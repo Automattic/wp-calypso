@@ -11,6 +11,7 @@ import isEqual from 'lodash/isEqual';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
+import Card from 'components/card';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginsActions from 'lib/plugins/actions';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
@@ -36,6 +37,40 @@ function checkPropsChange( nextProps, propArr ) {
 module.exports = React.createClass( {
 
 	displayName: 'PluginItem',
+
+	propTypes: {
+		plugin: React.PropTypes.object,
+		sites: React.PropTypes.array,
+		isSelected: React.PropTypes.bool,
+		isSelectable: React.PropTypes.bool,
+		onClick: React.PropTypes.func,
+		pluginLink: React.PropTypes.string,
+		allowedActions: React.PropTypes.shape( {
+			activation: React.PropTypes.bool,
+			autoupdate: React.PropTypes.bool,
+		} ),
+		isAutoManaged: React.PropTypes.bool,
+		progress: React.PropTypes.array,
+		errors: React.PropTypes.array,
+		notices: React.PropTypes.shape( {
+			completed: React.PropTypes.array,
+			errors: React.PropTypes.array,
+			inProgress: React.PropTypes.array,
+		} ),
+		hasAllNoManageSites: React.PropTypes.bool,
+		hasUpdate: React.PropTypes.func,
+	},
+
+	getDefaultProps() {
+		return  {
+			allowedActions: {
+				activation: true,
+				autoupdate: true,
+			},
+			isAutoManaged: false,
+			hasUpdate: () => false,
+		}
+	},
 
 	shouldComponentUpdate( nextProps, nextState ) {
 		const propsToCheck = [ 'plugin', 'sites', 'selectedSite', 'isMock', 'isSelectable', 'isSelected' ];
@@ -67,12 +102,6 @@ module.exports = React.createClass( {
 
 	ago( date ) {
 		return i18n.moment.utc( date, 'YYYY-MM-DD hh:mma' ).fromNow();
-	},
-
-	hasUpdate() {
-		return this.props.sites.some( function( site ) {
-			return site.plugin && site.plugin.update && site.canUpdateFiles;
-		} );
 	},
 
 	doing() {
@@ -160,7 +189,15 @@ module.exports = React.createClass( {
 				);
 			}
 		}
-		if ( this.hasUpdate() ) {
+		if ( this.props.isAutoManaged ) {
+			return (
+				<div className="plugin-item__last_updated">
+					{ this.translate( '%(pluginName)s is automatically managed on this site', { args: { pluginName: pluginData.name } } ) }
+				</div>
+			);
+		}
+
+		if ( this.props.hasUpdate( pluginData ) ) {
 			return this.renderUpdateFlag();
 		}
 
@@ -186,21 +223,26 @@ module.exports = React.createClass( {
 	},
 
 	renderActions() {
+		const {
+			activation: canToggleActivation,
+			autoupdate: canToggleAutoupdate,
+		} = this.props.allowedActions;
+
 		return (
 			<div className="plugin-item__actions">
-				<PluginActivateToggle
-					isMock={ this.props.isMock }
-					plugin={ this.props.plugin }
-					disabled={ this.props.isSelectable }
-					site={ this.props.selectedSite }
-					notices={ this.props.notices } />
-				<PluginAutoupdateToggle
-					isMock={ this.props.isMock }
-					plugin={ this.props.plugin }
-					disabled={ this.props.isSelectable }
-					site={ this.props.selectedSite }
-					notices={ this.props.notices }
-					wporg={ !! this.props.plugin.wporg } />
+				{ canToggleActivation && <PluginActivateToggle
+						isMock={ this.props.isMock }
+						plugin={ this.props.plugin }
+						disabled={ this.props.isSelectable }
+						site={ this.props.selectedSite }
+						notices={ this.props.notices } /> }
+				{ canToggleAutoupdate && <PluginAutoupdateToggle
+						isMock={ this.props.isMock }
+						plugin={ this.props.plugin }
+						disabled={ this.props.isSelectable }
+						site={ this.props.selectedSite }
+						notices={ this.props.notices }
+						wporg={ !! this.props.plugin.wporg } /> }
 			</div>
 		);
 	},
@@ -264,7 +306,7 @@ module.exports = React.createClass( {
 			numberOfWarningIcons++;
 		}
 
-		if ( this.hasUpdate() ) {
+		if ( this.props.hasUpdate( plugin ) ) {
 			numberOfWarningIcons++;
 		}
 
@@ -295,9 +337,12 @@ module.exports = React.createClass( {
 				</div>
 			);
 		}
+
+		const CardType = this.props.isCompact ? CompactCard : Card;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				<CompactCard className="plugin-item">
+				<CardType className="plugin-item">
 					{ ! this.props.isSelectable
 						? null
 						: <input className="plugin-item__checkbox"
@@ -313,10 +358,11 @@ module.exports = React.createClass( {
 						{ this.pluginMeta( plugin ) }
 					</a>
 					{ this.props.selectedSite ? this.renderActions() : this.renderSiteCount() }
-				</CompactCard>
+				</CardType>
 				{ errorNotices }
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 } );

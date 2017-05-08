@@ -140,7 +140,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		it( 'should not persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -151,10 +151,10 @@ describe( 'reducer', () => {
 
 			const state = requests( original, { type: SERIALIZE } );
 
-			expect( state ).to.eql( state );
+			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should load persisted state', () => {
+		it( 'should not load persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -165,7 +165,7 @@ describe( 'reducer', () => {
 
 			const state = requests( original, { type: DESERIALIZE } );
 
-			expect( state ).to.eql( state );
+			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -258,6 +258,26 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should change root site property when received stats by statType', () => {
+			const original = deepFreeze( {
+				2916284: {
+					statsStreak: {
+						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': streakResponse
+					}
+				}
+			} );
+
+			const state = items( original, {
+				type: SITE_STATS_RECEIVE,
+				siteId: 2916284,
+				statType: 'statsStreak',
+				query: streakQueryDos,
+				data: streakResponseDos
+			} );
+
+			expect( state[ 2916284 ] ).to.not.equal( original[ 2916284 ] );
+		} );
+
 		it( 'should add additional statTypes', () => {
 			const original = deepFreeze( {
 				2916284: {
@@ -285,6 +305,46 @@ describe( 'reducer', () => {
 					}
 				}
 			} );
+		} );
+
+		it( 'should should not change another statTypes property', () => {
+			const original = deepFreeze( {
+				2916284: {
+					statsStreak: {
+						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': streakResponse
+					}
+				}
+			} );
+
+			const state = items( original, {
+				type: SITE_STATS_RECEIVE,
+				siteId: 2916284,
+				statType: 'statsCountryViews',
+				query: streakQuery,
+				data: {}
+			} );
+
+			expect( state[ 2916284 ].statsStreak ).to.equal( original[ 2916284 ].statsStreak );
+		} );
+
+		it( 'should not change another site property', () => {
+			const original = deepFreeze( {
+				2916284: {
+					statsStreak: {
+						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': streakResponse
+					}
+				}
+			} );
+
+			const state = items( original, {
+				type: SITE_STATS_RECEIVE,
+				siteId: 3916284,
+				statType: 'statsCountryViews',
+				query: streakQuery,
+				data: {}
+			} );
+
+			expect( state[ 2916284 ].statsStreak ).to.equal( original[ 2916284 ].statsStreak );
 		} );
 	} );
 } );

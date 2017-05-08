@@ -12,22 +12,22 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	StateSelector = require( 'components/forms/us-state-selector' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormLegend = require( 'components/forms/form-legend' ),
-	FormRadio = require( 'components/forms/form-radio' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormSelect = require( 'components/forms/form-select' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	WordadsActions = require( 'lib/ads/actions' ),
-	SettingsStore = require( 'lib/ads/settings-store' ),
-	sites = require( 'lib/sites-list' )();
-
+import Card from 'components/card';
+import StateSelector from 'components/forms/us-state-selector';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
+import FormRadio from 'components/forms/form-radio';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormSelect from 'components/forms/form-select';
+import FormTextInput from 'components/forms/form-text-input';
+import WordadsActions from 'lib/ads/actions';
+import SettingsStore from 'lib/ads/settings-store';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { dismissWordAdsSuccess } from 'state/wordads/approve/actions';
 import { protectForm } from 'lib/protect-form';
 
@@ -56,7 +56,7 @@ const AdsFormSettings = React.createClass( {
 
 	updateSettings: function() {
 		var settings = this.getSettingsFromStore();
-		const site = sites.getSelectedSite();
+		const { site } = this.props;
 		this.setState( settings );
 
 		// set/clear any notices on update
@@ -71,7 +71,7 @@ const AdsFormSettings = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		var site = this.props.site || sites.getSelectedSite();
+		const { site } = this.props;
 		if ( ! nextProps || ! nextProps.site || ! nextProps.site.ID ) {
 			return;
 		}
@@ -114,17 +114,18 @@ const AdsFormSettings = React.createClass( {
 
 	submitForm: function( event ) {
 		event.preventDefault();
-		WordadsActions.updateSettings( sites.getSelectedSite(), this.packageState() );
+		const { site } = this.props;
+		WordadsActions.updateSettings( site, this.packageState() );
 		this.setState( { notice: null, error: null } );
 		this.props.markSaved();
 	},
 
 	getSettingsFromStore: function( siteInstance ) {
-		var site = siteInstance || this.props.site || sites.getSelectedSite(),
+		const site = siteInstance || this.props.site,
 			store = SettingsStore.getById( site.ID );
 
 		store.us_checked = 'yes' === store.us_resident;
-		if ( site.jetpack ) {
+		if ( this.props.siteIsJetpack ) {
 			// JP doesn't matter, force yes to make things easier
 			store.show_to_logged_in = 'yes';
 		}
@@ -401,8 +402,8 @@ const AdsFormSettings = React.createClass( {
 								{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 						</FormButton>
 					</FormButtonsBar>
-					{ ! this.props.site.jetpack ? this.showAdsToOptions() : null }
-					{ ! this.props.site.jetpack ? this.additionalAdsOption() : null }
+					{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
+					{ ! this.props.siteIsJetpack ? this.additionalAdsOption() : null }
 					<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
 					{ this.siteOwnerOptions() }
 					{ this.state.us_checked ? this.taxOptions() : null }
@@ -422,7 +423,10 @@ const AdsFormSettings = React.createClass( {
 
 export default compose(
 	connect(
-		null,
+		( state ) => ( {
+			site: getSelectedSite( state ),
+			siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+		} ),
 		{ dismissWordAdsSuccess },
 	),
 	localize,

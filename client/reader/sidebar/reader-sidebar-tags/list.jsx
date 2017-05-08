@@ -30,7 +30,7 @@ export class ReaderSidebarTagsList extends Component {
 		return map( tags, function( tag ) {
 			return (
 				<ReaderSidebarTagsListItem
-					key={ tag.ID }
+					key={ tag.id }
 					tag={ tag }
 					path={ path }
 					onUnfollow={ onUnfollow }
@@ -43,7 +43,7 @@ export class ReaderSidebarTagsList extends Component {
 		const { tags, translate } = this.props;
 		if ( ! tags || tags.length === 0 ) {
 			return (
-				<li key="empty" className="sidebar__menu-empty">{ translate( 'Find relevant posts by adding a\xa0tag.' ) }</li>
+				<li key="empty" className="sidebar__menu-empty">{ translate( 'Find relevant posts by adding a tag.' ) }</li>
 			);
 		}
 

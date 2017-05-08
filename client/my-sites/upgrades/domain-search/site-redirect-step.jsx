@@ -20,10 +20,7 @@ var SiteRedirectStep = React.createClass( {
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
 		products: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired
+		selectedSite: React.PropTypes.object.isRequired,
 	},
 
 	getInitialState: function() {

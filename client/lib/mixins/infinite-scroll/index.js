@@ -36,8 +36,7 @@ module.exports = function( nextPageMethod ) {
 				documentHeight = document.body.scrollHeight,
 				viewportHeight = window.innerHeight,
 				scrollOffset = 2 * viewportHeight,
-				triggeredByScroll = options.triggeredByScroll,
-				self = this;
+				triggeredByScroll = options.triggeredByScroll;
 
 			if ( scrollPosition >= ( documentHeight - viewportHeight - scrollOffset ) ) {
 
@@ -49,11 +48,11 @@ module.exports = function( nextPageMethod ) {
 
 				// scroll check may be triggered while dispatching an action,
 				// we cannot create new action while dispatching old one
-				setTimeout( function() {
-					self[ nextPageMethod ]( {
+				window.requestAnimationFrame( () => {
+					this[ nextPageMethod ]( {
 						triggeredByScroll: triggeredByScroll
 					} );
-				}, 0 );
+				} );
 			}
 		}
 	};

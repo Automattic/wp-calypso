@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var controller = require( 'my-sites/controller' ),
-	customizeController = require( './controller' ),
-	config = require( 'config' );
+import { siteSelection, sites, navigation } from 'my-sites/controller';
+import { customize } from './controller';
+import config from 'config';
 
-module.exports = function() {
+export default function() {
 	if ( config.isEnabled( 'manage/customize' ) ) {
-		page( '/customize/:panel([^\.]+)?', controller.siteSelection, controller.sites );
-		page( '/customize/:panel?/:domain', controller.siteSelection, controller.navigation, customizeController.customize );
+		page( '/customize/:panel([^\.]+)?', siteSelection, sites );
+		page( '/customize/:panel?/:domain', siteSelection, navigation, customize );
 	}
-};
+}

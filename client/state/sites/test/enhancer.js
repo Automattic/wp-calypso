@@ -26,7 +26,10 @@ const EXAMPLE_SITE = {
 
 describe( 'sitesSync()', () => {
 	let sitesListFactory, Site, store, sitesList;
-	const state = { sites: { items: {} } };
+	const state = {
+		sites: { items: {} },
+		siteSettings: { items: {} },
+	};
 
 	useFakeDom();
 

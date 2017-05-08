@@ -8,7 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get } from 'lodash';
+import { get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,25 +19,33 @@ import utils from 'bundler/utils';
 import sectionsModule from '../../client/sections';
 import { serverRouter } from 'isomorphic-routing';
 import { serverRender } from 'render';
-import { createReduxStore } from 'state';
+import stateCache from 'state-cache';
+import { createReduxStore, reducer } from 'state';
+import { DESERIALIZE } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:pages' );
 
 const HASH_LENGTH = 10;
 const URL_BASE_PATH = '/calypso';
 const SERVER_BASE_PATH = '/public';
-const CALYPSO_ENV = process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development';
+const calypsoEnv = config( 'env_id' );
 
 const staticFiles = [
 	{ path: 'style.css' },
 	{ path: 'editor.css' },
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
-	{ path: 'style-rtl.css' },
-	{ path: 'vendor.' + config( 'env' ) + '.js' }
+	{ path: 'style-rtl.css' }
 ];
 
-let sections = sectionsModule.get();
+const sections = sectionsModule.get();
+
+// TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
+function getInitialServerState( serializedServerState ) {
+	// Bootstrapped state from a server-render
+	const serverState = reducer( serializedServerState, { type: DESERIALIZE } );
+	return pick( serverState, Object.keys( serializedServerState ) );
+}
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
@@ -82,18 +90,10 @@ function generateStaticUrls( request ) {
 		urls[ file.path ] = getUrl( file.path, file.hash );
 	} );
 
-	// vendor dll
-	urls.vendor = urls[ 'vendor.' + config( 'env' ) + '.js' ];
-	urls[ 'vendor-min' ] = urls.vendor.replace( '.js', '.m.js' );
-
 	const assets = request.app.get( 'assets' );
 
 	assets.forEach( function( asset ) {
-		let name = asset.name;
-		if ( ! name ) {
-			// this is for auto-generated chunks that don't have names, like the commons chunk
-			name = asset.url.replace( /\/calypso\/(\w+)\..*/, '_$1' );
-		}
+		const name = asset.name;
 		urls[ name ] = asset.url;
 		if ( config( 'env' ) !== 'development' ) {
 			urls[ name + '-min' ] = asset.url.replace( '.js', '.m.js' );
@@ -120,11 +120,19 @@ function getCurrentCommitShortChecksum() {
 }
 
 function getDefaultContext( request ) {
+	let initialServerState = {};
+	// We don't cache routes with query params
+	if ( isEmpty( request.query ) ) {
+		// context.pathname is set to request.path, see server/isomorphic-routing#getEnhancedContext()
+		const serializeCachedServerState = stateCache.get( request.path ) || {};
+		initialServerState = getInitialServerState( serializeCachedServerState );
+	}
+
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
 		user: false,
-		env: CALYPSO_ENV,
+		env: calypsoEnv,
 		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
 		isDebug: request.query.debug !== undefined ? true : false,
@@ -135,7 +143,7 @@ function getDefaultContext( request ) {
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
-		store: createReduxStore()
+		store: createReduxStore( initialServerState )
 	} );
 
 	context.app = {
@@ -146,26 +154,26 @@ function getDefaultContext( request ) {
 		tinymceEditorCss: context.urls[ 'editor.css' ]
 	};
 
-	if ( CALYPSO_ENV === 'wpcalypso' ) {
-		context.badge = CALYPSO_ENV;
+	if ( calypsoEnv === 'wpcalypso' ) {
+		context.badge = calypsoEnv;
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
 	}
 
-	if ( CALYPSO_ENV === 'horizon' ) {
+	if ( calypsoEnv === 'horizon' ) {
 		context.badge = 'feedback';
 		context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
 		context.faviconURL = '/calypso/images/favicons/favicon-horizon.ico';
 	}
 
-	if ( CALYPSO_ENV === 'stage' ) {
+	if ( calypsoEnv === 'stage' ) {
 		context.badge = 'staging';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
 	}
 
-	if ( CALYPSO_ENV === 'development' ) {
+	if ( calypsoEnv === 'development' ) {
 		context.badge = 'dev';
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
@@ -346,9 +354,16 @@ module.exports = function() {
 		} );
 	}
 
-	app.get( '/theme', ( req, res ) => res.redirect( '/design' ) );
+	// Redirect legacy `/menus` routes to the corresponding Customizer panel
+	// TODO: Move to `my-sites/customize` route defs once that section is isomorphic
+	app.get( [ '/menus', '/menus/:site?' ], ( req, res ) => {
+		const siteSlug = get( req.params, 'site', '' );
+		const newRoute = '/customize/menus/' + siteSlug;
+		res.redirect( 301, newRoute );
+	} );
 
 	sections
+		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
 			section.paths.forEach( path => {
 				const pathRegex = utils.pathToRegExp( path );
@@ -357,6 +372,15 @@ module.exports = function() {
 					if ( config.isEnabled( 'code-splitting' ) ) {
 						req.context = Object.assign( {}, req.context, { chunk: section.name } );
 					}
+
+					if ( section.secondary && req.context ) {
+						req.context.hasSecondary = true;
+					}
+
+					if ( section.group && req.context ) {
+						req.context.sectionGroup = section.group;
+					}
+
 					next();
 				} );
 

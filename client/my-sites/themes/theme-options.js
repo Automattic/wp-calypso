@@ -4,7 +4,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
-import { has, identity, mapValues, pick, pickBy } from 'lodash';
+import { has, identity, mapValues, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,10 +26,15 @@ import {
 	isThemeActive,
 	isThemePremium,
 	isPremiumThemeAvailable,
+	isThemeAvailableOnJetpackSite
 } from 'state/themes/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackSiteMultiSite
+} from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
@@ -43,11 +48,13 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
 		getUrl: getThemePurchaseUrl,
-		hideForSite: ( state, siteId ) => hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
-		hideForTheme: ( state, theme, siteId ) => (
-			! isThemePremium( state, theme.id ) ||
-			isThemeActive( state, theme.id, siteId ) ||
-			isPremiumThemeAvailable( state, theme.id, siteId )
+		hideForTheme: ( state, themeId, siteId ) => (
+			! getCurrentUser( state ) ||
+			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
+			isJetpackSite( state, siteId ) ||
+			! isThemePremium( state, themeId ) ||
+			isThemeActive( state, themeId, siteId ) ||
+			isPremiumThemeAvailable( state, themeId, siteId )
 		)
 	}
 	: {};
@@ -57,17 +64,24 @@ const activate = {
 	extendedLabel: i18n.translate( 'Activate this design' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateAction,
-	hideForTheme: ( state, theme, siteId ) => (
-		isThemeActive( state, theme.id, siteId ) ||
-		( isThemePremium( state, theme.id ) && ! isPremiumThemeAvailable( state, theme.id, siteId ) )
+	hideForTheme: ( state, themeId, siteId ) => (
+		! getCurrentUser( state ) ||
+		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ||
+		isThemeActive( state, themeId, siteId ) ||
+		( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
+		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
 	)
 };
 
 const deleteTheme = {
 	label: i18n.translate( 'Delete' ),
 	action: confirmDelete,
-	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId ) || ! config.isEnabled( 'manage/themes/upload' ),
-	hideForTheme: ( state, theme, siteId ) => isThemeActive( state, theme.id, siteId ),
+	hideForTheme: ( state, themeId, siteId, origin ) => (
+		! isJetpackSite( state, siteId ) ||
+		! config.isEnabled( 'manage/themes/upload' ) ||
+		origin === 'wpcom' ||
+		isThemeActive( state, themeId, siteId )
+	)
 };
 
 const customize = {
@@ -76,8 +90,10 @@ const customize = {
 	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
 	icon: 'customize',
 	getUrl: getThemeCustomizeUrl,
-	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
-	hideForTheme: ( state, theme, siteId ) => ! isThemeActive( state, theme.id, siteId )
+	hideForTheme: ( state, themeId, siteId ) => (
+		! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
+		! isThemeActive( state, themeId, siteId )
+	)
 };
 
 const tryandcustomize = {
@@ -87,8 +103,18 @@ const tryandcustomize = {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
 	action: tryAndCustomizeAction,
-	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
-	hideForTheme: ( state, theme, siteId ) => isThemeActive( state, theme.id, siteId )
+	hideForTheme: ( state, themeId, siteId ) => (
+		! getCurrentUser( state ) ||
+		( siteId && ( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
+		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
+		isThemeActive( state, themeId, siteId ) || (
+			isThemePremium( state, themeId ) &&
+			// In theory, we shouldn't need the isJetpackSite() check. In practice, Redux state required for isPremiumThemeAvailable
+			// is less readily available since it needs to be fetched using the `QuerySitePlans` component.
+			( isJetpackSite( state, siteId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) )
+		) ||
+		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
+	)
 };
 
 const preview = {
@@ -105,7 +131,8 @@ const signupLabel = i18n.translate( 'Pick this design', {
 const signup = {
 	label: signupLabel,
 	extendedLabel: signupLabel,
-	getUrl: getThemeSignupUrl
+	getUrl: getThemeSignupUrl,
+	hideForTheme: ( state ) => getCurrentUser( state )
 };
 
 const separator = {
@@ -124,7 +151,7 @@ const support = {
 	label: i18n.translate( 'Setup' ),
 	icon: 'help',
 	getUrl: getThemeSupportUrl,
-	hideForTheme: ( state, theme ) => ! isThemePremium( state, theme.id )
+	hideForTheme: ( state, themeId ) => ! isThemePremium( state, themeId )
 };
 
 const help = {
@@ -137,8 +164,8 @@ const ALL_THEME_OPTIONS = {
 	preview,
 	purchase,
 	activate,
-	deleteTheme,
 	tryandcustomize,
+	deleteTheme,
 	signup,
 	separator,
 	info,
@@ -147,50 +174,36 @@ const ALL_THEME_OPTIONS = {
 };
 
 export const connectOptions = connect(
-	( state, { options: optionNames, siteId } ) => {
-		let options = pick( ALL_THEME_OPTIONS, optionNames );
-		let mapGetUrl = identity, mapHideForSite = identity;
-
-		// We bind hideForTheme to siteId even if it is null since the selectors
-		// that are used by it are expected to recognize that case as "no site selected"
-		// and work accordingly.
-		const mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, siteId );
+	( state, { siteId, origin = siteId } ) => {
+		let mapGetUrl = identity, mapHideForTheme = identity;
 
 		if ( siteId ) {
 			mapGetUrl = getUrl => ( t ) => getUrl( state, t, siteId );
-			options = pickBy( options, option =>
-				! ( option.hideForSite && option.hideForSite( state, siteId ) )
-			);
+			mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, siteId, origin );
 		} else {
 			mapGetUrl = getUrl => ( t, s ) => getUrl( state, t, s );
-			mapHideForSite = hideForSite => ( s ) => hideForSite( state, s );
+			mapHideForTheme = hideForTheme => ( t, s ) => hideForTheme( state, t, s, origin );
 		}
 
-		return mapValues( options, option => Object.assign(
+		return mapValues( ALL_THEME_OPTIONS, option => Object.assign(
 			{},
 			option,
 			option.getUrl
 				? { getUrl: mapGetUrl( option.getUrl ) }
-				: {},
-			option.hideForSite
-				? { hideForSite: mapHideForSite( option.hideForSite ) }
 				: {},
 			option.hideForTheme
 				? { hideForTheme: mapHideForTheme( option.hideForTheme ) }
 				: {}
 		) );
 	},
-	( dispatch, { options: optionNames, siteId, source = 'unknown' } ) => {
-		const options = pickBy(
-			pick( ALL_THEME_OPTIONS, optionNames ),
-			'action'
-		);
+	( dispatch, { siteId, source = 'unknown' } ) => {
+		const options = pickBy( ALL_THEME_OPTIONS, 'action' );
 		let mapAction;
 
 		if ( siteId ) {
-			mapAction = action => ( t ) => action( t.id, siteId, source );
+			mapAction = action => ( t ) => action( t, siteId, source );
 		} else { // Bind only source.
-			mapAction = action => ( t, s ) => action( t.id, s, source );
+			mapAction = action => ( t, s ) => action( t, s, source );
 		}
 
 		return bindActionCreators(

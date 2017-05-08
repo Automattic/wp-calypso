@@ -20,6 +20,14 @@ function hasDiscoverSlug( post, searchSlug ) {
 
 export const discoverBlogId = config( 'discover_blog_id' );
 
+export function isDiscoverBlog( blogId ) {
+	return +blogId === config( 'discover_blog_id' );
+}
+
+export function isDiscoverFeed( feedId ) {
+	return +feedId === config( 'discover_feed_id' );
+}
+
 export function isDiscoverEnabled() {
 	return userUtils.getLocaleSlug() === 'en';
 }

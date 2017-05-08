@@ -1,7 +1,6 @@
 /**
 * Functions for working with theme search filters. The filter syntax is
 * {taxonomy}:{term}
-* allowing whitespace after the :
 *
 * Valid values for {taxonomy} and {term} are contained in the
 * `taxonomies` object.
@@ -15,7 +14,7 @@ import omitBy from 'lodash/omitBy';
 import includes from 'lodash/includes';
 
 // Regular expressions for matching "taxonomy:term" search-box syntax
-const FILTER_REGEX_STRING = '(\\w+)\\:\\s*([\\w-]+)';
+const FILTER_REGEX_STRING = '(\\w+)\\:([\\w-]*)';
 const FILTER_REGEX_GLOBAL = new RegExp( FILTER_REGEX_STRING, 'g' );
 const FILTER_REGEX_SINGLE = new RegExp( '^' + FILTER_REGEX_STRING + '$' );
 const FILTER_TAXONOMY_GROUP = 1;
@@ -114,8 +113,6 @@ const taxonomies = {
         "journal",
         "lifestream",
         "magazine",
-        "major-league-baseball",
-        "mlb",
         "music",
         "nature",
         "news",
@@ -273,6 +270,20 @@ export function getFilter( term ) {
 }
 
 /**
+ * For array of terms recreate full search string in
+ * "taxonomy:term taxonomy:term" search-box format.
+ *
+ * @param {string} terms - space or + separated list of filter terms
+ * @return {string}     - complete taxonomy:term filter string, or empty string if term is not valid
+ */
+export function prependFilterKeys( terms ) {
+	if ( terms ) {
+		return terms.split( /[+\s]/ ).map( getFilter ).join( ' ' ) + ' ';
+	}
+	return '';
+}
+
+/**
  * Checks that a taxonomy:term filter is valid, using the theme
  * taxonomy data.
  *
@@ -314,7 +325,7 @@ export function getSortedFilterTerms( input ) {
 	const matches = input.match( FILTER_REGEX_GLOBAL );
 	if ( matches ) {
 		const terms = matches.filter( filterIsValid ).map( getTerm );
-		return sortFilterTerms( terms ).join( ',' );
+		return sortFilterTerms( terms ).join( '+' );
 	}
 	return '';
 }

@@ -12,16 +12,14 @@ import { invoke } from 'lodash';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
-import { abtest } from 'lib/abtest';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PressableStoreStep from './pressable-store';
-import BluehostStoreStep from './bluehost-store';
-import SitegroundStoreStep from './siteground-store';
 import BlogImage from './blog-image';
 import PageImage from './page-image';
 import GridImage from './grid-image';
 import StoreImage from './store-image';
+import { abtest } from 'lib/abtest';
 
 class DesignTypeWithStoreStep extends Component {
 	constructor( props ) {
@@ -36,12 +34,32 @@ class DesignTypeWithStoreStep extends Component {
 
 	getChoices() {
 		const { translate } = this.props;
+		const blogText = translate(
+			'To share your ideas, stories, and photographs with your followers.'
+		);
+		const siteText = translate(
+			'To promote your business, organization, or brand and connect with your audience.'
+		);
+		const gridText = translate( 'To present your creative projects in a visual showcase.' );
+		const storeText = translate( 'To sell your products or services and accept payments.' );
 
 		return [
-			{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
-			{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
-			{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
-			{ type: 'store', label: translate( 'An online store' ), image: <StoreImage /> },
+			{ type: 'blog',
+				label: translate( 'Start with a blog' ),
+				description: blogText,
+				image: <BlogImage /> },
+			{ type: 'page',
+				label: translate( 'Start with a website' ),
+				description: siteText,
+				image: <PageImage /> },
+			{ type: 'grid',
+				label: translate( 'Start with a portfolio' ),
+				description: gridText,
+				image: <GridImage /> },
+			{ type: 'store',
+				label: translate( 'Start with an online store' ),
+				description: storeText,
+				image: <StoreImage /> },
 		];
 	}
 
@@ -90,14 +108,26 @@ class DesignTypeWithStoreStep extends Component {
 				<a className="design-type-with-store__choice-link"
 					href="#"
 					onClick={ this.handleChoiceClick( choice.type ) }>
-					{ choice.image }
-					<h2>{ choice.label }</h2>
+					<div className="design-type-with-store__image">
+						{ choice.image }
+					</div>
+					<div className="design-type-with-store__choice-copy">
+						<span className="button is-compact design-type-with-store__cta">
+							{choice.label}
+						</span>
+						<p className="design-type-with-store__choice-description">
+							{ choice.description }
+						</p>
+					</div>
 				</a>
 			</Card>
 		);
 	};
 
 	renderChoices() {
+		const { translate } = this.props;
+		const disclaimerText = translate( 'Not sure? Pick the closest option. You can always change your settings later.' ); // eslint-disable-line max-len
+
 		const storeWrapperClassName = classNames(
 			'design-type-with-store__store-wrapper',
 			{ 'is-hidden': ! this.state.showStore }
@@ -111,10 +141,18 @@ class DesignTypeWithStoreStep extends Component {
 		return (
 			<div className="design-type-with-store__substep-wrapper">
 				<div className={ storeWrapperClassName }>
-					{ this.renderStoreStep() }
+					<PressableStoreStep
+						{ ... this.props }
+						onBackClick={ this.handleStoreBackClick }
+						setRef={ this.setPressableStore }
+					/>
 				</div>
 				<div className={ designTypeListClassName }>
 					{ this.getChoices().map( this.renderChoice ) }
+
+					<p className="design-type-with-store__disclaimer">
+						{ disclaimerText }
+					</p>
 				</div>
 			</div>
 		);
@@ -124,59 +162,32 @@ class DesignTypeWithStoreStep extends Component {
 		this.pressableStore = ref;
 	}
 
-	renderStoreStep() {
-		switch ( abtest( 'signupStoreBenchmarking' ) ) {
-			case 'bluehost':
-				return <BluehostStoreStep
-							{ ... this.props }
-							onBackClick={ this.handleStoreBackClick }
-						/>;
-			case 'bluehostWithWoo':
-				return <BluehostStoreStep
-							{ ... this.props }
-							onBackClick={ this.handleStoreBackClick }
-							partnerName="Bluehost with WooCommerce"
-						/>;
-			case 'siteground':
-				return <SitegroundStoreStep
-							{ ... this.props }
-							onBackClick={ this.handleStoreBackClick }
-						/>;
-			default:
-				return <PressableStoreStep
-							{ ... this.props }
-							onBackClick={ this.handleStoreBackClick }
-							setRef={ this.setPressableStore }
-						/>;
+	getHeaderText() {
+		const { translate } = this.props;
+
+		if ( this.state.showStore ) {
+			return translate( 'Create your WordPress Store' );
 		}
+
+		if ( abtest( 'signupSurveyStep' ) === 'showSurveyStep' ) {
+			return 'We\'re excited to hear more about your project.';
+		}
+
+		return translate( 'Hello! Let’s create your new site.' );
 	}
 
 	getSubHeaderText() {
 		const { translate } = this.props;
 
 		if ( this.state.showStore ) {
-			switch ( abtest( 'signupStoreBenchmarking' ) ) {
-				case 'bluehost':
-					return translate( 'Our partners at BlueHost are here for you.'	);
-				case 'bluehostWithWoo':
-					return translate( 'Our partners at BlueHost and WooCommerce are here for you.' );
-				case 'siteground':
-					return translate( 'Our partners at SiteGround and WooCommerce are here for you.' );
-				default:
-					return translate( 'Our partners at Pressable and WooCommerce are here for you.' );
-			}
+			return translate( 'Our partners at Pressable and WooCommerce are here for you.' );
 		}
 
-		return translate( 'This will help us figure out what kinds of designs to show you.' );
+		return translate( 'What kind of site do you need? Choose an option below:' );
 	}
 
 	render() {
-		const { translate } = this.props;
-
-		const headerText = this.state.showStore
-			? translate( 'Create your WordPress Store' )
-			: translate( 'What would you like your homepage to look like?' );
-
+		const headerText = this.getHeaderText();
 		const subHeaderText = this.getSubHeaderText();
 
 		return (
@@ -186,17 +197,18 @@ class DesignTypeWithStoreStep extends Component {
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ subHeaderText }
+				headerText={ headerText }
 				subHeaderText={ subHeaderText }
 				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderChoices() }
-				shouldHideNavButtons={ this.state.showStore }
-			/>
+				shouldHideNavButtons={ this.state.showStore } />
 		);
 	}
 }
 
 const mapDispatchToProps = dispatch => ( {
-	recordNextStep: designType => dispatch( recordTracksEvent( 'calypso_triforce_select_design', { category: designType } ) )
+	recordNextStep: designType => dispatch( recordTracksEvent( 'calypso_triforce_select_design',
+		{ category: designType } ) )
 } );
 
 export default connect( null, mapDispatchToProps )( localize( DesignTypeWithStoreStep ) );

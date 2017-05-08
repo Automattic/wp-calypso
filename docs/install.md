@@ -7,8 +7,9 @@ You can install Calypso directly on your machine by following the next steps, or
 1.	Check that you have all prerequisites (Git, Node, NPM). See [below](install.md#prerequisites) for more details.
 2.	Clone this repository locally.
 3.	Add `127.0.0.1 calypso.localhost` to your local `hosts` file.
-4.	Execute `make run` or `make dashboard` (for a more visually-oriented interface) from the root directory of the repository.
-5.	Open [`calypso.localhost:3000`](http://calypso.localhost:3000/) in your browser.
+4.	Run `npm install`
+5.	Execute `make run` or `make dashboard` (for a more visually-oriented interface) from the root directory of the repository.
+6.	Open [`calypso.localhost:3000`](http://calypso.localhost:3000/) in your browser.
 
 ## Prerequisites
 
@@ -30,9 +31,11 @@ $ cd wp-calypso
 $ make run
 ```
 
-The `make run` command will install any `npm` dependencies and start the development server. When changes are made to either the JavaScript files or the Sass stylesheets, the build process will run automatically. In some cases it will even automatically reload the code in the browser (for React components code). The build process compiles both the JavaScript and CSS to make sure that you have the latest versions of both.
+The `make run` command will install any `npm` dependencies and start the development server. When changes are made to either the JavaScript files or the Sass stylesheets, the build process will run automatically. The build process compiles both the JavaScript and CSS to make sure that you have the latest versions of both.
 
 To run Calypso locally, you'll need to add `127.0.0.1 calypso.localhost` to [your hosts file](http://www.howtogeek.com/howto/27350/beginner-geek-how-to-edit-your-hosts-file/), and load the app at [http://calypso.localhost:3000](http://calypso.localhost:3000) instead of just `localhost`. This is necessary, because when running locally Calypso is using the remote version of the WordPress.com REST API, which allows only certain origins via our current authentication methods.
+
+See [Development Workflow](../docs/development-workflow.md) for more.
 
 ## Using a portable development environment
 

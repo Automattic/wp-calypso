@@ -2,12 +2,9 @@
  * External Dependencies
  */
 var page = require( 'page' ),
-	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' ),
 	i18n = require( 'i18n-calypso' );
-
-import { Provider } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -19,6 +16,8 @@ var user = require( 'lib/user' )(),
 	titlecase = require( 'to-title-case' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
 	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
+
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 module.exports = {
 
@@ -77,24 +76,23 @@ module.exports = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		ReactDom.render(
-			React.createElement( Provider, { store: context.store },
-				React.createElement( Posts, {
-					context: context,
-					siteID: siteID,
-					author: author,
-					statusSlug: statusSlug,
-					sites: sites,
-					search: search,
-					trackScrollPage: trackScrollPage.bind(
-						null,
-						baseAnalyticsPath,
-						analyticsPageTitle,
-						'Posts'
-					)
-				} )
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( Posts, {
+				context: context,
+				siteID: siteID,
+				author: author,
+				statusSlug: statusSlug,
+				sites: sites,
+				search: search,
+				trackScrollPage: trackScrollPage.bind(
+					null,
+					baseAnalyticsPath,
+					analyticsPageTitle,
+					'Posts'
+				)
+			} ),
+			'primary',
+			context.store
 		);
 	}
 };

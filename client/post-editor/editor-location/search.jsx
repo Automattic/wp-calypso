@@ -94,7 +94,9 @@ export default React.createClass( {
 					ref="search"
 					onSearch={ this.geocode }
 					searching={ isSearching }
-					delaySearch />
+					delaySearch
+					compact
+				/>
 				<ul className="editor-location__search-results">
 					{ results.map( ( result ) => {
 						return (

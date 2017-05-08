@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var SignupActions = require( 'lib/signup/actions' );
+import SignupActions from 'lib/signup/actions';
 
 module.exports = React.createClass( {
 	displayName: 'SubmitStepButton',

@@ -38,18 +38,21 @@ describe( 'gmtOffset', () => {
 } );
 
 describe( 'getLocalizedDate', () => {
+	// Use a fixed "now" to prevent issues with DST
+	const now = new Date( 2017, 1, 1, 0, 0, 0 );
+
 	it( 'Should return a date localized at Amsterdam (utc: 60 minutes)', () => {
-		const nowInAmsterdam = getLocalizedDate( new Date(), 'Europe/Amsterdam' );
+		const nowInAmsterdam = getLocalizedDate( now, 'Europe/Amsterdam' );
 		expect( nowInAmsterdam.utcOffset() ).to.equal( 60 );
 	} );
 
 	it( 'Should return a date localized at New York (utc: -300 minutes)', () => {
-		const nowInNewYork = getLocalizedDate( new Date(), 'America/New_York' );
+		const nowInNewYork = getLocalizedDate( now, 'America/New_York' );
 		expect( nowInNewYork.utcOffset() ).to.equal( -300 );
 	} );
 
 	it( 'Should return a date localized at UTC+3:30 (utc: 210 minutes)', () => {
-		const NowAtUTC3_30 = getLocalizedDate( new Date(), false, 210 );
+		const NowAtUTC3_30 = getLocalizedDate( now, false, 210 );
 		expect( NowAtUTC3_30.utcOffset() ).to.equal( 210 );
 	} );
 } );

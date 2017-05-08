@@ -14,6 +14,7 @@ import { bindActionCreators } from 'redux';
 import InviteHeader from 'my-sites/invites/invite-header';
 import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
+import { login } from 'lib/paths';
 import _user from 'lib/user';
 import { fetchInvite } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-accept-validation';
@@ -23,7 +24,6 @@ import analytics from 'lib/analytics';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import config from 'config';
 import userUtils from 'lib/user/utils';
 import LocaleSuggestions from 'signup/locale-suggestions';
 
@@ -97,7 +97,7 @@ let InviteAccept = React.createClass( {
 
 	signInLink() {
 		const invite = this.state.invite;
-		let loginUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
+		let loginUrl = login( { legacy: true, redirectTo: window.location.href } );
 
 		if ( invite && invite.sentTo ) {
 			let presetEmail = '&email_address=' + encodeURIComponent( invite.sentTo );
@@ -166,14 +166,14 @@ let InviteAccept = React.createClass( {
 						title: error.message, // "You are already a (follower|member) of this site"
 						line: this.translate( 'Would you like to accept the invite with a different account?' ),
 						action: this.translate( 'Switch Accounts' ),
-						actionURL: config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href ),
+						actionURL: login( { legacy: true, redirectTo: window.location.href } ),
 					} );
 					break;
 				case 'unauthorized_created_by_self':
 					Object.assign( props, {
 						line: error.message, // "You can not use an invitation that you have created for someone else."
 						action: this.translate( 'Switch Accounts' ),
-						actionURL: config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href ),
+						actionURL: login( { legacy: true, redirectTo: window.location.href } ),
 					} );
 					break;
 				default:

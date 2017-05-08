@@ -1,7 +1,10 @@
-import { getSiteUrl, getFeedUrl } from 'reader/route';
+/**
+ * Internal dependencies
+ */
+import { getSiteUrl as getSiteUrlFromRoute, getFeedUrl } from 'reader/route';
 import { withoutHttp } from 'lib/url';
 
-module.exports = {
+const exported = {
 	formatUrlForDisplay: function( url ) {
 		if ( ! url ) {
 			return;
@@ -34,7 +37,7 @@ module.exports = {
 			return getFeedUrl( feedData.feed_ID );
 		}
 
-		return getSiteUrl( siteData.get( 'ID' ) );
+		return getSiteUrlFromRoute( siteData.get( 'ID' ) );
 	},
 
 	getSiteUrl: function( siteData, feedData, subscription ) {
@@ -51,3 +54,12 @@ module.exports = {
 		return siteUrl;
 	}
 };
+
+export default exported;
+
+export const {
+    formatUrlForDisplay,
+    getFeedTitle,
+    getFeedStreamUrl,
+    getSiteUrl
+} = exported;

@@ -15,7 +15,7 @@
 	display: block;
 	font-size: 33px;
 	font-weight: 100;
-	padding-top: 70px;
+	padding-top: 78px;
 	padding-left: 25px;
 	line-height: 1;
 }
@@ -23,7 +23,7 @@
 .theme__sheet-bar-tag {
 	max-width: none;
 	display: block;
-	color: rgba(255, 255, 255, 0.6);
+	color: $white;
 	font-size: 16px;
 	font-weight: 200;
 	padding-top: 5px;
@@ -33,6 +33,8 @@
 .theme__sheet-columns {
 	display: flex;
 	flex-direction: row;
+	max-width: 1500px;
+	margin: 0 auto;
 
 	@include breakpoint( "<960px" ) {
 		flex-direction: column-reverse;
@@ -88,11 +90,12 @@
 
 .theme__sheet-screenshot {
 	display: block;
-	position: relative;
-	top: -156px;
+	margin-top: -156px;
 	width: 98%;
-	box-shadow: 0px 2px 8px 0px rgba(46,68,83,0.45);
+	z-index: 1;
+	box-shadow: 0 0 0 1px $transparent, 0px 2px 8px 0px transparentize( $gray-dark, 0.5 );
 	background-color: transparentize( white, 0.5 );
+	transition: all 200ms ease-in-out;
 
 	// with width: 98%, gives 4:3 ratio before the image loads
 	// also x-browser issues, so it's smaller than 4:3 proper
@@ -100,6 +103,7 @@
 
 	@include breakpoint( "<960px" ) {
 		position: relative;
+		margin-top: 0;
 		top: 0;
 		width: 100%;
 		height: 75vw; // force proportions
@@ -116,11 +120,57 @@
 			background: linear-gradient( to bottom, transparentize( $gray-light, 1.0 ) 0%, transparentize( $gray-light, 0.5 ) 40%, $gray-light 93% );
 		}
 	}
+
+	@include breakpoint( ">960px" ) {
+		&.is-active:hover {
+			cursor: pointer;
+			box-shadow: 0 0 0 1px $gray, 0px 2px 10px 0px transparentize( $gray-dark, 0.5 );
+		}
+	}
 }
 
 .theme__sheet-img {
 	display: block;
 	width: 100%;
+}
+
+.theme__sheet-preview-link {
+	display: flex;
+	position: absolute;
+		top: 269px;
+		right: calc( 50% + 30px );
+	margin: 0 auto;
+	padding: 10px;
+	color: $blue-wordpress;
+	font-size: 14px;
+	cursor: pointer;
+	transition: all ease-in-out 100ms;
+
+	&:hover {
+		color: $blue-medium;
+	}
+
+	.theme__sheet-preview-link-text {
+		margin-top: 2px;
+	}
+
+	@include breakpoint( "<960px" ) {
+		top: auto;
+		bottom: -10px;
+		left: 0;
+		right: 0;
+
+		.theme__sheet-preview-link-text {
+			margin: 0 auto;
+			padding: 2px 8px 3px 8px;
+			background-color: $gray-light;
+			color: $gray-text-min;
+			font-size: 11px;
+			font-weight: 600;
+			border-radius: 3px;
+			border: 1px solid darken( $sidebar-bg-color, 10% );
+		}
+	}
 }
 
 .theme__sheet-content {
@@ -373,45 +423,37 @@
 	}
 }
 
-.theme__sheet-preview-link {
+.theme__retired-theme-message {
 	display: flex;
-	position: absolute;
-		top: -28px;
-	color: lighten( $gray, 30% );
-	cursor: pointer;
-	transition: all ease-in-out 100ms;
+	align-items: center;
+	margin-bottom: 40px;
 
-	&:hover {
-		color: $white;
+	@include breakpoint( "<960px" ) {
+		flex-wrap: wrap;
 	}
 
 	.gridicon {
-		margin: 0 8px 0 -4px;
+		color: lighten( $gray, 20% );
+		flex: 0 0 auto;
 	}
 
-	.theme__sheet-preview-link-text {
-		font-size: 12px;
-		margin-top: 2px;
-		text-transform: uppercase;
+	.button {
+		flex: 0 0 auto;
+
+		@include breakpoint( "<960px" ) {
+			flex: 1 1 100%;
+			margin-top: 20px;
+			text-align: center;
+		}
 	}
+}
 
-	@include breakpoint( "<960px" ) {
-		color: transparentize( $gray, 0.2 );
-		top: 90%;
-		margin-left: 30px;
+.theme__retired-theme-message-details {
+	flex: 1 1 20px;
+	padding: 0 20px;
 
-		&:hover {
-			color: $gray-dark;
-		}
-
-		.gridicon {
-			width: 24px;
-			height: 24px;
-		}
-
-		.theme__sheet-preview-link-text {
-			display: none;
-		}
+	.theme__retired-theme-message-details-title {
+		font-size: 20px;
 	}
 }
 

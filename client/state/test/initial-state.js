@@ -40,6 +40,13 @@ describe( 'initial-state', () => {
 		mockery.registerMock( 'config', configMock );
 		localforage = require( 'lib/localforage/localforage-bypass' );
 		mockery.registerMock( 'lib/localforage', localforage );
+		mockery.registerMock( 'lib/user', () => {
+			return {
+				get: () => {
+					return { ID: 123456789 };
+				}
+			};
+		} );
 		const initialState = require( 'state/initial-state' );
 		createReduxStoreFromPersistedInitialState = initialState.default;
 		persistOnChange = initialState.persistOnChange;
@@ -392,8 +399,8 @@ describe( 'initial-state', () => {
 			clock.tick( SERIALIZE_THROTTLE );
 
 			expect( localforage.setItem ).to.have.been.calledTwice;
-			expect( localforage.setItem ).to.have.been.calledWith( 'redux-state', 3 );
-			expect( localforage.setItem ).to.have.been.calledWith( 'redux-state', 5 );
+			expect( localforage.setItem ).to.have.been.calledWith( 'redux-state-123456789', 3 );
+			expect( localforage.setItem ).to.have.been.calledWith( 'redux-state-123456789', 5 );
 		} );
 	} );
 } );

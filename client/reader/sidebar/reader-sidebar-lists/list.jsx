@@ -43,7 +43,7 @@ export class ReaderSidebarListsList extends React.Component {
 		const { translate, lists } = this.props;
 		if ( ! lists || lists.length === 0 ) {
 			return (
-				<li key="empty" className="sidebar__menu-empty">{ translate( 'Collect sites together by adding a\xa0list.' ) }</li>
+				<li key="empty" className="sidebar__menu-empty">{ translate( 'Collect sites together by adding a list.' ) }</li>
 			);
 		}
 

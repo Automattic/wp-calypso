@@ -222,7 +222,12 @@ User.prototype.isRTL = function() {
 	return isRTL;
 };
 
-User.prototype.clear = function() {
+/**
+ * Clear any user data.
+ *
+ * @param {function}  onClear called when data has been cleared
+ */
+User.prototype.clear = function( onClear ) {
 	/**
 	 * Clear internal user data and empty localStorage cache
 	 * to discard any user reference that the application may hold
@@ -231,7 +236,7 @@ User.prototype.clear = function() {
 	delete this.settings;
 	store.clear();
 	if ( config.isEnabled( 'persist-redux' ) ) {
-		localforage.removeItem( 'redux-state' );
+		localforage.clear( onClear );
 	}
 };
 

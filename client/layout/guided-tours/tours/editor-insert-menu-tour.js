@@ -17,7 +17,6 @@ import {
 	Quit,
 } from 'layout/guided-tours/config-elements';
 import {
-	isEnabled,
 	hasUserRegisteredBefore,
 } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
@@ -44,7 +43,6 @@ export const EditorInsertMenuTour = makeTour(
 		path={ [ '/post/', '/page/' ] }
 		version="20161215"
 		when={ and(
-			isEnabled( 'post-editor/insert-menu' ),
 			hasUserRegisteredBefore( new Date( '2016-12-15' ) ),
 			isDesktop,
 		) }

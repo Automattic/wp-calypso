@@ -7,7 +7,14 @@ import page from 'page';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import config from 'config';
 import paths from './paths';
+import {
+	isExpired,
+	isIncludedWithPlan,
+	isOneTimePurchase,
+	isPaidWithCreditCard
+} from 'lib/purchases';
 
 // TODO: Remove these property-masking functions in favor of accessing the props directly
 function getPurchase( props ) {
@@ -62,6 +69,22 @@ function recordPageView( trackingSlug, props, nextProps = null ) {
 	analytics.tracks.recordEvent( `calypso_${ trackingSlug }_purchase_view`, { product_slug: productSlug } );
 }
 
+function canEditPaymentDetails( purchase ) {
+	if ( ! config.isEnabled( 'upgrades/credit-cards' ) ) {
+		return false;
+	}
+	return ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase );
+}
+
+function getEditCardDetailsPath( site, purchase ) {
+	if ( isPaidWithCreditCard( purchase ) ) {
+		const { payment: { creditCard } } = purchase;
+
+		return paths.editCardDetails( site.slug, purchase.id, creditCard.id );
+	}
+	return paths.addCardDetails( site.slug, purchase.id );
+}
+
 export {
 	getPurchase,
 	getSelectedSite,
@@ -69,5 +92,7 @@ export {
 	goToList,
 	goToManagePurchase,
 	isDataLoading,
-	recordPageView
+	recordPageView,
+	canEditPaymentDetails,
+	getEditCardDetailsPath,
 };

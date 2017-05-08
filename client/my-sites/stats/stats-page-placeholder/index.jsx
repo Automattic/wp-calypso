@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 
-const StatsPagePlaceholder = (
-	<div className="main is-wide-layout">
+const StatsPagePlaceholder = props => (
+	<div className={ classnames( 'main is-wide-layout', props.className ) }>
 		<Card className="stats-module stats-page-placeholder__header is-loading">
 			<div className="module-header">
 				<h3 className="module-header-title" />
@@ -23,4 +24,8 @@ const StatsPagePlaceholder = (
 	</div>
 );
 
-export default () => StatsPagePlaceholder;
+StatsPagePlaceholder.propTypes = {
+	className: PropTypes.string
+};
+
+export default StatsPagePlaceholder;

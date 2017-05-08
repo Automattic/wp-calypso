@@ -4,52 +4,49 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, flatMap, lastIndexOf, noop, times, clamp, includes } from 'lodash';
+import { defer, findLast, noop, times, clamp, identity, map } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import ReaderMain from 'components/reader-main';
-import DISPLAY_TYPES from 'lib/feed-post-store/display-types';
 import EmptyContent from './empty';
-import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
-import ListGap from 'reader/list-gap';
+import {
+	fetchNextPage,
+	selectFirstItem,
+	selectItem,
+	selectNextItem,
+	selectPrevItem,
+	showUpdates,
+	shufflePosts,
+} from 'lib/feed-stream-store/actions';
 import LikeStore from 'lib/like-store/like-store';
 import LikeStoreActions from 'lib/like-store/actions';
 import LikeHelper from 'reader/like-helper';
 import InfiniteList from 'components/infinite-list';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
-import CrossPost from './x-post';
-import Post from './post';
 import PostPlaceholder from './post-placeholder';
 import PostStore from 'lib/feed-post-store';
 import UpdateNotice from 'reader/update-notice';
-import PostBlocked from 'blocks/reader-post-card/blocked';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
-import RecommendedPosts from './recommended-posts';
 import PostLifecycle from './post-lifecycle';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
-import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
 import { showSelectedPost } from 'reader/utils';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
+import config from 'config';
+import { keysAreEqual } from 'lib/feed-stream-store/post-key';
+import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
+import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
+import { keyToString, keyForPost } from 'lib/feed-stream-store/post-key';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 
-function cardFactory( post ) {
-	if ( post.display_type & DISPLAY_TYPES.X_POST ) {
-		return CrossPost;
-	}
-
-	return Post;
-}
-
 const MIN_DISTANCE_BETWEEN_RECS = 4; // page size is 7, so one in the middle of every page and one on page boundries, sometimes
 const MAX_DISTANCE_BETWEEN_RECS = 30;
-const RECS_PER_BLOCK = 2;
 
 function getDistanceBetweenRecs() {
 	// the distance between recs changes based on how many subscriptions the user has.
@@ -71,36 +68,6 @@ function getDistanceBetweenRecs() {
 	return distance;
 }
 
-function injectRecommendations( posts, recs = [] ) {
-	if ( ! recs || recs.length === 0 ) {
-		return posts;
-	}
-
-	const itemsBetweenRecs = getDistanceBetweenRecs();
-	// if we don't have enough posts to insert recs, don't bother
-	if ( posts.length < itemsBetweenRecs ) {
-		return posts;
-	}
-
-	let recIndex = 0;
-
-	return flatMap( posts, ( post, index ) => {
-		if ( index && index % itemsBetweenRecs === 0 && recIndex < recs.length ) {
-			const recBlock = {
-				isRecommendationBlock: true,
-				recommendations: recs.slice( recIndex, recIndex + RECS_PER_BLOCK ),
-				index: recIndex
-			};
-			recIndex += RECS_PER_BLOCK;
-			return [
-				recBlock,
-				post
-			];
-		}
-		return post;
-	} );
-}
-
 class ReaderStream extends React.Component {
 
 	static propTypes = {
@@ -116,10 +83,11 @@ class ReaderStream extends React.Component {
 		showDefaultEmptyContentIfMissing: PropTypes.bool,
 		showPrimaryFollowButtonOnCards: PropTypes.bool,
 		showMobileBackToSidebar: PropTypes.bool,
-		cardFactory: PropTypes.func,
 		placeholderFactory: PropTypes.func,
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
+		shouldCombineCards: PropTypes.bool,
+		transformStreamItems: PropTypes.func,
 	}
 
 	static defaultProps = {
@@ -132,30 +100,37 @@ class ReaderStream extends React.Component {
 		showPrimaryFollowButtonOnCards: true,
 		showMobileBackToSidebar: true,
 		isDiscoverStream: false,
+		shouldCombineCards: config.isEnabled( 'reader/combined-cards' ),
+		transformStreamItems: identity,
 	};
 
 	getStateFromStores( store = this.props.postsStore, recommendationsStore = this.props.recommendationsStore ) {
-		const posts = store.get();
+		const posts = map( store.get(), this.props.transformStreamItems );
 		const recs = recommendationsStore ? recommendationsStore.get() : null;
 		// do we have enough recs? if we have a store, but not enough recs, we should fetch some more...
 		if ( recommendationsStore ) {
 			if ( ! recs || recs.length < posts.length * ( RECS_PER_BLOCK / getDistanceBetweenRecs() ) ) {
 				if ( ! recommendationsStore.isFetchingNextPage() ) {
-					defer( () => FeedStreamStoreActions.fetchNextPage( recommendationsStore.id ) );
+					defer( () => fetchNextPage( recommendationsStore.id ) );
 				}
 			}
 		}
 
 		let items = this.state && this.state.items;
 		if ( ! this.state || posts !== this.state.posts || recs !== this.state.recs ) {
-			items = injectRecommendations( posts, recs );
+			items = injectRecommendations( posts, recs, getDistanceBetweenRecs() );
 		}
+
+		if ( this.props.shouldCombineCards ) {
+			items = combineCards( items );
+		}
+
 		return {
 			items,
 			posts,
 			recs,
 			updateCount: store.getUpdateCount(),
-			selectedIndex: store.getSelectedIndex(),
+			selectedPostKey: store.getSelectedPostKey(),
 			isFetchingNextPage: store.isFetchingNextPage && store.isFetchingNextPage(),
 			isLastPage: store.isLastPage()
 		};
@@ -168,7 +143,7 @@ class ReaderStream extends React.Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		if ( prevState.selectedIndex !== this.state.selectedIndex ) {
+		if ( ! keysAreEqual( prevState.selectedPostKey, this.state.selectedPostKey ) ) {
 			this.scrollToSelectedPost( true );
 			if ( this.isPostFullScreen() ) {
 				showSelectedPost( {
@@ -180,23 +155,9 @@ class ReaderStream extends React.Component {
 	}
 
 	_popstate = () => {
-		if ( this.state.selectedIndex > -1 && history.scrollRestoration !== 'manual' ) {
+		if ( this.state.selectedPostKey && history.scrollRestoration !== 'manual' ) {
 			this.scrollToSelectedPost( false );
 		}
-	}
-
-	cardClassForPost = ( post ) => {
-		if ( includes( this.props.blockedSites, +post.site_ID ) ) {
-			return PostBlocked;
-		}
-
-		if ( this.props.cardFactory ) {
-			const externalPostClass = this.props.cardFactory( post );
-			if ( externalPostClass ) {
-				return externalPostClass;
-			}
-		}
-		return cardFactory( post );
 	}
 
 	scrollToSelectedPost( animate ) {
@@ -224,6 +185,7 @@ class ReaderStream extends React.Component {
 	componentDidMount() {
 		this.props.postsStore.on( 'change', this.updateState );
 		this.props.recommendationsStore && this.props.recommendationsStore.on( 'change', this.updateState );
+		this.props.resetCardExpansions();
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
@@ -258,6 +220,7 @@ class ReaderStream extends React.Component {
 
 			nextProps.postsStore.on( 'change', this.updateState );
 			nextProps.recommendationsStore && nextProps.recommendationsStore.on( 'change', this.updateState );
+			this.props.resetCardExpansions();
 
 			this.updateState( nextProps.postsStore, nextProps.recommendationsStore );
 			this._list && this._list.reset();
@@ -265,15 +228,15 @@ class ReaderStream extends React.Component {
 	}
 
 	handleOpenSelection = () => {
+		const selectedPostKey = this.props.postsStore.getSelectedPostKey();
 		showSelectedPost( {
 			store: this.props.postsStore,
-			selectedGap: this._selectedGap,
-			postKey: this.props.postsStore.getSelectedPost()
+			postKey: selectedPostKey,
 		} );
 	}
 
 	toggleLikeOnSelectedPost = () => {
-		const postKey = this.props.postsStore.getSelectedPost();
+		const postKey = this.props.postsStore.getSelectedPostKey();
 		let post;
 
 		if ( postKey && ! postKey.isGap ) {
@@ -312,7 +275,7 @@ class ReaderStream extends React.Component {
 		if ( this.state.updateCount && this.state.updateCount > 0 ) {
 			this.showUpdates();
 		} else {
-			FeedStreamStoreActions.selectItem( this.props.postsStore.id, 0 );
+			selectFirstItem( this.props.postsStore.id );
 		}
 	}
 
@@ -321,6 +284,12 @@ class ReaderStream extends React.Component {
 	}
 
 	selectNextItem = () => {
+		// do we have a selected item? if so, just move to the next one
+		if ( this.state.selectedPostKey ) {
+			selectNextItem( this.props.postsStore.id );
+			return;
+		}
+
 		const visibleIndexes = this.getVisibleItemIndexes();
 		const { items, posts } = this.state;
 
@@ -345,15 +314,29 @@ class ReaderStream extends React.Component {
 					break;
 				}
 			}
+
+			const candidateItem = items[ index ];
+			// is this a combo card?
+			if ( candidateItem.isCombination ) {
+				// pick the first item
+				const postKey = { postId: candidateItem.postIds[ 0 ] };
+				if ( candidateItem.feedId ) {
+					postKey.feedId = candidateItem.feedId;
+				} else {
+					postKey.blogId = candidateItem.blogId;
+				}
+				selectItem( this.props.postsStore.id, postKey );
+			}
+
 			// find the index of the post / gap in the posts array.
 			// Start the search from the index in the items array, which has to be equal to or larger than
 			// the index in the posts array.
 			// Use lastIndexOf to walk the array from right to left
-			const indexInPosts = lastIndexOf( posts, items[ index ], index );
-			if ( indexInPosts === this.state.selectedIndex ) {
-				FeedStreamStoreActions.selectNextItem( this.props.postsStore.id );
+			const selectedPostKey = findLast( posts, items[ index ], index );
+			if ( keysAreEqual( selectedPostKey, this.state.selectedPostKey ) ) {
+				selectNextItem( this.props.postsStore.id );
 			} else {
-				FeedStreamStoreActions.selectItem( this.props.postsStore.id, indexInPosts );
+				selectItem( this.props.postsStore.id, selectedPostKey );
 			}
 		}
 	}
@@ -362,8 +345,8 @@ class ReaderStream extends React.Component {
 		// unlike selectNextItem, we don't want any magic here. Just move back an item if the user
 		// currently has a selected item. Otherwise do nothing.
 		// We avoid the magic here because we expect users to enter the flow using next, not previous.
-		if ( this.state.selectedIndex > 0 ) {
-			FeedStreamStoreActions.selectPrevItem( this.props.postsStore.id );
+		if ( this.state.selectedPostKey ) {
+			selectPrevItem( this.props.postsStore.id );
 		}
 	}
 
@@ -374,14 +357,14 @@ class ReaderStream extends React.Component {
 		if ( options.triggeredByScroll ) {
 			this.props.trackScrollPage( this.props.postsStore.getPage() + 1 );
 		}
-		FeedStreamStoreActions.fetchNextPage( this.props.postsStore.id );
+		fetchNextPage( this.props.postsStore.id );
 	}
 
 	showUpdates = () => {
 		this.props.onUpdatesShown();
-		FeedStreamStoreActions.showUpdates( this.props.postsStore.id );
+		showUpdates( this.props.postsStore.id );
 		if ( this.props.recommendationsStore ) {
-			FeedStreamStoreActions.shufflePosts( this.props.recommendationsStore.id );
+			shufflePosts( this.props.recommendationsStore.id );
 		}
 		if ( this._list ) {
 			this._list.scrollToTop();
@@ -400,11 +383,12 @@ class ReaderStream extends React.Component {
 	}
 
 	getPostRef = ( postKey ) => {
-		return 'feed-post-' + ( postKey.feedId || postKey.blogId ) + '-' + postKey.postId;
+		return keyToString( postKey );
 	}
 
 	renderPost = ( postKey, index ) => {
-		const selectedPostKey = this.props.postsStore.getSelectedPost();
+		const recStoreId = this.props.recommendationsStore && this.props.recommendationsStore.id;
+		const selectedPostKey = this.props.postsStore.getSelectedPostKey();
 		const isSelected = !! ( selectedPostKey &&
 			selectedPostKey.postId === postKey.postId &&
 			(
@@ -413,38 +397,15 @@ class ReaderStream extends React.Component {
 			)
 		);
 
-		if ( postKey.isGap ) {
-			return (
-				<ListGap
-				ref={ ( c ) => {
-					if ( isSelected ) {
-						this._selectedGap = c;
-					}
-				} }
-				key={ 'gap-' + postKey.from + '-' + postKey.to }
-				gap={ postKey }
-				selected={ isSelected }
-				store={ this.props.postsStore } />
-				);
-		}
-
-		if ( postKey.isRecommendationBlock ) {
-			return <RecommendedPosts
-				recommendations={ postKey.recommendations }
-				index={ postKey.index }
-				storeId={ this.props.recommendationsStore.id }
-				key={ `recs-${ index }` }
-				followSource={ IN_STREAM_RECOMMENDATION }
-				/>;
-		}
-
 		const itemKey = this.getPostRef( postKey );
 		const showPost = ( args ) => showSelectedPost( {
 			...args,
-			postKey,
-			store: this.props.postsStore,
-			index,
+			postKey: postKey.isCombination
+				? keyForPost( args )
+				: postKey,
+			store: this.props.postsStore
 		} );
+
 		return <PostLifecycle
 			key={ itemKey }
 			ref={ itemKey }
@@ -458,8 +419,11 @@ class ReaderStream extends React.Component {
 			showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
 			isDiscoverStream={ this.props.isDiscoverStream }
 			showSiteName={ this.props.showSiteNameOnCards }
-			cardClassForPost={ this.cardClassForPost }
 			followSource={ this.props.followSource }
+			blockedSites={ this.props.blockedSites }
+			index={ index }
+			selectedPostKey={ selectedPostKey }
+			recStoreId={ recStoreId }
 		/>;
 	}
 
@@ -510,5 +474,6 @@ class ReaderStream extends React.Component {
 export default connect(
 	( state ) => ( {
 		blockedSites: getBlockedSites( state )
-	} )
+	} ),
+	{ resetCardExpansions }
 )( ReaderStream );

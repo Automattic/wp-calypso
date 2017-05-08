@@ -1,8 +1,18 @@
-const React = require( 'react' );
+/**
+ * External dependencies
+ */
+import React from 'react';
 
-const EmptyContent = require( 'components/empty-content' ),
-	stats = require( 'reader/stats' ),
-	discoverHelper = require( 'reader/discover/helper' );
+/**
+ * Internal dependencies
+ */
+import EmptyContent from 'components/empty-content';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrack,
+} from 'reader/stats';
+import { isDiscoverEnabled } from 'reader/discover/helper';
 
 const FollowingEmptyContent = React.createClass( {
 	shouldComponentUpdate: function() {
@@ -10,13 +20,13 @@ const FollowingEmptyContent = React.createClass( {
 	},
 
 	recordAction: function() {
-		stats.recordAction( 'clicked_search_on_empty' );
-		stats.recordGaEvent( 'Clicked Search on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_search_on_empty_stream_clicked' );
+		recordAction( 'clicked_search_on_empty' );
+		recordGaEvent( 'Clicked Search on EmptyContent' );
+		recordTrack( 'calypso_reader_search_on_empty_stream_clicked' );
 	},
 
 	render: function() {
-		const action = discoverHelper.isDiscoverEnabled()
+		const action = isDiscoverEnabled()
 		? (
 			<a
 				className="empty-content__action button is-primary"
@@ -35,4 +45,4 @@ const FollowingEmptyContent = React.createClass( {
 	}
 } );
 
-module.exports = FollowingEmptyContent;
+export default FollowingEmptyContent;

@@ -7,13 +7,21 @@
 	text-transform: uppercase;
 	display: block;
 }
-.plugin-site__actions .plugin-remove-button__remove{
+
+.plugin-remove-button__remove-link {
+	margin-left:12px;
+}
+.plugin-meta__actions .plugin-remove-button__remove-link {
+	margin-left: 0;
+}
+
+.plugin-site__actions .plugin-remove-button__remove {
 	margin-top: 0;
 	padding: 16px;
 }
 .plugin-remove-button__remove-icon {
 	display: block;
-	margin-top: -1px;
+	margin: -2px 3px 0;
 
 	.gridicons-trash {
 		color: $gray;

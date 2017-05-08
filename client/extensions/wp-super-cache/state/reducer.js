@@ -1,0 +1,17 @@
+/**
+ * External dependencies
+ */
+import { combineReducers } from 'redux';
+
+/**
+ * Internal dependencies
+ */
+import cache from './cache/reducer';
+import notices from './notices/reducer';
+import settings from './settings/reducer';
+
+export default combineReducers( {
+	cache,
+	notices,
+	settings,
+} );

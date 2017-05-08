@@ -13,26 +13,24 @@ var ReactDom = require( 'react-dom' ),
 	tinymce = require( 'tinymce/tinymce' ),
 	translate = require( 'i18n-calypso' ).translate;
 
-import { Provider as ReduxProvider } from 'react-redux';
-
 /**
  * Internal dependencies
  */
 var LinkDialog = require( './dialog' );
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 function wpLink( editor ) {
 	var node, toolbar;
 
 	function render( visible = true ) {
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: editor.getParam( 'redux_store' ) },
-				React.createElement( LinkDialog, {
-					visible: visible,
-					editor: editor,
-					onClose: () => render( false )
-				} )
-			),
-			node
+		renderWithReduxStore(
+			React.createElement( LinkDialog, {
+				visible: visible,
+				editor: editor,
+				onClose: () => render( false )
+			} ),
+			node,
+			editor.getParam( 'redux_store' )
 		);
 
 		if ( ! visible ) {

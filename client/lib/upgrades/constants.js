@@ -1,4 +1,7 @@
-const keyMirror = require( 'key-mirror' );
+/**
+ * External dependencies
+ */
+import keyMirror from 'key-mirror';
 
 module.exports.action = keyMirror( {
 	CART_COUPON_APPLY: null,
@@ -9,10 +12,11 @@ module.exports.action = keyMirror( {
 	CART_POPUP_OPEN: null,
 	CART_PRIVACY_PROTECTION_ADD: null,
 	CART_PRIVACY_PROTECTION_REMOVE: null,
+	CART_ON_MOBILE_SHOW: null,
 	DNS_ADD: null,
 	DNS_ADD_COMPLETED: null,
 	DNS_ADD_FAILED: null,
-	DNS_ADD_OFFICE_COMPLETED: null,
+	DNS_APPLY_TEMPLATE_COMPLETED: null,
 	DNS_DELETE: null,
 	DNS_DELETE_COMPLETED: null,
 	DNS_DELETE_FAILED: null,
@@ -33,6 +37,7 @@ module.exports.action = keyMirror( {
 	EMAIL_FORWARDING_FETCH_COMPLETED: null,
 	EMAIL_FORWARDING_FETCH_FAILED: null,
 	ICANN_VERIFICATION_RESEND_COMPLETED: null,
+	GOOGLE_APPS_REGISTRATION_DATA_ADD: null,
 	NAMESERVERS_FETCH: null,
 	NAMESERVERS_FETCH_COMPLETED: null,
 	NAMESERVERS_FETCH_FAILED: null,

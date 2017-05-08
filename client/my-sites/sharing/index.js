@@ -1,20 +1,16 @@
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var sharingController = require( './controller' ),
-	controller = require( 'my-sites/controller' ),
-	config = require( 'config' );
+import { awaitSiteLoaded, jetpackModuleActive, navigation, sites, siteSelection } from 'my-sites/controller';
+import { buttons, connections, layout } from './controller';
 
-
-module.exports = function() {
-	if ( config.isEnabled( 'manage/sharing' ) ) {
-		page( /^\/sharing(\/buttons)?$/, controller.siteSelection, controller.sites );
-		page( '/sharing/:domain', controller.siteSelection, controller.navigation, controller.awaitSiteLoaded, controller.jetpackModuleActive( 'publicize', false ), sharingController.connections, sharingController.layout );
-		page( '/sharing/buttons/:domain', controller.siteSelection, controller.navigation, controller.awaitSiteLoaded, controller.jetpackModuleActive( 'sharedaddy' ), sharingController.buttons, sharingController.layout );
-	}
-};
+export default function() {
+	page( /^\/sharing(\/buttons)?$/, siteSelection, sites );
+	page( '/sharing/:domain', siteSelection, navigation, awaitSiteLoaded, jetpackModuleActive( 'publicize', false ), connections, layout );
+	page( '/sharing/buttons/:domain', siteSelection, navigation, awaitSiteLoaded, jetpackModuleActive( 'sharedaddy' ), buttons, layout );
+}

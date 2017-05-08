@@ -79,19 +79,16 @@ describe( 'restrictSize', () => {
 			expect( value ).to.equal( '<p><img class="alignnone size-large wp-image-5823" src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>' );
 		} );
 
-		it( 'should not replace small images', () => {
-			const value = setImages( '<p><img src="https://wordpress.com/2015/11/forest.jpg?w=150" alt="forest" width="150" height="100" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>' );
-			expect( value ).to.equal( '<p><img src="https://wordpress.com/2015/11/forest.jpg?w=150" alt="forest" width="150" height="100" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>' );
-		} );
-
-		it( 'should not replace images with indeterminate widths', () => {
+		it( 'should replace images with indeterminate widths', () => {
 			const value = setImages( '<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>' );
-			expect( value ).to.equal( '<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>' );
+			expect( value ).to.equal( '<p><img src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>' );
 		} );
 
-		it( 'should handle multiple images of mixed replacement needs', () => {
-			const value = setImages( '<p><img src="https://example.com/bird.jpg" width="200" height="174"><img src="https://example.com/forest.jpg?w=1024" width="1024" height="683"></p>' );
-			expect( value ).to.equal( '<p><img src="https://example.com/bird.jpg" width="200" height="174"><img src="https://example.com/forest.jpg?w=680" data-wpmedia-src="https://example.com/forest.jpg?w=1024" width="1024" height="683"></p>' );
+		it( 'should not replace external images (those without media ID)', () => {
+			const markup = '<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail"></p>';
+
+			const value = setImages( markup );
+			expect( value ).to.equal( markup );
 		} );
 	} );
 } );

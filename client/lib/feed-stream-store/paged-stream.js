@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, filter, findIndex, findLastIndex, forEach, last, map, isNumber, defer } from 'lodash';
+import { assign, filter, findIndex, findLastIndex, forEach, last, map, defer } from 'lodash';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
@@ -84,6 +84,9 @@ export default class PagedStream {
 			case ActionTypes.SELECT_PREV_ITEM:
 				this.selectPrevItem( action.selectedIndex );
 				break;
+			case ActionTypes.SELECT_FIRST_ITEM:
+				this.selectFirstItem();
+				break;
 			case ActionTypes.DISMISS_FEED_STREAM_POST:
 				this.dismissPost( action.postKey );
 				break;
@@ -116,7 +119,7 @@ export default class PagedStream {
 		return 0;
 	}
 
-	getSelectedPost() {
+	getSelectedPostKey() {
 		if ( this.selectedIndex >= 0 && this.selectedIndex < this.postKeys.length ) {
 			return this.postKeys[ this.selectedIndex ];
 		}
@@ -171,13 +174,19 @@ export default class PagedStream {
 		}
 	}
 
-	selectItem( selectedIndex ) {
-		if ( isNumber( selectedIndex ) ) {
-			this.selectedIndex = selectedIndex;
-			setLastStoreId( this.id );
+	selectFirstItem() {
+		if ( this.selectedIndex !== 0 ) {
+			this.selectedIndex = 0;
 			this.emitChange();
-		} else {
-			this.selectNextItem( selectedIndex - 1 );
+		}
+	}
+
+	selectItem( postKey, id ) {
+		const selectedIndex = findIndex( this.postKeys, postKey );
+		if ( this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) && selectedIndex !== this.selectedIndex ) {
+			this.selectedIndex = selectedIndex;
+			setLastStoreId( id );
+			this.emitChange();
 		}
 	}
 

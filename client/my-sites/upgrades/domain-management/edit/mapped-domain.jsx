@@ -1,40 +1,41 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-const analyticsMixin = require( 'lib/mixins/analytics' ),
-	Card = require( 'components/card/compact' ),
-	Header = require( './card/header' ),
-	Property = require( './card/property' ),
-	SubscriptionSettings = require( './card/subscription-settings' ),
-	VerticalNav = require( 'components/vertical-nav' ),
-	VerticalNavItem = require( 'components/vertical-nav/item' ),
-	DomainWarnings = require( 'my-sites/upgrades/components/domain-warnings' ),
-	paths = require( 'my-sites/upgrades/paths' );
+import analyticsMixin from 'lib/mixins/analytics';
+import Card from 'components/card/compact';
+import Header from './card/header';
+import Property from './card/property';
+import SubscriptionSettings from './card/subscription-settings';
+import VerticalNav from 'components/vertical-nav';
+import VerticalNavItem from 'components/vertical-nav/item';
+import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
+import paths from 'my-sites/upgrades/paths';
 
 const MappedDomain = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
 	getAutoRenewalOrExpirationDate() {
-		const domain = this.props.domain;
+		const { domain, translate } = this.props;
 
 		if ( domain.isAutoRenewing ) {
 			return (
-				<Property label={ this.translate( 'Mapping renews on' ) }>
-					{ domain.autoRenewalDate }
+				<Property label={ translate( 'Mapping renews on' ) }>
+					{ domain.autoRenewalMoment.format( 'LL' ) }
 				</Property>
 			);
 		}
 
-		const expirationMessage = domain.expirationMoment && domain.expirationMoment.format( 'MMMM D, YYYY' ) ||
-			<em>{ this.translate( 'Never Expires', { context: 'Expiration detail for a mapped domain' } ) }</em>;
+		const expirationMessage = domain.expirationMoment && domain.expirationMoment.format( 'LL' ) ||
+			<em>{ translate( 'Never Expires', { context: 'Expiration detail for a mapped domain' } ) }</em>;
 
 		return (
-			<Property label={ this.translate( 'Mapping expires on' ) }>
+			<Property label={ translate( 'Mapping expires on' ) }>
 				{ expirationMessage }
 			</Property>
 		);
@@ -48,7 +49,7 @@ const MappedDomain = React.createClass( {
 		return <DomainWarnings
 			domain={ this.props.domain }
 			selectedSite={ this.props.selectedSite }
-			ruleWhiteList={ [ 'wrongNSMappedDomains' ] }/>;
+			ruleWhiteList={ [ 'wrongNSMappedDomains' ] } />;
 	},
 
 	render() {
@@ -67,8 +68,8 @@ const MappedDomain = React.createClass( {
 				<Header { ...this.props } />
 
 				<Card>
-					<Property label={ this.translate( 'Type', { context: 'A type of domain.' } ) }>
-						{ this.translate( 'Mapped Domain' ) }
+					<Property label={ this.props.translate( 'Type', { context: 'A type of domain.' } ) }>
+						{ this.props.translate( 'Mapped Domain' ) }
 					</Property>
 
 					{ this.getAutoRenewalOrExpirationDate() }
@@ -97,7 +98,7 @@ const MappedDomain = React.createClass( {
 
 		return (
 			<VerticalNavItem path={ path }>
-				{ this.translate( 'Email' ) }
+				{ this.props.translate( 'Email' ) }
 			</VerticalNavItem>
 		);
 	},
@@ -110,10 +111,11 @@ const MappedDomain = React.createClass( {
 
 		return (
 			<VerticalNavItem path={ path }>
-				{ this.translate( 'DNS Records' ) }
+				{ this.props.translate( 'DNS Records' ) }
 			</VerticalNavItem>
 		);
 	}
 } );
 
-module.exports = MappedDomain;
+export { MappedDomain };
+export default localize( MappedDomain );

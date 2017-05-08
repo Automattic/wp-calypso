@@ -359,13 +359,6 @@ Undocumented.prototype.scheduleJetpackFullysync = function( siteId, fn ) {
 	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
 };
 
-Undocumented.prototype.activateManage = function( siteId, state, secret ) {
-	debug( '/jetpack-blogs/:site_id:/activate-manage query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/activate-manage';
-	const params = { state, secret };
-	return this.wpcom.req.post( { path: endpointUrl }, params );
-};
-
 Undocumented.prototype.invitesList = function( siteId, number, offset, fn ) {
 	debug( '/sites/:site_id:/invites query' );
 	return this.wpcom.req.get( '/sites/' + siteId + '/invites', {
@@ -381,8 +374,12 @@ Undocumented.prototype.getInvite = function( siteId, inviteKey, fn ) {
 
 Undocumented.prototype.acceptInvite = function( invite, fn ) {
 	debug( '/sites/:site_id:/invites/:inviteKey:/accept query' );
+	const apiVersion = '1.2';
+
 	return this.wpcom.req.get( '/sites/' + invite.site.ID + '/invites/' + invite.inviteKey + '/accept', {
-		activate: invite.activationKey
+		activate: invite.activationKey,
+		include_domain_only: true,
+		apiVersion
 	}, fn );
 };
 
@@ -426,12 +423,9 @@ Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, f
 	}, fn );
 };
 
-Undocumented.prototype._sendRequestWithLocale = function( originalParams, fn ) {
-	const { apiVersion, body = {}, method } = originalParams,
-		locale = i18n.getLocaleSlug(),
+Undocumented.prototype._sendRequest = function( originalParams, fn ) {
+	const { apiVersion, method } = originalParams,
 		updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
-
-	updatedParams.body = Object.assign( {}, body, { locale } );
 
 	if ( apiVersion ) {
 		// TODO: temporary solution for apiVersion until https://github.com/Automattic/wpcom.js/issues/152 is resolved
@@ -442,29 +436,17 @@ Undocumented.prototype._sendRequestWithLocale = function( originalParams, fn ) {
 };
 
 /**
- * Determine whether a domain name can be mapped
- *
- * @param {string} domain - The domain name to check.
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.isDomainMappable = function( domain, fn ) {
-	domain = encodeURIComponent( domain );
-
-	return this.wpcom.req.get( { path: '/domains/' + domain + '/is-mappable' }, fn );
-};
-
-/**
  * Determine whether a domain name is available for registration
  *
  * @param {string} domain - The domain name to check.
  * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
  * @api public
  */
 Undocumented.prototype.isDomainAvailable = function( domain, fn ) {
-	domain = encodeURIComponent( domain );
-
-	return this.wpcom.req.get( { path: '/domains/' + domain + '/is-available' }, fn );
+	return this.wpcom.req.get( `/domains/${ encodeURIComponent( domain ) }/is-available`, {
+		apiVersion: '1.2'
+	}, fn );
 };
 
 /**
@@ -517,7 +499,7 @@ Undocumented.prototype.setSiteRedirect = function( siteId, location, fn ) {
 Undocumented.prototype.getDomainContactInformation = function( fn ) {
 	debug( '/me/domain-contact-information query' );
 
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/me/domain-contact-information',
 		method: 'get'
 	}, function( error, data ) {
@@ -538,7 +520,7 @@ Undocumented.prototype.getDomainContactInformation = function( fn ) {
 Undocumented.prototype.getDomainRegistrationSupportedStates = function( countryCode, fn ) {
 	debug( '/domains/supported-states/ query' );
 
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/domains/supported-states/' + countryCode,
 		method: 'get'
 	}, fn );
@@ -547,7 +529,7 @@ Undocumented.prototype.getDomainRegistrationSupportedStates = function( countryC
 Undocumented.prototype.getDomainRegistrationSupportedCountries = function( fn ) {
 	debug( '/domains/supported-countries/ query' );
 
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/domains/supported-countries/',
 		method: 'get'
 	}, fn );
@@ -556,7 +538,7 @@ Undocumented.prototype.getDomainRegistrationSupportedCountries = function( fn ) 
 Undocumented.prototype.getPaymentSupportedCountries = function( fn ) {
 	debug( '/me/transactions/supported-countries/ query' );
 
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/me/transactions/supported-countries/',
 		method: 'get'
 	}, fn );
@@ -650,7 +632,7 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function( contactI
  */
 Undocumented.prototype.getProducts = function( fn ) {
 	debug( '/products query' );
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/products',
 		method: 'get'
 	}, fn );
@@ -671,7 +653,7 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
 	// the request
 	siteDomain = encodeURIComponent( siteDomain );
 
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/sites/' + siteDomain + '/plans',
 		method: 'get'
 	}, fn );
@@ -697,7 +679,7 @@ Undocumented.prototype.cart = function( cartKey, method, data, fn ) {
 		method = 'GET';
 		data = {};
 	}
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/me/shopping-cart/' + cartKey,
 		method: method,
 		body: data
@@ -713,53 +695,6 @@ Undocumented.prototype.cart = function( cartKey, method, data, fn ) {
 Undocumented.prototype.getStoredCards = function( fn ) {
 	debug( '/me/stored-cards query' );
 	return this.wpcom.req.get( { path: '/me/stored-cards' }, fn );
-};
-
-/**
- * GET site menus
- *
- * @param {int|string} [siteId] The site ID
- * @param {Function} [callback] The callback function called with arguments error, data
- * @api public
- * @return {Promise} A Promise to resolve when complete
- */
-Undocumented.prototype.menus = function( siteId, callback ) {
-	debug( '/sites/:site_id/menus query' );
-
-	return this.wpcom.withLocale().req.get( { path: '/sites/' + siteId + '/menus' }, callback );
-};
-
-/**
- * Update site menus
- *
- * @param {int|string} siteId the ID of the site.
- * @param {int|string} menuId use 0 to create a new menu
- * @param {object} [data] menus & locations data
- * @param {Function} [callback] called with arguments error, data
- * @api public
- */
-Undocumented.prototype.menusUpdate = function( siteId, menuId, data, callback ) {
-	debug( '/sites/:site_id/menus/:menu_id query' );
-
-	if ( menuId === 0 ) {
-		menuId = 'new';
-	}
-
-	return this.wpcom.req.post( { path: '/sites/' + siteId + '/menus/' + menuId }, data, callback );
-};
-
-/**
- * Delete a navigation menu
- *
- * @param {int|string} siteId The site ID
- * @param {int|string} menuId The menu ID
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.menusDelete = function( siteId, menuId, fn ) {
-	debug( '/sites/:site_id/menus/:menu_id/delete query' );
-
-	return this.wpcom.req.post( { path: '/sites/' + siteId + '/menus/' + menuId + '/delete' }, fn );
 };
 
 /**
@@ -1043,7 +978,7 @@ Undocumented.prototype.transactions = function( method, data, fn ) {
 		data = mapKeysRecursively( data, snakeCase );
 	}
 
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/me/transactions',
 		method: method,
 		body: data
@@ -1212,17 +1147,6 @@ Undocumented.prototype.readSearch = function( query, fn ) {
 	return this.wpcom.req.get( '/read/search', params, fn );
 };
 
-Undocumented.prototype.readTag = function( query, fn ) {
-	var params = omit( query, 'slug' );
-	debug( '/read/tag/' + query.slug );
-	return this.wpcom.req.get( '/read/tags/' + query.slug, params, fn );
-};
-
-Undocumented.prototype.readTags = function( fn ) {
-	debug( '/read/tags' );
-	return this.wpcom.req.get( '/read/tags', fn );
-};
-
 Undocumented.prototype.readTagPosts = function( query, fn ) {
 	var params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
@@ -1341,6 +1265,7 @@ Undocumented.prototype.readListItems = function( query, fn ) {
 };
 
 Undocumented.prototype.followReaderFeed = function( query, fn ) {
+	query = Object.assign( { source: config( 'readerFollowingSource' ) }, query );
 	return this.wpcom.req.post( '/read/following/mine/new', query, {}, fn );
 };
 
@@ -1464,6 +1389,29 @@ Undocumented.prototype.usersNew = function( query, fn ) {
 		path: '/users/new',
 		body: query
 	};
+	return this.wpcom.req.post( args, fn );
+};
+
+/**
+ * Sign up for a new account with a social service (e.g. Google/Facebook).
+ *
+ * @param {string} service - Social service associated with token, e.g. google.
+ * @param {string} token - Token returned from service.
+ * @param {Function} fn - callback
+ *
+ * @return {Promise} A promise for the request
+ */
+Undocumented.prototype.usersSocialNew = function( service, token, fn ) {
+	const body = { service, token, locale: i18n.getLocaleSlug() };
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( body );
+
+	const args = {
+		path: '/users/social/new',
+		body
+	};
+
 	return this.wpcom.req.post( args, fn );
 };
 
@@ -1601,6 +1549,19 @@ Undocumented.prototype.validateNewUser = function( data, fn ) {
 	data.locale = i18n.getLocaleSlug();
 
 	return this.wpcom.req.post( '/signups/validation/user/', null, data, fn );
+};
+
+/**
+ * Request a "Magic Login" email be sent to a user so they can use it to log in
+ * @param  {object} data - object containing an email address
+ * @param  {Function} fn - Function to invoke when request is complete
+ * @returns {Promise} promise
+ */
+Undocumented.prototype.requestMagicLoginEmail = function( data, fn ) {
+	restrictByOauthKeys( data );
+	return this.wpcom.req.post( '/auth/send-login-email', {
+		apiVersion: '1.2',
+	}, data, fn );
 };
 
 /**
@@ -1822,8 +1783,8 @@ Undocumented.prototype.updateDns = function( domain, records, fn ) {
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
 };
 
-Undocumented.prototype.addDnsOffice = function( domain, token, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/dns/office/add', { token }, callback );
+Undocumented.prototype.applyDnsTemplate = function( domain, template, variables, callback ) {
+	return this.wpcom.req.post( '/domains/' + domain + '/dns/template/' + template, { variables }, callback );
 };
 
 Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
@@ -2064,6 +2025,20 @@ Undocumented.prototype.cancelPlanTrial = function( planId, fn ) {
 	}, fn );
 };
 
+/**
+ * Get the Directly configuration for the current user
+ *
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.getDirectlyConfiguration = function( fn ) {
+	return this.wpcom.req.get( {
+		apiVersion: '1.1',
+		path: '/help/directly/mine'
+	}, fn );
+};
+
 Undocumented.prototype.submitKayakoTicket = function( subject, message, locale, client, fn ) {
 	debug( 'submitKayakoTicket' );
 
@@ -2110,7 +2085,7 @@ Undocumented.prototype.submitSupportForumsTopic = function( subject, message, lo
  * @api public
  */
 Undocumented.prototype.getExportSettings = function( siteId, fn ) {
-	return this.wpcom.withLocale().req.get( {
+	return this.wpcom.req.get( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/settings`
 	}, fn );
@@ -2125,7 +2100,7 @@ Undocumented.prototype.getExportSettings = function( siteId, fn ) {
  * @returns {Promise}                   A promise that resolves when the export started
  */
 Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
-	return this.wpcom.withLocale().req.post( {
+	return this.wpcom.req.post( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/start`
 	}, advancedSettings, fn );
@@ -2140,7 +2115,7 @@ Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
  * @returns {Promise}  promise
  */
 Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
-	return this.wpcom.withLocale().req.get( {
+	return this.wpcom.req.get( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/${ exportId }`
 	}, fn );
@@ -2284,23 +2259,6 @@ Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
 };
 
 /**
- * Set site homepage settings
- *
- * @param    {int|string}    siteId     the ID of the site
- * @param    {object}        data       the POST request body data
- * @param    {Function}      fn         the callback function
- * @returns  {Promise}
- */
-Undocumented.prototype.setSiteHomepageSettings = function( siteId, data, fn ) {
-	debug( '/sites/:site:/homepage' );
-
-	return this.wpcom.req.post( {
-			path: '/sites/' + siteId + '/homepage',
-			body: data
-		}, fn );
-};
-
-/**
  * Initiate the Automated Transfer process, uploading a theme and/or selecting
  * a community plugin.
  *
@@ -2347,6 +2305,36 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 	return this.wpcom.req.get( {
 		path: `/sites/${ siteId }/automated-transfers/status/${ transferId }`
 	} );
+};
+
+/**
+ * Submit a response to the NPS Survey.
+ * @param {string}     surveyName     The name of the NPS survey being submitted
+ * @param {int}        score          The value for the survey response
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}
+ */
+Undocumented.prototype.submitNPSSurvey = function( surveyName, score, fn ) {
+	return this.wpcom.req.post( { path: `/nps/${ surveyName }` }, { apiVersion: '1.2' }, { score }, fn );
+};
+
+/**
+ * Dismiss the NPS Survey.
+ * @param {string}     surveyName     The name of the NPS survey being submitted
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}
+ */
+Undocumented.prototype.dismissNPSSurvey = function( surveyName, fn ) {
+	return this.wpcom.req.post( { path: `/nps/${ surveyName }` }, { apiVersion: '1.2' }, { dismissed: true }, fn );
+};
+
+/**
+ * Check the eligibility status for the NPS Survey.
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}
+ */
+Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
+	return this.wpcom.req.get( { path: '/nps' }, { apiVersion: '1.2' }, {}, fn );
 };
 
 /**

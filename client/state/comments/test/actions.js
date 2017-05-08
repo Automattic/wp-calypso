@@ -53,7 +53,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should not dispatch a thing if the request is already in flight', () => {
-			const requestId = createRequestId( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId, { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH } );
+			const requestId = createRequestId( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId, { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, status: 'approved' } );
 
 			const dispatchSpy = sinon.spy();
 			const getStateStub = sinon.stub().returns( {
@@ -83,20 +83,20 @@ describe( 'actions', () => {
 
 			nock( API_DOMAIN )
 				.get( `/rest/v1.1/sites/${ MANY_COMMENTS_POST.siteId }/posts/${ MANY_COMMENTS_POST.postId }/replies/` )
-				.query( { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH } )
+				.query( { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, status: 'approved' } )
 				.reply( 200, { found: 123, comments: [] } );
 
 			const reqPromise = requestPostComments( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId )( dispatchSpy, getStateStub );
 
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: COMMENTS_REQUEST,
-				requestId: createRequestId( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId, { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH } )
+				requestId: createRequestId( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId, { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, status: 'approved' } )
 			} );
 
 			return reqPromise.then( () => {
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: COMMENTS_REQUEST_SUCCESS,
-					requestId: createRequestId( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId, { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH } )
+					requestId: createRequestId( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId, { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, status: 'approved' } )
 				} );
 			} );
 		} );
@@ -122,20 +122,20 @@ describe( 'actions', () => {
 				.query( { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH } )
 				.reply( 200, { found: 123, comments: [] } )
 				.get( `/rest/v1.1/sites/${ MANY_COMMENTS_POST.siteId }/posts/${ MANY_COMMENTS_POST.postId }/replies/` )
-				.query( { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, before: beforeDateString } )
+				.query( { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, before: beforeDateString, status: 'approved' } )
 				.reply( 200, { found: 123, comments: [] } );
 
 			const reqPromise = requestPostComments( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId )( dispatchSpy, getStateSpy );
 
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: COMMENTS_REQUEST,
-				requestId: createRequestId( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId, { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, before: new Date( beforeDateString ).toISOString() } )
+				requestId: createRequestId( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId, { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, before: new Date( beforeDateString ).toISOString(), status: 'approved' } )
 			} );
 
 			return reqPromise.then( () => {
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: COMMENTS_REQUEST_SUCCESS,
-					requestId: createRequestId( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId, { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, before: new Date( beforeDateString ).toISOString() } )
+					requestId: createRequestId( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId, { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, before: new Date( beforeDateString ).toISOString(), status: 'approved' } )
 				} );
 			} );
 		} );
@@ -169,25 +169,25 @@ describe( 'actions', () => {
 
 			const reqPromise = writeCommentThunk( dispatchSpy );
 
-			const firstSpyCallArg = dispatchSpy.args[0][0];
+			const firstSpyCallArg = dispatchSpy.args[ 0 ][ 0 ];
 
 			expect( firstSpyCallArg.type ).to.eql( COMMENTS_RECEIVE );
-			expect( firstSpyCallArg.comments[0].ID.indexOf( 'placeholder-' ) ).to.equal( 0 );
+			expect( firstSpyCallArg.comments[ 0 ].ID.indexOf( 'placeholder-' ) ).to.equal( 0 );
 
 			return reqPromise.then( ( comment ) => {
 				expect( comment ).to.be.object;
 				expect( comment ).to.not.equal( undefined );
 				expect( comment ).to.not.equal( null );
 
-				const secondSpyCallArg = dispatchSpy.args[1][0];
-				const thirdSpyCallArg = dispatchSpy.args[2][0];
+				const secondSpyCallArg = dispatchSpy.args[ 1 ][ 0 ];
+				const thirdSpyCallArg = dispatchSpy.args[ 2 ][ 0 ];
 
 				expect( secondSpyCallArg.type ).to.eql( COMMENTS_REMOVE );
 				expect( secondSpyCallArg.commentId.indexOf( 'placeholder-' ) ).to.equal( 0 );
 
 				expect( thirdSpyCallArg.type ).to.eql( COMMENTS_RECEIVE );
 				expect( thirdSpyCallArg.comments.length ).to.eql( 1 );
-				expect( thirdSpyCallArg.comments[0].ID ).to.be.a.number;
+				expect( thirdSpyCallArg.comments[ 0 ].ID ).to.be.a.number;
 			} );
 		} );
 	} ); // writeComment

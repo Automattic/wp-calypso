@@ -13,7 +13,10 @@ describe( 'isSiteSupportingImageEditor()', () => {
 		const siteSupportsImageEditor = isSiteSupportingImageEditor( {
 			sites: {
 				items: {}
-			}
+			},
+			// isPrivateSite falls back on siteSettings.
+			// An empty siteSettings object allows getSiteSettings to pass
+			siteSettings: {}
 		}, 2916284 );
 
 		expect( siteSupportsImageEditor ).to.be.true;

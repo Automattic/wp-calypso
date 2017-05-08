@@ -15,7 +15,7 @@ import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
-export default {
+const exported = {
 	tagListing( context ) {
 		var basePath = '/tag/:slug',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag,
@@ -38,7 +38,8 @@ export default {
 			<AsyncLoad require="reader/tag-stream/main"
 				key={ 'tag-' + encodedTag }
 				postsStore={ tagStore }
-				tag={ encodedTag }
+				encodedTagSlug={ encodedTag }
+				decodedTagSlug={ tagSlug }
 				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,
@@ -55,3 +56,9 @@ export default {
 		);
 	}
 };
+
+export default exported;
+
+export const {
+    tagListing
+} = exported;

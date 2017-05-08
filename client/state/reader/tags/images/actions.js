@@ -57,7 +57,7 @@ export function requestTagImages( tag, limit = 5 ) {
 
 		return wpcom.undocumented().readTagImages( query )
 		.then( ( data ) => {
-			dispatch( receiveTagImages( tag, data.images ) );
+			dispatch( receiveTagImages( tag, ( data && data.images ) || [] ) );
 
 			dispatch( {
 				type: READER_TAG_IMAGES_REQUEST_SUCCESS,
@@ -66,6 +66,9 @@ export function requestTagImages( tag, limit = 5 ) {
 			} );
 		},
 		( error ) => {
+			// dispatch an empty array so we stop requesting it
+			dispatch( receiveTagImages( tag, [] ) );
+
 			dispatch( {
 				type: READER_TAG_IMAGES_REQUEST_FAILURE,
 				tag,

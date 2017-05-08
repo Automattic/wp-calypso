@@ -35,7 +35,7 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 	const summary = [];
 
 	const examples = React.Children.map( children, ( example ) => {
-		if ( ! shouldShowInstance( example, filter, component ) ) {
+		if ( ! example || ! shouldShowInstance( example, filter, component ) ) {
 			return null;
 		}
 

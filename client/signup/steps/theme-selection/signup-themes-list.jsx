@@ -11,7 +11,6 @@ import { identity } from 'lodash';
  */
 import getThemes from 'lib/signup/themes';
 import ThemesList from 'components/themes-list';
-import { abtest } from 'lib/abtest';
 
 class SignupThemesList extends Component {
 
@@ -19,8 +18,6 @@ class SignupThemesList extends Component {
 		surveyQuestion: PropTypes.string,
 		designType: PropTypes.string,
 		handleScreenshotClick: PropTypes.func,
-		handleThemeUpload: PropTypes.func,
-		showThemeUpload: PropTypes.bool,
 		translate: PropTypes.func
 	};
 
@@ -28,8 +25,6 @@ class SignupThemesList extends Component {
 		surveyQuestion: null,
 		designType: null,
 		handleScreenshotClick: noop,
-		handleThemeUpload: noop,
-		showThemeUpload: 'showThemeUpload' === abtest( 'signupThemeUpload' ),
 		translate: identity
 	};
 
@@ -64,12 +59,9 @@ class SignupThemesList extends Component {
 				onMoreButtonClick= { noop }
 				getActionLabel={ getActionLabel }
 				themes= { themes }
-				showThemeUpload= { this.props.showThemeUpload }
-				onThemeUpload= { this.props.handleThemeUpload }
 			/>
 		);
 	}
 }
 
 export default localize( SignupThemesList );
-

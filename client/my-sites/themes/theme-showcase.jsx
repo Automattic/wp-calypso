@@ -14,37 +14,34 @@ import Gridicon from 'gridicons';
 import Main from 'components/main';
 import Button from 'components/button';
 import ThemesSelection from './themes-selection';
-import StickyPanel from 'components/sticky-panel';
+import SubMasterbarNav from 'components/sub-masterbar-nav';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
+import { prependFilterKeys, getSortedFilterTerms, stripFilters, getSubjects } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
-import { getSiteSlug } from 'state/sites/selectors';
+import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
+import { isATEnabled } from 'lib/automated-transfer';
+import { getThemeShowcaseDescription, getThemeShowcaseTitle } from 'state/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSite } from 'state/ui/selectors';
+import ThemesSearchCard from './themes-magic-search-card';
+import QueryThemeFilters from 'components/data/query-theme-filters';
 
-const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
-	? require( './themes-magic-search-card' )
-	: require( './themes-search-card' );
-
-const themesMeta = {
-	'': {
-		title: 'WordPress Themes',
-		description: 'Beautiful, responsive, free and premium WordPress themes \
-			for your photography site, portfolio, magazine, business website, or blog.',
-		canonicalUrl: 'https://wordpress.com/design',
-	},
-	free: {
-		title: 'Free WordPress Themes',
-		description: 'Discover Free WordPress Themes on the WordPress.com Theme Showcase.',
-		canonicalUrl: 'https://wordpress.com/design/free',
-	},
-	premium: {
-		title: 'Premium WordPress Themes',
-		description: 'Discover Premium WordPress Themes on the WordPress.com Theme Showcase.',
-		canonicalUrl: 'https://wordpress.com/design/premium',
-	}
+const subjectsMeta = {
+	photo: { icon: 'camera', order: 1 },
+	portfolio: { icon: 'custom-post-type', order: 2 },
+	magazine: { icon: 'reader', order: 3 },
+	blog: { icon: 'posts', order: 4 },
+	business: { icon: 'cart', order: 5 },
+	wedding: { icon: 'heart', order: 6 },
+	minimal: { icon: 'minus-small', order: 7 },
+	travel: { icon: 'globe', order: 8 },
+	food: { icon: 'flip-horizontal', order: 9 },
+	music: { icon: 'audio', order: 10 }
 };
 
 const optionShape = PropTypes.shape( {
@@ -59,12 +56,14 @@ const ThemeShowcase = React.createClass( {
 		emptyContent: PropTypes.element,
 		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
 		search: PropTypes.string,
+		pathName: PropTypes.string,
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
 		defaultOption: optionShape,
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
+		trackATUploadClick: PropTypes.func,
 	},
 
 	getDefaultProps() {
@@ -83,14 +82,6 @@ const ThemeShowcase = React.createClass( {
 		};
 	},
 
-	prependFilterKeys() {
-		const { filter } = this.props;
-		if ( filter ) {
-			return filter.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
-		}
-		return '';
-	},
-
 	doSearch( searchBoxContent ) {
 		const filter = getSortedFilterTerms( searchBoxContent );
 		const searchString = stripFilters( searchBoxContent );
@@ -105,7 +96,7 @@ const ThemeShowcase = React.createClass( {
 		const tierSection = tier === 'all' ? '' : `/${ tier }`;
 		const filterSection = filter ? `/filter/${ filter }` : '';
 
-		const url = `/design${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
 		page( buildUrl( url, searchString ) );
 	},
 
@@ -116,82 +107,143 @@ const ThemeShowcase = React.createClass( {
 
 	onUploadClick() {
 		trackClick( 'upload theme' );
+		if ( this.props.atEnabled ) {
+			this.props.trackATUploadClick();
+		}
+	},
+
+	showUploadButton() {
+		const { isMultisite, isJetpack, isLoggedIn } = this.props;
+
+		return (
+			config.isEnabled( 'manage/themes/upload' ) &&
+			isLoggedIn &&
+			! isMultisite &&
+			( isJetpack || this.props.atEnabled )
+		);
 	},
 
 	render() {
-		const { site, options, getScreenshotOption, search, filter, translate } = this.props;
+		const {
+			siteId,
+			options,
+			getScreenshotOption,
+			search,
+			filter,
+			translate,
+			siteSlug,
+			vertical,
+			isLoggedIn,
+			pathName,
+			title,
+		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
+		const canonicalUrl = 'https://wordpress.com' + pathName;
+
 		const metas = [
-			{ name: 'description', property: 'og:description', content: themesMeta[ tier ].description },
-			{ property: 'og:url', content: themesMeta[ tier ].canonicalUrl },
+			{ name: 'description', property: 'og:description', content: this.props.description },
+			{ property: 'og:title', content: title },
+			{ property: 'og:url', content: canonicalUrl },
 			{ property: 'og:type', content: 'website' }
 		];
+
+		const links = [ { rel: 'canonical', href: canonicalUrl } ];
+
+		const headerIcons = [ {
+			label: 'new',
+			uri: '/themes',
+			icon: 'star'
+		} ].concat(
+			getSubjects()
+				.map( subject => subjectsMeta[ subject ] && {
+					label: subject,
+					uri: `/themes/${ subject }`,
+					icon: subjectsMeta[ subject ].icon,
+					order: subjectsMeta[ subject ].order
+				} )
+				.filter( icon => !! icon )
+				.sort( ( a, b ) => a.order - b.order )
+		);
+
+		const verticalSection = vertical ? `/${ vertical }` : '';
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<Main className="themes">
-				<DocumentHead title={ themesMeta[ tier ].title } meta={ metas } />
+				<DocumentHead title={ title } meta={ metas } link={ links } />
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
-				<StickyPanel>
+				{ ! isLoggedIn && (
+					<SubMasterbarNav
+						options={ headerIcons }
+						fallback={ headerIcons[ 0 ] }
+						uri={ `/themes${ verticalSection }` } />
+				)}
+				<div className="themes__content">
+					<QueryThemeFilters />
 					<ThemesSearchCard
-						site={ site }
 						onSearch={ this.doSearch }
-						search={ this.prependFilterKeys() + search }
+						search={ prependFilterKeys( filter ) + search }
 						tier={ tier }
 						select={ this.onTierSelect } />
-				</StickyPanel>
-				{ config.isEnabled( 'manage/themes/upload' ) && this.props.siteSlug &&
-					<Button className="themes__upload-button" compact icon
+					{ this.showUploadButton() && <Button className="themes__upload-button" compact icon
 						onClick={ this.onUploadClick }
-						href={ `/design/upload/${ this.props.siteSlug }` }
-					>
+						href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }>
 						<Gridicon icon="cloud-upload" />
 						{ translate( 'Upload Theme' ) }
 					</Button>
-				}
-				<ThemesSelection
-					search={ search }
-					tier={ this.props.tier }
-					filter={ filter }
-					vertical={ this.props.vertical }
-					siteId={ this.props.siteId }
-					listLabel={ this.props.listLabel }
-					defaultOption={ this.props.defaultOption }
-					secondaryOption={ this.props.secondaryOption }
-					placeholderCount={ this.props.placeholderCount }
-					getScreenshotUrl={ function( theme ) {
-						if ( ! getScreenshotOption( theme ).getUrl ) {
-							return null;
-						}
-						return getScreenshotOption( theme ).getUrl( theme );
-					} }
-					onScreenshotClick={ function( theme ) {
-						if ( ! getScreenshotOption( theme ).action ) {
-							return;
-						}
-						getScreenshotOption( theme ).action( theme );
-					} }
-					getActionLabel={ function( theme ) {
-						return getScreenshotOption( theme ).label;
-					} }
-					getOptions={ function( theme ) {
-						return pickBy(
-							addTracking( options ),
-							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
-						); } }
-					trackScrollPage={ this.props.trackScrollPage }
-					emptyContent={ this.props.emptyContent }
-				/>
-				<ThemePreview />
-				{ this.props.children }
+					}
+					<ThemesSelection
+						search={ search }
+						tier={ this.props.tier }
+						filter={ filter }
+						vertical={ this.props.vertical }
+						siteId={ this.props.siteId }
+						listLabel={ this.props.listLabel }
+						defaultOption={ this.props.defaultOption }
+						secondaryOption={ this.props.secondaryOption }
+						placeholderCount={ this.props.placeholderCount }
+						getScreenshotUrl={ function( theme ) {
+							if ( ! getScreenshotOption( theme ).getUrl ) {
+								return null;
+							}
+							return getScreenshotOption( theme ).getUrl( theme );
+						} }
+						onScreenshotClick={ function( theme ) {
+							if ( ! getScreenshotOption( theme ).action ) {
+								return;
+							}
+							getScreenshotOption( theme ).action( theme );
+						} }
+						getActionLabel={ function( theme ) {
+							return getScreenshotOption( theme ).label;
+						} }
+						getOptions={ function( theme ) {
+							return pickBy(
+								addTracking( options ),
+								option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+							); } }
+						trackScrollPage={ this.props.trackScrollPage }
+						emptyContent={ this.props.emptyContent }
+					/>
+					<ThemePreview />
+					{ this.props.children }
+				</div>
 			</Main>
 		);
 	}
 } );
 
-export default connect(
-	( state, { siteId } ) => ( {
-		siteSlug: getSiteSlug( state, siteId ),
-	} )
-)( localize( ThemeShowcase ) );
+const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
+	atEnabled: isATEnabled( getSelectedSite( state ) ),
+	isLoggedIn: !! getCurrentUserId( state ),
+	siteSlug: getSiteSlug( state, siteId ),
+	isJetpack: isJetpackSite( state, siteId ),
+	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
+	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
+} );
+
+const mapDispatchToProps = {
+	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' )
+};
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );

@@ -323,7 +323,7 @@
 
 	@include breakpoint( "<660px" ) {
 		position: fixed;
-			right: 138px;
+			right: 160px;
 			top: 10px;
 		z-index: z-index( '.masterbar', '.reader-profile' );
 	}
@@ -344,7 +344,7 @@
 	@include breakpoint( "<660px" ) {
 		position: fixed;
 			top: 10px;
-			right: 208px;
+			right: 232px;
 		z-index: z-index( '.masterbar', '.reader-profile' );
 		margin-right: 0;
 	}

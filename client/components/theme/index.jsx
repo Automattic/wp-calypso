@@ -12,7 +12,6 @@ import Gridicon from 'gridicons';
  */
 import Card from 'components/card';
 import ThemeMoreButton from './more-button';
-import TrackInteractions from 'components/track-interactions';
 import PulsingDot from 'components/pulsing-dot';
 
 /**
@@ -86,7 +85,7 @@ const Theme = React.createClass( {
 	},
 
 	onScreenshotClick() {
-		this.props.onScreenshotClick( this.props.theme, this.props.index );
+		this.props.onScreenshotClick( this.props.theme.id, this.props.index );
 	},
 
 	renderPlaceholder() {
@@ -143,7 +142,6 @@ const Theme = React.createClass( {
 			return this.renderPlaceholder();
 		}
 
-		const screenshotWidth = typeof window !== 'undefined' && window.devicePixelRatio > 1 ? 680 : 340;
 		return (
 			<Card className={ themeClass }>
 				<div className="theme__content">
@@ -154,7 +152,11 @@ const Theme = React.createClass( {
 						{ this.renderInstalling() }
 						{ screenshot
 							? <img className="theme__img"
-								src={ screenshot + '?w=' + screenshotWidth }
+								src={ screenshot + '?w=340' }
+								srcSet={
+									screenshot + '?w=340 1x, ' +
+									screenshot + '?w=680 2x'
+								}
 								onClick={ this.onScreenshotClick }
 								id={ screenshotID } />
 							: <div className="theme__no-screenshot" >
@@ -174,14 +176,12 @@ const Theme = React.createClass( {
 							<span className="theme-badge__price">{ price }</span>
 						}
 						{ ! isEmpty( this.props.buttonContents )
-							? <TrackInteractions fields="theme.id" >
-								<ThemeMoreButton
-									index={ this.props.index }
-									theme={ this.props.theme }
-									active={ this.props.active }
-									onMoreButtonClick={ this.props.onMoreButtonClick }
-									options={ this.props.buttonContents } />
-							</TrackInteractions>
+							? <ThemeMoreButton
+								index={ this.props.index }
+								theme={ this.props.theme }
+								active={ this.props.active }
+								onMoreButtonClick={ this.props.onMoreButtonClick }
+								options={ this.props.buttonContents } />
 							: null
 						}
 					</div>

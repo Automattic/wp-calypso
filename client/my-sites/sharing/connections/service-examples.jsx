@@ -172,19 +172,6 @@ class SharingServiceExamples extends Component {
 					}
 				} ),
 			},
-			{
-				image: {
-					src: '/calypso/images/sharing/instagram-media.png',
-					alt: this.props.translate( 'Access Instagram photos via the Media Library', { textOnly: true } )
-				},
-				label: this.props.translate(
-					'Get instant access to all your Instagram photos through the {{link}}Media Library{{/link}}.', {
-						components: {
-							link: <a href="https://support.wordpress.com/media/" />
-						}
-					}
-				),
-			},
 		];
 	}
 

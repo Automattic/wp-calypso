@@ -15,19 +15,18 @@ import cookie from 'cookie';
  * Internal dependencies
  */
 import addQueryArgs from 'lib/route/add-query-args';
+import { login } from 'lib/paths';
 import Main from 'components/main';
 import StepHeader from '../step-header';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
-import config from 'config';
 import QuerySites from 'components/data/query-sites';
 import {
 	createAccount,
 	authorize,
 	goBackToWpAdmin,
-	activateManage,
 	retryAuth,
 	goToXmlrpcErrorFallbackUrl
 } from 'state/jetpack-connect/actions';
@@ -163,10 +162,10 @@ const LoggedOutForm = React.createClass( {
 	renderFooterLink() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const redirectTo = addQueryArgs( queryObject, window.location.href );
-		const loginUrl = addQueryArgs( { redirect_to: redirectTo }, config( 'login_url' ) );
+
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ loginUrl }>
+				<LoggedOutFormLinkItem href={ login( { redirectTo } ) }>
 					{ this.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
 				<HelpButton onClick={ this.clickHelpButton } />
@@ -226,7 +225,6 @@ const LoggedInForm = React.createClass( {
 	componentWillReceiveProps( props ) {
 		const {
 			siteReceived,
-			isActivating,
 			queryObject,
 			isRedirectingToWpAdmin,
 			authorizeSuccess,
@@ -246,10 +244,10 @@ const LoggedInForm = React.createClass( {
 		) {
 			this.setState( { haveAuthorized: true } );
 			this.props.authorize( queryObject );
-		} else if ( siteReceived && ! isActivating ) {
-			return this.activateManageAndRedirect();
-		} else if ( props.isAlreadyOnSitesList && queryObject.already_authorized && ! isActivating ) {
-			return this.activateManageAndRedirect();
+		} else if ( siteReceived ) {
+			return this.redirect();
+		} else if ( props.isAlreadyOnSitesList && queryObject.already_authorized ) {
+			return this.redirect();
 		}
 		if (
 			authorizeError &&
@@ -290,10 +288,9 @@ const LoggedInForm = React.createClass( {
 		);
 	},
 
-	activateManageAndRedirect() {
-		const { queryObject, activateManageSecret } = this.props.jetpackConnectAuthorize;
-		debug( 'Activating Manage module and calculating redirection', queryObject );
-		this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
+	redirect() {
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+
 		if ( 'jpo' === queryObject.from || this.props.isSSO ) {
 			debug( 'Going back to WP Admin.', 'Connection initiated via: ', queryObject.from, 'SSO found:', this.props.isSSO );
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
@@ -305,9 +302,8 @@ const LoggedInForm = React.createClass( {
 	handleSubmit() {
 		const {
 			queryObject,
-			manageActivated,
-			activateManageSecret,
-			authorizeError
+			authorizeError,
+			authorizeSuccess
 		} = this.props.jetpackConnectAuthorize;
 
 		if ( ! this.props.isAlreadyOnSitesList &&
@@ -320,12 +316,12 @@ const LoggedInForm = React.createClass( {
 		if ( this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
 			this.props.recordTracksEvent( 'calypso_jpc_already_authorized_click' );
-			return this.activateManageAndRedirect();
+			return this.redirect();
 		}
 
-		if ( activateManageSecret && ! manageActivated ) {
+		if ( authorizeSuccess && ! queryObject.already_authorized ) {
 			this.props.recordTracksEvent( 'calypso_jpc_activate_click' );
-			return this.activateManageAndRedirect();
+			return this.redirect();
 		}
 		if ( authorizeError ) {
 			this.props.recordTracksEvent( 'calypso_jpc_try_again_click' );
@@ -333,7 +329,7 @@ const LoggedInForm = React.createClass( {
 		}
 		if ( this.props.isAlreadyOnSitesList ) {
 			this.props.recordTracksEvent( 'calypso_jpc_return_site_click' );
-			return this.activateManageAndRedirect();
+			return this.redirect();
 		}
 
 		this.props.recordTracksEvent( 'calypso_jpc_approve_click' );
@@ -348,8 +344,8 @@ const LoggedInForm = React.createClass( {
 	},
 
 	isAuthorizing() {
-		const { isAuthorizing, isActivating } = this.props.jetpackConnectAuthorize;
-		return ( ! this.props.isAlreadyOnSitesList && ( isAuthorizing || isActivating ) );
+		const { isAuthorizing } = this.props.jetpackConnectAuthorize;
+		return ( ! this.props.isAlreadyOnSitesList && isAuthorizing );
 	},
 
 	handleResolve() {
@@ -561,7 +557,6 @@ const LoggedInForm = React.createClass( {
 		} = this.props.jetpackConnectAuthorize;
 		const { blogname, redirect_after_auth } = queryObject;
 		const redirectTo = addQueryArgs( queryObject, window.location.href );
-		const loginUrl = addQueryArgs( { redirect_to: redirectTo }, config( 'login_url' ) );
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem icon={ true } href={ redirect_after_auth }>
 				<Gridicon size={ 18 } icon="arrow-left" />
@@ -589,7 +584,7 @@ const LoggedInForm = React.createClass( {
 		return (
 			<LoggedOutFormLinks>
 				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
-				<LoggedOutFormLinkItem href={ loginUrl }>
+				<LoggedOutFormLinkItem href={ login( { legacy: true, redirectTo } ) }>
 					{ this.translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
@@ -768,7 +763,6 @@ export default connect(
 		recordTracksEvent,
 		authorize,
 		createAccount,
-		activateManage,
 		goBackToWpAdmin,
 		retryAuth,
 		goToXmlrpcErrorFallbackUrl

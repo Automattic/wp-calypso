@@ -6,20 +6,62 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import {
 	READER_FOLLOW,
 	READER_UNFOLLOW,
+	READER_RECORD_FOLLOW,
+	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
-	READER_FOLLOWS_REQUEST,
-	READER_FOLLOWS_REQUEST_SUCCESS,
-	READER_FOLLOWS_REQUEST_FAILURE,
+	READER_FOLLOWS_SYNC_START,
+	READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
+	READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL,
+	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
+	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
+	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
 } from 'state/action-types';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:redux:reader-follows' );
+
+/**
+ * Extended information about a reader follow
+ * @typedef {Object} follow
+ * @property {number} ID
+ * @property {string} URL The URL being followed. Usually a feed.
+ * @property {string} feed_URL Same as URL
+ * @property {number} blog_ID The blog ID. Optional.
+ * @property {number} feed_ID The feed ID
+ * @property {number} date_subscribed The date subscribed. Seconds since epoch.
+ * @property {boolean} is_owner Is the current user the owner of this site
+ * @property {Object} delivery_methods
+ *
+ */
+
+/**
+ * Follow a feed URL
+ * @param  {string} feedUrl      The feed URL
+ * @param {Follow} followInfo		A subscription, optional
+ * @return {Object}              The action
+ */
+export function follow( feedUrl, followInfo ) {
+	const action = {
+		type: READER_FOLLOW,
+		payload: { feedUrl }
+	};
+	if ( followInfo ) {
+		action.payload.follow = followInfo;
+	}
+	return action;
+}
+
+export function unfollow( feedUrl ) {
+	return {
+		type: READER_UNFOLLOW,
+		payload: { feedUrl }
+	};
+}
 
 /**
  * Returns an action object to signal that a URL has been followed.
@@ -31,7 +73,7 @@ export function recordFollow( url ) {
 	return ( dispatch ) => {
 		debug( 'User followed ' + url );
 		dispatch( {
-			type: READER_FOLLOW,
+			type: READER_RECORD_FOLLOW,
 			payload: { url }
 		} );
 	};
@@ -47,7 +89,7 @@ export function recordUnfollow( url ) {
 	return ( dispatch ) => {
 		debug( 'User unfollowed ' + url );
 		dispatch( {
-			type: READER_UNFOLLOW,
+			type: READER_RECORD_UNFOLLOW,
 			payload: { url }
 		} );
 	};
@@ -59,46 +101,66 @@ export function recordUnfollow( url ) {
  * @param  {Array}  follows Follows received
  * @return {Object} 		Action object
  */
-export function receiveFollows( follows ) {
+export function receiveFollows( { follows, totalCount } ) {
 	return {
 		type: READER_FOLLOWS_RECEIVE,
-		payload: { follows }
+		payload: { follows, totalCount }
 	};
 }
 
 /**
- * Triggers a network request to fetch user's followed sites.
+ * Returns an action object to signal that follows have been requested.
  *
- * @param  {Integer} page Page number of results
- * @param  {Integer} limit Maximum number of results to return
- * @return {Function} Action thunk
+ * @return {Object} 		Action object
  */
-export function requestFollows( page = 1, limit = 5 ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_FOLLOWS_REQUEST
-		} );
-
-		const query = {
-			page,
-			number: limit
-		};
-
-		return wpcom.undocumented().readFollowingMine( query ).then( ( payload ) => {
-			dispatch( receiveFollows( payload.subscriptions ) );
-			dispatch( {
-				type: READER_FOLLOWS_REQUEST_SUCCESS,
-				payload
-			} );
-		},
-		( error ) => {
-			dispatch( {
-				type: READER_FOLLOWS_REQUEST_FAILURE,
-				payload: error,
-				error: true,
-			} );
-		}
-		);
+export function requestFollows() {
+	return {
+		type: READER_FOLLOWS_SYNC_START,
 	};
 }
 
+export function subscribeToNewPostEmail( blogId ) {
+	return {
+		type: READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
+		payload: {
+			blogId
+		}
+	};
+}
+
+export function unsubscribeToNewPostEmail( blogId ) {
+	return {
+		type: READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL,
+		payload: {
+			blogId
+		}
+	};
+}
+
+export function updateNewPostEmailSubscription( blogId, deliveryFrequency ) {
+	return {
+		type: READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
+		payload: {
+			blogId,
+			deliveryFrequency
+		}
+	};
+}
+
+export function subscribeToNewCommentEmail( blogId ) {
+	return {
+		type: READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
+		payload: {
+			blogId
+		}
+	};
+}
+
+export function unsubscribeToNewCommentEmail( blogId ) {
+	return {
+		type: READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
+		payload: {
+			blogId
+		}
+	};
+}

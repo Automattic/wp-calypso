@@ -2,6 +2,7 @@
  * External dependencies
  */
 import find from 'lodash/find';
+import url from 'url';
 
 /**
  * Internal dependencies
@@ -40,20 +41,37 @@ const i18nUtils = {
 	},
 
 	/**
+	 * Adds a locale slug to the current path.
+	 *
+	 * Will replace existing locale slug, if present.
+	 *
+	 * @param {string} path - original path
+	 * @param {string} locale - locale slug (eg: 'fr')
+	 * @returns {string} original path with new locale slug
+	*/
+	addLocaleToPath: function( path, locale ) {
+		const urlParts = url.parse( path );
+		const queryString = urlParts.search || '';
+		return i18nUtils.removeLocaleFromPath( urlParts.pathname ) + `/${ locale }` + queryString;
+	},
+
+	/**
 	 * Removes the trailing locale slug from the path, if it is present.
 	 * '/start/en' => '/start', '/start' => '/start', '/start/flow/fr' => '/start/flow', '/start/flow' => '/start/flow'
 	 * @param {string} path - original path
 	 * @returns {string} original path minus locale slug
 	 */
 	removeLocaleFromPath: function( path ) {
-		const parts = getPathParts( path );
+		const urlParts = url.parse( path );
+		const queryString = urlParts.search || '';
+		const parts = getPathParts( urlParts.pathname );
 		const locale = parts.pop();
 
 		if ( 'undefined' === typeof i18nUtils.getLanguage( locale ) ) {
 			parts.push( locale );
 		}
 
-		return parts.join( '/' );
+		return parts.join( '/' ) + queryString;
 	}
 };
 export default i18nUtils;

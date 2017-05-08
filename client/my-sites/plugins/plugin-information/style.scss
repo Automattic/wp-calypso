@@ -44,7 +44,7 @@
 
 .plugin-information__version-info {
 	font-size: 11px;
-	color: $gray;
+	color: $gray-text-min;
 	text-transform: uppercase;
 	width: 100%;
 
@@ -121,8 +121,12 @@
 	}
 
 	.plugin-information__external-link,
-	.version{
+	.version {
 		color: transparent;
+
+		svg {
+			fill: transparent;
+		}
 	}
 
 	.plugin-information__version-limit,
@@ -135,4 +139,3 @@
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
-

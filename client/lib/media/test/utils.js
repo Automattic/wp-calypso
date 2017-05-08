@@ -101,11 +101,11 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should detect extension from HTML5 File object', function() {
-			expect( MediaUtils.getFileExtension( new window.File( [''], 'example.gif' ) ) ).to.equal( 'gif' );
+			expect( MediaUtils.getFileExtension( new window.File( [ '' ], 'example.gif' ) ) ).to.equal( 'gif' );
 		} );
 
 		it( 'should detect extension from HTML5 File object with reserved url chars', function() {
-			expect( MediaUtils.getFileExtension( new window.File( [''], 'example#?#?.gif' ) ) ).to.equal( 'gif' );
+			expect( MediaUtils.getFileExtension( new window.File( [ '' ], 'example#?#?.gif' ) ) ).to.equal( 'gif' );
 		} );
 
 		it( 'should detect extension from object file property', function() {

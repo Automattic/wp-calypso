@@ -1,41 +1,49 @@
 /**
  * External Dependencies
  */
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classnames = require( 'classnames' ),
-	closest = require( 'component-closest' ),
-	url = require( 'url' );
+import React, { PureComponent } from 'react';
+import ReactDom from 'react-dom';
+import classnames from 'classnames';
+import url from 'url';
+import { localize } from 'i18n-calypso';
+import closest from 'component-closest';
+import { get } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
-const Card = require( 'components/card' ),
-	SiteAndAuthorIcon = require( 'reader/site-and-author-icon' );
+import Card from 'components/card';
+import ReaderAvatar from 'blocks/reader-avatar';
+import { getSite } from 'state/reader/sites/selectors';
+import { getFeed } from 'state/reader/feeds/selectors';
+import QueryReaderSite from 'components/data/query-reader-site';
+import QueryReaderFeed from 'components/data/query-reader-feed';
 
-const CrossPost = React.createClass( {
+class CrossPost extends PureComponent {
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		post: React.PropTypes.object.isRequired,
 		isSelected: React.PropTypes.bool.isRequired,
 		xMetadata: React.PropTypes.object.isRequired,
 		xPostedTo: React.PropTypes.array,
-		handleClick: React.PropTypes.func.isRequired
-	},
+		handleClick: React.PropTypes.func.isRequired,
+		translate: React.PropTypes.func.isRequired,
+		postKey: React.PropTypes.object,
+		site: React.PropTypes.object,
+		feed: React.PropTypes.object,
+	}
 
-	handleTitleClick: function( event ) {
+	handleTitleClick = ( event ) => {
 		// modified clicks should let the default action open a new tab/window
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
 			return;
 		}
 		event.preventDefault();
 		this.props.handleClick( this.props.xMetadata );
-	},
+	}
 
-	handleCardClick: function( event ) {
+	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this );
 
 		if ( closest( event.target, '.should-scroll', true, rootNode ) ) {
@@ -63,45 +71,51 @@ const CrossPost = React.createClass( {
 			event.preventDefault();
 			this.props.handleClick( this.props.xMetadata );
 		}
-	},
+	}
 
-	getSiteNameFromURL: function( siteURL ) {
+	getSiteNameFromURL = ( siteURL ) => {
 		return `+${ url.parse( siteURL ).hostname.split( '.' )[ 0 ] }`;
-	},
+	}
 
-	getDescription: function( authorFirstName ) {
+	getDescription = ( authorFirstName ) => {
 		let label;
 		const siteName = this.getSiteNameFromURL( this.props.xMetadata.siteURL );
 		const isCrossComment = !! this.props.xMetadata.commentURL;
 		if ( isCrossComment ) {
-			label = this.translate( '{{author}}%(authorFirstName)s{{/author}} {{label}}left a comment on %(siteName)s, cross-posted to{{/label}} {{blogNames/}}', {
-				args: {
-					siteName: siteName,
-					authorFirstName: authorFirstName
-				},
-				components: {
-					author: <span className="reader__x-post-author" />,
-					label: <span className="reader__x-post-label" />,
-					blogNames: this.getXPostedToContent()
+			label = this.props.translate(
+				'{{author}}%(authorFirstName)s{{/author}} {{label}}left a comment on %(siteName)s, cross-posted to{{/label}} {{blogNames/}}',
+				{
+					args: {
+						siteName: siteName,
+						authorFirstName: authorFirstName
+					},
+					components: {
+						author: <span className="reader__x-post-author" />,
+						label: <span className="reader__x-post-label" />,
+						blogNames: this.getXPostedToContent()
+					}
 				}
-			} );
+			);
 		} else {
-			label = this.translate( '{{author}}%(authorFirstName)s{{/author}} {{label}}cross-posted from %(siteName)s to{{/label}} {{blogNames/}}', {
-				args: {
-					siteName: siteName,
-					authorFirstName: authorFirstName
-				},
-				components: {
-					author: <span className="reader__x-post-author" />,
-					label: <span className="reader__x-post-label" />,
-					blogNames: this.getXPostedToContent()
+			label = this.props.translate(
+				'{{author}}%(authorFirstName)s{{/author}} {{label}}cross-posted from %(siteName)s to{{/label}} {{blogNames/}}',
+				{
+					args: {
+						siteName: siteName,
+						authorFirstName: authorFirstName
+					},
+					components: {
+						author: <span className="reader__x-post-author" />,
+						label: <span className="reader__x-post-label" />,
+						blogNames: this.getXPostedToContent()
+					}
 				}
-			} );
+			);
 		}
 		return label;
-	},
+	}
 
-	getXPostedToContent: function() {
+	getXPostedToContent = () => {
 		let xPostedToList = this.props.xPostedTo;
 		if ( ! xPostedToList || xPostedToList.length === 0 ) {
 			xPostedToList = [ {
@@ -113,21 +127,25 @@ const CrossPost = React.createClass( {
 			return (
 				<span className="reader__x-post-site" key={ xPostedTo.siteURL + '-' + index }>
 					{ xPostedTo.siteName }
-					{ index + 2 < array.length ? <span>, </span> : null }
-					{ index + 2 === array.length ?
-						<span> { this.translate( 'and', { comment: 'last conjuction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4' } ) } </span> : null }
+					{ ( index + 2 < array.length ) && <span>, </span> }
+					{ ( index + 2 === array.length ) &&
+						<span> { this.props.translate( 'and', { comment: 'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4' } ) } </span> }
 				</span>
 			);
 		} );
-	},
+	}
 
-	render: function() {
-		const post = this.props.post,
-			articleClasses = classnames( {
-				reader__card: true,
-				'is-x-post': true,
-				'is-selected': this.props.isSelected
-			} );
+	render() {
+		const { post, postKey, site, feed } = this.props;
+		const { blogId: siteId, feedId } = postKey;
+		const siteIcon = get( site, 'icon.img' );
+		const feedIcon = get( feed, 'image' );
+
+		const articleClasses = classnames( {
+			'reader__card': true,
+			'is-x-post': true,
+			'is-selected': this.props.isSelected
+		} );
 
 		// Remove the x-post text from the title.
 		// TODO: maybe add xpost metadata, so we can remove this regex
@@ -136,12 +154,12 @@ const CrossPost = React.createClass( {
 
 		return (
 			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
-				<SiteAndAuthorIcon
-					siteId={ this.props.post.site_ID }
-					isExternal={ this.props.post.is_external }
-					user={ post.author }
+				<ReaderAvatar
+					siteIcon={ siteIcon }
+					feedIcon={ feedIcon }
+					author={ post.author }
 					onClick={ this.handleTitleClick }
-					href={ post.URL } />
+					isCompact={ true } />
 				<div className="reader__x-post">
 					{ post.title &&
 						<h1 className="reader__post-title">
@@ -150,8 +168,27 @@ const CrossPost = React.createClass( {
 						}
 					{ this.getDescription( post.author.first_name ) }
 				</div>
-			</Card> );
+				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
+				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
+			</Card>
+		);
 	}
-} );
+}
 
-module.exports = CrossPost;
+export default connect(
+	( state, ownProps ) => {
+		const { feedId, blogId } = ownProps.postKey;
+		let feed, site;
+		if ( feedId ) {
+			feed = getFeed( state, feedId );
+			site = feed && feed.blog_ID ? getSite( state, feed.blog_ID ) : undefined;
+		} else {
+			site = getSite( state, blogId );
+			feed = site && site.feed_ID ? getFeed( state, site.feed_ID ) : undefined;
+		}
+		return {
+			feed,
+			site
+		};
+	}
+)( localize( CrossPost ) );

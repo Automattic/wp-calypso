@@ -1,0 +1,75 @@
+
+.disconnect-jetpack-dialog.dialog.card {
+	text-align: center;
+	max-width: 400px;
+}
+
+.disconnect-jetpack-dialog .dialog__content {
+	color: darken( $gray, 20% );
+
+	h1 {
+		color: $gray-dark;
+		font-size: 24px;
+		font-weight: 300;
+		height: 2em;
+		line-height: 32px;
+		margin-top: .5em;
+		margin-bottom: .5em;
+	}
+}
+
+.disconnect-jetpack-dialog__highlight {
+	color: darken( $gray, 10% );
+	margin-bottom: 1.5em;
+	font-size: 16px;
+}
+
+.disconnect-jetpack-dialog__feature {
+	padding: 14px 24px 14px 44px;
+	text-align: left;
+	font-size: 13px;
+	border-bottom: 1px solid lighten( $gray, 25% );
+
+	&:first-of-type {
+		border-top: 1px solid lighten( $gray, 25% );
+	}
+
+	.gridicon {
+		float: left;
+		width: 18px;
+		height: 18px;
+		margin-left: -28px;
+	}
+}
+
+.disconnect-jetpack-dialog__button-wrap {
+	margin-top: 32px;
+	margin-bottom:16px;
+
+	.button {
+		margin: 0 4px;
+	}
+}
+
+.disconnect-jetpack-dialog__more-info-link {
+	font-size: 13px;
+}
+
+.disconnect-jetpack-dialog__dialog__action-buttons {
+	overflow: hidden;
+	border-top: 1px solid lighten( $gray, 30% );
+	padding: 16px;
+	margin: 0 -24px -24px;
+	text-align: right;
+
+	.button {
+		margin-left: 10px;
+		min-width: 80px;
+
+		.is-left-aligned {
+			float: left;
+			margin-left: 0;
+			margin-right: 10px;
+		}
+	}
+}

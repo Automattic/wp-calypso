@@ -1,6 +1,11 @@
 .editor-sticky.button {
+	opacity: 0;
+	cursor: default;
+	transition: opacity 200ms;
 	&.is-sticky {
 		color: $orange-jazzy;
+		opacity: 1;
+		cursor: pointer;
 	}
 }
 

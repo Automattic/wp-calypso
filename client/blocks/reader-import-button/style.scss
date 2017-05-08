@@ -1,0 +1,24 @@
+.reader-import-button {
+	cursor: pointer;
+
+	&:hover {
+		.reader-import-button__icon {
+			fill: $blue-medium;
+		}
+
+		.reader-import-button__label {
+			color: $blue-medium;
+		}
+	}
+}
+
+.reader-import-button__icon {
+	fill: $gray;
+	vertical-align: middle;
+}
+
+.reader-import-button__label {
+	font-size: 14px;
+	color: $gray;
+	padding-left: 4px;
+}

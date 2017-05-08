@@ -16,6 +16,7 @@ import NavItem from 'components/section-nav/item';
 import viewport from 'lib/viewport';
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 import PopoverCart from 'my-sites/upgrades/cart/popover-cart';
+import { isATEnabled } from 'lib/automated-transfer';
 
 const PlansNavigation = React.createClass( {
 	propTypes: {
@@ -48,14 +49,35 @@ const PlansNavigation = React.createClass( {
 		Dispatcher.unregister( this.dispatchToken );
 	},
 
+	getSectionTitle( path ) {
+		switch ( path ) {
+			case '/plans/my-plan':
+				return 'My Plan';
+
+			case '/plans':
+			case '/plans/monthly':
+				return 'Plans';
+
+			case '/domains/manage':
+			case '/domains/add':
+				return 'Domains';
+
+			case '/domains/manage/email':
+				return 'Email';
+
+			default:
+				return path.split( '?' )[ 0 ].replace( /\//g, ' ' );
+		}
+	},
+
 	render() {
 		const site = this.props.selectedSite;
 		const path = sectionify( this.props.path );
 		const hasPlan = site && site.plan && site.plan.product_slug !== 'free_plan';
-		const sectionTitle = path.split( '?' )[ 0 ].replace( /\//g, ' ' );
+		const sectionTitle = this.getSectionTitle( path );
 		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
 		const canManageDomain = userCanManageOptions &&
-			( config.isEnabled( 'automated-transfer' ) || ! site.jetpack );
+			( isATEnabled( site ) || ! site.jetpack );
 
 		return (
 			<SectionNav

@@ -26,6 +26,7 @@ import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 import { isEnabled } from 'config';
+import SectionHeader from 'components/section-header';
 
 const debug = debugFactory( 'calypso:me:profile' );
 
@@ -50,34 +51,8 @@ export default protectForm( React.createClass( {
 			<Main className="profile">
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<SectionHeader label={ this.translate( 'Profile' ) } />
 				<Card className="me-profile-settings">
-					<p>
-						{ this.translate(
-							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
-							'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
-							{
-								components: {
-									profilelink: (
-										<a
-											onClick={ this.recordClickEvent( 'My Profile Link' ) }
-											href={ gravatarProfileLink }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-									hovercardslink: (
-										<a
-											onClick={ this.recordClickEvent( 'Gravatar Hovercards Link' ) }
-											href="https://support.wordpress.com/gravatar-hovercards/"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									)
-								}
-							}
-						) }
-					</p>
-
 					{ isEnabled( 'me/edit-gravatar' ) && <EditGravatar /> }
 
 					<form onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
@@ -130,6 +105,32 @@ export default protectForm( React.createClass( {
 							</FormButton>
 						</p>
 					</form>
+					<p className="me-profile-settings__info-text">
+						{ this.translate(
+							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
+							'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
+							{
+								components: {
+									profilelink: (
+										<a
+											onClick={ this.recordClickEvent( 'My Profile Link' ) }
+											href={ gravatarProfileLink }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									hovercardslink: (
+										<a
+											onClick={ this.recordClickEvent( 'Gravatar Hovercards Link' ) }
+											href="https://support.wordpress.com/gravatar-hovercards/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									)
+								}
+							}
+						) }
+					</p>
 				</Card>
 
 				<ProfileLinks userProfileLinks={ userProfileLinks } />

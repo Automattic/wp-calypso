@@ -17,6 +17,7 @@ import Button from 'components/button';
 
 import { setPreference, savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
+import { getSectionName } from 'state/ui/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 
 const EditorMediaModalGalleryHelp =  React.createClass( {
@@ -25,7 +26,8 @@ const EditorMediaModalGalleryHelp =  React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		onDismiss: PropTypes.func
+		onDismiss: PropTypes.func,
+		sectionName: PropTypes.string,
 	},
 
 	getInitialState() {
@@ -107,6 +109,11 @@ const EditorMediaModalGalleryHelp =  React.createClass( {
 	},
 
 	render() {
+		// note that the post editor section is used for posts and pages
+		if ( this.props.sectionName !== 'post-editor' ) {
+			return null;
+		}
+
 		if ( this.props.isMediaModalGalleryInstructionsDismissed ) {
 			return null;
 		}
@@ -121,6 +128,7 @@ const EditorMediaModalGalleryHelp =  React.createClass( {
 
 export default connect(
 	state => ( {
+		sectionName: getSectionName( state ),
 		isMediaModalGalleryInstructionsDismissed: (
 			getPreference( state, 'mediaModalGalleryInstructionsDismissed' ) ||
 			getPreference( state, 'mediaModalGalleryInstructionsDismissedForSession' )

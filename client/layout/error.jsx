@@ -52,7 +52,7 @@ var LoadingError = React.createClass( {
 	render: function() {
 		return (
 			<EmptyContent
-				illustration="/calypso/images/drake/drake-500.svg"
+				illustration="/calypso/images/illustrations/illustration-500.svg"
 				title={ this.translate( 'We\'re sorry, but an unexpected error has occurred' ) } />
 		);
 	}

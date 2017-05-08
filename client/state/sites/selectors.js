@@ -30,8 +30,8 @@ import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
 import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
-import getComputedAttributes from 'lib/site/computed-attributes';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
+import { getSiteDefaultPostFormat } from 'state/selectors';
 
 /**
  * Returns a raw site object by its ID.
@@ -63,17 +63,33 @@ export const getSite = createSelector(
 
 		return {
 			...site,
-			...getComputedAttributes( site ),
 			...getJetpackComputedAttributes( state, siteId ),
 			hasConflict: isSiteConflicting( state, siteId ),
 			title: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			domain: getSiteDomain( state, siteId ),
-			is_previewable: isSitePreviewable( state, siteId )
+			is_previewable: isSitePreviewable( state, siteId ),
+			options: computeSiteOptions( state, siteId ),
 		};
 	},
 	( state ) => state.sites.items
 );
+
+export function computeSiteOptions( state, siteId ) {
+	const site = getRawSite( state, siteId );
+	if ( ! site ) {
+		return null;
+	}
+
+	const isWpcomMappedDomain = getSiteOption( state, siteId, 'is_mapped_domain' ) && ! isJetpackSite( state, siteId );
+	const wpcomUrl = withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+
+	return {
+		...site.options,
+		...isWpcomMappedDomain && { wpcom_url: wpcomUrl },
+		default_post_format: getSiteDefaultPostFormat( state, siteId ),
+	};
+}
 
 export function getJetpackComputedAttributes( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
@@ -82,6 +98,10 @@ export function getJetpackComputedAttributes( state, siteId ) {
 	return {
 		hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
 		canAutoupdateFiles: canJetpackSiteAutoUpdateFiles( state, siteId ),
+		canUpdateFiles: canJetpackSiteUpdateFiles( state, siteId ),
+		canManage: canJetpackSiteManage( state, siteId ),
+		isMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
+		isSecondaryNetworkSite: isJetpackSiteSecondaryNetworkSite( state, siteId ),
 	};
 }
 
@@ -503,6 +523,10 @@ export function getSitePlan( state, siteId ) {
 	return site.plan;
 }
 
+export function getSitePlanSlug( state, siteId ) {
+	return get( getSitePlan( state, siteId ), 'product_slug' );
+}
+
 /**
  * Returns true if the current site plan is a paid one
  *
@@ -690,23 +714,6 @@ export function canJetpackSiteAutoUpdateCore( state, siteId ) {
 }
 
 /**
- * Determines if the Jetpack plugin of a Jetpack Site has menus.
- * Returns null if the site is not known or is not a Jetpack site.
- *
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @return {?Boolean} true if the site has Jetpack menus management
- */
-export function hasJetpackSiteJetpackMenus( state, siteId ) {
-	if ( ! isJetpackSite( state, siteId ) ) {
-		return null;
-	}
-
-	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-	return versionCompare( siteJetpackVersion, '3.5-alpha' ) >= 0;
-}
-
-/**
  * Determines if the Jetpack plugin of a Jetpack Site has themes.
  * Returns null if the site is not known or is not a Jetpack site.
  *
@@ -737,7 +744,25 @@ export function hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) {
 	}
 
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-	return versionCompare( siteJetpackVersion, '4.4.2' ) >= 0;
+	return versionCompare( siteJetpackVersion, '4.7' ) >= 0;
+}
+
+/**
+ * Determines if the Jetpack site is part of multi-site.
+ * Returns null if the site is not known or is not a Jetpack site.
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        true if the site is multi-site
+ */
+export function isJetpackSiteMultiSite( state, siteId ) {
+	const site = getRawSite( state, siteId );
+
+	if ( ! site || ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
+	return site.is_multisite === true;
 }
 
 /**

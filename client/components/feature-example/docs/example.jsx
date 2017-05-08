@@ -40,6 +40,7 @@ module.exports = React.createClass( {
 				key={ `plugin-item-mock-${ plugin.slug }` }
 				plugin={ plugin }
 				sites={ [] }
+				hasUpdate={ () => false }
 				selectedSite={ selectedSite }
 				progress={ [] } />
 		} );

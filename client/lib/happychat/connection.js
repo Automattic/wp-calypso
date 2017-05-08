@@ -13,21 +13,26 @@ const debug = require( 'debug' )( 'calypso:happychat:connection' );
 
 class Connection extends EventEmitter {
 
-	open( user_id, token ) {
+	open( user_id, token, locale ) {
 		if ( ! this.openSocket ) {
 			this.openSocket = new Promise( resolve => {
 				const url = config( 'happychat_url' );
 				const socket = new IO( url );
 				socket
 					.once( 'connect', () => debug( 'connected' ) )
-					.on( 'init', () => resolve( socket ) )
+					.on( 'init', () => {
+						this.emit( 'connected' );
+						resolve( socket );
+					} )
 					.on( 'token', handler => {
-						handler( { signer_user_id: user_id, jwt: token } );
+						handler( { signer_user_id: user_id, jwt: token, locale } );
 					} )
 					.on( 'unauthorized', () => {
 						socket.close();
 						debug( 'not authorized' );
 					} )
+					.on( 'disconnect', reason => this.emit( 'disconnect', reason ) )
+					.on( 'reconnecting', () => this.emit( 'reconnecting' ) )
 					// Received a chat message
 					.on( 'message', message => this.emit( 'message', message ) )
 					// Received chat status new/assigning/assigned/missed/pending/abandoned
@@ -60,6 +65,54 @@ class Connection extends EventEmitter {
 	send( message ) {
 		this.openSocket.then(
 			socket => socket.emit( 'message', { text: message, id: uuid() } ),
+			e => debug( 'failed to send message', e )
+		);
+	}
+
+	sendEvent( message ) {
+		this.openSocket.then(
+			socket => socket.emit( 'message', {
+				text: message,
+				id: uuid(),
+				type: 'customer-event',
+				meta: { forOperator: true, event_type: 'customer-event' }
+			} ),
+			e => debug( 'failed to send message', e )
+		);
+	}
+
+	// This is a temporary measure — we want to start sending some events that are
+	// picked up by the staged HUD but not by the production HUD. The only way to do this
+	// now is to send a different event type, and make the staging HUD render this event.
+	// Once the HUD side ships to production, we should delete this function and just use
+	// sendEvent for event messages.
+	sendStagingEvent( message ) {
+		this.openSocket.then(
+			socket => socket.emit( 'message', {
+				text: message,
+				id: uuid(),
+				type: 'customer-event-staging',
+				meta: { forOperator: true, event_type: 'customer-event-staging' }
+			} ),
+			e => debug( 'failed to send message', e )
+		);
+	}
+
+	sendLog( message ) {
+		this.openSocket.then(
+			socket => socket.emit( 'message', {
+				text: message,
+				id: uuid(),
+				type: 'log',
+				meta: { forOperator: true, event_type: 'log' }
+			} ),
+			e => debug( 'failed to send message', e )
+		);
+	}
+
+	info( message ) {
+		this.openSocket.then(
+			socket => socket.emit( 'message', { text: message.text, id: uuid(), meta: { forOperator: true } } ),
 			e => debug( 'failed to send message', e )
 		);
 	}

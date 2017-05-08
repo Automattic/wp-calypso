@@ -142,7 +142,7 @@ module.exports = React.createClass( {
 
 	swapYearMonth: function( date ) {
 		var splits = date.split( '-' );
-		return splits[1] + '-' + splits[0];
+		return splits[ 1 ] + '-' + splits[ 0 ];
 	},
 
 	getStatus: function( status ) {
@@ -240,9 +240,9 @@ module.exports = React.createClass( {
 				rows.push(
 					<tr key={ type + '-' + period }>
 						<td className="earnings-history__value">{ this.swapYearMonth( period ) }</td>
-						<td className="earnings-history__value">${ this.numberFormat( earnings[period].amount, 2 ) }</td>
-						<td className="earnings-history__value">{ earnings[period].pageviews }</td>
-						<td className="earnings-history__value">{ this.getStatus( earnings[period].status ) }</td>
+						<td className="earnings-history__value">${ this.numberFormat( earnings[ period ].amount, 2 ) }</td>
+						<td className="earnings-history__value">{ earnings[ period ].pageviews }</td>
+						<td className="earnings-history__value">{ this.getStatus( earnings[ period ].status ) }</td>
 					</tr>
 				);
 			}

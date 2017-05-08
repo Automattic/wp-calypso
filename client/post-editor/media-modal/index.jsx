@@ -10,9 +10,11 @@ import {
 	head,
 	noop,
 	map,
+	flow,
 	partial,
 	some,
 	values,
+	isEmpty,
 	identity
 } from 'lodash';
 
@@ -25,7 +27,6 @@ import {
 	recordEvent,
 	recordStat
 } from 'lib/posts/stats';
-import MediaModalSecondaryActions from './secondary-actions';
 import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
@@ -40,6 +41,19 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { deleteMedia } from 'state/media/actions';
 import ImageEditor from 'blocks/image-editor';
 import MediaModalDetail from './detail';
+import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
+
+function areMediaActionsDisabled( modalView, mediaItems ) {
+	return some( mediaItems, item =>
+		MediaUtils.isItemBeingUploaded( item ) && (
+			// Transients can't be handled by the editor if they are being
+			// uploaded via an external URL
+			! MediaUtils.isTransientPreviewable( item ) ||
+			MediaUtils.getMimePrefix( item ) !== 'image' ||
+			ModalViews.GALLERY === modalView
+		)
+	);
+}
 
 export class EditorMediaModal extends Component {
 	static propTypes = {
@@ -95,6 +109,13 @@ export class EditorMediaModal extends Component {
 		this.statsTracking = {};
 	}
 
+	componentWillMount() {
+		const { view, mediaLibrarySelectedItems, site } = this.props;
+		if ( ! isEmpty( mediaLibrarySelectedItems ) && view === ModalViews.LIST ) {
+			MediaActions.setLibrarySelectedItems( site.ID, [] );
+		}
+	}
+
 	componentWillUnmount() {
 		this.props.resetView();
 		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
@@ -108,24 +129,19 @@ export class EditorMediaModal extends Component {
 		};
 	}
 
-	isDisabled() {
-		return some( this.props.mediaLibrarySelectedItems, function( item ) {
-			const mimePrefix = MediaUtils.getMimePrefix( item );
-			return item.transient && ( mimePrefix !== 'image' || ModalViews.GALLERY === this.props.view );
-		}.bind( this ) );
-	}
-
 	confirmSelection = () => {
 		const { view, mediaLibrarySelectedItems } = this.props;
 
-		let value;
-		if ( mediaLibrarySelectedItems.length ) {
-			value = {
+		if ( areMediaActionsDisabled( view, mediaLibrarySelectedItems ) ) {
+			return;
+		}
+
+		const value = mediaLibrarySelectedItems.length
+			? {
 				type: ModalViews.GALLERY === view ? 'gallery' : 'media',
 				items: mediaLibrarySelectedItems,
 				settings: this.state.gallerySettings
-			};
-		}
+			} : undefined;
 
 		this.props.onClose( value );
 	};
@@ -326,14 +342,9 @@ export class EditorMediaModal extends Component {
 			return;
 		}
 
-		const isDisabled = this.isDisabled();
 		const selectedItems = this.props.mediaLibrarySelectedItems;
+		const isDisabled = areMediaActionsDisabled( this.props.view, selectedItems );
 		const buttons = [
-			<MediaModalSecondaryActions
-				site={ this.props.site }
-				selectedItems={ selectedItems }
-				disabled={ isDisabled }
-				onDelete={ this.deleteMedia } />,
 			{
 				action: 'cancel',
 				label: this.props.translate( 'Cancel' )
@@ -431,6 +442,9 @@ export class EditorMediaModal extends Component {
 						onEditItem={ this.editItem }
 						fullScreenDropZone={ false }
 						single={ this.props.single }
+						onDeleteItem={ this.deleteMedia }
+						onViewDetails={ this.props.onViewDetails }
+						mediaLibrarySelectedItems={ this.props.mediaLibrarySelectedItems }
 						scrollable />
 				);
 				break;
@@ -463,6 +477,11 @@ export default connect(
 	{
 		setView: setEditorMediaModalView,
 		resetView: resetMediaModalView,
-		deleteMedia
+		deleteMedia,
+		onViewDetails: flow(
+			withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
+			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
+			partial( setEditorMediaModalView, ModalViews.DETAIL )
+		)
 	}
 )( localize( EditorMediaModal ) );

@@ -122,6 +122,11 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				expect( onFailure ).to.not.have.beenCalled;
 				expect( onProgress ).to.have.been.calledWith( store, progress, next, progressInfo );
 			} );
+
+			it( 'should not throw runtime error if onProgress is not specified', () => {
+				dispatcher = dispatchRequest( initiator, onSuccess, onFailure );
+				expect( () => dispatcher( store, progress, next ) ).to.not.throw( TypeError );
+			} );
 		} );
 	} );
 } );

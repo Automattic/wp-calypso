@@ -16,7 +16,10 @@ import url from 'url';
 function doesNotNeedSandbox( iframe ) {
 	const trustedHosts = [
 		'spotify.com',
-		'kickstarter.com'
+		'kickstarter.com',
+		'soundcloud.com',
+		'embed.ted.com',
+		'player.twitch.tv',
 	];
 
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;

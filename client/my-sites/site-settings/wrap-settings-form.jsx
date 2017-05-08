@@ -80,7 +80,9 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
-			const nextDirtyFields = previousDirtyFields.filter( field => ! isEqual( currentFields[ field ], persistedFields[ field ] ) );
+			/*eslint-disable eqeqeq*/
+			const nextDirtyFields = previousDirtyFields.filter( field => ! ( currentFields[ field ] == persistedFields[ field ] ) );
+			/*eslint-enable eqeqeq*/
 
 			// Update the dirty fields state without updating their values
 			if ( nextDirtyFields.length === 0 ) {
@@ -120,7 +122,20 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const currentTargetName = event.currentTarget.name,
 				currentTargetValue = event.currentTarget.value;
 
+			this.props.trackEvent( `Set ${ currentTargetName } to ${ currentTargetValue }` );
 			this.props.updateFields( { [ currentTargetName ]: currentTargetValue } );
+		};
+
+		handleAutosavingRadio = ( name, value ) => () => {
+			const { fields } = this.props;
+			if ( fields[ name ] === value ) {
+				return;
+			}
+
+			this.props.trackEvent( `Set ${ name } to ${ value }` );
+			this.props.updateFields( { [ name ]: value }, () => {
+				this.submitForm();
+			} );
 		};
 
 		handleSelect = event => {
@@ -135,15 +150,24 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
 
+		handleAutosavingToggle = name => () => {
+			this.props.trackEvent( `Toggled ${ name }` );
+			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] }, () => {
+				this.submitForm();
+			} );
+		};
+
 		onChangeField = field => event => {
 			this.props.updateFields( {
 				[ field ]: event.target.value
 			} );
 		};
 
-		setFieldValue = ( field, value ) => {
+		setFieldValue = ( field, value, autosave = false ) => {
 			this.props.updateFields( {
 				[ field ]: value
+			}, () => {
+				autosave && this.submitForm();
 			} );
 		};
 
@@ -165,6 +189,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				handleSelect: this.handleSelect,
 				handleSubmitForm: this.handleSubmitForm,
 				handleToggle: this.handleToggle,
+				handleAutosavingToggle: this.handleAutosavingToggle,
+				handleAutosavingRadio: this.handleAutosavingRadio,
 				onChangeField: this.onChangeField,
 				setFieldValue: this.setFieldValue,
 				submitForm: this.submitForm,

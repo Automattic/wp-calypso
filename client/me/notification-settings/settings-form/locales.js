@@ -17,9 +17,9 @@ export const settingLabels = {
 };
 
 export const getLabelForStream = stream => stream in streamLabels
-	? streamLabels[stream].call()
+	? streamLabels[ stream ].call()
 	: null;
 
 export const getLabelForSetting = setting => setting in settingLabels
-	? settingLabels[setting].call()
+	? settingLabels[ setting ].call()
 	: null;

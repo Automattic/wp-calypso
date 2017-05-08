@@ -13,7 +13,7 @@ import {
 
 describe( 'selectors', () => {
 	describe( '#getUserSuggestions()', () => {
-		it( 'should return null if there is no suggestion available', () => {
+		it( 'should return empty array if there is no suggestion available', () => {
 			const state = {
 				users: {
 					suggestions: {
@@ -21,7 +21,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			expect( getUserSuggestions( state, 123 ) ).to.equal( null );
+			expect( getUserSuggestions( state, 123 ) ).to.eql( [] );
 		} );
 
 		it( 'should return suggestions if they exist for a site ID', () => {
@@ -40,7 +40,6 @@ describe( 'selectors', () => {
 				}
 			};
 			expect( getUserSuggestions( state, 123 ) ).to.have.length( 2 );
-			expect( getUserSuggestions( state, 124 ) ).to.eql( null );
 		} );
 	} );
 

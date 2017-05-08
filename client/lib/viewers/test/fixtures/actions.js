@@ -30,12 +30,12 @@ module.exports = {
 	removeViewer: {
 		type: 'REMOVE_VIEWER',
 		siteId: site.ID,
-		viewer: viewerData.viewers[0]
+		viewer: viewerData.viewers[ 0 ]
 	},
 
 	removeViewerError: {
 		type: 'RECEIVE_REMOVE_VIEWER_ERROR',
 		siteId: site.ID,
-		viewer: viewerData.viewers[0]
+		viewer: viewerData.viewers[ 0 ]
 	}
 };

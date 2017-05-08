@@ -8,25 +8,29 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import * as stats from 'reader/stats';
-import * as DiscoverHelper from 'reader/discover/helper';
+import {
+	recordAction as statRecordAction,
+	recordGaEvent,
+	recordTrack,
+} from 'reader/stats';
+import { isDiscoverEnabled } from 'reader/discover/helper';
 
 const SiteEmptyContent = ( { translate } ) => {
 	const recordAction = () => {
-		stats.recordAction( 'clicked_discover_on_empty' );
-		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_discover_on_empty_site_stream_clicked' );
+		statRecordAction( 'clicked_discover_on_empty' );
+		recordGaEvent( 'Clicked Discover on EmptyContent' );
+		recordTrack( 'calypso_reader_discover_on_empty_site_stream_clicked' );
 	};
 
 	const recordSecondaryAction = () => {
-		stats.recordAction( 'clicked_search_on_empty' );
-		stats.recordGaEvent( 'Clicked Search on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_search_on_empty_site_stream_clicked' );
+		statRecordAction( 'clicked_search_on_empty' );
+		recordGaEvent( 'Clicked Search on EmptyContent' );
+		recordTrack( 'calypso_reader_search_on_empty_site_stream_clicked' );
 	};
 
 	let action;
 
-	if ( DiscoverHelper.isDiscoverEnabled() ) {
+	if ( isDiscoverEnabled() ) {
 		action = (
 			<a className="empty-content__action button is-primary"
 				onClick={ recordAction }

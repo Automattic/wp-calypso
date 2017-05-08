@@ -8,9 +8,9 @@ The `CompactCard` component slightly modifies the `Card` component.
 
 #### How to use:
 
-```js
-var Card = require( 'components/card' ),
-	CompactCard = require( 'components/card/compact' );
+```jsx
+import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 
 render: function() {
   return (

@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
+import { find, findIndex, times } from 'lodash';
+import Gridicon from 'gridicons';
+import moment from 'moment';
 import page from 'page';
 import React from 'react';
-import times from 'lodash/times';
-import findIndex from 'lodash/findIndex';
-import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -100,6 +100,7 @@ export const List = React.createClass( {
 					<SidebarNavigation />
 					<DomainOnly
 						domainName={ this.props.selectedSite.domain }
+						hasNotice={ this.isFreshDomainOnlyRegistration() }
 						siteId={ this.props.selectedSite.ID }
 					/>
 				</Main>
@@ -131,6 +132,15 @@ export const List = React.createClass( {
 				<DomainToPlanNudge />
 			</Main>
 		);
+	},
+
+	isFreshDomainOnlyRegistration() {
+		const domainName = this.props.selectedSite.domain;
+		const domain = this.props.domains.hasLoadedFromServer &&
+			find( this.props.domains.list, ( { name } ) => name === domainName );
+
+		return domain && domain.registrationMoment &&
+			moment().subtract( 1, 'day' ).isBefore( domain.registrationMoment );
 	},
 
 	hideNotice() {

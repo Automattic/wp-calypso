@@ -24,10 +24,6 @@ describe( 'legacy-routes', function() {
 			config.isEnabled.restore();
 		} );
 
-		it( 'should return true for /themes/sometheme', () => {
-			expect( isLegacyRoute( '/themes/sometheme' ) ).to.be.true;
-		} );
-
 		it( 'should return false for /settings/general', () => {
 			expect( isLegacyRoute( '/settings/general' ) ).to.be.false;
 		} );
@@ -48,18 +44,6 @@ describe( 'legacy-routes', function() {
 			expect( isLegacyRoute( '/test.php' ) ).to.be.true;
 			expect( isLegacyRoute( 'test.php' ) ).to.be.true;
 			expect( isLegacyRoute( '/some/nested/page.php' ) ).to.be.true;
-		} );
-
-		it( 'should return true for /plans when `manage/plans` feature flag disabled', () => {
-			// config.isEnabled( 'manage/plans' ) === false
-			features = [];
-			expect( isLegacyRoute( '/plans' ) ).to.be.true;
-		} );
-
-		it( 'should return false for /plans when `manage/plans` feature flag enabled', () => {
-			// config.isEnabled( 'manage/plans' ) === true
-			features = [ 'manage/plans' ];
-			expect( isLegacyRoute( '/plans' ) ).to.be.false;
 		} );
 
 		describe( 'when `me/my-profile` feature flag is enabled', () => {

@@ -6,7 +6,7 @@ import some from 'lodash/some';
 import startsWith from 'lodash/startsWith';
 import assign from 'lodash/assign';
 
-module.exports = {
+const exported = {
 	itemLinkClass: function( path, currentPath, additionalClasses ) {
 		const basePathLowerCase = decodeURIComponent( currentPath ).split( '?' )[ 0 ].replace( /\/edit$/, '' ).toLowerCase(),
 			pathLowerCase = decodeURIComponent( path ).replace( /\/edit$/, '' ).toLowerCase();
@@ -39,3 +39,11 @@ module.exports = {
 		} );
 	}
 };
+
+export default exported;
+
+export const {
+    itemLinkClass,
+    itemLinkClassStartsWithOneOf,
+    pathStartsWithOneOf
+} = exported;

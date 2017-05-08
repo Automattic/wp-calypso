@@ -9,35 +9,23 @@ import classnames from 'classnames';
  * Internal Dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import * as stats from 'reader/stats';
-import PostStoreActions from 'lib/feed-post-store/actions';
 import cssSafeUrl from 'lib/css-safe-url';
 
 class PostPhoto extends React.Component {
 
 	state = {
-		isExpanded: false,
 		cardWidth: 800,
 	};
 
 	handleClick = ( event ) => {
-		if ( this.state.isExpanded ) {
+		if ( this.props.isExpanded ) {
 			this.props.onClick( event );
 			return;
 		}
 
 		event.preventDefault();
-		this.setState( { isExpanded: true } );
-		this.onExpanded();
-	}
-
-	onExpanded = () => {
-		const { post, site } = this.props;
-		stats.recordTrackForPost( 'calypso_reader_photo_expanded', post );
-
-		// Record page view
-		PostStoreActions.markSeen( post, site );
-		stats.recordTrackForPost( 'calypso_reader_article_opened', post );
+		const { post, site, postKey } = this.props;
+		this.props.expandCard( { post, site, postKey } );
 	}
 
 	getViewportHeight = () =>
@@ -90,7 +78,7 @@ class PostPhoto extends React.Component {
 		};
 
 		let newWidth, newHeight;
-		if ( this.state.isExpanded ) {
+		if ( this.props.isExpanded ) {
 			const cardWidth = this.state.cardWidth;
 			const { width: naturalWidth, height: naturalHeight } = imageSize;
 
@@ -105,12 +93,12 @@ class PostPhoto extends React.Component {
 
 		const classes = classnames( {
 			'reader-post-card__photo': true,
-			'is-expanded': this.state.isExpanded
+			'is-expanded': this.props.isExpanded
 		} );
 
 		// force to non-breaking space if `title` is empty so that the title h1 doesn't collapse and complicate things
 		const linkTitle = title || '\xa0';
-		const divStyle = this.state.isExpanded
+		const divStyle = this.props.isExpanded
 			? { height: newHeight, width: newWidth, margin: '0 auto' }
 			: {};
 

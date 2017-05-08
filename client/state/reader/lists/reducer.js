@@ -49,14 +49,14 @@ export function items( state = {}, action ) {
 		case READER_LIST_UPDATE_SUCCESS:
 			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
 		case READER_LIST_UPDATE_TITLE:
-			let listForTitleChange = Object.assign( {}, state[ action.listId ] );
+			const listForTitleChange = Object.assign( {}, state[ action.listId ] );
 			if ( ! listForTitleChange ) {
 				return state;
 			}
 			listForTitleChange.title = action.title;
 			return Object.assign( {}, state, keyBy( [ listForTitleChange ], 'ID' ) );
 		case READER_LIST_UPDATE_DESCRIPTION:
-			let listForDescriptionChange = Object.assign( {}, state[ action.listId ] );
+			const listForDescriptionChange = Object.assign( {}, state[ action.listId ] );
 			if ( ! listForDescriptionChange ) {
 				return state;
 			}
@@ -83,7 +83,7 @@ export function items( state = {}, action ) {
 export function subscribedLists( state = [], action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
-			return union( state, map( action.lists, 'ID' ) );
+			return map( action.lists, 'ID' );
 		case READER_LISTS_UNFOLLOW_SUCCESS:
 			// Remove the unfollowed list ID from subscribedLists
 			return filter( state, ( listId ) => {

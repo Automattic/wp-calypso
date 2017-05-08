@@ -186,7 +186,7 @@ function plugin( editor ) {
 			i = nodes.length;
 
 		while ( i-- ) { // reversed
-			node = nodes[i];
+			node = nodes[ i ];
 
 			if ( node.className && regex.test( node.className ) ) {
 				editor.dom.remove( node, true );

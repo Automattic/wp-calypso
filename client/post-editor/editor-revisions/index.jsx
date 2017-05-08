@@ -23,11 +23,11 @@ export default React.createClass( {
 	},
 
 	render() {
-		if ( ! this.props.revisions.length ) {
+		if ( ! this.props.revisions || ! this.props.revisions.length ) {
 			return null;
 		}
 
-		const lastRevision = this.props.revisions[0];
+		const lastRevision = this.props.revisions[ 0 ];
 		const revisionsLink = this.props.adminUrl + 'revision.php?revision=' + lastRevision;
 
 		return (

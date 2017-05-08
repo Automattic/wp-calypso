@@ -19,14 +19,4 @@ if ( config.isEnabled( 'myFeature') ) {
 }
 ```
 
-### config.anyEnabled( key, [...key] )
-Is one or more features enabled?
-
-```js
-// Returns true if any passed feature is enabled
-if ( config.anyEnabled( 'myFeature1', 'myFeature2', 'myFeature3' ) ) {
-	// do something when any of the three features are enabled
-}
-```
-
 The key should always be a literal string not a variable so that down the road we can process the compiled scripts and remove code for disabled features in production.

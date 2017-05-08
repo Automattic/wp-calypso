@@ -30,6 +30,6 @@ export function getActionLog( state ) {
  * @return {Object}              The matching dispatched action
  */
 export const getLastAction = createSelector(
-	( state ) => last( state.ui.actionLog ),
+	( state ) => last( state.ui.actionLog ) || false,
 	( state ) => [ state.ui.actionLog ]
 );

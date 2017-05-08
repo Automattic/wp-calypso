@@ -11,6 +11,10 @@
 		left: 0;
 	opacity: 0;
 	cursor: pointer;
+
+	&::-webkit-file-upload-button {
+		cursor: pointer; /* webkit needs this to change cursor for file type input. */
+	}
 }
 
 @include breakpoint( "<480px" ) {

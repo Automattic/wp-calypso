@@ -5,7 +5,7 @@ This component is used to implement dang sweet buttons.
 
 #### How to use:
 
-```js
+```jsx
 import Button from 'components/button';
 
 export default function RockOnButton() {

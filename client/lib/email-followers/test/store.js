@@ -38,7 +38,7 @@ describe( 'Email Followers Store', function() {
 		it( 'The store should return an array of objects when fetching email followers', function() {
 			var followers = EmailFollowersStore.getFollowers( options );
 			assert.isArray( followers );
-			assert.isObject( followers[0] );
+			assert.isObject( followers[ 0 ] );
 		} );
 
 		it( 'Fetching more email followers should update the array in the store', function() {

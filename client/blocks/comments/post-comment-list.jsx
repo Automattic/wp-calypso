@@ -27,30 +27,45 @@ import {
 import PostComment from './post-comment';
 import PostCommentForm from './form';
 import CommentCount from './comment-count';
+import SegmentedControl from 'components/segmented-control';
+import SegmentedControlItem from 'components/segmented-control/item';
 
 class PostCommentList extends React.Component {
 	constructor( props ) {
 		super();
 		this.state = {
 			activeReplyCommentID: null,
-			amountOfCommentsToTake: props.initialSize
+			amountOfCommentsToTake: props.initialSize,
+			commentsFilter: 'all',
+			activeEditCommentId: null,
 		};
 
 		this.viewEarlierCommentsHandler = this.viewEarlierCommentsHandler.bind( this );
 	}
 
 	componentWillMount() {
-		const siteId = this.props.post.site_ID;
-		const postId = this.props.post.ID;
+		const {
+			post: { ID: postId, site_ID: siteId }
+		} = this.props;
 
-		this.props.requestPostComments( siteId, postId );
+		this.props.requestPostComments( siteId, postId, this.props.commentsFilter );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		const nextSiteId = get( nextProps, 'post.site_ID' );
 		const nextPostId = get( nextProps, 'post.ID' );
-		if ( nextSiteId && nextPostId && ( this.props.post.site_ID !== nextSiteId || this.props.post.ID !== nextPostId ) ) {
-			this.props.requestPostComments( nextSiteId, nextPostId );
+		const nextCommentsFilter = get( nextProps, 'commentsFilter' );
+
+		if (
+			nextSiteId &&
+			nextPostId &&
+			nextCommentsFilter &&
+			(
+				this.props.post.site_ID !== nextSiteId ||
+				this.props.post.ID !== nextPostId ||
+				this.props.commentsFilter !== nextCommentsFilter )
+			) {
+			this.props.requestPostComments( nextSiteId, nextPostId, this.props.commentsFilter );
 		}
 	}
 
@@ -59,6 +74,8 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
+		const onEditCommentClick = this.onEditCommentClick.bind( this, commentId );
+		const onEditCommentCancel = this.onEditCommentCancel.bind( this );
 		const onReplyClick = this.onReplyClick.bind( this );
 		const onReplyCancel = this.onReplyCancel.bind( this );
 		const commentText = this.state.commentText;
@@ -70,7 +87,11 @@ class PostCommentList extends React.Component {
 			commentsTree={ this.props.commentsTree }
 			commentId={ commentId }
 			key={ commentId }
+			showModerationTools={ this.props.showModerationTools }
+			activeEditCommentId={ this.state.activeEditCommentId }
 			activeReplyCommentID={ this.state.activeReplyCommentID }
+			onEditCommentClick={ onEditCommentClick }
+			onEditCommentCancel={ onEditCommentCancel }
 			onReplyClick={ onReplyClick }
 			onReplyCancel={ onReplyCancel }
 			commentText={ commentText }
@@ -79,6 +100,12 @@ class PostCommentList extends React.Component {
 			depth={ 0 }
 		/>;
 	}
+
+	onEditCommentClick( commentId ) {
+		this.setState( { activeEditCommentId: commentId } );
+	}
+
+	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 
 	onReplyClick( commentID ) {
 		this.setState( { activeReplyCommentID: commentID } );
@@ -161,8 +188,9 @@ class PostCommentList extends React.Component {
 	}
 
 	viewEarlierCommentsHandler() {
-		const siteId = this.props.post.site_ID;
-		const postId = this.props.post.ID;
+		const {
+			post: { ID: postId, site_ID: siteId },
+		} = this.props;
 
 		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
 
@@ -171,14 +199,21 @@ class PostCommentList extends React.Component {
 		} );
 
 		if ( this.props.haveMoreCommentsToFetch ) {
-			this.props.requestPostComments( siteId, postId );
+			this.props.requestPostComments( siteId, postId, this.props.commentsFilter );
 		}
 	}
+
+	handleFilterClick = commentsFilter => () => this.props.onFilterChange( commentsFilter );
 
 	render() {
 		if ( ! this.props.commentsTree ) {
 			return null;
 		}
+
+		const {
+			commentsFilter,
+			showFilters,
+		} = this.props;
 
 		const {
 			displayedComments,
@@ -210,6 +245,30 @@ class PostCommentList extends React.Component {
 							} )
 						}</span> : null }
 				</div> }
+				{ showFilters &&
+					<SegmentedControl compact primary>
+						<SegmentedControlItem
+							selected={ commentsFilter === 'all' }
+							onClick={ this.handleFilterClick( 'all' ) }>{ translate( 'All' ) }
+						</SegmentedControlItem>
+						<SegmentedControlItem
+							selected={ commentsFilter === 'approved' }
+							onClick={ this.handleFilterClick( 'approved' ) }>{ translate( 'Approved', { context: 'comment status' } ) }
+						</SegmentedControlItem>
+						<SegmentedControlItem
+							selected={ commentsFilter === 'unapproved' }
+							onClick={ this.handleFilterClick( 'unapproved' ) }>{ translate( 'Pending', { context: 'comment status' } ) }
+						</SegmentedControlItem>
+						<SegmentedControlItem
+							selected={ commentsFilter === 'spam' }
+							onClick={ this.handleFilterClick( 'spam' ) }>{ translate( 'Spam', { context: 'comment status' } ) }
+						</SegmentedControlItem>
+						<SegmentedControlItem
+							selected={ commentsFilter === 'trash' }
+							onClick={ this.handleFilterClick( 'trash' ) }>{ translate( 'Trash', { context: 'comment status' } ) }
+						</SegmentedControlItem>
+					</SegmentedControl>
+				}
 				{ this.renderCommentsList( displayedComments ) }
 				{ this.renderCommentForm() }
 			</div>
@@ -244,7 +303,7 @@ PostCommentList.defaultProps = {
 export default connect(
 	( state, ownProps ) => (
 		{
-			commentsTree: getPostCommentsTree( state, ownProps.post.site_ID, ownProps.post.ID ),
+			commentsTree: getPostCommentsTree( state, ownProps.post.site_ID, ownProps.post.ID, ownProps.commentsFilter ),
 			totalCommentsCount: getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID ),
 			haveMoreCommentsToFetch: haveMoreCommentsToFetch( state, ownProps.post.site_ID, ownProps.post.ID )
 		}

@@ -47,29 +47,6 @@ const EVENTS = {
 		}
 	},
 	registerDomain: {
-		addDomainButtonClick( domainName, section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Add" Button on a Domain Registration',
-				'Domain Name',
-				domainName
-			);
-
-			analytics.tracks.recordEvent( 'calypso_domain_search_add_button_click', {
-				domain_name: domainName,
-				section
-			} );
-		},
-
-		removeDomainButtonClick( domainName ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Remove" Button on a Domain Registration',
-				'Domain Name',
-				domainName
-			);
-		},
-
 		mapDomainButtonClick( section ) {
 			analytics.ga.recordEvent(
 				'Domain Search',
@@ -156,11 +133,19 @@ const EVENTS = {
 				suggestion.domain_name
 			);
 
-			analytics.tracks.recordEvent( 'calypso_domain_search_submit_step', {
+			const tracksObjects = {
 				domain_name: suggestion.domain_name,
 				section,
 				type: domainType
-			} );
+			};
+			if ( suggestion.isRecommended ) {
+				tracksObjects.label = 'recommended';
+			}
+			if ( suggestion.isBestAlternative ) {
+				tracksObjects.label = 'best-alternative';
+			}
+
+			analytics.tracks.recordEvent( 'calypso_domain_search_submit_step', tracksObjects );
 		}
 	},
 
@@ -250,20 +235,6 @@ const EVENTS = {
 				section
 			} );
 		},
-
-		addDomainButtonClick( domainName, section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Add" Button on a Domain Registration in Map Domain Step',
-				'Domain Name',
-				domainName
-			);
-
-			analytics.tracks.recordEvent( 'calypso_map_domain_step_add_domain_click', {
-				domain_name: domainName,
-				section
-			} );
-		}
 	},
 
 	siteRedirect: {

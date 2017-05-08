@@ -1,45 +1,54 @@
-const React = require( 'react' );
+/**
+ * External Dependencies
+ */
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
-const EmptyContent = require( 'components/empty-content' ),
-	stats = require( 'reader/stats' );
+/**
+ * Internal Dependencies
+ */
+import EmptyContent from 'components/empty-content';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrack,
+} from 'reader/stats';
 
-const FeedEmptyContent = React.createClass( {
-	shouldComponentUpdate: function() {
-		return false;
-	},
+class FeedEmptyContent extends React.PureComponent {
 
-	recordAction: function() {
-		stats.recordAction( 'clicked_search_on_empty' );
-		stats.recordGaEvent( 'Clicked Search on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_search_on_empty_feed_clicked' );
-	},
+	recordAction = () => {
+		recordAction( 'clicked_search_on_empty' );
+		recordGaEvent( 'Clicked Search on EmptyContent' );
+		recordTrack( 'calypso_reader_search_on_empty_feed_clicked' );
+	}
 
-	recordSecondaryAction: function() {
-		stats.recordAction( 'clicked_discover_on_empty' );
-		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_discover_on_empty_feed_clicked' );
-	},
+	recordSecondaryAction = () => {
+		recordAction( 'clicked_discover_on_empty' );
+		recordGaEvent( 'Clicked Discover on EmptyContent' );
+		recordTrack( 'calypso_reader_discover_on_empty_feed_clicked' );
+	}
 
-	render: function() {
+	render() {
+		const translate = this.props.translate;
 		const action = <a
-				className="empty-content__action button is-primary"
+				className="empty-content__action button is-primary" //eslint-disable-line
 				onClick={ this.recordAction }
-				href="/read/search">{ this.translate( 'Find Sites to Follow' ) }</a>,
+				href="/read/search">{ translate( 'Find Sites to Follow' ) }</a>,
 			secondaryAction = (
 				<a
-					className="empty-content__action button"
+					className="empty-content__action button" //eslint-disable-line
 					onClick={ this.recordSecondaryAction }
-					href="/discover">{ this.translate( 'Explore Discover' ) }</a> );
+					href="/discover">{ translate( 'Explore Discover' ) }</a> );
 
 		return ( <EmptyContent
-			title={ this.translate( 'No recent posts' ) }
-			line={ this.translate( 'This site has not posted anything recently.' ) }
+			title={ translate( 'No recent posts' ) }
+			line={ translate( 'This site has not posted anything recently.' ) }
 			action={ action }
 			secondaryAction={ secondaryAction }
 			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
 			illustrationWidth={ 500 }
 			/> );
 	}
-} );
+}
 
-module.exports = FeedEmptyContent;
+export default localize( FeedEmptyContent );

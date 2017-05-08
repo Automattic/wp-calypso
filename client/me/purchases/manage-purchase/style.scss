@@ -71,7 +71,6 @@
 }
 
 .manage-purchase__header {
-	border-bottom: 1px solid lighten( $gray, 30% );
 	overflow: auto;
 	padding: 0 0 16px 0;
 }
@@ -109,33 +108,45 @@
 	}
 }
 
-.manage-purchase__meta {
-	display: flex;
-	list-style: none;
-	margin: 0;
-	overflow: auto;
-	padding: 0;
+.manage-purchase__meta,
+.manage-purchase__contact-support {
+	margin: 0 -24px;
+	padding: 0 24px;
+	border-top: 1px solid lighten( $gray, 30% );
 
 	@include breakpoint( "<660px" ) {
+		margin: 0 -16px;
+		padding: 0 16px;
+	}
+}
+
+.manage-purchase__meta {
+	display: flex;
+	margin-bottom: -16px;
+	list-style: none;
+	overflow: auto;
+
+	@include breakpoint( "<660px" ) {
+		margin-bottom: 0;
 		flex-direction: column;
 	}
 
 	li {
 		color: darken( $gray, 30% );
 		font-size: 13px;
-		margin-top: 15px;
 
 		@include breakpoint( "<660px" ) {
 			clear: both;
 			overflow: auto;
+			margin-top: 15px;
 		}
 
 		@include breakpoint( ">660px" ) {
 			box-sizing: border-box;
 			flex: 1 1 auto;
-			font-size: 18px;
+			font-size: 14px;
 			text-align: center;
-			padding: 0 8px;
+			padding: 15px 8px 12px;
 
 			&:first-child {
 				padding-left: 0;
@@ -169,19 +180,13 @@
 	}
 
 	@include breakpoint( ">660px" ) {
-		color: darken( $gray, 10% );
+		color: $gray-text-min;
 		display: block;
 		font-family: $sans;
-		font-size: 10px;
+		font-size: 12px;
 		font-weight: 400;
-		margin: 0 0 5px 0;
-		text-transform: uppercase;
+		margin: 0 0 12px 0;
 	}
-}
-
-.manage-purchase__time-period {
-	font-size: 75%;
-	opacity: .7;
 }
 
 .manage-purchase__detail {
@@ -197,7 +202,6 @@
 
 	a {
 		display: block;
-		font-size: 12px;
 		cursor: pointer;
 	}
 }

@@ -103,7 +103,7 @@ module.exports = React.createClass( {
 			<ButtonsPreviewAction
 				active={ null === this.state.buttonsTrayVisibility }
 				onClick={ this.showButtonsTray.bind( null, visibility ) }
-				icon={ enabledButtonsExist ? 'edit' : 'plus' }
+				icon={ enabledButtonsExist ? 'pencil' : 'plus' }
 				position="bottom-left">
 					{ this.getButtonsTrayToggleButtonLabel( visibility, enabledButtonsExist ) }
 			</ButtonsPreviewAction>
@@ -154,7 +154,7 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<div className="sharing-buttons-preview">
-				<ButtonsPreviewAction active={ ! this.state.isEditingLabel } onClick={ this.toggleEditLabel } icon="edit" position="top-left">
+				<ButtonsPreviewAction active={ ! this.state.isEditingLabel } onClick={ this.toggleEditLabel } icon="pencil" position="top-left">
 					{ this.translate( 'Edit label text', { context: 'Sharing: Buttons edit label' } ) }
 				</ButtonsPreviewAction>
 				<ButtonsLabelEditor

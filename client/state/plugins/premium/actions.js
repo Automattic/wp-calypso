@@ -187,9 +187,6 @@ function configure( site, plugin, dispatch ) {
 		case 'akismet':
 			option = 'wordpress_api_key';
 			break;
-		case 'polldaddy':
-			option = 'polldaddy_api_key';
-			break;
 	}
 	if ( ! option || ! plugin.key ) {
 		const optionError = new Error( 'We can\'t configure this plugin.' );

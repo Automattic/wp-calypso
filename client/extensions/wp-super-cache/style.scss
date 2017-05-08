@@ -1,0 +1,199 @@
+.wp-super-cache__main .form-toggle__label {
+	display: flex;
+	align-items: center;
+	margin-bottom: 5px;
+	font-size: 14px;
+}
+
+.wp-super-cache__main .form-toggle__switch {
+	flex: 1 0 auto;
+	margin-top: 3px;
+}
+
+.wp-super-cache__main .button {
+	margin-right: 8px;
+}
+
+// Easy Tab
+.wp-super-cache__notice-hug-card {
+	margin-top: -15px;
+}
+
+.wp-super-cache__cache-test-results {
+	list-style: none;
+	margin: 0;
+}
+
+.wp-super-cache__cache-test-results-label {
+	display: inline-block;
+	font-weight: bold;
+	margin-top: 1.5em;
+}
+
+.wp-super-cache__cache-test-results-item {
+	padding: 5px 0;
+}
+
+.wp-super-cache__cache-test-results-icon {
+	margin-left: 5px;
+	vertical-align: bottom;
+
+	&.gridicons-checkmark-circle {
+		color: $alert-green;
+	}
+
+	&.gridicons-cross-circle {
+		color: $alert-red;
+	}
+}
+
+// Advanced Tab
+.wp-super-cache__cache-timeout.form-text-input {
+	width: 100px;
+	margin-right: 10px;
+}
+
+.wp-super-cache__scheduler .form-radio {
+	margin-top: 12px;
+}
+
+.wp-super-cache__scheduler .form-text-input {
+	width: 100px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.wp-super-cache__clock {
+	margin-top: 5px;
+}
+
+.wp-super-cache__interval {
+	margin: 10px 0 0 24px;
+}
+
+.wp-super-cache__directly-cached-files .form-text-input,
+.wp-super-cache__directly-cached-files .form-text-input-with-action {
+	width: 300px;
+}
+
+// Contents Tab
+.wp-super-cache__cache-stat {
+	margin-bottom: 20px;
+}
+
+.wp-super-cache__cache-stat-label {
+	display: block;
+	font-size: 14px;
+	font-weight: 600;
+	margin-bottom: 5px;
+}
+
+.wp-super-cache__cache-stat-item {
+	display: block;
+}
+
+.wp-super-cache__cache-stat-refresh {
+	font-style: italic;
+	font-size: 13px;
+}
+
+.wp-super-cache__foldable-card.is-compact .foldable-card__header {
+	padding: 24px;
+}
+
+.wp-super-cache__contents-list {
+	padding: 0;
+	margin: 0 0 .5em;
+	list-style-type: none;
+}
+
+.wp-super-cache__contents-list-legend {
+	padding-top: .5em;
+	margin-bottom: 0;
+}
+
+.wp-super-cache__contents-list-legend .wp-super-cache__contents-list-item-value,
+.wp-super-cache__contents-list-legend .wp-super-cache__contents-list-item-label {
+	color: $gray;
+	font-weight: bold;
+}
+
+.wp-super-cache__contents-list-item {
+	font-size: 14px;
+	line-height: 28px;
+	margin-bottom: 5px;
+}
+
+.wp-super-cache__contents-list-item-right {
+	float: right;
+}
+
+.wp-super-cache__contents-list-item-label {
+	display: block;
+	overflow: hidden;
+	word-break: break-all;
+}
+
+.wp-super-cache__contents-list-item-value {
+	display: inline-block;
+	min-width: 44px;
+	margin: 0 1em 0 0;
+	text-align: right;
+}
+
+.wp-super-cache__contents-list-item-action {
+	display: inline-block;
+	width: 60px;
+}
+
+// Preload Tab
+.wp-super-cache__preload-posts {
+	text-transform: capitalize;
+}
+
+.wp-super-cache__preload-interval.form-text-input {
+	padding: 0;
+	width: 50px;
+	text-align: center;
+	display: inline-block;
+}
+
+.wp-super-cache__cache-type-fieldset {
+	margin-left: 40px;
+	margin-bottom: 0;
+	margin-top: -10px;
+}
+
+.wp-super-cache__miscellaneous-304-notice.is-compact {
+	margin-left: 36px;
+	margin-bottom: 5px;
+}
+
+.wp-super-cache__condition-settings-explanation {
+	margin-bottom: 20px;
+}
+
+.wp-super-cache__lock-down-container,
+.wp-super-cache__cdn-fieldsets {
+	margin-left: 40px;
+}
+
+.wp-super-cache__lock-down-explanation,
+.wp-super-cache__lock-down-code-block {
+	margin-bottom: 1.5em;
+}
+
+.wp-super-cache__lock-down-code-block {
+	@extend %form-field;
+	overflow: hidden;
+}
+
+.wp-super-cache__main  .wp-super-cache__lock-down-code-block-snippet {
+	font-family: monospace, serif;
+	display: block;
+}
+
+.wp-super-cache__main  .wp-super-cache__lock-down-code-block-button {
+	margin-right: 0;
+	float: right;
+}

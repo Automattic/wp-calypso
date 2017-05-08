@@ -14,18 +14,18 @@ import {
 	ACTIVE_THEME_REQUEST_FAILURE,
 	DESERIALIZE,
 	SERIALIZE,
-	THEME_ACTIVATE_REQUEST,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
-	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_ACTIVATE,
+	THEME_ACTIVATE_SUCCESS,
+	THEME_ACTIVATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_SUCCESS,
+	THEME_FILTERS_ADD,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
 	THEME_REQUEST_FAILURE,
-	THEMES_RECEIVE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
@@ -40,6 +40,7 @@ import { createReducer, isValidStateWithSchema } from 'state/utils';
 import {
 	queriesSchema,
 	activeThemesSchema,
+	themeFiltersSchema,
 	themeRequestErrorsSchema,
 } from './schema';
 import themesUI from './themes-ui/reducer';
@@ -55,7 +56,7 @@ import uploadTheme from './upload-theme/reducer';
  * @return {Object}        Updated state
  */
 export const activeThemes = createReducer( {}, {
-	[ THEME_ACTIVATE_REQUEST_SUCCESS ]: ( state, { siteId, themeStylesheet } ) => ( {
+	[ THEME_ACTIVATE_SUCCESS ]: ( state, { siteId, themeStylesheet } ) => ( {
 		...state,
 		[ siteId ]: getThemeIdFromStylesheet( themeStylesheet )
 	} ),
@@ -77,12 +78,12 @@ export const activeThemes = createReducer( {}, {
  */
 export function activationRequests( state = {}, action ) {
 	switch ( action.type ) {
-		case THEME_ACTIVATE_REQUEST:
-		case THEME_ACTIVATE_REQUEST_SUCCESS:
-		case THEME_ACTIVATE_REQUEST_FAILURE:
+		case THEME_ACTIVATE:
+		case THEME_ACTIVATE_SUCCESS:
+		case THEME_ACTIVATE_FAILURE:
 			return {
 				...state,
-				[ action.siteId ]: THEME_ACTIVATE_REQUEST === action.type
+				[ action.siteId ]: THEME_ACTIVATE === action.type
 			};
 
 		case SERIALIZE:
@@ -103,7 +104,7 @@ export function activationRequests( state = {}, action ) {
  * @return {Object}        Updated state
  */
 export const completedActivationRequests = createReducer( {}, {
-	[ THEME_ACTIVATE_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( {
+	[ THEME_ACTIVATE_SUCCESS ]: ( state, { siteId } ) => ( {
 		...state,
 		[ siteId ]: true,
 	} ),
@@ -310,10 +311,11 @@ export const queries = ( () => {
 
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
-			return applyToManager( state, siteId, 'receive', true, themes, { query, found } );
-		},
-		[ THEMES_RECEIVE ]: ( state, { siteId, themes } ) => {
-			return applyToManager( state, siteId, 'receive', true, themes );
+			return applyToManager(
+				// Always 'patch' to avoid overwriting existing fields when receiving
+				// from a less rich endpoint such as /mine
+				state, siteId, 'receive', true, themes, { query, found, patch: true }
+			);
 		},
 		[ THEME_DELETE_SUCCESS ]: ( state, { siteId, themeId } ) => {
 			return applyToManager( state, siteId, 'removeItem', false, themeId );
@@ -375,6 +377,10 @@ export const themePreviewVisibility = createReducer( null, {
 	[ THEME_PREVIEW_STATE ]: ( state, { themeId } ) => ( themeId )
 } );
 
+export const themeFilters = createReducer( {}, {
+	[ THEME_FILTERS_ADD ]: ( state, { filters } ) => ( filters )
+}, themeFiltersSchema );
+
 export default combineReducers( {
 	queries,
 	queryRequests,
@@ -390,5 +396,6 @@ export default combineReducers( {
 	themesUI,
 	uploadTheme,
 	themePreviewOptions,
-	themePreviewVisibility
+	themePreviewVisibility,
+	themeFilters,
 } );

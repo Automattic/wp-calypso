@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FollowButton from 'reader/follow-button';
-import * as discoverStats from './stats';
+import { recordFollowToggle } from './stats';
 
 class DiscoverFollowButton extends React.Component {
 
@@ -18,7 +18,7 @@ class DiscoverFollowButton extends React.Component {
 	}
 
 	recordFollowToggle = ( isFollowing ) => {
-		discoverStats.recordFollowToggle( isFollowing, this.props.siteUrl );
+		recordFollowToggle( isFollowing, this.props.siteUrl );
 	}
 
 	render() {

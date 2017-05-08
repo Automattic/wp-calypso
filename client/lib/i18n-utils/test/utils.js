@@ -8,14 +8,36 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { removeLocaleFromPath, getLanguage, getLocaleFromPath } from 'lib/i18n-utils';
+import { removeLocaleFromPath, addLocaleToPath, getLanguage, getLocaleFromPath } from 'lib/i18n-utils';
 
 describe( 'utils', function() {
+	describe( '#addLocaleToPath', function() {
+		it( 'adds a locale to the path', function() {
+			assert.equal( addLocaleToPath( '/start/flow/step', 'fr' ), '/start/flow/step/fr' );
+		} );
+
+		it( 'adds a locale to the path, replacing any previous locale', function() {
+			assert.equal( addLocaleToPath( '/start/flow/step/de', 'fr' ), '/start/flow/step/fr' );
+		} );
+
+		it( 'adds a locale to the path, keeping query string intact', function() {
+			assert.equal( addLocaleToPath( '/start/flow/step?foo=bar', 'fr' ), '/start/flow/step/fr?foo=bar' );
+		} );
+	} );
+
 	describe( '#removeLocaleFromPath', function() {
 		it( 'should remove the :lang part of the URL', function() {
 			assert.equal( removeLocaleFromPath( '/start/fr' ), '/start' );
 			assert.equal( removeLocaleFromPath( '/start/flow/fr' ), '/start/flow' );
 			assert.equal( removeLocaleFromPath( '/start/flow/step' ), '/start/flow/step' );
+		} );
+
+		it( 'should remove the :lang part of the URL, keeping any query string', function() {
+			assert.equal( removeLocaleFromPath( '/start/flow/step/fr?foo=bar' ), '/start/flow/step?foo=bar' );
+		} );
+
+		it( 'should not change the URL if no lang is present', function() {
+			assert.equal( removeLocaleFromPath( '/start/flow/step?foo=bar' ), '/start/flow/step?foo=bar' );
 		} );
 
 		it( 'should not remove the :flow part of the URL', function() {

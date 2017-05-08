@@ -5,7 +5,7 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { uniq } from 'lodash';
+import { uniq, some, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -30,8 +30,24 @@ import utils from 'lib/site/utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { domainManagementList, domainManagementEdit, domainManagementDns } from 'my-sites/upgrades/paths';
+import {
+	domainManagementAddGoogleApps,
+	domainManagementContactsPrivacy,
+	domainManagementDns,
+	domainManagementEdit,
+	domainManagementEditContactInfo,
+	domainManagementEmail,
+	domainManagementEmailForwarding,
+	domainManagementList,
+	domainManagementNameServers,
+	domainManagementPrivacyProtection,
+	domainManagementRedirectSettings,
+	domainManagementTransfer,
+	domainManagementTransferOut,
+	domainManagementTransferToAnotherUser
+} from 'my-sites/upgrades/paths';
 import SitesComponent from 'my-sites/sites';
+import { isATEnabled } from 'lib/automated-transfer';
 
 /**
  * Module vars
@@ -113,34 +129,54 @@ function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	const EmptyContentComponent = require( 'components/empty-content' );
+	const DomainOnly = require( 'my-sites/upgrades/domain-management/list/domain-only' );
 	const { store: reduxStore } = reactContext;
 
-	removeSidebar( reactContext );
+	renderWithReduxStore( (
+			<DomainOnly domainName={ selectedSite.slug } siteId={ selectedSite.ID } hasNotice={ false } />
+		),
+		document.getElementById( 'primary' ),
+		reduxStore
+	);
 
 	renderWithReduxStore(
-		React.createElement( EmptyContentComponent, {
-			title: i18n.translate( 'Add a site to start using this feature.' ),
-			line: i18n.translate( 'Your domain is only set up with a temporary page. Start a site now to unlock everything WordPress.com can offer.' ),
-			action: i18n.translate( 'Create Site' ),
-			actionURL: `/start/site-selected/?siteSlug=${ encodeURIComponent( selectedSite.slug ) }&siteId=${ encodeURIComponent( selectedSite.ID ) }`,
-			secondaryAction: i18n.translate( 'Manage Domain' ),
-			secondaryActionURL: domainManagementList( selectedSite.slug )
-		} ),
-		document.getElementById( 'primary' ),
+		createNavigation( reactContext ),
+		document.getElementById( 'secondary' ),
 		reduxStore
 	);
 }
 
-function isPathAllowedForDomainOnlySite( pathname, domainName ) {
-	const urlWhiteListForDomainOnlySite = [
-		domainManagementList( domainName ),
-		domainManagementEdit( domainName ),
-		domainManagementDns( domainName ),
-		`/checkout/${ domainName }`,
-	];
+function isPathAllowedForDomainOnlySite( path, domainName ) {
+	const domainManagementPaths = [
+		domainManagementAddGoogleApps,
+		domainManagementContactsPrivacy,
+		domainManagementDns,
+		domainManagementEdit,
+		domainManagementEditContactInfo,
+		domainManagementEmail,
+		domainManagementEmailForwarding,
+		domainManagementList,
+		domainManagementNameServers,
+		domainManagementPrivacyProtection,
+		domainManagementRedirectSettings,
+		domainManagementTransfer,
+		domainManagementTransferOut,
+		domainManagementTransferToAnotherUser
+	].map( pathFactory => pathFactory( domainName, domainName ) );
 
-	return urlWhiteListForDomainOnlySite.indexOf( pathname ) > -1;
+	const otherPaths = [
+			`/checkout/${ domainName }`
+		],
+		startsWithPaths = [
+			'/checkout/thank-you',
+			`/me/purchases/${ domainName }`
+		];
+
+	if ( some( startsWithPaths, startsWithPath => startsWith( path, startsWithPath ) ) ) {
+		return true;
+	}
+
+	return [ ...domainManagementPaths, ...otherPaths ].indexOf( path ) > -1;
 }
 
 function onSelectedSiteAvailable( context ) {
@@ -202,11 +238,18 @@ function createSitesComponent( context ) {
 }
 
 module.exports = {
+
+	// Clears selected site from global redux state
+	noSite( context, next ) {
+		context.store.dispatch( setSelectedSiteId( null ) );
+		return next();
+	},
+
 	/*
 	 * Set up site selection based on last URL param and/or handle no-sites error cases
 	 */
 	siteSelection( context, next ) {
-		const siteID = route.getSiteFragment( context.path );
+		const siteID = context.params.site || route.getSiteFragment( context.path );
 		const basePath = route.sectionify( context.path );
 		const currentUser = user.get();
 		const hasOneSite = currentUser.visible_site_count === 1;
@@ -307,7 +350,7 @@ module.exports = {
 		}
 	},
 
-	jetpackModuleActive( moduleIds, redirect ) {
+	jetpackModuleActive( moduleId, redirect ) {
 		return function( context, next ) {
 			const site = sites.getSelectedSite();
 
@@ -315,13 +358,11 @@ module.exports = {
 				return next();
 			}
 
-			site.verifyModulesActive( moduleIds, function( error, supported ) {
-				if ( supported || false === redirect ) {
-					next();
-				} else {
-					page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
-				}
-			} );
+			if ( site.isModuleActive( moduleId ) || false === redirect ) {
+				next();
+			} else {
+				page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
+			}
 		};
 	},
 
@@ -367,7 +408,7 @@ module.exports = {
 		const basePath = route.sectionify( context.path );
 		const selectedSite = sites.getSelectedSite();
 
-		if ( selectedSite && selectedSite.jetpack && ! ( config.isEnabled( 'automated-transfer' ) ) ) {
+		if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
 			renderWithReduxStore( (
 				<Main>
 					<JetpackManageErrorPage

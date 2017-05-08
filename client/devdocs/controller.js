@@ -6,13 +6,13 @@ import React from 'react';
 import qs from 'qs';
 import debounce from 'lodash/debounce';
 import page from 'page';
-import { Provider as ReduxProvider } from 'react-redux';
 import url from 'url';
 
 /**
  * Internal dependencies
  */
 import DocsComponent from './main';
+import { login } from 'lib/paths';
 import SingleDocComponent from './doc';
 import DesignAssetsComponent from './design';
 import Blocks from './design/blocks';
@@ -22,6 +22,7 @@ import DevWelcome from './welcome';
 import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
 import EmptyContent from 'components/empty-content';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const devdocs = {
 
@@ -93,37 +94,34 @@ const devdocs = {
 
 	// UI components
 	design: function( context ) {
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( DesignAssetsComponent, {
-					component: context.params.component
-				} )
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( DesignAssetsComponent, {
+				component: context.params.component
+			} ),
+			'primary',
+			context.store
 		);
 	},
 
 	// App Blocks
 	blocks: function( context ) {
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( Blocks, {
-					component: context.params.component
-				} )
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( Blocks, {
+				component: context.params.component
+			} ),
+			'primary',
+			context.store
 		);
 	},
 
 	selectors: function( context ) {
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( DocsSelectors, {
-					selector: context.params.selector,
-					search: context.query.search
-				} )
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( DocsSelectors, {
+				selector: context.params.selector,
+				search: context.query.search
+			} ),
+			'primary',
+			context.store
 		);
 	},
 
@@ -147,7 +145,7 @@ const devdocs = {
 
 	pleaseLogIn: function( context ) { // eslint-disable-line no-unused-vars
 		const currentUrl = url.parse( location.href );
-		const redirectUrl = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
+		const redirectTo = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
@@ -156,7 +154,7 @@ const devdocs = {
 				title: 'Log In to start hacking',
 				line: 'Required to access the WordPress.com API',
 				action: 'Log In to WordPress.com',
-				actionURL: 'https://wordpress.com/wp-login.php?redirect_to=' + encodeURIComponent( redirectUrl ),
+				actionURL: login( { redirectTo } ),
 				secondaryAction: 'Register',
 				secondaryActionURL: '/start/developer',
 				illustration: '/calypso/images/drake/drake-nosites.svg'

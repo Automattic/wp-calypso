@@ -104,7 +104,7 @@ const CartItem = React.createClass( {
 	},
 
 	getProductInfo() {
-		var domain = this.props.cartItem.meta || this.props.selectedSite.domain,
+		var domain = this.props.cartItem.meta || ( this.props.selectedSite && this.props.selectedSite.domain ),
 			info = null;
 		if ( isGoogleApps( this.props.cartItem ) && this.props.cartItem.extra.google_apps_users ) {
 			info = this.props.cartItem.extra.google_apps_users.map( user => <div>{ user.email }</div> );
@@ -113,7 +113,7 @@ const CartItem = React.createClass( {
 		} else if ( getIncludedDomain( this.props.cartItem ) ) {
 			info = getIncludedDomain( this.props.cartItem );
 		} else if ( isTheme( this.props.cartItem ) ) {
-			info = this.props.selectedSite.domain;
+			info = this.props.selectedSite && this.props.selectedSite.domain;
 		} else {
 			info = domain;
 		}

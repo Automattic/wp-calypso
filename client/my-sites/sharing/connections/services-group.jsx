@@ -12,6 +12,7 @@ import { getEligibleKeyringServices, isKeyringServicesFetching } from 'state/sha
 import { getSelectedSiteId } from 'state/ui/selectors';
 import SectionHeader from 'components/section-header';
 import Service from './service';
+import * as Components from './services';
 import ServicePlaceholder from './service-placeholder';
 
 /**
@@ -19,7 +20,7 @@ import ServicePlaceholder from './service-placeholder';
  */
 const NUMBER_OF_PLACEHOLDERS = 4;
 
-const SharingServicesGroup = ( { connections, isFetching, services, title } ) => {
+const SharingServicesGroup = ( { isFetching, services, title } ) => {
 	if ( ! services.length && ! isFetching ) {
 		return null;
 	}
@@ -29,9 +30,11 @@ const SharingServicesGroup = ( { connections, isFetching, services, title } ) =>
 			<SectionHeader label={ title } />
 			<ul className="sharing-services-group__services">
 				{ services.length
-					? services.map( ( service ) => (
-						<Service key={ service.ID } connections={ connections } service={ service } />
-					) )
+					? services.map( ( service ) => {
+						const Component = Components.hasOwnProperty( service.ID ) ? Components[ service.ID ] : Service;
+
+						return <Component key={ service.ID } service={ service } />;
+					} )
 					: times( NUMBER_OF_PLACEHOLDERS, ( index ) => (
 						<ServicePlaceholder key={ 'service-placeholder-' + index } />
 					) )
@@ -42,7 +45,6 @@ const SharingServicesGroup = ( { connections, isFetching, services, title } ) =>
 };
 
 SharingServicesGroup.propTypes = {
-	connections: PropTypes.object,
 	isFetching: PropTypes.bool,
 	services: PropTypes.array,
 	title: PropTypes.string.isRequired,
@@ -50,7 +52,6 @@ SharingServicesGroup.propTypes = {
 };
 
 SharingServicesGroup.defaultProps = {
-	connections: {},
 	isFetching: false,
 	services: [],
 };

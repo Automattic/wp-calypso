@@ -20,6 +20,8 @@ const ReaderAvatarExample = () => {
 	return (
 		<div className="design-assets__group">
 			<ReaderAvatar author={ author } siteIcon={ siteIcon } />
+			<h4>Compact</h4>
+			<ReaderAvatar author={ author } siteIcon={ siteIcon } isCompact={ true } />
 		</div>
 	);
 };

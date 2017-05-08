@@ -6,8 +6,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { SELECTED_SITE_SET, ROUTE_SET } from 'state/action-types';
-import { setSelectedSiteId, setRoute } from '../actions';
+import {
+	SELECTED_SITE_SET,
+	ROUTE_SET,
+	NOTIFICATIONS_PANEL_TOGGLE
+} from 'state/action-types';
+import { setSelectedSiteId, setRoute, toggleNotificationsPanel } from '../actions';
 
 describe( 'actions', () => {
 	describe( '#setSelectedSiteId()', () => {
@@ -29,6 +33,14 @@ describe( 'actions', () => {
 				type: ROUTE_SET,
 				path: '/foo',
 				query: {}
+			} );
+		} );
+	} );
+
+	describe( 'toggleNotificationsPanel()', () => {
+		it( 'should return an action object', () => {
+			expect( toggleNotificationsPanel() ).to.eql( {
+				type: NOTIFICATIONS_PANEL_TOGGLE,
 			} );
 		} );
 	} );

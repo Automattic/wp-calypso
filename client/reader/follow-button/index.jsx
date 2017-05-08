@@ -68,5 +68,5 @@ export default connect(
 		dispatchRecordUnfollow: recordUnfollowAction,
 	}, dispatch ),
 	null,
-	{ pure: false } // we are not pure from the standpoint of the redux state tree
+	{ pure: true } // TODO: is this component pure?
 )( ReaderFollowButton );

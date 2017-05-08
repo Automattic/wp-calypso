@@ -9,12 +9,17 @@ import { expect } from 'chai';
  */
 import {
 	KEYRING_CONNECTION_DELETE,
+	KEYRING_CONNECTION_DELETE_FAILURE,
 	KEYRING_CONNECTIONS_RECEIVE,
 	KEYRING_CONNECTIONS_REQUEST,
 	KEYRING_CONNECTIONS_REQUEST_FAILURE,
 	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { requestKeyringConnections, deleteKeyringConnection } from '../actions';
+import {
+	requestKeyringConnections,
+	deleteKeyringConnection,
+	deleteStoredKeyringConnection,
+} from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -97,13 +102,49 @@ describe( 'actions', () => {
 
 	describe( 'deleteKeyringConnection()', () => {
 		it( 'should dispatch delete action', () => {
-			deleteKeyringConnection( { ID: 2 } )( spy );
+			const action = deleteKeyringConnection( { ID: 2 } );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( action ).to.eql( {
 				type: KEYRING_CONNECTION_DELETE,
 				connection: {
 					ID: 2,
 				},
+			} );
+		} );
+	} );
+
+	describe( 'deleteStoredKeyringConnection()', () => {
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( '/rest/v1.1/me/keyring-connections/2/delete' )
+				.reply( 200, {
+					ID: 2,
+					deleted: true,
+				} )
+				.post( '/rest/v1.1/me/keyring-connections/34/delete' )
+				.reply( 403, {
+					error: 'authorization_required',
+					message: 'You do not have permission to access this Keyring connection.'
+				} );
+		} );
+
+		it( 'should dispatch delete action when request completes', () => {
+			deleteStoredKeyringConnection( { ID: 2 } )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: KEYRING_CONNECTION_DELETE,
+					connection: {
+						ID: 2
+					},
+				} );
+			} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			deleteStoredKeyringConnection( { ID: 34 } )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: KEYRING_CONNECTION_DELETE_FAILURE,
+					error: sinon.match( { message: 'You do not have permission to access this Keyring connection.' } )
+				} );
 			} );
 		} );
 	} );

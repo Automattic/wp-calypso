@@ -25,11 +25,11 @@ import StatsFirstView from '../stats-first-view';
 import SectionHeader from 'components/section-header';
 import StatsViews from '../stats-views';
 import Followers from '../stats-followers';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 const StatsInsights = ( props ) => {
-	const { followList, isJetpack, siteId, translate } = props;
+	const { followList, isJetpack, siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
 
 	let tagsList;
@@ -48,7 +48,7 @@ const StatsInsights = ( props ) => {
 		<Main wideLayout>
 			<StatsFirstView />
 			<SidebarNavigation />
-			<StatsNavigation section="insights" />
+			<StatsNavigation section="insights" slug={ siteSlug } />
 			<div>
 				<PostingActivity />
 				<SectionHeader label={ translate( 'All Time Views' ) } />
@@ -58,19 +58,21 @@ const StatsInsights = ( props ) => {
 					<div className="stats__module-list">
 						<div className="stats__module-column">
 							<LatestPostSummary />
-							<AllTime />
-							<Comments
-								path={ 'comments' }
-								followList={ followList }
-							/>
+							<MostPopular />
+							{ tagsList }
 						</div>
 						<div className="stats__module-column">
 							<Reach />
 							<Followers
 								path={ 'followers' }
 								followList={ followList } />
-							<MostPopular />
-							{ tagsList }
+						</div>
+						<div className="stats__module-column">
+							<AllTime />
+							<Comments
+								path={ 'comments' }
+								followList={ followList }
+							/>
 							<StatsModule
 								path="publicize"
 								moduleStrings={ moduleStrings.publicize }
@@ -95,7 +97,8 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		return {
 			isJetpack: isJetpackSite( state, siteId ),
-			siteId
+			siteId,
+			siteSlug: getSelectedSiteSlug( state, siteId ),
 		};
 	}
 );

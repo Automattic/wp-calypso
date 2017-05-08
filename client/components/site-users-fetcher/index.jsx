@@ -102,9 +102,9 @@ module.exports = React.createClass( {
 		}
 
 		return Object.assign( {}, paginationData, {
-			users: this.props.exclude ? users[0] : users,
+			users: this.props.exclude ? users[ 0 ] : users,
 			fetchOptions: fetchOptions,
-			excludedUsers: this.props.exclude ? users[1] : []
+			excludedUsers: this.props.exclude ? users[ 1 ] : []
 		} );
 	},
 

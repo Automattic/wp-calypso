@@ -5,7 +5,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -28,7 +27,7 @@ function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
 	}
 
 	return (
-		<Accordion title={ title } icon={ <Gridicon icon="pages" /> }>
+		<Accordion title={ title }>
 			{ hierarchical && (
 				<PageParent />
 			) }

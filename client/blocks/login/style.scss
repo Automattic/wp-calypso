@@ -1,0 +1,64 @@
+.card.login__form {
+	margin-bottom: 0;
+}
+
+.login__form-userdata {
+	label {
+		color: $gray-dark;
+		display: block;
+		font-size: 14px;
+		line-height: 1.5;
+		font-weight: 500;
+		margin-bottom: 5px;
+	}
+	input{
+		margin-bottom: 20px;
+	}
+}
+
+.login__form-action {
+	margin-top: 10px;
+
+	button {
+		width: 100%;
+	}
+}
+
+.login__form-header,
+.two-factor-authentication__header {
+	font-size: 22px;
+	margin-bottom: 24px;
+	margin-top: 16px;
+	text-align: center;
+}
+
+.login__form-remember-me {
+	margin-bottom: 20px;
+
+	input {
+		margin-right: 10px;
+	}
+
+	label{
+		font-size: 14px;
+	}
+}
+
+.wp-login__footer{
+	a{
+		font-size: 14px;
+
+		&:hover{
+			color: $blue-medium;
+		}
+	}
+	.gridicon{
+		vertical-align: text-bottom;
+	}
+}
+
+.two-factor-authentication__auth-code-preview {
+	width: 100%;
+	display: block;
+	margin-bottom: 16px;
+}

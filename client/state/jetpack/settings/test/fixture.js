@@ -3,8 +3,8 @@ export const settings = {
 		setting_1: 4321,
 		setting_2: false,
 		setting_10: 'test',
-		wp_mobile_excerpt: 'disabled',
-		wp_mobile_featured_images: 'enabled',
+		wp_mobile_excerpt: false,
+		wp_mobile_featured_images: true,
 	},
 	87654321: {
 		setting_1: 1234,
@@ -18,9 +18,7 @@ export const settings = {
 export const normalizedSettings = {
 	...settings,
 	12345678: {
-		...settings[ 12345678 ],
-		wp_mobile_excerpt: false,
-		wp_mobile_featured_images: true,
+		...settings[ 12345678 ]
 	}
 };
 

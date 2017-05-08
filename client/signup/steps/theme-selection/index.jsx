@@ -3,9 +3,8 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
+import { find, identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,10 +12,11 @@ import { identity } from 'lodash';
 import analytics from 'lib/analytics';
 import SignupActions from 'lib/signup/actions';
 import SignupThemesList from './signup-themes-list';
-import PressableThemeStep from './pressable-theme';
 import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
-
+import { themes } from 'lib/signup/themes-data';
+import { abtest } from 'lib/abtest';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 
 class ThemeSelectionStep extends Component {
@@ -34,11 +34,8 @@ class ThemeSelectionStep extends Component {
 		translate: identity,
 	};
 
-	state = {
-		showPressable: false,
-	};
-
-	pickTheme = ( theme ) => {
+	pickTheme = ( themeId ) => {
+		const theme = find( themes, { slug: themeId } );
 		const repoSlug = `${ theme.repo }/${ theme.slug }`;
 
 		analytics.tracks.recordEvent( 'calypso_signup_theme_select', {
@@ -57,43 +54,13 @@ class ThemeSelectionStep extends Component {
 		this.props.goToNextStep();
 	};
 
-	handleThemeUpload = () => {
-		this.setState( {
-			showPressable: true
-		} );
-
-		this.scrollUp();
-	};
-
 	renderThemesList() {
-		const pressableWrapperClassName = classNames(
-			'theme-selection__pressable-wrapper',
-			{ 'is-hidden': ! this.state.showPressable }
-		);
-
-		const themesWrapperClassName = classNames(
-			'theme-selection__themes-wrapper',
-			{ 'is-hidden': this.state.showPressable }
-		);
-
 		return (
-			<div className="theme-selection__pressable-substep-wrapper">
-				<div className={ pressableWrapperClassName }>
-					<PressableThemeStep
-						{ ...this.props }
-						onBackClick={ this.handleStoreBackClick }
-					/>
-				</div>
-				<div className={ themesWrapperClassName }>
-					<SignupThemesList
-						className={ themesWrapperClassName }
-						surveyQuestion={ this.props.chosenSurveyVertical }
-						designType={ this.props.designType || this.props.signupDependencies.designType }
-						handleScreenshotClick={ this.pickTheme }
-						handleThemeUpload={ this.handleThemeUpload }
-					/>
-				</div>
-			</div>
+			<SignupThemesList
+				surveyQuestion={ this.props.chosenSurveyVertical }
+				designType={ this.props.designType || this.props.signupDependencies.designType }
+				handleScreenshotClick={ this.pickTheme }
+			/>
 		);
 	}
 
@@ -105,36 +72,39 @@ class ThemeSelectionStep extends Component {
 		);
 	}
 
-	scrollUp() {
-		// Didn't use setInterval in order to fix delayed scroll
-		while ( window.pageYOffset > 0 ) {
-			window.scrollBy( 0, -10 );
-		}
-	}
-
-	handleStoreBackClick = () => {
-		this.setState( {
-			showPressable: false
-		} );
-
-		this.scrollUp();
-	};
-
 	render = () => {
 		const defaultDependencies = this.props.useHeadstart ? { themeSlugWithRepo: 'pub/twentysixteen' } : undefined;
 		const { translate } = this.props;
+		let headerText = translate( 'Choose a theme.' );
+		let subHeaderText = translate(
+			'No need to overthink it. You can always switch to a different theme later.',
+			{ context: 'Themes step subheader in Signup' }
+		);
 
-		const headerText = this.state.showPressable
-			? translate( 'Upload your WordPress Theme' )
-			: translate( 'Choose a theme.' );
+		if ( abtest( 'signupThemeStepCopyChanges' ) === 'modified' && this.props.currentUser == null ) {
+			let siteType = this.props.signupDependencies.designType;
 
-		const subHeaderText = this.state.showPressable
-			? translate( 'Our partner Pressable is here to help you', {
-				context: 'Subheader text in Signup, when a user chooses the Upload theme in the Themes step'
-			} )
-			: translate( 'No need to overthink it. You can always switch to a different theme later.', {
-				context: 'Themes step subheader in Signup'
-			} );
+			switch ( siteType ) {
+				case 'blog':
+					siteType = 'blog';
+					break;
+				case 'grid':
+					siteType = 'portfolio';
+					break;
+				case 'page':
+					siteType = 'website';
+					break;
+				case undefined:
+					siteType = '';
+					break;
+				default:
+					siteType = 'website';
+			}
+
+			// Note: Don't make this translatable because it's only visible to English-language users
+			headerText = 'Here are our most popular ' + siteType + ' designs.';
+			subHeaderText = 'Pick one of these to get started or choose from hundreds more once your account is created.';
+		}
 
 		return (
 			<StepWrapper
@@ -144,7 +114,6 @@ class ThemeSelectionStep extends Component {
 				stepContent={ this.renderThemesList() }
 				defaultDependencies={ defaultDependencies }
 				headerButton={ this.renderJetpackButton() }
-				shouldHideNavButtons={ this.state.showPressable }
 				{ ...this.props }
 			/>
 		);
@@ -152,9 +121,8 @@ class ThemeSelectionStep extends Component {
 }
 
 export default connect(
-	( state ) => {
-		return {
-			chosenSurveyVertical: getSurveyVertical( state )
-		};
-	}
+	( state ) => ( {
+		chosenSurveyVertical: getSurveyVertical( state ),
+		currentUser: getCurrentUser( state )
+	} )
 )( localize( ThemeSelectionStep ) );

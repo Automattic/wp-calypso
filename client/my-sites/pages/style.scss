@@ -35,8 +35,7 @@
 }
 
 // <Page> component
-.page,
-.pages__blog-posts-page {
+.page {
 
 	.site-icon {
 		display: none;
@@ -51,9 +50,7 @@
 }
 
 .page__title,
-.page__title:visited,
-.pages__blog-posts-page__title,
-.pages__blog-posts-page__title:visited {
+.page__title:visited {
 	display: inline;
 	color: $gray-dark;
 	font-weight: 500;
@@ -97,35 +94,12 @@
 	}
 }
 
-.page__popover-more-info,
-.pages__blog-posts-page__popover-more-info {
+.page__popover-more-info {
 	color: $gray;
 	padding: 4px 16px 8px;
 	font-size: 12px;
 	max-width: 150px;
 	text-align: left;
-}
-
-.pages__blog-posts-page__popover-more-info {
-	padding: 8px 16px;
-}
-
-.pages__blog-posts-page__not-used-label {
-	background-color: $gray;
-	border-radius: 3px;
-	color: $white;
-	float: left;
-	font-size: 12px;
-	margin: 6px 24px 0 0;
-	padding: 5px 16px;
-}
-
-.pages__blog-posts-page__info {
-	color: $gray;
-	font-size: 12px;
-	max-width: 300px;
-	line-height: 24px;
-	margin: -6px 33px 0px 26px;
 }
 
 .page__delete-item.popover__menu-item {

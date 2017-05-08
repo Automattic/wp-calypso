@@ -5,7 +5,7 @@ var identity = require( 'lodash/identity' );
 
 var fieldMasks = {};
 
-fieldMasks['expiration-date'] = {
+fieldMasks[ 'expiration-date' ] = {
 	mask: function( previousValue, nextValue ) {
 		// If the user is deleting from the value then don't modify it
 		if ( previousValue && previousValue.length > nextValue.length ) {

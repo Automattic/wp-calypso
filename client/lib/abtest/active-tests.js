@@ -8,139 +8,87 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	signupStore: {
-		datestamp: '20160927',
+	signupPlansCallToAction: {
+		datestamp: '20170403',
 		variations: {
-			designTypeWithoutStore: 0,
-			designTypeWithStore: 100,
+			original: 0,
+			modified: 100, // Setting to 100% until strings are translated
 		},
-		defaultVariation: 'designTypeWithStore',
-		allowExistingUsers: false,
+		defaultVariation: 'original',
 	},
-	signupStoreBenchmarking: {
-		datestamp: '20160927',
+	jetpackNoMonthly: {
+		datestamp: '20170410',
 		variations: {
-			pressable: 97,
-			bluehost: 1,
-			bluehostWithWoo: 1,
-			siteground: 1
+			showMonthly: 50,
+			dontShowMonthly: 50
 		},
-		defaultVariation: 'pressable',
-		allowExistingUsers: false,
-	},
-	signupThemeUpload: {
-		datestamp: '20160928',
-		variations: {
-			showThemeUpload: 10,
-			hideThemeUpload: 90,
-		},
-		defaultVariation: 'hideThemeUpload',
-		allowExistingUsers: false,
-	},
-	domainSuggestionPopover: {
-		datestamp: '20160809',
-		variations: {
-			showPopover: 80,
-			hidePopover: 20,
-		},
-		defaultVariation: 'showPopover',
-		allowExistingUsers: false,
-	},
-	designShowcaseWelcomeTour: {
-		datestamp: '20161206',
-		variations: {
-			enabled: 0,
-			disabled: 100,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-	themeSheetWelcomeTour: {
-		datestamp: '20161206',
-		variations: {
-			enabled: 0,
-			disabled: 100,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-	siteTitleStep: {
-		datestamp: '20170102',
-		variations: {
-			showSiteTitleStep: 5,
-			hideSiteTitleStep: 95,
-		},
-		defaultVariation: 'hideSiteTitleStep',
-		allowExistingUsers: false
-	},
-
-	jetpackConnectPlansFirst: {
-		datestamp: '20161024',
-		variations: {
-			showPlansBeforeAuth: 50,
-			showPlansAfterAuth: 50
-		},
-		defaultVariation: 'showPlansAfterAuth',
+		defaultVariation: 'showMonthly',
 		allowExistingUsers: true
 	},
-
-	siteTitleTour: {
-		datestamp: '20161207',
+	signupSurveyStep: {
+		datestamp: '20170329',
 		variations: {
-			disabled: 100,
-			enabled: 0,
+			showSurveyStep: 20,
+			hideSurveyStep: 80,
 		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
+		defaultVariation: 'hideSurveyStep',
 	},
-
-	userFirstSignup: {
-		datestamp: '20160124',
+	signupThemeStepCopyChanges: {
+		datestamp: '20170420',
 		variations: {
-			userLast: 100,
-			userFirst: 0,
+			original: 50,
+			modified: 50,
 		},
-		defaultVariation: 'userLast',
-		allowExistingUsers: false,
+		defaultVariation: 'original',
 	},
-
-	premiumSquaredPlansWording: {
-		datestamp: '20170111',
+	signupPlansReorderTest: {
+		datestamp: '20170410',
 		variations: {
-			withoutMarketingCopy: 50,
-			withMarketingCopy: 50
+			original: 50,
+			modified: 50,
 		},
-		defaultVariation: 'withoutMarketingCopy',
-		allowExistingUsers: true
+		defaultVariation: 'original',
 	},
-
-	jetpackPlansTabs: {
-		datestamp: '20170117',
+	conciergeOfferOnCancel: {
+		datestamp: '20170410',
 		variations: {
-			tabs: 50,
-			noTabs: 50
+			showConciergeOffer: 50,
+			hideConciergeOffer: 50,
 		},
-		defaultVariation: 'noTabs'
+		defaultVariation: 'showConciergeOffer',
 	},
-
-	readerSearchOnFollowing: {
-		datestamp: '20170206',
+	presaleChatButton: {
+		datestamp: '20170328',
+		variations: {
+			showChatButton: 20,
+			original: 80
+		},
+		defaultVariation: 'original',
+		allowAnyLocale: true,
+	},
+	newSiteWithJetpack: {
+		datestamp: '20170419',
+		variations: {
+			showNewJetpackSite: 10,
+			onlyDotComSites: 90,
+		},
+		defaultVariation: 'onlyDotComSites',
+	},
+	chatOfferOnCancel: {
+		datestamp: '20170421',
 		variations: {
 			show: 50,
-			hide: 50
+			hide: 50,
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'show',
 		allowExistingUsers: true,
-		allowAnyLocale: true
 	},
-
-	freeToPaidUpsell: {
-		datestamp: '20170222',
+	domainToPaidPlanUpsellNudge: {
+		datestamp: '20170429',
 		variations: {
-			sidebar: 50,
-			disabled: 50
+			skip: 50,
+			show: 50,
 		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true
-	}
+		defaultVariation: 'skip',
+	},
 };

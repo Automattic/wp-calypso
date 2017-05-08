@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 
 /**
@@ -9,19 +9,20 @@ import classnames from 'classnames';
  */
 import Card from 'components/card';
 
-export default React.createClass( {
-	displayName: 'LoggedOutFormFooter',
-
-	propTypes: {
-		children: React.PropTypes.node.isRequired,
-		className: React.PropTypes.string
-	},
+class LoggedOutFormFooter extends Component {
+	static propTypes = {
+		children: PropTypes.node.isRequired,
+		className: PropTypes.string,
+		isBlended: PropTypes.bool
+	};
 
 	render() {
 		return (
-			<Card className={ classnames( 'logged-out-form__footer', this.props.className ) } >
+			<Card className={ classnames( 'logged-out-form__footer', this.props.className, { 'is-blended': this.props.isBlended } ) } >
 				{ this.props.children }
 			</Card>
 		);
 	}
-} );
+}
+
+export default LoggedOutFormFooter;

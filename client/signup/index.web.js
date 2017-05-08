@@ -10,7 +10,7 @@ import controller from './controller';
 import jetpackConnectController from './jetpack-connect/controller';
 import sitesController from 'my-sites/controller';
 
-module.exports = function() {
+export default function() {
 	page(
 		'/start/:flowName?/:stepName?/:stepSectionName?/:lang?',
 		controller.saveRefParameter,
@@ -84,4 +84,5 @@ module.exports = function() {
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', jetpackConnectController.sso );
 	page( '/jetpack/sso/*', jetpackConnectController.sso );
-};
+	page( '/jetpack/new', jetpackConnectController.newSite );
+}

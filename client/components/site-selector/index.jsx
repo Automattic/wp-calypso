@@ -393,6 +393,7 @@ const SiteSelector = React.createClass( {
 				<Search
 					ref="siteSearch"
 					onSearch={ this.onSearch }
+					delaySearch={ true }
 					autoFocus={ this.props.autoFocus }
 					disabled={ ! this.props.sites.initialized }
 					onSearchClose={ this.props.onClose }

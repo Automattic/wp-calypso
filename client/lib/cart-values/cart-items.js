@@ -215,14 +215,16 @@ function hasDomainCredit( cart ) {
 }
 
 /**
- * Whether the cart has a registration with .nl TLD
+ * Whether the cart has a registration with a specific TLD
  *
  * @param {Object} cart - cart as `CartValue` object
- * @returns {Boolean} - Whether or not the cart contains a .nl TLD
+ * @param {string} tld - TLD to look for, no leading dot
+ *
+ * @returns {Boolean} - Whether or not the cart contains a domain with that TLD
  */
-function hasNlTld( cart ) {
+function hasTld( cart, tld ) {
 	return some( getDomainRegistrations( cart ), function( cartItem ) {
-		return getDomainRegistrationTld( cartItem ) === '.nl';
+		return getDomainRegistrationTld( cartItem ) === '.' + tld;
 	} );
 }
 
@@ -458,10 +460,17 @@ function googleAppsExtraLicenses( properties ) {
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
+function fillGoogleAppsRegistrationData( cart, registrationData ) {
+	const googleAppsItems = filter( getAll( cart ), isGoogleApps );
+	return flow.apply( null, googleAppsItems.map( function( item ) {
+		item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
+		return add( item )
+	} ) );
+}
+
 function hasGoogleApps( cart ) {
 	return some( getAll( cart ), isGoogleApps );
 }
-
 
 function customDesignItem() {
 	return {
@@ -769,6 +778,7 @@ module.exports = {
 	domainPrivacyProtection,
 	domainRedemption,
 	domainRegistration,
+	fillGoogleAppsRegistrationData,
 	findFreeTrial,
 	getAll,
 	getAllSorted,
@@ -794,7 +804,6 @@ module.exports = {
 	hasDomainRegistration,
 	hasFreeTrial,
 	hasGoogleApps,
-	hasNlTld,
 	hasOnlyFreeTrial,
 	hasOnlyProductsOf,
 	hasOnlyRenewalItems,
@@ -803,6 +812,7 @@ module.exports = {
 	hasProduct,
 	hasRenewableSubscription,
 	hasRenewalItem,
+	hasTld,
 	noAdsItem,
 	planItem,
 	premiumPlan,

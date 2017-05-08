@@ -124,13 +124,13 @@ export function isFetchingConnection( state, connectionId ) {
 }
 
 export function isRequestingSharePost( state, siteId, postId ) {
-	return get( state.sharing.publicize.sharePostStatus, [ siteId , postId, 'requesting' ], false );
+	return get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'requesting' ], false );
 }
 
 export function sharePostSuccessMessage( state, siteId, postId ) {
-	return get( state.sharing.publicize.sharePostStatus, [ siteId , postId, 'success' ], false );
+	return get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'success' ], false );
 }
 
 export function sharePostFailure( state, siteId, postId ) {
-	return ( get( state.sharing.publicize.sharePostStatus, [ siteId , postId, 'error' ], false ) === true );
+	return ( get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'error' ], false ) === true );
 }

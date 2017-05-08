@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 import debug from 'debug';
 
 /**
@@ -17,6 +18,7 @@ const videoPressUrl = 'https://wordpress.com/wp-content/plugins/video/assets/js/
 
 class EditorMediaModalDetailPreviewVideoPress extends Component {
 	static propTypes = {
+		className: PropTypes.string,
 		isPlaying: PropTypes.bool,
 		item: PropTypes.object.isRequired,
 	};
@@ -89,9 +91,11 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 
 	render() {
+		const classes = classNames( this.props.className, 'is-video' );
+
 		return (
 			<div
-				className="editor-media-modal-detail__preview is-video"
+				className={ classes }
 				ref={ this.setVideoInstance }>
 			</div>
 		);

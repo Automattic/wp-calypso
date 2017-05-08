@@ -34,7 +34,12 @@ import FollowingImportButton from './import-button';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-const stats = require( 'reader/stats' );
+import {
+	recordAction,
+	recordFollow,
+	recordGaEvent,
+	recordTrack,
+} from 'reader/stats';
 
 const initialLoadFeedCount = 20;
 
@@ -300,9 +305,9 @@ const FollowingEdit = React.createClass( {
 		// Call originating store and mark error as dismissed
 		FeedSubscriptionActions.dismissError( this.state.lastError );
 		this.setState( { isAttemptingFollow: false } );
-		stats.recordAction( 'dismiss_follow_error' );
-		stats.recordGaEvent( 'Clicked Dismiss Follow Error' );
-		stats.recordTrack( 'calypso_reader_follow_error_dismissed' );
+		recordAction( 'dismiss_follow_error' );
+		recordGaEvent( 'Clicked Dismiss Follow Error' );
+		recordTrack( 'calypso_reader_follow_error_dismissed' );
 	},
 
 	handleNewSubscriptionSearch: function( searchString ) {
@@ -359,7 +364,7 @@ const FollowingEdit = React.createClass( {
 	handleFollow: function( newUrl ) {
 		this.toggleAddSite();
 		this.setState( { isAttemptingFollow: true } );
-		stats.recordFollow( newUrl );
+		recordFollow( newUrl );
 	},
 
 	renderUnfollowError: function() {
@@ -409,7 +414,9 @@ const FollowingEdit = React.createClass( {
 
 	renderFeedExportNotice() {
 		const feedExport = this.state.feedExport;
-		if ( ! feedExport ) return null;
+		if ( ! feedExport ) {
+			return null;
+		}
 
 		const message = this.translate( 'Your Followed Sites list has been exported.' );
 		return (
@@ -425,7 +432,9 @@ const FollowingEdit = React.createClass( {
 
 	renderFeedImportNotice() {
 		const feedImport = this.state.feedImport;
-		if ( ! feedImport ) return null;
+		if ( ! feedImport ) {
+			return null;
+		}
 
 		const message = this.translate( '{{em}}%(name)s{{/em}} has been imported. Refresh this page to see the new sites you follow.', {
 			args: { name: feedImport.fileName },
@@ -447,7 +456,9 @@ const FollowingEdit = React.createClass( {
 
 	renderFeedImportExportError() {
 		const error = this.state.feedImportError || this.state.feedExportError;
-		if ( ! error ) return null;
+		if ( ! error ) {
+			return null;
+		}
 
 		const message = this.translate( 'Whoops, something went wrong. %(message)s. Please try again.', {
 			args: { message: error.message }
@@ -589,4 +600,4 @@ const FollowingEdit = React.createClass( {
 
 } );
 
-module.exports = FollowingEdit;
+export default FollowingEdit;

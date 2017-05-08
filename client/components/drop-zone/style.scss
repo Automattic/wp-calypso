@@ -4,11 +4,17 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
+
+	margin: 15px;
+
 	z-index: z-index( 'root', '.drop-zone' );
 	visibility: hidden;
 	opacity: 0;
 	transition: 0.3s opacity, 0.3s background-color, 0s visibility 0.3s;
-	border: 2px dashed $blue-dark;
+
+	border: 6px solid $blue-dark;
+	border-radius: 6px;
+
 	background-color: rgba( $blue-wordpress, 0.8 );
 
 	&.is-active {
@@ -34,7 +40,8 @@
 	z-index: z-index( 'root', '.drop-zone__content' );
 	transform: translateY( -50% );
 	width: 100%;
-	font-size: 24px;
+	font-size: 14px;
+	font-weight: bold;
 	text-align: center;
 	color: $white;
 	transition: transform 0.3s ease-in-out;
@@ -51,8 +58,25 @@
 
 .drop-zone__content-icon {
 	margin: 0 auto;
+	line-height: 0;
 }
 
 .drop-zone.is-full-screen .drop-zone__content {
 	font-size: 30px;
+}
+
+.drop-zone.editor-featured-image__dropzone {
+	background-color: rgba( $orange-jazzy, 0.7 );
+	border: 6px solid $orange-jazzy;
+
+	margin: 0;
+
+	&.is-dragging-over-element {
+		background-color: rgba( lighten( $orange-jazzy, 20 ), 0.8 );
+	}
+
+	.drop-zone__content {
+		color: #542B06;
+
+	}
 }

@@ -96,6 +96,11 @@ export function recordTrack( eventName, eventProperties ) {
 		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
 	}
 
+	if ( location === 'topic_page' && ! eventProperties.hasOwnProperty( 'tag' ) ) {
+		const tag = decodeURIComponent( window.location.pathname.split( '/tag/' ).pop() );
+		eventProperties = Object.assign( { tag: tag }, eventProperties );
+	}
+
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'blog_id' in eventProperties && 'post_id' in eventProperties && ! ( 'is_jetpack' in eventProperties ) ) {
 			console.warn( 'consider using recordTrackForPost...', eventName, eventProperties ); //eslint-disable-line no-console
@@ -113,7 +118,6 @@ tracksRailcarEventWhitelist
 	.add( 'calypso_reader_article_liked' )
 	.add( 'calypso_reader_article_commented_on' )
 	.add( 'calypso_reader_article_opened' )
-	.add( 'calypso_reader_startcard_clicked' )
 	.add( 'calypso_reader_searchcard_clicked' )
 	.add( 'calypso_reader_author_link_clicked' )
 	.add( 'calypso_reader_permalink_click' )

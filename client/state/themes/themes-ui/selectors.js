@@ -16,5 +16,5 @@ export function getBackPath( state ) {
 	if ( ! siteSlug || includes( backPath, siteSlug ) ) {
 		return backPath;
 	}
-	return `/design/${ siteSlug }`;
+	return `/themes/${ siteSlug }`;
 }

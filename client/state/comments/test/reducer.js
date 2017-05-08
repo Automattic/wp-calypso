@@ -116,7 +116,7 @@ describe( 'reducer', () => {
 				type: COMMENTS_RECEIVE,
 				siteId: 1,
 				postId: 1,
-				comments: [{
+				comments: [ {
 					ID: 123,
 					like_count: 100,
 					i_like: false
@@ -141,7 +141,7 @@ describe( 'reducer', () => {
 				type: COMMENTS_RECEIVE,
 				siteId: 1,
 				postId: 1,
-				comments: [{
+				comments: [ {
 					ID: 123,
 					like_count: 100,
 					i_like: true
@@ -166,7 +166,7 @@ describe( 'reducer', () => {
 				type: COMMENTS_RECEIVE,
 				siteId: 1,
 				postId: 1,
-				comments: [{
+				comments: [ {
 					ID: 123,
 					like_count: 100,
 					i_like: true

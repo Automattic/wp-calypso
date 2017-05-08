@@ -23,7 +23,9 @@ function handleSMSResponse( payload ) {
 	var errorMessage = null;
 
 	// if it's 2fa error then we actually successfully requested an sms code
-	if ( data && data.body && data.body.error === 'needs_2fa' ) return Object.assign( {}, initialState, { status: requestState.COMPLETE } );
+	if ( data && data.body && data.body.error === 'needs_2fa' ) {
+		return Object.assign( {}, initialState, { status: requestState.COMPLETE } );
+	}
 
 	// assign the error message from the response body, otherwise take it from the error object
 	if ( data && data.body && data.body.error_description ) {

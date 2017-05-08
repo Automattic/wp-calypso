@@ -43,7 +43,7 @@ module.exports = React.createClass( {
 	render: function() {
 		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart ),
 			numberOfDomainRegistrations = domainRegistrations.length,
-			firstDomainToRegister = domainRegistrations[0],
+			firstDomainToRegister = domainRegistrations[ 0 ],
 			hasOneFreePrivacy = this.hasDomainPartOfPlan() && numberOfDomainRegistrations === 1,
 			privacyText = this.translate(
 				"Privacy Protection hides your personal information in your domain's public records, to protect your identity and prevent spam."

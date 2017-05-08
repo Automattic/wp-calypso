@@ -212,6 +212,12 @@
 		left: 50%;
 }
 
+.web-preview .pulsing-dot {
+	right: 24px;
+	top: 22px;
+	left: initial;
+}
+
 .web-preview__loading-message {
 	color: $gray;
 	font-size: 18px;

@@ -36,13 +36,13 @@ var CustomizeActions = {
 	activated: function( stylesheet, site, themeActivated ) {
 		trackClick( 'customizer', 'activate' );
 
-		page( '/design/' + site.slug );
+		page( '/themes/' + site.slug );
 
 		themeActivated( stylesheet, site.ID, 'customizer' );
 	},
 
 	close: function( previousPath ) {
-		if ( previousPath.indexOf( '/design' ) > -1 ) {
+		if ( previousPath.indexOf( '/themes' ) > -1 ) {
 			trackClick( 'customizer', 'close' );
 		}
 

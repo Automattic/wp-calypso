@@ -234,8 +234,7 @@ export const normalizers = {
 				label: country.country_full.replace( /’/, "'" ),
 				value: viewData.views,
 				region: country.map_region,
-				icon: icon,
-				iconClassName: 'is-flag'
+				backgroundImage: icon
 			};
 		} );
 	},

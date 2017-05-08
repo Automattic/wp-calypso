@@ -25,7 +25,6 @@ import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'state/sites/se
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isEnabled } from 'config';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import InfoPopover from 'components/info-popover';
@@ -219,10 +218,9 @@ class SiteIconSetting extends Component {
 	render() {
 		const { isJetpack, isPrivate, iconUrl, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
 		const { isModalVisible, hasToggledModal, isEditingSiteIcon } = this.state;
-		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' );
 
 		let buttonProps;
-		if ( isIconManagementEnabled && siteSupportsImageEditor ) {
+		if ( siteSupportsImageEditor ) {
 			buttonProps = {
 				type: 'button',
 				onClick: this.showModal,
@@ -235,7 +233,7 @@ class SiteIconSetting extends Component {
 			// send to wp-admin instead (Customizer field unsupported)
 			const hasBlavatar = includes( iconUrl, '.gravatar.com/blavatar/' );
 
-			if ( isJetpack || ( isIconManagementEnabled && isPrivate && ! hasBlavatar ) ) {
+			if ( isJetpack || ( isPrivate && ! hasBlavatar ) ) {
 				buttonProps.href = customizerUrl;
 			} else {
 				buttonProps.href = generalOptionsUrl;
@@ -274,7 +272,7 @@ class SiteIconSetting extends Component {
 					compact>
 					{ translate( 'Change', { context: 'verb' } ) }
 				</Button>
-				{ isIconManagementEnabled && hasIcon && (
+				{ hasIcon && (
 					<Button
 						compact
 						scary
@@ -284,7 +282,7 @@ class SiteIconSetting extends Component {
 						{ translate( 'Remove' ) }
 					</Button>
 				) }
-				{ isIconManagementEnabled && hasToggledModal && (
+				{ hasToggledModal && (
 					<MediaLibrarySelectedData siteId={ siteId }>
 						<AsyncLoad
 							require="post-editor/media-modal"

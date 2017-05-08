@@ -5,12 +5,12 @@ import { localize } from 'i18n-calypso';
 import noop from 'lodash/noop';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
+import { abtest } from 'lib/abtest';
 
 const PlanFeaturesActions = ( {
 	canPurchase,
@@ -21,17 +21,19 @@ const PlanFeaturesActions = ( {
 	freePlan = false,
 	onUpgradeClick = noop,
 	isPlaceholder = false,
+	isPopular,
 	isInSignup,
 	translate,
 	manageHref,
-	isLandingPage
+	isLandingPage,
+	planName
 } ) => {
 	let upgradeButton;
 	const classes = classNames(
 		'plan-features__actions-button',
 		{
 			'is-current': current,
-			'is-primary': primaryUpgrade && ! isPlaceholder
+			'is-primary': ( primaryUpgrade && ! isPlaceholder ) || ( isPopular && abtest( 'signupPlansCallToAction' ) === 'modified' )
 		},
 		className
 	);
@@ -39,8 +41,7 @@ const PlanFeaturesActions = ( {
 	if ( current && ! isInSignup ) {
 		upgradeButton = (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
-				<Gridicon size={ 18 } icon="checkmark" />
-				{ canPurchase ? translate( 'Your plan' ) : translate( 'Current plan' ) }
+				{ canPurchase ? translate( 'Manage Plan' ) : translate( 'View Plan' ) }
 			</Button>
 		);
 	} else if ( available || isPlaceholder ) {
@@ -50,6 +51,10 @@ const PlanFeaturesActions = ( {
 		if ( isLandingPage ) {
 			buttonText = translate( 'Select', { context: 'button' } );
 		}
+		if ( isInSignup && ( abtest( 'signupPlansCallToAction' ) === 'modified' ) ) {
+			buttonText = 'Start with ' + planName;
+		}
+
 		upgradeButton = (
 			<Button
 				className={ classes }

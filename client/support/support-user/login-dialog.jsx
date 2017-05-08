@@ -1,8 +1,8 @@
 /**
  * External Dependencies
  */
-import React from 'react';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import React, { Component } from 'react';
+import { get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -15,63 +15,79 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormPasswordInput from 'components/forms/form-password-input';
 import Notice from 'components/notice';
 
-const SupportUserLoginDialog = React.createClass( {
+class SupportUserLoginDialog extends Component {
+	constructor( ...args ) {
+		super( ...args );
 
-	mixins: [ LinkedStateMixin ],
+		// Keep password in component state - we don't want it in global state
+		this.state = { password: '' };
+	}
 
-	getInitialState() {
-		return {
-			supportUser: '',
-			supportPassword: ''
-		};
-	},
-
-	onSubmit() {
-		this.props.onChangeUser( this.state.supportUser, this.state.supportPassword );
-		this.setState( { supportPassword: '' } );
-	},
-
-	onEnterKey( event ) {
-		event.preventDefault();
-
-		// Next action depends on which text field is active
-		switch ( event.target.name ) {
-			case 'supportUser':
-				this.supportPasswordInput.focus();
-				break;
-			case 'supportPassword':
-				this.onSubmit();
-				break;
+	onSubmit = () => {
+		// Can't submit without a username or password
+		if ( ! this.props.username || ! this.state.password ) {
+			return;
 		}
-	},
 
-	onEscapeKey( event ) {
-		event.preventDefault();
-		this.props.onCloseDialog();
-	},
+		this.props.onChangeUser( this.props.username, this.state.password );
+		this.setState( { password: '' } );
+	}
 
-	onInputKeyDown( event ) {
-		switch ( event.key ) {
-			case 'Enter':
-				return this.onEnterKey( event );
-			case 'Escape':
-				return this.onEscapeKey( event );
+	onCancel = () => {
+		this.setState( { password: '' } );
+		this.props.toggleDialog();
+	}
+
+	onInputKeyDown = ( event ) => {
+		if ( event.key === 'Enter' ) {
+			event.preventDefault();
+
+			// Next action depends on which text field is active
+			switch ( event.target.name ) {
+				case 'supportUser':
+					this.supportPasswordInput.focus();
+					break;
+				case 'supportPassword':
+					this.onSubmit();
+					break;
+			}
 		}
-	},
+	}
 
 	componentDidUpdate( prevProps ) {
 		if ( ! this.props.isBusy && prevProps.isBusy ) {
-			setTimeout( () => this.supportPasswordInput.focus(), 0 );
+			setTimeout( () => {
+				this.supportPasswordInput.focus()
+			}, 0 );
 		}
-	},
+	}
+
+	onEditUsername = ( event ) => {
+		this.props.setUsername( get( event, 'target.value', '' ) );
+	}
+
+	onEditPassword = ( event ) => {
+		this.setState( {
+			password: get( event, 'target.value', '' )
+		} );
+	}
+
+	autoFocusField() {
+		if ( this.props.username ) {
+			// Autofocus the password only if username is already entered
+			return 'password';
+		}
+		return 'username';
+	}
 
 	render() {
-		const { isVisible, isBusy, onCloseDialog, errorMessage } = this.props;
+		const { isVisible, isBusy, errorMessage, username } = this.props;
+		const { password } = this.state;
 
 		const buttons = [
 			<FormButton
 				key="supportuser"
-				disabled={ isBusy }
+				disabled={ isBusy || ! username || ! password }
 				onClick={ this.onSubmit }>
 					{ isBusy ? 'Switching...' : 'Change user' }
 			</FormButton>,
@@ -79,7 +95,7 @@ const SupportUserLoginDialog = React.createClass( {
 				key="cancel"
 				type="button"
 				isPrimary={ false }
-				onClick={ onCloseDialog }>
+				onClick={ this.onCancel }>
 					Cancel
 			</FormButton>
 		];
@@ -89,7 +105,7 @@ const SupportUserLoginDialog = React.createClass( {
 		return (
 			<Dialog
 				isVisible={ isVisible }
-				onClose={ onCloseDialog }
+				onClose={ this.onCancel }
 				buttons={ buttons }
 				autoFocus={ false }
 				additionalClassNames="support-user__login-dialog">
@@ -105,30 +121,34 @@ const SupportUserLoginDialog = React.createClass( {
 					<FormLabel>
 						<span>Username</span>
 						<FormTextInput
-							autoFocus={ true }
+							autoFocus={ this.autoFocusField() === 'username' }
 							disabled={ isBusy }
 							name="supportUser"
 							id="supportUser"
 							placeholder="Username"
 							onKeyDown={ this.onInputKeyDown }
-							valueLink={ this.linkState( 'supportUser' ) } />
+							onChange={ this.onEditUsername }
+							value={ username || '' } />
 					</FormLabel>
 
 					<FormLabel>
 						<span>Support user password</span>
 						<FormPasswordInput
+							autoFocus={ this.autoFocusField() === 'password'  }
 							name="supportPassword"
 							id="supportPassword"
 							disabled={ isBusy }
 							placeholder="Password"
 							ref={ supportPasswordRef }
 							onKeyDown={ this.onInputKeyDown }
-							valueLink={ this.linkState( 'supportPassword' ) } />
+							onChange={ this.onEditPassword }
+							value={ password }
+						/>
 					</FormLabel>
 				</FormFieldset>
 			</Dialog>
 		);
-	},
-} );
+	}
+}
 
 export default SupportUserLoginDialog;

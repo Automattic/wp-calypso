@@ -76,16 +76,18 @@ module.exports = function() {
 			pluginsController.plugin
 		);
 
-		if ( config.isEnabled( 'automated-transfer' ) ) {
-			page( '/plugins/:plugin/eligibility/:site_id',
-				controller.siteSelection,
-				controller.navigation,
-				pluginsController.eligibility
-			);
-		}
-
-		page.exit( '/plugins*',
-			pluginsController.resetHistory
+		page( '/plugins/:plugin/eligibility/:site_id',
+			controller.siteSelection,
+			controller.navigation,
+			pluginsController.eligibility
 		);
+
+		page.exit( '/plugins/*', ( context, next ) => {
+			if ( 0 !== page.current.indexOf( '/plugins/' ) ) {
+				pluginsController.resetHistory();
+			}
+
+			next();
+		} );
 	}
 };

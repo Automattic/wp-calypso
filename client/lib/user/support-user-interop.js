@@ -2,7 +2,8 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import noop from 'lodash/noop';
+import { noop, get } from 'lodash';
+import qs from 'qs';
 
 /**
  * Internal dependencies
@@ -11,7 +12,12 @@ import wpcom from 'lib/wp';
 import config from 'config';
 import store from 'store';
 import localforage from 'lib/localforage';
-import { supportUserTokenFetch, supportUserActivate, supportUserError } from 'state/support/actions';
+import {
+	supportUserTokenFetch,
+	supportUserActivate,
+	supportUserError,
+	supportUserPrefill,
+} from 'state/support/actions';
 import localStorageBypass from 'lib/support/support-user/localstorage-bypass';
 
 /**
@@ -37,6 +43,28 @@ const reduxStoreReady = new Promise( ( resolve ) => {
 	_setReduxStore = ( reduxStore ) => resolve( reduxStore );
 } );
 export const setReduxStore = _setReduxStore;
+
+// Get the value of the `?support_user=` query param for prefilling
+const getPrefillUsername = () => {
+	const queryString = get( window, 'location.search', null );
+
+	if ( ! queryString ) {
+		return null;
+	}
+
+	// Remove the initial ? character
+	const query = qs.parse( queryString.slice( 1 ) );
+	return query.support_user || null;
+}
+
+// Check if we should prefill the support user login box
+reduxStoreReady.then( reduxStore => {
+	const prefillUsername = getPrefillUsername();
+
+	if ( prefillUsername ) {
+		reduxStore.dispatch( supportUserPrefill( prefillUsername ) );
+	}
+} );
 
 // Evaluate isSupportUserSession at module startup time, then freeze it
 // for the remainder of the session. This is needed because the User
@@ -68,7 +96,7 @@ export const rebootNormally = () => {
 	debug( 'Rebooting Calypso normally' );
 
 	store.remove( STORAGE_KEY );
-	window.location.reload();
+	window.location.search = '';
 };
 
 /**
@@ -84,7 +112,7 @@ export const rebootWithToken = ( user, token ) => {
 	debug( 'Rebooting Calypso with support user' );
 
 	store.set( STORAGE_KEY, { user, token } );
-	window.location.reload();
+	window.location.search = '';
 };
 
 // Called when an API call fails due to a token error

@@ -2,13 +2,14 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { truncate } from 'lodash';
+import { truncate, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
+import { getSiteDomain } from 'state/sites/selectors';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
@@ -30,6 +31,7 @@ import {
 	JETPACK_MODULE_ACTIVATE_FAILURE,
 	JETPACK_MODULE_DEACTIVATE_FAILURE,
 	KEYRING_CONNECTION_DELETE,
+	KEYRING_CONNECTION_DELETE_FAILURE,
 	POST_DELETE_FAILURE,
 	POST_DELETE_SUCCESS,
 	POST_RESTORE_FAILURE,
@@ -43,11 +45,16 @@ import {
 	PUBLICIZE_CONNECTION_REFRESH_FAILURE,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
-	SITE_FRONT_PAGE_SET_FAILURE,
+	SITE_DELETE,
+	SITE_DELETE_SUCCESS,
+	SITE_DELETE_FAILURE,
+	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
+	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	THEME_DELETE_FAILURE,
 	THEME_DELETE_SUCCESS,
-	THEME_TRY_AND_CUSTOMIZE_FAILURE,
+	THEME_ACTIVATE_FAILURE,
 } from 'state/action-types';
+import purchasesPaths from 'me/purchases/paths';
 
 import { dispatchSuccess, dispatchError } from './utils';
 
@@ -119,34 +126,34 @@ export const onPublicizeConnectionCreate = ( dispatch, { connection } ) => dispa
 	successNotice( translate( 'The %(service)s account was successfully connected.', {
 		args: { service: connection.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionCreateFailure = ( dispatch, { error } ) => dispatch(
 	errorNotice( error.message || translate( 'An error occurred while connecting the account.', {
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionDelete = ( dispatch, { connection } ) => dispatch(
 	successNotice( translate( 'The %(service)s account was successfully disconnected.', {
 		args: { service: connection.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionDeleteFailure = ( dispatch, { error } ) => dispatch(
 	errorNotice( translate( 'The %(service)s account was unable to be disconnected.', {
 		args: { service: error.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionRefresh = ( dispatch, { connection } ) => dispatch(
 	successNotice( translate( 'The %(service)s account was successfully reconnected.', {
 		args: { service: connection.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionRefreshFailure = ( dispatch, { error } ) => dispatch(
@@ -160,14 +167,14 @@ export const onPublicizeConnectionUpdate = ( dispatch, { connection } ) => dispa
 	successNotice( translate( 'The %(service)s account was successfully updated.', {
 		args: { service: connection.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionUpdateFailure = ( dispatch, { error } ) => dispatch(
 	errorNotice( translate( 'The %(service)s account was unable to be updated.', {
 		args: { service: error.label },
 		context: 'Sharing: Publicize reconnection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 const onThemeDeleteSuccess = ( dispatch, { themeName } ) => dispatch(
@@ -183,6 +190,45 @@ const onThemeDeleteFailure = ( dispatch, { themeId } ) => dispatch(
 		context: 'Themes: Theme delete failure',
 	} ) )
 );
+
+const onThemeActivateFailure = ( dispatch, { error } ) => {
+	if ( includes( error.error, 'theme_not_found' ) ) {
+		return dispatch( errorNotice( translate( 'Theme not yet available for this site' ) ) );
+	}
+	return dispatch( errorNotice( translate( 'Unable to activate theme. Contact support.' ) ) );
+};
+
+const onSiteMonitorSettingsUpdateSuccess = ( dispatch ) => dispatch(
+	successNotice( translate( 'Settings saved successfully!' ) )
+);
+
+const onSiteMonitorSettingsUpdateFailure = ( dispatch ) => dispatch(
+	successNotice( translate( 'There was a problem saving your changes. Please, try again.' ) )
+);
+
+const onSiteDelete = ( dispatch, { siteId }, getState ) => dispatch(
+	successNotice( translate( '%(siteDomain)s is being deleted.', {
+		args: { siteDomain: getSiteDomain( getState(), siteId ) }
+	} ), { duration: 5000, noticeId: 'site-delete' } )
+);
+
+const onSiteDeleteSuccess = ( dispatch, { siteId }, getState ) => dispatch(
+	successNotice( translate( '%(siteDomain)s has been deleted.', {
+		args: { siteDomain: getSiteDomain( getState(), siteId ) }
+	} ), { duration: 5000, noticeId: 'site-delete' } )
+);
+
+const onSiteDeleteFailure = ( dispatch, { error } ) => {
+	if ( error.error === 'active-subscriptions' ) {
+		return dispatch( errorNotice( translate( 'You must cancel any active subscriptions prior to deleting your site.' ), {
+			noticeId: 'site-delete',
+			showDismiss: false,
+			button: translate( 'Manage Purchases' ),
+			href: purchasesPaths.purchasesRoot()
+		} ) );
+	}
+	return dispatch( errorNotice( error.message ) );
+};
 
 /**
  * Handler action type mapping
@@ -212,6 +258,7 @@ export const handlers = {
 	[ JETPACK_MODULE_ACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,
 	[ JETPACK_MODULE_DEACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,
 	[ KEYRING_CONNECTION_DELETE ]: onPublicizeConnectionDelete,
+	[ KEYRING_CONNECTION_DELETE_FAILURE ]: onPublicizeConnectionDeleteFailure,
 	[ POST_DELETE_FAILURE ]: onPostDeleteFailure,
 	[ POST_DELETE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully deleted' ) ),
 	[ POST_RESTORE_FAILURE ]: onPostRestoreFailure,
@@ -226,10 +273,14 @@ export const handlers = {
 	[ PUBLICIZE_CONNECTION_UPDATE ]: onPublicizeConnectionUpdate,
 	[ PUBLICIZE_CONNECTION_UPDATE_FAILURE ]: onPublicizeConnectionUpdateFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
-	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) ),
+	[ SITE_DELETE ]: onSiteDelete,
+	[ SITE_DELETE_FAILURE ]: onSiteDeleteFailure,
+	[ SITE_DELETE_SUCCESS ]: onSiteDeleteSuccess,
+	[ SITE_MONITOR_SETTINGS_UPDATE_SUCCESS ]: onSiteMonitorSettingsUpdateSuccess,
+	[ SITE_MONITOR_SETTINGS_UPDATE_FAILURE ]: onSiteMonitorSettingsUpdateFailure,
 	[ THEME_DELETE_FAILURE ]: onThemeDeleteFailure,
 	[ THEME_DELETE_SUCCESS ]: onThemeDeleteSuccess,
-	[ THEME_TRY_AND_CUSTOMIZE_FAILURE ]: dispatchError( translate( 'Customize error, please retry or contact support' ) ),
+	[ THEME_ACTIVATE_FAILURE ]: onThemeActivateFailure,
 };
 
 /**

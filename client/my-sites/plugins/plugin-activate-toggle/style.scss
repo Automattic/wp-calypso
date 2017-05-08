@@ -1,16 +1,48 @@
-.plugin-activate-toggle .disconnect-jetpack-button {
+.plugin-activate-toggle .plugin-action__children {
+	float: none;
+}
+.plugin-activate-toggle__disabled,
+.plugin-activate-toggle__link {
 	font-size: 11px;
-	font-weight: 400;
-	color: $alert-red;
+	line-height: 16px;
+	margin-right: 12px;
+	vertical-align: top;
 	text-transform: uppercase;
+	color: $gray;
 
-	&:disabled,
-	&:disabled:hover {
-		color: lighten( $gray, 30% );
-		cursor: default;
+	@include breakpoint( '<480px' ) {
+		color: $gray-dark;
+	}
+}
+.plugin-activate-toggle__link:hover {
+	color: $link-highlight;
+}
+.plugin-activate-toggle__disabled {
+	color: lighten( $gray, 30% );
+}
+.plugin-activate-toggle__link {
+	a {
+		color: currentcolor;
+		line-height: 18px;
+		vertical-align: top;
+		@include breakpoint( '<480px' ) {
+			color: $gray-dark;
+		}
+	}
+	.plugin-activate-toggle__icon {
+		@include breakpoint( '<480px' ) {
+			color: $gray;
+		}
 	}
 }
 
-.plugin-activate-toggle .plugin-action__children {
-	float: none;
+.plugin-activate-toggle__icon {
+	display: inline-block;
+	vertical-align: inherit;
+	float: right;
+	margin: -1px 3px 0 -1px;
+
+	.gridicons-cog {
+		transform: translate(.5px, .5px);
+	}
 }

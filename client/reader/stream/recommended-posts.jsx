@@ -11,12 +11,15 @@ import Gridicon from 'gridicons';
  */
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import PostStore from 'lib/feed-post-store';
-import * as stats from 'reader/stats';
+import {
+	recordAction,
+	recordTrackForPost,
+} from 'reader/stats';
 import Button from 'components/button';
 import { dismissPost } from 'lib/feed-stream-store/actions';
 
 function dismissRecommendation( uiIndex, storeId, post ) {
-	stats.recordTrackForPost(
+	recordTrackForPost(
 		'calypso_reader_recommended_post_dismissed',
 		post,
 		{
@@ -24,12 +27,12 @@ function dismissRecommendation( uiIndex, storeId, post ) {
 			ui_position: uiIndex
 		}
 	);
-	stats.recordAction( 'in_stream_rec_dismiss' );
+	recordAction( 'in_stream_rec_dismiss' );
 	dismissPost( storeId, post );
 }
 
 function handleSiteClick( uiIndex, post ) {
-	stats.recordTrackForPost(
+	recordTrackForPost(
 		'calypso_reader_recommended_site_clicked',
 		post,
 		{
@@ -37,11 +40,11 @@ function handleSiteClick( uiIndex, post ) {
 			ui_position: uiIndex
 		}
 	);
-	stats.recordAction( 'in_stream_rec_site_click' );
+	recordAction( 'in_stream_rec_site_click' );
 }
 
 function handlePostClick( uiIndex, post ) {
-	stats.recordTrackForPost(
+	recordTrackForPost(
 		'calypso_reader_recommended_post_clicked',
 		post,
 		{
@@ -49,7 +52,7 @@ function handlePostClick( uiIndex, post ) {
 			ui_position: uiIndex
 		}
 	);
-	stats.recordAction( 'in_stream_rec_post_click' );
+	recordAction( 'in_stream_rec_post_click' );
 }
 
 export class RecommendedPosts extends React.PureComponent {

@@ -1,8 +1,14 @@
-var React = require( 'react' );
+/**
+ * External dependencies
+ */
+import React from 'react';
 
-var Stream = require( 'reader/stream' ),
-	EmptyContent = require( './empty' ),
-	DocumentHead = require( 'components/data/document-head' );
+/**
+ * Internal dependencies
+ */
+import Stream from 'reader/stream';
+import EmptyContent from './empty';
+import DocumentHead from 'components/data/document-head';
 
 var RecommendationPostsStream = React.createClass( {
 
@@ -23,4 +29,4 @@ var RecommendationPostsStream = React.createClass( {
 
 } );
 
-module.exports = RecommendationPostsStream;
+export default RecommendationPostsStream;

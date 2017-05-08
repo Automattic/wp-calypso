@@ -1,36 +1,39 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site-settings' );
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var GeneralForm = require( 'my-sites/site-settings/form-general' ),
-	DeleteSiteOptions = require( './delete-site-options' ),
-	config = require( 'config' );
+import GeneralForm from 'my-sites/site-settings/form-general';
+import DeleteSiteOptions from './delete-site-options';
+import config from 'config';
+import { getSelectedSite } from 'state/ui/selectors';
 
-module.exports = React.createClass({
-	displayName: 'SiteSettingsGeneral',
+const SiteSettingsGeneral = ( {
+	hasLoadedSitePurchasesFromServer,
+	site,
+	sitePurchases
+} ) => {
+	return (
+		<div className="site-settings__main general-settings">
+			<GeneralForm site={ site } />
 
-	componentWillMount: function() {
-		debug( 'Mounting SiteSettingsGeneral React component.' );
-	},
-
-	render: function() {
-		var site = this.props.site;
-		return (
-			<div className="general-settings">
-				<GeneralForm site={ site } />
-				{ ( config.isEnabled( 'manage/site-settings/delete-site' ) && ! site.jetpack && ! site.is_vip ) ?
+			{ config.isEnabled( 'manage/site-settings/delete-site' ) && site && ! site.jetpack && ! site.is_vip &&
 				<DeleteSiteOptions
-					site={ this.props.site }
-					sitePurchases={ this.props.sitePurchases }
-					hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer } />
-				: null }
-			</div>
-		);
+					site={ site }
+					sitePurchases={ sitePurchases }
+					hasLoadedSitePurchasesFromServer={ hasLoadedSitePurchasesFromServer }
+				/>
+			}
+		</div>
+	);
+};
 
-	}
-});
+export default connect(
+	( state ) => ( {
+		site: getSelectedSite( state ),
+	} )
+)( SiteSettingsGeneral );

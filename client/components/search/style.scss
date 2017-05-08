@@ -48,6 +48,24 @@
 	.accessible-focus &.has-focus {
 		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
 	}
+
+	&.is-compact {
+		height: 36px;
+		.search__input {
+			height: 36px;
+			font-size: 12px;
+		}
+
+		.search__open-icon {
+			margin: 0 4px 0 8px;
+			width: 18px;
+		}
+
+		.search__close-icon {
+			width: 18px;
+			margin-right: 8px;
+		}
+	}
 }
 
 // Position collapsed search-button to the right
@@ -89,6 +107,10 @@
 
 	&::-webkit-search-cancel-button {
 		-webkit-appearance: none;
+	}
+
+	&:disabled {
+		background: $white;
 	}
 
 	&:focus {
@@ -135,6 +157,14 @@
 				border-radius: inherit;
 			}
 		}
+
+		padding-left: 8px;
+	}
+}
+
+.search.has-open-icon {
+	.search__input-fade {
+		padding-left: 0;
 	}
 }
 
@@ -150,7 +180,7 @@
 	font: inherit;
 	width: 100%;
 	height: 100%;
-	top: 0px;
+	top: 1px;
 	left: 0px;
 	z-index: z-index( '.search', '.search__input' ) + 1;
 }

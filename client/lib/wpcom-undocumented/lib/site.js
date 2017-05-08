@@ -83,18 +83,22 @@ function UndocumentedSite( id, wpcom ) {
 }
 
 UndocumentedSite.prototype.domains = function( callback ) {
-	return this.wpcom.req.get( '/sites/' + this._id + '/domains', function( error, response ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
+	return this.wpcom.req.get(
+		`/sites/${ this._id }/domains`,
+		{ apiVersion: '1.2' },
+		function( error, response ) {
+			if ( error ) {
+				callback( error );
+				return;
+			}
 
-		callback( null, response );
-	} );
+			callback( null, response );
+		}
+	);
 };
 
 UndocumentedSite.prototype.postFormatsList = function( callback ) {
-	return this.wpcom.withLocale().req.get( '/sites/' + this._id + '/post-formats', {}, callback );
+	return this.wpcom.req.get( '/sites/' + this._id + '/post-formats', {}, callback );
 };
 
 UndocumentedSite.prototype.postAutosave = function( postId, attributes, callback ) {
@@ -124,7 +128,7 @@ UndocumentedSite.prototype.shortcodes = function( attributes, callback ) {
 };
 
 UndocumentedSite.prototype.getRoles = function( callback ) {
-	return this.wpcom.withLocale().req.get( '/sites/' + this._id + '/roles', {}, callback );
+	return this.wpcom.req.get( '/sites/' + this._id + '/roles', {}, callback );
 };
 
 UndocumentedSite.prototype.getViewers = function( query, callback ) {
@@ -159,6 +163,14 @@ UndocumentedSite.prototype.removeFollower = function( followerId, callback ) {
 	return this.wpcom.req.post( {
 		path: '/sites/' + this._id + '/followers/' + followerId + '/delete'
 	}, callback );
+};
+
+UndocumentedSite.prototype.fetchFollowers = function( fetchOptions, callback ) {
+	return this.wpcom.req.get(
+		'/sites/' + this._id + '/followers/',
+		fetchOptions,
+		callback
+	);
 };
 
 UndocumentedSite.prototype.removeEmailFollower = function( followerId, callback ) {
@@ -241,6 +253,18 @@ UndocumentedSite.prototype.getConnection = function( connectionId ) {
 	return this.wpcom.req.get( {
 		path: '/sites/' + this._id + '/publicize-connections/' + connectionId,
 		apiVersion: '1.1',
+	} );
+};
+
+/**
+ * Runs Theme Setup (Headstart).
+ *
+ * @return {Promise} A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.runThemeSetup = function() {
+	return this.wpcom.req.post( {
+		path: '/sites/' + this._id + '/theme-setup',
+		apiNamespace: 'wpcom/v2',
 	} );
 };
 

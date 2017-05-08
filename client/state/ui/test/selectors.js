@@ -37,6 +37,9 @@ describe( 'selectors', () => {
 						2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'https://example.com' }
 					}
 				},
+				siteSettings: {
+					items: {},
+				},
 				ui: {
 					selectedSiteId: 2916284
 				}
@@ -48,7 +51,6 @@ describe( 'selectors', () => {
 				URL: 'https://example.com',
 				domain: 'example.com',
 				hasConflict: false,
-				is_customizable: false,
 				is_previewable: false,
 				options: {
 					default_post_format: 'standard',
@@ -259,7 +261,7 @@ describe( 'selectors', () => {
 				isomorphic: true,
 				module: 'my-sites/themes',
 				name: 'themes',
-				paths: [ '/design' ],
+				paths: [ '/themes' ],
 				secondary: false
 			};
 

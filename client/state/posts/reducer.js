@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues } from 'lodash';
+import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues, mapKeys } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,8 +31,10 @@ import {
 } from 'state/action-types';
 import counts from './counts/reducer';
 import likes from './likes/reducer';
+import revisions from './revisions/reducer';
 import {
 	getSerializedPostsQuery,
+	isTermsEqual,
 	mergeIgnoringArrays,
 	normalizePostForState
 } from './utils';
@@ -253,6 +255,9 @@ export function edits( state = {}, action ) {
 				}
 
 				return set( memoState, [ post.site_ID, post.ID ], omitBy( postEdits, ( value, key ) => {
+					if ( key === 'terms' ) {
+						return isTermsEqual( value, post[ key ] );
+					}
 					return isEqual( post[ key ], value );
 				} ) );
 			}, state );
@@ -273,7 +278,6 @@ export function edits( state = {}, action ) {
 			} );
 
 		case EDITOR_STOP:
-		case POST_SAVE_SUCCESS:
 			if ( ! state.hasOwnProperty( action.siteId ) ) {
 				break;
 			}
@@ -281,6 +285,20 @@ export function edits( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: omit( state[ action.siteId ], action.postId || '' )
 			} );
+
+		case POST_SAVE_SUCCESS:
+			if ( ! state.hasOwnProperty( action.siteId ) || ! action.savedPost || action.postId ) {
+				break;
+			}
+			const { siteId, savedPost } = action;
+
+			// if postId is null, copy over any edits
+			return {
+				...state,
+				[ siteId ]: mapKeys( state[ siteId ], ( value, key ) => (
+					'' === key ? savedPost.ID : key
+				) )
+			};
 
 		case SERIALIZE:
 		case DESERIALIZE:
@@ -298,4 +316,5 @@ export default combineReducers( {
 	queries,
 	edits,
 	likes,
+	revisions,
 } );

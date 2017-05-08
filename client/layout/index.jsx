@@ -10,7 +10,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
+var AsyncLoad = require( 'components/async-load' ),
+	MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	MasterbarLoggedOut = require( 'layout/masterbar/logged-out' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	GlobalNotices = require( 'components/global-notices' ),
@@ -26,12 +27,10 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	OfflineStatus = require( 'layout/offline-status' ),
-	PollerPool = require( 'lib/data-poller' ),
 	QueryPreferences = require( 'components/data/query-preferences' ),
 	KeyboardShortcutsMenu,
 	Layout,
-	SupportUser,
-	Happychat = require( 'components/happychat' );
+	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
@@ -39,6 +38,7 @@ import { isHappychatOpen } from 'state/ui/happychat/selectors';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
+import NpsSurveyNotice from 'layout/nps-survey-notice';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -53,12 +53,9 @@ Layout = React.createClass( {
 
 	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
 
-	_sitesPoller: null,
-
 	propTypes: {
 		primary: React.PropTypes.element,
 		secondary: React.PropTypes.element,
-		tertiary: React.PropTypes.element,
 		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
 		nuxWelcome: React.PropTypes.object,
@@ -74,33 +71,6 @@ Layout = React.createClass( {
 		isOffline: React.PropTypes.bool,
 	},
 
-	componentWillUpdate: function( nextProps ) {
-		if ( this.props.section.group !== nextProps.section.group ) {
-			if ( nextProps.section.group === 'sites' ) {
-				setTimeout( function() {
-					if ( ! this.isMounted() || this._sitesPoller ) {
-						return;
-					}
-					this._sitesPoller = PollerPool.add( this.props.sites, 'fetchAvailableUpdates', { interval: 900000 } );
-				}.bind( this ), 0 );
-			} else {
-				this.removeSitesPoller();
-			}
-		}
-	},
-
-	componentWillUnmount: function() {
-		this.removeSitesPoller();
-	},
-
-	removeSitesPoller: function() {
-		if ( ! this._sitesPoller ) {
-			return;
-		}
-
-		PollerPool.remove( this._sitesPoller );
-		this._sitesPoller = null;
-	},
 	closeWelcome: function() {
 		this.props.nuxWelcome.closeWelcome();
 		analytics.ga.recordEvent( 'Welcome Box', 'Clicked Close Button' );
@@ -111,12 +81,8 @@ Layout = React.createClass( {
 	},
 
 	renderMasterbar: function() {
-		if ( 'login' === this.props.section.name ) {
-			return null;
-		}
-
 		if ( ! this.props.user ) {
-			return <MasterbarLoggedOut showSignup={ 'signup' !== this.props.section.name } />;
+			return <MasterbarLoggedOut sectionName={ this.props.section.name } />;
 		}
 
 		return (
@@ -179,6 +145,7 @@ Layout = React.createClass( {
 				<DocumentHead />
 				<QueryPreferences />
 				{ <GuidedTours /> }
+				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
@@ -194,14 +161,11 @@ Layout = React.createClass( {
 						{ this.props.secondary }
 					</div>
 				</div>
-				<div id="tertiary">
-					{ this.props.tertiary }
-				</div>
 				<TranslatorLauncher
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
 				{ this.renderPreview() }
-				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <Happychat /> }
+				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
 			</div>
 		);
 	}

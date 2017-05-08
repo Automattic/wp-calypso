@@ -1,5 +1,5 @@
 // steps.js stub
-module.exports = {
+export default {
 	'theme-selection': { stepName: 'theme-selection' },
 	user: { stepName: 'user' }
 };

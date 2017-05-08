@@ -13,6 +13,7 @@ import PostMetadata from 'lib/post-metadata';
 import PostActions from 'lib/posts/actions';
 import * as PostStats from 'lib/posts/stats';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 export default React.createClass( {
 	displayName: 'EditorSharingPublicizeConnection',
@@ -20,7 +21,8 @@ export default React.createClass( {
 	propTypes: {
 		post: PropTypes.object,
 		connection: PropTypes.object,
-		onRefresh: PropTypes.func
+		onRefresh: PropTypes.func,
+		label: PropTypes.string
 	},
 
 	getDefaultProps() {
@@ -70,27 +72,15 @@ export default React.createClass( {
 		}
 
 		return (
-			<Notice className="editor-sharing__broken-publicize-connection" status="is-warning" showDismiss={ false }>
-				{ this.translate( 'There is an issue connecting to %s. {{button}}Reconnect {{icon/}}{{/button}}', {
-					args: connection.label,
-					components: {
-						button: (
-							<button
-								type="button"
-								onClick={ this.props.onRefresh }
-								className="editor-sharing__broken-publicize-connection-button" />
-						),
-						icon: (
-							<Gridicon icon="external" size={ 18 } />
-						)
-					}
-				} ) }
+			<Notice isCompact className="editor-sharing__broken-publicize-connection" status="is-warning" showDismiss={ false }>
+				{ this.translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
+				<NoticeAction onClick={ this.props.onRefresh }>Reconnect <Gridicon icon="external" size={ 18 } /></NoticeAction>
 			</Notice>
 		);
 	},
 
 	render() {
-		const { connection } = this.props;
+		const { connection, label } = this.props;
 
 		return (
 			<div className="editor-sharing__publicize-connection">
@@ -99,7 +89,7 @@ export default React.createClass( {
 						checked={ ! this.isConnectionSkipped() }
 						disabled={ this.isDisabled() }
 						onChange={ this.onChange } />
-					<span>{ connection && connection.external_display }</span>
+					<span data-e2e-service={ label }>{ connection && connection.external_display }</span>
 				</label>
 				{ this.renderBrokenConnection() }
 			</div>

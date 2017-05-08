@@ -12,15 +12,20 @@ import { getCurrentUser } from 'state/current-user/selectors';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
-		const { store, primary, secondary, tertiary } = context;
+		const { store, primary, secondary } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
 		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
+			let redirectUri;
+			if ( context.isServerSide ) {
+				redirectUri = `${ context.protocol }://${ context.host }${ context.originalUrl }`;
+			}
 			context.layout = (
-				<LayoutComponent store={ store }
+				<LayoutComponent
+					store={ store }
 					primary={ primary }
 					secondary={ secondary }
-					tertiary={ tertiary }
+					redirectUri={ redirectUri }
 				/>
 			);
 		}
