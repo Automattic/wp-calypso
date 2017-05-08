@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import addQueryArgs from 'lib/route/add-query-args';
 import debugModule from 'debug';
@@ -39,14 +39,8 @@ const MAX_AUTH_ATTEMPTS = 3;
 const PLANS_PAGE = '/jetpack/connect/plans/';
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 
-const LoggedInForm = React.createClass( {
-	displayName: 'LoggedInForm',
-
-	getInitialState() {
-		return {
-			haveAuthorized: false
-		};
-	},
+class LoggedInForm extends Component {
+	state = { haveAuthorized: false };
 
 	componentWillMount() {
 		const { queryObject, autoAuthorize } = this.props.jetpackConnectAuthorize;
@@ -64,7 +58,7 @@ const LoggedInForm = React.createClass( {
 			this.setState( { haveAuthorized: true } );
 			return this.props.authorize( queryObject );
 		}
-	},
+	}
 
 	componentWillReceiveProps( props ) {
 		const {
@@ -108,7 +102,7 @@ const LoggedInForm = React.createClass( {
 			this.retryingAuth = true;
 			return this.props.retryAuth( queryObject.site, attempts + 1 );
 		}
-	},
+	}
 
 	renderFormHeader( isConnected ) {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
@@ -130,7 +124,7 @@ const LoggedInForm = React.createClass( {
 				{ siteCard }
 			</div>
 		);
-	},
+	}
 
 	redirect() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
@@ -141,9 +135,9 @@ const LoggedInForm = React.createClass( {
 		} else {
 			page.redirect( this.getRedirectionTarget() );
 		}
-	},
+	}
 
-	handleSubmit() {
+	handleSubmit = () => {
 		const {
 			queryObject,
 			authorizeError,
@@ -178,21 +172,21 @@ const LoggedInForm = React.createClass( {
 
 		this.props.recordTracksEvent( 'calypso_jpc_approve_click' );
 		return this.props.authorize( queryObject );
-	},
+	}
 
-	handleSignOut() {
+	handleSignOut = () => {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const redirect = addQueryArgs( queryObject, window.location.href );
 		this.props.recordTracksEvent( 'calypso_jpc_signout_click' );
 		userUtilities.logout( redirect );
-	},
+	}
 
 	isAuthorizing() {
 		const { isAuthorizing } = this.props.jetpackConnectAuthorize;
 		return ( ! this.props.isAlreadyOnSitesList && isAuthorizing );
-	},
+	}
 
-	handleResolve() {
+	handleResolve = () => {
 		const { queryObject, authorizationCode } = this.props.jetpackConnectAuthorize;
 		const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 		this.retryingAuth = false;
@@ -208,7 +202,7 @@ const LoggedInForm = React.createClass( {
 		// legacy functions on the client.
 		this.props.recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
 		this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
-	},
+	}
 
 	renderErrorDetails() {
 		const { authorizeError } = this.props.jetpackConnectAuthorize;
@@ -220,7 +214,7 @@ const LoggedInForm = React.createClass( {
 				</FormSettingExplanation>
 			</div>
 		);
-	},
+	}
 
 	renderXmlrpcFeedback() {
 		const xmlrpcErrorText = this.translate( 'We had trouble connecting.' );
@@ -247,7 +241,7 @@ const LoggedInForm = React.createClass( {
 				{ this.renderErrorDetails() }
 			</div>
 		);
-	},
+	}
 
 	renderNotices() {
 		const { authorizeError, queryObject, isAuthorizing, authorizeSuccess } = this.props.jetpackConnectAuthorize;
@@ -282,7 +276,7 @@ const LoggedInForm = React.createClass( {
 				{ this.renderErrorDetails() }
 			</div>
 		);
-	},
+	}
 
 	getButtonText() {
 		const {
@@ -328,11 +322,11 @@ const LoggedInForm = React.createClass( {
 		if ( ! this.retryingAuth ) {
 			return this.translate( 'Approve' );
 		}
-	},
+	}
 
-	onClickDisclaimerLink() {
+	onClickDisclaimerLink = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
-	},
+	}
 
 	getDisclaimerText() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
@@ -364,7 +358,7 @@ const LoggedInForm = React.createClass( {
 				{ text }
 			</p>
 		);
-	},
+	}
 
 	getUserText() {
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
@@ -381,16 +375,16 @@ const LoggedInForm = React.createClass( {
 		}
 
 		return text;
-	},
+	}
 
 	isWaitingForConfirmation() {
 		const { isAuthorizing, authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
 		return ! ( isAuthorizing || authorizeSuccess || siteReceived );
-	},
+	}
 
 	getRedirectionTarget() {
 		return PLANS_PAGE + this.props.siteSlug;
-	},
+	}
 
 	renderFooterLinks() {
 		const {
@@ -437,11 +431,11 @@ const LoggedInForm = React.createClass( {
 				<HelpButton onClick={ this.clickHelpButton } />
 			</LoggedOutFormLinks>
 		);
-	},
+	}
 
-	clickHelpButton() {
+	clickHelpButton = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
-	},
+	}
 
 	renderStateAction() {
 		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
@@ -470,7 +464,7 @@ const LoggedInForm = React.createClass( {
 			</LoggedOutFormFooter>
 
 		);
-	},
+	}
 
 	render() {
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
@@ -487,6 +481,6 @@ const LoggedInForm = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default LoggedInForm;
