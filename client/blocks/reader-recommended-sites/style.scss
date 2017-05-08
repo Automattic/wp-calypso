@@ -163,6 +163,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		color: $blue-medium;
 		margin-bottom: 3px;
 		width: calc( 100% - 70px );
+		word-break: break-all;
 
 		@include breakpoint( "<960px" ) {
 			width: calc( 100% - 20px );
