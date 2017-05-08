@@ -75,7 +75,7 @@
 
 	@include breakpoint( "<480px" ) {
 		:not( .no-wrap ) > & {
-			border-left: none;
+			border-top: none;
 		}
 	}
 
