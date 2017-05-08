@@ -27,7 +27,7 @@ import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
 export const items = keyedReducer( 'query', createReducer( null, {
 	[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => uniqBy(
 		( state || [] ).concat( action.payload.feeds ),
-		'URL',
+		'feed_URL',
 	)
 } ) );
 
