@@ -21,12 +21,11 @@ class FollowersCount extends Component {
 		const { slug, followers, translate, siteId } = this.props;
 
 		if ( ! followers ) {
-			return null;
+			return siteId && <QuerySiteStats statType="stats" siteId={ siteId } />;
 		}
 
 		return (
 			<div className="followers-count">
-				{ siteId && <QuerySiteStats statType="stats" siteId={ siteId } /> }
 				<Button
 					borderless
 					href={ '/people/followers/' + slug }
@@ -44,6 +43,7 @@ export default connect( ( state ) => {
 	const data = getSiteStatsNormalizedData( state, siteId, 'stats' );
 
 	return {
+		siteId,
 		slug: getSiteSlug( state, siteId ),
 		followers: get( data, 'followersBlog' ),
 	};
