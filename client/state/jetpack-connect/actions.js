@@ -2,7 +2,7 @@
  * External dependencies
  */
 const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
-import pick from 'lodash/pick';
+import { pick, omit } from 'lodash';
 import page from 'page';
 
 /**
@@ -10,7 +10,6 @@ import page from 'page';
  */
 import wpcom from 'lib/wp';
 import { recordTracksEvent } from 'state/analytics/actions';
-import Dispatcher from 'dispatcher';
 import {
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
@@ -34,7 +33,8 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
-	SITES_RECEIVE
+	SITE_RECEIVE,
+	SITE_REQUEST_SUCCESS
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import config from 'config';
@@ -348,7 +348,7 @@ export default {
 				} );
 				// Update the user now that we are fully connected.
 				userFactory().fetch();
-				return wpcom.me().sites( { site_visibility: 'all', include_domain_only: true } );
+				return wpcom.site( parseInt( client_id ) ).get();
 			} )
 			.then( ( data ) => {
 				tracksEvent( dispatch, 'calypso_jpc_auth_sitesrefresh', {
@@ -356,16 +356,16 @@ export default {
 				} );
 				debug( 'Sites list updated!', data );
 				dispatch( {
-					type: SITES_RECEIVE,
-					sites: data.sites
+					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+					data: data
 				} );
 				dispatch( {
-					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-					data: data
+					type: SITE_RECEIVE,
+					site: omit( data, '_headers' )
 				} );
-				Dispatcher.handleViewAction( {
-					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-					data: data
+				dispatch( {
+					type: SITE_REQUEST_SUCCESS,
+					siteId: parseInt( client_id )
 				} );
 			} )
 			.catch( ( error ) => {

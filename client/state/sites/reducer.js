@@ -105,6 +105,9 @@ export function items( state = {}, action ) {
 		case SITE_DELETE_RECEIVE:
 			return omit( state, action.siteId );
 
+		case SITE_REQUEST_FAILURE:
+			return omit( state, action.siteId );
+
 		case JETPACK_DISCONNECT_RECEIVE:
 			return omit( state, action.siteId );
 
