@@ -25,7 +25,7 @@ export class RecommendedSites extends React.PureComponent {
 		recordTrack( 'calypso_reader_recommended_site_dismissed', {
 			ui_position: uiIndex,
 		} );
-		recordAction( 'calypso_reader_recommended_site_dismissed' ); // todo: how do we name these?
+		recordAction( 'calypso_reader_recommended_site_dismissed' );
 		this.props.requestSiteBlock( siteId );
 	}
 
