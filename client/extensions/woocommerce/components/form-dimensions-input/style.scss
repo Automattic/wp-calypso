@@ -1,0 +1,18 @@
+.form-dimensions-input {
+	display: flex;
+	justify-content: flex-start;
+
+	.form-dimensions-input__length,
+	.form-dimensions-input__width,
+	.form-dimensions-input__height {
+		&:hover,
+		&:focus {
+			transform: scale(1);
+		}
+
+		&:focus + .form-dimensions-input__width:hover,
+		&:focus + .form-text-input-with-affixes .form-dimensions-input__height:hover {
+			transform: none;
+		}
+	}
+}
