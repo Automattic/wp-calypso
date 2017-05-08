@@ -44,6 +44,11 @@ class EditorRevisionsList extends PureComponent {
 		this.trySelectingRevision();
 	}
 
+	componentDidMount() {
+		// Make sure that scroll position in the editor is not preserved.
+		window.scrollTo( 0, 0 );
+	}
+
 	componentDidUpdate() {
 		this.trySelectingRevision();
 	}
