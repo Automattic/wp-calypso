@@ -14,6 +14,7 @@ const query = 'macrumor';
 const feeds = freeze( [
 	{
 		URL: 'http://www.macrumors.com/macrumors.xml',
+		feed_URL: 'http://www.macrumors.com/macrumors.xml',
 		subscribe_URL: 'http://www.macrumors.com/macrumors.xml',
 		feed_ID: '8850855',
 		title: null,
@@ -21,6 +22,7 @@ const feeds = freeze( [
 	},
 	{
 		URL: 'http://feeds.macrumors.com/MacRumors-All',
+		feed_URL: 'http://feeds.macrumors.com/MacRumors-All',
 		subscribe_URL: 'http://feeds.macrumors.com/MacRumors-All',
 		feed_ID: '4210277',
 		title: null,
