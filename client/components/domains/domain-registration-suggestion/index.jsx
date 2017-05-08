@@ -36,7 +36,10 @@ const DomainRegistrationSuggestion = React.createClass( {
 
 		if ( domain ) {
 			const newTLDs = [];
-			const a8cTLDs = [ '.ca', '.de', '.fr' ];
+			const testTLDs = [ '.ca', '.de', '.fr' ];
+			// Grab everything after the first dot, so 'example.co.uk' will
+			// match '.co.uk' but not '.uk'
+			// This won't work if we add subdomains.
 			const tld = domain.substring( domain.indexOf( '.' ) );
 
 			if ( includes( newTLDs, tld ) ) {
@@ -49,12 +52,12 @@ const DomainRegistrationSuggestion = React.createClass( {
 				);
 			}
 
-			if ( includes( a8cTLDs, tld ) ) {
+			if ( includes( testTLDs, tld ) ) {
 				domainFlags.push(
 					<DomainSuggestionFlag
-						key={ `${ domain }-a8c` }
-						content={ 'A8c' }
-						status="success"
+						key={ `${ domain }-testing` }
+						content={ 'Testing only' }
+						status="warning"
 					/>
 				);
 			}
