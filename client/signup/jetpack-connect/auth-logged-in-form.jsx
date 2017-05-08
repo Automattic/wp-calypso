@@ -137,6 +137,39 @@ class LoggedInForm extends Component {
 		}
 	}
 
+	handleClickDisclaimer = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
+	}
+
+	handleClickHelp = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
+	}
+
+	handleSignOut = () => {
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+		const redirect = addQueryArgs( queryObject, window.location.href );
+		this.props.recordTracksEvent( 'calypso_jpc_signout_click' );
+		userUtilities.logout( redirect );
+	}
+
+	handleResolve = () => {
+		const { queryObject, authorizationCode } = this.props.jetpackConnectAuthorize;
+		const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
+		this.retryingAuth = false;
+		if ( this.props.requestHasExpiredSecretError() ) {
+			// In this case, we need to re-issue the secret.
+			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
+			this.props.recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
+			externalRedirect( queryObject.site + authUrl );
+			return;
+		}
+		// Otherwise, we assume the site is having trouble receive XMLRPC requests.
+		// To resolve, we redirect to the Jetpack Client, and attempt to complete the connection with
+		// legacy functions on the client.
+		this.props.recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
+		this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
+	}
+
 	handleSubmit = () => {
 		const {
 			queryObject,
@@ -174,34 +207,9 @@ class LoggedInForm extends Component {
 		return this.props.authorize( queryObject );
 	}
 
-	handleSignOut = () => {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
-		const redirect = addQueryArgs( queryObject, window.location.href );
-		this.props.recordTracksEvent( 'calypso_jpc_signout_click' );
-		userUtilities.logout( redirect );
-	}
-
 	isAuthorizing() {
 		const { isAuthorizing } = this.props.jetpackConnectAuthorize;
 		return ( ! this.props.isAlreadyOnSitesList && isAuthorizing );
-	}
-
-	handleResolve = () => {
-		const { queryObject, authorizationCode } = this.props.jetpackConnectAuthorize;
-		const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
-		this.retryingAuth = false;
-		if ( this.props.requestHasExpiredSecretError() ) {
-			// In this case, we need to re-issue the secret.
-			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
-			this.props.recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
-			externalRedirect( queryObject.site + authUrl );
-			return;
-		}
-		// Otherwise, we assume the site is having trouble receive XMLRPC requests.
-		// To resolve, we redirect to the Jetpack Client, and attempt to complete the connection with
-		// legacy functions on the client.
-		this.props.recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
-		this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
 	}
 
 	renderErrorDetails() {
@@ -324,10 +332,6 @@ class LoggedInForm extends Component {
 		}
 	}
 
-	onClickDisclaimerLink = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
-	}
-
 	getDisclaimerText() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const { blogname } = queryObject;
@@ -336,7 +340,7 @@ class LoggedInForm extends Component {
 			<a
 				target="_blank"
 				rel="noopener noreferrer"
-				onClick={ this.onClickDisclaimerLink }
+				onClick={ this.handleClickDisclaimer }
 				href="https://jetpack.com/support/what-data-does-jetpack-sync/"
 				className="jetpack-connect__sso-actions-modal-link" />
 		);
@@ -428,13 +432,9 @@ class LoggedInForm extends Component {
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
 					{ this.translate( 'Create a new account' ) }
 				</LoggedOutFormLinkItem>
-				<HelpButton onClick={ this.clickHelpButton } />
+				<HelpButton onClick={ this.handleClickHelp } />
 			</LoggedOutFormLinks>
 		);
-	}
-
-	clickHelpButton = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	}
 
 	renderStateAction() {
