@@ -17,7 +17,6 @@ import {
 	getTwoFactorUserId,
 	getTwoFactorAuthNonce,
 	isTwoFactorAuthTypeSupported,
-	getTwoFactorPushPollInProgress,
 	getTwoFactorPushPollSuccess,
 } from 'state/login/selectors';
 
@@ -57,7 +56,6 @@ class WaitingTwoFactorNotificationApproval extends Component {
 			isSmsAuthSupported,
 			translate,
 			pushSuccess,
-			pollInProgress,
 		} = this.props;
 
 		if ( pushSuccess ) {
@@ -67,7 +65,6 @@ class WaitingTwoFactorNotificationApproval extends Component {
 		return (
 			<form>
 				<Card className="two-factor-authentication__push-notification-screen is-compact">
-					<p>inProgress: { pollInProgress ? 'true' : 'false' }</p>
 					<p>
 						{ translate( 'We just sent a push notification to your WordPress mobile app. ' +
 							'Swipe or tap to open and verify your login.' ) }
@@ -105,7 +102,6 @@ export default connect(
 		twoStepNonce: getTwoFactorAuthNonce( state ),
 		userId: getTwoFactorUserId( state ),
 		pushSuccess: getTwoFactorPushPollSuccess( state ),
-		pollInProgress: getTwoFactorPushPollInProgress( state ),
 	} ),
 	{
 		sendSmsCode,
