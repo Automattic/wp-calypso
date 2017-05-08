@@ -25,6 +25,11 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 
 class WaitingTwoFactorNotificationApproval extends Component {
 	static propTypes = {
+		onSuccess: PropTypes.func.isRequired,
+		pushSuccess: PropTypes.bool.isRequired,
+		startPollAppPushAuth: PropTypes.func.isRequired,
+		stopPollAppPushAuth: PropTypes.func.isRequired,
+		sendSmsCode: PropTypes.func.isRequired,
 		errorNotice: PropTypes.func.isRequired,
 		isSmsAuthSupported: PropTypes.bool.isRequired,
 		successNotice: PropTypes.func.isRequired,
