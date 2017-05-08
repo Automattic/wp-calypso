@@ -41,12 +41,9 @@ export default class JSXTreeRenderer extends Component {
 		const text = stringifyComponent( tree );
 		const highlighted = prism.highlight( text, prism.languages.jsx );
 
-		return <pre style={ { padding: '0.6em 0.8em', margin: 0, height: '100%' } }>
-			<code
-				style={ { fontSize: 13 } }
-				dangerouslySetInnerHTML={ { __html: highlighted } } // eslint-disable-line react/no-danger
-			/>
-		</pre>;
+		return <code
+			className="jsx-tree-renderer__code"
+			dangerouslySetInnerHTML={ { __html: highlighted } } />; // eslint-disable-line react/no-danger
 	}
 
 	render() {
@@ -54,7 +51,10 @@ export default class JSXTreeRenderer extends Component {
 		const classes = classNames( className, 'jsx-tree-renderer' );
 		const code = this.renderSourceCode();
 		const display = code ? 'block' : 'none';
-		return <div className={ classes } style={ { display, height: '100%' } }>{ code }</div>;
+		return <pre
+			className={ classes }
+			style={ { display } }
+			>{ code }</pre>;
 	}
 }
 
