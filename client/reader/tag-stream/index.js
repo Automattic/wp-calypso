@@ -12,7 +12,6 @@ import {
 } from './controller';
 import {
 	initAbTests,
-	loadSubscriptions,
 	preloadReaderBundle,
 	sidebar,
 	updateLastRoute,
@@ -21,7 +20,6 @@ import {
 export default function() {
 	page( '/tag/*',
 		preloadReaderBundle,
-		loadSubscriptions,
 		initAbTests
 	);
 	page( '/tag/:tag',
@@ -31,7 +29,6 @@ export default function() {
 	);
 
 	page( '/tags',
-		loadSubscriptions,
 		initAbTests,
 		updateLastRoute,
 		sidebar,

@@ -13,7 +13,6 @@ import {
 } from './controller';
 import {
 	initAbTests,
-	loadSubscriptions,
 	preloadReaderBundle,
 	sidebar,
 	updateLastRoute,
@@ -27,7 +26,6 @@ export default function() {
 	// Blog Recommendations
 	page( '/recommendations',
 		preloadReaderBundle,
-		loadSubscriptions,
 		initAbTests,
 		updateLastRoute,
 		sidebar,
@@ -41,7 +39,6 @@ export default function() {
 				page.apply( page, [
 					path,
 					preloadReaderBundle,
-					loadSubscriptions,
 					updateLastRoute,
 					sidebar,
 					recommendedPosts

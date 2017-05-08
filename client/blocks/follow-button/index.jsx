@@ -1,71 +1,43 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { noop } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
 import FollowButton from './button';
-import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
-import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
+import { follow, unfollow } from 'state/reader/follows/actions';
+import { isFollowing } from 'state/selectors';
 
-const FollowButtonContainer = React.createClass( {
-	propTypes: {
+class FollowButtonContainer extends Component {
+	static propTypes = {
 		siteUrl: React.PropTypes.string.isRequired,
 		iconSize: React.PropTypes.number,
 		onFollowToggle: React.PropTypes.func,
 		followLabel: React.PropTypes.string,
 		followingLabel: React.PropTypes.string
-	},
+	}
 
-	getDefaultProps() {
-		return {
-			onFollowToggle: noop
-		};
-	},
+	static defaultProps = {
+		onFollowToggle: noop
+	}
 
-	getInitialState() {
-		return this.getStateFromStores();
-	},
-
-	getStateFromStores( props = this.props ) {
-		return { following: FeedSubscriptionStore.getIsFollowingBySiteUrl( props.siteUrl ) };
-	},
-
-	componentDidMount() {
-		FeedSubscriptionStore.on( 'change', this.onStoreChange );
-	},
-
-	componentWillUnmount() {
-		FeedSubscriptionStore.off( 'change', this.onStoreChange );
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		this.updateState( nextProps );
-	},
-
-	updateState( props = this.props ) {
-		const newState = this.getStateFromStores( props );
-		if ( newState.following !== this.state.following ) {
-			this.setState( newState );
+	handleFollowToggle = ( following ) => {
+		if ( following ) {
+			this.props.follow( this.props.siteUrl );
+		} else {
+			this.props.unfollow( this.props.siteUrl );
 		}
-	},
-
-	onStoreChange() {
-		this.updateState();
-	},
-
-	handleFollowToggle( following ) {
-		FeedSubscriptionActions[ following ? 'follow' : 'unfollow' ]( this.props.siteUrl );
 		this.props.onFollowToggle( following );
-	},
+	}
 
 	render() {
 		return (
 			<FollowButton
-				following={ this.state.following }
+				following={ this.props.following }
 				onFollowToggle={ this.handleFollowToggle }
 				iconSize={ this.props.iconSize }
 				tagName={ this.props.tagName }
@@ -75,6 +47,14 @@ const FollowButtonContainer = React.createClass( {
 				className={ this.props.className } />
 		);
 	}
-} );
+}
 
-export default FollowButtonContainer;
+export default connect(
+	( state, ownProps ) => ( {
+		following: isFollowing( state, { feedUrl: ownProps.siteUrl } )
+	} ),
+	{
+		follow,
+		unfollow
+	}
+)( FollowButtonContainer );

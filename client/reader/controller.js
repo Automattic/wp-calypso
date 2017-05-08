@@ -15,7 +15,6 @@ import feedLookup from 'lib/feed-lookup';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from './controller-helper';
 import FeedError from 'reader/feed-error';
-import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
 import StreamComponent from 'reader/following/main';
 import {
 	getPrettyFeedUrl,
@@ -25,11 +24,6 @@ import { recordTrack } from 'reader/stats';
 import { preload } from 'sections-preload';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
-
-// these three are included to ensure that the stores required have been loaded and can accept actions
-import FeedSubscriptionStore from 'lib/reader-feed-subscriptions'; // eslint-disable-line no-unused-vars
-import PostEmailSubscriptionStore from 'lib/reader-post-email-subscriptions'; // eslint-disable-line no-unused-vars
-import CommentEmailSubscriptionStore from 'lib/reader-comment-email-subscriptions'; // eslint-disable-line no-unused-vars
 
 const analyticsPageTitle = 'Reader';
 
@@ -120,11 +114,6 @@ const exported = {
 
 	preloadReaderBundle( context, next ) {
 		preload( 'reader' );
-		next();
-	},
-
-	loadSubscriptions( context, next ) {
-		FeedSubscriptionActions.fetchAll();
 		next();
 	},
 

@@ -14,7 +14,6 @@ import {
 	incompleteUrlRedirects,
 	initAbTests,
 	legacyRedirects,
-	loadSubscriptions,
 	preloadReaderBundle,
 	prettyRedirects,
 	readA8C,
@@ -32,7 +31,6 @@ export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
 		page( '/',
 			preloadReaderBundle,
-			loadSubscriptions,
 			initAbTests,
 			updateLastRoute,
 			sidebar,
@@ -48,7 +46,7 @@ export default function() {
 		page( '/read/feed', '/' );
 
 		// Feed stream
-		page( '/read/*', preloadReaderBundle, loadSubscriptions, initAbTests );
+		page( '/read/*', preloadReaderBundle, initAbTests );
 		page( '/read/blog/feed/:feed_id', legacyRedirects );
 		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page( '/read/feeds/:feed_id',
@@ -74,4 +72,4 @@ export default function() {
 
 	// Automattic Employee Posts
 	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C );
-};
+}
