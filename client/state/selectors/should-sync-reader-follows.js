@@ -3,7 +3,7 @@
  */
 import { getReaderFollowsLastSyncTime } from 'state/selectors';
 
-const MS_BETWEEN_SYNCS = 1000 * 60 * 60; // one hour
+export const MS_BETWEEN_SYNCS = 1000 * 60 * 60; // one hour
 
 export default function shouldSyncReaderFollows( state ) {
 	const lastTime = getReaderFollowsLastSyncTime( state );

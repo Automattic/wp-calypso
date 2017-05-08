@@ -7,8 +7,7 @@ import { expect } from 'chai';
  * Internal Dependencies
  */
 import { shouldSyncReaderFollows } from 'state/selectors';
-
-const TIME_BETWEEN_SYNCS = 1000 * 60 * 60; // one day in millis
+import { MS_BETWEEN_SYNCS } from 'state/selectors/should-sync-reader-follows';
 
 describe( 'shouldSyncReaderFollows', () => {
 	it( 'should return true when last time is null', () => {
@@ -25,7 +24,7 @@ describe( 'shouldSyncReaderFollows', () => {
 		expect( shouldSyncReaderFollows( {
 			reader: {
 				follows: {
-					lastSyncTime: Date.now() - ( TIME_BETWEEN_SYNCS + 1000 )
+					lastSyncTime: Date.now() - ( MS_BETWEEN_SYNCS + 1000 )
 				}
 			}
 		} ) ).to.be.true;
@@ -45,7 +44,7 @@ describe( 'shouldSyncReaderFollows', () => {
 		expect( shouldSyncReaderFollows( {
 			reader: {
 				follows: {
-					lastSyncTime: Date.now() - ( TIME_BETWEEN_SYNCS - 1000 )
+					lastSyncTime: Date.now() - ( MS_BETWEEN_SYNCS - 1000 )
 				}
 			}
 		} ) ).to.be.false;
