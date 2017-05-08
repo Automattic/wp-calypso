@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -11,8 +12,9 @@ import {
 	getTwoFactorUserId,
 	getTwoFactorAuthNonce,
 	getTwoFactorSupportedAuthTypes,
-	isTwoFactorEnabled,
 	isRequestingTwoFactorAuth,
+	isTwoFactorEnabled,
+	isTwoFactorAuthTypeSupported,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -165,6 +167,28 @@ describe( 'selectors', () => {
 			} );
 
 			expect( authTypes ).to.eql( [ 'authenticator', 'sms' ] );
+		} );
+	} );
+
+	describe( 'isTwoFactorAuthTypeSupported', () => {
+		const state = deepFreeze( {
+			login: {
+				twoFactorAuth: {
+					two_step_supported_auth_types: [ 'authenticator', 'sms' ],
+				}
+			}
+		} );
+
+		it( 'should return null when the state is not there yet', () => {
+			expect( isTwoFactorAuthTypeSupported( null, 'sms' ) ).to.be.null;
+		} );
+
+		it( 'should return false when the supported auth type does not exist in the state', () => {
+			expect( isTwoFactorAuthTypeSupported( state, 'unknown' ) ).to.be.false;
+		} );
+
+		it( 'should return true when the supported auth type exists in the state', () => {
+			expect( isTwoFactorAuthTypeSupported( state, 'sms' ) ).to.be.true;
 		} );
 	} );
 } );
