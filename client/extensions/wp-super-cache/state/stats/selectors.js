@@ -3,6 +3,10 @@
  */
 import { get } from 'lodash';
 
+function getStatsState( state ) {
+	return get( state, 'extensions.wpSuperCache.stats', {} );
+}
+
 /**
  * Returns true if we are generating stats for the specified site ID, false otherwise.
  *
@@ -11,7 +15,7 @@ import { get } from 'lodash';
  * @return {Boolean} Whether stats are being generated
  */
 export function isGeneratingStats( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'stats', 'generateStatus', siteId, 'generating' ], false );
+	return get( getStatsState( state ), [ 'generateStatus', siteId, 'generating' ], false );
 }
 
 /**
@@ -33,7 +37,7 @@ export function isStatsGenerationSuccessful( state, siteId ) {
  * @return {String}  Stats generation request status (pending, success or error)
  */
 export function getStatsGenerationStatus( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'stats', 'generateStatus', siteId, 'status' ] );
+	return get( getStatsState( state ), [ 'generateStatus', siteId, 'status' ] );
 }
 
 /**
@@ -44,5 +48,5 @@ export function getStatsGenerationStatus( state, siteId ) {
  * @return {Object} Stats
  */
 export function getStats( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'stats', 'items', siteId ], null );
+	return get( getStatsState( state ), [ 'items', siteId ], null );
 }
