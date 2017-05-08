@@ -56,22 +56,25 @@ class WaitingTwoFactorNotificationApproval extends Component {
 		this.props.stopPollAppPushAuth();
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		if ( ! this.props.pushSuccess && nextProps.pushSuccess ) {
+			this.props.onSuccess();
+		}
+	}
+
 	render() {
 		const {
 			isSmsAuthSupported,
-			translate,
 			pushSuccess,
+			translate,
 		} = this.props;
-
-		if ( pushSuccess ) {
-			return <h1>Success!</h1>;
-		}
 
 		return (
 			<form>
 				<Card className="two-factor-authentication__push-notification-screen is-compact">
 					<p>
-						{ translate( 'We just sent a push notification to your WordPress mobile app. ' +
+						{ pushSuccess ? translate( 'Awesome, you are now logged in! One moment while we take you to homepage…' )
+							: translate( 'We just sent a push notification to your WordPress mobile app. ' +
 							'Swipe or tap to open and verify your login.' ) }
 					</p>
 					<div>
