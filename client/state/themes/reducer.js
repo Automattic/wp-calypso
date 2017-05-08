@@ -309,7 +309,8 @@ export const queries = ( () => {
 		};
 	}
 
-	// days * hours_in_day * minuets_in_hour * seconds_in_hour * miliseconds_in_second
+	// Time after which queries storred in IndexedDb will be invalidated.
+	// days * hours_in_day * minutes_in_hour * seconds_in_hour * miliseconds_in_second
 	const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
 
 	return createReducer( {}, {
@@ -325,18 +326,18 @@ export const queries = ( () => {
 		},
 		[ SERIALIZE ]: ( state ) => {
 			const serializedState = mapValues( state, ( { data, options } ) => ( { data, options } ) );
-			return Object.assign( serializedState, { _timestamp: Date.now() } );
+			return { ...serializedState, _timestamp: Date.now() };
 		},
 		[ DESERIALIZE ]: ( state ) => {
 			if ( state._timestamp && state._timestamp + MAX_THEMES_AGE < Date.now() ) {
 				return {};
 			}
-			delete state._timestamp;
-			if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
+			const noTimestampState = omit( state, '_timestamp' );
+			if ( ! isValidStateWithSchema( noTimestampState, queriesSchema ) ) {
 				return {};
 			}
 
-			return mapValues( state, ( { data, options } ) => {
+			return mapValues( noTimestampState, ( { data, options } ) => {
 				return new ThemeQueryManager( data, options );
 			} );
 		},
