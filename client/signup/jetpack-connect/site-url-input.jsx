@@ -34,16 +34,18 @@ class JetpackConnectSiteUrlInput extends Component {
 		url: '',
 	};
 
+	focusInput = noop;
+
+	refInput = ( formInputComponent ) => {
+		this.focusInput = () => formInputComponent.focus();
+	};
+
 	componentDidUpdate() {
 		if ( ! this.props.isError ) {
 			return;
 		}
 
-		if ( ! this.refs.siteUrl.refs.textField ) {
-			return;
-		}
-
-		this.refs.siteUrl.refs.textField.focus();
+		this.focusInput();
 	}
 
 	handleKeyPress = ( event ) => {
@@ -106,7 +108,7 @@ class JetpackConnectSiteUrlInput extends Component {
 						size={ 24 }
 						icon="globe" />
 					<FormTextInput
-						ref="siteUrl"
+						ref={ this.refInput }
 						id="siteUrl"
 						autoCapitalize="off"
 						autoFocus="autofocus"
