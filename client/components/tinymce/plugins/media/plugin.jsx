@@ -435,7 +435,10 @@ function mediaButton( editor ) {
 
 			MediaActions.clearValidationErrors( siteId );
 			renderModal( {
-				visible: true
+				visible: true,
+				labels: {
+					confirm: i18n.translate( 'Update', { context: 'verb' } )
+				}
 			} );
 			MediaActions.setLibrarySelectedItems( siteId, [ image ] );
 		}
