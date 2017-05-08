@@ -23,7 +23,7 @@ import {
 	getTwoFactorAuthNonce,
 	getTwoFactorAuthRequestError,
 	isRequestingTwoFactorAuth,
-	getTwoFactorSupportedAuthTypes,
+	isTwoFactorAuthTypeSupported,
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode } from 'state/login/actions';
@@ -36,7 +36,7 @@ class VerificationCodeForm extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		rememberMe: PropTypes.bool.isRequired,
 		successNotice: PropTypes.func.isRequired,
-		supportedAuthTypes: PropTypes.array.isRequired,
+		isSmsSupported: PropTypes.bool.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
 		userId: PropTypes.number.isRequired,
 	};
@@ -77,7 +77,7 @@ class VerificationCodeForm extends Component {
 	};
 
 	render() {
-		const { translate, twoFactorAuthRequestError, supportedAuthTypes } = this.props;
+		const { translate, twoFactorAuthRequestError, isSmsSupported } = this.props;
 		const isError = !! twoFactorAuthRequestError;
 
 		return (
@@ -128,7 +128,7 @@ class VerificationCodeForm extends Component {
 				</p>
 
 				<hr />
-				{ supportedAuthTypes.indexOf( 'sms' ) > -1 && (
+				{ isSmsSupported && (
 					<p>
 						<a href="#" onClick={ this.sendSmsCode }>{ translate( 'Send recovery code via text' ) }</a>
 					</p>
@@ -144,7 +144,7 @@ export default connect(
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 		userId: getTwoFactorUserId( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
-		supportedAuthTypes: getTwoFactorSupportedAuthTypes( state ),
+		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 	} ),
 	{
 		loginUserWithTwoFactorVerificationCode,
