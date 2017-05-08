@@ -541,6 +541,7 @@ const ThemeSheet = React.createClass( {
 		} );
 
 		const metas = [
+			{ property: 'og:title', content: title },
 			{ property: 'og:url', content: canonicalUrl },
 			{ property: 'og:image', content: this.props.screenshot },
 			{ property: 'og:type', content: 'website' },
