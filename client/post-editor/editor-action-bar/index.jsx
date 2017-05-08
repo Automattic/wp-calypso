@@ -18,6 +18,7 @@ import EditorStatusLabel from 'post-editor/editor-status-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
+import PostEditStore from 'lib/posts/post-edit-store';
 
 class EditorActionBar extends Component {
 
@@ -37,7 +38,7 @@ class EditorActionBar extends Component {
 	render() {
 		const multiUserSite = this.props.site && ! this.props.site.single_user_site;
 		const isPasswordProtected = utils.getVisibility( this.props.post ) === 'password';
-		const isPrivate = utils.isPrivate( this.props.post );
+		const isPrivate = utils.isPrivate( PostEditStore.get() );
 
 		return (
 			<div className="editor-action-bar">
