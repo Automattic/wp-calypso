@@ -107,7 +107,12 @@ function stringifyPropValue( value ) {
 	switch ( typeof value ) {
 		case 'function': return '{ [function] }';
 		case 'string': return `"${ value }"`;
-		default: return `{ ${ String( value ) } }`;
+		case 'object':
+			try {
+				return `{ ${ JSON.stringify( value ) } }`;
+			} catch ( err ) {}
+		default:
+			return `{ '${ String( value ) }' }`;
 	}
 }
 
