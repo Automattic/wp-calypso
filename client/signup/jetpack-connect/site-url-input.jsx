@@ -46,11 +46,9 @@ class JetpackConnectSiteUrlInput extends Component {
 		this.refs.siteUrl.refs.textField.focus();
 	}
 
-	handleSubmit = () => this.props.onSubmit();
-
 	handleKeyPress = ( event ) => {
 		if ( 13 === event.keyCode ) {
-			this.handleSubmit();
+			this.props.onSubmit();
 		}
 	};
 
@@ -94,6 +92,7 @@ class JetpackConnectSiteUrlInput extends Component {
 			isError,
 			isFetching,
 			onChange,
+			onSubmit,
 			translate,
 			url,
 		} = this.props;
@@ -127,7 +126,7 @@ class JetpackConnectSiteUrlInput extends Component {
 					<Button
 						primary
 						disabled={ ( ! url || isFetching || hasError ) }
-						onClick={ this.handleSubmit }
+						onClick={ onSubmit }
 					>
 						{ this.renderButtonLabel() }
 					</Button>

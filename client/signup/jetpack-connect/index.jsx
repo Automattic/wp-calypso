@@ -156,7 +156,7 @@ class JetpackConnectMain extends Component {
 		);
 	}
 
-	onUrlSubmit = () => {
+	handleUrlSubmit = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl
 		} );
@@ -354,7 +354,7 @@ class JetpackConnectMain extends Component {
 					url={ this.state.shownUrl }
 					onTosClick={ this.handleOnClickTos }
 					onChange={ this.handleUrlChange }
-					onSubmit={ this.onUrlSubmit }
+					onSubmit={ this.handleUrlSubmit }
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
 					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() || this.state.waitingForSites }
