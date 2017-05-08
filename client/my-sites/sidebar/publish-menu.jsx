@@ -159,8 +159,7 @@ class PublishMenu extends PureComponent {
 		}
 
 		const className = this.props.itemLinkClass(
-			menuItem.paths ? menuItem.paths : menuItem.link,
-			menuItem.className
+			menuItem.paths ? menuItem.paths : menuItem.link
 		);
 
 		return (
