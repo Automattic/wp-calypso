@@ -41,25 +41,35 @@
 module.exports = {
 	media: [
 		{
-			ID: 1009
+			ID: 1009,
+			guid: 'http://example.files.wordpress.com/2015/05/g1009.gif'
 		}, {
-			ID: 1008
+			ID: 1008,
+			guid: 'http://example.files.wordpress.com/2015/05/g1008.gif'
 		}, {
-			ID: 1007
+			ID: 1007,
+			guid: 'http://example.files.wordpress.com/2015/05/g1007.gif'
 		}, {
-			ID: 1006
+			ID: 1006,
+			guid: 'http://example.files.wordpress.com/2015/05/g1006.gif'
 		}, {
-			ID: 1005
+			ID: 1005,
+			guid: 'http://example.files.wordpress.com/2015/05/g1005.gif'
 		}, {
-			ID: 1004
+			ID: 1004,
+			guid: 'http://example.files.wordpress.com/2015/05/g1004.gif'
 		}, {
-			ID: 1003
+			ID: 1003,
+			guid: 'http://example.files.wordpress.com/2015/05/g1003.gif'
 		}, {
-			ID: 1002
+			ID: 1002,
+			guid: 'http://example.files.wordpress.com/2015/05/g1002.gif'
 		}, {
-			ID: 1001
+			ID: 1001,
+			guid: 'http://example.files.wordpress.com/2015/05/g1001.gif'
 		}, {
-			ID: 1000
+			ID: 1000,
+			guid: 'http://example.files.wordpress.com/2015/05/g1000.gif'
 		}
 	]
 };

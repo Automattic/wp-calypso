@@ -89,7 +89,9 @@ MediaLibrarySelectedStore.getAll = function( siteId ) {
 		MediaLibrarySelectedStore
 			._media[ siteId ]
 			.map( itemId => MediaStore.get( siteId, itemId ) )
-			.filter( Boolean )
+			.filter( ( item ) => {
+				return ( item && item.guid );
+			} )
 	);
 };
 
