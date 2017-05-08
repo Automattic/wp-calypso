@@ -12,6 +12,8 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormDimensionsInput from '../../components/form-dimensions-input';
+import formattedVariationName from '../../lib/formatted-variation-name';
 
 class ProductFormVariationRow extends React.Component {
 
@@ -31,13 +33,6 @@ class ProductFormVariationRow extends React.Component {
 		this.setWeight = this.setWeight.bind( this );
 		this.setDimension = this.setDimension.bind( this );
 		this.setStockQuantity = this.setStockQuantity.bind( this );
-	}
-
-	// TODO Consider splitting out into a helper lib if we end up needing it in other places.
-	formattedVariationName( { attributes } ) {
-		return attributes.map( function( attribute ) {
-			return attribute.option;
-		} ).join( ' - ' );
 	}
 
 	// TODO: Consider consolidating the following set functions with a helper (along with the form-details functions).
@@ -74,7 +69,7 @@ class ProductFormVariationRow extends React.Component {
 
 	// TODO Pull in correct currency, dimension, and weight from from settings.
 	render() {
-		const { variation, translate, manageStock } = this.props;
+		const { variation, manageStock } = this.props;
 		const dimensions = variation.dimensions || { };
 		const allVariationsRow = ! variation.attributes.length;
 		const rowClassName = 'products__product-form-variation-' + ( allVariationsRow && 'all-row' || 'row' );
@@ -92,7 +87,7 @@ class ProductFormVariationRow extends React.Component {
 							<div className="products__product-form-variation-image"></div>
 						) }
 						<div className="products__product-name">
-						{ allVariationsRow && translate( 'All variations' ) || this.formattedVariationName( variation ) }
+						{ formattedVariationName( variation, 'All variations' ) }
 						</div>
 					</div>
 				</td>
@@ -107,33 +102,12 @@ class ProductFormVariationRow extends React.Component {
 				</td>
 				<td>
 					<div className="products__product-dimensions-weight">
-						<div className="products__product-dimensions-input">
-							<FormTextInput
-								name="length"
-								placeholder={ translate( 'L' ) }
-								type="number"
-								value={ dimensions.length || '' }
-								onChange={ this.setDimension }
-								className="products__product-dimensions-length"
-							/>
-							<FormTextInput
-								name="width"
-								placeholder={ translate( 'W' ) }
-								type="number"
-								value={ dimensions.width || '' }
-								onChange={ this.setDimension }
-								className="products__product-dimensions-width"
-							/>
-							<FormTextInputWithAffixes
-								name="height"
-								placeholder={ translate( 'H' ) }
-								suffix="in"
-								type="number"
-								value={ dimensions.height || '' }
-								onChange={ this.setDimension }
-								className="products__product-dimensions-height"
-							/>
-						</div>
+						<FormDimensionsInput
+							className="products__product-dimensions-input"
+							unit="in"
+							dimensions={ dimensions }
+							onChange={ this.setDimension }
+						/>
 						<div className="products__product-weight-input">
 							<FormTextInputWithAffixes
 								name="weight"
