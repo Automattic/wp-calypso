@@ -196,7 +196,6 @@
 
 .following-manage__url-follow {
 	border-bottom: 1px solid lighten( $gray, 30% );
-	min-height: 30px;
 	padding: 13px 0 10px;
 	display: flex;
 	justify-content: center;
@@ -208,6 +207,10 @@
 
 		.follow-button__label {
 			color: $blue-medium;
+
+			@include breakpoint ("<660px" ) {
+				display: inline;
+			}
 		}
 
 		&.is-following {
