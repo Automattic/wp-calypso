@@ -48,7 +48,6 @@ export const examples = [
 	require( 'social-logos/example' ),
 	require( 'components/section-header/docs/example' ),
 	require( 'components/select-dropdown/docs/example' ),
-	require( 'devdocs/design/search-collection' ),
 	require( 'components/section-nav/docs/example' ),
 	require( 'components/spinner/docs/example' ),
 	require( 'components/timezone/docs/example' ),
