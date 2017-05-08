@@ -10,6 +10,18 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 
+function getAge( { lower_age, upper_age } ) {
+	if ( lower_age && upper_age ) {
+		return `${ lower_age } - ${ upper_age }`;
+	} else if ( lower_age ) {
+		return lower_age;
+	} else if ( upper_age ) {
+		return upper_age;
+	}
+
+	return '';
+}
+
 class CacheStats extends Component {
 	static propTypes = {
 		files: PropTypes.array,
@@ -20,18 +32,6 @@ class CacheStats extends Component {
 	static defaultProps = {
 		files: [],
 	};
-
-	getAge = ( { lower_age, upper_age } ) => {
-		if ( lower_age && upper_age ) {
-			return `${ lower_age } - ${ upper_age }`;
-		} else if ( lower_age ) {
-			return lower_age;
-		} else if ( upper_age ) {
-			return upper_age;
-		}
-
-		return '';
-	}
 
 	render() {
 		const {
@@ -59,7 +59,7 @@ class CacheStats extends Component {
 						<tr className="wp-super-cache__stat" key={ index }>
 							<td className="wp-super-cache__stat-dir">{ file.dir }</td>
 							<td>{ file.files }</td>
-							<td className="wp-super-cache__stat-age">{ this.getAge( file ) }</td>
+							<td className="wp-super-cache__stat-age">{ getAge( file ) }</td>
 							<td className="wp-super-cache__stat-action">
 								<Button compact>
 									{ translate( 'Delete' ) }
