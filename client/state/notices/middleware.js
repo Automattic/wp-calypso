@@ -209,19 +209,19 @@ const onSiteMonitorSettingsUpdateFailure = ( dispatch ) => dispatch(
 const onSiteDelete = ( dispatch, { siteId }, getState ) => dispatch(
 	successNotice( translate( '%(siteDomain)s is being deleted.', {
 		args: { siteDomain: getSiteDomain( getState(), siteId ) }
-	} ), { duration: 5000, noticeId: 'site-delete' } )
+	} ), { duration: 5000, id: 'site-delete' } )
 );
 
 const onSiteDeleteSuccess = ( dispatch, { siteId }, getState ) => dispatch(
 	successNotice( translate( '%(siteDomain)s has been deleted.', {
 		args: { siteDomain: getSiteDomain( getState(), siteId ) }
-	} ), { duration: 5000, noticeId: 'site-delete' } )
+	} ), { duration: 5000, id: 'site-delete' } )
 );
 
 const onSiteDeleteFailure = ( dispatch, { error } ) => {
 	if ( error.error === 'active-subscriptions' ) {
 		return dispatch( errorNotice( translate( 'You must cancel any active subscriptions prior to deleting your site.' ), {
-			noticeId: 'site-delete',
+			id: 'site-delete',
 			showDismiss: false,
 			button: translate( 'Manage Purchases' ),
 			href: purchasesPaths.purchasesRoot()
