@@ -12,15 +12,15 @@ import { localize } from 'i18n-calypso';
 import {
 	getTwoFactorUserId,
 	getTwoFactorAuthNonce,
-	getTwoFactorSupportedAuthTypes,
+	isTwoFactorAuthTypeSupported,
 } from 'state/login/selectors';
 import { sendSmsCode } from 'state/login/actions';
 import { successNotice } from 'state/notices/actions';
 
 class WaitingTwoFactorNotificationApproval extends Component {
 	static propTypes = {
+		isSmsAuthSupported: PropTypes.bool.isRequired,
 		successNotice: PropTypes.func.isRequired,
-		supportedAuthTypes: PropTypes.array.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -35,7 +35,7 @@ class WaitingTwoFactorNotificationApproval extends Component {
 	};
 
 	render() {
-		const { supportedAuthTypes, translate } = this.props;
+		const { isSmsAuthSupported, translate } = this.props;
 
 		return (
 			<form>
@@ -56,7 +56,7 @@ class WaitingTwoFactorNotificationApproval extends Component {
 					<p>
 						{ translate( 'Or, continue to your account using:' ) }
 					</p>
-					{ supportedAuthTypes.indexOf( 'sms' ) > -1 && (
+					{ isSmsAuthSupported && (
 						<p>
 							<a href="#" onClick={ this.sendSmsCode }>{ translate( 'A recovery code via text' ) }</a>
 						</p>
@@ -72,9 +72,9 @@ class WaitingTwoFactorNotificationApproval extends Component {
 
 export default connect(
 	( state ) => ( {
-		userId: getTwoFactorUserId( state ),
+		isSmsAuthSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
-		supportedAuthTypes: getTwoFactorSupportedAuthTypes( state ),
+		userId: getTwoFactorUserId( state ),
 	} ),
 	{
 		sendSmsCode,
