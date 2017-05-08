@@ -344,7 +344,7 @@ class SiteSettingsFormGeneral extends Component {
 							step="1"
 							min="1"
 							id="posts_per_page"
-							value={ fields.posts_per_page || '' }
+							value={ fields.posts_per_page || 10 }
 							onChange={ onChangeField( 'posts_per_page' ) }
 							disabled={ isRequestingSettings }
 							onClick={ eventTracker( 'Clicked Posts Per Page Field' ) }
