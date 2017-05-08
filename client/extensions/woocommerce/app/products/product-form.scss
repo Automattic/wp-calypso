@@ -1,0 +1,94 @@
+.form-label {
+	margin-bottom: 16px;
+}
+
+.form-label {
+	margin-bottom: 16px;
+}
+
+.form-label {
+	margin-bottom: 16px;
+}
+
+.foldable-card.products__variation-card .foldable-card__content {
+	padding: 0;
+	border: 0;
+}
+
+.products__product-form-details-featured {
+	text-align: right;
+
+	.form-toggle__wrapper {
+		margin-left: 10px;
+	}
+}
+
+.products__product-form-details-wrapper {
+	display: flex;
+	flex-direction: column;
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+	}
+}
+/* TODO: remove placeholder styles once implemented */
+.products__product-form-details-images {
+	background: $gray-light;
+	height: 200px;
+	margin-bottom: 16px;
+	@include breakpoint( ">960px" ) {
+		margin-bottom: 0;
+	}
+}
+
+.products__product-form-details-images,
+.products__product-form-details-basic {
+	flex: 1;
+	@include breakpoint( ">960px" ) {
+		margin-right: 32px;
+	}
+
+	&:last-child {
+		margin-right: 0;
+	}
+
+	&:last-child {
+		margin-right: 0;
+	}
+
+	&:last-child {
+		margin-right: 0;
+	}
+}
+
+.products__product-form-details-basic-description textarea {
+	resize: vertical;
+}
+
+.products__variation-types-form-wrapper {
+	padding: 24px;
+	border-top: 1px solid $gray-light;
+}
+
+.products__variation-types-form-group {
+
+	.products__variation-types-form-fieldset,
+	.products__variation-types-form-labels {
+		display: flex;
+	}
+
+	.products__variation-types-form-fieldset {
+		margin-bottom: 16px;
+	}
+
+	.products__variation-types-form-field {
+		width: 50%;
+	}
+
+	.products__variation-types-form-label {
+		width: 35%;
+	}
+
+	.token-field {
+		margin-left: 16px;
+	}
+}
