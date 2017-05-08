@@ -13,7 +13,7 @@ import Card from 'components/card';
 
 const sites = {
 	'longreads': { siteId: 70135762 },
-	'wordpress': { siteId: 25823 },
+	'wordpress': { siteId: 3584907 },
 }
 
 export default class ReaderRecommendedSitesExample extends PureComponent {
