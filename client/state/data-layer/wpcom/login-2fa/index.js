@@ -26,6 +26,12 @@ import {
  */
 const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
 
+/***
+ * Checks the status of the push notification auth
+ *
+ * @param {Object}   store  Global redux store
+ * @returns {Promise}		Promise of result from the API
+ */
 const doAppPushRequest = ( store ) => {
 	return request.post( config( 'two_step_authentication_xhr' ) )
 		.withCredentials()
@@ -46,6 +52,13 @@ const doAppPushRequest = ( store ) => {
 		} );
 };
 
+/***
+ * Polling the login API for the status of the push notification.
+ * The polling will stop on success or when store's polling progress
+ * state changes to `false`
+ *
+ * @param {Object}   store  Global redux store
+ */
 const doAppPushPolling = store => {
 	let retryCount = 0;
 	const retry = () => {
@@ -67,6 +80,7 @@ const doAppPushPolling = store => {
 };
 
 const handleTwoFactorPushPoll = ( store, action, next ) => {
+	// this is deferred to allow reducer respond to LOGIN_TWOFACTOR_PUSH_POLL_START
 	defer( () => doAppPushPolling( store ) );
 	return next( action );
 };
