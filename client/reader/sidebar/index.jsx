@@ -116,7 +116,8 @@ export const ReaderSidebar = React.createClass( {
 								<Gridicon icon="checkmark-circle" size={ 24 } />
 								<span className="menu-link-text">{ this.props.translate( 'Followed Sites' ) }</span>
 							</a>
-							<a href="/following/edit" className="sidebar__button">{ this.props.translate( 'Manage' ) }</a>
+							<a href={ config.isEnabled( 'reader/following-manage-refresh' ) ? '/following/manage' : '/following/edit' }
+								className="sidebar__button">{ this.props.translate( 'Manage' ) }</a>
 						</li>
 
 						<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
