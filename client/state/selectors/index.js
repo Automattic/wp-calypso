@@ -67,6 +67,7 @@ export getReaderFollowForBlog from './get-reader-follow-for-blog';
 export getReaderFollowForFeed from './get-reader-follow-for-feed';
 export getReaderFollows from './get-reader-follows';
 export getReaderFollowsCount from './get-reader-follows-count';
+export getReaderRecommendedSites from './get-reader-recommended-sites';
 export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
 export getSelectedOrAllSites from './get-selected-or-all-sites';
