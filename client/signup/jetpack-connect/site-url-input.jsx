@@ -24,13 +24,13 @@ class JetpackConnectSiteUrlInput extends Component {
 		] ),
 		isFetching: PropTypes.bool,
 		isInstall: PropTypes.bool,
-		onPushValue: PropTypes.func,
+		onChange: PropTypes.func,
 		onSubmit: PropTypes.func,
 		url: PropTypes.string,
 	};
 
 	static defaultProps = {
-		onPushValue: noop,
+		onChange: noop,
 		url: '',
 	};
 
@@ -45,10 +45,6 @@ class JetpackConnectSiteUrlInput extends Component {
 
 		this.refs.siteUrl.refs.textField.focus();
 	}
-
-	handleChange = ( event ) => {
-		this.props.onPushValue( event.target.value );
-	};
 
 	handleSubmit = () => this.props.onSubmit();
 
@@ -97,6 +93,7 @@ class JetpackConnectSiteUrlInput extends Component {
 		const {
 			isError,
 			isFetching,
+			onChange,
 			translate,
 			url,
 		} = this.props;
@@ -114,7 +111,7 @@ class JetpackConnectSiteUrlInput extends Component {
 						id="siteUrl"
 						autoCapitalize="off"
 						autoFocus="autofocus"
-						onChange={ this.handleChange }
+						onChange={ onChange }
 						disabled={ isFetching }
 						placeholder={ translate( 'http://www.yoursite.com' ) }
 						onKeyUp={ this.handleKeyPress }

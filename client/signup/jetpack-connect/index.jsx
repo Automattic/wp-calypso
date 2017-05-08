@@ -131,7 +131,8 @@ class JetpackConnectMain extends Component {
 			this.props.jetpackConnectSite.isFetching;
 	}
 
-	handleUpdateUrl = ( url ) => {
+	handleUrlChange = ( event ) => {
+		const url = event.target.value;
 		this.setState( {
 			currentUrl: this.cleanUrl( url ),
 			shownUrl: url,
@@ -352,7 +353,7 @@ class JetpackConnectMain extends Component {
 				<SiteUrlInput
 					url={ this.state.shownUrl }
 					onTosClick={ this.handleOnClickTos }
-					onPushValue={ this.handleUpdateUrl }
+					onChange={ this.handleUrlChange }
 					onSubmit={ this.onUrlSubmit }
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
