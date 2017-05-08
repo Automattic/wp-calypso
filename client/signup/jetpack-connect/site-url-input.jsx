@@ -94,8 +94,13 @@ class JetpackConnectSiteUrlInput extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
-		const hasError = this.props.isError && ( 'notExists' !== this.props.isError );
+		const {
+			isError,
+			isFetching,
+			translate,
+			url,
+		} = this.props;
+		const hasError = isError && ( 'notExists' !== isError );
 
 		return (
 			<div>
@@ -110,21 +115,25 @@ class JetpackConnectSiteUrlInput extends Component {
 						autoCapitalize="off"
 						autoFocus="autofocus"
 						onChange={ this.handleChange }
-						disabled={ this.props.isFetching }
+						disabled={ isFetching }
 						placeholder={ translate( 'http://www.yoursite.com' ) }
 						onKeyUp={ this.handleKeyPress }
-						value={ this.props.url }
+						value={ url }
 					/>
-					{ this.props.isFetching
+					{ isFetching
 						? <Spinner duration={ 30 } />
 						: null
 					}
 				</div>
 				<Card className="jetpack-connect__connect-button-card">
 					{ this.renderTermsOfServiceLink() }
-					<Button primary
-						disabled={ ( ! this.props.url || this.props.isFetching || hasError ) }
-						onClick={ this.handleSubmit }>{ this.renderButtonLabel() }</Button>
+					<Button
+						primary
+						disabled={ ( ! url || isFetching || hasError ) }
+						onClick={ this.handleSubmit }
+					>
+						{ this.renderButtonLabel() }
+					</Button>
 				</Card>
 			</div>
 		);
