@@ -74,7 +74,7 @@ function editProduct( array, product, data ) {
 	return _array;
 }
 
-function editProductAttribute( attributes, attribute, data ) {
+export function editProductAttribute( attributes, attribute, data ) {
 	const prevAttributes = attributes || [];
 	const uid = attribute && attribute.uid || uniqueId( 'edit_' ) + ( new Date().getTime() );
 
