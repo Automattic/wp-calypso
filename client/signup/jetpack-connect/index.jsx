@@ -355,7 +355,6 @@ class JetpackConnectMain extends Component {
 					onTosClick={ this.handleOnClickTos }
 					onChange={ this.handleUrlChange }
 					onSubmit={ this.handleUrlSubmit }
-					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
 					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() || this.state.waitingForSites }
 					isInstall={ this.isInstall() } />
