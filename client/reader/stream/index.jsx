@@ -104,8 +104,10 @@ class ReaderStream extends React.Component {
 		transformStreamItems: identity,
 	};
 
-	getStateFromStores( store = this.props.postsStore, recommendationsStore = this.props.recommendationsStore ) {
-		const posts = map( store.get(), this.props.transformStreamItems );
+	getStateFromStores( props = this.props ) {
+		const { postsStore: store, recommendationsStore } = props;
+
+		const posts = map( store.get(), props.transformStreamItems );
 		const recs = recommendationsStore ? recommendationsStore.get() : null;
 		// do we have enough recs? if we have a store, but not enough recs, we should fetch some more...
 		if ( recommendationsStore ) {
@@ -121,7 +123,7 @@ class ReaderStream extends React.Component {
 			items = injectRecommendations( posts, recs, getDistanceBetweenRecs() );
 		}
 
-		if ( this.props.shouldCombineCards ) {
+		if ( props.shouldCombineCards ) {
 			items = combineCards( items );
 		}
 
@@ -138,8 +140,8 @@ class ReaderStream extends React.Component {
 
 	state = this.getStateFromStores();
 
-	updateState = ( store ) => {
-		this.setState( this.getStateFromStores( store ) );
+	updateState = ( props = this.props ) => {
+		this.setState( this.getStateFromStores( props ) );
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -222,7 +224,7 @@ class ReaderStream extends React.Component {
 			nextProps.recommendationsStore && nextProps.recommendationsStore.on( 'change', this.updateState );
 			this.props.resetCardExpansions();
 
-			this.updateState( nextProps.postsStore, nextProps.recommendationsStore );
+			this.updateState( nextProps );
 			this._list && this._list.reset();
 		}
 	}
