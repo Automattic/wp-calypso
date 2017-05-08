@@ -5,7 +5,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
-import urlModule from 'url';
 import i18n from 'i18n-calypso';
 import Gridicon from 'gridicons';
 const debug = require( 'debug' )( 'calypso:jetpack-connect:authorize-form' );
@@ -22,7 +21,6 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
-import QuerySites from 'components/data/query-sites';
 import {
 	createAccount,
 	authorize,
@@ -46,16 +44,13 @@ import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
 import Card from 'components/card';
-import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Spinner from 'components/spinner';
-import Site from 'blocks/site';
 import { decodeEntities } from 'lib/formatting';
 import versionCompare from 'lib/version-compare';
 import EmptyContent from 'components/empty-content';
-import safeImageUrl from 'lib/safe-image-url';
 import Button from 'components/button';
 import { requestSites } from 'state/sites/actions';
 import { isRequestingSites } from 'state/sites/selectors';
@@ -70,39 +65,13 @@ import NoticeAction from 'components/notice/notice-action';
 import Plans from './plans';
 import CheckoutData from 'components/data/checkout';
 import { externalRedirect } from 'lib/route/path';
+import SiteCard from './site-card';
 
 /**
  * Constants
  */
 const PLANS_PAGE = '/jetpack/connect/plans/';
 const MAX_AUTH_ATTEMPTS = 3;
-
-const SiteCard = React.createClass( {
-	render() {
-		const { site_icon, blogname, home_url, site_url } = this.props.queryObject;
-		const safeIconUrl = site_icon ? safeImageUrl( site_icon ) : false;
-		const siteIcon = safeIconUrl ? { img: safeIconUrl } : false;
-		const url = decodeEntities( home_url );
-		const parsedUrl = urlModule.parse( url );
-		const path = ( parsedUrl.path === '/' ) ? '' : parsedUrl.path;
-		const site = {
-			ID: null,
-			url: url,
-			admin_url: decodeEntities( site_url + '/wp-admin' ),
-			domain: parsedUrl.host + path,
-			icon: siteIcon,
-			is_vip: false,
-			title: decodeEntities( blogname )
-		};
-
-		return (
-			<CompactCard className="jetpack-connect__site">
-				<QuerySites allSites />
-				<Site site={ site } />
-			</CompactCard>
-		);
-	}
-} );
 
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
