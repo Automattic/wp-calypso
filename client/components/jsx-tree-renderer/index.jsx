@@ -31,7 +31,7 @@ export default class JSXTreeRenderer extends Component {
 		this.setState( { tree } );
 	}
 
-	_renderSourceCode() {
+	renderSourceCode() {
 		const { tree } = this.state;
 
 		if ( ! tree ) {
@@ -52,7 +52,7 @@ export default class JSXTreeRenderer extends Component {
 	render() {
 		const { className } = this.props;
 		const classes = classNames( className, 'jsx-tree-renderer' );
-		const code = this._renderSourceCode();
+		const code = this.renderSourceCode();
 		const display = code ? 'block' : 'none';
 		return <div className={ classes } style={ { display, height: '100%' } }>{ code }</div>;
 	}
