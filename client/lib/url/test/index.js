@@ -13,6 +13,7 @@ import {
 	addSchemeIfMissing,
 	setUrlScheme,
 	urlToSlug,
+	resemblesUrl,
 } from '../';
 
 describe( 'withoutHttp', () => {
@@ -283,5 +284,32 @@ describe( 'urlToSlug()', () => {
 		const urlWithoutHttp = urlToSlug( urlWithHttp );
 
 		expect( urlWithoutHttp ).to.equal( 'example.com::example::test123' );
+	} );
+} );
+
+describe( 'resemblesUrl()', () => {
+	it( 'should detect a URL', () => {
+		const source = 'http://example.com/path';
+		expect( resemblesUrl( source ) ).to.equal( true );
+	} );
+
+	it( 'should detect a URL without protocol', () => {
+		const source = 'example.com';
+		expect( resemblesUrl( source ) ).to.equal( true );
+	} );
+
+	it( 'should detect a URL with a query string', () => {
+		const source = 'http://example.com/path?query=banana&query2=pineapple';
+		expect( resemblesUrl( source ) ).to.equal( true );
+	} );
+
+	it( 'should detect a URL with a short suffix', () => {
+		const source = 'http://example.cc';
+		expect( resemblesUrl( source ) ).to.equal( true );
+	} );
+
+	it( 'should return false if the string is not a URL', () => {
+		const source = 'exampledotcom';
+		expect( resemblesUrl( source ) ).to.equal( false );
 	} );
 } );

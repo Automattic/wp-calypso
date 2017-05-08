@@ -24,7 +24,7 @@ import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import { addQueryArgs } from 'lib/url';
 import FollowButton from 'reader/follow-button';
 import { READER_FOLLOWING_MANAGE_URL_INPUT } from 'reader/follow-button/follow-sources';
-import { isUrl, prependUrlProtocol, stripUrlProtocol } from './url-helper';
+import { resemblesUrl, addSchemeIfMissing, withoutHttp } from 'lib/url';
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -97,7 +97,7 @@ class FollowingManage extends Component {
 		this.resizeSearchBox();
 
 		// this is a total hack. In React-Virtualized you need to tell a WindowScroller when the things
-		// above it has moved with a call to updatePosision().  Our issue is we don't have a good moment
+		// above it has moved with a call to updatePosition().  Our issue is we don't have a good moment
 		// where we know that the content above the WindowScroller has settled down and so instead the solution
 		// here is to call updatePosition in a regular interval. the call takes about 0.1ms from empirical testing.
 		this.updatePosition = setInterval( () => {
@@ -133,10 +133,10 @@ class FollowingManage extends Component {
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 		const showExistingSubscriptions = ! ( !! sitesQuery && showMoreResults );
-		const isSitesQueryUrl = isUrl( sitesQuery );
+		const isSitesQueryUrl = resemblesUrl( sitesQuery );
 		let sitesQueryWithoutProtocol;
 		if ( isSitesQueryUrl ) {
-			sitesQueryWithoutProtocol = stripUrlProtocol( sitesQuery );
+			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		}
 
 		return (
@@ -168,7 +168,7 @@ class FollowingManage extends Component {
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
-								siteUrl={ prependUrlProtocol( sitesQuery ) }
+								siteUrl={ addSchemeIfMissing( sitesQuery ) }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT } />
 						</div>
 					) }
