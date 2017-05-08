@@ -156,7 +156,6 @@ export default {
 	},
 	'site-picker': {
 		stepName: 'site-picker',
-		apiRequestFunction: stepActions.linkExistingSite,
 		props: {
 			headerText: i18n.translate( 'Choose your site?' ),
 		},

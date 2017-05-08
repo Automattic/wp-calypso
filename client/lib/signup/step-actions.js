@@ -38,7 +38,7 @@ import { requestSites } from 'state/sites/actions';
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
 function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
-	const { designType, domainItem } = data;
+	const { designType, domainItem, siteId, siteSlug } = data;
 
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
@@ -50,29 +50,21 @@ function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 
 		SignupCart.createCart( cartKey, [ domainItem ], error => callback( error, providedDependencies ) );
-	} else if ( designType === 'page' ) {
+	} else if ( designType === 'existing-site' ) {
+		const providedDependencies = {
+			siteId,
+			siteSlug,
+		};
+
+		SignupCart.createCart( siteId, omitBy( dependencies, isNull ), error => {
+			callback( error, providedDependencies );
+			page.redirect( `/checkout/${ siteSlug }` );
+		} );
+	} else {
 		createSiteWithCart( ( errors, providedDependencies ) => {
 			callback( errors, pick( providedDependencies, [ 'siteId', 'siteSlug', 'themeSlugWithRepo', 'domainItem' ] ) );
 		}, dependencies, data, reduxStore );
 	}
-}
-
-function linkExistingSite( callback, dependencies, data ) {
-	const { designType, siteId, siteSlug } = data;
-
-	if ( designType !== 'existing-site' ) {
-		return;
-	}
-
-	const providedDependencies = {
-		siteId,
-		siteSlug,
-	};
-
-	SignupCart.createCart( siteId, omitBy( dependencies, isNull ), error => {
-		callback( error, providedDependencies );
-		page.redirect( `/checkout/${ siteSlug }` );
-	} );
 }
 
 function createSiteWithCart( callback, dependencies, {
@@ -270,8 +262,6 @@ module.exports = {
 	createSiteOrDomain,
 
 	createSiteWithCart,
-
-	linkExistingSite,
 
 	addPlanToCart( callback, { siteId }, { cartItem, privacyItem } ) {
 		if ( isEmpty( cartItem ) ) {
