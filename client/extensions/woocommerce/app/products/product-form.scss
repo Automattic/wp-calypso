@@ -218,9 +218,16 @@
 }
 
 .products__product-form-variation-table-wrapper {
+	width: 1px;
 	max-width: 100%;
 	min-width: 100%;
 	overflow-x: auto;
+}
+
+.products__product-form-variation-table-wrapper .form-text-input-with-affixes .form-text-input,
+.products__product-form-variation-table-wrapper .form-dimensions-input__length,
+.products__product-form-variation-table-wrapper .form-dimensions-input__width{
+	min-width: 80px;
 }
 
 /* TODO: remove placeholder styles once implemented */
@@ -235,6 +242,11 @@
 		margin-bottom: 0;
 		margin-right: 8px;
 	}
+}
+
+.products__product-form-variation-table-wrapper .products__product-form-variation-image{
+	margin-bottom: 0;
+	margin-right: 8px;
 }
 
 .products__product-form-variation-all-row .products__product-id {
