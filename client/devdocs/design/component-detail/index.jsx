@@ -35,9 +35,13 @@ export default class DesignAssets extends React.Component {
 				</HeaderCake>
 				<h1 className="component-detail__title">{ name }</h1>
 				<div className="component-detail__example">
-					<Example ref="example" />
+					<div className="component-detail__tree">
+						<JSXTreeRenderer ref="tree" />
+					</div>
+					<div className="component-detail__render">
+						<Example ref="example" />
+					</div>
 				</div>
-				<JSXTreeRenderer ref="tree" className="component-detail__tree" />
 			</Main>
 		);
 	}

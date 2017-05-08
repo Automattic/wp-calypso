@@ -1,6 +1,6 @@
 
 .component-detail {
-
+  max-width: 800px;
 }
 
 .component-detail__title {
@@ -12,11 +12,40 @@
 }
 
 .component-detail__example {
-  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  border: solid 1px #ddd;
+}
+
+.component-detail__tree,
+.component-detail__render {
+  float: left;
+  width: 50%;
 }
 
 .component-detail__tree {
-  max-height: 270px;
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  border-right: solid 1px #ddd;
   overflow: scroll;
-  border: solid 1px #ddd;
+}
+
+.component-detail__render {
+  box-sizing: border-box;
+  float: right;
+  width: 50%;
+  min-height: 400px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+
+.component-detail__render:last-child {
+  margin-bottom: 0;
 }
