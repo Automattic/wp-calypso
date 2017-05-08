@@ -125,12 +125,8 @@ function stringifyPropValue( value ) {
 	}
 }
 
-function truncate( string, length ) {
-	if ( string.length < length ) {
-		return string;
-	}
-
-	return `${ string.slice( 0, length ) }…`;
+function truncate( string, maxLength ) {
+	return string.length > maxLength ? `${ string.slice( 0, maxLength ) }…` : string;
 }
 
 function getElementName( element ) {
