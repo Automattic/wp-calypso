@@ -309,6 +309,9 @@ export const queries = ( () => {
 		};
 	}
 
+	// days * hours_in_day * minuets_in_hour * seconds_in_hour * miliseconds_in_second
+	const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
+
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
 			return applyToManager(
@@ -321,9 +324,14 @@ export const queries = ( () => {
 			return applyToManager( state, siteId, 'removeItem', false, themeId );
 		},
 		[ SERIALIZE ]: ( state ) => {
-			return mapValues( state, ( { data, options } ) => ( { data, options } ) );
+			const serializedState = mapValues( state, ( { data, options } ) => ( { data, options } ) );
+			return Object.assign( serializedState, { _timestamp: Date.now() } );
 		},
 		[ DESERIALIZE ]: ( state ) => {
+			if ( state._timestamp && state._timestamp + MAX_THEMES_AGE < Date.now() ) {
+				return {};
+			}
+			delete state._timestamp;
 			if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
 				return {};
 			}
