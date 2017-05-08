@@ -87,7 +87,15 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			fill: lighten( $gray, 10% );
 			width: 14px;
 			height: 14px;
-			top: -8px;
+			top: -5px;
+
+			@media #{$reader-related-card-v2-breakpoint-medium} {
+				top: -2px;
+			}
+
+			@include breakpoint( "<660px" ) {
+				top: -2px;
+			}
 		}
 	}
 
@@ -95,10 +103,25 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		padding: 5px 0;
 		position: relative;
 
+		@media #{$reader-related-card-v2-breakpoint-medium} {
+			margin: 0 0 0 10px;
+		}
+
+		@include breakpoint( "<480px" ) {
+			margin: 0 0 0 10px;
+		}
+
 		.follow-button .follow-button__label {
 
 			@include breakpoint( "<960px" ) {
 				display: none;
+			}
+		}
+
+		.gridicon.gridicon__follow {
+
+			@include breakpoint( "<960px" ) {
+				left: 4px;
 			}
 		}
 	}
@@ -134,6 +157,16 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	.reader-subscription-list-item__options {
 		position: absolute;
 			right: 0;
+	}
+
+	.reader-subscription-list-item__site-title {
+		color: $blue-medium;
+		margin-bottom: 3px;
+		width: calc( 100% - 70px );
+
+		@include breakpoint( "<960px" ) {
+			width: calc( 100% - 20px );
+		}
 	}
 
 	.reader-subscription-list-item__by-text,
