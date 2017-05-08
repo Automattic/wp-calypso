@@ -2,14 +2,15 @@
  * External dependencies
  */
 import page from 'page';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isValidTerm, sortFilterTerms } from './theme-filters';
+import { isValidTerm, sortFilterTerms, getSubjects } from './theme-filters';
 
 // Reorder and remove invalid filters to redirect to canonical URL
-module.exports = function validateFilter( context, next ) {
+export function validateFilters( context, next ) {
 	// Page.js replaces + with \s
 	const filterParam = context.params.filter.replace( /\s/g, '+' );
 
@@ -30,5 +31,21 @@ module.exports = function validateFilter( context, next ) {
 	}
 
 	next();
-};
+}
 
+export function validateVertical( context, next ) {
+	const { vertical } = context.params;
+
+	if ( ! vertical ) {
+		return next();
+	}
+
+	if ( ! includes( getSubjects(), vertical ) ) {
+		if ( context.isServerSide ) {
+			return context.res.redirect( '/themes' );
+		}
+		return page.redirect( '/themes' );
+	}
+
+	next();
+}
