@@ -60,7 +60,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 		usernameOrEmail
 	} );
 
-	return request.post( config( 'login_url_xhr' ) )
+	return request.post( 'https://wordpress.com/wp-login.php?action=login-endpoint' )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -101,7 +101,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, two_step_nonce, remember_me ) => dispatch => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
-	return request.post( config( 'two_step_authentication_xhr' ) )
+	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -137,7 +137,7 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
  * @return {Function}                Action thunk to trigger the request.
  */
 export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
-	return request.post( config( 'two_step_authentication_send_sms_code_xhr' ) )
+	return request.post( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' )
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
