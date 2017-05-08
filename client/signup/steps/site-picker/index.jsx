@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import Card from 'components/card';
 import SiteSelector from 'components/site-selector';
 import StepWrapper from 'signup/step-wrapper';
-import { getSites } from 'state/selectors';
 import sitesFactory from 'lib/sites-list';
 import { setSelectedSiteId } from 'state/ui/actions';
 import SignupActions from 'lib/signup/actions';
@@ -65,7 +64,7 @@ class SitePicker extends Component {
 				<SiteSelector
 					filter={
 						function( site ) {
-							return ! site.jetpack;
+							return site.capabilities.manage_options && ! site.jetpack;
 						}
 					}
 					sites={ sites }
@@ -90,11 +89,7 @@ class SitePicker extends Component {
 }
 
 export default connect(
-	( state ) => {
-		return {
-			sites: getSites( state )
-		};
-	},
+	null,
 	( dispatch ) => {
 		return {
 			setSelectedSite: ( siteId ) => dispatch( setSelectedSiteId( siteId ) )

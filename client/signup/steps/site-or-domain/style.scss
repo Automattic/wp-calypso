@@ -49,7 +49,7 @@
 
 @include breakpoint( ">480px" ) {
 	.site-or-domain__choice-button {
-		margin-bottom: 1.5em;
+		margin-bottom: 2em;
 	}
 
 	.site-or-domain__choice-image {
@@ -59,7 +59,7 @@
 	}
 
 	.site-or-domain__choice-text {
-		min-height: 185px;
+		min-height: 205px;
 	}
 }
 
