@@ -168,7 +168,7 @@ class FollowingManage extends Component {
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
-								siteUrl={ addSchemeIfMissing( sitesQuery ) }
+								siteUrl={ addSchemeIfMissing( sitesQuery, 'http' ) }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT } />
 						</div>
 					) }
