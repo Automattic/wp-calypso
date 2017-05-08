@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
@@ -70,7 +71,24 @@ export class LoginForm extends Component {
 			} );
 
 			if ( error.field === 'global' ) {
-				this.props.errorNotice( error.message );
+				if ( error.message === 'proxy_required' ) {
+					// TODO: Remove once the proxy requirement is removed from the API
+
+					let redirectTo = '';
+
+					if ( typeof window !== 'undefined' && window.location.search.indexOf( '?redirect_to=' ) === 0 ) {
+						redirectTo = window.location.search;
+					}
+
+					this.props.errorNotice(
+						<p>
+							{ 'This endpoint is restricted to proxied Automatticians for now. Please use ' }
+							<a href={ config( 'login_url' ) + redirectTo }>the old login page</a>.
+						</p>
+					);
+				} else {
+					this.props.errorNotice( error.message );
+				}
 			}
 		} );
 	};
