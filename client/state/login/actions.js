@@ -137,7 +137,7 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
  * @return {Function}                Action thunk to trigger the request.
  */
 export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
-	return request.post( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' )
+	return request.post( config( 'two_step_authentication_send_sms_code_xhr' ) )
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
