@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import urlModule from 'url';
 
 /**
@@ -14,6 +14,15 @@ import safeImageUrl from 'lib/safe-image-url';
 import { decodeEntities } from 'lib/formatting';
 
 class SiteCard extends Component {
+	static propTypes = {
+		queryObject: PropTypes.shape( {
+			site_icon: PropTypes.string,
+			blogname: PropTypes.string.isRequired,
+			home_url: PropTypes.string.isRequired,
+			site_url: PropTypes.string.isRequired,
+		} ).isRequired,
+	};
+
 	render() {
 		const {
 			site_icon,
