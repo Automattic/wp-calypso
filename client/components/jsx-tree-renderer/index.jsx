@@ -114,6 +114,8 @@ function stringifyPropValue( value ) {
 	switch ( typeof value ) {
 		case 'function': return '{ [function] }';
 		case 'string': return `"${ value }"`;
+		case 'boolean':
+		case 'number': return `{ ${ value } }`;
 		case 'object':
 			try {
 				return `{ ${ JSON.stringify( value ) } }`;
