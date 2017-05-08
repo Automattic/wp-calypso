@@ -59,10 +59,11 @@ export default class JSXTreeRenderer extends Component {
 }
 
 function stringifyComponent( elements, depth = 0 ) {
+	const TWO_SPACES = '  ';
 	let indent = '';
 
 	for ( let i = 0; i < depth; i++ ) {
-		indent += '  ';
+		indent += TWO_SPACES;
 	}
 
 	return indent + React.Children.toArray( elements )
@@ -76,7 +77,7 @@ function stringifyComponent( elements, depth = 0 ) {
 			const { props } = element;
 			const { children } = props;
 
-			let result = `<${ name }${ stringifyProps( props ) }`;
+			let result = `<${ name }${ stringifyProps( props, indent + TWO_SPACES ) }`;
 
 			if ( children ) {
 				result += '>\n';
@@ -90,17 +91,23 @@ function stringifyComponent( elements, depth = 0 ) {
 		} ).join( `\n${ indent }` );
 }
 
-function stringifyProps( props ) {
-	const keys = Object.keys( props )
-		.filter( key => key !== 'children' );
+function stringifyProps( props, indent ) {
+	const keys = Object.keys( props ).filter( key => key !== 'children' );
+	let result = '';
 
 	if ( ! keys.length ) {
-		return '';
+		return result;
 	}
 
-	return ' ' + keys.map( key => {
+	if ( keys.length > 1 ) {
+		result += `\n${ indent }`;
+	} else {
+		result += ' ';
+	}
+
+	return result + keys.map( key => {
 		return `${ key }=${ stringifyPropValue( props[ key ] ) }`;
-	} ).join( ' ' );
+	} ).join( `\n${ indent }` );
 }
 
 function stringifyPropValue( value ) {
