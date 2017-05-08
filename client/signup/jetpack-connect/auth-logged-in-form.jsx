@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 import Gridicon from 'gridicons';
 import addQueryArgs from 'lib/route/add-query-args';
+import debugModule from 'debug';
 import i18n from 'i18n-calypso';
-const debug = require( 'debug' )( 'calypso:jetpack-connect:authorize-form' );
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -35,8 +35,9 @@ import { login } from 'lib/paths';
 /**
  * Constants
  */
-const PLANS_PAGE = '/jetpack/connect/plans/';
 const MAX_AUTH_ATTEMPTS = 3;
+const PLANS_PAGE = '/jetpack/connect/plans/';
+const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 
 const LoggedInForm = React.createClass( {
 	displayName: 'LoggedInForm',
