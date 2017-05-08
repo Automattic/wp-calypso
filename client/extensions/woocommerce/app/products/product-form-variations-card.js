@@ -14,7 +14,7 @@ import FormToggle from 'components/forms/form-toggle';
 const ProductFormVariationsCard = ( { product, editProduct, translate, editProductAttribute } ) => {
 	const handleToggle = () => {
 		if ( 'variable' !== product.type ) {
-			editProduct( product, { type: 'variable' } );
+			editProduct( product, { type: 'variable', dimensions: {} } );
 		} else {
 			// TODO: Don't clear out all attributes when implementing "additional details" (non variation attributes).
 			editProduct( product, { type: 'simple', attributes: null } );
