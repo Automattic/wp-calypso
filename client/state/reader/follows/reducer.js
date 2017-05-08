@@ -12,6 +12,7 @@ import {
 	READER_UNFOLLOW,
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
+	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_RECEIVE,
 	READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
@@ -139,7 +140,14 @@ export const itemsCount = createReducer( 0, {
 	}
 } );
 
+export const lastSyncTime = createReducer( null, {
+	[ READER_FOLLOWS_SYNC_START ]: ( ) => {
+		return Date.now();
+	}
+} );
+
 export default combineReducers( {
 	items,
 	itemsCount,
+	lastSyncTime
 } );

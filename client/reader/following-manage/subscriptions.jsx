@@ -14,7 +14,7 @@ import page from 'page';
 import ReaderImportButton from 'blocks/reader-import-button';
 import ReaderExportButton from 'blocks/reader-export-button';
 import SitesWindowScroller from './sites-window-scroller';
-import QueryReaderFollows from 'components/data/query-reader-follows';
+import SyncReaderFollows from 'components/data/sync-reader-follows';
 import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';
 import { getFeed as getReaderFeed } from 'state/reader/feeds/selectors';
@@ -90,7 +90,7 @@ class FollowingManageSubscriptions extends Component {
 
 		return (
 			<div className="following-manage__subscriptions">
-				<QueryReaderFollows />
+				<SyncReaderFollows />
 				<div className="following-manage__subscriptions-controls">
 					<h1 className="following-manage__subscriptions-header">
 						{
