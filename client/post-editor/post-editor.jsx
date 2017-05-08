@@ -125,6 +125,19 @@ export const PostEditor = React.createClass( {
 		} );
 	},
 
+	componentDidUpdate( prevProps, prevState ) {
+		if (
+			prevState.childSidebar !== CHILD_SIDEBAR_NONE &&
+			this.state.childSidebar === CHILD_SIDEBAR_NONE
+		) {
+			// NOTE: Make sure we scroll back to the top AND trigger a scroll
+			// event no matter the scroll position we're coming from.
+			// ( used to force-reset TinyMCE toolbar )
+			window.scrollTo( 0, 1 );
+			window.scrollTo( 0, 0 );
+		}
+	},
+
 	componentWillUpdate( nextProps, nextState ) {
 		const { isNew, savedPost } = nextState;
 		if ( ! isNew && savedPost && savedPost !== this.state.savedPost ) {
