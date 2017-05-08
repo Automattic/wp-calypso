@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -40,8 +40,8 @@ const FollowingEditEmptyContent = React.createClass( {
 			<EmptyContent
 				action={ action }
 				secondaryAction={ secondaryAction }
-				title={ i18n.translate( 'You haven\'t followed any sites yet' ) }
-				line={ i18n.translate( 'Search for a site or explore Discover.' ) }
+				title={ this.props.translate( 'You haven\'t followed any sites yet' ) }
+				line={ this.props.translate( 'Search for a site or explore Discover.' ) }
 				illustration={ '/calypso/images/drake/drake-404.svg' }
 				illustrationWidth={ 500 }
 			/>
