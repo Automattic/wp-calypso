@@ -17,6 +17,10 @@ import {
 	isRequesting,
 	isTwoFactorEnabled,
 	isTwoFactorAuthTypeSupported,
+	getTwoFactorPushToken,
+	getTwoFactorRememberMe,
+	getTwoFactorPushPollInProgress,
+	getTwoFactorPushPollSuccess,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -224,6 +228,74 @@ describe( 'selectors', () => {
 
 		it( 'should return true when the supported auth type exists in the state', () => {
 			expect( isTwoFactorAuthTypeSupported( state, 'sms' ) ).to.be.true;
+		} );
+	} );
+
+	describe( 'getTwoFactorPushToken()', () => {
+		it( 'should return null by default', () => {
+			expect( getTwoFactorPushToken( undefined ) ).to.be.null;
+		} );
+
+		it( "should return push token when it's set", () => {
+			const token = '12345';
+			expect( getTwoFactorPushToken( {
+				login: {
+					twoFactorAuth: {
+						push_web_token: token
+					}
+				}
+			} ) ).to.eql( token );
+		} );
+	} );
+
+	describe( 'getTwoFactorRememberMe()', () => {
+		it( 'should return false by default', () => {
+			expect( getTwoFactorRememberMe( undefined ) ).to.be.false;
+		} );
+
+		it( "should return remember me flag when it's set", () => {
+			const rememberMe = true;
+			expect( getTwoFactorRememberMe( {
+				login: {
+					twoFactorAuth: {
+						remember_me: rememberMe
+					}
+				}
+			} ) ).to.eql( rememberMe );
+		} );
+	} );
+
+	describe( 'getTwoFactorPushPollInProgress()', () => {
+		it( 'should return false by default', () => {
+			expect( getTwoFactorPushPollInProgress( undefined ) ).to.be.false;
+		} );
+
+		it( 'should return polling progresss status', () => {
+			const inProgress = true;
+			expect( getTwoFactorPushPollInProgress( {
+				login: {
+					twoFactorAuthPushPoll: {
+						inProgress
+					}
+				}
+			} ) ).to.eql( inProgress );
+		} );
+	} );
+
+	describe( 'getTwoFactorPushPollSuccess()', () => {
+		it( 'should return false by default', () => {
+			expect( getTwoFactorPushPollSuccess( undefined ) ).to.be.false;
+		} );
+
+		it( 'should return push polling success status', () => {
+			const success = true;
+			expect( getTwoFactorPushPollSuccess( {
+				login: {
+					twoFactorAuthPushPoll: {
+						success
+					}
+				}
+			} ) ).to.eql( success );
 		} );
 	} );
 } );
