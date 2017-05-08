@@ -193,3 +193,34 @@
 		border: 0;
 	}
 }
+
+.following-manage__url-follow {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	padding: 13px 0 10px;
+	display: flex;
+	justify-content: center;
+
+	.follow-button {
+		.gridicon {
+			fill: $blue-medium;
+		}
+
+		.follow-button__label {
+			color: $blue-medium;
+
+			@include breakpoint ("<660px" ) {
+				display: inline;
+			}
+		}
+
+		&.is-following {
+			.gridicon {
+				fill: $alert-green;
+			}
+
+			.follow-button__label {
+				color: $alert-green;
+			}
+		}
+	}
+}

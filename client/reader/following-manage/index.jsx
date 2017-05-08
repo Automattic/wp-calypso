@@ -22,6 +22,9 @@ import FollowingManageSearchFeedsResults from './feed-search-results';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import { addQueryArgs } from 'lib/url';
+import FollowButton from 'reader/follow-button';
+import { READER_FOLLOWING_MANAGE_URL_INPUT } from 'reader/follow-button/follow-sources';
+import { resemblesUrl, addSchemeIfMissing, withoutHttp } from 'lib/url';
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -94,7 +97,7 @@ class FollowingManage extends Component {
 		this.resizeSearchBox();
 
 		// this is a total hack. In React-Virtualized you need to tell a WindowScroller when the things
-		// above it has moved with a call to updatePosision().  Our issue is we don't have a good moment
+		// above it has moved with a call to updatePosition().  Our issue is we don't have a good moment
 		// where we know that the content above the WindowScroller has settled down and so instead the solution
 		// here is to call updatePosition in a regular interval. the call takes about 0.1ms from empirical testing.
 		this.updatePosition = setInterval( () => {
@@ -129,6 +132,12 @@ class FollowingManage extends Component {
 			showMoreResults
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
+		const showExistingSubscriptions = ! ( !! sitesQuery && showMoreResults );
+		const isSitesQueryUrl = resemblesUrl( sitesQuery );
+		let sitesQueryWithoutProtocol;
+		if ( isSitesQueryUrl ) {
+			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
+		}
 
 		return (
 			<ReaderMain className="following-manage">
@@ -136,7 +145,7 @@ class FollowingManage extends Component {
 				<MobileBackToSidebar>
 					<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
-				{ ! searchResults && <QueryReaderFeedsSearch query={ sitesQuery } /> }
+				{ ! searchResults && ! isSitesQueryUrl && <QueryReaderFeedsSearch query={ sitesQuery } /> }
 				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
@@ -153,8 +162,18 @@ class FollowingManage extends Component {
 							value={ sitesQuery }>
 						</SearchInput>
 					</CompactCard>
+
+					{ isSitesQueryUrl && (
+						<div className="following-manage__url-follow">
+							<FollowButton
+								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
+								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
+								siteUrl={ addSchemeIfMissing( sitesQuery, 'http' ) }
+								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT } />
+						</div>
+					) }
 				</div>
-				{ !! sitesQuery && (
+				{ !! sitesQuery && ! isSitesQueryUrl && (
 					<FollowingManageSearchFeedsResults
 						searchResults={ searchResults }
 						showMoreResults={ showMoreResults }
@@ -165,7 +184,7 @@ class FollowingManage extends Component {
 						searchResultsCount={ searchResultsCount }
 					/>
 				) }
-				{ ! ( !! sitesQuery && showMoreResults ) && (
+				{ showExistingSubscriptions && (
 					<FollowingManageSubscriptions
 						width={ this.state.width }
 						query={ subsQuery }
