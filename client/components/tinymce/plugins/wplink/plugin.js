@@ -106,7 +106,7 @@ function wpLink( editor ) {
 	 * Link Preview
 	 */
 
-	tinymce.ui.WPLinkPreview = tinymce.ui.Control.extend( {
+	tinymce.ui.Factory.add( 'WPLinkPreview', tinymce.ui.Control.extend( {
 		url: '#',
 		renderHtml: function() {
 			return (
@@ -155,7 +155,7 @@ function wpLink( editor ) {
 				tinymce.$( this.getEl().firstChild ).attr( 'href', this.url ).text( url );
 			}
 		}
-	} );
+	} ) );
 
 	editor.addButton( 'wp_link_preview', {
 		type: 'WPLinkPreview',
