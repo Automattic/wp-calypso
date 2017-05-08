@@ -3,8 +3,7 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import each from 'lodash/each';
-import isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies.
@@ -12,8 +11,8 @@ import isEqual from 'lodash/isEqual';
 import { getDocumentHeadFormattedTitle } from 'state/document-head/selectors';
 import {
 	setDocumentHeadTitle as setTitle,
-	addDocumentHeadLink as addLink,
-	addDocumentHeadMeta as addMeta,
+	setDocumentHeadLink as setLink,
+	setDocumentHeadMeta as setMeta,
 	setDocumentHeadUnreadCount as setUnreadCount
 } from 'state/document-head/actions';
 
@@ -32,13 +31,13 @@ class DocumentHead extends Component {
 			this.props.setUnreadCount( unreadCount );
 		}
 
-		each( this.props.link, ( link ) => {
-			this.props.addLink( link );
-		} );
+		if ( this.props.link !== undefined ) {
+			this.props.setLink( this.props.link );
+		}
 
-		each( this.props.meta, ( meta ) => {
-			this.props.addMeta( meta );
-		} );
+		if ( this.props.meta !== undefined ) {
+			this.props.setMeta( this.props.meta );
+		}
 	}
 
 	componentDidMount() {
@@ -55,16 +54,12 @@ class DocumentHead extends Component {
 			this.props.setUnreadCount( nextProps.unreadCount );
 		}
 
-		if ( ! isEqual( this.props.link, nextProps.link ) ) {
-			each( nextProps.link, ( link ) => {
-				this.props.addLink( link );
-			} );
+		if ( nextProps.link !== undefined && ! isEqual( this.props.link, nextProps.link ) ) {
+			this.props.setLink( nextProps.link );
 		}
 
-		if ( ! isEqual( this.props.meta, nextProps.meta ) ) {
-			each( nextProps.meta, ( meta ) => {
-				this.props.addMeta( meta );
-			} );
+		if ( nextProps.meta !== undefined && ! isEqual( this.props.meta, nextProps.meta ) ) {
+			this.props.setMeta( nextProps.meta );
 		}
 
 		if ( nextProps.formattedTitle !== this.props.formattedTitle ) {
@@ -83,8 +78,8 @@ DocumentHead.propTypes = {
 	link: PropTypes.array,
 	meta: PropTypes.array,
 	setTitle: PropTypes.func.isRequired,
-	addLink: PropTypes.func.isRequired,
-	addMeta: PropTypes.func.isRequired,
+	setLink: PropTypes.func.isRequired,
+	setMeta: PropTypes.func.isRequired,
 	setUnreadCount: PropTypes.func.isRequired
 };
 
@@ -94,8 +89,8 @@ export default connect(
 	} ),
 	{
 		setTitle,
-		addLink,
-		addMeta,
+		setLink,
+		setMeta,
 		setUnreadCount
 	}
 )( DocumentHead );
