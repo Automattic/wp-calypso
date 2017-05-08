@@ -1,6 +1,17 @@
 .form-dimensions-input {
 	display: flex;
 	justify-content: flex-start;
+	flex-wrap: nowrap;
+
+	.form-text-input-with-affixes {
+		flex-grow: 2;
+		flex-direction: row;
+	}
+
+	.form-dimensions-input__length,
+	.form-dimensions-input__width {
+		border-right: 0;
+	}
 
 	.form-dimensions-input__length,
 	.form-dimensions-input__width,
