@@ -308,6 +308,21 @@ describe( 'resemblesUrl()', () => {
 		expect( resemblesUrl( source ) ).to.equal( true );
 	} );
 
+	it( 'should return false with adjacent dots', () => {
+		const source = '..com';
+		expect( resemblesUrl( source ) ).to.equal( false );
+	} );
+
+	it( 'should return false with spaced dots', () => {
+		const source = '. . .com';
+		expect( resemblesUrl( source ) ).to.equal( false );
+	} );
+
+	it( 'should return false with a single dot', () => {
+		const source = '.';
+		expect( resemblesUrl( source ) ).to.equal( false );
+	} );
+
 	it( 'should return false if the string is not a URL', () => {
 		const source = 'exampledotcom';
 		expect( resemblesUrl( source ) ).to.equal( false );
