@@ -145,7 +145,8 @@ const ThemeShowcase = React.createClass( {
 			{ name: 'description', property: 'og:description', content: this.props.description },
 			{ property: 'og:title', content: title },
 			{ property: 'og:url', content: canonicalUrl },
-			{ property: 'og:type', content: 'website' }
+			{ property: 'og:type', content: 'website' },
+			{ property: 'og:site_name', content: 'WordPress.com' }
 		];
 
 		const links = [ { rel: 'canonical', href: canonicalUrl } ];

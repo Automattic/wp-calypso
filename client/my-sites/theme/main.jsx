@@ -543,7 +543,8 @@ const ThemeSheet = React.createClass( {
 		const metas = [
 			{ property: 'og:url', content: canonicalUrl },
 			{ property: 'og:image', content: this.props.screenshot },
-			{ property: 'og:type', content: 'website' }
+			{ property: 'og:type', content: 'website' },
+			{ property: 'og:site_name', content: 'WordPress.com' }
 		];
 
 		if ( description ) {
