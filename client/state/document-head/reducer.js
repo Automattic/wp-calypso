@@ -8,8 +8,8 @@ import { combineReducers } from 'redux';
  */
 import { createReducer } from 'state/utils';
 import {
-	DOCUMENT_HEAD_LINK_ADD,
-	DOCUMENT_HEAD_META_ADD,
+	DOCUMENT_HEAD_LINK_SET,
+	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 } from 'state/action-types';
@@ -24,11 +24,11 @@ export const unreadCount = createReducer( 0, {
 }, unreadCountSchema );
 
 export const meta = createReducer( [ { property: 'og:site_name', content: 'WordPress.com' } ], {
-	[ DOCUMENT_HEAD_META_ADD ]: ( state, action ) => ( [ ...state, action.meta ] )
+	[ DOCUMENT_HEAD_META_SET ]: ( state, action ) => ( action.meta )
 }, metaSchema );
 
 export const link = createReducer( [], {
-	[ DOCUMENT_HEAD_LINK_ADD ]: ( state, action ) => ( [ ...state, action.link ] )
+	[ DOCUMENT_HEAD_LINK_SET ]: ( state, action ) => ( action.link )
 }, linkSchema );
 
 export default combineReducers( {
