@@ -8,7 +8,7 @@ import { isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import ProductFormVariationRow from './product-form-variation-row';
+import ProductFormVariationsRow from './product-form-variations-row';
 
 class ProductFormVariationsTable extends React.Component {
 
@@ -24,7 +24,7 @@ class ProductFormVariationsTable extends React.Component {
 		const manageStock = variations && variations[ 0 ].manage_stock || false;
 
 		return (
-			<ProductFormVariationRow
+			<ProductFormVariationsRow
 				key={ id }
 				product={ product }
 				variation={ variation }

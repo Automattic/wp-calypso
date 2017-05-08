@@ -12,7 +12,14 @@ import ProductVariationTypesForm from './product-variation-types-form';
 import ProductFormVariationsTable from './product-form-variations-table';
 import FormToggle from 'components/forms/form-toggle';
 
-const ProductFormVariationsCard = ( { product, variations, editProduct, translate, editProductAttribute, editProductVariation } ) => {
+const ProductFormVariationsCard = ( {
+	product,
+	variations,
+	editProduct,
+	translate,
+	editProductAttribute,
+	editProductVariation
+} ) => {
 	const handleToggle = () => {
 		if ( 'variable' !== product.type ) {
 			editProduct( product, { type: 'variable', dimensions: {} } );
