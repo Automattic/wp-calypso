@@ -38,7 +38,8 @@ import { requestSites } from 'state/sites/actions';
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
 function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
-	const { designType, domainItem, siteId, siteSlug } = data;
+	const { siteId, siteSlug } = data;
+	const { designType, domainItem } = dependencies;
 
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
@@ -56,7 +57,7 @@ function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			siteSlug,
 		};
 
-		SignupCart.createCart( siteId, omitBy( dependencies, isNull ), error => {
+		SignupCart.createCart( siteId, omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ), error => {
 			callback( error, providedDependencies );
 			page.redirect( `/checkout/${ siteSlug }` );
 		} );

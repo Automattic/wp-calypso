@@ -147,7 +147,7 @@ class SiteOrDomain extends Component {
 			siteSlug: domain,
 			siteUrl: domain,
 			isPurchasingItem: true,
-		}, [], { domainItem } );
+		}, [], { domainItem, designType } );
 
 		if ( designType === 'domain' ) {
 			// we can skip the next two steps in the `domain-first` flow if the

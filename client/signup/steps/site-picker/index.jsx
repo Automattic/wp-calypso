@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,7 +10,6 @@ import Card from 'components/card';
 import SiteSelector from 'components/site-selector';
 import StepWrapper from 'signup/step-wrapper';
 import sitesFactory from 'lib/sites-list';
-import { setSelectedSiteId } from 'state/ui/actions';
 import SignupActions from 'lib/signup/actions';
 
 const sites = sitesFactory();
@@ -28,12 +26,9 @@ class SitePicker extends Component {
 				stepSectionName,
 				stepName,
 				goToStep,
-				goToNextStep,
 			} = this.props,
 			site = sites.getSite( siteSlug ),
 			hasPlan = site && site.plan && site.plan.product_slug !== 'free_plan';
-
-		this.props.setSelectedSite( site.ID );
 
 		SignupActions.submitSignupStep(
 			{
@@ -46,15 +41,16 @@ class SitePicker extends Component {
 			{}
 		);
 
+		SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
+			themeSlugWithRepo: 'pub/twentysixteen'
+		} );
+
 		if ( hasPlan ) {
-			SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
-				themeSlugWithRepo: 'pub/twentysixteen'
-			} );
 			SignupActions.submitSignupStep( { stepName: 'plans', wasSkipped: true }, [], { cartItem: null, privacyItem: null } );
 
 			goToStep( 'user' );
 		} else {
-			goToNextStep();
+			goToStep( 'plans' );
 		}
 	}
 
@@ -88,11 +84,4 @@ class SitePicker extends Component {
 	}
 }
 
-export default connect(
-	null,
-	( dispatch ) => {
-		return {
-			setSelectedSite: ( siteId ) => dispatch( setSelectedSiteId( siteId ) )
-		};
-	}
-)( SitePicker );
+export default SitePicker;

@@ -146,21 +146,20 @@ export default {
 	// should not be used outside of the `domain-first` flow.
 	'site-or-domain': {
 		stepName: 'site-or-domain',
-		apiRequestFunction: stepActions.createSiteOrDomain,
 		props: {
 			headerText: i18n.translate( 'Choose how you want to use your domain.' ),
 			subHeaderText: i18n.translate( "Don't worry you can easily add a site later if you're not ready." )
 		},
-		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
-		delayApiRequestUntilComplete: true
+		providesDependencies: [ 'designType', 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
 	},
 	'site-picker': {
 		stepName: 'site-picker',
+		apiRequestFunction: stepActions.createSiteOrDomain,
 		props: {
 			headerText: i18n.translate( 'Choose your site?' ),
 		},
-		providesDependencies: [ 'siteId', 'siteSlug' ],
-		dependencies: [ 'domainItem', 'cartItem', 'privacyItem' ],
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
+		dependencies: [ 'designType', 'domainItem', 'themeSlugWithRepo', 'cartItem', 'privacyItem' ],
 		delayApiRequestUntilComplete: true
 	},
 };
