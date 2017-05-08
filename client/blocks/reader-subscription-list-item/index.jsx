@@ -22,8 +22,14 @@ import {
 } from 'reader/get-helpers';
 import untrailingslashit from 'lib/route/untrailingslashit';
 
-// Remove the starting https, www. and remove trailing slash.
-const stripUrl = url => untrailingslashit(
+
+/**
+ * Takes in a string and removes the starting https, www., and removes a trailing slash
+ *
+ * @param {String} url - the url to format
+ * @returns {String} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
+ */
+const formatUrlForDisplay = url => untrailingslashit(
 	url.replace( /^https?:\/\/(www\.)?/, '' )
 );
 
@@ -78,11 +84,14 @@ function ReaderSubscriptionListItem( {
 					</span>
 				}
 			{ siteUrl && (
-				<div className="reader-subscription-list-item__site-url">
-					<a href={ siteUrl } target="_blank" rel="noopener noreferrer">
-						{ stripUrl( siteUrl ) }
-					</a>
-				</div>
+				<a
+					href={ siteUrl }
+					target="_blank"
+					rel="noopener noreferrer"
+					className="reader-subscription-list-item__site-url"
+				>
+					{ formatUrlForDisplay( siteUrl ) }
+				</a>
 			) }
 			</div>
 			<div className="reader-subscription-list-item__options">
