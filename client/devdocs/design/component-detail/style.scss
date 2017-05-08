@@ -49,3 +49,18 @@
 .component-detail__render:last-child {
   margin-bottom: 0;
 }
+
+.component-detail__icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 27px;
+  height: 27px;
+  margin: -14px 0 0 -14px;
+  background: #f3f6f8;
+  border: solid 1px #ccc;
+}

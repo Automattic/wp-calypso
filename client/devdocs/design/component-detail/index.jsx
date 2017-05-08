@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import React from 'react';
 import page from 'page';
 
@@ -40,6 +41,9 @@ export default class DesignAssets extends React.Component {
 					</div>
 					<div className="component-detail__render">
 						<Example ref="example" />
+					</div>
+					<div className="component-detail__icon">
+						<Gridicon icon="chevron-right" size={ 12 } />
 					</div>
 				</div>
 			</Main>
