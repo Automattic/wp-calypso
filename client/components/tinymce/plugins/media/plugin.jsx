@@ -428,6 +428,9 @@ function mediaButton( editor ) {
 			const node = editor.selection.getNode();
 			const m = node.className.match( /wp-image-(\d+)/ );
 			const imageId = m && parseInt( m[ 1 ], 10 );
+			if ( ! imageId ) {
+				return;
+			}
 			const image = MediaStore.get( siteId, imageId );
 
 			MediaActions.clearValidationErrors( siteId );
