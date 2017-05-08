@@ -64,8 +64,8 @@ export const findExample = name => {
 		.toLowerCase();
 
 	return find( examples, Component => {
-		const _name = getName( Component );
-		return _name.toLowerCase() === name;
+		const componentName = getName( Component );
+		return componentName.toLowerCase() === name;
 	} );
 };
 
