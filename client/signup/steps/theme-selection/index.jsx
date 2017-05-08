@@ -15,7 +15,6 @@ import SignupThemesList from './signup-themes-list';
 import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
 import { themes } from 'lib/signup/themes-data';
-import { abtest } from 'lib/abtest';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 
@@ -75,36 +74,11 @@ class ThemeSelectionStep extends Component {
 	render = () => {
 		const defaultDependencies = this.props.useHeadstart ? { themeSlugWithRepo: 'pub/twentysixteen' } : undefined;
 		const { translate } = this.props;
-		let headerText = translate( 'Choose a theme.' );
-		let subHeaderText = translate(
+		const headerText = translate( 'Choose a theme.' );
+		const subHeaderText = translate(
 			'No need to overthink it. You can always switch to a different theme later.',
 			{ context: 'Themes step subheader in Signup' }
 		);
-
-		if ( abtest( 'signupThemeStepCopyChanges' ) === 'modified' && this.props.currentUser == null ) {
-			let siteType = this.props.signupDependencies.designType;
-
-			switch ( siteType ) {
-				case 'blog':
-					siteType = 'blog';
-					break;
-				case 'grid':
-					siteType = 'portfolio';
-					break;
-				case 'page':
-					siteType = 'website';
-					break;
-				case undefined:
-					siteType = '';
-					break;
-				default:
-					siteType = 'website';
-			}
-
-			// Note: Don't make this translatable because it's only visible to English-language users
-			headerText = 'Here are our most popular ' + siteType + ' designs.';
-			subHeaderText = 'Pick one of these to get started or choose from hundreds more once your account is created.';
-		}
 
 		return (
 			<StepWrapper

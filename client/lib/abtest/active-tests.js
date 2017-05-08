@@ -33,14 +33,6 @@ module.exports = {
 		},
 		defaultVariation: 'hideSurveyStep',
 	},
-	signupThemeStepCopyChanges: {
-		datestamp: '20170420',
-		variations: {
-			original: 50,
-			modified: 50,
-		},
-		defaultVariation: 'original',
-	},
 	signupPlansReorderTest: {
 		datestamp: '20170410',
 		variations: {
