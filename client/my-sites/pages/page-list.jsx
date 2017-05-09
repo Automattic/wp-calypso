@@ -317,12 +317,10 @@ var Pages = React.createClass( {
 
 } );
 
-const mapState = state => {
-	return {
-		hasSites: hasInitializedSites( state ),
-		site: getSelectedSite( state ),
-		siteId: getSelectedSiteId( state ),
-	};
-};
+const mapState = ( state ) => ( {
+	hasSites: hasInitializedSites( state ),
+	site: getSelectedSite( state ),
+	siteId: getSelectedSiteId( state ),
+} );
 
 export default connect( mapState )( PageList );
