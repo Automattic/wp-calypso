@@ -54,6 +54,8 @@ function ReaderSubscriptionListItem( {
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	const siteUrl = getSiteUrl( { feed, site } );
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
+	const preferBlavatar = get( site, 'is_multi_author', false );
+	const preferGravatar = ! preferBlavatar;
 
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>
@@ -62,7 +64,8 @@ function ReaderSubscriptionListItem( {
 					siteIcon={ siteIcon }
 					feedIcon={ feedIcon }
 					author={ siteAuthor }
-					preferGravatar={ true }
+					preferBlavatar={ preferBlavatar }
+					preferGravatar={ preferGravatar }
 					siteUrl={ streamUrl }
 					isCompact={ true }
 				/>
