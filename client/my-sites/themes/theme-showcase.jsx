@@ -85,28 +85,44 @@ const ThemeShowcase = React.createClass( {
 	doSearch( searchBoxContent ) {
 		const filter = getSortedFilterTerms( searchBoxContent );
 		const searchString = stripFilters( searchBoxContent );
-		this.updateUrl( this.props.tier, filter, searchString );
+		const url = this.constructUrl( { filter, searchString } );
+		page( url );
 	},
 
-	updateUrl( tier, filter, searchString = this.props.search ) {
-		const { siteSlug, vertical } = this.props;
+	/**
+	 * Returns a full showcase url from current props.
+	 *
+	 * @param {Object} sections fields from this object will override current props.
+	 * @param {String} sections.vertical override vertical prop
+	 * @param {String} sections.tier override tier prop
+	 * @param {String} sections.filter override filter prop
+	 * @param {String} sections.siteSlug override siteSlug prop
+	 * @param {String} sections.searchString override searchString prop
+	 *
+	 * @returns {String} Theme showcase url
+	 */
+	constructUrl( sections ) {
+		const {
+			vertical,
+			tier,
+			filter,
+			siteSlug,
+			searchString
+		} = { ...this.props, ...sections };
 
-		const url = this.constructUrl( vertical, tier, filter, siteSlug );
-		page( buildUrl( url, searchString ) );
-	},
-
-	constructUrl( vertical, tier, filter, siteSlug ) {
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = ( tier && tier !== 'all' ) ? `/${ tier }` : '';
 		const filterSection = filter ? `/filter/${ filter }` : '';
 
-		return `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+		return buildUrl( url, searchString );
 	},
 
 	onTierSelect( { value: tier } ) {
 		trackClick( 'search bar filter', tier );
-		this.updateUrl( tier, this.props.filter );
+		const url = this.constructUrl( { tier } );
+		page( url );
 	},
 
 	onUploadClick() {
@@ -136,7 +152,6 @@ const ThemeShowcase = React.createClass( {
 			filter,
 			translate,
 			siteSlug,
-			vertical,
 			isLoggedIn,
 			pathName,
 			title,
@@ -157,21 +172,19 @@ const ThemeShowcase = React.createClass( {
 
 		const headerIcons = [ {
 			label: 'new',
-			uri: this.constructUrl( '', this.props.tier, filter, siteSlug ),
+			uri: this.constructUrl( { vertical: '' } ),
 			icon: 'star'
 		} ].concat(
 			getSubjects()
 				.map( subject => subjectsMeta[ subject ] && {
 					label: subject,
-					uri: this.constructUrl( subject, this.props.tier, filter, siteSlug ),
+					uri: this.constructUrl( { vertical: subject } ),
 					icon: subjectsMeta[ subject ].icon,
 					order: subjectsMeta[ subject ].order
 				} )
 				.filter( icon => !! icon )
 				.sort( ( a, b ) => a.order - b.order )
 		);
-
-		const verticalSection = vertical ? `/${ vertical }` : '';
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
@@ -182,7 +195,7 @@ const ThemeShowcase = React.createClass( {
 					<SubMasterbarNav
 						options={ headerIcons }
 						fallback={ headerIcons[ 0 ] }
-						uri={ `/themes${ verticalSection }` } />
+						uri={ this.constructUrl() } />
 				)}
 				<div className="themes__content">
 					<QueryThemeFilters />
