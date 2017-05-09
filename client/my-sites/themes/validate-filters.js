@@ -42,9 +42,10 @@ export function validateVertical( context, next ) {
 
 	if ( ! includes( getSubjects(), vertical ) ) {
 		if ( context.isServerSide ) {
-			return context.res.redirect( '/themes' );
+			return next( 'route' );
 		}
-		return page.redirect( '/themes' );
+		// Client-side: Terminate routing, rely on server-side rendered markup.
+		return;
 	}
 
 	next();
