@@ -238,10 +238,6 @@
 	margin-bottom: 16px;
 	margin-right: 0px;
 	flex-shrink: 0;
-	@include breakpoint( ">960px" ) {
-		margin-bottom: 0;
-		margin-right: 8px;
-	}
 }
 
 .products__product-form-variation-table-wrapper .products__product-form-variation-image{
