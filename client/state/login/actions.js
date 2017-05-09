@@ -24,12 +24,25 @@ const loginErrorMessages = {
 	empty_password: translate( 'The password field is empty.' ),
 	empty_two_step_code: translate( 'The verification code field is empty.' ),
 	empty_username: translate( 'The username field is empty.' ),
-	incorrect_password: translate( 'Invalid username or password.' ),
+	incorrect_password: translate( 'Invalid password' ),
 	invalid_two_step_code: translate( 'Invalid verification code.' ),
-	invalid_username: translate( 'Invalid username or password.' ),
+	invalid_email: translate( 'Invalid email address.' ),
+	invalid_username: translate( 'Invalid username' ),
 	unknown: translate( 'Invalid username or password.' ),
 	account_unactivated: translate( 'This account has not been activated. Please check your email for an activation link.' ),
 	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
+};
+
+const loginErrorFields = {
+	empty_password: 'password',
+	empty_two_step_code: 'twoStepCode',
+	empty_username: 'usernameOrEmail',
+	incorrect_password: 'password',
+	invalid_two_step_code: 'twoStepCode',
+	invalid_email: 'usernameOrEmail',
+	invalid_username: 'usernameOrEmail',
+	unknown: 'global',
+	account_unactivated: 'global',
 };
 
 function getMessageFromHTTPError( error ) {
@@ -79,15 +92,16 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 				data: response.body && response.body.data,
 			} );
 		} ).catch( ( error ) => {
-			const errorMessage = getMessageFromHTTPError( error );
+			const message = getMessageFromHTTPError( error );
+			const field = loginErrorFields[ get( error, 'response.body.data.errors', [] )[ 0 ] ];
 
 			dispatch( {
 				type: LOGIN_REQUEST_FAILURE,
 				usernameOrEmail,
-				error: errorMessage,
+				error: { message, field },
 			} );
 
-			return Promise.reject( errorMessage );
+			return Promise.reject( { message, field } );
 		} );
 };
 

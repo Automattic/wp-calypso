@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -9,21 +10,26 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormsButton from 'components/forms/form-button';
+import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
-import Notice from 'components/notice';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { isRequesting, getRequestError } from 'state/login/selectors';
+import { errorNotice } from 'state/notices/actions';
 
 export class LoginForm extends Component {
 	static propTypes = {
-		loginUser: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
+		errorNotice: PropTypes.func.isRequired,
+		isRequesting: PropTypes.bool.isRequired,
 		loginError: PropTypes.string,
+		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
+		requestError: PropTypes.object,
 		title: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -34,14 +40,6 @@ export class LoginForm extends Component {
 		usernameOrEmail: '',
 		password: '',
 		rememberMe: false,
-		submitting: false,
-		errorMessage: '',
-	};
-
-	dismissNotice = () => {
-		this.setState( {
-			errorMessage: ''
-		} );
 	};
 
 	onChangeField = ( event ) => {
@@ -60,47 +58,33 @@ export class LoginForm extends Component {
 
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
-		this.setState( {
-			submitting: true
-		} );
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_submit' );
 
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password, this.state.rememberMe ).then( () => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_success' );
-			this.dismissNotice();
 			this.props.onSuccess( this.state );
-		} ).catch( errorMessage => {
+		} ).catch( error => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_failure', {
-				error_message: errorMessage
+				error_message: error.message
 			} );
-			this.setState( {
-				submitting: false,
-				errorMessage
-			} );
+
+			if ( error.field === 'global' ) {
+				this.props.errorNotice( error.message );
+			}
 		} );
 	};
 
-	renderNotices() {
-		if ( this.state.errorMessage ) {
-			return (
-				<Notice status="is-error"
-					text={ this.state.errorMessage }
-					onDismissClick={ this.dismissNotice } />
-			);
-		}
-	}
-
 	render() {
 		const isDisabled = {};
-		if ( this.state.submitting ) {
+		if ( this.props.isRequesting ) {
 			isDisabled.disabled = true;
 		}
 
+		const { requestError } = this.props;
+
 		return (
 			<div>
-				{ this.renderNotices() }
-
 				<div className="login__form-header">
 					{ this.props.title }
 				</div>
@@ -113,24 +97,40 @@ export class LoginForm extends Component {
 							</label>
 
 							<FormTextInput
-								className="login__form-userdata-username-input"
+								className={
+									classNames( 'login__form-userdata-username-input', {
+										'is-error': requestError && requestError.field === 'usernameOrEmail'
+									} )
+								}
 								onChange={ this.onChangeField }
 								id="usernameOrEmail"
 								name="usernameOrEmail"
 								value={ this.state.usernameOrEmail }
 								{ ...isDisabled } />
 
+							{ requestError && requestError.field === 'usernameOrEmail' && (
+								<FormInputValidation isError text={ requestError.message } />
+							) }
+
 							<label htmlFor="password" className="login__form-userdata-username">
 								{ this.props.translate( 'Password' ) }
 							</label>
 
 							<FormPasswordInput
-								className="login__form-userdata-username-password"
+								className={
+									classNames( 'login__form-userdata-username-password', {
+										'is-error': requestError && requestError.field === 'password'
+									} )
+								}
 								onChange={ this.onChangeField }
 								id="password"
 								name="password"
 								value={ this.state.password }
 								{ ...isDisabled } />
+
+							{ requestError && requestError.field === 'password' && (
+								<FormInputValidation isError text={ requestError.message } />
+							) }
 						</div>
 
 						<div className="login__form-remember-me">
@@ -157,9 +157,13 @@ export class LoginForm extends Component {
 }
 
 export default connect(
-	null,
+	( state ) => ( {
+		isRequesting: isRequesting( state ),
+		requestError: getRequestError( state ),
+	} ),
 	{
+		errorNotice,
 		loginUser,
-		recordTracksEvent
+		recordTracksEvent,
 	}
 )( localize( LoginForm ) );

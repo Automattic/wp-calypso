@@ -11,9 +11,19 @@
 		font-weight: 500;
 		margin-bottom: 5px;
 	}
-	input{
+
+	input {
 		margin-bottom: 20px;
+		transition: none;
+
+		&.is-error {
+			margin-bottom: 0;
+		}
 	}
+}
+
+.login__form .form-input-validation {
+	margin-bottom: 5px;
 }
 
 .login__form-action {
