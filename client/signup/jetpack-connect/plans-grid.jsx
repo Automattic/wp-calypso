@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import StepHeader from '../step-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
+import { abtest } from 'lib/abtest';
 
 class JetpackPlansGrid extends Component {
 	static propTypes = {
@@ -33,6 +34,17 @@ class JetpackPlansGrid extends Component {
 
 		let headerText = translate( 'Your site is now connected!' );
 		let subheaderText = translate( 'Now pick a plan that\'s right for you.' );
+
+		if ( abtest( 'jetpackPlansHeadlines' ) === 'headlineB' ) {
+			subheaderText = translate( 'Simple, affordable pricing.' );
+		}
+		if ( abtest( 'jetpackPlansHeadlines' ) === 'headlineC' ) {
+			subheaderText = translate( 'Protect your site from data loss.' );
+		}
+		if ( abtest( 'jetpackPlansHeadlines' ) === 'headlineD' ) {
+			subheaderText = translate( 'Protect your data from hackers.' );
+		}
+
 		if ( showFirst ) {
 			headerText = translate( 'You are moments away from connecting your site' );
 		}
