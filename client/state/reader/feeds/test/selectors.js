@@ -1,5 +1,11 @@
+/**
+ * External Dependencies
+ */
 import { expect } from 'chai';
 
+/**
+ * Internal Dependencies
+ */
 import { shouldFeedBeFetched } from '../selectors';
 
 describe( 'selectors', () => {
@@ -17,17 +23,36 @@ describe( 'selectors', () => {
 			}, 1 ) ).to.be.false;
 		} );
 
-		it( 'should return false if the feed is loaded', () => {
+		it( 'should return false if the feed is loaded and recent', () => {
 			expect( shouldFeedBeFetched( {
 				reader: {
 					feeds: {
 						queuedRequests: {},
 						items: {
 							1: {}
+						},
+						lastUpdated: {
+							1: Date.now()
 						}
 					}
 				}
 			}, 1 ) ).to.be.false;
+		} );
+
+		it( 'should return true if the feed is loaded, but old', () => {
+			expect( shouldFeedBeFetched( {
+				reader: {
+					feeds: {
+						queuedRequests: {},
+						items: {
+							1: {}
+						},
+						lastUpdated: {
+							1: 100
+						}
+					}
+				}
+			}, 1 ) ).to.be.true;
 		} );
 
 		it( 'should return true if the feed is not queued and not loaded', () => {
@@ -35,7 +60,8 @@ describe( 'selectors', () => {
 				reader: {
 					feeds: {
 						queuedRequests: {},
-						items: {}
+						items: {},
+						lastUpdated: {}
 					}
 				}
 			}, 1 ) ).to.be.true;
@@ -50,7 +76,8 @@ describe( 'selectors', () => {
 						},
 						items: {
 							2: {}
-						}
+						},
+						lastUpdated: {}
 					}
 				}
 			}, 1 ) ).to.be.true;
