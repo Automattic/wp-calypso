@@ -2,16 +2,29 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { pick } from 'lodash';
+import { connect } from 'react-redux';
+import { flowRight, get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import CachedFiles from './cached-files';
+import CacheStats from './cache-stats';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	errorNotice,
+	removeNotice,
+	successNotice,
+} from 'state/notices/actions';
+import { generateStats } from './state/stats/actions';
+import {
+	getStats,
+	isGeneratingStats,
+	isStatsGenerationSuccessful,
+} from './state/stats/selectors';
 
 class ContentsTab extends Component {
 	static propTypes = {
@@ -44,6 +57,30 @@ class ContentsTab extends Component {
 		}
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( this.props.isGenerating || ! prevProps.isGenerating ) {
+			return;
+		}
+
+		const {
+			isSuccessful,
+			site,
+			translate,
+		} = this.props;
+
+		if ( isSuccessful ) {
+			this.props.successNotice(
+				translate( 'Cache stats regenerated on %(site)s.', { args: { site: site && site.title } } ),
+				{ id: 'wpsc-cache-stats' }
+			);
+		} else {
+			this.props.errorNotice(
+				translate( 'There was a problem regenerating the stats. Please try again.' ),
+				{ id: 'wpsc-cache-stats' }
+			);
+		}
+	}
+
 	deleteCache = () => {
 		this.setState( { isDeleting: true } );
 		this.props.handleDeleteCache( false, false );
@@ -59,18 +96,24 @@ class ContentsTab extends Component {
 		this.props.handleDeleteCache( true, false );
 	}
 
+	generateStats = () => {
+		this.props.removeNotice( 'wpsc-cache-stats' );
+		this.props.generateStats( this.props.siteId );
+	}
+
 	render() {
 		const {
 			fields: {
 				cache_max_time,
-				generated,
-				supercache,
-				wpcache,
 			},
 			isDeleting,
+			isGenerating,
 			isMultisite,
+			stats,
 			translate,
 		} = this.props;
+		const supercache = ( get( stats, 'supercache', {} ) );
+		const wpcache = ( get( stats, 'wpcache', {} ) );
 
 		return (
 			<div>
@@ -120,32 +163,36 @@ class ContentsTab extends Component {
 							{ translate(
 								'Cache stats last generated: %(generated)d minutes ago.',
 								{
-									args: { generated: generated || 0 },
+									args: { generated: ( get( stats, 'generated', 0 ) ) },
 								}
 							) }
 						</p>
 					}
-						<Button compact>
+						<Button
+							compact
+							busy={ isGenerating }
+							disabled={ isGenerating }
+							onClick={ this.generateStats }>
 							{ translate( 'Regenerate Cache Stats' ) }
 						</Button>
 					</div>
 				</Card>
 
 				<div>
-				{ wpcache && wpcache.cached_list &&
-					<CachedFiles header="Fresh WP-Cached Files" files={ wpcache.cached_list } />
+				{ ! isEmpty( get( wpcache, 'cached_list' ) ) &&
+					<CacheStats header="Fresh WP-Cached Files" files={ wpcache.cached_list } />
 				}
 
-				{ wpcache && wpcache.expired_list &&
-					<CachedFiles header="Stale WP-Cached Files" files={ wpcache.expired_list } />
+				{ ! isEmpty( get( wpcache, 'expired_list' ) ) &&
+					<CacheStats header="Stale WP-Cached Files" files={ wpcache.expired_list } />
 				}
 
-				{ supercache && supercache.cached_list &&
-					<CachedFiles header="Fresh Super Cached Files" files={ supercache.cached_list } />
+				{ ! isEmpty( get( supercache, 'cached_list' ) ) &&
+					<CacheStats header="Fresh Super Cached Files" files={ supercache.cached_list } />
 				}
 
-				{ supercache && supercache.expired_list &&
-					<CachedFiles header="Stale Super Cached Files" files={ supercache.expired_list } />
+				{ ! isEmpty( get( supercache, 'expired_list' ) ) &&
+					<CacheStats header="Stale Super Cached Files" files={ supercache.expired_list } />
 				}
 				</div>
 
@@ -193,17 +240,34 @@ class ContentsTab extends Component {
 	}
 }
 
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const stats = getStats( state, siteId );
+		const isGenerating = isGeneratingStats( state, siteId );
+		const isSuccessful = isStatsGenerationSuccessful( state, siteId );
+
+		return {
+			isGenerating,
+			isSuccessful,
+			stats,
+		};
+	},
+	{
+		errorNotice,
+		generateStats,
+		removeNotice,
+		successNotice,
+	},
+);
+
 const getFormSettings = settings => {
-	const cacheStats = pick( settings.cache_stats, [
-		'generated',
-		'supercache',
-		'wpcache',
-	] );
-	const otherSettings = pick( settings, [
+	return pick( settings, [
 		'cache_max_time',
 	] );
-
-	return { ...cacheStats, ...otherSettings };
 };
 
-export default WrapSettingsForm( getFormSettings )( ContentsTab );
+export default flowRight(
+	connectComponent,
+	WrapSettingsForm( getFormSettings )
+)( ContentsTab );
