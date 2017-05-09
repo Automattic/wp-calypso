@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import debugModule from 'debug';
-import i18n from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -30,8 +30,9 @@ const LoggedOutForm = React.createClass( {
 	},
 
 	renderFormHeader() {
-		const headerText = i18n.translate( 'Create your account' );
-		const subHeaderText = i18n.translate( 'You are moments away from connecting your site.' );
+		const { translate } = this.props;
+		const headerText = translate( 'Create your account' );
+		const subHeaderText = translate( 'You are moments away from connecting your site.' );
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' )
 			? <SiteCard queryObject={ queryObject } />
@@ -84,7 +85,7 @@ const LoggedOutForm = React.createClass( {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href={ login( { redirectTo } ) }>
-					{ this.translate( 'Already have an account? Sign in' ) }
+					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
 				<HelpButton onClick={ this.clickHelpButton } />
 			</LoggedOutFormLinks>
@@ -103,7 +104,7 @@ const LoggedOutForm = React.createClass( {
 					submitting={ this.isSubmitting() }
 					save={ this.save }
 					submitForm={ this.submitForm }
-					submitButtonText={ this.translate( 'Sign Up and Connect Jetpack' ) }
+					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
 					footerLink={ this.renderFooterLink() }
 					suggestedUsername={ userData && userData.username ? userData.username : '' }
 				/>
@@ -113,4 +114,4 @@ const LoggedOutForm = React.createClass( {
 	}
 } );
 
-export default LoggedOutForm;
+export default localize( LoggedOutForm );
