@@ -13,6 +13,8 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
+	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -22,7 +24,6 @@ import {
 
 const loginErrorMessages = {
 	empty_password: translate( 'The password field is empty.' ),
-	empty_two_step_code: translate( 'The verification code field is empty.' ),
 	empty_username: translate( 'The username field is empty.' ),
 	incorrect_password: translate( 'Invalid password' ),
 	invalid_two_step_code: translate( 'Invalid verification code.' ),
@@ -35,7 +36,6 @@ const loginErrorMessages = {
 
 const loginErrorFields = {
 	empty_password: 'password',
-	empty_two_step_code: 'twoStepCode',
 	empty_username: 'usernameOrEmail',
 	incorrect_password: 'password',
 	invalid_two_step_code: 'twoStepCode',
@@ -89,6 +89,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 			dispatch( {
 				type: LOGIN_REQUEST_SUCCESS,
 				usernameOrEmail,
+				rememberMe,
 				data: response.body && response.body.data,
 			} );
 		} ).catch( ( error ) => {
@@ -185,3 +186,6 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 			return Promise.reject( errorMessage );
 		} );
 };
+
+export const startPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } );
+export const stopPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );

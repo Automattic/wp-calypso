@@ -36,6 +36,38 @@ export const getTwoFactorNotificationSent = ( state ) => {
 	return get( state, 'login.twoFactorAuth.two_step_notification_sent', null );
 };
 
+/***
+ * Retrieve a token to be used for push notification auth polling
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Push notification token to be used for polling auth state
+ */
+export const getTwoFactorPushToken = state => get( state, 'login.twoFactorAuth.push_web_token', null );
+
+/***
+ * Retrieve the remember me flag that was set when logging in
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Remember me flag for authentication
+ */
+export const getTwoFactorRememberMe = state => get( state, 'login.twoFactorAuth.remember_me', false );
+
+/***
+ * Retrieve the progress status of polling for push authentication
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Whether the polling for push authentication is in progress
+ */
+export const getTwoFactorPushPollInProgress = state => get( state, 'login.twoFactorAuthPushPoll.inProgress', false );
+
+/***
+ * Get whether user logged in successfully via push auth
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Whether the polling for push authentication completed successfully
+ */
+export const getTwoFactorPushPollSuccess = state => get( state, 'login.twoFactorAuthPushPoll.success', false );
+
 /**
  * True if two factor authentication is enabled for the logging in user.
  * False if not, null if the information is not available yet.
