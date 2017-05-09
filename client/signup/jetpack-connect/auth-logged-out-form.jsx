@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 
@@ -22,12 +22,10 @@ import SiteCard from './site-card';
 
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 
-const LoggedOutForm = React.createClass( {
-	displayName: 'LoggedOutForm',
-
+class LoggedOutForm extends Component {
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
-	},
+	}
 
 	renderFormHeader() {
 		const { translate } = this.props;
@@ -46,16 +44,16 @@ const LoggedOutForm = React.createClass( {
 				{ siteCard }
 			</div>
 		);
-	},
+	}
 
-	submitForm( form, userData ) {
+	submitForm = ( form, userData ) => {
 		debug( 'submiting new account', form, userData );
 		this.props.createAccount( userData );
-	},
+	}
 
 	isSubmitting() {
 		return this.props.jetpackConnectAuthorize && this.props.jetpackConnectAuthorize.isAuthorizing;
-	},
+	}
 
 	loginUser() {
 		const { queryObject, userData, bearerToken } = this.props.jetpackConnectAuthorize;
@@ -66,7 +64,7 @@ const LoggedOutForm = React.createClass( {
 				authorization={ 'Bearer ' + bearerToken }
 				redirectTo={ redirectTo } />
 		);
-	},
+	}
 
 	renderLocaleSuggestions() {
 		if ( ! this.props.locale ) {
@@ -76,7 +74,7 @@ const LoggedOutForm = React.createClass( {
 		return (
 			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 		);
-	},
+	}
 
 	renderFooterLink() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
@@ -90,7 +88,7 @@ const LoggedOutForm = React.createClass( {
 				<HelpButton onClick={ this.clickHelpButton } />
 			</LoggedOutFormLinks>
 		);
-	},
+	}
 
 	render() {
 		const { userData } = this.props.jetpackConnectAuthorize;
@@ -112,6 +110,6 @@ const LoggedOutForm = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default localize( LoggedOutForm );
