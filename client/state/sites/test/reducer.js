@@ -226,6 +226,23 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should remove an unreachable site', () => {
+			const original = deepFreeze( {
+				2916284: { ID: 2916284, name: 'Jetpack Example Blog' },
+				77203074: { ID: 77203074, name: 'Just You Wait' }
+			} );
+
+			const state = items( original, {
+				type: SITE_REQUEST_FAILURE,
+				siteId: 2916284,
+				status: { }
+			} );
+
+			expect( state ).to.eql( {
+				77203074: { ID: 77203074, name: 'Just You Wait' }
+			} );
+		} );
+
 		it( 'should return the original state when deleting a site that is not present', () => {
 			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
