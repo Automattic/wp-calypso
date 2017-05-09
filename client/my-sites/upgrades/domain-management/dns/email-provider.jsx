@@ -34,12 +34,12 @@ class EmailProvider extends Component {
 
 		const { domain, translate, template } = this.props;
 		let variables = {
-				token: this.state.token,
-				domain
-			};
+			token: this.state.token,
+			domain
+		};
 
 		if ( template.modifyVariables ) {
-			variables = template.modifyVariables( variables, this.props );
+			variables = template.modifyVariables( variables );
 		}
 
 		upgradesActions.applyDnsTemplate( domain, template.dnsTemplate, variables, ( error ) => {

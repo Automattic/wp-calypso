@@ -35,12 +35,11 @@ class DnsTemplates extends Component {
 					placeholder: 'MS=ms...',
 					validationPattern: /^MS=ms\d{4,20}$/,
 					dnsTemplate: dnsTemplates.MICROSOFT_OFFICE365,
-					modifyVariables: ( variables ) => {
-						return Object.assign(
-							variables,
-							{ mxdata: replace( variables.domain, '.', '-' ) + '.mail.protection.outlook.com.' }
-						);
-					}
+					modifyVariables: ( variables ) => Object.assign(
+						{},
+						variables,
+						{ mxdata: replace( variables.domain, '.', '-' ) + '.mail.protection.outlook.com.' }
+					)
 				},
 				{
 					name: 'Zoho Mail',
