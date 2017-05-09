@@ -118,12 +118,16 @@ class Login extends React.Component {
 				</a>;
 		}
 
-		const goBackLink = ! magicLoginView && <a
-			href="#"
-			key="back-link"
-			onClick={ this.goBack }>
-				<Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Return' ) }
-			</a>;
+		let goBackLink;
+		if ( typeof window === 'undefined' || window.history.length > 1 ) {
+			goBackLink = ! magicLoginView && <a
+				href="#"
+				key="back-link"
+				onClick={ this.goBack }>
+					<Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Return' ) }
+				</a>;
+		}
+
 		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView && <a href="#"
 			key="magic-login-link"
 			onClick={ this.onMagicLoginRequestClick }>
