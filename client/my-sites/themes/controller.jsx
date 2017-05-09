@@ -61,25 +61,15 @@ export function upload( context, next ) {
 	next();
 }
 
-export function singleSite( context, next ) {
+export function loggedIn( context, next ) {
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <SingleSiteComponent { ...getProps( context ) } />;
-	next();
-}
+	const Component = context.params.site_id ? SingleSiteComponent : MultiSiteComponent;
+	context.primary = <Component { ...getProps( context ) } />;
 
-export function multiSite( context, next ) {
-	const props = getProps( context );
-
-	// Scroll to the top
-	if ( typeof window !== 'undefined' ) {
-		window.scrollTo( 0, 0 );
-	}
-
-	context.primary = <MultiSiteComponent { ...props } />;
 	next();
 }
 
