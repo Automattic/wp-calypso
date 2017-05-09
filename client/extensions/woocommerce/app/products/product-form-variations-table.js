@@ -60,7 +60,7 @@ class ProductFormVariationsTable extends React.Component {
 				buttons={ buttons }
 				onClose={ this.onCloseDialog }
 				className="products__product-form-variation-modal"
-				additionalClassNames="woocommerce"
+				additionalClassNames="woocommerce products__product-form-variation-dialog"
 			>
 				<ProductFormVariationsModal
 					product={ product }

@@ -1,13 +1,5 @@
 .form-label {
-	margin-bottom: 16px;
-}
-
-.form-label {
-	margin-bottom: 16px;
-}
-
-.form-label {
-	margin-bottom: 16px;
+	margin-bottom: 5px;
 }
 
 .foldable-card.products__variation-card .foldable-card__content {
@@ -248,8 +240,13 @@
 	cursor: pointer;
 }
 
+.products__product-form-variation-dialog {
+	max-width: 600px;
+}
+
 .products__product-form-variation-modal {
 	min-width: 600px;
+	overflow-x: auto;
 
 	h2 {
 		margin-bottom: 0;
@@ -267,13 +264,13 @@
 	}
 
 	.vertical-menu__items {
-		padding-left: 10px;
+		padding-left: 16px;
 	}
 
 	.products__product-form-modal-wrapper {
 		display: flex;
 		flex-flow: row wrap;
-		padding: 10px;
+		padding: 16px;
 	}
 
 	h1 {
@@ -286,6 +283,6 @@
 	}
 
 	.form-toggle__wrapper {
-		margin-left: 5px;
+		margin-left: 8px;
 	}
 }
