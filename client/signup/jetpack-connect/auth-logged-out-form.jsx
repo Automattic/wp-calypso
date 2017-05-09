@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 
@@ -23,6 +23,19 @@ import SiteCard from './site-card';
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedOutForm extends Component {
+	static propTypes = {
+		createAccount: PropTypes.func.isRequired,
+		jetpackConnectAuthorize: PropTypes.shape( {
+			bearerToken: PropTypes.string,
+			isAuthorizing: PropTypes.bool,
+			queryObject: PropTypes.object.isRequired,
+			userData: PropTypes.object,
+		} ).isRequired,
+		locale: PropTypes.string,
+		path: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+	};
+
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
 	}
