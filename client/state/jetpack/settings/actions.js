@@ -11,7 +11,10 @@ import {
 	JETPACK_SETTINGS_REQUEST_SUCCESS,
 	JETPACK_SETTINGS_UPDATE,
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
-	JETPACK_SETTINGS_UPDATE_FAILURE
+	JETPACK_SETTINGS_UPDATE_FAILURE,
+	JETPACK_SETTINGS_VALIDATE_AKISMET_KEY,
+	JETPACK_SETTINGS_VALIDATE_AKISMET_KEY_FAILURE,
+	JETPACK_SETTINGS_VALIDATE_AKISMET_KEY_SUCCESS
 } from 'state/action-types';
 import wp from 'lib/wp';
 import { normalizeSettings, sanitizeSettings, filterSettingsByActiveModules } from './utils';
@@ -108,6 +111,40 @@ export const regeneratePostByEmail = ( siteId ) => {
 				dispatch( {
 					type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE,
 					siteId,
+					error: error.message
+				} );
+			} );
+	};
+};
+
+/**
+ * Checks an Akismet Key for validity on Jetpack a site.
+ *
+ * @param  {Int}      siteId      ID of the site.
+ * @param  {String}   apiKey      The key that we want to check for validity.
+ * @return {Function}             Action thunk to check validity of an Akismet Key on a site when called.
+ */
+export const validateAkismetKeyForSite = ( siteId, apiKey ) => {
+	return ( dispatch ) => {
+		dispatch( {
+			type: JETPACK_SETTINGS_VALIDATE_AKISMET_KEY,
+			siteId,
+			apiKey
+		} );
+
+		return wp.undocumented().validateAkismetKeyForSite( siteId, apiKey )
+			.then( ( { data } ) => {
+				dispatch( {
+					type: JETPACK_SETTINGS_VALIDATE_AKISMET_KEY_SUCCESS,
+					siteId,
+					apiKey,
+					validKey: data.validKey
+				} );
+			} ).catch( ( error ) => {
+				dispatch( {
+					type: JETPACK_SETTINGS_VALIDATE_AKISMET_KEY_FAILURE,
+					siteId,
+					apiKey,
 					error: error.message
 				} );
 			} );

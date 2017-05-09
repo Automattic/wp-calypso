@@ -225,10 +225,28 @@ Undocumented.prototype.updateWordPressCore = function( siteId, fn ) {
 };
 
 /**
+ * validate Akismet key on a site with id siteId.
+ *
+ * @param {int}      siteId The Site ID
+ * @param {String}   apiKey The key to validate
+ * @param {Function} fn     The callback function
+ * @returns {Promise}       A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.validateAkismetKeyForSite = function( siteId, apiKey, fn ) {
+	return this.wpcom.req.post(
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{ path: '/jetpack/v4/module/akismet/key/check/', body: JSON.stringify( { api_key: apiKey } ) },
+		fn
+	);
+};
+
+/**
  * Get the updates info for the site with id siteId
  *
- * @param {int} [siteId] The site ID
- * @param {Function} fn The callback function
+ * @param {int}       [siteId] The site ID
+ * @param {Function}  fn       The callback function
+ * @returns {Promise}          A promise that resolves when the request completes
  * @api public
  */
 Undocumented.prototype.getAvailableUpdates = function( siteId, fn ) {
