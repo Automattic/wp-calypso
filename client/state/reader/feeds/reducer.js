@@ -75,7 +75,7 @@ function handleRequestSuccess( state, action ) {
 }
 
 function handleFeedUpdate( state, action ) {
-	const feeds = map( action.payload, feed => adaptFeed( feed ) );
+	const feeds = map( action.payload, adaptFeed );
 	return assign( {}, state, keyBy( feeds, 'feed_ID' ) );
 }
 
