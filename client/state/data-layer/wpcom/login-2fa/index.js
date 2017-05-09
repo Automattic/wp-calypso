@@ -9,9 +9,9 @@ import defer from 'lodash/defer';
  */
 import config from 'config';
 import {
-	LOGIN_TWOFACTOR_UPDATE_NONCE,
-	LOGIN_TWOFACTOR_PUSH_POLL_COMPLETED,
-	LOGIN_TWOFACTOR_PUSH_POLL_START,
+	TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE,
+	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
+	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 } from 'state/action-types';
 import {
 	getTwoFactorUserId,
@@ -45,9 +45,9 @@ const doAppPushRequest = ( store ) => {
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} ).then( () => {
-			store.dispatch( { type: LOGIN_TWOFACTOR_PUSH_POLL_COMPLETED } );
+			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
 		} ).catch( error => {
-			store.dispatch( { type: LOGIN_TWOFACTOR_UPDATE_NONCE, twoStepNonce: error.response.body.data.two_step_nonce } );
+			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE, twoStepNonce: error.response.body.data.two_step_nonce } );
 			return Promise.reject( error );
 		} );
 };
@@ -80,11 +80,11 @@ const doAppPushPolling = store => {
 };
 
 const handleTwoFactorPushPoll = ( store, action, next ) => {
-	// this is deferred to allow reducer respond to LOGIN_TWOFACTOR_PUSH_POLL_START
+	// this is deferred to allow reducer respond to TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START
 	defer( () => doAppPushPolling( store ) );
 	return next( action );
 };
 
 export default {
-	[ LOGIN_TWOFACTOR_PUSH_POLL_START ]: [ handleTwoFactorPushPoll ],
+	[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START ]: [ handleTwoFactorPushPoll ],
 };
