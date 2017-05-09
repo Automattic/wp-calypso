@@ -124,7 +124,7 @@ class CancelPurchaseButton extends Component {
 		const buttons = {
 			close: {
 				action: 'close',
-				label: translate( "No, I'll Keep It" )
+				label: translate( "I'll Keep It" )
 			},
 			next: {
 				action: 'next',
@@ -140,7 +140,7 @@ class CancelPurchaseButton extends Component {
 			},
 			cancel: {
 				action: 'cancel',
-				label: translate( 'Yes, Cancel Now' ),
+				label: translate( 'Cancel Now' ),
 				isPrimary: true,
 				disabled: this.state.submitting,
 				onClick: this.submitCancelAndRefundPurchase
