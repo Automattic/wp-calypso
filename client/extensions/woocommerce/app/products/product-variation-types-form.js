@@ -79,7 +79,7 @@ export default class ProductVariationTypesForm extends Component {
 					onChange={ this.updateName }
 				/>
 				<TokenField
-					placeholder={ i18n.translate( 'Comma separate these' ) }
+					placeholder={ i18n.translate( 'Red, Green, Blue' ) }
 					value={ attribute.options }
 					name="values"
 					/* eslint-disable react/jsx-no-bind */
