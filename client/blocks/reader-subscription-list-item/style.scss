@@ -98,7 +98,7 @@
 		fill: $blue-medium;
 
 		@include breakpoint( "<660px" ) {
-			left: 6px;
+			left: 3px;
 		}
 	}
 
@@ -123,7 +123,7 @@
 	height: 18px;
 	padding-right: 7px;
 	position: relative;
-		left: 7px;
+		left: 5px;
 		top: 4px;
 	width: 18px;
 
