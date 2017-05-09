@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { pickBy, get } from 'lodash';
+import { pickBy } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -18,17 +18,14 @@ import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import { connectOptions } from './theme-options';
 import Banner from 'components/banner';
 import {
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM
 } from 'lib/plans/constants';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
-import { hasFeature } from 'state/sites/plans/selectors';
+import { hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 import {
 	canJetpackSiteManage,
@@ -68,7 +65,8 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			vertical,
 			tier,
 			translate,
-			currentPlanSlug
+			hasUnlimitedPremiumThemes,
+			requestingSitePlans
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
@@ -95,14 +93,15 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			<div>
 				<SidebarNavigation />
 				<CurrentTheme siteId={ siteId } />
-				{ ( currentPlanSlug === PLAN_JETPACK_FREE || currentPlanSlug === PLAN_JETPACK_PERSONAL ) && <Banner
-					plan={ PLAN_JETPACK_PREMIUM }
-					title={ translate( 'Access all our premium themes with our Premium and Business plans!' ) }
-					description={
-						translate( 'Get advanced customization, more storage space, and video support along with all your new themes.' )
-					}
-					event="themes_plans_free_personal"
-				/>
+				{
+					( ! requestingSitePlans && ! hasUnlimitedPremiumThemes ) && <Banner
+						plan={ PLAN_JETPACK_PREMIUM }
+						title={ translate( 'Access all our premium themes with our Business plan!' ) }
+						description={
+							translate( 'Get advanced customization, more storage space, and video support along with all your new themes.' )
+						}
+						event="themes_plans_free_personal_premium"
+					/>
 				}
 				<ThemeShowcase { ...props }
 					siteId={ siteId }
@@ -149,7 +148,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 );
 
 export default connect(
-	( state, { siteId, tier } ) => {
+	( state, { siteId } ) => {
 		const isMultisite = isJetpackSiteMultiSite( state, siteId );
 		const showWpcomThemesList = config.isEnabled( 'manage/themes/upload' ) &&
 			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) && ! isMultisite;
@@ -161,15 +160,14 @@ export default connect(
 			const wpcomThemesCount = getThemesFoundForQuery( state, 'wpcom', wpcomQuery );
 			emptyContent = ( ! siteThemesCount && ! wpcomThemesCount ) ? null : <div />;
 		}
-		const currentPlan = getCurrentPlan( state, siteId );
 		return {
 			canManage: canJetpackSiteManage( state, siteId ),
 			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
-			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
 			showWpcomThemesList,
 			emptyContent,
 			isMultisite,
-			currentPlanSlug: get( currentPlan, 'productSlug', null )
+			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
+			requestingSitePlans: isRequestingSitePlans( state, siteId )
 		};
 	}
 )( ConnectedSingleSiteJetpack );
