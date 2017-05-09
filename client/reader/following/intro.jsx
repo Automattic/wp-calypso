@@ -6,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -35,6 +36,8 @@ class FollowingIntro extends React.Component {
 
 	render() {
 		const { isNewReader, translate, dismiss } = this.props;
+		const linkElement = config.isEnabled( 'reader/following-manage-refresh' )
+			? <a href="/following/manage" /> : <a href="/following/edit" />;
 
 		if ( ! isNewReader ) {
 			return null;
@@ -52,7 +55,7 @@ class FollowingIntro extends React.Component {
 								'distraction-free environment.{{/span}}',
 								{
 									components: {
-										link: <a href="/following/edit" />,
+										link: linkElement,
 										strong: <strong />,
 										span: <span className="following__intro-copy-hidden" />
 									}
@@ -63,6 +66,7 @@ class FollowingIntro extends React.Component {
 					<div className="following__intro-close"
 						onClick={ dismiss }
 						title={ translate( 'Close' ) }
+						role="button"
 						aria-label={ translate( 'Close' ) }>
 							<Gridicon icon="cross-circle" className="following__intro-close-icon" title={ translate( 'Close' ) } />
 							<span className="following__intro-close-icon-bg" />
