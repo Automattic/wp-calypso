@@ -11,6 +11,11 @@ import Main from 'components/main';
 import StepHeader from '../step-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 
+/**
+ * Constants
+ */
+const defaultJetpackSite = { jetpack: true, plan: {}, isUpgradeable: () => true };
+
 class JetpackPlansGrid extends Component {
 	static propTypes = {
 		basePlansPath: PropTypes.string,
@@ -55,7 +60,6 @@ class JetpackPlansGrid extends Component {
 	}
 
 	render() {
-		const defaultJetpackSite = { jetpack: true, plan: {}, isUpgradeable: () => true };
 		return (
 			<Main wideLayout>
 				<div className="jetpack-connect__plans">
