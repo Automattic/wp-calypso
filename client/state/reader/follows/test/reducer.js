@@ -11,6 +11,8 @@ import {
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
+	SERIALIZE,
+	DESERIALIZE,
 } from 'state/action-types';
 import {
 	subscribeToNewPostEmail,
@@ -93,6 +95,56 @@ describe( 'reducer', () => {
 			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).to.eql(
 				{ is_following: true, blog_ID: 126, URL: 'https://postcardsfromthereader.wordpress.com' }
 			);
+		} );
+
+		it( 'should only SERIALIZE followed items', () => {
+			const original = deepFreeze( {
+				'discover.wordpress.com': {
+					feed_URL: 'http://discover.wordpress.com',
+					URL: 'http://discover.wordpress.com',
+					is_following: false,
+					blog_ID: 123
+				},
+				'dailypost.wordpress.com': {
+					feed_URL: 'http://dailypost.wordpress.com',
+					URL: 'http://dailypost.wordpress.com',
+					is_following: true,
+					blog_ID: 124,
+				},
+			} );
+			expect( items( original, { type: SERIALIZE } ) ).to.eql( {
+				'dailypost.wordpress.com': {
+					feed_URL: 'http://dailypost.wordpress.com',
+					URL: 'http://dailypost.wordpress.com',
+					is_following: true,
+					blog_ID: 124,
+				},
+			} );
+		} );
+
+		it( 'should deserialize good data', () => {
+			const original = deepFreeze( {
+				'dailypost.wordpress.com': {
+					feed_URL: 'http://dailypost.wordpress.com',
+					URL: 'http://dailypost.wordpress.com',
+					is_following: true,
+					blog_ID: 124,
+				},
+			} );
+
+			expect( items( original, { type: DESERIALIZE } ) ).to.eql( original );
+		} );
+
+		it( 'should return the blank state for bad serialized data', () => {
+			const original = deepFreeze( {
+				'dailypost.wordpress.com': {
+					URL: 'http://dailypost.wordpress.com',
+					is_following: true,
+					blog_ID: 124,
+				},
+			} );
+
+			expect( items( original, { type: DESERIALIZE } ) ).to.eql( {} );
 		} );
 
 		it( 'should update when passed new post subscription info', () => {

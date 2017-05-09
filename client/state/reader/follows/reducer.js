@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { find, get, isEqual, merge, reduce } from 'lodash';
+import { find, get, isEqual, merge, pickBy, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,8 +19,10 @@ import {
 	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
 	READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
+	SERIALIZE,
 } from 'state/action-types';
 import { prepareComparableUrl } from './utils';
+import { items as itemsSchema } from './schema';
 import { createReducer } from 'state/utils';
 
 function updatePostSubscription( state, { payload, type } ) {
@@ -130,7 +132,8 @@ export const items = createReducer( {}, {
 	[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
 	[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
 	[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
-} );
+	[ SERIALIZE ]: ( state ) => pickBy( state, item => item.is_following ),
+}, itemsSchema );
 
 export const itemsCount = createReducer( 0, {
 	[ READER_FOLLOWS_RECEIVE ]: ( state, action ) => {
