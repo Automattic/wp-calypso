@@ -5,8 +5,8 @@ import React, { Component, PropTypes } from 'react';
 import Gridicon from 'gridicons';
 import addQueryArgs from 'lib/route/add-query-args';
 import debugModule from 'debug';
-import i18n from 'i18n-calypso';
 import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -140,13 +140,14 @@ class LoggedInForm extends Component {
 	}
 
 	renderFormHeader( isConnected ) {
+		const { translate } = this.props;
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const headerText = ( isConnected )
-			? i18n.translate( 'You are connected!' )
-			: i18n.translate( 'Completing connection' );
+			? translate( 'You are connected!' )
+			: translate( 'Completing connection' );
 		const subHeaderText = ( isConnected )
-			? i18n.translate( 'Thank you for flying with Jetpack' )
-			: i18n.translate( 'Jetpack is finishing up the connection process' );
+			? translate( 'Thank you for flying with Jetpack' )
+			: translate( 'Jetpack is finishing up the connection process' );
 		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' )
 			? <SiteCard queryObject={ queryObject } />
 			: null;
@@ -251,7 +252,7 @@ class LoggedInForm extends Component {
 		const { authorizeError } = this.props.jetpackConnectAuthorize;
 		return (
 			<div className="jetpack-connect__error-details">
-				<FormLabel>{ this.translate( 'Error Details' ) }</FormLabel>
+				<FormLabel>{ this.props.translate( 'Error Details' ) }</FormLabel>
 				<FormSettingExplanation>
 					{ authorizeError.message }
 				</FormSettingExplanation>
@@ -260,18 +261,23 @@ class LoggedInForm extends Component {
 	}
 
 	renderXmlrpcFeedback() {
-		const xmlrpcErrorText = this.translate( 'We had trouble connecting.' );
+		const { translate } = this.props;
 		return (
 			<div>
 				<div className="jetpack-connect__notices-container">
-					<Notice icon="notice" status="is-error" text={ xmlrpcErrorText } showDismiss={ false }>
+					<Notice
+						icon="notice"
+						status="is-error"
+						text={ translate( 'We had trouble connecting.' ) }
+						showDismiss={ false }
+					>
 						<NoticeAction onClick={ this.handleResolve }>
-							{ this.translate( 'Try again' ) }
+							{ translate( 'Try again' ) }
 						</NoticeAction>
 					</Notice>
 				</div>
 				<p>
-					{ this.translate(
+					{ translate(
 						'WordPress.com was unable to reach your site and approve the connection. ' +
 						'Try again by clicking the button above; ' +
 						'if that doesn\'t work you may need to {{link}}contact support{{/link}}.', {
@@ -322,6 +328,7 @@ class LoggedInForm extends Component {
 	}
 
 	getButtonText() {
+		const { translate } = this.props;
 		const {
 			queryObject,
 			isAuthorizing,
@@ -333,37 +340,37 @@ class LoggedInForm extends Component {
 		if ( ! this.props.isAlreadyOnSitesList &&
 			! this.props.isFetchingSites &&
 			queryObject.already_authorized ) {
-			return this.translate( 'Go back to your site' );
+			return translate( 'Go back to your site' );
 		}
 
 		if ( authorizeError && ! this.retryingAuth ) {
-			return this.translate( 'Try again' );
+			return translate( 'Try again' );
 		}
 
 		if ( this.props.isFetchingSites ) {
-			return this.translate( 'Preparing authorization' );
+			return translate( 'Preparing authorization' );
 		}
 
 		if ( authorizeSuccess && isRedirectingToWpAdmin ) {
-			return this.translate( 'Returning to your site' );
+			return translate( 'Returning to your site' );
 		}
 
 		if ( authorizeSuccess ) {
-			return this.translate( 'Finishing up!', {
+			return translate( 'Finishing up!', {
 				context: 'Shown during a jetpack authorization process, while we retrieve the info we need to show the last page'
 			} );
 		}
 
 		if ( isAuthorizing || this.retryingAuth ) {
-			return this.translate( 'Authorizing your connection' );
+			return translate( 'Authorizing your connection' );
 		}
 
 		if ( this.props.isAlreadyOnSitesList ) {
-			return this.translate( 'Return to your site' );
+			return translate( 'Return to your site' );
 		}
 
 		if ( ! this.retryingAuth ) {
-			return this.translate( 'Approve' );
+			return translate( 'Approve' );
 		}
 	}
 
@@ -380,7 +387,7 @@ class LoggedInForm extends Component {
 				className="jetpack-connect__sso-actions-modal-link" />
 		);
 
-		const text = this.translate(
+		const text = this.props.translate(
 			'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
 			{
 				components: {
@@ -400,14 +407,15 @@ class LoggedInForm extends Component {
 	}
 
 	getUserText() {
+		const { translate } = this.props;
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
-		let text = this.translate( 'Connecting as {{strong}}%(user)s{{/strong}}', {
+		let text = translate( 'Connecting as {{strong}}%(user)s{{/strong}}', {
 			args: { user: this.props.user.display_name },
 			components: { strong: <strong /> }
 		} );
 
 		if ( authorizeSuccess || this.props.isAlreadyOnSitesList ) {
-			text = this.translate( 'Connected as {{strong}}%(user)s{{/strong}}', {
+			text = translate( 'Connected as {{strong}}%(user)s{{/strong}}', {
 				args: { user: this.props.user.display_name },
 				components: { strong: <strong /> }
 			} );
@@ -426,6 +434,7 @@ class LoggedInForm extends Component {
 	}
 
 	renderFooterLinks() {
+		const { translate } = this.props;
 		const {
 			queryObject,
 			authorizeSuccess,
@@ -437,7 +446,7 @@ class LoggedInForm extends Component {
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem icon={ true } href={ redirect_after_auth }>
 				<Gridicon size={ 18 } icon="arrow-left" />
-				{ this.translate( 'Return to %(sitename)s', {
+				{ translate( 'Return to %(sitename)s', {
 					args: { sitename: decodeEntities( blogname ) }
 				} ) }
 			</LoggedOutFormLinkItem>
@@ -452,7 +461,7 @@ class LoggedInForm extends Component {
 				<LoggedOutFormLinks>
 					{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
 					<LoggedOutFormLinkItem href={ this.getRedirectionTarget() }>
-						{ this.translate( 'I\'m not interested in upgrades' ) }
+						{ translate( 'I\'m not interested in upgrades' ) }
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
 			);
@@ -462,10 +471,10 @@ class LoggedInForm extends Component {
 			<LoggedOutFormLinks>
 				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
 				<LoggedOutFormLinkItem href={ login( { legacy: true, redirectTo } ) }>
-					{ this.translate( 'Sign in as a different user' ) }
+					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
-					{ this.translate( 'Create a new account' ) }
+					{ translate( 'Create a new account' ) }
 				</LoggedOutFormLinkItem>
 				<HelpButton onClick={ this.handleClickHelp } />
 			</LoggedOutFormLinks>
@@ -518,4 +527,4 @@ class LoggedInForm extends Component {
 	}
 }
 
-export default LoggedInForm;
+export default localize( LoggedInForm );
