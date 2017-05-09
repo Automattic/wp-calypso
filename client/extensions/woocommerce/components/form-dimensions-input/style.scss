@@ -2,9 +2,9 @@
 	display: flex;
 	justify-content: flex-start;
 	flex-wrap: wrap;
-		@include breakpoint( ">480px" ) {
-			flex-wrap: nowrap;
-		}
+	@include breakpoint( ">480px" ) {
+		flex-wrap: nowrap;
+	}
 
 	.form-text-input-with-affixes {
 		flex-grow: 2;
@@ -30,6 +30,8 @@
 	.form-dimensions-input__length,
 	.form-dimensions-input__width,
 	.form-dimensions-input__height {
+		width: 96px;
+
 		&:hover,
 		&:focus {
 			transform: scale(1);
