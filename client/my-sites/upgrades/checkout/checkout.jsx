@@ -230,6 +230,7 @@ const Checkout = React.createClass( {
 		const {
 			cart,
 			isDomainOnly,
+			reduxStore,
 			selectedSiteId,
 			transaction: {
 				step: {
@@ -309,9 +310,13 @@ const Checkout = React.createClass( {
 			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
 
 			if ( domainName ) {
-				fetchSitesAndUser( domainName, () => {
-					page( redirectPath );
-				} );
+				fetchSitesAndUser(
+					domainName,
+					() => {
+						page( redirectPath );
+					},
+					reduxStore
+				);
 
 				return;
 			}
