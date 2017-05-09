@@ -1,0 +1,240 @@
+.form-label {
+	margin-bottom: 16px;
+}
+
+.form-label {
+	margin-bottom: 16px;
+}
+
+.form-label {
+	margin-bottom: 16px;
+}
+
+.foldable-card.products__variation-card .foldable-card__content {
+	padding: 0;
+	border: 0;
+}
+
+.products__product-form-details-featured {
+	text-align: right;
+
+	.form-toggle__wrapper {
+		margin-left: 10px;
+	}
+}
+
+.products__product-form-details-wrapper {
+	display: flex;
+	flex-direction: column;
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+	}
+}
+/* TODO: remove placeholder styles once implemented */
+.products__product-form-details-images {
+	background: $gray-light;
+	height: 200px;
+	margin-bottom: 16px;
+	@include breakpoint( ">960px" ) {
+		margin-bottom: 0;
+	}
+}
+
+.products__product-form-details-images,
+.products__product-form-details-basic {
+	flex: 1;
+	@include breakpoint( ">960px" ) {
+		margin-right: 32px;
+	}
+
+	&:last-child {
+		margin-right: 0;
+	}
+
+	&:last-child {
+		margin-right: 0;
+	}
+
+	&:last-child {
+		margin-right: 0;
+	}
+}
+
+.products__product-form-details-basic-description textarea {
+	resize: vertical;
+}
+
+.products__variation-types-form-wrapper {
+	padding: 24px;
+	border-top: 1px solid $gray-light;
+}
+
+.products__variation-types-form-group {
+
+	.products__variation-types-form-fieldset,
+	.products__variation-types-form-labels {
+		display: flex;
+	}
+
+	.products__variation-types-form-fieldset {
+		margin-bottom: 16px;
+	}
+
+	.products__variation-types-form-field {
+		width: 50%;
+	}
+
+	.products__variation-types-form-label {
+		width: 35%;
+	}
+
+	.token-field {
+		margin-left: 16px;
+	}
+}
+
+.products__product-form-variation-table {
+	border-spacing: 24px 16px;
+	border-collapse: collapse;
+
+	.products__product-form-variation-all-row {
+		background: lighten( $gray, 30% );
+	}
+
+	.products__product-dimensions-weight {
+		display: flex;
+		justify-content: flex-start;
+
+		.products__product-dimensions-input {
+			margin-right: 8px;
+		}
+	}
+
+	.products__product-manage-stock {
+		display: inline-flex;
+		flex-direction: row;
+		width: 100%;
+
+		.products__product-manage-stock-checkbox {
+			@include clear-fix();
+			padding: 12px;
+			background: $white;
+			border: 1px solid lighten( $gray, 20% );
+			display: flex;
+
+			input[type=checkbox] {
+				float: none;
+				margin: 0;
+			}
+
+			+ .form-text-input {
+				transform: translateX( -1px );
+			}
+		}
+
+		.form-text-input {
+			height: 42px;
+			width: 70px;
+		}
+	}
+
+	.products__product-form-variation-row {
+		td {
+			.products__product-manage-stock {
+				.form-text-input {
+					width: 110px;
+				}
+			}
+		}
+	}
+
+	.products__product-form-variation-all-row + .products__product-form-variation-row {
+		td {
+			padding-top: 16px;
+		}
+	}
+
+	th, td {
+		padding: 8px;
+		vertical-align: middle;
+
+		&:first-child {
+			padding-left: 24px;
+		}
+
+		&:last-child {
+			padding-right: 24px;
+		}
+	}
+
+}
+
+.products__product-form-variation-table th {
+	font-size: 13px;
+	vertical-align: bottom;
+	min-width: 122px;
+
+	&.products__product-price {
+		width: 80px;
+	}
+
+	&:first-child,
+	&:last-child {
+		min-width: 0;
+	}
+}
+
+.products__product-dimensions-input {
+	display: flex;
+}
+
+.products__product-dimensions-length,
+.products__product-dimensions-width,
+.products__product-dimensions-height {
+	width: 120px
+}
+
+.products__all-variations {
+	font-size: 13px;
+}
+
+.products__product-form-variation-table-wrapper {
+	width: 1px;
+	max-width: 100%;
+	min-width: 100%;
+	overflow-x: auto;
+}
+
+.products__product-form-variation-table-wrapper .form-text-input-with-affixes .form-text-input {
+	min-width: 80px;
+}
+
+/* TODO: remove placeholder styles once implemented */
+.products__product-form-variation-image {
+	background: $gray-light;
+	height: 40px;
+	width: 40px;
+	margin-bottom: 16px;
+	margin-right: 0px;
+	flex-shrink: 0;
+}
+
+.products__product-form-variation-table-wrapper .products__product-form-variation-image{
+	margin-bottom: 0;
+	margin-right: 8px;
+}
+
+.products__product-form-variation-all-row .products__product-id {
+	vertical-align: middle;
+}
+
+.products__product-name-thumb {
+	display: inline-flex;
+	flex-direction: row;
+	max-width: 120px;
+	align-items: center;
+}
+
+.products__product-name {
+	font-size: 13px;
+}
