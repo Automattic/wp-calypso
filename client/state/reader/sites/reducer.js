@@ -1,11 +1,20 @@
+/**
+ * External Dependencies
+ */
 import { combineReducers } from 'redux';
-import assign from 'lodash/assign';
-import omit from 'lodash/omit';
-import omitBy from 'lodash/omitBy';
-import keyBy from 'lodash/keyBy';
-import map from 'lodash/map';
-import trim from 'lodash/trim';
+import {
+	assign,
+	keyBy,
+	map,
+	omit,
+	omitBy,
+	reduce,
+	trim,
+ } from 'lodash';
 
+/**
+ * Internal Dependencies
+ */
 import {
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
@@ -15,7 +24,7 @@ import {
 	SERIALIZE
 } from 'state/action-types';
 
-import { isValidStateWithSchema } from 'state/utils';
+import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { readerSitesSchema } from './schema';
 import { withoutHttp } from 'lib/url';
 
@@ -113,7 +122,22 @@ export function queuedRequests( state = {}, action ) {
 	return state;
 }
 
+export const lastUpdated = createReducer( {}, {
+	[ READER_SITE_REQUEST_SUCCESS ]: ( state, action ) => ( {
+		...state,
+		[ action.payload.ID ]: Date.now()
+	} ),
+	[ READER_SITE_UPDATE ]: ( state, action ) => {
+		const updates = reduce( action.payload, ( memo, site ) => {
+			memo[ site.ID ] = Date.now();
+			return memo;
+		}, {} );
+		return assign( {}, state, updates );
+	}
+} );
+
 export default combineReducers( {
 	items,
-	queuedRequests
+	queuedRequests,
+	lastUpdated,
 } );

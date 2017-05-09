@@ -1,3 +1,5 @@
+const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
+
 /**
 * Returns true if we should fetch the feed
 *
@@ -5,9 +7,6 @@
 * @param  {Number}  feedId The feed ID
 * @return {Boolean}        Whether feed should be fetched
 */
-
-const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
-
 export function shouldFeedBeFetched( state, feedId ) {
 	// we should fetch the feed if we don't have it,
 	// or we do have it

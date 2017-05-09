@@ -1,5 +1,7 @@
+const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
+
 /**
-* Returns true if we should fetch the feed
+* Returns true if we should fetch the site
 *
 * @param  {Object}  state  Global state tree
 * @param  {Number}  siteId The site ID
@@ -8,7 +10,18 @@
 
 export function shouldSiteBeFetched( state, siteId ) {
 	return ! state.reader.sites.queuedRequests[ siteId ] && // not currently queued
-		! state.reader.sites.items[ siteId ]; // not currently loaded
+		(
+			! getSite( state, siteId ) ||
+			! lastUpdatedWithin( state, siteId, DAY_IN_MILLIS )
+		);
+}
+
+function lastUpdatedWithin( state, siteId, timeInMillis ) {
+	const lastUpdated = state.reader.sites.lastUpdated[ siteId ];
+	if ( ! lastUpdated ) {
+		return false;
+	}
+	return lastUpdated > ( Date.now() - timeInMillis );
 }
 
 /**
