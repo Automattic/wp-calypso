@@ -22,6 +22,18 @@ import { isJetpackPlan, isFreeJetpackPlan } from 'lib/products-values';
 import { getPluginsForSite } from 'state/plugins/premium/selectors';
 
 class PurchasePlanDetails extends Component {
+	renderPlaceholder() {
+		return (
+			<div className="plan-details__wrapper is-placeholder">
+				<SectionHeader />
+				<Card>
+					<div className="plan-details__plugin-key" />
+					<div className="plan-details__plugin-key" />
+				</Card>
+			</div>
+		);
+	}
+
 	renderPluginLabel( slug ) {
 		switch ( slug ) {
 			case 'vaultpress':
@@ -35,12 +47,13 @@ class PurchasePlanDetails extends Component {
 		const { selectedSite, pluginList, translate } = this.props;
 		const purchase = getPurchase( this.props );
 
-		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
+		// Short out as soon as we know it's not a Jetpack plan
+		if ( purchase && ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) ) {
 			return null;
 		}
 
-		if ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) {
-			return null;
+		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
+			return this.renderPlaceholder();
 		}
 
 		if ( isExpired( purchase ) ) {
