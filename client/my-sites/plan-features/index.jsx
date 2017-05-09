@@ -482,7 +482,7 @@ export default connect(
 						selectedSiteId,
 						plan,
 						{
-							isMonthly: showMonthly
+							isMonthly: showMonthlyPrice
 						} ),
 					features: getPlanFeaturesObject( planConstantObj.getFeatures( abtest ) ),
 					onUpgradeClick: onUpgradeClick
