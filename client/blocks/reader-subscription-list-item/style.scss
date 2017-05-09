@@ -74,6 +74,11 @@
 	}
 }
 
+.reader-subscription-list-item__site-url,
+.reader-subscription-list-item__site-url:visited {
+	color: lighten( $gray, 10% );
+}
+
 .reader-subscription-list-item__site-title,
 .reader-subscription-list-item__by-text,
 .reader-subscription-list-item__site-url {
