@@ -79,7 +79,7 @@ class WaitingTwoFactorNotificationApproval extends Component {
 					</p>
 					<div>
 						<img className="two-factor-authentication__auth-code-preview"
-							 src="/calypso/images/login/pushauth.svg"/>
+							src="/calypso/images/login/pushauth.svg" />
 					</div>
 				</Card>
 				<Card className="two-factor-authentication__form-action is-compact">
