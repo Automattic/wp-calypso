@@ -293,8 +293,14 @@ const PluginMeta = React.createClass( {
 		}
 	},
 
-	getDefaultActionLinks() {
-		const adminUrl = get( this.props, 'selectedSite.options.admin_url' );
+	getDefaultActionLinks( plugin ) {
+		let adminUrl = get( this.props, 'selectedSite.options.admin_url' );
+		const pluginSlug = get( plugin, 'slug' );
+
+		if ( pluginSlug === 'vaultpress' ) {
+			adminUrl += '/admin.php?page=vaultpress';
+		}
+
 		return adminUrl
 			? { [ i18n.translate( 'WP Admin' ) ]: adminUrl }
 			: null;
@@ -428,7 +434,7 @@ const PluginMeta = React.createClass( {
 		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
 		let actionLinks = get( plugin, 'action_links' );
 		if ( get( plugin, 'active' ) && isEmpty( actionLinks ) ) {
-			actionLinks = this.getDefaultActionLinks();
+			actionLinks = this.getDefaultActionLinks( plugin );
 		}
 
 		return (
