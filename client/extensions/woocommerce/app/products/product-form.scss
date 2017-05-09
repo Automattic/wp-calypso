@@ -107,25 +107,6 @@
 
 		.products__product-dimensions-input {
 			margin-right: 8px;
-
-			.products__product-dimensions-width,
-			.products__product-dimensions-height {
-				margin-left: -1px;
-			}
-
-			.products__product-dimensions-length,
-			.products__product-dimensions-width,
-			.products__product-dimensions-height {
-				&:hover,
-				&:focus {
-					transform: scale(1);
-				}
-
-				&:focus + .products__product-dimensions-width:hover,
-				&:focus + .form-text-input-with-affixes .products__product-dimensions-height:hover {
-					transform: none;
-				}
-			}
 		}
 	}
 
