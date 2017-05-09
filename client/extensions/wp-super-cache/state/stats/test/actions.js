@@ -8,14 +8,20 @@ import { expect } from 'chai';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	WP_SUPER_CACHE_DELETE_FILE,
+	WP_SUPER_CACHE_DELETE_FILE_FAILURE,
+	WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
 	WP_SUPER_CACHE_GENERATE_STATS,
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 	WP_SUPER_CACHE_RECEIVE_STATS,
+	WP_SUPER_CACHE_REMOVE_FILE,
 } from '../../action-types';
 import {
+	deleteFile,
 	generateStats,
 	receiveStats,
+	removeFile,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -25,6 +31,7 @@ describe( 'actions', () => {
 
 	const siteId = 123456;
 	const failedSiteId = 456789;
+	const url = 'wordpress.com/test';
 	const stats = {
 		data: {
 			generated: 1493997829,
@@ -112,6 +119,71 @@ describe( 'actions', () => {
 			return generateStats( failedSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
+					siteId: failedSiteId,
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#removeFile()', () => {
+		it( 'should return an action object', () => {
+			const action = removeFile( siteId, url, true, false );
+
+			expect( action ).to.eql( {
+				type: WP_SUPER_CACHE_REMOVE_FILE,
+				isCached: false,
+				isSupercache: true,
+				siteId,
+				url,
+			} );
+		} );
+	} );
+
+	describe( '#deleteFile()', () => {
+		useNock( nock => {
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
+				.query( { path: '/wp-super-cache/v1/cache' } )
+				.reply( 200, { 'Cache Cleared': true } )
+				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
+				.query( { path: '/wp-super-cache/v1/cache' } )
+				.reply( 403, {
+					error: 'authorization_required',
+					message: 'User cannot access this private blog.'
+				} );
+		} );
+
+		it( 'should dispatch fetch action when thunk triggered', () => {
+			deleteFile( siteId, url, true, false )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: WP_SUPER_CACHE_DELETE_FILE,
+				siteId,
+			} );
+		} );
+
+		it( 'should dispatch remove action when request completes', () => {
+			return deleteFile( siteId, url, true, false )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith(
+					removeFile( siteId, url, true, false )
+				);
+			} );
+		} );
+
+		it( 'should dispatch request success action when request completes', () => {
+			return deleteFile( siteId, url, true, false )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
+					siteId,
+				} );
+			} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			return deleteFile( failedSiteId, url, true, false )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_DELETE_FILE_FAILURE,
 					siteId: failedSiteId,
 				} );
 			} );
