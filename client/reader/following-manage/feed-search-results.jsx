@@ -5,6 +5,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import { take, map } from 'lodash';
 import Gridicon from 'gridicons';
+import classnames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -22,14 +23,24 @@ const FollowingManageSearchFeedsResults = ( {
 	fetchNextPage,
 	forceRefresh,
 	searchResultsCount,
+	query,
 } ) => {
+	const isError = !! ( query && searchResults.length === 0 );
+	const classNames = classnames( 'following-manage__search-results', {
+		'is-error': !! isError,
+	} );
+
 	if ( ! searchResults ) {
 		return null; // todo: add placeholder
 	} else if ( searchResults.length === 0 ) {
 		return (
-			<p>
-				{ translate( 'There were no site results for your query.' ) }
-			</p>
+			<div className={ classNames }>
+				<p>
+					{ translate( 'Sorry, no sites match %s.', {
+						args: query,
+					} ) }
+				</p>
+			</div>
 		);
 	}
 
@@ -44,7 +55,7 @@ const FollowingManageSearchFeedsResults = ( {
 		) );
 
 		return (
-			<div className="following-manage__search-results">
+			<div className={ classNames }>
 				{ resultsToShow }
 				<div className="following-manage__show-more">
 					{ searchResultsCount > 3 &&
@@ -63,7 +74,7 @@ const FollowingManageSearchFeedsResults = ( {
 	}
 
 	return (
-		<div className="following-manage__search-results">
+		<div className={ classNames }>
 			<SitesWindowScroller
 				sites={ searchResults }
 				width={ width }

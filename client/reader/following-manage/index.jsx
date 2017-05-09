@@ -209,14 +209,15 @@ class FollowingManage extends Component {
 						fetchNextPage={ this.fetchNextPage }
 						forceRefresh={ this.props.sitesQuery }
 						searchResultsCount={ searchResultsCount }
+						query={ sitesQuery }
 					/> }
-				{ showExistingSubscriptions &&
+				{ showExistingSubscriptions && (
 					<FollowingManageSubscriptions
 						width={ this.state.width }
 						query={ subsQuery }
 						sortOrder={ subsSortOrder }
 						windowScrollerRef={ this.handleWindowScrollerMounted }
-					/> }
+					/> ) }
 			</ReaderMain>
 		);
 	}
