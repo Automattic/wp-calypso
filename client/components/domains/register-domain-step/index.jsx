@@ -49,7 +49,8 @@ const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
 
 const analytics = analyticsMixin( 'registerDomain' ),
-	searchVendor = 'domainsbot';
+	searchVendor = 'domainsbot',
+	fetchAlgo = searchVendor + '/v1';
 
 let searchQueue = [],
 	searchStackTimer = null,
@@ -149,6 +150,13 @@ const RegisterDomainStep = React.createClass( {
 		};
 	},
 
+	getNewRailcarSeed() {
+		// Generate a 7 character random hash on base16. E.g. ac618a3
+		return Math.floor( ( 1 + Math.random() ) * 0x10000000 )
+			.toString( 16 )
+			.substring( 1 );
+	},
+
 	componentWillReceiveProps( nextProps ) {
 		// Reset state on site change
 		if ( nextProps.selectedSite && nextProps.selectedSite.slug !== ( this.props.selectedSite || {} ).slug ) {
@@ -182,7 +190,7 @@ const RegisterDomainStep = React.createClass( {
 		lastSearchTimestamp = null; // reset timer
 
 		if ( this.props.initialState ) {
-			const state = { ...this.props.initialState };
+			const state = { ...this.props.initialState, railcarSeed: this.getNewRailcarSeed() };
 
 			if ( state.lastSurveyVertical &&
 				( state.lastSurveyVertical !== this.props.surveyVertical ) ) {
@@ -304,7 +312,8 @@ const RegisterDomainStep = React.createClass( {
 
 		this.setState( {
 			lastDomainSearched: domain,
-			searchResults: []
+			searchResults: [],
+			railcarSeed: this.getNewRailcarSeed(),
 		} );
 
 		async.parallel(
@@ -515,6 +524,8 @@ const RegisterDomainStep = React.createClass( {
 				offerMappingOption={ this.props.offerMappingOption }
 				placeholderQuantity={ SUGGESTION_QUANTITY }
 				isSignupStep={ this.props.isSignupStep }
+				railcarSeed={ this.state.railcarSeed }
+				fetchAlgo={ fetchAlgo }
 				cart={ this.props.cart } />
 		);
 	},
