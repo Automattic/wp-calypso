@@ -53,10 +53,8 @@ export const twoFactorAuth = createReducer( null, {
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: updateTwoStepNonce,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: updateTwoStepNonce,
 	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data, rememberMe } ) => data ? { ...data, remember_me: rememberMe } : null,
-	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE ]: ( state, { twoStepNonce } ) => Object.assign( {}, state, {
-		two_step_nonce: twoStepNonce
-	} ),
-	[ LOGIN_TWOFACTOR_UPDATE_NONCE ]: ( state, { twoStepNonce } ) => ( { ...state, two_step_nonce: twoStepNonce } ),
+	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE ]: updateTwoStepNonce,
+	[ LOGIN_TWOFACTOR_UPDATE_NONCE ]: updateTwoStepNonce,
 	[ LOGIN_REQUEST_FAILURE ]: () => null
 } );
 
