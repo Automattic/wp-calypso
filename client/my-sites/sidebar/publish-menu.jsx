@@ -168,6 +168,7 @@ class PublishMenu extends PureComponent {
 				onNavigate={ this.onNavigate( menuItem.name ) }
 				icon={ icon }
 				preloadSectionName={ preload }
+				postType={ menuItem.name }
 			>
 				{ menuItem.name === 'media' && (
 					<MediaLibraryUploadButton className="sidebar__button" site={ site } href={ menuItem.buttonLink }>
