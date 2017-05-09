@@ -67,4 +67,4 @@ const TagEmptyContent = React.createClass( {
 	}
 } );
 
-export default localize(TagEmptyContent);
+export default localize( TagEmptyContent );

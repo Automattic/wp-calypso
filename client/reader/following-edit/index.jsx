@@ -602,4 +602,4 @@ const FollowingEdit = React.createClass( {
 
 } );
 
-export default localize(FollowingEdit);
+export default localize( FollowingEdit );

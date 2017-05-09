@@ -95,4 +95,4 @@ export default connect(
 			unfollowList
 		}, dispatch );
 	}
-)( localize(ListStream) );
+)( localize( ListStream ) );

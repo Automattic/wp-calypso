@@ -31,4 +31,4 @@ var RecommendationPostsStream = React.createClass( {
 
 } );
 
-export default localize(RecommendationPostsStream);
+export default localize( RecommendationPostsStream );

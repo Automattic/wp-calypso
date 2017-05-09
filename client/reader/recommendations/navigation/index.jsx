@@ -29,4 +29,4 @@ const RecommendedNavigation = React.createClass( {
 	}
 } );
 
-export default localize(RecommendedNavigation);
+export default localize( RecommendedNavigation );

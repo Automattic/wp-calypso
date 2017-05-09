@@ -150,4 +150,4 @@ const RecommendedForYou = React.createClass( {
 	}
 } );
 
-export default localize(RecommendedForYou);
+export default localize( RecommendedForYou );

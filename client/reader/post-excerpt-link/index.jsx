@@ -61,4 +61,4 @@ const PostExcerptLink = React.createClass( {
 	}
 } );
 
-export default localize(PostExcerptLink);
+export default localize( PostExcerptLink );

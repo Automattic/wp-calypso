@@ -46,4 +46,4 @@ var PostUnavailable = React.createClass( {
 
 } );
 
-export default localize(PostUnavailable);
+export default localize( PostUnavailable );

@@ -54,4 +54,4 @@ export default connect(
 	state => ( {
 		cappedUnreadCount: getDocumentHeadCappedUnreadCount( state )
 	} )
-)( localize(UpdateNotice) );
+)( localize( UpdateNotice ) );

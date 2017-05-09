@@ -49,4 +49,4 @@ const FollowingEditEmptyContent = React.createClass( {
 	}
 } );
 
-export default localize(FollowingEditEmptyContent);
+export default localize( FollowingEditEmptyContent );

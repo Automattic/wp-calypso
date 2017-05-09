@@ -41,4 +41,4 @@ const FollowingEditSortControls = React.createClass( {
 	}
 } );
 
-export default localize(FollowingEditSortControls);
+export default localize( FollowingEditSortControls );

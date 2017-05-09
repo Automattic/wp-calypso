@@ -68,4 +68,4 @@ const SearchEmptyContent = React.createClass( {
 	}
 } );
 
-export default localize(SearchEmptyContent);
+export default localize( SearchEmptyContent );

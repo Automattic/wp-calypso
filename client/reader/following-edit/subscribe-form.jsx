@@ -163,4 +163,4 @@ var FollowingEditSubscribeForm = React.createClass( {
 
 } );
 
-export default localize(FollowingEditSubscribeForm);
+export default localize( FollowingEditSubscribeForm );

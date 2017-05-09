@@ -134,4 +134,4 @@ export default connect(
 		followTag: requestFollowTag,
 		unfollowTag: requestUnfollowTag,
 	}
-)( localize(TagStream) );
+)( localize( TagStream ) );

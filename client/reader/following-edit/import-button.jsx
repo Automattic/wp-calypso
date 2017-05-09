@@ -78,4 +78,4 @@ const FollowingImportButton = React.createClass( {
 	}
 } );
 
-export default localize(FollowingImportButton);
+export default localize( FollowingImportButton );

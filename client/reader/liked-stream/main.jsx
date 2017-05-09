@@ -27,4 +27,4 @@ var LikedStream = React.createClass( {
 
 } );
 
-export default localize(LikedStream);
+export default localize( LikedStream );

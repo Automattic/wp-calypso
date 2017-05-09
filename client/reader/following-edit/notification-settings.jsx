@@ -194,4 +194,4 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 } );
 
-export default localize(FollowingEditNotificationSettings);
+export default localize( FollowingEditNotificationSettings );

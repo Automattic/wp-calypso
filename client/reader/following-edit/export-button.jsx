@@ -71,4 +71,4 @@ const FollowingExportButton = React.createClass( {
 	}
 } );
 
-export default localize(FollowingExportButton);
+export default localize( FollowingExportButton );

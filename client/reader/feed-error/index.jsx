@@ -62,4 +62,4 @@ FeedError.propTypes = {
 	sidebarTitle: React.PropTypes.string
 };
 
-export default localize(FeedError);
+export default localize( FeedError );

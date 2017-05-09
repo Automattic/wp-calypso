@@ -57,4 +57,4 @@ var RecommendedPostsEmptyContent = React.createClass( {
 	}
 } );
 
-export default localize(RecommendedPostsEmptyContent);
+export default localize( RecommendedPostsEmptyContent );

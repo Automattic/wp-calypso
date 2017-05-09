@@ -64,4 +64,4 @@ const ListMissing = React.createClass( {
 	}
 } );
 
-export default localize(ListMissing);
+export default localize( ListMissing );

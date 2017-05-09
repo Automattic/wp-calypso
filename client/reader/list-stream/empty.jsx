@@ -57,4 +57,4 @@ var ListEmptyContent = React.createClass( {
 	}
 } );
 
-export default localize(ListEmptyContent);
+export default localize( ListEmptyContent );

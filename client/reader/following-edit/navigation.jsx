@@ -34,4 +34,4 @@ var FollowingEditNavigation = React.createClass( {
 	}
 } );
 
-export default localize(FollowingEditNavigation);
+export default localize( FollowingEditNavigation );

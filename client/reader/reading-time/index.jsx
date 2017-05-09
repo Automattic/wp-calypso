@@ -37,4 +37,4 @@ var ReadingTime = React.createClass( {
 
 } );
 
-export default localize(ReadingTime);
+export default localize( ReadingTime );
