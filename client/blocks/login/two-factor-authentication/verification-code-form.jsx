@@ -23,15 +23,21 @@ import {
 	getTwoFactorAuthNonce,
 	getTwoFactorAuthRequestError,
 	isRequestingTwoFactorAuth,
+	isTwoFactorAuthTypeSupported,
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { sendSmsCode } from 'state/login/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
+		errorNotice: PropTypes.func.isRequired,
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		rememberMe: PropTypes.bool.isRequired,
+		successNotice: PropTypes.func.isRequired,
+		isSmsSupported: PropTypes.bool.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
 		userId: PropTypes.number.isRequired,
 	};
@@ -61,8 +67,20 @@ class VerificationCodeForm extends Component {
 		} );
 	};
 
+	sendSmsCode = ( event ) => {
+		event.preventDefault();
+
+		const { userId, twoStepNonce, translate } = this.props;
+
+		this.props.sendSmsCode( userId, twoStepNonce ).then( () => {
+			this.props.successNotice( translate( 'Recovery code has been sent.' ) );
+		} ).catch( ( errorMesssage ) => {
+			this.props.errorNotice( errorMesssage );
+		} );
+	};
+
 	render() {
-		const { translate, twoFactorAuthRequestError } = this.props;
+		const { translate, twoFactorAuthRequestError, isSmsSupported } = this.props;
 		const isError = !! twoFactorAuthRequestError;
 
 		return (
@@ -113,10 +131,11 @@ class VerificationCodeForm extends Component {
 				</p>
 
 				<hr />
-
-				<p>
-					<a href="#">{ translate( 'Send recovery code via text' ) }</a>
-				</p>
+				{ isSmsSupported && (
+					<p>
+						<a href="#" onClick={ this.sendSmsCode }>{ translate( 'Send recovery code via text' ) }</a>
+					</p>
+				) }
 			</div>
 		);
 	}
@@ -128,9 +147,13 @@ export default connect(
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 		userId: getTwoFactorUserId( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
+		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 	} ),
 	{
 		loginUserWithTwoFactorVerificationCode,
 		recordTracksEvent,
+		sendSmsCode,
+		errorNotice,
+		successNotice,
 	}
 )( localize( VerificationCodeForm ) );
