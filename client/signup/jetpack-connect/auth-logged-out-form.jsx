@@ -49,7 +49,7 @@ class LoggedOutForm extends Component {
 		return this.props.jetpackConnectAuthorize && this.props.jetpackConnectAuthorize.isAuthorizing;
 	}
 
-	loginUser() {
+	renderLoginUser() {
 		const { queryObject, userData, bearerToken } = this.props.jetpackConnectAuthorize;
 		const redirectTo = addQueryArgs( queryObject, window.location.href );
 		return (
@@ -118,7 +118,7 @@ class LoggedOutForm extends Component {
 					footerLink={ this.renderFooterLink() }
 					suggestedUsername={ userData && userData.username ? userData.username : '' }
 				/>
-				{ userData && this.loginUser() }
+				{ userData && this.renderLoginUser() }
 			</div>
 		);
 	}
