@@ -11,6 +11,10 @@ import { isValidTerm, sortFilterTerms, getSubjects } from './theme-filters';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {
+	if ( ! context.params.filter ) {
+		return next();
+	}
+
 	// Page.js replaces + with \s
 	const filterParam = context.params.filter.replace( /\s/g, '+' );
 

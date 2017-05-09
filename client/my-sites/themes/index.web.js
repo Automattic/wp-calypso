@@ -24,33 +24,14 @@ export default function( router ) {
 					siteSelection, upload, makeNavigation, makeLayout
 				);
 			}
-			router(
+			const loggedInRoutes = [
 				`/themes/:tier(free|premium)?/:site_id(${ siteId })?`,
-				siteSelection,
-				loggedIn,
-				makeNavigation,
-				makeLayout
-			);
-			router(
 				`/themes/:tier(free|premium)?/filter/:filter/:site_id(${ siteId })?`,
-				fetchThemeFilters,
-				validateFilters,
-				siteSelection,
-				loggedIn,
-				makeNavigation,
-				makeLayout
-			);
-			router(
 				`/themes/:vertical?/:tier(free|premium)?/:site_id(${ siteId })?`,
-				fetchThemeFilters,
-				validateVertical,
-				siteSelection,
-				loggedIn,
-				makeNavigation,
-				makeLayout
-			);
-			router(
 				`/themes/:vertical?/:tier(free|premium)?/filter/:filter/:site_id(${ siteId })?`,
+			];
+			router(
+				loggedInRoutes,
 				fetchThemeFilters,
 				validateVertical,
 				validateFilters,
@@ -60,27 +41,14 @@ export default function( router ) {
 				makeLayout
 			);
 		} else {
-			router(
+			const loggedOutRoutes = [
 				'/themes/:tier(free|premium)?',
-				loggedOut,
-				makeLayout
-			);
-			router(
 				'/themes/:tier(free|premium)?/filter/:filter',
-				fetchThemeFilters,
-				validateFilters,
-				loggedOut,
-				makeLayout
-			);
-			router(
 				'/themes/:vertical?/:tier(free|premium)?',
-				fetchThemeFilters,
-				validateVertical,
-				loggedOut,
-				makeLayout
-			);
-			router(
 				'/themes/:vertical?/:tier(free|premium)?/filter/:filter',
+			];
+			router(
+				loggedOutRoutes,
 				fetchThemeFilters,
 				validateVertical,
 				validateFilters,

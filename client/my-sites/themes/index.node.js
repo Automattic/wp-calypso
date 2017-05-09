@@ -20,31 +20,14 @@ export default function( router ) {
 			res.redirect( 301, '/themes' + originalUrl.slice( '/design'.length ) );
 		} );
 
-		router(
+		const showcaseRoutes = [
 			'/themes/:tier(free|premium)?',
-			fetchThemeFilters,
-			fetchThemeData,
-			loggedOut,
-			makeLayout
-		);
-		router(
 			'/themes/:tier(free|premium)?/filter/:filter',
-			fetchThemeFilters,
-			validateFilters,
-			fetchThemeData,
-			loggedOut,
-			makeLayout
-		);
-		router(
 			'/themes/:vertical?/:tier(free|premium)?',
-			fetchThemeFilters,
-			validateVertical,
-			fetchThemeData,
-			loggedOut,
-			makeLayout
-		);
-		router(
 			'/themes/:vertical?/:tier(free|premium)?/filter/:filter',
+		];
+		router(
+			showcaseRoutes,
 			fetchThemeFilters,
 			validateVertical,
 			validateFilters,
