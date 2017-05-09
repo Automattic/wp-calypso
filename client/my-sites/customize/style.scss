@@ -38,7 +38,14 @@
 	margin-top: 200px;
 	padding: 20px;
 	text-align: center;
-	width: 140px;
+	color: #2e4453;
+	font-size: 34px;
+	font-weight: 300;
+
+	@include breakpoint( "<660px" ) {
+		background-position: center 70px;
+		font-size: 24px;
+	}
 }
 
 .customizer-loading-panel__notice-label .spinner__image {
