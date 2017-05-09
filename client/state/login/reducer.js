@@ -48,12 +48,10 @@ const updateTwoStepNonce = ( state, { twoStepNonce } ) => Object.assign( {}, sta
 
 export const twoFactorAuth = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
-	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => data || null,
+	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data, rememberMe } ) => data ? { ...data, remember_me: rememberMe } : null,
 	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE ]: updateTwoStepNonce,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: updateTwoStepNonce,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: updateTwoStepNonce,
-	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data, rememberMe } ) => data ? { ...data, remember_me: rememberMe } : null,
-	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE ]: updateTwoStepNonce,
 	[ TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE ]: updateTwoStepNonce,
 	[ LOGIN_REQUEST_FAILURE ]: () => null
 } );
