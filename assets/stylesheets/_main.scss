@@ -27,6 +27,7 @@ $sidebar-width-min: 228px;
 	color: $white;
 	background: rgba( $gray-dark, 0.8 );
 	text-align: center;
+	z-index: z-index( 'root', '.wpcom-site__global-noscript' );
 }
 
 
