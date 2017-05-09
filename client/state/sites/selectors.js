@@ -30,8 +30,8 @@ import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
 import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
+import getComputedAttributes from 'lib/site/computed-attributes';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
-import { getSiteDefaultPostFormat } from 'state/selectors';
 
 /**
  * Returns a raw site object by its ID.
@@ -45,6 +45,22 @@ export const getRawSite = ( state, siteId ) => {
 };
 
 /**
+ * Returns a site object by its slug.
+ *
+ * @param  {Object}  state     Global state tree
+ * @param  {String}  siteSlug  Site URL
+ * @return {?Object}           Site object
+ */
+export const getSiteBySlug = createSelector(
+	( state, siteSlug ) => (
+		find( state.sites.items, ( item, siteId ) => (
+			getSiteSlug( state, siteId ) === siteSlug
+		) ) || null
+	),
+	( state ) => state.sites.items
+);
+
+/**
  * Returns a normalized site object by its ID. Intends to replicate
  * the site object returned from the legacy `sites-list` module.
  *
@@ -55,7 +71,10 @@ export const getRawSite = ( state, siteId ) => {
  */
 export const getSite = createSelector(
 	( state, siteId ) => {
-		const site = getRawSite( state, siteId );
+		const site = getRawSite( state, siteId ) ||
+			// Support for non-ID site retrieval
+			// Replaces SitesList#getSite
+			getSiteBySlug( state, siteId );
 
 		if ( ! site ) {
 			return null;
@@ -63,33 +82,14 @@ export const getSite = createSelector(
 
 		return {
 			...site,
+			...getComputedAttributes( site ),
 			...getJetpackComputedAttributes( state, siteId ),
 			hasConflict: isSiteConflicting( state, siteId ),
-			title: getSiteTitle( state, siteId ),
-			slug: getSiteSlug( state, siteId ),
-			domain: getSiteDomain( state, siteId ),
-			is_previewable: isSitePreviewable( state, siteId ),
-			options: computeSiteOptions( state, siteId ),
+			is_previewable: isSitePreviewable( state, siteId )
 		};
 	},
 	( state ) => state.sites.items
 );
-
-export function computeSiteOptions( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
-		return null;
-	}
-
-	const isWpcomMappedDomain = getSiteOption( state, siteId, 'is_mapped_domain' ) && ! isJetpackSite( state, siteId );
-	const wpcomUrl = withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
-
-	return {
-		...site.options,
-		...isWpcomMappedDomain && { wpcom_url: wpcomUrl },
-		default_post_format: getSiteDefaultPostFormat( state, siteId ),
-	};
-}
 
 export function getJetpackComputedAttributes( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
@@ -426,22 +426,6 @@ export const getSeoTitle = ( state, type, data ) => {
 
 	return buildSeoTitle( titleFormats, type, data );
 };
-
-/**
- * Returns a site object by its slug.
- *
- * @param  {Object}  state     Global state tree
- * @param  {String}  siteSlug  Site URL
- * @return {?Object}           Site object
- */
-export const getSiteBySlug = createSelector(
-	( state, siteSlug ) => (
-		find( state.sites.items, ( item, siteId ) => (
-			getSiteSlug( state, siteId ) === siteSlug
-		) ) || null
-	),
-	( state ) => state.sites.items
-);
 
 /**
  * Returns a site object by its URL.

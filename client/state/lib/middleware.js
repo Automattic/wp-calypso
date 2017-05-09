@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,
 	SITES_UPDATE,
+	SITES_ONCE_CHANGED,
 } from 'state/action-types';
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
@@ -21,6 +23,12 @@ import { isNotificationsOpen } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
+
+// KILL IT WITH FIRE
+import sitesFactory from 'lib/sites-list';
+const sites = sitesFactory();
+
+const debug = debugFactory( 'calypso:state:middleware' );
 
 /**
  * Module variables
@@ -37,6 +45,19 @@ let desktop;
 if ( desktopEnabled ) {
 	desktop = require( 'lib/desktop' );
 }
+
+/*
+ * Queue of functions waiting to be called once (and only once) when sites data
+ * arrives (SITES_RECEIVE). Aims to reduce dependencies on ´lib/sites-list` by
+ * providing an alternative to `sites.once()`.
+ */
+let sitesListeners = [];
+
+const updateSelectedSiteForSitesList = ( dispatch, action, getState ) => {
+	const state = getState();
+	const selectedSiteId = getSelectedSiteId( state );
+	sites.select( selectedSiteId );
+};
 
 /**
  * Sets the selectedSite and siteCount for lib/analytics. This is used to
@@ -107,6 +128,27 @@ const updateSelectedSiteForDesktop = ( dispatch, action, getState ) => {
 	desktop.setSelectedSite( selectedSite );
 };
 
+/**
+ * Registers a listener function to be fired once there are changes to sites
+ * state.
+ *
+ * @param {function} dispatch - redux dispatch function
+ * @param {object}   action   - the dispatched action
+ */
+const receiveSitesChangeListener = ( dispatch, action ) => {
+	debug( 'receiveSitesChangeListener' );
+	sitesListeners.push( action.listener );
+};
+
+/**
+ * Calls all functions registered as listeners of site-state changes.
+ */
+const fireChangeListeners = () => {
+	debug( 'firing', sitesListeners.length, 'emitters' );
+	sitesListeners.forEach( ( listener ) => listener() );
+	sitesListeners = [];
+};
+
 const handler = ( dispatch, action, getState ) => {
 	switch ( action.type ) {
 		case ANALYTICS_SUPER_PROPS_UPDATE:
@@ -122,7 +164,11 @@ const handler = ( dispatch, action, getState ) => {
 		case SITES_UPDATE:
 			// Wait a tick for the reducer to update the state tree
 			setTimeout( () => {
+				updateSelectedSiteForSitesList( dispatch, action, getState );
 				updateSelectedSiteForCart( dispatch, action, getState );
+				if ( action.type === SITES_RECEIVE ) {
+					fireChangeListeners();
+				}
 				if ( globalKeyBoardShortcutsEnabled ) {
 					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
 				}
@@ -130,6 +176,10 @@ const handler = ( dispatch, action, getState ) => {
 					updateSelectedSiteForDesktop( dispatch, action, getState );
 				}
 			}, 0 );
+			return;
+
+		case SITES_ONCE_CHANGED:
+			receiveSitesChangeListener( dispatch, action );
 			return;
 	}
 };

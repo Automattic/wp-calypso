@@ -26,7 +26,10 @@ var NavItem = React.createClass( {
 		onClick: React.PropTypes.func,
 		isExternalLink: React.PropTypes.bool,
 		disabled: React.PropTypes.bool,
-		count: React.PropTypes.number,
+		count: React.PropTypes.oneOfType( [
+			React.PropTypes.number,
+			React.PropTypes.bool,
+		] ),
 		className: React.PropTypes.string,
 		preloadSectionName: React.PropTypes.string
 	},
