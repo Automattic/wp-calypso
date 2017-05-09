@@ -1,5 +1,6 @@
 // External dependencies
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import times from 'lodash/times';
 import trimStart from 'lodash/trimStart';
 import Immutable from 'immutable';
@@ -374,15 +375,16 @@ const FollowingEdit = React.createClass( {
 
 		const url = this.state.lastError.URL;
 
-		return ( <Notice
-					status="is-error"
-					showDismiss={ true }
-					onDismissClick={ this.dismissError }>
-					{ this.translate( 'Sorry - there was a problem unfollowing {{strong}}%(url)s{{/strong}}.', {
-						components: { strong: <strong /> },
-						args: { url: url } } )
-					}
-					</Notice>
+		return (
+		    <Notice
+						status="is-error"
+						showDismiss={ true }
+						onDismissClick={ this.dismissError }>
+						{ this.props.translate( 'Sorry - there was a problem unfollowing {{strong}}%(url)s{{/strong}}.', {
+							components: { strong: <strong /> },
+							args: { url: url } } )
+						}
+						</Notice>
 		);
 	},
 
@@ -395,9 +397,9 @@ const FollowingEdit = React.createClass( {
 		let errorMessage;
 
 		if ( lastError.info && lastError.info === 'already_subscribed' ) {
-			errorMessage = this.translate( 'You\'re already subscribed to that site.' );
+			errorMessage = this.props.translate( 'You\'re already subscribed to that site.' );
 		} else {
-			errorMessage = this.translate( 'Sorry, we couldn\'t find a feed for {{em}}%(url)s{{/em}}.', {
+			errorMessage = this.props.translate( 'Sorry, we couldn\'t find a feed for {{em}}%(url)s{{/em}}.', {
 				args: { url: this.state.searchString },
 				components: { em: <em/> }
 			} );
@@ -418,7 +420,7 @@ const FollowingEdit = React.createClass( {
 			return null;
 		}
 
-		const message = this.translate( 'Your Followed Sites list has been exported.' );
+		const message = this.props.translate( 'Your Followed Sites list has been exported.' );
 		return (
 			<Notice
 				key="notice-feed-export"
@@ -436,7 +438,7 @@ const FollowingEdit = React.createClass( {
 			return null;
 		}
 
-		const message = this.translate( '{{em}}%(name)s{{/em}} has been imported. Refresh this page to see the new sites you follow.', {
+		const message = this.props.translate( '{{em}}%(name)s{{/em}} has been imported. Refresh this page to see the new sites you follow.', {
 			args: { name: feedImport.fileName },
 			components: { em: <em/> }
 		} );
@@ -460,7 +462,7 @@ const FollowingEdit = React.createClass( {
 			return null;
 		}
 
-		const message = this.translate( 'Whoops, something went wrong. %(message)s. Please try again.', {
+		const message = this.props.translate( 'Whoops, something went wrong. %(message)s. Please try again.', {
 			args: { message: error.message }
 		} );
 		return (
@@ -516,9 +518,9 @@ const FollowingEdit = React.createClass( {
 		}
 
 		if ( this.state.windowWidth && this.state.windowWidth > 960 ) {
-			searchPlaceholder = this.translate( 'Search your followed sites' );
+			searchPlaceholder = this.props.translate( 'Search your followed sites' );
 		} else {
-			searchPlaceholder = this.translate( 'Search' );
+			searchPlaceholder = this.props.translate( 'Search' );
 		}
 
 		const containerClasses = classnames( {
@@ -527,9 +529,9 @@ const FollowingEdit = React.createClass( {
 		}, 'following-edit' );
 
 		return (
-			<ReaderMain className={ containerClasses }>
+		    <ReaderMain className={ containerClasses }>
 				<MobileBackToSidebar>
-					<h1>{ this.translate( 'Manage Followed Sites' ) }</h1>
+					<h1>{ this.props.translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
 				{ this.renderFollowError() }
 				{ this.renderUnfollowError() }
@@ -543,7 +545,7 @@ const FollowingEdit = React.createClass( {
 					isSearchOpen={ this.state.isAddingOpen }
 					ref="feed-search" />
 
-				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
+				<SectionHeader className="following-edit__header" label={ this.props.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
 					{ ! hasNoSubscriptions
 							? <FollowingExportButton
 									onExport={ this.handleFeedExport }
@@ -559,7 +561,7 @@ const FollowingEdit = React.createClass( {
 							? <Button
 								borderless
 								className="following-edit__search"
-								aria-label={ this.translate( 'Open Search', { context: 'button label' } ) }
+								aria-label={ this.props.translate( 'Open Search', { context: 'button label' } ) }
 								onClick={ this.toggleSearching }>
 								<Gridicon icon="search" />
 							</Button>
@@ -581,7 +583,7 @@ const FollowingEdit = React.createClass( {
 
 				{ this.state.isAttemptingFollow && ! this.state.lastError ? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } /> : null }
 				{ subscriptionsToDisplay.length === 0 && this.props.search && ! this.state.isLoading
-					? <NoResults text={ this.translate( 'No subscriptions match that search.' ) } />
+					? <NoResults text={ this.props.translate( 'No subscriptions match that search.' ) } />
 					: <InfiniteList className="following-edit__sites"
 						items={ subscriptionsToDisplay }
 						lastPage={ this.state.isLastPage }
@@ -600,4 +602,4 @@ const FollowingEdit = React.createClass( {
 
 } );
 
-export default FollowingEdit;
+export default localize(FollowingEdit);

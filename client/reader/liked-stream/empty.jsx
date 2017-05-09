@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -35,22 +37,24 @@ var TagEmptyContent = React.createClass( {
 		var action = ( <a
 			className="empty-content__action button is-primary"
 			onClick={ this.recordAction }
-			href="/">{ this.translate( 'Back to Following' ) }</a> ),
+			href="/">{ this.props.translate( 'Back to Following' ) }</a> ),
 			secondaryAction = isDiscoverEnabled()
 			? ( <a
 				className="empty-content__action button"
 				onClick={ this.recordSecondaryAction }
-				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ) : null;
+				href="/discover">{ this.props.translate( 'Explore Discover' ) }</a> ) : null;
 
-		return ( <EmptyContent
-			title={ this.translate( 'No Likes Yet' ) }
-			line={ this.translate( 'Posts that you like will appear here.' ) }
-			action={ action }
-			secondaryAction={ secondaryAction }
-			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
-			illustrationWidth={ 500 }
-			/> );
+		return (
+		    <EmptyContent
+				title={ this.props.translate( 'No Likes Yet' ) }
+				line={ this.props.translate( 'Posts that you like will appear here.' ) }
+				action={ action }
+				secondaryAction={ secondaryAction }
+				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+				illustrationWidth={ 500 }
+				/>
+		);
 	}
 } );
 
-export default TagEmptyContent;
+export default localize(TagEmptyContent);

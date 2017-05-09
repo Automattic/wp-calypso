@@ -2,6 +2,7 @@
  * External dependencies
  */
 import Blob from 'blob';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import noop from 'lodash/noop';
 import { saveAs } from 'browser-filesaver';
@@ -46,7 +47,7 @@ const FollowingExportButton = React.createClass( {
 		} );
 
 		if ( ! err && ! data.success ) {
-			err = new Error( this.translate( 'Error exporting Reader feed' ) );
+			err = new Error( this.props.translate( 'Error exporting Reader feed' ) );
 		}
 
 		if ( err ) {
@@ -60,14 +61,14 @@ const FollowingExportButton = React.createClass( {
 
 	render() {
 		return (
-			<Button
+		    <Button
 				compact
 				disabled={ this.state.disabled }
 				onClick={ this.onClick } >
-				{ this.translate( 'Export' ) }
+				{ this.props.translate( 'Export' ) }
 			</Button>
 		);
 	}
 } );
 
-export default FollowingExportButton;
+export default localize(FollowingExportButton);

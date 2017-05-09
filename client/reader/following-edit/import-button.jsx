@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import noop from 'lodash/noop';
 
 /**
@@ -68,13 +69,13 @@ const FollowingImportButton = React.createClass( {
 
 	render() {
 		return (
-			<FilePicker accept=".xml,.opml" onPick={ this.onPick } >
+		    <FilePicker accept=".xml,.opml" onPick={ this.onPick } >
 				<Button compact disabled={ this.state.disabled } >
-					{ this.translate( 'Import' ) }
+					{ this.props.translate( 'Import' ) }
 				</Button>
 			</FilePicker>
 		);
 	}
 } );
 
-export default FollowingImportButton;
+export default localize(FollowingImportButton);

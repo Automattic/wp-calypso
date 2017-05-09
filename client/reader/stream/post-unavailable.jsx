@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 import config from 'config';
 
@@ -16,8 +17,8 @@ var PostUnavailable = React.createClass( {
 
 	componentWillMount: function() {
 		this.errors = {
-			unauthorized: this.translate( 'This is a post on a private site that you’re following, but not currently a member of. Please request membership to display these posts in Reader.' ),
-			default: this.translate( 'An error occurred loading this post.' )
+			unauthorized: this.props.translate( 'This is a post on a private site that you’re following, but not currently a member of. Please request membership to display these posts in Reader.' ),
+			default: this.props.translate( 'An error occurred loading this post.' )
 		};
 	},
 
@@ -45,4 +46,4 @@ var PostUnavailable = React.createClass( {
 
 } );
 
-export default PostUnavailable;
+export default localize(PostUnavailable);

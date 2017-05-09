@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -19,7 +20,7 @@ import {
 } from 'reader/stats';
 import cssSafeUrl from 'lib/css-safe-url';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'FeedFeatured',
 
 	mixins: [ PureRenderMixin ],
@@ -133,10 +134,10 @@ export default React.createClass( {
 		}
 
 		return (
-			<Card className="reader__featured-card">
+		    <Card className="reader__featured-card">
 				<div className="reader__featured-header">
-					<div className="reader__featured-title">{ this.translate( 'Highlights' ) }</div>
-					<div className="reader__featured-description">{ this.translate( 'What we’re reading this week.' ) }</div>
+					<div className="reader__featured-title">{ this.props.translate( 'Highlights' ) }</div>
+					<div className="reader__featured-description">{ this.props.translate( 'What we’re reading this week.' ) }</div>
 				</div>
 
 				<div className="reader__featured-posts">
@@ -145,4 +146,4 @@ export default React.createClass( {
 			</Card>
 		);
 	}
-} );
+}));
