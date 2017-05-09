@@ -17,6 +17,7 @@ export default React.createClass( {
 
 	propTypes: {
 		type: PropTypes.string,
+		excludePrivateTypes: PropTypes.bool,
 		siteId: PropTypes.number.isRequired,
 		status: PropTypes.string,
 		multiple: PropTypes.bool,
@@ -55,10 +56,10 @@ export default React.createClass( {
 	},
 
 	getQuery() {
-		const { type, status, excludeTree, orderBy, order } = this.props;
+		const { type, status, excludeTree, orderBy, order, excludePrivateTypes } = this.props;
 		const { search } = this.state;
 
-		return reduce( { type, status, excludeTree, orderBy, order, search }, ( memo, value, key ) => {
+		return reduce( { type, status, excludeTree, orderBy, order, excludePrivateTypes, search }, ( memo, value, key ) => {
 			if ( null === value || undefined === value ) {
 				return memo;
 			}

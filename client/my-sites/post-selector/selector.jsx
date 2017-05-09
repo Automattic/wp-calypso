@@ -191,7 +191,7 @@ const PostSelectorPosts = React.createClass( {
 			return this.props.showTypeLabels;
 		}
 
-		return 'any' === this.props.query.type || 'public' === this.props.query.type;
+		return 'any' === this.props.query.type;
 	},
 
 	isLastPage() {
