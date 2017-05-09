@@ -3026,7 +3026,7 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "1.1.6"
+      "version": "Automattic/notifications-panel#fix\/notification-bell"
     },
     "npm-path": {
       "version": "1.1.0",
