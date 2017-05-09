@@ -4,7 +4,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { includes, map, noop, partial } from 'lodash';
+import { includes, map, noop, partial, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
+import LANGUAGE_NAMES from './language-names';
 
 class LanguagePickerModal extends PureComponent {
 	static propTypes = {
@@ -44,6 +45,13 @@ class LanguagePickerModal extends PureComponent {
 		}
 	}
 
+	getLanguageTitle( languageSlug ) {
+		// `LANGUAGE_NAMES` value is a lambda that takes a `translate` function as argument.
+		// Evaluate it to get a string.
+		const title = LANGUAGE_NAMES[ languageSlug ];
+		return title ? title( this.props.translate ) : languageSlug;
+	}
+
 	getFilterLabel( filter ) {
 		const { translate } = this.props;
 
@@ -62,7 +70,15 @@ class LanguagePickerModal extends PureComponent {
 		if ( search ) {
 			const searchString = search.toLowerCase();
 			return languages.filter( language => {
-				return includes( language.name.toLowerCase(), searchString );
+				// Search in language autonym (Deutsch), localized name (German) or
+				// in the language code (de).
+				const names = [
+					language.name.toLowerCase(),
+					this.getLanguageTitle( language.langSlug ).toLowerCase(),
+					language.langSlug.toLowerCase(),
+				];
+
+				return some( names, name => includes( name, searchString ) );
 			} );
 		}
 
@@ -134,6 +150,7 @@ class LanguagePickerModal extends PureComponent {
 				className="language-picker__modal-item"
 				key={ language.langSlug }
 				onClick={ partial( this.handleClick, language.langSlug ) }
+				title={ this.getLanguageTitle( language.langSlug ) }
 			>
 				<span className={ classes }>{ language.name }</span>
 			</div>
