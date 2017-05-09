@@ -1,6 +1,10 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import React from 'react';
 import classNames from 'classnames';
 import {
@@ -42,7 +46,7 @@ var DomainSearchResults = React.createClass( {
 	},
 
 	renderDomainAvailability: function() {
-		const { availableDomain, lastDomainStatus, lastDomainSearched: domain } = this.props,
+		const { availableDomain, lastDomainStatus, lastDomainSearched: domain, translate } = this.props,
 			availabilityElementClasses = classNames( {
 				'domain-search-results__domain-is-available': availableDomain,
 				'domain-search-results__domain-not-available': ! availableDomain
@@ -59,7 +63,7 @@ var DomainSearchResults = React.createClass( {
 				<Notice
 					status="is-success"
 					showDismiss={ false }>
-					{ this.translate( '%(domain)s is available!', { args: { domain } } ) }
+					{ translate( '%(domain)s is available!', { args: { domain } } ) }
 				</Notice>
 			);
 
@@ -77,20 +81,20 @@ var DomainSearchResults = React.createClass( {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
 			if ( isNextDomainFree( this.props.cart ) ) {
-				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
+				mappingOffer = translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
 					'free.{{/small}}', { args: { domain }, components } );
-			} else if ( ! this.props.domainsWithPlansOnly ) {
-				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
+			} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
+				mappingOffer = translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
 					'%(cost)s.{{/small}}', { args: { domain, cost: this.props.products.domain_map.cost_display }, components } );
 			} else {
-				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
+				mappingOffer = translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
 					' with WordPress.com Premium.{{/small}}', { args: { domain }, components }
 				);
 			}
 
 			const domainUnavailableMessage = lastDomainStatus === UNKNOWN
-				? this.translate( '.%(tld)s domains are not offered on WordPress.com.', { args: { tld: getTld( domain ) } } )
-				: this.translate( '%(domain)s is taken.', { args: { domain } } );
+				? translate( '.%(tld)s domains are not offered on WordPress.com.', { args: { tld: getTld( domain ) } } )
+				: translate( '%(domain)s is taken.', { args: { domain } } );
 
 			if ( this.props.offerMappingOption ) {
 				availabilityElement = (
@@ -173,4 +177,11 @@ var DomainSearchResults = React.createClass( {
 	}
 } );
 
-module.exports = DomainSearchResults;
+const mapStateToProps = ( state ) => {
+	const selectedSiteId = getSelectedSiteId( state );
+	return {
+		isSiteOnPaidPlan: !! isSiteOnPaidPlan( state, selectedSiteId ),
+	};
+};
+
+export default connect( mapStateToProps )( localize( DomainSearchResults ) );
