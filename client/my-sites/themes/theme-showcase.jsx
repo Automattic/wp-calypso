@@ -85,19 +85,23 @@ const ThemeShowcase = React.createClass( {
 	doSearch( searchBoxContent ) {
 		const filter = getSortedFilterTerms( searchBoxContent );
 		const searchString = stripFilters( searchBoxContent );
-		this.updateUrl( this.props.tier || 'all', filter, searchString );
+		this.updateUrl( this.props.tier, filter, searchString );
 	},
 
 	updateUrl( tier, filter, searchString = this.props.search ) {
 		const { siteSlug, vertical } = this.props;
 
+		const url = this.constructUrl( vertical, tier, filter, siteSlug );
+		page( buildUrl( url, searchString ) );
+	},
+
+	constructUrl( vertical, tier, filter, siteSlug ) {
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
-		const tierSection = tier === 'all' ? '' : `/${ tier }`;
+		const tierSection = ( tier && tier !== 'all' ) ? `/${ tier }` : '';
 		const filterSection = filter ? `/filter/${ filter }` : '';
 
-		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
-		page( buildUrl( url, searchString ) );
+		return `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
 	},
 
 	onTierSelect( { value: tier } ) {
@@ -153,13 +157,13 @@ const ThemeShowcase = React.createClass( {
 
 		const headerIcons = [ {
 			label: 'new',
-			uri: '/themes',
+			uri: this.constructUrl( '', this.props.tier, filter, siteSlug ),
 			icon: 'star'
 		} ].concat(
 			getSubjects()
 				.map( subject => subjectsMeta[ subject ] && {
 					label: subject,
-					uri: `/themes/${ subject }`,
+					uri: this.constructUrl( subject, this.props.tier, filter, siteSlug ),
 					icon: subjectsMeta[ subject ].icon,
 					order: subjectsMeta[ subject ].order
 				} )
