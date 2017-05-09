@@ -6,6 +6,50 @@ export default function transformer(file, api) {
 
   const createClassesInstances = ReactUtils.findAllReactCreateClassCalls( root );
 
+  // Find the declaration to wrap with the localize HOC. It can be the React.createClass
+  // itself, or an 'export default' or 'module.exports =' declaration, if present.
+  function findDeclarationsToWrap( createClassInstance ) {
+    // Is the created class being assigned to a variable?
+    const parentNode = createClassInstance.parentPath.value;
+    if (parentNode.type !== 'VariableDeclarator' || parentNode.id.type !== 'Identifier') {
+      return j(createClassInstance);
+    }
+
+    const classIdentifier = {
+      type: 'Identifier',
+      name: parentNode.id.name,
+    };
+
+    // Is the variable later exported with 'export default'?
+    const exportDefaultDeclarations = root.find(j.ExportDefaultDeclaration, {
+      declaration: classIdentifier
+    });
+    if (exportDefaultDeclarations.size()) {
+      return exportDefaultDeclarations.map(d => d.get('declaration'));
+    }
+
+    // Is the variable later exported with 'module.exports ='?
+    const moduleExportsDeclarations = root.find(j.AssignmentExpression, {
+      left: {
+        type: 'MemberExpression',
+        object: {
+          type: 'Identifier',
+          name: 'module'
+        },
+        property: {
+          type: 'Identifier',
+          name: 'exports',
+        }
+      },
+      right: classIdentifier
+    });
+    if (moduleExportsDeclarations.size()) {
+      return moduleExportsDeclarations.map(d => d.get('right'));
+    }
+
+    return j(createClassInstance);
+  }
+
   createClassesInstances.forEach( createClassInstance => {
     const thisTranslateInstances = j(createClassInstance).find(j.MemberExpression, {
       object: { type: 'ThisExpression'},
@@ -25,12 +69,14 @@ export default function transformer(file, api) {
     ) );
     if (thisTranslateInstances.size()) {
       foundThisTranslate = true;
-      j(createClassInstance).replaceWith( () => (
-        j.callExpression(
+
+      const declarationsToWrap = findDeclarationsToWrap(createClassInstance);
+      declarationsToWrap.replaceWith( decl => {
+        return j.callExpression(
           j.identifier('localize'),
-          [ createClassInstance.value ]
+          [ decl.value ]
         )
-      ));
+      });
     }
   } );
 
