@@ -28,7 +28,7 @@ const BillingHistory = ( {
 	upcomingTransactions,
 	translate
 } ) => (
-	<Main className="billing-history__main">
+	<Main className="billing-history">
 		<DocumentHead title={ translate( 'Billing History' ) } />
 		<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
 		<MeSidebarNavigation />
