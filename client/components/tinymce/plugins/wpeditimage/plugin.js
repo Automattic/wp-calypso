@@ -601,8 +601,13 @@ function wpEditImage( editor ) {
 				// Prevent pasting in there as it will break the caption.
 				// Replace the caption parent with a new paragraph and move the caret there.
 				p = dom.create( 'p' );
-				dom.replace( p, captionParent );
+				dom.insertAfter( p, captionParent );
 				editor.selection.setCursorLocation( p, 0 );
+
+				if ( node.nodeName === 'IMG' ) {
+					editor.$( captionParent ).remove();
+				}
+
 				editor.nodeChanged();
 			}
 		} else if ( cmd === 'JustifyLeft' || cmd === 'JustifyRight' || cmd === 'JustifyCenter' || cmd === 'wpAlignNone' ) {
