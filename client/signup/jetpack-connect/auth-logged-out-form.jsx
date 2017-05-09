@@ -113,7 +113,6 @@ class LoggedOutForm extends Component {
 					getRedirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.isSubmitting() }
 					submitting={ this.isSubmitting() }
-					save={ this.save }
 					submitForm={ this.submitForm }
 					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
 					footerLink={ this.renderFooterLink() }
