@@ -26,9 +26,10 @@ const ProductFormDeliveryDetailsCard = ( { product, editProduct, translate } ) =
 			<FormFieldSet>
 				<FormLabel>{ translate( 'Dimensions' ) }</FormLabel>
 				<FormDimensionsInput
-					unit="in"
+					unit={ translate( 'in' ) }
 					dimensions={ dimensions }
 					onChange={ setDimension }
+					className="products__product-form-delivery-details-dimensions"
 				/>
 			</FormFieldSet>
 		</Card>
