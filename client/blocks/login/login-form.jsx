@@ -107,7 +107,7 @@ export class LoginForm extends Component {
 					{ this.props.title }
 				</div>
 
-				<form onSubmit={ this.onSubmitForm }>
+				<form onSubmit={ this.onSubmitForm } method="post">
 					<Card className="login__form">
 						<div className="login__form-userdata">
 							<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
