@@ -329,6 +329,35 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	postsPerPageOption() {
+		const { eventTracker, fields, isRequestingSettings, onChangeField, translate, uniqueEventTracker } = this.props;
+		const showPostsPerPage = ( 'undefined' !== typeof fields.posts_per_page );
+
+		return showPostsPerPage && (
+			<FormFieldset className="site-settings__has-divider is-top-only">
+				<FormLabel htmlFor="posts_per_page">{ translate( 'Posts Per Page' ) }</FormLabel>
+				<ul>
+					<li>
+						<FormInput
+							name="posts_per_page"
+							type="number"
+							step="1"
+							min="1"
+							id="posts_per_page"
+							value={ fields.posts_per_page || 10 }
+							onChange={ onChangeField( 'posts_per_page' ) }
+							disabled={ isRequestingSettings }
+							onClick={ eventTracker( 'Clicked Posts Per Page Field' ) }
+							onKeyPress={ uniqueEventTracker( 'Typed in Posts Per Page Field' ) } />
+							<FormSettingExplanation>
+								{ translate( 'On blog pages, the number of posts to show per page.' ) }
+							</FormSettingExplanation>
+					</li>
+				</ul>
+			</FormFieldset>
+		);
+	}
+
 	Timezone() {
 		const { fields, isRequestingSettings, siteIsJetpack, translate } = this.props;
 		if ( siteIsJetpack ) {
@@ -443,6 +472,7 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.languageOptions() }
 						{ this.Timezone() }
 						{ this.holidaySnowOption() }
+						{ this.postsPerPageOption() }
 					</form>
 				</Card>
 
@@ -573,6 +603,7 @@ const getFormSettings = settings => {
 		jetpack_sync_non_public_post_stati: false,
 		holidaysnow: false,
 		api_cache: false,
+		posts_per_page: '',
 	};
 
 	if ( ! settings ) {
@@ -591,6 +622,8 @@ const getFormSettings = settings => {
 		holidaysnow: !! settings.holidaysnow,
 
 		api_cache: settings.api_cache,
+
+		posts_per_page: settings.posts_per_page,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
