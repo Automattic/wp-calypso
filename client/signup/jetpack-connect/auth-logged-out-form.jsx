@@ -80,13 +80,9 @@ class LoggedOutForm extends Component {
 	}
 
 	renderLocaleSuggestions() {
-		if ( ! this.props.locale ) {
-			return;
-		}
-
-		return (
-			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
-		);
+		return this.props.locale
+			? <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+			: null;
 	}
 
 	renderFooterLink() {
