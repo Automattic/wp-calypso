@@ -27,8 +27,8 @@ const FollowingManageSearchFeedsResults = ( {
 		return null; // todo: add placeholder
 	} else if ( searchResults.length === 0 ) {
 		return (
-			<p className="following-manage__no-match">
-				{ translate( 'Sorry, no sites match yourquery.' ) }
+			<p>
+				{ translate( 'There were no site results for your query.' ) }
 			</p>
 		);
 	}
