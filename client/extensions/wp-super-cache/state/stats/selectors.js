@@ -50,3 +50,36 @@ export function getStatsGenerationStatus( state, siteId ) {
 export function getStats( state, siteId ) {
 	return get( getStatsState( state ), [ 'items', siteId ], null );
 }
+
+/**
+ * Returns true if we are deleting a cached file for the specified site ID, false otherwise.
+ *
+ * @param  {Object}  state Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean} Whether the cached file is being deleted
+ */
+export function isDeletingFile( state, siteId ) {
+	return get( getStatsState( state ), [ 'deleteStatus', siteId, 'deleting' ], false );
+}
+
+/**
+ * Returns true if the file delete request failed.
+ *
+ * @param  {Object}  state Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean} Whether the file delete request encountered an error
+ */
+export function hasFileDeleteError( state, siteId, ) {
+	return getFileDeleteStatus( state, siteId ) === 'error';
+}
+
+/**
+ * Returns the status of the last file delete request.
+ *
+ * @param  {Object}  state Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {String}  Delete request status (pending, success or error)
+ */
+export function getFileDeleteStatus( state, siteId ) {
+	return get( getStatsState( state ), [ 'deleteStatus', siteId, 'status' ] );
+}
