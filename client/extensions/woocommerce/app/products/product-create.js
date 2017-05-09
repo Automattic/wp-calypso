@@ -9,7 +9,10 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getCurrentlyEditingProduct } from '../../state/ui/products/selectors';
+import { getProductVariationsWithLocalEdits } from '../../state/ui/products/variations/selectors';
 import { editProduct, editProductAttribute } from '../../state/ui/products/actions';
+import { editProductVariation } from '../../state/ui/products/variations/actions';
+import Main from 'components/main';
 import ProductForm from './product-form';
 
 class ProductCreate extends Component {
@@ -29,23 +32,29 @@ class ProductCreate extends Component {
 	}
 
 	render() {
-		const { product } = this.props;
+		const { product, variations } = this.props;
 
 		return (
-			<ProductForm
-				product={ product || { type: 'simple' } }
-				editProduct={ this.props.editProduct }
-				editProductAttribute={ this.props.editProductAttribute }
-			/>
+			<Main className="woocommerce products__form" wideLayout={ true }>
+				<ProductForm
+					product={ product || { type: 'simple' } }
+					variations={ variations }
+					editProduct={ this.props.editProduct }
+					editProductAttribute={ this.props.editProductAttribute }
+					editProductVariation={ this.props.editProductVariation }
+				/>
+			</Main>
 		);
 	}
 }
 
 function mapStateToProps( state ) {
 	const product = getCurrentlyEditingProduct( state );
+	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
 
 	return {
 		product,
+		variations,
 	};
 }
 
@@ -54,6 +63,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			editProduct,
 			editProductAttribute,
+			editProductVariation,
 		},
 		dispatch
 	);

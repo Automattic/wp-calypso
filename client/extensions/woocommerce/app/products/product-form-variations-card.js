@@ -9,9 +9,17 @@ import { localize } from 'i18n-calypso';
  */
 import FoldableCard from 'components/foldable-card';
 import ProductVariationTypesForm from './product-variation-types-form';
+import ProductFormVariationsTable from './product-form-variations-table';
 import FormToggle from 'components/forms/form-toggle';
 
-const ProductFormVariationsCard = ( { product, editProduct, translate, editProductAttribute } ) => {
+const ProductFormVariationsCard = ( {
+	product,
+	variations,
+	editProduct,
+	translate,
+	editProductAttribute,
+	editProductVariation
+} ) => {
 	const handleToggle = () => {
 		if ( 'variable' !== product.type ) {
 			editProduct( product, { type: 'variable', dimensions: {} } );
@@ -40,10 +48,17 @@ const ProductFormVariationsCard = ( { product, editProduct, translate, editProdu
 			) }
 		>
 			{ 'variable' === product.type && (
-				<ProductVariationTypesForm
-					product={ product }
-					editProductAttribute={ editProductAttribute }
-				/>
+				<div>
+					<ProductVariationTypesForm
+						product={ product }
+						editProductAttribute={ editProductAttribute }
+					/>
+					<ProductFormVariationsTable
+						product={ product }
+						variations={ variations }
+						editProductVariation={ editProductVariation }
+					/>
+				</div>
 			) }
 		</FoldableCard>
 	);
@@ -55,8 +70,10 @@ ProductFormVariationsCard.propTypes = {
 		type: PropTypes.string.isRequired,
 		name: PropTypes.string,
 	} ),
+	variations: PropTypes.array,
 	editProduct: PropTypes.func.isRequired,
 	editProductAttribute: PropTypes.func.isRequired,
+	editProductVariation: PropTypes.func.isRequired,
 };
 
 export default localize( ProductFormVariationsCard );

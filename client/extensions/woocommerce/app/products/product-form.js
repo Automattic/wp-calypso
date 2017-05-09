@@ -18,12 +18,14 @@ export default class ProductForm extends Component {
 			type: PropTypes.string.isRequired,
 			name: PropTypes.string,
 		} ),
+		variations: PropTypes.array,
 		editProduct: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
+		editProductVariation: PropTypes.func.isRequired,
 	};
 
 	render() {
-		const { product } = this.props;
+		const { product, variations, editProductVariation } = this.props;
 		return (
 			<div className="woocommerce products__form">
 				<ProductFormDetailsCard
@@ -33,8 +35,10 @@ export default class ProductForm extends Component {
 
 				<ProductFormVariationsCard
 					product={ product }
+					variations={ variations }
 					editProduct={ this.props.editProduct }
 					editProductAttribute={ this.props.editProductAttribute }
+					editProductVariation={ editProductVariation }
 				/>
 
 				{ 'simple' === product.type && (
