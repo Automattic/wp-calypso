@@ -11,7 +11,7 @@ import { READER_FOLLOW } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
-import { follow, unfollow } from 'state/reader/follows/actions';
+import { follow, unfollow, recordFollowError } from 'state/reader/follows/actions';
 import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine';
 
 export function requestFollow( { dispatch }, action, next ) {
@@ -40,16 +40,17 @@ export function receiveFollow( store, action, next, response ) {
 			)
 		);
 	} else {
-		followError( store, action, next );
+		followError( store, action, next, response );
 	}
 }
 
-export function followError( { dispatch }, action, next ) {
+export function followError( { dispatch }, action, next, response ) {
 	dispatch(
 		errorNotice(
 			translate( 'Sorry, there was a problem following that site. Please try again.' )
 		)
 	);
+	dispatch( recordFollowError( action.payload.feedUrl, response ) );
 	next( unfollow( action.payload.feedUrl ) );
 }
 

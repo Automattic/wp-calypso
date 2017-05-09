@@ -8,6 +8,7 @@ import debugModule from 'debug';
  */
 import {
 	READER_FOLLOW,
+	READER_FOLLOW_ERROR,
 	READER_UNFOLLOW,
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
@@ -60,6 +61,14 @@ export function follow( feedUrl, followInfo ) {
 export function unfollow( feedUrl ) {
 	return {
 		type: READER_UNFOLLOW,
+		payload: { feedUrl }
+	};
+}
+
+export function recordFollowError( feedUrl, /*response*/ ) {
+	// @todo extract error info from response
+	return {
+		type: READER_FOLLOW_ERROR,
 		payload: { feedUrl }
 	};
 }
