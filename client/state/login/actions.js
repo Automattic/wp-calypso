@@ -24,7 +24,6 @@ import {
 
 const loginErrorMessages = {
 	empty_password: translate( 'The password field is empty.' ),
-	empty_two_step_code: translate( 'The verification code field is empty.' ),
 	empty_username: translate( 'The username field is empty.' ),
 	incorrect_password: translate( 'Invalid password' ),
 	invalid_two_step_code: translate( 'Invalid verification code.' ),
@@ -37,7 +36,6 @@ const loginErrorMessages = {
 
 const loginErrorFields = {
 	empty_password: 'password',
-	empty_two_step_code: 'twoStepCode',
 	empty_username: 'usernameOrEmail',
 	incorrect_password: 'password',
 	invalid_two_step_code: 'twoStepCode',
