@@ -42,4 +42,9 @@
 			transform: none;
 		}
 	}
+
+	.form-dimensions-input__width,
+	.form-dimensions-input__height {
+		margin-left: -1px;
+	}
 }
