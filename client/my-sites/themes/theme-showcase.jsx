@@ -113,7 +113,9 @@ const ThemeShowcase = React.createClass( {
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = ( tier && tier !== 'all' ) ? `/${ tier }` : '';
-		const filterSection = filter ? `/filter/${ filter }` : '';
+
+		let filterSection = filter ? `/filter/${ filter }` : '';
+		filterSection = filterSection.replace( /\s/g, '+' );
 
 		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
 		return buildUrl( url, searchString );
