@@ -15,9 +15,36 @@ export default function transformer(file, api) {
       return j(createClassInstance);
     }
 
+    // AST matcher for the class identifier
     const classIdentifier = {
       type: 'Identifier',
       name: parentNode.id.name,
+    };
+
+    // AST matcher for the connected class identifier
+    const connectedClassIdentifier = {
+      type: 'CallExpression',
+      callee: {
+        type: 'CallExpression',
+        callee: {
+          type: 'Identifier',
+          name: 'connect',
+        }
+      },
+      arguments: [ classIdentifier ]
+    };
+
+    // AST matcher for the module.exports expression
+    const moduleExportsExpression = {
+      type: 'MemberExpression',
+      object: {
+        type: 'Identifier',
+        name: 'module'
+      },
+      property: {
+        type: 'Identifier',
+        name: 'exports',
+      }
     };
 
     // Is the variable later exported with 'export default'?
@@ -28,23 +55,30 @@ export default function transformer(file, api) {
       return exportDefaultDeclarations.map(d => d.get('declaration'));
     }
 
+    // Is the variable later exported with 'export default connect()'?
+    const exportDefaultConnectDeclarations = root.find(j.ExportDefaultDeclaration, {
+      declaration: connectedClassIdentifier
+    });
+    if (exportDefaultConnectDeclarations.size()) {
+      return exportDefaultConnectDeclarations.map(d => d.get('declaration').get('arguments', 0));
+    }
+
     // Is the variable later exported with 'module.exports ='?
     const moduleExportsDeclarations = root.find(j.AssignmentExpression, {
-      left: {
-        type: 'MemberExpression',
-        object: {
-          type: 'Identifier',
-          name: 'module'
-        },
-        property: {
-          type: 'Identifier',
-          name: 'exports',
-        }
-      },
+      left: moduleExportsExpression,
       right: classIdentifier
     });
     if (moduleExportsDeclarations.size()) {
       return moduleExportsDeclarations.map(d => d.get('right'));
+    }
+
+    // Is the variable later exported with 'module.exports = connect()'?
+    const moduleExportsConnectDeclarations = root.find(j.AssignmentExpression, {
+      left: moduleExportsExpression,
+      right: connectedClassIdentifier
+    });
+    if (moduleExportsConnectDeclarations.size()) {
+      return moduleExportsConnectDeclarations.map(d => d.get('right').get('arguments', 0));
     }
 
     return j(createClassInstance);
