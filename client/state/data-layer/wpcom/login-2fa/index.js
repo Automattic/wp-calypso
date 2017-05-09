@@ -33,7 +33,7 @@ const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
  * @returns {Promise}		Promise of result from the API
  */
 const doAppPushRequest = ( store ) => {
-	return request.post( config( 'two_step_authentication_xhr' ) )
+	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
