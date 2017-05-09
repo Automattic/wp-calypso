@@ -40,26 +40,7 @@ class LoggedOutForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
 	}
 
-	renderFormHeader() {
-		const { translate } = this.props;
-		const headerText = translate( 'Create your account' );
-		const subHeaderText = translate( 'You are moments away from connecting your site.' );
-		const { queryObject } = this.props.jetpackConnectAuthorize;
-		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' )
-			? <SiteCard queryObject={ queryObject } />
-			: null;
-
-		return (
-			<div>
-				<StepHeader
-					headerText={ headerText }
-					subHeaderText={ subHeaderText } />
-				{ siteCard }
-			</div>
-		);
-	}
-
-	submitForm = ( form, userData ) => {
+	handleSubmitSignup = ( form, userData ) => {
 		debug( 'submiting new account', form, userData );
 		this.props.createAccount( userData );
 	}
@@ -76,6 +57,25 @@ class LoggedOutForm extends Component {
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
 				redirectTo={ redirectTo } />
+		);
+	}
+
+	renderFormHeader() {
+		const { translate } = this.props;
+		const headerText = translate( 'Create your account' );
+		const subHeaderText = translate( 'You are moments away from connecting your site.' );
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' )
+			? <SiteCard queryObject={ queryObject } />
+			: null;
+
+		return (
+			<div>
+				<StepHeader
+					headerText={ headerText }
+					subHeaderText={ subHeaderText } />
+				{ siteCard }
+			</div>
 		);
 	}
 
@@ -113,7 +113,7 @@ class LoggedOutForm extends Component {
 					getRedirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.isSubmitting() }
 					submitting={ this.isSubmitting() }
-					submitForm={ this.submitForm }
+					submitForm={ this.handleSubmitSignup }
 					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
 					footerLink={ this.renderFooterLink() }
 					suggestedUsername={ userData && userData.username ? userData.username : '' }
