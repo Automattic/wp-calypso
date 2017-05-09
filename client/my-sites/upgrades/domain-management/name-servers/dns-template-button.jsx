@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 
-class DnsTemplateButton extends Component {
+class DnsTemplateButton extends Button {
 	onClick = () => {
 		this.props.onTemplateClick( this.props.name );
 	};

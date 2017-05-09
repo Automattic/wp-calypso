@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { dnsTemplates } from 'lib/domains/constants';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormFooter from 'my-sites/upgrades/domain-management/components/form-footer';
@@ -18,7 +17,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
 
-class ZohoMail extends Component {
+class EmailProvider extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = { token: '', submitting: false };
@@ -33,17 +32,21 @@ class ZohoMail extends Component {
 		event.preventDefault();
 		this.setState( { submitting: true } );
 
-		const { domain, translate } = this.props,
-			variables = {
+		const { domain, translate, template } = this.props;
+		let variables = {
 				token: this.state.token,
 				domain
 			};
 
-		upgradesActions.applyDnsTemplate( domain, dnsTemplates.ZOHO_MAIL, variables, ( error ) => {
+		if ( template.modifyVariables ) {
+			variables = template.modifyVariables( variables, this.props );
+		}
+
+		upgradesActions.applyDnsTemplate( domain, template.dnsTemplate, variables, ( error ) => {
 			if ( error ) {
-				notices.error( error.message || translate( 'The DNS records have not been added.' ) );
+				notices.error( error.message || translate( 'The DNS records were not able to be added.' ) );
 			} else {
-				notices.success( translate( 'All DNS records that Zoho Mail needs have been added.' ), {
+				notices.success( translate( 'All DNS records for this service have been added.' ), {
 					duration: 5000
 				} );
 			}
@@ -53,19 +56,21 @@ class ZohoMail extends Component {
 	}
 
 	render() {
-		const isDataValid = this.state.token.match( /^zb\w+$/ ),
-			{ translate } = this.props;
+		const { translate } = this.props,
+			{ name, label, placeholder, validationPattern } = this.props.template,
+			isDataValid = this.state.token.match( validationPattern );
 
 		return (
 			<form className="dns__template-form">
 				<div className="dns__form-content">
 					<FormFieldset>
-						<FormLabel>{ translate( 'Zoho Mail CNAME zb code' ) }</FormLabel>
+						<FormLabel>{ label }</FormLabel>
 						<FormTextInput
+							key={ `dns-templates-token-${ name }` }
 							name="token"
 							isError={ ! isEmpty( this.state.token ) && ! isDataValid }
 							onChange={ this.onChange }
-							placeholder="zb..." />
+							placeholder={ placeholder } />
 						{ this.state.token && ! isDataValid &&
 						<FormInputValidation text={ translate( 'Invalid Token' ) } isError={ true } /> }
 					</FormFieldset>
@@ -74,7 +79,7 @@ class ZohoMail extends Component {
 						<FormButton
 							disabled={ ! isDataValid || this.state.submitting }
 							onClick={ this.onAddDnsRecords }>
-							{ translate( 'Set up Zoho Mail' ) }
+							{ translate( 'Set up ' ) }{ name }
 						</FormButton>
 					</FormFooter>
 				</div>
@@ -83,4 +88,4 @@ class ZohoMail extends Component {
 	}
 }
 
-export default localize( ZohoMail );
+export default localize( EmailProvider );
