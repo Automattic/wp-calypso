@@ -29,6 +29,7 @@ import { getSelectedOrAllSites } from 'state/selectors';
 class CurrentSite extends Component {
 	static propTypes = {
 		isJetpack: React.PropTypes.bool,
+		isPreviewShowing: React.PropTypes.bool,
 		siteCount: React.PropTypes.number.isRequired,
 		setLayoutFocus: React.PropTypes.func.isRequired,
 		selectedSiteId: React.PropTypes.number,
@@ -102,10 +103,7 @@ class CurrentSite extends Component {
 		);
 	}
 
-	previewSite = ( event ) => {
-		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site' );
-		this.props.onClick && this.props.onClick( event );
-	}
+	previewSite = ( event ) => this.props.onClick && this.props.onClick( event );
 
 	render() {
 		const { isJetpack, selectedSite, translate, anySiteSelected } = this.props;
@@ -139,12 +137,19 @@ class CurrentSite extends Component {
 					</span>
 				}
 				{ selectedSite
-					? <Site
-						site={ selectedSite }
-						homeLink={ true }
-						externalLink={ true }
-						onSelect={ this.previewSite }
-						tipTarget="site-card-preview" />
+					? <div>
+						<Site site={ selectedSite } />
+						<a
+							href={ selectedSite.URL }
+							onClick={ this.previewSite }
+							className={ `current-site__view-site${ this.props.isPreviewShowing ? ' selected' : '' }` }
+						>
+							<span className="current-site__view-site-text">
+								{ translate( 'Site Preview' ) }
+							</span>
+							<Gridicon icon="computer" />
+						</a>
+					</div>
 					: <AllSites />
 				}
 				{ ! isJetpack && this.getDomainWarnings() }
