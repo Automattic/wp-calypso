@@ -209,13 +209,13 @@ describe( 'actions', () => {
 
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/sites' )
+					.get( '/rest/v1.1/sites/' + client_id )
 					.query( {
 						site_visibility: 'all',
 						include_domain_only: true
 					} )
 					.reply( 200, {
-						sites: [ client_id ]
+						ID: client_id
 					}, {
 						'Content-Type': 'application/json'
 					} );
@@ -279,7 +279,7 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 						data: {
-							sites: [ client_id ]
+							ID: client_id
 						}
 					} );
 				} );
