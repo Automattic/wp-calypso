@@ -21,7 +21,9 @@ export default React.createClass( {
 		onNavigate: React.PropTypes.func,
 		icon: React.PropTypes.string,
 		selected: React.PropTypes.bool,
-		preloadSectionName: React.PropTypes.string
+		preloadSectionName: React.PropTypes.string,
+		testTarget: React.PropTypes.string,
+		tipTarget: React.PropTypes.string
 	},
 
 	_preloaded: false,
@@ -38,7 +40,11 @@ export default React.createClass( {
 		const classes = classnames( this.props.className, { selected: this.props.selected } );
 
 		return (
-			<li className={ classes } data-tip-target={ this.props.tipTarget } >
+			<li
+				className={ classes }
+				data-tip-target={ this.props.tipTarget }
+				data-post-type={ this.props.postType }
+			>
 				<a
 					onClick={ this.props.onNavigate }
 					href={ this.props.link }
