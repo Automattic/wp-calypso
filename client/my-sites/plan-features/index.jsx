@@ -504,7 +504,7 @@ export default connect(
 					planObject: planObject,
 					popular: popular,
 					newPlan: newPlan,
-					hideMonthly: isInSignup && abtest( 'jetpackNoMonthly' ) === 'dontShowMonthly',
+					hideMonthly: false,
 					primaryUpgrade: (
 						( currentPlan === PLAN_PERSONAL && plan === PLAN_PREMIUM ) ||
 						( currentPlan === PLAN_PREMIUM && plan === PLAN_BUSINESS ) ||
