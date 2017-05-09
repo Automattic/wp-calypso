@@ -5,6 +5,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal Dependencies
@@ -124,7 +125,9 @@ const exported = {
 	},
 
 	loadSubscriptions( context, next ) {
-		FeedSubscriptionActions.fetchAll();
+		if ( ! config.isEnabled( 'reader/following-manage-refresh' ) ) {
+			FeedSubscriptionActions.fetchAll();
+		}
 		next();
 	},
 
