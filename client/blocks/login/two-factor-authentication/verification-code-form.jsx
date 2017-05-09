@@ -27,10 +27,11 @@ import {
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode } from 'state/login/actions';
-import { successNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
+		errorNotice: PropTypes.func.isRequired,
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -73,6 +74,8 @@ class VerificationCodeForm extends Component {
 
 		this.props.sendSmsCode( userId, twoStepNonce ).then( () => {
 			this.props.successNotice( translate( 'Recovery code has been sent.' ) );
+		} ).catch( ( errorMesssage ) => {
+			this.props.errorNotice( errorMesssage );
 		} );
 	};
 
@@ -150,6 +153,7 @@ export default connect(
 		loginUserWithTwoFactorVerificationCode,
 		recordTracksEvent,
 		sendSmsCode,
+		errorNotice,
 		successNotice,
 	}
 )( localize( VerificationCodeForm ) );

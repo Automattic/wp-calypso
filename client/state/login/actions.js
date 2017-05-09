@@ -16,6 +16,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'state/action-types';
 
@@ -27,7 +28,8 @@ const loginErrorMessages = {
 	invalid_two_step_code: translate( 'Invalid verification code.' ),
 	invalid_username: translate( 'Invalid username or password.' ),
 	unknown: translate( 'Invalid username or password.' ),
-	account_unactivated: translate( 'This account has not been activated. Please check your email for an activation link.' )
+	account_unactivated: translate( 'This account has not been activated. Please check your email for an activation link.' ),
+	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
 };
 
 function getMessageFromHTTPError( error ) {
@@ -151,5 +153,15 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
 			} );
+		} ).catch( ( error ) => {
+			const errorMessage = getMessageFromHTTPError( error );
+
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
+				error: errorMessage,
+				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
+			} );
+
+			return Promise.reject( errorMessage );
 		} );
 };
