@@ -35,13 +35,9 @@ function checkPropsChange( nextProps, propArr ) {
 
 class PluginItem extends Component {
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			clicked: false,
-		};
-	}
+	state = {
+		clicked: false
+	};
 
 	static propTypes = {
 		plugin: PropTypes.object,
