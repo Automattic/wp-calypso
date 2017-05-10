@@ -76,7 +76,7 @@ export const items = createReducer( {}, {
 		const urlKey = prepareComparableUrl( action.payload.url );
 		return {
 			...state,
-			[ urlKey ]: merge( {}, state[ urlKey ], { is_following: true } ),
+			[ urlKey ]: merge( {}, state[ urlKey ], { is_following: true, error: null } ),
 		};
 	},
 	[ READER_RECORD_UNFOLLOW ]: ( state, action ) => {
