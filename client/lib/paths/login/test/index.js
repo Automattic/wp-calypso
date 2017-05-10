@@ -32,6 +32,14 @@ describe( 'index', () => {
 			);
 		} );
 
+		it( 'should return the login url when the two factor auth page is supplied', () => {
+			const url = login( { twoFactorAuthType: 'code' } );
+
+			expect( url ).to.equal(
+				'/login/code'
+			);
+		} );
+
 		it( 'should return the login url with encoded redirect url param', () => {
 			const url = login( { redirectTo: 'https://wordpress.com/?search=test&foo=bar' } );
 
