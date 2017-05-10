@@ -13,6 +13,8 @@
 }
 
 .store-sidebar__sidebar {
+	display: block;
+
 	.store-sidebar__ground-control {
 		align-items: center;
 		border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
