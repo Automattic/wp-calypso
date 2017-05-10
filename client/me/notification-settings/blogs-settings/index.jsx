@@ -1,8 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 import Immutable from 'immutable';
 
 /**
@@ -16,10 +18,12 @@ import Placeholder from './placeholder';
 import QuerySites from 'components/data/query-sites';
 import config from 'config';
 
-const BlogsSettings = React.createClass( {
-	displayName: 'BlogsSettings',
+const createPlaceholder = () => <Placeholder />;
 
-	propTypes: {
+const getItemRef = ( { ID } ) => `blog-${ ID }`;
+
+class BlogsSettings extends Component {
+	static propTypes = {
 		sites: PropTypes.array.isRequired,
 		devices: PropTypes.object.isRequired,
 		settings: PropTypes.instanceOf( Immutable.List ),
@@ -27,10 +31,10 @@ const BlogsSettings = React.createClass( {
 		onToggle: PropTypes.func.isRequired,
 		onSave: PropTypes.func.isRequired,
 		onSaveToAll: PropTypes.func.isRequired
-	},
+	};
 
 	render() {
-		const { sites } = this.props;
+		const { sites, translate } = this.props;
 
 		if ( ! sites || ! this.props.devices.initialized || ! this.props.settings ) {
 			return (
@@ -43,14 +47,17 @@ const BlogsSettings = React.createClass( {
 
 		if ( sites.length === 0 ) {
 			return <EmptyContentComponent
-				title={ this.translate( 'You don\'t have any WordPress sites yet.' ) }
-				line={ this.translate( 'Would you like to start one?' ) }
-				action={ this.translate( 'Create Site' ) }
+				title={ translate( 'You don\'t have any WordPress sites yet.' ) }
+				line={ translate( 'Would you like to start one?' ) }
+				action={ translate( 'Create Site' ) }
 				actionURL={ config( 'signup_url' ) + '?ref=calypso-nosites' }
-				illustration={ '/calypso/images/drake/drake-nosites.svg' } />
+				illustration={ '/calypso/images/drake/drake-nosites.svg' } />;
 		}
 
 		const renderBlog = ( site, index, disableToggle = false ) => {
+			const onSave = () => this.props.onSave( site.ID );
+			const onSaveToAll = () => this.props.onSaveToAll( site.ID );
+
 			return (
 				<Blog
 					key={ `blog-${ site.ID }` }
@@ -60,10 +67,10 @@ const BlogsSettings = React.createClass( {
 					hasUnsavedChanges={ this.props.hasUnsavedChanges }
 					settings={ this.props.settings.find( settings => settings.get( 'blog_id' ) === site.ID ) }
 					onToggle={ this.props.onToggle }
-					onSave={ () => this.props.onSave( site.ID ) }
-					onSaveToAll={ () => this.props.onSaveToAll( site.ID ) } />
+					onSave={ onSave }
+					onSaveToAll={ onSaveToAll } />
 			);
-		}
+		};
 
 		if ( sites.length === 1 ) {
 			return renderBlog( sites[ 0 ], null, true );
@@ -73,18 +80,18 @@ const BlogsSettings = React.createClass( {
 			<InfiniteList
 				items={ sites }
 				lastPage={ true }
-				fetchNextPage={ () => {} }
+				fetchNextPage={ noop }
 				fetchingNextPage={ false }
 				guessedItemHeight={ 69 }
-				getItemRef={ site => `blog-${ site.ID }` }
+				getItemRef={ getItemRef }
 				renderItem={ renderBlog }
-				renderLoadingPlaceholders={ () => <Placeholder /> } />
+				renderLoadingPlaceholders={ createPlaceholder } />
 		);
 	}
-} );
+}
 
 const mapStateToProps = state => ( {
 	sites: getSites( state )
 } );
 
-export default connect( mapStateToProps )( BlogsSettings );
+export default connect( mapStateToProps )( localize( BlogsSettings ) );
