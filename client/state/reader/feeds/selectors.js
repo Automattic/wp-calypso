@@ -22,7 +22,6 @@ function isStale( state, feedId ) {
 	return lastFetched <= ( Date.now() - DAY_IN_MILLIS );
 }
 
-
 /**
  * Returns a feed object
  *
