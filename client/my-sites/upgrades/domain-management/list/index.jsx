@@ -283,7 +283,7 @@ export const List = React.createClass( {
 
 	setPrimaryDomain: function( domainName ) {
 		return new Promise( ( resolve, reject ) => {
-			setPrimaryDomain( this.props.selectedSite.ID, domainName, ( error, data ) => {
+			this.props.setPrimaryDomain( this.props.selectedSite.ID, domainName, ( error, data ) => {
 				if ( ! error && data && data.success ) {
 					page.redirect( paths.domainManagementList( this.props.selectedSite.slug ) );
 					resolve();
@@ -383,6 +383,7 @@ export default connect( ( state, ownProps ) => {
 			{
 				cta_name: 'domain_info_notice'
 			}
-		) )
+		) ),
+		setPrimaryDomain: ( ...props ) => setPrimaryDomain( ...props )( dispatch )
 	};
 } )( List );

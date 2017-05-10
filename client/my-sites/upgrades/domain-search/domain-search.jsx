@@ -88,7 +88,7 @@ class DomainSearch extends Component {
 		}
 
 		upgradesActions.addItems( items );
-		upgradesActions.goToDomainCheckout( suggestion );
+		upgradesActions.goToDomainCheckout( suggestion, this.props.selectedSiteSlug );
 	}
 
 	removeDomain( suggestion ) {

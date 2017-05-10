@@ -15,7 +15,7 @@ import domainsAssembler from 'lib/domains/assembler';
 import DomainsStore from 'lib/domains/store';
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';
 import NameserversStore from 'lib/domains/nameservers/store';
-import sitesFactory from 'lib/sites-list';
+import { requestSite } from 'state/sites/actions';
 import wapiDomainInfoAssembler from 'lib/domains/wapi-domain-info/assembler';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
 import whoisAssembler from 'lib/domains/whois/assembler';
@@ -26,10 +26,9 @@ import { isBeingProcessed } from 'lib/domains/dns';
 
 const debug = debugFactory( 'actions:domain-management' );
 
-const sites = sitesFactory(),
-	wpcom = wp.undocumented();
+const wpcom = wp.undocumented();
 
-function setPrimaryDomain( siteId, domainName, onComplete = noop ) {
+const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dispatch => {
 	debug( 'setPrimaryDomain', siteId, domainName );
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.PRIMARY_DOMAIN_SET,
@@ -48,13 +47,7 @@ function setPrimaryDomain( siteId, domainName, onComplete = noop ) {
 			return onComplete( error, data );
 		}
 
-		sites.setSelectedSite( siteId );
-
-		Dispatcher.handleServerAction( {
-			type: 'FETCH_SITES'
-		} );
-
-		sites.once( 'change', () => {
+		requestSite( siteId )( dispatch ).then( () => {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PRIMARY_DOMAIN_SET_COMPLETED,
 				siteId,
@@ -65,7 +58,7 @@ function setPrimaryDomain( siteId, domainName, onComplete = noop ) {
 			fetchDomains( siteId );
 		} );
 	} );
-}
+};
 
 function fetchEmailForwarding( domainName ) {
 	const emailForwarding = EmailForwardingStore.getByDomainName( domainName );
