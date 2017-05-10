@@ -4,7 +4,6 @@ $reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width
 $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-recommended-sites {
-	padding-bottom: 12px;
 
 	@include breakpoint( "<660px" ) {
 		margin: 0 15px;
@@ -31,7 +30,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 .reader-recommended-sites__list {
 	display: flex;
 	flex-direction: row;
-	margin: 0;
+	margin: 0 0 20px;
 	padding: 0;
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
@@ -54,20 +53,27 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	flex: 1 1 0;
 	flex-direction: column;
 	list-style-type: none;
+	margin-top: -40px;
 	min-width: 0;
-	position: relative;
-		top: -40px;
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
 		flex-direction: row;
 		flex: 0;
-		top: 0;
+		margin-top: 0;
+
+		& + & {
+			margin-top: 10px;
+		}
 	}
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
 		flex-direction: row;
 		flex: 0;
-		top: 0;
+		margin-top: 0;
+
+		& + & {
+			margin-top: 10px;
+		}
 	}
 
 	:nth-child(2) {
@@ -146,7 +152,8 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	&:last-child {
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
-			margin: 0;
+			margin-left: 0;
+			margin-right: 0;
 		}
 	}
 
