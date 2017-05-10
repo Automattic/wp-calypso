@@ -1,7 +1,6 @@
 .reader-subscription-list-item {
 	display: flex;
 	flex-direction: row;
-	justify-content: flex-end;
 }
 
 .reader-subscription-list-item__byline {
@@ -21,7 +20,6 @@
 
 	.button.follow-button {
 		display: flex;
-		justify-content: flex-start;
 	}
 }
 
