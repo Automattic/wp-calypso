@@ -14,8 +14,8 @@ import DocumentHead from 'components/data/document-head';
 var RecommendationPostsStream = React.createClass( {
 
 	render: function() {
-		var title = this.props.translate( 'Recommended Posts' ),
-			emptyContent = ( <EmptyContent /> );
+		const title = this.props.translate( 'Recommended Posts' );
+		const emptyContent = ( <EmptyContent /> );
 
 		return (
 			<Stream { ...this.props }
