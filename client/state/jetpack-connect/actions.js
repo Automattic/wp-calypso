@@ -33,7 +33,8 @@ import {
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-	JETPACK_CONNECT_SSO_VALIDATION_ERROR
+	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+	SITES_RECEIVE
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import config from 'config';
@@ -354,6 +355,10 @@ export default {
 					site: client_id
 				} );
 				debug( 'Sites list updated!', data );
+				dispatch( {
+					type: SITES_RECEIVE,
+					sites: data.sites
+				} );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 					data: data
