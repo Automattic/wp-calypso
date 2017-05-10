@@ -77,13 +77,13 @@ export default React.createClass( {
 		const { site } = this.props;
 
 		return (
-			<header key={ site.wpcom_url } className="notification-settings-blog-settings-header" onClick={ this.toggleExpanded }>
+			<header key={ site.wpcom_url } className="blogs-settings__header" onClick={ this.toggleExpanded }>
 				<SiteInfo site={ site } indicator={ false } />
-				<div className="notification-settings-blog-settings-header__legend">
+				<div className="blogs-settings__header-legend">
 					<em>{ this.getLegend() }</em>
 				</div>
 				{ ! this.props.disableToggle ?
-				<div className="notification-settings-blog-settings-header__expand">
+				<div className="blogs-settings__header-expand">
 					<a className={ 'noticon noticon-' + ( this.state.isExpanded ? 'collapse' : 'expand' ) }></a>
 				</div> :
 				null }
