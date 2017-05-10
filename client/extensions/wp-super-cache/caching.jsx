@@ -61,7 +61,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ !! is_super_cache_enabled && !! cache_mod_rewrite }
-								disabled={ isRequesting || isSaving }
+								disabled={ isRequesting || isSaving || ! is_cache_enabled }
 								name="is_super_cache_enabled"
 								onChange={ handleRadio }
 								value="1" />
@@ -73,7 +73,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ ! cache_mod_rewrite }
-								disabled={ isRequesting || isSaving }
+								disabled={ isRequesting || isSaving || ! is_cache_enabled }
 								name="is_super_cache_enabled"
 								onChange={ handleRadio }
 								value="2" />
@@ -90,7 +90,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ ! is_super_cache_enabled }
-								disabled={ isRequesting || isSaving }
+								disabled={ isRequesting || isSaving || ! is_cache_enabled }
 								name="is_super_cache_enabled"
 								onChange={ handleRadio }
 								value="0" />
