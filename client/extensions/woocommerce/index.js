@@ -4,6 +4,7 @@
 import config from 'config';
 import page from 'page';
 import React from 'react';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -26,7 +27,7 @@ const getStorePages = () => {
 			sidebarItem: {
 				icon: 'house',
 				isPrimary: true,
-				label: 'Dashboard',
+				label: translate( 'Dashboard' ),
 				slug: 'dashboard',
 			},
 		},
@@ -37,7 +38,7 @@ const getStorePages = () => {
 			sidebarItem: {
 				icon: 'product',
 				isPrimary: true,
-				label: 'Products',
+				label: translate( 'Products' ),
 				slug: 'products',
 			},
 		},
@@ -46,7 +47,7 @@ const getStorePages = () => {
 			configKey: 'woocommerce/extension-products',
 			path: '/store/products/:site/add',
 			sidebarItemButton: {
-				label: 'Add',
+				label: translate( 'Add' ),
 				parentSlug: 'products',
 				slug: 'product-add',
 			},
@@ -63,7 +64,7 @@ const getStorePages = () => {
 			sidebarItem: {
 				icon: 'pages',
 				isPrimary: true,
-				label: 'Orders',
+				label: translate( 'Orders' ),
 				slug: 'orders',
 			},
 		},
@@ -72,7 +73,7 @@ const getStorePages = () => {
 			configKey: 'woocommerce/extension-orders',
 			path: '/store/orders/:site/add',
 			sidebarItemButton: {
-				label: 'Add',
+				label: translate( 'Add' ),
 				parentSlug: 'orders',
 				slug: 'order-add',
 			},
@@ -84,7 +85,7 @@ const getStorePages = () => {
 			sidebarItem: {
 				icon: 'money',
 				isPrimary: true,
-				label: 'Promotions',
+				label: translate( 'Promotions' ),
 				slug: 'promotions',
 			},
 		},
@@ -95,7 +96,7 @@ const getStorePages = () => {
 			sidebarItem: {
 				icon: 'plugins',
 				isPrimary: false,
-				label: 'Extensions',
+				label: translate( 'Extensions' ),
 				slug: 'extensions',
 			},
 		},
@@ -106,7 +107,7 @@ const getStorePages = () => {
 			sidebarItem: {
 				icon: 'cog',
 				isPrimary: false,
-				label: 'Settings',
+				label: translate( 'Settings' ),
 				slug: 'settings',
 			},
 		},
