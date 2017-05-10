@@ -44,10 +44,8 @@ class DirectlyCachedFiles extends Component {
 			siteUrl,
 			translate
 		} = this.props;
-		const {
-			cache_direct_pages = [],
-			cache_path,
-		} = fields;
+		const cache_direct_pages = fields.cache_direct_pages || [];
+		const cache_path = fields.cache_path || '';
 		const notices = pick( this.props.notices, [
 			'cache_readonly',
 			'cache_writable',
