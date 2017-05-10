@@ -61,7 +61,7 @@ const FollowingExportButton = React.createClass( {
 
 	render() {
 		return (
-		    <Button
+			<Button
 				compact
 				disabled={ this.state.disabled }
 				onClick={ this.onClick } >

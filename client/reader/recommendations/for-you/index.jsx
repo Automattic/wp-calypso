@@ -129,7 +129,7 @@ const RecommendedForYou = React.createClass( {
 
 	render() {
 		return (
-		    <Main className="recommended-for-you">
+			<Main className="recommended-for-you">
 				<MobileBackToSidebar>
 					<h1>{ this.props.translate( 'Recommendations' ) }</h1>
 				</MobileBackToSidebar>

@@ -19,7 +19,7 @@ var LikedStream = React.createClass( {
 			emptyContent = ( <EmptyContent /> );
 
 		return (
-		    <Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ true }>
+			<Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ true }>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 			</Stream>
 		);

@@ -134,7 +134,7 @@ export default localize(React.createClass({
 		}
 
 		return (
-		    <Card className="reader__featured-card">
+			<Card className="reader__featured-card">
 				<div className="reader__featured-header">
 					<div className="reader__featured-title">{ this.props.translate( 'Highlights' ) }</div>
 					<div className="reader__featured-description">{ this.props.translate( 'What we’re reading this week.' ) }</div>

@@ -45,7 +45,7 @@ var ListEmptyContent = React.createClass( {
 				href="/discover">{ this.props.translate( 'Explore Discover' ) }</a> ) : null;
 
 		return (
-		    <EmptyContent
+			<EmptyContent
 				title={ this.props.translate( 'No recent posts' ) }
 				line={ this.props.translate( 'The sites in this list have not posted anything recently.' ) }
 				action={ action }

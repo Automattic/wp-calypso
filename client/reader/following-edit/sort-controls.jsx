@@ -30,7 +30,7 @@ const FollowingEditSortControls = React.createClass( {
 		const sortOrder = this.props.sortOrder;
 
 		return (
-		    <div className="following-edit__sort-controls">
+			<div className="following-edit__sort-controls">
 				<label htmlFor="sort-control-select">{ this.props.translate( 'Sort by' ) }</label>
 				<select id="sort-control-select" ref="sortControlSelect" className="is-compact" onChange={ this.handleSelectChange } value={ sortOrder }>
 					<option value="date-followed">{ this.props.translate( 'By Date' ) }</option>

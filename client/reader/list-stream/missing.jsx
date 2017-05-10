@@ -49,7 +49,7 @@ const ListMissing = React.createClass( {
 				href="/discover">{ this.props.translate( 'Explore Discover' ) }</a> ) : null;
 
 		return (
-		    <div>
+			<div>
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<EmptyContent
 				title={ this.props.translate( 'List not found' ) }

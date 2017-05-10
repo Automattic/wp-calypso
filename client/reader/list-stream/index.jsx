@@ -62,7 +62,7 @@ const ListStream = React.createClass( {
 		}
 
 		return (
-		    <Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ shouldShowFollow }>
+			<Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ shouldShowFollow }>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<ListStreamHeader

@@ -37,7 +37,7 @@ const FollowingEmptyContent = React.createClass( {
 			secondaryAction = null;
 
 		return (
-		    <EmptyContent
+			<EmptyContent
 				title={ this.props.translate( 'Welcome to Reader' ) }
 				line={ this.props.translate( 'Recent posts from sites you follow will appear here.' ) }
 				action={ action }

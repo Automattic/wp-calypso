@@ -69,7 +69,7 @@ const FollowingImportButton = React.createClass( {
 
 	render() {
 		return (
-		    <FilePicker accept=".xml,.opml" onPick={ this.onPick } >
+			<FilePicker accept=".xml,.opml" onPick={ this.onPick } >
 				<Button compact disabled={ this.state.disabled } >
 					{ this.props.translate( 'Import' ) }
 				</Button>

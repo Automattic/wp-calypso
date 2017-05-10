@@ -17,7 +17,7 @@ const RecommendedNavigation = React.createClass( {
 		};
 
 		return (
-		    <SectionNav selectedText={ sectionNames[ current ] }>
+			<SectionNav selectedText={ sectionNames[ current ] }>
 				<NavTabs>
 					<NavItem path="/recommendations/mine" selected={ current === 'for-you' }>{ this.props.translate( 'For You' ) }</NavItem>
 					<NavItem path="/recommendations/posts" selected={ current === 'posts' }>{ this.props.translate( 'Posts' ) }</NavItem>

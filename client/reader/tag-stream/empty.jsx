@@ -55,7 +55,7 @@ const TagEmptyContent = React.createClass( {
 		);
 
 		return (
-		    <EmptyContent
+			<EmptyContent
 				title={ this.props.translate( 'No recent posts' ) }
 				line={ message }
 				action={ action }

@@ -108,7 +108,7 @@ const TagStream = React.createClass( {
 		}
 
 		return (
-		    <Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
+			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />

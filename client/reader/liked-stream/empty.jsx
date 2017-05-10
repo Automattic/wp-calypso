@@ -45,7 +45,7 @@ var TagEmptyContent = React.createClass( {
 				href="/discover">{ this.props.translate( 'Explore Discover' ) }</a> ) : null;
 
 		return (
-		    <EmptyContent
+			<EmptyContent
 				title={ this.props.translate( 'No Likes Yet' ) }
 				line={ this.props.translate( 'Posts that you like will appear here.' ) }
 				action={ action }

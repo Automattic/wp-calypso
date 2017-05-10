@@ -376,7 +376,7 @@ const FollowingEdit = React.createClass( {
 		const url = this.state.lastError.URL;
 
 		return (
-		    <Notice
+			<Notice
 						status="is-error"
 						showDismiss={ true }
 						onDismissClick={ this.dismissError }>
@@ -529,7 +529,7 @@ const FollowingEdit = React.createClass( {
 		}, 'following-edit' );
 
 		return (
-		    <ReaderMain className={ containerClasses }>
+			<ReaderMain className={ containerClasses }>
 				<MobileBackToSidebar>
 					<h1>{ this.props.translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>

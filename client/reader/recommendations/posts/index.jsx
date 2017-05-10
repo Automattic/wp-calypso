@@ -19,7 +19,7 @@ var RecommendationPostsStream = React.createClass( {
 			emptyContent = ( <EmptyContent /> );
 
 		return (
-		    <Stream { ...this.props }
+			<Stream { ...this.props }
 				listName = { title }
 				emptyContent = { emptyContent }
 				showFollowInHeader = { true }

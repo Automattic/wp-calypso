@@ -120,7 +120,7 @@ var FollowingEditNotificationSettings = React.createClass( {
 		}
 
 		return (
-		    <div className="following-edit__notification-settings-error">
+			<div className="following-edit__notification-settings-error">
 				<FormInputValidation className="following-edit__notification-settings-error" isError text={ this.props.translate( 'Sorry, there was a problem changing your subscription settings.' ) } />
 			</div>
 		);
@@ -141,7 +141,7 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 		if ( isExternal ) {
 			return (
-			    <Card className="is-compact is-impossible-to-send-email following-edit__notification-settings-card" key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
+				<Card className="is-compact is-impossible-to-send-email following-edit__notification-settings-card" key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
 					<p>{ this.props.translate( 'RSS feeds do not allow for email notifications.' ) }</p>
 				</Card>
 			);
@@ -149,7 +149,7 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 		if ( this.props.isEmailBlocked ) {
 			return (
-			    <Card className="is-compact is-impossible-to-send-email following-edit__notification-settings-card" key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
+				<Card className="is-compact is-impossible-to-send-email following-edit__notification-settings-card" key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
 					<p>{ this.props.translate( 'You have blocked all email updates from your subscribed blogs.' ) }</p>
 					<p>{ this.props.translate( 'You can change this in your {{settingsLink}}Notification Settings{{/settingsLink}}.',
 						{
@@ -164,7 +164,7 @@ var FollowingEditNotificationSettings = React.createClass( {
 		}
 
 		return (
-		    <div>
+			<div>
 				<Card className={ postEmailClasses } key={ 'notification-settings-posts-' + subscription.get( 'ID' ) }>
 					<span>{ this.props.translate( 'Emails for new posts' ) }</span>
 					<span className="following-edit__form-toggle-wrapper">

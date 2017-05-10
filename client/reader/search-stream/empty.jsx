@@ -56,7 +56,7 @@ const SearchEmptyContent = React.createClass( {
 		);
 
 		return (
-		    <EmptyContent
+			<EmptyContent
 				title={ this.props.translate( 'No Results' ) }
 				line={ message }
 				action={ action }

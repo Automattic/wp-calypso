@@ -142,7 +142,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 		}
 
 		return (
-		    <div className="following-edit__subscribe-form">
+			<div className="following-edit__subscribe-form">
 				<SearchCard
 					isOpen={ this.props.isSearchOpen }
 					autoFocus={ true }
