@@ -12,7 +12,7 @@ import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
-import Checkout from './app/settings/checkout';
+import SettingsCheckout from './app/settings/checkout';
 import StatsController from './app/stats/controller';
 
 function addStorePage( storePage ) {
@@ -73,7 +73,7 @@ export default function() {
 			route: '/store/settings/:site',
 		},
 		{
-			container: Checkout,
+			container: SettingsCheckout,
 			configKey: 'woocommerce/extension-settings-checkout',
 			route: '/store/settings/:site/checkout',
 		},

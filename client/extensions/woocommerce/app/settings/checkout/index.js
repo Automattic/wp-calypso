@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,21 +12,26 @@ import Main from 'components/main';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 
-export default class Checkout extends Component {
+class SettingsCheckout extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
 	};
 
 	render() {
+		const { translate } = this.props;
 		return (
-			<Main className={ classNames( 'checkout', this.props.className ) }>
-				<SectionHeader label="Store Location and Currency" />
+			<Main
+				className={ classNames( 'settingsCheckout', this.props.className ) }>
+				<SectionHeader label={ translate( 'Store Location and Currency' ) } />
 				<Card>
-					Checkout settings go here
+					Different payment methods may be available based on your store
+					location and currency.
 				</Card>
 			</Main>
 		);
 	}
 
 }
+
+export default localize( SettingsCheckout );
