@@ -2,10 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import debugFactory from 'debug';
 import React, { Component, PropTypes } from 'react';
-
-const debug = debugFactory( 'calypso:store-sidebar' );
 
 /**
  * Internal dependencies
@@ -20,13 +17,23 @@ import StoreGroundControl from './store-ground-control';
 export default class StoreSidebar extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
-		sidebarItems: PropTypes.array, // TODO enforce shape
-		sidebarItemButtons: PropTypes.array, // TODO enforce shape
-		site: PropTypes.object, // TODO enforce slug in shape
+		sidebarItems: PropTypes.arrayOf( PropTypes.shape( {
+			icon: PropTypes.string.isRequired,
+			isPrimary: PropTypes.bool.isRequired,
+			label: PropTypes.string.isRequired,
+			path: PropTypes.string.isRequired,
+			slug: PropTypes.string.isRequired,
+		} ) ),
+		sidebarItemButtons: PropTypes.arrayOf( PropTypes.shape( {
+			label: PropTypes.string.isRequired,
+			parentSlug: PropTypes.string.isRequired,
+			path: PropTypes.string.isRequired,
+			slug: PropTypes.string.isRequired,
+		} ) ),
+		site: PropTypes.object,
 	}
 
 	onNavigate = () => {
-		// TODO - this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
 	}
 
@@ -90,24 +97,17 @@ export default class StoreSidebar extends Component {
 		}, this );
 	}
 
-	onBack = () => {
-		// TODO - decide what path should go in on back
-		// Probably stats/day/:site
-	}
-
 	render = () => {
-		const { path, sidebarItems, sidebarItemButtons, site } = this.props;
-		debug( 'rendering store sidebar for path:', path );
+		const { sidebarItems, sidebarItemButtons, site } = this.props;
 
 		// The store sidebar only makes sense in the context of a site
 		if ( ! site ) {
-			debug( 'attempted to render store sidebar outside of site context' );
 			return null;
 		}
 
 		return (
 			<Sidebar className="store-sidebar__sidebar">
-				<StoreGroundControl onBack={ this.onBack } site={ site } />
+				<StoreGroundControl site={ site } />
 				<SidebarMenu>
 					<ul>
 						{ this.renderSidebarMenuItems( sidebarItems.filter( item => item.isPrimary ), sidebarItemButtons ) }
@@ -119,6 +119,3 @@ export default class StoreSidebar extends Component {
 		);
 	}
 }
-
-// TODO mapStateToProps
-// TODO connect setNextLayoutFocus and SetLayoutFocus

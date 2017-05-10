@@ -12,14 +12,15 @@ const Gridicon = require( 'gridicons' ),
 
 import Button from 'components/button';
 
-const StoreGroundControl = ( { onBack, site, translate } ) => {
+const StoreGroundControl = ( { site, translate } ) => {
+	const backLink = '/stats/day/' + site.slug;
+
 	return (
 		<div className="store-sidebar__ground-control">
 			<Button
 				borderless
 				className="store-sidebar__ground-control-back"
-				href={ '' }
-				onClick={ onBack }
+				href={ backLink }
 				aria-label={ translate( 'Go back' ) }
 			>
 				<Gridicon icon="arrow-left" />
@@ -38,8 +39,9 @@ const StoreGroundControl = ( { onBack, site, translate } ) => {
 };
 
 StoreGroundControl.propTypes = {
-	onBack: React.PropTypes.function,
-	site: React.PropTypes.object,
+	site: React.PropTypes.shape( {
+		slug: React.PropTypes.string.isRequired,
+	} ),
 };
 
 export default localize( StoreGroundControl );
