@@ -71,7 +71,7 @@ export function unfollow( feedUrl ) {
  *
  * @param  {String} feedUrl Feed URL
  * @param  {Object} response Error response (contains keys 'info' and 'subscribed')
- * @return {Function} Action thunk
+ * @return {Object} Action
  */
 export function recordFollowError( url, response ) {
 	const action = {
