@@ -11,6 +11,7 @@ import { mergeHandlers } from 'state/data-layer/utils';
 import followingNew from './new';
 import followingDelete from './delete';
 import {
+	READER_FOLLOW,
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
 } from 'state/action-types';
@@ -54,7 +55,7 @@ export const subscriptionsFromApi = apiResponse => {
 };
 
 let syncingFollows = false;
-let seenSubscriptions;
+let seenSubscriptions = null;
 export const isSyncingFollows = () => syncingFollows;
 export const resetSyncingFollows = () => syncingFollows = false;
 
@@ -106,7 +107,7 @@ export function receivePage( store, action, next, apiResponse ) {
 	);
 
 	forEach( follows, ( follow ) => {
-		seenSubscriptions.add( follow.ID );
+		seenSubscriptions.add( follow.feed_URL );
 	} );
 
 	// Fetch the next page of subscriptions where applicable
@@ -119,13 +120,21 @@ export function receivePage( store, action, next, apiResponse ) {
 	const currentFollows = getReaderFollows( store.getState() );
 	const followsToRemove = filter( currentFollows, ( follow ) => follow.ID &&
 		follow.is_following &&
-		! seenSubscriptions.has( follow.ID )
+		! seenSubscriptions.has( follow.feed_URL )
 	);
 
 	// do this with next so we don't trigger a network request
 	forEach( followsToRemove, f => next( unfollowAction( f.feed_URL ) ) );
 
+	seenSubscriptions = null;
 	syncingFollows = false;
+}
+
+export function updateSeenOnFollow( store, action, next ) {
+	if ( seenSubscriptions ) {
+		seenSubscriptions.add( action.payload.feedUrl );
+	}
+	next( action );
 }
 
 export function receiveError( store ) {
@@ -138,6 +147,7 @@ export function receiveError( store ) {
 const followingMine = {
 	[ READER_FOLLOWS_SYNC_START ]: [ syncReaderFollows ],
 	[ READER_FOLLOWS_SYNC_PAGE ]: [ dispatchRequest( requestPage, receivePage, receiveError ) ],
+	[ READER_FOLLOW ]: [ updateSeenOnFollow ]
 };
 
 export default mergeHandlers(

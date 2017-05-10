@@ -20,8 +20,9 @@ import {
 	isValidApiResponse,
 	syncReaderFollows,
 	resetSyncingFollows,
+	updateSeenOnFollow,
 } from '../';
-import { receiveFollows as receiveFollowsAction, unfollow } from 'state/reader/follows/actions';
+import { receiveFollows as receiveFollowsAction, follow, unfollow } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
 
@@ -151,6 +152,48 @@ describe( 'get follow subscriptions', () => {
 			} ) );
 
 			expect( next ).to.be.calledWith( unfollow( 'http://example.com' ) );
+		} );
+
+		it( 'should not unfollow a feed followed during the sync', () => {
+			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
+			const action = requestPageAction(); // no feeds
+			const ignoredDispatch = noop;
+			const dispatch = sinon.spy();
+			const next = sinon.spy();
+
+			const getState = () => ( {
+				reader: {
+					follows: {
+						items: {
+							'feed.example.com': {
+								ID: 6,
+								is_following: true,
+								feed_URL: 'http://feed.example.com',
+							}
+						}
+					}
+				}
+			} );
+
+			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction, next );
+			receivePage( { dispatch: ignoredDispatch }, action, next, successfulApiResponse );
+
+			updateSeenOnFollow( { dispatch: ignoredDispatch }, follow( 'http://feed.example.com' ), next );
+
+			receivePage( { dispatch, getState }, action, next, {
+				number: 0,
+				page: 2,
+				total_subscriptions: 10,
+				subscriptions: [],
+			} );
+
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith( receiveFollowsAction( {
+				follows: [],
+				totalCount: 10
+			} ) );
+
+			expect( next ).to.have.not.been.calledWith( unfollow( 'http://feed.example.com' ) );
 		} );
 	} );
 
