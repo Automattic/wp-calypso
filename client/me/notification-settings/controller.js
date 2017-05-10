@@ -12,12 +12,12 @@ import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import devicesFactory from 'lib/devices';
-import sitesFactory from 'lib/sites-list';
+// import sitesFactory from 'lib/sites-list';
 import userFactory from 'lib/user';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 const devices = devicesFactory();
-const sites = sitesFactory();
+// const sites = sitesFactory();
 const user = userFactory();
 
 export default {
@@ -33,7 +33,7 @@ export default {
 			React.createElement( NotificationsComponent, {
 				user: user,
 				userSettings: userSettings,
-				blogs: sites,
+				// blogs: sites,
 				devices: devices,
 				path: context.path
 			} ),
