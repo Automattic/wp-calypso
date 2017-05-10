@@ -21,7 +21,7 @@ const WPSuperCache = ( { site, tab } ) => {
 			case Tabs.ADVANCED:
 				return <AdvancedTab />;
 			case Tabs.CDN:
-				return <CdnTab siteUrl={ site.URL } />;
+				return <CdnTab />;
 			case Tabs.CONTENTS:
 				return <ContentsTab isMultisite={ site.is_multisite } />;
 			case Tabs.PRELOAD:
