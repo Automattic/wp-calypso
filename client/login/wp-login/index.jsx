@@ -38,7 +38,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 
-class Login extends React.Component {
+export class Login extends React.Component {
 	static propTypes = {
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		magicLoginEmailAddress: PropTypes.string,
@@ -117,7 +117,7 @@ class Login extends React.Component {
 		}
 	};
 
-	footerLinks() {
+	footerLinks = () => {
 		const {
 			magicLoginEnabled,
 			magicLoginView,
@@ -158,7 +158,7 @@ class Login extends React.Component {
 			showMagicLoginLink,
 			resetPasswordLink,
 		] );
-	}
+	};
 
 	render() {
 		const {
