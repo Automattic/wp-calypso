@@ -164,7 +164,7 @@ export class LoginForm extends Component {
 
 						<div className="login__form-action">
 							<FormsButton primary { ...isDisabled }>
-								{ this.props.translate( 'Log in' ) }
+								{ this.props.translate( 'Log In' ) }
 							</FormsButton>
 						</div>
 					</Card>
