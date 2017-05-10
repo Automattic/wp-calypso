@@ -4,6 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import {
+	bind,
 	camelCase,
 	deburr,
 	head,
@@ -12,6 +13,7 @@ import {
 	omit,
 	reduce,
 } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -28,10 +30,14 @@ import FormButton from 'components/forms/form-button';
 import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 // Cannot convert to ES6 import
 const wpcom = require( 'lib/wp' ).undocumented(),
 	countriesList = countriesListForDomainRegistrations();
+
+const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 
 export default React.createClass( {
 	displayName: 'DomainDetailsForm',
@@ -280,10 +286,34 @@ export default React.createClass( {
 	},
 
 	renderAddressFields() {
+		const frNotice = ( <Notice
+			status="is-info"
+			showDismiss={ false }
+			text={  "registrants must be a resident of the European Union, Switzerland, Norway, Iceland or Liechtenstein and must provide their place and date of birth in the OpenSRS Order Notes." }
+			icon="globe"
+			isCompact={ true }>
+			<NoticeAction href="#">
+				{ "Add As Additional Address" }
+			</NoticeAction>
+		</Notice> );
+		const deNotice = ( <Notice
+			status="is-info"
+			showDismiss={ false }
+			text="example.de requires an address in Germany"
+			icon="globe"
+			isCompact={ true }>
+			<NoticeAction href="#">
+				{ "Add As Additional Address" }
+			</NoticeAction>
+		</Notice> );
+
 		return (
 			<div>
-				<Input label={ this.translate( 'Address' ) } maxLength={ 40 } { ...this.getFieldProps( 'address-1' ) }/>
-
+				<Input
+					label={ this.translate( 'Address' ) }
+					maxLength={ 40 }
+					{ ...this.getFieldProps( 'address-1' ) }
+					notices={ [ frNotice, deNotice ] } />
 				<HiddenInput
 					label={ this.translate( 'Address Line 2' ) }
 					text={ this.translate( '+ Add Address Line 2' ) }
@@ -315,24 +345,41 @@ export default React.createClass( {
 	},
 
 	renderDetailsForm() {
-		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails();
+		const needsOnlyGoogleAppsFields = this.needsOnlyGoogleAppsDetails();
+		const fields = needsOnlyGoogleAppsFields
+			? [ 'name', 'country', 'postcode' ]
+			: [ 'name', 'organization', 'email', 'phone', 'country',
+				this.needsFax() ? 'fax' : '',
+				'address', 'city', 'state', 'postcode' ];
 
 		return (
 			<form>
-				{ this.renderNameFields() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderOrganizationField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderEmailField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderPhoneField() }
-				{ this.renderCountryField() }
-				{ ! needsOnlyGoogleAppsDetails && this.needsFax() && this.renderFaxField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderAddressFields() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderCityField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderStateField() }
-				{ this.renderPostalCodeField() }
-
+				{ map( fields, this.renderField, this ) }
 				{ this.renderSubmitButton() }
 			</form>
 		);
+	},
+
+	renderField( fieldName ) {
+		const renderFunctionsByFieldName = {
+			name: this.renderNameFields,
+			organization: this.renderOrganizationField,
+			email: this.renderEmailField,
+			phone: this.renderPhoneField,
+			country: this.renderCountryField,
+			fax: this.renderFaxField,
+			address: this.renderAddressFields,
+			city: this.renderCityField,
+			state: this.renderStateField,
+			postcode: this.renderPostalCodeField,
+		};
+
+		if ( ! renderFunctionsByFieldName[ fieldName ] ) {
+			fieldName && debug( 'Unrecognized field: ' + fieldName );
+			return null;
+		}
+
+		return bind( renderFunctionsByFieldName[ fieldName ], this )();
 	},
 
 	handleCheckboxChange() {
