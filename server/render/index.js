@@ -96,13 +96,9 @@ export function serverRender( req, res ) {
 		links = getDocumentHeadLink( context.store.getState() );
 
 		let reduxSubtrees = [ 'documentHead' ];
-		if ( isSectionIsomorphic( context.store.getState() ) ) {
-			reduxSubtrees = reduxSubtrees.concat( [ 'ui' ] );
-
-			// Send themes redux state only in logged-out scenario
-			if ( ! context.user ) {
-				reduxSubtrees = reduxSubtrees.concat( [ 'themes' ] );
-			}
+		// Send themes redux state only in logged-out scenario
+		if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
+			reduxSubtrees = reduxSubtrees.concat( [ 'ui', 'themes' ] );
 		}
 
 		// Send state to client
