@@ -16,7 +16,7 @@ const isSiteOnPaidPlan = ( state, siteId ) => {
 	const currentPlan = getCurrentPlan( state, siteId );
 
 	if ( ! currentPlan ) {
-		return null;
+		return false;
 	}
 
 	return currentPlan.productSlug !== PLAN_FREE;
