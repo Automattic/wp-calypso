@@ -55,13 +55,13 @@ class PlanFeatures extends Component {
 		super( props );
 		this.handleShowFeatureButtonClick = this.handleShowFeatureButtonClick.bind( this );
 		this.state = {
-			showFeatures: true,
+			hideFeatures: true,
 		};
 	}
 
 	toggleClass() {
-		const currentState = this.state.showFeatures;
-		this.setState( { showFeatures: ! currentState } );
+		const currentState = this.state.hideFeatures;
+		this.setState( { hideFeatures: ! currentState } );
 	}
 
 	render() {
@@ -94,7 +94,6 @@ class PlanFeatures extends Component {
 							</tr>
 						</tbody>
 					</table>
-					{ this.renderShowFeaturesButton() }
 				</div>
 			</div>
 		);
@@ -105,17 +104,21 @@ class PlanFeatures extends Component {
 			return null;
 		}
 
-		const buttonClass = 'is-borderless';
+		const showClass = abtest( 'signupPlansPageSimplification' ) === 'modified' && this.state.hideFeatures;
+
+		const buttonClass = 'is-borderless btn-toggle-features';
+		const containerClass = classNames( 'toggle-container' );
+
 		const featuresHiddenClass = classNames( {
-			'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && this.state.showFeatures,
+			'plan-features__hide': showClass,
 		} );
 
 		const featuresVisibleClass = classNames( {
-			'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && ! this.state.showFeatures,
+			'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && ! this.state.hideFeatures,
 		} );
 
 		return (
-			<div className={ 'plan-features__toggle-container' }>
+			<div className={ containerClass }>
 				<Button
 					className={ buttonClass }
 					onClick={ this.handleShowFeatureButtonClick }>
@@ -296,6 +299,10 @@ class PlanFeatures extends Component {
 				'is-placeholder': isPlaceholder
 			} );
 
+			const descriptionClass = classNames('plan-features__description', {
+				'plan-features__description--test': abtest( 'signupPlansPageSimplification' ) === 'modified'
+			});
+
 			return (
 				<td key={ planName } className={ classes }>
 					{
@@ -304,7 +311,7 @@ class PlanFeatures extends Component {
 							: null
 					}
 
-					<p className="plan-features__description">
+					<p className={ descriptionClass }>
 						{ planConstantObj.getDescription( abtest ) }
 					</p>
 				</td>
@@ -350,6 +357,7 @@ class PlanFeatures extends Component {
 						isLandingPage={ isLandingPage }
 						manageHref={ `/plans/my-plan/${ site.slug }` }
 					/>
+					{ this.renderShowFeaturesButton() }
 				</td>
 			);
 		} );
@@ -369,7 +377,7 @@ class PlanFeatures extends Component {
 	renderPlanFeatureRows() {
 		const longestFeatures = this.getLongestFeaturesList();
 		const classes = classNames( 'plan-features__row', {
-			'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && this.state.showFeatures,
+			'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && this.state.hideFeatures,
 		} );
 
 		return map( longestFeatures, ( featureKey, rowIndex ) => {
@@ -448,7 +456,7 @@ class PlanFeatures extends Component {
 				'plan-features__table-item',
 				'has-border-bottom',
 				'is-bottom-buttons', {
-					'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && this.state.showFeatures,
+					'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && this.state.hideFeatures,
 				}
 			);
 			return (

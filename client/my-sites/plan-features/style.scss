@@ -430,13 +430,28 @@ $plan-features-sidebar-width: 272px;
 
 /* For signupPlansPageSimplification a/b test */
 
+.plan-features__description--test {
+	text-align: center;
+	margin-bottom: 24px;
+
+	strong {
+		display: block;
+		margin-bottom: 1em;
+	}
+}
+
 .plan-features__hide {
 	display: none;
 }
 
-.plan-features__toggle-container {
+.btn-toggle-features {
+	font-weight: normal;
+	font-size: 0.9em;
+}
+
+.toggle-container {
 	text-align: center;
-	margin-top: -0.5em;
+	margin-top: -20px;
 }
 
 /* End signupPlansPageSimplification a/b test */
