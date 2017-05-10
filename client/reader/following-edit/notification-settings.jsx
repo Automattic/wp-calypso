@@ -141,7 +141,8 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 		if ( isExternal ) {
 			return (
-				<Card className="is-compact is-impossible-to-send-email following-edit__notification-settings-card" key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
+				<Card className="is-compact is-impossible-to-send-email following-edit__notification-settings-card"
+					key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
 					<p>{ this.props.translate( 'RSS feeds do not allow for email notifications.' ) }</p>
 				</Card>
 			);
@@ -149,7 +150,8 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 		if ( this.props.isEmailBlocked ) {
 			return (
-				<Card className="is-compact is-impossible-to-send-email following-edit__notification-settings-card" key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
+				<Card className="is-compact is-impossible-to-send-email following-edit__notification-settings-card"
+					key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
 					<p>{ this.props.translate( 'You have blocked all email updates from your subscribed blogs.' ) }</p>
 					<p>{ this.props.translate( 'You can change this in your {{settingsLink}}Notification Settings{{/settingsLink}}.',
 						{
