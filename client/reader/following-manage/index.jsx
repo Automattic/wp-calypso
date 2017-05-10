@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { trim, debounce } from 'lodash';
+import { trim, debounce, random, take } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
@@ -15,8 +15,14 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import ReaderMain from 'components/reader-main';
-import { getReaderFeedsForQuery, getReaderFeedsCountForQuery } from 'state/selectors';
+import {
+	getReaderFeedsForQuery,
+	getReaderFeedsCountForQuery,
+	getReaderRecommendedSites,
+} from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
+import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
+import RecommendedSites from 'blocks/reader-recommended-sites';
 import FollowingManageSubscriptions from './subscriptions';
 import FollowingManageSearchFeedsResults from './feed-search-results';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
@@ -45,6 +51,7 @@ class FollowingManage extends Component {
 
 	state = {
 		width: 800,
+		seed: random( 0, 10000 ),
 		forceRefresh: false,
 	};
 
@@ -129,7 +136,8 @@ class FollowingManage extends Component {
 			translate,
 			searchResults,
 			searchResultsCount,
-			showMoreResults
+			showMoreResults,
+			getRecommendedSites,
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 		const showExistingSubscriptions = ! ( !! sitesQuery && showMoreResults );
@@ -138,6 +146,7 @@ class FollowingManage extends Component {
 		if ( isSitesQueryUrl ) {
 			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		}
+		const recommendedSites = getRecommendedSites( this.state.seed );
 
 		return (
 			<ReaderMain className="following-manage">
@@ -146,6 +155,7 @@ class FollowingManage extends Component {
 					<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
 				{ ! searchResults && ! isSitesQueryUrl && <QueryReaderFeedsSearch query={ sitesQuery } /> }
+				{ ! recommendedSites && <QueryReaderRecommendedSites seed={ this.state.seed } /> }
 				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
@@ -173,6 +183,9 @@ class FollowingManage extends Component {
 						</div>
 					) }
 				</div>
+				{ recommendedSites && ! sitesQuery && (
+					<RecommendedSites sites={ take( recommendedSites, 2 ) } />
+				) }
 				{ !! sitesQuery && ! isSitesQueryUrl && (
 					<FollowingManageSearchFeedsResults
 						searchResults={ searchResults }
@@ -201,6 +214,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		searchResults: getReaderFeedsForQuery( state, ownProps.sitesQuery ),
 		searchResultsCount: getReaderFeedsCountForQuery( state, ownProps.sitesQuery ),
+		getRecommendedSites: seed => getReaderRecommendedSites( state, seed ),
 	} ),
 	{ requestFeedSearch }
 )( localize( FollowingManage ) );
