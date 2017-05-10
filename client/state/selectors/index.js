@@ -82,6 +82,7 @@ export getSiteSetting from './get-site-setting';
 export getSiteStatsQueryDate from './get-site-stats-query-date';
 export getSiteStatsViewSummary from './get-site-stats-view-summary';
 export getSites from './get-sites';
+export getSiteSlugsForUpcomingTransactions from './get-site-slugs-for-upcoming-transactions';
 export getThemeFilters from './get-theme-filters';
 export getThemeFilterTerm from './get-theme-filter-term';
 export getThemeFilterTerms from './get-theme-filter-terms';
