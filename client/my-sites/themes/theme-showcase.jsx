@@ -18,13 +18,13 @@ import SubMasterbarNav from 'components/sub-masterbar-nav';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import { prependFilterKeys, getSortedFilterTerms, stripFilters, getSubjects } from './theme-filters.js';
+import { prependFilterKeys, getSortedFilterTerms, stripFilters } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
-import { getThemeShowcaseDescription, getThemeShowcaseTitle } from 'state/selectors';
+import { getThemeFilterTerms, getThemeShowcaseDescription, getThemeShowcaseTitle } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
@@ -174,7 +174,7 @@ const ThemeShowcase = React.createClass( {
 			uri: this.constructUrl( { vertical: '' } ),
 			icon: 'star'
 		} ].concat(
-			getSubjects()
+			Object.keys( this.props.subjects )
 				.map( subject => subjectsMeta[ subject ] && {
 					label: subject,
 					uri: this.constructUrl( { vertical: subject } ),
@@ -257,6 +257,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	isJetpack: isJetpackSite( state, siteId ),
 	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
+	subjects: getThemeFilterTerms( state, 'subject' ),
 } );
 
 const mapDispatchToProps = {

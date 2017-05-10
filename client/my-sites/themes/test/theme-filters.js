@@ -16,7 +16,6 @@ import {
 	stripFilters,
 	sortFilterTerms,
 	filterIsValid,
-	isValidTerm,
 } from '../theme-filters.js';
 
 describe( 'theme-filters', () => {
@@ -96,20 +95,6 @@ describe( 'theme-filters', () => {
 			assert.isFalse( filterIsValid( 'subject:' ) );
 			assert.isFalse( filterIsValid( ':music' ) );
 			assert.isFalse( filterIsValid( ':' ) );
-		} );
-	} );
-
-	describe( 'isValidTerm', () => {
-		it( 'should return true for a valid term string', () => {
-			assert.isTrue( isValidTerm( 'music' ) );
-			assert.isTrue( isValidTerm( 'feature:video' ) );
-		} );
-
-		it( 'should return false for an invalid filter string', () => {
-			assert.isFalse( isValidTerm( 'video' ) );
-			assert.isFalse( isValidTerm( '' ) );
-			assert.isFalse( isValidTerm( ':video' ) );
-			assert.isFalse( isValidTerm( ':' ) );
 		} );
 	} );
 } );
