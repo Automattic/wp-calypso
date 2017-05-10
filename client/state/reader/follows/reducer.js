@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { find, get, isEqual, merge, reduce } from 'lodash';
+import { find, get, isEqual, merge, omitBy, pickBy, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,14 +13,17 @@ import {
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_SYNC_START,
+	READER_FOLLOWS_SYNC_COMPLETE,
 	READER_FOLLOWS_RECEIVE,
 	READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
 	READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
+	SERIALIZE,
 } from 'state/action-types';
 import { prepareComparableUrl } from './utils';
+import { items as itemsSchema } from './schema';
 import { createReducer } from 'state/utils';
 
 function updatePostSubscription( state, { payload, type } ) {
@@ -130,7 +133,21 @@ export const items = createReducer( {}, {
 	[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
 	[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
 	[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
-} );
+	[ READER_FOLLOWS_SYNC_COMPLETE ]: ( state, action ) => {
+		const seenSubscriptions = new Set( action.payload );
+
+		// diff what we saw vs. what's in state and remove anything extra
+		// extra would be active subscriptions that were not seen in the sync
+		//
+		// Only check items with an ID (the subscription ID) because those are what
+		// we show on the manage listing. Items without an ID are either inflight follows
+		// or follows that we picked up from a feed, site, or post object.
+		return omitBy( state, ( follow ) => follow.ID &&
+			! seenSubscriptions.has( follow.feed_URL )
+		);
+	},
+	[ SERIALIZE ]: ( state ) => pickBy( state, item => item.is_following ),
+}, itemsSchema );
 
 export const itemsCount = createReducer( 0, {
 	[ READER_FOLLOWS_RECEIVE ]: ( state, action ) => {

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { map, omitBy, isArray, isUndefined } from 'lodash';
+import { forEach, map, omitBy, isArray, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,10 +11,14 @@ import { mergeHandlers } from 'state/data-layer/utils';
 import followingNew from './new';
 import followingDelete from './delete';
 import {
+	READER_FOLLOW,
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
 } from 'state/action-types';
-import { receiveFollows as receiveFollowsAction } from 'state/reader/follows/actions';
+import {
+	receiveFollows as receiveFollowsAction,
+	syncComplete,
+} from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
@@ -53,6 +57,7 @@ export const subscriptionsFromApi = apiResponse => {
 };
 
 let syncingFollows = false;
+let seenSubscriptions = null;
 export const isSyncingFollows = () => syncingFollows;
 export const resetSyncingFollows = () => syncingFollows = false;
 
@@ -62,6 +67,7 @@ export function syncReaderFollows( store, action, next ) {
 	}
 
 	syncingFollows = true;
+	seenSubscriptions = new Set();
 
 	store.dispatch( requestPageAction( 1 ) );
 
@@ -86,6 +92,7 @@ export function requestPage( store, action, next ) {
 }
 
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
+
 export function receivePage( store, action, next, apiResponse ) {
 	if ( ! isValidApiResponse( apiResponse, action ) ) {
 		receiveError( store, action, next, apiResponse );
@@ -93,20 +100,35 @@ export function receivePage( store, action, next, apiResponse ) {
 	}
 
 	const { page, number } = apiResponse;
-
+	const follows = subscriptionsFromApi( apiResponse );
 	store.dispatch(
 		receiveFollowsAction( {
-			follows: subscriptionsFromApi( apiResponse ),
+			follows,
 			totalCount: apiResponse.total_subscriptions,
 		} )
 	);
+
+	forEach( follows, ( follow ) => {
+		seenSubscriptions.add( follow.feed_URL );
+	} );
 
 	// Fetch the next page of subscriptions where applicable
 	if ( number > 0 && page <= MAX_PAGES_TO_FETCH && isSyncingFollows() ) {
 		store.dispatch( requestPageAction( page + 1 ) );
 		return;
 	}
+	// all done syncing
+	store.dispatch( syncComplete( Array.from( seenSubscriptions ) ) );
+
+	seenSubscriptions = null;
 	syncingFollows = false;
+}
+
+export function updateSeenOnFollow( store, action, next ) {
+	if ( seenSubscriptions ) {
+		seenSubscriptions.add( action.payload.feedUrl );
+	}
+	next( action );
 }
 
 export function receiveError( store ) {
@@ -119,6 +141,7 @@ export function receiveError( store ) {
 const followingMine = {
 	[ READER_FOLLOWS_SYNC_START ]: [ syncReaderFollows ],
 	[ READER_FOLLOWS_SYNC_PAGE ]: [ dispatchRequest( requestPage, receivePage, receiveError ) ],
+	[ READER_FOLLOW ]: [ updateSeenOnFollow ]
 };
 
 export default mergeHandlers(
