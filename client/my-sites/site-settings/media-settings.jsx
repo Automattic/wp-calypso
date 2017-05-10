@@ -72,8 +72,18 @@ class MediaSettings extends Component {
 					disabled={ isRequestingOrSaving }
 				/>
 			</FormFieldset>
+			: null;
+	}
+
+	renderVideoUpgradeNudge() {
+		const {
+			isVideoPressAvailable,
+			translate,
+		} = this.props;
+
+		return isVideoPressAvailable
+			? null
 			: <Banner
-				//description={ translate( 'Upgrade to Jetpack Premium to get 13gb of video.' ) }
 				event={ 'jetpack_video_settings' }
 				feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM }
 				plan={ PLAN_JETPACK_PREMIUM }
@@ -98,69 +108,69 @@ class MediaSettings extends Component {
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
 		return (
-			<Card className="media-settings site-settings site-settings__module-settings">
-				<QueryJetpackConnection siteId={ selectedSiteId } />
+			<div className="media-settings__wrapper">
+				<Card className="media-settings site-settings site-settings__module-settings">
+					<QueryJetpackConnection siteId={ selectedSiteId } />
+					<FormFieldset>
+						<div className="media-settings__info-link-container site-settings__info-link-container">
+							<InfoPopover position="left">
+								<ExternalLink target="_blank" icon={ true } href="https://jetpack.com/support/photon" >
+									{ translate( 'Learn more about Photon.' ) }
+								</ExternalLink>
+							</InfoPopover>
+						</div>
+						<JetpackModuleToggle
+							siteId={ siteId }
+							moduleSlug="photon"
+							label={ translate( 'Speed up your images and photos with Photon' ) }
+							description={ translate( 'Must be enabled to use tiled galleries.' ) }
+							disabled={ isRequestingOrSaving || photonModuleUnavailable }
+							/>
+					</FormFieldset>
+					<FormFieldset className="media-settings__formfieldset has-divider is-top-only">
+						<div className="media-settings__info-link-container site-settings__info-link-container">
+							<InfoPopover position="left">
+								<ExternalLink target="_blank" icon={ true } href="https://jetpack.com/support/carousel" >
+									{ translate( 'Learn more about Carousel.' ) }
+								</ExternalLink>
+							</InfoPopover>
+						</div>
+						<JetpackModuleToggle
+							siteId={ siteId }
+							moduleSlug="carousel"
+							label={ translate( 'Transform standard image galleries into full-screen slideshows' ) }
+							disabled={ isRequestingOrSaving }
+							/>
+						<div className="media-settings__module-settings site-settings__child-settings">
+							<CompactFormToggle
+								checked={ fields.carousel_display_exif || false }
+								disabled={ isRequestingOrSaving || ! carouselActive }
+								onChange={ handleAutosavingToggle( 'carousel_display_exif' ) } >
+								{ translate( 'Show photo metadata in carousel, when available' ) }
+							</CompactFormToggle>
+							<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
+								{ translate( 'Background color' ) }
+							</FormLabel>
+							<FormSelect
+								name="carousel_background_color"
+								id="carousel_background_color"
+								value={ fields.carousel_background_color || 'black' }
+								onChange={ onChangeField( 'carousel_background_color' ) }
+								disabled={ isRequestingOrSaving || ! carouselActive } >
+								<option value="black" key="carousel_background_color_black">
+									{ translate( 'Black' ) }
+								</option>
+								<option value="white" key="carousel_background_color_white">
+									{ translate( 'White' ) }
+								</option>
+							</FormSelect>
+						</div>
+					</FormFieldset>
+					{ this.renderVideoSettings() }
+				</Card>
+				{ this.renderVideoUpgradeNudge() }
+			</div>
 
-				<FormFieldset>
-					<div className="media-settings__info-link-container site-settings__info-link-container">
-						<InfoPopover position="left">
-							<ExternalLink target="_blank" icon={ true } href="https://jetpack.com/support/photon" >
-								{ translate( 'Learn more about Photon.' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
-					<JetpackModuleToggle
-						siteId={ siteId }
-						moduleSlug="photon"
-						label={ translate( 'Speed up your images and photos with Photon' ) }
-						description={ translate( 'Must be enabled to use tiled galleries.' ) }
-						disabled={ isRequestingOrSaving || photonModuleUnavailable }
-						/>
-				</FormFieldset>
-
-				<FormFieldset className="media-settings__formfieldset has-divider is-top-only">
-					<div className="media-settings__info-link-container site-settings__info-link-container">
-						<InfoPopover position="left">
-							<ExternalLink target="_blank" icon={ true } href="https://jetpack.com/support/carousel" >
-								{ translate( 'Learn more about Carousel.' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
-					<JetpackModuleToggle
-						siteId={ siteId }
-						moduleSlug="carousel"
-						label={ translate( 'Transform standard image galleries into full-screen slideshows' ) }
-						disabled={ isRequestingOrSaving }
-						/>
-					<div className="media-settings__module-settings site-settings__child-settings">
-						<CompactFormToggle
-							checked={ fields.carousel_display_exif || false }
-							disabled={ isRequestingOrSaving || ! carouselActive }
-							onChange={ handleAutosavingToggle( 'carousel_display_exif' ) } >
-							{ translate( 'Show photo metadata in carousel, when available' ) }
-						</CompactFormToggle>
-						<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
-							{ translate( 'Background color' ) }
-						</FormLabel>
-						<FormSelect
-							name="carousel_background_color"
-							id="carousel_background_color"
-							value={ fields.carousel_background_color || 'black' }
-							onChange={ onChangeField( 'carousel_background_color' ) }
-							disabled={ isRequestingOrSaving || ! carouselActive } >
-							<option value="black" key="carousel_background_color_black">
-								{ translate( 'Black' ) }
-							</option>
-							<option value="white" key="carousel_background_color_white">
-								{ translate( 'White' ) }
-							</option>
-						</FormSelect>
-					</div>
-				</FormFieldset>
-
-				{ this.renderVideoSettings() }
-
-			</Card>
 		);
 	}
 }
