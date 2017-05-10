@@ -1,12 +1,17 @@
 .reader-subscription-list-item {
 	display: flex;
 	flex-direction: row;
+	justify-content: flex-start;
 }
 
 .reader-subscription-list-item__byline {
 	color: darken( $gray, 30% );
-	flex: 1 0 0;
-	padding-right: 10px;
+	margin-right: 16px;
+	width: 100%;
+
+	@include breakpoint( ">660px" ) {
+		width: calc( 100% - 144px );
+	}
 }
 
 .reader-subscription-list-item__options {
@@ -15,7 +20,7 @@
 
 	.button.follow-button {
 		display: flex;
-		justify-content: flex-end;
+		justify-content: flex-start;
 	}
 }
 
@@ -130,19 +135,18 @@
 .reader-subscription-list-item .gridicons-cog {
 	fill: lighten( $gray, 10% );
 	height: 18px;
-	padding-right: 7px;
 	position: relative;
-		left: 5px;
+		left: 0;
 		top: 4px;
-	width: 18px;
 
 	@include breakpoint( ">660px" ) {
-		left: 4px;
+		left: -4px;
 	}
 }
 
 .reader-subscription-list-item .follow-button .gridicon {
 	height: 24px;
+	padding-right: 6px;
 	top: 2px;
 }
 
@@ -156,11 +160,6 @@
 
 .reader-subscription-list-item__settings-menu {
 	color: $gray;
-	padding-left: 0;
-
-	@include breakpoint( ">660px" ) {
-		padding-left: 8px;
-	}
 }
 
 // Settings popover
