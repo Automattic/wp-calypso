@@ -307,6 +307,10 @@
 .products__additional-details-card {
 	margin-top: -1em;
 	border-top: 0;
+
+	&.is-expanded {
+		margin-bottom: 16px;
+	}
 }
 
 .products__additional-details-form-labels {
