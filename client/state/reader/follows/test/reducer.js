@@ -11,8 +11,12 @@ import {
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
+<<<<<<< HEAD
 	SERIALIZE,
 	DESERIALIZE,
+=======
+	READER_FOLLOW_ERROR,
+>>>>>>> Add follow error handling to reducer
 } from 'state/action-types';
 import {
 	subscribeToNewPostEmail,
@@ -22,7 +26,10 @@ import {
 	unsubscribeToNewCommentEmail,
 	follow,
 	unfollow,
+<<<<<<< HEAD
 	syncComplete,
+=======
+>>>>>>> Add follow error handling to reducer
 } from '../actions';
 import { items, itemsCount } from '../reducer';
 
@@ -469,6 +476,20 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 456 ) );
 			expect( state ).to.equal( original );
+		} );
+
+		it( 'should insert a follow error if one is received', () => {
+			const original = deepFreeze( {
+				'discoverinvalid.wordpress.com': { is_following: true },
+				'dailypost.wordpress.com': { is_following: true },
+			} );
+			const state = items( original, {
+				type: READER_FOLLOW_ERROR,
+				payload: { url: 'http://discoverinvalid.wordpress.com', error: 'invalid_feed' },
+			} );
+			expect( state[ 'discoverinvalid.wordpress.com' ] ).to.eql(
+				{ is_following: false, error: 'invalid_feed' }
+			);
 		} );
 	} );
 

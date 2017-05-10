@@ -13,9 +13,10 @@ import {
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOW_ERROR,
 } from 'state/action-types';
+import { recordFollowError } from '../actions';
 
 describe( 'actions', () => {
-	let recordFollow, recordUnfollow, recordFollowError;
+	let recordFollow, recordUnfollow;
 
 	useMockery( mockery => {
 		mockery.registerMock( 'state/reader/posts/actions', {
@@ -27,7 +28,6 @@ describe( 'actions', () => {
 		const actions = require( '../actions' );
 		recordFollow = actions.recordFollow;
 		recordUnfollow = actions.recordUnfollow;
-		recordFollowError = actions.recordFollowError;
 	} );
 
 	const spy = sinon.spy();
@@ -62,8 +62,8 @@ describe( 'actions', () => {
 	describe( '#recordFollowError', () => {
 		it( 'should dispatch an action on follow error', () => {
 			const response = { info: 'invalid_feed', subscribed: false };
-			recordFollowError( 'http://discover.wordpress.com', response )( dispatchSpy );
-			expect( dispatchSpy ).to.have.been.calledWith( {
+			const action = recordFollowError( 'http://discover.wordpress.com', response );
+			expect( action ).to.deep.equal( {
 				type: READER_FOLLOW_ERROR,
 				payload: { url: 'http://discover.wordpress.com', error: 'invalid_feed' }
 			} );
