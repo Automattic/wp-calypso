@@ -12,7 +12,7 @@ import Main from 'components/main';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 
-class SettingsCheckout extends Component {
+class SettingsPayments extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
@@ -22,7 +22,7 @@ class SettingsCheckout extends Component {
 		const { translate } = this.props;
 		return (
 			<Main
-				className={ classNames( 'settingsCheckout', this.props.className ) }>
+				className={ classNames( 'settingsPayments', this.props.className ) }>
 				<SectionHeader label={ translate( 'Store Location and Currency' ) } />
 				<Card>
 					Different payment methods may be available based on your store
@@ -34,4 +34,4 @@ class SettingsCheckout extends Component {
 
 }
 
-export default localize( SettingsCheckout );
+export default localize( SettingsPayments );
