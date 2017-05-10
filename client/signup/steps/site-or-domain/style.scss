@@ -43,6 +43,10 @@
 	display: none;
 }
 
+.site-or-domain__choice-text {
+	color: $gray-dark;
+}
+
 @include breakpoint( ">480px" ) {
 	.site-or-domain__choice-button {
 		margin-bottom: 1.5em;
