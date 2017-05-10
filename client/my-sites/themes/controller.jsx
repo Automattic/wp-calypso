@@ -18,6 +18,7 @@ import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/ac
 import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 import { getThemeFilters } from 'state/selectors';
+import { init as initThemeFiltersLib } from 'my-sites/themes/theme-filters';
 
 const debug = debugFactory( 'calypso:themes' );
 
@@ -111,13 +112,16 @@ export function fetchThemeData( context, next ) {
 export function fetchThemeFilters( context, next ) {
 	const { store } = context;
 
-	if ( ! isEmpty( getThemeFilters( store.getState() ) ) ) {
+	const themeFilters = getThemeFilters( store.getState() );
+	if ( ! isEmpty( themeFilters ) ) {
 		debug( 'found theme filters in cache' );
+		initThemeFiltersLib( themeFilters );
 		return next();
 	}
 
 	const unsubscribe = store.subscribe( () => {
 		if ( ! isEmpty( getThemeFilters( store.getState() ) ) ) {
+			initThemeFiltersLib( getThemeFilters( store.getState() ) );
 			unsubscribe();
 			return next();
 		}
