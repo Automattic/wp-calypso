@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Banner from 'components/banner';
 import Card from 'components/card';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -21,6 +22,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
+	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 } from 'lib/plans/constants';
 import {
 	isJetpackModuleActive,
@@ -43,6 +45,41 @@ class MediaSettings extends Component {
 		onChangeField: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 	};
+
+	renderVideoSettings() {
+		const {
+			isRequestingSettings,
+			isSavingSettings,
+			isVideoPressAvailable,
+			siteId,
+			translate,
+		} = this.props;
+		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
+
+		return isVideoPressAvailable
+			? <FormFieldset className="media-settings__formfieldset has-divider is-top-only">
+				<div className="media-settings__info-link-container site-settings__info-link-container">
+					<InfoPopover position="left">
+						<ExternalLink target="_blank" icon href="https://jetpack.com/support/videopress/" >
+							{ translate( 'Learn more about VideoPress.' ) }
+						</ExternalLink>
+					</InfoPopover>
+				</div>
+				<JetpackModuleToggle
+					siteId={ siteId }
+					moduleSlug="videopress"
+					label={ translate( 'Fast, ad-free video hosting' ) }
+					disabled={ isRequestingOrSaving }
+				/>
+			</FormFieldset>
+			: <Banner
+				//description={ translate( 'Upgrade to Jetpack Premium to get 13gb of video.' ) }
+				event={ 'jetpack_video_settings' }
+				feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM }
+				plan={ PLAN_JETPACK_PREMIUM }
+				title={ translate( 'Host fast, high-quality, ad-free video.' ) }
+			/>;
+	}
 
 	render() {
 		const {
@@ -121,21 +158,7 @@ class MediaSettings extends Component {
 					</div>
 				</FormFieldset>
 
-				<FormFieldset className="media-settings__formfieldset has-divider is-top-only">
-					<div className="media-settings__info-link-container site-settings__info-link-container">
-						<InfoPopover position="left">
-							<ExternalLink target="_blank" icon href="https://jetpack.com/support/videopress/" >
-								{ translate( 'Learn more about VideoPress.' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
-					<JetpackModuleToggle
-						siteId={ siteId }
-						moduleSlug="videopress"
-						label={ translate( 'Fast, ad-free video hosting' ) }
-						disabled={ isRequestingOrSaving }
-					/>
-				</FormFieldset>
+				{ this.renderVideoSettings() }
 
 			</Card>
 		);
