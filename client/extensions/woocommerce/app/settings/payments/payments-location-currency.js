@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,15 +12,11 @@ import SectionHeader from 'components/section-header';
 
 class SettingsPaymentsLocationCurrency extends Component {
 
-	static propTypes = {
-		className: PropTypes.string,
-	};
-
 	render() {
 		const { translate } = this.props;
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Store Location and Currency' ) } />
+				<SectionHeader label={ translate( 'Store location and currency' ) } />
 				<Card>
 					{
 						translate(

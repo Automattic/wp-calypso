@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -11,10 +11,6 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 
 class SettingsPaymentsOnSite extends Component {
-
-	static propTypes = {
-		className: PropTypes.string,
-	};
 
 	render() {
 		const { translate } = this.props;
