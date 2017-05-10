@@ -318,10 +318,7 @@ const SinglePlugin = React.createClass( {
 	render() {
 		const { selectedSite } = this.props;
 
-		if (
-			this.state.accessError &&
-			( ! selectedSite || selectedSite.jetpack )
-		) {
+		if ( this.state.accessError ) {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
