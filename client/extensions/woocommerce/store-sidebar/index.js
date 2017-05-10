@@ -73,6 +73,13 @@ export default class StoreSidebar extends Component {
 	renderSidebarMenuItems = ( items, buttons ) => {
 		return items.map( function( item, index ) {
 			const itemLink = this.itemLink( item.path );
+			const itemButton = buttons.filter( button => button.parentSlug === item.slug ).map( button => {
+				return (
+					<SidebarButton href={ this.itemLink( button.path ) } key={ button.slug } >
+						{ button.label }
+					</SidebarButton>
+				);
+			} );
 			return (
 				<SidebarItem
 					className={ this.itemLinkClass( itemLink, item.slug ) }
@@ -83,15 +90,7 @@ export default class StoreSidebar extends Component {
 					onNavigate={ this.onNavigate }
 					preloadSectionName={ item.slug }
 				>
-				{
-					buttons.filter( button => button.parentSlug === item.slug ).map( button => {
-						return (
-							<SidebarButton href={ this.itemLink( button.path ) } key={ button.slug } >
-								{ button.label }
-							</SidebarButton>
-						);
-					} )
-				}
+				{ itemButton }
 				</SidebarItem>
 			);
 		}, this );

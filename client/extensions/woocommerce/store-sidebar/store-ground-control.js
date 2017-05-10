@@ -7,10 +7,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-const Gridicon = require( 'gridicons' ),
-	Site = require( 'blocks/site' );
-
 import Button from 'components/button';
+import Gridicon from 'gridicons';
+import Site from 'blocks/site';
 
 const StoreGroundControl = ( { site, translate } ) => {
 	const backLink = '/stats/day/' + site.slug;
@@ -30,8 +29,8 @@ const StoreGroundControl = ( { site, translate } ) => {
 					compact
 					site={ site }
 					indicator={ false }
-					homeLink={ true }
-					externalLink={ true }
+					homeLink
+					externalLink
 				/>
 			</div>
 		</div>
