@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 import ReaderSidebarListsListItem from './list-item';
 
 export class ReaderSidebarListsList extends React.Component {
-
 	static propTypes = {
 		lists: React.PropTypes.array,
 		path: React.PropTypes.string.isRequired,
@@ -23,7 +22,7 @@ export class ReaderSidebarListsList extends React.Component {
 
 	static defaultProps = {
 		translate: identity,
-	}
+	};
 
 	renderItems() {
 		const { currentListOwner, currentListSlug, path } = this.props;
@@ -34,7 +33,8 @@ export class ReaderSidebarListsList extends React.Component {
 					list={ list }
 					path={ path }
 					currentListOwner={ currentListOwner }
-					currentListSlug={ currentListSlug } />
+					currentListSlug={ currentListSlug }
+				/>
 			);
 		} );
 	}
@@ -43,13 +43,13 @@ export class ReaderSidebarListsList extends React.Component {
 		const { translate, lists } = this.props;
 		if ( ! lists || lists.length === 0 ) {
 			return (
-				<li key="empty" className="sidebar__menu-empty">{ translate( 'Collect sites together by adding a list.' ) }</li>
+				<li key="empty" className="sidebar__menu-empty">
+					{ translate( 'Collect sites together by adding a list.' ) }
+				</li>
 			);
 		}
 
-		return (
-			<div>{ this.renderItems() }</div>
-		);
+		return <div>{ this.renderItems() }</div>;
 	}
 }
 

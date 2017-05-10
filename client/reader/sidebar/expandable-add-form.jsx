@@ -20,17 +20,17 @@ export class ExpandableSidebarAddForm extends Component {
 		onAddClick: PropTypes.func,
 		hideAddButton: PropTypes.bool,
 		translate: PropTypes.func,
-	}
+	};
 
 	static defaultProps = {
 		onAddSubmit: noop,
 		onAddClick: noop,
 		translate: identity,
-	}
+	};
 
 	state = {
 		isAdding: false,
-	}
+	};
 
 	toggleAdd = () => {
 		if ( ! this.state.isAdding ) {
@@ -38,9 +38,9 @@ export class ExpandableSidebarAddForm extends Component {
 			this.props.onAddClick();
 		}
 		this.setState( { isAdding: ! this.state.isAdding } );
-	}
+	};
 
-	handleAddKeyDown = ( event ) => {
+	handleAddKeyDown = event => {
 		const inputValue = this.refs.menuAddInput.value;
 		if ( event.keyCode === 13 && inputValue.length > 0 ) {
 			event.preventDefault();
@@ -48,22 +48,20 @@ export class ExpandableSidebarAddForm extends Component {
 			this.refs.menuAddInput.value = '';
 			this.toggleAdd();
 		}
-	}
+	};
 
 	render() {
 		const { translate, addLabel, addPlaceholder } = this.props;
-		const classes = classNames(
-			'sidebar__menu-add-item',
-			{
-				'is-add-open': this.state.isAdding
-			}
-		);
+		const classes = classNames( 'sidebar__menu-add-item', {
+			'is-add-open': this.state.isAdding,
+		} );
 		return (
 			<div className={ classes }>
 				{ this.props.hideAddButton
 					? null
-					: <Button compact className="sidebar__menu-add-button" onClick={ this.toggleAdd }>{ translate( 'Add' ) }</Button>
-				}
+					: <Button compact className="sidebar__menu-add-button" onClick={ this.toggleAdd }>
+							{ translate( 'Add' ) }
+						</Button> }
 				<div className="sidebar__menu-add">
 					<input
 						aria-label={ addLabel }

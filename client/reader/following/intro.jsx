@@ -17,7 +17,6 @@ import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
 
 class FollowingIntro extends React.Component {
-
 	componentDidMount() {
 		this.recordRenderTrack();
 	}
@@ -32,11 +31,11 @@ class FollowingIntro extends React.Component {
 		if ( props.isNewReader === true ) {
 			recordTrack( 'calypso_reader_following_intro_render' );
 		}
-	}
+	};
 
 	recordManageLinkTrack = () => {
 		recordTrack( 'calypso_reader_following_intro_link_clicked' );
-	}
+	};
 
 	render() {
 		const { isNewReader, translate, dismiss } = this.props;
@@ -53,28 +52,34 @@ class FollowingIntro extends React.Component {
 				<QueryPreferences />
 				<div className="following__intro-header">
 					<div className="following__intro-copy">
-							{ translate(
-								'{{strong}}Welcome!{{/strong}} Reader is a custom magazine. ' +
+						{ translate(
+							'{{strong}}Welcome!{{/strong}} Reader is a custom magazine. ' +
 								'{{link}}Follow your favorite sites{{/link}} and their latest ' +
 								'posts will appear here. {{span}}Read, like, and comment in a ' +
 								'distraction-free environment.{{/span}}',
-								{
-									components: {
-										link: linkElement,
-										strong: <strong />,
-										span: <span className="following__intro-copy-hidden" />
-									}
-								}
-							) }
+							{
+								components: {
+									link: linkElement,
+									strong: <strong />,
+									span: <span className="following__intro-copy-hidden" />,
+								},
+							}
+						) }
 					</div>
 
-					<div className="following__intro-close"
+					<div
+						className="following__intro-close"
 						onClick={ dismiss }
 						title={ translate( 'Close' ) }
 						role="button"
-						aria-label={ translate( 'Close' ) }>
-							<Gridicon icon="cross-circle" className="following__intro-close-icon" title={ translate( 'Close' ) } />
-							<span className="following__intro-close-icon-bg" />
+						aria-label={ translate( 'Close' ) }
+					>
+						<Gridicon
+							icon="cross-circle"
+							className="following__intro-close-icon"
+							title={ translate( 'Close' ) }
+						/>
+						<span className="following__intro-close-icon-bg" />
 					</div>
 				</div>
 			</header>
@@ -83,15 +88,19 @@ class FollowingIntro extends React.Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		return {
-			isNewReader: getPreference( state, 'is_new_reader' )
+			isNewReader: getPreference( state, 'is_new_reader' ),
 		};
 	},
-	( dispatch ) => bindActionCreators( {
-		dismiss: () => {
-			recordTrack( 'calypso_reader_following_intro_dismiss' );
-			return savePreference( 'is_new_reader', false );
-		}
-	}, dispatch )
+	dispatch =>
+		bindActionCreators(
+			{
+				dismiss: () => {
+					recordTrack( 'calypso_reader_following_intro_dismiss' );
+					return savePreference( 'is_new_reader', false );
+				},
+			},
+			dispatch
+		)
 )( localize( FollowingIntro ) );

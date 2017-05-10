@@ -22,7 +22,6 @@ import { getSiteUrl } from 'reader/route';
 import { decodeEntities } from 'lib/formatting';
 
 const RecommendedForYou = React.createClass( {
-
 	getInitialState() {
 		const recommendations = this.getRecommendations();
 		let fetching = false;
@@ -33,7 +32,7 @@ const RecommendedForYou = React.createClass( {
 		return {
 			recommendations,
 			fetching,
-			page: 1
+			page: 1,
 		};
 	},
 
@@ -72,15 +71,14 @@ const RecommendedForYou = React.createClass( {
 	stopFetching() {
 		this.setState( {
 			fetching: false,
-			page: this.state.page + 1
+			page: this.state.page + 1,
 		} );
 	},
 
 	renderPlaceholders() {
-		const placeholders = [],
-			number = this.state.recommendations.length ? 2 : 10;
+		const placeholders = [], number = this.state.recommendations.length ? 2 : 10;
 
-		times( number, ( i ) => {
+		times( number, i => {
 			placeholders.push(
 				<ListItem className="is-placeholder" key={ 'recommendation-placeholder-' + i }>
 					<Icon><SiteIcon size={ 48 } /></Icon>
@@ -124,7 +122,7 @@ const RecommendedForYou = React.createClass( {
 					<FollowButton siteUrl={ site.URL } />
 				</Actions>
 			</ListItem>
-			);
+		);
 	},
 
 	render() {
@@ -134,7 +132,9 @@ const RecommendedForYou = React.createClass( {
 					<h1>{ this.props.translate( 'Recommendations' ) }</h1>
 				</MobileBackToSidebar>
 
-				<h2 className="reader-recommended__heading">{ this.props.translate( 'We think you\'ll like' ) }</h2>
+				<h2 className="reader-recommended__heading">
+					{ this.props.translate( "We think you'll like" ) }
+				</h2>
 				<InfiniteList
 					items={ this.state.recommendations }
 					fetchingNextPage={ this.state.fetching }
@@ -144,10 +144,10 @@ const RecommendedForYou = React.createClass( {
 					getItemRef={ this.getItemRef }
 					renderItem={ this.renderItem }
 					renderLoadingPlaceholders={ this.renderPlaceholders }
-					/>
-				</Main>
+				/>
+			</Main>
 		);
-	}
+	},
 } );
 
 export default localize( RecommendedForYou );

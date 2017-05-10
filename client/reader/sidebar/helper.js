@@ -8,11 +8,13 @@ import assign from 'lodash/assign';
 
 const exported = {
 	itemLinkClass: function( path, currentPath, additionalClasses ) {
-		const basePathLowerCase = decodeURIComponent( currentPath ).split( '?' )[ 0 ].replace( /\/edit$/, '' ).toLowerCase(),
+		const basePathLowerCase = decodeURIComponent( currentPath )
+			.split( '?' )[ 0 ]
+			.replace( /\/edit$/, '' )
+			.toLowerCase(),
 			pathLowerCase = decodeURIComponent( path ).replace( /\/edit$/, '' ).toLowerCase();
 
-		let selected = basePathLowerCase === pathLowerCase,
-			isActionButtonSelected = false;
+		let selected = basePathLowerCase === pathLowerCase, isActionButtonSelected = false;
 
 		// Following is a special case, because it can be at / or /following
 		if ( pathLowerCase === '/' && ! selected ) {
@@ -25,7 +27,12 @@ const exported = {
 			isActionButtonSelected = true;
 		}
 
-		return classNames( assign( { selected: selected, 'is-action-button-selected': isActionButtonSelected }, additionalClasses ) );
+		return classNames(
+			assign(
+				{ selected: selected, 'is-action-button-selected': isActionButtonSelected },
+				additionalClasses
+			)
+		);
 	},
 
 	itemLinkClassStartsWithOneOf: function( paths, currentPath, additionalClasses ) {
@@ -37,13 +44,9 @@ const exported = {
 		return some( paths, function( path ) {
 			return startsWith( currentPath.toLowerCase(), path.toLowerCase() );
 		} );
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    itemLinkClass,
-    itemLinkClassStartsWithOneOf,
-    pathStartsWithOneOf
-} = exported;
+export const { itemLinkClass, itemLinkClassStartsWithOneOf, pathStartsWithOneOf } = exported;

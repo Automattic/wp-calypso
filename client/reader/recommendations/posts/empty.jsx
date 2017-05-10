@@ -8,11 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrack,
-} from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 
 var RecommendedPostsEmptyContent = React.createClass( {
@@ -33,27 +29,34 @@ var RecommendedPostsEmptyContent = React.createClass( {
 	},
 
 	render: function() {
-		var action = ( <a
-			className="empty-content__action button is-primary"
-			onClick={ this.recordAction }
-			href="/">{ this.props.translate( 'Back to Following' ) }</a> ),
+		var action = (
+			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
+				{ this.props.translate( 'Back to Following' ) }
+			</a>
+		),
 			secondaryAction = isDiscoverEnabled()
-			? ( <a
-				className="empty-content__action button"
-				onClick={ this.recordSecondaryAction }
-				href="/discover">{ this.props.translate( 'Explore Discover' ) }</a> ) : null;
+				? <a
+						className="empty-content__action button"
+						onClick={ this.recordSecondaryAction }
+						href="/discover"
+					>
+						{ this.props.translate( 'Explore Discover' ) }
+					</a>
+				: null;
 
 		return (
 			<EmptyContent
 				title={ this.props.translate( 'No Post Recommendations yet' ) }
-				line={ this.props.translate( 'Posts we recommend based on your WordPress.com activity will appear here.' ) }
+				line={ this.props.translate(
+					'Posts we recommend based on your WordPress.com activity will appear here.'
+				) }
 				action={ action }
 				secondaryAction={ secondaryAction }
 				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
 				illustrationWidth={ 500 }
-				/>
+			/>
 		);
-	}
+	},
 } );
 
 export default localize( RecommendedPostsEmptyContent );

@@ -15,7 +15,7 @@ export class Suggestion extends Component {
 		suggestion: PropTypes.string.isRequired,
 		source: PropTypes.string,
 		sort: PropTypes.string,
-		railcar: PropTypes.object
+		railcar: PropTypes.object,
 	};
 
 	componentWillMount() {
@@ -34,14 +34,13 @@ export class Suggestion extends Component {
 		const args = {
 			isSuggestion: 1,
 			q: suggestion,
-			sort
+			sort,
 		};
 
 		const searchUrl = '/read/search?' + stringify( args );
 
 		return (
-			<a onClick={ this.handleSuggestionClick }
-				href={ searchUrl } >
+			<a onClick={ this.handleSuggestionClick } href={ searchUrl }>
 				{ suggestion }
 			</a>
 		);

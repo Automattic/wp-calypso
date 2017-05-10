@@ -12,11 +12,7 @@ import Stream from 'reader/stream';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from './empty';
 import TagStreamHeader from './header';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrack,
-} from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import HeaderBack from 'reader/header-back';
 import { getReaderFollowedTags, getReaderTags } from 'state/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
@@ -25,7 +21,6 @@ import QueryReaderTag from 'components/data/query-reader-tag';
 import { find } from 'lodash';
 
 const TagStream = React.createClass( {
-
 	_isMounted: false,
 
 	propTypes: {
@@ -35,7 +30,7 @@ const TagStream = React.createClass( {
 
 	getInitialState() {
 		return {
-			isEmojiTitle: false
+			isEmojiTitle: false,
 		};
 	},
 
@@ -53,7 +48,7 @@ const TagStream = React.createClass( {
 				const title = self.props.decodedTagSlug;
 				self.setState( {
 					twemoji,
-					isEmojiTitle: title && twemoji.test( title )
+					isEmojiTitle: title && twemoji.test( title ),
 				} );
 			}
 		} );
@@ -72,7 +67,7 @@ const TagStream = React.createClass( {
 	checkForTwemoji() {
 		const title = this.getTitle();
 		this.setState( {
-			isEmojiTitle: title && this.state.twemoji && this.state.twemoji.test( title )
+			isEmojiTitle: title && this.state.twemoji && this.state.twemoji.test( title ),
 		} );
 	},
 
@@ -87,14 +82,20 @@ const TagStream = React.createClass( {
 		const toggleAction = isFollowing ? unfollowTag : followTag;
 		toggleAction( decodedTagSlug );
 		recordAction( isFollowing ? 'unfollowed_topic' : 'followed_topic' );
-		recordGaEvent( isFollowing ? 'Clicked Unfollow Topic' : 'Clicked Follow Topic', decodedTagSlug );
-		recordTrack( isFollowing ? 'calypso_reader_reader_tag_unfollowed' : 'calypso_reader_reader_tag_followed', {
-			tag: decodedTagSlug
-		} );
+		recordGaEvent(
+			isFollowing ? 'Clicked Unfollow Topic' : 'Clicked Follow Topic',
+			decodedTagSlug
+		);
+		recordTrack(
+			isFollowing ? 'calypso_reader_reader_tag_unfollowed' : 'calypso_reader_reader_tag_followed',
+			{
+				tag: decodedTagSlug,
+			}
+		);
 	},
 
 	render() {
-		const emptyContent = ( <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } /> );
+		const emptyContent = <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
 		const title = this.props.decodedTagSlug;
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
 
@@ -103,12 +104,17 @@ const TagStream = React.createClass( {
 		// If the tag contains emoji, convert to text equivalent
 		if ( this.state.emojiText && this.state.isEmojiTitle ) {
 			imageSearchString = this.state.emojiText.convert( title, {
-				delimiter: ''
+				delimiter: '',
 			} );
 		}
 
 		return (
-			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
+			<Stream
+				{ ...this.props }
+				listName={ this.state.title }
+				emptyContent={ emptyContent }
+				showFollowInHeader={ true }
+			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
@@ -119,10 +125,11 @@ const TagStream = React.createClass( {
 					showFollow={ !! ( tag && tag.id ) }
 					following={ this.isSubscribed() }
 					onFollowToggle={ this.toggleFollowing }
-					showBack={ this.props.showBack } />
+					showBack={ this.props.showBack }
+				/>
 			</Stream>
 		);
-	}
+	},
 } );
 
 export default connect(

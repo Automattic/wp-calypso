@@ -9,8 +9,8 @@ const RecommendedSites = React.createClass( {
 				<Navigation selected="sites" />
 				Sites!
 			</Main>
-			);
-	}
+		);
+	},
 } );
 
 export default RecommendedSites;

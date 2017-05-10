@@ -12,10 +12,7 @@ export function toValidId( val ) {
 		return v === 0 ? undefined : v;
 	}
 	if ( valType === 'number' ) {
-		if ( val === 0 ||
-			isNaN( val ) ||
-			! isFinite( val ) ||
-			val !== Math.floor( val ) ) {
+		if ( val === 0 || isNaN( val ) || ! isFinite( val ) || val !== Math.floor( val ) ) {
 			return undefined;
 		}
 		return val;

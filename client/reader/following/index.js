@@ -6,16 +6,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import {
-	followingEdit,
-	followingManage,
-} from './controller';
-import {
-	loadSubscriptions,
-	initAbTests,
-	updateLastRoute,
-	sidebar,
-} from 'reader/controller';
+import { followingEdit, followingManage } from './controller';
+import { loadSubscriptions, initAbTests, updateLastRoute, sidebar } from 'reader/controller';
 import config from 'config';
 
 export default function() {

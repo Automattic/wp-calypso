@@ -44,12 +44,7 @@ const exported = {
 		const basePath = route.sectionify( context.path );
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage Followed Sites';
 		const mcKey = 'following_manage';
-		const {
-			q: sitesQuery,
-			s: subsQuery,
-			sort: subsSortOrder,
-			showMoreResults
-		} = context.query;
+		const { q: sitesQuery, s: subsQuery, sort: subsSortOrder, showMoreResults } = context.query;
 
 		setPageTitle( context, i18n.translate( 'Manage Followed Sites' ) );
 
@@ -70,12 +65,9 @@ const exported = {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    followingEdit,
-    followingManage
-} = exported;
+export const { followingEdit, followingManage } = exported;

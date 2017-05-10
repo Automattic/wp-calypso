@@ -11,8 +11,7 @@ import Card from 'components/card';
 import SiteIcon from 'blocks/site-icon';
 
 export default class SubscriptionPlaceholder extends React.PureComponent {
-
-	static displayName = 'SubscriptionPlaceholder'
+	static displayName = 'SubscriptionPlaceholder';
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
@@ -22,8 +21,10 @@ export default class SubscriptionPlaceholder extends React.PureComponent {
 					<SiteIcon size={ 48 } />
 				</span>
 				<h2 className="reader-list-item__title"><span className="placeholder-text">Title</span></h2>
-				<p className="reader-list-item__description"><span className="placeholder-text">URL</span></p>
+				<p className="reader-list-item__description">
+					<span className="placeholder-text">URL</span>
+				</p>
 			</Card>
-			);
+		);
 	}
 }

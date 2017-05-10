@@ -14,7 +14,7 @@ import {
 	ensureStoreLoading,
 	trackPageLoad,
 	trackUpdatesLoaded,
-	trackScrollPage
+	trackScrollPage,
 } from 'reader/controller-helper';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
@@ -51,13 +51,13 @@ const exported = {
 		if ( searchSlug ) {
 			recordTrack( 'calypso_reader_search_performed', {
 				query: searchSlug,
-				sort
+				sort,
 			} );
 		} else {
 			recordTrack( 'calypso_reader_search_loaded' );
 		}
 
-		const autoFocusInput = ( ! searchSlug ) || context.query.focus === '1';
+		const autoFocusInput = ! searchSlug || context.query.focus === '1';
 
 		function reportQueryChange( query ) {
 			replaceSearchUrl( query, sort !== 'relevance' ? sort : undefined );
@@ -68,7 +68,8 @@ const exported = {
 		}
 
 		renderWithReduxStore(
-			<AsyncLoad require="reader/search-stream"
+			<AsyncLoad
+				require="reader/search-stream"
 				key="search"
 				postsStore={ store }
 				query={ searchSlug }
@@ -89,11 +90,9 @@ const exported = {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    search
-} = exported;
+export const { search } = exported;

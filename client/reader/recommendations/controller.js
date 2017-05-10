@@ -9,7 +9,12 @@ import i18n from 'i18n-calypso';
  */
 import trackScrollPage from 'lib/track-scroll-page';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, userHasHistory } from 'reader/controller-helper';
+import {
+	ensureStoreLoading,
+	trackPageLoad,
+	trackUpdatesLoaded,
+	userHasHistory,
+} from 'reader/controller-helper';
 import RecommendedForYou from 'reader/recommendations/for-you';
 import RecommendedPostsStream from 'reader/recommendations/posts';
 import route from 'lib/route';
@@ -32,7 +37,7 @@ const exported = {
 					fullAnalyticsPageTitle,
 					ANALYTICS_PAGE_TITLE,
 					mcKey
-				)
+				),
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
@@ -98,17 +103,14 @@ const exported = {
 					mcKey
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				showBack: userHasHistory( context )
+				showBack: userHasHistory( context ),
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    recommendedForYou,
-    recommendedPosts
-} = exported;
+export const { recommendedForYou, recommendedPosts } = exported;

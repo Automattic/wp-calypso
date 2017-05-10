@@ -28,25 +28,36 @@ const FollowingEditEmptyContent = React.createClass( {
 	},
 
 	render() {
-		const action = ( <a className="empty-content__action button is-primary"
+		const action = (
+			<a
+				className="empty-content__action button is-primary"
 				onClick={ this.recordAction }
-				href="/read/search">{ this.props.translate( 'Find Sites to Follow' ) }</a>),
+				href="/read/search"
+			>
+				{ this.props.translate( 'Find Sites to Follow' ) }
+			</a>
+		),
 			secondaryAction = (
-				<a className="empty-content__action button"
+				<a
+					className="empty-content__action button"
 					onClick={ this.recordSecondaryAction }
-					href="/discover">{ this.props.translate( 'Explore Discover' ) }</a> );
+					href="/discover"
+				>
+					{ this.props.translate( 'Explore Discover' ) }
+				</a>
+			);
 
 		return (
 			<EmptyContent
 				action={ action }
 				secondaryAction={ secondaryAction }
-				title={ this.props.translate( 'You haven\'t followed any sites yet' ) }
+				title={ this.props.translate( "You haven't followed any sites yet" ) }
 				line={ this.props.translate( 'Search for a site or explore Discover.' ) }
 				illustration={ '/calypso/images/drake/drake-404.svg' }
 				illustrationWidth={ 500 }
 			/>
 		);
-	}
+	},
 } );
 
 export default localize( FollowingEditEmptyContent );

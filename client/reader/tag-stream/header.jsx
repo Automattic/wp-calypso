@@ -22,27 +22,26 @@ const TAG_HEADER_WIDTH = 800;
 const TAG_HEADER_HEIGHT = 140;
 
 class TagStreamHeader extends React.Component {
-
 	static propTypes = {
 		isPlaceholder: React.PropTypes.bool,
 		showFollow: React.PropTypes.bool,
 		following: React.PropTypes.bool,
 		onFollowToggle: React.PropTypes.func,
 		tagImages: React.PropTypes.array,
-		showBack: React.PropTypes.bool
+		showBack: React.PropTypes.bool,
 	};
 
 	static defaultProps = {
-		tagImages: []
-	}
+		tagImages: [],
+	};
 
 	pickTagImage = ( props = this.props ) => {
 		return sample( props.tagImages );
-	}
+	};
 
 	state = {
 		tagImages: this.props.tagImages,
-		chosenTagImage: this.pickTagImage()
+		chosenTagImage: this.pickTagImage(),
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -52,11 +51,20 @@ class TagStreamHeader extends React.Component {
 	}
 
 	render() {
-		const { title, isPlaceholder, showFollow, following, onFollowToggle, translate, showBack, imageSearchString } = this.props;
+		const {
+			title,
+			isPlaceholder,
+			showFollow,
+			following,
+			onFollowToggle,
+			translate,
+			showBack,
+			imageSearchString,
+		} = this.props;
 		const classes = classnames( {
 			'tag-stream__header': true,
 			'is-placeholder': isPlaceholder,
-			'has-back-button': showBack
+			'has-back-button': showBack,
 		} );
 		const imageStyle = {};
 		const tagImage = this.state.chosenTagImage;
@@ -64,15 +72,22 @@ class TagStreamHeader extends React.Component {
 		let photoByWrapper;
 		let authorLink;
 		if ( tagImage ) {
-			const imageUrl = resizeImageUrl( 'https://' + tagImage.url, { resize: `${ TAG_HEADER_WIDTH },${ TAG_HEADER_HEIGHT }` } );
+			const imageUrl = resizeImageUrl( 'https://' + tagImage.url, {
+				resize: `${ TAG_HEADER_WIDTH },${ TAG_HEADER_HEIGHT }`,
+			} );
 			const safeCssUrl = cssSafeUrl( imageUrl );
 			imageStyle.backgroundImage = 'url(' + safeCssUrl + ')';
 
-			photoByWrapper = ( <span className="tag-stream__header-image-byline-label" /> );
-			authorLink = <a href={ `/read/blogs/${ tagImage.blog_id }/posts/${ tagImage.post_id }` }
-												className="tag-stream__header-image-byline-link" rel="author">
-											{ decodeEntities( tagImage.author ) }
-										</a>;
+			photoByWrapper = <span className="tag-stream__header-image-byline-label" />;
+			authorLink = (
+				<a
+					href={ `/read/blogs/${ tagImage.blog_id }/posts/${ tagImage.post_id }` }
+					className="tag-stream__header-image-byline-link"
+					rel="author"
+				>
+					{ decodeEntities( tagImage.author ) }
+				</a>
+			);
 		}
 
 		return (
@@ -85,9 +100,9 @@ class TagStreamHeader extends React.Component {
 							followingLabel={ translate( 'Following Tag' ) }
 							iconSize={ 24 }
 							following={ following }
-							onFollowToggle={ onFollowToggle } />
-					</div>
-				}
+							onFollowToggle={ onFollowToggle }
+						/>
+					</div> }
 
 				<div className="tag-stream__header-image" style={ imageStyle }>
 					<h1 className="tag-stream__header-image-title">
@@ -98,21 +113,18 @@ class TagStreamHeader extends React.Component {
 							{ translate( '{{photoByWrapper}}Photo by{{/photoByWrapper}} {{authorLink/}}', {
 								components: {
 									photoByWrapper,
-									authorLink
-								}
+									authorLink,
+								},
 							} ) }
-						</div>
-					}
+						</div> }
 				</div>
 			</div>
 		);
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			tagImages: getTagImages( state, ownProps.imageSearchString )
-		};
-	}
-)( localize( TagStreamHeader ) );
+export default connect( ( state, ownProps ) => {
+	return {
+		tagImages: getTagImages( state, ownProps.imageSearchString ),
+	};
+} )( localize( TagStreamHeader ) );

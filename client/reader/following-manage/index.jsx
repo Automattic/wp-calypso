@@ -50,7 +50,7 @@ class FollowingManage extends Component {
 		showMoreResults: false,
 		forceRefresh: false,
 		subsSortOrder: 'date-followed',
-	}
+	};
 
 	state = {
 		width: 800,
@@ -60,13 +60,11 @@ class FollowingManage extends Component {
 	};
 
 	// TODO make this common between our different search pages?
-	updateQuery = ( newValue ) => {
+	updateQuery = newValue => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
-		if ( ( trimmedValue !== '' &&
-				trimmedValue.length > 1 &&
-				trimmedValue !== this.props.query
-			) ||
+		if (
+			( trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query ) ||
 			newValue === ''
 		) {
 			let searchUrl = '/following/manage';
@@ -75,16 +73,16 @@ class FollowingManage extends Component {
 			}
 			page.replace( searchUrl );
 		}
-	}
+	};
 
 	handleSearchClosed = () => {
 		this.scrollToTop();
 		this.setState( { showMoreResults: false } );
-	}
+	};
 
 	scrollToTop = () => {
 		window.scrollTo( 0, 0 );
-	}
+	};
 
 	handleStreamMounted = ref => this.streamRef = ref;
 	handleSearchBoxMounted = ref => this.searchBoxRef = ref;
@@ -98,13 +96,10 @@ class FollowingManage extends Component {
 			}
 			this.setState( { width } );
 		}
-	}
+	};
 
 	componentDidMount() {
-		this.resizeListener = window.addEventListener(
-			'resize',
-			debounce( this.resizeSearchBox, 50 )
-		);
+		this.resizeListener = window.addEventListener( 'resize', debounce( this.resizeSearchBox, 50 ) );
 		this.resizeSearchBox();
 
 		// this is a total hack. In React-Virtualized you need to tell a WindowScroller when the things
@@ -126,11 +121,10 @@ class FollowingManage extends Component {
 		const nextState = { forceRefresh };
 		const recommendedSites = nextProps.getRecommendedSites( this.state.seed );
 
-		const shouldRequestMoreRecs = (
+		const shouldRequestMoreRecs =
 			recommendedSites &&
 			recommendedSites.length === this.state.offset + PAGE_SIZE &&
-			reject( recommendedSites, nextProps.isSiteBlocked ).length <= 2
-		);
+			reject( recommendedSites, nextProps.isSiteBlocked ).length <= 2;
 
 		if ( shouldRequestMoreRecs ) {
 			nextState.offset = this.state.offset + PAGE_SIZE;
@@ -142,8 +136,10 @@ class FollowingManage extends Component {
 	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
 
 	handleShowMoreClicked = () => {
-		page.replace( addQueryArgs( { showMoreResults: true }, window.location.pathname + window.location.search ) );
-	}
+		page.replace(
+			addQueryArgs( { showMoreResults: true }, window.location.pathname + window.location.search )
+		);
+	};
 
 	render() {
 		const {
@@ -164,10 +160,7 @@ class FollowingManage extends Component {
 		if ( isSitesQueryUrl ) {
 			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		}
-		const recommendedSites = reject(
-			getRecommendedSites( this.state.seed ),
-			isSiteBlocked
-		);
+		const recommendedSites = reject( getRecommendedSites( this.state.seed ), isSiteBlocked );
 
 		return (
 			<ReaderMain className="following-manage">
@@ -176,9 +169,8 @@ class FollowingManage extends Component {
 					<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
 				{ ! searchResults && ! isSitesQueryUrl && <QueryReaderFeedsSearch query={ sitesQuery } /> }
-				{ recommendedSites.length <= 2 && (
-					<QueryReaderRecommendedSites seed={ this.state.seed } offset={ this.state.offset } />
-				) }
+				{ recommendedSites.length <= 2 &&
+					<QueryReaderRecommendedSites seed={ this.state.seed } offset={ this.state.offset } /> }
 				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
@@ -192,24 +184,23 @@ class FollowingManage extends Component {
 							placeholder={ searchPlaceholderText }
 							additionalClasses="following-manage__search-new"
 							initialValue={ sitesQuery }
-							value={ sitesQuery }>
-						</SearchInput>
+							value={ sitesQuery }
+						/>
 					</CompactCard>
 
-					{ isSitesQueryUrl && (
+					{ isSitesQueryUrl &&
 						<div className="following-manage__url-follow">
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
 								siteUrl={ addSchemeIfMissing( sitesQuery, 'http' ) }
-								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT } />
-						</div>
-					) }
+								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
+							/>
+						</div> }
 				</div>
-				{ ! sitesQuery && (
-					<RecommendedSites sites={ take( recommendedSites, 2 ) } />
-				) }
-				{ !! sitesQuery && ! isSitesQueryUrl && (
+				{ ! sitesQuery && <RecommendedSites sites={ take( recommendedSites, 2 ) } /> }
+				{ !! sitesQuery &&
+					! isSitesQueryUrl &&
 					<FollowingManageSearchFeedsResults
 						searchResults={ searchResults }
 						showMoreResults={ showMoreResults }
@@ -218,16 +209,14 @@ class FollowingManage extends Component {
 						fetchNextPage={ this.fetchNextPage }
 						forceRefresh={ this.state.forceRefresh }
 						searchResultsCount={ searchResultsCount }
-					/>
-				) }
-				{ showExistingSubscriptions && (
+					/> }
+				{ showExistingSubscriptions &&
 					<FollowingManageSubscriptions
 						width={ this.state.width }
 						query={ subsQuery }
 						sortOrder={ subsSortOrder }
 						windowScrollerRef={ this.handleWindowScrollerMounted }
-					/>
-				) }
+					/> }
 			</ReaderMain>
 		);
 	}
