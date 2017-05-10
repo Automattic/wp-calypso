@@ -2,12 +2,12 @@
  * External dependencies
  */
 import page from 'page';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isValidTerm, sortFilterTerms, getSubjects } from './theme-filters';
+import { isValidTerm, sortFilterTerms } from './theme-filters';
+import { getThemeFilterTerm } from 'state/selectors';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {
@@ -39,12 +39,13 @@ export function validateFilters( context, next ) {
 
 export function validateVertical( context, next ) {
 	const { vertical } = context.params;
+	const { store } = context;
 
 	if ( ! vertical ) {
 		return next();
 	}
 
-	if ( ! includes( getSubjects(), vertical ) ) {
+	if ( ! getThemeFilterTerm( store.getState(), 'subject', vertical ) ) {
 		if ( context.isServerSide ) {
 			return next( 'route' );
 		}

@@ -194,10 +194,6 @@ export function stripFilters( input ) {
 	return withoutFilters.replace( /\s+/g, ' ' );
 }
 
-export function getSubjects() {
-	return taxonomies.subject;
-}
-
 /**
  * Returns true for valid term.
  *
