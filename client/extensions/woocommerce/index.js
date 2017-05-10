@@ -112,11 +112,6 @@ const getStorePages = () => {
 			},
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
-			configKey: 'woocommerce/extension-settings-checkout',
-			path: '/store/settings/:site/checkout',
-		},
-		{
 			container: SettingsPayments,
 			configKey: 'woocommerce/extension-settings-payments',
 			path: '/store/settings/:site/payments',
