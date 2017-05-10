@@ -356,16 +356,16 @@ export default {
 				} );
 				debug( 'Sites list updated!', data );
 				dispatch( {
-					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-					data: data
-				} );
-				dispatch( {
 					type: SITE_RECEIVE,
 					site: omit( data, '_headers' )
 				} );
 				dispatch( {
 					type: SITE_REQUEST_SUCCESS,
 					siteId: parseInt( client_id )
+				} );
+				dispatch( {
+					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+					data: data
 				} );
 			} )
 			.catch( ( error ) => {
