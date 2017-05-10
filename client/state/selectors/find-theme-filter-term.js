@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, some } from 'lodash';
+import { get, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ export default function findThemeFilterTerm( state, search ) {
 
 	let ret;
 	some( filters, ( terms ) => {
-		ret = find( terms, ( value, term ) => ( term === left ) );
+		ret = get( terms, left );
 		return !! ret;
 	} );
 	return ret;
