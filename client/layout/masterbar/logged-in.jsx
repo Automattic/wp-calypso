@@ -75,7 +75,7 @@ const MasterbarLoggedIn = React.createClass( {
 					tooltip={ translate( 'View a list of your sites and access their dashboards', { textOnly: true } ) }
 					preloadSection={ () => preload( domainOnlySite ? 'upgrades' : 'stats' ) }
 				>
-					{ this.props.user.get().visible_site_count > 1
+					{ this.props.user.get().site_count > 1
 						? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 						: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 					}
