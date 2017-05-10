@@ -88,6 +88,7 @@
 		"preview-layout": true,
 		"reader": true,
 		"reader/combined-cards": true,
+		"reader/following-intro": true,
 		"reader/full-errors": true,
 		"reader/following-manage-refresh": true,
 		"reader/recommendations/posts": true,
