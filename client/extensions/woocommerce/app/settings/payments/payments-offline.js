@@ -1,0 +1,34 @@
+/**
+ * External dependencies
+ */
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import Card from 'components/card';
+import SectionHeader from 'components/section-header';
+
+class SettingsPaymentsOffline extends Component {
+
+	render() {
+		const { translate } = this.props;
+		return (
+			<div>
+				<SectionHeader label={ translate( 'Offline payment methods' ) } />
+				<Card>
+					{
+						translate(
+							'Allow customers to pay you manually using methods like bank ' +
+							'transfer, check or cash on delivery.'
+						)
+					}
+				</Card>
+			</div>
+		);
+	}
+
+}
+
+export default localize( SettingsPaymentsOffline );

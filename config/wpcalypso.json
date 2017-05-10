@@ -123,7 +123,7 @@
 		"woocommerce/extension-products-import": true,
 		"woocommerce/extension-promotions": true,
 		"woocommerce/extension-settings": true,
-		"woocommerce/extension-settings-checkout": true,
+		"woocommerce/extension-settings-payments": true,
 		"woocommerce/extension-settings-shipping": true,
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-stats": false,

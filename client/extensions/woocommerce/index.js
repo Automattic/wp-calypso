@@ -12,6 +12,7 @@ import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
+import SettingsPayments from './app/settings/payments';
 import StatsController from './app/stats/controller';
 
 function addStorePage( storePage ) {
@@ -72,9 +73,9 @@ export default function() {
 			route: '/store/settings/:site',
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
-			configKey: 'woocommerce/extension-settings-checkout',
-			route: '/store/settings/:site/checkout',
+			container: SettingsPayments,
+			configKey: 'woocommerce/extension-settings-payments',
+			route: '/store/settings/:site/payments',
 		},
 		{
 			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
