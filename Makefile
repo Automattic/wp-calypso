@@ -209,12 +209,12 @@ translate: node_modules
 githooks: githooks-commit githooks-push
 
 # install git pre-commit hook
-githooks-commit:
-	@if [ ! -e .git/hooks/pre-commit ]; then ln -s ../../bin/pre-commit .git/hooks/pre-commit; fi
+githooks-commit: bin/pre-commit
+	@ln -sf ../../$< .git/hooks/pre-commit
 
 # install git pre-push hook
-githooks-push:
-	@if [ ! -e .git/hooks/pre-push ]; then ln -s ../../bin/pre-push .git/hooks/pre-push; fi
+githooks-push: bin/pre-push
+	@ln -sf ../../$< .git/hooks/pre-push
 
 # generate a new shrinkwrap
 shrinkwrap: node-version
