@@ -10,7 +10,7 @@
 	width: 100%;
 
 	@include breakpoint( ">660px" ) {
-		width: calc( 100% - 144px );
+		width: calc( 100% - 145px );
 	}
 }
 
