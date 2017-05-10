@@ -309,6 +309,10 @@ export const queries = ( () => {
 		};
 	}
 
+	// Time after which queries storred in IndexedDb will be invalidated.
+	// days * hours_in_day * minutes_in_hour * seconds_in_minute * miliseconds_in_second
+	const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
+
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
 			return applyToManager(
@@ -321,14 +325,19 @@ export const queries = ( () => {
 			return applyToManager( state, siteId, 'removeItem', false, themeId );
 		},
 		[ SERIALIZE ]: ( state ) => {
-			return mapValues( state, ( { data, options } ) => ( { data, options } ) );
+			const serializedState = mapValues( state, ( { data, options } ) => ( { data, options } ) );
+			return { ...serializedState, _timestamp: Date.now() };
 		},
 		[ DESERIALIZE ]: ( state ) => {
-			if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
+			if ( state._timestamp && state._timestamp + MAX_THEMES_AGE < Date.now() ) {
+				return {};
+			}
+			const noTimestampState = omit( state, '_timestamp' );
+			if ( ! isValidStateWithSchema( noTimestampState, queriesSchema ) ) {
 				return {};
 			}
 
-			return mapValues( state, ( { data, options } ) => {
+			return mapValues( noTimestampState, ( { data, options } ) => {
 				return new ThemeQueryManager( data, options );
 			} );
 		},
