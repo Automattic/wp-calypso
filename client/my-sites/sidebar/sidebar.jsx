@@ -202,9 +202,10 @@ export class MySitesSidebar extends Component {
 
 	plugins() {
 		const { site } = this.props;
+		const addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
 		let pluginsLink = '/plugins' + this.props.siteSuffix;
-		let addPluginsLink;
 
+		// TODO: we can probably rip this out
 		if ( ! config.isEnabled( 'manage/plugins' ) ) {
 			if ( ! site ) {
 				return null;
@@ -215,12 +216,14 @@ export class MySitesSidebar extends Component {
 			}
 		}
 
+		// checks for manage plugins capability across all sites
 		if ( ! this.props.canManagePlugins ) {
 			return null;
 		}
 
-		if ( this.props.siteId || ( ! this.props.siteId && this.props.hasJetpackSites ) ) {
-			addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
+		// if selectedSite and cannot manage, skip plugins section
+		if ( this.props.siteId && ! this.props.canUserManageOptions ) {
+			return null;
 		}
 
 		return (
@@ -589,6 +592,7 @@ function mapStateToProps( state ) {
 	const canManagePlugins = !! getSites( state ).some( ( s ) => (
 		( s.capabilities && s.capabilities.manage_options )
 	) );
+
 	// FIXME: Turn into dedicated selector
 	const hasJetpackSites = getSites( state ).some( s => s.jetpack );
 
