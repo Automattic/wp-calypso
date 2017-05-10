@@ -7,7 +7,6 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,6 +24,7 @@ import { updateWordPress } from 'state/sites/updates/actions';
 import {
 	getSiteConnectionStatus,
 	isRequestingSiteConnectionStatus,
+	isSiteAutomatedTransfer,
 	isWordpressUpdateSuccessful,
 } from 'state/selectors';
 
@@ -70,13 +70,17 @@ class SiteIndicator extends Component {
 	}
 
 	showIndicator() {
-		const { siteIsJetpack, userCanManage } = this.props;
+		const {
+			siteIsAutomatedTransfer,
+			siteIsJetpack,
+			userCanManage,
+		} = this.props;
 
 		// Until WP.com sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
 		return (
 			userCanManage &&
 			siteIsJetpack &&
-			! get( site, 'options.is_automated_transfer' ) &&
+			! siteIsAutomatedTransfer &&
 			( this.hasUpdate() || this.hasError() || this.hasWarning() || this.state.updateError )
 		);
 	}
@@ -381,6 +385,7 @@ export default connect(
 			requestingConnectionStatus: site && isRequestingSiteConnectionStatus( state, site.ID ),
 			siteIsConnected: site && getSiteConnectionStatus( state, site.ID ),
 			siteIsJetpack: site && isJetpackSite( state, site.ID ),
+			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer( state, site.ID ),
 			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),
 			userCanManage: site && canCurrentUser( state, site.ID, 'manage_options' ),
 		};
