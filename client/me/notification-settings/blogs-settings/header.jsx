@@ -19,7 +19,7 @@ export default React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		blog: PropTypes.object.isRequired,
+		site: PropTypes.object.isRequired,
 		settings: PropTypes.instanceOf( Immutable.Map ).isRequired,
 		disableToggle: PropTypes.bool,
 		onToggle: PropTypes.func.isRequired
@@ -39,7 +39,7 @@ export default React.createClass( {
 		const isExpanded = ! this.state.isExpanded;
 		this.setState( { isExpanded } );
 
-		analytics.ga.recordEvent( 'Notification Settings', isExpanded ? 'Expanded Site' : 'Collapsed Site', this.props.blog.name );
+		analytics.ga.recordEvent( 'Notification Settings', isExpanded ? 'Expanded Site' : 'Collapsed Site', this.props.site.name );
 
 		this.props.onToggle();
 	},
@@ -74,9 +74,11 @@ export default React.createClass( {
 	},
 
 	render() {
+		const { site } = this.props;
+
 		return (
-			<header key={ this.props.blog.wpcom_url } className="notification-settings-blog-settings-header" onClick={ this.toggleExpanded }>
-				<SiteInfo site={ this.props.blog } indicator={ false }/>
+			<header key={ site.wpcom_url } className="notification-settings-blog-settings-header" onClick={ this.toggleExpanded }>
+				<SiteInfo site={ site } indicator={ false } />
 				<div className="notification-settings-blog-settings-header__legend">
 					<em>{ this.getLegend() }</em>
 				</div>
