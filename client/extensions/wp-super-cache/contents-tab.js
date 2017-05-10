@@ -31,14 +31,13 @@ class ContentsTab extends Component {
 		fields: PropTypes.object,
 		handleDeleteCache: PropTypes.func.isRequired,
 		isDeleting: PropTypes.bool,
-		isMultisite: PropTypes.bool,
+		site: PropTypes.object.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
 		fields: {},
 		isDeleting: false,
-		isMultisite: false,
 	};
 
 	state = {
@@ -108,7 +107,7 @@ class ContentsTab extends Component {
 			},
 			isDeleting,
 			isGenerating,
-			isMultisite,
+			site,
 			stats,
 			translate,
 		} = this.props;
@@ -224,7 +223,7 @@ class ContentsTab extends Component {
 							onClick={ this.deleteCache }>
 							{ translate( 'Delete Cache' ) }
 						</Button>
-						{ isMultisite &&
+						{ site && site.is_multisite &&
 							<Button
 								compact
 								busy={ this.state.isDeletingAll }

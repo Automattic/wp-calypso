@@ -23,7 +23,7 @@ const WPSuperCache = ( { site, tab } ) => {
 			case Tabs.CDN:
 				return <CdnTab />;
 			case Tabs.CONTENTS:
-				return <ContentsTab isMultisite={ site.is_multisite } />;
+				return <ContentsTab />;
 			case Tabs.PRELOAD:
 				return <PreloadTab />;
 			default:
