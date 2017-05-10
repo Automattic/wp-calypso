@@ -17,7 +17,7 @@ import {
 
 export default function stepsForProductAndSurvey( survey, product, canChat ) {
 	if ( survey && survey.questionOneRadio === 'tooHard' ) {
-		if ( includesProduct( [ PLAN_BUSINESS ], product ) && abtest( 'conciergeOfferOnCancel' ) === 'showConciergeOffer' ) {
+		if ( includesProduct( [ PLAN_BUSINESS ], product ) ) {
 			return [ INITIAL_STEP, CONCIERGE_STEP, FINAL_STEP ];
 		}
 

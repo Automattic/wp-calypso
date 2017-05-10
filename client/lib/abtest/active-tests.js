@@ -32,14 +32,6 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
-	conciergeOfferOnCancel: {
-		datestamp: '20170410',
-		variations: {
-			showConciergeOffer: 50,
-			hideConciergeOffer: 50,
-		},
-		defaultVariation: 'showConciergeOffer',
-	},
 	presaleChatButton: {
 		datestamp: '20170328',
 		variations: {
