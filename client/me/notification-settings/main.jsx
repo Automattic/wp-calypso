@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,13 +18,11 @@ import BlogsSettings from './blogs-settings';
 import PushNotificationSettings from './push-notification-settings';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 const NotificationSettings = React.createClass( {
 	displayName: 'NotificationSettings',
 
-	mixins: [ observe( 'sites', 'devices', 'pushNotifications' ) ],
+	mixins: [ observe( 'devices', 'pushNotifications' ) ],
 
 	getInitialState() {
 		return {
@@ -66,7 +65,6 @@ const NotificationSettings = React.createClass( {
 				<Navigation path={ this.props.path } />
 				<PushNotificationSettings pushNotifications={ this.props.pushNotifications } />
 				<BlogsSettings
-					blogs={ this.props.blogs }
 					devices={ this.props.devices }
 					settings={ this.state.settings }
 					hasUnsavedChanges={ this.state.hasUnsavedChanges }
@@ -80,5 +78,5 @@ const NotificationSettings = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
+	{ successNotice, errorNotice }
 )( NotificationSettings );
