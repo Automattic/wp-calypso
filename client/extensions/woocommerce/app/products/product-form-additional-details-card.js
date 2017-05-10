@@ -88,7 +88,7 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 					onChange={ this.updateNameHandler }
 				/>
 				<TokenField
-					placeholder={ translate( 'Comma separate these' ) }
+					placeholder={ translate( 'Cotton' ) }
 					value={ attribute.options }
 					name="values"
 					/* eslint-disable react/jsx-no-bind */
@@ -127,8 +127,9 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 				onClick={ this.cardToggle }
 			>
 				<FormSettingExplanation>
-					{ translate( 'Display additional details in a formatted list. This will also allow customers ' +
-					'to filter your store to find the products they want based on the info you put here.' ) }
+					{ translate( 'Display additional details in a formatted list. ' +
+					'Examples when selling apparal include Material, Type, and Cut. ' +
+					'This will also allow customers to filter your store to find Women cut Hoodies in Cotton.' ) }
 				</FormSettingExplanation>
 
 				<div className="products__additional-details-container">
@@ -142,7 +143,7 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 							{inputs}
 						</div>
 
-						<Button onClick={ this.addType }>{ translate( 'Add another' ) }</Button>
+						<Button compact onClick={ this.addType }>{ translate( 'Add another' ) }</Button>
 					</div>
 
 					<div className="products__additional-details-preview-container">
