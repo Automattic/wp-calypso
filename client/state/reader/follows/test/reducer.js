@@ -22,7 +22,7 @@ import {
 	unsubscribeToNewCommentEmail,
 	follow,
 	unfollow,
-
+	syncComplete,
 } from '../actions';
 import { items, itemsCount } from '../reducer';
 
@@ -568,6 +568,31 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {} );
 			const state = items( original, unfollow( 'http://example.com' ) );
 			expect( state ).to.equal( original );
+		} );
+	} );
+
+	describe( 'sync complete', () => {
+		it( 'should remove followed sites not seen during sync', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					feed_URL: 'http://example.com',
+					ID: 1,
+					is_following: true
+				},
+				'example2.com': {
+					feed_URL: 'http://example2.com',
+					ID: 2,
+					is_following: true
+				},
+			} );
+			const state = items( original, syncComplete( [ 'http://example2.com' ] ) );
+			expect( state ).to.eql( {
+				'example2.com': {
+					feed_URL: 'http://example2.com',
+					ID: 2,
+					is_following: true
+				},
+			} );
 		} );
 	} );
 } );

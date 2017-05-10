@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { forEach, map, omitBy, isArray, isUndefined, filter } from 'lodash';
+import { forEach, map, omitBy, isArray, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,12 +15,14 @@ import {
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
 } from 'state/action-types';
-import { receiveFollows as receiveFollowsAction, unfollow as unfollowAction } from 'state/reader/follows/actions';
+import {
+	receiveFollows as receiveFollowsAction,
+	syncComplete,
+} from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { toValidId } from 'reader/id-helpers';
-import { getReaderFollows } from 'state/selectors';
 
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
@@ -116,15 +118,7 @@ export function receivePage( store, action, next, apiResponse ) {
 		return;
 	}
 	// all done syncing
-	// diff what we saw vs. what's in state and remove anything extra
-	const currentFollows = getReaderFollows( store.getState() );
-	const followsToRemove = filter( currentFollows, ( follow ) => follow.ID &&
-		follow.is_following &&
-		! seenSubscriptions.has( follow.feed_URL )
-	);
-
-	// do this with next so we don't trigger a network request
-	forEach( followsToRemove, f => next( unfollowAction( f.feed_URL ) ) );
+	store.dispatch( syncComplete( Array.from( seenSubscriptions ) ) );
 
 	seenSubscriptions = null;
 	syncingFollows = false;

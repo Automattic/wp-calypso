@@ -22,7 +22,7 @@ import {
 	resetSyncingFollows,
 	updateSeenOnFollow,
 } from '../';
-import { receiveFollows as receiveFollowsAction, follow, unfollow } from 'state/reader/follows/actions';
+import { receiveFollows as receiveFollowsAction, follow, syncComplete } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
 
@@ -145,16 +145,18 @@ describe( 'get follow subscriptions', () => {
 				subscriptions: [],
 			} );
 
-			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledTwice;
 			expect( dispatch ).to.have.been.calledWith( receiveFollowsAction( {
 				follows: [],
 				totalCount: 10
 			} ) );
-
-			expect( next ).to.be.calledWith( unfollow( 'http://example.com' ) );
+			expect( dispatch ).to.have.been.calledWith( syncComplete( [
+				'http://readerpostcards.wordpress.com',
+				'https://fivethirtyeight.com/',
+			] ) );
 		} );
 
-		it( 'should not unfollow a feed followed during the sync', () => {
+		it( 'should catch a feed followed during the sync', () => {
 			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
 			const action = requestPageAction(); // no feeds
 			const ignoredDispatch = noop;
@@ -187,13 +189,17 @@ describe( 'get follow subscriptions', () => {
 				subscriptions: [],
 			} );
 
-			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledTwice;
 			expect( dispatch ).to.have.been.calledWith( receiveFollowsAction( {
 				follows: [],
 				totalCount: 10
 			} ) );
 
-			expect( next ).to.have.not.been.calledWith( unfollow( 'http://feed.example.com' ) );
+			expect( dispatch ).to.have.been.calledWith( syncComplete( [
+				'http://readerpostcards.wordpress.com',
+				'https://fivethirtyeight.com/',
+				'http://feed.example.com',
+			] ) );
 		} );
 	} );
 

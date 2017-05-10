@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { find, get, isEqual, merge, pickBy, reduce } from 'lodash';
+import { find, get, isEqual, merge, omitBy, pickBy, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,7 @@ import {
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_SYNC_START,
+	READER_FOLLOWS_SYNC_COMPLETE,
 	READER_FOLLOWS_RECEIVE,
 	READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
@@ -132,6 +133,16 @@ export const items = createReducer( {}, {
 	[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
 	[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
 	[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
+	[ READER_FOLLOWS_SYNC_COMPLETE ]: ( state, action ) => {
+		const seenSubscriptions = new Set( action.payload );
+
+		// diff what we saw vs. what's in state and remove anything extra
+		// extra would be active subscriptions that were not seen in the sync
+		return omitBy( state, ( follow ) => follow.ID &&
+			follow.is_following &&
+			! seenSubscriptions.has( follow.feed_URL )
+		);
+	},
 	[ SERIALIZE ]: ( state ) => pickBy( state, item => item.is_following ),
 }, itemsSchema );
 

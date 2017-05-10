@@ -13,6 +13,7 @@ import {
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
 	READER_FOLLOWS_SYNC_START,
+	READER_FOLLOWS_SYNC_COMPLETE,
 	READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
@@ -116,6 +117,18 @@ export function receiveFollows( { follows, totalCount } ) {
 export function requestFollows() {
 	return {
 		type: READER_FOLLOWS_SYNC_START,
+	};
+}
+
+/**
+ * Represents a completed sync.
+ * @param  {Array} followedUrls An array of all the feed URLS seen during the sync
+ * @return {Object}              The action
+ */
+export function syncComplete( followedUrls ) {
+	return {
+		type: READER_FOLLOWS_SYNC_COMPLETE,
+		payload: followedUrls
 	};
 }
 
