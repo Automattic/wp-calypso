@@ -11,10 +11,11 @@ import { expect } from 'chai';
 import {
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
+	READER_FOLLOW_ERROR,
 } from 'state/action-types';
 
 describe( 'actions', () => {
-	let recordFollow, recordUnfollow;
+	let recordFollow, recordUnfollow, recordFollowError;
 
 	useMockery( mockery => {
 		mockery.registerMock( 'state/reader/posts/actions', {
@@ -26,6 +27,7 @@ describe( 'actions', () => {
 		const actions = require( '../actions' );
 		recordFollow = actions.recordFollow;
 		recordUnfollow = actions.recordUnfollow;
+		recordFollowError = actions.recordFollowError;
 	} );
 
 	const spy = sinon.spy();
@@ -53,6 +55,17 @@ describe( 'actions', () => {
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_RECORD_UNFOLLOW,
 				payload: { url: 'http://discover.wordpress.com' }
+			} );
+		} );
+	} );
+
+	describe( '#recordFollowError', () => {
+		it( 'should dispatch an action on follow error', () => {
+			const response = { info: 'invalid_feed', subscribed: false };
+			recordFollowError( 'http://discover.wordpress.com', response )( dispatchSpy );
+			expect( dispatchSpy ).to.have.been.calledWith( {
+				type: READER_FOLLOW_ERROR,
+				payload: { url: 'http://discover.wordpress.com', error: 'invalid_feed' }
 			} );
 		} );
 	} );

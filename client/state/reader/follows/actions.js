@@ -65,12 +65,25 @@ export function unfollow( feedUrl ) {
 	};
 }
 
-export function recordFollowError( feedUrl, /*response*/ ) {
-	// @todo extract error info from response
-	return {
+/**
+ * Returns an action object to signal that an error was encountered
+ * when following a URL.
+ *
+ * @param  {String} feedUrl Feed URL
+ * @param  {Object} response Error response (contains keys 'info' and 'subscribed')
+ * @return {Function} Action thunk
+ */
+export function recordFollowError( feedUrl, response ) {
+	const action = {
 		type: READER_FOLLOW_ERROR,
 		payload: { feedUrl }
 	};
+
+	if ( response && response.info ) {
+		action.payload.error = response.info;
+	}
+
+	return action;
 }
 
 /**
