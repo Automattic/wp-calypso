@@ -24,7 +24,6 @@ const AdvancedTab = ( {
 		is_cache_enabled,
 		is_super_cache_enabled,
 	},
-	siteUrl,
 } ) => {
 	return (
 		<div>
@@ -37,7 +36,7 @@ const AdvancedTab = ( {
 			<RejectedUserAgents />
 			<LockDown />
 			{ is_cache_enabled && is_super_cache_enabled &&
-				<DirectlyCachedFiles siteUrl={ siteUrl } />
+				<DirectlyCachedFiles />
 			}
 			<FixConfig />
 		</div>

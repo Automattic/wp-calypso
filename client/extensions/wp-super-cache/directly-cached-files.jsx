@@ -41,7 +41,7 @@ class DirectlyCachedFiles extends Component {
 			isRequesting,
 			isSaving,
 			setFieldArrayValue,
-			siteUrl,
+			site,
 			translate
 		} = this.props;
 		const cache_direct_pages = fields.cache_direct_pages || [];
@@ -96,7 +96,7 @@ class DirectlyCachedFiles extends Component {
 									'For example: to cache {{em}}%(url)s/about/{{/em}}, you would enter %(url)s/about/ or /about/. ' +
 									'The cached file will be generated the next time an anonymous user visits that page.',
 									{
-										args: { url: siteUrl },
+										args: { url: site && site.URL },
 										components: { em: <em /> },
 									}
 								) }
