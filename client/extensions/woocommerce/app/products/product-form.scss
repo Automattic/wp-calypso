@@ -265,16 +265,21 @@
 	.vertical-menu {
 		width: 200px;
 		flex: 1 auto;
+		overflow-y: scroll;
+		max-height: 600px;
 	}
 
 	.vertical-menu__items {
 		padding-left: 16px;
+		min-height: 45px;
 	}
 
 	.products__product-form-modal-wrapper {
 		display: flex;
 		flex-flow: row wrap;
 		padding: 16px;
+		max-height: 80vh;
+		overflow-y: hidden;
 	}
 
 	h1 {

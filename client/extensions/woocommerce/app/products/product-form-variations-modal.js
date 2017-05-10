@@ -37,17 +37,21 @@ class ProductFormVariationsModal extends React.Component {
 		this.toggleVisible = this.toggleVisible.bind( this );
 	}
 
-	setDescription( e ) {
+	selectedVariation() {
 		const { selectedVariation } = this.state;
-		const { product, editProductVariation, variations } = this.props;
-		const variation = find( variations, ( v ) => selectedVariation === v.id );
+		const { variations } = this.props;
+		return find( variations, ( v ) => selectedVariation === v.id );
+	}
+
+	setDescription( e ) {
+		const { product, editProductVariation } = this.props;
+		const variation = this.selectedVariation();
 		editProductVariation( product, variation, { description: e.target.value } );
 	}
 
 	toggleVisible() {
-		const { selectedVariation } = this.state;
-		const { product, editProductVariation, variations } = this.props;
-		const variation = find( variations, ( v ) => selectedVariation === v.id );
+		const { product, editProductVariation } = this.props;
+		const variation = this.selectedVariation();
 		editProductVariation( product, variation, { visible: ! variation.visible } );
 	}
 
@@ -60,7 +64,7 @@ class ProductFormVariationsModal extends React.Component {
 	render() {
 		const { variations, translate } = this.props;
 		const { selectedVariation } = this.state;
-		const variation = find( variations, ( v ) => selectedVariation === v.id );
+		const variation = this.selectedVariation();
 
 		const navVariations = ( variations && variations.filter( v => v.attributes.length > 0 ) ) || [];
 		const navItems = navVariations.map( function( v, i ) {
