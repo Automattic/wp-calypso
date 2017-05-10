@@ -1,13 +1,9 @@
-.form-label {
-	margin-bottom: 16px;
-}
+/**
+ * TODO: Variation modal width
+ */
 
 .form-label {
-	margin-bottom: 16px;
-}
-
-.form-label {
-	margin-bottom: 16px;
+	margin-bottom: 5px;
 }
 
 .foldable-card.products__variation-card .foldable-card__content {
@@ -237,4 +233,65 @@
 
 .products__product-name {
 	font-size: 13px;
+}
+
+.products__product-form-sku {
+		color: $gray;
+}
+
+.products__variation-settings-link {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.products__product-form-variation-dialog {
+	max-width: 600px;
+}
+
+.products__product-form-variation-modal {
+	min-width: 600px;
+	overflow-x: auto;
+
+	h2 {
+		margin-bottom: 0;
+		font-weight: bold;
+		font-size: 20px;
+	}
+
+	.products__product-form-variation-description {
+		margin-top: 1em;
+	}
+
+	.vertical-menu {
+		width: 200px;
+		flex: 1 auto;
+		overflow-y: scroll;
+		max-height: 600px;
+	}
+
+	.vertical-menu__items {
+		padding-left: 16px;
+		min-height: 45px;
+	}
+
+	.products__product-form-modal-wrapper {
+		display: flex;
+		flex-flow: row wrap;
+		padding: 16px;
+		max-height: 80vh;
+		overflow-y: hidden;
+	}
+
+	h1 {
+		flex: 1 100%;
+	}
+
+	.products__product-form-modal-contents {
+		padding-left: 40px;
+		flex: 1 auto;
+	}
+
+	.form-toggle__wrapper {
+		margin-left: 8px;
+	}
 }
