@@ -17,11 +17,18 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import {
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+} from 'lib/plans/constants';
+import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSitePlanSlug } from 'state/sites/selectors';
 import { updateSettings } from 'state/jetpack/settings/actions';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
@@ -135,12 +142,21 @@ export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+		const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'photon' );
 
+		const isVideoPressAvailable = [
+			PLAN_JETPACK_BUSINESS,
+			PLAN_JETPACK_BUSINESS_MONTHLY,
+			PLAN_JETPACK_PREMIUM,
+			PLAN_JETPACK_PREMIUM_MONTHLY,
+		].includes( sitePlanSlug );
+
 		return {
-			selectedSiteId,
 			carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),
+			isVideoPressAvailable,
 			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+			selectedSiteId,
 		};
 	},
 	{
