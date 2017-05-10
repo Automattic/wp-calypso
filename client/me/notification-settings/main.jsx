@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import observe from 'lib/mixins/data-observe';
-import { successNotice, errorNotice } from 'state/notices/actions'
+import { successNotice, errorNotice } from 'state/notices/actions';
 import Main from 'components/main';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -19,44 +19,40 @@ import PushNotificationSettings from './push-notification-settings';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
 
-const NotificationSettings = React.createClass( {
-	displayName: 'NotificationSettings',
-
-	mixins: [ observe( 'devices', 'pushNotifications' ) ],
-
-	getInitialState() {
-		return {
-			settings: null,
-			hasUnsavedChanges: false
-		};
-	},
+class NotificationSettings extends Component {
+	state = {
+		settings: null,
+		hasUnsavedChanges: false
+	};
 
 	componentDidMount() {
 		store.on( 'change', this.onChange );
 		this.props.devices.get();
 		fetchSettings();
-	},
+	}
 
 	componentWillUnmount() {
 		store.off( 'change', this.onChange );
-	},
+	}
 
-	onChange() {
+	onChange = () => {
 		const state = store.getStateFor( 'blogs' );
 
 		if ( state.error ) {
-			this.props.errorNotice( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice( this.props.translate( 'There was a problem saving your changes. Please, try again.' ) );
 		}
 
 		if ( state.status === 'success' ) {
-			this.props.successNotice( this.translate( 'Settings saved successfully!' ) );
+			this.props.successNotice( this.props.translate( 'Settings saved successfully!' ) );
 		}
 
 		this.setState( state );
-	},
+	};
 
 	render() {
 		const findSettingsForBlog = blogId => this.state.settings.find( blog => blog.get( 'blog_id' ) === parseInt( blogId, 10 ) );
+		const onSave = blogId => saveSettings( 'blogs', findSettingsForBlog( blogId ) );
+		const onSaveToAll = blogId => saveSettings( 'blogs', findSettingsForBlog( blogId ), true );
 
 		return (
 			<Main className="notification-settings">
@@ -68,15 +64,15 @@ const NotificationSettings = React.createClass( {
 					devices={ this.props.devices }
 					settings={ this.state.settings }
 					hasUnsavedChanges={ this.state.hasUnsavedChanges }
-					onToggle={ ( source, stream, setting ) => toggle( source, stream, setting ) }
-					onSave={ blogId => saveSettings( 'blogs', findSettingsForBlog( blogId ) ) }
-					onSaveToAll={ blogId => saveSettings( 'blogs', findSettingsForBlog( blogId ), true ) } />
+					onToggle={ toggle }
+					onSave={ onSave }
+					onSaveToAll={ onSaveToAll } />
 			</Main>
 		);
 	}
-} );
+}
 
 export default connect(
 	null,
 	{ successNotice, errorNotice }
-)( NotificationSettings );
+)( localize( NotificationSettings ) );
