@@ -53,7 +53,9 @@ function removeSingle( siteId, item ) {
 		return;
 	}
 
-	delete MediaStore._media[ siteId ][ item.ID ];
+	// This mimics the behavior we get from the server.
+	// Deleted items return with only an ID.
+	MediaStore._media[ siteId ][ item.ID ] = { ID: item.ID };
 }
 
 function receivePage( siteId, items ) {
