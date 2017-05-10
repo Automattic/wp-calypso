@@ -27,7 +27,7 @@ const WPSuperCache = ( { site, tab } ) => {
 			case Tabs.PRELOAD:
 				return <PreloadTab />;
 			default:
-				return <EasyTab site={ site } />;
+				return <EasyTab />;
 		}
 	};
 
