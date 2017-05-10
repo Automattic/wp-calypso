@@ -8,10 +8,10 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Main from 'components/main';
-import SettingsPaymentsLocationCurrency from './paymentsLocationCurrency';
-import SettingsPaymentsOffline from './paymentsOffline';
-import SettingsPaymentsOffSite from './paymentsOffSite';
-import SettingsPaymentsOnSite from './paymentsOnSite';
+import SettingsPaymentsLocationCurrency from './payments-location-currency';
+import SettingsPaymentsOffline from './payments-offline';
+import SettingsPaymentsOffSite from './payments-off-site';
+import SettingsPaymentsOnSite from './payments-on-site';
 
 class SettingsPayments extends Component {
 
