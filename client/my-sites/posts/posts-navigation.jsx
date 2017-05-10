@@ -49,9 +49,9 @@ const PostsNavigation = React.createClass( {
 			state = {
 				show: true,
 				loading: true,
-				counts: ! this.props.siteId ?
-					this._defaultCounts() :
-					this._getCounts()
+				counts: ! this.props.siteId
+					? this._defaultCounts()
+					: this._getCounts()
 			};
 
 		if ( ! this.props.siteId || Object.keys( counts ).length ) {
@@ -86,10 +86,10 @@ const PostsNavigation = React.createClass( {
 			return ( <SectionNav /> );
 		}
 
-		let author = this.props.author ? '/my' : '',
+		const author = this.props.author ? '/my' : '',
 			statusSlug = this.props.statusSlug ? '/' + this.props.statusSlug : '',
-			siteFilter = this.props.siteId ? '/' + this.props.siteId : '',
-			showMyFilter = true;
+			siteFilter = this.props.siteId ? '/' + this.props.siteId : '';
+		let showMyFilter = true;
 
 		this.filterStatuses = {
 			publish: this.translate( 'Published', { context: 'Filter label for posts list' } ),
