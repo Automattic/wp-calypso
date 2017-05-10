@@ -1,22 +1,23 @@
 .reader-subscription-list-item {
 	display: flex;
 	flex-direction: row;
-	justify-content: flex-start;
+	justify-content: flex-end;
 }
 
 .reader-subscription-list-item__byline {
 	color: darken( $gray, 30% );
 	margin-right: 16px;
-	width: 100%;
-
-	@include breakpoint( ">660px" ) {
-		width: calc( 100% - 145px );
-	}
+	flex: 1;
 }
 
 .reader-subscription-list-item__options {
 	display: flex;
 	flex-direction: column;
+	min-width: 24px;
+
+	@include breakpoint( ">660px" ) {
+		min-width: 90px;
+	}
 
 	.button.follow-button {
 		display: flex;
@@ -140,7 +141,7 @@
 		top: 4px;
 
 	@include breakpoint( ">660px" ) {
-		left: -3px;
+		left: -4px;
 	}
 }
 
