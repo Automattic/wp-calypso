@@ -49,7 +49,7 @@ export class RecommendedSites extends React.PureComponent {
 						map(
 							sites,
 							( site, index ) => {
-								const siteId = site.siteId;
+								const siteId = site.siteId || site.blogId;
 								return ( <li className="reader-recommended-sites__site-list-item" key={ `site-rec-${ siteId }` }>
 									<div className="reader-recommended-sites__recommended-site-dismiss">
 										<Button borderless
