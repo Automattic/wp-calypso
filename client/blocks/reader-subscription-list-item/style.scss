@@ -208,3 +208,13 @@
 	color: lighten( $gray, 10% );
 	display: block;
 }
+
+// Placeholders
+.reader-subscription-list-item.reader-subscription-list-item__placeholder {
+	.reader-subscription-list-item__site-title,
+	.reader-subscription-list-item__site-excerpt,
+	.reader-subscription-list-item__by-text,
+	.reader-subscription-list-item__site-url {
+		@include placeholder();
+	}
+}
