@@ -19,6 +19,7 @@ import {
 	isBusiness,
 	isEnterprise
 } from 'lib/products-values';
+import { canCurrentUser } from 'state/selectors';
 import JetpackPluginsPanel from './jetpack-plugins-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
@@ -30,6 +31,7 @@ export const PluginPanel = ( {
 	category,
 	search,
 	translate,
+	canUserManageOptions,
 } ) => {
 	const hasBusiness = isBusiness( plan ) || isEnterprise( plan );
 	const hasPremium = hasBusiness || isPremium( plan );
@@ -39,7 +41,7 @@ export const PluginPanel = ( {
 
 			<PageViewTracker path="/plugins/:site" title="Plugins > WPCOM Site" />
 
-			{ ! hasBusiness &&
+			{ ! hasBusiness && canUserManageOptions &&
 				<Banner
 					feature={ FEATURE_UPLOAD_PLUGINS }
 					event={ 'calypso_plugins_page_upgrade_nudge' }
@@ -62,9 +64,11 @@ export const PluginPanel = ( {
 
 const mapStateToProps = state => {
 	const selectedSite = getSelectedSite( state );
+	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		plan: get( selectedSite, 'plan', {} ),
-		siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
+		siteSlug: getSiteSlug( state, selectedSiteId ),
+		canUserManageOptions: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 	};
 };
 
