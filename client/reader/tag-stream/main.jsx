@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -110,7 +111,7 @@ const TagStream = React.createClass( {
 			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
-				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
+				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				<TagStreamHeader
 					title={ title }
@@ -133,4 +134,4 @@ export default connect(
 		followTag: requestFollowTag,
 		unfollowTag: requestUnfollowTag,
 	}
-)( TagStream );
+)( localize( TagStream ) );

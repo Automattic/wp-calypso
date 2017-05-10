@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 var FollowingEditNavigation = React.createClass( {
 
@@ -13,7 +14,7 @@ var FollowingEditNavigation = React.createClass( {
 			return null;
 		}
 
-		return this.translate(
+		return this.props.translate(
 			'%(count)d site',
 			'%(count)d sites',
 			{
@@ -32,4 +33,4 @@ var FollowingEditNavigation = React.createClass( {
 	}
 } );
 
-export default FollowingEditNavigation;
+export default localize( FollowingEditNavigation );

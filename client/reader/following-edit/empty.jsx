@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -30,18 +30,18 @@ const FollowingEditEmptyContent = React.createClass( {
 	render() {
 		const action = ( <a className="empty-content__action button is-primary"
 				onClick={ this.recordAction }
-				href="/read/search">{ this.translate( 'Find Sites to Follow' ) }</a>),
+				href="/read/search">{ this.props.translate( 'Find Sites to Follow' ) }</a>),
 			secondaryAction = (
 				<a className="empty-content__action button"
 					onClick={ this.recordSecondaryAction }
-					href="/discover">{ this.translate( 'Explore Discover' ) }</a> );
+					href="/discover">{ this.props.translate( 'Explore Discover' ) }</a> );
 
 		return (
 			<EmptyContent
 				action={ action }
 				secondaryAction={ secondaryAction }
-				title={ i18n.translate( 'You haven\'t followed any sites yet' ) }
-				line={ i18n.translate( 'Search for a site or explore Discover.' ) }
+				title={ this.props.translate( 'You haven\'t followed any sites yet' ) }
+				line={ this.props.translate( 'Search for a site or explore Discover.' ) }
 				illustration={ '/calypso/images/drake/drake-404.svg' }
 				illustrationWidth={ 500 }
 			/>
@@ -49,4 +49,4 @@ const FollowingEditEmptyContent = React.createClass( {
 	}
 } );
 
-export default FollowingEditEmptyContent;
+export default localize( FollowingEditEmptyContent );

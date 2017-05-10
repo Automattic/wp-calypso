@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -48,7 +49,7 @@ const ListStream = React.createClass( {
 			emptyContent = ( <EmptyContent /> );
 
 		let	editUrl = null,
-			title = this.translate( 'Loading list' );
+			title = this.props.translate( 'Loading list' );
 
 		if ( list ) {
 			title = list.title;
@@ -62,7 +63,7 @@ const ListStream = React.createClass( {
 
 		return (
 			<Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ shouldShowFollow }>
-				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
+				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<ListStreamHeader
 					isPlaceholder={ ! list }
@@ -94,4 +95,4 @@ export default connect(
 			unfollowList
 		}, dispatch );
 	}
-)( ListStream );
+)( localize( ListStream ) );

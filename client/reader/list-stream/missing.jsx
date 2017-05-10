@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -39,19 +40,19 @@ const ListMissing = React.createClass( {
 		const action = ( <a
 			className="empty-content__action button is-primary"
 			onClick={ this.recordAction }
-			href="/">{ this.translate( 'Back to Followed Sites' ) }</a> ),
+			href="/">{ this.props.translate( 'Back to Followed Sites' ) }</a> ),
 			secondaryAction = isDiscoverEnabled()
 			? ( <a
 				className="empty-content__action button"
 				onClick={ this.recordSecondaryAction }
-				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ) : null;
+				href="/discover">{ this.props.translate( 'Explore Discover' ) }</a> ) : null;
 
 		return (
 			<div>
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<EmptyContent
-				title={ this.translate( 'List not found' ) }
-				line={ this.translate( 'Sorry, we couldn\'t find that list.' ) }
+				title={ this.props.translate( 'List not found' ) }
+				line={ this.props.translate( 'Sorry, we couldn\'t find that list.' ) }
 				action={ action }
 				secondaryAction={ secondaryAction }
 				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
@@ -62,5 +63,4 @@ const ListMissing = React.createClass( {
 	}
 } );
 
-export default ListMissing
-;
+export default localize( ListMissing );

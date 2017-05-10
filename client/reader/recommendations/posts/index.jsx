@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,8 +14,8 @@ import DocumentHead from 'components/data/document-head';
 var RecommendationPostsStream = React.createClass( {
 
 	render: function() {
-		var title = this.translate( 'Recommended Posts' ),
-			emptyContent = ( <EmptyContent /> );
+		const title = this.props.translate( 'Recommended Posts' );
+		const emptyContent = ( <EmptyContent /> );
 
 		return (
 			<Stream { ...this.props }
@@ -22,11 +23,11 @@ var RecommendationPostsStream = React.createClass( {
 				emptyContent = { emptyContent }
 				showFollowInHeader = { true }
 			>
-				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
+				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 			</Stream>
 		);
 	}
 
 } );
 
-export default RecommendationPostsStream;
+export default localize( RecommendationPostsStream );

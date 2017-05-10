@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -39,28 +40,30 @@ const TagEmptyContent = React.createClass( {
 		const action = ( <a
 			className="empty-content__action button is-primary"
 			onClick={ this.recordAction }
-			href="/">{ this.translate( 'Back to Following' ) }</a> );
+			href="/">{ this.props.translate( 'Back to Following' ) }</a> );
 
 		const secondaryAction = isDiscoverEnabled()
 			? ( <a
 			className="empty-content__action button"
 			onClick={ this.recordSecondaryAction }
-			href="/discover">{ this.translate( 'Explore Discover' ) }</a> ) : null;
+			href="/discover">{ this.props.translate( 'Explore Discover' ) }</a> ) : null;
 
-		const message = this.translate(
+		const message = this.props.translate(
 			'No posts have recently been tagged with {{tagName /}} for your language.',
 			{ components: { tagName: <em>{ this.props.decodedTagSlug }</em> } }
 		);
 
-		return ( <EmptyContent
-			title={ this.translate( 'No recent posts' ) }
-			line={ message }
-			action={ action }
-			secondaryAction={ secondaryAction }
-			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
-			illustrationWidth={ 500 }
-			/> );
+		return (
+			<EmptyContent
+				title={ this.props.translate( 'No recent posts' ) }
+				line={ message }
+				action={ action }
+				secondaryAction={ secondaryAction }
+				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+				illustrationWidth={ 500 }
+				/>
+		);
 	}
 } );
 
-export default TagEmptyContent;
+export default localize( TagEmptyContent );
