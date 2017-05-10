@@ -3,14 +3,15 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import SettingsPaymentsLocationCurrency from './paymentsLocationCurrency';
+import SettingsPaymentsOffline from './paymentsOffline';
+import SettingsPaymentsOffSite from './paymentsOffSite';
+import SettingsPaymentsOnSite from './paymentsOnSite';
 
 class SettingsPayments extends Component {
 
@@ -19,19 +20,17 @@ class SettingsPayments extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
 		return (
 			<Main
 				className={ classNames( 'settingsPayments', this.props.className ) }>
-				<SectionHeader label={ translate( 'Store Location and Currency' ) } />
-				<Card>
-					Different payment methods may be available based on your store
-					location and currency.
-				</Card>
+				<SettingsPaymentsLocationCurrency />
+				<SettingsPaymentsOnSite />
+				<SettingsPaymentsOffSite />
+				<SettingsPaymentsOffline />
 			</Main>
 		);
 	}
 
 }
 
-export default localize( SettingsPayments );
+export default SettingsPayments;
