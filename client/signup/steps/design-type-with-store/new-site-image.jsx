@@ -13,7 +13,7 @@ export default () => (
 				<use xlinkHref="#path-1"></use>
 			</mask>
 		</defs>
-		<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+		<g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
 			<g id="Group-3-Copy">
 				<g id="Group-2">
 					<g id="domain-illustration">
@@ -25,7 +25,7 @@ export default () => (
 								id="Fill-1"
 								fill="#CFDEE7">
 							</path>
-							<use id="Fill-6" stroke="#D9E8F0" mask="url(#mask-2)" stroke-width="2" fill="#FFFFFF" xlinkHref="#path-1"></use>
+							<use id="Fill-6" stroke="#D9E8F0" mask="url(#mask-2)" strokeWidth="2" fill="#FFFFFF" xlinkHref="#path-1"></use>
 						</g>
 					</g>
 					<rect id="Rectangle-4" fill="#CFDEE7" x="10.5038168" y="32.834056" width="111.603053" height="6.56681119"></rect>

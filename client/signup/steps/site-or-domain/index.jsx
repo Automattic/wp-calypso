@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
 import { externalRedirect } from 'lib/route/path';
 import NavigationLink from 'signup/navigation-link';
 
-export default class SiteOrDomain extends Component {
+class SiteOrDomain extends Component {
 	componentWillMount() {
 		if ( ! this.getDomainName() ) {
 			// /domains domain search is an external application to calypso,
@@ -50,18 +51,20 @@ export default class SiteOrDomain extends Component {
 	}
 
 	getChoices() {
+		const { translate } = this.props;
+
 		return [
 			{
 				type: 'page',
-				label: 'New site',
+				label: translate( 'New site' ),
 				image: <NewSiteImage />,
-				description: 'Choose a theme, customize, and launch your site. Free domain included with all plans.'
+				description: translate( 'Choose a theme, customize, and launch your site. Free domain included with all plans.' )
 			},
 			{
 				type: 'domain',
-				label: 'Just buy a domain',
+				label: translate( 'Just buy a domain' ),
 				image: <DomainImage />,
-				description: 'Show a "coming soon" notice on your domain. Add a site later.'
+				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' )
 			},
 		];
 	}
@@ -69,8 +72,12 @@ export default class SiteOrDomain extends Component {
 	renderChoices() {
 		return (
 			<div className="site-or-domain__choices">
-				{ this.getChoices().map( ( choice ) => (
-					<SiteOrDomainChoice choice={ choice } handleClickChoice={ this.handleClickChoice } />
+				{ this.getChoices().map( ( choice, index ) => (
+					<SiteOrDomainChoice
+						key={ `site-or-domain-choice-${ index }` }
+						choice={ choice }
+						handleClickChoice={ this.handleClickChoice }
+					/>
 				) ) }
 			</div>
 		);
@@ -86,7 +93,7 @@ export default class SiteOrDomain extends Component {
 					positionInFlow={ 1 }
 					stepName={ this.props.stepName }
 					stepSectionName={ this.props.stepSectionName }
-					backUrl="https://wordpress.com/domains"
+					backUrl="/domains"
 					signupProgress={ this.props.signupProgress }
 				/>
 			</div>
@@ -133,7 +140,7 @@ export default class SiteOrDomain extends Component {
 		} else {
 			goToNextStep();
 		}
-	}
+	};
 
 	render() {
 		return (
@@ -150,3 +157,5 @@ export default class SiteOrDomain extends Component {
 		);
 	}
 }
+
+export default localize( SiteOrDomain );
