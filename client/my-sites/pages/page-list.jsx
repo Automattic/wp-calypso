@@ -16,7 +16,8 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	NoResults = require( 'my-sites/no-results' ),
 	actions = require( 'lib/posts/actions' ),
 	Placeholder = require( './placeholder' ),
-	mapStatus = require( 'lib/route' ).mapPostStatus;
+	mapStatus = require( 'lib/route' ).mapPostStatus,
+	sortPagesHierarchically = require( './helpers' ).sortPagesHierarchically;
 
 import BlogPostsPage from './blog-posts-page';
 
@@ -35,6 +36,7 @@ var PageList = React.createClass( {
 		return (
 			<PostListFetcher
 				type="page"
+				number={ 100 }
 				siteID={ this.props.siteID }
 				status={ mapStatus( this.props.status ) }
 				search={ this.props.search }>
@@ -67,7 +69,7 @@ var Pages = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			perPage: 20,
+			perPage: 100,
 			loading: false,
 			hasRecentError: false,
 			lastPage: false,
@@ -197,57 +199,107 @@ var Pages = React.createClass( {
 		}
 	},
 
-	render: function() {
-		var pages = this.props.posts,
-			rows = [];
-
-		// pages have loaded, sites have loaded, and we have a site instance or are viewing all-sites
-		if ( pages.length && this.props.sites.initialized ) {
-			if ( ! this.props.search ) {
-				// we're listing in reverse chrono. use the markers.
-				pages = this._insertTimeMarkers( pages );
-			}
-			rows = pages.map( function( page ) {
-				if ( ! ( 'site_ID' in page ) ) {
-					return page;
-				}
-					// Get the site the page belongs to
-				var site = this.props.sites.getSite( page.site_ID );
-
-					// Render each page
-				return (
-						<Page key={ 'page-' + page.global_ID } page={ page } site={ site } multisite={ this.props.siteID === false } />
-					);
-			}, this );
-
-			if ( this.props.loading ) {
-				this.addLoadingRows( rows, 1 );
-			}
-
-			const site = this.props.sites.getSelectedSite();
-			const status = this.props.status || 'published';
-
-			if ( site && status === 'published' ) {
-				rows.push(
-					<BlogPostsPage
-						key="blog-posts-page"
-						site={ site }
-					/>
-				);
-			}
-		} else if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
-			rows.push( <div key="page-list-no-results">{ this.getNoContentMessage() }</div> );
-		} else {
-			this.addLoadingRows( rows, 1 );
-		}
+	renderLoading: function() {
+		const rows = [];
+		this.addLoadingRows( rows, 1 );
 
 		return (
 			<div id="pages" className="page-list">
 				{ rows }
+			</div>
+		);
+	},
+
+	renderPagesList: function( { pages } ) {
+		const site = this.props.sites.getSelectedSite();
+		const status = this.props.status || 'published';
+
+		// Pages only display hierarchically for published pages on single-sites when
+		// there are 100 or fewer pages and no more pages to load (last page).
+		// Pages are not displayed hierarchically for search.
+		if ( site && status === 'published' &&
+			this.props.lastPage && pages.length <= 100 &&
+			! this.props.search ) {
+			return this.renderHierarchical( { pages, site } );
+		}
+
+		return this.renderChronological( { pages, site } );
+	},
+
+	renderHierarchical: function( { pages, site } ) {
+		pages = sortPagesHierarchically( pages );
+		const rows = pages.map( function( page ) {
+			return (
+				<Page key={ 'page-' + page.global_ID } page={ page } site={ site }
+					multisite={ false } hierarchical={ true } hierarchyLevel={ page.indentLevel || 0 } />
+			);
+		}, this );
+
+		return (
+			<div id="pages" className="page-list">
+				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+				{ rows }
+			</div>
+		);
+	},
+
+	renderChronological: function( { pages, site } ) {
+		if ( ! this.props.search ) {
+			// we're listing in reverse chrono. use the markers.
+			pages = this._insertTimeMarkers( pages );
+		}
+		const rows = pages.map( function( page ) {
+			if ( ! ( 'site_ID' in page ) ) {
+				return page;
+			}
+			// Get the site the page belongs to
+			const site = this.props.sites.getSite( page.site_ID );
+
+			// Render each page
+			return (
+				<Page key={ 'page-' + page.global_ID } page={ page } site={ site } multisite={ this.props.siteID === false } />
+			);
+		}, this );
+
+		if ( this.props.loading ) {
+			this.addLoadingRows( rows, 1 );
+		}
+
+		const blogPostsPage = ( site && status === 'published' ) && (
+			<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+		);
+
+		return (
+			<div id="pages" className="page-list">
+				{ blogPostsPage }
+				{ rows }
 				{ this.props.lastPage && pages.length ? <div className="infinite-scroll-end" /> : null }
 			</div>
 		);
-	}
+	},
+
+	renderNoContent: function() {
+		return (
+			<div id="pages" className="page-list">
+				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
+			</div>
+		);
+	},
+
+	render: function() {
+		const pages = this.props.posts;
+
+		if ( pages.length && this.props.sites.initialized ) {
+			return this.renderPagesList( { pages } );
+		}
+
+		if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
+			return this.renderNoContent();
+		}
+
+		return this.renderLoading();
+	},
+
 } );
 
 module.exports = PageList;
