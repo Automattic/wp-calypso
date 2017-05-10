@@ -20,7 +20,7 @@ import {
 } from 'reader/stats';
 import cssSafeUrl from 'lib/css-safe-url';
 
-export default localize(React.createClass({
+export default localize( React.createClass( {
 	displayName: 'FeedFeatured',
 
 	mixins: [ PureRenderMixin ],
@@ -146,4 +146,4 @@ export default localize(React.createClass({
 			</Card>
 		);
 	}
-}));
+} ) );
