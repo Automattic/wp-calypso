@@ -24,7 +24,8 @@ export default {
 	notifications( context ) {
 		const basePath = context.path;
 
-		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications' );
 
@@ -42,7 +43,8 @@ export default {
 	comments( context ) {
 		const basePath = context.path;
 
-		context.store.dispatch( setTitle( i18n.translate( 'Comments on other sites', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Comments on other sites', { textOnly: true } ) ) );
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 
@@ -61,7 +63,8 @@ export default {
 	updates( context ) {
 		const basePath = context.path;
 
-		context.store.dispatch( setTitle( i18n.translate( 'Updates from WordPress.com', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Updates from WordPress.com', { textOnly: true } ) ) );
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Updates from WordPress.com' );
 
@@ -80,7 +83,8 @@ export default {
 	notificationSubscriptions( context ) {
 		const basePath = context.path;
 
-		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
 		analytics.ga.recordPageView( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 
