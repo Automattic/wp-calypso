@@ -73,15 +73,11 @@ export function unfollow( feedUrl ) {
  * @param  {Object} response Error response (contains keys 'info' and 'subscribed')
  * @return {Object} Action
  */
-export function recordFollowError( url, response ) {
+export function recordFollowError( url, error ) {
 	const action = {
 		type: READER_FOLLOW_ERROR,
-		payload: { url }
+		payload: { url, error }
 	};
-
-	if ( response && response.info ) {
-		action.payload.error = response.info;
-	}
 
 	return action;
 }

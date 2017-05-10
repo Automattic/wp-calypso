@@ -50,7 +50,11 @@ export function followError( { dispatch }, action, next, response ) {
 			translate( 'Sorry, there was a problem following that site. Please try again.' )
 		)
 	);
-	dispatch( recordFollowError( action.payload.feedUrl, response ) );
+
+	if ( response && response.info ) {
+		dispatch( recordFollowError( action.payload.feedUrl, response.info ) );
+	}
+
 	next( unfollow( action.payload.feedUrl ) );
 }
 

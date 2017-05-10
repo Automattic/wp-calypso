@@ -61,8 +61,7 @@ describe( 'actions', () => {
 
 	describe( '#recordFollowError', () => {
 		it( 'should dispatch an action on follow error', () => {
-			const response = { info: 'invalid_feed', subscribed: false };
-			const action = recordFollowError( 'http://discover.wordpress.com', response );
+			const action = recordFollowError( 'http://discover.wordpress.com', 'invalid_feed' );
 			expect( action ).to.deep.equal( {
 				type: READER_FOLLOW_ERROR,
 				payload: { url: 'http://discover.wordpress.com', error: 'invalid_feed' }
