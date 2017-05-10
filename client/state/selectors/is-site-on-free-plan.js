@@ -10,7 +10,7 @@ import { PLAN_FREE } from 'lib/plans/constants';
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @return {?Boolean} Whether site is on a free plan
+ * @return {Boolean} Whether site is on a free plan
  */
 const isSiteOnFreePlan = ( state, siteId ) => {
 	const currentPlan = getCurrentPlan( state, siteId );
