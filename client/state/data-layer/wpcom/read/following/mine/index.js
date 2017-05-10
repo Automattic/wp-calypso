@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { map, omitBy, isArray, isUndefined } from 'lodash';
+import { forEach, map, omitBy, isArray, isUndefined, filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,11 +14,12 @@ import {
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
 } from 'state/action-types';
-import { receiveFollows as receiveFollowsAction } from 'state/reader/follows/actions';
+import { receiveFollows as receiveFollowsAction, unfollow as unfollowAction } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { toValidId } from 'reader/id-helpers';
+import { getReaderFollows } from 'state/selectors';
 
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
@@ -53,6 +54,7 @@ export const subscriptionsFromApi = apiResponse => {
 };
 
 let syncingFollows = false;
+let seenSubscriptions;
 export const isSyncingFollows = () => syncingFollows;
 export const resetSyncingFollows = () => syncingFollows = false;
 
@@ -62,6 +64,7 @@ export function syncReaderFollows( store, action, next ) {
 	}
 
 	syncingFollows = true;
+	seenSubscriptions = new Set();
 
 	store.dispatch( requestPageAction( 1 ) );
 
@@ -86,6 +89,7 @@ export function requestPage( store, action, next ) {
 }
 
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
+
 export function receivePage( store, action, next, apiResponse ) {
 	if ( ! isValidApiResponse( apiResponse, action ) ) {
 		receiveError( store, action, next, apiResponse );
@@ -93,19 +97,34 @@ export function receivePage( store, action, next, apiResponse ) {
 	}
 
 	const { page, number } = apiResponse;
-
+	const follows = subscriptionsFromApi( apiResponse );
 	store.dispatch(
 		receiveFollowsAction( {
-			follows: subscriptionsFromApi( apiResponse ),
+			follows,
 			totalCount: apiResponse.total_subscriptions,
 		} )
 	);
+
+	forEach( follows, ( follow ) => {
+		seenSubscriptions.add( follow.ID );
+	} );
 
 	// Fetch the next page of subscriptions where applicable
 	if ( number > 0 && page <= MAX_PAGES_TO_FETCH && isSyncingFollows() ) {
 		store.dispatch( requestPageAction( page + 1 ) );
 		return;
 	}
+	// all done syncing
+	// diff what we saw vs. what's in state and remove anything extra
+	const currentFollows = getReaderFollows( store.getState() );
+	const followsToRemove = filter( currentFollows, ( follow ) => follow.ID &&
+		follow.is_following &&
+		! seenSubscriptions.has( follow.ID )
+	);
+
+	// do this with next so we don't trigger a network request
+	forEach( followsToRemove, f => next( unfollowAction( f.feed_URL ) ) );
+
 	syncingFollows = false;
 }
 

@@ -4,6 +4,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import freeze from 'deep-freeze';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +21,7 @@ import {
 	syncReaderFollows,
 	resetSyncingFollows,
 } from '../';
-import { receiveFollows as receiveFollowsAction } from 'state/reader/follows/actions';
+import { receiveFollows as receiveFollowsAction, unfollow } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
 
@@ -111,6 +112,45 @@ describe( 'get follow subscriptions', () => {
 					totalCount: successfulApiResponse.total_subscriptions,
 				} )
 			);
+		} );
+
+		it( 'should stop the sync process if it hits an empty page', () => {
+			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
+			const action = requestPageAction(); // no feeds
+			const ignoredDispatch = noop;
+			const dispatch = sinon.spy();
+			const next = sinon.spy();
+
+			const getState = () => ( {
+				reader: {
+					follows: {
+						items: {
+							'example.com': {
+								ID: 5,
+								is_following: true,
+								feed_URL: 'http://example.com',
+							}
+						}
+					}
+				}
+			} );
+
+			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction, next );
+			receivePage( { dispatch: ignoredDispatch }, action, next, successfulApiResponse );
+			receivePage( { dispatch, getState }, action, next, {
+				number: 0,
+				page: 2,
+				total_subscriptions: 10,
+				subscriptions: [],
+			} );
+
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith( receiveFollowsAction( {
+				follows: [],
+				totalCount: 10
+			} ) );
+
+			expect( next ).to.be.calledWith( unfollow( 'http://example.com' ) );
 		} );
 	} );
 
