@@ -57,7 +57,7 @@ const MediaSettings = ( {
 					moduleSlug="photon"
 					label={ translate( 'Speed up your images and photos with Photon' ) }
 					description={ translate( 'Must be enabled to use tiled galleries.' ) }
-					disabled={ isRequestingSettings || isSavingSettings || photonModuleUnavailable }
+					disabled={ isRequestingOrSaving || photonModuleUnavailable }
 					/>
 			</FormFieldset>
 
@@ -73,12 +73,12 @@ const MediaSettings = ( {
 					siteId={ siteId }
 					moduleSlug="carousel"
 					label={ translate( 'Transform standard image galleries into full-screen slideshows' ) }
-					disabled={ isRequestingSettings || isSavingSettings }
+					disabled={ isRequestingOrSaving }
 					/>
 				<div className="media-settings__module-settings site-settings__child-settings">
 					<CompactFormToggle
 						checked={ fields.carousel_display_exif || false }
-						disabled={ isRequestingSettings || isSavingSettings || ! carouselActive }
+						disabled={ isRequestingOrSaving || ! carouselActive }
 						onChange={ handleAutosavingToggle( 'carousel_display_exif' ) } >
 						{ translate( 'Show photo metadata in carousel, when available' ) }
 					</CompactFormToggle>
@@ -90,7 +90,7 @@ const MediaSettings = ( {
 						id="carousel_background_color"
 						value={ fields.carousel_background_color || 'black' }
 						onChange={ onChangeField( 'carousel_background_color' ) }
-						disabled={ isRequestingSettings || isSavingSettings || ! carouselActive } >
+						disabled={ isRequestingOrSaving || ! carouselActive } >
 						<option value="black" key="carousel_background_color_black">
 							{ translate( 'Black' ) }
 						</option>
