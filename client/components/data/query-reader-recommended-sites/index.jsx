@@ -15,10 +15,10 @@ class QueryReaderRecommendedSites extends Component {
 		offset: PropTypes.number,
 	};
 
-	static defaultProps = () => ( {
+	static defaultProps = {
 		seed: 0,
 		offset: 0,
-	} )
+	};
 
 	componentWillMount() {
 		this.props.requestRecommendedSites( { seed: this.props.seed, offset: this.props.offset } );
