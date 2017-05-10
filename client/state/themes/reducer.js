@@ -310,7 +310,7 @@ export const queries = ( () => {
 	}
 
 	// Time after which queries storred in IndexedDb will be invalidated.
-	// days * hours_in_day * minutes_in_hour * seconds_in_hour * miliseconds_in_second
+	// days * hours_in_day * minutes_in_hour * seconds_in_minute * miliseconds_in_second
 	const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
 
 	return createReducer( {}, {
