@@ -6,8 +6,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { isValidTerm, sortFilterTerms } from './theme-filters';
-import { getThemeFilterTerm } from 'state/selectors';
+import { sortFilterTerms } from './theme-filters';
+import { getThemeFilterTerm, isValidThemeFilterTerm } from 'state/selectors';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {
@@ -19,7 +19,7 @@ export function validateFilters( context, next ) {
 	const filterParam = context.params.filter.replace( /\s/g, '+' );
 
 	// Accept commas, which were previously used as canonical filter separators
-	const validFilters = filterParam.split( /[,+]/ ).filter( isValidTerm );
+	const validFilters = filterParam.split( /[,+]/ ).filter( term => isValidThemeFilterTerm( context.store.getState(), term ) );
 	const sortedValidFilters = sortFilterTerms( validFilters ).join( '+' );
 
 	if ( sortedValidFilters !== filterParam ) {
