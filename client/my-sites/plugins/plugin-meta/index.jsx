@@ -34,8 +34,8 @@ import PluginInformation from 'my-sites/plugins/plugin-information';
 import WpcomPluginInstallButton from 'my-sites/plugins-wpcom/plugin-install-button';
 import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
 import { userCan } from 'lib/site/utils';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
-import { FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import Banner from 'components/banner';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import {
 	isBusiness,
 	isEnterprise
@@ -492,11 +492,11 @@ const PluginMeta = React.createClass( {
 
 				{ ! get( this.props.selectedSite, 'jetpack' ) && ! this.hasBusinessPlan() && ! this.isWpcomPreinstalled() &&
 					<div className="plugin-meta__upgrade_nudge">
-						<UpgradeNudge
+						<Banner
 							feature={ FEATURE_UPLOAD_PLUGINS }
+							event={ 'calypso_plugin_detail_page_upgrade_nudge' }
+							plan={ PLAN_BUSINESS }
 							title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
-							message={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
-							event={ 'calypso_plugins_page_upgrade_nudge' }
 						/>
 					</div>
 				}

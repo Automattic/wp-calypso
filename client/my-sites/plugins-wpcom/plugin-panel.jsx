@@ -42,6 +42,7 @@ export const PluginPanel = ( {
 			{ ! hasBusiness &&
 				<Banner
 					feature={ FEATURE_UPLOAD_PLUGINS }
+					event={ 'calypso_plugins_page_upgrade_nudge' }
 					plan={ PLAN_BUSINESS }
 					title={ translate( 'Upgrade to the Business plan to install plugins.' ) }
 				/>
