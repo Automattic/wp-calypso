@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Immutable from 'immutable';
 import classNames from 'classnames';
@@ -14,10 +14,8 @@ import Card from 'components/card';
 import Header from './header';
 import SettingsForm from 'me/notification-settings/settings-form';
 
-const BlogSettings = React.createClass( {
-	displayName: 'BlogSettings',
-
-	propTypes: {
+class BlogSettings extends Component {
+	static propTypes = {
 		site: PropTypes.object.isRequired,
 		devices: PropTypes.object,
 		disableToggle: PropTypes.bool,
@@ -26,13 +24,14 @@ const BlogSettings = React.createClass( {
 		onToggle: PropTypes.func.isRequired,
 		onSave: PropTypes.func.isRequired,
 		onSaveToAll: PropTypes.func.isRequired
-	},
+	};
 
-	getInitialState() {
-		return {
-			isExpanded: false
-		};
-	},
+	state = { isExpanded: false	};
+
+	onToggle = () => {
+		const isExpanded = ! this.state.isExpanded;
+		this.setState( { isExpanded } );
+	};
 
 	render() {
 		const {
@@ -58,18 +57,27 @@ const BlogSettings = React.createClass( {
 			<Card className={ styles }>
 				<Header
 					{ ...{ site, settings, disableToggle } }
-					onToggle={ () => this.setState( { isExpanded: ! isExpanded } ) } />
+					onToggle={ this.onToggle } />
 				{ ( () => {
 					if ( isExpanded || disableToggle ) {
 						return <SettingsForm
-							{ ...{ sourceId, devices, settings, hasUnsavedChanges, isApplyAllVisible: ! disableToggle, onToggle, onSave, onSaveToAll } }
+							{ ...{
+								sourceId,
+								devices,
+								settings,
+								hasUnsavedChanges,
+								isApplyAllVisible: ! disableToggle,
+								onToggle,
+								onSave,
+								onSaveToAll
+							} }
 							settingKeys={ [ 'new_comment', 'comment_like', 'post_like', 'follow', 'achievement', 'mentions' ] } />;
 					}
 				} )() }
 			</Card>
 		);
 	}
-} );
+}
 
 const mapStateToProps = ( state, { siteId } ) => ( {
 	site: getSite( state, siteId )
