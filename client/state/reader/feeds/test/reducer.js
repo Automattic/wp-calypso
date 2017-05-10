@@ -17,7 +17,7 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 
-import { items, queuedRequests } from '../reducer';
+import { items, queuedRequests, lastFetched, } from '../reducer';
 
 describe( 'reducer', ( ) => {
 	describe( 'items', ( ) => {
@@ -201,6 +201,26 @@ describe( 'reducer', ( ) => {
 					}
 				)
 			).to.deep.equal( {} );
+		} );
+	} );
+
+	describe( 'lastFetched', () => {
+		it( 'should update the last fetched time on request success', () => {
+			const original = deepFreeze( {} );
+			const action = {
+				type: READER_FEED_REQUEST_SUCCESS,
+				payload: { feed_ID: 1 }
+			};
+			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
+		} );
+
+		it( 'should update the last fetched time on feed update', () => {
+			const original = deepFreeze( {} );
+			const action = {
+				type: READER_FEED_UPDATE,
+				payload: [ { feed_ID: 1 } ]
+			};
+			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
 		} );
 	} );
 } );
