@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { trim, debounce, random, take } from 'lodash';
+import { trim, debounce, random, take, reject } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
@@ -19,6 +19,7 @@ import {
 	getReaderFeedsForQuery,
 	getReaderFeedsCountForQuery,
 	getReaderRecommendedSites,
+	isSiteBlocked as isSiteBlockedSelector,
 } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
@@ -31,6 +32,8 @@ import { addQueryArgs } from 'lib/url';
 import FollowButton from 'reader/follow-button';
 import { READER_FOLLOWING_MANAGE_URL_INPUT } from 'reader/follow-button/follow-sources';
 import { resemblesUrl, addSchemeIfMissing, withoutHttp } from 'lib/url';
+
+const PAGE_SIZE = 4;
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -52,6 +55,7 @@ class FollowingManage extends Component {
 	state = {
 		width: 800,
 		seed: random( 0, 10000 ),
+		offset: 0,
 		forceRefresh: false,
 	};
 
@@ -119,7 +123,20 @@ class FollowingManage extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		const forceRefresh = nextProps.sitesQuery !== this.props.sitesQuery;
-		this.setState( { forceRefresh } );
+		const nextState = { forceRefresh };
+		const recommendedSites = nextProps.getRecommendedSites( this.state.seed );
+
+		const shouldRequestMoreRecs = (
+			recommendedSites &&
+			recommendedSites.length === this.state.offset + PAGE_SIZE &&
+			reject( recommendedSites, nextProps.isSiteBlocked ).length <= 2
+		);
+
+		if ( shouldRequestMoreRecs ) {
+			nextState.offset = this.state.offset + PAGE_SIZE;
+		}
+
+		this.setState( nextState );
 	}
 
 	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
@@ -138,6 +155,7 @@ class FollowingManage extends Component {
 			searchResultsCount,
 			showMoreResults,
 			getRecommendedSites,
+			isSiteBlocked,
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 		const showExistingSubscriptions = ! ( !! sitesQuery && showMoreResults );
@@ -146,7 +164,10 @@ class FollowingManage extends Component {
 		if ( isSitesQueryUrl ) {
 			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		}
-		const recommendedSites = getRecommendedSites( this.state.seed );
+		const recommendedSites = reject(
+			getRecommendedSites( this.state.seed ),
+			isSiteBlocked
+		);
 
 		return (
 			<ReaderMain className="following-manage">
@@ -155,7 +176,9 @@ class FollowingManage extends Component {
 					<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
 				{ ! searchResults && ! isSitesQueryUrl && <QueryReaderFeedsSearch query={ sitesQuery } /> }
-				{ ! recommendedSites && <QueryReaderRecommendedSites seed={ this.state.seed } /> }
+				{ recommendedSites.length <= 2 && (
+					<QueryReaderRecommendedSites seed={ this.state.seed } offset={ this.state.offset } />
+				) }
 				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
@@ -183,7 +206,7 @@ class FollowingManage extends Component {
 						</div>
 					) }
 				</div>
-				{ recommendedSites && ! sitesQuery && (
+				{ ! sitesQuery && (
 					<RecommendedSites sites={ take( recommendedSites, 2 ) } />
 				) }
 				{ !! sitesQuery && ! isSitesQueryUrl && (
@@ -215,6 +238,7 @@ export default connect(
 		searchResults: getReaderFeedsForQuery( state, ownProps.sitesQuery ),
 		searchResultsCount: getReaderFeedsCountForQuery( state, ownProps.sitesQuery ),
 		getRecommendedSites: seed => getReaderRecommendedSites( state, seed ),
+		isSiteBlocked: site => isSiteBlockedSelector( state, site.blogId ),
 	} ),
 	{ requestFeedSearch }
 )( localize( FollowingManage ) );
