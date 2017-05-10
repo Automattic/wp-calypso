@@ -46,7 +46,6 @@ import {
 	isJetpackSite
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
-import { isATEnabled } from 'lib/automated-transfer';
 import { abtest } from 'lib/abtest';
 
 /**
@@ -206,10 +205,6 @@ export class MySitesSidebar extends Component {
 		let pluginsLink = '/plugins' + this.props.siteSuffix;
 		let addPluginsLink;
 
-		if ( this.props.atEnabled ) {
-			addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
-		}
-
 		if ( ! config.isEnabled( 'manage/plugins' ) ) {
 			if ( ! site ) {
 				return null;
@@ -224,7 +219,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ( this.props.siteId && this.props.isJetpack ) || ( ! this.props.siteId && this.props.hasJetpackSites ) ) {
+		if ( this.props.siteId || ( ! this.props.siteId && this.props.hasJetpackSites ) ) {
 			addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
 		}
 
@@ -257,7 +252,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( this.props.isJetpack && ! this.props.atEnabled ) {
+		if ( this.props.isJetpack && ! this.props.isSiteAutomatedTransfer ) {
 			return null;
 		}
 
@@ -600,7 +595,6 @@ function mapStateToProps( state ) {
 	const isPreviewShowing = getCurrentLayoutFocus( state ) === 'preview';
 
 	return {
-		atEnabled: isATEnabled( site ),
 		canManagePlugins,
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),

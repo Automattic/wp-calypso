@@ -23,7 +23,6 @@ import JetpackPluginsPanel from './jetpack-plugins-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import Banner from 'components/banner';
-import { isATEnabled } from 'lib/automated-transfer';
 
 export const PluginPanel = ( {
 	plan,
@@ -31,7 +30,6 @@ export const PluginPanel = ( {
 	category,
 	search,
 	translate,
-	atEnabled
 } ) => {
 	const hasBusiness = isBusiness( plan ) || isEnterprise( plan );
 	const hasPremium = hasBusiness || isPremium( plan );
@@ -41,7 +39,7 @@ export const PluginPanel = ( {
 
 			<PageViewTracker path="/plugins/:site" title="Plugins > WPCOM Site" />
 
-			{ atEnabled && ! hasBusiness &&
+			{ ! hasBusiness &&
 				<Banner
 					feature={ FEATURE_UPLOAD_PLUGINS }
 					plan={ PLAN_BUSINESS }
@@ -64,7 +62,6 @@ export const PluginPanel = ( {
 const mapStateToProps = state => {
 	const selectedSite = getSelectedSite( state );
 	return {
-		atEnabled: isATEnabled( selectedSite ),
 		plan: get( selectedSite, 'plan', {} ),
 		siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
 	};

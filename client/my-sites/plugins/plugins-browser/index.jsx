@@ -29,7 +29,6 @@ import { hasTouch } from 'lib/touch-detect';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite, canJetpackSiteManage } from 'state/sites/selectors';
-import { isATEnabled } from 'lib/automated-transfer';
 
 const PluginsBrowser = React.createClass( {
 	_SHORT_LIST_LENGTH: 6,
@@ -319,15 +318,9 @@ const PluginsBrowser = React.createClass( {
 		);
 
 		if (
-			( this.state.accessError || cantManage ) &&
-			(
-				// If automated transfer is _off_ then behave
-				// as normal. If it's on, then only show if we
-				// are getting an error on a Jetpack site
-				! this.props.atEnabled ||
-				( selectedSite && selectedSite.jetpack )
-			)
-		) {
+			( this.state.accessError || cantManage ) && selectedSite && selectedSite.jetpack
+		)
+		{
 			return this.renderAccessError( selectedSite );
 		}
 
@@ -347,7 +340,6 @@ export default connect(
 		const selectedSite = getSelectedSite( state );
 		return {
 			selectedSite,
-			atEnabled: isATEnabled( selectedSite ),
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
 		};
