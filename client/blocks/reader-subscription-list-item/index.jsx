@@ -98,7 +98,12 @@ function ReaderSubscriptionListItem( {
 			) }
 			</div>
 			<div className="reader-subscription-list-item__options">
-				<FollowButton siteUrl={ feedUrl } followSource={ followSource } />
+				<FollowButton
+					siteUrl={ feedUrl }
+					followSource={ followSource }
+					feedId={ feedId }
+					siteId={ siteId }
+				/>
 				{ isFollowing && ! isEmailBlocked && <EmailSettings siteId={ siteId } /> }
 			</div>
 		</div>
