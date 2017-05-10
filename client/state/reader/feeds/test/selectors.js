@@ -31,7 +31,7 @@ describe( 'selectors', () => {
 						items: {
 							1: {}
 						},
-						lastUpdated: {
+						lastFetched: {
 							1: Date.now()
 						}
 					}
@@ -47,7 +47,7 @@ describe( 'selectors', () => {
 						items: {
 							1: {}
 						},
-						lastUpdated: {
+						lastFetched: {
 							1: 100
 						}
 					}
@@ -61,7 +61,7 @@ describe( 'selectors', () => {
 					feeds: {
 						queuedRequests: {},
 						items: {},
-						lastUpdated: {}
+						lastFetched: {}
 					}
 				}
 			}, 1 ) ).to.be.true;
@@ -77,7 +77,7 @@ describe( 'selectors', () => {
 						items: {
 							2: {}
 						},
-						lastUpdated: {}
+						lastFetched: {}
 					}
 				}
 			}, 1 ) ).to.be.true;

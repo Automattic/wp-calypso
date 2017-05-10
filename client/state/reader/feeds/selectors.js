@@ -7,32 +7,29 @@ const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
 * @param  {Number}  feedId The feed ID
 * @return {Boolean}        Whether feed should be fetched
 */
+
 export function shouldFeedBeFetched( state, feedId ) {
-	// we should fetch the feed if we don't have it,
-	// or we do have it
-	// and it's been more than a day since we last fetched, and it's not already queued to be fetched
-	return ! state.reader.feeds.queuedRequests[ feedId ] &&
-		(
-			! getFeed( state, feedId ) ||
-			! lastUpdatedWithin( state, feedId, DAY_IN_MILLIS )
-		);
+	const isNotQueued = ! state.reader.feeds.queuedRequests[ feedId ];
+	const isMissing = ! getFeed( state, feedId );
+	return isNotQueued && ( isMissing || isStale( state, feedId ) );
 }
 
-function lastUpdatedWithin( state, feedId, timeInMillis ) {
-	const lastUpdated = state.reader.feeds.lastUpdated[ feedId ];
-	if ( ! lastUpdated ) {
+function isStale( state, feedId ) {
+	const lastFetched = state.reader.feeds.lastFetched[ feedId ];
+	if ( ! lastFetched ) {
 		return false;
 	}
-	return lastUpdated > ( Date.now() - timeInMillis );
+	return lastFetched <= ( Date.now() - DAY_IN_MILLIS );
 }
 
 /**
- * Get the feed object for the given feed id
- *
- * @param  {Object} state  Global state tree
- * @param  {Number} feedId The feed ID
- * @return {Object}        The feed object
- */
+* Returns a feed object
+*
+* @param  {Object}  state  Global state tree
+* @param  {Number}  feedId The feed ID
+* @return {Object}        Feed
+*/
+
 export function getFeed( state, feedId ) {
 	return state.reader.feeds.items[ feedId ];
 }

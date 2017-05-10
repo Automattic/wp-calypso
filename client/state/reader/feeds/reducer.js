@@ -101,7 +101,7 @@ export function queuedRequests( state = {}, action ) {
 	return state;
 }
 
-export const lastUpdated = createReducer( {}, {
+export const lastFetched = createReducer( {}, {
 	[ READER_FEED_REQUEST_SUCCESS ]: ( state, action ) => ( {
 		...state,
 		[ action.payload.feed_ID ]: Date.now()
@@ -117,6 +117,6 @@ export const lastUpdated = createReducer( {}, {
 
 export default combineReducers( {
 	items,
-	lastUpdated,
+	lastFetched,
 	queuedRequests
 } );

@@ -9,19 +9,17 @@ const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
 */
 
 export function shouldSiteBeFetched( state, siteId ) {
-	return ! state.reader.sites.queuedRequests[ siteId ] && // not currently queued
-		(
-			! getSite( state, siteId ) ||
-			! lastUpdatedWithin( state, siteId, DAY_IN_MILLIS )
-		);
+	const isNotQueued = ! state.reader.sites.queuedRequests[ siteId ];
+	const isMissing = ! getSite( state, siteId );
+	return isNotQueued && ( isMissing || isStale( state, siteId ) );
 }
 
-function lastUpdatedWithin( state, siteId, timeInMillis ) {
-	const lastUpdated = state.reader.sites.lastUpdated[ siteId ];
-	if ( ! lastUpdated ) {
+function isStale( state, siteId ) {
+	const lastFetched = state.reader.sites.lastFetched[ siteId ];
+	if ( ! lastFetched ) {
 		return false;
 	}
-	return lastUpdated > ( Date.now() - timeInMillis );
+	return lastFetched <= ( Date.now() - DAY_IN_MILLIS );
 }
 
 /**
