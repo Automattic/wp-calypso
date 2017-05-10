@@ -20,7 +20,6 @@ import userLib from 'lib/user';
 import { areAllSitesSingleUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
-import { areAllSitesSingleUser } from 'state/selectors';
 
 const debug = new Debug( 'calypso:posts-navigation' );
 const user = userLib();
