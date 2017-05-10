@@ -153,7 +153,7 @@ class PreloadTab extends Component {
 										'Refresh preloaded cache files every {{number /}} minute. ',
 										'Refresh preloaded cache files every {{number /}} minutes. ',
 										{
-											count: preload_interval,
+											count: preload_interval || 0,
 											components: {
 												number: renderCachePreloadInterval( {
 													handleChange,
