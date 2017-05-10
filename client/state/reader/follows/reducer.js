@@ -138,8 +138,11 @@ export const items = createReducer( {}, {
 
 		// diff what we saw vs. what's in state and remove anything extra
 		// extra would be active subscriptions that were not seen in the sync
+		//
+		// Only check items with an ID (the subscription ID) because those are what
+		// we show on the manage listing. Items without an ID are either inflight follows
+		// or follows that we picked up from a feed, site, or post object.
 		return omitBy( state, ( follow ) => follow.ID &&
-			follow.is_following &&
 			! seenSubscriptions.has( follow.feed_URL )
 		);
 	},
