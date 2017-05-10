@@ -11,7 +11,7 @@ import WPLogin from './wp-login';
 export default {
 	login( context, next ) {
 		context.renderCacheKey = 'login';
-		context.primary = <WPLogin />;
+		context.primary = <WPLogin twoFactorAuthType={ context.params.twoFactorAuthType } />;
 
 		next();
 	}

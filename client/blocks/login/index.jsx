@@ -3,34 +3,35 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import LoginForm from './login-form';
-import TwoFactorAuthentication from './two-factor-authentication';
-import { isTwoFactorEnabled } from 'state/login/selectors';
+import { getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
+import VerificationCodeForm from './two-factor-authentication/verification-code-form';
+import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
+import { login } from 'lib/paths';
 
 class Login extends Component {
 	static propTypes = {
-		title: PropTypes.string,
 		redirectLocation: PropTypes.string,
+		title: PropTypes.string,
+		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
+		twoFactorNotificationSent: PropTypes.string,
 	};
 
 	state = {
-		hasSubmittedValidCredentials: false,
 		rememberMe: false,
 	};
 
-	handleValidUsernamePassword = ( { rememberMe } ) => {
+	handleValidUsernamePassword = () => {
 		if ( ! this.props.twoFactorEnabled ) {
 			this.rebootAfterLogin();
 		} else {
-			this.setState( {
-				hasSubmittedValidCredentials: true,
-				rememberMe,
-			} );
+			page( login( { twoFactorAuthType: this.props.twoFactorNotificationSent === 'push' ? 'push' : 'code' } ) );
 		}
 	};
 
@@ -41,19 +42,22 @@ class Login extends Component {
 	renderContent() {
 		const {
 			title,
-			twoFactorEnabled,
+			twoFactorAuthType,
 		} = this.props;
 
 		const {
 			rememberMe,
-			hasSubmittedValidCredentials,
 		} = this.state;
 
-		if ( twoFactorEnabled && hasSubmittedValidCredentials ) {
+		if ( twoFactorAuthType === 'code' ) {
 			return (
-				<TwoFactorAuthentication
-					rememberMe={ rememberMe }
-					onSuccess={ this.rebootAfterLogin } />
+				<VerificationCodeForm rememberMe={ rememberMe } onSuccess={ this.rebootAfterLogin } />
+			);
+		}
+
+		if ( twoFactorAuthType === 'push' ) {
+			return (
+				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } />
 			);
 		}
 
@@ -75,6 +79,7 @@ class Login extends Component {
 
 export default connect(
 	( state ) => ( {
-		twoFactorEnabled: isTwoFactorEnabled( state )
+		twoFactorEnabled: isTwoFactorEnabled( state ),
+		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 	} ),
 )( Login );

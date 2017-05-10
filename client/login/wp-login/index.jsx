@@ -48,6 +48,7 @@ class Login extends React.Component {
 		showMagicLoginInterstitialPage: PropTypes.func.isRequired,
 		showMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+		twoFactorAuthType: PropTypes.string,
 	};
 
 	onClickEnterPasswordInstead = event => {
@@ -146,6 +147,7 @@ class Login extends React.Component {
 			magicLoginView,
 			queryArguments,
 			translate,
+			twoFactorAuthType,
 		} = this.props;
 
 		return (
@@ -160,6 +162,7 @@ class Login extends React.Component {
 							{ magicLoginView === REQUEST_FORM
 								? <RequestLoginEmailForm />
 								: <LoginBlock
+									twoFactorAuthType={ twoFactorAuthType }
 									redirectLocation={ queryArguments.redirect_to }
 									title={ translate( 'Log in to your account.' ) } />
 							}
