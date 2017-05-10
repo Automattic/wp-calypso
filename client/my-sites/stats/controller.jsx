@@ -9,7 +9,6 @@ import { find, pick } from 'lodash';
 /**
  * Internal Dependencies
  */
-import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
@@ -21,7 +20,6 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
-const sites = sitesFactory();
 const analyticsPageTitle = 'Stats';
 
 function rangeOfPeriod( period, date ) {
@@ -372,7 +370,6 @@ module.exports = {
 				perPage: 20,
 				total: 10,
 				domain: siteDomain,
-				sites,
 				siteId,
 				followList,
 			};
