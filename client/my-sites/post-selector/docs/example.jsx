@@ -49,8 +49,12 @@ class PostSelectorExample extends Component {
 	}
 }
 
-export default connect(
+const ConnectedPostSelectorExample = connect(
 	( state ) => ( {
 		primarySiteId: getPrimarySiteId( state ),
 	} )
 )( PostSelectorExample );
+
+ConnectedPostSelectorExample.displayName = 'PostSelector';
+
+export default ConnectedPostSelectorExample;
