@@ -38,6 +38,7 @@ const MediaSettings = ( {
 	translate
 } ) => {
 	const labelClassName = isSavingSettings || ! carouselActive ? 'is-disabled' : null;
+	const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
 	return (
 		<Card className="media-settings site-settings site-settings__module-settings">
@@ -59,6 +60,7 @@ const MediaSettings = ( {
 					disabled={ isRequestingSettings || isSavingSettings || photonModuleUnavailable }
 					/>
 			</FormFieldset>
+
 			<FormFieldset className="media-settings__formfieldset has-divider is-top-only">
 				<div className="media-settings__info-link-container site-settings__info-link-container">
 					<InfoPopover position="left">
@@ -98,6 +100,23 @@ const MediaSettings = ( {
 					</FormSelect>
 				</div>
 			</FormFieldset>
+
+			<FormFieldset className="media-settings__formfieldset has-divider is-top-only">
+				<div className="media-settings__info-link-container site-settings__info-link-container">
+					<InfoPopover position="left">
+						<ExternalLink target="_blank" icon href="https://jetpack.com/support/videopress/" >
+							{ translate( 'Learn more about VideoPress.' ) }
+						</ExternalLink>
+					</InfoPopover>
+				</div>
+				<JetpackModuleToggle
+					siteId={ siteId }
+					moduleSlug="videopress"
+					label={ translate( 'Fast, ad-free video hosting' ) }
+					disabled={ isRequestingOrSaving }
+				/>
+			</FormFieldset>
+
 		</Card>
 	);
 };
