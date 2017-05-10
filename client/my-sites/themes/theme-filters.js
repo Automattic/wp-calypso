@@ -193,16 +193,3 @@ export function stripFilters( input ) {
 	const withoutFilters = input.replace( FILTER_REGEX_GLOBAL, '' ).trim();
 	return withoutFilters.replace( /\s+/g, ' ' );
 }
-
-/**
- * Returns true for valid term.
- *
- * Supplied terms that belong to more than one taxonomy must be
- * prefixed with taxonomy:term
- *
- * @param {string} term - term to validate
- * @return {bool} true if term is valid
- */
-export function isValidTerm( term ) {
-	return !! getTermTable()[ term ];
-}
