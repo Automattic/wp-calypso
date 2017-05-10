@@ -485,7 +485,7 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, {
 				type: READER_FOLLOW_ERROR,
-				payload: { url: 'http://discoverinvalid.wordpress.com', error: 'invalid_feed' },
+				payload: { feedUrl: 'http://discoverinvalid.wordpress.com', error: 'invalid_feed' },
 			} );
 			expect( state[ 'discoverinvalid.wordpress.com' ] ).to.eql(
 				{ is_following: true, error: 'invalid_feed' }

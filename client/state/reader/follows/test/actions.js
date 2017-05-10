@@ -64,7 +64,7 @@ describe( 'actions', () => {
 			const action = recordFollowError( 'http://discover.wordpress.com', 'invalid_feed' );
 			expect( action ).to.deep.equal( {
 				type: READER_FOLLOW_ERROR,
-				payload: { url: 'http://discover.wordpress.com', error: 'invalid_feed' }
+				payload: { feedUrl: 'http://discover.wordpress.com', error: 'invalid_feed' }
 			} );
 		} );
 	} );
