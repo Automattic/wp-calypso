@@ -41,32 +41,32 @@ import viewport from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import { getTagStreamUrl } from 'reader/route';
 
-export const ReaderSidebar = createReactClass({
-    displayName: 'ReaderSidebar',
-    mixins: [ observe( 'userSettings' ) ],
+export const ReaderSidebar = createReactClass( {
+	displayName: 'ReaderSidebar',
+	mixins: [ observe( 'userSettings' ) ],
 
-    getInitialState() {
+	getInitialState() {
 		return {};
 	},
 
-    componentDidMount() {
+	componentDidMount() {
 		// If we're browsing a tag or list, open the sidebar menu
 		this.openExpandableMenuForCurrentTagOrList();
 	},
 
-    handleClick( event ) {
+	handleClick( event ) {
 		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span', true ) ) {
 			this.props.setNextLayoutFocus( 'content' );
 			window.scrollTo( 0, 0 );
 		}
 	},
 
-    highlightNewList( list ) {
+	highlightNewList( list ) {
 		list = ReaderListsStore.get( list.owner, list.slug );
 		window.location.href = url.resolve( 'https://wordpress.com', list.URL + '/edit' );
 	},
 
-    highlightNewTag( tagSlug ) {
+	highlightNewTag( tagSlug ) {
 		const tagStreamUrl = getTagStreamUrl( tagSlug );
 		if ( tagStreamUrl !== page.current ) {
 			defer( function() {
@@ -76,7 +76,7 @@ export const ReaderSidebar = createReactClass({
 		}
 	},
 
-    openExpandableMenuForCurrentTagOrList() {
+	openExpandableMenuForCurrentTagOrList() {
 		const pathParts = this.props.path.split( '/' );
 
 		if ( startsWith( this.props.path, '/tag/' ) ) {
@@ -103,7 +103,7 @@ export const ReaderSidebar = createReactClass({
 		}
 	},
 
-    render() {
+	render() {
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
@@ -206,7 +206,7 @@ export const ReaderSidebar = createReactClass({
 			</Sidebar>
 		);
 	},
-});
+} );
 
 ReaderSidebar.defaultProps = {
 	translate: identity,

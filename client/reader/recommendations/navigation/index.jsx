@@ -5,9 +5,9 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 
 class RecommendedNavigation extends React.Component {
-    static propTypes = { selected: PropTypes.oneOf( [ 'for-you', 'sites', 'tags' ] ).isRequired };
+	static propTypes = { selected: PropTypes.oneOf( [ 'for-you', 'sites', 'tags' ] ).isRequired };
 
-    render() {
+	render() {
 		const current = this.props.selected;
 		const sectionNames = {
 			'for-you': this.props.translate( 'Recommendations: For You' ),

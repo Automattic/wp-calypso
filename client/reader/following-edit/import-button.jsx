@@ -13,23 +13,23 @@ import Button from 'components/button';
 import FilePicker from 'components/file-picker';
 
 class FollowingImportButton extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		onError: React.PropTypes.func,
 		onImport: React.PropTypes.func,
 		onProgress: React.PropTypes.func,
 	};
 
-    static defaultProps = {
-        onError: noop,
-        onImport: noop,
-        onProgress: noop,
-    };
+	static defaultProps = {
+		onError: noop,
+		onImport: noop,
+		onProgress: noop,
+	};
 
-    state = {
-        disabled: false,
-    };
+	state = {
+		disabled: false,
+	};
 
-    onPick = (files) => {
+	onPick = files => {
 		// we only care about the first file in the list
 		const file = files[ 0 ];
 		if ( ! file ) {
@@ -45,7 +45,7 @@ class FollowingImportButton extends React.Component {
 		} );
 	};
 
-    onImport = (err, data) => {
+	onImport = ( err, data ) => {
 		this.setState( {
 			disabled: false,
 		} );
@@ -59,11 +59,11 @@ class FollowingImportButton extends React.Component {
 		}
 	};
 
-    onImportProgress = (event) => {
+	onImportProgress = event => {
 		this.props.onProgress( event );
 	};
 
-    render() {
+	render() {
 		return (
 			<FilePicker accept=".xml,.opml" onPick={ this.onPick }>
 				<Button compact disabled={ this.state.disabled }>

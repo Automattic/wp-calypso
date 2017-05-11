@@ -10,20 +10,20 @@ import noop from 'lodash/noop';
  */
 
 class FollowingEditSortControls extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		onSelectChange: React.PropTypes.func,
 		sortOrder: React.PropTypes.string,
 	};
 
-    static defaultProps = {
-        onSelectChange: noop,
-    };
+	static defaultProps = {
+		onSelectChange: noop,
+	};
 
-    handleSelectChange = (event) => {
+	handleSelectChange = event => {
 		this.props.onSelectChange( event.target.value );
 	};
 
-    render() {
+	render() {
 		const sortOrder = this.props.sortOrder;
 
 		return (

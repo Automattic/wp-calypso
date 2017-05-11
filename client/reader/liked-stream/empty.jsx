@@ -12,23 +12,23 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 
 class TagEmptyContent extends React.Component {
-    shouldComponentUpdate() {
+	shouldComponentUpdate() {
 		return false;
 	}
 
-    recordAction = () => {
+	recordAction = () => {
 		recordAction( 'clicked_following_on_empty_likes' );
 		recordGaEvent( 'Clicked Following on Empty Like Stream' );
 		recordTrack( 'calypso_reader_following_on_empty_like_stream_clicked' );
 	};
 
-    recordSecondaryAction = () => {
+	recordSecondaryAction = () => {
 		recordAction( 'clicked_discover_on_empty_likes' );
 		recordGaEvent( 'Clicked Discover on Empty Like Stream' );
 		recordTrack( 'calypso_reader_discover_on_empty_like_stream_clicked' );
 	};
 
-    render() {
+	render() {
 		var action = (
 			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
 				{ this.props.translate( 'Back to Following' ) }

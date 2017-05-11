@@ -11,7 +11,7 @@ import config from 'config';
 import Card from 'components/card';
 
 class PostUnavailable extends React.PureComponent {
-    componentWillMount() {
+	componentWillMount() {
 		this.errors = {
 			unauthorized: this.props.translate(
 				'This is a post on a private site that you’re following, but not currently a member of. Please request membership to display these posts in Reader.'
@@ -20,7 +20,7 @@ class PostUnavailable extends React.PureComponent {
 		};
 	}
 
-    render() {
+	render() {
 		var errorMessage = this.errors[ this.props.post.errorCode || 'default' ] || this.errors.default;
 
 		if ( this.props.post.statusCode === 404 ) {

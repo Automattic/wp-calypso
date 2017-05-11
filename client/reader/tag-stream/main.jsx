@@ -21,18 +21,18 @@ import QueryReaderTag from 'components/data/query-reader-tag';
 import { find } from 'lodash';
 
 class TagStream extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		encodedTagSlug: React.PropTypes.string,
 		decodedTagSlug: React.PropTypes.string,
 	};
 
-    state = {
-        isEmojiTitle: false,
-    };
+	state = {
+		isEmojiTitle: false,
+	};
 
-    _isMounted = false;
+	_isMounted = false;
 
-    componentWillMount() {
+	componentWillMount() {
 		const self = this;
 		this._isMounted = true;
 		// can't use arrows with asyncRequire
@@ -52,29 +52,29 @@ class TagStream extends React.Component {
 		} );
 	}
 
-    componentWillUnmount() {
+	componentWillUnmount() {
 		this._isMounted = false;
 	}
 
-    componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.encodedTagSlug !== this.props.encodedTagSlug ) {
 			this.checkForTwemoji( nextProps );
 		}
 	}
 
-    checkForTwemoji = () => {
+	checkForTwemoji = () => {
 		const title = this.getTitle();
 		this.setState( {
 			isEmojiTitle: title && this.state.twemoji && this.state.twemoji.test( title ),
 		} );
 	};
 
-    isSubscribed = () => {
+	isSubscribed = () => {
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
 		return !! ( tag && tag.isFollowing );
 	};
 
-    toggleFollowing = () => {
+	toggleFollowing = () => {
 		const { decodedTagSlug, unfollowTag, followTag } = this.props;
 		const isFollowing = this.isSubscribed(); // this is the current state, not the new state
 		const toggleAction = isFollowing ? unfollowTag : followTag;
@@ -92,7 +92,7 @@ class TagStream extends React.Component {
 		);
 	};
 
-    render() {
+	render() {
 		const emptyContent = <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
 		const title = this.props.decodedTagSlug;
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );

@@ -9,7 +9,7 @@ import React from 'react';
 import Card from 'components/card';
 
 class PostPlaceholder extends React.PureComponent {
-    render() {
+	render() {
 		return (
 			<Card tagName="article" className="reader__card is-placeholder">
 				<div className="reader__post-header">

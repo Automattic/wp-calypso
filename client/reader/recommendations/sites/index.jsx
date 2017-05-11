@@ -3,7 +3,7 @@ import Main from 'components/main';
 import Navigation from 'reader/recommendations/navigation';
 
 class RecommendedSites extends React.Component {
-    render() {
+	render() {
 		return (
 			<Main>
 				<Navigation selected="sites" />

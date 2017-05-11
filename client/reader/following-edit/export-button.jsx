@@ -14,30 +14,30 @@ import wpcom from 'lib/wp';
 import Button from 'components/button';
 
 class FollowingExportButton extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		onError: React.PropTypes.func,
 		onExport: React.PropTypes.func,
 		saveAs: React.PropTypes.string,
 	};
 
-    static defaultProps = {
-        onError: noop,
-        onExport: noop,
-        saveAs: 'wpcom-subscriptions.opml',
-    };
+	static defaultProps = {
+		onError: noop,
+		onExport: noop,
+		saveAs: 'wpcom-subscriptions.opml',
+	};
 
-    state = {
-        disabled: false,
-    };
+	state = {
+		disabled: false,
+	};
 
-    onClick = () => {
+	onClick = () => {
 		wpcom.undocumented().exportReaderFeed( this.onFeed );
 		this.setState( {
 			disabled: true,
 		} );
 	};
 
-    onFeed = (err, data) => {
+	onFeed = ( err, data ) => {
 		this.setState( {
 			disabled: false,
 		} );
@@ -55,7 +55,7 @@ class FollowingExportButton extends React.Component {
 		}
 	};
 
-    render() {
+	render() {
 		return (
 			<Button compact disabled={ this.state.disabled } onClick={ this.onClick }>
 				{ this.props.translate( 'Export' ) }

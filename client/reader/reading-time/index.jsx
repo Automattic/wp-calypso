@@ -5,7 +5,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 
 class ReadingTime extends React.PureComponent {
-    render() {
+	render() {
 		var words = this.props.words || 0,
 			timeInMinutes = Math.round( this.props.readingTime / 60 ),
 			approxTime = null,
