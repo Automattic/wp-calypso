@@ -20,14 +20,14 @@ export function createProduct( siteId, product ) {
 		// Filter out any id we might have.
 		const { id, ...productData } = product;
 
-		const jpProps = { path: `/jetpack-blogs/${ siteId }/rest-api/` };
+		const jetpackProps = { path: `/jetpack-blogs/${ siteId }/rest-api/` };
 		const httpProps = {
 			path: '/wc/v2/products',
-			body: productData,
-			json:true
+			body: JSON.stringify( productData ),
+			json: true,
 		};
 
-		return wp.req.post( jpProps, httpProps )
+		return wp.req.post( jetpackProps, httpProps )
 			.then( ( { data } ) => {
 				console.log( 'data:', data );
 				dispatch( createProductSuccess( siteId, product ) );
