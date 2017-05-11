@@ -55,8 +55,12 @@ function isExternal( url ) {
 	return hostname !== config( 'hostname' );
 }
 
-function isHttps( url ) {
-	return url && startsWith( url, 'https://' );
+function isHttps( uri ) {
+	return url && startsWith( uri, 'https://' );
+}
+
+function isHttp( uri ) {
+	return url && startsWith( uri, 'http://' );
 }
 
 const schemeRegex = /^\w+:\/\//;
@@ -147,6 +151,7 @@ export default {
 	isOutsideCalypso,
 	isExternal,
 	isHttps,
+	isHttp,
 	withoutHttp,
 	addSchemeIfMissing,
 	setUrlScheme,
