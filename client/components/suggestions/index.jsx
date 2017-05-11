@@ -160,7 +160,7 @@ class Suggestions extends React.Component {
 	 * @return {Object}          filtered taxonomy:[ terms ] object
 	 */
 	narrowDownAndSort = ( input, showAll = '' ) => {
-		const termsTable = mapValues( this.props.terms, term => Object.keys( term ) );
+		const termsTable = mapValues( this.props.terms, Object.keys );
 		const [ taxonomy, filter ] = input.toLowerCase().split( ':' );
 		if ( taxonomy === '' ) {
 			// empty string or just ":" or ":filter" -
