@@ -14,6 +14,7 @@ import {
 	sortBy,
 	partition,
 	includes,
+	mapValues,
 } from 'lodash';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
@@ -131,14 +132,15 @@ class Suggestions extends React.Component {
 	onMouseDown = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
-		//Additional empty space at the end adds fluidity to workflow
-		this.props.suggest( event.target.textContent );
+		const suggestion = event.target.textContent.split( ' ' )[ 0 ];
+		this.props.suggest( suggestion );
 	}
 
 	onMouseOver = ( event ) => {
+		const suggestion = event.target.textContent.split( ' ' )[ 0 ];
 		this.setState( {
-			suggestionPosition: this.getPositionForSuggestion( event.target.textContent ),
-			currentSuggestion: event.target.textContent,
+			suggestionPosition: this.getPositionForSuggestion( suggestion ),
+			currentSuggestion: suggestion,
 		} );
 	}
 
@@ -158,7 +160,8 @@ class Suggestions extends React.Component {
 	 * @return {Object}          filtered taxonomy:[ terms ] object
 	 */
 	narrowDownAndSort = ( input, showAll = '' ) => {
-		const [ taxonomy, filter ] = input.split( ':' );
+		const termsTable = mapValues( this.props.terms, term => Object.keys( term ) );
+		const [ taxonomy, filter ] = input.toLowerCase().split( ':' );
 		if ( taxonomy === '' ) {
 			// empty string or just ":" or ":filter" -
 			// TODO: just show welcome screen
@@ -172,9 +175,9 @@ class Suggestions extends React.Component {
 		if ( filter !== undefined ) {
 			// this means that we have at least taxonomy:
 			// so check if this is a correct taxonomy
-			if ( has( this.props.terms, taxonomy ) ) {
+			if ( has( termsTable, taxonomy ) ) {
 				//so we will only filter elements from this taxonomy
-				terms = pick( this.props.terms, taxonomy );
+				terms = pick( termsTable, taxonomy );
 				//limit to 5 suggestions
 				limit = 5;
 			} else {
@@ -186,7 +189,7 @@ class Suggestions extends React.Component {
 		} else {
 			// we just have one word so treat is as a search terms
 			filterTerm = taxonomy;
-			terms = this.props.terms;
+			terms = termsTable;
 		}
 
 		const filtered = {};
@@ -243,11 +246,12 @@ class Suggestions extends React.Component {
 	}
 
 	createTextWithHighlight = ( text, highlightedText ) => {
-		const re = new RegExp( '(' + highlightedText + ')', 'g' );
+		const re = new RegExp( '(' + highlightedText + ')', 'gi' );
 		const parts = text.split( re );
 		const token = parts.map( ( part, i ) => {
 			const key = text + i;
-			if ( part === highlightedText ) {
+			const lowercasePart = part.toLowerCase();
+			if ( lowercasePart === highlightedText ) {
 				return <span key={ key } className="suggestions__value-emphasis" >{ part }</span>;
 			}
 			return <span key={ key }className="suggestions__value-normal" >{ part }</span>;
@@ -275,7 +279,7 @@ class Suggestions extends React.Component {
 			}
 
 			const filtered = suggestions[ key ].length.toString();
-			const total = this.props.terms[ key ].length.toString();
+			const total = Object.keys( this.props.terms[ key ] ).length.toString();
 			//Add header
 			rendered.push(
 				<div className="suggestions__category" key={ key }>
@@ -285,7 +289,7 @@ class Suggestions extends React.Component {
 							args: { filtered, total }
 						} ) }
 					</span>
-					{ this.props.terms[ key ].length > suggestions[ key ].length &&
+					{ Object.keys( this.props.terms[ key ] ).length > suggestions[ key ].length &&
 						<SuggestionsButtonAll
 							onClick={ this.onShowAllClick }
 							category={ key }
@@ -299,12 +303,13 @@ class Suggestions extends React.Component {
 			);
 			//Add values
 			rendered.push( suggestions[ key ].map( ( value, i ) => {
+				const taxonomyName = this.props.terms[ key ][ value ].name;
 				const hasHighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
 				const className = classNames( 'suggestions__value', { 'has-highlight': hasHighlight } );
 				return (
 					<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver } key={ key + '_' + i }>
-						<span className="suggestions__value-category">{ key + ':' }</span>
-						{ this.createTextWithHighlight( value, this.state.filterTerm ) }
+						<span className="suggestions__value-category">{ key + ':' + value + ' '}</span>
+						{ this.createTextWithHighlight( taxonomyName, this.state.filterTerm ) }
 					</span>
 				);
 			} ) );

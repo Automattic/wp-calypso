@@ -17,11 +17,12 @@ import Suggestions from 'components/suggestions';
 import StickyPanel from 'components/sticky-panel';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
-import { filterIsValid, getTaxonomies, } from '../theme-filters.js';
+import { filterIsValid } from '../theme-filters.js';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getThemeFilters } from 'state/selectors';
 
 class ThemesMagicSearchCard extends React.Component {
 	constructor( props ) {
@@ -236,8 +237,7 @@ class ThemesMagicSearchCard extends React.Component {
 			{ value: 'premium', label: translate( 'Premium' ) },
 		];
 
-		const taxonomies = getTaxonomies();
-		const taxonomiesKeys = Object.keys( taxonomies );
+		const filtersKeys = Object.keys( this.props.filters );
 
 		const searchField = (
 			<Search
@@ -303,7 +303,7 @@ class ThemesMagicSearchCard extends React.Component {
 					{ renderSuggestions &&
 						<Suggestions
 							ref="suggestions"
-							terms={ taxonomies }
+							terms={ this.props.filters }
 							input={ this.state.editedSearchElement }
 							suggest={ this.suggest }
 						/>
@@ -311,7 +311,7 @@ class ThemesMagicSearchCard extends React.Component {
 					{ ! renderSuggestions &&
 						<MagicSearchWelcome
 							ref="welcome"
-							taxonomies={ taxonomiesKeys }
+							taxonomies={ filtersKeys }
 							topSearches={ [] }
 							suggestionsCallback={ this.insertTextInInput }
 						/>
@@ -338,6 +338,7 @@ ThemesMagicSearchCard.defaultProps = {
 
 export default connect(
 	( state ) => ( {
-		isJetpack: isJetpackSite( state, getSelectedSiteId( state ) )
+		isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+		filters: getThemeFilters( state )
 	} )
 )( localize( wrapWithClickOutside( ThemesMagicSearchCard ) ) );
