@@ -21,10 +21,10 @@ const ReaderSubscriptionListItemPlaceholder = () => {
 				<div className="reader-subscription-list-item__site-excerpt is-placeholder">
 					Description of the site
 				</div>
-				<span className="reader-subscription-list-item__by-text">
+				<span className="reader-subscription-list-item__by-text is-placeholder">
 					by author name
 				</span>
-				<span className="reader-subscription-list-item__site-url">
+				<span className="reader-subscription-list-item__site-url is-placeholder">
 					www.example.com
 				</span>
 			</div>
