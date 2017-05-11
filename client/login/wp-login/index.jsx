@@ -150,21 +150,24 @@ export class Login extends React.Component {
 				{ this.props.translate( 'Lost your password?' ) }
 			</a>;
 
-		let helpLink;
-		if ( twoFactorAuthType ) {
-			helpLink = <ExternalLink
+		const helpLink = <ExternalLink
 				icon={ true }
 				target="_blank"
 				href="http://en.support.wordpress.com/security/two-step-authentication/">
 				{ translate( 'Get help' ) }
 			</ExternalLink>;
+
+		if ( twoFactorAuthType ) {
+			return compact( [
+				goBackLink,
+				helpLink
+			] );
 		}
 
 		return compact( [
 			goBackLink,
 			showMagicLoginLink,
-			resetPasswordLink,
-			helpLink
+			resetPasswordLink
 		] );
 	}
 
