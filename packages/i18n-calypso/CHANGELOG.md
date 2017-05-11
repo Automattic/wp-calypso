@@ -1,3 +1,7 @@
+1.7.4
+-----
+Handle options with new plural syntax, see [#37](https://github.com/Automattic/i18n-calypso/pull/37).
+
 1.7.3
 -----
 Improve input file pattern support, see [#25](https://github.com/Automattic/i18n-calypso/pull/25).
