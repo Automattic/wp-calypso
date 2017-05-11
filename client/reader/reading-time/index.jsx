@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
+var PureRenderMixin = require( 'react-pure-render/mixin' );
 
 var ReadingTime = React.createClass( {
 	mixins: [ PureRenderMixin ],

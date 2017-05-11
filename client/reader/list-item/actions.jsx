@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+var PureRenderMixin = require( 'react-pure-render/mixin' );
 
 const ListItemActions = React.createClass( {
 	mixins: [ PureRenderMixin ],

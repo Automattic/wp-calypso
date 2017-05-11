@@ -4,7 +4,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import PureRenderMixin from 'react-pure-render/mixin';
+var PureRenderMixin = require( 'react-pure-render/mixin' );
 import { noop } from 'lodash';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
