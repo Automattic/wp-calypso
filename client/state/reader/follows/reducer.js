@@ -96,23 +96,32 @@ export const items = createReducer(
 			};
 		},
 		[ READER_FOLLOW ]: ( state, action ) => {
-			const urlKey = prepareComparableUrl( action.payload.feedUrl );
+			let urlKey = prepareComparableUrl( action.payload.feedUrl );
 			const newValues = { is_following: true };
 
-			// Reset follow error state
-			if ( state[ urlKey ] && state[ urlKey ].error ) {
+			const actualFeedUrl = get(
+				action.payload,
+				[ 'follow', 'feed_URL' ],
+				action.payload.feedUrl
+			);
+
+			const newState = { ...state };
+			if ( actualFeedUrl !== action.payload.feedUrl ) {
+				delete newState[ urlKey ];
+				urlKey = prepareComparableUrl( actualFeedUrl );
+			} else if ( state[ urlKey ] && state[ urlKey ].error ) {
+				// Reset follow error state
 				newValues.error = null;
 			}
 
-			return {
-				...state,
+			return Object.assign( newState, {
 				[ urlKey ]: merge(
-					{ feed_URL: action.payload.feedUrl },
+					{ feed_URL: actualFeedUrl },
 					state[ urlKey ],
 					action.payload.follow,
 					newValues
 				),
-			};
+			} );
 		},
 		[ READER_UNFOLLOW ]: ( state, action ) => {
 			const urlKey = prepareComparableUrl( action.payload.feedUrl );
