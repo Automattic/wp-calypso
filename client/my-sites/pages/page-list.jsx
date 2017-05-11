@@ -27,6 +27,7 @@ var PageList = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
+        hierarchical: React.PropTypes.bool,
 		sites: React.PropTypes.object,
 		siteID: React.PropTypes.any
 	},
@@ -37,6 +38,7 @@ var PageList = React.createClass( {
 				type="page"
 				siteID={ this.props.siteID }
 				status={ mapStatus( this.props.status ) }
+				hierarchical={ this.props.hierarchical }
 				search={ this.props.search }>
 				<Pages
 					{ ...omit( this.props, 'children' ) }
@@ -59,6 +61,7 @@ var Pages = React.createClass( {
 		page: React.PropTypes.number.isRequired,
 		posts: React.PropTypes.array.isRequired,
 		search: React.PropTypes.string,
+        hierarchical: React.PropTypes.bool,
 		siteID: React.PropTypes.any,
 		sites: React.PropTypes.object.isRequired,
 		trackScrollPage: React.PropTypes.func.isRequired,
@@ -71,6 +74,7 @@ var Pages = React.createClass( {
 			loading: false,
 			hasRecentError: false,
 			lastPage: false,
+			hierarchical: false,
 			page: 0,
 			posts: [],
 			trackScrollPage: function() {}
@@ -203,7 +207,7 @@ var Pages = React.createClass( {
 
 		// pages have loaded, sites have loaded, and we have a site instance or are viewing all-sites
 		if ( pages.length && this.props.sites.initialized ) {
-			if ( ! this.props.search ) {
+            if ( ! ( this.props.search || this.props.hierarchical ) ) {
 				// we're listing in reverse chrono. use the markers.
 				pages = this._insertTimeMarkers( pages );
 			}
@@ -211,10 +215,10 @@ var Pages = React.createClass( {
 				if ( ! ( 'site_ID' in page ) ) {
 					return page;
 				}
-					// Get the site the page belongs to
+				// Get the site the page belongs to
 				var site = this.props.sites.getSite( page.site_ID );
 
-					// Render each page
+				// Render each page
 				return (
 						<Page key={ 'page-' + page.global_ID } page={ page } site={ site } multisite={ this.props.siteID === false } />
 					);
@@ -243,7 +247,9 @@ var Pages = React.createClass( {
 
 		return (
 			<div id="pages" className="page-list">
-				{ rows }
+				<div className="page-list__nested-itmes">
+					{ rows }
+				</div>
 				{ this.props.lastPage && pages.length ? <div className="infinite-scroll-end" /> : null }
 			</div>
 		);

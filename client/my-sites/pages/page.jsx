@@ -333,12 +333,7 @@ const Page = React.createClass( {
 		var page = this.props.page,
 			title = page.title || this.translate( '(no title)' ),
 			site = this.props.site || {},
-			canEdit = utils.userCan( 'edit_post', this.props.page ),
-			depthIndicator;
-
-		if ( page.parent ) {
-			depthIndicator = '— ';
-		}
+			canEdit = utils.userCan( 'edit_post', this.props.page );
 
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
@@ -380,8 +375,13 @@ const Page = React.createClass( {
 			ref="popoverMenuButton" />
 		) : null;
 
+		// calculate depth (children indentation)
+        const indentStyle = {
+            marginLeft: 2 * page.depth + 'em'
+        };
+
 		return (
-			<CompactCard className="page">
+			<CompactCard className="page" style={indentStyle}>
 				{ this.props.multisite ? <SiteIcon site={ site } size={ 34 } /> : null }
 				<a className="page__title"
 					href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
@@ -390,7 +390,6 @@ const Page = React.createClass( {
 						this.translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } ) }
 					onClick={ this.analyticsEvents.pageTitle }
 					>
-					{ depthIndicator }
 					{ this.props.isFrontPage ? <Gridicon icon="house" size={ 18 } /> : null }
 					{ title }
 				</a>
@@ -405,7 +404,6 @@ const Page = React.createClass( {
 					{ this.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
 			</CompactCard>
-
 		);
 	},
 

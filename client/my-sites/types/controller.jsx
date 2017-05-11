@@ -15,12 +15,19 @@ export function redirect() {
 }
 
 export function list( context, next ) {
+	const queryParams = {
+        type: context.params.type,
+        status: mapPostStatus( context.params.status ),
+        search: context.query.s
+	};
+
+	// use hierarchical ordering for pages
+	if(queryParams.type === 'page') {
+		queryParams.hierarchical = 1;
+	}
+
 	context.primary = (
-		<Types query={ {
-			type: context.params.type,
-			status: mapPostStatus( context.params.status ),
-			search: context.query.s
-		} } />
+		<Types query={ queryParams } />
 	);
 
 	next();

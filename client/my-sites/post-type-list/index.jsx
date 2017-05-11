@@ -119,6 +119,16 @@ class PostTypeList extends Component {
 	}
 
 	cellRendererWrapper( { key, style, ...rest } ) {
+
+        // indent if the entry has depth field
+		if(rest && rest.index ) {
+            const entry = this.props.posts[ rest.index ];
+
+            if(entry && entry.depth) {
+                style.marginLeft = `${entry.depth * 2}rem`;
+            }
+		}
+
 		return (
 			<div key={ key } style={ style }>
 				{ this.renderPostRow( rest ) }
