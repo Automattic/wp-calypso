@@ -21,7 +21,8 @@ import {
 	getJetpackSiteByUrl,
 	hasXmlrpcError,
 	getAuthAttempts,
-	hasExpiredSecretError
+	hasExpiredSecretError,
+	getSiteIdFromQueryObject
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -660,6 +661,41 @@ describe( 'selectors', () => {
 			};
 
 			expect( getAuthAttempts( state, 'sitetest.com' ) ).to.equals( 2 );
+		} );
+	} );
+
+	describe( '#getSiteIdFromQueryObject()', () => {
+		it( 'should return an integer', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						queryObject: {
+							client_id: '123'
+						}
+					}
+				}
+			};
+			expect( getSiteIdFromQueryObject( state ) ).to.equals( 123 );
+		} );
+
+		it( 'should return false if there is no query object', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {}
+				}
+			};
+			expect( getSiteIdFromQueryObject( state ) ).to.equals( false );
+		} );
+
+		it( 'should return false if there is no client id', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						queryObject: {}
+					}
+				}
+			};
+			expect( getSiteIdFromQueryObject( state ) ).to.equals( false );
 		} );
 	} );
 } );

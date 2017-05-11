@@ -319,6 +319,8 @@ export default {
 	authorize( queryObject ) {
 		return ( dispatch ) => {
 			const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
+			const siteId = parseInt( client_id );
+
 			debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
 			tracksEvent( dispatch, 'calypso_jpc_authorize' );
 			dispatch( {
@@ -351,9 +353,9 @@ export default {
 				userFactory().fetch();
 				dispatch( {
 					type: SITE_REQUEST,
-					siteId: parseInt( client_id )
+					siteId
 				} );
-				return wpcom.site( parseInt( client_id ) ).get();
+				return wpcom.site( siteId ).get();
 			} )
 			.then( ( data ) => {
 				tracksEvent( dispatch, 'calypso_jpc_auth_sitesrefresh', {
@@ -363,7 +365,7 @@ export default {
 				dispatch( receiveSite( omit( data, '_headers' ) ) );
 				dispatch( {
 					type: SITE_REQUEST_SUCCESS,
-					siteId: parseInt( client_id )
+					siteId
 				} );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE,
