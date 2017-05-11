@@ -117,7 +117,7 @@ export class Login extends React.Component {
 		}
 	};
 
-	footerLinks = () => {
+	footerLinks() {
 		const {
 			magicLoginEnabled,
 			magicLoginView,
@@ -158,7 +158,7 @@ export class Login extends React.Component {
 			showMagicLoginLink,
 			resetPasswordLink,
 		] );
-	};
+	}
 
 	render() {
 		const {
