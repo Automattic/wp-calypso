@@ -68,7 +68,7 @@ class MediaSettings extends Component {
 				<JetpackModuleToggle
 					siteId={ siteId }
 					moduleSlug="videopress"
-					label={ translate( 'Fast, ad-free video hosting' ) }
+					label={ translate( 'Enable fast, ad-free video hosting' ) }
 					disabled={ isRequestingOrSaving }
 				/>
 			</FormFieldset>
