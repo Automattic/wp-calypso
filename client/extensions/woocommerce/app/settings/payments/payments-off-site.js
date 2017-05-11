@@ -7,10 +7,30 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+
 import ExtendedHeader from '../../../components/extended-header';
+import ListHeader from '../../../components/list/list-header';
+import ListRows from '../../../components/list/list-rows';
+import ListTable from '../../../components/list/list-table';
+import ListTd from '../../../components/list/list-td';
+import PaymentMethodRow from './payment-method-row';
 
 class SettingsPaymentsOffSite extends Component {
+	constructor( props ) {
+		super( props );
+
+		//TODO: use redux state and real data
+		this.state = {
+			methods: [
+				{
+					name: 'PayPal Standard',
+					suggested: true,
+					fee: '2.9% + 30c per transaction',
+					information: 'http://paypal.com',
+				},
+			],
+		};
+	}
 
 	render() {
 		const { translate } = this.props;
@@ -25,7 +45,17 @@ class SettingsPaymentsOffSite extends Component {
 							'information'
 						)
 					} />
-				<Card></Card>
+					<ListTable>
+						<ListHeader>
+							<ListTd width="20">Method</ListTd>
+							<ListTd width="60">Fees</ListTd>
+							<ListTd width="20"></ListTd>
+						</ListHeader>
+						<ListRows>
+							<PaymentMethodRow method={ this.state.methods[ 0 ] } />
+						</ListRows>
+					</ListTable>
+
 			</div>
 		);
 	}
