@@ -17,7 +17,6 @@ import {
 	DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_REMOVE,
 	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS,
-	DISCUSSIONS_ITEM_UNLIKE_REQUEST_SUCCESS,
 	DISCUSSIONS_REQUEST,
 	DISCUSSIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
@@ -26,18 +25,15 @@ import {
 	keyedReducer,
 } from 'state/utils';
 
-const updateCommentLike = ( state, { commentId, iLike, likeCount } ) => ( {
-	...state,
-	...keyBy( [ { ...state[ commentId ], iLike, likeCount } ], 'ID' )
-} );
-
 export const items = keyedReducer( 'siteId', createReducer( {}, {
 	[ DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUEST_SUCCESS ]: ( state, { commentId, content } ) => ( {
 		...state,
 		...{ [ commentId ]: { ...state[ commentId ], content } }
 	} ),
-	[ DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS ]: updateCommentLike,
-	[ DISCUSSIONS_ITEM_UNLIKE_REQUEST_SUCCESS ]: updateCommentLike,
+	[ DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS ]: ( state, { commentId, iLike, likeCount } ) => ( {
+		...state,
+		...keyBy( [ { ...state[ commentId ], iLike, likeCount } ], 'ID' )
+	} ),
 	[ DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS ]: ( state, { commentId, status } ) => ( {
 		...state,
 		...{ [ commentId ]: { ...state[ commentId ], status } }
