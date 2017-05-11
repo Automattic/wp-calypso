@@ -248,7 +248,7 @@
 		height: 20px;
 
 		@include breakpoint( ">660px" ) {
-			width: 72px;
+			width: 16px * 1.5 * 3;
 		}
 	}
 }
