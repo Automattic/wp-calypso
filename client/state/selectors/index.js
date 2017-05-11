@@ -180,6 +180,7 @@ export isSiteOnPaidPlan from './is-site-on-paid-plan';
 export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
 export isSiteUpgradeable from './is-site-upgradeable';
 export isValidThemeFilterTerm from './is-valid-theme-filter-term';
+export isValidThemeFilter from './is-valid-theme-filter';
 export isVipSite from './is-vip-site';
 export isTransientMedia from './is-transient-media';
 export isTracking from './is-tracking';
