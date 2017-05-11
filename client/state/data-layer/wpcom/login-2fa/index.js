@@ -22,6 +22,12 @@ import { rawHttp } from 'state/data-layer/http/actions';
  */
 const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
 
+/***
+ * Dispatch action to perform http request
+ *
+ * @param {Object}	store  Global redux store
+ * @param {Object}	action dispathced action
+ */
 const requestTwoFactorPushNotificationStatus = ( store, action ) => {
 	store.dispatch( rawHttp( {
 		url: 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint',
@@ -41,9 +47,23 @@ const requestTwoFactorPushNotificationStatus = ( store, action ) => {
 	}, action ) );
 };
 
+/***
+ * Receive data from the two factor push notification status http request
+ *
+ * @param {Function}	dispatch redux store dispatch function
+ * @returns {*} dispatch result
+ */
 const receivedTwoFactorPushNotificationApproved = ( { dispatch } ) =>
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
 
+/***
+ * Receive error from the two factor push notification status http request
+ *
+ * @param {Object}	store  Global redux store
+ * @param {Object}	action dispathced action
+ * @param {Function}	next continue dispatch function
+ * @param {Object}	error the error object
+ */
 const receivedTwoFactorPushNotificationError = ( store, action, next, error ) => {
 	store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE, twoStepNonce: error.response.body.data.two_step_nonce } );
 
@@ -56,12 +76,24 @@ const receivedTwoFactorPushNotificationError = ( store, action, next, error ) =>
 	);
 };
 
+/***
+ * Dispatch a two factor push notification status request with handlers
+ */
 const makePushNotificationRequest = dispatchRequest(
 	requestTwoFactorPushNotificationStatus,
 	receivedTwoFactorPushNotificationApproved,
 	receivedTwoFactorPushNotificationError
 );
 
+/***
+ * Starts polling for push notification status
+ *
+ * @param {Object}	store  Global redux store
+ * @param {Object}	action dispathced action
+ * @param {Function}	next continue dispatch function
+ * @param {Object}	error the error object
+ * @returns {*} whatever requestTwoFactorPushNotificationStatus returns, which is undefined
+ */
 const startPolling = ( store, action, next ) => {
 	next( action ); // allow the reducer change status of polling to inProgress
 	return makePushNotificationRequest( store, action, next );
