@@ -134,6 +134,15 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 		postAttributes.title = decodeEntities( postAttributes.title );
 		postAttributes.featured_image = getFeaturedImageId( postToCopy );
 
+		/**
+		 * A post attributes whitelist for Redux's `editPost()` action.
+		 *
+		 * This is needed because blindly passing all post attributes to `editPost()`
+		 * caused some of them (notably the featured image) to revert to their original value
+		 * when modified right after the copy.
+		 *
+		 * @see https://github.com/Automattic/wp-calypso/pull/13933
+		 */
 		const reduxPostAttributes = {
 			terms: postAttributes.terms,
 			title: postAttributes.title,
