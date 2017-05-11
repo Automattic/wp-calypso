@@ -21,7 +21,7 @@ import {
 	getSiteUrl,
 } from 'reader/get-helpers';
 import untrailingslashit from 'lib/route/untrailingslashit';
-
+import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 
 /**
  * Takes in a string and removes the starting https, www., and removes a trailing slash
@@ -56,6 +56,10 @@ function ReaderSubscriptionListItem( {
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
 	const preferBlavatar = get( site, 'is_multi_author', false );
 	const preferGravatar = ! preferBlavatar;
+
+	if ( ! site && ! feed ) {
+		return <ReaderSubscriptionListItemPlaceholder />;
+	}
 
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>

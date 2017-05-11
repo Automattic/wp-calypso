@@ -23,8 +23,10 @@
 	position: relative;
 	width: 100%;
 
-	&::after{
-		@include long-content-fade( $size: 20% );
+	&:not(.is-placeholder) {
+		&::after {
+			@include long-content-fade( $size: 20% );
+		}
 	}
 }
 
@@ -41,9 +43,14 @@
 	}
 
 	&::after{
-		@include long-content-fade( $size: 20% );
 		height: 16px * 1.4;
 		top: auto;
+	}
+
+	&:not(.is-placeholder) {
+		&::after {
+			@include long-content-fade( $size: 20% );
+		}
 	}
 }
 
@@ -207,4 +214,41 @@
 .reader-subscription-list-item__site-url:visited {
 	color: lighten( $gray, 10% );
 	display: block;
+}
+
+// Placeholders
+.reader-subscription-list-item.reader-subscription-list-item__placeholder {
+	.reader-subscription-list-item__site-title,
+	.reader-subscription-list-item__site-excerpt,
+	.reader-subscription-list-item__by-text,
+	.reader-subscription-list-item__site-url,
+	.reader-subscription-list-item__follow {
+		@include placeholder();
+	}
+
+	.reader-subscription-list-item__site-excerpt {
+		margin-top: 2px;
+	}
+
+	.reader-subscription-list-item__site-title {
+		max-width: 60%;
+	}
+
+	.reader-subscription-list-item__site-excerpt {
+		max-width: 80%;
+	}
+
+	.reader-subscription-list-item__site-url {
+		max-width: 40%;
+		margin-top: -1px;
+	}
+
+	.reader-subscription-list-item__follow {
+		width: 20px;
+		height: 20px;
+
+		@include breakpoint( ">660px" ) {
+			width: 16px * 1.5 * 3;
+		}
+	}
 }
