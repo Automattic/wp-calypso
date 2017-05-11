@@ -62,7 +62,7 @@ class WaitingTwoFactorNotificationApproval extends Component {
 	componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.pushSuccess && nextProps.pushSuccess ) {
 			const { translate } = this.props;
-			this.props.successNotice( translate( 'Verified successfully!' ) );
+			this.props.successNotice( translate( 'Logging in…' ) );
 			this.props.onSuccess();
 		}
 	}
