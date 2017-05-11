@@ -11,7 +11,7 @@ import debugFactory from 'debug';
 import { closePreview } from 'state/ui/preview/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewUrl } from 'state/ui/preview/selectors';
-import { getSiteOption } from 'state/sites/selectors';
+import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 
@@ -97,11 +97,13 @@ export default function urlPreview( WebPreview ) {
 
 	function mapStateToProps( state ) {
 		const selectedSiteId = getSelectedSiteId( state );
-		const selectedSite = getSelectedSite( state );
+		// Force https to prevent mixed content errors in the iframe
+		const siteUrl = 'https://' + getSiteSlug( state, selectedSiteId );
+
 		return {
-			selectedSite,
+			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
-			selectedSiteUrl: selectedSite && selectedSite.URL,
+			selectedSiteUrl: siteUrl.replace( /::/g, '/' ),
 			selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
 			previewUrl: getPreviewUrl( state ),
 			isDomainOnlySite: isDomainOnlySite( state, selectedSiteId ),
