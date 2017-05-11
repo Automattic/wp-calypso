@@ -74,6 +74,7 @@ export const ThemesList = React.createClass( {
 			onMoreButtonClick={ this.props.onMoreButtonClick }
 			actionLabel={ this.props.getActionLabel( theme.id ) }
 			index={ index }
+			isJetpack={ this.props.isJetpack }
 			theme={ theme }
 			active={ this.props.isActive( theme.id ) }
 			purchased={ this.props.isPurchased( theme.id ) }

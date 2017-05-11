@@ -436,10 +436,14 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getDefaultOptionLabel() {
-		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased } = this.props;
+		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = this.props;
 		if ( isLoggedIn && ! isActive ) {
 			if ( isPremium && ! isPurchased ) { // purchase
-				return i18n.translate( 'Pick this design' );
+				return isJetpack
+					? i18n.translate( 'Upgrade to activate', {
+						comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
+					} )
+					: i18n.translate( 'Pick this design' );
 			} // else: activate
 			return i18n.translate( 'Activate this design' );
 		}
@@ -474,6 +478,9 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderPrice() {
+		if ( this.props.isJetpack ) {
+			return '';
+		}
 		let price = this.props.price;
 		if ( ! this.isLoaded() || this.props.isActive || this.props.isPurchased ) {
 			price = '';
@@ -481,7 +488,9 @@ const ThemeSheet = React.createClass( {
 			price = i18n.translate( 'Free' );
 		}
 
-		return price ? <span className="theme__sheet-action-bar-cost">{ price }</span> : '';
+		return price
+			? <span className="theme__sheet-action-bar-cost">{ price }</span>
+			: '';
 	},
 
 	renderButton() {
@@ -644,7 +653,8 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
-			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ) // No siteId specified since we want the *canonical* URL :-)
+			// No siteId specified since we want the *canonical* URL :-)
+			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id )
 		};
 	},
 	{

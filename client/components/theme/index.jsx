@@ -172,7 +172,7 @@ const Theme = React.createClass( {
 								context: 'singular noun, the currently active theme'
 							} ) }</span>
 						}
-						{ price && ! purchased &&
+						{ ! this.props.isJetpack && price && ! purchased &&
 							<span className="theme-badge__price">{ price }</span>
 						}
 						{ ! isEmpty( this.props.buttonContents )

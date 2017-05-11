@@ -42,8 +42,11 @@ const ConnectedThemesSelection = connectOptions(
 				getOptions={ function( theme ) {
 					return pickBy(
 						addTracking( props.options ),
-						option => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
-					); } }
+						( option, key ) => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) ) || (
+							'tryandcustomize' === key && props.hasUnlimitedPremiumThemes
+						)
+					);
+				} }
 			/>
 		);
 	}
@@ -114,7 +117,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 							<ConnectedThemesSelection
 								origin="wpcom"
 								defaultOption={ 'activate' }
-								secondaryOption={ 'tryandcustomize' }
+								secondaryOption={ hasUnlimitedPremiumThemes ? 'tryandcustomize' : '' }
 								search={ search }
 								tier={ tier }
 								filter={ filter }
@@ -138,6 +141,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								trackScrollPage={ props.trackScrollPage }
 								source="wpcom"
 								emptyContent={ emptyContent }
+								hasUnlimitedPremiumThemes={ hasUnlimitedPremiumThemes }
 							/>
 						</div>
 					}

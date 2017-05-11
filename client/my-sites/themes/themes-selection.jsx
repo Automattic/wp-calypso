@@ -145,7 +145,9 @@ class ThemesSelection extends Component {
 					label={ listLabel }
 					count={ themesCount }
 				/>
-				<ThemesList themes={ this.props.themes }
+				<ThemesList
+					isJetpack={ this.props.isJetpack }
+					themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
@@ -190,6 +192,7 @@ const ConnectedThemesSelection = connect(
 			query,
 			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
+			isJetpack: isJetpack,
 			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
 			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),

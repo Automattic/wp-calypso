@@ -410,6 +410,7 @@ export function getThemeHelpUrl( state, themeId, siteId ) {
 
 /**
  * Returns the URL for purchasing the given theme for the given site.
+ * If the site is a Jetpack site, return the plans URL.
  *
  * @param  {Object}  state   Global state tree
  * @param  {String}  themeId Theme ID
@@ -420,7 +421,9 @@ export function getThemePurchaseUrl( state, themeId, siteId ) {
 	if ( ! isThemePremium( state, themeId ) ) {
 		return null;
 	}
-
+	if ( isJetpackSite( state, siteId ) ) {
+		return `/plans/${ getSiteSlug( state, siteId ) }`;
+	}
 	return `/checkout/${ getSiteSlug( state, siteId ) }/theme:${ themeId }`;
 }
 

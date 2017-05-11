@@ -39,10 +39,18 @@ import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
-		label: i18n.translate( 'Purchase', {
-			context: 'verb'
-		} ),
-		extendedLabel: i18n.translate( 'Purchase this design' ),
+		label: ( state, siteId ) => isJetpackSite( state, siteId )
+			? i18n.translate( 'Upgrade to activate', {
+				comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
+			} )
+			: i18n.translate( 'Purchase', {
+				context: 'verb'
+			} ),
+		extendedLabel: ( state, siteId ) => isJetpackSite( state, siteId )
+			? i18n.translate( 'Upgrade to activate', {
+				comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
+			} )
+			: i18n.translate( 'Purchase this design' ),
 		header: i18n.translate( 'Purchase on:', {
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme'
@@ -105,14 +113,14 @@ const tryandcustomize = {
 	hideForTheme: ( state, themeId, siteId ) => (
 		! getCurrentUser( state ) ||
 		( siteId && ( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
-		( isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
+		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
 		isThemeActive( state, themeId, siteId ) || (
 			isThemePremium( state, themeId ) &&
 			// In theory, we shouldn't need the isJetpackSite() check. In practice, Redux state required for isPremiumThemeAvailable
 			// is less readily available since it needs to be fetched using the `QuerySitePlans` component.
 			( isJetpackSite( state, siteId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) )
 		) ||
-		( ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
+		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
 	)
 };
 
@@ -187,12 +195,21 @@ export const connectOptions = connect(
 		return mapValues( ALL_THEME_OPTIONS, option => Object.assign(
 			{},
 			option,
+			'function' === typeof option.label
+				? { label: ( option.label )( state, siteId ) }
+				: { label: option.label },
+			'function' === typeof option.extendedLabel
+				? { extendedLabel: ( option.extendedLabel )( state, siteId ) }
+				: { extendedLabel: option.extendedLabel },
 			option.getUrl
 				? { getUrl: mapGetUrl( option.getUrl ) }
 				: {},
 			option.hideForTheme
 				? { hideForTheme: mapHideForTheme( option.hideForTheme ) }
-				: {}
+				: {},
+			{
+				isJetpack: isJetpackSite( state, siteId )
+			}
 		) );
 	},
 	( dispatch, { siteId, source = 'unknown' } ) => {
