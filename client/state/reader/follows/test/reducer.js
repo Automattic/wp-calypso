@@ -13,6 +13,7 @@ import {
 	READER_FOLLOWS_RECEIVE,
 	SERIALIZE,
 	DESERIALIZE,
+	READER_FOLLOW_ERROR,
 } from 'state/action-types';
 import {
 	subscribeToNewPostEmail,
@@ -469,6 +470,20 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 456 ) );
 			expect( state ).to.equal( original );
+		} );
+
+		it( 'should insert a follow error if one is received', () => {
+			const original = deepFreeze( {
+				'discoverinvalid.wordpress.com': { is_following: true },
+				'dailypost.wordpress.com': { is_following: true },
+			} );
+			const state = items( original, {
+				type: READER_FOLLOW_ERROR,
+				payload: { feedUrl: 'http://discoverinvalid.wordpress.com', error: 'invalid_feed' },
+			} );
+			expect( state[ 'discoverinvalid.wordpress.com' ] ).to.eql(
+				{ is_following: true, error: 'invalid_feed' }
+			);
 		} );
 	} );
 

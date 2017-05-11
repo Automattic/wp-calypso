@@ -10,6 +10,7 @@ import { find, get, isEqual, merge, omitBy, pickBy, reduce } from 'lodash';
 import {
 	READER_FOLLOW,
 	READER_UNFOLLOW,
+	READER_FOLLOW_ERROR,
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_SYNC_START,
@@ -85,15 +86,29 @@ export const items = createReducer( {}, {
 			[ urlKey ]: merge( {}, state[ urlKey ], { is_following: false } ),
 		};
 	},
+	[ READER_FOLLOW_ERROR ]: ( state, action ) => {
+		const urlKey = prepareComparableUrl( action.payload.feedUrl );
+		return {
+			...state,
+			[ urlKey ]: merge( {}, state[ urlKey ], { error: action.payload.error } ),
+		};
+	},
 	[ READER_FOLLOW ]: ( state, action ) => {
 		const urlKey = prepareComparableUrl( action.payload.feedUrl );
+		const newValues = { is_following: true };
+
+		// Reset follow error state
+		if ( state[ urlKey ] && state[ urlKey ].error ) {
+			newValues.error = null;
+		}
+
 		return {
 			...state,
 			[ urlKey ]: merge(
 				{ feed_URL: action.payload.feedUrl },
 				state[ urlKey ],
 				action.payload.follow,
-				{ is_following: true }
+				newValues,
 			)
 		};
 	},

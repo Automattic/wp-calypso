@@ -8,6 +8,7 @@ import debugModule from 'debug';
  */
 import {
 	READER_FOLLOW,
+	READER_FOLLOW_ERROR,
 	READER_UNFOLLOW,
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
@@ -62,6 +63,23 @@ export function unfollow( feedUrl ) {
 		type: READER_UNFOLLOW,
 		payload: { feedUrl }
 	};
+}
+
+/**
+ * Returns an action object to signal that an error was encountered
+ * when following a URL.
+ *
+ * @param  {String} feedUrl Feed URL
+ * @param  {Object} response Error response (contains keys 'info' and 'subscribed')
+ * @return {Object} Action
+ */
+export function recordFollowError( feedUrl, error ) {
+	const action = {
+		type: READER_FOLLOW_ERROR,
+		payload: { feedUrl, error }
+	};
+
+	return action;
 }
 
 /**
