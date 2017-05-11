@@ -85,6 +85,10 @@ class VerificationCodeForm extends Component {
 
 		return (
 			<div>
+				<div className="two-factor-authentication__header">
+					{ this.props.title }
+				</div>
+
 				<form onSubmit={ this.onCodeSubmit }>
 					<Card>
 						<p>

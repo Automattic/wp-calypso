@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -50,6 +51,7 @@ class Login extends Component {
 	renderContent() {
 		const {
 			title,
+			translate,
 			twoFactorAuthType,
 			twoStepNonce,
 		} = this.props;
@@ -58,15 +60,17 @@ class Login extends Component {
 			rememberMe,
 		} = this.state;
 
+		const twoStepTitle = translate( '2-Step Verification' );
+
 		if ( twoStepNonce && twoFactorAuthType === 'code' ) {
 			return (
-				<VerificationCodeForm rememberMe={ rememberMe } onSuccess={ this.rebootAfterLogin } />
+				<VerificationCodeForm rememberMe={ rememberMe } onSuccess={ this.rebootAfterLogin } title={ twoStepTitle } />
 			);
 		}
 
 		if ( twoStepNonce && twoFactorAuthType === 'push' ) {
 			return (
-				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } />
+				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } title={ twoStepTitle } />
 			);
 		}
 
@@ -92,4 +96,4 @@ export default connect(
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
 	} ),
-)( Login );
+)( localize( Login ) );

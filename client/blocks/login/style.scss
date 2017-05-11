@@ -72,3 +72,7 @@
 	display: block;
 	margin-bottom: 16px;
 }
+
+.card.two-factor-authentication__form-action {
+	background: lighten( $gray, 34% );
+}
