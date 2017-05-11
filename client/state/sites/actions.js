@@ -107,9 +107,10 @@ export function requestSites() {
  * a site.
  *
  * @param  {Number}   siteId Site ID
+ * @param  {Boolean}  removeSiteOnFailure Remove the site from list if request fails
  * @return {Function}        Action thunk
  */
-export function requestSite( siteId ) {
+export function requestSite( siteId, removeSiteOnFailure = false ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_REQUEST,
@@ -128,6 +129,9 @@ export function requestSite( siteId ) {
 				siteId,
 				error
 			} );
+			if ( removeSiteOnFailure ) {
+				dispatch( receiveDeletedSite( siteId ) );
+			}
 		} );
 	};
 }

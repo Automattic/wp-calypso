@@ -23,7 +23,6 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
-	SITES_RECEIVE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_SUCCESS
@@ -257,17 +256,6 @@ describe( 'actions', () => {
 							plans_url: '/plans/example.com'
 						},
 						error: null
-					} );
-				} );
-			} );
-
-			it( 'should dispatch sites receive action when request completes', () => {
-				const { authorize } = actions;
-
-				return authorize( queryObject )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: SITES_RECEIVE,
-						sites: [ client_id ]
 					} );
 				} );
 			} );

@@ -20,6 +20,7 @@ class SiteCard extends Component {
 			blogname: PropTypes.string.isRequired,
 			home_url: PropTypes.string.isRequired,
 			site_url: PropTypes.string.isRequired,
+			client_id: PropTypes.string.isRequired
 		} ).isRequired,
 	};
 
@@ -48,7 +49,7 @@ class SiteCard extends Component {
 
 		return (
 			<CompactCard className="jetpack-connect__site">
-				<QuerySites siteId={ parseInt( client_id ) } />
+				<QuerySites siteId={ parseInt( client_id ) } removeSiteOnFailure />
 				<Site site={ site } />
 			</CompactCard>
 		);

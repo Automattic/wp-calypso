@@ -11,6 +11,7 @@ import useNock from 'test/helpers/use-nock';
 import {
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
+	SITE_DELETE_RECEIVE,
 	SITE_DELETE_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
@@ -193,6 +194,21 @@ describe( 'actions', () => {
 					siteId: 77203074,
 					error: match( { message: 'User cannot access this private blog.' } )
 				} );
+			} );
+		} );
+
+		it( 'should dispatch a site delete receive action if we choose to remove on failure', () => {
+			return requestSite( 77203074, true )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: SITE_DELETE_RECEIVE,
+					siteId: 77203074
+				} );
+			} );
+		} );
+
+		it( 'should not dispatch a site delete receive action if remove on failure is not specified', () => {
+			return requestSite( 77203074 )( spy ).then( () => {
+				expect( spy ).to.have.callCount( 2 );
 			} );
 		} );
 	} );
