@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import ExtendedHeader from '../../../components/extended-header';
 
 class SettingsPaymentsOnSite extends Component {
 
@@ -16,16 +16,16 @@ class SettingsPaymentsOnSite extends Component {
 		const { translate } = this.props;
 		return (
 			<div>
-				<SectionHeader label={ translate( 'On-site credit card payment methods' ) } />
-				<Card>
-					{
+				<ExtendedHeader
+					label={ translate( 'On-site credit card payment methods' ) }
+					description={
 						translate(
 							'On-site methods provide a seamless experience by keeping the ' +
 							'customer on your site to enter their credit card details and ' +
 							'complete checkout. More information'
 						)
-					}
-				</Card>
+					} />
+				<Card></Card>
 			</div>
 		);
 	}

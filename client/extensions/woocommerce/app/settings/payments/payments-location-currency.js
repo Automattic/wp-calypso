@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import ExtendedHeader from '../../../components/extended-header';
 
 class SettingsPaymentsLocationCurrency extends Component {
 
@@ -16,14 +16,15 @@ class SettingsPaymentsLocationCurrency extends Component {
 		const { translate } = this.props;
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Store location and currency' ) } />
-				<Card>
-					{
+				<ExtendedHeader
+					label={ translate( 'Store location and currency' ) }
+					description={
 						translate(
-							'Different payment methods may be available based on your store location and currency.'
+							'Different payment methods may be available based on your store' +
+							'location and currency.'
 						)
-					}
-				</Card>
+					} />
+				<Card></Card>
 			</div>
 		);
 	}
