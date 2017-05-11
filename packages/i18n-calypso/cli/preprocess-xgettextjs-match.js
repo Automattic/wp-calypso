@@ -21,7 +21,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 
 	args = match.arguments;
 
-	[ 'single', 'plural' ].slice( 0, args.length ).forEach( function( field, i ) {
+	[ 'single', 'plural', 'options' ].slice( 0, args.length ).forEach( function( field, i ) {
 		if ( 'StringLiteral' === args[i].type ) {
 			finalProps[field] = makeDoubleQuoted( args[i].extra.raw );
 		} else if ( 'BinaryExpression' === args[i].type ) {
