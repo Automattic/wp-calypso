@@ -13,10 +13,10 @@ class ExtendedHeader extends Component {
 		const { label, description, children } = this.props;
 
 		const labelContent = (
-			<span>
+			<div>
 				<div className="extended-header__header">{ label }</div>
 				<div className="extended-header__header-description">{ description }</div>
-			</span>
+			</div>
 		);
 
 		return (
