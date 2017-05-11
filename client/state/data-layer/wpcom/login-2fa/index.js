@@ -68,12 +68,12 @@ const receivedTwoFactorPushNotificationError = ( store, action, next, error ) =>
 	store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE, twoStepNonce: error.response.body.data.two_step_nonce } );
 
 	if ( getTwoFactorPushPollInProgress( store.getState() ) ) {
+		setTimeout(
+			// eslint-disable-next-line no-use-before-define
+			() => makePushNotificationRequest( store, { type: action.type }, next ),
+			POLL_APP_PUSH_INTERVAL_SECONDS * 1000
+		);
 	}
-	setTimeout(
-		// eslint-disable-next-line no-use-before-define
-		() => makePushNotificationRequest( store, { type: action.type }, next ),
-		POLL_APP_PUSH_INTERVAL_SECONDS * 1000
-	);
 };
 
 /***
