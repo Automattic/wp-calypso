@@ -159,7 +159,8 @@ const Page = React.createClass( {
 			site = this.props.site,
 			parentTitle, parentHref, parentLink;
 
-		if ( ! page.parent ) {
+		// If we're in hierarchical view, we don't show child info in the context menu, as it's redudant.
+		if ( this.props.hierarchical || ! page.parent ) {
 			return null;
 		}
 
