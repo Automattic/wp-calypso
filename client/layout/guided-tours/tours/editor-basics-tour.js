@@ -21,7 +21,6 @@ import {
 	Link,
 } from 'layout/guided-tours/config-elements';
 import {
-	isEnabled,
 	isNewUser,
 } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
@@ -31,7 +30,7 @@ export const EditorBasicsTour = makeTour(
 		name="editorBasicsTour"
 		version="20170503"
 		path="/post/"
-		when={ and( isEnabled( 'guided-tours/editor-basics-tour' ), isDesktop, isNewUser ) }
+		when={ and( isDesktop, isNewUser ) }
 	>
 		<Step
 			name="init"
