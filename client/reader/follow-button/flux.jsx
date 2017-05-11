@@ -45,14 +45,10 @@ function ReaderFollowButton( props ) {
 	}
 
 	if ( isButtonOnly ) {
-		return (
-			<FollowButton { ...props } onFollowToggle={ recordFollowToggle } />
-		);
+		return <FollowButton { ...props } onFollowToggle={ recordFollowToggle } />;
 	}
 
-	return (
-		<FollowButtonContainer { ...props } onFollowToggle={ recordFollowToggle } />
-	);
+	return <FollowButtonContainer { ...props } onFollowToggle={ recordFollowToggle } />;
 }
 
 ReaderFollowButton.propTypes = {
@@ -62,11 +58,15 @@ ReaderFollowButton.propTypes = {
 };
 
 export default connect(
-	( state ) => ( {} ), // eslint-disable-line no-unused-vars
-	( dispatch ) => bindActionCreators( {
-		dispatchRecordFollow: recordFollowAction,
-		dispatchRecordUnfollow: recordUnfollowAction,
-	}, dispatch ),
+	state => ( {} ), // eslint-disable-line no-unused-vars
+	dispatch =>
+		bindActionCreators(
+			{
+				dispatchRecordFollow: recordFollowAction,
+				dispatchRecordUnfollow: recordUnfollowAction,
+			},
+			dispatch
+		),
 	null,
-	{ pure: true } // TODO: is this component pure?
+	{ pure: true }  // TODO: is this component pure?
 )( ReaderFollowButton );

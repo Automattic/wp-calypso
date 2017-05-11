@@ -10,7 +10,12 @@ import config from 'config';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import {
+	ensureStoreLoading,
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'reader/controller-helper';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 
@@ -40,13 +45,12 @@ const exported = {
 				siteId={ +blogId }
 				title="Discover"
 				trackScrollPage={ trackScrollPage.bind(
-						null,
-						basePath,
-						fullAnalyticsPageTitle,
-						ANALYTICS_PAGE_TITLE,
-						mcKey
-					)
-				}
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					ANALYTICS_PAGE_TITLE,
+					mcKey
+				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				suppressSiteNameLink={ true }
 				showPrimaryFollowButtonOnCards={ false }
@@ -58,11 +62,9 @@ const exported = {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    discover
-} = exported;
+export const { discover } = exported;

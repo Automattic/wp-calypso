@@ -9,8 +9,8 @@ const RecommendedTags = React.createClass( {
 				<Navigation selected="tags" />
 				Trending tags
 			</Main>
-			);
-	}
+		);
+	},
 } );
 
 export default RecommendedTags;

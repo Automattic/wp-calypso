@@ -13,20 +13,28 @@ const RecommendedNavigation = React.createClass( {
 			'for-you': this.props.translate( 'Recommendations: For You' ),
 			posts: this.props.translate( 'Recommendations: Posts' ),
 			sites: this.props.translate( 'Recommendations: Sites' ),
-			tags: this.props.translate( 'Recommendations: Tags' )
+			tags: this.props.translate( 'Recommendations: Tags' ),
 		};
 
 		return (
 			<SectionNav selectedText={ sectionNames[ current ] }>
 				<NavTabs>
-					<NavItem path="/recommendations/mine" selected={ current === 'for-you' }>{ this.props.translate( 'For You' ) }</NavItem>
-					<NavItem path="/recommendations/posts" selected={ current === 'posts' }>{ this.props.translate( 'Posts' ) }</NavItem>
-					<NavItem path="/recommendations" selected={ current === 'sites' }>{ this.props.translate( 'Topics' ) }</NavItem>
-					<NavItem path="/tags" selected={ current === 'tags' }>{ this.props.translate( 'Tags' ) }</NavItem>
+					<NavItem path="/recommendations/mine" selected={ current === 'for-you' }>
+						{ this.props.translate( 'For You' ) }
+					</NavItem>
+					<NavItem path="/recommendations/posts" selected={ current === 'posts' }>
+						{ this.props.translate( 'Posts' ) }
+					</NavItem>
+					<NavItem path="/recommendations" selected={ current === 'sites' }>
+						{ this.props.translate( 'Topics' ) }
+					</NavItem>
+					<NavItem path="/tags" selected={ current === 'tags' }>
+						{ this.props.translate( 'Tags' ) }
+					</NavItem>
 				</NavTabs>
 			</SectionNav>
 		);
-	}
+	},
 } );
 
 export default localize( RecommendedNavigation );

@@ -52,14 +52,9 @@ const exported = {
 		}
 
 		return siteUrl;
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    formatUrlForDisplay,
-    getFeedTitle,
-    getFeedStreamUrl,
-    getSiteUrl
-} = exported;
+export const { formatUrlForDisplay, getFeedTitle, getFeedStreamUrl, getSiteUrl } = exported;

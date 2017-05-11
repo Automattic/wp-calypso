@@ -1,10 +1,10 @@
 import percentageFactory from 'percentage-regex';
 
 const percentageRegex = percentageFactory( { exact: true } );
-const isPercentage = ( val ) => percentageRegex.test( val );
+const isPercentage = val => percentageRegex.test( val );
 
 var embedsConfig = {
-	'default': {
+	default: {
 		sizingFunction: function defaultEmbedSizingFunction( embed, availableWidth ) {
 			let { aspectRatio, width, height } = embed;
 
@@ -27,7 +27,7 @@ var embedsConfig = {
 				height: `${ height | 0 }px`,
 				paddingRight: '1px', // this exists to solve a bug in safari that we found here: https://github.com/Automattic/wp-calypso/issues/8987
 			};
-		}
+		},
 	},
 	spotify: {
 		sizingFunction: function spotifyEmbedSizingFunction( embed, availableWidth ) {
@@ -43,15 +43,14 @@ var embedsConfig = {
 
 			return {
 				width: availableWidth + 'px',
-				height: height + 'px'
+				height: height + 'px',
 			};
 		},
-		urlRegex: /\/\/embed.spotify.com/
+		urlRegex: /\/\/embed.spotify.com/,
 	},
 	soundcloud: {
 		sizingFunction: function soundcloudEmbedSizingFunction( embed, availableWidth ) {
-			var aspectRatio = embed.aspectRatio || 1,
-				height = '100%';
+			var aspectRatio = embed.aspectRatio || 1, height = '100%';
 
 			if ( embed.iframe.indexOf( 'visual=true' ) > -1 ) {
 				height = Math.floor( availableWidth / aspectRatio ) + 'px';
@@ -59,23 +58,21 @@ var embedsConfig = {
 
 			return {
 				width: availableWidth + 'px',
-				height: height
+				height: height,
 			};
 		},
-		urlRegex: /\/\/w\.soundcloud\.com\/player/
+		urlRegex: /\/\/w\.soundcloud\.com\/player/,
 	},
 };
 
 function extractUrlFromIframe( iframeHtml ) {
-	var urlRegex = new RegExp( 'src="([^"]+)"' ),
-		res = urlRegex.exec( iframeHtml );
+	var urlRegex = new RegExp( 'src="([^"]+)"' ), res = urlRegex.exec( iframeHtml );
 
 	return res.length > 1 ? res[ 1 ] : null;
 }
 
 function resolveEmbedConfig( embed ) {
-	var embedType,
-		url;
+	var embedType, url;
 
 	// if there's type, easiest way just to use it
 	if ( embedsConfig.hasOwnProperty( embed.type ) ) {
@@ -103,11 +100,9 @@ const exported = {
 		var embedConfig = resolveEmbedConfig( embed );
 
 		return embedConfig.sizingFunction.bind( embedConfig, embed );
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    getEmbedSizingFunction
-} = exported;
+export const { getEmbedSizingFunction } = exported;

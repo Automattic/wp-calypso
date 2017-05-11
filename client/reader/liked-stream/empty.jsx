@@ -8,11 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrack,
-} from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 
 var TagEmptyContent = React.createClass( {
@@ -33,15 +29,20 @@ var TagEmptyContent = React.createClass( {
 	},
 
 	render: function() {
-		var action = ( <a
-			className="empty-content__action button is-primary"
-			onClick={ this.recordAction }
-			href="/">{ this.props.translate( 'Back to Following' ) }</a> ),
+		var action = (
+			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
+				{ this.props.translate( 'Back to Following' ) }
+			</a>
+		),
 			secondaryAction = isDiscoverEnabled()
-			? ( <a
-				className="empty-content__action button"
-				onClick={ this.recordSecondaryAction }
-				href="/discover">{ this.props.translate( 'Explore Discover' ) }</a> ) : null;
+				? <a
+						className="empty-content__action button"
+						onClick={ this.recordSecondaryAction }
+						href="/discover"
+					>
+						{ this.props.translate( 'Explore Discover' ) }
+					</a>
+				: null;
 
 		return (
 			<EmptyContent
@@ -51,9 +52,9 @@ var TagEmptyContent = React.createClass( {
 				secondaryAction={ secondaryAction }
 				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
 				illustrationWidth={ 500 }
-				/>
+			/>
 		);
-	}
+	},
 } );
 
 export default localize( TagEmptyContent );

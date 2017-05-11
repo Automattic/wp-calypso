@@ -34,14 +34,14 @@ export default class PostTime extends PureComponent {
 		date = date || this.props.date;
 		this.smartSetState( {
 			humanDate: humanDate( date ),
-			fullDate: moment( date ).format( 'llll' )
+			fullDate: moment( date ).format( 'llll' ),
 		} );
-	}
+	};
 
 	render() {
 		const date = this.props.date;
 		return (
-			<time className={ this.props.className } dateTime={ date } title={ this.state.fullDate } >
+			<time className={ this.props.className } dateTime={ date } title={ this.state.fullDate }>
 				{ this.state.humanDate }
 			</time>
 		);

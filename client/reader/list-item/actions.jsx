@@ -8,8 +8,8 @@ const ListItemActions = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render() {
-		return ( <div className="reader-list-item__actions">{ this.props.children }</div> );
-	}
+		return <div className="reader-list-item__actions">{ this.props.children }</div>;
+	},
 } );
 
 export default ListItemActions;

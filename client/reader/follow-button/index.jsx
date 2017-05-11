@@ -9,6 +9,4 @@ import config from 'config';
 import FluxButton from './flux';
 import ReduxButton from './redux';
 
-module.exports = config.isEnabled( 'reader/following-manage-refresh' )
-   ? ReduxButton
-   : FluxButton;
+module.exports = config.isEnabled( 'reader/following-manage-refresh' ) ? ReduxButton : FluxButton;

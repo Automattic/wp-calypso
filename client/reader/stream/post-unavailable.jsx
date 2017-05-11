@@ -12,13 +12,14 @@ import config from 'config';
 import Card from 'components/card';
 
 var PostUnavailable = React.createClass( {
-
 	mixins: [ PureRenderMixin ],
 
 	componentWillMount: function() {
 		this.errors = {
-			unauthorized: this.props.translate( 'This is a post on a private site that you’re following, but not currently a member of. Please request membership to display these posts in Reader.' ),
-			default: this.props.translate( 'An error occurred loading this post.' )
+			unauthorized: this.props.translate(
+				'This is a post on a private site that you’re following, but not currently a member of. Please request membership to display these posts in Reader.'
+			),
+			default: this.props.translate( 'An error occurred loading this post.' ),
 		};
 	},
 
@@ -33,17 +34,22 @@ var PostUnavailable = React.createClass( {
 		return (
 			<Card tagName="article" className="reader__card is-error">
 				<div className="reader__post-header">
-					<h1 className="reader__post-title"><a className="reader__post-title-link" target="_blank" rel="noopener noreferrer"><span className="reader__placeholder-text">Oops!</span></a></h1>
+					<h1 className="reader__post-title">
+						<a className="reader__post-title-link" target="_blank" rel="noopener noreferrer">
+							<span className="reader__placeholder-text">Oops!</span>
+						</a>
+					</h1>
 				</div>
 
 				<div className="reader__post-excerpt">
 					<p>{ errorMessage }</p>
-					{ config.isEnabled( 'reader/full-errors' ) ? <pre>{ JSON.stringify( this.props.post, null, '  ' ) }</pre> : null }
-					</div>
+					{ config.isEnabled( 'reader/full-errors' )
+						? <pre>{ JSON.stringify( this.props.post, null, '  ' ) }</pre>
+						: null }
+				</div>
 			</Card>
 		);
-	}
-
+	},
 } );
 
 export default localize( PostUnavailable );

@@ -17,33 +17,33 @@ const FollowingExportButton = React.createClass( {
 	propTypes: {
 		onError: React.PropTypes.func,
 		onExport: React.PropTypes.func,
-		saveAs: React.PropTypes.string
+		saveAs: React.PropTypes.string,
 	},
 
 	getDefaultProps() {
 		return {
 			onError: noop,
 			onExport: noop,
-			saveAs: 'wpcom-subscriptions.opml'
+			saveAs: 'wpcom-subscriptions.opml',
 		};
 	},
 
 	getInitialState() {
 		return {
-			disabled: false
+			disabled: false,
 		};
 	},
 
 	onClick() {
 		wpcom.undocumented().exportReaderFeed( this.onFeed );
 		this.setState( {
-			disabled: true
+			disabled: true,
 		} );
 	},
 
 	onFeed( err, data ) {
 		this.setState( {
-			disabled: false
+			disabled: false,
 		} );
 
 		if ( ! err && ! data.success ) {
@@ -61,14 +61,11 @@ const FollowingExportButton = React.createClass( {
 
 	render() {
 		return (
-			<Button
-				compact
-				disabled={ this.state.disabled }
-				onClick={ this.onClick } >
+			<Button compact disabled={ this.state.disabled } onClick={ this.onClick }>
 				{ this.props.translate( 'Export' ) }
 			</Button>
 		);
-	}
+	},
 } );
 
 export default localize( FollowingExportButton );

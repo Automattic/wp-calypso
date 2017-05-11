@@ -10,10 +10,7 @@ import { defer } from 'lodash';
  * Internal Dependencies
  */
 import FeedError from 'reader/feed-error';
-import {
-	setPageTitle,
-	trackPageLoad
-} from 'reader/controller-helper';
+import { setPageTitle, trackPageLoad } from 'reader/controller-helper';
 import AsyncLoad from 'components/async-load';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
@@ -25,7 +22,10 @@ function renderPostNotFound() {
 	setPageTitle( context, sidebarAndPageTitle );
 
 	renderWithReduxStore(
-		<FeedError sidebarTitle={ sidebarAndPageTitle } message={ i18n.translate( 'Post Not Found' ) } />,
+		<FeedError
+			sidebarTitle={ sidebarAndPageTitle }
+			message={ i18n.translate( 'Post Not Found' ) }
+		/>,
 		document.getElementById( 'primary' ),
 		context.store
 	);
@@ -82,7 +82,8 @@ export function feedPost( context ) {
 			feedId={ feedId }
 			postId={ postId }
 			onClose={ closer }
-			onPostNotFound={ renderPostNotFound } />,
+			onPostNotFound={ renderPostNotFound }
+		/>,
 		document.getElementById( 'primary' ),
 		context.store
 	);
