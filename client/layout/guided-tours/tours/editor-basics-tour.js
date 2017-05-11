@@ -51,7 +51,7 @@ export const EditorBasicsTour = makeTour(
 		<Step
 			name="write"
 			arrow="top-left"
-			target=".mce-toolbar-grp.mce-container"
+			target=".editor-html-toolbar__buttons, .mce-toolbar-grp.mce-container"
 			placement="below"
 			style={ { marginTop: '40px' } }
 		>
@@ -70,7 +70,7 @@ export const EditorBasicsTour = makeTour(
 		<Step
 			name="add-image"
 			arrow="top-left"
-			target=".mce-wpcom-insert-menu button"
+			target=".editor-html-toolbar__button-insert-media, .mce-wpcom-insert-menu button"
 			placement="below"
 			style={ { marginLeft: '-10px', zIndex: 'auto' } }
 		>
