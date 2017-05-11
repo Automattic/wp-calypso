@@ -19,6 +19,7 @@ const embedsToLookFor = {
 	'fb\\\:post, [class^=fb-]': embedFacebook,
 	'[class^=tumblr-]': embedTumblr,
 	'.jetpack-slideshow': embedSlideshow,
+	'.embed-reddit': embedReddit,
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -111,6 +112,11 @@ function embedFacebook( domNode ) {
 	}
 
 	loadAndRun( 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.2', noop );
+}
+
+function embedReddit( domNode ) {
+	debug( 'processing reddit for ', domNode );
+	loadAndRun( 'https://embed.redditmedia.com/widgets/platform.js', noop );
 }
 
 let tumblrLoader;
