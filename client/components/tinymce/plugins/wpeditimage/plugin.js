@@ -599,11 +599,13 @@ function wpEditImage( editor ) {
 				}
 				// The paste is somewhere else in the caption DL element.
 				// Prevent pasting in there as it will break the caption.
-				// Replace the caption parent with a new paragraph and move the caret there.
+				// Make new paragraph under the caption DL and move the caret there.
 				p = dom.create( 'p' );
 				dom.insertAfter( p, captionParent );
 				editor.selection.setCursorLocation( p, 0 );
 
+				// If we were pasting into an img, remove it so it's replaced
+				// with the new one.
 				if ( node.nodeName === 'IMG' ) {
 					editor.$( captionParent ).remove();
 				}
