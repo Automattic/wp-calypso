@@ -30,7 +30,7 @@
 .products__product-form-details-wrapper {
 	display: flex;
 	flex-direction: column;
-	@include breakpoint( '>960px' ) {
+	@include breakpoint( ">960px" ) {
 		flex-direction: row;
 	}
 }
@@ -39,7 +39,7 @@
 	background: $gray-light;
 	height: 200px;
 	margin-bottom: 16px;
-	@include breakpoint( '>960px' ) {
+	@include breakpoint( ">960px" ) {
 		margin-bottom: 0;
 	}
 }
@@ -47,7 +47,7 @@
 .products__product-form-details-images,
 .products__product-form-details-basic {
 	flex: 1;
-	@include breakpoint( '>960px' ) {
+	@include breakpoint( ">960px" ) {
 		margin-right: 32px;
 	}
 
@@ -319,7 +319,7 @@
 	label:first-child {
 		width: 37%;
 		padding-left: 16px;
-		@include breakpoint( '>660px' ) {
+		@include breakpoint( ">660px" ) {
 			width: 33%;
 		}
 
@@ -330,7 +330,7 @@
 	display: flex;
 	flex-direction: column;
 	flex-wrap: wrap;
-	@include breakpoint( '>660px' ) {
+	@include breakpoint( ">660px" ) {
 		margin-top: 1em;
 		flex-direction: row;
 	}
@@ -339,7 +339,7 @@
 .products__additional-details-form-group {
 		width: 100%;
 		padding: 16px 0;
-	@include breakpoint( '>660px' ) {
+	@include breakpoint( ">660px" ) {
 		width: 60%;
 		margin-right: 1.5em;
 		padding: 0;
@@ -352,7 +352,7 @@
 	border: 1px solid lighten( $gray, 30% );
 	padding: 16px 16px 4px 16px;
 	margin-bottom: 8px;
-	@include breakpoint( '>660px' ) {
+	@include breakpoint( ">660px" ) {
 		margin-right: 24px;
 		margin-bottom: 16px;
 	}
@@ -360,7 +360,7 @@
 
 .products__additional-details-preview-container {
 	width: 100%;
-	@include breakpoint( '>660px' ) {
+	@include breakpoint( ">660px" ) {
 		width: 30%;
 	}
 }
