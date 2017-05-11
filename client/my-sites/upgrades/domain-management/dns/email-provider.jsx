@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty } from 'lodash';
+import { isEmpty, trim } from 'lodash';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -25,7 +25,7 @@ class EmailProvider extends Component {
 
 	onChange = ( event ) => {
 		const { value } = event.target;
-		this.setState( { token: value } );
+		this.setState( { token: trim( value ) } );
 	}
 
 	onAddDnsRecords = ( event ) => {
@@ -79,7 +79,10 @@ class EmailProvider extends Component {
 						<FormButton
 							disabled={ ! isDataValid || this.state.submitting }
 							onClick={ this.onAddDnsRecords }>
-							{ translate( 'Set up ' ) }{ name }
+							{ translate(
+								'Set up %(providerName)s',
+								{ args: { providerName: name } }
+							) }
 						</FormButton>
 					</FormFooter>
 				</div>

@@ -8,10 +8,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ButtonGroup from 'components/button-group';
 import Card from 'components/card';
 import { dnsTemplates } from 'lib/domains/constants';
-import DnsTemplateButton from './dns-template-button';
+import DnsTemplateButtonGroup from './dns-template-button-group';
 import EmailProvider from '../dns/email-provider';
 
 class DnsTemplates extends Component {
@@ -33,7 +32,7 @@ class DnsTemplates extends Component {
 					name: 'Office 365',
 					label: translate( 'Office 365 Verification Token - from the TXT record verification' ),
 					placeholder: 'MS=ms...',
-					validationPattern: /^MS=ms\d{4,20}$/,
+					validationPattern: /^MS=ms\d{8}$/,
 					dnsTemplate: dnsTemplates.MICROSOFT_OFFICE365,
 					modifyVariables: ( variables ) => Object.assign(
 						{},
@@ -45,7 +44,7 @@ class DnsTemplates extends Component {
 					name: 'Zoho Mail',
 					label: translate( 'Zoho Mail CNAME zb code' ),
 					placeholder: 'zb...',
-					validationPattern: /^zb\w+$/,
+					validationPattern: /^zb\w{1,100}$/,
 					dnsTemplate: dnsTemplates.ZOHO_MAIL
 				}
 			]
@@ -84,20 +83,10 @@ class DnsTemplates extends Component {
 							'you can set it up with us easily:' ) }
 					</span>
 					<div className="name-servers__dns-templates-buttons">
-						<ButtonGroup>
-							{
-								this.state.templates.map( ( template ) => {
-									const { name } = template;
-									return (
-										<DnsTemplateButton
-											key={ `dns-templates-button-${ name }` }
-											name={ name }
-											onTemplateClick={ this.onTemplateClick }
-										/>
-									);
-								}, this )
-							}
-						</ButtonGroup>
+						<DnsTemplateButtonGroup
+							templates={ this.state.templates }
+							onTemplateClick={ this.onTemplateClick }
+						/>
 					</div>
 					<div className="name-servers__dns-templates-forms">
 						{ this.showCurrentTemplate() }
