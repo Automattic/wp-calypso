@@ -12,7 +12,7 @@ export default React.createClass( {
 	propTypes: {
 		isError: React.PropTypes.bool,
 		isWarning: React.PropTypes.bool,
-		text: React.PropTypes.string,
+		text: React.PropTypes.node,
 		icon: React.PropTypes.string
 	},
 

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { map, forEach, head, includes, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
@@ -29,6 +30,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import { mergeFormWithValue } from 'signup/utils';
 import SocialSignupForm from './social';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -292,7 +294,7 @@ class SignupForm extends Component {
 							{ message }&nbsp;
 							{ this.props.translate( 'If this is you {{a}}log in now{{/a}}.', {
 								components: {
-									a: <a href={ link } />
+									a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />
 								}
 							} ) }
 						</p>
@@ -476,4 +478,9 @@ class SignupForm extends Component {
 	}
 }
 
-export default localize( SignupForm );
+export default connect(
+	null,
+	{
+		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' )
+	}
+)( localize( SignupForm ) );
