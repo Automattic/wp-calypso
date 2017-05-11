@@ -57,6 +57,7 @@ import {
 	isPlan,
 	isDomainProduct,
 	isDomainRegistration,
+	isDomainMapping,
 	isTheme,
 } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
@@ -306,13 +307,23 @@ class ManagePurchase extends Component {
 
 	renderPlanDescription() {
 		const purchase = getPurchase( this.props );
-		const { plan, selectedSite, theme } = this.props;
+		const { plan, selectedSite, theme, translate } = this.props;
 
 		let description = purchaseType( purchase );
 		if ( isPlan( purchase ) ) {
 			description = plan.getDescription();
 		} else if ( isTheme( purchase ) && theme ) {
 			description = theme.description;
+		} else if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
+			description = translate(
+				'Replaces your site\'s free address with the domain %(domain)s, ' +
+				'making it easier to remember and easier to share.',
+				{
+					args: {
+						domain: selectedSite.domain,
+					}
+				}
+			);
 		}
 
 		return (
