@@ -102,7 +102,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			}
 
 			@include breakpoint( "<660px" ) {
-				top: -2px;
+				top: 3px;
 			}
 		}
 	}
@@ -116,7 +116,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		}
 
 		@include breakpoint( "<660px" ) {
-			margin: 0 0 0 10px;
+			margin: 10px 0 0 10px;
 		}
 
 		.follow-button .follow-button__label {
