@@ -18,9 +18,8 @@ import WPSuperCache from './main';
 export function settings( context ) {
 	const siteId = getSiteFragment( context.path );
 	const site = getSelectedSite( context.store.getState() );
-	let tab = context.params.tab;
+	const { tab = '' } = context.params;
 
-	tab = ( ! tab || tab === siteId ) ? '' : tab;
 	context.store.dispatch( setTitle( i18n.translate( 'WP Super Cache', { textOnly: true } ) ) );
 
 	const basePath = sectionify( context.path );
