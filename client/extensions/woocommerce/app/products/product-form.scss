@@ -201,8 +201,10 @@
 	overflow-x: auto;
 }
 
-.products__product-form-variation-table-wrapper .form-text-input-with-affixes .form-text-input {
-	min-width: 80px;
+.products__product-form-variation-table-wrapper .form-text-input-with-affixes .form-text-input,
+.form-dimensions-input__length,
+.form-dimensions-input__width {
+	min-width: 75px;
 }
 
 /* TODO: remove placeholder styles once implemented */
@@ -242,6 +244,10 @@
 .products__variation-settings-link {
 	text-decoration: underline;
 	cursor: pointer;
+	color: $blue-medium;
+	&:hover {
+		color: $blue-light;
+	}
 }
 
 .products__product-form-variation-dialog {

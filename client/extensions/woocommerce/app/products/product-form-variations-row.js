@@ -111,6 +111,7 @@ const ProductFormVariationsRow = ( {
 							value={ variation.stock_quantity || '' }
 							type="number"
 							onChange={ setStockQuantity }
+							placeholder={ translate( 'Quantity' ) }
 						/>
 					) }
 				</div>
