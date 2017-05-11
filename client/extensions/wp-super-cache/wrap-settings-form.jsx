@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
 import {
 	flowRight,
 	isEqual,
@@ -316,19 +315,13 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				siteId,
 			};
 		},
-		dispatch => {
-			const boundActionCreators = bindActionCreators( {
-				deleteCache,
-				errorNotice,
-				removeNotice,
-				saveSettings,
-				successNotice,
-				testCache,
-			}, dispatch );
-
-			return {
-				...boundActionCreators,
-			};
+		{
+			deleteCache,
+			errorNotice,
+			removeNotice,
+			saveSettings,
+			successNotice,
+			testCache,
 		}
 	);
 
