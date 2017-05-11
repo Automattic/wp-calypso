@@ -204,7 +204,7 @@ var Pages = React.createClass( {
 		this.addLoadingRows( rows, 1 );
 
 		return (
-			<div id="pages" className="page-list">
+			<div id="pages" className="pages__page-list">
 				{ rows }
 			</div>
 		);
@@ -236,7 +236,7 @@ var Pages = React.createClass( {
 		}, this );
 
 		return (
-			<div id="pages" className="page-list">
+			<div id="pages" className="pages__page-list">
 				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
 				{ rows }
 			</div>
@@ -253,11 +253,11 @@ var Pages = React.createClass( {
 				return page;
 			}
 			// Get the site the page belongs to
-			const site = this.props.sites.getSite( page.site_ID );
+			const _site = this.props.sites.getSite( page.site_ID );
 
 			// Render each page
 			return (
-				<Page key={ 'page-' + page.global_ID } page={ page } site={ site } multisite={ this.props.siteID === false } />
+				<Page key={ 'page-' + page.global_ID } page={ page } site={ _site } multisite={ this.props.siteID === false } />
 			);
 		}, this );
 
@@ -270,7 +270,7 @@ var Pages = React.createClass( {
 		);
 
 		return (
-			<div id="pages" className="page-list">
+			<div id="pages" className="pages__page-list">
 				{ blogPostsPage }
 				{ rows }
 				{ this.props.lastPage && pages.length ? <div className="infinite-scroll-end" /> : null }
@@ -280,7 +280,7 @@ var Pages = React.createClass( {
 
 	renderNoContent: function() {
 		return (
-			<div id="pages" className="page-list">
+			<div id="pages" className="pages__page-list">
 				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
 			</div>
 		);
