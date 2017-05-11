@@ -19,7 +19,7 @@ import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
-	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
@@ -33,9 +33,10 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
-	SITE_RECEIVE,
+	SITE_REQUEST,
 	SITE_REQUEST_SUCCESS
 } from 'state/action-types';
+import { receiveSite } from 'state/sites/actions';
 import userFactory from 'lib/user';
 import config from 'config';
 import addQueryArgs from 'lib/route/add-query-args';
@@ -348,6 +349,10 @@ export default {
 				} );
 				// Update the user now that we are fully connected.
 				userFactory().fetch();
+				dispatch( {
+					type: SITE_REQUEST,
+					siteId: parseInt( client_id )
+				} );
 				return wpcom.site( parseInt( client_id ) ).get();
 			} )
 			.then( ( data ) => {
@@ -355,16 +360,13 @@ export default {
 					site: client_id
 				} );
 				debug( 'Sites list updated!', data );
-				dispatch( {
-					type: SITE_RECEIVE,
-					site: omit( data, '_headers' )
-				} );
+				dispatch( receiveSite( omit( data, '_headers' ) ) );
 				dispatch( {
 					type: SITE_REQUEST_SUCCESS,
 					siteId: parseInt( client_id )
 				} );
 				dispatch( {
-					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE,
 					data: data
 				} );
 			} )
