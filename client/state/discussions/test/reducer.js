@@ -7,11 +7,10 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_SUCCESS,
+	DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_REMOVE,
 	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS,
-	DISCUSSIONS_ITEM_UNLIKE_REQUEST_SUCCESS,
 	DISCUSSIONS_REQUEST_SUCCESS
 } from 'state/action-types';
 import { items } from '../reducer';
@@ -101,7 +100,7 @@ describe( 'reducer', () => {
 				};
 
 				const action = {
-					type: DISCUSSIONS_ITEM_UNLIKE_REQUEST_SUCCESS,
+					type: DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
 					siteId: 101010,
 					postId: 202020,
 					commentId: 3,
@@ -165,7 +164,7 @@ describe( 'reducer', () => {
 				};
 
 				const action = {
-					type: DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_SUCCESS,
+					type: DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUEST_SUCCESS,
 					siteId: 101010,
 					commentId: 3,
 					content: 'dolor sit amet'
