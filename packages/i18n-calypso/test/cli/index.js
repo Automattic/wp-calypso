@@ -227,6 +227,10 @@ describe( 'index', function() {
 			expect( output ).to.have.string( 'msgctxt "context with a literal string key"\nmsgid "The string key text"\nmsgstr ""\n' );
 		} );
 
+		it( 'should find options with new plural syntax', function() {
+			expect( output ).to.have.string( 'msgctxt "context after new plural syntax"\nmsgid "My hat has one corner."\nmsgid_plural "My hat has many corners."\nmsgstr[0] ""\n' );
+		} );
+
 		it( 'should handle template literals', function() {
 			expect( output ).to.have.string( 'msgid "My hat has six corners."' );
 			expect( output ).to.have.string( 'msgid "My hat\\nhas seventeen\\ncorners."' );

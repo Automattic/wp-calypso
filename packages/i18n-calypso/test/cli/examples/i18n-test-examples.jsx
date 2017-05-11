@@ -76,6 +76,11 @@ corners.` );
 	i18n.translate( 'My hat has three corners.', {
 		'comment': 'Second ocurrence'
 	} );
+
+	i18n.translate( 'My hat has one corner.', 'My hat has many corners.', {
+		context: 'context after new plural syntax',
+		count: 5
+	} );
 }
 
 module.exports = test;
