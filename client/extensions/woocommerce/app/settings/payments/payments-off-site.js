@@ -32,8 +32,15 @@ class SettingsPaymentsOffSite extends Component {
 		};
 	}
 
+	renderMethodRow = ( method ) => {
+		return (
+			<PaymentMethodRow method={ method } />
+		);
+	}
+
 	render() {
 		const { translate } = this.props;
+		const { methods } = this.state;
 		return (
 			<div>
 				<ExtendedHeader
@@ -52,7 +59,7 @@ class SettingsPaymentsOffSite extends Component {
 							<ListTd width="20"></ListTd>
 						</ListHeader>
 						<ListRows>
-							<PaymentMethodRow method={ this.state.methods[ 0 ] } />
+							{ methods && methods.map( ( m ) => this.renderMethodRow( m ) ) }
 						</ListRows>
 					</ListTable>
 
