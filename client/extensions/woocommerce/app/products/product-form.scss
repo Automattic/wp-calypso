@@ -97,15 +97,6 @@
 		background: lighten( $gray, 30% );
 	}
 
-	.products__product-dimensions-weight {
-		display: flex;
-		justify-content: flex-start;
-
-		.products__product-dimensions-input {
-			margin-right: 8px;
-		}
-	}
-
 	.products__product-manage-stock {
 		display: inline-flex;
 		flex-direction: row;
@@ -224,6 +215,10 @@
 	vertical-align: middle;
 }
 
+.products__product-price {
+	width: 35%;
+}
+
 .products__product-name-thumb {
 	display: inline-flex;
 	flex-direction: row;
@@ -293,5 +288,20 @@
 
 	.form-toggle__wrapper {
 		margin-left: 8px;
+	}
+
+	.products__product-dimensions-weight {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 16px;
+
+		.products__product-dimensions-wrapper {
+			width: 70%;
+		}
+
+		.products__product-weight-input {
+			margin-top: 16px;
+			width: 25%;
+		}
 	}
 }
