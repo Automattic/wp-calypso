@@ -15,21 +15,21 @@ const ReaderSubscriptionListItemPlaceholder = () => {
 				<ReaderAvatar showPlaceholder={ true } isCompact={ true } />
 			</div>
 			<div className="reader-subscription-list-item__byline">
-				<span className="reader-subscription-list-item__site-title">
+				<span className="reader-subscription-list-item__site-title is-placeholder">
 					Site title
 				</span>
-				<div className="reader-subscription-list-item__site-excerpt">
+				<div className="reader-subscription-list-item__site-excerpt is-placeholder">
 					Description of the site
 				</div>
 				<span className="reader-subscription-list-item__by-text">
-					by author
+					by author name
 				</span>
 				<span className="reader-subscription-list-item__site-url">
 					www.example.com
 				</span>
 			</div>
 			<div className="reader-subscription-list-item__options">
-				banana
+				<div className="reader-subscription-list-item__follow">Follow here</div>
 			</div>
 		</div>
 	);
