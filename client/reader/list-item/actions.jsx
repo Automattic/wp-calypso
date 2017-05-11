@@ -2,14 +2,15 @@
  * External dependencies
  */
 import React from 'react';
-var PureRenderMixin = require( 'react-pure-render/mixin' );
 
-const ListItemActions = React.createClass( {
-	mixins: [ PureRenderMixin ],
+const ListItemActions = React.createClass({
+    shouldComponentUpdate: function(nextProps, nextState) {
+        return React.addons.shallowCompare(this, nextProps, nextState);
+    },
 
-	render() {
+    render() {
 		return <div className="reader-list-item__actions">{ this.props.children }</div>;
 	},
-} );
+});
 
 export default ListItemActions;

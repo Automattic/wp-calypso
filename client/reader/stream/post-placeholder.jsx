@@ -2,17 +2,18 @@
  * External dependencies
  */
 import React from 'react';
-var PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 
-const PostPlaceholder = React.createClass( {
-	mixins: [ PureRenderMixin ],
+const PostPlaceholder = React.createClass({
+    shouldComponentUpdate: function(nextProps, nextState) {
+        return React.addons.shallowCompare(this, nextProps, nextState);
+    },
 
-	render() {
+    render() {
 		return (
 			<Card tagName="article" className="reader__card is-placeholder">
 				<div className="reader__post-header">
@@ -48,6 +49,6 @@ const PostPlaceholder = React.createClass( {
 			</Card>
 		);
 	},
-} );
+});
 
 export default PostPlaceholder;

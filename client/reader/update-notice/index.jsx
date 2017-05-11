@@ -4,7 +4,6 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-var PureRenderMixin = require( 'react-pure-render/mixin' );
 import { noop } from 'lodash';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
@@ -15,21 +14,19 @@ import Gridicon from 'gridicons';
 import DocumentHead from 'components/data/document-head';
 import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
 
-const UpdateNotice = React.createClass( {
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+const UpdateNotice = React.createClass({
+    propTypes: {
 		count: React.PropTypes.number.isRequired,
 		onClick: React.PropTypes.func,
 		// connected props
 		cappedUnreadCount: React.PropTypes.string,
 	},
 
-	getDefaultProps: function() {
+    getDefaultProps: function() {
 		return { onClick: noop };
 	},
 
-	render: function() {
+    render: function() {
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
 			'is-active': this.props.count > 0,
@@ -47,11 +44,15 @@ const UpdateNotice = React.createClass( {
 		);
 	},
 
-	handleClick: function( event ) {
+    handleClick: function( event ) {
 		event.preventDefault();
 		this.props.onClick();
 	},
-} );
+
+    shouldComponentUpdate: function(nextProps, nextState) {
+        return React.addons.shallowCompare(this, nextProps, nextState);
+    },
+});
 
 export default connect( state => ( {
 	cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),

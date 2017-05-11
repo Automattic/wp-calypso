@@ -2,23 +2,24 @@
  * External dependencies
  */
 import React from 'react';
-var PureRenderMixin = require( 'react-pure-render/mixin' );
 import noop from 'lodash/noop';
 
-const ListItemTitle = React.createClass( {
-	mixins: [ PureRenderMixin ],
-
-	getDefaultProps() {
+const ListItemTitle = React.createClass({
+    getDefaultProps() {
 		return { onClick: noop };
 	},
 
-	render() {
+    shouldComponentUpdate: function(nextProps, nextState) {
+        return React.addons.shallowCompare(this, nextProps, nextState);
+    },
+
+    render() {
 		return (
 			<h2 className="reader-list-item__title" onClick={ this.props.onClick }>
 				{ this.props.children }
 			</h2>
 		);
 	},
-} );
+});
 
 export default ListItemTitle;
