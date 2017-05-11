@@ -10,7 +10,8 @@ import createSelector from 'lib/create-selector';
 import { getThemeFilters } from './';
 
 /**
- * Whether a filter term slug is ambiguous
+ * Returns true if a theme filter term belongs to more
+ * than one taxonomy.
  *
  * @param  {Object}  state  Global state tree
  * @param  {String}  term   The term to check for ambiguity
