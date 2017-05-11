@@ -36,6 +36,9 @@ class EditorActionBar extends Component {
 	};
 
 	render() {
+		// We store password changes via Flux while we store privacy changes via Redux.
+		// This results in checking Flux for some items and Redux for others to correctly
+		// update based on post changes.
 		const multiUserSite = this.props.site && ! this.props.site.single_user_site;
 		const isPasswordProtected = utils.getVisibility( this.props.post ) === 'password';
 		const isPrivate = utils.isPrivate( PostEditStore.get() );

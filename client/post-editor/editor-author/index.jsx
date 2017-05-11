@@ -15,6 +15,7 @@ import PostActions from 'lib/posts/actions';
 import touchDetect from 'lib/touch-detect';
 import * as stats from 'lib/posts/stats';
 import { getSelectedSite } from 'state/ui/selectors';
+import PostEditStore from 'lib/posts/post-edit-store';
 
 /**
  * Module dependencies
@@ -28,10 +29,38 @@ export class EditorAuthor extends Component {
 		isNew: React.PropTypes.bool
 	};
 
+	constructor( props ) {
+		super( props );
+		this.onChange = this.updatePostState.bind( this );
+		this.state = { post: props.post };
+	}
+
+	componentWillMount() {
+		// This is a hack since the author changes are stored in Flux.
+		// See #13636 for more details. Remove once author changes are
+		// migrated to Redux.
+		PostEditStore.on( 'change', this.onChange );
+	}
+
+	componentWillUnmount() {
+		PostEditStore.off( 'change', this.onChange );
+	}
+
+	shouldComponentUpdate( nextProps, nextState ) {
+		return this.state.post.author !== nextState.post.author;
+	}
+
+	updatePostState() {
+		this.setState( {
+			post: PostEditStore.get() || this.props.post
+		} );
+	}
+
 	render() {
 		// if it's not a new post and we are still loading
 		// show a placeholder component
-		const { post, translate } = this.props;
+		const { translate, site } = this.props;
+		const { post } = this.state;
 
 		if ( ! post && ! this.props.isNew ) {
 			return this.renderPlaceholder();
@@ -43,7 +72,7 @@ export class EditorAuthor extends Component {
 		const popoverPosition = touchDetect.hasTouch() ? 'bottom right' : 'bottom left';
 		const wrapperProps = this.userCanAssignAuthor()
 			? {
-				siteId: post.site_ID,
+				siteId: site.ID,
 				onSelect: this.onSelect,
 				popoverPosition,
 			}
@@ -78,7 +107,8 @@ export class EditorAuthor extends Component {
 	};
 
 	userCanAssignAuthor() {
-		const { post, site } = this.props;
+		const { site } = this.props;
+		const { post } = this.state;
 		const reassignCapability = 'edit_others_' + post.type + 's';
 
 		// if user cannot edit others posts
