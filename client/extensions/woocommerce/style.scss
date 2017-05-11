@@ -23,7 +23,7 @@
 
 .sidebar.store-sidebar__sidebar {
 	display: block;
-	animation: 1s ease-out 0s 1 slideInFromLeft;
+	animation: 0.15s cubic-bezier(0.075, 0.82, 0.165, 1) 0s 1 slideInFromLeft;
 
 	.store-sidebar__ground-control {
 		align-items: center;
