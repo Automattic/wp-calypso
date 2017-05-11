@@ -38,7 +38,7 @@ class ProductCreate extends Component {
 		const { product, className, variations } = this.props;
 
 		return (
-			<Main className={ className } wideLayout={ true }>
+			<Main className={ className }>
 				<ProductForm
 					product={ product || { type: 'simple' } }
 					variations={ variations }
