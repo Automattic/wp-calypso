@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -22,7 +23,8 @@ import {
 	getTwoFactorPushPollSuccess,
 } from 'state/login/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { sendSmsCode, verifyWithCodeInstead } from 'state/login/actions';
+import { sendSmsCode } from 'state/login/actions';
+import { login } from 'lib/paths';
 
 class WaitingTwoFactorNotificationApproval extends Component {
 	static propTypes = {
@@ -68,7 +70,7 @@ class WaitingTwoFactorNotificationApproval extends Component {
 	verifyWithCodeInstead = ( event ) => {
 		event.preventDefault();
 
-		this.props.verifyWithCodeInstead();
+		page( login( { twoFactorAuthType: 'code' } ) );
 	};
 
 	render() {
@@ -131,6 +133,5 @@ export default connect(
 		startPollAppPushAuth,
 		stopPollAppPushAuth,
 		successNotice,
-		verifyWithCodeInstead,
 	}
 )( localize( WaitingTwoFactorNotificationApproval ) );

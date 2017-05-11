@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
 
 /**
@@ -16,7 +15,6 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
-	TWO_FACTOR_AUTHENTICATION_LOGIN_VERIFY_WITH_CODE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'state/action-types';
@@ -387,24 +385,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				two_step_id: 12345678,
 				two_step_nonce: 'foo'
-			} );
-		} );
-
-		it( 'should have the notification sent field set to none when verify with code dispatched', () => {
-			const initialState = deepFreeze( {
-				two_step_id: 12345678,
-				two_step_nonce: 'abcdefgh1234',
-				two_step_notification_sent: 'push',
-			} );
-
-			const state = twoFactorAuth( initialState, {
-				type: TWO_FACTOR_AUTHENTICATION_LOGIN_VERIFY_WITH_CODE,
-			} );
-
-			expect( state ).to.eql( {
-				two_step_id: 12345678,
-				two_step_nonce: 'abcdefgh1234',
-				two_step_notification_sent: 'none',
 			} );
 		} );
 	} );

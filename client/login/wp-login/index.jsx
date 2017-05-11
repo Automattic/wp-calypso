@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { compact } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -39,6 +39,18 @@ import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 
 class Login extends React.Component {
+	static propTypes = {
+		hideMagicLoginRequestForm: PropTypes.func.isRequired,
+		magicLoginEmailAddress: PropTypes.string,
+		magicLoginEnabled: PropTypes.bool,
+		magicLoginView: PropTypes.string,
+		recordTracksEvent: PropTypes.func.isRequired,
+		showMagicLoginInterstitialPage: PropTypes.func.isRequired,
+		showMagicLoginRequestForm: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+		twoFactorAuthType: PropTypes.string,
+	};
+
 	onClickEnterPasswordInstead = event => {
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_login_enter_password_instead_click' );
@@ -135,6 +147,7 @@ class Login extends React.Component {
 			magicLoginView,
 			queryArguments,
 			translate,
+			twoFactorAuthType,
 		} = this.props;
 
 		return (
@@ -149,6 +162,7 @@ class Login extends React.Component {
 							{ magicLoginView === REQUEST_FORM
 								? <RequestLoginEmailForm />
 								: <LoginBlock
+									twoFactorAuthType={ twoFactorAuthType }
 									redirectLocation={ queryArguments.redirect_to }
 									title={ translate( 'Log in to your account.' ) } />
 							}
