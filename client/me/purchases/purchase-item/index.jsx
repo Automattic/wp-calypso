@@ -19,7 +19,7 @@ import {
 	purchaseType,
 	showCreditCardExpiringWarning
 } from 'lib/purchases';
-import { isPlan, isDomainProduct } from 'lib/products-values';
+import { isPlan, isDomainProduct, isTheme } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'gridicons';
@@ -122,6 +122,12 @@ class PurchaseItem extends Component {
 			icon = (
 				<div className="purchase-item__plan-icon">
 					<Gridicon icon="domains" size={ 24 } />
+				</div>
+			);
+		} else if ( purchase && isTheme( purchase ) ) {
+			icon = (
+				<div className="purchase-item__plan-icon">
+					<Gridicon icon="themes" size={ 24 } />
 				</div>
 			);
 		}
