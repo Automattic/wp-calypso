@@ -34,10 +34,15 @@ class FollowingIntro extends React.Component {
 		}
 	}
 
+	recordManageLinkTrack = () => {
+		recordTrack( 'calypso_reader_following_intro_link_clicked' );
+	}
+
 	render() {
 		const { isNewReader, translate, dismiss } = this.props;
 		const linkElement = config.isEnabled( 'reader/following-manage-refresh' )
-			? <a href="/following/manage" /> : <a href="/following/edit" />;
+			? <a onClick={ this.recordManageLinkTrack } href="/following/manage" />
+			: <a onClick={ this.recordManageLinkTrack } href="/following/edit" />;
 
 		if ( ! isNewReader ) {
 			return null;
