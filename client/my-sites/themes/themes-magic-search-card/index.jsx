@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-import { debounce } from 'lodash';
+import { debounce, intersection, difference } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -23,6 +23,9 @@ import MagicSearchWelcome from './welcome';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getThemeFilters } from 'state/selectors';
+
+//We want those taxonomies if they are used to be presented in this order
+const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', 'style' ];
 
 class ThemesMagicSearchCard extends React.Component {
 	constructor( props ) {
@@ -228,7 +231,7 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	render() {
-		const { isJetpack, translate } = this.props;
+		const { isJetpack, translate, filters } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
@@ -237,7 +240,10 @@ class ThemesMagicSearchCard extends React.Component {
 			{ value: 'premium', label: translate( 'Premium' ) },
 		];
 
-		const filtersKeys = Object.keys( this.props.filters );
+		const filtersKeys = [
+			...intersection( preferredOrderOfTaxonomies, Object.keys( filters ) ),
+			...difference( Object.keys( filters ), preferredOrderOfTaxonomies )
+		];
 
 		const searchField = (
 			<Search
