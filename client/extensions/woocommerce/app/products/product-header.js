@@ -8,9 +8,8 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import ActionHeader from '../../components/action-header';
 import Button from 'components/button';
-import StickyPanel from 'components/sticky-panel';
 
 const ProductHeader = ( { onTrash, onDuplicate, onSave, translate } ) => {
 	const trashButton = onTrash &&
@@ -23,16 +22,11 @@ const ProductHeader = ( { onTrash, onDuplicate, onSave, translate } ) => {
 		<Button primary onClick={ onSave }>{ translate( 'Save' ) }</Button>;
 
 	return (
-		<StickyPanel>
-			<Card className="products__header">
-				<span>Breadcrumbs > go > here</span>
-				<div className="products__header-right">
-					{ trashButton }
-					{ duplicateButton }
-					{ saveButton }
-				</div>
-			</Card>
-		</StickyPanel>
+		<ActionHeader>
+			{ trashButton }
+			{ duplicateButton }
+			{ saveButton }
+		</ActionHeader>
 	);
 };
 
