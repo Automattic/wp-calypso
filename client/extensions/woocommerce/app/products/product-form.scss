@@ -317,10 +317,10 @@
 	display: flex;
 
 	label:first-child {
-		width: 37%;
+		width: 44%;
 		padding-left: 16px;
 		@include breakpoint( ">660px" ) {
-			width: 33%;
+			width: 42%;
 		}
 
 	}
@@ -355,6 +355,11 @@
 	@include breakpoint( ">660px" ) {
 		margin-right: 24px;
 		margin-bottom: 16px;
+	}
+
+	.form-setting-explanation {
+		padding: 10px;
+		padding-top: 0;
 	}
 }
 
@@ -403,10 +408,20 @@
 .products__additional-details-form-fieldset {
 	display: flex;
 	flex-direction: row;
+	align-items: center;
 	margin-bottom: 16px;
 
 	.form-text-input {
 		width: 40%;
 		margin-right: 24px;
+	}
+
+	.token-field {
+		width: 50%;
+		margin-right: 16px;
+	}
+
+	.button, .button:hover, .button:focus {
+		color: $gray-dark;
 	}
 }

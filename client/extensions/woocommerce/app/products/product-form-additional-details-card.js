@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { find, debounce } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -17,23 +18,18 @@ import TokenField from 'components/token-field';
 
 class ProductFormAdditionalDetailsCard extends React.Component {
 
+	state = {
+		attributeNames: {},
+	};
+
 	static propTypes = {
 		product: PropTypes.object.isRequired,
+		editProduct: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
 		super( props );
-
-		this.state = {
-			attributeNames: [],
-		};
-
-		this.addType = this.addType.bind( this );
-		this.updateNameHandler = this.updateNameHandler.bind( this );
-		this.updateValues = this.updateValues.bind( this );
-		this.cardToggle = this.cardToggle.bind( this );
-
 		this.debouncedUpdateName = debounce( this.updateName, 300 );
 	}
 
@@ -42,20 +38,39 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 		return product.attributes && product.attributes.filter( attribute => ! attribute.variation ) || [];
 	}
 
-	addType() {
+	getAttribute( { attributes }, attributeId ) {
+		return attributes && find( attributes, function( a ) {
+			return a.uid === attributeId;
+		} );
+	}
+
+	addAttribute = () => {
 		const { product, editProductAttribute } = this.props;
 		editProductAttribute( product, null, { name: '', options: [] } );
 	}
 
-	cardToggle() {
+	removeAttribute = ( e ) => {
+		const { product, editProduct } = this.props;
+		const attributes = [ ...this.getAttributes() ];
+		const attribute = this.getAttribute( product, e.currentTarget.id );
+		attributes.splice( attributes.indexOf( attribute ), 1 );
+		editProduct( product, { attributes } );
+	}
+
+	cardOpen = () => {
 		const attributes = this.getAttributes();
 		if ( ! attributes.length ) {
-			this.addType();
+			this.addAttribute();
 		}
 	}
 
-	updateNameHandler( e ) {
-		const attributeNames = [ ...this.state.attributeNames ];
+	updateValues = ( values, attribute ) => {
+		const { product, editProductAttribute } = this.props;
+		editProductAttribute( product, attribute, { options: values } );
+	}
+
+	updateNameHandler = ( e ) => {
+		const attributeNames = { ...this.state.attributeNames };
 		attributeNames[ e.target.id ] = e.target.value;
 		this.setState( { attributeNames } );
 		this.debouncedUpdateName( e.target.id, e.target.value );
@@ -63,21 +78,28 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 
 	updateName( attributeId, name ) {
 		const { product, editProductAttribute } = this.props;
-		const attribute = product.attributes && find( product.attributes, function( a ) {
-			return a.uid === attributeId;
-		} );
+		const attribute = this.getAttribute( product, attributeId );
 		editProductAttribute( product, attribute, { name } );
-	}
-
-	updateValues( values, attribute ) {
-		const { product, editProductAttribute } = this.props;
-		editProductAttribute( product, attribute, { options: values } );
 	}
 
 	renderInput( attribute ) {
 		const { translate } = this.props;
 		const { attributeNames } = this.state;
 		const attributeName = attributeNames && attributeNames[ attribute.uid ] || attribute.name;
+		const updateValues = ( values ) => {
+			this.updateValues( values, attribute );
+		};
+		const attributes = this.getAttributes();
+		const removeButton = attributes && attributes.length > 1 && (
+			<Button
+				borderless
+				onClick={ this.removeAttribute }
+				id={ attribute.uid }
+			>
+				<Gridicon icon="cross-small" />
+			</Button>
+		);
+
 		return (
 			<div key={ attribute.uid } className="products__additional-details-form-fieldset">
 				<FormTextInput
@@ -91,9 +113,9 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 					placeholder={ translate( 'Cotton' ) }
 					value={ attribute.options }
 					name="values"
-					/* eslint-disable react/jsx-no-bind */
-					onChange={ values => this.updateValues( values, attribute ) }
+					onChange={ updateValues }
 				/>
+				{removeButton}
 			</div>
 		);
 	}
@@ -124,7 +146,8 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 			<FoldableCard
 				className="products__additional-details-card"
 				header={ translate( 'Add additional details' ) }
-				onClick={ this.cardToggle }
+				onOpen={ this.cardOpen }
+				clickableHeader
 			>
 				<FormSettingExplanation>
 					{ translate( 'Display additional details in a formatted list. ' +
@@ -136,14 +159,14 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 					<div className="products__additional-details-form-group">
 						<div className="products__additional-details-form-labels">
 							<FormLabel>{ translate( 'Type' ) }</FormLabel>
-							<FormLabel>{ translate( 'Value' ) }</FormLabel>
+							<FormLabel>{ translate( 'Values' ) }</FormLabel>
 						</div>
 
 						<div className="products__additional-details-form-inputs">
 							{inputs}
 						</div>
 
-						<Button compact onClick={ this.addType }>{ translate( 'Add another' ) }</Button>
+						<Button compact onClick={ this.addAttribute }>{ translate( 'Add another' ) }</Button>
 					</div>
 
 					<div className="products__additional-details-preview-container">
