@@ -3,14 +3,14 @@
  */
 import { local, mergeHandlers } from './utils';
 
-import rawHttpHandlers from './http';
-import httpHandlers from './wpcom-http';
+import httpHandlers from './http';
+import wpcomHttpHandlers from './wpcom-http';
 import thirdPartyHandlers from './third-party';
 import wpcomHandlers from './wpcom';
 
 const mergedHandlers = mergeHandlers(
-	rawHttpHandlers,
 	httpHandlers,
+	wpcomHttpHandlers,
 	thirdPartyHandlers,
 	wpcomHandlers,
 );
