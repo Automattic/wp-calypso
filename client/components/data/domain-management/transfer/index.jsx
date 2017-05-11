@@ -57,7 +57,7 @@ class TransferData extends Component {
 
 		if ( this.prevSelectedSite !== selectedSite ) {
 			fetchDomains( selectedSite.ID );
-			fetchUsers( { siteId: selectedSite.ID } );
+			fetchUsers( { siteId: selectedSite.ID, number: 1000 } );
 
 			this.prevSelectedSite = selectedSite;
 		}
