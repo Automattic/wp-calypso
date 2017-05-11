@@ -187,11 +187,7 @@ function mediaButton( editor ) {
 			// If image is deleted in image editor, we delete it in the post/page editor.
 			if ( media && media.status === 'deleted' ) {
 				captionNode = editor.dom.getParent( img, 'div.mceTemp' );
-				if ( captionNode ) {
-					editor.$( captionNode ).remove();
-				} else {
-					editor.$( img ).remove();
-				}
+				editor.$( captionNode || img ).remove();
 				editor.nodeChanged();
 				return;
 			}
