@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+const React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var postListStoreFactory = require( 'lib/posts/post-list-store-factory' ),
+let postListStoreFactory = require( 'lib/posts/post-list-store-factory' ),
 	PostContentImagesStore = require( 'lib/posts/post-content-images-store' ),
 	Dispatcher = require( 'dispatcher' ),
 	actions = require( 'lib/posts/actions' ),
 	pollers = require( 'lib/data-poller' );
 
-var PostListFetcher;
+let PostListFetcher;
 
 function dispatchQueryActions( postListStoreId, query ) {
-	var postListStore = postListStoreFactory( postListStoreId );
+	const postListStore = postListStoreFactory( postListStoreId );
 	actions.queryPosts( query, postListStoreId );
 
 	if ( postListStore.getPage() === 0 ) {
@@ -24,7 +24,7 @@ function dispatchQueryActions( postListStoreId, query ) {
 }
 
 function queryPosts( props ) {
-	var query = {
+	const query = {
 		type: props.type || 'post',
 		siteID: props.siteID,
 		status: props.status,
@@ -54,7 +54,7 @@ function queryPosts( props ) {
 }
 
 function getPostsState( postListStoreId ) {
-	var postListStore = postListStoreFactory( postListStoreId );
+	const postListStore = postListStoreFactory( postListStoreId );
 	return {
 		listId: postListStore.getID(),
 		posts: postListStore.getAll(),
@@ -93,7 +93,7 @@ PostListFetcher = React.createClass( {
 		status: React.PropTypes.string,
 		author: React.PropTypes.number,
 		search: React.PropTypes.string,
-		siteID: React.PropTypes.any,
+		siteID: React.PropTypes.number,
 		withImages: React.PropTypes.bool,
 		withCounts: React.PropTypes.bool,
 		excludeTree: React.PropTypes.number,
@@ -116,7 +116,7 @@ PostListFetcher = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		var postListStore = postListStoreFactory( this.props.postListStoreId );
+		const postListStore = postListStoreFactory( this.props.postListStoreId );
 		postListStore.on( 'change', this.onPostsChange );
 		if ( this.props.withImages ) {
 			PostContentImagesStore.on( 'change', this.onPostsChange );
@@ -125,12 +125,12 @@ PostListFetcher = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		var postListStore = postListStoreFactory( this.props.postListStoreId );
+		const postListStore = postListStoreFactory( this.props.postListStoreId );
 		this._poller = pollers.add( postListStore, actions.fetchUpdated, { interval: 60000 } );
 	},
 
 	componentWillUnmount: function() {
-		var postListStore = postListStoreFactory( this.props.postListStoreId );
+		const postListStore = postListStoreFactory( this.props.postListStoreId );
 		pollers.remove( this._poller );
 		postListStore.off( 'change', this.onPostsChange );
 		if ( this.props.withImages ) {
@@ -139,7 +139,7 @@ PostListFetcher = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		var listenerChange;
+		let listenerChange;
 
 		if ( shouldQueryPosts( this.props, nextProps ) ) {
 			queryPosts( nextProps );

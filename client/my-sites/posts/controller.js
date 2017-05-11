@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-var page = require( 'page' ),
+let page = require( 'page' ),
 	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' ),
 	i18n = require( 'i18n-calypso' );
@@ -9,7 +9,7 @@ var page = require( 'page' ),
 /**
  * Internal Dependencies
  */
-var user = require( 'lib/user' )(),
+let user = require( 'lib/user' )(),
 	sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	analytics = require( 'lib/analytics' ),
@@ -22,7 +22,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 module.exports = {
 
 	posts: function( context ) {
-		var Posts = require( 'my-sites/posts/main' ),
+		let Posts = require( 'my-sites/posts/main' ),
 			siteID = route.getSiteFragment( context.path ),
 			author = ( context.params.author === 'my' ) ? user.get().ID : null,
 			statusSlug = ( author ) ? context.params.status : context.params.author,
@@ -32,7 +32,7 @@ module.exports = {
 			baseAnalyticsPath;
 
 		function shouldRedirectMyPosts( author, sites ) {
-			var selectedSite = sites.getSelectedSite() || {};
+			const selectedSite = sites.getSelectedSite() || {};
 			if ( ! author ) {
 				return false;
 			}
@@ -79,7 +79,6 @@ module.exports = {
 		renderWithReduxStore(
 			React.createElement( Posts, {
 				context: context,
-				siteID: siteID,
 				author: author,
 				statusSlug: statusSlug,
 				sites: sites,

@@ -1,27 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:pages:pages' );
+import React from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var PageList = require( './page-list' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' ),
-	Search = require( 'components/search' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	URLSearch = require( 'lib/mixins/url-search' ),
-	config = require( 'config' ),
-	notices = require( 'notices' ),
-	Main = require( 'components/main' );
+import PageList from './page-list';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import Search from 'components/search';
+import observe from 'lib/mixins/data-observe';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import URLSearch from 'lib/mixins/url-search';
+import config from 'config';
+import Main from 'components/main';
+
+import { warningNotice } from 'state/notices/actions';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
 
-module.exports = React.createClass( {
+const PagesMain = React.createClass( {
 
 	displayName: 'Pages',
 
@@ -38,38 +41,33 @@ module.exports = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		var selectedSite = this.props.sites.getSelectedSite();
-		this._setWarning( selectedSite );
-	},
-
-	componentDidMount: function() {
-		debug( 'Pages React component mounted.' );
+		this._setWarning( this.props.selectedSite );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		var selectedSite = nextProps.sites.getSelectedSite();
-		this._setWarning( selectedSite );
+		this._setWarning( nextProps.selectedSite );
 	},
 
 	render: function() {
 		const status = this.props.status || 'published';
+		const { translate } = this.props;
 		const filterStrings = {
-			published: this.translate( 'Published', { context: 'Filter label for pages list' } ),
-			drafts: this.translate( 'Drafts', { context: 'Filter label for pages list' } ),
-			scheduled: this.translate( 'Scheduled', { context: 'Filter label for pages list' } ),
-			trashed: this.translate( 'Trashed', { context: 'Filter label for pages list' } )
+			published: translate( 'Published', { context: 'Filter label for pages list' } ),
+			drafts: translate( 'Drafts', { context: 'Filter label for pages list' } ),
+			scheduled: translate( 'Scheduled', { context: 'Filter label for pages list' } ),
+			trashed: translate( 'Trashed', { context: 'Filter label for pages list' } )
 		};
 		const searchStrings = {
-			published: this.translate( 'Search Published…', { context: 'Search placeholder for pages list', textOnly: true } ),
-			drafts: this.translate( 'Search Drafts…', { context: 'Search placeholder for pages list', textOnly: true } ),
-			scheduled: this.translate( 'Search Scheduled…', { context: 'Search placeholder for pages list', textOnly: true } ),
-			trashed: this.translate( 'Search Trashed…', { context: 'Search placeholder for pages list', textOnly: true } )
+			published: translate( 'Search Published…', { context: 'Search placeholder for pages list', textOnly: true } ),
+			drafts: translate( 'Search Drafts…', { context: 'Search placeholder for pages list', textOnly: true } ),
+			scheduled: translate( 'Search Scheduled…', { context: 'Search placeholder for pages list', textOnly: true } ),
+			trashed: translate( 'Search Trashed…', { context: 'Search placeholder for pages list', textOnly: true } )
 		};
 		return (
 			<Main classname="pages">
 				<SidebarNavigation />
 				<SectionNav selectedText={ filterStrings[ status ] }>
-					<NavTabs label={ this.translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
+					<NavTabs label={ translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
 						{ this.getNavItems( filterStrings, status ) }
 					</NavTabs>
 					<Search
@@ -106,11 +104,27 @@ module.exports = React.createClass( {
 	},
 
 	_setWarning( selectedSite ) {
+		const { translate, displayWarningNotice } = this.props;
 		if ( selectedSite && selectedSite.jetpack && ! selectedSite.hasMinimumJetpackVersion ) {
-			notices.warning(
-				this.translate( 'Jetpack %(version)s is required to take full advantage of all page editing features.', { args: { version: config( 'jetpack_min_version' ) } } ),
-				{ button: this.translate( 'Update now' ), href: selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' }
+			displayWarningNotice(
+				translate(
+					'Jetpack %(version)s is required to take full advantage of all page editing features.',
+					{ args: { version: config( 'jetpack_min_version' ) } }
+				),
+				{ button: translate( 'Update now' ), href: selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' }
 			);
 		}
 	}
 } );
+
+export default connect(
+	( state ) => {
+		return {
+			siteID: getSelectedSiteId( state ),
+			selectedSite: getSelectedSite( state ),
+		};
+	},
+	{
+		displayWarningNotice: warningNotice,
+	},
+)( localize( PagesMain ) );
