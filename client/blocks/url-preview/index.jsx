@@ -97,6 +97,7 @@ export default function urlPreview( WebPreview ) {
 
 	function mapStateToProps( state ) {
 		const selectedSiteId = getSelectedSiteId( state );
+		// Force https to prevent mixed content errors in the iframe
 		const siteUrl = 'https://' + getSiteSlug( state, selectedSiteId );
 
 		return {
