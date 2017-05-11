@@ -13,35 +13,31 @@ import { saveAs } from 'browser-filesaver';
 import wpcom from 'lib/wp';
 import Button from 'components/button';
 
-const FollowingExportButton = React.createClass( {
-	propTypes: {
+class FollowingExportButton extends React.Component {
+    static propTypes = {
 		onError: React.PropTypes.func,
 		onExport: React.PropTypes.func,
 		saveAs: React.PropTypes.string,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onError: noop,
-			onExport: noop,
-			saveAs: 'wpcom-subscriptions.opml',
-		};
-	},
+    static defaultProps = {
+        onError: noop,
+        onExport: noop,
+        saveAs: 'wpcom-subscriptions.opml',
+    };
 
-	getInitialState() {
-		return {
-			disabled: false,
-		};
-	},
+    state = {
+        disabled: false,
+    };
 
-	onClick() {
+    onClick = () => {
 		wpcom.undocumented().exportReaderFeed( this.onFeed );
 		this.setState( {
 			disabled: true,
 		} );
-	},
+	};
 
-	onFeed( err, data ) {
+    onFeed = (err, data) => {
 		this.setState( {
 			disabled: false,
 		} );
@@ -57,15 +53,15 @@ const FollowingExportButton = React.createClass( {
 			saveAs( blob, this.props.saveAs );
 			this.props.onExport( this.props.saveAs );
 		}
-	},
+	};
 
-	render() {
+    render() {
 		return (
 			<Button compact disabled={ this.state.disabled } onClick={ this.onClick }>
 				{ this.props.translate( 'Export' ) }
 			</Button>
 		);
-	},
-} );
+	}
+}
 
 export default localize( FollowingExportButton );

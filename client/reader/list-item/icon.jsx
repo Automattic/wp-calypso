@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import noop from 'lodash/noop';
 
 /**
@@ -12,20 +11,16 @@ import SiteIcon from 'blocks/site-icon';
 
 const genericFeedIcon = <SiteIcon size={ 48 } />;
 
-const ListItemDescription = React.createClass( {
-	mixins: [ PureRenderMixin ],
+class ListItemDescription extends React.PureComponent {
+    static defaultProps = { onClick: noop };
 
-	getDefaultProps() {
-		return { onClick: noop };
-	},
-
-	render() {
+    render() {
 		return (
 			<span className="reader-list-item__icon" onClick={ this.props.onClick }>
 				{ this.props.children || genericFeedIcon }
 			</span>
 		);
-	},
-} );
+	}
+}
 
 export default ListItemDescription;

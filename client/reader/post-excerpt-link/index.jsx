@@ -10,30 +10,28 @@ import classNames from 'classnames';
  */
 import { recordPermalinkClick } from 'reader/stats';
 
-const PostExcerptLink = React.createClass( {
-	propTypes: {
+class PostExcerptLink extends React.Component {
+    static propTypes = {
 		siteName: React.PropTypes.string,
 		postUrl: React.PropTypes.string,
-	},
+	};
 
-	getInitialState() {
-		return {
-			isShowingNotice: false,
-		};
-	},
+    state = {
+        isShowingNotice: false,
+    };
 
-	toggleNotice( event ) {
+    toggleNotice = (event) => {
 		event.preventDefault();
 		this.setState( {
 			isShowingNotice: ! this.state.isShowingNotice,
 		} );
-	},
+	};
 
-	recordClick() {
+    recordClick = () => {
 		recordPermalinkClick( 'summary_card_site_name' );
-	},
+	};
 
-	render() {
+    render() {
 		if ( ! this.props.siteName || ! this.props.postUrl ) {
 			return null;
 		}
@@ -74,7 +72,7 @@ const PostExcerptLink = React.createClass( {
 				</p>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( PostExcerptLink );

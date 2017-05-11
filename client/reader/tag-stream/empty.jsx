@@ -11,28 +11,28 @@ import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 
-const TagEmptyContent = React.createClass( {
-	propTypes: {
+class TagEmptyContent extends React.Component {
+    static propTypes = {
 		decodedTagSlug: React.PropTypes.string,
-	},
+	};
 
-	shouldComponentUpdate() {
+    shouldComponentUpdate() {
 		return false;
-	},
+	}
 
-	recordAction() {
+    recordAction = () => {
 		recordAction( 'clicked_following_on_empty' );
 		recordGaEvent( 'Clicked Following on EmptyContent' );
 		recordTrack( 'calypso_reader_following_on_empty_tag_stream_clicked' );
-	},
+	};
 
-	recordSecondaryAction() {
+    recordSecondaryAction = () => {
 		recordAction( 'clicked_discover_on_empty' );
 		recordGaEvent( 'Clicked Discover on EmptyContent' );
 		recordTrack( 'calypso_reader_discover_on_empty_tag_stream_clicked' );
-	},
+	};
 
-	render() {
+    render() {
 		const action = (
 			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
 				{ this.props.translate( 'Back to Following' ) }
@@ -64,7 +64,7 @@ const TagEmptyContent = React.createClass( {
 				illustrationWidth={ 500 }
 			/>
 		);
-	},
-} );
+	}
+}
 
 export default localize( TagEmptyContent );

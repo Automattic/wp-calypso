@@ -11,8 +11,8 @@ import LikeButtonContainer from 'blocks/like-button';
 import { markSeen } from 'lib/feed-post-store/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 
-const ReaderLikeButton = React.createClass( {
-	recordLikeToggle: function( liked ) {
+class ReaderLikeButton extends React.Component {
+    recordLikeToggle = (liked) => {
 		const post =
 			this.props.post ||
 			postStore.get( {
@@ -30,11 +30,11 @@ const ReaderLikeButton = React.createClass( {
 		if ( liked && ! this.props.fullPost && ! post._seen ) {
 			markSeen( post, this.props.site );
 		}
-	},
+	};
 
-	render: function() {
+    render() {
 		return <LikeButtonContainer { ...this.props } onLikeToggle={ this.recordLikeToggle } />;
-	},
-} );
+	}
+}
 
 export default ReaderLikeButton;

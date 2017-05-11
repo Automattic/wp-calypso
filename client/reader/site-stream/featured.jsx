@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal Dependencies
@@ -16,135 +15,129 @@ import { getSourceData as getDiscoverSourceData } from 'reader/discover/helper';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import cssSafeUrl from 'lib/css-safe-url';
 
-export default localize(
-	React.createClass( {
-		displayName: 'FeedFeatured',
+export default localize(class extends React.PureComponent {
+    static displayName = 'FeedFeatured';
 
-		mixins: [ PureRenderMixin ],
+    getStateFromStores = (store = this.props.store) => {
+        const posts = store.get().map( postKey => {
+            const post = FeedPostStore.get( postKey );
 
-		getInitialState() {
-			return this.getStateFromStores();
-		},
+            if ( this.shouldFetch( post ) ) {
+                FeedPostStoreActions.fetchPost( postKey );
+                return { post };
+            }
 
-		getStateFromStores( store = this.props.store ) {
-			const posts = store.get().map( postKey => {
-				const post = FeedPostStore.get( postKey );
+            const source = this.getSourcePost( post ), url = this.getPostUrl( source || post );
 
-				if ( this.shouldFetch( post ) ) {
-					FeedPostStoreActions.fetchPost( postKey );
-					return { post };
-				}
+            return {
+                post,
+                source,
+                url,
+            };
+        } );
 
-				const source = this.getSourcePost( post ), url = this.getPostUrl( source || post );
+        return {
+            posts,
+        };
+    };
 
-				return {
-					post,
-					source,
-					url,
-				};
-			} );
+    updateState = (store) => {
+        this.setState( this.getStateFromStores( store ) );
+    };
 
-			return {
-				posts,
-			};
-		},
+    componentDidMount() {
+        this.props.store.on( 'change', this.updateState );
+        FeedPostStore.on( 'change', this.updateState );
+    }
 
-		updateState( store ) {
-			this.setState( this.getStateFromStores( store ) );
-		},
+    componentWillUnmount() {
+        this.props.store.off( 'change', this.updateState );
+        FeedPostStore.off( 'change', this.updateState );
+    }
 
-		componentDidMount() {
-			this.props.store.on( 'change', this.updateState );
-			FeedPostStore.on( 'change', this.updateState );
-		},
+    componentWillReceiveProps(nextProps) {
+        if ( nextProps.store !== this.props.store ) {
+            this.updateState();
+        }
+    }
 
-		componentWillUnmount() {
-			this.props.store.off( 'change', this.updateState );
-			FeedPostStore.off( 'change', this.updateState );
-		},
+    shouldFetch = (post) => {
+        return ! post || post._state === 'minimal';
+    };
 
-		componentWillReceiveProps( nextProps ) {
-			if ( nextProps.store !== this.props.store ) {
-				this.updateState();
-			}
-		},
+    getSourcePost = (post) => {
+        const data = getDiscoverSourceData( post );
 
-		shouldFetch( post ) {
-			return ! post || post._state === 'minimal';
-		},
+        if ( ! data ) {
+            return null;
+        }
 
-		getSourcePost( post ) {
-			const data = getDiscoverSourceData( post );
+        return FeedPostStore.get( data );
+    };
 
-			if ( ! data ) {
-				return null;
-			}
+    getPostUrl = (post) => {
+        return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
+    };
 
-			return FeedPostStore.get( data );
-		},
+    handleClick = (postData) => {
+        const post = postData.post;
+        recordTrackForPost( 'calypso_reader_clicked_featured_post', post );
+        recordAction( 'clicked_featured_post' );
+        recordGaEvent( 'Clicked Featured Post' );
 
-		getPostUrl( post ) {
-			return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
-		},
+        page( postData.url );
+    };
 
-		handleClick( postData ) {
-			const post = postData.post;
-			recordTrackForPost( 'calypso_reader_clicked_featured_post', post );
-			recordAction( 'clicked_featured_post' );
-			recordGaEvent( 'Clicked Featured Post' );
+    renderPosts = () => {
+        return this.state.posts.map( postData => {
+            const post = postData.post, postState = post._state;
 
-			page( postData.url );
-		},
+            switch ( postState ) {
+                case 'minimal':
+                case 'pending':
+                case 'error':
+                    break;
+                default:
+                    let style = {
+                        backgroundImage: post.canonical_image && post.canonical_image.uri
+                            ? 'url(' + cssSafeUrl( post.canonical_image.uri ) + ')'
+                            : null,
+                    };
 
-		renderPosts() {
-			return this.state.posts.map( postData => {
-				const post = postData.post, postState = post._state;
+                    return (
+                        <div
+                            key={ post.ID }
+                            className="reader__featured-post"
+                            onClick={ this.handleClick.bind( this, postData ) }
+                        >
+                            <div className="reader__featured-post-image" style={ style } />
+                            <h2 className="reader__featured-post-title">{ post.title }</h2>
+                        </div>
+                    );
+            }
+        } );
+    };
 
-				switch ( postState ) {
-					case 'minimal':
-					case 'pending':
-					case 'error':
-						break;
-					default:
-						let style = {
-							backgroundImage: post.canonical_image && post.canonical_image.uri
-								? 'url(' + cssSafeUrl( post.canonical_image.uri ) + ')'
-								: null,
-						};
+    state = this.getStateFromStores();
 
-						return (
-							<div
-								key={ post.ID }
-								className="reader__featured-post"
-								onClick={ this.handleClick.bind( this, postData ) }
-							>
-								<div className="reader__featured-post-image" style={ style } />
-								<h2 className="reader__featured-post-title">{ post.title }</h2>
-							</div>
-						);
-				}
-			} );
-		},
+    render() {
+        if ( ! this.state.posts ) {
+            return null;
+        }
 
-		render() {
-			if ( ! this.state.posts ) {
-				return null;
-			}
+        return (
+            <Card className="reader__featured-card">
+                <div className="reader__featured-header">
+                    <div className="reader__featured-title">{ this.props.translate( 'Highlights' ) }</div>
+                    <div className="reader__featured-description">
+                        { this.props.translate( 'What we’re reading this week.' ) }
+                    </div>
+                </div>
 
-			return (
-				<Card className="reader__featured-card">
-					<div className="reader__featured-header">
-						<div className="reader__featured-title">{ this.props.translate( 'Highlights' ) }</div>
-						<div className="reader__featured-description">
-							{ this.props.translate( 'What we’re reading this week.' ) }
-						</div>
-					</div>
-
-					<div className="reader__featured-posts">
-						{ this.renderPosts() }
-					</div>
-				</Card>
-			);
-		},
-	} )
-);
+                <div className="reader__featured-posts">
+                    { this.renderPosts() }
+                </div>
+            </Card>
+        );
+    }
+});
