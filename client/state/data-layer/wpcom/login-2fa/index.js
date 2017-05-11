@@ -89,7 +89,7 @@ const makePushNotificationRequest = dispatchRequest(
  * Starts polling for push notification status
  *
  * @param {Object}	store  Global redux store
- * @param {Object}	action dispathced action
+ * @param {Object}	action dispatched action
  * @param {Function}	next continue dispatch function
  * @param {Object}	error the error object
  * @returns {*} whatever requestTwoFactorPushNotificationStatus returns, which is undefined
