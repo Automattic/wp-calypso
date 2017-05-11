@@ -9,7 +9,7 @@
 	flex: 1;
 }
 
-.reader-subscription-list-item__options {
+.following-manage__subscriptions-list .reader-subscription-list-item__options {
 	display: flex;
 	flex-direction: column;
 	min-width: 24px;
@@ -19,7 +19,10 @@
 	}
 
 	.button.follow-button {
-		display: flex;
+
+		@include breakpoint( ">660px" ) {
+			display: flex;
+		}
 	}
 }
 
@@ -28,7 +31,6 @@
 	max-height: 16px * 2.8;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	position: relative;
 	width: 100%;
 
 	@include breakpoint( ">660px" ) {
@@ -143,10 +145,8 @@
 	}
 }
 
-.reader-subscription-list-item .follow-button .gridicon {
-	height: 24px;
-	padding-right: 6px;
-	top: 2px;
+.reader-subscription-list-item__settings-label {
+	margin-left: -2px;
 }
 
 .reader-subscription-list-item .follow-button__label,
