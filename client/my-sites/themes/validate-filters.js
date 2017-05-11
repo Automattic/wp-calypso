@@ -2,12 +2,17 @@
  * External dependencies
  */
 import page from 'page';
+import { curry } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { sortFilterTerms } from './theme-filters';
-import { getThemeFilterTerm, isValidThemeFilterTerm } from 'state/selectors';
+import {
+	getThemeFilterTerm,
+	isValidThemeFilterTerm,
+	getThemeFilterStringFromTerm,
+	getThemeFilterTermFromString,
+} from 'state/selectors';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {
@@ -20,7 +25,7 @@ export function validateFilters( context, next ) {
 
 	// Accept commas, which were previously used as canonical filter separators
 	const validFilters = filterParam.split( /[,+]/ ).filter( term => isValidThemeFilterTerm( context.store.getState(), term ) );
-	const sortedValidFilters = sortFilterTerms( validFilters ).join( '+' );
+	const sortedValidFilters = sortFilterTerms( context, validFilters ).join( '+' );
 
 	if ( sortedValidFilters !== filterParam ) {
 		const path = context.path;
@@ -54,4 +59,25 @@ export function validateVertical( context, next ) {
 	}
 
 	next();
+}
+
+/**
+ * Return a sorted array of filter terms.
+ *
+ * Sort is alphabetical on the complete "taxonomy:term" string.
+ *
+ * Supplied terms that belong to more than one taxonomy must be
+ * prefixed taxonomy:term. Returned terms will
+ * keep this prefix.
+ *
+ * @param {Object} context Routing context
+ * @param {array} terms Array of term strings
+ * @return {array} Sorted array
+ */
+export function sortFilterTerms( context, terms ) {
+	const getFilter = curry( getThemeFilterStringFromTerm )( context.store.getState() );
+	const getTerm = curry( getThemeFilterTermFromString )( context.store.getState() );
+
+	const result = terms.map( getFilter ).sort().map( getTerm );
+	return result;
 }
