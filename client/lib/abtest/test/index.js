@@ -22,7 +22,6 @@ describe( 'abtest', () => {
 
 	useFakeDom();
 	useMockery( () => {
-		require( 'lib/local-storage' )( global );
 		mockery.registerMock( 'lib/abtest/active-tests', {
 			mockedTest: {
 				datestamp: '20160627',

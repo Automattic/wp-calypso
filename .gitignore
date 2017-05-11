@@ -31,6 +31,7 @@ env-config.sh
 
 /public/*.js
 /public/*.js.map
+!/public/polyfill.js
 /public/style*.css
 /public/style*.css.map
 /public/editor*.css
