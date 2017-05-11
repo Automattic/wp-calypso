@@ -20,10 +20,12 @@ class ConnectedSubscriptionListItem extends React.Component {
 		feedId: PropTypes.number,
 		siteId: PropTypes.number,
 		onLoad: PropTypes.func,
+		showEmailSettings: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onLoad: noop,
+		showEmailSettings: true,
 	};
 
 	componentDidMount() {
@@ -37,7 +39,8 @@ class ConnectedSubscriptionListItem extends React.Component {
 	}
 
 	render() {
-		const { feed, site, translate, url, feedId, siteId } = this.props;
+		const { feed, site, translate, url, feedId, siteId, showEmailSettings } = this.props;
+		const isEmailBlocked = userSettings.getSetting( 'subscription_delivery_email_blocked' );
 
 		return (
 			<SubscriptionListItem
@@ -47,7 +50,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 				site={ site }
 				feed={ feed }
 				url={ url }
-				isEmailBlocked={ userSettings.getSetting( 'subscription_delivery_email_blocked' ) }
+				showEmailSettings={ showEmailSettings && ! isEmailBlocked }
 			/>
 		);
 	}
