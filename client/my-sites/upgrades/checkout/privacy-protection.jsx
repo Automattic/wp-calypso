@@ -4,7 +4,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
-
+import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
@@ -45,12 +45,12 @@ module.exports = React.createClass( {
 			numberOfDomainRegistrations = domainRegistrations.length,
 			firstDomainToRegister = domainRegistrations[ 0 ],
 			hasOneFreePrivacy = this.hasDomainPartOfPlan() && numberOfDomainRegistrations === 1,
-			privacyText = this.translate(
+			privacyText = i18n.translate(
 				"Privacy Protection hides your personal information in your domain's public records, to protect your identity and prevent spam."
 			),
 			freeWithPlan = hasOneFreePrivacy &&
 						<span className="checkout__privacy-protection-free-text">
-							{ this.translate( 'Free with your plan' ) }
+							{ i18n.translate( 'Free with your plan' ) }
 						</span>;
 
 		return (
@@ -60,13 +60,13 @@ module.exports = React.createClass( {
 					<div className="checkout__privacy-protection-checkbox__description">
 						<label htmlFor="privacyProtectionCheckbox">
 							<strong className="checkout__privacy-protection-checkbox-heading">
-								{ this.translate( 'Please keep my information private.', { textOnly: true } ) }
+								{ i18n.translate( 'Please keep my information private.', { textOnly: true } ) }
 							</strong>
 						</label>
 						<p className={ 'checkout__privacy-protection-price-text' }>
 							<span className={ classnames( { 'free-with-plan': hasOneFreePrivacy } ) }>
 								{
-									this.translate(
+									i18n.translate(
 										'%(cost)s per year',
 										'%(cost)s per domain per year',
 										{
@@ -79,7 +79,7 @@ module.exports = React.createClass( {
 							{ freeWithPlan }
 						</p>
 						<p className="checkout__privacy-protection-checkbox-text">{ privacyText }</p>
-						<a href="" onClick={ this.handleDialogOpen }>Learn more about Privacy Protection.</a>
+						<a href="" onClick={ this.handleDialogOpen }>{ i18n.translate( 'Learn more about Privacy Protection.' ) }</a>
 					</div>
 					<div>
 						<Gridicon icon="lock" size={ 48 } />
