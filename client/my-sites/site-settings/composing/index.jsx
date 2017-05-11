@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
+import PostsPerPage from './posts-per-page';
 import DefaultPostFormat from './default-post-format';
 import AfterTheDeadline from './after-the-deadline';
 import DateTimeFormat from '../date-time-format';
@@ -26,6 +27,7 @@ const Composing = ( {
 	onChangeField,
 	setFieldValue,
 	eventTracker,
+	uniqueEventTracker,
 	hasDateTimeFormats,
 	isRequestingSettings,
 	isSavingSettings,
@@ -37,6 +39,15 @@ const Composing = ( {
 	return (
 		<div>
 			<CardComponent className="composing__card site-settings">
+				<PostsPerPage
+					onChangeField={ onChangeField }
+					eventTracker={ eventTracker }
+					uniqueEventTracker={ uniqueEventTracker }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+
 				<DefaultPostFormat
 					onChangeField={ onChangeField }
 					eventTracker={ eventTracker }
@@ -80,6 +91,7 @@ Composing.propTypes = {
 	onChangeField: PropTypes.func.isRequired,
 	setFieldValue: PropTypes.func.isRequired,
 	eventTracker: PropTypes.func.isRequired,
+	uniqueEventTracker: PropTypes.func.isRequired,
 	updateFields: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
