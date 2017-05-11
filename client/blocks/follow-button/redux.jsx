@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { Component } from 'react';
-import { noop } from 'lodash';
+import { noop, omitBy, isUndefined } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -18,16 +18,22 @@ class FollowButtonContainer extends Component {
 		iconSize: React.PropTypes.number,
 		onFollowToggle: React.PropTypes.func,
 		followLabel: React.PropTypes.string,
-		followingLabel: React.PropTypes.string
+		followingLabel: React.PropTypes.string,
+		feedId: React.PropTypes.number,
+		siteId: React.PropTypes.number,
 	}
 
 	static defaultProps = {
 		onFollowToggle: noop
 	}
-
 	handleFollowToggle = ( following ) => {
 		if ( following ) {
-			this.props.follow( this.props.siteUrl );
+			const followData = omitBy( {
+				feed_ID: this.props.feedId,
+				blog_ID: this.props.siteId,
+			}, isUndefined );
+
+			this.props.follow( this.props.siteUrl, followData );
 		} else {
 			this.props.unfollow( this.props.siteUrl );
 		}
