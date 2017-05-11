@@ -33,16 +33,11 @@ class FollowingIntro extends React.Component {
 		}
 	};
 
-	handleManageLinkClick = () => {
-		this.props.dismiss();
-		recordTrack( 'calypso_reader_following_intro_link_clicked' );
-	};
-
 	render() {
 		const { isNewReader, translate, dismiss } = this.props;
 		const linkElement = config.isEnabled( 'reader/following-manage-refresh' )
-			? <a onClick={ this.handleManageLinkClick } href="/following/manage" />
-			: <a onClick={ this.handleManageLinkClick } href="/following/edit" />;
+			? <a onClick={ this.props.handleManageLinkClick } href="/following/manage" />
+			: <a onClick={ this.props.handleManageLinkClick } href="/following/edit" />;
 
 		if ( ! isNewReader ) {
 			return null;
@@ -99,6 +94,10 @@ export default connect(
 			{
 				dismiss: () => {
 					recordTrack( 'calypso_reader_following_intro_dismiss' );
+					return savePreference( 'is_new_reader', false );
+				},
+				handleManageLinkClick: () => {
+					recordTrack( 'calypso_reader_following_intro_link_clicked' );
 					return savePreference( 'is_new_reader', false );
 				},
 			},
