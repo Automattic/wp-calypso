@@ -12,17 +12,17 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 
 class FollowingEmptyContent extends React.Component {
-    shouldComponentUpdate() {
+	shouldComponentUpdate() {
 		return false;
 	}
 
-    recordAction = () => {
+	recordAction = () => {
 		recordAction( 'clicked_search_on_empty' );
 		recordGaEvent( 'Clicked Search on EmptyContent' );
 		recordTrack( 'calypso_reader_search_on_empty_stream_clicked' );
 	};
 
-    render() {
+	render() {
 		const action = isDiscoverEnabled()
 			? <a
 					className="empty-content__action button is-primary"

@@ -25,10 +25,10 @@ import smartSetState from 'lib/react-smart-set-state';
 
 import ExternalLink from 'components/external-link';
 
-const SubscriptionListItem = createReactClass({
-    displayName: 'SubscriptionListItem',
+const SubscriptionListItem = createReactClass( {
+	displayName: 'SubscriptionListItem',
 
-    propTypes: {
+	propTypes: {
 		subscription: React.PropTypes.object.isRequired,
 		classNames: React.PropTypes.string,
 		onNotificationSettingsOpen: React.PropTypes.func,
@@ -37,7 +37,7 @@ const SubscriptionListItem = createReactClass({
 		isEmailBlocked: React.PropTypes.bool,
 	},
 
-    getDefaultProps() {
+	getDefaultProps() {
 		return {
 			classNames: '',
 			onNotificationSettingsOpen: noop,
@@ -45,11 +45,11 @@ const SubscriptionListItem = createReactClass({
 		};
 	},
 
-    getInitialState: function() {
+	getInitialState: function() {
 		return this.getStateFromStores();
 	},
 
-    getStateFromStores: function( props = this.props ) {
+	getStateFromStores: function( props = this.props ) {
 		const site = SiteStore.get( props.subscription.get( 'blog_ID' ) ),
 			feed = FeedStore.get( props.subscription.get( 'feed_ID' ) );
 
@@ -59,27 +59,27 @@ const SubscriptionListItem = createReactClass({
 		};
 	},
 
-    smartSetState: smartSetState,
+	smartSetState: smartSetState,
 
-    componentDidMount: function() {
+	componentDidMount: function() {
 		SiteStore.on( 'change', this.handleChange );
 		FeedStore.on( 'change', this.handleChange );
 	},
 
-    componentWillUnmount: function() {
+	componentWillUnmount: function() {
 		SiteStore.off( 'change', this.handleChange );
 		FeedStore.off( 'change', this.handleChange );
 	},
 
-    componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps: function( nextProps ) {
 		this.smartSetState( this.getStateFromStores( nextProps ) );
 	},
 
-    handleChange: function() {
+	handleChange: function() {
 		this.smartSetState( this.getStateFromStores() );
 	},
 
-    handleFollowToggle: function() {
+	handleFollowToggle: function() {
 		const action = this.isFollowing() ? 'unfollow' : 'follow';
 		FeedSubscriptionActions[ action ](
 			this.props.subscription.get( 'URL' ),
@@ -87,18 +87,18 @@ const SubscriptionListItem = createReactClass({
 		);
 	},
 
-    isFollowing: function() {
+	isFollowing: function() {
 		return (
 			!! this.props.subscription &&
 			this.props.subscription.get( 'state' ) === SubscriptionStates.SUBSCRIBED
 		);
 	},
 
-    shouldComponentUpdate: function( nextProps, nextState ) {
+	shouldComponentUpdate: function( nextProps, nextState ) {
 		return React.addons.shallowCompare( this, nextProps, nextState );
 	},
 
-    render: function() {
+	render: function() {
 		var subscription = this.props.subscription,
 			siteData = this.state.site,
 			feedData = this.state.feed,
@@ -159,6 +159,6 @@ const SubscriptionListItem = createReactClass({
 			</FoldableCard>
 		);
 	},
-});
+} );
 
 export default SubscriptionListItem;

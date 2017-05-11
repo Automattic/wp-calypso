@@ -12,23 +12,23 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 
 class RecommendedPostsEmptyContent extends React.Component {
-    shouldComponentUpdate() {
+	shouldComponentUpdate() {
 		return false;
 	}
 
-    recordAction = () => {
+	recordAction = () => {
 		recordAction( 'clicked_following_on_empty_recommended_posts' );
 		recordGaEvent( 'Clicked Following on Empty Recommended Posts Stream' );
 		recordTrack( 'calypso_reader_following_on_empty_Posts_stream_clicked' );
 	};
 
-    recordSecondaryAction = () => {
+	recordSecondaryAction = () => {
 		recordAction( 'clicked_discover_on_empty_recommended_posts' );
 		recordGaEvent( 'Clicked Discover on Empty Recommended Posts Stream' );
 		recordTrack( 'calypso_reader_discover_on_empty_Posts_stream_clicked' );
 	};
 
-    render() {
+	render() {
 		var action = (
 			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
 				{ this.props.translate( 'Back to Following' ) }

@@ -5,9 +5,9 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 
 class FollowingEditNavigation extends React.Component {
-    static propTypes = { totalSubscriptions: React.PropTypes.number };
+	static propTypes = { totalSubscriptions: React.PropTypes.number };
 
-    renderSiteCount = () => {
+	renderSiteCount = () => {
 		const totalSubscriptions = this.props.totalSubscriptions;
 		if ( ! totalSubscriptions ) {
 			return null;
@@ -19,7 +19,7 @@ class FollowingEditNavigation extends React.Component {
 		} );
 	};
 
-    render() {
+	render() {
 		return (
 			<div className="following-edit-navigation">
 				<span className="following-edit-navigation__site-count">{ this.renderSiteCount() }</span>

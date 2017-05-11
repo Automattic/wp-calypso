@@ -12,7 +12,7 @@ import EmptyContent from './empty';
 import DocumentHead from 'components/data/document-head';
 
 class RecommendationPostsStream extends React.Component {
-    render() {
+	render() {
 		const title = this.props.translate( 'Recommended Posts' );
 		const emptyContent = <EmptyContent />;
 

@@ -9,11 +9,11 @@ import React from 'react';
 import Card from 'components/card';
 
 class PostPlaceholder extends React.Component {
-    shouldComponentUpdate(nextProps, nextState) {
+	shouldComponentUpdate( nextProps, nextState ) {
 		return React.addons.shallowCompare( this, nextProps, nextState );
 	}
 
-    render() {
+	render() {
 		return (
 			<Card tagName="article" className="reader__card is-placeholder">
 				<div className="reader__post-header">

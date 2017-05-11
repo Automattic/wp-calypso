@@ -24,7 +24,7 @@ import QueryReaderList from 'components/data/query-reader-list';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 class ListStream extends React.Component {
-    toggleFollowing = (isFollowRequested) => {
+	toggleFollowing = isFollowRequested => {
 		const list = this.props.list;
 
 		if ( isFollowRequested ) {
@@ -49,7 +49,7 @@ class ListStream extends React.Component {
 		);
 	};
 
-    render() {
+	render() {
 		const list = this.props.list,
 			shouldShowFollow = list && ! list.is_owner,
 			shouldShowEdit = ! shouldShowFollow,

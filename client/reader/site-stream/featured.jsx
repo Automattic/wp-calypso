@@ -18,7 +18,7 @@ import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import cssSafeUrl from 'lib/css-safe-url';
 
 export default localize(
-	createReactClass({
+	createReactClass( {
 		displayName: 'FeedFeatured',
 
 		mixins: [ PureRenderMixin ],
@@ -147,5 +147,5 @@ export default localize(
 				</Card>
 			);
 		},
-	})
+	} )
 );

@@ -15,16 +15,16 @@ import DocumentHead from 'components/data/document-head';
 import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
 
 class UpdateNotice extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		count: React.PropTypes.number.isRequired,
 		onClick: React.PropTypes.func,
 		// connected props
 		cappedUnreadCount: React.PropTypes.string,
 	};
 
-    static defaultProps = { onClick: noop };
+	static defaultProps = { onClick: noop };
 
-    render() {
+	render() {
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
 			'is-active': this.props.count > 0,
@@ -42,12 +42,12 @@ class UpdateNotice extends React.Component {
 		);
 	}
 
-    handleClick = (event) => {
+	handleClick = event => {
 		event.preventDefault();
 		this.props.onClick();
 	};
 
-    shouldComponentUpdate(nextProps, nextState) {
+	shouldComponentUpdate( nextProps, nextState ) {
 		return React.addons.shallowCompare( this, nextProps, nextState );
 	}
 }

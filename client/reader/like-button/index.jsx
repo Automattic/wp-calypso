@@ -12,7 +12,7 @@ import { markSeen } from 'lib/feed-post-store/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 
 class ReaderLikeButton extends React.Component {
-    recordLikeToggle = (liked) => {
+	recordLikeToggle = liked => {
 		const post =
 			this.props.post ||
 			postStore.get( {
@@ -32,7 +32,7 @@ class ReaderLikeButton extends React.Component {
 		}
 	};
 
-    render() {
+	render() {
 		return <LikeButtonContainer { ...this.props } onLikeToggle={ this.recordLikeToggle } />;
 	}
 }

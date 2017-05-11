@@ -22,23 +22,23 @@ import { getSiteUrl } from 'reader/route';
 import { decodeEntities } from 'lib/formatting';
 
 class RecommendedForYou extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-        const recommendations = this.getRecommendations();
-        let fetching = false;
-        if ( recommendations.length === 0 ) {
+	constructor( props, context ) {
+		super( props, context );
+		const recommendations = this.getRecommendations();
+		let fetching = false;
+		if ( recommendations.length === 0 ) {
 			fetchMore();
 			fetching = true;
 		}
 
-        this.state = {
+		this.state = {
 			recommendations,
 			fetching,
 			page: 1,
 		};
-    }
+	}
 
-    getRecommendations = () => {
+	getRecommendations = () => {
 		const recs = RecommendedSites.get();
 		return recs.map( function( rec ) {
 			rec.site = SiteStore.get( rec.blog_id );
@@ -46,23 +46,23 @@ class RecommendedForYou extends React.Component {
 		} );
 	};
 
-    update = () => {
+	update = () => {
 		this.setState( { recommendations: this.getRecommendations() } );
 	};
 
-    componentDidMount() {
+	componentDidMount() {
 		SiteStore.on( 'change', this.update );
 		RecommendedSites.on( 'change', this.update );
 		RecommendedSites.on( 'change', this.stopFetching );
 	}
 
-    componentWillUnmount() {
+	componentWillUnmount() {
 		SiteStore.off( 'change', this.update );
 		RecommendedSites.off( 'change', this.update );
 		RecommendedSites.off( 'change', this.stopFetching );
 	}
 
-    loadMore = (options) => {
+	loadMore = options => {
 		fetchMore();
 		this.setState( { fetching: true } );
 		if ( options.triggeredByScroll ) {
@@ -70,14 +70,14 @@ class RecommendedForYou extends React.Component {
 		}
 	};
 
-    stopFetching = () => {
+	stopFetching = () => {
 		this.setState( {
 			fetching: false,
 			page: this.state.page + 1,
 		} );
 	};
 
-    renderPlaceholders = () => {
+	renderPlaceholders = () => {
 		const placeholders = [], number = this.state.recommendations.length ? 2 : 10;
 
 		times( number, i => {
@@ -93,11 +93,11 @@ class RecommendedForYou extends React.Component {
 		return placeholders;
 	};
 
-    getItemRef = (rec) => {
+	getItemRef = rec => {
 		return 'recommendation-' + rec.blog_id;
 	};
 
-    trackSiteClick = (event) => {
+	trackSiteClick = event => {
 		const clickedUrl = event.currentTarget.getAttribute( 'href' );
 		recordAction( 'click_site_on_recommended_for_you' );
 		recordGaEvent( 'Clicked Site on Recommended For You' );
@@ -107,7 +107,7 @@ class RecommendedForYou extends React.Component {
 		} );
 	};
 
-    renderItem = (rec) => {
+	renderItem = rec => {
 		const site = rec.site && rec.site.toJS(),
 			itemKey = this.getItemRef( rec ),
 			title = site.name || ( site.URL && url.parse( site.URL ).hostname ),
@@ -127,7 +127,7 @@ class RecommendedForYou extends React.Component {
 		);
 	};
 
-    render() {
+	render() {
 		return (
 			<Main className="recommended-for-you">
 				<MobileBackToSidebar>
