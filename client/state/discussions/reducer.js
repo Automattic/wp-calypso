@@ -13,7 +13,7 @@ import {
  * Internal dependencies
  */
 import {
-	DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_SUCCESS,
+	DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_REMOVE,
 	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS,
@@ -32,7 +32,7 @@ const updateCommentLike = ( state, { commentId, iLike, likeCount } ) => ( {
 } );
 
 export const items = keyedReducer( 'siteId', createReducer( {}, {
-	[ DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_SUCCESS ]: ( state, { commentId, content } ) => ( {
+	[ DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUEST_SUCCESS ]: ( state, { commentId, content } ) => ( {
 		...state,
 		...{ [ commentId ]: { ...state[ commentId ], content } }
 	} ),
