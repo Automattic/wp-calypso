@@ -237,8 +237,6 @@ export default React.createClass( {
 				'Registering this domain for a company? + Add Organization Name',
 				'Registering these domains for a company? + Add Organization Name',
 				{
-					context: 'Domain contact information page',
-					comment: 'Count specifies the number of domain registrations',
 					count: this.getNumberOfDomainRegistrations()
 				}
 			) }
