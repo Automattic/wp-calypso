@@ -48,7 +48,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			if ( prevProps.siteId !== this.props.siteId ) {
 				this.props.clearDirtyFields();
 				const newSiteFields = getFormSettings( this.props.settings );
-				this.props.replaceFields( newSiteFields );
+				this.props.replaceFields( newSiteFields, undefined, false );
 			} else if (
 				! isEqual( prevProps.settings, this.props.settings ) ||
 				! isEqual( prevProps.fields, this.props.fields )
