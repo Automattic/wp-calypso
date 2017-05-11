@@ -12,7 +12,6 @@ import { trackClick } from './helpers';
 import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
 import ThemesSelectionHeader from './themes-selection-header';
-import { prependFilterKeys } from './theme-filters.js';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -28,6 +27,7 @@ import {
 } from 'state/themes/selectors';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import config from 'config';
+import { prependThemeFilterKeys } from 'state/selectors';
 
 class ThemesSelection extends Component {
 	static propTypes = {
@@ -59,8 +59,8 @@ class ThemesSelection extends Component {
 	}
 
 	recordSearchResultsClick = ( theme, resultsRank, action ) => {
-		const { query, themes } = this.props;
-		const search_taxonomies = prependFilterKeys( query.filter );
+		const { query, themes, filterString } = this.props;
+		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
 		this.props.recordTracksEvent( 'calypso_themeshowcase_theme_click', {
 			search_term: search_term || null,
@@ -202,7 +202,8 @@ const ConnectedThemesSelection = connect(
 			// and `<QuerySitePlans />` components, respectively. At the time of implementation, neither of them
 			// provides caching, and both are already being rendered by a parent component. So to avoid
 			// redundant AJAX requests, we're not rendering these query components locally.
-			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId )
+			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId ),
+			filterString: prependThemeFilterKeys( state, query.filter ),
 		};
 	},
 	{ setThemePreviewOptions, recordGoogleEvent, recordTracksEvent }
