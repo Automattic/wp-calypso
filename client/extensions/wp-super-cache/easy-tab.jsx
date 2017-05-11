@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { isEmpty, get, pick } from 'lodash';
+import { flowRight, get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,19 +17,33 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
+import { testCache } from './state/cache/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteTitle } from 'state/sites/selectors';
+import {
+	getCacheTestResults,
+	isCacheTestSuccessful,
+	isTestingCache,
+} from './state/cache/selectors';
 
 class EasyTab extends Component {
 	static propTypes = {
 		cacheTestResults: PropTypes.object,
+		errorNotice: PropTypes.func.isRequired,
 		fields: PropTypes.object,
 		handleAutosavingToggle: PropTypes.func.isRequired,
 		handleDeleteCache: PropTypes.func.isRequired,
-		handleTestCache: PropTypes.func.isRequired,
 		isDeleting: PropTypes.bool,
 		isRequesting: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		isTesting: PropTypes.bool,
+		isTestSuccessful: PropTypes.bool,
+		removeNotice: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
+		siteId: PropTypes.number,
+		siteTitle: PropTypes.string,
+		successNotice: PropTypes.func.isRequired,
+		testCache: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -39,6 +54,8 @@ class EasyTab extends Component {
 		isRequesting: true,
 		isSaving: false,
 		isTesting: false,
+		isTestSuccessful: false,
+		siteTitle: '',
 	};
 
 	state = {
@@ -56,6 +73,32 @@ class EasyTab extends Component {
 		}
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( this.props.isTesting || ! prevProps.isTesting ) {
+			return;
+		}
+
+		const {
+			errorNotice,
+			isTestSuccessful,
+			siteTitle,
+			successNotice,
+			translate,
+		} = this.props;
+
+		if ( isTestSuccessful ) {
+			successNotice(
+				translate( 'Cache test completed successfully on %(siteTitle)s.', { args: { siteTitle } } ),
+				{ id: 'wpsc-cache-test' }
+			);
+		} else {
+			errorNotice(
+				translate( 'There was a problem testing the cache. Please try again.' ),
+				{ id: 'wpsc-cache-test' }
+			);
+		}
+	}
+
 	handleHttpOnlyChange = () => this.setState( { httpOnly: ! this.state.httpOnly } );
 
 	deleteCache = () => {
@@ -68,7 +111,10 @@ class EasyTab extends Component {
 		this.props.handleDeleteCache( true, false );
 	}
 
-	testCache = () => this.props.handleTestCache( this.state.httpOnly );
+	testCache = () => {
+		this.props.removeNotice( 'wpsc-cache-test' );
+		this.props.testCache( this.props.siteId, this.state.httpOnly );
+	}
 
 	render() {
 		const {
@@ -214,6 +260,24 @@ class EasyTab extends Component {
 	}
 }
 
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const siteTitle = getSiteTitle( state, siteId );
+		const isTesting = isTestingCache( state, siteId );
+		const isTestSuccessful = isCacheTestSuccessful( state, siteId );
+		const cacheTestResults = getCacheTestResults( state, siteId );
+
+		return {
+			cacheTestResults,
+			isTesting,
+			isTestSuccessful,
+			siteTitle,
+		};
+	},
+	{ testCache },
+);
+
 const getFormSettings = settings => {
 	return pick( settings, [
 		'cache_mod_rewrite',
@@ -221,4 +285,7 @@ const getFormSettings = settings => {
 	] );
 };
 
-export default WrapSettingsForm( getFormSettings )( EasyTab );
+export default flowRight(
+	connectComponent,
+	WrapSettingsForm( getFormSettings )
+)( EasyTab );
