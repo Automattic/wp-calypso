@@ -14,19 +14,17 @@ import Gridicon from 'gridicons';
 import DocumentHead from 'components/data/document-head';
 import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
 
-const UpdateNotice = React.createClass( {
-	propTypes: {
+class UpdateNotice extends React.Component {
+    static propTypes = {
 		count: React.PropTypes.number.isRequired,
 		onClick: React.PropTypes.func,
 		// connected props
 		cappedUnreadCount: React.PropTypes.string,
-	},
+	};
 
-	getDefaultProps: function() {
-		return { onClick: noop };
-	},
+    static defaultProps = { onClick: noop };
 
-	render: function() {
+    render() {
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
 			'is-active': this.props.count > 0,
@@ -42,17 +40,17 @@ const UpdateNotice = React.createClass( {
 				} ) }
 			</div>
 		);
-	},
+	}
 
-	handleClick: function( event ) {
+    handleClick = (event) => {
 		event.preventDefault();
 		this.props.onClick();
-	},
+	};
 
-	shouldComponentUpdate: function( nextProps, nextState ) {
+    shouldComponentUpdate(nextProps, nextState) {
 		return React.addons.shallowCompare( this, nextProps, nextState );
-	},
-} );
+	}
+}
 
 export default connect( state => ( {
 	cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),

@@ -9,19 +9,19 @@ import classnames from 'classnames';
  */
 import Card from 'components/card/compact';
 
-const ListItem = React.createClass( {
-	shouldComponentUpdate: function( nextProps, nextState ) {
+class ListItem extends React.Component {
+    shouldComponentUpdate(nextProps, nextState) {
 		return React.addons.shallowCompare( this, nextProps, nextState );
-	},
+	}
 
-	render() {
+    render() {
 		const classes = classnames( 'reader-list-item__card', this.props.className );
 		return (
 			<Card className={ classes }>
 				{ this.props.children }
 			</Card>
 		);
-	},
-} );
+	}
+}
 
 export default ListItem;

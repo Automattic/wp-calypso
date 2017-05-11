@@ -11,8 +11,8 @@ import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import DocumentHead from 'components/data/document-head';
 
-var LikedStream = React.createClass( {
-	render: function() {
+class LikedStream extends React.Component {
+    render() {
 		var title = this.props.translate( 'My Likes' ), emptyContent = <EmptyContent />;
 
 		return (
@@ -25,7 +25,7 @@ var LikedStream = React.createClass( {
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 			</Stream>
 		);
-	},
-} );
+	}
+}
 
 export default localize( LikedStream );

@@ -11,18 +11,18 @@ import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 
-const FollowingEmptyContent = React.createClass( {
-	shouldComponentUpdate: function() {
+class FollowingEmptyContent extends React.Component {
+    shouldComponentUpdate() {
 		return false;
-	},
+	}
 
-	recordAction: function() {
+    recordAction = () => {
 		recordAction( 'clicked_search_on_empty' );
 		recordGaEvent( 'Clicked Search on EmptyContent' );
 		recordTrack( 'calypso_reader_search_on_empty_stream_clicked' );
-	},
+	};
 
-	render: function() {
+    render() {
 		const action = isDiscoverEnabled()
 			? <a
 					className="empty-content__action button is-primary"
@@ -44,7 +44,7 @@ const FollowingEmptyContent = React.createClass( {
 				illustrationWidth={ 500 }
 			/>
 		);
-	},
-} );
+	}
+}
 
 export default localize( FollowingEmptyContent );

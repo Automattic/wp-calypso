@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
@@ -23,17 +24,19 @@ const DELIVERY_FREQUENCY_INSTANTLY = 'instantly',
 	DELIVERY_FREQUENCY_DAILY = 'daily',
 	DELIVERY_FREQUENCY_WEEKLY = 'weekly';
 
-var FollowingEditNotificationSettings = React.createClass( {
-	propTypes: {
+var FollowingEditNotificationSettings = createReactClass({
+    displayName: 'FollowingEditNotificationSettings',
+
+    propTypes: {
 		subscription: React.PropTypes.object.isRequired,
 		isEmailBlocked: React.PropTypes.bool,
 	},
 
-	getInitialState: function() {
+    getInitialState: function() {
 		return this.getStateFromStores();
 	},
 
-	getStateFromStores: function( props = this.props ) {
+    getStateFromStores: function( props = this.props ) {
 		const blogId = props.subscription.get( 'blog_ID' ),
 			postEmailSubscription = PostEmailSubscriptionStore.getSubscription( blogId ),
 			commentEmailSubscription = CommentEmailSubscriptionStore.getSubscription( blogId ),
@@ -55,29 +58,29 @@ var FollowingEditNotificationSettings = React.createClass( {
 		return newState;
 	},
 
-	componentDidMount: function() {
+    componentDidMount: function() {
 		PostEmailSubscriptionStore.on( 'change', this.handleChange );
 		CommentEmailSubscriptionStore.on( 'change', this.handleChange );
 	},
 
-	componentWillUnmount: function() {
+    componentWillUnmount: function() {
 		PostEmailSubscriptionStore.off( 'change', this.handleChange );
 		CommentEmailSubscriptionStore.off( 'change', this.handleChange );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+    componentWillReceiveProps: function( nextProps ) {
 		this.smartSetState( this.getStateFromStores( nextProps ) );
 	},
 
-	smartSetState: smartSetState,
+    smartSetState: smartSetState,
 
-	handleChange: function() {
+    handleChange: function() {
 		if ( this.isMounted() ) {
 			this.smartSetState( this.getStateFromStores() );
 		}
 	},
 
-	handleEmailFrequencyClick: function( newFrequency ) {
+    handleEmailFrequencyClick: function( newFrequency ) {
 		this.setState( { emailDeliveryFrequency: newFrequency } );
 		PostEmailSubscriptionActions.updateDeliveryFrequency(
 			this.props.subscription.get( 'blog_ID' ),
@@ -85,7 +88,7 @@ var FollowingEditNotificationSettings = React.createClass( {
 		);
 	},
 
-	handlePostEmailToggle: function() {
+    handlePostEmailToggle: function() {
 		if ( this.state.postEmailSubscription ) {
 			PostEmailSubscriptionActions.unsubscribe( this.props.subscription.get( 'blog_ID' ) );
 		} else {
@@ -96,7 +99,7 @@ var FollowingEditNotificationSettings = React.createClass( {
 		}
 	},
 
-	handleCommentEmailToggle: function() {
+    handleCommentEmailToggle: function() {
 		const subscription = this.props.subscription;
 		if ( this.state.commentEmailSubscription ) {
 			CommentEmailSubscriptionActions.unsubscribe( subscription.get( 'blog_ID' ) );
@@ -105,15 +108,15 @@ var FollowingEditNotificationSettings = React.createClass( {
 		}
 	},
 
-	renderPostEmailError: function() {
+    renderPostEmailError: function() {
 		return this.renderEmailError( 'post' );
 	},
 
-	renderCommentEmailError: function() {
+    renderCommentEmailError: function() {
 		return this.renderEmailError( 'comment' );
 	},
 
-	renderEmailError: function( subscriptionType ) {
+    renderEmailError: function( subscriptionType ) {
 		if ( subscriptionType !== 'post' && subscriptionType !== 'comment' ) {
 			return;
 		}
@@ -137,7 +140,7 @@ var FollowingEditNotificationSettings = React.createClass( {
 		);
 	},
 
-	render: function() {
+    render: function() {
 		var subscription = this.props.subscription,
 			isExternal = ! subscription.get( 'blog_ID' ) || subscription.get( 'blog_ID' ) < 1,
 			emailDeliveryFrequency = this.state.emailDeliveryFrequency,
@@ -256,6 +259,6 @@ var FollowingEditNotificationSettings = React.createClass( {
 			</div>
 		);
 	},
-} );
+});
 
 export default localize( FollowingEditNotificationSettings );

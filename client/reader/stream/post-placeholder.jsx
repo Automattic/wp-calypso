@@ -8,12 +8,12 @@ import React from 'react';
  */
 import Card from 'components/card';
 
-const PostPlaceholder = React.createClass( {
-	shouldComponentUpdate: function( nextProps, nextState ) {
+class PostPlaceholder extends React.Component {
+    shouldComponentUpdate(nextProps, nextState) {
 		return React.addons.shallowCompare( this, nextProps, nextState );
-	},
+	}
 
-	render() {
+    render() {
 		return (
 			<Card tagName="article" className="reader__card is-placeholder">
 				<div className="reader__post-header">
@@ -48,7 +48,7 @@ const PostPlaceholder = React.createClass( {
 				</ul>
 			</Card>
 		);
-	},
-} );
+	}
+}
 
 export default PostPlaceholder;

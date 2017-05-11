@@ -1,5 +1,6 @@
 // External dependencies
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import times from 'lodash/times';
 import trimStart from 'lodash/trimStart';
@@ -39,16 +40,17 @@ import { recordAction, recordFollow, recordGaEvent, recordTrack } from 'reader/s
 
 const initialLoadFeedCount = 20;
 
-const FollowingEdit = React.createClass( {
-	mixins: [ URLSearch ],
+const FollowingEdit = createReactClass({
+    displayName: 'FollowingEdit',
+    mixins: [ URLSearch ],
 
-	propTypes: {
+    propTypes: {
 		initialFollowUrl: React.PropTypes.string,
 		search: React.PropTypes.string,
 		userSettings: React.PropTypes.object,
 	},
 
-	getInitialState: function() {
+    getInitialState: function() {
 		return Object.assign(
 			{
 				notices: [],
@@ -58,15 +60,15 @@ const FollowingEdit = React.createClass( {
 		);
 	},
 
-	getDefaultProps: function() {
+    getDefaultProps: function() {
 		return {
 			initialFollowUrl: '',
 		};
 	},
 
-	smartSetState: smartSetState,
+    smartSetState: smartSetState,
 
-	getStateFromStores: function( props = this.props ) {
+    getStateFromStores: function( props = this.props ) {
 		const newState = {
 			subscriptions: FeedSubscriptionStore.getSubscriptions().list,
 			currentPage: FeedSubscriptionStore.getCurrentPage(),
@@ -91,16 +93,16 @@ const FollowingEdit = React.createClass( {
 		return newState;
 	},
 
-	// Add change listeners to stores
-	componentDidMount: function() {
+    // Add change listeners to stores
+    componentDidMount: function() {
 		FeedSubscriptionStore.on( 'add', this.handleAdd );
 		FeedSubscriptionStore.on( 'change', this.handleChange );
 		FeedSubscriptionStore.on( 'remove', this.handleRemove );
 		window.addEventListener( 'resize', this.handleResize );
 	},
 
-	// Remove change listers from stores
-	componentWillUnmount: function() {
+    // Remove change listers from stores
+    componentWillUnmount: function() {
 		FeedSubscriptionStore.clearErrors();
 		FeedSubscriptionStore.off( 'add', this.handleAdd );
 		FeedSubscriptionStore.off( 'change', this.handleChange );
@@ -108,11 +110,11 @@ const FollowingEdit = React.createClass( {
 		window.removeEventListener( 'resize', this.handleResize );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+    componentWillReceiveProps: function( nextProps ) {
 		this.smartSetState( this.getStateFromStores( nextProps ) );
 	},
 
-	searchSubscriptions: function( subscriptions, phrase ) {
+    searchSubscriptions: function( subscriptions, phrase ) {
 		return subscriptions.filter( function( item ) {
 			const feed = FeedStore.get( item.get( 'feed_ID' ) ),
 				site = SiteStore.get( item.get( 'blog_ID' ) ),
@@ -128,7 +130,7 @@ const FollowingEdit = React.createClass( {
 		}, this );
 	},
 
-	sortSubscriptions: function( subscriptions, sortOrder ) {
+    sortSubscriptions: function( subscriptions, sortOrder ) {
 		if ( ! subscriptions ) {
 			return;
 		}
@@ -149,7 +151,7 @@ const FollowingEdit = React.createClass( {
 			.reverse();
 	},
 
-	handleAdd: function( newSubscription ) {
+    handleAdd: function( newSubscription ) {
 		let newState = {
 			isAttemptingFollow: false,
 			isAddingOpen: false,
@@ -164,26 +166,26 @@ const FollowingEdit = React.createClass( {
 		this.setState( newState );
 	},
 
-	handleChange: function() {
+    handleChange: function() {
 		this.smartSetState( this.getStateFromStores() );
 	},
 
-	handleRemove: function( url ) {
+    handleRemove: function( url ) {
 		this.setState( { lastUnfollow: url } );
 	},
 
-	handleResize: debounce( function() {
+    handleResize: debounce( function() {
 		this.setState( { windowWidth: this.getWindowWidth() } );
 	}, 500 ),
 
-	handleSortOrderChange: function( newSortOrder ) {
+    handleSortOrderChange: function( newSortOrder ) {
 		this.setState( {
 			sortOrder: newSortOrder,
 			subscriptions: this.sortSubscriptions( this.state.subscriptions, newSortOrder ),
 		} );
 	},
 
-	handleNotificationSettingsOpen: function( cardKey ) {
+    handleNotificationSettingsOpen: function( cardKey ) {
 		let openCards = this.state.openCards;
 		if ( ! openCards ) {
 			openCards = Immutable.List(); // eslint-disable-line new-cap
@@ -193,7 +195,7 @@ const FollowingEdit = React.createClass( {
 		this.setState( { openCards: newOpenCards } );
 	},
 
-	handleNotificationSettingsClose: function( cardKey ) {
+    handleNotificationSettingsClose: function( cardKey ) {
 		const openCards = this.state.openCards;
 		if ( ! openCards ) {
 			return;
@@ -205,7 +207,7 @@ const FollowingEdit = React.createClass( {
 		this.setState( { openCards: newOpenCards } );
 	},
 
-	handleFeedExport( fileName ) {
+    handleFeedExport( fileName ) {
 		this.dismissFeedExportNotice();
 		if ( this.state.feedExportError ) {
 			this.dismissFeedImportExportError();
@@ -220,7 +222,7 @@ const FollowingEdit = React.createClass( {
 		} );
 	},
 
-	handleFeedExportError( error ) {
+    handleFeedExportError( error ) {
 		this.dismissFeedImportExportError();
 		if ( this.state.feedExport ) {
 			this.dismissFeedExportNotice();
@@ -235,7 +237,7 @@ const FollowingEdit = React.createClass( {
 		} );
 	},
 
-	handleFeedImport( data ) {
+    handleFeedImport( data ) {
 		this.dismissFeedImportNotice();
 		if ( this.state.feedImportError ) {
 			this.dismissFeedImportExportError();
@@ -250,7 +252,7 @@ const FollowingEdit = React.createClass( {
 		} );
 	},
 
-	handleFeedImportError( error ) {
+    handleFeedImportError( error ) {
 		this.dismissFeedImportExportError();
 		if ( this.state.feedImport ) {
 			this.dismissFeedImportNotice();
@@ -265,7 +267,7 @@ const FollowingEdit = React.createClass( {
 		} );
 	},
 
-	fetchNextPage: function() {
+    fetchNextPage: function() {
 		if ( this.state.isLastPage ) {
 			return;
 		}
@@ -273,15 +275,15 @@ const FollowingEdit = React.createClass( {
 		FeedSubscriptionActions.fetchNextPage();
 	},
 
-	getSubscriptionRef: function( subscription ) {
+    getSubscriptionRef: function( subscription ) {
 		return 'subscription-' + subscription.get( 'ID' );
 	},
 
-	getWindowWidth: function() {
+    getWindowWidth: function() {
 		return typeof window !== 'undefined' && window.innerWidth;
 	},
 
-	renderSubscription: function( subscription ) {
+    renderSubscription: function( subscription ) {
 		const subscriptionKey = this.getSubscriptionRef( subscription );
 		const isEmailBlocked = this.props.userSettings.getSetting(
 			'subscription_delivery_email_blocked'
@@ -300,14 +302,14 @@ const FollowingEdit = React.createClass( {
 		);
 	},
 
-	renderLoadingPlaceholders: function() {
+    renderLoadingPlaceholders: function() {
 		var count = this.state.subscriptions.size ? 10 : initialLoadFeedCount;
 		return times( count, function( i ) {
 			return <SubscriptionPlaceholder key={ 'placeholder-' + i } />;
 		} );
 	},
 
-	dismissError: function( event ) {
+    dismissError: function( event ) {
 		event.preventDefault();
 
 		// Call originating store and mark error as dismissed
@@ -318,7 +320,7 @@ const FollowingEdit = React.createClass( {
 		recordTrack( 'calypso_reader_follow_error_dismissed' );
 	},
 
-	handleNewSubscriptionSearch: function( searchString ) {
+    handleNewSubscriptionSearch: function( searchString ) {
 		// Clear the last follow error if the search box is empty
 		if ( this.state.lastError ) {
 			this.setState( { isAttemptingFollow: false } );
@@ -332,7 +334,7 @@ const FollowingEdit = React.createClass( {
 		}
 	},
 
-	dismissFeedExportNotice() {
+    dismissFeedExportNotice() {
 		const notices = this.state.notices;
 		remove( notices, f => f === 'renderFeedExportNotice' );
 		this.setState( {
@@ -341,7 +343,7 @@ const FollowingEdit = React.createClass( {
 		} );
 	},
 
-	dismissFeedImportNotice() {
+    dismissFeedImportNotice() {
 		const notices = this.state.notices;
 		remove( notices, f => f === 'renderFeedImportNotice' );
 		this.setState( {
@@ -350,7 +352,7 @@ const FollowingEdit = React.createClass( {
 		} );
 	},
 
-	dismissFeedImportExportError() {
+    dismissFeedImportExportError() {
 		const notices = this.state.notices;
 		remove( notices, f => f === 'renderFeedImportExportError' );
 		this.setState( {
@@ -360,7 +362,7 @@ const FollowingEdit = React.createClass( {
 		} );
 	},
 
-	handleNewSubscriptionSearchClose: function() {
+    handleNewSubscriptionSearchClose: function() {
 		this.toggleAddSite();
 
 		if (
@@ -372,13 +374,13 @@ const FollowingEdit = React.createClass( {
 		}
 	},
 
-	handleFollow: function( newUrl ) {
+    handleFollow: function( newUrl ) {
 		this.toggleAddSite();
 		this.setState( { isAttemptingFollow: true } );
 		recordFollow( newUrl );
 	},
 
-	renderUnfollowError: function() {
+    renderUnfollowError: function() {
 		if (
 			! this.state.lastError ||
 			this.state.lastError.errorType !== FeedSubscriptionErrorTypes.UNABLE_TO_UNFOLLOW
@@ -401,7 +403,7 @@ const FollowingEdit = React.createClass( {
 		);
 	},
 
-	renderFollowError: function() {
+    renderFollowError: function() {
 		if (
 			! this.state.lastError ||
 			this.state.lastError.errorType !== FeedSubscriptionErrorTypes.UNABLE_TO_FOLLOW
@@ -431,7 +433,7 @@ const FollowingEdit = React.createClass( {
 		);
 	},
 
-	renderFeedExportNotice() {
+    renderFeedExportNotice() {
 		const feedExport = this.state.feedExport;
 		if ( ! feedExport ) {
 			return null;
@@ -449,7 +451,7 @@ const FollowingEdit = React.createClass( {
 		);
 	},
 
-	renderFeedImportNotice() {
+    renderFeedImportNotice() {
 		const feedImport = this.state.feedImport;
 		if ( ! feedImport ) {
 			return null;
@@ -477,7 +479,7 @@ const FollowingEdit = React.createClass( {
 		);
 	},
 
-	renderFeedImportExportError() {
+    renderFeedImportExportError() {
 		const error = this.state.feedImportError || this.state.feedExportError;
 		if ( ! error ) {
 			return null;
@@ -500,15 +502,15 @@ const FollowingEdit = React.createClass( {
 		);
 	},
 
-	refresh() {
+    refresh() {
 		location.reload();
 	},
 
-	toggleAddSite: function() {
+    toggleAddSite: function() {
 		this.refs[ 'feed-search' ].focus();
 	},
 
-	toggleSearching() {
+    toggleSearching() {
 		var isSearching = ! this.state.isSearching;
 		this.setState( {
 			isSearching: isSearching,
@@ -518,11 +520,11 @@ const FollowingEdit = React.createClass( {
 		}
 	},
 
-	renderNotices() {
+    renderNotices() {
 		return this.state.notices.map( funcName => this[ funcName ]() );
 	},
 
-	render: function() {
+    render: function() {
 		let subscriptions = this.state.subscriptions,
 			subscriptionsToDisplay = [],
 			searchPlaceholder = '',
@@ -645,6 +647,6 @@ const FollowingEdit = React.createClass( {
 			</ReaderMain>
 		);
 	},
-} );
+});
 
 export default localize( FollowingEdit );

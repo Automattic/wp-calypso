@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 var PureRenderMixin = require( 'react-pure-render/mixin' );
 
@@ -17,7 +18,7 @@ import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import cssSafeUrl from 'lib/css-safe-url';
 
 export default localize(
-	React.createClass( {
+	createReactClass({
 		displayName: 'FeedFeatured',
 
 		mixins: [ PureRenderMixin ],
@@ -146,5 +147,5 @@ export default localize(
 				</Card>
 			);
 		},
-	} )
+	})
 );
