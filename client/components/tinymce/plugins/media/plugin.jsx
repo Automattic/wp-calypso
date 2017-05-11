@@ -184,6 +184,18 @@ function mediaButton( editor ) {
 			let mediaHasCaption = false;
 			let captionNode = null;
 
+			// If image is deleted in image editor, we delete it in the post/page editor.
+			if ( media && media.status === 'deleted' ) {
+				captionNode = editor.dom.getParent( img, 'div.mceTemp' );
+				if ( captionNode ) {
+					editor.$( captionNode ).remove();
+				} else {
+					editor.$( img ).remove();
+				}
+				editor.nodeChanged();
+				return;
+			}
+
 			// If image is edited in image editor, we mark it as dirty and update it in post/page editor.
 			if ( media && media.isDirty ) {
 				if (
