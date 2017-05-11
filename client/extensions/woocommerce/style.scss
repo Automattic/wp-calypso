@@ -12,8 +12,18 @@
 	@import 'components/form-dimensions-input/style';
 }
 
-.store-sidebar__sidebar {
+@keyframes slideInFromLeft {
+	0% {
+		transform: translateX(-273px);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+
+.sidebar.store-sidebar__sidebar {
 	display: block;
+	animation: 1s ease-out 0s 1 slideInFromLeft;
 
 	.store-sidebar__ground-control {
 		align-items: center;
