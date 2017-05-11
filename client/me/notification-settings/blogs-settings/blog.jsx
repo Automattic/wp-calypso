@@ -26,7 +26,7 @@ class BlogSettings extends Component {
 		onSaveToAll: PropTypes.func.isRequired
 	};
 
-	state = { isExpanded: false	};
+	state = { isExpanded: false };
 
 	onToggle = () => {
 		const isExpanded = ! this.state.isExpanded;

@@ -4,18 +4,17 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { noop, sortBy } from 'lodash';
 import Immutable from 'immutable';
 
 /**
  * Internal dependencies
  */
-import { getSites } from 'state/selectors';
+import { getSites, getPrimarySiteId } from 'state/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import Blog from './blog';
 import InfiniteList from 'components/infinite-list';
 import Placeholder from './placeholder';
-import QuerySites from 'components/data/query-sites';
 import config from 'config';
 
 const createPlaceholder = () => <Placeholder />;
@@ -37,12 +36,7 @@ class BlogsSettings extends Component {
 		const { sites, translate } = this.props;
 
 		if ( ! sites || ! this.props.devices.initialized || ! this.props.settings ) {
-			return (
-				<div>
-					<QuerySites allSites />
-					<Placeholder />
-				</div>
-			);
+			return <Placeholder />;
 		}
 
 		if ( sites.length === 0 ) {
@@ -90,8 +84,11 @@ class BlogsSettings extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	sites: getSites( state )
-} );
+const mapStateToProps = state => {
+	const primarySiteId = getPrimarySiteId( state );
+	return {
+		sites: sortBy( getSites( state ), site => site.ID !== primarySiteId )
+	};
+};
 
 export default connect( mapStateToProps )( localize( BlogsSettings ) );

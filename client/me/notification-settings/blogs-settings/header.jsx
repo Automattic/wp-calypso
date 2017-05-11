@@ -75,9 +75,11 @@ class BlogSettingsHeader extends PureComponent {
 					<em>{ this.getLegend() }</em>
 				</div>
 				{ ! this.props.disableToggle
-					? <div className="blogs-settings__header-expand">
-							<a className={ 'noticon noticon-' + ( this.state.isExpanded ? 'collapse' : 'expand' ) }></a>
-						</div>
+					? (
+							<div className="blogs-settings__header-expand">
+								<a className={ 'noticon noticon-' + ( this.state.isExpanded ? 'collapse' : 'expand' ) }></a>
+							</div>
+						)
 					: null }
 			</header>
 		);
