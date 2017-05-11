@@ -24,14 +24,17 @@ class PaymentMethodRow extends Component {
 		const { method } = this.props;
 
 		return (
-			<tr>
+			<tr className="payments__method-row">
 				<ListTd>
-					{ method.suggested && ( <span>Suggested Method</span> ) }
-					{ method.name }
+					{
+						method.suggested &&
+						( <p className="payments__method-suggested">Suggested Method</p> )
+					}
+					<p>{ method.name }</p>
 				</ListTd>
 				<ListTd>
-					{ method.fee }
-					<a href={ method.information }>More Information</a>
+					<p>{ method.fee }</p>
+					<p><a href={ method.information }>More Information</a></p>
 				</ListTd>
 				<ListTd>
 					<Button>Set Up</Button>

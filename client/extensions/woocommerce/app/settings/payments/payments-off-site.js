@@ -34,7 +34,7 @@ class SettingsPaymentsOffSite extends Component {
 
 	renderMethodRow = ( method ) => {
 		return (
-			<PaymentMethodRow method={ method } />
+			<PaymentMethodRow key={ method.name } method={ method } />
 		);
 	}
 
@@ -54,9 +54,9 @@ class SettingsPaymentsOffSite extends Component {
 					} />
 					<ListTable>
 						<ListHeader>
-							<ListTd width="20">Method</ListTd>
-							<ListTd width="60">Fees</ListTd>
-							<ListTd width="20"></ListTd>
+							<ListTd width="30">Method</ListTd>
+							<ListTd width="45">Fees</ListTd>
+							<ListTd width="25"></ListTd>
 						</ListHeader>
 						<ListRows>
 							{ methods && methods.map( ( m ) => this.renderMethodRow( m ) ) }
