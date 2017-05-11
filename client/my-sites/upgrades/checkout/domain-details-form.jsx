@@ -424,16 +424,13 @@ export default React.createClass( {
 				'domain-details': true,
 				selected: true,
 				'only-google-apps-details': needsOnlyGoogleAppsDetails
-			} ),
-			titleOptions = {
-				context: 'Domain contact information page'
-			};
+			} );
 
 		let title;
 		if ( needsOnlyGoogleAppsDetails ) {
-			title = this.translate( 'G Suite Account Information', titleOptions );
+			title = this.translate( 'G Suite Account Information' );
 		} else {
-			title = this.translate( 'Domain Contact Information', titleOptions );
+			title = this.translate( 'Domain Contact Information' );
 		}
 
 		return (
