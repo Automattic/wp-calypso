@@ -108,6 +108,7 @@ export isAccountRecoveryResetOptionsReady from './is-account-recovery-reset-opti
 export isAccountRecoveryUserDataReady from './is-account-recovery-user-data-ready';
 export isActivatingJetpackJumpstart from './is-activating-jetpack-jumpstart';
 export isActivatingJetpackModule from './is-activating-jetpack-module';
+export isAmbiguousThemeFilterTerm from './is-ambiguous-theme-filter-term';
 export isAutomatedTransferActive from './is-automated-transfer-active';
 export isAutomatedTransferFailed from './is-automated-transfer-failed';
 export isDeactivatingJetpackJumpstart from './is-deactivating-jetpack-jumpstart';
