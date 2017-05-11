@@ -108,6 +108,7 @@ export isAccountRecoveryResetOptionsReady from './is-account-recovery-reset-opti
 export isAccountRecoveryUserDataReady from './is-account-recovery-user-data-ready';
 export isActivatingJetpackJumpstart from './is-activating-jetpack-jumpstart';
 export isActivatingJetpackModule from './is-activating-jetpack-module';
+export isAmbiguousThemeFilterTerm from './is-ambiguous-theme-filter-term';
 export isAutomatedTransferActive from './is-automated-transfer-active';
 export isAutomatedTransferFailed from './is-automated-transfer-failed';
 export isDeactivatingJetpackJumpstart from './is-deactivating-jetpack-jumpstart';
@@ -162,6 +163,7 @@ export isSiteBlocked from './is-site-blocked';
 export isSiteOnFreePlan from './is-site-on-free-plan';
 export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
 export isSiteUpgradeable from './is-site-upgradeable';
+export isValidThemeFilterTerm from './is-valid-theme-filter-term';
 export isVipSite from './is-vip-site';
 export isTransientMedia from './is-transient-media';
 export isTracking from './is-tracking';
