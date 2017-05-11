@@ -17,6 +17,12 @@ class PostSelectorExample extends Component {
 		selectedPostId: null,
 	};
 
+	toggleTypeLabels = () => {
+		this.setState( {
+			showTypeLabels: ! this.state.showTypeLabels
+		} );
+	};
+
 	setSelected = ( post ) => {
 		this.setState( {
 			selectedPostId: post.ID,
@@ -32,7 +38,7 @@ class PostSelectorExample extends Component {
 					<input
 						type="checkbox"
 						checked={ this.state.showTypeLabels }
-						onChange={ () => this.setState( { showTypeLabels: ! this.state.showTypeLabels } ) } />
+						onChange={ this.toggleTypeLabels } />
 					<span>Show Type Labels</span>
 				</FormLabel>
 				<PostSelector
