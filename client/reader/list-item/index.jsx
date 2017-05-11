@@ -9,12 +9,12 @@ import classnames from 'classnames';
  */
 import Card from 'components/card/compact';
 
-const ListItem = React.createClass({
-    shouldComponentUpdate: function(nextProps, nextState) {
-        return React.addons.shallowCompare(this, nextProps, nextState);
-    },
+const ListItem = React.createClass( {
+	shouldComponentUpdate: function( nextProps, nextState ) {
+		return React.addons.shallowCompare( this, nextProps, nextState );
+	},
 
-    render() {
+	render() {
 		const classes = classnames( 'reader-list-item__card', this.props.className );
 		return (
 			<Card className={ classes }>
@@ -22,6 +22,6 @@ const ListItem = React.createClass({
 			</Card>
 		);
 	},
-});
+} );
 
 export default ListItem;

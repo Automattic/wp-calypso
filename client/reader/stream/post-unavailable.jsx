@@ -10,8 +10,8 @@ import config from 'config';
  */
 import Card from 'components/card';
 
-var PostUnavailable = React.createClass({
-    componentWillMount: function() {
+var PostUnavailable = React.createClass( {
+	componentWillMount: function() {
 		this.errors = {
 			unauthorized: this.props.translate(
 				'This is a post on a private site that you’re following, but not currently a member of. Please request membership to display these posts in Reader.'
@@ -20,11 +20,11 @@ var PostUnavailable = React.createClass({
 		};
 	},
 
-    shouldComponentUpdate: function(nextProps, nextState) {
-        return React.addons.shallowCompare(this, nextProps, nextState);
-    },
+	shouldComponentUpdate: function( nextProps, nextState ) {
+		return React.addons.shallowCompare( this, nextProps, nextState );
+	},
 
-    render: function() {
+	render: function() {
 		var errorMessage = this.errors[ this.props.post.errorCode || 'default' ] || this.errors.default;
 
 		if ( this.props.post.statusCode === 404 ) {
@@ -51,6 +51,6 @@ var PostUnavailable = React.createClass({
 			</Card>
 		);
 	},
-});
+} );
 
 export default localize( PostUnavailable );
