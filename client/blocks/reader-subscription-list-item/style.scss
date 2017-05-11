@@ -38,12 +38,7 @@
 		max-height: 16px * 1.4;
 	}
 
-	&::after{
-		height: 16px * 1.4;
-		top: auto;
-	}
-
-	&:not(.is-placeholder) {
+	&:not( .is-placeholder )::after {
 		&::after {
 			@include long-content-fade( $size: 20% );
 		}
@@ -97,8 +92,10 @@
 	width: 100%;
 	word-break: break-all;
 
-	&::after{
-		@include long-content-fade( $size: 20% );
+	&:not( .is-placeholder )::after {
+		&::after {
+			@include long-content-fade( $size: 20% );
+		}
 	}
 }
 
