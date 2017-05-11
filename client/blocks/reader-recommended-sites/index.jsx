@@ -59,7 +59,7 @@ export class RecommendedSites extends React.PureComponent {
 											<Gridicon icon="cross" size={ 18 } />
 										</Button>
 									</div>
-									<ConnectedSubscriptionListItem siteId={ siteId } />
+									<ConnectedSubscriptionListItem siteId={ siteId } showEmailSettings={ false } />
 								</li> );
 							}
 						)
