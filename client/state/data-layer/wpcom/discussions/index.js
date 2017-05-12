@@ -3,6 +3,7 @@
  */
 import wpcom from 'lib/wp';
 import debug from 'debug';
+import { mergeHandlers } from 'state/data-layer/utils';
 import {
 	DISCUSSIONS_REQUEST,
 	DISCUSSIONS_ITEM_LIKE_REQUEST,
@@ -22,7 +23,7 @@ import {
 	requestCommentUnLike
 } from './likes';
 import requestCommentStatusUpdate from './status';
-import requestCommentContentUpdate from './content';
+import content from './content';
 
 /**
  * Module variables
@@ -60,10 +61,15 @@ export const requestDiscussions = ( { dispatch }, action ) => {
 		.catch( error => dispatch( failPostCommentsRequest( siteId, postId, status, error ) ) );
 };
 
-export default {
+const discussions = {
 	[ DISCUSSIONS_REQUEST ]: [ requestDiscussions ],
 	[ DISCUSSIONS_ITEM_LIKE_REQUEST ]: [ requestCommentLike ],
 	[ DISCUSSIONS_ITEM_UNLIKE_REQUEST ]: [ requestCommentUnLike ],
 	[ DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST ]: [ requestCommentStatusUpdate ],
 	[ DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUEST ]: [ requestCommentContentUpdate ]
 };
+
+export default mergeHandlers(
+	content,
+	discussions,
+);
