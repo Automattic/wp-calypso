@@ -10,11 +10,11 @@ export const CommentActions = ( {
 } ) =>
 	<div className="comment-detail__actions">
 		<div className="comment-detail__action-like">
-			<Gridicon icon="thumbs-up" size={ 24 } />
+			<Gridicon icon="star-outline" size={ 24 } />
 			<span>{ translate( 'Like' ) }</span>
 		</div>
 		<div className="comment-detail__action-approve">
-			<Gridicon icon="checkmark-circle" size={ 24 } />
+			<Gridicon icon="checkmark" size={ 24 } />
 			<span>{ translate( 'Approve' ) }</span>
 		</div>
 		<div className="comment-detail__action-edit">
