@@ -58,15 +58,26 @@ import {
 
 class PostShare extends Component {
 	static propTypes = {
+		// parent prps
+		post: PropTypes.object,
+		siteId: PropTypes.number,
+
+		// connect prps
+		businessDiscountedRawPrice: PropTypes.number,
+		businessRawPrice: PropTypes.number,
 		connections: PropTypes.array,
+		failed: PropTypes.bool,
+		hasFetchedConnections: PropTypes.bool,
+		hasRepublicizeFeature: PropTypes.bool,
+		hasRepublicizeSchedulingFeature: PropTypes.bool,
 		isPublicizeEnabled: PropTypes.bool,
 		planSlug: PropTypes.string,
-		post: PropTypes.object,
 		postId: PropTypes.number,
 		requestConnections: PropTypes.func,
-		site: PropTypes.object,
-		siteId: PropTypes.number,
+		requesting: PropTypes.bool,
 		siteSlug: PropTypes.string,
+		success: PropTypes.bool,
+		userCurrency: PropTypes.string,
 	};
 
 	static defaultProps = {
