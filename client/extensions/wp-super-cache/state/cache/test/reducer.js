@@ -13,7 +13,6 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
 	WP_SUPER_CACHE_TEST_CACHE,
-	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../../action-types';
 import {
@@ -156,28 +155,6 @@ describe( 'reducer', () => {
 			expect( state.testing ).to.eql( {
 				[ primarySiteId ]: true,
 				[ secondarySiteId ]: true,
-			} );
-		} );
-
-		it( 'should set testing value to false if request finishes successfully', () => {
-			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
-				siteId: primarySiteId,
-			} );
-
-			expect( state.testing ).to.eql( {
-				[ primarySiteId ]: false,
-			} );
-		} );
-
-		it( 'should set testing value to false if request finishes with failure', () => {
-			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_TEST_CACHE_FAILURE,
-				siteId: primarySiteId,
-			} );
-
-			expect( state.testing ).to.eql( {
-				[ primarySiteId ]: false,
 			} );
 		} );
 

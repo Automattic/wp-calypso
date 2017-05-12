@@ -41,17 +41,6 @@ export function getCacheDeleteStatus( state, siteId ) {
 }
 
 /**
- * Returns true if we are testing the cache for the specified site ID, false otherwise.
- *
- * @param  {Object}  state Global state tree
- * @param  {Number}  siteId Site ID
- * @return {Boolean} Whether the cache is being tested
- */
-export function isTestingCache( state, siteId ) {
-	return get( getCacheState( state ), [ 'testing', siteId ], false );
-}
-
-/**
  * Returns the cache test results for the specified site ID.
  *
  * @param  {Object} state Global state tree

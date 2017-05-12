@@ -7,8 +7,6 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
-	WP_SUPER_CACHE_TEST_CACHE,
-	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../action-types';
 
@@ -45,20 +43,6 @@ const deleteStatus = createReducer( {}, {
 } );
 
 /**
- * Returns the updated cache testing state after an action has been dispatched.
- * Testing state tracks whether the cache test for a site is currently in progress.
- *
- * @param  {Object} state Current cache testing state
- * @param  {Object} action Action object
- * @return {Object} Updated cache testing state
- */
-const testing = createReducer( {}, {
-	[ WP_SUPER_CACHE_TEST_CACHE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-	[ WP_SUPER_CACHE_TEST_CACHE_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ WP_SUPER_CACHE_TEST_CACHE_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
-} );
-
-/**
  * Tracks the cache test results for a particular site.
  *
  * @param  {Object} state Current cache test results
@@ -72,5 +56,4 @@ const items = createReducer( {}, {
 export default combineReducersWithPersistence( {
 	deleteStatus,
 	items,
-	testing,
 } );
