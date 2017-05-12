@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import escapeRegexp from 'escape-string-regexp';
-import { reverse, sortBy, trimStart } from 'lodash';
+import { reverse, sortBy, trimStart, isEmpty } from 'lodash';
 import page from 'page';
 
 /**
@@ -76,7 +76,7 @@ class FollowingManageSubscriptions extends Component {
 	};
 
 	render() {
-		const { follows, width, translate, query, followsCount, sortOrder, feeds } = this.props;
+		const { width, translate, query, followsCount, sortOrder, feeds } = this.props;
 		const filteredFollows = this.filterFollowsByQuery( query );
 		const sortedFollows = this.sortFollows( filteredFollows, sortOrder );
 
@@ -113,7 +113,7 @@ class FollowingManageSubscriptions extends Component {
 					</div>
 				</div>
 				<div className="following-manage__subscriptions-list">
-					{ follows &&
+					{ ! isEmpty( sortedFollows ) &&
 						<SitesWindowScroller
 							sites={ sortedFollows }
 							width={ width }
@@ -121,6 +121,13 @@ class FollowingManageSubscriptions extends Component {
 							forceRefresh={ [ feeds, sortedFollows ] }
 							windowScrollerRef={ this.props.windowScrollerRef }
 						/> }
+					{ isEmpty( sortedFollows ) &&
+						<p>
+							{ translate( 'Sorry, no sites match {{strong}}%s.{{/strong}}', {
+								components: { strong: <strong /> },
+								args: query,
+							} ) }
+						</p> }
 				</div>
 			</div>
 		);

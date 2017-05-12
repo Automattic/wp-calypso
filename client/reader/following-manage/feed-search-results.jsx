@@ -25,9 +25,9 @@ const FollowingManageSearchFeedsResults = ( {
 	searchResultsCount,
 	query,
 } ) => {
-	const isEmpty = !! ( query && searchResults.length === 0 );
+	const isEmpty = !! ( query && searchResults && searchResults.length === 0 );
 	const classNames = classnames( 'following-manage__search-results', {
-		'is-empty': !! isEmpty
+		'is-empty': !! isEmpty,
 	} );
 
 	if ( ! searchResults ) {
@@ -36,10 +36,10 @@ const FollowingManageSearchFeedsResults = ( {
 		return (
 			<div className={ classNames }>
 				<p>
-					{ translate(
-						'Sorry, no sites match {{strong}}%s.{{/strong}}',
-						{ components: { strong: <strong /> }, args: query }
-					) }
+					{ translate( 'Sorry, no sites match {{strong}}%s.{{/strong}}', {
+						components: { strong: <strong /> },
+						args: query,
+					} ) }
 				</p>
 			</div>
 		);
