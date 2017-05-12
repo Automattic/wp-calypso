@@ -22,7 +22,7 @@ import ProductForm from './product-form';
 class ProductCreate extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
 		} ),
@@ -40,7 +40,15 @@ class ProductCreate extends React.Component {
 			} );
 		}
 
-		this.props.fetchProductCategories( siteId );
+		if ( siteId ) {
+			this.props.fetchProductCategories( siteId );
+		}
+	}
+
+	componentWillReceiveProps( newProps ) {
+		if ( newProps.siteId !== this.props.siteId ) {
+			this.props.fetchProductCategories( newProps.siteId );
+		}
 	}
 
 	componentWillUnmount() {
