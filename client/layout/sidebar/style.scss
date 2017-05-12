@@ -437,3 +437,27 @@ form.sidebar__button {
 		-webkit-overflow-scrolling: touch;
 	}
 }
+
+.sidebar__menu {
+	.is-placeholder {
+		cursor: default;
+		pointer-events: none;
+
+		.gridicon, span, .sidebar__button {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: lighten( $gray, 25% );
+			color: transparent;
+		}
+
+		.gridicon {
+			fill: transparent;
+			stroke: transparent;
+		}
+
+		a {
+			&:after {
+				display: none;
+			}
+		}
+	}
+}
