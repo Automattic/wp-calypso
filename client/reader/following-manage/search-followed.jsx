@@ -14,11 +14,11 @@ class FollowingManageSearchFollowed extends Component {
 	static propTypes = {
 		initialValue: PropTypes.string,
 		onSearch: PropTypes.func,
-	}
+	};
 
 	static defaultProps = {
 		onSearch: noop,
-	}
+	};
 
 	render() {
 		return (
@@ -34,7 +34,8 @@ class FollowingManageSearchFollowed extends Component {
 				initialValue={ this.props.initialValue }
 				delaySearch={ true }
 				delayTimeout={ 100 }
-				hideOpenIcon={ true } />
+				hideOpenIcon={ true }
+			/>
 		);
 	}
 }

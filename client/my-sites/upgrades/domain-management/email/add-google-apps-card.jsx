@@ -32,9 +32,9 @@ const AddGoogleAppsCard = React.createClass( {
 		let price = gapps && gapps.cost_display;
 
 		// Gapps price is stored annually but we'd like to show a monthly price
-		price = price.replace( /(\d+\.?\d+)/, ( val ) => {
+		price = price.replace( /(\d+[.,]?\d+)/, ( val ) => {
 			const number = ( Math.round( parseFloat( val ) / 10 * 100 ) / 100 );
-			return number % 1 === 0 ? number : number.toFixed( 2 );
+			return number % 1 === 0 ? number : this.numberFormat( number, 2 );
 		} );
 
 		return (

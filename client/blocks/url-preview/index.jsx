@@ -97,10 +97,13 @@ export default function urlPreview( WebPreview ) {
 
 	function mapStateToProps( state ) {
 		const selectedSiteId = getSelectedSiteId( state );
+		// Force https to prevent mixed content errors in the iframe
+		const siteUrl = 'https://' + getSiteSlug( state, selectedSiteId );
+
 		return {
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
-			selectedSiteUrl: 'https://' + getSiteSlug( state, selectedSiteId ),
+			selectedSiteUrl: siteUrl.replace( /::/g, '/' ),
 			selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
 			previewUrl: getPreviewUrl( state ),
 			isDomainOnlySite: isDomainOnlySite( state, selectedSiteId ),

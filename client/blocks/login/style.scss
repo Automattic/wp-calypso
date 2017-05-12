@@ -11,9 +11,19 @@
 		font-weight: 500;
 		margin-bottom: 5px;
 	}
-	input{
+
+	input {
 		margin-bottom: 20px;
+		transition: none;
+
+		&.is-error {
+			margin-bottom: 0;
+		}
 	}
+}
+
+.login__form .form-input-validation {
+	margin-bottom: 5px;
 }
 
 .login__form-action {
@@ -24,9 +34,11 @@
 	}
 }
 
-.login__form-header-title {
+.login__form-header,
+.two-factor-authentication__header {
 	font-size: 22px;
-	margin-bottom: 16px;
+	margin-bottom: 24px;
+	margin-top: 16px;
 	text-align: center;
 }
 
@@ -36,6 +48,7 @@
 	input {
 		margin-right: 10px;
 	}
+
 	label{
 		font-size: 14px;
 	}
@@ -52,4 +65,10 @@
 	.gridicon{
 		vertical-align: text-bottom;
 	}
+}
+
+.two-factor-authentication__auth-code-preview {
+	width: 100%;
+	display: block;
+	margin-bottom: 16px;
 }

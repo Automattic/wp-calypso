@@ -19,6 +19,7 @@ import ResetPasswordForm from 'account-recovery/reset-password-form';
 import ResetPasswordEmailForm from 'account-recovery/reset-password-email-form';
 import ResetPasswordSmsForm from 'account-recovery/reset-password-sms-form';
 import ResetPasswordConfirmForm from 'account-recovery/reset-password-confirm-form';
+import ResetPasswordSucceeded from 'account-recovery/reset-password-succeeded';
 import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'account-recovery/constants';
 import {
 	isAccountRecoveryResetOptionsReady,
@@ -54,6 +55,10 @@ const getPageInfo = ( translate, step ) => {
 		[ STEPS.RESET_PASSWORD_CONFIRM ]: {
 			trackerTitle: 'Account Recovery > New Password',
 			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'New Password' ) ),
+		},
+		[ STEPS.RESET_PASSWORD_SUCCEEDED ]: {
+			trackerTitle: 'Account Recovery > Succeeded',
+			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'Succeeded' ) ),
 		},
 	};
 
@@ -102,6 +107,8 @@ const getForm = ( step ) => {
 			return <ResetPasswordSmsForm />;
 		case STEPS.RESET_PASSWORD_CONFIRM:
 			return <ResetPasswordConfirmForm />;
+		case STEPS.RESET_PASSWORD_SUCCEEDED:
+			return <ResetPasswordSucceeded />;
 	}
 
 	return null;

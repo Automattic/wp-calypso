@@ -8,11 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import {
-	recordAction as statRecordAction,
-	recordGaEvent,
-	recordTrack,
-} from 'reader/stats';
+import { recordAction as statRecordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 
 const SiteEmptyContent = ( { translate } ) => {
@@ -32,24 +28,36 @@ const SiteEmptyContent = ( { translate } ) => {
 
 	if ( isDiscoverEnabled() ) {
 		action = (
-			<a className="empty-content__action button is-primary"
+			<a
+				className="empty-content__action button is-primary"
 				onClick={ recordAction }
-				href="/discover">{ translate( 'Explore Discover' ) }</a> );
+				href="/discover"
+			>
+				{ translate( 'Explore Discover' ) }
+			</a>
+		);
 	}
 
 	const secondaryAction = (
-		<a className="empty-content__action button"
+		<a
+			className="empty-content__action button"
 			onClick={ recordSecondaryAction }
-			href="/read/search">{ translate( 'Find Sites to Follow' ) }</a> );
+			href="/read/search"
+		>
+			{ translate( 'Find Sites to Follow' ) }
+		</a>
+	);
 
-	return ( <EmptyContent
+	return (
+		<EmptyContent
 			title={ translate( 'No Posts' ) }
 			line={ translate( 'This site has not posted anything yet. Try back later.' ) }
 			action={ action }
 			secondaryAction={ secondaryAction }
 			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
 			illustrationWidth={ 500 }
-			/> );
+		/>
+	);
 };
 
 export default localize( SiteEmptyContent );

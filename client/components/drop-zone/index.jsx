@@ -35,6 +35,7 @@ export const DropZone = React.createClass( {
 		translate: PropTypes.func,
 		showDropZone: PropTypes.func.isRequired,
 		hideDropZone: PropTypes.func.isRequired,
+		dropZoneName: PropTypes.string,
 	},
 
 	getInitialState() {
@@ -54,6 +55,7 @@ export const DropZone = React.createClass( {
 			fullScreen: false,
 			icon: <Gridicon icon="cloud-upload" size={ 48 } />,
 			translate: identity,
+			dropZoneName: null,
 		};
 	},
 
@@ -165,9 +167,9 @@ export const DropZone = React.createClass( {
 	toggleDropZoneReduxState( isVisible ) {
 		if ( this.state.lastVisibleState !== isVisible ) {
 			if ( isVisible ) {
-				this.props.showDropZone();
+				this.props.showDropZone( this.props.dropZoneName );
 			} else {
-				this.props.hideDropZone();
+				this.props.hideDropZone( this.props.dropZoneName );
 			}
 
 			this.setState( {

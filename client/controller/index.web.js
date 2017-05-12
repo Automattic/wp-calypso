@@ -16,7 +16,6 @@ import translatorInvitation from 'layout/community-translator/invitation-utils';
 import { makeLayoutMiddleware } from './shared.js';
 import { getCurrentUser } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
-import sitesFactory from 'lib/sites-list';
 
 /**
  * Re-export
@@ -24,20 +23,21 @@ import sitesFactory from 'lib/sites-list';
 export { setSection } from './shared.js';
 
 const user = userFactory();
-const sites = sitesFactory();
 
-export const ReduxWrappedLayout = ( { store, primary, secondary } ) => (
+export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
 	<ReduxProvider store={ store }>
 		{ getCurrentUser( store.getState() )
 			? <Layout primary={ primary }
 				secondary={ secondary }
 				user={ user }
-				sites={ sites }
 				nuxWelcome={ nuxWelcome }
 				translatorInvitation={ translatorInvitation }
 			/>
-			: <LayoutLoggedOut primary={ primary }
-				secondary={ secondary } />
+			: <LayoutLoggedOut
+				primary={ primary }
+				secondary={ secondary }
+				redirectUri={ redirectUri }
+			/>
 		}
 	</ReduxProvider>
 );

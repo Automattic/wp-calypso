@@ -21,7 +21,6 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
 import FeedFeatured from './featured';
 
 class SiteStream extends React.Component {
-
 	static propTypes = {
 		siteId: React.PropTypes.number.isRequired,
 		className: React.PropTypes.string,
@@ -40,7 +39,7 @@ class SiteStream extends React.Component {
 		if ( typeof window !== 'undefined' ) {
 			window.history.back();
 		}
-	}
+	};
 
 	render() {
 		const { site, feed, featuredStore } = this.props;
@@ -49,16 +48,14 @@ class SiteStream extends React.Component {
 			page.replace( '/read/feeds/' + site.feed_ID );
 		}
 
-		const emptyContent = ( <EmptyContent /> );
-		const title = site
-			? site.name
-			: this.props.translate( 'Loading Site' );
+		const emptyContent = <EmptyContent />;
+		const title = site ? site.name : this.props.translate( 'Loading Site' );
 
 		if ( ( site && site.is_error ) || ( feed && feed.is_error ) ) {
 			return <FeedError sidebarTitle={ title } />;
 		}
 
-		const featuredContent = featuredStore && ( <FeedFeatured store={ featuredStore } /> );
+		const featuredContent = featuredStore && <FeedFeatured store={ featuredStore } />;
 
 		return (
 			<Stream
@@ -76,17 +73,14 @@ class SiteStream extends React.Component {
 				{ ! site && <QueryReaderSite siteId={ this.props.siteId } /> }
 				{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }
 			</Stream>
-
 		);
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const site = getSite( state, ownProps.siteId );
-		return {
-			site: site,
-			feed: site && site.feed_ID && getFeed( state, site.feed_ID ),
-		};
-	}
-)( localize( SiteStream ) );
+export default connect( ( state, ownProps ) => {
+	const site = getSite( state, ownProps.siteId );
+	return {
+		site: site,
+		feed: site && site.feed_ID && getFeed( state, site.feed_ID ),
+	};
+} )( localize( SiteStream ) );

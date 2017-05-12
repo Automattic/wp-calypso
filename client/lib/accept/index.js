@@ -15,6 +15,7 @@ module.exports = function( message, callback, confirmButtonText, cancelButtonTex
 
 	function onClose( result ) {
 		if ( wrapper ) {
+			ReactDom.unmountComponentAtNode( wrapper );
 			document.body.removeChild( wrapper );
 			wrapper = null;
 		}

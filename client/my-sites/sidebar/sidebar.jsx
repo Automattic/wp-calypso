@@ -29,8 +29,15 @@ import JetpackLogo from 'components/jetpack-logo';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { canCurrentUser, getPrimarySiteId, getSites, isDomainOnlySite } from 'state/selectors';
+import {
+	canCurrentUser,
+	getPrimarySiteId,
+	getSites,
+	isDomainOnlySite,
+	isSiteAutomatedTransfer
+} from 'state/selectors';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -38,9 +45,7 @@ import {
 	isJetpackModuleActive,
 	isJetpackSite
 } from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { getStatsPathForTab } from 'lib/route/path';
-import { isATEnabled } from 'lib/automated-transfer';
 import { abtest } from 'lib/abtest';
 
 /**
@@ -54,7 +59,6 @@ export class MySitesSidebar extends Component {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
 		path: PropTypes.string,
-		sites: PropTypes.object,
 		currentUser: PropTypes.object,
 		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
@@ -72,6 +76,7 @@ export class MySitesSidebar extends Component {
 
 	onPreviewSite = ( event ) => {
 		const { site } = this.props;
+		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site' );
 		if ( site.is_previewable && ! event.metaKey && ! event.ctrlKey ) {
 			event.preventDefault();
 			this.props.setLayoutFocus( 'preview' );
@@ -97,6 +102,10 @@ export class MySitesSidebar extends Component {
 	};
 
 	isItemLinkSelected( paths ) {
+		if ( this.props.isPreviewShowing ) {
+			return false;
+		}
+
 		if ( ! Array.isArray( paths ) ) {
 			paths = [ paths ];
 		}
@@ -126,7 +135,7 @@ export class MySitesSidebar extends Component {
 			<SidebarItem
 				tipTarget="menus"
 				label={ this.props.translate( 'Stats' ) }
-				className={ this.itemLinkClass( '/stats', 'stats' ) }
+				className={ this.itemLinkClass( [ '/stats', '/store/stats' ], 'stats' ) }
 				link={ statsLink }
 				onNavigate={ this.onNavigate }
 				icon="stats-alt">
@@ -193,13 +202,10 @@ export class MySitesSidebar extends Component {
 
 	plugins() {
 		const { site } = this.props;
+		const addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
 		let pluginsLink = '/plugins' + this.props.siteSuffix;
-		let addPluginsLink;
 
-		if ( this.props.atEnabled ) {
-			addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
-		}
-
+		// TODO: we can probably rip this out
 		if ( ! config.isEnabled( 'manage/plugins' ) ) {
 			if ( ! site ) {
 				return null;
@@ -210,12 +216,14 @@ export class MySitesSidebar extends Component {
 			}
 		}
 
+		// checks for manage plugins capability across all sites
 		if ( ! this.props.canManagePlugins ) {
 			return null;
 		}
 
-		if ( ( this.props.siteId && this.props.isJetpack ) || ( ! this.props.siteId && this.props.hasJetpackSites ) ) {
-			addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
+		// if selectedSite and cannot manage, skip plugins section
+		if ( this.props.siteId && ! this.props.canUserManageOptions ) {
+			return null;
 		}
 
 		return (
@@ -247,7 +255,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( this.props.isJetpack && ! this.props.atEnabled ) {
+		if ( this.props.isJetpack && ! this.props.isSiteAutomatedTransfer ) {
 			return null;
 		}
 
@@ -361,10 +369,8 @@ export class MySitesSidebar extends Component {
 			usersLink = site.options.admin_url + 'users.php';
 		}
 
-		if ( site.options && this.props.isJetpack ) {
-			addPeopleLink = ( this.props.isJetpack )
-				? site.options.admin_url + 'user-new.php'
-				: site.options.admin_url + 'users.php?page=wpcom-invite-users';
+		if ( ! config.isEnabled( 'jetpack/invites' ) && ! this.props.isSiteAutomatedTransfer && site.options && this.props.isJetpack ) {
+			addPeopleLink = site.options.admin_url + 'user-new.php';
 		}
 
 		return (
@@ -556,7 +562,7 @@ export class MySitesSidebar extends Component {
 			<Sidebar>
 				<SidebarRegion>
 					<CurrentSite
-						sites={ this.props.sites }
+						isPreviewShowing={ this.props.isPreviewShowing }
 						onClick={ this.onPreviewSite }
 					/>
 					{ this.renderSidebarMenus() }
@@ -586,11 +592,13 @@ function mapStateToProps( state ) {
 	const canManagePlugins = !! getSites( state ).some( ( s ) => (
 		( s.capabilities && s.capabilities.manage_options )
 	) );
+
 	// FIXME: Turn into dedicated selector
 	const hasJetpackSites = getSites( state ).some( s => s.jetpack );
 
+	const isPreviewShowing = getCurrentLayoutFocus( state ) === 'preview';
+
 	return {
-		atEnabled: isATEnabled( site ),
 		canManagePlugins,
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
@@ -602,6 +610,7 @@ function mapStateToProps( state ) {
 		hasJetpackSites,
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
+		isPreviewShowing,
 		isSharingEnabledOnJetpackSite,
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		siteId,

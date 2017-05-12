@@ -13,7 +13,7 @@ export default class Stats extends Component {
 	render() {
 		return (
 			<Main className="woocommerce stats" wideLayout={ true }>
-				<StatsNavigation />
+				<StatsNavigation { ...this.props } />
 			</Main>
 		);
 	}

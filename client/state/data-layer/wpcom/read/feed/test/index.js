@@ -63,18 +63,22 @@ describe( 'wpcom-api', () => {
 				const action = requestFeedSearch( query );
 				const dispatch = sinon.spy();
 				const next = sinon.spy();
-				const apiResponse = { feeds };
+				const apiResponse = { feeds, total: 500 };
 
 				receiveFeeds( { dispatch }, action, next, apiResponse );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(
-					receiveFeedSearch( query, [ {
-						blog_ID: 'IM A BLOG',
-						feed_URL: 'feedUrl',
-						subscribe_URL: 'feedUrl',
-					} ] )
-				);
+					receiveFeedSearch( query,
+						[
+							{
+								blog_ID: 'IM A BLOG',
+								feed_URL: 'feedUrl',
+								subscribe_URL: 'feedUrl',
+							}
+						],
+						200,
+					) );
 			} );
 		} );
 

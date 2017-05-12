@@ -3,169 +3,93 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import FormsButton from 'components/forms/form-button';
-import Card from 'components/card';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormTextInput from 'components/forms/form-text-input';
-import FormCheckbox from 'components/forms/form-checkbox';
-import { loginUser } from 'state/login/actions';
-import Notice from 'components/notice';
-import { createFormAndSubmit } from 'lib/form';
-import { recordTracksEvent } from 'state/analytics/actions';
+import LoginForm from './login-form';
+import { getTwoFactorAuthNonce, getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
+import VerificationCodeForm from './two-factor-authentication/verification-code-form';
+import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
+import { login } from 'lib/paths';
 
-export class Login extends Component {
+class Login extends Component {
 	static propTypes = {
-		loginUser: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
-		loginError: PropTypes.string,
 		redirectLocation: PropTypes.string,
 		title: PropTypes.string,
-	};
-
-	static defaultProps = {
-		title: '',
+		twoFactorAuthType: PropTypes.string,
+		twoFactorEnabled: PropTypes.bool,
+		twoFactorNotificationSent: PropTypes.string,
+		twoStepNonce: PropTypes.string,
 	};
 
 	state = {
-		usernameOrEmail: '',
-		password: '',
-		rememberme: false,
-		submitting: false,
-		errorMessage: '',
+		rememberMe: false,
 	};
 
-	dismissNotice = () => {
-		this.setState( {
-			errorMessage: ''
-		} );
+	componentWillMount = () => {
+		if ( ! this.props.twoStepNonce && this.props.twoFactorAuthType && typeof window !== 'undefined' ) {
+			// Disallow access to the 2FA pages unless the user has received a nonce
+			page( login() );
+		}
 	};
 
-	onChangeField = ( event ) => {
-		const { name, value } = event.target;
-
-		this.setState( { [ name ]: value } );
+	handleValidUsernamePassword = () => {
+		if ( ! this.props.twoFactorEnabled ) {
+			this.rebootAfterLogin();
+		} else {
+			page( login( { twoFactorAuthType: this.props.twoFactorNotificationSent === 'push' ? 'push' : 'code' } ) );
+		}
 	};
 
-	onChangeRememberMe = ( event ) => {
-		const { name, checked } = event.target;
-
-		this.props.recordTracksEvent( 'calypso_login_block_remember_me_change', { new_value: checked } );
-
-		this.setState( { [ name ]: checked } );
+	rebootAfterLogin = () => {
+		window.location.href = this.props.redirectLocation || window.location.origin;
 	};
 
-	onSubmitForm = ( event ) => {
-		event.preventDefault();
-		this.setState( {
-			submitting: true
-		} );
+	renderContent() {
+		const {
+			title,
+			twoFactorAuthType,
+			twoStepNonce,
+		} = this.props;
 
-		this.props.recordTracksEvent( 'calypso_login_block_login_submit' );
+		const {
+			rememberMe,
+		} = this.state;
 
-		this.props.loginUser( this.state.usernameOrEmail, this.state.password ).then( () => {
-			this.props.recordTracksEvent( 'calypso_login_block_login_success' );
-			this.dismissNotice();
-			createFormAndSubmit( config( 'login_url' ), {
-				log: this.state.usernameOrEmail,
-				pwd: this.state.password,
-				redirect_to: this.props.redirectLocation || window.location.origin,
-				rememberme: this.state.rememberme ? 1 : 0,
-			} );
-		} ).catch( errorMessage => {
-			this.props.recordTracksEvent( 'calypso_login_block_login_failure', {
-				error_message: errorMessage
-			} );
-
-			this.setState( {
-				submitting: false,
-				errorMessage
-			} );
-		} );
-	};
-
-	renderNotices() {
-		if ( this.state.errorMessage ) {
+		if ( twoStepNonce && twoFactorAuthType === 'code' ) {
 			return (
-				<Notice status="is-error"
-					text={ this.state.errorMessage }
-					onDismissClick={ this.dismissNotice } />
+				<VerificationCodeForm rememberMe={ rememberMe } onSuccess={ this.rebootAfterLogin } />
 			);
 		}
-	}
 
-	render() {
-		const isDisabled = {};
-		if ( this.state.submitting ) {
-			isDisabled.disabled = true;
+		if ( twoStepNonce && twoFactorAuthType === 'push' ) {
+			return (
+				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } />
+			);
 		}
 
 		return (
-			<div className="login">
+			<LoginForm
+				title={ title }
+				onSuccess={ this.handleValidUsernamePassword } />
+		);
+	}
 
-				{ this.renderNotices() }
-
-				<div className="login__form-header">
-					<div className="login__form-header-title">
-						{ this.props.title }
-					</div>
-				</div>
-
-				<form onSubmit={ this.onSubmitForm }>
-					<Card className="login__form">
-						<div className="login__form-userdata">
-							<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
-								{ this.props.translate( 'Username or Email Address' ) }
-							</label>
-							<FormTextInput
-								className="login__form-userdata-username-input"
-								onChange={ this.onChangeField }
-								id="usernameOrEmail"
-								name="usernameOrEmail"
-								value={ this.state.usernameOrEmail }
-								{ ...isDisabled } />
-							<label htmlFor="password" className="login__form-userdata-username">
-								{ this.props.translate( 'Password' ) }
-							</label>
-							<FormPasswordInput
-								className="login__form-userdata-username-password"
-								onChange={ this.onChangeField }
-								id="password"
-								name="password"
-								value={ this.state.password }
-								{ ...isDisabled } />
-						</div>
-						<div className="login__form-remember-me">
-							<label>
-								<FormCheckbox
-									name="rememberme"
-									checked={ this.state.rememberme }
-									onChange={ this.onChangeRememberMe }
-									{ ...isDisabled } />
-								<span>{ this.props.translate( 'Stay logged in' ) }</span>
-							</label>
-						</div>
-						<div className="login__form-action">
-							<FormsButton primary { ...isDisabled }>
-								{ this.props.translate( 'Log in' ) }
-							</FormsButton>
-						</div>
-					</Card>
-				</form>
+	render() {
+		return (
+			<div>
+				{ this.renderContent() }
 			</div>
 		);
 	}
 }
 
 export default connect(
-	null,
-	{
-		loginUser,
-		recordTracksEvent
-	}
-)( localize( Login ) );
+	( state ) => ( {
+		twoFactorEnabled: isTwoFactorEnabled( state ),
+		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+		twoStepNonce: getTwoFactorAuthNonce( state ),
+	} ),
+)( Login );

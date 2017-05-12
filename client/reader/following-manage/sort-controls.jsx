@@ -1,4 +1,3 @@
-
 /**
  * External dependencies
  */
@@ -12,28 +11,31 @@ import { localize } from 'i18n-calypso';
 import FormSelect from 'components/forms/form-select';
 
 class FollowingManageSortControls extends React.Component {
-
 	static propTypes = {
-		onSelectChange: React.PropTypes.func,
+		onSortChange: React.PropTypes.func,
 		sortOrder: React.PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
-	}
+	};
 
 	static defaultProps = {
-		onSelectChange: noop,
+		onSortChange: noop,
 		sortOrder: 'date-followed',
-	}
+	};
 
-	handleSelectChange = ( event ) => {
-		this.props.onSelectChange( event.target.value );
-	}
+	handleSelectChange = event => {
+		this.props.onSortChange( event.target.value );
+	};
 
 	render() {
 		const sortOrder = this.props.sortOrder;
 
 		return (
-			<FormSelect className="following-manage__sort-controls" onChange={ this.handleSelectChange } value={ sortOrder }>
-				<option value="date-followed">{ this.props.translate( 'Sort by date' ) }</option>
-				<option value="alpha">{ this.props.translate( 'Sort by name' ) }</option>
+			<FormSelect
+				className="following-manage__sort-controls"
+				onChange={ this.handleSelectChange }
+				value={ sortOrder }
+			>
+				<option value="date-followed">{ this.props.translate( 'Sort by date followed' ) }</option>
+				<option value="alpha">{ this.props.translate( 'Sort by site name' ) }</option>
 			</FormSelect>
 		);
 	}

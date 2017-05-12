@@ -2,9 +2,9 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 var FollowingEditNavigation = React.createClass( {
-
 	propTypes: { totalSubscriptions: React.PropTypes.number },
 
 	renderSiteCount: function() {
@@ -13,14 +13,10 @@ var FollowingEditNavigation = React.createClass( {
 			return null;
 		}
 
-		return this.translate(
-			'%(count)d site',
-			'%(count)d sites',
-			{
-				count: totalSubscriptions,
-				args: { count: totalSubscriptions }
-			}
-		);
+		return this.props.translate( '%(count)d site', '%(count)d sites', {
+			count: totalSubscriptions,
+			args: { count: totalSubscriptions },
+		} );
 	},
 
 	render: function() {
@@ -29,7 +25,7 @@ var FollowingEditNavigation = React.createClass( {
 				<span className="following-edit-navigation__site-count">{ this.renderSiteCount() }</span>
 			</div>
 		);
-	}
+	},
 } );
 
-export default FollowingEditNavigation;
+export default localize( FollowingEditNavigation );

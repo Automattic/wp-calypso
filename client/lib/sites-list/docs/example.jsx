@@ -21,7 +21,7 @@ var Sites = React.createClass( {
 					<Site compact site={ sites.getPrimary() } />
 				</Card>
 				<Card style={ { padding: 0 } }>
-					<AllSites sites={ sites.get() } />
+					<AllSites />
 				</Card>
 			</div>
 		);

@@ -19,7 +19,7 @@ import {
 	purchaseType,
 	showCreditCardExpiringWarning
 } from 'lib/purchases';
-import { isPlan, isDomainProduct } from 'lib/products-values';
+import { isPlan, isDomainProduct, isTheme } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'gridicons';
@@ -104,7 +104,7 @@ class PurchaseItem extends Component {
 	}
 
 	render() {
-		const { isPlaceholder, purchase } = this.props;
+		const { isPlaceholder, isDisconnectedSite, purchase } = this.props;
 		const classes = classNames( 'purchase-item',
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
 			{ 'is-placeholder': isPlaceholder },
@@ -122,6 +122,12 @@ class PurchaseItem extends Component {
 			icon = (
 				<div className="purchase-item__plan-icon">
 					<Gridicon icon="domains" size={ 24 } />
+				</div>
+			);
+		} else if ( purchase && isTheme( purchase ) ) {
+			icon = (
+				<div className="purchase-item__plan-icon">
+					<Gridicon icon="themes" size={ 24 } />
 				</div>
 			);
 		}
@@ -149,9 +155,12 @@ class PurchaseItem extends Component {
 		let props;
 		if ( ! isPlaceholder ) {
 			props = {
-				href: paths.managePurchase( this.props.slug, this.props.purchase.id ),
 				onClick: this.scrollToTop
 			};
+
+			if ( ! isDisconnectedSite ) {
+				props.href = paths.managePurchase( this.props.slug, this.props.purchase.id );
+			}
 		}
 
 		return (
@@ -164,6 +173,7 @@ class PurchaseItem extends Component {
 
 PurchaseItem.propTypes = {
 	isPlaceholder: React.PropTypes.bool,
+	isDisconnectedSite: React.PropTypes.bool,
 	purchase: React.PropTypes.object,
 	slug: React.PropTypes.string
 };

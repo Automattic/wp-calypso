@@ -2,8 +2,14 @@
  * External Dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { List, WindowScroller, CellMeasurerCache, CellMeasurer, InfiniteLoader } from 'react-virtualized';
-import { debounce, defer } from 'lodash';
+import {
+	List,
+	WindowScroller,
+	CellMeasurerCache,
+	CellMeasurer,
+	InfiniteLoader,
+} from 'react-virtualized';
+import { debounce, noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -22,11 +28,13 @@ class SitesWindowScroller extends Component {
 		fetchNextPage: PropTypes.func,
 		remoteTotalCount: PropTypes.number.isRequired,
 		forceRefresh: PropTypes.bool,
+		windowScrollerRef: PropTypes.func,
 	};
+	defaultProps = { windowScrollerRef: noop };
 
 	heightCache = new CellMeasurerCache( {
 		fixedWidth: true,
-		minHeight: 50,
+		minHeight: 70,
 	} );
 
 	siteRowRenderer = ( { index, key, style, parent } ) => {
@@ -44,33 +52,38 @@ class SitesWindowScroller extends Component {
 				parent={ parent }
 			>
 				{ ( { measure } ) => (
-					<div key={ key } style={ style } className="following-manage__sites-window-scroller-row-wrapper" >
-							<ConnectedSubscriptionListItem
-								url={ site.feed_URL }
-								feedId={ +site.feed_ID }
-								siteId={ +site.blog_ID }
-								onLoad={ measure }
-							/>
+					<div
+						key={ key }
+						style={ style }
+						className="following-manage__sites-window-scroller-row-wrapper"
+					>
+						<ConnectedSubscriptionListItem
+							url={ site.feed_URL }
+							feedId={ +site.feed_ID }
+							siteId={ +site.blog_ID }
+							onLoad={ measure }
+						/>
 					</div>
 				) }
 			</CellMeasurer>
 		);
 	};
 
-	handleListMounted = list => {
+	handleListMounted = registerChild => list => {
 		this.listRef = list;
-	}
+		registerChild( list ); // InfiniteLoader also wants a ref
+	};
 
 	handleResize = debounce( () => this.clearListCaches(), 50 );
 
 	clearListCaches = () => {
 		this.heightCache.clearAll();
-		defer( () => this.listRef && this.listRef.recomputeRowHeights( 0 ) );
-	}
+		this.listRef && this.listRef.forceUpdateGrid();
+	};
 
 	isRowLoaded = ( { index } ) => {
 		return !! this.props.sites[ index ];
-	}
+	};
 
 	// technically this function should return a promise that only resolves when the data is fetched.
 	// initially I had created a promise that would setInterval and see if the startIndex
@@ -82,6 +95,12 @@ class SitesWindowScroller extends Component {
 		return Promise.resolve();
 	};
 
+	componentDidUpdate() {
+		if ( this.props.forceRefresh ) {
+			this.clearListCaches();
+		}
+	}
+
 	componentWillMount() {
 		window.addEventListener( 'resize', this.handleResize );
 	}
@@ -91,7 +110,7 @@ class SitesWindowScroller extends Component {
 	}
 
 	render() {
-		const { sites, width, remoteTotalCount, forceRefresh } = this.props;
+		const { width, remoteTotalCount } = this.props;
 		return (
 			<div className="following-manage__sites-window-scroller">
 				<InfiniteLoader
@@ -99,23 +118,23 @@ class SitesWindowScroller extends Component {
 					loadMoreRows={ this.loadMoreRows }
 					rowCount={ remoteTotalCount }
 				>
-				{ ( { onRowsRendered, registerChild } ) => (
-					<WindowScroller>
-						{ ( { height, scrollTop } ) => (
-							<List
-								autoHeight
-								height={ height }
-								rowCount={ forceRefresh ? sites.length : remoteTotalCount }
-								rowHeight={ this.heightCache.rowHeight }
-								rowRenderer={ this.siteRowRenderer }
-								onRowsRendered={ onRowsRendered }
-								ref={ registerChild }
-								scrollTop={ scrollTop }
-								width={ width }
-							/>
-						)}
-					</WindowScroller>
-				) }
+					{ ( { onRowsRendered, registerChild } ) => (
+						<WindowScroller ref={ this.props.windowScrollerRef }>
+							{ ( { height, scrollTop } ) => (
+								<List
+									autoHeight
+									height={ height }
+									rowCount={ remoteTotalCount }
+									rowHeight={ this.heightCache.rowHeight }
+									rowRenderer={ this.siteRowRenderer }
+									onRowsRendered={ onRowsRendered }
+									ref={ this.handleListMounted( registerChild ) }
+									scrollTop={ scrollTop }
+									width={ width }
+								/>
+							) }
+						</WindowScroller>
+					) }
 				</InfiniteLoader>
 			</div>
 		);

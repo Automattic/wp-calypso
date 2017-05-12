@@ -6,9 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import {
-	likes
-} from './controller';
+import { likes } from './controller';
 import {
 	preloadReaderBundle,
 	loadSubscriptions,
@@ -18,7 +16,8 @@ import {
 } from 'reader/controller';
 
 export default function() {
-	page( '/activities/likes',
+	page(
+		'/activities/likes',
 		preloadReaderBundle,
 		loadSubscriptions,
 		initAbTests,

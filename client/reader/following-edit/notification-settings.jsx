@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
 /**
@@ -23,10 +24,9 @@ const DELIVERY_FREQUENCY_INSTANTLY = 'instantly',
 	DELIVERY_FREQUENCY_WEEKLY = 'weekly';
 
 var FollowingEditNotificationSettings = React.createClass( {
-
 	propTypes: {
 		subscription: React.PropTypes.object.isRequired,
-		isEmailBlocked: React.PropTypes.bool
+		isEmailBlocked: React.PropTypes.bool,
 	},
 
 	getInitialState: function() {
@@ -44,7 +44,7 @@ var FollowingEditNotificationSettings = React.createClass( {
 			postEmailSubscription,
 			commentEmailSubscription,
 			postEmailError,
-			commentEmailError
+			commentEmailError,
 		};
 
 		// Set the initial value for emailDeliveryFrequency if we have an existing subscription
@@ -79,14 +79,20 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 	handleEmailFrequencyClick: function( newFrequency ) {
 		this.setState( { emailDeliveryFrequency: newFrequency } );
-		PostEmailSubscriptionActions.updateDeliveryFrequency( this.props.subscription.get( 'blog_ID' ), newFrequency );
+		PostEmailSubscriptionActions.updateDeliveryFrequency(
+			this.props.subscription.get( 'blog_ID' ),
+			newFrequency
+		);
 	},
 
 	handlePostEmailToggle: function() {
 		if ( this.state.postEmailSubscription ) {
 			PostEmailSubscriptionActions.unsubscribe( this.props.subscription.get( 'blog_ID' ) );
 		} else {
-			PostEmailSubscriptionActions.subscribe( this.props.subscription.get( 'blog_ID' ), this.state.emailDeliveryFrequency );
+			PostEmailSubscriptionActions.subscribe(
+				this.props.subscription.get( 'blog_ID' ),
+				this.state.emailDeliveryFrequency
+			);
 		}
 	},
 
@@ -120,14 +126,20 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 		return (
 			<div className="following-edit__notification-settings-error">
-				<FormInputValidation className="following-edit__notification-settings-error" isError text={ this.translate( 'Sorry, there was a problem changing your subscription settings.' ) } />
+				<FormInputValidation
+					className="following-edit__notification-settings-error"
+					isError
+					text={ this.props.translate(
+						'Sorry, there was a problem changing your subscription settings.'
+					) }
+				/>
 			</div>
 		);
 	},
 
 	render: function() {
 		var subscription = this.props.subscription,
-			isExternal = ( ! subscription.get( 'blog_ID' ) || subscription.get( 'blog_ID' ) < 1 ),
+			isExternal = ! subscription.get( 'blog_ID' ) || subscription.get( 'blog_ID' ) < 1,
 			emailDeliveryFrequency = this.state.emailDeliveryFrequency,
 			isPostEmailActive = !! this.state.postEmailSubscription,
 			isCommentEmailActive = !! this.state.commentEmailSubscription,
@@ -140,23 +152,35 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 		if ( isExternal ) {
 			return (
-				<Card className="is-compact is-impossible-to-send-email following-edit__notification-settings-card" key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
-					<p>{ this.translate( 'RSS feeds do not allow for email notifications.' ) }</p>
+				<Card
+					className="is-compact is-impossible-to-send-email following-edit__notification-settings-card"
+					key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }
+				>
+					<p>{ this.props.translate( 'RSS feeds do not allow for email notifications.' ) }</p>
 				</Card>
 			);
 		}
 
 		if ( this.props.isEmailBlocked ) {
 			return (
-				<Card className="is-compact is-impossible-to-send-email following-edit__notification-settings-card" key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
-					<p>{ this.translate( 'You have blocked all email updates from your subscribed blogs.' ) }</p>
-					<p>{ this.translate( 'You can change this in your {{settingsLink}}Notification Settings{{/settingsLink}}.',
-						{
-							components: {
-								settingsLink: <a href="/me/notifications/subscriptions" />
+				<Card
+					className="is-compact is-impossible-to-send-email following-edit__notification-settings-card"
+					key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }
+				>
+					<p>
+						{ this.props.translate(
+							'You have blocked all email updates from your subscribed blogs.'
+						) }
+					</p>
+					<p>
+						{ this.props.translate(
+							'You can change this in your {{settingsLink}}Notification Settings{{/settingsLink}}.',
+							{
+								components: {
+									settingsLink: <a href="/me/notifications/subscriptions" />,
+								},
 							}
-						} )
-						}
+						) }
 					</p>
 				</Card>
 			);
@@ -164,33 +188,74 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 		return (
 			<div>
-				<Card className={ postEmailClasses } key={ 'notification-settings-posts-' + subscription.get( 'ID' ) }>
-					<span>{ this.translate( 'Emails for new posts' ) }</span>
+				<Card
+					className={ postEmailClasses }
+					key={ 'notification-settings-posts-' + subscription.get( 'ID' ) }
+				>
+					<span>{ this.props.translate( 'Emails for new posts' ) }</span>
 					<span className="following-edit__form-toggle-wrapper">
-						<span className="following-edit__form-toggle-status">{ isPostEmailActive ? 'on' : 'off' }</span>
-						<FormToggle id="following-edit__form-toggle-post-emails" onChange={ this.handlePostEmailToggle } checked={ isPostEmailActive } disabled={ false } />
+						<span className="following-edit__form-toggle-status">
+							{ isPostEmailActive ? 'on' : 'off' }
+						</span>
+						<FormToggle
+							id="following-edit__form-toggle-post-emails"
+							onChange={ this.handlePostEmailToggle }
+							checked={ isPostEmailActive }
+							disabled={ false }
+						/>
 					</span>
-					{ isPostEmailActive ?
-						<SegmentedControl compact={ true }>
-							<ControlItem selected={ emailDeliveryFrequency === DELIVERY_FREQUENCY_INSTANTLY } onClick={ this.handleEmailFrequencyClick.bind( this, DELIVERY_FREQUENCY_INSTANTLY ) } key={ 'delivery-frequency-instant' }>{ this.translate( 'Instant' ) }</ControlItem>
-							<ControlItem selected={ emailDeliveryFrequency === DELIVERY_FREQUENCY_DAILY } onClick={ this.handleEmailFrequencyClick.bind( this, DELIVERY_FREQUENCY_DAILY ) } key={ 'delivery-frequency-daily' }>{ this.translate( 'Daily' ) }</ControlItem>
-							<ControlItem selected={ emailDeliveryFrequency === DELIVERY_FREQUENCY_WEEKLY } onClick={ this.handleEmailFrequencyClick.bind( this, DELIVERY_FREQUENCY_WEEKLY ) } key={ 'delivery-frequency-weekly' }>{ this.translate( 'Weekly' ) }</ControlItem>
-						</SegmentedControl> : null }
+					{ isPostEmailActive
+						? <SegmentedControl compact={ true }>
+								<ControlItem
+									selected={ emailDeliveryFrequency === DELIVERY_FREQUENCY_INSTANTLY }
+									onClick={ this.handleEmailFrequencyClick.bind(
+										this,
+										DELIVERY_FREQUENCY_INSTANTLY
+									) }
+									key={ 'delivery-frequency-instant' }
+								>
+									{ this.props.translate( 'Instant' ) }
+								</ControlItem>
+								<ControlItem
+									selected={ emailDeliveryFrequency === DELIVERY_FREQUENCY_DAILY }
+									onClick={ this.handleEmailFrequencyClick.bind( this, DELIVERY_FREQUENCY_DAILY ) }
+									key={ 'delivery-frequency-daily' }
+								>
+									{ this.props.translate( 'Daily' ) }
+								</ControlItem>
+								<ControlItem
+									selected={ emailDeliveryFrequency === DELIVERY_FREQUENCY_WEEKLY }
+									onClick={ this.handleEmailFrequencyClick.bind( this, DELIVERY_FREQUENCY_WEEKLY ) }
+									key={ 'delivery-frequency-weekly' }
+								>
+									{ this.props.translate( 'Weekly' ) }
+								</ControlItem>
+							</SegmentedControl>
+						: null }
 					{ this.renderPostEmailError() }
 				</Card>
 
-				<Card className={ commentEmailClasses } key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
-					<span>{ this.translate( 'Emails for new comments' ) }</span>
+				<Card
+					className={ commentEmailClasses }
+					key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }
+				>
+					<span>{ this.props.translate( 'Emails for new comments' ) }</span>
 					<span className="following-edit__form-toggle-wrapper">
-						<span className="following-edit__form-toggle-status">{ isCommentEmailActive ? 'on' : 'off' }</span>
-						<FormToggle id="following-edit__form-toggle-comment-emails" onChange={ this.handleCommentEmailToggle } checked={ isCommentEmailActive } disabled={ false } />
+						<span className="following-edit__form-toggle-status">
+							{ isCommentEmailActive ? 'on' : 'off' }
+						</span>
+						<FormToggle
+							id="following-edit__form-toggle-comment-emails"
+							onChange={ this.handleCommentEmailToggle }
+							checked={ isCommentEmailActive }
+							disabled={ false }
+						/>
 					</span>
 					{ this.renderCommentEmailError() }
 				</Card>
 			</div>
 		);
-	}
-
+	},
 } );
 
-export default FollowingEditNotificationSettings;
+export default localize( FollowingEditNotificationSettings );

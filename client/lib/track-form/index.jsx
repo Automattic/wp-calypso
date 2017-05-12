@@ -22,9 +22,10 @@ export const trackForm = WrappedComponent => class TrackFormComponent extends Co
 		this.setState( newState, callback );
 	};
 
-	replaceFields = ( fields, callback ) => {
+	replaceFields = ( fields, callback, keepPrevFields = true ) => {
+		const prevFields = keepPrevFields ? this.state.fields : {};
 		const newFields = {
-			...this.state.fields,
+			...prevFields,
 			...fields
 		};
 

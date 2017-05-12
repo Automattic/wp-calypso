@@ -5,7 +5,6 @@
 }
 
 .site-or-domain__choice {
-	padding: 0;
 	margin: 10px;
 	min-width: 230px;
 	max-width: 330px;
@@ -30,4 +29,43 @@
 
 .site-or-domain__button {
 	text-align: center;
+}
+
+.site-or-domain__choice-button {
+	text-align: center;
+
+	.button {
+		text-transform: uppercase;
+	}
+}
+
+.site-or-domain__choice-image {
+	display: none;
+}
+
+.site-or-domain__choice-text {
+	color: $gray-dark;
+}
+
+@include breakpoint( ">480px" ) {
+	.site-or-domain__choice-button {
+		margin-bottom: 1.5em;
+	}
+
+	.site-or-domain__choice-image {
+		display: flex;
+		align-items: center;
+		min-height: 170px;
+	}
+
+	.site-or-domain__choice-text {
+		min-height: 185px;
+	}
+}
+
+@include breakpoint( "<480px" ) {
+	.site-or-domain__choice-text {
+		display: flex;
+		flex-direction: column-reverse;
+	}
 }

@@ -230,6 +230,7 @@ module.exports = {
 			(
 				<CheckoutData>
 					<Checkout
+						reduxStore={ context.store }
 						productsList={ productsList }
 					/>
 				</CheckoutData>

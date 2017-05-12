@@ -2,10 +2,10 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 var ReadingTime = React.createClass( {
-
 	mixins: [ PureRenderMixin ],
 
 	render: function() {
@@ -15,25 +15,24 @@ var ReadingTime = React.createClass( {
 			readingTime;
 
 		if ( timeInMinutes > 1 ) {
-			approxTime = ( <span className="reading-time__approx">( { this.translate( '~%d min', {
-				args: [ timeInMinutes ],
-				context: 'An approximate time to read something, in minutes'
-			} ) })</span> );
+			approxTime = (
+				<span className="reading-time__approx">
+					( { this.props.translate( '~%d min', {
+						args: [ timeInMinutes ],
+						context: 'An approximate time to read something, in minutes',
+					} ) })
+				</span>
+			);
 		}
 
-		readingTime = this.translate(
-			'%d word {{Time/}}',
-			'%d words {{Time/}}', {
-				count: words,
-				args: [ words ],
-				components: { Time: approxTime }
-			} );
+		readingTime = this.props.translate( '%d word {{Time/}}', '%d words {{Time/}}', {
+			count: words,
+			args: [ words ],
+			components: { Time: approxTime },
+		} );
 
-		return (
-			<span className="byline__reading-time reading-time">{ readingTime }</span>
-			);
-	}
-
+		return <span className="byline__reading-time reading-time">{ readingTime }</span>;
+	},
 } );
 
-export default ReadingTime;
+export default localize( ReadingTime );

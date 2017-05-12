@@ -30,4 +30,8 @@ const FixConfig = ( { translate } ) => {
 	);
 };
 
-export default WrapSettingsForm()( FixConfig );
+const getFormSettings = () => {
+	return {};
+};
+
+export default WrapSettingsForm( getFormSettings )( FixConfig );

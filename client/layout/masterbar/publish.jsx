@@ -19,7 +19,6 @@ import AsyncLoad from 'components/async-load';
 const MasterbarItemNew = React.createClass( {
 	propTypes: {
 		user: React.PropTypes.object,
-		sites: React.PropTypes.object,
 		isActive: React.PropTypes.bool,
 		className: React.PropTypes.string,
 		tooltip: React.PropTypes.string,
@@ -86,7 +85,6 @@ const MasterbarItemNew = React.createClass( {
 					{ this.props.children }
 					<SitesPopover
 						id="popover__sites-popover-masterbar"
-						sites={ this.props.sites }
 						visible={ this.state.isShowingPopover }
 						context={ this.state.postButtonContext }
 						onClose={ this.toggleSitesPopover.bind( this, false ) }

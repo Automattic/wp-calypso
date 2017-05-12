@@ -17,7 +17,7 @@ import SectionHeader from 'components/section-header';
 import { isRequestingSites } from 'state/sites/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getPurchase, isDataLoading } from 'me/purchases/utils';
-import { getName } from 'lib/purchases';
+import { getName, isExpired } from 'lib/purchases';
 import { isJetpackPlan, isFreeJetpackPlan } from 'lib/products-values';
 import { getPluginsForSite } from 'state/plugins/premium/selectors';
 
@@ -40,6 +40,10 @@ class PurchasePlanDetails extends Component {
 		}
 
 		if ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) {
+			return null;
+		}
+
+		if ( isExpired( purchase ) ) {
 			return null;
 		}
 

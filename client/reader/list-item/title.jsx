@@ -13,8 +13,12 @@ const ListItemTitle = React.createClass( {
 	},
 
 	render() {
-		return ( <h2 className="reader-list-item__title" onClick={ this.props.onClick }>{ this.props.children }</h2> );
-	}
+		return (
+			<h2 className="reader-list-item__title" onClick={ this.props.onClick }>
+				{ this.props.children }
+			</h2>
+		);
+	},
 } );
 
 export default ListItemTitle;

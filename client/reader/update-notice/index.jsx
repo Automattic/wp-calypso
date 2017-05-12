@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { noop } from 'lodash';
@@ -12,7 +13,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
+import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
 
 const UpdateNotice = React.createClass( {
 	mixins: [ PureRenderMixin ],
@@ -21,7 +22,7 @@ const UpdateNotice = React.createClass( {
 		count: React.PropTypes.number.isRequired,
 		onClick: React.PropTypes.func,
 		// connected props
-		cappedUnreadCount: React.PropTypes.string
+		cappedUnreadCount: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
@@ -31,14 +32,17 @@ const UpdateNotice = React.createClass( {
 	render: function() {
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
-			'is-active': this.props.count > 0
+			'is-active': this.props.count > 0,
 		} );
 
 		return (
-			<div className={ counterClasses } onClick={ this.handleClick } >
+			<div className={ counterClasses } onClick={ this.handleClick }>
 				<DocumentHead unreadCount={ this.props.count } />
 				<Gridicon icon="arrow-up" size={ 18 } />
-				{ this.translate( '%s new post', '%s new posts', { args: [ this.props.cappedUnreadCount ], count: this.props.count } ) }
+				{ this.props.translate( '%s new post', '%s new posts', {
+					args: [ this.props.cappedUnreadCount ],
+					count: this.props.count,
+				} ) }
 			</div>
 		);
 	},
@@ -46,11 +50,9 @@ const UpdateNotice = React.createClass( {
 	handleClick: function( event ) {
 		event.preventDefault();
 		this.props.onClick();
-	}
+	},
 } );
 
-export default connect(
-	state => ( {
-		cappedUnreadCount: getDocumentHeadCappedUnreadCount( state )
-	} )
-)( UpdateNotice );
+export default connect( state => ( {
+	cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),
+} ) )( localize( UpdateNotice ) );

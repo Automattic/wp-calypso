@@ -59,7 +59,8 @@ export function details( context, next ) {
 	}
 
 	context.primary = <ThemeSheetComponent id={ slug }
-		section={ section } />;
+		section={ section }
+		pathName={ context.pathname } />;
 	context.secondary = null; // When we're logged in, we need to remove the sidebar.
 	next();
 }

@@ -7,16 +7,13 @@ import React from 'react';
  * Internal dependencies
  */
 import { renderWithReduxStore } from 'lib/react-helpers';
-import sitesFactory from 'lib/sites-list';
-
-const sites = sitesFactory();
 
 export default {
 	billingHistory( context ) {
 		const BillingHistoryComponent = require( './main' );
 
 		renderWithReduxStore(
-			React.createElement( BillingHistoryComponent, { sites: sites } ),
+			React.createElement( BillingHistoryComponent ),
 			document.getElementById( 'primary' ),
 			context.store
 		);

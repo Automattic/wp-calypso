@@ -19,9 +19,8 @@ const ListItem = React.createClass( {
 			<Card className={ classes }>
 				{ this.props.children }
 			</Card>
-			);
-	}
-
+		);
+	},
 } );
 
 export default ListItem;

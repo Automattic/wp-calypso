@@ -17,9 +17,9 @@ import { decodeEntities } from 'lib/formatting';
  * @returns {string} the site url
  */
 export const getSiteUrl = ( { feed, site, post } = {} ) => {
-	const siteUrl = ( !! site ) && ( site.URL || site.domain );
-	const feedUrl = ( !! feed ) && feed.URL;
-	const postUrl = ( !! post ) && post.site_URL;
+	const siteUrl = !! site && ( site.URL || site.domain );
+	const feedUrl = !! feed && feed.URL;
+	const postUrl = !! post && post.site_URL;
 
 	return siteUrl || feedUrl || postUrl;
 };
@@ -33,9 +33,9 @@ export const getSiteUrl = ( { feed, site, post } = {} ) => {
  * @returns {string} the site url
  */
 export const getFeedUrl = ( { feed, site, post } = {} ) => {
-	const siteUrl = ( !! site ) && site.feed_URL;
-	const feedUrl = ( !! feed ) && ( feed.feed_URL || feed.URL );
-	const postUrl = ( !! post ) && post.feed_URL;
+	const siteUrl = !! site && site.feed_URL;
+	const feedUrl = !! feed && ( feed.feed_URL || feed.URL );
+	const postUrl = !! post && post.feed_URL;
 
 	return siteUrl || feedUrl || postUrl;
 };
@@ -55,30 +55,28 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 		siteName = feed.name || feed.title;
 	} else if ( post && post.site_name ) {
 		siteName = post.site_name;
-	} else if ( ( site && site.is_error ) || ( feed && feed.is_error ) && ( ! post ) ) {
+	} else if ( ( site && site.is_error ) || ( feed && feed.is_error && ! post ) ) {
 		siteName = translate( 'Error fetching feed' );
 	} else if ( site && site.domain ) {
 		siteName = site.domain;
 	} else {
 		const siteUrl = getSiteUrl( { feed, site, post } );
-		siteName = ( !! siteUrl ) ? url.parse( siteUrl ).hostname : null;
+		siteName = !! siteUrl ? url.parse( siteUrl ).hostname : null;
 	}
 
 	return decodeEntities( siteName );
 };
 
 export const getSiteDescription = ( { site, feed } ) => {
-	return decodeEntities(
-		( site && site.description ) || ( feed && feed.description )
-	);
+	return decodeEntities( ( site && site.description ) || ( feed && feed.description ) );
 };
 
 export const getSiteAuthorName = site => {
 	const siteAuthor = site && site.owner;
-	const authorFullName = siteAuthor && (
-		siteAuthor.name ||
-		trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` )
-	);
+	const authorFullName =
+		siteAuthor &&
+		( siteAuthor.name ||
+			trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` ) );
 
 	return decodeEntities( authorFullName );
 };

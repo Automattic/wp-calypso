@@ -86,7 +86,6 @@ const SitePicker = React.createClass( {
 				indicator={ true }
 				showAddNewSite={ true }
 				showAllSites={ true }
-				sites={ this.props.sites }
 				allSitesPath={ this.props.allSitesPath }
 				siteBasePath={ this.props.siteBasePath }
 				autoFocus={ this.state.isAutoFocused }

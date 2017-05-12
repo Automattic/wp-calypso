@@ -91,6 +91,7 @@ export class SiteSettingsNavigation extends Component {
 
 					<NavItem
 						path={ `/settings/traffic/${ site.slug }` }
+						preloadSectionName="settings-traffic"
 						selected={ section === 'traffic' }
 					>
 						{ strings.traffic }
@@ -99,6 +100,7 @@ export class SiteSettingsNavigation extends Component {
 					{
 						config.isEnabled( 'manage/security' ) && site.jetpack &&
 							<NavItem path={ `/settings/security/${ site.slug }` }
+							preloadSectionName="settings-security"
 							selected={ section === 'security' } >
 								{ strings.security }
 						</NavItem>

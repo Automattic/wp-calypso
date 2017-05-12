@@ -18,7 +18,6 @@ import GeneralSettings from './section-general';
 import ImportSettings from './section-import';
 import ExportSettings from './section-export';
 import GuidedTransfer from 'my-sites/guided-transfer';
-import SiteSecurity from './section-security';
 import SiteSettingsNavigation from './navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
@@ -56,8 +55,6 @@ export class SiteSettingsComponent extends Component {
 						hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer }
 					/>
 				);
-			case 'security':
-				return <SiteSecurity />;
 			case 'import':
 				return <ImportSettings />;
 			case 'export':

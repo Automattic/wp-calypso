@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { get, pick } from 'lodash';
+import React, { Component, PropTypes } from 'react';
+import Gridicon from 'gridicons';
+import { isEmpty, get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,28 +18,87 @@ import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
 class EasyTab extends Component {
+	static propTypes = {
+		cacheTestResults: PropTypes.object,
+		fields: PropTypes.object,
+		handleAutosavingToggle: PropTypes.func.isRequired,
+		handleDeleteCache: PropTypes.func.isRequired,
+		handleTestCache: PropTypes.func.isRequired,
+		isDeleting: PropTypes.bool,
+		isRequesting: PropTypes.bool,
+		isSaving: PropTypes.bool,
+		isTesting: PropTypes.bool,
+		site: PropTypes.object.isRequired,
+		siteId: PropTypes.number.isRequired,
+		testCache: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		cacheTestResults: {},
+		fields: {},
+		isDeleting: false,
+		isRequesting: true,
+		isSaving: false,
+		isTesting: false,
+	};
+
 	state = {
 		httpOnly: true,
+		isBusy: false,
+		isDeleting: false,
+		isDeletingAll: false,
 	}
 
-	handleHttpOnlyChange = () => {
-		this.setState( { httpOnly: ! this.state.httpOnly } );
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isDeleting && ! nextProps.isDeleting ) {
+			this.setState( {
+				isDeleting: false,
+				isDeletingAll: false,
+			} );
+		}
+
+		if ( ! this.props.isTesting && nextProps.isTesting ) {
+			this.setState( { isBusy: true } );
+			return;
+		}
+
+		if ( this.props.isTesting && ! nextProps.isTesting ) {
+			this.setState( { isBusy: false } );
+		}
 	}
+
+	handleHttpOnlyChange = () => this.setState( { httpOnly: ! this.state.httpOnly } );
+
+	deleteCache = () => {
+		this.setState( { isDeleting: true } );
+		this.props.handleDeleteCache( false, false );
+	}
+
+	deleteAllCaches = () => {
+		this.setState( { isDeletingAll: true } );
+		this.props.handleDeleteCache( true, false );
+	}
+
+	testCache = () => this.props.handleTestCache( this.state.httpOnly );
 
 	render() {
 		const {
-			fields,
+			cacheTestResults: {
+				attempts = {},
+			},
+			fields: {
+				cache_mod_rewrite,
+				is_cache_enabled,
+			},
 			handleAutosavingToggle,
+			isDeleting,
 			isRequesting,
 			isSaving,
+			isTesting,
 			site,
 			translate,
 		} = this.props;
-		const {
-			cache_mod_rewrite,
-			is_cache_enabled,
-		} = fields;
-
 		const enableCacheNotice = translate(
 			'PHP caching is enabled but Supercache mod_rewrite rules were ' +
 			'detected. Cached files will be served using those rules. If your site is working ok, ' +
@@ -54,7 +114,7 @@ class EasyTab extends Component {
 				<Card>
 					<form>
 						<FormToggle
-							checked={ is_cache_enabled }
+							checked={ !! is_cache_enabled }
 							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'is_cache_enabled' ) }>
 							<span>
@@ -90,9 +150,44 @@ class EasyTab extends Component {
 								</form>
 							}
 
-							<Button compact>
+							<Button
+								compact
+								busy={ this.state.isBusy }
+								disabled={ isTesting }
+								onClick={ this.testCache }>
 								{ translate( 'Test Cache' ) }
 							</Button>
+
+							{ ! isEmpty( attempts ) &&
+							<div>
+								<span className="wp-super-cache__cache-test-results-label">
+									{ translate( 'Results' ) }
+								</span>
+								<ul className="wp-super-cache__cache-test-results">
+									{ Object.keys( attempts ).map( ( key ) => (
+										<li className="wp-super-cache__cache-test-results-item" key={ key }>
+											{ key === 'prime'
+												? translate( 'Fetching %(url)s to prime cache',
+													{
+														args: { url: site && site.URL }
+													} )
+												: translate( 'Fetching %(key)s copy of %(url)s',
+													{
+														args: {
+															key: key,
+															url: site && site.URL,
+														}
+													} )
+											}
+											<Gridicon
+												className="wp-super-cache__cache-test-results-icon"
+												icon={ get( attempts[ key ], 'status' ) === 'OK' ? 'checkmark-circle' : 'cross-circle' }
+												size={ 24 } />
+										</li>
+									) ) }
+								</ul>
+							</div>
+							}
 						</Card>
 					</div>
 				}
@@ -106,11 +201,21 @@ class EasyTab extends Component {
 						) }
 					</p>
 					<div>
-						<Button compact>
+						<Button
+							compact
+							busy={ this.state.isDeleting }
+							disabled={ isDeleting }
+							name="wp_delete_cache"
+							onClick={ this.deleteCache }>
 							{ translate( 'Delete Cache' ) }
 						</Button>
 						{ site.jetpack && site.is_multisite &&
-							<Button compact>
+							<Button
+								compact
+								busy={ this.state.isDeletingAll }
+								disabled={ isDeleting }
+								name="wp_delete_all_cache"
+								onClick={ this.deleteAllCaches }>
 								{ translate( 'Delete Cache On All Blogs' ) }
 							</Button>
 						}

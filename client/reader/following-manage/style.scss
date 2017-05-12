@@ -21,6 +21,37 @@
 	padding-top: 10px;
 }
 
+// Load more results
+.following-manage__show-more {
+	border-top: 1px solid lighten( $gray, 20% );
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+}
+
+.following-manage__show-more-button.button {
+	border-top: 0;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	color: $gray;
+	font-size: 11px;
+	padding: 2px 9px 6px 11px;
+	position: relative;
+		top: -1px;
+
+	.gridicon.gridicons-chevron-down {
+		height: 14px;
+		left: -4px;
+		top: 3px;
+		width: 14px;
+	}
+
+	&:hover {
+		color: darken( $gray, 10% );
+		cursor: pointer;
+	}
+}
+
 // Subscription controls
 .following-manage__subscriptions-controls {
 	display: flex;
@@ -38,6 +69,8 @@
 	}
 
 	.following-manage__subscriptions-header {
+		align-items: center;
+		display: flex;
 		flex: 1;
 		font-weight: 600;
 		padding-bottom: 15px;
@@ -45,6 +78,21 @@
 		@include breakpoint( "<960px" ) {
 			flex: 0 0 auto;
 			width: 100%;
+		}
+	}
+
+	.following-manage__subscriptions-sort {
+		position: relative;
+
+		&::before {
+
+			@include breakpoint( "<960px" ) {
+
+				@include long-content-fade( $size: 20% );
+				height: 30px;
+				right: 30px;
+				top: 1px;
+			}
 		}
 	}
 
@@ -57,12 +105,13 @@
 	}
 
 	.following-manage__subscriptions-sort .following-manage__sort-controls {
-		color: darken( $gray, 10% );
+		color: $gray;
 		font-size: 12px;
 		font-weight: normal;
+		width: 100%;
 
-		@include breakpoint( "<960px" ) {
-			width: 100%;
+		@include breakpoint( ">960px" ) {
+			min-width: 200px;
 		}
 	}
 
@@ -126,12 +175,19 @@
 	}
 }
 
+.following-manage .reader-recommended-sites {
+	border-bottom: 1px solid lighten( $gray, 30% );
+}
+
 .following-manage__search-followed {
 	margin-left: 0;
 }
 
 .following-manage__search-followed-input {
-	min-width: 200px;
+
+	@include breakpoint( ">960px" ) {
+		min-width: 200px;
+	}
 }
 
 .following-manage__sites-window-scroller-row-wrapper {
@@ -139,5 +195,36 @@
 
 	&:last-child {
 		border: 0;
+	}
+}
+
+.following-manage__url-follow {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	padding: 13px 0 10px;
+	display: flex;
+	justify-content: center;
+
+	.follow-button {
+		.gridicon {
+			fill: $blue-medium;
+		}
+
+		.follow-button__label {
+			color: $blue-medium;
+
+			@include breakpoint ("<660px" ) {
+				display: inline;
+			}
+		}
+
+		&.is-following {
+			.gridicon {
+				fill: $alert-green;
+			}
+
+			.follow-button__label {
+				color: $alert-green;
+			}
+		}
 	}
 }

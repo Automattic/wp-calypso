@@ -18,7 +18,6 @@ import WrapSettingsForm from './wrap-settings-form';
 const Miscellaneous = ( {
 	fields: {
 		cache_compression,
-		cache_compression_disabled,
 		cache_hello_world,
 		cache_mod_rewrite,
 		cache_rebuild,
@@ -30,8 +29,11 @@ const Miscellaneous = ( {
 	handleAutosavingToggle,
 	isRequesting,
 	isSaving,
+	notices,
 	translate,
 } ) => {
+	const compressionDisabled = notices && notices.compression_disabled;
+
 	return (
 		<div>
 			<SectionHeader
@@ -39,18 +41,14 @@ const Miscellaneous = ( {
 			</SectionHeader>
 			<Card>
 				<form>
-					{ cache_compression_disabled &&
-					<p>
-						{ translate(
-							' {{em}}Warning! Compression is disabled as gzencode() function was not found.{{/em}}',
-							{
-								components: { em: <em /> }
-							}
-						) }
-					</p>
+					{ compressionDisabled && compressionDisabled.message &&
+					<Notice
+						showDismiss={ false }
+						status={ compressionDisabled.type ? `is-${ compressionDisabled.type }` : 'is-info' }
+						text={ compressionDisabled.message } />
 					}
 					<FormFieldset>
-						{ ! cache_compression_disabled &&
+						{ ! compressionDisabled &&
 						<FormToggle
 							checked={ !! cache_compression }
 							disabled={ isRequesting || isSaving }
@@ -178,7 +176,6 @@ const Miscellaneous = ( {
 const getFormSettings = settings => {
 	return pick( settings, [
 		'cache_compression',
-		'cache_compression_disabled',
 		'cache_hello_world',
 		'cache_mod_rewrite',
 		'cache_rebuild',

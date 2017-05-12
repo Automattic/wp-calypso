@@ -40,8 +40,8 @@ const Subscriptions = ( {
 			<CompactCard className="subscriptions__card site-settings__discussion-settings">
 				<FormFieldset>
 					<div className="subscriptions__info-link-container site-settings__info-link-container">
-						<InfoPopover position={ 'left' }>
-							<ExternalLink href={ 'https://jetpack.com/support/subscriptions' } icon target="_blank">
+						<InfoPopover position="left">
+							<ExternalLink href="https://jetpack.com/support/subscriptions" icon target="_blank">
 								{ translate( 'Learn more about Subscriptions.' ) }
 							</ExternalLink>
 						</InfoPopover>

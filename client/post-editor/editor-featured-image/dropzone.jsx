@@ -96,6 +96,7 @@ class FeaturedImageDropZone extends Component {
 		return (
 			<DropZone
 				className="editor-featured-image__dropzone"
+				dropZoneName="featuredImage"
 				icon={ <FeaturedImageDropZoneIcon /> }
 				textLabel={ this.props.translate( 'Set as Featured Image' ) }
 				onFilesDrop={ this.onFilesDrop }

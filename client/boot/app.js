@@ -1,5 +1,6 @@
-// Initialize localStorage polyfill before any dependencies are loaded
-require( 'lib/local-storage' )();
+// Initialize polyfills before any dependencies are loaded
+import './polyfills';
+
 if ( process.env.NODE_ENV === 'development' ) {
 	require( 'lib/wrap-es6-functions' )();
 }

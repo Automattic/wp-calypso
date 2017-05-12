@@ -8,9 +8,12 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	READER_FOLLOW,
-	READER_UNFOLLOW,
+	READER_RECORD_FOLLOW,
+	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
+	SERIALIZE,
+	DESERIALIZE,
+	READER_FOLLOW_ERROR,
 } from 'state/action-types';
 import {
 	subscribeToNewPostEmail,
@@ -18,6 +21,9 @@ import {
 	unsubscribeToNewPostEmail,
 	subscribeToNewCommentEmail,
 	unsubscribeToNewCommentEmail,
+	follow,
+	unfollow,
+	syncComplete,
 } from '../actions';
 import { items, itemsCount } from '../reducer';
 
@@ -49,7 +55,7 @@ describe( 'reducer', () => {
 				'dailypost.wordpress.com': { is_following: true },
 			} );
 			const state = items( original, {
-				type: READER_FOLLOW,
+				type: READER_RECORD_FOLLOW,
 				payload: { url: 'http://data.blog' },
 			} );
 			expect( state[ 'data.blog' ] ).to.eql( { is_following: true } );
@@ -61,7 +67,7 @@ describe( 'reducer', () => {
 				'dailypost.wordpress.com': { blog_ID: 124, is_following: true },
 			} );
 			const state = items( original, {
-				type: READER_UNFOLLOW,
+				type: READER_RECORD_UNFOLLOW,
 				payload: { url: 'http://discover.wordpress.com' }
 			} );
 			expect( state[ 'discover.wordpress.com' ] ).to.eql( { blog_ID: 123, is_following: false } );
@@ -90,6 +96,56 @@ describe( 'reducer', () => {
 			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).to.eql(
 				{ is_following: true, blog_ID: 126, URL: 'https://postcardsfromthereader.wordpress.com' }
 			);
+		} );
+
+		it( 'should only SERIALIZE followed items', () => {
+			const original = deepFreeze( {
+				'discover.wordpress.com': {
+					feed_URL: 'http://discover.wordpress.com',
+					URL: 'http://discover.wordpress.com',
+					is_following: false,
+					blog_ID: 123
+				},
+				'dailypost.wordpress.com': {
+					feed_URL: 'http://dailypost.wordpress.com',
+					URL: 'http://dailypost.wordpress.com',
+					is_following: true,
+					blog_ID: 124,
+				},
+			} );
+			expect( items( original, { type: SERIALIZE } ) ).to.eql( {
+				'dailypost.wordpress.com': {
+					feed_URL: 'http://dailypost.wordpress.com',
+					URL: 'http://dailypost.wordpress.com',
+					is_following: true,
+					blog_ID: 124,
+				},
+			} );
+		} );
+
+		it( 'should deserialize good data', () => {
+			const original = deepFreeze( {
+				'dailypost.wordpress.com': {
+					feed_URL: 'http://dailypost.wordpress.com',
+					URL: 'http://dailypost.wordpress.com',
+					is_following: true,
+					blog_ID: 124,
+				},
+			} );
+
+			expect( items( original, { type: DESERIALIZE } ) ).to.eql( original );
+		} );
+
+		it( 'should return the blank state for bad serialized data', () => {
+			const original = deepFreeze( {
+				'dailypost.wordpress.com': {
+					URL: 'http://dailypost.wordpress.com',
+					is_following: true,
+					blog_ID: 124,
+				},
+			} );
+
+			expect( items( original, { type: DESERIALIZE } ) ).to.eql( {} );
 		} );
 
 		it( 'should update when passed new post subscription info', () => {
@@ -414,6 +470,144 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 456 ) );
 			expect( state ).to.equal( original );
+		} );
+
+		it( 'should insert a follow error if one is received', () => {
+			const original = deepFreeze( {
+				'discoverinvalid.wordpress.com': { is_following: true },
+				'dailypost.wordpress.com': { is_following: true },
+			} );
+			const state = items( original, {
+				type: READER_FOLLOW_ERROR,
+				payload: { feedUrl: 'http://discoverinvalid.wordpress.com', error: 'invalid_feed' },
+			} );
+			expect( state[ 'discoverinvalid.wordpress.com' ] ).to.eql(
+				{ is_following: true, error: 'invalid_feed' }
+			);
+		} );
+	} );
+
+	describe( 'follow', () => {
+		it( 'should mark an existing feed as followed, add in a feed_URL if missing, and leave the rest alone', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: false,
+					blog_ID: 123
+				}
+			} );
+
+			const state = items( original, follow( 'http://example.com' ) );
+			expect( state ).to.eql( {
+				'example.com': {
+					is_following: true,
+					feed_URL: 'http://example.com',
+					blog_ID: 123
+				}
+			} );
+		} );
+
+		it( 'should create a new entry for a new follow', () => {
+			const state = items( {}, follow( 'http://example.com' ) );
+			expect( state ).to.eql( {
+				'example.com': {
+					feed_URL: 'http://example.com',
+					is_following: true
+				}
+			} );
+		} );
+
+		it( 'should update an existing subscription', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					feed_URL: 'http://example.com',
+				}
+			} );
+
+			const subscriptionInfo = {
+				ID: 25,
+				blog_ID: 10,
+				feed_ID: 20,
+				feed_URL: 'http://example.com', // what should we do if the feed_URL doesn't match the feedUrl on the action??
+				delivery_methods: {
+					email: {
+						send_posts: true
+					}
+				},
+			};
+
+			const state = items( original, follow( 'http://example.com', subscriptionInfo ) );
+			expect( state ).to.eql( {
+				'example.com': {
+					...subscriptionInfo,
+					is_following: true,
+				}
+			} );
+		} );
+	} );
+
+	describe( 'unfollow', () => {
+		it( 'should mark an existing follow as unfollowed', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					feed_URL: 'http://example.com',
+					blog_ID: 123
+				}
+			} );
+
+			const state = items( original, unfollow( 'http://example.com' ) );
+			expect( state ).to.eql( {
+				'example.com': {
+					is_following: false,
+					feed_URL: 'http://example.com',
+					blog_ID: 123
+				}
+			} );
+		} );
+
+		it( 'should return the original state when already unfollowed', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: false,
+					feed_URL: 'http://example.com',
+					blog_ID: 123
+				}
+			} );
+
+			const state = items( original, unfollow( 'http://example.com' ) );
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should return the same state for an item that does not exist', () => {
+			const original = deepFreeze( {} );
+			const state = items( original, unfollow( 'http://example.com' ) );
+			expect( state ).to.equal( original );
+		} );
+	} );
+
+	describe( 'sync complete', () => {
+		it( 'should remove followed sites not seen during sync', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					feed_URL: 'http://example.com',
+					ID: 1,
+					is_following: true
+				},
+				'example2.com': {
+					feed_URL: 'http://example2.com',
+					ID: 2,
+					is_following: true
+				},
+			} );
+			const state = items( original, syncComplete( [ 'http://example2.com' ] ) );
+			expect( state ).to.eql( {
+				'example2.com': {
+					feed_URL: 'http://example2.com',
+					ID: 2,
+					is_following: true
+				},
+			} );
 		} );
 	} );
 } );

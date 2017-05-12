@@ -8,7 +8,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 import titlecase from 'to-title-case';
-import { isArray } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -51,10 +50,10 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
 import { getCanonicalTheme } from 'state/themes/selectors';
-import { isValidTerm } from 'my-sites/themes/theme-filters';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
+import ThemeFeaturesCard from './theme-features-card';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -102,8 +101,18 @@ const ThemeSheet = React.createClass( {
 		};
 	},
 
-	componentDidMount() {
+	scrollToTop() {
 		window.scroll( 0, 0 );
+	},
+
+	componentDidMount() {
+		this.scrollToTop();
+	},
+
+	componentWillUpdate( nextProps ) {
+		if ( nextProps.id !== this.props.id ) {
+			this.scrollToTop();
+		}
 	},
 
 	isLoaded() {
@@ -273,17 +282,30 @@ const ThemeSheet = React.createClass( {
 		return <div>{ this.props.description }</div>;
 	},
 
+	renderNextTheme() {
+		const { next, siteSlug } = this.props;
+		const sitePart = siteSlug ? `/${ siteSlug }` : '';
+
+		const nextThemeHref = `/theme/${ next }${ sitePart }`;
+		return <SectionHeader
+			href={ nextThemeHref }
+			label={ i18n.translate( 'Next theme' ) } />;
+	},
+
 	renderOverviewTab() {
-		const { isWpcomTheme, download } = this.props;
+		const { download, isWpcomTheme, siteSlug, taxonomies } = this.props;
 
 		return (
 			<div>
 				<Card className="theme__sheet-content">
 					{ this.renderDescription() }
 				</Card>
-				{ this.renderFeaturesCard() }
+				<ThemeFeaturesCard taxonomies={ taxonomies }
+					siteSlug={ siteSlug }
+					isWpcomTheme={ isWpcomTheme } />
 				{ download && <ThemeDownloadCard href={ download } /> }
 				{ isWpcomTheme && this.renderRelatedThemes() }
+				{ isWpcomTheme && this.renderNextTheme() }
 			</div>
 		);
 	},
@@ -413,36 +435,6 @@ const ThemeSheet = React.createClass( {
 		return renderedTab;
 	},
 
-	renderFeaturesCard() {
-		const { isWpcomTheme, siteSlug, taxonomies } = this.props;
-		if ( ! taxonomies || ! isArray( taxonomies.theme_feature ) ) {
-			return null;
-		}
-
-		const themeFeatures = taxonomies.theme_feature.map( function( item ) {
-			const term = isValidTerm( item.slug ) ? item.slug : `feature:${ item.slug }`;
-			return (
-				<li key={ 'theme-features-item-' + item.slug }>
-					{ ! isWpcomTheme
-						? <a>{ item.name }</a>
-						: <a href={ `/themes/filter/${ term }/${ siteSlug || '' }` }>{ item.name }</a>
-					}
-				</li>
-			);
-		} );
-
-		return (
-			<div>
-				<SectionHeader label={ i18n.translate( 'Features' ) } />
-				<Card>
-					<ul className="theme__sheet-features-list">
-						{ themeFeatures }
-					</ul>
-				</Card>
-			</div>
-		);
-	},
-
 	getDefaultOptionLabel() {
 		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased } = this.props;
 		if ( isLoggedIn && ! isActive ) {
@@ -502,7 +494,7 @@ const ThemeSheet = React.createClass( {
 				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }>
 				{ this.isLoaded() ? label : placeholder }
-				{ this.renderPrice() }
+				{ this.props.isWpcomTheme && this.renderPrice() }
 			</Button>
 		);
 	},
@@ -520,9 +512,11 @@ const ThemeSheet = React.createClass( {
 		} );
 
 		const metas = [
+			{ property: 'og:title', content: title },
 			{ property: 'og:url', content: canonicalUrl },
 			{ property: 'og:image', content: this.props.screenshot },
-			{ property: 'og:type', content: 'website' }
+			{ property: 'og:type', content: 'website' },
+			{ property: 'og:site_name', content: 'WordPress.com' }
 		];
 
 		if ( description ) {
@@ -583,8 +577,7 @@ const ConnectedThemeSheet = connectOptions(
 		}
 
 		return (
-			<ThemesSiteSelectorModal { ...props }
-				sourcePath={ `/theme/${ props.id }${ props.section ? '/' + props.section : '' }` }>
+			<ThemesSiteSelectorModal { ...props }>
 				<ThemeSheet />
 			</ThemesSiteSelectorModal>
 		);

@@ -2,55 +2,61 @@
  * Notifications
  */
 
-#wpnt-notes-panel2 {
+#wpnc-panel {
 	position: fixed;
-		top: 47px;
-		right: 0;
-		bottom: 0;
+	top: 47px;
+	right: 0;
+	bottom: 0;
 	min-width: 400px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( "<660px" ) {
 		width: 100%;
 		min-width: 0;
 	}
 
 	&.wpnt-open {
+		right: 0;
+		transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
 		opacity: 1;
 		pointer-events: auto;
+		visibility: visible;
 	}
 
 	&.wpnt-closed {
+		visibility: hidden;
+		right: -400px;
 		opacity: 0;
 		pointer-events: none;
-		display: none;
+		transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
+	}
+
+	&.wpnc__main .wpnc__time-group-title.fixed {
+		top: 85px;
+	}
+
+	&.wpnc__main .wpnc__single-view {
+			left: inherit;
+			width: 400px;
+
+			@media screen and (max-width: 799px) {
+		    left: 0;
+				width: auto;
+		  }
+	}
+
+	@media screen and (max-width: 799px) {
+		&.wpnc__main header {
+			top: 47px;
+		}
 	}
 }
 
-#wpnt-notes-panel2.wide {
+#wpnc-panel.wide {
 	border-left: 0px;
 	box-shadow: none;
 }
 
-html.touch #wpnt-notes-panel2 {
+html.touch #wpnc-panel {
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch;
-}
-
-iframe#wpnt-notes-iframe2 {
-	width: 400px;
-	height: 100%;
-
-	@include breakpoint( "<480px" ) {
-		width: 100%;
-	}
-}
-
-iframe#wpnt-notes-iframe2.wide {
-	width: 410px;
-
-	@include breakpoint( ">960px" ) {
-		&.widescreen {
-			width: 810px;
-		}
-	}
 }

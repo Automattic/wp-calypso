@@ -1,16 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
-import isFunction from 'lodash/isFunction';
+import { isFunction, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
-	displayName: 'MasterbarItem',
-
-	propTypes: {
+class MasterbarItem extends Component {
+	static propTypes = {
 		url: React.PropTypes.string,
 		onClick: React.PropTypes.func,
 		tooltip: React.PropTypes.string,
@@ -18,23 +15,21 @@ export default React.createClass( {
 		className: React.PropTypes.string,
 		isActive: React.PropTypes.bool,
 		preloadSection: React.PropTypes.func
-	},
+	};
 
-	_preloaded: false,
+	static defaultProps = {
+		icon: '',
+		onClick: noop
+	};
 
-	getDefaultProps() {
-		return {
-			icon: '',
-			onClick: noop
-		};
-	},
+	_preloaded = false;
 
-	preload() {
+	preload = () => {
 		if ( ! this._preloaded && isFunction( this.props.preloadSection ) ) {
 			this._preloaded = true;
 			this.props.preloadSection();
 		}
-	},
+	};
 
 	render() {
 		const itemClasses = classNames( 'masterbar__item', this.props.className, {
@@ -50,13 +45,13 @@ export default React.createClass( {
 				className={ itemClasses }
 				onTouchStart={ this.preload }
 				onMouseEnter={ this.preload }>
-				{ !! this.props.icon &&
-					<Gridicon icon={ this.props.icon } size={ 24 } />
-				}
-				<span className="masterbar__item-content">{
-						this.props.children
-				}</span>
+				{ !! this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
+				<span className="masterbar__item-content">
+					{ this.props.children }
+				</span>
 			</a>
 		);
 	}
-} );
+}
+
+export default MasterbarItem;

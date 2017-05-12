@@ -353,6 +353,9 @@ describe( 'reducer', () => {
 
 			const state = queries( original, { type: SERIALIZE } );
 
+			// _timestamp is not part of the data
+			delete state._timestamp;
+
 			expect( state ).to.deep.equal( {
 				2916284: {
 					data: {

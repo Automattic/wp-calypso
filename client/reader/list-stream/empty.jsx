@@ -2,16 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrack,
-} from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 
 var ListEmptyContent = React.createClass( {
@@ -32,25 +29,32 @@ var ListEmptyContent = React.createClass( {
 	},
 
 	render: function() {
-		var action = ( <a
-			className="empty-content__action button is-primary"
-			onClick={ this.recordAction }
-			href="/">{ this.translate( 'Back to Following' ) }</a> ),
+		var action = (
+			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
+				{ this.props.translate( 'Back to Following' ) }
+			</a>
+		),
 			secondaryAction = isDiscoverEnabled()
-			? ( <a
-				className="empty-content__action button"
-				onClick={ this.recordSecondaryAction }
-				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ) : null;
+				? <a
+						className="empty-content__action button"
+						onClick={ this.recordSecondaryAction }
+						href="/discover"
+					>
+						{ this.props.translate( 'Explore Discover' ) }
+					</a>
+				: null;
 
-		return ( <EmptyContent
-			title={ this.translate( 'No recent posts' ) }
-			line={ this.translate( 'The sites in this list have not posted anything recently.' ) }
-			action={ action }
-			secondaryAction={ secondaryAction }
-			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
-			illustrationWidth={ 500 }
-			/> );
-	}
+		return (
+			<EmptyContent
+				title={ this.props.translate( 'No recent posts' ) }
+				line={ this.props.translate( 'The sites in this list have not posted anything recently.' ) }
+				action={ action }
+				secondaryAction={ secondaryAction }
+				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+				illustrationWidth={ 500 }
+			/>
+		);
+	},
 } );
 
-export default ListEmptyContent;
+export default localize( ListEmptyContent );

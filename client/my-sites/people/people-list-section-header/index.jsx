@@ -1,10 +1,12 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import get from 'lodash/get';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,36 +15,37 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import Tooltip from 'components/tooltip';
+import config from 'config';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
-export default React.createClass( {
-	displayName: 'PeopleListSectionHeader',
+class PeopleListSectionHeader extends Component {
+	static propTypes = {
+		label: PropTypes.string.isRequired,
+		count: PropTypes.number,
+		isFollower: PropTypes.bool,
+		site: PropTypes.object,
+		isSiteAutomatedTransfer: PropTypes.bool,
+	};
 
-	PropTypes: {
-		label: React.PropTypes.string.isRequired,
-		count: React.PropTypes.number,
-		isFollower: React.PropTypes.bool,
-		site: React.PropTypes.object
-	},
+	static defaultProps = {
+		isFollower: false
+	};
 
-	getInitialState() {
-		return {
+	constructor( props ) {
+		super( props );
+		this.state = {
 			addPeopleTooltip: false
 		};
-	},
+	}
 
-	getDefaultProps() {
-		return {
-			isFollower: false
-		};
-	},
+	showAddTooltip = () => this.setState( { addPeopleTooltip: true } );
 
-	showAddTooltip() {
-		this.setState( { addPeopleTooltip: true } );
-	},
+	hideAddTooltip = () => this.setState( { addPeopleTooltip: false } );
 
-	hideAddTooltip() {
-		this.setState( { addPeopleTooltip: false } );
-	},
+	shouldUseWPAdmin() {
+		return ! config.isEnabled( 'jetpack/invites' ) && get( this.props, 'site.jetpack' ) && ! this.props.isSiteAutomatedTransfer;
+	}
 
 	getAddLink() {
 		const siteSlug = get( this.props, 'site.slug' );
@@ -53,15 +56,15 @@ export default React.createClass( {
 			return false;
 		}
 
-		if ( isJetpack ) {
+		if ( this.shouldUseWPAdmin() ) {
 			return wpAdminUrl + 'user-new.php';
 		}
 
 		return '/people/new/' + siteSlug;
-	},
+	}
 
 	render() {
-		const { label, count, site, children } = this.props;
+		const { label, count, children, translate } = this.props;
 		const siteLink = this.getAddLink();
 		const classes = classNames(
 			this.props.className,
@@ -79,18 +82,18 @@ export default React.createClass( {
 						<Button
 							compact
 							href={ siteLink }
-							target={ site && site.jetpack ? '_new' : null }
+							target={ this.shouldUseWPAdmin() ? '_new' : null }
 							className="people-list-section-header__add-button"
 							onMouseEnter={ this.showAddTooltip }
 							onMouseLeave={ this.hideAddTooltip }
 							ref="addPeopleButton"
-							aria-label={ this.translate( 'Invite user', { context: 'button label' } ) }>
+							aria-label={ translate( 'Invite user', { context: 'button label' } ) }>
 							<Gridicon icon="plus-small" size={ 18 } /><Gridicon icon="user" size={ 18 } />
 							<Tooltip
 								isVisible={ this.state.addPeopleTooltip }
 								context={ this.refs && this.refs.addPeopleButton }
 								position="bottom">
-								{ this.translate( 'Invite user', { context: 'button tooltip' } ) }
+								{ translate( 'Invite user', { context: 'button tooltip' } ) }
 							</Tooltip>
 						</Button>
 					</ButtonGroup>
@@ -99,4 +102,13 @@ export default React.createClass( {
 			</SectionHeader>
 		);
 	}
-} );
+}
+
+const mapStateToProps = ( state ) => {
+	const selectedSiteId = getSelectedSiteId( state );
+	return {
+		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+	};
+};
+
+export default connect( mapStateToProps )( localize( PeopleListSectionHeader ) );

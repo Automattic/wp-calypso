@@ -35,8 +35,14 @@ const StatsNavigation = ( props ) => {
 					className="stats-navigation__control"
 					initialSelected="site"
 					options={ [
-						{ value: 'site', label: translate( 'Site' ) },
-						{ value: 'store', label: translate( 'Store' ), path: `/store/stats/${ slug }` },
+						{
+							value: 'site',
+							label: translate( 'Site' )
+						},
+						{
+							value: 'store',
+							label: translate( 'Store' ),
+							path: `/store/stats/orders/${ section }/${ slug }` }
 					] }
 				/>
 			);

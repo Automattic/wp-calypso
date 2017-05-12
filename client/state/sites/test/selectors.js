@@ -10,8 +10,8 @@ import { expect } from 'chai';
 import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	getRawSite,
 	getSite,
-	computeSiteOptions,
 	getSiteCollisions,
 	isSiteConflicting,
 	isSingleUserSite,
@@ -23,11 +23,15 @@ import {
 	getSiteTitle,
 	getSiteThemeShowcasePath,
 	isSitePreviewable,
+	getSiteOption,
 	isRequestingSites,
 	isRequestingSite,
+	getSeoTitleFormats,
+	getSeoTitle,
 	getSiteBySlug,
 	getSiteByUrl,
 	getSitePlan,
+	getSitePlanSlug,
 	isCurrentSitePlan,
 	isCurrentPlanPaid,
 	getSiteFrontPage,
@@ -37,8 +41,10 @@ import {
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
+	canJetpackSiteAutoUpdateCore,
 	hasJetpackSiteJetpackThemes,
 	hasJetpackSiteJetpackThemesExtendedFeatures,
+	isJetpackSiteMultiSite,
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
 	getJetpackSiteRemoteManagementUrl,
@@ -49,6 +55,7 @@ import {
 	getSiteAdminUrl,
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
+	hasDefaultSiteTitle,
 	siteSupportsJetpackSettingsUi
 } from '../selectors';
 
@@ -64,6 +71,34 @@ describe( 'selectors', () => {
 	beforeEach( () => {
 		getSite.memoizedSelector.cache.clear();
 		getSiteCollisions.memoizedSelector.cache.clear();
+	} );
+
+	describe( '#getRawSite()', () => {
+		it( 'it should return null if there is no such site', () => {
+			const rawSite = getRawSite( {
+				sites: {
+					items: {}
+				}
+			}, 77203199 );
+
+			expect( rawSite ).to.be.null;
+		} );
+
+		it( 'it should return the raw site object for site with that ID', () => {
+			const site = {
+				ID: 77203199,
+				URL: 'https://example.com'
+			};
+			const rawSite = getRawSite( {
+				sites: {
+					items: {
+						77203199: site,
+					}
+				}
+			}, 77203199 );
+
+			expect( rawSite ).to.eql( site );
+		} );
 	} );
 
 	describe( '#getSite()', () => {
@@ -94,7 +129,10 @@ describe( 'selectors', () => {
 							}
 						}
 					}
-				}
+				},
+				siteSettings: {
+					items: {},
+				},
 			}, 2916284 );
 
 			expect( site ).to.eql( {
@@ -105,69 +143,12 @@ describe( 'selectors', () => {
 				domain: 'example.com',
 				slug: 'example.com',
 				hasConflict: false,
+				is_customizable: false,
 				is_previewable: true,
 				options: {
 					default_post_format: 'standard',
 					unmapped_url: 'https://example.wordpress.com'
 				}
-			} );
-		} );
-	} );
-
-	describe( '#computeSiteOptions()', () => {
-		it( 'should return null if the site is not known', () => {
-			const siteOptions = computeSiteOptions( {
-				sites: {
-					items: {}
-				}
-			}, 2916284 );
-
-			expect( siteOptions ).to.be.null;
-		} );
-
-		it( 'should return a the site options along with the computed option wpcom_url', () => {
-			const siteOptions = computeSiteOptions( {
-				sites: {
-					items: {
-						2916284: {
-							ID: 2916284,
-							URL: 'https://example.com',
-							options: {
-								unmapped_url: 'https://example.wordpress.com',
-								is_mapped_domain: true
-							}
-						}
-					}
-				}
-			}, 2916284 );
-
-			expect( siteOptions ).to.eql( {
-				default_post_format: 'standard',
-				unmapped_url: 'https://example.wordpress.com',
-				is_mapped_domain: true,
-				wpcom_url: 'example.wordpress.com'
-			} );
-		} );
-
-		it( 'should fix `default_post_format` if it is equal to \'0\'', () => {
-			const siteOptions = computeSiteOptions( {
-				sites: {
-					items: {
-						2916284: {
-							ID: 2916284,
-							URL: 'https://example.com',
-							options: {
-								default_post_format: '0',
-								unmapped_url: 'https://example.wordpress.com'
-							}
-						}
-					}
-				}
-			}, 2916284 );
-
-			expect( siteOptions ).to.eql( {
-				default_post_format: 'standard',
-				unmapped_url: 'https://example.wordpress.com'
 			} );
 		} );
 	} );
@@ -258,7 +239,10 @@ describe( 'selectors', () => {
 					items: {
 						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', single_user_site: true }
 					}
-				}
+				},
+				siteSettings: {
+					items: {},
+				},
 			}, 77203074 );
 
 			expect( singleUserSite ).to.be.true;
@@ -270,7 +254,10 @@ describe( 'selectors', () => {
 					items: {
 						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', single_user_site: false }
 					}
-				}
+				},
+				siteSettings: {
+					items: {},
+				},
 			}, 77203074 );
 
 			expect( singleUserSite ).to.be.false;
@@ -752,6 +739,69 @@ describe( 'selectors', () => {
 		} );
 	} );
 
+	describe( 'getSiteOption()', () => {
+		it( 'should return null if site is not known', () => {
+			const siteOption = getSiteOption( {
+				sites: {
+					items: {}
+				}
+			}, 77203199, 'example_option' );
+
+			expect( siteOption ).to.be.null;
+		} );
+
+		it( 'should return null if the options are not known for that site', () => {
+			const siteOption = getSiteOption( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+						}
+					}
+				}
+			}, 77203199, 'example_option' );
+
+			expect( siteOption ).to.be.null;
+		} );
+
+		it( 'should return undefined if the option is not known for that site', () => {
+			const siteOption = getSiteOption( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							options: {
+								unmapped_url: 'https://example.wordpress.com'
+							}
+						}
+					}
+				}
+			}, 77203199, 'example_option' );
+
+			expect( siteOption ).to.be.undefined;
+		} );
+
+		it( 'should return the option value if the option is known for that site', () => {
+			const siteOption = getSiteOption( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							options: {
+								example_option: 'example value'
+							}
+						}
+					}
+				}
+			}, 77203199, 'example_option' );
+
+			expect( siteOption ).to.eql( 'example value' );
+		} );
+	} );
+
 	describe( '#isRequestingSites()', () => {
 		it( 'should return false if a request is not in progress', () => {
 			const isRequesting = isRequestingSites( {
@@ -807,6 +857,550 @@ describe( 'selectors', () => {
 			}, 2916284 );
 
 			expect( isRequesting ).to.be.false;
+		} );
+	} );
+
+	describe( 'getSeoTitleFormats()', () => {
+		it( 'should return an empty object for an unknown site', () => {
+			const seoTitleFormats = getSeoTitleFormats( {
+				sites: {
+					items: {}
+				}
+			}, 2916284 );
+
+			expect( seoTitleFormats ).to.eql( {} );
+		} );
+
+		it( 'should return an empty object when unavailable for a known site', () => {
+			const seoTitleFormats = getSeoTitleFormats( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {}
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( seoTitleFormats ).to.eql( {} );
+		} );
+
+		it( 'should return seo title formats by type if available', () => {
+			const seoTitleFormats = getSeoTitleFormats( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									archives: [],
+									front_page: [
+										{
+											type: 'string',
+											value: 'Site Title',
+										}
+									],
+									groups: [],
+									pages: [],
+									posts: [],
+								}
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( seoTitleFormats ).to.eql( {
+				archives: [],
+				frontPage: [
+					{
+						type: 'string',
+						value: 'Site Title',
+					}
+				],
+				groups: [],
+				pages: [],
+				posts: [],
+			} );
+		} );
+	} );
+
+	describe( 'getSeoTitle()', () => {
+		it( 'should return an empty string when there is no site ID in data', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {}
+				}
+			}, 'frontPage', {} );
+
+			expect( seoTitle ).to.eql( '' );
+		} );
+
+		it( 'should convert site name and tagline for front page title type', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									front_page: [
+										{
+											value: 'siteName',
+										},
+										{
+											type: 'string',
+											value: ' | ',
+										},
+										{
+											value: 'tagline',
+										},
+									],
+								}
+							}
+						}
+					}
+				}
+			}, 'frontPage', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title | Site Tagline' );
+		} );
+
+		it( 'should default to site name for front page title type if no other title is set', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									front_page: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'frontPage', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title' );
+		} );
+
+		it( 'should convert site name, tagline and post title for posts title type', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									posts: [
+										{
+											value: 'siteName',
+										},
+										{
+											type: 'string',
+											value: ' | ',
+										},
+										{
+											value: 'tagline',
+										},
+										{
+											type: 'string',
+											value: ' > ',
+										},
+										{
+											value: 'postTitle',
+										},
+									],
+								}
+							}
+						}
+					}
+				}
+			}, 'posts', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {
+					title: 'Post Title',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title | Site Tagline > Post Title' );
+		} );
+
+		it( 'should default to post title for posts title type if no other title is set', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									posts: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'posts', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {
+					title: 'Post Title',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( 'Post Title' );
+		} );
+
+		it( 'should return empty string as post title for posts title type if post title is missing', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									posts: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'posts', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {}
+			} );
+
+			expect( seoTitle ).to.eql( '' );
+		} );
+
+		it( 'should convert site name, tagline and page title for pages title type', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									pages: [
+										{
+											value: 'siteName',
+										},
+										{
+											type: 'string',
+											value: ' | ',
+										},
+										{
+											value: 'tagline',
+										},
+										{
+											type: 'string',
+											value: ' > ',
+										},
+										{
+											value: 'pageTitle',
+										},
+									],
+								}
+							}
+						}
+					}
+				}
+			}, 'pages', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {
+					title: 'Page Title',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title | Site Tagline > Page Title' );
+		} );
+
+		it( 'should default to empty string for pages title type if no other title is set', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									pages: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'pages', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {
+					title: 'Page Title',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( '' );
+		} );
+
+		it( 'should return empty string as page title for pages title type if page title is missing', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									pages: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'pages', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {}
+			} );
+
+			expect( seoTitle ).to.eql( '' );
+		} );
+
+		it( 'should convert site name, tagline and group name for groups title type', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									groups: [
+										{
+											value: 'siteName',
+										},
+										{
+											type: 'string',
+											value: ' | ',
+										},
+										{
+											value: 'tagline',
+										},
+										{
+											type: 'string',
+											value: ' > ',
+										},
+										{
+											value: 'groupTitle',
+										},
+									],
+								}
+							}
+						}
+					}
+				}
+			}, 'groups', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				tag: 'Tag Name',
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title | Site Tagline > Tag Name' );
+		} );
+
+		it( 'should default to empty string for groups title type if no other title is set', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									groups: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'groups', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( '' );
+		} );
+
+		it( 'should convert site name, tagline and date for archives title type', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									archives: [
+										{
+											value: 'siteName',
+										},
+										{
+											type: 'string',
+											value: ' | ',
+										},
+										{
+											value: 'tagline',
+										},
+										{
+											type: 'string',
+											value: ' > ',
+										},
+										{
+											value: 'date',
+										},
+									],
+								}
+							}
+						}
+					}
+				}
+			}, 'archives', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				date: 'January 2000',
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title | Site Tagline > January 2000' );
+		} );
+
+		it( 'should default to empty string for archives title type if no other title is set', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									archives: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'archives', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+			} );
+
+			expect( seoTitle ).to.eql( '' );
+		} );
+
+		it( 'should default to post title for a misc title type', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {}
+							}
+						}
+					}
+				}
+			}, 'exampleType', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {
+					title: 'Post Title'
+				}
+			} );
+
+			expect( seoTitle ).to.eql( 'Post Title' );
+		} );
+
+		it( 'should default to site name for a misc title type if post title is missing', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {}
+							}
+						}
+					}
+				}
+			}, 'exampleType', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title' );
 		} );
 	} );
 
@@ -987,6 +1581,36 @@ describe( 'selectors', () => {
 				free_trial: false,
 				expired: false
 			} );
+		} );
+	} );
+
+	describe( 'getSitePlanSlug()', () => {
+		it( 'should return undefined if the plan slug is not known', () => {
+			const planSlug = getSitePlanSlug( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( planSlug ).to.be.undefined;
+		} );
+
+		it( 'should return the plan slug if it is known', () => {
+			const planSlug = getSitePlanSlug( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							plan: {
+								product_id: 1234,
+								product_slug: 'fake-plan',
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( planSlug ).to.eql( 'fake-plan' );
 		} );
 	} );
 
@@ -1645,6 +2269,44 @@ describe( 'selectors', () => {
 		} );
 	} );
 
+	describe( '#canJetpackSiteAutoUpdateCore()', () => {
+		it( 'it should return `true` if the `file_mod_disabled` option does not contain `automatic_updater_disabled`', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: false,
+					jetpack: true,
+					options: {
+						file_mod_disabled: [],
+						jetpack_version: '3.4'
+					}
+				}
+			} );
+
+			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
+			expect( canAutoUpdateCore ).to.equal( true );
+		} );
+
+		it( 'it should return `false` if the `file_mod_disabled` option contains `automatic_updater_disabled`', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: false,
+					jetpack: true,
+					options: {
+						file_mod_disabled: [ 'automatic_updater_disabled' ],
+						jetpack_version: '3.4'
+					}
+				}
+			} );
+
+			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
+			expect( canAutoUpdateCore ).to.equal( false );
+		} );
+	} );
+
 	describe( '#siteHasMinimumJetpackVersion()', () => {
 		it( 'it should return `null` for a non-existing site', () => {
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( stateWithNoItems, nonExistingSiteId );
@@ -1789,6 +2451,66 @@ describe( 'selectors', () => {
 
 			const hasThemesExtendedFeatures = hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
 			expect( hasThemesExtendedFeatures ).to.be.true;
+		} );
+	} );
+
+	describe( 'isJetpackSiteMultiSite()', () => {
+		it( 'should return null if the site is not known', () => {
+			const isMultisite = isJetpackSiteMultiSite( {
+				sites: {
+					items: {}
+				}
+			}, 2916284 );
+
+			expect( isMultisite ).to.be.null;
+		} );
+
+		it( 'should return null if the site is not a Jetpack site', () => {
+			const isMultisite = isJetpackSiteMultiSite( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							jetpack: false,
+							is_multisite: true,
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isMultisite ).to.be.null;
+		} );
+
+		it( 'should return true if the site is a Jetpack multisite', () => {
+			const isMultisite = isJetpackSiteMultiSite( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							jetpack: true,
+							is_multisite: true,
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isMultisite ).to.be.true;
+		} );
+
+		it( 'should return false if the site is a Jetpack single site', () => {
+			const isMultisite = isJetpackSiteMultiSite( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							jetpack: true,
+							is_multisite: false,
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isMultisite ).to.be.false;
 		} );
 	} );
 
@@ -2488,6 +3210,66 @@ describe( 'selectors', () => {
 			}, 77203074 );
 
 			expect( supportsJetpackSettingsUI ).to.be.true;
+		} );
+	} );
+
+	describe( 'hasDefaultSiteTitle()', () => {
+		it( 'should return null if the site is not known', () => {
+			const hasDefaultTitle = hasDefaultSiteTitle( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( hasDefaultTitle ).to.be.null;
+		} );
+
+		it( 'should return true if the site title is "Site Title"', () => {
+			const hasDefaultTitle = hasDefaultSiteTitle( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'example.wordpress.com',
+							name: 'Site Title',
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( hasDefaultTitle ).to.be.true;
+		} );
+
+		it( 'should return true if the site title is equal to the site slug', () => {
+			const hasDefaultTitle = hasDefaultSiteTitle( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'example.wordpress.com',
+							name: 'example.wordpress.com',
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( hasDefaultTitle ).to.be.true;
+		} );
+
+		it( 'should return false if the site title is any other title', () => {
+			const hasDefaultTitle = hasDefaultSiteTitle( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'example.wordpress.com',
+							name: 'Example Site Name',
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( hasDefaultTitle ).to.be.false;
 		} );
 	} );
 

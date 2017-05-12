@@ -51,6 +51,7 @@ class SiteSettingsFormWriting extends Component {
 	render() {
 		const {
 			eventTracker,
+			uniqueEventTracker,
 			fields,
 			handleSelect,
 			handleToggle,
@@ -101,6 +102,7 @@ class SiteSettingsFormWriting extends Component {
 					onChangeField={ onChangeField }
 					setFieldValue={ setFieldValue }
 					eventTracker={ eventTracker }
+					uniqueEventTracker={ uniqueEventTracker }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
@@ -190,6 +192,7 @@ const connectComponent = connect(
 
 const getFormSettings = settings => {
 	const formSettings = pick( settings, [
+		'posts_per_page',
 		'default_post_format',
 		'custom-content-types',
 		'jetpack_testimonial',

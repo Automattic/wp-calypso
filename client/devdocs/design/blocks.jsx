@@ -55,6 +55,7 @@ import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
 import ReaderPostCard from 'blocks/reader-post-card/docs/example';
 import ReaderCombinedCard from 'blocks/reader-combined-card/docs/example';
+import ReaderRecommendedSites from 'blocks/reader-recommended-sites/docs/example';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu/docs/example';
 import DailyPostButton from 'blocks/daily-post-button/docs/example';
 import ReaderSubscriptionListItem from 'blocks/reader-subscription-list-item/docs/example';
@@ -65,6 +66,7 @@ import ReaderExportButton from 'blocks/reader-export-button/docs/example';
 import ReaderImportButton from 'blocks/reader-import-button/docs/example';
 import SharingPreviewPane from 'blocks/sharing-preview-pane/docs/example';
 import ReaderShare from 'blocks/reader-share/docs/example';
+import Login from 'blocks/login/docs/example';
 
 export default React.createClass( {
 
@@ -112,6 +114,7 @@ export default React.createClass( {
 					<HappinessSupport />
 					<ImageEditor />
 					<LikeButtons />
+					<Login />
 					<PostEditButton />
 					<PlanStorage />
 					<PostSchedule />
@@ -136,6 +139,7 @@ export default React.createClass( {
 					<AuthorCompactProfile />
 					<ReaderPostCard />
 					<ReaderCombinedCard />
+					<ReaderRecommendedSites />
 					<PlanPrice />
 					<PlanThankYouCard />
 					<DismissibleCard />

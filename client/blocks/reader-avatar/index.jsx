@@ -20,6 +20,7 @@ const ReaderAvatar = ( {
 		siteUrl,
 		isCompact = false,
 		preferGravatar = false,
+		preferBlavatar = false,
 		showPlaceholder = false,
 		onClick,
 	} ) => {
@@ -58,9 +59,13 @@ const ReaderAvatar = ( {
 		}
 	}
 
+
 	// If we have an avatar and we prefer it, don't even consider the site icon
 	if ( hasAvatar && preferGravatar ) {
 		hasSiteIcon = false;
+	} else if ( hasSiteIcon && preferBlavatar ) {
+		hasAvatar = false;
+		showPlaceholder = false;
 	}
 
 	const hasBothIcons = hasSiteIcon && hasAvatar;

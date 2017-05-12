@@ -1,10 +1,12 @@
+/**
+ * External Dependencies
+ */
 import { combineReducers } from 'redux';
-import assign from 'lodash/assign';
-import keyBy from 'lodash/keyBy';
-import map from 'lodash/map';
-import omit from 'lodash/omit';
-import omitBy from 'lodash/omitBy';
+import { assign, keyBy, map, omit, omitBy, reduce } from 'lodash';
 
+/**
+ * Internal Dependencies
+ */
 import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
@@ -16,7 +18,7 @@ import {
 
 import { decodeEntities } from 'lib/formatting';
 
-import { isValidStateWithSchema } from 'state/utils';
+import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
 
 const actionMap = {
@@ -54,28 +56,26 @@ function handleRequestFailure( state, action ) {
 }
 
 function adaptFeed( feed ) {
-	if ( feed.name ) {
-		feed.name = decodeEntities( feed.name );
-	}
-	feed.feed_ID = + feed.feed_ID;
-	feed.blog_ID = + feed.blog_ID;
-	return feed;
+	return {
+		feed_ID: +feed.feed_ID,
+		blog_ID: +feed.blog_ID,
+		name: feed.name && decodeEntities( feed.name ),
+		URL: feed.URL,
+		feed_URL: feed.feed_URL,
+		is_following: feed.is_following,
+		subscribers_count: feed.subscribers_count,
+	};
 }
 
 function handleRequestSuccess( state, action ) {
-	const feed = assign( {}, action.payload );
-	adaptFeed( feed );
+	const feed = adaptFeed( action.payload );
 	return assign( {}, state, {
 		[ feed.feed_ID ]: feed
 	} );
 }
 
 function handleFeedUpdate( state, action ) {
-	const feeds = map( action.payload, feed => {
-		feed = assign( {}, feed );
-		adaptFeed( feed );
-		return feed;
-	} );
+	const feeds = map( action.payload, adaptFeed );
 	return assign( {}, state, keyBy( feeds, 'feed_ID' ) );
 }
 
@@ -101,7 +101,22 @@ export function queuedRequests( state = {}, action ) {
 	return state;
 }
 
+export const lastFetched = createReducer( {}, {
+	[ READER_FEED_REQUEST_SUCCESS ]: ( state, action ) => ( {
+		...state,
+		[ action.payload.feed_ID ]: Date.now()
+	} ),
+	[ READER_FEED_UPDATE ]: ( state, action ) => {
+		const updates = reduce( action.payload, ( memo, feed ) => {
+			memo[ feed.feed_ID ] = Date.now();
+			return memo;
+		}, {} );
+		return assign( {}, state, updates );
+	}
+} );
+
 export default combineReducers( {
 	items,
+	lastFetched,
 	queuedRequests
 } );

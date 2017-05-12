@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,7 +15,7 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 const FeedError = React.createClass( {
 	getDefaultProps() {
 		return {
-			message: i18n.translate( 'Sorry, we can\'t find that site.' )
+			message: i18n.translate( "Sorry, we can't find that site." ),
 		};
 	},
 
@@ -32,13 +32,24 @@ const FeedError = React.createClass( {
 	},
 
 	render() {
-		const action = ( <a className="empty-content__action button is-primary"
+		const action = (
+			<a
+				className="empty-content__action button is-primary"
 				onClick={ this.recordAction }
-				href="/read/search">{ this.translate( 'Find Sites to Follow' ) }</a>),
+				href="/read/search"
+			>
+				{ this.props.translate( 'Find Sites to Follow' ) }
+			</a>
+		),
 			secondaryAction = (
-				<a className="empty-content__action button"
+				<a
+					className="empty-content__action button"
 					onClick={ this.recordSecondaryAction }
-					href="/discover">{ this.translate( 'Explore Discover' ) }</a> );
+					href="/discover"
+				>
+					{ this.props.translate( 'Explore Discover' ) }
+				</a>
+			);
 
 		return (
 			<ReaderMain>
@@ -55,11 +66,11 @@ const FeedError = React.createClass( {
 				/>
 			</ReaderMain>
 		);
-	}
+	},
 } );
 
 FeedError.propTypes = {
-	sidebarTitle: React.PropTypes.string
+	sidebarTitle: React.PropTypes.string,
 };
 
-export default FeedError;
+export default localize( FeedError );

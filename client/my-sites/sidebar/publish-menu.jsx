@@ -66,7 +66,6 @@ class PublishMenu extends PureComponent {
 			{
 				name: 'post',
 				label: this.props.translate( 'Blog Posts' ),
-				className: 'posts',
 				capability: 'edit_posts',
 				config: 'manage/posts',
 				queryable: true,
@@ -79,7 +78,6 @@ class PublishMenu extends PureComponent {
 			{
 				name: 'page',
 				label: this.props.translate( 'Pages' ),
-				className: 'pages',
 				capability: 'edit_pages',
 				queryable: true,
 				config: 'manage/pages',
@@ -94,7 +92,6 @@ class PublishMenu extends PureComponent {
 			items.push( {
 				name: 'media',
 				label: this.props.translate( 'Media' ),
-				className: 'media-section',
 				capability: 'upload_files',
 				queryable: true,
 				config: 'manage/media',
@@ -159,8 +156,7 @@ class PublishMenu extends PureComponent {
 		}
 
 		const className = this.props.itemLinkClass(
-			menuItem.paths ? menuItem.paths : menuItem.link,
-			menuItem.className
+			menuItem.paths ? menuItem.paths : menuItem.link
 		);
 
 		return (
@@ -172,6 +168,7 @@ class PublishMenu extends PureComponent {
 				onNavigate={ this.onNavigate( menuItem.name ) }
 				icon={ icon }
 				preloadSectionName={ preload }
+				postType={ menuItem.name }
 			>
 				{ menuItem.name === 'media' && (
 					<MediaLibraryUploadButton className="sidebar__button" site={ site } href={ menuItem.buttonLink }>
@@ -204,7 +201,6 @@ class PublishMenu extends PureComponent {
 			return memo.concat( {
 				name: postType.name,
 				label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
-				className: postType.name,
 				config: 'manage/custom-post-types',
 				queryable: postType.api_queryable,
 

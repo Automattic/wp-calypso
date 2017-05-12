@@ -11,8 +11,8 @@ export const requestFeedSearch = ( query, offset = 0 ) => ( {
 	payload: { query, offset },
 } );
 
-export const receiveFeedSearch = ( query, feeds ) => ( {
+export const receiveFeedSearch = ( query, feeds, total ) => ( {
 	type: READER_FEED_SEARCH_RECEIVE,
-	payload: feeds,
+	payload: { feeds, total },
 	query,
 } );

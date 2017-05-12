@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { noop, partial } from 'lodash';
+import { get, noop, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -26,7 +26,8 @@ const RELATED_IMAGE_WIDTH = 385; // usual width of featured images in related po
 function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
 	const siteName = ( site && site.title ) || post.site_name;
-	const authorAndSiteAreDifferent = ! areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
+	const authorName = get( post, 'author.name', '' );
+	const authorAndSiteAreDifferent = ! areEqualIgnoringWhitespaceAndCase( siteName, authorName );
 
 	return (
 		<div className="reader-related-card-v2__meta">
@@ -34,9 +35,9 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 				<Gravatar user={ post.author } />
 			</a>
 			<div className="reader-related-card-v2__byline">
-				{ authorAndSiteAreDifferent &&
+				{ authorName && authorAndSiteAreDifferent &&
 				<span className="reader-related-card-v2__byline-author">
-					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">{ post.author.name }</a>
+					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">{ authorName }</a>
 				</span>
 				}
 				<span className="reader-related-card-v2__byline-site">
@@ -85,10 +86,9 @@ export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSit
 		return <RelatedPostCardPlaceholder />;
 	}
 
-	const featuredImage = post.canonical_image;
 	const postLink = getPostUrl( post );
 	const classes = classnames( 'reader-related-card-v2', {
-		'has-thumbnail': !! featuredImage,
+		'has-thumbnail': !! post.canonical_media,
 		'has-excerpt': post.excerpt && post.excerpt.length > 1
 	} );
 	const postClickTracker = partial( onPostClick, post );
@@ -127,7 +127,7 @@ export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSit
 				<div className="reader-related-card-v2__site-info">
 					<h1 className="reader-related-card-v2__title">{ post.title }</h1>
 					<div className="reader-related-card-v2__excerpt post-excerpt">
-						{ featuredImage ? post.short_excerpt : post.better_excerpt_no_html }
+						{ !! post.canonical_media ? post.short_excerpt : post.better_excerpt_no_html }
 					</div>
 				</div>
 			</a>

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import noop from 'lodash/noop';
 
 /**
@@ -15,20 +16,20 @@ const FollowingImportButton = React.createClass( {
 	propTypes: {
 		onError: React.PropTypes.func,
 		onImport: React.PropTypes.func,
-		onProgress: React.PropTypes.func
+		onProgress: React.PropTypes.func,
 	},
 
 	getDefaultProps() {
 		return {
 			onError: noop,
 			onImport: noop,
-			onProgress: noop
+			onProgress: noop,
 		};
 	},
 
 	getInitialState() {
 		return {
-			disabled: false
+			disabled: false,
 		};
 	},
 
@@ -44,13 +45,13 @@ const FollowingImportButton = React.createClass( {
 		req.upload.onprogress = this.onImportProgress;
 
 		this.setState( {
-			disabled: true
+			disabled: true,
 		} );
 	},
 
 	onImport( err, data ) {
 		this.setState( {
-			disabled: false
+			disabled: false,
 		} );
 
 		if ( err ) {
@@ -68,13 +69,13 @@ const FollowingImportButton = React.createClass( {
 
 	render() {
 		return (
-			<FilePicker accept=".xml,.opml" onPick={ this.onPick } >
-				<Button compact disabled={ this.state.disabled } >
-					{ this.translate( 'Import' ) }
+			<FilePicker accept=".xml,.opml" onPick={ this.onPick }>
+				<Button compact disabled={ this.state.disabled }>
+					{ this.props.translate( 'Import' ) }
 				</Button>
 			</FilePicker>
 		);
-	}
+	},
 } );
 
-export default FollowingImportButton;
+export default localize( FollowingImportButton );

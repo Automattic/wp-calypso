@@ -5,7 +5,7 @@ import {
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
-	SITE_DOMAINS_REQUEST_FAILURE
+	SITE_DOMAINS_REQUEST_FAILURE,
 } from 'state/action-types';
 import { createSiteDomainObject } from 'state/sites/domains/assembler';
 

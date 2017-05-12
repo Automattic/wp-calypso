@@ -116,7 +116,10 @@ describe( 'selectors', () => {
 								URL: 'https://example.wordpress.com'
 							}
 						}
-					}
+					},
+					siteSettings: {
+						items: {},
+					},
 				} );
 
 				it( 'returns a new sitePlanObject', () => {

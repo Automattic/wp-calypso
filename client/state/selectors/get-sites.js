@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { getSite } from 'state/sites/selectors';
 
 /**
@@ -9,7 +10,10 @@ import { getSite } from 'state/sites/selectors';
  * @param {Object} state  Global state tree
  * @return {Array}        Sites objects
  */
-export default function getSites( state ) {
-	return Object.values( state.sites.items )
-		.map( site => getSite( state, site.ID ) );
-}
+export default createSelector(
+	( state ) => (
+		Object.values( state.sites.items )
+			.map( site => getSite( state, site.ID ) )
+	),
+	( state ) => state.sites.items
+);

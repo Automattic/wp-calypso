@@ -9,6 +9,9 @@ import { expect } from 'chai';
  */
 import useNock from 'test/helpers/use-nock';
 import {
+	SITE_DELETE,
+	SITE_DELETE_FAILURE,
+	SITE_DELETE_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -20,6 +23,8 @@ import {
 	SITES_UPDATE
 } from 'state/action-types';
 import {
+	deleteSite,
+	receiveDeletedSite,
 	receiveSite,
 	receiveSites,
 	receiveSiteUpdates,
@@ -187,6 +192,58 @@ describe( 'actions', () => {
 					type: SITE_REQUEST_FAILURE,
 					siteId: 77203074,
 					error: match( { message: 'User cannot access this private blog.' } )
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'deleteSite()', () => {
+		useNock( nock => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2916284/delete' )
+				.reply( 200, {
+					ID: 2916284
+				} )
+				.post( '/rest/v1.1/sites/77203074/delete' )
+				.reply( 403, {
+					error: 'unauthorized',
+					message: 'User cannot delete site.'
+				} );
+		} );
+
+		it( 'should dispatch delete action when thunk triggered', () => {
+			deleteSite( 2916284 )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: SITE_DELETE,
+				siteId: 2916284
+			} );
+		} );
+
+		it( 'should dispatch receive deleted site when request completes', () => {
+			return deleteSite( 2916284 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith(
+					receiveDeletedSite( 2916284 )
+				);
+			} );
+		} );
+
+		it( 'should dispatch delete success action when request completes', () => {
+			return deleteSite( 2916284 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: SITE_DELETE_SUCCESS,
+					siteId: 2916284
+				} );
+			} );
+		} );
+
+		it( 'should dispatch fail action when request for delete fails', () => {
+			return deleteSite( 77203074 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: SITE_DELETE_FAILURE,
+					siteId: 77203074,
+					error: match( { message: 'User cannot delete site.' } )
 				} );
 			} );
 		} );

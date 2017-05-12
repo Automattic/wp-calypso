@@ -451,13 +451,18 @@
 			min-height: 91px;
 			padding: 20px 20px 20px 80px;
 			position: relative;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
 
 			&::before {
 				color: $blue-medium;
 				left: 10px;
 				position: absolute;
-				top: 15px;
 				@include noticon( '\f205', 60px );
+				@include breakpoint( ">660px" ) {
+					left: 20px;
+				}
 			}
 
 			> h6 {

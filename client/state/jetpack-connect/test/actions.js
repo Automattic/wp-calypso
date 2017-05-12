@@ -23,6 +23,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+	SITES_RECEIVE,
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import useFakeDom from 'test/helpers/use-fake-dom';
@@ -256,6 +257,17 @@ describe( 'actions', () => {
 							plans_url: '/plans/example.com'
 						},
 						error: null
+					} );
+				} );
+			} );
+
+			it( 'should dispatch sites receive action when request completes', () => {
+				const { authorize } = actions;
+
+				return authorize( queryObject )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: SITES_RECEIVE,
+						sites: [ client_id ]
 					} );
 				} );
 			} );
