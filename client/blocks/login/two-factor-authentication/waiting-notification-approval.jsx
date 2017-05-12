@@ -4,7 +4,6 @@
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -21,7 +20,6 @@ import {
 	getTwoFactorPushPollSuccess,
 } from 'state/login/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { login } from 'lib/paths';
 import TwoFactorActions from './two-factor-actions';
 
 class WaitingTwoFactorNotificationApproval extends Component {
@@ -50,12 +48,6 @@ class WaitingTwoFactorNotificationApproval extends Component {
 			this.props.onSuccess();
 		}
 	}
-
-	verifyWithCodeInstead = ( event ) => {
-		event.preventDefault();
-
-		page( login( { twoFactorAuthType: 'authenticator' } ) );
-	};
 
 	render() {
 		const { translate } = this.props;
