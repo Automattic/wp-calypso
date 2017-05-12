@@ -20,6 +20,7 @@ import componentsUsageStats from './components-usage-stats/reducer';
 import consoleDispatcher from './console-dispatch';
 import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
+import discussions from './discussions/reducer';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
 import geo from './geo/reducer';
@@ -82,6 +83,7 @@ const reducers = {
 	componentsUsageStats,
 	countryStates,
 	currentUser,
+	discussions,
 	documentHead,
 	domains,
 	extensions,

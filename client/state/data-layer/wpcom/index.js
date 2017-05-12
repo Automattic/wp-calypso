@@ -3,6 +3,7 @@
  */
 import { mergeHandlers } from 'state/data-layer/utils';
 import accountRecovery from './account-recovery';
+import discussions from './discussions';
 import me from './me';
 import plans from './plans';
 import posts from './posts';
@@ -15,6 +16,7 @@ import login2fa from './login-2fa';
 
 export const handlers = mergeHandlers(
 	accountRecovery,
+	discussions,
 	me,
 	plans,
 	posts,
