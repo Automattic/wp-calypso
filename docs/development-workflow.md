@@ -51,6 +51,18 @@ or limit it as before with:
 DEBUG=calypso:* make run
 ```
 
+## Clearing browser data
+
+Seeing some strange errors that only happen on _your_ browser? You may need to clear your browser's local storage and database. Calypso saves a lot here and if you've changed the way your data is kept (especially in redux state), it can break things in unepxected ways during the transition.
+
+At the browser console line:
+
+```js
+localStorage.clear(); indexedDB.deleteDatabase( 'calypso' );
+```
+
+And this should clear out your database. Just make sure that in your changes you're not creating problems for production users!
+
 ## Monitoring builds and tests
 
 Throughout your Calypso development workflow, you will find yourself waiting — either for a build to finish or for tests to run. Rather than standing idle looking at terminals while you wait, you can use status indicators and/or system notifications.
