@@ -45,7 +45,6 @@ class EasyTab extends Component {
 
 	state = {
 		httpOnly: true,
-		isBusy: false,
 		isDeleting: false,
 		isDeletingAll: false,
 	}
@@ -56,15 +55,6 @@ class EasyTab extends Component {
 				isDeleting: false,
 				isDeletingAll: false,
 			} );
-		}
-
-		if ( ! this.props.isTesting && nextProps.isTesting ) {
-			this.setState( { isBusy: true } );
-			return;
-		}
-
-		if ( this.props.isTesting && ! nextProps.isTesting ) {
-			this.setState( { isBusy: false } );
 		}
 	}
 
@@ -152,7 +142,7 @@ class EasyTab extends Component {
 
 							<Button
 								compact
-								busy={ this.state.isBusy }
+								busy={ isTesting }
 								disabled={ isTesting }
 								onClick={ this.testCache }>
 								{ translate( 'Test Cache' ) }
