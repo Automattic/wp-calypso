@@ -108,7 +108,7 @@ install: node_modules
 
 # Simply running `make run` will spawn the Node.js server instance.
 run: welcome githooks install build
-	@$(NODE) build/bundle.js
+	@$(NODE) $(NODE_ARGS) build/bundle.js
 
 dashboard: install
 	@$(NODE_BIN)/webpack-dashboard -- make run
