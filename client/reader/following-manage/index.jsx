@@ -20,6 +20,7 @@ import {
 	getReaderFeedsCountForQuery,
 	getReaderRecommendedSites,
 	isSiteBlocked as isSiteBlockedSelector,
+	getReaderAliasedFollowFeedUrl,
 } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
@@ -193,7 +194,9 @@ class FollowingManage extends Component {
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
-								siteUrl={ addSchemeIfMissing( sitesQuery, 'http' ) }
+								siteUrl={ this.props.getReaderAliasedFollowFeedUrl(
+									addSchemeIfMissing( sitesQuery, 'http' )
+								) }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
 							/>
 						</div> }
@@ -228,6 +231,7 @@ export default connect(
 		searchResultsCount: getReaderFeedsCountForQuery( state, ownProps.sitesQuery ),
 		getRecommendedSites: seed => getReaderRecommendedSites( state, seed ),
 		isSiteBlocked: site => isSiteBlockedSelector( state, site.blogId ),
+		getReaderAliasedFollowFeedUrl: url => getReaderAliasedFollowFeedUrl( state, url ),
 	} ),
 	{ requestFeedSearch }
 )( localize( FollowingManage ) );
