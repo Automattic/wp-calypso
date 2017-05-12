@@ -2,4 +2,12 @@
 	background: lighten( $gray, 30% );
 	padding: 8px;
 	vertical-align: middle;
+	font-size: 11px;
+	text-transform: uppercase;
+
+	td {
+		padding-top: 12px;
+		padding-bottom: 12px;
+		font-weight: 600;
+	}
 }
