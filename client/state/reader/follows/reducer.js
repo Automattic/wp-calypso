@@ -99,11 +99,7 @@ export const items = createReducer(
 			let urlKey = prepareComparableUrl( action.payload.feedUrl );
 			const newValues = { is_following: true };
 
-			const actualFeedUrl = get(
-				action.payload,
-				[ 'follow', 'feed_URL' ],
-				action.payload.feedUrl
-			);
+			const actualFeedUrl = get( action.payload, [ 'follow', 'feed_URL' ], action.payload.feedUrl );
 
 			const newState = { ...state };
 			// for the case where a user entered an exact url to follow something, sometimes the
@@ -111,7 +107,13 @@ export const items = createReducer(
 			// e.g. example.com --> example.com/rss.
 			// Since we are keying this reducer by url,
 			// we need delete the old key and move it to the new one.
+			// also keep what was typed in as an alias.  pretty edge casey but ideally we should retain aliases to
+			// display correct followByUrl follow button status
 			if ( actualFeedUrl !== action.payload.feedUrl ) {
+				newValues.alias_feed_URLs = [
+					...( state[ urlKey ].alias_feed_URLs || [] ),
+					prepareComparableUrl( action.payload.feedUrl ),
+				];
 				delete newState[ urlKey ];
 				urlKey = prepareComparableUrl( actualFeedUrl );
 			} else if ( state[ urlKey ] && state[ urlKey ].error ) {

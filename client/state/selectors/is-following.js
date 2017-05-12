@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { find } from 'lodash';
+import { find, includes } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -13,6 +13,10 @@ export default function isFollowing( state, { feedUrl, feedId, blogId } ) {
 	if ( feedUrl ) {
 		const url = prepareComparableUrl( feedUrl );
 		follow = state.reader.follows.items[ url ];
+		// if follow by url make sure it hasn't been aliased
+		if ( ! follow ) {
+			follow = find( state.reader.follows.items, f => includes( f.alias_feed_URLs, url ) );
+		}
 	} else if ( feedId ) {
 		follow = find( state.reader.follows.items, { feed_ID: feedId } );
 	} else if ( blogId ) {

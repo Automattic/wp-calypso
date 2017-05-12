@@ -570,6 +570,7 @@ describe( 'reducer', () => {
 				'example.com/feed': {
 					...subscriptionInfo,
 					is_following: true,
+					alias_feed_URLs: [ 'example.com' ],
 				},
 			} );
 		} );
