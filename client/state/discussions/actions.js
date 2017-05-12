@@ -3,7 +3,6 @@
  */
 import {
 	DISCUSSIONS_COUNTS_UPDATE,
-	DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUESTING,
 	DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_LIKE_REQUESTING,
@@ -126,22 +125,6 @@ export function receivePostCommentsCount( siteId, postId, count ) {
 		siteId,
 		postId,
 		count
-	};
-}
-
-/***
- * returns an action object used in signalling that a content update
- * is beign requested.
- *
- * @param   {Number} siteId    site identifier
- * @param   {Number} commentId comment identifier
- * @returns {Object}           action object
- */
-export function requestingCommentContentUpdate( siteId, commentId ) {
-	return {
-		type: DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUESTING,
-		siteId,
-		commentId
 	};
 }
 
