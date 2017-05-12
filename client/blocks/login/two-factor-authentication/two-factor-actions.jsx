@@ -22,13 +22,10 @@ import { login } from 'lib/paths';
 class TwoFactorActions extends Component {
 	static propTypes = {
 		errorNotice: PropTypes.func.isRequired,
-		successNotice: PropTypes.func.isRequired,
 		isSmsSupported: PropTypes.bool.isRequired,
+		successNotice: PropTypes.func.isRequired,
+		twoFactorAuthType: PropTypes.string.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
-	};
-
-	state = {
-		twoStepCode: ''
 	};
 
 	sendSmsCode = ( event ) => {
