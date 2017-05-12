@@ -318,6 +318,26 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	store() {
+		const { canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
+		const storeLink = '/store' + siteSuffix;
+		const showStoreLink = config.isEnabled( 'woocommerce/extension-dashboard' ) &&
+			site && isJetpack && canUserManageOptions;
+
+		return (
+			showStoreLink &&
+			<SidebarItem
+				label={ translate( 'Store' ) }
+				link={ storeLink }
+				onNavigate={ this.onNavigate }
+				icon="cart" >
+				<SidebarButton href={ storeLink }>
+					{ translate( 'Set up' ) }
+				</SidebarButton>
+			</SidebarItem>
+		);
+	}
+
 	trackUpgradeClick = () => {
 		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
 			cta_name: 'sidebar_upgrade_default'
@@ -517,6 +537,7 @@ export class MySitesSidebar extends Component {
 					<ul>
 						{ this.stats() }
 						{ this.plan() }
+						{ this.store() }
 					</ul>
 				</SidebarMenu>
 
