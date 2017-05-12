@@ -68,6 +68,7 @@ class ResetPasswordEmailValidation extends Component {
 
 		return (
 			<EmptyContent
+				illustration="/calypso/images/illustrations/illustration-500.svg"
 				title={ translate( 'Oops, something went wrong.' ) }
 				line={ translate( "We've failed to validate using the given link. " +
 							'Please try to request a new one or try the other methods.' ) }
