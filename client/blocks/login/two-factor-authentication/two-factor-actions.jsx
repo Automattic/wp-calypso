@@ -32,12 +32,10 @@ class TwoFactorActions extends Component {
 	sendSmsCode = ( event ) => {
 		event.preventDefault();
 
-		const { userId, twoStepNonce, translate } = this.props;
-
-		page( login( { twoFactorAuthType: 'sms' } ) );
+		const { userId, twoStepNonce } = this.props;
 
 		this.props.sendSmsCode( userId, twoStepNonce ).then( () => {
-			this.props.successNotice( translate( 'Recovery code has been sent.' ) );
+			page( login( { twoFactorAuthType: 'sms' } ) );
 		} ).catch( ( errorMesssage ) => {
 			this.props.errorNotice( errorMesssage );
 		} );
