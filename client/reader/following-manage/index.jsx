@@ -153,7 +153,7 @@ class FollowingManage extends Component {
 			getRecommendedSites,
 			isSiteBlocked,
 		} = this.props;
-		const searchPlaceholderText = translate( 'Search millions of sites' );
+		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
 		const showExistingSubscriptions = ! ( !! sitesQuery && showMoreResults );
 		const isSitesQueryUrl = resemblesUrl( sitesQuery );
 		let sitesQueryWithoutProtocol;
