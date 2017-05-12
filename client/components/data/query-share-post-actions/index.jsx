@@ -26,14 +26,17 @@ class QuerySharePostActions extends Component {
 	componentDidMount() {
 		this.request( this.props );
 	}
-
-	componentWillReceiveProps( nextProps ) {
+	shouldComponentUpdate( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId &&
 			this.props.postId === nextProps.postId &&
 			this.props.status === nextProps.status ) {
-			return;
+			return false;
 		}
-		this.request( nextProps );
+		return true;
+	}
+
+	componentDidUpdate() {
+		this.request( this.props );
 	}
 
 	request( props ) {
