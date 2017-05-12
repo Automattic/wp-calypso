@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { pick } from 'lodash';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ const CdnTab = ( {
 	handleSubmitForm,
 	isRequesting,
 	isSaving,
-	siteUrl,
+	site,
 	translate,
 } ) => {
 	return (
@@ -79,7 +79,7 @@ const CdnTab = ( {
 								{ translate(
 									'The new URL to be used in place of %(url)s for rewriting. No trailing / please.',
 									{
-										args: { url: siteUrl },
+										args: { url: get( site, 'URL' ) },
 									}
 								) }
 							</FormSettingExplanation>
@@ -147,9 +147,7 @@ const CdnTab = ( {
 									'off-site URL above). Use a comma as the delimiter. For pages with a large number of static files, ' +
 									'this can improve browser performance. CNAMEs may also need to be configured on your CDN.',
 									{
-										args: {
-											url: siteUrl,
-										},
+										args: { url: get( site, 'URL' ) },
 										components: {
 											a: (
 												<ExternalLink

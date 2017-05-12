@@ -29,8 +29,6 @@ class EasyTab extends Component {
 		isSaving: PropTypes.bool,
 		isTesting: PropTypes.bool,
 		site: PropTypes.object.isRequired,
-		siteId: PropTypes.number.isRequired,
-		testCache: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
