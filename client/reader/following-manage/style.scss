@@ -189,6 +189,15 @@
 	}
 }
 
+.following-manage__search-results > div {
+	border-bottom: 1px solid lighten( $gray, 30% );
+
+	&:nth-last-child(2),
+	&:last-child {
+		border-bottom: 0;
+	}
+}
+
 .following-manage__sites-window-scroller-row-wrapper {
 	border-bottom: 1px solid lighten( $gray, 30% );
 
