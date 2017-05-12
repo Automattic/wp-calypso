@@ -73,3 +73,10 @@
 		color: $white;
 	}
 }
+
+.suggestions__value-description {
+	pointer-events: none;
+	text-indent: 10px;
+	color: gray-text-min;
+	font-size: 14px;
+}

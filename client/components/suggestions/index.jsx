@@ -302,14 +302,16 @@ class Suggestions extends React.Component {
 				</div>
 			);
 			//Add values
+			const { terms } = this.props;
 			rendered.push( suggestions[ key ].map( ( value, i ) => {
-				const taxonomyName = this.props.terms[ key ][ value ].name;
+				const taxonomyName = terms[ key ][ value ].name + ' - ';
 				const hasHighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
 				const className = classNames( 'suggestions__value', { 'has-highlight': hasHighlight } );
 				return (
 					<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver } key={ key + '_' + i }>
 						<span className="suggestions__value-category">{ key + ':' + value + ' '}</span>
 						{ this.createTextWithHighlight( taxonomyName, this.state.filterTerm ) }
+						<span className="suggestions__value-description">{ terms[ key ][ value ].description }</span>
 					</span>
 				);
 			} ) );
