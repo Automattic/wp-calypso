@@ -1,74 +1,91 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 import Immutable from 'immutable';
 
 /**
  * Internal dependencies
  */
+import { getSites } from 'state/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import Blog from './blog';
 import InfiniteList from 'components/infinite-list';
 import Placeholder from './placeholder';
 import config from 'config';
 
-export default React.createClass( {
-	displayName: 'BlogsSettings',
+const createPlaceholder = () => <Placeholder />;
 
-	propTypes: {
-		blogs: PropTypes.object.isRequired,
+const getItemRef = ( { ID } ) => `blog-${ ID }`;
+
+class BlogsSettings extends Component {
+	static propTypes = {
+		sites: PropTypes.array.isRequired,
 		devices: PropTypes.object.isRequired,
 		settings: PropTypes.instanceOf( Immutable.List ),
 		hasUnsavedChanges: PropTypes.bool.isRequired,
 		onToggle: PropTypes.func.isRequired,
 		onSave: PropTypes.func.isRequired,
 		onSaveToAll: PropTypes.func.isRequired
-	},
+	};
 
 	render() {
-		if ( ! this.props.blogs.initialized || ! this.props.devices.initialized || ! this.props.settings ) {
+		const { sites, translate } = this.props;
+
+		if ( ! sites || ! this.props.devices.initialized || ! this.props.settings ) {
 			return <Placeholder />;
 		}
 
-		if ( this.props.blogs.get().length === 0 ) {
+		if ( sites.length === 0 ) {
 			return <EmptyContentComponent
-				title={ this.translate( 'You don\'t have any WordPress sites yet.' ) }
-				line={ this.translate( 'Would you like to start one?' ) }
-				action={ this.translate( 'Create Site' ) }
+				title={ translate( 'You don\'t have any WordPress sites yet.' ) }
+				line={ translate( 'Would you like to start one?' ) }
+				action={ translate( 'Create Site' ) }
 				actionURL={ config( 'signup_url' ) + '?ref=calypso-nosites' }
-				illustration={ '/calypso/images/drake/drake-nosites.svg' } />
+				illustration={ '/calypso/images/drake/drake-nosites.svg' } />;
 		}
 
-		const renderBlog = ( blog, index, disableToggle = false ) => {
+		const renderBlog = ( site, index, disableToggle = false ) => {
+			const onSave = () => this.props.onSave( site.ID );
+			const onSaveToAll = () => this.props.onSaveToAll( site.ID );
+
 			return (
 				<Blog
-					key={ `blog-${ blog.ID }` }
-					blog={ blog }
+					key={ `blog-${ site.ID }` }
+					siteId={ site.ID }
 					devices={ this.props.devices }
 					disableToggle={ disableToggle }
 					hasUnsavedChanges={ this.props.hasUnsavedChanges }
-					settings={ this.props.settings.find( settings => settings.get( 'blog_id' ) === blog.ID ) }
+					settings={ this.props.settings.find( settings => settings.get( 'blog_id' ) === site.ID ) }
 					onToggle={ this.props.onToggle }
-					onSave={ () => this.props.onSave( blog.ID ) }
-					onSaveToAll={ () => this.props.onSaveToAll( blog.ID ) } />
+					onSave={ onSave }
+					onSaveToAll={ onSaveToAll } />
 			);
-		}
+		};
 
-		if ( this.props.blogs.get().length === 1 ) {
-			return renderBlog( this.props.blogs.get()[ 0 ], null, true );
+		if ( sites.length === 1 ) {
+			return renderBlog( sites[ 0 ], null, true );
 		}
 
 		return (
 			<InfiniteList
-				items={ this.props.blogs.get() }
+				items={ sites }
 				lastPage={ true }
-				fetchNextPage={ () => {} }
+				fetchNextPage={ noop }
 				fetchingNextPage={ false }
 				guessedItemHeight={ 69 }
-				getItemRef={ blog => `blog-${ blog.ID }` }
+				getItemRef={ getItemRef }
 				renderItem={ renderBlog }
-				renderLoadingPlaceholders={ () => <Placeholder /> } />
+				renderLoadingPlaceholders={ createPlaceholder } />
 		);
 	}
+}
+
+const mapStateToProps = state => ( {
+	sites: getSites( state )
 } );
+
+export default connect( mapStateToProps )( localize( BlogsSettings ) );
