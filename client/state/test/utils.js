@@ -373,6 +373,13 @@ describe( 'utils', () => {
 			expect( keyed( prevState, { type: SERIALIZE } ) ).to.eql( { Bonobo: 'age:13' } );
 		} );
 
+		it( 'should return initial state on DESERIALIZE if no deserializer given', () => {
+			const keyed = keyedReducer( 'name', age );
+
+			expect( keyed( undefined, { type: DESERIALIZE } ) ).to.eql( {} );
+			expect( keyed( prevState, { type: DESERIALIZE } ) ).to.eql( {} );
+		} );
+
 		it( 'should pass along DESERIALIZE actions to items in collection', () => {
 			const deserializing = ( state = 0, { type } ) => {
 				if ( DESERIALIZE === type ) {
@@ -384,7 +391,7 @@ describe( 'utils', () => {
 					? state + 1
 					: state;
 			};
-			const keyed = keyedReducer( 'name', deserializing );
+			const keyed = keyedReducer( 'name', deserializing, { deserializer: ( state, mapper ) => mapper( state ) } );
 
 			expect( keyed( { Bonobo: 'age:13' }, { type: DESERIALIZE } ) ).to.eql( { Bonobo: 13 } );
 		} );
@@ -421,9 +428,6 @@ describe( 'utils', () => {
 				DESERIALIZE === type
 					? state * 2
 					: state;
-
-			const deserialized = keyedReducer( 'name', deserializing );
-			expect( deserialized( { Bonobo: 13 }, { type: DESERIALIZE } ) ).to.eql( { Bonobo: 26 } );
 
 			const custom = keyedReducer( 'name', deserializing, { deserializer: state => state } );
 			expect( custom( prevState, { type: DESERIALIZE } ) ).to.equal( prevState );

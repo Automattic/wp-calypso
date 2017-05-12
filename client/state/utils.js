@@ -86,7 +86,7 @@ const keyedMapper = ( state, collectionMapper ) => collectionMapper( state );
  * @param {function} serializer takes entire state of collection and serializes
  * @return {function} super-reducer applying reducer over map of keyed items
  */
-export const keyedReducer = ( keyName, reducer, { deserializer, serializer } = { deserializer: keyedMapper, serializer: keyedMapper } ) => {
+export const keyedReducer = ( keyName, reducer, { deserializer, serializer } = { serializer: keyedMapper } ) => {
 	// some keys are invalid
 	if ( 'string' !== typeof keyName ) {
 		throw new TypeError( `Key name passed into ``keyedReducer`` must be a string but I detected a ${ typeof keyName }` );
@@ -104,7 +104,9 @@ export const keyedReducer = ( keyName, reducer, { deserializer, serializer } = {
 
 	return ( state = {}, action ) => {
 		if ( DESERIALIZE === action.type ) {
-			return deserializer( state, next => mapValues( next, item => reducer( item, action ) ) );
+			return deserializer
+				? deserializer( state, next => mapValues( next, item => reducer( item, action ) ) )
+				: {};
 		}
 
 		if ( SERIALIZE === action.type ) {
