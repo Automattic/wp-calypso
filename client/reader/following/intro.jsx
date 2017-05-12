@@ -15,6 +15,9 @@ import QueryPreferences from 'components/data/query-preferences';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
+import { getCurrentUserId } from 'state/current-user/selectors';
+
+const isEven = number => number % 2 === 0;
 
 class FollowingIntro extends React.Component {
 	componentDidMount() {
@@ -34,12 +37,13 @@ class FollowingIntro extends React.Component {
 	};
 
 	render() {
-		const { isNewReader, translate, dismiss } = this.props;
+		const { isNewReader, translate, dismiss, userId } = this.props;
 		const linkElement = config.isEnabled( 'reader/following-manage-refresh' )
 			? <a onClick={ this.props.handleManageLinkClick } href="/following/manage" />
 			: <a onClick={ this.props.handleManageLinkClick } href="/following/edit" />;
 
-		if ( ! isNewReader ) {
+		// Only show the banner to new Readers with an odd user ID (simple A/B test)
+		if ( ! isNewReader || ! userId || ! isEven( userId ) ) {
 			return null;
 		}
 
@@ -87,6 +91,7 @@ export default connect(
 	state => {
 		return {
 			isNewReader: getPreference( state, 'is_new_reader' ),
+			userId: getCurrentUserId( state ),
 		};
 	},
 	dispatch =>
