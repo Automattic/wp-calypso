@@ -39,7 +39,7 @@ const FollowingManageSearchFeedsResults = ( {
 				url={ site.URL }
 				feedId={ +site.feed_ID }
 				siteId={ +site.blog_ID }
-				key={ `search-result-site-id-${ site.feed_ID }` }
+				key={ `search-result-site-id-${ site.feed_ID || 0 }-${ site.blog_ID || 0 }` }
 			/>
 		) );
 
