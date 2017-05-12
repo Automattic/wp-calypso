@@ -12,6 +12,6 @@ import { settings } from './controller';
 import { Tabs } from './constants';
 
 export default function() {
-	page( '/extensions/wp-super-cache', sites, navigation, settings );
+	page( '/extensions/wp-super-cache', sites );
 	page( `/extensions/wp-super-cache/:tab(${ values( Tabs ).join( '|' ) })?/:site`, siteSelection, navigation, settings );
 }
