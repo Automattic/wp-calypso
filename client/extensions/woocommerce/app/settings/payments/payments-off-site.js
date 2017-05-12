@@ -54,9 +54,9 @@ class SettingsPaymentsOffSite extends Component {
 					} />
 					<ListTable>
 						<ListHeader>
-							<ListTd width="30">Method</ListTd>
-							<ListTd width="45">Fees</ListTd>
-							<ListTd width="25"></ListTd>
+							<ListTd width="30%">Method</ListTd>
+							<ListTd width="45%">Fees</ListTd>
+							<ListTd width="25%"></ListTd>
 						</ListHeader>
 						<ListRows>
 							{ methods && methods.map( ( m ) => this.renderMethodRow( m ) ) }

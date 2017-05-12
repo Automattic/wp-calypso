@@ -8,9 +8,8 @@ import React from 'react';
  */
 
 const ListTd = ( { children, width } ) => {
-	const percentage = `${ width }%`;
 	return (
-		<td className="list-td" style={ { width: percentage } }>
+		<td className="list-td" style={ { width: width } }>
 			{ children }
 		</td>
 	);
