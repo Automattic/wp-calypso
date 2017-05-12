@@ -72,19 +72,19 @@ class TwoFactorActions extends Component {
 
 				{ isSmsSupported && twoFactorAuthType !== 'sms' && (
 					<p>
-						<a href="#" onClick={ this.sendSmsCode }>{ translate( 'Code Via Text Message' ) }</a>
+						<a href="#" onClick={ this.sendSmsCode }>{ translate( 'Code via text message' ) }</a>
 					</p>
 				) }
 
 				{ isAuthenticatorSupported && twoFactorAuthType !== 'authenticator' && (
 					<p>
-						<a href="#" onClick={ this.verifyWithAuthenticator }>{ translate( 'An Authenticator App' ) }</a>
+						<a href="#" onClick={ this.verifyWithAuthenticator }>{ translate( 'An Authenticator application' ) }</a>
 					</p>
 				) }
 
 				{ isPushSupported && twoFactorAuthType !== 'push' && (
 					<p>
-						<a href="#" onClick={ this.verifyWithPush }>{ translate( 'The WordPress Mobile App' ) }</a>
+						<a href="#" onClick={ this.verifyWithPush }>{ translate( 'The WordPress mobile app' ) }</a>
 					</p>
 				) }
 			</Card>
