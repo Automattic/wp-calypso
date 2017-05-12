@@ -10,10 +10,12 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import formattedVariationName from '../../lib/formatted-variation-name';
+import FormDimensionsInput from '../../components/form-dimensions-input';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextArea from 'components/forms/form-textarea';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormToggle from 'components/forms/form-toggle';
 import VerticalMenu from 'components/vertical-menu';
 
@@ -47,6 +49,19 @@ class ProductFormVariationsModal extends React.Component {
 		const { product, editProductVariation } = this.props;
 		const variation = this.selectedVariation();
 		editProductVariation( product, variation, { description: e.target.value } );
+	}
+
+	setWeight = ( e ) => {
+		const { product, editProductVariation } = this.props;
+		const variation = this.selectedVariation();
+		editProductVariation( product, variation, { weight: e.target.value } );
+	}
+
+	setDimension = ( e ) => {
+		const { product, editProductVariation } = this.props;
+		const variation = this.selectedVariation();
+		const dimensions = { ...variation.dimensions, [ e.target.name ]: e.target.value };
+		editProductVariation( product, variation, { dimensions } );
 	}
 
 	toggleVisible() {
@@ -92,6 +107,32 @@ class ProductFormVariationsModal extends React.Component {
 								'This will be displayed in addition to the main product description when this variation is selected.'
 						) }</FormSettingExplanation>
 					</FormFieldSet>
+
+					<FormLabel>
+						{ translate( 'Dimensions & weight' ) }
+					</FormLabel>
+
+					<div className="products__product-dimensions-weight">
+						<div className="products__product-dimensions-wrapper">
+							<FormDimensionsInput
+								className="products__product-dimensions-input"
+								unit="in"
+								name="dimensions"
+								dimensions={ variation.dimensions }
+								onChange={ this.setDimension }
+							/>
+						</div>
+						<div className="products__product-weight-input">
+							<FormTextInputWithAffixes
+								name="weight"
+								type="number"
+								suffix="g"
+								value={ variation.weight || '' }
+								onChange={ this.setWeight }
+								size="4"
+							/>
+						</div>
+					</div>
 
 					<FormLabel>
 						{ translate( 'Visible' ) }

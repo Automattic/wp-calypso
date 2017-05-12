@@ -10,8 +10,6 @@ import { localize } from 'i18n-calypso';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCurrencyInput from 'components/forms/form-currency-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormDimensionsInput from '../../components/form-dimensions-input';
 import formattedVariationName from '../../lib/formatted-variation-name';
 
 const ProductFormVariationsRow = ( {
@@ -25,15 +23,6 @@ const ProductFormVariationsRow = ( {
 	// TODO: Consildate the following set/toggle functions with a helper (along with the form-details functions).
 	const setPrice = ( e ) => {
 		editProductVariation( product, variation, { regular_price: e.target.value } );
-	};
-
-	const setWeight = ( e ) => {
-		editProductVariation( product, variation, { weight: e.target.value } );
-	};
-
-	const setDimension = ( e ) => {
-		const dimensions = { ...variation.dimensions, [ e.target.name ]: e.target.value };
-		editProductVariation( product, variation, { dimensions } );
 	};
 
 	const setStockQuantity = ( e ) => {
@@ -69,7 +58,7 @@ const ProductFormVariationsRow = ( {
 					</div>
 				) }
 			</td>
-			<td>
+			<td className="products__product-price">
 				<FormCurrencyInput
 					currencySymbolPrefix="$"
 					name="price"
@@ -77,26 +66,6 @@ const ProductFormVariationsRow = ( {
 					onChange={ setPrice }
 					size="4"
 				/>
-			</td>
-			<td>
-				<div className="products__product-dimensions-weight">
-					<FormDimensionsInput
-						className="products__product-dimensions-input"
-						unit="in"
-						dimensions={ variation.dimensions }
-						onChange={ setDimension }
-					/>
-					<div className="products__product-weight-input">
-						<FormTextInputWithAffixes
-							name="weight"
-							type="number"
-							suffix="g"
-							value={ variation.weight || '' }
-							onChange={ setWeight }
-							size="4"
-						/>
-					</div>
-				</div>
 			</td>
 			<td>
 				<div className="products__product-manage-stock">
