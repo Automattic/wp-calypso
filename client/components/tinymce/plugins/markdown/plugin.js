@@ -12,14 +12,12 @@ function markdown( editor ) {
 	function allowMarkdownAttribute( event ) {
 		const ed = event.target;
 		Object.keys( ed.schema.elements ).forEach( function( key ) {
-			if ( typeof ed.schema.elements[ key ].attributes.markdown === 'undefined' ) {
-				ed.schema.elements[ key ].attributes.markdown = {};
-				ed.schema.elements[ key ].attributesOrder.push( 'markdown' );
-			}
+			ed.schema.elements[ key ].attributes.markdown = {};
+			ed.schema.elements[ key ].attributesOrder.push( 'markdown' );
 		} );
 	}
 
-	editor.on( 'BeforeSetContent', allowMarkdownAttribute );
+	editor.on( 'preinit', allowMarkdownAttribute );
 }
 
 export default function() {
