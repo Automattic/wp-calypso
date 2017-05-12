@@ -25,20 +25,21 @@ const FollowingManageSearchFeedsResults = ( {
 	searchResultsCount,
 	query,
 } ) => {
-	const isError = !! ( query && searchResults.length === 0 );
+	const isEmpty = !! ( query && searchResults.length === 0 );
 	const classNames = classnames( 'following-manage__search-results', {
-		'is-error': !! isError,
+		'is-empty': !! isEmpty
 	} );
 
 	if ( ! searchResults ) {
 		return null; // todo: add placeholder
-	} else if ( searchResults.length === 0 ) {
+	} else if ( isEmpty ) {
 		return (
 			<div className={ classNames }>
 				<p>
-					{ translate( 'Sorry, no sites match %s.', {
-						args: query,
-					} ) }
+					{ translate(
+						'Sorry, no sites match {{strong}}%s.{{/strong}}',
+						{ components: { strong: <strong /> }, args: query }
+					) }
 				</p>
 			</div>
 		);
