@@ -97,8 +97,10 @@ class LoggedOutForm extends Component {
 	}
 
 	render() {
-		const { userData } = this.props.jetpackConnectAuthorize;
-		const isSubmitting = this.props.jetpackConnectAuthorize && this.props.jetpackConnectAuthorize.isAuthorizing;
+		const {
+			isAuthorizing,
+			userData,
+		} = this.props.jetpackConnectAuthorize;
 
 		return (
 			<div>
@@ -106,8 +108,8 @@ class LoggedOutForm extends Component {
 				{ this.renderFormHeader() }
 				<SignupForm
 					getRedirectToAfterLoginUrl={ window.location.href }
-					disabled={ isSubmitting }
-					submitting={ isSubmitting }
+					disabled={ isAuthorizing }
+					submitting={ isAuthorizing }
 					submitForm={ this.handleSubmitSignup }
 					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
 					footerLink={ this.renderFooterLink() }
