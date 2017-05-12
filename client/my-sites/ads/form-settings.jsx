@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	notices = require( 'notices' ),
-	debug = require( 'debug' )( 'calypso:my-sites:ads-settings' );
+import React, { Component, PropTypes } from 'react';
+import notices from 'notices';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
@@ -31,31 +29,52 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { dismissWordAdsSuccess } from 'state/wordads/approve/actions';
 import { protectForm } from 'lib/protect-form';
 
-const AdsFormSettings = React.createClass( {
+class AdsFormSettings extends Component {
+	static propTypes = {
+		site: PropTypes.object.isRequired,
+		markChanged: PropTypes.func.isRequired,
+		markSaved: PropTypes.func.isRequired,
+	};
 
-	displayName: 'AdsFormSettings',
+	constructor( props ) {
+		super( props );
 
-	mixins: [ LinkedStateMixin ],
+		let store = this.getSettingsFromStore();
+		if ( ! store.tos ) {
+			store = this.defaultSettings();
+		}
 
-	propTypes: {
-		site: React.PropTypes.object.isRequired,
-		markChanged: React.PropTypes.func.isRequired,
-		markSaved: React.PropTypes.func.isRequired
-	},
+		this.state = store;
+	}
 
-	componentWillMount: function() {
-		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
+	componentWillMount() {
 		SettingsStore.on( 'change', this.updateSettings );
 		this._fetchIfEmpty();
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		SettingsStore.removeListener( 'change', this.updateSettings );
 		SettingsStore.clearNotices();
-	},
+	}
 
-	updateSettings: function() {
-		var settings = this.getSettingsFromStore();
+	componentWillReceiveProps( nextProps ) {
+		const { site } = this.props;
+		if ( ! nextProps || ! nextProps.site || ! nextProps.site.ID ) {
+			return;
+		}
+
+		if ( ! SettingsStore.settingsLoaded( nextProps.site.ID ) ) {
+			this.setState( this.defaultSettings() );
+		}
+
+		if ( site.ID !== nextProps.site.ID ) {
+			this._fetchIfEmpty( nextProps.site );
+			this.setState( this.getSettingsFromStore( nextProps.site ) );
+		}
+	}
+
+	updateSettings = () => {
+		const settings = this.getSettingsFromStore();
 		const { site } = this.props;
 		this.setState( settings );
 
@@ -68,59 +87,47 @@ const AdsFormSettings = React.createClass( {
 		} else {
 			notices.clearNotices( 'notices' );
 		}
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
-		const { site } = this.props;
-		if ( ! nextProps || ! nextProps.site || ! nextProps.site.ID ) {
-			return;
-		}
+	handleChange = ( event ) => {
+		const name = event.currentTarget.name;
+		const value = event.currentTarget.value;
 
-		if ( ! SettingsStore.settingsLoaded( nextProps.site.ID ) ) {
-			this.resetState();
-		}
+		this.setState( {
+			[ name ]: value,
+		} );
+	}
 
-		if ( site.ID !== nextProps.site.ID ) {
-			this._fetchIfEmpty( nextProps.site );
-			this.setState( this.getSettingsFromStore( nextProps.site ) );
-		}
-	},
+	handleToggle = ( event ) => {
+		const name = event.currentTarget.name;
 
-	getInitialState: function() {
-		var store = this.getSettingsFromStore();
-		if ( ! store.tos ) {
-			store = this.defaultSettings();
-		}
+		this.setState( {
+			[ name ]: ! this.state[ name ],
+		} );
+	}
 
-		return store;
-	},
+	handleResidentCheckbox = () => {
+		const isResident = ! this.state.us_checked;
 
-	handleRadio: function( event ) {
-		var name = event.currentTarget.name,
-			value = event.currentTarget.value,
-			updateObj = {};
-
-		updateObj[ name ] = value;
-		this.setState( updateObj );
-	},
-
-	handleResidentCheckbox: function() {
-		var isResident = ! this.state.us_checked;
 		this.setState( {
 			us_checked: isResident,
 			us_resident: isResident ? 'yes' : 'no'
 		} );
-	},
+	}
 
-	submitForm: function( event ) {
-		event.preventDefault();
+	submitForm = ( event ) => {
 		const { site } = this.props;
-		WordadsActions.updateSettings( site, this.packageState() );
-		this.setState( { notice: null, error: null } );
-		this.props.markSaved();
-	},
+		event.preventDefault();
 
-	getSettingsFromStore: function( siteInstance ) {
+		WordadsActions.updateSettings( site, this.packageState() );
+		this.setState( {
+			notice: null,
+			error: null
+		} );
+		this.props.markSaved();
+	}
+
+	getSettingsFromStore( siteInstance ) {
 		const site = siteInstance || this.props.site,
 			store = SettingsStore.getById( site.ID );
 
@@ -131,14 +138,9 @@ const AdsFormSettings = React.createClass( {
 		}
 
 		return store;
-	},
+	}
 
-	resetState: function() {
-		debug( 'wordads state reset' );
-		this.replaceState( this.defaultSettings() );
-	},
-
-	defaultSettings: function() {
+	defaultSettings() {
 		return {
 			addr1: '',
 			addr2: '',
@@ -159,9 +161,9 @@ const AdsFormSettings = React.createClass( {
 			error: {},
 			notice: null
 		};
-	},
+	}
 
-	packageState: function() {
+	packageState() {
 		return {
 			addr1: this.state.addr1,
 			addr2: this.state.addr2,
@@ -177,26 +179,25 @@ const AdsFormSettings = React.createClass( {
 			who_owns: this.state.who_owns,
 			zip: this.state.zip
 		};
-	},
+	}
 
-	_fetchIfEmpty: function( site ) {
+	_fetchIfEmpty( site ) {
 		site = site || this.props.site;
 		if ( ! site || ! site.ID ) {
 			return;
 		}
 
 		if ( SettingsStore.settingsLoaded( site.ID ) ) {
-			debug( 'initial fetch not necessary' );
 			return;
 		}
 
 		// defer fetch requests to avoid dispatcher conflicts
 		setTimeout( function() {
-			WordadsActions.fetchSettings( site )
+			WordadsActions.fetchSettings( site );
 		}, 0 );
-	},
+	}
 
-	showAdsToOptions: function() {
+	showAdsToOptions() {
 		const { translate } = this.props;
 
 		return (
@@ -207,8 +208,9 @@ const AdsFormSettings = React.createClass( {
 						name="show_to_logged_in"
 						value="yes"
 						checked={ 'yes' === this.state.show_to_logged_in }
-						onChange={ this.handleRadio }
-						disabled={ this.state.isLoading } />
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 					<span>{ translate( 'Run ads for all users' ) }</span>
 				</FormLabel>
 
@@ -217,8 +219,9 @@ const AdsFormSettings = React.createClass( {
 						name="show_to_logged_in"
 						value="no"
 						checked={ 'no' === this.state.show_to_logged_in }
-						onChange={ this.handleRadio }
-						disabled={ this.state.isLoading } />
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 					<span>{ translate( 'Run ads only for logged-out users (less revenue)' ) }</span>
 				</FormLabel>
 
@@ -227,15 +230,16 @@ const AdsFormSettings = React.createClass( {
 						name="show_to_logged_in"
 						value="pause"
 						checked={ 'pause' === this.state.show_to_logged_in }
-						onChange={ this.handleRadio }
-						disabled={ this.state.isLoading } />
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 					<span>{ translate( 'Pause ads (no revenue)' ) }</span>
 				</FormLabel>
 			</FormFieldset>
 		);
-	},
+	}
 
-	additionalAdsOption: function() {
+	additionalAdsOption() {
 		const { translate } = this.props;
 
 		return (
@@ -244,8 +248,10 @@ const AdsFormSettings = React.createClass( {
 				<FormLabel>
 					<FormCheckbox
 						name="optimized_ads"
-						checkedLink={ this.linkState( 'optimized_ads' ) }
-						disabled={ this.state.isLoading } />
+						checked={ !! this.state.optimized_ads }
+						onChange={ this.handleToggle }
+						disabled={ this.state.isLoading }
+					/>
 					<span>
 						{ translate( 'Show optimized ads. ' ) }
 						<a target="_blank" rel="noopener noreferrer" href="https://wordads.co/optimized-ads/">
@@ -255,9 +261,9 @@ const AdsFormSettings = React.createClass( {
 				</FormLabel>
 			</FormFieldset>
 		);
-	},
+	}
 
-	siteOwnerOptions: function() {
+	siteOwnerOptions() {
 		const { translate } = this.props;
 
 		return (
@@ -267,22 +273,26 @@ const AdsFormSettings = React.createClass( {
 					<FormTextInput
 						name="paypal"
 						id="paypal"
-						valueLink={ this.linkState( 'paypal' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.paypal || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="who_owns">{ translate( 'Who owns this site?' ) }</FormLabel>
 					<FormSelect
 						name="who_owns"
 						id="who_owns"
-						valueLink={ this.linkState( 'who_owns' ) }
-						disabled={ this.state.isLoading }>
-							<option value="">{ translate( 'Select who owns this site' ) }</option>
-							<option value="person">{ translate( 'An Individual/Sole Proprietor' ) }</option>
-							<option value="corp">{ translate( 'A Corporation' ) }</option>
-							<option value="partnership">{ translate( 'A Partnership' ) }</option>
-							<option value="llc">{ translate( 'An LLC' ) }</option>
-							<option value="tax_exempt">{ translate( 'A Tax-Exempt Entity' ) }</option>
+						value={ this.state.who_owns || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					>
+						<option value="">{ translate( 'Select who owns this site' ) }</option>
+						<option value="person">{ translate( 'An Individual/Sole Proprietor' ) }</option>
+						<option value="corp">{ translate( 'A Corporation' ) }</option>
+						<option value="partnership">{ translate( 'A Partnership' ) }</option>
+						<option value="llc">{ translate( 'An LLC' ) }</option>
+						<option value="tax_exempt">{ translate( 'A Tax-Exempt Entity' ) }</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
@@ -291,15 +301,16 @@ const AdsFormSettings = React.createClass( {
 							name="us_resident"
 							checked={ this.state.us_checked }
 							disabled={ this.state.isLoading }
-							onChange={ this.handleResidentCheckbox } />
+							onChange={ this.handleResidentCheckbox }
+						/>
 						<span>{ translate( 'US Resident or based in the US' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 			</div>
 		);
-	},
+	}
 
-	taxOptions: function() {
+	taxOptions() {
 		const { translate } = this.props;
 
 		return (
@@ -311,8 +322,10 @@ const AdsFormSettings = React.createClass( {
 						name="taxid"
 						id="taxid"
 						placeholder={ this.state.taxid_last4 ? 'On file. Last Four Digits: '.concat( this.state.taxid_last4 ) : '' }
-						valueLink={ this.linkState( 'taxid' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.taxid || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
@@ -320,8 +333,10 @@ const AdsFormSettings = React.createClass( {
 					<FormTextInput
 						name="name"
 						id="name"
-						valueLink={ this.linkState( 'name' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.name || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
@@ -330,8 +345,10 @@ const AdsFormSettings = React.createClass( {
 						name="addr1"
 						id="addr1"
 						placeholder="Address Line 1"
-						valueLink={ this.linkState( 'addr1' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.addr1 || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
@@ -339,8 +356,10 @@ const AdsFormSettings = React.createClass( {
 						name="addr2"
 						id="addr2"
 						placeholder="Address Line 2"
-						valueLink={ this.linkState( 'addr2' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.addr2 || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
@@ -348,8 +367,10 @@ const AdsFormSettings = React.createClass( {
 					<FormTextInput
 						name="city"
 						id="city"
-						valueLink={ this.linkState( 'city' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.city || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
@@ -357,9 +378,11 @@ const AdsFormSettings = React.createClass( {
 					<StateSelector
 						name="state"
 						id="state"
-						className="settings__state"
-						valueLink={ this.linkState( 'state' ) }
-						disabled={ this.state.isLoading } />
+						className="ads__settings-state"
+						value={ this.state.state || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
@@ -367,59 +390,73 @@ const AdsFormSettings = React.createClass( {
 					<FormTextInput
 						name="zip"
 						id="zip"
-						valueLink={ this.linkState( 'zip' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.zip || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 			</div>
 		);
-	},
+	}
 
-	acceptCheckbox: function() {
-		return (
-			<FormFieldset className="wordads-tos__fieldset">
-				<FormLabel>
-					<FormCheckbox
-						name="tos"
-						checkedLink={ this.linkState( 'tos' ) }
-						disabled={ this.state.isLoading || 'signed' === this.state.tos } />
-					<span>{ this.props.translate( 'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.', {
-						components: { a: <a href="https://wordpress.com/automattic-ads-tos/" target="_blank" rel="noopener noreferrer" /> }
-					} ) }</span>
-				</FormLabel>
-			</FormFieldset>
-		);
-	},
-
-	render: function() {
+	acceptCheckbox() {
 		const { translate } = this.props;
 
 		return (
-			<Card className="settings">
+			<FormFieldset>
+				<FormLabel>
+					<FormCheckbox
+						name="tos"
+						checked={ !! this.state.tos }
+						onChange={ this.handleToggle }
+						disabled={ this.state.isLoading || 'signed' === this.state.tos }
+					/>
+					<span>
+						{
+							translate( 'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.', {
+								components: {
+									a: <a href="https://wordpress.com/automattic-ads-tos/" target="_blank" rel="noopener noreferrer" />
+								}
+							} )
+						}
+					</span>
+				</FormLabel>
+			</FormFieldset>
+		);
+	}
+
+	render() {
+		const { translate } = this.props;
+
+		return (
+			<Card>
 				<form id="wordads-settings" onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
 					<FormButtonsBar>
-						<FormButton
-							disabled={ this.state.isLoading || this.state.isSubmitting }>
-								{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+						<FormButton disabled={ this.state.isLoading || this.state.isSubmitting }>
+							{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 						</FormButton>
 					</FormButtonsBar>
+
 					{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
 					{ ! this.props.siteIsJetpack ? this.additionalAdsOption() : null }
+
 					<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
 					{ this.siteOwnerOptions() }
 					{ this.state.us_checked ? this.taxOptions() : null }
+
 					<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
 					{ this.acceptCheckbox() }
+
 					<FormButtonsBar>
-						<FormButton
-							disabled={ this.state.isLoading || this.state.isSubmitting }>
-								{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+						<FormButton disabled={ this.state.isLoading || this.state.isSubmitting }>
+							{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 						</FormButton>
 					</FormButtonsBar>
 				</form>
 			</Card>
 		);
 	}
-} );
+}
 
 export default compose(
 	connect(
