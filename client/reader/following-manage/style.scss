@@ -16,6 +16,10 @@
 	padding: 0;
 }
 
+.following-manage__input-card.card.is-compact {
+	box-shadow: 0 0 0 2px lighten( $gray, 20% ), 0 1px 2px lighten( $gray, 20% );
+}
+
 .following-manage__subscriptions {
 	margin-top: 20px;
 	padding-top: 10px;
@@ -175,7 +179,7 @@
 }
 
 .following-manage .reader-recommended-sites {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid lighten( $gray, 20% );
 }
 
 .following-manage__search-followed {
