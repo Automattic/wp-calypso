@@ -139,32 +139,32 @@ export class Login extends React.Component {
 				</a>;
 		}
 
-		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView && <a href="#"
-			key="magic-login-link"
-			onClick={ this.onMagicLoginRequestClick }>
-				{ translate( 'Email me a login link' ) }
-			</a>;
-		const resetPasswordLink = ! magicLoginView && <a
-			href={ config( 'login_url' ) + '?action=lostpassword' }
-			key="lost-password-link">
+		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView && ! twoFactorAuthType && (
+			<a href="#"
+				key="magic-login-link"
+				onClick={ this.onMagicLoginRequestClick }>
+					{ translate( 'Email me a login link' ) }
+			</a>
+		);
+		const resetPasswordLink = ! magicLoginView && ! twoFactorAuthType && (
+			<a
+				href={ config( 'login_url' ) + '?action=lostpassword' }
+				key="lost-password-link">
 				{ this.props.translate( 'Lost your password?' ) }
-			</a>;
+			</a>
+		);
 
-		const helpLink = <ExternalLink
+		const helpLink = twoFactorAuthType && (
+			<ExternalLink
 				icon={ true }
 				target="_blank"
 				href="http://en.support.wordpress.com/security/two-step-authentication/">
 				{ translate( 'Get help' ) }
-			</ExternalLink>;
-
-		if ( twoFactorAuthType ) {
-			return compact( [
-				goBackLink,
-				helpLink
-			] );
-		}
+			</ExternalLink>
+		);
 
 		return compact( [
+			helpLink,
 			goBackLink,
 			showMagicLoginLink,
 			resetPasswordLink
