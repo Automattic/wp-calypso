@@ -24,10 +24,8 @@ import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
-import { isATEnabled } from 'lib/automated-transfer';
 import { getThemeShowcaseDescription, getThemeShowcaseTitle } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 
@@ -135,13 +133,12 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	showUploadButton() {
-		const { isMultisite, isJetpack, isLoggedIn } = this.props;
+		const { isMultisite, isLoggedIn } = this.props;
 
 		return (
 			config.isEnabled( 'manage/themes/upload' ) &&
 			isLoggedIn &&
-			! isMultisite &&
-			( isJetpack || this.props.atEnabled )
+			! isMultisite
 		);
 	},
 
@@ -255,7 +252,6 @@ const ThemeShowcase = React.createClass( {
 } );
 
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
-	atEnabled: isATEnabled( getSelectedSite( state ) ),
 	isLoggedIn: !! getCurrentUserId( state ),
 	siteSlug: getSiteSlug( state, siteId ),
 	isJetpack: isJetpackSite( state, siteId ),
