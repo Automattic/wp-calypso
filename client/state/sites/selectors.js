@@ -939,6 +939,10 @@ export function siteHasMinimumJetpackVersion( state, siteId ) {
 	}
 
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+	if ( ! siteJetpackVersion ) {
+		return null;
+	}
+
 	const jetpackMinVersion = config( 'jetpack_min_version' );
 
 	return versionCompare( siteJetpackVersion, jetpackMinVersion ) >= 0;
