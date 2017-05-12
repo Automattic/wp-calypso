@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -22,12 +21,11 @@ import {
 	getTwoFactorAuthNonce,
 	getTwoFactorAuthRequestError,
 	isRequestingTwoFactorAuth,
-	isTwoFactorAuthTypeSupported,
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode } from 'state/login/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { login } from 'lib/paths';
+import TwoFactorActions from './two-factor-actions';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
@@ -67,37 +65,8 @@ class VerificationCodeForm extends Component {
 		} );
 	};
 
-	sendSmsCode = ( event ) => {
-		event.preventDefault();
-
-		const { userId, twoStepNonce, translate } = this.props;
-
-		page( login( { twoFactorAuthType: 'sms' } ) );
-
-		this.props.sendSmsCode( userId, twoStepNonce ).then( () => {
-			this.props.successNotice( translate( 'Recovery code has been sent.' ) );
-		} ).catch( ( errorMesssage ) => {
-			this.props.errorNotice( errorMesssage );
-		} );
-	};
-
-	verifyWithPush = ( event ) => {
-		event.preventDefault();
-
-		page( login( { twoFactorAuthType: 'push' } ) );
-	};
-
-	verifyWithAuthenticator = ( event ) => {
-		event.preventDefault();
-
-		page( login( { twoFactorAuthType: 'code' } ) );
-	};
-
 	render() {
 		const {
-			isAuthenicatorSupported,
-			isPushSupported,
-			isSmsSupported,
 			translate,
 			twoFactorAuthRequestError,
 			twoFactorAuthType,
@@ -144,29 +113,10 @@ class VerificationCodeForm extends Component {
 						>{ translate( 'Continue' ) }</FormButton>
 					</Card>
 
-					<Card className="two-factor-authentication__form-action is-compact">
-						<p>
-							{ translate( 'Or continue to your account using:' ) }
-						</p>
-
-						{ twoFactorAuthType === 'code' && isSmsSupported && (
-							<p>
-								<a href="#" onClick={ this.sendSmsCode }>{ translate( 'Code Via Text Message' ) }</a>
-							</p>
-						) }
-
-						{ twoFactorAuthType === 'sms' && isAuthenicatorSupported && (
-							<p>
-								<a href="#" onClick={ this.verifyWithAuthenticator }>{ translate( 'An Authenticator App' ) }</a>
-							</p>
-						) }
-
-						{ isPushSupported && (
-							<p>
-								<a href="#" onClick={ this.verifyWithPush }>{ translate( 'The WordPress Mobile App' ) }</a>
-							</p>
-						) }
-					</Card>
+					<TwoFactorActions
+						errorNotice={ this.props.errorNotice }
+						successNotice={ this.props.successNotice }
+						twoFactorAuthType={ twoFactorAuthType } />
 				</form>
 			</div>
 		);
@@ -179,9 +129,6 @@ export default connect(
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 		userId: getTwoFactorUserId( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
-		isAuthenicatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
-		isPushSupported: isTwoFactorAuthTypeSupported( state, 'push' ),
-		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 	} ),
 	{
 		loginUserWithTwoFactorVerificationCode,

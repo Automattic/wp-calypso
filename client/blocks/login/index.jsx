@@ -74,7 +74,10 @@ class Login extends Component {
 
 		if ( twoStepNonce && twoFactorAuthType === 'push' ) {
 			return (
-				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } title={ twoStepTitle } />
+				<WaitingTwoFactorNotificationApproval
+					onSuccess={ this.rebootAfterLogin }
+					title={ twoStepTitle }
+					twoFactorAuthType={ twoFactorAuthType } />
 			);
 		}
 

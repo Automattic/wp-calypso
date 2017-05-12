@@ -21,8 +21,8 @@ import {
 	getTwoFactorPushPollSuccess,
 } from 'state/login/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { sendSmsCode } from 'state/login/actions';
 import { login } from 'lib/paths';
+import TwoFactorActions from './two-factor-actions';
 
 class WaitingTwoFactorNotificationApproval extends Component {
 	static propTypes = {
@@ -30,24 +30,9 @@ class WaitingTwoFactorNotificationApproval extends Component {
 		pushSuccess: PropTypes.bool.isRequired,
 		startPollAppPushAuth: PropTypes.func.isRequired,
 		stopPollAppPushAuth: PropTypes.func.isRequired,
-		sendSmsCode: PropTypes.func.isRequired,
 		errorNotice: PropTypes.func.isRequired,
-		isSmsAuthSupported: PropTypes.bool.isRequired,
 		successNotice: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
-	};
-
-	sendSmsCode = ( event ) => {
-		event.preventDefault();
-
-		const { userId, twoStepNonce, translate } = this.props;
-		page( login( { twoFactorAuthType: 'sms' } ) );
-
-		this.props.sendSmsCode( userId, twoStepNonce ).then( () => {
-			this.props.successNotice( translate( 'Recovery code has been sent.' ) );
-		} ).catch( ( errorMessage ) => {
-			this.props.errorNotice( errorMessage );
-		} );
 	};
 
 	componentDidMount() {
@@ -73,10 +58,7 @@ class WaitingTwoFactorNotificationApproval extends Component {
 	};
 
 	render() {
-		const {
-			isSmsAuthSupported,
-			translate,
-		} = this.props;
+		const { translate, twoFactorAuthType } = this.props;
 
 		return (
 			<div>
@@ -99,22 +81,11 @@ class WaitingTwoFactorNotificationApproval extends Component {
 								src="/calypso/images/login/pushauth.svg" />
 						</div>
 					</Card>
-					<Card className="two-factor-authentication__form-action is-compact">
-						<p>
-							{ translate( 'Or continue to your account using:' ) }
-						</p>
-						<p>
-							<a href="#" onClick={ this.verifyWithCodeInstead }>
-								{ translate( 'An Authenticator App' ) }
-							</a>
-						</p>
 
-						{ isSmsAuthSupported && (
-							<p>
-								<a href="#" onClick={ this.sendSmsCode }>{ translate( 'Code Via Text Message' ) }</a>
-							</p>
-						) }
-					</Card>
+					<TwoFactorActions
+						errorNotice={ this.props.errorNotice }
+						successNotice={ this.props.successNotice }
+						twoFactorAuthType={ twoFactorAuthType } />
 				</form>
 			</div>
 		);
@@ -130,7 +101,6 @@ export default connect(
 	} ),
 	{
 		errorNotice,
-		sendSmsCode,
 		startPollAppPushAuth,
 		stopPollAppPushAuth,
 		successNotice,
