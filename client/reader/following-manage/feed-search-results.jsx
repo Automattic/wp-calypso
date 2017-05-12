@@ -36,8 +36,8 @@ const FollowingManageSearchFeedsResults = ( {
 		return (
 			<div className={ classNames }>
 				<p>
-					{ translate( 'Sorry, no sites match {{strong}}%s.{{/strong}}', {
-						components: { strong: <strong /> },
+					{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
+						components: { italic: <i /> },
 						args: query,
 					} ) }
 				</p>

@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import escapeRegexp from 'escape-string-regexp';
 import { reverse, sortBy, trimStart, isEmpty } from 'lodash';
 import page from 'page';
+import classnames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -79,6 +80,10 @@ class FollowingManageSubscriptions extends Component {
 		const { width, translate, query, followsCount, sortOrder, feeds } = this.props;
 		const filteredFollows = this.filterFollowsByQuery( query );
 		const sortedFollows = this.sortFollows( filteredFollows, sortOrder );
+		const noSitesMatchQuery = isEmpty( sortedFollows );
+		const subsListClassNames = classnames( 'following-manage__subscriptions-list', {
+			'is-empty': noSitesMatchQuery,
+		} );
 
 		return (
 			<div className="following-manage__subscriptions">
@@ -112,8 +117,8 @@ class FollowingManageSubscriptions extends Component {
 						</EllipsisMenu>
 					</div>
 				</div>
-				<div className="following-manage__subscriptions-list">
-					{ ! isEmpty( sortedFollows ) &&
+				<div className={ subsListClassNames }>
+					{ ! noSitesMatchQuery &&
 						<SitesWindowScroller
 							sites={ sortedFollows }
 							width={ width }
@@ -121,10 +126,10 @@ class FollowingManageSubscriptions extends Component {
 							forceRefresh={ [ feeds, sortedFollows ] }
 							windowScrollerRef={ this.props.windowScrollerRef }
 						/> }
-					{ isEmpty( sortedFollows ) &&
+					{ noSitesMatchQuery &&
 						<p>
-							{ translate( 'Sorry, no sites match {{strong}}%s.{{/strong}}', {
-								components: { strong: <strong /> },
+							{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
+								components: { italic: <i /> },
 								args: query,
 							} ) }
 						</p> }

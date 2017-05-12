@@ -202,6 +202,17 @@
 	}
 }
 
+.following-manage__search-results.is-empty {
+	color: darken( $gray, 10% );
+}
+
+.following-manage__subscriptions-list.is-empty {
+	color: darken( $gray, 10% );
+	p {
+		text-align: center;
+	}
+}
+
 .following-manage__sites-window-scroller-row-wrapper {
 	border-bottom: 1px solid lighten( $gray, 30% );
 
