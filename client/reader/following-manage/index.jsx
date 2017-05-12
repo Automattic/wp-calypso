@@ -49,7 +49,6 @@ class FollowingManage extends Component {
 		subsQuery: '',
 		sitesQuery: '',
 		showMoreResults: false,
-		forceRefresh: false,
 		subsSortOrder: 'date-followed',
 	};
 
@@ -57,7 +56,6 @@ class FollowingManage extends Component {
 		width: 800,
 		seed: random( 0, 10000 ),
 		offset: 0,
-		forceRefresh: false,
 	};
 
 	// TODO make this common between our different search pages?
@@ -118,8 +116,7 @@ class FollowingManage extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const forceRefresh = nextProps.sitesQuery !== this.props.sitesQuery;
-		const nextState = { forceRefresh };
+		const nextState = {};
 		const recommendedSites = nextProps.getRecommendedSites( this.state.seed );
 
 		const shouldRequestMoreRecs =
@@ -210,7 +207,7 @@ class FollowingManage extends Component {
 						showMoreResultsClicked={ this.handleShowMoreClicked }
 						width={ this.state.width }
 						fetchNextPage={ this.fetchNextPage }
-						forceRefresh={ this.state.forceRefresh }
+						forceRefresh={ this.props.sitesQuery }
 						searchResultsCount={ searchResultsCount }
 					/> }
 				{ showExistingSubscriptions &&

@@ -27,7 +27,7 @@ class SitesWindowScroller extends Component {
 		sites: PropTypes.array.isRequired,
 		fetchNextPage: PropTypes.func,
 		remoteTotalCount: PropTypes.number.isRequired,
-		forceRefresh: PropTypes.bool,
+		forceRefresh: PropTypes.any, // forceRefresh can be anything. Whenever we want to force a refresh, it should change
 		windowScrollerRef: PropTypes.func,
 	};
 	defaultProps = { windowScrollerRef: noop };
