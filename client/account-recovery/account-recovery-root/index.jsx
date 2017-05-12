@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
-import { includes } from 'lodash';
+import { includes, kebabCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -132,7 +132,7 @@ const AccountRecoveryRoot = ( props ) => {
 	const { trackerTitle, documentHeadTitle } = getPageInfo( translate, currentStep );
 
 	return (
-		<Main className={ classnames( 'account-recovery-form', className ) }>
+		<Main className={ classnames( 'account-recovery-form', className, kebabCase( currentStep ) ) }>
 			<PageViewTracker path={ basePath } title={ trackerTitle } />
 			<DocumentHead title={ documentHeadTitle } />
 			{ getForm( currentStep ) }
