@@ -90,7 +90,7 @@
 	padding-top: 3px;
 	color: $gray-text-min;
 	font-size: 13px;
-	height: 16px;
+	height: 19px; /* font-size + 2*padding */
 	overflow: hidden;
 
 	&:before {
