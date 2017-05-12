@@ -11,12 +11,7 @@ import {
 	requestUnfollowTag as requestUnfollowAction,
 	receiveUnfollowTag as receiveUnfollowAction,
 } from 'state/reader/tags/items/actions';
-import {
-	requestUnfollow,
-	receiveUnfollowTag,
-	receiveError,
-	fromApi,
-} from '../';
+import { requestUnfollow, receiveUnfollowTag, receiveError, fromApi } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
 
@@ -29,14 +24,14 @@ const successfulUnfollowResponse = {
 			slug: 'poetry',
 			title: 'Poetry',
 			display_name: 'poetry',
-			URL: 'https://public-api.wordpress.com/rest/v1/read/tags/poetry/posts'
+			URL: 'https://public-api.wordpress.com/rest/v1/read/tags/poetry/posts',
 		},
 		{
 			ID: '69750',
 			slug: 'ship',
 			title: 'SHIP',
 			display_name: 'ship',
-			URL: 'https://public-api.wordpress.com/rest/v1/read/tags/ship/posts'
+			URL: 'https://public-api.wordpress.com/rest/v1/read/tags/ship/posts',
 		},
 	],
 };
@@ -58,13 +53,15 @@ describe( 'unfollow tag request', () => {
 			requestUnfollow( { dispatch }, action, next );
 
 			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith( http( {
-				apiVersion: '1.1',
-				method: 'POST',
-				path: `/read/tags/${ slug }/mine/delete`,
-				onSuccess: action,
-				onFailure: action,
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				http( {
+					apiVersion: '1.1',
+					method: 'POST',
+					path: `/read/tags/${ slug }/mine/delete`,
+					onSuccess: action,
+					onFailure: action,
+				} )
+			);
 		} );
 
 		it( 'should pass the original action along the middleware chain', () => {

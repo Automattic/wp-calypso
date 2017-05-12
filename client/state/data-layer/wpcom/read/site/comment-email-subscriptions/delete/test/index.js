@@ -14,7 +14,7 @@ import {
 } from '../';
 import {
 	subscribeToNewCommentEmail,
-	unsubscribeToNewCommentEmail
+	unsubscribeToNewCommentEmail,
 } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -25,14 +25,16 @@ describe( 'comment-email-subscriptions', () => {
 			const next = spy();
 			const action = unsubscribeToNewCommentEmail( 1234 );
 			requestCommentEmailUnsubscription( { dispatch }, action, next );
-			expect( dispatch ).to.have.been.calledWith( http( {
-				method: 'POST',
-				path: '/read/site/1234/comment_email_subscriptions/delete',
-				body: {},
-				apiVersion: '1.2',
-				onSuccess: action,
-				onFailure: action
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				http( {
+					method: 'POST',
+					path: '/read/site/1234/comment_email_subscriptions/delete',
+					body: {},
+					apiVersion: '1.2',
+					onSuccess: action,
+					onFailure: action,
+				} )
+			);
 
 			expect( next ).to.have.been.calledWith( action );
 		} );
@@ -42,32 +44,22 @@ describe( 'comment-email-subscriptions', () => {
 		it( 'should do nothing if successful', () => {
 			const nextSpy = spy();
 
-			receiveCommentEmailUnsubscription(
-				null,
-				null,
-				nextSpy,
-				{ subscribed: false }
-			);
+			receiveCommentEmailUnsubscription( null, null, nextSpy, { subscribed: false } );
 			expect( nextSpy ).to.not.have.been.called;
 		} );
 
 		it( 'should dispatch a subscribe if it fails using next', () => {
 			const nextSpy = spy();
 			const dispatch = spy();
-			receiveCommentEmailUnsubscription(
-				{ dispatch },
-				{ payload: { blogId: 1234 } },
-				nextSpy,
-				{ subscribed: true }
-			);
+			receiveCommentEmailUnsubscription( { dispatch }, { payload: { blogId: 1234 } }, nextSpy, {
+				subscribed: true,
+			} );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
-					text: 'Sorry, we had a problem unsubscribing. Please try again.'
-				}
+					text: 'Sorry, we had a problem unsubscribing. Please try again.',
+				},
 			} );
-			expect( nextSpy ).to.have.been.calledWith(
-				subscribeToNewCommentEmail( 1234 )
-			);
+			expect( nextSpy ).to.have.been.calledWith( subscribeToNewCommentEmail( 1234 ) );
 		} );
 	} );
 
@@ -82,12 +74,10 @@ describe( 'comment-email-subscriptions', () => {
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
-					text: 'Sorry, we had a problem unsubscribing. Please try again.'
-				}
+					text: 'Sorry, we had a problem unsubscribing. Please try again.',
+				},
 			} );
-			expect( nextSpy ).to.have.been.calledWith(
-				subscribeToNewCommentEmail( 1234 )
-			);
+			expect( nextSpy ).to.have.been.calledWith( subscribeToNewCommentEmail( 1234 ) );
 		} );
 	} );
 } );

@@ -18,17 +18,19 @@ describe( 'requestUnfollow', () => {
 		const next = spy();
 		const action = unfollow( 'http://example.com' );
 		requestUnfollow( { dispatch }, action, next );
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'POST',
-			path: '/read/following/mine/delete',
-			apiVersion: '1.1',
-			body: {
-				url: 'http://example.com',
-				source: 'calypso',
-			},
-			onSuccess: action,
-			onFailure: action,
-		} ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http( {
+				method: 'POST',
+				path: '/read/following/mine/delete',
+				apiVersion: '1.1',
+				body: {
+					url: 'http://example.com',
+					source: 'calypso',
+				},
+				onSuccess: action,
+				onFailure: action,
+			} )
+		);
 		expect( next ).to.have.been.calledWith( action );
 	} );
 } );
@@ -39,7 +41,7 @@ describe( 'receiveUnfollow', () => {
 		const next = spy();
 		const action = unfollow( 'http://example.com' );
 		const response = {
-			subscribed: false
+			subscribed: false,
 		};
 		receiveUnfollow( { dispatch }, action, next, response );
 		expect( next ).to.be.calledWith( action );
@@ -50,12 +52,12 @@ describe( 'receiveUnfollow', () => {
 		const next = spy();
 		const action = unfollow( 'http://example.com' );
 		const response = {
-			subscribed: true
+			subscribed: true,
 		};
 
 		receiveUnfollow( { dispatch }, action, next, response );
 		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
-		expect( next ) .to.be.calledWith( follow( 'http://example.com' ) );
+		expect( next ).to.be.calledWith( follow( 'http://example.com' ) );
 	} );
 } );
 
@@ -67,6 +69,6 @@ describe( 'followError', () => {
 
 		unfollowError( { dispatch }, action, next );
 		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
-		expect( next ) .to.be.calledWith( follow( 'http://example.com' ) );
+		expect( next ).to.be.calledWith( follow( 'http://example.com' ) );
 	} );
 } );

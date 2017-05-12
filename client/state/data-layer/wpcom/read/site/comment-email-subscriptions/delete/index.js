@@ -6,23 +6,23 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import {
-	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
-} from 'state/action-types';
+import { READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { subscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 
 export function requestCommentEmailUnsubscription( { dispatch }, action, next ) {
-	dispatch( http( {
-		method: 'POST',
-		path: `/read/site/${ action.payload.blogId }/comment_email_subscriptions/delete`,
-		apiVersion: '1.2',
-		body: {}, // have to have the empty body for now to make the middleware happy
-		onSuccess: action,
-		onFailure: action,
-	} ) );
+	dispatch(
+		http( {
+			method: 'POST',
+			path: `/read/site/${ action.payload.blogId }/comment_email_subscriptions/delete`,
+			apiVersion: '1.2',
+			body: {}, // have to have the empty body for now to make the middleware happy
+			onSuccess: action,
+			onFailure: action,
+		} )
+	);
 	next( action );
 }
 
@@ -38,7 +38,9 @@ export function receiveCommentEmailUnsubscription( store, action, next, response
 }
 
 export function receiveCommentEmailUnsubscriptionError( { dispatch }, action, next ) {
-	dispatch( errorNotice( translate( 'Sorry, we had a problem unsubscribing. Please try again.' ) ) );
+	dispatch(
+		errorNotice( translate( 'Sorry, we had a problem unsubscribing. Please try again.' ) )
+	);
 	next( subscribeToNewCommentEmail( action.payload.blogId ) );
 }
 
@@ -48,6 +50,6 @@ export default {
 			requestCommentEmailUnsubscription,
 			receiveCommentEmailUnsubscription,
 			receiveCommentEmailUnsubscriptionError
-		)
+		),
 	],
 };

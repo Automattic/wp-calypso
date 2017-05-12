@@ -15,10 +15,7 @@ import {
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
 } from 'state/action-types';
-import {
-	receiveFollows as receiveFollowsAction,
-	syncComplete,
-} from 'state/reader/follows/actions';
+import { receiveFollows as receiveFollowsAction, syncComplete } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
@@ -27,27 +24,32 @@ import { toValidId } from 'reader/id-helpers';
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
 
-export const requestPageAction = ( page = 1, number = ITEMS_PER_PAGE, meta = '' )=> ( {
+export const requestPageAction = ( page = 1, number = ITEMS_PER_PAGE, meta = '' ) => ( {
 	type: READER_FOLLOWS_SYNC_PAGE,
-	payload: { page, meta, number, }
+	payload: { page, meta, number },
 } );
 
 export const isValidApiResponse = apiResponse => {
-	const hasSubscriptions = apiResponse && apiResponse.subscriptions &&
-		isArray( apiResponse.subscriptions );
+	const hasSubscriptions =
+		apiResponse && apiResponse.subscriptions && isArray( apiResponse.subscriptions );
 	return hasSubscriptions;
 };
 
-export const subscriptionFromApi = subscription => subscription && omitBy( {
-	ID: Number( subscription.ID ),
-	URL: subscription.URL,
-	feed_URL: subscription.URL,
-	blog_ID: toValidId( subscription.blog_ID ),
-	feed_ID: toValidId( subscription.feed_ID ),
-	date_subscribed: Date.parse( subscription.date_subscribed ),
-	delivery_methods: subscription.delivery_methods,
-	is_owner: subscription.is_owner,
-}, isUndefined );
+export const subscriptionFromApi = subscription =>
+	subscription &&
+	omitBy(
+		{
+			ID: Number( subscription.ID ),
+			URL: subscription.URL,
+			feed_URL: subscription.URL,
+			blog_ID: toValidId( subscription.blog_ID ),
+			feed_ID: toValidId( subscription.feed_ID ),
+			date_subscribed: Date.parse( subscription.date_subscribed ),
+			delivery_methods: subscription.delivery_methods,
+			is_owner: subscription.is_owner,
+		},
+		isUndefined
+	);
 
 export const subscriptionsFromApi = apiResponse => {
 	if ( ! isValidApiResponse( apiResponse ) ) {
@@ -75,18 +77,20 @@ export function syncReaderFollows( store, action, next ) {
 }
 
 export function requestPage( store, action, next ) {
-	store.dispatch( http( {
-		method: 'GET',
-		path: '/read/following/mine',
-		apiVersion: '1.2',
-		query: {
-			page: action.payload.page,
-			number: action.payload.number,
-			meta: action.payload.meta,
-		},
-		onSuccess: action,
-		onError: action,
-	} ) );
+	store.dispatch(
+		http( {
+			method: 'GET',
+			path: '/read/following/mine',
+			apiVersion: '1.2',
+			query: {
+				page: action.payload.page,
+				number: action.payload.number,
+				meta: action.payload.meta,
+			},
+			onSuccess: action,
+			onError: action,
+		} )
+	);
 
 	next( action );
 }
@@ -108,7 +112,7 @@ export function receivePage( store, action, next, apiResponse ) {
 		} )
 	);
 
-	forEach( follows, ( follow ) => {
+	forEach( follows, follow => {
 		seenSubscriptions.add( follow.feed_URL );
 	} );
 
@@ -141,11 +145,7 @@ export function receiveError( store ) {
 const followingMine = {
 	[ READER_FOLLOWS_SYNC_START ]: [ syncReaderFollows ],
 	[ READER_FOLLOWS_SYNC_PAGE ]: [ dispatchRequest( requestPage, receivePage, receiveError ) ],
-	[ READER_FOLLOW ]: [ updateSeenOnFollow ]
+	[ READER_FOLLOW ]: [ updateSeenOnFollow ],
 };
 
-export default mergeHandlers(
-	followingMine,
-	followingNew,
-	followingDelete,
-);
+export default mergeHandlers( followingMine, followingNew, followingDelete );

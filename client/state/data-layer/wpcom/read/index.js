@@ -9,11 +9,4 @@ import followingMine from './following/mine';
 import feed from './feed';
 import recommendations from './recommendations';
 
-export default mergeHandlers(
-	site,
-	teams,
-	tags,
-	followingMine,
-	feed,
-	recommendations,
-);
+export default mergeHandlers( site, teams, tags, followingMine, feed, recommendations );
