@@ -63,12 +63,7 @@ export class Login extends React.Component {
 		this.props.showMagicLoginRequestForm();
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			loaded: false
-		};
-	}
+	state = { loaded: false };
 
 	magicLoginMainContent() {
 		const {
