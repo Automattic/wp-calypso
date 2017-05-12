@@ -1,33 +1,46 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import Main from 'components/main';
+import { getSelectedSiteId } from 'state/ui/selectors';
+
+import { editProduct, editProductAttribute } from '../../state/ui/products/actions';
 import { getCurrentlyEditingProduct } from '../../state/ui/products/selectors';
 import { getProductVariationsWithLocalEdits } from '../../state/ui/products/variations/selectors';
-import { editProduct, editProductAttribute } from '../../state/ui/products/actions';
 import { editProductVariation } from '../../state/ui/products/variations/actions';
-import Main from 'components/main';
+import { fetchProductCategories } from '../../state/wc-api/product-categories/actions';
+import { getProductCategories } from '../../state/wc-api/product-categories/selectors';
 import ProductForm from './product-form';
 
-class ProductCreate extends Component {
+class ProductCreate extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
+		siteId: PropTypes.number.isRequired,
+		product: PropTypes.shape( {
+			id: PropTypes.isRequired,
+		} ),
+		fetchProductCategories: PropTypes.func.isRequired,
+		editProduct: PropTypes.func.isRequired,
+		editProductAttribute: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
-		const { product } = this.props;
+		const { product, siteId } = this.props;
 
 		if ( ! product ) {
 			this.props.editProduct( null, {
 				type: 'simple'
 			} );
 		}
+
+		this.props.fetchProductCategories( siteId );
 	}
 
 	componentWillUnmount() {
@@ -35,13 +48,14 @@ class ProductCreate extends Component {
 	}
 
 	render() {
-		const { product, className, variations } = this.props;
+		const { product, className, variations, productCategories } = this.props;
 
 		return (
 			<Main className={ className } wideLayout={ true }>
 				<ProductForm
 					product={ product || { type: 'simple' } }
 					variations={ variations }
+					productCategories={ productCategories }
 					editProduct={ this.props.editProduct }
 					editProductAttribute={ this.props.editProductAttribute }
 					editProductVariation={ this.props.editProductVariation }
@@ -52,12 +66,16 @@ class ProductCreate extends Component {
 }
 
 function mapStateToProps( state ) {
+	const siteId = getSelectedSiteId( state );
 	const product = getCurrentlyEditingProduct( state );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
+	const productCategories = getProductCategories( state, siteId );
 
 	return {
+		siteId,
 		product,
 		variations,
+		productCategories,
 	};
 }
 
@@ -67,6 +85,7 @@ function mapDispatchToProps( dispatch ) {
 			editProduct,
 			editProductAttribute,
 			editProductVariation,
+			fetchProductCategories,
 		},
 		dispatch
 	);
