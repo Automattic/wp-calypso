@@ -26,6 +26,7 @@ class JetpackConnectSiteUrlInput extends Component {
 		isInstall: PropTypes.bool,
 		onChange: PropTypes.func,
 		onSubmit: PropTypes.func,
+		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
 	};
 
