@@ -17,11 +17,22 @@ function createProduct( siteData ) {
 }
 
 function createProductSuccess( siteData, action ) {
-	const { data } = action.payload;
+	const { product } = action.payload;
+	const products = siteData.products || [];
 
-	console.log( 'createProductSuccess! data=', data );
+	let found = false;
+	const newProducts = products.map( ( p ) => {
+		if ( p.id === product.id ) {
+			found = true;
+			return product;
+		}
+		return p;
+	} );
+
+	if ( ! found ) {
+		newProducts.push( product );
+	}
 
 	return siteData;
 }
-
 

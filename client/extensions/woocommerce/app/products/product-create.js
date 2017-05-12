@@ -62,7 +62,6 @@ class ProductCreate extends React.Component {
 	}
 
 	onSave = () => {
-		// TODO: Add action dispatch to save this product.
 		const { siteId, product } = this.props;
 		this.props.createProduct( siteId, product );
 	}

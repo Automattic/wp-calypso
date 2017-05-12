@@ -20,6 +20,14 @@ export function createProduct( siteId, product ) {
 		// Filter out any id we might have.
 		const { id, ...productData } = product;
 
+		if ( typeof id === 'number' ) {
+			dispatch( error( siteId, createAction, {
+				message: 'Attempting to create a product which already has a valid id.',
+				product,
+			} ) );
+			return;
+		}
+
 		const jetpackProps = { path: `/jetpack-blogs/${ siteId }/rest-api/` };
 		const httpProps = {
 			path: '/wc/v2/products',
@@ -27,14 +35,13 @@ export function createProduct( siteId, product ) {
 			json: true,
 		};
 
+		// TODO: Modify this to use the extensions data layer.
 		return wp.req.post( jetpackProps, httpProps )
 			.then( ( { data } ) => {
-				console.log( 'data:', data );
-				dispatch( createProductSuccess( siteId, product ) );
+				dispatch( createProductSuccess( siteId, data ) );
 			} )
 			.catch( err => {
-				console.log( 'err:', err );
-				dispatch( error( siteId, getAction, err ) );
+				dispatch( error( siteId, createAction, err ) );
 			} );
 	};
 }
@@ -46,7 +53,10 @@ export function createProductSuccess( siteId, product ) {
 			payload: { siteId, product },
 		};
 
-		return error( siteId, originalAction, { message: 'Invalid Product Object', product } );
+		return error( siteId, originalAction, {
+			message: 'Invalid Product Object',
+			product
+		} );
 	}
 
 	return {
@@ -55,7 +65,7 @@ export function createProductSuccess( siteId, product ) {
 			siteId,
 			product,
 		}
-	}
+	};
 }
 
 function isValidProduct( product ) {
