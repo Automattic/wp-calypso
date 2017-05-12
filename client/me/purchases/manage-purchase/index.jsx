@@ -120,7 +120,7 @@ class ManagePurchase extends Component {
 		return Boolean( getPurchase( props ) );
 	}
 
-	handleRenew() {
+	handleRenew = () => {
 		const purchase = getPurchase( this.props ),
 			renewItem = cartItems.getRenewalItemFromProduct( purchase, {
 				domain: purchase.meta
