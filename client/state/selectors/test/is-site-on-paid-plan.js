@@ -14,10 +14,10 @@ import {
 } from 'lib/plans/constants';
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'isSiteOnFreePlan', () => {
+describe( 'isSiteOnPaidPlan', () => {
 	const state = deepFreeze( {} );
 	let getCurrentPlan;
-	let isSiteOnFreePlan;
+	let isSiteOnPaidPlan;
 
 	useMockery( mockery => {
 		getCurrentPlan = stub();
@@ -25,21 +25,21 @@ describe( 'isSiteOnFreePlan', () => {
 	} );
 
 	before( () => {
-		isSiteOnFreePlan = require( '../is-site-on-free-plan' );
+		isSiteOnPaidPlan = require( '../is-site-on-paid-plan' );
 	} );
 
 	it( 'should return false when plan is not known', () => {
 		getCurrentPlan.returns( null );
-		expect( isSiteOnFreePlan( state, 'site1' ) ).to.be.false;
+		expect( isSiteOnPaidPlan( state, 'site1' ) ).to.be.false;
 	} );
 
-	it( 'should return false when not on free plan', () => {
-		getCurrentPlan.returns( { productSlug: PLAN_BUSINESS } );
-		expect( isSiteOnFreePlan( state, 'site1' ) ).to.be.false;
-	} );
-
-	it( 'should return true when on free plan', () => {
+	it( 'should return false when on free plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_FREE } );
-		expect( isSiteOnFreePlan( state, 'site1' ) ).to.be.true;
+		expect( isSiteOnPaidPlan( state, 'site1' ) ).to.be.false;
+	} );
+
+	it( 'should return true when on paid plan', () => {
+		getCurrentPlan.returns( { productSlug: PLAN_BUSINESS } );
+		expect( isSiteOnPaidPlan( state, 'site1' ) ).to.be.true;
 	} );
 } );
