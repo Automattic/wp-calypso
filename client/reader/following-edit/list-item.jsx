@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import PureRenderMixin from 'react-pure-render/mixin';
 import noop from 'lodash/noop';
 
@@ -25,7 +26,9 @@ import smartSetState from 'lib/react-smart-set-state';
 
 import ExternalLink from 'components/external-link';
 
-const SubscriptionListItem = React.createClass( {
+const SubscriptionListItem = createReactClass( {
+	displayName: 'SubscriptionListItem',
+
 	propTypes: {
 		subscription: React.PropTypes.object.isRequired,
 		classNames: React.PropTypes.string,

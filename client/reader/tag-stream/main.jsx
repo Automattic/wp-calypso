@@ -20,19 +20,17 @@ import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags'
 import QueryReaderTag from 'components/data/query-reader-tag';
 import { find } from 'lodash';
 
-const TagStream = React.createClass( {
-	_isMounted: false,
-
-	propTypes: {
+class TagStream extends React.Component {
+	static propTypes = {
 		encodedTagSlug: React.PropTypes.string,
 		decodedTagSlug: React.PropTypes.string,
-	},
+	};
 
-	getInitialState() {
-		return {
-			isEmojiTitle: false,
-		};
-	},
+	state = {
+		isEmojiTitle: false,
+	};
+
+	_isMounted = false;
 
 	componentWillMount() {
 		const self = this;
@@ -52,31 +50,31 @@ const TagStream = React.createClass( {
 				} );
 			}
 		} );
-	},
+	}
 
 	componentWillUnmount() {
 		this._isMounted = false;
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.encodedTagSlug !== this.props.encodedTagSlug ) {
 			this.checkForTwemoji( nextProps );
 		}
-	},
+	}
 
-	checkForTwemoji() {
+	checkForTwemoji = () => {
 		const title = this.getTitle();
 		this.setState( {
 			isEmojiTitle: title && this.state.twemoji && this.state.twemoji.test( title ),
 		} );
-	},
+	};
 
-	isSubscribed() {
+	isSubscribed = () => {
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
 		return !! ( tag && tag.isFollowing );
-	},
+	};
 
-	toggleFollowing() {
+	toggleFollowing = () => {
 		const { decodedTagSlug, unfollowTag, followTag } = this.props;
 		const isFollowing = this.isSubscribed(); // this is the current state, not the new state
 		const toggleAction = isFollowing ? unfollowTag : followTag;
@@ -92,7 +90,7 @@ const TagStream = React.createClass( {
 				tag: decodedTagSlug,
 			}
 		);
-	},
+	};
 
 	render() {
 		const emptyContent = <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
@@ -129,8 +127,8 @@ const TagStream = React.createClass( {
 				/>
 			</Stream>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => ( {

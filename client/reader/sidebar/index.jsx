@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import closest from 'component-closest';
 import page from 'page';
 import url from 'url';
@@ -40,7 +41,8 @@ import viewport from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import { getTagStreamUrl } from 'reader/route';
 
-export const ReaderSidebar = React.createClass( {
+export const ReaderSidebar = createReactClass( {
+	displayName: 'ReaderSidebar',
 	mixins: [ observe( 'userSettings' ) ],
 
 	getInitialState() {

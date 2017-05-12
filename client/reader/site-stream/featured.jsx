@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal Dependencies
@@ -17,16 +16,10 @@ import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import cssSafeUrl from 'lib/css-safe-url';
 
 export default localize(
-	React.createClass( {
-		displayName: 'FeedFeatured',
+	class extends React.PureComponent {
+		static displayName = 'FeedFeatured';
 
-		mixins: [ PureRenderMixin ],
-
-		getInitialState() {
-			return this.getStateFromStores();
-		},
-
-		getStateFromStores( store = this.props.store ) {
+		getStateFromStores = ( store = this.props.store ) => {
 			const posts = store.get().map( postKey => {
 				const post = FeedPostStore.get( postKey );
 
@@ -47,33 +40,33 @@ export default localize(
 			return {
 				posts,
 			};
-		},
+		};
 
-		updateState( store ) {
+		updateState = store => {
 			this.setState( this.getStateFromStores( store ) );
-		},
+		};
 
 		componentDidMount() {
 			this.props.store.on( 'change', this.updateState );
 			FeedPostStore.on( 'change', this.updateState );
-		},
+		}
 
 		componentWillUnmount() {
 			this.props.store.off( 'change', this.updateState );
 			FeedPostStore.off( 'change', this.updateState );
-		},
+		}
 
 		componentWillReceiveProps( nextProps ) {
 			if ( nextProps.store !== this.props.store ) {
 				this.updateState();
 			}
-		},
+		}
 
-		shouldFetch( post ) {
+		shouldFetch = post => {
 			return ! post || post._state === 'minimal';
-		},
+		};
 
-		getSourcePost( post ) {
+		getSourcePost = post => {
 			const data = getDiscoverSourceData( post );
 
 			if ( ! data ) {
@@ -81,22 +74,22 @@ export default localize(
 			}
 
 			return FeedPostStore.get( data );
-		},
+		};
 
-		getPostUrl( post ) {
+		getPostUrl = post => {
 			return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
-		},
+		};
 
-		handleClick( postData ) {
+		handleClick = postData => {
 			const post = postData.post;
 			recordTrackForPost( 'calypso_reader_clicked_featured_post', post );
 			recordAction( 'clicked_featured_post' );
 			recordGaEvent( 'Clicked Featured Post' );
 
 			page( postData.url );
-		},
+		};
 
-		renderPosts() {
+		renderPosts = () => {
 			return this.state.posts.map( postData => {
 				const post = postData.post, postState = post._state;
 
@@ -124,7 +117,9 @@ export default localize(
 						);
 				}
 			} );
-		},
+		};
+
+		state = this.getStateFromStores();
 
 		render() {
 			if ( ! this.state.posts ) {
@@ -145,6 +140,6 @@ export default localize(
 					</div>
 				</Card>
 			);
-		},
-	} )
+		}
+	}
 );
