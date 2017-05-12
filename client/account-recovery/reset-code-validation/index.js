@@ -63,20 +63,50 @@ class ResetPasswordEmailValidation extends Component {
 		}
 	}
 
-	renderErrorMsg = () => {
+	getErrorMsg = ( errorIdentifier ) => {
 		const { translate } = this.props;
+
+		switch ( errorIdentifier ) {
+			case 'RestInvalidKeyError':
+				return {
+					title: translate( "We've failed to validate using the given link." ),
+					line: translate(
+						'Please try to {{a}}request a new one or try the other methods{{/a}}.',
+						{ components: {
+							a: <a href={ '/account-recovery/' } />
+						} }
+					),
+				};
+		}
+
+		return {
+			title: translate( "We've run into an unexpected error. We're sorry! " ),
+			line: translate(
+				'Please try to {{a}}reset your password again{{/a}}.',
+				{ components: {
+					a: <a href={ '/account-recovery/' } />
+				} }
+			),
+		};
+	}
+
+	renderErrorMsg = ( error ) => {
+		const { title, line } = this.getErrorMsg( error.name );
 
 		return (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-500.svg"
-				title={ translate( 'Oops, something went wrong.' ) }
-				line={ translate( "We've failed to validate using the given link. " +
-							'Please try to request a new one or try the other methods.' ) }
+				title={ title }
+				line={ line }
 			/>
 		);
 	}
 
-	render = () => ( this.props.error ? this.renderErrorMsg() : null )
+	render = () => {
+		const { error } = this.props;
+
+		return error ? this.renderErrorMsg( error ) : null;
+	}
 }
 
 export default connect(
