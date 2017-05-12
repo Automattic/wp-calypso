@@ -449,7 +449,7 @@ class PostShare extends Component {
 
 export default connect(
 	( state, props ) => {
-		const siteId = get( props, 'site.ID' );
+		const { siteId } = props;
 		const postId = get( props, 'post.ID' );
 		const userId = getCurrentUserId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
