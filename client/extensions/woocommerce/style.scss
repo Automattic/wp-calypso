@@ -9,6 +9,8 @@
 	flex-grow: 1;
 
 	@import 'app/products/product-form';
+	@import 'app/settings/payments/style';
+
 	@import 'components/address-view/style';
 	@import 'components/extended-header/style';
 	@import 'components/form-dimensions-input/style';
