@@ -11,5 +11,5 @@ export const HAPPYCHAT_MAX_STORED_MESSAGES = 30;
 // Groups
 export const HAPPYCHAT_GROUP_JPOP = 'jpop';
 export const HAPPYCHAT_GROUP_WOO = 'woo';
-export const HAPPYCHAT_GROUP_JPHP = 'jpphp';
+export const HAPPYCHAT_GROUP_JPPHP = 'jpphp';
 export const HAPPYCHAT_GROUP_WPCOM = 'WP.com';
