@@ -5,6 +5,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal Dependencies
@@ -30,8 +31,7 @@ import ReaderSubscriptionListItemPlaceholder
  * @param {String} url - the url to format
  * @returns {String} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
  */
-const formatUrlForDisplay = url =>
-	untrailingslashit( url.replace( /^https?:\/\/(www\.)?/, '' ) );
+const formatUrlForDisplay = url => untrailingslashit( url.replace( /^https?:\/\/(www\.)?/, '' ) );
 
 function ReaderSubscriptionListItem( {
 	url,
@@ -56,6 +56,7 @@ function ReaderSubscriptionListItem( {
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
 	const preferGravatar = ! isMultiAuthor;
+	const lastUpdatedDate = moment( get( feed, 'last_update' ) ).fromNow();
 
 	if ( ! site && ! feed ) {
 		return <ReaderSubscriptionListItemPlaceholder />;
@@ -104,6 +105,7 @@ function ReaderSubscriptionListItem( {
 						className="reader-subscription-list-item__site-url"
 					>
 						{ formatUrlForDisplay( siteUrl ) }
+						{ feed && feed.last_update && translate( ' updated %s ', { args: lastUpdatedDate } ) }
 					</a> }
 			</div>
 			<div className="reader-subscription-list-item__options">
