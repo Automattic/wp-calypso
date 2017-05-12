@@ -51,18 +51,30 @@ import { abtest } from 'lib/abtest';
 import Button from 'components/button'; //For signupPlansPageSimplification
 
 class PlanFeatures extends Component {
-	constructor( props ) {
-		super( props );
-		this.handleShowFeatureButtonClick = this.handleShowFeatureButtonClick.bind( this );
-		this.state = {
-			hideFeatures: true,
-		};
+	static propTypes = {
+		canPurchase: PropTypes.bool.isRequired,
+		onUpgradeClick: PropTypes.func,
+		// either you specify the plans prop or isPlaceholder prop
+		plans: PropTypes.array,
+		planProperties: PropTypes.array,
+		isInSignup: PropTypes.bool,
+		basePlansPath: PropTypes.string,
+		selectedFeature: PropTypes.string,
+		intervalType: PropTypes.string,
+		site: PropTypes.object
 	}
 
-	toggleClass() {
-		const currentState = this.state.hideFeatures;
-		this.setState( { hideFeatures: ! currentState } );
+	static defaultProps = {
+		onUpgradeClick: noop,
+		isInSignup: false,
+		basePlansPath: null,
+		intervalType: 'yearly',
+		site: {}
 	}
+
+	state = {
+		hideFeatures: true,
+	};
 
 	render() {
 		const { planProperties } = this.props;
@@ -99,45 +111,7 @@ class PlanFeatures extends Component {
 		);
 	}
 
-	renderShowFeaturesButton() {
-		if ( abtest( 'signupPlansPageSimplification' ) !== 'modified' ) {
-			return null;
-		}
-
-		const showClass = abtest( 'signupPlansPageSimplification' ) === 'modified' && this.state.hideFeatures;
-
-		const buttonClass = 'is-borderless btn-toggle-features';
-		const containerClass = classNames( 'toggle-container' );
-
-		const featuresHiddenClass = classNames( {
-			'plan-features__hide': showClass,
-		} );
-
-		const featuresVisibleClass = classNames( {
-			'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && ! this.state.hideFeatures,
-		} );
-
-		return (
-			<div className={ containerClass }>
-				<Button
-					className={ buttonClass }
-					onClick={ this.handleShowFeatureButtonClick }>
-					<span className={ featuresVisibleClass }>
-						Show features
-					</span>
-					<span className={ featuresHiddenClass }>
-						Hide features
-					</span>
-				</Button>
-			</div>
-		);
-	}
-
-	handleShowFeatureButtonClick() {
-		this.toggleClass();
-	}
-
-	renderUpgradeDisabledNotice() {
+	renderUpgradeDisabledNotice = () => {
 		const { canPurchase, hasPlaceholders, translate } = this.props;
 
 		if ( hasPlaceholders || canPurchase ) {
@@ -154,7 +128,7 @@ class PlanFeatures extends Component {
 		);
 	}
 
-	renderMobileView() {
+	renderMobileView = () => {
 		const {
 			canPurchase, translate, planProperties, isInSignup, isLandingPage, intervalType, site, basePlansPath
 		} = this.props;
@@ -237,13 +211,13 @@ class PlanFeatures extends Component {
 		} );
 	}
 
-	renderMobileFeatures( features ) {
+	renderMobileFeatures = ( features ) => {
 		return map( features, ( currentFeature, index ) => {
 			return this.renderFeatureItem( currentFeature, index );
 		} );
 	}
 
-	renderPlanHeaders() {
+	renderPlanHeaders = () => {
 		const { planProperties, intervalType, site, basePlansPath } = this.props;
 
 		return map( planProperties, ( properties ) => {
@@ -285,7 +259,7 @@ class PlanFeatures extends Component {
 		} );
 	}
 
-	renderPlanDescriptions() {
+	renderPlanDescriptions = () => {
 		const { planProperties } = this.props;
 
 		return map( planProperties, ( properties ) => {
@@ -319,7 +293,7 @@ class PlanFeatures extends Component {
 		} );
 	}
 
-	renderTopButtons() {
+	renderTopButtons = () => {
 		const { canPurchase, isLandingPage, planProperties, isInSignup, site } = this.props;
 
 		return map( planProperties, ( properties ) => {
@@ -363,7 +337,44 @@ class PlanFeatures extends Component {
 		} );
 	}
 
-	getLongestFeaturesList() {
+	renderShowFeaturesButton = () => {
+		if ( abtest( 'signupPlansPageSimplification' ) !== 'modified' ) {
+			return null;
+		}
+
+		const buttonClass = 'is-borderless btn-toggle-features';
+		const containerClass = classNames( 'toggle-container' );
+
+		const featuresHiddenClass = classNames( {
+			'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && this.state.hideFeatures,
+		} );
+
+		const featuresVisibleClass = classNames( {
+			'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && ! this.state.hideFeatures,
+		} );
+
+		return (
+			<div className={ containerClass }>
+				<Button
+					className={ buttonClass }
+					onClick={ this.handleShowFeatureButtonClick }>
+					<span className={ featuresVisibleClass }>
+						Show features
+					</span>
+					<span className={ featuresHiddenClass }>
+						Hide features
+					</span>
+				</Button>
+			</div>
+		);
+	}
+
+	handleShowFeatureButtonClick = () => {
+		const currentState = this.state.hideFeatures;
+		this.setState( { hideFeatures: ! currentState } );
+	}
+
+	getLongestFeaturesList = () => {
 		const { planProperties } = this.props;
 
 		return reduce( planProperties, ( longest, properties ) => {
@@ -374,7 +385,7 @@ class PlanFeatures extends Component {
 		}, [] );
 	}
 
-	renderPlanFeatureRows() {
+	renderPlanFeatureRows = () => {
 		const longestFeatures = this.getLongestFeaturesList();
 		const classes = classNames( 'plan-features__row', {
 			'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && this.state.hideFeatures,
@@ -389,7 +400,7 @@ class PlanFeatures extends Component {
 		} );
 	}
 
-	renderFeatureItem( feature, index ) {
+	renderFeatureItem = ( feature, index ) => {
 		const description = feature.getDescription
 					? feature.getDescription( abtest, this.props.domainName )
 					: null;
@@ -400,13 +411,13 @@ class PlanFeatures extends Component {
 				hideInfoPopover={ false }
 			>
 				<span className="plan-features__item-info">
-					<span className="plan-features__item-title">{ feature.getTitle() }</span>
+					<span className="plan-features__item-title">{ feature.getTitle( abtest ) }</span>
 				</span>
 			</PlanFeaturesItem>
 		);
 	}
 
-	renderPlanFeatureColumns( rowIndex ) {
+	renderPlanFeatureColumns = ( rowIndex ) => {
 		const {
 			planProperties,
 			selectedFeature
@@ -438,7 +449,7 @@ class PlanFeatures extends Component {
 		} );
 	}
 
-	renderBottomButtons() {
+	renderBottomButtons = () => {
 		const { canPurchase, planProperties, isInSignup, isLandingPage, site } = this.props;
 
 		return map( planProperties, ( properties ) => {
@@ -486,27 +497,6 @@ class PlanFeatures extends Component {
 		retargetViewPlans();
 	}
 }
-
-PlanFeatures.propTypes = {
-	canPurchase: PropTypes.bool.isRequired,
-	onUpgradeClick: PropTypes.func,
-	// either you specify the plans prop or isPlaceholder prop
-	plans: PropTypes.array,
-	planProperties: PropTypes.array,
-	isInSignup: PropTypes.bool,
-	basePlansPath: PropTypes.string,
-	selectedFeature: PropTypes.string,
-	intervalType: PropTypes.string,
-	site: PropTypes.object
-};
-
-PlanFeatures.defaultProps = {
-	onUpgradeClick: noop,
-	isInSignup: false,
-	basePlansPath: null,
-	intervalType: 'yearly',
-	site: {}
-};
 
 export default connect(
 	( state, ownProps ) => {
