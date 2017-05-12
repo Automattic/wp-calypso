@@ -33,12 +33,8 @@ const connectSite = Component => {
 		render() {
 			return (
 				<div>
-					{ ! this.props.feed &&
-						!! this.props.feedId &&
-						<QueryReaderFeed feedId={ this.props.feedId } /> }
-					{ ! this.props.site &&
-						!! this.props.siteId &&
-						<QueryReaderSite siteId={ this.props.siteId } /> }
+					{ !! this.props.feedId && <QueryReaderFeed feedId={ this.props.feedId } /> }
+					{ !! this.props.siteId && <QueryReaderSite siteId={ this.props.siteId } /> }
 					<Component { ...this.props } />
 				</div>
 			);
