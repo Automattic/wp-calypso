@@ -8,7 +8,6 @@ import {
 	DISCUSSIONS_REQUEST,
 	DISCUSSIONS_ITEM_LIKE_REQUEST,
 	DISCUSSIONS_ITEM_UNLIKE_REQUEST,
-	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST,
 } from 'state/action-types';
 import {
 	requestingPostComments,
@@ -21,7 +20,7 @@ import {
 	requestCommentLike,
 	requestCommentUnLike
 } from './likes';
-import requestCommentStatusUpdate from './status';
+import status from './status';
 import content from './content';
 
 /**
@@ -64,10 +63,10 @@ const discussions = {
 	[ DISCUSSIONS_REQUEST ]: [ requestDiscussions ],
 	[ DISCUSSIONS_ITEM_LIKE_REQUEST ]: [ requestCommentLike ],
 	[ DISCUSSIONS_ITEM_UNLIKE_REQUEST ]: [ requestCommentUnLike ],
-	[ DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST ]: [ requestCommentStatusUpdate ],
 };
 
 export default mergeHandlers(
 	content,
 	discussions,
+	status
 );

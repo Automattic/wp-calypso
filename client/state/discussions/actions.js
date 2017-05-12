@@ -8,7 +8,6 @@ import {
 	DISCUSSIONS_ITEM_LIKE_REQUESTING,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
-	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUESTING,
 	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS,
 	DISCUSSIONS_RECEIVE,
@@ -223,22 +222,6 @@ export function failCommentLikeRequest( siteId, commentId, source, error ) {
 		commentId,
 		source,
 		error
-	};
-}
-
-/***
- * retuns an action object used in signalling that a status update has been
- * requested for a comment.
- *
- * @param   {Number} siteId    site identifier
- * @param   {Number} commentId comment identifier
- * @returns {Object}           action object
- */
-export function requestingCommentStatusUpdate( siteId, commentId ) {
-	return {
-		type: DISCUSSIONS_ITEM_STATUS_UPDATE_REQUESTING,
-		siteId,
-		commentId
 	};
 }
 
