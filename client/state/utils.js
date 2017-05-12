@@ -30,6 +30,8 @@ export function isValidStateWithSchema( state, schema ) {
 	return valid;
 }
 
+const keyedMapper = ( state, collectionMapper ) => collectionMapper( state );
+
 /**
  * Creates a super-reducer as a map of reducers over keyed objects
  *
@@ -84,7 +86,7 @@ export function isValidStateWithSchema( state, schema ) {
  * @param {function} serializer takes entire state of collection and serializes
  * @return {function} super-reducer applying reducer over map of keyed items
  */
-export const keyedReducer = ( keyName, reducer, { deserializer, serializer } = { deserializer: identity, serializer: identity } ) => {
+export const keyedReducer = ( keyName, reducer, { deserializer, serializer } = { deserializer: keyedMapper, serializer: keyedMapper } ) => {
 	// some keys are invalid
 	if ( 'string' !== typeof keyName ) {
 		throw new TypeError( `Key name passed into ``keyedReducer`` must be a string but I detected a ${ typeof keyName }` );
@@ -102,11 +104,11 @@ export const keyedReducer = ( keyName, reducer, { deserializer, serializer } = {
 
 	return ( state = {}, action ) => {
 		if ( DESERIALIZE === action.type ) {
-			return deserializer( state );
+			return deserializer( state, next => mapValues( next, item => reducer( item, action ) ) );
 		}
 
 		if ( SERIALIZE === action.type ) {
-			return serializer( mapValues( state, item => reducer( item, action ) ) );
+			return serializer( state, next => mapValues( next, item => reducer( item, action ) ) );
 		}
 
 		// don't allow coercion of key name: null => 0

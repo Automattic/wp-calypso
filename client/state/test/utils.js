@@ -3,8 +3,8 @@
  */
 import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
-import noop from 'lodash/noop';
 import { stub, spy } from 'sinon';
+import { noop, sum, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -278,7 +278,7 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( '#keyedReducer', () => {
+	describe.only( '#keyedReducer', () => {
 		const grow = name => ( { type: 'GROW', name } );
 
 		const age = ( state = 0, action ) =>
@@ -356,6 +356,90 @@ describe( 'utils', () => {
 		it( 'should not initialize a state if no changes and not keyed (simple state)', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( prevState, { type: 'STAY', name: 'Calypso' } ) ).to.equal( prevState );
+		} );
+
+		it( 'should pass along SERIALIZE actions to items in collection', () => {
+			const serializing = ( state = 0, { type } ) => {
+				if ( SERIALIZE === type ) {
+					return `age:${ state }`;
+				}
+
+				return 'GROW' === type
+					? state + 1
+					: state;
+			};
+			const keyed = keyedReducer( 'name', serializing );
+
+			expect( keyed( prevState, { type: SERIALIZE } ) ).to.eql( { Bonobo: 'age:13' } );
+		} );
+
+		it( 'should pass along DESERIALIZE actions to items in collection', () => {
+			const deserializing = ( state = 0, { type } ) => {
+				if ( DESERIALIZE === type ) {
+					// age:1 -> 1
+					return parseInt( state.slice( 4 ), 10 );
+				}
+
+				return 'GROW' === type
+					? state + 1
+					: state;
+			};
+			const keyed = keyedReducer( 'name', deserializing );
+
+			expect( keyed( { Bonobo: 'age:13' }, { type: DESERIALIZE } ) ).to.eql( { Bonobo: 13 } );
+		} );
+
+		it( 'should serialize entire collection if serializer given', () => {
+			const serializing = ( state = 0, { type } ) =>
+				SERIALIZE === type
+					? state * 2
+					: state;
+			const ageSum = ( o, mapper ) => sum( values( mapper( o ) ) );
+			const keyed = keyedReducer( 'name', serializing, { serializer: ageSum } );
+
+			expect( keyed( {
+				Bonobo: 13,
+				Lemur: 5,
+			}, { type: SERIALIZE } ) ).to.equal( 26 + 10 );
+		} );
+
+		it( 'should deserialize entire collection if deserializer given', () => {
+			const deserializing = ( state = 0, { type } ) =>
+				DESERIALIZE === type
+					? state * 2
+					: state;
+
+			const stored = '{"Bonobo":13}';
+			const unpack = ( s, mapper ) => mapper( JSON.parse( s ) );
+			const keyed = keyedReducer( 'name', deserializing, { deserializer: unpack } );
+
+			expect( keyed( stored, { type: DESERIALIZE } ) ).to.eql( { Bonobo: 26 } );
+		} );
+
+		it( 'should not pass through deserialization if not intended', () => {
+			const deserializing = ( state = 0, { type } ) =>
+				DESERIALIZE === type
+					? state * 2
+					: state;
+
+			const deserialized = keyedReducer( 'name', deserializing );
+			expect( deserialized( { Bonobo: 13 }, { type: DESERIALIZE } ) ).to.eql( { Bonobo: 26 } );
+
+			const custom = keyedReducer( 'name', deserializing, { deserializer: state => state } );
+			expect( custom( prevState, { type: DESERIALIZE } ) ).to.equal( prevState );
+		} );
+
+		it( 'should not pass through serialization if not intended', () => {
+			const serializing = ( state = 0, { type } ) =>
+				SERIALIZE === type
+					? state * 2
+					: state;
+
+			const serialized = keyedReducer( 'name', serializing );
+			expect( serialized( { Bonobo: 13 }, { type: SERIALIZE } ) ).to.eql( { Bonobo: 26 } );
+
+			const custom = keyedReducer( 'name', serializing, { serializer: state => state } );
+			expect( custom( prevState, { type: SERIALIZE } ) ).to.equal( prevState );
 		} );
 	} );
 
