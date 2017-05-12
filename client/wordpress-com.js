@@ -346,4 +346,12 @@ sections.push( {
 	secondary: true
 } );
 
+sections.push( {
+	name: 'comments',
+	paths: [ '/comments' ],
+	module: 'my-sites/comments',
+	group: 'sites',
+	secondary: true
+} );
+
 module.exports = sections;
