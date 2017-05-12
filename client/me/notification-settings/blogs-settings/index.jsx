@@ -4,13 +4,13 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop, sortBy } from 'lodash';
+import { noop } from 'lodash';
 import Immutable from 'immutable';
 
 /**
  * Internal dependencies
  */
-import { getSites, getPrimarySiteId } from 'state/selectors';
+import { getSites } from 'state/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import Blog from './blog';
 import InfiniteList from 'components/infinite-list';
@@ -84,11 +84,8 @@ class BlogsSettings extends Component {
 	}
 }
 
-const mapStateToProps = state => {
-	const primarySiteId = getPrimarySiteId( state );
-	return {
-		sites: sortBy( getSites( state ), site => site.ID !== primarySiteId )
-	};
-};
+const mapStateToProps = state => ( {
+	sites: getSites( state )
+} );
 
 export default connect( mapStateToProps )( localize( BlogsSettings ) );
