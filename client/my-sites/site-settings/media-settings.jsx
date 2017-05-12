@@ -56,8 +56,8 @@ class MediaSettings extends Component {
 		} = this.props;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
-		return isVideoPressAvailable
-			? <FormFieldset className="site-settings__formfieldset has-divider is-top-only">
+		return isVideoPressAvailable && (
+			<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
 				<div className="site-settings__info-link-container">
 					<InfoPopover position="left">
 						<ExternalLink target="_blank" icon href="https://jetpack.com/support/videopress/" >
@@ -72,7 +72,7 @@ class MediaSettings extends Component {
 					disabled={ isRequestingOrSaving }
 				/>
 			</FormFieldset>
-			: null;
+		);
 	}
 
 	renderVideoUpgradeNudge() {
@@ -81,14 +81,14 @@ class MediaSettings extends Component {
 			translate,
 		} = this.props;
 
-		return isVideoPressAvailable
-			? null
-			: <Banner
+		return ! isVideoPressAvailable && (
+			<Banner
 				event={ 'jetpack_video_settings' }
 				feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM }
 				plan={ PLAN_JETPACK_PREMIUM }
 				title={ translate( 'Host fast, high-quality, ad-free video.' ) }
-			/>;
+			/>
+		);
 	}
 
 	render() {
@@ -114,7 +114,7 @@ class MediaSettings extends Component {
 					<FormFieldset>
 						<div className="site-settings__info-link-container">
 							<InfoPopover position="left">
-								<ExternalLink target="_blank" icon={ true } href="https://jetpack.com/support/photon" >
+								<ExternalLink target="_blank" icon href="https://jetpack.com/support/photon" >
 									{ translate( 'Learn more about Photon.' ) }
 								</ExternalLink>
 							</InfoPopover>
@@ -130,7 +130,7 @@ class MediaSettings extends Component {
 					<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
 						<div className="site-settings__info-link-container">
 							<InfoPopover position="left">
-								<ExternalLink target="_blank" icon={ true } href="https://jetpack.com/support/carousel" >
+								<ExternalLink target="_blank" icon href="https://jetpack.com/support/carousel" >
 									{ translate( 'Learn more about Carousel.' ) }
 								</ExternalLink>
 							</InfoPopover>
@@ -140,7 +140,7 @@ class MediaSettings extends Component {
 							moduleSlug="carousel"
 							label={ translate( 'Transform standard image galleries into full-screen slideshows' ) }
 							disabled={ isRequestingOrSaving }
-							/>
+						/>
 						<div className="site-settings__child-settings">
 							<CompactFormToggle
 								checked={ fields.carousel_display_exif || false }
