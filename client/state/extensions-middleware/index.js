@@ -6,8 +6,8 @@ import { has, invoke, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from './utils';
-import { middleware as wpcomApiMiddleware } from './wpcom-api-middleware';
+import { mergeHandlers } from '../data-layer/utils'; // FIXME: Move to this directory?
+import { middleware as wpcomApiMiddleware } from '../data-layer/wpcom-api-middleware';
 
 const MIDDLEWARES = {
 	wpcomApi: wpcomApiMiddleware

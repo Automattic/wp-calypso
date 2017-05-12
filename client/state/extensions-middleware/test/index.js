@@ -7,8 +7,8 @@ import { spy, stub } from 'sinon';
 /**
  * Internal dependencies
  */
-import { addHandlers, removeHandlers, configureMiddleware } from '../extensions-middleware';
-import { local } from '../utils';
+import { addHandlers, removeHandlers, configureMiddleware } from '..';
+import { local } from '../../data-layer/utils';
 
 describe( 'Calypso Extensions Data Layer Middleware', () => {
 	let next;
