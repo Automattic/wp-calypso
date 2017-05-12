@@ -1,27 +1,42 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId } from 'state/ui/selectors';
+
 import { getCurrentlyEditingProduct } from '../../state/ui/products/selectors';
+import { getProductCategories } from '../../state/wc-api/product-categories/selectors';
 import { editProduct, editProductAttribute } from '../../state/ui/products/actions';
+import { fetchProductCategories } from '../../state/wc-api/product-categories/actions';
 import ProductForm from './product-form';
 
-class ProductCreate extends Component {
+class ProductCreate extends React.Component {
+	static propTypes = {
+		siteId: PropTypes.number.isRequired,
+		product: PropTypes.shape( {
+			id: PropTypes.isRequired,
+		} ),
+		fetchProductCategories: PropTypes.func.isRequired,
+		editProduct: PropTypes.func.isRequired,
+		editProductAttribute: PropTypes.func.isRequired,
+	};
 
 	componentDidMount() {
-		const { product } = this.props;
+		const { product, siteId } = this.props;
 
 		if ( ! product ) {
 			this.props.editProduct( null, {
 				type: 'simple'
 			} );
 		}
+
+		this.props.fetchProductCategories( siteId );
 	}
 
 	componentWillUnmount() {
@@ -29,11 +44,12 @@ class ProductCreate extends Component {
 	}
 
 	render() {
-		const { product } = this.props;
+		const { product, productCategories } = this.props;
 
 		return (
 			<ProductForm
 				product={ product || { type: 'simple' } }
+				productCategories={ productCategories }
 				editProduct={ this.props.editProduct }
 				editProductAttribute={ this.props.editProductAttribute }
 			/>
@@ -42,10 +58,14 @@ class ProductCreate extends Component {
 }
 
 function mapStateToProps( state ) {
+	const siteId = getSelectedSiteId( state );
 	const product = getCurrentlyEditingProduct( state );
+	const productCategories = getProductCategories( state, siteId );
 
 	return {
+		siteId,
 		product,
+		productCategories,
 	};
 }
 
@@ -54,6 +74,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			editProduct,
 			editProductAttribute,
+			fetchProductCategories,
 		},
 		dispatch
 	);
