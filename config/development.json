@@ -38,6 +38,7 @@
 		"code-splitting": true,
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
+		"comments/management": true,
 		"community-translator": true,
 		"css-hot-reload": true,
 		"desktop-promo": true,
