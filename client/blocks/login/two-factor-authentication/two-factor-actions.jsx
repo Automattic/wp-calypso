@@ -22,7 +22,8 @@ import { login } from 'lib/paths';
 class TwoFactorActions extends Component {
 	static propTypes = {
 		errorNotice: PropTypes.func.isRequired,
-		isSmsSupported: PropTypes.bool.isRequired,
+		isAuthenticatorSupported: PropTypes.bool,
+		isSmsSupported: PropTypes.bool,
 		successNotice: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
@@ -56,7 +57,7 @@ class TwoFactorActions extends Component {
 
 	render() {
 		const {
-			isAuthenicatorSupported,
+			isAuthenticatorSupported,
 			isPushSupported,
 			isSmsSupported,
 			translate,
@@ -75,7 +76,7 @@ class TwoFactorActions extends Component {
 					</p>
 				) }
 
-				{ isAuthenicatorSupported && twoFactorAuthType !== 'authenticator' && (
+				{ isAuthenticatorSupported && twoFactorAuthType !== 'authenticator' && (
 					<p>
 						<a href="#" onClick={ this.verifyWithAuthenticator }>{ translate( 'An Authenticator App' ) }</a>
 					</p>
@@ -94,7 +95,7 @@ class TwoFactorActions extends Component {
 export default connect(
 	( state ) => ( {
 		twoStepNonce: getTwoFactorAuthNonce( state ),
-		isAuthenicatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
+		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isPushSupported: isTwoFactorAuthTypeSupported( state, 'push' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 		userId: getTwoFactorUserId( state ),
