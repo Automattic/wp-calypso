@@ -1,22 +1,18 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 
-class ListRows extends Component {
-	render() {
-		const { children } = this.props;
-		return (
-			<tbody>
-				{ children }
-			</tbody>
-		);
-	}
-
-}
+const ListRows = ( { children } ) => {
+	return (
+		<tbody>
+			{ children }
+		</tbody>
+	);
+};
 
 export default ListRows;

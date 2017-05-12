@@ -1,26 +1,20 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 
-class ListHeader extends Component {
-
-	render() {
-		const { children } = this.props;
-
-		return (
-			<thead>
-				<tr className="list-header__container">
-					{ children }
-				</tr>
-			</thead>
-		);
-	}
-
-}
+const ListHeader = ( { children } ) => {
+	return (
+		<thead>
+			<tr className="list-header__container">
+				{ children }
+			</tr>
+		</thead>
+	);
+};
 
 export default ListHeader;

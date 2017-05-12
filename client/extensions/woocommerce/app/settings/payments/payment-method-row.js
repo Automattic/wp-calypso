@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -9,40 +10,46 @@ import React, { Component, PropTypes } from 'react';
 import Button from 'components/button';
 import ListTd from '../../../components/list/list-td';
 
-class PaymentMethodRow extends Component {
-
-	static propTypes = {
-		method: PropTypes.shape( {
-			name: PropTypes.string.isRequired,
-			suggested: PropTypes.bool.isRequired,
-			fee: PropTypes.string.isRequired,
-			information: PropTypes.string.isRequired,
-		} ),
-	};
-
-	render() {
-		const { method } = this.props;
-
-		return (
-			<tr className="payments__method-row">
-				<ListTd>
+const PaymentMethodRow = ( { method, translate } ) => {
+	return (
+		<tr className="payments__method-row">
+			<ListTd>
+				{
+					method.suggested &&
+					(
+						<p className="payments__method-suggested">
+							{ translate( 'Suggested Method' ) }
+						</p>
+					)
+				}
+				<p>{ method.name }</p>
+			</ListTd>
+			<ListTd>
+				<p>{ method.fee }</p>
+				<p>
+					<a href={ method.information }>
+						{ translate( 'More Information' ) }
+					</a>
+				</p>
+			</ListTd>
+			<ListTd>
+				<Button>
 					{
-						method.suggested &&
-						( <p className="payments__method-suggested">Suggested Method</p> )
+						translate( 'Set Up' )
 					}
-					<p>{ method.name }</p>
-				</ListTd>
-				<ListTd>
-					<p>{ method.fee }</p>
-					<p><a href={ method.information }>More Information</a></p>
-				</ListTd>
-				<ListTd>
-					<Button>Set Up</Button>
-				</ListTd>
-			</tr>
-		);
-	}
+				</Button>
+			</ListTd>
+		</tr>
+	);
+};
 
-}
+PaymentMethodRow.propTypes = {
+	method: PropTypes.shape( {
+		name: PropTypes.string.isRequired,
+		suggested: PropTypes.bool.isRequired,
+		fee: PropTypes.string.isRequired,
+		information: PropTypes.string.isRequired,
+	} ),
+};
 
-export default PaymentMethodRow;
+export default localize( PaymentMethodRow );
