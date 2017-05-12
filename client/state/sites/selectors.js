@@ -939,9 +939,6 @@ export function siteHasMinimumJetpackVersion( state, siteId ) {
 	}
 
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-
-	// FIXME: Recently connected Jetpack sites have jetpack_version = false
-	// When this is corrected, drop this condition
 	if ( ! siteJetpackVersion ) {
 		return null;
 	}
