@@ -59,7 +59,7 @@ class SettingsPaymentsOffSite extends Component {
 							<ListTd width="25%"></ListTd>
 						</ListHeader>
 						<ListRows>
-							{ methods && methods.map( ( m ) => this.renderMethodRow( m ) ) }
+							{ methods && methods.map( this.renderMethodRow ) }
 						</ListRows>
 					</ListTable>
 
