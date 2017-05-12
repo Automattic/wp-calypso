@@ -37,6 +37,16 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let sandbox, spy;
+	const getState = () => ( {
+		jetpackConnect: {
+			jetpackConnectSitesList: {}
+		}
+	} );
+	const getStateNewJetpackSite = () => ( {
+		jetpackConnect: {
+			jetpackConnectSitesList: { newSite: true }
+		}
+	} );
 
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
@@ -60,9 +70,20 @@ describe( 'actions', () => {
 				{ ID: 2916284, name: 'WordPress.com Example Blog' },
 				{ ID: 77203074, name: 'WordPress.com Example Blog 2' }
 			];
-			const action = receiveSites( sites );
+			const action = receiveSites( sites, getState );
 			expect( action ).to.eql( {
 				type: SITES_RECEIVE,
+				sites
+			} );
+		} );
+		it( 'should update sites list during jetpack connection', () => {
+			const sites = [
+				{ ID: 2916284, name: 'WordPress.com Example Blog' },
+				{ ID: 77203074, name: 'WordPress.com Example Blog 2' }
+			];
+			const action = receiveSites( sites, getStateNewJetpackSite );
+			expect( action ).to.eql( {
+				type: SITES_UPDATE,
 				sites
 			} );
 		} );
@@ -96,13 +117,13 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch request action when thunk triggered', () => {
-				requestSites()( spy );
+				requestSites()( spy, getState );
 				expect( spy ).to.have.been.calledWith( {
 					type: SITES_REQUEST
 				} );
 			} );
 			it( 'should dispatch receive action when request completes', () => {
-				return requestSites()( spy ).then( () => {
+				return requestSites()( spy, getState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITES_RECEIVE,
 						sites: [
@@ -113,7 +134,7 @@ describe( 'actions', () => {
 				} );
 			} );
 			it( 'should dispatch success action when request completes', () => {
-				return requestSites()( spy ).then( () => {
+				return requestSites()( spy, getState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITES_REQUEST_SUCCESS
 					} );
@@ -132,7 +153,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch fail action when request fails', () => {
-				return requestSites()( spy ).then( () => {
+				return requestSites()( spy, getState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITES_REQUEST_FAILURE,
 						error: sandbox.match( { message: 'An active access token must be used to access sites.' } )

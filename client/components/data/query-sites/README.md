@@ -7,7 +7,6 @@ Query Sites
 
 Render the component, optionally passing a site ID. The component does not accept any children, nor does it render any of its own.
 
-
 ```jsx
 function AllSites() {
 	return <QuerySites allSites />;

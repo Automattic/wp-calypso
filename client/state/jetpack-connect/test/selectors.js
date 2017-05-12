@@ -22,6 +22,7 @@ import {
 	hasXmlrpcError,
 	getAuthAttempts,
 	hasExpiredSecretError,
+	hasNewlyConnectedSite,
 	getSiteIdFromQueryObject
 } from '../selectors';
 
@@ -684,7 +685,7 @@ describe( 'selectors', () => {
 					jetpackConnectAuthorize: {}
 				}
 			};
-			expect( getSiteIdFromQueryObject( state ) ).to.equals( false );
+			expect( getSiteIdFromQueryObject( state ) ).to.be.null;
 		} );
 
 		it( 'should return false if there is no client id', () => {
@@ -695,7 +696,23 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			expect( getSiteIdFromQueryObject( state ) ).to.equals( false );
+			expect( getSiteIdFromQueryObject( state ) ).to.be.null;
+		} );
+	} );
+
+	describe( '#hasNewlyConnectedSite()', () => {
+		it( 'should be false with an empty state', () => {
+			const state = {};
+			expect( hasNewlyConnectedSite( state ) ).to.be.false;
+		} );
+
+		it( 'should be false when there is no new site', () => {
+			const state = { jetpackConnect: { jetpackConnectSitesList: { newSite: false } } };
+			expect( hasNewlyConnectedSite( state ) ).to.be.false;
+		} );
+		it( 'should be true when there is a new site', () => {
+			const state = { jetpackConnect: { jetpackConnectSitesList: { newSite: true } } };
+			expect( hasNewlyConnectedSite( state ) ).to.be.true;
 		} );
 	} );
 } );

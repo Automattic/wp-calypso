@@ -336,7 +336,7 @@ const LoggedInForm = React.createClass( {
 			return this.translate( 'Try again' );
 		}
 
-		if ( this.props.isFetchingSite ) {
+		if ( this.props.isFetchingSite && ! authorizeSuccess ) {
 			return this.translate( 'Preparing authorization' );
 		}
 

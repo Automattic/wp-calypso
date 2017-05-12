@@ -260,7 +260,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch authorize receive site list action when request completes', () => {
+			it( 'should dispatch authorize receive site action when request completes', () => {
 				const { authorize } = actions;
 
 				return authorize( queryObject )( spy ).then( () => {

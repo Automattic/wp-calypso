@@ -151,6 +151,14 @@ const getSiteIdFromQueryObject = function( state ) {
 	if ( authorizationData.queryObject && authorizationData.queryObject.client_id ) {
 		return parseInt( authorizationData.queryObject.client_id );
 	}
+	return null;
+};
+
+const hasNewlyConnectedSite = function( state ) {
+	const jetpackConnectSitesList = get( state, [ 'jetpackConnect', 'jetpackConnectSitesList' ] );
+	if ( jetpackConnectSitesList && jetpackConnectSitesList.newSite ) {
+		return true;
+	}
 	return false;
 };
 
@@ -162,6 +170,7 @@ export default {
 	getSessions,
 	getSSOSessions,
 	getSSO,
+	hasNewlyConnectedSite,
 	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,

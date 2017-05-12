@@ -31,6 +31,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+	UPDATE_SITES,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -121,6 +122,18 @@ export function jetpackConnectSite( state = {}, action ) {
 			return {};
 		case SERIALIZE:
 		case DESERIALIZE:
+			return {};
+	}
+	return state;
+}
+
+export function jetpackConnectSitesList( state = {}, action ) {
+	switch ( action.type ) {
+		case JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE:
+			return Object.assign( {}, state, { newSite: true } );
+		case UPDATE_SITES:
+		case DESERIALIZE:
+		case SERIALIZE:
 			return {};
 	}
 	return state;
@@ -253,7 +266,7 @@ export function jetpackAuthAttempts( state = {}, action ) {
 			return {};
 		case DESERIALIZE:
 		case SERIALIZE:
-			state;
+			return state;
 	}
 	return state;
 }
@@ -303,6 +316,7 @@ export function jetpackConnectSelectedPlans( state = {}, action ) {
 
 export default combineReducers( {
 	jetpackConnectSite,
+	jetpackConnectSitesList,
 	jetpackSSO,
 	jetpackConnectAuthorize,
 	jetpackConnectSessions,
