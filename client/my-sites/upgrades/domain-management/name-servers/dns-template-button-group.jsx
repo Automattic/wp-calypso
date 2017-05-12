@@ -10,8 +10,14 @@ import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 
 class DnsTemplateButtonGroup extends Component {
-	onClick( name ) {
-		return () => this.props.onTemplateClick( name );
+	constructor( props ) {
+		super( props );
+		this.handleOnClick = this.handleOnClick.bind( this );
+	}
+
+	handleOnClick( event ) {
+		const { name } = event.currentTarget.dataset;
+		this.props.onTemplateClick( name );
 	}
 
 	render() {
@@ -25,7 +31,8 @@ class DnsTemplateButtonGroup extends Component {
 						return (
 							<Button
 								key={ `dns-templates-button-${ name }` }
-								onClick={ this.onClick( name ) }
+								data-name={ name }
+								onClick={ this.handleOnClick }
 							>
 								{ name }
 							</Button>
