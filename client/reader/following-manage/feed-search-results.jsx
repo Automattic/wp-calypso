@@ -36,7 +36,7 @@ const FollowingManageSearchFeedsResults = ( {
 	if ( ! showMoreResults ) {
 		const resultsToShow = map( take( searchResults, 10 ), site => (
 			<ConnectedSubscriptionListItem
-				url={ site.URL }
+				url={ site.feed_URL || site.URL }
 				feedId={ +site.feed_ID }
 				siteId={ +site.blog_ID }
 				key={ `search-result-site-id-${ site.feed_ID }` }
