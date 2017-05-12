@@ -1,0 +1,128 @@
+.comment-detail.card {
+	padding: 0;
+}
+
+.comment-detail__post,
+.comment-detail__actions,
+.comment-detail__reply {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	padding: 16px;
+}
+
+.comment-detail__author {
+	align-items: center;
+	display: flex;
+	flex-flow: row;
+	font-size: 14px;
+	line-height: 1.4;
+
+	.comment-detail__author-avatar {
+		flex-shrink: 0;
+		margin-right: 12px;
+		width: 32px;
+
+		& > img {
+			border-radius: 50%;
+		}
+	}
+
+	.comment-detail__author-content {
+		flex-grow: 1;
+
+		.gridicon {
+			padding-right: 4px;
+			vertical-align: text-bottom;
+		}
+	}
+
+	.comment-detail__author-name {
+		font-weight: 600;
+		padding-right: 8px;
+	}
+
+	.comment-detail__comment-date,
+	.comment-detail__post-title {
+		color: $gray;
+	}
+}
+
+.comment-detail__post {
+	.comment-detail__author-name,
+	.comment-detail__comment-date {
+		display: inline;
+	}
+}
+
+.comment-detail__comment {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	padding-left: 16px;
+
+	.comment-detail__comment-content {
+		border-left: 3px solid lighten( $gray, 30% );
+		padding: 16px;
+	}
+
+	.comment-detail__comment-body {
+		font-family: $serif;
+		padding-top: 16px;
+	}
+}
+
+.comment-detail__author-meta {
+	color: $gray;
+	display: flex;
+	flex-flow: row wrap;
+	font-size: 14px;
+	padding: 16px 8px 0px 8px;
+
+	div {
+		box-sizing: border-box;
+		flex-grow: 0;
+		flex-shrink: 0;
+		overflow: hidden;
+		padding: 0 8px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		width: 50%;
+	}
+
+	.gridicon {
+		padding-right: 4px;
+		vertical-align: text-bottom;
+	}
+}
+
+.comment-detail__actions {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-around;
+
+	div {
+		color: $blue-wordpress;
+		cursor: pointer;
+		font-size: 16px;
+		line-height: 1.2;
+		padding: 8px;
+		text-align: center;
+		&:hover {
+			color: $blue-light;
+		}
+	}
+
+	span {
+		display: block;
+	}
+}
+
+.comment-detail__reply {
+	display: flex;
+	flex-flow: row nowrap;
+
+	img {
+		border-radius: 50%;
+		flex-shrink: 0;
+		height: 32px;
+		margin-right: 16px;
+		width: 32px;
+	}
+}
