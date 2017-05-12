@@ -180,7 +180,7 @@ var DomainSearchResults = React.createClass( {
 const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
-		isSiteOnPaidPlan: !! isSiteOnPaidPlan( state, selectedSiteId ),
+		isSiteOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
 	};
 };
 
