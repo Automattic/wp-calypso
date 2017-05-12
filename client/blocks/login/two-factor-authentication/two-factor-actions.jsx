@@ -43,18 +43,6 @@ class TwoFactorActions extends Component {
 		} );
 	};
 
-	verifyWithPush = ( event ) => {
-		event.preventDefault();
-
-		page( login( { twoFactorAuthType: 'push' } ) );
-	};
-
-	verifyWithAuthenticator = ( event ) => {
-		event.preventDefault();
-
-		page( login( { twoFactorAuthType: 'authenticator' } ) );
-	};
-
 	render() {
 		const {
 			isAuthenticatorSupported,
@@ -78,13 +66,13 @@ class TwoFactorActions extends Component {
 
 				{ isAuthenticatorSupported && twoFactorAuthType !== 'authenticator' && (
 					<p>
-						<a href="#" onClick={ this.verifyWithAuthenticator }>{ translate( 'An Authenticator application' ) }</a>
+						<a href={ login( { twoFactorAuthType: 'authenticator' } ) }>{ translate( 'An Authenticator application' ) }</a>
 					</p>
 				) }
 
 				{ isPushSupported && twoFactorAuthType !== 'push' && (
 					<p>
-						<a href="#" onClick={ this.verifyWithPush }>{ translate( 'The WordPress mobile app' ) }</a>
+						<a href={ login( { twoFactorAuthType: 'push' } ) }>{ translate( 'The WordPress mobile app' ) }</a>
 					</p>
 				) }
 			</Card>

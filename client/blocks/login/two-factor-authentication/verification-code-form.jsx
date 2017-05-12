@@ -35,7 +35,7 @@ class VerificationCodeForm extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		rememberMe: PropTypes.bool.isRequired,
 		successNotice: PropTypes.func.isRequired,
-		isSmsSupported: PropTypes.bool.isRequired,
+		isSmsSupported: PropTypes.bool,
 		twoStepNonce: PropTypes.string.isRequired,
 		userId: PropTypes.number.isRequired,
 	};
