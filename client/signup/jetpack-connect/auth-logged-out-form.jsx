@@ -46,10 +46,6 @@ class LoggedOutForm extends Component {
 		this.props.createAccount( userData );
 	}
 
-	isSubmitting() {
-		return this.props.jetpackConnectAuthorize && this.props.jetpackConnectAuthorize.isAuthorizing;
-	}
-
 	renderLoginUser() {
 		const { queryObject, userData, bearerToken } = this.props.jetpackConnectAuthorize;
 		const redirectTo = addQueryArgs( queryObject, window.location.href );
@@ -102,14 +98,16 @@ class LoggedOutForm extends Component {
 
 	render() {
 		const { userData } = this.props.jetpackConnectAuthorize;
+		const isSubmitting = this.props.jetpackConnectAuthorize && this.props.jetpackConnectAuthorize.isAuthorizing;
+
 		return (
 			<div>
 				{ this.renderLocaleSuggestions() }
 				{ this.renderFormHeader() }
 				<SignupForm
 					getRedirectToAfterLoginUrl={ window.location.href }
-					disabled={ this.isSubmitting() }
-					submitting={ this.isSubmitting() }
+					disabled={ isSubmitting }
+					submitting={ isSubmitting }
 					submitForm={ this.handleSubmitSignup }
 					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
 					footerLink={ this.renderFooterLink() }
