@@ -157,7 +157,7 @@ class VerificationCodeForm extends Component {
 
 						{ twoFactorAuthType === 'sms' && isAuthenicatorSupported && (
 							<p>
-								<a href="#" onClick={ this.verifyWithAuthenticator }>{ translate( 'An Authenticator Application' ) }</a>
+								<a href="#" onClick={ this.verifyWithAuthenticator }>{ translate( 'An Authenticator App' ) }</a>
 							</p>
 						) }
 

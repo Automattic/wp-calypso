@@ -105,7 +105,7 @@ class WaitingTwoFactorNotificationApproval extends Component {
 						</p>
 						<p>
 							<a href="#" onClick={ this.verifyWithCodeInstead }>
-								{ translate( 'Verify with Authenticator App' ) }
+								{ translate( 'An Authenticator App' ) }
 							</a>
 						</p>
 
