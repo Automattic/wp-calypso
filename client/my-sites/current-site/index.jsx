@@ -9,26 +9,24 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-const AllSites = require( 'my-sites/all-sites' ),
-	analytics = require( 'lib/analytics' ),
-	Button = require( 'components/button' ),
-	Card = require( 'components/card' ),
-	Site = require( 'blocks/site' ),
-	Gridicon = require( 'gridicons' ),
-	UpgradesActions = require( 'lib/upgrades/actions' ),
-	DomainsStore = require( 'lib/domains/store' ),
-	DomainWarnings = require( 'my-sites/upgrades/components/domain-warnings' );
-
-import SiteNotice from './notice';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import AllSites from 'my-sites/all-sites';
+import analytics from 'lib/analytics';
+import AsyncLoad from 'components/async-load';
+import Button from 'components/button';
+import Card from 'components/card';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedOrAllSites } from 'state/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import Gridicon from 'gridicons';
+import QuerySiteDomains from 'components/data/query-site-domains';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import Site from 'blocks/site';
+import SiteNotice from './notice';
+
+const EmptyComponent = () => null;
 
 class CurrentSite extends Component {
 	static propTypes = {
-		isJetpack: React.PropTypes.bool,
 		isPreviewShowing: React.PropTypes.bool,
 		siteCount: React.PropTypes.number.isRequired,
 		setLayoutFocus: React.PropTypes.func.isRequired,
@@ -38,75 +36,18 @@ class CurrentSite extends Component {
 		anySiteSelected: React.PropTypes.array
 	};
 
-	state = {
-		domainsStore: DomainsStore
-	};
-
-	componentWillMount() {
-		const { selectedSiteId, isJetpack } = this.props;
-		if ( selectedSiteId && ! isJetpack ) {
-			UpgradesActions.fetchDomains( selectedSiteId );
-		}
-
-		DomainsStore.on( 'change', this.handleStoreChange );
-	}
-
-	componentWillUnmount() {
-		DomainsStore.off( 'change', this.handleStoreChange );
-	}
-
-	componentDidUpdate( prevProps ) {
-		const { selectedSiteId, isJetpack } = this.props;
-		if ( selectedSiteId && ! isJetpack && selectedSiteId !== prevProps.selectedSiteId ) {
-			UpgradesActions.fetchDomains( selectedSiteId );
-		}
-	}
-
-	handleStoreChange = () => {
-		this.setState( { domainsStore: DomainsStore } );
-	}
-
 	switchSites = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
 
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
-	}
-
-	getDomainWarnings() {
-		const { selectedSiteId, selectedSite: site } = this.props;
-
-		if ( ! selectedSiteId ) {
-			return null;
-		}
-
-		const domainStore = this.state.domainsStore.getBySite( selectedSiteId );
-		const domains = domainStore && domainStore.list || [];
-
-		return (
-			<DomainWarnings
-				isCompact
-				selectedSite={ site }
-				domains={ domains }
-				ruleWhiteList={ [
-					'unverifiedDomainsCanManage',
-					'unverifiedDomainsCannotManage',
-					'expiredDomainsCanManage',
-					'expiringDomainsCanManage',
-					'expiredDomainsCannotManage',
-					'expiringDomainsCannotManage',
-					'wrongNSMappedDomains',
-					'pendingGappsTosAcceptanceDomains'
-				] }
-			/>
-		);
-	}
+	};
 
 	previewSite = ( event ) => this.props.onClick && this.props.onClick( event );
 
 	render() {
-		const { isJetpack, selectedSite, translate, anySiteSelected } = this.props;
+		const { selectedSite, selectedSiteId, translate, anySiteSelected } = this.props;
 
 		if ( ! anySiteSelected.length ) {
 			return (
@@ -138,6 +79,7 @@ class CurrentSite extends Component {
 				}
 				{ selectedSite
 					? <div>
+						<QuerySiteDomains siteId={ selectedSiteId } />
 						<Site site={ selectedSite } />
 						<a
 							href={ selectedSite.URL }
@@ -152,7 +94,8 @@ class CurrentSite extends Component {
 					</div>
 					: <AllSites />
 				}
-				{ ! isJetpack && this.getDomainWarnings() }
+				<AsyncLoad require="my-sites/current-site/domain-warnings"
+					placeholder={ <EmptyComponent /> } />
 				<SiteNotice site={ selectedSite } />
 			</Card>
 		);
@@ -165,7 +108,6 @@ export default connect(
 		const user = getCurrentUser( state );
 
 		return {
-			isJetpack: isJetpackSite( state, selectedSiteId ),
 			selectedSiteId,
 			selectedSite: getSelectedSite( state ),
 			anySiteSelected: getSelectedOrAllSites( state ),
