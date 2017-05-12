@@ -24,7 +24,7 @@ const DELIVERY_FREQUENCY_INSTANTLY = 'instantly',
 	DELIVERY_FREQUENCY_DAILY = 'daily',
 	DELIVERY_FREQUENCY_WEEKLY = 'weekly';
 
-var FollowingEditNotificationSettings = createReactClass( {
+const FollowingEditNotificationSettings = createReactClass( {
 	displayName: 'FollowingEditNotificationSettings',
 
 	propTypes: {
