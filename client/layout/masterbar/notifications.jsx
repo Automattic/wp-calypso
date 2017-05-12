@@ -33,13 +33,18 @@ class MasterbarItemNotifications extends Component {
 		animationState: 0,
 	};
 
+	componentWillMount() {
+		this.user = this.props.user.get();
+		this.setState( {
+			newNote: this.user && this.user.has_unseen_notes,
+		} );
+	}
+
 	componentWillReceiveProps( nextProps ) {
 		const {
 			isNotificationsOpen: isOpen,
 			recordOpening,
 		} = nextProps;
-
-		this.user = this.props.user.get();
 
 		if ( ! this.props.isNotificationsOpen && isOpen ) {
 			recordOpening( {
@@ -53,10 +58,6 @@ class MasterbarItemNotifications extends Component {
 			this.getNotificationLinkDomNode().blur();
 			window.focus();
 		}
-
-		this.setState( {
-			newNote: this.user && this.user.has_unseen_notes,
-		} );
 	}
 
 	checkToggleNotes = ( event, forceToggle ) => {
