@@ -133,11 +133,11 @@ class JetpackConnectMain extends Component {
 
 	handleUrlChange = ( event ) => {
 		const url = event.target.value;
+		this.dismissUrl();
 		this.setState( {
 			currentUrl: this.cleanUrl( url ),
 			shownUrl: url,
 		} );
-		this.dismissUrl();
 	}
 
 	cleanUrl( inputUrl ) {
