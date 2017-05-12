@@ -24,12 +24,13 @@ import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
  * @param  {Object} action Action payload
  * @return {Array}        Updated state
  */
-export const items = keyedReducer( 'query', createReducer( null, {
-	[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => uniqBy(
-		( state || [] ).concat( action.payload.feeds ),
-		'feed_URL',
-	)
-} ) );
+export const items = keyedReducer(
+	'query',
+	createReducer( null, {
+		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) =>
+			uniqBy( ( state || [] ).concat( action.payload.feeds ), 'feed_URL' ),
+	} )
+);
 
 /**
  * Tracks mappings between queries --> num results
@@ -47,9 +48,12 @@ export const items = keyedReducer( 'query', createReducer( null, {
  * @param  {Object} action Action payload
  * @return {Array}         Updated state
  */
-export const total = keyedReducer( 'query', createReducer( null, {
-	[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => action.payload.total
-} ) );
+export const total = keyedReducer(
+	'query',
+	createReducer( null, {
+		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => action.payload.total,
+	} )
+);
 
 export default combineReducers( {
 	items,
