@@ -30,7 +30,7 @@ import { saveSiteSettings } from 'state/site-settings/actions';
 import { updateSettings } from 'state/jetpack/settings/actions';
 import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
@@ -109,11 +109,11 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		};
 
 		submitForm = () => {
-			const { fields, settingsFields, siteId, jetpackSettingsUISupported } = this.props;
+			const { fields, settingsFields, siteId } = this.props;
 			this.props.removeNotice( 'site-settings-save' );
 
 			this.props.saveSiteSettings( siteId, pick( fields, settingsFields.site ) );
-			if ( jetpackSettingsUISupported ) {
+			if ( this.props.isJetpack ) {
 				this.props.updateSettings( siteId, pick( fields, settingsFields.jetpack ) );
 			}
 		};
@@ -201,7 +201,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				<div>
 					<QuerySiteSettings siteId={ this.props.siteId } />
 					{
-						this.props.jetpackSettingsUISupported &&
+						this.props.isJetpack &&
 						<QueryJetpackSettings siteId={ this.props.siteId } />
 					}
 					<SettingsForm { ...this.props } { ...utils } />
@@ -223,8 +223,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			};
 
 			const isJetpack = isJetpackSite( state, siteId );
-			const jetpackSettingsUISupported = isJetpack && siteSupportsJetpackSettingsUi( state, siteId );
-			if ( jetpackSettingsUISupported ) {
+			if ( isJetpack ) {
 				const jetpackSettings = getJetpackSettings( state, siteId );
 				isSavingSettings = isSavingSettings || isUpdatingJetpackSettings( state, siteId );
 				isSaveRequestSuccessful = isSaveRequestSuccessful && ! isJetpackSettingsSaveFailure( state, siteId );
@@ -234,6 +233,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			return {
+				isJetpack,
 				isRequestingSettings,
 				isSavingSettings,
 				isSaveRequestSuccessful,
@@ -241,7 +241,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				settings,
 				settingsFields,
 				siteId,
-				jetpackSettingsUISupported
 			};
 		},
 		dispatch => {

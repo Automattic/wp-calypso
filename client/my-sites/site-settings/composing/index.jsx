@@ -12,11 +12,7 @@ import CompactCard from 'components/card/compact';
 import DefaultPostFormat from './default-post-format';
 import AfterTheDeadline from './after-the-deadline';
 import DateTimeFormat from '../date-time-format';
-import {
-	isJetpackSite,
-	isJetpackMinimumVersion,
-	siteSupportsJetpackSettingsUi,
-} from 'state/sites/selectors';
+import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const Composing = ( {
@@ -29,10 +25,10 @@ const Composing = ( {
 	hasDateTimeFormats,
 	isRequestingSettings,
 	isSavingSettings,
-	jetpackSettingsUISupported,
+	siteIsJetpack,
 	updateFields,
 } ) => {
-	const CardComponent = jetpackSettingsUISupported ? CompactCard : Card;
+	const CardComponent = siteIsJetpack ? CompactCard : Card;
 
 	return (
 		<div>
@@ -46,7 +42,7 @@ const Composing = ( {
 				/>
 			</CardComponent>
 
-			{ jetpackSettingsUISupported &&
+			{ siteIsJetpack &&
 				<AfterTheDeadline
 					handleToggle={ handleToggle }
 					setFieldValue={ setFieldValue }
@@ -92,7 +88,7 @@ export default connect(
 		const siteIsJetpack = isJetpackSite( state, siteId );
 
 		return {
-			jetpackSettingsUISupported: siteIsJetpack && siteSupportsJetpackSettingsUi( state, siteId ),
+			siteIsJetpack,
 			hasDateTimeFormats: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.7' ),
 		};
 	}

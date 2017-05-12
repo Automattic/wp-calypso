@@ -13,7 +13,7 @@ import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import GeneralSettings from './section-general';
 import ImportSettings from './section-import';
 import ExportSettings from './section-export';
@@ -31,7 +31,7 @@ export class SiteSettingsComponent extends Component {
 		purchasesError: PropTypes.object,
 		hasLoadedSitePurchasesFromServer: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
-		jetpackSettingsUiSupported: PropTypes.bool
+		siteIsJetpack: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -66,12 +66,12 @@ export class SiteSettingsComponent extends Component {
 
 	render() {
 		const { siteId } = this.props;
-		const { jetpackSettingsUiSupported, section } = this.props;
+		const { siteIsJetpack, section } = this.props;
 
 		return (
 			<Main className="site-settings">
 					{
-						jetpackSettingsUiSupported &&
+						siteIsJetpack &&
 						<JetpackDevModeNotice />
 					}
 					<SidebarNavigation />
@@ -88,15 +88,14 @@ export class SiteSettingsComponent extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const jetpackSite = isJetpackSite( state, siteId );
-		const jetpackUiSupported = siteSupportsJetpackSettingsUi( state, siteId );
+		const siteIsJetpack = isJetpackSite( state, siteId );
 
 		return {
 			siteId,
 			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 			purchasesError: getPurchasesError( state ),
 			sitePurchases: getSitePurchases( state, siteId ),
-			jetpackSettingsUiSupported: jetpackSite && jetpackUiSupported,
+			siteIsJetpack
 		};
 	}
 )( SiteSettingsComponent );
