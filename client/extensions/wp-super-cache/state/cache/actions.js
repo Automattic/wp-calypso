@@ -8,6 +8,8 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
 	WP_SUPER_CACHE_TEST_CACHE,
 } from '../action-types';
+// Need to import somewhere so the module registers the handler with the middleware
+import handlers from '../data-layer'; // eslint-disable-line no-unused-vars
 
 /*
  * Tests the cache for a site.

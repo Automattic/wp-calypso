@@ -13,6 +13,7 @@ import {
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import { addHandlers } from 'state/data-layer/extensions-middleware';
 
 const testCache = ( { dispatch }, action ) => {
 	const { siteId, httpOnly } = action;
@@ -40,5 +41,7 @@ const receiveError = ( { dispatch } ) => {
 const handlers = {
 	[ WP_SUPER_CACHE_TEST_CACHE ]: [ dispatchRequest( testCache, receiveSuccess, receiveError ) ],
 };
+
+addHandlers( 'wp-super-cache', handlers );
 
 export default handlers;
