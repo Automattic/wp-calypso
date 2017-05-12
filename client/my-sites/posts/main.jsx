@@ -50,7 +50,7 @@ const PostsMain = React.createClass( {
 	},
 
 	showDrafts() {
-		const { isJetpack } = this.props;
+		const { isJetpack } = this.props;
 
 		// Jetpack sites can have malformed counts
 		if ( isJetpack && ! this.props.loadingDrafts && this.props.drafts && this.props.drafts.length === 0 ) {
@@ -69,7 +69,7 @@ const PostsMain = React.createClass( {
 	},
 
 	mostRecentDrafts() {
-		const { siteId, siteSlug } = this.props;
+		const { siteId, siteSlug } = this.props;
 
 		if ( ! siteId || ! this.showDrafts() ) {
 			return null;
@@ -122,8 +122,12 @@ const PostsMain = React.createClass( {
 		);
 	},
 
-	setWarning( { adminUrl, hasMinimumJetpackVersion, isJetpack, siteId } ) {
-		if ( siteId && isJetpack && ! hasMinimumJetpackVersion ) {
+	setWarning( { adminUrl, hasMinimumJetpackVersion, isJetpack, siteId } ) {
+		if (
+			siteId &&
+			isJetpack &&
+			false === hasMinimumJetpackVersion
+		) {
 			this.props.warningNotice(
 				this.props.translate( 'Jetpack %(version)s is required to take full advantage of all post editing features.', {
 					args: { version: config( 'jetpack_min_version' ) }
