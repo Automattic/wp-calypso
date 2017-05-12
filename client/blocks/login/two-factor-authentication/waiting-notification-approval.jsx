@@ -54,11 +54,11 @@ class WaitingTwoFactorNotificationApproval extends Component {
 	verifyWithCodeInstead = ( event ) => {
 		event.preventDefault();
 
-		page( login( { twoFactorAuthType: 'code' } ) );
+		page( login( { twoFactorAuthType: 'authenticator' } ) );
 	};
 
 	render() {
-		const { translate, twoFactorAuthType } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<form>
@@ -80,7 +80,8 @@ class WaitingTwoFactorNotificationApproval extends Component {
 				<TwoFactorActions
 					errorNotice={ this.props.errorNotice }
 					successNotice={ this.props.successNotice }
-					twoFactorAuthType={ twoFactorAuthType } />
+					twoFactorAuthType="push"
+				/>
 			</form>
 		);
 	}

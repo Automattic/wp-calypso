@@ -54,7 +54,7 @@ class TwoFactorActions extends Component {
 	verifyWithAuthenticator = ( event ) => {
 		event.preventDefault();
 
-		page( login( { twoFactorAuthType: 'code' } ) );
+		page( login( { twoFactorAuthType: 'authenticator' } ) );
 	};
 
 	render() {
@@ -78,7 +78,7 @@ class TwoFactorActions extends Component {
 					</p>
 				) }
 
-				{ isAuthenicatorSupported && twoFactorAuthType !== 'code' && (
+				{ isAuthenicatorSupported && twoFactorAuthType !== 'authenticator' && (
 					<p>
 						<a href="#" onClick={ this.verifyWithAuthenticator }>{ translate( 'An Authenticator App' ) }</a>
 					</p>

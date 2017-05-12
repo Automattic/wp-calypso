@@ -39,7 +39,10 @@ class Login extends Component {
 		if ( ! this.props.twoFactorEnabled ) {
 			this.rebootAfterLogin();
 		} else {
-			page( login( { twoFactorAuthType: this.props.twoFactorNotificationSent === 'push' ? 'push' : 'code' } ) );
+			page( login( {
+				// If no notification is sent, the user is using the authenticator for 2FA by default
+				twoFactorAuthType: this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' )
+			} ) );
 		}
 	};
 
@@ -57,20 +60,19 @@ class Login extends Component {
 			rememberMe,
 		} = this.state;
 
-		if ( twoStepNonce && ( twoFactorAuthType === 'code' || twoFactorAuthType === 'sms' ) ) {
+		if ( twoStepNonce && [ 'authenticator', 'sms' ].indexOf( twoFactorAuthType ) > -1 ) {
 			return (
 				<VerificationCodeForm
 					rememberMe={ rememberMe }
 					onSuccess={ this.rebootAfterLogin }
-					twoFactorAuthType={ twoFactorAuthType } />
+					twoFactorAuthType={ twoFactorAuthType }
+				/>
 			);
 		}
 
 		if ( twoStepNonce && twoFactorAuthType === 'push' ) {
 			return (
-				<WaitingTwoFactorNotificationApproval
-					onSuccess={ this.rebootAfterLogin }
-					twoFactorAuthType={ twoFactorAuthType } />
+				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } />
 			);
 		}
 
