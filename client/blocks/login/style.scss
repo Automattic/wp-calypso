@@ -73,6 +73,10 @@
 	margin-bottom: 16px;
 }
 
+.two-factor-authentication__form-button {
+	width: 100%;
+}
+
 .card.two-factor-authentication__form-action {
 	background: lighten( $gray, 34% );
 }
