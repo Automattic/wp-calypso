@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import {
 	getPostRevision,
 	getPostRevisionChanges,
-	normalizeForDisplay,
+	normalizeForEditing,
 } from 'state/posts/revisions/selectors';
 
 const EditorDiffViewer = ( { contentChanges, revision } ) => (
@@ -45,7 +45,7 @@ EditorDiffViewer.propTypes = {
 export default connect(
 	( state, ownProps ) => ( {
 		contentChanges: getPostRevisionChanges( state, ownProps.siteId, ownProps.postId, ownProps.selectedRevisionId ),
-		revision: normalizeForDisplay(
+		revision: normalizeForEditing(
 			getPostRevision( state, ownProps.siteId, ownProps.postId, ownProps.selectedRevisionId )
 		),
 	} )

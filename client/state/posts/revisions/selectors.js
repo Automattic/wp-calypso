@@ -1,17 +1,24 @@
 /**
  * External dependencies
  */
-import { findIndex, get, identity, isUndefined, map, omitBy, orderBy, partial } from 'lodash';
+import { cloneDeep, findIndex, get, isUndefined, map, omitBy, orderBy, partial } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
  * Internal dependencies
  */
 import { normalizePostForDisplay } from '../utils';
+import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import { diffWords } from 'lib/text-utils';
 
 export const normalizeForDisplay = normalizePostForDisplay;
-export const normalizeForEditing = identity;
+export function normalizeForEditing( revision ) {
+	if ( ! revision ) {
+		return null;
+	}
+
+	return decodeEntities( cloneDeep( revision ) );
+}
 
 function hydrateRevision( state, revision ) {
 	if ( ! revision ) {
