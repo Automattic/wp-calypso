@@ -7,31 +7,31 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import AfterTheDeadline from './after-the-deadline';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import PostsPerPage from './posts-per-page';
-import DefaultPostFormat from './default-post-format';
-import AfterTheDeadline from './after-the-deadline';
 import DateTimeFormat from '../date-time-format';
+import DefaultPostFormat from './default-post-format';
+import PostsPerPage from './posts-per-page';
 import {
-	isJetpackSite,
 	isJetpackMinimumVersion,
+	isJetpackSite,
 	siteSupportsJetpackSettingsUi,
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const Composing = ( {
-	fields,
-	handleToggle,
-	handleSelect,
-	onChangeField,
-	setFieldValue,
 	eventTracker,
-	uniqueEventTracker,
+	fields,
+	handleSelect,
+	handleToggle,
 	hasDateTimeFormats,
 	isRequestingSettings,
 	isSavingSettings,
 	jetpackSettingsUISupported,
+	onChangeField,
+	setFieldValue,
+	uniqueEventTracker,
 	updateFields,
 } ) => {
 	const CardComponent = jetpackSettingsUISupported ? CompactCard : Card;
@@ -40,30 +40,30 @@ const Composing = ( {
 		<div>
 			<CardComponent className="composing__card site-settings">
 				<PostsPerPage
-					onChangeField={ onChangeField }
 					eventTracker={ eventTracker }
-					uniqueEventTracker={ uniqueEventTracker }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
+					isRequestingSettings={ isRequestingSettings }
+					isSavingSettings={ isSavingSettings }
+					onChangeField={ onChangeField }
+					uniqueEventTracker={ uniqueEventTracker }
 				/>
 
 				<DefaultPostFormat
-					onChangeField={ onChangeField }
 					eventTracker={ eventTracker }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
+					isRequestingSettings={ isRequestingSettings }
+					isSavingSettings={ isSavingSettings }
+					onChangeField={ onChangeField }
 				/>
 			</CardComponent>
 
 			{ jetpackSettingsUISupported &&
 				<AfterTheDeadline
-					handleToggle={ handleToggle }
-					setFieldValue={ setFieldValue }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
+					handleToggle={ handleToggle }
+					isRequestingSettings={ isRequestingSettings }
+					isSavingSettings={ isSavingSettings }
+					setFieldValue={ setFieldValue }
 				/>
 			}
 			{ hasDateTimeFormats &&
@@ -80,22 +80,22 @@ const Composing = ( {
 };
 
 Composing.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
 	fields: {},
+	isRequestingSettings: true,
+	isSavingSettings: false,
 };
 
 Composing.propTypes = {
+	eventTracker: PropTypes.func.isRequired,
+	fields: PropTypes.object,
 	handleSelect: PropTypes.func.isRequired,
 	handleToggle: PropTypes.func.isRequired,
+	isRequestingSettings: PropTypes.bool,
+	isSavingSettings: PropTypes.bool,
 	onChangeField: PropTypes.func.isRequired,
 	setFieldValue: PropTypes.func.isRequired,
-	eventTracker: PropTypes.func.isRequired,
 	uniqueEventTracker: PropTypes.func.isRequired,
 	updateFields: PropTypes.func.isRequired,
-	isSavingSettings: PropTypes.bool,
-	isRequestingSettings: PropTypes.bool,
-	fields: PropTypes.object,
 };
 
 export default connect(
@@ -104,8 +104,8 @@ export default connect(
 		const siteIsJetpack = isJetpackSite( state, siteId );
 
 		return {
-			jetpackSettingsUISupported: siteIsJetpack && siteSupportsJetpackSettingsUi( state, siteId ),
 			hasDateTimeFormats: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.7' ),
+			jetpackSettingsUISupported: siteIsJetpack && siteSupportsJetpackSettingsUi( state, siteId ),
 		};
 	}
 )( Composing );
