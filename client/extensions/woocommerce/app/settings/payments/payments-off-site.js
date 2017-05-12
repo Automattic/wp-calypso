@@ -12,7 +12,7 @@ import ExtendedHeader from '../../../components/extended-header';
 import ListHeader from '../../../components/list/list-header';
 import ListRows from '../../../components/list/list-rows';
 import ListTable from '../../../components/list/list-table';
-import ListTd from '../../../components/list/list-td';
+import ListRowField from '../../../components/list/list-row-field';
 import PaymentMethodRow from './payment-method-row';
 
 class SettingsPaymentsOffSite extends Component {
@@ -54,9 +54,9 @@ class SettingsPaymentsOffSite extends Component {
 					} />
 					<ListTable>
 						<ListHeader>
-							<ListTd width="30%">Method</ListTd>
-							<ListTd width="45%">Fees</ListTd>
-							<ListTd width="25%"></ListTd>
+							<ListRowField width="30%">Method</ListRowField>
+							<ListRowField width="45%">Fees</ListRowField>
+							<ListRowField width="25%"></ListRowField>
 						</ListHeader>
 						<ListRows>
 							{ methods && methods.map( this.renderMethodRow ) }
