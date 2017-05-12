@@ -82,7 +82,7 @@ const Composing = ( {
 Composing.defaultProps = {
 	isSavingSettings: false,
 	isRequestingSettings: true,
-	fields: {}
+	fields: {},
 };
 
 Composing.propTypes = {

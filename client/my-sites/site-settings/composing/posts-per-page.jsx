@@ -8,18 +8,18 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
+import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const PostsPerPage = ( {
-	fields,
-	onChangeField,
 	eventTracker,
-	uniqueEventTracker,
+	fields,
 	isRequestingSettings,
 	isSavingSettings,
-	translate
+	onChangeField,
+	translate,
+	uniqueEventTracker,
 } ) => {
 	if ( ! fields.hasOwnProperty( 'posts_per_page' ) ) {
 		return null;
@@ -48,18 +48,18 @@ const PostsPerPage = ( {
 };
 
 PostsPerPage.defaultProps = {
-	isSavingSettings: false,
+	fields: {},
 	isRequestingSettings: true,
-	fields: {}
+	isSavingSettings: false,
 };
 
 PostsPerPage.propTypes = {
-	onChangeField: PropTypes.func.isRequired,
 	eventTracker: PropTypes.func.isRequired,
-	uniqueEventTracker: PropTypes.func.isRequired,
-	isSavingSettings: PropTypes.bool,
-	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,
+	isRequestingSettings: PropTypes.bool,
+	isSavingSettings: PropTypes.bool,
+	onChangeField: PropTypes.func.isRequired,
+	uniqueEventTracker: PropTypes.func.isRequired,
 };
 
 export default localize( PostsPerPage );
