@@ -278,7 +278,7 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe.only( '#keyedReducer', () => {
+	describe( '#keyedReducer', () => {
 		const grow = name => ( { type: 'GROW', name } );
 
 		const age = ( state = 0, action ) =>
