@@ -106,6 +106,11 @@ export const items = createReducer(
 			);
 
 			const newState = { ...state };
+			// for the case where a user entered an exact url to follow something, sometimes the
+			// correct feed_URL is slightly different from what they typed in.
+			// e.g. example.com --> example.com/rss.
+			// Since we are keying this reducer by url,
+			// we need delete the old key and move it to the new one.
 			if ( actualFeedUrl !== action.payload.feedUrl ) {
 				delete newState[ urlKey ];
 				urlKey = prepareComparableUrl( actualFeedUrl );
