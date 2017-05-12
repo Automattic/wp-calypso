@@ -43,7 +43,7 @@ class FollowingIntro extends React.Component {
 			: <a onClick={ this.props.handleManageLinkClick } href="/following/edit" />;
 
 		// Only show the banner to new Readers with an odd user ID (simple A/B test)
-		if ( ! isNewReader || ! userId || ! isEven( userId ) ) {
+		if ( ! isNewReader || ! userId || isEven( userId ) ) {
 			return null;
 		}
 
