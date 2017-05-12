@@ -1,8 +1,14 @@
 /**
+ * External dependencies
+ */
+import { concat, partition, map } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
 import { getSite } from 'state/sites/selectors';
+import { getPrimarySiteId } from 'state/selectors';
 
 /**
  * Get all sites
@@ -11,9 +17,10 @@ import { getSite } from 'state/sites/selectors';
  * @return {Array}        Sites objects
  */
 export default createSelector(
-	( state ) => (
-		Object.values( state.sites.items )
-			.map( site => getSite( state, site.ID ) )
-	),
+	( state ) => {
+		const primarySiteId = getPrimarySiteId( state );
+		const [ primarySite, sites ] = partition( state.sites.items, site => site.ID === primarySiteId );
+		return map( concat( primarySite, sites ), site => getSite( state, site.ID ) );
+	},
 	( state ) => state.sites.items
 );
