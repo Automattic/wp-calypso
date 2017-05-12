@@ -21,7 +21,7 @@ const PostsPerPage = ( {
 	isSavingSettings,
 	translate
 } ) => {
-	if ( 'undefined' === typeof fields.posts_per_page ) {
+	if ( ! fields.hasOwnProperty( 'posts_per_page' ) ) {
 		return null;
 	}
 
