@@ -24,7 +24,6 @@ class FollowingManageSearchFollowed extends Component {
 		return (
 			<SearchCard
 				compact={ true }
-				isOpen={ true }
 				pinned={ false }
 				autoFocus={ false }
 				className="following-manage__search-followed"
