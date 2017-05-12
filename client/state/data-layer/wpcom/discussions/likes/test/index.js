@@ -2,89 +2,123 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import {
-	requestingCommentLike,
 	sucessCommentLikeRequest,
 	failCommentLikeRequest,
 } from 'state/discussions/actions';
-import { requestCommentLike, requestCommentUnLike } from '../';
+import {
+	requestCommentLike,
+	requestCommentUnLike,
+	receiveLikeUpdate,
+	receiveError
+} from '../';
 
 describe( 'wpcom-api', () => {
-	let dispatch;
+	describe( 'comment like/unlike', () => {
+		describe( '#requestCommentLike()', () => {
+			it( 'should not dispatch any action if a request for the specified site and post is in flight' );
 
-	useSandbox( sandbox => ( dispatch = sandbox.spy() ) );
+			it( 'should dispatch HTTP request to comments endpoint', () => {
+				const action = {
+					type: 'DUMMY',
+					siteId: 101010,
+					commentId: 20,
+					source: 'reader'
+				};
+				const dispatch = spy();
+				const next = spy();
 
-	useNock( nock => {
-		nock( 'https://public-api.wordpress.com:443' )
-			.persist()
-			.post( '/rest/v1.1/sites/101010/comments/20/likes/new', { source: 'reader' } )
-			.reply( 200, {
-				i_like: true,
-				like_count: 5
-			} )
-			.post( '/rest/v1.1/sites/101010/comments/20/likes/mine/delete' )
-			.query( { source: 'reader' } )
-			.reply( 200, {
-				success: true,
-				i_like: false,
-				like_count: 5
-			} )
-			.post( '/rest/v1.1/sites/101010/comments/20/likes/new', { source: 'error' } )
-			.reply( 403, { error: 'error', message: 'error_message' } )
-			.post( '/rest/v1.1/sites/101010/comments/20/likes/mine/delete' )
-			.query( { source: 'error' } )
-			.reply( 403, { error: 'error', message: 'error_message' } );
-	} );
+				requestCommentLike( { dispatch }, action, next );
 
-	describe( 'comment like request', () => {
-		it( 'should not dispatch any action if a request for the specified site and post is in flight' );
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith( http( {
+					apiVersion: '1.1',
+					method: 'POST',
+					path: '/sites/101010/comments/20/likes/new',
+					body: { source: action.source }
+				} ) );
+			} );
 
-		it( 'should dispatch requesting action when the request triggers', () => {
-			requestCommentLike( { dispatch }, { siteId: 101010, commentId: 20, source: 'reader' } );
-			expect( dispatch ).to.have.been.calledWith( requestingCommentLike( 101010, 20, 'reader' ) );
+			it( 'should pass the original action along the middleware chain', () => {
+				const action = { type: 'DUMMY' };
+				const dispatch = spy();
+				const next = spy();
+
+				requestCommentLike( { dispatch }, action, next );
+
+				expect( next ).to.have.been.calledOnce;
+				expect( next ).to.have.been.calledWith( action );
+			} );
 		} );
 
-		it( 'should dispatch a success request action when the request completes', () => {
-			return requestCommentLike( { dispatch }, { siteId: 101010, commentId: 20, source: 'reader' } )
-				.then( () => {
-					expect( dispatch ).to.have.been.calledWith( sucessCommentLikeRequest( 101010, 20, 'reader', true, 5 ) );
-				} );
+		describe( '#requestCommentUnLike()', () => {
+			it( 'should not dispatch any action if a request for the specified site and post is in flight' );
+
+			it( 'should dispatch HTTP request to comments endpoint', () => {
+				const action = {
+					type: 'DUMMY',
+					siteId: 101010,
+					commentId: 20,
+					source: 'reader'
+				};
+				const dispatch = spy();
+				const next = spy();
+
+				requestCommentUnLike( { dispatch }, action, next );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith( http( {
+					apiVersion: '1.1',
+					method: 'POST',
+					path: '/sites/101010/comments/20/likes/mine/delete',
+					body: { source: action.source }
+				} ) );
+			} );
+
+			it( 'should pass the original action along the middleware chain', () => {
+				const action = { type: 'DUMMY' };
+				const dispatch = spy();
+				const next = spy();
+
+				requestCommentUnLike( { dispatch }, action, next );
+
+				expect( next ).to.have.been.calledOnce;
+				expect( next ).to.have.been.calledWith( action );
+			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
-			return requestCommentLike( { dispatch }, { siteId: 101010, commentId: 20, source: 'error' } )
-				.catch( () => {
-					expect( dispatch ).to.have.been.calledWith( failCommentLikeRequest( 101010, 20, 'error' ) );
-				} );
-		} );
-	} );
+		describe( '#receiveLikeUpdate()', () => {
+			it( 'should dispatch a success request action', () => {
+				const response = { i_like: true, like_count: 5 };
+				const action = sucessCommentLikeRequest( 101010, 20, 'reader', true, 5 );
+				const dispatch = spy();
+				const next = spy();
 
-	describe( 'comment unlike request', () => {
-		it( 'should not dispatch any action if a request for the specified site and post is in flight' );
+				receiveLikeUpdate( { dispatch }, action, next, response );
 
-		it( 'should dispatch requesting action when the request triggers', () => {
-			requestCommentUnLike( { dispatch }, { siteId: 101010, commentId: 20, source: 'reader' } );
-			expect( dispatch ).to.have.been.calledWith( requestingCommentLike( 101010, 20, 'reader' ) );
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith( sucessCommentLikeRequest( 101010, 20, 'reader', true, 5 ) );
+			} );
 		} );
 
-		it( 'should dispatch a success request action when the request completes', () => {
-			return requestCommentUnLike( { dispatch }, { siteId: 101010, commentId: 20, source: 'reader' } )
-				.then( () => {
-					expect( dispatch ).to.have.been.calledWith( sucessCommentLikeRequest( 101010, 20, 'reader', false, 5 ) );
-				} );
-		} );
+		describe( '#receiveError', () => {
+			it( 'should dispatch error', () => {
+				const error = 'could not like comment';
+				const action = failCommentLikeRequest( 101010, 20, 'reader', error );
+				const dispatch = spy();
+				const next = spy();
 
-		it( 'should dispatch fail action when request fails', () => {
-			return requestCommentUnLike( { dispatch }, { siteId: 101010, commentId: 20, source: 'error' } )
-				.catch( () => {
-					expect( dispatch ).to.have.been.calledWith( failCommentLikeRequest( 101010, 20, 'error' ) );
-				} );
+				receiveError( { dispatch }, action, next, error );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith( failCommentLikeRequest( 101010, 20, 'reader', error ) );
+			} );
 		} );
 	} );
 } );

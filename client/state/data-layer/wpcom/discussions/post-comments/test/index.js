@@ -9,38 +9,40 @@ import { spy } from 'sinon';
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
-	successCommentStatusUpdateRequest,
-	failCommentStatusUpdateRequest,
+	// receivePostComments,
+	successPostCommentsRequest,
+	receivePostCommentsCount,
+	failPostCommentsRequest
 } from 'state/discussions/actions';
 import {
-	requestCommentStatusUpdate,
-	receiveStatusUpdate,
-	receiveError
+	requestPostComments,
+	receivePostComments,
+	receiveError,
 } from '../';
 
 describe( 'wpcom-api', () => {
-	describe( 'content update', () => {
-		describe( '#requestCommentStatusUpdate()', () => {
+	describe( 'post comments request', () => {
+		describe( '#requestPostComments()', () => {
 			it( 'should not dispatch any action if a request for the specified site and post is in flight' );
 
 			it( 'should dispatch HTTP request to comments endpoint', () => {
 				const action = {
 					type: 'DUMMY',
 					siteId: 101010,
-					commentId: 20,
-					status: 'approved'
+					postId: 10,
+					status: 'all'
 				};
 				const dispatch = spy();
 				const next = spy();
 
-				requestCommentStatusUpdate( { dispatch }, action, next );
+				requestPostComments( { dispatch }, action, next );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( http( {
 					apiVersion: '1.1',
-					method: 'POST',
-					path: '/sites/101010/comments/20',
-					body: { status: action.status }
+					method: 'GET',
+					path: '/sites/101010/posts/10/replies',
+					query: { status: action.status }
 				} ) );
 			} );
 
@@ -49,38 +51,45 @@ describe( 'wpcom-api', () => {
 				const dispatch = spy();
 				const next = spy();
 
-				requestCommentStatusUpdate( { dispatch }, action, next );
+				requestPostComments( { dispatch }, action, next );
 
 				expect( next ).to.have.been.calledOnce;
 				expect( next ).to.have.been.calledWith( action );
 			} );
 		} );
 
-		describe( '#receiveContentUpdate()', () => {
+		describe( '#receiveLikeUpdate()', () => {
 			it( 'should dispatch a success request action', () => {
-				const response = { status: 'approved' };
-				const action = successCommentStatusUpdateRequest( 101010, 20, 'approved' );
+				const response = { comments: [], found: 5 };
+				const action = {
+					type: 'DUMMY',
+					siteId: 101010,
+					postId: 10,
+					status: 'all',
+					comments: []
+				};
 				const dispatch = spy();
 				const next = spy();
 
-				receiveStatusUpdate( { dispatch }, action, next, response );
+				receivePostComments( { dispatch }, action, next, response );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( successCommentStatusUpdateRequest( 101010, 20, 'approved' ) );
+				expect( dispatch ).to.have.been.calledTwice;
+				expect( dispatch ).to.have.been.calledWith( successPostCommentsRequest( 101010, 10, 'all', [] ) );
+				expect( dispatch ).to.have.been.calledWith( receivePostCommentsCount( 101010, 10, 5 ) );
 			} );
 		} );
 
 		describe( '#receiveError', () => {
 			it( 'should dispatch error', () => {
-				const error = 'could not update content for comment';
-				const action = failCommentStatusUpdateRequest( 101010, 20, 'approved', error );
+				const error = 'could not retrieve comments';
+				const action = failPostCommentsRequest( 101010, 10, 'all', error );
 				const dispatch = spy();
 				const next = spy();
 
 				receiveError( { dispatch }, action, next, error );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( failCommentStatusUpdateRequest( 101010, 20, 'approved', error ) );
+				expect( dispatch ).to.have.been.calledWith( failPostCommentsRequest( 101010, 10, 'all', error ) );
 			} );
 		} );
 	} );

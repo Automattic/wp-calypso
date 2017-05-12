@@ -5,16 +5,12 @@ import {
 	DISCUSSIONS_COUNTS_UPDATE,
 	DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUEST_SUCCESS,
-	DISCUSSIONS_ITEM_LIKE_REQUESTING,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS,
-	DISCUSSIONS_RECEIVE,
-	DISCUSSIONS_REQUEST,
 	DISCUSSIONS_REQUEST_FAILURE,
 	DISCUSSIONS_REQUEST_SUCCESS,
-	DISCUSSIONS_REQUESTING,
 } from '../action-types';
 
 const DEFAULT_STATUS = 'all';
@@ -38,40 +34,6 @@ export function requestPostComments( siteId, postId, status = DEFAULT_STATUS ) {
 }
 
 /***
- * return an action object used in signalling that the discussions for the specified
- * site post are being requested.
- *
- * @param   {Number} siteId site identifier
- * @param   {Number} postId post identifier
- * @param   {String} status status filter. Defaults to all posts
- * @returns {Object}        action object
- */
-export function requestingPostComments( siteId, postId, status ) {
-	return {
-		type: DISCUSSIONS_REQUESTING,
-		siteId,
-		postId,
-		status
-	};
-}
-
-/***
- * return an action object used in signalling that the discussions for the specified
- * site post are being received.
- *
- * @param   {Number} siteId site identifier
- * @param   {Array}  postId array of comments for the specified site
- * @returns {Object}        action object
- */
-export function receivePostComments( siteId, comments ) {
-	return {
-		type: DISCUSSIONS_RECEIVE,
-		siteId,
-		comments
-	};
-}
-
-/***
  * return an action object used in signalling that the request for discussions for a specific
  * site post has succeeded.
  *
@@ -80,12 +42,13 @@ export function receivePostComments( siteId, comments ) {
  * @param   {String} status status filter. Defaults to all posts
  * @returns {Object}        action object
  */
-export function successPostCommentsRequest( siteId, postId, status ) {
+export function successPostCommentsRequest( siteId, postId, status, comments ) {
 	return {
 		type: DISCUSSIONS_REQUEST_SUCCESS,
 		siteId,
 		postId,
-		status
+		status,
+		comments
 	};
 }
 
@@ -162,24 +125,6 @@ export function failCommentContentUpdateRequest( siteId, commentId, content, err
 		commentId,
 		content,
 		error
-	};
-}
-
-/***
- * returns an action object used in signalling that a comment like/unlike
- * is beign requested.
- *
- * @param   {Number} siteId    site identifier
- * @param   {Number} commentId comment identifier
- * @param   {String} source    event source
- * @returns {Object}           action object
- */
-export function requestingCommentLike( siteId, commentId, source ) {
-	return {
-		type: DISCUSSIONS_ITEM_LIKE_REQUESTING,
-		siteId,
-		commentId,
-		source
 	};
 }
 
