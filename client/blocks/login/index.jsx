@@ -62,9 +62,13 @@ class Login extends Component {
 
 		const twoStepTitle = translate( '2-Step Verification' );
 
-		if ( twoStepNonce && twoFactorAuthType === 'code' ) {
+		if ( twoStepNonce && ( twoFactorAuthType === 'code' || twoFactorAuthType === 'sms' ) ) {
 			return (
-				<VerificationCodeForm rememberMe={ rememberMe } onSuccess={ this.rebootAfterLogin } title={ twoStepTitle } />
+				<VerificationCodeForm
+					rememberMe={ rememberMe }
+					onSuccess={ this.rebootAfterLogin }
+					twoFactorAuthType={ twoFactorAuthType }
+					title={ twoStepTitle } />
 			);
 		}
 

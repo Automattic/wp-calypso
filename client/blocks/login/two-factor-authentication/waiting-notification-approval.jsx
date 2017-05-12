@@ -41,6 +41,7 @@ class WaitingTwoFactorNotificationApproval extends Component {
 		event.preventDefault();
 
 		const { userId, twoStepNonce, translate } = this.props;
+		page( login( { twoFactorAuthType: 'sms' } ) );
 
 		this.props.sendSmsCode( userId, twoStepNonce ).then( () => {
 			this.props.successNotice( translate( 'Recovery code has been sent.' ) );
