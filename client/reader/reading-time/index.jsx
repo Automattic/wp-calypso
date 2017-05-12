@@ -3,12 +3,13 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 
-var ReadingTime = React.createClass( {
-	mixins: [ PureRenderMixin ],
+class ReadingTime extends React.Component {
+	shouldComponentUpdate( nextProps, nextState ) {
+		return React.addons.shallowCompare( this, nextProps, nextState );
+	}
 
-	render: function() {
+	render() {
 		var words = this.props.words || 0,
 			timeInMinutes = Math.round( this.props.readingTime / 60 ),
 			approxTime = null,
@@ -32,7 +33,7 @@ var ReadingTime = React.createClass( {
 		} );
 
 		return <span className="byline__reading-time reading-time">{ readingTime }</span>;
-	},
-} );
+	}
+}
 
 export default localize( ReadingTime );

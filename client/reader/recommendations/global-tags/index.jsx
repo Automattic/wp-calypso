@@ -2,7 +2,7 @@ import React from 'react';
 import Main from 'components/main';
 import Navigation from 'reader/recommendations/navigation';
 
-const RecommendedTags = React.createClass( {
+class RecommendedTags extends React.Component {
 	render() {
 		return (
 			<Main>
@@ -10,7 +10,7 @@ const RecommendedTags = React.createClass( {
 				Trending tags
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default RecommendedTags;

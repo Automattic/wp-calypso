@@ -2,15 +2,16 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 
-const PostPlaceholder = React.createClass( {
-	mixins: [ PureRenderMixin ],
+class PostPlaceholder extends React.Component {
+	shouldComponentUpdate( nextProps, nextState ) {
+		return React.addons.shallowCompare( this, nextProps, nextState );
+	}
 
 	render() {
 		return (
@@ -47,7 +48,7 @@ const PostPlaceholder = React.createClass( {
 				</ul>
 			</Card>
 		);
-	},
-} );
+	}
+}
 
 export default PostPlaceholder;

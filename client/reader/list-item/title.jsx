@@ -2,15 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import noop from 'lodash/noop';
 
-const ListItemTitle = React.createClass( {
-	mixins: [ PureRenderMixin ],
+class ListItemTitle extends React.Component {
+	static defaultProps = { onClick: noop };
 
-	getDefaultProps() {
-		return { onClick: noop };
-	},
+	shouldComponentUpdate( nextProps, nextState ) {
+		return React.addons.shallowCompare( this, nextProps, nextState );
+	}
 
 	render() {
 		return (
@@ -18,7 +17,7 @@ const ListItemTitle = React.createClass( {
 				{ this.props.children }
 			</h2>
 		);
-	},
-} );
+	}
+}
 
 export default ListItemTitle;

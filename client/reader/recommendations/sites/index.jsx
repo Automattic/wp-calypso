@@ -2,7 +2,7 @@ import React from 'react';
 import Main from 'components/main';
 import Navigation from 'reader/recommendations/navigation';
 
-const RecommendedSites = React.createClass( {
+class RecommendedSites extends React.Component {
 	render() {
 		return (
 			<Main>
@@ -10,7 +10,7 @@ const RecommendedSites = React.createClass( {
 				Sites!
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default RecommendedSites;

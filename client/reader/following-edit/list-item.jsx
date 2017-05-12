@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import createReactClass from 'create-react-class';
 import noop from 'lodash/noop';
 
 /**
@@ -25,7 +25,9 @@ import smartSetState from 'lib/react-smart-set-state';
 
 import ExternalLink from 'components/external-link';
 
-const SubscriptionListItem = React.createClass( {
+const SubscriptionListItem = createReactClass( {
+	displayName: 'SubscriptionListItem',
+
 	propTypes: {
 		subscription: React.PropTypes.object.isRequired,
 		classNames: React.PropTypes.string,
@@ -34,8 +36,6 @@ const SubscriptionListItem = React.createClass( {
 		openCards: React.PropTypes.object,
 		isEmailBlocked: React.PropTypes.bool,
 	},
-
-	mixins: [ PureRenderMixin ],
 
 	getDefaultProps() {
 		return {
@@ -92,6 +92,10 @@ const SubscriptionListItem = React.createClass( {
 			!! this.props.subscription &&
 			this.props.subscription.get( 'state' ) === SubscriptionStates.SUBSCRIBED
 		);
+	},
+
+	shouldComponentUpdate: function( nextProps, nextState ) {
+		return React.addons.shallowCompare( this, nextProps, nextState );
 	},
 
 	render: function() {

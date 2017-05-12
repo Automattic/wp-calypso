@@ -23,8 +23,8 @@ import {
 import QueryReaderList from 'components/data/query-reader-list';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
-const ListStream = React.createClass( {
-	toggleFollowing( isFollowRequested ) {
+class ListStream extends React.Component {
+	toggleFollowing = isFollowRequested => {
 		const list = this.props.list;
 
 		if ( isFollowRequested ) {
@@ -47,7 +47,7 @@ const ListStream = React.createClass( {
 				list_slug: list.slug,
 			}
 		);
-	},
+	};
 
 	render() {
 		const list = this.props.list,
@@ -101,8 +101,8 @@ const ListStream = React.createClass( {
 				/>
 			</Stream>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	( state, ownProps ) => {

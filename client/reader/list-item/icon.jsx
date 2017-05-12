@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import noop from 'lodash/noop';
 
 /**
@@ -12,12 +11,12 @@ import SiteIcon from 'blocks/site-icon';
 
 const genericFeedIcon = <SiteIcon size={ 48 } />;
 
-const ListItemDescription = React.createClass( {
-	mixins: [ PureRenderMixin ],
+class ListItemDescription extends React.Component {
+	static defaultProps = { onClick: noop };
 
-	getDefaultProps() {
-		return { onClick: noop };
-	},
+	shouldComponentUpdate( nextProps, nextState ) {
+		return React.addons.shallowCompare( this, nextProps, nextState );
+	}
 
 	render() {
 		return (
@@ -25,7 +24,7 @@ const ListItemDescription = React.createClass( {
 				{ this.props.children || genericFeedIcon }
 			</span>
 		);
-	},
-} );
+	}
+}
 
 export default ListItemDescription;

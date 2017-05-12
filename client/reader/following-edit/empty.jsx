@@ -10,22 +10,22 @@ import { localize } from 'i18n-calypso';
 import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
-const FollowingEditEmptyContent = React.createClass( {
+class FollowingEditEmptyContent extends React.Component {
 	componentDidMount() {
 		recordTrack( 'calypso_reader_empty_manage_following_loaded' );
-	},
+	}
 
-	recordAction() {
+	recordAction = () => {
 		recordAction( 'clicked_search_on_empty_manage_following' );
 		recordGaEvent( 'Clicked Search on EmptyContent in Manage Following' );
 		recordTrack( 'calypso_reader_search_on_empty_manage_following_clicked' );
-	},
+	};
 
-	recordSecondaryAction() {
+	recordSecondaryAction = () => {
 		recordAction( 'clicked_discover_on_empty_manage_following' );
 		recordGaEvent( 'Clicked Discover on EmptyContent in Manage Following' );
 		recordTrack( 'calypso_reader_discover_on_empty_manage_following_clicked' );
-	},
+	};
 
 	render() {
 		const action = (
@@ -57,7 +57,7 @@ const FollowingEditEmptyContent = React.createClass( {
 				illustrationWidth={ 500 }
 			/>
 		);
-	},
-} );
+	}
+}
 
 export default localize( FollowingEditEmptyContent );
