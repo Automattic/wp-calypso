@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import debugModule from 'debug';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -112,7 +113,7 @@ class LoggedOutForm extends Component {
 					submitForm={ this.handleSubmitSignup }
 					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
 					footerLink={ this.renderFooterLink() }
-					suggestedUsername={ userData && userData.username ? userData.username : '' }
+					suggestedUsername={ get( userData, 'username', '' ) }
 				/>
 				{ userData && this.renderLoginUser() }
 			</div>
