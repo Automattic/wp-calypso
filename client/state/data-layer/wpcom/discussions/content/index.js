@@ -3,7 +3,6 @@
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import debug from 'debug';
 import { DISCUSSIONS_ITEM_CONTENT_UPDATE_REQUEST } from 'state/action-types';
 import {
 	successCommentContentUpdateRequest,
@@ -11,26 +10,19 @@ import {
 } from 'state/discussions/actions';
 
 /**
- * Module variables
- */
-const log = debug( 'calypso:middleware-comments:content' );
-
- /**
-  * Dispatches a request update the content of a comment
-  *
-	* @param   {Function} dispatch Redux dispatcher
-  * @param   {Object}   action   Redux action
-  * @param   {Function} next     data-layer-bypassing dispatcher
-  * @returns {Promise}           Promise
-  */
+* Dispatches a request update the content of a comment
+*
+* @param   {Function} dispatch Redux dispatcher
+* @param   {Object}   action   Redux action
+* @param   {Function} next     data-layer-bypassing dispatcher
+* @returns {Promise}           Promise
+*/
 export const requestCommentContentUpdate = ( { dispatch }, action, next ) => {
 	const {
 		siteId,
 		commentId,
 		content
 	} = action;
-
-	log( 'Request content update for comment %d on site %d using content %o', commentId, siteId, content );
 
 	dispatch( http( {
 		apiVersion: '1.1',
