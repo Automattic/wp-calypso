@@ -2,7 +2,14 @@
  * External dependencies
  */
 import validator from 'is-my-json-valid';
-import { merge, flow, partialRight, reduce } from 'lodash';
+import {
+	flow,
+	identity,
+	mapValues,
+	merge,
+	partialRight,
+	reduce,
+} from 'lodash';
 import { combineReducers } from 'redux';
 
 /**
@@ -73,9 +80,11 @@ export function isValidStateWithSchema( state, schema ) {
  *
  * @param {string} keyName name of key in action referencing item in state map
  * @param {function} reducer applied to referenced item in state map
+ * @param {function} deserializer takes entire state of collection and deserializes
+ * @param {function} serializer takes entire state of collection and serializes
  * @return {function} super-reducer applying reducer over map of keyed items
  */
-export const keyedReducer = ( keyName, reducer ) => {
+export const keyedReducer = ( keyName, reducer, { deserializer, serializer } = { deserializer: identity, serializer: identity } ) => {
 	// some keys are invalid
 	if ( 'string' !== typeof keyName ) {
 		throw new TypeError( `Key name passed into ``keyedReducer`` must be a string but I detected a ${ typeof keyName }` );
@@ -92,6 +101,14 @@ export const keyedReducer = ( keyName, reducer ) => {
 	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
 
 	return ( state = {}, action ) => {
+		if ( DESERIALIZE === action.type ) {
+			return deserializer( state );
+		}
+
+		if ( SERIALIZE === action.type ) {
+			return serializer( mapValues( state, item => reducer( item, action ) ) );
+		}
+
 		// don't allow coercion of key name: null => 0
 		if ( ! action.hasOwnProperty( keyName ) ) {
 			return state;
