@@ -61,6 +61,7 @@ export getPublicizeConnection from './get-publicize-connection';
 export getPostLikes from './get-post-likes';
 export getPrimarySiteId from './get-primary-site-id';
 export getRawOffsets from './get-raw-offsets';
+export getReaderAliasedFollowFeedUrl from './get-reader-aliased-follow-feed-url';
 export getReaderFeedsForQuery from './get-reader-feeds-for-query';
 export getReaderFeedsCountForQuery from './get-reader-feeds-count-for-query';
 export getReaderFollowedTags from './get-reader-followed-tags';

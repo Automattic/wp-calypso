@@ -11,7 +11,7 @@ import createSelector from 'lib/create-selector';
 /**
  * Selector for all of the reader tags a user is following. Sorted by tag slug
  */
-const getReaderFollowedtags = createSelector(
+const getReaderFollowedTags = createSelector(
 	state => {
 		return state.reader.tags.items
 			? sortBy( filter( state.reader.tags.items, tag => tag.isFollowing ), 'slug' )
@@ -20,4 +20,4 @@ const getReaderFollowedtags = createSelector(
 	state => [ state.reader.tags.items ]
 );
 
-export default getReaderFollowedtags;
+export default getReaderFollowedTags;

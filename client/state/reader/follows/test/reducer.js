@@ -528,7 +528,7 @@ describe( 'reducer', () => {
 				ID: 25,
 				blog_ID: 10,
 				feed_ID: 20,
-				feed_URL: 'http://example.com', // what should we do if the feed_URL doesn't match the feedUrl on the action??
+				feed_URL: 'http://example.com',
 				delivery_methods: {
 					email: {
 						send_posts: true
@@ -542,6 +542,36 @@ describe( 'reducer', () => {
 					...subscriptionInfo,
 					is_following: true,
 				}
+			} );
+		} );
+
+		it( 'should update the feed key when an existing subscription changes feed URL', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					feed_URL: 'http://example.com',
+				},
+			} );
+
+			const subscriptionInfo = {
+				ID: 25,
+				blog_ID: 10,
+				feed_ID: 20,
+				feed_URL: 'http://example.com/feed',
+				delivery_methods: {
+					email: {
+						send_posts: true,
+					},
+				},
+			};
+
+			const state = items( original, follow( 'http://example.com', subscriptionInfo ) );
+			expect( state ).to.eql( {
+				'example.com/feed': {
+					...subscriptionInfo,
+					is_following: true,
+					alias_feed_URLs: [ 'example.com' ],
+				},
 			} );
 		} );
 	} );

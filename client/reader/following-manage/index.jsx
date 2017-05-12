@@ -20,6 +20,7 @@ import {
 	getReaderFeedsCountForQuery,
 	getReaderRecommendedSites,
 	isSiteBlocked as isSiteBlockedSelector,
+	getReaderAliasedFollowFeedUrl,
 } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
@@ -48,7 +49,6 @@ class FollowingManage extends Component {
 		subsQuery: '',
 		sitesQuery: '',
 		showMoreResults: false,
-		forceRefresh: false,
 		subsSortOrder: 'date-followed',
 	};
 
@@ -56,7 +56,6 @@ class FollowingManage extends Component {
 		width: 800,
 		seed: random( 0, 10000 ),
 		offset: 0,
-		forceRefresh: false,
 	};
 
 	// TODO make this common between our different search pages?
@@ -117,8 +116,7 @@ class FollowingManage extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const forceRefresh = nextProps.sitesQuery !== this.props.sitesQuery;
-		const nextState = { forceRefresh };
+		const nextState = {};
 		const recommendedSites = nextProps.getRecommendedSites( this.state.seed );
 
 		const shouldRequestMoreRecs =
@@ -193,7 +191,9 @@ class FollowingManage extends Component {
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
-								siteUrl={ addSchemeIfMissing( sitesQuery, 'http' ) }
+								siteUrl={ this.props.getReaderAliasedFollowFeedUrl(
+									addSchemeIfMissing( sitesQuery, 'http' )
+								) }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
 							/>
 						</div> }
@@ -207,7 +207,7 @@ class FollowingManage extends Component {
 						showMoreResultsClicked={ this.handleShowMoreClicked }
 						width={ this.state.width }
 						fetchNextPage={ this.fetchNextPage }
-						forceRefresh={ this.state.forceRefresh }
+						forceRefresh={ this.props.sitesQuery }
 						searchResultsCount={ searchResultsCount }
 					/> }
 				{ showExistingSubscriptions &&
@@ -228,6 +228,7 @@ export default connect(
 		searchResultsCount: getReaderFeedsCountForQuery( state, ownProps.sitesQuery ),
 		getRecommendedSites: seed => getReaderRecommendedSites( state, seed ),
 		isSiteBlocked: site => isSiteBlockedSelector( state, site.blogId ),
+		getReaderAliasedFollowFeedUrl: url => getReaderAliasedFollowFeedUrl( state, url ),
 	} ),
 	{ requestFeedSearch }
 )( localize( FollowingManage ) );
