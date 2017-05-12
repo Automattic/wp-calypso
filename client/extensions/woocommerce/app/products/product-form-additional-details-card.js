@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { find, debounce } from 'lodash';
 import Gridicon from 'gridicons';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -82,15 +83,14 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 		editProductAttribute( product, attribute, { name } );
 	}
 
-	renderInput( attribute ) {
+	renderInput( attribute, index ) {
 		const { translate } = this.props;
 		const { attributeNames } = this.state;
 		const attributeName = attributeNames && attributeNames[ attribute.uid ] || attribute.name;
 		const updateValues = ( values ) => {
 			this.updateValues( values, attribute );
 		};
-		const attributes = this.getAttributes();
-		const removeButton = attributes && attributes.length > 1 && (
+		const removeButton = index !== 0 && (
 			<Button
 				borderless
 				onClick={ this.removeAttribute }
@@ -100,8 +100,13 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 			</Button>
 		);
 
+		const classes = classNames( {
+			'products__additional-details-form-fieldset': true,
+			'products__additional-details-form-first-row': index === 0,
+		} );
+
 		return (
-			<div key={ attribute.uid } className="products__additional-details-form-fieldset">
+			<div key={ attribute.uid } className={ classes }>
 				<FormTextInput
 					placeholder={ translate( 'Material' ) }
 					value={ attributeName }
@@ -115,7 +120,9 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 					name="values"
 					onChange={ updateValues }
 				/>
-				{removeButton}
+				<div className="products__additional-details-form-remove">
+					{removeButton}
+				</div>
 			</div>
 		);
 	}
