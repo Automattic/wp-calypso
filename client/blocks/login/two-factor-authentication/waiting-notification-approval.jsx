@@ -61,33 +61,27 @@ class WaitingTwoFactorNotificationApproval extends Component {
 		const { translate, twoFactorAuthType } = this.props;
 
 		return (
-			<div>
-				<div className="two-factor-authentication__header">
-					{ this.props.title }
-				</div>
+			<form>
+				<Card className="two-factor-authentication__push-notification-screen is-compact">
+					<p>
+						{ translate( 'We sent a push notification to your {{strong}}WordPress mobile app{{/strong}}. ' +
+							'Once you get it and swipe or tap to confirm, this page will update.', {
+								components: {
+									strong: <strong />
+								}
+							} ) }
+					</p>
+					<div>
+						<img className="two-factor-authentication__auth-code-preview"
+							src="/calypso/images/login/pushauth.svg" />
+					</div>
+				</Card>
 
-				<form>
-					<Card className="two-factor-authentication__push-notification-screen is-compact">
-						<p>
-							{ translate( 'We sent a push notification to your {{strong}}WordPress mobile app{{/strong}}. ' +
-								'Once you get it and swipe or tap to confirm, this page will update.', {
-									components: {
-										strong: <strong />
-									}
-								} ) }
-						</p>
-						<div>
-							<img className="two-factor-authentication__auth-code-preview"
-								src="/calypso/images/login/pushauth.svg" />
-						</div>
-					</Card>
-
-					<TwoFactorActions
-						errorNotice={ this.props.errorNotice }
-						successNotice={ this.props.successNotice }
-						twoFactorAuthType={ twoFactorAuthType } />
-				</form>
-			</div>
+				<TwoFactorActions
+					errorNotice={ this.props.errorNotice }
+					successNotice={ this.props.successNotice }
+					twoFactorAuthType={ twoFactorAuthType } />
+			</form>
 		);
 	}
 }

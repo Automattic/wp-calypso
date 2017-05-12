@@ -79,46 +79,40 @@ class VerificationCodeForm extends Component {
 		}
 
 		return (
-			<div>
-				<div className="two-factor-authentication__header">
-					{ this.props.title }
-				</div>
+			<form onSubmit={ this.onCodeSubmit }>
+				<Card className="two-factor-authentication__push-notification-screen is-compact">
+					<p>
+						{ helpText }
+					</p>
 
-				<form onSubmit={ this.onCodeSubmit }>
-					<Card className="two-factor-authentication__push-notification-screen is-compact">
-						<p>
-							{ helpText }
-						</p>
+					<FormFieldset>
+						<FormLabel htmlFor="twoStepCode">
+							{ translate( 'Verification Code' ) }
+						</FormLabel>
 
-						<FormFieldset>
-							<FormLabel htmlFor="twoStepCode">
-								{ translate( 'Verification Code' ) }
-							</FormLabel>
+						<FormTextInput
+							onChange={ this.onChangeField }
+							className={ classNames( { 'is-error': isError } ) }
+							name="twoStepCode" />
 
-							<FormTextInput
-								onChange={ this.onChangeField }
-								className={ classNames( { 'is-error': isError } ) }
-								name="twoStepCode" />
+						{ isError && (
+							<FormInputValidation isError text={ twoFactorAuthRequestError } />
+						) }
+					</FormFieldset>
 
-							{ isError && (
-								<FormInputValidation isError text={ twoFactorAuthRequestError } />
-							) }
-						</FormFieldset>
+					<FormButton
+						className="two-factor-authentication__form-button"
+						onClick={ this.onSubmit }
+						primary
+						disabled={ this.props.isRequestingTwoFactorAuth }
+					>{ translate( 'Continue' ) }</FormButton>
+				</Card>
 
-						<FormButton
-							className="two-factor-authentication__form-button"
-							onClick={ this.onSubmit }
-							primary
-							disabled={ this.props.isRequestingTwoFactorAuth }
-						>{ translate( 'Continue' ) }</FormButton>
-					</Card>
-
-					<TwoFactorActions
-						errorNotice={ this.props.errorNotice }
-						successNotice={ this.props.successNotice }
-						twoFactorAuthType={ twoFactorAuthType } />
-				</form>
-			</div>
+				<TwoFactorActions
+					errorNotice={ this.props.errorNotice }
+					successNotice={ this.props.successNotice }
+					twoFactorAuthType={ twoFactorAuthType } />
+			</form>
 		);
 	}
 }

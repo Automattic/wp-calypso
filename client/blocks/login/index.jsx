@@ -51,7 +51,6 @@ class Login extends Component {
 	renderContent() {
 		const {
 			title,
-			translate,
 			twoFactorAuthType,
 			twoStepNonce,
 		} = this.props;
@@ -60,15 +59,12 @@ class Login extends Component {
 			rememberMe,
 		} = this.state;
 
-		const twoStepTitle = translate( '2-Step Verification' );
-
 		if ( twoStepNonce && ( twoFactorAuthType === 'code' || twoFactorAuthType === 'sms' ) ) {
 			return (
 				<VerificationCodeForm
 					rememberMe={ rememberMe }
 					onSuccess={ this.rebootAfterLogin }
-					twoFactorAuthType={ twoFactorAuthType }
-					title={ twoStepTitle } />
+					twoFactorAuthType={ twoFactorAuthType } />
 			);
 		}
 
@@ -76,7 +72,6 @@ class Login extends Component {
 			return (
 				<WaitingTwoFactorNotificationApproval
 					onSuccess={ this.rebootAfterLogin }
-					title={ twoStepTitle }
 					twoFactorAuthType={ twoFactorAuthType } />
 			);
 		}
@@ -91,6 +86,10 @@ class Login extends Component {
 	render() {
 		return (
 			<div>
+				<div className="login__form-header">
+					{ this.props.twoStepNonce ? this.props.translate( '2-Step Verification' ) : this.props.title }
+				</div>
+
 				{ this.renderContent() }
 			</div>
 		);
