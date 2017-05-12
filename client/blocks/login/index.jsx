@@ -18,7 +18,6 @@ import { login } from 'lib/paths';
 class Login extends Component {
 	static propTypes = {
 		redirectLocation: PropTypes.string,
-		title: PropTypes.string,
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
@@ -50,7 +49,6 @@ class Login extends Component {
 
 	renderContent() {
 		const {
-			title,
 			twoFactorAuthType,
 			twoStepNonce,
 		} = this.props;
@@ -77,17 +75,17 @@ class Login extends Component {
 		}
 
 		return (
-			<LoginForm
-				title={ title }
-				onSuccess={ this.handleValidUsernamePassword } />
+			<LoginForm onSuccess={ this.handleValidUsernamePassword } />
 		);
 	}
 
 	render() {
+		const { translate, twoStepNonce } = this.props;
+
 		return (
 			<div>
 				<div className="login__form-header">
-					{ this.props.twoStepNonce ? this.props.translate( '2-Step Verification' ) : this.props.title }
+					{ twoStepNonce ? translate( '2-Step Verification' ) : translate( 'Log in to your account.' ) }
 				</div>
 
 				{ this.renderContent() }

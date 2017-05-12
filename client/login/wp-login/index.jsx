@@ -175,7 +175,6 @@ export class Login extends React.Component {
 		const {
 			magicLoginView,
 			queryArguments,
-			translate,
 			twoFactorAuthType,
 		} = this.props;
 
@@ -192,8 +191,7 @@ export class Login extends React.Component {
 								? <RequestLoginEmailForm />
 								: <LoginBlock
 									twoFactorAuthType={ twoFactorAuthType }
-									redirectLocation={ queryArguments.redirect_to }
-									title={ translate( 'Log in to your account.' ) } />
+									redirectLocation={ queryArguments.redirect_to } />
 							}
 						</div>
 						<div className="wp-login__footer">
