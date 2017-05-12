@@ -50,7 +50,7 @@ const debug = debugModule( 'calypso:redux:reader-follows' );
 export function follow( feedUrl, followInfo ) {
 	const action = {
 		type: READER_FOLLOW,
-		payload: { feedUrl }
+		payload: { feedUrl },
 	};
 	if ( followInfo ) {
 		action.payload.follow = followInfo;
@@ -61,7 +61,7 @@ export function follow( feedUrl, followInfo ) {
 export function unfollow( feedUrl ) {
 	return {
 		type: READER_UNFOLLOW,
-		payload: { feedUrl }
+		payload: { feedUrl },
 	};
 }
 
@@ -76,7 +76,7 @@ export function unfollow( feedUrl ) {
 export function recordFollowError( feedUrl, error ) {
 	const action = {
 		type: READER_FOLLOW_ERROR,
-		payload: { feedUrl, error }
+		payload: { feedUrl, error },
 	};
 
 	return action;
@@ -89,11 +89,11 @@ export function recordFollowError( feedUrl, error ) {
  * @return {Function} Action thunk
  */
 export function recordFollow( url ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		debug( 'User followed ' + url );
 		dispatch( {
 			type: READER_RECORD_FOLLOW,
-			payload: { url }
+			payload: { url },
 		} );
 	};
 }
@@ -105,11 +105,11 @@ export function recordFollow( url ) {
  * @return {Function} Action thunk
  */
 export function recordUnfollow( url ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		debug( 'User unfollowed ' + url );
 		dispatch( {
 			type: READER_RECORD_UNFOLLOW,
-			payload: { url }
+			payload: { url },
 		} );
 	};
 }
@@ -123,7 +123,7 @@ export function recordUnfollow( url ) {
 export function receiveFollows( { follows, totalCount } ) {
 	return {
 		type: READER_FOLLOWS_RECEIVE,
-		payload: { follows, totalCount }
+		payload: { follows, totalCount },
 	};
 }
 
@@ -146,7 +146,7 @@ export function requestFollows() {
 export function syncComplete( followedUrls ) {
 	return {
 		type: READER_FOLLOWS_SYNC_COMPLETE,
-		payload: followedUrls
+		payload: followedUrls,
 	};
 }
 
@@ -154,8 +154,8 @@ export function subscribeToNewPostEmail( blogId ) {
 	return {
 		type: READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
 		payload: {
-			blogId
-		}
+			blogId,
+		},
 	};
 }
 
@@ -163,8 +163,8 @@ export function unsubscribeToNewPostEmail( blogId ) {
 	return {
 		type: READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL,
 		payload: {
-			blogId
-		}
+			blogId,
+		},
 	};
 }
 
@@ -173,8 +173,8 @@ export function updateNewPostEmailSubscription( blogId, deliveryFrequency ) {
 		type: READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
 		payload: {
 			blogId,
-			deliveryFrequency
-		}
+			deliveryFrequency,
+		},
 	};
 }
 
@@ -182,8 +182,8 @@ export function subscribeToNewCommentEmail( blogId ) {
 	return {
 		type: READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 		payload: {
-			blogId
-		}
+			blogId,
+		},
 	};
 }
 
@@ -191,7 +191,7 @@ export function unsubscribeToNewCommentEmail( blogId ) {
 	return {
 		type: READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 		payload: {
-			blogId
-		}
+			blogId,
+		},
 	};
 }

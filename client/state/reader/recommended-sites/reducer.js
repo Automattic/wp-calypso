@@ -17,11 +17,12 @@ import { READER_RECOMMENDED_SITES_RECEIVE } from 'state/action-types';
  * @param  {Object} action Action payload
  * @return {Array}        Updated state
  */
-export const items = keyedReducer( 'seed', createReducer( [], {
-	[ READER_RECOMMENDED_SITES_RECEIVE ]: ( state, action ) => uniqBy(
-		state.concat( action.payload.sites ),
-		'feedId',
-	)
-} ) );
+export const items = keyedReducer(
+	'seed',
+	createReducer( [], {
+		[ READER_RECOMMENDED_SITES_RECEIVE ]: ( state, action ) =>
+			uniqBy( state.concat( action.payload.sites ), 'feedId' ),
+	} )
+);
 
 export default items;

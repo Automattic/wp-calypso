@@ -13,20 +13,20 @@ export const itemsSchema = {
 				owner: { type: 'string' },
 				is_owner: { type: 'boolean' },
 				is_public: { type: 'boolean' },
-			}
-		}
+			},
+		},
 	},
-	additionalProperties: false
+	additionalProperties: false,
 };
 
 export const subscriptionsSchema = {
-	type: 'array'
+	type: 'array',
 };
 
 export const updatedListsSchema = {
-	type: 'array'
+	type: 'array',
 };
 
 export const errorsSchema = {
-	type: 'object'
+	type: 'object',
 };

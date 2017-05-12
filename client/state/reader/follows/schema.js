@@ -14,9 +14,9 @@ export const items = {
 				feed_ID: { type: [ 'integer', 'null' ] },
 				date_subscribed: { type: [ 'integer', 'null' ] },
 				delivery_methods: { type: [ 'object', 'null' ] },
-				is_owner: { type: [ 'boolean', 'null' ] }
-			}
-		}
+				is_owner: { type: [ 'boolean', 'null' ] },
+			},
+		},
 	},
-	additionalProperties: false
+	additionalProperties: false,
 };
