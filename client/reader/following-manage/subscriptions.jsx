@@ -128,7 +128,7 @@ class FollowingManageSubscriptions extends Component {
 						/> }
 					{ noSitesMatchQuery &&
 						<p>
-							{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
+							{ translate( 'Sorry, no followed sites match {{italic}}%s.{{/italic}}', {
 								components: { italic: <i /> },
 								args: query,
 							} ) }
