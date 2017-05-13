@@ -34,30 +34,29 @@ const FollowingManageSearchFeedsResults = ( {
 	}
 
 	if ( ! showMoreResults ) {
-		const resultsToShow = map(
-			take( searchResults, 10 ),
-			site => (
-				<ConnectedSubscriptionListItem
-					url={ site.URL }
-					feedId={ +site.feed_ID }
-					siteId={ +site.blog_ID }
-					key={ `search-result-site-id-${ site.feed_ID }` }
-				/>
-			)
-		);
+		const resultsToShow = map( take( searchResults, 10 ), site => (
+			<ConnectedSubscriptionListItem
+				url={ site.feed_URL || site.URL }
+				feedId={ +site.feed_ID }
+				siteId={ +site.blog_ID }
+				key={ `search-result-site-id-${ site.feed_ID || 0 }-${ site.blog_ID || 0 }` }
+			/>
+		) );
 
 		return (
 			<div className="following-manage__search-results">
 				{ resultsToShow }
 				<div className="following-manage__show-more">
-					{ searchResultsCount > 3 && (
-						<Button compact icon
+					{ searchResultsCount > 3 &&
+						<Button
+							compact
+							icon
 							onClick={ showMoreResultsClicked }
-							className="following-manage__show-more-button button">
-								<Gridicon icon="chevron-down" />
-								{ translate( 'Show more' ) }
-						</Button>
-					) }
+							className="following-manage__show-more-button button"
+						>
+							<Gridicon icon="chevron-down" />
+							{ translate( 'Show more' ) }
+						</Button> }
 				</div>
 			</div>
 		);

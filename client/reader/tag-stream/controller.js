@@ -9,7 +9,12 @@ import trim from 'lodash/trim';
  */
 import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import {
+	ensureStoreLoading,
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'reader/controller-helper';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 
@@ -31,11 +36,12 @@ const exported = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_tag_loaded', {
-			tag: tagSlug
+			tag: tagSlug,
 		} );
 
 		renderWithReduxStore(
-			<AsyncLoad require="reader/tag-stream/main"
+			<AsyncLoad
+				require="reader/tag-stream/main"
 				key={ 'tag-' + encodedTag }
 				postsStore={ tagStore }
 				encodedTagSlug={ encodedTag }
@@ -54,11 +60,9 @@ const exported = {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    tagListing
-} = exported;
+export const { tagListing } = exported;

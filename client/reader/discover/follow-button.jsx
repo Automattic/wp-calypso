@@ -11,15 +11,14 @@ import FollowButton from 'reader/follow-button';
 import { recordFollowToggle } from './stats';
 
 class DiscoverFollowButton extends React.Component {
-
 	static propTypes = {
 		siteName: React.PropTypes.string.isRequired,
-		followUrl: React.PropTypes.string.isRequired
-	}
+		followUrl: React.PropTypes.string.isRequired,
+	};
 
-	recordFollowToggle = ( isFollowing ) => {
+	recordFollowToggle = isFollowing => {
 		recordFollowToggle( isFollowing, this.props.siteUrl );
-	}
+	};
 
 	render() {
 		if ( ! this.props.followUrl ) {
@@ -29,12 +28,12 @@ class DiscoverFollowButton extends React.Component {
 		const followLabel = this.props.translate( 'Follow %(siteName)s', {
 			args: {
 				siteName: this.props.siteName,
-			}
+			},
 		} );
 		const followingLabel = this.props.translate( 'Following %(siteName)s', {
 			args: {
 				siteName: this.props.siteName,
-			}
+			},
 		} );
 
 		return (
@@ -44,7 +43,8 @@ class DiscoverFollowButton extends React.Component {
 				iconSize={ 20 }
 				onFollowToggle={ this.recordFollowToggle }
 				followLabel={ followLabel }
-				followingLabel={ followingLabel } />
+				followingLabel={ followingLabel }
+			/>
 		);
 	}
 }

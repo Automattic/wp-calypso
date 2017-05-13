@@ -25,6 +25,7 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	classNames = require( 'classnames' );
 
 import MenuSeparator from 'components/popover/menu-separator';
+import PageCardInfo from './page-card-info';
 import { hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
 import {
 	isFrontPage,
@@ -158,7 +159,8 @@ const Page = React.createClass( {
 			site = this.props.site,
 			parentTitle, parentHref, parentLink;
 
-		if ( ! page.parent ) {
+		// If we're in hierarchical view, we don't show child info in the context menu, as it's redudant.
+		if ( this.props.hierarchical || ! page.parent ) {
 			return null;
 		}
 
@@ -336,7 +338,7 @@ const Page = React.createClass( {
 			canEdit = utils.userCan( 'edit_post', this.props.page ),
 			depthIndicator;
 
-		if ( page.parent ) {
+		if ( ! this.props.hierarchical && page.parent ) {
 			depthIndicator = '— ';
 		}
 
@@ -380,22 +382,46 @@ const Page = React.createClass( {
 			ref="popoverMenuButton" />
 		) : null;
 
+		const cardClasses = {
+			page: true,
+			'is-indented': this.props.hierarchical && this.props.hierarchyLevel > 0,
+		};
+
+		const hierarchyIndentClasses = {
+			'page__hierarchy-indent': true,
+			'is-indented': cardClasses[ 'is-indented' ],
+		};
+
+		if ( cardClasses[ 'is-indented' ] ) {
+			cardClasses[ 'is-indented-level-' + this.props.hierarchyLevel ] = true;
+			hierarchyIndentClasses[ 'is-indented-level-' + this.props.hierarchyLevel ] = true;
+		}
+
+		const hierarchyIndent = cardClasses[ 'is-indented' ] && (
+			<div className={ classNames( hierarchyIndentClasses ) } ></div>
+		);
+
 		return (
-			<CompactCard className="page">
+			<CompactCard className={ classNames( cardClasses ) } >
+				{ hierarchyIndent }
 				{ this.props.multisite ? <SiteIcon site={ site } size={ 34 } /> : null }
-				<a className="page__title"
-					href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
-					title={ canEdit ?
-						this.translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } ) :
-						this.translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } ) }
-					onClick={ this.analyticsEvents.pageTitle }
-					>
-					{ depthIndicator }
-					{ this.props.isFrontPage ? <Gridicon icon="house" size={ 18 } /> : null }
-					{ title }
-				</a>
-				{ this.props.isPostsPage ? <div className="page__posts-page">{ this.translate( 'Your latest posts' ) }</div> : null }
-				{ this.props.multisite ? <span className="page__site-url">{ this.getSiteDomain() }</span> : null }
+				<div className="page__main">
+					<a className="page__title"
+						href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
+						title={ canEdit ?
+							this.translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } ) :
+							this.translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } ) }
+						onClick={ this.analyticsEvents.pageTitle }
+						>
+						{ depthIndicator }
+						{ title }
+					</a>
+					<PageCardInfo
+						page={ page }
+						showTimestamp={ this.props.hierarchical }
+						siteUrl={ this.props.multisite && this.getSiteDomain() }
+					/>
+				</div>
 				{ ellipsisGridicon }
 				{ popoverMenu }
 				<ReactCSSTransitionGroup

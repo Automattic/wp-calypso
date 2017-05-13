@@ -774,7 +774,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000666"
+      "version": "1.0.30000667"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -1113,6 +1113,9 @@
     "crc32": {
       "version": "0.2.2"
     },
+    "create-react-class": {
+      "version": "15.5.3"
+    },
     "creditcards": {
       "version": "2.1.2"
     },
@@ -1209,7 +1212,7 @@
       "dev": true
     },
     "deep-extend": {
-      "version": "0.4.1"
+      "version": "0.4.2"
     },
     "deep-freeze": {
       "version": "0.0.1",
@@ -3745,7 +3748,7 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "1.1.8"
+      "version": "1.1.9"
     },
     "npm-path": {
       "version": "1.1.0",
@@ -4688,7 +4691,7 @@
       "dev": true
     },
     "scss-tokenizer": {
-      "version": "0.2.1",
+      "version": "0.2.3",
       "dependencies": {
         "source-map": {
           "version": "0.4.4"
@@ -5177,7 +5180,7 @@
       "version": "1.15.2"
     },
     "tar-stream": {
-      "version": "1.5.2",
+      "version": "1.5.4",
       "dependencies": {
         "readable-stream": {
           "version": "2.2.9"
@@ -5856,7 +5859,7 @@
       "version": "1.0.0"
     },
     "wide-align": {
-      "version": "1.1.1",
+      "version": "1.1.2",
       "dependencies": {
         "is-fullwidth-code-point": {
           "version": "2.0.0"

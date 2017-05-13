@@ -16,6 +16,10 @@
 	padding: 0;
 }
 
+.following-manage__input-card.card.is-compact {
+	box-shadow: 0 0 0 2px lighten( $gray, 20% ), 0 1px 2px lighten( $gray, 20% );
+}
+
 .following-manage__subscriptions {
 	margin-top: 20px;
 	padding-top: 10px;
@@ -69,11 +73,9 @@
 	}
 
 	.following-manage__subscriptions-header {
-		align-items: center;
-		display: flex;
 		flex: 1;
 		font-weight: 600;
-		padding-bottom: 15px;
+		padding: 4px 0 15px;
 
 		@include breakpoint( "<960px" ) {
 			flex: 0 0 auto;
@@ -108,6 +110,7 @@
 		color: $gray;
 		font-size: 12px;
 		font-weight: normal;
+		padding-top: 8px;
 		width: 100%;
 
 		@include breakpoint( ">960px" ) {
@@ -136,7 +139,7 @@
 
 		.search__input {
 			background: transparent;
-			height: 30px;
+			padding-bottom: 5px;
 		}
 	}
 
@@ -176,7 +179,7 @@
 }
 
 .following-manage .reader-recommended-sites {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid lighten( $gray, 20% );
 }
 
 .following-manage__search-followed {
@@ -187,6 +190,15 @@
 
 	@include breakpoint( ">960px" ) {
 		min-width: 200px;
+	}
+}
+
+.following-manage__search-results > div {
+	border-bottom: 1px solid lighten( $gray, 30% );
+
+	&:nth-last-child(2),
+	&:last-child {
+		border-bottom: 0;
 	}
 }
 

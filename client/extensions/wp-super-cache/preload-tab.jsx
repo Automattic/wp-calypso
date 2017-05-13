@@ -150,10 +150,10 @@ class PreloadTab extends Component {
 								onChange={ this.handlePreloadRefreshChange }>
 								<span>
 									{ translate(
-										'Refresh preloaded cache files every {{number /}} minute. ',
-										'Refresh preloaded cache files every {{number /}} minutes. ',
+										'Refresh preloaded cache files every {{number /}} minute ',
+										'Refresh preloaded cache files every {{number /}} minutes ',
 										{
-											count: preload_interval,
+											count: preload_interval || 0,
 											components: {
 												number: renderCachePreloadInterval( {
 													handleChange,
@@ -166,11 +166,11 @@ class PreloadTab extends Component {
 									) }
 
 									{ translate(
-										'(minimum %d minute)',
-										'(minimum %d minutes)',
+										'(minimum %(minutes)d minute).',
+										'(minimum %(minutes)d minutes).',
 										{
-											args: minimum_preload_interval,
-											count: minimum_preload_interval,
+											args: { minutes: minimum_preload_interval || 0 },
+											count: minimum_preload_interval || 0,
 										}
 									) }
 								</span>

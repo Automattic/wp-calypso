@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { map, partial } from 'lodash';
+import { map, partial, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
@@ -39,6 +39,11 @@ export class RecommendedSites extends React.PureComponent {
 
 	render() {
 		const { sites } = this.props;
+
+		if ( isEmpty( sites ) ) {
+			return null;
+		}
+
 		return (
 			<div className="reader-recommended-sites">
 				<h1 className="reader-recommended-sites__header">
@@ -59,7 +64,7 @@ export class RecommendedSites extends React.PureComponent {
 											<Gridicon icon="cross" size={ 18 } />
 										</Button>
 									</div>
-									<ConnectedSubscriptionListItem siteId={ siteId } />
+									<ConnectedSubscriptionListItem siteId={ siteId } showEmailSettings={ false } />
 								</li> );
 							}
 						)

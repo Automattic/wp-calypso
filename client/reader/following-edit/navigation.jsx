@@ -4,33 +4,28 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
-var FollowingEditNavigation = React.createClass( {
+class FollowingEditNavigation extends React.Component {
+	static propTypes = { totalSubscriptions: React.PropTypes.number };
 
-	propTypes: { totalSubscriptions: React.PropTypes.number },
-
-	renderSiteCount: function() {
+	renderSiteCount = () => {
 		const totalSubscriptions = this.props.totalSubscriptions;
 		if ( ! totalSubscriptions ) {
 			return null;
 		}
 
-		return this.props.translate(
-			'%(count)d site',
-			'%(count)d sites',
-			{
-				count: totalSubscriptions,
-				args: { count: totalSubscriptions }
-			}
-		);
-	},
+		return this.props.translate( '%(count)d site', '%(count)d sites', {
+			count: totalSubscriptions,
+			args: { count: totalSubscriptions },
+		} );
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="following-edit-navigation">
 				<span className="following-edit-navigation__site-count">{ this.renderSiteCount() }</span>
 			</div>
 		);
 	}
-} );
+}
 
 export default localize( FollowingEditNavigation );

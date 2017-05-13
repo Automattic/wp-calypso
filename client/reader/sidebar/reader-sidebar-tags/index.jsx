@@ -16,14 +16,9 @@ import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags'
 import { getReaderFollowedTags } from 'state/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
 
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrack,
-} from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 export class ReaderSidebarTags extends Component {
-
 	static propTypes = {
 		tags: PropTypes.array,
 		path: PropTypes.string.isRequired,
@@ -32,23 +27,23 @@ export class ReaderSidebarTags extends Component {
 		currentTag: PropTypes.string,
 		onFollowTag: PropTypes.func,
 		translate: PropTypes.func,
-	}
+	};
 
 	static defaultProps = {
 		translate: identity,
-	}
+	};
 
-	followTag = ( tag ) => {
+	followTag = tag => {
 		this.props.followTag( decodeURIComponent( tag ) );
 		recordAction( 'followed_topic' );
 		recordGaEvent( 'Clicked Follow Topic', tag );
 		recordTrack( 'calypso_reader_reader_tag_followed', {
-			tag: tag
+			tag: tag,
 		} );
 		this.props.onFollowTag( tag );
-	}
+	};
 
-	unfollowTag = ( event ) => {
+	unfollowTag = event => {
 		const node = closest( event.target, '[data-tag-slug]', true );
 		event.preventDefault();
 		const slug = node && node.dataset && node.dataset.tagSlug;
@@ -60,13 +55,13 @@ export class ReaderSidebarTags extends Component {
 			} );
 			this.props.unfollowTag( decodeURIComponent( slug ) );
 		}
-	}
+	};
 
 	handleAddClick = () => {
 		recordAction( 'follow_topic_open_input' );
 		recordGaEvent( 'Clicked Add Topic to Open Input' );
 		recordTrack( 'calypso_reader_add_tag_clicked' );
-	}
+	};
 
 	render() {
 		const { tags, isOpen, translate, onClick } = this.props;
@@ -82,8 +77,9 @@ export class ReaderSidebarTags extends Component {
 					addPlaceholder={ translate( 'Add any tag' ) }
 					onAddSubmit={ this.followTag }
 					onAddClick={ this.handleAddClick }
-					onClick={ onClick }>
-						<ReaderSidebarTagsList { ...this.props } onUnfollow={ this.unfollowTag } />
+					onClick={ onClick }
+				>
+					<ReaderSidebarTagsList { ...this.props } onUnfollow={ this.unfollowTag } />
 				</ExpandableSidebarMenu>
 			</div>
 		);

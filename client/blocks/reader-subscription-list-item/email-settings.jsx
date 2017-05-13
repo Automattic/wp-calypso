@@ -87,9 +87,8 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 				<span
 					className="reader-subscription-list-item__settings-menu"
 					onClick={ this.togglePopoverVisibility }
-					ref={ this.savePopoutSpanRef }
 				>
-					<Gridicon icon="cog" size={ 24 } />
+					<Gridicon icon="cog" size={ 24 } ref={ this.savePopoutSpanRef } />
 					<span className="reader-subscription-list-item__settings-label">Settings</span>
 				</span>
 

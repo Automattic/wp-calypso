@@ -4,7 +4,6 @@ $reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width
 $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-recommended-sites {
-	padding-bottom: 12px;
 
 	@include breakpoint( "<660px" ) {
 		margin: 0 15px;
@@ -16,9 +15,13 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	font-size: 14px;
 	font-weight: 600;
 	letter-spacing: 0.01em;
-	margin: 13px 0 17px;
+	margin: 13px 0 10px;
 	position: relative;
 	text-transform: uppercase;
+
+	@include breakpoint( ">660px" ) {
+		margin: 13px 0 17px;
+	}
 
 	.gridicon {
 		fill: lighten( $gray, 10% );
@@ -31,7 +34,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 .reader-recommended-sites__list {
 	display: flex;
 	flex-direction: row;
-	margin: 0;
+	margin: 0 0 20px;
 	padding: 0;
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
@@ -51,35 +54,40 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-recommended-sites__site-list-item {
 	display: flex;
-	flex: 1 1 0;
+	flex: 1;
 	flex-direction: column;
 	list-style-type: none;
+	margin-top: -40px;
 	min-width: 0;
-	position: relative;
-		top: -40px;
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
 		flex-direction: row;
 		flex: 0;
-		top: 0;
+		margin-top: 0;
+
+		& + & {
+			margin-top: 10px;
+		}
 	}
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
 		flex-direction: row;
 		flex: 0;
-		top: 0;
+		margin-top: 0;
+
+		& + & {
+			margin-top: 10px;
+		}
 	}
 
-	:nth-child(2) {
-		flex: 1 1 0;
+	> :nth-child(2) {
+		flex: 1;
 	}
 
 	.reader-recommended-sites__recommended-site-dismiss {
+		display: flex;
 		height: 30px;
-
-		.button {
-			float: right;
-		}
+		justify-content: flex-end;
 
 		.button.is-borderless .gridicon,
 		.gridicon,
@@ -94,7 +102,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			}
 
 			@include breakpoint( "<660px" ) {
-				top: -2px;
+				top: 3px;
 			}
 		}
 	}
@@ -107,8 +115,8 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			margin: 0 0 0 10px;
 		}
 
-		@include breakpoint( "<480px" ) {
-			margin: 0 0 0 10px;
+		@include breakpoint( "<660px" ) {
+			margin: 10px 0 0 10px;
 		}
 
 		.follow-button .follow-button__label {
@@ -146,7 +154,8 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	&:last-child {
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
-			margin: 0;
+			margin-left: 0;
+			margin-right: 0;
 		}
 	}
 
@@ -161,12 +170,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	.reader-subscription-list-item__site-title {
 		color: $blue-medium;
-		margin-bottom: 3px;
-		width: calc( 100% - 70px );
+		width: calc( 100% - 20px );
 		word-break: break-all;
 
-		@include breakpoint( "<960px" ) {
-			width: calc( 100% - 20px );
+		@include breakpoint( ">960px" ) {
+			width: calc( 100% - 70px );
 		}
 	}
 
@@ -180,8 +188,24 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		word-break: break-all;
 		width: 100%;
 
-		&::after{
-			@include long-content-fade( $size: 20% );
+		&:not(.is-placeholder) {
+			&::after {
+				@include long-content-fade( $size: 20% );
+			}
+		}
+
+		&.is-placeholder {
+			margin-top: 2px;
+		}
+	}
+
+	.reader-subscription-list-item.reader-subscription-list-item__placeholder {
+		.reader-subscription-list-item__site-url.is-placeholder {
+			margin-top: 2px;
+		}
+
+		.reader-subscription-list-item__site-excerpt.is-placeholder {
+			max-width: 70%;
 		}
 	}
 }

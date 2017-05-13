@@ -27,18 +27,18 @@ describe( 'reader stream', () => {
 	const postKey2 = { feedId: 'feed1', postId: 'postId2' };
 	const postIds34 = [ 'postId3', 'postId4' ];
 	const postIds57 = [ 'postId5', 'postId6', 'postId7' ];
-	const combinedCardPostKey1 = ( {
+	const combinedCardPostKey1 = {
 		feedId: postKey1.feedId,
 		postIds: postIds34,
 		localMoment: undefined,
 		isCombination: true,
-	} );
-	const combinedCardPostKey2 = ( {
+	};
+	const combinedCardPostKey2 = {
 		feedId: postKey1.feedId,
 		postIds: postIds57,
 		localMoment: undefined,
 		isCombination: true,
-	} );
+	};
 
 	describe( '#sameDay', () => {
 		const momentPostKey = localMoment => ( { localMoment } );
@@ -63,10 +63,7 @@ describe( 'reader stream', () => {
 	describe( '#sameSite', () => {
 		it( 'should return true when two postKeys represent the same site', () => {
 			const postId = 'postId';
-			const isSame = sameSite(
-				{ blogId: 'site1', postId },
-				{ blogId: 'site1', postId },
-			);
+			const isSame = sameSite( { blogId: 'site1', postId }, { blogId: 'site1', postId } );
 			assert( isSame );
 		} );
 
@@ -81,10 +78,7 @@ describe( 'reader stream', () => {
 		} );
 
 		it( 'should return false when different site and one item is a combinedCard', () => {
-			const isSame = sameSite(
-				{ ...combinedCardPostKey1, feedId: 'feed3' },
-				combinedCardPostKey2
-			);
+			const isSame = sameSite( { ...combinedCardPostKey1, feedId: 'feed3' }, combinedCardPostKey2 );
 			assert( ! isSame );
 		} );
 
@@ -95,8 +89,8 @@ describe( 'reader stream', () => {
 
 		it( 'recs should never be marked as sameSite', () => {
 			const isSame = sameSite(
-				{ ...postKey1, isRecommendationBlock: 'isRecommendationBlock', },
-				postKey1,
+				{ ...postKey1, isRecommendationBlock: 'isRecommendationBlock' },
+				postKey1
 			);
 			assert.isNotTrue( isSame );
 		} );
@@ -151,11 +145,7 @@ describe( 'reader stream', () => {
 
 			const postKeysSet2 = [ site4Key1, site1Key1, site1Key2, site3Key1 ];
 			const combinedItems2 = combineCards( postKeysSet2 );
-			expect( combinedItems2 ).eql( [
-				site4Key1,
-				combine( site1Key1, site1Key2 ),
-				site3Key1,
-			] );
+			expect( combinedItems2 ).eql( [ site4Key1, combine( site1Key1, site1Key2 ), site3Key1 ] );
 		} );
 
 		it( 'should combine cards with series of 3 in a row', () => {
@@ -167,11 +157,7 @@ describe( 'reader stream', () => {
 
 			const postKeys2 = [ site4Key1, site1Key1, site1Key2, site1Key3, site3Key1 ];
 			const combinedItems2 = combineCards( postKeys2 );
-			expect( combinedItems2 ).eql( [
-				site4Key1,
-				combinedCard,
-				site3Key1,
-			] );
+			expect( combinedItems2 ).eql( [ site4Key1, combinedCard, site3Key1 ] );
 		} );
 
 		it( 'should not combine any cards when no series exist', () => {
@@ -184,12 +170,12 @@ describe( 'reader stream', () => {
 			const discoverFeedId = 41325786;
 			const discoverSiteId = 53424024;
 			const discoverFeedPostKeys = [
-				{ feedId: discoverFeedId, postId: '1', localMoment: moment(), },
-				{ feedId: discoverFeedId, postId: '2', localMoment: moment(), },
+				{ feedId: discoverFeedId, postId: '1', localMoment: moment() },
+				{ feedId: discoverFeedId, postId: '2', localMoment: moment() },
 			];
 			const discoverSitePostKeys = [
-				{ blogId: discoverSiteId, postId: '1', localMoment: moment(), },
-				{ blogId: discoverSiteId, postId: '2', localMoment: moment(), },
+				{ blogId: discoverSiteId, postId: '1', localMoment: moment() },
+				{ blogId: discoverSiteId, postId: '2', localMoment: moment() },
 			];
 			const combinedFeedItems = combineCards( discoverFeedPostKeys );
 			const combinedSiteItems = combineCards( discoverSitePostKeys );
@@ -200,10 +186,7 @@ describe( 'reader stream', () => {
 
 		it( 'should not combine cards that are greater than a day apart', () => {
 			const theDistantPast = moment().year( -1 );
-			const postKeys = [
-				site1Key1,
-				{ ...site1Key2, localMoment: theDistantPast },
-			];
+			const postKeys = [ site1Key1, { ...site1Key2, localMoment: theDistantPast } ];
 			const combinedItems = combineCards( postKeys );
 			expect( combinedItems ).eql( postKeys );
 		} );
@@ -220,7 +203,7 @@ describe( 'reader stream', () => {
 		} );
 
 		it( 'should not modify items if empty recs', () => {
-			const items = ( [ {} ] );
+			const items = [ {} ];
 			const injectedItems = injectRecommendations( items, [], 1 );
 
 			expect( injectedItems ).eql( items );
@@ -235,7 +218,7 @@ describe( 'reader stream', () => {
 		} );
 
 		it( 'should inject 2 recs for each regular post when cards per rec = 1', () => {
-			const recs = [ rec(), rec(), rec(), rec(), rec(), rec(), rec(), rec(), ];
+			const recs = [ rec(), rec(), rec(), rec(), rec(), rec(), rec(), rec() ];
 			const items = [ post(), post(), post(), post(), post() ];
 			const injectedItems = injectRecommendations( items, recs, 1 );
 
@@ -253,7 +236,7 @@ describe( 'reader stream', () => {
 		} );
 
 		it( 'should gracefully run out of recs by inserting until it runs out', () => {
-			const recs = [ rec(), rec(), ];
+			const recs = [ rec(), rec() ];
 			const items = [ post(), post(), post() ];
 			const injectedItems = injectRecommendations( items, recs, 1 );
 
@@ -266,7 +249,7 @@ describe( 'reader stream', () => {
 		} );
 
 		it( 'should inject 2 recs for each 4 regular posts when cards per rec = 4', () => {
-			const recs = [ rec(), rec(), ];
+			const recs = [ rec(), rec() ];
 			const items = [ post(), post(), post(), post(), post() ];
 			const injectedItems = injectRecommendations( items, recs, 4 );
 

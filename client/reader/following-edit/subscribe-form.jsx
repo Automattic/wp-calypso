@@ -15,39 +15,34 @@ import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
 
 const minSearchLength = 8; // includes protocol
 
-var FollowingEditSubscribeForm = React.createClass( {
-
-	propTypes: {
+class FollowingEditSubscribeForm extends React.Component {
+	static propTypes = {
 		onSearch: React.PropTypes.func,
 		onSearchClose: React.PropTypes.func,
 		onFollow: React.PropTypes.func,
 		initialSearchString: React.PropTypes.string,
-		isSearchOpen: React.PropTypes.bool
-	},
+		isSearchOpen: React.PropTypes.bool,
+	};
 
-	getDefaultProps: function() {
-		return {
-			onSearch: noop,
-			onSearchClose: noop,
-			onFollow: noop,
-			initialSearchString: '',
-			isSearchOpen: false
-		};
-	},
+	static defaultProps = {
+		onSearch: noop,
+		onSearchClose: noop,
+		onFollow: noop,
+		initialSearchString: '',
+		isSearchOpen: false,
+	};
 
-	getInitialState: function() {
-		return { searchString: this.props.initialSearchString };
-	},
+	state = { searchString: this.props.initialSearchString };
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.verifySearchString( this.props.initialSearchString );
-	},
+	}
 
-	focus: function() {
+	focus = () => {
 		this.refs.followingEditSubscriptionSearch.focus();
-	},
+	};
 
-	handleFollowToggle: function() {
+	handleFollowToggle = () => {
 		FeedSubscriptionActions.follow( this.state.searchString, true );
 		this.setState( { previousSearchString: this.state.searchString } );
 
@@ -56,30 +51,34 @@ var FollowingEditSubscribeForm = React.createClass( {
 
 		// Call onFollow method on the parent
 		this.props.onFollow( this.state.searchString );
-	},
+	};
 
-	handleKeyDown: function( event ) {
+	handleKeyDown = event => {
 		// Use Enter to submit
-		if ( event.keyCode === 13 && this.state.searchString.length > minSearchLength && this.state.isWellFormedFeedUrl ) {
+		if (
+			event.keyCode === 13 &&
+			this.state.searchString.length > minSearchLength &&
+			this.state.isWellFormedFeedUrl
+		) {
 			event.preventDefault();
 			this.handleFollowToggle();
 		}
-	},
+	};
 
-	handleSearch: function( searchString ) {
+	handleSearch = searchString => {
 		if ( searchString === this.state.searchString ) {
 			return;
 		}
 
 		this.verifySearchString( searchString );
 		this.props.onSearch( searchString );
-	},
+	};
 
-	handleSearchClose: function() {
+	handleSearchClose = () => {
 		this.props.onSearchClose();
-	},
+	};
 
-	verifySearchString: function( searchString ) {
+	verifySearchString = searchString => {
 		let parsedUrl = url.parse( searchString );
 
 		// Make sure the feed URL has http:// protocol
@@ -97,17 +96,17 @@ var FollowingEditSubscribeForm = React.createClass( {
 
 		this.setState( {
 			searchString: searchString,
-			isWellFormedFeedUrl: isWellFormedFeedUrl
+			isWellFormedFeedUrl: isWellFormedFeedUrl,
 		} );
-	},
+	};
 
-	isWellFormedFeedUrl: function( parsedUrl ) {
+	isWellFormedFeedUrl = parsedUrl => {
 		if ( ! parsedUrl.hostname || parsedUrl.hostname.indexOf( '.' ) === -1 ) {
 			return false;
 		}
 
 		// Check for a valid-looking TLD
-		if ( parsedUrl.hostname.lastIndexOf( '.' ) > ( parsedUrl.hostname.length - 3 ) ) {
+		if ( parsedUrl.hostname.lastIndexOf( '.' ) > parsedUrl.hostname.length - 3 ) {
 			return false;
 		}
 
@@ -118,15 +117,14 @@ var FollowingEditSubscribeForm = React.createClass( {
 		}
 
 		return true;
-	},
+	};
 
-	render: function() {
-		var searchResult = null,
-			handleFollowToggle = noop;
+	render() {
+		var searchResult = null, handleFollowToggle = noop;
 
 		const searchString = this.state.searchString,
 			isWellFormedFeedUrl = this.state.isWellFormedFeedUrl,
-			showSearchResult = ( searchString && searchString.length > minSearchLength );
+			showSearchResult = searchString && searchString.length > minSearchLength;
 
 		// Activate the follow button if the URL looks reasonable
 		if ( isWellFormedFeedUrl ) {
@@ -134,10 +132,12 @@ var FollowingEditSubscribeForm = React.createClass( {
 		}
 
 		if ( showSearchResult ) {
-			searchResult = ( <FollowingEditSubscribeFormResult
-				isValid={ isWellFormedFeedUrl }
-				url={ searchString }
-				onFollowToggle={ handleFollowToggle } />
+			searchResult = (
+				<FollowingEditSubscribeFormResult
+					isValid={ isWellFormedFeedUrl }
+					url={ searchString }
+					onFollowToggle={ handleFollowToggle }
+				/>
 			);
 		}
 
@@ -149,7 +149,9 @@ var FollowingEditSubscribeForm = React.createClass( {
 					key="newSubscriptionSearch"
 					onSearch={ this.handleSearch }
 					onSearchClose={ this.handleSearchClose }
-					placeholder={ this.props.translate( 'Enter a site URL to follow', { context: 'field placeholder' } ) }
+					placeholder={ this.props.translate( 'Enter a site URL to follow', {
+						context: 'field placeholder',
+					} ) }
 					delaySearch={ false }
 					ref="followingEditSubscriptionSearch"
 					onKeyDown={ this.handleKeyDown }
@@ -160,7 +162,6 @@ var FollowingEditSubscribeForm = React.createClass( {
 			</div>
 		);
 	}
-
-} );
+}
 
 export default localize( FollowingEditSubscribeForm );

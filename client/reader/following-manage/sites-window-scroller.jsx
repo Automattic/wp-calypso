@@ -2,7 +2,13 @@
  * External Dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { List, WindowScroller, CellMeasurerCache, CellMeasurer, InfiniteLoader } from 'react-virtualized';
+import {
+	List,
+	WindowScroller,
+	CellMeasurerCache,
+	CellMeasurer,
+	InfiniteLoader,
+} from 'react-virtualized';
 import { debounce, noop } from 'lodash';
 
 /**
@@ -21,10 +27,10 @@ class SitesWindowScroller extends Component {
 		sites: PropTypes.array.isRequired,
 		fetchNextPage: PropTypes.func,
 		remoteTotalCount: PropTypes.number.isRequired,
-		forceRefresh: PropTypes.bool,
+		forceRefresh: PropTypes.any, // forceRefresh can be anything. Whenever we want to force a refresh, it should change
 		windowScrollerRef: PropTypes.func,
 	};
-	defaultProps = { windowScrollerRef: noop }
+	defaultProps = { windowScrollerRef: noop };
 
 	heightCache = new CellMeasurerCache( {
 		fixedWidth: true,
@@ -46,13 +52,17 @@ class SitesWindowScroller extends Component {
 				parent={ parent }
 			>
 				{ ( { measure } ) => (
-					<div key={ key } style={ style } className="following-manage__sites-window-scroller-row-wrapper" >
-							<ConnectedSubscriptionListItem
-								url={ site.feed_URL }
-								feedId={ +site.feed_ID }
-								siteId={ +site.blog_ID }
-								onLoad={ measure }
-							/>
+					<div
+						key={ key }
+						style={ style }
+						className="following-manage__sites-window-scroller-row-wrapper"
+					>
+						<ConnectedSubscriptionListItem
+							url={ site.feed_URL }
+							feedId={ +site.feed_ID }
+							siteId={ +site.blog_ID }
+							onLoad={ measure }
+						/>
 					</div>
 				) }
 			</CellMeasurer>
@@ -62,18 +72,18 @@ class SitesWindowScroller extends Component {
 	handleListMounted = registerChild => list => {
 		this.listRef = list;
 		registerChild( list ); // InfiniteLoader also wants a ref
-	}
+	};
 
 	handleResize = debounce( () => this.clearListCaches(), 50 );
 
 	clearListCaches = () => {
 		this.heightCache.clearAll();
 		this.listRef && this.listRef.forceUpdateGrid();
-	}
+	};
 
 	isRowLoaded = ( { index } ) => {
 		return !! this.props.sites[ index ];
-	}
+	};
 
 	// technically this function should return a promise that only resolves when the data is fetched.
 	// initially I had created a promise that would setInterval and see if the startIndex
@@ -108,23 +118,23 @@ class SitesWindowScroller extends Component {
 					loadMoreRows={ this.loadMoreRows }
 					rowCount={ remoteTotalCount }
 				>
-				{ ( { onRowsRendered, registerChild } ) => (
-					<WindowScroller ref={ this.props.windowScrollerRef }>
-						{ ( { height, scrollTop } ) => (
-							<List
-								autoHeight
-								height={ height }
-								rowCount={ remoteTotalCount }
-								rowHeight={ this.heightCache.rowHeight }
-								rowRenderer={ this.siteRowRenderer }
-								onRowsRendered={ onRowsRendered }
-								ref={ this.handleListMounted( registerChild ) }
-								scrollTop={ scrollTop }
-								width={ width }
-							/>
-						)}
-					</WindowScroller>
-				) }
+					{ ( { onRowsRendered, registerChild } ) => (
+						<WindowScroller ref={ this.props.windowScrollerRef }>
+							{ ( { height, scrollTop } ) => (
+								<List
+									autoHeight
+									height={ height }
+									rowCount={ remoteTotalCount }
+									rowHeight={ this.heightCache.rowHeight }
+									rowRenderer={ this.siteRowRenderer }
+									onRowsRendered={ onRowsRendered }
+									ref={ this.handleListMounted( registerChild ) }
+									scrollTop={ scrollTop }
+									width={ width }
+								/>
+							) }
+						</WindowScroller>
+					) }
 				</InfiniteLoader>
 			</div>
 		);

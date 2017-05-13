@@ -8,51 +8,50 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrack,
-} from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 
-const SearchEmptyContent = React.createClass( {
+class SearchEmptyContent extends React.Component {
+	static propTypes = {
+		query: React.PropTypes.string,
+	};
 
-	propTypes: {
-		query: React.PropTypes.string
-	},
-
-	shouldComponentUpdate: function() {
+	shouldComponentUpdate() {
 		return false;
-	},
+	}
 
-	recordAction: function() {
+	recordAction = () => {
 		recordAction( 'clicked_following_on_empty' );
 		recordGaEvent( 'Clicked Following on EmptyContent' );
 		recordTrack( 'calypso_reader_following_on_empty_search_stream_clicked' );
-	},
+	};
 
-	recordSecondaryAction: function() {
+	recordSecondaryAction = () => {
 		recordAction( 'clicked_discover_on_empty' );
 		recordGaEvent( 'Clicked Discover on EmptyContent' );
 		recordTrack( 'calypso_reader_discover_on_empty_search_stream_clicked' );
-	},
+	};
 
-	render: function() {
-		const action = ( <a
-			className="empty-content__action button is-primary"
-			onClick={ this.recordAction }
-			href="/">{ this.props.translate( 'Back to Following' ) }</a> );
+	render() {
+		const action = (
+			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
+				{ this.props.translate( 'Back to Following' ) }
+			</a>
+		);
 
 		const secondaryAction = isDiscoverEnabled()
-			? ( <a
-			className="empty-content__action button"
-			onClick={ this.recordSecondaryAction }
-			href="/discover">{ this.props.translate( 'Explore Discover' ) }</a> ) : null;
+			? <a
+					className="empty-content__action button"
+					onClick={ this.recordSecondaryAction }
+					href="/discover"
+				>
+					{ this.props.translate( 'Explore Discover' ) }
+				</a>
+			: null;
 
-		const message = this.props.translate(
-			'No posts found for {{query /}} for your language.',
-			{ components: { query: <em>{ this.props.query }</em> } }
-		);
+		const message = this.props.translate( 'No posts found for {{query /}} for your language.', {
+			components: { query: <em>{ this.props.query }</em> },
+		} );
 
 		return (
 			<EmptyContent
@@ -62,9 +61,9 @@ const SearchEmptyContent = React.createClass( {
 				secondaryAction={ secondaryAction }
 				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
 				illustrationWidth={ 500 }
-				/>
+			/>
 		);
 	}
-} );
+}
 
 export default localize( SearchEmptyContent );

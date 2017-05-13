@@ -46,7 +46,6 @@ import {
 	isJetpackSite
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
-import { isATEnabled } from 'lib/automated-transfer';
 import { abtest } from 'lib/abtest';
 
 /**
@@ -203,13 +202,10 @@ export class MySitesSidebar extends Component {
 
 	plugins() {
 		const { site } = this.props;
+		const addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
 		let pluginsLink = '/plugins' + this.props.siteSuffix;
-		let addPluginsLink;
 
-		if ( this.props.atEnabled ) {
-			addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
-		}
-
+		// TODO: we can probably rip this out
 		if ( ! config.isEnabled( 'manage/plugins' ) ) {
 			if ( ! site ) {
 				return null;
@@ -220,12 +216,14 @@ export class MySitesSidebar extends Component {
 			}
 		}
 
+		// checks for manage plugins capability across all sites
 		if ( ! this.props.canManagePlugins ) {
 			return null;
 		}
 
-		if ( ( this.props.siteId && this.props.isJetpack ) || ( ! this.props.siteId && this.props.hasJetpackSites ) ) {
-			addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
+		// if selectedSite and cannot manage, skip plugins section
+		if ( this.props.siteId && ! this.props.canUserManageOptions ) {
+			return null;
 		}
 
 		return (
@@ -257,7 +255,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( this.props.isJetpack && ! this.props.atEnabled ) {
+		if ( this.props.isJetpack && ! this.props.isSiteAutomatedTransfer ) {
 			return null;
 		}
 
@@ -594,13 +592,13 @@ function mapStateToProps( state ) {
 	const canManagePlugins = !! getSites( state ).some( ( s ) => (
 		( s.capabilities && s.capabilities.manage_options )
 	) );
+
 	// FIXME: Turn into dedicated selector
 	const hasJetpackSites = getSites( state ).some( s => s.jetpack );
 
 	const isPreviewShowing = getCurrentLayoutFocus( state ) === 'preview';
 
 	return {
-		atEnabled: isATEnabled( site ),
 		canManagePlugins,
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),

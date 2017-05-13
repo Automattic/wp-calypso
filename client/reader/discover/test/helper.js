@@ -16,7 +16,7 @@ import * as fixtures from './fixtures';
 describe( 'helper', () => {
 	const { discoverPost } = fixtures;
 	let helper;
-	useMockery( ( mockery ) => {
+	useMockery( mockery => {
 		mockery.registerMock( 'config', () => fixtures.discoverSiteId );
 		mockery.registerMock( 'lib/user/utils', { getLocaleSlug: () => 'en' } );
 	} );
@@ -42,7 +42,7 @@ describe( 'helper', () => {
 		} );
 
 		it( 'returns false if the post is undefined', () => {
-			assert.isFalse( helper.isDiscoverPost( ) );
+			assert.isFalse( helper.isDiscoverPost() );
 		} );
 	} );
 
@@ -56,11 +56,11 @@ describe( 'helper', () => {
 		} );
 
 		it( 'returns false if the post is undefined', () => {
-			assert.isFalse( helper.isDiscoverSitePick( ) );
+			assert.isFalse( helper.isDiscoverSitePick() );
 		} );
 	} );
 
-	describe( 'isInternalDiscoverPost', () =>{
+	describe( 'isInternalDiscoverPost', () => {
 		it( 'returns true if the post is internal to wpcom', () => {
 			assert.isTrue( helper.isInternalDiscoverPost( discoverPost ) );
 		} );
@@ -78,7 +78,7 @@ describe( 'helper', () => {
 		it( 'returns the permalink if the post is not internal', () => {
 			const permalink = get( fixtures.externalDiscoverPost, 'discover_metadata.permalink' );
 			assert.equal( permalink, helper.getSiteUrl( fixtures.externalDiscoverPost ) );
-		}	);
+		} );
 
 		it( 'returns undefined if the post is not a discover post', () => {
 			assert.isUndefined( helper.getSiteUrl( fixtures.nonDiscoverPost ) );
@@ -95,8 +95,8 @@ describe( 'helper', () => {
 		} );
 
 		it( 'returns false if the post is undefined', () => {
-			assert.isFalse( helper.hasSource( ) );
-		}	);
+			assert.isFalse( helper.hasSource() );
+		} );
 	} );
 
 	describe( 'getSourceData', () => {
@@ -110,7 +110,10 @@ describe( 'helper', () => {
 
 		it( 'returns blog id if the post is a discover site pick', () => {
 			const fixtureData = {
-				blogId: get( fixtures.discoverSiteFormat, 'discover_metadata.featured_post_wpcom_data.blog_id' ),
+				blogId: get(
+					fixtures.discoverSiteFormat,
+					'discover_metadata.featured_post_wpcom_data.blog_id'
+				),
 				postId: undefined,
 			};
 			assert.deepEqual( fixtureData, helper.getSourceData( fixtures.discoverSiteFormat ) );
@@ -119,7 +122,7 @@ describe( 'helper', () => {
 		it( 'returns the post and blog id', () => {
 			const fixtureData = {
 				blogId: get( discoverPost, 'discover_metadata.featured_post_wpcom_data.blog_id' ),
-				postId: get( discoverPost, 'discover_metadata.featured_post_wpcom_data.post_id' )
+				postId: get( discoverPost, 'discover_metadata.featured_post_wpcom_data.post_id' ),
 			};
 			assert.deepEqual( fixtureData, helper.getSourceData( discoverPost ) );
 		} );
@@ -147,5 +150,5 @@ describe( 'helper', () => {
 			const followUrl = helper.getSourceFollowUrl( fixtures.nonDiscoverPost );
 			assert.isUndefined( followUrl );
 		} );
-	}	);
+	} );
 } );

@@ -62,14 +62,14 @@ function getDistanceBetweenRecs() {
 		return MAX_DISTANCE_BETWEEN_RECS;
 	}
 	const distance = clamp(
-		Math.floor( ( Math.log( totalSubs ) * Math.LOG2E * 5 ) - 6 ),
+		Math.floor( Math.log( totalSubs ) * Math.LOG2E * 5 - 6 ),
 		MIN_DISTANCE_BETWEEN_RECS,
-		MAX_DISTANCE_BETWEEN_RECS );
+		MAX_DISTANCE_BETWEEN_RECS
+	);
 	return distance;
 }
 
 class ReaderStream extends React.Component {
-
 	static propTypes = {
 		postsStore: PropTypes.object.isRequired,
 		recommendationsStore: PropTypes.object,
@@ -88,7 +88,7 @@ class ReaderStream extends React.Component {
 		isDiscoverStream: PropTypes.bool,
 		shouldCombineCards: PropTypes.bool,
 		transformStreamItems: PropTypes.func,
-	}
+	};
 
 	static defaultProps = {
 		showPostHeader: true,
@@ -134,7 +134,7 @@ class ReaderStream extends React.Component {
 			updateCount: store.getUpdateCount(),
 			selectedPostKey: store.getSelectedPostKey(),
 			isFetchingNextPage: store.isFetchingNextPage && store.isFetchingNextPage(),
-			isLastPage: store.isLastPage()
+			isLastPage: store.isLastPage(),
 		};
 	}
 
@@ -142,7 +142,7 @@ class ReaderStream extends React.Component {
 
 	updateState = ( props = this.props ) => {
 		this.setState( this.getStateFromStores( props ) );
-	}
+	};
 
 	componentDidUpdate( prevProps, prevState ) {
 		if ( ! keysAreEqual( prevState.selectedPostKey, this.state.selectedPostKey ) ) {
@@ -160,7 +160,7 @@ class ReaderStream extends React.Component {
 		if ( this.state.selectedPostKey && history.scrollRestoration !== 'manual' ) {
 			this.scrollToSelectedPost( false );
 		}
-	}
+	};
 
 	scrollToSelectedPost( animate ) {
 		const HEADER_OFFSET = -80; // a fixed position header means we can't just scroll the element into view.
@@ -168,15 +168,15 @@ class ReaderStream extends React.Component {
 		if ( selectedNode ) {
 			const documentElement = document.documentElement;
 			selectedNode.focus();
-			const windowTop = ( window.pageYOffset || documentElement.scrollTop ) -
-				( documentElement.clientTop || 0 );
+			const windowTop =
+				( window.pageYOffset || documentElement.scrollTop ) - ( documentElement.clientTop || 0 );
 			const boundingClientRect = selectedNode.getBoundingClientRect();
 			const scrollY = parseInt( windowTop + boundingClientRect.top + HEADER_OFFSET, 10 );
 			if ( animate ) {
 				scrollTo( {
 					x: 0,
 					y: scrollY,
-					duration: 200
+					duration: 200,
 				} );
 			} else {
 				window.scrollTo( 0, scrollY );
@@ -186,7 +186,8 @@ class ReaderStream extends React.Component {
 
 	componentDidMount() {
 		this.props.postsStore.on( 'change', this.updateState );
-		this.props.recommendationsStore && this.props.recommendationsStore.on( 'change', this.updateState );
+		this.props.recommendationsStore &&
+			this.props.recommendationsStore.on( 'change', this.updateState );
 		this.props.resetCardExpansions();
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
@@ -202,7 +203,8 @@ class ReaderStream extends React.Component {
 
 	componentWillUnmount() {
 		this.props.postsStore.off( 'change', this.updateState );
-		this.props.recommendationsStore && this.props.recommendationsStore.off( 'change', this.updateState );
+		this.props.recommendationsStore &&
+			this.props.recommendationsStore.off( 'change', this.updateState );
 
 		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.off( 'move-selection-up', this.selectPrevItem );
@@ -218,10 +220,12 @@ class ReaderStream extends React.Component {
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.postsStore !== this.props.postsStore ) {
 			this.props.postsStore.off( 'change', this.updateState );
-			this.props.recommendationsStore && this.props.recommendationsStore.off( 'change', this.updateState );
+			this.props.recommendationsStore &&
+				this.props.recommendationsStore.off( 'change', this.updateState );
 
 			nextProps.postsStore.on( 'change', this.updateState );
-			nextProps.recommendationsStore && nextProps.recommendationsStore.on( 'change', this.updateState );
+			nextProps.recommendationsStore &&
+				nextProps.recommendationsStore.on( 'change', this.updateState );
 			this.props.resetCardExpansions();
 
 			this.updateState( nextProps );
@@ -235,7 +239,7 @@ class ReaderStream extends React.Component {
 			store: this.props.postsStore,
 			postKey: selectedPostKey,
 		} );
-	}
+	};
 
 	toggleLikeOnSelectedPost = () => {
 		const postKey = this.props.postsStore.getSelectedPostKey();
@@ -258,7 +262,7 @@ class ReaderStream extends React.Component {
 		if ( LikeHelper.shouldShowLikes( post ) ) {
 			this.toggleLikeAction( post.site_ID, post.ID );
 		}
-	}
+	};
 
 	toggleLikeAction( siteId, postId ) {
 		const liked = LikeStore.isPostLikedByCurrentUser( siteId, postId );
@@ -270,7 +274,9 @@ class ReaderStream extends React.Component {
 	}
 
 	isPostFullScreen() {
-		return !! window.location.pathname.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i );
+		return !! window.location.pathname.match(
+			/^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i
+		);
 	}
 
 	goToTop = () => {
@@ -279,7 +285,7 @@ class ReaderStream extends React.Component {
 		} else {
 			selectFirstItem( this.props.postsStore.id );
 		}
-	}
+	};
 
 	getVisibleItemIndexes() {
 		return this._list && this._list.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } );
@@ -341,7 +347,7 @@ class ReaderStream extends React.Component {
 				selectItem( this.props.postsStore.id, selectedPostKey );
 			}
 		}
-	}
+	};
 
 	selectPrevItem = () => {
 		// unlike selectNextItem, we don't want any magic here. Just move back an item if the user
@@ -350,9 +356,9 @@ class ReaderStream extends React.Component {
 		if ( this.state.selectedPostKey ) {
 			selectPrevItem( this.props.postsStore.id );
 		}
-	}
+	};
 
-	fetchNextPage = ( options ) => {
+	fetchNextPage = options => {
 		if ( this.props.postsStore.isLastPage() || this.props.postsStore.isFetchingNextPage() ) {
 			return;
 		}
@@ -360,7 +366,7 @@ class ReaderStream extends React.Component {
 			this.props.trackScrollPage( this.props.postsStore.getPage() + 1 );
 		}
 		fetchNextPage( this.props.postsStore.id );
-	}
+	};
 
 	showUpdates = () => {
 		this.props.onUpdatesShown();
@@ -371,111 +377,111 @@ class ReaderStream extends React.Component {
 		if ( this._list ) {
 			this._list.scrollToTop();
 		}
-	}
+	};
 
 	renderLoadingPlaceholders = () => {
 		const count = this.state.posts.length ? 2 : this.props.postsStore.getPerPage();
 
-		return times( count, ( i ) => {
+		return times( count, i => {
 			if ( this.props.placeholderFactory ) {
 				return this.props.placeholderFactory( { key: 'feed-post-placeholder-' + i } );
 			}
 			return <PostPlaceholder key={ 'feed-post-placeholder-' + i } />;
 		} );
-	}
+	};
 
-	getPostRef = ( postKey ) => {
+	getPostRef = postKey => {
 		return keyToString( postKey );
-	}
+	};
 
 	renderPost = ( postKey, index ) => {
 		const recStoreId = this.props.recommendationsStore && this.props.recommendationsStore.id;
 		const selectedPostKey = this.props.postsStore.getSelectedPostKey();
 		const isSelected = !! ( selectedPostKey &&
 			selectedPostKey.postId === postKey.postId &&
-			(
-				selectedPostKey.blogId === postKey.blogId ||
-				selectedPostKey.feedId === postKey.feedId
-			)
-		);
+			( selectedPostKey.blogId === postKey.blogId || selectedPostKey.feedId === postKey.feedId ) );
 
 		const itemKey = this.getPostRef( postKey );
-		const showPost = ( args ) => showSelectedPost( {
-			...args,
-			postKey: postKey.isCombination
-				? keyForPost( args )
-				: postKey,
-			store: this.props.postsStore
-		} );
+		const showPost = args =>
+			showSelectedPost( {
+				...args,
+				postKey: postKey.isCombination ? keyForPost( args ) : postKey,
+				store: this.props.postsStore,
+			} );
 
-		return <PostLifecycle
-			key={ itemKey }
-			ref={ itemKey }
-			isSelected={ isSelected }
-			handleClick={ showPost }
-			postKey={ postKey }
-			store={ this.props.postsStore }
-			suppressSiteNameLink={ this.props.suppressSiteNameLink }
-			showPostHeader={ this.props.showPostHeader }
-			showFollowInHeader={ this.props.showFollowInHeader }
-			showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
-			isDiscoverStream={ this.props.isDiscoverStream }
-			showSiteName={ this.props.showSiteNameOnCards }
-			followSource={ this.props.followSource }
-			blockedSites={ this.props.blockedSites }
-			index={ index }
-			selectedPostKey={ selectedPostKey }
-			recStoreId={ recStoreId }
-		/>;
-	}
+		return (
+			<PostLifecycle
+				key={ itemKey }
+				ref={ itemKey }
+				isSelected={ isSelected }
+				handleClick={ showPost }
+				postKey={ postKey }
+				store={ this.props.postsStore }
+				suppressSiteNameLink={ this.props.suppressSiteNameLink }
+				showPostHeader={ this.props.showPostHeader }
+				showFollowInHeader={ this.props.showFollowInHeader }
+				showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
+				isDiscoverStream={ this.props.isDiscoverStream }
+				showSiteName={ this.props.showSiteNameOnCards }
+				followSource={ this.props.followSource }
+				blockedSites={ this.props.blockedSites }
+				index={ index }
+				selectedPostKey={ selectedPostKey }
+				recStoreId={ recStoreId }
+			/>
+		);
+	};
 
 	render() {
 		const store = this.props.postsStore,
-			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 );
+			hasNoPosts = store.isLastPage() && ( ! this.state.posts || this.state.posts.length === 0 );
 		let body, showingStream;
 
 		if ( hasNoPosts || store.hasRecentError( 'invalid_tag' ) ) {
 			body = this.props.emptyContent;
 			if ( ! body && this.props.showDefaultEmptyContentIfMissing ) {
-				body = ( <EmptyContent /> );
+				body = <EmptyContent />;
 			}
 			showingStream = false;
 		} else {
-			body = ( <InfiniteList
-			ref={ ( c ) => this._list = c }
-			className="reader__content"
-			items={ this.state.items }
-			lastPage={ this.state.isLastPage }
-			fetchingNextPage={ this.state.isFetchingNextPage }
-			guessedItemHeight={ GUESSED_POST_HEIGHT }
-			fetchNextPage={ this.fetchNextPage }
-			getItemRef= { this.getPostRef }
-			renderItem={ this.renderPost }
-			renderLoadingPlaceholders={ this.renderLoadingPlaceholders } /> );
+			body = (
+				<InfiniteList
+					ref={ c => this._list = c }
+					className="reader__content"
+					items={ this.state.items }
+					lastPage={ this.state.isLastPage }
+					fetchingNextPage={ this.state.isFetchingNextPage }
+					guessedItemHeight={ GUESSED_POST_HEIGHT }
+					fetchNextPage={ this.fetchNextPage }
+					getItemRef={ this.getPostRef }
+					renderItem={ this.renderPost }
+					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
+				/>
+			);
 			showingStream = true;
 		}
 
 		return (
 			<ReaderMain className={ classnames( 'following', this.props.className ) }>
-				{ this.props.showMobileBackToSidebar && <MobileBackToSidebar>
-					<h1>{ this.props.listName }</h1>
-				</MobileBackToSidebar> }
+				{ this.props.showMobileBackToSidebar &&
+					<MobileBackToSidebar>
+						<h1>{ this.props.listName }</h1>
+					</MobileBackToSidebar> }
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
 				{ this.props.children }
 				{ body }
 				{ showingStream && store.isLastPage() && this.state.posts.length
 					? <div className="infinite-scroll-end" />
-					: null
-				}
+					: null }
 			</ReaderMain>
 		);
 	}
 }
 
 export default connect(
-	( state ) => ( {
-		blockedSites: getBlockedSites( state )
+	state => ( {
+		blockedSites: getBlockedSites( state ),
 	} ),
 	{ resetCardExpansions }
 )( ReaderStream );

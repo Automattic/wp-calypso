@@ -1,16 +1,20 @@
 .manage-purchase__info {
 	font-size: 13px;
-	padding: 16px;
+	padding: 0;
 
 	@include breakpoint ( ">660px" ) {
 		font-size: 14px;
-		padding: 16px 24px;
+		padding: 0;
 	}
 
 	&.is-expired {
 		background: $gray-light;
 
-		.manage-purchase__content {
+		.manage-purchase__header,
+		.manage-purchase__content,
+		.manage-purchase__detail-label,
+		.manage-purchase__detail,
+		.manage-purchase__detail .user {
 			opacity: .6;
 		}
 	}
@@ -24,15 +28,31 @@
 	}
 
 	&.is-placeholder {
-		.manage-purchase__content {
+		.manage-purchase__plan-icon,
+		.manage-purchase__title,
+		.manage-purchase__subtitle,
+		.manage-purchase__description,
+		.manage-purchase__settings-link,
+		.manage-purchase__detail-label,
+		.manage-purchase__detail {
 			@include placeholder( 23% );
 
 			display: block;
 		}
 
+		.manage-purchase__plan-icon {
+			height: 56px;
+			border-radius: 50%;
+		}
+
+		.manage-purchase__header {
+			border-bottom: 2px solid $gray-light;
+		}
+
 		.manage-purchase__subtitle,
 		.manage-purchase__title {
 			margin-bottom: 3px;
+			margin-left: 64px;
 		}
 
 		.manage-purchase__detail-label {
@@ -52,6 +72,7 @@
 		}
 
 		@include breakpoint( ">660px" ) {
+			.manage-purchase__description,
 			.manage-purchase__detail,
 			.manage-purchase__detail-label {
 				height: 40px;
@@ -70,65 +91,97 @@
 	}
 }
 
+.manage-purchase__header,
+.manage-purchase__content {
+	padding: 16px 24px;
+
+	@include breakpoint( "<660px" ) {
+		padding: 16px;
+	}
+}
+
 .manage-purchase__header {
 	overflow: auto;
-	padding: 0 0 16px 0;
+	border-bottom: 2px solid $blue-medium;
+
+	.is-personal & {
+		border-bottom: 2px solid $alert-yellow;
+	}
+
+	.is-premium & {
+		border-bottom: 2px solid $alert-green;
+	}
+
+	.is-business & {
+		border-bottom: 2px solid $alert-purple;
+	}
+}
+
+.manage-purchase__plan-icon {
+	margin: 0 12px 0 0;
+	max-width: 56px;
+	width: 56px;
+	float: left;
+
+	.gridicon {
+		box-sizing: border-box;
+		padding: 4px;
+		border-radius: 50%;
+		background: $blue-medium;
+		fill: $white;
+	}
+
+	.gridicons-themes {
+		border-radius: 8px;
+	}
 }
 
 .manage-purchase__title {
-	color: $gray-dark;
+	color: $blue-wordpress;
 	display: block;
 	font-size: 18px;
 	font-weight: 400;
+	clear: none;
 
 	@include breakpoint( ">660px" ) {
-		font-family: $serif;
-		font-size: 24px;
-		font-weight: 700;
+		font-size: 22px;
 		padding-right: 100px;
 	}
 }
 
-.manage-purchase__subtitle {
-	color: darken( $gray, 10% );
+.manage-purchase__price .plan-price {
+	clear: none;
+}
+
+.manage-purchase__description {
+	color: $gray-text-min;
 	display: block;
-	font-size: 11px;
-	text-transform: uppercase;
 }
 
 .manage-purchase__settings-link {
-	font-size: 13px;
-	line-height: 1.75em;
-
-	.gridicon {
-		position: relative;
-		top: 2px;
-		left: 3px;
-		color: $gray;
-	}
+	display: block;
+	margin-top: 16px;
 }
 
 .manage-purchase__meta,
 .manage-purchase__contact-support {
-	margin: 0 -24px;
 	padding: 0 24px;
 	border-top: 1px solid lighten( $gray, 30% );
 
 	@include breakpoint( "<660px" ) {
-		margin: 0 -16px;
 		padding: 0 16px;
 	}
 }
 
 .manage-purchase__meta {
 	display: flex;
-	margin-bottom: -16px;
+	margin: 0;
 	list-style: none;
 	overflow: auto;
 
 	@include breakpoint( "<660px" ) {
-		margin-bottom: 0;
 		flex-direction: column;
+		padding-bottom: 16px;
 	}
 
 	li {

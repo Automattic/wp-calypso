@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import closest from 'component-closest';
 import page from 'page';
 import url from 'url';
@@ -40,11 +41,9 @@ import viewport from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import { getTagStreamUrl } from 'reader/route';
 
-export const ReaderSidebar = React.createClass( {
-
-	mixins: [
-		observe( 'userSettings' ),
-	],
+export const ReaderSidebar = createReactClass( {
+	displayName: 'ReaderSidebar',
+	mixins: [ observe( 'userSettings' ) ],
 
 	getInitialState() {
 		return {};
@@ -108,91 +107,112 @@ export const ReaderSidebar = React.createClass( {
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
-				<SidebarMenu>
-					<SidebarHeading>{ this.props.translate( 'Streams' ) }</SidebarHeading>
-					<ul>
-						<li className={ ReaderSidebarHelper.itemLinkClass( '/', this.props.path, { 'sidebar-streams__following': true } ) }>
-							<a href="/">
-								<Gridicon icon="checkmark-circle" size={ 24 } />
-								<span className="menu-link-text">{ this.props.translate( 'Followed Sites' ) }</span>
-							</a>
-							<a href={ config.isEnabled( 'reader/following-manage-refresh' ) ? '/following/manage' : '/following/edit' }
-								className="sidebar__button">{ this.props.translate( 'Manage' ) }</a>
-						</li>
+					<SidebarMenu>
+						<SidebarHeading>{ this.props.translate( 'Streams' ) }</SidebarHeading>
+						<ul>
+							<li
+								className={ ReaderSidebarHelper.itemLinkClass( '/', this.props.path, {
+									'sidebar-streams__following': true,
+								} ) }
+							>
+								<a href="/">
+									<Gridicon icon="checkmark-circle" size={ 24 } />
+									<span className="menu-link-text">
+										{ this.props.translate( 'Followed Sites' ) }
+									</span>
+								</a>
+								<a
+									href={
+										config.isEnabled( 'reader/following-manage-refresh' )
+											? '/following/manage'
+											: '/following/edit'
+									}
+									className="sidebar__button"
+								>
+									{ this.props.translate( 'Manage' ) }
+								</a>
+							</li>
 
-						<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
+							<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
 
-						{
-							isDiscoverEnabled()
-							? (
-									<li className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, { 'sidebar-streams__discover': true } ) }>
+							{ isDiscoverEnabled()
+								? <li
+										className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, {
+											'sidebar-streams__discover': true,
+										} ) }
+									>
 										<a href="/discover">
 											<Gridicon icon="my-sites" />
 											<span className="menu-link-text">{ this.props.translate( 'Discover' ) }</span>
 										</a>
 									</li>
-								) : null
-						}
+								: null }
 
-						{ config.isEnabled( 'reader/search' ) &&
-							(
-								<li className={ ReaderSidebarHelper.itemLinkClass( '/read/search', this.props.path, { 'sidebar-streams__search': true } ) }>
+							{ config.isEnabled( 'reader/search' ) &&
+								<li
+									className={ ReaderSidebarHelper.itemLinkClass( '/read/search', this.props.path, {
+										'sidebar-streams__search': true,
+									} ) }
+								>
 									<a href="/read/search">
 										<Gridicon icon="search" size={ 24 } />
 										<span className="menu-link-text">{ this.props.translate( 'Search' ) }</span>
 									</a>
-								</li>
-							)
-						}
+								</li> }
 
-						<li className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', this.props.path, { 'sidebar-activity__likes': true } ) }>
-							<a href="/activities/likes">
-								<Gridicon icon="star" size={ 24 } />
-								<span className="menu-link-text">{ this.props.translate( 'My Likes' ) }</span>
-							</a>
-						</li>
-					</ul>
-				</SidebarMenu>
+							<li
+								className={ ReaderSidebarHelper.itemLinkClass(
+									'/activities/likes',
+									this.props.path,
+									{ 'sidebar-activity__likes': true }
+								) }
+							>
+								<a href="/activities/likes">
+									<Gridicon icon="star" size={ 24 } />
+									<span className="menu-link-text">{ this.props.translate( 'My Likes' ) }</span>
+								</a>
+							</li>
+						</ul>
+					</SidebarMenu>
 
-				<QueryReaderLists />
-				<QueryReaderTeams />
-				{ this.props.subscribedLists && this.props.subscribedLists.length
-				? <ReaderSidebarLists
-						lists={ this.props.subscribedLists }
+					<QueryReaderLists />
+					<QueryReaderTeams />
+					{ this.props.subscribedLists && this.props.subscribedLists.length
+						? <ReaderSidebarLists
+								lists={ this.props.subscribedLists }
+								path={ this.props.path }
+								isOpen={ this.props.isListsOpen }
+								onClick={ this.props.toggleListsVisibility }
+								currentListOwner={ this.state.currentListOwner }
+								currentListSlug={ this.state.currentListSlug }
+							/>
+						: null }
+					<ReaderSidebarTags
+						tags={ this.props.followedTags }
 						path={ this.props.path }
-						isOpen={ this.props.isListsOpen }
-						onClick={ this.props.toggleListsVisibility }
-						currentListOwner={ this.state.currentListOwner }
-						currentListSlug={ this.state.currentListSlug }
+						isOpen={ this.props.isTagsOpen }
+						onClick={ this.props.toggleTagsVisibility }
+						onFollowTag={ this.highlightNewTag }
+						currentTag={ this.state.currentTag }
 					/>
-				: null
-				}
-				<ReaderSidebarTags
-					tags={ this.props.followedTags }
-					path={ this.props.path }
-					isOpen={ this.props.isTagsOpen }
-					onClick={ this.props.toggleTagsVisibility }
-					onFollowTag={ this.highlightNewTag }
-					currentTag={ this.state.currentTag } />
-			</SidebarRegion>
+				</SidebarRegion>
 
-			{ this.props.shouldRenderAppPromo &&
-				<div className="sidebar__app-promo">
-					<AppPromo location="reader" locale={ userUtils.getLocaleSlug() } />
-				</div>
-			}
+				{ this.props.shouldRenderAppPromo &&
+					<div className="sidebar__app-promo">
+						<AppPromo location="reader" locale={ userUtils.getLocaleSlug() } />
+					</div> }
 
 				<SidebarFooter />
 			</Sidebar>
 		);
-	}
+	},
 } );
 
 ReaderSidebar.defaultProps = {
-	translate: identity
+	translate: identity,
 };
 
-export const shouldRenderAppPromo = ( options = { } ) => {
+export const shouldRenderAppPromo = ( options = {} ) => {
 	// Until the user settings have loaded we'll indicate the user is is a
 	// desktop app user because until the user settings have loaded
 	// userSettings.getSetting( 'is_desktop_app_user' ) will return false which
@@ -205,8 +225,9 @@ export const shouldRenderAppPromo = ( options = { } ) => {
 		isViewportMobile = viewport.isMobile(),
 		isUserLocaleEnglish = 'en' === userUtils.getLocaleSlug(),
 		isDesktopPromoConfiguredToRun = config.isEnabled( 'desktop-promo' ),
-		isUserDesktopAppUser = haveUserSettingsLoaded || userSettings.getSetting( 'is_desktop_app_user' ),
-		isUserOnChromeOs = /\bCrOS\b/.test( navigator.userAgent )
+		isUserDesktopAppUser = haveUserSettingsLoaded ||
+			userSettings.getSetting( 'is_desktop_app_user' ),
+		isUserOnChromeOs = /\bCrOS\b/.test( navigator.userAgent ),
 	} = options;
 
 	return every( [
@@ -215,12 +236,12 @@ export const shouldRenderAppPromo = ( options = { } ) => {
 		! isViewportMobile,
 		! isUserOnChromeOs,
 		isDesktopPromoConfiguredToRun,
-		! isUserDesktopAppUser
+		! isUserDesktopAppUser,
 	] );
 };
 
 export default connect(
-	( state ) => {
+	state => {
 		return {
 			isListsOpen: state.ui.reader.sidebar.isListsOpen,
 			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,
@@ -229,11 +250,14 @@ export default connect(
 			teams: getReaderTeams( state ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			toggleListsVisibility: toggleReaderSidebarLists,
-			toggleTagsVisibility: toggleReaderSidebarTags,
-			setNextLayoutFocus,
-		}, dispatch );
+	dispatch => {
+		return bindActionCreators(
+			{
+				toggleListsVisibility: toggleReaderSidebarLists,
+				toggleTagsVisibility: toggleReaderSidebarTags,
+				setNextLayoutFocus,
+			},
+			dispatch
+		);
 	}
 )( localize( ReaderSidebar ) );

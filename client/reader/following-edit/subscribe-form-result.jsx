@@ -17,9 +17,7 @@ import FollowButton from 'blocks/follow-button/button';
 import SiteIcon from 'blocks/site-icon';
 
 const FollowingEditSubscribeFormResult = ( { url, isValid, onFollowToggle, translate } ) => {
-	const message = ! isValid
-		? translate( 'Not a valid URL' )
-		: translate( 'Follow this site' );
+	const message = ! isValid ? translate( 'Not a valid URL' ) : translate( 'Follow this site' );
 	const classes = classNames( 'is-search-result', { 'is-valid': isValid } );
 
 	return (
@@ -28,7 +26,11 @@ const FollowingEditSubscribeFormResult = ( { url, isValid, onFollowToggle, trans
 			<Title>{ url }</Title>
 			<Description>{ message }</Description>
 			<Actions>
-				<FollowButton disabled={ ! isValid } following={ false } onFollowToggle={ onFollowToggle } />
+				<FollowButton
+					disabled={ ! isValid }
+					following={ false }
+					onFollowToggle={ onFollowToggle }
+				/>
 			</Actions>
 		</ListItem>
 	);
@@ -37,7 +39,7 @@ const FollowingEditSubscribeFormResult = ( { url, isValid, onFollowToggle, trans
 FollowingEditSubscribeFormResult.propTypes = {
 	url: React.PropTypes.string.isRequired,
 	isValid: React.PropTypes.bool.isRequired,
-	onFollowToggle: React.PropTypes.func.isRequired
+	onFollowToggle: React.PropTypes.func.isRequired,
 };
 
 export default localize( FollowingEditSubscribeFormResult );

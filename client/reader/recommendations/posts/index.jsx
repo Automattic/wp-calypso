@@ -11,23 +11,22 @@ import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import DocumentHead from 'components/data/document-head';
 
-var RecommendationPostsStream = React.createClass( {
-
-	render: function() {
+class RecommendationPostsStream extends React.Component {
+	render() {
 		const title = this.props.translate( 'Recommended Posts' );
-		const emptyContent = ( <EmptyContent /> );
+		const emptyContent = <EmptyContent />;
 
 		return (
-			<Stream { ...this.props }
-				listName = { title }
-				emptyContent = { emptyContent }
-				showFollowInHeader = { true }
+			<Stream
+				{ ...this.props }
+				listName={ title }
+				emptyContent={ emptyContent }
+				showFollowInHeader={ true }
 			>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 			</Stream>
 		);
 	}
-
-} );
+}
 
 export default localize( RecommendationPostsStream );

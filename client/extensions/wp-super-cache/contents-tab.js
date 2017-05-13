@@ -21,6 +21,10 @@ import {
 } from 'state/notices/actions';
 import { generateStats } from './state/stats/actions';
 import {
+	getSiteTitle,
+	isJetpackSiteMultiSite,
+} from 'state/sites/selectors';
+import {
 	getStats,
 	isGeneratingStats,
 	isStatsGenerationSuccessful,
@@ -32,6 +36,8 @@ class ContentsTab extends Component {
 		handleDeleteCache: PropTypes.func.isRequired,
 		isDeleting: PropTypes.bool,
 		isMultisite: PropTypes.bool,
+		site: PropTypes.object.isRequired,
+		siteTitle: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -39,6 +45,7 @@ class ContentsTab extends Component {
 		fields: {},
 		isDeleting: false,
 		isMultisite: false,
+		siteTitle: '',
 	};
 
 	state = {
@@ -64,13 +71,13 @@ class ContentsTab extends Component {
 
 		const {
 			isSuccessful,
-			site,
+			siteTitle,
 			translate,
 		} = this.props;
 
 		if ( isSuccessful ) {
 			this.props.successNotice(
-				translate( 'Cache stats regenerated on %(site)s.', { args: { site: site && site.title } } ),
+				translate( 'Cache stats regenerated on %(site)s.', { args: { site: siteTitle } } ),
 				{ id: 'wpsc-cache-stats' }
 			);
 		} else {
@@ -246,10 +253,14 @@ const connectComponent = connect(
 		const stats = getStats( state, siteId );
 		const isGenerating = isGeneratingStats( state, siteId );
 		const isSuccessful = isStatsGenerationSuccessful( state, siteId );
+		const isMultisite = isJetpackSiteMultiSite( state, siteId );
+		const siteTitle = getSiteTitle( state, siteId );
 
 		return {
 			isGenerating,
+			isMultisite,
 			isSuccessful,
+			siteTitle,
 			stats,
 		};
 	},

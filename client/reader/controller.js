@@ -14,14 +14,17 @@ import { abtest } from 'lib/abtest';
 import route from 'lib/route';
 import feedLookup from 'lib/feed-lookup';
 import feedStreamFactory from 'lib/feed-stream-store';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from './controller-helper';
+import {
+	ensureStoreLoading,
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+	setPageTitle,
+} from './controller-helper';
 import FeedError from 'reader/feed-error';
 import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
 import StreamComponent from 'reader/following/main';
-import {
-	getPrettyFeedUrl,
-	getPrettySiteUrl
-} from 'reader/route';
+import { getPrettyFeedUrl, getPrettySiteUrl } from 'reader/route';
 import { recordTrack } from 'reader/stats';
 import { preload } from 'sections-preload';
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -177,7 +180,7 @@ const exported = {
 					analyticsPageTitle,
 					mcKey
 				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
+				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 			} ),
 			'primary',
 			context.store
@@ -208,11 +211,12 @@ const exported = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_blog_preview', {
-			feed_id: context.params.feed_id
+			feed_id: context.params.feed_id,
 		} );
 
 		renderWithReduxStore(
-			<AsyncLoad require="reader/feed-stream"
+			<AsyncLoad
+				require="reader/feed-stream"
 				key={ 'feed-' + context.params.feed_id }
 				postsStore={ feedStore }
 				feedId={ +context.params.feed_id }
@@ -243,11 +247,12 @@ const exported = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_blog_preview', {
-			blog_id: context.params.blog_id
+			blog_id: context.params.blog_id,
 		} );
 
 		renderWithReduxStore(
-			<AsyncLoad require="reader/site-stream"
+			<AsyncLoad
+				require="reader/site-stream"
 				key={ 'site-' + context.params.blog_id }
 				postsStore={ feedStore }
 				siteId={ +context.params.blog_id }
@@ -281,10 +286,11 @@ const exported = {
 		setPageTitle( context, 'Automattic' );
 
 		renderWithReduxStore(
-			<AsyncLoad require="reader/team/main"
-				key='read-a8c'
-				className='is-a8c'
-				listName='Automattic'
+			<AsyncLoad
+				require="reader/team/main"
+				key="read-a8c"
+				className="is-a8c"
+				listName="Automattic"
 				postsStore={ feedStore }
 				trackScrollPage={ trackScrollPage.bind(
 					null,
@@ -299,22 +305,22 @@ const exported = {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };
 
 export const {
-    initAbTests,
-    prettyRedirects,
-    legacyRedirects,
-    updateLastRoute,
-    incompleteUrlRedirects,
-    preloadReaderBundle,
-    loadSubscriptions,
-    sidebar,
-    unmountSidebar,
-    following,
-    feedDiscovery,
-    feedListing,
-    blogListing,
-    readA8C
+	initAbTests,
+	prettyRedirects,
+	legacyRedirects,
+	updateLastRoute,
+	incompleteUrlRedirects,
+	preloadReaderBundle,
+	loadSubscriptions,
+	sidebar,
+	unmountSidebar,
+	following,
+	feedDiscovery,
+	feedListing,
+	blogListing,
+	readA8C,
 } = exported;

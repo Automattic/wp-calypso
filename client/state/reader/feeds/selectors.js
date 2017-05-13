@@ -19,7 +19,7 @@ function isStale( state, feedId ) {
 	if ( ! lastFetched ) {
 		return false;
 	}
-	return lastFetched <= ( Date.now() - DAY_IN_MILLIS );
+	return lastFetched <= Date.now() - DAY_IN_MILLIS;
 }
 
 /**
@@ -32,4 +32,8 @@ function isStale( state, feedId ) {
 
 export function getFeed( state, feedId ) {
 	return state.reader.feeds.items[ feedId ];
+}
+
+export function getFeeds( state ) {
+	return state.reader.feeds.items;
 }

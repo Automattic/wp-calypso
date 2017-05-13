@@ -8,8 +8,8 @@ import { map } from 'lodash';
  * Internal dependencies
  */
 import ConnectedReaderSubscriptionListItem from 'reader/following-manage/connected-subscription-list-item';
+import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 import Card from 'components/card';
-
 
 const sites = {
 	'longreads': { siteId: 70135762 },
@@ -33,6 +33,7 @@ export default class ReaderSubscriptionListItemExample extends PureComponent {
 							{ ...site }
 						/>
 				) }
+				<ReaderSubscriptionListItemPlaceholder />
 			</Card>
 
 		);

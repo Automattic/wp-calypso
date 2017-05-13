@@ -14,13 +14,7 @@ import {
 } from 'reader/stats';
 
 function ReaderFollowButton( props ) {
-	const {
-		onFollowToggle,
-		railcar,
-		followSource,
-		isButtonOnly,
-		siteUrl,
-	} = props;
+	const { onFollowToggle, railcar, followSource, isButtonOnly, siteUrl } = props;
 
 	function recordFollowToggle( isFollowing ) {
 		if ( isFollowing ) {
@@ -35,14 +29,10 @@ function ReaderFollowButton( props ) {
 	}
 
 	if ( isButtonOnly ) {
-		return (
-			<FollowButton { ...props } onFollowToggle={ recordFollowToggle } />
-		);
+		return <FollowButton { ...props } onFollowToggle={ recordFollowToggle } />;
 	}
 
-	return (
-		<FollowButtonContainer { ...props } onFollowToggle={ recordFollowToggle } />
-	);
+	return <FollowButtonContainer { ...props } onFollowToggle={ recordFollowToggle } />;
 }
 
 ReaderFollowButton.propTypes = {

@@ -2,15 +2,7 @@
  * External Dependencies
  */
 import { combineReducers } from 'redux';
-import {
-	assign,
-	keyBy,
-	map,
-	omit,
-	omitBy,
-	reduce,
-	trim,
- } from 'lodash';
+import { assign, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -21,7 +13,7 @@ import {
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
 	DESERIALIZE,
-	SERIALIZE
+	SERIALIZE,
 } from 'state/action-types';
 
 import { createReducer, isValidStateWithSchema } from 'state/utils';
@@ -33,7 +25,7 @@ const actionMap = {
 	[ DESERIALIZE ]: handleDeserialize,
 	[ READER_SITE_REQUEST_SUCCESS ]: handleRequestSuccess,
 	[ READER_SITE_REQUEST_FAILURE ]: handleRequestFailure,
-	[ READER_SITE_UPDATE ]: handleSiteUpdate
+	[ READER_SITE_UPDATE ]: handleSiteUpdate,
 };
 
 function defaultHandler( state ) {
@@ -54,12 +46,15 @@ function handleDeserialize( state ) {
 
 function handleRequestFailure( state, action ) {
 	// new object proceeds current state to prevent new errors from overwriting existing values
-	return assign( {
-		[ action.payload.ID ]: {
-			ID: action.payload.ID,
-			is_error: true
-		}
-	}, state );
+	return assign(
+		{
+			[ action.payload.ID ]: {
+				ID: action.payload.ID,
+				is_error: true,
+			},
+		},
+		state
+	);
 }
 
 function adaptSite( attributes ) {
@@ -91,7 +86,7 @@ function handleRequestSuccess( state, action ) {
 	const site = adaptSite( action.payload );
 	// TODO do we need to normalize site entries somehow?
 	return assign( {}, state, {
-		[ action.payload.ID ]: site
+		[ action.payload.ID ]: site,
 	} );
 }
 
@@ -109,7 +104,7 @@ export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_SITE_REQUEST:
 			return assign( {}, state, {
-				[ action.payload.ID ]: true
+				[ action.payload.ID ]: true,
 			} );
 		case READER_SITE_REQUEST_SUCCESS:
 		case READER_SITE_REQUEST_FAILURE:
@@ -122,19 +117,26 @@ export function queuedRequests( state = {}, action ) {
 	return state;
 }
 
-export const lastFetched = createReducer( {}, {
-	[ READER_SITE_REQUEST_SUCCESS ]: ( state, action ) => ( {
-		...state,
-		[ action.payload.ID ]: Date.now()
-	} ),
-	[ READER_SITE_UPDATE ]: ( state, action ) => {
-		const updates = reduce( action.payload, ( memo, site ) => {
-			memo[ site.ID ] = Date.now();
-			return memo;
-		}, {} );
-		return assign( {}, state, updates );
+export const lastFetched = createReducer(
+	{},
+	{
+		[ READER_SITE_REQUEST_SUCCESS ]: ( state, action ) => ( {
+			...state,
+			[ action.payload.ID ]: Date.now(),
+		} ),
+		[ READER_SITE_UPDATE ]: ( state, action ) => {
+			const updates = reduce(
+				action.payload,
+				( memo, site ) => {
+					memo[ site.ID ] = Date.now();
+					return memo;
+				},
+				{}
+			);
+			return assign( {}, state, updates );
+		},
 	}
-} );
+);
 
 export default combineReducers( {
 	items,

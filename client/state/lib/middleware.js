@@ -20,7 +20,7 @@ import {
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
 import { isNotificationsOpen } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
 
@@ -53,10 +53,14 @@ if ( desktopEnabled ) {
  */
 let sitesListeners = [];
 
-const updateSelectedSiteForSitesList = ( dispatch, action, getState ) => {
-	const state = getState();
-	const selectedSiteId = getSelectedSiteId( state );
-	sites.select( selectedSiteId );
+/**
+ * Sets the selected site id for SitesList
+ *
+ * @param {function} dispatch - redux dispatch function
+ * @param {number} siteId     - the selected site id
+ */
+const updateSelectedSiteIdForSitesList = ( dispatch, { siteId } ) => {
+	sites.select( siteId );
 };
 
 /**
@@ -80,13 +84,10 @@ const updateSelectedSiteForAnalytics = ( dispatch, action, getState ) => {
  * Sets the selectedSiteId for lib/cart/store
  *
  * @param {function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- * @param {function} getState - redux getState function
+ * @param {number}   siteId   - the selected siteId
  */
-const updateSelectedSiteForCart = ( dispatch, action, getState ) => {
-	const state = getState();
-	const selectedSiteId = getSelectedSiteId( state );
-	cartStore.setSelectedSiteId( selectedSiteId );
+const updateSelectedSiteForCart = ( dispatch, { siteId } ) => {
+	cartStore.setSelectedSiteId( siteId );
 };
 
 /**
@@ -159,13 +160,15 @@ const handler = ( dispatch, action, getState ) => {
 			return updateNotificationsOpenForKeyboardShortcuts( dispatch, action, getState );
 
 		case SELECTED_SITE_SET:
+			//let this fall through
+			updateSelectedSiteIdForSitesList( dispatch, action );
+			updateSelectedSiteForCart( dispatch, action );
+
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
 		case SITES_UPDATE:
 			// Wait a tick for the reducer to update the state tree
 			setTimeout( () => {
-				updateSelectedSiteForSitesList( dispatch, action, getState );
-				updateSelectedSiteForCart( dispatch, action, getState );
 				if ( action.type === SITES_RECEIVE ) {
 					fireChangeListeners();
 				}

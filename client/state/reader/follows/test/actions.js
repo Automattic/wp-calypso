@@ -11,7 +11,9 @@ import { expect } from 'chai';
 import {
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
+	READER_FOLLOW_ERROR,
 } from 'state/action-types';
+import { recordFollowError } from '../actions';
 
 describe( 'actions', () => {
 	let recordFollow, recordUnfollow;
@@ -53,6 +55,16 @@ describe( 'actions', () => {
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_RECORD_UNFOLLOW,
 				payload: { url: 'http://discover.wordpress.com' }
+			} );
+		} );
+	} );
+
+	describe( '#recordFollowError', () => {
+		it( 'should dispatch an action on follow error', () => {
+			const action = recordFollowError( 'http://discover.wordpress.com', 'invalid_feed' );
+			expect( action ).to.deep.equal( {
+				type: READER_FOLLOW_ERROR,
+				payload: { feedUrl: 'http://discover.wordpress.com', error: 'invalid_feed' }
 			} );
 		} );
 	} );
