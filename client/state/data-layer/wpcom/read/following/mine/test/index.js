@@ -22,7 +22,11 @@ import {
 	resetSyncingFollows,
 	updateSeenOnFollow,
 } from '../';
-import { receiveFollows as receiveFollowsAction, follow, syncComplete } from 'state/reader/follows/actions';
+import {
+	receiveFollows as receiveFollowsAction,
+	follow,
+	syncComplete,
+} from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
 
@@ -42,8 +46,8 @@ const successfulApiResponse = freeze( {
 			blog_ID: '64146350',
 			URL: 'https://fivethirtyeight.com/',
 			date_subscribed: '2016-01-12T03:55:45+00:00',
-		}
-	]
+		},
+	],
 } );
 
 describe( 'get follow subscriptions', () => {
@@ -73,14 +77,16 @@ describe( 'get follow subscriptions', () => {
 			requestPage( { dispatch }, action, next );
 
 			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith( http( {
-				method: 'GET',
-				path: '/read/following/mine',
-				apiVersion: '1.2',
-				query: { page: 1, number: 200, meta: '' },
-				onSuccess: action,
-				onError: action,
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				http( {
+					method: 'GET',
+					path: '/read/following/mine',
+					apiVersion: '1.2',
+					query: { page: 1, number: 200, meta: '' },
+					onSuccess: action,
+					onError: action,
+				} )
+			);
 		} );
 
 		it( 'should pass the original action along the middleware chain', () => {
@@ -130,10 +136,10 @@ describe( 'get follow subscriptions', () => {
 								ID: 5,
 								is_following: true,
 								feed_URL: 'http://example.com',
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			} );
 
 			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction, next );
@@ -146,14 +152,15 @@ describe( 'get follow subscriptions', () => {
 			} );
 
 			expect( dispatch ).to.have.been.calledTwice;
-			expect( dispatch ).to.have.been.calledWith( receiveFollowsAction( {
-				follows: [],
-				totalCount: 10
-			} ) );
-			expect( dispatch ).to.have.been.calledWith( syncComplete( [
-				'http://readerpostcards.wordpress.com',
-				'https://fivethirtyeight.com/',
-			] ) );
+			expect( dispatch ).to.have.been.calledWith(
+				receiveFollowsAction( {
+					follows: [],
+					totalCount: 10,
+				} )
+			);
+			expect( dispatch ).to.have.been.calledWith(
+				syncComplete( [ 'http://readerpostcards.wordpress.com', 'https://fivethirtyeight.com/' ] )
+			);
 		} );
 
 		it( 'should catch a feed followed during the sync', () => {
@@ -171,16 +178,20 @@ describe( 'get follow subscriptions', () => {
 								ID: 6,
 								is_following: true,
 								feed_URL: 'http://feed.example.com',
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			} );
 
 			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction, next );
 			receivePage( { dispatch: ignoredDispatch }, action, next, successfulApiResponse );
 
-			updateSeenOnFollow( { dispatch: ignoredDispatch }, follow( 'http://feed.example.com' ), next );
+			updateSeenOnFollow(
+				{ dispatch: ignoredDispatch },
+				follow( 'http://feed.example.com' ),
+				next
+			);
 
 			receivePage( { dispatch, getState }, action, next, {
 				number: 0,
@@ -190,16 +201,20 @@ describe( 'get follow subscriptions', () => {
 			} );
 
 			expect( dispatch ).to.have.been.calledTwice;
-			expect( dispatch ).to.have.been.calledWith( receiveFollowsAction( {
-				follows: [],
-				totalCount: 10
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				receiveFollowsAction( {
+					follows: [],
+					totalCount: 10,
+				} )
+			);
 
-			expect( dispatch ).to.have.been.calledWith( syncComplete( [
-				'http://readerpostcards.wordpress.com',
-				'https://fivethirtyeight.com/',
-				'http://feed.example.com',
-			] ) );
+			expect( dispatch ).to.have.been.calledWith(
+				syncComplete( [
+					'http://readerpostcards.wordpress.com',
+					'https://fivethirtyeight.com/',
+					'http://feed.example.com',
+				] )
+			);
 		} );
 	} );
 
@@ -248,7 +263,7 @@ describe( 'get follow subscriptions', () => {
 					URL: 'https://fivethirtyeight.com/',
 					feed_URL: 'https://fivethirtyeight.com/',
 					date_subscribed: Date.parse( '2016-01-12T03:55:45+00:00' ),
-				}
+				},
 			];
 			expect( subscriptionsFromApi( successfulApiResponse ) ).eql( transformedSubs );
 		} );

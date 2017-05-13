@@ -6,23 +6,23 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import {
-	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL
-} from 'state/action-types';
+import { READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { unsubscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 
 export function requestCommentEmailSubscription( { dispatch }, action, next ) {
-	dispatch( http( {
-		method: 'POST',
-		path: `/read/site/${ action.payload.blogId }/comment_email_subscriptions/new`,
-		body: {}, // have to have an empty body to make wpcom-http happy
-		apiVersion: '1.2',
-		onSuccess: action,
-		onFailure: action,
-	} ) );
+	dispatch(
+		http( {
+			method: 'POST',
+			path: `/read/site/${ action.payload.blogId }/comment_email_subscriptions/new`,
+			body: {}, // have to have an empty body to make wpcom-http happy
+			apiVersion: '1.2',
+			onSuccess: action,
+			onFailure: action,
+		} )
+	);
 	next( action );
 }
 
@@ -46,6 +46,6 @@ export default {
 			requestCommentEmailSubscription,
 			receiveCommentEmailSubscription,
 			receiveCommentEmailSubscriptionError
-		)
-	]
+		),
+	],
 };

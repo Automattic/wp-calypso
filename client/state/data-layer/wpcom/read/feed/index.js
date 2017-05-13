@@ -19,14 +19,16 @@ export function initiateFeedSearch( store, action, next ) {
 	}
 
 	const path = '/read/feed';
-	store.dispatch( http( {
-		path,
-		method: 'GET',
-		apiVersion: '1.1',
-		query: { q: action.payload.query, offset: action.payload.offset },
-		onSuccess: action,
-		onFailure: action,
-	} ) );
+	store.dispatch(
+		http( {
+			path,
+			method: 'GET',
+			apiVersion: '1.1',
+			query: { q: action.payload.query, offset: action.payload.offset },
+			onSuccess: action,
+			onFailure: action,
+		} )
+	);
 
 	next( action );
 }
@@ -38,9 +40,7 @@ export function receiveFeeds( store, action, next, apiResponse ) {
 	} ) );
 
 	const total = apiResponse.total > 200 ? 200 : apiResponse.total;
-	store.dispatch(
-		receiveFeedSearch( action.payload.query, feeds, total )
-	);
+	store.dispatch( receiveFeedSearch( action.payload.query, feeds, total ) );
 }
 
 export function receiveError( store, action, next, error ) {
@@ -49,16 +49,13 @@ export function receiveError( store, action, next, error ) {
 	}
 
 	const errorText = translate( 'Could not get results for query: %(query)s', {
-		args: { query: action.payload.query }
+		args: { query: action.payload.query },
 	} );
 	store.dispatch( errorNotice( errorText ) );
 }
 
 export default {
-	[ READER_FEED_SEARCH_REQUEST ]: [ dispatchRequest(
-			initiateFeedSearch,
-			receiveFeeds,
-			receiveError
-		) ],
+	[ READER_FEED_SEARCH_REQUEST ]: [
+		dispatchRequest( initiateFeedSearch, receiveFeeds, receiveError ),
+	],
 };
-

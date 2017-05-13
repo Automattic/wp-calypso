@@ -15,17 +15,19 @@ import { follow } from 'state/reader/follows/actions';
 
 export function requestUnfollow( { dispatch, getState }, action, next ) {
 	const { payload: { feedUrl } } = action;
-	dispatch( http( {
-		method: 'POST',
-		path: '/read/following/mine/delete',
-		apiVersion: '1.1',
-		body: {
-			url: feedUrl,
-			source: config( 'readerFollowingSource' )
-		},
-		onSuccess: action,
-		onFailure: action,
-	} ) );
+	dispatch(
+		http( {
+			method: 'POST',
+			path: '/read/following/mine/delete',
+			apiVersion: '1.1',
+			body: {
+				url: feedUrl,
+				source: config( 'readerFollowingSource' ),
+			},
+			onSuccess: action,
+			onFailure: action,
+		} )
+	);
 	next( action );
 }
 
@@ -47,5 +49,5 @@ export function unfollowError( { dispatch }, action, next ) {
 }
 
 export default {
-	[ READER_UNFOLLOW ]: [ dispatchRequest( requestUnfollow, receiveUnfollow, unfollowError ) ]
+	[ READER_UNFOLLOW ]: [ dispatchRequest( requestUnfollow, receiveUnfollow, unfollowError ) ],
 };
