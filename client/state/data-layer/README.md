@@ -135,11 +135,6 @@ const syncChanges = ( { dispatch, getState }, action, next ) => {
 			// next() instead of dispatch()
 			next( reticulateSpline( oldSpline ) );
 		} );
-
-	// pass along action to reducers
-	// and bypass all further
-	// data-layer middleware
-	next( action );
 };
 
 export default {
