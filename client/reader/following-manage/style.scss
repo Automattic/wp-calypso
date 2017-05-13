@@ -1,4 +1,3 @@
-
 .following-manage__header {
 	font-weight: 600;
 	margin: 14px 0 14px 14px;
@@ -202,15 +201,13 @@
 	}
 }
 
-.following-manage__search-results.is-empty {
+.following-manage__search-results.is-empty,
+.following-manage__subscriptions-list.is-empty {
 	color: darken( $gray, 10% );
 }
 
-.following-manage__subscriptions-list.is-empty {
-	color: darken( $gray, 10% );
-	p {
-		text-align: center;
-	}
+.following-manage__search-results-empty-message {
+	text-align: center;
 }
 
 .following-manage__sites-window-scroller-row-wrapper {
