@@ -66,16 +66,6 @@ describe( 'follow tag request', () => {
 				} )
 			);
 		} );
-
-		it( 'should pass the original action along the middleware chain', () => {
-			const action = requestFollowAction( slug );
-			const dispatch = sinon.spy();
-			const next = sinon.spy();
-
-			requestFollowTag( { dispatch }, action, next );
-
-			expect( next ).to.have.been.calledWith( action );
-		} );
 	} );
 
 	describe( '#receiveFollowSuccess', () => {

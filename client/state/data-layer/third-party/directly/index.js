@@ -15,16 +15,12 @@ import {
 } from 'state/help/directly/actions';
 import * as directly from 'lib/directly';
 
-export function askQuestion( { dispatch }, action, next ) {
-	next( action );
-
+export function askQuestion( { dispatch }, action ) {
 	return directly.askQuestion( action.questionText, action.name, action.email )
 		.then( () => dispatch( recordTracksEvent( 'calypso_directly_ask_question' ) ) );
 }
 
-export function initialize( { dispatch, getState }, action, next ) {
-	next( action );
-
+export function initialize( { dispatch } ) {
 	dispatch( recordTracksEvent( 'calypso_directly_initialization_start' ) );
 
 	return directly.initialize()

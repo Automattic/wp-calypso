@@ -100,7 +100,6 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		config.middleware( store )( next )( action );
 
-		expect( next ).to.not.have.been.calledWith( action );
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
@@ -117,7 +116,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		config.middleware( store )( next )( action );
 
-		expect( next ).to.have.been.calledOnce;
+		expect( next ).to.have.been.calledTwice;
 		expect( next ).to.have.been.calledWith( local( action ) );
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );

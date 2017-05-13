@@ -13,7 +13,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 
-export function requestUnfollow( store, action, next ) {
+export function requestUnfollow( store, action ) {
 	store.dispatch(
 		http( {
 			path: `/read/tags/${ action.payload.slug }/mine/delete`,
@@ -23,8 +23,6 @@ export function requestUnfollow( store, action, next ) {
 			onFailure: action,
 		} )
 	);
-
-	next( action );
 }
 
 /**

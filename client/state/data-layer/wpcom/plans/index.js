@@ -22,7 +22,7 @@ import {
  * @param {Function} next data-layer-bypassing dispatcher
  * @returns {Object} original action
  */
-export const requestPlans = ( { dispatch }, action, next ) => {
+export const requestPlans = ( { dispatch }, action ) => {
 	dispatch( http( {
 		apiVersion: '1.4',
 		method: 'GET',
@@ -30,8 +30,6 @@ export const requestPlans = ( { dispatch }, action, next ) => {
 		onSuccess: action,
 		onFailure: action,
 	} ) );
-
-	return next( action );
 };
 
 /**

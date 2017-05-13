@@ -60,8 +60,6 @@ describe( 'recommended sites', () => {
 					onFailure: action,
 				} )
 			);
-
-			expect( next ).to.have.been.calledWith( action );
 		} );
 	} );
 

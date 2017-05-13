@@ -53,8 +53,6 @@ describe( '#queueRequest', () => {
 
 		http( { dispatch }, getMe, next );
 
-		expect( next ).to.have.been.calledWith( getMe );
-
 		setTimeout( () => {
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( extendAction( succeeder, successMeta( data ) ) );
@@ -67,8 +65,6 @@ describe( '#queueRequest', () => {
 		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me' ).replyWithError( error );
 
 		http( { dispatch }, getMe, next );
-
-		expect( next ).to.have.been.calledWith( getMe );
 
 		setTimeout( () => {
 			expect( dispatch ).to.have.been.calledOnce;

@@ -79,10 +79,9 @@ const doAppPushPolling = store => {
 	}
 };
 
-const handleTwoFactorPushPoll = ( store, action, next ) => {
+const handleTwoFactorPushPoll = store => {
 	// this is deferred to allow reducer respond to TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START
 	defer( () => doAppPushPolling( store ) );
-	return next( action );
 };
 
 export default {

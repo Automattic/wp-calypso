@@ -13,7 +13,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 
-export function initiateFeedSearch( store, action, next ) {
+export function initiateFeedSearch( store, action ) {
 	if ( ! ( action.payload && action.payload.query ) ) {
 		return;
 	}
@@ -29,8 +29,6 @@ export function initiateFeedSearch( store, action, next ) {
 			onFailure: action,
 		} )
 	);
-
-	next( action );
 }
 
 export function receiveFeeds( store, action, next, apiResponse ) {

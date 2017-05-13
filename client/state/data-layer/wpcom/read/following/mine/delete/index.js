@@ -13,7 +13,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { follow } from 'state/reader/follows/actions';
 
-export function requestUnfollow( { dispatch, getState }, action, next ) {
+export function requestUnfollow( { dispatch }, action ) {
 	const { payload: { feedUrl } } = action;
 	dispatch(
 		http( {
@@ -28,15 +28,14 @@ export function requestUnfollow( { dispatch, getState }, action, next ) {
 			onFailure: action,
 		} )
 	);
-	next( action );
 }
 
 export function receiveUnfollow( store, action, next, response ) {
 	if ( response && ! response.subscribed ) {
-		next( action );
-	} else {
-		unfollowError( store, action, next );
+		return;
 	}
+
+	unfollowError( store, action, next );
 }
 
 export function unfollowError( { dispatch }, action, next ) {

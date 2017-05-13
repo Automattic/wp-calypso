@@ -89,16 +89,6 @@ describe( 'wpcom-api', () => {
 					} )
 				);
 			} );
-
-			it( 'should pass the original action along the middleware chain', () => {
-				const action = requestTagsAction( slug );
-				const dispatch = sinon.spy();
-				const next = sinon.spy();
-
-				requestTags( { dispatch }, action, next );
-
-				expect( next ).to.have.been.calledWith( action );
-			} );
 		} );
 
 		describe( '#receiveTagsResponse', () => {

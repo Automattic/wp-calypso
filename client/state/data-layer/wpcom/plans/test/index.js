@@ -40,16 +40,6 @@ describe( 'wpcom-api', () => {
 					onFailure: action,
 				} ) );
 			} );
-
-			it( 'should pass the original action along the middleware chain', () => {
-				const action = { type: 'DUMMY' };
-				const dispatch = spy();
-				const next = spy();
-
-				requestPlans( { dispatch }, action, next );
-
-				expect( next ).to.have.been.calledWith( action );
-			} );
 		} );
 
 		describe( '#receivePlans', () => {

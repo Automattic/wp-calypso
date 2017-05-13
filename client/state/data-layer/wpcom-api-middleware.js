@@ -68,7 +68,9 @@ export const middleware = handlers => store => next => {
 			}
 		}
 
-		return handlerChain.forEach( handler => handler( store, action, localNext ) );
+		handlerChain.forEach( handler => handler( store, action, localNext ) );
+
+		return next( action );
 	};
 };
 
