@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { identity, noop } from 'lodash';
+import { get, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -20,60 +20,52 @@ import {
 
 export class SitesDropdown extends PureComponent {
 	static propTypes = {
-		selectedSiteId: React.PropTypes.number,
-		showAllSites: React.PropTypes.bool,
-		onClose: React.PropTypes.func,
-		onSiteSelect: React.PropTypes.func,
-		filter: React.PropTypes.func,
-		isPlaceholder: React.PropTypes.bool
+		selectedSiteId: PropTypes.number,
+		showAllSites: PropTypes.bool,
+		onClose: PropTypes.func,
+		onSiteSelect: PropTypes.func,
+		filter: PropTypes.func,
+		isPlaceholder: PropTypes.bool,
+
+		// connected
+		initialSiteId: PropTypes.number.isRequired,
+		selectedSite: PropTypes.object,
 	}
 
 	static defaultProps = {
-		getSite: identity,
 		showAllSites: false,
 		onClose: noop,
 		onSiteSelect: noop,
 		isPlaceholder: false
 	}
 
-	constructor( props ) {
-		super( props );
+	state = { open: false }
 
-		this.selectSite = this.selectSite.bind( this );
-		this.toggleOpen = this.toggleOpen.bind( this );
-		this.onClose = this.onClose.bind( this );
-
-		const selectedSite = props.selectedSiteId
-			? props.getSite( props.selectedSiteId )
-			: props.getSite( props.primarySiteId );
-
-		this.state = {
-			selectedSiteSlug: selectedSite && selectedSite.slug
-		};
+	componentDidMount() {
+		const { initialSiteId, setSelectedSiteSlug } = this.props;
+		setSelectedSiteSlug( initialSiteId );
 	}
 
-	getSelectedSite() {
-		return this.props.getSite( this.state.selectedSiteSlug );
-	}
-
-	selectSite( siteSlug ) {
+	selectSite = ( siteSlug ) => {
 		this.props.onSiteSelect( siteSlug );
+		this.props.setSelectedSiteSlug( siteSlug );
 		this.setState( {
-			selectedSiteSlug: siteSlug,
 			open: false
 		} );
 	}
 
-	toggleOpen() {
+	toggleOpen = () => {
 		this.setState( { open: ! this.state.open } );
 	}
 
-	onClose( e ) {
+	onClose = ( e ) => {
 		this.setState( { open: false } );
 		this.props.onClose && this.props.onClose( e );
 	}
 
 	render() {
+		const selectedSiteSlug = get( this.props.selectedSite, 'slug', null );
+
 		return (
 			<div className={ classNames( 'sites-dropdown', { 'is-open': this.state.open } ) }>
 				<div className="sites-dropdown__wrapper">
@@ -83,7 +75,7 @@ export class SitesDropdown extends PureComponent {
 						{
 							this.props.isPlaceholder
 							? <SitePlaceholder />
-							: <Site site={ this.getSelectedSite() } indicator={ false } />
+							: <Site site={ this.props.selectedSite } indicator={ false } />
 						}
 						<Gridicon icon="chevron-down" />
 					</div>
@@ -92,7 +84,7 @@ export class SitesDropdown extends PureComponent {
 							autoFocus={ true }
 							onClose={ this.onClose }
 							onSiteSelect={ this.selectSite }
-							selected={ this.state.selectedSiteSlug }
+							selected={ selectedSiteSlug }
 							hideSelected={ true }
 							filter={ this.props.filter }
 						/>
@@ -103,9 +95,37 @@ export class SitesDropdown extends PureComponent {
 	}
 }
 
-export default connect( ( state ) => {
-	return {
-		getSite: getSite.bind( null, state ),
-		primarySiteId: getPrimarySiteId( state ),
-	};
-} )( SitesDropdown );
+const Connected = connect(
+	( state, { selectedSiteId, selectedSiteSlug } ) => {
+		const initialSiteId = selectedSiteId ||
+			getPrimarySiteId( state );
+
+		const selectedSite = selectedSiteSlug
+			? getSite( state, selectedSiteSlug )
+			: undefined;
+
+		return {
+			initialSiteId,
+			selectedSite,
+		};
+	}
+)( SitesDropdown );
+
+/*
+ * A container for component state that can then be passed to SitesDropdown's
+ * Redux-connected counterpart.
+ */
+export default class SitesDropdownWrapper extends PureComponent {
+	state = { selectedSiteSlug: null }
+
+	setSelectedSiteSlug = ( slug ) => {
+		this.setState( { selectedSiteSlug: slug } );
+	}
+
+	render() {
+		return <Connected
+			selectedSiteSlug={ this.state.selectedSiteSlug }
+			setSelectedSiteSlug={ this.setSelectedSiteSlug }
+			{ ...this.props } />;
+	}
+}
