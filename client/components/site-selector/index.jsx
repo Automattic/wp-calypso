@@ -9,6 +9,7 @@ import page from 'page';
 import classNames from 'classnames';
 import {
 	filter,
+	flow,
 	get,
 	includes,
 	keyBy,
@@ -449,7 +450,7 @@ class SiteSelector extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+const mapState = ( state ) => {
 	const user = getCurrentUser( state );
 	const visibleSiteCount = get( user, 'visible_site_count', 0 );
 
@@ -465,4 +466,10 @@ export default connect( ( state ) => {
 		allSitesSingleUser: areAllSitesSingleUser( state ),
 		isRequestingMissingSites: isRequestingMissingSites( state ),
 	};
-} )( searchSites( localize( SiteSelector ) ) );
+};
+
+export default flow(
+	localize,
+	searchSites,
+	connect( mapState )
+)( SiteSelector );
