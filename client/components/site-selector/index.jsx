@@ -61,7 +61,7 @@ class SiteSelector extends Component {
 		recentSites: PropTypes.array,
 		getSite: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
-		visibleSites: PropTypes.array,
+		visibleSites: PropTypes.arrayOf( PropTypes.object ),
 		allSitesPath: PropTypes.string,
 	};
 
@@ -125,23 +125,22 @@ class SiteSelector extends Component {
 	computeHighlightedSite() {
 		// site can be highlighted by either keyboard or by mouse and
 		// we need to switch seemlessly between the two
-		let highlightedSite, highlightedIndex;
+		let highlightedSiteId, highlightedIndex;
 		if ( this.state.isKeyboardEngaged ) {
 			debug( 'using highlight from last keyboard interaction' );
-			highlightedSite = this.visibleSites[ this.state.highlightedIndex ];
+			highlightedSiteId = this.visibleSites[ this.state.highlightedIndex ];
 			highlightedIndex = this.state.highlightedIndex;
 		} else if ( this.lastMouseHover ) {
 			debug( `restoring highlight from last mouse hover (${ this.lastMouseHover })` );
-			// @FIXME
-			highlightedSite = this.props.getSite( this.lastMouseHover ) || this.lastMouseHover;
-			highlightedIndex = this.visibleSites.indexOf( highlightedSite );
+			highlightedSiteId = this.props.highlightedSiteId || this.lastMouseHover;
+			highlightedIndex = this.visibleSites.indexOf( highlightedSiteId );
 		} else {
 			debug( 'reseting highlight as mouse left site selector' );
-			highlightedSite = null;
+			highlightedSiteId = null;
 			highlightedIndex = -1;
 		}
 
-		return { highlightedSite, highlightedIndex };
+		return { highlightedSiteId, highlightedIndex };
 	}
 
 	onKeyDown = ( event ) => {
@@ -153,7 +152,7 @@ class SiteSelector extends Component {
 			return;
 		}
 
-		const { highlightedSite, highlightedIndex } = this.computeHighlightedSite();
+		const { highlightedSiteId, highlightedIndex } = this.computeHighlightedSite();
 		let nextIndex = null;
 
 		switch ( event.key ) {
@@ -170,11 +169,11 @@ class SiteSelector extends Component {
 				}
 				break;
 			case 'Enter':
-				if ( highlightedSite ) {
-					if ( highlightedSite === ALL_SITES ) {
+				if ( highlightedSiteId ) {
+					if ( highlightedSiteId === ALL_SITES ) {
 						this.onSiteSelect( event, ALL_SITES );
 					} else {
-						this.onSiteSelect( event, highlightedSite.slug );
+						this.onSiteSelect( event, highlightedSiteId );
 					}
 				}
 				break;
@@ -189,8 +188,8 @@ class SiteSelector extends Component {
 		}
 	};
 
-	onSiteSelect = ( event, siteSlug ) => {
-		const handledByHost = this.props.onSiteSelect( siteSlug );
+	onSiteSelect = ( event, siteId ) => {
+		const handledByHost = this.props.onSiteSelect( siteId );
 		this.props.onClose( event );
 
 		const node = ReactDom.findDOMNode( this.refs.selector );
@@ -202,7 +201,7 @@ class SiteSelector extends Component {
 		// any number of things). handledByHost gives them the chance to avoid the simulated navigation,
 		// even for touchend
 		if ( ! handledByHost ) {
-			const pathname = this.getPathnameForSite( siteSlug );
+			const pathname = this.getPathnameForSite( siteId );
 			if ( pathname ) {
 				// why pathname and not patnname + search? unsure. This currently strips querystrings.
 				page( pathname );
@@ -214,10 +213,10 @@ class SiteSelector extends Component {
 		this.onSiteSelect( event, ALL_SITES );
 	};
 
-	onSiteHover = ( event, siteSlug ) => {
-		if ( this.lastMouseHover !== siteSlug ) {
-			debug( `${ siteSlug } hovered` );
-			this.lastMouseHover = siteSlug;
+	onSiteHover = ( event, siteId ) => {
+		if ( this.lastMouseHover !== siteId ) {
+			debug( `${ siteId } hovered` );
+			this.lastMouseHover = siteId;
 		}
 	};
 
@@ -267,10 +266,10 @@ class SiteSelector extends Component {
 		return siteBasePath;
 	}
 
-	getPathnameForSite( slug ) {
-		const site = this.props.getSite( slug );
+	getPathnameForSite( siteId ) {
+		const site = this.props.getSite( siteId );
 
-		if ( slug === ALL_SITES ) {
+		if ( siteId === ALL_SITES ) {
 			// default posts links to /posts/my when possible and /posts when not
 			const postsBase = this.props.allSitesSingleUser ? '/posts' : '/posts/my';
 			const allSitesPath = this.props.allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
@@ -278,7 +277,7 @@ class SiteSelector extends Component {
 			// There is currently no "all sites" version of the insights page
 			return allSitesPath.replace( /^\/stats\/insights\/?$/, '/stats/day' );
 		} else if ( this.props.siteBasePath ) {
-			return this.getSiteBasePath( site ) + '/' + site.slug;
+			return this.getSiteBasePath( site ) + '/' + site.ID;
 		}
 	}
 
@@ -286,13 +285,14 @@ class SiteSelector extends Component {
 		const selectedSite = this.props.selected || this.props.selectedSite;
 		return (
 			( site === ALL_SITES && selectedSite === null ) ||
+			( selectedSite === site.ID ) ||
 			( selectedSite === site.domain ) ||
 			( selectedSite === site.slug )
 		);
 	}
 
-	isHighlighted( site ) {
-		return this.state.isKeyboardEngaged && this.visibleSites.indexOf( site ) === this.state.highlightedIndex;
+	isHighlighted( siteId ) {
+		return this.state.isKeyboardEngaged && this.visibleSites.indexOf( siteId ) === this.state.highlightedIndex;
 	}
 
 	shouldShowGroups() {
@@ -360,9 +360,9 @@ class SiteSelector extends Component {
 			return null;
 		}
 
-		this.visibleSites.push( site );
+		this.visibleSites.push( site.ID );
 
-		const isHighlighted = this.isHighlighted( site );
+		const isHighlighted = this.isHighlighted( site.ID );
 		return (
 			<Site
 				site={ site }
@@ -449,6 +449,7 @@ class SiteSelector extends Component {
 		);
 	}
 }
+
 
 const mapState = ( state ) => {
 	const user = getCurrentUser( state );
