@@ -164,7 +164,10 @@ class TransferToOtherSite extends React.Component {
 	}
 
 	checkSiteEligibility = ( site ) => {
-		return site.capabilities.manage_options && ! site.jetpack && site.ID !== this.props.selectedSite.ID;
+		return site.capabilities.manage_options &&
+			! site.jetpack &&
+			! get( site, 'options.is_domain_only', false ) &&
+			site.ID !== this.props.selectedSite.ID;
 	}
 }
 
