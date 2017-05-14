@@ -4,7 +4,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { get, noop } from 'lodash';
+import { flow, get, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -104,27 +104,28 @@ export class SitesDropdown extends PureComponent {
 	}
 }
 
-const Connected = connect(
-	( state, { selectedSiteId, selectedSiteSlug } ) => {
-		const initialSiteId = selectedSiteId ||
-			getPrimarySiteId( state );
+const mapState = ( state, { selectedSiteId, selectedSiteSlug } ) => {
+	const initialSiteId = selectedSiteId ||
+		getPrimarySiteId( state );
 
-		const selectedSite = selectedSiteSlug
-			? getSite( state, selectedSiteSlug )
-			: undefined;
+	const selectedSite = selectedSiteSlug
+		? getSite( state, selectedSiteSlug )
+		: undefined;
 
-		return {
-			initialSiteId,
-			selectedSite,
-		};
-	}
-)( SitesDropdown );
+	return {
+		initialSiteId,
+		selectedSite,
+	};
+};
 
 /*
  * A container for component state that can then be passed to SitesDropdown's
  * Redux-connected counterpart.
  */
-export default class SitesDropdownWrapper extends PureComponent {
+const withSelectedSiteSlug = ( Wrapped ) => class extends PureComponent {
+	static displayName = `WithSelectedSiteSlug(${
+		Wrapped.displayName || Wrapped.name } )`
+
 	state = { selectedSiteSlug: null }
 
 	setSelectedSiteSlug = ( slug ) => {
@@ -132,9 +133,14 @@ export default class SitesDropdownWrapper extends PureComponent {
 	}
 
 	render() {
-		return <Connected
+		return <Wrapped
 			selectedSiteSlug={ this.state.selectedSiteSlug }
 			setSelectedSiteSlug={ this.setSelectedSiteSlug }
 			{ ...this.props } />;
 	}
-}
+};
+
+export default flow(
+	connect( mapState ),
+	withSelectedSiteSlug
+)( SitesDropdown );
