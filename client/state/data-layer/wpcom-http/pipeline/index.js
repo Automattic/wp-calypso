@@ -10,6 +10,7 @@ import {
  * Internal dependencies
  */
 import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate-gets';
+import { retryOnFailure } from './retry-on-failure';
 
 /**
  * @typedef {Object} InboundData
@@ -47,6 +48,7 @@ import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate
 
 /** @type {InboundProcessor[]} */
 const inboundChain = [
+	retryOnFailure,
 	applyDuplicatesHandlers,
 ];
 
