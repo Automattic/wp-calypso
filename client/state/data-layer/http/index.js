@@ -41,7 +41,13 @@ const httpHandler = ( { dispatch }, action ) => {
 		request = request.withCredentials();
 	}
 
-	headers.forEach( header => request = request.set( header.key, header.value ) );
+	if ( Array.isArray( headers ) ) {
+		headers.forEach( header => {
+			if ( header.key && header.value ) {
+				request = request.set( header.key, header.value );
+			}
+		} );
+	}
 
 	request = request.accept( 'application/json' );
 
