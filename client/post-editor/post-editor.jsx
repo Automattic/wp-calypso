@@ -349,7 +349,6 @@ export const PostEditor = React.createClass( {
 				: null }
 				{ this.state.showVerifyEmailDialog
 					? <VerifyEmailDialog
-						user={ this.props.user }
 						onClose={ this.closeVerifyEmailDialog }
 					/>
 				: null }
