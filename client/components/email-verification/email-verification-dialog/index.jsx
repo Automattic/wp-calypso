@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import FormButton from 'components/forms/form-button';
+import Button from 'components/button';
 import Spinner from 'components/spinner';
 import userFactory from 'lib/user';
 
@@ -28,9 +28,7 @@ class VerifyEmailDialog extends Component {
 		this.handleSendVerification = this.sendVerification.bind( this );
 	}
 
-	sendVerification( e ) {
-		e.preventDefault();
-
+	sendVerification() {
 		if ( this.state.pendingRequest ) {
 			return;
 		}
@@ -58,19 +56,19 @@ class VerifyEmailDialog extends Component {
 
 	getDialogButtons() {
 		return [
-			<FormButton
-				key="close"
-				isPrimary={ true }
-				onClick={ this.props.onClose }>
-					{ this.props.translate( 'OK' ) }
-			</FormButton>,
-			<FormButton
+			<Button
 				key="resend"
-				isPrimary={ false }
+				primary={ false }
 				disabled={ this.state.pendingRequest || this.state.emailSent }
 				onClick={ this.handleSendVerification }>
 				{ this.getResendButtonLabel() }
-			</FormButton>
+			</Button>,
+			<Button
+				key="close"
+				primary={ true }
+				onClick={ this.props.onClose }>
+					{ this.props.translate( 'OK' ) }
+			</Button>
 		];
 	}
 
