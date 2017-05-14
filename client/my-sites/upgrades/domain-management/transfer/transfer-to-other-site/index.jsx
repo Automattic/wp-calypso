@@ -23,6 +23,7 @@ import Main from 'components/main';
 import paths from 'my-sites/upgrades/paths';
 import { getSelectedDomain } from 'lib/domains';
 import NonOwnerCard from 'my-sites/upgrades/domain-management/components/domain/non-owner-card';
+import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/components/domain/main-placeholder';
 import SectionHeader from 'components/section-header';
 import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
@@ -49,6 +50,17 @@ class TransferToOtherSite extends React.Component {
 			showConfirmationDialog: false,
 			disableDialogButtons: false
 		};
+	}
+
+	isDataReady() {
+		return this.props.domains.hasLoadedFromServer;
+	}
+
+	checkSiteEligibility = ( site ) => {
+		return site.capabilities.manage_options &&
+			! site.jetpack &&
+			! get( site, 'options.is_domain_only', false ) &&
+			site.ID !== this.props.selectedSite.ID;
 	}
 
 	handleSiteSelect = ( siteSlug ) => {
@@ -92,6 +104,10 @@ class TransferToOtherSite extends React.Component {
 	}
 
 	render() {
+		if ( ! this.isDataReady() ) {
+			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
+		}
+
 		const { selectedSite, selectedDomainName } = this.props,
 			{ slug } = selectedSite;
 
@@ -161,13 +177,6 @@ class TransferToOtherSite extends React.Component {
 				{ this.renderDialog() }
 			</div>
 		);
-	}
-
-	checkSiteEligibility = ( site ) => {
-		return site.capabilities.manage_options &&
-			! site.jetpack &&
-			! get( site, 'options.is_domain_only', false ) &&
-			site.ID !== this.props.selectedSite.ID;
 	}
 }
 
