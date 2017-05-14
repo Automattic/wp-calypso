@@ -59,10 +59,10 @@ class SiteSelector extends Component {
 		onSiteSelect: PropTypes.func,
 		showRecentSites: PropTypes.bool,
 		recentSites: PropTypes.array,
-		getSite: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
 		visibleSites: PropTypes.arrayOf( PropTypes.object ),
 		allSitesPath: PropTypes.string,
+		navigateToSite: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -201,11 +201,7 @@ class SiteSelector extends Component {
 		// any number of things). handledByHost gives them the chance to avoid the simulated navigation,
 		// even for touchend
 		if ( ! handledByHost ) {
-			const pathname = this.getPathnameForSite( siteId );
-			if ( pathname ) {
-				// why pathname and not patnname + search? unsure. This currently strips querystrings.
-				page( pathname );
-			}
+			this.props.navigateToSite( siteId, this.props );
 		}
 	};
 
@@ -246,40 +242,6 @@ class SiteSelector extends Component {
 			}
 		}
 	};
-
-	getSiteBasePath( site ) {
-		let siteBasePath = this.props.siteBasePath;
-		const postsBase = ( site.jetpack || site.single_user_site ) ? '/posts' : '/posts/my';
-
-		// Default posts to /posts/my when possible and /posts when not
-		siteBasePath = siteBasePath.replace( /^\/posts\b(\/my)?/, postsBase );
-
-		// Default stats to /stats/slug when on a 3rd level post/page summary
-		if ( siteBasePath.match( /^\/stats\/(post|page)\// ) ) {
-			siteBasePath = '/stats';
-		}
-
-		if ( siteBasePath.match( /^\/domains\/manage\// ) ) {
-			siteBasePath = '/domains/manage';
-		}
-
-		return siteBasePath;
-	}
-
-	getPathnameForSite( siteId ) {
-		const site = this.props.getSite( siteId );
-
-		if ( siteId === ALL_SITES ) {
-			// default posts links to /posts/my when possible and /posts when not
-			const postsBase = this.props.allSitesSingleUser ? '/posts' : '/posts/my';
-			const allSitesPath = this.props.allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
-
-			// There is currently no "all sites" version of the insights page
-			return allSitesPath.replace( /^\/stats\/insights\/?$/, '/stats/day' );
-		} else if ( this.props.siteBasePath ) {
-			return this.getSiteBasePath( site ) + '/' + site.ID;
-		}
-	}
 
 	isSelected( site ) {
 		const selectedSite = this.props.selected || this.props.selectedSite;
@@ -450,6 +412,51 @@ class SiteSelector extends Component {
 	}
 }
 
+const navigateToSite = ( siteId, {
+	allSitesPath,
+	allSitesSingleUser,
+	siteBasePath,
+} ) => ( dispatch, getState ) => {
+	const pathname = getPathnameForSite( siteId );
+	if ( pathname ) {
+		page( pathname );
+	}
+
+	function getPathnameForSite() {
+		const site = getSite( getState(), siteId );
+		debug( 'getPathnameForSite', siteId, site );
+
+		if ( siteId === ALL_SITES ) {
+			// default posts links to /posts/my when possible and /posts when not
+			const postsBase = allSitesSingleUser ? '/posts' : '/posts/my';
+			const path = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
+
+			// There is currently no "all sites" version of the insights page
+			return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
+		} else if ( siteBasePath ) {
+			return getSiteBasePath( site ) + '/' + site.slug;
+		}
+	}
+
+	function getSiteBasePath( site ) {
+		let path = siteBasePath;
+		const postsBase = ( site.jetpack || site.single_user_site ) ? '/posts' : '/posts/my';
+
+		// Default posts to /posts/my when possible and /posts when not
+		path = path.replace( /^\/posts\b(\/my)?/, postsBase );
+
+		// Default stats to /stats/slug when on a 3rd level post/page summary
+		if ( path.match( /^\/stats\/(post|page)\// ) ) {
+			path = '/stats';
+		}
+
+		if ( path.match( /^\/domains\/manage\// ) ) {
+			path = '/domains/manage';
+		}
+
+		return path;
+	}
+};
 
 const mapState = ( state ) => {
 	const user = getCurrentUser( state );
@@ -461,7 +468,6 @@ const mapState = ( state ) => {
 		recentSites: getPreference( state, 'recentSites' ),
 		siteCount: get( user, 'site_count', 0 ),
 		visibleSiteCount: visibleSiteCount,
-		getSite: getSite.bind( null, state ),
 		selectedSite: getSelectedSite( state ),
 		visibleSites: getVisibleSites( state ),
 		allSitesSingleUser: areAllSitesSingleUser( state ),
@@ -472,5 +478,5 @@ const mapState = ( state ) => {
 export default flow(
 	localize,
 	searchSites,
-	connect( mapState )
+	connect( mapState, { navigateToSite } )
 )( SiteSelector );
