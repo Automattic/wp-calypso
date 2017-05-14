@@ -26,7 +26,7 @@ describe( 'index', function() {
 	let SitesDropdown;
 
 	before( function() {
-		SitesDropdown = require( '../index.jsx' ).SitesDropdown;
+		SitesDropdown = require( '..' ).SitesDropdown;
 	} );
 
 	describe( 'component rendering', function() {
@@ -64,11 +64,13 @@ describe( 'index', function() {
 	describe( 'selectSite', function() {
 		it( 'should update the `selectedSiteSlug`, and `open` state properties', function() {
 			const setStateSpy = sinon.spy();
+			const setSelectedSiteSlugSpy = sinon.spy();
 			const siteSelectedSpy = sinon.spy();
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
-					onSiteSelect: siteSelectedSpy
+					onSiteSelect: siteSelectedSpy,
+					setSelectedSiteSlug: setSelectedSiteSlugSpy,
 				}
 			};
 
@@ -77,8 +79,11 @@ describe( 'index', function() {
 			sinon.assert.calledOnce( siteSelectedSpy );
 			sinon.assert.calledWith( siteSelectedSpy, 'foobar' );
 
+			sinon.assert.calledOnce( setSelectedSiteSlugSpy );
+			sinon.assert.calledWith( setSelectedSiteSlugSpy, 'foobar' );
+
 			sinon.assert.calledOnce( setStateSpy );
-			sinon.assert.calledWith( setStateSpy, { open: false, selectedSiteSlug: 'foobar' } );
+			sinon.assert.calledWith( setStateSpy, { open: false } );
 		} );
 	} );
 

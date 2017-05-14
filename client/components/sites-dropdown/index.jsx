@@ -27,7 +27,7 @@ export class SitesDropdown extends PureComponent {
 		filter: PropTypes.func,
 		isPlaceholder: PropTypes.bool,
 
-		// connected
+		// Redux-provided
 		initialSiteId: PropTypes.number.isRequired,
 		selectedSite: PropTypes.object,
 	}
@@ -39,6 +39,15 @@ export class SitesDropdown extends PureComponent {
 		isPlaceholder: false
 	}
 
+	constructor( props ) {
+		super( props );
+
+		// needed to be done in constructor b/c spy tests
+		this.selectSite = this.selectSite.bind( this );
+		this.toggleOpen = this.toggleOpen.bind( this );
+		this.onClose = this.onClose.bind( this );
+	}
+
 	state = { open: false }
 
 	componentDidMount() {
@@ -46,7 +55,7 @@ export class SitesDropdown extends PureComponent {
 		setSelectedSiteSlug( initialSiteId );
 	}
 
-	selectSite = ( siteSlug ) => {
+	selectSite( siteSlug ) {
 		this.props.onSiteSelect( siteSlug );
 		this.props.setSelectedSiteSlug( siteSlug );
 		this.setState( {
@@ -54,11 +63,11 @@ export class SitesDropdown extends PureComponent {
 		} );
 	}
 
-	toggleOpen = () => {
+	toggleOpen() {
 		this.setState( { open: ! this.state.open } );
 	}
 
-	onClose = ( e ) => {
+	onClose( e ) {
 		this.setState( { open: false } );
 		this.props.onClose && this.props.onClose( e );
 	}
