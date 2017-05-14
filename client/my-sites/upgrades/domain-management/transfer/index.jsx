@@ -37,7 +37,7 @@ function Transfer( props ) {
 						{ translate( 'Transfer to another user' ) }
 					</VerticalNavItem>
 				}
-				{ ! isAutomatedTransfer && ! isDomainOnly &&
+				{ ! isAutomatedTransfer &&
 					<VerticalNavItem path={ paths.domainManagementTransferToOtherSite( slug, selectedDomainName ) }>
 						{ translate( 'Transfer to another WordPress.com site' ) }
 					</VerticalNavItem>
