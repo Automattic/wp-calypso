@@ -118,6 +118,7 @@ describe( 'EditGravatar', function() {
 					<EditGravatar
 						translate={ noop }
 						user={ user }
+						recordReceiveImageEvent={ noop }
 					/>
 				);
 				const files = [ {
@@ -142,6 +143,7 @@ describe( 'EditGravatar', function() {
 						receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
 						translate={ noop }
 						user={ user }
+						recordReceiveImageEvent={ noop }
 					/>
 				);
 				const files = [ {
@@ -174,6 +176,7 @@ describe( 'EditGravatar', function() {
 					translate={ noop }
 					uploadGravatar={ uploadGravatarSpy }
 					user={ user }
+					recordReceiveImageEvent={ noop }
 				/>
 			);
 
@@ -196,6 +199,7 @@ describe( 'EditGravatar', function() {
 					translate={ noop }
 					uploadGravatar={ uploadGravatarSpy }
 					user={ user }
+					recordReceiveImageEvent={ noop }
 				/>
 			);
 
@@ -214,6 +218,7 @@ describe( 'EditGravatar', function() {
 				<EditGravatar
 					translate={ noop }
 					user={ user }
+					recordClickButtonEvent={ noop }
 				/>
 			);
 			// Enzyme requires simulate() to be called directly on the element with the click handler
