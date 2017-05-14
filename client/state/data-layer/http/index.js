@@ -55,12 +55,13 @@ const httpHandler = ( { dispatch }, action ) => {
 		request = request.send( body );
 	}
 
-	return request.then( data =>
-		dispatch( extendAction( onSuccess, successMeta( data ) ) )
-	).catch( error => {
-		dispatch( extendAction( onFailure, failureMeta( error ) ) );
-		return Promise.reject( error );
-	} );
+	return request.then(
+		data => dispatch( extendAction( onSuccess, successMeta( data ) ) ),
+		error => {
+			dispatch( extendAction( onFailure, failureMeta( error ) ) );
+			return Promise.reject( error );
+		}
+	);
 };
 
 export default {
