@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { pickBy } from 'lodash';
+import { compact, pickBy } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -18,7 +18,6 @@ import SubMasterbarNav from 'components/sub-masterbar-nav';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import { getSortedFilterTerms, stripFilters } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -26,6 +25,7 @@ import ThemePreview from './theme-preview';
 import config from 'config';
 import {
 	getThemeFilterTerms,
+	getThemeFilterToTermTable,
 	getThemeShowcaseDescription,
 	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
@@ -86,9 +86,17 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	doSearch( searchBoxContent ) {
-		const filter = getSortedFilterTerms( searchBoxContent );
-		const searchString = stripFilters( searchBoxContent );
-		const url = this.constructUrl( { filter, searchString } );
+		const filterRegex = /(\w+)\:([\w-]*)/g;
+		const { filterToTermTable } = this.props;
+
+		const filters = searchBoxContent.match( filterRegex ) || [];
+		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
+
+		const url = this.constructUrl( {
+			filter: compact( validFilters ).join( '+' ),
+			// Strip filters and excess whitespace
+			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
+		} );
 		page( url );
 	},
 
@@ -265,6 +273,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
 	subjects: getThemeFilterTerms( state, 'subject' ),
 	filterString: prependThemeFilterKeys( state, filter ),
+	filterToTermTable: getThemeFilterToTermTable( state ),
 } );
 
 const mapDispatchToProps = {
