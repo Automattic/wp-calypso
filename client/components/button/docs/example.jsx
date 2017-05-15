@@ -199,4 +199,4 @@ var ButtonExample = React.createClass( {
 	}
 } );
 
-module.exports = Buttons;
+module.exports = ButtonExample;
