@@ -8,16 +8,15 @@ import React from 'react';
  */
 import Emojify from 'components/emojify';
 
-const EmojifyExample = () => {
-	const textToEmojify = 'This 🙈 will be converted 🙉🙊🙂';
+export default class EmojifyExample extends React.Component {
+	static displayName = 'EmojifyExample';
 
-	return (
-		<div className="design-assets__group">
-			<Emojify>{ textToEmojify }</Emojify>
-		</div>
-	);
+	render() {
+		const textToEmojify = 'This 🙈 will be converted 🙉🙊🙂';
+		return (
+			<div className="design-assets__group">
+				<Emojify>{ textToEmojify }</Emojify>
+			</div>
+		);
+	}
 };
-
-EmojifyExample.displayName = 'Emojify';
-
-export default EmojifyExample;
