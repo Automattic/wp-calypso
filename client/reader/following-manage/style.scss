@@ -1,4 +1,3 @@
-
 .following-manage__header {
 	font-weight: 600;
 	margin: 14px 0 14px 14px;
@@ -200,6 +199,20 @@
 	&:last-child {
 		border-bottom: 0;
 	}
+}
+
+.following-manage__search-results.is-empty,
+.following-manage__subscriptions-list.is-empty {
+	color: darken( $gray, 10% );
+}
+
+.following-manage__search-results.is-empty {
+	margin-top: 10px;
+}
+
+.following-manage__subscriptions-list.is-empty {
+	margin-top: 30px;
+	text-align: center;
 }
 
 .following-manage__sites-window-scroller-row-wrapper {

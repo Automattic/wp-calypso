@@ -5,8 +5,9 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import escapeRegexp from 'escape-string-regexp';
-import { reverse, sortBy, trimStart } from 'lodash';
+import { reverse, sortBy, trimStart, isEmpty } from 'lodash';
 import page from 'page';
+import classnames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -76,9 +77,13 @@ class FollowingManageSubscriptions extends Component {
 	};
 
 	render() {
-		const { follows, width, translate, query, followsCount, sortOrder, feeds } = this.props;
+		const { width, translate, query, followsCount, sortOrder, feeds } = this.props;
 		const filteredFollows = this.filterFollowsByQuery( query );
 		const sortedFollows = this.sortFollows( filteredFollows, sortOrder );
+		const noSitesMatchQuery = isEmpty( sortedFollows );
+		const subsListClassNames = classnames( 'following-manage__subscriptions-list', {
+			'is-empty': noSitesMatchQuery,
+		} );
 
 		return (
 			<div className="following-manage__subscriptions">
@@ -112,8 +117,8 @@ class FollowingManageSubscriptions extends Component {
 						</EllipsisMenu>
 					</div>
 				</div>
-				<div className="following-manage__subscriptions-list">
-					{ follows &&
+				<div className={ subsListClassNames }>
+					{ ! noSitesMatchQuery &&
 						<SitesWindowScroller
 							sites={ sortedFollows }
 							width={ width }
@@ -121,6 +126,13 @@ class FollowingManageSubscriptions extends Component {
 							forceRefresh={ [ feeds, sortedFollows ] }
 							windowScrollerRef={ this.props.windowScrollerRef }
 						/> }
+					{ noSitesMatchQuery &&
+						<span>
+							{ translate( 'Sorry, no followed sites match {{italic}}%s.{{/italic}}', {
+								components: { italic: <i /> },
+								args: query,
+							} ) }
+						</span> }
 				</div>
 			</div>
 		);
