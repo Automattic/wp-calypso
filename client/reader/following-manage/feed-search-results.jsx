@@ -27,7 +27,7 @@ const FollowingManageSearchFeedsResults = ( {
 } ) => {
 	const isEmpty = !! ( query && searchResults && searchResults.length === 0 );
 	const classNames = classnames( 'following-manage__search-results', {
-		'is-empty': !! isEmpty,
+		'is-empty': isEmpty,
 	} );
 
 	if ( ! searchResults ) {
