@@ -47,7 +47,11 @@ import LoggedOutForm from './auth-logged-out-form';
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
 		authAttempts: PropTypes.number,
+		authorize: PropTypes.func,
 		calypsoStartedConnection: PropTypes.bool,
+		createAccount: PropTypes.func,
+		goBackToWpAdmin: PropTypes.func,
+		goToXmlrpcErrorFallbackUrl: PropTypes.func,
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
 		jetpackConnectAuthorize: PropTypes.shape( {
@@ -57,8 +61,11 @@ class JetpackConnectAuthorizeForm extends Component {
 			} ).isRequired,
 		} ).isRequired,
 		plansFirst: PropTypes.bool,
+		recordTracksEvent: PropTypes.func,
 		requestHasExpiredSecretError: PropTypes.func,
 		requestHasXmlrpcError: PropTypes.func,
+		requestSites: PropTypes.func,
+		retryAuth: PropTypes.func,
 		selectedPlan: PropTypes.string,
 		siteSlug: PropTypes.string,
 		user: PropTypes.object,
