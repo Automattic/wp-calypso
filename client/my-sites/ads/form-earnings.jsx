@@ -58,7 +58,7 @@ class AdsFormEarnings extends Component {
 	}
 
 	resetState() {
-		this.replaceState( {
+		this.setState( {
 			earnings: {
 				adjustment: {},
 				sponsored: {},
