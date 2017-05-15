@@ -6,11 +6,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import Button from 'components/button';
 import FilePicker from 'components/file-picker';
 
-export default class FilePickers extends React.Component {
+export default class FilePickerExample extends React.Component {
 	constructor( props ) {
 		super( props );
 	}
@@ -52,9 +51,9 @@ export default class FilePickers extends React.Component {
 				<FilePicker onPick={ this.onSingle } >
 					<a href="#">Select File…</a>
 				</FilePicker>
-			</Card>
+			</div>
 		);
 	}
 }
 
-FilePickers.displayName = 'FilePickers';
+FilePickerExample.displayName = 'FilePickerExample';
