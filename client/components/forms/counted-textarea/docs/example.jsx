@@ -10,7 +10,7 @@ var React = require( 'react' ),
 var CountedTextarea = require( 'components/forms/counted-textarea' );
 
 module.exports = React.createClass( {
-	displayName: 'CountedTextareas',
+	displayName: 'CountedTextareaExample',
 
 	mixins: [ PureRenderMixin ],
 
