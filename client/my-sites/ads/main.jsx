@@ -46,7 +46,7 @@ class AdsMain extends Component {
 	};
 
 	getSelectedText() {
-		var selected = find( this.getFilters(), { path: this.props.path } );
+		const selected = find( this.getFilters(), { path: this.props.path } );
 		if ( selected ) {
 			return selected.title;
 		}
@@ -96,10 +96,10 @@ class AdsMain extends Component {
 		const { siteId, translate } = this.props;
 		return ( <div>
 			<QueryWordadsStatus siteId={ siteId } />
-			<Card className="rads__activate-wrapper">
-				<div className="rads__activate-header">
-					<h2 className="rads__activate-header-title">{ translate( 'WordAds Disabled' ) }</h2>
-					<div className="rads__activate-header-toggle">
+			<Card className="ads__activate-wrapper">
+				<div className="ads__activate-header">
+					<h2 className="ads__activate-header-title">{ translate( 'WordAds Disabled' ) }</h2>
+					<div className="ads__activate-header-toggle">
 						<FormButton
 							disabled={
 								this.props.site.options.wordads ||
@@ -114,15 +114,18 @@ class AdsMain extends Component {
 					</div>
 				</div>
 				{ this.props.wordAdsError &&
-					<Notice status="is-error rads__activate-notice" onDismissClick={ this.dismissWordAdsError }>
+					<Notice status="is-error ads__activate-notice" onDismissClick={ this.dismissWordAdsError }>
 						{ this.props.wordAdsError }
 					</Notice>
 				}
 				{ this.props.isUnsafe === 'mature' &&
 					<Notice
-						status="is-warning rads__activate-notice"
+						status="is-warning ads__activate-notice"
 						showDismiss={ false }
-						text={ translate( 'Your site has been identified as serving mature content. Our advertisers would like to include only family-friendly sites in the program.' ) }
+						text={ translate(
+							'Your site has been identified as serving mature content. ' +
+							'Our advertisers would like to include only family-friendly sites in the program.'
+						) }
 					>
 						<NoticeAction href="https://wordads.co/2012/09/06/wordads-is-for-family-safe-sites/" external={ true }>
 							{ translate( 'Learn more' ) }
@@ -131,15 +134,18 @@ class AdsMain extends Component {
 				}
 				{ this.props.isUnsafe === 'spam' &&
 					<Notice
-						status="is-warning rads__activate-notice"
+						status="is-warning ads__activate-notice"
 						showDismiss={ false }
-						text={ translate( 'Your site has been identified as serving automatically created or copied content. We cannot serve WordAds on these kind of sites.' ) }
+						text={ translate(
+							'Your site has been identified as serving automatically created or copied content. ' +
+							'We cannot serve WordAds on these kind of sites.'
+						) }
 					>
 					</Notice>
 				}
 				{ this.props.isUnsafe === 'private' &&
 					<Notice
-						status="is-warning rads__activate-notice"
+						status="is-warning ads__activate-notice"
 						showDismiss={ false }
 						text={ translate( 'Your site is marked as private. It needs to be public so that visitors can see the ads.' ) }
 					>
@@ -150,13 +156,13 @@ class AdsMain extends Component {
 				}
 				{ this.props.isUnsafe === 'other' &&
 					<Notice
-						status="is-warning rads__activate-notice"
+						status="is-warning ads__activate-notice"
 						showDismiss={ false }
 						text={ translate( 'Your site cannot participate in WordAds program.' ) }
 					>
 					</Notice>
 				}
-				<p className="rads__activate-description">
+				<p className="ads__activate-description">
 					{ translate(
 						'WordAds allows you to make money from advertising that runs on your site. ' +
 						'Because you have a WordPress.com Premium plan, you can skip the review process and activate WordAds instantly. ' +
@@ -191,7 +197,7 @@ class AdsMain extends Component {
 		}
 
 		return (
-			<Main className="rads">
+			<Main className="ads">
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
