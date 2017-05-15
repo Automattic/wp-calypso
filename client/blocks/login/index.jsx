@@ -60,7 +60,7 @@ class Login extends Component {
 			rememberMe,
 		} = this.state;
 
-		if ( twoStepNonce && [ 'authenticator', 'sms' ].indexOf( twoFactorAuthType ) > -1 ) {
+		if ( twoStepNonce && [ 'authenticator', 'sms' ].includes( twoFactorAuthType ) ) {
 			return (
 				<VerificationCodeForm
 					rememberMe={ rememberMe }
