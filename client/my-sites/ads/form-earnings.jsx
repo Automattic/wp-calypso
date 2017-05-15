@@ -95,12 +95,12 @@ class AdsFormEarnings extends Component {
 		this.setState( this.getSettingsFromStore() );
 	};
 
-	toggleEarningsNotice = ( event ) => {
+	handleEarningsNoticeToggle = ( event ) => {
 		event.preventDefault();
 		this.setState( { showEarningsNotice: ! this.state.showEarningsNotice } );
 	};
 
-	toggleInfo = ( type ) => ( event ) => {
+	handleInfoToggle = ( type ) => ( event ) => {
 		event.preventDefault();
 		switch ( type ) {
 			case 'wordads':
@@ -271,7 +271,7 @@ class AdsFormEarnings extends Component {
 								className="ads__module-header-action-link module-header-action-link"
 								aria-label={ translate( 'Show or hide panel information' ) }
 								title={ translate( 'Show or hide panel information' ) }
-								onClick={ this.toggleInfo( type ) }>
+								onClick={ this.handleInfoToggle( type ) }>
 								<Gridicon icon={ infoIcon } />
 							</a>
 						</li>
@@ -315,7 +315,7 @@ class AdsFormEarnings extends Component {
 									className="ads__module-header-action-link module-header-action-link"
 									aria-label={ translate( 'Show or hide panel information' ) }
 									title={ translate( 'Show or hide panel information' ) }
-									onClick={ this.toggleEarningsNotice } >
+									onClick={ this.handleEarningsNoticeToggle } >
 									<Gridicon icon={ infoIcon } />
 								</a>
 							</li>
