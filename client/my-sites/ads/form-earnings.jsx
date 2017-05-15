@@ -30,10 +30,6 @@ class AdsFormEarnings extends Component {
 		EarningsStore.removeListener( 'change', this.updateSettings );
 	}
 
-	updateSettings() {
-		this.setState( this.getSettingsFromStore() );
-	}
-
 	componentDidUpdate() {
 		if ( this.state.error && this.state.error.message ) {
 			notices.error( this.state.error.message );
@@ -98,6 +94,10 @@ class AdsFormEarnings extends Component {
 			WordadsActions.fetchEarnings( site )
 		}, 0 );
 	}
+
+	updateSettings = () => {
+		this.setState( this.getSettingsFromStore() );
+	};
 
 	toggleEarningsNotice = ( event ) => {
 		event.preventDefault();
