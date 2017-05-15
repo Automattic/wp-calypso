@@ -10,7 +10,7 @@ var Card = require( 'components/card' ),
 	CompactCard = require( 'components/card/compact' );
 
 var Cards = React.createClass( {
-	displayName: 'Cards',
+	displayName: 'CardExample',
 
 	getInitialState: function() {
 		return {

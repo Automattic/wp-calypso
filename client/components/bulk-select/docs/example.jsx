@@ -10,7 +10,7 @@ import Card from 'components/card';
 import BulkSelect from 'components/bulk-select';
 
 module.exports = React.createClass( {
-	displayName: 'BulkSelects',
+	displayName: 'BulkSelectExample',
 
 	handleToggleAll( checkedState ) {
 		let newElements = [];

@@ -11,7 +11,7 @@ import Card from 'components/card';
 import DropZone from 'components/drop-zone';
 
 export default React.createClass( {
-	displayName: 'DropZones',
+	displayName: 'DropZoneExample',
 
 	mixins: [ PureRenderMixin ],
 

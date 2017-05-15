@@ -13,8 +13,8 @@ import Card from 'components/card';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 
-var Buttons = React.createClass( {
-	displayName: 'Buttons',
+var ButtonExample = React.createClass( {
+	displayName: 'ButtonExample',
 
 	mixins: [ PureRenderMixin ],
 
