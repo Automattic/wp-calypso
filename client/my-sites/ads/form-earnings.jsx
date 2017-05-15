@@ -71,7 +71,7 @@ class AdsFormEarnings extends Component {
 			showEarningsNotice: false,
 			showWordadsInfo: false,
 			showSponsoredInfo: false,
-			showAdjustmentInfo: false
+			showAdjustmentInfo: false,
 		} );
 	}
 
@@ -97,20 +97,28 @@ class AdsFormEarnings extends Component {
 
 	handleEarningsNoticeToggle = ( event ) => {
 		event.preventDefault();
-		this.setState( { showEarningsNotice: ! this.state.showEarningsNotice } );
+		this.setState( {
+			showEarningsNotice: ! this.state.showEarningsNotice
+		} );
 	};
 
 	handleInfoToggle = ( type ) => ( event ) => {
 		event.preventDefault();
 		switch ( type ) {
 			case 'wordads':
-				this.setState( { showWordadsInfo: ! this.state.showWordadsInfo } );
+				this.setState( {
+					showWordadsInfo: ! this.state.showWordadsInfo,
+				} );
 				break;
 			case 'sponsored':
-				this.setState( { showSponsoredInfo: ! this.state.showSponsoredInfo } );
+				this.setState( {
+					showSponsoredInfo: ! this.state.showSponsoredInfo,
+				} );
 				break;
 			case 'adjustment':
-				this.setState( { showAdjustmentInfo: ! this.state.showAdjustmentInfo } );
+				this.setState( {
+					showAdjustmentInfo: ! this.state.showAdjustmentInfo,
+				} );
 				break;
 		}
 	};
@@ -145,7 +153,7 @@ class AdsFormEarnings extends Component {
 			1: translate( 'Paid' ),
 			2: translate( 'a8c-only' ),
 			3: translate( 'Pending (Missing Tax Info)' ),
-			4: translate( 'Pending (Invalid PayPal)' )
+			4: translate( 'Pending (Invalid PayPal)' ),
 		};
 
 		return statuses[ status ] ? statuses[ status ] : '?';
@@ -159,14 +167,14 @@ class AdsFormEarnings extends Component {
 				'Payment will be made as soon as the total outstanding amount has reached $100.',
 				{
 					comment: 'Insufficient balance for payout.',
-					args: { amountOwed: owed }
+					args: { amountOwed: owed },
 				}
 			),
 			payout = translate(
 				'Outstanding amount of $%(amountOwed)s will be paid by the last business day of the month.',
 				{
 					comment: 'Payout will proceed.',
-					args: { amountOwed: owed }
+					args: { amountOwed: owed },
 				}
 			);
 
