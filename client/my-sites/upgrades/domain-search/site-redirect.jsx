@@ -46,10 +46,6 @@ class SiteRedirect extends Component {
 		}
 	}
 
-	handleBackToDomainSearch() {
-		page( '/domains/add/' + this.props.selectedSiteSlug );
-	}
-
 	render() {
 		const {
 			cart,
