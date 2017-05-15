@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
@@ -45,12 +45,10 @@ import CheckoutData from 'components/data/checkout';
 import LoggedInForm from './auth-logged-in-form';
 import LoggedOutForm from './auth-logged-out-form';
 
-const JetpackConnectAuthorizeForm = React.createClass( {
-	displayName: 'JetpackConnectAuthorizeForm',
-
+class JetpackConnectAuthorizeForm extends Component {
 	componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
-	},
+	}
 
 	isSSO() {
 		const cookies = cookie.parse( document.cookie );
@@ -62,7 +60,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 			query.client_id &&
 			query.client_id === cookies.jetpack_sso_approved
 		);
-	},
+	}
 
 	renderNoQueryArgsError() {
 		return (
@@ -80,7 +78,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 				</LoggedOutFormLinks>
 			</Main>
 		);
-	},
+	}
 
 	renderPlansSelector() {
 		return (
@@ -90,7 +88,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 				</CheckoutData>
 			</div>
 		);
-	},
+	}
 
 	renderForm() {
 		return (
@@ -98,7 +96,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 				? <LoggedInForm { ...this.props } isSSO={ this.isSSO() } />
 				: <LoggedOutForm { ...this.props } isSSO={ this.isSSO() } />
 		);
-	},
+	}
 
 	render() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
@@ -123,7 +121,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 			</MainWrapper>
 		);
 	}
-} );
+}
 
 export default connect(
 	state => {
