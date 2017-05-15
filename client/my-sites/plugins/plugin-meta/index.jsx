@@ -99,9 +99,11 @@ class PluginMeta extends Component {
 
 	renderActions() {
 		if ( ! this.props.selectedSite ) {
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<div className="plugin-meta__actions">
-					<div className="plugin-meta__count">
+
+					<div className="plugin-item__count">
 						{
 							this.props.translate( 'Sites {{count/}}',
 								{
@@ -114,6 +116,7 @@ class PluginMeta extends Component {
 					</div>
 				</div>
 			);
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
 		if ( this.props.isPlaceholder ) {
