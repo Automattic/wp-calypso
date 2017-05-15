@@ -95,6 +95,10 @@
 
 	&.has-back-button {
 
+		.header-cake .button {
+			max-width: none;
+		}
+
 		.reader-feed-header__back-and-follow {
 			height: 0;
 			flex-direction: row;
