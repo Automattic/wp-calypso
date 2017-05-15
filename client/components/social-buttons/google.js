@@ -122,7 +122,7 @@ class GoogleLoginButton extends Component {
 						} ) }
 					</span>
 				</button>
-				<div className="social-buttons__service-error">{ this.state.error }</div>
+				{ this.state.error && <div className="social-buttons__service-error">{ this.state.error }</div> }
 			</div>
 		);
 	}
