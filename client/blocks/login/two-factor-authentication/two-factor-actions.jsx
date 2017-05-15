@@ -77,6 +77,12 @@ class TwoFactorActions extends Component {
 						<a href={ login( { twoFactorAuthType: 'push' } ) }>{ translate( 'The WordPress mobile app' ) }</a>
 					</p>
 				) }
+
+				{ twoFactorAuthType !== 'backup' && (
+					<p>
+						<a href={ login( { twoFactorAuthType: 'backup' } ) }>{ translate( 'A backup code' ) }</a>
+					</p>
+				) }
 			</Card>
 		);
 	}
