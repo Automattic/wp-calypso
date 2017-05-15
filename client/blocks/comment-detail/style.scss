@@ -2,6 +2,7 @@
 	font-size: 14px;
 	margin: 0 auto;
 	padding: 0;
+	transition: margin .15s linear;
 
 	&.is-expanded {
 		margin: 16px auto;
@@ -61,8 +62,15 @@
 		a {
 			color: $gray;
 			cursor: pointer;
-			padding: 0 8px;
+			padding: 8px;
 			white-space: nowrap;
+		}
+		span {
+			display: none;
+
+			@include breakpoint( ">960px" ) {
+				display: inline;
+			}
 		}
 		.gridicon {
 			margin-right: 4px;
