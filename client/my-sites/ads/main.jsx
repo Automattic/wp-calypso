@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { find } from 'lodash';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -54,19 +55,19 @@ class AdsMain extends Component {
 	}
 
 	getFilters() {
-		const { site, siteSlug } = this.props,
+		const { site, siteSlug, translate } = this.props,
 			pathSuffix = siteSlug ? '/' + siteSlug : '',
 			filters = [];
 
 		if ( canAccessWordads( site ) ) {
 			filters.push( {
-				title: this.translate( 'Earnings' ),
+				title: translate( 'Earnings' ),
 				path: '/ads/earnings' + pathSuffix,
 				id: 'ads-earnings'
 			} );
 
 			filters.push( {
-				title: this.translate( 'Settings' ),
+				title: translate( 'Settings' ),
 				path: '/ads/settings' + pathSuffix,
 				id: 'ads-settings'
 			} );
@@ -92,12 +93,12 @@ class AdsMain extends Component {
 	};
 
 	renderInstantActivationToggle( component ) {
-		const { siteId } = this.props;
+		const { siteId, translate } = this.props;
 		return ( <div>
 			<QueryWordadsStatus siteId={ siteId } />
 			<Card className="rads__activate-wrapper">
 				<div className="rads__activate-header">
-					<h2 className="rads__activate-header-title">{ this.translate( 'WordAds Disabled' ) }</h2>
+					<h2 className="rads__activate-header-title">{ translate( 'WordAds Disabled' ) }</h2>
 					<div className="rads__activate-header-toggle">
 						<FormButton
 							disabled={
@@ -108,7 +109,7 @@ class AdsMain extends Component {
 							}
 							onClick={ this.props.requestWordAdsApproval }
 						>
-							{ this.translate( 'Join WordAds' ) }
+							{ translate( 'Join WordAds' ) }
 						</FormButton>
 					</div>
 				</div>
@@ -121,10 +122,10 @@ class AdsMain extends Component {
 					<Notice
 						status="is-warning rads__activate-notice"
 						showDismiss={ false }
-						text={ this.translate( 'Your site has been identified as serving mature content. Our advertisers would like to include only family-friendly sites in the program.' ) }
+						text={ translate( 'Your site has been identified as serving mature content. Our advertisers would like to include only family-friendly sites in the program.' ) }
 					>
 						<NoticeAction href="https://wordads.co/2012/09/06/wordads-is-for-family-safe-sites/" external={ true }>
-							{ this.translate( 'Learn more' ) }
+							{ translate( 'Learn more' ) }
 						</NoticeAction>
 					</Notice>
 				}
@@ -132,7 +133,7 @@ class AdsMain extends Component {
 					<Notice
 						status="is-warning rads__activate-notice"
 						showDismiss={ false }
-						text={ this.translate( 'Your site has been identified as serving automatically created or copied content. We cannot serve WordAds on these kind of sites.' ) }
+						text={ translate( 'Your site has been identified as serving automatically created or copied content. We cannot serve WordAds on these kind of sites.' ) }
 					>
 					</Notice>
 				}
@@ -140,10 +141,10 @@ class AdsMain extends Component {
 					<Notice
 						status="is-warning rads__activate-notice"
 						showDismiss={ false }
-						text={ this.translate( 'Your site is marked as private. It needs to be public so that visitors can see the ads.' ) }
+						text={ translate( 'Your site is marked as private. It needs to be public so that visitors can see the ads.' ) }
 					>
 						<NoticeAction href={ '/settings/general/' + this.props.siteSlug }>
-							{ this.translate( 'Change privacy settings' ) }
+							{ translate( 'Change privacy settings' ) }
 						</NoticeAction>
 					</Notice>
 				}
@@ -151,12 +152,12 @@ class AdsMain extends Component {
 					<Notice
 						status="is-warning rads__activate-notice"
 						showDismiss={ false }
-						text={ this.translate( 'Your site cannot participate in WordAds program.' ) }
+						text={ translate( 'Your site cannot participate in WordAds program.' ) }
 					>
 					</Notice>
 				}
 				<p className="rads__activate-description">
-					{ this.translate(
+					{ translate(
 						'WordAds allows you to make money from advertising that runs on your site. ' +
 						'Because you have a WordPress.com Premium plan, you can skip the review process and activate WordAds instantly. ' +
 						'{{a}}Learn more about the program.{{/a}}', {
@@ -175,13 +176,14 @@ class AdsMain extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
 		let component = this.getComponent( this.props.section );
 		let notice = null;
 
 		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
 			notice = (
 				<Notice status="is-success" showDismiss={ false }>
-					{ this.translate( 'You have joined the WordAds program. Please review these settings:' ) }
+					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
 				</Notice>
 			);
 		} else if ( ! this.props.site.options.wordads && isWordadsInstantActivationEligible( this.props.site ) ) {
@@ -243,4 +245,8 @@ const mergeProps = ( stateProps, dispatchProps, parentProps ) => ( {
 	...stateProps
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( AdsMain );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)( localize( AdsMain ) );
