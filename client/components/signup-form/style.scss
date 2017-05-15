@@ -44,6 +44,20 @@
 
 	svg {
 		margin-top: -2px;
+
+		&.disabled {
+			display: none;
+		}
+	}
+}
+
+.social-buttons__button:disabled {
+	svg.enabled {
+		display: none;
+	}
+
+	svg.disabled {
+		display: inline;
 	}
 }
 
@@ -52,7 +66,7 @@
 }
 
 .social-buttons__service-error {
-	color: red;
+	color: $alert-red;
 	font-size: 11px;
-	margin: 0 10px 10px 10px;
+	margin: 0 10px 10px;
 }
