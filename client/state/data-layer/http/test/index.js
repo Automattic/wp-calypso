@@ -79,4 +79,70 @@ describe( '#rawHttpHandler', () => {
 			);
 		} );
 	} );
+
+	it( 'should reject invalid headers', () => {
+		const headers = [ { key: 'Accept', value: 'something' } ];
+
+		const requestPromise = httpHandler(
+			{
+				dispatch
+			},
+			{
+				...getMe,
+				headers
+			},
+			next
+		);
+
+		return requestPromise.catch( () => {
+			sinon.assert.calledWith(
+				dispatch,
+				sinon.match(
+					extendAction(
+						failer,
+						failureMeta( new Error( "Not all headers were of an array pair: [ 'key', 'value' ]" ) )
+					)
+				)
+			);
+		} );
+	} );
+
+	it( 'should set appropriate headers', () => {
+		let requestedHeaders;
+		nock( requestDomain ).get( requestPath )
+			.reply( function replyHandler() { // don't use arrow func to allow `this` to be set:
+				requestedHeaders = this.req.headers;
+
+				return [
+					200,
+					'',
+				];
+			} );
+
+		const headers = [
+			[ 'Auth', 'something' ],
+			[ 'Bearer', 'secret' ],
+		];
+
+		const requestPromise = httpHandler(
+			{
+				dispatch
+			},
+			{
+				...getMe,
+				headers
+			},
+			next
+		);
+
+		return requestPromise.then( () => {
+			expect(
+				headers
+					.map( ( [ headerKey, headerValue ] ) => [ headerKey.toLowerCase(), headerValue ] )
+					.every(
+					( [ headerKey, headerValue ] ) => requestedHeaders[ headerKey ] === headerValue
+				)
+			).to.be.true;
+		} );
+	} );
 } );
