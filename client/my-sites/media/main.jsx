@@ -156,15 +156,15 @@ class Media extends Component {
 		const site = this.props.sites.getSelectedSite();
 
 		// Photon does not support URLs with a querystring component.
-		posterUrl = posterUrl && posterUrl.split( '?' )[ 0 ];
+		const urlBeforeQuery = ( posterUrl || '' ).split( '?' )[ 0 ];
 
 		if ( site ) {
 			MediaActions.edit( site.ID, {
 				ID,
 				thumbnails: {
-					fmt_hd: posterUrl,
-					fmt_dvd: posterUrl,
-					fmt_std: posterUrl,
+					fmt_hd: urlBeforeQuery,
+					fmt_dvd: urlBeforeQuery,
+					fmt_std: urlBeforeQuery,
 				}
 			} );
 		}
