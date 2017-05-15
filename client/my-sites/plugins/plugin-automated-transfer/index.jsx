@@ -13,7 +13,10 @@ import { transferStates } from 'state/automated-transfer/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import { isAutomatedTransferActive } from 'state/selectors';
+import {
+	isAutomatedTransferActive,
+	isAutomatedTransferFailed,
+} from 'state/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
@@ -40,18 +43,22 @@ class PluginAutomatedTransfer extends Component {
 	};
 
 	componentWillMount() {
-		const { COMPLETE, CONFLICTS } = transferStates;
-		const { isTransferring, transferState } = this.props;
+		const { COMPLETE } = transferStates;
+		const {
+			isTransferring,
+			isFailedTransfer,
+			transferState,
+		} = this.props;
 
 		if ( COMPLETE === transferState ) {
 			this.setState( { transferComplete: true } );
-		} else if ( isTransferring || CONFLICTS === transferState ) {
+		} else if ( isTransferring || isFailedTransfer ) {
 			this.setState( { shouldDisplay: true } );
 		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { COMPLETE, CONFLICTS } = transferStates;
+		const { COMPLETE } = transferStates;
 		const { transferComplete } = this.state;
 		const newState = {};
 
@@ -65,14 +72,14 @@ class PluginAutomatedTransfer extends Component {
 				newState.shouldDisplay = true;
 			}
 		} else if ( ! transferComplete ) {
-			newState.shouldDisplay = nextProps.isTransferring || CONFLICTS === nextProps.transferState;
+			newState.shouldDisplay = nextProps.isTransferring || nextProps.isFailedTransfer;
 		}
 
 		this.setState( newState );
 	}
 
 	getNoticeText = () => {
-		const { START, CONFLICTS } = transferStates;
+		const { START, CONFLICTS, FAILURE } = transferStates;
 		const { plugin, transferState, translate } = this.props;
 		const { clickOutside, transferComplete } = this.state;
 
@@ -80,37 +87,36 @@ class PluginAutomatedTransfer extends Component {
 			return translate( "Don't leave quite yet! Just a bit longer." );
 		}
 		if ( transferComplete ) {
-			return translate( 'Activating %(plugin)s...', { args: { plugin: plugin.name } } );
+			return translate( 'Activating %(plugin)s…', { args: { plugin: plugin.name } } );
 		}
 		switch ( transferState ) {
 			case START: return translate( 'Installing %(plugin)s…', { args: { plugin: plugin.name } } );
 			case CONFLICTS: return translate( 'Sorry, we found some conflicts to fix before proceeding.' );
+			case FAILURE: return translate( 'There was a problem installing the plugin. Please try again in a few minutes.' );
 		}
 	}
 
 	getStatus = () => {
-		const { CONFLICTS } = transferStates;
-		const { transferState } = this.props;
+		const { isFailedTransfer } = this.props;
 		const { clickOutside } = this.state;
 
 		if ( clickOutside ) {
 			return 'is-info';
 		}
-		if ( CONFLICTS === transferState ) {
+		if ( isFailedTransfer ) {
 			return 'is-error';
 		}
 		return 'is-info';
 	}
 
 	getIcon = () => {
-		const { CONFLICTS } = transferStates;
-		const { transferState } = this.props;
+		const { isFailedTransfer } = this.props;
 		const { clickOutside } = this.state;
 
 		if ( clickOutside ) {
 			return 'sync';
 		}
-		if ( CONFLICTS === transferState ) {
+		if ( isFailedTransfer ) {
 			return 'notice';
 		}
 		return 'sync';
@@ -137,7 +143,7 @@ class PluginAutomatedTransfer extends Component {
 			<div>
 				<Notice
 					icon={ this.getIcon() }
-					className="plugin-automated-transfer"
+					className="plugin-automated-transfer__notice"
 					showDismiss={ false }
 					status={ this.getStatus() }
 					text={ this.getNoticeText() }
@@ -162,6 +168,7 @@ const mapStateToProps = state => {
 	return {
 		transferState: getAutomatedTransferStatus( state, siteId ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
+		isFailedTransfer: isAutomatedTransferFailed( state, siteId ),
 		site: getSite( state, siteId ),
 	};
 };

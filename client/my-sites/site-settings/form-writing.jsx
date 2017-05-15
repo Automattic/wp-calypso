@@ -51,10 +51,12 @@ class SiteSettingsFormWriting extends Component {
 	render() {
 		const {
 			eventTracker,
+			uniqueEventTracker,
 			fields,
 			handleSelect,
 			handleToggle,
 			handleAutosavingToggle,
+			handleAutosavingRadio,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
@@ -100,6 +102,7 @@ class SiteSettingsFormWriting extends Component {
 					onChangeField={ onChangeField }
 					setFieldValue={ setFieldValue }
 					eventTracker={ eventTracker }
+					uniqueEventTracker={ uniqueEventTracker }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
@@ -137,6 +140,7 @@ class SiteSettingsFormWriting extends Component {
 							<ThemeEnhancements
 								onSubmitForm={ this.props.handleSubmitForm }
 								handleAutosavingToggle={ handleAutosavingToggle }
+								handleAutosavingRadio={ handleAutosavingRadio }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
@@ -188,13 +192,13 @@ const connectComponent = connect(
 
 const getFormSettings = settings => {
 	const formSettings = pick( settings, [
+		'posts_per_page',
 		'default_post_format',
 		'custom-content-types',
 		'jetpack_testimonial',
 		'jetpack_portfolio',
 		'infinite-scroll',
 		'infinite_scroll',
-		'infinite_scroll_google_analytics',
 		'minileven',
 		'wp_mobile_excerpt',
 		'wp_mobile_featured_images',

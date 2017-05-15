@@ -15,7 +15,7 @@ import { isEnabled } from 'config';
 import { ga } from 'lib/analytics';
 import { userCan } from 'lib/posts/utils';
 import { isPublicizeEnabled } from 'state/selectors';
-import { isSitePreviewable } from 'state/sites/selectors';
+import { getSiteSlug, isSitePreviewable } from 'state/sites/selectors';
 
 const edit = () => ga.recordEvent( 'Posts', 'Clicked Edit Post' );
 const copy = () => ga.recordEvent( 'Posts', 'Clicked Copy Post' );
@@ -33,7 +33,7 @@ const getAvailableControls = props => {
 		onToggleShare,
 		onTrash,
 		post,
-		site,
+		siteSlug,
 		translate,
 		onViewPost,
 	} = props;
@@ -64,7 +64,7 @@ const getAvailableControls = props => {
 
 		controls.main.push( {
 			className: 'stats',
-			href: `/stats/post/${ post.ID }/${ site.slug }`,
+			href: `/stats/post/${ post.ID }/${ siteSlug }`,
 			icon: 'stats-alt',
 			onClick: viewStats,
 			text: translate( 'Stats' ),
@@ -128,7 +128,7 @@ const getAvailableControls = props => {
 	) {
 		controls.main.push( {
 			className: 'copy',
-			href: `/post/${ site.slug }?copy=${ post.ID }`,
+			href: `/post/${ siteSlug }?copy=${ post.ID }`,
 			icon: 'clipboard',
 			onClick: copy,
 			text: translate( 'Copy' ),
@@ -215,11 +215,12 @@ PostControls.propTypes = {
 	onTrash: PropTypes.func,
 	onViewPost: PropTypes.func,
 	post: PropTypes.object.isRequired,
-	site: PropTypes.object,
+	siteId: PropTypes.number,
 	translate: PropTypes.func,
 };
 
-export default connect( ( state, { site, post } ) => ( {
-	isPreviewable: false !== isSitePreviewable( state, site.ID ),
-	isPublicizeEnabled: isPublicizeEnabled( state, site.ID, post.type ),
+export default connect( ( state, { siteId, post } ) => ( {
+	isPreviewable: false !== isSitePreviewable( state, siteId ),
+	isPublicizeEnabled: isPublicizeEnabled( state, siteId, post.type ),
+	siteSlug: getSiteSlug( state, siteId ),
 } ) )( localize( PostControls ) );

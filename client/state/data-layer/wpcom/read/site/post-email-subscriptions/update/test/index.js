@@ -13,9 +13,7 @@ import {
 	receiveUpdatePostEmailSubscription,
 	receiveUpdatePostEmailSubscriptionError,
 } from '../';
-import {
-	updateNewPostEmailSubscription,
-} from 'state/reader/follows/actions';
+import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'comment-email-subscriptions', () => {
@@ -32,37 +30,35 @@ describe( 'comment-email-subscriptions', () => {
 									blog_ID: 1234,
 									delivery_frequency: {
 										email: {
-											post_delivery_frequency: 'instantly'
-										}
-									}
-								}
-							}
-						}
-					}
+											post_delivery_frequency: 'instantly',
+										},
+									},
+								},
+							},
+						},
+					},
 				};
 			};
 			const action = updateNewPostEmailSubscription( 1234, 'daily' );
 			const actionWithRevert = merge( {}, action, {
 				meta: {
-					previousState: 'instantly'
-				}
-			} );
-			requestUpdatePostEmailSubscription(
-				{ dispatch, getState },
-				action,
-				nextSpy
-			);
-
-			expect( dispatch ).to.have.been.calledWith( http( {
-				method: 'POST',
-				path: '/read/site/1234/post_email_subscriptions/update',
-				body: {
-					delivery_frequency: 'daily'
+					previousState: 'instantly',
 				},
-				apiVersion: '1.2',
-				onSuccess: actionWithRevert,
-				onFailure: actionWithRevert
-			} ) );
+			} );
+			requestUpdatePostEmailSubscription( { dispatch, getState }, action, nextSpy );
+
+			expect( dispatch ).to.have.been.calledWith(
+				http( {
+					method: 'POST',
+					path: '/read/site/1234/post_email_subscriptions/update',
+					body: {
+						delivery_frequency: 'daily',
+					},
+					apiVersion: '1.2',
+					onSuccess: actionWithRevert,
+					onFailure: actionWithRevert,
+				} )
+			);
 		} );
 	} );
 
@@ -74,7 +70,7 @@ describe( 'comment-email-subscriptions', () => {
 				{ dispatch },
 				{
 					payload: { blogId: 1234 },
-					meta: { previousState: 'instantly' }
+					meta: { previousState: 'instantly' },
 				},
 				next,
 				{ success: true }
@@ -91,7 +87,7 @@ describe( 'comment-email-subscriptions', () => {
 				{ dispatch },
 				{
 					payload: { blogId: 1234 },
-					meta: { previousState }
+					meta: { previousState },
 				},
 				next,
 				null
@@ -109,7 +105,7 @@ describe( 'comment-email-subscriptions', () => {
 				{ dispatch },
 				{
 					payload: { blogId: 1234 },
-					meta: { previousState }
+					meta: { previousState },
 				},
 				next,
 				{ success: false }
@@ -129,7 +125,7 @@ describe( 'comment-email-subscriptions', () => {
 				{ dispatch },
 				{
 					payload: { blogId: 1234 },
-					meta: { previousState }
+					meta: { previousState },
 				},
 				next
 			);
@@ -137,7 +133,7 @@ describe( 'comment-email-subscriptions', () => {
 				updateNewPostEmailSubscription( 1234, previousState )
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
-				notice: { text: 'Sorry, we had a problem updating that subscription. Please try again.' }
+				notice: { text: 'Sorry, we had a problem updating that subscription. Please try again.' },
 			} );
 		} );
 	} );

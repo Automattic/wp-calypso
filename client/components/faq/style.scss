@@ -1,3 +1,5 @@
+$faq-gutter-width: 24px;
+
 .faq {
 	padding: 0 16px;
 
@@ -20,7 +22,7 @@
 .faq__list {
 	display: flex;
 	flex-wrap: wrap;
-	margin: 0;
+	margin: 0 ($faq-gutter-width / -2);
 	list-style: none;
 }
 
@@ -29,25 +31,18 @@
 	margin-bottom: 16px;
 	font-size: 14px;
 	line-height: 21px;
+	box-sizing: border-box;
+	padding-left: ($faq-gutter-width / 2);
+	padding-right: ($faq-gutter-width / 2);
 
 	@media
 		(min-width: 480px) and (max-width: 660px),
 		(min-width: 800px) and (max-width: 1040px) {
-			width: calc( ( 100% - 24px ) / 2 );
-			margin-left: 24px;
-
-			&:nth-child( 2n+1 ) {
-				margin-left: 0;
-			}
+			width: 50%;
 	}
 
 	@include breakpoint( ">1040px" ) {
-		width: calc( ( 100% - 48px ) / 3 );
-		margin-left: 24px;
-
-		&:nth-child( 3n+1 ) {
-			margin-left: 0;
-		}
+		width: (100% / 3);
 	}
 }
 

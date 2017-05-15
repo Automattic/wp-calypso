@@ -10,9 +10,9 @@ import { findThemeFilterTerm } from '../';
 import { state } from './fixtures/theme-filters';
 
 describe( 'findThemeFilterTerm()', () => {
-	it( 'should return undefined for an inexistent term slug', () => {
+	it( 'should return null for an inexistent term slug', () => {
 		const term = findThemeFilterTerm( state, 'blahg' );
-		expect( term ).to.be.undefined;
+		expect( term ).to.be.null;
 	} );
 
 	it( 'should return the filter term object for a given term slug', () => {

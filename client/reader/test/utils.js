@@ -20,7 +20,7 @@ describe( 'reader utils', () => {
 	describe( '#showSelectedPost', () => {
 		let showSelectedPost;
 		useFakeDom();
-		useMockery( ( mockery ) => {
+		useMockery( mockery => {
 			mockery.registerMock( 'page', {
 				show: pageSpy,
 			} );
@@ -45,7 +45,7 @@ describe( 'reader utils', () => {
 
 		it( 'redirects to a #comments URL if we passed comments argument', () => {
 			showSelectedPost( { postKey: { feedId: 1, postId: 5 }, comments: true } );
-			expect( pageSpy ).to.have.been.calledWithMatch('#comments');
+			expect( pageSpy ).to.have.been.calledWithMatch( '#comments' );
 		} );
 	} );
 } );

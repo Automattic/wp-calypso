@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import { find, some } from 'lodash';
+import { filter, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { getThemeFilters, getThemeFilterTerm } from './';
 
 /**
@@ -15,18 +16,24 @@ import { getThemeFilters, getThemeFilterTerm } from './';
  * @param  {String}  search The term to search for
  * @return {Object}         A filter term object
  */
-export default function findThemeFilterTerm( state, search ) {
-	const [ left, right ] = search.split( ':' );
-	if ( right ) {
-		return getThemeFilterTerm( state, left, right );
-	}
+export default createSelector(
+	( state, search ) => {
+		const [ left, right ] = search.split( ':' );
+		if ( right ) {
+			return getThemeFilterTerm( state, left, right );
+		}
 
-	const filters = getThemeFilters( state );
+		const filters = getThemeFilters( state );
 
-	let ret;
-	some( filters, ( terms ) => {
-		ret = find( terms, ( value, term ) => ( term === left ) );
-		return !! ret;
-	} );
-	return ret;
-}
+		const results = filter( filters, ( terms ) => (
+			!! get( terms, left )
+		) );
+
+		if ( results.length !== 1 ) {
+			// No or ambiguous results
+			return null;
+		}
+		return results[ 0 ][ left ];
+	},
+	( state ) => [ getThemeFilters( state ) ]
+);

@@ -30,13 +30,15 @@ function forceTeamA8C( context, next ) {
 
 export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
-		page( '/',
+		page(
+			'/',
 			preloadReaderBundle,
 			loadSubscriptions,
 			initAbTests,
 			updateLastRoute,
 			sidebar,
-			following );
+			following
+		);
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/' );
@@ -51,23 +53,25 @@ export default function() {
 		page( '/read/*', preloadReaderBundle, loadSubscriptions, initAbTests );
 		page( '/read/blog/feed/:feed_id', legacyRedirects );
 		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
-		page( '/read/feeds/:feed_id',
+		page(
+			'/read/feeds/:feed_id',
 			updateLastRoute,
 			prettyRedirects,
 			sidebar,
 			feedDiscovery,
-			feedListing );
+			feedListing
+		);
 
 		// Blog stream
 		page( '/read/blog/id/:blog_id', legacyRedirects );
 		page( '/read/blogs/:blog_id/posts', incompleteUrlRedirects );
-		page( '/read/blogs/:blog_id',
-			updateLastRoute,
-			prettyRedirects,
-			sidebar,
-			blogListing );
+		page( '/read/blogs/:blog_id', updateLastRoute, prettyRedirects, sidebar, blogListing );
+
+		// Old full post view
+		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
+		page( '/read/post/id/:blog_id/:post_id', legacyRedirects );
 	}
 
 	// Automattic Employee Posts
 	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C );
-};
+}

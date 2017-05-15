@@ -22,16 +22,12 @@ export const jetpackConnectAuthorizeSchema = {
 			type: 'object',
 			required: [ 'queryObject', 'timestamp' ],
 			properties: {
-				activateManageSecret: { type: 'string' },
 				authorizationCode: { type: 'string ' },
 				authorizeError: { type: 'boolean' },
 				authorizeSuccess: { type: 'boolean' },
 				autoAuthorize: { type: 'boolean' },
-				isActivating: { type: 'boolean' },
 				isAuthorizing: { type: 'boolean' },
 				isRedirectingToWpAdmin: { type: 'boolean' },
-				manageActivated: { type: 'boolean' },
-				manageActivatedError: { type: 'boolean' },
 				plansUrl: { type: 'string' },
 				queryObject: {
 					type: 'object',

@@ -1,4 +1,5 @@
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import times from 'lodash/times';
 import url from 'url';
 
@@ -20,66 +21,66 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getSiteUrl } from 'reader/route';
 import { decodeEntities } from 'lib/formatting';
 
-const RecommendedForYou = React.createClass( {
-
-	getInitialState() {
+class RecommendedForYou extends React.Component {
+	constructor( props, context ) {
+		super( props, context );
 		const recommendations = this.getRecommendations();
 		let fetching = false;
 		if ( recommendations.length === 0 ) {
 			fetchMore();
 			fetching = true;
 		}
-		return {
+
+		this.state = {
 			recommendations,
 			fetching,
-			page: 1
+			page: 1,
 		};
-	},
+	}
 
-	getRecommendations() {
+	getRecommendations = () => {
 		const recs = RecommendedSites.get();
 		return recs.map( function( rec ) {
 			rec.site = SiteStore.get( rec.blog_id );
 			return rec;
 		} );
-	},
+	};
 
-	update() {
+	update = () => {
 		this.setState( { recommendations: this.getRecommendations() } );
-	},
+	};
 
 	componentDidMount() {
 		SiteStore.on( 'change', this.update );
 		RecommendedSites.on( 'change', this.update );
 		RecommendedSites.on( 'change', this.stopFetching );
-	},
+	}
 
 	componentWillUnmount() {
 		SiteStore.off( 'change', this.update );
 		RecommendedSites.off( 'change', this.update );
 		RecommendedSites.off( 'change', this.stopFetching );
-	},
+	}
 
-	loadMore( options ) {
+	loadMore = options => {
 		fetchMore();
 		this.setState( { fetching: true } );
 		if ( options.triggeredByScroll ) {
 			this.props.trackScrollPage( RecommendedSites.getPage() );
 		}
-	},
+	};
 
-	stopFetching() {
+	stopFetching = () => {
 		this.setState( {
 			fetching: false,
-			page: this.state.page + 1
+			page: this.state.page + 1,
 		} );
-	},
+	};
 
-	renderPlaceholders() {
-		const placeholders = [],
-			number = this.state.recommendations.length ? 2 : 10;
+	renderPlaceholders = () => {
+		const placeholders = [], number = this.state.recommendations.length ? 2 : 10;
 
-		times( number, ( i ) => {
+		times( number, i => {
 			placeholders.push(
 				<ListItem className="is-placeholder" key={ 'recommendation-placeholder-' + i }>
 					<Icon><SiteIcon size={ 48 } /></Icon>
@@ -90,13 +91,13 @@ const RecommendedForYou = React.createClass( {
 		} );
 
 		return placeholders;
-	},
+	};
 
-	getItemRef( rec ) {
+	getItemRef = rec => {
 		return 'recommendation-' + rec.blog_id;
-	},
+	};
 
-	trackSiteClick( event ) {
+	trackSiteClick = event => {
 		const clickedUrl = event.currentTarget.getAttribute( 'href' );
 		recordAction( 'click_site_on_recommended_for_you' );
 		recordGaEvent( 'Clicked Site on Recommended For You' );
@@ -104,9 +105,9 @@ const RecommendedForYou = React.createClass( {
 			clicked_url: clickedUrl,
 			recommendation_source: 'recommendations-page',
 		} );
-	},
+	};
 
-	renderItem( rec ) {
+	renderItem = rec => {
 		const site = rec.site && rec.site.toJS(),
 			itemKey = this.getItemRef( rec ),
 			title = site.name || ( site.URL && url.parse( site.URL ).hostname ),
@@ -123,17 +124,19 @@ const RecommendedForYou = React.createClass( {
 					<FollowButton siteUrl={ site.URL } />
 				</Actions>
 			</ListItem>
-			);
-	},
+		);
+	};
 
 	render() {
 		return (
 			<Main className="recommended-for-you">
 				<MobileBackToSidebar>
-					<h1>{ this.translate( 'Recommendations' ) }</h1>
+					<h1>{ this.props.translate( 'Recommendations' ) }</h1>
 				</MobileBackToSidebar>
 
-				<h2 className="reader-recommended__heading">{ this.translate( 'We think you\'ll like' ) }</h2>
+				<h2 className="reader-recommended__heading">
+					{ this.props.translate( "We think you'll like" ) }
+				</h2>
 				<InfiniteList
 					items={ this.state.recommendations }
 					fetchingNextPage={ this.state.fetching }
@@ -143,10 +146,10 @@ const RecommendedForYou = React.createClass( {
 					getItemRef={ this.getItemRef }
 					renderItem={ this.renderItem }
 					renderLoadingPlaceholders={ this.renderPlaceholders }
-					/>
-				</Main>
-			);
+				/>
+			</Main>
+		);
 	}
-} );
+}
 
-export default RecommendedForYou;
+export default localize( RecommendedForYou );

@@ -54,7 +54,7 @@ class PurchaseSiteHeader extends Component {
 			);
 		} else if ( site ) {
 			header = (
-				<Site isCompact site={ site } />
+				<Site isCompact site={ site } indicator={ false } />
 			);
 		} else {
 			header = this.renderFauxSite( name, domain );

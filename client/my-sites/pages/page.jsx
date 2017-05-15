@@ -22,19 +22,15 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	helpers = require( './helpers' ),
 	analytics = require( 'lib/analytics' ),
 	utils = require( 'lib/posts/utils' ),
-	classNames = require( 'classnames' ),
-	config = require( 'config' );
+	classNames = require( 'classnames' );
 
 import MenuSeparator from 'components/popover/menu-separator';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import PageCardInfo from './page-card-info';
 import { hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
 import {
 	isFrontPage,
 	isPostsPage,
 } from 'state/pages/selectors';
-import { setFrontPage } from 'state/sites/actions';
-import { userCan } from 'lib/site/utils';
-import { updateSitesList } from './helpers';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getPreviewURL } from 'lib/posts/utils';
@@ -74,6 +70,9 @@ const Page = React.createClass( {
 		},
 		viewPage: function() {
 			recordEvent( 'Clicked View Page' );
+		},
+		statsPage: function() {
+			recordEvent( 'Clicked Stats Page' );
 		}
 	},
 
@@ -110,32 +109,6 @@ const Page = React.createClass( {
 	// Construct a link to the Site the page belongs too
 	getSiteDomain: function() {
 		return ( this.props.site && this.props.site.domain ) || '...';
-	},
-
-	setAsHomepage: function() {
-		this.setState( { showPageActions: false } );
-		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID, updateSitesList );
-	},
-
-	getSetAsHomepageItem: function() {
-		if ( ! this.props.selectedSiteId ) {
-			return null;
-		}
-
-		const isPublished = this.props.page.status === 'publish';
-
-		if ( ! isPublished || this.props.isFrontPage ||
-			! config.isEnabled( 'manage/pages/set-homepage' ) ||
-			! userCan( 'edit_theme_options', this.props.site ) ) {
-			return null;
-		}
-
-		return (
-			<PopoverMenuItem onClick={ this.setAsHomepage }>
-				<Gridicon icon="house" size={ 18 } />
-				{ this.translate( 'Set as Homepage' ) }
-			</PopoverMenuItem>
-		);
 	},
 
 	viewPage: function( event ) {
@@ -186,7 +159,8 @@ const Page = React.createClass( {
 			site = this.props.site,
 			parentTitle, parentHref, parentLink;
 
-		if ( ! page.parent ) {
+		// If we're in hierarchical view, we don't show child info in the context menu, as it's redudant.
+		if ( this.props.hierarchical || ! page.parent ) {
 			return null;
 		}
 
@@ -211,19 +185,9 @@ const Page = React.createClass( {
 			return null;
 		}
 
-		if ( config.isEnabled( 'manage/pages/set-homepage' ) ) {
-			return ( <div className="page__popover-more-info">{
-				this.translate( 'This page is set as your site\'s homepage' )
-			}</div> );
-		} else {
-			return ( <div className="page__popover-more-info">{
-				this.translate( 'Currently set as {{link}}Front Page{{/link}}', {
-					components: {
-						link: <a target="_blank" rel="noopener noreferrer" href={ this.props.site.options.admin_url + 'options-reading.php' } />
-					}
-				} )
-			}</div> );
-		}
+		return ( <div className="page__popover-more-info">{
+			this.translate( 'This page is set as your site\'s homepage' )
+		}</div> );
 	},
 
 	getPublishItem: function() {
@@ -267,17 +231,23 @@ const Page = React.createClass( {
 
 		if ( this.props.page.status !== 'trash' ) {
 			return (
-				<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
-					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Trash' ) }
-				</PopoverMenuItem>
+				<div>
+					<MenuSeparator />
+					<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
+						<Gridicon icon="trash" size={ 18 } />
+						{ this.translate( 'Trash' ) }
+					</PopoverMenuItem>
+				</div>
 			);
 		} else {
 			return (
-				<PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
-					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Delete' ) }
-				</PopoverMenuItem>
+				<div>
+					<MenuSeparator />
+					<PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
+						<Gridicon icon="trash" size={ 18 } />
+						{ this.translate( 'Delete' ) }
+					</PopoverMenuItem>
+				</div>
 			);
 		}
 	},
@@ -307,6 +277,24 @@ const Page = React.createClass( {
 			<PopoverMenuItem onClick={ this.updateStatusRestore }>
 				<Gridicon icon="undo" size={ 18 } />
 				{ this.translate( 'Restore' ) }
+			</PopoverMenuItem>
+		);
+	},
+
+	statsPage: function() {
+		this.analyticsEvents.statsPage();
+		page( helpers.statsLinkForPage( this.props.page, this.props.site ) );
+	},
+
+	getStatsItem: function() {
+		if ( this.props.page.status !== 'publish' ) {
+			return null;
+		}
+
+		return (
+			<PopoverMenuItem onClick={ this.statsPage }>
+				<Gridicon icon="stats" size={ 18 } />
+				{ this.translate( 'Stats' ) }
 			</PopoverMenuItem>
 		);
 	},
@@ -350,43 +338,40 @@ const Page = React.createClass( {
 			canEdit = utils.userCan( 'edit_post', this.props.page ),
 			depthIndicator;
 
-		if ( page.parent ) {
+		if ( ! this.props.hierarchical && page.parent ) {
 			depthIndicator = '— ';
 		}
 
-		const setAsHomepageItem = this.getSetAsHomepageItem();
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
 		const editItem = this.getEditItem();
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
 		const copyItem = this.getCopyItem();
+		const statsItem = this.getStatsItem();
 		const moreInfoItem = this.popoverMoreInfo();
-		const hasSeparatedItems = (
-			viewItem || publishItem || editItem ||
+		const hasMenuItems = (
+			viewItem || publishItem || editItem || statsItem ||
 			restoreItem || sendToTrashItem || moreInfoItem
 		);
-		const hasPopoverItems = setAsHomepageItem || hasSeparatedItems;
-		const setHomepageMenuSeparator = ( setAsHomepageItem && hasSeparatedItems ) ? <MenuSeparator /> : null;
-		const popoverMenu = hasPopoverItems ? (
+		const popoverMenu = hasMenuItems ? (
 			<PopoverMenu
 				isVisible={ this.state.showPageActions }
 				onClose={ this.togglePageActions }
 				position={ 'bottom left' }
 				context={ this.refs && this.refs.popoverMenuButton }
 			>
-				{ setAsHomepageItem }
-				{ setHomepageMenuSeparator }
-				{ viewItem }
-				{ publishItem }
 				{ editItem }
+				{ publishItem }
+				{ viewItem }
+				{ statsItem }
 				{ copyItem }
 				{ restoreItem }
 				{ sendToTrashItem }
 				{ moreInfoItem }
 			</PopoverMenu>
 		) : null;
-		const ellipsisGridicon = hasPopoverItems ? (
+		const ellipsisGridicon = hasMenuItems ? (
 			<Gridicon
 			icon="ellipsis"
 			className={ classNames( {
@@ -397,22 +382,46 @@ const Page = React.createClass( {
 			ref="popoverMenuButton" />
 		) : null;
 
+		const cardClasses = {
+			page: true,
+			'is-indented': this.props.hierarchical && this.props.hierarchyLevel > 0,
+		};
+
+		const hierarchyIndentClasses = {
+			'page__hierarchy-indent': true,
+			'is-indented': cardClasses[ 'is-indented' ],
+		};
+
+		if ( cardClasses[ 'is-indented' ] ) {
+			cardClasses[ 'is-indented-level-' + this.props.hierarchyLevel ] = true;
+			hierarchyIndentClasses[ 'is-indented-level-' + this.props.hierarchyLevel ] = true;
+		}
+
+		const hierarchyIndent = cardClasses[ 'is-indented' ] && (
+			<div className={ classNames( hierarchyIndentClasses ) } ></div>
+		);
+
 		return (
-			<CompactCard className="page">
+			<CompactCard className={ classNames( cardClasses ) } >
+				{ hierarchyIndent }
 				{ this.props.multisite ? <SiteIcon site={ site } size={ 34 } /> : null }
-				<a className="page__title"
-					href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
-					title={ canEdit ?
-						this.translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } ) :
-						this.translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } ) }
-					onClick={ this.analyticsEvents.pageTitle }
-					>
-					{ depthIndicator }
-					{ this.props.isFrontPage ? <Gridicon icon="house" size={ 18 } /> : null }
-					{ title }
-				</a>
-				{ this.props.isPostsPage ? <div className="page__posts-page">{ this.translate( 'Your latest posts' ) }</div> : null }
-				{ this.props.multisite ? <span className="page__site-url">{ this.getSiteDomain() }</span> : null }
+				<div className="page__main">
+					<a className="page__title"
+						href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
+						title={ canEdit ?
+							this.translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } ) :
+							this.translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } ) }
+						onClick={ this.analyticsEvents.pageTitle }
+						>
+						{ depthIndicator }
+						{ title }
+					</a>
+					<PageCardInfo
+						page={ page }
+						showTimestamp={ this.props.hierarchical }
+						siteUrl={ this.props.multisite && this.getSiteDomain() }
+					/>
+				</div>
 				{ ellipsisGridicon }
 				{ popoverMenu }
 				<ReactCSSTransitionGroup
@@ -458,7 +467,6 @@ const Page = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
-			selectedSiteId: getSelectedSiteId( state ),
 			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
 			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
 			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
@@ -467,7 +475,6 @@ export default connect(
 		};
 	},
 	( dispatch ) => bindActionCreators( {
-		setFrontPage,
 		setPreviewUrl,
 		setLayoutFocus
 	}, dispatch )

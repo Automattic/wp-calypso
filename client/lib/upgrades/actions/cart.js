@@ -31,6 +31,13 @@ function closeCartPopup() {
 	} );
 }
 
+function showCartOnMobile( show ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.CART_ON_MOBILE_SHOW,
+		show,
+	} );
+}
+
 function addPrivacyToAllDomains() {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_PRIVACY_PROTECTION_ADD
@@ -109,5 +116,6 @@ export {
 	openCartPopup,
 	removeDomainFromCart,
 	removeItem,
-	removePrivacyFromAllDomains
+	removePrivacyFromAllDomains,
+	showCartOnMobile,
 };

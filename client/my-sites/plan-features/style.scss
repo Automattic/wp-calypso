@@ -222,18 +222,6 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-.plan-features__header-checkmark {
-	position: absolute;
-	top: 0;
-	right: -3px;
-	transform: translate( 25%, -25% );
-	fill: $alert-green;
-
-	@include breakpoint( "<1280px" ) {
-		display: none;
-	}
-}
-
 .plan-features__header-text {
 	flex: 1;
 	padding: 6px 0 0 0;
@@ -419,19 +407,6 @@ $plan-features-sidebar-width: 272px;
 .plan-features__actions-button {
 	width: 100%;
 	margin-top: 8px;
-
-	&.is-current {
-
-		.gridicon {
-			fill: $alert-green;
-			margin-right: 8px;
-		}
-	}
-
-	&.is-popular {
-		background-color: $alert-green;
-		border-color: darken( $alert-green, 20% );
-	}
 
 	@include breakpoint( "<660px" ) {
 		margin-top: 20px;

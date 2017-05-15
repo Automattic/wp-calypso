@@ -9,7 +9,7 @@ import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import qs from 'querystring';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { map, pick, startsWith } from 'lodash';
+import { map, pick, reduce, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -125,7 +125,6 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 			'excerpt',
 			'featured_image',
 			'format',
-			'metadata',
 			'post_thumbnail',
 			'terms',
 			'title',
@@ -135,13 +134,33 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 		postAttributes.title = decodeEntities( postAttributes.title );
 		postAttributes.featured_image = getFeaturedImageId( postToCopy );
 
+		/**
+		 * A post attributes whitelist for Redux's `editPost()` action.
+		 *
+		 * This is needed because blindly passing all post attributes to `editPost()`
+		 * caused some of them (notably the featured image) to revert to their original value
+		 * when modified right after the copy.
+		 *
+		 * @see https://github.com/Automattic/wp-calypso/pull/13933
+		 */
+		const reduxPostAttributes = {
+			terms: postAttributes.terms,
+			title: postAttributes.title,
+		};
+
 		actions.startEditingNew( siteId, {
 			content: postToCopy.content,
 			title: postToCopy.title,
 			type: postToCopy.type,
 		} );
-		context.store.dispatch( editPost( siteId, null, postAttributes ) );
+		context.store.dispatch( editPost( siteId, null, reduxPostAttributes ) );
 		actions.edit( postAttributes );
+		actions.updateMetadata(
+			reduce( postToCopy.metadata, ( newMetadata, { key, value } ) => {
+				newMetadata[ key ] = value;
+				return newMetadata;
+			}, {} )
+		);
 	} ).catch( error => {
 		Dispatcher.handleServerAction( {
 			type: 'SET_POST_LOADING_ERROR',

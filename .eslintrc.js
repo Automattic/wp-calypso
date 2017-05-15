@@ -17,5 +17,8 @@ module.exports = {
 		'no-restricted-imports': [ 2, 'lib/sites-list', 'lib/mixins/data-observe' ],
 		'no-restricted-modules': [ 2, 'lib/sites-list', 'lib/mixins/data-observe' ],
 		'no-unused-expressions': 0, // Allows Chai `expect` expressions
+		'wpcalypso/jsx-classname-namespace': [ 2, {
+			rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
+		} ],
 	}
 };

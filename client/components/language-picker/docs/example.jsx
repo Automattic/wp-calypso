@@ -12,6 +12,8 @@ import LanguagePicker from 'components/language-picker';
 import Card from 'components/card';
 
 class LanguagePickerExample extends PureComponent {
+	static displayName = 'LanguagePickerExample';
+
 	state = {
 		disabled: false,
 		loading: false,

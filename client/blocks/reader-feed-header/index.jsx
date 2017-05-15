@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import ReaderFollowButton from 'reader/follow-button';
+import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import Site from 'blocks/site';
 import HeaderBack from 'reader/header-back';
 
@@ -89,7 +90,7 @@ class FeedHeader extends Component {
 					}
 					<div className="reader-feed-header__details">
 						<span className="reader-feed-header__description">{ description }</span>
-						{ ownerDisplayName && <span className="reader-feed-header__byline">
+						{ ownerDisplayName && ! isAuthorNameBlacklisted( ownerDisplayName ) && <span className="reader-feed-header__byline">
 							{ this.props.translate(
 								'by %(author)s',
 								{

@@ -28,42 +28,40 @@ const connectSite = Component => {
 		static propTypes = {
 			feed: PropTypes.object,
 			site: PropTypes.object,
-		}
+		};
 
 		render() {
 			return (
 				<div>
-					{ ! this.props.feed && !! this.props.feedId && <QueryReaderFeed feedId={ this.props.feedId } /> }
-					{ ! this.props.site && !! this.props.siteId && <QueryReaderSite siteId={ this.props.siteId } /> }
+					{ !! this.props.feedId && <QueryReaderFeed feedId={ this.props.feedId } /> }
+					{ !! this.props.siteId && <QueryReaderSite siteId={ this.props.siteId } /> }
 					<Component { ...this.props } />
 				</div>
 			);
 		}
 	}
 
-	return connect(
-		( state, ownProps ) => {
-			let { feedId, siteId } = ownProps;
-			let feed = !! feedId ? getFeed( state, feedId ) : undefined;
-			let site = !! siteId ? getSite( state, siteId ) : undefined;
+	return connect( ( state, ownProps ) => {
+		let { feedId, siteId } = ownProps;
+		let feed = !! feedId ? getFeed( state, feedId ) : undefined;
+		let site = !! siteId ? getSite( state, siteId ) : undefined;
 
-			if ( feed && ! siteId ) {
-				siteId = feed.blog_ID !== 0 && feed.blog_ID;
-				site = !! siteId ? getSite( state, feed.blog_ID ) : undefined;
-			}
-			if ( site && ! feedId ) {
-				feedId = site.feed_ID;
-				feed = !! feedId ? getFeed( state, site.feed_ID ) : undefined;
-			}
-
-			return {
-				feed,
-				site,
-				siteId,
-				feedId,
-			};
+		if ( feed && ! siteId ) {
+			siteId = feed.blog_ID !== 0 ? feed.blog_ID : undefined;
+			site = !! siteId ? getSite( state, feed.blog_ID ) : undefined;
 		}
-	)( connectSiteFetcher );
+		if ( site && ! feedId ) {
+			feedId = site.feed_ID;
+			feed = !! feedId ? getFeed( state, site.feed_ID ) : undefined;
+		}
+
+		return {
+			feed,
+			site,
+			siteId,
+			feedId,
+		};
+	} )( connectSiteFetcher );
 };
 
 export default connectSite;

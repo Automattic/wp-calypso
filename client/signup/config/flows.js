@@ -213,7 +213,8 @@ if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 		steps: [ 'site-or-domain', 'themes', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
-		lastModified: '2017-01-16'
+		disallowResume: true,
+		lastModified: '2017-05-09'
 	};
 
 	flows[ 'site-selected' ] = {

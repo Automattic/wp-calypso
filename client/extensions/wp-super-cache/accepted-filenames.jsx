@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { pick } from 'lodash';
 
 /**
@@ -13,136 +13,102 @@ import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
+import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
-const AcceptedFilenames = ( {
-	fields: {
-		archives,
-		author,
-		category,
-		feed,
-		frontpage,
-		home,
-		pages,
-		search,
-		single,
-		tag,
-		wp_accepted_files,
-		wp_rejected_uri,
-	},
-	handleChange,
-	handleToggle,
-	isRequesting,
-	translate,
-} ) => {
-	return (
-		<div>
-			<SectionHeader label={ translate( 'Accepted Filenames & Rejected URIs' ) }>
-				<Button
-					compact
-					primary
-					disabled={ isRequesting }
-					type="submit">
-					{ translate( 'Save Settings' ) }
-				</Button>
-			</SectionHeader>
-			<Card>
-				<form>
-					<FormFieldset>
-						<FormToggle
-							checked={ !! single }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'single' ) }>
-							<span>
-								{ translate( 'Single Posts (is_single)' ) }
-							</span>
-						</FormToggle>
+class AcceptedFilenames extends Component {
+	static propTypes = {
+		fields: PropTypes.object,
+		handleChange: PropTypes.func.isRequired,
+		handleSubmitForm: PropTypes.func.isRequired,
+		isRequesting: PropTypes.bool,
+		isSaving: PropTypes.bool,
+		setFieldValue: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
 
-						<FormToggle
-							checked={ !! pages }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'pages' ) }>
-							<span>
-								{ translate( 'Pages (is_page)' ) }
-							</span>
-						</FormToggle>
+	static defaultProps = {
+		fields: {},
+		isRequesting: true,
+		isSaving: false,
+	};
 
-						<FormToggle
-							checked={ !! frontpage }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'frontpage' ) }>
-							<span>
-								{ translate( 'Front Page (is_front_page)' ) }
-							</span>
-						</FormToggle>
+	renderToggle = ( fieldName, fieldLabel ) => {
+		const {
+			fields: { pages },
+			isRequesting,
+			isSaving,
+		} = this.props;
 
-						<FormToggle
-							checked={ !! home }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'home' ) }>
-							<span>
-								{ translate( 'Home (is_home)' ) }
-							</span>
-						</FormToggle>
+		return (
+			<FormToggle
+				checked={ !! pages && !! pages[ fieldName ] }
+				disabled={ isRequesting || isSaving }
+				onChange={ this.handleToggle( fieldName ) }>
+				<span>
+					{ fieldLabel }
+				</span>
+			</FormToggle>
+		);
+	}
 
-						<FormToggle
-							checked={ !! archives }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'archives' ) }>
-							<span>
-								{ translate( 'Archives (is_archive)' ) }
-							</span>
-						</FormToggle>
+	handleToggle = ( fieldName ) => {
+		return () => {
+			const {
+				fields,
+				setFieldValue,
+			} = this.props;
+			const groupName = 'pages';
+			const groupFields = fields[ groupName ] ? fields[ groupName ] : {};
 
-						<FormToggle
-							checked={ !! tag }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'tag' ) }>
-							<span>
-								{ translate( 'Tags (is_tag)' ) }
-							</span>
-						</FormToggle>
+			if ( ! ( fieldName in groupFields ) ) {
+				return;
+			}
 
-						<FormToggle
-							checked={ !! category }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'category' ) }>
-							<span>
-								{ translate( 'Category (is_category)' ) }
-							</span>
-						</FormToggle>
+			groupFields[ fieldName ] = ! groupFields[ fieldName ];
+			setFieldValue( groupName, groupFields );
+		};
+	};
 
-						<FormToggle
-							checked={ !! feed }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'feed' ) }>
-							<span>
-								{ translate( 'Feeds (is_feed)' ) }
-							</span>
-						</FormToggle>
+	render() {
+		const {
+			fields,
+			handleChange,
+			handleSubmitForm,
+			isRequesting,
+			isSaving,
+			translate,
+		} = this.props;
+		const {
+			cache_acceptable_files,
+			cache_rejected_uri,
+		} = fields;
 
-						<FormToggle
-							checked={ !! search }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'search' ) }>
-							<span>
-								{ translate( 'Search Pages (is_search)' ) }
-							</span>
-						</FormToggle>
+		return (
+			<div>
+				<SectionHeader label={ translate( 'Accepted Filenames & Rejected URIs' ) }>
+					<Button
+						compact
+						primary
+						disabled={ isRequesting || isSaving }
+						onClick={ handleSubmitForm }>
+						{ isSaving
+							? translate( 'Saving…' )
+							: translate( 'Save Settings' )
+						}
+					</Button>
+				</SectionHeader>
+				<Card>
+					<form>
+						<FormLabel>
+							{ translate( 'Do not cache these page types.' ) }
+						</FormLabel>
 
-						<FormToggle
-							checked={ !! author }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'author' ) }>
-							<span>
-								{ translate( 'Author Pages (is_author)' ) }
-							</span>
-						</FormToggle>
-						<FormSettingExplanation>
+						<FormSettingExplanation className="wp-super-cache__condition-settings-explanation">
 							{ translate(
-								'Do not cache these page types. See the {{a}}Conditional Tags{{/a}} ' +
+								' See the {{a}}Conditional Tags{{/a}} ' +
 								'documentation for a complete discussion on each type.',
 								{
 									components: {
@@ -157,60 +123,66 @@ const AcceptedFilenames = ( {
 								}
 							) }
 						</FormSettingExplanation>
-					</FormFieldset>
 
-					<FormFieldset>
-						<FormTextarea
-							disabled={ isRequesting }
-							onChange={ handleChange( 'wp_rejected_uri' ) }
-							value={ wp_rejected_uri || '' } />
-						<FormSettingExplanation>
-							{ translate(
-								'Add here strings (not a filename) that forces a page not to be cached. For example, ' +
-								'if your URLs include year and you dont want to cache last year posts, it’s enough ' +
-								'to specify the year, i.e. ’/2004/’. WP-Cache will search if that string is part ' +
-								'of the URI and if so, it will not cache that page.'
-							) }
-						</FormSettingExplanation>
-					</FormFieldset>
+						<FormFieldset>
+							{ this.renderToggle( 'single', translate( 'Single Posts (is_single)' ) ) }
+							{ this.renderToggle( 'pages', translate( 'Pages (is_page)' ) ) }
+							{ this.renderToggle( 'frontpage', translate( 'Front Page (is_front_page)' ) ) }
+							{ this.renderToggle( 'home', translate( 'Home (is_home)' ) ) }
+							{ this.renderToggle( 'archives', translate( 'Archives (is_archive)' ) ) }
+							{ this.renderToggle( 'tag', translate( 'Tags (is_tag)' ) ) }
+							{ this.renderToggle( 'category', translate( 'Category (is_category)' ) ) }
+							{ this.renderToggle( 'feed', translate( 'Feeds (is_feed)' ) ) }
+							{ this.renderToggle( 'search', translate( 'Search Pages (is_search)' ) ) }
+							{ this.renderToggle( 'author', translate( 'Author Pages (is_author)' ) ) }
+						</FormFieldset>
 
-					<FormFieldset>
-						<FormTextarea
-							disabled={ isRequesting }
-							onChange={ handleChange( 'wp_accepted_files' ) }
-							value={ wp_accepted_files || '' } />
-						<FormSettingExplanation>
-							{ translate(
-								'Add here those filenames that can be cached, even if they match one of the rejected ' +
-								'substring specified above.'
-							) }
-						</FormSettingExplanation>
-					</FormFieldset>
-				</form>
-			</Card>
-		</div>
-	);
-};
+						<FormFieldset>
+							<FormLabel>
+								{ translate( 'Do not cache pages that contain the following strings:' ) }
+							</FormLabel>
+							<FormTextarea
+								disabled={ isRequesting || isSaving }
+								onChange={ handleChange( 'cache_rejected_uri' ) }
+								value={ cache_rejected_uri && cache_rejected_uri.join( '\n' ) } />
+							<FormSettingExplanation>
+								{ translate(
+									'Add here strings (not a filename) that forces a page not to be cached. For example, ' +
+									'if your URLs include year and you dont want to cache last year posts, it’s enough ' +
+									'to specify the year, i.e. ’/2004/’. WP-Cache will search if that string is part ' +
+									'of the URI and if so, it will not cache that page.'
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLabel>
+								{ translate( 'Whitelisted filenames:' ) }
+							</FormLabel>
+							<FormTextarea
+								disabled={ isRequesting || isSaving }
+								onChange={ handleChange( 'cache_acceptable_files' ) }
+								value={ cache_acceptable_files && cache_acceptable_files.join( '\n' ) } />
+							<FormSettingExplanation>
+								{ translate(
+									'Add here those filenames that can be cached, even if they match one of the rejected ' +
+									'substring specified above.'
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+					</form>
+				</Card>
+			</div>
+		);
+	}
+}
 
 const getFormSettings = settings => {
-	const textSettings = pick( settings, [
-		'wp_accepted_files',
-		'wp_rejected_uri',
-	] );
-	const wpCachePages = pick( settings.wp_cache_pages, [
-		'archives',
-		'author',
-		'category',
-		'feed',
-		'frontpage',
-		'home',
+	return pick( settings, [
+		'cache_acceptable_files',
+		'cache_rejected_uri',
 		'pages',
-		'search',
-		'single',
-		'tag',
 	] );
-
-	return Object.assign( {}, textSettings, wpCachePages );
 };
 
 export default WrapSettingsForm( getFormSettings )( AcceptedFilenames );

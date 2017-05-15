@@ -41,8 +41,8 @@ function getHoldMessages( siteSlug, translate ) {
 			supportUrl: 'https://support.wordpress.com/suspended-blogs/',
 		},
 		NON_ADMIN_USER: {
-			title: translate( 'Admin access required' ),
-			description: translate( 'Only site administrators are allowed to use this feature.' ),
+			title: translate( 'Site owner access required' ),
+			description: translate( 'Only site owners are allowed to use this feature.' ),
 			supportUrl: 'https://support.wordpress.com/user-roles/',
 		},
 		NOT_DOMAIN_OWNER: {

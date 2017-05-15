@@ -5,7 +5,7 @@
  * @return {Function} handler wrapper
  */
 export function requestHandler( handler ) {
-	return ( params, fn ) => {
+	return ( params, fn ) => (
 		handler( params, ( err, response ) => {
 			const { code, message, data = {} } = response || {};
 			const { status } = data;
@@ -21,8 +21,8 @@ export function requestHandler( handler ) {
 			}
 
 			return fn( err, response );
-		} );
-	};
+		} )
+	);
 }
 
 /**

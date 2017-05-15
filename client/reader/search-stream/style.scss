@@ -1,4 +1,5 @@
 .search-stream__intro {
+
 	@include breakpoint( "<660px" ) {
 		margin-left: 16px;
 	}
@@ -11,7 +12,7 @@
 .search-stream__fixed-area-separator {
 	margin-top: 31px;
 	margin-bottom: 0;
-	background: #c8d7e1;
+	background: lighten( $gray, 20% );
 }
 
 .is-reader-page .search-stream .reader-post-card.card {
@@ -21,9 +22,14 @@
 .is-reader-page .search-stream__fixed-area {
 	background-color: $white;
 	position: fixed;
-	top: 0px;
-	padding-top: 77px;
+	top: 0;
+	padding-top: 47px;
 	z-index: 20;
+	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
+
+	@include breakpoint( ">660px" ) {
+		padding-top: 77px;
+	}
 }
 
 // Custom breakpoints needed to match Related Posts
@@ -34,7 +40,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 .is-reader-page .search-stream .reader__content {
 	display: flex;
 	flex-flow: wrap;
-	margin-top: 80px;
+	margin-top: 100px;
 
 	@include breakpoint( ">660px" ) {
 		margin-top: 133px;
@@ -93,13 +99,17 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	.reader-related-card-v2__post {
-		max-height: 110px;
-
-		@media #{$reader-related-card-v2-breakpoint-small} {
-			max-height: 103px;
-		}
+		max-height: 208px;
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
+			max-height: 105px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			max-height: 206px;
+		}
+
+		@media #{$reader-related-card-v2-breakpoint-small} {
 			max-height: 103px;
 		}
 
@@ -121,15 +131,19 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 				max-height: 104px;
 			}
 		}
+
+		.reader-related-card-v2__meta {
+			margin-bottom: 18px;
+		}
 	}
 
 	.reader-related-card-v2__featured-image {
-		margin: 0 0 17px;
+		margin: 0 0 14px;
 	}
 
 	.reader-related-card-v2__meta {
 		align-items: flex-start;
-		margin-bottom: 16px;
+		margin-bottom: 12px;
 
 		.reader-related-card-v2__byline,
 		.reader-related-card-v2__byline-author,

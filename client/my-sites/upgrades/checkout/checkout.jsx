@@ -74,6 +74,10 @@ const Checkout = React.createClass( {
 			return;
 		}
 
+		if ( this.props.cart.hasLoadedFromServer ) {
+			this.trackPageView();
+		}
+
 		if ( this.props.cart.hasLoadedFromServer && this.props.product ) {
 			this.addProductToCart();
 		}
@@ -85,12 +89,6 @@ const Checkout = React.createClass( {
 	componentWillReceiveProps: function( nextProps ) {
 		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer && this.props.product ) {
 			this.addProductToCart();
-		}
-
-		// Note that `hasPendingServerUpdates` will go from `null` to `false` on NUX checkout
-		// and from `true` to `false` on post-NUX checkout
-		if ( this.props.cart.hasPendingServerUpdates !== false && nextProps.cart.hasPendingServerUpdates === false ) {
-			this.trackPageView( nextProps );
 		}
 	},
 
@@ -232,6 +230,7 @@ const Checkout = React.createClass( {
 		const {
 			cart,
 			isDomainOnly,
+			reduxStore,
 			selectedSiteId,
 			transaction: {
 				step: {
@@ -277,7 +276,7 @@ const Checkout = React.createClass( {
 						'We sent your receipt to %(email)s.', {
 							args: {
 								productName: renewalItem.product_name,
-								duration: i18n.moment.duration( renewalItem.bill_period, 'days' ).humanize(),
+								duration: i18n.moment.duration( { days: renewalItem.bill_period } ).humanize(),
 								date: i18n.moment( product.expiry ).format( 'MMM DD, YYYY' ),
 								email: product.user_email
 							}
@@ -311,9 +310,13 @@ const Checkout = React.createClass( {
 			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
 
 			if ( domainName ) {
-				fetchSitesAndUser( domainName, () => {
-					page( redirectPath );
-				} );
+				fetchSitesAndUser(
+					domainName,
+					() => {
+						page( redirectPath );
+					},
+					reduxStore
+				);
 
 				return;
 			}

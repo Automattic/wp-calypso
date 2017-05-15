@@ -8,7 +8,12 @@ import React from 'react';
  */
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import {
+	ensureStoreLoading,
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'reader/controller-helper';
 import LikedPostsStream from 'reader/liked-stream/main';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
@@ -36,16 +41,14 @@ const exported = {
 					analyticsPageTitle,
 					mcKey
 				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
+				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    likes
-} = exported;
+export const { likes } = exported;

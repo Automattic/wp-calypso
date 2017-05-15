@@ -7,16 +7,16 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	DOCUMENT_HEAD_LINK_ADD,
-	DOCUMENT_HEAD_META_ADD,
+	DOCUMENT_HEAD_LINK_SET,
+	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET
 } from 'state/action-types';
 
 import {
 	setDocumentHeadTitle,
-	addDocumentHeadLink,
-	addDocumentHeadMeta,
+	setDocumentHeadLink,
+	setDocumentHeadMeta,
 	setDocumentHeadUnreadCount
 } from '../actions';
 
@@ -43,23 +43,23 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#addDocumentHeadLink()', () => {
+	describe( '#setDocumentHeadLink()', () => {
 		it( 'should return an action object', () => {
-			const action = addDocumentHeadLink( { rel: 'some-rel', content: 'some-content' } );
+			const action = setDocumentHeadLink( { rel: 'some-rel', content: 'some-content' } );
 
 			expect( action ).to.eql( {
-				type: DOCUMENT_HEAD_LINK_ADD,
+				type: DOCUMENT_HEAD_LINK_SET,
 				link: { rel: 'some-rel', content: 'some-content' }
 			} );
 		} );
 	} );
 
-	describe( '#addDocumentHeadMeta()', () => {
+	describe( '#setDocumentHeadMeta()', () => {
 		it( 'should return an action object', () => {
-			const action = addDocumentHeadMeta( { rel: 'some-rel', content: 'some-content' } );
+			const action = setDocumentHeadMeta( { rel: 'some-rel', content: 'some-content' } );
 
 			expect( action ).to.eql( {
-				type: DOCUMENT_HEAD_META_ADD,
+				type: DOCUMENT_HEAD_META_SET,
 				meta: { rel: 'some-rel', content: 'some-content' }
 			} );
 		} );

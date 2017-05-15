@@ -7,8 +7,9 @@ You can install Calypso directly on your machine by following the next steps, or
 1.	Check that you have all prerequisites (Git, Node, NPM). See [below](install.md#prerequisites) for more details.
 2.	Clone this repository locally.
 3.	Add `127.0.0.1 calypso.localhost` to your local `hosts` file.
-4.	Execute `make run` or `make dashboard` (for a more visually-oriented interface) from the root directory of the repository.
-5.	Open [`calypso.localhost:3000`](http://calypso.localhost:3000/) in your browser.
+4.	Run `npm install`
+5.	Execute `make run` or `make dashboard` (for a more visually-oriented interface) from the root directory of the repository.
+6.	Open [`calypso.localhost:3000`](http://calypso.localhost:3000/) in your browser.
 
 ## Prerequisites
 
@@ -35,6 +36,10 @@ The `make run` command will install any `npm` dependencies and start the develop
 To run Calypso locally, you'll need to add `127.0.0.1 calypso.localhost` to [your hosts file](http://www.howtogeek.com/howto/27350/beginner-geek-how-to-edit-your-hosts-file/), and load the app at [http://calypso.localhost:3000](http://calypso.localhost:3000) instead of just `localhost`. This is necessary, because when running locally Calypso is using the remote version of the WordPress.com REST API, which allows only certain origins via our current authentication methods.
 
 See [Development Workflow](../docs/development-workflow.md) for more.
+
+### Starting the node debugger
+
+The `make run` command will pass anything set in the `NODE_ARGS` environment variable as an option to the Node command.  This means that if you want to start up the debugger on a specific port you can run `NODE_ARGS="--debug=5858" make run`.  Starting the built-in inspector can also by done by running `NODE_ARGS="--inspect" make run`.  In either case, if you would like to debug the build process as well, it might be convenient to have the inspector break on the first line and wait for you.  In that case, you should also pass in the `--debug-brk` option like so `NODE_ARGS="--inspect --debug-brk" make run`.
 
 ## Using a portable development environment
 

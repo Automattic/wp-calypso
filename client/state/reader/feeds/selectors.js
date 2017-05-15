@@ -1,23 +1,39 @@
+const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
+
 /**
-* Returns true if we should fetch the feed
-*
-* @param  {Object}  state  Global state tree
-* @param  {Number}  feedId The feed ID
-* @return {Boolean}        Whether feed should be fetched
-*/
+ * Returns true if we should fetch the feed
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  feedId The feed ID
+ * @return {Boolean}        Whether feed should be fetched
+ */
 
 export function shouldFeedBeFetched( state, feedId ) {
-	return ! state.reader.feeds.queuedRequests[ feedId ] && // not currently queued
-		! state.reader.feeds.items[ feedId ]; // not currently loaded
+	const isNotQueued = ! state.reader.feeds.queuedRequests[ feedId ];
+	const isMissing = ! getFeed( state, feedId );
+	return isNotQueued && ( isMissing || isStale( state, feedId ) );
+}
+
+function isStale( state, feedId ) {
+	const lastFetched = state.reader.feeds.lastFetched[ feedId ];
+	if ( ! lastFetched ) {
+		return false;
+	}
+	return lastFetched <= Date.now() - DAY_IN_MILLIS;
 }
 
 /**
- * Get the feed object for the given feed id
+ * Returns a feed object
  *
- * @param  {Object} state  Global state tree
- * @param  {Number} feedId The feed ID
- * @return {Object}        The feed object
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  feedId The feed ID
+ * @return {Object}        Feed
  */
+
 export function getFeed( state, feedId ) {
 	return state.reader.feeds.items[ feedId ];
+}
+
+export function getFeeds( state ) {
+	return state.reader.feeds.items;
 }

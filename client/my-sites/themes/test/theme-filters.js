@@ -58,7 +58,7 @@ describe( 'theme-filters', () => {
 	describe( 'getSortedFilterTerms', () => {
 		it( 'should return terms from a mixed input string', () => {
 			const terms = getSortedFilterTerms( 'blah rah color:blue yah feature:post-slider blah' );
-			assert.equal( terms, 'blue,post-slider' );
+			assert.equal( terms, 'blue+post-slider' );
 		} );
 
 		it( 'should ignore invalid filters', () => {

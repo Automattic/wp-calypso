@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { includes, pickBy } from 'lodash';
+import { pickBy } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -24,30 +24,10 @@ import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
-import { isATEnabled } from 'lib/automated-transfer';
-import { getThemeShowcaseDescription } from 'state/selectors';
+import { getThemeShowcaseDescription, getThemeShowcaseTitle } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-
-const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
-	? require( './themes-magic-search-card' )
-	: require( './themes-search-card' );
-
-function getThemeShowcaseTitle( tier ) {
-	const titles = {
-		'': 'WordPress Themes',
-		free: 'Free WordPress Themes',
-		premium: 'Premium WordPress Themes',
-	};
-	return titles[ tier ];
-}
-
-function getThemeShowcaseCanonicalUrl( tier ) {
-	if ( includes( [ 'free', 'premium' ], tier ) ) {
-		return 'https://wordpress.com/themes/' + tier;
-	}
-	return 'https://wordpress.com/themes';
-}
+import ThemesSearchCard from './themes-magic-search-card';
+import QueryThemeFilters from 'components/data/query-theme-filters';
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -74,6 +54,7 @@ const ThemeShowcase = React.createClass( {
 		emptyContent: PropTypes.element,
 		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
 		search: PropTypes.string,
+		pathName: PropTypes.string,
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
 		defaultOption: optionShape,
@@ -102,24 +83,46 @@ const ThemeShowcase = React.createClass( {
 	doSearch( searchBoxContent ) {
 		const filter = getSortedFilterTerms( searchBoxContent );
 		const searchString = stripFilters( searchBoxContent );
-		this.updateUrl( this.props.tier || 'all', filter, searchString );
+		const url = this.constructUrl( { filter, searchString } );
+		page( url );
 	},
 
-	updateUrl( tier, filter, searchString = this.props.search ) {
-		const { siteSlug, vertical } = this.props;
+	/**
+	 * Returns a full showcase url from current props.
+	 *
+	 * @param {Object} sections fields from this object will override current props.
+	 * @param {String} sections.vertical override vertical prop
+	 * @param {String} sections.tier override tier prop
+	 * @param {String} sections.filter override filter prop
+	 * @param {String} sections.siteSlug override siteSlug prop
+	 * @param {String} sections.searchString override searchString prop
+	 *
+	 * @returns {String} Theme showcase url
+	 */
+	constructUrl( sections ) {
+		const {
+			vertical,
+			tier,
+			filter,
+			siteSlug,
+			searchString
+		} = { ...this.props, ...sections };
 
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
-		const tierSection = tier === 'all' ? '' : `/${ tier }`;
-		const filterSection = filter ? `/filter/${ filter }` : '';
+		const tierSection = ( tier && tier !== 'all' ) ? `/${ tier }` : '';
+
+		let filterSection = filter ? `/filter/${ filter }` : '';
+		filterSection = filterSection.replace( /\s/g, '+' );
 
 		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
-		page( buildUrl( url, searchString ) );
+		return buildUrl( url, searchString );
 	},
 
 	onTierSelect( { value: tier } ) {
 		trackClick( 'search bar filter', tier );
-		this.updateUrl( tier, this.props.filter );
+		const url = this.constructUrl( { tier } );
+		page( url );
 	},
 
 	onUploadClick() {
@@ -130,13 +133,12 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	showUploadButton() {
-		const { isMultisite, isJetpack, isLoggedIn } = this.props;
+		const { isMultisite, isLoggedIn } = this.props;
 
 		return (
 			config.isEnabled( 'manage/themes/upload' ) &&
 			isLoggedIn &&
-			! isMultisite &&
-			( isJetpack || this.props.atEnabled )
+			! isMultisite
 		);
 	},
 
@@ -149,26 +151,33 @@ const ThemeShowcase = React.createClass( {
 			filter,
 			translate,
 			siteSlug,
-			vertical,
-			isLoggedIn
+			isLoggedIn,
+			pathName,
+			title,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
+		const canonicalUrl = 'https://wordpress.com' + pathName;
+
 		const metas = [
 			{ name: 'description', property: 'og:description', content: this.props.description },
-			{ property: 'og:url', content: getThemeShowcaseCanonicalUrl( tier ) },
-			{ property: 'og:type', content: 'website' }
+			{ property: 'og:title', content: title },
+			{ property: 'og:url', content: canonicalUrl },
+			{ property: 'og:type', content: 'website' },
+			{ property: 'og:site_name', content: 'WordPress.com' }
 		];
+
+		const links = [ { rel: 'canonical', href: canonicalUrl } ];
 
 		const headerIcons = [ {
 			label: 'new',
-			uri: '/themes',
+			uri: this.constructUrl( { vertical: '' } ),
 			icon: 'star'
 		} ].concat(
 			getSubjects()
 				.map( subject => subjectsMeta[ subject ] && {
 					label: subject,
-					uri: `/themes/${ subject }`,
+					uri: this.constructUrl( { vertical: subject } ),
 					icon: subjectsMeta[ subject ].icon,
 					order: subjectsMeta[ subject ].order
 				} )
@@ -176,20 +185,19 @@ const ThemeShowcase = React.createClass( {
 				.sort( ( a, b ) => a.order - b.order )
 		);
 
-		const verticalSection = vertical ? `/${ vertical }` : '';
-
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<Main className="themes">
-				<DocumentHead title={ getThemeShowcaseTitle( tier ) } meta={ metas } />
+				<DocumentHead title={ title } meta={ metas } link={ links } />
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
 				{ ! isLoggedIn && (
 					<SubMasterbarNav
 						options={ headerIcons }
 						fallback={ headerIcons[ 0 ] }
-						uri={ `/themes${ verticalSection }` } />
+						uri={ this.constructUrl() } />
 				)}
 				<div className="themes__content">
+					<QueryThemeFilters />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ prependFilterKeys( filter ) + search }
@@ -244,11 +252,11 @@ const ThemeShowcase = React.createClass( {
 } );
 
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
-	atEnabled: isATEnabled( getSelectedSite( state ) ),
 	isLoggedIn: !! getCurrentUserId( state ),
 	siteSlug: getSiteSlug( state, siteId ),
 	isJetpack: isJetpackSite( state, siteId ),
 	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
+	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
 } );
 
 const mapDispatchToProps = {

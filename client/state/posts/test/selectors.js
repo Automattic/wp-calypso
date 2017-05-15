@@ -1406,7 +1406,10 @@ describe( 'selectors', () => {
 							}
 						}
 					}
-				}
+				},
+				siteSettings: {
+					items: {},
+				},
 			}, 2916284, 841 );
 
 			expect( previewUrl ).to.equal( 'https://example.wordpress.com/post-url' );

@@ -15,35 +15,52 @@ import useNock from 'test/helpers/use-nock';
 import {
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
+	ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
 } from 'state/action-types';
 
 describe( 'handleValidateRequest()', () => {
 	const apiBaseUrl = 'https://public-api.wordpress.com:443';
 	const endpoint = '/wpcom/v2/account-recovery/validate';
 
-	const request = {
-		user: 'foo',
-		method: 'primary_email',
-		key: 'a-super-secret-key',
-	};
+	const userData = { user: 'foo' };
+	const method = 'primary_email';
+	const key = 'a-super-secret-key';
 
 	describe( 'success', () => {
 		useNock( nock => (
 			nock( apiBaseUrl )
+				.persist()
 				.post( endpoint )
 				.reply( 200, { success: true } )
 		) );
 
 		it( 'should dispatch SUCCESS action on success', ( done ) => {
-			const dispatch = sinon.spy( () => {
-				assert.isTrue( dispatch.calledWith( {
-					type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
-				} ) );
+			const dispatch = sinon.spy( ( action ) => {
+				if ( action.type === ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS ) {
+					assert.isTrue( dispatch.calledWith( {
+						type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
+					} ) );
 
-				done();
+					done();
+				}
 			} );
 
-			handleValidateRequest( { dispatch }, { request }, noop );
+			handleValidateRequest( { dispatch }, { userData, method, key }, noop );
+		} );
+
+		it( 'should dispatch SET_VALIDATION_KEY action on success', ( done ) => {
+			const dispatch = sinon.spy( ( action ) => {
+				if ( action.type === ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY ) {
+					assert.isTrue( dispatch.calledWith( {
+						type: ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
+						key: key,
+					} ) );
+
+					done();
+				}
+			} );
+
+			handleValidateRequest( { dispatch }, { userData, method, key }, noop );
 		} );
 	} );
 
@@ -69,7 +86,7 @@ describe( 'handleValidateRequest()', () => {
 				done();
 			} );
 
-			handleValidateRequest( { dispatch }, { request }, noop );
+			handleValidateRequest( { dispatch }, { userData, method, key }, noop );
 		} );
 	} );
 } );

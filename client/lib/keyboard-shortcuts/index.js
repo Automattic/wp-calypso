@@ -50,6 +50,9 @@ function KeyboardShortcuts( keyBindings ) {
 	// save a copy of the bound last-key-pressed handler so it can be removed later
 	this.boundKeyHandler = this.handleKeyPress.bind( this );
 
+	// is the notifications panel open? If so we don't fire off key-handlers
+	this.isNotificationsOpen = false;
+
 	// bind the shortcuts if this is a browser environment
 	if ( typeof window !== 'undefined' ) {
 		keymaster.filter = ignoreDefaultAndContentEditableFilter;
@@ -91,6 +94,11 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 	keyCombinations.forEach( function( keys ) {
 		if ( 'sequence' === type ) {
 			keymaster( keys[ 1 ], function( event, handler ) {
+				// if the notifications panel is open, do not handle any sequences
+				if ( self.isNotificationsOpen ) {
+					return;
+				}
+
 				if ( self.lastKey === keys[ 0 ] && self.lastKeyTime > Date.now() - self.timeLimit ) {
 					self.emitEvent( eventName, event, handler );
 
@@ -104,6 +112,11 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 		} else {
 			keys = keys.join( '+' );
 			keymaster( keys, function( event, handler ) {
+				// if the notifications panel is open, do not handle any presses besides `n` to toggle the panel
+				if ( self.isNotificationsOpen && ( self._getKey( event ) !== 'n' && event.keyCode !== 27 ) ) {
+					return;
+				}
+
 				var keyValue;
 				// Check if the value of the pressed key matches. This is needed
 				// for keys being used with shift modifiers, as the charCode only
@@ -158,6 +171,10 @@ KeyboardShortcuts.prototype.handleKeyPress = function( event ) {
 		this.lastKey = String.fromCharCode( event.keyCode ).toLowerCase();
 		this.lastKeyTime = Date.now();
 	}
+};
+
+KeyboardShortcuts.prototype.setNotificationsOpen = function( isOpen ) {
+	this.isNotificationsOpen = isOpen;
 };
 
 // add EventEmitter methods to prototype

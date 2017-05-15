@@ -12,6 +12,8 @@ import { noop } from 'lodash';
 import { useSandbox } from 'test/helpers/use-sinon';
 import wpcom from 'lib/wp';
 import {
+	ANALYTICS_EVENT_RECORD,
+	HAPPYCHAT_BLUR,
 	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_DISCONNECTED,
@@ -29,11 +31,14 @@ import middleware, {
 	connectChat,
 	connectIfRecentlyActive,
 	requestTranscript,
+	sendActionLogsAndEvents,
+	sendAnalyticsLogEvent,
 	sendRouteSetEventMessage,
 } from '../middleware';
 import * as selectors from '../selectors';
 import {
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
+	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
 } from '../selectors';
 
@@ -124,7 +129,7 @@ describe( 'middleware', () => {
 		it( 'should send relevant browser information to the connection', () => {
 			const action = { type: HAPPYCHAT_SEND_BROWSER_INFO, siteUrl: 'http://butt.holdings/' };
 			const connection = { info: spy() };
-			middleware( connection )()( noop )( action );
+			middleware( connection )( { getState: noop } )( noop )( action );
 
 			expect( connection.info ).to.have.been.calledOnce;
 			expect( connection.info.firstCall.args[ 0 ].text ).to.include( action.siteUrl );
@@ -178,7 +183,7 @@ describe( 'middleware', () => {
 				send: spy(),
 				notTyping: spy(),
 			};
-			middleware( connection )()( noop )( action );
+			middleware( connection )( { getState: noop } )( noop )( action );
 			expect( connection.send ).to.have.been.calledWith( action.message );
 			expect( connection.notTyping ).to.have.been.calledOnce;
 		} );
@@ -188,13 +193,13 @@ describe( 'middleware', () => {
 		it( 'should send the connection a typing signal when a message is present', () => {
 			const action = { type: HAPPYCHAT_SET_MESSAGE, message: 'Hello world' };
 			const connection = { typing: spy() };
-			middleware( connection )()( noop )( action );
+			middleware( connection )( { getState: noop } )( noop )( action );
 			expect( connection.typing ).to.have.been.calledWith( action.message );
 		} );
 		it( 'should send the connection a notTyping signal when the message is blank', () => {
 			const action = { type: HAPPYCHAT_SET_MESSAGE, message: '' };
 			const connection = { notTyping: spy() };
-			middleware( connection )()( noop )( action );
+			middleware( connection )( { getState: noop } )( noop )( action );
 			expect( connection.notTyping ).to.have.been.calledOnce;
 		} );
 	} );
@@ -272,6 +277,149 @@ describe( 'middleware', () => {
 			);
 			sendRouteSetEventMessage( connection, { getState }, action );
 			expect( connection.sendEvent ).to.not.have.been.called;
+		} );
+	} );
+
+	describe( '#sendAnalyticsLogEvent', () => {
+		let connection;
+
+		useSandbox( sandbox => {
+			connection = {
+				sendLog: sandbox.stub(),
+				sendStagingEvent: sandbox.stub(),
+			};
+		} );
+
+		it( 'should ignore non-tracks analytics recordings', () => {
+			const analyticsMeta = [
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'ga' } },
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'fb' } },
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'adwords' } },
+			];
+			sendAnalyticsLogEvent( connection, { meta: { analytics: analyticsMeta } } );
+
+			expect( connection.sendLog ).not.to.have.been.called;
+			expect( connection.sendStagingEvent ).not.to.have.been.called;
+		} );
+
+		it( 'should send log events for all listed tracks events', () => {
+			const analyticsMeta = [
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'ga' } },
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'adwords' } },
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'def' } },
+			];
+			sendAnalyticsLogEvent( connection, { meta: { analytics: analyticsMeta } } );
+
+			expect( connection.sendLog.callCount ).to.equal( 2 );
+			expect( connection.sendLog ).to.have.been.calledWith( 'abc' );
+			expect( connection.sendLog ).to.have.been.calledWith( 'def' );
+		} );
+
+		it( 'should only send a timeline event for whitelisted tracks events', () => {
+			const analyticsMeta = [
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'calypso_add_new_wordpress_click' } },
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
+				{ type: ANALYTICS_EVENT_RECORD, payload: {
+					service: 'tracks', name: 'calypso_themeshowcase_theme_activate', properties: {}
+				} },
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'def' } },
+			];
+			sendAnalyticsLogEvent( connection, { meta: { analytics: analyticsMeta } } );
+
+			expect( connection.sendStagingEvent.callCount ).to.equal( 2 );
+		} );
+	} );
+
+	describe( '#sendActionLogsAndEvents', () => {
+		const assignedState = deepFreeze( {
+			happychat: {
+				connectionStatus: 'connected',
+				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED
+			},
+		} );
+		const unassignedState = deepFreeze( {
+			happychat: {
+				connectionStatus: 'connected',
+				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT
+			},
+		} );
+		const unconnectedState = deepFreeze( {
+			happychat: {
+				connectionStatus: 'uninitialized',
+				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT
+			},
+		} );
+
+		let connection, getState;
+
+		useSandbox( sandbox => {
+			connection = {
+				sendLog: sandbox.stub(),
+				sendStagingEvent: sandbox.stub(),
+			};
+
+			getState = sandbox.stub();
+		} );
+
+		beforeEach( () => {
+			getState.returns( assignedState );
+		} );
+
+		it( 'should not send events if there\'s no Happychat connection', () => {
+			const action = {
+				type: HAPPYCHAT_BLUR,
+				meta: {
+					analytics: [
+						{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
+					]
+				}
+			};
+			getState.returns( unconnectedState );
+			sendActionLogsAndEvents( connection, { getState }, action );
+
+			expect( connection.sendLog ).not.to.have.been.called;
+			expect( connection.sendStagingEvent ).not.to.have.been.called;
+		} );
+
+		it( 'should not send log events if the Happychat connection is unassigned', () => {
+			const action = {
+				type: HAPPYCHAT_BLUR,
+				meta: {
+					analytics: [
+						{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
+					]
+				}
+			};
+			getState.returns( unassignedState );
+			sendActionLogsAndEvents( connection, { getState }, action );
+
+			expect( connection.sendLog ).not.to.have.been.called;
+			expect( connection.sendStagingEvent ).not.to.have.been.called;
+		} );
+
+		it( 'should send matching events when Happychat is connected and assigned', () => {
+			const action = {
+				type: HAPPYCHAT_BLUR,
+				meta: {
+					analytics: [
+						{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'calypso_add_new_wordpress_click' } },
+						{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
+						{ type: ANALYTICS_EVENT_RECORD, payload: {
+							service: 'tracks', name: 'calypso_themeshowcase_theme_activate', properties: {}
+						} },
+						{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'def' } },
+					]
+				}
+			};
+			getState.returns( assignedState );
+			sendActionLogsAndEvents( connection, { getState }, action );
+
+			// All 4 analytics records will be sent to the "firehose" log
+			expect( connection.sendLog.callCount ).to.equal( 4 );
+			// The two whitelisted analytics events and the HAPPYCHAT_BLUR action itself
+			// will be sent as customer events
+			expect( connection.sendStagingEvent.callCount ).to.equal( 3 );
 		} );
 	} );
 } );

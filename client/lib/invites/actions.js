@@ -15,6 +15,7 @@ import { action as ActionTypes } from 'lib/invites/constants';
 import analytics from 'lib/analytics';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { acceptedNotice } from 'my-sites/invites/utils';
+import { requestSites } from 'state/sites/actions';
 
 /**
  * Module variables
@@ -82,7 +83,7 @@ export function createAccount( userData, invite, callback ) {
 				callback( error, bearerToken );
 			}
 		);
-	}
+	};
 }
 
 export function acceptInvite( invite, callback ) {
@@ -113,12 +114,13 @@ export function acceptInvite( invite, callback ) {
 					}
 					analytics.tracks.recordEvent( 'calypso_invite_accepted' );
 				}
+				dispatch( requestSites() );
 				if ( typeof callback === 'function' ) {
 					callback( error, data );
 				}
 			}
 		);
-	}
+	};
 }
 
 export function sendInvites( siteId, usernamesOrEmails, role, message, formId ) {
@@ -178,7 +180,7 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId ) 
 				analytics.tracks.recordEvent( 'calypso_invite_send_success' );
 			}
 		} );
-	}
+	};
 }
 
 export function createInviteValidation( siteId, usernamesOrEmails, role ) {

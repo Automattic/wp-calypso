@@ -42,7 +42,7 @@ export const getHappychatTranscriptTimestamp = state => (
  * @return {String} current state value
  */
 export const getHappychatConnectionStatus = createSelector(
-	state => state.happychat.connectionStatus
+	state => get( state, 'happychat.connectionStatus' )
 );
 
 export const isHappychatConnectionUninitialized = state => getHappychatConnectionStatus( state ) === 'uninitialized';
@@ -50,7 +50,7 @@ export const isHappychatConnectionUninitialized = state => getHappychatConnectio
 export const isHappychatClientConnected = state => getHappychatConnectionStatus( state ) === 'connected';
 
 export const isHappychatChatAssigned = createSelector(
-	state => state.happychat.chatStatus === HAPPYCHAT_CHAT_STATUS_ASSIGNED
+	state => get( state, 'happychat.chatStatus' ) === HAPPYCHAT_CHAT_STATUS_ASSIGNED
 );
 
 export const isHappychatAcceptingChats = createSelector(

@@ -6,8 +6,4 @@ import subscribe from './new';
 import update from './update';
 import unsubscribe from './delete';
 
-export default mergeHandlers(
-	subscribe,
-	update,
-	unsubscribe,
-);
+export default mergeHandlers( subscribe, update, unsubscribe );

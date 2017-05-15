@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import {
 	find,
@@ -30,8 +29,6 @@ import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import jetpackPlugins from './jetpack-plugins';
 import Tooltip from 'components/tooltip';
-import { isATEnabled } from 'lib/automated-transfer';
-import { getSelectedSite } from 'state/ui/selectors';
 
 const filterGroup = category => group => {
 	if ( category && category !== 'all' ) {
@@ -176,26 +173,24 @@ class JetpackPluginsPanel extends Component {
 				</SectionNav>
 
 				<SectionHeader label={ translate( 'Plugins' ) }>
-					{ this.props.atEnabled &&
-						<ButtonGroup key="plugin-list-header__buttons-browser">
-							<Button
-								compact
-								href={ browserUrl }
-								onMouseEnter={ this.showPluginTooltip }
-								onMouseLeave={ this.hidePluginTooltip }
-								ref="addPluginButton"
-								aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }>
-								<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
-								<Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
-								<Tooltip
-									isVisible={ this.state.addPluginTooltip }
-									context={ this.refs && this.refs.addPluginButton }
-									position="bottom">
-									{ translate( 'Browse all plugins' ) }
-								</Tooltip>
-							</Button>
-						</ButtonGroup>
-					}
+					<ButtonGroup key="plugin-list-header__buttons-browser">
+						<Button
+							compact
+							href={ browserUrl }
+							onMouseEnter={ this.showPluginTooltip }
+							onMouseLeave={ this.hidePluginTooltip }
+							ref="addPluginButton"
+							aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }>
+							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
+							<Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
+							<Tooltip
+								isVisible={ this.state.addPluginTooltip }
+								context={ this.refs && this.refs.addPluginButton }
+								position="bottom">
+								{ translate( 'Browse all plugins' ) }
+							</Tooltip>
+						</Button>
+					</ButtonGroup>
 				</SectionHeader>
 
 				<CompactCard className="plugins-wpcom__jetpack-main-plugin plugins-wpcom__jetpack-plugin-item">
@@ -253,11 +248,4 @@ class JetpackPluginsPanel extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const selectedSite = getSelectedSite( state );
-		return {
-			atEnabled: isATEnabled( selectedSite )
-		};
-	}
-)( localize( urlSearch( JetpackPluginsPanel ) ) );
+export default localize( urlSearch( JetpackPluginsPanel ) );

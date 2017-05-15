@@ -6,6 +6,7 @@ import { ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST } from 'state/action-types';
 import {
 	validateRequestSuccess,
 	validateRequestError,
+	setValidationKey,
 } from 'state/account-recovery/reset/actions';
 
 export const handleValidateRequest = ( { dispatch }, action, next ) => {
@@ -18,7 +19,10 @@ export const handleValidateRequest = ( { dispatch }, action, next ) => {
 		},
 		apiNamespace: 'wpcom/v2',
 		path: '/account-recovery/validate',
-	} ).then( () => dispatch( validateRequestSuccess() ) )
+	} ).then( () => {
+		dispatch( validateRequestSuccess() );
+		dispatch( setValidationKey( key ) );
+	} )
 	.catch( ( error ) => dispatch( validateRequestError( error ) ) );
 
 	return next( action );

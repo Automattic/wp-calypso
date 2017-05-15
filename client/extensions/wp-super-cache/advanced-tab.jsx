@@ -21,10 +21,9 @@ import WrapSettingsForm from './wrap-settings-form';
 
 const AdvancedTab = ( {
 	fields: {
-		super_cache_enabled,
-		wp_cache_enabled,
+		is_cache_enabled,
+		is_super_cache_enabled,
 	},
-	siteUrl,
 } ) => {
 	return (
 		<div>
@@ -36,8 +35,8 @@ const AdvancedTab = ( {
 			<AcceptedFilenames />
 			<RejectedUserAgents />
 			<LockDown />
-			{	!! wp_cache_enabled && ( '1' === super_cache_enabled || '2' === super_cache_enabled ) &&
-				<DirectlyCachedFiles siteUrl={ siteUrl } />
+			{ is_cache_enabled && is_super_cache_enabled &&
+				<DirectlyCachedFiles />
 			}
 			<FixConfig />
 		</div>
@@ -45,8 +44,8 @@ const AdvancedTab = ( {
 };
 const getFormSettings = settings => {
 	return pick( settings, [
-		'super_cache_enabled',
-		'wp_cache_enabled',
+		'is_cache_enabled',
+		'is_super_cache_enabled',
 	] );
 };
 

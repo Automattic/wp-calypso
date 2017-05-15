@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { map, forEach, head, includes, isEmpty, keys } from 'lodash';
+import { connect } from 'react-redux';
+import { map, forEach, head, includes, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -29,6 +30,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import { mergeFormWithValue } from 'signup/utils';
 import SocialSignupForm from './social';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -112,13 +114,6 @@ class SignupForm extends Component {
 		const stateWithFilledUsername = this.autoFillUsername( initialState );
 
 		this.setState( { form: stateWithFilledUsername } );
-	}
-
-	componentDidMount() {
-		// If we initialized the form with an email, we need to validate the email
-		if ( this.props.email ) {
-			this.handleBlur();
-		}
 	}
 
 	sanitizeEmail( email ) {
@@ -299,7 +294,7 @@ class SignupForm extends Component {
 							{ message }&nbsp;
 							{ this.props.translate( 'If this is you {{a}}log in now{{/a}}.', {
 								components: {
-									a: <a href={ link } />
+									a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />
 								}
 							} ) }
 						</p>
@@ -318,7 +313,7 @@ class SignupForm extends Component {
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'email' ) }>
 					<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
 					<FormTextInput
-						autoFocus={ isEmpty( this.props.email ) && ! this.props.isSocialSignupEnabled }
+						autoFocus={ ! this.props.isSocialSignupEnabled }
 						autoCapitalize="off"
 						autoCorrect="off"
 						className="signup-form__input"
@@ -337,7 +332,6 @@ class SignupForm extends Component {
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'username' ) }>
 					<FormLabel htmlFor="username">{ this.props.translate( 'Choose a username' ) }</FormLabel>
 					<FormTextInput
-						autoFocus={ ! isEmpty( this.props.email ) }
 						autoCapitalize="off"
 						autoCorrect="off"
 						className="signup-form__input"
@@ -484,4 +478,9 @@ class SignupForm extends Component {
 	}
 }
 
-export default localize( SignupForm );
+export default connect(
+	null,
+	{
+		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' )
+	}
+)( localize( SignupForm ) );

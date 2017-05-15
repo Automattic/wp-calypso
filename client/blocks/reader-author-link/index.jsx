@@ -2,15 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import * as stats from 'reader/stats';
-
-const authorNameBlacklist = [ 'admin' ];
 
 const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 	const recordAuthorClick = ( { } ) => {
@@ -28,7 +27,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 	const authorName = get( author, 'name', null );
 
 	// If the author name is blacklisted, don't return anything
-	if ( ! authorName || includes( authorNameBlacklist, authorName.toLowerCase() ) ) {
+	if ( ! authorName || isAuthorNameBlacklisted( authorName ) ) {
 		return null;
 	}
 

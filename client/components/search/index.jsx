@@ -125,7 +125,11 @@ const Search = React.createClass( {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 
-		if ( this.props.value !== nextProps.value && nextProps.value && nextProps.value !== this.state.keyword ) {
+		if (
+			( this.props.value !== nextProps.value ) &&
+			( nextProps.value || nextProps.value === '' ) &&
+			( nextProps.value !== this.state.keyword )
+		) {
 			this.setState( { keyword: nextProps.value } );
 		}
 	},

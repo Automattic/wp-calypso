@@ -40,6 +40,14 @@
 	}
 }
 
+.stats-navigation__control {
+	margin-right: 16px;
+
+	@include breakpoint( "<480px" ) {
+		margin-right: 0;
+	}
+}
+
 // Welcome Stats message
 // -- extends .welcome-message /assets/stylesheets/shared/welcome.scss
 

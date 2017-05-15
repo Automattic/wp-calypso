@@ -20,7 +20,7 @@ import config from 'config';
 
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
-		query
+		query,
 	} );
 
 	if ( trim( query ) !== '' ) {
@@ -28,16 +28,15 @@ function handleSearch( query ) {
 	}
 }
 
-const FollowingStream = ( props ) => {
-	const suggestionList = props.suggestions && initial( flatMap( props.suggestions, query =>
-		[
-			<Suggestion
-				suggestion={ query.text }
-				source="following"
-				railcar={ query.railcar }
-			/>,
-			', '
-		] ) );
+const FollowingStream = props => {
+	const suggestionList =
+		props.suggestions &&
+		initial(
+			flatMap( props.suggestions, query => [
+				<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
+				', ',
+			] )
+		);
 
 	return (
 		<Stream { ...props }>
@@ -48,16 +47,16 @@ const FollowingStream = ( props ) => {
 					autoFocus={ false }
 					delaySearch={ true }
 					delayTimeout={ 500 }
-					placeholder={ props.translate( 'Search billions of WordPress.com posts…' ) } />
+					placeholder={ props.translate( 'Search billions of WordPress.com posts…' ) }
+				/>
 			</CompactCard>
 			<p className="search-stream__blank-suggestions">
 				{ suggestionList &&
 					props.translate( 'Suggestions: {{suggestions /}}.', {
 						components: {
-							suggestions: suggestionList
-						}
-					} )
-				}&nbsp;
+							suggestions: suggestionList,
+						},
+					} ) }&nbsp;
 			</p>
 			<hr className="search-stream__fixed-area-separator" />
 		</Stream>

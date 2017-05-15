@@ -354,7 +354,8 @@
 		padding: 24px;
 	}
 
-	.site-settings__info-link-container {
+	.composing__module-settings .site-settings__info-link-container,
+	.protect__module-settings .site-settings__info-link-container {
 		margin-right: -36px;
 		height: 0;
 	}
@@ -377,6 +378,19 @@
 	float: right;
 }
 
+.form-legend + .site-settings__info-link-container {
+	margin-top: -21px;
+}
+
 .site-settings__add-to-whitelist {
 	margin-top: 3px;
+}
+
+.site-settings__foldable-card + .card.is-compact:last-child {
+	margin-top: -16px;
+	margin-bottom: 16px;
+}
+
+.site-settings__media-settings > .banner {
+	margin-top: -16px;
 }

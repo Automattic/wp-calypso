@@ -10,18 +10,21 @@ import analytics from 'lib/analytics';
 import route from 'lib/route';
 import { sectionify } from 'lib/route/path';
 import titlecase from 'to-title-case';
-import utils from 'lib/site/utils';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { canCurrentUser } from 'state/selectors';
 
 export default {
 	siteSettings( context, next ) {
 		let analyticsPageTitle = 'Site Settings';
 		const basePath = route.sectionify( context.path );
-		const site = getSelectedSite( context.store.getState() );
 		const section = sectionify( context.path ).split( '/' )[ 2 ];
+		const state = context.store.getState();
+		const site = getSelectedSite( state );
+		const siteId = getSelectedSiteId( state );
+		const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 
 		// if site loaded, but user cannot manage site, redirect
-		if ( site && ! utils.userCan( 'manage_options', site ) ) {
+		if ( site && ! canManageOptions ) {
 			page.redirect( '/stats' );
 			return;
 		}

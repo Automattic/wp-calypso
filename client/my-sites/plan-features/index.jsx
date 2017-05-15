@@ -331,7 +331,7 @@ class PlanFeatures extends Component {
 
 	renderFeatureItem( feature, index ) {
 		const description = feature.getDescription
-					? feature.getDescription( abtest )
+					? feature.getDescription( abtest, this.props.domainName )
 					: null;
 		return (
 			<PlanFeaturesItem
@@ -482,7 +482,7 @@ export default connect(
 						selectedSiteId,
 						plan,
 						{
-							isMonthly: showMonthly
+							isMonthly: showMonthlyPrice
 						} ),
 					features: getPlanFeaturesObject( planConstantObj.getFeatures( abtest ) ),
 					onUpgradeClick: onUpgradeClick
@@ -504,7 +504,7 @@ export default connect(
 					planObject: planObject,
 					popular: popular,
 					newPlan: newPlan,
-					hideMonthly: isInSignup && abtest( 'jetpackNoMonthly' ) === 'dontShowMonthly',
+					hideMonthly: false,
 					primaryUpgrade: (
 						( currentPlan === PLAN_PERSONAL && plan === PLAN_PREMIUM ) ||
 						( currentPlan === PLAN_PREMIUM && plan === PLAN_BUSINESS ) ||

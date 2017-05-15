@@ -24,6 +24,7 @@ describe( 'Automated Transfer', () => {
 		it( 'should return `false` for non-active transfer states', () => {
 			expect( isActive( transferStates.COMPLETE ) ).to.be.false;
 			expect( isActive( transferStates.CONFLICTS ) ).to.be.false;
+			expect( isActive( transferStates.FAILURE ) ).to.be.false;
 			expect( isActive( transferStates.INQUIRING ) ).to.be.false;
 		} );
 	} );

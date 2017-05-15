@@ -5,6 +5,7 @@ import React from 'react';
 import config from 'config';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -56,9 +57,11 @@ export default React.createClass( {
 	},
 
 	showIndicator() {
-		// Until WP.com sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
-		return userCan( 'manage_options', this.props.site ) &&
-			this.props.site.jetpack &&
+		// Until WP.com and Automated Transfer sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
+		const { site } = this.props;
+		const isJetpackSite = site.jetpack && ! get( site, 'options.is_automated_transfer' );
+		return userCan( 'manage_options', site ) &&
+			isJetpackSite &&
 			( this.hasUpdate() || this.hasError() || this.hasWarning() || this.state.updateError );
 	},
 

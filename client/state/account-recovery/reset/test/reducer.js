@@ -15,7 +15,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-	ACCOUNT_RECOVERY_RESET_PICK_METHOD,
+	ACCOUNT_RECOVERY_RESET_SET_METHOD,
 	ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
@@ -129,10 +129,10 @@ describe( '#account-recovery/reset reducer', () => {
 		assert.deepEqual( state.userData, userData );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_RESET_PICK_METHOD action should populate the method field', () => {
+	it( 'ACCOUNT_RECOVERY_RESET_SET_METHOD action should populate the method field', () => {
 		const method = 'primary_email';
 		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_RESET_PICK_METHOD,
+			type: ACCOUNT_RECOVERY_RESET_SET_METHOD,
 			method,
 		} );
 

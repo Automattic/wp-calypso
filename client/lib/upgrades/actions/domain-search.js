@@ -2,30 +2,19 @@
  * Internal dependencies
  */
 import page from 'page';
-import sitesFactory from 'lib/sites-list';
 import userFactory from 'lib/user';
 import { canAddGoogleApps } from 'lib/domains';
-import { addDomainToCart } from './cart';
 
-const sites = sitesFactory(),
-	user = userFactory();
+const user = userFactory();
 
-function registerDomain( domainSuggestion ) {
-	addDomainToCart( domainSuggestion );
-	goToDomainCheckout( domainSuggestion );
-}
-
-function goToDomainCheckout( domainSuggestion ) {
-	const siteSlug = sites.getSelectedSite().slug;
-
+function goToDomainCheckout( domainSuggestion, selectedSiteSlug ) {
 	if ( user.get().is_valid_google_apps_country && canAddGoogleApps( domainSuggestion.domain_name ) ) {
-		page( '/domains/add/' + domainSuggestion.domain_name + '/google-apps/' + siteSlug );
+		page( '/domains/add/' + domainSuggestion.domain_name + '/google-apps/' + selectedSiteSlug );
 	} else {
-		page( '/checkout/' + siteSlug );
+		page( '/checkout/' + selectedSiteSlug );
 	}
 }
 
 export {
-	goToDomainCheckout,
-	registerDomain
+	goToDomainCheckout
 };

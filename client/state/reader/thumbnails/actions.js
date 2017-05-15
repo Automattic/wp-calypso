@@ -60,7 +60,7 @@ function requestFailure( embedUrl, error ) {
  * @param  {String} embedUrl -  the url of the embed for which to get the thumbnail
  * @return {Function|Object} Action thunk | Action object
  */
-export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
+export const requestThumbnail = embedUrl => dispatch => {
 	const { id, service } = getEmbedMetadata( embedUrl ) || {};
 	switch ( service ) {
 		case 'youtube': {
@@ -77,12 +77,12 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 			debug( `Requesting thumbnail for embed ${ embedUrl }` );
 			dispatch( {
 				type: READER_THUMBNAIL_REQUEST,
-				embedUrl
+				embedUrl,
 			} );
 
 			const fetchUrl = `https://vimeo.com/api/v2/video/${ id }.json`;
-			return request.get( fetchUrl )
-				.then( response => {
+			return request.get( fetchUrl ).then(
+				response => {
 					const thumbnailUrl = get( response, [ 'body', 0, 'thumbnail_large' ] );
 					if ( thumbnailUrl ) {
 						dispatch( requestSuccessful( embedUrl ) );
@@ -90,9 +90,11 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 					} else {
 						dispatch( requestFailure( embedUrl, { type: BAD_API_RESPONSE, response } ) );
 					}
-				}, error => {
+				},
+				error => {
 					dispatch( requestFailure( embedUrl, error ) );
-				} );
+				}
+			);
 		}
 		default:
 			dispatch( requestFailure( embedUrl, { type: UNSUPPORTED_EMBED } ) );

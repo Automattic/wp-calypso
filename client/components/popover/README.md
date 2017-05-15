@@ -9,6 +9,11 @@ Popover
 
 Defines if the Popover should be automatically positioned under specific circumstances. For instance when the window is scrolled, the viewport is resized, etc.
 
+#### `autoRtl { bool } - default: true`
+
+Defines if the Popover should automatically be adjusted for right-to-left contexts.
+`autoRtl={ true }` will swap `right` and `left` position props in RTL context.
+
 #### `className { string } - optional`
 
 Set a custom className for the main container. Keep in mind that `popover` className will be always added to the instance.

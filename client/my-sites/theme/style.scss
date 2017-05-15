@@ -103,6 +103,7 @@
 
 	@include breakpoint( "<960px" ) {
 		position: relative;
+		margin-top: 0;
 		top: 0;
 		width: 100%;
 		height: 75vw; // force proportions
@@ -154,7 +155,8 @@
 	}
 
 	@include breakpoint( "<960px" ) {
-		top: 90%;
+		top: auto;
+		bottom: -10px;
 		left: 0;
 		right: 0;
 
@@ -334,10 +336,6 @@
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
-.theme__sheet-content .section-nav {
-	height: 50px;
-}
-
 .theme__sheet-features-list {
 	text-align: center;
 	margin: -10px;
@@ -422,6 +420,40 @@
 	small {
 		display: block;
 		color: $gray;
+	}
+}
+
+.theme__retired-theme-message {
+	display: flex;
+	align-items: center;
+	margin-bottom: 40px;
+
+	@include breakpoint( "<960px" ) {
+		flex-wrap: wrap;
+	}
+
+	.gridicon {
+		color: lighten( $gray, 20% );
+		flex: 0 0 auto;
+	}
+
+	.button {
+		flex: 0 0 auto;
+
+		@include breakpoint( "<960px" ) {
+			flex: 1 1 100%;
+			margin-top: 20px;
+			text-align: center;
+		}
+	}
+}
+
+.theme__retired-theme-message-details {
+	flex: 1 1 20px;
+	padding: 0 20px;
+
+	.theme__retired-theme-message-details-title {
+		font-size: 20px;
 	}
 }
 

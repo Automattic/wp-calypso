@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -9,23 +10,56 @@ import React from 'react';
 import Main from 'components/main';
 import StepHeader from '../step-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
+import { abtest } from 'lib/abtest';
 
-export default React.createClass( {
-	displayName: 'JetpackPlansGrid',
+/**
+ * Constants
+ */
+const defaultJetpackSite = { jetpack: true, plan: {}, isUpgradeable: () => true };
+
+class JetpackPlansGrid extends Component {
+	static propTypes = {
+		basePlansPath: PropTypes.string,
+		hideFreePlan: PropTypes.bool,
+		intervalType: PropTypes.string,
+		isLanding: PropTypes.bool,
+		landingType: PropTypes.string,
+		onSelect: PropTypes.func,
+		selectedSite: PropTypes.object,
+		showFirst: PropTypes.bool,
+	};
 
 	renderConnectHeader() {
-		let headerText = this.translate( 'Your site is now connected!' );
-		let subheaderText = this.translate( 'Now pick a plan that\'s right for you.' );
-		if ( this.props.showFirst ) {
-			headerText = this.translate( 'You are moments away from connecting your site' );
+		const {
+			isLanding,
+			landingType,
+			showFirst,
+			translate,
+		} = this.props;
+
+		let headerText = translate( 'Your site is now connected!' );
+		let subheaderText = translate( 'Now pick a plan that\'s right for you.' );
+
+		if ( abtest( 'jetpackPlansHeadlines' ) === 'headlineB' ) {
+			headerText = translate( 'Simple, affordable pricing.' );
 		}
-		if ( this.props.isLanding ) {
-			headerText = this.translate( 'Pick a plan that\'s right for you.' );
+		if ( abtest( 'jetpackPlansHeadlines' ) === 'headlineC' ) {
+			headerText = translate( 'Protect your site from data loss.' );
+		}
+		if ( abtest( 'jetpackPlansHeadlines' ) === 'headlineD' ) {
+			headerText = translate( 'Protect your data from hackers.' );
+		}
+
+		if ( showFirst ) {
+			headerText = translate( 'You are moments away from connecting your site' );
+		}
+		if ( isLanding ) {
+			headerText = translate( 'Pick a plan that\'s right for you.' );
 			subheaderText = '';
 
-			if ( this.props.landingType === 'vaultpress' ) {
-				headerText = this.translate( 'Select your VaultPress plan.' );
-				subheaderText = this.translate( 'VaultPress backup and security plans are now cheaper as part of Jetpack.' );
+			if ( landingType === 'vaultpress' ) {
+				headerText = translate( 'Select your VaultPress plan.' );
+				subheaderText = translate( 'VaultPress backup and security plans are now cheaper as part of Jetpack.' );
 			}
 		}
 		return (
@@ -35,10 +69,9 @@ export default React.createClass( {
 				step={ 1 }
 				steps={ 3 } />
 		);
-	},
+	}
 
 	render() {
-		const defaultJetpackSite = { jetpack: true, plan: {}, isUpgradeable: () => true };
 		return (
 			<Main wideLayout>
 				<div className="jetpack-connect__plans">
@@ -58,4 +91,6 @@ export default React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
+
+export default localize( JetpackPlansGrid );

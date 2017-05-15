@@ -11,28 +11,10 @@ module.exports = {
 	signupPlansCallToAction: {
 		datestamp: '20170403',
 		variations: {
-			original: 50,
-			modified: 50,
+			original: 0,
+			modified: 100, // Setting to 100% until strings are translated
 		},
 		defaultVariation: 'original',
-	},
-	automatedTransfer2: {
-		datestamp: '20170316',
-		variations: {
-			enabled: 100,
-			disabled: 0
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: false
-	},
-	jetpackNoMonthly: {
-		datestamp: '20170410',
-		variations: {
-			showMonthly: 50,
-			dontShowMonthly: 50
-		},
-		defaultVariation: 'showMonthly',
-		allowExistingUsers: true
 	},
 	signupSurveyStep: {
 		datestamp: '20170329',
@@ -41,6 +23,14 @@ module.exports = {
 			hideSurveyStep: 80,
 		},
 		defaultVariation: 'hideSurveyStep',
+	},
+	signupPlansReorderTest: {
+		datestamp: '20170410',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
 	},
 	conciergeOfferOnCancel: {
 		datestamp: '20170410',
@@ -66,5 +56,32 @@ module.exports = {
 			onlyDotComSites: 90,
 		},
 		defaultVariation: 'onlyDotComSites',
+	},
+	chatOfferOnCancel: {
+		datestamp: '20170421',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'show',
+		allowExistingUsers: true,
+	},
+	domainToPaidPlanUpsellNudge: {
+		datestamp: '20170429',
+		variations: {
+			skip: 50,
+			show: 50,
+		},
+		defaultVariation: 'skip',
+	},
+	jetpackPlansHeadlines: {
+		datestamp: '20170508',
+		variations: {
+			headlineA: 25,
+			headlineB: 25,
+			headlineC: 25,
+			headlineD: 25
+		},
+		defaultVariation: 'headlineA',
 	},
 };

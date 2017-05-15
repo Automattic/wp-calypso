@@ -48,7 +48,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			if ( prevProps.siteId !== this.props.siteId ) {
 				this.props.clearDirtyFields();
 				const newSiteFields = getFormSettings( this.props.settings );
-				this.props.replaceFields( newSiteFields );
+				this.props.replaceFields( newSiteFields, undefined, false );
 			} else if (
 				! isEqual( prevProps.settings, this.props.settings ) ||
 				! isEqual( prevProps.fields, this.props.fields )
@@ -122,7 +122,20 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const currentTargetName = event.currentTarget.name,
 				currentTargetValue = event.currentTarget.value;
 
+			this.props.trackEvent( `Set ${ currentTargetName } to ${ currentTargetValue }` );
 			this.props.updateFields( { [ currentTargetName ]: currentTargetValue } );
+		};
+
+		handleAutosavingRadio = ( name, value ) => () => {
+			const { fields } = this.props;
+			if ( fields[ name ] === value ) {
+				return;
+			}
+
+			this.props.trackEvent( `Set ${ name } to ${ value }` );
+			this.props.updateFields( { [ name ]: value }, () => {
+				this.submitForm();
+			} );
 		};
 
 		handleSelect = event => {
@@ -177,6 +190,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				handleSubmitForm: this.handleSubmitForm,
 				handleToggle: this.handleToggle,
 				handleAutosavingToggle: this.handleAutosavingToggle,
+				handleAutosavingRadio: this.handleAutosavingRadio,
 				onChangeField: this.onChangeField,
 				setFieldValue: this.setFieldValue,
 				submitForm: this.submitForm,

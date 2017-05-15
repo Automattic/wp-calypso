@@ -7,10 +7,7 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	recommendedForYou,
-	recommendedPosts,
-} from './controller';
+import { recommendedForYou, recommendedPosts } from './controller';
 import {
 	initAbTests,
 	loadSubscriptions,
@@ -25,7 +22,8 @@ export default function() {
 	page( '/recommendations/start', '/' );
 
 	// Blog Recommendations
-	page( '/recommendations',
+	page(
+		'/recommendations',
 		preloadReaderBundle,
 		loadSubscriptions,
 		initAbTests,
@@ -36,15 +34,25 @@ export default function() {
 
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
 	if ( config.isEnabled( 'reader/recommendations/posts' ) ) {
-		forEach( [ '/recommendations/posts', '/recommendations/cold', '/recommendations/cold1w', '/recommendations/cold2w', '/recommendations/cold4w', '/recommendations/coldtopics' ],
-			( path ) => {
+		forEach(
+			[
+				'/recommendations/posts',
+				'/recommendations/cold',
+				'/recommendations/cold1w',
+				'/recommendations/cold2w',
+				'/recommendations/cold4w',
+				'/recommendations/coldtopics',
+			],
+			path => {
 				page.apply( page, [
 					path,
 					preloadReaderBundle,
 					loadSubscriptions,
 					updateLastRoute,
 					sidebar,
-					recommendedPosts
-		] ) } )
+					recommendedPosts,
+				] );
+			}
+		);
 	}
 }

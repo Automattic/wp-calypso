@@ -8,7 +8,7 @@ import React from 'react';
  */
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import { recordTrackForPost, recordAction } from 'reader/stats';
-import { EMPTY_SEARCH_RECOMMENDATIONS, } from 'reader/follow-button/follow-sources';
+import { EMPTY_SEARCH_RECOMMENDATIONS } from 'reader/follow-button/follow-sources';
 
 export default function EmptySearchRecommendedPost( { post } ) {
 	function handlePostClick() {
@@ -25,12 +25,17 @@ export default function EmptySearchRecommendedPost( { post } ) {
 		recordAction( 'search_page_rec_site_click' );
 	}
 
-	const site = { title: post.site_name, };
+	const site = { title: post.site_name };
 
 	return (
 		<div className="search-stream__recommendation-list-item" key={ post.global_ID }>
-			<RelatedPostCard post={ post } site={ site }
-				onSiteClick={ handleSiteClick } onPostClick={ handlePostClick } followSource={ EMPTY_SEARCH_RECOMMENDATIONS } />
+			<RelatedPostCard
+				post={ post }
+				site={ site }
+				onSiteClick={ handleSiteClick }
+				onPostClick={ handlePostClick }
+				followSource={ EMPTY_SEARCH_RECOMMENDATIONS }
+			/>
 		</div>
 	);
 }

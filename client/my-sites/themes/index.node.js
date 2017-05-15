@@ -3,7 +3,6 @@
  */
 import config from 'config';
 import { makeLayout } from 'controller';
-import { getSubjects } from './theme-filters.js';
 import {
 	fetchThemeData,
 	fetchThemeFilters,
@@ -12,21 +11,25 @@ import {
 	redirectFilterAndType,
 	redirectToThemeDetails
 } from './controller';
-import validateFilters from './validate-filters';
+import { validateFilters, validateVertical } from './validate-filters';
 
 export default function( router ) {
-	const verticals = getSubjects().join( '|' );
-
 	if ( config.isEnabled( 'manage/themes' ) ) {
 		// Redirect interim showcase route to permanent one
 		router( [ '/design', '/design/*' ], ( { originalUrl, res } ) => {
 			res.redirect( 301, '/themes' + originalUrl.slice( '/design'.length ) );
 		} );
 
-		router( `/themes/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeFilters, fetchThemeData, loggedOut, makeLayout );
+		const showcaseRoutes = [
+			'/themes/:tier(free|premium)?',
+			'/themes/:tier(free|premium)?/filter/:filter',
+			'/themes/:vertical?/:tier(free|premium)?',
+			'/themes/:vertical?/:tier(free|premium)?/filter/:filter',
+		];
 		router(
-			`/themes/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+			showcaseRoutes,
 			fetchThemeFilters,
+			validateVertical,
 			validateFilters,
 			fetchThemeData,
 			loggedOut,

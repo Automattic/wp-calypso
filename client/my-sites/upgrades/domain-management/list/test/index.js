@@ -28,7 +28,6 @@ describe( 'index', function() {
 	useSandbox( newSandbox => sandbox = newSandbox );
 	useFakeDom.withContainer();
 	useMockery( mockery => {
-		require( 'test/helpers/mocks/data-poller' )( mockery );
 		mockery.registerMock( 'components/section-nav', EmptyComponent );
 		mockery.registerMock( 'components/sidebar-navigation', EmptyComponent );
 		mockery.registerMock( 'lib/analytics/ad-tracking', noop );

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { trim, isEmpty, get } from 'lodash';
+import { isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,7 +13,25 @@ import ReaderAvatar from 'blocks/reader-avatar';
 import FollowButton from 'reader/follow-button';
 import { getStreamUrl } from 'reader/route';
 import EmailSettings from './email-settings';
-import { getSiteName, getSiteUrl } from 'reader/get-helpers';
+import {
+	getSiteName,
+	getSiteDescription,
+	getSiteAuthorName,
+	getFeedUrl,
+	getSiteUrl,
+} from 'reader/get-helpers';
+import untrailingslashit from 'lib/route/untrailingslashit';
+import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
+
+/**
+ * Takes in a string and removes the starting https, www., and removes a trailing slash
+ *
+ * @param {String} url - the url to format
+ * @returns {String} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
+ */
+const formatUrlForDisplay = url => untrailingslashit(
+	url.replace( /^https?:\/\/(www\.)?/, '' )
+);
 
 function ReaderSubscriptionListItem( {
 	url,
@@ -24,20 +42,24 @@ function ReaderSubscriptionListItem( {
 	className = '',
 	translate,
 	followSource,
-	isEmailBlocked,
+	showEmailSettings,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
-	const siteExcerpt = ( site && site.description ) || ( feed && feed.description );
-	// prefer a users name property
-	// if that doesn't exist settle for combining first and last name
-	const authorName = siteAuthor && ( siteAuthor.name ||
-		trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` ) );
+	const siteExcerpt = getSiteDescription( { feed, site } );
+	const authorName = getSiteAuthorName( site );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = get( feed, 'image' );
 	const streamUrl = getStreamUrl( feedId, siteId );
-	const siteUrl = url || getSiteUrl( { feed, site } );
+	const feedUrl = url || getFeedUrl( { feed, site } );
+	const siteUrl = getSiteUrl( { feed, site } );
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
+	const preferBlavatar = get( site, 'is_multi_author', false );
+	const preferGravatar = ! preferBlavatar;
+
+	if ( ! site && ! feed ) {
+		return <ReaderSubscriptionListItemPlaceholder />;
+	}
 
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>
@@ -46,7 +68,8 @@ function ReaderSubscriptionListItem( {
 					siteIcon={ siteIcon }
 					feedIcon={ feedIcon }
 					author={ siteAuthor }
-					preferGravatar={ true }
+					preferBlavatar={ preferBlavatar }
+					preferGravatar={ preferGravatar }
 					siteUrl={ streamUrl }
 					isCompact={ true }
 				/>
@@ -67,10 +90,25 @@ function ReaderSubscriptionListItem( {
 						}
 					</span>
 				}
+			{ siteUrl && (
+				<a
+					href={ siteUrl }
+					target="_blank"
+					rel="noopener noreferrer"
+					className="reader-subscription-list-item__site-url"
+				>
+					{ formatUrlForDisplay( siteUrl ) }
+				</a>
+			) }
 			</div>
 			<div className="reader-subscription-list-item__options">
-				<FollowButton siteUrl={ siteUrl } followSource={ followSource } />
-				{ isFollowing && ! isEmailBlocked && <EmailSettings siteId={ siteId } /> }
+				<FollowButton
+					siteUrl={ feedUrl }
+					followSource={ followSource }
+					feedId={ feedId }
+					siteId={ siteId }
+				/>
+				{ isFollowing && showEmailSettings && <EmailSettings siteId={ siteId } /> }
 			</div>
 		</div>
 	);

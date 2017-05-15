@@ -26,7 +26,7 @@ let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain, toggleDi
 	return (
 		<div className="main theme-setup" role="main">
 			{ site && <QueryActiveTheme siteId={ site.ID } /> }
-			{ themeId && <QueryTheme siteId={ 'wpcom' } themeId={ themeId } /> }
+			{ themeId && <QueryTheme siteId="wpcom" themeId={ themeId } /> }
 			<HeaderCake onClick={ onBack }><h1>{ translate( 'Theme Setup' ) }</h1></HeaderCake>
 			{ site && theme
 				? <ThemeSetupCard

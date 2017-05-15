@@ -8,21 +8,12 @@ import freeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	requestFeedSearch,
-	receiveFeedSearch,
-} from 'state/reader/feed-searches/actions';
-import {
-	initiateFeedSearch,
-	receiveFeeds,
-	receiveError,
-} from '../';
+import { requestFeedSearch, receiveFeedSearch } from 'state/reader/feed-searches/actions';
+import { initiateFeedSearch, receiveFeeds, receiveError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
 
-const feeds = freeze( [
-	{ blog_ID: 'IM A BLOG' },
-] );
+const feeds = freeze( [ { blog_ID: 'IM A BLOG', subscribe_URL: 'feedUrl' } ] );
 
 const query = 'okapis r us';
 
@@ -37,14 +28,16 @@ describe( 'wpcom-api', () => {
 				initiateFeedSearch( { dispatch }, action, next );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( http( {
-					method: 'GET',
-					path: '/read/feed',
-					apiVersion: '1.1',
-					query: { q: query },
-					onSuccess: action,
-					onFailure: action,
-				} ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http( {
+						method: 'GET',
+						path: '/read/feed',
+						apiVersion: '1.1',
+						query: { q: query, offset: 0 },
+						onSuccess: action,
+						onFailure: action,
+					} )
+				);
 			} );
 
 			it( 'should pass the original action along the middleware chain', () => {
@@ -63,13 +56,23 @@ describe( 'wpcom-api', () => {
 				const action = requestFeedSearch( query );
 				const dispatch = sinon.spy();
 				const next = sinon.spy();
-				const apiResponse = { feeds };
+				const apiResponse = { feeds, total: 500 };
 
 				receiveFeeds( { dispatch }, action, next, apiResponse );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(
-					receiveFeedSearch( query, feeds )
+					receiveFeedSearch(
+						query,
+						[
+							{
+								blog_ID: 'IM A BLOG',
+								feed_URL: 'feedUrl',
+								subscribe_URL: 'feedUrl',
+							},
+						],
+						200
+					)
 				);
 			} );
 		} );

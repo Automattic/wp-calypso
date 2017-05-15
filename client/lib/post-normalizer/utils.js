@@ -141,6 +141,12 @@ export function iframeIsWhitelisted( iframe ) {
 		'google.com',
 		'mixcloud.com',
 		'players.brightcove.net',
+		'embed.ted.com',
+		'fast.wistia.net',
+		'player.twitch.tv',
+		'archive.org',
+		'codepen.io',
+		'www.audiomack.com',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();

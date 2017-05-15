@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -10,13 +11,14 @@ import { cartItems } from 'lib/cart-values';
 import { tlds } from 'lib/domains/constants';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import Card from 'components/card';
+import SiteOrDomainChoice from './choice';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
-import PageImage from 'signup/steps/design-type-with-store/page-image';
+import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
 import { externalRedirect } from 'lib/route/path';
+import NavigationLink from 'signup/navigation-link';
 
-export default class SiteOrDomain extends Component {
+class SiteOrDomain extends Component {
 	componentWillMount() {
 		if ( ! this.getDomainName() ) {
 			// /domains domain search is an external application to calypso,
@@ -49,16 +51,20 @@ export default class SiteOrDomain extends Component {
 	}
 
 	getChoices() {
+		const { translate } = this.props;
+
 		return [
 			{
 				type: 'page',
-				label: 'Start a new site',
-				image: <PageImage />
+				label: translate( 'New site' ),
+				image: <NewSiteImage />,
+				description: translate( 'Choose a theme, customize, and launch your site. Free domain included with all plans.' )
 			},
 			{
 				type: 'domain',
-				label: 'Just buy a domain',
-				image: <DomainImage />
+				label: translate( 'Just buy a domain' ),
+				image: <DomainImage />,
+				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' )
 			},
 		];
 	}
@@ -66,21 +72,44 @@ export default class SiteOrDomain extends Component {
 	renderChoices() {
 		return (
 			<div className="site-or-domain__choices">
-				{ this.getChoices().map( ( choice ) => (
-					<Card className="site-or-domain__choice" key={ choice.type }>
-						<a href="#" onClick={ ( event ) => this.handleClickChoice( event, choice.type ) }>
-							{ choice.image }
-							<h2>{ choice.label }</h2>
-						</a>
-					</Card>
+				{ this.getChoices().map( ( choice, index ) => (
+					<SiteOrDomainChoice
+						key={ `site-or-domain-choice-${ index }` }
+						choice={ choice }
+						handleClickChoice={ this.handleClickChoice }
+					/>
 				) ) }
 			</div>
 		);
 	}
 
-	handleClickChoice( event, designType ) {
-		event.preventDefault();
+	renderBackLink() {
+		// Hacky way to add back link to /domains
+		return (
+			<div className="site-or-domain__button">
+				<NavigationLink
+					direction="back"
+					flowName={ this.props.flowName }
+					positionInFlow={ 1 }
+					stepName={ this.props.stepName }
+					stepSectionName={ this.props.stepSectionName }
+					backUrl="/domains"
+					signupProgress={ this.props.signupProgress }
+				/>
+			</div>
+		);
+	}
 
+	renderScreen() {
+		return (
+			<div>
+				{ this.renderChoices() }
+				{ this.renderBackLink() }
+			</div>
+		);
+	}
+
+	handleClickChoice = ( designType ) => {
 		const {
 			stepName,
 			goToStep,
@@ -111,7 +140,7 @@ export default class SiteOrDomain extends Component {
 		} else {
 			goToNextStep();
 		}
-	}
+	};
 
 	render() {
 		return (
@@ -119,10 +148,14 @@ export default class SiteOrDomain extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
+				headerText={ this.props.headerText }
+				subHeaderText={ this.props.subHeaderText }
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
 				signupProgress={ this.props.signupProgress }
-				stepContent={ this.renderChoices() } />
+				stepContent={ this.renderScreen() } />
 		);
 	}
 }
+
+export default localize( SiteOrDomain );

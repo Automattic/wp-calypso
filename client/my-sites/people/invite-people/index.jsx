@@ -14,6 +14,7 @@ import groupBy from 'lodash/groupBy';
 import filter from 'lodash/filter';
 import pickBy from 'lodash/pickBy';
 import isEmpty from 'lodash/isEmpty';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -38,6 +39,15 @@ import EmptyContent from 'components/empty-content';
 import { userCan } from 'lib/site/utils';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import FeatureExample from 'components/feature-example';
+import versionCompare from 'lib/version-compare';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import { isJetpackSite } from 'state/sites/selectors';
+import { activateModule } from 'state/jetpack/modules/actions';
+import { isActivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 /**
  * Module variables
@@ -286,6 +296,7 @@ const InvitePeople = React.createClass( {
 	},
 
 	renderRoleExplanation() {
+		const { translate } = this.props;
 		return (
 			<a
 				target="_blank"
@@ -293,19 +304,145 @@ const InvitePeople = React.createClass( {
 				href="http://en.support.wordpress.com/user-roles/"
 				onClick={ this.onClickRoleExplanation }
 			>
-				{ this.translate( 'Learn more about roles' ) }
+				{ translate( 'Learn more about roles' ) }
 			</a>
 		);
 	},
 
+	enableSSO() {
+		this.props.activateModule( this.props.siteId, 'sso' );
+	},
+
+	renderInviteForm() {
+		const {
+			site,
+			translate,
+			needsVerification,
+			isJetpack,
+			showSSONotice
+		} = this.props;
+
+		const inviteForm = (
+			<Card>
+				<EmailVerificationGate>
+					<form onSubmit={ this.submitForm } >
+						<div role="group" className="invite-people__token-field-wrapper">
+							<FormLabel>{ translate( 'Usernames or Emails' ) }</FormLabel>
+							<TokenField
+								isBorderless
+								tokenizeOnSpace
+								autoCapitalize="none"
+								autoComplete="off"
+								maxLength={ 10 }
+								value={ this.getTokensWithStatus() }
+								onChange={ this.onTokensChange }
+								onFocus={ this.onFocusTokenField }
+								disabled={ this.state.sendingInvites } />
+							<FormSettingExplanation>
+								{ translate(
+									'Invite up to 10 email addresses and/or WordPress.com usernames. ' +
+									'Those needing a username will be sent instructions on how to create one.'
+								) }
+							</FormSettingExplanation>
+						</div>
+
+						<RoleSelect
+							id="role"
+							name="role"
+							includeFollower
+							siteId={ this.props.siteId }
+							onChange={ this.onRoleChange }
+							onFocus={ this.onFocusRoleSelect }
+							value={ this.state.role }
+							disabled={ this.state.sendingInvites }
+							explanation={ this.renderRoleExplanation() }
+							/>
+
+						<FormFieldset>
+							<FormLabel htmlFor="message">{ translate( 'Custom Message' ) }</FormLabel>
+							<CountedTextarea
+								name="message"
+								id="message"
+								showRemainingCharacters
+								maxLength={ 500 }
+								acceptableLength={ 500 }
+								onChange={ this.onMessageChange }
+								onFocus={ this.onFocusCustomMessage }
+								value={ this.state.message }
+								disabled={ this.state.sendingInvites } />
+							<FormSettingExplanation>
+								{ translate(
+									'(Optional) You can enter a custom message of up to 500 characters ' +
+									'that will be included in the invitation to the user(s).'
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<FormButton disabled={ this.isSubmitDisabled() } onClick={ this.onClickSendInvites } >
+							{ translate(
+								'Send Invitation',
+								'Send Invitations', {
+									count: this.state.usernamesOrEmails.length || 1,
+									context: 'Button label'
+								}
+							) }
+						</FormButton>
+					</form>
+				</EmailVerificationGate>
+			</Card>
+		);
+
+		// Return early for WPCOM or needs verification
+		if ( ! site || ! isJetpack || needsVerification ) {
+			return inviteForm;
+		}
+
+		const jetpackVersion = get( site, 'options.jetpack_version', 0 );
+		if ( ! this.props.isSiteAutomatedTransfer && versionCompare( jetpackVersion, '5.0', '<' ) ) {
+			return (
+				<div className="invite-people__action-required">
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate( 'Inviting users requires Jetpack 5.0 or higher' ) }>
+						<NoticeAction href={ `/plugins/jetpack/${ site.slug }` }>
+							{ translate( 'Update' ) }
+						</NoticeAction>
+					</Notice>
+					<FeatureExample>
+						{ inviteForm }
+					</FeatureExample>
+				</div>
+			);
+		} else if ( showSSONotice ) {
+			return (
+				<div className="invite-people__action-required">
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate( 'Inviting users requires WordPress.com sign in' ) }>
+						<NoticeAction onClick={ this.enableSSO }>
+							{ translate( 'Enable' ) }
+						</NoticeAction>
+					</Notice>
+					<FeatureExample>
+						{ inviteForm }
+					</FeatureExample>
+				</div>
+			);
+		}
+
+		return inviteForm;
+	},
+
 	render() {
-		const { site } = this.props;
+		const { site, translate } = this.props;
 		if ( site && ! userCan( 'promote_users', site ) ) {
 			return (
 				<Main>
 					<SidebarNavigation />
 					<EmptyContent
-						title={ this.translate( 'Oops, only administrators can invite other people' ) }
+						title={ translate( 'Oops, only administrators can invite other people' ) }
 						illustration={ '/calypso/images/drake/drake-empty-results.svg' }
 					/>
 				</Main>
@@ -313,86 +450,30 @@ const InvitePeople = React.createClass( {
 		}
 
 		return (
-			<Main>
+			<Main className="invite-people">
 				<SidebarNavigation />
 				<HeaderCake isCompact onClick={ this.goBack }>
-					{ this.translate( 'Invite People' ) }
+					{ translate( 'Invite People' ) }
 				</HeaderCake>
-				<Card>
-					<EmailVerificationGate>
-						<form onSubmit={ this.submitForm } >
-							<div role="group" className="invite-people__token-field-wrapper">
-								<FormLabel>{ this.translate( 'Usernames or Emails' ) }</FormLabel>
-								<TokenField
-									isBorderless
-									tokenizeOnSpace
-									autoCapitalize="none"
-									autoComplete="off"
-									maxLength={ 10 }
-									value={ this.getTokensWithStatus() }
-									onChange={ this.onTokensChange }
-									onFocus={ this.onFocusTokenField }
-									disabled={ this.state.sendingInvites } />
-								<FormSettingExplanation>
-									{ this.translate(
-										'Invite up to 10 email addresses and/or WordPress.com usernames. ' +
-										'Those needing a username will be sent instructions on how to create one.'
-									) }
-								</FormSettingExplanation>
-							</div>
-
-							<RoleSelect
-								id="role"
-								name="role"
-								includeFollower
-								siteId={ this.props.siteId }
-								onChange={ this.onRoleChange }
-								onFocus={ this.onFocusRoleSelect }
-								value={ this.state.role }
-								disabled={ this.state.sendingInvites }
-								explanation={ this.renderRoleExplanation() }
-								/>
-
-							<FormFieldset>
-								<FormLabel htmlFor="message">{ this.translate( 'Custom Message' ) }</FormLabel>
-								<CountedTextarea
-									name="message"
-									id="message"
-									showRemainingCharacters
-									maxLength={ 500 }
-									acceptableLength={ 500 }
-									onChange={ this.onMessageChange }
-									onFocus={ this.onFocusCustomMessage }
-									value={ this.state.message }
-									disabled={ this.state.sendingInvites } />
-								<FormSettingExplanation>
-									{ this.translate(
-										'(Optional) You can enter a custom message of up to 500 characters ' +
-										'that will be included in the invitation to the user(s).'
-									) }
-								</FormSettingExplanation>
-							</FormFieldset>
-
-							<FormButton disabled={ this.isSubmitDisabled() } onClick={ this.onClickSendInvites } >
-								{ this.translate(
-									'Send Invitation',
-									'Send Invitations', {
-										count: this.state.usernamesOrEmails.length || 1,
-										context: 'Button label'
-									}
-								) }
-							</FormButton>
-						</form>
-					</EmailVerificationGate>
-				</Card>
+				{ this.renderInviteForm() }
 			</Main>
 		);
 	}
 } );
 
 export default connect(
-	( state ) => ( {
-		siteId: getSelectedSiteId( state )
-	} ),
-	dispatch => bindActionCreators( { sendInvites }, dispatch )
-)( InvitePeople );
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const activating = isActivatingJetpackModule( state, siteId, 'sso' );
+		const active = isJetpackModuleActive( state, siteId, 'sso' );
+
+		return {
+			siteId,
+			needsVerification: ! isCurrentUserEmailVerified( state ),
+			showSSONotice: !! ( activating || active ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+		};
+	},
+	dispatch => bindActionCreators( { sendInvites, activateModule }, dispatch )
+)( localize( InvitePeople ) );

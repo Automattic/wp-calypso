@@ -27,13 +27,11 @@ import pluginsAccessControl from 'my-sites/plugins/access-control';
 import EmptyContent from 'components/empty-content';
 import FeatureExample from 'components/feature-example';
 import DocumentHead from 'components/data/document-head';
-import WpcomPluginsList from 'my-sites/plugins-wpcom/plugins-list';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, canJetpackSiteManage, getRawSite } from 'state/sites/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import QuerySites from 'components/data/query-sites';
-import { isATEnabled } from 'lib/automated-transfer';
 
 const SinglePlugin = React.createClass( {
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
@@ -320,24 +318,7 @@ const SinglePlugin = React.createClass( {
 	render() {
 		const { selectedSite } = this.props;
 
-		if (
-			selectedSite &&
-			! this.props.isJetpackSite( selectedSite.ID ) &&
-			! this.props.atEnabled
-		) {
-			return (
-				<MainComponent>
-					{ this.renderDocumentHead() }
-					<SidebarNavigation />
-					<WpcomPluginsList />
-				</MainComponent>
-			);
-		}
-
-		if (
-			this.state.accessError &&
-			( ! selectedSite || selectedSite.jetpack )
-		) {
+		if ( this.state.accessError ) {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
@@ -433,7 +414,6 @@ export default connect(
 			selectedSite: selectedSite,
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
-			atEnabled: isATEnabled( site ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
 		};
 	},
