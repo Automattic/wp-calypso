@@ -54,15 +54,18 @@ export default class BannerExample extends React.Component {
 					price={ [ 10.99, 9.99 ] }
 					title="Upgrade to a Business Plan!"
 				/>
-				<Banner
-					callToAction="Upgrade for $9.99"
-					description="Live chat support and no advertising."
-					dismissPreferenceName="devdocs-banner-example"
-					dismissTemporary
-					list={ [ 'Live chat support', 'No advertising' ] }
-					plan={ PLAN_BUSINESS }
-					title="Upgrade to a Business Plan!"
-				/>
+				<div style={ { marginBottom: '-16px' } }>
+					<Banner
+						callToAction="Upgrade for $9.99"
+						description="Live chat support and no advertising."
+						dismissPreferenceName="devdocs-banner-example"
+						dismissTemporary
+						list={ [ 'Live chat support', 'No advertising' ] }
+						plan={ PLAN_BUSINESS }
+
+						title="Upgrade to a Business Plan!"
+					/>
+				</div>
 			</div>
 		);
 	}
