@@ -13,10 +13,7 @@ describe( '#rawHttp', () => {
 		const url = 'http://yury.com',
 			method = 'POST',
 			headers = [
-				{
-					key: 'Content-Type',
-					value: 'application/json'
-				}
+				[ 'Content-Type', 'application/json' ]
 			],
 			body = {
 				hello: 'world'

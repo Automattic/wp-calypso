@@ -33,7 +33,7 @@ const requestTwoFactorPushNotificationStatus = ( store, action ) => {
 		url: 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint',
 		method: 'POST',
 		headers: [
-			{ key: 'Content-Type', value: 'application/x-www-form-urlencoded' },
+			[ 'Content-Type', 'application/x-www-form-urlencoded' ],
 		],
 		withCredentials: true,
 		body: {

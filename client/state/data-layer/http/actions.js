@@ -7,7 +7,7 @@ import { HTTP_REQUEST } from 'state/action-types';
  * @typedef {Object} RequestDescription
  * @property {String} url the url to request
  * @property {String} method the method we should use in the request: GET, POST etc.
- * @property {Array<{Object}>} headers array of { key: '', value: '' } pairs for the request headers
+ * @property {Array<Array<String>>} headers array of [ 'key', 'value' ] pairs for the request headers
  * @property {Object} body data send as body
  * @property {Boolean} withCredentials save cookie set on request
  * @property {Object|Function} onSuccess action to dispatch on success with data meta
