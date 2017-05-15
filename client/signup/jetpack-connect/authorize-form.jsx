@@ -60,7 +60,6 @@ class JetpackConnectAuthorizeForm extends Component {
 				from: PropTypes.string,
 			} ).isRequired,
 		} ).isRequired,
-		plansFirst: PropTypes.bool,
 		recordTracksEvent: PropTypes.func,
 		requestHasExpiredSecretError: PropTypes.func,
 		requestHasXmlrpcError: PropTypes.func,
@@ -146,10 +145,6 @@ class JetpackConnectAuthorizeForm extends Component {
 			this.renderForm();
 		}
 
-		if ( this.props.plansFirst && ! this.props.selectedPlan ) {
-			return this.renderPlansSelector();
-		}
-
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">
@@ -176,7 +171,6 @@ export default connect(
 			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
 			isFetchingSites: isRequestingSites( state ),
 			jetpackConnectAuthorize: getAuthorizationData( state ),
-			plansFirst: false,
 			requestHasExpiredSecretError,
 			requestHasXmlrpcError,
 			selectedPlan,

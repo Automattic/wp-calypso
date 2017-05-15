@@ -65,7 +65,6 @@ class LoggedInForm extends Component {
 			} ).isRequired,
 			siteReceived: PropTypes.bool,
 		} ).isRequired,
-		plansFirst: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestHasExpiredSecretError: PropTypes.func.isRequired,
 		requestHasXmlrpcError: PropTypes.func.isRequired,
@@ -110,14 +109,6 @@ class LoggedInForm extends Component {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
 				return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 			}
-		} else if (
-			props.plansFirst &&
-			props.selectedPlan &&
-			! this.state.haveAuthorized &&
-			! this.isAuthorizing()
-		) {
-			this.setState( { haveAuthorized: true } );
-			this.props.authorize( queryObject );
 		} else if ( siteReceived ) {
 			return this.redirect();
 		} else if ( props.isAlreadyOnSitesList && queryObject.already_authorized ) {
