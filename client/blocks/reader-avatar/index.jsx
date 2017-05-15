@@ -14,16 +14,16 @@ import classnames from 'classnames';
 import safeImageUrl from 'lib/safe-image-url';
 
 const ReaderAvatar = ( {
-		author,
-		siteIcon,
-		feedIcon,
-		siteUrl,
-		isCompact = false,
-		preferGravatar = false,
-		preferBlavatar = false,
-		showPlaceholder = false,
-		onClick,
-	} ) => {
+	author,
+	siteIcon,
+	feedIcon,
+	siteUrl,
+	isCompact = false,
+	preferGravatar = false,
+	preferBlavatar = false,
+	showPlaceholder = false,
+	onClick,
+} ) => {
 	let fakeSite;
 
 	// don't show the default favicon for some sites
@@ -37,14 +37,14 @@ const ReaderAvatar = ( {
 	if ( safeSiteIcon ) {
 		fakeSite = {
 			icon: {
-				img: safeSiteIcon
-			}
+				img: safeSiteIcon,
+			},
 		};
 	} else if ( safeFeedIcon ) {
 		fakeSite = {
 			icon: {
-				img: safeFeedIcon
-			}
+				img: safeFeedIcon,
+			},
 		};
 	}
 
@@ -53,12 +53,11 @@ const ReaderAvatar = ( {
 
 	if ( hasSiteIcon && hasAvatar ) {
 		// Do these both reference the same image? Disregard query string params.
-		const [ withoutQuery, ] = fakeSite.icon.img.split( '?' );
+		const [ withoutQuery ] = fakeSite.icon.img.split( '?' );
 		if ( startsWith( author.avatar_URL, withoutQuery ) ) {
 			hasAvatar = false;
 		}
 	}
-
 
 	// If we have an avatar and we prefer it, don't even consider the site icon
 	if ( hasAvatar && preferGravatar ) {
@@ -79,18 +78,18 @@ const ReaderAvatar = ( {
 		gravatarSize = hasBothIcons ? 32 : 96;
 	}
 
-	const classes = classnames(
-		'reader-avatar',
-		{
-			'is-compact': isCompact,
-			'has-site-and-author-icon': hasBothIcons,
-			'has-site-icon': hasSiteIcon,
-			'has-gravatar': hasAvatar || showPlaceholder
-		}
-	);
+	const classes = classnames( 'reader-avatar', {
+		'is-compact': isCompact,
+		'has-site-and-author-icon': hasBothIcons,
+		'has-site-icon': hasSiteIcon,
+		'has-gravatar': hasAvatar || showPlaceholder,
+	} );
 
-	const siteIconElement = hasSiteIcon && <SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />;
-	const avatarElement = ( hasAvatar || showPlaceholder ) && <Gravatar key="author-avatar" user={ author } size={ gravatarSize } />;
+	const siteIconElement =
+		hasSiteIcon && <SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />;
+	const avatarElement =
+		( hasAvatar || showPlaceholder ) &&
+		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />;
 	const iconElements = [ siteIconElement, avatarElement ];
 
 	return (
