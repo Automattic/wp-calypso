@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { localize } from 'i18n-calypso';
 import cookie from 'cookie';
 
 /**
@@ -68,10 +69,10 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 			<Main className="jetpack-connect__main-error">
 				<EmptyContent
 					illustration="/calypso/images/drake/drake-whoops.svg"
-					title={ this.translate(
+					title={ this.props.translate(
 						'Oops, this URL should not be accessed directly'
 					) }
-					action={ this.translate( 'Get back to Jetpack Connect screen' ) }
+					action={ this.props.translate( 'Get back to Jetpack Connect screen' ) }
 					actionURL="/jetpack/connect"
 				/>
 				<LoggedOutFormLinks>
@@ -162,4 +163,4 @@ export default connect(
 		retryAuth,
 		goToXmlrpcErrorFallbackUrl
 	}, dispatch )
-)( JetpackConnectAuthorizeForm );
+)( localize( JetpackConnectAuthorizeForm ) );
