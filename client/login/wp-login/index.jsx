@@ -38,7 +38,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 
-class Login extends React.Component {
+export class Login extends React.Component {
 	static propTypes = {
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		magicLoginEmailAddress: PropTypes.string,
@@ -62,6 +62,8 @@ class Login extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
 		this.props.showMagicLoginRequestForm();
 	};
+
+	state = { loaded: false };
 
 	magicLoginMainContent() {
 		const {
@@ -93,6 +95,13 @@ class Login extends React.Component {
 		}
 	}
 
+	componentDidMount() {
+		// Turning off eslint rule, as this flag is telling us when the component is
+		// loaded in the browser, which isn't guaranteed until componentDidMount() fires.
+		// eslint-disable-next-line react/no-did-mount-set-state
+		this.setState( { loaded: true } );
+	}
+
 	goBack = event => {
 		event.preventDefault();
 
@@ -118,12 +127,16 @@ class Login extends React.Component {
 				</a>;
 		}
 
-		const goBackLink = ! magicLoginView && <a
-			href="#"
-			key="back-link"
-			onClick={ this.goBack }>
-				<Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Return' ) }
-			</a>;
+		let goBackLink;
+		if ( this.state.loaded && window.history.length > 1 ) {
+			goBackLink = ! magicLoginView && <a
+				href="#"
+				key="back-link"
+				onClick={ this.goBack }>
+					<Gridicon icon="arrow-left" size={ 18 } /> { translate( 'Return' ) }
+				</a>;
+		}
+
 		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView && <a href="#"
 			key="magic-login-link"
 			onClick={ this.onMagicLoginRequestClick }>
