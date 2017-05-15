@@ -105,7 +105,7 @@ function ReaderSubscriptionListItem( {
 						className="reader-subscription-list-item__site-url"
 					>
 						{ formatUrlForDisplay( siteUrl ) }
-						{ feed && feed.last_update && translate( ' updated %s ', { args: lastUpdatedDate } ) }
+						{ feed && feed.last_update && ' ' + translate( 'updated %s', { args: lastUpdatedDate } ) }
 					</a> }
 			</div>
 			<div className="reader-subscription-list-item__options">
