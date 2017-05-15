@@ -100,7 +100,7 @@ class AdsFormEarnings extends Component {
 		this.setState( { showEarningsNotice: ! this.state.showEarningsNotice } );
 	};
 
-	toggleInfo = ( type, event ) => {
+	toggleInfo = ( type ) => ( event ) => {
 		event.preventDefault();
 		switch ( type ) {
 			case 'wordads':
@@ -271,7 +271,7 @@ class AdsFormEarnings extends Component {
 								className="module-header-action-link"
 								aria-label={ translate( 'Show or hide panel information' ) }
 								title={ translate( 'Show or hide panel information' ) }
-								onClick={ this.toggleInfo.bind( this, type ) }>
+								onClick={ this.toggleInfo( type ) }>
 								<Gridicon icon={ infoIcon } />
 							</a>
 						</li>
