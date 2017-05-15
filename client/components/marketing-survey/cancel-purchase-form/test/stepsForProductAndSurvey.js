@@ -13,6 +13,8 @@ import * as steps from '../steps';
 const DEFAULT_STEPS = [ steps.INITIAL_STEP, steps.FINAL_STEP ];
 const DEFAULT_STEPS_WITH_HAPPYCHAT = [ steps.INITIAL_STEP, steps.HAPPYCHAT_STEP, steps.FINAL_STEP ];
 const DEFAULT_STEPS_WITH_CONCIERGE = [ steps.INITIAL_STEP, steps.CONCIERGE_STEP, steps.FINAL_STEP ];
+const DEFAULT_STEPS_WITH_UPGRADE_AT_STEP = [ steps.INITIAL_STEP, steps.UPGRADE_AT_STEP, steps.FINAL_STEP ];
+const DEFAULT_STEPS_WITH_BUSINESS_AT_STEP = [ steps.INITIAL_STEP, steps.BUSINESS_AT_STEP, steps.FINAL_STEP ];
 
 describe( 'stepsForProductAndSurvey', function() {
 	const abtests = {};
@@ -77,6 +79,46 @@ describe( 'stepsForProductAndSurvey', function() {
 		it( 'should not include concierge step if product is jetpack business plan, function() {
 			const product = { product_slug: plans.PLAN_JETPACK_BUSINESS };
 			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( DEFAULT_STEPS );
+		} );
+	} );
+
+	describe( 'question one answer is "could not install"', function() {
+		const survey = { questionOneRadio: 'couldNotInstall' };
+
+		it( 'should include AT upgrade step if product is personal plan and abtest variant is show', function() {
+			const product = { product_slug: plans.PLAN_PERSONAL };
+			abtests.ATUpgradeOnCancel = 'show';
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS_WITH_UPGRADE_AT_STEP );
+		} );
+
+		it( 'should not include AT upgrade step if product is personal plan and abtest variant is hide', function() {
+			const product = { product_slug: plans.PLAN_PERSONAL };
+			abtests.ATUpgradeOnCancel = 'hide';
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS );
+		} );
+
+		it( 'should include AT upgrade step if product is premium plan and abtest variant is show', function() {
+			const product = { product_slug: plans.PLAN_PREMIUM };
+			abtests.ATUpgradeOnCancel = 'show';
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS_WITH_UPGRADE_AT_STEP );
+		} );
+
+		it( 'should not include AT upgrade step if product is premium plan and abtest variant is hide', function() {
+			const product = { product_slug: plans.PLAN_PREMIUM };
+			abtests.ATUpgradeOnCancel = 'hide';
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS );
+		} );
+
+		it( 'should include business AT step if product is personal plan and abtest variant is show', function() {
+			const product = { product_slug: plans.PLAN_BUSINESS };
+			abtests.ATPromptOnCancel = 'show';
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS_WITH_BUSINESS_AT_STEP );
+		} );
+
+		it( 'should not include business AT step if product is business plan and abtest variant is hide', function() {
+			const product = { product_slug: plans.PLAN_BUSINESS };
+			abtests.ATPromptOnCancel = 'hide';
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS );
 		} );
 	} );
 } );
