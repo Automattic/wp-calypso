@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React from 'react';
 import page from 'page';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 import trim from 'lodash/trim';
@@ -11,44 +9,38 @@ import trim from 'lodash/trim';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import SearchCollection from './search-collection';
 import SearchCard from 'components/search-card';
 import HeaderCake from 'components/header-cake';
 import { examples } from './examples';
 import Main from 'components/main';
 
-let DesignAssets = React.createClass( {
-	displayName: 'DesignAssets',
+export default class DesignAssets extends React.Component {
+	static displayName = 'DesignAssets';
 
-	getInitialState() {
-		return { filter: '' };
-	},
-
-	componentWillMount() {
-		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-			const { dispatchFetchComponentsUsageStats } = this.props;
-			dispatchFetchComponentsUsageStats();
-		}
-	},
+	constructor( props ) {
+		super( props );
+		this.state = { filter: '' };
+		this.backToComponents = this.backToComponents.bind( this );
+	}
 
 	onSearch( term ) {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
-	},
+	}
 
 	backToComponents() {
 		page( '/devdocs/design/' );
-	},
+	}
 
 	renderExamples() {
 		return examples.map( Example => {
-			return <Example key={ Example.displayName || Example.name } />;
+			const name = ( Example.displayName || Example.name ).replace( /Example$/, '' );
+			return <Example key={ name } />;
 		} );
-	},
+	}
 
 	render() {
-		const { componentsUsageStats = {}, component } = this.props;
+		const { component } = this.props;
 		const { filter } = this.state;
 
 		return (
@@ -74,31 +66,4 @@ let DesignAssets = React.createClass( {
 			</Main>
 		);
 	}
-} );
-
-if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-	const mapStateToProps = ( state ) => {
-		const { componentsUsageStats } = state;
-
-		return componentsUsageStats;
-	};
-
-	const mapDispatchToProps = ( dispatch ) => {
-		return bindActionCreators( {
-			dispatchFetchComponentsUsageStats: fetchComponentsUsageStats
-		}, dispatch );
-	};
-
-	DesignAssets.propTypes = {
-		componentsUsageStats: PropTypes.object,
-		isFetching: PropTypes.bool,
-		dispatchFetchComponentsUsageStats: PropTypes.func
-	};
-
-	DesignAssets = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
 }
-
-export default DesignAssets;
