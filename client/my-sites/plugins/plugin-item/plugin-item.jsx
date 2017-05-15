@@ -206,7 +206,7 @@ class PluginItem extends Component {
 		return null;
 	}
 
-	clickNoManageItem() {
+	clickNoManageItem = () => {
 		this.setState( { clicked: true } );
 	}
 
