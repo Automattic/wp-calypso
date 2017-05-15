@@ -1,3 +1,20 @@
+%comment-detail__ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+%comment-detail__gray-link {
+	color: $gray;
+	cursor: pointer;
+	fill: $gray;
+	&:focus,
+	&:hover {
+		color: $blue-wordpress;
+		fill: $blue-wordpress;
+	}
+}
+
 .comment-detail.card {
 	font-size: 14px;
 	margin: 0 auto;
@@ -6,6 +23,15 @@
 
 	&.is-expanded {
 		margin: 16px auto;
+	}
+	&:not( .is-expanded ):hover {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
+		z-index: 1;
+	}
+
+	.gridicon {
+		margin-right: 4px;
+		vertical-align: middle;
 	}
 }
 
@@ -16,10 +42,8 @@
 	}
 }
 .comment-detail__author-info {
+	@extend %comment-detail__ellipsis;
 	color: $gray;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 
 	strong {
 		color: $gray-text;
@@ -50,18 +74,15 @@
 	}
 
 	.comment-detail__comment-preview {
-		width: 60%;
-		overflow: hidden;
+		@extend %comment-detail__ellipsis;
 		padding: 0 8px;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		width: 60%;
 	}
 
 	.comment-detail__actions {
 		color: $gray;
 		a {
-			color: $gray;
-			cursor: pointer;
+			@extend %comment-detail__gray-link;
 			padding: 8px;
 			white-space: nowrap;
 		}
@@ -71,10 +92,6 @@
 			@include breakpoint( ">960px" ) {
 				display: inline;
 			}
-		}
-		.gridicon {
-			margin-right: 4px;
-			vertical-align: middle;
 		}
 	}
 }
@@ -92,12 +109,10 @@
 	}
 
 	.comment-detail__post-info {
+		@extend %comment-detail__ellipsis;
 		color: $gray;
 		line-height: 32px;
-		overflow: hidden;
 		padding-left: 4px;
-		text-overflow: ellipsis;
-		white-space: nowrap;
 
 		span {
 			color: $gray-text;
@@ -105,7 +120,7 @@
 		}
 
 		a {
-			color: $gray;
+			@extend %comment-detail__gray-link;
 		}
 	}
 }
@@ -116,13 +131,37 @@
 
 	.comment-detail__comment-content {
 		border-left: 3px solid lighten( $gray, 30% );
-		padding: 16px;
 	}
 
-	.comment-detail__author {
+	.comment-detail__comment-body {
+		padding: 0 16px;
+	}
+
+	.comment-detail__comment-reply {
+		padding: 16px;
+
+		a {
+			@extend %comment-detail__gray-link;
+		}
+	}
+}
+
+.comment-detail__author {
+	padding: 16px 0;
+
+	.comment-detail__author-info {
+		@extend %comment-detail__ellipsis;
+		> div {
+			@extend %comment-detail__ellipsis;
+		}
+	}
+
+	.comment-detail__author-preview {
+		align-items: center;
 		display: flex;
 		flex-flow: row nowrap;
-		padding-bottom: 16px;
+		padding: 0 16px;
+		transition: padding-bottom .3s linear;
 
 		.comment-detail__author-avatar {
 			height: 40px;
@@ -131,21 +170,70 @@
 
 		.comment-detail__author-info {
 			line-height: 1.4;
-			padding-left: 8px;
+			padding: 0 8px;
+		}
+
+		.comment-detail__author-more-info-toggle {
+			@extend %comment-detail__gray-link;
+			display: block;
+			height: 24px;
+			margin-left: auto;
 		}
 	}
+	&.is-expanded .comment-detail__author-preview {
+		padding-bottom: 16px;
+	}
 
-	.comment-detail__comment-reply {
-		padding-top: 16px;
+	.comment-detail__author-more-info {
+		border-bottom: 1px solid lighten( $gray, 30% );
+		color: $gray;
+		display: none;
+		transform: scaleY( 0 );
+		transform-origin: top;
 
-		a {
-			color: $gray;
-			cursor: pointer;
+		.comment-detail__author-more-actions {
+			border-top: 1px solid lighten( $gray, 30% );
+			display: flex;
+			flex-flow: row wrap;
+			padding: 16px 8px;
 		}
-		.gridicon {
-			margin-right: 4px;
-			vertical-align: middle;
+
+		.comment-detail__author-more-element {
+			@extend %comment-detail__ellipsis;
+			box-sizing: border-box;
+			display: block;
+			flex-shrink: 0;
+			flex-grow: 0;
+			padding: 8px;
+			width: 100%;
+
+			&.comment-detail__author-more-element-author {
+				display: flex;
+				flex-flow: row nowrap;
+
+				.comment-detail__author-avatar {
+					height: 24px;
+					width: 24px;
+				}
+
+				.comment-detail__author-info {
+					line-height: 1.2;
+					padding-left: 8px;
+				}
+			}
+
+			@include breakpoint( ">660px" ) {
+				width: 50%;
+			}
 		}
+		a.comment-detail__author-more-element {
+			@extend %comment-detail__gray-link;
+		}
+	}
+	&.is-expanded .comment-detail__author-more-info {
+		animation: author-more-info .15s linear;
+		display: block;
+		transform: scaleY( 1 );
 	}
 }
 
@@ -155,5 +243,19 @@
 	textarea {
 		border: none;
 		resize: vertical;
+	}
+}
+
+@keyframes author-more-info {
+	0% {
+		display: none;
+		transform: scaleY( 0 );
+	}
+	1% {
+		display: block;
+		transform: scaleY( 0 );
+	}
+	100% {
+		transform: scaleY( 1 );
 	}
 }

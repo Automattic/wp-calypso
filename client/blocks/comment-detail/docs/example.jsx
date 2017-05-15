@@ -20,6 +20,7 @@ const mockUser = {
 	has_avatar: true,
 	ip: '127.0.0.1',
 	name: 'Matt',
+	username: 'matt',
 	URL: 'http://discover.wordpress.com',
 };
 

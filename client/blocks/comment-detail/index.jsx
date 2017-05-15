@@ -21,7 +21,7 @@ export class CommentDetail extends Component {
 	};
 
 	state = {
-		isExpanded: true,
+		isExpanded: false,
 	};
 
 	toggleExpanded = () => {
