@@ -43,9 +43,17 @@ export function addLocaleQueryParam( params ) {
 		return params;
 	}
 
+	let localeQueryParam = {};
 	const query = qs.parse( params.query );
+
+	if ( params.hasOwnProperty( 'apiNamespace' ) && 'wpcom/v2' === params.apiNamespace ) {
+		localeQueryParam = { _locale: locale };
+	} else {
+		localeQueryParam = { locale };
+	}
+
 	return Object.assign( params, {
-		query: qs.stringify( Object.assign( query, { locale } ) )
+		query: qs.stringify( Object.assign( query, localeQueryParam ) )
 	} );
 }
 
