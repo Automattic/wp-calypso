@@ -19,7 +19,7 @@ class AdsFormEarnings extends Component {
 
 	componentWillMount() {
 		EarningsStore.on( 'change', this.updateSettings );
-		this._fetchIfEmpty();
+		this.fetchIfEmpty();
 	}
 
 	componentWillUnmount() {
@@ -40,7 +40,7 @@ class AdsFormEarnings extends Component {
 		}
 
 		if ( this.props.site.ID !== nextProps.site.ID ) {
-			this._fetchIfEmpty( nextProps.site );
+			this.fetchIfEmpty( nextProps.site );
 			this.setState( this.getSettingsFromStore( nextProps.site ) );
 		}
 	}
@@ -75,7 +75,7 @@ class AdsFormEarnings extends Component {
 		} );
 	}
 
-	_fetchIfEmpty( site ) {
+	fetchIfEmpty( site ) {
 		site = site || this.props.site;
 		if ( ! site || ! site.ID ) {
 			return;
