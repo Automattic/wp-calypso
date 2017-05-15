@@ -2,14 +2,10 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import Immutable from 'immutable';
 
 /***
  * Internal dependencies
  */
-import {
-	getCommentParentKey
-} from '../utils';
 import {
 	getPostOldestCommentDate,
 	getPostMostRecentCommentDate,
@@ -53,11 +49,7 @@ describe( 'selectors', () => {
 
 		it( 'should return undefined if no comment items', () => {
 			const res = getPostOldestCommentDate( {
-				comments: {
-					items: Immutable.fromJS( {
-						[ getCommentParentKey( 1, 1 ) ]: []
-					} )
-				}
+				comments: { items: { '1-1': [] } }
 			}, 1, 1 );
 
 			expect( res ).to.be.eql( undefined );
