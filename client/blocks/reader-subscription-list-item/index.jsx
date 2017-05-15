@@ -54,8 +54,8 @@ function ReaderSubscriptionListItem( {
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	const siteUrl = getSiteUrl( { feed, site } );
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
-	const preferBlavatar = get( site, 'is_multi_author', false );
-	const preferGravatar = ! preferBlavatar;
+	const isMultiAuthor = get( site, 'is_multi_author', false );
+	const preferGravatar = ! isMultiAuthor;
 
 	if ( ! site && ! feed ) {
 		return <ReaderSubscriptionListItemPlaceholder />;
@@ -68,7 +68,7 @@ function ReaderSubscriptionListItem( {
 					siteIcon={ siteIcon }
 					feedIcon={ feedIcon }
 					author={ siteAuthor }
-					preferBlavatar={ preferBlavatar }
+					preferBlavatar={ isMultiAuthor }
 					preferGravatar={ preferGravatar }
 					siteUrl={ streamUrl }
 					isCompact={ true }
@@ -78,18 +78,19 @@ function ReaderSubscriptionListItem( {
 				<span className="reader-subscription-list-item__site-title">
 					{
 						<a href={ streamUrl } className="reader-subscription-list-item__link">
-							{' '}{ siteTitle }{' '}
+							{ ' ' }{ siteTitle }{ ' ' }
 						</a>
 					}
 				</span>
 				<div className="reader-subscription-list-item__site-excerpt">{ siteExcerpt }</div>
-				{ ! isEmpty( authorName ) &&
+				{ ! isMultiAuthor &&
+					! isEmpty( authorName ) &&
 					<span className="reader-subscription-list-item__by-text">
 						{ translate( 'by {{author/}}', {
 							components: {
 								author: (
 									<a href={ streamUrl } className="reader-subscription-list-item__link">
-										{' '}{ authorName }{' '}
+										{ ' ' }{ authorName }{ ' ' }
 									</a>
 								),
 							},
