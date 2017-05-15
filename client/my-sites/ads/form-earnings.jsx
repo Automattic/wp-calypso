@@ -1,25 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	notices = require( 'notices' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:my-sites:ads-earnings' );
+import React from 'react';
+import notices from 'notices';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	Gridicon = require( 'gridicons' ),
-	WordadsActions = require( 'lib/ads/actions' ),
-	EarningsStore = require( 'lib/ads/earnings-store' );
+import Card from 'components/card';
+import Gridicon from 'gridicons';
+import WordadsActions from 'lib/ads/actions';
+import EarningsStore from 'lib/ads/earnings-store';
 
 module.exports = React.createClass( {
 
 	displayName: 'AdsFormEarnings',
 
 	componentWillMount: function() {
-		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
 		EarningsStore.on( 'change', this.updateSettings );
 		this._fetchIfEmpty();
 	},
@@ -92,7 +90,6 @@ module.exports = React.createClass( {
 		}
 
 		if ( EarningsStore.getById( site.ID ).earnings ) {
-			debug( 'initial fetch not necessary' );
 			return;
 		}
 
