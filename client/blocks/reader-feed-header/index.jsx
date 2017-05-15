@@ -52,7 +52,8 @@ class FeedHeader extends Component {
 	render() {
 		const { site, feed } = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
-		const ownerDisplayName = site && site.owner && site.owner.name;
+		const ownerDisplayName =
+			site && ! site.is_multi_author && site.owner && site.owner.name;
 		const siteish = this.buildSiteish( site, feed );
 		const description = site && site.description;
 
@@ -69,7 +70,7 @@ class FeedHeader extends Component {
 					<div className="reader-feed-header__follow">
 						{ followerCount
 							? <span className="reader-feed-header__follow-count">
-									{' '}
+									{ ' ' }
 									{ this.props.translate( '%s follower', '%s followers', {
 										count: followerCount,
 										args: [ this.props.numberFormat( followerCount ) ],
