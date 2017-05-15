@@ -65,7 +65,6 @@ class GoogleLoginButton extends Component {
 				if ( 'idpiframe_initialization_failed' === error.error ) {
 					// This error is caused by 3rd party cookies being blocked.
 					this.setState( { error: translate( 'Please enable "third-party cookies" to connect your Google account.' ) } );
-					return null;
 				}
 
 				return Promise.reject( error );
