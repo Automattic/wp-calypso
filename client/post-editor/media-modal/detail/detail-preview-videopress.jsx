@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { get, invoke, noop, pick } from 'lodash';
 import classNames from 'classnames';
 import debug from 'debug';
@@ -174,6 +173,4 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 }
 
-export default connect(
-	null,
-)( EditorMediaModalDetailPreviewVideoPress );
+export default EditorMediaModalDetailPreviewVideoPress;
