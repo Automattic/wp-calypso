@@ -87,7 +87,7 @@ class AdsMain extends Component {
 		}
 	}
 
-	dismissWordAdsError = () => {
+	handleDismissWordAdsError = () => {
 		const { siteId } = this.props;
 		this.props.dismissWordAdsError( siteId );
 	};
@@ -114,7 +114,7 @@ class AdsMain extends Component {
 					</div>
 				</div>
 				{ this.props.wordAdsError &&
-					<Notice status="is-error ads__activate-notice" onDismissClick={ this.dismissWordAdsError }>
+					<Notice status="is-error ads__activate-notice" onDismissClick={ this.handleDismissWordAdsError }>
 						{ this.props.wordAdsError }
 					</Notice>
 				}
