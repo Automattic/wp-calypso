@@ -177,7 +177,11 @@ class PostShare extends Component {
 		</Button>;
 
 		if ( ! hasRepublicizeSchedulingFeature ) {
-			return shareButton;
+			return (
+				<div className="post-share__button-actions">
+					{ shareButton }
+				</div>
+			);
 		}
 
 		return (
@@ -221,7 +225,10 @@ class PostShare extends Component {
 	}
 
 	renderUpgradeToGetSchedulingNudge() {
-		if ( this.props.hasRepublicizeSchedulingFeature ) {
+		if (
+			this.props.hasRepublicizeSchedulingFeature ||
+			! isEnabled( 'publicize-scheduling' )
+		) {
 			return null;
 		}
 
