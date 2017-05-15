@@ -136,7 +136,6 @@ describe( 'utils', () => {
 				some_other_setting: 123,
 			} );
 		} );
-
 	} );
 
 	describe( 'sanitizeSettings()', () => {
