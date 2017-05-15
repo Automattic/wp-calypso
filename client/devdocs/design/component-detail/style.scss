@@ -14,7 +14,10 @@
 .component-detail__example {
   position: relative;
   overflow: hidden;
-  border: solid 1px #ddd;
+  margin-bottom: 20px;
+  box-shadow:
+    0 0 0 1px rgba(200, 215, 225, 0.5),
+    0 1px 2px #e9eff3;
 }
 
 .component-detail__tree,
@@ -30,7 +33,9 @@
   top: 0;
   bottom: 0;
   width: 50%;
-  border-right: solid 1px #ddd;
+  box-shadow:
+    0 0 0 1px rgba(200, 215, 225, 0.5),
+    0 1px 2px #e9eff3;
 }
 
 .component-detail__render {
@@ -61,5 +66,5 @@
   height: 26px;
   margin: -14px 0 0 -14px;
   background: #f3f6f8;
-  border: solid 1px #ccc;
+  border: solid 1px #ddd;
 }
