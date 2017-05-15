@@ -43,7 +43,7 @@ module.exports = React.createClass( {
 					</label>
 				</div>
 
-				<div style={ { maxWidth: '300px' } }>
+				<div style={ { maxWidth: '300px', boxShadow: '-1px 0 0 #dce5ec, 1px 0 0 #dce5ec' } }>
 					<Accordion title="Section One">
 						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum eget libero at pretium. Morbi hendrerit arcu mauris, laoreet dapibus est maximus nec. Sed volutpat, lorem semper porta efficitur, dui augue tempor ante, eget faucibus quam erat vitae velit.
 					</Accordion>
