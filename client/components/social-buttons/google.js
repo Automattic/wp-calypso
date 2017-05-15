@@ -19,7 +19,7 @@ class GoogleLoginButton extends Component {
 		fetchBasicProfile: true,
 	};
 
-	state = { error: false };
+	state = { error: '' };
 
 	constructor( props ) {
 		super( props );
@@ -93,10 +93,8 @@ class GoogleLoginButton extends Component {
 	}
 
 	render() {
-		let buttonDisabled = false;
-		if ( this.state.error ) {
-			buttonDisabled = true;
-		}
+		const buttonDisabled = Boolean( this.state.error );
+
 		return (
 			<div>
 				<button className="social-buttons__button button" onClick={ this.handleClick } disabled={ buttonDisabled }>
