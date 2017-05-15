@@ -115,7 +115,7 @@ class AdsFormSettings extends Component {
 		} );
 	}
 
-	submitForm = ( event ) => {
+	handleSubmit = ( event ) => {
 		const { site } = this.props;
 		event.preventDefault();
 
@@ -430,7 +430,7 @@ class AdsFormSettings extends Component {
 
 		return (
 			<Card>
-				<form id="wordads-settings" onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
+				<form id="wordads-settings" onSubmit={ this.handleSubmit } onChange={ this.props.markChanged }>
 					<FormButtonsBar>
 						<FormButton disabled={ this.state.isLoading || this.state.isSubmitting }>
 							{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
