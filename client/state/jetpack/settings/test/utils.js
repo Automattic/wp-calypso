@@ -123,6 +123,19 @@ describe( 'utils', () => {
 				'infinite-scroll': true,
 			} );
 		} );
+
+		it( 'should skip all Custom Content Types settings', () => {
+			const settings = {
+				some_other_setting: 123,
+				jetpack_testimonial: true,
+				jetpack_portfolio: true,
+				'custom-content-types': true,
+			};
+
+			expect( normalizeSettings( settings ) ).to.eql( {
+				some_other_setting: 123,
+			} );
+		} );
 	} );
 
 	describe( 'sanitizeSettings()', () => {
@@ -192,6 +205,19 @@ describe( 'utils', () => {
 				'infinite-scroll': true,
 			} );
 		} );
+
+		it( 'should skip all Custom Content Types settings', () => {
+			const settings = {
+				some_other_setting: 123,
+				jetpack_testimonial: true,
+				jetpack_portfolio: true,
+				'custom-content-types': true,
+			};
+
+			expect( sanitizeSettings( settings ) ).to.eql( {
+				some_other_setting: 123,
+			} );
+		} );
 	} );
 
 	describe( 'filterSettingsByActiveModules()', () => {
@@ -231,9 +257,6 @@ describe( 'utils', () => {
 				'Phrases to Avoid': true,
 				'Redundant Expression': true,
 				ignored_phrases: true,
-				'custom-content-types': true,
-				jetpack_testimonial: true,
-				jetpack_portfolio: false,
 				comments: true,
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
@@ -275,8 +298,6 @@ describe( 'utils', () => {
 				'Phrases to Avoid': true,
 				'Redundant Expression': true,
 				ignored_phrases: true,
-				jetpack_testimonial: true,
-				jetpack_portfolio: false,
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
 				carousel_background_color: 'black',
@@ -324,9 +345,6 @@ describe( 'utils', () => {
 				'Phrases to Avoid': true,
 				'Redundant Expression': true,
 				ignored_phrases: true,
-				'custom-content-types': false,
-				jetpack_testimonial: true,
-				jetpack_portfolio: false,
 				comments: false,
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
@@ -374,8 +392,6 @@ describe( 'utils', () => {
 				'Phrases to Avoid': true,
 				'Redundant Expression': true,
 				ignored_phrases: true,
-				jetpack_testimonial: true,
-				jetpack_portfolio: false,
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
 				carousel_background_color: 'black',
