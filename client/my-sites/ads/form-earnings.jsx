@@ -17,20 +17,20 @@ module.exports = React.createClass( {
 
 	displayName: 'AdsFormEarnings',
 
-	componentWillMount: function() {
+	componentWillMount() {
 		EarningsStore.on( 'change', this.updateSettings );
 		this._fetchIfEmpty();
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		EarningsStore.removeListener( 'change', this.updateSettings );
 	},
 
-	updateSettings: function() {
+	updateSettings() {
 		this.setState( this.getSettingsFromStore() );
 	},
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		if ( this.state.error && this.state.error.message ) {
 			notices.error( this.state.error.message );
 		} else {
@@ -38,7 +38,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! EarningsStore.getById( nextProps.site.ID ).earnings ) {
 			this.resetState();
 		}
@@ -49,11 +49,11 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return this.getSettingsFromStore();
 	},
 
-	getSettingsFromStore: function( siteInstance ) {
+	getSettingsFromStore( siteInstance ) {
 		var site = siteInstance || this.props.site,
 			store = EarningsStore.getById( site.ID ) || {};
 
@@ -65,7 +65,7 @@ module.exports = React.createClass( {
 		return store;
 	},
 
-	resetState: function() {
+	resetState() {
 		this.replaceState( {
 			earnings: {
 				adjustment: {},
@@ -83,7 +83,7 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	_fetchIfEmpty: function( site ) {
+	_fetchIfEmpty( site ) {
 		site = site || this.props.site;
 		if ( ! site || ! site.ID ) {
 			return;
@@ -94,17 +94,17 @@ module.exports = React.createClass( {
 		}
 
 		// defer fetch requests to avoid dispatcher conflicts
-		setTimeout( function() {
+		setTimeout( () => {
 			WordadsActions.fetchEarnings( site )
 		}, 0 );
 	},
 
-	toggleEarningsNotice: function( event ) {
+	toggleEarningsNotice( event ) {
 		event.preventDefault();
 		this.setState( { showEarningsNotice: ! this.state.showEarningsNotice } );
 	},
 
-	toggleInfo: function( type, event ) {
+	toggleInfo( type, event ) {
 		event.preventDefault();
 		switch ( type ) {
 			case 'wordads':
@@ -119,7 +119,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getInfoToggle: function( type ) {
+	getInfoToggle( type ) {
 		var types = {
 			wordads: this.state.showWordadsInfo,
 			sponsored: this.state.showSponsoredInfo,
@@ -129,7 +129,7 @@ module.exports = React.createClass( {
 		return types[ type ] ? types[ type ] : false;
 	},
 
-	checkSize: function( obj ) {
+	checkSize( obj ) {
 		if ( ! obj ) {
 			return 0;
 		}
@@ -137,12 +137,12 @@ module.exports = React.createClass( {
 		return Object.keys( obj ).length;
 	},
 
-	swapYearMonth: function( date ) {
+	swapYearMonth( date ) {
 		var splits = date.split( '-' );
 		return splits[ 1 ] + '-' + splits[ 0 ];
 	},
 
-	getStatus: function( status ) {
+	getStatus( status ) {
 		var statuses = {
 			0: this.translate( 'Unpaid' ),
 			1: this.translate( 'Paid' ),
@@ -154,7 +154,7 @@ module.exports = React.createClass( {
 		return statuses[ status ] ? statuses[ status ] : '?';
 	},
 
-	payoutNotice: function() {
+	payoutNotice() {
 		var owed = this.state.earnings && this.state.earnings.total_amount_owed ? this.state.earnings.total_amount_owed : '0.00',
 			notice = this.translate(
 				'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. Payment will be made as soon as the total outstanding amount has reached $100.',
@@ -178,7 +178,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	infoNotice: function() {
+	infoNotice() {
 		return (
 			<div className="module-content-text module-content-text-info">
 				<p>{ this.translate( 'Payments can have the following statuses:' ) }</p>
@@ -200,7 +200,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	earningsBreakdown: function() {
+	earningsBreakdown() {
 		var earnings = this.state.earnings && this.state.earnings.total_earnings ? Number( this.state.earnings.total_earnings ) : 0,
 			owed = this.state.earnings && this.state.earnings.total_amount_owed ? Number( this.state.earnings.total_amount_owed ) : 0,
 			paid = this.state.earnings && this.state.earnings.total_earnings && this.state.earnings.total_amount_owed ?
@@ -224,7 +224,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	earningsTable: function( earnings, header_text, type ) {
+	earningsTable( earnings, header_text, type ) {
 		var period,
 			rows = [],
 			infoIcon = this.getInfoToggle( type ) ? 'info' : 'info-outline',
@@ -281,7 +281,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		var infoIcon = this.state.showEarningsNotice ? 'info' : 'info-outline',
 			classes = classNames( 'earnings_breakdown', {
 				'is-showing-info': this.state.showEarningsNotice
