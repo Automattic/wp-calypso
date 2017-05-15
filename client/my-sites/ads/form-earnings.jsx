@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import notices from 'notices';
 import classNames from 'classnames';
 
@@ -13,22 +13,25 @@ import Gridicon from 'gridicons';
 import WordadsActions from 'lib/ads/actions';
 import EarningsStore from 'lib/ads/earnings-store';
 
-module.exports = React.createClass( {
+class AdsFormEarnings extends Component {
+	constructor( props ) {
+		super( props );
 
-	displayName: 'AdsFormEarnings',
+		this.state = this.getSettingsFromStore();
+	}
 
 	componentWillMount() {
 		EarningsStore.on( 'change', this.updateSettings );
 		this._fetchIfEmpty();
-	},
+	}
 
 	componentWillUnmount() {
 		EarningsStore.removeListener( 'change', this.updateSettings );
-	},
+	}
 
 	updateSettings() {
 		this.setState( this.getSettingsFromStore() );
-	},
+	}
 
 	componentDidUpdate() {
 		if ( this.state.error && this.state.error.message ) {
@@ -36,7 +39,7 @@ module.exports = React.createClass( {
 		} else {
 			notices.clearNotices( 'notices' );
 		}
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! EarningsStore.getById( nextProps.site.ID ).earnings ) {
@@ -47,11 +50,7 @@ module.exports = React.createClass( {
 			this._fetchIfEmpty( nextProps.site );
 			this.setState( this.getSettingsFromStore( nextProps.site ) );
 		}
-	},
-
-	getInitialState() {
-		return this.getSettingsFromStore();
-	},
+	}
 
 	getSettingsFromStore( siteInstance ) {
 		var site = siteInstance || this.props.site,
@@ -63,7 +62,7 @@ module.exports = React.createClass( {
 		store.showAdjustmentInfo = false;
 
 		return store;
-	},
+	}
 
 	resetState() {
 		this.replaceState( {
@@ -81,7 +80,7 @@ module.exports = React.createClass( {
 			showSponsoredInfo: false,
 			showAdjustmentInfo: false
 		} );
-	},
+	}
 
 	_fetchIfEmpty( site ) {
 		site = site || this.props.site;
@@ -97,14 +96,14 @@ module.exports = React.createClass( {
 		setTimeout( () => {
 			WordadsActions.fetchEarnings( site )
 		}, 0 );
-	},
+	}
 
-	toggleEarningsNotice( event ) {
+	toggleEarningsNotice = ( event ) => {
 		event.preventDefault();
 		this.setState( { showEarningsNotice: ! this.state.showEarningsNotice } );
-	},
+	};
 
-	toggleInfo( type, event ) {
+	toggleInfo = ( type, event ) => {
 		event.preventDefault();
 		switch ( type ) {
 			case 'wordads':
@@ -117,7 +116,7 @@ module.exports = React.createClass( {
 				this.setState( { showAdjustmentInfo: ! this.state.showAdjustmentInfo } );
 				break;
 		}
-	},
+	};
 
 	getInfoToggle( type ) {
 		var types = {
@@ -127,7 +126,7 @@ module.exports = React.createClass( {
 		}
 
 		return types[ type ] ? types[ type ] : false;
-	},
+	}
 
 	checkSize( obj ) {
 		if ( ! obj ) {
@@ -135,12 +134,12 @@ module.exports = React.createClass( {
 		}
 
 		return Object.keys( obj ).length;
-	},
+	}
 
 	swapYearMonth( date ) {
 		var splits = date.split( '-' );
 		return splits[ 1 ] + '-' + splits[ 0 ];
-	},
+	}
 
 	getStatus( status ) {
 		var statuses = {
@@ -152,7 +151,7 @@ module.exports = React.createClass( {
 		}
 
 		return statuses[ status ] ? statuses[ status ] : '?';
-	},
+	}
 
 	payoutNotice() {
 		var owed = this.state.earnings && this.state.earnings.total_amount_owed ? this.state.earnings.total_amount_owed : '0.00',
@@ -176,7 +175,7 @@ module.exports = React.createClass( {
 				<p>{ owed < 100 ? notice : payout }</p>
 			</div>
 		);
-	},
+	}
 
 	infoNotice() {
 		return (
@@ -198,7 +197,7 @@ module.exports = React.createClass( {
 				</ul>
 			</div>
 		);
-	},
+	}
 
 	earningsBreakdown() {
 		var earnings = this.state.earnings && this.state.earnings.total_earnings ? Number( this.state.earnings.total_earnings ) : 0,
@@ -222,7 +221,7 @@ module.exports = React.createClass( {
 				</li>
 			</ul>
 		);
-	},
+	}
 
 	earningsTable( earnings, header_text, type ) {
 		var period,
@@ -279,7 +278,7 @@ module.exports = React.createClass( {
 				</div>
 			</Card>
 		);
-	},
+	}
 
 	render() {
 		var infoIcon = this.state.showEarningsNotice ? 'info' : 'info-outline',
@@ -324,4 +323,6 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default AdsFormEarnings;
