@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { invoke, noop } from 'lodash';
+import { get, invoke, noop, pick } from 'lodash';
 import classNames from 'classnames';
 import debug from 'debug';
 
@@ -82,17 +82,27 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		} = this.props;
 
 		if ( error ) {
-			log( `Script${ error.src } failed to load.` );
+			log( `Script${ get( error, 'src', '' ) } failed to load.` );
 			onScriptLoadError();
 
 			return;
 		}
 
+		const {
+			height = 480,
+			videopress_guid,
+			width = 854,
+		} = pick( item, [ 'videopress_guid', 'height', 'width' ] );
+
+		if ( ! videopress_guid ) {
+			return;
+		}
+
 		if ( typeof window !== 'undefined' && window.videopress ) {
-			this.player = window.videopress( item.videopress_guid, this.video, {
+			this.player = window.videopress( videopress_guid, this.video, {
 				autoPlay: isPlaying,
-				height: item.height,
-				width: item.width,
+				height: height,
+				width: width,
 			} );
 		}
 	};
