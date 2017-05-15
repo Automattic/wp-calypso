@@ -137,28 +137,30 @@ export default connect(
 		const siteId = getSiteIdFromQueryObject( state );
 
 		return {
-			siteSlug,
-			selectedPlan,
+			authAttempts: getAuthAttempts( state, siteSlug ),
+			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
+			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
+			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
+			isFetchingSites: isRequestingSites( state ),
 			jetpackConnectAuthorize: getAuthorizationData( state ),
 			plansFirst: false,
-			jetpackSSOSessions: getSSOSessions( state ),
-			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
-			isFetchingSites: isRequestingSites( state ),
-			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
-			requestHasXmlrpcError,
 			requestHasExpiredSecretError,
-			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
-			authAttempts: getAuthAttempts( state, siteSlug ),
+			requestHasXmlrpcError,
+			selectedPlan,
+			siteSlug,
 			user: getCurrentUser( state ),
+
+			// FIXME: Is this prop used? Can it be removed completely?
+			jetpackSSOSessions: getSSOSessions( state ),
 		};
 	},
 	dispatch => bindActionCreators( {
-		requestSites,
-		recordTracksEvent,
 		authorize,
 		createAccount,
 		goBackToWpAdmin,
+		goToXmlrpcErrorFallbackUrl,
+		recordTracksEvent,
+		requestSites,
 		retryAuth,
-		goToXmlrpcErrorFallbackUrl
 	}, dispatch )
 )( localize( JetpackConnectAuthorizeForm ) );
