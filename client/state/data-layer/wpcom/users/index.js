@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-import { flow, isUndefined, map, noop, omitBy } from 'lodash';
+import { flow, get, isUndefined, map, noop, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { USERS_REQUEST } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	receiveUser,
 } from 'state/users/actions';
+
+export const DEFAULT_PER_PAGE = 10;
 
 /**
  * Normalize a WP REST API (v2) user ressource for consumption in Calypso which
@@ -27,6 +29,26 @@ export const normalizeUser = ( user ) => omitBy( {
 }, isUndefined );
 
 /**
+ * Dispatches a request to fetch post revisions users
+ *
+ * @param {Function} dispatch Redux dispatcher
+ * @param {Object} action Redux action
+ */
+export const fetchUsers = ( { dispatch }, action ) => {
+	const { siteId, ids, page = 1, perPage = DEFAULT_PER_PAGE } = action;
+	dispatch( http( {
+		path: `/sites/${ siteId }/users`,
+		method: 'GET',
+		apiNamespace: 'wp/v2',
+		query: {
+			include: ids,
+			page,
+			per_page: perPage,
+		},
+	}, action ) );
+};
+
+/**
  * Dispatches returned users
  *
  * @param {Function} dispatch Redux dispatcher
@@ -35,25 +57,18 @@ export const normalizeUser = ( user ) => omitBy( {
  * @param {Array} users raw data from post revisions API
  */
 export const receiveSuccess = ( { dispatch }, action, next, users ) => {
-	map( users, flow( normalizeUser, receiveUser, dispatch ) );
-};
+	const { page = 1, perPage = DEFAULT_PER_PAGE } = action;
+	const normalizedUsers = map( users, normalizeUser );
 
-/**
- * Dispatches a request to fetch post revisions users
- *
- * @param {Function} dispatch Redux dispatcher
- * @param {Object} action Redux action
- */
-export const fetchUsers = ( { dispatch }, action ) => {
-	const { siteId, ids } = action;
-	dispatch( http( {
-		path: `/sites/${ siteId }/users`,
-		method: 'GET',
-		apiNamespace: 'wp/v2',
-		query: {
-			include: ids,
-		},
-	}, action ) );
+	if ( get( getHeaders( action ), 'X-WP-TotalPages', 0 ) > page ) {
+		fetchUsers( { dispatch }, {
+			...omit( action, 'meta' ),
+			page: page + 1,
+			perPage,
+		} );
+	}
+
+	map( normalizedUsers, flow( receiveUser, dispatch ) );
 };
 
 const dispatchUsersRequest = dispatchRequest( fetchUsers, receiveSuccess, noop );
