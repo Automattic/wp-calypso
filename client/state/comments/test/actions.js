@@ -4,7 +4,6 @@
 import nock from 'nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import Immutable from 'immutable';
 
 /**
  * Internal dependencies
@@ -26,7 +25,6 @@ import {
 	unlikeComment
 } from '../actions';
 import {
-	getCommentParentKey,
 	createRequestId
 } from '../utils';
 import {
@@ -58,12 +56,12 @@ describe( 'actions', () => {
 			const dispatchSpy = sinon.spy();
 			const getStateStub = sinon.stub().returns( {
 				comments: {
-					items: Immutable.Map(),
-					requests: Immutable.fromJS( {
-						[ getCommentParentKey( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId ) ]: {
+					items: {},
+					requests: {
+						'91750058-287': {
 							[ requestId ]: COMMENTS_REQUEST
 						}
-					} )
+					}
 				}
 			} );
 
@@ -76,8 +74,8 @@ describe( 'actions', () => {
 			const dispatchSpy = sinon.spy();
 			const getStateStub = sinon.stub().returns( {
 				comments: {
-					items: Immutable.Map(),
-					requests: Immutable.Map()
+					items: {},
+					requests: {}
 				}
 			} );
 
@@ -96,6 +94,8 @@ describe( 'actions', () => {
 			return reqPromise.then( () => {
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: COMMENTS_REQUEST_SUCCESS,
+					siteId: MANY_COMMENTS_POST.siteId,
+					postId: MANY_COMMENTS_POST.postId,
 					requestId: createRequestId( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId, { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, status: 'approved' } )
 				} );
 			} );
@@ -106,14 +106,12 @@ describe( 'actions', () => {
 			const dispatchSpy = sinon.spy();
 			const getStateSpy = sinon.stub().returns( {
 				comments: {
-					items: Immutable.fromJS( {
-						[ getCommentParentKey( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId ) ]: [
-							{ ID: 123, date: beforeDateString }
-						]
-					} ),
-					requests: Immutable.fromJS( {
-						[ getCommentParentKey( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId ) ]: { }
-					} )
+					items: {
+						'91750058-287': [ { ID: 123, date: beforeDateString } ]
+					},
+					requests: {
+						'91750058-287': { }
+					}
 				}
 			} );
 
@@ -135,6 +133,8 @@ describe( 'actions', () => {
 			return reqPromise.then( () => {
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: COMMENTS_REQUEST_SUCCESS,
+					siteId: MANY_COMMENTS_POST.siteId,
+					postId: MANY_COMMENTS_POST.postId,
 					requestId: createRequestId( MANY_COMMENTS_POST.siteId, MANY_COMMENTS_POST.postId, { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, before: new Date( beforeDateString ).toISOString(), status: 'approved' } )
 				} );
 			} );
