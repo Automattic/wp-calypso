@@ -49,7 +49,7 @@ class AdsFormSettings extends Component {
 
 	componentWillMount() {
 		SettingsStore.on( 'change', this.updateSettings );
-		this._fetchIfEmpty();
+		this.fetchIfEmpty();
 	}
 
 	componentWillUnmount() {
@@ -68,7 +68,7 @@ class AdsFormSettings extends Component {
 		}
 
 		if ( site.ID !== nextProps.site.ID ) {
-			this._fetchIfEmpty( nextProps.site );
+			this.fetchIfEmpty( nextProps.site );
 			this.setState( this.getSettingsFromStore( nextProps.site ) );
 		}
 	}
@@ -181,7 +181,7 @@ class AdsFormSettings extends Component {
 		};
 	}
 
-	_fetchIfEmpty( site ) {
+	fetchIfEmpty( site ) {
 		site = site || this.props.site;
 		if ( ! site || ! site.ID ) {
 			return;
