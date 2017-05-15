@@ -1,7 +1,7 @@
 /***
  * External dependencies
  */
-import { filter, find, get, keyBy, map, last } from 'lodash';
+import { filter, find, first, get, keyBy, map, last } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,7 +44,7 @@ export const getPostTotalCommentsCount = ( state, siteId, postId ) => get( state
 export const getPostMostRecentCommentDate = createSelector(
 	( state, siteId, postId ) => {
 		const items = getPostCommentItems( state, siteId, postId );
-		return items && items.first() ? new Date( items.first().get( 'date' ) ) : undefined;
+		return items && first( items ) ? new Date( get( first( items ), 'date' ) ) : undefined;
 	},
 	getPostCommentItems
 );
