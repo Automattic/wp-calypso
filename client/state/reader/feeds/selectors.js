@@ -17,7 +17,7 @@ export function shouldFeedBeFetched( state, feedId ) {
 function isStale( state, feedId ) {
 	const lastFetched = state.reader.feeds.lastFetched[ feedId ];
 	if ( ! lastFetched ) {
-		return false;
+		return true;
 	}
 	return lastFetched <= Date.now() - DAY_IN_MILLIS;
 }
