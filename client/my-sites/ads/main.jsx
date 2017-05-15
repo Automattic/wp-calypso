@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:ads-settings' ),
-	find = require( 'lodash/find' );
+import React from 'react';
+import { find } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -46,10 +45,6 @@ const AdsMain = React.createClass( {
 		isUnsafe: React.PropTypes.oneOf( wordadsUnsafeValues ),
 		section: React.PropTypes.string.isRequired,
 		wordAdsSuccess: React.PropTypes.bool.isRequired
-	},
-
-	componentWillMount: function() {
-		debug( 'Mounting AdsMain React component.' );
 	},
 
 	getSelectedText: function() {
