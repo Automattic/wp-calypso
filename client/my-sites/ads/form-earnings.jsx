@@ -15,11 +15,7 @@ import WordadsActions from 'lib/ads/actions';
 import EarningsStore from 'lib/ads/earnings-store';
 
 class AdsFormEarnings extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = this.getSettingsFromStore();
-	}
+	state = this.getSettingsFromStore();
 
 	componentWillMount() {
 		EarningsStore.on( 'change', this.updateSettings );
