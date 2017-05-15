@@ -1,16 +1,12 @@
 /***
  * External dependencies
  */
-import { filter, find, get, keyBy, map, partition, last } from 'lodash';
+import { filter, find, get, keyBy, map, last } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import {
-	getCommentParentKey,
-	buildCommentsTree
-} from './utils';
 
 /***
  * Gets comment items for post
@@ -76,7 +72,7 @@ export const getPostOldestCommentDate = createSelector(
  * @return {Immutable.Map<CommentId, CommentNode>} comments tree in the form of immutable map<CommentId, CommentNode>, and in addition a children array
  */
 export const getPostCommentsTree = createSelector(
-	( state, siteId, postId, status ) => {
+	( state, siteId, postId/*, status*/ ) => {
 		const items = getPostCommentItems( state, siteId, postId );
 		return {
 			...keyBy( map( items, item => ( {
