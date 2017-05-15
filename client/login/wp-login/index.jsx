@@ -147,6 +147,7 @@ export class Login extends React.Component {
 					{ translate( 'Email me a login link' ) }
 			</a>
 		);
+
 		const resetPasswordLink = ! magicLoginView && ! twoFactorAuthType && (
 			<a
 				href={ config( 'login_url' ) + '?action=lostpassword' }
@@ -155,7 +156,7 @@ export class Login extends React.Component {
 			</a>
 		);
 
-		const lostPhoneLink = twoFactorAuthType && (
+		const lostPhoneLink = twoFactorAuthType && twoFactorAuthType !== 'backup' && (
 			<a
 				href={ login( { twoFactorAuthType: 'backup' } ) }
 				key="lost-phone-link">
