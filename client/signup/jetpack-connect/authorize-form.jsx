@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
@@ -46,6 +46,28 @@ import LoggedInForm from './auth-logged-in-form';
 import LoggedOutForm from './auth-logged-out-form';
 
 class JetpackConnectAuthorizeForm extends Component {
+	static propTypes = {
+		authAttempts: PropTypes.number,
+		calypsoStartedConnection: PropTypes.bool,
+		isAlreadyOnSitesList: PropTypes.bool,
+		isFetchingSites: PropTypes.bool,
+		jetpackConnectAuthorize: PropTypes.shape( {
+			queryObject: PropTypes.shape( {
+				client_id: PropTypes.string,
+				from: PropTypes.string,
+			} ).isRequired,
+		} ).isRequired,
+		plansFirst: PropTypes.bool,
+		requestHasExpiredSecretError: PropTypes.func,
+		requestHasXmlrpcError: PropTypes.func,
+		selectedPlan: PropTypes.string,
+		siteSlug: PropTypes.string,
+		user: PropTypes.object,
+
+		// FIXME: Is this prop used? Can it be removed completely?
+		jetpackSSOSessions: PropTypes.any,
+	}
+
 	componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 	}
