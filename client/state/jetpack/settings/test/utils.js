@@ -124,31 +124,11 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should skip jetpack_testimonial setting', () => {
+		it( 'should skip all Custom Content Types settings', () => {
 			const settings = {
 				some_other_setting: 123,
 				jetpack_testimonial: true,
-			};
-
-			expect( normalizeSettings( settings ) ).to.eql( {
-				some_other_setting: 123,
-			} );
-		} );
-
-		it( 'should skip jetpack_portfolio setting', () => {
-			const settings = {
-				some_other_setting: 123,
 				jetpack_portfolio: true,
-			};
-
-			expect( normalizeSettings( settings ) ).to.eql( {
-				some_other_setting: 123,
-			} );
-		} );
-
-		it( 'should skip custom-content-types setting', () => {
-			const settings = {
-				some_other_setting: 123,
 				'custom-content-types': true,
 			};
 
@@ -156,6 +136,7 @@ describe( 'utils', () => {
 				some_other_setting: 123,
 			} );
 		} );
+
 	} );
 
 	describe( 'sanitizeSettings()', () => {
@@ -226,31 +207,11 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should skip jetpack_testimonial setting', () => {
+		it( 'should skip all Custom Content Types settings', () => {
 			const settings = {
 				some_other_setting: 123,
 				jetpack_testimonial: true,
-			};
-
-			expect( sanitizeSettings( settings ) ).to.eql( {
-				some_other_setting: 123,
-			} );
-		} );
-
-		it( 'should skip jetpack_portfolio setting', () => {
-			const settings = {
-				some_other_setting: 123,
 				jetpack_portfolio: true,
-			};
-
-			expect( sanitizeSettings( settings ) ).to.eql( {
-				some_other_setting: 123,
-			} );
-		} );
-
-		it( 'should skip custom-content-types setting', () => {
-			const settings = {
-				some_other_setting: 123,
 				'custom-content-types': true,
 			};
 
