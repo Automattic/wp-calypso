@@ -22,32 +22,42 @@
 
 .component-detail__tree,
 .component-detail__render {
-  float: left;
-  width: 50%;
+  @include breakpoint('>960px') {
+    float: left;
+    width: 50%;
+  }
 }
 
 .component-detail__tree {
-  box-sizing: border-box;
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 50%;
-  box-shadow:
-    0 0 0 1px rgba(200, 215, 225, 0.5),
-    0 1px 2px #e9eff3;
+  display: none;
+
+  @include breakpoint('>960px') {
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    box-shadow:
+      0 0 0 1px rgba(200, 215, 225, 0.5),
+      0 1px 2px #e9eff3;
+  }
 }
 
 .component-detail__render {
-  box-sizing: border-box;
-  float: right;
-  width: 50%;
-  min-height: 200px;
   padding: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: #fff;
+
+  @include breakpoint('>960px') {
+    box-sizing: border-box;
+    float: right;
+    width: 50%;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .component-detail__render:last-child {
@@ -55,16 +65,19 @@
 }
 
 .component-detail__icon {
-  position: absolute;
-  left: 50%;
-  top: 50%;
+  display: none;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  margin: -14px 0 0 -14px;
-  background: #f3f6f8;
-  border: solid 1px #ddd;
+  @include breakpoint('>960px') {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    margin: -14px 0 0 -14px;
+    background: #f3f6f8;
+    border: solid 1px #ddd;
+  }
 }
