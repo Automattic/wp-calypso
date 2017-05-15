@@ -46,7 +46,7 @@ export class UpgradeATStep extends Component {
 						}
 					</p>
 					<Button primary href={ href }>
-						{ translate( 'Upgrade my site' ) }
+						{ translate( 'Upgrade My Site' ) }
 					</Button>
 				</FormFieldset>
 			</div>
