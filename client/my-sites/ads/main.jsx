@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { find } from 'lodash';
 import { connect } from 'react-redux';
 
@@ -32,31 +32,28 @@ import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/st
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
-const AdsMain = React.createClass( {
+class AdsMain extends Component {
+	static propTypes = {
+		site: PropTypes.object.isRequired,
+		requestingWordAdsApproval: PropTypes.bool.isRequired,
+		requestWordAdsApproval: PropTypes.func.isRequired,
+		isRequestingWordadsStatus: PropTypes.bool.isRequired,
+		isUnsafe: PropTypes.oneOf( wordadsUnsafeValues ),
+		section: PropTypes.string.isRequired,
+		wordAdsError: PropTypes.string,
+		wordAdsSuccess: PropTypes.bool,
+	};
 
-	displayName: 'AdsMain',
-
-	PropTypes: {
-		site: React.PropTypes.object.isRequired,
-		requestingWordAdsApproval: React.PropTypes.bool.isRequired,
-		requestWordAdsApproval: React.PropTypes.func.isRequired,
-		wordAdsError: React.PropTypes.string.isRequired,
-		isRequestingWordadsStatus: React.PropTypes.bool.isRequired,
-		isUnsafe: React.PropTypes.oneOf( wordadsUnsafeValues ),
-		section: React.PropTypes.string.isRequired,
-		wordAdsSuccess: React.PropTypes.bool.isRequired
-	},
-
-	getSelectedText: function() {
+	getSelectedText() {
 		var selected = find( this.getFilters(), { path: this.props.path } );
 		if ( selected ) {
 			return selected.title;
 		}
 
 		return '';
-	},
+	}
 
-	getFilters: function() {
+	getFilters() {
 		const { site, siteSlug } = this.props,
 			pathSuffix = siteSlug ? '/' + siteSlug : '',
 			filters = [];
@@ -76,9 +73,9 @@ const AdsMain = React.createClass( {
 		}
 
 		return filters;
-	},
+	}
 
-	getComponent: function( section ) {
+	getComponent( section ) {
 		switch ( section ) {
 			case 'earnings':
 				return <AdsEarnings site={ this.props.site } />;
@@ -87,14 +84,14 @@ const AdsMain = React.createClass( {
 			default:
 				return null;
 		}
-	},
+	}
 
-	dismissWordAdsError() {
+	dismissWordAdsError = () => {
 		const { siteId } = this.props;
 		this.props.dismissWordAdsError( siteId );
-	},
+	};
 
-	renderInstantActivationToggle: function( component ) {
+	renderInstantActivationToggle( component ) {
 		const { siteId } = this.props;
 		return ( <div>
 			<QueryWordadsStatus siteId={ siteId } />
@@ -175,9 +172,9 @@ const AdsMain = React.createClass( {
 				{ component }
 			</FeatureExample>
 		</div> );
-	},
+	}
 
-	render: function() {
+	render() {
 		let component = this.getComponent( this.props.section );
 		let notice = null;
 
@@ -196,7 +193,7 @@ const AdsMain = React.createClass( {
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
-						{ this.getFilters().map( function( filterItem ) {
+						{ this.getFilters().map( ( filterItem ) => {
 							return (
 								<NavItem
 									key={ filterItem.id }
@@ -206,7 +203,7 @@ const AdsMain = React.createClass( {
 									{ filterItem.title }
 								</NavItem>
 							);
-						}, this ) }
+						} ) }
 					</NavTabs>
 				</SectionNav>
 				{ notice }
@@ -214,7 +211,7 @@ const AdsMain = React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
 
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
