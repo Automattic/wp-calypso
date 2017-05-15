@@ -180,10 +180,6 @@ class ManagePurchase extends Component {
 	}
 
 	renderPlanDetails() {
-		if ( ! config.isEnabled( 'me/purchases-v2' ) ) {
-			return null;
-		}
-
 		return (
 			<PurchasePlanDetails
 				selectedSite={ this.props.selectedSite }
