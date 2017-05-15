@@ -155,7 +155,7 @@ class AdsFormEarnings extends Component {
 		const { translate } = this.props;
 		const owed = this.state.earnings && this.state.earnings.total_amount_owed ? this.state.earnings.total_amount_owed : '0.00',
 			notice = translate(
-				'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment.' +
+				'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. ' +
 				'Payment will be made as soon as the total outstanding amount has reached $100.',
 				{
 					comment: 'Insufficient balance for payout.',
@@ -171,7 +171,7 @@ class AdsFormEarnings extends Component {
 			);
 
 		return (
-			<div className="module-content-text module-content-text-info">
+			<div className="ads__module-content-text module-content-text module-content-text-info">
 				<p>{ owed < 100 ? notice : payout }</p>
 			</div>
 		);
@@ -181,24 +181,24 @@ class AdsFormEarnings extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div className="module-content-text module-content-text-info">
+			<div className="ads__module-content-text module-content-text module-content-text-info">
 				<p>{ translate( 'Payments can have the following statuses:' ) }</p>
-				<ul className="earnings_history__statuses-list">
-					<li className="earnings_history__status"><strong>{ translate( 'Unpaid:' ) } </strong>
+				<ul className="ads__earnings-history-statuses-list">
+					<li className="ads__earnings-history-status"><strong>{ translate( 'Unpaid:' ) } </strong>
 						{ translate( 'Payment is on hold until the end of the current month.' ) }
 					</li>
-					<li className="earnings_history__status"><strong>{ translate( 'Paid:' ) } </strong>
+					<li className="ads__earnings-history-status"><strong>{ translate( 'Paid:' ) } </strong>
 						{ translate( 'Payment has been processed through PayPal.' ) }
 					</li>
-					<li className="earnings_history__status"><strong>{ translate( 'Pending (Missing Tax Info):' ) } </strong>
+					<li className="ads__earnings-history-status"><strong>{ translate( 'Pending (Missing Tax Info):' ) } </strong>
 						{ translate(
-							'Payment is pending due to missing information.' +
+							'Payment is pending due to missing information. ' +
 							'You can provide tax information in the settings screen.'
 						) }
 					</li>
-					<li className="earnings_history__status"><strong>{ translate( 'Pending (Invalid PayPal):' ) } </strong>
+					<li className="ads__earnings-history-status"><strong>{ translate( 'Pending (Invalid PayPal):' ) } </strong>
 						{ translate(
-							'Payment processing has failed due to invalid PayPal address.' +
+							'Payment processing has failed due to invalid PayPal address. ' +
 							'You can correct the PayPal address in the settings screen.'
 						) }
 					</li>
@@ -216,24 +216,24 @@ class AdsFormEarnings extends Component {
 				: 0;
 
 		return (
-			<ul className="earnings_breakdown__list" >
-				<li className="earnings_breakdown__item">
-					<span className="earnings_breakdown__label">
+			<ul className="ads__earnings-breakdown-list">
+				<li className="ads__earnings-breakdown-item">
+					<span className="ads__earnings-breakdown-label">
 						{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
 					</span>
-					<span className="earnings_breakdown__value">${ numberFormat( earnings, 2 ) }</span>
+					<span className="ads__earnings-breakdown-value">${ numberFormat( earnings, 2 ) }</span>
 				</li>
-				<li className="earnings_breakdown__item">
-					<span className="earnings_breakdown__label">
+				<li className="ads__earnings-breakdown-item">
+					<span className="ads__earnings-breakdown-label">
 						{ translate( 'Total paid', { context: 'Sum of earnings that have been distributed' } ) }
 					</span>
-					<span className="earnings_breakdown__value">${ numberFormat( paid, 2 ) }</span>
+					<span className="ads__earnings-breakdown-value">${ numberFormat( paid, 2 ) }</span>
 				</li>
-				<li className="earnings_breakdown__item">
-					<span className="earnings_breakdown__label">
+				<li className="ads__earnings-breakdown-item">
+					<span className="ads__earnings-breakdown-label">
 						{ translate( 'Outstanding amount', { context: 'Sum earnings left unpaid' } ) }
 					</span>
-					<span className="earnings_breakdown__value">${ numberFormat( owed, 2 ) }</span>
+					<span className="ads__earnings-breakdown-value">${ numberFormat( owed, 2 ) }</span>
 				</li>
 			</ul>
 		);
@@ -252,10 +252,10 @@ class AdsFormEarnings extends Component {
 			if ( earnings.hasOwnProperty( period ) ) {
 				rows.push(
 					<tr key={ type + '-' + period }>
-						<td className="earnings-history__value">{ this.swapYearMonth( period ) }</td>
-						<td className="earnings-history__value">${ numberFormat( earnings[ period ].amount, 2 ) }</td>
-						<td className="earnings-history__value">{ earnings[ period ].pageviews }</td>
-						<td className="earnings-history__value">{ this.getStatus( earnings[ period ].status ) }</td>
+						<td className="ads__earnings-history-value">{ this.swapYearMonth( period ) }</td>
+						<td className="ads__earnings-history-value">${ numberFormat( earnings[ period ].amount, 2 ) }</td>
+						<td className="ads__earnings-history-value">{ earnings[ period ].pageviews }</td>
+						<td className="ads__earnings-history-value">{ this.getStatus( earnings[ period ].status ) }</td>
 					</tr>
 				);
 			}
@@ -263,12 +263,12 @@ class AdsFormEarnings extends Component {
 
 		return (
 			<Card className={ classes }>
-				<div className="module-header">
-					<h1 className="module-header-title">{ header_text }</h1>
-					<ul className="module-header-actions">
-						<li className="module-header-action toggle-info">
+				<div className="ads__module-header module-header">
+					<h1 className="ads__module-header-title module-header-title">{ header_text }</h1>
+					<ul className="ads__module-header-actions module-header-actions">
+						<li className="ads__module-header-action module-header-action toggle-info">
 							<a href="#"
-								className="module-header-action-link"
+								className="ads__module-header-action-link module-header-action-link"
 								aria-label={ translate( 'Show or hide panel information' ) }
 								title={ translate( 'Show or hide panel information' ) }
 								onClick={ this.toggleInfo( type ) }>
@@ -277,15 +277,15 @@ class AdsFormEarnings extends Component {
 						</li>
 					</ul>
 				</div>
-				<div className="module-content">
+				<div className="ads__module-content module-content">
 					{ this.infoNotice() }
 					<table>
 						<thead>
 							<tr>
-								<th className="earnings-history__header">{ translate( 'Period' ) }</th>
-								<th className="earnings-history__header">{ translate( 'Earnings' ) }</th>
-								<th className="earnings-history__header">{ translate( 'Ad Impressions' ) }</th>
-								<th className="earnings-history__header">{ translate( 'Status' ) }</th>
+								<th className="ads__earnings-history-header">{ translate( 'Period' ) }</th>
+								<th className="ads__earnings-history-header">{ translate( 'Earnings' ) }</th>
+								<th className="ads__earnings-history-header">{ translate( 'Ad Impressions' ) }</th>
+								<th className="ads__earnings-history-header">{ translate( 'Status' ) }</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -307,12 +307,12 @@ class AdsFormEarnings extends Component {
 		return (
 			<div>
 				<Card className={ classes }>
-					<div className="module-header">
-						<h1 className="module-header-title">{ translate( 'Totals' ) }</h1>
-						<ul className="module-header-actions">
-							<li className="module-header-action toggle-info">
+					<div className="ads__module-header module-header">
+						<h1 className="ads__module-header-title module-header-title">{ translate( 'Totals' ) }</h1>
+						<ul className="ads__module-header-actions module-header-actions">
+							<li className="ads__module-header-action module-header-action toggle-info">
 								<a href="#"
-									className="module-header-action-link"
+									className="ads__module-header-action-link module-header-action-link"
 									aria-label={ translate( 'Show or hide panel information' ) }
 									title={ translate( 'Show or hide panel information' ) }
 									onClick={ this.toggleEarningsNotice } >
@@ -321,7 +321,7 @@ class AdsFormEarnings extends Component {
 							</li>
 						</ul>
 					</div>
-					<div className="module-content">
+					<div className="ads__module-content module-content">
 						{ this.payoutNotice() }
 						{ this.earningsBreakdown() }
 					</div>
