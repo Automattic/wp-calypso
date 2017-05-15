@@ -31,7 +31,7 @@ import {
 	getAuthAttempts,
 	getSiteIdFromQueryObject
 } from 'state/jetpack-connect/selectors';
-import observe from 'lib/mixins/data-observe';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import { requestSites } from 'state/sites/actions';
@@ -46,7 +46,6 @@ import LoggedOutForm from './auth-logged-out-form';
 
 const JetpackConnectAuthorizeForm = React.createClass( {
 	displayName: 'JetpackConnectAuthorizeForm',
-	mixins: [ observe( 'userModule' ) ],
 
 	componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
@@ -93,16 +92,10 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 	},
 
 	renderForm() {
-		const { userModule } = this.props;
-		const user = userModule.get();
-		const props = Object.assign( {}, this.props, {
-			user: user
-		} );
-
 		return (
-			( user )
-				? <LoggedInForm { ...props } isSSO={ this.isSSO() } />
-				: <LoggedOutForm { ...props } isSSO={ this.isSSO() } />
+			( this.props.user )
+				? <LoggedInForm { ...this.props } isSSO={ this.isSSO() } />
+				: <LoggedOutForm { ...this.props } isSSO={ this.isSSO() } />
 		);
 	},
 
@@ -157,6 +150,7 @@ export default connect(
 			requestHasExpiredSecretError,
 			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
 			authAttempts: getAuthAttempts( state, siteSlug ),
+			user: getCurrentUser( state ),
 		};
 	},
 	dispatch => bindActionCreators( {
