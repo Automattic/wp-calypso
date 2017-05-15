@@ -64,6 +64,17 @@ export const FEATURE_UPLOAD_THEMES = 'upload-themes';
 export const FEATURE_REPUBLICIZE = 'republicize';
 export const FEATURE_REPUBLICIZE_SCHEDULING = 'republicize-scheduling';
 
+//PLANS TEST CONSTANTS
+export const FEATURE_EVERYTHING_IN_FREE = 'everything-in-free';
+export const FEATURE_EVERYTHING_IN_PERSONAL = 'everything-in-personal';
+export const FEATURE_EVERYTHING_IN_PREMIUM = 'everything-in-premium';
+export const FEATURE_CUSTOM_DOMAIN_TEST = 'custom-domain-test';
+export const FEATURE_UNLIMITED_PREMIUM_THEMES_TEST = 'premium-themes-test';
+export const FEATURE_VIDEO_UPLOADS_TEST = 'video-upload-test';
+export const FEATURE_BASIC_DESIGN_TEST = 'basic-design-test';
+export const FEATURE_ADVANCED_DESIGN_TEST = 'advanced-design-test';
+export const FEATURE_NO_ADS_TEST = 'no-adverts-test';
+
 // jetpack features constants
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
 export const FEATURE_SITE_STATS = 'site-stats';
@@ -105,16 +116,39 @@ export const PLANS_LIST = {
 		getProductId: () => 1,
 		getStoreSlug: () => PLAN_FREE,
 		getPathSlug: () => 'beginner',
-		getDescription: () => i18n.translate( 'Get a free website and be on your way to publishing your ' +
-			'first post in less than five minutes.' ),
-		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
-			FEATURE_WP_SUBDOMAIN,
-			FEATURE_JETPACK_ESSENTIAL,
-			FEATURE_COMMUNITY_SUPPORT,
-			FEATURE_FREE_THEMES,
-			FEATURE_BASIC_DESIGN,
-			FEATURE_3GB_STORAGE
-		],
+		getDescription: ( abtest ) => {
+			if ( abtest && abtest( 'signupPlansPageSimplification' ) === 'modified' ) {
+				return (
+					<span>
+						Try us for free and publish your
+						content in less than five minutes.
+					</span>
+				);
+			}
+
+			return i18n.translate( 'Get a free website and be on your way to publishing your ' +
+				'first post in less than five minutes.' );
+		},
+		getFeatures: ( abtest ) => {
+			if ( abtest && abtest( 'signupPlansPageSimplification' ) === 'modified' ) {
+				return [ // pay attention to ordering, it is used on /plan page
+					FEATURE_WP_SUBDOMAIN,
+					FEATURE_FREE_THEMES,
+					FEATURE_BASIC_DESIGN_TEST,
+					FEATURE_3GB_STORAGE,
+					FEATURE_COMMUNITY_SUPPORT,
+				];
+			}
+
+			return [ // pay attention to ordering, it is used on /plan page
+				FEATURE_WP_SUBDOMAIN,
+				FEATURE_JETPACK_ESSENTIAL,
+				FEATURE_COMMUNITY_SUPPORT,
+				FEATURE_FREE_THEMES,
+				FEATURE_BASIC_DESIGN,
+				FEATURE_3GB_STORAGE
+			];
+		},
 		getBillingTimeFrame: () => i18n.translate( 'for life' )
 	},
 
@@ -124,22 +158,44 @@ export const PLANS_LIST = {
 		getStoreSlug: () => PLAN_PERSONAL,
 		availableFor: ( plan ) => includes( [ PLAN_FREE ], plan ),
 		getPathSlug: () => 'personal',
-		getDescription: () => i18n.translate( '{{strong}}Best for Personal Use:{{/strong}} Boost your' +
-			' website with a custom domain name, and remove all WordPress.com advertising. ' +
-			'Get access to high quality email and live chat support.', {
-				components: {
-					strong: <strong className="plans__features plan-features__targeted-description-heading" />
-				}
-			} ),
-		getFeatures: () => [
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_JETPACK_ESSENTIAL,
-			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-			FEATURE_FREE_THEMES,
-			FEATURE_BASIC_DESIGN,
-			FEATURE_6GB_STORAGE,
-			FEATURE_NO_ADS
-		],
+		getDescription: ( abtest ) => {
+			if ( abtest && abtest( 'signupPlansPageSimplification' ) === 'modified' ) {
+				return (
+					<span>
+						Create a personal web presence and build your audience.
+					</span>
+				);
+			}
+
+			return i18n.translate( '{{strong}}Best for Personal Use:{{/strong}} Boost your' +
+					' website with a custom domain name, and remove all WordPress.com advertising. ' +
+					'Get access to high quality email and live chat support.', {
+						components: {
+							strong: <strong className="plans__features plan-features__targeted-description-heading" />
+						}
+					} );
+		},
+		getFeatures: ( abtest ) => {
+			if ( abtest && abtest( 'signupPlansPageSimplification' ) === 'modified' ) {
+				return [
+					FEATURE_EVERYTHING_IN_FREE,
+					FEATURE_CUSTOM_DOMAIN_TEST,
+					FEATURE_NO_ADS_TEST,
+					FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+					FEATURE_6GB_STORAGE,
+				];
+			}
+
+			return [
+				FEATURE_CUSTOM_DOMAIN,
+				FEATURE_JETPACK_ESSENTIAL,
+				FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+				FEATURE_FREE_THEMES,
+				FEATURE_BASIC_DESIGN,
+				FEATURE_6GB_STORAGE,
+				FEATURE_NO_ADS
+			];
+		},
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
 
@@ -150,26 +206,51 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium',
 		getStoreSlug: () => PLAN_PREMIUM,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
-		getDescription: () => i18n.translate( '{{strong}}Best for Entrepreneurs & Freelancers:{{/strong}}' +
-			' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
-			' and the ability to monetize your site with ads.', {
-				components: {
-					strong: <strong className="plans__features plan-features__targeted-description-heading" />
-				}
-			} ),
-		getFeatures: () => compact( [ // pay attention to ordering, shared features should align on /plan page
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_JETPACK_ESSENTIAL,
-			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
-			FEATURE_ADVANCED_DESIGN,
-			FEATURE_13GB_STORAGE,
-			FEATURE_NO_ADS,
-			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
-		] ),
+		getDescription: ( abtest ) => {
+			if ( abtest && abtest( 'signupPlansPageSimplification' ) === 'modified' ) {
+				return (
+					<span>
+						Share your ideas with the world on a supercharged website.
+					</span>
+				);
+			}
+
+			return i18n.translate( '{{strong}}Best for Entrepreneurs & Freelancers:{{/strong}}' +
+					' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+					' and the ability to monetize your site with ads.', {
+						components: {
+							strong: <strong className="plans__features plan-features__targeted-description-heading" />
+						}
+					} );
+		},
+		getFeatures: ( abtest ) => {
+			if ( abtest && abtest( 'signupPlansPageSimplification' ) === 'modified' ) {
+				return compact( [ // pay attention to ordering, shared features should align on /plan page
+					FEATURE_EVERYTHING_IN_PERSONAL,
+					FEATURE_UNLIMITED_PREMIUM_THEMES_TEST,
+					FEATURE_ADVANCED_DESIGN_TEST,
+					FEATURE_WORDADS_INSTANT,
+					FEATURE_VIDEO_UPLOADS_TEST,
+					isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+					isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
+					FEATURE_13GB_STORAGE,
+				] );
+			}
+
+			return compact( [ // pay attention to ordering, shared features should align on /plan page
+				FEATURE_CUSTOM_DOMAIN,
+				FEATURE_JETPACK_ESSENTIAL,
+				FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+				FEATURE_UNLIMITED_PREMIUM_THEMES,
+				FEATURE_ADVANCED_DESIGN,
+				FEATURE_13GB_STORAGE,
+				FEATURE_NO_ADS,
+				FEATURE_WORDADS_INSTANT,
+				FEATURE_VIDEO_UPLOADS,
+				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+				isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
+			] );
+		},
 		getPromotedFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_NO_ADS,
@@ -186,32 +267,58 @@ export const PLANS_LIST = {
 		getStoreSlug: () => PLAN_BUSINESS,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
 		getPathSlug: () => 'business',
-		getDescription: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
-			' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
-			' storage, and the ability to remove WordPress.com branding.', {
-				components: {
-					strong: <strong className="plans__features plan-features__targeted-description-heading" />
-				}
-			} ),
-		getFeatures: () => compact( [ // pay attention to ordering, shared features should align on /plan page
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_JETPACK_ESSENTIAL,
-			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
-			FEATURE_ADVANCED_DESIGN,
-			FEATURE_UNLIMITED_STORAGE,
-			FEATURE_NO_ADS,
-			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
-			FEATURE_BUSINESS_ONBOARDING,
-			FEATURE_ADVANCED_SEO,
-			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
-			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
-			FEATURE_GOOGLE_ANALYTICS,
-			FEATURE_NO_BRANDING,
-		] ),
+		getDescription: ( abtest ) => {
+			if ( abtest && abtest( 'signupPlansPageSimplification' ) === 'modified' ) {
+				return (
+					<span>
+						Attract new customers with our most powerful plan.
+					</span>
+				);
+			}
+
+			return i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
+				' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
+				' storage, and the ability to remove WordPress.com branding.', {
+					components: {
+						strong: <strong className="plans__features plan-features__targeted-description-heading" />
+					}
+				} );
+		},
+		getFeatures: ( abtest ) => {
+			if ( abtest && abtest( 'signupPlansPageSimplification' ) === 'modified' ) {
+				return compact( [ // pay attention to ordering, shared features should align on /plan page
+					FEATURE_EVERYTHING_IN_PREMIUM,
+					FEATURE_UNLIMITED_STORAGE,
+					isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
+					FEATURE_BUSINESS_ONBOARDING,
+					FEATURE_ADVANCED_SEO,
+					isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
+					isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
+					FEATURE_GOOGLE_ANALYTICS,
+					FEATURE_NO_BRANDING,
+				] );
+			}
+
+			return compact( [ // pay attention to ordering, shared features should align on /plan page
+				FEATURE_CUSTOM_DOMAIN,
+				FEATURE_JETPACK_ESSENTIAL,
+				FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+				FEATURE_UNLIMITED_PREMIUM_THEMES,
+				FEATURE_ADVANCED_DESIGN,
+				FEATURE_UNLIMITED_STORAGE,
+				FEATURE_NO_ADS,
+				FEATURE_WORDADS_INSTANT,
+				FEATURE_VIDEO_UPLOADS,
+				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+				isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
+				FEATURE_BUSINESS_ONBOARDING,
+				FEATURE_ADVANCED_SEO,
+				isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
+				isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
+				FEATURE_GOOGLE_ANALYTICS,
+				FEATURE_NO_BRANDING,
+			] );
+		},
 		getPromotedFeatures: () => [
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_UNLIMITED_PREMIUM_THEMES,
@@ -413,6 +520,104 @@ export const PLANS_LIST = {
 };
 
 export const FEATURES_LIST = {
+	// Plans copy page test constants start
+	[ FEATURE_EVERYTHING_IN_FREE ]: {
+		getSlug: () => FEATURE_EVERYTHING_IN_FREE,
+		getTitle: () => 'Free Features',
+		getDescription: () => i18n.translate(
+			'Track website statistics with Google Analytics for a ' +
+			'deeper understanding of your website visitors and customers.'
+		)
+	},
+
+	[ FEATURE_EVERYTHING_IN_PERSONAL ]: {
+		getSlug: () => FEATURE_EVERYTHING_IN_PERSONAL,
+		getTitle: () => 'Personal Features',
+		getDescription: () => i18n.translate(
+			'Track website statistics with Google Analytics for a ' +
+			'deeper understanding of your website visitors and customers.'
+		)
+	},
+
+	[ FEATURE_EVERYTHING_IN_PREMIUM ]: {
+		getSlug: () => FEATURE_EVERYTHING_IN_PREMIUM,
+		getTitle: () => 'Premium Features',
+		getDescription: () => i18n.translate(
+			'Track website statistics with Google Analytics for a ' +
+			'deeper understanding of your website visitors and customers.'
+		)
+	},
+
+	[ FEATURE_CUSTOM_DOMAIN_TEST ]: {
+		getSlug: () => FEATURE_CUSTOM_DOMAIN_TEST,
+		getTitle: () => 'Custom web address',
+		getDescription: () => 'Get a free custom web address (eg: yourname.com) to use for your website.',
+	},
+
+	[ FEATURE_UNLIMITED_PREMIUM_THEMES_TEST ]: {
+		getSlug: () => FEATURE_UNLIMITED_PREMIUM_THEMES_TEST,
+		getTitle: () => {
+			return (
+				<span>
+					<strong>Free</strong> Premium Themes
+				</span>
+			);
+		},
+		getDescription: () => i18n.translate(
+			'Unlimited access to all of our advanced premium theme templates, ' +
+			'including templates specifically tailored for businesses.'
+		),
+		getStoreSlug: () => 'unlimited_themes'
+	},
+
+	[ FEATURE_VIDEO_UPLOADS_TEST ]: {
+		getSlug: () => FEATURE_VIDEO_UPLOADS_TEST,
+		getTitle: () => 'Upload videos',
+		getDescription: () => i18n.translate(
+			'The easiest way to upload videos to your website and display them ' +
+			'using a fast, unbranded, customizable player with rich stats.'
+		),
+		getStoreSlug: () => 'videopress'
+	},
+
+	[ FEATURE_BASIC_DESIGN_TEST ]: {
+		getSlug: () => FEATURE_BASIC_DESIGN_TEST,
+		getTitle: () => 'Basic Customization',
+		getDescription: () => i18n.translate(
+			'Customize your selected theme template with pre-set color schemes, ' +
+			'background designs, and font styles.'
+		),
+		getStoreSlug: () => FEATURE_ADVANCED_DESIGN
+	},
+
+	[ FEATURE_ADVANCED_DESIGN_TEST ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN_TEST,
+		getTitle: () => {
+			return (
+				<span>
+					<strong>Advanced</strong> Customization
+				</span>
+			);
+		},
+		getDescription: () => i18n.translate(
+			'Customize your selected theme template with extended color schemes, ' +
+			'background designs, and complete control over website CSS.'
+		),
+		getStoreSlug: () => FEATURE_ADVANCED_DESIGN
+	},
+
+	[ FEATURE_NO_ADS_TEST ]: {
+		getSlug: () => FEATURE_NO_ADS_TEST,
+		getTitle: () => 'No WordPress.com Ads',
+		getDescription: () => i18n.translate(
+			'Allow your visitors to visit and read your website without ' +
+			'seeing any WordPress.com advertising.'
+		),
+		getStoreSlug: () => 'no-adverts/no-adverts.php'
+	},
+
+	// Plans copy page test constants End
+
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
 		getSlug: () => FEATURE_GOOGLE_ANALYTICS,
 		getTitle: () => i18n.translate( 'Google Analytics Integration' ),
