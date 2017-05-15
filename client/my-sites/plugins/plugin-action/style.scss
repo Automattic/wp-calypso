@@ -16,6 +16,16 @@
 			color: $alert-red;
 		}
 	}
+
+	.disconnect-jetpack-button {
+		margin-right: 0;
+	}
+
+	.plugin-action__label {
+		@include breakpoint( '<480px' ) {
+			color: $gray-dark;
+		}
+	}
 }
 
 .plugin-action .toggle__switch {
@@ -54,7 +64,7 @@
 }
 .plugin-action__disabled-info.info-popover {
 	float: right;
-	margin: 0 3px;
+	margin: -2px 4px 0 2px;
 }
 
 .plugin-action__disabled-info-list {

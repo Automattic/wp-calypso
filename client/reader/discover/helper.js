@@ -20,12 +20,21 @@ function hasDiscoverSlug( post, searchSlug ) {
 
 export const discoverBlogId = config( 'discover_blog_id' );
 
+export function isDiscoverBlog( blogId ) {
+	return +blogId === config( 'discover_blog_id' );
+}
+
+export function isDiscoverFeed( feedId ) {
+	return +feedId === config( 'discover_feed_id' );
+}
+
 export function isDiscoverEnabled() {
 	return userUtils.getLocaleSlug() === 'en';
 }
 
 export function isDiscoverPost( post ) {
-	return !! ( get( post, 'discover_metadata' ) || get( post, 'site_ID' ) === config( 'discover_blog_id' ) );
+	return !! ( get( post, 'discover_metadata' ) ||
+		get( post, 'site_ID' ) === config( 'discover_blog_id' ) );
 }
 
 export function isDiscoverSitePick( post ) {
@@ -55,7 +64,7 @@ export function getSourceData( post ) {
 	if ( sourceData ) {
 		return {
 			blogId: get( sourceData, 'blog_id' ),
-			postId: get( sourceData, 'post_id' )
+			postId: get( sourceData, 'post_id' ),
 		};
 	}
 	return {};
@@ -68,7 +77,7 @@ export function getLinkProps( linkUrl ) {
 
 	return {
 		rel: isExternal ? 'external' : '',
-		target: isExternal ? '_blank' : ''
+		target: isExternal ? '_blank' : '',
 	};
 }
 

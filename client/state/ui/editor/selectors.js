@@ -30,16 +30,6 @@ export function isEditorNewPost( state ) {
 }
 
 /**
- * Returns whether the editor drafts drawer is visible.
- *
- * @param  {Object}  state Global state tree
- * @return {Boolean}       Whether drafts are visible
- */
-export function isEditorDraftsVisible( state ) {
-	return state.ui.editor.showDrafts;
-}
-
-/**
  * Returns the editor new post URL path for the given site ID and type.
  *
  * @param  {Object} state       Global state tree

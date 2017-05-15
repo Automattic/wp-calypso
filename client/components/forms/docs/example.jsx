@@ -13,6 +13,7 @@ var countriesList = require( 'lib/countries-list' ).forSms(),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormCountrySelect = require( 'components/forms/form-country-select' ),
+	FormCurrencyInput = require( 'components/forms/form-currency-input' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
 	FormLabel = require( 'components/forms/form-label' ),
@@ -252,6 +253,16 @@ var FormFields = React.createClass( {
 					<FormFieldset>
 						<FormLabel>Form Media Phone Input</FormLabel>
 						<PhoneInput countryCode={ this.state.phoneInput.countryCode } value={ this.state.phoneInput.value } countriesList={ countriesList } onChange={ this.handlePhoneInputChange } />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="currency_input">Form Currency Input</FormLabel>
+						<FormCurrencyInput
+							name="currency_input"
+							id="currency_input"
+							currencySymbolPrefix="$"
+							placeholder="Placeholder text..."
+						/>
 					</FormFieldset>
 
 					<FormFieldset>

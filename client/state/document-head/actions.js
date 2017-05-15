@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import {
-	DOCUMENT_HEAD_LINK_ADD,
-	DOCUMENT_HEAD_META_ADD,
+	DOCUMENT_HEAD_LINK_SET,
+	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET
 } from 'state/action-types';
@@ -43,9 +43,9 @@ export function setDocumentHeadUnreadCount( count ) {
  * @param  {Object} link Link object
  * @return {Object}      Action object
  */
-export function addDocumentHeadLink( link ) {
+export function setDocumentHeadLink( link ) {
 	return {
-		type: DOCUMENT_HEAD_LINK_ADD,
+		type: DOCUMENT_HEAD_LINK_SET,
 		link
 	};
 }
@@ -57,9 +57,9 @@ export function addDocumentHeadLink( link ) {
  * @param  {Object} meta Meta object
  * @return {Object}      Action object
  */
-export function addDocumentHeadMeta( meta ) {
+export function setDocumentHeadMeta( meta ) {
 	return {
-		type: DOCUMENT_HEAD_META_ADD,
+		type: DOCUMENT_HEAD_META_SET,
 		meta
 	};
 }

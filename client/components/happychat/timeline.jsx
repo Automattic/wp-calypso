@@ -17,6 +17,7 @@ import {
 	forEach
 } from './functional';
 import autoscroll from './autoscroll';
+import Emojify from 'components/emojify';
 import scrollbleed from './scrollbleed';
 import { translate } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -34,7 +35,7 @@ const debug = require( 'debug' )( 'calypso:happychat:timeline' );
 
 const linksNotEmpty = ( { links } ) => ! isEmpty( links );
 
-const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
+const messageParagraph = ( { message, key } ) => <p key={ key }><Emojify>{ message }</Emojify></p>;
 
 /*
  * Given a message and array of links contained within that message, returns the message
@@ -42,12 +43,13 @@ const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
  */
 const messageWithLinks = ( { message, key, links } ) => {
 	const children = links.reduce( ( { parts, last }, [ url, startIndex, length ] ) => {
+		const text = url;
 		let href = url;
 		let rel = null;
 		let target = null;
 
-		if ( isExternal( url ) ) {
-			href = addSchemeIfMissing( href, 'http' );
+		href = addSchemeIfMissing( href, 'http' );
+		if ( isExternal( href ) ) {
 			rel = 'noopener noreferrer';
 			target = '_blank';
 		} else if ( typeof window !== 'undefined' ) {
@@ -60,7 +62,7 @@ const messageWithLinks = ( { message, key, links } ) => {
 			parts = parts.concat( <span key={ parts.length }>{ message.slice( last, startIndex ) }</span> );
 		}
 
-		parts = parts.concat( <a key={ parts.length } href={ href } rel={ rel } target={ target }>{ href }</a> );
+		parts = parts.concat( <a key={ parts.length } href={ href } rel={ rel } target={ target }>{ text }</a> );
 
 		return { parts, last: startIndex + length };
 	}, { parts: [], last: 0 } );

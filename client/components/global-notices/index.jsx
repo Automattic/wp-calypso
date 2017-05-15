@@ -68,7 +68,7 @@ const NoticesList = React.createClass( {
 						>
 							{ notice.button }
 						</NoticeAction> }
-					</Notice>
+				</Notice>
 			);
 		}, this );
 
@@ -83,7 +83,15 @@ const NoticesList = React.createClass( {
 					duration = { notice.duration || null }
 					showDismiss={ notice.showDismiss }
 					onDismissClick={ this.props.removeNotice.bind( this, notice.noticeId ) }
-					text={ notice.text }>
+					text={ notice.text }
+				>
+					{ notice.button &&
+						<NoticeAction
+							href={ notice.href }
+							onClick={ notice.onClick }
+						>
+						{ notice.button }
+					</NoticeAction> }
 				</Notice>
 			);
 		}, this ) );

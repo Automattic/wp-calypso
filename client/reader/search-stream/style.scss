@@ -1,4 +1,5 @@
 .search-stream__intro {
+
 	@include breakpoint( "<660px" ) {
 		margin-left: 16px;
 	}
@@ -11,6 +12,7 @@
 .search-stream__fixed-area-separator {
 	margin-top: 31px;
 	margin-bottom: 0;
+	background: lighten( $gray, 20% );
 }
 
 .is-reader-page .search-stream .reader-post-card.card {
@@ -20,9 +22,14 @@
 .is-reader-page .search-stream__fixed-area {
 	background-color: $white;
 	position: fixed;
-	top: 0px;
-	padding-top: 77px;
+	top: 0;
+	padding-top: 47px;
 	z-index: 20;
+	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
+
+	@include breakpoint( ">660px" ) {
+		padding-top: 77px;
+	}
 }
 
 // Custom breakpoints needed to match Related Posts
@@ -33,7 +40,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 .is-reader-page .search-stream .reader__content {
 	display: flex;
 	flex-flow: wrap;
-	margin-top: 80px;
+	margin-top: 100px;
 
 	@include breakpoint( ">660px" ) {
 		margin-top: 133px;
@@ -41,7 +48,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 }
 
 .is-reader-page .search-stream__input-card.card {
-	box-shadow: 0 0 0 2px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 2px lighten( $gray, 20% ), 0 1px 2px lighten( $gray, 20% );
  }
 
  .is-reader-page .search-stream__blank-suggestions {
@@ -54,7 +61,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	display: flex;
 	flex-basis: calc( 50% - 15px );
 	margin: 0 0 0 15px;
-	padding: 18px 0 32px 0;
+	padding: 18px 0 21px 0;
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
 		flex-basis: 100%;
@@ -92,14 +99,18 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	.reader-related-card-v2__post {
-		max-height: 205px;
-
-		@media #{$reader-related-card-v2-breakpoint-small} {
-			max-height: 100px;
-		}
+		max-height: 208px;
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
-			max-height: 100px;
+			max-height: 105px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			max-height: 206px;
+		}
+
+		@media #{$reader-related-card-v2-breakpoint-small} {
+			max-height: 103px;
 		}
 
 		.reader-related-card-v2__excerpt {
@@ -110,44 +121,29 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	 .has-thumbnail {
 
 		.reader-related-card-v2__post {
-			max-height: 200px;
+			max-height: 110px;
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
-				max-height: 145px;
+				max-height: 104px;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
-				max-height: 145px;
+				max-height: 104px;
 			}
 		}
 
-		.reader-related-card-v2__site-info {
-
-			@media #{$reader-related-card-v2-breakpoint-small} {
-				margin-top: 45px;
-			}
-
-			@media #{$reader-related-card-v2-breakpoint-medium} {
-				margin-top: 45px;
-			}
+		.reader-related-card-v2__meta {
+			margin-bottom: 18px;
 		}
 	}
 
 	.reader-related-card-v2__featured-image {
-		margin: 0 0 17px;
-
-		@media #{$reader-related-card-v2-breakpoint-medium} {
-			margin: 0 15px 0 0;
-		}
-
-		@media #{$reader-related-card-v2-breakpoint-small} {
-			margin: 0 15px 0 0;
-		}
+		margin: 0 0 14px;
 	}
 
 	.reader-related-card-v2__meta {
 		align-items: flex-start;
-		margin-bottom: 16px;
+		margin-bottom: 12px;
 
 		.reader-related-card-v2__byline,
 		.reader-related-card-v2__byline-author,
@@ -193,6 +189,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	margin-top: 0;
 	text-align:left;
 
+	a, a:visited {
+		color: $blue-medium;
+	}
+
+	a:hover {
+		color: $blue-light;
+	}
+
 	@include breakpoint( "<660px" ) {
 		padding-left: 16px;
 	}
@@ -206,4 +210,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			z-index: z-index( 'root', '.reader-search-card' );
 		}
 	}
+}
+
+.search-stream__sort-picker {
+	position: absolute;
+	right: 50px;
+	top: 11px;
+	z-index: z-index( 'root', '.search-stream__sort-picker' );
 }

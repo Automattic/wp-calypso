@@ -58,12 +58,12 @@ export function getRemovedPosts( currentList, newPosts ) {
 		return [];
 	}
 
-	const overlapBegin = currentList.indexOf( newPosts[0] );
+	const overlapBegin = currentList.indexOf( newPosts[ 0 ] );
 	if ( overlapBegin === -1 ) {
 		return getRemovedPosts( currentList, newPosts.slice( 1 ) );
 	}
 
-	const overlapEnd = currentList.indexOf( newPosts.slice( -1 )[0] );
+	const overlapEnd = currentList.indexOf( newPosts.slice( -1 )[ 0 ] );
 	if ( overlapEnd === -1 ) {
 		return getRemovedPosts( currentList, newPosts.slice( 0, -1 ) );
 	}

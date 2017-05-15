@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import defer from 'lodash/defer';
 import omit from 'lodash/omit';
@@ -13,6 +14,7 @@ import mapValues from 'lodash/mapValues';
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
 import { trackClick } from './helpers';
+import { getTheme } from 'state/themes/selectors';
 
 const OPTION_SHAPE = PropTypes.shape( {
 	label: PropTypes.string,
@@ -28,36 +30,42 @@ const ThemesSiteSelectorModal = React.createClass( {
 		defaultOption: OPTION_SHAPE,
 		secondaryOption: OPTION_SHAPE,
 		// Will be prepended to site slug for a redirect on selection
-		sourcePath: PropTypes.string.isRequired,
+		pathName: PropTypes.string.isRequired,
 	},
 
 	getInitialState() {
 		return {
-			selectedTheme: null,
+			selectedThemeId: null,
 			selectedOption: null,
 		};
 	},
 
 	trackAndCallAction( site ) {
 		const action = this.state.selectedOption.action;
-		const theme = this.state.selectedTheme;
+		const themeId = this.state.selectedThemeId;
+		const { search } = this.props;
+
+		let redirectTarget = this.props.pathName + '/' + site.slug;
+		if ( search ) {
+			redirectTarget += '?s=' + search;
+		}
 
 		trackClick( 'site selector', this.props.name );
-		page( this.props.sourcePath + '/' + site.slug );
+		page( redirectTarget );
 
 		/**
 		 * Since this implies a route change, defer it in case other state
-		 * changes are enqueued, e.g. setSelectedTheme.
+		 * changes are enqueued, e.g. setselectedThemeId.
 		 */
 		if ( action ) {
 			defer( () => {
-				action( theme, site.ID );
+				action( themeId, site.ID );
 			} );
 		}
 	},
 
-	showSiteSelectorModal( option, theme ) {
-		this.setState( { selectedTheme: theme, selectedOption: option } );
+	showSiteSelectorModal( option, themeId ) {
+		this.setState( { selectedThemeId: themeId, selectedOption: option } );
 	},
 
 	hideSiteSelectorModal() {
@@ -75,7 +83,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 			{},
 			option,
 			option.header
-				? { action: theme => this.showSiteSelectorModal( option, theme ) }
+				? { action: themeId => this.showSiteSelectorModal( option, themeId ) }
 				: {},
 			option.getUrl && option.header
 				? { getUrl: null }
@@ -93,7 +101,8 @@ const ThemesSiteSelectorModal = React.createClass( {
 			} )
 		);
 
-		const { selectedOption, selectedTheme } = this.state;
+		const { selectedOption, selectedThemeId } = this.state;
+		const theme = this.props.getWpcomTheme( selectedThemeId );
 
 		return (
 			<div>
@@ -101,16 +110,16 @@ const ThemesSiteSelectorModal = React.createClass( {
 				{ selectedOption && <SiteSelectorModal className="themes__site-selector-modal"
 					isVisible={ true }
 					filter={ function( site ) {
-						return ! site.jetpack;
-					} /* No Jetpack sites for now. */ }
+						return ! ( selectedOption.hideForTheme && selectedOption.hideForTheme( selectedThemeId, site.ID ) );
+					} }
 					hide={ this.hideSiteSelectorModal }
 					mainAction={ this.trackAndCallAction }
 					mainActionLabel={ selectedOption.label }
 					getMainUrl={ selectedOption.getUrl ? function( site ) {
-						return selectedOption.getUrl( selectedTheme, site.ID );
+						return selectedOption.getUrl( selectedThemeId, site.ID );
 					} : null } >
 
-					<Theme isActionable={ false } theme={ selectedTheme } />
+					<Theme isActionable={ false } theme={ theme } />
 					<h1>{ selectedOption.header }</h1>
 				</SiteSelectorModal> }
 			</div>
@@ -118,4 +127,12 @@ const ThemesSiteSelectorModal = React.createClass( {
 	}
 } );
 
-export default ThemesSiteSelectorModal;
+export default connect(
+	( state ) => ( {
+		// We don't need a <QueryTheme /> component to fetch data for the theme since the
+		// ThemesSiteSelectorModal will always be called from a context where those data are available.
+		// FIXME: Since the themeId is part of the component's internal state, we can't use it here and
+		// have to return a function instead of a ready-made theme object.
+		getWpcomTheme: themeId => getTheme( state, 'wpcom', themeId )
+	} )
+)( ThemesSiteSelectorModal );

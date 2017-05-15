@@ -1,0 +1,104 @@
+.card.nps-survey {
+	margin: 0;
+	padding: 0;
+}
+
+.dialog__content .card.nps-survey {
+	box-shadow: unset;
+}
+
+.nps-survey__question {
+	padding: 16px;
+
+	@include breakpoint( ">480px" ) {
+		padding: 24px;
+	}
+}
+
+.nps-survey__buttons {
+	padding: 16px 16px 7px;
+	transform: translateY(-25px);
+	transition: transform .1s ease-in;
+}
+
+.button.nps-survey__finish-button,
+.button.nps-survey__not-answer-button,
+.button.nps-survey__dismiss-button {
+	display: block;
+	margin: 0 auto;
+	min-width: 170px;
+}
+
+.button.nps-survey__finish-button {
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity .2s ease-in;
+}
+
+.nps-survey.is-recommendation-selected {
+	.nps-survey__buttons {
+		//height: 75px;
+		transform: translateY(0);
+	}
+
+	.button.nps-survey__finish-button {
+		opacity: 1;
+		//transform: translateY(0);
+		visibility: visible;
+	}
+}
+
+.nps-survey__recommendation-select-wrapper {
+	background-color: $gray-light;
+	border-top: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid lighten( $gray, 20% );
+	padding: 16px 0;
+	text-align: center;
+
+	@include breakpoint( ">480px" ) {
+		padding: 16px;
+	}
+}
+
+.nps-survey__recommendation-select {
+	box-sizing: border-box;
+	display: inline-block;
+}
+
+.nps-survey__scale-labels,
+.nps-survey__recommendation-option {
+	padding: 0 3px;
+	margin-bottom: 8px;
+
+	@include breakpoint( ">480px" ) {
+		padding: 0 6px;
+	}
+}
+
+.nps-survey__scale-labels {
+	color: $gray-text-min;
+	text-align: left;
+}
+
+.nps-survey__very-likely-label {
+	float: right;
+}
+
+.nps-survey__recommendation-option {
+	display: inline-block;
+}
+
+.nps-survey__recommendation-option.is-selected {
+	color: darken( $blue-medium, 8% );
+	font-weight: bold;
+}
+
+.nps-survey__recommendation-option input[type=radio] {
+	margin: 0 2px;
+}
+
+.nps-survey__recommendation-option input[type=radio] + span {
+	clear: both;
+	margin-left: 0;
+	text-align: center;
+}

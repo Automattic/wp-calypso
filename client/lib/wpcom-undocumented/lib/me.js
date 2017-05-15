@@ -183,7 +183,8 @@ UndocumentedMe.prototype.storedCardAdd = function( paygateToken, callback ) {
 	return this.wpcom.req.post( {
 		path: '/me/stored-cards'
 	}, {
-		payment_key: paygateToken
+		payment_key: paygateToken,
+		use_for_existing: true
 	}, callback );
 };
 

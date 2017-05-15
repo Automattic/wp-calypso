@@ -92,6 +92,7 @@ var FoldableCard = React.createClass( {
 			return (
 				<button
 					disabled={ this.props.disabled }
+					type="button"
 					className="foldable-card__action foldable-card__expand"
 					onClick={ clickAction }>
 					<span className="screen-reader-text">{ screenReaderText }</span>

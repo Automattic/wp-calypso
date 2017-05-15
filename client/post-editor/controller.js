@@ -1,25 +1,24 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	ReactDomServer = require( 'react-dom/server' ),
-	React = require( 'react' ),
-	i18n = require( 'i18n-calypso' ),
-	page = require( 'page' ),
-	ReduxProvider = require( 'react-redux' ).Provider,
-	qs = require( 'querystring' ),
-	isValidUrl = require( 'valid-url' ).isWebUri;
-import { map, pick, startsWith } from 'lodash';
+import ReactDom from 'react-dom';
+import ReactDomServer from 'react-dom/server';
+import React from 'react';
+import i18n from 'i18n-calypso';
+import page from 'page';
+import { Provider as ReduxProvider } from 'react-redux';
+import qs from 'querystring';
+import { isWebUri as isValidUrl } from 'valid-url';
+import { map, pick, reduce, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var actions = require( 'lib/posts/actions' ),
-	route = require( 'lib/route' ),
-	sites = require( 'lib/sites-list' )(),
-	user = require( 'lib/user' )(),
-	userUtils = require( 'lib/user/utils' ),
-	analytics = require( 'lib/analytics' );
+import actions from 'lib/posts/actions';
+import route from 'lib/route';
+import User from 'lib/user';
+import userUtils from 'lib/user/utils';
+import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import PostEditor from './post-editor';
 import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
@@ -28,6 +27,9 @@ import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { editPost } from 'state/posts/actions';
 import wpcom from 'lib/wp';
 import Dispatcher from 'dispatcher';
+import { getFeaturedImageId } from 'lib/posts/utils';
+
+const user = User();
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -57,7 +59,6 @@ function renderEditor( context, postType ) {
 			React.createElement( PostEditor, {
 				user: user,
 				userUtils: userUtils,
-				sites: sites,
 				type: postType
 			} )
 		),
@@ -124,7 +125,6 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 			'excerpt',
 			'featured_image',
 			'format',
-			'metadata',
 			'post_thumbnail',
 			'terms',
 			'title',
@@ -132,14 +132,35 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 		);
 		postAttributes.tags = map( postToCopy.tags, 'name' );
 		postAttributes.title = decodeEntities( postAttributes.title );
+		postAttributes.featured_image = getFeaturedImageId( postToCopy );
+
+		/**
+		 * A post attributes whitelist for Redux's `editPost()` action.
+		 *
+		 * This is needed because blindly passing all post attributes to `editPost()`
+		 * caused some of them (notably the featured image) to revert to their original value
+		 * when modified right after the copy.
+		 *
+		 * @see https://github.com/Automattic/wp-calypso/pull/13933
+		 */
+		const reduxPostAttributes = {
+			terms: postAttributes.terms,
+			title: postAttributes.title,
+		};
 
 		actions.startEditingNew( siteId, {
 			content: postToCopy.content,
 			title: postToCopy.title,
 			type: postToCopy.type,
 		} );
-		context.store.dispatch( editPost( siteId, null, postAttributes ) );
+		context.store.dispatch( editPost( siteId, null, reduxPostAttributes ) );
 		actions.edit( postAttributes );
+		actions.updateMetadata(
+			reduce( postToCopy.metadata, ( newMetadata, { key, value } ) => {
+				newMetadata[ key ] = value;
+				return newMetadata;
+			}, {} )
+		);
 	} ).catch( error => {
 		Dispatcher.handleServerAction( {
 			type: 'SET_POST_LOADING_ERROR',
@@ -181,7 +202,7 @@ module.exports = {
 				actions.startEditingExisting( siteId, postID );
 				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
 			} else {
-				let postOptions = { type: postType };
+				const postOptions = { type: postType };
 
 				// handle press-this params if applicable
 				if ( context.query.url ) {

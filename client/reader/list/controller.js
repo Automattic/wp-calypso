@@ -8,16 +8,22 @@ import React from 'react';
  */
 import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import {
+	ensureStoreLoading,
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'reader/controller-helper';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
-export default {
+const exported = {
 	listListing( context ) {
 		const basePath = '/read/list/:owner/:slug',
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list,
+			fullAnalyticsPageTitle =
+				analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list,
 			listStore = feedStreamFactory( 'list:' + context.params.user + '-' + context.params.list ),
 			mcKey = 'list';
 
@@ -26,11 +32,12 @@ export default {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_list_loaded', {
 			list_owner: context.params.user,
-			list_slug: context.params.list
+			list_slug: context.params.list,
 		} );
 
 		renderWithReduxStore(
-			<AsyncLoad require="reader/list-stream"
+			<AsyncLoad
+				require="reader/list-stream"
 				key={ 'tag-' + context.params.user + '-' + context.params.list }
 				postsStore={ listStore }
 				owner={ encodeURIComponent( context.params.user ) }
@@ -48,5 +55,9 @@ export default {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };
+
+export default exported;
+
+export const { listListing } = exported;

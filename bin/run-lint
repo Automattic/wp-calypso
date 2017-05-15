@@ -1,21 +1,59 @@
 #!/usr/bin/env node
-const child_process = require( 'child_process' );
+
 const path = require( 'path' );
-var args = [ '--cache', '--quiet', '--ext=.js',  '--ext=.jsx' ];
+const child_process = require( 'child_process' );
+
+var argsESLint = [ '--cache', '--quiet', '--ext=.js,.jsx', '--format=json' ];
+var argsESLines = [ '--quiet' ];
+
+const markerIndex = process.argv.indexOf('--');
 if ( process.argv.length > 2 ) {
-	args = args.concat( process.argv.slice( 2 ) );
+	// use -- as a marker for end of options,
+	// so any value that follows the marker is considered an option for ESLines.
+	if ( markerIndex > -1 ) {
+		argsESLint = argsESLint.concat( process.argv.slice( 2, markerIndex ) );
+		argsESLines = argsESLines.concat( process.argv.slice( markerIndex + 1 ) );
+	} else {
+		argsESLint = argsESLint.concat( process.argv.slice( 2 ) );
+	}
 } else {
-	args = args.concat( [ '.' ] );
+	process.stdout.write( 'No files to lint\n' );
+	process.exit( 0 );
 }
 
-const results = child_process.spawnSync( path.join( '.', 'node_modules', '.bin', 'eslint' ), args );
+const eslint = child_process.spawn( path.join( '.', 'node_modules', '.bin', 'eslint' ), argsESLint );
+const eslines = child_process.spawn( path.join( '.', 'node_modules', '.bin', 'eslines' ), argsESLines );
 
-if ( results.stdout ) {
-	process.stdout.write( results.stdout );
-}
-if ( results.stderr ) {
-	process.stderr.write( results.stderr );
-}
-process.on( 'exit', function() {
-	process.exit( results.status );
-} );
+eslint.stdout.on( 'data', ( data ) => {
+	eslines.stdin.write( data );
+});
+
+var eslintStdErr = 0;
+eslint.stderr.on( 'data', ( data ) => {
+	eslintStdErr = 1;
+	process.stderr.write( data );
+});
+
+eslint.on('close', ( code ) => {
+	eslines.stdin.end();
+});
+
+eslines.stdout.on( 'data', ( data ) => {
+	process.stdout.write( data );
+});
+
+eslines.stderr.on( 'data', ( data ) => {
+	process.stderr.write( data );
+});
+
+eslines.on( 'close', ( code ) => {
+	// since the goal of eslines is to downgrade errors
+	// on non-modified lines, we can't count on eslint's
+	// exit code, but we assume that if eslint output
+	// something on its stderr, this means it encountered
+	// some other error
+	if ( eslintStdErr === 1 ) {
+		process.exit( 1 );
+	}
+	process.exit( code );
+});

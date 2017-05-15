@@ -65,6 +65,7 @@
 .plugin-meta__detail {
 	position: relative;
 	flex-grow: 1;
+	min-width: 0;
 }
 
 .plugin-meta__upgrade_nudge .upgrade-nudge.card {
@@ -94,6 +95,7 @@
 .plugin-meta__actions {
 	border-top: 1px solid lighten( $gray, 30% );
 	flex-grow: 1;
+	flex-shrink: 0;
 	margin-top: 16px;
 	padding-top: 16px;
 
@@ -103,12 +105,13 @@
 	}
 
 	@include breakpoint( '>480px' ) {
+		min-width: 22%;
 		border: none;
 		margin: 0;
 		padding: 0;
 		text-align: right;
 		justify-content: flex-end;
-		align-self: center;
+		align-self: flex-start;
 
 		.plugin-action {
 			margin-top: 16px;
@@ -119,17 +122,17 @@
 		}
 	}
 
-}
-
-.plugin-meta__actions .plugin-action__label {
-	@include breakpoint( '<480px' ) {
-		flex-grow: 2;
-		color: $gray-dark;
-		font-size: 11px;
+	.form-toggle__label-content {
+		@include breakpoint( '<480px' ) {
+			margin-left: 0;
+		}
 	}
-	@include breakpoint( '<660px' ) {
-		display: block;
-		padding-right: 16px;
+
+	.plugin-action__label {
+		@include breakpoint( '<480px' ) {
+			flex-grow: 2;
+			font-size: 11px;
+		}
 	}
 }
 
@@ -147,6 +150,19 @@
 
 .plugin-meta__actions .plugin-meta__active {
 	color: $alert-green;
+}
+
+.plugin-meta__action-links {
+	display: flex;
+	flex-wrap: wrap;
+	clear: both;
+	padding-top: 12px;
+
+	.button {
+		margin-top: 12px;
+		flex-shrink: 0;
+		margin-right: 10px;
+	}
 }
 
 a.plugin-meta__settings-link {

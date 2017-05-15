@@ -28,7 +28,7 @@ class PostEditEmbedsStore extends ReduceStore {
 
 			case 'FETCH_EMBED':
 				state = Object.assign( {}, state, {
-					[action.url]: {
+					[ action.url ]: {
 						status: 'LOADING'
 					}
 				} );
@@ -37,13 +37,13 @@ class PostEditEmbedsStore extends ReduceStore {
 			case 'RECEIVE_EMBED':
 				if ( action.error ) {
 					state = Object.assign( {}, state, {
-						[action.url]: {
+						[ action.url ]: {
 							status: 'ERROR'
 						}
 					} );
 				} else if ( action.data ) {
 					state = Object.assign( {}, state, {
-						[action.url]: {
+						[ action.url ]: {
 							status: 'LOADED',
 							body: action.data.result,
 							scripts: action.data.scripts,

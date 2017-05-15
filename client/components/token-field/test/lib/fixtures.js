@@ -39,7 +39,7 @@ module.exports = {
 			[ 'thi', 's' ],
 			[ 'a', 's' ],
 			[ 'wa', 's' ],
-			[ 'pipe', 's']
+			[ 'pipe', 's' ]
 		],
 		at: [
 			[ 'at' ],

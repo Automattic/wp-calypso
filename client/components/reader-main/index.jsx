@@ -2,11 +2,13 @@
  * External Dependencies
  */
 import React from 'react';
+import config from 'config';
 
 /**
  * Internal Dependencies
  */
 import Main from 'components/main';
+import SyncReaderFollows from 'components/data/sync-reader-follows';
 
 /**
  * A specialization of `Main` that adds a class to the body of the document
@@ -24,6 +26,11 @@ export default class ReaderMain extends React.Component {
 	}
 
 	render() {
-		return ( <Main { ...this.props } /> );
+		const { children, ...props } = this.props;
+		return ( <Main { ...props } >
+			{ config.isEnabled( 'reader/following-manage-refresh' ) &&
+				<SyncReaderFollows key="syncReaderFollows" /> }
+			{ children }
+		</Main> );
 	}
 }

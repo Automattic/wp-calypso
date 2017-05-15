@@ -41,7 +41,7 @@ function setup( io ) {
 		debug( 'spawning %o', 'make build-css --jobs ' + cores );
 		cssMake = spawn( 'make', [ 'build-css', '--jobs', cores ], {
 			cwd: ROOT_DIR,
-			stdio: [ 'ignore', 'pipe', 'pipe']
+			stdio: [ 'ignore', 'pipe', 'pipe' ]
 		} );
 
 		errors = '';

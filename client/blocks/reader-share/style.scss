@@ -1,0 +1,99 @@
+.reader-share__button {
+	align-items: center;
+	box-sizing: border-box;
+	color: $gray;
+	display: inline-flex;
+	padding: 4px;
+	position: relative;
+
+	&:hover,
+	&:focus,
+	&:active {
+		cursor: pointer;
+		color: $blue-medium;
+	}
+
+	.gridicon {
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+
+	&.is-active {
+		color: $blue-wordpress;
+
+		.gridicon {
+			fill: $blue-wordpress;
+		}
+	}
+}
+
+.reader-share__button-label {
+	margin-left: 6px;
+
+	@include breakpoint( "<480px" ) {
+		display: none;
+	}
+}
+
+.reader-share__popover {
+
+	@include breakpoint( "<480px" ) {
+		width: 152px;
+		padding-right: 2px;
+	}
+}
+
+.reader-share__popover-item {
+
+	@include breakpoint( "<480px" ) {
+		width: 150px;
+	}
+
+	span {
+		display: inline-block;
+		line-height: 24px;
+		margin-left: 34px;
+
+		@include breakpoint( ">480px" ) {
+			margin-left: 27px;
+		}
+	}
+
+	.gridicon,
+	.social-logo {
+		height: 24px;
+		width: 24px;
+		position: absolute;
+			top: 8px;
+			left: 18px;
+		padding: 0;
+		fill: $gray;
+
+		@include breakpoint( ">480px" ) {
+			left: 11px;
+		}
+	}
+
+	.gridicons-my-sites {
+		fill: $blue-wordpress;
+	}
+
+	.social-logo.twitter {
+		fill: #2aa9e0;
+	}
+
+	.social-logo.facebook {
+		fill: #3B5998;
+	}
+
+	&:hover,
+	&:focus {
+		.gridicon,
+		.social-logo {
+			fill: $white;
+		}
+	}
+}
+
+.sites-popover.reader-share__sites-popover .site-selector__sites {
+	max-height: 25vh;
+}

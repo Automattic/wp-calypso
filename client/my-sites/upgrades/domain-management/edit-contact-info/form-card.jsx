@@ -35,6 +35,7 @@ import support from 'lib/url/support';
 import { registrar as registrarNames } from 'lib/domains/constants';
 import DesignatedAgentNotice from 'my-sites/upgrades/domain-management/components/designated-agent-notice';
 import Dialog from 'components/dialog';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 const countriesList = countriesListBuilder.forDomainRegistrations();
 const wpcom = wp.undocumented();
@@ -46,7 +47,8 @@ class EditContactInfoFormCard extends React.Component {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired
+		] ).isRequired,
+		currentUser: React.PropTypes.object.isRequired
 	};
 
 	constructor( props ) {
@@ -118,6 +120,22 @@ class EditContactInfoFormCard extends React.Component {
 		}
 	}
 
+	requiresConfirmation() {
+		const { firstName, lastName, organization, email } = this.props.contactInformation,
+			isWwdDomain = this.props.selectedDomain.registrar === registrarNames.WWD,
+			primaryFieldsChanged = ! (
+				firstName === formState.getFieldValue( this.state.form, 'first-name' ) &&
+				lastName === formState.getFieldValue( this.state.form, 'last-name' ) &&
+				organization === formState.getFieldValue( this.state.form, 'organization' ) &&
+				email === formState.getFieldValue( this.state.form, 'email' )
+			);
+		return isWwdDomain && primaryFieldsChanged;
+	}
+
+	hasEmailChanged() {
+		return this.props.contactInformation.email !== formState.getFieldValue( this.state.form, 'email' );
+	}
+
 	handleFormControllerError = ( error ) => {
 		if ( error ) {
 			throw error;
@@ -152,6 +170,20 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	}
 
+	renderBackupEmail() {
+		const currentEmail = this.props.contactInformation.email,
+			wpcomEmail = this.props.currentUser.email,
+			strong = <strong />;
+
+		return <p>{ this.props.translate(
+			'If you don’t have access to {{strong}}%(currentEmail)s{{/strong}}, ' +
+			'we will also email you at {{strong}}%(wpcomEmail)s{{/strong}}, as backup.', {
+				args: { currentEmail, wpcomEmail },
+				components: { strong }
+			}
+		) }</p>;
+	}
+
 	renderDialog() {
 		const { translate } = this.props,
 			strong = <strong />,
@@ -162,45 +194,44 @@ class EditContactInfoFormCard extends React.Component {
 				},
 				{
 					action: 'confirm',
-					label: this.props.translate( 'Confirm' ),
+					label: this.props.translate( 'Request Confirmation' ),
 					onClick: this.saveContactInfo,
 					isPrimary: true
 				}
 			],
-			oldEmail = this.props.contactInformation.email,
-			newEmail = formState.getFieldValue( this.state.form, 'email' );
+			currentEmail = this.props.contactInformation.email,
+			wpcomEmail = this.props.currentUser.email;
 
 		let text;
-		if ( oldEmail === newEmail ) {
-			text = translate( 'To finish this process, this change will need to be confirmed by an email ' +
-				'sent to {{strong}}%(email)s{{/strong}}. Please make sure you have access to it.', {
-					args: { email: newEmail }, components: { strong }
-				}
+		if ( this.hasEmailChanged() ) {
+			const newEmail = formState.getFieldValue( this.state.form, 'email' );
+
+			text = translate(
+				'We’ll email you at {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}} ' +
+				'with a link to confirm the new details. The change won’t go live until we receive confirmation from both emails.',
+				{ args: { oldEmail: currentEmail, newEmail }, components: { strong } }
 			);
 		} else {
-			text = translate( 'To finish this process, this change will need to be confirmed by emails ' +
-				'sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. Please make sure ' +
-				'you\'ll be able to do so.', {
-					args: { oldEmail, newEmail }, components: { strong }
-				}
+			text = translate(
+				'We’ll email you at {{strong}}%(currentEmail)s{{/strong}} with a link to confirm the new details. ' +
+				'The change won\'t go live until we receive confirmation from this email.',
+				{ args: { currentEmail }, components: { strong } }
 			);
 		}
 		return (
 			<Dialog isVisible={ this.state.showNonDaConfirmationDialog } buttons={ buttons } onClose={ this.handleDialogClose }>
-				<h1>{ translate( 'Confirm Update' ) }</h1>
+				<h1>{ translate( 'Confirmation Needed' ) }</h1>
 				<p>{ text }</p>
-				<p>{ translate( 'If that is not the case, please {{supportLink}}contact support{{/supportLink}} instead.', {
-					components: { supportLink: <a href={ support.CALYPSO_CONTACT } /> }
-				} ) }</p>
+				{ currentEmail !== wpcomEmail && this.renderBackupEmail() }
 			</Dialog>
 		);
 	}
 
 	render() {
 		const { translate } = this.props,
+			saveButtonLabel = translate( 'Save Contact Info' ),
 			{ OPENHRS, OPENSRS } = registrarNames,
-			canUseDesignatedAgent = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar ),
-			saveButtonLabel = translate( 'Save Contact Info' );
+			canUseDesignatedAgent = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar );
 
 		return (
 			<Card>
@@ -301,7 +332,7 @@ class EditContactInfoFormCard extends React.Component {
 					<FormFooter>
 						<FormButton
 							disabled={ this.state.formSubmitting }
-							onClick={ canUseDesignatedAgent ? this.saveContactInfo : this.showNonDaConfirmationDialog }>
+							onClick={ this.requiresConfirmation() ? this.showNonDaConfirmationDialog : this.saveContactInfo }>
 							{ saveButtonLabel }
 						</FormButton>
 
@@ -336,7 +367,7 @@ class EditContactInfoFormCard extends React.Component {
 	hasFaxField() {
 		const NETHERLANDS_TLD = '.nl';
 
-		return endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD );
+		return endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD ) || this.props.contactInformation.fax;
 	}
 
 	onChange = ( event ) => {
@@ -406,44 +437,38 @@ class EditContactInfoFormCard extends React.Component {
 	onWhoisUpdate = ( error, data ) => {
 		this.setState( { formSubmitting: false } );
 		if ( data && data.success ) {
-			const { OPENHRS, OPENSRS, WWD } = registrarNames;
+			if ( ! this.requiresConfirmation() ) {
+				this.props.successNotice( this.props.translate(
+					'The contact info has been updated. ' +
+					'There may be a short delay before the changes show up in the public records.'
+				) );
+				return;
+			}
+
+			const currentEmail = this.props.contactInformation.email,
+				strong = <strong />;
 			let message;
 
-			switch ( this.props.selectedDomain.registrar ) {
-				case OPENHRS:
-				case OPENSRS:
-					message = this.props.translate(
-						'The contact info has been updated. ' +
-						'There may be a short delay before the changes show up in the public records.'
-					);
-					break;
+			if ( this.hasEmailChanged() ) {
+				const newEmail = formState.getFieldValue( this.state.form, 'email' );
 
-				case WWD:
-				default:
-					const oldEmail = this.props.contactInformation.email,
-						newEmail = formState.getFieldValue( this.state.form, 'email' ),
-						strong = <strong />;
-
-					if ( oldEmail === newEmail ) {
-						message = this.props.translate(
-							'An email has been sent to {{strong}}%(email)s{{/strong}}. ' +
-							'Please confirm it to finish this process.',
-							{
-								args: { email: oldEmail },
-								components: { strong }
-							}
-						);
-					} else {
-						message = this.props.translate(
-							'Emails have been sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
-							'Please ensure they\'re both confirmed to finish this process.',
-							{
-								args: { oldEmail, newEmail },
-								components: { strong }
-							}
-						);
+				message = this.props.translate(
+					'Emails have been sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
+					'Please ensure they\'re both confirmed to finish this process.',
+					{
+						args: { oldEmail: currentEmail, newEmail },
+						components: { strong }
 					}
-					break;
+				);
+			} else {
+				message = this.props.translate(
+					'An email has been sent to {{strong}}%(email)s{{/strong}}. ' +
+					'Please confirm it to finish this process.',
+					{
+						args: { email: currentEmail },
+						components: { strong }
+					}
+				);
 			}
 
 			this.props.successNotice( message );
@@ -458,6 +483,6 @@ class EditContactInfoFormCard extends React.Component {
 }
 
 export default connect(
-	null,
+	state => ( { currentUser: getCurrentUser( state ) } ),
 	dispatch => bindActionCreators( { successNotice }, dispatch )
 )( localize( EditContactInfoFormCard ) );

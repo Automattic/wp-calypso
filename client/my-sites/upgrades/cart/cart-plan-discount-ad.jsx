@@ -3,8 +3,8 @@
  */
 import { connect } from 'react-redux';
 import find from 'lodash/find';
-import React from 'react';
-import i18n from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
+import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
@@ -16,18 +16,19 @@ import { getPlansBySite } from 'state/sites/plans/selectors';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { shouldFetchSitePlans } from 'lib/plans';
 
-const CartPlanDiscountAd = React.createClass( {
-	propTypes: {
-		cart: React.PropTypes.object,
-		sitePlans: React.PropTypes.object
-	},
+class CartPlanDiscountAd extends Component {
+	static propTypes = {
+		cart: PropTypes.object,
+		translate: PropTypes.func.isRequired,
+		sitePlans: PropTypes.object
+	};
 
 	componentDidMount() {
 		this.props.fetchSitePlans( this.props.sitePlans, this.props.selectedSite );
-	},
+	}
 
 	render() {
-		const { cart, sitePlans } = this.props;
+		const { cart, translate, sitePlans } = this.props;
 		let plan;
 
 		if ( ! sitePlans.hasLoadedFromServer || ! cart.hasLoadedFromServer || ! cartItems.hasPlan( cart ) ) {
@@ -50,10 +51,35 @@ const CartPlanDiscountAd = React.createClass( {
 			return null;
 		}
 
+		if ( plan.isDomainUpgrade ) {
+			return (
+				<CartAd>
+					<p className="cart__cart-plan-discount-ad-paragraph">{ translate(
+						"You're getting a %(discount)s discount off the regular price of the plan (%(originalPrice)s)" +
+						', because you already paid for the domain.',
+						{
+							args: {
+								discount: plan.formattedDiscount,
+								originalPrice: plan.formattedOriginalPrice
+							}
+						}
+					) }</p>
+					<p className="cart__cart-plan-discount-ad-paragraph">{ translate(
+						'The plan and the domain can be renewed together for %(originalPrice)s / year.',
+						{
+							args: {
+								originalPrice: plan.formattedOriginalPrice
+							}
+						}
+					) }</p>
+				</CartAd>
+			);
+		}
+
 		return (
 			<CartAd>
 				<strong>
-					{ i18n.translate( "You're saving %(discount)s!", {
+					{ translate( "You're saving %(discount)s!", {
 						args: {
 							discount: plan.formattedDiscount
 						}
@@ -64,7 +90,7 @@ const CartPlanDiscountAd = React.createClass( {
 			</CartAd>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state, { selectedSite } ) => {
@@ -81,4 +107,4 @@ export default connect(
 			}
 		};
 	}
-)( CartPlanDiscountAd );
+)( localize( CartPlanDiscountAd ) );

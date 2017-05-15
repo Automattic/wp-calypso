@@ -26,6 +26,8 @@ const googleSnippet = firstValid(
 	hardTruncation( SNIPPET_LENGTH )
 );
 
+const googleUrl = hardTruncation( 79 );
+
 export const SearchPreview = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
@@ -44,7 +46,7 @@ export const SearchPreview = React.createClass( {
 						{ googleTitle( title ) }
 					</div>
 					<div className="seo-search-preview__url">
-						{ url } ▾
+						{ googleUrl( url ) } ▾
 					</div>
 					<div className="seo-search-preview__snippet">
 						{ googleSnippet( snippet || '' ) }

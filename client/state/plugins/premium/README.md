@@ -50,12 +50,6 @@ state.plugins.premium = {
 			key: 'ak-api-key',
 			status: 'wait',
 			error: null
-		}, {
-			slug: 'polldaddy',
-			name: 'Polldaddy',
-			key: 'pd-api-key',
-			status: 'wait',
-			error: null
 		} ]
 	}
 }

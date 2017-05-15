@@ -46,17 +46,19 @@ export const sitesSchema = {
 				},
 				plan: {
 					type: 'object',
-					required: [ 'product_id', 'product_slug', 'expired' ],
+					required: [ 'product_id', 'product_slug' ],
 					properties: {
-						product_id: { type: 'number' },
+						product_id: { type: [ 'number', 'string' ] },
 						product_slug: { type: 'string' },
-						product_name_short: { type: 'string' },
+						product_name_short: { type: [ 'string', 'null' ] },
 						free_trial: { type: 'boolean' },
 						expired: { type: 'boolean' },
-						user_is_owner: { type: 'boolean' }
+						user_is_owner: { type: 'boolean' },
+						is_free: { type: 'boolean' }
 					}
 				},
-				single_user_site: { type: 'boolean' }
+				single_user_site: { type: 'boolean' },
+				updates: { type: 'object' },
 			}
 		}
 	},

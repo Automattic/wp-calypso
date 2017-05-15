@@ -2,12 +2,15 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import some from 'lodash/some';
 import get from 'lodash/get';
 import { includes } from 'lodash';
+import { isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -31,18 +34,19 @@ import PluginInformation from 'my-sites/plugins/plugin-information';
 import WpcomPluginInstallButton from 'my-sites/plugins-wpcom/plugin-install-button';
 import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
 import { userCan } from 'lib/site/utils';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
-import { FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import Banner from 'components/banner';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import {
 	isBusiness,
 	isEnterprise
 } from 'lib/products-values';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/selectors';
 import QueryEligibility from 'components/data/query-atat-eligibility';
+import { isATEnabled } from 'lib/automated-transfer';
 
-export default React.createClass( {
+const PluginMeta = React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
-
-	displayName: 'PluginMeta',
 
 	propTypes: {
 		siteURL: React.PropTypes.string,
@@ -52,6 +56,21 @@ export default React.createClass( {
 		isInstalledOnSite: React.PropTypes.bool,
 		isPlaceholder: React.PropTypes.bool,
 		isMock: React.PropTypes.bool,
+		allowedActions: React.PropTypes.shape( {
+			activation: React.PropTypes.bool,
+			autoupdate: React.PropTypes.bool,
+			remove: React.PropTypes.bool,
+		} ),
+	},
+
+	getDefaultProps() {
+		return {
+			allowedActions: {
+				activation: true,
+				autoupdate: true,
+				remove: true,
+			}
+		};
 	},
 
 	displayBanner() {
@@ -71,7 +90,7 @@ export default React.createClass( {
 	},
 
 	isWpcomPreinstalled: function() {
-		const installedPlugins = [ 'Jetpack by WordPress.com', 'Akismet' ];
+		const installedPlugins = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
 
 		if ( ! this.props.selectedSite ) {
 			return false;
@@ -86,7 +105,7 @@ export default React.createClass( {
 				<div className="plugin-meta__actions">
 					<div className="plugin-item__count">
 						{
-							this.translate( 'Sites {{count/}}',
+							this.props.translate( 'Sites {{count/}}',
 								{
 									components: {
 										count: <Count count={ this.props.sites.length } />
@@ -111,7 +130,7 @@ export default React.createClass( {
 			return (
 				<div className="plugin-meta__actions">
 					<Button className="plugin-meta__active" compact borderless>
-						<Gridicon icon="checkmark" />{ this.translate( 'Active' ) }
+						<Gridicon icon="checkmark" />{ this.props.translate( 'Active' ) }
 					</Button>
 				</div>
 			);
@@ -121,14 +140,29 @@ export default React.createClass( {
 			return ( <div className="plugin-meta__actions"> { this.getInstallButton() } </div> );
 		}
 
+		const {
+			autoupdate: canToggleAutoupdate,
+			activation: canToggleActivation,
+			remove: canRemove,
+		} = this.props.allowedActions;
 		return (
 			<div className="plugin-meta__actions">
-				<PluginActivateToggle plugin={ this.props.plugin } site={ this.props.selectedSite }
-					notices={ this.props.notices } isMock={ this.props.isMock } />
-				<PluginAutoupdateToggle plugin={ this.props.plugin } site={ this.props.selectedSite }
-					notices={ this.props.notices } wporg={ this.props.plugin.wporg } isMock={ this.props.isMock } />
-				<PluginRemoveButton plugin={ this.props.plugin } site={ this.props.selectedSite }
-					notices={ this.props.notices } isMock={ this.props.isMock } />
+				{ canToggleActivation && <PluginActivateToggle
+						plugin={ this.props.plugin }
+						site={ this.props.selectedSite }
+						notices={ this.props.notices }
+						isMock={ this.props.isMock } /> }
+				{ canToggleAutoupdate && <PluginAutoupdateToggle
+						plugin={ this.props.plugin }
+						site={ this.props.selectedSite }
+						notices={ this.props.notices }
+						wporg={ this.props.plugin.wporg }
+						isMock={ this.props.isMock } /> }
+				{ canRemove && <PluginRemoveButton
+						plugin={ this.props.plugin }
+						site={ this.props.selectedSite }
+						notices={ this.props.notices }
+						isMock={ this.props.isMock } /> }
 			</div>
 		);
 	},
@@ -153,24 +187,82 @@ export default React.createClass( {
 			</ExternalLink>
 		);
 
-		return this.translate( 'By {{linkToAuthor/}}', {
+		return this.props.translate( 'By {{linkToAuthor/}}', {
 			components: {
 				linkToAuthor
 			}
 		} );
 	},
 
+	isUnsupportedPluginForAT() {
+		const { plugin } = this.props;
+
+		// Pressable prevents installation of some plugins, so we need to disable AT for them.
+		// More info here: https://kb.pressable.com/faq/does-pressable-restrict-any-plugins/
+		const unsupportedPlugins = [
+			'nginx-helper',
+			'w3-total-cache',
+			'wp-rocket',
+			'wp-super-cache',
+			'bwp-minify',
+			'wordpress-database-reset',
+			'wordpress-reset',
+			'wp-reset',
+			'advanced-reset-wp',
+			'advanced-wp-reset',
+		];
+
+		return includes( unsupportedPlugins, plugin.slug );
+	},
+
+	isWpcomInstallDisabled() {
+		const { isTransfering } = this.props;
+
+		return ! this.hasBusinessPlan() || this.isUnsupportedPluginForAT() || isTransfering;
+	},
+
+	isJetpackInstallDisabled() {
+		const { automatedTransferSite } = this.props;
+
+		return automatedTransferSite && this.isUnsupportedPluginForAT();
+	},
+
 	getInstallButton() {
-		if ( this.props.selectedSite && this.props.selectedSite.jetpack && this.hasOrgInstallButton() ) {
-			return <PluginInstallButton { ...this.props } />;
+		const { selectedSite } = this.props;
+
+		if ( selectedSite && selectedSite.jetpack && this.hasOrgInstallButton() ) {
+			return (
+				<PluginInstallButton
+					disabled={ this.isJetpackInstallDisabled() }
+					{ ...this.props }
+				/>
+			);
 		}
 
-		if ( this.props.selectedSite && ! this.props.selectedSite.jetpack ) {
+		if ( selectedSite && ! selectedSite.jetpack ) {
 			return (
 				<WpcomPluginInstallButton
-					disabled={ ! this.hasBusinessPlan() }
+					disabled={ this.isWpcomInstallDisabled() }
 					plugin={ this.props.plugin }
 				/>
+			);
+		}
+	},
+
+	maybeDisplayUnsupportedNotice() {
+		const { selectedSite, automatedTransferSite } = this.props;
+
+		if ( selectedSite && this.isUnsupportedPluginForAT() && ( ! selectedSite.jetpack || automatedTransferSite ) ) {
+			return (
+				<Notice
+					text={ this.props.translate( 'Incompatible plugin: This plugin is not supported on WordPress.com.' ) }
+					status="is-warning"
+					showDismiss={ false }
+				>
+					<NoticeAction href="https://support.wordpress.com/incompatible-plugins/">
+						{ this.props.translate( 'More info' ) }
+					</NoticeAction>
+				</Notice>
 			);
 		}
 	},
@@ -188,7 +280,7 @@ export default React.createClass( {
 		if ( this.isOutOfDate() && newVersions.length === 0 ) {
 			return <Notice
 				className="plugin-meta__version-notice"
-				text={ this.translate( 'This plugin hasn\'t been updated in over 2 years. It may no longer be maintained or ' +
+				text={ this.props.translate( 'This plugin hasn\'t been updated in over 2 years. It may no longer be maintained or ' +
 					'supported and may have compatibility issues when used with more recent versions of WordPress' ) }
 				status="is-warning"
 				showDismiss={ false } />;
@@ -199,6 +291,19 @@ export default React.createClass( {
 				status="is-warning"
 				showDismiss={ false } />;
 		}
+	},
+
+	getDefaultActionLinks( plugin ) {
+		let adminUrl = get( this.props, 'selectedSite.options.admin_url' );
+		const pluginSlug = get( plugin, 'slug' );
+
+		if ( pluginSlug === 'vaultpress' ) {
+			adminUrl += '/admin.php?page=vaultpress';
+		}
+
+		return adminUrl
+			? { [ i18n.translate( 'WP Admin' ) ]: adminUrl }
+			: null;
 	},
 
 	getUpdateWarning() {
@@ -327,10 +432,14 @@ export default React.createClass( {
 		} );
 
 		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
+		let actionLinks = get( plugin, 'action_links' );
+		if ( get( plugin, 'active' ) && isEmpty( actionLinks ) ) {
+			actionLinks = this.getDefaultActionLinks( plugin );
+		}
 
 		return (
 			<div className="plugin-meta">
-				{ config.isEnabled( 'automated-transfer' ) && this.props.selectedSite &&
+				{ this.props.atEnabled && this.props.selectedSite &&
 					<QueryEligibility siteId={ this.props.selectedSite.ID } />
 				}
 				<Card>
@@ -342,6 +451,18 @@ export default React.createClass( {
 							<div className="plugin-meta__meta">
 								{ this.renderAuthorUrl() }
 							</div>
+							{ ! isEmpty( actionLinks ) &&
+								<div className="plugin-meta__action-links">
+									{ Object.keys( actionLinks ).map( linkTitle => (
+										<Button compact icon
+											href={ actionLinks[ linkTitle ] }
+											target="_blank"
+											rel="noopener noreferrer">
+												{ linkTitle } <Gridicon icon="external" />
+										</Button>
+									) ) }
+								</div>
+							}
 						</div>
 						{ this.renderActions() }
 					</div>
@@ -357,7 +478,11 @@ export default React.createClass( {
 					}
 				</Card>
 
-				{ config.isEnabled( 'automated-transfer' ) && this.hasBusinessPlan() && ! get( this.props.selectedSite, 'jetpack' ) &&
+				{ this.props.atEnabled &&
+					this.maybeDisplayUnsupportedNotice()
+				}
+
+				{ this.props.atEnabled && this.hasBusinessPlan() && ! get( this.props.selectedSite, 'jetpack' ) &&
 					<PluginAutomatedTransfer plugin={ this.props.plugin } />
 				}
 
@@ -367,11 +492,11 @@ export default React.createClass( {
 
 				{ ! get( this.props.selectedSite, 'jetpack' ) && ! this.hasBusinessPlan() && ! this.isWpcomPreinstalled() &&
 					<div className="plugin-meta__upgrade_nudge">
-						<UpgradeNudge
+						<Banner
 							feature={ FEATURE_UPLOAD_PLUGINS }
-							title={ this.translate( 'Upgrade to the Business plan to install plugins.' ) }
-							message={ this.translate( 'Upgrade to the Business plan to install plugins.' ) }
-							event={ 'calypso_plugins_page_upgrade_nudge' }
+							event={ 'calypso_plugin_detail_page_upgrade_nudge' }
+							plan={ PLAN_BUSINESS }
+							title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
 						/>
 					</div>
 				}
@@ -382,3 +507,16 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+	const selectedSite = getSelectedSite( state );
+
+	return {
+		atEnabled: isATEnabled( selectedSite ),
+		isTransferring: isAutomatedTransferActive( state, siteId ),
+		automatedTransferSite: isSiteAutomatedTransfer( state, siteId ),
+	};
+};
+
+export default connect( mapStateToProps )( localize( PluginMeta ) );

@@ -17,7 +17,6 @@ import OlarkChatbox from 'components/olark-chatbox';
 import olarkStore from 'lib/olark-store';
 import olarkActions from 'lib/olark-store/actions';
 import olarkEvents from 'lib/olark-events';
-import olarkApi from 'lib/olark-api';
 import HelpContactForm from 'me/help/help-contact-form';
 import HelpContactClosed from 'me/help/help-contact-closed';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
@@ -26,17 +25,23 @@ import wpcomLib from 'lib/wp';
 import notices from 'notices';
 import siteList from 'lib/sites-list';
 import analytics from 'lib/analytics';
-import i18n from 'lib/i18n-utils';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { isHappychatAvailable } from 'state/happychat/selectors';
 import { isTicketSupportEligible, isTicketSupportConfigurationReady, getTicketSupportRequestError } from 'state/help/ticket/selectors';
+import HappychatConnection from 'components/happychat/connection';
 import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
-import { connectChat as connectHappychat, sendChatMessage as sendHappychatMessage } from 'state/happychat/actions';
+import { sendChatMessage as sendHappychatMessage, sendBrowserInfo } from 'state/happychat/actions';
 import { openChat as openHappychat } from 'state/ui/happychat/actions';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
+import {
+	isDirectlyFailed,
+	isDirectlyReady,
+	isDirectlyUninitialized,
+} from 'state/selectors';
 
 /**
  * Module variables
@@ -53,16 +58,8 @@ const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
 const HelpContact = React.createClass( {
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.olarkTimedOut && this.olarkTimedOut !== nextProps.olarkTimedOut && ! this.shouldUseHappychat() ) {
-			this.onOlarkUnavailable();
-		}
-	},
-
 	componentDidMount: function() {
-		if ( config.isEnabled( 'happychat' ) ) {
-			this.props.connectHappychat();
-		}
+		this.prepareDirectlyWidget();
 
 		olarkStore.on( 'change', this.updateOlarkState );
 		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
@@ -80,6 +77,13 @@ const HelpContact = React.createClass( {
 		olarkActions.expandBox();
 		olarkActions.shrinkBox();
 		olarkActions.hideBox();
+	},
+
+	componentDidUpdate: function() {
+		// Directly initialization is a noop if it's already happened. This catches
+		// instances where a state/prop change moves a user to Directly support from
+		// some other variation.
+		this.prepareDirectlyWidget();
 	},
 
 	componentWillUnmount: function() {
@@ -130,25 +134,19 @@ const HelpContact = React.createClass( {
 		const { message, siteId } = contactForm;
 		const site = sites.getSite( siteId );
 
-		const userAgent = `User Agent: ${ navigator.userAgent }`;
-		const screenRes = `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
-		const browserSize = `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
-		const browserInfoMsg = [ `Information to assist troubleshooting.\n ${ screenRes } ${ browserSize } ${ userAgent }` ];
+		this.props.sendBrowserInfo( site.URL );
+		this.props.sendHappychatMessage( message );
 
-		let messages = browserInfoMsg.concat( message );
-
-		if ( site ) {
-			messages = [ `Site I need help with: ${ site.URL }` ].concat( messages );
-		}
-
-		messages.forEach( this.props.sendHappychatMessage );
+		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
+			site_plan_product_id: ( site ? site.plan.product_id : null )
+		} );
 
 		page( '/help' );
 	},
 
 	startChat: function( contactForm ) {
-		const { message, howCanWeHelp, howYouFeel, siteSlug } = contactForm;
-		const site = sites.getSite( siteSlug );
+		const { message, howCanWeHelp, howYouFeel, siteId } = contactForm;
+		const site = sites.getSite( siteId );
 
 		// Intentionally not translated since only HE's will see this in the olark console as a notification.
 		const notifications = [
@@ -168,16 +166,34 @@ const HelpContact = React.createClass( {
 		this.clearSavedContactForm();
 	},
 
-	submitDirectlyQuestion: function( contactForm ) {
-		// TODO: open Directly form here
+	prepareDirectlyWidget: function() {
+		if (
+			this.hasDataToDetermineVariation() &&
+			this.getSupportVariation() === SUPPORT_DIRECTLY &&
+			this.props.isDirectlyUninitialized
+		) {
+			this.props.initializeDirectly();
+		}
+	},
 
-		return contactForm; // TODO: Remove this line once functionality is implemented
+	submitDirectlyQuestion: function( contactForm ) {
+		const { display_name, email } = this.props.currentUser;
+
+		this.props.askDirectlyQuestion(
+			contactForm.message,
+			display_name,
+			email
+		);
+
+		this.clearSavedContactForm();
+
+		page( '/help' );
 	},
 
 	submitKayakoTicket: function( contactForm ) {
-		const { subject, message, howCanWeHelp, howYouFeel, siteSlug } = contactForm;
-		const { locale } = this.state.olark;
-		const site = sites.getSite( siteSlug );
+		const { subject, message, howCanWeHelp, howYouFeel, siteId } = contactForm;
+		const { currentUserLocale } = this.props;
+		const site = sites.getSite( siteId );
 
 		const ticketMeta = [
 			'How can you help: ' + howCanWeHelp,
@@ -189,7 +205,7 @@ const HelpContact = React.createClass( {
 
 		this.setState( { isSubmitting: true } );
 
-		wpcom.submitKayakoTicket( subject, kayakoMessage, locale, this.props.clientSlug, ( error ) => {
+		wpcom.submitKayakoTicket( subject, kayakoMessage, currentUserLocale, this.props.clientSlug, ( error ) => {
 			if ( error ) {
 				// TODO: bump a stat here
 				notices.error( error.message );
@@ -220,11 +236,11 @@ const HelpContact = React.createClass( {
 
 	submitSupportForumsTopic: function( contactForm ) {
 		const { subject, message } = contactForm;
-		const locale = this.props.currentUserLocale;
+		const { currentUserLocale } = this.props;
 
 		this.setState( { isSubmitting: true } );
 
-		wpcom.submitSupportForumsTopic( subject, message, locale, this.props.clientSlug, ( error, data ) => {
+		wpcom.submitSupportForumsTopic( subject, message, currentUserLocale, this.props.clientSlug, ( error, data ) => {
 			if ( error ) {
 				// TODO: bump a stat here
 				notices.error( error.message );
@@ -324,17 +340,6 @@ const HelpContact = React.createClass( {
 		}
 
 		analytics.tracks.recordEvent( 'calypso_help_contact_chatbox_mistaken_display', tracksData );
-
-		// Lets call the olark API directly to see if the value we get differs from what our olark store has.
-		olarkApi( 'api.visitor.getDetails', ( details ) => {
-			const data = {
-				olark_event: olarkEvent,
-				olark_is_conversing: details.isConversing,
-			};
-
-			// This does a separate tracks ping just incase the error is occuring in the olark api call
-			analytics.tracks.recordEvent( 'calypso_help_contact_chatbox_mistaken_display_got_details', data );
-		} );
 	},
 
 	trackContactFormAndFillSubject() {
@@ -345,11 +350,6 @@ const HelpContact = React.createClass( {
 			} );
 		}
 		this.autofillSubject();
-	},
-
-	onOlarkUnavailable() {
-		this.trackContactFormAndFillSubject();
-		this.showTimeoutNotice();
 	},
 
 	onOperatorsAway: function() {
@@ -378,18 +378,6 @@ const HelpContact = React.createClass( {
 		}
 	},
 
-	showTimeoutNotice() {
-		const { isUserEligible, isOlarkReady } = this.state.olark;
-
-		if ( ! isUserEligible || isOlarkReady ) {
-			return;
-		}
-		notices.warning( this.props.translate(
-			'Our chat tools did not load. If you have an adblocker ' +
-			'please disable it and refresh this page.'
-		) );
-	},
-
 	/**
 	 * Auto fill the subject with the first five words contained in the message field of the contact form.
 	 */
@@ -413,26 +401,22 @@ const HelpContact = React.createClass( {
 
 	shouldUseHappychat: function() {
 		const { olark } = this.state;
-		const { isHappychatAvailable } = this.props;
-		let isEn = i18n.getLocaleSlug() === 'en';
-		isEn = olark.locale ? olark.locale === 'en' : isEn;
 
 		// if happychat is disabled in the config, do not use it
 		if ( ! config.isEnabled( 'happychat' ) ) {
 			return false;
 		}
 
-		if ( ! isEn ) {
-			return false;
-		}
-
 		// if the happychat connection is able to accept chats, use it
-		return isHappychatAvailable && olark.isUserEligible;
+		return this.props.isHappychatAvailable && olark.isUserEligible;
 	},
 
 	shouldUseDirectly: function() {
 		const isEn = this.props.currentUserLocale === 'en';
-		return config.isEnabled( 'help/directly' ) && isEn;
+		return (
+			isEn &&
+			! this.props.isDirectlyFailed
+		);
 	},
 
 	canShowChatbox: function() {
@@ -518,7 +502,7 @@ const HelpContact = React.createClass( {
 					showSubjectField: false,
 					showHowCanWeHelpField: false,
 					showHowYouFeelField: false,
-					showSiteField: hasMoreThanOneSite,
+					showSiteField: false,
 				};
 
 			default:
@@ -545,7 +529,8 @@ const HelpContact = React.createClass( {
 	},
 
 	getContactFormCommonProps: function( variationSlug ) {
-		const { olark, isSubmitting } = this.state;
+		const { isSubmitting } = this.state;
+		const { currentUserLocale } = this.props;
 
 		// Let the user know we only offer support in English.
 		// We only need to show the message if:
@@ -554,7 +539,7 @@ const HelpContact = React.createClass( {
 		//    requests are sent to the language specific forums (for popular languages)
 		//    we don't tell the user that support is only offered in English.
 		const showHelpLanguagePrompt =
-			( olark.locale !== i18n.getLocaleSlug() ) &&
+			( config( 'support_locales' ).indexOf( currentUserLocale ) === -1 ) &&
 			SUPPORT_FORUM !== variationSlug;
 
 		return {
@@ -570,14 +555,27 @@ const HelpContact = React.createClass( {
 		return SUPPORT_HAPPYCHAT !== variationSlug && SUPPORT_LIVECHAT !== variationSlug && null != ticketSupportRequestError;
 	},
 
-	shouldShowPreloadForm: function() {
-		const { olark, sitesInitialized } = this.state;
+	/**
+	 * Before determining which variation to assign, certain async data needs to be in place.
+	 * This function helps assess whether we're ready to say which variation the user should see.
+	 *
+	 * @returns {Boolean} Whether all the data is present to determine the variation to show
+	 */
+	hasDataToDetermineVariation: function() {
+		const { olark } = this.state;
 		const { ticketSupportConfigurationReady, ticketSupportRequestError } = this.props;
 
 		const olarkReadyOrTimedOut = olark.isOlarkReady || this.props.olarkTimedOut;
 		const ticketReadyOrError = ticketSupportConfigurationReady || null != ticketSupportRequestError;
 
-		return ! sitesInitialized || ! ticketReadyOrError || ! olarkReadyOrTimedOut;
+		return olarkReadyOrTimedOut && ticketReadyOrError;
+	},
+
+	shouldShowPreloadForm: function() {
+		const { sitesInitialized } = this.state;
+		const waitingOnDirectly = this.getSupportVariation() === SUPPORT_DIRECTLY && ! this.props.isDirectlyReady;
+
+		return ! sitesInitialized || ! this.hasDataToDetermineVariation() || waitingOnDirectly;
 	},
 
 	/**
@@ -647,6 +645,7 @@ const HelpContact = React.createClass( {
 				<Card className={ this.canShowChatbox() ? 'help-contact__chat-form' : 'help-contact__form' }>
 					{ this.getView() }
 				</Card>
+				<HappychatConnection />
 				<QueryOlark />
 				<QueryTicketSupportConfiguration />
 			</Main>
@@ -658,6 +657,10 @@ export default connect(
 	( state ) => {
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
+			currentUser: getCurrentUser( state ),
+			isDirectlyFailed: isDirectlyFailed( state ),
+			isDirectlyReady: isDirectlyReady( state ),
+			isDirectlyUninitialized: isDirectlyUninitialized( state ),
 			olarkTimedOut: isOlarkTimedOut( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),
@@ -666,5 +669,11 @@ export default connect(
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 		};
 	},
-	{ connectHappychat, openHappychat, sendHappychatMessage }
+	{
+		openHappychat,
+		sendHappychatMessage,
+		sendBrowserInfo,
+		askDirectlyQuestion,
+		initializeDirectly,
+	}
 )( localize( HelpContact ) );

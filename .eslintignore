@@ -1,8 +1,8 @@
 .vscode
 assets/
 bin/
+!bin/generate-proptypes-index.js
 build/
-config/
 docs/
 public/
 !.eslintrc.js

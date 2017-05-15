@@ -131,6 +131,17 @@ function getRefundPolicy( cart ) {
 	return 'genericRefund';
 }
 
+function isPaymentMethodEnabled( cart, method ) {
+	switch ( method ) {
+		case 'credit-card':
+			return isCreditCardPaymentsEnabled( cart );
+		case 'paypal':
+			return isPayPalExpressEnabled( cart );
+		default:
+			return false;
+	}
+}
+
 function isCreditCardPaymentsEnabled( cart ) {
 	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_MoneyPress_Paygate' ) >= 0;
 }
@@ -151,6 +162,7 @@ module.exports = {
 	getRefundPolicy,
 	isFree,
 	isPaidForFullyInCredits,
+	isPaymentMethodEnabled,
 	isPayPalExpressEnabled,
 	isCreditCardPaymentsEnabled
 };

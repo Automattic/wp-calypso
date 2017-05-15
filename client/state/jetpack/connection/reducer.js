@@ -10,7 +10,10 @@ import {
 	JETPACK_CONNECTION_STATUS_RECEIVE,
 	JETPACK_CONNECTION_STATUS_REQUEST,
 	JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
-	JETPACK_CONNECTION_STATUS_REQUEST_FAILURE
+	JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
+	JETPACK_DISCONNECT_REQUEST,
+	JETPACK_DISCONNECT_REQUEST_FAILURE,
+	JETPACK_DISCONNECT_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 
@@ -47,7 +50,14 @@ export const requests = createReducer( {}, {
 	[ JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS ]: createRequestReducer( false )
 } );
 
+export const disconnectRequests = createReducer( {}, {
+	[ JETPACK_DISCONNECT_REQUEST ]: createRequestReducer( true ),
+	[ JETPACK_DISCONNECT_REQUEST_FAILURE ]: createRequestReducer( false ),
+	[ JETPACK_DISCONNECT_REQUEST_SUCCESS ]: createRequestReducer( false )
+} );
+
 export const reducer = combineReducers( {
 	items,
-	requests
+	requests,
+	disconnectRequests
 } );

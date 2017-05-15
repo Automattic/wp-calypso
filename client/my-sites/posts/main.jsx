@@ -4,55 +4,64 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import PostsNavigation from './posts-navigation';
-import observe from 'lib/mixins/data-observe';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PostList from './post-list';
 import config from 'config';
 import Main from 'components/main';
-import notices from 'notices';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostCounts from 'components/data/query-post-counts';
-import Draft from 'my-sites/draft';
+import PostItem from 'blocks/post-item';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getSitePostsForQueryIgnoringPage,
 	isRequestingSitePostsForQuery
 } from 'state/posts/selectors';
 import Button from 'components/button';
-import Card from 'components/card';
 import Count from 'components/count';
+import SectionHeader from 'components/section-header';
 import { sectionify } from 'lib/route/path';
-import { getAllPostCount } from 'state/posts/counts/selectors';
+import {
+	getAllPostCount,
+	getMyPostCount
+} from 'state/posts/counts/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
+import { warningNotice } from 'state/notices/actions';
+import {
+	getSiteAdminUrl,
+	getSiteSlug,
+	isJetpackSite,
+	siteHasMinimumJetpackVersion
+} from 'state/sites/selectors';
 
 const PostsMain = React.createClass( {
-	mixins: [ observe( 'sites' ) ],
-
 	componentWillMount() {
-		const selectedSite = this.props.sites.getSelectedSite();
-		this.setWarning( selectedSite );
+		this.setWarning( this.props );
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		const selectedSite = nextProps.sites.getSelectedSite();
-		this.setWarning( selectedSite );
+		this.setWarning( nextProps );
 	},
 
 	showDrafts() {
-		const site = this.props.sites.getSelectedSite();
+		const { isJetpack } = this.props;
 
 		// Jetpack sites can have malformed counts
-		if ( site.jetpack && ! this.props.loadingDrafts && this.props.drafts && this.props.drafts.length === 0 ) {
+		if ( isJetpack && ! this.props.loadingDrafts && this.props.drafts && this.props.drafts.length === 0 ) {
 			return false;
 		}
 
-		if ( ! site.jetpack && this.props.draftCount === 0 ) {
+		if ( ! isJetpack && this.props.draftCount === 0 ) {
+			return false;
+		}
+
+		if ( ! isJetpack && this.props.author && this.props.myDraftCount === 0 ) {
 			return false;
 		}
 
@@ -60,57 +69,45 @@ const PostsMain = React.createClass( {
 	},
 
 	mostRecentDrafts() {
-		const site = this.props.sites.getSelectedSite();
-		const isLoading = this.props.draftCount !== 0 && this.props.loadingDrafts;
+		const { siteId, siteSlug } = this.props;
 
-		if ( ! site || ! this.showDrafts() ) {
+		if ( ! siteId || ! this.showDrafts() ) {
 			return null;
 		}
+
+		const { draftCount, translate } = this.props;
+		const isLoading = draftCount !== 0 && this.props.loadingDrafts;
 
 		return (
 			<div className="posts__recent-drafts">
 				<QueryPosts
-					siteId={ site.ID }
+					siteId={ siteId }
 					query={ this.props.draftsQuery } />
-				<QueryPostCounts siteId={ site.ID } type="post" />
-				<Card compact className="posts__drafts-header">
-					{ this.translate( 'Latest Drafts' ) }
-					<Button borderless href={ this.props.newPostPath }>
-						<Gridicon icon="plus" />
+				<QueryPostCounts siteId={ siteId } type="post" />
+				<SectionHeader className="posts__drafts-header" label={ translate( 'Latest Drafts' ) }>
+					<Button compact href={ this.props.newPostPath }>
+						{ translate( 'New Post' ) }
 					</Button>
-				</Card>
-				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
-				{ isLoading && <Draft isPlaceholder /> }
-				{ this.props.draftCount > 6 &&
-					<Button compact borderless className="posts__see-all-drafts" href={ `/posts/drafts/${ site.slug }` }>
-						{ this.translate( 'See all drafts' ) }
-						{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
+				</SectionHeader>
+				{ map( this.props.drafts, ( { global_ID: globalId } ) => (
+					<PostItem compact key={ globalId } globalId={ globalId } />
+				) ) }
+				{ isLoading && <PostItem compact /> }
+				{ draftCount > 6 &&
+					<Button compact borderless className="posts__see-all-drafts" href={ `/posts/drafts/${ siteSlug }` }>
+						{ translate( 'See all drafts' ) }
+						{ draftCount ? <Count count={ draftCount } /> : null }
 					</Button>
 				}
 			</div>
 		);
 	},
 
-	renderDraft( draft ) {
-		if ( ! draft ) {
-			return null;
-		}
-
-		const site = this.props.sites.getSelectedSite();
-
-		return <Draft
-			key={ draft.global_ID }
-			post={ draft }
-			sites={ this.props.sites }
-			showAuthor={ site && ! site.single_user_site && ! this.props.author }
-		/>;
-	},
-
 	render() {
 		const path = sectionify( this.props.context.path );
 		const classes = classnames( 'posts', {
-			'is-multisite': ! this.props.sites.selected,
-			'is-single-site': this.props.sites.selected
+			'is-multisite': ! this.props.siteId,
+			'is-single-site': this.props.siteId
 		} );
 
 		return (
@@ -125,32 +122,54 @@ const PostsMain = React.createClass( {
 		);
 	},
 
-	setWarning( selectedSite ) {
-		if ( selectedSite && selectedSite.jetpack && ! selectedSite.hasMinimumJetpackVersion ) {
-			notices.warning(
-				this.translate( 'Jetpack %(version)s is required to take full advantage of all post editing features.', { args: { version: config( 'jetpack_min_version' ) } } ),
-				{ button: this.translate( 'Update now' ), href: selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' }
+	setWarning( { adminUrl, hasMinimumJetpackVersion, isJetpack, siteId } ) {
+		if (
+			siteId &&
+			isJetpack &&
+			false === hasMinimumJetpackVersion
+		) {
+			this.props.warningNotice(
+				this.props.translate( 'Jetpack %(version)s is required to take full advantage of all post editing features.', {
+					args: { version: config( 'jetpack_min_version' ) }
+				} ),
+				{
+					button: this.props.translate( 'Update now' ),
+					href: adminUrl,
+				}
 			);
 		}
 	}
 
 } );
 
-export default connect( ( state, props ) => {
+function mapStateToProps( state, { author } ) {
 	const siteId = getSelectedSiteId( state );
 	const draftsQuery = {
-		type: 'post',
-		status: 'draft',
+		author,
 		number: 6,
 		order_by: 'modified',
-		author: props.author
+		status: 'draft',
+		type: 'post',
 	};
 
 	return {
+		adminUrl: getSiteAdminUrl( state, siteId, 'plugins.php?plugin_status=upgrade' ),
 		drafts: getSitePostsForQueryIgnoringPage( state, siteId, draftsQuery ),
-		loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
-		draftsQuery: draftsQuery,
 		draftCount: getAllPostCount( state, siteId, 'post', 'draft' ),
-		newPostPath: getEditorNewPostPath( state, siteId )
+		draftsQuery,
+		hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
+		loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
+		myDraftCount: getMyPostCount( state, siteId, 'post', 'draft' ),
+		newPostPath: getEditorNewPostPath( state, siteId ),
+		siteId,
+		siteSlug: getSiteSlug( state, siteId )
 	};
-} )( PostsMain );
+}
+
+export default connect(
+	mapStateToProps,
+	{
+		warningNotice,
+	},
+)( localize( PostsMain ) );

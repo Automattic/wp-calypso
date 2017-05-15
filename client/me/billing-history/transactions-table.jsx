@@ -178,7 +178,7 @@ var TransactionsTable = React.createClass( {
 						<div className="billing-history__trans-wrap">
 							<div className="billing-history__service-description">
 								<div className="billing-history__service-name">{ this.serviceName( transaction ) }</div>
-								{ this.props.transactionRenderer.call( this, transaction ) }
+								{ this.props.transactionRenderer( transaction ) }
 							</div>
 						</div>
 					</td>

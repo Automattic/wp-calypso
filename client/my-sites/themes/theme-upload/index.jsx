@@ -19,7 +19,7 @@ import EmptyContent from 'components/empty-content';
 import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
-import QueryTheme from 'components/data/query-theme';
+import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 // Necessary for ThanksModal
 import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
@@ -28,6 +28,7 @@ import debugFactory from 'debug';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import {
+	getSiteAdminUrl,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 	hasJetpackSiteJetpackThemesExtendedFeatures
@@ -42,19 +43,23 @@ import {
 	getUploadProgressLoaded,
 	isInstallInProgress,
 } from 'state/themes/upload-theme/selectors';
-import { getTheme } from 'state/themes/selectors';
+import { getCanonicalTheme } from 'state/themes/selectors';
 import { connectOptions } from 'my-sites/themes/theme-options';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
-import Banner from 'components/banner';
-import { PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer
 } from 'state/automated-transfer/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import WpAdminAutoLogin from 'components/wpadmin-auto-login';
+import {
+	MAX_UPLOADED_THEME_SIZE
+} from 'lib/automated-transfer/constants';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -125,20 +130,27 @@ class Upload extends React.Component {
 	failureMessage() {
 		const { translate, error } = this.props;
 
-		debug( 'Error', error );
+		debug( 'Error', { error } );
 
 		const errorCauses = {
 			exists: translate( 'Upload problem: Theme already installed on site.' ),
-			'Too Large': translate( 'Upload problem: Zip file too large to upload.' ),
+			already_installed: translate( 'Upload problem: Theme already installed on site.' ),
+			'too large': translate( 'Upload problem: Theme zip must be under 10MB.' ),
 			incompatible: translate( 'Upload problem: Incompatible theme.' ),
+			unsupported_mime_type: translate( 'Upload problem: Not a valid zip file' ),
+			initiate_failure: translate(
+				'Upload problem: Theme may not be valid. Check that your zip file contains only the theme ' +
+				'you are trying to upload.'
+			),
 		};
 
-		const errorString = JSON.stringify( error );
+		const errorString = JSON.stringify( error ).toLowerCase();
 		const cause = find( errorCauses, ( v, key ) => {
 			return includes( errorString, key );
 		} );
 
-		notices.error( cause || translate( 'Problem uploading theme' ) );
+		const unknownCause = error.error ? `: ${ error.error }` : '';
+		notices.error( cause || translate( 'Problem uploading theme' ) + unknownCause );
 	}
 
 	onFileSelect = ( files ) => {
@@ -152,15 +164,15 @@ class Upload extends React.Component {
 
 		// DropZone supplies an array, FilePicker supplies a FileList
 		const file = files[ 0 ] || files.item( 0 );
+		debug( 'zip file:', file );
 
-		const validFileType = file.type === 'application/zip' || file.type === 'application/x-zip-compressed';
-		debug( 'file mime: ', file.type );
+		if ( file.size > MAX_UPLOADED_THEME_SIZE ) {
+			notices.error(
+				translate( 'Theme zip is too large. Please upload a theme under 50 MB.' )
+			);
 
-		if ( ! validFileType ) {
-			notices.error( errorMessage );
 			return;
 		}
-		debug( 'zip file:', file );
 
 		const action = this.props.isJetpack
 			? this.props.uploadTheme : this.props.initiateThemeTransfer;
@@ -226,12 +238,12 @@ class Upload extends React.Component {
 
 	onActivateClick = () => {
 		const { activate } = this.props.options;
-		activate.action( this.props.uploadedTheme );
+		activate.action( this.props.themeId );
 	};
 
 	onTryAndCustomizeClick = () => {
 		const { tryandcustomize } = this.props.options;
-		tryandcustomize.action( this.props.uploadedTheme );
+		tryandcustomize.action( this.props.themeId );
 	}
 
 	renderTheme() {
@@ -240,19 +252,21 @@ class Upload extends React.Component {
 
 		return (
 			<div className="theme-upload__theme-sheet">
-				<span className="theme-upload__theme-name">{ theme.name }</span>
-				<span className="theme-upload__author">
+				<img className="theme-upload__screenshot" src={ theme.screenshot } />
+				<h2 className="theme-upload__theme-name">{ theme.name }</h2>
+				<div className="theme-upload__author">
 					{ translate( 'by ' ) }
 					<a href={ theme.author_uri }>{ theme.author }</a>
-				</span>
-				<img src={ theme.screenshot } />
-				<span className="theme-upload__description">{ theme.description }</span>
-				<Button onClick={ this.onTryAndCustomizeClick } >
-					{ tryandcustomize.label }
-				</Button>
-				<Button primary onClick={ this.onActivateClick }>
-					{ activate.label }
-				</Button>
+				</div>
+				<div className="theme-upload__description">{ theme.description }</div>
+				<div className="theme-upload__action-buttons">
+					<Button onClick={ this.onTryAndCustomizeClick } >
+						{ tryandcustomize.label }
+					</Button>
+					<Button primary onClick={ this.onActivateClick }>
+						{ activate.label }
+					</Button>
+				</div>
 			</div>
 		);
 	}
@@ -264,60 +278,52 @@ class Upload extends React.Component {
 				{ ! inProgress && ! complete && this.renderDropZone() }
 				{ inProgress && this.renderProgressBar() }
 				{ complete && ! failed && uploadedTheme && this.renderTheme() }
+				{ complete && this.props.isSiteAutomatedTransfer && <WpAdminAutoLogin site={ this.props.selectedSite } /> }
 			</Card>
 		);
 	}
 
-	renderNotAvailable() {
+	renderNotAvailableForMultisite() {
 		return (
 			<EmptyContent
 				title={ this.props.translate( 'Not available for multi site' ) }
 				line={ this.props.translate( 'Use the WP Admin interface instead' ) }
 				action={ this.props.translate( 'Open WP Admin' ) }
-				actionURL={ this.props.selectedSite.options.admin_url }
+				actionURL={ this.props.siteAdminUrl }
 				illustration={ '/calypso/images/drake/drake-jetpack.svg' }
 			/>
-			);
+		);
 	}
+
 	render() {
 		const {
 			translate,
 			complete,
 			siteId,
-			selectedSite,
 			themeId,
 			upgradeJetpack,
 			backPath,
-			isBusiness,
-			isJetpack,
 			isMultisite
 		} = this.props;
 
 		const { showEligibility } = this.state;
 
 		if ( isMultisite ) {
-			return this.renderNotAvailable();
+			return this.renderNotAvailableForMultisite();
 		}
 
 		return (
 			<Main>
 				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
-				{ themeId && complete && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
-				<ThanksModal
-					site={ selectedSite }
-					source="upload" />
+				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
+				<ThanksModal source="upload" />
 				<HeaderCake backHref={ backPath }>{ translate( 'Upload theme' ) }</HeaderCake>
-				{ ! isBusiness && ! isJetpack && <Banner
-					feature={ FEATURE_UPLOAD_THEMES }
-					plan={ PLAN_BUSINESS }
-					title={ translate( 'To upload themes, upgrade to Business Plan' ) }
-					description={ translate( 'Unlimited themes, advanced customization, no ads, live chat support, and more!' ) } /> }
 				{ upgradeJetpack && <JetpackManageErrorPage
 					template="updateJetpack"
 					siteId={ siteId }
 					featureExample={ this.renderUploadCard() }
-					version="4.4.2" /> }
+					version="4.7" /> }
 				{ showEligibility && <EligibilityWarnings
 					backUrl={ backPath }
 					onProceed={ this.onProceedClick } /> }
@@ -334,14 +340,14 @@ const UploadWithOptions = ( props ) => {
 	return (
 		<ConnectedUpload { ...props }
 			siteId={ siteId }
-			theme={ uploadedTheme }
-			options={ [ 'tryandcustomize', 'activate' ] } />
+			theme={ uploadedTheme } />
 	);
 };
 
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
 		const themeId = getUploadedThemeId( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 		const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
@@ -355,14 +361,14 @@ export default connect(
 		return {
 			siteId,
 			isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
-			selectedSite: getSelectedSite( state ),
+			selectedSite: site,
 			isJetpack,
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
 			themeId,
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
-			uploadedTheme: getTheme( state, siteId, themeId ),
+			uploadedTheme: getCanonicalTheme( state, siteId, themeId ),
 			error: getUploadError( state, siteId ),
 			progressTotal: getUploadProgressTotal( state, siteId ),
 			progressLoaded: getUploadProgressLoaded( state, siteId ),
@@ -370,6 +376,8 @@ export default connect(
 			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
 			backPath: getBackPath( state ),
 			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },

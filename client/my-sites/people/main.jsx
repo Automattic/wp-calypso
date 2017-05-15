@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import omit from 'lodash/omit';
 import debugModule from 'debug';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -18,17 +18,24 @@ import PeopleNotices from 'my-sites/people/people-notices';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import {
+	isJetpackMinimumVersion,
+	isJetpackSite,
+} from 'state/sites/selectors';
+import { canCurrentUser, isPrivateSite } from 'state/selectors';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:my-sites:people:main' );
 
-export default React.createClass( {
+// TODO: port to es6 once we remove the last observe
+export const People = React.createClass( { // eslint-disable-line react/prefer-es6-class
 
 	displayName: 'People',
 
-	mixins: [ observe( 'sites', 'peopleLog' ) ],
+	mixins: [ observe( 'peopleLog' ) ],
 
 	componentDidMount: function() {
 		debug( 'PeopleList React component mounted.' );
@@ -54,22 +61,31 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const site = this.props.sites.getSelectedSite();
+		const {
+			isJetpack,
+			jetpackPeopleSupported,
+			canViewPeople,
+			siteId,
+			site,
+			search,
+			filter,
+			isPrivate
+		} = this.props;
 
 		// Jetpack 3.7 is necessary to manage people
-		if ( site && site.jetpack && site.versionCompare( '3.7.0-beta', '<' ) ) {
+		if ( isJetpack && ! jetpackPeopleSupported ) {
 			return (
 				<Main>
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="updateJetpack"
-						siteId={ site.ID }
+						siteId={ siteId }
 						version="3.7"
 					/>
 				</Main>
 			);
 		}
-		if ( site && site.capabilities && ! site.capabilities.list_users ) {
+		if ( siteId && ! canViewPeople ) {
 			return (
 				<Main>
 					<SidebarNavigation />
@@ -84,7 +100,14 @@ export default React.createClass( {
 			<Main>
 				<SidebarNavigation />
 				<div>
-					{ <PeopleSectionNav { ...omit( this.props, [ 'sites' ] ) } site={ site } /> }
+					{ <PeopleSectionNav
+						isJetpack={ isJetpack }
+						isPrivate={ isPrivate }
+						jetpackPeopleSupported={ jetpackPeopleSupported }
+						canViewPeople={ canViewPeople }
+						search={ search }
+						filter={ filter }
+						site={ site } /> }
 					<PeopleNotices />
 					{ this.renderPeopleList( site ) }
 				</div>
@@ -92,3 +115,17 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			siteId,
+			site: getSelectedSite( state ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isPrivate: isPrivateSite( state, siteId ),
+			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+			jetpackPeopleSupported: isJetpackMinimumVersion( state, siteId, '3.7.0-beta' ),
+		};
+	}
+)( People );

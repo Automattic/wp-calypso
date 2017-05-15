@@ -19,8 +19,6 @@ export default function() {
 }
 ```
 
-(That's basically [client/my-sites/menus/index.js](../client/my-sites/menus/index.js), by the way.)
-
 ## Route definitions
 
 So what we're doing here is export a default function that holds our route definitions, using the [`page.js`](https://visionmedia.github.io/page.js/) client-side router.

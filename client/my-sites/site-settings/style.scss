@@ -1,4 +1,6 @@
 .site-settings {
+	font-size: 14px;
+
 	fieldset {
 		clear: both;
 		margin-bottom: 24px;
@@ -52,6 +54,15 @@
 		font-weight: normal;
 	}
 
+	label a,
+	p a {
+		text-decoration: underline;
+	}
+
+	p:last-child {
+		margin-bottom: 0;
+	}
+
 	.is-primary {
 		float: right;
 	}
@@ -73,9 +84,14 @@
 		font-style: italic;
 		font-weight: 400;
 		color: $gray-text-min;
+
 		&.is-indented {
 			margin-left: 24px;
 		}
+	}
+
+	.form-toggle__wrapper + p.form-setting-explanation.is-indented {
+		margin-left: 36px;
 	}
 
 	p.settings-alert {
@@ -131,10 +147,6 @@
 		}
 	}
 
-	.seo-settings__seo-form .section-header {
-		margin-top: 32px;
-	}
-
 	.seo-settings__seo-form .seo-settings__preview-button {
 		display: block;
 		float: left;
@@ -145,6 +157,10 @@
 		display: block;
 		float: left;
 		line-height: 40px;
+	}
+
+	.seo-settings__front-page-description {
+		margin-bottom: 1.5em;
 	}
 
 	fieldset.site-icon-setting {
@@ -178,7 +194,10 @@
 	}
 }
 
-.site-settings__general-settings, .site-settings__writing-settings {
+.site-settings__general-settings,
+.site-settings__writing-settings,
+.site-settings__traffic-settings,
+.site-settings__security-settings {
 	.form-toggle__label {
 		display: flex;
 		align-items: center;
@@ -252,16 +271,6 @@
 	}
 }
 
-.site-settings__amp {
-	.section-header__actions {
-		display: flex;
-
-		button {
-			margin-left: 15px;
-		}
-	}
-}
-
 .site-settings__footer-credit-container {
 	margin-bottom: 16px;
 }
@@ -291,79 +300,10 @@
 	}
 }
 
-#settings-reading-relatedposts-preview .form-label {
-	font-weight: 600;
-	margin-top: 16px;
-}
-
-.site-settings__related-posts {
-	position: relative;
-	margin-top: 8px;
-	padding: 16px 8px;
-	width: 100%;
-	background: $gray-light;
-	box-sizing: border-box;
-
-	@include clear-fix;
-
-	.site-settings__related-posts-headline {
- 		margin: 0 0 1em 8px;
- 		font-size: 11px;
- 		font-weight: 600;
- 	}
-
-	.site-settings__related-posts-items {
-
-
-		@include breakpoint( ">480px" ) {
-			display: flex;
-			flex-wrap: wrap;
-			.site-settings__related-posts-post {
-				width: 50%;
-			}
-		}
-
-		@include breakpoint( ">960px" ) {
-			flex-wrap: nowrap;
-		}
-	}
-
-	.site-settings__related-posts-post .site-settings__related-posts-post-title a {
-		font-weight: normal;
-		text-decoration: none;
-		opacity: 1;
-	}
-
-	.site-settings__related-posts-post {
-		box-sizing: border-box;
-		margin: 0;
-		padding: 0 8px;
-	}
-
-	.site-settings__related-posts-post span {
-		display: block;
-		max-width: 90%;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.site-settings__related-posts-post .site-settings__related-posts-post-context {
-		opacity: .6;
-	}
-
-	.site-settings__related-posts-post-a {
-		cursor: pointer;
-	}
-}
-
 .jetpack-protect__deactivate,
 .jetpack-protect__edit-settings,
-.jetpack-scan__deactivate,
-.jetpack-monitor__deactivate,
 .disconnect-jetpack-button,
 .jetpack-protect__edit-settings,
-.jetpack-scan__deactivate,
-.jetpack-monitor__deactivate,
 .disconnect-jetpack-button {
 	margin-right: 8px;
 }
@@ -381,22 +321,44 @@
 	}
 }
 
-.site-settings__jetpack-prompt {
-	display: flex;
-
-	img {
-		width: 128px;
-		flex: 1;
-		margin-right: 16px;
-	}
-}
-
-.site-settings__jetpack-prompt-text {
-	flex: 4;
-}
-
 .site-settings__taxonomies {
 	margin-bottom: 17px;
+}
+
+.site-settings__foldable-card {
+	&.foldable-card,
+	&.foldable-card.is-expanded {
+		margin-bottom: 16px;
+	}
+
+	.foldable-card__header {
+		padding: 24px;
+
+		.gridicons-checkmark {
+			margin-right: 4px;
+			vertical-align: bottom;
+			color: $alert-green;
+		}
+	}
+
+	.foldable-card__expand {
+		width: 64px;
+	}
+
+	&.is-expanded .foldable-card__content {
+		padding: 8px 24px 24px;
+		border-top: 1px lighten( $gray, 20% ) solid;
+	}
+
+	&.is-expanded.is-top-level .foldable-card__content {
+		padding: 24px;
+	}
+
+	.composing__module-settings .site-settings__info-link-container,
+	.protect__module-settings .site-settings__info-link-container {
+		margin-right: -36px;
+		height: 0;
+	}
 }
 
 // Site settings group styles
@@ -416,21 +378,19 @@
 	float: right;
 }
 
-.site-settings__date-time-format-custom {
-	.form-radio {
-		display: none;
-		margin-top: 12px;
-	}
-	&.is-custom .form-radio {
-		display: block;
-	}
+.form-legend + .site-settings__info-link-container {
+	margin-top: -21px;
+}
 
-	.form-text-input {
-		margin: 0 12px;
-		width: 100px;
-	}
+.site-settings__add-to-whitelist {
+	margin-top: 3px;
+}
 
-	.site-settings__date-time-format-custom-preview {
-		white-space: nowrap;
-	}
+.site-settings__foldable-card + .card.is-compact:last-child {
+	margin-top: -16px;
+	margin-bottom: 16px;
+}
+
+.site-settings__media-settings > .banner {
+	margin-top: -16px;
 }

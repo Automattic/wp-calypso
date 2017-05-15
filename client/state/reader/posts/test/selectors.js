@@ -84,7 +84,7 @@ describe( 'selectors', () => {
 				}
 			};
 			expect( getPostBySiteAndId( stateTree, 1, 1 ) )
-				.to.equal( stateTree.reader.posts.items['2'] );
+				.to.equal( stateTree.reader.posts.items[ '2' ] );
 		} );
 	} );
 } );

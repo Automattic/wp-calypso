@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
@@ -58,9 +57,11 @@ class PlanFeaturesHeader extends Component {
 				{
 					newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon>
 				}
+				{
+					current && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon>
+				}
 				<div className="plan-features__header-figure" >
 					<PlanIcon plan={ planType } />
-					{ current && <Gridicon icon="checkmark-circle" className="plan-features__header-checkmark" /> }
 				</div>
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
@@ -78,7 +79,8 @@ class PlanFeaturesHeader extends Component {
 			isPlaceholder,
 			site,
 			translate,
-			isSiteAT
+			isSiteAT,
+			hideMonthly
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -90,7 +92,8 @@ class PlanFeaturesHeader extends Component {
 		if (
 			isSiteAT ||
 			! site.jetpack ||
-			this.props.planType === PLAN_JETPACK_FREE
+			this.props.planType === PLAN_JETPACK_FREE ||
+			hideMonthly
 		) {
 			return (
 				<p className={ timeframeClasses }>
@@ -115,10 +118,13 @@ class PlanFeaturesHeader extends Component {
 			rawPrice,
 			intervalType,
 			site,
-			basePlansPath
+			basePlansPath,
+			hideMonthly
 		} = this.props;
 
-		if ( ! rawPrice || this.isPlanCurrent() ) {
+		if ( hideMonthly ||
+			! rawPrice ||
+			this.isPlanCurrent() ) {
 			return (
 				<div className="plan-features__interval-type is-placeholder">
 				</div>
@@ -184,7 +190,6 @@ class PlanFeaturesHeader extends Component {
 				<div className={ classes } ></div>
 			);
 		}
-
 		if ( discountPrice ) {
 			return (
 				<span className="plan-features__header-price-group">
@@ -260,7 +265,6 @@ export default connect( ( state, ownProps ) => {
 	const { isInSignup } = ownProps;
 	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
-
 	return Object.assign( {},
 		ownProps,
 		{

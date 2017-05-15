@@ -1,2 +1,2 @@
 // step-actions stub
-module.exports = {};
+export default {};

@@ -12,12 +12,14 @@
 		background: lighten( $gray, 20% );
 	}
 
-	@include breakpoint( ">660px" ) {
-		margin-left: 52px;
-	}
+	.focus-sidebar & {
+		@include breakpoint( ">660px" ) {
+			margin-left: 52px;
+		}
 
-	@include breakpoint( ">1040px" ) {
-		margin-left: 0;
+		@include breakpoint( ">1040px" ) {
+			margin-left: 0;
+		}
 	}
 }
 

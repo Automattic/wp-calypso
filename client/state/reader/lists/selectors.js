@@ -41,12 +41,15 @@ export function isRequestingSubscribedLists( state ) {
  * @return {?Object}        Reader lists
  */
 export const getSubscribedLists = createSelector(
-	( state ) => sortBy(
-		filter( state.reader.lists.items, ( item ) => {
-			// Is the user subscribed to this list?
-			return includes( state.reader.lists.subscribedLists, item.ID );
-		} ), 'slug' ),
-	( state ) => [ state.reader.lists.items, state.reader.lists.subscribedLists ]
+	state =>
+		sortBy(
+			filter( state.reader.lists.items, item => {
+				// Is the user subscribed to this list?
+				return includes( state.reader.lists.subscribedLists, item.ID );
+			} ),
+			'slug'
+		),
+	state => [ state.reader.lists.items, state.reader.lists.subscribedLists ]
 );
 
 /**
@@ -94,8 +97,8 @@ export function getListByOwnerAndSlug( state, owner, slug ) {
 	const preparedOwner = owner.toLowerCase();
 	const preparedSlug = slug.toLowerCase();
 
-	return find( state.reader.lists.items, ( list ) => {
-		return list.owner === preparedOwner && list.slug === preparedSlug
+	return find( state.reader.lists.items, list => {
+		return list.owner === preparedOwner && list.slug === preparedSlug;
 	} );
 }
 
@@ -127,7 +130,7 @@ export function isMissingByOwnerAndSlug( state, owner, slug ) {
 	const preparedOwner = owner.toLowerCase();
 	const preparedSlug = slug.toLowerCase();
 
-	return !! find( state.reader.lists.missingLists, ( list ) => {
-		return list.owner === preparedOwner && list.slug === preparedSlug
+	return !! find( state.reader.lists.missingLists, list => {
+		return list.owner === preparedOwner && list.slug === preparedSlug;
 	} );
 }

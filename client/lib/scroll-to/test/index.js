@@ -29,8 +29,8 @@ describe( 'scroll-to', () => {
 			y: 300,
 			duration: 1,
 			onComplete: () => {
-				expect( window.scrollTo.lastCall.args[0] ).to.equal( 500 );
-				expect( window.scrollTo.lastCall.args[1] ).to.equal( 300 );
+				expect( window.scrollTo.lastCall.args[ 0 ] ).to.equal( 500 );
+				expect( window.scrollTo.lastCall.args[ 1 ] ).to.equal( 300 );
 				done();
 			}
 		} );
@@ -41,8 +41,8 @@ describe( 'scroll-to', () => {
 			y: 100,
 			duration: 1,
 			onComplete: () => {
-				expect( window.scrollTo.lastCall.args[0] ).to.equal( 0 );
-				expect( window.scrollTo.lastCall.args[1] ).to.equal( 100 );
+				expect( window.scrollTo.lastCall.args[ 0 ] ).to.equal( 0 );
+				expect( window.scrollTo.lastCall.args[ 1 ] ).to.equal( 100 );
 				done();
 			}
 		} );

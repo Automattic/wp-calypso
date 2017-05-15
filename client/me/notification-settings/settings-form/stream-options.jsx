@@ -34,7 +34,7 @@ export default React.createClass( {
 		return (
 			<ul className="notification-settings-form-stream-options">
 				{ this.props.settingKeys.map( ( setting, index ) => {
-					const isException = this.props.stream in NOTIFICATIONS_EXCEPTIONS && NOTIFICATIONS_EXCEPTIONS[this.props.stream].indexOf( setting ) >= 0;
+					const isException = this.props.stream in NOTIFICATIONS_EXCEPTIONS && NOTIFICATIONS_EXCEPTIONS[ this.props.stream ].indexOf( setting ) >= 0;
 
 					return ( <li className="notification-settings-form-stream-options__item" key={ index }>
 						{ isException ? null : <FormCheckbox checked={ this.props.settings.get( setting ) } onChange={ () => {

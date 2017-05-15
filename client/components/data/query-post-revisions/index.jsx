@@ -1,0 +1,46 @@
+/**
+ * External dependencies
+ */
+import { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import { requestPostRevisions } from 'state/posts/revisions/actions';
+
+class QueryPostRevisions extends Component {
+	componentWillMount() {
+		this.request();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if (
+			this.props.siteId === prevProps.siteId &&
+			this.props.postId === prevProps.postId
+		) {
+			return;
+		}
+
+		this.request();
+	}
+
+	request() {
+		this.props.requestPostRevisions( this.props.siteId, this.props.postId );
+	}
+
+	render() {
+		return null;
+	}
+}
+
+QueryPostRevisions.propTypes = {
+	postId: PropTypes.number,
+	siteId: PropTypes.number,
+	requestPostRevisions: PropTypes.func,
+};
+
+export default connect(
+	() => ( {} ),
+	{ requestPostRevisions }
+)( QueryPostRevisions );

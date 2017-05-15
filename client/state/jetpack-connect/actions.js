@@ -23,8 +23,6 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-	JETPACK_CONNECT_ACTIVATE_MANAGE,
-	JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
@@ -35,7 +33,8 @@ import {
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-	JETPACK_CONNECT_SSO_VALIDATION_ERROR
+	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+	SITES_RECEIVE
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import config from 'config';
@@ -48,7 +47,7 @@ import { JPC_PLANS_PAGE } from './constants';
  *  Local variables;
  */
 const _fetching = {};
-const calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
+const calypsoEnv = config( 'env_id' );
 const remoteAuthPath = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
 const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const remoteActivatePath = '/wp-admin/plugins.php';
@@ -82,7 +81,6 @@ export default {
 			if ( _fetching[ url ] ) {
 				return;
 			}
-
 			if ( isUrlOnSites ) {
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL,
@@ -350,13 +348,17 @@ export default {
 				} );
 				// Update the user now that we are fully connected.
 				userFactory().fetch();
-				return wpcom.me().sites( { site_visibility: 'all' } );
+				return wpcom.me().sites( { site_visibility: 'all', include_domain_only: true } );
 			} )
 			.then( ( data ) => {
 				tracksEvent( dispatch, 'calypso_jpc_auth_sitesrefresh', {
 					site: client_id
 				} );
 				debug( 'Sites list updated!', data );
+				dispatch( {
+					type: SITES_RECEIVE,
+					sites: data.sites
+				} );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 					data: data
@@ -433,34 +435,6 @@ export default {
 				} );
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
-					error: pick( error, [ 'error', 'status', 'message' ] )
-				} );
-			} );
-		};
-	},
-	activateManage( blogId, state, secret ) {
-		return ( dispatch ) => {
-			debug( 'Activating manage', blogId );
-			dispatch( {
-				type: JETPACK_CONNECT_ACTIVATE_MANAGE,
-				blogId: blogId
-			} );
-			return wpcom.undocumented().activateManage( blogId, state, secret )
-			.then( ( data ) => {
-				tracksEvent( dispatch, 'calypso_jpc_activate_manage_success' );
-				debug( 'Manage activated!', data );
-				dispatch( {
-					type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
-					data: data,
-					error: null
-				} );
-			} )
-			.catch( ( error ) => {
-				tracksEvent( dispatch, 'calypso_jpc_activate_manage_error', { error_code: error.code, error: JSON.stringify( error ) } );
-				debug( 'Manage activation error', error );
-				dispatch( {
-					type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
-					data: null,
 					error: pick( error, [ 'error', 'status', 'message' ] )
 				} );
 			} );

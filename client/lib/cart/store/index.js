@@ -11,7 +11,6 @@ var assign = require( 'lodash/assign' ),
  */
 var UpgradesActionTypes = require( 'lib/upgrades/constants' ).action,
 	emitter = require( 'lib/mixins/emitter' ),
-	sites = require( 'lib/sites-list' )(),
 	cartSynchronizer = require( './cart-synchronizer' ),
 	wpcom = require( 'lib/wp' ).undocumented(),
 	PollerPool = require( 'lib/data-poller' ),
@@ -34,6 +33,27 @@ var CartStore = {
 			hasLoadedFromServer: hasLoadedFromServer(),
 			hasPendingServerUpdates: hasPendingServerUpdates()
 		} );
+	},
+	setSelectedSiteId( selectedSiteId ) {
+		if ( selectedSiteId && _cartKey === selectedSiteId ) {
+			return;
+		}
+
+		if ( ! selectedSiteId ) {
+			_cartKey = 'no-site';
+		} else {
+			_cartKey = selectedSiteId;
+		}
+
+		if ( _synchronizer && _poller ) {
+			PollerPool.remove( _poller );
+			_synchronizer.off( 'change', emitChange );
+		}
+
+		_synchronizer = cartSynchronizer( _cartKey, wpcom );
+		_synchronizer.on( 'change', emitChange );
+
+		_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
 	}
 };
 
@@ -45,30 +65,6 @@ function hasLoadedFromServer() {
 
 function hasPendingServerUpdates() {
 	return ( _synchronizer && _synchronizer.hasPendingServerUpdates() );
-}
-
-function setSelectedSite() {
-	var selectedSite = sites.getSelectedSite();
-
-	if ( selectedSite && _cartKey === selectedSite.ID ) {
-		return;
-	}
-
-	if ( ! selectedSite ) {
-		_cartKey = 'no-site';
-	} else {
-		_cartKey = selectedSite.ID;
-	}
-
-	if ( _synchronizer && _poller ) {
-		PollerPool.remove( _poller );
-		_synchronizer.off( 'change', emitChange );
-	}
-
-	_synchronizer = cartSynchronizer( _cartKey, wpcom );
-	_synchronizer.on( 'change', emitChange );
-
-	_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
 }
 
 function emitChange() {
@@ -119,6 +115,10 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 			update( cartItems.removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
+		case UpgradesActionTypes.GOOGLE_APPS_REGISTRATION_DATA_ADD:
+			update( cartItems.fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData ) );
+			break;
+
 		case UpgradesActionTypes.CART_ITEMS_ADD:
 			update( flow( ...action.cartItems.map( cartItem => cartItems.add( cartItem ) ) ) );
 			break;
@@ -133,7 +133,4 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 	}
 } );
 
-sites.on( 'change', setSelectedSite );
-setSelectedSite();
-
-module.exports = CartStore;
+export default CartStore;

@@ -3,45 +3,59 @@
  */
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
-import createFragment from 'react-addons-create-fragment';
-import without from 'lodash/without';
-import includes from 'lodash/includes';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
-import identity from 'lodash/identity';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import {
+	identity,
+	includes,
+	noop,
+	without,
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
 import RootChild from 'components/root-child';
+import {
+	hideDropZone,
+	showDropZone,
+} from 'state/ui/drop-zone/actions';
 
 export const DropZone = React.createClass( {
 	propTypes: {
+		className: PropTypes.string,
+		fullScreen: PropTypes.bool,
+		icon: PropTypes.node,
 		onDrop: PropTypes.func,
 		onVerifyValidTransfer: PropTypes.func,
 		onFilesDrop: PropTypes.func,
-		fullScreen: PropTypes.bool,
-		icon: PropTypes.string,
+		textLabel: PropTypes.string,
 		translate: PropTypes.func,
+		showDropZone: PropTypes.func.isRequired,
+		hideDropZone: PropTypes.func.isRequired,
+		dropZoneName: PropTypes.string,
 	},
 
 	getInitialState() {
 		return {
 			isDraggingOverDocument: false,
-			isDraggingOverElement: false
+			isDraggingOverElement: false,
+			lastVisibleState: false,
 		};
 	},
 
 	getDefaultProps() {
 		return {
+			className: null,
 			onDrop: noop,
 			onVerifyValidTransfer: () => true,
 			onFilesDrop: noop,
 			fullScreen: false,
-			icon: 'cloud-upload',
+			icon: <Gridicon icon="cloud-upload" size={ 48 } />,
 			translate: identity,
+			dropZoneName: null,
 		};
 	},
 
@@ -78,6 +92,8 @@ export const DropZone = React.createClass( {
 			isDraggingOverDocument: false,
 			isDraggingOverElement: false
 		} );
+
+		this.toggleDropZoneReduxState( false );
 	},
 
 	toggleMutationObserver() {
@@ -144,6 +160,22 @@ export const DropZone = React.createClass( {
 			// from tracked nodes since another "real" event will be triggered.
 			this.dragEnterNodes = without( this.dragEnterNodes, window );
 		}
+
+		this.toggleDropZoneReduxState( !! ( this.state.isDraggingOverDocument || this.state.isDraggingOverElement ) );
+	},
+
+	toggleDropZoneReduxState( isVisible ) {
+		if ( this.state.lastVisibleState !== isVisible ) {
+			if ( isVisible ) {
+				this.props.showDropZone( this.props.dropZoneName );
+			} else {
+				this.props.hideDropZone( this.props.dropZoneName );
+			}
+
+			this.setState( {
+				lastVisibleState: isVisible,
+			} );
+		}
 	},
 
 	preventDefault( event ) {
@@ -194,30 +226,36 @@ export const DropZone = React.createClass( {
 	},
 
 	renderContent() {
-		let content;
+		const textLabel = this.props.textLabel
+			? this.props.textLabel
+			: this.props.translate( 'Drop files to upload' );
 
-		if ( this.props.children ) {
-			content = this.props.children;
-		} else {
-			content = createFragment( {
-				icon: <Gridicon icon={ this.props.icon } size={ 48 } className="drop-zone__content-icon" />,
-				text: (
-					<span className="drop-zone__content-text">
-						{ this.props.translate( 'Drop files to upload' ) }
-					</span>
-				)
-			} );
-		}
-
-		return <div className="drop-zone__content">{ content }</div>;
+		return (
+			<div className="drop-zone__content">
+				{
+					this.props.children
+						? this.props.children
+						: (
+							<div>
+								<span className="drop-zone__content-icon">
+									{ this.props.icon }
+								</span>
+								<span className="drop-zone__content-text">
+									{ textLabel }
+								</span>
+							</div>
+						)
+				}
+			</div>
+		);
 	},
 
 	render() {
-		const classes = classNames( 'drop-zone', {
+		const classes = classNames( 'drop-zone', this.props.className, {
 			'is-active': this.state.isDraggingOverDocument || this.state.isDraggingOverElement,
 			'is-dragging-over-document': this.state.isDraggingOverDocument,
 			'is-dragging-over-element': this.state.isDraggingOverElement,
-			'is-full-screen': this.props.fullScreen
+			'is-full-screen': this.props.fullScreen,
 		} );
 
 		const element = (
@@ -233,4 +271,9 @@ export const DropZone = React.createClass( {
 	}
 } );
 
-export default localize( DropZone );
+const mapDispatch = {
+	showDropZone,
+	hideDropZone,
+};
+
+export default connect( null, mapDispatch )( localize( DropZone ) );

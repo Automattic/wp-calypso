@@ -43,7 +43,7 @@ export function addLocaleQueryParam( params ) {
 		return params;
 	}
 
-	let query = qs.parse( params.query );
+	const query = qs.parse( params.query );
 	return Object.assign( params, {
 		query: qs.stringify( Object.assign( query, { locale } ) )
 	} );
@@ -51,27 +51,19 @@ export function addLocaleQueryParam( params ) {
 
 /**
  * Modifies a WPCOM instance, returning an updated instance with included
- * localization helpers. Specifically, this adds a new `withLocale` method to
- * the base instance for indicating the request should be localized.
+ * localization helpers. Specifically, this adds a locale query parameter
+ * by default.
  *
  * @param  {Object} wpcom Original WPCOM instance
  * @return {Object}       Modified WPCOM instance with localization helpers
  */
 export function injectLocalization( wpcom ) {
-	const request = wpcom.request.bind( wpcom );
+	const originalRequest = wpcom.request.bind( wpcom );
 	return Object.assign( wpcom, {
-		withLocale: function() {
-			this.localize = true;
-			return this;
-		},
+		localized: true,
 
 		request: function( params, callback ) {
-			if ( this.localize ) {
-				this.localize = false;
-				return request( addLocaleQueryParam( params ), callback );
-			}
-
-			return request( params, callback );
+			return originalRequest( addLocaleQueryParam( params ), callback );
 		}
 	} );
 }

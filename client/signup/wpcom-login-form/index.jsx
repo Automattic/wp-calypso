@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:signup:wpcom-login' );
+import React from 'react';
+const debug = require( 'debug' )( 'calypso:signup:wpcom-login' );
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' );
+import config from 'config';
 
 module.exports = React.createClass( {
 	displayName: 'WpcomLoginForm',

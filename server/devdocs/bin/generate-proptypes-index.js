@@ -4,31 +4,97 @@
  * This file generates an index of proptypes by component displayname, slug and folder name
  */
 
+const startTime = process.hrtime();
+
 /**
  * External Dependencies
  */
-
+require( 'babel-register' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const reactDocgen = require( 'react-docgen' );
+const { getPropertyName, getMemberValuePath, resolveToValue } = require( 'react-docgen/dist/utils' );
+const util = require( 'client/devdocs/docs-example/util' );
 
 const root = path.dirname( path.join( __dirname, '..', '..' ) );
 const pathSwap = new RegExp(path.sep, 'g');
+const handlers = [ ...reactDocgen.defaultHandlers, commentHandler ];
 
 /**
- * Converts a camel cased string into a slug
- * @param {String} name The camel cased string to slugify
- * @return {String}
+ * Replaces **'s in comment blocks and trims comments
+ * @param {string} str The doc string to clean
  */
-const camelCaseToSlug = ( name ) => {
-	if ( ! name ) {
-		return name;
+function parseDocblock( str ) {
+	const lines = str.split( '\n' );
+	for ( let i = 0, l = lines.length; i < l; i++ ) {
+		lines[ i ] = lines[ i ].replace( /^\s*\*\s?/, '' );
+	}
+	return lines.join( '\n' ).trim();
+}
+
+/**
+ * Given a path, this function returns the closest preceding comment, if it exists
+ * @param {NodePath} path The node path from react-docgen
+ */
+function getComments( path ) {
+	let comments = [];
+
+	if ( path.node.leadingComments ) {
+		// if there are comments before this property node, use the ones leading, not following a previous node
+		comments = path.node.leadingComments.filter(
+			comment => comment.leading === true
+		);
+	} else if (path.node.comments) {
+		// if there are comments after this property node, use the ones following this node
+		comments = path.node.comments.filter(
+			comment => comment.leading === false
+		);
 	}
 
-	return name
-		.replace( /\.?([A-Z])/g, ( x, y ) => '-' + y.toLowerCase() )
-		.replace( /^-/, '' );
-};
+	if ( comments.length > 0 ) {
+		return parseDocblock( comments[ comments.length - 1 ].value );
+	}
+
+	return null;
+}
+
+/**
+ * Handler for react-docgen to use in order to discover
+ * @param {Documentation} documentation The object to mutate that will eventually be passed back to us from parse()
+ * @param {NodePath} path The node we are handling
+ */
+function commentHandler(documentation, path) {
+	// retrieve the proptypes for this node, if they exist
+	let propTypesPath = getMemberValuePath(path, 'propTypes');
+	if (!propTypesPath) {
+		return;
+	}
+
+	// resolve a path to a value, if possible, will be ObjectExpression type if it can
+	propTypesPath = resolveToValue( propTypesPath );
+	if ( !propTypesPath || propTypesPath.value.type !== 'ObjectExpression' ) {
+		return;
+	}
+
+	// Iterate over all the properties in the proptypes object
+	propTypesPath.get( 'properties' ).each( ( propertyPath ) => {
+		// ensure that this node is a property
+		if ( propertyPath.value.type !== 'Property' ) {
+			return;
+		}
+
+		// get the prop name and description, ensuring that it either doesn't exist or is empty before continuing
+		const propName = getPropertyName(propertyPath);
+		const propDescriptor = documentation.getPropDescriptor(propName);
+
+		if ( propDescriptor.description && propDescriptor.description !== '' ) {
+			return;
+		}
+
+		// if we don't have anything, see if there are inline comments for this property
+		propDescriptor.description = getComments( propertyPath ) || '';
+	} );
+}
 
 /**
  * Wraps fs.readFile in a Promise
@@ -69,10 +135,15 @@ const processFile = ( filePath ) => {
  */
 const parseDocument = ( docObj ) => {
 	try {
-		const parsed = reactDocgen.parse( docObj.document );
+		const parsed = reactDocgen.parse( docObj.document, undefined, handlers );
 		parsed.includePath = docObj.includePath;
 		if ( parsed.displayName ) {
-			parsed.slug = camelCaseToSlug( parsed.displayName );
+			parsed.slug = util.camelCaseToSlug( parsed.displayName );
+		}
+		else {
+			// we have to figure it out -- use the directory name to get the slug
+			parsed.slug = path.basename( docObj.includePath );
+			parsed.displayName = util.slugToCamelCase( parsed.slug );
 		}
 		return parsed;
 	} catch ( error ) {
@@ -107,6 +178,7 @@ const writeFile = ( contents ) => {
 };
 
 const main = ( () => {
+	console.log( 'Building: proptypes-index.json' );
 	const fileList = process
 		.argv
 		.splice( 2, process.argv.length )
@@ -125,4 +197,7 @@ const main = ( () => {
 			.map( parseDocument )
 	);
 	writeFile( documents );
+
+	const elapsed = process.hrtime( startTime )[ 1 ] / 1000000;
+	console.log( `Time: ${ process.hrtime( startTime )[0] }s ${ elapsed.toFixed( 3 ) }ms` );
 } )();

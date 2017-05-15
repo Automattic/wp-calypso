@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	config = require( 'config' ),
-	find = require( 'lodash/find' ),
-	includes = require( 'lodash/includes' );
+import React, { Component } from 'react';
+import config from 'config';
+import { find, get, includes } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -53,60 +53,64 @@ let PeopleNavTabs = React.createClass( {
 	}
 } );
 
-module.exports = React.createClass( {
+class PeopleSectionNav extends Component {
 
-	displayName: 'PeopleSectionNav',
+	canSearch() {
+		const { isJetpack, jetpackPeopleSupported, filter } = this.props;
+		if ( ! this.props.site ) {
+			return false;
+		}
 
-	canSearch: function() {
 		// Disable search for wpcom followers and viewers
-		if ( this.props.filter ) {
-			if ( 'followers' === this.props.filter || 'viewers' === this.props.filter ) {
+		if ( filter ) {
+			if ( 'followers' === filter || 'viewers' === filter ) {
 				return false;
 			}
 		}
 
-		if ( ! this.props.site.jetpack ) {
+		if ( ! isJetpack ) {
 			// wpcom sites will always support search
 			return true;
 		}
 
-		if ( 'team' === this.props.filter && ! this.props.site.versionCompare( '3.7.0-beta', '>=' ) ) {
+		if ( 'team' === filter && ! jetpackPeopleSupported ) {
 			// Jetpack sites can only search team on versions of 3.7.0-beta or later
 			return false;
 		}
 
 		return true;
-	},
+	}
 
-	getFilters: function() {
-		var siteFilter = this.props.site.slug,
-			filters = [
-				{
-					title: this.translate( 'Team', { context: 'Filter label for people list' } ),
-					path: '/people/team/' + siteFilter,
-					id: 'team'
-				},
-				{
-					title: this.translate( 'Followers', { context: 'Filter label for people list' } ),
-					path: '/people/followers/' + siteFilter,
-					id: 'followers'
-				},
-				{
-					title: this.translate( 'Email Followers', { context: 'Filter label for people list' } ),
-					path: '/people/email-followers/' + siteFilter,
-					id: 'email-followers'
-				},
-				{
-					title: this.translate( 'Viewers', { context: 'Filter label for people list' } ),
-					path: '/people/viewers/' + siteFilter,
-					id: 'viewers'
-				}
-			];
+	getFilters() {
+		const siteFilter = get( this.props.site, 'slug', '' );
+		const { translate } = this.props;
+		const filters = [
+			{
+				title: translate( 'Team', { context: 'Filter label for people list' } ),
+				path: '/people/team/' + siteFilter,
+				id: 'team'
+			},
+			{
+				title: translate( 'Followers', { context: 'Filter label for people list' } ),
+				path: '/people/followers/' + siteFilter,
+				id: 'followers'
+			},
+			{
+				title: translate( 'Email Followers', { context: 'Filter label for people list' } ),
+				path: '/people/email-followers/' + siteFilter,
+				id: 'email-followers'
+			},
+			{
+				title: translate( 'Viewers', { context: 'Filter label for people list' } ),
+				path: '/people/viewers/' + siteFilter,
+				id: 'viewers'
+			}
+		];
 
 		return filters;
-	},
+	}
 
-	getNavigableFilters: function() {
+	getNavigableFilters() {
 		var allowedFilterIds = [ 'team' ];
 		if ( config.isEnabled( 'manage/people/readers' ) ) {
 			allowedFilterIds.push( 'followers' );
@@ -118,23 +122,23 @@ module.exports = React.createClass( {
 		}
 
 		return this.getFilters().filter( filter => this.props.filter === filter.id || includes( allowedFilterIds, filter.id ) );
-	},
+	}
 
-	shouldDisplayViewers: function() {
-		if ( 'viewers' === this.props.filter || ( ! this.props.site.jetpack && this.props.site.is_private ) ) {
+	shouldDisplayViewers() {
+		if ( ! this.props.site ) {
+			return false;
+		}
+
+		if ( 'viewers' === this.props.filter || ( ! this.props.isJetpack && this.props.isPrivate ) ) {
 			return true;
 		}
 		return false;
-	},
+	}
 
-	render: function() {
+	render() {
 		var selectedText,
 			hasPinnedItems = false,
 			search = null;
-
-		if ( this.props.fetching ) {
-			return <SectionNav></SectionNav>
-		}
 
 		if ( this.canSearch() ) {
 			hasPinnedItems = true;
@@ -149,4 +153,6 @@ module.exports = React.createClass( {
 			</SectionNav>
 		);
 	}
-} );
+}
+
+export default localize( PeopleSectionNav );

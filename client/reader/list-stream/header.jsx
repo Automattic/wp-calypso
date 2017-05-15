@@ -13,13 +13,21 @@ import Card from 'components/card';
 import { isExternal } from 'lib/url';
 import FollowButton from 'blocks/follow-button/button';
 
-const ListStreamHeader = (
-	{ isPlaceholder, title, description, showEdit, editUrl, showFollow, following, onFollowToggle, translate }
-	) => {
+const ListStreamHeader = ( {
+	isPlaceholder,
+	title,
+	description,
+	showEdit,
+	editUrl,
+	showFollow,
+	following,
+	onFollowToggle,
+	translate,
+} ) => {
 	const classes = classnames( {
 		'list-stream__header': true,
 		'is-placeholder': isPlaceholder,
-		'has-description': !! description
+		'has-description': !! description,
 	} );
 
 	return (
@@ -36,15 +44,18 @@ const ListStreamHeader = (
 			{ showFollow &&
 				<div className="list-stream__header-follow">
 					<FollowButton iconSize={ 24 } following={ following } onFollowToggle={ onFollowToggle } />
-			</div> }
+				</div> }
 
-			{ showEdit && editUrl &&
-			<div className="list-stream__header-edit">
-				<a href={ editUrl } rel={ isExternal( editUrl ) ? 'external' : '' }>
-					<span className="list-stream__header-action-icon"><Gridicon icon="cog" size={ 24 } /></span>
-					<span className="list-stream__header-action-label">{ translate( 'Edit' ) }</span>
-				</a>
-			</div> }
+			{ showEdit &&
+				editUrl &&
+				<div className="list-stream__header-edit">
+					<a href={ editUrl } rel={ isExternal( editUrl ) ? 'external' : '' }>
+						<span className="list-stream__header-action-icon">
+							<Gridicon icon="cog" size={ 24 } />
+						</span>
+						<span className="list-stream__header-action-label">{ translate( 'Edit' ) }</span>
+					</a>
+				</div> }
 		</Card>
 	);
 };
@@ -57,7 +68,7 @@ ListStreamHeader.propTypes = {
 	editUrl: React.PropTypes.string,
 	showFollow: React.PropTypes.bool,
 	following: React.PropTypes.bool,
-	onFollowToggle: React.PropTypes.func
+	onFollowToggle: React.PropTypes.func,
 };
 
 export default localize( ListStreamHeader );

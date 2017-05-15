@@ -54,8 +54,8 @@ export default {
 	},
 
 	apps( context ) {
-		const AppsComponent = require( 'me/get-apps' ),
-			basePath = context.path;
+		const AppsComponent = require( 'me/get-apps' ).default;
+		const basePath = context.path;
 
 		context.store.dispatch( setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 

@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, toArray } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -63,7 +62,7 @@ export class EditorCategoriesTagsAccordion extends Component {
 					helpText={ translate( 'Use categories to group your posts by topic.' ) }
 					labelText={ translate( 'Categories' ) } />
 				{ isTermsSupported
-					? <TermSelector taxonomyName="category" />
+					? <TermSelector compact taxonomyName="category" />
 					: this.renderJetpackNotice()
 				}
 			</AccordionSection>
@@ -179,7 +178,6 @@ export class EditorCategoriesTagsAccordion extends Component {
 			<Accordion
 				title={ this.getTitle() }
 				subtitle={ this.getSubtitle() }
-				icon={ <Gridicon icon="tag" /> }
 				className={ classes }
 			>
 				{ this.renderCategories() }

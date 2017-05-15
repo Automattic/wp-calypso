@@ -12,9 +12,11 @@ import {
 	PREVIEW_IS_SHOWING,
 	SERIALIZE,
 	DESERIALIZE,
+	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import editor from './editor/reducer';
+import dropZone from './drop-zone/reducer';
 import guidedTour from './guided-tours/reducer';
 import queryArguments from './query-arguments/reducer';
 import reader from './reader/reducer';
@@ -24,6 +26,8 @@ import layoutFocus from './layout-focus/reducer';
 import preview from './preview/reducer';
 import happychat from './happychat/reducer';
 import mediaModal from './media-modal/reducer';
+import themeSetup from './theme-setup/reducers';
+import npsSurveyNotice from './nps-survey-notice/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -71,6 +75,19 @@ export const isPreviewShowing = createReducer( false, {
 		isShowing !== undefined ? isShowing : state,
 } );
 
+/**
+ * Tracks if the notifications panel is open
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const isNotificationsOpen = function( state = false, { type } ) {
+	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {
+		return ! state;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	section,
 	isLoading,
@@ -79,6 +96,7 @@ const reducer = combineReducers( {
 	isPreviewShowing,
 	queryArguments,
 	selectedSiteId,
+	dropZone,
 	guidedTour,
 	editor,
 	reader,
@@ -86,7 +104,10 @@ const reducer = combineReducers( {
 	preview,
 	actionLog,
 	happychat,
-	mediaModal
+	mediaModal,
+	themeSetup,
+	npsSurveyNotice,
+	isNotificationsOpen,
 } );
 
 export default function( state, action ) {

@@ -8,14 +8,16 @@ var React = require( 'react' ),
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	analytics = require( 'lib/analytics' ),
-	titlecase = require( 'to-title-case' ),
-	AdsUtils = require( 'lib/ads/utils' ),
-	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle,
-	utils = require( 'lib/site/utils' );
+import route from 'lib/route';
+import analytics from 'lib/analytics';
+import titlecase from 'to-title-case';
+import { canAccessWordads } from 'lib/ads/utils';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { userCan } from 'lib/site/utils';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import Ads from 'my-sites/ads/main';
 
 function _recordPageView( context, analyticsPageTitle ) {
 	var basePath = route.sectionify( context.path );
@@ -27,7 +29,9 @@ function _recordPageView( context, analyticsPageTitle ) {
 }
 
 function _getLayoutTitle( context ) {
-	var title = sites.getSelectedSite().jetpack ? 'Ads' : 'WordAds';
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const title = isJetpackSite( state, siteId ) ? 'Ads' : 'WordAds';
 	switch ( context.params.section ) {
 		case 'earnings':
 			return i18n.translate( '%(wordads)s Earnings', { args: { wordads: title } } );
@@ -44,19 +48,18 @@ module.exports = {
 	},
 
 	layout: function( context ) {
-		var Ads = require( 'my-sites/ads/main' ),
-			pathSuffix = sites.selected ? '/' + sites.selected : '',
-			layoutTitle = _getLayoutTitle( context ),
-			site = sites.getSelectedSite();
+		const site = getSelectedSite( context.store.getState() );
+		const pathSuffix = site ? '/' + site.slug : '';
+		const layoutTitle = _getLayoutTitle( context );
 
 		context.store.dispatch( setTitle( layoutTitle ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-		if ( ! utils.userCan( 'manage_options', site ) ) {
+		if ( ! userCan( 'manage_options', site ) ) {
 			page.redirect( '/stats' + pathSuffix );
 			return;
 		}
 
-		if ( ! AdsUtils.canAccessWordads( site ) ) {
+		if ( ! canAccessWordads( site ) ) {
 			page.redirect( '/stats' + pathSuffix );
 			return;
 		}
@@ -70,7 +73,6 @@ module.exports = {
 
 		renderWithReduxStore(
 			React.createElement( Ads, {
-				site: site,
 				section: context.params.section,
 				path: context.path,
 			} ),

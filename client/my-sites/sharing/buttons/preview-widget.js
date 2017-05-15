@@ -20,11 +20,11 @@ module.exports = {
 				// Custom buttons previews are specified by index using the
 				// name and a URL to the icon
 				index = numberOfCustomButtons++;
-				query['custom[' + index + '][name]'] = encodeURIComponent( button.name );
-				query['custom[' + index + '][icon]'] = encodeURIComponent( button.icon );
+				query[ 'custom[' + index + '][name]' ] = encodeURIComponent( button.name );
+				query[ 'custom[' + index + '][icon]' ] = encodeURIComponent( button.icon );
 			} else {
-				query['service[]'] = query['service[]'] || [];
-				query['service[]'].push( button.ID );
+				query[ 'service[]' ] = query[ 'service[]' ] || [];
+				query[ 'service[]' ].push( button.ID );
 			}
 		} );
 

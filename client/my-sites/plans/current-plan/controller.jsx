@@ -18,6 +18,12 @@ export default {
 
 		const selectedSite = getSelectedSite( state );
 
+		if ( ! selectedSite ) {
+			page.redirect( '/plans/' );
+
+			return null;
+		}
+
 		if ( isFreePlan( selectedSite.plan ) ) {
 			page.redirect( `/plans/${ selectedSite.slug }` );
 

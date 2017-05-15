@@ -29,11 +29,11 @@ const DeleteUser = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		isMultisite: React.PropTypes.bool.isRequired,
-		isJetpack: React.PropTypes.bool.isRequired,
-		siteId: React.PropTypes.number.isRequired,
-		user: React.PropTypes.object.isRequired,
-		currentUser: React.PropTypes.object.isRequired,
+		isMultisite: React.PropTypes.bool,
+		isJetpack: React.PropTypes.bool,
+		siteId: React.PropTypes.number,
+		user: React.PropTypes.object,
+		currentUser: React.PropTypes.object,
 	},
 
 	getInitialState: function() {

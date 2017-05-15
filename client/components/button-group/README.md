@@ -5,9 +5,9 @@ This component is used to group several semantically linked buttons under the sa
 
 #### How to use:
 
-```js
-const  ButtonGroup = require( 'components/button-group' ),
-	Button = require( 'components/button' );
+```jsx
+import ButtonGroup from 'components/button-group';
+import Button from 'components/button';
 
 render: function() {
 	return (

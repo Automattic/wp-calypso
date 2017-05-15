@@ -12,12 +12,20 @@ import {
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { Env } from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
  */
 import { serialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
+import MediaActions from 'lib/media/actions';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import MediaUtils from 'lib/media/utils';
+import MediaValidationStore from 'lib/media/validation-store';
+import PostActions from 'lib/posts/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
+import markup from 'post-editor/media-modal/markup';
+import { getSelectedSite } from 'state/ui/selectors';
 import {
 	fieldAdd,
 	fieldRemove,
@@ -29,17 +37,12 @@ import AddLinkDialog from './add-link-dialog';
 import Button from 'components/button';
 import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
 import EditorMediaModal from 'post-editor/editor-media-modal';
+import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 
 /**
- * Module constants
+ * Module constant
  */
 const TOOLBAR_HEIGHT = 39;
-const isIE11Detected = (
-	window &&
-	window.MSInputMethodContext &&
-	document &&
-	document.documentMode
-);
 
 export class EditorHtmlToolbar extends Component {
 
@@ -167,11 +170,25 @@ export class EditorHtmlToolbar extends Component {
 			previousSelectionEnd + insertedContentLength;
 	}
 
-	// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
-	// Using the previous version of replacing the entire content value instead.
-	updateEditorContent = isIE11Detected
-		? this.updateEditorContentIE11
-		: this.insertEditorContent;
+	updateEditorContent = ( before, newContent, after ) => {
+		// Browser is Firefox
+		if ( Env.gecko ) {
+			// In Firefox, execCommand( 'insertText' ), needed to preserve the undo stack,
+			// always moves the cursor to the end of the content.
+			// A workaround involving manually setting the cursor position and inserting the editor content
+			// is needed to put the cursor back to the correct position.
+			return this.updateEditorContentFirefox( before, newContent, after );
+		}
+
+		// Browser is Internet Explorer 11
+		if ( 11 === Env.ie ) {
+			// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
+			// Using the previous version of replacing the entire content value instead.
+			return this.updateEditorContentIE11( before, newContent, after );
+		}
+
+		return this.insertEditorContent( before, newContent, after );
+	}
 
 	insertEditorContent( before, newContent, after ) {
 		const { content, onToolbarChangeContent } = this.props;
@@ -180,13 +197,23 @@ export class EditorHtmlToolbar extends Component {
 		onToolbarChangeContent( before + newContent + after );
 	}
 
+	updateEditorContentFirefox( before, newContent, after ) {
+		const fullContent = before + newContent + after;
+		const { content, content: { selectionEnd, value }, onToolbarChangeContent } = this.props;
+		this.props.content.value = fullContent;
+		content.focus();
+		document.execCommand( 'insertText', false, newContent );
+		onToolbarChangeContent( fullContent );
+		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
+		this.props.content.focus();
+	}
+
 	updateEditorContentIE11( before, newContent, after ) {
 		const fullContent = before + newContent + after;
 		const { content: { selectionEnd, value }, onToolbarChangeContent } = this.props;
 		this.props.content.value = fullContent;
 		onToolbarChangeContent( fullContent );
 		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
-		this.props.content.focus();
 	}
 
 	attributesToString = ( attributes = {} ) => reduce(
@@ -394,10 +421,36 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { showMediaModal: false } );
 	}
 
+	onFilesDrop = () => {
+		const { site } = this.props;
+		// Find selected images. Non-images will still be uploaded, but not
+		// inserted directly into the post contents.
+		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
+		const isSingleImage = 1 === selectedItems.length && 'image' === MediaUtils.getMimePrefix( selectedItems[ 0 ] );
+
+		if ( isSingleImage && ! MediaValidationStore.hasErrors( site.ID ) ) {
+			// For single image upload, insert into post content, blocking save
+			// until the image has finished upload
+			if ( selectedItems[ 0 ].transient ) {
+				PostActions.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
+			}
+
+			this.onInsertMedia( markup.get( site, selectedItems[ 0 ] ) );
+			MediaActions.setLibrarySelectedItems( site.ID, [] );
+		} else {
+			// In all other cases, show the media modal list view
+			this.openMediaModal();
+		}
+	}
+
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
 
 	render() {
-		const { translate } = this.props;
+		const {
+			site,
+			translate,
+		} = this.props;
+
 		const classes = classNames( 'editor-html-toolbar', {
 			'is-pinned': this.state.isPinned,
 			'is-scrollable': this.state.isScrollable,
@@ -545,6 +598,11 @@ export class EditorHtmlToolbar extends Component {
 					onInsertMedia={ this.onInsertMedia }
 					visible={ this.state.showMediaModal }
 				/>
+
+				<MediaLibraryDropZone
+					onAddMedia={ this.onFilesDrop }
+					site={ site }
+				/>
 			</div>
 		);
 	}
@@ -552,6 +610,7 @@ export class EditorHtmlToolbar extends Component {
 
 const mapStateToProps = state => ( {
 	contactForm: get( state, 'ui.editor.contactForm', {} ),
+	site: getSelectedSite( state ),
 } );
 
 const mapDispatchToProps = {

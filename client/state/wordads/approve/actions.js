@@ -9,7 +9,6 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 } from 'state/action-types';
 import wpcom from 'lib/wp';
-import Sites from 'lib/sites-list';
 
 export const requestWordAdsApproval = siteId => dispatch => {
 	dispatch( {
@@ -19,15 +18,6 @@ export const requestWordAdsApproval = siteId => dispatch => {
 
 	return wpcom.undocumented().wordAdsApprove( siteId )
 	.then( result => {
-		if ( result.approved ) {
-			//We need to propagate this change to flux
-			const site = Sites().getSite( siteId );
-			if ( site && ! site.options.wordads ) {
-				site.options.wordads = true;
-				site.emit( 'change' );
-			}
-		}
-
 		dispatch( {
 			type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 			approved: result.approved,

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,36 +19,41 @@ import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import {
 	isDiscoverSitePick,
 	getSourceData as getDiscoverSourceData,
-	discoverBlogId
+	discoverBlogId,
 } from 'reader/discover/helper';
+import { shallowEquals } from 'reader/utils';
 
 class ReaderPostCardAdapter extends React.Component {
+	static displayName = 'ReaderPostCardAdapter';
 
-	onClick = ( postToOpen ) => {
+	onClick = postToOpen => {
 		let referredPost;
 		if ( get( this.props, 'discoverPick.post' ) ) {
-			referredPost = { ...postToOpen,
+			referredPost = {
+				...postToOpen,
 				referral: {
 					blogId: discoverBlogId,
-					postId: this.props.post.ID
-				}
+					postId: this.props.post.ID,
+				},
 			};
 		}
-		this.props.handleClick && this.props.handleClick( {
-			post: referredPost || postToOpen
-		} );
-	}
+		this.props.handleClick &&
+			this.props.handleClick( {
+				post: referredPost || postToOpen,
+			} );
+	};
 
 	onCommentClick = () => {
 		recordAction( 'click_comments' );
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_post_comments_button_clicked', this.props.post );
 
-		this.props.handleClick && this.props.handleClick( {
-			post: this.props.post,
-			comments: true
-		} );
-	}
+		this.props.handleClick &&
+			this.props.handleClick( {
+				post: this.props.post,
+				comments: true,
+			} );
+	};
 
 	// take what the stream hands to a card and adapt it
 	// for use by a ReaderPostCard
@@ -81,57 +86,60 @@ class ReaderPostCardAdapter extends React.Component {
 				showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 				followSource={ this.props.followSource }
 				showSiteName={ this.props.showSiteName }
-				isDiscoverStream={ this.props.isDiscoverStream }>
+				isDiscoverStream={ this.props.isDiscoverStream }
+				postKey={ this.props.postKey }
+			>
 				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
-				{ discoverPickSiteId && <QueryReaderSite siteId={ discoverPickSiteId } includeMeta={ false } /> }
+				{ discoverPickSiteId &&
+					<QueryReaderSite siteId={ discoverPickSiteId } includeMeta={ false } /> }
 			</ReaderPostCard>
 		);
 	}
 }
 
-const ConnectedReaderPostCardAdapter = connect(
-	( state, ownProps ) => {
-		const siteId = get( ownProps, 'post.site_ID' );
-		const isExternal = get( ownProps, 'post.is_external' );
-		const feedId = get( ownProps, 'post.feed_ID' );
+const ConnectedReaderPostCardAdapter = connect( ( state, ownProps ) => {
+	const siteId = get( ownProps, 'post.site_ID' );
+	const isExternal = get( ownProps, 'post.is_external' );
+	const feedId = get( ownProps, 'post.feed_ID' );
 
-		// set up the discover pick
-		let discoverPick = null;
-		if ( get( ownProps, 'post.is_discover' ) ) {
-			// copy discoverPick from feed store
-			const discoverPickPost = get( ownProps, 'discoverPick.post' );
+	// set up the discover pick
+	let discoverPick = null;
+	if ( get( ownProps, 'post.is_discover' ) ) {
+		// copy discoverPick from feed store
+		const discoverPickPost = get( ownProps, 'discoverPick.post' );
 
-			// limit discover pick site to discover stream
-			if ( ownProps.isDiscoverStream ) {
-				// add discoverPick site from state
-				const { blogId } = getDiscoverSourceData( ownProps.post );
-				const discoverPickSite = blogId ? getSite( state, blogId ) : null;
+		// limit discover pick site to discover stream
+		if ( ownProps.isDiscoverStream ) {
+			// add discoverPick site from state
+			const { blogId } = getDiscoverSourceData( ownProps.post );
+			const discoverPickSite = blogId ? getSite( state, blogId ) : null;
 
-				if ( discoverPickPost || discoverPickSite ) {
-					discoverPick = {
-						post: discoverPickPost,
-						site: discoverPickSite,
-					};
-				}
-			} else if ( discoverPickPost ) {
+			if ( discoverPickPost || discoverPickSite ) {
 				discoverPick = {
-					post: discoverPickPost
+					post: discoverPickPost,
+					site: discoverPickSite,
 				};
 			}
+		} else if ( discoverPickPost ) {
+			discoverPick = {
+				post: discoverPickPost,
+			};
 		}
-		return {
-			site: isExternal ? null : getSite( state, siteId ),
-			feed: getFeed( state, feedId ),
-			discoverPick,
-		};
 	}
-)( ReaderPostCardAdapter );
+	return {
+		site: isExternal ? null : getSite( state, siteId ),
+		feed: getFeed( state, feedId ),
+		discoverPick,
+	};
+} )( ReaderPostCardAdapter );
 
 /**
  * A container for the ReaderPostCardAdapter responsible for binding to Flux stores
  */
 export default class ReaderPostCardAdapterFluxContainer extends React.Component {
+	static displayName = 'ReaderPostCardAdapterFluxContainer';
+
 	constructor( props ) {
 		super( props );
 		this.state = this.getStateFromStores( props );
@@ -146,18 +154,18 @@ export default class ReaderPostCardAdapterFluxContainer extends React.Component 
 		let discoverPick = null;
 		if ( nonSiteDiscoverPick ) {
 			discoverPick = {
-				post: FeedPostStore.get( getDiscoverSourceData( post ) )
+				post: FeedPostStore.get( getDiscoverSourceData( post ) ),
 			};
 		}
 
 		return {
-			discoverPick
+			discoverPick,
 		};
 	}
 
 	updateState = ( newState = this.getStateFromStores() ) => {
 		this.smartSetState( newState );
-	}
+	};
 
 	componentWillMount() {
 		FeedPostStore.on( 'change', this.updateState );
@@ -171,9 +179,20 @@ export default class ReaderPostCardAdapterFluxContainer extends React.Component 
 		FeedPostStore.off( 'change', this.updateState );
 	}
 
+	shouldComponentUpdate( nextProps, nextState ) {
+		const currentPropsToCompare = omit( this.props, 'handleClick' );
+		const nextPropsToCompare = omit( nextProps, 'handleClick' );
+		const shouldUpdate =
+			( this.props !== nextProps &&
+				! shallowEquals( currentPropsToCompare, nextPropsToCompare ) ) ||
+			get( this.state, 'discoverPick.post' ) !== get( nextState, 'discoverPick.post' );
+
+		return shouldUpdate;
+	}
+
 	render() {
-		return ( <ConnectedReaderPostCardAdapter
-					{ ...this.props }
-					discoverPick={ this.state.discoverPick } /> );
+		return (
+			<ConnectedReaderPostCardAdapter { ...this.props } discoverPick={ this.state.discoverPick } />
+		);
 	}
 }

@@ -40,7 +40,7 @@ class ThemeMoreButton extends React.Component {
 	}
 
 	popoverAction( action, label ) {
-		action( this.props.theme );
+		action( this.props.theme.id );
 		this.props.onMoreButtonClick( this.props.theme, this.props.index, 'popup_' + label );
 	}
 
@@ -79,7 +79,7 @@ class ThemeMoreButton extends React.Component {
 							return ( <hr key={ key } className="popover__hr" /> );
 						}
 						if ( option.getUrl ) {
-							const url = option.getUrl( this.props.theme );
+							const url = option.getUrl( this.props.theme.id );
 							return (
 								<a className="theme__more-button-menu-item popover__menu-item"
 									onMouseOver={ this.focus }

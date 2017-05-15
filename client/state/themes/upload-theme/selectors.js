@@ -44,10 +44,17 @@ export function hasUploadFailed( state, siteId ) {
  *
  * @param {Object} state -- Global state tree
  * @param {Number} siteId -- Site ID
- * @return {?Object} -- Uploaded theme ID
+ * @return {?string} -- Uploaded theme ID
  */
 export function getUploadedThemeId( state, siteId ) {
-	return get( state.themes.uploadTheme.uploadedThemeId, siteId );
+	const themeId = get( state.themes.uploadTheme.uploadedThemeId, siteId );
+	// When wpcom themes are uploaded, we will not be able to retrieve details
+	// from the site, since we filter out all wpcom themes. Remove the suffix
+	// so we can use details from wpcom.
+	if ( themeId ) {
+		return themeId.replace( /-wpcom$/, '' );
+	}
+	return null;
 }
 
 /**

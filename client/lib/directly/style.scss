@@ -1,0 +1,17 @@
+// The Directly RTM widget opens in an iframe. These styles are to nudge the iframe
+// into place where we want it on the page, so they should be bundled into the primary
+// Calypso stylesheet. Any styles that affect the visuals of the widget itself are in
+// another CSS bundle at assets/stylesheets/directly.scss to be imported into the iframe.
+
+.directly-rtm:not(.is-minimized) {
+	padding: 0 !important;
+	max-height: none !important;
+	top: 47px;
+	height: auto !important;
+	box-shadow: -3px 1px 10px rgba(46,68,83,.1);
+	border-left: 1px solid #D9E3EA;
+}
+.directly-rtm.is-minimized {
+	height: calc(102px + 30px) !important;
+	width: calc(102px + 20px) !important;
+}

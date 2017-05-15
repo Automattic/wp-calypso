@@ -10,6 +10,8 @@ var PayButton = require( './pay-button' ),
 	PaymentBox = require( './payment-box' ),
 	TermsOfService = require( './terms-of-service' );
 
+import CartToggle from './cart-toggle';
+
 var FreeCartPaymentBox = React.createClass( {
 	propTypes: {
 		products: React.PropTypes.object.isRequired
@@ -35,6 +37,8 @@ var FreeCartPaymentBox = React.createClass( {
 				</div>
 
 				<TermsOfService />
+
+				<CartToggle />
 
 				<div className="payment-box-actions">
 					<PayButton

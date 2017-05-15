@@ -10,6 +10,7 @@ export default class Button extends PureComponent {
 		compact: PropTypes.bool,
 		primary: PropTypes.bool,
 		scary: PropTypes.bool,
+		busy: PropTypes.bool,
 		type: PropTypes.string,
 		href: PropTypes.string,
 		borderless: PropTypes.bool,
@@ -22,7 +23,7 @@ export default class Button extends PureComponent {
 	};
 
 	render() {
-		const omitProps = [ 'compact', 'primary', 'scary', 'borderless' ];
+		const omitProps = [ 'compact', 'primary', 'scary', 'busy', 'borderless' ];
 
 		let tag;
 		if ( this.props.href ) {
@@ -50,6 +51,7 @@ export default class Button extends PureComponent {
 				'is-compact': this.props.compact,
 				'is-primary': this.props.primary,
 				'is-scary': this.props.scary,
+				'is-busy': this.props.busy,
 				'is-borderless': this.props.borderless
 			} )
 		} );

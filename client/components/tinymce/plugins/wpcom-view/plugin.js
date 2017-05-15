@@ -15,13 +15,13 @@ var tinymce = require( 'tinymce/tinymce' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react'),
 	i18n = require( 'i18n-calypso' );
-import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var views = require( './views' ),
-	sites = require( 'lib/sites-list' )();
+import views from './views';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * WordPress View plugin.
@@ -80,25 +80,26 @@ function wpview( editor ) {
 			return;
 		}
 
+		const store = editor.getParam( 'redux_store' );
+		const siteId = getSelectedSiteId( store.getState() );
+
 		$( '.wpview-wrap' ).each( function( index, view ) {
-			var $view = $( view ),
-				type;
+			const $view = $( view );
 
 			if ( undefined !== $view.attr( 'data-wpview-rendered' ) ) {
 				return;
 			}
 
-			type = $view.attr( 'data-wpview-type' );
+			const type = $view.attr( 'data-wpview-type' );
 
-			ReactDom.render(
-				React.createElement( ReduxProvider, { store: editor.getParam( 'redux_store' ) },
-					React.createElement( views.components[ type ], {
-						content: getText( view ),
-						siteId: sites.getSelectedSite() ? sites.getSelectedSite().ID : null,
-						onResize: debounce( triggerNodeChanged, 500 )
-					} )
-				),
-				$view.find( '.wpview-body' )[0]
+			renderWithReduxStore(
+				React.createElement( views.components[ type ], {
+					content: getText( view ),
+					siteId,
+					onResize: debounce( triggerNodeChanged, 500 )
+				} ),
+				$view.find( '.wpview-body' )[ 0 ],
+				store
 			);
 
 			$view.attr( 'data-wpview-rendered', '' );
@@ -137,7 +138,7 @@ function wpview( editor ) {
 		var location = before ? 'before' : 'after',
 			offset = before ? 0 : 1;
 		deselect();
-		editor.selection.setCursorLocation( editor.dom.select( '.wpview-selection-' + location, view )[0], offset );
+		editor.selection.setCursorLocation( editor.dom.select( '.wpview-selection-' + location, view )[ 0 ], offset );
 		editor.nodeChanged();
 	}
 
@@ -169,7 +170,7 @@ function wpview( editor ) {
 	function removeView( view ) {
 		editor.undoManager.transact( function() {
 			handleEnter( view );
-			ReactDom.unmountComponentAtNode( $( view ).find( '.wpview-body' )[0] );
+			ReactDom.unmountComponentAtNode( $( view ).find( '.wpview-body' )[ 0 ] );
 			editor.dom.remove( view );
 			editor.focus();
 		} );
@@ -187,7 +188,9 @@ function wpview( editor ) {
 			// Make sure that the editor is focused.
 			// It is possible that the editor is not focused when the mouse event fires
 			// without focus, the selection will not work properly.
-			editor.getBody().focus();
+			if ( ! focus ) {
+				editor.getBody().focus();
+			}
 
 			deselect();
 			selected = viewNode;
@@ -198,7 +201,7 @@ function wpview( editor ) {
 				contenteditable: 'true'
 			}, getText( viewNode ) );
 
-			editor.dom.select( '.wpview-body', viewNode )[0].appendChild( clipboard );
+			editor.dom.select( '.wpview-body', viewNode )[ 0 ].appendChild( clipboard );
 
 			// Both of the following are necessary to prevent manipulating the selection/focus
 			dom.bind( clipboard, 'beforedeactivate focusin focusout', _stop );
@@ -224,7 +227,7 @@ function wpview( editor ) {
 			dom = editor.dom;
 
 		if ( selected ) {
-			clipboard = editor.dom.select( '.wpview-clipboard', selected )[0];
+			clipboard = editor.dom.select( '.wpview-clipboard', selected )[ 0 ];
 			dom.unbind( clipboard );
 			dom.remove( clipboard );
 
@@ -319,7 +322,13 @@ function wpview( editor ) {
 		if ( pastedStr ) {
 			pastedStr = tinymce.trim( pastedStr.replace( /<[^>]+>/g, '' ) );
 
-			if ( /^https?:\/\/\S+$/i.test( pastedStr ) ) {
+			const imageMatch = /(https?:\/\/[^<]*)(\.jpg|\.jpeg|\.gif|\.png)\??.*$/i.exec( pastedStr );
+			if ( imageMatch ) {
+				// If the link looks like an image, replace the pasted content with an <img> tag.
+				// As a side effect, this won't request an embed code to the REST API anymore.
+				event.content = `<img src="${ imageMatch[ 1 ] }${ imageMatch[ 2 ] }" style="max-width:100%;" />`;
+			} else if ( /^https?:\/\/\S+$/i.test( pastedStr ) ) {
+				// Otherwise replace the content with the cleaned URL.
 				event.content = pastedStr;
 			}
 		}
@@ -447,7 +456,7 @@ function wpview( editor ) {
 			} )
 			.observe( editor.getBody(), {
 				attributes: true,
-				attributeFilter: ['class']
+				attributeFilter: [ 'class' ]
 			} );
 		}
 	});
@@ -654,7 +663,7 @@ function wpview( editor ) {
 					}
 				}
 				event.preventDefault();
-			} else if ( cursorBefore && ( key === VK.UP || key ===  VK.LEFT ) ) {
+			} else if ( cursorBefore && ( key === VK.UP || key === VK.LEFT ) ) {
 				if ( view.previousSibling ) {
 					if ( getView( view.previousSibling ) ) {
 						setViewCursor( key === VK.UP, view.previousSibling );
@@ -684,7 +693,7 @@ function wpview( editor ) {
 			} else if ( cursorAfter ) {
 				handleEnter( view );
 			} else if ( cursorBefore ) {
-				handleEnter( view , true, key );
+				handleEnter( view, true, key );
 			}
 
 			if ( key === VK.ENTER ) {

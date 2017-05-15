@@ -4,7 +4,10 @@ PATH="$PATH:/usr/local/bin"
 
 printf "\nBy contributing to this project, you license the materials you contribute under the GNU General Public License v2 (or later). All materials must have GPLv2 compatible licenses — see .github/CONTRIBUTING.md for details.\n\n"
 
-files=$(git diff --cached --name-only --diff-filter=ACM | grep ".jsx*$")
+# Make quick pass over config files on every change
+make config-defaults-lint || exit 1
+
+files=$(git diff --cached --name-only client/ server/ test/ | grep ".jsx*$")
 if [ "$files" = "" ]; then
     exit 0
 fi
@@ -13,21 +16,13 @@ pass=true
 
 printf "\nValidating .jsx and .js:\n"
 
-for file in ${files}; do
-    ./node_modules/.bin/eslint --cache ${file}
-    if [ $? -ne 0 ]; then
-        printf "\033[31meslint Failed: %s\033[0m\n" "${file}"
-        pass=false
-    else
-        printf "\033[32meslint Passed: %s\033[0m\n" "${file}"
-    fi
-done
-
-printf "\neslint validation complete\n"
-
-if ! $pass; then
-    printf "\n\033[41mCOMMIT FAILED:\033[0m Your commit contains files that should pass validation tests but do not. Please fix the errors and try again.\n\n"
-    exit 1
-else
-    printf "\n\033[42mCOMMIT SUCCEEDED\033[0m\n\n"
+./bin/run-lint $files -- --diff=index
+linter_exit_code=$?
+if [ ! 0 = "$linter_exit_code" ]
+then
+	printf "\n"
+	printf "\033[41mCOMMIT ABORTED:\033[0m the linter reported some problems. If you are aware of them and it is OK, repeat the commit command with --no-verify to avoid this check. You may also want to execute the linter after the errors have been solved: ./bin/run-lint \$(git diff --cached --name-only client/ server/ test/) -- --diff=index"
+	printf "\n"
 fi
+
+exit $linter_exit_code

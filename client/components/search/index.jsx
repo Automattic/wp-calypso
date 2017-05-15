@@ -41,6 +41,7 @@ const Search = React.createClass( {
 	propTypes: {
 		additionalClasses: PropTypes.string,
 		initialValue: PropTypes.string,
+		value: PropTypes.string,
 		placeholder: PropTypes.string,
 		pinned: PropTypes.bool,
 		delaySearch: PropTypes.bool,
@@ -62,7 +63,9 @@ const Search = React.createClass( {
 		dir: PropTypes.oneOf( [ 'ltr', 'rtl' ] ),
 		fitsContainer: PropTypes.bool,
 		maxLength: PropTypes.number,
-		hideClose: PropTypes.bool
+		hideClose: PropTypes.bool,
+		compact: PropTypes.bool,
+		hideOpenIcon: PropTypes.bool,
 	},
 
 	getInitialState: function() {
@@ -93,7 +96,9 @@ const Search = React.createClass( {
 			isOpen: false,
 			dir: undefined,
 			fitsContainer: false,
-			hideClose: false
+			hideClose: false,
+			compact: false,
+			hideOpenIcon: false,
 		};
 	},
 
@@ -120,8 +125,12 @@ const Search = React.createClass( {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 
-		if ( nextProps.initialValue !== this.props.initialValue ) {
-			this.setState( { keyword: nextProps.initialValue || '' } );
+		if (
+			( this.props.value !== nextProps.value ) &&
+			( nextProps.value || nextProps.value === '' ) &&
+			( nextProps.value !== this.state.keyword )
+		) {
+			this.setState( { keyword: nextProps.value } );
 		}
 	},
 
@@ -319,7 +328,9 @@ const Search = React.createClass( {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
+			'is-compact': this.props.compact,
 			'has-focus': this.state.hasFocus,
+			'has-open-icon': ! this.props.hideOpenIcon,
 			search: true
 		} );
 
@@ -340,7 +351,7 @@ const Search = React.createClass( {
 					}
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
-					<Gridicon icon="search" className="search__open-icon" />
+					{ ! this.props.hideOpenIcon && <Gridicon icon="search" className="search__open-icon" /> }
 				</div>
 				<div className={ fadeDivClass }>
 					<input
@@ -351,7 +362,7 @@ const Search = React.createClass( {
 						role="search"
 						value={ searchValue }
 						ref="searchInput"
-						onChange={ this.onChange }
+						onInput={ this.onChange /* onChange has bug IE11 React15 https://github.com/facebook/react/issues/7027 */ }
 						onKeyUp={ this.keyUp }
 						onKeyDown={ this.keyDown }
 						onMouseUp={ this.props.onClick }

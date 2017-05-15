@@ -67,7 +67,7 @@ const PrimaryDomain = React.createClass( {
 				errorMessage: null
 			} );
 
-			upgradesActions.setPrimaryDomain(
+			this.props.setPrimaryDomain(
 				this.props.selectedSite.ID,
 				this.props.selectedDomainName,
 				( error, data ) => {
@@ -186,4 +186,8 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps )( PrimaryDomain );
+const mapDispatchToProps = {
+	setPrimaryDomain: upgradesActions.setPrimaryDomain
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( PrimaryDomain );

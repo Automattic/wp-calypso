@@ -98,4 +98,6 @@ class Tooltip extends PureComponent {
 	}
 }
 
+Tooltip.displayName = 'Tooltip';
+
 export default Tooltip;

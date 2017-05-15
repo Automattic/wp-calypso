@@ -11,7 +11,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class='is-desktop' + ( isFluidWidth ?
 		link(rel='shortcut icon', type='image/x-icon', href=faviconURL, sizes='16x16')
 		link(rel='icon', type='image/x-icon', href=faviconURL, sizes='16x16')
 		link(rel='profile', href='http://gmpg.org/xfn/11')
-		link(rel='stylesheet', href='https://s1.wp.com/i/fonts/merriweather/merriweather.css?v=20160210')
+		link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese')
 		link(rel='stylesheet', href='https://s1.wp.com/i/noticons/noticons.css?v=20150727')
 		link(rel='stylesheet', href='https://s1.wp.com/wp-includes/css/dashicons.css?v=20150727')
 		if isRTL
@@ -22,21 +22,27 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class='is-desktop' + ( isFluidWidth ?
 			else
 				link(rel='stylesheet', href=urls['style.css'])
 
+		if config
+			script(type='text/javascript')!= config
 		link(rel='stylesheet', href='/desktop/wordpress-desktop.css')
 		script(src='/calypso/build.js')
 		script(src='/desktop/desktop-app.js')
 
 	body(class=isRTL ? 'rtl' : '')
 		#wpcom.wpcom-site
-			.wpcom-site__logo.noticon.noticon-wordpress
+			.layout
+				.masterbar
+				.layout__content
+					.wpcom-site__logo.noticon.noticon-wordpress
+					if hasSecondary
+						.layout__secondary
+						ul.sidebar
 		if badge
 			div.environment-badge
 				a(class='bug-report', href=feedbackURL, title='Report an issue', target='_blank')
 				span(class=['environment', 'is-' + badge])=badge
-
 		if app
 			script(type='text/javascript')!='var app = ' + sanitize.jsonStringifyForHtml( app )
-
 		if i18nLocaleScript
 			script(src=i18nLocaleScript)
 

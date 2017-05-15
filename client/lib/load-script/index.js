@@ -46,7 +46,7 @@ var loadScript = function( url, callback ) {
 	callbacksForURLsInProgress[ url ] = [ callback ];
 	script.onload = script.onreadystatechange = script.onerror = handleCompletedRequest;
 
-	document.getElementsByTagName( 'head' )[0].appendChild( script );
+	document.getElementsByTagName( 'head' )[ 0 ].appendChild( script );
 };
 
 var loadjQueryDependentScript = function( scriptURL, callback ) {

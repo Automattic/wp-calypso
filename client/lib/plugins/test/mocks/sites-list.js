@@ -5,9 +5,7 @@
 module.exports = function() {
 	return {
 		getSite: function() {
-			return {
-				fetchAvailableUpdates: function() {}
-			};
+			return {};
 		},
 		onUpdatedPlugin: function() {
 			return;

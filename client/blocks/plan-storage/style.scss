@@ -1,26 +1,30 @@
+.plan-storage {
+	display: flex;
+}
 
 .plan-storage__bar {
+	align-self: center; // flex-item behavior (parent element: .plans-storage)
+	display: flex; // flex-container bahavior
+	flex-flow: row wrap;
+	justify-content: space-between;
 	line-height: 12px;
-	display: inline-block;
 	width: 100%;
 }
 
 .plan-storage__storage-label,
 .plan-storage__storage-link {
 	font-size: 11px;
-	display: inline-block;
-	height: 24px;
-	line-height: 24px;
+	line-height: 1;
+	margin-top: 6px;
 }
 
 .plan-storage__storage-label {
 	color: $gray-dark;
 	font-weight: 500;
-	margin-right: 10px;
 }
 
 .plan-storage__storage-link {
-	float: right;
+	margin-left: 12px;
 	text-decoration: none;
 }
 

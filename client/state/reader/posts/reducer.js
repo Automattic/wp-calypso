@@ -7,11 +7,7 @@ import keyBy from 'lodash/keyBy';
 /**
  * Internal dependencies
  */
-import {
-	READER_POSTS_RECEIVE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
+import { READER_POSTS_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { itemsSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
 
@@ -39,5 +35,5 @@ export function items( state = {}, action ) {
 }
 
 export default combineReducers( {
-	items
+	items,
 } );

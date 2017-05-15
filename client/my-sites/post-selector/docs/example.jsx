@@ -1,68 +1,66 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import PostSelector from '../';
-import observe from 'lib/mixins/data-observe';
-import sites from 'lib/sites-list';
 import FormLabel from 'components/forms/form-label';
+import { getPrimarySiteId } from 'state/selectors';
 
-const PostSelectorExample = React.createClass( {
-	mixins: [ observe( 'sites' ), PureRenderMixin ],
+class PostSelectorExample extends Component {
+	state = {
+		showTypeLabels: true,
+		selectedPostId: null,
+	};
 
-	getInitialState() {
-		return {
-			showTypeLabels: true,
-			selectedPostId: null,
-		};
-	},
+	toggleTypeLabels = () => {
+		this.setState( {
+			showTypeLabels: ! this.state.showTypeLabels
+		} );
+	};
 
-	setSelected( post ) {
+	setSelected = ( post ) => {
 		this.setState( {
 			selectedPostId: post.ID,
 		} );
-	},
+	};
 
 	render() {
-		const primary = this.props.sites.getPrimary();
+		const { primarySiteId } = this.props;
 
 		return (
-			<div>
-				<div style={ { width: 300 } }>
-					<FormLabel>
-						<input
-							type="checkbox"
-							checked={ this.state.showTypeLabels }
-							onChange={ () => this.setState( { showTypeLabels: ! this.state.showTypeLabels } ) } />
-						<span>Show Type Labels</span>
-					</FormLabel>
-					{ this.props.sites.initialized && (
-						<PostSelector
-							siteId={ primary ? primary.ID : 3584907 }
-							type="any"
-							orderBy="date"
-							order="DESC"
-							showTypeLabels={ this.state.showTypeLabels }
-							selected={ this.state.selectedPostId }
-							onChange={ this.setSelected } />
-					) }
-				</div>
+			<div style={ { width: 300 } }>
+				<FormLabel>
+					<input
+						type="checkbox"
+						checked={ this.state.showTypeLabels }
+						onChange={ this.toggleTypeLabels } />
+					<span>Show Type Labels</span>
+				</FormLabel>
+				<PostSelector
+					siteId={ primarySiteId ? primarySiteId : 3584907 }
+					type="any"
+					orderBy="date"
+					order="DESC"
+					showTypeLabels={ this.state.showTypeLabels }
+					selected={ this.state.selectedPostId }
+					onChange={ this.setSelected }
+				/>
 			</div>
 		);
 	}
-} );
+}
 
-export default React.createClass( {
-	displayName: 'PostSelector',
+const ConnectedPostSelectorExample = connect(
+	( state ) => ( {
+		primarySiteId: getPrimarySiteId( state ),
+	} )
+)( PostSelectorExample );
 
-	mixins: [ PureRenderMixin ],
+ConnectedPostSelectorExample.displayName = 'PostSelector';
 
-	render() {
-		return <PostSelectorExample sites={ sites() } />;
-	}
-} );
+export default ConnectedPostSelectorExample;

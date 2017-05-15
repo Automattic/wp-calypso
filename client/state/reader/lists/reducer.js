@@ -49,14 +49,14 @@ export function items( state = {}, action ) {
 		case READER_LIST_UPDATE_SUCCESS:
 			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
 		case READER_LIST_UPDATE_TITLE:
-			let listForTitleChange = Object.assign( {}, state[ action.listId ] );
+			const listForTitleChange = Object.assign( {}, state[ action.listId ] );
 			if ( ! listForTitleChange ) {
 				return state;
 			}
 			listForTitleChange.title = action.title;
 			return Object.assign( {}, state, keyBy( [ listForTitleChange ], 'ID' ) );
 		case READER_LIST_UPDATE_DESCRIPTION:
-			let listForDescriptionChange = Object.assign( {}, state[ action.listId ] );
+			const listForDescriptionChange = Object.assign( {}, state[ action.listId ] );
 			if ( ! listForDescriptionChange ) {
 				return state;
 			}
@@ -83,10 +83,10 @@ export function items( state = {}, action ) {
 export function subscribedLists( state = [], action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
-			return union( state, map( action.lists, 'ID' ) );
+			return map( action.lists, 'ID' );
 		case READER_LISTS_UNFOLLOW_SUCCESS:
 			// Remove the unfollowed list ID from subscribedLists
-			return filter( state, ( listId ) => {
+			return filter( state, listId => {
 				return listId !== action.data.list.ID;
 			} );
 		case SERIALIZE:
@@ -117,7 +117,7 @@ export function updatedLists( state = [], action ) {
 			return union( state, [ newListId ] );
 		case READER_LIST_DISMISS_NOTICE:
 			// Remove the dismissed list ID
-			return filter( state, ( listId ) => {
+			return filter( state, listId => {
 				return listId !== action.listId;
 			} );
 		case SERIALIZE:
@@ -215,12 +215,12 @@ export function missingLists( state = [], action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
 			// Remove any valid lists from missingLists
-			return filter( state, ( list ) => {
+			return filter( state, list => {
 				return ! find( action.lists, { owner: list.owner, slug: list.slug } );
 			} );
 		case READER_LIST_REQUEST_SUCCESS:
 			// Remove any valid lists from missingLists
-			return filter( state, ( list ) => {
+			return filter( state, list => {
 				return action.data.list.owner !== list.owner && action.data.list.slug !== list.slug;
 			} );
 		case READER_LIST_REQUEST_FAILURE:
@@ -244,5 +244,5 @@ export default combineReducers( {
 	isRequestingList,
 	isRequestingLists,
 	errors,
-	missingLists
+	missingLists,
 } );

@@ -10,7 +10,7 @@ var CurrentSite = require( 'my-sites/current-site' );
 
 render: function() {
 	return (
-		<CurrentSite sites={ sitesListObject } siteCount={ user.visible_site_count } />
+		<CurrentSite sites={ sitesListObject } />
 	);
 }
 ```
@@ -18,4 +18,3 @@ render: function() {
 #### Props
 
 * `sites (object)` - (required) An instance of `sites-list`.
-* `siteCount (number)` - (required) The number of sites the user has.

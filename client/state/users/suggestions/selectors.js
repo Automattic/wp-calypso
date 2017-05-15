@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Returns true if requesting user suggestions for the specified site ID, or
  * false otherwise.
  *
@@ -7,7 +12,7 @@
  * @return {Boolean}         Whether user suggestions are being requested
  */
 export function isRequestingUserSuggestions( state, siteId ) {
-	return !! state.users.suggestions.requesting[ siteId ];
+	return get( state.users.suggestions.requesting, [ siteId ], false );
 }
 
 /**
@@ -15,8 +20,8 @@ export function isRequestingUserSuggestions( state, siteId ) {
  *
  * @param  {Object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
- * @return {?Object}         Site user suggestions
+ * @return {Array}           Site user suggestions
  */
 export function getUserSuggestions( state, siteId ) {
-	return state.users.suggestions.items[ siteId ] || null;
+	return get( state.users.suggestions.items, [ siteId ], [] );
 }

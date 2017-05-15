@@ -8,130 +8,80 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	signupStore: {
-		datestamp: '20160927',
+	signupPlansCallToAction: {
+		datestamp: '20170403',
 		variations: {
-			designTypeWithoutStore: 0,
-			designTypeWithStore: 100,
+			original: 0,
+			modified: 100, // Setting to 100% until strings are translated
 		},
-		defaultVariation: 'designTypeWithStore',
-		allowExistingUsers: false,
+		defaultVariation: 'original',
 	},
-	signupStoreBenchmarking: {
-		datestamp: '20160927',
+	signupSurveyStep: {
+		datestamp: '20170329',
 		variations: {
-			pressable: 97,
-			bluehost: 1,
-			bluehostWithWoo: 1,
-			siteground: 1
+			showSurveyStep: 20,
+			hideSurveyStep: 80,
 		},
-		defaultVariation: 'pressable',
-		allowExistingUsers: false,
+		defaultVariation: 'hideSurveyStep',
 	},
-	signupThemeUpload: {
-		datestamp: '20160928',
+	signupPlansReorderTest: {
+		datestamp: '20170410',
 		variations: {
-			showThemeUpload: 10,
-			hideThemeUpload: 90,
+			original: 50,
+			modified: 50,
 		},
-		defaultVariation: 'hideThemeUpload',
-		allowExistingUsers: false,
+		defaultVariation: 'original',
 	},
-	domainSuggestionPopover: {
-		datestamp: '20160809',
+	conciergeOfferOnCancel: {
+		datestamp: '20170410',
 		variations: {
-			showPopover: 80,
-			hidePopover: 20,
+			showConciergeOffer: 50,
+			hideConciergeOffer: 50,
 		},
-		defaultVariation: 'showPopover',
-		allowExistingUsers: false,
+		defaultVariation: 'showConciergeOffer',
 	},
-	designShowcaseWelcomeTour: {
-		datestamp: '20161206',
+	presaleChatButton: {
+		datestamp: '20170328',
 		variations: {
-			enabled: 0,
-			disabled: 100,
+			showChatButton: 20,
+			original: 80
 		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
+		defaultVariation: 'original',
+		allowAnyLocale: true,
 	},
-	themeSheetWelcomeTour: {
-		datestamp: '20161206',
+	newSiteWithJetpack: {
+		datestamp: '20170419',
 		variations: {
-			enabled: 0,
-			disabled: 100,
+			showNewJetpackSite: 10,
+			onlyDotComSites: 90,
 		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
+		defaultVariation: 'onlyDotComSites',
 	},
-	siteTitleStep: {
-		datestamp: '20170102',
-		variations: {
-			showSiteTitleStep: 5,
-			hideSiteTitleStep: 95,
-		},
-		defaultVariation: 'hideSiteTitleStep',
-		allowExistingUsers: false
-	},
-
-	jetpackConnectPlansFirst: {
-		datestamp: '20161024',
-		variations: {
-			showPlansBeforeAuth: 50,
-			showPlansAfterAuth: 50
-		},
-		defaultVariation: 'showPlansAfterAuth',
-		allowExistingUsers: true
-	},
-
-	siteTitleTour: {
-		datestamp: '20161207',
-		variations: {
-			disabled: 100,
-			enabled: 0,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-
-	userFirstSignup: {
-		datestamp: '20160124',
-		variations: {
-			userLast: 100,
-			userFirst: 0,
-		},
-		defaultVariation: 'userLast',
-		allowExistingUsers: false,
-	},
-
-	premiumSquaredPlansWording: {
-		datestamp: '20170111',
-		variations: {
-			withoutMarketingCopy: 50,
-			withMarketingCopy: 50
-		},
-		defaultVariation: 'withoutMarketingCopy',
-		allowExistingUsers: true
-	},
-
-	readerSearchOnFollowing: {
-		datestamp: '20170206',
+	chatOfferOnCancel: {
+		datestamp: '20170421',
 		variations: {
 			show: 50,
-			hide: 50
+			hide: 50,
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'show',
 		allowExistingUsers: true,
-		allowAnyLocale: true
 	},
-
-	freeToPaidUpsell: {
-		datestamp: '20170222',
+	domainToPaidPlanUpsellNudge: {
+		datestamp: '20170429',
 		variations: {
-			sidebar: 50,
-			disabled: 50
+			skip: 50,
+			show: 50,
 		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true
-	}
+		defaultVariation: 'skip',
+	},
+	jetpackPlansHeadlines: {
+		datestamp: '20170508',
+		variations: {
+			headlineA: 25,
+			headlineB: 25,
+			headlineC: 25,
+			headlineD: 25
+		},
+		defaultVariation: 'headlineA',
+	},
 };

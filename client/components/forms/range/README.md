@@ -11,8 +11,8 @@ Refer to the following code snippet for a typical usage example:
 
 ```jsx
 <Range
-	minContent={ <span className="noticon noticon-minus" /> }
-	maxContent={ <span className="noticon noticon-plus" /> }
+	minContent={ <Gridicon icon="minus-small" /> }
+	maxContent={ <Gridicon icon="plus-small" /> }
 	max="100"
 	value={ this.state.rangeValue }
 	onChange={ this.onChange }

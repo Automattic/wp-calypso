@@ -5,3 +5,34 @@
 		padding: 0;
 	}
 }
+
+.media__item-dialog .dialog__action-buttons {
+	display: flex;
+	justify-content: space-between;
+}
+
+.media__modal-delete-item-button {
+	border: 0;
+
+	.dialog__button-label {
+		color: $alert-red;
+	}
+
+	&:hover {
+		color: lighten( $alert-red, 10% );
+	}
+
+	&:disabled {
+		cursor: default;
+		cursor: not-allowed;
+		color: lighten( $alert-red, 25% );
+	}
+}
+
+.media__main-section .media-library__header.media-library__upload-url {
+	padding: 6px 12px;
+	background-color: $white;
+	box-sizing: border-box;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+}

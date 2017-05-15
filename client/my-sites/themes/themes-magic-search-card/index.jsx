@@ -2,8 +2,11 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import debounce from 'lodash/debounce';
+import wrapWithClickOutside from 'react-click-outside';
+import { connect } from 'react-redux';
+import { debounce, intersection, difference } from 'lodash';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,11 +14,18 @@ import classNames from 'classnames';
 import Search from 'components/search';
 import SegmentedControl from 'components/segmented-control';
 import Suggestions from 'components/suggestions';
+import StickyPanel from 'components/sticky-panel';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
-import { filterIsValid, getTaxonomies, } from '../theme-filters.js';
+import { filterIsValid } from '../theme-filters.js';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getThemeFilters } from 'state/selectors';
+
+//We want those taxonomies if they are used to be presented in this order
+const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', 'style' ];
 
 class ThemesMagicSearchCard extends React.Component {
 	constructor( props ) {
@@ -54,12 +64,35 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	onKeyDown = ( event ) => {
-		this.findTextForSuggestions( event.target.value );
-		this.refs.suggestions.handleKeyEvent( event );
+		const txt = event.target.value;
+		this.findTextForSuggestions( txt );
+
+		let inputUpdated = false;
+		//We need this logic because we are working togheter with different modules.
+		//that provide suggestions to the input depending on what is currently in input
+		const target = this.state.editedSearchElement !== '' ? 'suggestions' : 'welcome';
+		if ( this.refs[ target ] ) {
+			// handleKeyEvent functions return bool that infroms if suggestion was picked
+			// We need that because we cannot rely on input state because it is updated
+			// asynchronously and we are not able to observe what was changed during handleKeyEvent
+			inputUpdated = this.refs[ target ].handleKeyEvent( event );
+		}
+
+		if ( event.key === 'Enter' && ! inputUpdated && this.isPreviousCharWhitespace() ) {
+			this.refs[ 'url-search' ].blur();
+			this.setState( { searchIsOpen: false } );
+		}
 	}
 
 	onClick = ( event ) => {
 		this.findTextForSuggestions( event.target.value );
+	}
+
+	// Check if char before cursor in input is a space.
+	isPreviousCharWhitespace = () => {
+		const { value, selectionStart } = this.refs[ 'url-search' ].refs.searchInput;
+		const cursorPosition = value.slice( 0, selectionStart ).length;
+		return value[ cursorPosition - 1 ] === ' ';
 	}
 
 	findEditedTokenIndex = ( tokens, cursorPosition ) => {
@@ -116,7 +149,9 @@ class ThemesMagicSearchCard extends React.Component {
 		// Get rid of empty match at end
 		tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
 		const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
-		tokens[ tokenIndex ] = suggestion;
+		// Check if we want to add additional sapce after suggestion so next suggestions card can be opened immediately
+		const hasNextTokenFirstSpace = tokens[ tokenIndex + 1 ] && tokens[ tokenIndex + 1 ][ 0 ] === ' ';
+		tokens[ tokenIndex ] = hasNextTokenFirstSpace ? suggestion : suggestion + ' ';
 		return tokens.join( '' );
 	}
 
@@ -131,12 +166,12 @@ class ThemesMagicSearchCard extends React.Component {
 		this.setState( { searchInput: input } );
 	}
 
-	onBlur = ( event ) => {
-		event.preventDefault();
-		this.setState( { searchIsOpen: false } );
-	}
-
 	searchTokens = ( input ) => {
+		//We are not able to scroll overlay on Edge so just create empty div
+		if ( global.window && /(Edge)/.test( global.window.navigator.userAgent ) ) {
+			return <div />;
+		}
+
 		const tokens = input.split( /(\s+)/ );
 
 		return (
@@ -146,8 +181,12 @@ class ThemesMagicSearchCard extends React.Component {
 				} else if ( filterIsValid( token ) ) {
 					const separator = ':';
 					const [ taxonomy, filter ] = token.split( separator );
+					const themesTokenTypeClass = classNames(
+						'themes-magic-search-card__token',
+						'themes-magic-search-card__token-type-' + taxonomy
+					);
 					return (
-						<span className="themes-magic-search-card__token" key={ i }>
+						<span className={ themesTokenTypeClass } key={ i }>
 							<span className="themes-magic-search-card__token-taxonomy">{ taxonomy }</span>
 							<span className="themes-magic-search-card__token-separator">{ separator }</span>
 							<span className="themes-magic-search-card__token-filter">{ filter }</span>
@@ -174,10 +213,26 @@ class ThemesMagicSearchCard extends React.Component {
 		this.updateInput( updatedInput );
 	}
 
+	focusOnInput = () => {
+		this.refs[ 'url-search' ].focus();
+	}
+
+	clearSearch = () => {
+		this.updateInput( '' );
+		this.focusOnInput();
+	}
+
+	handleClickOutside() {
+		this.setState( { searchIsOpen: false } );
+	}
+
+	handleClickInside = () => {
+		this.focusOnInput();
+	}
+
 	render() {
-		const isJetpack = this.props.site && this.props.site.jetpack;
+		const { isJetpack, translate, filters } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
-		const { translate } = this.props;
 
 		const tiers = [
 			{ value: 'all', label: translate( 'All' ) },
@@ -185,18 +240,16 @@ class ThemesMagicSearchCard extends React.Component {
 			{ value: 'premium', label: translate( 'Premium' ) },
 		];
 
-		const taxonomies = getTaxonomies();
-		const taxonomiesKeys = Object.keys( taxonomies );
-		const welcomeSignProps = {
-			taxonomies: taxonomiesKeys,
-			topSearches: [],
-			suggestionsCallback: this.insertTextInInput
-		};
+		const filtersKeys = [
+			...intersection( preferredOrderOfTaxonomies, Object.keys( filters ) ),
+			...difference( Object.keys( filters ), preferredOrderOfTaxonomies )
+		];
 
 		const searchField = (
 			<Search
 				onSearch={ this.props.onSearch }
 				initialValue={ this.state.searchInput }
+				value={ this.state.searchInput }
 				ref="url-search"
 				placeholder={ translate( 'What kind of theme are you looking for?' ) }
 				analyticsGroup="Themes"
@@ -207,9 +260,8 @@ class ThemesMagicSearchCard extends React.Component {
 				onKeyDown={ this.onKeyDown }
 				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
-				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
-				hideClose={ isMobile() }
+				hideClose={ true }
 			/>
 		);
 
@@ -221,27 +273,56 @@ class ThemesMagicSearchCard extends React.Component {
 			'has-highlight': this.state.searchIsOpen
 		} );
 
-		const welcome = ( <MagicSearchWelcome { ...welcomeSignProps } /> );
+		// Check if we want to render suggestions or welcome banner
+		const renderSuggestions = this.state.editedSearchElement !== '';
 
 		return (
 			<div className={ magicSearchClass }>
-				<div className={ themesSearchCardClass } data-tip-target="themes-search-card">
-					{ searchField }
-					{ isPremiumThemesEnabled && ! isJetpack &&
-						<SegmentedControl
-							initialSelected={ this.props.tier }
-							options={ tiers }
-							onSelect={ this.props.select }
+				<StickyPanel>
+					<div
+						className={ themesSearchCardClass }
+						data-tip-target="themes-search-card"
+						onClick={ this.handleClickInside } >
+						{ searchField }
+						{ ! isMobile() && this.state.searchInput !== '' &&
+							<div className="themes-magic-search-card__icon" >
+								<Gridicon
+									icon="cross"
+									className="themes-magic-search-card__icon-close"
+									tabIndex="0"
+									onClick={ this.clearSearch }
+									aria-controls={ 'search-component-magic-search' }
+									aria-label={ translate( 'Clear Search' ) }
+								/>
+							</div>
+						}
+						{ isPremiumThemesEnabled && ! isJetpack &&
+							<SegmentedControl
+								initialSelected={ this.props.tier }
+								options={ tiers }
+								onSelect={ this.props.select }
+							/>
+						}
+					</div>
+				</StickyPanel>
+				<div onClick={ this.handleClickInside }>
+					{ renderSuggestions &&
+						<Suggestions
+							ref="suggestions"
+							terms={ this.props.filters }
+							input={ this.state.editedSearchElement }
+							suggest={ this.suggest }
+						/>
+					}
+					{ ! renderSuggestions &&
+						<MagicSearchWelcome
+							ref="welcome"
+							taxonomies={ filtersKeys }
+							topSearches={ [] }
+							suggestionsCallback={ this.insertTextInInput }
 						/>
 					}
 				</div>
-				<Suggestions
-					ref="suggestions"
-					terms={ taxonomies }
-					input={ this.state.editedSearchElement }
-					suggest={ this.suggest }
-					welcomeSign={ welcome }
-				/>
 			</div>
 		);
 	}
@@ -250,14 +331,20 @@ class ThemesMagicSearchCard extends React.Component {
 ThemesMagicSearchCard.propTypes = {
 	tier: PropTypes.string,
 	select: PropTypes.func.isRequired,
-	site: PropTypes.object,
+	siteId: PropTypes.number,
 	onSearch: PropTypes.func.isRequired,
 	search: PropTypes.string,
 	translate: PropTypes.func.isRequired,
+	isJetpack: PropTypes.bool
 };
 
 ThemesMagicSearchCard.defaultProps = {
 	tier: 'all',
 };
 
-export default localize( ThemesMagicSearchCard );
+export default connect(
+	( state ) => ( {
+		isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+		filters: getThemeFilters( state )
+	} )
+)( localize( wrapWithClickOutside( ThemesMagicSearchCard ) ) );

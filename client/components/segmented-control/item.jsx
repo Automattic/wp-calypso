@@ -14,6 +14,7 @@ var SegmentedControlItem = React.createClass( {
 		path: React.PropTypes.string,
 		selected: React.PropTypes.bool,
 		title: React.PropTypes.string,
+		value: React.PropTypes.string,
 		onClick: React.PropTypes.func
 	},
 
@@ -41,6 +42,7 @@ var SegmentedControlItem = React.createClass( {
 					ref="itemLink"
 					onClick={ this.props.onClick }
 					title={ this.props.title }
+					data-e2e-value={ this.props.value }
 					role="radio"
 					tabIndex={ 0 }
 					aria-selected={ this.props.selected }>

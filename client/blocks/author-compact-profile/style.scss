@@ -35,16 +35,6 @@
 			color: $alert-green;
 		}
 
-		&:hover {
-			.gridicon__follow {
-				fill: lighten( $gray, 10% );
-			}
-
-			.follow-button__label {
-				color: $gray-text-min;
-			}
-		}
-
 		// No hover if already following
 		&.is-following {
 			&:hover {

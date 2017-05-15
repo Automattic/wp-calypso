@@ -12,7 +12,7 @@ import {
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { type as domainTypes } from './constants';
+import { type as domainTypes, domainAvailability } from './constants';
 
 const GOOGLE_APPS_INVALID_TLDS = [ 'in' ],
 	GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
@@ -35,40 +35,17 @@ function canAddGoogleApps( domainName ) {
 
 function checkDomainAvailability( domainName, onComplete ) {
 	if ( ! domainName ) {
-		onComplete( new ValidationError( 'empty_query' ) );
+		onComplete( null, { status: domainAvailability.EMPTY_QUERY } );
 		return;
 	}
 
-	wpcom.undocumented().isDomainAvailable( domainName, function( serverError, data ) {
+	wpcom.undocumented().isDomainAvailable( domainName, function( serverError, result ) {
 		if ( serverError ) {
-			onComplete( new ValidationError( serverError.error ) );
+			onComplete( serverError.error );
 			return;
 		}
 
-		const {
-			is_available: isAvailable,
-			is_mappable: isMappable,
-			is_registrable: isRegistrable,
-			unmappability_reason: unmappabilityReason
-		} = data;
-
-		let errorCode;
-		if ( ! isMappable ) {
-			errorCode = 'not_mappable';
-			if ( unmappabilityReason ) {
-				errorCode += `_${ unmappabilityReason }`;
-			}
-		} else if ( ! isAvailable && isMappable ) {
-			errorCode = 'not_available_but_mappable';
-		} else if ( isAvailable && ! isRegistrable ) {
-			errorCode = 'available_but_not_registrable';
-		}
-
-		if ( errorCode ) {
-			onComplete( new ValidationError( errorCode ) );
-		} else {
-			onComplete( null, data );
-		}
+		onComplete( null, result );
 	} );
 }
 

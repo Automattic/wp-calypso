@@ -9,6 +9,7 @@ import deepFreeze from 'deep-freeze';
  */
 import {
 	READER_LISTS_RECEIVE,
+	READER_LISTS_UNFOLLOW_SUCCESS,
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_UPDATE_TITLE,
@@ -20,7 +21,8 @@ import {
 import {
 	items,
 	updatedLists,
-	missingLists
+	missingLists,
+	subscribedLists,
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -151,7 +153,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( [
-				{ owner: 'lister', slug: 'banana'}
+				{ owner: 'lister', slug: 'banana' }
 			] );
 		} );
 
@@ -179,7 +181,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( initialState ).to.eql( [
-				{ owner: 'lister', slug: 'banana'}
+				{ owner: 'lister', slug: 'banana' }
 			] );
 
 			const state = missingLists( initialState, {
@@ -204,7 +206,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( initialState ).to.eql( [
-				{ owner: 'lister', slug: 'banana'}
+				{ owner: 'lister', slug: 'banana' }
 			] );
 
 			const state = missingLists( initialState, {
@@ -215,6 +217,43 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( [] );
+		} );
+	} );
+
+	describe( '#subscribedLists', () => {
+		it( 'should default to empty', () => {
+			expect( subscribedLists( undefined, { type: '@@BAD' } ) ).to.eql( [] );
+		} );
+
+		it( 'should pick up the ids of the subscribed lists', () => {
+			expect( subscribedLists( deepFreeze( [] ), {
+				type: READER_LISTS_RECEIVE,
+				lists: [
+					{ ID: 1 },
+					{ ID: 2 }
+				]
+			} ) ).to.eql( [ 1, 2 ] );
+		} );
+
+		it( 'should overwrite existing subs', () => {
+			const initial = deepFreeze( [ 1, 2 ] );
+			expect( subscribedLists( initial, {
+				type: READER_LISTS_RECEIVE,
+				lists: [
+					{ ID: 3 },
+					{ ID: 1 }
+				]
+			} ) ).to.eql( [ 3, 1 ] );
+		} );
+
+		it( 'should remove an item on unfollow', () => {
+			const initial = deepFreeze( [ 1, 2 ] );
+			expect( subscribedLists( initial, {
+				type: READER_LISTS_UNFOLLOW_SUCCESS,
+				data: {
+					list: { ID: 1 }
+				}
+			} ) ).to.eql( [ 2 ] );
 		} );
 	} );
 } );

@@ -21,7 +21,6 @@ var webpackConfig = require( process.cwd() + '/webpack.config' ),
  * Variables
  */
 var start = new Date().getTime(),
-	CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
 	bundleEnv = config( 'env' ),
 	outputOptions;
 
@@ -106,15 +105,16 @@ webpack( webpackConfig, function( error, stats ) {
 
 	assets = utils.getAssets( stats.toJson() );
 
-	fs.writeFileSync( path.join( __dirname, '..', 'assets-' + CALYPSO_ENV + '.json' ), JSON.stringify( assets, null, '\t' ) );
+	fs.writeFileSync( path.join( __dirname, '..', 'assets.json' ), JSON.stringify( assets, null, '\t' ) );
 
-	// sort by size to make parallel minification go a bit quicker. don't get stuck doing the big stuff last.
-	files = assets.sort( function( a, b ) {
-		return b.size - a.size;
-	} ).map( function( chunk ) {
-		return path.join( process.cwd(), 'public', chunk.file );
-	} );
-	files.unshift( path.join( process.cwd(), 'public', 'vendor.' + bundleEnv + '.js' ) );
+	if ( ! process.env.WEBPACK_OUTPUT_JSON ) {
+		// sort by size to make parallel minification go a bit quicker. don't get stuck doing the big stuff last.
+		files = assets.sort( function( a, b ) {
+			return b.size - a.size;
+		} ).map( function( chunk ) {
+			return path.join( process.cwd(), 'public', chunk.file );
+		} );
 
-	minify( files );
+		minify( files );
+	}
 });

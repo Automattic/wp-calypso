@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { filter, get } from 'lodash';
+import { filter, get, reverse } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +28,7 @@ import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 import { isEnabled } from 'config';
 import purchasesPaths from 'me/purchases/paths';
+import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
@@ -40,12 +41,18 @@ class PlansFeaturesMain extends Component {
 			isLandingPage,
 			basePlansPath,
 			selectedFeature,
-			displayJetpackPlans
+			displayJetpackPlans,
+			domainName
 		} = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 		if ( displayJetpackPlans && intervalType === 'monthly' ) {
-			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ];
+			const jetpackPlans = [
+				PLAN_JETPACK_FREE,
+				PLAN_JETPACK_PERSONAL_MONTHLY,
+				PLAN_JETPACK_PREMIUM_MONTHLY,
+				PLAN_JETPACK_BUSINESS_MONTHLY
+			];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
 			}
@@ -60,13 +67,19 @@ class PlansFeaturesMain extends Component {
 						basePlansPath={ basePlansPath }
 						intervalType={ intervalType }
 						site={ site }
+						domainName={ domainName }
 					/>
 				</div>
 			);
 		}
 
 		if ( displayJetpackPlans ) {
-			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ];
+			const jetpackPlans = [
+				PLAN_JETPACK_FREE,
+				PLAN_JETPACK_PERSONAL,
+				PLAN_JETPACK_PREMIUM,
+				PLAN_JETPACK_BUSINESS
+			];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
 			}
@@ -81,18 +94,21 @@ class PlansFeaturesMain extends Component {
 						basePlansPath={ basePlansPath }
 						intervalType={ intervalType }
 						site={ site }
+						domainName={ domainName }
 					/>
 				</div>
 			);
 		}
 
+		const signupPlans = [
+			hideFreePlan ? null : PLAN_FREE,
+			isPersonalPlanEnabled ? PLAN_PERSONAL : null,
+			PLAN_PREMIUM,
+			PLAN_BUSINESS
+		];
+
 		const plans = filter(
-			[
-				hideFreePlan ? null : PLAN_FREE,
-				isPersonalPlanEnabled ? PLAN_PERSONAL : null,
-				PLAN_PREMIUM,
-				PLAN_BUSINESS
-			],
+			abtest( 'signupPlansReorderTest' ) === 'modified' ? reverse( signupPlans ) : signupPlans,
 			value => !! value
 		);
 
@@ -107,6 +123,7 @@ class PlansFeaturesMain extends Component {
 					selectedFeature={ selectedFeature }
 					intervalType={ intervalType }
 					site={ site }
+					domainName={ domainName }
 				/>
 			</div>
 		);
@@ -121,8 +138,7 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'I signed up and paid. What’s next?' ) }
 					answer={ translate(
 						'Our premium features are powered by a few of our other plugins. After purchasing you will' +
-						' need to install the Akismet and VaultPress plugins. If you purchase a Professional' +
-						' subscription, you will also need to install the Polldaddy plugin. Just follow the guide' +
+						' need to install the Akismet and VaultPress plugins. Just follow the guide' +
 						' after you complete your purchase.'
 					) }
 				/>
@@ -152,14 +168,6 @@ class PlansFeaturesMain extends Component {
 						' everything works correctly, Jetpack requires you to connect a (free) WordPress.com' +
 						" account. If you don't already have an account you can easily create one during the" +
 						' connection process.'
-					) }
-				/>
-
-				<FAQItem
-					question={ translate( 'Can I migrate my subscription to a different site?' ) }
-					answer={ translate(
-						'Absolutely. You are always free to activate your premium services on a different' +
-						' WordPress site.'
 					) }
 				/>
 
@@ -228,7 +236,7 @@ class PlansFeaturesMain extends Component {
 						' by our team and represent the highest quality. The business plan even supports' +
 						' unlimited premium theme access.',
 						{
-							components: { a: <a href={ `/design/${ site.slug }` } /> }
+							components: { a: <a href={ `/themes/${ site.slug }` } /> }
 						}
 					) }
 				/>

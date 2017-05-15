@@ -24,13 +24,13 @@
 }
 
 .happiness-support__heading {
-	color: darken( $gray, 20% );
+	color: darken( $gray, 10% );
 	clear: none;
 	font-size: 21px;
 }
 
 .happiness-support__text {
-	color: darken( $gray, 10% );
+	color: $gray-text-min;
 	margin-bottom: 16px;
 	margin-top: 16px;
 }

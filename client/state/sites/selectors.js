@@ -45,6 +45,22 @@ export const getRawSite = ( state, siteId ) => {
 };
 
 /**
+ * Returns a site object by its slug.
+ *
+ * @param  {Object}  state     Global state tree
+ * @param  {String}  siteSlug  Site URL
+ * @return {?Object}           Site object
+ */
+export const getSiteBySlug = createSelector(
+	( state, siteSlug ) => (
+		find( state.sites.items, ( item, siteId ) => (
+			getSiteSlug( state, siteId ) === siteSlug
+		) ) || null
+	),
+	( state ) => state.sites.items
+);
+
+/**
  * Returns a normalized site object by its ID. Intends to replicate
  * the site object returned from the legacy `sites-list` module.
  *
@@ -55,7 +71,10 @@ export const getRawSite = ( state, siteId ) => {
  */
 export const getSite = createSelector(
 	( state, siteId ) => {
-		const site = getRawSite( state, siteId );
+		const site = getRawSite( state, siteId ) ||
+			// Support for non-ID site retrieval
+			// Replaces SitesList#getSite
+			getSiteBySlug( state, siteId );
 
 		if ( ! site ) {
 			return null;
@@ -66,9 +85,6 @@ export const getSite = createSelector(
 			...getComputedAttributes( site ),
 			...getJetpackComputedAttributes( state, siteId ),
 			hasConflict: isSiteConflicting( state, siteId ),
-			title: getSiteTitle( state, siteId ),
-			slug: getSiteSlug( state, siteId ),
-			domain: getSiteDomain( state, siteId ),
 			is_previewable: isSitePreviewable( state, siteId )
 		};
 	},
@@ -82,6 +98,10 @@ export function getJetpackComputedAttributes( state, siteId ) {
 	return {
 		hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
 		canAutoupdateFiles: canJetpackSiteAutoUpdateFiles( state, siteId ),
+		canUpdateFiles: canJetpackSiteUpdateFiles( state, siteId ),
+		canManage: canJetpackSiteManage( state, siteId ),
+		isMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
+		isSecondaryNetworkSite: isJetpackSiteSecondaryNetworkSite( state, siteId ),
 	};
 }
 
@@ -408,22 +428,6 @@ export const getSeoTitle = ( state, type, data ) => {
 };
 
 /**
- * Returns a site object by its slug.
- *
- * @param  {Object}  state     Global state tree
- * @param  {String}  siteSlug  Site URL
- * @return {?Object}           Site object
- */
-export const getSiteBySlug = createSelector(
-	( state, siteSlug ) => (
-		find( state.sites.items, ( item, siteId ) => (
-			getSiteSlug( state, siteId ) === siteSlug
-		) ) || null
-	),
-	( state ) => state.sites.items
-);
-
-/**
  * Returns a site object by its URL.
  *
  * @param  {Object}  state Global state tree
@@ -501,6 +505,10 @@ export function getSitePlan( state, siteId ) {
 	}
 
 	return site.plan;
+}
+
+export function getSitePlanSlug( state, siteId ) {
+	return get( getSitePlan( state, siteId ), 'product_slug' );
 }
 
 /**
@@ -690,23 +698,6 @@ export function canJetpackSiteAutoUpdateCore( state, siteId ) {
 }
 
 /**
- * Determines if the Jetpack plugin of a Jetpack Site has menus.
- * Returns null if the site is not known or is not a Jetpack site.
- *
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @return {?Boolean} true if the site has Jetpack menus management
- */
-export function hasJetpackSiteJetpackMenus( state, siteId ) {
-	if ( ! isJetpackSite( state, siteId ) ) {
-		return null;
-	}
-
-	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-	return versionCompare( siteJetpackVersion, '3.5-alpha' ) >= 0;
-}
-
-/**
  * Determines if the Jetpack plugin of a Jetpack Site has themes.
  * Returns null if the site is not known or is not a Jetpack site.
  *
@@ -737,7 +728,7 @@ export function hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) {
 	}
 
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-	return versionCompare( siteJetpackVersion, '4.4.2' ) >= 0;
+	return versionCompare( siteJetpackVersion, '4.7' ) >= 0;
 }
 
 /**
@@ -948,6 +939,10 @@ export function siteHasMinimumJetpackVersion( state, siteId ) {
 	}
 
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+	if ( ! siteJetpackVersion ) {
+		return null;
+	}
+
 	const jetpackMinVersion = config( 'jetpack_min_version' );
 
 	return versionCompare( siteJetpackVersion, jetpackMinVersion ) >= 0;

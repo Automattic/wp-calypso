@@ -1,0 +1,36 @@
+.blog-posts-page {
+	display: flex;
+	align-items: center;
+	padding: 16px 24px;
+}
+
+.blog-posts-page__front-page-icon,
+.blog-posts-page__not-used-icon {
+	margin-right: 6px;
+}
+
+.blog-posts-page__details {
+	flex: 1 1 auto;
+}
+
+.blog-posts-page__title {
+	display: inline;
+	color: $gray-dark;
+	font-weight: bold;
+	font-family: $serif;
+	margin-right: 33px;
+
+	&.is-disabled {
+		color: $gray;
+	}
+}
+
+.blog-posts-page__info {
+	color: $gray-text-min;
+	font-size: 12px;
+	margin: 0 33px 0 0;
+
+	&.is-disabled {
+		color: lighten( $gray, 10% );
+	}
+}

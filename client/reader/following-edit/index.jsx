@@ -1,5 +1,7 @@
 // External dependencies
 import React from 'react';
+import createReactClass from 'create-react-class';
+import { localize } from 'i18n-calypso';
 import times from 'lodash/times';
 import trimStart from 'lodash/trimStart';
 import Immutable from 'immutable';
@@ -34,30 +36,33 @@ import FollowingImportButton from './import-button';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-const stats = require( 'reader/stats' );
+import { recordAction, recordFollow, recordGaEvent, recordTrack } from 'reader/stats';
 
 const initialLoadFeedCount = 20;
 
-const FollowingEdit = React.createClass( {
-
+const FollowingEdit = createReactClass( {
+	displayName: 'FollowingEdit',
 	mixins: [ URLSearch ],
 
 	propTypes: {
 		initialFollowUrl: React.PropTypes.string,
 		search: React.PropTypes.string,
-		userSettings: React.PropTypes.object
+		userSettings: React.PropTypes.object,
 	},
 
 	getInitialState: function() {
-		return Object.assign( {
-			notices: [],
-			isSearching: !! this.props.search,
-		}, this.getStateFromStores() );
+		return Object.assign(
+			{
+				notices: [],
+				isSearching: !! this.props.search,
+			},
+			this.getStateFromStores()
+		);
 	},
 
 	getDefaultProps: function() {
 		return {
-			initialFollowUrl: ''
+			initialFollowUrl: '',
 		};
 	},
 
@@ -71,7 +76,7 @@ const FollowingEdit = React.createClass( {
 			isLoading: FeedSubscriptionStore.isFetching(),
 			lastError: FeedSubscriptionStore.getLastError(),
 			totalSubscriptions: FeedSubscriptionStore.getTotalSubscriptions(),
-			windowWidth: this.getWindowWidth()
+			windowWidth: this.getWindowWidth(),
 		};
 
 		if ( props.search ) {
@@ -79,7 +84,10 @@ const FollowingEdit = React.createClass( {
 		}
 
 		if ( this.state && this.state.sortOrder ) {
-			newState.subscriptions = this.sortSubscriptions( newState.subscriptions, this.state.sortOrder );
+			newState.subscriptions = this.sortSubscriptions(
+				newState.subscriptions,
+				this.state.sortOrder
+			);
 		}
 
 		return newState;
@@ -111,12 +119,14 @@ const FollowingEdit = React.createClass( {
 			const feed = FeedStore.get( item.get( 'feed_ID' ) ),
 				site = SiteStore.get( item.get( 'blog_ID' ) ),
 				phraseRe = new RegExp( escapeRegexp( phrase ), 'i' );
-			return item.get( 'URL' ).search( phraseRe ) !== -1 ||
+			return (
+				item.get( 'URL' ).search( phraseRe ) !== -1 ||
 				( site && ( site.get( 'name' ) || '' ).search( phraseRe ) !== -1 ) ||
 				( site && ( site.get( 'URL' ) || '' ).search( phraseRe ) !== -1 ) ||
 				( feed && ( feed.name || '' ).search( phraseRe ) !== -1 ) ||
 				( feed && ( feed.URL || '' ).search( phraseRe ) !== -1 ) ||
-				( feed && ( feed.feed_URL || '' ).search( phraseRe ) !== -1 );
+				( feed && ( feed.feed_URL || '' ).search( phraseRe ) !== -1 )
+			);
 		}, this );
 	},
 
@@ -134,15 +144,17 @@ const FollowingEdit = React.createClass( {
 			} );
 		}
 
-		return subscriptions.sortBy( function( subscription ) {
-			return subscription.get( 'date_subscribed' );
-		} ).reverse();
+		return subscriptions
+			.sortBy( function( subscription ) {
+				return subscription.get( 'date_subscribed' );
+			} )
+			.reverse();
 	},
 
 	handleAdd: function( newSubscription ) {
 		let newState = {
 			isAttemptingFollow: false,
-			isAddingOpen: false
+			isAddingOpen: false,
 		};
 
 		// If it's a brand new subscription, re-sort by date followed so
@@ -169,7 +181,7 @@ const FollowingEdit = React.createClass( {
 	handleSortOrderChange: function( newSortOrder ) {
 		this.setState( {
 			sortOrder: newSortOrder,
-			subscriptions: this.sortSubscriptions( this.state.subscriptions, newSortOrder )
+			subscriptions: this.sortSubscriptions( this.state.subscriptions, newSortOrder ),
 		} );
 	},
 
@@ -206,7 +218,7 @@ const FollowingEdit = React.createClass( {
 
 		this.setState( {
 			feedExport: fileName,
-			notices: notices
+			notices: notices,
 		} );
 	},
 
@@ -221,7 +233,7 @@ const FollowingEdit = React.createClass( {
 
 		this.setState( {
 			notices: notices,
-			feedExportError: error
+			feedExportError: error,
 		} );
 	},
 
@@ -236,7 +248,7 @@ const FollowingEdit = React.createClass( {
 
 		this.setState( {
 			notices: notices,
-			feedImport: data
+			feedImport: data,
 		} );
 	},
 
@@ -251,7 +263,7 @@ const FollowingEdit = React.createClass( {
 
 		this.setState( {
 			notices: notices,
-			feedImportError: error
+			feedImportError: error,
 		} );
 	},
 
@@ -273,7 +285,9 @@ const FollowingEdit = React.createClass( {
 
 	renderSubscription: function( subscription ) {
 		const subscriptionKey = this.getSubscriptionRef( subscription );
-		const isEmailBlocked = this.props.userSettings.getSetting( 'subscription_delivery_email_blocked' );
+		const isEmailBlocked = this.props.userSettings.getSetting(
+			'subscription_delivery_email_blocked'
+		);
 
 		return (
 			<SubscriptionListItem
@@ -283,14 +297,15 @@ const FollowingEdit = React.createClass( {
 				onNotificationSettingsOpen={ this.handleNotificationSettingsOpen }
 				onNotificationSettingsClose={ this.handleNotificationSettingsClose }
 				openCards={ this.state.openCards }
-				isEmailBlocked={ isEmailBlocked } />
+				isEmailBlocked={ isEmailBlocked }
+			/>
 		);
 	},
 
 	renderLoadingPlaceholders: function() {
 		var count = this.state.subscriptions.size ? 10 : initialLoadFeedCount;
 		return times( count, function( i ) {
-			return ( <SubscriptionPlaceholder key={ 'placeholder-' + i } /> );
+			return <SubscriptionPlaceholder key={ 'placeholder-' + i } />;
 		} );
 	},
 
@@ -300,9 +315,9 @@ const FollowingEdit = React.createClass( {
 		// Call originating store and mark error as dismissed
 		FeedSubscriptionActions.dismissError( this.state.lastError );
 		this.setState( { isAttemptingFollow: false } );
-		stats.recordAction( 'dismiss_follow_error' );
-		stats.recordGaEvent( 'Clicked Dismiss Follow Error' );
-		stats.recordTrack( 'calypso_reader_follow_error_dismissed' );
+		recordAction( 'dismiss_follow_error' );
+		recordGaEvent( 'Clicked Dismiss Follow Error' );
+		recordTrack( 'calypso_reader_follow_error_dismissed' );
 	},
 
 	handleNewSubscriptionSearch: function( searchString ) {
@@ -321,16 +336,16 @@ const FollowingEdit = React.createClass( {
 
 	dismissFeedExportNotice() {
 		const notices = this.state.notices;
-		remove( notices, ( f ) => f === 'renderFeedExportNotice' );
+		remove( notices, f => f === 'renderFeedExportNotice' );
 		this.setState( {
 			notices: notices,
-			feedExport: null
+			feedExport: null,
 		} );
 	},
 
 	dismissFeedImportNotice() {
 		const notices = this.state.notices;
-		remove( notices, ( f ) => f ===	'renderFeedImportNotice' );
+		remove( notices, f => f === 'renderFeedImportNotice' );
 		this.setState( {
 			notices: notices,
 			feedImport: null,
@@ -339,18 +354,21 @@ const FollowingEdit = React.createClass( {
 
 	dismissFeedImportExportError() {
 		const notices = this.state.notices;
-		remove( notices, ( f ) => f === 'renderFeedImportExportError' );
+		remove( notices, f => f === 'renderFeedImportExportError' );
 		this.setState( {
 			notices: notices,
 			feedImportError: null,
-			feedExportError: null
+			feedExportError: null,
 		} );
 	},
 
 	handleNewSubscriptionSearchClose: function() {
 		this.toggleAddSite();
 
-		if ( this.state.lastError && this.state.lastError.errorType === FeedSubscriptionErrorTypes.UNABLE_TO_FOLLOW ) {
+		if (
+			this.state.lastError &&
+			this.state.lastError.errorType === FeedSubscriptionErrorTypes.UNABLE_TO_FOLLOW
+		) {
 			this.setState( { isAttemptingFollow: false } );
 			FeedSubscriptionActions.dismissError( this.state.lastError );
 		}
@@ -359,30 +377,37 @@ const FollowingEdit = React.createClass( {
 	handleFollow: function( newUrl ) {
 		this.toggleAddSite();
 		this.setState( { isAttemptingFollow: true } );
-		stats.recordFollow( newUrl );
+		recordFollow( newUrl );
 	},
 
 	renderUnfollowError: function() {
-		if ( ! this.state.lastError || this.state.lastError.errorType !== FeedSubscriptionErrorTypes.UNABLE_TO_UNFOLLOW ) {
+		if (
+			! this.state.lastError ||
+			this.state.lastError.errorType !== FeedSubscriptionErrorTypes.UNABLE_TO_UNFOLLOW
+		) {
 			return null;
 		}
 
 		const url = this.state.lastError.URL;
 
-		return ( <Notice
-					status="is-error"
-					showDismiss={ true }
-					onDismissClick={ this.dismissError }>
-					{ this.translate( 'Sorry - there was a problem unfollowing {{strong}}%(url)s{{/strong}}.', {
+		return (
+			<Notice status="is-error" showDismiss={ true } onDismissClick={ this.dismissError }>
+				{ this.props.translate(
+					'Sorry - there was a problem unfollowing {{strong}}%(url)s{{/strong}}.',
+					{
 						components: { strong: <strong /> },
-						args: { url: url } } )
+						args: { url: url },
 					}
-					</Notice>
+				) }
+			</Notice>
 		);
 	},
 
 	renderFollowError: function() {
-		if ( ! this.state.lastError || this.state.lastError.errorType !== FeedSubscriptionErrorTypes.UNABLE_TO_FOLLOW ) {
+		if (
+			! this.state.lastError ||
+			this.state.lastError.errorType !== FeedSubscriptionErrorTypes.UNABLE_TO_FOLLOW
+		) {
 			return null;
 		}
 
@@ -390,54 +415,63 @@ const FollowingEdit = React.createClass( {
 		let errorMessage;
 
 		if ( lastError.info && lastError.info === 'already_subscribed' ) {
-			errorMessage = this.translate( 'You\'re already subscribed to that site.' );
+			errorMessage = this.props.translate( "You're already subscribed to that site." );
 		} else {
-			errorMessage = this.translate( 'Sorry, we couldn\'t find a feed for {{em}}%(url)s{{/em}}.', {
-				args: { url: this.state.searchString },
-				components: { em: <em/> }
-			} );
+			errorMessage = this.props.translate(
+				"Sorry, we couldn't find a feed for {{em}}%(url)s{{/em}}.",
+				{
+					args: { url: this.state.searchString },
+					components: { em: <em /> },
+				}
+			);
 		}
 
-		return ( <Notice
-					status="is-error"
-					showDismiss={ true }
-					onDismissClick={ this.dismissError }>
-					{ errorMessage }
-				</Notice>
+		return (
+			<Notice status="is-error" showDismiss={ true } onDismissClick={ this.dismissError }>
+				{ errorMessage }
+			</Notice>
 		);
 	},
 
 	renderFeedExportNotice() {
 		const feedExport = this.state.feedExport;
-		if ( ! feedExport ) return null;
+		if ( ! feedExport ) {
+			return null;
+		}
 
-		const message = this.translate( 'Your Followed Sites list has been exported.' );
+		const message = this.props.translate( 'Your Followed Sites list has been exported.' );
 		return (
 			<Notice
 				key="notice-feed-export"
 				status="is-success"
 				showDismiss={ true }
 				onDismissClick={ this.dismissFeedExportNotice }
-				text={ message }>
-			</Notice>
+				text={ message }
+			/>
 		);
 	},
 
 	renderFeedImportNotice() {
 		const feedImport = this.state.feedImport;
-		if ( ! feedImport ) return null;
+		if ( ! feedImport ) {
+			return null;
+		}
 
-		const message = this.translate( '{{em}}%(name)s{{/em}} has been imported. Refresh this page to see the new sites you follow.', {
-			args: { name: feedImport.fileName },
-			components: { em: <em/> }
-		} );
+		const message = this.props.translate(
+			'{{em}}%(name)s{{/em}} has been imported. Refresh this page to see the new sites you follow.',
+			{
+				args: { name: feedImport.fileName },
+				components: { em: <em /> },
+			}
+		);
 		return (
 			<Notice
 				key="notice-feed-import"
 				status="is-success"
 				showDismiss={ false }
 				onDismissClick={ this.dismissFeedImportNotice }
-				text={ message }>
+				text={ message }
+			>
 				<NoticeAction href="#" onClick={ this.refresh }>
 					Refresh
 				</NoticeAction>
@@ -447,19 +481,24 @@ const FollowingEdit = React.createClass( {
 
 	renderFeedImportExportError() {
 		const error = this.state.feedImportError || this.state.feedExportError;
-		if ( ! error ) return null;
+		if ( ! error ) {
+			return null;
+		}
 
-		const message = this.translate( 'Whoops, something went wrong. %(message)s. Please try again.', {
-			args: { message: error.message }
-		} );
+		const message = this.props.translate(
+			'Whoops, something went wrong. %(message)s. Please try again.',
+			{
+				args: { message: error.message },
+			}
+		);
 		return (
 			<Notice
 				key="notice-feed-import-export"
 				status="is-error"
 				text={ message }
 				onDismissClick={ this.dismissFeedImportExportError }
-				showDismiss={ true }>
-			</Notice>
+				showDismiss={ true }
+			/>
 		);
 	},
 
@@ -474,7 +513,7 @@ const FollowingEdit = React.createClass( {
 	toggleSearching() {
 		var isSearching = ! this.state.isSearching;
 		this.setState( {
-			isSearching: isSearching
+			isSearching: isSearching,
 		} );
 		if ( isSearching ) {
 			this.refs[ 'url-search' ].focus();
@@ -482,7 +521,7 @@ const FollowingEdit = React.createClass( {
 	},
 
 	renderNotices() {
-		return this.state.notices.map( ( funcName ) => this[ funcName ]() );
+		return this.state.notices.map( funcName => this[ funcName ]() );
 	},
 
 	render: function() {
@@ -495,9 +534,11 @@ const FollowingEdit = React.createClass( {
 		// At this point we may have some kicking around that just have a URL, such as those added when
 		// the following stream was processed
 		if ( subscriptions ) {
-			subscriptionsToDisplay = subscriptions.filter( function( subscription ) {
-				return subscription.has( 'ID' );
-			} ).toArray();
+			subscriptionsToDisplay = subscriptions
+				.filter( function( subscription ) {
+					return subscription.has( 'ID' );
+				} )
+				.toArray();
 		}
 
 		if ( subscriptionsToDisplay.length === 0 && this.state.isLastPage && ! this.props.search ) {
@@ -505,20 +546,23 @@ const FollowingEdit = React.createClass( {
 		}
 
 		if ( this.state.windowWidth && this.state.windowWidth > 960 ) {
-			searchPlaceholder = this.translate( 'Search your followed sites' );
+			searchPlaceholder = this.props.translate( 'Search your followed sites' );
 		} else {
-			searchPlaceholder = this.translate( 'Search' );
+			searchPlaceholder = this.props.translate( 'Search' );
 		}
 
-		const containerClasses = classnames( {
-			'is-searching': this.state.isSearching,
-			'has-no-subscriptions': hasNoSubscriptions
-		}, 'following-edit' );
+		const containerClasses = classnames(
+			{
+				'is-searching': this.state.isSearching,
+				'has-no-subscriptions': hasNoSubscriptions,
+			},
+			'following-edit'
+		);
 
 		return (
 			<ReaderMain className={ containerClasses }>
 				<MobileBackToSidebar>
-					<h1>{ this.translate( 'Manage Followed Sites' ) }</h1>
+					<h1>{ this.props.translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
 				{ this.renderFollowError() }
 				{ this.renderUnfollowError() }
@@ -530,63 +574,79 @@ const FollowingEdit = React.createClass( {
 					onFollow={ this.handleFollow }
 					initialSearchString={ this.props.initialFollowUrl }
 					isSearchOpen={ this.state.isAddingOpen }
-					ref="feed-search" />
+					ref="feed-search"
+				/>
 
-				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
+				<SectionHeader
+					className="following-edit__header"
+					label={ this.props.translate( 'Sites' ) }
+					count={ this.state.totalSubscriptions }
+				>
 					{ ! hasNoSubscriptions
-							? <FollowingExportButton
-									onExport={ this.handleFeedExport }
-									onError={ this.handleFeedExportError } />
-							: null }
+						? <FollowingExportButton
+								onExport={ this.handleFeedExport }
+								onError={ this.handleFeedExportError }
+							/>
+						: null }
 					<FollowingImportButton
 						onImport={ this.handleFeedImport }
-						onError={ this.handleFeedImportError } />
+						onError={ this.handleFeedImportError }
+					/>
 					{ ! hasNoSubscriptions
-							? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
-							: null }
+						? <FollowingEditSortControls
+								onSelectChange={ this.handleSortOrderChange }
+								sortOrder={ this.state.sortOrder }
+							/>
+						: null }
 					{ ! hasNoSubscriptions
-							? <Button
+						? <Button
 								borderless
 								className="following-edit__search"
-								aria-label={ this.translate( 'Open Search', { context: 'button label' } ) }
-								onClick={ this.toggleSearching }>
+								aria-label={ this.props.translate( 'Open Search', { context: 'button label' } ) }
+								onClick={ this.toggleSearching }
+							>
 								<Gridicon icon="search" />
 							</Button>
-							: null }
+						: null }
 				</SectionHeader>
 
-				{ ! hasNoSubscriptions ? <SearchCard
-					isOpen={ true }
-					pinned={ true }
-					key="existingFeedSearch"
-					autoFocus={ false }
-					additionalClasses="following-edit__existing-feed-search"
-					placeholder={ searchPlaceholder }
-					onSearch={ this.doSearch }
-					onSearchClose={ this.toggleSearching }
-					initialValue={ this.props.search }
-					delaySearch={ true }
-					ref="url-search" /> : null }
+				{ ! hasNoSubscriptions
+					? <SearchCard
+							isOpen={ true }
+							pinned={ true }
+							key="existingFeedSearch"
+							autoFocus={ false }
+							additionalClasses="following-edit__existing-feed-search"
+							placeholder={ searchPlaceholder }
+							onSearch={ this.doSearch }
+							onSearchClose={ this.toggleSearching }
+							initialValue={ this.props.search }
+							delaySearch={ true }
+							ref="url-search"
+						/>
+					: null }
 
-				{ this.state.isAttemptingFollow && ! this.state.lastError ? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } /> : null }
+				{ this.state.isAttemptingFollow && ! this.state.lastError
+					? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } />
+					: null }
 				{ subscriptionsToDisplay.length === 0 && this.props.search && ! this.state.isLoading
-					? <NoResults text={ this.translate( 'No subscriptions match that search.' ) } />
-					: <InfiniteList className="following-edit__sites"
-						items={ subscriptionsToDisplay }
-						lastPage={ this.state.isLastPage }
-						fetchingNextPage={ this.state.isLoading }
-						guessedItemHeight={ 75 }
-						fetchNextPage={ this.fetchNextPage }
-						getItemRef= { this.getSubscriptionRef }
-						renderItem={ this.renderSubscription }
-						renderLoadingPlaceholders={ this.renderLoadingPlaceholders } />
-				}
+					? <NoResults text={ this.props.translate( 'No subscriptions match that search.' ) } />
+					: <InfiniteList
+							className="following-edit__sites"
+							items={ subscriptionsToDisplay }
+							lastPage={ this.state.isLastPage }
+							fetchingNextPage={ this.state.isLoading }
+							guessedItemHeight={ 75 }
+							fetchNextPage={ this.fetchNextPage }
+							getItemRef={ this.getSubscriptionRef }
+							renderItem={ this.renderSubscription }
+							renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
+						/> }
 
 				{ hasNoSubscriptions ? <EmptyContent /> : null }
 			</ReaderMain>
 		);
-	}
-
+	},
 } );
 
-module.exports = FollowingEdit;
+export default localize( FollowingEdit );

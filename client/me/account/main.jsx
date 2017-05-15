@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import i18n, { localize } from 'i18n-calypso';
-import Debug from 'debug';
+import debugFactory from 'debug';
 import emailValidator from 'email-validator';
 import {
 	debounce,
@@ -56,7 +55,7 @@ const user = _user();
 /**
  * Debug instance
  */
-let debug = new Debug( 'calypso:me:account' );
+const debug = debugFactory( 'calypso:me:account' );
 
 const Account = React.createClass( {
 
@@ -64,10 +63,15 @@ const Account = React.createClass( {
 
 	mixins: [
 		formBase,
-		LinkedStateMixin,
 		observe( 'userSettings', 'username' ),
 		eventRecorder
 	],
+
+	propTypes: {
+		userSettings: PropTypes.object.isRequired,
+		username: PropTypes.object.isRequired,
+		showNoticeInitially: PropTypes.bool,
+	},
 
 	componentWillMount() {
 		// Clear any username changes that were previously made
@@ -84,25 +88,54 @@ const Account = React.createClass( {
 		debug( this.constructor.displayName + ' component is unmounting.' );
 	},
 
-	updateLanguage() {
-		let valueLink = this.valueLink( 'language' );
+	getUserSetting( settingName ) {
+		return this.props.userSettings.getSetting( settingName );
+	},
 
-		valueLink.requestChange = ( value ) => {
-			const originalLanguage = this.props.userSettings.getOriginalSetting( 'language' );
+	updateUserSetting( settingName, value ) {
+		this.props.userSettings.updateSetting( settingName, value );
+	},
 
-			this.props.userSettings.updateSetting( 'language', value );
-			if ( value !== originalLanguage ) {
-				this.setState( { redirect: '/me/account' } );
-			} else {
-				this.setState( { redirect: false } );
-			}
-		};
+	updateUserSettingInput( event ) {
+		this.updateUserSetting( event.target.name, event.target.value );
+	},
 
-		return valueLink;
+	updateUserSettingCheckbox( event ) {
+		this.updateUserSetting( event.target.name, event.target.checked );
+	},
+
+	updateLanguage( event ) {
+		const { value } = event.target;
+		const originalLanguage = this.props.userSettings.getOriginalSetting( 'language' );
+
+		this.updateUserSetting( 'language', value );
+		const redirect = value !== originalLanguage ? '/me/account' : false;
+		this.setState( { redirect } );
+	},
+
+	getEmailAddress() {
+		return this.hasPendingEmailChange()
+			? this.getUserSetting( 'new_user_email' )
+			: this.getUserSetting( 'user_email' );
+	},
+
+	updateEmailAddress( event ) {
+		const { value } = event.target;
+		const emailValidationError = (
+			( '' === value && 'empty' ) ||
+			( ! emailValidator.validate( value ) && 'invalid' ) ||
+			false
+		);
+		this.setState( { emailValidationError } );
+		this.updateUserSetting( 'user_email', value );
+	},
+
+	updateUserLoginConfirm( event ) {
+		this.setState( { userLoginConfirm: event.target.value } );
 	},
 
 	validateUsername() {
-		const username = this.props.userSettings.getSetting( 'user_login' );
+		const username = this.getUserSetting( 'user_login' );
 		debug( 'Validating username ' + username );
 		this.props.username.validate( username );
 	},
@@ -113,7 +146,7 @@ const Account = React.createClass( {
 
 	communityTranslator() {
 		const { translate } = this.props;
-		const userLocale = this.props.userSettings.getSetting( 'language' );
+		const userLocale = this.getUserSetting( 'language' );
 		const showTranslator = userLocale && userLocale !== 'en';
 		if ( config.isEnabled( 'community-translator' ) && showTranslator ) {
 			return (
@@ -121,7 +154,8 @@ const Account = React.createClass( {
 					<FormLegend>{ translate( 'Community Translator' ) }</FormLegend>
 					<FormLabel>
 						<FormCheckbox
-							checkedLink={ this.valueLink( 'enable_translator' ) }
+							checked={ this.getUserSetting( 'enable_translator' ) }
+							onChange={ this.updateUserSettingCheckbox }
 							disabled={ this.getDisabledState() }
 							id="enable_translator"
 							name="enable_translator"
@@ -146,8 +180,8 @@ const Account = React.createClass( {
 	},
 
 	thankTranslationContributors() {
-		const { translate, userSettings } = this.props;
-		const locale = userSettings.getSetting( 'language' );
+		const { translate } = this.props;
+		const locale = this.getUserSetting( 'language' );
 		if ( ! locale || locale === 'en' ) {
 			return;
 		}
@@ -157,8 +191,6 @@ const Account = React.createClass( {
 			return;
 		}
 
-		// Config names are like 'fr - Francais', so strip the slug off
-		const languageName = language.name.replace( /^[a-zA-Z-]* - /, '' );
 		const url = 'https://translate.wordpress.com/translators/?contributor_locale=' + locale;
 
 		return ( <FormSettingExplanation> {
@@ -169,7 +201,7 @@ const Account = React.createClass( {
 							rel="noopener noreferrer"
 							href={ url }
 					/>,
-					language: <span>{ languageName }</span>
+					language: <span>{ language.name }</span>
 				}
 			} ) }
 		</FormSettingExplanation> );
@@ -189,13 +221,8 @@ const Account = React.createClass( {
 	},
 
 	handleRadioChange( event ) {
-		const name = event.currentTarget.name;
-		const value = event.currentTarget.value;
-		let updateObj = {};
-
-		updateObj[ name ] = value;
-
-		this.setState( updateObj );
+		const { name, value } = event.currentTarget;
+		this.setState( { [ name ]: value } );
 	},
 
 	/**
@@ -206,7 +233,7 @@ const Account = React.createClass( {
 	 */
 	handleUsernameChange( event ) {
 		this.debouncedUsernameValidate();
-		this.props.userSettings.updateSetting( 'user_login', event.currentTarget.value );
+		this.updateUserSetting( 'user_login', event.currentTarget.value );
 		this.setState( { usernameAction: null } );
 	},
 
@@ -225,7 +252,7 @@ const Account = React.createClass( {
 	},
 
 	submitUsernameForm() {
-		const username = this.props.userSettings.getSetting( 'user_login' );
+		const username = this.getUserSetting( 'user_login' );
 		const action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
 
 		this.setState( { submittingForm: true } );
@@ -244,9 +271,9 @@ const Account = React.createClass( {
 	},
 
 	onSiteSelect( siteSlug ) {
-		let selectedSite = sites.getSite( siteSlug );
+		const selectedSite = sites.getSite( siteSlug );
 		if ( selectedSite ) {
-			this.props.userSettings.updateSetting( 'primary_site_ID', selectedSite.ID );
+			this.updateUserSetting( 'primary_site_ID', selectedSite.ID );
 		}
 	},
 
@@ -274,7 +301,8 @@ const Account = React.createClass( {
 				<FormLegend>{ translate( 'Holiday Snow' ) }</FormLegend>
 				<FormLabel>
 					<FormCheckbox
-						checkedLink={ this.valueLink( 'holidaysnow' ) }
+						checked={ this.getUserSetting( 'holidaysnow' ) }
+						onChange={ this.updateUserSettingCheckbox }
 						disabled={ this.getDisabledState() }
 						id="holidaysnow"
 						name="holidaysnow"
@@ -309,7 +337,7 @@ const Account = React.createClass( {
 	},
 
 	renderPendingEmailChange() {
-		const { translate, userSettings } = this.props;
+		const { translate } = this.props;
 
 		if ( ! this.hasPendingEmailChange() ) {
 			return null;
@@ -322,7 +350,7 @@ const Account = React.createClass( {
 				text={
 					translate( 'There is a pending change of your email to %(email)s. Please check your inbox for a confirmation link.', {
 						args: {
-							email: userSettings.getSetting( 'new_user_email' )
+							email: this.getUserSetting( 'new_user_email' )
 						}
 					} )
 				}>
@@ -364,8 +392,8 @@ const Account = React.createClass( {
 	},
 
 	renderUsernameConfirmNotice() {
-		const { translate, username, userSettings } = this.props;
-		const usernameMatch = userSettings.getSetting( 'user_login' ) === this.state.userLoginConfirm;
+		const { translate, username } = this.props;
+		const usernameMatch = this.getUserSetting( 'user_login' ) === this.state.userLoginConfirm;
 		const status = usernameMatch ? 'is-success' : 'is-error';
 		const text = usernameMatch
 			? translate( 'Thanks for confirming your new username!' )
@@ -385,7 +413,7 @@ const Account = React.createClass( {
 	},
 
 	renderPrimarySite() {
-		const { translate, userSettings } = this.props;
+		const { translate } = this.props;
 
 		if ( ! user.get().visible_site_count ) {
 			return (
@@ -399,7 +427,7 @@ const Account = React.createClass( {
 			);
 		}
 
-		const primarySiteId = userSettings.getSetting( 'primary_site_ID' );
+		const primarySiteId = this.getUserSetting( 'primary_site_ID' );
 
 		return (
 			<SitesDropdown
@@ -409,24 +437,6 @@ const Account = React.createClass( {
 				onSiteSelect={ this.onSiteSelect }
 			/>
 		);
-	},
-
-	updateEmailAddress() {
-		return {
-			value: this.hasPendingEmailChange()
-				? this.props.userSettings.getSetting( 'new_user_email' )
-				: this.props.userSettings.getSetting( 'user_email' ),
-			requestChange: ( value ) => {
-				if ( '' === value ) {
-					this.setState( { emailValidationError: 'empty' } );
-				} else if ( ! emailValidator.validate( value ) ) {
-					this.setState( { emailValidationError: 'invalid' } );
-				} else {
-					this.setState( { emailValidationError: false } );
-				}
-				this.props.userSettings.updateSetting( 'user_email', value );
-			}
-		};
 	},
 
 	renderEmailValidation() {
@@ -443,7 +453,7 @@ const Account = React.createClass( {
 		switch ( this.state.emailValidationError ) {
 			case 'invalid':
 				notice = translate( '%(email)s is not a valid email address.', {
-					args: { email: userSettings.getSetting( 'user_email' ) }
+					args: { email: this.getUserSetting( 'user_email' ) }
 				} );
 				break;
 			case 'empty':
@@ -462,18 +472,21 @@ const Account = React.createClass( {
 	renderAccountFields() {
 		const { translate, userSettings } = this.props;
 
+		const isSubmitButtonDisabled = ! userSettings.hasUnsavedSettings() ||
+			this.getDisabledState() || this.hasEmailValidationError();
+
 		return (
 			<div className="account__settings-form" key="settingsForm">
 				<FormFieldset>
-					<FormLabel htmlFor="email">{ translate( 'Email Address' ) }</FormLabel>
+					<FormLabel htmlFor="user_email">{ translate( 'Email Address' ) }</FormLabel>
 					<FormTextInput
 						disabled={ this.getDisabledState() || this.hasPendingEmailChange() }
-						id="email"
-						name="email"
+						id="user_email"
+						name="user_email"
 						isError={ !! this.state.emailValidationError }
 						onFocus={ this.recordFocusEvent( 'Email Address Field' ) }
-						valueLink={ this.updateEmailAddress() }
-						valueKey="user_email"
+						value={ this.getEmailAddress() || '' }
+						onChange={ this.updateEmailAddress }
 					/>
 					{ this.renderEmailValidation() }
 					{ this.renderPendingEmailChange() }
@@ -488,13 +501,14 @@ const Account = React.createClass( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="url">{ translate( 'Web Address' ) }</FormLabel>
+					<FormLabel htmlFor="user_URL">{ translate( 'Web Address' ) }</FormLabel>
 					<FormTextInput
 						disabled={ this.getDisabledState() }
-						id="url"
-						name="url"
+						id="user_URL"
+						name="user_URL"
 						onFocus={ this.recordFocusEvent( 'Web Address Field' ) }
-						valueLink={ this.valueLink( 'user_URL' ) }
+						value={ this.getUserSetting( 'user_URL' ) || '' }
+						onChange={ this.updateUserSettingInput }
 					/>
 					<FormSettingExplanation>
 						{ translate( 'Shown publicly when you comment on blogs.' ) }
@@ -502,15 +516,16 @@ const Account = React.createClass( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="lang_id">{ translate( 'Interface Language' ) }</FormLabel>
+					<FormLabel htmlFor="language">{ translate( 'Interface Language' ) }</FormLabel>
 					<LanguageSelector
 						disabled={ this.getDisabledState() }
-						id="lang_id"
+						id="language"
 						languages={ config( 'languages' ) }
-						name="lang_id"
+						name="language"
 						onFocus={ this.recordFocusEvent( 'Interface Language Field' ) }
 						valueKey="langSlug"
-						valueLink={ this.updateLanguage() }
+						value={ this.getUserSetting( 'language' ) || '' }
+						onChange={ this.updateLanguage }
 					/>
 					{ this.thankTranslationContributors() }
 				</FormFieldset>
@@ -521,7 +536,7 @@ const Account = React.createClass( {
 
 				<FormButton
 					isSubmitting={ this.state.submittingForm }
-					disabled={ ! userSettings.hasUnsavedSettings() || this.getDisabledState() || this.hasEmailValidationError() }
+					disabled={ isSubmitButtonDisabled }
 					onClick={ this.recordClickEvent( 'Save Account Settings Button' ) }
 				>
 					{ this.state.submittingForm ? translate( 'Saving…' ) : translate( 'Save Account Settings' ) }
@@ -568,7 +583,10 @@ const Account = React.createClass( {
 	 * These form fields are displayed when a username change is in progress.
 	 */
 	renderUsernameFields() {
-		const { translate, username, userSettings } = this.props;
+		const { translate, username } = this.props;
+
+		const isSaveButtonDisabled = ( this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ) ||
+			! username.isUsernameValid() || this.state.submittingForm;
 
 		return (
 			<div className="account__username-form" key="usernameForm">
@@ -582,7 +600,9 @@ const Account = React.createClass( {
 						id="username_confirm"
 						name="username_confirm"
 						onFocus={ this.recordFocusEvent( 'Username Confirm Field' ) }
-						valueLink={ this.linkState( 'userLoginConfirm' ) } />
+						value={ this.state.userLoginConfirm }
+						onChange={ this.updateUserLoginConfirm }
+					/>
 					{ this.renderUsernameConfirmNotice() }
 					<FormSettingExplanation>{ translate( 'Confirm new username' ) }</FormSettingExplanation>
 				</FormFieldset>
@@ -628,7 +648,7 @@ const Account = React.createClass( {
 
 				<FormButtonsBar>
 					<FormButton
-						disabled={ ( userSettings.getSetting( 'user_login' ) !== this.state.userLoginConfirm ) || ! username.isUsernameValid() || this.state.submittingForm }
+						disabled={ isSaveButtonDisabled }
 						type="button"
 						onClick={ this.recordClickEvent( 'Change Username Button', this.submitUsernameForm ) }
 					>
@@ -659,16 +679,16 @@ const Account = React.createClass( {
 				<Card className="account__settings">
 					<form onChange={ markChanged } onSubmit={ this.submitForm } >
 						<FormFieldset>
-							<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
+							<FormLabel htmlFor="user_login">{ translate( 'Username' ) }</FormLabel>
 								<FormTextInput
 									autoComplete="off"
 									className="account__username"
-									disabled={ this.getDisabledState() || ! userSettings.getSetting( 'user_login_can_be_changed' ) }
-									id="username"
-									name="username"
+									disabled={ this.getDisabledState() || ! this.getUserSetting( 'user_login_can_be_changed' ) }
+									id="user_login"
+									name="user_login"
 									onFocus={ this.recordFocusEvent( 'Username Field' ) }
 									onChange={ this.handleUsernameChange }
-									value={ userSettings.getSetting( 'user_login' ) }
+									value={ this.getUserSetting( 'user_login' ) || '' }
 								/>
 								{ this.renderUsernameValidation() }
 								<FormSettingExplanation>{ this.renderJoinDate() }</FormSettingExplanation>

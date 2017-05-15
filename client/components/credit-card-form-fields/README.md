@@ -16,21 +16,22 @@ Some of these fields use [masking](https://en.wikipedia.org/wiki/Input_mask), i.
 ## Usage
 
 ```jsx
-import React from 'react';
+import React, { Component } from 'react';
 import CreditCardFormFields from 'components/credit-card-form-fields';
 
-React.createClass( {
-	render: function() {
+class YourComponent extends Component {
+	render() {
 		return (
 			<CreditCardFormFields
 				card={ this.props.card }
 				countriesList={ this.props.countriesList }
 				eventFormName="Credit Card Form"
 				isFieldInvalid={ this.isFieldInvalid }
-				onFieldChange={ this.onFieldChange } />
+				onFieldChange={ this.onFieldChange }
+			/>
 		);
 	}
-} );
+}
 ```
 
 ## Properties

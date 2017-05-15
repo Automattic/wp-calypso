@@ -4,7 +4,7 @@ As Guided Tours as a framework is made available to parties interested in [writi
 
 ## State-aware steps
 
-When the day comes that we decide we need proper dynamic, state-aware steps for Guided Tours, [PR #10436] will contain useful material to inform that enhancement; notably, the diff at hand and the last couple of comments before the closing of the pull request. In a nutshell:
+When the day comes that we decide we need proper dynamic, state-aware steps for Guided Tours, [PR #10436][editortourpr] will contain useful material to inform that enhancement; notably, the diff at hand and the last couple of comments before the closing of the pull request. In a nutshell:
 
 ```js
 // default behavior would be unaffected
@@ -28,10 +28,9 @@ Most (if not all) of the ways `actionLog` is processed — with `map`, `filter`,
 
 ## Making `actionLog` scale
 
-By design, `actionLog`'s reducer will react to all sorts of actions coming in through the dispatcher. As of this writing, the [list][relevant-types] of subscribed types is relatively limited:
+By design, `actionLog`'s reducer will react to all sorts of actions coming in through the dispatcher. As of this writing, the [list][relevanttypes] of subscribed types is relatively limited:
 
 ```
-COMPONENT_INTERACTION_TRACKED
 FIRST_VIEW_HIDE
 GUIDED_TOUR_UPDATE
 THEMES_RECEIVE
@@ -44,7 +43,7 @@ Yet, a few things are clear:
 
 - As more Guided Tours are built in the future, that list can only grow.
 - There are really no limits to _what kind_ of actions may be added to it — from navigation, to success signals of fetches, to specific signals of user interaction.
-- A non-negligible part of these actions can be fired very often (`ROUTE_SET`, `COMPONENT_INTERACTION_TRACKED`).
+- A non-negligible part of these actions can be fired very often (_e.g._, `ROUTE_SET`).
 
 Every time `actionLog` changes, Guided Tours's main selectors get called with the new state, whether a tour is running or not. This has obvious **performance implications**. Right now, we believe this is acceptably mitigated by 1) copious use of memoization with `createSelector` and simple cache heuristics, and 2) the still limited set of action types `actionLog` subscribes to.
 
@@ -58,7 +57,7 @@ You probably saw this one coming. Calypso does not use [streams][rxjs], but, sho
 
 ### (Persistent?) Data Structures
 
-The following approach, leveraging persistent or linked data structures, could be a simple replacement for streams. It aims to replace standard array traversal functions with a suite of functions optimized for `actionLog`: `mapActionLog`, `filterActionLog`, etc. Since `actionLog` is a [monoid][monoids], any operation _f_ on `actionLog` can be decomposable to [divide and conquer]. Notably,
+The following approach, leveraging persistent or linked data structures, could be a simple replacement for streams. It aims to replace standard array traversal functions with a suite of functions optimized for `actionLog`: `mapActionLog`, `filterActionLog`, etc. Since `actionLog` is a [monoid][monoids], any operation _f_ on `actionLog` can be decomposable to [divide and conquer][divideconquer]. Notably,
 
 ```js
 f( [ A, B, C ] ) === join( f( [ A, B ] ), f( [ C ] ) )
@@ -104,7 +103,7 @@ reduce( [ A, B, C ], f, initial ) === reduce(
 ) // simpler to express without `join`, unless we had lazy eval
 ```
 
-**A sad caveat.** JS collections are implemented with arrays and not [linked lists], meaning we have no built-in way to express a collection in terms of its _head_ (new item) + _tail_ (the rest, _i.e._ the "previous version" of the list). Implementing the above suite in a way that would allows us to benefit from caching (the whole point of this!) would require also implementing `actionLog` as a basic [doubly linked list], be it homemade or with a library. It shouldn't be hard, but it's disappointing.
+**A sad caveat.** JS collections are implemented with arrays and not [linked lists][linkedlists], meaning we have no built-in way to express a collection in terms of its _head_ (new item) + _tail_ (the rest, _i.e._ the "previous version" of the list). Implementing the above suite in a way that would allows us to benefit from caching (the whole point of this!) would require also implementing `actionLog` as a basic [doubly linked list][doublylinked], be it homemade or with a library. It shouldn't be hard, but it's disappointing.
 
 
 ### A deep map of actions
@@ -161,11 +160,12 @@ With this distinction, assuming we could keep `relevantTourEntryTypes` small, ma
 * * *
 
 <a name="note-1"><sup>1</sup></a>: Having read and understood the [architecture] is a prerequisite.
-[PR #10436]: https://github.com/Automattic/wp-calypso/pull/10436#issuecomment-273854187
+
+[editortourpr]: https://github.com/Automattic/wp-calypso/pull/10436#issuecomment-273854187
 [architecture]: ./ARCHITECTURE.md
-[relevant-types]: https://github.com/Automattic/wp-calypso/blob/25cdc9141129757530c66b3b2525c9fd3a0aebb8/client/state/ui/action-log/reducer.js#L19-L27
+[relevanttypes]: https://github.com/Automattic/wp-calypso/blob/25cdc9141129757530c66b3b2525c9fd3a0aebb8/client/state/ui/action-log/reducer.js#L19-L27
 [rxjs]: https://github.com/ReactiveX/rxjs
 [monoids]: http://learnyouahaskell.com/functors-applicative-functors-and-monoids#monoids
-[divide and conquer]: https://en.wikipedia.org/wiki/Divide_and_conquer_algorithm
-[linked lists]: https://en.wikipedia.org/wiki/Linked_list
-[doubly linked list]: https://en.wikipedia.org/wiki/Doubly_linked_list
+[divideconquer]: https://en.wikipedia.org/wiki/Divide_and_conquer_algorithm
+[linkedlists]: https://en.wikipedia.org/wiki/Linked_list
+[doublylinked]: https://en.wikipedia.org/wiki/Doubly_linked_list

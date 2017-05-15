@@ -5,8 +5,8 @@ This component is used to implement a checkbox which you can use to bulk select 
 
 #### How to use:
 
-```js
-var BulkSelect = require( 'components/bulk-select' );
+```jsx
+import BulkSelect from 'components/bulk-select';
 
 render: function() {
 	return (

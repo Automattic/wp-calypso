@@ -4,7 +4,7 @@
 
 var isLoggedIn = false;
 
-module.exports = function() {
+export default function() {
 	return {
 		get: function() {
 			return isLoggedIn;

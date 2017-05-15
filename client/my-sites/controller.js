@@ -5,15 +5,21 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { uniq } from 'lodash';
+import { uniq, some, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
  */
+import { SITES_ONCE_CHANGED } from 'state/action-types';
 import userFactory from 'lib/user';
-import sitesFactory from 'lib/sites-list';
-import { receiveSite } from 'state/sites/actions';
-import { getSite } from 'state/sites/selectors';
+import { receiveSite, requestSites } from 'state/sites/actions';
+import {
+	getSite,
+	isJetpackModuleActive,
+	isJetpackSite,
+	isRequestingSites,
+} from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import {
 	setSelectedSiteId,
 	setSection,
@@ -26,18 +32,46 @@ import route from 'lib/route';
 import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
-import utils from 'lib/site/utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { domainManagementList, domainManagementEdit, domainManagementDns } from 'my-sites/upgrades/paths';
+import {
+	getPrimarySiteId,
+	getSiteId,
+	getSites,
+	getVisibleSites,
+	isDomainOnlySite,
+} from 'state/selectors';
+import {
+	domainManagementAddGoogleApps,
+	domainManagementContactsPrivacy,
+	domainManagementDns,
+	domainManagementEdit,
+	domainManagementEditContactInfo,
+	domainManagementEmail,
+	domainManagementEmailForwarding,
+	domainManagementList,
+	domainManagementNameServers,
+	domainManagementPrivacyProtection,
+	domainManagementRedirectSettings,
+	domainManagementTransfer,
+	domainManagementTransferOut,
+	domainManagementTransferToAnotherUser
+} from 'my-sites/upgrades/paths';
 import SitesComponent from 'my-sites/sites';
+import { isATEnabled } from 'lib/automated-transfer';
+
+/*
+ * @FIXME Shorthand, but I might get rid of this.
+ */
+const getStore = ( context ) => ( {
+	getState: () => context.store.getState(),
+	dispatch: ( action ) => context.store.dispatch( action ),
+} );
 
 /**
  * Module vars
  */
 const user = userFactory();
-const sites = sitesFactory();
 const sitesPageTitleForAnalytics = 'Sites';
 
 /*
@@ -58,8 +92,7 @@ function createNavigation( context ) {
 		<NavigationComponent path={ context.path }
 			allSitesPath={ basePath }
 			siteBasePath={ basePath }
-			user={ user }
-			sites={ sites } />
+			user={ user } />
 	);
 }
 
@@ -113,39 +146,59 @@ function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	const EmptyContentComponent = require( 'components/empty-content' );
+	const DomainOnly = require( 'my-sites/upgrades/domain-management/list/domain-only' );
 	const { store: reduxStore } = reactContext;
 
-	removeSidebar( reactContext );
+	renderWithReduxStore( (
+			<DomainOnly domainName={ selectedSite.slug } siteId={ selectedSite.ID } hasNotice={ false } />
+		),
+		document.getElementById( 'primary' ),
+		reduxStore
+	);
 
 	renderWithReduxStore(
-		React.createElement( EmptyContentComponent, {
-			title: i18n.translate( 'Add a site to start using this feature.' ),
-			line: i18n.translate( 'Your domain is only set up with a temporary page. Start a site now to unlock everything WordPress.com can offer.' ),
-			action: i18n.translate( 'Create Site' ),
-			actionURL: `/start/site-selected/?siteSlug=${ encodeURIComponent( selectedSite.slug ) }&siteId=${ encodeURIComponent( selectedSite.ID ) }`,
-			secondaryAction: i18n.translate( 'Manage Domain' ),
-			secondaryActionURL: domainManagementList( selectedSite.slug )
-		} ),
-		document.getElementById( 'primary' ),
+		createNavigation( reactContext ),
+		document.getElementById( 'secondary' ),
 		reduxStore
 	);
 }
 
-function isPathAllowedForDomainOnlySite( pathname, domainName ) {
-	const urlWhiteListForDomainOnlySite = [
-		domainManagementList( domainName ),
-		domainManagementEdit( domainName ),
-		domainManagementDns( domainName ),
-		`/checkout/${ domainName }`,
-	];
+function isPathAllowedForDomainOnlySite( path, domainName ) {
+	const domainManagementPaths = [
+		domainManagementAddGoogleApps,
+		domainManagementContactsPrivacy,
+		domainManagementDns,
+		domainManagementEdit,
+		domainManagementEditContactInfo,
+		domainManagementEmail,
+		domainManagementEmailForwarding,
+		domainManagementList,
+		domainManagementNameServers,
+		domainManagementPrivacyProtection,
+		domainManagementRedirectSettings,
+		domainManagementTransfer,
+		domainManagementTransferOut,
+		domainManagementTransferToAnotherUser
+	].map( pathFactory => pathFactory( domainName, domainName ) );
 
-	return urlWhiteListForDomainOnlySite.indexOf( pathname ) > -1;
+	const otherPaths = [
+			`/checkout/${ domainName }`
+		],
+		startsWithPaths = [
+			'/checkout/thank-you',
+			`/me/purchases/${ domainName }`
+		];
+
+	if ( some( startsWithPaths, startsWithPath => startsWith( path, startsWithPath ) ) ) {
+		return true;
+	}
+
+	return [ ...domainManagementPaths, ...otherPaths ].indexOf( path ) > -1;
 }
 
 function onSelectedSiteAvailable( context ) {
-	const selectedSite = sites.getSelectedSite();
-	const getState = () => context.store.getState();
+	const { getState } = getStore( context );
+	const selectedSite = getSelectedSite( getState() );
 
 	// Currently, sites are only made available in Redux state by the receive
 	// here (i.e. only selected sites). If a site is already known in state,
@@ -193,7 +246,6 @@ function createSitesComponent( context ) {
 
 	return (
 		<SitesComponent
-			sites={ sites }
 			path={ context.path }
 			sourcePath={ sourcePath }
 			user={ user }
@@ -202,18 +254,28 @@ function createSitesComponent( context ) {
 }
 
 module.exports = {
+
+	// Clears selected site from global redux state
+	noSite( context, next ) {
+		context.store.dispatch( setSelectedSiteId( null ) );
+		return next();
+	},
+
 	/*
 	 * Set up site selection based on last URL param and/or handle no-sites error cases
 	 */
 	siteSelection( context, next ) {
-		const siteID = route.getSiteFragment( context.path );
+		const { getState, dispatch } = getStore( context );
+		const siteFragment = context.params.site || route.getSiteFragment( context.path );
 		const basePath = route.sectionify( context.path );
 		const currentUser = user.get();
 		const hasOneSite = currentUser.visible_site_count === 1;
 		const allSitesPath = route.sectionify( context.path );
+		const primaryId = getPrimarySiteId( getState() );
+		const primary = getSite( getState(), primaryId ) || '';
 
 		const redirectToPrimary = () => {
-			let redirectPath = `${ context.pathname }/${ sites.getPrimary().slug }`;
+			let redirectPath = `${ context.pathname }/${ primary.slug }`;
 
 			redirectPath = context.querystring
 				? `${ redirectPath }?${ context.querystring }`
@@ -241,24 +303,27 @@ module.exports = {
 
 		// If the user has only one site, redirect to the single site
 		// context instead of rendering the all-site views.
-		if ( hasOneSite && ! siteID ) {
-			if ( sites.initialized ) {
+		if ( hasOneSite && ! siteFragment ) {
+			const hasInitialized = getSites( getState() ).length;
+			if ( hasInitialized ) {
 				redirectToPrimary();
 				return;
 			}
-			sites.once( 'change', redirectToPrimary );
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: redirectToPrimary,
+			} );
 		}
 
 		// If the path fragment does not resemble a site, set all sites to visible
-		if ( ! siteID ) {
-			sites.selectAll();
-			context.store.dispatch( setAllSitesSelected() );
+		if ( ! siteFragment ) {
+			dispatch( setAllSitesSelected() );
 			return next();
 		}
 
-		// If there's a valid site from the url path
-		// set site visibility to just that site on the picker
-		if ( sites.select( siteID ) ) {
+		const siteId = getSiteId( getState(), siteFragment );
+		if ( siteId ) {
+			dispatch( setSelectedSiteId( siteId ) );
 			const selectionComplete = onSelectedSiteAvailable( context );
 
 			// if there was a redirect, we should terminate processing of next routes
@@ -267,83 +332,63 @@ module.exports = {
 				return;
 			}
 		} else {
-			// if sites has fresh data and siteID is invalid
+			// if sites has fresh data and siteId is invalid
 			// redirect to allSitesPath
-			if ( sites.fetched || ! sites.fetching ) {
+			if ( ! isRequestingSites( getState() ) ) {
 				return page.redirect( allSitesPath );
 			}
 
 			let waitingNotice;
+			let freshSiteId;
 			const selectOnSitesChange = () => {
-				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
-				if ( sites.select( siteID ) ) {
-					sites.initialized = true;
+				// if sites have loaded, but siteId is invalid, redirect to allSitesPath
+				freshSiteId = getSiteId( getState(), siteFragment );
+				dispatch( setSelectedSiteId( freshSiteId ) );
+				if ( getSite( getState(), freshSiteId ) ) {
 					onSelectedSiteAvailable( context );
 					if ( waitingNotice ) {
 						notices.removeNotice( waitingNotice );
 					}
-				} else if ( ( currentUser.visible_site_count !== sites.getVisible().length ) ) {
-					sites.initialized = false;
+				} else if ( ( currentUser.visible_site_count !== getVisibleSites( getState() ).length ) ) {
 					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
-					sites.once( 'change', selectOnSitesChange );
-					sites.fetch();
+					dispatch( {
+						type: SITES_ONCE_CHANGED,
+						listener: selectOnSitesChange,
+					} );
+					dispatch( requestSites() );
 				} else {
 					page.redirect( allSitesPath );
 				}
 			};
 			// Otherwise, check when sites has loaded
-			sites.once( 'change', selectOnSitesChange );
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: selectOnSitesChange,
+			} );
 		}
 		next();
 	},
 
-	awaitSiteLoaded( context, next ) {
-		const siteUrl = route.getSiteFragment( context.path );
-
-		if ( siteUrl && ! sites.initialized ) {
-			sites.once( 'change', next );
-		} else {
-			next();
-		}
-	},
-
-	jetpackModuleActive( moduleIds, redirect ) {
+	jetpackModuleActive( moduleId, redirect ) {
 		return function( context, next ) {
-			const site = sites.getSelectedSite();
+			const { getState } = getStore( context );
+			const siteId = getSelectedSiteId( getState() );
+			const isJetpack = isJetpackSite( getState(), siteId );
+			const isModuleActive = isJetpackModuleActive(
+					getState(),
+					siteId,
+					moduleId );
 
-			if ( ! site.jetpack ) {
+			if ( ! isJetpack ) {
 				return next();
 			}
 
-			site.verifyModulesActive( moduleIds, function( error, supported ) {
-				if ( supported || false === redirect ) {
-					next();
-				} else {
-					page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
-				}
-			} );
-		};
-	},
-
-	fetchJetpackSettings( context, next ) {
-		const siteFragment = route.getSiteFragment( context.path );
-
-		next();
-
-		if ( ! siteFragment ) {
-			return;
-		}
-
-		function checkSiteShouldFetch() {
-			const site = sites.getSite( siteFragment );
-			if ( ! site ) {
-				sites.once( 'change', checkSiteShouldFetch );
-			} else if ( site.jetpack && utils.userCan( 'manage_options', site ) ) {
-				site.fetchSettings();
+			if ( isModuleActive || false === redirect ) {
+				next();
+			} else {
+				page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
 			}
-		}
-
-		checkSiteShouldFetch();
+		};
 	},
 
 	makeNavigation: function( context, next ) {
@@ -362,17 +407,18 @@ module.exports = {
 	},
 
 	jetPackWarning( context, next ) {
+		const { getState } = getStore( context );
 		const Main = require( 'components/main' );
 		const JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
 		const basePath = route.sectionify( context.path );
-		const selectedSite = sites.getSelectedSite();
+		const selectedSite = getSelectedSite( getState() );
 
-		if ( selectedSite && selectedSite.jetpack && ! ( config.isEnabled( 'automated-transfer' ) ) ) {
+		if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
 			renderWithReduxStore( (
 				<Main>
 					<JetpackManageErrorPage
 						template="noDomainsOnJetpack"
-						siteId={ sites.getSelectedSite().ID }
+						siteId={ selectedSite.ID }
 					/>
 				</Main>
 			), document.getElementById( 'primary' ), context.store );
@@ -384,6 +430,7 @@ module.exports = {
 	},
 
 	sites( context ) {
+		const { dispatch } = getStore( context );
 		if ( context.query.verified === '1' ) {
 			notices.success(
 				i18n.translate(
@@ -395,7 +442,7 @@ module.exports = {
 		 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
 		 */
 		removeSidebar( context );
-		context.store.dispatch( setLayoutFocus( 'content' ) );
+		dispatch( setLayoutFocus( 'content' ) );
 
 		renderWithReduxStore(
 			createSitesComponent( context ),

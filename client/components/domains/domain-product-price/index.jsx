@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import PremiumPopover from 'components/plans/premium-popover';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { abtest } from 'lib/abtest';
 
 const DomainProductPrice = React.createClass( {
 	propTypes: {
@@ -85,15 +84,13 @@ const DomainProductPrice = React.createClass( {
 			return <div className="domain-product-price is-placeholder">{ this.translate( 'Loading…' ) }</div>;
 		}
 
-		const showPopover = abtest( 'domainSuggestionPopover' ) === 'showPopover';
-
 		switch ( this.props.rule ) {
 			case 'FREE_DOMAIN':
-				return showPopover && this.renderFree();
+				return this.renderFree();
 			case 'FREE_WITH_PLAN':
 				return this.renderFreeWithPlan();
 			case 'INCLUDED_IN_PREMIUM':
-				return showPopover && this.renderIncludedInPremium();
+				return this.renderIncludedInPremium();
 			case 'PRICE':
 			default:
 				return this.renderPrice();

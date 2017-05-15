@@ -51,6 +51,8 @@
 }
 
 .importer__service-info {
+	margin-bottom: 1.5em;
+
 	@include breakpoint(">480px") {
 		margin-left: 60px;
 	}

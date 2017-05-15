@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import debugFactory from 'debug';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-const debug = debugFactory( 'calypso:my-sites:current-site' );
+import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -23,23 +22,25 @@ const AllSites = require( 'my-sites/all-sites' ),
 import SiteNotice from './notice';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedOrAllSites } from 'state/selectors';
 
-const CurrentSite = React.createClass( {
-	displayName: 'CurrentSite',
-
-	componentDidMount: function() {
-		debug( 'The current site React component is mounted.' );
-	},
-
-	propTypes: {
-		sites: React.PropTypes.object.isRequired,
+class CurrentSite extends Component {
+	static propTypes = {
+		isJetpack: React.PropTypes.bool,
+		isPreviewShowing: React.PropTypes.bool,
 		siteCount: React.PropTypes.number.isRequired,
 		setLayoutFocus: React.PropTypes.func.isRequired,
 		selectedSiteId: React.PropTypes.number,
 		selectedSite: React.PropTypes.object,
-		isJetpack: React.PropTypes.bool
-	},
+		translate: React.PropTypes.func.isRequired,
+		anySiteSelected: React.PropTypes.array
+	};
+
+	state = {
+		domainsStore: DomainsStore
+	};
 
 	componentWillMount() {
 		const { selectedSiteId, isJetpack } = this.props;
@@ -48,38 +49,32 @@ const CurrentSite = React.createClass( {
 		}
 
 		DomainsStore.on( 'change', this.handleStoreChange );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		DomainsStore.off( 'change', this.handleStoreChange );
-	},
-
-	getInitialState: function() {
-		return {
-			domainsStore: DomainsStore
-		};
-	},
+	}
 
 	componentDidUpdate( prevProps ) {
 		const { selectedSiteId, isJetpack } = this.props;
 		if ( selectedSiteId && ! isJetpack && selectedSiteId !== prevProps.selectedSiteId ) {
 			UpgradesActions.fetchDomains( selectedSiteId );
 		}
-	},
+	}
 
-	handleStoreChange: function() {
+	handleStoreChange = () => {
 		this.setState( { domainsStore: DomainsStore } );
-	},
+	}
 
-	switchSites: function( event ) {
+	switchSites = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
 
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
-	},
+	}
 
-	getDomainWarnings: function() {
+	getDomainWarnings() {
 		const { selectedSiteId, selectedSite: site } = this.props;
 
 		if ( ! selectedSiteId ) {
@@ -106,17 +101,14 @@ const CurrentSite = React.createClass( {
 				] }
 			/>
 		);
-	},
+	}
 
-	previewSite: function( event ) {
-		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site' );
-		this.props.onClick && this.props.onClick( event );
-	},
+	previewSite = ( event ) => this.props.onClick && this.props.onClick( event );
 
-	render: function() {
-		const { selectedSite, isJetpack } = this.props;
+	render() {
+		const { isJetpack, selectedSite, translate, anySiteSelected } = this.props;
 
-		if ( ! this.props.sites.initialized ) {
+		if ( ! anySiteSelected.length ) {
 			return (
 				<Card className="current-site is-loading">
 					{ this.props.siteCount > 1 &&
@@ -126,7 +118,7 @@ const CurrentSite = React.createClass( {
 						<a className="site__content">
 							<div className="site-icon" />
 							<div className="site__info">
-								<span className="site__title">{ this.translate( 'Loading My Sites…' ) }</span>
+								<span className="site__title">{ translate( 'Loading My Sites…' ) }</span>
 							</div>
 						</a>
 					</div>
@@ -140,38 +132,45 @@ const CurrentSite = React.createClass( {
 					<span className="current-site__switch-sites">
 						<Button compact borderless onClick={ this.switchSites }>
 							<Gridicon icon="arrow-left" size={ 18 } />
-							{ this.translate( 'Switch Site' ) }
+							{ translate( 'Switch Site' ) }
 						</Button>
 					</span>
 				}
 				{ selectedSite
-					? <Site
-						site={ selectedSite }
-						homeLink={ true }
-						externalLink={ true }
-						onSelect={ this.previewSite }
-						tipTarget="site-card-preview" />
-					: <AllSites sites={ this.props.sites.get() } />
+					? <div>
+						<Site site={ selectedSite } />
+						<a
+							href={ selectedSite.URL }
+							onClick={ this.previewSite }
+							className={ `current-site__view-site${ this.props.isPreviewShowing ? ' selected' : '' }` }
+						>
+							<span className="current-site__view-site-text">
+								{ translate( 'Site Preview' ) }
+							</span>
+							<Gridicon icon="computer" />
+						</a>
+					</div>
+					: <AllSites />
 				}
 				{ ! isJetpack && this.getDomainWarnings() }
 				<SiteNotice site={ selectedSite } />
 			</Card>
 		);
 	}
-} );
+}
 
-// TODO: make this pure when sites can be retrieved from the Redux state
-module.exports = connect(
+export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
+		const user = getCurrentUser( state );
 
 		return {
+			isJetpack: isJetpackSite( state, selectedSiteId ),
 			selectedSiteId,
 			selectedSite: getSelectedSite( state ),
-			isJetpack: isJetpackSite( state, selectedSiteId )
+			anySiteSelected: getSelectedOrAllSites( state ),
+			siteCount: get( user, 'visible_site_count', 0 ),
 		};
 	},
 	{ setLayoutFocus },
-	null,
-	{ pure: false }
-)( CurrentSite );
+)( localize( CurrentSite ) );

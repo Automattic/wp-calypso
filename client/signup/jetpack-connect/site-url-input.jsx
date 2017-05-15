@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import i18n from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -15,8 +15,22 @@ import FormTextInput from 'components/forms/form-text-input';
 import Spinner from 'components/spinner';
 import untrailingslashit from 'lib/route/untrailingslashit';
 
-export default React.createClass( {
-	displayName: 'JetpackConnectSiteURLInput',
+
+class JetpackConnectSiteURLInput extends Component {
+	constructor() {
+		super();
+		this.onChange = this.onChange.bind( this );
+		this.onClick = this.onClick.bind( this );
+		this.handleKeyPress = this.handleKeyPress.bind( this );
+	}
+
+	componentWillMount() {
+		if ( this.props.url ) {
+			this.setState( { value: untrailingslashit( this.props.url ), shownValue: this.props.url } );
+		} else {
+			this.setState( { value: '', shownValue: '' } );
+		}
+	}
 
 	componentDidUpdate() {
 		if ( ! this.props.isError ) {
@@ -28,44 +42,43 @@ export default React.createClass( {
 		}
 
 		this.refs.siteUrl.refs.textField.focus();
-	},
-
-	getInitialState() {
-		return {
-			value: ''
-		};
-	},
+	}
 
 	onChange( event ) {
 		this.setState( {
-			value: untrailingslashit( event.target.value )
+			value: untrailingslashit( event.target.value ),
+			shownValue: event.target.value
 		}, this.props.onChange );
-	},
+	}
+
+	onClick() {
+		this.props.onClick( this.state.value );
+	}
 
 	renderButtonLabel() {
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
-				return this.translate( 'Connect Now' );
+				return i18n.translate( 'Connect Now' );
 			}
-			return this.translate( 'Start Installation' );
+			return i18n.translate( 'Start Installation' );
 		}
-		return this.translate( 'Connecting…' );
-	},
+		return i18n.translate( 'Connecting…' );
+	}
 
 	handleKeyPress( event ) {
 		if ( 13 === event.keyCode ) {
-			this.props.onClick();
+			this.onClick();
 		}
-	},
+	}
 
 	getTermsOfServiceUrl() {
 		return 'https://' + i18n.getLocaleSlug() + '.wordpress.com/tos/';
-	},
+	}
 
 	renderTermsOfServiceLink() {
 		return (
 			<p className="jetpack-connect__tos-link">{
-				this.translate(
+				i18n.translate(
 					'By connecting your site you agree to our fascinating {{a}}Terms of Service{{/a}}.',
 					{
 						components: {
@@ -80,26 +93,30 @@ export default React.createClass( {
 				)
 			}</p>
 		);
-	},
+	}
 
 	render() {
 		const hasError = this.props.isError && ( 'notExists' !== this.props.isError );
+		const textInputProps = {
+			ref: 'siteUrl',
+			id: 'siteUrl',
+			autoCapitalize: 'off',
+			autoFocus: 'autofocus',
+			onChange: this.onChange,
+			disabled: this.props.isFetching,
+			placeholder: i18n.translate( 'http://www.yoursite.com' ),
+			onKeyUp: this.handleKeyPress,
+			value: this.state.shownValue || ''
+		};
+
 		return (
 			<div>
-				<FormLabel htmlFor="siteUrl">{ this.translate( 'Site Address' ) }</FormLabel>
+				<FormLabel htmlFor="siteUrl">{ i18n.translate( 'Site Address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon
 						size={ 24 }
 						icon="globe" />
-					<FormTextInput
-						ref="siteUrl"
-						id="siteUrl"
-						autoCapitalize="off"
-						autoFocus="autofocus"
-						onChange={ this.onChange }
-						disabled={ this.props.isFetching }
-						placeholder={ this.translate( 'http://www.yoursite.com' ) }
-						onKeyUp={ this.handleKeyPress } />
+					<FormTextInput { ...textInputProps } />
 					{ this.props.isFetching
 						? ( <Spinner duration={ 30 } /> )
 						: null }
@@ -108,10 +125,11 @@ export default React.createClass( {
 					{ this.renderTermsOfServiceLink() }
 					<Button primary
 						disabled={ ( ! this.state.value || this.props.isFetching || hasError ) }
-						onClick={ this.props.onClick }>{ this.renderButtonLabel() }</Button>
+						onClick={ this.onClick }>{ this.renderButtonLabel() }</Button>
 				</Card>
 			</div>
 		);
 	}
+}
 
-} );
+export default JetpackConnectSiteURLInput;

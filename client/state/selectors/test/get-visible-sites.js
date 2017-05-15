@@ -42,7 +42,10 @@ describe( 'getVisibleSites()', () => {
 						}
 					}
 				}
-			}
+			},
+			siteSettings: {
+				items: {},
+			},
 		};
 		const sites = getVisibleSites( state );
 		expect( sites ).to.eql( [

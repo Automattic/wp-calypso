@@ -17,7 +17,7 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 
-import { items, queuedRequests } from '../reducer';
+import { items, queuedRequests, lastFetched, } from '../reducer';
 
 describe( 'reducer', ( ) => {
 	describe( 'items', ( ) => {
@@ -31,12 +31,19 @@ describe( 'reducer', ( ) => {
 					type: READER_FEED_REQUEST_SUCCESS,
 					payload: {
 						feed_ID: 1,
-						blog_ID: 2
+						blog_ID: 2,
+						feed_URL: 'http://example.com',
+						is_following: true,
 					}
 				} )[ 1 ]
 			).to.deep.equal( {
 				feed_ID: 1,
-				blog_ID: 2
+				blog_ID: 2,
+				feed_URL: 'http://example.com',
+				URL: undefined,
+				is_following: true,
+				name: undefined,
+				subscribers_count: undefined
 			} );
 		} );
 
@@ -53,7 +60,11 @@ describe( 'reducer', ( ) => {
 			).to.deep.equal( {
 				feed_ID: 1,
 				blog_ID: 2,
-				name: 'ben & jerries'
+				name: 'ben & jerries',
+				URL: undefined,
+				feed_URL: undefined,
+				is_following: undefined,
+				subscribers_count: undefined
 			} );
 		} );
 
@@ -112,7 +123,17 @@ describe( 'reducer', ( ) => {
 					name: 'new',
 					subscribers_count: 10
 				}
-			} ) ).to.deep.equal( { 666: { feed_ID: 666, blog_ID: 888, name: 'new', subscribers_count: 10 } } );
+			} ) ).to.deep.equal( {
+				666: {
+					feed_ID: 666,
+					blog_ID: 888,
+					name: 'new',
+					subscribers_count: 10,
+					feed_URL: undefined,
+					URL: undefined,
+					is_following: undefined,
+				}
+			} );
 		} );
 
 		it( 'should leave an existing entry alone if an error is received', ( ) => {
@@ -129,14 +150,35 @@ describe( 'reducer', ( ) => {
 			expect( items( startingState, {
 				type: READER_FEED_UPDATE,
 				payload: [
-					{ feed_ID: 666, blog_ID: 888, name: 'valid but new' },
-					{ feed_ID: 1, blog_ID: 777, name: 'first &amp; one' },
-					{ feed_ID: 2, blog_ID: 999, name: 'second' }
+					{ feed_ID: 666, blog_ID: 888, name: 'valid but new', is_following: true },
+					{ feed_ID: 1, blog_ID: 777, name: 'first &amp; one', is_following: true },
+					{ feed_ID: 2, blog_ID: 999, name: 'second', is_following: true }
 				]
 			} ) ).to.deep.equal( {
-				666: { feed_ID: 666, blog_ID: 888, name: 'valid but new' },
-				1: { feed_ID: 1, blog_ID: 777, name: 'first & one' },
-				2: { feed_ID: 2, blog_ID: 999, name: 'second' }
+				666: {
+					feed_ID: 666,
+					blog_ID: 888,
+					name: 'valid but new',
+					URL: undefined,
+					feed_URL: undefined,
+					is_following: true,
+					subscribers_count: undefined },
+				1: {
+					feed_ID: 1,
+					blog_ID: 777,
+					name: 'first & one',
+					URL: undefined,
+					feed_URL: undefined,
+					is_following: true,
+					subscribers_count: undefined },
+				2: {
+					feed_ID: 2,
+					blog_ID: 999,
+					name: 'second',
+					URL: undefined,
+					feed_URL: undefined,
+					is_following: true,
+					subscribers_count: undefined }
 			} );
 		} );
 	} );
@@ -159,6 +201,26 @@ describe( 'reducer', ( ) => {
 					}
 				)
 			).to.deep.equal( {} );
+		} );
+	} );
+
+	describe( 'lastFetched', () => {
+		it( 'should update the last fetched time on request success', () => {
+			const original = deepFreeze( {} );
+			const action = {
+				type: READER_FEED_REQUEST_SUCCESS,
+				payload: { feed_ID: 1 }
+			};
+			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
+		} );
+
+		it( 'should update the last fetched time on feed update', () => {
+			const original = deepFreeze( {} );
+			const action = {
+				type: READER_FEED_UPDATE,
+				payload: [ { feed_ID: 1 } ]
+			};
+			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
 		} );
 	} );
 } );

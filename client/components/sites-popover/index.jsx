@@ -16,7 +16,6 @@ module.exports = React.createClass( {
 	displayName: 'SitesPopover',
 
 	propTypes: {
-		sites: React.PropTypes.object,
 		showDelay: React.PropTypes.number,
 		context: React.PropTypes.object,
 		visible: React.PropTypes.bool,
@@ -71,7 +70,6 @@ module.exports = React.createClass( {
 	renderSiteSelector() {
 		return (
 			<SiteSelector
-				sites={ this.props.sites }
 				siteBasePath="/post"
 				onSiteSelect={ this.props.onSiteSelect }
 				showAddNewSite={ false }

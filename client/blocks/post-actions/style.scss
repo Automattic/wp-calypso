@@ -1,0 +1,37 @@
+.post-actions {
+	box-sizing: border-box;
+	display: flex;
+	font-family: $sans;
+	flex-direction: row;
+	height: auto;
+	justify-content: flex-end;
+	list-style-type: none;
+	margin: 10px 0;
+
+	.post-actions__item {
+		margin-right: 13px;
+
+		&.post-actions__relative-time {
+			flex: 1;
+			margin-left: 20px;
+		}
+
+		a,
+		&.post-actions__relative-time {
+			color: $gray-text-min;
+
+			&:hover {
+				color: $blue-medium;
+			}
+		}
+
+		&:last-child {
+			margin-right: 10px;
+		}
+
+		.comment-button,
+		.like-button {
+			padding: 0
+		}
+	}
+}

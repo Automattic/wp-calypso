@@ -26,7 +26,7 @@ function getConnectionIdsByPattern( metadata, pattern ) {
 	return metadata.filter( function( meta ) {
 		return pattern.test( meta.key ) && 1 === parseInt( meta.value, 10 );
 	} ).map( function( meta ) {
-		return parseInt( meta.key.match( pattern )[1], 10 );
+		return parseInt( meta.key.match( pattern )[ 1 ], 10 );
 	} );
 }
 

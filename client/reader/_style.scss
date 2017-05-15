@@ -25,16 +25,6 @@
 }
 
 .reader__content {
-	a {
-		color: $blue-medium;
-
-		&:hover {
-			color: $blue-light;
-		}
-	}
-}
-
-.reader__content {
 	sup, sub {
 		position: relative;
 		font-size: 0.83em;
@@ -196,7 +186,7 @@
 		font-family: $sans;
 		font-size: 15px;
 		padding-top: 5px;
-		border-top: 1px solid lighten( $gray, 30% );
+		border-top: 1px solid lighten( $gray, 20% );
 
 		a {
 			padding: 5px 10px;

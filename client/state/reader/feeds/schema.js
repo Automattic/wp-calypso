@@ -8,14 +8,13 @@ export const itemsSchema = {
 			properties: {
 				feed_ID: { type: 'integer' },
 				blog_ID: { type: 'integer' },
-				name: { type: 'string' },
-				URL: { type: 'string' },
-				feed_URL: { type: 'string' },
-				is_following: { type: 'boolean' },
-				subscribers_count: { type: 'integer' },
-				meta: { type: 'object' }
-			}
-		}
+				name: { type: [ 'string', 'null' ] },
+				URL: { type: [ 'string', 'null' ] },
+				feed_URL: { type: [ 'string', 'null' ] },
+				is_following: { type: [ 'boolean', 'null' ] },
+				subscribers_count: { type: [ 'integer', 'null' ] },
+			},
+		},
 	},
-	additionalProperties: false
+	additionalProperties: false,
 };

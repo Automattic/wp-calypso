@@ -1,9 +1,9 @@
-/***** WARNING: ES5 code only here. Not transpiled! *****/
+/***** WARNING: No ES6 modules here. Not transpiled! *****/
 
 /**
  * External dependencies
  */
-var webpack = require( 'webpack' ),
+const webpack = require( 'webpack' ),
 	path = require( 'path' ),
 	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' ),
 	fs = require( 'fs' );
@@ -11,7 +11,7 @@ var webpack = require( 'webpack' ),
 /**
  * Internal dependencies
  */
-var config = require( 'config' );
+const config = require( 'config' );
 
 /**
  * This lists modules that must use commonJS `require()`s
@@ -20,7 +20,7 @@ var config = require( 'config' );
  * @returns { object } list of externals
 */
 function getExternals() {
-	var externals = {};
+	const externals = {};
 
 	// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 	// with modules that are incompatible with webpack bundling.
@@ -36,7 +36,6 @@ function getExternals() {
 	externals[ 'webpack.config' ] = 'commonjs webpack.config';
 	// Exclude hot-reloader, as webpack will try and resolve this in production builds,
 	// and error.
-	// TODO: use WebpackDefinePlugin for CALYPSO_ENV, so we can make conditional requires work
 	externals[ 'bundler/hot-reloader' ] = 'commonjs bundler/hot-reloader';
 	// Exclude the devdocs search-index, as it's huge.
 	externals[ 'devdocs/search-index' ] = 'commonjs devdocs/search-index';
@@ -54,16 +53,21 @@ function getExternals() {
 	return externals;
 }
 
-var webpackConfig = {
+const webpackConfig = {
 	devtool: 'source-map',
 	entry: 'index.js',
 	target: 'node',
 	output: {
 		path: path.join( __dirname, 'build' ),
-		filename: 'bundle-' + ( process.env.CALYPSO_ENV || 'development' ) + '.js',
+		filename: 'bundle.js',
 	},
 	module: {
 		loaders: [
+			{
+				test: /extensions\/index/,
+				exclude: 'node_modules',
+				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' )
+			},
 			{
 				test: /sections.js$/,
 				exclude: 'node_modules',
@@ -101,24 +105,29 @@ var webpackConfig = {
 	plugins: [
 		// Require source-map-support at the top, so we get source maps for the bundle
 		new webpack.BannerPlugin( 'require( "source-map-support" ).install();', { raw: true, entryOnly: false } ),
+		new webpack.DefinePlugin( {
+			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
+		} ),
 		new webpack.NormalModuleReplacementPlugin( /^lib\/analytics$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib\/olark$/, 'lodash/noop' ), // Too many dependencies, e.g. sites-list
+		new webpack.NormalModuleReplacementPlugin( /^lib\/sites-list$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^lib\/olark$/, 'lodash/noop' ), // Depends on DOM
+		new webpack.NormalModuleReplacementPlugin( /^lib\/user$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib\/post-normalizer\/rule-create-better-excerpt$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^components\/seo\/preview-upgrade-nudge$/, 'components/empty-component' ), // Depends on page.js and should never be required server side
-		new webpack.NormalModuleReplacementPlugin( /^components\/popover$/, 'components/empty-component' ), // Depends on BOM and interactions don't work without JS
-		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/themes-site-selector-modal$/, 'components/empty-component' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^components\/seo\/reader-preview$/, 'components/empty-component' ), // Conflicts with component-closest module
+		new webpack.NormalModuleReplacementPlugin( /^components\/popover$/, 'components/null-component' ), // Depends on BOM and interactions don't work without JS
 		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/theme-upload$/, 'components/empty-component' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/single-site$/, 'components/empty-component' ), // Depends on DOM
-		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/multi-site$/, 'components/empty-component' ), // Depends on DOM
-		new webpack.NormalModuleReplacementPlugin( /^state\/ui\/editor\/selectors$/, 'lodash/noop' ), // will never be called server-side
-		new webpack.NormalModuleReplacementPlugin( /^state\/posts\/selectors$/, 'lodash/noop' ), // will never be called server-side
-		new webpack.NormalModuleReplacementPlugin( /^client\/layout\/guided-tours\/config$/, 'components/empty-component' ) // should never be required server side
+		new webpack.NormalModuleReplacementPlugin( /^client\/layout\/guided-tours\/config$/, 'components/empty-component' ), // should never be required server side
+		new webpack.NormalModuleReplacementPlugin( /^components\/site-selector$/, 'components/null-component' ), // Depends on BOM
 	],
 	externals: getExternals()
 };
 
+if ( ! config.isEnabled( 'desktop' ) ) {
+	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin( /^lib\/desktop$/, 'lodash/noop' ) );
+}
+
 if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
-	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'server-records.json' ),
+	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'server-records.json' );
 	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'server' ) } ) );
 }
 

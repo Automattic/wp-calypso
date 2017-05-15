@@ -5,6 +5,8 @@ var React = require( 'react' ),
 	Card = require( 'components/card' ),
 	classNames = require( 'classnames' );
 
+import SectionHeader from 'components/section-header';
+
 module.exports = React.createClass( {
 	displayName: 'PaymentBox',
 
@@ -12,14 +14,16 @@ module.exports = React.createClass( {
 		var cardClass = classNames( 'payment-box', this.props.classSet ),
 			contentClass = classNames( 'payment-box__content', this.props.contentClassSet );
 		return (
-			<Card className={ cardClass }>
-				<div className="box-padding">
-					<h5 className="payment-box__title">{ this.props.title }</h5>
-					<div className={ contentClass }>
-						{ this.props.children }
+			<div className="checkout__payment-box-container">
+				<SectionHeader label={ this.props.title } />
+				<Card className={ cardClass }>
+					<div className="checkout__box-padding">
+						<div className={ contentClass }>
+							{ this.props.children }
+						</div>
 					</div>
-				</div>
-			</Card>
+				</Card>
+			</div>
 		);
 	}
 } );

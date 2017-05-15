@@ -1,8 +1,15 @@
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import wpcom from 'lib/wp';
 import {
+	COMMENTS_CHANGE_STATUS,
+	COMMENTS_CHANGE_STATUS_FAILURE,
+	COMMENTS_CHANGE_STATUS_SUCESS,
+	COMMENTS_EDIT,
+	COMMENTS_EDIT_FAILURE,
+	COMMENTS_EDIT_SUCCESS,
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_REQUEST,
@@ -90,16 +97,22 @@ function commentsRequestFailure( dispatch, requestId, err ) {
  * Creates a thunk that requests comments for a given post
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
+ * @param {String} status status filter. Defaults to approved posts
  * @returns {Function} thunk that requests comments for a given post
  */
-export function requestPostComments( siteId, postId ) {
+export function requestPostComments( siteId, postId, status = 'approved' ) {
+	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
+		status = 'approved';
+	}
+
 	return ( dispatch, getState ) => {
 		const postCommentRequests = getPostCommentRequests( getState(), siteId, postId );
 		const oldestCommentDateForPost = getPostOldestCommentDate( getState(), siteId, postId );
 
 		const query = {
 			order: 'DESC',
-			number: NUMBER_OF_COMMENTS_PER_FETCH
+			number: NUMBER_OF_COMMENTS_PER_FETCH,
+			status
 		};
 
 		if ( oldestCommentDateForPost && oldestCommentDateForPost.toISOString ) {
@@ -221,6 +234,15 @@ export function writeComment( commentText, siteId, postId, parentCommentId ) {
 				skipSort
 			} );
 
+			const requestId = createRequestId( siteId, postId, {} );
+
+			wpcom.site( siteId )
+				.post( postId )
+				.comment()
+				.replies()
+				.then( ( { found: totalCommentsCount } ) => dispatch( { type: COMMENTS_COUNT_RECEIVE, siteId, postId, totalCommentsCount } ) )
+				.catch( ( err ) => commentsRequestFailure( dispatch, requestId, err ) );
+
 			return comment;
 		} )
 		.catch( ( error ) => {
@@ -298,6 +320,54 @@ export function unlikeComment( siteId, postId, commentId ) {
 			likeCount: data.like_count
 		} ) ).catch( () => dispatch( {
 			type: COMMENTS_LIKE,
+			siteId,
+			postId,
+			commentId
+		} ) );
+	};
+}
+
+export function changeCommentStatus( siteId, postId, commentId, status ) {
+	return dispatch => {
+		dispatch( {
+			type: COMMENTS_CHANGE_STATUS,
+			siteId,
+			postId,
+			commentId
+		} );
+
+		return wpcom.site( siteId ).comment( commentId ).update( { status } ).then( data => dispatch( {
+			type: COMMENTS_CHANGE_STATUS_SUCESS,
+			siteId,
+			postId,
+			commentId,
+			status: data.status
+		} ) ).catch( () => dispatch( {
+			type: COMMENTS_CHANGE_STATUS_FAILURE,
+			siteId,
+			postId,
+			commentId
+		} ) );
+	};
+}
+
+export function editComment( siteId, postId, commentId, content ) {
+	return dispatch => {
+		dispatch( {
+			type: COMMENTS_EDIT,
+			siteId,
+			postId,
+			content
+		} );
+
+		return wpcom.site( siteId ).comment( commentId ).update( { content } ).then( data => dispatch( {
+			type: COMMENTS_EDIT_SUCCESS,
+			siteId,
+			postId,
+			commentId,
+			content: data.content
+		} ) ).catch( () => dispatch( {
+			type: COMMENTS_EDIT_FAILURE,
 			siteId,
 			postId,
 			commentId

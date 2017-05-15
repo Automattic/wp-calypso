@@ -1,31 +1,33 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	noop = require( 'lodash/noop' );
+import React from 'react';
+import createReactClass from 'create-react-class';
+import PureRenderMixin from 'react-pure-render/mixin';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
-const Icon = require( 'reader/list-item/icon' ),
-	Title = require( 'reader/list-item/title' ),
-	Description = require( 'reader/list-item/description' ),
-	Actions = require( 'reader/list-item/actions' ),
-	FeedDisplayHelper = require( 'reader/lib/feed-display-helper' ),
-	decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
-	ReaderFollowButton = require( 'reader/follow-button' ),
-	SubscriptionStates = require( 'lib/reader-feed-subscriptions/constants' ).state,
-	FollowingEditNotificationSettings = require( './notification-settings' ),
-	FoldableCard = require( 'components/foldable-card' ),
-	SiteStore = require( 'lib/reader-site-store' ),
-	FeedStore = require( 'lib/feed-store' ),
-	smartSetState = require( 'lib/react-smart-set-state' );
+import Icon from 'reader/list-item/icon';
+import Title from 'reader/list-item/title';
+import Description from 'reader/list-item/description';
+import Actions from 'reader/list-item/actions';
+import FeedDisplayHelper from 'reader/lib/feed-display-helper';
+import { decodeEntities } from 'lib/formatting';
+import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
+import ReaderFollowButton from 'reader/follow-button';
+import { state as SubscriptionStates } from 'lib/reader-feed-subscriptions/constants';
+import FollowingEditNotificationSettings from './notification-settings';
+import FoldableCard from 'components/foldable-card';
+import SiteStore from 'lib/reader-site-store';
+import FeedStore from 'lib/feed-store';
+import smartSetState from 'lib/react-smart-set-state';
 
 import ExternalLink from 'components/external-link';
 
-const SubscriptionListItem = React.createClass( {
+const SubscriptionListItem = createReactClass( {
+	displayName: 'SubscriptionListItem',
 
 	propTypes: {
 		subscription: React.PropTypes.object.isRequired,
@@ -33,7 +35,7 @@ const SubscriptionListItem = React.createClass( {
 		onNotificationSettingsOpen: React.PropTypes.func,
 		onNotificationSettingsClose: React.PropTypes.func,
 		openCards: React.PropTypes.object,
-		isEmailBlocked: React.PropTypes.bool
+		isEmailBlocked: React.PropTypes.bool,
 	},
 
 	mixins: [ PureRenderMixin ],
@@ -42,7 +44,7 @@ const SubscriptionListItem = React.createClass( {
 		return {
 			classNames: '',
 			onNotificationSettingsOpen: noop,
-			onNotificationSettingsClose: noop
+			onNotificationSettingsClose: noop,
 		};
 	},
 
@@ -56,7 +58,7 @@ const SubscriptionListItem = React.createClass( {
 
 		return {
 			site,
-			feed
+			feed,
 		};
 	},
 
@@ -82,11 +84,17 @@ const SubscriptionListItem = React.createClass( {
 
 	handleFollowToggle: function() {
 		const action = this.isFollowing() ? 'unfollow' : 'follow';
-		FeedSubscriptionActions[ action ]( this.props.subscription.get( 'URL' ), this.props.subscription.get( 'blog_ID' ) );
+		FeedSubscriptionActions[ action ](
+			this.props.subscription.get( 'URL' ),
+			this.props.subscription.get( 'blog_ID' )
+		);
 	},
 
 	isFollowing: function() {
-		return !! this.props.subscription && this.props.subscription.get( 'state' ) === SubscriptionStates.SUBSCRIBED;
+		return (
+			!! this.props.subscription &&
+			this.props.subscription.get( 'state' ) === SubscriptionStates.SUBSCRIBED
+		);
 	},
 
 	render: function() {
@@ -97,18 +105,31 @@ const SubscriptionListItem = React.createClass( {
 			siteUrl = FeedDisplayHelper.getSiteUrl( siteData, feedData, subscription ),
 			displayUrl = FeedDisplayHelper.formatUrlForDisplay( siteUrl ),
 			isFollowing = this.isFollowing(),
-			feedTitle = decodeEntities( FeedDisplayHelper.getFeedTitle( siteData, feedData, displayUrl ) );
+			feedTitle = decodeEntities(
+				FeedDisplayHelper.getFeedTitle( siteData, feedData, displayUrl )
+			);
 
 		/* eslint-disable react/jsx-no-target-blank */
 		const cardHeader = (
 			<div className="subscription-list-item__header-content">
 				<Icon>{ iconUrl ? <img src={ iconUrl } alt="Feed icon" /> : null }</Icon>
 				<Title>
-					<a href={ FeedDisplayHelper.getFeedStreamUrl( siteData, feedData, displayUrl ) }>{ feedTitle }</a>
+					<a href={ FeedDisplayHelper.getFeedStreamUrl( siteData, feedData, displayUrl ) }>
+						{ feedTitle }
+					</a>
 				</Title>
-				<Description><ExternalLink icon={ true } href={ siteUrl } target="_blank" iconSize={ 12 }>{ displayUrl }</ExternalLink></Description>
+				<Description>
+					<ExternalLink icon={ true } href={ siteUrl } target="_blank" iconSize={ 12 }>
+						{ displayUrl }
+					</ExternalLink>
+				</Description>
 				<Actions>
-					<ReaderFollowButton following={ isFollowing } onFollowToggle={ this.handleFollowToggle } isButtonOnly={ true } siteUrl={ subscription.get( 'URL' ) } />
+					<ReaderFollowButton
+						following={ isFollowing }
+						onFollowToggle={ this.handleFollowToggle }
+						isButtonOnly={ true }
+						siteUrl={ subscription.get( 'URL' ) }
+					/>
 				</Actions>
 			</div>
 		);
@@ -128,11 +149,15 @@ const SubscriptionListItem = React.createClass( {
 				className={ this.props.classNames }
 				expanded={ isCardExpanded }
 			>
-				{ isFollowing ? <FollowingEditNotificationSettings subscription={ subscription } isEmailBlocked={ this.props.isEmailBlocked } /> : null }
+				{ isFollowing
+					? <FollowingEditNotificationSettings
+							subscription={ subscription }
+							isEmailBlocked={ this.props.isEmailBlocked }
+						/>
+					: null }
 			</FoldableCard>
 		);
-	}
-
+	},
 } );
 
-module.exports = SubscriptionListItem;
+export default SubscriptionListItem;

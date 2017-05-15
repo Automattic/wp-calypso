@@ -16,7 +16,8 @@
 	margin: 0 0 5px 0;
 
 	@include breakpoint( "<480px" ) {
-		padding: 0 20px;
+		line-height: 1.2em;
+		padding: 0 10px;
 	}
 }
 

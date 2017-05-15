@@ -7,23 +7,21 @@ import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import path from 'path';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import Button from 'components/button';
 import Dialog from 'components/dialog';
 import FilePicker from 'components/file-picker';
-import FormLabel from 'components/forms/form-label';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getToken as getOauthToken } from 'lib/oauth-token';
 import Gravatar from 'components/gravatar';
 import {
 	isCurrentUserUploadingGravatar,
 } from 'state/current-user/gravatar-status/selectors';
-import { isOffline } from 'state/application/selectors';
 import {
 	resetAllImageEditorState
 } from 'state/ui/editor/image-editor/actions';
@@ -33,6 +31,8 @@ import {
 	uploadGravatar
 } from 'state/current-user/gravatar-status/actions';
 import ImageEditor from 'blocks/image-editor';
+import InfoPopover from 'components/info-popover';
+import ExternalLink from 'components/external-link';
 
 /**
  * Module dependencies
@@ -49,7 +49,6 @@ export class EditGravatar extends Component {
 	}
 
 	static propTypes = {
-		isOffline: PropTypes.bool,
 		isUploading: PropTypes.bool,
 		translate: PropTypes.func,
 		receiveGravatarImageFailed: PropTypes.func,
@@ -160,48 +159,66 @@ export class EditGravatar extends Component {
 
 	render() {
 		const {
-			isOffline: userIsOffline,
 			isUploading,
 			translate,
 			user
 		} = this.props;
+		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
+		// use imgSize = 400 for caching
+		// it's the popular value for large Gravatars in Calypso
+		const GRAVATAR_IMG_SIZE = 400;
 		return (
-			<div>
+			<div className="edit-gravatar">
 				{ this.renderImageEditor() }
-				<FormLabel>
-					{
-						translate( 'Avatar', {
-							comment: 'A section heading on the profile page.'
-						} )
-					}
-				</FormLabel>
-				<div
-					className={
-						classnames( 'edit-gravatar__image-container',
-							{ 'is-uploading': isUploading }
-						)
-					}
-				>
-					<Gravatar
-						imgSize={ 270 }
-						size={ 100 }
-						user={ user }
-					/>
-					{ isUploading && <Spinner className="edit-gravatar__spinner" /> }
-				</div>
-				<p>
-					{
-						translate( 'To change, select an image or ' +
-							'drag and drop a picture from your computer.' )
-					}
-				</p>
 				<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
-					<Button
-						disabled={ userIsOffline || isUploading || ! user.email_verified }
+					<div
+						className={
+							classnames( 'edit-gravatar__image-container',
+								{ 'is-uploading': isUploading }
+							)
+						}
 					>
-						{ translate( 'Select Image' ) }
-					</Button>
+						<Gravatar
+							imgSize={ GRAVATAR_IMG_SIZE }
+							size={ 150 }
+							user={ user }
+						/>
+						{ ! isUploading && (
+							<div className="edit-gravatar__label-container">
+								<Gridicon icon="cloud-upload" size={ 36 } />
+								<span className="edit-gravatar__label">
+									{ this.props.translate( 'Click to change photo' ) }
+								</span>
+							</div>
+						) }
+						{ isUploading && <Spinner className="edit-gravatar__spinner" /> }
+						</div>
 				</FilePicker>
+				<div>
+					<p className="edit-gravatar__explanation">Your profile photo is public.</p>
+					<InfoPopover
+						className="edit-gravatar__pop-over"
+						position="left" >
+						{ translate( '{{p}}The avatar you use on WordPress.com comes ' +
+							'from {{ExternalLink}}Gravatar{{/ExternalLink}} - a universal avatar service.{{/p}}' +
+							'{{p}}Your photo may be displayed on other sites where ' +
+							'you use your email address %(email)s.{{/p}}',
+							{
+								components: {
+									ExternalLink: <ExternalLink
+										href={ gravatarLink }
+										target="_blank"
+										rel="noopener noreferrer"
+										icon={ true } />,
+									p: <p />
+								},
+								args: {
+									email: user.email
+								}
+							}
+						) }
+					</InfoPopover>
+				</div>
 			</div>
 		);
 	}
@@ -209,8 +226,7 @@ export class EditGravatar extends Component {
 
 export default connect(
 	state => ( {
-		user: getCurrentUser( state ),
-		isOffline: isOffline( state ),
+		user: getCurrentUser( state ) || {},
 		isUploading: isCurrentUserUploadingGravatar( state ),
 	} ),
 	{

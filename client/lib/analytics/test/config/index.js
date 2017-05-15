@@ -3,5 +3,9 @@ module.exports = function( key ) {
 		return true;
 	}
 
+	if ( key === 'google_analytics_enabled' ) {
+		return false;
+	}
+
 	throw new Error( 'key ' + key + ' not expected to be needed' );
 };

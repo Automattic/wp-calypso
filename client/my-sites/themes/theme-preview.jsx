@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -13,14 +13,13 @@ import PulsingDot from 'components/pulsing-dot';
 import QueryTheme from 'components/data/query-theme';
 import { connectOptions } from './theme-options';
 import {
+	getThemeDemoUrl,
 	getThemePreviewThemeOptions,
-	getCanonicalTheme,
 	themePreviewVisibility,
 	isThemeActive,
 	isInstallingTheme,
 	isActivatingTheme
 } from 'state/themes/selectors';
-import { getPreviewUrl } from 'my-sites/themes/helpers';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hideThemePreview } from 'state/themes/actions';
@@ -30,11 +29,14 @@ const ThemePreview = React.createClass( {
 	displayName: 'ThemePreview',
 
 	propTypes: {
-		theme: React.PropTypes.object,
-		themeOptions: React.PropTypes.object,
-		isActive: React.PropTypes.bool,
-		isInstalling: React.PropTypes.bool,
-		onClose: React.PropTypes.func,
+		// connected props
+		demoUrl: PropTypes.string,
+		isActivating: PropTypes.bool,
+		isActive: PropTypes.bool,
+		isInstalling: PropTypes.bool,
+		isJetpack: PropTypes.bool,
+		themeId: PropTypes.string,
+		themeOptions: PropTypes.object,
 	},
 
 	getInitialState() {
@@ -55,13 +57,13 @@ const ThemePreview = React.createClass( {
 
 	onPrimaryButtonClick() {
 		const option = this.getPrimaryOption();
-		option.action && option.action( this.props.theme );
+		option.action && option.action( this.props.themeId );
 		! this.props.isJetpack && this.props.hideThemePreview();
 	},
 
 	onSecondaryButtonClick() {
 		const secondary = this.getSecondaryOption();
-		secondary.action && secondary.action( this.props.theme );
+		secondary.action && secondary.action( this.props.themeId );
 		! this.props.isJetpack && this.props.hideThemePreview();
 	},
 
@@ -76,7 +78,7 @@ const ThemePreview = React.createClass( {
 
 	renderPrimaryButton() {
 		const primaryOption = this.getPrimaryOption();
-		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.theme ) : null;
+		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.themeId ) : null;
 
 		return (
 			<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
@@ -90,7 +92,7 @@ const ThemePreview = React.createClass( {
 		if ( ! secondaryButton ) {
 			return;
 		}
-		const buttonHref = secondaryButton.getUrl ? secondaryButton.getUrl( this.props.theme ) : null;
+		const buttonHref = secondaryButton.getUrl ? secondaryButton.getUrl( this.props.themeId ) : null;
 		return (
 			<Button onClick={ this.onSecondaryButtonClick } href={ buttonHref } >
 				{ secondaryButton.extendedLabel }
@@ -108,13 +110,13 @@ const ThemePreview = React.createClass( {
 		return (
 			<div>
 				{ this.props.isJetpack && <QueryTheme themeId={ themeId } siteId="wporg" /> }
-				{ this.props.previewUrl && <WebPreview
+				{ this.props.demoUrl && <WebPreview
 					showPreview={ true }
 					showExternal={ true }
 					showSEO={ false }
 					onClose={ this.props.hideThemePreview }
-					previewUrl={ this.props.previewUrl }
-					externalUrl={ this.props.theme.demo_uri } >
+					previewUrl={ this.props.demoUrl + '?demo=true&iframe=true&theme_preview=true' }
+					externalUrl={ this.props.demoUrl } >
 					{ showActionIndicator && <PulsingDot active={ true } /> }
 					{ ! showActionIndicator && this.renderSecondaryButton() }
 					{ ! showActionIndicator && this.renderPrimaryButton() }
@@ -136,18 +138,15 @@ export default connect(
 
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
-		const theme = getCanonicalTheme( state, siteId, themeId );
 		const themeOptions = getThemePreviewThemeOptions( state );
 		return {
 			themeId,
-			theme,
-			siteId,
 			isJetpack,
 			themeOptions,
 			isInstalling: isInstallingTheme( state, themeId, siteId ),
 			isActive: isThemeActive( state, themeId, siteId ),
 			isActivating: isActivatingTheme( state, siteId ),
-			previewUrl: theme && theme.demo_uri ? getPreviewUrl( theme ) : null,
+			demoUrl: getThemeDemoUrl( state, themeId, siteId ),
 			options: [
 				'activate',
 				'preview',
