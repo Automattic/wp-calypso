@@ -12,15 +12,8 @@ import {
 	getComponentName,
 } from 'devdocs/docs-example/util';
 
-const shouldShowInstance = ( example, filter, component ) => {
+const shouldShowInstance = ( example, filter ) => {
 	const name = getComponentName( example );
-
-	// let's show only one instance
-	if ( component ) {
-		const slug = camelCaseToSlug( name );
-		return component === slug;
-	}
-
 	let searchPattern = name;
 
 	if ( example.props.searchKeywords ) {
@@ -30,12 +23,12 @@ const shouldShowInstance = ( example, filter, component ) => {
 	return ( ! filter || searchPattern.toLowerCase().indexOf( filter ) > -1 );
 };
 
-const Collection = ( { children, filter, section = 'design', component } ) => {
+const Collection = ( { children, filter, section = 'design' } ) => {
 	let showCounter = 0;
 	const summary = [];
 
 	const examples = React.Children.map( children, ( example ) => {
-		if ( ! example || ! shouldShowInstance( example, filter, component ) ) {
+		if ( ! example || ! shouldShowInstance( example, filter ) ) {
 			return null;
 		}
 
@@ -61,7 +54,6 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 		return (
 			<DocsExampleWrapper
 				name={ exampleName }
-				unique={ !! component }
 				url={ exampleLink }
 			>
 				{ example }

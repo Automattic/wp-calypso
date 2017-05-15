@@ -6,19 +6,9 @@
 import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
 
-const renderTitle = ( unique, name, url ) => unique
-	? <span className="docs-example__wrapper-header-title">
-		{ name }
-	</span>
-	: <a className="docs-example__wrapper-header-title" href={ url }>
-		{ name }
-	</a>
-;
-
 class DocsExampleWrapper extends Component {
 	static propTypes = {
 		name: PropTypes.string.isRequired,
-		unique: PropTypes.bool,
 		url: PropTypes.string.isRequired,
 	};
 
@@ -26,17 +16,15 @@ class DocsExampleWrapper extends Component {
 		const {
 			children,
 			name,
-			unique,
 			url,
 		} = this.props;
 
 		return (
-			<div className={ classNames(
-				'docs-example__wrapper',
-				{ 'docs-example__wrapper-unique': unique }
-			) }>
+			<div className={ classNames( 'docs-example__wrapper' ) }>
 				<h2 className="docs-example__wrapper-header">
-					{ renderTitle( unique, name, url ) }
+					<a className="docs-example__wrapper-header-title" href={ url }>
+						{ name }
+					</a>
 				</h2>
 				{ children }
 			</div>

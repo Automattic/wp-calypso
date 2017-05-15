@@ -1,17 +1,15 @@
 /**
  * External dependencies
  */
+import trim from 'lodash/trim';
 import React from 'react';
 import page from 'page';
-import { slugToCamelCase } from 'devdocs/docs-example/util';
-import trim from 'lodash/trim';
 
 /**
  * Internal dependencies
  */
 import SearchCollection from './search-collection';
 import SearchCard from 'components/search-card';
-import HeaderCake from 'components/header-cake';
 import { examples } from './examples';
 import Main from 'components/main';
 
@@ -40,27 +38,17 @@ export default class DesignAssets extends React.Component {
 	}
 
 	render() {
-		const { component } = this.props;
 		const { filter } = this.state;
 
 		return (
 			<Main className="design">
-				{ component
-					? <HeaderCake onClick={ this.backToComponents } backText="All Components">
-						{ slugToCamelCase( component ) }
-					</HeaderCake>
+				<SearchCard
+					onSearch={ this.onSearch }
+					initialValue={ filter }
+					placeholder="Search components…"
+					analyticsGroup="Docs" />
 
-					: <SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ filter }
-						placeholder="Search components…"
-						analyticsGroup="Docs" />
-				}
-
-				<SearchCollection
-					component={ component }
-					filter={ filter }
-				>
+				<SearchCollection filter={ filter }>
 					{ this.renderExamples() }
 				</SearchCollection>
 			</Main>
