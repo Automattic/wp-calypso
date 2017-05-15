@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-import { debounce, intersection, difference, curry } from 'lodash';
+import { debounce, intersection, difference, includes } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -21,7 +21,7 @@ import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getThemeFilters, isValidThemeFilter } from 'state/selectors';
+import { getThemeFilters, getThemeFilterToTermTable } from 'state/selectors';
 
 //We want those taxonomies if they are used to be presented in this order
 const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', 'style' ];
@@ -177,7 +177,7 @@ class ThemesMagicSearchCard extends React.Component {
 			tokens.map( ( token, i ) => {
 				if ( token.trim() === '' ) {
 					return <span className="themes-magic-search-card__search-white-space" key={ i }>{ token }</span>; // use shortid for key
-				} else if ( this.props.filterIsValid( token ) ) {
+				} else if ( includes( this.props.allValidFilters, token ) ) {
 					const separator = ':';
 					const [ taxonomy, filter ] = token.split( separator );
 					const themesTokenTypeClass = classNames(
@@ -345,6 +345,6 @@ export default connect(
 	( state ) => ( {
 		isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
 		filters: getThemeFilters( state ),
-		filterIsValid: curry( isValidThemeFilter )( state ),
+		allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
 	} )
 )( localize( wrapWithClickOutside( ThemesMagicSearchCard ) ) );
