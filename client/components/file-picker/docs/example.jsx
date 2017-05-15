@@ -26,7 +26,7 @@ export default class FilePickerExample extends React.Component {
 
 	render() {
 		return (
-			<Card>
+			<div>
 				<h4>Select a single file:</h4>
 				<FilePicker onPick={ this.onSingle } >
 					<Button>Single Item</Button>

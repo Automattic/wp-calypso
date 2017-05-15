@@ -28,12 +28,10 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<Card style={ { width: '300px', height: '350px', margin: 0 } }>
-				<Timezone
-					selectedZone={ this.state.timezone }
-					onSelect={ this.onTimezoneSelect }
-				/>
-			</Card>
+			<Timezone
+				selectedZone={ this.state.timezone }
+				onSelect={ this.onTimezoneSelect }
+			/>
 		);
 	}
 } );

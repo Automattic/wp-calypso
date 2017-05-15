@@ -52,15 +52,13 @@ class LanguagePickerExample extends PureComponent {
 					style={ { marginRight: '8px' } }
 					onClick={ this.triggerLoading }
 				>Test Loading</a>
-				<Card>
-					<LanguagePicker
-						languages={ config( 'languages' ) }
-						valueKey="langSlug"
-						value={ loading ? null : language }
-						onChange={ this.selectLanguage }
-						disabled={ disabled }
-					/>
-				</Card>
+				<LanguagePicker
+					languages={ config( 'languages' ) }
+					valueKey="langSlug"
+					value={ loading ? null : language }
+					onChange={ this.selectLanguage }
+					disabled={ disabled }
+				/>
 			</div>
 		);
 	}
