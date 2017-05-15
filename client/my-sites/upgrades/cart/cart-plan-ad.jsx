@@ -18,7 +18,7 @@ import * as upgradesActions from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 
 class CartPlanAd extends Component {
-	addToCartAndRedirect( event ) {
+	addToCartAndRedirect = ( event ) => {
 		event.preventDefault();
 		upgradesActions.addItem( cartItems.premiumPlan( PLAN_PREMIUM, { isFreeTrial: false } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
