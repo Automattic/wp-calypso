@@ -55,11 +55,11 @@
 
 .docs__design-button-row,
 .design__button-row {
-	&:first-child {
-		margin-top: -16px;
+	&:last-child {
+		margin-bottom: -16px;
 	}
 	.button {
-		margin-top: 16px !important;
+		margin-bottom: 16px !important;
 		margin-right: 16px !important;
 	}
 }
