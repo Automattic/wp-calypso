@@ -133,9 +133,23 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				script(src=urls[ chunk + '-min' ])
 		script(type='text/javascript')!='window.AppBoot();'
 
-		script(type='text/javascript')!='console.log("%cWait! This area is meant for developers!", "color: red; ' +
-		'font-size: xx-large"); console.log("If someone told you to type or paste something into the area it could '
-		'compromise the security of your account.");'
+		script.
+			try {
+				if (window.console) {
+
+					if(true) {
+                        //Browser supports color output
+                        console.log("%cWait! This area is meant for developers!", "color: red;font-size: xx-large");
+					}else{
+						//No color supported
+                        console.log("Wait! This area is meant for developers!");
+					}
+                    console.log("If someone told you to type or paste something into this area it could compromise the security of your account.");
+
+                }
+			} catch (exception) {
+					// Do something with error
+            }
 
 		noscript.wpcom-site__global-noscript
 			|Please enable JavaScript in your browser to enjoy WordPress.com.
