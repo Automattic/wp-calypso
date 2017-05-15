@@ -35,12 +35,10 @@ const FollowingManageSearchFeedsResults = ( {
 	} else if ( isEmpty ) {
 		return (
 			<div className={ classNames }>
-				<p className="following-manage__search-results-empty-message">
-					{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
-						components: { italic: <i /> },
-						args: query,
-					} ) }
-				</p>
+				{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
+					components: { italic: <i /> },
+					args: query,
+				} ) }
 			</div>
 		);
 	}

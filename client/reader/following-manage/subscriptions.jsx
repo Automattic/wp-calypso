@@ -127,12 +127,12 @@ class FollowingManageSubscriptions extends Component {
 							windowScrollerRef={ this.props.windowScrollerRef }
 						/> }
 					{ noSitesMatchQuery &&
-						<p>
+						<span>
 							{ translate( 'Sorry, no followed sites match {{italic}}%s.{{/italic}}', {
 								components: { italic: <i /> },
 								args: query,
 							} ) }
-						</p> }
+						</span> }
 				</div>
 			</div>
 		);
