@@ -37,12 +37,15 @@ const PostShareConnection = ( {
 	return (
 		<div onClick={ toggle } className={ classes }>
 			<FormToggle checked={ isActive } />
-			<SocialLogo icon={ service === 'google_plus' ? 'google-plus' : service } />
 			<div
 				style={ { backgroundImage } }
 				className="post-share__service-account-image"
 			>
 				&nbsp;
+			</div>
+
+			<div className="post-share__service-account-social-logo">
+				<SocialLogo icon={ service === 'google_plus' ? 'google-plus' : service } />
 			</div>
 
 			<div className="post-share__service-account-name">

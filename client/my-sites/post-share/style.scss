@@ -194,8 +194,20 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	flex: 0 0 36px;
 }
 
+.post-share__service-account-social-logo {
+	position: relative;
+	top: 10px;
+	left: -10px;
+	background-color: $white;
+	width: 20px;
+	height: 20px;
+	border-radius: 3px;
+}
+
 .post-share__service .social-logo {
 	flex: 0 0 24px;
+	margin-top: -2px;
+	margin-left: -2px;
 }
 
 .post-share__service-account-image {
@@ -204,9 +216,6 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	height: 24px;
 	border-radius: 50%;
     position: relative;
-    left: -10px;
-    top: 5px;
-    border: 1px solid white;
 
     &::after {
 		content: '';
@@ -219,7 +228,7 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 		left: 0;
 		border-radius: 50%;
 		opacity: 0.5;
-   		transition: opacity .25s ease;
+		transition: opacity .25s ease;
 	}
 }
 
