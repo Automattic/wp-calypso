@@ -33,13 +33,29 @@ const mockUser = {
 };
 
 export const CommentDetailExample = () =>
-	<CommentDetail
-		author={ mockUser }
-		comment={ mockComment }
-		post={ mockPost }
-		site={ mockSite }
-		user={ mockUser }
-	/>;
+	<div>
+		<CommentDetail
+			author={ mockUser }
+			comment={ mockComment }
+			post={ mockPost }
+			site={ mockSite }
+			user={ mockUser }
+		/>
+		<CommentDetail
+			author={ mockUser }
+			comment={ mockComment }
+			post={ mockPost }
+			site={ mockSite }
+			user={ mockUser }
+		/>
+		<CommentDetail
+			author={ mockUser }
+			comment={ mockComment }
+			post={ mockPost }
+			site={ mockSite }
+			user={ mockUser }
+		/>
+	</div>;
 
 CommentDetailExample.displayName = 'CommentDetail';
 

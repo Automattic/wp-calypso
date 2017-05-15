@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import CommentActions from './comment-actions';
+import CommentDetailHeader from './comment-detail-header';
+/*import CommentActions from './comment-actions';
 import CommentAuthor from './comment-author';
 import CommentAuthorMeta from './comment-author-meta';
 
@@ -50,6 +51,44 @@ export const CommentDetail = ( {
 			<img src={ user.avatar_URL } />
 			<textarea name="comment-reply"></textarea>
 		</div>
-	</Card>;
+	</Card>;*/
+
+export class CommentDetail extends Component {
+	static propTypes = {
+		author: PropTypes.object,
+		comment: PropTypes.object,
+	};
+
+	state = {
+		isExpanded: false,
+	};
+
+	toggleExpanded = () => {
+		this.setState( { isExpanded: ! this.state.isExpanded } );
+	}
+
+	render() {
+		const {
+			author,
+			comment,
+		} = this.props;
+		const { isExpanded } = this.state;
+
+		const classes = classNames( 'comment-detail', {
+			'is-expanded': isExpanded,
+		} );
+
+		return (
+			<Card is-compact className={ classes }>
+				<CommentDetailHeader
+					author={ author }
+					commentBody={ comment.body }
+					isExpanded={ isExpanded }
+					toggleExpanded={ this.toggleExpanded }
+				/>
+			</Card>
+		);
+	}
+}
 
 export default CommentDetail;
