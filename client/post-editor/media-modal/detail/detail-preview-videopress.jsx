@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { invoke, noop } from 'lodash';
 import classNames from 'classnames';
 import debug from 'debug';
 
@@ -120,7 +120,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 			return;
 		}
 
-		this.player.destroy();
+		invoke( this, 'player.destroy' );
 
 		// Remove DOM created outside of React.
 		while ( this.video.firstChild ) {
@@ -133,9 +133,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 			return;
 		}
 
-		if ( typeof this.player.state.play === 'function' ) {
-			this.player.state.play();
-		}
+		invoke( this, 'player.state.play' );
 	}
 
 	pause() {
@@ -143,14 +141,12 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 			return;
 		}
 
-		if ( typeof this.player.state.pause === 'function' ) {
-			this.player.state.pause();
-		}
+		invoke( this, 'player.state.pause' );
 
-		let currentTime;
+		const currentTime = invoke( this, 'player.state.videoAt' );
 
-		if ( typeof this.player.state.videoAt === 'function' ) {
-			currentTime = this.player.state.videoAt();
+		if ( ! currentTime ) {
+			return;
 		}
 
 		this.props.onPause( currentTime );
