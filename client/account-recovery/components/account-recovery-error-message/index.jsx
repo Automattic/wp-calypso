@@ -17,11 +17,9 @@ class AccountRecoveryErrorMessage extends Component {
 				return translate( "We've failed to validate with the given code. " +
 					'Please double check if the code is correct.' );
 
-			// The error messages from our backend are quite descriptive in this case. e.g.
-			// "You've recently used this password", "Password must be at least 6 characeters.", etc.
-			// Thus I'm using it directly here.
 			case 'RestBadPasswordError':
-				return error.message;
+				return translate( "Sorry, you can't use this password either because " +
+						"it's not strong enough or you have used that as one of your previous passwords." );
 		}
 
 		return translate(
