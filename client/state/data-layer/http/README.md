@@ -1,16 +1,12 @@
 # Raw HTTP API Layer
 
-wpcom-http issues requests to WPCOM rest API, however
-sometimes you will want to issue a request to another API, maybe even on a 3rd party host.
+[`wpcom-http`](../wpcom-http) issues requests to the WordPress.com API. However sometimes you will want to issue a request to another API, maybe even on a third-party host. This raw HTTP layer will allow you to do just that.
 
-This raw http layer will allow you to do just that, it follows the same API as wpcom-http, the
-only difference from user's perspective is the action dispatched.
+It follows the same API than `wpcom-http`, the only difference from the user's perspective being the action dispatched.
 
-so, let's say you would like to do a POST request to https://api.example.com 
-when action `GET_EXAMPLE_DATA` is dispatched, later continuing with `GET_EXAMPLE_DATA_COMPLETED` for the data
-or `GET_EXAMPLE_DATA_ERROR` for the error
+### Usage
 
-probably under `third-party/` with the following code:
+So, let's say you would like to do a `POST` request to https://api.example.com when the action `GET_EXAMPLE_DATA` is dispatched, later continuing with `GET_EXAMPLE_DATA_COMPLETED` for the data or `GET_EXAMPLE_DATA_ERROR` for the error. You'll be able to do that with the following code (that could be located under `third-party`):
 
 ```js
 import { 
@@ -53,4 +49,4 @@ export default {
 
 ```
 
-Under the hood that uses `superagent`, for requests parameters see `data-layer/http/actions.js`
+Under the hood it uses [`superagent`](https://github.com/visionmedia/superagent), for requests parameters see [`data-layer/http/actions.js`](./actions.js).
