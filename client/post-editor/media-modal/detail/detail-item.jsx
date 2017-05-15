@@ -179,11 +179,9 @@ class EditorMediaModalDetailItem extends Component {
 		const mimePrefix = MediaUtils.getMimePrefix( item );
 		const classes = classNames( 'editor-media-modal-detail__edition-bar', classname );
 
-		if ( 'video' === mimePrefix ) {
-			return this.renderVideoEditorButtons( item, classes );
-		}
-
-		return this.renderImageEditorButtons( classes, classname );
+		return 'video' === mimePrefix
+			? this.renderVideoEditorButtons( item, classes )
+			: this.renderImageEditorButtons( classes, classname );
 	}
 
 	renderImageEditorButtons( classes, classname ) {
