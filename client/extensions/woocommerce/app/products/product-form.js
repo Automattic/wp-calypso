@@ -38,16 +38,15 @@ export default class ProductForm extends Component {
 					product={ product }
 					editProduct={ editProduct }
 				/>
-
-				<ProductFormCategoriesCard
-					product={ product }
-					productCategories={ productCategories }
-					editProduct={ editProduct }
-				/>
 				<ProductFormAdditionalDetailsCard
 					product={ product }
 					editProduct={ this.props.editProduct }
 					editProductAttribute={ this.props.editProductAttribute }
+				/>
+				<ProductFormCategoriesCard
+					product={ product }
+					productCategories={ productCategories }
+					editProduct={ editProduct }
 				/>
 				<ProductFormVariationsCard
 					product={ product }
