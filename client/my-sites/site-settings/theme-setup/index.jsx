@@ -15,7 +15,7 @@ import QueryTheme from 'components/data/query-theme';
 import ThemeSetupCard from './theme-setup-card';
 import ThemeSetupPlaceholder from './theme-setup-placeholder';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getActiveTheme, getTheme } from 'state/themes/selectors';
+import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
 import { toggleDialog } from 'state/ui/theme-setup/actions';
 
 let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain, toggleDialog } ) => {
@@ -42,7 +42,7 @@ ThemeSetup = localize( ThemeSetup );
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const themeId = site && getActiveTheme( state, site.ID );
-	const theme = themeId && getTheme( state, 'wpcom', themeId );
+	const theme = themeId && getCanonicalTheme( state, 'wpcom', themeId );
 	return {
 		site,
 		themeId,
