@@ -18,6 +18,7 @@ import {
 import config, { isEnabled } from 'config';
 import EmailedLoginLinkSuccessfully from '../magic-login/emailed-login-link-successfully';
 import EmailedLoginLinkExpired from '../magic-login/emailed-login-link-expired';
+import ExternalLink from 'components/external-link';
 import {
 	getMagicLoginEmailAddressFormInput,
 	getMagicLoginCurrentView,
@@ -117,6 +118,7 @@ export class Login extends React.Component {
 			magicLoginEnabled,
 			magicLoginView,
 			translate,
+			twoFactorAuthType
 		} = this.props;
 
 		if ( magicLoginEnabled && magicLoginView === REQUEST_FORM ) {
@@ -137,21 +139,36 @@ export class Login extends React.Component {
 				</a>;
 		}
 
-		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView && <a href="#"
-			key="magic-login-link"
-			onClick={ this.onMagicLoginRequestClick }>
-				{ translate( 'Email me a login link' ) }
-			</a>;
-		const resetPasswordLink = ! magicLoginView && <a
-			href={ config( 'login_url' ) + '?action=lostpassword' }
-			key="lost-password-link">
+		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView && ! twoFactorAuthType && (
+			<a href="#"
+				key="magic-login-link"
+				onClick={ this.onMagicLoginRequestClick }>
+					{ translate( 'Email me a login link' ) }
+			</a>
+		);
+		const resetPasswordLink = ! magicLoginView && ! twoFactorAuthType && (
+			<a
+				href={ config( 'login_url' ) + '?action=lostpassword' }
+				key="lost-password-link">
 				{ this.props.translate( 'Lost your password?' ) }
-			</a>;
+			</a>
+		);
+
+		const helpLink = twoFactorAuthType && (
+			<ExternalLink
+				key="help-link"
+				icon={ true }
+				target="_blank"
+				href="http://en.support.wordpress.com/security/two-step-authentication/">
+				{ translate( 'Get help' ) }
+			</ExternalLink>
+		);
 
 		return compact( [
+			helpLink,
 			goBackLink,
 			showMagicLoginLink,
-			resetPasswordLink,
+			resetPasswordLink
 		] );
 	}
 
@@ -159,7 +176,6 @@ export class Login extends React.Component {
 		const {
 			magicLoginView,
 			queryArguments,
-			translate,
 			twoFactorAuthType,
 		} = this.props;
 
@@ -176,8 +192,7 @@ export class Login extends React.Component {
 								? <RequestLoginEmailForm />
 								: <LoginBlock
 									twoFactorAuthType={ twoFactorAuthType }
-									redirectLocation={ queryArguments.redirect_to }
-									title={ translate( 'Log in to your account.' ) } />
+									redirectLocation={ queryArguments.redirect_to } />
 							}
 						</div>
 						<div className="wp-login__footer">
