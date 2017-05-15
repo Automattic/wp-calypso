@@ -11,6 +11,7 @@ import Card from 'components/card';
 import CommentDetailComment from './comment-detail-comment';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
+import CommentDetailReply from './comment-detail-reply';
 
 export class CommentDetail extends Component {
 	static propTypes = {
@@ -55,6 +56,7 @@ export class CommentDetail extends Component {
 							url={ post.url }
 						/>
 						<CommentDetailComment comment={ comment } />
+						<CommentDetailReply />
 					</div>
 				}
 			</Card>

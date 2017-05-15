@@ -134,4 +134,26 @@
 			padding-left: 8px;
 		}
 	}
+
+	.comment-detail__comment-reply {
+		padding-top: 16px;
+
+		a {
+			color: $gray;
+			cursor: pointer;
+		}
+		.gridicon {
+			margin-right: 4px;
+			vertical-align: middle;
+		}
+	}
+}
+
+.comment-detail__reply {
+	line-height: 0;
+
+	textarea {
+		border: none;
+		resize: vertical;
+	}
 }

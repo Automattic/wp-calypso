@@ -2,11 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
 export const CommentDetailComment = ( {
 	comment,
 	moment,
+	translate,
 } ) =>
 	<div className="comment-detail__comment">
 		<div className="comment-detail__comment-content">
@@ -31,6 +33,13 @@ export const CommentDetailComment = ( {
 
 			<div className="comment-detail__comment-body">
 				{ comment.body }
+			</div>
+
+			<div className="comment-detail__comment-reply">
+				<a>
+					<Gridicon icon="reply" />
+					<span>{ translate( 'You replied to this comment' ) }</span>
+				</a>
 			</div>
 		</div>
 	</div>;
