@@ -50,6 +50,10 @@ class TwoFactorActions extends Component {
 			twoFactorAuthType,
 		} = this.props;
 
+		if ( twoFactorAuthType === 'sms' && ! isAuthenticatorSupported && ! isPushSupported ) {
+			return null;
+		}
+
 		return (
 			<Card className="two-factor-authentication__form-action is-compact">
 				<p>
