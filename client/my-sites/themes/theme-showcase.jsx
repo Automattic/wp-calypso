@@ -271,7 +271,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	isJetpack: isJetpackSite( state, siteId ),
 	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
-	subjects: getThemeFilterTerms( state, 'subject' ),
+	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
 } );
