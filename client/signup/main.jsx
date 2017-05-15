@@ -259,7 +259,7 @@ const Signup = React.createClass( {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
-		this.props.loadTrackingTool( 'Lucky Orange' );
+		this.props.loadTrackingTool( 'HotJar' );
 	},
 
 	componentWillUnmount() {

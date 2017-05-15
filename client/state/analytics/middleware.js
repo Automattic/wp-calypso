@@ -36,10 +36,10 @@ const pageViewServices = {
 
 const loadTrackingTool = ( trackingTool, state ) => {
 	const trackUser = ! navigator.doNotTrack;
-	const luckyOrangeEnabled = config( 'lucky_orange_enabled' );
+	const hotJarEnabled = config( 'hotjar_enabled' );
 
-	if ( trackingTool === 'Lucky Orange' && ! isTracking( state, 'Lucky Orange' ) && luckyOrangeEnabled && trackUser ) {
-		analytics.luckyOrange.addLuckyOrangeScript();
+	if ( trackingTool === 'HotJar' && ! isTracking( state, 'HotJar' ) && hotJarEnabled && trackUser ) {
+		analytics.hotjar.addHotJarScript();
 	}
 };
 
