@@ -46,7 +46,7 @@ class AdsFormEarnings extends Component {
 	}
 
 	getSettingsFromStore( siteInstance ) {
-		var site = siteInstance || this.props.site,
+		const site = siteInstance || this.props.site,
 			store = EarningsStore.getById( site.ID ) || {};
 
 		store.showEarningsNotice = false;
@@ -87,7 +87,7 @@ class AdsFormEarnings extends Component {
 
 		// defer fetch requests to avoid dispatcher conflicts
 		setTimeout( () => {
-			WordadsActions.fetchEarnings( site )
+			WordadsActions.fetchEarnings( site );
 		}, 0 );
 	}
 
@@ -116,11 +116,11 @@ class AdsFormEarnings extends Component {
 	};
 
 	getInfoToggle( type ) {
-		var types = {
+		const types = {
 			wordads: this.state.showWordadsInfo,
 			sponsored: this.state.showSponsoredInfo,
 			adjustment: this.state.showAdjustmentInfo,
-		}
+		};
 
 		return types[ type ] ? types[ type ] : false;
 	}
@@ -134,28 +134,29 @@ class AdsFormEarnings extends Component {
 	}
 
 	swapYearMonth( date ) {
-		var splits = date.split( '-' );
+		const splits = date.split( '-' );
 		return splits[ 1 ] + '-' + splits[ 0 ];
 	}
 
 	getStatus( status ) {
 		const { translate } = this.props;
-		var statuses = {
+		const statuses = {
 			0: translate( 'Unpaid' ),
 			1: translate( 'Paid' ),
 			2: translate( 'a8c-only' ),
 			3: translate( 'Pending (Missing Tax Info)' ),
 			4: translate( 'Pending (Invalid PayPal)' )
-		}
+		};
 
 		return statuses[ status ] ? statuses[ status ] : '?';
 	}
 
 	payoutNotice() {
 		const { translate } = this.props;
-		var owed = this.state.earnings && this.state.earnings.total_amount_owed ? this.state.earnings.total_amount_owed : '0.00',
+		const owed = this.state.earnings && this.state.earnings.total_amount_owed ? this.state.earnings.total_amount_owed : '0.00',
 			notice = translate(
-				'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. Payment will be made as soon as the total outstanding amount has reached $100.',
+				'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment.' +
+				'Payment will be made as soon as the total outstanding amount has reached $100.',
 				{
 					comment: 'Insufficient balance for payout.',
 					args: { amountOwed: owed }
@@ -190,10 +191,16 @@ class AdsFormEarnings extends Component {
 						{ translate( 'Payment has been processed through PayPal.' ) }
 					</li>
 					<li className="earnings_history__status"><strong>{ translate( 'Pending (Missing Tax Info):' ) } </strong>
-						{ translate( 'Payment is pending due to missing information. You can provide tax information in the settings screen.' ) }
+						{ translate(
+							'Payment is pending due to missing information.' +
+							'You can provide tax information in the settings screen.'
+						) }
 					</li>
 					<li className="earnings_history__status"><strong>{ translate( 'Pending (Invalid PayPal):' ) } </strong>
-						{ translate( 'Payment processing has failed due to invalid PayPal address. You can correct the PayPal address in the settings screen.' ) }
+						{ translate(
+							'Payment processing has failed due to invalid PayPal address.' +
+							'You can correct the PayPal address in the settings screen.'
+						) }
 					</li>
 				</ul>
 			</div>
@@ -202,23 +209,30 @@ class AdsFormEarnings extends Component {
 
 	earningsBreakdown() {
 		const { numberFormat, translate } = this.props;
-		var earnings = this.state.earnings && this.state.earnings.total_earnings ? Number( this.state.earnings.total_earnings ) : 0,
+		const earnings = this.state.earnings && this.state.earnings.total_earnings ? Number( this.state.earnings.total_earnings ) : 0,
 			owed = this.state.earnings && this.state.earnings.total_amount_owed ? Number( this.state.earnings.total_amount_owed ) : 0,
-			paid = this.state.earnings && this.state.earnings.total_earnings && this.state.earnings.total_amount_owed ?
-				( this.state.earnings.total_earnings - this.state.earnings.total_amount_owed ) : 0;
+			paid = this.state.earnings && this.state.earnings.total_earnings && this.state.earnings.total_amount_owed
+				? this.state.earnings.total_earnings - this.state.earnings.total_amount_owed
+				: 0;
 
 		return (
 			<ul className="earnings_breakdown__list" >
 				<li className="earnings_breakdown__item">
-					<span className="earnings_breakdown__label">{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }</span>
+					<span className="earnings_breakdown__label">
+						{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
+					</span>
 					<span className="earnings_breakdown__value">${ numberFormat( earnings, 2 ) }</span>
 				</li>
 				<li className="earnings_breakdown__item">
-					<span className="earnings_breakdown__label">{ translate( 'Total paid', { context: 'Sum of earnings that have been distributed' } ) }</span>
+					<span className="earnings_breakdown__label">
+						{ translate( 'Total paid', { context: 'Sum of earnings that have been distributed' } ) }
+					</span>
 					<span className="earnings_breakdown__value">${ numberFormat( paid, 2 ) }</span>
 				</li>
 				<li className="earnings_breakdown__item">
-					<span className="earnings_breakdown__label">{ translate( 'Outstanding amount', { context: 'Sum earnings left unpaid' } ) }</span>
+					<span className="earnings_breakdown__label">
+						{ translate( 'Outstanding amount', { context: 'Sum earnings left unpaid' } ) }
+					</span>
 					<span className="earnings_breakdown__value">${ numberFormat( owed, 2 ) }</span>
 				</li>
 			</ul>
@@ -227,12 +241,12 @@ class AdsFormEarnings extends Component {
 
 	earningsTable( earnings, header_text, type ) {
 		const { numberFormat, translate } = this.props;
-		var period,
-			rows = [],
+		const rows = [],
 			infoIcon = this.getInfoToggle( type ) ? 'info' : 'info-outline',
 			classes = classNames( 'earnings_history', {
 				'is-showing-info': this.getInfoToggle( type )
 			} );
+		let period;
 
 		for ( period in earnings ) {
 			if ( earnings.hasOwnProperty( period ) ) {
@@ -285,7 +299,7 @@ class AdsFormEarnings extends Component {
 
 	render() {
 		const { translate } = this.props;
-		var infoIcon = this.state.showEarningsNotice ? 'info' : 'info-outline',
+		const infoIcon = this.state.showEarningsNotice ? 'info' : 'info-outline',
 			classes = classNames( 'earnings_breakdown', {
 				'is-showing-info': this.state.showEarningsNotice
 			} );
@@ -312,17 +326,17 @@ class AdsFormEarnings extends Component {
 						{ this.earningsBreakdown() }
 					</div>
 				</Card>
-				{ this.state.earnings && this.checkSize( this.state.earnings.wordads ) ?
-					this.earningsTable( this.state.earnings.wordads, translate( 'Earnings History' ), 'wordads' ) :
-					null
+				{ this.state.earnings && this.checkSize( this.state.earnings.wordads )
+					? this.earningsTable( this.state.earnings.wordads, translate( 'Earnings History' ), 'wordads' )
+					: null
 				}
-				{ this.state.earnings && this.checkSize( this.state.earnings.sponsored ) ?
-					this.earningsTable( this.state.earnings.sponsored, translate( 'Sponsored Content History' ), 'sponsored' ) :
-					null
+				{ this.state.earnings && this.checkSize( this.state.earnings.sponsored )
+					? this.earningsTable( this.state.earnings.sponsored, translate( 'Sponsored Content History' ), 'sponsored' )
+					: null
 				}
-				{ this.state.earnings && this.checkSize( this.state.earnings.adjustment ) ?
-					this.earningsTable( this.state.earnings.adjustment, translate( 'Adjustments History' ), 'adjustment' ) :
-					null
+				{ this.state.earnings && this.checkSize( this.state.earnings.adjustment )
+					? this.earningsTable( this.state.earnings.adjustment, translate( 'Adjustments History' ), 'adjustment' )
+					: null
 				}
 			</div>
 		);
