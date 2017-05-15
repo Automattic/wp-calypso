@@ -8,59 +8,19 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
+import CommentDetailComment from './comment-detail-comment';
 import CommentDetailHeader from './comment-detail-header';
-/*import CommentActions from './comment-actions';
-import CommentAuthor from './comment-author';
-import CommentAuthorMeta from './comment-author-meta';
-
-export const CommentDetail = ( {
-	author,
-	className,
-	comment,
-	post,
-	site,
-	user,
-} ) =>
-	<Card className={ classNames( 'comment-detail', className ) }>
-		<div className="comment-detail__post">
-			<CommentAuthor
-				author={ author }
-				date={ post.date }
-				post={ post }
-				siteIcon={ site.icon }
-			/>
-		</div>
-
-		<div className="comment-detail__comment">
-			<div className="comment-detail__comment-content">
-				<CommentAuthor
-					author={ author }
-					date={ comment.date }
-				/>
-				<div className="comment-detail__comment-body">
-					{ comment.body }
-				</div>
-			</div>
-		</div>
-
-		<CommentAuthorMeta author={ author } />
-
-		<CommentActions />
-
-		<div className="comment-detail__reply">
-			<img src={ user.avatar_URL } />
-			<textarea name="comment-reply"></textarea>
-		</div>
-	</Card>;*/
+import CommentDetailPost from './comment-detail-post';
 
 export class CommentDetail extends Component {
 	static propTypes = {
 		author: PropTypes.object,
 		comment: PropTypes.object,
+		post: PropTypes.object,
 	};
 
 	state = {
-		isExpanded: false,
+		isExpanded: true,
 	};
 
 	toggleExpanded = () => {
@@ -69,8 +29,8 @@ export class CommentDetail extends Component {
 
 	render() {
 		const {
-			author,
 			comment,
+			post,
 		} = this.props;
 		const { isExpanded } = this.state;
 
@@ -81,11 +41,22 @@ export class CommentDetail extends Component {
 		return (
 			<Card is-compact className={ classes }>
 				<CommentDetailHeader
-					author={ author }
+					author={ comment.author }
 					commentBody={ comment.body }
 					isExpanded={ isExpanded }
 					toggleExpanded={ this.toggleExpanded }
 				/>
+				{ isExpanded &&
+					<div className="comment-detail__content">
+						<CommentDetailPost
+							author={ post.author }
+							siteIcon={ post.site.icon }
+							title={ post.title }
+							url={ post.url }
+						/>
+						<CommentDetailComment comment={ comment } />
+					</div>
+				}
 			</Card>
 		);
 	}

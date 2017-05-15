@@ -48,8 +48,8 @@ export const CommentDetailHeader = ( {
 
 	return (
 		<div className="comment-detail__header is-preview" onClick={ toggleExpanded }>
-			<div className="comment-detail__user-info">
-				<div className="comment-detail__user-avatar">
+			<div className="comment-detail__author-info">
+				<div className="comment-detail__author-avatar">
 					<img src={ author.avatar_URL } />
 				</div>
 				<strong>
