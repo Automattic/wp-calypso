@@ -90,6 +90,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		justify-content: flex-end;
 
 		.button.is-borderless {
+			position: relative;
 			z-index: 0;
 		}
 
