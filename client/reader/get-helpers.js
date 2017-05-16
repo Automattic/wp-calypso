@@ -9,6 +9,7 @@ import { trim } from 'lodash';
  * Internal Dependencies
  */
 import { decodeEntities } from 'lib/formatting';
+import { isSiteDescriptionBlacklisted } from 'reader/lib/site-description-blacklist';
 
 /**
  * Given a feed, site, or post: return the site url. return false if one could not be found.
@@ -68,7 +69,13 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 };
 
 export const getSiteDescription = ( { site, feed } ) => {
-	return decodeEntities( ( site && site.description ) || ( feed && feed.description ) );
+	const description = decodeEntities(
+		( site && site.description ) || ( feed && feed.description )
+	);
+	if ( isSiteDescriptionBlacklisted( description ) ) {
+		return null;
+	}
+	return description;
 };
 
 export const getSiteAuthorName = site => {
