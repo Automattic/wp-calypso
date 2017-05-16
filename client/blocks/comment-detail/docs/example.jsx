@@ -38,8 +38,7 @@ const mockPost = {
 };
 
 const mockSite = {
-	icon: 'https://secure.gravatar.com/blavatar/c9e4e04719c81ca4936a63ea2dce6ace?s=120',
-	name: 'Test Site',
+	id: 3584907,
 };
 
 
@@ -68,8 +67,7 @@ export const CommentDetailExample = () =>
 			postTitle={ mockPost.title }
 			postUrl={ mockPost.url }
 
-			siteIcon={ mockSite.icon }
-			siteName={ mockSite.title }
+			siteId={ mockSite.id }
 		/>
 		<CommentDetail
 			authorAvatarUrl={ mockAuthor.avatarUrl }
@@ -94,8 +92,7 @@ export const CommentDetailExample = () =>
 			postTitle={ mockPost.title }
 			postUrl={ mockPost.url }
 
-			siteIcon={ mockSite.icon }
-			siteName={ mockSite.title }
+			siteId={ mockSite.id }
 		/>
 		<CommentDetail
 			authorAvatarUrl={ mockAuthor.avatarUrl }
@@ -120,8 +117,7 @@ export const CommentDetailExample = () =>
 			postTitle={ mockPost.title }
 			postUrl={ mockPost.url }
 
-			siteIcon={ mockSite.icon }
-			siteName={ mockSite.title }
+			siteId={ mockSite.id }
 		/>
 	</div>;
 

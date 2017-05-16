@@ -3,21 +3,19 @@
  */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
+import SiteIcon from 'blocks/site-icon';
+
 export const CommentDetailPost = ( {
 	postAuthorDisplayName,
 	postTitle,
 	postUrl,
-	siteIcon,
-	siteName,
+	siteId,
 } ) =>
 	<div className="comment-detail__post">
-		<div className="comment-detail__site-icon">
-			<img
-				alt={ siteName }
-				className="comment-detail__site-icon-image"
-				src={ siteIcon }
-			/>
-		</div>
+		<SiteIcon siteId={ siteId } size={ 24 } />
 		<div className="comment-detail__post-info">
 			<span>
 				{ postAuthorDisplayName }

@@ -35,8 +35,7 @@ export class CommentDetail extends Component {
 		postTitle: PropTypes.string,
 		postUrl: PropTypes.string,
 		repliedToComment: PropTypes.bool,
-		siteIcon: PropTypes.string,
-		siteName: PropTypes.string,
+		siteId: PropTypes.number,
 	};
 
 	state = {
@@ -105,8 +104,7 @@ export class CommentDetail extends Component {
 			postTitle,
 			postUrl,
 			repliedToComment,
-			siteIcon,
-			siteName,
+			siteId,
 		} = this.props;
 
 		const {
@@ -151,8 +149,7 @@ export class CommentDetail extends Component {
 							postAuthorDisplayName={ postAuthorDisplayName }
 							postTitle={ postTitle }
 							postUrl={ postUrl }
-							siteIcon={ siteIcon }
-							siteName={ siteName }
+							siteId={ siteId }
 						/>
 						<CommentDetailComment
 							authorAvatarUrl={ authorAvatarUrl }

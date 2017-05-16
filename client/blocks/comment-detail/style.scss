@@ -119,13 +119,15 @@
 	padding: 12px 16px;
 }
 
-.comment-detail__site-icon {
+.comment-detail__post .site-icon {
 	flex-shrink: 0;
-	width: 24px;
 	height: 24px;
-}
-.comment-detail__site-icon-image {
-	vertical-align: middle;
+	width: 24px;
+
+	.gridicon {
+		margin-right: 0;
+		margin-top: -6px;
+	}
 }
 
 .comment-detail__post-info {
