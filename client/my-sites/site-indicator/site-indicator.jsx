@@ -106,7 +106,6 @@ class SiteIndicator extends Component {
 							components: {
 								link: (
 									<a
-										className="site-indicator__action-button"
 										onClick={ this.handleUpdate }
 										href={ site.options.admin_url + 'update-core.php' }
 									/>
