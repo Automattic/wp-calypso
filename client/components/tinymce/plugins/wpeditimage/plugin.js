@@ -606,7 +606,7 @@ function wpEditImage( editor ) {
 
 				// If we were pasting into an img, remove it so it's replaced
 				// with the new one.
-				if ( node.nodeName === 'IMG' ) {
+				if ( node.nodeName === 'IMG' || node.nodeName === 'DT' ) {
 					editor.$( captionParent ).remove();
 				}
 
