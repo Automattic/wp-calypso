@@ -60,7 +60,7 @@ class Login extends Component {
 			rememberMe,
 		} = this.state;
 
-		if ( twoStepNonce && [ 'authenticator', 'sms' ].includes( twoFactorAuthType ) ) {
+		if ( twoStepNonce && [ 'authenticator', 'backup', 'sms' ].includes( twoFactorAuthType ) ) {
 			return (
 				<VerificationCodeForm
 					rememberMe={ rememberMe }
@@ -87,7 +87,7 @@ class Login extends Component {
 		return (
 			<div>
 				<div className="login__form-header">
-					{ twoStepNonce ? translate( '2-Step Verification' ) : translate( 'Log in to your account.' ) }
+					{ twoStepNonce ? translate( 'Two-Step Authentication' ) : translate( 'Log in to your account.' ) }
 				</div>
 
 				{ this.renderContent() }
