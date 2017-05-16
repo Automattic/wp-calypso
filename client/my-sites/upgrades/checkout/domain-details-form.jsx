@@ -35,8 +35,26 @@ const wpcom = require( 'lib/wp' ).undocumented(),
 	countriesList = countriesListForDomainRegistrations();
 
 class DomainDetailsForm extends Component {
-	getInitialState() {
-		return {
+
+	constructor( props, context ) {
+		super( props, context );
+
+		this.fieldNames = [
+			'firstName',
+			'lastName',
+			'organization',
+			'email',
+			'phone',
+			'address1',
+			'address2',
+			'city',
+			'state',
+			'postalCode',
+			'countryCode',
+			'fax'
+		];
+
+		this.state = {
 			form: null,
 			isDialogVisible: false,
 			submissionCount: 0,
@@ -431,19 +449,5 @@ class DomainDetailsForm extends Component {
 }
 
 DomainDetailsForm.displayName = 'DomainDetailsForm';
-DomainDetailsForm.fieldNames = [
-	'firstName',
-	'lastName',
-	'organization',
-	'email',
-	'phone',
-	'address1',
-	'address2',
-	'city',
-	'state',
-	'postalCode',
-	'countryCode',
-	'fax'
-];
 
 export default localize( DomainDetailsForm );
