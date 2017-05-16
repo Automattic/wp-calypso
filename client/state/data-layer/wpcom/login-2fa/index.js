@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import config from 'config';
@@ -6,6 +11,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
+	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 } from 'state/action-types';
 import {
 	getTwoFactorUserId,
@@ -65,7 +71,14 @@ const receivedTwoFactorPushNotificationApproved = ( { dispatch } ) =>
  * @param {Object}	error the error object
  */
 const receivedTwoFactorPushNotificationError = ( store, action, next, error ) => {
-	store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE, twoStepNonce: error.response.body.data.two_step_nonce } );
+	const twoStepNonce = get( error, 'response.body.data.two_step_nonce' );
+
+	if ( ! twoStepNonce ) {
+		store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } ); //
+		throw new Error( "Two step nonce wasn't present on the response from polling endpoint, unable to continue" );
+	}
+
+	store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE, twoStepNonce } );
 
 	if ( getTwoFactorPushPollInProgress( store.getState() ) ) {
 		setTimeout(
