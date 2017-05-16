@@ -28,7 +28,8 @@ import {
 	getSiteSelectedPlan,
 	isRemoteSiteOnSitesList,
 	getGlobalSelectedPlan,
-	getAuthAttempts
+	getAuthAttempts,
+	getSiteIdFromQueryObject
 } from 'state/jetpack-connect/selectors';
 import observe from 'lib/mixins/data-observe';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -141,6 +142,7 @@ export default connect(
 			return hasExpiredSecretError( state );
 		};
 		const selectedPlan = getSiteSelectedPlan( state, siteSlug ) || getGlobalSelectedPlan( state );
+		const siteId = getSiteIdFromQueryObject( state );
 
 		return {
 			siteSlug,
@@ -150,7 +152,7 @@ export default connect(
 			jetpackSSOSessions: getSSOSessions( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingSites: isRequestingSites( state ),
-			isFetchingAuthorizationSite: isRequestingSite( state ),
+			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
 			requestHasXmlrpcError,
 			requestHasExpiredSecretError,
 			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
