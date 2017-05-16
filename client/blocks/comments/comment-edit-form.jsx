@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -19,7 +19,7 @@ import {
 	recordGaEvent
 } from 'reader/stats';
 
-class PostCommentForm extends React.Component {
+class PostCommentForm extends Component {
 	constructor( props ) {
 		super();
 
@@ -27,12 +27,6 @@ class PostCommentForm extends React.Component {
 			commentText: props.commentText || '',
 			haveFocus: false
 		};
-
-		// bind event handlers to this instance
-		Object.getOwnPropertyNames( PostCommentForm.prototype )
-			.filter( ( prop ) => prop.indexOf( 'handle' ) === 0 )
-			.filter( ( prop ) => typeof this[ prop ] === 'function' )
-			.forEach( ( prop ) => this[ prop ] = this[ prop ].bind( this ) );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -60,16 +54,16 @@ class PostCommentForm extends React.Component {
 		commentTextNode.style.height = commentText.length ? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px' : null;
 	}
 
-	handleTextAreaNode( textareaNode ) {
+	handleTextAreaNode = ( textareaNode ) => {
 		this._textareaNode = textareaNode;
 	}
 
-	handleSubmit( event ) {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 		this.submit();
 	}
 
-	handleKeyDown( event ) {
+	handleKeyDown = ( event ) => {
 		// Use Ctrl+Enter to submit comment
 		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
 			event.preventDefault();
@@ -85,21 +79,19 @@ class PostCommentForm extends React.Component {
 		}
 	}
 
-	handleFocus() {
-		this.setState( { haveFocus: true } );
-	}
+	handleFocus = () => this.setState( { haveFocus: true } );
 
-	handleTextChange( event ) {
+	handleTextChange = ( event ) => {
 		const commentText = event.target.value;
 
 		this.setState( { commentText } );
 	}
 
-	resetCommentText() {
+	resetCommentText = () => {
 		this.setState( { commentText: '' } );
 	}
 
-	hasCommentText() {
+	hasCommentText = () => {
 		return this.state.commentText.trim().length > 0;
 	}
 
