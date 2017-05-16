@@ -19,10 +19,6 @@
 .suggestions__suggestions {
 	display: flex;
 	flex-direction: column;
-
-	.suggestions__value-category {
-		display: none;
-	}
 }
 
 .suggestions__category {
@@ -50,26 +46,58 @@
 }
 
 .suggestions__value {
+	display: flex;
 	padding: 10px 10px;
 	background: $white;
 	border: 1px solid darken( $gray-light, 10% );
 	border-top: 0px;
-	font-size: 16px;
+	font-size: 15px;
 	cursor: pointer;
+
+	&.has-highlight {
+		background-color: $blue-medium;
+		color: $white;
+
+		.suggestions__value-description {
+			color: $white;
+		}
+	}
+}
+
+.suggestions__value-category {
+	display: none;
+}
+
+.suggestions__value-label-wigh-highlight {
+	flex: 0 0 auto;
 
 	.suggestions__value-emphasis,
 	.suggestions__value-normal {
-		/* Required to allow clicks pass-through */
-		pointer-events: none;
+		pointer-events: none; /* Required to allow clicks pass-through */
 	}
 
 	.suggestions__value-emphasis {
 		font-weight: bold;
 		color: inherit;
 	}
+}
 
-	&.has-highlight {
-		background-color: $blue-medium;
-		color: $white;
+.suggestions__value-description {
+	position: relative; /* Required to allow :before positioning to work */
+	pointer-events: none; /* Required to allow clicks pass-through */
+	flex: 1 1 auto;
+	margin-left: 0.5em;
+	padding-top: 3px;
+	color: $gray-text-min;
+	font-size: 13px;
+	height: 19px; /* font-size + 2*padding */
+	overflow: hidden;
+
+	&:before {
+		@include long-content-fade( $color : $white );
+
+		.has-highlight & {
+			@include long-content-fade( $color : $blue-medium );
+		}
 	}
 }
