@@ -53,7 +53,7 @@ export const CommentDetailHeader = ( {
 		<div className="comment-detail__header is-preview" onClick={ toggleExpanded }>
 			<div className="comment-detail__author-info">
 				<div className="comment-detail__author-avatar">
-					<img src={ authorAvatarUrl } />
+					<img className="comment-detail__author-avatar-image" src={ authorAvatarUrl } />
 				</div>
 				<strong>
 					{ authorDisplayName }

@@ -20,10 +20,12 @@
 
 .comment-detail__author-avatar {
 	flex-shrink: 0;
-	.comment-detail__author-avatar-image {
-		border-radius: 50%;
-	}
 }
+
+.comment-detail__author-avatar-image {
+	border-radius: 50%;
+}
+
 .comment-detail__author-info {
 	color: $gray;
 	overflow: hidden;
@@ -57,38 +59,39 @@
 		vertical-align: middle;
 		width: 24px;
 	}
+}
 
-	.comment-detail__comment-preview {
-		overflow: hidden;
-		padding: 0 8px;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		width: 60%;
-	}
+.comment-detail__comment-preview {
+	overflow: hidden;
+	padding: 0 8px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 60%;
+}
 
-	.comment-detail__actions {
+.comment-detail__actions {
+	color: $gray;
+	a {
 		color: $gray;
-		a {
-			color: $gray;
-			cursor: pointer;
-			fill: $gray;
-			padding: 8px;
-			white-space: nowrap;
-			&:focus,
-			&:hover {
-				color: $blue-wordpress;
-				fill: $blue-wordpress;
-			}
+		cursor: pointer;
+		fill: $gray;
+		padding: 8px;
+		white-space: nowrap;
+		&:focus,
+		&:hover {
+			color: $blue-wordpress;
+			fill: $blue-wordpress;
 		}
-		span {
-			display: none;
+	}
+	span {
+		display: none;
 
-			@include breakpoint( ">960px" ) {
-				display: inline;
-			}
+		@include breakpoint( ">960px" ) {
+			display: inline;
 		}
 	}
 }
+
 
 .comment-detail__post {
 	border-bottom: 1px solid lighten( $gray, 30% );
@@ -96,38 +99,37 @@
 	flex-flow: row nowrap;
 	justify-content: flex-start;
 	padding: 12px 16px;
+}
 
-	.comment-detail__site-icon {
-		flex-shrink: 0;
-		width: 24px;
-		height: 24px;
+.comment-detail__site-icon {
+	flex-shrink: 0;
+	width: 24px;
+	height: 24px;
+}
+.comment-detail__site-icon-image {
+	vertical-align: middle;
+}
 
-		.comment-detail__site-icon-image {
-			vertical-align: middle;
-		}
+.comment-detail__post-info {
+	color: $gray;
+	overflow: hidden;
+	padding-left: 8px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	span {
+		color: $gray-text;
+		margin-right: 8px;
 	}
 
-	.comment-detail__post-info {
+	a {
 		color: $gray;
-		overflow: hidden;
-		padding-left: 8px;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-
-		span {
-			color: $gray-text;
-			margin-right: 8px;
-		}
-
-		a {
-			color: $gray;
-			cursor: pointer;
-			fill: $gray;
-			&:focus,
-			&:hover {
-				color: $blue-wordpress;
-				fill: $blue-wordpress;
-			}
+		cursor: pointer;
+		fill: $gray;
+		&:focus,
+		&:hover {
+			color: $blue-wordpress;
+			fill: $blue-wordpress;
 		}
 	}
 }
@@ -135,27 +137,27 @@
 .comment-detail__comment {
 	border-bottom: 1px solid lighten( $gray, 30% );
 	padding-left: 16px;
+}
 
-	.comment-detail__comment-content {
-		border-left: 3px solid lighten( $gray, 30% );
-	}
+.comment-detail__comment-content {
+	border-left: 3px solid lighten( $gray, 30% );
+}
 
-	.comment-detail__comment-body {
-		padding: 0 16px;
-	}
+.comment-detail__comment-body {
+	padding: 0 16px;
+}
 
-	.comment-detail__comment-reply {
-		padding: 16px;
+.comment-detail__comment-reply {
+	padding: 16px;
 
-		a {
-			color: $gray;
-			cursor: pointer;
-			fill: $gray;
-			&:focus,
-			&:hover {
-				color: $blue-wordpress;
-				fill: $blue-wordpress;
-			}
+	a {
+		color: $gray;
+		cursor: pointer;
+		fill: $gray;
+		&:focus,
+		&:hover {
+			color: $blue-wordpress;
+			fill: $blue-wordpress;
 		}
 	}
 }
@@ -167,107 +169,106 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		.comment-detail__author-info-element {
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
+	}
+	.comment-detail__author-info-element {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
+.comment-detail__author-preview {
+	align-items: center;
+	display: flex;
+	flex-flow: row nowrap;
+	padding: 0 16px;
+	transition: padding-bottom .3s linear;
+
+	.comment-detail__author-avatar {
+		height: 40px;
+		width: 40px;
 	}
 
-	.comment-detail__author-preview {
-		align-items: center;
-		display: flex;
-		flex-flow: row nowrap;
-		padding: 0 16px;
-		transition: padding-bottom .3s linear;
-
-		.comment-detail__author-avatar {
-			height: 40px;
-			width: 40px;
-		}
-
-		.comment-detail__author-info {
-			line-height: 1.4;
-			padding: 0 8px;
-		}
-
-		.comment-detail__author-more-info-toggle {
-			color: $gray;
-			cursor: pointer;
-			display: block;
-			fill: $gray;
-			height: 24px;
-			margin-left: auto;
-			&:focus,
-			&:hover {
-				color: $blue-wordpress;
-				fill: $blue-wordpress;
-			}
-		}
+	.comment-detail__author-info {
+		line-height: 1.4;
+		padding: 0 8px;
 	}
-	&.is-expanded .comment-detail__author-preview {
-		padding-bottom: 16px;
+}
+.comment-detail.is-expanded .comment-detail__author-preview {
+	padding-bottom: 16px;
+}
+
+.comment-detail__author-more-info-toggle {
+	color: $gray;
+	cursor: pointer;
+	display: block;
+	fill: $gray;
+	height: 24px;
+	margin-left: auto;
+	&:focus,
+	&:hover {
+		color: $blue-wordpress;
+		fill: $blue-wordpress;
+	}
+}
+
+.comment-detail__author-more-info {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	color: $gray;
+	display: none;
+	transform: scaleY( 0 );
+	transform-origin: top;
+}
+.comment-detail__author.is-expanded .comment-detail__author-more-info {
+	animation: comment-detail__author-more-info .15s linear;
+	display: block;
+	transform: scaleY( 1 );
+}
+
+.comment-detail__author-more-actions {
+	border-top: 1px solid lighten( $gray, 30% );
+	display: flex;
+	flex-flow: row wrap;
+	padding: 16px 8px;
+}
+
+.comment-detail__author-more-element {
+	box-sizing: border-box;
+	display: block;
+	flex-shrink: 0;
+	flex-grow: 0;
+	overflow: hidden;
+	padding: 8px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
+
+	@include breakpoint( ">660px" ) {
+		width: 50%;
+	}
+}
+a.comment-detail__author-more-element {
+	color: $gray;
+	cursor: pointer;
+	fill: $gray;
+	&:focus,
+	&:hover {
+		color: $blue-wordpress;
+		fill: $blue-wordpress;
+	}
+}
+.comment-detail__author-more-element-author {
+	display: flex;
+	flex-flow: row nowrap;
+
+	.comment-detail__author-avatar {
+		height: 24px;
+		width: 24px;
 	}
 
-	.comment-detail__author-more-info {
-		border-bottom: 1px solid lighten( $gray, 30% );
-		color: $gray;
-		display: none;
-		transform: scaleY( 0 );
-		transform-origin: top;
-
-		.comment-detail__author-more-actions {
-			border-top: 1px solid lighten( $gray, 30% );
-			display: flex;
-			flex-flow: row wrap;
-			padding: 16px 8px;
-		}
-
-		.comment-detail__author-more-element {
-			box-sizing: border-box;
-			display: block;
-			flex-shrink: 0;
-			flex-grow: 0;
-			overflow: hidden;
-			padding: 8px;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			width: 100%;
-
-			&.comment-detail__author-more-element-author {
-				display: flex;
-				flex-flow: row nowrap;
-
-				.comment-detail__author-avatar {
-					height: 24px;
-					width: 24px;
-				}
-
-				.comment-detail__author-info {
-					line-height: 1.2;
-					padding-left: 8px;
-				}
-			}
-
-			@include breakpoint( ">660px" ) {
-				width: 50%;
-			}
-		}
-		a.comment-detail__author-more-element {
-			color: $gray;
-			cursor: pointer;
-			fill: $gray;
-			&:focus,
-			&:hover {
-				color: $blue-wordpress;
-				fill: $blue-wordpress;
-			}
-		}
-	}
-	&.is-expanded .comment-detail__author-more-info {
-		animation: author-more-info .15s linear;
-		display: block;
-		transform: scaleY( 1 );
+	.comment-detail__author-info {
+		line-height: 1.2;
+		padding-left: 8px;
 	}
 }
 
@@ -280,7 +281,7 @@
 	}
 }
 
-@keyframes author-more-info {
+@keyframes comment-detail__author-more-info {
 	0% {
 		display: none;
 		transform: scaleY( 0 );

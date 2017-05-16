@@ -78,7 +78,7 @@ export class CommentDetailAuthor extends Component {
 					<div className="comment-detail__author-more-actions">
 						<div className="comment-detail__author-more-element comment-detail__author-more-element-author">
 							<div className="comment-detail__author-avatar">
-								<img src={ authorAvatarUrl } />
+								<img className="comment-detail__author-avatar-image" src={ authorAvatarUrl } />
 							</div>
 							<div className="comment-detail__author-info">
 								<div className="comment-detail__author-name">
