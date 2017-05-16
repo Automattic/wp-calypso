@@ -15,15 +15,10 @@ import {
 	READER_LIST_UPDATE_TITLE,
 	READER_LIST_UPDATE_DESCRIPTION,
 	READER_LIST_REQUEST_SUCCESS,
-	READER_LIST_REQUEST_FAILURE
+	READER_LIST_REQUEST_FAILURE,
 } from 'state/action-types';
 
-import {
-	items,
-	updatedLists,
-	missingLists,
-	subscribedLists,
-} from '../reducer';
+import { items, updatedLists, missingLists, subscribedLists } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
@@ -35,61 +30,58 @@ describe( 'reducer', () => {
 		it( 'should index lists by ID', () => {
 			const state = items( null, {
 				type: READER_LISTS_RECEIVE,
-				lists: [
-					{ ID: 841, title: 'Hello World' },
-					{ ID: 413, title: 'Mangos and feijoas' }
-				]
+				lists: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Mangos and feijoas' } ],
 			} );
 
 			expect( state ).to.eql( {
 				841: { ID: 841, title: 'Hello World' },
-				413: { ID: 413, title: 'Mangos and feijoas' }
+				413: { ID: 413, title: 'Mangos and feijoas' },
 			} );
 		} );
 
 		it( 'should accumulate lists', () => {
 			const original = deepFreeze( {
-				841: { ID: 841, title: 'Hello World' }
+				841: { ID: 841, title: 'Hello World' },
 			} );
 			const state = items( original, {
 				type: READER_LISTS_RECEIVE,
-				lists: [ { ID: 413, title: 'Mangos and feijoas' } ]
+				lists: [ { ID: 413, title: 'Mangos and feijoas' } ],
 			} );
 
 			expect( state ).to.eql( {
 				841: { ID: 841, title: 'Hello World' },
-				413: { ID: 413, title: 'Mangos and feijoas' }
+				413: { ID: 413, title: 'Mangos and feijoas' },
 			} );
 		} );
 
 		it( 'should update a list title', () => {
 			const original = deepFreeze( {
-				841: { ID: 841, title: 'Hello World' }
+				841: { ID: 841, title: 'Hello World' },
 			} );
 			const state = items( original, {
 				type: READER_LIST_UPDATE_TITLE,
 				listId: 841,
-				title: 'Bananas'
+				title: 'Bananas',
 			} );
 
 			expect( state ).to.eql( {
-				841: { ID: 841, title: 'Bananas' }
+				841: { ID: 841, title: 'Bananas' },
 			} );
 		} );
 
 		it( 'should update a list description', () => {
 			const original = deepFreeze( {
-				841: { ID: 841, title: 'Bananas' }
+				841: { ID: 841, title: 'Bananas' },
 			} );
 			const state = items( original, {
 				type: READER_LIST_UPDATE_DESCRIPTION,
 				listId: 841,
 				title: 'Bananas',
-				description: 'This is a list about fruit'
+				description: 'This is a list about fruit',
 			} );
 
 			expect( state ).to.eql( {
-				841: { ID: 841, title: 'Bananas', description: 'This is a list about fruit' }
+				841: { ID: 841, title: 'Bananas', description: 'This is a list about fruit' },
 			} );
 		} );
 	} );
@@ -106,9 +98,9 @@ describe( 'reducer', () => {
 				data: {
 					list: {
 						ID: 841,
-						title: 'Hello World'
-					}
-				}
+						title: 'Hello World',
+					},
+				},
 			} );
 
 			expect( state ).to.eql( [ 841 ] );
@@ -120,16 +112,16 @@ describe( 'reducer', () => {
 				data: {
 					list: {
 						ID: 841,
-						title: 'Hello World'
-					}
-				}
+						title: 'Hello World',
+					},
+				},
 			} );
 
 			expect( state ).to.eql( [ 841 ] );
 
 			state = updatedLists( null, {
 				type: READER_LIST_DISMISS_NOTICE,
-				listId: 841
+				listId: 841,
 			} );
 
 			expect( state ).to.eql( [] );
@@ -146,25 +138,23 @@ describe( 'reducer', () => {
 			const state = missingLists( undefined, {
 				type: READER_LIST_REQUEST_FAILURE,
 				error: {
-					statusCode: 404
+					statusCode: 404,
 				},
 				owner: 'lister',
-				slug: 'banana'
+				slug: 'banana',
 			} );
 
-			expect( state ).to.eql( [
-				{ owner: 'lister', slug: 'banana' }
-			] );
+			expect( state ).to.eql( [ { owner: 'lister', slug: 'banana' } ] );
 		} );
 
 		it( 'should not store new missing lists in the case of a different error', () => {
 			const state = missingLists( undefined, {
 				type: READER_LIST_REQUEST_FAILURE,
 				error: {
-					statusCode: 400
+					statusCode: 400,
 				},
 				owner: 'lister',
-				slug: 'banana'
+				slug: 'banana',
 			} );
 
 			expect( state ).to.eql( [] );
@@ -174,22 +164,20 @@ describe( 'reducer', () => {
 			const initialState = missingLists( undefined, {
 				type: READER_LIST_REQUEST_FAILURE,
 				error: {
-					statusCode: 404
+					statusCode: 404,
 				},
 				owner: 'lister',
-				slug: 'banana'
+				slug: 'banana',
 			} );
 
-			expect( initialState ).to.eql( [
-				{ owner: 'lister', slug: 'banana' }
-			] );
+			expect( initialState ).to.eql( [ { owner: 'lister', slug: 'banana' } ] );
 
 			const state = missingLists( initialState, {
 				type: READER_LISTS_RECEIVE,
 				lists: [
 					{ ID: 841, title: 'Hello World', owner: 'lister', slug: 'banana' },
-					{ ID: 413, title: 'Mangos and feijoas', owner: 'lister', slug: 'mango' }
-				]
+					{ ID: 413, title: 'Mangos and feijoas', owner: 'lister', slug: 'mango' },
+				],
 			} );
 
 			expect( state ).to.eql( [] );
@@ -199,21 +187,19 @@ describe( 'reducer', () => {
 			const initialState = missingLists( undefined, {
 				type: READER_LIST_REQUEST_FAILURE,
 				error: {
-					statusCode: 404
+					statusCode: 404,
 				},
 				owner: 'lister',
-				slug: 'banana'
+				slug: 'banana',
 			} );
 
-			expect( initialState ).to.eql( [
-				{ owner: 'lister', slug: 'banana' }
-			] );
+			expect( initialState ).to.eql( [ { owner: 'lister', slug: 'banana' } ] );
 
 			const state = missingLists( initialState, {
 				type: READER_LIST_REQUEST_SUCCESS,
 				data: {
-					list: { ID: 841, title: 'Hello World', owner: 'lister', slug: 'banana' }
-				}
+					list: { ID: 841, title: 'Hello World', owner: 'lister', slug: 'banana' },
+				},
 			} );
 
 			expect( state ).to.eql( [] );
@@ -226,34 +212,34 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should pick up the ids of the subscribed lists', () => {
-			expect( subscribedLists( deepFreeze( [] ), {
-				type: READER_LISTS_RECEIVE,
-				lists: [
-					{ ID: 1 },
-					{ ID: 2 }
-				]
-			} ) ).to.eql( [ 1, 2 ] );
+			expect(
+				subscribedLists( deepFreeze( [] ), {
+					type: READER_LISTS_RECEIVE,
+					lists: [ { ID: 1 }, { ID: 2 } ],
+				} )
+			).to.eql( [ 1, 2 ] );
 		} );
 
 		it( 'should overwrite existing subs', () => {
 			const initial = deepFreeze( [ 1, 2 ] );
-			expect( subscribedLists( initial, {
-				type: READER_LISTS_RECEIVE,
-				lists: [
-					{ ID: 3 },
-					{ ID: 1 }
-				]
-			} ) ).to.eql( [ 3, 1 ] );
+			expect(
+				subscribedLists( initial, {
+					type: READER_LISTS_RECEIVE,
+					lists: [ { ID: 3 }, { ID: 1 } ],
+				} )
+			).to.eql( [ 3, 1 ] );
 		} );
 
 		it( 'should remove an item on unfollow', () => {
 			const initial = deepFreeze( [ 1, 2 ] );
-			expect( subscribedLists( initial, {
-				type: READER_LISTS_UNFOLLOW_SUCCESS,
-				data: {
-					list: { ID: 1 }
-				}
-			} ) ).to.eql( [ 2 ] );
+			expect(
+				subscribedLists( initial, {
+					type: READER_LISTS_UNFOLLOW_SUCCESS,
+					data: {
+						list: { ID: 1 },
+					},
+				} )
+			).to.eql( [ 2 ] );
 		} );
 	} );
 } );

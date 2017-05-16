@@ -20,12 +20,8 @@ import {
  * @param  {String} tag  Tag name to parse into a slug
  * @return {String}      Tag slug
  */
-export const slugify = ( tag ) => encodeURIComponent(
-	trim( tag )
-		.toLowerCase()
-		.replace( /\s+/g, '-' )
-		.replace( /-{2,}/g, '-' )
-);
+export const slugify = tag =>
+	encodeURIComponent( trim( tag ).toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' ) );
 
 export const requestTags = tag => {
 	const type = READER_TAGS_REQUEST;

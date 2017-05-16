@@ -6,9 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	items
-} from '../reducer';
+import { items } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

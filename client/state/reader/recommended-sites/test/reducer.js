@@ -7,7 +7,7 @@ import freeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { receiveRecommendedSites, } from '../actions';
+import { receiveRecommendedSites } from '../actions';
 import { items } from '../reducer';
 
 const seed = 0;

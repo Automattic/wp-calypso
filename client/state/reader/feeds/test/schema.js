@@ -19,8 +19,8 @@ describe( 'schema', () => {
 		const isValid = validator( {
 			1234: {
 				feed_ID: 1,
-				blog_ID: 2
-			}
+				blog_ID: 2,
+			},
 		} );
 		assert.isTrue( isValid, validator.error );
 	} );
@@ -35,8 +35,8 @@ describe( 'schema', () => {
 				feed_URL: 'http://example.com/feed',
 				is_following: true,
 				subscribers_count: 10,
-				meta: {}
-			}
+				meta: {},
+			},
 		} );
 		assert.isTrue( isValid, validator.error );
 	} );
@@ -52,7 +52,7 @@ describe( 'schema', () => {
 				is_following: null,
 				subscribers_count: null,
 				meta: null,
-			}
+			},
 		} );
 		assert.isTrue( isValid, validator.error );
 	} );
@@ -69,7 +69,7 @@ describe( 'schema', () => {
 					is_following: null,
 					subscribers_count: null,
 					meta: null,
-				}
+				},
 			} )
 		);
 	} );

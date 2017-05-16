@@ -63,22 +63,24 @@ describe( 'actions', () => {
 				embedUrl: successfulEmbedUrl,
 			} );
 
-			return request.then( () => {
-				expect( dispatchSpy ).to.have.been.calledWith( {
-					type: READER_THUMBNAIL_REQUEST_SUCCESS,
-					embedUrl: successfulEmbedUrl,
-				} );
+			return request
+				.then( () => {
+					expect( dispatchSpy ).to.have.been.calledWith( {
+						type: READER_THUMBNAIL_REQUEST_SUCCESS,
+						embedUrl: successfulEmbedUrl,
+					} );
 
-				expect( dispatchSpy ).to.have.been.calledWith( {
-					type: READER_THUMBNAIL_RECEIVE,
-					embedUrl: successfulEmbedUrl,
-					thumbnailUrl,
-				} );
+					expect( dispatchSpy ).to.have.been.calledWith( {
+						type: READER_THUMBNAIL_RECEIVE,
+						embedUrl: successfulEmbedUrl,
+						thumbnailUrl,
+					} );
 
-				expect( dispatchSpy.calledTwice );
-			} ).catch( ( err ) => {
-				assert.fail( err, undefined, 'errback should not have been called' );
-			} );
+					expect( dispatchSpy.calledTwice );
+				} )
+				.catch( err => {
+					assert.fail( err, undefined, 'errback should not have been called' );
+				} );
 		} );
 
 		it( 'youtube: should dispatch action with thumbnail instantly', () => {
@@ -102,16 +104,18 @@ describe( 'actions', () => {
 				embedUrl: failureEmbedUrl,
 			} );
 
-			return request.then( () => {
-				expect( dispatchSpy ).to.have.been.calledWithMatch( {
-					type: READER_THUMBNAIL_REQUEST_FAILURE,
-					embedUrl: failureEmbedUrl,
-				} );
+			return request
+				.then( () => {
+					expect( dispatchSpy ).to.have.been.calledWithMatch( {
+						type: READER_THUMBNAIL_REQUEST_FAILURE,
+						embedUrl: failureEmbedUrl,
+					} );
 
-				expect( dispatchSpy.calledTwice );
-			} ).catch( ( err ) => {
-				assert.fail( err, undefined, 'errback should not have been called' );
-			} );
+					expect( dispatchSpy.calledTwice );
+				} )
+				.catch( err => {
+					assert.fail( err, undefined, 'errback should not have been called' );
+				} );
 		} );
 
 		it( 'should dispatch a failure action instantly if unsupported', () => {

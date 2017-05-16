@@ -30,4 +30,3 @@ export function getTagImages( state, tag ) {
 export function shouldRequestTagImages( state, tag ) {
 	return ! ( getTagImages( state, tag ) || state.reader.tags.images.requesting[ tag ] );
 }
-

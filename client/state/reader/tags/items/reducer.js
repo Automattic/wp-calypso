@@ -6,11 +6,8 @@ import { keyBy, merge, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	READER_TAGS_RECEIVE,
-	READER_UNFOLLOW_TAG_RECEIVE,
-} from 'state/action-types';
-import { createReducer, } from 'state/utils';
+import { READER_TAGS_RECEIVE, READER_UNFOLLOW_TAG_RECEIVE } from 'state/action-types';
+import { createReducer } from 'state/utils';
 
 /*
  * since the api always returns the whole list of followed tags unpaginated, both read/tags*,
@@ -24,31 +21,17 @@ export const items = createReducer( null, {
 		const resetFollowingData = action.meta.resetFollowingData;
 
 		if ( ! resetFollowingData ) {
-			return merge(
-				{},
-				state,
-				keyBy( tags, 'id' ),
-			);
+			return merge( {}, state, keyBy( tags, 'id' ) );
 		}
 
-		const allTagsUnfollowed = mapValues( state, tag => (
-			{ ...tag, isFollowing: false }
-		) );
+		const allTagsUnfollowed = mapValues( state, tag => ( { ...tag, isFollowing: false } ) );
 
-		return merge(
-			{},
-			allTagsUnfollowed,
-			keyBy( tags, 'id' ),
-		);
+		return merge( {}, allTagsUnfollowed, keyBy( tags, 'id' ) );
 	},
 	[ READER_UNFOLLOW_TAG_RECEIVE ]: ( state, action ) => {
 		const removedTag = action.payload;
-		return merge(
-			{},
-			state,
-			{ [ removedTag ]: { isFollowing: false } },
-		);
-	}
+		return merge( {}, state, { [ removedTag ]: { isFollowing: false } } );
+	},
 } );
 
 export default items;
