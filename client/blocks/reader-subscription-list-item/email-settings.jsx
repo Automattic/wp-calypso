@@ -41,6 +41,7 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 		}
 	}
 
+
 	togglePopoverVisibility = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );
 	}
@@ -49,9 +50,8 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 		this.setState( { showPopover: false } );
 	}
 
-	savePopoutSpanRef = spanRef => {
-		this.spanRef = spanRef;
-	}
+	saveIconRef = ref => this.iconRef = ref;
+	saveSpanRef = ref => this.spanRef = ref;
 
 	setSelected = text => () => {
 		const { siteId } = this.props;
@@ -87,15 +87,17 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 				<span
 					className="reader-subscription-list-item__settings-menu"
 					onClick={ this.togglePopoverVisibility }
+					ref={ this.saveSpanRef }
 				>
-					<Gridicon icon="cog" size={ 24 } ref={ this.savePopoutSpanRef } />
+					<Gridicon icon="cog" size={ 24 } ref={ this.saveIconRef } />
 					<span className="reader-subscription-list-item__settings-label">Settings</span>
 				</span>
 
 				<Popover
 					onClose={ this.closePopover }
 					isVisible={ this.state.showPopover }
-					context={ this.spanRef }
+					context={ this.iconRef }
+					ignoreContext={ this.spanRef }
 					position={ 'bottom left' }
 					className="reader-subscription-list-item__settings-menu-popout"
 				>
