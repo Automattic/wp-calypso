@@ -27,7 +27,7 @@ const loginErrorMessages = {
 	empty_password: translate( 'Enter your password.' ),
 	empty_username: translate( 'Enter your username or email address.' ),
 	incorrect_password: translate( "That's not the right password." ),
-	invalid_two_step_code: translate( "That's not the right code" ),
+	invalid_two_step_code: translate( "That's not the right code." ),
 	invalid_email: translate( 'Invalid email address.' ),
 	invalid_username: translate( 'Invalid username' ),
 	unknown: translate( 'Invalid username or password.' ),
