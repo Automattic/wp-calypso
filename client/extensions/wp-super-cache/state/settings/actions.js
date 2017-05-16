@@ -12,6 +12,7 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 	WP_SUPER_CACHE_UPDATE_SETTINGS,
 } from '../action-types';
+import { normalizeSettings, sanitizeSettings } from './utils';
 
 /**
  * Returns an action object to be used in signalling that settings have been received.
@@ -37,7 +38,7 @@ export const requestSettings = ( siteId ) => {
 
 		return wp.req.get( { path: `/jetpack-blogs/${ siteId }/rest-api/` }, { path: '/wp-super-cache/v1/settings' } )
 			.then( ( { data } ) => {
-				dispatch( receiveSettings( siteId, data ) );
+				dispatch( receiveSettings( siteId, normalizeSettings( data ) || {} ) );
 				dispatch( {
 					type: WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
 					siteId,
@@ -78,7 +79,7 @@ export const saveSettings = ( siteId, settings ) => {
 
 		return wp.req.post(
 			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
-			{ path: '/wp-super-cache/v1/settings', body: JSON.stringify( settings ), json: true } )
+			{ path: '/wp-super-cache/v1/settings', body: JSON.stringify( sanitizeSettings( settings ) ), json: true } )
 			.then( () => {
 				dispatch( updateSettings( siteId, settings ) );
 				dispatch( {

@@ -144,7 +144,7 @@ class AcceptedFilenames extends Component {
 							<FormTextarea
 								disabled={ isRequesting || isSaving }
 								onChange={ handleChange( 'cache_rejected_uri' ) }
-								value={ cache_rejected_uri && cache_rejected_uri.join( '\n' ) } />
+								value={ cache_rejected_uri } />
 							<FormSettingExplanation>
 								{ translate(
 									'Add here strings (not a filename) that forces a page not to be cached. For example, ' +
@@ -162,7 +162,7 @@ class AcceptedFilenames extends Component {
 							<FormTextarea
 								disabled={ isRequesting || isSaving }
 								onChange={ handleChange( 'cache_acceptable_files' ) }
-								value={ cache_acceptable_files && cache_acceptable_files.join( '\n' ) } />
+								value={ cache_acceptable_files } />
 							<FormSettingExplanation>
 								{ translate(
 									'Add here those filenames that can be cached, even if they match one of the rejected ' +
