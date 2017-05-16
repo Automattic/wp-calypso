@@ -267,7 +267,7 @@ module.exports = {
 
 		if ( service ) {
 			// We're creating a new social account
-			wpcom.undocumented().usersSocialNew( service, token, ( error, response ) => {
+			wpcom.undocumented().usersSocialNew( service, token, flowName, ( error, response ) => {
 				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined;
 
 				if ( errors ) {
