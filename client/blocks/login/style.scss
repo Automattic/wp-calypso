@@ -53,6 +53,37 @@
 	}
 }
 
+.login-form__social-buttons {
+	button {
+		margin: 0 0 10px;
+		width: 100%;
+	}
+
+	svg {
+		margin-top: -2px;
+
+		&.disabled {
+			display: none;
+		}
+	}
+}
+
+.login-buttons__button:disabled {
+	svg.enabled {
+		display: none;
+	}
+
+	svg.disabled {
+		display: inline;
+	}
+}
+
+.login-buttons__service-error {
+	color: $alert-red;
+	font-size: 11px;
+	margin: 0 10px 10px;
+}
+
 .wp-login__footer{
 	a{
 		font-size: 14px;

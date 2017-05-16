@@ -21,6 +21,9 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+	SOCIAL_LOGIN_REQUEST,
+	SOCIAL_LOGIN_REQUEST_FAILURE,
+	/*SOCIAL_LOGIN_REQUEST_SUCCESS,*/
 } from 'state/action-types';
 
 const loginErrorMessages = {
@@ -145,6 +148,24 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 
 			return Promise.reject( errorMessage );
 		} );
+};
+
+/**
+ * Attempt to login a user with an external social account.
+ *
+ * @param  {String}    service The external social service name.
+ * @param  {String}    token   Authentication token provided by the external social service.
+ * @return {Function}          Action thunk to trigger the login process.
+ */
+export const loginSocialUser = ( /*service, token*/ ) => dispatch => {
+	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
+
+	dispatch( {
+		type: SOCIAL_LOGIN_REQUEST_FAILURE,
+		error: 'Not yet implemented'
+	} );
+
+	return Promise.reject( 'Not yet implemented' );
 };
 
 /**

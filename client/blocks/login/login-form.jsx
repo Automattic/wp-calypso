@@ -18,6 +18,8 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isRequesting, getRequestError } from 'state/login/selectors';
+import { errorNotice } from 'state/notices/actions';
+import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -133,6 +135,8 @@ export class LoginForm extends Component {
 							{ this.props.translate( 'Log In' ) }
 						</FormsButton>
 					</div>
+
+					<SocialLoginForm />
 				</Card>
 			</form>
 		);
