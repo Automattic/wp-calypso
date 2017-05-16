@@ -54,7 +54,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-recommended-sites__site-list-item {
 	display: flex;
-	flex: 1;
+	flex: 1 1 0%;
 	flex-direction: column;
 	list-style-type: none;
 	margin-top: -40px;
@@ -62,7 +62,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
 		flex-direction: row;
-		flex: 0;
+		flex: 0 1 auto;
 		margin-top: 0;
 
 		& + & {
@@ -72,7 +72,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
 		flex-direction: row;
-		flex: 0;
+		flex: 0 1 auto;
 		margin-top: 0;
 
 		& + & {
@@ -81,7 +81,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	> :nth-child(2) {
-		flex: 1;
+		flex: 1 1 auto;
 	}
 
 	.reader-recommended-sites__recommended-site-dismiss {
