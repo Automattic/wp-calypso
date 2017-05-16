@@ -36,9 +36,14 @@ const getAuthorizationRemoteSite = ( state ) => {
 };
 
 const isRemoteSiteOnSitesList = ( state ) => {
-	const remoteUrl = getAuthorizationRemoteSite( state );
+	const remoteUrl = getAuthorizationRemoteSite( state ),
+		authorizationData = getAuthorizationData( state );
 
 	if ( ! remoteUrl ) {
+		return false;
+	}
+
+	if ( authorizationData.clientNotResponding ) {
 		return false;
 	}
 

@@ -34,7 +34,7 @@ import observe from 'lib/mixins/data-observe';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import { requestSites } from 'state/sites/actions';
-import { isRequestingSites } from 'state/sites/selectors';
+import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
 import { urlToSlug } from 'lib/url';
@@ -83,11 +83,11 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 	renderPlansSelector() {
 		return (
-				<div>
-					<CheckoutData>
-						<Plans { ...this.props } showFirst={ true } />
-					</CheckoutData>
-				</div>
+			<div>
+				<CheckoutData>
+					<Plans { ...this.props } showFirst={ true } />
+				</CheckoutData>
+			</div>
 		);
 	},
 
@@ -150,6 +150,7 @@ export default connect(
 			jetpackSSOSessions: getSSOSessions( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingSites: isRequestingSites( state ),
+			isFetchingAuthorizationSite: isRequestingSite( state ),
 			requestHasXmlrpcError,
 			requestHasExpiredSecretError,
 			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
