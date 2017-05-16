@@ -15,14 +15,9 @@ const FixConfig = ( { translate } ) =>
 	<div>
 		<SectionHeader label={ translate( 'Fix Configuration' ) } />
 		<Card>
-			<form>
-				<div>
-					<Button
-						compact>
-						{ translate( 'Restore Default Configuration' ) }
-					</Button>
-				</div>
-			</form>
+			<Button compact>
+				{ translate( 'Restore Default Configuration' ) }
+			</Button>
 		</Card>
 	</div>;
 
