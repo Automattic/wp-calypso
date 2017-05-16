@@ -28,7 +28,7 @@ describe( 'index', () => {
 			const url = login();
 
 			expect( url ).to.equal(
-				'/login'
+				'/me/login'
 			);
 		} );
 
@@ -36,7 +36,7 @@ describe( 'index', () => {
 			const url = login( { twoFactorAuthType: 'code' } );
 
 			expect( url ).to.equal(
-				'/login/code'
+				'/me/login/code'
 			);
 		} );
 
@@ -44,7 +44,7 @@ describe( 'index', () => {
 			const url = login( { redirectTo: 'https://wordpress.com/?search=test&foo=bar' } );
 
 			expect( url ).to.equal(
-				'/login?redirect_to=https%3A%2F%2Fwordpress.com%2F%3Fsearch%3Dtest%26foo%3Dbar'
+				'/me/login?redirect_to=https%3A%2F%2Fwordpress.com%2F%3Fsearch%3Dtest%26foo%3Dbar'
 			);
 		} );
 	} );
