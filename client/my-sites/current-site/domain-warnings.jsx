@@ -11,10 +11,15 @@ import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import QuerySiteDomains from 'components/data/query-site-domains';
 
 const CurrentSiteDomainWarnings = ( { domains, isJetpack, selectedSiteId, selectedSite } ) => {
 	if ( ! selectedSiteId || isJetpack ) {
 		return null;
+	}
+
+	if ( ! domains.length ) {
+		return <QuerySiteDomains siteId={ selectedSiteId } />;
 	}
 
 	return (
@@ -23,14 +28,14 @@ const CurrentSiteDomainWarnings = ( { domains, isJetpack, selectedSiteId, select
 			selectedSite={ selectedSite }
 			domains={ domains }
 			ruleWhiteList={ [
+				'unverifiedDomainsCanManage',
+				'unverifiedDomainsCannotManage',
 				'expiredDomainsCanManage',
 				'expiringDomainsCanManage',
 				'expiredDomainsCannotManage',
 				'expiringDomainsCannotManage',
-				'pendingGappsTosAcceptanceDomains',
-				'unverifiedDomainsCanManage',
-				'unverifiedDomainsCannotManage',
 				'wrongNSMappedDomains',
+				'pendingGappsTosAcceptanceDomains',
 			] }
 		/>
 	);

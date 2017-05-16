@@ -16,9 +16,8 @@ import Button from 'components/button';
 import Card from 'components/card';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedOrAllSites } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import Gridicon from 'gridicons';
-import QuerySiteDomains from 'components/data/query-site-domains';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import Site from 'blocks/site';
 import SiteNotice from './notice';
@@ -30,7 +29,6 @@ class CurrentSite extends Component {
 		isPreviewShowing: React.PropTypes.bool,
 		siteCount: React.PropTypes.number.isRequired,
 		setLayoutFocus: React.PropTypes.func.isRequired,
-		selectedSiteId: React.PropTypes.number,
 		selectedSite: React.PropTypes.object,
 		translate: React.PropTypes.func.isRequired,
 		anySiteSelected: React.PropTypes.array
@@ -47,7 +45,7 @@ class CurrentSite extends Component {
 	previewSite = ( event ) => this.props.onClick && this.props.onClick( event );
 
 	render() {
-		const { selectedSite, selectedSiteId, translate, anySiteSelected } = this.props;
+		const { selectedSite, translate, anySiteSelected } = this.props;
 
 		if ( ! anySiteSelected.length ) {
 			return (
@@ -79,7 +77,6 @@ class CurrentSite extends Component {
 				}
 				{ selectedSite
 					? <div>
-						<QuerySiteDomains siteId={ selectedSiteId } />
 						<Site site={ selectedSite } />
 						<a
 							href={ selectedSite.URL }
@@ -104,11 +101,9 @@ class CurrentSite extends Component {
 
 export default connect(
 	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
 		const user = getCurrentUser( state );
 
 		return {
-			selectedSiteId,
 			selectedSite: getSelectedSite( state ),
 			anySiteSelected: getSelectedOrAllSites( state ),
 			siteCount: get( user, 'visible_site_count', 0 ),
