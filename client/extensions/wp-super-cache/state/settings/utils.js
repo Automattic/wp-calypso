@@ -1,23 +1,25 @@
 /**
+ * External dependencies
+ */
+import { mapValues } from 'lodash';
+
+/**
  * Normalize settings for use in Redux.
  *
  * @param  {Object} settings Raw settings
  * @return {Object} Normalized settings
  */
 export const normalizeSettings = settings => {
-	return Object.keys( settings ).reduce( ( acc, key ) => {
+	return mapValues( settings, ( setting, key ) => {
 		switch ( key ) {
 			case 'cache_acceptable_files':
 			case 'cache_rejected_uri':
 			case 'cache_rejected_user_agent':
-				acc[ key ] = settings[ key ].join( '\n' );
-				break;
+				return setting.join( '\n' );
 			default:
-				acc[ key ] = settings[ key ];
+				return setting;
 		}
-
-		return acc;
-	}, {} );
+	} );
 };
 
 /**
@@ -27,17 +29,14 @@ export const normalizeSettings = settings => {
  * @return {Object} Sanitized settings
  */
 export const sanitizeSettings = settings => {
-	return Object.keys( settings ).reduce( ( acc, key ) => {
+	return mapValues( settings, ( setting, key ) => {
 		switch ( key ) {
 			case 'cache_acceptable_files':
 			case 'cache_rejected_uri':
 			case 'cache_rejected_user_agent':
-				acc[ key ] = settings[ key ].split( '\n' );
-				break;
+				return setting.split( '\n' );
 			default:
-				acc[ key ] = settings[ key ];
+				return setting;
 		}
-
-		return acc;
-	}, {} );
+	} );
 };
