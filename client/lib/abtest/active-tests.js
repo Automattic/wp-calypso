@@ -75,7 +75,7 @@ module.exports = {
 		defaultVariation: 'skip',
 	},
 	jetpackPlansHeadlines: {
-		datestamp: '20170508',
+		datestamp: '20170516',
 		variations: {
 			headlineA: 25,
 			headlineB: 25,
