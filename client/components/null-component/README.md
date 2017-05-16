@@ -5,7 +5,7 @@ Useful for stubbing out components that will not build on the server when render
 
 #### How to use:
 
-In the webpack server [config file](/webpack.config.node.js):
+In the webpack server [config file](/webpack.config.node.babel.js):
 ```js
 plugins: [
   ...

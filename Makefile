@@ -182,7 +182,7 @@ server/devdocs/proptypes-index.json: $(COMPONENTS_PROPTYPE_FILES) $(COMPONENTS_P
 
 build-server: install
 	@mkdir -p build
-	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack.config.node.js
+	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack.config.node.babel.js
 
 build: install build-server build-css server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json
 	@if [ $(CALYPSO_ENV) != development ]; then $(BUNDLER); fi

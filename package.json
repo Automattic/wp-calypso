@@ -157,6 +157,7 @@
   },
   "devDependencies": {
     "5to6-codemod": "git://github.com/jsnmoon/5to6-codemod#v1.8.0",
+    "babel-cli": "6.24.1",
     "babel-eslint": "6.1.2",
     "chai": "3.5.0",
     "chai-enzyme": "0.5.2",
