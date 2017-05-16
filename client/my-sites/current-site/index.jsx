@@ -22,8 +22,6 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import Site from 'blocks/site';
 import SiteNotice from './notice';
 
-const EmptyComponent = () => null;
-
 class CurrentSite extends Component {
 	static propTypes = {
 		isPreviewShowing: React.PropTypes.bool,
@@ -92,7 +90,7 @@ class CurrentSite extends Component {
 					: <AllSites />
 				}
 				<AsyncLoad require="my-sites/current-site/domain-warnings"
-					placeholder={ <EmptyComponent /> } />
+					noPlaceholder={ true } />
 				<SiteNotice site={ selectedSite } />
 			</Card>
 		);
