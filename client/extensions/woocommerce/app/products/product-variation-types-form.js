@@ -32,7 +32,8 @@ export default class ProductVariationTypesForm extends Component {
 	componentWillMount() {
 		const { product } = this.props;
 
-		if ( ! product.attributes ) {
+		const attributes = ( product.attributes && product.attributes.filter( attribute => attribute.variation ) ) || [];
+		if ( ! attributes.length ) {
 			this.addType();
 		}
 

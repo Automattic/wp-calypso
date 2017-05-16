@@ -13,7 +13,7 @@ import {
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
-	READER_RELATED_POSTS_RECEIVE
+	READER_RELATED_POSTS_RECEIVE,
 } from 'state/action-types';
 
 describe( 'actions', () => {
@@ -22,7 +22,7 @@ describe( 'actions', () => {
 		mockery.registerMock( 'state/reader/posts/actions', {
 			receivePosts( posts ) {
 				return Promise.resolve( posts );
-			}
+			},
 		} );
 
 		requestRelatedPosts = require( '../actions' ).requestRelatedPosts;
@@ -33,11 +33,13 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/read/site/1/post/1/related?meta=site' )
 				.reply( 200, {
-					posts: [ {
-						ID: 1,
-						global_ID: 1,
-						site_ID: 1
-					} ]
+					posts: [
+						{
+							ID: 1,
+							global_ID: 1,
+							site_ID: 1,
+						},
+					],
 				} );
 		} );
 
@@ -55,8 +57,8 @@ describe( 'actions', () => {
 				payload: {
 					siteId: 1,
 					postId: 1,
-					scope: 'all'
-				}
+					scope: 'all',
+				},
 			} );
 		} );
 
@@ -68,12 +70,14 @@ describe( 'actions', () => {
 						siteId: 1,
 						postId: 1,
 						scope: 'all',
-						posts: [ {
-							ID: 1,
-							global_ID: 1,
-							site_ID: 1
-						} ]
-					}
+						posts: [
+							{
+								ID: 1,
+								global_ID: 1,
+								site_ID: 1,
+							},
+						],
+					},
 				} );
 			} );
 		} );
@@ -85,8 +89,8 @@ describe( 'actions', () => {
 					payload: {
 						siteId: 1,
 						postId: 1,
-						scope: 'all'
-					}
+						scope: 'all',
+					},
 				} );
 			} );
 		} );
@@ -112,8 +116,8 @@ describe( 'actions', () => {
 				payload: {
 					siteId: 1,
 					postId: 1,
-					scope: 'all'
-				}
+					scope: 'all',
+				},
 			} );
 		} );
 
@@ -124,25 +128,24 @@ describe( 'actions', () => {
 					siteId: 1,
 					postId: 1,
 					scope: 'all',
-					posts: []
-				}
+					posts: [],
+				},
 			} );
 		} );
 
 		it( 'should fail the promise and dispatch failure', () => {
-			return requestPromise
-				.catch( () => {
-					expect( fakeDispatch ).to.have.been.calledWith( {
-						type: READER_RELATED_POSTS_REQUEST_FAILURE,
-						payload: {
-							siteId: 1,
-							postId: 1,
-							scope: 'all',
-							error: sinon.match.instanceOf( Error )
-						},
-						error: true
-					} );
+			return requestPromise.catch( () => {
+				expect( fakeDispatch ).to.have.been.calledWith( {
+					type: READER_RELATED_POSTS_REQUEST_FAILURE,
+					payload: {
+						siteId: 1,
+						postId: 1,
+						scope: 'all',
+						error: sinon.match.instanceOf( Error ),
+					},
+					error: true,
 				} );
+			} );
 		} );
 	} );
 } );

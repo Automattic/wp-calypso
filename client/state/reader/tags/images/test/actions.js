@@ -34,7 +34,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: READER_TAG_IMAGES_RECEIVE,
 				images,
-				tag
+				tag,
 			} );
 		} );
 	} );
@@ -53,24 +53,26 @@ describe( 'actions', () => {
 
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_TAG_IMAGES_REQUEST,
-				tag: 'banana'
+				tag: 'banana',
 			} );
 
-			return request.then( () => {
-				expect( dispatchSpy ).to.have.been.calledWith( {
-					type: READER_TAG_IMAGES_REQUEST_SUCCESS,
-					data: sampleSuccessResponse,
-					tag: 'banana'
-				} );
+			return request
+				.then( () => {
+					expect( dispatchSpy ).to.have.been.calledWith( {
+						type: READER_TAG_IMAGES_REQUEST_SUCCESS,
+						data: sampleSuccessResponse,
+						tag: 'banana',
+					} );
 
-				expect( dispatchSpy ).to.have.been.calledWith( {
-					type: READER_TAG_IMAGES_RECEIVE,
-					images: sampleSuccessResponse.images,
-					tag: 'banana'
+					expect( dispatchSpy ).to.have.been.calledWith( {
+						type: READER_TAG_IMAGES_RECEIVE,
+						images: sampleSuccessResponse.images,
+						tag: 'banana',
+					} );
+				} )
+				.catch( err => {
+					assert.fail( err, undefined, 'errback should not have been called' );
 				} );
-			} ).catch( ( err ) => {
-				assert.fail( err, undefined, 'errback should not have been called' );
-			} );
 		} );
 	} );
 } );

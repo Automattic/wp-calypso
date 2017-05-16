@@ -45,7 +45,7 @@ const RejectedUserAgents = ( {
 						<FormTextarea
 							disabled={ isRequesting || isSaving }
 							onChange={ handleChange( 'cache_rejected_user_agent' ) }
-							value={ cache_rejected_user_agent && cache_rejected_user_agent.join( '\n' ) } />
+							value={ cache_rejected_user_agent } />
 						<FormSettingExplanation>
 							{ translate(
 								'Strings in the HTTP ’User Agent’ header that prevent WP-Cache from caching bot, ' +

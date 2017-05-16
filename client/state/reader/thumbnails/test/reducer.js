@@ -28,20 +28,26 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should insert a new thumbnailUrl for a new embedUrl', () => {
-			const state = items( {}, {
-				type: READER_THUMBNAIL_RECEIVE,
-				embedUrl,
-				thumbnailUrl,
-			} );
+			const state = items(
+				{},
+				{
+					type: READER_THUMBNAIL_RECEIVE,
+					embedUrl,
+					thumbnailUrl,
+				}
+			);
 
 			expect( state[ embedUrl ] ).to.eql( thumbnailUrl );
 		} );
 
 		it( 'should not insert anything for an error', () => {
-			const state = items( {}, {
-				type: READER_THUMBNAIL_REQUEST_FAILURE,
-				embedUrl,
-			} );
+			const state = items(
+				{},
+				{
+					type: READER_THUMBNAIL_REQUEST_FAILURE,
+					embedUrl,
+				}
+			);
 
 			expect( state ).to.eql( {} );
 		} );
@@ -54,13 +60,16 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should index requesting state by embedUrl', () => {
-			const state = requesting( {}, {
-				type: READER_THUMBNAIL_REQUEST,
-				embedUrl,
-			} );
+			const state = requesting(
+				{},
+				{
+					type: READER_THUMBNAIL_REQUEST,
+					embedUrl,
+				}
+			);
 
 			expect( state ).to.eql( {
-				[ embedUrl ]: true
+				[ embedUrl ]: true,
 			} );
 		} );
 
@@ -74,13 +83,13 @@ describe( 'reducer', () => {
 			} );
 			expect( state ).to.eql( {
 				[ embedUrl ]: true,
-				[ embedUrl + '2' ]: true
+				[ embedUrl + '2' ]: true,
 			} );
 		} );
 
 		it( 'should set requesting to false when done requesting', () => {
 			const original = deepFreeze( {
-				[ embedUrl ]: true
+				[ embedUrl ]: true,
 			} );
 			const state = requesting( original, {
 				type: READER_THUMBNAIL_REQUEST_SUCCESS,

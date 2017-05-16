@@ -16,7 +16,7 @@ import {
 	READER_LISTS_FOLLOW,
 	READER_LISTS_UNFOLLOW,
 	READER_LIST_UPDATE_TITLE,
-	READER_LIST_UPDATE_DESCRIPTION
+	READER_LIST_UPDATE_DESCRIPTION,
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import {
@@ -28,7 +28,7 @@ import {
 	updateListDetails,
 	dismissListNotice,
 	updateTitle,
-	updateDescription
+	updateDescription,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -45,20 +45,20 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: READER_LISTS_RECEIVE,
-				lists
+				lists,
 			} );
 		} );
 	} );
 
 	describe( '#requestList()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/read/lists/listowner/listslug' )
 				.reply( 200, {
 					list: {
 						ID: 123,
-						title: 'My test list'
-					}
+						title: 'My test list',
+					},
 				} );
 		} );
 
@@ -66,22 +66,19 @@ describe( 'actions', () => {
 			requestList()( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: READER_LIST_REQUEST
+				type: READER_LIST_REQUEST,
 			} );
 		} );
 	} );
 
 	describe( '#requestSubscribedLists()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.2/read/lists' )
 				.reply( 200, {
 					found: 2,
-					lists: [
-						{ ID: 841, title: 'Hello World' },
-						{ ID: 413, title: 'Mango & Feijoa' }
-					]
+					lists: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Mango & Feijoa' } ],
 				} );
 		} );
 
@@ -89,7 +86,7 @@ describe( 'actions', () => {
 			requestSubscribedLists()( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: READER_LISTS_REQUEST
+				type: READER_LISTS_REQUEST,
 			} );
 		} );
 
@@ -97,21 +94,18 @@ describe( 'actions', () => {
 			return requestSubscribedLists()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: READER_LISTS_RECEIVE,
-					lists: [
-						{ ID: 841, title: 'Hello World' },
-						{ ID: 413, title: 'Mango & Feijoa' }
-					]
+					lists: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Mango & Feijoa' } ],
 				} );
 			} );
 		} );
 	} );
 
 	describe( '#followList()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.2/read/lists/restapitests/testlist/follow' )
 				.reply( 200, {
-					following: true
+					following: true,
 				} );
 		} );
 
@@ -121,17 +115,17 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: READER_LISTS_FOLLOW,
 				owner: 'restapitests',
-				slug: 'testlist'
+				slug: 'testlist',
 			} );
 		} );
 	} );
 
 	describe( '#unfollowList()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.2/read/lists/restapitests/testlist/unfollow' )
 				.reply( 200, {
-					following: false
+					following: false,
 				} );
 		} );
 
@@ -141,17 +135,17 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: READER_LISTS_UNFOLLOW,
 				owner: 'restapitests',
-				slug: 'testlist'
+				slug: 'testlist',
 			} );
 		} );
 	} );
 
 	describe( '#updateListDetails()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.2/read/lists/restapitests/testlist/update' )
 				.reply( 200, {
-					following: false
+					following: false,
 				} );
 		} );
 
@@ -161,7 +155,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: READER_LIST_UPDATE,
-				list
+				list,
 			} );
 		} );
 	} );
@@ -173,7 +167,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: READER_LIST_DISMISS_NOTICE,
-				listId: 123
+				listId: 123,
 			} );
 		} );
 	} );
@@ -187,7 +181,7 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: READER_LIST_UPDATE_TITLE,
 				listId: 123,
-				title: newTitle
+				title: newTitle,
 			} );
 		} );
 	} );
@@ -201,7 +195,7 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: READER_LIST_UPDATE_DESCRIPTION,
 				listId: 123,
-				description: newDescription
+				description: newDescription,
 			} );
 		} );
 	} );

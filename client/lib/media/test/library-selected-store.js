@@ -13,9 +13,9 @@ import useMockery from 'test/helpers/use-mockery';
 
 var DUMMY_SITE_ID = 1,
 	DUMMY_OBJECTS = {
-		100: { ID: 100, title: 'Image' },
-		'media-1': { ID: 100, title: 'Image' },
-		200: { ID: 200, title: 'Video' }
+		100: { ID: 100, title: 'Image', guid: 'https://example.files.wordpress.com/2017/05/g1001.png' },
+		'media-1': { ID: 100, title: 'Image', guid: 'https://example.files.wordpress.com/2017/05/g1001.png' },
+		200: { ID: 200, title: 'Video', guid: 'https://example.files.wordpress.com/2017/05/g1002.mov' }
 	},
 	DUMMY_MEDIA_OBJECT = DUMMY_OBJECTS[ 100 ],
 	DUMMY_TRANSIENT_MEDIA_OBJECT = DUMMY_OBJECTS[ 'media-1' ];
