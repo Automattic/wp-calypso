@@ -34,6 +34,7 @@
 		right: 0;
 		bottom: 0;
 	display: block;
+	background: fade-out( $gray-light, .2 );
 }
 
 .web-preview__content {
