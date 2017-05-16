@@ -143,6 +143,8 @@ class CurrentSite extends Component {
 							href={ selectedSite.URL }
 							onClick={ this.previewSite }
 							className={ `current-site__view-site${ this.props.isPreviewShowing ? ' selected' : '' }` }
+							target="_blank"
+							rel="noopener noreferrer"
 						>
 							<span className="current-site__view-site-text">
 								{ translate( 'Site Preview' ) }
