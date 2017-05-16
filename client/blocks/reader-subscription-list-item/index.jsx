@@ -98,17 +98,22 @@ function ReaderSubscriptionListItem( {
 						} ) }
 					</span> }
 				{ siteUrl &&
-					<a
-						href={ siteUrl }
-						target="_blank"
-						rel="noopener noreferrer"
-						className="reader-subscription-list-item__site-url"
-					>
-						{ formatUrlForDisplay( siteUrl ) }
+					<div className="reader-subscription-list-item__site-url-timestamp">
+						<a
+							href={ siteUrl }
+							target="_blank"
+							rel="noopener noreferrer"
+							className="reader-subscription-list-item__site-url"
+						>
+							{ formatUrlForDisplay( siteUrl ) }
+						</a>
+						<span className="reader-subscription-list-item__timestamp">
 						{ feed &&
-							feed.last_update &&
-							' ' + translate( 'updated %s', { args: lastUpdatedDate } ) }
-					</a> }
+								feed.last_update &&
+								' ' + translate( 'updated %s', { args: lastUpdatedDate } ) }
+						</span>
+					</div>
+				}
 			</div>
 			<div className="reader-subscription-list-item__options">
 				<FollowButton
