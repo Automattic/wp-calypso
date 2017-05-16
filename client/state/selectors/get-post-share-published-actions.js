@@ -7,16 +7,28 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { enrichPublicizeActionsWithConnections } from 'state/selectors/utils/';
+import createSelector from 'lib/create-selector';
+
+const getPublishedActions = ( state, siteId, postId ) => get(
+	state,
+	[ 'sharing', 'publicize', 'sharePostActions', 'published', siteId, postId ],
+	[],
+);
 
 /**
  * Return a share-published-actions array propagaring data from publicize connections.
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @param {Number} postId Shared Post ID
- * @return {Array} share scheduled actions array
+ * @param {Number} postId Post ID
+ * @return {Array} share publihed actions array
  */
-export default function getPostSharePublishedActions( state, siteId, postId ) {
-	const postShareActions = get( state, [ 'sharing', 'publicize', 'sharePostActions', 'published', siteId, postId ], [] );
-	return enrichPublicizeActionsWithConnections( state, postShareActions );
-}
+const getPostSharePublishedActions = createSelector(
+	( state, siteId, postId ) => {
+		const postShareActions = getPublishedActions( state, siteId, postId );
+		return enrichPublicizeActionsWithConnections( state, postShareActions );
+	},
+	( state, siteId, postId ) => getPublishedActions( state, siteId, postId )
+);
+
+export default getPostSharePublishedActions;

@@ -29,12 +29,7 @@ export class LoginForm extends Component {
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		requestError: PropTypes.object,
-		title: PropTypes.string,
 		translate: PropTypes.func.isRequired,
-	};
-
-	static defaultProps = {
-		title: '',
 	};
 
 	state = {
@@ -102,74 +97,68 @@ export class LoginForm extends Component {
 		const { requestError } = this.props;
 
 		return (
-			<div>
-				<div className="login__form-header">
-					{ this.props.title }
-				</div>
+			<form onSubmit={ this.onSubmitForm } method="post">
+				<Card className="login__form">
+					<div className="login__form-userdata">
+						<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
+							{ this.props.translate( 'Username or Email Address' ) }
+						</label>
 
-				<form onSubmit={ this.onSubmitForm } method="post">
-					<Card className="login__form">
-						<div className="login__form-userdata">
-							<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
-								{ this.props.translate( 'Username or Email Address' ) }
-							</label>
+						<FormTextInput
+							className={
+								classNames( 'login__form-userdata-username-input', {
+									'is-error': requestError && requestError.field === 'usernameOrEmail'
+								} )
+							}
+							onChange={ this.onChangeField }
+							id="usernameOrEmail"
+							name="usernameOrEmail"
+							value={ this.state.usernameOrEmail }
+							{ ...isDisabled } />
 
-							<FormTextInput
-								className={
-									classNames( 'login__form-userdata-username-input', {
-										'is-error': requestError && requestError.field === 'usernameOrEmail'
-									} )
-								}
-								onChange={ this.onChangeField }
-								id="usernameOrEmail"
-								name="usernameOrEmail"
-								value={ this.state.usernameOrEmail }
+						{ requestError && requestError.field === 'usernameOrEmail' && (
+							<FormInputValidation isError text={ requestError.message } />
+						) }
+
+						<label htmlFor="password" className="login__form-userdata-username">
+							{ this.props.translate( 'Password' ) }
+						</label>
+
+						<FormPasswordInput
+							className={
+								classNames( 'login__form-userdata-username-password', {
+									'is-error': requestError && requestError.field === 'password'
+								} )
+							}
+							onChange={ this.onChangeField }
+							id="password"
+							name="password"
+							value={ this.state.password }
+							{ ...isDisabled } />
+
+						{ requestError && requestError.field === 'password' && (
+							<FormInputValidation isError text={ requestError.message } />
+						) }
+					</div>
+
+					<div className="login__form-remember-me">
+						<label>
+							<FormCheckbox
+								name="rememberMe"
+								checked={ this.state.rememberMe }
+								onChange={ this.onChangeRememberMe }
 								{ ...isDisabled } />
+							<span>{ this.props.translate( 'Stay logged in' ) }</span>
+						</label>
+					</div>
 
-							{ requestError && requestError.field === 'usernameOrEmail' && (
-								<FormInputValidation isError text={ requestError.message } />
-							) }
-
-							<label htmlFor="password" className="login__form-userdata-username">
-								{ this.props.translate( 'Password' ) }
-							</label>
-
-							<FormPasswordInput
-								className={
-									classNames( 'login__form-userdata-username-password', {
-										'is-error': requestError && requestError.field === 'password'
-									} )
-								}
-								onChange={ this.onChangeField }
-								id="password"
-								name="password"
-								value={ this.state.password }
-								{ ...isDisabled } />
-
-							{ requestError && requestError.field === 'password' && (
-								<FormInputValidation isError text={ requestError.message } />
-							) }
-						</div>
-
-						<div className="login__form-remember-me">
-							<label>
-								<FormCheckbox
-									name="rememberMe"
-									checked={ this.state.rememberMe }
-									onChange={ this.onChangeRememberMe }
-									{ ...isDisabled } />
-								<span>{ this.props.translate( 'Stay logged in' ) }</span>
-							</label>
-						</div>
-
-						<div className="login__form-action">
-							<FormsButton primary { ...isDisabled }>
-								{ this.props.translate( 'Log in' ) }
-							</FormsButton>
-						</div>
-					</Card>
-				</form>
-			</div>
+					<div className="login__form-action">
+						<FormsButton primary { ...isDisabled }>
+							{ this.props.translate( 'Log In' ) }
+						</FormsButton>
+					</div>
+				</Card>
+			</form>
 		);
 	}
 }

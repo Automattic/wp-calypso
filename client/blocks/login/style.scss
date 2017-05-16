@@ -34,8 +34,7 @@
 	}
 }
 
-.login__form-header,
-.two-factor-authentication__header {
+.login__form-header {
 	font-size: 22px;
 	margin-bottom: 24px;
 	margin-top: 16px;
@@ -71,4 +70,18 @@
 	width: 100%;
 	display: block;
 	margin-bottom: 16px;
+}
+
+.two-factor-authentication__form-button {
+	width: 100%;
+}
+
+.card.two-factor-authentication__form-action {
+	background: lighten( $gray, 34% );
+}
+
+.two-factor-authentication__small-print {
+	clear: both;
+	font-size: 11px;
+	padding: 1em 0;
 }

@@ -25,7 +25,7 @@ const successfulFollowedTagsResponse = deepFreeze( {
 			display_name: 'design',
 			URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/design/posts',
 		},
-	]
+	],
 } );
 
 const normalizedFollowedTagsResponse = deepFreeze( [
@@ -51,7 +51,7 @@ const successfulSingleTagResponse = deepFreeze( {
 		slug: 'chickens',
 		title: 'Chickens',
 		display_name: 'chickens',
-		URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/chickens/posts'
+		URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/chickens/posts',
 	},
 } );
 

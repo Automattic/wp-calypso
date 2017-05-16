@@ -16,6 +16,10 @@ class AccountRecoveryErrorMessage extends Component {
 			case 'RestInvalidKeyError':
 				return translate( "We've failed to validate with the given code. " +
 					'Please double check if the code is correct.' );
+
+			case 'RestBadPasswordError':
+				return translate( "Sorry, you can't use this password either because " +
+						"it's not strong enough or you have used that as one of your previous passwords." );
 		}
 
 		return translate(

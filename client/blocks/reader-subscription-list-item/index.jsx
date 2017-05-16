@@ -21,7 +21,8 @@ import {
 	getSiteUrl,
 } from 'reader/get-helpers';
 import untrailingslashit from 'lib/route/untrailingslashit';
-import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
+import ReaderSubscriptionListItemPlaceholder
+	from 'blocks/reader-subscription-list-item/placeholder';
 
 /**
  * Takes in a string and removes the starting https, www., and removes a trailing slash
@@ -29,9 +30,8 @@ import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-li
  * @param {String} url - the url to format
  * @returns {String} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
  */
-const formatUrlForDisplay = url => untrailingslashit(
-	url.replace( /^https?:\/\/(www\.)?/, '' )
-);
+const formatUrlForDisplay = url =>
+	untrailingslashit( url.replace( /^https?:\/\/(www\.)?/, '' ) );
 
 function ReaderSubscriptionListItem( {
 	url,
@@ -54,8 +54,8 @@ function ReaderSubscriptionListItem( {
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	const siteUrl = getSiteUrl( { feed, site } );
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
-	const preferBlavatar = get( site, 'is_multi_author', false );
-	const preferGravatar = ! preferBlavatar;
+	const isMultiAuthor = get( site, 'is_multi_author', false );
+	const preferGravatar = ! isMultiAuthor;
 
 	if ( ! site && ! feed ) {
 		return <ReaderSubscriptionListItemPlaceholder />;
@@ -68,7 +68,7 @@ function ReaderSubscriptionListItem( {
 					siteIcon={ siteIcon }
 					feedIcon={ feedIcon }
 					author={ siteAuthor }
-					preferBlavatar={ preferBlavatar }
+					preferBlavatar={ isMultiAuthor }
 					preferGravatar={ preferGravatar }
 					siteUrl={ streamUrl }
 					isCompact={ true }
@@ -76,30 +76,35 @@ function ReaderSubscriptionListItem( {
 			</div>
 			<div className="reader-subscription-list-item__byline">
 				<span className="reader-subscription-list-item__site-title">
-					{ <a href={ streamUrl } className="reader-subscription-list-item__link"> { siteTitle } </a> }
+					{
+						<a href={ streamUrl } className="reader-subscription-list-item__link">
+							{ ' ' }{ siteTitle }{ ' ' }
+						</a>
+					}
 				</span>
 				<div className="reader-subscription-list-item__site-excerpt">{ siteExcerpt }</div>
-				{ ! isEmpty( authorName ) &&
+				{ ! isMultiAuthor &&
+					! isEmpty( authorName ) &&
 					<span className="reader-subscription-list-item__by-text">
-						{
-							translate( 'by {{author/}}', {
-								components: {
-									author: <a href={ streamUrl } className="reader-subscription-list-item__link"> { authorName } </a>
-								}
-							} )
-						}
-					</span>
-				}
-			{ siteUrl && (
-				<a
-					href={ siteUrl }
-					target="_blank"
-					rel="noopener noreferrer"
-					className="reader-subscription-list-item__site-url"
-				>
-					{ formatUrlForDisplay( siteUrl ) }
-				</a>
-			) }
+						{ translate( 'by {{author/}}', {
+							components: {
+								author: (
+									<a href={ streamUrl } className="reader-subscription-list-item__link">
+										{ ' ' }{ authorName }{ ' ' }
+									</a>
+								),
+							},
+						} ) }
+					</span> }
+				{ siteUrl &&
+					<a
+						href={ siteUrl }
+						target="_blank"
+						rel="noopener noreferrer"
+						className="reader-subscription-list-item__site-url"
+					>
+						{ formatUrlForDisplay( siteUrl ) }
+					</a> }
 			</div>
 			<div className="reader-subscription-list-item__options">
 				<FollowButton

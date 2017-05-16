@@ -89,6 +89,10 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		height: 30px;
 		justify-content: flex-end;
 
+		.button.is-borderless {
+			z-index: 0;
+		}
+
 		.button.is-borderless .gridicon,
 		.gridicon,
 		.gridicons-cross {

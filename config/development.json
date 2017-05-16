@@ -1,3 +1,4 @@
+
 {
 	"env": "development",
 	"env_id": "development",
@@ -18,7 +19,7 @@
 	"google_analytics_enabled": false,
 	"google_analytics_key": "UA-10673494-15",
 	"google_adwords_conversion_id": 1067250390,
-	"lucky_orange_enabled": true,
+	"hotjar_enabled": true,
 	"olark": {
 		"business_account_id": "3146-815-10-9343",
 		"business_group_id": false
@@ -116,6 +117,7 @@
 		"post-editor/media-advanced": false,
 		"press-this": true,
 		"publicize/preview": false,
+		"publicize-scheduling": false,
 		"push-notifications": true,
 		"reader": true,
 		"reader/combined-cards": true,

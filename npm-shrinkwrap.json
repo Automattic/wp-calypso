@@ -938,8 +938,16 @@
       "version": "1.0.2",
       "dev": true
     },
+    "color-convert": {
+      "version": "1.9.0",
+      "dev": true
+    },
     "color-diff": {
       "version": "0.1.7",
+      "dev": true
+    },
+    "color-name": {
+      "version": "1.1.2",
       "dev": true
     },
     "colorguard": {
@@ -2837,6 +2845,14 @@
           "version": "3.2.0",
           "dev": true
         },
+        "jest-matcher-utils": {
+          "version": "17.0.3",
+          "dev": true
+        },
+        "pretty-format": {
+          "version": "4.2.3",
+          "dev": true
+        },
         "supports-color": {
           "version": "2.0.0",
           "dev": true
@@ -2878,7 +2894,7 @@
       "dev": true
     },
     "jest-matcher-utils": {
-      "version": "17.0.3",
+      "version": "19.0.0",
       "dev": true,
       "dependencies": {
         "chalk": {
@@ -2893,7 +2909,25 @@
     },
     "jest-matchers": {
       "version": "17.0.3",
-      "dev": true
+      "dev": true,
+      "dependencies": {
+        "chalk": {
+          "version": "1.1.3",
+          "dev": true
+        },
+        "jest-matcher-utils": {
+          "version": "17.0.3",
+          "dev": true
+        },
+        "pretty-format": {
+          "version": "4.2.3",
+          "dev": true
+        },
+        "supports-color": {
+          "version": "2.0.0",
+          "dev": true
+        }
+      }
     },
     "jest-mock": {
       "version": "17.0.2",
@@ -2947,7 +2981,25 @@
     },
     "jest-snapshot": {
       "version": "17.0.3",
-      "dev": true
+      "dev": true,
+      "dependencies": {
+        "chalk": {
+          "version": "1.1.3",
+          "dev": true
+        },
+        "jest-matcher-utils": {
+          "version": "17.0.3",
+          "dev": true
+        },
+        "pretty-format": {
+          "version": "4.2.3",
+          "dev": true
+        },
+        "supports-color": {
+          "version": "2.0.0",
+          "dev": true
+        }
+      }
     },
     "jest-util": {
       "version": "17.0.2",
@@ -2959,6 +3011,24 @@
         },
         "diff": {
           "version": "3.2.0",
+          "dev": true
+        },
+        "supports-color": {
+          "version": "2.0.0",
+          "dev": true
+        }
+      }
+    },
+    "jest-validate": {
+      "version": "19.0.0",
+      "dev": true,
+      "dependencies": {
+        "chalk": {
+          "version": "1.1.3",
+          "dev": true
+        },
+        "leven": {
+          "version": "2.1.0",
           "dev": true
         },
         "supports-color": {
@@ -3748,7 +3818,7 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "1.1.9"
+      "version": "1.1.10"
     },
     "npm-path": {
       "version": "1.1.0",
@@ -4089,9 +4159,59 @@
     "preserve": {
       "version": "0.2.0"
     },
+    "prettier": {
+      "version": "1.1.7",
+      "from": "git+https://github.com/Automattic/calypso-prettier.git#c8199abf2573d33e5d7a1615d84bccccb876a279",
+      "resolved": "git+https://github.com/Automattic/calypso-prettier.git#c8199abf2573d33e5d7a1615d84bccccb876a279",
+      "dev": true,
+      "dependencies": {
+        "ast-types": {
+          "version": "0.9.8",
+          "dev": true
+        },
+        "babylon": {
+          "version": "7.0.0-beta.8",
+          "dev": true
+        },
+        "chalk": {
+          "version": "1.1.3",
+          "dev": true
+        },
+        "flow-parser": {
+          "version": "0.43.0",
+          "dev": true
+        },
+        "get-stdin": {
+          "version": "5.0.1",
+          "dev": true
+        },
+        "glob": {
+          "version": "7.1.1",
+          "dev": true
+        },
+        "minimatch": {
+          "version": "3.0.4",
+          "dev": true
+        },
+        "minimist": {
+          "version": "1.2.0",
+          "dev": true
+        },
+        "supports-color": {
+          "version": "2.0.0",
+          "dev": true
+        }
+      }
+    },
     "pretty-format": {
-      "version": "4.2.3",
-      "dev": true
+      "version": "19.0.0",
+      "dev": true,
+      "dependencies": {
+        "ansi-styles": {
+          "version": "3.0.0",
+          "dev": true
+        }
+      }
     },
     "prismjs": {
       "version": "1.6.0",
@@ -4673,7 +4793,7 @@
       "version": "1.11.1"
     },
     "sass-graph": {
-      "version": "2.2.2",
+      "version": "2.2.3",
       "dependencies": {
         "camelcase": {
           "version": "3.0.0"

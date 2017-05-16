@@ -22,11 +22,13 @@ export function fromApi( apiResponse ) {
 		return [];
 	}
 
-	const tags = compact( concat(
-		[],
-		isObject( apiResponse.tag ) && apiResponse.tag,
-		isArray( apiResponse.tags ) && apiResponse.tags,
-	) );
+	const tags = compact(
+		concat(
+			[],
+			isObject( apiResponse.tag ) && apiResponse.tag,
+			isArray( apiResponse.tags ) && apiResponse.tags
+		)
+	);
 
 	return map( tags, tag => ( {
 		id: tag.ID,

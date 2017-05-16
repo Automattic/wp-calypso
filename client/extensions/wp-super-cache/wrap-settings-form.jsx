@@ -17,7 +17,6 @@ import { localize } from 'i18n-calypso';
  */
 import { protectForm } from 'lib/protect-form';
 import trackForm from 'lib/track-form';
-import QueryNotices from './data/query-notices';
 import QuerySettings from './data/query-settings';
 import {
 	getSelectedSite,
@@ -40,7 +39,6 @@ import {
 	isDeletingCache,
 	isTestingCache,
 } from './state/cache/selectors';
-import { getNotices } from './state/notices/selectors';
 import {
 	getSettings,
 	isRequestingSettings,
@@ -257,7 +255,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 			return (
 				<div>
-					<QueryNotices siteId={ this.props.siteId } />
 					<QuerySettings siteId={ this.props.siteId } />
 					<SettingsForm { ...this.props } { ...utils } />
 				</div>
@@ -271,7 +268,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const siteId = getSelectedSiteId( state );
 			const isSaving = isSavingSettings( state, siteId );
 			const isSaveSuccessful = isSettingsSaveSuccessful( state, siteId );
-			const notices = getNotices( state, siteId );
 			const settings = getSettings( state, siteId );
 			const isRequesting = isRequestingSettings( state, siteId ) && ! settings;
 			// Don't include read-only fields when saving.
@@ -308,7 +304,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				isSaving,
 				isTesting,
 				isTestSuccessful,
-				notices,
 				settings,
 				settingsFields,
 				site,

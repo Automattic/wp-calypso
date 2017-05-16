@@ -18,7 +18,7 @@
 	"google_analytics_enabled": false,
 	"google_analytics_key": false,
 	"google_adwords_conversion_id": false,
-	"lucky_orange_enabled": false,
+	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
 	"jetpack_min_version": false,

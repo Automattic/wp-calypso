@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -17,7 +18,6 @@ import { login } from 'lib/paths';
 class Login extends Component {
 	static propTypes = {
 		redirectLocation: PropTypes.string,
-		title: PropTypes.string,
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
@@ -39,7 +39,10 @@ class Login extends Component {
 		if ( ! this.props.twoFactorEnabled ) {
 			this.rebootAfterLogin();
 		} else {
-			page( login( { twoFactorAuthType: this.props.twoFactorNotificationSent === 'push' ? 'push' : 'code' } ) );
+			page( login( {
+				// If no notification is sent, the user is using the authenticator for 2FA by default
+				twoFactorAuthType: this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' )
+			} ) );
 		}
 	};
 
@@ -49,7 +52,6 @@ class Login extends Component {
 
 	renderContent() {
 		const {
-			title,
 			twoFactorAuthType,
 			twoStepNonce,
 		} = this.props;
@@ -58,9 +60,13 @@ class Login extends Component {
 			rememberMe,
 		} = this.state;
 
-		if ( twoStepNonce && twoFactorAuthType === 'code' ) {
+		if ( twoStepNonce && [ 'authenticator', 'sms', 'backup' ].includes( twoFactorAuthType ) ) {
 			return (
-				<VerificationCodeForm rememberMe={ rememberMe } onSuccess={ this.rebootAfterLogin } />
+				<VerificationCodeForm
+					rememberMe={ rememberMe }
+					onSuccess={ this.rebootAfterLogin }
+					twoFactorAuthType={ twoFactorAuthType }
+				/>
 			);
 		}
 
@@ -71,15 +77,19 @@ class Login extends Component {
 		}
 
 		return (
-			<LoginForm
-				title={ title }
-				onSuccess={ this.handleValidUsernamePassword } />
+			<LoginForm onSuccess={ this.handleValidUsernamePassword } />
 		);
 	}
 
 	render() {
+		const { translate, twoStepNonce } = this.props;
+
 		return (
 			<div>
+				<div className="login__form-header">
+					{ twoStepNonce ? translate( 'Two-Step Authentication' ) : translate( 'Log in to your account.' ) }
+				</div>
+
 				{ this.renderContent() }
 			</div>
 		);
@@ -92,4 +102,4 @@ export default connect(
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
 	} ),
-)( Login );
+)( localize( Login ) );

@@ -29,6 +29,7 @@ var TokenFields = React.createClass( {
 		return {
 			tokenSuggestions: suggestions,
 			tokens: Object.freeze( [ 'foo', 'bar' ] ),
+			placeholderTokens: [],
 			disabledTokens: [ 'foo', 'bar' ],
 			statusTokens: Object.freeze( [ 'success', 'error', 'validating', 'none' ] )
 		};
@@ -66,6 +67,14 @@ var TokenFields = React.createClass( {
 						disabled
 						isBorderless
 						value={ this.state.disabledTokens } />
+				</Card>
+
+				<Card>
+					<h3>TokenField with Placeholder Text</h3>
+					<TokenField
+						placeholder="Red, Green, Blue"
+						value={ this.state.placeholderTokens }
+						onChange={ this._onPlaceholderTokensChange } />
 				</Card>
 			</div>
 		);
@@ -105,7 +114,11 @@ var TokenFields = React.createClass( {
 
 	_onTokensChange: function( value ) {
 		this.setState( { tokens: value } );
-	}
+	},
+
+	_onPlaceholderTokensChange: function( value ) {
+		this.setState( { placeholderTokens: value } );
+	},
 } );
 
 module.exports = TokenFields;
