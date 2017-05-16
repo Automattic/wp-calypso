@@ -1,12 +1,7 @@
-/**
- * External Dependencies
- */
-import { includes } from 'lodash';
-
-const siteDescriptionBlacklist = [
+const siteDescriptionBlacklist = new Set( [
 	'Just another WordPress.com site',
 	'Just another WordPress site',
-];
+] );
 
 /**
  * Is the provided site description name blacklisted?
@@ -15,5 +10,5 @@ const siteDescriptionBlacklist = [
  * @returns {boolean} True if blacklisted
  */
 export const isSiteDescriptionBlacklisted = siteDescription => {
-	return includes( siteDescriptionBlacklist, siteDescription );
+	return siteDescriptionBlacklist.has( siteDescription );
 };
