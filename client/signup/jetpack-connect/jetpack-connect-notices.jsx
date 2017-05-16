@@ -72,13 +72,7 @@ class JetpackConnectNotices extends Component {
 			noticeValues.text = translate( 'Jetpack couldn\'t be found.' );
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'alreadyConnected' ) {
-			noticeValues.status = 'is-success';
-			noticeValues.icon = 'status';
-			noticeValues.text = translate( 'This site is already connected!' );
-			return noticeValues;
-		}
-		if ( this.props.noticeType === 'alreadyOwned' ) {
+		if ( this.props.noticeType === 'alreadyConnected' || this.props.noticeType === 'alreadyOwned' ) {
 			noticeValues.status = 'is-success';
 			noticeValues.icon = 'status';
 			noticeValues.text = translate( 'This site is already connected!' );
