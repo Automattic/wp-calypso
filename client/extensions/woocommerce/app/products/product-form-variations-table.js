@@ -93,22 +93,23 @@ class ProductFormVariationsTable extends React.Component {
 	render() {
 		const { variations, translate } = this.props;
 		return (
-			<div className="products__product-form-variation-table-wrapper">
-				<table className="products__product-form-variation-table">
-					<thead>
-						<tr>
-							<th></th>
-							<th></th>
-							<th className="products__product-price">{ translate( 'Price' ) }</th>
-							<th>{ translate( 'Dimensions & weight' ) }</th>
-							<th>{ translate( 'Manage stock' ) }</th>
-						</tr>
-					</thead>
-					<tbody>
-						{ variations && variations.map( ( v ) => this.renderVariationRow( v ) ) }
-					</tbody>
-				</table>
-				{ this.renderModal() }
+			<div className="products__product-form-variation-table-shadow">
+				<div className="products__product-form-variation-table-wrapper">
+					<table className="products__product-form-variation-table">
+						<thead>
+							<tr>
+								<th></th>
+								<th className="products__product-price">{ translate( 'Price' ) }</th>
+								<th>{ translate( 'Dimensions & weight' ) }</th>
+								<th>{ translate( 'Manage stock' ) }</th>
+							</tr>
+						</thead>
+						<tbody>
+							{ variations && variations.map( ( v ) => this.renderVariationRow( v ) ) }
+						</tbody>
+					</table>
+					{ this.renderModal() }
+				</div>
 			</div>
 		);
 	}

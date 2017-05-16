@@ -21,6 +21,7 @@ const ProductFormDeliveryDetailsCard = ( { product, editProduct, translate } ) =
 	const { dimensions } = product;
 
 	// TODO Pull in dimensions unit from settings API.
+	// TODO Fix width of dimensions on narrow screens once weight input is in place.
 	return (
 		<Card className="products__product-form-delivery-details">
 			<FormFieldSet>

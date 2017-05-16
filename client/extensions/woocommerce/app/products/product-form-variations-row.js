@@ -40,10 +40,6 @@ const ProductFormVariationsRow = ( {
 		editProductVariation( product, variation, { stock_quantity: e.target.value } );
 	};
 
-	const toggleVisible = () => {
-		editProductVariation( product, variation, { visible: ! variation.visible } );
-	};
-
 	const toggleStock = () => {
 		editProductVariation( product, variation, { manage_stock: ! variation.manage_stock } );
 	};
@@ -59,11 +55,6 @@ const ProductFormVariationsRow = ( {
 
 	return (
 		<tr className={ rowClassName }>
-			<td>
-				{ ! fallbackRow && (
-					<FormCheckbox checked={ variation.visible } onChange={ toggleVisible } />
-				) }
-			</td>
 			<td className="products__product-id">
 				{ ! fallbackRow && (
 					<div className="products__product-name-thumb">
@@ -120,6 +111,7 @@ const ProductFormVariationsRow = ( {
 							value={ variation.stock_quantity || '' }
 							type="number"
 							onChange={ setStockQuantity }
+							placeholder={ translate( 'Quantity' ) }
 						/>
 					) }
 				</div>
