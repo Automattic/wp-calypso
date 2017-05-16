@@ -32,7 +32,7 @@ const PaymentMethodRow = ( { method, translate } ) => {
 					</a>
 				</p>
 			</ListRowField>
-			<ListRowField>
+			<ListRowField className="payments__setup-column">
 				<Button compact>
 					{
 						translate( 'Set Up' )
