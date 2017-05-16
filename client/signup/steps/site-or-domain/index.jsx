@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 

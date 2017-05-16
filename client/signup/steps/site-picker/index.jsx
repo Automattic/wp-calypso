@@ -2,17 +2,16 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import { getSite } from 'state/sites/selectors';
 import SiteSelector from 'components/site-selector';
 import StepWrapper from 'signup/step-wrapper';
-import sitesFactory from 'lib/sites-list';
 import SignupActions from 'lib/signup/actions';
-
-const sites = sitesFactory();
 
 class SitePicker extends Component {
 	constructor( props ) {
@@ -27,7 +26,7 @@ class SitePicker extends Component {
 				stepName,
 				goToStep,
 			} = this.props,
-			site = sites.getSite( siteSlug ),
+			site = this.props.getSelectedSite( siteSlug ),
 			hasPlan = site && site.plan && site.plan.product_slug !== 'free_plan';
 
 		SignupActions.submitSignupStep(
@@ -63,7 +62,6 @@ class SitePicker extends Component {
 							return site.capabilities.manage_options && ! site.jetpack;
 						}
 					}
-					sites={ sites }
 					onSiteSelect={ this.handleSiteSelect }
 				/>
 			</Card>
@@ -84,4 +82,10 @@ class SitePicker extends Component {
 	}
 }
 
-export default SitePicker;
+export default connect(
+	( state ) => {
+		return {
+			getSelectedSite: ( siteId ) => getSite( state, siteId )
+		};
+	}
+)( SitePicker );
