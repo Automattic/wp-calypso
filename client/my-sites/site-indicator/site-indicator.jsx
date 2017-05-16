@@ -104,7 +104,13 @@ class SiteIndicator extends Component {
 					{
 						translate( 'A newer version of WordPress is available. {{link}}Update to %(version)s{{/link}}', {
 							components: {
-								link: <button className="site-indicator__action-button" onClick={ this.handleUpdate } />
+								link: (
+									<a
+										className="site-indicator__action-button"
+										onClick={ this.handleUpdate }
+										href={ site.options.admin_url + 'update-core.php' }
+									/>
+								)
 							},
 							args: {
 								version: siteUpdates.wp_update_version
