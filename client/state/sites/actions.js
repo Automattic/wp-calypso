@@ -88,7 +88,14 @@ export function requestSites() {
 		dispatch( {
 			type: SITES_REQUEST
 		} );
-		return wpcom.me().sites( { site_visibility: 'all', include_domain_only: true, site_activity: 'active' } ).then( ( response ) => {
+
+		return wpcom.me().sites( {
+			site_visibility: 'all',
+			include_domain_only: true,
+			site_activity: 'active',
+			fields: 'ID,URL,name,capabilities,jetpack,visible,icon,plan,jetpack_modules,single_user_site,is_multisite,options',
+			options: 'is_mapped_domain,unmapped_url,admin_url,is_redirect,is_automated_transfer,allowed_file_types,show_on_front,main_network_site,jetpack_version,software_version,default_post_format,created_at,frame_nonce,publicize_permanently_disabled,page_on_front,page_for_posts,advanced_seo_front_page_description,advanced_seo_title_formats,verification_services_codes,podcasting_archive,is_domain_only'
+		} ).then( ( response ) => {
 			dispatch( receiveSites( response.sites ) );
 			dispatch( {
 				type: SITES_REQUEST_SUCCESS
