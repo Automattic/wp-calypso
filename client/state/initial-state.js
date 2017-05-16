@@ -55,6 +55,13 @@ function addSympathy( initialStateLoader ) {
 
 	console.log( 'Skipping initial state load to recreate first-load experience.' ); // eslint-disable-line no-console
 
+	try {
+		localStorage.clear();
+		indexedDB.deleteDatabase( 'calypso' );
+	} catch ( e ) {
+		// no big deal
+	}
+
 	return initialState => createReduxStore( initialState );
 }
 
