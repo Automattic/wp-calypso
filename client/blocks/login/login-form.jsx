@@ -136,7 +136,9 @@ export class LoginForm extends Component {
 						</FormsButton>
 					</div>
 
-					<SocialLoginForm />
+					<div className="login__form-social">
+						<SocialLoginForm />
+					</div>
 				</Card>
 			</form>
 		);
