@@ -149,9 +149,11 @@
     "test-client": "NODE_ENV=test NODE_PATH=test:client TEST_ROOT=client test/runner.js",
     "test-server": "NODE_ENV=test NODE_PATH=test:server:client TEST_ROOT=server test/runner.js",
     "test-test": "NODE_ENV=test NODE_PATH=test:client TEST_ROOT=test test/runner.js",
+    "test-integration": "NODE_ENV=test NODE_PATH=test:integration:client TEST_ROOT=integration test/runner.js",
     "test-client:watch": "nodemon -e js,jsx --exec npm run test-client",
     "test-server:watch": "nodemon -e js,jsx --exec npm run test-server",
     "test-test:watch": "nodemon -e js,jsx --exec npm run test-test",
+    "test-integration:watch": "nodemon -e js,jsx --exec npm run test-integration",
     "lint": "bin/run-lint .",
     "css-lint": "stylelint 'client/**/*.scss' --syntax scss"
   },
