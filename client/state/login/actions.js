@@ -174,6 +174,8 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
 			} );
+
+			return Promise.resolve( get( response, 'body.data.phone_number' ) );
 		} ).catch( ( error ) => {
 			const errorMessage = getMessageFromHTTPError( error );
 
