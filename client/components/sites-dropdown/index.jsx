@@ -4,7 +4,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flow, get, noop } from 'lodash';
+import { flow, get, identity, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -27,16 +27,18 @@ export class SitesDropdown extends PureComponent {
 		filter: PropTypes.func,
 		isPlaceholder: PropTypes.bool,
 
-		// Redux-provided
+		// connected props
 		initialSiteId: PropTypes.number.isRequired,
 		selectedSite: PropTypes.object,
+		setLocallySelectedSiteId: PropTypes.func,
 	}
 
 	static defaultProps = {
 		showAllSites: false,
 		onClose: noop,
 		onSiteSelect: noop,
-		isPlaceholder: false
+		isPlaceholder: false,
+		setLocallySelectedSiteId: identity,
 	}
 
 	constructor( props ) {
@@ -51,13 +53,13 @@ export class SitesDropdown extends PureComponent {
 	state = { open: false }
 
 	componentDidMount() {
-		const { initialSiteId, setSelectedSiteSlug } = this.props;
-		setSelectedSiteSlug( initialSiteId );
+		const { initialSiteId, setLocallySelectedSiteId } = this.props;
+		setLocallySelectedSiteId( initialSiteId );
 	}
 
 	selectSite( siteSlug ) {
 		this.props.onSiteSelect( siteSlug );
-		this.props.setSelectedSiteSlug( siteSlug );
+		this.props.setLocallySelectedSiteId( siteSlug );
 		this.setState( {
 			open: false
 		} );
@@ -104,12 +106,12 @@ export class SitesDropdown extends PureComponent {
 	}
 }
 
-const mapState = ( state, { selectedSiteId, selectedSiteSlug } ) => {
+const mapState = ( state, { selectedSiteId, locallySelectedSiteId } ) => {
 	const initialSiteId = selectedSiteId ||
 		getPrimarySiteId( state );
 
-	const selectedSite = selectedSiteSlug
-		? getSite( state, selectedSiteSlug )
+	const selectedSite = locallySelectedSiteId
+		? getSite( state, locallySelectedSiteId )
 		: undefined;
 
 	return {
@@ -122,25 +124,25 @@ const mapState = ( state, { selectedSiteId, selectedSiteSlug } ) => {
  * A container for component state that can then be passed to SitesDropdown's
  * Redux-connected counterpart.
  */
-const withSelectedSiteSlug = ( Wrapped ) => class extends PureComponent {
-	static displayName = `WithSelectedSiteSlug(${
+const withSelectedSiteId = ( Wrapped ) => class extends PureComponent {
+	static displayName = `WithSelectedSiteId(${
 		Wrapped.displayName || Wrapped.name } )`
 
-	state = { selectedSiteSlug: null }
+	state = { locallySelectedSiteId: null }
 
-	setSelectedSiteSlug = ( slug ) => {
-		this.setState( { selectedSiteSlug: slug } );
+	setLocallySelectedSiteId = ( slug ) => {
+		this.setState( { locallySelectedSiteId: slug } );
 	}
 
 	render() {
 		return <Wrapped
-			selectedSiteSlug={ this.state.selectedSiteSlug }
-			setSelectedSiteSlug={ this.setSelectedSiteSlug }
+			locallySelectedSiteId={ this.state.locallySelectedSiteId }
+			setLocallySelectedSiteId={ this.setLocallySelectedSiteId }
 			{ ...this.props } />;
 	}
 };
 
 export default flow(
 	connect( mapState ),
-	withSelectedSiteSlug
+	withSelectedSiteId
 )( SitesDropdown );

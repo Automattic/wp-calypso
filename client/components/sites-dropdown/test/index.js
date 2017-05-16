@@ -64,13 +64,13 @@ describe( 'index', function() {
 	describe( 'selectSite', function() {
 		it( 'should update the `selectedSiteSlug`, and `open` state properties', function() {
 			const setStateSpy = sinon.spy();
-			const setSelectedSiteSlugSpy = sinon.spy();
+			const setLocallySelectedSiteIdSpy = sinon.spy();
 			const siteSelectedSpy = sinon.spy();
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
 					onSiteSelect: siteSelectedSpy,
-					setSelectedSiteSlug: setSelectedSiteSlugSpy,
+					setLocallySelectedSiteId: setLocallySelectedSiteIdSpy,
 				}
 			};
 
@@ -79,8 +79,8 @@ describe( 'index', function() {
 			sinon.assert.calledOnce( siteSelectedSpy );
 			sinon.assert.calledWith( siteSelectedSpy, 'foobar' );
 
-			sinon.assert.calledOnce( setSelectedSiteSlugSpy );
-			sinon.assert.calledWith( setSelectedSiteSlugSpy, 'foobar' );
+			sinon.assert.calledOnce( setLocallySelectedSiteIdSpy );
+			sinon.assert.calledWith( setLocallySelectedSiteIdSpy, 'foobar' );
 
 			sinon.assert.calledOnce( setStateSpy );
 			sinon.assert.calledWith( setStateSpy, { open: false } );
