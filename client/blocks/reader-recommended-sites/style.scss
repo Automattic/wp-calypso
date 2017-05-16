@@ -140,7 +140,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	&:first-child {
-		margin-right: 10px;
+		margin-right: 20px;
 
 		@media #{$reader-related-card-v2-breakpoint-small} {
 			margin-right: 0;
@@ -148,7 +148,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	&:last-child {
-		margin-left: 10px;
+		margin-left: 20px;
 
 		@media #{$reader-related-card-v2-breakpoint-small} {
 			margin-left: 0;
@@ -165,6 +165,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	.reader-subscription-list-item__byline {
+		margin-right: 0;
 		padding-right: 0;
 	}
 
