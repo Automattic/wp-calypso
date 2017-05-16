@@ -229,10 +229,16 @@ class JetpackConnectMain extends Component {
 		if ( ! this.checkProperty( 'isJetpackActive' ) ) {
 			return 'notActiveJetpack';
 		}
-		if ( ! this.checkProperty( 'isJetpackConnected' ) ) {
+		if (
+			! this.checkProperty( 'isJetpackConnected' ) ||
+			( this.checkProperty( 'isJetpackConnected' ) && ! this.checkProperty( 'userOwnsSite' ) )
+		) {
 			return 'notConnectedJetpack';
 		}
-		if ( this.checkProperty( 'isJetpackConnected' ) ) {
+		if (
+			this.checkProperty( 'isJetpackConnected' ) &&
+			this.checkProperty( 'userOwnsSite' )
+		) {
 			return 'alreadyConnected';
 		}
 
