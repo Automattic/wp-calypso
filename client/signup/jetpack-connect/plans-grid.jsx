@@ -41,13 +41,13 @@ class JetpackPlansGrid extends Component {
 		let subheaderText = translate( 'Now pick a plan that\'s right for you.' );
 
 		if ( abtest( 'jetpackPlansHeadlines' ) === 'headlineB' ) {
-			headerText = translate( 'Simple, affordable pricing.' );
+			headerText = translate( 'Don\'t skimp on security.' );
 		}
 		if ( abtest( 'jetpackPlansHeadlines' ) === 'headlineC' ) {
 			headerText = translate( 'Protect your site from data loss.' );
 		}
 		if ( abtest( 'jetpackPlansHeadlines' ) === 'headlineD' ) {
-			headerText = translate( 'Protect your data from hackers.' );
+			headerText = translate( 'Full data backups and priority support.' );
 		}
 
 		if ( showFirst ) {
