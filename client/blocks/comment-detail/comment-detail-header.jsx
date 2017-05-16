@@ -3,14 +3,28 @@
  */
 import React from 'react';
 import Gridicon from 'gridicons';
-import { localize } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import CommentDetailActions from './comment-detail-actions';
 
 export const CommentDetailHeader = ( {
-	author,
-	commentBody,
+	authorAvatarUrl,
+	authorDisplayName,
+	authorUrl,
+	commentContent,
+	commentIsApproved,
+	commentIsLiked,
+	commentIsSpam,
+	commentIsTrash,
+	edit,
 	isExpanded,
+	toggleApprove,
 	toggleExpanded,
-	translate,
+	toggleLike,
+	toggleSpam,
+	toggleTrash,
 } ) => {
 	if ( isExpanded ) {
 		return (
@@ -20,28 +34,17 @@ export const CommentDetailHeader = ( {
 						<Gridicon icon="cross" />
 					</a>
 				</div>
-				<div className="comment-detail__actions">
-					<a>
-						<Gridicon icon="star-outline" />
-						<span>{ translate( 'Like' ) }</span>
-					</a>
-					<a>
-						<Gridicon icon="checkmark" />
-						<span>{ translate( 'Approve' ) }</span>
-					</a>
-					<a>
-						<Gridicon icon="pencil" />
-						<span>{ translate( 'Edit' ) }</span>
-					</a>
-					<a>
-						<Gridicon icon="spam" />
-						<span>{ translate( 'Spam' ) }</span>
-					</a>
-					<a>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Trash' ) }</span>
-					</a>
-				</div>
+				<CommentDetailActions
+					edit={ edit }
+					commentIsApproved={ commentIsApproved }
+					commentIsLiked={ commentIsLiked }
+					commentIsSpam={ commentIsSpam }
+					commentIsTrash={ commentIsTrash }
+					toggleApprove={ toggleApprove }
+					toggleLike={ toggleLike }
+					toggleSpam={ toggleSpam }
+					toggleTrash={ toggleTrash }
+				/>
 			</div>
 		);
 	}
@@ -50,20 +53,20 @@ export const CommentDetailHeader = ( {
 		<div className="comment-detail__header is-preview" onClick={ toggleExpanded }>
 			<div className="comment-detail__author-info">
 				<div className="comment-detail__author-avatar">
-					<img src={ author.avatar_URL } />
+					<img src={ authorAvatarUrl } />
 				</div>
 				<strong>
-					{ author.name }
+					{ authorDisplayName }
 				</strong>
 				<span>
-					{ author.URL }
+					{ authorUrl }
 				</span>
 			</div>
 			<div className="comment-detail__comment-preview">
-				{ commentBody }
+				{ commentContent }
 			</div>
 		</div>
 	);
 };
 
-export default localize( CommentDetailHeader );
+export default CommentDetailHeader;

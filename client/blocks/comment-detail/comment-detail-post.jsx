@@ -3,30 +3,23 @@
  */
 import React from 'react';
 
-/**
- * Internal dependencies
- */
-import ReaderAvatar from 'blocks/reader-avatar';
-
 export const CommentDetailPost = ( {
-	author,
+	postAuthorDisplayName,
+	postTitle,
+	postUrl,
 	siteIcon,
-	title,
-	url,
+	siteName,
 } ) =>
 	<div className="comment-detail__post">
-		<ReaderAvatar
-			author={ author }
-			isCompact
-			showPlaceholder
-			siteIcon={ siteIcon }
-		/>
+		<div className="comment-detail__site-icon">
+			<img alt={ siteName } src={ siteIcon } />
+		</div>
 		<div className="comment-detail__post-info">
 			<span>
-				{ author.name }
+				{ postAuthorDisplayName }
 			</span>
-			<a href={ url }>
-				{ title }
+			<a href={ postUrl }>
+				{ postTitle }
 			</a>
 		</div>
 	</div>;

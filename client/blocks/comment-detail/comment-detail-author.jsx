@@ -8,7 +8,14 @@ import classNames from 'classnames';
 
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
-		author: PropTypes.object,
+		authorAvatarUrl: PropTypes.string,
+		authorDisplayName: PropTypes.string,
+		authorEmail: PropTypes.string,
+		authorId: PropTypes.number,
+		authorIp: PropTypes.string,
+		authorUrl: PropTypes.string,
+		authorUsername: PropTypes.string,
+		blockUser: PropTypes.func,
 		commentDate: PropTypes.string,
 	};
 
@@ -22,7 +29,14 @@ export class CommentDetailAuthor extends Component {
 
 	render() {
 		const {
-			author,
+			authorAvatarUrl,
+			authorDisplayName,
+			authorEmail,
+			authorIp,
+			authorIsBlocked,
+			authorUrl,
+			authorUsername,
+			blockUser,
 			commentDate,
 			moment,
 			translate,
@@ -37,15 +51,15 @@ export class CommentDetailAuthor extends Component {
 			<div className={ classes }>
 				<div className="comment-detail__author-preview">
 					<div className="comment-detail__author-avatar">
-						<img src={ author.avatar_URL } />
+						<img src={ authorAvatarUrl } />
 					</div>
 					<div className="comment-detail__author-info">
 						<div className="comment-detail__author-name">
 							<strong>
-								{ author.name }
+								{ authorDisplayName }
 							</strong>
 							<span>
-								{ author.URL }
+								{ authorUrl }
 							</span>
 						</div>
 						<div className="comment-detail__comment-date">
@@ -61,46 +75,49 @@ export class CommentDetailAuthor extends Component {
 					<div className="comment-detail__author-more-actions">
 						<div className="comment-detail__author-more-element comment-detail__author-more-element-author">
 							<div className="comment-detail__author-avatar">
-								<img src={ author.avatar_URL } />
+								<img src={ authorAvatarUrl } />
 							</div>
 							<div className="comment-detail__author-info">
 								<div className="comment-detail__author-name">
 									<strong>
-										{ author.name }
+										{ authorDisplayName }
 									</strong>
 								</div>
 								<div className="comment-detail__author-username">
-									{ author.username }
+									{ authorUsername }
 								</div>
 							</div>
 						</div>
 						<div className="comment-detail__author-more-element">
 							<Gridicon icon="mail" />
 							<span>
-								{ author.email }
+								{ authorEmail }
 							</span>
 						</div>
 						<div className="comment-detail__author-more-element">
 							<Gridicon icon="link" />
 							<span>
-								{ author.URL }
+								{ authorUrl }
 							</span>
 						</div>
 						<div className="comment-detail__author-more-element">
 							<Gridicon icon="globe" />
 							<span>
-								{ author.ip }
+								{ authorIp }
 							</span>
 						</div>
 					</div>
 					<div className="comment-detail__author-more-actions">
-						<a className="comment-detail__author-more-element">
-							<Gridicon icon="comment" />
-							<span>{ translate( 'View all comments' ) }</span>
-						</a>
-						<a className="comment-detail__author-more-element">
+						<a
+							className="comment-detail__author-more-element"
+							onClick={ blockUser }
+						>
 							<Gridicon icon="block" />
-							<span>{ translate( 'Block user' ) }</span>
+							<span>{
+								authorIsBlocked
+									? translate( 'Block user' )
+									: translate( 'Unblock user' )
+							}</span>
 						</a>
 					</div>
 				</div>

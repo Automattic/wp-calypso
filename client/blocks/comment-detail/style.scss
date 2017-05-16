@@ -103,16 +103,20 @@
 	justify-content: flex-start;
 	padding: 12px 16px;
 
-	.reader-avatar {
+	.comment-detail__site-icon {
 		flex-shrink: 0;
-		margin-left: 0;
+		width: 24px;
+		height: 24px;
+
+		img {
+			vertical-align: middle;
+		}
 	}
 
 	.comment-detail__post-info {
 		@extend %comment-detail__ellipsis;
 		color: $gray;
-		line-height: 32px;
-		padding-left: 4px;
+		padding-left: 8px;
 
 		span {
 			color: $gray-text;
