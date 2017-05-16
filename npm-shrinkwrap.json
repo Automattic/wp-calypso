@@ -3683,7 +3683,7 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "Automattic/notifications-panel#fix\/keypress"
+      "version": "1.1.10"
     },
     "npm-path": {
       "version": "1.1.0",
