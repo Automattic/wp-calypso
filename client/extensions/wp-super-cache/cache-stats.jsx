@@ -42,9 +42,7 @@ class CacheStats extends Component {
 
 	static defaultProps = {
 		files: [],
-		hasError: false,
 		header: '',
-		isDeleting: false,
 	};
 
 	state = {
