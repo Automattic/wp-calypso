@@ -24,17 +24,15 @@ import {
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode } from 'state/login/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
 import TwoFactorActions from './two-factor-actions';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
-		errorNotice: PropTypes.func.isRequired,
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		rememberMe: PropTypes.bool.isRequired,
-		successNotice: PropTypes.func.isRequired,
+		setNotice: PropTypes.func.isRequired,
 		isSmsSupported: PropTypes.bool,
 		twoStepNonce: PropTypes.string.isRequired,
 		userId: PropTypes.number.isRequired,
@@ -125,8 +123,7 @@ class VerificationCodeForm extends Component {
 				</Card>
 
 				<TwoFactorActions
-					errorNotice={ this.props.errorNotice }
-					successNotice={ this.props.successNotice }
+					setNotice={ this.props.setNotice }
 					twoFactorAuthType={ twoFactorAuthType } />
 			</form>
 		);
@@ -143,8 +140,6 @@ export default connect(
 	{
 		loginUserWithTwoFactorVerificationCode,
 		recordTracksEvent,
-		sendSmsCode,
-		errorNotice,
-		successNotice,
+		sendSmsCode
 	}
 )( localize( VerificationCodeForm ) );

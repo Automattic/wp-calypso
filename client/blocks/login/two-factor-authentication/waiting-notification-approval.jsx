@@ -19,17 +19,15 @@ import {
 	isTwoFactorAuthTypeSupported,
 	getTwoFactorPushPollSuccess,
 } from 'state/login/selectors';
-import { errorNotice, successNotice } from 'state/notices/actions';
 import TwoFactorActions from './two-factor-actions';
 
 class WaitingTwoFactorNotificationApproval extends Component {
 	static propTypes = {
 		onSuccess: PropTypes.func.isRequired,
 		pushSuccess: PropTypes.bool.isRequired,
+		setNotice: PropTypes.func.isRequired,
 		startPollAppPushAuth: PropTypes.func.isRequired,
 		stopPollAppPushAuth: PropTypes.func.isRequired,
-		errorNotice: PropTypes.func.isRequired,
-		successNotice: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -70,8 +68,7 @@ class WaitingTwoFactorNotificationApproval extends Component {
 				</Card>
 
 				<TwoFactorActions
-					errorNotice={ this.props.errorNotice }
-					successNotice={ this.props.successNotice }
+					setNotice={ this.props.setNotice }
 					twoFactorAuthType="push"
 				/>
 			</form>
@@ -87,9 +84,7 @@ export default connect(
 		pushSuccess: getTwoFactorPushPollSuccess( state ),
 	} ),
 	{
-		errorNotice,
 		startPollAppPushAuth,
 		stopPollAppPushAuth,
-		successNotice,
 	}
 )( localize( WaitingTwoFactorNotificationApproval ) );

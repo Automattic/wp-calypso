@@ -16,15 +16,13 @@ import {
 	isTwoFactorAuthTypeSupported,
 } from 'state/login/selectors';
 import { sendSmsCode } from 'state/login/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
 import { login } from 'lib/paths';
 
 class TwoFactorActions extends Component {
 	static propTypes = {
-		errorNotice: PropTypes.func.isRequired,
 		isAuthenticatorSupported: PropTypes.bool,
 		isSmsSupported: PropTypes.bool,
-		successNotice: PropTypes.func.isRequired,
+		setNotice: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
 	};
@@ -37,15 +35,21 @@ class TwoFactorActions extends Component {
 		page( login( { isNative: true, twoFactorAuthType: 'sms' } ) );
 
 		this.props.sendSmsCode( userId, twoStepNonce ).then( ( phoneNumber ) => {
-			this.props.successNotice(
-				translate( 'A text message with the verification code was just sent to your phone number ending in %(phoneNumber)s', {
-					args: {
-						phoneNumber: phoneNumber
+			this.props.setNotice( {
+				message: translate( 'A text message with the verification code was just sent to your ' +
+					'phone number ending in %(phoneNumber)s', {
+						args: {
+							phoneNumber: phoneNumber
+						}
 					}
-				} )
-			);
+				),
+				status: 'is-success'
+			} );
 		} ).catch( ( errorMesssage ) => {
-			this.props.errorNotice( errorMesssage );
+			this.props.setNotice( {
+				message: errorMesssage,
+				status: 'is-error'
+			} );
 		} );
 	};
 
@@ -106,7 +110,5 @@ export default connect(
 	} ),
 	{
 		sendSmsCode,
-		errorNotice,
-		successNotice,
 	}
 )( localize( TwoFactorActions ) );

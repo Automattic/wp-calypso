@@ -73,13 +73,14 @@ class Login extends Component {
 					rememberMe={ rememberMe }
 					onSuccess={ this.rebootAfterLogin }
 					twoFactorAuthType={ twoFactorAuthType }
+					setNotice={ this.setNotice }
 				/>
 			);
 		}
 
 		if ( twoStepNonce && twoFactorAuthType === 'push' ) {
 			return (
-				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } />
+				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } setNotice={ this.setNotice } />
 			);
 		}
 
