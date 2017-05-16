@@ -54,10 +54,6 @@ const getSessions = ( state ) => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectSessions' ] );
 };
 
-const getSSOSessions = ( state ) => {
-	return get( state, [ 'jetpackConnect', 'jetpackSSOSessions' ] );
-};
-
 const getSSO = ( state ) => {
 	return get( state, [ 'jetpackConnect', 'jetpackSSO' ] );
 };
@@ -165,7 +161,6 @@ export default {
 	getAuthorizationRemoteQueryData,
 	getAuthorizationRemoteSite,
 	getSessions,
-	getSSOSessions,
 	getSSO,
 	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,
