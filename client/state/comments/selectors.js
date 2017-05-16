@@ -69,11 +69,14 @@ export const getPostOldestCommentDate = createSelector(
  * @param {Object} state redux state
  * @param {Number} siteId site identification
  * @param {Number} postId site identification
+ * @param {String} status String representing the comment status to show. Defaults to 'all'.
  * @return {Immutable.Map<CommentId, CommentNode>} comments tree in the form of immutable map<CommentId, CommentNode>, and in addition a children array
  */
 export const getPostCommentsTree = createSelector(
-	( state, siteId, postId/*, status*/ ) => {
-		const items = getPostCommentItems( state, siteId, postId );
+	( state, siteId, postId, status ) => {
+		const allItems = getPostCommentItems( state, siteId, postId );
+		const items = status !== 'all' ? filter( allItems, { status } ) : allItems;
+
 		return {
 			...keyBy( map( items, item => ( {
 				children: map( filter( items, { parent: { ID: item.ID } } ), 'ID' ),
