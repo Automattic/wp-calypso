@@ -48,7 +48,17 @@ function deserialize( state ) {
 	return reducer( state, { type: DESERIALIZE } );
 }
 
-function loadInitialState( initialState ) {
+function addSympathy( initialStateLoader ) {
+	if ( 'development' !== process.env.NODE_ENV || ( Math.random() > 0.5 ) ) {
+		return initialStateLoader;
+	}
+
+	console.log( 'Skipping initial state load to recreate first-load experience.' ); // eslint-disable-line no-console
+
+	return initialState => createReduxStore( initialState );
+}
+
+const loadInitialState = addSympathy( initialState => {
 	debug( 'loading initial state', initialState );
 	if ( initialState === null ) {
 		debug( 'no initial state found in localforage' );
@@ -62,7 +72,7 @@ function loadInitialState( initialState ) {
 	const serverState = getInitialServerState();
 	const mergedState = Object.assign( {}, localforageState, serverState );
 	return createReduxStore( mergedState );
-}
+} );
 
 function loadInitialStateFailed( error ) {
 	debug( 'failed to load initial redux-store state', error );
