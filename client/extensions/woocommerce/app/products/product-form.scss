@@ -399,10 +399,14 @@
 }
 
 .products__additional-details-preview-type {
-	width: 40%;
+	width: 35%;
 	margin-right: 1em;
 	font-weight: bold;
 	overflow-wrap: break-word;
+
+	& + div {
+		width: 60%;
+	}
 }
 
 .products__additional-details-form-fieldset {
