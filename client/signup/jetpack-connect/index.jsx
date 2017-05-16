@@ -137,7 +137,7 @@ class JetpackConnectMain extends Component {
 	}
 
 	getCurrentUrl() {
-		let url = this.refs.siteUrlInputRef.state.value.toLowerCase();
+		let url = this.refs.siteUrlInputRef.state.value.trim().toLowerCase();
 		if ( url && url.substr( 0, 4 ) !== 'http' ) {
 			url = 'http://' + url;
 		}
