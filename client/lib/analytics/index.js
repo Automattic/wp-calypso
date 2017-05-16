@@ -398,17 +398,20 @@ const analytics = {
 		}
 	},
 
-	// Lucky Orange tracking
-	luckyOrange: {
-		addLuckyOrangeScript: function() {
-			const wa = document.createElement( 'script' );
-			const s = document.getElementsByTagName( 'script' )[ 0 ];
-
-			window.__lo_site_id = 77942;
-			wa.type = 'text/javascript';
-			wa.async = true;
-			wa.src = 'https://d10lpsik1i8c69.cloudfront.net/w.js';
-			s.parentNode.insertBefore( wa, s );
+	// HotJar tracking
+	hotjar: {
+		addHotJarScript: function() {
+			( function( h, o, t, j, a, r ) {
+				h.hj = h.hj || function() {
+					( h.hj.q = h.hj.q || [] ).push( arguments );
+				};
+				h._hjSettings = { hjid: 227769, hjsv: 5 };
+				a = o.getElementsByTagName( 'head' )[ 0 ];
+				r = o.createElement( 'script' );
+				r.async = 1;
+				r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+				a.appendChild( r );
+			} )( window, document, '//static.hotjar.com/c/hotjar-', '.js?sv=' );
 		}
 	},
 
