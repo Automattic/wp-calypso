@@ -63,7 +63,8 @@ class DialogBase extends Component {
 			clickHandler = this._onButtonClick.bind( this, button );
 
 		return (
-			<button key={ button.action } className={ classes } data-e2e-button={ button.label } onClick={ clickHandler } disabled={ !! button.disabled }>
+			<button key={ button.action } className={ classes }
+					data-e2e-button={ button.action } onClick={ clickHandler } disabled={ !! button.disabled }>
 				<span className={ this.props.baseClassName + '__button-label' }>{ button.label }</span>
 			</button>
 		);
