@@ -53,10 +53,7 @@ function removeSingle( siteId, item ) {
 		return;
 	}
 
-	// This mimics the behavior we get from the server.
-	// Deleted items return with only an ID.
-	// Status is also added to let any listeners distinguish deleted items.
-	MediaStore._media[ siteId ][ item.ID ] = { ID: item.ID, status: item.status };
+	delete MediaStore._media[ siteId ][ item.ID ];
 }
 
 function receivePage( siteId, items ) {
