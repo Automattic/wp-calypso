@@ -13,6 +13,7 @@ import SocialLogo from 'social-logos';
 const services = translate => ( {
 	facebook: { icon: 'facebook', label: translate( 'Facebook feed' ) },
 	google: { icon: 'google', label: translate( 'Google search' ) },
+	google_plus: { icon: 'google-plus', label: translate( 'Google+ ' ) },
 	linkedin: { icon: 'linkedin', label: translate( 'LinkedIn share' ) },
 	twitter: { icon: 'twitter', label: translate( 'Twitter card' ) },
 	wordpress: { icon: 'wordpress', label: translate( 'WordPress.com Reader' ) }
