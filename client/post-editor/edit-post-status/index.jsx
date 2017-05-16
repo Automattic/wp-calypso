@@ -26,7 +26,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import EditorVisibility from 'post-editor/editor-visibility';
-import PostEditStore from 'lib/posts/post-edit-store';
 
 export class EditPostStatus extends Component {
 
@@ -42,6 +41,7 @@ export class EditPostStatus extends Component {
 		postDate: PropTypes.string,
 		onPrivatePublish: PropTypes.func,
 		status: PropTypes.string,
+		isPostPrivate: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -101,12 +101,11 @@ export class EditPostStatus extends Component {
 	};
 
 	render() {
-		let isSticky, isPublished, isPending, canPublish, isScheduled, isPrivate, isPasswordProtected;
-		const { translate } = this.props;
+		let isSticky, isPublished, isPending, canPublish, isScheduled, isPasswordProtected;
+		const { translate, isPostPrivate } = this.props;
 
 		if ( this.props.post ) {
 			isPasswordProtected = postUtils.getVisibility( this.props.post ) === 'password';
-			isPrivate = postUtils.isPrivate( PostEditStore.get() );
 			isSticky = this.props.post.sticky;
 			isPending = postUtils.isPending( this.props.post );
 			isPublished = postUtils.isPublished( this.props.savedPost );
@@ -145,7 +144,7 @@ export class EditPostStatus extends Component {
 					{ this.renderTZTooltop() }
 					{ this.renderPostSchedulePopover() }
 				</span>
-				{ this.props.type === 'post' && ! isPrivate && ! isPasswordProtected &&
+				{ this.props.type === 'post' && ! isPostPrivate && ! isPasswordProtected &&
 					<label className="edit-post-status__sticky">
 						<span className="edit-post-status__label-text">
 							{ translate( 'Stick to the front page' ) }

@@ -18,7 +18,6 @@ import EditorStatusLabel from 'post-editor/editor-status-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
-import PostEditStore from 'lib/posts/post-edit-store';
 
 class EditorActionBar extends Component {
 
@@ -28,7 +27,9 @@ class EditorActionBar extends Component {
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
 		site: React.PropTypes.object,
-		type: React.PropTypes.string
+		type: React.PropTypes.string,
+		isPostPrivate: React.PropTypes.bool,
+		postAuthor: React.PropTypes.object,
 	};
 
 	state = {
@@ -38,10 +39,10 @@ class EditorActionBar extends Component {
 	render() {
 		// We store privacy changes via Flux while we store password changes via Redux.
 		// This results in checking Flux for some items and Redux for others to correctly
-		// update based on post changes.
+		// update based on post changes. Flux changes are passed down from parent components.
 		const multiUserSite = this.props.site && ! this.props.site.single_user_site;
 		const isPasswordProtected = utils.getVisibility( this.props.post ) === 'password';
-		const isPrivate = utils.isPrivate( PostEditStore.get() );
+		const { isPostPrivate, postAuthor } = this.props;
 
 		return (
 			<div className="editor-action-bar">
@@ -58,12 +59,13 @@ class EditorActionBar extends Component {
 							require="post-editor/editor-author"
 							post={ this.props.post }
 							isNew={ this.props.isNew }
+							postAuthor={ postAuthor }
 						/>
 					}
 				</div>
 				<div className="editor-action-bar__cell is-right">
 					{ this.props.post && this.props.type === 'post' &&
-						! isPasswordProtected && ! isPrivate &&
+						! isPasswordProtected && ! isPostPrivate &&
 						<EditorSticky />
 					}
 					{ utils.isPublished( this.props.savedPost ) && (
