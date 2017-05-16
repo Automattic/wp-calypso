@@ -2,7 +2,6 @@
  * External dependencies
  */
 import page from 'page';
-import { curry } from 'lodash';
 
 /**
  * Internal dependencies
@@ -75,9 +74,9 @@ export function validateVertical( context, next ) {
  * @return {array} Sorted array
  */
 export function sortFilterTerms( context, terms ) {
-	const getFilter = curry( getThemeFilterStringFromTerm )( context.store.getState() );
-	const getTerm = curry( getThemeFilterTermFromString )( context.store.getState() );
-
-	const result = terms.map( getFilter ).sort().map( getTerm );
-	return result;
+	return terms.map(
+		( term ) => getThemeFilterStringFromTerm( context.store.getState(), term )
+	).sort().map(
+		( filter ) => getThemeFilterTermFromString( context.store.getState(), filter )
+	);
 }
