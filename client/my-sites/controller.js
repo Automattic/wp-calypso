@@ -222,7 +222,7 @@ function onSelectedSiteAvailable( context ) {
 			context.store.dispatch( savePreference( 'recentSites', uniq( [
 				selectedSite.ID,
 				...recentSites
-			] ).slice( 0, 3 ) ) );
+			] ).slice( 0, 5 ) ) );
 		}
 	}
 
