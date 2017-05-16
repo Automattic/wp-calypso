@@ -27,5 +27,6 @@ export default createSelector(
 			} );
 		} );
 		return result;
-	}
+	},
+	( state ) => [ getThemeFilters( state ) ]
 );
