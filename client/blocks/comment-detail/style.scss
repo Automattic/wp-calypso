@@ -1,20 +1,3 @@
-%comment-detail__ellipsis {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-%comment-detail__gray-link {
-	color: $gray;
-	cursor: pointer;
-	fill: $gray;
-	&:focus,
-	&:hover {
-		color: $blue-wordpress;
-		fill: $blue-wordpress;
-	}
-}
-
 .comment-detail.card {
 	font-size: 14px;
 	margin: 0 auto;
@@ -37,13 +20,15 @@
 
 .comment-detail__author-avatar {
 	flex-shrink: 0;
-	img {
+	.comment-detail__author-avatar-image {
 		border-radius: 50%;
 	}
 }
 .comment-detail__author-info {
-	@extend %comment-detail__ellipsis;
 	color: $gray;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 
 	strong {
 		color: $gray-text;
@@ -74,17 +59,26 @@
 	}
 
 	.comment-detail__comment-preview {
-		@extend %comment-detail__ellipsis;
+		overflow: hidden;
 		padding: 0 8px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 		width: 60%;
 	}
 
 	.comment-detail__actions {
 		color: $gray;
 		a {
-			@extend %comment-detail__gray-link;
+			color: $gray;
+			cursor: pointer;
+			fill: $gray;
 			padding: 8px;
 			white-space: nowrap;
+			&:focus,
+			&:hover {
+				color: $blue-wordpress;
+				fill: $blue-wordpress;
+			}
 		}
 		span {
 			display: none;
@@ -108,15 +102,17 @@
 		width: 24px;
 		height: 24px;
 
-		img {
+		.comment-detail__site-icon-image {
 			vertical-align: middle;
 		}
 	}
 
 	.comment-detail__post-info {
-		@extend %comment-detail__ellipsis;
 		color: $gray;
+		overflow: hidden;
 		padding-left: 8px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 
 		span {
 			color: $gray-text;
@@ -124,7 +120,14 @@
 		}
 
 		a {
-			@extend %comment-detail__gray-link;
+			color: $gray;
+			cursor: pointer;
+			fill: $gray;
+			&:focus,
+			&:hover {
+				color: $blue-wordpress;
+				fill: $blue-wordpress;
+			}
 		}
 	}
 }
@@ -145,7 +148,14 @@
 		padding: 16px;
 
 		a {
-			@extend %comment-detail__gray-link;
+			color: $gray;
+			cursor: pointer;
+			fill: $gray;
+			&:focus,
+			&:hover {
+				color: $blue-wordpress;
+				fill: $blue-wordpress;
+			}
 		}
 	}
 }
@@ -154,9 +164,13 @@
 	padding: 16px 0;
 
 	.comment-detail__author-info {
-		@extend %comment-detail__ellipsis;
-		> div {
-			@extend %comment-detail__ellipsis;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		.comment-detail__author-info-element {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 	}
 
@@ -178,10 +192,17 @@
 		}
 
 		.comment-detail__author-more-info-toggle {
-			@extend %comment-detail__gray-link;
+			color: $gray;
+			cursor: pointer;
 			display: block;
+			fill: $gray;
 			height: 24px;
 			margin-left: auto;
+			&:focus,
+			&:hover {
+				color: $blue-wordpress;
+				fill: $blue-wordpress;
+			}
 		}
 	}
 	&.is-expanded .comment-detail__author-preview {
@@ -203,12 +224,14 @@
 		}
 
 		.comment-detail__author-more-element {
-			@extend %comment-detail__ellipsis;
 			box-sizing: border-box;
 			display: block;
 			flex-shrink: 0;
 			flex-grow: 0;
+			overflow: hidden;
 			padding: 8px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 			width: 100%;
 
 			&.comment-detail__author-more-element-author {
@@ -231,7 +254,14 @@
 			}
 		}
 		a.comment-detail__author-more-element {
-			@extend %comment-detail__gray-link;
+			color: $gray;
+			cursor: pointer;
+			fill: $gray;
+			&:focus,
+			&:hover {
+				color: $blue-wordpress;
+				fill: $blue-wordpress;
+			}
 		}
 	}
 	&.is-expanded .comment-detail__author-more-info {

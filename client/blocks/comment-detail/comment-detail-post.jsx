@@ -12,7 +12,11 @@ export const CommentDetailPost = ( {
 } ) =>
 	<div className="comment-detail__post">
 		<div className="comment-detail__site-icon">
-			<img alt={ siteName } src={ siteIcon } />
+			<img
+				alt={ siteName }
+				className="comment-detail__site-icon-image"
+				src={ siteIcon }
+			/>
 		</div>
 		<div className="comment-detail__post-info">
 			<span>

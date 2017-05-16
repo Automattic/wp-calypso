@@ -119,6 +119,7 @@ export class CommentDetail extends Component {
 		} = this.state;
 
 		const classes = classNames( 'comment-detail', {
+			'author-is-blocked': authorIsBlocked,
 			'is-approved': isApproved,
 			'is-expanded': isExpanded,
 			'is-liked': isLiked,
