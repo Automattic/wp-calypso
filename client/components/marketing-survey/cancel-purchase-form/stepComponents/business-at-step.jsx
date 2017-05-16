@@ -23,8 +23,8 @@ export class BusinessATStep extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const pluginLink = <a href="https://en.support.wordpress.com/plugins/" />;
-		const themeLink = <a href="https://en.support.wordpress.com/themes/adding-new-themes/" />;
+		const pluginLink = <a target="_blank" rel="noopener noreferrer" href="https://en.support.wordpress.com/plugins/" />;
+		const themeLink = <a target="_blank" rel="noopener noreferrer" href="https://en.support.wordpress.com/themes/adding-new-themes/" />;
 
 		return (
 			<div>
