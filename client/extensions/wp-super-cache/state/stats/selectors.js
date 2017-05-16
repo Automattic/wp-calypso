@@ -59,5 +59,5 @@ export function getStats( state, siteId ) {
  * @return {Boolean} Whether the cached file is being deleted
  */
 export function isDeletingFile( state, siteId ) {
-	return get( getStatsState( state ), [ 'deleteStatus', siteId, 'deleting' ], false );
+	return get( getStatsState( state ), [ 'deleting', siteId ], false );
 }

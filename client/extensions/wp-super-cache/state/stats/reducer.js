@@ -60,28 +60,10 @@ const generateStatus = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object} Updated deleting state
  */
-const deleteStatus = createReducer( {}, {
-	[ WP_SUPER_CACHE_DELETE_FILE ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			deleting: true,
-			status: 'pending',
-		}
-	} ),
-	[ WP_SUPER_CACHE_DELETE_FILE_SUCCESS ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			deleting: false,
-			status: 'success',
-		}
-	} ),
-	[ WP_SUPER_CACHE_DELETE_FILE_FAILURE ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			deleting: false,
-			status: 'error',
-		}
-	} )
+const deleting = createReducer( {}, {
+	[ WP_SUPER_CACHE_DELETE_FILE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+	[ WP_SUPER_CACHE_DELETE_FILE_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ WP_SUPER_CACHE_DELETE_FILE_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
 } );
 
 /**
@@ -116,7 +98,7 @@ const items = createReducer( {}, {
 }, statsSchema );
 
 export default combineReducers( {
-	deleteStatus,
+	deleting,
 	generateStatus,
 	items,
 } );

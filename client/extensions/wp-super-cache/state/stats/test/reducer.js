@@ -125,79 +125,61 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'deleteStatus()', () => {
+	describe( 'deleting()', () => {
 		const previousState = deepFreeze( {
-			deleteStatus: {
-				[ primarySiteId ]: {
-					deleting: true,
-					status: 'pending',
-				}
+			deleting: {
+				[ primarySiteId ]: true,
 			}
 		} );
 
 		it( 'should default to an empty object', () => {
 			const state = reducer( undefined, {} );
 
-			expect( state.deleteStatus ).to.eql( {} );
+			expect( state.deleting ).to.eql( {} );
 		} );
 
-		it( 'should set delete status to pending if request in progress', () => {
+		it( 'should set deleting value to true if request in progress', () => {
 			const state = reducer( undefined, {
 				type: WP_SUPER_CACHE_DELETE_FILE,
 				siteId: primarySiteId,
 			} );
 
-			expect( state.deleteStatus ).to.eql( {
-				[ primarySiteId ]: {
-					deleting: true,
-					status: 'pending',
-				}
+			expect( state.deleting ).to.eql( {
+				[ primarySiteId ]: true,
 			} );
 		} );
 
-		it( 'should accumulate delete request statuses', () => {
+		it( 'should accumulate deleting values', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_DELETE_FILE,
 				siteId: secondarySiteId,
 			} );
 
-			expect( state.deleteStatus ).to.eql( {
-				[ primarySiteId ]: {
-					deleting: true,
-					status: 'pending',
-				},
-				[ secondarySiteId ]: {
-					deleting: true,
-					status: 'pending',
-				}
+			expect( state.deleting ).to.eql( {
+				[ primarySiteId ]: true,
+				[ secondarySiteId ]: true,
 			} );
 		} );
 
-		it( 'should set delete request to success if request finishes successfully', () => {
+		it( 'should set deleting value to false if request finishes successfully', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
 				siteId: primarySiteId,
 			} );
 
-			expect( state.deleteStatus ).to.eql( {
-				[ primarySiteId ]: {
-					deleting: false,
-					status: 'success',
-				}
+			expect( state.deleting ).to.eql( {
+				[ primarySiteId ]: false,
 			} );
 		} );
 
-		it( 'should set delete request to error if request finishes with failure', () => {
+		it( 'should set deleting value to false if request finishes with failure', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_DELETE_FILE_FAILURE,
 				siteId: primarySiteId,
 			} );
 
-			expect( state.deleteStatus ).to.eql( {
-				[ primarySiteId ]: {
-					deleting: false,
-					status: 'error',
-				}
+			expect( state.deleting ).to.eql( {
+				[ primarySiteId ]: false,
 			} );
 		} );
 
@@ -206,7 +188,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state.deleteStatus ).to.eql( {} );
+			expect( state.deleting ).to.eql( {} );
 		} );
 
 		it( 'should not load persisted state', () => {
@@ -214,7 +196,7 @@ describe( 'reducer', () => {
 				type: DESERIALIZE,
 			} );
 
-			expect( state.deleteStatus ).to.eql( {} );
+			expect( state.deleting ).to.eql( {} );
 		} );
 	} );
 

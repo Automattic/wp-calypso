@@ -271,8 +271,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpSuperCache: {
 						stats: {
-							deleteStatus: {
-								[ primarySiteId ]: { deleting: true, status: 'pending' }
+							deleting: {
+								[ primarySiteId ]: true,
 							}
 						}
 					}
@@ -288,8 +288,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpSuperCache: {
 						stats: {
-							deleteStatus: {
-								[ primarySiteId ]: { deleting: false, status: 'success' }
+							deleting: {
+								[ primarySiteId ]: false,
 							}
 						}
 					}
@@ -300,13 +300,13 @@ describe( 'selectors', () => {
 			expect( isDeleting ).to.be.false;
 		} );
 
-		it( 'should return true if the cache file is being deleted', () => {
+		it( 'should return true if the file is being deleted', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						stats: {
-							deleteStatus: {
-								[ primarySiteId ]: { deleting: true, status: 'pending' }
+							deleting: {
+								[ primarySiteId ]: true,
 							}
 						}
 					}
