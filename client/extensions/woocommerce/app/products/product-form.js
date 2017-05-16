@@ -7,6 +7,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import ProductFormAdditionalDetailsCard from './product-form-additional-details-card';
 import ProductFormCategoriesCard from './product-form-categories-card';
 import ProductFormDetailsCard from './product-form-details-card';
 import ProductFormVariationsCard from './product-form-variations-card';
@@ -37,13 +38,16 @@ export default class ProductForm extends Component {
 					product={ product }
 					editProduct={ editProduct }
 				/>
-
+				<ProductFormAdditionalDetailsCard
+					product={ product }
+					editProduct={ this.props.editProduct }
+					editProductAttribute={ this.props.editProductAttribute }
+				/>
 				<ProductFormCategoriesCard
 					product={ product }
 					productCategories={ productCategories }
 					editProduct={ editProduct }
 				/>
-
 				<ProductFormVariationsCard
 					product={ product }
 					variations={ variations }
