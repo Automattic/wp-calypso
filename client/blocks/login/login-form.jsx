@@ -19,11 +19,10 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isRequesting, getRequestError } from 'state/login/selectors';
-import { errorNotice } from 'state/notices/actions';
+import Notice from 'components/notice';
 
 export class LoginForm extends Component {
 	static propTypes = {
-		errorNotice: PropTypes.func.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		loginError: PropTypes.string,
 		loginUser: PropTypes.func.isRequired,
@@ -36,6 +35,7 @@ export class LoginForm extends Component {
 		usernameOrEmail: '',
 		password: '',
 		rememberMe: false,
+		error: null,
 	};
 
 	onChangeField = ( event ) => {
@@ -75,14 +75,18 @@ export class LoginForm extends Component {
 						redirectTo = window.location.search;
 					}
 
-					this.props.errorNotice(
-						<p>
-							{ 'This endpoint is restricted to proxied Automatticians for now. Please use ' }
-							<a href={ config( 'login_url' ) + redirectTo }>the old login page</a>.
-						</p>
-					);
+					this.setState( {
+						error: (
+							<p>
+								This endpoint is restricted to proxied Automatticians for now. Please use
+								<a href={ config( 'login_url' ) + redirectTo }>the old login page</a>.
+							</p>
+						)
+					} );
 				} else {
-					this.props.errorNotice( error.message );
+					this.setState( {
+						error: error.message
+					} );
 				}
 			}
 		} );
@@ -98,6 +102,7 @@ export class LoginForm extends Component {
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
+				{ this.state.error && <Notice status="is-error" showDismiss={ false }>{ this.state.error }</Notice> }
 				<Card className="login__form">
 					<div className="login__form-userdata">
 						<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
@@ -169,7 +174,6 @@ export default connect(
 		requestError: getRequestError( state ),
 	} ),
 	{
-		errorNotice,
 		loginUser,
 		recordTracksEvent,
 	}
