@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map } from 'lodash';
+var map = require( 'lodash/map' );
 
 /**
  * Internal dependencies
@@ -84,13 +84,9 @@ MediaLibrarySelectedStore.getAll = function( siteId ) {
 		return [];
 	}
 
-	// Avoid keeping invalid items in the selected list.
-	return (
-		MediaLibrarySelectedStore
-			._media[ siteId ]
-			.map( itemId => MediaStore.get( siteId, itemId ) )
-			.filter( ( item ) => ( item && ( item.guid || item.transient ) ) )
-	);
+	return MediaLibrarySelectedStore._media[ siteId ].map( function( itemId ) {
+		return MediaStore.get( siteId, itemId );
+	} );
 };
 
 MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload ) {
