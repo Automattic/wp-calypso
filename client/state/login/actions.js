@@ -24,10 +24,10 @@ import {
 } from 'state/action-types';
 
 const loginErrorMessages = {
-	empty_password: translate( 'The password field is empty.' ),
-	empty_username: translate( 'The username field is empty.' ),
-	incorrect_password: translate( 'Invalid password' ),
-	invalid_two_step_code: translate( 'Invalid verification code.' ),
+	empty_password: translate( 'Enter your password.' ),
+	empty_username: translate( 'Enter your username or email address.' ),
+	incorrect_password: translate( "That's not the right password." ),
+	invalid_two_step_code: translate( "That's not the right code" ),
 	invalid_email: translate( 'Invalid email address.' ),
 	invalid_username: translate( 'Invalid username' ),
 	unknown: translate( 'Invalid username or password.' ),
