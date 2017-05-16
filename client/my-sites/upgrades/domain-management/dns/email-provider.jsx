@@ -64,8 +64,9 @@ class EmailProvider extends Component {
 			<form className="dns__template-form">
 				<div className="dns__form-content">
 					<FormFieldset>
-						<FormLabel>{ label }</FormLabel>
+						<FormLabel htmlFor="dns-template-token">{ label }</FormLabel>
 						<FormTextInput
+							id="dns-template-token"
 							key={ `dns-templates-token-${ name }` }
 							name="token"
 							isError={ ! isEmpty( this.state.token ) && ! isDataValid }

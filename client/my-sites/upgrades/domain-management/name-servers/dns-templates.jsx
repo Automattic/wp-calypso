@@ -10,27 +10,38 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import { dnsTemplates } from 'lib/domains/constants';
-import DnsTemplateButtonGroup from './dns-template-button-group';
+import DnsTemplateSelector from './dns-template-selector';
 import EmailProvider from '../dns/email-provider';
 
 class DnsTemplates extends Component {
 	constructor( props ) {
 		super( props );
 		const { translate } = this.props;
+
 		this.state = {
 			currentComponentName: null,
 			currentProviderCardName: null,
 			templates: [
 				{
 					name: 'G Suite',
-					label: translate( 'G Suite Verification Token - from the TXT record verification' ),
+					label: translate( '%(serviceName)s Verification Token - from the TXT record verification',
+						{
+							args: { serviceName: 'G Suite' },
+							comment: '%(serviceName)s will be replaced with the name of the service ' +
+								'that this token applies to, for example G Suite or Office 365'
+						} ),
 					placeholder: 'google-site-verification=...',
 					validationPattern: /^google-site-verification=\w{43}$/,
 					dnsTemplate: dnsTemplates.G_SUITE
 				},
 				{
 					name: 'Office 365',
-					label: translate( 'Office 365 Verification Token - from the TXT record verification' ),
+					label: translate( '%(serviceName)s Verification Token - from the TXT record verification',
+						{
+							args: { serviceName: 'Office 365' },
+							comment: '%(serviceName)s will be replaced with the name of the service ' +
+								'that this token applies to, for example G Suite or Office 365'
+						} ),
 					placeholder: 'MS=ms...',
 					validationPattern: /^MS=ms\d{8}$/,
 					dnsTemplate: dnsTemplates.MICROSOFT_OFFICE365,
@@ -83,7 +94,7 @@ class DnsTemplates extends Component {
 							'you can set it up with us easily:' ) }
 					</span>
 					<div className="name-servers__dns-templates-buttons">
-						<DnsTemplateButtonGroup
+						<DnsTemplateSelector
 							templates={ this.state.templates }
 							onTemplateClick={ this.onTemplateClick }
 						/>
