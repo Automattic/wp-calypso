@@ -18,7 +18,7 @@ export const restoreLastLocation = () => ( next ) => ( action ) => {
 	if ( action.type === ROUTE_SET && action.path ) {
 		const lastPath = store.get( 'last_path' );
 
-		if ( ! hasInitialized && lastPath && action.path === '/' ) {
+		if ( ! hasInitialized && lastPath && lastPath !== '/' && action.path === '/' ) {
 			debug( 'redir to', action.path );
 			page( lastPath );
 		} else {
