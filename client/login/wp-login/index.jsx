@@ -38,6 +38,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
+import { login } from 'lib/paths';
 
 export class Login extends React.Component {
 	static propTypes = {
@@ -146,11 +147,20 @@ export class Login extends React.Component {
 					{ translate( 'Email me a login link' ) }
 			</a>
 		);
+
 		const resetPasswordLink = ! magicLoginView && ! twoFactorAuthType && (
 			<a
 				href={ config( 'login_url' ) + '?action=lostpassword' }
 				key="lost-password-link">
 				{ this.props.translate( 'Lost your password?' ) }
+			</a>
+		);
+
+		const lostPhoneLink = twoFactorAuthType && twoFactorAuthType !== 'backup' && (
+			<a
+				href={ login( { twoFactorAuthType: 'backup' } ) }
+				key="lost-phone-link">
+				{ this.props.translate( "I can't access my phone" ) }
 			</a>
 		);
 
@@ -165,10 +175,11 @@ export class Login extends React.Component {
 		);
 
 		return compact( [
-			helpLink,
 			goBackLink,
+			lostPhoneLink,
+			helpLink,
 			showMagicLoginLink,
-			resetPasswordLink
+			resetPasswordLink,
 		] );
 	}
 
