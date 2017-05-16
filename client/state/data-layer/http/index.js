@@ -35,13 +35,12 @@ const httpHandler = ( { dispatch }, action ) => {
 	const {
 		url,
 		method,
+		headers = [],
 		body,
 		withCredentials,
 		onSuccess,
 		onFailure
 	} = action;
-
-	const headers = action.headers || [];
 
 	if ( ! isAllHeadersValid( headers ) ) {
 		const error = new Error( "Not all headers were of an array pair: [ 'key', 'value' ]" );
