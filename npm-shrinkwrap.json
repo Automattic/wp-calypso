@@ -757,7 +757,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000667"
+      "version": "1.0.30000670"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -1486,7 +1486,7 @@
       }
     },
     "es5-ext": {
-      "version": "0.10.16",
+      "version": "0.10.18",
       "dev": true
     },
     "es6-iterator": {
@@ -3572,7 +3572,7 @@
       }
     },
     "node-abi": {
-      "version": "2.0.0"
+      "version": "2.0.2"
     },
     "node-contains": {
       "version": "1.0.0"
@@ -3981,8 +3981,8 @@
     },
     "prettier": {
       "version": "1.1.7",
-      "from": "git+https://github.com/Automattic/calypso-prettier.git#c8199abf2573d33e5d7a1615d84bccccb876a279",
-      "resolved": "git+https://github.com/Automattic/calypso-prettier.git#c8199abf2573d33e5d7a1615d84bccccb876a279",
+      "from": "git+https://github.com/Automattic/calypso-prettier.git#ee9c5e17a3fdc14ff344bbc945575f1b293f2b95",
+      "resolved": "git+https://github.com/Automattic/calypso-prettier.git#ee9c5e17a3fdc14ff344bbc945575f1b293f2b95",
       "dev": true,
       "dependencies": {
         "ast-types": {
@@ -5136,7 +5136,7 @@
       }
     },
     "time-stamp": {
-      "version": "1.0.1",
+      "version": "1.1.0",
       "dev": true
     },
     "timed-out": {
