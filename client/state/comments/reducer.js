@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { sortBy, findIndex, filter, map } from 'lodash';
+import { sortBy, has, map, union, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,13 +19,26 @@ import {
 	COMMENTS_REQUEST,
 	COMMENTS_REQUEST_SUCCESS,
 	COMMENTS_REQUEST_FAILURE,
-	DESERIALIZE,
-	SERIALIZE,
 } from '../action-types';
 import { combineReducersWithPersistence } from 'state/utils';
 import {
 	PLACEHOLDER_STATE
 } from './constants';
+
+const updateComment = ( commentId, newProperties ) => comment => {
+	if ( comment.ID !== commentId ) {
+		return comment;
+	}
+	const updateLikeCount = has( newProperties, 'i_like' ) && ! has( newProperties, 'like_count' );
+
+	return {
+		...comment,
+		...newProperties,
+		...updateLikeCount && {
+			like_count: newProperties.i_like ? comment.like_count + 1 : comment.like_count - 1
+		}
+	};
+};
 
 /***
  * Comments items reducer, stores a comments items Immutable.List per siteId, postId
@@ -34,110 +47,62 @@ import {
  * @returns {Object} new redux state
  */
 export function items( state = {}, action ) {
-	const { siteId, postId, commentId, skipSort } = action;
+	const { siteId, postId, commentId } = action;
 
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
 			const { status } = action;
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], comment => {
-					if ( comment.ID !== commentId ) {
-						return comment;
-					}
-
-					return {
-						...comment,
-						status
-					};
-				} )
+				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], updateComment( commentId, { status } ) )
 			};
 		case COMMENTS_EDIT:
 			const { content } = action;
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], comment => {
-					if ( comment.ID !== commentId ) {
-						return comment;
-					}
-
-					return {
-						...comment,
-						content
-					};
-				} )
+				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], updateComment( commentId, { content } ) )
 			};
 		case COMMENTS_RECEIVE:
+			const { skipSort, comments } = action;
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: ! skipSort ? sortBy( action.comments, [ 'date' ] ) : action.comments
+				[ `${ siteId }-${ postId }` ]: union(
+					state[ `${ siteId }-${ postId }` ],
+					! skipSort ? sortBy( comments, [ 'date' ] ) : comments
+				)
 			};
 		case COMMENTS_REMOVE:
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: filter( state[ `${ siteId }-${ postId }` ], { ID: commentId } )
+				[ `${ siteId }-${ postId }` ]: reject( state[ `${ siteId }-${ postId }` ], { ID: commentId } )
 			};
 		case COMMENTS_LIKE:
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], comment => {
-					if ( comment.ID !== commentId ) {
-						return comment;
-					}
-
-					return {
-						...comment,
-						i_like: true,
-						like_count: comment.like_count++
-					};
-				} )
+				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], updateComment( commentId, { i_like: true } ) )
 			};
 		case COMMENTS_LIKE_UPDATE:
 			const { iLike, likeCount } = action;
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], comment => {
-					if ( comment.ID !== commentId ) {
-						return comment;
-					}
-
-					return {
-						...comment,
-						i_like: iLike,
-						like_count: likeCount
-					};
-				} )
+				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], updateComment( commentId, {
+					i_like: iLike,
+					like_count: likeCount
+				} ) )
 			};
 		case COMMENTS_UNLIKE:
-			const { commentId } = action;
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], comment => {
-					if ( comment.ID !== commentId ) {
-						return comment;
-					}
-
-					return {
-						...comment,
-						i_like: false,
-						like_count: comment.like_count--
-					};
-				} )
+				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], updateComment( commentId, { i_like: false } ) )
 			};
 		case COMMENTS_ERROR:
+			const { error } = action;
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], comment => {
-					if ( comment.ID !== commentId ) {
-						return comment;
-					}
-
-					return {
-						...comment,
-						placeholderState: PLACEHOLDER_STATE.ERROR,
-						placeholderError: action.error
-					};
-				} )
+				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], updateComment( commentId, {
+					placeholderState: PLACEHOLDER_STATE.ERROR,
+					placeholderError: error
+				} ) )
 			};
 	}
 
