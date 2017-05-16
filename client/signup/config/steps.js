@@ -150,7 +150,7 @@ export default {
 			headerText: i18n.translate( 'Choose how you want to use your domain.' ),
 			subHeaderText: i18n.translate( "Don't worry you can easily add a site later if you're not ready." )
 		},
-		providesDependencies: [ 'designType', 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
+		providesDependencies: [ 'designType', 'siteId', 'siteSlug', 'siteUrl', 'domainItem', 'themeSlugWithRepo' ],
 	},
 	'site-picker': {
 		stepName: 'site-picker',
@@ -159,7 +159,7 @@ export default {
 			headerText: i18n.translate( 'Choose your site?' ),
 		},
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
-		dependencies: [ 'designType', 'domainItem', 'themeSlugWithRepo', 'cartItem', 'privacyItem' ],
+		dependencies: [ 'cartItem', 'designType', 'domainItem', 'privacyItem', 'siteUrl', 'themeSlugWithRepo' ],
 		delayApiRequestUntilComplete: true
 	},
 };

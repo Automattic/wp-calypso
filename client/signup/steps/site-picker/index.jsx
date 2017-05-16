@@ -14,13 +14,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 
 class SitePicker extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.handleSiteSelect = this.handleSiteSelect.bind( this );
-	}
-
-	handleSiteSelect( siteSlug ) {
+	handleSiteSelect = ( siteSlug ) => {
 		const {
 				stepSectionName,
 				stepName,
@@ -51,17 +45,17 @@ class SitePicker extends Component {
 		} else {
 			goToStep( 'plans' );
 		}
-	}
+	};
+
+	filterSites = ( site ) => {
+		return site.capabilities.manage_options && ! site.jetpack;
+	};
 
 	renderScreen() {
 		return (
 			<Card className="site-picker__wrapper">
 				<SiteSelector
-					filter={
-						function( site ) {
-							return site.capabilities.manage_options && ! site.jetpack;
-						}
-					}
+					filter={ this.filterSites }
 					onSiteSelect={ this.handleSiteSelect }
 				/>
 			</Card>

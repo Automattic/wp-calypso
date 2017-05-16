@@ -138,15 +138,16 @@ class SiteOrDomain extends Component {
 		const domain = this.getDomainName();
 		const tld = domain.split( '.' ).slice( 1 ).join( '.' );
 		const domainItem = cartItems.domainRegistration( { productSlug: tlds[ tld ], domain } );
+		const siteUrl = domain;
 
 		SignupActions.submitSignupStep( {
 			stepName,
 			domainItem,
 			designType,
 			siteSlug: domain,
-			siteUrl: domain,
+			siteUrl,
 			isPurchasingItem: true,
-		}, [], { domainItem, designType } );
+		}, [], { designType, domainItem, siteUrl } );
 
 		if ( designType === 'domain' ) {
 			// we can skip the next two steps in the `domain-first` flow if the
