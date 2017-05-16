@@ -13,6 +13,7 @@ export const itemsSchema = {
 				feed_URL: { type: [ 'string', 'null' ] },
 				is_following: { type: [ 'boolean', 'null' ] },
 				subscribers_count: { type: [ 'integer', 'null' ] },
+				description: { type: [ 'string', 'null' ] },
 			},
 		},
 	},

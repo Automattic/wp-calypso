@@ -47,10 +47,11 @@ describe( 'reducer', () => {
 				is_following: true,
 				name: undefined,
 				subscribers_count: undefined,
+				description: undefined,
 			} );
 		} );
 
-		it( 'should decode entities in the name', () => {
+		it( 'should decode entities in the name and description', () => {
 			expect(
 				items(
 					{},
@@ -60,6 +61,7 @@ describe( 'reducer', () => {
 							feed_ID: 1,
 							blog_ID: 2,
 							name: 'ben &amp; jerries',
+							description: 'peaches &amp; cream',
 						},
 					}
 				)[ 1 ]
@@ -67,6 +69,7 @@ describe( 'reducer', () => {
 				feed_ID: 1,
 				blog_ID: 2,
 				name: 'ben & jerries',
+				description: 'peaches & cream',
 				URL: undefined,
 				feed_URL: undefined,
 				is_following: undefined,
@@ -150,6 +153,7 @@ describe( 'reducer', () => {
 					feed_URL: undefined,
 					URL: undefined,
 					is_following: undefined,
+					description: undefined,
 				},
 			} );
 		} );
@@ -185,6 +189,7 @@ describe( 'reducer', () => {
 					feed_URL: undefined,
 					is_following: true,
 					subscribers_count: undefined,
+					description: undefined,
 				},
 				1: {
 					feed_ID: 1,
@@ -194,6 +199,7 @@ describe( 'reducer', () => {
 					feed_URL: undefined,
 					is_following: true,
 					subscribers_count: undefined,
+					description: undefined,
 				},
 				2: {
 					feed_ID: 2,
@@ -203,6 +209,7 @@ describe( 'reducer', () => {
 					feed_URL: undefined,
 					is_following: true,
 					subscribers_count: undefined,
+					description: undefined,
 				},
 			} );
 		} );

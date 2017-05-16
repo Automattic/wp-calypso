@@ -14,6 +14,7 @@ import ReaderFollowButton from 'reader/follow-button';
 import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import Site from 'blocks/site';
 import HeaderBack from 'reader/header-back';
+import { getSiteDescription } from 'reader/get-helpers';
 
 class FeedHeader extends Component {
 	static propTypes = {
@@ -55,7 +56,7 @@ class FeedHeader extends Component {
 		const ownerDisplayName =
 			site && ! site.is_multi_author && site.owner && site.owner.name;
 		const siteish = this.buildSiteish( site, feed );
-		const description = site && site.description;
+		const description = getSiteDescription( { site, feed } );
 
 		const classes = classnames( {
 			'reader-feed-header': true,
