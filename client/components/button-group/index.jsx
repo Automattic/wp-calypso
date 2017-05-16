@@ -22,7 +22,10 @@ class ButtonGroup extends PureComponent {
 		const buttonGroupClasses = classNames(
 			'button-group',
 			this.props.className,
-			{ 'is-busy': this.props.busy },
+			{
+				'is-busy': this.props.busy,
+				'is-primary': this.props.primary
+			},
 		);
 
 		return (
