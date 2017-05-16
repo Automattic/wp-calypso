@@ -38,8 +38,6 @@ import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
 import { urlToSlug } from 'lib/url';
-import Plans from './plans';
-import CheckoutData from 'components/data/checkout';
 import LoggedInForm from './auth-logged-in-form';
 import LoggedOutForm from './auth-logged-out-form';
 
@@ -100,19 +98,6 @@ class JetpackConnectAuthorizeForm extends Component {
 					<HelpButton onClick={ this.clickHelpButton } />
 				</LoggedOutFormLinks>
 			</Main>
-		);
-	}
-
-	renderPlansSelector() {
-		return (
-			<div>
-				<CheckoutData>
-					<Plans
-						{ ...this.props }
-						showFirst={ true }
-					/>
-				</CheckoutData>
-			</div>
 		);
 	}
 
