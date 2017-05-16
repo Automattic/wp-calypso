@@ -9,6 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import { getSelectedSite } from 'state/ui/selectors';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import Button from 'components/button';
@@ -16,6 +17,7 @@ import Button from 'components/button';
 export class UpgradeATStep extends Component {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
+		selectedSite: PropTypes.object.isRequired,
 	}
 
 	static defaultProps = {
@@ -23,8 +25,8 @@ export class UpgradeATStep extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
-		const href = '#';
+		const { translate, selectedSite } = this.props;
+		const href = `/checkout/${ selectedSite.slug }/business`;
 
 		return (
 			<div>
@@ -54,7 +56,9 @@ export class UpgradeATStep extends Component {
 	}
 }
 
-const mapStateToProps = null;
+const mapStateToProps = ( state ) => ( {
+	selectedSite: getSelectedSite( state )
+} );
 const mapDispatchToProps = null;
 
 export default connect(
