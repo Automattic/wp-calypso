@@ -184,6 +184,14 @@ function mediaButton( editor ) {
 			let mediaHasCaption = false;
 			let captionNode = null;
 
+			// If image is deleted in image editor, we delete it in the post/page editor.
+			if ( media && media.status === 'deleted' ) {
+				captionNode = editor.dom.getParent( img, 'div.mceTemp' );
+				editor.$( captionNode || img ).remove();
+				editor.nodeChanged();
+				return;
+			}
+
 			// If image is edited in image editor, we mark it as dirty and update it in post/page editor.
 			if ( media && media.isDirty ) {
 				if (
@@ -412,6 +420,35 @@ function mediaButton( editor ) {
 					{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 				</button>
 			) );
+		}
+	} );
+
+	editor.addButton( 'wp_img_edit', {
+		tooltip: i18n.translate( 'Edit', { context: 'verb' } ),
+		icon: 'dashicon dashicons-edit',
+		onclick: function() {
+			const selectedSite = getSelectedSiteFromState();
+			if ( ! selectedSite ) {
+				return;
+			}
+
+			const siteId = selectedSite.ID;
+			const node = editor.selection.getNode();
+			const m = node.className.match( /wp-image-(\d+)/ );
+			const imageId = m && parseInt( m[ 1 ], 10 );
+			if ( ! imageId ) {
+				return;
+			}
+			const image = MediaStore.get( siteId, imageId );
+
+			MediaActions.clearValidationErrors( siteId );
+			renderModal( {
+				visible: true,
+				labels: {
+					confirm: i18n.translate( 'Update', { context: 'verb' } )
+				}
+			} );
+			MediaActions.setLibrarySelectedItems( siteId, [ image ] );
 		}
 	} );
 
