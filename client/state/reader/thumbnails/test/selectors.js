@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getThumbnailForIframe,
-	isRequestingThumbnailUrl,
-} from '../selectors';
+import { getThumbnailForIframe, isRequestingThumbnailUrl } from '../selectors';
 
 describe( 'selectors', () => {
 	const embedUrl = 'embedUrl';
@@ -21,8 +18,8 @@ describe( 'selectors', () => {
 				reader: {
 					thumbnails: {
 						items: {},
-					}
-				}
+					},
+				},
 			};
 			expect( getThumbnailForIframe( state, embedUrl ) ).to.equal( undefined );
 		} );
@@ -32,10 +29,10 @@ describe( 'selectors', () => {
 				reader: {
 					thumbnails: {
 						items: {
-							[ embedUrl ]: thumbnailUrl
-						}
-					}
-				}
+							[ embedUrl ]: thumbnailUrl,
+						},
+					},
+				},
 			};
 			expect( getThumbnailForIframe( state, embedUrl ) ).to.eql( thumbnailUrl );
 		} );
@@ -49,9 +46,9 @@ describe( 'selectors', () => {
 						requesting: {
 							[ embedUrl ]: true,
 							[ embedUrl + '2' ]: false,
-						}
-					}
-				}
+						},
+					},
+				},
 			};
 			expect( isRequestingThumbnailUrl( state, embedUrl ) ).to.equal( true );
 			expect( isRequestingThumbnailUrl( state, embedUrl + '2' ) ).to.equal( false );

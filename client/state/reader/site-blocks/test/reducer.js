@@ -29,7 +29,7 @@ describe( 'reducer', () => {
 
 			const state = items( original, {
 				type: READER_SITE_BLOCK_REQUEST,
-				siteId: 123
+				siteId: 123,
 			} );
 
 			expect( state[ 123 ] ).to.eql( true );
@@ -41,7 +41,7 @@ describe( 'reducer', () => {
 			const state = items( original, {
 				type: READER_SITE_BLOCK_REQUEST_SUCCESS,
 				data: { success: true },
-				siteId: 123
+				siteId: 123,
 			} );
 
 			expect( state[ 123 ] ).to.eql( true );
@@ -53,7 +53,7 @@ describe( 'reducer', () => {
 			const state = items( original, {
 				type: READER_SITE_BLOCK_REQUEST_FAILURE,
 				data: { success: false },
-				siteId: 123
+				siteId: 123,
 			} );
 
 			expect( state[ 123 ] ).to.be.not.ok;
@@ -64,7 +64,7 @@ describe( 'reducer', () => {
 
 			const state = items( original, {
 				type: READER_SITE_UNBLOCK_REQUEST,
-				siteId: 123
+				siteId: 123,
 			} );
 
 			expect( state[ 123 ] ).to.eql( false );
@@ -76,7 +76,7 @@ describe( 'reducer', () => {
 			const state = items( original, {
 				type: READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 				data: { success: true },
-				siteId: 123
+				siteId: 123,
 			} );
 
 			expect( state[ 123 ] ).to.eql( false );
@@ -84,13 +84,13 @@ describe( 'reducer', () => {
 
 		it( 'should not change for a failed unblock', () => {
 			const original = deepFreeze( {
-				123: true
+				123: true,
 			} );
 
 			const state = items( original, {
 				type: READER_SITE_UNBLOCK_REQUEST_FAILURE,
 				data: { success: false },
-				siteId: 123
+				siteId: 123,
 			} );
 
 			expect( state[ 123 ] ).to.eql( true );

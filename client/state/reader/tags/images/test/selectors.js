@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getTagImages,
-	shouldRequestTagImages
-} from '../selectors';
+import { getTagImages, shouldRequestTagImages } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getTagImages()', () => {
@@ -18,10 +15,10 @@ describe( 'selectors', () => {
 				reader: {
 					tags: {
 						images: {
-							items: {}
-						}
-					}
-				}
+							items: {},
+						},
+					},
+				},
 			};
 			expect( getTagImages( state, 'banana' ) ).to.equal( undefined );
 		} );
@@ -34,14 +31,11 @@ describe( 'selectors', () => {
 					tags: {
 						images: {
 							items: {
-								banana: [
-									firstBananaImage,
-									secondBananaImage
-								]
-							}
-						}
-					}
-				}
+								banana: [ firstBananaImage, secondBananaImage ],
+							},
+						},
+					},
+				},
 			};
 			expect( getTagImages( state, 'banana' ) ).to.have.length( 2 );
 			expect( getTagImages( state, 'apple' ) ).to.eql( undefined );
@@ -59,11 +53,11 @@ describe( 'selectors', () => {
 								feijoa: false,
 							},
 							items: {
-								pants: [ { url: 'foo' } ]
-							}
-						}
-					}
-				}
+								pants: [ { url: 'foo' } ],
+							},
+						},
+					},
+				},
 			};
 			expect( shouldRequestTagImages( state, 'banana' ) ).to.equal( false );
 			expect( shouldRequestTagImages( state, 'feijoa' ) ).to.equal( true );

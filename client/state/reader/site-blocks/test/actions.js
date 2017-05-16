@@ -46,18 +46,20 @@ describe( 'actions', () => {
 
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: READER_SITE_BLOCK_REQUEST,
-					siteId
+					siteId,
 				} );
 
-				return request.then( () => {
-					expect( dispatchSpy ).to.have.been.calledWith( {
-						type: READER_SITE_BLOCK_REQUEST_SUCCESS,
-						data: sampleSuccessResponse,
-						siteId
+				return request
+					.then( () => {
+						expect( dispatchSpy ).to.have.been.calledWith( {
+							type: READER_SITE_BLOCK_REQUEST_SUCCESS,
+							data: sampleSuccessResponse,
+							siteId,
+						} );
+					} )
+					.catch( err => {
+						assert.fail( err, undefined, 'errback should not have been called' );
 					} );
-				} ).catch( ( err ) => {
-					assert.fail( err, undefined, 'errback should not have been called' );
-				} );
 			} );
 		} );
 
@@ -74,7 +76,7 @@ describe( 'actions', () => {
 
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: READER_SITE_BLOCK_REQUEST,
-					siteId
+					siteId,
 				} );
 
 				return request.then( () => {} ).catch( () => {
@@ -102,7 +104,7 @@ describe( 'actions', () => {
 
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: READER_SITE_BLOCK_REQUEST,
-					siteId
+					siteId,
 				} );
 
 				return request.then( () => {} ).catch( () => {
@@ -131,18 +133,20 @@ describe( 'actions', () => {
 
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: READER_SITE_UNBLOCK_REQUEST,
-					siteId
+					siteId,
 				} );
 
-				return request.then( () => {
-					expect( dispatchSpy ).to.have.been.calledWith( {
-						type: READER_SITE_UNBLOCK_REQUEST_SUCCESS,
-						data: sampleSuccessResponse,
-						siteId
+				return request
+					.then( () => {
+						expect( dispatchSpy ).to.have.been.calledWith( {
+							type: READER_SITE_UNBLOCK_REQUEST_SUCCESS,
+							data: sampleSuccessResponse,
+							siteId,
+						} );
+					} )
+					.catch( err => {
+						assert.fail( err, undefined, 'errback should not have been called' );
 					} );
-				} ).catch( ( err ) => {
-					assert.fail( err, undefined, 'errback should not have been called' );
-				} );
 			} );
 		} );
 
@@ -159,7 +163,7 @@ describe( 'actions', () => {
 
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: READER_SITE_UNBLOCK_REQUEST,
-					siteId
+					siteId,
 				} );
 
 				return request.then( () => {} ).catch( () => {
@@ -187,7 +191,7 @@ describe( 'actions', () => {
 
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: READER_SITE_UNBLOCK_REQUEST,
-					siteId
+					siteId,
 				} );
 
 				return request.then( () => {} ).catch( () => {
