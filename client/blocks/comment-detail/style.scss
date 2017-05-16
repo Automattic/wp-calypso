@@ -91,6 +91,24 @@
 		}
 	}
 }
+.comment-detail {
+	&.is-approved .comment-detail__action-approve .gridicon {
+		color: $alert-green;
+		fill: $alert-green;
+	}
+	&.is-liked .comment-detail__action-like .gridicon {
+		color: $alert-yellow;
+		fill: $alert-yellow;
+	}
+	&.is-spam .comment-detail__action-spam .gridicon {
+		color: $alert-red;
+		fill: $alert-red;
+	}
+	&.is-trash .comment-detail__action-trash .gridicon {
+		color: $gray-dark;
+		fill: $gray-dark;
+	}
+}
 
 
 .comment-detail__post {
@@ -247,6 +265,7 @@
 		width: 50%;
 	}
 }
+
 a.comment-detail__author-more-element {
 	color: $gray;
 	cursor: pointer;
@@ -257,6 +276,7 @@ a.comment-detail__author-more-element {
 		fill: $blue-wordpress;
 	}
 }
+
 .comment-detail__author-more-element-author {
 	display: flex;
 	flex-flow: row nowrap;
@@ -271,6 +291,12 @@ a.comment-detail__author-more-element {
 		padding-left: 8px;
 	}
 }
+
+.comment-detail.author-is-blocked .comment-detail__author-more-element-block-user .gridicon {
+	color: $alert-red;
+	fill: $alert-red;
+}
+
 
 .comment-detail__reply {
 	line-height: 0;

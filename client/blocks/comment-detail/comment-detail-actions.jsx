@@ -18,27 +18,27 @@ export const CommentDetailActions = ( {
 	translate,
 } ) =>
 	<div className="comment-detail__actions">
-		<a onClick={ toggleLike }>
-			<Gridicon icon="star-outline" />
+		<a className="comment-detail__action-like" onClick={ toggleLike }>
+			<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
 			<span>{
 				commentIsLiked
 					? translate( 'Liked' )
 					: translate( 'Like' )
 			}</span>
 		</a>
-		<a onClick={ toggleApprove }>
-			<Gridicon icon="checkmark" />
+		<a className="comment-detail__action-approve" onClick={ toggleApprove }>
+			<Gridicon icon={ commentIsApproved ? 'checkmark-circle' : 'checkmark' } />
 			<span>{
 				commentIsApproved
 					? translate( 'Approved' )
 					: translate( 'Approve' )
 			}</span>
 		</a>
-		<a onClick={ edit }>
+		<a className="comment-detail__action-edit" onClick={ edit }>
 			<Gridicon icon="pencil" />
 			<span>{ translate( 'Edit' ) }</span>
 		</a>
-		<a onClick={ toggleSpam }>
+		<a className="comment-detail__action-spam" onClick={ toggleSpam }>
 			<Gridicon icon="spam" />
 			<span>{
 				commentIsSpam
@@ -46,7 +46,7 @@ export const CommentDetailActions = ( {
 					: translate( 'Mark as Spam' )
 			}</span>
 		</a>
-		<a onClick={ toggleTrash }>
+		<a className="comment-detail__action-trash" onClick={ toggleTrash }>
 			<Gridicon icon="trash" />
 			<span>{
 				commentIsTrash

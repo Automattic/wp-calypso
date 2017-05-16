@@ -112,7 +112,7 @@ export class CommentDetailAuthor extends Component {
 					</div>
 					<div className="comment-detail__author-more-actions">
 						<a
-							className="comment-detail__author-more-element"
+							className="comment-detail__author-more-element comment-detail__author-more-element-block-user"
 							onClick={ blockUser }
 						>
 							<Gridicon icon="block" />

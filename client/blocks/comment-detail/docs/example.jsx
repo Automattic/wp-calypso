@@ -71,6 +71,58 @@ export const CommentDetailExample = () =>
 			siteIcon={ mockSite.icon }
 			siteName={ mockSite.title }
 		/>
+		<CommentDetail
+			authorAvatarUrl={ mockAuthor.avatarUrl }
+			authorDisplayName={ mockAuthor.displayName }
+			authorEmail={ mockAuthor.email }
+			authorId={ mockAuthor.id }
+			authorIp={ mockAuthor.ip }
+			authorIsBlocked={ mockAuthor.isBlocked }
+			authorUrl={ mockAuthor.url }
+			authorUsername={ mockAuthor.username }
+
+			commentContent={ mockComment.content }
+			commentDate={ mockComment.date }
+			commentId={ mockComment.id }
+			commentIsApproved={ mockComment.isApproved }
+			commentIsLiked={ mockComment.isLiked }
+			commentIsSpam={ mockComment.isSpam }
+			commentIsTrash={ mockComment.isTrash }
+			repliedToComment={ mockComment.replied }
+
+			postAuthorDisplayName={ mockPost.authorDisplayName }
+			postTitle={ mockPost.title }
+			postUrl={ mockPost.url }
+
+			siteIcon={ mockSite.icon }
+			siteName={ mockSite.title }
+		/>
+		<CommentDetail
+			authorAvatarUrl={ mockAuthor.avatarUrl }
+			authorDisplayName={ mockAuthor.displayName }
+			authorEmail={ mockAuthor.email }
+			authorId={ mockAuthor.id }
+			authorIp={ mockAuthor.ip }
+			authorIsBlocked={ mockAuthor.isBlocked }
+			authorUrl={ mockAuthor.url }
+			authorUsername={ mockAuthor.username }
+
+			commentContent={ mockComment.content }
+			commentDate={ mockComment.date }
+			commentId={ mockComment.id }
+			commentIsApproved={ mockComment.isApproved }
+			commentIsLiked={ mockComment.isLiked }
+			commentIsSpam={ mockComment.isSpam }
+			commentIsTrash={ mockComment.isTrash }
+			repliedToComment={ mockComment.replied }
+
+			postAuthorDisplayName={ mockPost.authorDisplayName }
+			postTitle={ mockPost.title }
+			postUrl={ mockPost.url }
+
+			siteIcon={ mockSite.icon }
+			siteName={ mockSite.title }
+		/>
 	</div>;
 
 CommentDetailExample.displayName = 'CommentDetail';
