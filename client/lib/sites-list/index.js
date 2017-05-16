@@ -2,7 +2,6 @@
  * Internal Dependencies
  */
 import { action as InvitesActionTypes } from 'lib/invites/constants';
-import { JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST } from 'state/action-types';
 
 import SitesList from './list';
 import PollerPool from 'lib/data-poller';
@@ -25,9 +24,6 @@ module.exports = function() {
 					if ( [ 'follower', 'viewer' ].indexOf( action.invite.role ) === -1 ) {
 						_sites.sync( action.data );
 					}
-					break;
-				case JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST:
-					_sites.sync( action.data );
 					break;
 				case 'FETCH_SITES':
 					_sites.fetch(); // refetch the sites from .com

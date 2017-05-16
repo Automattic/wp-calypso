@@ -21,7 +21,9 @@ import {
 	getJetpackSiteByUrl,
 	hasXmlrpcError,
 	getAuthAttempts,
-	hasExpiredSecretError
+	hasExpiredSecretError,
+	hasNewlyConnectedSite,
+	getSiteIdFromQueryObject
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -660,6 +662,57 @@ describe( 'selectors', () => {
 			};
 
 			expect( getAuthAttempts( state, 'sitetest.com' ) ).to.equals( 2 );
+		} );
+	} );
+
+	describe( '#getSiteIdFromQueryObject()', () => {
+		it( 'should return an integer', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						queryObject: {
+							client_id: '123'
+						}
+					}
+				}
+			};
+			expect( getSiteIdFromQueryObject( state ) ).to.equals( 123 );
+		} );
+
+		it( 'should return false if there is no query object', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {}
+				}
+			};
+			expect( getSiteIdFromQueryObject( state ) ).to.be.null;
+		} );
+
+		it( 'should return false if there is no client id', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						queryObject: {}
+					}
+				}
+			};
+			expect( getSiteIdFromQueryObject( state ) ).to.be.null;
+		} );
+	} );
+
+	describe( '#hasNewlyConnectedSite()', () => {
+		it( 'should be false with an empty state', () => {
+			const state = {};
+			expect( hasNewlyConnectedSite( state ) ).to.be.false;
+		} );
+
+		it( 'should be false when there is no new site', () => {
+			const state = { jetpackConnect: { jetpackConnectSitesList: { newSite: false } } };
+			expect( hasNewlyConnectedSite( state ) ).to.be.false;
+		} );
+		it( 'should be true when there is a new site', () => {
+			const state = { jetpackConnect: { jetpackConnectSitesList: { newSite: true } } };
+			expect( hasNewlyConnectedSite( state ) ).to.be.true;
 		} );
 	} );
 } );

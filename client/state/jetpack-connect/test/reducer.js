@@ -24,13 +24,15 @@ import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
-	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE,
 	JETPACK_CONNECT_QUERY_SET,
+	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_RETRY_AUTH,
+	UPDATE_SITES,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -40,6 +42,7 @@ import reducer, {
 	jetpackSSO,
 	jetpackConnectSessions,
 	jetpackConnectSite,
+	jetpackConnectSitesList,
 	jetpackAuthAttempts
 } from '../reducer';
 
@@ -80,6 +83,7 @@ describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'jetpackConnectSite',
+			'jetpackConnectSitesList',
 			'jetpackConnectAuthorize',
 			'jetpackConnectSessions',
 			'jetpackSSO',
@@ -438,7 +442,7 @@ describe( 'reducer', () => {
 					state: 1234567890
 				}
 			}, {
-				type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST
+				type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE
 			} );
 
 			expect( state ).to.have.property( 'siteReceived' )
@@ -566,6 +570,25 @@ describe( 'reducer', () => {
 				.to.be.true;
 		} );
 
+		it( 'should clear state when flow is complete', () => {
+			const state = jetpackConnectAuthorize( {
+				queryObject: {
+					_wp_nonce: 'testnonce',
+					client_id: 'example.com',
+					redirect_uri: 'https://example.com/',
+					scope: 'auth',
+					secret: 'abcd1234',
+					site: 'https://example.com/',
+					state: 1234567890
+				},
+				authorizeSuccess: true,
+				siteReceived: true
+			}, {
+				type: JETPACK_CONNECT_COMPLETE_FLOW
+			} );
+			expect( state ).to.eql( {} );
+		} );
+
 		it( 'should persist state', () => {
 			const originalState = deepFreeze( {
 				queryObject: {
@@ -609,6 +632,31 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.eql( {} );
+		} );
+	} );
+
+	describe( '#jetpackConnectSitesList', () => {
+		it( 'should default to an empty object', () => {
+			const state = jetpackConnectSitesList( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+		it( 'should not persist state', () => {
+			const original = deepFreeze( { newSite: true } );
+
+			const state = jetpackConnectSitesList( original, { type: SERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
+		it( 'should set new site flag when a site is received', () => {
+			const state = jetpackConnectSitesList( {}, { type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE } );
+			expect( state ).to.have.property( 'newSite' ).to.eql( true );
+		} );
+		it( 'should clear state when sites list is updated', () => {
+			const state = jetpackConnectSitesList(
+				{ newSite: true },
+				{ type: UPDATE_SITES }
+			);
+			expect( state ).to.eql( {} );
 		} );
 	} );
 

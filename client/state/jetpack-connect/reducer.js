@@ -17,7 +17,7 @@ import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
-	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
@@ -31,6 +31,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+	UPDATE_SITES,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -126,6 +127,18 @@ export function jetpackConnectSite( state = {}, action ) {
 	return state;
 }
 
+export function jetpackConnectSitesList( state = {}, action ) {
+	switch ( action.type ) {
+		case JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE:
+			return Object.assign( {}, state, { newSite: true } );
+		case UPDATE_SITES:
+		case DESERIALIZE:
+		case SERIALIZE:
+			return {};
+	}
+	return state;
+}
+
 export function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_AUTHORIZE:
@@ -167,7 +180,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			);
 		case JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE:
 			return Object.assign( {}, state, { authorizationCode: action.data.code } );
-		case JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST:
+		case JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE:
 			const updateQueryObject = omit( state.queryObject, '_wp_nonce', 'secret', 'scope' );
 			return Object.assign(
 				{},
@@ -253,7 +266,7 @@ export function jetpackAuthAttempts( state = {}, action ) {
 			return {};
 		case DESERIALIZE:
 		case SERIALIZE:
-			state;
+			return state;
 	}
 	return state;
 }
@@ -303,6 +316,7 @@ export function jetpackConnectSelectedPlans( state = {}, action ) {
 
 export default combineReducers( {
 	jetpackConnectSite,
+	jetpackConnectSitesList,
 	jetpackSSO,
 	jetpackConnectAuthorize,
 	jetpackConnectSessions,

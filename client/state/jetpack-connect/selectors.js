@@ -146,6 +146,22 @@ const getGlobalSelectedPlan = function( state ) {
 	return state.jetpackConnect.jetpackConnectSelectedPlans && state.jetpackConnect.jetpackConnectSelectedPlans[ '*' ];
 };
 
+const getSiteIdFromQueryObject = function( state ) {
+	const authorizationData = getAuthorizationData( state );
+	if ( authorizationData.queryObject && authorizationData.queryObject.client_id ) {
+		return parseInt( authorizationData.queryObject.client_id );
+	}
+	return null;
+};
+
+const hasNewlyConnectedSite = function( state ) {
+	const jetpackConnectSitesList = get( state, [ 'jetpackConnect', 'jetpackConnectSitesList' ] );
+	if ( jetpackConnectSitesList && jetpackConnectSitesList.newSite ) {
+		return true;
+	}
+	return false;
+};
+
 export default {
 	getConnectingSite,
 	getAuthorizationData,
@@ -154,6 +170,7 @@ export default {
 	getSessions,
 	getSSOSessions,
 	getSSO,
+	hasNewlyConnectedSite,
 	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,
@@ -164,5 +181,6 @@ export default {
 	getJetpackPlanSelected,
 	getSiteSelectedPlan,
 	getGlobalSelectedPlan,
-	getAuthAttempts
+	getAuthAttempts,
+	getSiteIdFromQueryObject
 };

@@ -22,6 +22,7 @@ import {
 	SITES_REQUEST_FAILURE,
 	SITES_UPDATE
 } from 'state/action-types';
+import { hasNewlyConnectedSite } from 'state/jetpack-connect/selectors';
 
 /**
  * Returns an action object to be used in signalling that a site has been
@@ -58,7 +59,13 @@ export function receiveSite( site ) {
  * @param  {Object[]} sites Sites received
  * @return {Object}         Action object
  */
-export function receiveSites( sites ) {
+export function receiveSites( sites, getState ) {
+	if ( hasNewlyConnectedSite( getState() ) ) {
+		return {
+			type: SITES_UPDATE,
+			sites
+		};
+	}
 	return {
 		type: SITES_RECEIVE,
 		sites
@@ -84,12 +91,12 @@ export function receiveSiteUpdates( sites ) {
  * @returns {Function}        Action thunk
  */
 export function requestSites() {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		dispatch( {
 			type: SITES_REQUEST
 		} );
 		return wpcom.me().sites( { site_visibility: 'all', include_domain_only: true } ).then( ( response ) => {
-			dispatch( receiveSites( response.sites ) );
+			dispatch( receiveSites( response.sites, getState ) );
 			dispatch( {
 				type: SITES_REQUEST_SUCCESS
 			} );
@@ -106,10 +113,11 @@ export function requestSites() {
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  *
- * @param  {Number}   siteId Site ID
+ * @param  {Number}   siteId              Site ID
+ * @param  {Boolean}  removeSiteOnFailure Remove the site from list if request fails
  * @return {Function}        Action thunk
  */
-export function requestSite( siteId ) {
+export function requestSite( siteId, removeSiteOnFailure = false ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_REQUEST,
@@ -128,6 +136,9 @@ export function requestSite( siteId ) {
 				siteId,
 				error
 			} );
+			if ( removeSiteOnFailure ) {
+				dispatch( receiveDeletedSite( siteId ) );
+			}
 		} );
 	};
 }

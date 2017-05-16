@@ -2,7 +2,7 @@
  * External dependencies
  */
 const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
-import pick from 'lodash/pick';
+import { pick, omit } from 'lodash';
 import page from 'page';
 
 /**
@@ -10,7 +10,6 @@ import page from 'page';
  */
 import wpcom from 'lib/wp';
 import { recordTracksEvent } from 'state/analytics/actions';
-import Dispatcher from 'dispatcher';
 import {
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
@@ -20,7 +19,7 @@ import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
-	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
@@ -34,8 +33,10 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
-	SITES_RECEIVE
+	SITE_REQUEST,
+	SITE_REQUEST_SUCCESS
 } from 'state/action-types';
+import { receiveSite } from 'state/sites/actions';
 import userFactory from 'lib/user';
 import config from 'config';
 import addQueryArgs from 'lib/route/add-query-args';
@@ -318,6 +319,8 @@ export default {
 	authorize( queryObject ) {
 		return ( dispatch ) => {
 			const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
+			const siteId = parseInt( client_id );
+
 			debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
 			tracksEvent( dispatch, 'calypso_jpc_authorize' );
 			dispatch( {
@@ -348,23 +351,24 @@ export default {
 				} );
 				// Update the user now that we are fully connected.
 				userFactory().fetch();
-				return wpcom.me().sites( { site_visibility: 'all', include_domain_only: true } );
+				dispatch( {
+					type: SITE_REQUEST,
+					siteId
+				} );
+				return wpcom.site( siteId ).get();
 			} )
 			.then( ( data ) => {
 				tracksEvent( dispatch, 'calypso_jpc_auth_sitesrefresh', {
 					site: client_id
 				} );
 				debug( 'Sites list updated!', data );
+				dispatch( receiveSite( omit( data, '_headers' ) ) );
 				dispatch( {
-					type: SITES_RECEIVE,
-					sites: data.sites
+					type: SITE_REQUEST_SUCCESS,
+					siteId
 				} );
 				dispatch( {
-					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-					data: data
-				} );
-				Dispatcher.handleViewAction( {
-					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE,
 					data: data
 				} );
 			} )

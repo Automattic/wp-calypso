@@ -36,3 +36,13 @@ An optional prop specifying a single site to be requested.
 </table>
 
 An optional prop specifying all sites to be requested. If true, all sites for the current user will be requested.
+
+### `removeSiteOnFailure`
+
+<table>
+	<tr><th>Type</th><td>Boolean</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td>false</td></tr>
+</table>
+
+An optional prop when requesting a single site and the site should be removed from the list if the request fails.

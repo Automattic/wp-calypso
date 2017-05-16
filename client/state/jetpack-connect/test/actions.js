@@ -15,7 +15,7 @@ import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
-	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE,
 	JETPACK_CONNECT_RETRY_AUTH,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
@@ -23,7 +23,9 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
-	SITES_RECEIVE,
+	SITE_RECEIVE,
+	SITE_REQUEST,
+	SITE_REQUEST_SUCCESS
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import useFakeDom from 'test/helpers/use-fake-dom';
@@ -209,13 +211,10 @@ describe( 'actions', () => {
 
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/sites' )
-					.query( {
-						site_visibility: 'all',
-						include_domain_only: true
-					} )
+					.get( '/rest/v1.1/sites/' + client_id )
 					.reply( 200, {
-						sites: [ client_id ]
+						ID: parseInt( client_id ),
+						_headers: {}
 					}, {
 						'Content-Type': 'application/json'
 					} );
@@ -261,26 +260,46 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch sites receive action when request completes', () => {
+			it( 'should dispatch authorize receive site action when request completes', () => {
 				const { authorize } = actions;
 
 				return authorize( queryObject )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
-						type: SITES_RECEIVE,
-						sites: [ client_id ]
+						type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE,
+						data: {
+							ID: parseInt( client_id ),
+							_headers: {}
+						}
 					} );
 				} );
 			} );
 
-			it( 'should dispatch authorize receive site list action when request completes', () => {
+			it( 'should dispatch a site request action when request completes', () => {
 				const { authorize } = actions;
-
 				return authorize( queryObject )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
-						type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-						data: {
-							sites: [ client_id ]
-						}
+						type: SITE_REQUEST,
+						siteId: parseInt( client_id )
+					} );
+				} );
+			} );
+
+			it( 'should dispatch a site request success action when request completes', () => {
+				const { authorize } = actions;
+				return authorize( queryObject )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: SITE_REQUEST_SUCCESS,
+						siteId: parseInt( client_id )
+					} );
+				} );
+			} );
+
+			it( 'should dispatch a site receive action when request completes', () => {
+				const { authorize } = actions;
+				return authorize( queryObject )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: SITE_RECEIVE,
+						site: { ID: parseInt( client_id ) }
 					} );
 				} );
 			} );

@@ -11,6 +11,7 @@ import useNock from 'test/helpers/use-nock';
 import {
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
+	SITE_DELETE_RECEIVE,
 	SITE_DELETE_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
@@ -36,6 +37,16 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let sandbox, spy;
+	const getState = () => ( {
+		jetpackConnect: {
+			jetpackConnectSitesList: {}
+		}
+	} );
+	const getStateNewJetpackSite = () => ( {
+		jetpackConnect: {
+			jetpackConnectSitesList: { newSite: true }
+		}
+	} );
 
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
@@ -59,9 +70,20 @@ describe( 'actions', () => {
 				{ ID: 2916284, name: 'WordPress.com Example Blog' },
 				{ ID: 77203074, name: 'WordPress.com Example Blog 2' }
 			];
-			const action = receiveSites( sites );
+			const action = receiveSites( sites, getState );
 			expect( action ).to.eql( {
 				type: SITES_RECEIVE,
+				sites
+			} );
+		} );
+		it( 'should update sites list during jetpack connection', () => {
+			const sites = [
+				{ ID: 2916284, name: 'WordPress.com Example Blog' },
+				{ ID: 77203074, name: 'WordPress.com Example Blog 2' }
+			];
+			const action = receiveSites( sites, getStateNewJetpackSite );
+			expect( action ).to.eql( {
+				type: SITES_UPDATE,
 				sites
 			} );
 		} );
@@ -95,13 +117,13 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch request action when thunk triggered', () => {
-				requestSites()( spy );
+				requestSites()( spy, getState );
 				expect( spy ).to.have.been.calledWith( {
 					type: SITES_REQUEST
 				} );
 			} );
 			it( 'should dispatch receive action when request completes', () => {
-				return requestSites()( spy ).then( () => {
+				return requestSites()( spy, getState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITES_RECEIVE,
 						sites: [
@@ -112,7 +134,7 @@ describe( 'actions', () => {
 				} );
 			} );
 			it( 'should dispatch success action when request completes', () => {
-				return requestSites()( spy ).then( () => {
+				return requestSites()( spy, getState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITES_REQUEST_SUCCESS
 					} );
@@ -131,7 +153,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch fail action when request fails', () => {
-				return requestSites()( spy ).then( () => {
+				return requestSites()( spy, getState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITES_REQUEST_FAILURE,
 						error: sandbox.match( { message: 'An active access token must be used to access sites.' } )
@@ -193,6 +215,21 @@ describe( 'actions', () => {
 					siteId: 77203074,
 					error: match( { message: 'User cannot access this private blog.' } )
 				} );
+			} );
+		} );
+
+		it( 'should dispatch a site delete receive action if we choose to remove on failure', () => {
+			return requestSite( 77203074, true )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: SITE_DELETE_RECEIVE,
+					siteId: 77203074
+				} );
+			} );
+		} );
+
+		it( 'should not dispatch a site delete receive action if remove on failure is not specified', () => {
+			return requestSite( 77203074 )( spy ).then( () => {
+				expect( spy ).to.have.callCount( 2 );
 			} );
 		} );
 	} );
