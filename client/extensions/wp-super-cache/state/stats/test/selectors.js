@@ -7,10 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getFileDeleteStatus,
 	getStats,
 	getStatsGenerationStatus,
-	hasFileDeleteError,
 	isDeletingFile,
 	isGeneratingStats,
 	isStatsGenerationSuccessful,
@@ -317,129 +315,6 @@ describe( 'selectors', () => {
 			const isDeleting = isDeletingFile( state, primarySiteId );
 
 			expect( isDeleting ).to.be.true;
-		} );
-	} );
-
-	describe( 'hasFileDeleteError()', () => {
-		it( 'should return false if the site is not attached', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							deleteStatus: {
-								[ primarySiteId ]: { deleting: true, status: 'pending' }
-							}
-						}
-					}
-				}
-			};
-			const hasError = hasFileDeleteError( state, secondarySiteId );
-
-			expect( hasError ).to.be.false;
-		} );
-
-		it( 'should return false if the delete request status is success', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							deleteStatus: {
-								[ primarySiteId ]: { deleting: false, status: 'success' }
-							}
-						}
-					}
-				}
-			};
-			const hasError = hasFileDeleteError( state, primarySiteId );
-
-			expect( hasError ).to.be.false;
-		} );
-
-		it( 'should return true if the delete request status is error', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							deleteStatus: {
-								[ primarySiteId ]: { deleting: false, status: 'error' }
-							}
-						}
-					}
-				}
-			};
-			const hasError = hasFileDeleteError( state, primarySiteId );
-
-			expect( hasError ).to.be.true;
-		} );
-	} );
-
-	describe( 'getFileDeleteStatus()', () => {
-		it( 'should return undefined if the site is not attached', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							deleteStatus: {
-								[ primarySiteId ]: { deleting: true, status: 'pending' }
-							}
-						}
-					}
-				}
-			};
-			const status = getFileDeleteStatus( state, secondarySiteId );
-
-			expect( status ).to.be.undefined;
-		} );
-
-		it( 'should return success if the delete request status is success', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							deleteStatus: {
-								[ primarySiteId ]: { deleting: false, status: 'success' }
-							}
-						}
-					}
-				}
-			};
-			const status = getFileDeleteStatus( state, primarySiteId );
-
-			expect( status ).to.eql( 'success' );
-		} );
-
-		it( 'should return error if the delete request status is error', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							deleteStatus: {
-								[ primarySiteId ]: { deleting: false, status: 'error' }
-							}
-						}
-					}
-				}
-			};
-			const status = getFileDeleteStatus( state, primarySiteId );
-
-			expect( status ).to.eql( 'error' );
-		} );
-
-		it( 'should return pending if the delete request status is pending', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							deleteStatus: {
-								[ primarySiteId ]: { deleting: true, status: 'pending' }
-							}
-						}
-					}
-				}
-			};
-			const status = getFileDeleteStatus( state, primarySiteId );
-
-			expect( status ).to.eql( 'pending' );
 		} );
 	} );
 } );

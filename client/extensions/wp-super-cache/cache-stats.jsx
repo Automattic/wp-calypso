@@ -11,9 +11,8 @@ import { flowRight, get, map } from 'lodash';
  */
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
-import { errorNotice, removeNotice } from 'state/notices/actions';
 import { deleteFile } from './state/stats/actions';
-import { hasFileDeleteError, isDeletingFile } from './state/stats/selectors';
+import { isDeletingFile } from './state/stats/selectors';
 
 function getAge( lower, upper ) {
 	if ( lower && upper ) {
@@ -30,12 +29,9 @@ function getAge( lower, upper ) {
 class CacheStats extends Component {
 	static propTypes = {
 		deleteFile: PropTypes.func.isRequired,
-		errorNotice: PropTypes.func.isRequired,
 		files: PropTypes.object,
-		hasError: PropTypes.bool,
 		header: PropTypes.string,
 		isDeleting: PropTypes.bool,
-		removeNotice: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -47,17 +43,6 @@ class CacheStats extends Component {
 
 	state = {
 		url: '',
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( this.props.isDeleting || ! prevProps.isDeleting || ! this.props.hasError ) {
-			return;
-		}
-
-		this.props.errorNotice(
-			this.props.translate( 'There was a problem deleting the cached file. Please try again.' ),
-			{ id: 'wpsc-cached-file-delete' }
-		);
 	}
 
 	deleteFile = ( event ) => {
@@ -74,7 +59,6 @@ class CacheStats extends Component {
 		} = this.props;
 
 		this.setState( { url } );
-		this.props.removeNotice( 'wpsc-cached-file-delete' );
 		this.props.deleteFile( siteId, url, isSupercache, isCached );
 	}
 
@@ -132,20 +116,10 @@ class CacheStats extends Component {
 }
 
 const connectComponent = connect(
-	( state, { siteId } ) => {
-		const hasError = hasFileDeleteError( state, siteId );
-		const isDeleting = isDeletingFile( state, siteId );
-
-		return {
-			hasError,
-			isDeleting,
-		};
-	},
-	{
-		deleteFile,
-		errorNotice,
-		removeNotice,
-	}
+	( state, { siteId } ) => (
+		{ isDeleting: isDeletingFile( state, siteId ) }
+	),
+	{ deleteFile }
 );
 
 export default flowRight(

@@ -1,4 +1,9 @@
 /**
+ * External Dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import wp from 'lib/wp';
@@ -12,6 +17,7 @@ import {
 	WP_SUPER_CACHE_RECEIVE_STATS,
 	WP_SUPER_CACHE_REMOVE_FILE,
 } from '../action-types';
+import { errorNotice, removeNotice } from 'state/notices/actions';
 
 /**
  * Returns an action object to be used in signalling that stats have been received.
@@ -75,10 +81,8 @@ export const removeFile = ( siteId, url, isSupercache, isCached ) =>
  */
 export const deleteFile = ( siteId, url, isSupercache, isCached ) => {
 	return ( dispatch ) => {
-		dispatch( {
-			type: WP_SUPER_CACHE_DELETE_FILE,
-			siteId,
-		} );
+		dispatch( removeNotice( 'wpsc-delete-cached-file' ) );
+		dispatch( { type: WP_SUPER_CACHE_DELETE_FILE, siteId } );
 
 		return wp.req.post(
 			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
@@ -89,16 +93,14 @@ export const deleteFile = ( siteId, url, isSupercache, isCached ) => {
 			} )
 			.then( () => {
 				dispatch( removeFile( siteId, url, isSupercache, isCached ) );
-				dispatch( {
-					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
-					siteId,
-				} );
+				dispatch( { type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS, siteId } );
 			} )
 			.catch( () => {
-				dispatch( {
-					type: WP_SUPER_CACHE_DELETE_FILE_FAILURE,
-					siteId,
-				} );
+				dispatch( errorNotice(
+					translate( 'There was a problem deleting the cached file. Please try again.' ),
+					{ id: 'wpsc-delete-cached-file' }
+				) );
+				dispatch( { type: WP_SUPER_CACHE_DELETE_FILE_FAILURE, siteId } );
 			} );
 	};
 };
