@@ -29,13 +29,12 @@ import FormButton from 'components/forms/form-button';
 import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
+import wp from 'lib/wp';
 
-// Cannot convert to ES6 import
-const wpcom = require( 'lib/wp' ).undocumented(),
+const wpcom = wp.undocumented(),
 	countriesList = countriesListForDomainRegistrations();
 
 class DomainDetailsForm extends Component {
-
 	constructor( props, context ) {
 		super( props, context );
 
@@ -79,7 +78,7 @@ class DomainDetailsForm extends Component {
 		analytics.pageView.record( '/checkout/domain-contact-information', 'Checkout > Domain Contact Information' );
 	}
 
-	sanitize( fieldValues, onComplete ) {
+	sanitize = ( fieldValues, onComplete ) => {
 		const sanitizedFieldValues = Object.assign( {}, fieldValues );
 		this.fieldNames.forEach( ( fieldName ) => {
 			if ( typeof fieldValues[ fieldName ] === 'string' ) {
@@ -93,7 +92,7 @@ class DomainDetailsForm extends Component {
 		onComplete( sanitizedFieldValues );
 	}
 
-	validate( fieldValues, onComplete ) {
+	validate = ( fieldValues, onComplete ) => {
 		if ( this.needsOnlyGoogleAppsDetails() ) {
 			wpcom.validateGoogleAppsContactInformation( fieldValues, this.generateValidationHandler( onComplete ) );
 			return;
@@ -112,11 +111,7 @@ class DomainDetailsForm extends Component {
 		};
 	}
 
-	setFormState( form ) {
-		if ( ! this.isMounted() ) {
-			return;
-		}
-
+	setFormState = ( form ) => {
 		if ( ! this.needsFax() ) {
 			delete form.fax;
 		}
@@ -128,11 +123,11 @@ class DomainDetailsForm extends Component {
 		return cartItems.hasGoogleApps( this.props.cart ) && ! cartItems.hasDomainRegistration( this.props.cart );
 	}
 
-	handleFormControllerError( error ) {
+	handleFormControllerError = ( error ) => {
 		throw error;
 	}
 
-	handleChangeEvent( event ) {
+	handleChangeEvent = ( event ) => {
 		// Resets the state field every time the user selects a different country
 		if ( event.target.name === 'country-code' ) {
 			this.formStateController.handleFieldChange( {
@@ -154,7 +149,7 @@ class DomainDetailsForm extends Component {
 		} );
 	}
 
-	handlePhoneChange( { value, countryCode } ) {
+	handlePhoneChange = ( { value, countryCode } ) => {
 		this.formStateController.handleFieldChange( {
 			name: 'phone',
 			value
@@ -215,7 +210,7 @@ class DomainDetailsForm extends Component {
 				onDialogOpen={ this.openDialog }
 				onDialogSelect={ this.handlePrivacyDialogSelect }
 				isDialogVisible={ this.state.isDialogVisible }
-				productsList={ this.props.productsList }/>
+				productsList={ this.props.productsList } />
 		);
 	}
 
@@ -335,15 +330,15 @@ class DomainDetailsForm extends Component {
 		);
 	}
 
-	handleCheckboxChange() {
+	handleCheckboxChange = () => {
 		this.setPrivacyProtectionSubscriptions( ! this.allDomainRegistrationsHavePrivacy() );
 	}
 
-	closeDialog() {
+	closeDialog = () => {
 		this.setState( { isDialogVisible: false } );
 	}
 
-	openDialog() {
+	openDialog = () => {
 		this.setState( { isDialogVisible: true } );
 	}
 
@@ -351,7 +346,7 @@ class DomainDetailsForm extends Component {
 		this.refs[ kebabCase( head( map( formState.getInvalidFields( this.state.form ), 'name' ) ) ) ].focus();
 	}
 
-	handleSubmitButtonClick( event ) {
+	handleSubmitButtonClick = ( event ) => {
 		event.preventDefault();
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
@@ -389,7 +384,7 @@ class DomainDetailsForm extends Component {
 		this.setState( { submissionCount: this.state.submissionCount + 1 } );
 	}
 
-	handlePrivacyDialogSelect( options ) {
+	handlePrivacyDialogSelect = ( options ) => {
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.recordSubmit();
 
@@ -447,7 +442,5 @@ class DomainDetailsForm extends Component {
 		);
 	}
 }
-
-DomainDetailsForm.displayName = 'DomainDetailsForm';
 
 export default localize( DomainDetailsForm );
