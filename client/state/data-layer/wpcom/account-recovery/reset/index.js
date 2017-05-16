@@ -8,8 +8,14 @@ import {
 	requestResetPasswordError,
 } from 'state/account-recovery/reset/actions';
 
-// userData can be either { user } or { firstname, lastname, url }
-export const handleResetPasswordRequest = ( { dispatch }, { userData, method, key, password } ) => (
+export const handleResetPasswordRequest = ( { dispatch }, action, next ) => {
+	const {
+		userData, // userData can be either { user } or { firstname, lastname, url }
+		method,
+		key,
+		password
+	} = action;
+
 	wpcom.req.post( {
 		body: {
 			...userData,
@@ -20,8 +26,10 @@ export const handleResetPasswordRequest = ( { dispatch }, { userData, method, ke
 		apiNamespace: 'wpcom/v2',
 		path: '/account-recovery/reset'
 	} ).then( () => dispatch( requestResetPasswordSuccess() ) )
-	.catch( ( error ) => dispatch( requestResetPasswordError( error ) ) )
-);
+	.catch( ( error ) => dispatch( requestResetPasswordError( error ) ) );
+
+	return next( action );
+};
 
 export default {
 	[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST ]: [ handleResetPasswordRequest ],
