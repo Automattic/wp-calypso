@@ -23,7 +23,8 @@ export class BusinessATStep extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const href = '#';
+		const pluginLink = <a href="https://en.support.wordpress.com/plugins/" />;
+		const themeLink = <a href="https://en.support.wordpress.com/themes/adding-new-themes/" />;
 
 		return (
 			<div>
@@ -35,12 +36,10 @@ export class BusinessATStep extends Component {
 						{
 							translate(
 								'Have a theme or plugin you need to install to build the site you want? ' +
-								'Now you can! To learn more about uploading third-party plugins and themes, {{a}}click here{{/a}}.',
-								{
-									components: {
-										a: <a href={ href } />
-									}
-								}
+								'Now you can! ' +
+								'Learn more about {{pluginLink}}installing plugins{{/pluginLink}} and ' +
+								'{{themeLink}}uploading themes{{/themeLink}} today.',
+								{ components: { pluginLink, themeLink } }
 							)
 						}
 					</p>
