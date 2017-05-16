@@ -12,5 +12,5 @@ export default {
 	addCardDetails: i18n.translate( 'Add Card Details', { comment: 'Credit card' } ),
 	editPaymentMethod: i18n.translate( 'Edit Payment Method' ),
 	managePurchase: i18n.translate( 'Manage Purchase' ),
-	purchases: i18n.translate( 'Purchases' )
+	purchases: i18n.translate( 'Purchases' ),
 };

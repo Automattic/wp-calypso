@@ -35,7 +35,7 @@ describe( 'cancellation-effect', function() {
 			it( 'should return translation of cancel and return', function() {
 				const headline = cancellationEffect.cancellationEffectHeadline( purchase, translate );
 				expect( headline.text ).to.equal(
-					'Are you sure you want to cancel and remove %(purchaseName)s from {{em}}%(domain)s{{/em}}? ',
+					'Are you sure you want to cancel and remove %(purchaseName)s from {{em}}%(domain)s{{/em}}? '
 				);
 			} );
 		} );
@@ -48,7 +48,7 @@ describe( 'cancellation-effect', function() {
 			it( 'should return translation of cancel', function() {
 				const headline = cancellationEffect.cancellationEffectHeadline( purchase, translate );
 				expect( headline.text ).to.equal(
-					'Are you sure you want to cancel %(purchaseName)s for {{em}}%(domain)s{{/em}}? ',
+					'Are you sure you want to cancel %(purchaseName)s for {{em}}%(domain)s{{/em}}? '
 				);
 			} );
 		} );
@@ -74,7 +74,7 @@ describe( 'cancellation-effect', function() {
 				const headline = cancellationEffect.cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
 					'You will be refunded %(cost)s, but your G Suite account will continue working without interruption. ' +
-					'You will be able to manage your G Suite billing directly through Google.'
+						'You will be able to manage your G Suite billing directly through Google.'
 				);
 			} );
 
@@ -85,7 +85,7 @@ describe( 'cancellation-effect', function() {
 				const headline = cancellationEffect.cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
 					'All plan features - spam filtering, backups, and security screening ' +
-					'- will be removed from your site and you will be refunded %(cost)s.'
+						'- will be removed from your site and you will be refunded %(cost)s.'
 				);
 			} );
 

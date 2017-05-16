@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	connect = require( 'react-redux' ).connect;
+var React = require( 'react' ), connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -15,11 +14,14 @@ import { isDeletingStoredCard } from 'state/stored-cards/selectors';
 
 const CreditCardDelete = React.createClass( {
 	handleClick: function() {
-		this.props.deleteStoredCard( this.props.card ).then( () => {
-			this.props.successNotice( this.translate( 'Card deleted successfully' ) );
-		} ).catch( error => {
-			this.props.errorNotice( error.message );
-		} )
+		this.props
+			.deleteStoredCard( this.props.card )
+			.then( () => {
+				this.props.successNotice( this.translate( 'Card deleted successfully' ) );
+			} )
+			.catch( error => {
+				this.props.errorNotice( error.message );
+			} );
 	},
 
 	renderDeleteButton: function() {
@@ -33,7 +35,8 @@ const CreditCardDelete = React.createClass( {
 			<button
 				className="button credit-card-delete__button"
 				disabled={ this.props.isDeleting }
-				onClick={ this.handleClick }>
+				onClick={ this.handleClick }
+			>
 				{ text }
 			</button>
 		);
@@ -47,18 +50,18 @@ const CreditCardDelete = React.createClass( {
 				{ this.renderDeleteButton() }
 			</div>
 		);
-	}
+	},
 } );
 
 export default connect(
 	state => {
 		return {
-			isDeleting: isDeletingStoredCard( state )
+			isDeleting: isDeletingStoredCard( state ),
 		};
 	},
 	{
 		deleteStoredCard,
 		errorNotice,
-		successNotice
+		successNotice,
 	}
 )( CreditCardDelete );
