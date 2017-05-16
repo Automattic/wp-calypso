@@ -2,6 +2,7 @@
  * External dependencies
  */
 import qs from 'querystring';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -76,7 +77,7 @@ export function injectLocalization( wpcom ) {
  */
 export function bindState( store ) {
 	function setLocaleFromState() {
-		setLocale( getCurrentUserLocale( store.getState() ) );
+		setLocale( getCurrentUserLocale( store.getState() ) || get( window, 'navigator.language', 'en' ) );
 	}
 
 	store.subscribe( setLocaleFromState );
