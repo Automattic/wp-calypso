@@ -76,6 +76,7 @@ class JetpackConnectNotices extends Component {
 			noticeValues.status = 'is-success';
 			noticeValues.icon = 'status';
 			noticeValues.text = translate( 'This site is already connected!' );
+			noticeValues.showDismiss = false;
 			noticeValues.children = (
 				<NoticeAction href={ '/plans/my-plan/' + urlToSlug( this.props.url ) }>
 					{ translate( 'Visit' ) }
