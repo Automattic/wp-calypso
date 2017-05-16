@@ -36,7 +36,6 @@ const PostShareConnection = ( {
 
 	return (
 		<div onClick={ toggle } className={ classes }>
-			<FormToggle checked={ isActive } />
 			<div
 				style={ { backgroundImage } }
 				className="post-share__service-account-image"
@@ -51,6 +50,7 @@ const PostShareConnection = ( {
 			<div className="post-share__service-account-name">
 				<span>{ external_display }</span>
 			</div>
+			<FormToggle checked={ isActive } />
 		</div>
 	);
 };
