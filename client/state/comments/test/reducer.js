@@ -29,10 +29,6 @@ import {
 import {
 	PLACEHOLDER_STATE
 } from '../constants';
-import {
-	getPostCommentItems,
-	getPostTotalCommentsCount
-} from '../selectors';
 
 const commentsNestedTree = [
 	{ ID: 11, parent: { ID: 9 }, text: 'eleven', date: '2016-01-31T10:07:18-08:00' },
@@ -46,37 +42,31 @@ const commentsNestedTree = [
 describe( 'reducer', () => {
 	describe( '#items()', () => {
 		it( 'should build an ordered by date list', () => {
-			const res = items( undefined, {
+			const response = items( undefined, {
 				type: COMMENTS_RECEIVE,
 				siteId: 1,
 				postId: 1,
 				comments: [ ...commentsNestedTree ].sort( () => Math.random() * 2 % 2 ? -1 : 1 )
 			} );
+			const ids = map( response[ '1-1' ], 'ID' );
 
-			const specificRes = getPostCommentItems( { comments: { items: res } }, 1, 1 );
-			const ids = map( specificRes, 'ID' );
-
-			expect( specificRes ).to.have.lengthOf( 6 );
+			expect( response[ '1-1' ] ).to.have.lengthOf( 6 );
 			expect( ids ).to.eql( [ 6, 7, 8, 9, 10, 11 ] );
 		} );
 
 		it( 'should build correct items list on consecutive calls', () => {
-			const res = items( undefined, {
-				type: COMMENTS_RECEIVE,
-				siteId: 1,
-				postId: 1,
-				comments: commentsNestedTree.slice( 0, 2 )
-			} );
+			const state = {
+				'1-1': commentsNestedTree.slice( 0, 2 )
+			};
 
-			const res2 = items( res, {
+			const response = items( state, {
 				type: COMMENTS_RECEIVE,
 				siteId: 1,
 				postId: 1,
 				comments: commentsNestedTree.slice( 1, commentsNestedTree.length )
 			} );
 
-			const specificCommentItemList = getPostCommentItems( { comments: { items: res2 } }, 1, 1 );
-			expect( specificCommentItemList ).to.have.lengthOf( 6 );
+			expect( response[ '1-1' ] ).to.have.lengthOf( 6 );
 		} );
 
 		it( 'should remove a comment by id', () => {
@@ -190,16 +180,14 @@ describe( 'reducer', () => {
 
 	describe( '#totalCommentsCount()', () => {
 		it( 'should update post comments count', () => {
-			const newState = totalCommentsCount( undefined, {
+			const response = totalCommentsCount( undefined, {
 				type: COMMENTS_COUNT_RECEIVE,
 				totalCommentsCount: 123,
 				siteId: 1,
 				postId: 1
 			} );
 
-			const specificRes = getPostTotalCommentsCount( { comments: { totalCommentsCount: newState } }, 1, 1 );
-
-			expect( specificRes ).to.eql( 123 );
+			expect( response[ '1-1' ] ).to.eql( 123 );
 		} );
 	} ); // end of totalCommentsCount
 } );
