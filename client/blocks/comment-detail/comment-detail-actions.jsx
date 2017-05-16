@@ -4,6 +4,7 @@
 import React from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 export const CommentDetailActions = ( {
 	edit,
@@ -18,7 +19,10 @@ export const CommentDetailActions = ( {
 	translate,
 } ) =>
 	<div className="comment-detail__actions">
-		<a className="comment-detail__action-like" onClick={ toggleLike }>
+		<a
+			className={ classNames( 'comment-detail__action-like', { 'is-liked': commentIsLiked } ) }
+			onClick={ toggleLike }
+		>
 			<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
 			<span>{
 				commentIsLiked
@@ -26,7 +30,10 @@ export const CommentDetailActions = ( {
 					: translate( 'Like' )
 			}</span>
 		</a>
-		<a className="comment-detail__action-approve" onClick={ toggleApprove }>
+		<a
+			className={ classNames( 'comment-detail__action-approve', { 'is-approved': commentIsApproved } ) }
+			onClick={ toggleApprove }
+		>
 			<Gridicon icon={ commentIsApproved ? 'checkmark-circle' : 'checkmark' } />
 			<span>{
 				commentIsApproved
@@ -38,7 +45,10 @@ export const CommentDetailActions = ( {
 			<Gridicon icon="pencil" />
 			<span>{ translate( 'Edit' ) }</span>
 		</a>
-		<a className="comment-detail__action-spam" onClick={ toggleSpam }>
+		<a
+			className={ classNames( 'comment-detail__action-spam', { 'is-spam': commentIsSpam } ) }
+			onClick={ toggleSpam }
+		>
 			<Gridicon icon="spam" />
 			<span>{
 				commentIsSpam
@@ -46,7 +56,10 @@ export const CommentDetailActions = ( {
 					: translate( 'Mark as Spam' )
 			}</span>
 		</a>
-		<a className="comment-detail__action-trash" onClick={ toggleTrash }>
+		<a
+			className={ classNames( 'comment-detail__action-trash', { 'is-trash': commentIsTrash } ) }
+			onClick={ toggleTrash }
+		>
 			<Gridicon icon="trash" />
 			<span>{
 				commentIsTrash

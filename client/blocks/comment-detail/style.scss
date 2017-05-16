@@ -91,20 +91,20 @@
 		}
 	}
 }
-.comment-detail {
-	&.is-approved .comment-detail__action-approve .gridicon {
+.comment-detail__actions {
+	.is-approved .gridicon {
 		color: $alert-green;
 		fill: $alert-green;
 	}
-	&.is-liked .comment-detail__action-like .gridicon {
+	.is-liked .gridicon {
 		color: $alert-yellow;
 		fill: $alert-yellow;
 	}
-	&.is-spam .comment-detail__action-spam .gridicon {
+	.is-spam .gridicon {
 		color: $alert-red;
 		fill: $alert-red;
 	}
-	&.is-trash .comment-detail__action-trash .gridicon {
+	.is-trash .gridicon {
 		color: $gray-dark;
 		fill: $gray-dark;
 	}
@@ -294,7 +294,7 @@ a.comment-detail__author-more-element {
 	}
 }
 
-.comment-detail.author-is-blocked .comment-detail__author-more-element-block-user .gridicon {
+.comment-detail__author-more-element-block-user.is-blocked .gridicon {
 	color: $alert-red;
 	fill: $alert-red;
 }

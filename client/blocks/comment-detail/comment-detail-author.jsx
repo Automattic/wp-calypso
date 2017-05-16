@@ -112,7 +112,10 @@ export class CommentDetailAuthor extends Component {
 					</div>
 					<div className="comment-detail__author-more-actions">
 						<a
-							className="comment-detail__author-more-element comment-detail__author-more-element-block-user"
+							className={ classNames(
+								'comment-detail__author-more-element comment-detail__author-more-element-block-user',
+								{ 'is-blocked': authorIsBlocked }
+							) }
 							onClick={ blockUser }
 						>
 							<Gridicon icon="block" />
