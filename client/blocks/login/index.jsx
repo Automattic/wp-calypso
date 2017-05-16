@@ -14,6 +14,7 @@ import { getTwoFactorAuthNonce, getTwoFactorNotificationSent, isTwoFactorEnabled
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
+import Notice from 'components/notice';
 
 class Login extends Component {
 	static propTypes = {
@@ -26,6 +27,7 @@ class Login extends Component {
 
 	state = {
 		rememberMe: false,
+		notice: null
 	};
 
 	componentWillMount = () => {
@@ -49,6 +51,10 @@ class Login extends Component {
 
 	rebootAfterLogin = () => {
 		window.location.href = this.props.redirectLocation || window.location.origin;
+	};
+
+	setNotice = ( notice ) => {
+		this.setState( { notice } );
 	};
 
 	renderContent() {
@@ -78,18 +84,21 @@ class Login extends Component {
 		}
 
 		return (
-			<LoginForm onSuccess={ this.handleValidUsernamePassword } />
+			<LoginForm onSuccess={ this.handleValidUsernamePassword } setNotice={ this.setNotice } />
 		);
 	}
 
 	render() {
 		const { translate, twoStepNonce } = this.props;
+		const { notice } = this.state;
 
 		return (
 			<div>
 				<div className="login__form-header">
 					{ twoStepNonce ? translate( 'Two-Step Authentication' ) : translate( 'Log in to your account.' ) }
 				</div>
+
+				{ notice && <Notice status={ notice.status } showDismiss={ false }>{ notice.message }</Notice> }
 
 				{ this.renderContent() }
 			</div>

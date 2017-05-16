@@ -19,7 +19,6 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isRequesting, getRequestError } from 'state/login/selectors';
-import Notice from 'components/notice';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -28,6 +27,7 @@ export class LoginForm extends Component {
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		requestError: PropTypes.object,
+		setNotice: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -35,7 +35,6 @@ export class LoginForm extends Component {
 		usernameOrEmail: '',
 		password: '',
 		rememberMe: false,
-		error: null,
 	};
 
 	onChangeField = ( event ) => {
@@ -75,17 +74,19 @@ export class LoginForm extends Component {
 						redirectTo = window.location.search;
 					}
 
-					this.setState( {
-						error: (
-							<p>
+					this.props.setNotice( {
+						message: (
+							<div>
 								This endpoint is restricted to proxied Automatticians for now. Please use
 								<a href={ config( 'login_url' ) + redirectTo }>the old login page</a>.
-							</p>
-						)
+							</div>
+						),
+						status: 'is-error'
 					} );
 				} else {
-					this.setState( {
-						error: error.message
+					this.props.setNotice( {
+						message: error.message,
+						status: 'is-error'
 					} );
 				}
 			}
@@ -102,7 +103,6 @@ export class LoginForm extends Component {
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
-				{ this.state.error && <Notice status="is-error" showDismiss={ false }>{ this.state.error }</Notice> }
 				<Card className="login__form">
 					<div className="login__form-userdata">
 						<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
