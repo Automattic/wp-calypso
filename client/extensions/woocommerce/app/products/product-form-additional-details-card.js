@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
-import { find, debounce } from 'lodash';
-import Gridicon from 'gridicons';
 import classNames from 'classnames';
+import { debounce, find } from 'lodash';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import React, { PropTypes, Component } from 'react';
 
 /**
  * Internal dependencies
@@ -17,14 +17,16 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import TokenField from 'components/token-field';
 
-class ProductFormAdditionalDetailsCard extends React.Component {
+class ProductFormAdditionalDetailsCard extends Component {
 
 	state = {
 		attributeNames: {},
 	};
 
 	static propTypes = {
-		product: PropTypes.object.isRequired,
+		product: PropTypes.shape( {
+			attributes: PropTypes.array,
+		} ),
 		editProduct: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
 	};
@@ -50,19 +52,30 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 		editProductAttribute( product, null, { name: '', options: [] } );
 	}
 
-	removeAttribute = ( e ) => {
-		const { product, editProduct } = this.props;
-		const attributes = [ ...this.getAttributes() ];
-		const attribute = this.getAttribute( product, e.currentTarget.id );
-		attributes.splice( attributes.indexOf( attribute ), 1 );
-		editProduct( product, { attributes } );
-	}
-
 	cardOpen = () => {
 		const attributes = this.getAttributes();
 		if ( ! attributes.length ) {
 			this.addAttribute();
 		}
+	}
+
+	cardClose = () => {
+		const attributes = this.getAttributes();
+		if ( attributes.length === 1 && attributes[ 0 ] && ! attributes[ 0 ].name && ! attributes[ 0 ].options.length ) {
+			this.removeAttribute( attributes[ 0 ].uid );
+		}
+	}
+
+	removeAttributeHandler = ( e ) => {
+		this.removeAttribute( e.currentTarget.id );
+	}
+
+	removeAttribute( uid ) {
+		const { product, editProduct } = this.props;
+		const attributes = [ ...product.attributes ];
+		const attribute = this.getAttribute( product, uid );
+		attributes.splice( attributes.indexOf( attribute ), 1 );
+		editProduct( product, { attributes } );
 	}
 
 	updateValues = ( values, attribute ) => {
@@ -83,26 +96,29 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 		editProductAttribute( product, attribute, { name } );
 	}
 
-	renderInput( attribute, index ) {
+	renderInput( attribute ) {
 		const { translate } = this.props;
 		const { attributeNames } = this.state;
 		const attributeName = attributeNames && attributeNames[ attribute.uid ] || attribute.name;
+		const attributes = this.getAttributes();
 		const updateValues = ( values ) => {
 			this.updateValues( values, attribute );
 		};
-		const removeButton = index !== 0 && (
-			<Button
-				borderless
-				onClick={ this.removeAttribute }
-				id={ attribute.uid }
-			>
-				<Gridicon icon="cross-small" />
-			</Button>
+		const removeButton = attributes.length > 1 && (
+			<div className="products__additional-details-form-remove">
+				<Button
+					borderless
+					onClick={ this.removeAttributeHandler }
+					id={ attribute.uid }
+				>
+					<Gridicon icon="cross-small" />
+				</Button>
+			</div>
 		);
 
 		const classes = classNames( {
 			'products__additional-details-form-fieldset': true,
-			'products__additional-details-form-first-row': index === 0,
+			'products__additional-details-form-single-row': attributes.length === 1,
 		} );
 
 		return (
@@ -120,9 +136,7 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 					name="values"
 					onChange={ updateValues }
 				/>
-				<div className="products__additional-details-form-remove">
-					{removeButton}
-				</div>
+				{removeButton}
 			</div>
 		);
 	}
@@ -154,12 +168,13 @@ class ProductFormAdditionalDetailsCard extends React.Component {
 				className="products__additional-details-card"
 				header={ translate( 'Add additional details' ) }
 				onOpen={ this.cardOpen }
+				onClose={ this.cardClose }
 				clickableHeader
 			>
 				<FormSettingExplanation>
-					{ translate( 'Display additional details in a formatted list. ' +
-					'Examples when selling apparal include Material, Type, and Cut. ' +
-					'This will also allow customers to filter your store to find Women cut Hoodies in Cotton.' ) }
+					{ translate( 'Display additional details in a formatted list. Examples when selling ' +
+						'apparel include Cut, Type, and Material. This will also allow customers to filter ' +
+						'your store to find Women\'s cut Hoodies in Cotton.' ) }
 				</FormSettingExplanation>
 
 				<div className="products__additional-details-container">
