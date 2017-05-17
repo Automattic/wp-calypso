@@ -33,7 +33,8 @@ export const isRequesting = createReducer( false, {
 export const requestError = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: () => null,
-	[ LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => error
+	[ LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => error,
+	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { error } ) => error
 } );
 
 export const requestSuccess = createReducer( null, {

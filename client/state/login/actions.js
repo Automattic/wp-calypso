@@ -174,18 +174,15 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
 			} );
-
-			return Promise.resolve( get( response, 'body.data.phone_number' ) );
 		} ).catch( ( error ) => {
-			const errorMessage = getMessageFromHTTPError( error );
+			const message = getMessageFromHTTPError( error ),
+				field = 'global';
 
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
-				error: errorMessage,
+				error: { message, field },
 				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
 			} );
-
-			return Promise.reject( errorMessage );
 		} );
 };
 
