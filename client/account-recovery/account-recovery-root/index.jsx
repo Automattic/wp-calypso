@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
-import { includes } from 'lodash';
+import { includes, kebabCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +20,7 @@ import ResetPasswordEmailForm from 'account-recovery/reset-password-email-form';
 import ResetPasswordSmsForm from 'account-recovery/reset-password-sms-form';
 import ResetPasswordConfirmForm from 'account-recovery/reset-password-confirm-form';
 import ResetPasswordSucceeded from 'account-recovery/reset-password-succeeded';
+import ResetCodeValidation from 'account-recovery/reset-code-validation';
 import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'account-recovery/constants';
 import {
 	isAccountRecoveryResetOptionsReady,
@@ -60,6 +61,10 @@ const getPageInfo = ( translate, step ) => {
 		[ STEPS.RESET_PASSWORD_SUCCEEDED ]: {
 			trackerTitle: 'Account Recovery > Succeeded',
 			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'Succeeded' ) ),
+		},
+		[ STEPS.VALIDATE_RESET_CODE ]: {
+			trackerTitle: 'Account Recovery > Validate Reset Code',
+			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'Validating' ) ),
 		},
 	};
 
@@ -115,6 +120,8 @@ const getForm = ( step ) => {
 			return <ResetPasswordConfirmForm />;
 		case STEPS.RESET_PASSWORD_SUCCEEDED:
 			return <ResetPasswordSucceeded />;
+		case STEPS.VALIDATE_RESET_CODE:
+			return <ResetCodeValidation />;
 	}
 
 	return null;
@@ -131,7 +138,7 @@ const AccountRecoveryRoot = ( props ) => {
 	const { trackerTitle, documentHeadTitle } = getPageInfo( translate, currentStep );
 
 	return (
-		<Main className={ classnames( 'account-recovery-form', className ) }>
+		<Main className={ classnames( 'account-recovery-form', className, kebabCase( currentStep ) ) }>
 			<PageViewTracker path={ basePath } title={ trackerTitle } />
 			<DocumentHead title={ documentHeadTitle } />
 			{ getForm( currentStep ) }
