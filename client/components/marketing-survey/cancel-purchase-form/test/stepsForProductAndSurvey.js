@@ -71,12 +71,12 @@ describe( 'stepsForProductAndSurvey', function() {
 			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS );
 		} );
 
-		it( 'should include concierge step if product is business plan, function() {
+		it( 'should include concierge step if product is business plan', function() {
 			const product = { product_slug: plans.PLAN_BUSINESS };
 			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( DEFAULT_STEPS_WITH_CONCIERGE );
 		} );
 
-		it( 'should not include concierge step if product is jetpack business plan, function() {
+		it( 'should not include concierge step if product is jetpack business plan', function() {
 			const product = { product_slug: plans.PLAN_JETPACK_BUSINESS };
 			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( DEFAULT_STEPS );
 		} );
