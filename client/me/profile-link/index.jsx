@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import safeProtocolUrl from 'lib/safe-protocol-url';
 import eventRecorder from 'me/event-recorder';
 import { withoutHttp } from 'lib/url';
 import Button from 'components/button';
-import Gridicon from 'gridicons';
 
 export default React.createClass( {
 

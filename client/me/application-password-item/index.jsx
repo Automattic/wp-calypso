@@ -4,14 +4,14 @@
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:application-password-item' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
-	connect = require( 'react-redux' ).connect;
+	connect = require( 'react-redux' ).connect,
+	Gridicon = require( 'gridicons' );
 
 /**
  * Internal dependencies
  */
 var eventRecorder = require( 'me/event-recorder' ),
 	errorNotice = require( 'state/notices/actions' ).errorNotice,
-	Gridicon = require( 'gridicons' ),
 	Button = require( 'components/button' );
 
 const ApplicationPasswordsItem = React.createClass( {
@@ -62,7 +62,8 @@ const ApplicationPasswordsItem = React.createClass( {
 				<Button borderless className="application-password-item__revoke"
 					onClick={ this.recordClickEvent( 'Remove Application Password Button', this.removeApplicationPassword ) }
 				>
-				<Gridicon icon="cross" /></Button>
+					<Gridicon icon="cross" />
+				</Button>
 			</li>
 		);
 	}

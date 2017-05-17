@@ -3,12 +3,12 @@
  */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { getLabelForStream } from './locales';
-import Gridicon from 'gridicons';
 
 export default React.createClass( {
 	displayName: 'NotificationSettingsFormHeader',

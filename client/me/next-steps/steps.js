@@ -2,13 +2,13 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	Gridicon = require( 'gridicons' ),
 	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
  */
 var paths = require( 'lib/paths' ),
-	Gridicon = require( 'gridicons' ),
 	config = require( 'config' );
 
 function buildCustomizeButtonURL( site ) {
