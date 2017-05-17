@@ -36,6 +36,7 @@ export class Notice extends Component {
 			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) ),
 			PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 		] ),
+		translate: PropTypes.func.isRequired,
 	};
 
 	dismissTimeout = null;
