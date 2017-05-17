@@ -9,8 +9,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import LoginForm from './login-form';
-import { getTwoFactorAuthNonce, getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
+import { getTwoFactorAuthNonce, getRequestError, getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
@@ -19,6 +20,7 @@ import Notice from 'components/notice';
 class Login extends Component {
 	static propTypes = {
 		redirectLocation: PropTypes.string,
+		requestError: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
@@ -57,6 +59,40 @@ class Login extends Component {
 		this.setState( { notice } );
 	};
 
+	renderNotice() {
+		const { requestError } = this.props;
+
+		if ( ! requestError || requestError.field !== 'global' ) {
+			return null;
+		}
+
+		let message;
+
+		if ( requestError.message === 'proxy_required' ) {
+			// TODO: Remove once the proxy requirement is removed from the API
+
+			let redirectTo = '';
+
+			if ( typeof window !== 'undefined' && window.location.search.indexOf( '?redirect_to=' ) === 0 ) {
+				redirectTo = window.location.search;
+			}
+
+			message = (
+				<div>
+					This endpoint is restricted to proxied Automatticians for now. Please use
+					{ ' ' }
+					<a href={ config( 'login_url' ) + redirectTo }>the old login page</a>.
+				</div>
+			);
+		} else {
+			message = requestError.message;
+		}
+
+		return (
+			<Notice status={ 'is-error' } showDismiss={ false }>{ message }</Notice>
+		);
+	}
+
 	renderContent() {
 		const {
 			twoFactorAuthType,
@@ -91,7 +127,6 @@ class Login extends Component {
 
 	render() {
 		const { translate, twoStepNonce } = this.props;
-		const { notice } = this.state;
 
 		return (
 			<div>
@@ -99,7 +134,7 @@ class Login extends Component {
 					{ twoStepNonce ? translate( 'Two-Step Authentication' ) : translate( 'Log in to your account.' ) }
 				</div>
 
-				{ notice && <Notice status={ notice.status } showDismiss={ false }>{ notice.message }</Notice> }
+				{ this.renderNotice() }
 
 				{ this.renderContent() }
 			</div>
@@ -109,6 +144,7 @@ class Login extends Component {
 
 export default connect(
 	( state ) => ( {
+		requestError: getRequestError( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),

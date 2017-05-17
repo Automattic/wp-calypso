@@ -9,7 +9,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
@@ -65,33 +64,6 @@ export class LoginForm extends Component {
 			this.props.recordTracksEvent( 'calypso_login_block_login_failure', {
 				error_message: error.message
 			} );
-
-			if ( error.field === 'global' ) {
-				if ( error.message === 'proxy_required' ) {
-					// TODO: Remove once the proxy requirement is removed from the API
-
-					let redirectTo = '';
-
-					if ( typeof window !== 'undefined' && window.location.search.indexOf( '?redirect_to=' ) === 0 ) {
-						redirectTo = window.location.search;
-					}
-
-					this.props.setNotice( {
-						message: (
-							<div>
-								This endpoint is restricted to proxied Automatticians for now. Please use
-								<a href={ config( 'login_url' ) + redirectTo }>the old login page</a>.
-							</div>
-						),
-						status: 'is-error'
-					} );
-				} else {
-					this.props.setNotice( {
-						message: error.message,
-						status: 'is-error'
-					} );
-				}
-			}
 		} );
 	};
 
