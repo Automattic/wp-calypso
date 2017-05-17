@@ -39,7 +39,7 @@ const debug = debugFactory( 'calypso:signup:step-actions' );
 
 function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
-	const { designType, domainItem } = dependencies;
+	const { cartItem, designType, domainItem, siteUrl, themeSlugWithRepo } = dependencies;
 
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
@@ -62,9 +62,17 @@ function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			page.redirect( `/checkout/${ siteSlug }` );
 		} );
 	} else {
+		const newSiteData = {
+			cartItem,
+			domainItem,
+			isPurchasingItem: true,
+			siteUrl,
+			themeSlugWithRepo
+		};
+
 		createSiteWithCart( ( errors, providedDependencies ) => {
 			callback( errors, pick( providedDependencies, [ 'siteId', 'siteSlug', 'themeSlugWithRepo', 'domainItem' ] ) );
-		}, dependencies, data, reduxStore );
+		}, dependencies, newSiteData, reduxStore );
 	}
 }
 
