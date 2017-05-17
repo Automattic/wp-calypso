@@ -38,7 +38,8 @@ class SharingPreviewPane extends PureComponent {
 		services: [
 			'facebook',
 			'google_plus',
-			'twitter' ]
+			'twitter',
+		]
 	};
 
 	state = {
