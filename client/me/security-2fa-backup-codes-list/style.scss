@@ -119,9 +119,10 @@ button.security-2fa-backups-codes-list__generate-button {
 .security-2fa-backup-codes-list__warning {
 	font-size: 75%;
 
-	.noticon {
-		color: $alert-red;
+	.gridicon {
+		fill: $alert-red;
 		margin-right: 8px;
+		vertical-align: middle;
 
 		&:before {
 			position: relative;
