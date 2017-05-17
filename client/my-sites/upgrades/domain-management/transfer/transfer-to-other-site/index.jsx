@@ -17,7 +17,6 @@ import Card from 'components/card';
 import SiteSelector from 'components/site-selector';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSites } from 'state/selectors';
-import { getSiteBySlug } from 'state/sites/selectors';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import Main from 'components/main';
 import paths from 'my-sites/upgrades/paths';
@@ -25,7 +24,7 @@ import { getSelectedDomain } from 'lib/domains';
 import NonOwnerCard from 'my-sites/upgrades/domain-management/components/domain/non-owner-card';
 import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/components/domain/main-placeholder';
 import SectionHeader from 'components/section-header';
-import Dialog from 'components/dialog';
+import TransferConfirmationDialog from './confirmation-dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import wp from 'lib/wp';
 
@@ -46,7 +45,7 @@ class TransferToOtherSite extends React.Component {
 		super( props );
 
 		this.state = {
-			targetSite: null,
+			targetSiteSlug: '',
 			showConfirmationDialog: false,
 			disableDialogButtons: false
 		};
@@ -63,20 +62,16 @@ class TransferToOtherSite extends React.Component {
 			site.ID !== this.props.selectedSite.ID;
 	}
 
-	handleSiteSelect = ( siteSlug ) => {
-		const targetSite = this.props.siteBySlug( siteSlug );
-
-		if ( targetSite ) {
-			this.setState( {
-				targetSite,
-				showConfirmationDialog: true,
-			} );
-		}
+	handleSiteSelect = ( targetSiteSlug ) => {
+		this.setState( {
+			targetSiteSlug,
+			showConfirmationDialog: true,
+		} );
 	}
 
-	handleConfirmTransferDomain = ( closeDialog ) => {
+	handleConfirmTransfer = ( targetSite, closeDialog ) => {
 		const { selectedDomainName } = this.props,
-			targetSiteName = this.state.targetSite.name,
+			targetSiteName = targetSite.name,
 			successMessage = this.props.translate(
 				'%(selectedDomainName)s has been transferred to site: %(targetSiteName)s',
 				{ args: { selectedDomainName, targetSiteName } } ),
@@ -84,7 +79,7 @@ class TransferToOtherSite extends React.Component {
 				'Failed to transfer %(selectedDomainName)s, please try again or contact support.', {
 					args: { selectedDomainName } } );
 		this.setState( { disableDialogButtons: true } );
-		wpcom.transferToSite( this.props.selectedSite.ID, this.props.selectedDomainName, this.state.targetSite.ID )
+		wpcom.transferToSite( this.props.selectedSite.ID, this.props.selectedDomainName, targetSite.ID )
 			.then( () => {
 				this.setState( { disableDialogButtons: false } );
 				this.props.successNotice( successMessage, { duration: 10000, isPersistent: true } );
@@ -123,35 +118,6 @@ class TransferToOtherSite extends React.Component {
 		);
 	}
 
-	renderDialog() {
-		const { selectedDomainName: domainName, translate } = this.props,
-			buttons = [
-				{
-					action: 'cancel',
-					label: translate( 'Cancel' ),
-					disabled: this.state.disableDialogButtons
-				},
-				{
-					action: 'confirm',
-					label: translate( 'Confirm Transfer' ),
-					onClick: this.handleConfirmTransferDomain,
-					disabled: this.state.disableDialogButtons,
-					isPrimary: true
-				}
-			],
-			targetSiteName = get( this.state.targetSite, 'name', '' );
-
-		return (
-			<Dialog isVisible={ this.state.showConfirmationDialog } buttons={ buttons } onClose={ this.handleDialogClose }>
-				<h1>{ translate( 'Confirm Transfer' ) }</h1>
-				<p>{ translate( 'Do you want to transfer {{strong}}%(domainName)s{{/strong}} ' +
-					'to site {{strong}}%(targetSiteName)s{{/strong}}?', {
-						args: { domainName, targetSiteName }, components: { strong: <strong /> }
-					} ) }</p>
-			</Dialog>
-		);
-	}
-
 	renderSection() {
 		const { selectedDomainName: domainName, translate } = this.props,
 			{ currentUserCanManage } = getSelectedDomain( this.props );
@@ -174,7 +140,13 @@ class TransferToOtherSite extends React.Component {
 						onSiteSelect={ this.handleSiteSelect }
 					/>
 				</Card>
-				{ this.renderDialog() }
+				<TransferConfirmationDialog
+					targetSiteSlug={ this.state.targetSiteSlug }
+					domainName={ this.props.selectedDomainName }
+					onConfirmTransfer={ this.handleConfirmTransfer }
+					onClose={ this.handleDialogClose }
+					isVisible={ this.state.showConfirmationDialog }
+					disableDialogButtons={ this.state.disableDialogButtons } />
 			</div>
 		);
 	}
@@ -184,7 +156,6 @@ export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
 		sites: getSites( state ),
-		siteBySlug: ( siteSlug ) => getSiteBySlug( state, siteSlug ),
 	} ),
 	{
 		successNotice,
