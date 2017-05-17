@@ -86,9 +86,7 @@ class AdsFormEarnings extends Component {
 		}
 
 		// defer fetch requests to avoid dispatcher conflicts
-		setTimeout( () => {
-			WordadsActions.fetchEarnings( site );
-		}, 0 );
+		setTimeout( () => WordadsActions.fetchEarnings( site ), 0 );
 	}
 
 	updateSettings = () => {
