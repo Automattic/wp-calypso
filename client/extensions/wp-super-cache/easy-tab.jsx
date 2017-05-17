@@ -20,16 +20,11 @@ import WrapSettingsForm from './wrap-settings-form';
 import { testCache } from './state/cache/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteTitle } from 'state/sites/selectors';
-import {
-	getCacheTestResults,
-	isCacheTestSuccessful,
-	isTestingCache,
-} from './state/cache/selectors';
+import { getCacheTestResults, isTestingCache } from './state/cache/selectors';
 
 class EasyTab extends Component {
 	static propTypes = {
 		cacheTestResults: PropTypes.object,
-		errorNotice: PropTypes.func.isRequired,
 		fields: PropTypes.object,
 		handleAutosavingToggle: PropTypes.func.isRequired,
 		handleDeleteCache: PropTypes.func.isRequired,
@@ -37,12 +32,9 @@ class EasyTab extends Component {
 		isRequesting: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		isTesting: PropTypes.bool,
-		isTestSuccessful: PropTypes.bool,
-		removeNotice: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 		siteId: PropTypes.number,
 		siteTitle: PropTypes.string,
-		successNotice: PropTypes.func.isRequired,
 		testCache: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -54,7 +46,6 @@ class EasyTab extends Component {
 		isRequesting: true,
 		isSaving: false,
 		isTesting: false,
-		isTestSuccessful: false,
 		siteTitle: '',
 	};
 
@@ -73,32 +64,6 @@ class EasyTab extends Component {
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.isTesting || ! prevProps.isTesting ) {
-			return;
-		}
-
-		const {
-			errorNotice,
-			isTestSuccessful,
-			siteTitle,
-			successNotice,
-			translate,
-		} = this.props;
-
-		if ( isTestSuccessful ) {
-			successNotice(
-				translate( 'Cache test completed successfully on %(siteTitle)s.', { args: { siteTitle } } ),
-				{ id: 'wpsc-cache-test' }
-			);
-		} else {
-			errorNotice(
-				translate( 'There was a problem testing the cache. Please try again.' ),
-				{ id: 'wpsc-cache-test' }
-			);
-		}
-	}
-
 	handleHttpOnlyChange = () => this.setState( { httpOnly: ! this.state.httpOnly } );
 
 	deleteCache = () => {
@@ -112,8 +77,7 @@ class EasyTab extends Component {
 	}
 
 	testCache = () => {
-		this.props.removeNotice( 'wpsc-cache-test' );
-		this.props.testCache( this.props.siteId, this.state.httpOnly );
+		this.props.testCache( this.props.siteId, this.props.siteTitle, this.state.httpOnly );
 	}
 
 	render() {
@@ -265,13 +229,11 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const siteTitle = getSiteTitle( state, siteId );
 		const isTesting = isTestingCache( state, siteId );
-		const isTestSuccessful = isCacheTestSuccessful( state, siteId );
 		const cacheTestResults = getCacheTestResults( state, siteId );
 
 		return {
 			cacheTestResults,
 			isTesting,
-			isTestSuccessful,
 			siteTitle,
 		};
 	},

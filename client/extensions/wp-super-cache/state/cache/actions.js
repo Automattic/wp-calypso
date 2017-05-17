@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import wp from 'lib/wp';
@@ -11,6 +16,7 @@ import {
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../action-types';
+import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 
 /**
  * Returns an action object to be used in signalling that cache test results have been received.
@@ -27,28 +33,28 @@ export const receiveResults = ( siteId, results ) => ( { type: WP_SUPER_CACHE_RE
  * @param  {Number} siteId Site ID
  * @returns {Function} Action thunk that tests the cache ror a given site
  */
-export const testCache = ( siteId, httpOnly ) => {
+export const testCache = ( siteId, siteTitle, httpOnly ) => {
 	return ( dispatch ) => {
-		dispatch( {
-			type: WP_SUPER_CACHE_TEST_CACHE,
-			siteId,
-		} );
+		dispatch( removeNotice( 'wpsc-test-cache' ) );
+		dispatch( { type: WP_SUPER_CACHE_TEST_CACHE, siteId } );
 
 		return wp.req.post(
 			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
 			{ path: '/wp-super-cache/v1/cache/test', body: JSON.stringify( { httponly: httpOnly } ), json: true } )
 			.then( ( { data } ) => {
+				dispatch( successNotice(
+					translate( 'Cache test completed successfully on %(siteTitle)s.', { args: { siteTitle } } ),
+					{ id: 'wpsc-test-cache' }
+				) );
 				dispatch( receiveResults( siteId, data ) );
-				dispatch( {
-					type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
-					siteId,
-				} );
+				dispatch( { type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS, siteId } );
 			} )
 			.catch( () => {
-				dispatch( {
-					type: WP_SUPER_CACHE_TEST_CACHE_FAILURE,
-					siteId,
-				} );
+				dispatch( errorNotice(
+					translate( 'There was a problem testing the cache. Please try again.' ),
+					{ id: 'wpsc-test-cache' }
+				) );
+				dispatch( { type: WP_SUPER_CACHE_TEST_CACHE_FAILURE, siteId } );
 			} );
 	};
 };
