@@ -322,6 +322,7 @@ const Post = React.createClass( {
 					onToggleShare={ this.toggleShare }
 					onViewPost={ this.viewPost }
 					siteId={ this.props.post.site_ID }
+					current={ this.state.showShare ? 'share' : null }
 				/>
 				<ReactCSSTransitionGroup
 					transitionName="updated-trans"
