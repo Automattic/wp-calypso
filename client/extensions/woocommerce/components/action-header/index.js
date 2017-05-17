@@ -14,9 +14,9 @@ const ActionHeader = ( { children } ) => {
 
 	return (
 		<StickyPanel>
-			<Card className="components__action-header">
+			<Card className="action-header__header">
 				<span>Breadcrumbs > go > here</span>
-				<div className="components__action-header-actions">
+				<div className="action-header__actions">
 					{ children }
 				</div>
 			</Card>

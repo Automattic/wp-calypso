@@ -1,0 +1,14 @@
+
+.action-header__header {
+	width: 100%;
+}
+
+.action-header__actions {
+	position: absolute;
+	top: 16px;
+	right: 24px;
+
+	.button {
+		margin-left: 8px;
+	}
+}
