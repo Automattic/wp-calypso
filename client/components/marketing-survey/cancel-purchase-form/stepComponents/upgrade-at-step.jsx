@@ -10,6 +10,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSite } from 'state/ui/selectors';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import Button from 'components/button';
@@ -50,6 +51,10 @@ export class UpgradeATStep extends Component {
 					<Button primary href={ href }>
 						{ translate( 'Upgrade My Site' ) }
 					</Button>
+					<TrackComponentView
+						eventName="calypso_cancellation_upgrade_at_impression"
+						eventProperties={ { cta_name: 'cancellation_prompt' } }
+					/>
 				</FormFieldset>
 			</div>
 		);

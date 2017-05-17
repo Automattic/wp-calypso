@@ -9,6 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import TrackComponentView from 'lib/analytics/track-component-view';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 
@@ -50,6 +51,10 @@ export class BusinessATStep extends Component {
 							)
 						}
 					</p>
+					<TrackComponentView
+						eventName="calypso_cancellation_business_at_impression"
+						eventProperties={ { cta_name: 'cancellation_prompt' } }
+					/>
 				</FormFieldset>
 			</div>
 		);
