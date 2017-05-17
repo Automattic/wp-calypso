@@ -57,28 +57,10 @@ const deleteStatus = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object} Updated cache testing state
  */
-const testStatus = createReducer( {}, {
-	[ WP_SUPER_CACHE_TEST_CACHE ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			testing: true,
-			status: 'pending',
-		}
-	} ),
-	[ WP_SUPER_CACHE_TEST_CACHE_SUCCESS ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			testing: false,
-			status: 'success',
-		}
-	} ),
-	[ WP_SUPER_CACHE_TEST_CACHE_FAILURE ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			testing: false,
-			status: 'error',
-		}
-	} )
+const testing = createReducer( {}, {
+	[ WP_SUPER_CACHE_TEST_CACHE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+	[ WP_SUPER_CACHE_TEST_CACHE_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ WP_SUPER_CACHE_TEST_CACHE_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
 } );
 
 /**
@@ -95,5 +77,5 @@ const items = createReducer( {}, {
 export default combineReducers( {
 	deleteStatus,
 	items,
-	testStatus,
+	testing,
 } );
