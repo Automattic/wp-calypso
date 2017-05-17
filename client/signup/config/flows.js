@@ -206,6 +206,11 @@ const flows = {
 		description: 'Used by `get.blog` users that connect their site to WordPress.com',
 		lastModified: '2016-11-14'
 	},
+
+	woocommerce: {
+		steps: [ 'wcs-info', 'user' ],
+		destination: '/',
+	}
 };
 
 if ( config.isEnabled( 'signup/domain-first-flow' ) ) {

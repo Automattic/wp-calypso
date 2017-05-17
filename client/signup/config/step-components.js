@@ -14,7 +14,7 @@ import SurveyStepComponent from 'signup/steps/survey';
 import ThemeSelectionComponent from 'signup/steps/theme-selection';
 import UserSignupComponent from 'signup/steps/user';
 import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
-
+import WcsShippingComponent from 'signup/steps/wcs-shipping';
 
 export default {
 	'design-type': DesignTypeComponent,
@@ -37,4 +37,5 @@ export default {
 	'themes-site-selected': ThemeSelectionComponent,
 	user: UserSignupComponent,
 	'user-social': UserSignupComponent,
+	'wcs-info': WcsShippingComponent,
 };

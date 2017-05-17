@@ -154,4 +154,8 @@ export default {
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
 		delayApiRequestUntilComplete: true
 	},
+
+	'wcs-info': {
+		stepName: 'wcs-info',
+	},
 };
