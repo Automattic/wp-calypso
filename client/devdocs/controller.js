@@ -15,6 +15,7 @@ import DocsComponent from './main';
 import { login } from 'lib/paths';
 import SingleDocComponent from './doc';
 import DesignAssetsComponent from './design';
+import ComponentDetail from './design/component-detail';
 import Blocks from './design/blocks';
 import DocsSelectors from './docs-selectors';
 import Typography from './design/typography';
@@ -46,8 +47,8 @@ const devdocs = {
 	 */
 	devdocs: function( context ) {
 		function onSearchChange( searchTerm ) {
-			let query = context.query,
-				url = context.pathname;
+			const query = context.query;
+			let	pathname = context.pathname;
 
 			if ( searchTerm ) {
 				query.term = searchTerm;
@@ -58,10 +59,10 @@ const devdocs = {
 			const queryString = qs.stringify( query ).replace( /%20/g, '+' ).trim();
 
 			if ( queryString ) {
-				url += '?' + queryString;
+				pathname += '?' + queryString;
 			}
 
-			page.replace( url,
+			page.replace( pathname,
 				context.state,
 				false,
 				false );
@@ -95,7 +96,15 @@ const devdocs = {
 	// UI components
 	design: function( context ) {
 		renderWithReduxStore(
-			React.createElement( DesignAssetsComponent, {
+			React.createElement( DesignAssetsComponent ),
+			'primary',
+			context.store
+		);
+	},
+
+	componentDetail: function( context ) {
+		renderWithReduxStore(
+			React.createElement( ComponentDetail, {
 				component: context.params.component
 			} ),
 			'primary',
