@@ -58,14 +58,15 @@
 }
 
 .reader-subscription-list-item__site-url,
-.reader-subscription-list-item__site-url:visited {
+.reader-subscription-list-item__site-url:visited,
+.reader-subscription-list-item__timestamp {
 	color: lighten( $gray, 10% );
 }
 
 .reader-subscription-list-item__site-title,
 .reader-subscription-list-item__by-text,
-.reader-subscription-list-item__site-url,
-.reader-subscription-list-item__site-excerpt {
+.reader-subscription-list-item__site-excerpt,
+.reader-subscription-list-item__site-url-timestamp {
 	display: block;
 	max-height: 16px * 1.3;
 	overflow: hidden;
@@ -88,6 +89,58 @@
 
 .reader-subscription-list-item__site-title {
 	font-weight: 600;
+}
+
+.reader-subscription-list-item__site-url-timestamp {
+	display: flex;
+	flex-direction: row;
+	max-height: none;
+
+	@include breakpoint( "<960px" ) {
+		height: auto;
+		flex-direction: column;
+	}
+
+	@include breakpoint( "<660px" ) {
+		flex-direction: row;
+	}
+
+	@include breakpoint( "<480px" ) {
+		flex-direction: column;
+	}
+}
+
+.following-manage__subscriptions .reader-subscription-list-item__site-url {
+	display: inline;
+	margin-right: 8px;
+	max-width: 70%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-break: break-all;
+	width: initial;
+
+	@include breakpoint( "<960px" ) {
+		height: 20px;
+		flex: 1 1 auto;
+		max-width: none;
+	}
+
+	@include breakpoint( "<660px" ) {
+		flex: 0 1 auto;
+	}
+
+	@include breakpoint( "<480px" ) {
+		flex: 1 1 auto;
+		max-width: none;
+	}
+}
+
+.following-manage__subscriptions .reader-subscription-list-item__timestamp {
+	max-width: 30%;
+
+	@include breakpoint( "<960px" ) {
+		max-width: none;
+	}
 }
 
 .reader-subscription-list-item .follow-button {
@@ -210,17 +263,6 @@
 
 .reader-subscription-list-item__email-popout-wrapper .segmented-control__link {
 	background: $white;
-}
-
-.reader-subscription-list-item__site-url,
-.reader-subscription-list-item__site-url:visited {
-	color: lighten( $gray, 10% );
-	display: block;
-	height: 20px;
-	overflow: hidden;
-	position: relative;
-	width: 100%;
-	word-break: break-all;
 }
 
 // Placeholders

@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getThemeFilterTermsTable } from '../';
+import { getThemeFilterTermsTable } from 'state/selectors';
 import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterTermsTable()', () => {

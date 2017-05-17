@@ -34,7 +34,6 @@
 		"jetpack/api-cache": true,
 		"jetpack_core_inline_update": true,
 		"keyboard-shortcuts": true,
-		"magic-login": true,
 		"manage/customize": true,
 		"manage/custom-post-types": true,
 		"manage/edit-user": true,
