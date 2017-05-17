@@ -9,7 +9,7 @@ import { get, find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostImage } from './utils';
+import { getPostImage, getExcerptForPost } from './utils';
 import FacebookSharePreview from 'components/share/facebook-share-preview';
 import GooglePlusSharePreview from 'components/share/google-plus-share-preview';
 import TwitterSharePreview from 'components/share/twitter-share-preview';
@@ -58,6 +58,8 @@ class SharingPreviewPane extends PureComponent {
 		}
 
 		const articleUrl = get( post, 'URL', '' );
+		const articleTitle = get( post, 'title', '' );
+		const articleContent = getExcerptForPost( post );
 		const imageUrl = getPostImage( post );
 		const {
 			external_name: externalName,
@@ -68,6 +70,8 @@ class SharingPreviewPane extends PureComponent {
 
 		const previewProps = {
 			articleUrl,
+			articleTitle,
+			articleContent,
 			externalName,
 			externalProfileURL,
 			externalProfilePicture,

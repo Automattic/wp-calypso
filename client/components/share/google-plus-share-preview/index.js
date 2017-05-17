@@ -3,6 +3,7 @@
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { truncatedAtSpace } from '../helpers';
 
 export class GooglePlusSharePreview extends PureComponent {
 
@@ -18,12 +19,17 @@ export class GooglePlusSharePreview extends PureComponent {
 	render() {
 		const {
 			articleUrl,
+			articleTitle,
+			articleContent,
 			externalProfilePicture,
 			externalProfileUrl,
 			externalName,
 			imageUrl,
 			message
 		} = this.props;
+
+		const summarizeContent = truncatedAtSpace( 0, 255 );
+		const summary = summarizeContent( articleContent );
 
 		return (
 			<div className="google-plus-share-preview">
@@ -48,11 +54,11 @@ export class GooglePlusSharePreview extends PureComponent {
 							{ message }
 						</div>
 						<div className="google-plus-share-preview__article-summary">
-							Summury of the post goes here.
+						{ summary }
 						</div>
 						<div className="google-plus-share-preview__article-title">
 							<a className="google-plus-share-preview__article-url" href={ articleUrl }>
-							Title of the post goes here.
+							{ articleTitle }
 							</a>
 						</div>
 						{ imageUrl &&
