@@ -30,27 +30,11 @@ class TwoFactorActions extends Component {
 	sendSmsCode = ( event ) => {
 		event.preventDefault();
 
-		const { userId, translate, twoStepNonce } = this.props;
+		const { userId, twoStepNonce } = this.props;
 
 		page( login( { isNative: true, twoFactorAuthType: 'sms' } ) );
 
-		this.props.sendSmsCode( userId, twoStepNonce ).then( ( phoneNumber ) => {
-			this.props.setNotice( {
-				message: translate( 'A text message with the verification code was just sent to your ' +
-					'phone number ending in %(phoneNumber)s', {
-						args: {
-							phoneNumber: phoneNumber
-						}
-					}
-				),
-				status: 'is-success'
-			} );
-		} ).catch( ( errorMesssage ) => {
-			this.props.setNotice( {
-				message: errorMesssage,
-				status: 'is-error'
-			} );
-		} );
+		this.props.sendSmsCode( userId, twoStepNonce );
 	};
 
 	render() {

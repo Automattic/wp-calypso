@@ -11,7 +11,13 @@ import page from 'page';
  */
 import config from 'config';
 import LoginForm from './login-form';
-import { getTwoFactorAuthNonce, getRequestError, getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
+import {
+	getTwoFactorAuthNonce,
+	getRequestError,
+	getRequestNotice,
+	getTwoFactorNotificationSent,
+	isTwoFactorEnabled
+} from 'state/login/selectors';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
@@ -21,6 +27,7 @@ class Login extends Component {
 	static propTypes = {
 		redirectLocation: PropTypes.string,
 		requestError: PropTypes.object,
+		getRequestNotice: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
@@ -59,7 +66,7 @@ class Login extends Component {
 		this.setState( { notice } );
 	};
 
-	renderNotice() {
+	renderError() {
 		const { requestError } = this.props;
 
 		if ( ! requestError || requestError.field !== 'global' ) {
@@ -90,6 +97,18 @@ class Login extends Component {
 
 		return (
 			<Notice status={ 'is-error' } showDismiss={ false }>{ message }</Notice>
+		);
+	}
+
+	renderNotice() {
+		const { requestNotice } = this.props;
+
+		if ( ! requestNotice ) {
+			return null;
+		}
+
+		return (
+			<Notice status={ requestNotice.status } showDismiss={ false }>{ requestNotice.message }</Notice>
 		);
 	}
 
@@ -134,6 +153,8 @@ class Login extends Component {
 					{ twoStepNonce ? translate( 'Two-Step Authentication' ) : translate( 'Log in to your account.' ) }
 				</div>
 
+				{ this.renderError() }
+
 				{ this.renderNotice() }
 
 				{ this.renderContent() }
@@ -145,6 +166,7 @@ class Login extends Component {
 export default connect(
 	( state ) => ( {
 		requestError: getRequestError( state ),
+		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),

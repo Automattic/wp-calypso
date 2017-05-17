@@ -34,13 +34,17 @@ export const requestError = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: () => null,
 	[ LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => error,
-	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { error } ) => error
+	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { error } ) => error,
 } );
 
 export const requestSuccess = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: () => true,
-	[ LOGIN_REQUEST_FAILURE ]: () => false
+	[ LOGIN_REQUEST_FAILURE ]: () => false,
+} );
+
+export const requestNotice = createReducer( null, {
+	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { notice } ) => notice
 } );
 
 const updateTwoStepNonce = ( state, { twoStepNonce } ) => Object.assign( {}, state, {
@@ -80,6 +84,7 @@ export default combineReducers( {
 	isRequestingTwoFactorAuth,
 	magicLogin,
 	requestError,
+	requestNotice,
 	requestSuccess,
 	twoFactorAuth,
 	twoFactorAuthRequestError,

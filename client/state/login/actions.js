@@ -170,13 +170,25 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
 		.then( ( response ) => {
+			const phoneNumber = get( response, 'body.data.phone_number' );
+			const message = translate( 'A text message with the verification code was just sent to your ' +
+				'phone number ending in %(phoneNumber)s', {
+					args: {
+						phoneNumber: phoneNumber
+					}
+				}
+			);
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+				notice: {
+					message,
+					status: 'is-success'
+				},
 				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
 			} );
 		} ).catch( ( error ) => {
-			const message = getMessageFromHTTPError( error ),
-				field = 'global';
+			const field = 'global';
+			const message = getMessageFromHTTPError( error );
 
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
