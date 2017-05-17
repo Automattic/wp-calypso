@@ -77,5 +77,5 @@ export function getCacheTestStatus( state, siteId ) {
  * @return {Object} Cache test results
  */
 export function getCacheTestResults( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'cache', 'items', siteId ] );
+	return get( state, [ 'extensions', 'wpSuperCache', 'cache', 'items', siteId ], {} );
 }

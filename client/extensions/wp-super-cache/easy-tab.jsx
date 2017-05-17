@@ -40,13 +40,7 @@ class EasyTab extends Component {
 	};
 
 	static defaultProps = {
-		cacheTestResults: {},
 		fields: {},
-		isDeleting: false,
-		isRequesting: true,
-		isSaving: false,
-		isTesting: false,
-		siteTitle: '',
 	};
 
 	state = {
