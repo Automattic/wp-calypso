@@ -1,26 +1,24 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import noop from 'lodash/noop';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
-export const Notice = React.createClass( {
-	dismissTimeout: null,
+class Notice extends Component {
+	dismissTimeout = null;
 
-	getDefaultProps() {
-		return {
-			duration: 0,
-			status: null,
-			showDismiss: true,
-			className: '',
-			onDismissClick: noop
-		};
-	},
+	static defaultProps = {
+		duration: 0,
+		status: null,
+		showDismiss: true,
+		className: '',
+		onDismissClick: noop
+	};
 
-	propTypes: {
+	static propTypes = {
 		status: PropTypes.oneOf( [
 			'is-info',
 			'is-success',
@@ -36,19 +34,19 @@ export const Notice = React.createClass( {
 		] ),
 		icon: PropTypes.string,
 		className: PropTypes.string
-	},
+	};
 
 	componentDidMount() {
 		if ( this.props.duration > 0 ) {
 			this.dismissTimeout = setTimeout( this.props.onDismissClick, this.props.duration );
 		}
-	},
+	}
 
 	componentWillUnmount() {
 		if ( this.dismissTimeout ) {
 			clearTimeout( this.dismissTimeout );
 		}
-	},
+	}
 
 	getIcon() {
 		let icon;
@@ -72,7 +70,7 @@ export const Notice = React.createClass( {
 		}
 
 		return icon;
-	},
+	}
 
 	render() {
 		const { status, className, isCompact, showDismiss } = this.props;
@@ -101,6 +99,6 @@ export const Notice = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default localize( Notice );
