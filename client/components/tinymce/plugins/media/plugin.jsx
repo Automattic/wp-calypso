@@ -409,7 +409,7 @@ function mediaButton( editor ) {
 	} );
 
 	editor.addButton( 'wpcom_add_media', {
-		classes: 'btn wpcom-icon-button media toolbar-segment-start',
+		classes: 'btn wpcom-icon-button media',
 		cmd: 'wpcomAddMedia',
 		title: i18n.translate( 'Add Media' ),
 		onPostRender: function() {
@@ -425,6 +425,7 @@ function mediaButton( editor ) {
 
 	editor.addButton( 'wp_img_edit', {
 		tooltip: i18n.translate( 'Edit', { context: 'verb' } ),
+		classes: 'toolbar-segment-start',
 		icon: 'dashicon dashicons-edit',
 		onclick: function() {
 			const selectedSite = getSelectedSiteFromState();
