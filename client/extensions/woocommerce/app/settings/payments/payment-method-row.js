@@ -46,9 +46,9 @@ const PaymentMethodRow = ( { method, translate } ) => {
 PaymentMethodRow.propTypes = {
 	method: PropTypes.shape( {
 		label: PropTypes.string.isRequired,
-		suggested: PropTypes.bool.isRequired,
+		isSuggested: PropTypes.bool.isRequired,
 		fee: PropTypes.string.isRequired,
-		information: PropTypes.string.isRequired,
+		informationUrl: PropTypes.string.isRequired,
 	} ),
 };
 
