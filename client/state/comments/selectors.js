@@ -72,7 +72,7 @@ export const getPostOldestCommentDate = createSelector(
  * @param {Number} siteId site identification
  * @param {Number} postId site identification
  * @param {String} status String representing the comment status to show. Defaults to 'all'.
- * @return {Immutable.Map<CommentId, CommentNode>} comments tree in the form of immutable map<CommentId, CommentNode>, and in addition a children array
+ * @return {Object} comments tree in the form of immutable map<CommentId, CommentNode>, and in addition a children array
  */
 export const getPostCommentsTree = createSelector(
 	( state, siteId, postId, status ) => {
@@ -85,7 +85,7 @@ export const getPostCommentsTree = createSelector(
 				data: item
 			} ) ), 'data.ID' ),
 			children: map( filter( items, { parent: false } ), 'ID' )
-		}
+		};
 	},
 	getPostCommentItems
 );
@@ -117,7 +117,7 @@ export const haveMoreCommentsToFetch = createSelector(
 export const getCommentLike = createSelector(
 	( state, siteId, postId, commentId ) => {
 		const items = getPostCommentItems( state, siteId, postId );
-		const comment = find( items, { 'ID': commentId } );
+		const comment = find( items, { ID: commentId } );
 
 		if ( ! comment ) {
 			return undefined;
