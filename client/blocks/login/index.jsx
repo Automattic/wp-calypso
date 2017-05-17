@@ -31,7 +31,7 @@ class Login extends Component {
 	componentWillMount = () => {
 		if ( ! this.props.twoStepNonce && this.props.twoFactorAuthType && typeof window !== 'undefined' ) {
 			// Disallow access to the 2FA pages unless the user has received a nonce
-			page( login() );
+			page( login( { isNative: true } ) );
 		}
 	};
 
@@ -40,6 +40,7 @@ class Login extends Component {
 			this.rebootAfterLogin();
 		} else {
 			page( login( {
+				isNative: true,
 				// If no notification is sent, the user is using the authenticator for 2FA by default
 				twoFactorAuthType: this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' )
 			} ) );

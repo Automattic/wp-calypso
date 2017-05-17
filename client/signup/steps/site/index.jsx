@@ -186,7 +186,7 @@ module.exports = React.createClass( {
 	},
 
 	getErrorMessagesWithLogin( fieldName ) {
-		const link = login( { redirectTo: window.location.href } ),
+		const link = login( { isNative: true, redirectTo: window.location.href } ),
 			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
 		if ( ! messages ) {
