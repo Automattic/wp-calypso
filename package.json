@@ -135,7 +135,7 @@
     "walk": "2.3.4",
     "webpack": "1.13.1",
     "webpack-dev-middleware": "1.2.0",
-    "wpcom": "5.3.0",
+    "wpcom": "5.4.0",
     "wpcom-oauth": "0.3.3",
     "wpcom-proxy-request": "3.0.0",
     "wpcom-xhr-request": "1.1.0"
