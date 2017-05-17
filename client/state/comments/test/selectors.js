@@ -64,6 +64,6 @@ describe( 'selectors', () => {
 
 			expect( res.i_like ).to.eql( false );
 			expect( res.like_count ).to.eql( 456 );
-		} )
+		} );
 	} );
 } );
