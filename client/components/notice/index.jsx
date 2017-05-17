@@ -11,9 +11,12 @@ class Notice extends Component {
 	static defaultProps = {
 		className: '',
 		duration: 0,
+		icon: null,
+		isCompact: false,
 		onDismissClick: noop,
 		showDismiss: true,
-		status: null,
+		status: 'is-info',
+		text: null,
 	};
 
 	static propTypes = {
