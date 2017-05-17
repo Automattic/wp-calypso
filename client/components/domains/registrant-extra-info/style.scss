@@ -1,0 +1,45 @@
+.registrant-extra-info__optional {
+	display: flex;
+	// align-items: baseline;
+
+	&::after {
+		content: "Optional";
+		font-weight: 200;
+		margin-left: 5px;
+	}
+}
+
+.registrant-extra-info__dob-4-digit {
+	width: 85px;
+
+}
+
+.registrant-extra-info__dob-inputs {
+	flex-direction: row;
+	display: flex;
+
+	input[type=number]::-webkit-inner-spin-button,
+	input[type=number]::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+		background: pink;
+	}
+
+	.registrant-extra-info__dob-year {
+		box-sizing: content-box;
+		width: 42px;
+	}
+	.registrant-extra-info__dob-month,
+	.registrant-extra-info__dob-day {
+		box-sizing: content-box;
+		width: 28px;
+	}
+}
+
+
+.registrant-extra-info__dob-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 5px;
+}
