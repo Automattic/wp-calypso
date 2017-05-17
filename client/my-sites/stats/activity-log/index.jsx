@@ -310,7 +310,7 @@ class ActivityLog extends Component {
 				/>
 				{ this.renderBanner( this.props.isAnythingRestoring ) }
 				<ActivityLogToggle
-					siteId={ site.ID }
+					siteId={ siteId }
 					activateRewind={ this.props.activateRewind }
 					deactivateRewind={ this.props.deactivateRewind }
 					isActivatingRewind={ this.props.isActivatingRewind }
