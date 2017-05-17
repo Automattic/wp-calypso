@@ -137,7 +137,7 @@ export class LoginForm extends Component {
 					</div>
 
 					<div className="login__form-social">
-						<SocialLoginForm />
+						<SocialLoginForm onSuccess={ this.props.onSuccess } />
 					</div>
 				</Card>
 			</form>

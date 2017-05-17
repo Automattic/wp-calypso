@@ -23,7 +23,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
-	/*SOCIAL_LOGIN_REQUEST_SUCCESS,*/
+	SOCIAL_LOGIN_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 const loginErrorMessages = {
@@ -157,15 +157,32 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
  * @param  {String}    token   Authentication token provided by the external social service.
  * @return {Function}          Action thunk to trigger the login process.
  */
-export const loginSocialUser = ( /*service, token*/ ) => dispatch => {
+export const loginSocialUser = ( service, token ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
-	dispatch( {
-		type: SOCIAL_LOGIN_REQUEST_FAILURE,
-		error: 'Not yet implemented'
-	} );
+	return request.post( 'https://wordpress.com/wp-login.php?action=social-login-endpoint' )
+		.withCredentials()
+		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
+		.accept( 'application/json' )
+		.send( {
+			service,
+			token,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} )
+		.then( () => {
+			dispatch( { type: SOCIAL_LOGIN_REQUEST_SUCCESS } );
+		} )
+		.catch( ( error ) => {
+			const errorMessage = getMessageFromHTTPError( error );
 
-	return Promise.reject( 'Not yet implemented' );
+			dispatch( {
+				type: SOCIAL_LOGIN_REQUEST_FAILURE,
+				error: errorMessage,
+			} );
+
+			return Promise.reject( errorMessage );
+		} );
 };
 
 /**
