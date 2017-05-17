@@ -13,6 +13,7 @@ import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import { deleteFile } from './state/stats/actions';
 import { isDeletingFile } from './state/stats/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 function getAge( lower, upper ) {
 	if ( lower && upper ) {
@@ -32,7 +33,7 @@ class CacheStats extends Component {
 		files: PropTypes.object,
 		header: PropTypes.string,
 		isDeleting: PropTypes.bool,
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -116,9 +117,14 @@ class CacheStats extends Component {
 }
 
 const connectComponent = connect(
-	( state, { siteId } ) => (
-		{ isDeleting: isDeletingFile( state, siteId ) }
-	),
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			isDeleting: isDeletingFile( state, siteId ),
+			siteId,
+		};
+	},
 	{ deleteFile }
 );
 

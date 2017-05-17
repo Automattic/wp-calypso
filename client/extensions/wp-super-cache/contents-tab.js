@@ -108,14 +108,6 @@ class ContentsTab extends Component {
 		this.props.generateStats( this.props.siteId );
 	}
 
-	renderCacheStats = ( files, header, isCached, isSupercache ) =>
-		<CacheStats
-			files={ files }
-			header={ header }
-			isCached={ isCached }
-			isSupercache={ isSupercache }
-			siteId={ this.props.siteId } />
-
 	render() {
 		const {
 			fields: {
@@ -195,19 +187,35 @@ class ContentsTab extends Component {
 
 				<div>
 				{ ! isEmpty( get( wpcache, 'cached_list' ) ) &&
-					this.renderCacheStats( wpcache.cached_list, translate( 'Fresh WP-Cached Files' ), true, false )
+					<CacheStats
+						files={ wpcache.cached_list }
+						header={ translate( 'Fresh WP-Cached Files' ) }
+						isCached={ true }
+						isSupercache={ false } />
 				}
 
 				{ ! isEmpty( get( wpcache, 'expired_list' ) ) &&
-					this.renderCacheStats( wpcache.expired_list, translate( 'Stale WP-Cached Files' ), false, false )
+					<CacheStats
+						files={ wpcache.expired_list }
+						header={ translate( 'Stale WP-Cached Files' ) }
+						isCached={ false }
+						isSupercache={ false } />
 				}
 
 				{ ! isEmpty( get( supercache, 'cached_list' ) ) &&
-					this.renderCacheStats( supercache.cached_list, translate( 'Fresh Super Cached Files' ), true, true )
+					<CacheStats
+						files={ supercache.cached_list }
+						header={ translate( 'Fresh Super Cached Files' ) }
+						isCached={ true }
+						isSupercache={ true } />
 				}
 
 				{ ! isEmpty( get( supercache, 'expired_list' ) ) &&
-					this.renderCacheStats( supercache.expired_list, translate( 'Stale Super Cached Files' ), false, true )
+					<CacheStats
+						files={ supercache.expired_list }
+						header={ translate( 'Stale Super Cached Files' ) }
+						isCached={ false }
+						isSupercache={ true } />
 				}
 				</div>
 
