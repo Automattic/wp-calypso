@@ -36,7 +36,6 @@ class Login extends Component {
 
 	state = {
 		rememberMe: false,
-		notice: null
 	};
 
 	componentWillMount = () => {
@@ -60,10 +59,6 @@ class Login extends Component {
 
 	rebootAfterLogin = () => {
 		window.location.href = this.props.redirectLocation || window.location.origin;
-	};
-
-	setNotice = ( notice ) => {
-		this.setState( { notice } );
 	};
 
 	renderError() {
@@ -128,19 +123,18 @@ class Login extends Component {
 					rememberMe={ rememberMe }
 					onSuccess={ this.rebootAfterLogin }
 					twoFactorAuthType={ twoFactorAuthType }
-					setNotice={ this.setNotice }
 				/>
 			);
 		}
 
 		if ( twoStepNonce && twoFactorAuthType === 'push' ) {
 			return (
-				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } setNotice={ this.setNotice } />
+				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } />
 			);
 		}
 
 		return (
-			<LoginForm onSuccess={ this.handleValidUsernamePassword } setNotice={ this.setNotice } />
+			<LoginForm onSuccess={ this.handleValidUsernamePassword } />
 		);
 	}
 

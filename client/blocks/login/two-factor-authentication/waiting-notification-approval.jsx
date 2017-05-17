@@ -25,7 +25,6 @@ class WaitingTwoFactorNotificationApproval extends Component {
 	static propTypes = {
 		onSuccess: PropTypes.func.isRequired,
 		pushSuccess: PropTypes.bool.isRequired,
-		setNotice: PropTypes.func.isRequired,
 		startPollAppPushAuth: PropTypes.func.isRequired,
 		stopPollAppPushAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -68,7 +67,6 @@ class WaitingTwoFactorNotificationApproval extends Component {
 				</Card>
 
 				<TwoFactorActions
-					setNotice={ this.props.setNotice }
 					twoFactorAuthType="push"
 				/>
 			</form>

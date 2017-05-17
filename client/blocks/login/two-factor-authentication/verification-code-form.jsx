@@ -32,7 +32,6 @@ class VerificationCodeForm extends Component {
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		rememberMe: PropTypes.bool.isRequired,
-		setNotice: PropTypes.func.isRequired,
 		isSmsSupported: PropTypes.bool,
 		twoStepNonce: PropTypes.string.isRequired,
 		userId: PropTypes.number.isRequired,
@@ -122,9 +121,7 @@ class VerificationCodeForm extends Component {
 					{ smallPrint }
 				</Card>
 
-				<TwoFactorActions
-					setNotice={ this.props.setNotice }
-					twoFactorAuthType={ twoFactorAuthType } />
+				<TwoFactorActions twoFactorAuthType={ twoFactorAuthType } />
 			</form>
 		);
 	}

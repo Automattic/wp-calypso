@@ -26,7 +26,6 @@ export class LoginForm extends Component {
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		requestError: PropTypes.object,
-		setNotice: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -54,8 +53,6 @@ export class LoginForm extends Component {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_submit' );
-
-		this.props.setNotice( null );
 
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password, this.state.rememberMe ).then( () => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_success' );
