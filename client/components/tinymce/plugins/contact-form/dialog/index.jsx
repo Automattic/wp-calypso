@@ -42,6 +42,7 @@ const ContactFormDialog = React.createClass( {
 		const actionButtons = [
 			<FormButton
 				key="save"
+				data-e2e-button="save"
 				disabled={ ! isValidForm }
 				onClick={ this.props.onInsert } >
 				{ this.props.isEdit ? this.translate( 'Update' ) : this.translate( 'Insert' ) }
@@ -49,6 +50,7 @@ const ContactFormDialog = React.createClass( {
 			<FormButton
 				key="cancel"
 				isPrimary={ false }
+				data-e2e-button="cancel"
 				onClick={ this.props.onClose } >
 				{ this.translate( 'Cancel' ) }
 			</FormButton>
