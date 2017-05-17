@@ -10,6 +10,7 @@ import {
 	head,
 	kebabCase,
 	map,
+	noop,
 	omit,
 	reduce,
 } from 'lodash';
@@ -17,8 +18,10 @@ import {
 /**
  * Internal dependencies
  */
+import { localize } from 'i18n-calypso';
 import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/upgrades/components/form';
 import PrivacyProtection from './privacy-protection';
+import ExtraContactInformationFrDialog from './extra-information-fr-dialog';
 import PaymentBox from './payment-box';
 import { cartItems } from 'lib/cart-values';
 import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
@@ -57,7 +60,8 @@ class DomainDetailsForm extends Component {
 			form: null,
 			isDialogVisible: false,
 			submissionCount: 0,
-			phoneCountryCode: 'US'
+			phoneCountryCode: 'US',
+			registrantExtraInfo: false,
 		};
 	}
 
@@ -181,6 +185,12 @@ class DomainDetailsForm extends Component {
 		};
 	}
 
+	needsExtraRegistrantInfo() {
+		// FIXME: Source from API
+		return cartItems.hasTld( this.props.cart, 'fr' ) &&
+			! this.state.registrantExtraInfo;
+	}
+
 	needsFax() {
 		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && cartItems.hasTld( this.props.cart, 'nl' );
 	}
@@ -190,9 +200,14 @@ class DomainDetailsForm extends Component {
 	}
 
 	renderSubmitButton() {
+		const extraDialogRequired = this.needsExtraRegistrantInfo();
+		const continueText = extraDialogRequired
+			? this.props.translate( 'Continue' )
+			: this.props.translate( 'Continue to Checkout' );
+
 		return (
 			<FormButton className="checkout__domain-details-form-submit-button" onClick={ this.handleSubmitButtonClick }>
-				{ this.props.translate( 'Continue to Checkout' ) }
+				{ continueText }
 			</FormButton>
 		);
 	}
@@ -209,7 +224,24 @@ class DomainDetailsForm extends Component {
 				onDialogClose={ this.closeDialog }
 				onDialogOpen={ this.openDialog }
 				onDialogSelect={ this.handlePrivacyDialogSelect }
-				isDialogVisible={ this.state.isDialogVisible }
+				isDialogVisible={ this.state.isPrivacyDialogVisible }
+				productsList={ this.props.productsList } />
+		);
+	}
+
+	handleFrSubmit( registrantExtraInfo ) {
+		this.setState( { registrantExtraInfo } );
+		this.closeDialog( 'fr' );
+		this.handleSubmitButtonClick();
+	}
+
+	renderExtraContactInformationFrDialog() {
+		return (
+			<ExtraContactInformationFrDialog
+				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
+				onSubmit={ this.handleFrSubmit }
+				onClose={ noop }
+				isVisible={ this.state.isFrDialogVisible && this.needsExtraRegistrantInfo() }
 				productsList={ this.props.productsList } />
 		);
 	}
@@ -334,20 +366,25 @@ class DomainDetailsForm extends Component {
 		this.setPrivacyProtectionSubscriptions( ! this.allDomainRegistrationsHavePrivacy() );
 	}
 
-	closeDialog = () => {
-		this.setState( { isDialogVisible: false } );
+	closeDialog( dialogKey = 'isDialogVisible' ) {
+		this.setState( { [ dialogKey ]: false } );
 	}
 
-	openDialog = () => {
-		this.setState( { isDialogVisible: true } );
-	}
+	openDialog( dialogKey = 'isDialogVisible' ) {
+		this.setState( { [ dialogKey ]: true } );
+	},
 
 	focusFirstError() {
 		this.refs[ kebabCase( head( map( formState.getInvalidFields( this.state.form ), 'name' ) ) ) ].focus();
 	}
 
 	handleSubmitButtonClick = ( event ) => {
-		event.preventDefault();
+		event && event.preventDefault();
+
+		if ( this.needsExtraRegistrantInfo() ) {
+			this.openDialog( 'isFrDialogVisible' );
+			return;
+		}
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.recordSubmit();
@@ -401,8 +438,15 @@ class DomainDetailsForm extends Component {
 	finish( options = {} ) {
 		this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
 
-		const allFieldValues = Object.assign( {}, formState.getAllFieldValues( this.state.form ) );
+		const allFieldValues = Object.assign(
+			{},
+			formState.getAllFieldValues( this.state.form ),
+			this.state.registrantExtraInfo
+				? { registrantExtraInfo: this.state.registrantExtraInfo }
+				: {}
+		);
 		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
+		// TODO: pass extra fr contact details in here
 		setDomainDetails( allFieldValues );
 		addGoogleAppsRegistrationData( allFieldValues );
 	}
@@ -433,6 +477,7 @@ class DomainDetailsForm extends Component {
 		return (
 			<div>
 				{ cartItems.hasDomainRegistration( this.props.cart ) && this.renderPrivacySection() }
+				{ this.renderExtraContactInformationFrDialog() }
 				<PaymentBox
 					classSet={ classSet }
 					title={ title }>
