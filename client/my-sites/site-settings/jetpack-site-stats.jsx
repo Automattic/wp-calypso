@@ -136,7 +136,7 @@ class JetpackSiteStats extends Component {
 		const header = (
 			<div>
 				<Gridicon icon="checkmark" />
-				{ translate( 'Collecting valuable traffic stats and insights' ) }
+				{ translate( 'Enabled! You\'re collecting valuable data and insights.' ) }
 			</div>
 		);
 
