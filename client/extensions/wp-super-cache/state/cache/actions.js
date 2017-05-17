@@ -11,27 +11,19 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../action-types';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 
-/**
- * Returns an action object to be used in signalling that cache test results have been received.
- *
- * @param  {Number} siteId Site ID
- * @param  {Object} results Cache test results object
- * @return {Object} Action object
- */
-export const receiveResults = ( siteId, results ) => ( { type: WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS, siteId, results } );
-
 /*
  * Tests the cache for a site.
  *
  * @param  {Number} siteId Site ID
- * @returns {Function} Action thunk that tests the cache ror a given site
+ * @param  {String} siteTitle Site title
+ * @param  {Boolean} httpOnly Whether to send a non-secure request for the homepage
+ * @returns {Function} Action thunk that tests the cache for a given site
  */
 export const testCache = ( siteId, siteTitle, httpOnly ) => {
 	return ( dispatch ) => {
@@ -46,8 +38,7 @@ export const testCache = ( siteId, siteTitle, httpOnly ) => {
 					translate( 'Cache test completed successfully on %(siteTitle)s.', { args: { siteTitle } } ),
 					{ id: 'wpsc-test-cache' }
 				) );
-				dispatch( receiveResults( siteId, data ) );
-				dispatch( { type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS, siteId } );
+				dispatch( { type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS, siteId, data } );
 			} )
 			.catch( () => {
 				dispatch( errorNotice(

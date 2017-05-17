@@ -11,7 +11,6 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
@@ -71,7 +70,7 @@ const testing = createReducer( {}, {
  * @return {Object} Updated cache test results
  */
 const items = createReducer( {}, {
-	[ WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS ]: ( state, { siteId, results } ) => ( { ...state, [ siteId ]: results } ),
+	[ WP_SUPER_CACHE_TEST_CACHE_SUCCESS ]: ( state, { siteId, data } ) => ( { ...state, [ siteId ]: data } ),
 } );
 
 export default combineReducers( {

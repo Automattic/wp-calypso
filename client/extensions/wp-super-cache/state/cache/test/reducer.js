@@ -12,7 +12,6 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
@@ -228,9 +227,9 @@ describe( 'reducer', () => {
 
 		it( 'should index cache test results by site ID', () => {
 			const state = reducer( undefined, {
-				type: WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
+				type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 				siteId: primarySiteId,
-				results: primaryResults,
+				data: primaryResults,
 			} );
 
 			expect( state.items ).to.eql( {
@@ -240,9 +239,9 @@ describe( 'reducer', () => {
 
 		it( 'should accumulate cache test results', () => {
 			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
+				type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 				siteId: secondarySiteId,
-				results: secondaryResults,
+				data: secondaryResults,
 			} );
 
 			expect( state.items ).to.eql( {
@@ -253,9 +252,9 @@ describe( 'reducer', () => {
 
 		it( 'should override previous cache test results of same site ID', () => {
 			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
+				type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 				siteId: primarySiteId,
-				results: secondaryResults,
+				data: secondaryResults,
 			} );
 
 			expect( state.items ).to.eql( {
@@ -275,9 +274,9 @@ describe( 'reducer', () => {
 				}
 			};
 			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
+				type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 				siteId: primarySiteId,
-				results: newResults,
+				data: newResults,
 			} );
 
 			expect( state.items ).to.eql( {
