@@ -105,7 +105,7 @@ class Notice extends Component {
 				{ showDismiss && (
 					<span tabIndex="0" className="notice__dismiss" onClick={ onDismissClick } >
 						<Gridicon icon="cross" size={ 24 } />
-						<span className="screen-reader-text">{ translate( 'Dismiss' ) }</span>
+						<span className="notice__screen-reader-text screen-reader-text">{ translate( 'Dismiss' ) }</span>
 					</span>
 				) }
 			</div>
