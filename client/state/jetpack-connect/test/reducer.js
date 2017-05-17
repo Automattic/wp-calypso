@@ -31,6 +31,7 @@ import {
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_RETRY_AUTH,
+	SITE_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -564,6 +565,23 @@ describe( 'reducer', () => {
 
 			expect( state ).to.have.property( 'isRedirectingToWpAdmin' )
 				.to.be.true;
+		} );
+
+		it( 'should set clientNotResponding when a site request to current client fails', () => {
+			const state = jetpackConnectAuthorize(
+				{ queryObject: { client_id: '123' } },
+				{ type: SITE_REQUEST_FAILURE, siteId: 123 }
+			);
+			expect( state ).to.have.property( 'clientNotResponding' )
+				.to.be.true;
+		} );
+
+		it( 'should persist state when a site request to a different client fails', () => {
+			const state = jetpackConnectAuthorize(
+				{ queryObject: { client_id: '123' } },
+				{ type: SITE_REQUEST_FAILURE, siteId: 456 }
+			);
+			expect( state ).to.eql( { queryObject: { client_id: '123' } } );
 		} );
 
 		it( 'should persist state', () => {

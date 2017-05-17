@@ -36,9 +36,14 @@ const getAuthorizationRemoteSite = ( state ) => {
 };
 
 const isRemoteSiteOnSitesList = ( state ) => {
-	const remoteUrl = getAuthorizationRemoteSite( state );
+	const remoteUrl = getAuthorizationRemoteSite( state ),
+		authorizationData = getAuthorizationData( state );
 
 	if ( ! remoteUrl ) {
+		return false;
+	}
+
+	if ( authorizationData.clientNotResponding ) {
 		return false;
 	}
 
@@ -146,6 +151,14 @@ const getGlobalSelectedPlan = function( state ) {
 	return state.jetpackConnect.jetpackConnectSelectedPlans && state.jetpackConnect.jetpackConnectSelectedPlans[ '*' ];
 };
 
+const getSiteIdFromQueryObject = function( state ) {
+	const authorizationData = getAuthorizationData( state );
+	if ( authorizationData.queryObject && authorizationData.queryObject.client_id ) {
+		return parseInt( authorizationData.queryObject.client_id );
+	}
+	return null;
+};
+
 export default {
 	getConnectingSite,
 	getAuthorizationData,
@@ -164,5 +177,6 @@ export default {
 	getJetpackPlanSelected,
 	getSiteSelectedPlan,
 	getGlobalSelectedPlan,
-	getAuthAttempts
+	getAuthAttempts,
+	getSiteIdFromQueryObject
 };

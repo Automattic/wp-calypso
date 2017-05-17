@@ -47,6 +47,7 @@ class LoggedInForm extends Component {
 		goBackToWpAdmin: PropTypes.func.isRequired,
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
+		isFetchingAuthorizationSite: PropTypes.bool,
 		isSSO: PropTypes.bool,
 		jetpackConnectAuthorize: PropTypes.shape( {
 			authorizeError: PropTypes.oneOfType( [
@@ -347,7 +348,7 @@ class LoggedInForm extends Component {
 			return translate( 'Try again' );
 		}
 
-		if ( this.props.isFetchingSites ) {
+		if ( this.props.isFetchingAuthorizationSite ) {
 			return translate( 'Preparing authorization' );
 		}
 
@@ -484,7 +485,7 @@ class LoggedInForm extends Component {
 	renderStateAction() {
 		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
 		if (
-			this.props.isFetchingSites ||
+			this.props.isFetchingAuthorizationSite ||
 			this.isAuthorizing() ||
 			this.retryingAuth ||
 			( authorizeSuccess && ! siteReceived )
