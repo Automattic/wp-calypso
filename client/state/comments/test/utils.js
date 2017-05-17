@@ -14,8 +14,8 @@ describe( 'utils', () => {
 	describe( '#createRequestId()', () => {
 		it( 'should create the same id for differently ordered but same queries', () => {
 			const props = [ 'first', 'second', 'third', 'fourth' ];
-			let firstQuery = {};
-			let secondQuery = {};
+			const firstQuery = {};
+			const secondQuery = {};
 
 			props.forEach( ( prop ) => firstQuery[ prop ] = prop );
 			props.reverse().forEach( ( prop ) => secondQuery[ prop ] = prop );
