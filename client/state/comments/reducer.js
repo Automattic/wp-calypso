@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { sortBy, has, map, union, reject } from 'lodash';
+import { sortBy, has, map, unionBy, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -64,12 +64,14 @@ export function items( state = {}, action ) {
 			};
 		case COMMENTS_RECEIVE:
 			const { skipSort, comments } = action;
+			const allComments = unionBy(
+				state[ `${ siteId }-${ postId }` ],
+				comments,
+				'ID'
+			);
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: union(
-					state[ `${ siteId }-${ postId }` ],
-					! skipSort ? sortBy( comments, [ 'date' ] ) : comments
-				)
+				[ `${ siteId }-${ postId }` ]: ! skipSort ? sortBy( allComments, comment => new Date( comment.date ) ) : allComments
 			};
 		case COMMENTS_REMOVE:
 			return {
