@@ -62,6 +62,7 @@ const ContactFormDialog = React.createClass( {
 					<FormButton
 						key="add"
 						isPrimary={ false }
+						data-e2e-button="add"
 						onClick={ this.props.onFieldAdd } >
 						{ this.translate( 'Add New Field' ) }
 					</FormButton>
