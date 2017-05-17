@@ -22,9 +22,9 @@ const PaymentMethodRow = ( { method, translate } ) => {
 						</p>
 					)
 				}
-				<p>{ method.label }</p>
+				<p className="payments__method-name">{ method.label }</p>
 			</TableRowField>
-			<TableRowField>
+			<TableRowField className="payments__method-information">
 				<p>{ method.fee }</p>
 				<p>
 					<a href={ method.information }>

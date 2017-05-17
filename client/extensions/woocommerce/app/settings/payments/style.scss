@@ -2,10 +2,10 @@
 .payments__method-suggested.payments__method-suggested {
 	font-size: 11px;
 	text-transform: uppercase;
+	color: $gray;
 }
 
 .payments__method-row p {
-	font-size: 12px;
 	margin: 0;
 	padding: 0;
 }
@@ -16,6 +16,14 @@
 
 .payments__methods-column-method {
 	width: 30%;
+
+	.payments__method-name {
+		font-size: 16px;
+	}
+}
+
+.payments__method-information {
+	font-size: 13px;
 }
 
 .payments__methods-column-fees {
