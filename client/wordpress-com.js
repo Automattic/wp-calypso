@@ -24,6 +24,14 @@ const sections = [
 		secondary: true
 	},
 	{
+		name: 'login',
+		paths: [ '/me/login' ],
+		module: 'me/login',
+		enableLoggedOut: true,
+		secondary: false,
+		isomorphic: true
+	},
+	{
 		name: 'me',
 		paths: [ '/me' ],
 		module: 'me',
@@ -311,15 +319,6 @@ sections.push( {
 	secondary: true,
 	enableLoggedOut: true,
 	group: 'me'
-} );
-
-sections.push( {
-	name: 'login',
-	paths: [ '/login' ],
-	module: 'login',
-	enableLoggedOut: true,
-	secondary: false,
-	isomorphic: true
 } );
 
 sections.push( {
