@@ -10,27 +10,23 @@ import { localize } from 'i18n-calypso';
 
 import ExtendedHeader from '../../../components/extended-header';
 import ListHeader from '../../../components/list/list-header';
+import ListRowField from '../../../components/list/list-row-field';
 import ListRows from '../../../components/list/list-rows';
 import ListTable from '../../../components/list/list-table';
-import ListRowField from '../../../components/list/list-row-field';
 import PaymentMethodRow from './payment-method-row';
 
 class SettingsPaymentsOffSite extends Component {
-	constructor( props ) {
-		super( props );
 
-		//TODO: use redux state and real data
-		this.state = {
-			methods: [
-				{
-					name: 'PayPal Standard',
-					suggested: true,
-					fee: '2.9% + 30c per transaction',
-					information: 'http://paypal.com',
-				},
-			],
-		};
-	}
+	state = {
+		methods: [
+			{
+				name: 'PayPal Standard',
+				suggested: true,
+				fee: '2.9% + 30c per transaction',
+				information: 'http://paypal.com',
+			},
+		],
+	};
 
 	renderMethodRow = ( method ) => {
 		return (
@@ -54,15 +50,19 @@ class SettingsPaymentsOffSite extends Component {
 					} />
 					<ListTable>
 						<ListHeader>
-							<ListRowField width="30%">Method</ListRowField>
-							<ListRowField width="45%">Fees</ListRowField>
-							<ListRowField width="25%"></ListRowField>
+							<ListRowField className="payments__methods-column-method">
+								{ translate( 'Method' ) }
+							</ListRowField>
+							<ListRowField className="payments__methods-column-fees">
+								{ translate( 'Fees' ) }
+							</ListRowField>
+							<ListRowField className="payments__methods-column-settings">
+							</ListRowField>
 						</ListHeader>
 						<ListRows>
 							{ methods && methods.map( this.renderMethodRow ) }
 						</ListRows>
 					</ListTable>
-
 			</div>
 		);
 	}

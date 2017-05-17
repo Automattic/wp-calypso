@@ -7,9 +7,9 @@ import React from 'react';
  * Internal dependencies
  */
 
-const ListRowField = ( { children, width } ) => {
+const ListRowField = ( { children } ) => {
 	return (
-		<td className="list-row-field" style={ { width: width } }>
+		<td className="list-row-field">
 			{ children }
 		</td>
 	);
