@@ -75,21 +75,13 @@ describe( 'stepsForProductAndSurvey', function() {
 			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( [ INITIAL_STEP, FINAL_STEP ] );
 		} );
 
-		it( 'should include concierge step if product is business plan and abtest variant is showConciergeOffer', function() {
+		it( 'should include concierge step if product is business plan', function() {
 			const product = { product_slug: PLAN_BUSINESS };
-			abtests.conciergeOfferOnCancel = 'showConciergeOffer';
 			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( [ INITIAL_STEP, CONCIERGE_STEP, FINAL_STEP ] );
 		} );
 
-		it( 'should not include concierge step if product is jetpack business plan and abtest variant is showConciergeOffer', function() {
+		it( 'should not include concierge step if product is jetpack business plan', function() {
 			const product = { product_slug: PLAN_JETPACK_BUSINESS };
-			abtests.conciergeOfferOnCancel = 'showConciergeOffer';
-			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( [ INITIAL_STEP, FINAL_STEP ] );
-		} );
-
-		it( 'should not include concierge step if product is business plan and abtest variant is hideConciergeOffer', function() {
-			const product = { product_slug: PLAN_BUSINESS };
-			abtests.conciergeOfferOnCancel = 'hideConciergeOffer';
 			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( [ INITIAL_STEP, FINAL_STEP ] );
 		} );
 	} );
