@@ -94,13 +94,13 @@ const webpackConfig = {
 				loaders: [
 					'isomorphic-style-loader',
 					'css-loader?camelCase=dashes&importLoaders=1',
-					'sass-loader'
+					'sass-loader',
 				]
-			}
+			},
 		]
 	},
 	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx', '.scss' ],
+		extensions: [ '', '.json', '.js', '.jsx' ],
 		root: [ path.join( __dirname, 'server' ), path.join( __dirname, 'client' ), __dirname ],
 		modulesDirectories: [ 'node_modules' ]
 	},
