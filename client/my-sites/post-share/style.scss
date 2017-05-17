@@ -250,6 +250,11 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	border-radius: 50%;
 	position: relative;
 	flex: 0 0 32px;
+	opacity: 0.3;
+}
+
+.post-share__service.is-active .post-share__service-account-image {
+	opacity: 1;
 }
 
 .post-share__service-account-name {
