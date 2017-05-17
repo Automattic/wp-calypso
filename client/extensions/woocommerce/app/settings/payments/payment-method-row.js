@@ -8,14 +8,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import ListRowField from '../../../components/list/list-row-field';
+import TableRowField from '../../../components/table/table-row-field';
 
 const PaymentMethodRow = ( { method, translate } ) => {
 	return (
 		<tr className="payments__method-row">
-			<ListRowField>
+			<TableRowField>
 				{
-					method.suggested &&
+					method.isSuggested &&
 					(
 						<p className="payments__method-suggested">
 							{ translate( 'Suggested Method' ) }
@@ -23,22 +23,22 @@ const PaymentMethodRow = ( { method, translate } ) => {
 					)
 				}
 				<p>{ method.label }</p>
-			</ListRowField>
-			<ListRowField>
+			</TableRowField>
+			<TableRowField>
 				<p>{ method.fee }</p>
 				<p>
 					<a href={ method.information }>
 						{ translate( 'More Information' ) }
 					</a>
 				</p>
-			</ListRowField>
-			<ListRowField className="payments__setup-column">
+			</TableRowField>
+			<TableRowField className="payments__setup-column">
 				<Button compact>
 					{
 						translate( 'Set Up' )
 					}
 				</Button>
-			</ListRowField>
+			</TableRowField>
 		</tr>
 	);
 };

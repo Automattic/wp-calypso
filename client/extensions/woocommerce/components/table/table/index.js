@@ -8,14 +8,14 @@ import React from 'react';
  */
 import Card from 'components/card';
 
-const ListTable = ( { children } ) => {
+const Table = ( { children } ) => {
 	return (
-		<Card className="list-table">
-			<table className="list-table__table">
+		<Card className="table">
+			<table className="table__table">
 				{ children }
 			</table>
 		</Card>
 	);
 };
 
-export default ListTable;
+export default Table;

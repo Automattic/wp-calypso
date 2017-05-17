@@ -7,14 +7,14 @@ import React from 'react';
  * Internal dependencies
  */
 
-const ListHeader = ( { children } ) => {
+const TableHeader = ( { children } ) => {
 	return (
 		<thead>
-			<tr className="list-header__container">
+			<tr className="table-header__container">
 				{ children }
 			</tr>
 		</thead>
 	);
 };
 
-export default ListHeader;
+export default TableHeader;

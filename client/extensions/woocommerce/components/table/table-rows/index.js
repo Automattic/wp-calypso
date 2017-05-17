@@ -7,12 +7,12 @@ import React from 'react';
  * Internal dependencies
  */
 
-const ListRowField = ( { children } ) => {
+const TableRows = ( { children } ) => {
 	return (
-		<td className="list-row-field">
+		<tbody>
 			{ children }
-		</td>
+		</tbody>
 	);
 };
 
-export default ListRowField;
+export default TableRows;

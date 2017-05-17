@@ -9,10 +9,10 @@ import { localize } from 'i18n-calypso';
  */
 
 import ExtendedHeader from '../../../components/extended-header';
-import ListHeader from '../../../components/list/list-header';
-import ListRowField from '../../../components/list/list-row-field';
-import ListRows from '../../../components/list/list-rows';
-import ListTable from '../../../components/list/list-table';
+import Table from '../../../components/table/table';
+import TableHeader from '../../../components/table/table-header';
+import TableRowField from '../../../components/table/table-row-field';
+import TableRows from '../../../components/table/table-rows';
 import PaymentMethodRow from './payment-method-row';
 
 class SettingsPaymentsOffSite extends Component {
@@ -20,17 +20,17 @@ class SettingsPaymentsOffSite extends Component {
 	state = {
 		methods: [
 			{
-				name: 'PayPal Standard',
-				suggested: true,
+				label: 'PayPal Standard',
+				isSuggested: true,
 				fee: '2.9% + 30c per transaction',
-				information: 'http://paypal.com',
+				informationUrl: 'http://paypal.com',
 			},
 		],
 	};
 
 	renderMethodRow = ( method ) => {
 		return (
-			<PaymentMethodRow key={ method.name } method={ method } />
+			<PaymentMethodRow key={ method.label } method={ method } />
 		);
 	}
 
@@ -48,21 +48,21 @@ class SettingsPaymentsOffSite extends Component {
 							'information'
 						)
 					} />
-					<ListTable>
-						<ListHeader>
-							<ListRowField className="payments__methods-column-method">
+					<Table>
+						<TableHeader>
+							<TableRowField className="payments__methods-column-method">
 								{ translate( 'Method' ) }
-							</ListRowField>
-							<ListRowField className="payments__methods-column-fees">
+							</TableRowField>
+							<TableRowField className="payments__methods-column-fees">
 								{ translate( 'Fees' ) }
-							</ListRowField>
-							<ListRowField className="payments__methods-column-settings">
-							</ListRowField>
-						</ListHeader>
-						<ListRows>
+							</TableRowField>
+							<TableRowField className="payments__methods-column-settings">
+							</TableRowField>
+						</TableHeader>
+						<TableRows>
 							{ methods && methods.map( this.renderMethodRow ) }
-						</ListRows>
-					</ListTable>
+						</TableRows>
+					</Table>
 			</div>
 		);
 	}

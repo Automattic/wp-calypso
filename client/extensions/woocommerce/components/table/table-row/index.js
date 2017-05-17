@@ -6,8 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-
-const ListRow = ( { children } ) => {
+const TableRow = ( { children } ) => {
 	return (
 		<tr>
 			{ children }
@@ -15,4 +14,4 @@ const ListRow = ( { children } ) => {
 	);
 };
 
-export default ListRow;
+export default TableRow;
