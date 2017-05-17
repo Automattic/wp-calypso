@@ -8,8 +8,6 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 class Notice extends Component {
-	dismissTimeout = null;
-
 	static defaultProps = {
 		duration: 0,
 		status: null,
@@ -35,6 +33,8 @@ class Notice extends Component {
 		icon: PropTypes.string,
 		className: PropTypes.string
 	};
+
+	dismissTimeout = null;
 
 	componentDidMount() {
 		if ( this.props.duration > 0 ) {
