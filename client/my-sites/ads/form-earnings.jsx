@@ -17,7 +17,7 @@ import EarningsStore from 'lib/ads/earnings-store';
 class AdsFormEarnings extends Component {
 	state = this.getSettingsFromStore();
 
-	componentWillMount() {
+	componentDidMount() {
 		EarningsStore.on( 'change', this.updateSettings );
 		this.fetchIfEmpty();
 	}
