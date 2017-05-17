@@ -252,9 +252,8 @@ class AdsFormEarnings extends Component {
 			classes = classNames( 'earnings_history', {
 				'is-showing-info': this.getInfoToggle( type )
 			} );
-		let period;
 
-		for ( period in earnings ) {
+		for ( const period in earnings ) {
 			if ( earnings.hasOwnProperty( period ) ) {
 				rows.push(
 					<tr key={ type + '-' + period }>
