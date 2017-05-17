@@ -161,7 +161,7 @@ describe( 'reducer', () => {
 			const siteId = 1;
 			const requestId = createRequestId( siteId, postId, { after: new Date(), order: 'DESC', number: 10 } );
 
-			let action = {
+			const action = {
 				type: COMMENTS_REQUEST,
 				siteId,
 				postId,
