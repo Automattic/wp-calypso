@@ -4,19 +4,15 @@
 import { addQueryArgs } from 'lib/url';
 import config, { isEnabled } from 'config';
 
-export function login( { legacy, redirectTo, twoFactorAuthType } = {} ) {
-	const legacyUrl = config( 'login_url' );
+export function login( { isNative, redirectTo, twoFactorAuthType } = {} ) {
+	let url = config( 'login_url' );
 
-	let url = '';
-
-	if ( ! legacy && isEnabled( 'wp-login' ) ) {
+	if ( isNative && isEnabled( 'wp-login' ) ) {
 		url = '/log-in';
 
 		if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;
 		}
-	} else {
-		url = legacyUrl;
 	}
 
 	return redirectTo

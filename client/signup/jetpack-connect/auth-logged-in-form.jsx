@@ -470,7 +470,7 @@ class LoggedInForm extends Component {
 		return (
 			<LoggedOutFormLinks>
 				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
-				<LoggedOutFormLinkItem href={ login( { legacy: true, redirectTo } ) }>
+				<LoggedOutFormLinkItem href={ login( { redirectTo } ) }>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>

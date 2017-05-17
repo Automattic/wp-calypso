@@ -158,7 +158,7 @@ export class Login extends React.Component {
 
 		const lostPhoneLink = twoFactorAuthType && twoFactorAuthType !== 'backup' && (
 			<a
-				href={ login( { twoFactorAuthType: 'backup' } ) }
+				href={ login( { isNative: true, twoFactorAuthType: 'backup' } ) }
 				key="lost-phone-link">
 				{ this.props.translate( "I can't access my phone" ) }
 			</a>
