@@ -61,23 +61,21 @@ class AdsMain extends Component {
 			translate
 		} = this.props;
 		const pathSuffix = siteSlug ? '/' + siteSlug : '';
-		const filters = [];
 
-		if ( canAccessWordads( site ) ) {
-			filters.push( {
-				title: translate( 'Earnings' ),
-				path: '/ads/earnings' + pathSuffix,
-				id: 'ads-earnings'
-			} );
-
-			filters.push( {
-				title: translate( 'Settings' ),
-				path: '/ads/settings' + pathSuffix,
-				id: 'ads-settings'
-			} );
-		}
-
-		return filters;
+		return canAccessWordads( site )
+			? [
+				{
+					title: translate( 'Earnings' ),
+					path: '/ads/earnings' + pathSuffix,
+					id: 'ads-earnings'
+				},
+				{
+					title: translate( 'Settings' ),
+					path: '/ads/settings' + pathSuffix,
+					id: 'ads-settings'
+				}
+			]
+			: [];
 	}
 
 	getComponent( section ) {
