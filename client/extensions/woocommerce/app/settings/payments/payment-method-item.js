@@ -23,12 +23,12 @@ const PaymentMethodItem = ( { method, translate } ) => {
 						</p>
 					)
 				}
-				<p className="payments__method-name">{ method.label }</p>
+				<p className="payments__method-name">{ method.title }</p>
 			</ListItemField>
 			<ListItemField>
-				<p className="payments__method-information">{ method.fee }</p>
+				<p className="payments__method-information">{ method.fees }</p>
 				<p className="payments__method-information">
-					<a href={ method.information }>
+					<a href={ method.informationUrl }>
 						{ translate( 'More Information' ) }
 					</a>
 				</p>
@@ -46,9 +46,9 @@ const PaymentMethodItem = ( { method, translate } ) => {
 
 PaymentMethodItem.propTypes = {
 	method: PropTypes.shape( {
-		label: PropTypes.string.isRequired,
+		title: PropTypes.string.isRequired,
 		isSuggested: PropTypes.bool.isRequired,
-		fee: PropTypes.string.isRequired,
+		fees: PropTypes.string.isRequired,
 		informationUrl: PropTypes.string.isRequired,
 	} ),
 };

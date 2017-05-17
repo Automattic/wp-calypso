@@ -1,0 +1,23 @@
+{
+	"bacs": {
+		"methodType": "offline"
+	},
+	"cheque": {
+		"methodType": "offline"
+	},
+	"cod": {
+		"methodType": "offline"
+	},
+	"paypal": {
+		"fees": "2.9% + 30c per transaction",
+		"informationUrl": "https://docs.woocommerce.com/document/paypal-standard/",
+		"isSuggested": true,
+		"methodType": "off-site"
+	},
+	"stripe": {
+		"fees": "2.9% + 30c per transaction",
+		"informationUrl": "https://docs.woocommerce.com/document/stripe/",
+		"isSuggested": true,
+		"methodType": "on-site"
+	}
+}
