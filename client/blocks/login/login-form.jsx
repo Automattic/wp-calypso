@@ -9,7 +9,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
@@ -19,11 +18,9 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isRequesting, getRequestError } from 'state/login/selectors';
-import { errorNotice } from 'state/notices/actions';
 
 export class LoginForm extends Component {
 	static propTypes = {
-		errorNotice: PropTypes.func.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		loginError: PropTypes.string,
 		loginUser: PropTypes.func.isRequired,
@@ -64,27 +61,6 @@ export class LoginForm extends Component {
 			this.props.recordTracksEvent( 'calypso_login_block_login_failure', {
 				error_message: error.message
 			} );
-
-			if ( error.field === 'global' ) {
-				if ( error.message === 'proxy_required' ) {
-					// TODO: Remove once the proxy requirement is removed from the API
-
-					let redirectTo = '';
-
-					if ( typeof window !== 'undefined' && window.location.search.indexOf( '?redirect_to=' ) === 0 ) {
-						redirectTo = window.location.search;
-					}
-
-					this.props.errorNotice(
-						<p>
-							{ 'This endpoint is restricted to proxied Automatticians for now. Please use ' }
-							<a href={ config( 'login_url' ) + redirectTo }>the old login page</a>.
-						</p>
-					);
-				} else {
-					this.props.errorNotice( error.message );
-				}
-			}
 		} );
 	};
 
@@ -169,7 +145,6 @@ export default connect(
 		requestError: getRequestError( state ),
 	} ),
 	{
-		errorNotice,
 		loginUser,
 		recordTracksEvent,
 	}

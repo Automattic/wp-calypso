@@ -150,3 +150,13 @@ export const isRequesting = ( state ) => {
 export const getRequestError = ( state ) => {
 	return get( state, 'login.requestError', null );
 };
+
+/**
+ * Returns the notice for a login request.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Object}         Notice for the request.
+ */
+export const getRequestNotice = ( state ) => {
+	return get( state, 'login.requestNotice', null );
+};
