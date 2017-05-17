@@ -24,11 +24,11 @@ export class BusinessATStep extends Component {
 	}
 
 	onClickPluginSupport = () => {
-		this.recordTracksEvent( 'calypso_cancellation_business_at_plugin_support_click' );
+		this.props.recordTracksEvent( 'calypso_cancellation_business_at_plugin_support_click' );
 	}
 
 	onClickThemeSupport = () => {
-		this.recordTracksEvent( 'calypso_cancellation_business_at_theme_support_click' );
+		this.props.recordTracksEvent( 'calypso_cancellation_business_at_theme_support_click' );
 	}
 
 	render() {
@@ -43,6 +43,7 @@ export class BusinessATStep extends Component {
 		);
 		const themeLink = (
 			<a
+				onClick={ this.onClickThemeSupport }
 				target="_blank"
 				rel="noopener noreferrer"
 				href="https://en.support.wordpress.com/themes/adding-new-themes/"

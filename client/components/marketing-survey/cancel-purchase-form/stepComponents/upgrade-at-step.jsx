@@ -27,7 +27,7 @@ export class UpgradeATStep extends Component {
 	}
 
 	onClick = () => {
-		this.recordTracksEvent( 'calypso_cancellation_business_at_plugin_support_click' );
+		this.props.recordTracksEvent( 'calypso_cancellation_business_at_plugin_support_click' );
 	}
 
 	render() {
