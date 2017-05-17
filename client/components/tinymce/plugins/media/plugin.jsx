@@ -409,7 +409,7 @@ function mediaButton( editor ) {
 	} );
 
 	editor.addButton( 'wpcom_add_media', {
-		classes: 'btn wpcom-icon-button media',
+		classes: 'btn wpcom-icon-button media toolbar-segment-start',
 		cmd: 'wpcomAddMedia',
 		title: i18n.translate( 'Add Media' ),
 		onPostRender: function() {
