@@ -10,7 +10,7 @@ export function login( { legacy, redirectTo, twoFactorAuthType } = {} ) {
 	let url = '';
 
 	if ( ! legacy && isEnabled( 'wp-login' ) ) {
-		url = '/login';
+		url = '/log-in';
 
 		if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;
