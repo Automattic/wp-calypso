@@ -18,6 +18,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'state/action-types';
@@ -160,6 +161,10 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
  * @return {Function}                Action thunk to trigger the request.
  */
 export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
+	dispatch( {
+		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST
+	} );
+
 	return request.post( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' )
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
