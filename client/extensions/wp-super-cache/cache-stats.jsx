@@ -87,28 +87,28 @@ class CacheStats extends Component {
 					</thead>
 					<tbody>
 						{ map( files, ( { files: count, lower_age, upper_age }, url ) => (
-						<tr className="wp-super-cache__stat" key={ url }>
-							<td className="wp-super-cache__stat-dir">
-								{ url }
-							</td>
-							<td>
-								{ count }
-							</td>
-							<td className="wp-super-cache__stat-age">
-								{ getAge( lower_age, upper_age ) }
-							</td>
-							<td className="wp-super-cache__stat-action">
-								<Button
-									compact
-									busy={ isDeleting && ( this.state.url === url ) }
-									data-url={ url }
-									disabled={ isDeleting }
-									onClick={ this.deleteFile }>
-									{ translate( 'Delete' ) }
-								</Button>
-							</td>
-						</tr>
-					) ) }
+							<tr className="wp-super-cache__stat" key={ url }>
+								<td className="wp-super-cache__stat-dir">
+									{ url }
+								</td>
+								<td>
+									{ count }
+								</td>
+								<td className="wp-super-cache__stat-age">
+									{ getAge( lower_age, upper_age ) }
+								</td>
+								<td className="wp-super-cache__stat-action">
+									<Button
+										compact
+										busy={ isDeleting && ( this.state.url === url ) }
+										data-url={ url }
+										disabled={ isDeleting }
+										onClick={ this.deleteFile }>
+										{ translate( 'Delete' ) }
+									</Button>
+								</td>
+							</tr>
+						) ) }
 					</tbody>
 				</table>
 			</FoldableCard>
