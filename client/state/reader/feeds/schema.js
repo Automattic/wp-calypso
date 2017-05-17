@@ -14,6 +14,7 @@ export const itemsSchema = {
 				is_following: { type: [ 'boolean', 'null' ] },
 				subscribers_count: { type: [ 'integer', 'null' ] },
 				description: { type: [ 'string', 'null' ] },
+				last_update: { type: [ 'string', 'null' ] },
 			},
 		},
 	},
