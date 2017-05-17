@@ -9,6 +9,10 @@
 	flex: 1 0 0%;
 }
 
+.following-manage__subscriptions-list {
+	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
+}
+
 .following-manage__subscriptions-list .reader-subscription-list-item__options {
 	display: flex;
 	flex-direction: column;
