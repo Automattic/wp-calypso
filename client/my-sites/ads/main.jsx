@@ -35,12 +35,12 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 
 class AdsMain extends Component {
 	static propTypes = {
-		site: PropTypes.object.isRequired,
-		requestingWordAdsApproval: PropTypes.bool.isRequired,
-		requestWordAdsApproval: PropTypes.func.isRequired,
 		isRequestingWordadsStatus: PropTypes.bool.isRequired,
 		isUnsafe: PropTypes.oneOf( wordadsUnsafeValues ),
+		requestingWordAdsApproval: PropTypes.bool.isRequired,
+		requestWordAdsApproval: PropTypes.func.isRequired,
 		section: PropTypes.string.isRequired,
+		site: PropTypes.object.isRequired,
 		wordAdsError: PropTypes.string,
 		wordAdsSuccess: PropTypes.bool,
 	};
