@@ -7,7 +7,7 @@ import noop from 'lodash/noop';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
-class Notice extends Component {
+export class Notice extends Component {
 	static defaultProps = {
 		className: '',
 		duration: 0,
