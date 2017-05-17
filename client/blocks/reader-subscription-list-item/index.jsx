@@ -43,6 +43,7 @@ function ReaderSubscriptionListItem( {
 	translate,
 	followSource,
 	showEmailSettings,
+	showLastUpdatedDate,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
@@ -56,7 +57,7 @@ function ReaderSubscriptionListItem( {
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
 	const preferGravatar = ! isMultiAuthor;
-	const lastUpdatedDate = moment( get( feed, 'last_update' ) ).fromNow();
+	const lastUpdatedDate = showLastUpdatedDate && moment( get( feed, 'last_update' ) ).fromNow();
 
 	if ( ! site && ! feed ) {
 		return <ReaderSubscriptionListItemPlaceholder />;
@@ -107,13 +108,13 @@ function ReaderSubscriptionListItem( {
 						>
 							{ formatUrlForDisplay( siteUrl ) }
 						</a>
-						<span className="reader-subscription-list-item__timestamp">
-						{ feed &&
-								feed.last_update &&
-								' ' + translate( 'updated %s', { args: lastUpdatedDate } ) }
-						</span>
-					</div>
-				}
+						{ showLastUpdatedDate &&
+							<span className="reader-subscription-list-item__timestamp">
+								{ feed &&
+									feed.last_update &&
+									' ' + translate( 'updated %s', { args: lastUpdatedDate } ) }
+							</span> }
+					</div> }
 			</div>
 			<div className="reader-subscription-list-item__options">
 				<FollowButton
