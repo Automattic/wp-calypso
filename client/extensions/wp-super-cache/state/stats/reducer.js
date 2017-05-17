@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { get, omit } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -78,8 +78,8 @@ const items = createReducer( {}, {
 		const cacheType = isSupercache ? 'supercache' : 'wpcache';
 		const listType = isCached ? 'cached_list' : 'expired_list';
 		const countType = isCached ? 'cached' : 'expired';
-		// Get the files property of the stat that is about to be removed.
-		const file = state[ siteId ][ cacheType ][ listType ][ url ];
+		// Store the object whose key is given by `url` in the `file` var, and all other files in `remainingFiles`.
+		const { [ url ]: file, ...remainingFiles } = state[ siteId ][ cacheType ][ listType ];
 		const fileCount = get( file, 'files', 0 );
 
 		return ( {
@@ -89,7 +89,7 @@ const items = createReducer( {}, {
 				[ cacheType ]: {
 					...state[ siteId ][ cacheType ],
 					[ countType ]: state[ siteId ][ cacheType ][ countType ] - fileCount,
-					[ listType ]: omit( state[ siteId ][ cacheType ][ listType ], url ),
+					[ listType ]: remainingFiles,
 				},
 			}
 		} );
