@@ -57,7 +57,7 @@ class CacheStats extends Component {
 					</thead>
 					<tbody>
 						{ map( files, ( file, dir ) => (
-							<tr className="wp-super-cache__stat" key={ file.lower_age }>
+							<tr className="wp-super-cache__stat" key={ dir }>
 								<td className="wp-super-cache__stat-dir">{ dir }</td>
 								<td>{ file.files }</td>
 								<td className="wp-super-cache__stat-age">{ getAge( file ) }</td>
