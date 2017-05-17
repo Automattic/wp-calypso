@@ -9,29 +9,30 @@ import Gridicon from 'gridicons';
 
 class Notice extends Component {
 	static defaultProps = {
-		duration: 0,
-		status: null,
-		showDismiss: true,
 		className: '',
-		onDismissClick: noop
+		duration: 0,
+		onDismissClick: noop,
+		showDismiss: true,
+		status: null,
 	};
 
 	static propTypes = {
+		className: PropTypes.string,
+		duration: React.PropTypes.number,
+		icon: PropTypes.string,
+		isCompact: PropTypes.bool,
+		onDismissClick: PropTypes.func,
+		showDismiss: PropTypes.bool,
 		status: PropTypes.oneOf( [
+			'is-error',
 			'is-info',
 			'is-success',
-			'is-error',
 			'is-warning',
 		] ),
-		showDismiss: PropTypes.bool,
-		isCompact: PropTypes.bool,
-		duration: React.PropTypes.number,
 		text: PropTypes.oneOfType( [
+			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) ),
 			PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
-			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) )
 		] ),
-		icon: PropTypes.string,
-		className: PropTypes.string
 	};
 
 	dismissTimeout = null;
