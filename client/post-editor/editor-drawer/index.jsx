@@ -34,8 +34,7 @@ import {
 import config from 'config';
 import {
 	areSitePermalinksEditable,
-	isPrivateSite,
-	isHiddenSite
+	isHiddenSite,
 } from 'state/selectors';
 
 import EditorDrawerTaxonomies from './taxonomies';
@@ -259,9 +258,9 @@ const EditorDrawer = React.createClass( {
 
 		const { plan } = this.props.site;
 		const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
-		const { isPrivate, isHidden } = this.props;
+		const { isHidden } = this.props;
 
-		if ( ! hasBusinessPlan || isPrivate || isHidden ) {
+		if ( ! hasBusinessPlan || isHidden ) {
 			return;
 		}
 
@@ -374,7 +373,6 @@ export default connect(
 			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
 			typeObject: getPostType( state, siteId, type ),
-			isPrivate: isPrivateSite( state, siteId ),
 			isHidden: isHiddenSite( state, siteId ),
 		};
 	},

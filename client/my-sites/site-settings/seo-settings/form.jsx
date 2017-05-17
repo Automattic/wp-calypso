@@ -416,7 +416,7 @@ export const SeoForm = React.createClass( {
 		const activateVerificationServices = () => this.props.activateModule( siteId, 'verification-tools' );
 		const isSitePrivate = siteSettings && parseInt( siteSettings.blog_public, 10 ) !== 1;
 		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsSeo;
-		const isDisabled = isSitePrivate || isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
+		const isDisabled = isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
 		const isSeoDisabled = isDisabled || isSeoToolsActive === false;
 		const isVerificationDisabled = isDisabled || isVerificationToolsActive === false;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
@@ -471,12 +471,11 @@ export const SeoForm = React.createClass( {
 						status="is-warning"
 						showDismiss={ false }
 						text={ translate(
-							'SEO settings are disabled because the ' +
-							'site visibility is not set to Public.'
+							"SEO settings aren't recognized by search engines while your site is Private."
 						) }
 					>
 						<NoticeAction href={ generalTabUrl }>
-							{ translate( 'View Settings' ) }
+							{ translate( 'View privacy settings' ) }
 						</NoticeAction>
 					</Notice>
 				}
