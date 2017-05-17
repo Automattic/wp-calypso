@@ -6,13 +6,8 @@ import { omit } from 'lodash';
 
 export default class AsyncLoad extends Component {
 	static propTypes = {
-		noPlaceholder: PropTypes.bool,
-		placeholder: PropTypes.node,
 		require: PropTypes.func.isRequired,
-	};
-
-	static defaultProps = {
-		noPlaceholder: false,
+		placeholder: PropTypes.node
 	};
 
 	constructor() {
@@ -53,12 +48,8 @@ export default class AsyncLoad extends Component {
 
 	render() {
 		if ( this.state.component ) {
-			const props = omit( this.props, [ 'noPlaceholder', 'placeholder', 'require' ] );
+			const props = omit( this.props, [ 'require', 'placeholder' ] );
 			return <this.state.component { ...props } />;
-		}
-
-		if ( this.props.noPlaceholder ) {
-			return null;
 		}
 
 		if ( this.props.placeholder ) {
