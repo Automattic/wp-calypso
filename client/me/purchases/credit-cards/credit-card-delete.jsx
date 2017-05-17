@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ), connect = require( 'react-redux' ).connect;
+import { connect } from 'react-redux';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var StoredCard = require( 'my-sites/upgrades/checkout/stored-card' ),
-	successNotice = require( 'state/notices/actions' ).successNotice,
-	errorNotice = require( 'state/notices/actions' ).errorNotice,
-	deleteStoredCard = require( 'state/stored-cards/actions' ).deleteStoredCard;
+import { deleteStoredCard } from 'state/stored-cards/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import { isDeletingStoredCard } from 'state/stored-cards/selectors';
+import StoredCard from 'my-sites/upgrades/checkout/stored-card';
 
 const CreditCardDelete = React.createClass( {
 	handleClick: function() {
@@ -25,11 +25,7 @@ const CreditCardDelete = React.createClass( {
 	},
 
 	renderDeleteButton: function() {
-		var text = this.translate( 'Delete' );
-
-		if ( this.props.isDeleting ) {
-			text = this.translate( 'Deleting ' );
-		}
+		const text = this.props.isDeleting ? this.translate( 'Deleting ' ) : this.translate( 'Delete' );
 
 		return (
 			<button

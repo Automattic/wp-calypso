@@ -268,8 +268,8 @@ class RemovePurchase extends Component {
 				label: translate( 'Remove Now' ),
 				onClick: this.removePurchase,
 			},
-		],
-			productName = getName( getPurchase( this.props ) );
+		];
+		const productName = getName( getPurchase( this.props ) );
 
 		if ( config.isEnabled( 'upgrades/precancellation-chat' ) ) {
 			buttons.unshift( this.getChatButton() );
