@@ -17,7 +17,6 @@ import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
 import QueryReaderThumbnail from 'components/data/query-reader-thumbnails';
 
 class ReaderFeaturedVideo extends React.Component {
-
 	static propTypes = {
 		thumbnailUrl: React.PropTypes.string,
 		autoplayIframe: React.PropTypes.string,
@@ -29,15 +28,15 @@ class ReaderFeaturedVideo extends React.Component {
 		href: React.PropTypes.string,
 		isExpanded: React.PropTypes.bool,
 		expandCard: React.PropTypes.func,
-	}
+	};
 
 	static defaultProps = {
 		allowPlaying: true,
 		onThumbnailClick: noop,
 		className: '',
-	}
+	};
 
-	setVideoSizingStrategy = ( videoEmbed ) => {
+	setVideoSizingStrategy = videoEmbed => {
 		let sizingFunction = constant( {} );
 		if ( videoEmbed ) {
 			const maxWidth = ReactDom.findDOMNode( this ).parentNode.offsetWidth;
@@ -46,7 +45,7 @@ class ReaderFeaturedVideo extends React.Component {
 			sizingFunction = ( available = maxWidth ) => embedSize( available );
 		}
 		this.getEmbedSize = sizingFunction;
-	}
+	};
 
 	updateVideoSize = () => {
 		if ( this.videoEmbedRef ) {
@@ -55,21 +54,21 @@ class ReaderFeaturedVideo extends React.Component {
 
 			Object.assign( iframe.style, this.getEmbedSize( availableWidth ) );
 		}
-	}
+	};
 
-	throttledUpdateVideoSize = throttle( this.updateVideoSize, 100 )
+	throttledUpdateVideoSize = throttle( this.updateVideoSize, 100 );
 
-	handleThumbnailClick = ( e ) => {
+	handleThumbnailClick = e => {
 		if ( this.props.allowPlaying ) {
 			e.preventDefault();
 			this.props.onThumbnailClick();
 		}
-	}
+	};
 
-	setVideoEmbedRef = ( c ) => {
+	setVideoEmbedRef = c => {
 		this.videoEmbedRef = c;
 		this.setVideoSizingStrategy( this.props.videoEmbed );
-	}
+	};
 
 	componentDidMount() {
 		if ( this.props.allowPlaying ) {
@@ -88,7 +87,16 @@ class ReaderFeaturedVideo extends React.Component {
 	}
 
 	render() {
-		const { thumbnailUrl, autoplayIframe, iframe, translate, allowPlaying, className, href, isExpanded } = this.props;
+		const {
+			thumbnailUrl,
+			autoplayIframe,
+			iframe,
+			translate,
+			allowPlaying,
+			className,
+			href,
+			isExpanded,
+		} = this.props;
 
 		if ( ! isExpanded && thumbnailUrl ) {
 			return (
@@ -98,10 +106,12 @@ class ReaderFeaturedVideo extends React.Component {
 					className={ className }
 					href={ href }
 				>
-					{ allowPlaying && <img className="reader-featured-video__play-icon"
-						src="/calypso/images/reader/play-icon.png"
-						title={ translate( 'Play Video' ) }
-					/> }
+					{ allowPlaying &&
+						<img
+							className="reader-featured-video__play-icon"
+							src="/calypso/images/reader/play-icon.png"
+							title={ translate( 'Play Video' ) }
+						/> }
 				</ReaderFeaturedImage>
 			);
 		}
@@ -116,10 +126,11 @@ class ReaderFeaturedVideo extends React.Component {
 			<div className={ classNames }>
 				<QueryReaderThumbnail embedUrl={ this.props.videoEmbed.src } />
 				{ showEmbed &&
-					<div ref={ this.setVideoEmbedRef } className="reader-featured-video__video"
+					<div
+						ref={ this.setVideoEmbedRef }
+						className="reader-featured-video__video"
 						dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
-					/>
-				}
+					/> }
 			</div>
 		);
 		/* eslint-enable-line react/no-danger */

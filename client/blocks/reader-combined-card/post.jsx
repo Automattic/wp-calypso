@@ -33,9 +33,9 @@ class ReaderCombinedCardPost extends React.Component {
 
 	static defaultProps = {
 		showFeaturedAsset: true,
-	}
+	};
 
-	handleCardClick = ( event ) => {
+	handleCardClick = event => {
 		const rootNode = ReactDom.findDOMNode( this );
 		const selection = window.getSelection && window.getSelection();
 
@@ -53,7 +53,10 @@ class ReaderCombinedCardPost extends React.Component {
 		}
 
 		// ignore clicks on anchors inside inline content
-		if ( closest( event.target, 'a', true, rootNode ) && closest( event.target, '.reader-excerpt', true, rootNode ) ) {
+		if (
+			closest( event.target, 'a', true, rootNode ) &&
+			closest( event.target, '.reader-excerpt', true, rootNode )
+		) {
 			return;
 		}
 
@@ -63,11 +66,12 @@ class ReaderCombinedCardPost extends React.Component {
 		}
 
 		// programattic ignore
-		if ( ! event.defaultPrevented ) { // some child handled it
+		if ( ! event.defaultPrevented ) {
+			// some child handled it
 			event.preventDefault();
 			this.props.onClick( this.props.post );
 		}
-	}
+	};
 
 	render() {
 		const { post, streamUrl, isDiscover, isSelected } = this.props;
@@ -77,12 +81,25 @@ class ReaderCombinedCardPost extends React.Component {
 			return <ReaderCombinedCardPostPlaceholder />;
 		}
 
-		const hasAuthorName = has( post, 'author.name' ) && ! isAuthorNameBlacklisted( post.author.name );
+		const hasAuthorName =
+			has( post, 'author.name' ) && ! isAuthorNameBlacklisted( post.author.name );
 		let featuredAsset = null;
 		if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
-			featuredAsset = <ReaderFeaturedVideo { ...post.canonical_media } videoEmbed={ post.canonical_media } allowPlaying={ false } />;
+			featuredAsset = (
+				<ReaderFeaturedVideo
+					{ ...post.canonical_media }
+					videoEmbed={ post.canonical_media }
+					allowPlaying={ false }
+				/>
+			);
 		} else if ( post.canonical_media ) {
-			featuredAsset = <ReaderFeaturedImage imageWidth={ 100 } imageUrl={ post.canonical_media.src } href={ post.URL } />;
+			featuredAsset = (
+				<ReaderFeaturedImage
+					imageWidth={ 100 }
+					imageUrl={ post.canonical_media.src }
+					href={ post.URL }
+				/>
+			);
 		}
 
 		const recordDateClick = () => {
@@ -100,12 +117,13 @@ class ReaderCombinedCardPost extends React.Component {
 				{ this.props.showFeaturedAsset &&
 					<div className="reader-combined-card__featured-asset-wrapper">
 						{ featuredAsset }
-					</div>
-				}
+					</div> }
 				<div className="reader-combined-card__post-details">
 					<AutoDirection>
 						<h1 className="reader-combined-card__post-title">
-							<a className="reader-combined-card__post-title-link" href={ post.URL }>{ post.title }</a>
+							<a className="reader-combined-card__post-title-link" href={ post.URL }>
+								{ post.title }
+							</a>
 						</h1>
 					</AutoDirection>
 					<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
@@ -118,22 +136,24 @@ class ReaderCombinedCardPost extends React.Component {
 								className="reader-combined-card__author-link"
 								author={ post.author }
 								siteUrl={ streamUrl }
-								post={ post }>
+								post={ post }
+							>
 								{ post.author.name }
-							</ReaderAuthorLink>
-						}
-						{ post.date && post.URL &&
+							</ReaderAuthorLink> }
+						{ post.date &&
+							post.URL &&
 							<span className="reader-combined-card__timestamp">
 								{ hasAuthorName && <span>, </span> }
-								<a className="reader-combined-card__timestamp-link"
+								<a
+									className="reader-combined-card__timestamp-link"
 									onClick={ recordDateClick }
 									href={ post.URL }
 									target="_blank"
-									rel="noopener noreferrer">
+									rel="noopener noreferrer"
+								>
 									<PostTime date={ post.date } />
 								</a>
-							</span>
-						}
+							</span> }
 					</div>
 				</div>
 			</li>

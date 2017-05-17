@@ -32,18 +32,30 @@ const AuthorCompactProfile = React.createClass( {
 	},
 
 	render() {
-		const { author, siteIcon, feedIcon, siteName, siteUrl, feedUrl, followCount, feedId, siteId, post } = this.props;
+		const {
+			author,
+			siteIcon,
+			feedIcon,
+			siteName,
+			siteUrl,
+			feedUrl,
+			followCount,
+			feedId,
+			siteId,
+			post,
+		} = this.props;
 
 		if ( ! author ) {
 			return <AuthorCompactProfilePlaceholder />;
 		}
 
 		const hasAuthorName = has( author, 'name' );
-		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, author.name );
+		const hasMatchingAuthorAndSiteNames =
+			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, author.name );
 		const classes = classnames( {
 			'author-compact-profile': true,
 			'has-author-link': ! hasMatchingAuthorAndSiteNames,
-			'has-author-icon': siteIcon || feedIcon || ( author && author.has_avatar )
+			'has-author-icon': siteIcon || feedIcon || ( author && author.has_avatar ),
 		} );
 		const streamUrl = getStreamUrl( feedId, siteId );
 
@@ -55,34 +67,38 @@ const AuthorCompactProfile = React.createClass( {
 				<a href={ streamUrl } className="author-compact-profile__avatar-link">
 					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
 				</a>
-				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames &&
-					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>{ author.name }</ReaderAuthorLink> }
+				{ hasAuthorName &&
+					! hasMatchingAuthorAndSiteNames &&
+					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>
+						{ author.name }
+					</ReaderAuthorLink> }
 				{ siteName &&
-					<ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId } post={ post }>
+					<ReaderSiteStreamLink
+						className="author-compact-profile__site-link"
+						feedId={ feedId }
+						siteId={ siteId }
+						post={ post }
+					>
 						{ siteName }
 					</ReaderSiteStreamLink> }
 
 				<div className="author-compact-profile__follow">
-				{ followCount
-					? <div className="author-compact-profile__follow-count">
-					{ this.props.translate(
-						'%(followCount)s follower',
-						'%(followCount)s followers',
-						{
-							count: followCount,
-							args: {
-								followCount: numberFormat( followCount )
-							}
-						}
-					) }
-					</div> : null }
+					{ followCount
+						? <div className="author-compact-profile__follow-count">
+								{ this.props.translate( '%(followCount)s follower', '%(followCount)s followers', {
+									count: followCount,
+									args: {
+										followCount: numberFormat( followCount ),
+									},
+								} ) }
+							</div>
+						: null }
 
 					{ followUrl && <ReaderFollowButton siteUrl={ followUrl } /> }
 				</div>
 			</div>
 		);
-	}
-
+	},
 } );
 
 export default localize( AuthorCompactProfile );

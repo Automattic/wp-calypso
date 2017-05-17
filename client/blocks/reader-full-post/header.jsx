@@ -18,7 +18,7 @@ import { isDiscoverPost } from 'reader/discover/helper';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
 const ReaderFullPostHeader = ( { post, referralPost } ) => {
-	const handlePermalinkClick = ( { } ) => {
+	const handlePermalinkClick = ( {} ) => {
 		recordPermalinkClick( 'full_post_title', post );
 	};
 
@@ -42,30 +42,39 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 		<div className={ classNames( classes ) }>
 			{ post.title
 				? <AutoDirection>
-					<h1 className="reader-full-post__header-title" onClick={ handlePermalinkClick }>
-						<ExternalLink className="reader-full-post__header-title-link" href={ externalHref } target="_blank" icon={ false }>
-							{ post.title }
-						</ExternalLink>
-					</h1>
-				</AutoDirection>
+						<h1 className="reader-full-post__header-title" onClick={ handlePermalinkClick }>
+							<ExternalLink
+								className="reader-full-post__header-title-link"
+								href={ externalHref }
+								target="_blank"
+								icon={ false }
+							>
+								{ post.title }
+							</ExternalLink>
+						</h1>
+					</AutoDirection>
 				: null }
 			<div className="reader-full-post__header-meta">
 				{ post.date
 					? <span className="reader-full-post__header-date">
-						<a className="reader-full-post__header-date-link"
-							onClick={ recordDateClick }
-							href={ externalHref }
-							target="_blank"
-							rel="noopener noreferrer">
-							<PostTime date={ post.date } />
-						</a>
-					</span> : null }
+							<a
+								className="reader-full-post__header-date-link"
+								onClick={ recordDateClick }
+								href={ externalHref }
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<PostTime date={ post.date } />
+							</a>
+						</span>
+					: null }
 
 				{ post.tags && keys( post.tags ).length > 0
 					? <div className="reader-full-post__header-tags">
-					<Gridicon icon="tag" size={ 18 } />
-					<ReaderFullPostHeaderTags tags={ post.tags } />
-				</div> : null }
+							<Gridicon icon="tag" size={ 18 } />
+							<ReaderFullPostHeaderTags tags={ post.tags } />
+						</div>
+					: null }
 			</div>
 		</div>
 	);
@@ -74,7 +83,7 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 
 ReaderFullPostHeader.propTypes = {
 	post: React.PropTypes.object.isRequired,
-	referralPost: React.PropTypes.object
+	referralPost: React.PropTypes.object,
 };
 
 export default ReaderFullPostHeader;

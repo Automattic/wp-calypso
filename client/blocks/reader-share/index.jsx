@@ -38,8 +38,8 @@ const actionMap = {
 			query: {
 				text: post.title,
 				url: post.URL,
-				via: 'wordpressdotcom'
-			}
+				via: 'wordpressdotcom',
+			},
 		};
 
 		const twitterUrl = url.format( twitterUrlProperties );
@@ -53,14 +53,14 @@ const actionMap = {
 			pathname: '/sharer.php',
 			query: {
 				u: post.URL,
-				app_id: config( 'facebook_api_key' )
-			}
+				app_id: config( 'facebook_api_key' ),
+			},
 		};
 
 		const facebookUrl = url.format( facebookUrlProperties );
 
 		window.open( facebookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
-	}
+	},
 };
 
 function buildQuerystringForPost( post ) {
@@ -89,16 +89,15 @@ function canShareToWordPress() {
 }
 
 class ReaderShare extends React.Component {
-
 	static propTypes = {
-		iconSize: React.PropTypes.number
-	}
+		iconSize: React.PropTypes.number,
+	};
 
 	static defaultProps = {
 		position: 'bottom',
 		tagName: 'li',
-		iconSize: 24
-	}
+		iconSize: 24,
+	};
 
 	state = {
 		showingMenu: false,
@@ -121,7 +120,7 @@ class ReaderShare extends React.Component {
 		this.mounted = false;
 	}
 
-	deferMenuChange = ( showing ) => {
+	deferMenuChange = showing => {
 		if ( this.closeHandle ) {
 			clearTimeout( this.closeHandle );
 		}
@@ -130,20 +129,20 @@ class ReaderShare extends React.Component {
 			this.closeHandle = null;
 			this.setState( { showingMenu: showing } );
 		} );
-	}
+	};
 
-	toggle = ( event ) => {
+	toggle = event => {
 		event.preventDefault();
 		if ( ! this.state.showingMenu ) {
 			const target = canShareToWordPress() ? 'wordpress' : 'external';
 			stats.recordAction( 'open_share' );
 			stats.recordGaEvent( 'Opened Share to ' + target );
 			stats.recordTrack( 'calypso_reader_share_opened', {
-				target
+				target,
 			} );
 		}
 		this.deferMenuChange( ! this.state.showingMenu );
-	}
+	};
 
 	closeMenu = () => {
 		// have to defer this to let the mouseup / click escape.
@@ -152,28 +151,28 @@ class ReaderShare extends React.Component {
 		if ( this.mounted ) {
 			this.deferMenuChange( false );
 		}
-	}
+	};
 
-	pickSiteToShareTo = ( slug ) => {
+	pickSiteToShareTo = slug => {
 		stats.recordAction( 'share_wordpress' );
 		stats.recordGaEvent( 'Clicked on Share to WordPress' );
 		stats.recordTrack( 'calypso_reader_share_to_site' );
 		page( `/post/${ slug }?` + buildQuerystringForPost( this.props.post ) );
 		return true;
-	}
+	};
 
-	closeExternalShareMenu = ( action ) => {
+	closeExternalShareMenu = action => {
 		this.closeMenu();
 		const actionFunc = actionMap[ action ];
 		if ( actionFunc ) {
 			stats.recordAction( 'share_' + action );
 			stats.recordGaEvent( 'Clicked on Share to ' + action );
 			stats.recordTrack( 'calypso_reader_share_action_picked', {
-				action: action
+				action: action,
 			} );
 			actionFunc( this.props.post );
 		}
-	}
+	};
 
 	preloadEditor() {
 		preloadSection( 'post-editor' );
@@ -183,22 +182,27 @@ class ReaderShare extends React.Component {
 		const buttonClasses = classnames( {
 			'reader-share__button': true,
 			'ignore-click': true,
-			'is-active': this.state.showingMenu
+			'is-active': this.state.showingMenu,
 		} );
 
-		return React.createElement( this.props.tagName, {
-			className: 'reader-share',
-			onClick: this.toggle,
-			onTouchStart: this.preloadEditor,
-			onMouseEnter: this.preloadEditor,
-			ref: 'shareButton' },
+		return React.createElement(
+			this.props.tagName,
+			{
+				className: 'reader-share',
+				onClick: this.toggle,
+				onTouchStart: this.preloadEditor,
+				onMouseEnter: this.preloadEditor,
+				ref: 'shareButton',
+			},
 			[
-				( <span key="button" ref="shareButton" className={ buttonClasses }>
+				<span key="button" ref="shareButton" className={ buttonClasses }>
 					<Gridicon icon="share" size={ this.props.iconSize } />
-					<span className="reader-share__button-label">{ this.props.translate( 'Share', { comment: 'Share the post' } ) }</span>
-				</span> ),
-				( this.state.showingMenu &&
-						( canShareToWordPress()
+					<span className="reader-share__button-label">
+						{ this.props.translate( 'Share', { comment: 'Share the post' } ) }
+					</span>
+				</span>,
+				this.state.showingMenu &&
+					( canShareToWordPress()
 						? <SitesPopover
 								key="menu"
 								header={ <div>{ this.props.translate( 'Share on:' ) }</div> }
@@ -209,19 +213,23 @@ class ReaderShare extends React.Component {
 								onSiteSelect={ this.pickSiteToShareTo }
 								onClose={ this.closeMenu }
 								position={ this.props.position }
-								className="reader-share__sites-popover" />
-						: <PopoverMenu key="menu" context={ this.refs && this.refs.shareButton }
+								className="reader-share__sites-popover"
+							/>
+						: <PopoverMenu
+								key="menu"
+								context={ this.refs && this.refs.shareButton }
 								isVisible={ this.state.showingMenu }
 								onClose={ this.closeExternalShareMenu }
 								position={ this.props.position }
-								className="popover reader-share__popover">
+								className="popover reader-share__popover"
+							>
 								<PopoverMenuItem action="twitter" className="reader-share__popover-item">
-									<SocialLogo icon="twitter" /><span>Twitter</span></PopoverMenuItem>
+									<SocialLogo icon="twitter" /><span>Twitter</span>
+								</PopoverMenuItem>
 								<PopoverMenuItem action="facebook" className="reader-share__popover-item">
-									<SocialLogo icon="facebook" /><span>Facebook</span></PopoverMenuItem>
-							</PopoverMenu>
-						)
-					)
+									<SocialLogo icon="facebook" /><span>Facebook</span>
+								</PopoverMenuItem>
+							</PopoverMenu> ),
 			]
 		);
 	}

@@ -12,12 +12,11 @@ import AutoDirection from 'components/auto-direction';
 import cssSafeUrl from 'lib/css-safe-url';
 
 class PostPhoto extends React.Component {
-
 	state = {
 		cardWidth: 800,
 	};
 
-	handleClick = ( event ) => {
+	handleClick = event => {
 		if ( this.props.isExpanded ) {
 			this.props.onClick( event );
 			return;
@@ -26,7 +25,7 @@ class PostPhoto extends React.Component {
 		event.preventDefault();
 		const { post, site, postKey } = this.props;
 		this.props.expandCard( { post, site, postKey } );
-	}
+	};
 
 	getViewportHeight = () =>
 		Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
@@ -47,11 +46,11 @@ class PostPhoto extends React.Component {
 				this.setState( { cardWidth } );
 			}
 		}
-	}
+	};
 
-	handleWidthDivLoaded = ( ref ) => {
+	handleWidthDivLoaded = ref => {
 		this.widthDivRef = ref;
-	}
+	};
 
 	componentDidMount() {
 		this.resizeListener = window.addEventListener( 'resize', debounce( this.setCardWidth, 50 ) );
@@ -67,14 +66,14 @@ class PostPhoto extends React.Component {
 		const imageUrl = post.canonical_media.src;
 		const imageSize = {
 			height: post.canonical_media.height,
-			width: post.canonical_media.width
+			width: post.canonical_media.width,
 		};
 
 		const featuredImageStyle = {
 			backgroundImage: 'url(' + cssSafeUrl( imageUrl ) + ')',
 			backgroundSize: this.state.isExpanded ? 'contain' : 'cover',
 			backgroundRepeat: 'no-repeat',
-			backgroundPosition: 'center'
+			backgroundPosition: 'center',
 		};
 
 		let newWidth, newHeight;
@@ -82,18 +81,15 @@ class PostPhoto extends React.Component {
 			const cardWidth = this.state.cardWidth;
 			const { width: naturalWidth, height: naturalHeight } = imageSize;
 
-			newHeight = Math.min(
-				( naturalHeight / naturalWidth ) * cardWidth,
-				this.getMaxPhotoHeight(),
-			);
-			newWidth = ( naturalWidth / naturalHeight ) * newHeight;
+			newHeight = Math.min( naturalHeight / naturalWidth * cardWidth, this.getMaxPhotoHeight() );
+			newWidth = naturalWidth / naturalHeight * newHeight;
 			featuredImageStyle.height = newHeight;
 			featuredImageStyle.width = newWidth;
 		}
 
 		const classes = classnames( {
 			'reader-post-card__photo': true,
-			'is-expanded': this.props.isExpanded
+			'is-expanded': this.props.isExpanded,
 		} );
 
 		// force to non-breaking space if `title` is empty so that the title h1 doesn't collapse and complicate things
@@ -103,13 +99,24 @@ class PostPhoto extends React.Component {
 			: {};
 
 		return (
-			<div style={ divStyle } >
-				<a className={ classes } href={ post.URL } style={ featuredImageStyle } onClick={ this.handleClick }>
-					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
+			<div style={ divStyle }>
+				<a
+					className={ classes }
+					href={ post.URL }
+					style={ featuredImageStyle }
+					onClick={ this.handleClick }
+				>
+					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } } />
 				</a>
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
-						<a className="reader-post-card__title-link" href={ post.URL } onClick={ this.props.onClick }>{ linkTitle }</a>
+						<a
+							className="reader-post-card__title-link"
+							href={ post.URL }
+							onClick={ this.props.onClick }
+						>
+							{ linkTitle }
+						</a>
 					</h1>
 				</AutoDirection>
 			</div>
@@ -121,9 +128,9 @@ class PostPhoto extends React.Component {
 		const featuredImage = !! post.canonical_media.src ? this.renderFeaturedImage() : null;
 
 		return (
-			<div className="reader-post-card__post" >
+			<div className="reader-post-card__post">
 				{ featuredImage }
-				<div className="reader-post-card__post-details" >
+				<div className="reader-post-card__post-details">
 					{ children }
 				</div>
 			</div>

@@ -18,7 +18,8 @@ const ReaderExcerpt = ( { post, isDiscover } ) => {
 
 	return (
 		<AutoDirection>
-			<div className="reader-excerpt"
+			<div
+				className="reader-excerpt"
 				dangerouslySetInnerHTML={ { __html: excerpt } } // eslint-disable-line react/no-danger
 			/>
 		</AutoDirection>

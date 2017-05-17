@@ -21,24 +21,27 @@ class FollowButtonContainer extends Component {
 		followingLabel: React.PropTypes.string,
 		feedId: React.PropTypes.number,
 		siteId: React.PropTypes.number,
-	}
+	};
 
 	static defaultProps = {
-		onFollowToggle: noop
-	}
-	handleFollowToggle = ( following ) => {
+		onFollowToggle: noop,
+	};
+	handleFollowToggle = following => {
 		if ( following ) {
-			const followData = omitBy( {
-				feed_ID: this.props.feedId,
-				blog_ID: this.props.siteId,
-			}, isUndefined );
+			const followData = omitBy(
+				{
+					feed_ID: this.props.feedId,
+					blog_ID: this.props.siteId,
+				},
+				isUndefined
+			);
 
 			this.props.follow( this.props.siteUrl, followData );
 		} else {
 			this.props.unfollow( this.props.siteUrl );
 		}
 		this.props.onFollowToggle( following );
-	}
+	};
 
 	render() {
 		return (
@@ -50,17 +53,18 @@ class FollowButtonContainer extends Component {
 				disabled={ this.props.disabled }
 				followLabel={ this.props.followLabel }
 				followingLabel={ this.props.followingLabel }
-				className={ this.props.className } />
+				className={ this.props.className }
+			/>
 		);
 	}
 }
 
 export default connect(
 	( state, ownProps ) => ( {
-		following: isFollowing( state, { feedUrl: ownProps.siteUrl } )
+		following: isFollowing( state, { feedUrl: ownProps.siteUrl } ),
 	} ),
 	{
 		follow,
-		unfollow
+		unfollow,
 	}
 )( FollowButtonContainer );
