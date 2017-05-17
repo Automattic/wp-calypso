@@ -32,5 +32,5 @@ export default class FeaturedImage extends React.Component {
 }
 
 FeaturedImage.propTypes = {
-	src: React.PropTypes.string
+	src: React.PropTypes.string,
 };

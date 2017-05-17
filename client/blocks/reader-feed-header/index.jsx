@@ -53,8 +53,7 @@ class FeedHeader extends Component {
 	render() {
 		const { site, feed } = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
-		const ownerDisplayName =
-			site && ! site.is_multi_author && site.owner && site.owner.name;
+		const ownerDisplayName = site && ! site.is_multi_author && site.owner && site.owner.name;
 		const siteish = this.buildSiteish( site, feed );
 		const description = getSiteDescription( { site, feed } );
 
@@ -81,10 +80,7 @@ class FeedHeader extends Component {
 						{ this.props.feed &&
 							! this.props.feed.is_error &&
 							<div className="reader-feed-header__follow-button">
-								<ReaderFollowButton
-									siteUrl={ this.props.feed.feed_URL }
-									iconSize={ 24 }
-								/>
+								<ReaderFollowButton siteUrl={ this.props.feed.feed_URL } iconSize={ 24 } />
 							</div> }
 					</div>
 				</div>
