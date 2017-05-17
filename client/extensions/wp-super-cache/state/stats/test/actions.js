@@ -15,13 +15,11 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 	WP_SUPER_CACHE_RECEIVE_STATS,
-	WP_SUPER_CACHE_REMOVE_FILE,
 } from '../../action-types';
 import {
 	deleteFile,
 	generateStats,
 	receiveStats,
-	removeFile,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -125,20 +123,6 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#removeFile()', () => {
-		it( 'should return an action object', () => {
-			const action = removeFile( siteId, url, true, false );
-
-			expect( action ).to.eql( {
-				type: WP_SUPER_CACHE_REMOVE_FILE,
-				isCached: false,
-				isSupercache: true,
-				siteId,
-				url,
-			} );
-		} );
-	} );
-
 	describe( '#deleteFile()', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com' )
@@ -163,19 +147,14 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch remove action when request completes', () => {
-			return deleteFile( siteId, url, true, false )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith(
-					removeFile( siteId, url, true, false )
-				);
-			} );
-		} );
-
 		it( 'should dispatch request success action when request completes', () => {
 			return deleteFile( siteId, url, true, false )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
+					isSupercache: true,
+					isCached: false,
 					siteId,
+					url,
 				} );
 			} );
 		} );

@@ -16,7 +16,6 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 	WP_SUPER_CACHE_RECEIVE_STATS,
-	WP_SUPER_CACHE_REMOVE_FILE,
 } from '../../action-types';
 import {
 	DESERIALIZE,
@@ -162,9 +161,30 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set deleting value to false if request finishes successfully', () => {
-			const state = reducer( previousState, {
+			const oldState = deepFreeze( {
+				items: {
+					[ primarySiteId ]: {
+						wpcache: {
+							cached: 2,
+							cached_list: [ {
+								dir: 'wordpress.com/cached-file',
+								files: 2,
+								lower_age: 5500,
+								upper_age: 10000,
+							} ],
+							expired: 0,
+							expired_list: [],
+							fsize: 0,
+						}
+					}
+				}
+			} );
+			const state = reducer( oldState, {
 				type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
 				siteId: primarySiteId,
+				url: 'wordpress.com/cached-file',
+				isSupercache: false,
+				isCached: true,
 			} );
 
 			expect( state.deleting ).to.eql( {
@@ -303,7 +323,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		describe( 'WP_SUPER_CACHE_REMOVE_FILE', () => {
+		describe( 'WP_SUPER_CACHE_DELETE_FILE_SUCCESS', () => {
 			it( 'should update supercache expired count and expired files on file remove', () => {
 				const previousState = deepFreeze( {
 					items: {
@@ -329,7 +349,7 @@ describe( 'reducer', () => {
 					}
 				} );
 				const state = reducer( previousState, {
-					type: WP_SUPER_CACHE_REMOVE_FILE,
+					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
 					siteId: primarySiteId,
 					url: 'wordpress.com/expired-file',
 					isSupercache: true,
@@ -379,7 +399,7 @@ describe( 'reducer', () => {
 					}
 				} );
 				const state = reducer( previousState, {
-					type: WP_SUPER_CACHE_REMOVE_FILE,
+					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
 					siteId: primarySiteId,
 					url: 'wordpress.com/cached-file',
 					isSupercache: true,
@@ -429,7 +449,7 @@ describe( 'reducer', () => {
 					}
 				} );
 				const state = reducer( previousState, {
-					type: WP_SUPER_CACHE_REMOVE_FILE,
+					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
 					siteId: primarySiteId,
 					url: 'wordpress.com/expired-file',
 					isSupercache: false,
@@ -479,7 +499,7 @@ describe( 'reducer', () => {
 					}
 				} );
 				const state = reducer( previousState, {
-					type: WP_SUPER_CACHE_REMOVE_FILE,
+					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
 					siteId: primarySiteId,
 					url: 'wordpress.com/cached-file',
 					isSupercache: false,

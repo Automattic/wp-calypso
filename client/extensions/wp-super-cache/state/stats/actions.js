@@ -15,7 +15,6 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 	WP_SUPER_CACHE_RECEIVE_STATS,
-	WP_SUPER_CACHE_REMOVE_FILE,
 } from '../action-types';
 import { errorNotice, removeNotice } from 'state/notices/actions';
 
@@ -58,18 +57,6 @@ export const generateStats = ( siteId ) => {
 	};
 };
 
-/**
- * Returns an action object to be used in signalling that a cached file should be removed.
- *
- * @param  {Number} siteId Site ID
- * @param  {String} url URL of cached file to remove
- * @param  {Boolean} isSupercache Whether this is a supercache file
- * @param  {Boolean} isCached Whether this is a cached file
- * @return {Object} Action object
- */
-export const removeFile = ( siteId, url, isSupercache, isCached ) =>
-	( { type: WP_SUPER_CACHE_REMOVE_FILE, siteId, url, isSupercache, isCached } );
-
 /*
  * Deletes a cached file for a site.
  *
@@ -92,8 +79,7 @@ export const deleteFile = ( siteId, url, isSupercache, isCached ) => {
 				path: '/wp-super-cache/v1/cache',
 			} )
 			.then( () => {
-				dispatch( removeFile( siteId, url, isSupercache, isCached ) );
-				dispatch( { type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS, siteId } );
+				dispatch( { type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS, siteId, url, isSupercache, isCached } );
 			} )
 			.catch( () => {
 				dispatch( errorNotice(
