@@ -3,10 +3,6 @@
  */
 import React from 'react';
 
-/**
- * Internal dependencies
- */
-
 const TableHeader = ( { children } ) => {
 	return (
 		<thead>

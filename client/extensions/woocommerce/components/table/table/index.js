@@ -3,9 +3,6 @@
  */
 import React from 'react';
 
-/**
- * Internal dependencies
- */
 import Card from 'components/card';
 
 const Table = ( { children } ) => {

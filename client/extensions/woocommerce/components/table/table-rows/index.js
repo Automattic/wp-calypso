@@ -3,10 +3,6 @@
  */
 import React from 'react';
 
-/**
- * Internal dependencies
- */
-
 const TableRows = ( { children } ) => {
 	return (
 		<tbody>
