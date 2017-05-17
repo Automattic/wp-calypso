@@ -4,12 +4,14 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 import { editProduct, editProductAttribute } from '../../state/ui/products/actions';
 import { getCurrentlyEditingProduct } from '../../state/ui/products/selectors';
@@ -62,8 +64,26 @@ class ProductCreate extends React.Component {
 	}
 
 	onSave = () => {
-		const { siteId, product } = this.props;
-		this.props.createProduct( siteId, product );
+		const { siteId, product, translate } = this.props;
+
+		const successAction = () => {
+			return successNotice(
+				translate( '%(product)s successfully created.', {
+					args: { product: product.name },
+				} ),
+				{ duration: 4000 }
+			);
+		};
+
+		const errorAction = () => {
+			return errorNotice(
+				translate( 'There was a problem saving %(product)s. Please try again.', {
+					args: { product: product.name },
+				} )
+			);
+		};
+
+		this.props.createProduct( siteId, product, successAction, errorAction );
 	}
 
 	render() {
@@ -115,4 +135,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( ProductCreate );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCreate ) );
