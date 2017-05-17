@@ -35,44 +35,48 @@ describe( '#processInboundChain', () => {
 
 	it( 'should pass through data given an empty chain', () => {
 		expect(
-			processInboundChain( [] )( getSites, {}, { value: 1 }, { error: 'bad' } )
+			processInboundChain( [] )( getSites, {}, { value: 1 }, { error: 'bad' }, {} )
 		).to.eql( {
 			failures: [ getSites.onFailure ],
 			nextData: { value: 1 },
 			nextError: { error: 'bad' },
+			nextHeaders: {},
 			successes: [ getSites.onSuccess ],
 		} );
 	} );
 
 	it( 'should sequence a single processor', () => {
 		expect(
-			processInboundChain( [ responderDoubler ] )( getSites, {}, {}, {} )
+			processInboundChain( [ responderDoubler ] )( getSites, {}, {}, {}, {} )
 		).to.eql( {
 			failures: [ getSites.onFailure, getSites.onFailure ],
 			nextData: {},
 			nextError: {},
+			nextHeaders: {},
 			successes: [ getSites.onSuccess, getSites.onSuccess ],
 		} );
 	} );
 
 	it( 'should sequence multiple processors', () => {
 		expect(
-			processInboundChain( [ responderDoubler, responderDoubler ] )( getSites, {}, {}, {} )
+			processInboundChain( [ responderDoubler, responderDoubler ] )( getSites, {}, {}, {}, {} )
 		).to.eql( {
 			failures: ( new Array( 4 ) ).fill( getSites.onFailure ),
 			nextData: {},
 			nextError: {},
+			nextHeaders: {},
 			successes: ( new Array( 4 ) ).fill( getSites.onSuccess ),
 		} );
 	} );
 
 	it( 'should abort the chain as soon as `shouldAbort` is set', () => {
 		expect(
-			processInboundChain( [ aborter, responderDoubler ] )( getSites, {}, {}, {} )
+			processInboundChain( [ aborter, responderDoubler ] )( getSites, {}, {}, {}, {} )
 		).to.eql( {
 			failures: [],
 			nextData: {},
 			nextError: {},
+			nextHeaders: {},
 			successes: [],
 			shouldAbort: true,
 		} );

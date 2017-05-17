@@ -28,8 +28,8 @@ const fetcherMap = method => get( {
 	POST: wpcom.req.post.bind( wpcom.req ),
 }, method, null );
 
-export const successMeta = data => ( { meta: { dataLayer: { data } } } );
-export const failureMeta = error => ( { meta: { dataLayer: { error } } } );
+export const successMeta = ( data, headers ) => ( { meta: { dataLayer: { data, headers } } } );
+export const failureMeta = ( error, headers ) => ( { meta: { dataLayer: { error, headers } } } );
 export const progressMeta = ( { total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
 
 export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch }, rawAction, next ) => {
@@ -54,22 +54,23 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 		{ path, formData },
 		query,
 		method === 'POST' && body,
-		( error, data ) => {
+		( error, data, headers ) => {
 			const {
 				failures,
 				nextData,
 				nextError,
+				nextHeaders,
 				shouldAbort,
 				successes
-			} = processInbound( action, { dispatch }, data, error );
+			} = processInbound( action, { dispatch }, data, error, headers );
 
 			if ( true === shouldAbort ) {
 				return null;
 			}
 
 			return !! nextError
-				? failures.forEach( handler => dispatch( extendAction( handler, failureMeta( nextError ) ) ) )
-				: successes.forEach( handler => dispatch( extendAction( handler, successMeta( nextData ) ) ) );
+				? failures.forEach( handler => dispatch( extendAction( handler, failureMeta( nextError, nextHeaders ) ) ) )
+				: successes.forEach( handler => dispatch( extendAction( handler, successMeta( nextData, nextHeaders ) ) ) );
 		}
 	] ) );
 
