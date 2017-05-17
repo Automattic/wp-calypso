@@ -13,7 +13,8 @@ import { connect } from 'react-redux';
 import { recordAction, recordTrack } from 'reader/stats';
 import Button from 'components/button';
 import { requestSiteBlock } from 'state/reader/site-blocks/actions';
-import ConnectedSubscriptionListItem from 'reader/following-manage/connected-subscription-list-item';
+import ConnectedSubscriptionListItem
+	from 'reader/following-manage/connected-subscription-list-item';
 
 export class RecommendedSites extends React.PureComponent {
 	static propTypes = {
@@ -27,12 +28,12 @@ export class RecommendedSites extends React.PureComponent {
 		} );
 		recordAction( 'calypso_reader_recommended_site_dismissed' );
 		this.props.requestSiteBlock( siteId );
-	}
+	};
 
 	handleSiteClick = ( siteId, uiIndex ) => {
 		recordTrack( 'calypso_reader_recommended_site_clicked', {
 			ui_position: uiIndex,
-			siteId
+			siteId,
 		} );
 		recordAction( 'calypso_reader_recommended_site_clicked' );
 	};
@@ -50,25 +51,30 @@ export class RecommendedSites extends React.PureComponent {
 					<Gridicon icon="thumbs-up" size={ 18 } />{ this.props.translate( 'Recommended Sites' ) }
 				</h1>
 				<ul className="reader-recommended-sites__list">
-					{
-						map(
-							sites,
-							( site, index ) => {
-								const siteId = site.siteId || site.blogId;
-								return ( <li className="reader-recommended-sites__site-list-item" key={ `site-rec-${ siteId }` }>
-									<div className="reader-recommended-sites__recommended-site-dismiss">
-										<Button borderless
-											title={ this.props.translate( 'Dismiss this recommendation' ) }
-											onClick={ partial( this.handleSiteDismiss, siteId, index ) }
-										>
-											<Gridicon icon="cross" size={ 18 } />
-										</Button>
-									</div>
-									<ConnectedSubscriptionListItem siteId={ siteId } showEmailSettings={ false } />
-								</li> );
-							}
-						)
-					}
+					{ map( sites, ( site, index ) => {
+						const siteId = site.siteId || site.blogId;
+						return (
+							<li
+								className="reader-recommended-sites__site-list-item"
+								key={ `site-rec-${ siteId }` }
+							>
+								<div className="reader-recommended-sites__recommended-site-dismiss">
+									<Button
+										borderless
+										title={ this.props.translate( 'Dismiss this recommendation' ) }
+										onClick={ partial( this.handleSiteDismiss, siteId, index ) }
+									>
+										<Gridicon icon="cross" size={ 18 } />
+									</Button>
+								</div>
+								<ConnectedSubscriptionListItem
+									siteId={ siteId }
+									showEmailSettings={ false }
+									showLastUpdatedDate={ false }
+								/>
+							</li>
+						);
+					} ) }
 				</ul>
 			</div>
 		);

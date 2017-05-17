@@ -21,11 +21,13 @@ class ConnectedSubscriptionListItem extends React.Component {
 		siteId: PropTypes.number,
 		onLoad: PropTypes.func,
 		showEmailSettings: PropTypes.bool,
+		showLastUpdatedDate: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onLoad: noop,
 		showEmailSettings: true,
+		showLastUpdatedDate: true,
 	};
 
 	componentDidMount() {
@@ -39,7 +41,16 @@ class ConnectedSubscriptionListItem extends React.Component {
 	}
 
 	render() {
-		const { feed, site, translate, url, feedId, siteId, showEmailSettings } = this.props;
+		const {
+			feed,
+			site,
+			translate,
+			url,
+			feedId,
+			siteId,
+			showEmailSettings,
+			showLastUpdatedDate,
+		} = this.props;
 		const isEmailBlocked = userSettings.getSetting( 'subscription_delivery_email_blocked' );
 
 		return (
@@ -51,6 +62,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 				feed={ feed }
 				url={ url }
 				showEmailSettings={ showEmailSettings && ! isEmailBlocked }
+				showLastUpdatedDate={ showLastUpdatedDate }
 			/>
 		);
 	}
