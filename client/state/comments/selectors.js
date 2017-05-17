@@ -75,7 +75,7 @@ export const getPostOldestCommentDate = createSelector(
  * @return {Object} comments tree in the form of immutable map<CommentId, CommentNode>, and in addition a children array
  */
 export const getPostCommentsTree = createSelector(
-	( state, siteId, postId, status ) => {
+	( state, siteId, postId, status = 'approved' ) => {
 		const allItems = getPostCommentItems( state, siteId, postId );
 		const items = status !== 'all' ? filter( allItems, { status } ) : allItems;
 
