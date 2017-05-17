@@ -12,8 +12,6 @@ import Gridicon from 'gridicons';
 import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
 
-const hrefProp = url => url ? { href: url } : {};
-
 export default React.createClass( {
 	displayName: 'Site',
 
@@ -37,8 +35,7 @@ export default React.createClass( {
 			homeLink: false,
 			// if homeLink is enabled
 			showHomeIcon: true,
-			compact: false,
-			homeLinkCompact: false,
+			compact: false
 		};
 	},
 
@@ -54,8 +51,7 @@ export default React.createClass( {
 		site: React.PropTypes.object,
 		homeLink: React.PropTypes.bool,
 		showHomeIcon: React.PropTypes.bool,
-		compact: React.PropTypes.bool,
-		homeLinkCompact: React.PropTypes.bool,
+		compact: React.PropTypes.bool
 	},
 
 	onSelect( event ) {
@@ -71,7 +67,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { site, homeLinkCompact, homeLink } = this.props;
+		const site = this.props.site;
 
 		if ( ! site ) {
 			// we could move the placeholder state here
@@ -89,15 +85,10 @@ export default React.createClass( {
 			'is-compact': this.props.compact,
 		} );
 
-		const homeLinkHref = homeLink ? site.URL : this.props.href;
-		const ariaLabel = ( homeLink && site.is_previewable )
-			? this.translate( 'Open site %(domain)s in a preview', { args: { domain: site.domain } } )
-			: this.translate( 'Open site %(domain)s in new tab', { args: { domain: site.domain } } );
-
 		return (
 			<div className={ siteClass }>
 				<a className="site__content"
-					{ ...hrefProp( ! homeLinkCompact && homeLinkHref ) }
+					href={ this.props.homeLink ? site.URL : this.props.href }
 					data-tip-target={ this.props.tipTarget }
 					target={ this.props.externalLink && '_blank' }
 					title={ this.props.homeLink
@@ -107,48 +98,44 @@ export default React.createClass( {
 					onClick={ this.onSelect }
 					onMouseEnter={ this.onMouseEnter }
 					onMouseLeave={ this.onMouseLeave }
-					aria-label={ ariaLabel }
+					aria-label={ this.props.homeLink && site.is_previewable
+						? this.translate( 'Open site %(domain)s in a preview', {
+							args: { domain: site.domain }
+						} )
+						: this.translate( 'Open site %(domain)s in new tab', {
+							args: { domain: site.domain }
+						} )
+					}
 				>
-					<a
-						href={ hrefProp( homeLinkCompact && homeLinkHref ) }
-						aria-label={ ariaLabel }
-						className="site__site-icon-link"
-					>
-						<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
-					</a>
-					<a
-						href={ hrefProp( homeLinkCompact && homeLinkHref ) }
-						aria-label={ ariaLabel }
-					>
-						<div className="site__info">
-							<div className="site__title">
-								{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-								{ this.props.site.is_private &&
-									<span className="site__badge">
-										<Gridicon icon="lock" size={ 14 } />
-									</span>
-								}
-								{ site.options && site.options.is_redirect &&
-									<span className="site__badge">
-										<Gridicon icon="block" size={ 14 } />
-									</span>
-								}
-								{ site.options && site.options.is_domain_only &&
-									<span className="site__badge">
-										<Gridicon icon="domains" size={ 14 } />
-									</span>
-								}
-								{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-								{ site.title }
-							</div>
-							<div className="site__domain">{ site.domain }</div>
+					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
+					<div className="site__info">
+						<div className="site__title">
+							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+							{ this.props.site.is_private &&
+								<span className="site__badge">
+									<Gridicon icon="lock" size={ 14 } />
+								</span>
+							}
+							{ site.options && site.options.is_redirect &&
+								<span className="site__badge">
+									<Gridicon icon="block" size={ 14 } />
+								</span>
+							}
+							{ site.options && site.options.is_domain_only &&
+								<span className="site__badge">
+									<Gridicon icon="domains" size={ 14 } />
+								</span>
+							}
+							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+							{ site.title }
 						</div>
-						{ this.props.homeLink && this.props.showHomeIcon &&
-							<span className="site__home">
-								<Gridicon icon="house" size={ 18 } />
-							</span>
-						}
-					</a>
+						<div className="site__domain">{ site.domain }</div>
+					</div>
+					{ this.props.homeLink && this.props.showHomeIcon &&
+						<span className="site__home">
+							<Gridicon icon="house" size={ 18 } />
+						</span>
+					}
 				</a>
 				{ this.props.indicator
 					? <SiteIndicator site={ site } />

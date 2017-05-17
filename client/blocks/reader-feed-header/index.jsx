@@ -90,7 +90,6 @@ class FeedHeader extends Component {
 							site={ siteish }
 							homeLink={ true }
 							showHomeIcon={ false }
-							homeLinkCompact={ true }
 							href={ siteish.URL }
 							indicator={ false }
 						/> }
