@@ -160,7 +160,7 @@ if ( calypsoEnv === 'desktop' ) {
 
 const jsLoader = {
 	test: /\.jsx?$/,
-	exclude: /node_modules\/(?!notifications-panel)/,
+	exclude: /node_modules[\/\\](?!notifications-panel)/,
 	loader: 'babel',
 	query: {
 		cacheDirectory: './.babel-cache',
