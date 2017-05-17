@@ -69,9 +69,7 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 };
 
 export const getSiteDescription = ( { site, feed } ) => {
-	const description = decodeEntities(
-		( site && site.description ) || ( feed && feed.description )
-	);
+	const description = ( site && site.description ) || ( feed && feed.description );
 	if ( isSiteDescriptionBlacklisted( description ) ) {
 		return null;
 	}
