@@ -9,6 +9,7 @@ import React, { Component, PropTypes } from 'react';
  * Internal dependencies
  */
 import { getSelectedSiteIdWithFallback } from '../state/sites/selectors';
+import { getLink } from '../lib/nav-utils';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarItem from 'layout/sidebar/item';
@@ -37,11 +38,6 @@ class StoreSidebar extends Component {
 
 	onNavigate = () => {
 		window.scrollTo( 0, 0 );
-	}
-
-	itemLink = ( path ) => {
-		const link = this.props.site ? path.replace( ':site', this.props.site.slug ) : '#';
-		return link;
 	}
 
 	itemLinkClass = ( path, existingClasses, disabled ) => {
@@ -78,10 +74,14 @@ class StoreSidebar extends Component {
 
 	renderSidebarMenuItems = ( items, buttons, disabled ) => {
 		return items.map( function( item, index ) {
-			const itemLink = this.itemLink( item.path );
+			const itemLink = getLink( item.path, this.props.site );
 			const itemButton = buttons.filter( button => button.parentSlug === item.slug ).map( button => {
 				return (
-					<SidebarButton href={ this.itemLink( button.path ) } key={ button.slug } disabled={ disabled } >
+					<SidebarButton
+						disabled={ disabled }
+						href={ getLink( button.path, this.props.site ) }
+						key={ button.slug }
+					>
 						{ button.label }
 					</SidebarButton>
 				);
