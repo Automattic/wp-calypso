@@ -73,13 +73,21 @@ class Notice extends Component {
 	}
 
 	render() {
-		const { status, className, isCompact, showDismiss } = this.props;
+		const {
+			children,
+			className,
+			icon,
+			isCompact,
+			onDismissClick,
+			showDismiss,
+			status,
+			text,
+			translate,
+		} = this.props;
 		const classes = classnames( 'notice', status, className, {
 			'is-compact': isCompact,
 			'is-dismissable': showDismiss
 		} );
-
-		const { icon, text, children, onDismissClick, translate } = this.props;
 
 		return (
 			<div className={ classes }>
