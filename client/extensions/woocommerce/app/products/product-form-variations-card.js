@@ -22,7 +22,21 @@ const ProductFormVariationsCard = ( {
 } ) => {
 	const handleToggle = () => {
 		if ( 'variable' !== product.type ) {
-			editProduct( product, { type: 'variable', dimensions: {} } );
+			// Reset any 'simple' product settings that have been filled out,
+			// since they are configured by each variation instead.
+			const productData = { ...product };
+			[ 'dimensions', 'weight', 'regular_price', 'manage_stock',
+			'stock_quantity', 'backorders' ].forEach(
+				function( field ) {
+					if ( product[ field ] ) {
+						productData[ field ] = null;
+					}
+				}
+			);
+			editProduct( product, {
+				...productData,
+				type: 'variable',
+			} );
 		} else {
 			const attributes = ( product.attributes && product.attributes.filter( attribute => ! attribute.variation ) ) || null;
 			editProduct( product, { type: 'simple', attributes } );
