@@ -107,7 +107,7 @@ describe( 'actions', () => {
 			const getStateSpy = sinon.stub().returns( {
 				comments: {
 					items: {
-						'91750058-287': [ { ID: 123, date: beforeDateString } ]
+						'91750058-287': [ { ID: 123, parent: false, date: beforeDateString } ]
 					},
 					requests: {
 						'91750058-287': { }
