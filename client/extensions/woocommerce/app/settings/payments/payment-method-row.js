@@ -22,7 +22,7 @@ const PaymentMethodRow = ( { method, translate } ) => {
 						</p>
 					)
 				}
-				<p>{ method.name }</p>
+				<p>{ method.label }</p>
 			</ListRowField>
 			<ListRowField>
 				<p>{ method.fee }</p>
@@ -45,7 +45,7 @@ const PaymentMethodRow = ( { method, translate } ) => {
 
 PaymentMethodRow.propTypes = {
 	method: PropTypes.shape( {
-		name: PropTypes.string.isRequired,
+		label: PropTypes.string.isRequired,
 		suggested: PropTypes.bool.isRequired,
 		fee: PropTypes.string.isRequired,
 		information: PropTypes.string.isRequired,
