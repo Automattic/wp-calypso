@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -79,8 +79,8 @@ const items = createReducer( {}, {
 		const listType = isCached ? 'cached_list' : 'expired_list';
 		const countType = isCached ? 'cached' : 'expired';
 		// Get the files property of the stat that is about to be removed.
-		const file = state[ siteId ][ cacheType ][ listType ].filter( item => item.dir === url );
-		const fileCount = file.length ? get( file[ 0 ], 'files', 0 ) : 0;
+		const file = state[ siteId ][ cacheType ][ listType ][ url ];
+		const fileCount = get( file, 'files', 0 );
 
 		return ( {
 			...state,
@@ -89,7 +89,7 @@ const items = createReducer( {}, {
 				[ cacheType ]: {
 					...state[ siteId ][ cacheType ],
 					[ countType ]: state[ siteId ][ cacheType ][ countType ] - fileCount,
-					[ listType ]: state[ siteId ][ cacheType ][ listType ].filter( item => item.dir !== url ),
+					[ listType ]: omit( state[ siteId ][ cacheType ][ listType ], url ),
 				},
 			}
 		} );

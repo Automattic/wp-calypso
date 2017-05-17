@@ -166,14 +166,15 @@ describe( 'reducer', () => {
 					[ primarySiteId ]: {
 						wpcache: {
 							cached: 2,
-							cached_list: [ {
-								dir: 'wordpress.com/cached-file',
-								files: 2,
-								lower_age: 5500,
-								upper_age: 10000,
-							} ],
+							cached_list: {
+								'wordpress.com/cached-file': {
+									files: 2,
+									lower_age: 5500,
+									upper_age: 10000,
+								}
+							},
 							expired: 0,
-							expired_list: [],
+							expired_list: {},
 							fsize: 0,
 						}
 					}
@@ -330,19 +331,21 @@ describe( 'reducer', () => {
 						[ primarySiteId ]: {
 							supercache: {
 								cached: 2,
-								cached_list: [ {
-									dir: 'wordpress.com/cached-file',
-									files: 2,
-									lower_age: 5500,
-									upper_age: 10000,
-								} ],
+								cached_list: {
+									'wordpress.com/cached-file': {
+										files: 2,
+										lower_age: 5500,
+										upper_age: 10000,
+									}
+								},
 								expired: 4,
-								expired_list: [ {
-									dir: 'wordpress.com/expired-file',
-									files: 4,
-									lower_age: 535937,
-									upper_age: 538273,
-								} ],
+								expired_list: {
+									'wordpress.com/expired-file': {
+										files: 4,
+										lower_age: 535937,
+										upper_age: 538273,
+									}
+								},
 								fsize: 58272,
 							}
 						}
@@ -360,14 +363,15 @@ describe( 'reducer', () => {
 					[ primarySiteId ]: {
 						supercache: {
 							cached: 2,
-							cached_list: [ {
-								dir: 'wordpress.com/cached-file',
-								files: 2,
-								lower_age: 5500,
-								upper_age: 10000,
-							} ],
+							cached_list: {
+								'wordpress.com/cached-file': {
+									files: 2,
+									lower_age: 5500,
+									upper_age: 10000,
+								}
+							},
 							expired: 0,
-							expired_list: [],
+							expired_list: {},
 							fsize: 58272,
 						}
 					}
@@ -380,19 +384,21 @@ describe( 'reducer', () => {
 						[ primarySiteId ]: {
 							supercache: {
 								cached: 2,
-								cached_list: [ {
-									dir: 'wordpress.com/cached-file',
-									files: 2,
-									lower_age: 5500,
-									upper_age: 10000,
-								} ],
+								cached_list: {
+									'wordpress.com/cached-file': {
+										files: 2,
+										lower_age: 5500,
+										upper_age: 10000,
+									}
+								},
 								expired: 4,
-								expired_list: [ {
-									dir: 'wordpress.com/expired-file',
-									files: 4,
-									lower_age: 535937,
-									upper_age: 538273,
-								} ],
+								expired_list: {
+									'wordpress.com/expired-file': {
+										files: 4,
+										lower_age: 535937,
+										upper_age: 538273,
+									}
+								},
 								fsize: 58272,
 							}
 						}
@@ -410,14 +416,15 @@ describe( 'reducer', () => {
 					[ primarySiteId ]: {
 						supercache: {
 							cached: 0,
-							cached_list: [],
+							cached_list: {},
 							expired: 4,
-							expired_list: [ {
-								dir: 'wordpress.com/expired-file',
-								files: 4,
-								lower_age: 535937,
-								upper_age: 538273,
-							} ],
+							expired_list: {
+								'wordpress.com/expired-file': {
+									files: 4,
+									lower_age: 535937,
+									upper_age: 538273,
+								}
+							},
 							fsize: 58272,
 						}
 					}
@@ -430,19 +437,21 @@ describe( 'reducer', () => {
 						[ primarySiteId ]: {
 							wpcache: {
 								cached: 2,
-								cached_list: [ {
-									dir: 'wordpress.com/cached-file',
-									files: 2,
-									lower_age: 5500,
-									upper_age: 10000,
-								} ],
+								cached_list: {
+									'wordpress.com/cached-file': {
+										files: 2,
+										lower_age: 5500,
+										upper_age: 10000,
+									}
+								},
 								expired: 4,
-								expired_list: [ {
-									dir: 'wordpress.com/expired-file',
-									files: 4,
-									lower_age: 535937,
-									upper_age: 538273,
-								} ],
+								expired_list: {
+									'wordpress.com/expired-file': {
+										files: 4,
+										lower_age: 535937,
+										upper_age: 538273,
+									}
+								},
 								fsize: 58272,
 							}
 						}
@@ -460,14 +469,15 @@ describe( 'reducer', () => {
 					[ primarySiteId ]: {
 						wpcache: {
 							cached: 2,
-							cached_list: [ {
-								dir: 'wordpress.com/cached-file',
-								files: 2,
-								lower_age: 5500,
-								upper_age: 10000,
-							} ],
+							cached_list: {
+								'wordpress.com/cached-file': {
+									files: 2,
+									lower_age: 5500,
+									upper_age: 10000,
+								}
+							},
 							expired: 0,
-							expired_list: [],
+							expired_list: {},
 							fsize: 58272,
 						}
 					}
@@ -480,19 +490,21 @@ describe( 'reducer', () => {
 						[ primarySiteId ]: {
 							wpcache: {
 								cached: 2,
-								cached_list: [ {
-									dir: 'wordpress.com/cached-file',
-									files: 2,
-									lower_age: 5500,
-									upper_age: 10000,
-								} ],
+								cached_list: {
+									'wordpress.com/cached-file': {
+										files: 2,
+										lower_age: 5500,
+										upper_age: 10000,
+									}
+								},
 								expired: 4,
-								expired_list: [ {
-									dir: 'wordpress.com/expired-file',
-									files: 4,
-									lower_age: 535937,
-									upper_age: 538273,
-								} ],
+								expired_list: {
+									'wordpress.com/expired-file': {
+										files: 4,
+										lower_age: 535937,
+										upper_age: 538273,
+									}
+								},
 								fsize: 58272,
 							}
 						}
@@ -510,14 +522,15 @@ describe( 'reducer', () => {
 					[ primarySiteId ]: {
 						wpcache: {
 							cached: 0,
-							cached_list: [],
+							cached_list: {},
 							expired: 4,
-							expired_list: [ {
-								dir: 'wordpress.com/expired-file',
-								files: 4,
-								lower_age: 535937,
-								upper_age: 538273,
-							} ],
+							expired_list: {
+								'wordpress.com/expired-file': {
+									files: 4,
+									lower_age: 535937,
+									upper_age: 538273,
+								}
+							},
 							fsize: 58272,
 						}
 					}
