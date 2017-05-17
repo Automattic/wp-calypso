@@ -10,19 +10,24 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSite } from 'state/ui/selectors';
-import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import Button from 'components/button';
 
 export class UpgradeATStep extends Component {
 	static propTypes = {
-		translate: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object.isRequired,
+		translate: PropTypes.func.isRequired,
 	}
 
 	static defaultProps = {
 		translate: noop,
+	}
+
+	onClick = () => {
+		this.recordTracksEvent( 'calypso_cancellation_business_at_plugin_support_click' );
 	}
 
 	render() {
@@ -48,13 +53,9 @@ export class UpgradeATStep extends Component {
 							)
 						}
 					</p>
-					<Button primary href={ href }>
+					<Button primary href={ href } onClick={ this.onClick }>
 						{ translate( 'Upgrade My Site' ) }
 					</Button>
-					<TrackComponentView
-						eventName="calypso_cancellation_upgrade_at_impression"
-						eventProperties={ { cta_name: 'cancellation_prompt' } }
-					/>
 				</FormFieldset>
 			</div>
 		);
@@ -64,7 +65,7 @@ export class UpgradeATStep extends Component {
 const mapStateToProps = ( state ) => ( {
 	selectedSite: getSelectedSite( state )
 } );
-const mapDispatchToProps = null;
+const mapDispatchToProps = { recordTracksEvent };
 
 export default connect(
 	mapStateToProps,

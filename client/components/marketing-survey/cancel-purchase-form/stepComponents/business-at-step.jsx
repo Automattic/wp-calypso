@@ -9,12 +9,13 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 
 export class BusinessATStep extends Component {
 	static propTypes = {
+		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	}
 
@@ -22,10 +23,31 @@ export class BusinessATStep extends Component {
 		translate: noop,
 	}
 
+	onClickPluginSupport = () => {
+		this.recordTracksEvent( 'calypso_cancellation_business_at_plugin_support_click' );
+	}
+
+	onClickThemeSupport = () => {
+		this.recordTracksEvent( 'calypso_cancellation_business_at_theme_support_click' );
+	}
+
 	render() {
 		const { translate } = this.props;
-		const pluginLink = <a target="_blank" rel="noopener noreferrer" href="https://en.support.wordpress.com/plugins/" />;
-		const themeLink = <a target="_blank" rel="noopener noreferrer" href="https://en.support.wordpress.com/themes/adding-new-themes/" />;
+		const pluginLink = (
+			<a
+				onClick={ this.onClickPluginSupport }
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://en.support.wordpress.com/plugins/"
+			/>
+		);
+		const themeLink = (
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://en.support.wordpress.com/themes/adding-new-themes/"
+			/>
+		);
 
 		return (
 			<div>
@@ -51,10 +73,6 @@ export class BusinessATStep extends Component {
 							)
 						}
 					</p>
-					<TrackComponentView
-						eventName="calypso_cancellation_business_at_impression"
-						eventProperties={ { cta_name: 'cancellation_prompt' } }
-					/>
 				</FormFieldset>
 			</div>
 		);
@@ -62,7 +80,7 @@ export class BusinessATStep extends Component {
 }
 
 const mapStateToProps = null;
-const mapDispatchToProps = null;
+const mapDispatchToProps = { recordTracksEvent };
 
 export default connect(
 	mapStateToProps,
