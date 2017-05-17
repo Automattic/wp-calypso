@@ -171,7 +171,7 @@ class PostCommentList extends React.Component {
 	/***
 	 * Gets comments for display
 	 * @param {Immutable.List<Number>} commentIds The top level commentIds to take from
-	 * @param {Number} take How many top level comments to take
+	 * @param {Number} numberToTake How many top level comments to take
 	 * @returns {Object} that has the displayed comments + total displayed count including children
 	 */
 	getDisplayedComments( commentIds, numberToTake ) {
@@ -213,7 +213,6 @@ class PostCommentList extends React.Component {
 		const {
 			commentsFilter,
 			commentsTree,
-			haveMoreCommentsToFetch,
 			showFilters,
 			totalCommentsCount,
 		} = this.props;
@@ -229,13 +228,13 @@ class PostCommentList extends React.Component {
 
 		// Note: we might show fewer comments than totalCommentsCount because some comments might be
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
-		const showViewEarlier = ( size( commentsTree.children ) > amountOfCommentsToTake || haveMoreCommentsToFetch );
+		const showViewEarlier = ( size( commentsTree.children ) > amountOfCommentsToTake || this.props.haveMoreCommentsToFetch );
 
 		// If we're not yet fetched all comments from server, we can only rely on server's count.
 		// once we got all the comments tree, we can calculate the count of reachable comments
-		const actualTotalCommentsCount = haveMoreCommentsToFetch
-									? totalCommentsCount
-									: this.getCommentsCount( commentsTree.children );
+		const actualTotalCommentsCount = this.props.haveMoreCommentsToFetch
+			? totalCommentsCount
+			: this.getCommentsCount( commentsTree.children );
 
 		return (
 			<div className="comments__comment-list">
