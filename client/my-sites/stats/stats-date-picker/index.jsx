@@ -69,7 +69,10 @@ class StatsDatePicker extends Component {
 
 	dateForDisplay() {
 		const { date, moment, period, translate } = this.props;
-		const localizedDate = moment( date.format( 'YYYY-MM-DD' ) );
+
+		// Ensure we have a moment instance here to work with.
+		const momentDate = moment.isMoment( date ) ? date : moment( date );
+		const localizedDate = moment( momentDate.format( 'YYYY-MM-DD' ) );
 		let formattedDate;
 
 		switch ( period ) {
