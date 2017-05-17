@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +25,7 @@ function getAge( { lower_age, upper_age } ) {
 
 class CacheStats extends Component {
 	static propTypes = {
-		files: PropTypes.array,
+		files: PropTypes.object,
 		header: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
@@ -55,18 +56,18 @@ class CacheStats extends Component {
 						</tr>
 					</thead>
 					<tbody>
-						{ files.map( ( file, index ) =>
-						<tr className="wp-super-cache__stat" key={ index }>
-							<td className="wp-super-cache__stat-dir">{ file.dir }</td>
-							<td>{ file.files }</td>
-							<td className="wp-super-cache__stat-age">{ getAge( file ) }</td>
-							<td className="wp-super-cache__stat-action">
-								<Button compact>
-									{ translate( 'Delete' ) }
-								</Button>
-							</td>
-						</tr>
-					) }
+						{ map( files, ( file, dir ) => (
+							<tr className="wp-super-cache__stat" key={ dir }>
+								<td className="wp-super-cache__stat-dir">{ dir }</td>
+								<td>{ file.files }</td>
+								<td className="wp-super-cache__stat-age">{ getAge( file ) }</td>
+								<td className="wp-super-cache__stat-action">
+									<Button compact>
+										{ translate( 'Delete' ) }
+									</Button>
+								</td>
+							</tr>
+						) ) }
 					</tbody>
 				</table>
 			</FoldableCard>
