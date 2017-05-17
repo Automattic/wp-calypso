@@ -116,7 +116,9 @@ class JetpackSiteStats extends Component {
 		return (
 			<Banner
 				title={ translate( 'Site Stats module is disabled' ) }
-				description={ translate( 'Enable it to see detailed stats, likes, followers, subscribers and more!' ) }
+				description={
+					translate( 'Enable this to see detailed information about your traffic, likes, comments, and subscribers.' )
+				}
 				callToAction={ translate( 'Enable' ) }
 				onClick={ this.handleStatsActivationButton }
 				event={ 'site_stats_module_enable_banner' }
