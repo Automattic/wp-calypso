@@ -55,9 +55,13 @@ class AdsMain extends Component {
 	}
 
 	getFilters() {
-		const { site, siteSlug, translate } = this.props,
-			pathSuffix = siteSlug ? '/' + siteSlug : '',
-			filters = [];
+		const {
+			site,
+			siteSlug,
+			translate
+		} = this.props;
+		const pathSuffix = siteSlug ? '/' + siteSlug : '';
+		const filters = [];
 
 		if ( canAccessWordads( site ) ) {
 			filters.push( {
@@ -93,7 +97,11 @@ class AdsMain extends Component {
 	};
 
 	renderInstantActivationToggle( component ) {
-		const { siteId, translate } = this.props;
+		const {
+			siteId,
+			translate
+		} = this.props;
+
 		return ( <div>
 			<QueryWordadsStatus siteId={ siteId } />
 			<Card className="ads__activate-wrapper">
