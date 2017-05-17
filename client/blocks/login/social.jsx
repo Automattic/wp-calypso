@@ -35,7 +35,7 @@ class SocialLoginForm extends Component {
 		}
 
 		this.props.loginSocialUser( 'google', response.Zi.id_token ).then( () => {
-			this.props.onSuccess( this.state );
+			this.props.onSuccess();
 		} ).catch( error => {
 			if ( error.field === 'global' ) {
 				if ( error.message === 'proxy_required' ) {
