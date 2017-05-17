@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { isEmpty, replace } from 'lodash';
+import { isEmpty, trim } from 'lodash';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { dnsTemplates } from 'lib/domains/constants';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormFooter from 'my-sites/upgrades/domain-management/components/form-footer';
@@ -18,7 +17,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
 
-class Office365 extends Component {
+class EmailProvider extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = { token: '', submitting: false };
@@ -26,25 +25,28 @@ class Office365 extends Component {
 
 	onChange = ( event ) => {
 		const { value } = event.target;
-		this.setState( { token: value } );
+		this.setState( { token: trim( value ) } );
 	}
 
 	onAddDnsRecords = ( event ) => {
 		event.preventDefault();
 		this.setState( { submitting: true } );
 
-		const { domain, translate } = this.props,
-			variables = {
-				token: this.state.token,
-				domain,
-				mxdata: replace( domain, '.', '-' ) + '.mail.protection.outlook.com.'
-			};
+		const { domain, translate, template } = this.props;
+		let variables = {
+			token: this.state.token,
+			domain
+		};
 
-		upgradesActions.applyDnsTemplate( domain, dnsTemplates.MICROSOFT_OFFICE365, variables, ( error ) => {
+		if ( template.modifyVariables ) {
+			variables = template.modifyVariables( variables );
+		}
+
+		upgradesActions.applyDnsTemplate( domain, template.dnsTemplate, variables, ( error ) => {
 			if ( error ) {
-				notices.error( error.message || translate( 'The DNS records have not been added.' ) );
+				notices.error( error.message || translate( 'The DNS records were not able to be added.' ) );
 			} else {
-				notices.success( translate( 'All DNS records that Office 365 needs have been added.' ), {
+				notices.success( translate( 'All DNS records for this service have been added.' ), {
 					duration: 5000
 				} );
 			}
@@ -54,19 +56,22 @@ class Office365 extends Component {
 	}
 
 	render() {
-		const isDataValid = this.state.token.match( /^MS=ms\d{4,20}$/ ),
-			{ translate } = this.props;
+		const { translate } = this.props,
+			{ name, label, placeholder, validationPattern } = this.props.template,
+			isDataValid = this.state.token.match( validationPattern );
 
 		return (
-			<form className="dns__office365">
+			<form className="dns__template-form">
 				<div className="dns__form-content">
 					<FormFieldset>
-						<FormLabel>{ translate( 'Office 365 Verification Token - from the TXT record verification' ) }</FormLabel>
+						<FormLabel htmlFor="dns-template-token">{ label }</FormLabel>
 						<FormTextInput
+							id="dns-template-token"
+							key={ `dns-templates-token-${ name }` }
 							name="token"
 							isError={ ! isEmpty( this.state.token ) && ! isDataValid }
 							onChange={ this.onChange }
-							placeholder="MS=ms..." />
+							placeholder={ placeholder } />
 						{ this.state.token && ! isDataValid &&
 						<FormInputValidation text={ translate( 'Invalid Token' ) } isError={ true } /> }
 					</FormFieldset>
@@ -75,7 +80,14 @@ class Office365 extends Component {
 						<FormButton
 							disabled={ ! isDataValid || this.state.submitting }
 							onClick={ this.onAddDnsRecords }>
-							{ translate( 'Set up Office 365' ) }
+							{ translate(
+								'Set up %(providerName)s',
+								{
+									args: { providerName: name },
+									comment: '%(providerName)s will be replaced with the name of the service ' +
+										'provider that this template is used for, for example G Suite or Office 365'
+								}
+							) }
 						</FormButton>
 					</FormFooter>
 				</div>
@@ -84,4 +96,4 @@ class Office365 extends Component {
 	}
 }
 
-export default localize( Office365 );
+export default localize( EmailProvider );
