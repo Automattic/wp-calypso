@@ -24,7 +24,7 @@ class DnsTemplateSelector extends Component {
 							value: template.dnsTemplate,
 							label: template.name
 						};
-					}, this )
+					} )
 				}
 				initialSelected={ 'none' }
 				onSelect={ this.handleOnSelect }
