@@ -22,7 +22,6 @@
 
 .reader-feed-header__site .reader-feed-header__site-title {
 	align-self: stretch;
-	color: $gray-dark;
 	font-family: $serif;
 	font-size: 21px;
 	font-weight: 600;
@@ -31,6 +30,11 @@
 	position: relative;
 	text-align: center;
 	white-space: normal;
+
+	.reader-feed-header__site-title-link,
+	.reader-feed-header__site-title-link:visited {
+		color: $gray-dark;
+	}
 
 	&::after {
 		@include long-content-fade( $size: 15% );
@@ -117,10 +121,13 @@
 		text-align: center;
 		position: relative;
 
-		&::after {
-			@include long-content-fade( $size: 15% );
-			height: 16px * 1.3;
-			top: auto;
+		.reader-feed-header__description {
+
+				&::after {
+					@include long-content-fade( $size: 15% );
+					height: 16px * 1.3;
+					top: auto;
+			}
 		}
 	}
 

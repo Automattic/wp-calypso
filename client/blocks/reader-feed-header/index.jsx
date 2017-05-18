@@ -85,13 +85,15 @@ class FeedHeader extends Component {
 					<a href={ siteUrl } className="reader-feed-header__site-icon">
 						<SiteIcon site={ site } size={ 96 } />
 					</a>
-					<a className="reader-feed-header__site-title" href={ siteUrl }>
-						{ siteBadge &&
-							<span className="reader-feed-header__site-badge">
-								{ siteBadge }
-							</span> }
-						{ siteTitle }
-					</a>
+					<div className="reader-feed-header__site-title">
+						<a className="reader-feed-header__site-title-link" href={ siteUrl }>
+							{ siteBadge &&
+								<span className="reader-feed-header__site-badge">
+									{ siteBadge }
+								</span> }
+							{ siteTitle }
+						</a>
+					</div>
 					<div className="reader-feed-header__details">
 						<span className="reader-feed-header__description">{ description }</span>
 						{ ownerDisplayName &&
