@@ -230,7 +230,7 @@ class DomainDetailsForm extends Component {
 
 	handleFrSubmit( registrantExtraInfo ) {
 		this.setState( { registrantExtraInfo } );
-		this.closeDialog( 'fr' );
+		this.closeDialog( 'isFrDialogVisible' );
 		this.handleSubmitButtonClick();
 	}
 
