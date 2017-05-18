@@ -76,4 +76,20 @@ module.exports = {
 		},
 		defaultVariation: 'headlineA',
 	},
+	ATPromptOnCancel: {
+		datestamp: '20170515',
+		variations: {
+			hide: 20,
+			show: 80,
+		},
+		defaultVariation: 'hide',
+	},
+	ATUpgradeOnCancel: {
+		datestamp: '20170515',
+		variations: {
+			hide: 20,
+			show: 80,
+		},
+		defaultVariation: 'hide',
+	},
 };

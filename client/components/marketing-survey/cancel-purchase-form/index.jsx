@@ -19,11 +19,9 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 import HappychatButton from 'components/happychat/button';
-import {
-	INITIAL_STEP,
-	CONCIERGE_STEP,
-	HAPPYCHAT_STEP,
-} from './steps';
+import * as steps from './steps';
+import BusinessATStep from './stepComponents/business-at-step';
+import UpgradeATStep from './stepComponents/upgrade-at-step';
 
 const CancelPurchaseForm = React.createClass( {
 	propTypes: {
@@ -492,9 +490,9 @@ const CancelPurchaseForm = React.createClass( {
 	},
 
 	render() {
-		const { translate } = this.props;
-		if ( this.props.showSurvey ) {
-			if ( this.props.surveyStep === INITIAL_STEP ) {
+		const { translate, showSurvey, surveyStep } = this.props;
+		if ( showSurvey ) {
+			if ( surveyStep === steps.INITIAL_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>
@@ -510,7 +508,7 @@ const CancelPurchaseForm = React.createClass( {
 			}
 
 			// Render concierge offer if appropriate
-			if ( this.props.surveyStep === CONCIERGE_STEP ) {
+			if ( surveyStep === steps.CONCIERGE_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>
@@ -521,7 +519,7 @@ const CancelPurchaseForm = React.createClass( {
 				);
 			}
 
-			if ( this.props.surveyStep === HAPPYCHAT_STEP ) {
+			if ( surveyStep === steps.HAPPYCHAT_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>
@@ -530,6 +528,14 @@ const CancelPurchaseForm = React.createClass( {
 						{ this.renderLiveChat() }
 					</div>
 				);
+			}
+
+			if ( surveyStep === steps.BUSINESS_AT_STEP ) {
+				return <BusinessATStep />;
+			}
+
+			if ( surveyStep === steps.UPGRADE_AT_STEP ) {
+				return <UpgradeATStep />;
 			}
 
 			// Render cancellation step

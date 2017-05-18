@@ -311,7 +311,7 @@ class RemovePurchase extends Component {
 			cancel: {
 				action: 'cancel',
 				disabled: this.state.isRemoving,
-				label: translate( "No, I'll Keep It" )
+				label: translate( "I'll Keep It" )
 			},
 			next: {
 				action: 'next',
@@ -329,7 +329,7 @@ class RemovePurchase extends Component {
 				action: 'remove',
 				disabled: this.state.isRemoving,
 				isPrimary: true,
-				label: translate( 'Yes, Remove Now' ),
+				label: translate( 'Remove Now' ),
 				onClick: this.removePurchase
 			}
 		};
