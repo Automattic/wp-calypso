@@ -36,6 +36,7 @@ const loginErrorMessages = {
 	unknown: translate( 'Invalid username or password.' ),
 	account_unactivated: translate( 'This account has not been activated. Please check your email for an activation link.' ),
 	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
+	forbidden_for_automattician: 'Cannot use social login with an Automattician account',
 };
 
 const loginErrorFields = {

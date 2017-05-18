@@ -11,18 +11,14 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import { loginSocialUser } from 'state/login/actions';
-import { isRequesting, getRequestError } from 'state/login/selectors';
 import { errorNotice } from 'state/notices/actions';
 
 class SocialLoginForm extends Component {
 	static propTypes = {
 		errorNotice: PropTypes.func.isRequired,
-		isRequesting: PropTypes.bool.isRequired,
 		onSuccess: PropTypes.func.isRequired,
-		requestError: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 	};
-
 
 	handleGoogleResponse = ( response ) => {
 		if ( ! response.Zi || ! response.Zi.id_token ) {
@@ -32,9 +28,7 @@ class SocialLoginForm extends Component {
 		this.props.loginSocialUser( 'google', response.Zi.id_token ).then( () => {
 			this.props.onSuccess();
 		} ).catch( error => {
-			if ( error.field === 'global' ) {
-				this.props.errorNotice( error.message );
-			}
+			this.props.errorNotice( error );
 		} );
 	};
 
@@ -56,10 +50,7 @@ class SocialLoginForm extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		isRequesting: isRequesting( state ),
-		requestError: getRequestError( state ),
-	} ),
+	null,
 	{
 		errorNotice,
 		loginSocialUser,
