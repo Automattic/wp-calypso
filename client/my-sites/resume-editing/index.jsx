@@ -128,7 +128,7 @@ export default connect(
 			draft: getEditorLastDraftPost( state ),
 			editPath: getEditorPath( state, siteId, postId ),
 			section: getSectionName( state ),
-			site: getSite( siteId ),
+			site: getSite( state, siteId ),
 		};
 	},
 	{ resetEditorLastDraft }
