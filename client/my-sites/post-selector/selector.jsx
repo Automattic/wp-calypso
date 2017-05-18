@@ -447,10 +447,10 @@ const PostSelectorPosts = React.createClass( {
 export default connect( ( state, ownProps ) => {
 	const { siteId, query } = ownProps;
 
-	const queryWithVersion = { ...query };
-	if ( ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '99' ) ) {
-		queryWithVersion.apiVersion = '1.2';
-	}
+	const apiVersion = ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '99' )
+		? '1.2'
+		: undefined;
+	const queryWithVersion = { ...query, apiVersion };
 
 	return {
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, queryWithVersion ),
