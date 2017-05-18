@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import { map, forEach } from 'lodash';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -55,9 +56,9 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should build correct items list on consecutive calls', () => {
-			const state = {
+			const state = deepFreeze( {
 				'1-1': commentsNestedTree.slice( 0, 2 )
-			};
+			} );
 
 			const response = items( state, {
 				type: COMMENTS_RECEIVE,
@@ -71,7 +72,7 @@ describe( 'reducer', () => {
 
 		it( 'should remove a comment by id', () => {
 			const removedCommentId = 9;
-			const state = { '1-1': commentsNestedTree };
+			const state = deepFreeze( { '1-1': commentsNestedTree } );
 			const result = items( state, {
 				type: COMMENTS_REMOVE,
 				siteId: 1,
@@ -84,9 +85,9 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should increase like counts and set i_like', () => {
-			const state = { '1-1': [
+			const state = deepFreeze( { '1-1': [
 				{ ID: 123, like_count: 100, i_like: false }
-			] };
+			] } );
 
 			const result = items( state, {
 				type: COMMENTS_LIKE,
@@ -100,9 +101,9 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should decrease like counts and unset i_like', () => {
-			const state = { '1-1': [
+			const state = deepFreeze( { '1-1': [
 				{ ID: 123, like_count: 100, i_like: true }
-			] };
+			] } );
 
 			const result = items( state, {
 				type: COMMENTS_UNLIKE,
@@ -116,9 +117,9 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should update like for a comment', () => {
-			const state = { '1-1': [
+			const state = deepFreeze( { '1-1': [
 				{ ID: 123, like_count: 100, i_like: true }
-			] };
+			] } );
 
 			const result = items( state, {
 				type: COMMENTS_LIKE_UPDATE,
@@ -134,13 +135,13 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set error state on a placeholder', () => {
-			const state = { '1-1': [
+			const state = deepFreeze( { '1-1': [
 				{
 					ID: 'placeholder-123',
 					placeholderState: PLACEHOLDER_STATE.PENDING,
 					isPlaceholder: true
 				}
-			] };
+			] } );
 
 			const result = items( state, {
 				type: COMMENTS_ERROR,
@@ -172,7 +173,7 @@ describe( 'reducer', () => {
 			expect( response[ '1-1' ][ requestId ] ).to.be.eql( COMMENTS_REQUEST );
 
 			action.type = COMMENTS_REQUEST_FAILURE;
-			const failureResponse = requests( response, action );
+			const failureResponse = requests( deepFreeze( response ), action );
 
 			expect( failureResponse[ '1-1' ][ requestId ] ).to.be.eql( COMMENTS_REQUEST_FAILURE );
 		} );
