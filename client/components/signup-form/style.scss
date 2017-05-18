@@ -41,32 +41,8 @@
 		margin: 0 0 10px;
 		width: 100%;
 	}
-
-	svg {
-		margin-top: -2px;
-
-		&.disabled {
-			display: none;
-		}
-	}
-}
-
-.social-buttons__button:disabled {
-	svg.enabled {
-		display: none;
-	}
-
-	svg.disabled {
-		display: inline;
-	}
 }
 
 .signup-form__notice.notice {
 	margin-bottom: 10px;
-}
-
-.social-buttons__service-error {
-	color: $alert-red;
-	font-size: 11px;
-	margin: 0 10px 10px;
 }

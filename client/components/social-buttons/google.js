@@ -5,6 +5,12 @@ import React, { Component, PropTypes } from 'react';
 import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
+import Popover from 'components/popover';
+import { preventWidows } from 'lib/formatting';
+
 class GoogleLoginButton extends Component {
 	static propTypes = {
 		clientId: PropTypes.string.isRequired,
@@ -19,13 +25,20 @@ class GoogleLoginButton extends Component {
 		fetchBasicProfile: true,
 	};
 
-	state = { error: '' };
+	state = {
+		error: '',
+		showError: false,
+		errorRef: null,
+	};
 
 	constructor( props ) {
 		super( props );
 
 		this.initialized = null;
+
 		this.handleClick = this.handleClick.bind( this );
+		this.showError = this.showError.bind( this );
+		this.hideError = this.hideError.bind( this );
 	}
 
 	componentDidMount() {
@@ -77,6 +90,11 @@ class GoogleLoginButton extends Component {
 		event.preventDefault();
 
 		if ( this.state.error ) {
+			this.setState( {
+				showError: ! this.state.showError,
+				errorRef: event.target,
+			} );
+
 			return;
 		}
 
@@ -89,12 +107,31 @@ class GoogleLoginButton extends Component {
 		this.initialize().then( gapi => gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } ).then( responseHandler ) );
 	}
 
+	showError( event ) {
+		if ( ! this.state.error ) {
+			return;
+		}
+
+		this.setState( {
+			showError: true,
+			errorRef: event.target,
+		} );
+	}
+
+	hideError() {
+		this.setState( { showError: false } );
+	}
+
 	render() {
-		const buttonDisabled = Boolean( this.state.error );
+		let classes = 'social-buttons__button button';
+		if ( this.state.error ) {
+			classes += ' disabled';
+		}
 
 		return (
 			<div>
-				<button className="social-buttons__button button" onClick={ this.handleClick } disabled={ buttonDisabled }>
+				<button
+					className={ classes } onMouseOver={ this.showError } onMouseOut={ this.hideError } onClick={ this.handleClick }>
 					{ /* eslint-disable max-len */ }
 					<svg className="social-buttons__logo enabled" width="20" height="20" viewBox="0 0 20 20"xmlns="http://www.w3.org/2000/svg">
 						<g fill="none" fillRule="evenodd">
@@ -122,7 +159,17 @@ class GoogleLoginButton extends Component {
 						} ) }
 					</span>
 				</button>
-				{ this.state.error && <div className="social-buttons__service-error">{ this.state.error }</div> }
+
+				<Popover
+					id="social-buttons__error"
+					className="social-buttons__error"
+					isVisible={ this.state.showError }
+					onClose={ this.hideError }
+					position="top"
+					context={ this.state.errorRef }
+				>
+					{ preventWidows( this.state.error ) }
+				</Popover>
 			</div>
 		);
 	}
