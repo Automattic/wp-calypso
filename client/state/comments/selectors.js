@@ -43,7 +43,7 @@ export const getPostTotalCommentsCount = ( state, siteId, postId ) => get( state
  */
 export const getPostMostRecentCommentDate = createSelector(
 	( state, siteId, postId ) => {
-		const items = filter( getPostCommentItems( state, siteId, postId ), { parent: false } );
+		const items = getPostCommentItems( state, siteId, postId );
 		return items && first( items ) ? new Date( get( first( items ), 'date' ) ) : undefined;
 	},
 	getPostCommentItems
@@ -58,7 +58,7 @@ export const getPostMostRecentCommentDate = createSelector(
  */
 export const getPostOldestCommentDate = createSelector(
 	( state, siteId, postId ) => {
-		const items = filter( getPostCommentItems( state, siteId, postId ), { parent: false } );
+		const items = getPostCommentItems( state, siteId, postId );
 		return items && last( items ) ? new Date( get( last( items ), 'date' ) ) : undefined;
 	},
 	getPostCommentItems
