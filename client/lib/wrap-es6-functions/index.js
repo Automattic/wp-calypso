@@ -22,7 +22,7 @@ function wrapObjectFn( obj, objectName, key ) {
 }
 
 export default function() {
-	[ 'keys', 'entries', 'values', 'findIndex', 'fill', 'find' ]
+	[ 'keys', 'entries', 'values', 'findIndex', 'fill', 'find', 'includes' ]
 		.map( partial( wrapObjectFn, Array.prototype, 'Array#' ) );
 
 	[ 'codePointAt', 'normalize', 'repeat', 'startsWith', 'endsWith', 'includes' ]
