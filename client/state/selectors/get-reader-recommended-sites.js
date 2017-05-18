@@ -6,5 +6,5 @@
  * @return {Array} Reader Sites
  */
 export default function getReaderRecommendedSites( state, seed ) {
-	return state.reader.recommendedSites[ seed ];
+	return state.reader.recommendedSites.items[ seed ];
 }
