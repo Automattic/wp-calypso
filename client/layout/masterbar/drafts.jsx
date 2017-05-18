@@ -23,14 +23,10 @@ import QueryPostCounts from 'components/data/query-post-counts';
 import Button from 'components/button';
 import Site from 'blocks/site';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import sitesList from 'lib/sites-list';
-
-const sites = sitesList();
 
 class MasterbarDrafts extends Component {
 	static propTypes = {
 		user: PropTypes.object,
-		sites: PropTypes.object,
 		isActive: PropTypes.bool,
 		className: PropTypes.string,
 		tooltip: PropTypes.string,
@@ -113,7 +109,7 @@ class MasterbarDrafts extends Component {
 		return <Draft
 			key={ draft.global_ID }
 			post={ draft }
-			sites={ sites }
+			siteId={ site && site.ID }
 			showAuthor={ site && ! site.single_user_site && ! this.props.userId }
 			onTitleClick={ this.closeDrafts }
 		/>;
