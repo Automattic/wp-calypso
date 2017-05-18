@@ -18,7 +18,6 @@ import {
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/upgrades/components/form';
 import PrivacyProtection from './privacy-protection';
 import ExtraContactInformationFrDialog from './extra-information-fr-dialog';
@@ -372,7 +371,7 @@ class DomainDetailsForm extends Component {
 
 	openDialog( dialogKey = 'isDialogVisible' ) {
 		this.setState( { [ dialogKey ]: true } );
-	},
+	}
 
 	focusFirstError() {
 		this.refs[ kebabCase( head( map( formState.getInvalidFields( this.state.form ), 'name' ) ) ) ].focus();
