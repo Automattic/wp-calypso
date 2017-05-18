@@ -13,7 +13,7 @@ import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
-import { getSites, isSiteUpgradeable } from 'state/selectors';
+import { getSites } from 'state/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export const Sites = React.createClass( {
@@ -47,7 +47,7 @@ export const Sites = React.createClass( {
 
 		// Filter out sites with no upgrades on particular routes
 		if ( /^\/domains/.test( path ) || /^\/plans/.test( this.props.sourcePath ) ) {
-			return this.props.isSiteUpgradeable( site.ID );
+			return site.isSiteUpgradeable;
 		}
 
 		return site;
@@ -103,7 +103,6 @@ export default connect(
 		return {
 			selectedSite: getSelectedSite( state ),
 			sites: getSites( state ),
-			isSiteUpgradeable: isSiteUpgradeable.bind( null, state ),
 		};
 	}
 )( Sites );
