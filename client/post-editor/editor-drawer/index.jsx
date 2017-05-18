@@ -32,10 +32,7 @@ import {
 	isJetpackSite,
 } from 'state/sites/selectors';
 import config from 'config';
-import {
-	areSitePermalinksEditable,
-	isHiddenSite,
-} from 'state/selectors';
+import { areSitePermalinksEditable } from 'state/selectors';
 
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
@@ -258,9 +255,8 @@ const EditorDrawer = React.createClass( {
 
 		const { plan } = this.props.site;
 		const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
-		const { isHidden } = this.props;
 
-		if ( ! hasBusinessPlan || isHidden ) {
+		if ( ! hasBusinessPlan ) {
 			return;
 		}
 
@@ -373,7 +369,6 @@ export default connect(
 			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
 			typeObject: getPostType( state, siteId, type ),
-			isHidden: isHiddenSite( state, siteId ),
 		};
 	},
 	null,
