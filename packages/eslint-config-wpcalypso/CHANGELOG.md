@@ -1,3 +1,7 @@
+#### v0.8.0 (2017-05-18)
+
+- Added: [`react/no-deprecated`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-deprecated.md) as error
+
 #### v0.7.1 (2017-03-20)
 
 - Changed: [`eslint-plugin-jsx-a11y`](https://github.com/evcohen/eslint-plugin-jsx-a11y) rules are now errors
