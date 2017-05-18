@@ -23,13 +23,8 @@ class SocialLoginForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	constructor() {
-		super();
 
-		this.handleGoogleResponse = this.handleGoogleResponse.bind( this );
-	}
-
-	handleGoogleResponse( response ) {
+	handleGoogleResponse = ( response ) => {
 		if ( ! response.Zi || ! response.Zi.id_token ) {
 			return;
 		}
@@ -41,7 +36,7 @@ class SocialLoginForm extends Component {
 				this.props.errorNotice( error.message );
 			}
 		} );
-	}
+	};
 
 	render() {
 		return (
