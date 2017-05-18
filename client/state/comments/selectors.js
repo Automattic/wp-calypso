@@ -13,7 +13,7 @@ import createSelector from 'lib/create-selector';
  * @param {Object} state redux state
  * @param {Number} siteId site identification
  * @param {Number} postId site identification
- * @return {Immutable.List} comment items
+ * @return {Array} comment items
  */
 export const getPostCommentItems = ( state, siteId, postId ) => get( state.comments.items, `${ siteId }-${ postId }` );
 
@@ -22,7 +22,7 @@ export const getPostCommentItems = ( state, siteId, postId ) => get( state.comme
  * @param {Object} state redux state
  * @param {Number} siteId site identification
  * @param {Number} postId site identification
- * @return {Immutable.Map<RequestId, ActionType>} map of requestIds to status
+ * @return {Object} requestIds
  */
 export const getPostCommentRequests = ( state, siteId, postId ) => get( state.comments.requests, `${ siteId }-${ postId }` );
 
@@ -72,7 +72,7 @@ export const getPostOldestCommentDate = createSelector(
  * @param {Number} siteId site identification
  * @param {Number} postId site identification
  * @param {String} status String representing the comment status to show. Defaults to 'all'.
- * @return {Object} comments tree in the form of immutable map<CommentId, CommentNode>, and in addition a children array
+ * @return {Object} comments tree, and in addition a children array
  */
 export const getPostCommentsTree = createSelector(
 	( state, siteId, postId, status = 'approved' ) => {
@@ -112,7 +112,7 @@ export const haveMoreCommentsToFetch = createSelector(
  * @param {Number} siteId site identification
  * @param {Number} postId site identification
  * @param {Number} commentId comment identification
- * @return {Immutable.Map} that has i_like and like_count props
+ * @return {Object} that has i_like and like_count props
  */
 export const getCommentLike = createSelector(
 	( state, siteId, postId, commentId ) => {
