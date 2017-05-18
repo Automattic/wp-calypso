@@ -12,9 +12,11 @@
  */
 var tinymce = require( 'tinymce/tinymce' ),
 	debounce = require( 'lodash/debounce' ),
+	assign = require( 'lodash/assign' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react'),
-	i18n = require( 'i18n-calypso' );
+	i18n = require( 'i18n-calypso' ),
+	Shortcode = require( 'lib/shortcode' );
 
 /**
  * Internal dependencies
@@ -22,6 +24,7 @@ var tinymce = require( 'tinymce/tinymce' ),
 import views from './views';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import * as MediaConstants from 'lib/media/constants';
 
 /**
  * WordPress View plugin.
@@ -41,7 +44,8 @@ function wpview( editor ) {
 		focus,
 		execCommandView,
 		execCommandBefore,
-		toolbar;
+		editToolbar,
+		removeToolbar
 
 	/**
 	 * Replaces all marker nodes tied to this view instance.
@@ -854,23 +858,32 @@ function wpview( editor ) {
 
 	editor.addButton( 'wp_view_remove', {
 		tooltip: i18n.translate( 'Remove' ),
-		icon: 'dashicon dashicons-no',
+		icon: 'dashicon dashicons-trash',
 		onClick: function() {
 			selected && removeView( selected );
 		}
 	} );
 
 	editor.once( 'preinit', function() {
-		toolbar = editor.wp._createToolbar( [
+		editToolbar = editor.wp._createToolbar( [
 			'wp_view_edit',
+			'wp_view_remove'
+		] );
+		removeToolbar = editor.wp._createToolbar( [
 			'wp_view_remove'
 		] );
 	} );
 
 	editor.on( 'wptoolbar', function( event ) {
 		if ( selected ) {
+
+			const type = editor.dom.getAttrib( selected, 'data-wpview-type' );
+			const content = decodeURIComponent( editor.dom.getAttrib( selected, 'data-wpview-text' ) );
+			let gallery = Shortcode.parse( content );
+			gallery = assign( {}, MediaConstants.GalleryDefaultAttrs, gallery.attrs.named );
+
 			event.element = selected;
-			event.toolbar = toolbar;
+			event.toolbar = gallery.ids !== undefined ? editToolbar : removeToolbar;
 		}
 	} );
 }

@@ -670,7 +670,7 @@ function mediaButton( editor ) {
 			}
 		}, {
 			preserveFocus: true,
-			view: gallery.items.length ? ModalViews.GALLERY : ModalViews.LIST
+			view: ModalViews.GALLERY
 		} );
 	} );
 
