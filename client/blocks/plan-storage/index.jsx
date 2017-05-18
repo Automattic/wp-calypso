@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,11 +14,23 @@ import { getMediaStorage } from 'state/sites/media-storage/selectors';
 import {
 	getSitePlanSlug,
 	getSiteSlug,
-	isJetpackSite
 } from 'state/sites/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import {
+	PLAN_BUSINESS,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+} from 'lib/plans/constants';
 
 import PlanStorageBar from './bar';
+
+/**
+ * Constants
+ */
+const UNLIMITED_STORAGE_PLANS = [
+	PLAN_BUSINESS,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+];
 
 class PlanStorage extends Component {
 	static propTypes = {
@@ -31,17 +44,17 @@ class PlanStorage extends Component {
 	render() {
 		const {
 			className,
-			jetpackSite,
+			mediaStorage,
 			siteId,
 			sitePlanSlug,
 			siteSlug,
 		} = this.props;
 
-		if ( jetpackSite || ! sitePlanSlug ) {
+		if ( ! sitePlanSlug ) {
 			return null;
 		}
 
-		if ( sitePlanSlug === PLAN_BUSINESS ) {
+		if ( includes( UNLIMITED_STORAGE_PLANS, sitePlanSlug ) ) {
 			return null;
 		}
 
@@ -51,7 +64,7 @@ class PlanStorage extends Component {
 				<PlanStorageBar
 					siteSlug={ siteSlug }
 					sitePlanSlug={ sitePlanSlug }
-					mediaStorage={ this.props.mediaStorage }
+					mediaStorage={ mediaStorage }
 				>
 					{ this.props.children }
 				</PlanStorageBar>
@@ -64,7 +77,6 @@ export default connect( ( state, ownProps ) => {
 	const { siteId } = ownProps;
 	return {
 		mediaStorage: getMediaStorage( state, siteId ),
-		jetpackSite: isJetpackSite( state, siteId ),
 		sitePlanSlug: getSitePlanSlug( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 	};
