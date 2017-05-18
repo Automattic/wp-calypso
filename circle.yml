@@ -17,8 +17,6 @@ test:
   override:
     - bin/run-integration :
         parallel: true
-        files:
-          - integration/**/*.js
     - make config-defaults-lint
     - bin/run-lint :
         parallel: true
