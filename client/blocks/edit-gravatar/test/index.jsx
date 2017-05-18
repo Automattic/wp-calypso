@@ -19,6 +19,7 @@ describe( 'EditGravatar', function() {
 		FilePicker,
 		Gravatar,
 		ImageEditor,
+		VerifyEmailDialog,
 		sandbox;
 	const user = {
 		email_verified: false
@@ -45,6 +46,7 @@ describe( 'EditGravatar', function() {
 		FilePicker = require( 'components/file-picker' );
 		Gravatar = require( 'components/gravatar' ).default;
 		ImageEditor = require( 'blocks/image-editor' );
+		VerifyEmailDialog = require( 'components/email-verification/email-verification-dialog' );
 	} );
 
 	describe( 'component rendering', () => {
@@ -175,6 +177,23 @@ describe( 'EditGravatar', function() {
 			expect( wrapper.update().find( ImageEditor ).length ).to.equal( 0 );
 			expect( receiveGravatarImageFailedSpy ).to.have.been.calledOnce;
 			expect( uploadGravatarSpy.callCount ).to.equal( 0 );
+		} );
+	} );
+
+	describe( 'unverified user', () => {
+		it( 'shows email verification dialog when clicked', () => {
+			const wrapper = shallow(
+				<EditGravatar
+					translate={ noop }
+					user={ user }
+				/>
+			);
+			// Enzyme requires simulate() to be called directly on the element with the click handler
+			const clickableWrapper = wrapper.find( '.edit-gravatar > div' ).first();
+
+			clickableWrapper.simulate( 'click' );
+			wrapper.update(); // make sure the state has been updated
+			expect( wrapper.find( VerifyEmailDialog ) ).to.have.length( 1 );
 		} );
 	} );
 } );

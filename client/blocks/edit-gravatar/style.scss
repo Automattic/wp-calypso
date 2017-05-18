@@ -104,3 +104,13 @@
 .edit-gravatar__pop-over p:last-of-type {
 	margin-bottom: 0;
 }
+
+.edit-gravatar.is-unverified {
+	.file-picker {
+		pointer-events: none;
+	}
+
+	.gravatar {
+		opacity: 0.33;
+	}
+}
