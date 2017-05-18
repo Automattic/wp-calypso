@@ -61,7 +61,7 @@ class DomainDetailsForm extends Component {
 			isDialogVisible: false,
 			submissionCount: 0,
 			phoneCountryCode: 'US',
-			registrantExtraInfo: false,
+			registrantExtraInfo: null,
 		};
 	}
 
