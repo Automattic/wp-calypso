@@ -26,7 +26,7 @@
 	font-family: $serif;
 	font-size: 21px;
 	font-weight: 600;
-	max-height: 16px * 4 ;
+	max-height: 16px * 4;
 	overflow: hidden;
 	position: relative;
 	text-align: center;
@@ -34,7 +34,7 @@
 
 	&::after {
 		@include long-content-fade( $size: 15% );
-		max-height: 16px * 1.6;
+		height: 16px * 1.6;
 		top: auto;
 	}
 
@@ -112,7 +112,16 @@
 	.reader-feed-header__details {
 		align-self: center;
 		font-size: 14px;
+		max-height: 16px * 4;
+		overflow: hidden;
 		text-align: center;
+		position: relative;
+
+		&::after {
+			@include long-content-fade( $size: 15% );
+			height: 16px * 1.3;
+			top: auto;
+		}
 	}
 
 	.reader-feed-header__follow-count {
