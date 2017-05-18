@@ -10,6 +10,8 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
+import CommentList from './comment-list';
+import CommentNavigation from './comment-navigation';
 
 export class CommentsManagement extends Component {
 
@@ -21,10 +23,13 @@ export class CommentsManagement extends Component {
 	render() {
 		const { translate, basePath } = this.props;
 		return (
-			<Main className="comments">
+			<Main className="comments" wideLayout>
 				<PageViewTracker path={ basePath } title="Manage Comments" />
 				<DocumentHead title={ translate( 'Manage Comments' ) } />
-				<div>Hello World!</div>
+				<div className="comments__primary">
+					<CommentNavigation />
+					<CommentList />
+				</div>
 			</Main>
 		);
 	}
