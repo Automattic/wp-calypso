@@ -479,7 +479,7 @@ export const SeoForm = React.createClass( {
 						}
 					>
 						<NoticeAction href={ generalTabUrl }>
-							{ translate( 'View privacy settings' ) }
+							{ translate( 'Privacy Settings' ) }
 						</NoticeAction>
 					</Notice>
 				}
