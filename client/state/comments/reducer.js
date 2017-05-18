@@ -71,11 +71,7 @@ export function items( state = {}, action ) {
 			};
 		case COMMENTS_RECEIVE:
 			const { skipSort, comments } = action;
-			const allComments = unionBy(
-				state[ stateKey ],
-				comments,
-				'ID'
-			);
+			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
 			return {
 				...state,
 				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments
@@ -94,10 +90,7 @@ export function items( state = {}, action ) {
 			const { iLike, likeCount } = action;
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, {
-					i_like: iLike,
-					like_count: likeCount
-				} ) )
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: iLike, like_count: likeCount } ) )
 			};
 		case COMMENTS_UNLIKE:
 			return {
