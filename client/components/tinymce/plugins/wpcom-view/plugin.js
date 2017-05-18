@@ -12,7 +12,6 @@
  */
 var tinymce = require( 'tinymce/tinymce' ),
 	debounce = require( 'lodash/debounce' ),
-	assign = require( 'lodash/assign' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react'),
 	i18n = require( 'i18n-calypso' ),
@@ -24,7 +23,6 @@ var tinymce = require( 'tinymce/tinymce' ),
 import views from './views';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import * as MediaConstants from 'lib/media/constants';
 
 /**
  * WordPress View plugin.
@@ -877,12 +875,13 @@ function wpview( editor ) {
 	editor.on( 'wptoolbar', function( event ) {
 		if ( selected ) {
 
-			const content = decodeURIComponent( editor.dom.getAttrib( selected, 'data-wpview-text' ) );
-			let gallery = Shortcode.parse( content );
-			gallery = assign( {}, MediaConstants.GalleryDefaultAttrs, gallery.attrs.named );
+			// Checks for ids in the gallery shortcode
+			const { attrs: { named: { ids } } } = Shortcode.parse(
+				decodeURIComponent( editor.dom.getAttrib( selected, 'data-wpview-text' ) )
+			);
 
 			event.element = selected;
-			event.toolbar = gallery.ids !== undefined ? editToolbar : removeToolbar;
+			event.toolbar = ids ? editToolbar : removeToolbar;
 		}
 	} );
 }
