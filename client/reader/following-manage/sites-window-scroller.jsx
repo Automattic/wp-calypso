@@ -29,8 +29,9 @@ class SitesWindowScroller extends Component {
 		remoteTotalCount: PropTypes.number.isRequired,
 		forceRefresh: PropTypes.any, // forceRefresh can be anything. Whenever we want to force a refresh, it should change
 		windowScrollerRef: PropTypes.func,
+		showLastUpdatedDate: PropTypes.bool,
 	};
-	defaultProps = { windowScrollerRef: noop };
+	defaultProps = { windowScrollerRef: noop, showLastUpdatedDate: true };
 
 	heightCache = new CellMeasurerCache( {
 		fixedWidth: true,
@@ -62,6 +63,7 @@ class SitesWindowScroller extends Component {
 							feedId={ feedId }
 							siteId={ siteId }
 							onLoad={ measure }
+							showLastUpdatedDate={ this.props.showLastUpdatedDate }
 						/>
 					</div>
 				) }
