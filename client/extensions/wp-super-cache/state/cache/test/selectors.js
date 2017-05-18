@@ -209,7 +209,9 @@ describe( 'selectors', () => {
 		it( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
-					wpSuperCache: undefined,
+					wpSuperCache: {
+						cache: {}
+					},
 				}
 			};
 			const isTesting = isTestingCache( state, primarySiteId );
@@ -281,7 +283,9 @@ describe( 'selectors', () => {
 		it( 'should return empty object if no state exists', () => {
 			const state = {
 				extensions: {
-					wpSuperCache: undefined,
+					wpSuperCache: {
+						cache: {}
+					}
 				}
 			};
 			const results = getCacheTestResults( state, primarySiteId );

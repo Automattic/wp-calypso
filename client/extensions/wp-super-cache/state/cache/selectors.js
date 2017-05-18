@@ -4,7 +4,7 @@
 import { get } from 'lodash';
 
 function getCacheState( state ) {
-	return get( state, 'extensions.wpSuperCache.cache', {} );
+	return state.extensions.wpSuperCache.cache;
 }
 
 /**
