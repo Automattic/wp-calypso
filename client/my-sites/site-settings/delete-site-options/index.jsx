@@ -11,6 +11,7 @@ import CompactCard from 'components/card/compact';
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
 import config from 'config';
 import { tracks } from 'lib/analytics';
+import { localize } from 'i18n-calypso';
 
 const trackDeleteSiteOption = ( option ) => {
 	tracks.recordEvent( 'calypso_settings_delete_site_options', {
@@ -18,35 +19,34 @@ const trackDeleteSiteOption = ( option ) => {
 	} );
 };
 
-module.exports = React.createClass( {
-	displayName: 'DeleteSite',
+class SiteTools extends React.Component {
 
-	propTypes: {
+	static propTypes = {
 		sitePurchases: React.PropTypes.array.isRequired,
 		hasLoadedSitePurchasesFromServer: React.PropTypes.bool.isRequired,
 		site: React.PropTypes.object.isRequired
-	},
+	}
 
-	getInitialState() {
-		return {
-			showDialog: false,
-			showStartOverDialog: false
-		};
-	},
+	state = {
+		showDialog: false,
+		showStartOverDialog: false,
+	}
 
 	render() {
+		const { translate } = this.props;
+
 		const selectedSite = this.props.site;
 		const changeAddressLink = `/domains/manage/${ selectedSite.slug }`;
 		const themeSetupLink = `/settings/theme-setup/${ selectedSite.slug }`;
 		const startOverLink = `/settings/start-over/${ selectedSite.slug }`;
 		const deleteSiteLink = `/settings/delete-site/${ selectedSite.slug }`;
-		let changeAddressLinkText = this.translate( 'Register a new domain or change your site\'s address.' );
-		const themeSetupLinkText = this.translate( 'Make your site look like your theme\'s demo.' );
+		let changeAddressLinkText = translate( 'Register a new domain or change your site\'s address.' );
+		const themeSetupLinkText = translate( 'Make your site look like your theme\'s demo.' );
 		const strings = {
-			changeSiteAddress: this.translate( 'Change Site Address' ),
-			themeSetup: this.translate( 'Theme Setup' ),
-			startOver: this.translate( 'Start Over' ),
-			deleteSite: this.translate( 'Delete Site' )
+			changeSiteAddress: translate( 'Change Site Address' ),
+			themeSetup: translate( 'Theme Setup' ),
+			startOver: translate( 'Start Over' ),
+			deleteSite: translate( 'Delete Site' )
 		};
 
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
@@ -54,7 +54,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			changeAddressLinkText = this.translate( 'Change your site\'s address.' );
+			changeAddressLinkText = translate( 'Change your site\'s address.' );
 		}
 
 		return (
@@ -67,7 +67,7 @@ module.exports = React.createClass( {
 						<h2 className="delete-site-options__section-title">{ strings.changeSiteAddress }</h2>
 						<p className="delete-site-options__section-desc">{ changeAddressLinkText }</p>
 						<p className="delete-site-options__section-footnote">
-							{ this.translate( 'Your current site address is "%(siteAddress)s."', {
+							{ translate( 'Your current site address is "%(siteAddress)s."', {
 								args: {
 									siteAddress: selectedSite.slug
 								}
@@ -93,7 +93,7 @@ module.exports = React.createClass( {
 					<div className="delete-site-options__content">
 						<h2 className="delete-site-options__section-title">{ strings.startOver }</h2>
 						<p className="delete-site-options__section-desc">
-							{ this.translate( 'Keep your URL and site active, but remove the content.' ) }
+							{ translate( 'Keep your URL and site active, but remove the content.' ) }
 						</p>
 					</div>
 				</CompactCard>
@@ -104,7 +104,7 @@ module.exports = React.createClass( {
 					<div className="delete-site-options__content">
 						<h2 className="delete-site-options__section-title">{ strings.deleteSite }</h2>
 						<p className="delete-site-options__section-desc">
-							{ this.translate(
+							{ translate(
 								'All your posts, images, and data will be deleted. ' +
 								'And this site’s address ({{siteAddress /}}) will be lost.',
 								{
@@ -116,7 +116,10 @@ module.exports = React.createClass( {
 						</p>
 						<p className="delete-site-options__section-footnote">
 							{
-								this.translate( 'Be careful! Once a site is deleted, it cannot be recovered. Please be sure before you proceed.' )
+								translate(
+									'Be careful! Once a site is deleted, it cannot be recovered. ' +
+									'Please be sure before you proceed.'
+								)
 							}
 						</p>
 					</div>
@@ -126,21 +129,21 @@ module.exports = React.createClass( {
 					onClose={ this.closeDialog } />
 			</div>
 		);
-	},
+	}
 
 	trackChangeAddress() {
 		trackDeleteSiteOption( 'change-address' );
-	},
+	}
 
 	trackThemeSetup() {
 		trackDeleteSiteOption( 'theme-setup' );
-	},
+	}
 
 	trackStartOver() {
 		trackDeleteSiteOption( 'start-over' );
-	},
+	}
 
-	checkForSubscriptions( event ) {
+	checkForSubscriptions = ( event ) => {
 		trackDeleteSiteOption( 'delete-site' );
 
 		if ( ! some( this.props.sitePurchases, 'active' ) ) {
@@ -149,9 +152,11 @@ module.exports = React.createClass( {
 
 		event.preventDefault();
 		this.setState( { showDialog: true } );
-	},
+	}
 
-	closeDialog() {
+	closeDialog = () => {
 		this.setState( { showDialog: false } );
 	}
-} );
+}
+
+export default localize( SiteTools );
