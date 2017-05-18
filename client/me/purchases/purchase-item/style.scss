@@ -55,11 +55,18 @@
 	max-width: 32px;
 	width: 32px;
 
-	.gridicons-domains {
+	.gridicon {
 		padding: 4px;
-		border-radius: 50%;
 		background: $blue-medium;
 		fill: $white;
+	}
+
+	.gridicons-domains {
+		border-radius: 50%;
+	}
+
+	.gridicons-themes {
+		border-radius: 4px;
 	}
 }
 

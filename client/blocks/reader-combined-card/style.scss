@@ -19,13 +19,19 @@
 }
 
 .reader-combined-card__site-link {
+	color: $blue-medium;
 	line-height: 1em;
 	margin-bottom: 0;
+	max-height: 14px;
 	top: 0;
-	color: $blue-medium;
+	overflow: hidden;
 
 	&:hover {
 		color: $blue-light;
+	}
+
+	&::after {
+		@include long-content-fade( $size: 5% );
 	}
 }
 
@@ -40,7 +46,6 @@
 .reader-combined-card__post-details {
 	font-family: $serif;
 	overflow: hidden;
-	white-space: nowrap;
 	width: 100%;
 
 	@include breakpoint( "<960px" ) {
@@ -65,7 +70,6 @@
 	overflow: hidden;
 	position: relative;
 	word-wrap: break-word;
-	white-space: nowrap;
 
 	&:hover,
 	&:focus {

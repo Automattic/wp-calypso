@@ -570,7 +570,7 @@ input[type=radio].domain-management-list-item__radio {
 }
 
 .dns__add-new,
-.dns__office365,
+.dns__template-form,
 .email-forwarding__add-new {
 	.email-forwarding__limit,
 	.dns__form-content,
@@ -881,13 +881,17 @@ ul.email-forwarding__list {
 		padding-right: 15px;
 	}
 
+	.name-servers__dns-templates-buttons {
+		margin-top: 20px;
+	}
+
 	&.is-placeholder {
-		.name-servers__dns {
+		.name-servers__dns, .name-servers__dns-templates {
 			.name-servers__title {
 				@include placeholder();
 			}
 
-			.name-servers__toggle {
+			.name-servers__toggle, .name-servers__dns-templates-buttons {
 				display: none;
 			}
 

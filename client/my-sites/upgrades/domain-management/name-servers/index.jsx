@@ -15,6 +15,7 @@ import Header from 'my-sites/upgrades/domain-management/components/header';
 import CustomNameserversForm from './custom-nameservers-form';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
 import IcannVerificationCard from 'my-sites/upgrades/domain-management/components/icann-verification/icann-verification-card';
+import DnsTemplates from './dns-templates';
 import notices from 'notices';
 import paths from 'my-sites/upgrades/paths';
 import VerticalNav from 'components/vertical-nav';
@@ -89,6 +90,13 @@ const NameServers = React.createClass( {
 					{ this.wpcomNameserversToggle() }
 					{ this.customNameservers() }
 					{ this.dnsRecordsNavItem() }
+				</VerticalNav>
+
+				<VerticalNav>
+					{
+						this.hasWpcomNameservers() &&
+						<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
+					}
 				</VerticalNav>
 			</Main>
 		);
@@ -214,4 +222,3 @@ export default connect(
 	null,
 	dispatch => bindActionCreators( { successNotice }, dispatch )
 )( NameServers );
-

@@ -21,9 +21,11 @@ describe( 'isDropZoneVisible()', () => {
 		expect( isDropZoneVisible( {
 			ui: {
 				dropZone: {
-					isVisible: 'myTest'
+					isVisible: {
+						myTestZone: 'myTest',
+					}
 				}
 			}
-		} ) ).to.be.eql( 'myTest' );
+		}, 'myTestZone' ) ).to.be.eql( 'myTest' );
 	} );
 } );

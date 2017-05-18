@@ -13,13 +13,27 @@ import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
+import SectionHeader from 'components/section-header';
 import { isRequestingSites } from 'state/sites/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getPurchase, isDataLoading } from 'me/purchases/utils';
+import { getName, isExpired } from 'lib/purchases';
 import { isJetpackPlan, isFreeJetpackPlan } from 'lib/products-values';
 import { getPluginsForSite } from 'state/plugins/premium/selectors';
 
 class PurchasePlanDetails extends Component {
+	renderPlaceholder() {
+		return (
+			<div className="plan-details__wrapper is-placeholder">
+				<SectionHeader />
+				<Card>
+					<div className="plan-details__plugin-key" />
+					<div className="plan-details__plugin-key" />
+				</Card>
+			</div>
+		);
+	}
+
 	renderPluginLabel( slug ) {
 		switch ( slug ) {
 			case 'vaultpress':
@@ -30,33 +44,43 @@ class PurchasePlanDetails extends Component {
 	}
 
 	render() {
-		const { selectedSite, pluginList } = this.props;
+		const { selectedSite, pluginList, translate } = this.props;
 		const purchase = getPurchase( this.props );
 
+		// Short out as soon as we know it's not a Jetpack plan
+		if ( purchase && ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) ) {
+			return null;
+		}
+
 		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
+			return this.renderPlaceholder();
+		}
+
+		if ( isExpired( purchase ) ) {
 			return null;
 		}
 
-		if ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) {
-			return null;
-		}
-
-		if ( pluginList.length < 1 ) {
-			return null;
-		}
+		const headerText = translate( '%(planName)s Plan', {
+			args: {
+				planName: getName( purchase )
+			}
+		} );
 
 		return (
-			<Card>
+			<div>
 				<QueryPluginKeys siteId={ selectedSite.ID } />
-				{ pluginList.map( ( plugin, i ) => {
-					return (
-						<FormFieldset key={ i }>
-							<FormLabel htmlFor={ `plugin-${ plugin.slug }` }>{ this.renderPluginLabel( plugin.slug ) }</FormLabel>
-							<ClipboardButtonInput id={ `plugin-${ plugin.slug }` } value={ plugin.key } />
-						</FormFieldset>
-					);
-				} ) }
-			</Card>
+				<SectionHeader label={ headerText } />
+				<Card>
+					{ pluginList.map( ( plugin, i ) => {
+						return (
+							<FormFieldset key={ i }>
+								<FormLabel htmlFor={ `plugin-${ plugin.slug }` }>{ this.renderPluginLabel( plugin.slug ) }</FormLabel>
+								<ClipboardButtonInput id={ `plugin-${ plugin.slug }` } value={ plugin.key } />
+							</FormFieldset>
+						);
+					} ) }
+				</Card>
+			</div>
 		);
 	}
 }

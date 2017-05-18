@@ -69,7 +69,7 @@ export const suggestions = {
 		'WordPress',
 		'Writing',
 		'Yoga',
-		'Zombies'
+		'Zombies',
 	],
 	es: [
 		'amor',
@@ -113,5 +113,4 @@ export const suggestions = {
 		'reisen',
 		'vegan',
 	],
-
 };

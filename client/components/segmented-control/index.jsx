@@ -125,6 +125,7 @@ var SegmentedControl = React.createClass( {
 					onClick={ this.selectItem.bind( this, item ) }
 					path={ item.path }
 					index={ index }
+					value={ item.value }
 				>
 					{ item.label }
 				</ControlItem>

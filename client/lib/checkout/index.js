@@ -8,9 +8,10 @@ export function getExitCheckoutUrl( cart, siteSlug ) {
 	let url = '/plans/';
 
 	if ( cartItems.hasRenewalItem( cart ) ) {
-		const renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
+		const { purchaseId, purchaseDomain } = cartItems.getRenewalItems( cart )[ 0 ].extra,
+			siteName = siteSlug || purchaseDomain;
 
-		return managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
+		return managePurchase( siteName, purchaseId );
 	}
 
 	if ( cartItems.hasDomainRegistration( cart ) ) {

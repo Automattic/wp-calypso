@@ -6,10 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import {
-	recommendedTags,
-	tagListing,
-} from './controller';
+import { recommendedTags, tagListing } from './controller';
 import {
 	initAbTests,
 	loadSubscriptions,
@@ -19,22 +16,8 @@ import {
 } from 'reader/controller';
 
 export default function() {
-	page( '/tag/*',
-		preloadReaderBundle,
-		loadSubscriptions,
-		initAbTests
-	);
-	page( '/tag/:tag',
-		updateLastRoute,
-		sidebar,
-		tagListing
-	);
+	page( '/tag/*', preloadReaderBundle, loadSubscriptions, initAbTests );
+	page( '/tag/:tag', updateLastRoute, sidebar, tagListing );
 
-	page( '/tags',
-		loadSubscriptions,
-		initAbTests,
-		updateLastRoute,
-		sidebar,
-		recommendedTags
-	);
+	page( '/tags', loadSubscriptions, initAbTests, updateLastRoute, sidebar, recommendedTags );
 }

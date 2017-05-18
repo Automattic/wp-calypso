@@ -1,62 +1,63 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-var	purchasesPaths = require( 'me/purchases/paths' ),
-	TransactionsTable = require( './transactions-table' );
+import purchasesPaths from 'me/purchases/paths';
+import TransactionsTable from './transactions-table';
+import { getSiteSlugsForUpcomingTransactions } from 'state/selectors';
 
-module.exports = React.createClass( {
+class UpcomingChargesTable extends Component {
+	static propTypes = {
+		// Computed props
+		siteSlugs: PropTypes.object.isRequired,
+	}
 
-	displayName: 'UpcomingChargesTable',
+	renderTransaction = ( transaction ) => {
+		const { translate } = this.props;
+		const siteSlug = this.props.siteSlugs[ Number( transaction.blog_id ) ];
 
-	propTypes: {
-		sites: PropTypes.shape( {
-			getSite: PropTypes.func.isRequired
-		} ).isRequired
-	},
+		if ( ! siteSlug ) {
+			return null;
+		}
 
-	render: function() {
-		var transactions = null;
-		const emptyTableText = this.translate(
+		return (
+			<div className="billing-history__transaction-links">
+				<a href={ purchasesPaths.managePurchase( siteSlug, transaction.id ) }>
+					{ translate( 'Manage Purchase' ) }
+				</a>
+			</div>
+		);
+	}
+
+	render() {
+		const { translate } = this.props;
+		const emptyTableText = translate(
 			'The upgrades on your account will not renew automatically. ' +
 			'To manage your upgrades or enable Auto Renew visit {{link}}My Upgrades{{/link}}.', {
 				components: { link: <a href={ purchasesPaths.purchasesRoot() } /> }
 			}
 		);
-		const noFilterResultsText = this.translate( 'No upcoming charges found.' );
-
-		if ( this.props.sites.initialized ) {
-			// `TransactionsTable` will render a loading state until the transactions are present
-			transactions = this.props.transactions;
-		}
+		const noFilterResultsText = translate( 'No upcoming charges found.' );
 
 		return (
 			<TransactionsTable
-				transactions={ transactions }
+				transactions={ this.props.transactions }
 				initialFilter={ { date: { newest: 20 } } }
 				emptyTableText={ emptyTableText }
 				noFilterResultsText={ noFilterResultsText }
 				transactionRenderer={ this.renderTransaction } />
 		);
-	},
-
-	renderTransaction: function( transaction ) {
-		var site = this.props.sites.getSite( Number( transaction.blog_id ) );
-
-		if ( ! site ) {
-			return null;
-		}
-
-		return (
-			<div className="transaction-links">
-				<a href={ purchasesPaths.managePurchase( site.slug, transaction.id ) }>
-					{ this.translate( 'Manage Purchase' ) }
-				</a>
-			</div>
-		);
 	}
-} );
+}
+
+export default connect(
+	( state ) => ( {
+		siteSlugs: getSiteSlugsForUpcomingTransactions( state ),
+	} )
+)( localize( UpcomingChargesTable ) );

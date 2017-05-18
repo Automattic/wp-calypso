@@ -1,21 +1,9 @@
-.cart-summary-bar {
-	padding: 0 15px;
-	background-color: $gray-dark;
-	color: $white;
-	font-size: 12px;
+.cart__header {
+	border-top: 1px solid lighten( $gray, 30% );
 
-	&:before {
-		@include noticon( '\f447', 18px );
-		display: inline-block;
-		padding-right: 10px;
-		margin: -3px 0 0 0;
-		vertical-align: middle;
+	&.is-compact {
+		padding: 11px 15px;
 	}
-}
-
-.cart-header {
-	height: 38px;
-	line-height: 38px;
 }
 
 .cart-body {
@@ -79,6 +67,7 @@
 			padding: 0;
 			margin: 0;
 			font-size: 25px;
+			pointer-events: auto;
 			position: absolute;
 			right: 0;
 			top: 0;
@@ -112,6 +101,10 @@
 
 	.cart-coupon {
 		font-size: 11px;
+
+		@include breakpoint( "<660px" ) {
+			display: none;
+		}
 
 		a {
 			color: $blue-medium;
@@ -160,6 +153,10 @@
 	font-size: 12px;
 	margin: 15px 15px 0px 15px;
 	padding: 10px;
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
 }
 
 .cart__cart-plan-discount-ad-paragraph:last-child {
@@ -346,6 +343,20 @@ div.popover-cart__popover {
 
 .secondary-cart {
 	background: $white;
+	
+	@include breakpoint( "<660px" ) {
+		left: 0;
+		margin-top: 10px;
+		max-height: 100%;
+		position: relative;
+		top: 0;
+	}
+}
+
+@include breakpoint( "<660px" ) {
+	.secondary-cart__hidden {
+		display: none;
+	}
 }
 
 .cart-item__loading-placeholder {

@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { get, pick } from 'lodash';
+import React, { Component, PropTypes } from 'react';
+import Gridicon from 'gridicons';
+import { isEmpty, get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,107 +17,206 @@ import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
-const EasyTab = ( {
-	fields: {
-		cache_mod_rewrite,
-		http_only,
-		is_cache_enabled,
-	},
-	handleToggle,
-	isRequesting,
-	site,
-	translate,
-} ) => {
-	const enableCacheNotice = translate(
-		'PHP caching is enabled but Supercache mod_rewrite rules were ' +
-		'detected. Cached files will be served using those rules. If your site is working ok, ' +
-		'please ignore this message. Otherwise, you can edit the .htaccess file in the root of your ' +
-		'install and remove the SuperCache rules.'
-	);
+class EasyTab extends Component {
+	static propTypes = {
+		cacheTestResults: PropTypes.object,
+		fields: PropTypes.object,
+		handleAutosavingToggle: PropTypes.func.isRequired,
+		handleDeleteCache: PropTypes.func.isRequired,
+		handleTestCache: PropTypes.func.isRequired,
+		isDeleting: PropTypes.bool,
+		isRequesting: PropTypes.bool,
+		isSaving: PropTypes.bool,
+		isTesting: PropTypes.bool,
+		site: PropTypes.object.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
 
-	return (
-		<div>
-			<SectionHeader label={ translate( 'Caching' ) }>
-				<Button
-					compact
-					primary
-					disabled={ isRequesting }>
-					{ translate( 'Save Settings' ) }
-				</Button>
-			</SectionHeader>
-			<Card>
-				<form>
-					<FormToggle
-						checked={ is_cache_enabled }
-						disabled={ isRequesting }
-						onChange={ handleToggle( 'is_cache_enabled' ) }>
-						<span>
-							{ translate( 'Enable Page Caching' ) }
-						</span>
-					</FormToggle>
-				</form>
-			</Card>
+	static defaultProps = {
+		cacheTestResults: {},
+		fields: {},
+		isDeleting: false,
+		isRequesting: true,
+		isSaving: false,
+		isTesting: false,
+	};
 
-			{ is_cache_enabled && ! cache_mod_rewrite &&
-				<Notice text={ enableCacheNotice } showDismiss={ false } className="wp-super-cache__notice-hug-card" />
-			}
+	state = {
+		httpOnly: true,
+		isDeleting: false,
+		isDeletingAll: false,
+	}
 
-			{ is_cache_enabled &&
-				<div>
-					<SectionHeader label={ translate( 'Cache Tester' ) } />
-					<Card>
-						<p>
-							{ translate( 'Test your cached website by clicking the test button below.' ) }
-						</p>
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isDeleting && ! nextProps.isDeleting ) {
+			this.setState( {
+				isDeleting: false,
+				isDeletingAll: false,
+			} );
+		}
+	}
 
-						{ isHttps( get( site, 'options.admin_url', '' ) ) &&
-							<form>
-								<FormFieldset>
-									<FormToggle
-										checked={ http_only }
-										onChange={ handleToggle( 'http_only' ) }>
-										<span>
-											{ translate( 'Send non-secure (non https) request for homepage' ) }
-										</span>
-									</FormToggle>
-								</FormFieldset>
-							</form>
+	handleHttpOnlyChange = () => this.setState( { httpOnly: ! this.state.httpOnly } );
+
+	deleteCache = () => {
+		this.setState( { isDeleting: true } );
+		this.props.handleDeleteCache( false, false );
+	}
+
+	deleteAllCaches = () => {
+		this.setState( { isDeletingAll: true } );
+		this.props.handleDeleteCache( true, false );
+	}
+
+	testCache = () => this.props.handleTestCache( this.state.httpOnly );
+
+	render() {
+		const {
+			cacheTestResults: {
+				attempts = {},
+			},
+			fields: {
+				cache_mod_rewrite,
+				is_cache_enabled,
+			},
+			handleAutosavingToggle,
+			isDeleting,
+			isRequesting,
+			isSaving,
+			isTesting,
+			site,
+			translate,
+		} = this.props;
+		const enableCacheNotice = translate(
+			'PHP caching is enabled but Supercache mod_rewrite rules were ' +
+			'detected. Cached files will be served using those rules. If your site is working ok, ' +
+			'please ignore this message. Otherwise, you can edit the .htaccess file in the root of your ' +
+			'install and remove the SuperCache rules.'
+		);
+
+		return (
+			<div>
+				<SectionHeader
+					label={ translate( 'Caching' ) }>
+				</SectionHeader>
+				<Card>
+					<form>
+						<FormToggle
+							checked={ !! is_cache_enabled }
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'is_cache_enabled' ) }>
+							<span>
+								{ translate( 'Enable Page Caching' ) }
+							</span>
+						</FormToggle>
+					</form>
+				</Card>
+
+				{ is_cache_enabled && ! cache_mod_rewrite &&
+					<Notice text={ enableCacheNotice } showDismiss={ false } className="wp-super-cache__notice-hug-card" />
+				}
+
+				{ is_cache_enabled &&
+					<div>
+						<SectionHeader label={ translate( 'Cache Tester' ) } />
+						<Card>
+							<p>
+								{ translate( 'Test your cached website by clicking the test button below.' ) }
+							</p>
+
+							{ isHttps( get( site, 'options.admin_url', '' ) ) &&
+								<form>
+									<FormFieldset>
+										<FormToggle
+											checked={ this.state.httpOnly }
+											onChange={ this.handleHttpOnlyChange }>
+											<span>
+												{ translate( 'Send non-secure (non https) request for homepage' ) }
+											</span>
+										</FormToggle>
+									</FormFieldset>
+								</form>
+							}
+
+							<Button
+								compact
+								busy={ isTesting }
+								disabled={ isTesting }
+								onClick={ this.testCache }>
+								{ translate( 'Test Cache' ) }
+							</Button>
+
+							{ ! isEmpty( attempts ) &&
+							<div>
+								<span className="wp-super-cache__cache-test-results-label">
+									{ translate( 'Results' ) }
+								</span>
+								<ul className="wp-super-cache__cache-test-results">
+									{ Object.keys( attempts ).map( ( key ) => (
+										<li className="wp-super-cache__cache-test-results-item" key={ key }>
+											{ key === 'prime'
+												? translate( 'Fetching %(url)s to prime cache',
+													{
+														args: { url: site && site.URL }
+													} )
+												: translate( 'Fetching %(key)s copy of %(url)s',
+													{
+														args: {
+															key: key,
+															url: site && site.URL,
+														}
+													} )
+											}
+											<Gridicon
+												className="wp-super-cache__cache-test-results-icon"
+												icon={ get( attempts[ key ], 'status' ) === 'OK' ? 'checkmark-circle' : 'cross-circle' }
+												size={ 24 } />
+										</li>
+									) ) }
+								</ul>
+							</div>
+							}
+						</Card>
+					</div>
+				}
+
+				<SectionHeader label={ translate( 'Delete Cached Pages' ) } />
+				<Card>
+					<p>
+						{ translate(
+						'Cached pages are stored on your server as HTML and PHP files. ' +
+						'If you need to delete them, use the buttons below.'
+						) }
+					</p>
+					<div>
+						<Button
+							compact
+							busy={ this.state.isDeleting }
+							disabled={ isDeleting }
+							name="wp_delete_cache"
+							onClick={ this.deleteCache }>
+							{ translate( 'Delete Cache' ) }
+						</Button>
+						{ site.jetpack && site.is_multisite &&
+							<Button
+								compact
+								busy={ this.state.isDeletingAll }
+								disabled={ isDeleting }
+								name="wp_delete_all_cache"
+								onClick={ this.deleteAllCaches }>
+								{ translate( 'Delete Cache On All Blogs' ) }
+							</Button>
 						}
-
-						<Button compact>
-							{ translate( 'Test Cache' ) }
-						</Button>
-					</Card>
-				</div>
-			}
-
-			<SectionHeader label={ translate( 'Delete Cached Pages' ) } />
-			<Card>
-				<p>
-					{ translate(
-					'Cached pages are stored on your server as HTML and PHP files. ' +
-					'If you need to delete them, use the buttons below.'
-					) }
-				</p>
-				<div>
-					<Button compact>
-						{ translate( 'Delete Cache' ) }
-					</Button>
-					{ site.jetpack && site.is_multisite &&
-						<Button compact>
-							{ translate( 'Delete Cache On All Blogs' ) }
-						</Button>
-					}
-				</div>
-			</Card>
-		</div>
-	);
-};
+					</div>
+				</Card>
+			</div>
+		);
+	}
+}
 
 const getFormSettings = settings => {
 	return pick( settings, [
 		'cache_mod_rewrite',
-		'http_only',
 		'is_cache_enabled',
 	] );
 };

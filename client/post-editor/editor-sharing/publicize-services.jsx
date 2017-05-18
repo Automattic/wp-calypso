@@ -23,7 +23,8 @@ export const EditorSharingPublicizeServices = ( { connections, post, newConnecti
 						key={ connection.ID }
 						post={ post }
 						connection={ connection }
-						onRefresh={ newConnectionPopup } />
+						onRefresh={ newConnectionPopup }
+						label = { label } />
 				) }
 			</li>
 		) }

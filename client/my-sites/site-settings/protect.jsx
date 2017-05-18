@@ -27,6 +27,20 @@ import ExternalLink from 'components/external-link';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
 class Protect extends Component {
+	static propTypes = {
+		onChangeField: PropTypes.func.isRequired,
+		setFieldValue: PropTypes.func.isRequired,
+		isSavingSettings: PropTypes.bool,
+		isRequestingSettings: PropTypes.bool,
+		fields: PropTypes.object,
+	};
+
+	static defaultProps = {
+		isSavingSettings: false,
+		isRequestingSettings: true,
+		fields: {}
+	};
+
 	handleAddToWhitelist = () => {
 		const { setFieldValue } = this.props;
 		let whitelist = trimEnd( this.getProtectWhitelist() );
@@ -99,8 +113,8 @@ class Protect extends Component {
 				<FormFieldset>
 					<div className="protect__module-settings site-settings__child-settings">
 						<div className="protect__info-link-container site-settings__info-link-container">
-							<InfoPopover position={ 'left' }>
-								<ExternalLink href={ 'https://jetpack.com/support/protect' } target="_blank">
+							<InfoPopover position="left">
+								<ExternalLink href="https://jetpack.com/support/protect" target="_blank">
 									{ translate( 'Learn more about Jetpack protect' ) }
 								</ExternalLink>
 							</InfoPopover>
@@ -157,20 +171,6 @@ class Protect extends Component {
 		);
 	}
 }
-
-Protect.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
-	fields: {}
-};
-
-Protect.propTypes = {
-	onChangeField: PropTypes.func.isRequired,
-	setFieldValue: PropTypes.func.isRequired,
-	isSavingSettings: PropTypes.bool,
-	isRequestingSettings: PropTypes.bool,
-	fields: PropTypes.object,
-};
 
 export default connect(
 	( state ) => {

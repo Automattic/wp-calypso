@@ -20,14 +20,15 @@ const exported = {
 			postURL: null,
 			commentURL: null,
 			blogId: null,
-			postId: null
+			postId: null,
 		};
 		if ( post && post.metadata ) {
 			const keys = Object.keys( post.metadata );
 			for ( let i = 0; i < keys.length; i++ ) {
 				const meta = post.metadata[ keys[ i ] ];
-				if ( meta.key === '_xpost_original_permalink' ||
-					meta.key === 'xcomment_original_permalink' ) {
+				if (
+					meta.key === '_xpost_original_permalink' || meta.key === 'xcomment_original_permalink'
+				) {
 					let parsedURL = url.parse( meta.value, false, false );
 					xPostMetadata.siteURL = `${ parsedURL.protocol }//${ parsedURL.host }`;
 					xPostMetadata.postURL = `${ xPostMetadata.siteURL }${ parsedURL.path }`;
@@ -42,14 +43,12 @@ const exported = {
 			}
 		}
 		return xPostMetadata;
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    getXPostMetadata
-} = exported;
+export const { getXPostMetadata } = exported;
 
 export function isXPost( post ) {
 	return post && post.display_type & X_POST;

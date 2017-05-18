@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,27 +14,53 @@ import MasterbarItem from './item';
 import Notifications from 'notifications';
 import store from 'store';
 import { recordTracksEvent } from 'state/analytics/actions';
+import {
+	toggleNotificationsPanel,
+} from 'state/ui/actions';
+import { isNotificationsOpen } from 'state/selectors';
 
-const MasterbarItemNotifications = React.createClass( {
-	propTypes: {
+class MasterbarItemNotifications extends Component {
+	static propTypes = {
 		user: React.PropTypes.object.isRequired,
 		isActive: React.PropTypes.bool,
 		className: React.PropTypes.string,
-		onClick: React.PropTypes.func,
 		tooltip: React.PropTypes.string,
-	},
+		//connected
+		isNotificationsOpen: React.PropTypes.bool,
+	};
 
-	getInitialState() {
-		const user = this.props.user.get();
+	state = {
+		animationState: 0,
+	};
 
-		return {
-			isShowingPopover: false,
-			newNote: user && user.has_unseen_notes,
-			animationState: 0,
-		};
-	},
+	componentWillMount() {
+		this.user = this.props.user.get();
+		this.setState( {
+			newNote: this.user && this.user.has_unseen_notes,
+		} );
+	}
 
-	checkToggleNotes( event, forceToggle ) {
+	componentWillReceiveProps( nextProps ) {
+		const {
+			isNotificationsOpen: isOpen,
+			recordOpening,
+		} = nextProps;
+
+		if ( ! this.props.isNotificationsOpen && isOpen ) {
+			recordOpening( {
+				unread_notifications: store.get( 'wpnotes_unseen_count' )
+			} );
+			this.setNotesIndicator( 0 );
+		}
+
+		// focus on main window if we just closed the notes panel
+		if ( this.props.isNotificationsOpen && ! isOpen ) {
+			this.getNotificationLinkDomNode().blur();
+			window.focus();
+		}
+	}
+
+	checkToggleNotes = ( event, forceToggle ) => {
 		const target = event ? event.target : false;
 		const notificationNode = this.getNotificationLinkDomNode();
 
@@ -41,37 +68,23 @@ const MasterbarItemNotifications = React.createClass( {
 			return;
 		}
 
-		if ( this.state.isShowingPopover || forceToggle === true ) {
+		if ( this.props.isNotificationsOpen || forceToggle === true ) {
 			this.toggleNotesFrame( event );
 		}
-	},
+	};
 
-	toggleNotesFrame( event ) {
+	toggleNotesFrame = ( event ) => {
 		if ( event ) {
-			event.preventDefault();
+			event.preventDefault && event.preventDefault();
+			event.stopPropagation && event.stopPropagation();
 		}
 
-		this.setState( {
-			isShowingPopover: ! this.state.isShowingPopover
-		}, () => {
-			this.props.onClick( this.state.isShowingPopover );
+		this.props.toggleNotificationsPanel();
+	};
 
-			if ( this.state.isShowingPopover ) {
-				this.props.recordOpening( store.get( 'wpnotes_unseen_count' ) );
-				this.setNotesIndicator( 0 );
-			}
-
-			// focus on main window if we just closed the notes panel
-			if ( ! this.state.isShowingPopover ) {
-				this.getNotificationLinkDomNode().blur();
-				window.focus();
-			}
-		} );
-	},
-
-	getNotificationLinkDomNode() {
+	getNotificationLinkDomNode = () => {
 		return ReactDom.findDOMNode( this.refs.notificationLink );
-	},
+	};
 
 	/**
 	 * Uses the passed number of unseen notifications
@@ -81,7 +94,7 @@ const MasterbarItemNotifications = React.createClass( {
 	 *
 	 * @param {Number} currentUnseenCount Number of reported unseen notifications
 	 */
-	setNotesIndicator( currentUnseenCount ) {
+	setNotesIndicator = ( currentUnseenCount ) => {
 		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );
 		let newAnimationState = this.state.animationState;
 
@@ -100,41 +113,49 @@ const MasterbarItemNotifications = React.createClass( {
 			newNote: ( currentUnseenCount > 0 ),
 			animationState: newAnimationState
 		} );
-	},
+	};
 
 	render() {
 		const classes = classNames( this.props.className, {
-			'is-active': this.state.isShowingPopover,
+			'is-active': this.props.isNotificationsOpen,
 			'has-unread': this.state.newNote,
 			'is-initial-load': this.state.animationState === -1,
 		} );
 
 		return (
-			<MasterbarItem
-				ref="notificationLink"
-				url="/notifications"
-				icon="bell"
-				onClick={ this.toggleNotesFrame }
-				isActive={ this.props.isActive }
-				tooltip={ this.props.tooltip }
-				className={ classes }
-			>
-				{ this.props.children }
-				<span
-					className="masterbar__notifications-bubble"
-					key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
-				/>
+			<div ref="notificationLink">
+				<MasterbarItem
+					url="/notifications"
+					icon="bell"
+					onClick={ this.toggleNotesFrame }
+					isActive={ this.props.isActive }
+					tooltip={ this.props.tooltip }
+					className={ classes }
+				>
+					{ this.props.children }
+					<span
+						className="masterbar__notifications-bubble"
+						key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
+					/>
+				</MasterbarItem>
 				<Notifications
-					visible={ this.state.isShowingPopover }
+					isShowing={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
-					setIndicator={ this.setNotesIndicator } />
-			</MasterbarItem>
+					setIndicator={ this.setNotesIndicator }
+				/>
+			</div>
 		);
 	}
-} );
+}
 
-const mapDispatchToProps = dispatch => ( {
-	recordOpening: unread_notifications => dispatch( recordTracksEvent( 'calypso_notification_open', { unread_notifications } ) )
-} );
+const mapStateToProps = ( state ) => {
+	return {
+		isNotificationsOpen: isNotificationsOpen( state ),
+	};
+};
+const mapDispatchToProps = {
+	toggleNotificationsPanel,
+	recordOpening: partial( recordTracksEvent, 'calypso_notification_open' )
+};
 
-export default connect( null, mapDispatchToProps )( MasterbarItemNotifications );
+export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNotifications );

@@ -16,13 +16,15 @@ import dropZone from '../reducer';
 describe( 'reducer', () => {
 	it( 'should show DropZone', () => {
 		expect( dropZone( {}, {
-			type: DROPZONE_SHOW
-		} ) ).to.be.eql( { isVisible: true } );
+			type: DROPZONE_SHOW,
+			dropZoneName: 'testZone'
+		} ) ).to.be.eql( { isVisible: { testZone: true } } );
 	} );
 
 	it( 'should hide DropZone', () => {
-		expect( dropZone( { isVisible: true }, {
+		expect( dropZone( { isVisible: { testZone: false } }, {
 			type: DROPZONE_HIDE,
-		} ) ).to.be.eql( { isVisible: false } );
+			dropZoneName: 'testZone'
+		} ) ).to.be.eql( { isVisible: { testZone: false } } );
 	} );
 } );

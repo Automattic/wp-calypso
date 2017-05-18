@@ -5,7 +5,8 @@ const exported = {
 	SEARCH_RESULTS: 'search-results',
 	READER_SUBSCRIPTIONS: 'reader-subscriptions',
 	READER_FEED_SEARCH: 'reader-feed-search-result',
-	COMBINED_CARD: 'reader-combined-card'
+	COMBINED_CARD: 'reader-combined-card',
+	READER_FOLLOWING_MANAGE_URL_INPUT: 'reader-following-manage-url-input',
 };
 
 export default exported;
@@ -16,5 +17,6 @@ export const {
 	SEARCH_RESULTS,
 	READER_SUBSCRIPTIONS,
 	READER_FEED_SEARCH,
-	COMBINED_CARD
+	COMBINED_CARD,
+	READER_FOLLOWING_MANAGE_URL_INPUT,
 } = exported;

@@ -13,7 +13,6 @@ import Gridicon from 'gridicons';
  */
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
-import { isBusiness, isEnterprise } from 'lib/products-values';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -145,12 +144,12 @@ EligibilityWarnings.defaultProps = {
 const mapStateToProps = state => {
 	const {
 		ID: siteId,
-		plan,
 		slug: siteSlug,
 	} = getSelectedSite( state );
 	const eligibilityData = getEligibility( state, siteId );
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-	const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
+	const eligibilityHolds = get( eligibilityData, 'eligibilityHolds', [] );
+	const hasBusinessPlan = ! includes( eligibilityHolds, 'NO_BUSINESS_PLAN' );
 	const isJetpack = isJetpackSite( state, siteId );
 	const dataLoaded = !! eligibilityData.lastUpdate;
 

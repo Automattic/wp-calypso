@@ -1,36 +1,32 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var SiteIcon = require( 'blocks/site-icon' );
+import SiteIcon from 'blocks/site-icon';
+import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 
-module.exports = React.createClass( {
+class PostHeader extends PureComponent {
+	static defaultProps = {
+		showAuthor: false
+	}
 
-	displayName: 'PostHeader',
-
-	getDefaultProps: function() {
-		return {
-			showAuthor: false
-		};
-	},
-
-	getAuthor: function() {
-		return this.translate(
+	getAuthor() {
+		return this.props.translate(
 			'By %(author)s',
 			{ args: { author: this.props.author } }
 		);
-	},
+	}
 
-	render: function() {
-		var classes;
-
-		classes = classNames( {
-			'post__header': true,
+	render() {
+		const classes = classNames( {
+			post__header: true,
 			'has-author': this.props.showAuthor
 		} );
 
@@ -38,14 +34,19 @@ module.exports = React.createClass( {
 			<div className={ classes }>
 				<SiteIcon site={ this.props.site } size={ 32 } />
 				<h4 className="post__site-title">
-					<a href={ this.props.path + '/' + this.props.site.slug }>
-						{ this.props.site.title }
+					<a href={ this.props.path + '/' + this.props.siteSlug }>
+						{ this.props.siteTitle }
 					</a>
 				</h4>
 				{ this.props.showAuthor ? <span className="post__author">{ this.getAuthor() }</span> : null }
 			</div>
 		);
-
 	}
+}
 
-} );
+export default connect(
+	( state, { siteId } ) => ( {
+		siteSlug: getSiteSlug( state, siteId ),
+		siteTitle: getSiteTitle( state, siteId ),
+	} )
+)( localize( PostHeader ) );

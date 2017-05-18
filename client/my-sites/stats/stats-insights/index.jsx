@@ -25,11 +25,11 @@ import StatsFirstView from '../stats-first-view';
 import SectionHeader from 'components/section-header';
 import StatsViews from '../stats-views';
 import Followers from '../stats-followers';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 const StatsInsights = ( props ) => {
-	const { followList, isJetpack, siteId, translate } = props;
+	const { followList, isJetpack, siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
 
 	let tagsList;
@@ -48,7 +48,7 @@ const StatsInsights = ( props ) => {
 		<Main wideLayout>
 			<StatsFirstView />
 			<SidebarNavigation />
-			<StatsNavigation section="insights" />
+			<StatsNavigation section="insights" slug={ siteSlug } />
 			<div>
 				<PostingActivity />
 				<SectionHeader label={ translate( 'All Time Views' ) } />
@@ -97,7 +97,8 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		return {
 			isJetpack: isJetpackSite( state, siteId ),
-			siteId
+			siteId,
+			siteSlug: getSelectedSiteSlug( state, siteId ),
 		};
 	}
 );

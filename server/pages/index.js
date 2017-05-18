@@ -8,7 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get } from 'lodash';
+import { get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,9 @@ import utils from 'bundler/utils';
 import sectionsModule from '../../client/sections';
 import { serverRouter } from 'isomorphic-routing';
 import { serverRender } from 'render';
-import { createReduxStore } from 'state';
+import stateCache from 'state-cache';
+import { createReduxStore, reducer } from 'state';
+import { DESERIALIZE } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -37,6 +39,13 @@ const staticFiles = [
 ];
 
 const sections = sectionsModule.get();
+
+// TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
+function getInitialServerState( serializedServerState ) {
+	// Bootstrapped state from a server-render
+	const serverState = reducer( serializedServerState, { type: DESERIALIZE } );
+	return pick( serverState, Object.keys( serializedServerState ) );
+}
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
@@ -111,6 +120,14 @@ function getCurrentCommitShortChecksum() {
 }
 
 function getDefaultContext( request ) {
+	let initialServerState = {};
+	// We don't cache routes with query params
+	if ( isEmpty( request.query ) ) {
+		// context.pathname is set to request.path, see server/isomorphic-routing#getEnhancedContext()
+		const serializeCachedServerState = stateCache.get( request.path ) || {};
+		initialServerState = getInitialServerState( serializeCachedServerState );
+	}
+
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
@@ -126,7 +143,7 @@ function getDefaultContext( request ) {
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
-		store: createReduxStore()
+		store: createReduxStore( initialServerState )
 	} );
 
 	context.app = {

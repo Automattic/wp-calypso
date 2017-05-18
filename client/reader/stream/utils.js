@@ -22,11 +22,14 @@ export const RECS_PER_BLOCK = 2;
  * @returns {Boolean} Returns true if two postKeys are for the same siteId or feedId
  */
 export function sameSite( postKey1, postKey2 ) {
-	return postKey1 && postKey2 &&
-		! postKey1.isRecommendationBlock && ! postKey2.isRecommendationBlock && (
-			( postKey1.blogId && postKey1.blogId === postKey2.blogId ) ||
-			( postKey1.feedId && postKey1.feedId === postKey2.feedId )
-		);
+	return (
+		postKey1 &&
+		postKey2 &&
+		! postKey1.isRecommendationBlock &&
+		! postKey2.isRecommendationBlock &&
+		( ( postKey1.blogId && postKey1.blogId === postKey2.blogId ) ||
+			( postKey1.feedId && postKey1.feedId === postKey2.feedId ) )
+	);
 }
 
 export function sameDay( postKey1, postKey2 ) {
@@ -62,20 +65,20 @@ export function combine( postKey1, postKey2 ) {
 	return combined;
 }
 
-export const combineCards = ( postKeys ) => postKeys.reduce(
-	( accumulator, postKey ) => {
+export const combineCards = postKeys =>
+	postKeys.reduce( ( accumulator, postKey ) => {
 		const lastPostKey = last( accumulator );
-		if ( sameSite( lastPostKey, postKey ) &&
+		if (
+			sameSite( lastPostKey, postKey ) &&
 			sameDay( lastPostKey, postKey ) &&
-			! isDiscoverPostKey( postKey ) ) {
+			! isDiscoverPostKey( postKey )
+		) {
 			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
 		} else {
 			accumulator.push( postKey );
 		}
 		return accumulator;
-	},
-	[]
-);
+	}, [] );
 
 export function injectRecommendations( posts, recs = [], itemsBetweenRecs ) {
 	if ( ! recs || recs.length === 0 ) {
@@ -93,13 +96,10 @@ export function injectRecommendations( posts, recs = [], itemsBetweenRecs ) {
 			const recBlock = {
 				isRecommendationBlock: true,
 				recommendations: recs.slice( recIndex, recIndex + RECS_PER_BLOCK ),
-				index: recIndex
+				index: recIndex,
 			};
 			recIndex += RECS_PER_BLOCK;
-			return [
-				recBlock,
-				post
-			];
+			return [ recBlock, post ];
 		}
 		return post;
 	} );

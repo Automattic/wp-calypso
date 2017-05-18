@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { trim, debounce } from 'lodash';
+import { trim, debounce, random, take, reject } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
@@ -13,35 +13,57 @@ import qs from 'qs';
  */
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
-import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
 import ReaderMain from 'components/reader-main';
-import { getReaderFeedsForQuery } from 'state/selectors';
+import {
+	getReaderFeedsForQuery,
+	getReaderFeedsCountForQuery,
+	getReaderRecommendedSites,
+	isSiteBlocked as isSiteBlockedSelector,
+	getReaderAliasedFollowFeedUrl,
+} from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
+import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
+import RecommendedSites from 'blocks/reader-recommended-sites';
 import FollowingManageSubscriptions from './subscriptions';
-import SitesWindowScroller from './sites-window-scroller';
+import FollowingManageSearchFeedsResults from './feed-search-results';
+import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+import { requestFeedSearch } from 'state/reader/feed-searches/actions';
+import { addQueryArgs } from 'lib/url';
+import FollowButton from 'reader/follow-button';
+import { READER_FOLLOWING_MANAGE_URL_INPUT } from 'reader/follow-button/follow-sources';
+import { resemblesUrl, addSchemeIfMissing, withoutHttp } from 'lib/url';
+
+const PAGE_SIZE = 4;
 
 class FollowingManage extends Component {
 	static propTypes = {
 		sitesQuery: PropTypes.string,
 		subsQuery: PropTypes.string,
+		subsSortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
+		translate: PropTypes.func,
+		showMoreResults: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		subsQuery: '',
 		sitesQuery: '',
-	}
+		showMoreResults: false,
+		subsSortOrder: 'date-followed',
+	};
 
-	state = { width: 800 };
+	state = {
+		width: 800,
+		seed: random( 0, 10000 ),
+		offset: 0,
+	};
 
 	// TODO make this common between our different search pages?
-	updateQuery = ( newValue ) => {
+	updateQuery = newValue => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
-		if ( ( trimmedValue !== '' &&
-				trimmedValue.length > 1 &&
-				trimmedValue !== this.props.query
-			) ||
+		if (
+			( trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query ) ||
 			newValue === ''
 		) {
 			let searchUrl = '/following/manage';
@@ -50,19 +72,20 @@ class FollowingManage extends Component {
 			}
 			page.replace( searchUrl );
 		}
-	}
+	};
+
+	handleSearchClosed = () => {
+		this.scrollToTop();
+		this.setState( { showMoreResults: false } );
+	};
 
 	scrollToTop = () => {
 		window.scrollTo( 0, 0 );
-	}
+	};
 
-	handleStreamMounted = ( ref ) => {
-		this.streamRef = ref;
-	}
-
-	handleSearchBoxMounted = ( ref ) => {
-		this.searchBoxRef = ref;
-	}
+	handleStreamMounted = ref => this.streamRef = ref;
+	handleSearchBoxMounted = ref => this.searchBoxRef = ref;
+	handleWindowScrollerMounted = ref => this.windowScrollerRef = ref;
 
 	resizeSearchBox = () => {
 		if ( this.searchBoxRef && this.streamRef ) {
@@ -72,48 +95,129 @@ class FollowingManage extends Component {
 			}
 			this.setState( { width } );
 		}
-	}
+	};
 
 	componentDidMount() {
-		this.resizeListener = window.addEventListener(
-			'resize',
-			debounce( this.resizeSearchBox, 50 )
-		);
+		this.resizeListener = window.addEventListener( 'resize', debounce( this.resizeSearchBox, 50 ) );
 		this.resizeSearchBox();
+
+		// this is a total hack. In React-Virtualized you need to tell a WindowScroller when the things
+		// above it has moved with a call to updatePosition().  Our issue is we don't have a good moment
+		// where we know that the content above the WindowScroller has settled down and so instead the solution
+		// here is to call updatePosition in a regular interval. the call takes about 0.1ms from empirical testing.
+		this.updatePosition = setInterval( () => {
+			this.windowScrollerRef && this.windowScrollerRef.updatePosition();
+		}, 300 );
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.resizeListener );
+		clearInterval( this.windowScrollerRef );
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		const nextState = {};
+		const recommendedSites = nextProps.getRecommendedSites( this.state.seed );
+
+		const shouldRequestMoreRecs =
+			recommendedSites &&
+			recommendedSites.length === this.state.offset + PAGE_SIZE &&
+			reject( recommendedSites, nextProps.isSiteBlocked ).length <= 2;
+
+		if ( shouldRequestMoreRecs ) {
+			nextState.offset = this.state.offset + PAGE_SIZE;
+		}
+
+		this.setState( nextState );
+	}
+
+	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
+
+	handleShowMoreClicked = () => {
+		page.replace(
+			addQueryArgs( { showMoreResults: true }, window.location.pathname + window.location.search )
+		);
+	};
+
 	render() {
-		const { sitesQuery, subsQuery, translate, searchResults } = this.props;
-		const searchPlaceholderText = translate( 'Search millions of sites' );
+		const {
+			sitesQuery,
+			subsQuery,
+			subsSortOrder,
+			translate,
+			searchResults,
+			searchResultsCount,
+			showMoreResults,
+			getRecommendedSites,
+			isSiteBlocked,
+		} = this.props;
+		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
+		const showExistingSubscriptions = ! ( !! sitesQuery && showMoreResults );
+		const isSitesQueryUrl = resemblesUrl( sitesQuery );
+		let sitesQueryWithoutProtocol;
+		if ( isSitesQueryUrl ) {
+			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
+		}
+		const recommendedSites = reject( getRecommendedSites( this.state.seed ), isSiteBlocked );
 
 		return (
 			<ReaderMain className="following-manage">
 				<DocumentHead title={ 'Manage Following' } />
-				{ this.props.showBack && <HeaderBack /> }
-				{ searchResults.length === 0 && <QueryReaderFeedsSearch query={ sitesQuery } /> }
-				<h1 className="following-manage__header"> { translate( 'Follow Something New' ) } </h1>
+				<MobileBackToSidebar>
+					<h1>{ translate( 'Manage Followed Sites' ) }</h1>
+				</MobileBackToSidebar>
+				{ ! searchResults && ! isSitesQueryUrl && <QueryReaderFeedsSearch query={ sitesQuery } /> }
+				{ recommendedSites.length <= 2 &&
+					<QueryReaderRecommendedSites seed={ this.state.seed } offset={ this.state.offset } /> }
+				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="following-manage__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }
-							onSearchClose={ this.scrollToTop }
+							onSearchClose={ this.handleSearchClosed }
 							autoFocus={ this.props.autoFocusInput }
 							delaySearch={ true }
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText }
 							additionalClasses="following-manage__search-new"
 							initialValue={ sitesQuery }
-							value={ sitesQuery }>
-						</SearchInput>
+							value={ sitesQuery }
+						/>
 					</CompactCard>
+
+					{ isSitesQueryUrl &&
+						<div className="following-manage__url-follow">
+							<FollowButton
+								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
+								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
+								siteUrl={ this.props.getReaderAliasedFollowFeedUrl(
+									addSchemeIfMissing( sitesQuery, 'http' )
+								) }
+								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
+							/>
+						</div> }
 				</div>
-				{ ! sitesQuery && <FollowingManageSubscriptions width={ this.state.width } query={ subsQuery } /> }
-				{ !! sitesQuery && <SitesWindowScroller sites={ searchResults } width={ this.state.width } /> }
+				{ ! sitesQuery && <RecommendedSites sites={ take( recommendedSites, 2 ) } /> }
+				{ !! sitesQuery &&
+					! isSitesQueryUrl &&
+					<FollowingManageSearchFeedsResults
+						searchResults={ searchResults }
+						showMoreResults={ showMoreResults }
+						showMoreResultsClicked={ this.handleShowMoreClicked }
+						width={ this.state.width }
+						fetchNextPage={ this.fetchNextPage }
+						forceRefresh={ this.props.sitesQuery }
+						searchResultsCount={ searchResultsCount }
+						query={ sitesQuery }
+					/> }
+				{ showExistingSubscriptions && (
+					<FollowingManageSubscriptions
+						width={ this.state.width }
+						query={ subsQuery }
+						sortOrder={ subsSortOrder }
+						windowScrollerRef={ this.handleWindowScrollerMounted }
+					/> ) }
 			</ReaderMain>
 		);
 	}
@@ -121,6 +225,11 @@ class FollowingManage extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		searchResults: getReaderFeedsForQuery( state, ownProps.sitesQuery ) || [],
+		searchResults: getReaderFeedsForQuery( state, ownProps.sitesQuery ),
+		searchResultsCount: getReaderFeedsCountForQuery( state, ownProps.sitesQuery ),
+		getRecommendedSites: seed => getReaderRecommendedSites( state, seed ),
+		isSiteBlocked: site => isSiteBlockedSelector( state, site.blogId ),
+		getReaderAliasedFollowFeedUrl: url => getReaderAliasedFollowFeedUrl( state, url ),
 	} ),
+	{ requestFeedSearch }
 )( localize( FollowingManage ) );

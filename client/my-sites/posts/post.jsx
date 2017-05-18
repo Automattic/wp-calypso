@@ -22,8 +22,10 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getPreviewURL } from 'lib/posts/utils';
-import { isSitePreviewable } from 'state/sites/selectors';
+import { getPostPreviewUrl } from 'state/posts/selectors';
+import { isSingleUserSite, isSitePreviewable } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPath } from 'state/ui/editor/selectors';
 
 import Comments from 'blocks/comments';
 import PostShare from 'my-sites/post-share';
@@ -217,14 +219,16 @@ const Post = React.createClass( {
 	},
 
 	getHeader() {
-		const selectedSite = this.props.sites.getSelectedSite();
-		const site = this.getSite();
-
-		if ( selectedSite && site.single_user_site ) {
+		if ( this.props.selectedSiteId && this.props.isPostFromSingleUserSite ) {
 			return null;
 		}
 
-		return <PostHeader site={ site } author={ this.props.post.author ? this.props.post.author.name : '' } path={ this.props.path } showAuthor={ ! site.single_user_site } />;
+		return (
+			<PostHeader siteId={ this.props.post.site_ID }
+				author={ this.props.post.author ? this.props.post.author.name : '' }
+				path={ this.props.path }
+				showAuthor={ ! this.props.isPostFromSingleUserSite } />
+		);
 	},
 
 	getContent() {
@@ -242,10 +246,9 @@ const Post = React.createClass( {
 
 	getContentLinkURL() {
 		const post = this.props.post;
-		const site = this.getSite();
 
 		if ( utils.userCan( 'edit_post', post ) ) {
-			return utils.getEditURL( post, site );
+			return this.props.editUrl;
 		} else if ( post.status === 'trash' ) {
 			return null;
 		}
@@ -266,10 +269,6 @@ const Post = React.createClass( {
 		} );
 	},
 
-	getSite() {
-		return this.props.sites.getSite( this.props.post.site_ID );
-	},
-
 	toggleComments() {
 		this.setState( {
 			showComments: ! this.state.showComments
@@ -283,7 +282,7 @@ const Post = React.createClass( {
 
 	viewPost( event ) {
 		event.preventDefault();
-		const { isPreviewable, previewURL } = this.props;
+		const { isPreviewable, previewUrl } = this.props;
 
 		if ( this.props.post.status && this.props.post.status === 'future' ) {
 			this.analyticsEvents.previewPost;
@@ -292,27 +291,27 @@ const Post = React.createClass( {
 		}
 
 		if ( ! isPreviewable ) {
-			return window.open( previewURL );
+			return window.open( previewUrl );
 		}
 
-		this.props.setPreviewUrl( previewURL );
+		this.props.setPreviewUrl( previewUrl );
 		this.props.setLayoutFocus( 'preview' );
 	},
 
 	render() {
-		const site = this.getSite();
-
 		return (
 			<Card tagName="article" className={ this.getPostClass() }>
 				<div className="post__body">
 					{ this.getHeader() }
 					{ this.getPostImage() }
 					{ this.getContent() }
-					<PostActions { ...{ site, post: this.props.post, toggleComments: this.toggleComments } } />
+					<PostActions siteId={ this.props.post.site_ID }
+						post={ this.props.post }
+						toggleComments={ this.toggleComments } />
 				</div>
 				<PostControls
 					post={ this.props.post }
-					editURL={ utils.getEditURL( this.props.post, site ) }
+					editURL={ this.props.editUrl }
 					fullWidth={ this.props.fullWidthPost }
 					onShowMore={ this.toggleMoreControls.bind( this, 'show' ) }
 					onHideMore={ this.toggleMoreControls.bind( this, 'hide' ) }
@@ -322,7 +321,8 @@ const Post = React.createClass( {
 					onRestore={ this.restorePost }
 					onToggleShare={ this.toggleShare }
 					onViewPost={ this.viewPost }
-					site={ site }
+					siteId={ this.props.post.site_ID }
+					current={ this.state.showShare ? 'share' : null }
 				/>
 				<ReactCSSTransitionGroup
 					transitionName="updated-trans"
@@ -340,7 +340,9 @@ const Post = React.createClass( {
 						onFilterChange={ commentsFilter => this.setState( { commentsFilter } ) }
 						onCommentsUpdate={ () => {} } />
 				}
-				{ this.state.showShare && config.isEnabled( 'republicize' ) && <PostShare post={ this.props.post } site={ site } /> }
+				{ this.state.showShare && config.isEnabled( 'republicize' ) &&
+					<PostShare post={ this.props.post } siteId={ this.props.post.site_ID } />
+				}
 			</Card>
 		);
 	}
@@ -348,10 +350,14 @@ const Post = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => {
+	( state, { post } ) => {
+		const selectedSiteId = getSelectedSiteId( state );
 		return {
-			isPreviewable: false !== isSitePreviewable( state, props.post.site_ID ),
-			previewURL: getPreviewURL( props.post ),
+			editUrl: getEditorPath( state, post.site_ID, post.ID, 'post' ),
+			isPostFromSingleUserSite: isSingleUserSite( state, post.site_ID ),
+			isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
+			previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID ),
+			selectedSiteId
 		};
 	},
 	{ setPreviewUrl, setLayoutFocus }

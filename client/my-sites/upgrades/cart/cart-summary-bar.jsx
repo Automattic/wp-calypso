@@ -1,16 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
-var CartSummaryBar = React.createClass( {
-	render: function() {
-		var itemCount = this.props.itemCount,
-			text;
+/**
+ * Internal dependencies
+ */
+import SectionHeader from 'components/section-header';
 
-		text = this.translate( 'Cart' );
-		if ( this.props.showItemCount && itemCount ) {
-			text = this.translate(
+class CartSummaryBar extends React.Component {
+	render() {
+		const { itemCount, showItemCount, translate } = this.props;
+
+		let text = translate( 'Order Summary' );
+		if ( showItemCount && itemCount ) {
+			text = translate(
 				'Cart - %(count)d item',
 				'Cart - %(count)d items',
 				{
@@ -21,19 +26,19 @@ var CartSummaryBar = React.createClass( {
 		}
 
 		return (
-			<div className={ 'cart-summary-bar ' + this.props.additionalClasses } onClick={ this.toggleVisibility }>
-				{ text }
+			<div>
+				<SectionHeader className="cart__header" label={ text } />
 			</div>
 		);
-	},
+	}
 
-	toggleVisibility: function( event ) {
+	toggleVisibility = ( event ) => {
 		event.preventDefault();
 
 		if ( this.props.onClick ) {
 			this.props.onClick( event );
 		}
-	}
-} );
+	};
+}
 
-module.exports = CartSummaryBar;
+export default localize( CartSummaryBar );

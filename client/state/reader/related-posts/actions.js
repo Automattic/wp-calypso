@@ -11,11 +11,9 @@ import {
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
 	READER_RELATED_POSTS_RECEIVE,
-	READER_SITE_UPDATE
+	READER_SITE_UPDATE,
 } from 'state/action-types';
-import {
-	receivePosts
-} from 'state/reader/posts/actions';
+import { receivePosts } from 'state/reader/posts/actions';
 import wpcom from 'lib/wp';
 import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from './utils';
 
@@ -26,14 +24,14 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 			payload: {
 				siteId,
 				postId,
-				scope
-			}
+				scope,
+			},
 		} );
 
 		const query = {
 			site_id: siteId,
 			post_id: postId,
-			meta: 'site'
+			meta: 'site',
 		};
 
 		if ( scope === SCOPE_SAME ) {
@@ -48,13 +46,13 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 			response => {
 				dispatch( {
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
-					payload: { siteId, postId, scope }
+					payload: { siteId, postId, scope },
 				} );
 				const sites = filter( map( response && response.posts, 'meta.data.site' ), Boolean );
 				if ( sites && sites.length !== 0 ) {
 					dispatch( {
 						type: READER_SITE_UPDATE,
-						payload: sites
+						payload: sites,
 					} );
 				}
 				// collect posts and dispatch
@@ -65,8 +63,8 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 							siteId,
 							postId,
 							scope,
-							posts: ( response && response.posts ) || []
-						}
+							posts: ( response && response.posts ) || [],
+						},
 					} );
 				} );
 			},
@@ -74,7 +72,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 				dispatch( {
 					type: READER_RELATED_POSTS_REQUEST_FAILURE,
 					payload: { siteId, postId, scope, error: err },
-					error: true
+					error: true,
 				} );
 
 				dispatch( {
@@ -83,8 +81,8 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 						siteId,
 						postId,
 						scope,
-						posts: []
-					}
+						posts: [],
+					},
 				} );
 			}
 		);

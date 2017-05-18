@@ -13,9 +13,10 @@ export const itemsSchema = {
 				feed_URL: { type: [ 'string', 'null' ] },
 				is_following: { type: [ 'boolean', 'null' ] },
 				subscribers_count: { type: [ 'integer', 'null' ] },
-				meta: { type: [ 'object', 'null' ] }
-			}
-		}
+				description: { type: [ 'string', 'null' ] },
+				last_update: { type: [ 'string', 'null' ] },
+			},
+		},
 	},
-	additionalProperties: false
+	additionalProperties: false,
 };

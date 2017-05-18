@@ -9,18 +9,20 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	READER_FOLLOW,
-	READER_UNFOLLOW,
+	READER_RECORD_FOLLOW,
+	READER_RECORD_UNFOLLOW,
+	READER_FOLLOW_ERROR,
 } from 'state/action-types';
+import { recordFollowError } from '../actions';
 
 describe( 'actions', () => {
 	let recordFollow, recordUnfollow;
 
 	useMockery( mockery => {
 		mockery.registerMock( 'state/reader/posts/actions', {
-			receivePosts: ( posts ) => {
+			receivePosts: posts => {
 				return Promise.resolve( posts );
-			}
+			},
 		} );
 
 		const actions = require( '../actions' );
@@ -41,7 +43,7 @@ describe( 'actions', () => {
 		it( 'should dispatch an action when a URL is followed', () => {
 			recordFollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
-				type: READER_FOLLOW,
+				type: READER_RECORD_FOLLOW,
 				payload: { url: 'http://discover.wordpress.com' },
 			} );
 		} );
@@ -51,8 +53,18 @@ describe( 'actions', () => {
 		it( 'should dispatch an action when a URL is unfollowed', () => {
 			recordUnfollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
-				type: READER_UNFOLLOW,
-				payload: { url: 'http://discover.wordpress.com' }
+				type: READER_RECORD_UNFOLLOW,
+				payload: { url: 'http://discover.wordpress.com' },
+			} );
+		} );
+	} );
+
+	describe( '#recordFollowError', () => {
+		it( 'should dispatch an action on follow error', () => {
+			const action = recordFollowError( 'http://discover.wordpress.com', 'invalid_feed' );
+			expect( action ).to.deep.equal( {
+				type: READER_FOLLOW_ERROR,
+				payload: { feedUrl: 'http://discover.wordpress.com', error: 'invalid_feed' },
 			} );
 		} );
 	} );

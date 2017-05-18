@@ -67,9 +67,16 @@ const domainAvailability = {
 	RECENTLY_UNMAPPED: 'recently_mapped',
 };
 
+const dnsTemplates = {
+	G_SUITE: 'g-suite',
+	MICROSOFT_OFFICE365: 'microsoft-office365',
+	ZOHO_MAIL: 'zoho-mail',
+};
+
 export default {
-	type,
+	dnsTemplates,
+	domainAvailability,
 	registrar,
 	tlds,
-	domainAvailability,
+	type,
 };

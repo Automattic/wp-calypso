@@ -49,15 +49,19 @@ class PressThis extends Component {
 							'for a posting shortcut.'
 						) }
 					</p>
-					<p className="pressthis">
-						<PressThisLink
-							site={ site }
-							onClick={ this.recordEvent( 'Clicked Press This Button' ) }
-							onDragStart={ this.recordEvent( 'Dragged Press This Button' ) }>
-							<Gridicon icon="create" />
-							<span>{ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }</span>
-						</PressThisLink>
-					</p>
+					{
+						site && (
+							<p className="press-this__link-container">
+								<PressThisLink
+									site={ site }
+									onClick={ this.recordEvent( 'Clicked Press This Button' ) }
+									onDragStart={ this.recordEvent( 'Dragged Press This Button' ) }>
+									<Gridicon icon="create" />
+									<span>{ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }</span>
+								</PressThisLink>
+							</p>
+						)
+					}
 				</Card>
 			</div>
 		);

@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -11,11 +12,7 @@ import Stream from 'reader/stream';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from './empty';
 import TagStreamHeader from './header';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrack,
-} from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import HeaderBack from 'reader/header-back';
 import { getReaderFollowedTags, getReaderTags } from 'state/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
@@ -23,20 +20,17 @@ import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags'
 import QueryReaderTag from 'components/data/query-reader-tag';
 import { find } from 'lodash';
 
-const TagStream = React.createClass( {
+class TagStream extends React.Component {
+	static propTypes = {
+		encodedTagSlug: React.PropTypes.string,
+		decodedTagSlug: React.PropTypes.string,
+	};
 
-	_isMounted: false,
+	state = {
+		isEmojiTitle: false,
+	};
 
-	propTypes: {
-		tag: React.PropTypes.string, // the tag slug encoded
-		decodedTag: React.PropTypes.string, // decoded tag slug
-	},
-
-	getInitialState() {
-		return {
-			isEmojiTitle: false
-		};
-	},
+	_isMounted = false;
 
 	componentWillMount() {
 		const self = this;
@@ -49,85 +43,92 @@ const TagStream = React.createClass( {
 		} );
 		asyncRequire( 'twemoji', function( twemoji ) {
 			if ( self._isMounted ) {
-				const title = self.getTitle();
+				const title = self.props.decodedTagSlug;
 				self.setState( {
 					twemoji,
-					isEmojiTitle: title && twemoji.test( title )
+					isEmojiTitle: title && twemoji.test( title ),
 				} );
 			}
 		} );
-	},
+	}
 
 	componentWillUnmount() {
 		this._isMounted = false;
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.tag !== this.props.tag ) {
+		if ( nextProps.encodedTagSlug !== this.props.encodedTagSlug ) {
 			this.checkForTwemoji( nextProps );
 		}
-	},
+	}
 
-	checkForTwemoji() {
+	checkForTwemoji = () => {
 		const title = this.getTitle();
 		this.setState( {
-			isEmojiTitle: title && this.state.twemoji && this.state.twemoji.test( title )
+			isEmojiTitle: title && this.state.twemoji && this.state.twemoji.test( title ),
 		} );
-	},
+	};
 
-	getTitle() {
-		return decodeURIComponent( this.props.tag );
-	},
-
-	isSubscribed() {
-		const tag = find( this.props.tags, { slug: this.props.tag } );
+	isSubscribed = () => {
+		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
 		return !! ( tag && tag.isFollowing );
-	},
+	};
 
-	toggleFollowing() {
-		const { tag, decodedTag, unfollowTag, followTag } = this.props;
+	toggleFollowing = () => {
+		const { decodedTagSlug, unfollowTag, followTag } = this.props;
 		const isFollowing = this.isSubscribed(); // this is the current state, not the new state
 		const toggleAction = isFollowing ? unfollowTag : followTag;
-		toggleAction( decodedTag );
+		toggleAction( decodedTagSlug );
 		recordAction( isFollowing ? 'unfollowed_topic' : 'followed_topic' );
-		recordGaEvent( isFollowing ? 'Clicked Unfollow Topic' : 'Clicked Follow Topic', tag );
-		recordTrack( isFollowing ? 'calypso_reader_reader_tag_unfollowed' : 'calypso_reader_reader_tag_followed', {
-			tag
-		} );
-	},
+		recordGaEvent(
+			isFollowing ? 'Clicked Unfollow Topic' : 'Clicked Follow Topic',
+			decodedTagSlug
+		);
+		recordTrack(
+			isFollowing ? 'calypso_reader_reader_tag_unfollowed' : 'calypso_reader_reader_tag_followed',
+			{
+				tag: decodedTagSlug,
+			}
+		);
+	};
 
 	render() {
-		const emptyContent = ( <EmptyContent tag={ this.props.tag } /> );
-		const title = this.getTitle();
-		const tag = find( this.props.tags, { slug: this.props.tag } );
+		const emptyContent = <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
+		const title = this.props.decodedTagSlug;
+		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
 
-		let imageSearchString = this.props.tag;
+		let imageSearchString = this.props.encodedTagSlug;
 
 		// If the tag contains emoji, convert to text equivalent
 		if ( this.state.emojiText && this.state.isEmojiTitle ) {
 			imageSearchString = this.state.emojiText.convert( title, {
-				delimiter: ''
+				delimiter: '',
 			} );
 		}
 
 		return (
-			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
+			<Stream
+				{ ...this.props }
+				listName={ this.state.title }
+				emptyContent={ emptyContent }
+				showFollowInHeader={ true }
+			>
 				<QueryReaderFollowedTags />
-				<QueryReaderTag tag={ this.props.decodedTag } />
-				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
+				<QueryReaderTag tag={ this.props.decodedTagSlug } />
+				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				<TagStreamHeader
-					tag={ this.props.tag }
-					title={ this.getTitle() }
+					title={ title }
 					imageSearchString={ imageSearchString }
 					showFollow={ !! ( tag && tag.id ) }
 					following={ this.isSubscribed() }
 					onFollowToggle={ this.toggleFollowing }
-					showBack={ this.props.showBack } />
+					showBack={ this.props.showBack }
+				/>
 			</Stream>
 		);
 	}
-} );
+}
 
 export default connect(
 	state => ( {
@@ -138,4 +139,4 @@ export default connect(
 		followTag: requestFollowTag,
 		unfollowTag: requestUnfollowTag,
 	}
-)( TagStream );
+)( localize( TagStream ) );

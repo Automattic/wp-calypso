@@ -17,19 +17,6 @@ describe( 'getThemeFilterTerms()', () => {
 
 	it( 'should return the filter terms for a given filter slug', () => {
 		const terms = getThemeFilterTerms( state, 'subject' );
-		expect( terms ).to.deep.equal( {
-			artwork: {
-				name: 'Artwork',
-				description: ''
-			},
-			blog: {
-				name: 'Blog',
-				description: 'Whether you\'re authoring a personal blog, professional blog, or a business blog — ...'
-			},
-			business: {
-				name: 'Business',
-				description: 'WordPress business themes offer you a professional design for your company or organization. ...'
-			},
-		} );
+		expect( terms ).to.deep.equal( state.themes.themeFilters.subject );
 	} );
 } );

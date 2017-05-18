@@ -1,3 +1,4 @@
+
 {
 	"env": "development",
 	"env_id": "development",
@@ -18,7 +19,7 @@
 	"google_analytics_enabled": false,
 	"google_analytics_key": "UA-10673494-15",
 	"google_adwords_conversion_id": 1067250390,
-	"lucky_orange_enabled": true,
+	"hotjar_enabled": true,
 	"olark": {
 		"business_account_id": "3146-815-10-9343",
 		"business_group_id": false
@@ -38,6 +39,7 @@
 		"code-splitting": true,
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
+		"comments/management": true,
 		"community-translator": true,
 		"css-hot-reload": true,
 		"desktop-promo": true,
@@ -66,7 +68,6 @@
 		"manage/media": true,
 		"manage/option_sync_non_public_post_stati": true,
 		"manage/pages": true,
-		"manage/pages/set-homepage": true,
 		"manage/payment-methods": true,
 		"manage/people": true,
 		"manage/people/readers": true,
@@ -88,7 +89,6 @@
 		"manage/themes/details": true,
 		"manage/themes/details/jetpack": true,
 		"manage/themes/logged-out": true,
-		"manage/themes/magic-search": true,
 		"manage/themes/upload": true,
 		"me/account": true,
 		"me/edit-gravatar": false,
@@ -117,10 +117,11 @@
 		"post-editor/media-advanced": false,
 		"press-this": true,
 		"publicize/preview": false,
+		"publicize-scheduling": false,
 		"push-notifications": true,
 		"reader": true,
 		"reader/combined-cards": true,
-		"reader/following-intro": false,
+		"reader/following-intro": true,
 		"reader/following-manage-refresh": true,
 		"reader/full-errors": true,
 		"reader/list-management": false,
@@ -131,6 +132,7 @@
 		"reader/tags-with-elasticsearch": false,
 		"resume-editing": true,
 		"republicize": true,
+		"restore-last-location": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
@@ -153,7 +155,16 @@
 		"upgrades/presale-chat": true,
 		"webpack/persistent-caching": false,
 		"woocommerce/extension-dashboard": true,
-		"woocommerce/extension-stats": true,
+		"woocommerce/extension-extensions": true,
+		"woocommerce/extension-orders": true,
+		"woocommerce/extension-products": true,
+		"woocommerce/extension-products-import": true,
+		"woocommerce/extension-promotions": true,
+		"woocommerce/extension-settings": true,
+		"woocommerce/extension-settings-payments": true,
+		"woocommerce/extension-settings-shipping": true,
+		"woocommerce/extension-settings-tax": true,
+		"woocommerce/extension-stats": false,
 		"wp-login": true
 	}
 }

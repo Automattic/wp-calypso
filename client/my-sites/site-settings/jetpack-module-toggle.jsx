@@ -31,7 +31,7 @@ class JetpackModuleToggle extends Component {
 	};
 
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		moduleSlug: PropTypes.string.isRequired,
 		label: PropTypes.string.isRequired,
 		checked: PropTypes.bool,

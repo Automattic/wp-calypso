@@ -261,7 +261,7 @@ module.exports = React.createClass( {
 				</ol>
 
 				<p className="security-2fa-backup-codes-list__warning">
-					<span className="noticon noticon-warning"></span>
+					<Gridicon icon="notice" />
 					{ this.translate( 'Without access to the app, your phone, or a backup code, you will lose access to your account.' ) }
 				</p>
 

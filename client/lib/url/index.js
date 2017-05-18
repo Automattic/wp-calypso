@@ -3,6 +3,7 @@
  */
 import { parse as parseUrl } from 'url';
 import { startsWith } from 'lodash';
+import url from 'url';
 
 /**
  * Internal dependencies
@@ -107,6 +108,41 @@ function urlToSlug( url ) {
 	return withoutHttp( url ).replace( /\//g, '::' );
 }
 
+/**
+ * Checks if the supplied string appears to be a URL.
+ * Looks only for the absolute basics:
+ *  - does it have a .suffix?
+ *  - does it have at least two parts separated by a dot?
+ *
+ * @param  {String}  query The string to check
+ * @return {Boolean} Does it appear to be a URL?
+ */
+function resemblesUrl( query ) {
+	let parsedUrl = url.parse( query );
+
+	// Make sure the query has a protocol - hostname ends up blank otherwise
+	if ( ! parsedUrl.protocol ) {
+		parsedUrl = url.parse( 'http://' + query );
+	}
+
+	if ( ! parsedUrl.hostname || parsedUrl.hostname.indexOf( '.' ) === -1 ) {
+		return false;
+	}
+
+	// Check for a valid-looking TLD
+	if ( parsedUrl.hostname.lastIndexOf( '.' ) > ( parsedUrl.hostname.length - 3 ) ) {
+		return false;
+	}
+
+	// Make sure the hostname has at least two parts separated by a dot
+	const hostnameParts = parsedUrl.hostname.split( '.' ).filter( Boolean );
+	if ( hostnameParts.length < 2 ) {
+		return false;
+	}
+
+	return true;
+}
+
 export default {
 	isOutsideCalypso,
 	isExternal,
@@ -116,5 +152,6 @@ export default {
 	setUrlScheme,
 	urlToSlug,
 	// [TODO]: Move lib/route/add-query-args contents here
-	addQueryArgs
+	addQueryArgs,
+	resemblesUrl,
 };

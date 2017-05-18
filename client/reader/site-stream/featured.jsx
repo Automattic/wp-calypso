@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -12,137 +12,134 @@ import page from 'page';
 import FeedPostStore from 'lib/feed-post-store';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import { getSourceData as getDiscoverSourceData } from 'reader/discover/helper';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrackForPost,
-} from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import cssSafeUrl from 'lib/css-safe-url';
 
-export default React.createClass( {
-	displayName: 'FeedFeatured',
+export default localize(
+	class extends React.PureComponent {
+		static displayName = 'FeedFeatured';
 
-	mixins: [ PureRenderMixin ],
+		getStateFromStores = ( store = this.props.store ) => {
+			const posts = store.get().map( postKey => {
+				const post = FeedPostStore.get( postKey );
 
-	getInitialState() {
-		return this.getStateFromStores();
-	},
+				if ( this.shouldFetch( post ) ) {
+					FeedPostStoreActions.fetchPost( postKey );
+					return { post };
+				}
 
-	getStateFromStores( store = this.props.store ) {
-		const posts = store.get().map( postKey => {
-			const post = FeedPostStore.get( postKey );
+				const source = this.getSourcePost( post ), url = this.getPostUrl( source || post );
 
-			if ( this.shouldFetch( post ) ) {
-				FeedPostStoreActions.fetchPost( postKey );
-				return { post };
-			}
-
-			const source = this.getSourcePost( post ),
-				url = this.getPostUrl( source || post );
+				return {
+					post,
+					source,
+					url,
+				};
+			} );
 
 			return {
-				post,
-				source,
-				url
+				posts,
 			};
-		} );
-
-		return {
-			posts
 		};
-	},
 
-	updateState( store ) {
-		this.setState( this.getStateFromStores( store ) );
-	},
+		updateState = store => {
+			this.setState( this.getStateFromStores( store ) );
+		};
 
-	componentDidMount() {
-		this.props.store.on( 'change', this.updateState );
-		FeedPostStore.on( 'change', this.updateState );
-	},
-
-	componentWillUnmount() {
-		this.props.store.off( 'change', this.updateState );
-		FeedPostStore.off( 'change', this.updateState );
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.store !== this.props.store ) {
-			this.updateState();
-		}
-	},
-
-	shouldFetch( post ) {
-		return ! post || post._state === 'minimal';
-	},
-
-	getSourcePost( post ) {
-		const data = getDiscoverSourceData( post );
-
-		if ( ! data ) {
-			return null;
+		componentDidMount() {
+			this.props.store.on( 'change', this.updateState );
+			FeedPostStore.on( 'change', this.updateState );
 		}
 
-		return FeedPostStore.get( data );
-	},
+		componentWillUnmount() {
+			this.props.store.off( 'change', this.updateState );
+			FeedPostStore.off( 'change', this.updateState );
+		}
 
-	getPostUrl( post ) {
-		return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
-	},
-
-	handleClick( postData ) {
-		const post = postData.post;
-		recordTrackForPost( 'calypso_reader_clicked_featured_post', post );
-		recordAction( 'clicked_featured_post' );
-		recordGaEvent( 'Clicked Featured Post' );
-
-		page( postData.url );
-	},
-
-	renderPosts() {
-		return this.state.posts.map( postData => {
-			const post = postData.post,
-				postState = post._state;
-
-			switch ( postState ) {
-				case 'minimal':
-				case 'pending':
-				case 'error':
-					break;
-				default:
-					let style = {
-						backgroundImage: post.canonical_image && post.canonical_image.uri ? 'url(' + cssSafeUrl( post.canonical_image.uri ) + ')' : null
-					};
-
-					return (
-						<div
-							key={ post.ID }
-							className="reader__featured-post"
-							onClick={ this.handleClick.bind( this, postData ) }>
-							<div className="reader__featured-post-image" style={ style }></div>
-							<h2 className="reader__featured-post-title">{ post.title }</h2>
-						</div>
-					);
+		componentWillReceiveProps( nextProps ) {
+			if ( nextProps.store !== this.props.store ) {
+				this.updateState();
 			}
-		} );
-	},
-
-	render() {
-		if ( ! this.state.posts ) {
-			return null;
 		}
 
-		return (
-			<Card className="reader__featured-card">
-				<div className="reader__featured-header">
-					<div className="reader__featured-title">{ this.translate( 'Highlights' ) }</div>
-					<div className="reader__featured-description">{ this.translate( 'What we’re reading this week.' ) }</div>
-				</div>
+		shouldFetch = post => {
+			return ! post || post._state === 'minimal';
+		};
 
-				<div className="reader__featured-posts">
-					{ this.renderPosts() }
-				</div>
-			</Card>
-		);
+		getSourcePost = post => {
+			const data = getDiscoverSourceData( post );
+
+			if ( ! data ) {
+				return null;
+			}
+
+			return FeedPostStore.get( data );
+		};
+
+		getPostUrl = post => {
+			return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
+		};
+
+		handleClick = postData => {
+			const post = postData.post;
+			recordTrackForPost( 'calypso_reader_clicked_featured_post', post );
+			recordAction( 'clicked_featured_post' );
+			recordGaEvent( 'Clicked Featured Post' );
+
+			page( postData.url );
+		};
+
+		renderPosts = () => {
+			return this.state.posts.map( postData => {
+				const post = postData.post, postState = post._state;
+
+				switch ( postState ) {
+					case 'minimal':
+					case 'pending':
+					case 'error':
+						break;
+					default:
+						let style = {
+							backgroundImage: post.canonical_image && post.canonical_image.uri
+								? 'url(' + cssSafeUrl( post.canonical_image.uri ) + ')'
+								: null,
+						};
+
+						return (
+							<div
+								key={ post.ID }
+								className="reader__featured-post"
+								onClick={ this.handleClick.bind( this, postData ) }
+							>
+								<div className="reader__featured-post-image" style={ style } />
+								<h2 className="reader__featured-post-title">{ post.title }</h2>
+							</div>
+						);
+				}
+			} );
+		};
+
+		state = this.getStateFromStores();
+
+		render() {
+			if ( ! this.state.posts ) {
+				return null;
+			}
+
+			return (
+				<Card className="reader__featured-card">
+					<div className="reader__featured-header">
+						<div className="reader__featured-title">{ this.props.translate( 'Highlights' ) }</div>
+						<div className="reader__featured-description">
+							{ this.props.translate( 'What we’re reading this week.' ) }
+						</div>
+					</div>
+
+					<div className="reader__featured-posts">
+						{ this.renderPosts() }
+					</div>
+				</Card>
+			);
+		}
 	}
-} );
+);

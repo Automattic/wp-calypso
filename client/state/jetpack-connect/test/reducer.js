@@ -25,14 +25,13 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-	JETPACK_CONNECT_ACTIVATE_MANAGE,
-	JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_RETRY_AUTH,
+	SITE_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -379,8 +378,7 @@ describe( 'reducer', () => {
 
 		it( 'should set authorizeSuccess to true when completed authorization successfully', () => {
 			const data = {
-				plans_url: 'https://wordpress.com/jetpack/connect/plans/',
-				activate_manage: 'abcdefghi12345678'
+				plans_url: 'https://wordpress.com/jetpack/connect/plans/'
 			};
 			const state = jetpackConnectAuthorize( undefined, {
 				type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
@@ -397,8 +395,6 @@ describe( 'reducer', () => {
 				.to.eql( data.plans_url );
 			expect( state ).to.have.property( 'siteReceived' )
 				.to.be.false;
-			expect( state ).to.have.property( 'activateManageSecret' )
-				.to.eql( data.activate_manage );
 		} );
 
 		it( 'should set authorizeSuccess to false when an error occurred during authorization', () => {
@@ -457,50 +453,6 @@ describe( 'reducer', () => {
 					site: 'https://example.com/',
 					state: 1234567890
 				} );
-		} );
-
-		it( 'should set isActivating to true when manage is being activated', () => {
-			const state = jetpackConnectAuthorize( undefined, {
-				type: JETPACK_CONNECT_ACTIVATE_MANAGE
-			} );
-
-			expect( state ).to.have.property( 'isActivating' )
-				.to.be.true;
-		} );
-
-		it( 'should mark manage as activated when request completes', () => {
-			const state = jetpackConnectAuthorize( undefined, {
-				type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
-				data: {
-					result: true
-				}
-			} );
-
-			expect( state ).to.have.property( 'isActivating' )
-				.to.be.false;
-			expect( state ).to.have.property( 'manageActivated' )
-				.to.be.true;
-			expect( state ).to.have.property( 'manageActivatedError' )
-				.to.be.undefined;
-			expect( state ).to.have.property( 'activateManageSecret' )
-				.to.be.false;
-		} );
-
-		it( 'should store the error if an error occurs during manage activation', () => {
-			const error = 'There was an error while activating the module.';
-			const state = jetpackConnectAuthorize( undefined, {
-				type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
-				error
-			} );
-
-			expect( state ).to.have.property( 'isActivating' )
-				.to.be.false;
-			expect( state ).to.have.property( 'manageActivated' )
-				.to.be.true;
-			expect( state ).to.have.property( 'manageActivatedError' )
-				.to.eql( error );
-			expect( state ).to.have.property( 'activateManageSecret' )
-				.to.be.false;
 		} );
 
 		it( 'should use default authorize state when setting an empty connect query', () => {
@@ -613,6 +565,23 @@ describe( 'reducer', () => {
 
 			expect( state ).to.have.property( 'isRedirectingToWpAdmin' )
 				.to.be.true;
+		} );
+
+		it( 'should set clientNotResponding when a site request to current client fails', () => {
+			const state = jetpackConnectAuthorize(
+				{ queryObject: { client_id: '123' } },
+				{ type: SITE_REQUEST_FAILURE, siteId: 123 }
+			);
+			expect( state ).to.have.property( 'clientNotResponding' )
+				.to.be.true;
+		} );
+
+		it( 'should persist state when a site request to a different client fails', () => {
+			const state = jetpackConnectAuthorize(
+				{ queryObject: { client_id: '123' } },
+				{ type: SITE_REQUEST_FAILURE, siteId: 456 }
+			);
+			expect( state ).to.eql( { queryObject: { client_id: '123' } } );
 		} );
 
 		it( 'should persist state', () => {

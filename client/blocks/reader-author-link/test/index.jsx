@@ -18,7 +18,7 @@ describe( 'ReaderAuthorLink', () => {
 		mockery.registerMock( 'reader/stats', {
 			recordAction: noop,
 			recordGaEvent: noop,
-			recordTrackForPost: noop
+			recordTrackForPost: noop,
 		} );
 	} );
 
@@ -31,12 +31,16 @@ describe( 'ReaderAuthorLink', () => {
 	} );
 
 	it( 'should render children', () => {
-		const wrapper = shallow( <ReaderAuthorLink author={ author }>Barnaby Blogwit</ReaderAuthorLink> );
+		const wrapper = shallow(
+			<ReaderAuthorLink author={ author }>Barnaby Blogwit</ReaderAuthorLink>
+		);
 		expect( wrapper.contains( 'Barnaby Blogwit' ) ).to.equal( true );
 	} );
 
 	it( 'should accept a custom class of `test__ace`', () => {
-		const wrapper = shallow( <ReaderAuthorLink author={ author } className="test__ace">xyz</ReaderAuthorLink> );
+		const wrapper = shallow(
+			<ReaderAuthorLink author={ author } className="test__ace">xyz</ReaderAuthorLink>
+		);
 		expect( wrapper.is( '.test__ace' ) ).to.equal( true );
 	} );
 
@@ -54,7 +58,9 @@ describe( 'ReaderAuthorLink', () => {
 
 	it( 'should use siteUrl if provided', () => {
 		const siteUrl = 'http://discover.wordpress.com';
-		const wrapper = shallow( <ReaderAuthorLink author={ author } siteUrl={ siteUrl }>xyz</ReaderAuthorLink> );
+		const wrapper = shallow(
+			<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>xyz</ReaderAuthorLink>
+		);
 		expect( wrapper.find( '.reader-author-link' ) ).to.have.prop( 'href' ).equal( siteUrl );
 	} );
 

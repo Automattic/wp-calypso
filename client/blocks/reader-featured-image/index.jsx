@@ -20,7 +20,7 @@ const ReaderFeaturedImage = ( { imageUrl, imageWidth, href, children, onClick, c
 		backgroundImage: 'url(' + cssSafeUrl( resizeImageUrl( imageUrl, { w: imageWidth } ) ) + ')',
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
-		backgroundPosition: 'center center'
+		backgroundPosition: 'center center',
 	};
 
 	const classNames = classnames( className, 'reader-featured-image' );

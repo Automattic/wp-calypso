@@ -15,10 +15,11 @@ import {
 	recordAction,
 	recordGaEvent,
 	recordTrackForPost,
-	recordPermalinkClick
+	recordPermalinkClick,
 } from 'reader/stats';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { getStreamUrl } from 'reader/route';
+import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 
@@ -30,17 +31,19 @@ class TagLink extends React.Component {
 		recordAction( 'click_tag' );
 		recordGaEvent( 'Clicked Tag Link' );
 		recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
-			tag: tag.slug
+			tag: tag.slug,
 		} );
-	}
+	};
 
 	render() {
 		const tag = this.props.tag;
 		return (
 			<span className="reader-post-card__tag">
-				<a href={ '/tag/' + tag.slug }
+				<a
+					href={ '/tag/' + tag.slug }
 					className="reader-post-card__tag-link ignore-click"
-					onClick={ this.recordSingleTagClick }>
+					onClick={ this.recordSingleTagClick }
+				>
 					{ tag.name }
 				</a>
 			</span>
@@ -49,22 +52,21 @@ class TagLink extends React.Component {
 }
 
 class PostByline extends React.Component {
-
 	static propTypes = {
 		post: React.PropTypes.object.isRequired,
 		site: React.PropTypes.object,
 		feed: React.PropTypes.object,
 		isDiscoverPost: React.PropTypes.bool,
-		showSiteName: React.PropTypes.bool
-	}
+		showSiteName: React.PropTypes.bool,
+	};
 
 	static defaultProps = {
 		isDiscoverPost: false,
-	}
+	};
 
 	recordDateClick = () => {
 		recordPermalinkClick( 'timestamp_card', this.props.post );
-	}
+	};
 
 	render() {
 		const { post, site, feed, isDiscoverPost, showSiteName } = this.props;
@@ -72,8 +74,13 @@ class PostByline extends React.Component {
 		const siteId = get( site, 'ID' );
 		const siteName = getSiteName( { site, feed, post } );
 		const hasAuthorName = has( post, 'author.name' );
-		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
-		const shouldDisplayAuthor = ! isDiscoverPost && hasAuthorName && ( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
+		const hasMatchingAuthorAndSiteNames =
+			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
+		const shouldDisplayAuthor =
+			! isDiscoverPost &&
+			hasAuthorName &&
+			! isAuthorNameBlacklisted( post.author.name ) &&
+			( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
@@ -91,52 +98,56 @@ class PostByline extends React.Component {
 					author={ post.author }
 					preferGravatar={ true }
 					siteUrl={ streamUrl }
-					isCompact={ true } />
+					isCompact={ true }
+				/>
 				<div className="reader-post-card__byline-details">
-					<div className="reader-post-card__byline-author-site">
-						{ shouldDisplayAuthor &&
-						<ReaderAuthorLink
-							className="reader-post-card__link"
-							author={ post.author }
-							siteUrl={ streamUrl }
-							post={ post }>
-							{ post.author.name }
-						</ReaderAuthorLink>
-						}
-						{ shouldDisplayAuthor && showSiteName && ', ' }
-						{ showSiteName && <ReaderSiteStreamLink
-							className="reader-post-card__site reader-post-card__link"
-							feedId={ feedId }
-							siteId={ siteId }
-							post={ post }>
-							{ siteName }
-						</ReaderSiteStreamLink> }
-					</div>
+					{ ( shouldDisplayAuthor || showSiteName ) &&
+						<div className="reader-post-card__byline-author-site">
+							{ shouldDisplayAuthor &&
+								<ReaderAuthorLink
+									className="reader-post-card__link"
+									author={ post.author }
+									siteUrl={ streamUrl }
+									post={ post }
+								>
+									{ post.author.name }
+								</ReaderAuthorLink> }
+							{ shouldDisplayAuthor && showSiteName ? ', ' : '' }
+							{ showSiteName &&
+								<ReaderSiteStreamLink
+									className="reader-post-card__site reader-post-card__link"
+									feedId={ feedId }
+									siteId={ siteId }
+									post={ post }
+								>
+									{ siteName }
+								</ReaderSiteStreamLink> }
+						</div> }
 					<div className="reader-post-card__timestamp-and-tag">
-						{ post.date && post.URL &&
+						{ post.date &&
+							post.URL &&
 							<span className="reader-post-card__timestamp">
-								<a className="reader-post-card__timestamp-link"
+								<a
+									className="reader-post-card__timestamp-link"
 									onClick={ this.recordDateClick }
 									href={ post.URL }
 									target="_blank"
-									rel="noopener noreferrer">
+									rel="noopener noreferrer"
+								>
 									<PostTime date={ post.date } />
 								</a>
-							</span>
-						}
+							</span> }
 						{ tags.length > 0 &&
 							<span className="reader-post-card__tags">
 								<Gridicon icon="tag" />
 								{ tags }
-							</span>
-						}
+							</span> }
 					</div>
 				</div>
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	}
-
 }
 
 export default PostByline;

@@ -42,6 +42,7 @@ class TermFormDialog extends Component {
 		onClose: PropTypes.func,
 		onSuccess: PropTypes.func,
 		postType: PropTypes.string,
+		searchTerm: PropTypes.string,
 		showDescriptionInput: PropTypes.bool,
 		showDialog: PropTypes.bool,
 		siteId: PropTypes.number,
@@ -145,6 +146,13 @@ class TermFormDialog extends Component {
 
 	init( props ) {
 		if ( ! props.term ) {
+			if ( props.searchTerm && props.searchTerm.trim().length ) {
+				this.setState( assign( {}, this.constructor.initialState, {
+					name: props.searchTerm,
+				} ), this.isValid );
+				return;
+			}
+
 			this.setState( this.constructor.initialState );
 			return;
 		}

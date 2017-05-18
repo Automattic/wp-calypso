@@ -24,35 +24,42 @@ import { errorNotice } from 'state/notices/actions';
  * @return {Function} Action thunk
  */
 export function requestSiteBlock( siteId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: READER_SITE_BLOCK_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wpcom.undocumented().me().blockSite( siteId ).then( ( response ) => {
-			if ( response && response.success === false ) {
-				return Promise.reject( 'Block was unsuccessful' );
-			}
-			return response;
-		} ).then( ( response ) => {
-			dispatch( {
-				type: READER_SITE_BLOCK_REQUEST_SUCCESS,
-				siteId,
-				data: response
-			} );
-		},
-		( error ) => {
-			dispatch( {
-				type: READER_SITE_BLOCK_REQUEST_FAILURE,
-				siteId,
-				error
-			} );
+		return wpcom
+			.undocumented()
+			.me()
+			.blockSite( siteId )
+			.then( response => {
+				if ( response && response.success === false ) {
+					return Promise.reject( 'Block was unsuccessful' );
+				}
+				return response;
+			} )
+			.then(
+				response => {
+					dispatch( {
+						type: READER_SITE_BLOCK_REQUEST_SUCCESS,
+						siteId,
+						data: response,
+					} );
+				},
+				error => {
+					dispatch( {
+						type: READER_SITE_BLOCK_REQUEST_FAILURE,
+						siteId,
+						error,
+					} );
 
-			dispatch( errorNotice( translate( 'Sorry, there was a problem blocking that site.' ) ) );
+					dispatch( errorNotice( translate( 'Sorry, there was a problem blocking that site.' ) ) );
 
-			return Promise.reject( error );
-		} );
+					return Promise.reject( error );
+				}
+			);
 	};
 }
 
@@ -63,34 +70,43 @@ export function requestSiteBlock( siteId ) {
  * @return {Function} Action thunk
  */
 export function requestSiteUnblock( siteId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: READER_SITE_UNBLOCK_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wpcom.undocumented().me().unblockSite( siteId ).then( ( response ) => {
-			if ( response && response.success === false ) {
-				return Promise.reject( 'Unblock was unsuccessful' );
-			}
-			return response;
-		} ).then( ( response ) => {
-			dispatch( {
-				type: READER_SITE_UNBLOCK_REQUEST_SUCCESS,
-				siteId,
-				data: response
-			} );
-		},
-		( error ) => {
-			dispatch( {
-				type: READER_SITE_UNBLOCK_REQUEST_FAILURE,
-				siteId,
-				error
-			} );
+		return wpcom
+			.undocumented()
+			.me()
+			.unblockSite( siteId )
+			.then( response => {
+				if ( response && response.success === false ) {
+					return Promise.reject( 'Unblock was unsuccessful' );
+				}
+				return response;
+			} )
+			.then(
+				response => {
+					dispatch( {
+						type: READER_SITE_UNBLOCK_REQUEST_SUCCESS,
+						siteId,
+						data: response,
+					} );
+				},
+				error => {
+					dispatch( {
+						type: READER_SITE_UNBLOCK_REQUEST_FAILURE,
+						siteId,
+						error,
+					} );
 
-			dispatch( errorNotice( translate( 'Sorry, there was a problem unblocking that site.' ) ) );
+					dispatch(
+						errorNotice( translate( 'Sorry, there was a problem unblocking that site.' ) )
+					);
 
-			return Promise.reject( error );
-		} );
+					return Promise.reject( error );
+				}
+			);
 	};
 }

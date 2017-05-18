@@ -15,7 +15,7 @@ import SignupThemesList from './signup-themes-list';
 import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
 import { themes } from 'lib/signup/themes-data';
-
+import { getCurrentUser } from 'state/current-user/selectors';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 
 class ThemeSelectionStep extends Component {
@@ -74,7 +74,7 @@ class ThemeSelectionStep extends Component {
 	render = () => {
 		const defaultDependencies = this.props.useHeadstart ? { themeSlugWithRepo: 'pub/twentysixteen' } : undefined;
 		const { translate } = this.props;
-
+		const headerText = translate( 'Choose a theme.' );
 		const subHeaderText = translate(
 			'No need to overthink it. You can always switch to a different theme later.',
 			{ context: 'Themes step subheader in Signup' }
@@ -82,7 +82,7 @@ class ThemeSelectionStep extends Component {
 
 		return (
 			<StepWrapper
-				fallbackHeaderText={ translate( 'Choose a theme.' ) }
+				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ subHeaderText }
 				subHeaderText={ subHeaderText }
 				stepContent={ this.renderThemesList() }
@@ -95,9 +95,8 @@ class ThemeSelectionStep extends Component {
 }
 
 export default connect(
-	( state ) => {
-		return {
-			chosenSurveyVertical: getSurveyVertical( state )
-		};
-	}
+	( state ) => ( {
+		chosenSurveyVertical: getSurveyVertical( state ),
+		currentUser: getCurrentUser( state )
+	} )
 )( localize( ThemeSelectionStep ) );

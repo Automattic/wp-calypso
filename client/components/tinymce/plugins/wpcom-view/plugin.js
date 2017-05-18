@@ -19,10 +19,9 @@ var tinymce = require( 'tinymce/tinymce' ),
 /**
  * Internal dependencies
  */
-var views = require( './views' ),
-	sites = require( 'lib/sites-list' )();
-
+import views from './views';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * WordPress View plugin.
@@ -81,24 +80,26 @@ function wpview( editor ) {
 			return;
 		}
 
+		const store = editor.getParam( 'redux_store' );
+		const siteId = getSelectedSiteId( store.getState() );
+
 		$( '.wpview-wrap' ).each( function( index, view ) {
-			var $view = $( view ),
-				type;
+			const $view = $( view );
 
 			if ( undefined !== $view.attr( 'data-wpview-rendered' ) ) {
 				return;
 			}
 
-			type = $view.attr( 'data-wpview-type' );
+			const type = $view.attr( 'data-wpview-type' );
 
 			renderWithReduxStore(
 				React.createElement( views.components[ type ], {
 					content: getText( view ),
-					siteId: sites.getSelectedSite() ? sites.getSelectedSite().ID : null,
+					siteId,
 					onResize: debounce( triggerNodeChanged, 500 )
 				} ),
-				$view.find( '.wpview-body' )[0],
-				editor.getParam( 'redux_store' )
+				$view.find( '.wpview-body' )[ 0 ],
+				store
 			);
 
 			$view.attr( 'data-wpview-rendered', '' );

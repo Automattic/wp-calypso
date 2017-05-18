@@ -138,7 +138,8 @@ export const PLANS_LIST = {
 			FEATURE_FREE_THEMES,
 			FEATURE_BASIC_DESIGN,
 			FEATURE_6GB_STORAGE,
-			FEATURE_NO_ADS
+			FEATURE_NO_ADS,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -193,7 +194,7 @@ export const PLANS_LIST = {
 					strong: <strong className="plans__features plan-features__targeted-description-heading" />
 				}
 			} ),
-		getFeatures: ( abtest ) => compact( [ // pay attention to ordering, shared features should align on /plan page
+		getFeatures: () => compact( [ // pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -207,8 +208,8 @@ export const PLANS_LIST = {
 			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 			FEATURE_BUSINESS_ONBOARDING,
 			FEATURE_ADVANCED_SEO,
-			isEnabled( 'automated-transfer' ) && abtest && abtest( 'automatedTransfer2' ) === 'enabled' && FEATURE_UPLOAD_PLUGINS,
-			isEnabled( 'automated-transfer' ) && abtest && abtest( 'automatedTransfer2' ) === 'enabled' && FEATURE_UPLOAD_THEMES,
+			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
+			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING,
 		] ),
@@ -439,10 +440,20 @@ export const FEATURES_LIST = {
 	[ FEATURE_CUSTOM_DOMAIN ]: {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
 		getTitle: () => i18n.translate( 'Custom Domain Name' ),
-		getDescription: () => i18n.translate(
-			'Get a free custom domain name (example.com) with this plan ' +
-			'to use for your website.'
-		)
+		getDescription: ( abtest, domainName ) => {
+			if ( domainName ) {
+				return i18n.translate(
+					'Your domain (%s) is included with this plan.', {
+						args: domainName
+					}
+				);
+			}
+
+			return i18n.translate(
+				'Get a free custom domain name (example.com) with this plan ' +
+				'to use for your website.'
+			);
+		}
 	},
 
 	[ FEATURE_JETPACK_ESSENTIAL ]: {

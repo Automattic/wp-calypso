@@ -11,13 +11,14 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import ReaderFollowButton from 'reader/follow-button';
+import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import Site from 'blocks/site';
 import HeaderBack from 'reader/header-back';
+import { getSiteDescription } from 'reader/get-helpers';
 
 class FeedHeader extends Component {
-
 	static propTypes = {
-		showBack: React.PropTypes.bool
+		showBack: React.PropTypes.bool,
 	};
 
 	buildSiteish = ( site, feed ) => {
@@ -31,11 +32,11 @@ class FeedHeader extends Component {
 					( feed.feed_URL && url.parse( feed.feed_URL ).hostname ),
 				domain: ( feed.URL && url.parse( feed.URL ).hostname ) ||
 					( feed.feed_URL && url.parse( feed.feed_URL ).hostname ),
-				URL: feed.URL || feed.feed_URL
+				URL: feed.URL || feed.feed_URL,
 			};
 		}
 		return siteish;
-	}
+	};
 
 	getFollowerCount = ( feed, site ) => {
 		if ( site && site.subscribers_count ) {
@@ -47,14 +48,14 @@ class FeedHeader extends Component {
 		}
 
 		return null;
-	}
+	};
 
 	render() {
 		const { site, feed } = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
-		const ownerDisplayName = site && site.owner && site.owner.name;
+		const ownerDisplayName = site && ! site.is_multi_author && site.owner && site.owner.name;
 		const siteish = this.buildSiteish( site, feed );
-		const description = site && site.description;
+		const description = getSiteDescription( { site, feed } );
 
 		const classes = classnames( {
 			'reader-feed-header': true,
@@ -67,15 +68,20 @@ class FeedHeader extends Component {
 				<div className="reader-feed-header__back-and-follow">
 					{ this.props.showBack && <HeaderBack /> }
 					<div className="reader-feed-header__follow">
-						{ followerCount ? <span className="reader-feed-header__follow-count"> {
-						this.props.translate( '%s follower', '%s followers',
-						{ count: followerCount, args: [ this.props.numberFormat( followerCount ) ] } ) }
-						</span> : null }
-						{ this.props.feed && ! this.props.feed.is_error &&
+						{ followerCount
+							? <span className="reader-feed-header__follow-count">
+									{ ' ' }
+									{ this.props.translate( '%s follower', '%s followers', {
+										count: followerCount,
+										args: [ this.props.numberFormat( followerCount ) ],
+									} ) }
+								</span>
+							: null }
+						{ this.props.feed &&
+							! this.props.feed.is_error &&
 							<div className="reader-feed-header__follow-button">
 								<ReaderFollowButton siteUrl={ this.props.feed.feed_URL } iconSize={ 24 } />
-							</div>
-						}
+							</div> }
 					</div>
 				</div>
 				<Card className="reader-feed-header__site">
@@ -85,21 +91,19 @@ class FeedHeader extends Component {
 							homeLink={ true }
 							showHomeIcon={ false }
 							href={ siteish.URL }
-							indicator={ false } />
-					}
+							indicator={ false }
+						/> }
 					<div className="reader-feed-header__details">
 						<span className="reader-feed-header__description">{ description }</span>
-						{ ownerDisplayName && <span className="reader-feed-header__byline">
-							{ this.props.translate(
-								'by %(author)s',
-								{
+						{ ownerDisplayName &&
+							! isAuthorNameBlacklisted( ownerDisplayName ) &&
+							<span className="reader-feed-header__byline">
+								{ this.props.translate( 'by %(author)s', {
 									args: {
-										author: ownerDisplayName
-									}
-								}
-							)
-						}
-						</span> }
+										author: ownerDisplayName,
+									},
+								} ) }
+							</span> }
 					</div>
 				</Card>
 			</div>

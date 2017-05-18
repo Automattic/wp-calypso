@@ -18,7 +18,7 @@ import RecommendedPosts from './recommended-posts';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 import PostBlocked from 'blocks/reader-post-card/blocked';
 import Post from './post';
-import { IN_STREAM_RECOMMENDATION, COMBINED_CARD, } from 'reader/follow-button/follow-sources';
+import { IN_STREAM_RECOMMENDATION, COMBINED_CARD } from 'reader/follow-button/follow-sources';
 import CombinedCard from 'blocks/reader-combined-card';
 import fluxPostAdapter from 'lib/reader-post-flux-adapter';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
@@ -31,17 +31,15 @@ export default class PostLifecycle extends React.PureComponent {
 		isDiscoverStream: PropTypes.bool,
 		handleClick: PropTypes.func,
 		recStoreId: PropTypes.string,
-	}
+	};
 
 	state = {
-		post: this.getPostFromStore()
-	}
+		post: this.getPostFromStore(),
+	};
 
 	getPostFromStore( props = this.props ) {
 		if (
-			props.postKey.isRecommendationBlock ||
-			props.postKey.isCombination ||
-			props.postKey.isGap
+			props.postKey.isRecommendationBlock || props.postKey.isCombination || props.postKey.isGap
 		) {
 			return null;
 		}
@@ -58,7 +56,7 @@ export default class PostLifecycle extends React.PureComponent {
 		if ( post !== this.state.post ) {
 			this.setState( { post } );
 		}
-	}
+	};
 
 	componentWillMount() {
 		PostStore.on( 'change', this.updatePost );
@@ -75,7 +73,8 @@ export default class PostLifecycle extends React.PureComponent {
 	shouldComponentUpdate( nextProps, nextState ) {
 		const currentPropsToCompare = omit( this.props, 'handleClick' );
 		const nextPropsToCompare = omit( nextProps, 'handleClick' );
-		const shouldUpdate = this.state.post !== nextState.post ||
+		const shouldUpdate =
+			this.state.post !== nextState.post ||
 			! shallowEquals( currentPropsToCompare, nextPropsToCompare );
 
 		return shouldUpdate;
@@ -124,14 +123,18 @@ export default class PostLifecycle extends React.PureComponent {
 			return <PostBlocked post={ post } />;
 		} else if ( isXPost( post ) ) {
 			const xMetadata = XPostHelper.getXPostMetadata( post );
-			const xPostedTo = this.props.store.getSitesCrossPostedTo( xMetadata.commentURL || xMetadata.postURL );
-			return <CrossPost
-								{ ...omit( this.props, 'store' ) }
-								xPostedTo={ xPostedTo }
-								xMetadata={ xMetadata }
-								post={ post }
-								postKey={ postKey }
-							/>;
+			const xPostedTo = this.props.store.getSitesCrossPostedTo(
+				xMetadata.commentURL || xMetadata.postURL
+			);
+			return (
+				<CrossPost
+					{ ...omit( this.props, 'store' ) }
+					xPostedTo={ xPostedTo }
+					xMetadata={ xMetadata }
+					post={ post }
+					postKey={ postKey }
+				/>
+			);
 		}
 
 		const xPostedTo = this.props.store.getSitesCrossPostedTo( post.URL );

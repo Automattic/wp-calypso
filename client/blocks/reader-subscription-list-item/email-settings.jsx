@@ -43,21 +43,20 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 
 	togglePopoverVisibility = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );
-	}
+	};
 
 	closePopover = () => {
 		this.setState( { showPopover: false } );
-	}
+	};
 
-	savePopoutSpanRef = spanRef => {
-		this.spanRef = spanRef;
-	}
+	saveIconRef = ref => this.iconRef = ref;
+	saveSpanRef = ref => this.spanRef = ref;
 
 	setSelected = text => () => {
 		const { siteId } = this.props;
 		this.setState( { selected: text } );
 		this.props.updateNewPostEmailSubscription( siteId, text );
-	}
+	};
 
 	toggleNewPostEmail = () => {
 		const toggleSubscription = this.props.notifyOnNewPosts
@@ -65,7 +64,7 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 			: this.props.subscribeToNewPostEmail;
 
 		toggleSubscription( this.props.siteId );
-	}
+	};
 
 	toggleNewCommentEmail = () => {
 		const toggleSubscription = this.props.notifyOnNewComments
@@ -73,7 +72,7 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 			: this.props.subscribeToNewCommentEmail;
 
 		toggleSubscription( this.props.siteId );
-	}
+	};
 
 	render() {
 		const { translate, notifyOnNewComments, notifyOnNewPosts } = this.props;
@@ -87,16 +86,17 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 				<span
 					className="reader-subscription-list-item__settings-menu"
 					onClick={ this.togglePopoverVisibility }
-					ref={ this.savePopoutSpanRef }
+					ref={ this.saveSpanRef }
 				>
-					<Gridicon icon="cog" size={ 24 } />
+					<Gridicon icon="cog" size={ 24 } ref={ this.saveIconRef } />
 					<span className="reader-subscription-list-item__settings-label">Settings</span>
 				</span>
 
 				<Popover
 					onClose={ this.closePopover }
 					isVisible={ this.state.showPopover }
-					context={ this.spanRef }
+					context={ this.iconRef }
+					ignoreContext={ this.spanRef }
 					position={ 'bottom left' }
 					className="reader-subscription-list-item__settings-menu-popout"
 				>
@@ -106,12 +106,9 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 						</h3>
 						<div className="reader-subscription-list-item__email-popout-toggle">
 							{ translate( 'New posts' ) }
-							<FormToggle
-								onChange={ this.toggleNewPostEmail }
-								checked={ notifyOnNewPosts }
-							/>
+							<FormToggle onChange={ this.toggleNewPostEmail } checked={ notifyOnNewPosts } />
 						</div>
-						{ notifyOnNewPosts && (
+						{ notifyOnNewPosts &&
 							<SegmentedControl>
 								<ControlItem
 									selected={ this.state.selected === 'instantly' }
@@ -131,14 +128,10 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 								>
 									{ translate( 'Weekly' ) }
 								</ControlItem>
-							</SegmentedControl>
-						) }
+							</SegmentedControl> }
 						<div className="reader-subscription-list-item__email-popout-toggle">
 							New comments
-							<FormToggle
-								onChange={ this.toggleNewCommentEmail }
-								checked={ notifyOnNewComments }
-							/>
+							<FormToggle onChange={ this.toggleNewCommentEmail } checked={ notifyOnNewComments } />
 						</div>
 					</div>
 				</Popover>
@@ -160,14 +153,10 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		subscribeToNewPostEmail,
-		unsubscribeToNewPostEmail,
-		updateNewPostEmailSubscription,
-		subscribeToNewCommentEmail,
-		unsubscribeToNewCommentEmail,
-	}
-)( localize( ReaderEmailSubscriptionSettingsPopout ) );
-
+export default connect( mapStateToProps, {
+	subscribeToNewPostEmail,
+	unsubscribeToNewPostEmail,
+	updateNewPostEmailSubscription,
+	subscribeToNewCommentEmail,
+	unsubscribeToNewCommentEmail,
+} )( localize( ReaderEmailSubscriptionSettingsPopout ) );

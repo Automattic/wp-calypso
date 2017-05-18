@@ -52,19 +52,19 @@ export function showSelectedPost( { store, replaceHistory, postKey, comments } )
 	if ( !! postKey.feedId ) {
 		mappedPost = {
 			feed_ID: postKey.feedId,
-			feed_item_ID: postKey.postId
+			feed_item_ID: postKey.postId,
 		};
 	} else {
 		mappedPost = {
 			site_ID: postKey.blogId,
-			ID: postKey.postId
+			ID: postKey.postId,
 		};
 	}
 
 	showFullPost( {
 		post: mappedPost,
 		replaceHistory,
-		comments
+		comments,
 	} );
 }
 
@@ -72,7 +72,7 @@ export function showFullXPost( xMetadata ) {
 	if ( xMetadata.blogId && xMetadata.postId ) {
 		const mappedPost = {
 			site_ID: xMetadata.blogId,
-			ID: xMetadata.postId
+			ID: xMetadata.postId,
 		};
 
 		showFullPost( {
@@ -104,10 +104,13 @@ export function showFullPost( { post, replaceHistory, comments } ) {
 
 	const method = replaceHistory ? 'replace' : 'show';
 	if ( post.feed_ID && post.feed_item_ID ) {
-		page[ method ]( `/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }` );
+		page[ method ](
+			`/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }`
+		);
 	} else {
 		page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
 	}
 }
 
-export const shallowEquals = ( o1, o2 ) => every( Object.keys( o1 ), key => o1[ key ] === o2[ key ] );
+export const shallowEquals = ( o1, o2 ) =>
+	every( Object.keys( o1 ), key => o1[ key ] === o2[ key ] );

@@ -13,11 +13,9 @@ const exported = {
 		}
 
 		return showLikes;
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    shouldShowLikes
-} = exported;
+export const { shouldShowLikes } = exported;

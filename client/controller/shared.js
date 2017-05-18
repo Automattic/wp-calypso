@@ -16,10 +16,16 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 
 		// On server, only render LoggedOutLayout when logged-out.
 		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
+			let redirectUri;
+			if ( context.isServerSide ) {
+				redirectUri = `${ context.protocol }://${ context.host }${ context.originalUrl }`;
+			}
 			context.layout = (
-				<LayoutComponent store={ store }
+				<LayoutComponent
+					store={ store }
 					primary={ primary }
 					secondary={ secondary }
+					redirectUri={ redirectUri }
 				/>
 			);
 		}

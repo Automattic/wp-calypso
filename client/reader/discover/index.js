@@ -16,7 +16,8 @@ import {
 } from 'reader/controller';
 
 export default function() {
-	page( '/discover',
+	page(
+		'/discover',
 		preloadReaderBundle,
 		updateLastRoute,
 		loadSubscriptions,

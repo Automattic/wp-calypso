@@ -168,7 +168,7 @@ const Signup = React.createClass( {
 			step => ( -1 !== flowSteps.indexOf( step.stepName ) ),
 		);
 
-		if ( flowStepsInProgressStore.length > 0 ) {
+		if ( flowStepsInProgressStore.length > 0 && ! flow.disallowResume ) {
 			// we loaded progress from local storage, attempt to resume progress
 			return this.resumeProgress();
 		}
@@ -259,7 +259,7 @@ const Signup = React.createClass( {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
-		this.props.loadTrackingTool( 'Lucky Orange' );
+		this.props.loadTrackingTool( 'HotJar' );
 	},
 
 	componentWillUnmount() {

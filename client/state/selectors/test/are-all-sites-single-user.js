@@ -33,7 +33,10 @@ describe( 'areAllSitesSingleUser()', () => {
 						single_user_site: false
 					}
 				}
-			}
+			},
+			siteSettings: {
+				items: {},
+			},
 		};
 
 		const allAreSingleUser = areAllSitesSingleUser( state );
@@ -53,7 +56,10 @@ describe( 'areAllSitesSingleUser()', () => {
 						single_user_site: true
 					}
 				}
-			}
+			},
+			siteSettings: {
+				items: {},
+			},
 		};
 
 		const allAreSingleUser = areAllSitesSingleUser( state );

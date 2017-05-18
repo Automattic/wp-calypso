@@ -5,6 +5,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal Dependencies
@@ -15,10 +16,22 @@ import { getStreamUrl } from 'reader/route';
 import EmailSettings from './email-settings';
 import {
 	getSiteName,
-	getSiteUrl,
 	getSiteDescription,
-	getSiteAuthorName
+	getSiteAuthorName,
+	getFeedUrl,
+	getSiteUrl,
 } from 'reader/get-helpers';
+import untrailingslashit from 'lib/route/untrailingslashit';
+import ReaderSubscriptionListItemPlaceholder
+	from 'blocks/reader-subscription-list-item/placeholder';
+
+/**
+ * Takes in a string and removes the starting https, www., and removes a trailing slash
+ *
+ * @param {String} url - the url to format
+ * @returns {String} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
+ */
+const formatUrlForDisplay = url => untrailingslashit( url.replace( /^https?:\/\/(www\.)?/, '' ) );
 
 function ReaderSubscriptionListItem( {
 	url,
@@ -29,19 +42,26 @@ function ReaderSubscriptionListItem( {
 	className = '',
 	translate,
 	followSource,
-	isEmailBlocked,
+	showEmailSettings,
+	showLastUpdatedDate,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
 	const siteExcerpt = getSiteDescription( { feed, site } );
-	// prefer a users name property
-	// if that doesn't exist settle for combining first and last name
 	const authorName = getSiteAuthorName( site );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = get( feed, 'image' );
 	const streamUrl = getStreamUrl( feedId, siteId );
-	const siteUrl = url || getSiteUrl( { feed, site } );
+	const feedUrl = url || getFeedUrl( { feed, site } );
+	const siteUrl = getSiteUrl( { feed, site } );
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
+	const isMultiAuthor = get( site, 'is_multi_author', false );
+	const preferGravatar = ! isMultiAuthor;
+	const lastUpdatedDate = showLastUpdatedDate && moment( get( feed, 'last_update' ) ).fromNow();
+
+	if ( ! site && ! feed ) {
+		return <ReaderSubscriptionListItemPlaceholder />;
+	}
 
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>
@@ -50,31 +70,60 @@ function ReaderSubscriptionListItem( {
 					siteIcon={ siteIcon }
 					feedIcon={ feedIcon }
 					author={ siteAuthor }
-					preferGravatar={ true }
+					preferBlavatar={ isMultiAuthor }
+					preferGravatar={ preferGravatar }
 					siteUrl={ streamUrl }
 					isCompact={ true }
 				/>
 			</div>
 			<div className="reader-subscription-list-item__byline">
 				<span className="reader-subscription-list-item__site-title">
-					{ <a href={ streamUrl } className="reader-subscription-list-item__link"> { siteTitle } </a> }
+					{
+						<a href={ streamUrl } className="reader-subscription-list-item__link">
+							{ ' ' }{ siteTitle }{ ' ' }
+						</a>
+					}
 				</span>
 				<div className="reader-subscription-list-item__site-excerpt">{ siteExcerpt }</div>
-				{ ! isEmpty( authorName ) &&
+				{ ! isMultiAuthor &&
+					! isEmpty( authorName ) &&
 					<span className="reader-subscription-list-item__by-text">
-						{
-							translate( 'by {{author/}}', {
-								components: {
-									author: <a href={ streamUrl } className="reader-subscription-list-item__link"> { authorName } </a>
-								}
-							} )
-						}
-					</span>
-				}
+						{ translate( 'by {{author/}}', {
+							components: {
+								author: (
+									<a href={ streamUrl } className="reader-subscription-list-item__link">
+										{ ' ' }{ authorName }{ ' ' }
+									</a>
+								),
+							},
+						} ) }
+					</span> }
+				{ siteUrl &&
+					<div className="reader-subscription-list-item__site-url-timestamp">
+						<a
+							href={ siteUrl }
+							target="_blank"
+							rel="noopener noreferrer"
+							className="reader-subscription-list-item__site-url"
+						>
+							{ formatUrlForDisplay( siteUrl ) }
+						</a>
+						{ showLastUpdatedDate &&
+							<span className="reader-subscription-list-item__timestamp">
+								{ feed &&
+									feed.last_update &&
+									' ' + translate( 'updated %s', { args: lastUpdatedDate } ) }
+							</span> }
+					</div> }
 			</div>
 			<div className="reader-subscription-list-item__options">
-				<FollowButton siteUrl={ siteUrl } followSource={ followSource } />
-				{ isFollowing && ! isEmailBlocked && <EmailSettings siteId={ siteId } /> }
+				<FollowButton
+					siteUrl={ feedUrl }
+					followSource={ followSource }
+					feedId={ feedId }
+					siteId={ siteId }
+				/>
+				{ isFollowing && showEmailSettings && <EmailSettings siteId={ siteId } /> }
 			</div>
 		</div>
 	);

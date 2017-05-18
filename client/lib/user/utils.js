@@ -15,7 +15,7 @@ import userModule from 'lib/user';
 const user = userModule();
 const debug = debugModule( 'calypso:user:utilities' );
 
-export default {
+const userUtils = {
 	getLogoutUrl( redirect ) {
 		const userData = user.get();
 		let url = '/logout',
@@ -46,7 +46,7 @@ export default {
 	},
 
 	logout( redirect ) {
-		const logoutUrl = this.getLogoutUrl( redirect );
+		const logoutUrl = userUtils.getLogoutUrl( redirect );
 
 		// Clear any data stored locally within the user data module or localStorage
 		user.clear( () => location.href = logoutUrl );
@@ -63,6 +63,8 @@ export default {
 	needsVerificationForSite( site ) {
 		// do not allow publish for unverified e-mails,
 		// but allow if the site is VIP
-		return !user.get().email_verified && !( site && site.is_vip );
+		return ! user.get().email_verified && ! ( site && site.is_vip );
 	},
 };
+
+export default userUtils;

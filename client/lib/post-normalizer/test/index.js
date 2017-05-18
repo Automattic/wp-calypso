@@ -376,6 +376,18 @@ describe( 'index', function() {
 			);
 		} );
 
+		it( 'can strip align attributes from non images', function( done ) {
+			normalizer(
+				{
+					content: '<div align="left"><img align="right" />some content</div>'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ], function( err, normalized ) {
+					assert.equal( normalized.content, '<div><img align="right">some content</div>' );
+					done( err );
+				}
+			);
+		} );
+
 		it( 'leaves galleries intact', function( done ) {
 			normalizer(
 				{
@@ -963,13 +975,13 @@ describe( 'index', function() {
 			} );
 		}
 
-		it( 'strips empty elements and leading brs', function( done ) {
+		it( 'strips empty elements, leading brs, and styling attributes', function( done ) {
 			assertExcerptBecomes( `<br>
-<p>&nbsp;</p>
-<p class="wp-caption">caption</p>
-<p><img src="http://example.com/image.jpg"></p>
-<p><a href="http://wikipedia.org">Giraffes</a> are <br>great</p>
-<p></p>`, '<p>Giraffes are <br>great</p>', done );
+				<p>&nbsp;</p>
+				<p class="wp-caption">caption</p>
+				<p><img src="http://example.com/image.jpg"></p>
+				<p align="left" style="text-align:right"><a href="http://wikipedia.org">Giraffes</a> are <br>great</p>
+				<p></p>`, '<p>Giraffes are <br>great</p>', done );
 		} );
 
 		it( 'strips leading brs even if they are nested', function( done ) {

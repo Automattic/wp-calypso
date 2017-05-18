@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -9,24 +10,34 @@ import { get } from 'lodash';
 import config from 'config';
 import {
 	ANALYTICS_SUPER_PROPS_UPDATE,
+	NOTIFICATIONS_PANEL_TOGGLE,
 	SELECTED_SITE_SET,
 	SITE_RECEIVE,
 	SITES_RECEIVE,
-	SITES_UPDATE
+	SITES_UPDATE,
+	SITES_ONCE_CHANGED,
 } from 'state/action-types';
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isNotificationsOpen } from 'state/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import keyboardShortcuts from 'lib/keyboard-shortcuts';
+
+// KILL IT WITH FIRE
+import sitesFactory from 'lib/sites-list';
+const sites = sitesFactory();
+
+const debug = debugFactory( 'calypso:state:middleware' );
 
 /**
  * Module variables
  */
-const keyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
-let keyboardShortcuts;
+const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
+let globalKeyboardShortcuts;
 
-if ( keyBoardShortcutsEnabled ) {
-	keyboardShortcuts = require( 'lib/keyboard-shortcuts/global' )();
+if ( globalKeyBoardShortcutsEnabled ) {
+	globalKeyboardShortcuts = require( 'lib/keyboard-shortcuts/global' )();
 }
 
 const desktopEnabled = config.isEnabled( 'desktop' );
@@ -34,6 +45,23 @@ let desktop;
 if ( desktopEnabled ) {
 	desktop = require( 'lib/desktop' );
 }
+
+/*
+ * Queue of functions waiting to be called once (and only once) when sites data
+ * arrives (SITES_RECEIVE). Aims to reduce dependencies on ´lib/sites-list` by
+ * providing an alternative to `sites.once()`.
+ */
+let sitesListeners = [];
+
+/**
+ * Sets the selected site id for SitesList
+ *
+ * @param {function} dispatch - redux dispatch function
+ * @param {number} siteId     - the selected site id
+ */
+const updateSelectedSiteIdForSitesList = ( dispatch, { siteId } ) => {
+	sites.select( siteId );
+};
 
 /**
  * Sets the selectedSite and siteCount for lib/analytics. This is used to
@@ -56,13 +84,10 @@ const updateSelectedSiteForAnalytics = ( dispatch, action, getState ) => {
  * Sets the selectedSiteId for lib/cart/store
  *
  * @param {function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- * @param {function} getState - redux getState function
+ * @param {number}   siteId   - the selected siteId
  */
-const updateSelectedSiteForCart = ( dispatch, action, getState ) => {
-	const state = getState();
-	const selectedSiteId = getSelectedSiteId( state );
-	cartStore.setSelectedSiteId( selectedSiteId );
+const updateSelectedSiteForCart = ( dispatch, { siteId } ) => {
+	cartStore.setSelectedSiteId( siteId );
 };
 
 /**
@@ -75,7 +100,20 @@ const updateSelectedSiteForCart = ( dispatch, action, getState ) => {
 const updatedSelectedSiteForKeyboardShortcuts = ( dispatch, action, getState ) => {
 	const state = getState();
 	const selectedSite = getSelectedSite( state );
-	keyboardShortcuts.setSelectedSite( selectedSite );
+	globalKeyboardShortcuts.setSelectedSite( selectedSite );
+};
+
+/**
+ * Sets isNotificationOpen for lib/keyboard-shortcuts
+ *
+ * @param {function} dispatch - redux dispatch function
+ * @param {object}   action   - the dispatched action
+ * @param {function} getState - redux getState function
+ */
+const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState ) => {
+	// flip the state here, since the reducer hasn't had a chance to update yet
+	const toggledState = ! isNotificationsOpen( getState() );
+	keyboardShortcuts.setNotificationsOpen( toggledState );
 };
 
 /**
@@ -91,25 +129,60 @@ const updateSelectedSiteForDesktop = ( dispatch, action, getState ) => {
 	desktop.setSelectedSite( selectedSite );
 };
 
+/**
+ * Registers a listener function to be fired once there are changes to sites
+ * state.
+ *
+ * @param {function} dispatch - redux dispatch function
+ * @param {object}   action   - the dispatched action
+ */
+const receiveSitesChangeListener = ( dispatch, action ) => {
+	debug( 'receiveSitesChangeListener' );
+	sitesListeners.push( action.listener );
+};
+
+/**
+ * Calls all functions registered as listeners of site-state changes.
+ */
+const fireChangeListeners = () => {
+	debug( 'firing', sitesListeners.length, 'emitters' );
+	sitesListeners.forEach( ( listener ) => listener() );
+	sitesListeners = [];
+};
+
 const handler = ( dispatch, action, getState ) => {
 	switch ( action.type ) {
 		case ANALYTICS_SUPER_PROPS_UPDATE:
 			return updateSelectedSiteForAnalytics( dispatch, action, getState );
 
+		//when the notifications panel is open keyboard events should not fire.
+		case NOTIFICATIONS_PANEL_TOGGLE:
+			return updateNotificationsOpenForKeyboardShortcuts( dispatch, action, getState );
+
 		case SELECTED_SITE_SET:
+			//let this fall through
+			updateSelectedSiteIdForSitesList( dispatch, action );
+			updateSelectedSiteForCart( dispatch, action );
+
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
 		case SITES_UPDATE:
 			// Wait a tick for the reducer to update the state tree
 			setTimeout( () => {
-				updateSelectedSiteForCart( dispatch, action, getState );
-				if ( keyBoardShortcutsEnabled ) {
+				if ( action.type === SITES_RECEIVE ) {
+					fireChangeListeners();
+				}
+				if ( globalKeyBoardShortcutsEnabled ) {
 					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
 				}
 				if ( desktopEnabled ) {
 					updateSelectedSiteForDesktop( dispatch, action, getState );
 				}
 			}, 0 );
+			return;
+
+		case SITES_ONCE_CHANGED:
+			receiveSitesChangeListener( dispatch, action );
 			return;
 	}
 };

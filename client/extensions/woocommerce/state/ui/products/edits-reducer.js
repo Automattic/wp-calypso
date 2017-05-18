@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { uniqueId } from 'lodash';
+import { createReducer } from 'state/utils';
 
 /**
  * Internal dependencies
@@ -12,18 +13,10 @@ import {
 } from '../../action-types';
 import { nextBucketIndex, getBucket } from '../helpers';
 
-const initialState = null;
-
-export default function( state = initialState, action ) {
-	const handlers = {
-		[ WOOCOMMERCE_EDIT_PRODUCT ]: editProductAction,
-		[ WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE ]: editProductAttributeAction,
-	};
-
-	const handler = handlers[ action.type ];
-
-	return ( handler && handler( state, action ) ) || state;
-}
+export default createReducer( null, {
+	[ WOOCOMMERCE_EDIT_PRODUCT ]: editProductAction,
+	[ WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE ]: editProductAttributeAction,
+} );
 
 function editProductAction( edits, action ) {
 	const { product, data } = action.payload;
@@ -81,7 +74,7 @@ function editProduct( array, product, data ) {
 	return _array;
 }
 
-function editProductAttribute( attributes, attribute, data ) {
+export function editProductAttribute( attributes, attribute, data ) {
 	const prevAttributes = attributes || [];
 	const uid = attribute && attribute.uid || uniqueId( 'edit_' ) + ( new Date().getTime() );
 

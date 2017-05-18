@@ -4,11 +4,26 @@
 
 .login__form-userdata {
 	label {
+		color: $gray-dark;
 		display: block;
-		line-height: 2em;
+		font-size: 14px;
+		line-height: 1.5;
 		font-weight: 500;
-		padding-bottom: 8px;
+		margin-bottom: 5px;
 	}
+
+	input {
+		margin-bottom: 20px;
+		transition: none;
+
+		&.is-error {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.login__form .form-input-validation {
+	margin-bottom: 5px;
 }
 
 .login__form-action {
@@ -19,16 +34,54 @@
 	}
 }
 
-.login__form-header-title {
+.login__form-header {
 	font-size: 22px;
-	margin-bottom: 16px;
+	margin-bottom: 24px;
+	margin-top: 16px;
 	text-align: center;
 }
 
 .login__form-remember-me {
-	margin: 5px 0 15px;
+	margin-bottom: 20px;
 
 	input {
 		margin-right: 10px;
 	}
+
+	label{
+		font-size: 14px;
+	}
+}
+
+.wp-login__footer{
+	a{
+		font-size: 14px;
+
+		&:hover{
+			color: $blue-medium;
+		}
+	}
+	.gridicon{
+		vertical-align: text-bottom;
+	}
+}
+
+.two-factor-authentication__auth-code-preview {
+	width: 100%;
+	display: block;
+	margin-bottom: 16px;
+}
+
+.two-factor-authentication__form-button {
+	width: 100%;
+}
+
+.card.two-factor-authentication__form-action {
+	background: lighten( $gray, 34% );
+}
+
+.two-factor-authentication__small-print {
+	clear: both;
+	font-size: 11px;
+	padding: 1em 0;
 }

@@ -15,6 +15,7 @@ const LayoutLoggedOut = ( {
 	primary,
 	secondary,
 	section,
+	redirectUri,
 } ) => {
 	const classes = classNames( 'layout', {
 		[ 'is-group-' + section.group ]: !! section,
@@ -26,7 +27,7 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classes }>
-			<MasterbarLoggedOut title={ section.title } sectionName={ section.name } />
+			<MasterbarLoggedOut title={ section.title } sectionName={ section.name } redirectUri={ redirectUri } />
 			<div id="content" className="layout__content">
 				<div id="primary" className="layout__primary">
 					{ primary }
@@ -46,7 +47,8 @@ LayoutLoggedOut.propTypes = {
 	section: React.PropTypes.oneOfType( [
 		React.PropTypes.bool,
 		React.PropTypes.object,
-	] )
+	] ),
+	redirectUri: React.PropTypes.string
 };
 
 export default connect(

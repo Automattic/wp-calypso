@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { pick, omit, merge, get, includes, reduce, isEqual } from 'lodash';
+import { pick, omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,9 @@ import sharingButtons from './sharing-buttons/reducer';
 import mediaStorage from './media-storage/reducer';
 import {
 	MEDIA_DELETE,
-	SITE_FRONT_PAGE_SET_SUCCESS,
+	SITE_DELETE,
+	SITE_DELETE_FAILURE,
+	SITE_DELETE_SUCCESS,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	SITE_RECEIVE,
@@ -38,7 +40,7 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { sitesSchema } from './schema';
-import { isValidStateWithSchema, createReducer } from 'state/utils';
+import { createReducer, isValidStateWithSchema, keyedReducer } from 'state/utils';
 
 /**
  * Constants
@@ -56,21 +58,6 @@ const VALID_SITE_KEYS = Object.keys( sitesSchema.patternProperties[ '^\\d+$' ].p
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
-		case SITE_FRONT_PAGE_SET_SUCCESS: {
-			const { siteId, updatedOptions } = action;
-			const site = state[ siteId ];
-			if ( ! site ) {
-				break;
-			}
-
-			return {
-				...state,
-				[ siteId ]: merge( {}, site, {
-					options: updatedOptions,
-				} )
-			};
-		}
-
 		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
 			const prevSite = state[ action.siteId ];
 			if ( prevSite ) {
@@ -116,7 +103,7 @@ export function items( state = {}, action ) {
 			}, initialNextState );
 
 		case SITE_DELETE_RECEIVE:
-			return omit( state, action.site.ID );
+			return omit( state, action.siteId );
 
 		case JETPACK_DISCONNECT_RECEIVE:
 			return omit( state, action.siteId );
@@ -262,8 +249,23 @@ export const requesting = createReducer( {}, {
 	}
 } );
 
+/**
+ * Returns the updated deleting state after an action has been dispatched.
+ * Deleting state tracks whether a network request is in progress for a site.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @return {Object}        Updated state
+ */
+export const deleting = keyedReducer( 'siteId', createReducer( {}, {
+	[ SITE_DELETE ]: stubTrue,
+	[ SITE_DELETE_FAILURE ]: stubFalse,
+	[ SITE_DELETE_SUCCESS ]: stubFalse
+} ) );
+
 export default combineReducers( {
 	connection,
+	deleting,
 	domains,
 	requestingAll,
 	items,

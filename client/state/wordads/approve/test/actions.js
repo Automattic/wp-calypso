@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
 import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WORDADS_SITE_APPROVE_REQUEST,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
@@ -15,26 +15,18 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS
 } from 'state/action-types';
-
-import { useSandbox } from 'test/helpers/use-sinon';
-import useMockery from 'test/helpers/use-mockery';
+import {
+	dismissWordAdsError,
+	dismissWordAdsSuccess,
+	requestWordAdsApproval,
+} from '../actions';
 
 describe( 'actions', () => {
-	let sandbox, spy, requestWordAdsApproval, dismissWordAdsError, dismissWordAdsSuccess;
+	let sandbox, spy;
 
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
-	} );
-
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'lib/sites-list', function() {
-			return { getSite: noop };
-		} );
-		const actions = require( '../actions' );
-		requestWordAdsApproval = actions.requestWordAdsApproval;
-		dismissWordAdsError = actions.dismissWordAdsError;
-		dismissWordAdsSuccess = actions.dismissWordAdsSuccess;
 	} );
 
 	describe( '#dismissWordAdsError()', () => {

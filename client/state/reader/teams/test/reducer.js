@@ -7,11 +7,7 @@ import { assert, expect } from 'chai';
  * Internal dependencies
  */
 import { items, isRequesting } from '../reducer';
-import {
-	READER_TEAMS_REQUEST,
-	READER_TEAMS_RECEIVE,
-	DESERIALIZE,
-} from 'state/action-types';
+import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE, DESERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const TEAM1 = { slug: 'team one slug', title: 'team one title' };
@@ -19,7 +15,7 @@ const TEAM2 = { slug: 'team two slug', title: 'team two title' };
 const validState = [ TEAM1, TEAM2 ];
 const invalidState = [ { slug: 1, title: 'foo bar' } ];
 
-describe( 'reducer', ( ) => {
+describe( 'reducer', () => {
 	let sandbox;
 
 	useSandbox( newSandbox => {
@@ -34,10 +30,11 @@ describe( 'reducer', ( ) => {
 
 		it( 'should append a single teams when received', () => {
 			expect(
-				items( {},
+				items(
+					{},
 					{
 						type: READER_TEAMS_RECEIVE,
-						payload: { teams: [ TEAM1 ] }
+						payload: { teams: [ TEAM1 ] },
 					}
 				)
 			).to.deep.equal( [ TEAM1 ] );
@@ -45,7 +42,8 @@ describe( 'reducer', ( ) => {
 
 		it( 'should append teams when received', () => {
 			expect(
-				items( {},
+				items(
+					{},
 					{
 						type: READER_TEAMS_RECEIVE,
 						payload: { teams: [ TEAM1, TEAM2 ] },
@@ -72,33 +70,27 @@ describe( 'reducer', ( ) => {
 	describe( 'isRequesting', () => {
 		it( 'requesting teams should set requesting to true', () => {
 			expect(
-				isRequesting( false,
-					{
-						type: READER_TEAMS_REQUEST,
-					}
-				)
+				isRequesting( false, {
+					type: READER_TEAMS_REQUEST,
+				} )
 			).to.equal( true );
 		} );
 
 		it( 'successful request should set requesting to false', () => {
 			expect(
-				isRequesting( true,
-					{
-						type: READER_TEAMS_RECEIVE,
-						teams: [ {}, {}, {} ],
-					}
-				)
+				isRequesting( true, {
+					type: READER_TEAMS_RECEIVE,
+					teams: [ {}, {}, {} ],
+				} )
 			).to.equal( false );
 		} );
 
 		it( 'failed request should set requesting to false', () => {
 			expect(
-				isRequesting( true,
-					{
-						type: READER_TEAMS_RECEIVE,
-						error: new Error( 'test error' ),
-					}
-				)
+				isRequesting( true, {
+					type: READER_TEAMS_RECEIVE,
+					error: new Error( 'test error' ),
+				} )
 			).to.equal( false );
 		} );
 	} );

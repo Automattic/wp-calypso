@@ -2,65 +2,66 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import i18n from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import ProductVariationTypesForm from './product-variation-types-form';
-import FormToggle from 'components/forms/form-toggle';
+import ProductFormAdditionalDetailsCard from './product-form-additional-details-card';
+import ProductFormCategoriesCard from './product-form-categories-card';
+import ProductFormDetailsCard from './product-form-details-card';
+import ProductFormVariationsCard from './product-form-variations-card';
+import ProductFormDeliveryDetailsCard from './product-form-delivery-details-card';
 
 export default class ProductForm extends Component {
-
 	static propTypes = {
+		className: PropTypes.string,
 		product: PropTypes.shape( {
-			id: PropTypes.number.isRequired,
-			name: PropTypes.string.isRequired,
+			id: PropTypes.isRequired,
 			type: PropTypes.string.isRequired,
-		} )
+			name: PropTypes.string,
+		} ),
+		variations: PropTypes.array,
+		productCategories: PropTypes.array.isRequired,
+		editProduct: PropTypes.func.isRequired,
+		editProductAttribute: PropTypes.func.isRequired,
+		editProductVariation: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			isVariation: props.product && 'variable' === props.product.type ? true : false,
-		};
-
-		this.handleToggle = this.handleToggle.bind( this );
-	}
-
-	handleToggle() {
-		this.setState( ( prevState ) => ( {
-			isVariation: ! prevState.isVariation,
-		} ) );
-	}
-
 	render() {
-		const { product } = this.props;
-		const variationToggleDescription = i18n.translate(
-			'%(productName)s has variations, for example size and color.', {
-				args: {
-					productName: product && product.name || i18n.translate( 'This product' )
-				}
-			}
-		);
+		const { product, productCategories, variations } = this.props;
+		const { editProduct, editProductVariation, editProductAttribute } = this.props;
+
 		return (
-			<div className="woocommerce products__form">
-				<FoldableCard
-					icon=""
-					expanded={ true }
-					className="products__variation-card"
-					header={ ( <FormToggle onChange={ this.handleToggle } checked={ this.state.isVariation }>
-					{variationToggleDescription}
-					</FormToggle>
-					) }
-				>
-					{ this.state.isVariation && (
-						<ProductVariationTypesForm />
-					) }
-				</FoldableCard>
+			<div className={ classNames( 'products__form', this.props.className ) }>
+				<ProductFormDetailsCard
+					product={ product }
+					editProduct={ editProduct }
+				/>
+				<ProductFormAdditionalDetailsCard
+					product={ product }
+					editProduct={ this.props.editProduct }
+					editProductAttribute={ this.props.editProductAttribute }
+				/>
+				<ProductFormCategoriesCard
+					product={ product }
+					productCategories={ productCategories }
+					editProduct={ editProduct }
+				/>
+				<ProductFormVariationsCard
+					product={ product }
+					variations={ variations }
+					editProduct={ editProduct }
+					editProductAttribute={ editProductAttribute }
+					editProductVariation={ editProductVariation }
+				/>
+
+				{ 'simple' === product.type && (
+					<ProductFormDeliveryDetailsCard
+						product={ product }
+						editProduct={ this.props.editProduct }
+					/>
+				) }
 			</div>
 		);
 	}

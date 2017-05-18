@@ -15,45 +15,39 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import WPSuperCache from './main';
 
-const controller = {
+export function settings( context ) {
+	const siteId = getSiteFragment( context.path );
+	const site = getSelectedSite( context.store.getState() );
+	const { tab = '' } = context.params;
 
-	settings: function( context ) {
-		const siteId = getSiteFragment( context.path );
-		const site = getSelectedSite( context.store.getState() );
-		let tab = context.params.tab;
+	context.store.dispatch( setTitle( i18n.translate( 'WP Super Cache', { textOnly: true } ) ) );
 
-		tab = ( ! tab || tab === siteId ) ? '' : tab;
-		context.store.dispatch( setTitle( i18n.translate( 'WP Super Cache', { textOnly: true } ) ) );
+	const basePath = sectionify( context.path );
+	let baseAnalyticsPath;
 
-		const basePath = sectionify( context.path );
-		let baseAnalyticsPath;
-
-		if ( siteId ) {
-			baseAnalyticsPath = `${ basePath }/:site`;
-		} else {
-			baseAnalyticsPath = basePath;
-		}
-
-		let analyticsPageTitle = 'WP Super Cache';
-
-		if ( tab.length ) {
-			analyticsPageTitle += ` > ${ titlecase( tab ) }`;
-		} else {
-			analyticsPageTitle += ' > Easy';
-		}
-
-		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
-
-		renderWithReduxStore(
-			React.createElement( WPSuperCache, {
-				context,
-				site,
-				tab,
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+	if ( siteId ) {
+		baseAnalyticsPath = `${ basePath }/:site`;
+	} else {
+		baseAnalyticsPath = basePath;
 	}
-};
 
-module.exports = controller;
+	let analyticsPageTitle = 'WP Super Cache';
+
+	if ( tab.length ) {
+		analyticsPageTitle += ` > ${ titlecase( tab ) }`;
+	} else {
+		analyticsPageTitle += ' > Easy';
+	}
+
+	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
+
+	renderWithReduxStore(
+		React.createElement( WPSuperCache, {
+			context,
+			site,
+			tab,
+		} ),
+		document.getElementById( 'primary' ),
+		context.store
+	);
+}

@@ -11,17 +11,17 @@ The file of the example component should reside into a `/docs` folder in the sam
 
 ```
 // component definition
-- client/component/popover/index.jsx 
+- client/component/popover/index.jsx
 
 // example component
-- client/component/popover/docs/example.jsx 
+- client/component/popover/docs/example.jsx
 ```
 
 #### Component name convention
 
 By convention the name of example component should ends with the `Example` word so for in the Popover case the name should be `PopoverExample`. The Devdocs-design component will take over to clean and show the right name in the web page.
 
-If the example component is created using `React.createClass` then uses `displayName` to define its name:
+If the example component is created using `React.createClass` then use `displayName` to define its name:
 
 ```js
 module.exports = React.createClass( {
@@ -31,10 +31,11 @@ module.exports = React.createClass( {
 } );
 ```
 
-If you use ES6 `class` the name will be defined in function of the class name:
+If you use ES6 `class` then define the name as a static `displayName` property:
 
 ```es6
 class PopoverExample extends PureComponent {
+	static displayName = 'PopoverExample';
 	// ...
 }
 ```

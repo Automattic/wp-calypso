@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { compact } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -18,6 +18,7 @@ import {
 import config, { isEnabled } from 'config';
 import EmailedLoginLinkSuccessfully from '../magic-login/emailed-login-link-successfully';
 import EmailedLoginLinkExpired from '../magic-login/emailed-login-link-expired';
+import ExternalLink from 'components/external-link';
 import {
 	getMagicLoginEmailAddressFormInput,
 	getMagicLoginCurrentView,
@@ -35,8 +36,23 @@ import LoginBlock from 'blocks/login';
 import RequestLoginEmailForm from '../magic-login/request-login-email-form';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import GlobalNotices from 'components/global-notices';
+import notices from 'notices';
+import { login } from 'lib/paths';
 
-class Login extends React.Component {
+export class Login extends React.Component {
+	static propTypes = {
+		hideMagicLoginRequestForm: PropTypes.func.isRequired,
+		magicLoginEmailAddress: PropTypes.string,
+		magicLoginEnabled: PropTypes.bool,
+		magicLoginView: PropTypes.string,
+		recordTracksEvent: PropTypes.func.isRequired,
+		showMagicLoginInterstitialPage: PropTypes.func.isRequired,
+		showMagicLoginRequestForm: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+		twoFactorAuthType: PropTypes.string,
+	};
+
 	onClickEnterPasswordInstead = event => {
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_login_enter_password_instead_click' );
@@ -48,6 +64,8 @@ class Login extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
 		this.props.showMagicLoginRequestForm();
 	};
+
+	state = { loaded: false };
 
 	magicLoginMainContent() {
 		const {
@@ -79,6 +97,13 @@ class Login extends React.Component {
 		}
 	}
 
+	componentDidMount() {
+		// Turning off eslint rule, as this flag is telling us when the component is
+		// loaded in the browser, which isn't guaranteed until componentDidMount() fires.
+		// eslint-disable-next-line react/no-did-mount-set-state
+		this.setState( { loaded: true } );
+	}
+
 	goBack = event => {
 		event.preventDefault();
 
@@ -94,6 +119,7 @@ class Login extends React.Component {
 			magicLoginEnabled,
 			magicLoginView,
 			translate,
+			twoFactorAuthType
 		} = this.props;
 
 		if ( magicLoginEnabled && magicLoginView === REQUEST_FORM ) {
@@ -104,27 +130,56 @@ class Login extends React.Component {
 				</a>;
 		}
 
-		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView && <a href="#"
-			key="magic-login-link"
-			onClick={ this.onMagicLoginRequestClick }>
-				{ translate( 'Email me a login link' ) }
-			</a>;
-		const resetPasswordLink = ! magicLoginView && <a
-				href={ config( 'login_url' ) + '?action=lostpassword' }
-				key="lost-password-link">
-					{ this.props.translate( 'Lost your password?' ) }
-				</a>;
-		const goBackLink = ! magicLoginView && <a
+		let goBackLink;
+		if ( this.state.loaded && window.history.length > 1 ) {
+			goBackLink = ! magicLoginView && <a
 				href="#"
 				key="back-link"
 				onClick={ this.goBack }>
-					<Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Back' ) }
+					<Gridicon icon="arrow-left" size={ 18 } /> { translate( 'Return' ) }
 				</a>;
+		}
+
+		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView && ! twoFactorAuthType && (
+			<a href="#"
+				key="magic-login-link"
+				onClick={ this.onMagicLoginRequestClick }>
+					{ translate( 'Email me a login link' ) }
+			</a>
+		);
+
+		const resetPasswordLink = ! magicLoginView && ! twoFactorAuthType && (
+			<a
+				href={ config( 'login_url' ) + '?action=lostpassword' }
+				key="lost-password-link">
+				{ this.props.translate( 'Lost your password?' ) }
+			</a>
+		);
+
+		const lostPhoneLink = twoFactorAuthType && twoFactorAuthType !== 'backup' && (
+			<a
+				href={ login( { isNative: true, twoFactorAuthType: 'backup' } ) }
+				key="lost-phone-link">
+				{ this.props.translate( "I can't access my phone" ) }
+			</a>
+		);
+
+		const helpLink = twoFactorAuthType && (
+			<ExternalLink
+				key="help-link"
+				icon={ true }
+				target="_blank"
+				href="http://en.support.wordpress.com/security/two-step-authentication/">
+				{ translate( 'Get help' ) }
+			</ExternalLink>
+		);
 
 		return compact( [
+			goBackLink,
+			lostPhoneLink,
+			helpLink,
 			showMagicLoginLink,
 			resetPasswordLink,
-			goBackLink,
 		] );
 	}
 
@@ -132,20 +187,23 @@ class Login extends React.Component {
 		const {
 			magicLoginView,
 			queryArguments,
-			translate,
+			twoFactorAuthType,
 		} = this.props;
 
 		return (
 			<Main className="wp-login">
 				<PageViewTracker path="/login" title="Login" />
+
+				<GlobalNotices id="notices" notices={ notices.list } />
+
 				{ this.magicLoginMainContent() || (
 					<div>
 						<div className="wp-login__container">
 							{ magicLoginView === REQUEST_FORM
 								? <RequestLoginEmailForm />
 								: <LoginBlock
-									redirectLocation={ queryArguments.redirect_to }
-									title={ translate( 'Log in to your account.' ) } />
+									twoFactorAuthType={ twoFactorAuthType }
+									redirectLocation={ queryArguments.redirect_to } />
 							}
 						</div>
 						<div className="wp-login__footer">

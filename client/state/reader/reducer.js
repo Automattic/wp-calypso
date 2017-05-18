@@ -17,6 +17,7 @@ import tags from './tags/reducer';
 import thumbnails from './thumbnails/reducer';
 import teams from './teams/reducer';
 import feedSearches from './feed-searches/reducer';
+import recommendedSites from './recommended-sites/reducer';
 
 export default combineReducers( {
 	feeds,
@@ -30,4 +31,5 @@ export default combineReducers( {
 	thumbnails,
 	teams,
 	feedSearches,
+	recommendedSites,
 } );
