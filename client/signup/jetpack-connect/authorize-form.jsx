@@ -50,6 +50,7 @@ class JetpackConnectAuthorizeForm extends Component {
 		goBackToWpAdmin: PropTypes.func,
 		goToXmlrpcErrorFallbackUrl: PropTypes.func,
 		isAlreadyOnSitesList: PropTypes.bool,
+		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
 		jetpackConnectAuthorize: PropTypes.shape( {
 			queryObject: PropTypes.shape( {
