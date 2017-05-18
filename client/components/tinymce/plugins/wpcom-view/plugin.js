@@ -45,7 +45,7 @@ function wpview( editor ) {
 		execCommandView,
 		execCommandBefore,
 		editToolbar,
-		removeToolbar
+		removeToolbar;
 
 	/**
 	 * Replaces all marker nodes tied to this view instance.
@@ -877,7 +877,6 @@ function wpview( editor ) {
 	editor.on( 'wptoolbar', function( event ) {
 		if ( selected ) {
 
-			const type = editor.dom.getAttrib( selected, 'data-wpview-type' );
 			const content = decodeURIComponent( editor.dom.getAttrib( selected, 'data-wpview-text' ) );
 			let gallery = Shortcode.parse( content );
 			gallery = assign( {}, MediaConstants.GalleryDefaultAttrs, gallery.attrs.named );
