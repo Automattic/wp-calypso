@@ -1,47 +1,36 @@
 /**
  * External dependencies
  */
+import { get, identity } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import {
-	get,
-	head,
-	sortBy,
-	toPairs,
-} from 'lodash';
+	buildKey,
+	isGetRequest,
+} from '../utils';
 
-const requestQueue = new Map();
+import {
+	basicJitter,
+	decorrelatedJitter,
+} from './delays';
+import defaultPolicy from './policies';
 
-export const buildKey = ( { path, apiNamespace, apiVersion, query } ) => JSON.stringify( [
-	path,
-	apiNamespace,
-	apiVersion,
-	sortBy( toPairs( query ), head ),
-] );
+const retryCounts = new Map();
 
-const noRetry = () => ( {
-	name: 'NO_RETRY',
-} );
+/**
+ * Empties the retryCounts
+ *
+ * FOR TESTING ONLY!
+ */
+export const clearCounts = () => {
+	if ( 'undefined' !== typeof window ) {
+		throw new Error( '`clearCounts()` is not for use in production - only in testing!' );
+	}
 
-const simpleRetry = ( { delay, maxTries } ) => ( {
-	name: 'SIMPLE_RETRY',
-	delay: Math.min( 500, delay ),
-	maxTries: Math.max( 5, maxTries ),
-} );
-
-const exponentialBackoff = ( { initialDelay, maxTries } ) => ( {
-	name: 'EXPONENTIAL_BACKOFF',
-	initialDelay: Math.min( 500, initialDelay ),
-	maxTries: Math.max( 5, maxTries ),
-} );
-
-export const policies = {
-	exponentialBackoff,
-	noRetry,
-	simpleRetry,
+	retryCounts.clear();
 };
-
-const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCase();
-
-const defaultPolicy = policies.simpleRetry( { delay: 1000, maxTries: 1 } );
 
 export const retryOnFailure = inboundData => {
 	const {
@@ -52,11 +41,11 @@ export const retryOnFailure = inboundData => {
 	} = inboundData;
 
 	const key = buildKey( nextRequest );
-	const state = requestQueue.get( key );
+	const retryCount = retryCounts.get( key ) || 0;
 
 	// if we need to keep this in the queue
 	// we will resubmit it with new data
-	requestQueue.delete( state );
+	retryCounts.delete( key );
 
 	// if the request came back successfully
 	// then we have no need to intercept it
@@ -72,37 +61,19 @@ export const retryOnFailure = inboundData => {
 	}
 
 	const { options: { whenFailing: policy = defaultPolicy } } = nextRequest;
+	const { delay: rawDelay, maxTries, name } = policy;
 
-	if ( 'NO_RETRY' === policy.name ) {
+	if ( 'NO_RETRY' === name || retryCount > maxTries ) {
 		return inboundData;
 	}
 
-	if ( 'SIMPLE_RETRY' === policy.name ) {
-		const { delay, maxTries } = policy;
-		const retryCount = state || 0;
+	const delay = get( {
+		SIMPLE_RETRY: basicJitter,
+		EXPONENTIAL_BACKOFF: decorrelatedJitter,
+	}, name, identity )( rawDelay, retryCount );
 
-		if ( retryCount > maxTries ) {
-			return inboundData;
-		}
-
-		setTimeout( () => store.dispatch( originalRequest ), delay );
-		requestQueue.set( key, retryCount + 1 );
-	}
-
-	if ( 'EXPONENTIAL_BACKOFF' === policy.name ) {
-		const { initialDelay, maxTries } = policy;
-		const retryCount = state || 0;
-
-		if ( retryCount > maxTries ) {
-			return inboundData;
-		}
-
-		setTimeout(
-			() => store.dispatch( originalRequest ),
-			initialDelay * Math.pow( 2, retryCount ),
-		);
-		requestQueue.set( key, retryCount + 1 );
-	}
+	setTimeout( () => store.dispatch( originalRequest ), delay );
+	retryCounts.set( key, retryCount + 1 );
 
 	return { ...inboundData, shouldAbort: true };
 };
