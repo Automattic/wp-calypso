@@ -1,3 +1,9 @@
+/**
+ * External Dependencies
+ */
+import JsDiff from 'diff';
+import { reduce } from 'lodash';
+
 function countWords( content ) {
 	// Adapted from TinyMCE wordcount plugin:
 	// https://github.com/tinymce/tinymce/blob/4.2.6/js/tinymce/plugins/wordcount/plugin.js
@@ -24,4 +30,26 @@ function countWords( content ) {
 	return 0;
 }
 
-export default { countWords };
+const diffWords = JsDiff.diffWords;
+
+function countDiffWords( diffChanges ) {
+	return reduce(
+		diffChanges,
+		( accumulator, change ) => {
+			const count = countWords( change.value );
+			change.added && ( accumulator.added += count );
+			change.removed && ( accumulator.removed += count );
+			return accumulator;
+		},
+		{
+			added: 0,
+			removed: 0,
+		},
+	);
+}
+
+export default {
+	countDiffWords,
+	countWords,
+	diffWords,
+};

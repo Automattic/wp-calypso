@@ -96,13 +96,13 @@
       "dev": true
     },
     "aproba": {
-      "version": "1.1.1"
+      "version": "1.1.2"
     },
     "are-we-there-yet": {
       "version": "1.1.4",
       "dependencies": {
         "readable-stream": {
-          "version": "2.2.9"
+          "version": "2.2.10"
         },
         "string_decoder": {
           "version": "1.0.1"
@@ -648,7 +648,7 @@
       "version": "1.2.1",
       "dependencies": {
         "readable-stream": {
-          "version": "2.2.9"
+          "version": "2.2.10"
         },
         "string_decoder": {
           "version": "1.0.1"
@@ -731,9 +731,6 @@
     },
     "buffer": {
       "version": "4.9.1"
-    },
-    "buffer-shims": {
-      "version": "1.0.0"
     },
     "builtin-modules": {
       "version": "1.1.1"
@@ -1307,8 +1304,7 @@
       }
     },
     "diff": {
-      "version": "1.4.0",
-      "dev": true
+      "version": "1.4.0"
     },
     "disparity": {
       "version": "2.0.0",
@@ -1362,6 +1358,10 @@
     "dot-case": {
       "version": "1.1.2"
     },
+    "double-ended-queue": {
+      "version": "2.1.0-0",
+      "dev": true
+    },
     "draft-js": {
       "version": "0.8.1"
     },
@@ -1385,7 +1385,7 @@
           "dev": true
         },
         "readable-stream": {
-          "version": "2.2.9",
+          "version": "2.2.10",
           "dev": true
         },
         "string_decoder": {
@@ -1901,7 +1901,7 @@
           "dev": true
         },
         "readable-stream": {
-          "version": "2.2.9",
+          "version": "2.2.10",
           "dev": true
         },
         "string_decoder": {
@@ -2181,7 +2181,7 @@
           "dev": true
         },
         "readable-stream": {
-          "version": "2.2.9",
+          "version": "2.2.10",
           "dev": true
         },
         "string_decoder": {
@@ -3471,7 +3471,7 @@
       "version": "0.3.0",
       "dependencies": {
         "readable-stream": {
-          "version": "2.2.9"
+          "version": "2.2.10"
         },
         "string_decoder": {
           "version": "1.0.1"
@@ -3656,7 +3656,7 @@
       "dev": true
     },
     "node-fetch": {
-      "version": "1.7.0"
+      "version": "1.7.1"
     },
     "node-gyp": {
       "version": "3.6.2",
@@ -4413,7 +4413,7 @@
       "dev": true,
       "dependencies": {
         "readable-stream": {
-          "version": "2.2.9",
+          "version": "2.2.10",
           "dev": true
         },
         "string_decoder": {
@@ -4446,7 +4446,7 @@
           "version": "3.0.4"
         },
         "readable-stream": {
-          "version": "2.2.9"
+          "version": "2.2.10"
         },
         "string_decoder": {
           "version": "1.0.1"
@@ -4714,7 +4714,7 @@
       "dev": true
     },
     "safe-buffer": {
-      "version": "5.0.1"
+      "version": "5.1.0"
     },
     "samsam": {
       "version": "1.1.2",
@@ -5142,7 +5142,7 @@
           "dev": true
         },
         "readable-stream": {
-          "version": "2.2.9",
+          "version": "2.2.10",
           "dev": true
         },
         "resolve-from": {
@@ -5176,7 +5176,7 @@
           "version": "6.4.0"
         },
         "readable-stream": {
-          "version": "2.2.9"
+          "version": "2.2.10"
         },
         "string_decoder": {
           "version": "1.0.1"
@@ -5244,7 +5244,7 @@
       "version": "1.5.4",
       "dependencies": {
         "readable-stream": {
-          "version": "2.2.9"
+          "version": "2.2.10"
         },
         "string_decoder": {
           "version": "1.0.1"
@@ -5270,7 +5270,7 @@
       "dev": true
     },
     "throat": {
-      "version": "3.0.0",
+      "version": "3.1.0",
       "dev": true
     },
     "through": {

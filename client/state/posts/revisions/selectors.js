@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { cloneDeep, get, map, partial } from 'lodash';
+import { cloneDeep, findIndex, get, isUndefined, map, omitBy, orderBy, partial } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -9,6 +9,7 @@ import createSelector from 'lib/create-selector';
  */
 import { normalizePostForDisplay } from '../utils';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
+import { diffWords } from 'lib/text-utils';
 
 export const normalizeForDisplay = normalizePostForDisplay;
 export function normalizeForEditing( revision ) {
@@ -49,4 +50,25 @@ export const getPostRevision = createSelector(
 		get( state.posts.revisions.revisions, [ siteId, postId, revisionId ], null )
 	),
 	( state ) => [ state.posts.revisions.revisions, state.users.items ]
+);
+
+export const getPostRevisionChanges = createSelector(
+	( state, siteId, postId, revisionId ) => {
+		const orderedRevisions = orderBy(
+			getPostRevisions( state, siteId, postId ),
+			'date', 'desc',
+		);
+		const revisionIndex = findIndex( orderedRevisions, { id: revisionId } );
+		if ( revisionIndex === -1 ) {
+			return [];
+		}
+		return map(
+			diffWords(
+				get( orderedRevisions, [ revisionIndex + 1, 'content' ], '' ),
+				orderedRevisions[ revisionIndex ].content
+			),
+			change => omitBy( change, isUndefined )
+		);
+	},
+	( state ) => [ state.posts.revisions.revisions ],
 );

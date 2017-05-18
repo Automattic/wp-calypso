@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { flow, map, omit } from 'lodash';
+import { flow, forEach, map, omit } from 'lodash';
 import mapKeys from 'lodash/fp/mapKeys';
 import mapValues from 'lodash/fp/mapValues';
 import pick from 'lodash/fp/pick';
@@ -9,6 +9,7 @@ import pick from 'lodash/fp/pick';
 /**
  * Internal dependencies
  */
+import { countDiffWords, diffWords } from 'lib/text-utils';
 import {
 	POST_REVISIONS_REQUEST,
 } from 'state/action-types';
@@ -71,6 +72,13 @@ export const receiveError = ( { dispatch }, { siteId, postId }, next, rawError )
  */
 export const receiveSuccess = ( { dispatch }, { siteId, postId }, next, revisions ) => {
 	const normalizedRevisions = map( revisions, normalizeRevision );
+
+	forEach( normalizedRevisions, ( revision, index ) => {
+		revision.changes = index === normalizedRevisions.length - 1
+			? { added: 0, removed: 0 }
+			: countDiffWords( diffWords( normalizedRevisions[ index + 1 ].content, revision.content ) );
+	} );
+
 	dispatch( receivePostRevisionsSuccess( siteId, postId ) );
 	dispatch( receivePostRevisions( siteId, postId, normalizedRevisions ) );
 };
