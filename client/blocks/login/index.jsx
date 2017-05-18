@@ -9,7 +9,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import LoginForm from './login-form';
 import {
 	getTwoFactorAuthNonce,
@@ -68,30 +67,8 @@ class Login extends Component {
 			return null;
 		}
 
-		let message;
-
-		if ( requestError.message === 'proxy_required' ) {
-			// TODO: Remove once the proxy requirement is removed from the API
-
-			let redirectTo = '';
-
-			if ( typeof window !== 'undefined' && window.location.search.indexOf( '?redirect_to=' ) === 0 ) {
-				redirectTo = window.location.search;
-			}
-
-			message = (
-				<div>
-					This endpoint is restricted to proxied Automatticians for now. Please use
-					{ ' ' }
-					<a href={ config( 'login_url' ) + redirectTo }>the old login page</a>.
-				</div>
-			);
-		} else {
-			message = requestError.message;
-		}
-
 		return (
-			<Notice status={ 'is-error' } showDismiss={ false }>{ message }</Notice>
+			<Notice status={ 'is-error' } showDismiss={ false }>{ requestError.message }</Notice>
 		);
 	}
 

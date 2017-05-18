@@ -94,14 +94,8 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 				data: response.body && response.body.data,
 			} );
 		} ).catch( ( error ) => {
-			let message = getMessageFromHTTPError( error );
-			let field = loginErrorFields[ get( error, 'response.body.data.errors', [] )[ 0 ] ];
-
-			if ( error.crossDomain ) {
-				// We use custom field/message values here as this case is handled with JSX in `LoginForm`
-				field = 'global';
-				message = 'proxy_required';
-			}
+			const message = getMessageFromHTTPError( error );
+			const field = loginErrorFields[ get( error, 'response.body.data.errors', [] )[ 0 ] ];
 
 			dispatch( {
 				type: LOGIN_REQUEST_FAILURE,
