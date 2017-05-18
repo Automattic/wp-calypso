@@ -71,7 +71,7 @@ const webpackConfig = {
 				loaders: [
 					'isomorphic-style-loader',
 					'css-loader?camelCase=dashes&importLoaders=1',
-					'sass-loader',
+					'sass-loader?outputStyle=' + ( bundleEnv === 'production' ? 'compressed' : 'nested' ),
 				]
 			},
 			{
