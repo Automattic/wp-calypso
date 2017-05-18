@@ -60,7 +60,7 @@ export const retryOnFailure = inboundData => {
 		return inboundData;
 	}
 
-	const { options: { whenFailing: policy = defaultPolicy } } = nextRequest;
+	const { options: { whenFailing: policy = defaultPolicy } = {} } = nextRequest;
 	const { delay: rawDelay, maxTries, name } = policy;
 
 	if ( 'NO_RETRY' === name || retryCount > maxTries ) {
