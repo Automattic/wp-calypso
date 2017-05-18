@@ -5,6 +5,6 @@
  * @param  {String}  domain      Domain to query details
  * @return {Object}              Contact details
  */
-export default function getDomainContactInformation( state, domain ) {
+export default function getWhois( state, domain ) {
 	return state.domains.management[ domain ];
 }

@@ -1,4 +1,4 @@
-export const domainContactDetailsSchema = {
+export const domainWhoisSchema = {
 	type: 'object',
 	additionalProperties: true,
 	patternProperties: {

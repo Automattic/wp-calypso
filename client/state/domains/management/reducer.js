@@ -7,16 +7,16 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
-import { items as domainContactDetailsSchemas } from './schema';
+import { domainWhoisSchema } from './schema';
 import {
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_RECEIVE,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_REQUEST,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_REQUEST_FAILURE,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_REQUEST_SUCCESS,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_SAVE,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_SAVE_FAILURE,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_SAVE_SUCCESS,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_UPDATE
+	DOMAIN_MANAGEMENT_WHOIS_RECEIVE,
+	DOMAIN_MANAGEMENT_WHOIS_REQUEST,
+	DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE,
+	DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS,
+	DOMAIN_MANAGEMENT_WHOIS_SAVE,
+	DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
+	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
+	DOMAIN_MANAGEMENT_WHOIS_UPDATE
 } from 'state/action-types';
 
 /**
@@ -28,9 +28,9 @@ import {
  * @return {Object}        Updated state
  */
 export const requesting = createReducer( {}, {
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_REQUEST ]: ( state, { domain } ) => ( { ...state, [ domain ]: true } ),
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_REQUEST_SUCCESS ]: ( state, { domain } ) => ( { ...state, [ domain ]: false } ),
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_REQUEST_FAILURE ]: ( state, { domain } ) => ( { ...state, [ domain ]: false } )
+	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST ]: ( state, { domain } ) => ( { ...state, [ domain ]: true } ),
+	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS ]: ( state, { domain } ) => ( { ...state, [ domain ]: false } ),
+	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE ]: ( state, { domain } ) => ( { ...state, [ domain ]: false } )
 } );
 
 /**
@@ -42,12 +42,18 @@ export const requesting = createReducer( {}, {
  * @return {Object}        Updated state
  */
 export const saveRequests = createReducer( {}, {
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_SAVE ]: ( state, { domain } ) => ( { ...state, [ domain ]: { saving: true, status: 'pending', error: false } } ),
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_SAVE_SUCCESS ]: ( state, { domain } ) => ( {
+	[ DOMAIN_MANAGEMENT_WHOIS_SAVE ]: ( state, { domain } ) => ( {
+		...state,
+		[ domain ]: { saving: true, status: 'pending', error: false }
+	} ),
+	[ DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS ]: ( state, { domain } ) => ( {
 		...state,
 		[ domain ]: { saving: false, status: 'success', error: false }
 	} ),
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_SAVE_FAILURE ]: ( state, { domain, error } ) => ( { ...state, [ domain ]: { saving: false, status: 'error', error } } )
+	[ DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE ]: ( state, { domain, error } ) => ( {
+		...state,
+		[ domain ]: { saving: false, status: 'error', error }
+	} )
 } );
 
 /**
@@ -59,15 +65,15 @@ export const saveRequests = createReducer( {}, {
  * @return {Object}        Updated state
  */
 export const items = createReducer( {}, {
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_RECEIVE ]: ( state, { domain, contactDetails } ) => ( { ...state, [ domain ]: contactDetails } ),
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_UPDATE ]: ( state, { domain, contactDetails } ) => ( {
+	[ DOMAIN_MANAGEMENT_WHOIS_RECEIVE ]: ( state, { domain, whoisData } ) => ( { ...state, [ domain ]: whoisData } ),
+	[ DOMAIN_MANAGEMENT_WHOIS_UPDATE ]: ( state, { domain, whoisData } ) => ( {
 		...state,
 		[ domain ]: {
 			...state[ domain ],
-			...contactDetails
+			...whoisData
 		}
 	} )
-}, domainContactDetailsSchema );
+}, domainWhoisSchema );
 
 export default combineReducers( {
 	items,

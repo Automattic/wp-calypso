@@ -1,35 +1,31 @@
 /**
  * Internal dependencies
  */
+import wpcom from 'lib/wp';
 import {
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_RECEIVE,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_REQUEST,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_REQUEST_FAILURE,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_REQUEST_SUCCESS,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_SAVE,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_SAVE_FAILURE,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_SAVE_SUCCESS,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_UPDATE,
+	DOMAIN_MANAGEMENT_WHOIS_RECEIVE,
+	DOMAIN_MANAGEMENT_WHOIS_REQUEST,
+	DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE,
+	DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS,
+	DOMAIN_MANAGEMENT_WHOIS_SAVE,
+	DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
+	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
+	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 } from 'state/action-types';
-
-const fauxApiResponse = {
-	first_name: "Testy",
-	last_name: "McTesta",
-}
 
 /**
  * Returns an action object to be used in signalling that a domains contact details  object
  * has been received.
  *
  * @param	{String}   domain			domain queried
- * @param   {Object}   contactDetails	contact details object
+ * @param   {Object}   whois	contact details object
  * @returns {Object}   Action object
  */
-export function receiveDomainContactDetails( domain, contactDetails ) {
+export function receiveWhois( domain, whoisData ) {
 	return {
-		type: DOMAINS_MANAGEMENT_CONTACT_DETAILS_RECEIVE,
+		type: DOMAIN_MANAGEMENT_WHOIS_RECEIVE,
 		domain,
-		contactDetails
+		whoisData
 	};
 }
 
@@ -38,37 +34,24 @@ export function receiveDomainContactDetails( domain, contactDetails ) {
  * @param   {String}   domain	domain to query
  * @returns {Function}          Action thunk
  */
-export function requestDomainContactDetails( domain ) {
+export function requestWhois( domain ) {
 	return ( dispatch ) => {
 		dispatch( {
-			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_REQUEST,
+			type: DOMAIN_MANAGEMENT_WHOIS_REQUEST,
 			domain
 		} );
 
-		dispatch( receiveDomainContactDetails( domain, fauxApiResponse ) );
-
-		return dispatch( { type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_REQUEST_SUCCESS } );
-	};
-}
-
-export function saveDomainContactDetails( domain, contactDetails ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_SAVE,
-			domain
-		} );
-
-		return wpcom.undocumented().domains( domain, 'post', contactDetails )
-			.then( ( { updated } ) => {
-				dispatch( updateDomainContactDetails( domain, updated ) );
+		return wpcom.undocumented().fetchWhois( domain )
+			.then( ( { whoisData } ) => {
+				dispatch( receiveWhois( domain, whoisData ) );
 				dispatch( {
-					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_SAVE_SUCCESS,
+					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS,
 					domain
 				} );
 			} )
 			.catch( error => {
 				dispatch( {
-					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_SAVE_FAILURE,
+					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE,
 					domain,
 					error
 				} );
@@ -76,11 +59,36 @@ export function saveDomainContactDetails( domain, contactDetails ) {
 	};
 }
 
-export function updateDomainContactDetails( domain, contactDetails ) {
+export function saveWhois( domain, whoisData ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: DOMAIN_MANAGEMENT_WHOIS_SAVE,
+			domain
+		} );
+
+		return wpcom.undocumented().updateWhois( domain, whoisData )
+			.then( ( { updated } ) => {
+				dispatch( updateWhois( domain, updated ) );
+				dispatch( {
+					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
+					domain
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
+					domain,
+					error
+				} );
+			} );
+	};
+}
+
+export function updateWhois( domain, whoisData ) {
 	return {
-		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_UPDATE,
+		type: DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 		domain,
-		contactDetails
-	}
+		whoisData
+	};
 }
 
