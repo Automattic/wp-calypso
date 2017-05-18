@@ -8,6 +8,10 @@
 	padding-bottom: 20px;
 }
 
+.reader-feed-header__site-icon .site-icon.is-blank {
+	display: none;
+}
+
 .reader-feed-header .reader-feed-header__site-badge {
 	color: $gray;
 	padding-right: 4px;
