@@ -9,6 +9,6 @@ import { get } from 'lodash';
  * @param  {Object} state  Global state tree
  * @return {Boolean} If the request is in progress
  */
-export default ( state ) => {
-	return get( state, 'domains.management.requesting', false );
+export function isRequestingWhois( state, domain ) {
+	return get( state, [ 'domains.management.requesting', domain ], false );
 };

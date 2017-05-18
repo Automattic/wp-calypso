@@ -12,9 +12,10 @@ import { requestWhois } from 'state/domains/management/actions';
 
 class QueryWhois extends Component {
 	componentWillMount() {
-		if ( ! this.props.requesting ) {
-			this.props.requestWhois();
+		if ( this.props.requesting ) {
+			return;
 		}
+		this.props.requestWhois( this.props.domain );
 	}
 
 	render() {
@@ -23,11 +24,12 @@ class QueryWhois extends Component {
 }
 
 QueryWhois.propTypes = {
+	domain: PropTypes.string,
 	requesting: PropTypes.bool,
 	requestWhois: PropTypes.func
 };
 
 export default connect(
-	( state, domain ) => ( { requesting: isRequestingWhois( state, domain ) } ),
+	( state, { domain } ) => ( { requesting: isRequestingWhois( state, domain ) } ),
 	{ requestWhois }
 )( QueryWhois );

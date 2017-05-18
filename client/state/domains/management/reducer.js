@@ -27,7 +27,7 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const requesting = createReducer( {}, {
+export const requesting = createReducer( false, {
 	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST ]: ( state, { domain } ) => ( { ...state, [ domain ]: true } ),
 	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS ]: ( state, { domain } ) => ( { ...state, [ domain ]: false } ),
 	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE ]: ( state, { domain } ) => ( { ...state, [ domain ]: false } )
@@ -41,7 +41,7 @@ export const requesting = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const saveRequests = createReducer( {}, {
+export const saving = createReducer( false, {
 	[ DOMAIN_MANAGEMENT_WHOIS_SAVE ]: ( state, { domain } ) => ( {
 		...state,
 		[ domain ]: { saving: true, status: 'pending', error: false }
@@ -58,7 +58,7 @@ export const saveRequests = createReducer( {}, {
 
 /**
  * Returns the updated items state after an action has been dispatched. The
- * state maps domain to the domain's contactDetails object.
+ * state maps domain to the domain's whoisData object.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -78,5 +78,5 @@ export const items = createReducer( {}, {
 export default combineReducers( {
 	items,
 	requesting,
-	saveRequests
+	saving
 } );
