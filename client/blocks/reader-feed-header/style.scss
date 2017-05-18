@@ -21,36 +21,29 @@
 }
 
 .reader-feed-header__site .reader-feed-header__site-title {
+	align-self: stretch;
 	color: $gray-dark;
 	font-family: $serif;
 	font-size: 21px;
 	font-weight: 600;
+	max-height: 16px * 4 ;
 	overflow: hidden;
 	position: relative;
 	text-align: center;
 	white-space: normal;
 
 	&::after {
-		background: none;
-		content: '';
-		height: 22px;
 		@include long-content-fade( $size: 15% );
-		top: calc( 100% - 32px );
-
-		@include breakpoint( ">660px" ) {
-			@include long-content-fade( $size: 10% );
-			top: 0;
-		}
+		max-height: 16px * 1.6;
+		top: auto;
 	}
 
-	@include breakpoint( ">660px" ) {
-		height: 30px;
+	@include breakpoint( "<960px" ) {
+		max-height: 16px * 5.9;
 	}
 }
 
 .reader-feed-header {
-	display: flex;
-	flex-direction: column;
 	margin: 0 auto;
 	margin-bottom: 40px;
 	position: relative;
@@ -117,6 +110,7 @@
 	}
 
 	.reader-feed-header__details {
+		align-self: center;
 		font-size: 14px;
 		text-align: center;
 	}
