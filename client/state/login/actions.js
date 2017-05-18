@@ -173,7 +173,7 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 			const message = translate( 'A text message with the verification code was just sent to your ' +
 				'phone number ending in %(phoneNumber)s', {
 					args: {
-						phoneNumber: phoneNumber
+						phoneNumber
 					}
 				}
 			);
