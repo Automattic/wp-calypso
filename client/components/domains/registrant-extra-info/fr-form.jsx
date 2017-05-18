@@ -13,7 +13,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
-import FormSectionHeading from 'components/forms/form-section-heading';
 import FormCountrySelect from 'components/forms/form-country-select';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -81,8 +80,8 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	render() {
 		return (
 			<div>
-				<Card>
-					<FormSectionHeading>.FR Registration</FormSectionHeading>
+				<Card className="registrant-extra-info__title-card">
+					.FR Registration
 				</Card>
 				<Card>
 					<FormFieldset>
