@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { flow, forEach, map, omit, uniq } from 'lodash';
+import { flow, map, omit } from 'lodash';
 import mapKeys from 'lodash/fp/mapKeys';
 import mapValues from 'lodash/fp/mapValues';
 import pick from 'lodash/fp/pick';
@@ -70,8 +70,9 @@ export const receiveError = ( { dispatch }, { siteId, postId }, next, rawError )
  * @param {Array} revisions raw data from post revisions API
  */
 export const receiveSuccess = ( { dispatch }, { siteId, postId }, next, revisions ) => {
+	const normalizedRevisions = map( revisions, normalizeRevision );
 	dispatch( receivePostRevisionsSuccess( siteId, postId ) );
-	dispatch( receivePostRevisions( siteId, postId, map( revisions, normalizeRevision ) ) );
+	dispatch( receivePostRevisions( siteId, postId, normalizedRevisions ) );
 };
 
 /**

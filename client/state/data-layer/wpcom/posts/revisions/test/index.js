@@ -117,7 +117,7 @@ describe( '#receiveSuccess', () => {
 
 		receiveSuccess( { dispatch }, action, null, successfulPostRevisionsResponse );
 
-		expect( dispatch ).to.have.been.calledTwice;
+		expect( dispatch ).to.have.callCount( 2 );
 		expect( dispatch ).to.have.been.calledWith( receivePostRevisionsSuccess( 12345678, 10 ) );
 		expect( dispatch ).to.have.been.calledWith( receivePostRevisions( 12345678, 10, normalizedPostRevisions ) );
 	} );
