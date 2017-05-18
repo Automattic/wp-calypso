@@ -13,47 +13,53 @@ import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 
+const DEFAULT_STATUS = 'pending';
+
 export class CommentNavigation extends Component {
-	getStatusPath = status => ( status && 'approved' !== status )
+	getStatusPath = status => ( status && DEFAULT_STATUS !== status )
 		? `/comments/${ status }/${ this.props.siteSlug }`
 		: `/comments/${ this.props.siteSlug }`;
 
+	isSelectedStatus = status => DEFAULT_STATUS === status
+		? ! this.props.status || status === this.props.status
+		: status === this.props.status;
+
 	render() {
-		const { status, translate } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<SectionNav className="comment-navigation">
 				<NavTabs>
 					<NavItem
 						path={ this.getStatusPath( 'pending' ) }
-						selected={ 'pending' === status }
+						selected={ this.isSelectedStatus( 'pending' ) }
 					>
 						{ translate( 'Pending' ) }
 					</NavItem>
 					<NavItem
 						count={ 15 }
 						path={ this.getStatusPath( 'approved' ) }
-						selected={ ! status || 'approved' === status }
+						selected={ this.isSelectedStatus( 'approved' ) }
 					>
 						{ translate( 'Approved' ) }
 					</NavItem>
 					<NavItem
 						count={ 3 }
 						path={ this.getStatusPath( 'spam' ) }
-						selected={ 'spam' === status }
+						selected={ this.isSelectedStatus( 'spam' ) }
 					>
 						{ translate( 'Spam' ) }
 					</NavItem>
 					<NavItem
 						path={ this.getStatusPath( 'trash' ) }
-						selected={ 'trash' === status }
+						selected={ this.isSelectedStatus( 'trash' ) }
 					>
 						{ translate( 'Trash' ) }
 					</NavItem>
 					<NavItem
 						count={ 18 }
 						path={ this.getStatusPath( 'all' ) }
-						selected={ 'all' === status }
+						selected={ this.isSelectedStatus( 'all' ) }
 					>
 						{ translate( 'All' ) }
 					</NavItem>
