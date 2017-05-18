@@ -41,6 +41,13 @@ class VerificationCodeForm extends Component {
 		twoStepCode: ''
 	};
 
+	componentWillReceiveProps = ( nextProps ) => {
+		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
+			// reset the code input value when changing pages
+			this.setState( { twoStepCode: '' } );
+		}
+	};
+
 	onChangeField = ( event ) => {
 		this.setState( {
 			[ event.target.name ]: event.target.value,
@@ -102,6 +109,7 @@ class VerificationCodeForm extends Component {
 						</FormLabel>
 
 						<FormTextInput
+							value={ this.state.twoStepCode }
 							onChange={ this.onChangeField }
 							className={ classNames( { 'is-error': isError } ) }
 							name="twoStepCode" />
