@@ -113,7 +113,7 @@ class Login extends Component {
 		}
 
 		return (
-			<LoginForm onSuccess={ this.rebootAfterLogin } />
+			<LoginForm onSuccess={ this.handleValidUsernamePassword } />
 		);
 	}
 
