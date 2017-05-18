@@ -69,7 +69,7 @@ export const getPostOldestCommentDate = createSelector(
  * @param {Object} state redux state
  * @param {Number} siteId site identification
  * @param {Number} postId site identification
- * @param {String} status String representing the comment status to show. Defaults to 'all'.
+ * @param {String} status String representing the comment status to show. Defaults to 'approved'.
  * @return {Object} comments tree, and in addition a children array
  */
 export const getPostCommentsTree = createSelector(
