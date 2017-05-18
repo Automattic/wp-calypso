@@ -158,7 +158,10 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
  */
 export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 	dispatch( {
-		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST
+		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
+		notice: {
+			message: translate( 'Trying to send you a text message…' )
+		},
 	} );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' )

@@ -81,7 +81,7 @@ class VerificationCodeForm extends Component {
 		let labelText = translate( 'Verification code' );
 		let smallPrint;
 		if ( twoFactorAuthType === 'sms' ) {
-			helpText = translate( 'A text message with the verification code was just sent to your phone number.' );
+			helpText = translate( 'Type in the code you receive in a text message.' );
 		}
 
 		if ( twoFactorAuthType === 'backup' ) {
