@@ -4,6 +4,31 @@
 import { get } from 'lodash';
 
 /**
+ * Returns the status of Rewind
+ * Returns null if the site is unknown
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  The ID of the site we're querying
+ * @return {Array}           Rewind status items
+ */
+export function getRewindStatus( state, siteId ) {
+	return get( state.activityLog.status, [ siteId, 'data' ], {} );
+}
+
+/**
+ * Returns true if we are currently making a request to get status of Rewind
+ * modules on the site. False otherwise.
+ * Returns null if the status for queried site and module is unknown.
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  The ID of the site we're querying
+ * @return {Boolean}         Whether the status is being requested
+ */
+export function isFetchingRewindStatus( state, siteId ) {
+	return get( state.activityLog.requests, [ siteId, 'isRequestingRewindStatus' ], null );
+}
+
+/**
  * Returns the activity log data for a given site
  * Returns null if the site is unknown, or activity logs have not been fetched yet.
  *

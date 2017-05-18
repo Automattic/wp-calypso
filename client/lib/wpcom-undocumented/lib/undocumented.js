@@ -2326,9 +2326,22 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 };
 
 /**
+ * Get Rewind status
+ *
+ * @param  {int} siteId -- the ID of the site.
+ *
+ * @return {Promise} Promise for handling result
+ */
+Undocumented.prototype.rewindStatus = function( siteId ) {
+	return this.wpcom.req.get( {
+		path: `/activity-log/${ siteId }/rewind`
+	} );
+};
+
+/**
  * Activate Jetpack Rewind
  *
- * @param  {int} siteId.
+ * @param  {int} siteId -- The ID of the site
  *
  * @return {Promise} Promise for handling result
  */
@@ -2341,7 +2354,7 @@ Undocumented.prototype.rewindActivate = function( siteId ) {
 /**
  * Deactivate Jetpack Rewind
  *
- * @param  {int} siteId.
+ * @param  {int} siteId -- The ID of the site
  *
  * @return {Promise} Promise for handling result
  */
@@ -2356,6 +2369,7 @@ Undocumented.prototype.rewindDeactivate = function( siteId ) {
  *
  * @param {int} siteId -- the ID of the site being transferred
  *
+ * @return {Promise} Promise for handling result
  */
 Undocumented.prototype.rewindGetActivityLog = function( siteId ) {
 	// debug( '/sites/:site_id:/sync/status query' );
@@ -2370,8 +2384,8 @@ Undocumented.prototype.rewindGetActivityLog = function( siteId ) {
 /**
  * Initiate backup restore for a given site.
  *
- * @param  {int}    siteId    ID of the site to restore.
- * @param  {int} timestamp Time stamp that identifies the backup to restore.
+ * @param  {int}    siteId  ID of the site to restore.
+ * @param  {int} timestamp  Time stamp that identifies the backup to restore.
  *
  * @return {object} Contains path as item.
  */

@@ -19,11 +19,31 @@ import {
 	REWIND_ACTIVATE_FAILED,
 	REWIND_DEACTIVATE_REQUEST,
 	REWIND_DEACTIVATE_SUCCESS,
-	REWIND_DEACTIVATE_FAILED
+	REWIND_DEACTIVATE_FAILED,
+	REWIND_STATUS_REQUEST,
+	REWIND_STATUS_SUCCESS,
+	REWIND_STATUS_FAILED
 } from 'state/action-types';
 
 export function requests( state = {}, action ) {
 	switch ( action.type ) {
+		case REWIND_STATUS_REQUEST:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign(
+					{},
+					get( state, [ action.siteId ], {} ),
+					{ isRequestingRewindStatus: true }
+				)
+			} );
+		case REWIND_STATUS_SUCCESS:
+		case REWIND_STATUS_FAILED:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign(
+					{},
+					get( state, [ action.siteId ], {} ),
+					{ isRequestingRewindStatus: false }
+				)
+			} );
 		case ACTIVITY_LOG_FETCH:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign(
@@ -113,7 +133,21 @@ export function items( state = {}, action ) {
 	return state;
 }
 
+export function status( state = {}, action ) {
+	switch ( action.type ) {
+		case REWIND_STATUS_SUCCESS:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign(
+					{},
+					{ data: action.data }
+				)
+			} );
+	}
+	return state;
+}
+
 export default combineReducers( {
 	requests,
-	items
+	items,
+	status
 } );

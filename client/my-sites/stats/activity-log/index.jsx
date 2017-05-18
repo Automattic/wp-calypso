@@ -18,6 +18,7 @@ import StatsNavigation from '../stats-navigation';
 import ActivityLogDay from '../activity-log-day';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
+import QueryRewindStatus from 'components/data/query-rewind-status';
 import { getActivityLog, isFetchingActivityLog, isRestoring, isAnythingRestoring, isActivatingRewind, isDeactivatingRewind } from 'state/activity-log/selectors';
 import { requestRestore, activateRewind, deactivateRewind } from 'state/activity-log/actions';
 import ActivityLogToggle from '../activity-log-toggle';
@@ -320,6 +321,7 @@ class ActivityLog extends Component {
 					{ logsGroupedByDate }
 				</section>
 				<QueryActivityLog siteId={ siteId } />
+				<QueryRewindStatus siteId={ siteId } />
 			</Main>
 		);
 	}
