@@ -110,9 +110,7 @@ function ReaderSubscriptionListItem( {
 						</a>
 						{ showLastUpdatedDate &&
 							<span className="reader-subscription-list-item__timestamp">
-								{ feed &&
-									feed.last_update &&
-									' ' + translate( 'updated %s', { args: lastUpdatedDate } ) }
+								{ feed && feed.last_update && translate( 'updated %s', { args: lastUpdatedDate } ) }
 							</span> }
 					</div> }
 			</div>

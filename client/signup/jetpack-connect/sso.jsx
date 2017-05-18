@@ -132,7 +132,7 @@ class JetpackSsoForm extends Component {
 	}
 
 	getSignInLink() {
-		return login( { legacy: true, redirectTo: window.location.href } );
+		return login( { redirectTo: window.location.href } );
 	}
 
 	maybeValidateSSO( props = this.props ) {

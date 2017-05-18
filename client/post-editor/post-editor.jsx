@@ -26,7 +26,7 @@ const actions = require( 'lib/posts/actions' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
-	VerifyEmailDialog = require( 'post-editor/verify-email-dialog' ),
+	VerifyEmailDialog = require( 'components/email-verification/email-verification-dialog' ),
 	utils = require( 'lib/posts/utils' ),
 	EditorPreview = require( './editor-preview' ),
 	stats = require( 'lib/posts/stats' ),
@@ -349,7 +349,6 @@ export const PostEditor = React.createClass( {
 				: null }
 				{ this.state.showVerifyEmailDialog
 					? <VerifyEmailDialog
-						user={ this.props.user }
 						onClose={ this.closeVerifyEmailDialog }
 					/>
 				: null }

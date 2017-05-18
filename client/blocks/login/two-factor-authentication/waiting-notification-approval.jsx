@@ -19,7 +19,6 @@ import {
 	isTwoFactorAuthTypeSupported,
 	getTwoFactorPushPollSuccess,
 } from 'state/login/selectors';
-import { errorNotice, successNotice } from 'state/notices/actions';
 import TwoFactorActions from './two-factor-actions';
 
 class WaitingTwoFactorNotificationApproval extends Component {
@@ -28,8 +27,6 @@ class WaitingTwoFactorNotificationApproval extends Component {
 		pushSuccess: PropTypes.bool.isRequired,
 		startPollAppPushAuth: PropTypes.func.isRequired,
 		stopPollAppPushAuth: PropTypes.func.isRequired,
-		errorNotice: PropTypes.func.isRequired,
-		successNotice: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -43,8 +40,6 @@ class WaitingTwoFactorNotificationApproval extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.pushSuccess && nextProps.pushSuccess ) {
-			const { translate } = this.props;
-			this.props.successNotice( translate( 'Logging In…' ) );
 			this.props.onSuccess();
 		}
 	}
@@ -56,12 +51,14 @@ class WaitingTwoFactorNotificationApproval extends Component {
 			<form>
 				<Card className="two-factor-authentication__push-notification-screen is-compact">
 					<p>
-						{ translate( 'We sent a push notification to your {{strong}}WordPress mobile app{{/strong}}. ' +
+						{ translate(
+							'We sent a push notification to your {{strong}}WordPress mobile app{{/strong}}. ' +
 							'Once you get it and swipe or tap to confirm, this page will update.', {
 								components: {
 									strong: <strong />
 								}
-							} ) }
+							} )
+						}
 					</p>
 					<div>
 						<img className="two-factor-authentication__auth-code-preview"
@@ -70,8 +67,6 @@ class WaitingTwoFactorNotificationApproval extends Component {
 				</Card>
 
 				<TwoFactorActions
-					errorNotice={ this.props.errorNotice }
-					successNotice={ this.props.successNotice }
 					twoFactorAuthType="push"
 				/>
 			</form>
@@ -87,9 +82,7 @@ export default connect(
 		pushSuccess: getTwoFactorPushPollSuccess( state ),
 	} ),
 	{
-		errorNotice,
 		startPollAppPushAuth,
 		stopPollAppPushAuth,
-		successNotice,
 	}
 )( localize( WaitingTwoFactorNotificationApproval ) );

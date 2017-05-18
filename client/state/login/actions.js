@@ -18,6 +18,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'state/action-types';
@@ -93,14 +94,8 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 				data: response.body && response.body.data,
 			} );
 		} ).catch( ( error ) => {
-			let message = getMessageFromHTTPError( error );
-			let field = loginErrorFields[ get( error, 'response.body.data.errors', [] )[ 0 ] ];
-
-			if ( error.crossDomain ) {
-				// We use custom field/message values here as this case is handled with JSX in `LoginForm`
-				field = 'global';
-				message = 'proxy_required';
-			}
+			const message = getMessageFromHTTPError( error );
+			const field = loginErrorFields[ get( error, 'response.body.data.errors', [] )[ 0 ] ];
 
 			dispatch( {
 				type: LOGIN_REQUEST_FAILURE,
@@ -160,6 +155,10 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
  * @return {Function}                Action thunk to trigger the request.
  */
 export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
+	dispatch( {
+		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST
+	} );
+
 	return request.post( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' )
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -170,22 +169,31 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
 		.then( ( response ) => {
+			const phoneNumber = get( response, 'body.data.phone_number' );
+			const message = translate( 'A text message with the verification code was just sent to your ' +
+				'phone number ending in %(phoneNumber)s', {
+					args: {
+						phoneNumber
+					}
+				}
+			);
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+				notice: {
+					message,
+					status: 'is-success'
+				},
 				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
 			} );
-
-			return Promise.resolve( get( response, 'body.data.phone_number' ) );
 		} ).catch( ( error ) => {
-			const errorMessage = getMessageFromHTTPError( error );
+			const field = 'global';
+			const message = getMessageFromHTTPError( error );
 
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
-				error: errorMessage,
+				error: { message, field },
 				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
 			} );
-
-			return Promise.reject( errorMessage );
 		} );
 };
 

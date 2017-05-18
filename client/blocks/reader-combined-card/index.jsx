@@ -21,7 +21,6 @@ import { getSiteName } from 'reader/get-helpers';
 import FollowButton from 'reader/follow-button';
 
 class ReaderCombinedCard extends React.Component {
-
 	static propTypes = {
 		posts: React.PropTypes.array.isRequired,
 		site: React.PropTypes.object,
@@ -32,21 +31,23 @@ class ReaderCombinedCard extends React.Component {
 		selectedPostKey: React.PropTypes.object,
 		showFollowButton: React.PropTypes.bool,
 		followSource: React.PropTypes.string,
-	}
+	};
 
 	static defaultProps = {
 		isDiscover: false,
 		showFollowButton: false,
-	}
+	};
 
 	componentDidMount() {
 		this.recordRenderTrack();
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.postKey.feedId !== nextProps.postKey.feedId ||
+		if (
+			this.props.postKey.feedId !== nextProps.postKey.feedId ||
 			this.props.postKey.blogId !== nextProps.postKey.blogId ||
-			size( this.props.posts ) !== size( nextProps.posts ) ) {
+			size( this.props.posts ) !== size( nextProps.posts )
+		) {
 			this.recordRenderTrack( nextProps );
 		}
 	}
@@ -59,10 +60,19 @@ class ReaderCombinedCard extends React.Component {
 			feed_id: postKey.feedId,
 			post_count: size( posts ),
 		} );
-	}
+	};
 
 	render() {
-		const { posts, site, feed, postKey, selectedPostKey, onClick, isDiscover, translate } = this.props;
+		const {
+			posts,
+			site,
+			feed,
+			postKey,
+			selectedPostKey,
+			onClick,
+			isDiscover,
+			translate,
+		} = this.props;
 		const feedId = postKey.feedId;
 		const siteId = postKey.blogId;
 		const siteIcon = get( site, 'icon.img' );
@@ -70,7 +80,7 @@ class ReaderCombinedCard extends React.Component {
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteName = getSiteName( { site, post: posts[ 0 ] } );
 		const isSelectedPost = post => keysAreEqual( keyForPost( post ), selectedPostKey );
-		const followUrl = feed && feed.URL || site && site.URL;
+		const followUrl = ( feed && feed.URL ) || ( site && site.URL );
 		const mediaCount = filter( posts, post => ! isEmpty( post.canonical_media ) ).length;
 
 		return (
@@ -82,28 +92,27 @@ class ReaderCombinedCard extends React.Component {
 						author={ null }
 						preferGravatar={ true }
 						siteUrl={ streamUrl }
-						isCompact={ true } />
+						isCompact={ true }
+					/>
 					<div className="reader-combined-card__header-details">
 						<ReaderSiteStreamLink
 							className="reader-combined-card__site-link"
 							feedId={ feedId }
-							siteId={ siteId }>
+							siteId={ siteId }
+						>
 							{ siteName }
 						</ReaderSiteStreamLink>
 						<p className="reader-combined-card__header-post-count">
 							{ translate( '%(count)d posts', {
 								args: {
-									count: posts.length
-								}
+									count: posts.length,
+								},
 							} ) }
 						</p>
 					</div>
-					{ this.props.showFollowButton && followUrl &&
-						<FollowButton
-							siteUrl={ followUrl }
-							followSource={ this.props.followSource }
-						/>
-					}
+					{ this.props.showFollowButton &&
+						followUrl &&
+						<FollowButton siteUrl={ followUrl } followSource={ this.props.followSource } /> }
 				</header>
 				<ul className="reader-combined-card__post-list">
 					{ posts.map( post => (
@@ -115,7 +124,7 @@ class ReaderCombinedCard extends React.Component {
 							isDiscover={ isDiscover }
 							isSelected={ isSelectedPost( post ) }
 							showFeaturedAsset={ mediaCount > 0 }
-							/>
+						/>
 					) ) }
 				</ul>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }

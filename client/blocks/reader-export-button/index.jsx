@@ -17,13 +17,13 @@ import { errorNotice } from 'state/notices/actions';
 class ReaderExportButton extends React.Component {
 	static propTypes = {
 		saveAs: React.PropTypes.string,
-	}
+	};
 
 	static defaultProps = {
 		saveAs: 'wpcom-subscriptions.opml',
-	}
+	};
 
-	state = { disabled: false }
+	state = { disabled: false };
 
 	onClick = () => {
 		// Don't kick off a new export request if there's one in progress
@@ -33,13 +33,13 @@ class ReaderExportButton extends React.Component {
 
 		wpcom.undocumented().exportReaderFeed( this.onApiResponse );
 		this.setState( {
-			disabled: true
+			disabled: true,
 		} );
-	}
+	};
 
 	onApiResponse = ( err, data ) => {
 		this.setState( {
-			disabled: false
+			disabled: false,
 		} );
 
 		if ( ! err && ! data.success ) {
@@ -51,7 +51,7 @@ class ReaderExportButton extends React.Component {
 
 		const blob = new Blob( [ data.opml ], { type: 'text/xml;charset=utf-8' } );
 		saveAs( blob, this.props.saveAs );
-	}
+	};
 
 	render() {
 		return (
@@ -65,7 +65,4 @@ class ReaderExportButton extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ errorNotice },
-)( localize( ReaderExportButton ) );
+export default connect( null, { errorNotice } )( localize( ReaderExportButton ) );

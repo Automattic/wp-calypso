@@ -46,6 +46,7 @@ const FollowingManageSearchFeedsResults = ( {
 	if ( ! showMoreResults ) {
 		const resultsToShow = map( take( searchResults, 10 ), site => (
 			<ConnectedSubscriptionListItem
+				showLastUpdatedDate={ false }
 				url={ site.feed_URL || site.URL }
 				feedId={ +site.feed_ID }
 				siteId={ +site.blog_ID }
@@ -75,6 +76,7 @@ const FollowingManageSearchFeedsResults = ( {
 	return (
 		<div className={ classNames }>
 			<SitesWindowScroller
+				showLastUpdatedDate={ false }
 				sites={ searchResults }
 				width={ width }
 				fetchNextPage={ fetchNextPage }

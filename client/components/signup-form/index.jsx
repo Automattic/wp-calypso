@@ -284,7 +284,8 @@ class SignupForm extends Component {
 			return;
 		}
 
-		let link = login( { redirectTo: this.props.getRedirectToAfterLoginUrl } );
+		let link = login( { isNative: true, redirectTo: this.props.getRedirectToAfterLoginUrl } );
+
 		return map( messages, ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
 				link += '&email_address=' + encodeURIComponent( formState.getFieldValue( this.state.form, fieldName ) );
@@ -440,7 +441,9 @@ class SignupForm extends Component {
 			return;
 		}
 
-		const logInUrl = config.isEnabled( 'wp-login' ) ? login() : this.localizeUrlWithSubdomain( config( 'login_url' ) );
+		const logInUrl = config.isEnabled( 'wp-login' )
+			? login( { isNative: true } )
+			: this.localizeUrlWithSubdomain( config( 'login_url' ) );
 
 		return (
 			<LoggedOutFormLinks>

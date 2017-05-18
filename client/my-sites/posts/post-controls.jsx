@@ -23,6 +23,7 @@ const viewStats = () => ga.recordEvent( 'Posts', 'Clicked View Post Stats' );
 
 const getAvailableControls = props => {
 	const {
+		current,
 		editURL,
 		fullWidth,
 		onDelete,
@@ -45,7 +46,7 @@ const getAvailableControls = props => {
 	// Main Controls (not behind ... more link)
 	if ( userCan( 'edit_post', post ) ) {
 		controls.main.push( {
-			className: 'edit',
+			className: 'edit' + ( current === 'edit' ? ' is-active' : '' ),
 			href: editURL,
 			icon: 'pencil',
 			onClick: edit,
@@ -55,7 +56,7 @@ const getAvailableControls = props => {
 
 	if ( 'publish' === post.status ) {
 		controls.main.push( {
-			className: 'view',
+			className: 'view' + ( current === 'view' ? ' is-active' : '' ),
 			href: post.URL,
 			icon: props.isPreviewable ? 'visible' : 'external',
 			onClick: onViewPost,
@@ -63,7 +64,7 @@ const getAvailableControls = props => {
 		} );
 
 		controls.main.push( {
-			className: 'stats',
+			className: 'stats' + ( current === 'stats' ? ' is-active' : '' ),
 			href: `/stats/post/${ post.ID }/${ siteSlug }`,
 			icon: 'stats-alt',
 			onClick: viewStats,
@@ -72,7 +73,7 @@ const getAvailableControls = props => {
 
 		if ( isEnabled( 'republicize' ) ) {
 			controls.main.push( {
-				className: 'share',
+				className: 'share' + ( current === 'share' ? ' is-active' : '' ),
 				disabled: ! props.isPublicizeEnabled,
 				icon: 'share',
 				onClick: onToggleShare,
@@ -81,7 +82,7 @@ const getAvailableControls = props => {
 		}
 	} else if ( 'trash' !== post.status ) {
 		controls.main.push( {
-			className: 'view',
+			className: 'view' + ( current === 'preview' ? ' is-active' : '' ),
 			icon: props.isPreviewable ? 'visible' : 'external',
 			onClick: onViewPost,
 			text: translate( 'Preview' ),
@@ -89,7 +90,7 @@ const getAvailableControls = props => {
 
 		if ( userCan( 'publish_post', post ) ) {
 			controls.main.push( {
-				className: 'publish',
+				className: 'publish' + ( current === 'publish' ? ' is-active' : '' ),
 				icon: 'reader',
 				onClick: onPublish,
 				text: translate( 'Publish' ),
@@ -97,7 +98,7 @@ const getAvailableControls = props => {
 		}
 	} else if ( userCan( 'delete_post', post ) ) {
 		controls.main.push( {
-			className: 'restore',
+			className: 'restore' + ( current === 'restore' ? ' is-active' : '' ),
 			icon: 'undo',
 			onClick: onRestore,
 			text: translate( 'Restore' ),
@@ -107,14 +108,14 @@ const getAvailableControls = props => {
 	if ( userCan( 'delete_post', post ) ) {
 		if ( 'trash' === post.status ) {
 			controls.main.push( {
-				className: 'trash is-scary',
+				className: 'trash is-scary' + ( current === 'delete-permanently' ? ' is-active' : '' ),
 				icon: 'trash',
 				onClick: onDelete,
 				text: translate( 'Delete Permanently' ),
 			} );
 		} else {
 			controls.main.push( {
-				className: 'trash',
+				className: 'trash' + ( current === 'trash' ? ' is-active' : '' ),
 				icon: 'trash',
 				onClick: onTrash,
 				text: translate( 'Trash' ),
@@ -127,7 +128,7 @@ const getAvailableControls = props => {
 		userCan( 'edit_post', post )
 	) {
 		controls.main.push( {
-			className: 'copy',
+			className: 'copy' + ( current === 'copy' ? ' is-active' : '' ),
 			href: `/post/${ siteSlug }?copy=${ post.ID }`,
 			icon: 'clipboard',
 			onClick: copy,
@@ -144,14 +145,14 @@ const getAvailableControls = props => {
 
 	if ( controls.more.length ) {
 		controls.main.push( {
-			className: 'more',
+			className: 'more' + ( current === 'more' ? ' is-active' : '' ),
 			icon: 'ellipsis',
 			onClick: onShowMore,
 			text: translate( 'More' ),
 		} );
 
 		controls.more.push( {
-			className: 'back',
+			className: 'back' + ( current === 'back' ? ' is-active' : '' ),
 			icon: 'chevron-left',
 			onClick: onHideMore,
 			text: translate( 'Back' ),
@@ -202,6 +203,7 @@ export const PostControls = props => {
 };
 
 PostControls.propTypes = {
+	current: PropTypes.string,
 	editURL: PropTypes.string.isRequired,
 	fullWidth: PropTypes.bool,
 	isPublicizeEnabled: PropTypes.bool,

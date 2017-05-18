@@ -119,6 +119,23 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should decode entities in the site description', () => {
+			expect(
+				items(
+					{},
+					{
+						type: READER_SITE_REQUEST_SUCCESS,
+						payload: {
+							ID: 1,
+							description: 'Apples&amp;Pears',
+						},
+					}
+				)[ 1 ]
+			).to.have.a
+				.property( 'description' )
+				.that.equals( 'Apples&Pears' );
+		} );
+
 		it( 'should serialize site entries', () => {
 			const unvalidatedObject = deepFreeze( { hi: 'there' } );
 			expect( items( unvalidatedObject, { type: SERIALIZE } ) ).to.deep.equal( unvalidatedObject );

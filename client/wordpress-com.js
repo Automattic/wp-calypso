@@ -315,7 +315,7 @@ sections.push( {
 
 sections.push( {
 	name: 'login',
-	paths: [ '/login' ],
+	paths: [ '/log-in' ],
 	module: 'login',
 	enableLoggedOut: true,
 	secondary: false,

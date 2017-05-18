@@ -436,7 +436,8 @@
 			box-sizing: border-box;
 			font-size: inherit;
 			padding: (11 / 14) * 1em 0;
-			&:hover {
+			&:hover,
+			&.is-active {
 				color: $gray-dark;
 				cursor: pointer;
 			}

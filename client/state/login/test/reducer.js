@@ -15,6 +15,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'state/action-types';
@@ -33,6 +34,7 @@ describe( 'reducer', () => {
 			'isRequesting',
 			'magicLogin',
 			'requestError',
+			'requestNotice',
 			'requestSuccess',
 			'twoFactorAuth',
 			'isRequestingTwoFactorAuth',
@@ -352,6 +354,14 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.null;
+		} );
+
+		it( 'should reset the "notice" value when an SMS code request is made', () => {
+			const state = requestSuccess( null, {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST
+			} );
+
+			expect( state ).to.eql( null );
 		} );
 
 		it( 'should reset the "two_step_nonce" value when a two factor authentication SMS code request returns new nonce', () => {

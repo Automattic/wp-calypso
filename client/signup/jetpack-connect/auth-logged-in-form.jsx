@@ -47,6 +47,7 @@ class LoggedInForm extends Component {
 		goBackToWpAdmin: PropTypes.func.isRequired,
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
+		isFetchingAuthorizationSite: PropTypes.bool,
 		isSSO: PropTypes.bool,
 		jetpackConnectAuthorize: PropTypes.shape( {
 			authorizeError: PropTypes.oneOfType( [
@@ -64,7 +65,6 @@ class LoggedInForm extends Component {
 			} ).isRequired,
 			siteReceived: PropTypes.bool,
 		} ).isRequired,
-		plansFirst: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestHasExpiredSecretError: PropTypes.func.isRequired,
 		requestHasXmlrpcError: PropTypes.func.isRequired,
@@ -109,14 +109,6 @@ class LoggedInForm extends Component {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
 				return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 			}
-		} else if (
-			props.plansFirst &&
-			props.selectedPlan &&
-			! this.state.haveAuthorized &&
-			! this.isAuthorizing()
-		) {
-			this.setState( { haveAuthorized: true } );
-			this.props.authorize( queryObject );
 		} else if ( siteReceived ) {
 			return this.redirect();
 		} else if ( props.isAlreadyOnSitesList && queryObject.already_authorized ) {
@@ -347,7 +339,7 @@ class LoggedInForm extends Component {
 			return translate( 'Try again' );
 		}
 
-		if ( this.props.isFetchingSites ) {
+		if ( this.props.isFetchingAuthorizationSite ) {
 			return translate( 'Preparing authorization' );
 		}
 
@@ -470,7 +462,7 @@ class LoggedInForm extends Component {
 		return (
 			<LoggedOutFormLinks>
 				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
-				<LoggedOutFormLinkItem href={ login( { legacy: true, redirectTo } ) }>
+				<LoggedOutFormLinkItem href={ login( { redirectTo } ) }>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
@@ -484,7 +476,7 @@ class LoggedInForm extends Component {
 	renderStateAction() {
 		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
 		if (
-			this.props.isFetchingSites ||
+			this.props.isFetchingAuthorizationSite ||
 			this.isAuthorizing() ||
 			this.retryingAuth ||
 			( authorizeSuccess && ! siteReceived )

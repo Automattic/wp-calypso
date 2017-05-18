@@ -7,17 +7,13 @@ will query media storage limits for you.
 #### Usage:
 
 ```javascript
-	<PlanStorage
-		siteId={ this.props.siteId }
-		onClick={ this.onClickHandler } 
-	/>
+	<PlanStorage siteId={ this.props.siteId } />
 }
 ```
 
 #### Props
 
 * `siteId`: A site ID (required)
-* `onClick`: An on click handler that is fired when the plan bar is clicked.
 * `className`: A string that adds additional class names to this component.
 
 
@@ -39,7 +35,6 @@ render() {
 			<PlanStorageBar
 				sitePlanName={ planName }
 				mediaStorage={ this.props.mediaStorage }
-				onClick={ this.onClickHandler }
 			/>
 		</div>
 	);
@@ -56,8 +51,4 @@ export default connect( ( state, ownProps ) => {
 
 * `sitePlanName`: A plan name ( Free or Premium ) (required)
 * `mediaStorage`: Media Storage limits for a given site. If this is not provided, the bar will not render.
-* `onClick`: An on click handler that is fired when the plan storage bar is clicked.
 * `className`: A string that adds additional class names to this component.
-
-
-

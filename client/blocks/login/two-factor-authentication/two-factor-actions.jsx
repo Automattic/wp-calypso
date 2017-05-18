@@ -16,15 +16,12 @@ import {
 	isTwoFactorAuthTypeSupported,
 } from 'state/login/selectors';
 import { sendSmsCode } from 'state/login/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
 import { login } from 'lib/paths';
 
 class TwoFactorActions extends Component {
 	static propTypes = {
-		errorNotice: PropTypes.func.isRequired,
 		isAuthenticatorSupported: PropTypes.bool,
 		isSmsSupported: PropTypes.bool,
-		successNotice: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
 	};
@@ -32,21 +29,11 @@ class TwoFactorActions extends Component {
 	sendSmsCode = ( event ) => {
 		event.preventDefault();
 
-		const { userId, translate, twoStepNonce } = this.props;
+		const { userId, twoStepNonce } = this.props;
 
-		page( login( { twoFactorAuthType: 'sms' } ) );
+		page( login( { isNative: true, twoFactorAuthType: 'sms' } ) );
 
-		this.props.sendSmsCode( userId, twoStepNonce ).then( ( phoneNumber ) => {
-			this.props.successNotice(
-				translate( 'A text message with the verification code was just sent to your phone number ending in %(phoneNumber)s', {
-					args: {
-						phoneNumber: phoneNumber
-					}
-				} )
-			);
-		} ).catch( ( errorMesssage ) => {
-			this.props.errorNotice( errorMesssage );
-		} );
+		this.props.sendSmsCode( userId, twoStepNonce );
 	};
 
 	render() {
@@ -70,19 +57,25 @@ class TwoFactorActions extends Component {
 
 				{ isSmsSupported && twoFactorAuthType !== 'sms' && (
 					<p>
-						<a href="#" onClick={ this.sendSmsCode }>{ translate( 'Code via text message' ) }</a>
+						<a href="#" onClick={ this.sendSmsCode }>
+							{ translate( 'Code via text message' ) }
+						</a>
 					</p>
 				) }
 
 				{ isAuthenticatorSupported && twoFactorAuthType !== 'authenticator' && (
 					<p>
-						<a href={ login( { twoFactorAuthType: 'authenticator' } ) }>{ translate( 'An Authenticator application' ) }</a>
+						<a href={ login( { isNative: true, twoFactorAuthType: 'authenticator' } ) }>
+							{ translate( 'An Authenticator application' ) }
+						</a>
 					</p>
 				) }
 
 				{ isPushSupported && twoFactorAuthType !== 'push' && (
 					<p>
-						<a href={ login( { twoFactorAuthType: 'push' } ) }>{ translate( 'The WordPress mobile app' ) }</a>
+						<a href={ login( { isNative: true, twoFactorAuthType: 'push' } ) }>
+							{ translate( 'The WordPress mobile app' ) }
+						</a>
 					</p>
 				) }
 			</Card>
@@ -100,7 +93,5 @@ export default connect(
 	} ),
 	{
 		sendSmsCode,
-		errorNotice,
-		successNotice,
 	}
 )( localize( TwoFactorActions ) );

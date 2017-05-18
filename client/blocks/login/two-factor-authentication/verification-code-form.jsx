@@ -24,17 +24,14 @@ import {
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode } from 'state/login/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
 import TwoFactorActions from './two-factor-actions';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
-		errorNotice: PropTypes.func.isRequired,
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		rememberMe: PropTypes.bool.isRequired,
-		successNotice: PropTypes.func.isRequired,
 		isSmsSupported: PropTypes.bool,
 		twoStepNonce: PropTypes.string.isRequired,
 		userId: PropTypes.number.isRequired,
@@ -42,6 +39,13 @@ class VerificationCodeForm extends Component {
 
 	state = {
 		twoStepCode: ''
+	};
+
+	componentWillReceiveProps = ( nextProps ) => {
+		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
+			// reset the code input value when changing pages
+			this.setState( { twoStepCode: '' } );
+		}
 	};
 
 	onChangeField = ( event ) => {
@@ -105,6 +109,7 @@ class VerificationCodeForm extends Component {
 						</FormLabel>
 
 						<FormTextInput
+							value={ this.state.twoStepCode }
 							onChange={ this.onChangeField }
 							className={ classNames( { 'is-error': isError } ) }
 							name="twoStepCode" />
@@ -124,10 +129,7 @@ class VerificationCodeForm extends Component {
 					{ smallPrint }
 				</Card>
 
-				<TwoFactorActions
-					errorNotice={ this.props.errorNotice }
-					successNotice={ this.props.successNotice }
-					twoFactorAuthType={ twoFactorAuthType } />
+				<TwoFactorActions twoFactorAuthType={ twoFactorAuthType } />
 			</form>
 		);
 	}
@@ -143,8 +145,6 @@ export default connect(
 	{
 		loginUserWithTwoFactorVerificationCode,
 		recordTracksEvent,
-		sendSmsCode,
-		errorNotice,
-		successNotice,
+		sendSmsCode
 	}
 )( localize( VerificationCodeForm ) );

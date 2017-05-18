@@ -69,7 +69,7 @@
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,
-		"plans/jetpack-config-v2": true,
+		"plans/jetpack-config-v2": false,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"press-this": true,

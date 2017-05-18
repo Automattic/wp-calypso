@@ -1401,8 +1401,13 @@ Undocumented.prototype.usersNew = function( query, fn ) {
  *
  * @return {Promise} A promise for the request
  */
-Undocumented.prototype.usersSocialNew = function( service, token, fn ) {
-	const body = { service, token, locale: i18n.getLocaleSlug() };
+Undocumented.prototype.usersSocialNew = function( service, token, flowName, fn ) {
+	const body = {
+		service,
+		token,
+		signup_flow_name: flowName,
+		locale: i18n.getLocaleSlug()
+	};
 
 	// This API call is restricted to these OAuth keys
 	restrictByOauthKeys( body );

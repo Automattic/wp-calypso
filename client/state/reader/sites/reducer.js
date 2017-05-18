@@ -19,6 +19,7 @@ import {
 import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { readerSitesSchema } from './schema';
 import { withoutHttp } from 'lib/url';
+import { decodeEntities } from 'lib/formatting';
 
 const actionMap = {
 	[ SERIALIZE ]: handleSerialize,
@@ -66,6 +67,10 @@ function adaptSite( attributes ) {
 		attributes.slug = attributes.domain.replace( /\//g, '::' );
 	}
 	attributes.title = trim( attributes.name ) || attributes.domain;
+
+	if ( attributes.description ) {
+		attributes.description = decodeEntities( attributes.description );
+	}
 
 	// If a WordPress.com site has a mapped domain create a `wpcom_url`
 	// attribute to allow site selection with either domain.
