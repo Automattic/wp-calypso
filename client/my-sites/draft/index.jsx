@@ -311,7 +311,7 @@ const Draft = React.createClass( {
 
 export default connect( ( state, { siteId } ) => {
 	return {
-		site: getSite( siteId ),
+		site: getSite( state, siteId ),
 		selectedSiteId: getSelectedSiteId( state ),
 	};
 } )( Draft );
