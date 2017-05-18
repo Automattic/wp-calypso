@@ -443,12 +443,17 @@ function mediaButton( editor ) {
 			const image = MediaStore.get( siteId, imageId );
 
 			MediaActions.clearValidationErrors( siteId );
-			renderModal( {
-				visible: true,
-				labels: {
-					confirm: i18n.translate( 'Update', { context: 'verb' } )
+			renderModal(
+				{
+					visible: true,
+					labels: {
+						confirm: i18n.translate( 'Update', { context: 'verb' } )
+					}
+				},
+				{
+					view: ModalViews.DETAIL
 				}
-			} );
+			);
 			MediaActions.setLibrarySelectedItems( siteId, [ image ] );
 		}
 	} );
