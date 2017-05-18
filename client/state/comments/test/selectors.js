@@ -27,7 +27,7 @@ const state = {
 
 describe( 'selectors', () => {
 	describe( '#getPostMostRecentCommentDate()', () => {
-		it( 'should get most recent date, ignoring children', () => {
+		it( 'should get most recent date', () => {
 			const res = getPostMostRecentCommentDate( state, 1, 1 );
 
 			expect( res ).to.be.eql( new Date( '2016-01-31T10:07:18-08:00' ) );
@@ -43,7 +43,7 @@ describe( 'selectors', () => {
 	} ); // end of getPostMostRecentCommentDate
 
 	describe( '#getPostOldestCommentDate()', () => {
-		it( 'should get earliest date, ignoring children', () => {
+		it( 'should get earliest date', () => {
 			const res = getPostOldestCommentDate( state, 1, 1 );
 
 			expect( res ).to.be.eql( new Date( '2016-01-29T10:07:18-08:00' ) );

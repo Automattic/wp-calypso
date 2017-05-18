@@ -1,7 +1,7 @@
 /***
  * External dependencies
  */
-import { filter, find, get, keyBy, map, size, maxBy, minBy } from 'lodash';
+import { filter, find, get, keyBy, last, first, map, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,8 +44,7 @@ export const getPostTotalCommentsCount = ( state, siteId, postId ) => get( state
 export const getPostMostRecentCommentDate = createSelector(
 	( state, siteId, postId ) => {
 		const items = filter( getPostCommentItems( state, siteId, postId ), { parent: false } );
-		const newestComment = maxBy( items, item => new Date( item.date ) );
-		return newestComment ? new Date( newestComment.date ) : undefined;
+		return items && first( items ) ? new Date( get( first( items ), 'date' ) ) : undefined;
 	},
 	getPostCommentItems
 );
@@ -60,8 +59,7 @@ export const getPostMostRecentCommentDate = createSelector(
 export const getPostOldestCommentDate = createSelector(
 	( state, siteId, postId ) => {
 		const items = filter( getPostCommentItems( state, siteId, postId ), { parent: false } );
-		const oldestComment = minBy( items, item => new Date( item.date ) );
-		return oldestComment ? new Date( oldestComment.date ) : undefined;
+		return items && last( items ) ? new Date( get( last( items ), 'date' ) ) : undefined;
 	},
 	getPostCommentItems
 );
