@@ -9,8 +9,27 @@
  * External dependencies
  */
 const tinymce = require( 'tinymce/tinymce' );
+import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import i18n from 'i18n-calypso';
+import { deserialize } from 'lib/media-serialization';
+import { getSelectedSite } from 'state/ui/selectors';
+//import { setMediaModalView } from 'state/ui/media-modal/actions';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { ModalViews } from 'state/ui/media-modal/constants';
 
 function wpEditImage( editor ) {
+	const store = editor.getParam( 'redux_store' );
+
+	if ( ! store ) {
+		return;
+	}
+
+	const { dispatch, getState } = store;
+
 	let toolbar, serializer, pasteInCaption;
 	const each = tinymce.each,
 		iOS = tinymce.Env.iOS;
@@ -18,6 +37,28 @@ function wpEditImage( editor ) {
 	function isPlaceholder( node ) {
 		return !! ( editor.dom.getAttrib( node, 'data-mce-placeholder' ) || editor.dom.getAttrib( node, 'data-mce-object' ) );
 	}
+
+	editor.addButton( 'wp_img_edit', {
+		tooltip: i18n.translate( 'Edit image'/*, { context: 'verb' }*/ ),
+		icon: 'dashicon dashicons-edit',
+		classes: 'toolbar-segment-start',
+		onclick: function() {
+			const node = editor.selection.getStart();
+			const parsed = deserialize( node );
+			const selectedSite = getSelectedSite( getState() );
+			const mediaId = get( parsed, 'media.ID' );
+
+			if ( selectedSite && mediaId ) {
+				// This doesn't do anything
+				// @TODO fix it
+				dispatch( setEditorMediaModalView( ModalViews.DETAIL ) );
+			} else {
+				// Huh? Error?
+			}
+
+			this.rootControl.hide();
+		}
+	} );
 
 	editor.addButton( 'wp_img_remove', {
 		tooltip: 'Remove',
@@ -70,6 +111,7 @@ function wpEditImage( editor ) {
 			'wpcom_img_size_increase',
 			'wp_img_caption', // See plugins/media
 			'wp_img_advanced', // See plugins/media/advanced
+			'wp_img_edit',
 			'wp_img_remove'
 		] );
 	} );
