@@ -130,8 +130,7 @@ class GoogleLoginButton extends Component {
 
 		return (
 			<div>
-				<button
-					className={ classes } onMouseOver={ this.showError } onMouseOut={ this.hideError } onClick={ this.handleClick }>
+				<button className={ classes } onMouseOver={ this.showError } onMouseOut={ this.hideError } onClick={ this.handleClick }>
 					{ /* eslint-disable max-len */ }
 					<svg className="social-buttons__logo enabled" width="20" height="20" viewBox="0 0 20 20"xmlns="http://www.w3.org/2000/svg">
 						<g fill="none" fillRule="evenodd">
