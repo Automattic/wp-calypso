@@ -27,6 +27,8 @@ describe( 'utils', () => {
 	let keyedReducer;
 	let reducer;
 	let withSchemaValidation;
+	let combineReducersWithPersistence;
+	let isValidStateWithSchema;
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/warn', noop );
@@ -36,6 +38,8 @@ describe( 'utils', () => {
 			extendAction,
 			keyedReducer,
 			withSchemaValidation,
+			combineReducersWithPersistence,
+			isValidStateWithSchema,
 		} = require( 'state/utils' ) );
 	} );
 
@@ -357,7 +361,9 @@ describe( 'utils', () => {
 
 	describe( '#withSchemaValidation', () => {
 		const load = { type: DESERIALIZE };
+		const write = { type: SERIALIZE };
 		const normal = { type: 'NORMAL' };
+		const grow = { type: 'GROW' };
 		const schema = {
 			type: 'number',
 			minimum: 0,
@@ -367,6 +373,33 @@ describe( 'utils', () => {
 			'GROW' === action.type
 				? state + 1
 				: state;
+
+		const date = ( state = new Date( 0 ), action ) => {
+			switch ( action.type ) {
+				case 'GROW':
+					return new Date( state.getTime() + 1 );
+				case SERIALIZE:
+					return state.getTime();
+				case DESERIALIZE:
+					if ( isValidStateWithSchema( state, schema ) ) {
+						return new Date( state );
+					}
+					return new Date( 0 );
+				default:
+					return state;
+			}
+		};
+		date.hasCustomPersistence = true;
+
+		it( 'should return initial state without a schema on SERIALIZE', () => {
+			const validated = withSchemaValidation( null, age );
+			expect( validated( 5, write ) ).to.equal( 0 );
+		} );
+
+		it( 'should return initial state without a schema on DESERIALIZE', () => {
+			const validated = withSchemaValidation( null, age );
+			expect( validated( 5, load ) ).to.equal( 0 );
+		} );
 
 		it( 'should invalidate DESERIALIZED state', () => {
 			const validated = withSchemaValidation( schema, age );
@@ -384,6 +417,198 @@ describe( 'utils', () => {
 			const validated = withSchemaValidation( schema, age );
 
 			expect( validated( 5, load ) ).to.equal( 5 );
+		} );
+
+		it( 'actions work as expected with schema', () => {
+			const validated = withSchemaValidation( schema, age );
+			expect( validated( 5, grow ) ).to.equal( 6 );
+		} );
+
+		it( 'actions work as expected without schema', () => {
+			const validated = withSchemaValidation( null, age );
+			expect( validated( 5, grow ) ).to.equal( 6 );
+		} );
+
+		it( 'supports reducers with custom handlers', () => {
+			const validated = withSchemaValidation( null, date );
+			expect( validated( 44, load ).getTime() ).to.equal( 44 );
+			expect( validated( -5, load ).getTime() ).to.equal( 0 );
+			expect( validated( new Date( 24 ), write ) ).to.equal( 24 );
+			expect( validated( new Date( 24 ), grow ).getTime() ).to.equal( 25 );
+		} );
+	} );
+
+	describe( '#combineReducersWithPersistence', () => {
+		const load = { type: DESERIALIZE };
+		const write = { type: SERIALIZE };
+		const grow = { type: 'GROW' };
+		const schema = {
+			type: 'number',
+			minimum: 0,
+		};
+
+		const age = ( state = 0, action ) =>
+			'GROW' === action.type
+				? state + 1
+				: state;
+		age.schema = schema;
+
+		const height = ( state = 160, action ) =>
+			'GROW' === action.type
+				? state + 1
+				: state;
+		const count = ( state = 1, action ) =>
+			'GROW' === action.type
+				? state + 1
+				: state;
+
+		const date = ( state = new Date( 0 ), action ) => {
+			switch ( action.type ) {
+				case 'GROW':
+					return new Date( state.getTime() + 1 );
+				case SERIALIZE:
+					return state.getTime();
+				case DESERIALIZE:
+					if ( isValidStateWithSchema( state, schema ) ) {
+						return new Date( state );
+					}
+					return new Date( 0 );
+				default:
+					return state;
+			}
+		};
+		date.hasCustomPersistence = true;
+
+		let reducers;
+
+		beforeEach( () => {
+			reducers = combineReducersWithPersistence( {
+				age,
+				height
+			} );
+		} );
+
+		const appState = deepFreeze( {
+			age: 20,
+			height: 171
+		} );
+
+		it( 'should return initial state on init', () => {
+			const state = reducers( undefined, write );
+			expect( state ).to.eql( { age: 0, height: 160 } );
+		} );
+
+		it( 'should not persist height, because it is missing a schema', () => {
+			const state = reducers( appState, write );
+			expect( state ).to.eql( { age: 20, height: 160 } );
+		} );
+
+		it( 'should not load height, because it is missing a schema', () => {
+			const state = reducers( appState, load );
+			expect( state ).to.eql( { age: 20, height: 160 } );
+		} );
+
+		it( 'should validate age', () => {
+			const state = reducers( { age: -5 }, load );
+			expect( state ).to.eql( { age: 0, height: 160 } );
+		} );
+
+		it( 'actions work as expected', () => {
+			const state = reducers( appState, grow );
+			expect( state ).to.eql( { age: 21, height: 172 } );
+		} );
+
+		it( 'nested reducers work on load', () => {
+			reducers = combineReducersWithPersistence( {
+				age,
+				height,
+				date
+			} );
+			const nested = combineReducersWithPersistence( {
+				person: reducers,
+				count
+			} );
+			const valid = nested( { person: { age: 22, date: 224 } }, load );
+			expect( valid ).to.eql( { person: { age: 22, height: 160, date: new Date( 224 ) }, count: 1 } );
+
+			const invalid = nested( { person: { age: -5, height: 100, date: -5 } }, load );
+			expect( invalid ).to.eql( { person: { age: 0, height: 160, date: new Date( 0 ) }, count: 1 } );
+		} );
+
+		it( 'nested reducers work on persist', () => {
+			reducers = combineReducersWithPersistence( {
+				age,
+				height,
+				date
+			} );
+			const nested = combineReducersWithPersistence( {
+				person: reducers,
+				count
+			} );
+			const valid = nested( { person: { age: 22, date: new Date( 224 ) } }, write );
+			expect( valid ).to.eql( { person: { age: 22, height: 160, date: 224 }, count: 1 } );
+
+			const invalid = nested( { person: { age: -5, height: 100, date: new Date( -500 ) } }, write );
+			expect( invalid ).to.eql( { person: { age: -5, height: 160, date: -500 }, count: 1 } );
+		} );
+
+		it( 'deeply nested reducers work on load', () => {
+			reducers = combineReducersWithPersistence( {
+				age,
+				height,
+				date
+			} );
+			const nested = combineReducersWithPersistence( {
+				person: reducers,
+			} );
+			const veryNested = combineReducersWithPersistence( {
+				bob: nested,
+				count
+			} );
+			const valid = veryNested( { bob: { person: { age: 22, date: 224 } }, count: 122 }, load );
+			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160, date: new Date( 224 ) } }, count: 1 } );
+
+			const invalid = veryNested( { bob: { person: { age: -5, height: 22, date: -500 } }, count: 123 }, load );
+			expect( invalid ).to.eql( { bob: { person: { age: 0, height: 160, date: new Date( 0 ) } }, count: 1 } );
+		} );
+
+		it( 'deeply nested reducers work on persist', () => {
+			reducers = combineReducersWithPersistence( {
+				age,
+				height,
+				date
+			} );
+			const nested = combineReducersWithPersistence( {
+				person: reducers,
+			} );
+			const veryNested = combineReducersWithPersistence( {
+				bob: nested,
+				count
+			} );
+			const valid = veryNested( { bob: { person: { age: 22, date: new Date( 234 ) } }, count: 122 }, write );
+			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160, date: 234 } }, count: 1 } );
+
+			const invalid = veryNested( { bob: { person: { age: -5, height: 22, date: new Date( -5 ) } }, count: 123 }, write );
+			expect( invalid ).to.eql( { bob: { person: { age: -5, height: 160, date: -5 } }, count: 1 } );
+		} );
+
+		it( 'deeply nested reducers work with reducer with a custom handler', () => {
+			reducers = combineReducersWithPersistence( {
+				height,
+				date
+			} );
+			const nested = combineReducersWithPersistence( {
+				person: reducers,
+			} );
+			const veryNested = combineReducersWithPersistence( {
+				bob: nested,
+				count
+			} );
+			const valid = veryNested( { bob: { person: { date: new Date( 234 ) } }, count: 122 }, write );
+			expect( valid ).to.eql( { bob: { person: { height: 160, date: 234 } }, count: 1 } );
+
+			const invalid = veryNested( { bob: { person: { height: 22, date: new Date( -5 ) } }, count: 123 }, write );
+			expect( invalid ).to.eql( { bob: { person: { height: 160, date: -5 } }, count: 1 } );
 		} );
 	} );
 } );
