@@ -17,9 +17,9 @@ import {
 	PLAN_FREE,
 } from 'lib/plans/constants';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getSite, getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
-const PlanStorageExample = ( { site, siteId, siteSlug } ) => {
+const PlanStorageExample = ( { siteId, siteSlug } ) => {
 	const mediaStorage = {
 		red: {
 			storage_used_bytes: 11362335981,
@@ -35,7 +35,7 @@ const PlanStorageExample = ( { site, siteId, siteSlug } ) => {
 		}
 	};
 
-	if ( ! site ) {
+	if ( ! siteSlug ) {
 		return null;
 	}
 
@@ -85,11 +85,9 @@ const PlanStorageExample = ( { site, siteId, siteSlug } ) => {
 const ConnectedPlanStorageExample = connect(
 	( state ) => {
 		const siteId = get( getCurrentUser( state ), 'primary_blog', null );
-		const site = getSite( state, siteId );
 		const siteSlug = getSiteSlug( state, siteId );
 
 		return {
-			site,
 			siteId,
 			siteSlug,
 		};
