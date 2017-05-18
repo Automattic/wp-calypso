@@ -38,24 +38,7 @@ class SocialLoginForm extends Component {
 			this.props.onSuccess();
 		} ).catch( error => {
 			if ( error.field === 'global' ) {
-				if ( error.message === 'proxy_required' ) {
-					// TODO: Remove once the proxy requirement is removed from the API
-
-					let redirectTo = '';
-
-					if ( typeof window !== 'undefined' && window.location.search.indexOf( '?redirect_to=' ) === 0 ) {
-						redirectTo = window.location.search;
-					}
-
-					this.props.errorNotice(
-						<p>
-							{ 'This endpoint is restricted to proxied Automatticians for now. Please use ' }
-							<a href={ config( 'login_url' ) + redirectTo }>the old login page</a>.
-						</p>
-					);
-				} else {
-					this.props.errorNotice( error.message );
-				}
+				this.props.errorNotice( error.message );
 			}
 		} );
 	}
