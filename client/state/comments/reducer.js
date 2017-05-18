@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { sortBy, has, map, unionBy, reject } from 'lodash';
+import { orderBy, has, map, unionBy, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,6 +27,10 @@ import {
 	PLACEHOLDER_STATE
 } from './constants';
 
+const getCommentDate = ( { date } ) => new Date( date );
+
+const getStateKey = ( siteId, postId ) => `${ siteId }-${ postId }`;
+
 const updateComment = ( commentId, newProperties ) => comment => {
 	if ( comment.ID !== commentId ) {
 		return comment;
@@ -50,46 +54,47 @@ const updateComment = ( commentId, newProperties ) => comment => {
  */
 export function items( state = {}, action ) {
 	const { siteId, postId, commentId } = action;
+	const stateKey = getStateKey( siteId, postId );
 
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
 			const { status } = action;
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], updateComment( commentId, { status } ) )
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { status } ) )
 			};
 		case COMMENTS_EDIT:
 			const { content } = action;
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], updateComment( commentId, { content } ) )
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { content } ) )
 			};
 		case COMMENTS_RECEIVE:
 			const { skipSort, comments } = action;
 			const allComments = unionBy(
-				state[ `${ siteId }-${ postId }` ],
+				state[ stateKey ],
 				comments,
 				'ID'
 			);
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: ! skipSort ? sortBy( allComments, comment => new Date( comment.date ) ) : allComments
+				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments
 			};
 		case COMMENTS_REMOVE:
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: reject( state[ `${ siteId }-${ postId }` ], { ID: commentId } )
+				[ stateKey ]: reject( state[ stateKey ], { ID: commentId } )
 			};
 		case COMMENTS_LIKE:
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], updateComment( commentId, { i_like: true } ) )
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: true } ) )
 			};
 		case COMMENTS_LIKE_UPDATE:
 			const { iLike, likeCount } = action;
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], updateComment( commentId, {
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, {
 					i_like: iLike,
 					like_count: likeCount
 				} ) )
@@ -97,13 +102,13 @@ export function items( state = {}, action ) {
 		case COMMENTS_UNLIKE:
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], updateComment( commentId, { i_like: false } ) )
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: false } ) )
 			};
 		case COMMENTS_ERROR:
 			const { error } = action;
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: map( state[ `${ siteId }-${ postId }` ], updateComment( commentId, {
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, {
 					placeholderState: PLACEHOLDER_STATE.ERROR,
 					placeholderError: error
 				} ) )
@@ -129,7 +134,7 @@ export function requests( state = {}, action ) {
 		case COMMENTS_REQUEST_SUCCESS:
 		case COMMENTS_REQUEST_FAILURE:
 			const { siteId, postId, requestId, type } = action;
-			const stateKey = `${ siteId }-${ postId }`;
+			const stateKey = getStateKey( siteId, postId );
 			return {
 				...state,
 				[ stateKey ]: {
@@ -156,9 +161,10 @@ export function totalCommentsCount( state = {}, action ) {
 	switch ( action.type ) {
 		case COMMENTS_COUNT_RECEIVE:
 			const { siteId, postId } = action;
+			const stateKey = getStateKey( siteId, postId );
 			return {
 				...state,
-				[ `${ siteId }-${ postId }` ]: action.totalCommentsCount
+				[ stateKey ]: action.totalCommentsCount
 			};
 		case SERIALIZE:
 		case DESERIALIZE:

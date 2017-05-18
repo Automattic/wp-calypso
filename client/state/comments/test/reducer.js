@@ -52,7 +52,7 @@ describe( 'reducer', () => {
 			const ids = map( response[ '1-1' ], 'ID' );
 
 			expect( response[ '1-1' ] ).to.have.lengthOf( 6 );
-			expect( ids ).to.eql( [ 6, 7, 8, 9, 10, 11 ] );
+			expect( ids ).to.eql( [ 11, 10, 9, 8, 7, 6 ] );
 		} );
 
 		it( 'should build correct items list on consecutive calls', () => {
