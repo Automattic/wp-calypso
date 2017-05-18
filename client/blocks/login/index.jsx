@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
@@ -95,7 +96,7 @@ class Login extends Component {
 			rememberMe,
 		} = this.state;
 
-		if ( twoStepNonce && [ 'authenticator', 'sms', 'backup' ].includes( twoFactorAuthType ) ) {
+		if ( twoStepNonce && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
 			return (
 				<VerificationCodeForm
 					rememberMe={ rememberMe }
