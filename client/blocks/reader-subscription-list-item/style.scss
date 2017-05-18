@@ -13,7 +13,8 @@
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes aliasing in Safari
 }
 
-.reader-subscription-list-item__options {
+.following-manage__subscriptions-list .reader-subscription-list-item__options,
+.following-manage__search-results .reader-subscription-list-item__options {
 	display: flex;
 	flex-direction: column;
 	min-width: 24px;
