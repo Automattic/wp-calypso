@@ -1,0 +1,85 @@
+.preview-card.card {
+	font-size: 14px;
+	margin: 0 auto;
+	padding: 0;
+	transition: margin .15s linear;
+
+	&.is-expanded {
+		margin: 16px auto;
+
+		.preview-card__header {
+			border-bottom: 1px solid lighten( $gray, 30% );
+		}
+	}
+	&:not( .is-expanded ) {
+		&:hover {
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
+			z-index: 1;
+		}
+
+		.preview-card__header {
+			cursor: pointer;
+		}
+	}
+
+	.gridicon {
+		margin-right: 4px;
+		vertical-align: middle;
+	}
+}
+
+.preview-card__header {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: flex-start;
+	padding: 12px 8px;
+}
+
+.preview-card__header-element {
+	padding: 0px 8px;
+}
+
+.preview-card__actions {
+	justify-content: space-between;
+
+	.preview-card__header-element {
+		padding: 0;
+	}
+}
+
+.preview-card__action {
+	color: $gray;
+	cursor: pointer;
+	fill: $gray;
+	padding: 8px;
+	white-space: nowrap;
+	&:focus,
+	&:hover {
+		color: $blue-wordpress;
+		fill: $blue-wordpress;
+	}
+
+	&.has-icon span {
+		display: none;
+
+		@include breakpoint( ">960px" ) {
+			display: inline;
+		}
+	}
+}
+
+.preview-card__content-element {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	padding: 16px;
+
+	&:last-child {
+		border-bottom: none;
+	}
+}
+
+// Utilities
+.preview-card__overflow-ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
