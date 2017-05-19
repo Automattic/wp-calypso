@@ -50,7 +50,7 @@ class TransferToOtherSite extends React.Component {
 		return this.props.domains.hasLoadedFromServer;
 	}
 
-	checkSiteEligibility = ( site ) => {
+	isSiteEligible = ( site ) => {
 		return site.capabilities.manage_options &&
 			! site.jetpack &&
 			! get( site, 'options.is_domain_only', false ) &&
@@ -65,14 +65,15 @@ class TransferToOtherSite extends React.Component {
 	}
 
 	handleConfirmTransfer = ( targetSite, closeDialog ) => {
-		const { selectedDomainName } = this.props,
-			targetSiteName = targetSite.name,
-			successMessage = this.props.translate(
+		const { selectedDomainName } = this.props;
+		const targetSiteName = targetSite.name;
+		const successMessage = this.props.translate(
 				'%(selectedDomainName)s has been transferred to site: %(targetSiteName)s',
-				{ args: { selectedDomainName, targetSiteName } } ),
-			defaultErrorMessage = this.props.translate(
+				{ args: { selectedDomainName, targetSiteName } } );
+		const defaultErrorMessage = this.props.translate(
 				'Failed to transfer %(selectedDomainName)s, please try again or contact support.', {
 					args: { selectedDomainName } } );
+
 		this.setState( { disableDialogButtons: true } );
 		wpcom.transferToSite( this.props.selectedSite.ID, this.props.selectedDomainName, targetSite.ID )
 			.then( () => {
@@ -98,8 +99,8 @@ class TransferToOtherSite extends React.Component {
 			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
-		const { selectedSite, selectedDomainName } = this.props,
-			{ slug } = selectedSite;
+		const { selectedSite, selectedDomainName } = this.props;
+		const { slug } = selectedSite;
 
 		return (
 			<Main className="transfer-to-other-site">
@@ -114,12 +115,12 @@ class TransferToOtherSite extends React.Component {
 	}
 
 	renderSection() {
-		const { selectedDomainName: domainName, translate } = this.props,
-			{ currentUserCanManage } = getSelectedDomain( this.props );
-
+		const { currentUserCanManage } = getSelectedDomain( this.props );
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
 		}
+
+		const { selectedDomainName: domainName, translate } = this.props;
 
 		return (
 			<div>
@@ -130,7 +131,7 @@ class TransferToOtherSite extends React.Component {
 							{ args: { domainName }, components: { strong: <strong /> } } ) }
 					</p>
 					<SiteSelector
-						filter={ this.checkSiteEligibility }
+						filter={ this.isSiteEligible }
 						sites={ this.props.sites }
 						onSiteSelect={ this.handleSiteSelect }
 					/>
