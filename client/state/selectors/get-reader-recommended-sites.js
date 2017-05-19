@@ -3,10 +3,6 @@
  *
  * @param  {Object} state  Global state tree
  * @param {Number} seed the elasticsearch seed for which to grab recs
- * @return {Object} { recommendedSites: [ Reader Sites ], offset:  Current paging offset }
+ * @return {Array} array of recommended sites for a given seed
  */
-const getReaderRecommendedSites = ( state, seed ) => ( {
-	recommendedSites: state.reader.recommendedSites.items[ seed ],
-	offset: state.reader.recommendedSites.pagingOffset[ seed ],
-} );
-export default getReaderRecommendedSites;
+export default ( state, seed ) => state.reader.recommendedSites.items[ seed ];

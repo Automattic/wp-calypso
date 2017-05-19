@@ -19,6 +19,7 @@ import {
 	getReaderFeedsForQuery,
 	getReaderFeedsCountForQuery,
 	getReaderRecommendedSites,
+	getReaderRecommendedSitesPagingOffset,
 	isSiteBlocked as isSiteBlockedSelector,
 	getReaderAliasedFollowFeedUrl,
 } from 'state/selectors';
@@ -118,7 +119,7 @@ class FollowingManage extends Component {
 
 	shouldRequestMoreRecs = () => {
 		const { getRecommendedSites, isSiteBlocked } = this.props;
-		const { recommendedSites } = getRecommendedSites( this.state.seed );
+		const recommendedSites = getRecommendedSites( this.state.seed );
 
 		return reject( recommendedSites, isSiteBlocked ).length <= 4;
 	};
@@ -141,6 +142,7 @@ class FollowingManage extends Component {
 			searchResultsCount,
 			showMoreResults,
 			getRecommendedSites,
+			getRecommendedSitesPagingOffsets,
 			isSiteBlocked,
 			followsCount,
 		} = this.props;
@@ -153,7 +155,8 @@ class FollowingManage extends Component {
 		if ( isSitesQueryUrl ) {
 			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		}
-		const { recommendedSites, offset } = getRecommendedSites( this.state.seed );
+		const offset = getRecommendedSitesPagingOffsets( this.state.seed );
+		const recommendedSites = reject( getRecommendedSites( this.state.seed ), isSiteBlocked );
 		const isFollowByUrlWithNoSearchResults = isSitesQueryUrl && searchResultsCount === 0;
 
 		return (
@@ -211,7 +214,7 @@ class FollowingManage extends Component {
 				</div>
 				{ hasFollows &&
 					! sitesQuery &&
-					<RecommendedSites sites={ take( reject( recommendedSites, isSiteBlocked ), 2 ) } /> }
+					<RecommendedSites sites={ take( recommendedSites, 2 ) } /> }
 				{ !! sitesQuery &&
 					! isFollowByUrlWithNoSearchResults &&
 					<FollowingManageSearchFeedsResults
@@ -242,6 +245,7 @@ export default connect(
 		searchResults: getReaderFeedsForQuery( state, ownProps.sitesQuery ),
 		searchResultsCount: getReaderFeedsCountForQuery( state, ownProps.sitesQuery ),
 		getRecommendedSites: seed => getReaderRecommendedSites( state, seed ),
+		getRecommendedSitesPagingOffsets: seed => getReaderRecommendedSitesPagingOffset( state, seed ),
 		isSiteBlocked: site => isSiteBlockedSelector( state, site.blogId ),
 		getReaderAliasedFollowFeedUrl: url => getReaderAliasedFollowFeedUrl( state, url ),
 		followsCount: getReaderFollowsCount( state ),
