@@ -438,13 +438,29 @@
 .products__product-dimensions-weight {
 	display: flex;
 	justify-content: flex-start;
+	flex-direction: column;
 
-	.products__product-dimensions-input {
-		margin-right: 40px;
+	.form-fieldset.products__product-dimensions-input {
+		margin-bottom: 12px;
+		width: 342px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+
+		.form-fieldset.products__product-dimensions-input {
+			margin-right: 24px;
+			margin-bottom: 0;
+		}
 	}
 
 	.products__product-weight-input {
-		min-width: 120px;
+		width: 140px;
+
+		.form-text-input {
+			min-width: 60px;
+			max-width: 100px;
+		}
 	}
 
 	.form-fieldset {
@@ -460,8 +476,11 @@
 		margin-top: -1em;
 	}
 
+	.form-dimensions-input__length,
+	.form-dimensions-input__width,
 	.form-dimensions-input__height {
-		width: 140px;
+		min-width: 60px;
+		max-width: 100px;
 	}
 
 	.products__product-form-price .form-text-input-with-affixes {
