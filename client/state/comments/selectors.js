@@ -79,10 +79,10 @@ export const getPostCommentsTree = createSelector(
 
 		return {
 			...keyBy( map( items, item => ( {
-				children: map( filter( items, { parent: { ID: item.ID } } ), 'ID' ),
+				children: map( filter( items, { parent: { ID: item.ID } } ), 'ID' ).reverse(),
 				data: item
 			} ) ), 'data.ID' ),
-			children: map( filter( items, { parent: false } ), 'ID' )
+			children: map( filter( items, { parent: false } ), 'ID' ).reverse()
 		};
 	},
 	getPostCommentItems

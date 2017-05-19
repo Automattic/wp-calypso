@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
-import { get, size, take } from 'lodash';
+import { get, size, takeRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -137,7 +137,7 @@ class PostCommentList extends React.Component {
 
 	renderCommentsList( commentIds ) {
 		return <ol className="comments__list is-root">
-			{ commentIds.slice().reverse().map( ( commentId ) => this.renderComment( commentId ) ) }
+			{ commentIds.map( ( commentId ) => this.renderComment( commentId ) ) }
 		</ol>;
 	}
 
@@ -179,7 +179,7 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
-		const displayedComments = take( commentIds, numberToTake );
+		const displayedComments = takeRight( commentIds, numberToTake );
 
 		return {
 			displayedComments: displayedComments,
