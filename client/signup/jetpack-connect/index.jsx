@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { flowRight } from 'lodash';
+import { flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -296,12 +296,12 @@ class JetpackConnectMain extends Component {
 		 * I'm avoiding significantly changing this implementation
 		 * until propTypes have been around for a while.
 		 */
-		return [
+		return includes( [
 			'install',
 			'pro',
 			'premium',
 			'personal',
-		].includes( this.props.type );
+		], this.props.type );
 	}
 
 	getInstructionsData( status ) {
@@ -456,7 +456,7 @@ class JetpackConnectMain extends Component {
 	render() {
 		const status = this.getStatus();
 		if (
-			[ 'notJetpack', 'notActiveJetpack' ].includes( status ) &&
+			includes( [ 'notJetpack', 'notActiveJetpack' ], status ) &&
 			! this.props.jetpackConnectSite.isDismissed
 		) {
 			return this.renderInstructions( this.getInstructionsData( status ) );
