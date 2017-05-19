@@ -19,6 +19,7 @@ import {
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled
 } from 'state/login/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
@@ -26,6 +27,7 @@ import Notice from 'components/notice';
 
 class Login extends Component {
 	static propTypes = {
+		recordTracksEvent: PropTypes.func.isRequired,
 		redirectLocation: PropTypes.string,
 		requestError: PropTypes.object,
 		requestNotice: PropTypes.object,
@@ -69,6 +71,10 @@ class Login extends Component {
 	};
 
 	rebootAfterLogin = () => {
+		this.props.recordTracksEvent( 'calypso_login_success', {
+			two_factor_enabled: this.props.twoFactorEnabled
+		} );
+
 		window.location.href = this.props.redirectLocation || window.location.origin;
 	};
 
@@ -159,5 +165,7 @@ export default connect(
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
-	} ),
+	} ), {
+		recordTracksEvent,
+	}
 )( localize( Login ) );
