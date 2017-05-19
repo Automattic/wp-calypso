@@ -192,6 +192,12 @@
 			margin-bottom: 8px;
 		}
 	}
+
+	.card {
+		&.is-placeholder div {
+			@include placeholder;
+		}
+	}
 }
 
 .site-settings__general-settings,
