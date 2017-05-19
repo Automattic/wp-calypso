@@ -106,7 +106,7 @@ class CurrentSite extends Component {
 
 	previewSite = ( event ) => this.props.onClick && this.props.onClick( event );
 
-	renderViewLink() {
+	renderSiteViewLink() {
 		const {
 			isPreviewShowing,
 			selectedSite,
@@ -173,7 +173,7 @@ class CurrentSite extends Component {
 				{ selectedSite
 					? <div>
 						<Site site={ selectedSite } />
-						{ this.renderViewLink() }
+						{ this.renderSiteViewLink() }
 					</div>
 					: <AllSites />
 				}
