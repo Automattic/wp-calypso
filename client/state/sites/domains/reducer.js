@@ -6,11 +6,8 @@ import {
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { combineReducersWithPersistence } from 'state/utils';
-import { isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -31,17 +28,11 @@ export const items = ( state = {}, action ) => {
 					[ siteId ]: action.domains
 				}
 			);
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, itemsSchema ) ) {
-				return state;
-			}
-			return {};
-		case SERIALIZE:
-			return state;
 	}
 
 	return state;
 };
+items.schema = itemsSchema;
 
 /**
  * `Reducer` function which handles request/response actions
@@ -59,9 +50,6 @@ export const requesting = ( state = {}, action ) => {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: action.type === SITE_DOMAINS_REQUEST
 			} );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -86,10 +74,6 @@ export const errors = ( state = {}, action ) => {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: action.error
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
