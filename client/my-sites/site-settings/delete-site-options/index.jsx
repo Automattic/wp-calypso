@@ -46,8 +46,8 @@ class SiteTools extends React.Component {
 		const strings = {
 			changeSiteAddress: translate( 'Change Site Address' ),
 			themeSetup: translate( 'Theme Setup' ),
-			startOver: translate( 'Start Over' ),
-			deleteSite: translate( 'Delete Site' )
+			startOver: translate( 'Empty your content' ),
+			deleteSite: translate( 'Delete your site' )
 		};
 
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
@@ -88,7 +88,7 @@ class SiteTools extends React.Component {
 					<div className="delete-site-options__content">
 						<p className="delete-site-options__section-title">{ strings.startOver }</p>
 						<p className="delete-site-options__section-desc">
-							{ translate( 'Keep your URL and site active, but remove the content.' ) }
+							{ translate( 'Keep your site address and site active, but remove all of your posts, pages, media, etc.' ) }
 						</p>
 					</div>
 				</CompactCard>
