@@ -7,8 +7,6 @@ import {
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	EXPORT_POST_TYPE_SET,
 	EXPORT_POST_TYPE_FIELD_SET,
-	SERIALIZE,
-	DESERIALIZE,
 	EXPORT_CLEAR,
 	EXPORT_COMPLETE,
 	EXPORT_START_REQUEST,
@@ -22,10 +20,6 @@ export function selectedPostType( state = null, action ) {
 	switch ( action.type ) {
 		case EXPORT_POST_TYPE_SET:
 			return action.postType;
-		case SERIALIZE:
-			return null;
-		case DESERIALIZE:
-			return null;
 	}
 	return state;
 }
@@ -56,10 +50,6 @@ export function selectedAdvancedSettings( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: postTypes( state[ action.siteId ], action )
 			} );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -92,10 +82,6 @@ export function exportingState( state = {}, { type, siteId } ) {
 			return Object.assign( {}, state, {
 				[ siteId ]: States.READY
 			} );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -117,10 +103,6 @@ export function fetchingAdvancedSettings( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: false
 			} );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -137,10 +119,6 @@ export function advancedSettings( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: action.advancedSettings
 			} );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -150,10 +128,6 @@ export function downloadURL( state = null, action ) {
 		case EXPORT_COMPLETE:
 			return action.downloadURL;
 		case EXPORT_CLEAR:
-			return null;
-		case SERIALIZE:
-			return null;
-		case DESERIALIZE:
 			return null;
 	}
 
