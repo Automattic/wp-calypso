@@ -106,10 +106,13 @@ const reducer = combineReducersWithPersistence( {
 	isNotificationsOpen,
 } );
 
-export default function( state, action ) {
+const ui = function( state, action ) {
 	if ( SERIALIZE === action.type || DESERIALIZE === action.type ) {
 		return {};
 	}
 
 	return reducer( state, action );
-}
+};
+ui.hasCustomPersistence = true;
+
+export default ui;
