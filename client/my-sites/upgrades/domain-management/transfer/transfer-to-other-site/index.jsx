@@ -31,7 +31,6 @@ import wp from 'lib/wp';
 const wpcom = wp.undocumented();
 
 class TransferToOtherSite extends React.Component {
-
 	static propTypes = {
 		selectedDomainName: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
@@ -41,15 +40,11 @@ class TransferToOtherSite extends React.Component {
 		currentUser: React.PropTypes.object.isRequired
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			targetSiteSlug: '',
-			showConfirmationDialog: false,
-			disableDialogButtons: false
-		};
-	}
+	state = {
+		targetSiteSlug: '',
+		showConfirmationDialog: false,
+		disableDialogButtons: false
+	};
 
 	isDataReady() {
 		return this.props.domains.hasLoadedFromServer;
