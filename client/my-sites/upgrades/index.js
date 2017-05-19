@@ -28,7 +28,7 @@ function getCommonHandlers( { noSitePath = paths.domainManagementRoot(), warnIfJ
 	}
 
 	if ( warnIfJetpack ) {
-		handlers.push( controller.jetPackWarning );
+		handlers.push( upgradesController.jetPackWarning );
 	}
 
 	return handlers;
@@ -161,7 +161,7 @@ module.exports = function() {
 			controller.siteSelection,
 			upgradesController.domainsAddHeader,
 			upgradesController.redirectToAddMappingIfVipSite(),
-			controller.jetPackWarning,
+			upgradesController.jetPackWarning,
 			controller.sites
 		);
 
@@ -169,7 +169,7 @@ module.exports = function() {
 			'/domains/add/mapping',
 			controller.siteSelection,
 			upgradesController.domainsAddHeader,
-			controller.jetPackWarning,
+			upgradesController.jetPackWarning,
 			controller.sites
 		);
 
@@ -177,7 +177,7 @@ module.exports = function() {
 			'/domains/add/site-redirect',
 			controller.siteSelection,
 			upgradesController.domainsAddRedirectHeader,
-			controller.jetPackWarning,
+			upgradesController.jetPackWarning,
 			controller.sites
 		);
 
@@ -186,7 +186,7 @@ module.exports = function() {
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add' ),
 			upgradesController.redirectToAddMappingIfVipSite(),
-			controller.jetPackWarning,
+			upgradesController.jetPackWarning,
 			upgradesController.domainSearch
 		);
 
@@ -195,7 +195,7 @@ module.exports = function() {
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add' ),
 			upgradesController.redirectToAddMappingIfVipSite(),
-			controller.jetPackWarning,
+			upgradesController.jetPackWarning,
 			upgradesController.domainSearch
 		);
 
@@ -203,7 +203,7 @@ module.exports = function() {
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add' ),
-			controller.jetPackWarning,
+			upgradesController.jetPackWarning,
 			upgradesController.googleAppsWithRegistration
 		);
 
@@ -211,7 +211,7 @@ module.exports = function() {
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add/mapping' ),
-			controller.jetPackWarning,
+			upgradesController.jetPackWarning,
 			upgradesController.mapDomain
 		);
 
@@ -219,7 +219,7 @@ module.exports = function() {
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add/site-redirect' ),
-			controller.jetPackWarning,
+			upgradesController.jetPackWarning,
 			upgradesController.siteRedirect
 		);
 	}
@@ -234,7 +234,7 @@ module.exports = function() {
 		'/domains/:site',
 		controller.siteSelection,
 		controller.navigation,
-		controller.jetPackWarning,
+		upgradesController.jetPackWarning,
 		domainManagementController.domainManagementIndex
 	);
 
