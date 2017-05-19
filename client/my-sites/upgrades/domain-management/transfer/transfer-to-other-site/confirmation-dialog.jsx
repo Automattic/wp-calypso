@@ -29,22 +29,22 @@ class TransferConfirmationDialog extends React.PureComponent {
 	}
 
 	render() {
-		const { domainName, translate } = this.props,
-			buttons = [
-				{
-					action: 'cancel',
-					label: translate( 'Cancel' ),
-					disabled: this.props.disableDialogButtons
-				},
-				{
-					action: 'confirm',
-					label: translate( 'Confirm Transfer' ),
-					onClick: this.onConfirm,
-					disabled: this.props.disableDialogButtons,
-					isPrimary: true
-				}
-			],
-			targetSiteName = get( this.props.targetSite, 'name', '' );
+		const { domainName, translate } = this.props;
+		const buttons = [
+			{
+				action: 'cancel',
+				label: translate( 'Cancel' ),
+				disabled: this.props.disableDialogButtons
+			},
+			{
+				action: 'confirm',
+				label: translate( 'Confirm Transfer' ),
+				onClick: this.onConfirm,
+				disabled: this.props.disableDialogButtons,
+				isPrimary: true
+			}
+		];
+		const targetSiteName = get( this.props.targetSite, 'name', '' );
 
 		return (
 			<Dialog isVisible={ this.props.isVisible } buttons={ buttons } onClose={ this.props.onClose }>
@@ -56,7 +56,6 @@ class TransferConfirmationDialog extends React.PureComponent {
 			</Dialog>
 		);
 	}
-
 }
 
 export default connect(
