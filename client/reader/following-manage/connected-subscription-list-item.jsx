@@ -68,6 +68,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 				showEmailSettings={ showEmailSettings && ! isEmailBlocked }
 				showLastUpdatedDate={ showLastUpdatedDate }
 				isFollowing={ isFollowing }
+				showExtendedInformation={ true }
 			/>
 		);
 	}
