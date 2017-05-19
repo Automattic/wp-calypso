@@ -142,7 +142,7 @@ class FollowingManage extends Component {
 			searchResultsCount,
 			showMoreResults,
 			getRecommendedSites,
-			getRecommendedSitesPagingOffsets,
+			getRecommendedSitesPagingOffset,
 			isSiteBlocked,
 			followsCount,
 		} = this.props;
@@ -155,7 +155,7 @@ class FollowingManage extends Component {
 		if ( isSitesQueryUrl ) {
 			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		}
-		const offset = getRecommendedSitesPagingOffsets( this.state.seed );
+		const offset = getRecommendedSitesPagingOffset( this.state.seed );
 		const recommendedSites = reject( getRecommendedSites( this.state.seed ), isSiteBlocked );
 		const isFollowByUrlWithNoSearchResults = isSitesQueryUrl && searchResultsCount === 0;
 
@@ -245,7 +245,7 @@ export default connect(
 		searchResults: getReaderFeedsForQuery( state, ownProps.sitesQuery ),
 		searchResultsCount: getReaderFeedsCountForQuery( state, ownProps.sitesQuery ),
 		getRecommendedSites: seed => getReaderRecommendedSites( state, seed ),
-		getRecommendedSitesPagingOffsets: seed => getReaderRecommendedSitesPagingOffset( state, seed ),
+		getRecommendedSitesPagingOffset: seed => getReaderRecommendedSitesPagingOffset( state, seed ),
 		isSiteBlocked: site => isSiteBlockedSelector( state, site.blogId ),
 		getReaderAliasedFollowFeedUrl: url => getReaderAliasedFollowFeedUrl( state, url ),
 		followsCount: getReaderFollowsCount( state ),
