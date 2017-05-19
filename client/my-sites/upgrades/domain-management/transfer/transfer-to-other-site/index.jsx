@@ -33,10 +33,7 @@ const wpcom = wp.undocumented();
 class TransferToOtherSite extends React.Component {
 	static propTypes = {
 		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
+		selectedSite: React.PropTypes.object.isRequired,
 		currentUser: React.PropTypes.object.isRequired
 	};
 
