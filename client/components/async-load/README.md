@@ -36,3 +36,12 @@ In general usage, this should be passed as a string of the module to be imported
 </table>
 
 A placeholder to be shown while the module is being asynchronously required. If omitted, a default placeholder will be shown.
+
+### `noPlaceholder`
+
+<table>
+	<tr><td>Type</td><td>PropTypes.bool</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+A flag indicating if a placeholder should be hidden while the module is being asynchronously required. If omitted, the placeholder will be shown.

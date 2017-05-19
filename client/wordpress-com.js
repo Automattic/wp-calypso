@@ -7,7 +7,7 @@ const sections = [
 		paths: [ '/sites' ],
 		module: 'my-sites',
 		group: 'sites',
-		secondary: true
+		secondary: false
 	},
 	{
 		name: 'customize',
