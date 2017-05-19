@@ -12,7 +12,6 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
@@ -124,79 +123,61 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'testStatus()', () => {
+	describe( 'testing()', () => {
 		const previousState = deepFreeze( {
-			testStatus: {
-				[ primarySiteId ]: {
-					testing: true,
-					status: 'pending',
-				}
+			testing: {
+				[ primarySiteId ]: true,
 			}
 		} );
 
 		it( 'should default to an empty object', () => {
 			const state = reducer( undefined, {} );
 
-			expect( state.testStatus ).to.eql( {} );
+			expect( state.testing ).to.eql( {} );
 		} );
 
-		it( 'should set cache test status to pending if request in progress', () => {
+		it( 'should set testing value to true if request in progress', () => {
 			const state = reducer( undefined, {
 				type: WP_SUPER_CACHE_TEST_CACHE,
 				siteId: primarySiteId,
 			} );
 
-			expect( state.testStatus ).to.eql( {
-				[ primarySiteId ]: {
-					testing: true,
-					status: 'pending',
-				}
+			expect( state.testing ).to.eql( {
+				[ primarySiteId ]: true,
 			} );
 		} );
 
-		it( 'should accumulate cache test request statuses', () => {
+		it( 'should accumulate testing values', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_TEST_CACHE,
 				siteId: secondarySiteId,
 			} );
 
-			expect( state.testStatus ).to.eql( {
-				[ primarySiteId ]: {
-					testing: true,
-					status: 'pending',
-				},
-				[ secondarySiteId ]: {
-					testing: true,
-					status: 'pending',
-				}
+			expect( state.testing ).to.eql( {
+				[ primarySiteId ]: true,
+				[ secondarySiteId ]: true,
 			} );
 		} );
 
-		it( 'should set cache test request to success if request finishes successfully', () => {
+		it( 'should set testing value to false if request finishes successfully', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 				siteId: primarySiteId,
 			} );
 
-			expect( state.testStatus ).to.eql( {
-				[ primarySiteId ]: {
-					testing: false,
-					status: 'success',
-				}
+			expect( state.testing ).to.eql( {
+				[ primarySiteId ]: false,
 			} );
 		} );
 
-		it( 'should set cache test request to error if request finishes with failure', () => {
+		it( 'should set testing value to false if request finishes with failure', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 				siteId: primarySiteId,
 			} );
 
-			expect( state.testStatus ).to.eql( {
-				[ primarySiteId ]: {
-					testing: false,
-					status: 'error',
-				}
+			expect( state.testing ).to.eql( {
+				[ primarySiteId ]: false,
 			} );
 		} );
 
@@ -205,7 +186,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state.testStatus ).to.eql( {} );
+			expect( state.testing ).to.eql( {} );
 		} );
 
 		it( 'should not load persisted state', () => {
@@ -213,7 +194,7 @@ describe( 'reducer', () => {
 				type: DESERIALIZE,
 			} );
 
-			expect( state.testStatus ).to.eql( {} );
+			expect( state.testing ).to.eql( {} );
 		} );
 	} );
 
@@ -246,9 +227,9 @@ describe( 'reducer', () => {
 
 		it( 'should index cache test results by site ID', () => {
 			const state = reducer( undefined, {
-				type: WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
+				type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 				siteId: primarySiteId,
-				results: primaryResults,
+				data: primaryResults,
 			} );
 
 			expect( state.items ).to.eql( {
@@ -258,9 +239,9 @@ describe( 'reducer', () => {
 
 		it( 'should accumulate cache test results', () => {
 			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
+				type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 				siteId: secondarySiteId,
-				results: secondaryResults,
+				data: secondaryResults,
 			} );
 
 			expect( state.items ).to.eql( {
@@ -271,9 +252,9 @@ describe( 'reducer', () => {
 
 		it( 'should override previous cache test results of same site ID', () => {
 			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
+				type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 				siteId: primarySiteId,
-				results: secondaryResults,
+				data: secondaryResults,
 			} );
 
 			expect( state.items ).to.eql( {
@@ -293,9 +274,9 @@ describe( 'reducer', () => {
 				}
 			};
 			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
+				type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 				siteId: primarySiteId,
-				results: newResults,
+				data: newResults,
 			} );
 
 			expect( state.items ).to.eql( {

@@ -11,7 +11,6 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
@@ -57,28 +56,10 @@ const deleteStatus = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object} Updated cache testing state
  */
-const testStatus = createReducer( {}, {
-	[ WP_SUPER_CACHE_TEST_CACHE ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			testing: true,
-			status: 'pending',
-		}
-	} ),
-	[ WP_SUPER_CACHE_TEST_CACHE_SUCCESS ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			testing: false,
-			status: 'success',
-		}
-	} ),
-	[ WP_SUPER_CACHE_TEST_CACHE_FAILURE ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			testing: false,
-			status: 'error',
-		}
-	} )
+const testing = createReducer( {}, {
+	[ WP_SUPER_CACHE_TEST_CACHE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+	[ WP_SUPER_CACHE_TEST_CACHE_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ WP_SUPER_CACHE_TEST_CACHE_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
 } );
 
 /**
@@ -89,11 +70,11 @@ const testStatus = createReducer( {}, {
  * @return {Object} Updated cache test results
  */
 const items = createReducer( {}, {
-	[ WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS ]: ( state, { siteId, results } ) => ( { ...state, [ siteId ]: results } ),
+	[ WP_SUPER_CACHE_TEST_CACHE_SUCCESS ]: ( state, { siteId, data } ) => ( { ...state, [ siteId ]: data } ),
 } );
 
 export default combineReducers( {
 	deleteStatus,
 	items,
-	testStatus,
+	testing,
 } );
