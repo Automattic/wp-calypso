@@ -137,7 +137,7 @@ class PostCommentList extends React.Component {
 
 	renderCommentsList( commentIds ) {
 		return <ol className="comments__list is-root">
-			{ commentIds.reverse().map( ( commentId ) => this.renderComment( commentId ) ) }
+			{ commentIds.slice().reverse().map( ( commentId ) => this.renderComment( commentId ) ) }
 		</ol>;
 	}
 

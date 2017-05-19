@@ -99,7 +99,7 @@ class PostComment extends Component {
 			{ showReplies
 				? <ol className="comments__list">
 					{
-						commentChildrenIds.reverse().map( ( childId ) =>
+						commentChildrenIds.slice().reverse().map( ( childId ) =>
 							<PostComment { ...this.props } depth={ this.props.depth + 1 } key={ childId } commentId={ childId } />
 						)
 					}
