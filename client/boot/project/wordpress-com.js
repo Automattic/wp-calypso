@@ -200,6 +200,8 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		} );
 	}
 
+	require( 'my-sites/controller' );
+
 	if ( config.isEnabled( 'olark' ) ) {
 		asyncRequire( 'lib/olark', olark => olark.initialize( reduxStore.dispatch ) );
 	}
