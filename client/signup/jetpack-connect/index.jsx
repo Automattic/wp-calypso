@@ -103,11 +103,6 @@ class JetpackConnectMain extends Component {
 		) {
 			return this.props.goToRemoteAuth( this.state.currentUrl );
 		}
-		if ( this.getStatus() === 'alreadyOwned' &&
-			! this.props.jetpackConnectSite.isRedirecting
-		) {
-			return this.props.goToPlans( this.state.currentUrl );
-		}
 
 		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
 			// eslint-disable-next-line react/no-did-update-set-state
@@ -234,10 +229,16 @@ class JetpackConnectMain extends Component {
 		if ( ! this.checkProperty( 'isJetpackActive' ) ) {
 			return 'notActiveJetpack';
 		}
-		if ( ! this.checkProperty( 'isJetpackConnected' ) ) {
+		if (
+			! this.checkProperty( 'isJetpackConnected' ) ||
+			( this.checkProperty( 'isJetpackConnected' ) && ! this.checkProperty( 'userOwnsSite' ) )
+		) {
 			return 'notConnectedJetpack';
 		}
-		if ( this.checkProperty( 'isJetpackConnected' ) ) {
+		if (
+			this.checkProperty( 'isJetpackConnected' ) &&
+			this.checkProperty( 'userOwnsSite' )
+		) {
 			return 'alreadyConnected';
 		}
 
