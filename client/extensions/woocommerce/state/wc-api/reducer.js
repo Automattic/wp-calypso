@@ -3,7 +3,6 @@
  */
 import error from './error-reducer';
 import productCategories from './product-categories/reducer';
-import { withoutPersistence } from 'state/utils';
 
 const initialState = {};
 
@@ -12,7 +11,7 @@ const handlers = {
 	...error,
 };
 
-export default withoutPersistence( ( state = initialState, action ) => {
+export default function( state = initialState, action ) {
 	const { type, payload } = action;
 	const { siteId } = payload || {};
 	const handler = handlers[ type ];
@@ -29,4 +28,5 @@ export default withoutPersistence( ( state = initialState, action ) => {
 	}
 
 	return state;
-} );
+}
+

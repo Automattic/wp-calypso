@@ -70,6 +70,7 @@ export function items( state = {}, action ) {
 
 	return state;
 }
+items.hasCustomPersistence = true;
 
 export default combineReducersWithPersistence( {
 	requesting,
