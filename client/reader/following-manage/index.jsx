@@ -164,6 +164,7 @@ class FollowingManage extends Component {
 			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		}
 		const recommendedSites = reject( getRecommendedSites( this.state.seed ), isSiteBlocked );
+		const isFollowByUrlWithNoSearchResults = isSitesQueryUrl && searchResultsCount === 0;
 
 		return (
 			<ReaderMain className="following-manage">
@@ -172,8 +173,8 @@ class FollowingManage extends Component {
 					<h1>{ translate( 'Streams' ) }</h1>
 				</MobileBackToSidebar>
 				{ ! searchResults && ! isSitesQueryUrl && <QueryReaderFeedsSearch query={ sitesQuery } /> }
-				{ hasFollows &&
-					recommendedSites.length <= 2 &&
+				{ ! searchResults && <QueryReaderFeedsSearch query={ sitesQuery } /> }
+				{ recommendedSites.length <= 2 &&
 					<QueryReaderRecommendedSites seed={ this.state.seed } offset={ this.state.offset } /> }
 				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
@@ -195,6 +196,17 @@ class FollowingManage extends Component {
 
 					{ isSitesQueryUrl &&
 						<div className="following-manage__url-follow">
+							{ isFollowByUrlWithNoSearchResults &&
+								<span className="following-manage__url-follow-no-search-results-message">
+									{ translate(
+										'Sorry, no sites that we could find match {{italic}}%(site1)s{{/italic}}. ' +
+											'Try to follow {{italic}}%(site2)s{{/italic}} anyway?',
+										{
+											components: { italic: <i /> },
+											args: { site1: sitesQuery, site2: sitesQuery },
+										}
+									) }
+								</span> }
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
@@ -207,7 +219,7 @@ class FollowingManage extends Component {
 				</div>
 				{ hasFollows && ! sitesQuery && <RecommendedSites sites={ take( recommendedSites, 2 ) } /> }
 				{ !! sitesQuery &&
-					! isSitesQueryUrl &&
+					! isFollowByUrlWithNoSearchResults &&
 					<FollowingManageSearchFeedsResults
 						searchResults={ searchResults }
 						showMoreResults={ showMoreResults }
