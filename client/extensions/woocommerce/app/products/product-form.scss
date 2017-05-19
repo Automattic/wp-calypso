@@ -456,9 +456,11 @@
 	.products__product-weight-input {
 		width: 150px;
 
-		.form-text-input {
-			min-width: 60px;
-			max-width: 100px;
+		@include breakpoint( ">480px" ) {
+			.form-text-input {
+				min-width: 60px;
+				max-width: 100px;
+			}
 		}
 	}
 
@@ -475,11 +477,13 @@
 		margin-top: -1em;
 	}
 
-	.form-dimensions-input__length,
-	.form-dimensions-input__width,
-	.form-dimensions-input__height {
-		min-width: 60px;
-		max-width: 100px;
+	@include breakpoint( ">480px" ) {
+		.form-dimensions-input__length,
+		.form-dimensions-input__width,
+		.form-dimensions-input__height {
+			min-width: 60px;
+			max-width: 100px;
+		}
 	}
 
 	.products__product-form-price .form-text-input-with-affixes {

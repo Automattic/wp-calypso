@@ -4,18 +4,11 @@
 	flex-wrap: wrap;
 	@include breakpoint( ">480px" ) {
 		flex-wrap: nowrap;
-	}
 
-	.form-text-input-with-affixes {
-		flex-grow: 2;
-		flex-direction: row;
-	}
-
-	.form-text-input-with-affixes__suffix {
-		@include breakpoint( "<480px" ) {
-				border-left: none;
-				border-top: 1px solid lighten( $gray, 20% );
-			}
+		.form-text-input-with-affixes {
+			flex-grow: 2;
+			flex-direction: row;
+		}
 	}
 
 	.form-dimensions-input__length,
