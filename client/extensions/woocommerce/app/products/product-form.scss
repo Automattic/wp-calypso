@@ -431,7 +431,6 @@
 
 	.form-text-input {
 		height: 42px;
-		width: 70px;
 	}
 }
 
@@ -455,7 +454,7 @@
 	}
 
 	.products__product-weight-input {
-		width: 140px;
+		width: 150px;
 
 		.form-text-input {
 			min-width: 60px;
@@ -484,23 +483,35 @@
 	}
 
 	.products__product-form-price .form-text-input-with-affixes {
-		width: 140px;
+		width: 150px;
 	}
 
-	.products__product-manage-stock .form-text-input {
-		width: 200px;
+	.products__product-manage-stock {
+		width: 150px;
 	}
 
 	.products__product-form-stock {
 		display: flex;
-	}
+		flex-direction: column;
 
-	.products__product-manage-stock-wrapper {
-		flex: 1;
-		width: 60%;
-	}
+		.products__product-manage-stock-wrapper {
+			width: 150px;
+			margin-right: 32px;
+			margin-bottom: 12px;
+		}
 
-	.products__product-backorders-wrapper {
-		flex: 1;
+		.products__product-backorders-wrapper {
+			label + select {
+				min-width: 150px;
+			}
+		}
+
+		@include breakpoint( ">960px" ) {
+			flex-direction: row;
+
+			.products__product-manage-stock-wrapper {
+				margin-bottom: 0;
+			}
+		}
 	}
 }
