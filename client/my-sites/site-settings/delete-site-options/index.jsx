@@ -44,8 +44,8 @@ class SiteTools extends React.Component {
 		let changeAddressLinkText = translate( 'Register a new domain or change your site\'s address.' );
 		const themeSetupLinkText = translate( 'Make your site look like your theme\'s demo.' );
 		const strings = {
-			changeSiteAddress: translate( 'Change Site Address' ),
-			themeSetup: translate( 'Theme Setup' ),
+			changeSiteAddress: translate( 'Change your site address' ),
+			themeSetup: translate( 'Theme setup' ),
 			startOver: translate( 'Empty your content' ),
 			deleteSite: translate( 'Delete your site' )
 		};
