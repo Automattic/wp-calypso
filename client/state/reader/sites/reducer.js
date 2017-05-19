@@ -103,6 +103,7 @@ export function items( state = {}, action ) {
 	const handler = actionMap[ action.type ] || defaultHandler;
 	return handler( state, action );
 }
+items.hasCustomPersistence = true;
 
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -113,9 +114,6 @@ export function queuedRequests( state = {}, action ) {
 		case READER_SITE_REQUEST_SUCCESS:
 		case READER_SITE_REQUEST_FAILURE:
 			return omit( state, action.payload.ID );
-		case SERIALIZE: // do not serialize in flight data
-		case DESERIALIZE:
-			return {};
 		// we intentionally don't update state on READER_SITE_UPDATE because those can't affect inflight requests
 	}
 	return state;
