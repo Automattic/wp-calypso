@@ -585,6 +585,18 @@ input[type=radio].domain-management-list-item__radio {
 	}
 }
 
+.domain-connect-authorize {
+	h2 {
+		font-size: 20px;
+		font-weight: 600;
+	}
+
+	.domain-connect-authorize__button {
+		margin-right: 16px;
+		margin-top: 16px;
+	}
+}
+
 .email-forwarding__form {
 	margin-top: 0;
 
