@@ -115,6 +115,7 @@ function system( state = {}, action ) {
 
 	return state;
 }
+system.hasCustomPersistence = true;
 
 // If you change this, also change the corresponding test
 const UNPERSISTED_SETTINGS_NODES = [
@@ -167,6 +168,7 @@ function settings( state = {}, action ) {
 
 	return state;
 }
+settings.hasCustomPersistence = true;
 
 export default combineReducersWithPersistence( {
 	settings,
