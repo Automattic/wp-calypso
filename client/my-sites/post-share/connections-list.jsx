@@ -54,10 +54,15 @@ class ConnectionsList extends PureComponent {
 			return null;
 		}
 
+		const brokenConnections = connections.filter( connection => connection.status === 'broken' );
+
+		if ( ! brokenConnections || ! brokenConnections.length ) {
+			return null;
+		}
+
 		return (
 			<div>
-				{ connections
-					.filter( connection => connection.status === 'broken' )
+				{ brokenConnections
 					.map( connection => <Notice
 						key={ connection.keyring_connection_ID }
 						status="is-warning"
@@ -85,7 +90,7 @@ class ConnectionsList extends PureComponent {
 		}
 
 		return (
-			<div className="post-share__connections">
+			<div className="card post-share__connections">
 				{ this.renderWarnings() }
 
 				{ connections.map( connection =>
