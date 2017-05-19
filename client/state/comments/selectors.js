@@ -72,21 +72,18 @@ export const getPostOldestCommentDate = createSelector(
  * @param {String} status String representing the comment status to show. Defaults to 'approved'.
  * @return {Object} comments tree, and in addition a children array
  */
-export const getPostCommentsTree = createSelector(
-	( state, siteId, postId, status = 'approved' ) => {
-		const allItems = getPostCommentItems( state, siteId, postId );
-		const items = status !== 'all' ? filter( allItems, { status } ) : allItems;
+export const getPostCommentsTree = ( state, siteId, postId, status = 'approved' ) => {
+	const allItems = getPostCommentItems( state, siteId, postId );
+	const items = status !== 'all' ? filter( allItems, { status } ) : allItems;
 
-		return {
-			...keyBy( map( items, item => ( {
-				children: map( filter( items, { parent: { ID: item.ID } } ), 'ID' ),
-				data: item
-			} ) ), 'data.ID' ),
-			children: map( filter( items, { parent: false } ), 'ID' )
-		};
-	},
-	getPostCommentItems
-);
+	return {
+		...keyBy( map( items, item => ( {
+			children: map( filter( items, { parent: { ID: item.ID } } ), 'ID' ),
+			data: item
+		} ) ), 'data.ID' ),
+		children: map( filter( items, { parent: false } ), 'ID' )
+	};
+};
 
 /***
  * Whether we have more comments to fetch for a given post
