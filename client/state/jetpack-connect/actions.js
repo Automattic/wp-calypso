@@ -119,6 +119,7 @@ export default {
 				wpcom.undocumented().getSiteConnectInfo( url, 'hasJetpack' ),
 				wpcom.undocumented().getSiteConnectInfo( url, 'isJetpackActive' ),
 				wpcom.undocumented().getSiteConnectInfo( url, 'isWordPressDotCom' ),
+				wpcom.undocumented().getSiteConnectInfo( url, 'isJetpackConnected' ),
 			] ).then( ( data, error ) => {
 				_fetching[ url ] = null;
 				data = data ? Object.assign.apply( Object, data ) : null;

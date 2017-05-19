@@ -66,7 +66,7 @@ class TwoFactorActions extends Component {
 				{ isAuthenticatorSupported && twoFactorAuthType !== 'authenticator' && (
 					<p>
 						<a href={ login( { isNative: true, twoFactorAuthType: 'authenticator' } ) }>
-							{ translate( 'An Authenticator application' ) }
+							{ translate( 'Your Authenticator app' ) }
 						</a>
 					</p>
 				) }

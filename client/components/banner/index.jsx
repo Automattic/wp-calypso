@@ -71,7 +71,7 @@ class Banner extends Component {
 		return href;
 	}
 
-	handleClick = () => {
+	handleClick = ( e ) => {
 		const {
 			event,
 			feature,
@@ -87,7 +87,7 @@ class Banner extends Component {
 				} );
 		}
 
-		onClick();
+		onClick( e );
 	}
 
 	getIcon() {

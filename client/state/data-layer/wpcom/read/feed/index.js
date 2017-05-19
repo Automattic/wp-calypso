@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map } from 'lodash';
+import { map, truncate } from 'lodash';
 
 /**
  * Internal dependencies
@@ -49,7 +49,7 @@ export function receiveError( store, action, next, error ) {
 	}
 
 	const errorText = translate( 'Could not get results for query: %(query)s', {
-		args: { query: action.payload.query },
+		args: { query: truncate( action.payload.query, { length: 50 } ) },
 	} );
 	store.dispatch( errorNotice( errorText ) );
 }

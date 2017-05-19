@@ -253,10 +253,11 @@ export const PostEditor = React.createClass( {
 							<EditorActionBar
 								isNew={ this.state.isNew }
 								onPrivatePublish={ this.onPublish }
-								post={ this.state.post }
 								savedPost={ this.state.savedPost }
 								site={ site }
 								type={ this.props.type }
+								isPostPrivate={ utils.isPrivate( this.state.post ) }
+								postAuthor={ this.state.post ? this.state.post.author : null }
 							/>
 							<div className="post-editor__site">
 								<Site
@@ -329,6 +330,7 @@ export const PostEditor = React.createClass( {
 						type={ this.props.type }
 						setPostDate={ this.setPostDate }
 						onSave={ this.onSave }
+						isPostPrivate={ utils.isPrivate( this.state.post ) }
 						/>
 					{ this.props.isSitePreviewable ?
 						<EditorPreview

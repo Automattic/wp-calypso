@@ -465,7 +465,7 @@ class ReaderStream extends React.Component {
 			<ReaderMain className={ classnames( 'following', this.props.className ) }>
 				{ this.props.showMobileBackToSidebar &&
 					<MobileBackToSidebar>
-						<h1>{ this.props.listName }</h1>
+						<h1>{ this.props.translate( 'Streams' ) }</h1>
 					</MobileBackToSidebar> }
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />

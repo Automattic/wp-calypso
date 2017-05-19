@@ -18,6 +18,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isRequesting, getRequestError } from 'state/login/selectors';
+import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -124,7 +125,7 @@ export class LoginForm extends Component {
 								checked={ this.state.rememberMe }
 								onChange={ this.onChangeRememberMe }
 								{ ...isDisabled } />
-							<span>{ this.props.translate( 'Stay logged in' ) }</span>
+							<span>{ this.props.translate( 'Keep me logged in' ) }</span>
 						</label>
 					</div>
 
@@ -132,6 +133,10 @@ export class LoginForm extends Component {
 						<FormsButton primary { ...isDisabled }>
 							{ this.props.translate( 'Log In' ) }
 						</FormsButton>
+					</div>
+
+					<div className="login__form-social">
+						<SocialLoginForm onSuccess={ this.props.onSuccess } />
 					</div>
 				</Card>
 			</form>

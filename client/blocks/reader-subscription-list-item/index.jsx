@@ -44,6 +44,7 @@ function ReaderSubscriptionListItem( {
 	followSource,
 	showEmailSettings,
 	showLastUpdatedDate,
+	isFollowing,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
@@ -54,7 +55,6 @@ function ReaderSubscriptionListItem( {
 	const streamUrl = getStreamUrl( feedId, siteId );
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	const siteUrl = getSiteUrl( { feed, site } );
-	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
 	const preferGravatar = ! isMultiAuthor;
 	const lastUpdatedDate = showLastUpdatedDate && moment( get( feed, 'last_update' ) ).fromNow();
@@ -65,7 +65,7 @@ function ReaderSubscriptionListItem( {
 
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>
-			<div>
+			<div className="reader-subscription-list-item__avatar">
 				<ReaderAvatar
 					siteIcon={ siteIcon }
 					feedIcon={ feedIcon }

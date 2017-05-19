@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import {
 	getStats,
 	getStatsGenerationStatus,
+	isDeletingFile,
 	isGeneratingStats,
 	isStatsGenerationSuccessful,
 } from '../selectors';
@@ -250,6 +251,70 @@ describe( 'selectors', () => {
 			const stats = getStats( state, primarySiteId );
 
 			expect( stats ).to.eql( primaryStats );
+		} );
+	} );
+
+	describe( 'isDeletingFile()', () => {
+		it( 'should return false if no state exists', () => {
+			const state = {
+				extensions: {
+					wpSuperCache: undefined,
+				}
+			};
+			const isDeleting = isDeletingFile( state, primarySiteId );
+
+			expect( isDeleting ).to.be.false;
+		} );
+
+		it( 'should return false if the site is not attached', () => {
+			const state = {
+				extensions: {
+					wpSuperCache: {
+						stats: {
+							deleting: {
+								[ primarySiteId ]: true,
+							}
+						}
+					}
+				}
+			};
+			const isDeleting = isDeletingFile( state, secondarySiteId );
+
+			expect( isDeleting ).to.be.false;
+		} );
+
+		it( 'should return false if the file is not being deleted', () => {
+			const state = {
+				extensions: {
+					wpSuperCache: {
+						stats: {
+							deleting: {
+								[ primarySiteId ]: false,
+							}
+						}
+					}
+				}
+			};
+			const isDeleting = isDeletingFile( state, primarySiteId );
+
+			expect( isDeleting ).to.be.false;
+		} );
+
+		it( 'should return true if the file is being deleted', () => {
+			const state = {
+				extensions: {
+					wpSuperCache: {
+						stats: {
+							deleting: {
+								[ primarySiteId ]: true,
+							}
+						}
+					}
+				}
+			};
+			const isDeleting = isDeletingFile( state, primarySiteId );
+
+			expect( isDeleting ).to.be.true;
 		} );
 	} );
 } );

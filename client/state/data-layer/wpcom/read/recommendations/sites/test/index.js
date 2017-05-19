@@ -77,6 +77,7 @@ describe( 'recommended sites', () => {
 				receiveRecommendedSites( {
 					sites: fromApi( response ),
 					seed,
+					offset: 0,
 				} )
 			);
 		} );

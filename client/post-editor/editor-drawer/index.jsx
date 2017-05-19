@@ -32,11 +32,7 @@ import {
 	isJetpackSite,
 } from 'state/sites/selectors';
 import config from 'config';
-import {
-	areSitePermalinksEditable,
-	isPrivateSite,
-	isHiddenSite
-} from 'state/selectors';
+import { areSitePermalinksEditable } from 'state/selectors';
 
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
@@ -85,6 +81,7 @@ const EditorDrawer = React.createClass( {
 		type: React.PropTypes.string,
 		setPostDate: React.PropTypes.func,
 		onSave: React.PropTypes.func,
+		isPostPrivate: React.PropTypes.bool,
 	},
 
 	onExcerptChange: function( event ) {
@@ -259,9 +256,8 @@ const EditorDrawer = React.createClass( {
 
 		const { plan } = this.props.site;
 		const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
-		const { isPrivate, isHidden } = this.props;
 
-		if ( ! hasBusinessPlan || isPrivate || isHidden ) {
+		if ( ! hasBusinessPlan ) {
 			return;
 		}
 
@@ -333,6 +329,7 @@ const EditorDrawer = React.createClass( {
 					setPostDate={ this.props.setPostDate }
 					site={ this.props.site }
 					status={ postStatus }
+					isPostPrivate={ this.props.isPostPrivate }
 				/>
 			</Accordion>
 		);
@@ -374,8 +371,6 @@ export default connect(
 			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
 			typeObject: getPostType( state, siteId, type ),
-			isPrivate: isPrivateSite( state, siteId ),
-			isHidden: isHiddenSite( state, siteId ),
 		};
 	},
 	null,
