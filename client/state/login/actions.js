@@ -21,6 +21,9 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+	SOCIAL_LOGIN_REQUEST,
+	SOCIAL_LOGIN_REQUEST_FAILURE,
+	SOCIAL_LOGIN_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 const loginErrorMessages = {
@@ -33,6 +36,7 @@ const loginErrorMessages = {
 	unknown: translate( 'Invalid username or password.' ),
 	account_unactivated: translate( 'This account has not been activated. Please check your email for an activation link.' ),
 	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
+	forbidden_for_automattician: 'Cannot use social login with an Automattician account',
 };
 
 const loginErrorFields = {
@@ -141,6 +145,41 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 				error: errorMessage,
 				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
+			} );
+
+			return Promise.reject( errorMessage );
+		} );
+};
+
+/**
+ * Attempt to login a user with an external social account.
+ *
+ * @param  {String}    service The external social service name.
+ * @param  {String}    token   Authentication token provided by the external social service.
+ * @return {Function}          Action thunk to trigger the login process.
+ */
+export const loginSocialUser = ( service, token ) => dispatch => {
+	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
+
+	return request.post( 'https://wordpress.com/wp-login.php?action=social-login-endpoint' )
+		.withCredentials()
+		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
+		.accept( 'application/json' )
+		.send( {
+			service,
+			token,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} )
+		.then( () => {
+			dispatch( { type: SOCIAL_LOGIN_REQUEST_SUCCESS } );
+		} )
+		.catch( ( error ) => {
+			const errorMessage = getMessageFromHTTPError( error );
+
+			dispatch( {
+				type: SOCIAL_LOGIN_REQUEST_FAILURE,
+				error: errorMessage,
 			} );
 
 			return Promise.reject( errorMessage );

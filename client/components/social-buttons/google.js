@@ -26,7 +26,7 @@ class GoogleLoginButton extends Component {
 		this.handleClick = this.handleClick.bind( this );
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.initialize();
 	}
 
