@@ -27,6 +27,7 @@ import QueryReaderRecommendedSites from 'components/data/query-reader-recommende
 import RecommendedSites from 'blocks/reader-recommended-sites';
 import FollowingManageSubscriptions from './subscriptions';
 import FollowingManageSearchFeedsResults from './feed-search-results';
+import FollowingManageEmptyContent from './empty';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import { addQueryArgs } from 'lib/url';
@@ -223,6 +224,7 @@ class FollowingManage extends Component {
 						sortOrder={ subsSortOrder }
 						windowScrollerRef={ this.handleWindowScrollerMounted }
 					/> }
+				{ ! hasFollows && <FollowingManageEmptyContent /> }
 			</ReaderMain>
 		);
 	}
