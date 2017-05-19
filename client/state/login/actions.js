@@ -27,14 +27,16 @@ import {
 } from 'state/action-types';
 
 const loginErrorMessages = {
-	empty_password: translate( 'The password field is empty.' ),
-	empty_username: translate( 'The username field is empty.' ),
-	incorrect_password: translate( 'Invalid password' ),
-	invalid_two_step_code: translate( 'Invalid verification code.' ),
-	invalid_email: translate( 'Invalid email address.' ),
-	invalid_username: translate( 'Invalid username' ),
-	unknown: translate( 'Invalid username or password.' ),
-	account_unactivated: translate( 'This account has not been activated. Please check your email for an activation link.' ),
+	empty_password: translate( 'Please be sure to enter your password.' ),
+	empty_username: translate( 'Please enter a username or email address.' ),
+	incorrect_password: translate( "Oops, looks like that's not the right password. Please try again!" ),
+	invalid_two_step_code: translate( "Hmm, that's not a valid verification code. Please double-check your app and try again." ),
+	invalid_email: translate( "Oops, looks like that's not the right address. Please try again!" ),
+	invalid_username: translate( "We don't seem to have an account with that name. Double-check the spelling and try again!" ),
+	unknown: translate( "Hmm, we can't find a WordPress.com account with this username and password combo. " +
+		'Please double check your information and try again.' ),
+	account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
+		"WordPress.com and click the activation link. You'll be able to log in after that." ),
 	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
 	forbidden_for_automattician: 'Cannot use social login with an Automattician account',
 };
@@ -195,7 +197,10 @@ export const loginSocialUser = ( service, token ) => dispatch => {
  */
 export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 	dispatch( {
-		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST
+		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
+		notice: {
+			message: translate( 'Sending you a text message…' )
+		},
 	} );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' )

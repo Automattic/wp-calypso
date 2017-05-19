@@ -125,7 +125,7 @@ export class LoginForm extends Component {
 								checked={ this.state.rememberMe }
 								onChange={ this.onChangeRememberMe }
 								{ ...isDisabled } />
-							<span>{ this.props.translate( 'Stay logged in' ) }</span>
+							<span>{ this.props.translate( 'Keep me logged in' ) }</span>
 						</label>
 					</div>
 
