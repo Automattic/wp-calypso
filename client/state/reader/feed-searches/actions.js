@@ -5,7 +5,10 @@ import { READER_FEED_SEARCH_REQUEST, READER_FEED_SEARCH_RECEIVE } from 'state/ac
 
 export const requestFeedSearch = ( query, offset = 0 ) => ( {
 	type: READER_FEED_SEARCH_REQUEST,
-	payload: { query, offset },
+	payload: {
+		query: query.substring( 0, 500 ),
+		offset,
+	},
 } );
 
 export const receiveFeedSearch = ( query, feeds, total ) => ( {
