@@ -90,7 +90,7 @@ class ConnectionsList extends PureComponent {
 		}
 
 		return (
-			<div className="card post-share__connections">
+			<div className="post-share__connections">
 				{ this.renderWarnings() }
 
 				{ connections.map( connection =>
