@@ -34,7 +34,7 @@
 		right: 0;
 		bottom: 0;
 	display: block;
-	background: fade-out( $gray-light, .2 );
+	background: rgba( $gray-light, 0.8 );
 }
 
 .web-preview__content {
