@@ -11,12 +11,9 @@ import {
 	SITE_MEDIA_STORAGE_REQUEST,
 	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
 	SITE_MEDIA_STORAGE_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { combineReducersWithPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
 
 /**
  * Tracks media-storage information, indexed by site ID.
@@ -32,16 +29,10 @@ export function items( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: mediaStorage
 			} );
-		case SERIALIZE:
-			return state;
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, itemsSchema ) ) {
-				return state;
-			}
-			return {};
 	}
 	return state;
 }
+items.schema = itemsSchema;
 
 /**
  * Tracks media-storage fetching state, indexed by site ID.
@@ -58,10 +49,6 @@ export function fetchingItems( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: action.type === SITE_MEDIA_STORAGE_REQUEST
 			} );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
