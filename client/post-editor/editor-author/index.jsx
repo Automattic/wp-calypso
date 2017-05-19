@@ -25,25 +25,26 @@ export class EditorAuthor extends Component {
 
 	static propTypes = {
 		post: React.PropTypes.object,
-		isNew: React.PropTypes.bool
+		isNew: React.PropTypes.bool,
+		postAuthor: React.PropTypes.object,
 	};
 
 	render() {
 		// if it's not a new post and we are still loading
 		// show a placeholder component
-		const { post, translate } = this.props;
+		const { post, translate, site, postAuthor } = this.props;
 
 		if ( ! post && ! this.props.isNew ) {
 			return this.renderPlaceholder();
 		}
 
-		const author = ( post && post.author ) ? post.author : user.get();
+		const author = ( post && postAuthor ) ? postAuthor : user.get();
 		const name = author.display_name || author.name;
 		const Wrapper = this.userCanAssignAuthor() ? AuthorSelector : 'div';
 		const popoverPosition = touchDetect.hasTouch() ? 'bottom right' : 'bottom left';
 		const wrapperProps = this.userCanAssignAuthor()
 			? {
-				siteId: post.site_ID,
+				siteId: site.ID,
 				onSelect: this.onSelect,
 				popoverPosition,
 			}

@@ -81,6 +81,7 @@ const EditorDrawer = React.createClass( {
 		type: React.PropTypes.string,
 		setPostDate: React.PropTypes.func,
 		onSave: React.PropTypes.func,
+		isPostPrivate: React.PropTypes.bool,
 	},
 
 	onExcerptChange: function( event ) {
@@ -328,6 +329,7 @@ const EditorDrawer = React.createClass( {
 					setPostDate={ this.props.setPostDate }
 					site={ this.props.site }
 					status={ postStatus }
+					isPostPrivate={ this.props.isPostPrivate }
 				/>
 			</Accordion>
 		);
