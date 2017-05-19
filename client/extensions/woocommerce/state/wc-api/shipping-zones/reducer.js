@@ -17,7 +17,7 @@ export default {
 		};
 	},
 
-	[ WOOCOMMERCE_API_FETCH_SHIPPING_ZONES_SUCCESS ]: ( state, { data } ) => {
+	[ WOOCOMMERCE_API_FETCH_SHIPPING_ZONES_SUCCESS ]: ( state, { payload: { data } } ) => {
 		return { ...state,
 			shippingZones: data,
 		};

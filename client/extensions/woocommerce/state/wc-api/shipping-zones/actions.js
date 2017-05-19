@@ -15,8 +15,10 @@ import {
 export const fetchShippingZonesSuccess = ( siteId, data ) => {
 	return {
 		type: WOOCOMMERCE_API_FETCH_SHIPPING_ZONES_SUCCESS,
-		siteId,
-		data,
+		payload: {
+			siteId,
+			data,
+		},
 	};
 };
 
@@ -27,7 +29,7 @@ export const fetchShippingZones = ( siteId ) => ( dispatch, getState ) => {
 
 	const getAction = {
 		type: WOOCOMMERCE_API_FETCH_SHIPPING_ZONES,
-		siteId,
+		payload: { siteId },
 	};
 
 	dispatch( getAction );
