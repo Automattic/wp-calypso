@@ -23,8 +23,6 @@ import {
 	PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { pluginsSchema } from './schema';
 import { createReducer } from 'state/utils';
@@ -38,9 +36,6 @@ export function isRequesting( state = {}, action ) {
 			return Object.assign( {}, state, { [ action.siteId ]: true } );
 		case PLUGINS_RECEIVE:
 			return Object.assign( {}, state, { [ action.siteId ]: false } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 		default:
 			return state;
 	}
