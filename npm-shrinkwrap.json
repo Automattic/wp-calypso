@@ -105,7 +105,7 @@
           "version": "2.2.9"
         },
         "string_decoder": {
-          "version": "1.0.0"
+          "version": "1.0.1"
         }
       }
     },
@@ -638,7 +638,7 @@
           "version": "2.2.9"
         },
         "string_decoder": {
-          "version": "1.0.0"
+          "version": "1.0.1"
         }
       }
     },
@@ -1358,7 +1358,7 @@
           "dev": true
         },
         "string_decoder": {
-          "version": "1.0.0",
+          "version": "1.0.1",
           "dev": true
         }
       }
@@ -1871,7 +1871,7 @@
           "dev": true
         },
         "string_decoder": {
-          "version": "1.0.0",
+          "version": "1.0.1",
           "dev": true
         },
         "through2": {
@@ -2155,7 +2155,7 @@
           "dev": true
         },
         "string_decoder": {
-          "version": "1.0.0",
+          "version": "1.0.1",
           "dev": true
         },
         "through2": {
@@ -2340,7 +2340,7 @@
       "version": "1.1.8"
     },
     "ignore": {
-      "version": "3.3.0",
+      "version": "3.3.3",
       "dev": true
     },
     "immediate": {
@@ -2636,7 +2636,7 @@
       "dev": true,
       "dependencies": {
         "debug": {
-          "version": "2.6.7",
+          "version": "2.6.8",
           "dev": true
         },
         "ms": {
@@ -3416,7 +3416,7 @@
           "version": "2.2.9"
         },
         "string_decoder": {
-          "version": "1.0.0"
+          "version": "1.0.1"
         }
       }
     },
@@ -3691,7 +3691,9 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "1.1.11"
+      "version": "1.1.11",
+      "from": "git://github.com/automattic/notifications-panel.git#920fe1df16565f6f9a26032db9b16c60d70eb168",
+      "resolved": "git://github.com/automattic/notifications-panel.git#920fe1df16565f6f9a26032db9b16c60d70eb168"
     },
     "npm-path": {
       "version": "1.1.0",
@@ -4152,8 +4154,8 @@
     },
     "react-codemod": {
       "version": "4.0.0",
-      "from": "git://github.com/reactjs/react-codemod.git#d6563d988c1dbc4a94d4c67f4eb85ab12f2f70ea",
-      "resolved": "git://github.com/reactjs/react-codemod.git#d6563d988c1dbc4a94d4c67f4eb85ab12f2f70ea",
+      "from": "git://github.com/reactjs/react-codemod.git#367a72785fde073e462976eb65d879a846dd5a9e",
+      "resolved": "git://github.com/reactjs/react-codemod.git#367a72785fde073e462976eb65d879a846dd5a9e",
       "dev": true,
       "dependencies": {
         "chalk": {
@@ -4283,7 +4285,7 @@
           "dev": true
         },
         "string_decoder": {
-          "version": "1.0.0",
+          "version": "1.0.1",
           "dev": true
         }
       }
@@ -4315,7 +4317,7 @@
           "version": "2.2.9"
         },
         "string_decoder": {
-          "version": "1.0.0"
+          "version": "1.0.1"
         }
       }
     },
@@ -5006,7 +5008,7 @@
           "dev": true
         },
         "string_decoder": {
-          "version": "1.0.0",
+          "version": "1.0.1",
           "dev": true
         },
         "supports-color": {
@@ -5035,7 +5037,7 @@
           "version": "2.2.9"
         },
         "string_decoder": {
-          "version": "1.0.0"
+          "version": "1.0.1"
         }
       }
     },
@@ -5103,7 +5105,7 @@
           "version": "2.2.9"
         },
         "string_decoder": {
-          "version": "1.0.0"
+          "version": "1.0.1"
         }
       }
     },
@@ -5476,7 +5478,7 @@
           "dev": true
         },
         "filesize": {
-          "version": "3.5.9",
+          "version": "3.5.10",
           "dev": true
         },
         "finalhandler": {
@@ -5608,7 +5610,7 @@
           "dev": true
         },
         "filesize": {
-          "version": "3.5.9",
+          "version": "3.5.10",
           "dev": true
         },
         "isarray": {
