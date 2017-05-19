@@ -19,8 +19,6 @@ import {
 	POST_DELETE,
 	POST_SAVE,
 	POSTS_RECEIVE,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { combineReducersWithPersistence } from 'state/utils';
 import { countsSchema } from './schema';
@@ -45,10 +43,6 @@ export function requesting( state = {}, action ) {
 					[ action.postType ]: POST_COUNTS_REQUEST === action.type
 				}
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
