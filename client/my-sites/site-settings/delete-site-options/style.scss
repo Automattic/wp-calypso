@@ -3,21 +3,13 @@
  */
 
 .delete-site-options__section-title {
-	margin-bottom: 16px;
-	font-size: 21px;
-	font-weight: 300;
-	line-height: 24px;
-	color: $gray-dark;
-}
-
-.delete-site-options__section-desc {
 	margin-bottom: 4px;
 	font-size: 14px;
 	line-height: 18px;
 	color: $gray-dark;
 }
 
-.delete-site-options__section-footnote {
+.delete-site-options__section-desc {
 	margin-bottom: 0;
 	font-size: 13px;
 	color: $gray-text-min;
@@ -43,10 +35,6 @@
 
 .delete-site-options__content {
 	flex: 0 1 auto;
-
-	@include breakpoint( ">480px" ) {
-		max-width: 460px;
-	}
 }
 
 .delete-site-options__link,

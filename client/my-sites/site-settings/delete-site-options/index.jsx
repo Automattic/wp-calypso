@@ -12,6 +12,7 @@ import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-
 import config from 'config';
 import { tracks } from 'lib/analytics';
 import { localize } from 'i18n-calypso';
+import SectionHeader from 'components/section-header';
 
 const trackDeleteSiteOption = ( option ) => {
 	tracks.recordEvent( 'calypso_settings_delete_site_options', {
@@ -54,25 +55,19 @@ class SiteTools extends React.Component {
 		}
 
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			changeAddressLinkText = translate( 'Change your site\'s address.' );
+			changeAddressLinkText = translate( 'Change your site address.' );
 		}
 
 		return (
 			<div className="delete-site-options">
+				<SectionHeader label={ translate( 'Site Tools' ) } />
 				<CompactCard
 					href={ changeAddressLink }
 					onClick={ this.trackChangeAddress }
 					className="delete-site-options__link">
 					<div className="delete-site-options__content">
-						<h2 className="delete-site-options__section-title">{ strings.changeSiteAddress }</h2>
+						<p className="delete-site-options__section-title">{ strings.changeSiteAddress }</p>
 						<p className="delete-site-options__section-desc">{ changeAddressLinkText }</p>
-						<p className="delete-site-options__section-footnote">
-							{ translate( 'Your current site address is "%(siteAddress)s."', {
-								args: {
-									siteAddress: selectedSite.slug
-								}
-							} ) }
-						</p>
 					</div>
 				</CompactCard>
 				{ config.isEnabled( 'settings/theme-setup' ) &&
@@ -81,7 +76,7 @@ class SiteTools extends React.Component {
 						onClick={ this.trackThemeSetup }
 						className="delete-site-options__link">
 						<div className="delete-site-options__content">
-							<h2 className="delete-site-options__section-title">{ strings.themeSetup }</h2>
+							<p className="delete-site-options__section-title">{ strings.themeSetup }</p>
 							<p className="delete-site-options__section-desc">{ themeSetupLinkText }</p>
 						</div>
 					</CompactCard>
@@ -91,7 +86,7 @@ class SiteTools extends React.Component {
 					onClick={ this.trackStartOver }
 					className="delete-site-options__link">
 					<div className="delete-site-options__content">
-						<h2 className="delete-site-options__section-title">{ strings.startOver }</h2>
+						<p className="delete-site-options__section-title">{ strings.startOver }</p>
 						<p className="delete-site-options__section-desc">
 							{ translate( 'Keep your URL and site active, but remove the content.' ) }
 						</p>
@@ -102,25 +97,12 @@ class SiteTools extends React.Component {
 					onClick={ this.checkForSubscriptions }
 					className="delete-site-options__link">
 					<div className="delete-site-options__content">
-						<h2 className="delete-site-options__section-title">{ strings.deleteSite }</h2>
+						<p className="delete-site-options__section-title">{ strings.deleteSite }</p>
 						<p className="delete-site-options__section-desc">
 							{ translate(
 								'All your posts, images, and data will be deleted. ' +
-								'And this site’s address ({{siteAddress /}}) will be lost.',
-								{
-									components: {
-										siteAddress: <strong>{ selectedSite.wpcom_url || selectedSite.slug }</strong>
-									}
-								}
+								'And this site’s address will be lost.'
 							) }
-						</p>
-						<p className="delete-site-options__section-footnote">
-							{
-								translate(
-									'Be careful! Once a site is deleted, it cannot be recovered. ' +
-									'Please be sure before you proceed.'
-								)
-							}
 						</p>
 					</div>
 				</CompactCard>
