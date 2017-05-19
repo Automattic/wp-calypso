@@ -188,6 +188,7 @@ class FollowingManage extends Component {
 
 					{ isSitesQueryUrl &&
 						<div className="following-manage__url-follow">
+						<span className="following-manage__url-enter">{ this.props.translate( 'Hit return to' ) }</span>
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
