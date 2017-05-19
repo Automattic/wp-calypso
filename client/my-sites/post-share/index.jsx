@@ -406,7 +406,6 @@ class PostShare extends Component {
 		}
 
 		const {
-			message,
 			hasRepublicizeFeature,
 			hasRepublicizeSchedulingFeature,
 			postId,
@@ -456,7 +455,7 @@ class PostShare extends Component {
 				<SharingPreviewModal
 					siteId={ siteId }
 					postId={ postId }
-					message={ message }
+					message={ this.state.message }
 					isVisible={ this.state.showSharingPreview }
 					onClose={ this.toggleSharingPreview }
 				/>
