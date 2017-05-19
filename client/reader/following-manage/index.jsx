@@ -120,7 +120,7 @@ class FollowingManage extends Component {
 		const { getRecommendedSites, isSiteBlocked } = this.props;
 		const { recommendedSites } = getRecommendedSites( this.state.seed );
 
-		return reject( recommendedSites, isSiteBlocked ).length <= 2;
+		return reject( recommendedSites, isSiteBlocked ).length <= 4;
 	};
 
 	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
@@ -211,8 +211,6 @@ class FollowingManage extends Component {
 				</div>
 				{ hasFollows &&
 					! sitesQuery &&
-					<RecommendedSites sites={ take( reject( recommendedSites, isSiteBlocked ), 2 ) } /> }
-				{ ! sitesQuery &&
 					<RecommendedSites sites={ take( reject( recommendedSites, isSiteBlocked ), 2 ) } /> }
 				{ !! sitesQuery &&
 					! isFollowByUrlWithNoSearchResults &&
