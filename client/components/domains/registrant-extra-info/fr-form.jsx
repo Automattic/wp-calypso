@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { noop, pick } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -208,4 +209,4 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 RegistrantExtraInfoForm.displayName = 'ExtraInfoFrForm';
 
-export default RegistrantExtraInfoForm;
+export default localize( RegistrantExtraInfoForm );
