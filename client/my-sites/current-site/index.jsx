@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -105,6 +106,39 @@ class CurrentSite extends Component {
 
 	previewSite = ( event ) => this.props.onClick && this.props.onClick( event );
 
+	renderSiteViewLink() {
+		const {
+			isPreviewShowing,
+			selectedSite,
+			translate,
+		} = this.props;
+
+		const viewText = selectedSite.is_previewable
+			? translate( 'Site Preview' )
+			: translate( 'View site' );
+
+		const viewIcon = selectedSite.is_previewable
+			? 'computer'
+			: 'external';
+
+		return (
+			<a
+				href={ selectedSite.URL }
+				onClick={ this.previewSite }
+				className={ classNames( 'current-site__view-site', {
+					selected: isPreviewShowing,
+				} ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				<span className="current-site__view-site-text">
+					{ viewText }
+				</span>
+				<Gridicon icon={ viewIcon } />
+			</a>
+		);
+	}
+
 	render() {
 		const { isJetpack, selectedSite, translate, anySiteSelected } = this.props;
 
@@ -139,16 +173,7 @@ class CurrentSite extends Component {
 				{ selectedSite
 					? <div>
 						<Site site={ selectedSite } />
-						<a
-							href={ selectedSite.URL }
-							onClick={ this.previewSite }
-							className={ `current-site__view-site${ this.props.isPreviewShowing ? ' selected' : '' }` }
-						>
-							<span className="current-site__view-site-text">
-								{ translate( 'Site Preview' ) }
-							</span>
-							<Gridicon icon="computer" />
-						</a>
+						{ this.renderSiteViewLink() }
 					</div>
 					: <AllSites />
 				}
