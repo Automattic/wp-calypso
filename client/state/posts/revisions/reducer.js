@@ -11,8 +11,6 @@ import {
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { combineReducersWithPersistence } from 'state/utils';
 
@@ -26,10 +24,6 @@ export function requesting( state = {}, action ) {
 					[ action.postId ]: action.type === POST_REVISIONS_REQUEST,
 				},
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
