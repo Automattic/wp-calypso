@@ -8,11 +8,9 @@ import { merge, get } from 'lodash';
  */
 import { createReducer } from 'state/utils';
 import { combineReducersWithPersistence } from 'state/utils';
-import { isValidStateWithSchema } from 'state/utils';
 import { getSerializedStatsQuery } from './utils';
 import { itemSchema } from './schema';
 import {
-	DESERIALIZE,
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
@@ -86,17 +84,11 @@ export function items( state = {}, action ) {
 					}
 				}
 			};
-
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, itemSchema ) ) {
-				return state;
-			}
-
-			return {};
 	}
 
 	return state;
 }
+items.schema = itemSchema;
 
 export default combineReducersWithPersistence( {
 	requests,
