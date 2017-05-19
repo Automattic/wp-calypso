@@ -434,6 +434,24 @@
 	}
 }
 
+.products__product-form-variation-table {
+	.products__product-dimensions-weight {
+		flex-direction: row;
+
+		.form-fieldset.products__product-dimensions-input {
+			margin-bottom: 0;
+		}
+
+		.products__product-dimensions-input {
+			margin-right: 8px;
+		}
+	}
+
+	.products__product-manage-stock {
+		width: 150px;
+	}
+}
+
 .products__product-dimensions-weight {
 	display: flex;
 	justify-content: flex-start;
