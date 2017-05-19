@@ -447,5 +447,10 @@
 }
 
 .site-settings__videopress-storage {
-	margin-top: 24px;
+	.plan-storage__bar {
+		margin-top: 24px;
+	}
+	p.site-settings__videopress-storage-used {
+		margin-left: 36px;
+	}
 }
