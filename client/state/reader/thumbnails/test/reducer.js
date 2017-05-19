@@ -12,8 +12,6 @@ import {
 	READER_THUMBNAIL_REQUEST_SUCCESS,
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'state/action-types';
 import { items, requesting } from '../reducer';
 
@@ -98,24 +96,6 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				[ embedUrl ]: false,
-			} );
-		} );
-
-		describe( 'persistence', () => {
-			it( 'never persists state', () => {
-				const original = deepFreeze( {
-					[ embedUrl ]: true,
-				} );
-				const state = requesting( original, { type: SERIALIZE } );
-				expect( state ).to.eql( {} );
-			} );
-
-			it( 'never loads persisted state', () => {
-				const original = deepFreeze( {
-					[ embedUrl ]: true,
-				} );
-				const state = requesting( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
 			} );
 		} );
 	} );
