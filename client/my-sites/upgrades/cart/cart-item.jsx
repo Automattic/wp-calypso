@@ -21,6 +21,7 @@ import {
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as upgradesActions from 'lib/upgrades/actions';
+import { localize } from 'i18n-calypso';
 
 const getIncludedDomain = cartItems.getIncludedDomain;
 
@@ -38,7 +39,7 @@ const CartItem = React.createClass( {
 			cartItem = this.props.cartItem;
 
 		if ( typeof cartItem.cost === 'undefined' ) {
-			return this.translate( 'Loading price' );
+			return this.props.translate( 'Loading price' );
 		}
 
 		if ( cartItem.free_trial ) {
@@ -51,7 +52,7 @@ const CartItem = React.createClass( {
 
 		cost = cartItem.cost * cartItem.volume;
 
-		return this.translate( '%(cost)s %(currency)s', {
+		return this.props.translate( '%(cost)s %(currency)s', {
 			args: {
 				cost: cost,
 				currency: cartItem.currency
@@ -78,7 +79,7 @@ const CartItem = React.createClass( {
 			return null;
 		}
 
-		return this.translate( '(%(monthlyPrice)f %(currency)s x 12 months)', {
+		return this.props.translate( '(%(monthlyPrice)f %(currency)s x 12 months)', {
 			args: {
 				monthlyPrice: +( cost / 12 ).toFixed( currency === 'JPY' ? 0 : 2 ),
 				currency
@@ -91,18 +92,18 @@ const CartItem = React.createClass( {
 			return (
 				<span>
 					<span className="cart__free-with-plan">{ cartItem.product_cost } { cartItem.currency }</span>
-					<span className="cart__free-text">{ this.translate( 'Free with your plan' ) }</span>
+					<span className="cart__free-text">{ this.props.translate( 'Free with your plan' ) }</span>
 				</span>
 			);
 		}
 
-		return <em>{ this.translate( 'Free with your plan' ) }</em>;
+		return <em>{ this.props.translate( 'Free with your plan' ) }</em>;
 	},
 
 	getFreeTrialPrice: function() {
 		var freeTrialText;
 
-		freeTrialText = this.translate( 'Free %(days)s Day Trial', {
+		freeTrialText = this.props.translate( 'Free %(days)s Day Trial', {
 			args: { days: '14' }
 		} );
 
@@ -134,16 +135,17 @@ const CartItem = React.createClass( {
 		var name = this.getProductName();
 		if ( this.props.cartItem.bill_period && this.props.cartItem.bill_period !== -1 ) {
 			if ( isMonthly( this.props.cartItem ) ) {
-				name += ' - ' + this.translate( 'monthly subscription' );
+				name += ' - ' + this.props.translate( 'monthly subscription' );
 			} else {
-				name += ' - ' + this.translate( 'annual subscription' );
+				name += ' - ' + this.props.translate( 'annual subscription' );
 			}
 		}
 
+		/*eslint-disable wpcalypso/jsx-classname-namespace*/
 		return (
 			<li className="cart-item">
 				<div className="primary-details">
-					<span className="product-name">{ name || this.translate( 'Loading…' ) }</span>
+					<span className="product-name">{ name || this.props.translate( 'Loading…' ) }</span>
 					<span className="product-domain">{ this.getProductInfo() }</span>
 				</div>
 
@@ -158,6 +160,7 @@ const CartItem = React.createClass( {
 				</div>
 			</li>
 		);
+		/*eslint-enable wpcalypso/jsx-classname-namespace*/
 	},
 
 	getProductName: function() {
@@ -175,7 +178,7 @@ const CartItem = React.createClass( {
 		} else if ( cartItem.volume === 1 ) {
 			switch ( cartItem.product_slug ) {
 				case 'gapps':
-					return this.translate(
+					return this.props.translate(
 						'%(productName)s (1 User)', {
 							args: {
 								productName: cartItem.product_name
@@ -188,14 +191,14 @@ const CartItem = React.createClass( {
 		} else {
 			switch ( cartItem.product_slug ) {
 				case 'gapps':
-					return this.translate(
+					return this.props.translate(
 						'%(productName)s (%(volume)s User)',
 						'%(productName)s (%(volume)s Users)',
 						options
 					);
 
 				default:
-					return this.translate(
+					return this.props.translate(
 						'%(productName)s (%(volume)s Item)',
 						'%(productName)s (%(volume)s Items)',
 						options
@@ -211,4 +214,8 @@ const CartItem = React.createClass( {
 	}
 } );
 
-export default connect( state => ( { domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) } ) )( CartItem );
+export default connect(
+	state => ( {
+		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+	} )
+)( localize( CartItem ) );
