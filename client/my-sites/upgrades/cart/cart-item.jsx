@@ -90,8 +90,8 @@ const CartItem = React.createClass( {
 		if ( abtest( 'savingsInCheckoutSummary' ) === 'show' && cartItem && cartItem.product_cost ) {
 			return (
 				<span>
-					<span className="product-price__free-with-plan">{ cartItem.product_cost } { cartItem.currency }</span>
-					<span className="product-price__free-text">{ this.translate( 'Free with your plan' ) }</span>
+					<span className="cart__free-with-plan">{ cartItem.product_cost } { cartItem.currency }</span>
+					<span className="cart__free-text">{ this.translate( 'Free with your plan' ) }</span>
 				</span>
 			);
 		}
