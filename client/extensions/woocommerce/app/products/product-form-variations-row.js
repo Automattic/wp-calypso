@@ -70,7 +70,7 @@ const ProductFormVariationsRow = ( {
 				) }
 			</td>
 			<td>
-				<FormCurrencyInput
+				<FormCurrencyInput noWrap
 					currencySymbolPrefix="$"
 					name="price"
 					value={ variation.regular_price || '' }

@@ -2,6 +2,16 @@
 	display: flex;
 	justify-content: flex-start;
 	flex-wrap: wrap;
+
+	&.no-wrap {
+		flex-wrap: nowrap;
+
+		.form-dimensions-input__length,
+		.form-dimensions-input__width {
+			border-bottom-width: 1px;
+		}
+	}
+
 	@include breakpoint( ">480px" ) {
 		flex-wrap: nowrap;
 
