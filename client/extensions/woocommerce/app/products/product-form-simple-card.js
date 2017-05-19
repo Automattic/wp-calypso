@@ -47,6 +47,7 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 	// TODO Pull in currency and currency position.
 	const renderPrice = () => (
 		<Card className="products__product-form-price">
+			<FormLabel>{ translate( 'Price' ) }</FormLabel>
 			<FormCurrencyInput
 				currencySymbolPrefix="$"
 				name="price"
