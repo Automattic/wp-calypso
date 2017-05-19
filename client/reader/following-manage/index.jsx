@@ -189,6 +189,7 @@ class FollowingManage extends Component {
 							additionalClasses="following-manage__search-new"
 							initialValue={ sitesQuery }
 							value={ sitesQuery }
+							maxLength={ 500 }
 						/>
 					</CompactCard>
 
