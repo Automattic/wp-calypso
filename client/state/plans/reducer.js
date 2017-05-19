@@ -6,11 +6,8 @@ import {
 	PLANS_REQUEST,
 	PLANS_REQUEST_SUCCESS,
 	PLANS_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { combineReducersWithPersistence } from 'state/utils';
-import { isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -26,19 +23,11 @@ export const items = ( state = [], action ) => {
 	switch ( action.type ) {
 		case PLANS_RECEIVE:
 			return action.plans.slice( 0 );
-
-		case DESERIALIZE:
-			const isValidState = isValidStateWithSchema( state, itemsSchema );
-			if ( isValidState ) {
-				return state;
-			}
-			return [];
-		case SERIALIZE:
-			return state;
 	}
 
 	return state;
 };
+items.schema = itemsSchema;
 
 /**
  * `Reducer` function which handles request/response actions
@@ -54,10 +43,6 @@ export const requesting = ( state = false, action ) => {
 		case PLANS_REQUEST_SUCCESS:
 		case PLANS_REQUEST_FAILURE:
 			return action.type === PLANS_REQUEST;
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
 	}
 
 	return state;
@@ -78,10 +63,6 @@ export const error = ( state = false, action ) => {
 
 		case PLANS_REQUEST_FAILURE:
 			return true;
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
 	}
 
 	return state;
