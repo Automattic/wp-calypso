@@ -25,7 +25,7 @@ const FollowingManageSearchFeedsResults = ( {
 	searchResultsCount,
 	query,
 } ) => {
-	const isEmpty = !! ( query && searchResults && searchResults.length === 0 );
+	const isEmpty = !! ( query && query.length > 0 && searchResults && searchResults.length === 0 );
 	const classNames = classnames( 'following-manage__search-results', {
 		'is-empty': isEmpty,
 	} );
@@ -44,15 +44,18 @@ const FollowingManageSearchFeedsResults = ( {
 	}
 
 	if ( ! showMoreResults ) {
-		const resultsToShow = map( take( searchResults, 10 ), site => (
-			<ConnectedSubscriptionListItem
-				showLastUpdatedDate={ false }
-				url={ site.feed_URL || site.URL }
-				feedId={ +site.feed_ID }
-				siteId={ +site.blog_ID }
-				key={ `search-result-site-id-${ site.feed_ID || 0 }-${ site.blog_ID || 0 }` }
-			/>
-		) );
+		const resultsToShow = map(
+			take( searchResults, 10 ),
+			site => (
+				<ConnectedSubscriptionListItem
+					showLastUpdatedDate={ false }
+					url={ site.feed_URL || site.URL }
+					feedId={ +site.feed_ID }
+					siteId={ +site.blog_ID }
+					key={ `search-result-site-id-${ site.feed_ID || 0 }-${ site.blog_ID || 0 }` }
+				/>
+			)
+		);
 
 		return (
 			<div className={ classNames }>
