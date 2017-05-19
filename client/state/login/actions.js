@@ -160,7 +160,7 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 	dispatch( {
 		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 		notice: {
-			message: translate( 'Trying to send you a text message…' )
+			message: translate( 'Sending you a text message…' )
 		},
 	} );
 
