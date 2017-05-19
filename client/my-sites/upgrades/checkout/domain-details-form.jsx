@@ -1,16 +1,19 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import debugFactory from 'debug';
 import {
 	camelCase,
 	deburr,
+	first,
 	head,
+	indexOf,
 	kebabCase,
+	last,
 	map,
-	noop,
 	omit,
 	reduce,
 } from 'lodash';
@@ -20,7 +23,6 @@ import {
  */
 import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/upgrades/components/form';
 import PrivacyProtection from './privacy-protection';
-import ExtraContactInformationFrDialog from './extra-information-fr-dialog';
 import PaymentBox from './payment-box';
 import { cartItems } from 'lib/cart-values';
 import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
@@ -32,11 +34,13 @@ import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import wp from 'lib/wp';
+import ExtraInfoFrForm from 'components/domains/registrant-extra-info/fr-form';
 
+const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented(),
 	countriesList = countriesListForDomainRegistrations();
 
-class DomainDetailsForm extends Component {
+class DomainDetailsForm extends PureComponent {
 	static displayName = 'DomainDetailsForm';
 
 	constructor( props, context ) {
@@ -63,10 +67,12 @@ class DomainDetailsForm extends Component {
 			submissionCount: 0,
 			phoneCountryCode: 'US',
 			registrantExtraInfo: null,
+			steps: [ 'mainForm', 'fr' ],
+			currentStep: 'mainForm',
 		};
 	}
 
-	componentWillMount() {
+	componentWillMount = () => {
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
 			loadFunction: wpcom.getDomainContactInformation.bind( wpcom ),
@@ -95,6 +101,27 @@ class DomainDetailsForm extends Component {
 		} );
 
 		onComplete( sanitizedFieldValues );
+	}
+
+	hasAnotherStep = () => {
+		return this.state.currentStep !== last( this.state.steps );
+	}
+
+	hasPreviousStep = () => {
+		return this.state.currentStep !== first( this.state.steps );
+	}
+
+	switchToNextStep = () => {
+		const newStep = this.state.steps[ indexOf( this.state.steps, this.state.currentStep ) + 1 ];
+		debug( 'Switching to step: ' + newStep );
+		this.setState( { currentStep: newStep } );
+	}
+
+	switchToPreviousStep = () => {
+		const currentIndex = indexOf( this.state.steps, this.state.currentStep );
+		const newStep = this.state.steps[ Math.max( 0, currentIndex - 1 ) ];
+		debug( 'Switching back to step:' + newStep );
+		return this.setState( { currentStep: newStep } );
 	}
 
 	validate = ( fieldValues, onComplete ) => {
@@ -186,23 +213,22 @@ class DomainDetailsForm extends Component {
 		};
 	}
 
-	needsExtraRegistrantInfo() {
+	needsExtraRegistrantInfo = () => {
 		// FIXME: Source from API
 		return cartItems.hasTld( this.props.cart, 'fr' ) &&
 			! this.state.registrantExtraInfo;
 	}
 
-	needsFax() {
+	needsFax = () => {
 		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && cartItems.hasTld( this.props.cart, 'nl' );
 	}
 
-	allDomainRegistrationsHavePrivacy() {
+	allDomainRegistrationsHavePrivacy = () => {
 		return cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0;
 	}
 
-	renderSubmitButton() {
-		const extraDialogRequired = this.needsExtraRegistrantInfo();
-		const continueText = extraDialogRequired
+	renderSubmitButton = () => {
+		const continueText = this.hasAnotherStep()
 			? this.props.translate( 'Continue' )
 			: this.props.translate( 'Continue to Checkout' );
 
@@ -236,18 +262,7 @@ class DomainDetailsForm extends Component {
 		this.handleSubmitButtonClick();
 	}
 
-	renderExtraContactInformationFrDialog() {
-		return (
-			<ExtraContactInformationFrDialog
-				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
-				onSubmit={ this.handleFrSubmit }
-				onClose={ noop }
-				isVisible={ this.state.isFrDialogVisible && this.needsExtraRegistrantInfo() }
-				productsList={ this.props.productsList } />
-		);
-	}
-
-	renderNameFields() {
+	renderNameFields = () => {
 		return (
 			<div>
 				<Input
@@ -260,7 +275,7 @@ class DomainDetailsForm extends Component {
 		);
 	}
 
-	renderOrganizationField() {
+	renderOrganizationField = () => {
 		return <HiddenInput
 			label={ this.props.translate( 'Organization' ) }
 			text={ this.props.translate(
@@ -363,6 +378,15 @@ class DomainDetailsForm extends Component {
 		);
 	}
 
+	renderExtraDetailsForm = () => {
+		return ( <ExtraInfoFrForm
+			onSubmit={ this.handleExtraSubmit }
+			onClose={ ( event ) => console.log( 'ExtraInfoFrForm closed', event ) } >
+				{ this.renderSubmitButton() }
+			</ExtraInfoFrForm>
+		);
+	}
+
 	handleCheckboxChange = () => {
 		this.setPrivacyProtectionSubscriptions( ! this.allDomainRegistrationsHavePrivacy() );
 	}
@@ -382,9 +406,8 @@ class DomainDetailsForm extends Component {
 	handleSubmitButtonClick = ( event ) => {
 		event && event.preventDefault();
 
-		if ( this.needsExtraRegistrantInfo() ) {
-			this.openDialog( 'isFrDialogVisible' );
-			return;
+		if ( this.hasAnotherStep() ) {
+			return this.switchToNextStep();
 		}
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
@@ -460,7 +483,7 @@ class DomainDetailsForm extends Component {
 		}
 	}
 
-	render() {
+	renderMainDetailsForm = () => {
 		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails(),
 			classSet = classNames( {
 				'domain-details': true,
@@ -478,7 +501,6 @@ class DomainDetailsForm extends Component {
 		return (
 			<div>
 				{ cartItems.hasDomainRegistration( this.props.cart ) && this.renderPrivacySection() }
-				{ this.renderExtraContactInformationFrDialog() }
 				<PaymentBox
 					classSet={ classSet }
 					title={ title }>
@@ -486,6 +508,26 @@ class DomainDetailsForm extends Component {
 				</PaymentBox>
 			</div>
 		);
+	}
+
+	render = () => {
+		const classSet = classNames( {
+			'domain-details': true,
+			selected: true,
+		} );
+
+		if ( this.state.currentStep === 'fr' ) {
+			debug( "rendering 'fr' step" );
+			return (
+				<PaymentBox
+					classSet={ classSet }
+					title={ '.FR Extra Contact Details' }>
+					{ this.renderExtraDetailsForm() }
+				</PaymentBox>
+			);
+		}
+
+		return this.renderMainDetailsForm();
 	}
 }
 
