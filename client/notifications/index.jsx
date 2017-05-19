@@ -15,6 +15,7 @@
  */
 import React, { Component } from 'react';
 import classNames from 'classnames';
+import page from 'page';
 import wpcom from 'lib/wp';
 import { get } from 'lodash';
 
@@ -153,6 +154,13 @@ export class Notifications extends Component {
 	render() {
 		const localeSlug = get( user.get(), 'localeSlug', config( 'i18n_default_locale_slug' ) );
 
+		const customMiddleware = {
+			VIEW_SETTINGS: [ () => {
+				this.props.checkToggle();
+				page( '/me/notifications' );
+			} ],
+		};
+
 		return (
 			<div
 				id="wpnc-panel"
@@ -162,6 +170,7 @@ export class Notifications extends Component {
 				} ) }
 			>
 				<NotificationsPanel
+					customMiddleware={ customMiddleware }
 					isShowing={ this.props.isShowing }
 					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
