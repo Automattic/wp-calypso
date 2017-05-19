@@ -7,7 +7,6 @@ import { pick, omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue 
  * Internal dependencies
  */
 import { plans } from './plans/reducer';
-import { combineReducersWithPersistence } from 'state/utils';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
@@ -15,7 +14,6 @@ import monitor from './monitor/reducer';
 import vouchers from './vouchers/reducer';
 import updates from './updates/reducer';
 import sharingButtons from './sharing-buttons/reducer';
-
 import mediaStorage from './media-storage/reducer';
 import {
 	MEDIA_DELETE,
@@ -35,12 +33,11 @@ import {
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
 	SITES_UPDATE,
-	DESERIALIZE,
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { sitesSchema } from './schema';
-import { createReducer, isValidStateWithSchema, keyedReducer } from 'state/utils';
+import { createReducer, keyedReducer, combineReducersWithPersistence } from 'state/utils';
 
 /**
  * Constants
@@ -203,16 +200,11 @@ export function items( state = {}, action ) {
 
 			return state;
 		}
-
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, sitesSchema ) ) {
-				return state;
-			}
-			return {};
 	}
 
 	return state;
 }
+items.schema = sitesSchema;
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
