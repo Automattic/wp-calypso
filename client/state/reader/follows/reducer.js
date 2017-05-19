@@ -22,10 +22,9 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 function updatePostSubscription( state, { payload, type } ) {
 	const follow = find( state, { blog_ID: +payload.blogId } );

@@ -6,8 +6,8 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import exporter from './exporter/reducers';
 import { items as itemSchemas } from './schema';
 import {

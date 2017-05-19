@@ -2,8 +2,7 @@
  * Internal dependencies
  */
 import { siteRolesSchema } from './schema';
-import { combineReducersWithPersistence } from 'state/utils';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import {
 	SITE_ROLES_RECEIVE,
 	SITE_ROLES_REQUEST,

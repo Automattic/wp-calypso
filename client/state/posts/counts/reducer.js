@@ -20,9 +20,8 @@ import {
 	POST_SAVE,
 	POSTS_RECEIVE,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import { countsSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 /**
  * Returns the updated post types requesting state after an action has been

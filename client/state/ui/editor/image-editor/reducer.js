@@ -14,8 +14,7 @@ import {
 	IMAGE_EDITOR_STATE_RESET_ALL,
 	IMAGE_EDITOR_IMAGE_HAS_LOADED
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import { AspectRatios } from './constants';
 
 export const defaultTransform = {

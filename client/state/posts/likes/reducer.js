@@ -7,8 +7,7 @@ import { merge } from 'lodash';
  * Internal dependencies
  */
 import itemsSchema from './schema';
-import { combineReducersWithPersistence } from 'state/utils';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import {
 	POST_LIKES_RECEIVE,
 	POST_LIKES_REQUEST,

@@ -7,7 +7,7 @@ import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues, map
  * Internal dependencies
  */
 import PostQueryManager from 'lib/query-manager/post';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer, isValidStateWithSchema } from 'state/utils';
 import {
 	EDITOR_START,
 	EDITOR_STOP,
@@ -38,7 +38,6 @@ import {
 	mergeIgnoringArrays,
 	normalizePostForState
 } from './utils';
-import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { itemsSchema, queriesSchema } from './schema';
 
 /**

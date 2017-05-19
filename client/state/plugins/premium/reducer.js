@@ -17,9 +17,8 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, isValidStateWithSchema } from 'state/utils';
 import { pluginInstructionSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
 
 /*
  * Tracks the requesting state for premium plugin "instructions" (the list

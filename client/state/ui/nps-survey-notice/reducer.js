@@ -4,8 +4,7 @@
 import {
 	NPS_SURVEY_DIALOG_IS_SHOWING,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 
 export const isNpsSurveyDialogShowing = createReducer( false, {
 	[ NPS_SURVEY_DIALOG_IS_SHOWING ]: ( state, { isShowing } ) =>

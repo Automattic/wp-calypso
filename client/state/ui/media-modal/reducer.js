@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
 
 export const view = createReducer( null, {

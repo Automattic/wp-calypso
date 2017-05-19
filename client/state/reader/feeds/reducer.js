@@ -14,9 +14,8 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer, isValidStateWithSchema } from 'state/utils';
 import { decodeEntities } from 'lib/formatting';
-import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
 
 const actionMap = {

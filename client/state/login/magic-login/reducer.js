@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 
 import {
 	CHECK_YOUR_EMAIL_PAGE,

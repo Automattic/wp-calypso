@@ -15,8 +15,7 @@ import {
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
 
 export const queries = ( () => {

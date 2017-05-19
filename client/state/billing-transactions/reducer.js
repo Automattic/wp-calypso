@@ -10,9 +10,8 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import { billingTransactionsSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 /**
  * Returns the updated items state after an action has been dispatched.

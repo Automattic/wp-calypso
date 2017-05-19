@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import {
 	TIMEZONES_RECEIVE,
 	TIMEZONES_REQUEST,

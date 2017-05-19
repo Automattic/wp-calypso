@@ -7,8 +7,8 @@ import omit from 'lodash/omit';
 /**
  * Internal dependencies
  */
-import { isValidStateWithSchema } from 'state/utils';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, isValidStateWithSchema } from 'state/utils';
+
 import {
 	settingsSchema,
 	systemSchema,

@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_NOTICES,

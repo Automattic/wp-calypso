@@ -6,8 +6,8 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import {
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,

@@ -7,8 +7,7 @@ import {
 	GEO_REQUEST_FAILURE,
 	GEO_REQUEST_SUCCESS
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import { geoSchema } from './schema';
 
 /**

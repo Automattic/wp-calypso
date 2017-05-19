@@ -12,8 +12,7 @@ import {
 	NOTICE_REMOVE,
 	ROUTE_SET
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 
 export const items = createReducer( {}, {
 	[ NOTICE_CREATE ]: ( state, action ) => {

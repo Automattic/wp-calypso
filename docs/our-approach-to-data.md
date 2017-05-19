@@ -392,7 +392,7 @@ If you are not satisfied with the default handling, it is possible to implement 
 `DESERIALIZE` action handlers in your reducers to customize data persistence. Always use a schema with your custom 
 handlers to avoid data shape errors. 
 
-### Opt-in to Persistence ( [#13359](https://github.com/Automattic/wp-calypso/pull/13359) )
+### Opt-in to Persistence ( [#13542](https://github.com/Automattic/wp-calypso/pull/13542) )
 
 If we choose not to use `createReducer` we can opt-in to persistence by adding a schema as a property on the reducer. 
 We do this by combining all of our reducers using `combineReducersWithPersistence` at every level of the tree instead 

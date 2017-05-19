@@ -7,9 +7,8 @@ import {
 	COUNTRY_STATES_REQUEST_FAILURE,
 	COUNTRY_STATES_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import { itemSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 // Stores the complete list of states, indexed by locale key
 export const items = createReducer( {}, {

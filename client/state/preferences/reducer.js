@@ -14,9 +14,8 @@ import {
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import { remoteValuesSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 /**
  * Returns the updated local values state after an action has been dispatched.

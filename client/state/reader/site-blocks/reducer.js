@@ -10,8 +10,7 @@ import {
 	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 } from 'state/action-types';
 
-import { combineReducersWithPersistence } from 'state/utils';
-import { createReducer, keyedReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer, keyedReducer } from 'state/utils';
 
 /**
  * Tracks all known site block statuses, indexed by site ID.

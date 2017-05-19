@@ -7,8 +7,7 @@ import { merge } from 'lodash';
  * Internal dependencies
  */
 import { shortcodesSchema } from './schema';
-import { combineReducersWithPersistence } from 'state/utils';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import {
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,

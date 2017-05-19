@@ -10,7 +10,7 @@ import {
  * Internal dependencies
  */
 import status from './status/reducer';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -25,7 +25,6 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { pluginsSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 /*
  * Tracks the requesting state for installed plugins on a per-site index.

@@ -21,9 +21,8 @@ import {
 	PUBLICIZE_SHARE_FAILURE,
 	PUBLICIZE_SHARE_DISMISS
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import { connectionsSchema } from './schema';
-import { createReducer } from 'state/utils';
 import sharePostActions from './publicize-actions/reducer';
 
 export const sharePostStatus = createReducer( {}, {

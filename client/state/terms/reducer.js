@@ -16,9 +16,8 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	SERIALIZE
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer, isValidStateWithSchema } from 'state/utils';
 import TermQueryManager from 'lib/query-manager/term';
-import { isValidStateWithSchema, createReducer } from 'state/utils';
 import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
 

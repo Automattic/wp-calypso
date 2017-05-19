@@ -6,8 +6,8 @@ import { merge, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import { getSerializedStatsQuery } from './utils';
 import { itemSchema } from './schema';
 import {

@@ -6,8 +6,8 @@ import { isEqual, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import {
 	ROUTE_SET,
 } from 'state/action-types';

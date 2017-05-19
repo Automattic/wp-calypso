@@ -7,7 +7,7 @@ import { mapValues, omit } from 'lodash';
  * Internal dependencies
  */
 import ThemeQueryManager from 'lib/query-manager/theme';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer, isValidStateWithSchema } from 'state/utils';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -36,7 +36,6 @@ import {
 	getSerializedThemesQuery,
 	getThemeIdFromStylesheet
 } from './utils';
-import { createReducer, isValidStateWithSchema } from 'state/utils';
 import {
 	queriesSchema,
 	activeThemesSchema,

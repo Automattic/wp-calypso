@@ -2,9 +2,8 @@
  * Internal dependencies
  */
 import reset from './reset/reducer';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import settings from './settings/reducer';
-import { createReducer } from 'state/utils';
 
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,

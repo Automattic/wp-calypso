@@ -32,12 +32,11 @@ import {
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_SET_GEO_LOCATION,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, createReducer, isValidStateWithSchema } from 'state/utils';
 import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 } from './selectors';
 import { HAPPYCHAT_MAX_STORED_MESSAGES } from './constants';
-import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { timelineSchema, geoLocationSchema } from './schema';
 
 /**

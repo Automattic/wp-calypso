@@ -15,8 +15,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
-import { isValidStateWithSchema } from 'state/utils';
+import { combineReducersWithPersistence, isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**

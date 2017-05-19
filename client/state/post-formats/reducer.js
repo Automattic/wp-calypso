@@ -2,8 +2,7 @@
  * Internal dependencies
  */
 import { postFormatsItemsSchema } from './schema';
-import { combineReducersWithPersistence } from 'state/utils';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,

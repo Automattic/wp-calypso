@@ -5,8 +5,7 @@ import {
 	CONNECTION_LOST,
 	CONNECTION_RESTORED
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 
 export const connectionState = createReducer( 'CHECKING', {
 	[ CONNECTION_LOST ]: () => 'OFFLINE',

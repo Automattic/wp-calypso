@@ -7,11 +7,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import eligibility from './eligibility/reducer';
-import { combineReducersWithPersistence } from 'state/utils';
-import {
-	keyedReducer,
-	withSchemaValidation,
-} from 'state/utils';
+import { combineReducersWithPersistence, keyedReducer, withSchemaValidation } from 'state/utils';
 import { transferStates } from './constants';
 import { automatedTransfer as schema } from './schema';
 import {

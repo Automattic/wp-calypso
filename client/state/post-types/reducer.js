@@ -6,8 +6,8 @@ import keyBy from 'lodash/keyBy';
 /**
  * Internal dependencies
  */
-import { isValidStateWithSchema } from 'state/utils';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducersWithPersistence, isValidStateWithSchema } from 'state/utils';
+
 import * as schema from './schema';
 import taxonomies from './taxonomies/reducer';
 import {
