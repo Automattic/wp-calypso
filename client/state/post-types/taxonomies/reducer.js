@@ -38,10 +38,6 @@ export function requesting( state = {}, action ) {
 					[ action.postType ]: POST_TYPES_TAXONOMIES_REQUEST === action.type
 				}
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -70,6 +66,8 @@ export function items( state = {}, action ) {
 			}
 
 			return {};
+		case SERIALIZE:
+			return state;
 	}
 
 	return state;
