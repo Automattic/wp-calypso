@@ -51,6 +51,7 @@ export const receiveRecommendedSitesResponse = ( store, action, next, response )
 		receiveRecommendedSites( {
 			sites: fromApi( response ),
 			seed: action.payload.seed,
+			offset: action.payload.offset,
 		} )
 	);
 };
