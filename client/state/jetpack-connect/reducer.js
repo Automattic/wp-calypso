@@ -35,7 +35,11 @@ import {
 } from 'state/action-types';
 import { combineReducersWithPersistence } from 'state/utils';
 import { isValidStateWithSchema } from 'state/utils';
-import { jetpackConnectSessionsSchema } from './schema';
+import {
+	jetpackConnectSessionsSchema,
+	jetpackAuthAttemptsSchema,
+	jetpackConnectSelectedPlansSchema,
+} from './schema';
 import { isStale } from './utils';
 import { JETPACK_CONNECT_AUTHORIZE_TTL, AUTH_ATTEMPS_TTL } from './constants';
 import { urlToSlug } from 'lib/url';
@@ -75,6 +79,7 @@ export function jetpackConnectSessions( state = {}, action ) {
 	}
 	return state;
 }
+jetpackConnectSessions.hasCustomPersistence = true;
 
 export function jetpackConnectSite( state = {}, action ) {
 	const defaultState = {
@@ -117,9 +122,6 @@ export function jetpackConnectSite( state = {}, action ) {
 		case JETPACK_CONNECT_CONFIRM_JETPACK_STATUS:
 			return Object.assign( {}, state, { installConfirmedByUser: action.status } );
 		case JETPACK_CONNECT_COMPLETE_FLOW:
-			return {};
-		case SERIALIZE:
-		case DESERIALIZE:
 			return {};
 	}
 	return state;
@@ -239,6 +241,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 	}
 	return state;
 }
+jetpackConnectAuthorize.hasCustomPersistence = true;
 
 export function jetpackAuthAttempts( state = {}, action ) {
 	switch ( action.type ) {
@@ -256,12 +259,10 @@ export function jetpackAuthAttempts( state = {}, action ) {
 			return Object.assign( {}, state, { [ slug ]: { attempt: attemptNumber, timestamp: currentTimestamp } } );
 		case JETPACK_CONNECT_COMPLETE_FLOW:
 			return {};
-		case DESERIALIZE:
-		case SERIALIZE:
-			state;
 	}
 	return state;
 }
+jetpackAuthAttempts.schema = jetpackAuthAttemptsSchema;
 
 export function jetpackSSO( state = {}, action ) {
 	switch ( action.type ) {
@@ -283,9 +284,6 @@ export function jetpackSSO( state = {}, action ) {
 			return Object.assign( {}, state, { isAuthorizing: false, authorizationError: false, ssoUrl: action.ssoUrl } );
 		case JETPACK_CONNECT_SSO_AUTHORIZE_ERROR:
 			return Object.assign( {}, state, { isAuthorizing: false, authorizationError: action.error, ssoUrl: false } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -299,12 +297,10 @@ export function jetpackConnectSelectedPlans( state = {}, action ) {
 			return { '*': state[ '*' ] };
 		case JETPACK_CONNECT_COMPLETE_FLOW:
 			return {};
-		case SERIALIZE:
-		case DESERIALIZE:
-			return state;
 	}
 	return state;
 }
+jetpackConnectSelectedPlans.schema = jetpackConnectSelectedPlansSchema;
 
 export default combineReducersWithPersistence( {
 	jetpackConnectSite,
