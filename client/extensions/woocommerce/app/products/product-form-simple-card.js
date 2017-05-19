@@ -69,7 +69,7 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 						onChange={ setDimension }
 					/>
 				</FormFieldSet>
-				<FormFieldSet>
+				<FormFieldSet className="products__product-weight-input">
 					<FormLabel>{ translate( 'Weight' ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="weight"
