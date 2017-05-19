@@ -177,7 +177,7 @@ class SearchStream extends Component {
 				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<DocumentHead title={ documentTitle } />
 					<MobileBackToSidebar>
-						<h1>{ translate( 'Search' ) }</h1>
+						<h1>{ translate( 'Streams' ) }</h1>
 					</MobileBackToSidebar>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
