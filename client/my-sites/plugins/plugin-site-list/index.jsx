@@ -1,17 +1,20 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	compact = require( 'lodash/compact' );
+import React from 'react';
+
+import classNames from 'classnames';
+import compact from 'lodash/compact';
 
 /**
  * Internal dependencies
  */
-var allSites = require( 'lib/sites-list' )(),
-	PluginSite = require( 'my-sites/plugins/plugin-site/plugin-site' ),
-	SectionHeader = require( 'components/section-header' ),
-	PluginsStore = require( 'lib/plugins/store' );
+import allSitesFactory from 'lib/sites-list';
+
+const allSites = allSitesFactory();
+import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
+import SectionHeader from 'components/section-header';
+import PluginsStore from 'lib/plugins/store';
 
 module.exports = React.createClass( {
 

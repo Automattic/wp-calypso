@@ -1,20 +1,22 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	titleCase = require( 'to-title-case' ),
-	find = require( 'lodash/find' ),
-	filter = require( 'lodash/filter' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import titleCase from 'to-title-case';
+import find from 'lodash/find';
+import filter from 'lodash/filter';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-const analytics = require( 'lib/analytics' ),
-	Card = require( 'components/card' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' );
+import analytics from 'lib/analytics';
+
+import Card from 'components/card';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
 
 module.exports = React.createClass( {
 
