@@ -29,10 +29,9 @@ import FollowingManageSubscriptions from './subscriptions';
 import FollowingManageSearchFeedsResults from './feed-search-results';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
-import { addQueryArgs } from 'lib/url';
+import { addQueryArgs, isHttps, isHttp, addSchemeIfMissing, withoutHttp } from 'lib/url';
 import FollowButton from 'reader/follow-button';
 import { READER_FOLLOWING_MANAGE_URL_INPUT } from 'reader/follow-button/follow-sources';
-import { resemblesUrl, addSchemeIfMissing, withoutHttp } from 'lib/url';
 
 const PAGE_SIZE = 4;
 
@@ -153,7 +152,7 @@ class FollowingManage extends Component {
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
 		const showExistingSubscriptions = ! ( !! sitesQuery && showMoreResults );
-		const isSitesQueryUrl = resemblesUrl( sitesQuery );
+		const isSitesQueryUrl = isHttp( sitesQuery ) || isHttps( sitesQuery );
 		let sitesQueryWithoutProtocol;
 		if ( isSitesQueryUrl ) {
 			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
