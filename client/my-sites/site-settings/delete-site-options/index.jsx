@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { some } from 'lodash';
 
 /**
@@ -20,12 +20,11 @@ const trackDeleteSiteOption = ( option ) => {
 	} );
 };
 
-class SiteTools extends React.Component {
-
+class SiteTools extends Component {
 	static propTypes = {
-		sitePurchases: React.PropTypes.array.isRequired,
-		hasLoadedSitePurchasesFromServer: React.PropTypes.bool.isRequired,
-		site: React.PropTypes.object.isRequired
+		sitePurchases: PropTypes.array.isRequired,
+		hasLoadedSitePurchasesFromServer: PropTypes.bool.isRequired,
+		site: PropTypes.object.isRequired
 	}
 
 	state = {
