@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -45,7 +46,7 @@ const CartItem = React.createClass( {
 		}
 
 		if ( cartItems.hasDomainCredit( cart ) && isDomainProduct( cartItem ) && cartItem.cost === 0 ) {
-			return this.getDomainPlanPrice();
+			return this.getDomainPlanPrice( cartItem );
 		}
 
 		cost = cartItem.cost * cartItem.volume;
@@ -85,7 +86,16 @@ const CartItem = React.createClass( {
 		} );
 	},
 
-	getDomainPlanPrice: function() {
+	getDomainPlanPrice: function( cartItem ) {
+		if ( abtest( 'savingsInCheckoutSummary' ) === 'show' && cartItem && cartItem.product_cost ) {
+			return (
+				<span>
+					<span className="product-price__free-with-plan">{ cartItem.product_cost } { cartItem.currency }</span>
+					<span className="product-price__free-text">{ this.translate( 'Free with your plan' ) }</span>
+				</span>
+			);
+		}
+
 		return <em>{ this.translate( 'Free with your plan' ) }</em>;
 	},
 
