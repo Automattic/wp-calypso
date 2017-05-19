@@ -67,12 +67,10 @@ module.exports = {
 		defaultVariation: 'skip',
 	},
 	jetpackPlansHeadlines: {
-		datestamp: '20170516',
+		datestamp: '20170519',
 		variations: {
-			headlineA: 25,
-			headlineB: 25,
-			headlineC: 25,
-			headlineD: 25
+			headlineA: 50,
+			headlineB: 50
 		},
 		defaultVariation: 'headlineA',
 	},
