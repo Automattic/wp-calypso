@@ -240,7 +240,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 			document.getElementsByClassName( 'wp-singletree-layout' ).length
 		);
 
-		const singleTreeSections = [ 'account-recovery', 'login', 'posts-custom', 'theme', 'themes', 'preview' ];
+		const singleTreeSections = [ 'account-recovery', 'login', 'posts-custom', 'theme', 'themes', 'preview', 'domain-connect-authorize' ];
 		const sectionName = getSectionName( context.store.getState() );
 		const isMultiTreeLayout = ! includes( singleTreeSections, sectionName );
 
