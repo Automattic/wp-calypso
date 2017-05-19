@@ -1,10 +1,12 @@
-/**
- * Returns the recommended sites for a given seed
+/***
+ * Returns the recommended sites for a given seed.
  *
  * @param  {Object} state  Global state tree
  * @param {Number} seed the elasticsearch seed for which to grab recs
- * @return {Array} Reader Sites
+ * @return {Object} { recommendedSites: [ Reader Sites ], offset:  Current paging offset }
  */
-export default function getReaderRecommendedSites( state, seed ) {
-	return state.reader.recommendedSites.items[ seed ];
-}
+const getReaderRecommendedSites = ( state, seed ) => ( {
+	recommendedSites: state.reader.recommendedSites.items[ seed ],
+	offset: state.reader.recommendedSites.pagingOffset[ seed ],
+} );
+export default getReaderRecommendedSites;

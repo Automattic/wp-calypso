@@ -57,7 +57,6 @@ class FollowingManage extends Component {
 	state = {
 		width: 800,
 		seed: random( 0, 10000 ),
-		offset: 0,
 	};
 
 	// TODO make this common between our different search pages?
@@ -117,21 +116,12 @@ class FollowingManage extends Component {
 		clearInterval( this.windowScrollerRef );
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		const nextState = {};
-		const recommendedSites = nextProps.getRecommendedSites( this.state.seed );
+	shouldRequestMoreRecs = () => {
+		const { getRecommendedSites, isSiteBlocked } = this.props;
+		const { recommendedSites } = getRecommendedSites( this.state.seed );
 
-		const shouldRequestMoreRecs =
-			recommendedSites &&
-			recommendedSites.length === this.state.offset + PAGE_SIZE &&
-			reject( recommendedSites, nextProps.isSiteBlocked ).length <= 2;
-
-		if ( shouldRequestMoreRecs ) {
-			nextState.offset = this.state.offset + PAGE_SIZE;
-		}
-
-		this.setState( nextState );
-	}
+		return reject( recommendedSites, isSiteBlocked ).length <= 2;
+	};
 
 	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
 
@@ -163,7 +153,7 @@ class FollowingManage extends Component {
 		if ( isSitesQueryUrl ) {
 			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		}
-		const recommendedSites = reject( getRecommendedSites( this.state.seed ), isSiteBlocked );
+		const { recommendedSites, offset } = getRecommendedSites( this.state.seed );
 		const isFollowByUrlWithNoSearchResults = isSitesQueryUrl && searchResultsCount === 0;
 
 		return (
@@ -172,10 +162,12 @@ class FollowingManage extends Component {
 				<MobileBackToSidebar>
 					<h1>{ translate( 'Streams' ) }</h1>
 				</MobileBackToSidebar>
-				{ ! searchResults && ! isSitesQueryUrl && <QueryReaderFeedsSearch query={ sitesQuery } /> }
 				{ ! searchResults && <QueryReaderFeedsSearch query={ sitesQuery } /> }
-				{ recommendedSites.length <= 2 &&
-					<QueryReaderRecommendedSites seed={ this.state.seed } offset={ this.state.offset } /> }
+				{ this.shouldRequestMoreRecs() &&
+					<QueryReaderRecommendedSites
+						seed={ this.state.seed }
+						offset={ offset + PAGE_SIZE || 0 }
+					/> }
 				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
@@ -217,7 +209,11 @@ class FollowingManage extends Component {
 							/>
 						</div> }
 				</div>
-				{ hasFollows && ! sitesQuery && <RecommendedSites sites={ take( recommendedSites, 2 ) } /> }
+				{ hasFollows &&
+					! sitesQuery &&
+					<RecommendedSites sites={ take( reject( recommendedSites, isSiteBlocked ), 2 ) } /> }
+				{ ! sitesQuery &&
+					<RecommendedSites sites={ take( reject( recommendedSites, isSiteBlocked ), 2 ) } /> }
 				{ !! sitesQuery &&
 					! isFollowByUrlWithNoSearchResults &&
 					<FollowingManageSearchFeedsResults
