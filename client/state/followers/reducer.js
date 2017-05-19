@@ -17,8 +17,6 @@ import {
 	FOLLOWER_REMOVE_ERROR,
 	FOLLOWER_REMOVE_REQUEST,
 	FOLLOWER_REMOVE_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { combineReducersWithPersistence } from 'state/utils';
 import { getSerializedQuery, normalizeFollower } from 'state/followers/utils';
@@ -30,9 +28,6 @@ export function items( state = {}, action ) {
 			return Object.assign( {}, state, keyBy( action.data.subscribers.map( normalizeFollower ), 'ID' ) );
 		case FOLLOWER_REMOVE_SUCCESS:
 			return Object.assign( {}, omit( state, action.follower.ID ) );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -64,9 +59,6 @@ export function queries( state = {}, action ) {
 				}
 				return query;
 			} ) );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -86,9 +78,6 @@ export function queryRequests( state = {}, action ) {
 		case FOLLOWERS_REQUEST_ERROR:
 			const serializedQuery = getSerializedQuery( action.query );
 			return Object.assign( {}, state, { [ serializedQuery ]: FOLLOWERS_REQUEST === action.type } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -99,9 +88,6 @@ export function removeFromSiteRequests( state = {}, action ) {
 		case FOLLOWER_REMOVE_REQUEST:
 		case FOLLOWER_REMOVE_SUCCESS:
 			return Object.assign( {}, state, { [ action.siteId ]: FOLLOWER_REMOVE_REQUEST === action.type } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
