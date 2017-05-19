@@ -8,7 +8,6 @@ import { spy, stub } from 'sinon';
  * Internal dependencies
  */
 import { addHandlers, removeHandlers, configureMiddleware } from '../extensions-middleware';
-import { local } from '../utils';
 
 describe( 'Calypso Extensions Data Layer Middleware', () => {
 	let next;
@@ -39,54 +38,6 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		expect( next ).to.have.been.calledWith( action );
 	} );
 
-	it( 'should pass along local actions untouched', () => {
-		const adder = spy();
-		const handlers = {
-			[ 'ADD' ]: [ adder ],
-		};
-
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
-		const action = local( { type: 'ADD' } );
-
-		config.middleware( store )( next )( action );
-
-		expect( next ).to.have.been.calledWith( action );
-		expect( adder ).to.not.have.beenCalled;
-	} );
-
-	it( 'should not pass along non-local actions with non data-layer meta', () => {
-		const adder = spy();
-		const handlers = {
-			[ 'ADD' ]: [ adder ],
-		};
-
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
-		const action = { type: 'ADD', meta: { semigroup: true } };
-
-		config.middleware( store )( next )( action );
-
-		expect( next ).to.not.have.beenCalled;
-		expect( adder ).to.have.been.calledWith( store, action );
-	} );
-
-	it( 'should not pass along non-local actions with data-layer meta but no bypass', () => {
-		const adder = spy();
-		const handlers = {
-			[ 'ADD' ]: [ adder ],
-		};
-
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
-		const action = { type: 'ADD', meta: { dataLayer: { data: 42 } } };
-
-		config.middleware( store )( next )( action );
-
-		expect( next ).to.not.have.beenCalled;
-		expect( adder ).to.have.been.calledWith( store, action );
-	} );
-
 	it( 'should intercept actions in appropriate handler', () => {
 		const adder = spy();
 
@@ -101,24 +52,6 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		config.middleware( store )( next )( action );
 
 		expect( next ).to.not.have.been.calledWith( action );
-		expect( adder ).to.have.been.calledWith( store, action );
-	} );
-
-	it( 'should allow continuing the action down the chain', () => {
-		const adder = spy( ( _store, _action, _next ) => _next( _action ) );
-
-		const handlers = {
-			[ 'ADD' ]: [ adder ],
-		};
-
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
-		const action = { type: 'ADD' };
-
-		config.middleware( store )( next )( action );
-
-		expect( next ).to.have.been.calledOnce;
-		expect( next ).to.have.been.calledWith( local( action ) );
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
