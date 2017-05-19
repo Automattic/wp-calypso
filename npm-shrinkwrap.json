@@ -3691,9 +3691,7 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "1.1.11",
-      "from": "git://github.com/automattic/notifications-panel.git#920fe1df16565f6f9a26032db9b16c60d70eb168",
-      "resolved": "git://github.com/automattic/notifications-panel.git#920fe1df16565f6f9a26032db9b16c60d70eb168"
+      "version": "1.1.12"
     },
     "npm-path": {
       "version": "1.1.0",
