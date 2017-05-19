@@ -33,6 +33,7 @@ import { addQueryArgs } from 'lib/url';
 import FollowButton from 'reader/follow-button';
 import { READER_FOLLOWING_MANAGE_URL_INPUT } from 'reader/follow-button/follow-sources';
 import { resemblesUrl, addSchemeIfMissing, withoutHttp } from 'lib/url';
+import { getReaderFollowsCount } from 'state/selectors';
 
 const PAGE_SIZE = 4;
 
@@ -150,9 +151,12 @@ class FollowingManage extends Component {
 			showMoreResults,
 			getRecommendedSites,
 			isSiteBlocked,
+			followsCount,
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
-		const showExistingSubscriptions = ! ( !! sitesQuery && showMoreResults );
+		const isSearching = !! sitesQuery;
+		const hasFollows = followsCount > 0;
+		const showExistingSubscriptions = ! isSearching && hasFollows;
 		const isSitesQueryUrl = resemblesUrl( sitesQuery );
 		let sitesQueryWithoutProtocol;
 		if ( isSitesQueryUrl ) {
@@ -167,7 +171,8 @@ class FollowingManage extends Component {
 					<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
 				{ ! searchResults && ! isSitesQueryUrl && <QueryReaderFeedsSearch query={ sitesQuery } /> }
-				{ recommendedSites.length <= 2 &&
+				{ hasFollows &&
+					recommendedSites.length <= 2 &&
 					<QueryReaderRecommendedSites seed={ this.state.seed } offset={ this.state.offset } /> }
 				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
@@ -198,7 +203,7 @@ class FollowingManage extends Component {
 							/>
 						</div> }
 				</div>
-				{ ! sitesQuery && <RecommendedSites sites={ take( recommendedSites, 2 ) } /> }
+				{ hasFollows && ! sitesQuery && <RecommendedSites sites={ take( recommendedSites, 2 ) } /> }
 				{ !! sitesQuery &&
 					! isSitesQueryUrl &&
 					<FollowingManageSearchFeedsResults
@@ -211,13 +216,13 @@ class FollowingManage extends Component {
 						searchResultsCount={ searchResultsCount }
 						query={ sitesQuery }
 					/> }
-				{ showExistingSubscriptions && (
+				{ showExistingSubscriptions &&
 					<FollowingManageSubscriptions
 						width={ this.state.width }
 						query={ subsQuery }
 						sortOrder={ subsSortOrder }
 						windowScrollerRef={ this.handleWindowScrollerMounted }
-					/> ) }
+					/> }
 			</ReaderMain>
 		);
 	}
@@ -230,6 +235,7 @@ export default connect(
 		getRecommendedSites: seed => getReaderRecommendedSites( state, seed ),
 		isSiteBlocked: site => isSiteBlockedSelector( state, site.blogId ),
 		getReaderAliasedFollowFeedUrl: url => getReaderAliasedFollowFeedUrl( state, url ),
+		followsCount: getReaderFollowsCount( state ),
 	} ),
 	{ requestFeedSearch }
 )( localize( FollowingManage ) );
