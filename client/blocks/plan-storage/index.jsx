@@ -35,10 +35,20 @@ const UNLIMITED_STORAGE_PLANS = [
 class PlanStorage extends Component {
 	static propTypes = {
 		className: PropTypes.string,
-		mediaStorage: PropTypes.object,
-		siteId: PropTypes.number,
+		mediaStorage: PropTypes.shape( {
+			max_storage_bytes: PropTypes.number.isRequired,
+			storage_used_bytes: PropTypes.number.isRequired,
+		} ).isRequired,
+		siteId: PropTypes.number.isRequired,
 		sitePlanSlug: PropTypes.string,
 		siteSlug: PropTypes.string,
+	};
+
+	static defaultProps = {
+		mediaStorage: {
+			max_storage_bytes: -1,
+			storage_used_bytes: -1,
+		},
 	};
 
 	render() {
