@@ -86,7 +86,7 @@
     "morgan": "1.2.0",
     "ms": "0.7.1",
     "node-sass": "3.7.0",
-    "notifications-panel": "1.1.11",
+    "notifications-panel": "automattic/notifications-panel#add\/104-settings-button",
     "numeral": "2.0.4",
     "page": "1.6.4",
     "percentage-regex": "3.0.0",
