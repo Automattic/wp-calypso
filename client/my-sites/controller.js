@@ -15,11 +15,9 @@ import userFactory from 'lib/user';
 import { receiveSite, requestSites } from 'state/sites/actions';
 import {
 	getSite,
-	isJetpackModuleActive,
-	isJetpackSite,
 	isRequestingSites,
 } from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import {
 	setSelectedSiteId,
 	setSection,
@@ -58,7 +56,6 @@ import {
 	domainManagementTransferToAnotherUser
 } from 'my-sites/upgrades/paths';
 import SitesComponent from 'my-sites/sites';
-import { isATEnabled } from 'lib/automated-transfer';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -369,28 +366,6 @@ module.exports = {
 		next();
 	},
 
-	jetpackModuleActive( moduleId, redirect ) {
-		return function( context, next ) {
-			const { getState } = getStore( context );
-			const siteId = getSelectedSiteId( getState() );
-			const isJetpack = isJetpackSite( getState(), siteId );
-			const isModuleActive = isJetpackModuleActive(
-					getState(),
-					siteId,
-					moduleId );
-
-			if ( ! isJetpack ) {
-				return next();
-			}
-
-			if ( isModuleActive || false === redirect ) {
-				next();
-			} else {
-				page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
-			}
-		};
-	},
-
 	makeNavigation: function( context, next ) {
 		context.secondary = createNavigation( context );
 		next();
@@ -404,29 +379,6 @@ module.exports = {
 			context.store
 		);
 		next();
-	},
-
-	jetPackWarning( context, next ) {
-		const { getState } = getStore( context );
-		const Main = require( 'components/main' );
-		const JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
-		const basePath = route.sectionify( context.path );
-		const selectedSite = getSelectedSite( getState() );
-
-		if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
-			renderWithReduxStore( (
-				<Main>
-					<JetpackManageErrorPage
-						template="noDomainsOnJetpack"
-						siteId={ selectedSite.ID }
-					/>
-				</Main>
-			), document.getElementById( 'primary' ), context.store );
-
-			analytics.pageView.record( basePath, '> No Domains On Jetpack' );
-		} else {
-			next();
-		}
 	},
 
 	sites( context ) {

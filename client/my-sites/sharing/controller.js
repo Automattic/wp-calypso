@@ -8,6 +8,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import {
+	isJetpackModuleActive,
+	isJetpackSite,
+} from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import notices from 'notices';
 import { pageView } from 'lib/analytics';
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -74,4 +79,26 @@ export const buttons = ( context, next ) => {
 	context.contentComponent = createElement( SharingButtons );
 
 	next();
+};
+
+export const jetpackModuleActive = ( moduleId, redirect ) => {
+	return function( context, next ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isModuleActive = isJetpackModuleActive(
+			state,
+			siteId,
+			moduleId );
+
+		if ( ! isJetpack ) {
+			return next();
+		}
+
+		if ( isModuleActive || false === redirect ) {
+			next();
+		} else {
+			page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
+		}
+	};
 };
