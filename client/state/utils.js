@@ -375,3 +375,35 @@ export function combineReducersWithPersistence( reducers ) {
 	combined.hasSchema = validatedReducersHasSchema;
 	return combined;
 }
+
+/**
+ * Wraps a reducer such that it won't persist
+ * any state to the browser's local cache
+ *
+ * @example revent a simple reducer from persisting
+ * const age = ( state = 0, { type } ) =>
+ *   GROW === type
+ *     ? state + 1
+ *     : state
+ *
+ * export default combineReducers( {
+ *   age: withoutPersistence( age )
+ * } )
+ *
+ * @example preventing a large reducer from persisting
+ * const posts = withoutPersistence( keyedReducer( 'postId', post ) )
+ *
+ * @param {Function} reducer original reducer
+ * @returns {Function} wrapped reducer
+ */
+export const withoutPersistence = reducer => ( state, action ) => {
+	if ( DESERIALIZE === action.type ) {
+		return reducer( undefined, { type: '@@calypso/INIT' } );
+	}
+
+	if ( SERIALIZE === action.type ) {
+		return null;
+	}
+
+	return reducer( state, action );
+};

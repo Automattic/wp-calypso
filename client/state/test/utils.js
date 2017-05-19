@@ -29,6 +29,7 @@ describe( 'utils', () => {
 	let withSchemaValidation;
 	let combineReducersWithPersistence;
 	let isValidStateWithSchema;
+	let withoutPersistence;
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/warn', noop );
@@ -40,6 +41,7 @@ describe( 'utils', () => {
 			withSchemaValidation,
 			combineReducersWithPersistence,
 			isValidStateWithSchema,
+			withoutPersistence,
 		} = require( 'state/utils' ) );
 	} );
 
@@ -277,7 +279,6 @@ describe( 'utils', () => {
 			expect( state ).to.eql( [ 0, 1 ] );
 		} );
 	} );
-
 	describe( '#keyedReducer', () => {
 		const grow = name => ( { type: 'GROW', name } );
 
@@ -609,6 +610,40 @@ describe( 'utils', () => {
 
 			const invalid = veryNested( { bob: { person: { height: 22, date: new Date( -5 ) } }, count: 123 }, write );
 			expect( invalid ).to.eql( { bob: { person: { height: 160, date: -5 } }, count: 1 } );
+		} );
+	} );
+
+	describe( '#withoutPersistence', () => {
+		const age = ( state = 0, { type } ) => {
+			if ( 'GROW' === type ) {
+				return state + 1;
+			}
+
+			if ( DESERIALIZE === type ) {
+				return state.age;
+			}
+
+			if ( SERIALIZE === type ) {
+				return { age: state };
+			}
+
+			return state;
+		};
+		let wrapped;
+
+		before( () => wrapped = withoutPersistence( age ) );
+
+		it( 'should pass through normal actions', () => {
+			expect( wrapped( 10, { type: 'GROW' } ) ).to.equal( 11 );
+			expect( wrapped( 10, { type: 'FADE' } ) ).to.equal( 10 );
+		} );
+
+		it( 'should DESERIALIZE to `initialState`', () => {
+			expect( wrapped( 10, { type: DESERIALIZE } ) ).to.equal( 0 );
+		} );
+
+		it( 'should SERIALIZE to `null`', () => {
+			expect( wrapped( 10, { type: SERIALIZE } ) ).to.be.null;
 		} );
 	} );
 } );
