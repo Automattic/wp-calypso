@@ -65,7 +65,7 @@ function ReaderSubscriptionListItem( {
 
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>
-			<div>
+			<div className="reader-subscription-list-item__avatar">
 				<ReaderAvatar
 					siteIcon={ siteIcon }
 					feedIcon={ feedIcon }
