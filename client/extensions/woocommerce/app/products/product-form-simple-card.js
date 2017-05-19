@@ -25,7 +25,8 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 	};
 
 	const setWeight = ( e ) => {
-		editProduct( product, { weight: e.target.value } );
+		const weight = e.target.value;
+		Number( weight ) >= 0 && editProduct( product, { weight } );
 	};
 
 	const setPrice = ( e ) => {
@@ -37,7 +38,8 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 	};
 
 	const setStockQuantity = ( e ) => {
-		editProduct( product, { stock_quantity: e.target.value } );
+		const stock_quantity = e.target.value;
+		Number( stock_quantity ) >= 0 && editProduct( product, { stock_quantity } );
 	};
 
 	const setBackorders = ( e ) => {
@@ -75,6 +77,7 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 					<FormTextInputWithAffixes
 						name="weight"
 						type="number"
+						min="0"
 						suffix="g"
 						value={ product.weight || '' }
 						onChange={ setWeight }
@@ -105,6 +108,7 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 							name="stock_quantity"
 							value={ product.stock_quantity || '' }
 							type="number"
+							min="0"
 							onChange={ setStockQuantity }
 							placeholder={ translate( 'Quantity' ) } />
 					) }
@@ -139,10 +143,10 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 ProductFormSimpleCard.propTypes = {
 	product: PropTypes.shape( {
 		dimensions: PropTypes.object,
-		weight: PropTypes.number,
-		regular_price: PropTypes.number,
+		weight: PropTypes.string,
+		regular_price: PropTypes.string,
 		manage_stock: PropTypes.bool,
-		stock_quantity: PropTypes.number,
+		stock_quantity: PropTypes.string,
 		backorders: PropTypes.string,
 	} ),
 	editProduct: PropTypes.func.isRequired,

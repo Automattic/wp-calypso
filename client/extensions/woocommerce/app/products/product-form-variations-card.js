@@ -20,23 +20,10 @@ const ProductFormVariationsCard = ( {
 	editProductAttribute,
 	editProductVariation
 } ) => {
+	// TODO When toggling between types, don't destory a user's previous edits. Save to component state and restore on toggle.
 	const handleToggle = () => {
 		if ( 'variable' !== product.type ) {
-			// Reset any 'simple' product settings that have been filled out,
-			// since they are configured by each variation instead.
-			const productData = { ...product };
-			[ 'dimensions', 'weight', 'regular_price', 'manage_stock',
-			'stock_quantity', 'backorders' ].forEach(
-				function( field ) {
-					if ( product[ field ] ) {
-						productData[ field ] = null;
-					}
-				}
-			);
-			editProduct( product, {
-				...productData,
-				type: 'variable',
-			} );
+			editProduct( product, { type: 'variable' } );
 		} else {
 			const attributes = ( product.attributes && product.attributes.filter( attribute => ! attribute.variation ) ) || null;
 			editProduct( product, { type: 'simple', attributes } );
