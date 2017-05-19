@@ -36,7 +36,7 @@ export const items = keyedReducer(
  */
 export const pagingOffset = keyedReducer(
 	'seed',
-	createReducer( 0, {
+	createReducer( null, {
 		[ READER_RECOMMENDED_SITES_RECEIVE ]: ( state, action ) =>
 			Math.max( action.payload.offset, state ),
 	} )
