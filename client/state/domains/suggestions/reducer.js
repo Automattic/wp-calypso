@@ -6,12 +6,9 @@ import {
 	DOMAINS_SUGGESTIONS_REQUEST,
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { combineReducersWithPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
 import { getSerializedDomainsSuggestionsQuery } from './utils';
 
 /**
@@ -31,16 +28,10 @@ export function items( state = {}, action ) {
 				} );
 			}
 			return state;
-		case SERIALIZE:
-			return state;
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, itemsSchema ) ) {
-				return state;
-			}
-			return {};
 	}
 	return state;
 }
+items.schema = itemsSchema;
 
 /**
  * Tracks domains suggestions request state, indexed by a serialized query.
@@ -61,9 +52,6 @@ export function requesting( state = {}, action ) {
 				} );
 			}
 			return state;
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -93,9 +81,6 @@ export function errors( state = {}, action ) {
 				} );
 			}
 			return state;
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
