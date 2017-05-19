@@ -7,6 +7,10 @@
 	font-size: 14px;
 	line-height: 18px;
 	color: $gray-dark;
+
+	&.is-destructive {
+		color: $alert-red;
+	}
 }
 
 .delete-site-options__section-desc {

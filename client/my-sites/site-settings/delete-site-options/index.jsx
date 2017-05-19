@@ -97,7 +97,9 @@ class SiteTools extends React.Component {
 					onClick={ this.checkForSubscriptions }
 					className="delete-site-options__link">
 					<div className="delete-site-options__content">
-						<p className="delete-site-options__section-title">{ strings.deleteSite }</p>
+						<p className="delete-site-options__section-title is-destructive">
+							{ strings.deleteSite }
+						</p>
 						<p className="delete-site-options__section-desc">
 							{ translate(
 								'All your posts, images, and data will be deleted. ' +
