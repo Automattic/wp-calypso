@@ -46,11 +46,14 @@ import {
 } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
-	getSiteSettings,
 	getSiteSettingsSaveError,
 } from 'state/site-settings/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
+import {
+	isJetpackModuleActive,
+	isHiddenSite,
+	isPrivateSite,
+} from 'state/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import WebPreview from 'components/web-preview';
@@ -389,9 +392,10 @@ export const SeoForm = React.createClass( {
 			showAdvancedSeo,
 			showWebsiteMeta,
 			site,
-			siteSettings,
 			isFetchingSite,
 			isSeoToolsActive,
+			isSitePrivate,
+			isSiteHidden,
 			isVerificationToolsActive,
 			translate,
 		} = this.props;
@@ -414,9 +418,8 @@ export const SeoForm = React.createClass( {
 
 		const activateSeoTools = () => this.props.activateModule( siteId, 'seo-tools' );
 		const activateVerificationServices = () => this.props.activateModule( siteId, 'verification-tools' );
-		const isSitePrivate = siteSettings && parseInt( siteSettings.blog_public, 10 ) !== 1;
 		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsSeo;
-		const isDisabled = isSitePrivate || isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
+		const isDisabled = isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
 		const isSeoDisabled = isDisabled || isSeoToolsActive === false;
 		const isVerificationDisabled = isDisabled || isVerificationToolsActive === false;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
@@ -466,17 +469,17 @@ export const SeoForm = React.createClass( {
 					path="/settings/seo/:site"
 					title="Site Settings > SEO"
 				/>
-				{ isSitePrivate && hasBusinessPlan( site.plan ) &&
+				{ ( isSitePrivate || isSiteHidden ) && hasBusinessPlan( site.plan ) &&
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ translate(
-							'SEO settings are disabled because the ' +
-							'site visibility is not set to Public.'
-						) }
+						text={ isSitePrivate
+							? translate( "SEO settings aren't recognized by search engines while your site is Private." )
+							: translate( "SEO settings aren't recognized by search engines while your site is Hidden." )
+						}
 					>
 						<NoticeAction href={ generalTabUrl }>
-							{ translate( 'View Settings' ) }
+							{ translate( 'Privacy Settings' ) }
 						</NoticeAction>
 					</Notice>
 				}
@@ -752,12 +755,13 @@ const mapStateToProps = ( state, ownProps ) => {
 		siteIsJetpack,
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
-		siteSettings: getSiteSettings( state, siteId ),
 		showAdvancedSeo: isAdvancedSeoEligible && isAdvancedSeoSupported,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
 		jetpackVersionSupportsSeo: jetpackVersionSupportsSeo,
 		isFetchingSite: isRequestingSite( state, siteId ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
+		isSiteHidden: isHiddenSite( state, siteId ),
+		isSitePrivate: isPrivateSite( state, siteId ),
 		isVerificationToolsActive: isJetpackModuleActive( state, siteId, 'verification-tools' ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
