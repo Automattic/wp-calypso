@@ -6,10 +6,9 @@ import keyBy from 'lodash/keyBy';
 /**
  * Internal dependencies
  */
-import { READER_POSTS_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { READER_POSTS_RECEIVE } from 'state/action-types';
 import { combineReducersWithPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
 
 /**
  * Tracks all known post objects, indexed by post ID.
@@ -23,16 +22,10 @@ export function items( state = {}, action ) {
 		case READER_POSTS_RECEIVE: {
 			return Object.assign( {}, state, keyBy( action.posts, 'global_ID' ) );
 		}
-		case SERIALIZE:
-			return state;
-		case DESERIALIZE:
-			if ( ! isValidStateWithSchema( state, itemsSchema ) ) {
-				return {};
-			}
-			return state;
 	}
 	return state;
 }
+items.schema = itemsSchema;
 
 export default combineReducersWithPersistence( {
 	items,
