@@ -6,10 +6,12 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import Gridicon from 'gridicons';
+import { compact } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import QueryPlans from 'components/data/query-plans';
 import FeatureExample from 'components/feature-example';
 import FeatureComparison from 'my-sites/feature-comparison';
@@ -19,11 +21,13 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import { preventWidows } from 'lib/formatting';
 import formatCurrency from 'lib/format-currency';
 import { getFeatureTitle, planHasFeature } from 'lib/plans';
-import { isFreePlan } from 'lib/products-values';
+import { isFreePlan, isFreeJetpackPlan } from 'lib/products-values';
+import { isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getPlanBySlug } from 'state/plans/selectors';
 import {
 	PLAN_BUSINESS,
+	PLAN_JETPACK_BUSINESS,
 	FEATURE_ADVANCED_SEO,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -34,7 +38,19 @@ import {
 	FEATURE_WORDADS_INSTANT,
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_GOOGLE_ANALYTICS,
-	FEATURE_NO_BRANDING
+	FEATURE_NO_BRANDING,
+	FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+	FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+	FEATURE_AUTOMATED_RESTORES,
+	FEATURE_SPAM_AKISMET_PLUS,
+	FEATURE_EASY_SITE_MIGRATION,
+	FEATURE_PREMIUM_SUPPORT,
+	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
+	FEATURE_ONE_CLICK_THREAT_RESOLUTION,
+	FEATURE_REPUBLICIZE,
+	FEATURE_REPUBLICIZE_SCHEDULING
 } from 'lib/plans/constants';
 
 const businessPlanFeatures = [
@@ -50,17 +66,46 @@ const businessPlanFeatures = [
 	FEATURE_NO_BRANDING
 ];
 
-const SeoPreviewNudge = ( { translate, domain, plan = {}, businessPlan = {} } ) => {
-	const planPrice = isFreePlan( plan )
-		? translate( 'Free for life' )
-		: translate( '%(price)s per month, billed yearly', {
-			args: {
-				price: formatCurrency( plan.raw_price / 12, plan.currency_code )
-			}
-		} );
-	const businessPlanPrice = formatCurrency( businessPlan.raw_price / 12, businessPlan.currency_code );
-	const featuresToShow = businessPlanFeatures.filter( feature => ! planHasFeature( plan.product_slug, feature ) );
+const jetpackBusinessPlanFeatures = compact( [
+	FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+	FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+	FEATURE_AUTOMATED_RESTORES,
+	FEATURE_SPAM_AKISMET_PLUS,
+	FEATURE_EASY_SITE_MIGRATION,
+	FEATURE_PREMIUM_SUPPORT,
+	FEATURE_WORDADS_INSTANT,
+	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
+	FEATURE_ONE_CLICK_THREAT_RESOLUTION,
+	FEATURE_GOOGLE_ANALYTICS,
+	isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+	isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING
+] );
 
+const SeoPreviewNudge = ( { translate, domain, plan = {}, businessPlan = {}, isJetpack = false, planFeatures = [] } ) => {
+	let planPrice = translate( 'Free for life' );
+	if ( ! ( isFreePlan( plan ) || isFreeJetpackPlan( plan ) ) ) {
+		planPrice = isJetpack
+			? translate( '%(price)s per year', {
+				args: {
+					price: formatCurrency( plan.raw_price, plan.currency_code )
+				}
+			} )
+			: translate( '%(price)s per month, billed yearly', {
+				args: {
+					price: formatCurrency( plan.raw_price / 12, plan.currency_code )
+				}
+			} );
+	}
+	const businessPlanPrice = isJetpack
+		? formatCurrency( businessPlan.raw_price, businessPlan.currency_code )
+		: formatCurrency( businessPlan.raw_price / 12, businessPlan.currency_code );
+	const priceInfo = isJetpack
+		? translate( '%(price)s per year', { args: { price: businessPlanPrice } } )
+		: translate( '%(price)s per month, billed yearly', { args: { price: businessPlanPrice } } );
+
+	const featuresToShow = planFeatures.filter( feature => ! planHasFeature( plan.product_slug, feature ) );
 	return (
 		<div className="preview-upgrade-nudge">
 			<QueryPlans />
@@ -112,7 +157,7 @@ const SeoPreviewNudge = ( { translate, domain, plan = {}, businessPlan = {} } ) 
 				</PlanCompareCard>
 				<PlanCompareCard
 					title={ businessPlan.product_name_short || '' }
-					line={ translate( '%(price)s per month, billed yearly', { args: { price: businessPlanPrice } } ) }
+					line={ priceInfo }
 					buttonName={ translate( 'Upgrade' ) }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
@@ -120,7 +165,7 @@ const SeoPreviewNudge = ( { translate, domain, plan = {}, businessPlan = {} } ) 
 							cta_name: 'calypso_seo_preview_upgrade_nudge',
 							cta_feature: FEATURE_ADVANCED_SEO
 						} );
-						page( '/checkout/' + domain + '/business' );
+						page( '/checkout/' + domain + ( isJetpack ? '/professional' : '/business' ) );
 					} }
 					currentPlan={ false }
 					popularRibbon={ true } >
@@ -147,11 +192,13 @@ SeoPreviewNudge.propTypes = {
 
 const mapStateToProps = ( state, ownProps ) => {
 	const { site } = ownProps;
-
+	const isJetpack = isJetpackSite( state, site.ID );
 	return {
 		domain: site.domain,
 		plan: getPlanBySlug( state, site.plan.product_slug ),
-		businessPlan: getPlanBySlug( state, PLAN_BUSINESS )
+		businessPlan: getPlanBySlug( state, isJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS ),
+		isJetpack,
+		planFeatures: isJetpack ? jetpackBusinessPlanFeatures : businessPlanFeatures
 	};
 };
 
