@@ -35,10 +35,6 @@ export function requesting( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: POST_TYPES_REQUEST === action.type
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -64,8 +60,9 @@ export function items( state = {}, action ) {
 			if ( isValidStateWithSchema( state, schema.items ) ) {
 				return state;
 			}
-
 			return {};
+		case SERIALIZE:
+			return state;
 	}
 
 	return state;
