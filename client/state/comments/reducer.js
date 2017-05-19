@@ -146,6 +146,7 @@ export function items( state = Immutable.Map(), action ) {
 
 	return state;
 }
+items.hasCustomPersistence = true;
 
 /***
  * Stores information regarding requests status per requestId
@@ -171,6 +172,7 @@ export function requests( state = Immutable.Map(), action ) {
 
 	return state;
 }
+requests.hasCustomPersistence = true;
 
 /***
  * Stores latest comments count for post we've seen from the server
@@ -190,6 +192,7 @@ export function totalCommentsCount( state = Immutable.Map(), action ) {
 
 	return state;
 }
+totalCommentsCount.hasCustomPersistence = true;
 
 export default combineReducersWithPersistence( {
 	items,
