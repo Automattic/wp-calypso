@@ -9,18 +9,12 @@ import {
 	SUPPORT_USER_PREFILL,
 	SUPPORT_USER_SET_USERNAME,
 	SUPPORT_USER_TOGGLE_DIALOG,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 
 export function isSupportUser( state = false, { type } ) {
 	switch ( type ) {
 		case SUPPORT_USER_ACTIVATE:
 			return true;
-		case SERIALIZE:
-			return false;
-		case DESERIALIZE:
-			return false;
 	}
 
 	return state;
@@ -31,10 +25,6 @@ export function isTransitioning( state = false, { type } ) {
 		case SUPPORT_USER_TOKEN_FETCH:
 			return true;
 		case SUPPORT_USER_ERROR:
-			return false;
-		case SERIALIZE:
-			return false;
-		case DESERIALIZE:
 			return false;
 	}
 	return state;
@@ -48,10 +38,6 @@ export function showDialog( state = false, { type } ) {
 			return true;
 		case SUPPORT_USER_PREFILL:
 			return true;
-		case SERIALIZE:
-			return false;
-		case DESERIALIZE:
-			return false;
 	}
 
 	return state;
@@ -63,10 +49,6 @@ export function errorMessage( state = null, action ) {
 			return action.errorMessage;
 		case SUPPORT_USER_ACTIVATE:
 			return null;
-		case SERIALIZE:
-			return null;
-		case DESERIALIZE:
-			return null;
 	}
 
 	return state;
@@ -77,10 +59,6 @@ export function username( state = null, action ) {
 		case SUPPORT_USER_PREFILL:
 		case SUPPORT_USER_SET_USERNAME:
 			return action.username;
-		case SERIALIZE:
-			return null;
-		case DESERIALIZE:
-			return null;
 	}
 	return state;
 }
