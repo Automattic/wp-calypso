@@ -12,6 +12,7 @@ import { isEnabled } from 'config';
  * Internal dependencies
  */
 import QueryPostTypes from 'components/data/query-post-types';
+import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
@@ -452,7 +453,7 @@ class PostShare extends Component {
 
 					{ this.renderPrimarySection() }
 				</div>
-
+				<QueryPosts { ...{ siteId, postId } } />
 				<SharingPreviewModal
 					siteId={ siteId }
 					postId={ postId }
