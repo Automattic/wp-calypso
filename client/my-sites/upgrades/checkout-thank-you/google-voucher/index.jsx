@@ -5,6 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import debounce from 'lodash/debounce';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -208,6 +209,15 @@ class GoogleVoucherDetails extends Component {
 		const { selectedSite, translate } = this.props;
 		const { step } = this.state;
 		let body;
+
+		if ( ! selectedSite ) {
+			return null;
+		}
+
+		// hide voucher for AT sites
+		if ( get( selectedSite, 'options.is_automated_transfer' ) ) {
+			return null;
+		}
 
 		switch ( step ) {
 			case INITIAL_STEP:
