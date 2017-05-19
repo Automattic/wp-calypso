@@ -44,10 +44,6 @@ export function queryRequests( state = {}, action ) {
 					}
 				}
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
