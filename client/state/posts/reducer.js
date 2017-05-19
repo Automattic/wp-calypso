@@ -98,10 +98,6 @@ export function siteRequests( state = {}, action ) {
 					[ action.postId ]: POST_REQUEST === action.type
 				} )
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -125,10 +121,6 @@ export function queryRequests( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ serializedQuery ]: POSTS_REQUEST === action.type
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -299,10 +291,6 @@ export function edits( state = {}, action ) {
 					'' === key ? savedPost.ID : key
 				) )
 			};
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
