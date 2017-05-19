@@ -10,11 +10,8 @@ import {
 	SITE_VOUCHERS_REQUEST,
 	SITE_VOUCHERS_REQUEST_SUCCESS,
 	SITE_VOUCHERS_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { combineReducersWithPersistence } from 'state/utils';
-import { isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -53,17 +50,11 @@ export const items = ( state = {}, action ) => {
 					[ siteId ]: vouchers
 				}
 			);
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, itemsSchema ) ) {
-				return state;
-			}
-			return {};
-		case SERIALIZE:
-			return state;
 	}
 
 	return state;
 };
+items.schema = itemsSchema;
 
 /**
  * `Reducer` function which handles request/response actions
@@ -87,9 +78,6 @@ export const requesting = ( state = {}, { type, siteId } ) => {
 					assign: type === SITE_VOUCHERS_ASSIGN_REQUEST
 				}
 			} );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -124,10 +112,6 @@ export const errors = ( state = {}, { type, siteId, error } ) => {
 				}
 
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
