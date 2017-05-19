@@ -7,8 +7,6 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { combineReducersWithPersistence } from 'state/utils';
 
@@ -27,10 +25,6 @@ export function requesting( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: action.type === WORDADS_SITE_APPROVE_REQUEST
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -53,9 +47,6 @@ export function requestErrors( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: null
 			} );
-		case DESERIALIZE:
-		case SERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -78,9 +69,6 @@ export function requestSuccess( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: true
 			} );
-		case DESERIALIZE:
-		case SERIALIZE:
-			return {};
 	}
 	return state;
 }
