@@ -13,8 +13,28 @@ import { urlToSlug } from 'lib/url';
 
 class JetpackConnectNotices extends Component {
 	static propTypes = {
-		noticeType: PropTypes.string,
-		url: PropTypes.string
+		noticeType: PropTypes.oneOf( [
+			'alreadyConnected',
+			'alreadyConnectedByOtherUser',
+			'alreadyOwned',
+			'defaultAuthorizeError',
+			'isDotCom',
+			'jetpackIsValid',
+			'notActiveJetpack',
+
+			// notConnectedJetpack is expected, but no notice is shown.
+			'notConnectedJetpack',
+			'notExists',
+			'notJetpack',
+			'notWordPress',
+			'outdatedJetpack',
+			'retryAuth',
+			'retryingAuth',
+			'secretExpired',
+			'wordpress.com',
+		] ).isRequired,
+		translate: PropTypes.func.isRequired,
+		url: PropTypes.string,
 	}
 
 	getNoticeValues() {
