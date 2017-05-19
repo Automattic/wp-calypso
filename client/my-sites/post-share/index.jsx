@@ -333,13 +333,9 @@ class PostShare extends Component {
 		}
 	}
 
-	showAddTooltip = () => {
-		this.setState( { showAccountTooltip: true } );
-	}
+	showAddTooltip = () => this.setState( { showAccountTooltip: true } );
 
-	hideAddTooltip = () => {
-		this.setState( { showAccountTooltip: false } );
-	}
+	hideAddTooltip = () => this.setState( { showAccountTooltip: false } );
 
 	renderConnectionsSection() {
 		const { hasFetchedConnections, siteId, siteSlug, translate } = this.props;

@@ -56,7 +56,7 @@ class ConnectionsList extends PureComponent {
 
 		const brokenConnections = connections.filter( connection => connection.status === 'broken' );
 
-		if ( ! brokenConnections || ! brokenConnections.length ) {
+		if ( ! brokenConnections.length ) {
 			return null;
 		}
 
