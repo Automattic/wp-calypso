@@ -76,14 +76,15 @@ class TransferToOtherSite extends React.Component {
 
 		this.setState( { disableDialogButtons: true } );
 		wpcom.transferToSite( this.props.selectedSite.ID, this.props.selectedDomainName, targetSite.ID )
+			.then(
+				() => {
+					this.props.successNotice( successMessage, { duration: 10000, isPersistent: true } );
+					page( paths.domainManagementList( this.props.selectedSite.slug ) );
+				}, ( error ) => {
+					this.props.errorNotice( error.message || defaultErrorMessage );
+				} )
 			.then( () => {
 				this.setState( { disableDialogButtons: false } );
-				this.props.successNotice( successMessage, { duration: 10000, isPersistent: true } );
-				closeDialog();
-				page( paths.domainManagementList( this.props.selectedSite.slug ) );
-			}, error => {
-				this.setState( { disableDialogButtons: false } );
-				this.props.errorNotice( error.message || defaultErrorMessage );
 				closeDialog();
 			} );
 	}
