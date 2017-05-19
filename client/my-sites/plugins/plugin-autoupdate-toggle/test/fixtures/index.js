@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	site: {
 		slug: 'test',
 		domain: '',

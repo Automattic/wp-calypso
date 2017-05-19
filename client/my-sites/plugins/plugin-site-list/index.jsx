@@ -16,7 +16,7 @@ import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
 import SectionHeader from 'components/section-header';
 import PluginsStore from 'lib/plugins/store';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PluginSiteList',
 

@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-module.exports = {
+export default {
 	togglePluginAutoUpdate: sinon.spy(),
 	removePluginsNotices: function() {}
 };
