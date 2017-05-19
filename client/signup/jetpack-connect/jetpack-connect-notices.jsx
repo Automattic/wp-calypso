@@ -18,7 +18,12 @@ class JetpackConnectNotices extends Component {
 	}
 
 	getNoticeValues() {
-		const { translate } = this.props;
+		const {
+			noticeType,
+			onDismissClick,
+			translate,
+			url,
+		} = this.props;
 
 		const noticeValues = {
 			icon: 'notice',
@@ -27,88 +32,88 @@ class JetpackConnectNotices extends Component {
 			showDismiss: false
 		};
 
-		if ( this.props.onDismissClick ) {
-			noticeValues.onDismissClick = this.props.onDismissClick;
+		if ( onDismissClick ) {
+			noticeValues.onDismissClick = onDismissClick;
 			noticeValues.showDismiss = true;
 		}
 
-		if ( this.props.noticeType === 'notExists' ) {
+		if ( noticeType === 'notExists' ) {
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'isDotCom' ) {
+		if ( noticeType === 'isDotCom' ) {
 			noticeValues.icon = 'block';
 			noticeValues.text = translate( 'That\'s a WordPress.com site, so you don\'t need to connect it.' );
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'notWordPress' ) {
+		if ( noticeType === 'notWordPress' ) {
 			noticeValues.icon = 'block';
 			noticeValues.text = translate( 'That\'s not a WordPress site.' );
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'notActiveJetpack' ) {
+		if ( noticeType === 'notActiveJetpack' ) {
 			noticeValues.icon = 'block';
 			noticeValues.text = translate( 'Jetpack is deactivated.' );
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'outdatedJetpack' ) {
+		if ( noticeType === 'outdatedJetpack' ) {
 			noticeValues.icon = 'block';
 			noticeValues.text = translate( 'You must update Jetpack before connecting.' );
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'jetpackIsDisconnected' ) {
+		if ( noticeType === 'jetpackIsDisconnected' ) {
 			noticeValues.icon = 'link-break';
 			noticeValues.text = translate( 'Jetpack is currently disconnected.' );
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'jetpackIsValid' ) {
+		if ( noticeType === 'jetpackIsValid' ) {
 			noticeValues.status = 'is-success';
 			noticeValues.icon = 'plugins';
 			noticeValues.text = translate( 'Jetpack is connected.' );
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'notJetpack' ) {
+		if ( noticeType === 'notJetpack' ) {
 			noticeValues.status = 'is-noticeType';
 			noticeValues.icon = 'status';
 			noticeValues.text = translate( 'Jetpack couldn\'t be found.' );
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'alreadyConnected' || this.props.noticeType === 'alreadyOwned' ) {
+		if ( noticeType === 'alreadyConnected' || noticeType === 'alreadyOwned' ) {
 			noticeValues.status = 'is-success';
 			noticeValues.icon = 'status';
 			noticeValues.text = translate( 'This site is already connected!' );
 			noticeValues.showDismiss = false;
 			noticeValues.children = (
-				<NoticeAction href={ '/plans/my-plan/' + urlToSlug( this.props.url ) }>
+				<NoticeAction href={ '/plans/my-plan/' + urlToSlug( url ) }>
 					{ translate( 'Visit' ) }
 				</NoticeAction>
 			);
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'wordpress.com' ) {
+		if ( noticeType === 'wordpress.com' ) {
 			noticeValues.text = translate( 'Oops, that\'s us.' );
 			noticeValues.status = 'is-warning';
 			noticeValues.icon = 'status';
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'retryingAuth' ) {
+		if ( noticeType === 'retryingAuth' ) {
 			noticeValues.text = translate( 'Error authorizing. Page is refreshing for an other attempt.' );
 			noticeValues.status = 'is-warning';
 			noticeValues.icon = 'notice';
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'retryAuth' ) {
+		if ( noticeType === 'retryAuth' ) {
 			noticeValues.text = translate( 'In some cases, authorization can take a few attempts. Please try again.' );
 			noticeValues.status = 'is-warning';
 			noticeValues.icon = 'notice';
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'secretExpired' ) {
+		if ( noticeType === 'secretExpired' ) {
 			noticeValues.text = translate( 'Oops, that took a while. You\'ll have to try again.' );
 			noticeValues.status = 'is-error';
 			noticeValues.icon = 'notice';
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'defaultAuthorizeError' ) {
+		if ( noticeType === 'defaultAuthorizeError' ) {
 			noticeValues.text = translate( 'Error authorizing your site. Please {{link}}contact support{{/link}}.', {
 				components: { link: <a href="https://jetpack.com/contact-support" target="_blank" rel="noopener noreferrer" /> }
 			} );
@@ -116,7 +121,7 @@ class JetpackConnectNotices extends Component {
 			noticeValues.icon = 'notice';
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'alreadyConnectedByOtherUser' ) {
+		if ( noticeType === 'alreadyConnectedByOtherUser' ) {
 			noticeValues.text = translate(
 				'This site is already connected to a different WordPress.com user, ' +
 				'you need to disconnect that user before you can connect another.'
