@@ -96,7 +96,7 @@ class SiteTools extends Component {
 					onClick={ this.checkForSubscriptions }
 					className="delete-site-options__link">
 					<div className="delete-site-options__content">
-						<p className="delete-site-options__section-title is-destructive">
+						<p className="delete-site-options__section-title is-warning">
 							{ strings.deleteSite }
 						</p>
 						<p className="delete-site-options__section-desc">
