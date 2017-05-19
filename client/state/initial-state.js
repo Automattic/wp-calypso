@@ -48,21 +48,43 @@ function deserialize( state ) {
 	return reducer( state, { type: DESERIALIZE } );
 }
 
+/**
+ * Adds "sympathy" by randomly clearing out persistent
+ * browser state and loading without it
+ *
+ * Can be overridden on the command-line with two flags
+ *   - ENABLE_FEATURES=force-sympathy make run (always sympathize)
+ *   - ENABLE_FEATURES=force-no-sympathy make run (always prevent sympathy)
+ *
+ * @param {Function} initialStateLoader normal unsympathetic state loader
+ * @returns {Function} augmented initial state loader
+ */
 function addSympathy( initialStateLoader ) {
-	if ( 'development' !== process.env.NODE_ENV || ( Math.random() > 0.5 ) ) {
+	if (
+		(
+			'development' !== process.env.NODE_ENV ||
+			( Math.random() > 0.75 ) ||
+			config.isEnabled( 'force-no-sympathy' )
+		) &&
+		(
+			! config.isEnabled( 'force-sympathy' )
+		)
+	) {
 		return initialStateLoader;
 	}
 
-	console.log( 'Skipping initial state load to recreate first-load experience.' ); // eslint-disable-line no-console
+	console.log( // eslint-disable-line no-console
+		'%cSkipping initial state rehydration to recreate first-load experience.',
+		'font-size: 14px; color: red;'
+	);
 
 	try {
-		localStorage.clear();
-		indexedDB.deleteDatabase( 'calypso' );
+		localforage.clear();
 	} catch ( e ) {
 		// no big deal
 	}
 
-	return initialState => createReduxStore( initialState );
+	return () => createReduxStore( getInitialServerState() );
 }
 
 const loadInitialState = addSympathy( initialState => {
