@@ -6,8 +6,6 @@ import {
 	READER_TAG_IMAGES_REQUEST,
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 	READER_TAG_IMAGES_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'state/action-types';
 import { combineReducersWithPersistence } from 'state/utils';
 
@@ -30,10 +28,6 @@ export function items( state = {}, action ) {
 				...state,
 				[ action.tag ]: images,
 			};
-		// Always return default state - we don't want to serialize images yet
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -56,10 +50,6 @@ export function requesting( state = {}, action ) {
 				...state,
 				[ action.tag ]: action.type === READER_TAG_IMAGES_REQUEST,
 			};
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
