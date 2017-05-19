@@ -195,6 +195,48 @@
     "aws4": {
       "version": "1.6.0"
     },
+    "babel-cli": {
+      "version": "6.24.1",
+      "dev": true,
+      "dependencies": {
+        "babel-core": {
+          "version": "6.24.1",
+          "dev": true
+        },
+        "babel-register": {
+          "version": "6.24.1",
+          "dev": true
+        },
+        "commander": {
+          "version": "2.9.0",
+          "dev": true
+        },
+        "fs-readdir-recursive": {
+          "version": "1.0.0",
+          "dev": true
+        },
+        "home-or-tmp": {
+          "version": "2.0.0",
+          "dev": true
+        },
+        "json5": {
+          "version": "0.5.1",
+          "dev": true
+        },
+        "minimatch": {
+          "version": "3.0.4",
+          "dev": true
+        },
+        "source-map": {
+          "version": "0.5.6",
+          "dev": true
+        },
+        "source-map-support": {
+          "version": "0.4.15",
+          "dev": true
+        }
+      }
+    },
     "babel-code-frame": {
       "version": "6.22.0",
       "dependencies": {
@@ -517,6 +559,10 @@
     },
     "babel-plugin-undefined-to-void": {
       "version": "1.1.6",
+      "dev": true
+    },
+    "babel-polyfill": {
+      "version": "6.23.0",
       "dev": true
     },
     "babel-preset-es2015": {
@@ -5355,6 +5401,10 @@
     },
     "uuid": {
       "version": "2.0.1"
+    },
+    "v8flags": {
+      "version": "2.1.1",
+      "dev": true
     },
     "valid-url": {
       "version": "1.0.9"
