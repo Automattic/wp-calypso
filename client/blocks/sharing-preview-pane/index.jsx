@@ -4,7 +4,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, find } from 'lodash';
+import { get, find, map, intersection } from 'lodash';
 
 /**
  * Internal dependencies
@@ -95,7 +95,8 @@ class SharingPreviewPane extends PureComponent {
 	}
 
 	render() {
-		const { translate, services } = this.props;
+		const { translate, connections, services } = this.props;
+		const activeServices = intersection( services, map( connections, 'service' ) );
 
 		return (
 			<div className="sharing-preview-pane">
@@ -112,7 +113,7 @@ class SharingPreviewPane extends PureComponent {
 						</p>
 					</div>
 					<VerticalMenu onClick={ this.selectPreview }>
-						{ services.map( service => <SocialItem { ...{ key: service, service } } /> ) }
+						{ activeServices.map( service => <SocialItem { ...{ key: service, service } } /> ) }
 					</VerticalMenu>
 				</div>
 				<div className="sharing-preview-pane__preview-area">
