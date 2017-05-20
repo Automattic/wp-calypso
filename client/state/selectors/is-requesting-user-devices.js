@@ -9,6 +9,6 @@ import { get } from 'lodash';
  * @param  {Object} state Global state tree
  * @return {Boolean}      Whether the user's devices are being requested
  */
-export default function isRequestingTimezones( state ) {
-	return get( state, 'devices.isRequesting', false );
+export default function isRequestingUserDevices( state ) {
+	return get( state, 'userDevices.isRequesting', false );
 }

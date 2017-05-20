@@ -116,6 +116,7 @@ export getVisibleSites from './get-visible-sites';
 export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
 export hasInitializedSites from './has-initialized-sites';
 export hasUnsavedUserSettings from './has-unsaved-user-settings';
+export hasUserDevices from './has-user-devices';
 export hasUserSettings from './has-user-settings';
 export isAccountRecoveryResetOptionsReady from './is-account-recovery-reset-options-ready';
 export isAccountRecoveryResetPasswordSucceeded from './is-account-recovery-reset-password-succeeded';

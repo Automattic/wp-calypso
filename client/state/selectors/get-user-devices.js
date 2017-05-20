@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, values } from 'lodash';
 
 /**
  * Returns the current user's devices
@@ -10,5 +10,5 @@ import { get } from 'lodash';
  * @return {Object}       current user's devices
  */
 export default function getUserDevices( state ) {
-	return get( state, 'devices.items', null );
+	return values( get( state, 'userDevices.items', null ) );
 }
