@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PropTypes, PureComponent } from 'react';
+import { connect } from 'react-redux';
+import { map } from 'lodash';
 import Immutable from 'immutable';
 
 /**
@@ -10,35 +11,42 @@ import Immutable from 'immutable';
  */
 import FormSelect from 'components/forms/form-select';
 import { getLabelForStream } from './locales'
+import { getUserDevices } from 'state/selectors';
 
-export default React.createClass( {
-	displayName: 'NotificationSettingsFormStreamSelector',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
-		devices: PropTypes.object,
+class NotificationSettingsFormStreamSelector extends PureComponent {
+	static propTypes = {
+		devices: PropTypes.array,
 		selectedStream: PropTypes.oneOfType( [
 			PropTypes.string,
 			PropTypes.number
 		] ).isRequired,
 		settings: PropTypes.instanceOf( Immutable.Map ),
 		onChange: PropTypes.func.isRequired
-	},
+	}
+
+	onChange = event => this.props.onChange( event.target.value )
 
 	render() {
 		const options = [ 'timeline', 'email' ]
 			.map( stream => <option key={ stream } value={ stream }>{ getLabelForStream( stream ) }</option> )
-			.concat( this.props.devices.get().map( device => <option key={ device.device_id } value={ device.device_id }>{ device.device_name }</option> ) );
+			.concat( map( this.props.devices, device => (
+				<option key={ device.device_id } value={ device.device_id }>{ device.device_name }</option>
+			) ) );
 
 		return (
 			<div className="notification-settings-form-stream-selector">
 				<FormSelect
 					value={ this.props.selectedStream }
-					onChange={ event => this.props.onChange( event.target.value ) } >
+					onChange={ this.onChange } >
 					{ options }
 				</FormSelect>
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => ( {
+		devices: getUserDevices( state )
+	} )
+)( NotificationSettingsFormStreamSelector );

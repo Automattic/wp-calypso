@@ -1,24 +1,22 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PropTypes, PureComponent } from 'react';
+import { connect } from 'react-redux';
 import Immutable from 'immutable';
 import classNames from 'classnames';
+import { size } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { isRequestingUserDevices } from 'state/selectors';
 import StreamHeader from './stream-header';
 import DeviceSelector from './device-selector';
 import StreamOptions from './stream-options';
 
-export default React.createClass( {
-	displayName: 'NotificationSettingsFormStream',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+class NotificationSettingsFormStream extends PureComponent {
+	static propTypes = {
 		blogId: PropTypes.oneOfType( [
 			PropTypes.string,
 			PropTypes.number
@@ -33,24 +31,20 @@ export default React.createClass( {
 			PropTypes.instanceOf( Immutable.Map )
 		] ).isRequired,
 		onToggle: PropTypes.func.isRequired
-	},
+	};
 
-	getInitialState() {
-		return {
-			selectedDeviceIndex: 0
-		};
-	},
+	state = { selectedDeviceIndex: 0 };
 
-	getStreamSettings() {
+	getStreamSettings = () => {
 		let { stream, settings } = this.props;
 
-		if ( this.props.devices && this.props.devices.initialized && this.props.devices.get().length > 0 ) {
-			stream = parseInt( this.props.devices.get()[ this.state.selectedDeviceIndex ].device_id, 10 );
+		if ( this.props.devices && ! this.props.requestingUserDevices && size( this.props.devices ) > 0 ) {
+			stream = parseInt( this.props.devices[ this.state.selectedDeviceIndex ].device_id, 10 );
 			settings = this.props.settings.find( device => device.get( 'device_id' ) === stream );
 		}
 
 		return { stream, settings };
-	},
+	};
 
 	render() {
 		const { stream, settings } = this.getStreamSettings();
@@ -76,4 +70,8 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => ( { requestingUserDevices: isRequestingUserDevices( state ) } )
+)( NotificationSettingsFormStream );

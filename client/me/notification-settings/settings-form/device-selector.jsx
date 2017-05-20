@@ -1,29 +1,28 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PropTypes, PureComponent } from 'react';
+import { connect } from 'react-redux';
+import { size, map, first } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { getUserDevices } from 'state/selectors';
 import StreamHeader from './stream-header';
 import FormSelect from 'components/forms/form-select';
 
-export default React.createClass( {
-	displayName: 'NotificationSettingsFormDeviceSelector',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
-		devices: PropTypes.object.isRequired,
+class NotificationSettingsFormDeviceSelector extends PureComponent {
+	static propTypes = {
+		devices: PropTypes.array.isRequired,
 		selectedDeviceIndex: PropTypes.number.isRequired,
 		onChange: PropTypes.func.isRequired
-	},
+	};
 
 	render() {
-		if ( this.props.devices.get().length === 1 ) {
-			return ( <StreamHeader title={ this.props.devices.get()[ 0 ].device_name } /> );
+		const { devices } = this.props;
+		if ( size( devices ) === 1 ) {
+			return ( <StreamHeader title={ first( devices ).device_name } /> );
 		}
 
 		return (
@@ -32,7 +31,7 @@ export default React.createClass( {
 					<FormSelect
 						value={ this.props.selectedDeviceIndex }
 						onChange={ this.props.onChange } >
-						{ this.props.devices.get().map( ( device, index ) => {
+						{ map( devices, ( device, index ) => {
 							return <option key={ index } value={ index }>{ device.device_name }</option>;
 						} ) }
 					</FormSelect>
@@ -40,4 +39,10 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => ( {
+		devices: getUserDevices( state )
+	} )
+)( NotificationSettingsFormDeviceSelector );
