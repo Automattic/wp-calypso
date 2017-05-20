@@ -55,7 +55,7 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	renderPreview() {
-		const { post, message, connections } = this.props;
+		const { post, site, message, connections } = this.props;
 		const { selectedService } = this.state;
 		const connection = find( connections, { service: selectedService } );
 		if ( ! connection ) {
@@ -65,6 +65,7 @@ class SharingPreviewPane extends PureComponent {
 		const articleUrl = get( post, 'URL', '' );
 		const articleTitle = get( post, 'title', '' );
 		const articleContent = getExcerptForPost( post );
+		const siteDomain = get( site, 'domain', '' );
 		const imageUrl = getPostImage( post );
 		const {
 			external_name: externalName,
@@ -77,11 +78,13 @@ class SharingPreviewPane extends PureComponent {
 			articleUrl,
 			articleTitle,
 			articleContent,
+			externalDisplay,
 			externalName,
 			externalProfileURL,
 			externalProfilePicture,
 			message,
 			imageUrl,
+			siteDomain,
 		};
 
 		switch ( selectedService ) {
