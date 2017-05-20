@@ -10,19 +10,21 @@ export class LinkedinSharePreview extends PureComponent {
 		articleUrl: PropTypes.string,
 		externalProfilePicture: PropTypes.string,
 		externalProfileUrl: PropTypes.string,
-		externalName: PropTypes.string,
 		imageUrl: PropTypes.string,
 		message: PropTypes.string,
+		name: PropTypes.string,
+		siteDomain: PropTypes.string,
 	};
 
 	render() {
 		const {
 			articleUrl,
+			externalDisplay,
 			externalProfilePicture,
 			externalProfileUrl,
-			externalName,
 			imageUrl,
-			message
+			message,
+			siteDomain,
 		} = this.props;
 		return (
 			<div className="linkedin-share-preview">
@@ -37,11 +39,8 @@ export class LinkedinSharePreview extends PureComponent {
 						<div className="linkedin-share-preview__profile-line-part">
 							<div className="linkedin-share-preview__profile-line">
 								<a className="linkedin-share-preview__profile-name" href={ externalProfileUrl }>
-									{ externalName }
+									{ externalDisplay }
 								</a>
-							</div>
-							<div className="linkedin-share-preview__meta-line">
-								companyName
 							</div>
 						</div>
 					</div>
@@ -57,12 +56,12 @@ export class LinkedinSharePreview extends PureComponent {
 							</div>
 						}
 						<div className="linkedin-share-preview__message-part">
-							<a href={ articleUrl }>
+							<a className="linkedin-share-preview__message-link" href={ articleUrl }>
 								<div className="linkedin-share-preview__message">
 									{ message }
 								</div>
 								<div className="linkedin-share-preview__site-url">
-									siteUrl
+									{ siteDomain }
 								</div>
 							</a>
 						</div>
