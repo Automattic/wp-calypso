@@ -16,7 +16,7 @@ export const requestUserDevices = function( { dispatch }, action, next ) {
 		apiVersion: '1.1',
 		method: 'GET',
 		path: '/notifications/devices',
-	}, action ) );
+	} ) );
 
 	return next( action );
 };
