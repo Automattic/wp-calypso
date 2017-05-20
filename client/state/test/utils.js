@@ -429,14 +429,6 @@ describe( 'utils', () => {
 			const validated = withSchemaValidation( null, age );
 			expect( validated( 5, grow ) ).to.equal( 6 );
 		} );
-
-		it( 'supports reducers with custom handlers', () => {
-			const validated = withSchemaValidation( null, date );
-			expect( validated( 44, load ).getTime() ).to.equal( 44 );
-			expect( validated( -5, load ).getTime() ).to.equal( 0 );
-			expect( validated( new Date( 24 ), write ) ).to.equal( 24 );
-			expect( validated( new Date( 24 ), grow ).getTime() ).to.equal( 25 );
-		} );
 	} );
 
 	describe( '#combineReducersWithPersistence', () => {
