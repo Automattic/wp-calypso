@@ -23,6 +23,7 @@ import {
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import localeVariants from 'lib/i18n-utils/locale-variants';
+import userSettings from 'lib/user-settings';
 import touchDetect from 'lib/touch-detect';
 
 const debug = debugFactory( 'calypso' );
