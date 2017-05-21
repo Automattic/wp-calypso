@@ -85,7 +85,7 @@ const Account = React.createClass( {
 	},
 
 	componentDidUpdate() {
-		const originalLangSlug = this.props.userSettings.getOriginalSetting( 'locale_variant' ) || this.props.userSettings.getOriginalSetting( 'language' )
+		const originalLangSlug = this.getOriginalUserSetting( 'locale_variant' ) || this.getOriginalUserSetting( 'language' );
 
 		if (  originalLangSlug !== null && ! this.state.langSlug ) {
 			this.setState( { langSlug: originalLangSlug } );
@@ -98,6 +98,10 @@ const Account = React.createClass( {
 
 	getUserSetting( settingName ) {
 		return this.props.userSettings.getSetting( settingName );
+	},
+
+	getOriginalUserSetting( settingName ) {
+		return this.props.userSettings.getOriginalSetting( settingName );
 	},
 
 	updateUserSetting( settingName, value ) {
@@ -114,17 +118,8 @@ const Account = React.createClass( {
 
 	updateLanguage( event ) {
 		const { value } = event.target;
-		const originalLanguage = this.props.userSettings.getOriginalSetting( 'locale_variant' ) || this.props.userSettings.getOriginalSetting( 'language' );
-
-		this.props.userSettings.updateSetting( 'language', value );
+		const originalLanguage = this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' );
 		this.setState( { langSlug: value } );
-
-		if ( value !== originalLanguage ) {
-			this.setState( { redirect: '/me/account' } );
-		} else {
-			this.setState( { redirect: false } );
-		}
-
 
 		this.updateUserSetting( 'language', value );
 		const redirect = value !== originalLanguage ? '/me/account' : false;
@@ -543,7 +538,7 @@ const Account = React.createClass( {
 						onFocus={ this.recordFocusEvent( 'Interface Language Field' ) }
 						valueKey="langSlug"
 						value={ this.state.langSlug }
-						defaultValue={ this.props.userSettings.getOriginalSetting( 'locale_variant' ) || this.props.userSettings.getOriginalSetting( 'language' ) }
+						defaultValue={ this.getOriginalUserSetting( 'locale_variant' ) || this.getOriginalUserSetting( 'language' ) }
 						onChange={ this.updateLanguage }
 					/>
 					{ this.thankTranslationContributors() }

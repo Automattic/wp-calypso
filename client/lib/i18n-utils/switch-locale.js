@@ -14,7 +14,6 @@ import i18nUtils from 'lib/i18n-utils';
 const debug = debugFactory( 'calypso:i18n' );
 
 export default function switchLocale( localeSlug ) {
-
 	if ( localeSlug === i18n.getLocaleSlug() ) {
 		return;
 	}

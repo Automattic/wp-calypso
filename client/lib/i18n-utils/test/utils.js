@@ -8,8 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-
-import { removeLocaleFromPath, addLocaleToPath, getLanguage, getLocaleFromPathm, languageFileUrl } from 'lib/i18n-utils';
+import { removeLocaleFromPath, addLocaleToPath, getLanguage, languageFileUrl } from 'lib/i18n-utils';
 
 describe( 'utils', function() {
 	describe( '#addLocaleToPath', function() {

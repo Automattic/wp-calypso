@@ -20,7 +20,6 @@ function getPathParts( path ) {
 const i18nUtils = {
 	getLanguage: function( langSlug ) {
 		let language;
-
 		if ( localeRegex.test( langSlug ) ) {
 			language = find( config( 'languages' ), { langSlug: langSlug } ) ||
 				find( config( 'languages' ), { langSlug: langSlug.substring( 0, 2 ) } );
