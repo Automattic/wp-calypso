@@ -1794,24 +1794,24 @@ Undocumented.prototype.applyDnsTemplate = function( domain, template, variables,
 
 Undocumented.prototype.getDnsTemplateConflicts = function( domain, template, variables, callback ) {
 	// TODO: Create this endpoint on the back end.
-	// return this.wpcom.req.post( '/domains/' + domain + '/dns/template/conflicts/' + template, { variables }, callback );
+	return this.wpcom.req.post( '/domains/' + domain + '/dns/template/' + template + '/conflicts', { variables }, callback );
 
 	// This is just sample data. When the above functionality is implemented, this should be removed.
-	const data = [
-		{
-			type: 'MX',
-			name: 'blerg.com',
-			data: 'ALT1.ASPMX.L.GOOGLE.COM with priority 5'
-		},
-		{
-			type: 'MX',
-			name: 'blerg.com',
-			data: 'ALT2.ASPMX.L.GOOGLE.COM with priority 5'
-		}
-	];
+	// const data = [
+	// 	{
+	// 		type: 'MX',
+	// 		name: 'blerg.com',
+	// 		data: 'ALT1.ASPMX.L.GOOGLE.COM with priority 5'
+	// 	},
+	// 	{
+	// 		type: 'MX',
+	// 		name: 'blerg.com',
+	// 		data: 'ALT2.ASPMX.L.GOOGLE.COM with priority 5'
+	// 	}
+	// ];
 
-	callback( null, data );
-	return true;
+	// callback( null, data );
+	// return true;
 };
 
 Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
