@@ -46,7 +46,8 @@ export function addLocaleQueryParam( params ) {
 	let localeQueryParam = {};
 	const query = qs.parse( params.query );
 
-	if ( 'wpcom/v2' === params.apiNamespace ) {
+	if ( params.apiNamespace ) {
+		// v2 api request
 		localeQueryParam = { _locale: locale };
 	} else {
 		localeQueryParam = { locale };
