@@ -30,8 +30,20 @@ class DomainConnectAuthorize extends Component {
 		super( props );
 		this.state = {
 			action: actionType.READY_TO_SUBMIT,
-			notice: null
+			notice: null,
+			dnsTemplateConflicts: null,
 		};
+	}
+
+	componentDidMount() {
+		const { provider_id, params } = this.props,
+			{ domain } = params;
+
+		upgradesActions.getDnsTemplateConflicts( domain, provider_id, params, ( error, data ) => {
+			this.setState( {
+				dnsTemplateConflicts: data,
+			} );
+		} );
 	}
 
 	handleClickConfirm = () => {
@@ -61,6 +73,37 @@ class DomainConnectAuthorize extends Component {
 
 	handleClickCancel = () => {
 		window.close();
+	}
+
+	renderConflict = () => {
+		if ( null !== this.state.dnsTemplateConflicts ) {
+			return (
+				<div>
+					<p>
+						The following DNS records will be replaced when you make this change:
+					</p>
+					<div className="domain-connect__dns-list">
+						<ul>
+							{
+								this.state.dnsTemplateConflicts.map( ( record, index ) => {
+									return (
+										<li key={ index }>
+											<div className="domain-connect__dns-list-type">
+												<label>{ record.type }</label>
+											</div>
+											<div className="domain-connect__dns-list-info">
+												<strong>{ record.name }</strong>
+												<em>handled by { record.data }</em>
+											</div>
+										</li>
+									);
+								} )
+							}
+						</ul>
+					</div>
+				</div>
+			);
+		}
 	}
 
 	renderNoticeSuccess = () => {
@@ -155,6 +198,7 @@ class DomainConnectAuthorize extends Component {
 						Howdy! It looks like you want to make your domain work with the Google G Suite email service.
 						This means that we'll be adding some new DNS records for you.
 					</p>
+					{ this.renderConflict() }
 					<p>
 						When you're ready to proceed, click Confirm. If this isn't what you meant to do,
 						click Cancel and we won't add the records.
