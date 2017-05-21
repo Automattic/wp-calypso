@@ -2,17 +2,17 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Main from 'components/main';
 import Card from 'components/card/compact';
-import upgradesActions from 'lib/upgrades/actions';
+import Main from 'components/main';
 import Notice from 'components/notice';
+import upgradesActions from 'lib/upgrades/actions';
 
 const actionType = {
 	READY_TO_SUBMIT: 'action-ready-to-submit',
@@ -40,9 +40,11 @@ class DomainConnectAuthorize extends Component {
 			{ domain } = params;
 
 		upgradesActions.getDnsTemplateConflicts( domain, provider_id, params, ( error, data ) => {
-			this.setState( {
-				dnsTemplateConflicts: data,
-			} );
+			if ( ! error ) {
+				this.setState( {
+					dnsTemplateConflicts: data.records,
+				} );
+			}
 		} );
 	}
 
@@ -80,7 +82,7 @@ class DomainConnectAuthorize extends Component {
 			return (
 				<div>
 					<p>
-						The following DNS records will be replaced when you make this change:
+						{ translate( 'The following DNS records will be replaced when you make this change:' ) }
 					</p>
 					<div className="domain-connect__dns-list">
 						<ul>
@@ -93,7 +95,7 @@ class DomainConnectAuthorize extends Component {
 											</div>
 											<div className="domain-connect__dns-list-info">
 												<strong>{ record.name }</strong>
-												<em>handled by { record.data }</em>
+												<em>{ record.data }</em>
 											</div>
 										</li>
 									);
@@ -101,6 +103,13 @@ class DomainConnectAuthorize extends Component {
 							}
 						</ul>
 					</div>
+					<p>
+						{
+							translate( 'The services that these records were used for may no longer work if they ' +
+								'are removed. If you are trying to switch from one service provider to another ' +
+								'this is probably what you want to do.' )
+						}
+					</p>
 				</div>
 			);
 		}
@@ -126,7 +135,7 @@ class DomainConnectAuthorize extends Component {
 					showDismiss={ false }
 					text={
 						this.state.errorMessage ||
-						translate( 'We weren\'t able to add DNS records for this service. Please try again.' ) }>
+						translate( 'We weren\'t able to add the DNS records needed for this service. Please try again.' ) }>
 				</Notice>
 			</div>
 		);
@@ -151,7 +160,7 @@ class DomainConnectAuthorize extends Component {
 					onClick={ this.handleClickConfirm }
 					busy={ actionType.READY_TO_SUBMIT !== this.state.action }
 					disabled={ actionType.READY_TO_SUBMIT !== this.state.action }>
-					<Gridicon icon="checkmark" /> Confirm
+					<Gridicon icon="checkmark" /> { translate( 'Confirm' ) }
 				</Button>
 				<Button
 					icon
@@ -159,7 +168,7 @@ class DomainConnectAuthorize extends Component {
 					onClick={ this.handleClickCancel }
 					busy={ actionType.READY_TO_SUBMIT !== this.state.action }
 					disabled={ actionType.READY_TO_SUBMIT !== this.state.action }>
-					<Gridicon icon="cross" /> Cancel
+					<Gridicon icon="cross" /> { translate( 'Cancel' ) }
 				</Button>
 			</div>
 		);
@@ -171,7 +180,7 @@ class DomainConnectAuthorize extends Component {
 				<Button
 					className="domain-connect__button"
 					onClick={ this.handleClickCancel }>
-					Close
+					{ translate( 'Close' ) }
 				</Button>
 			</div>
 		);
@@ -190,18 +199,39 @@ class DomainConnectAuthorize extends Component {
 	render() {
 		const { domain } = this.props.params;
 
+		// TODO: Get this string from somewhere...based on the template that is being used.
+		const description = 'make your domain work with the Google G Suite email service.';
+
 		return (
 			<Main className="domain-connect__main">
 				<Card>
-					<h2>Authorize DNS Changes for { domain }</h2>
+					<h2>
+						{
+							translate( 'Authorize DNS Changes for %(domain)s',
+								{
+									args: { domain: domain },
+									comment: '%(domain)s is the domain name that we are requesting the user to authorize changes to.'
+								}
+							)
+						}
+					</h2>
 					<p>
-						Howdy! It looks like you want to make your domain work with the Google G Suite email service.
-						This means that we'll be adding some new DNS records for you.
+						{
+							translate( 'Howdy! It looks like you want to %(description)s ' +
+								'This means that we\'ll be adding some new DNS records for you.',
+								{
+									args: { description: description },
+									comment: '%(description)s is a brief phrase that summarizes the changes that will be made.'
+								}
+							)
+						}
 					</p>
 					{ this.renderConflict() }
 					<p>
-						When you're ready to proceed, click Confirm. If this isn't what you meant to do,
-						click Cancel and we won't add the records.
+						{
+							translate( 'When you\'re ready to proceed, click Confirm. If this isn\'t what you meant to do,' +
+								'click Cancel and we won\'t make any changes.' )
+						}
 					</p>
 					{ this.renderNotice() }
 					{ this.renderAction() }
