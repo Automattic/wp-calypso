@@ -43,7 +43,7 @@ export function addLocaleQueryParam( params ) {
 		return params;
 	}
 
-	let localeQueryParam = {};
+	let localeQueryParam;
 	const query = qs.parse( params.query );
 
 	if ( params.apiNamespace ) {
