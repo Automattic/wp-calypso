@@ -200,6 +200,7 @@ class DomainConnectAuthorize extends Component {
 		const { domain } = this.props.params;
 
 		// TODO: Get this string from somewhere...based on the template that is being used.
+		// This is just an example of what the description may look like. I don't like that
 		const description = 'make your domain work with the Google G Suite email service.';
 
 		return (
