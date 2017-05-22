@@ -11,6 +11,10 @@ import { get, find } from 'lodash';
  */
 import { getPostImage } from './utils';
 import FacebookSharePreview from 'components/share/facebook-share-preview';
+import GooglePlusSharePreview from 'components/share/google-plus-share-preview';
+import LinkedinSharePreview from 'components/share/linkedin-share-preview';
+import PathSharePreview from 'components/share/path-share-preview';
+import TumblrSharePreview from 'components/share/tumblr-share-preview';
 import TwitterSharePreview from 'components/share/twitter-share-preview';
 import VerticalMenu from 'components/vertical-menu';
 import { SocialItem } from 'components/vertical-menu/items';
@@ -34,7 +38,14 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	static defaultProps = {
-		services: [ 'facebook', 'twitter' ]
+		services: [
+			'facebook',
+			'twitter',
+			'google_plus',
+			'linkedin',
+			'tumblr',
+			'path',
+		]
 	};
 
 	state = {
@@ -78,6 +89,14 @@ class SharingPreviewPane extends PureComponent {
 				return <TwitterSharePreview
 					{ ...previewProps }
 					externalDisplay={ externalDisplay } />;
+			case 'google_plus':
+				return <GooglePlusSharePreview { ...previewProps } />;
+			case 'linkedin':
+				return <LinkedinSharePreview { ...previewProps } />;
+			case 'path':
+				return <PathSharePreview { ...previewProps } />;
+			case 'tumblr':
+				return <TumblrSharePreview { ...previewProps } />;
 			default:
 				return null;
 		}
