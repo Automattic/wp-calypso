@@ -83,21 +83,23 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		return (
 			<form>
 				<FormFieldset>
-					<FormLabel>
+					<FormLegend>
 						{ this.props.translate( "Who's this domain for?" ) }
+					</FormLegend>
+					<FormLabel>
+						<FormRadio value="individual"
+							checked={ 'individual' === this.state.registrantType }
+							name="registrantType"
+							onChange={ this.handleChangeEvent } />
+						<span>{ this.props.translate( 'An individual' ) }</span>
 					</FormLabel>
-					<FormRadio value="individual"
-						checked={ 'individual' === this.state.registrantType }
-						name="registrantType"
-						onChange={ this.handleChangeEvent } />
-					<span>An individual</span>
 
 					<FormLabel>
 						<FormRadio value="organization"
 							checked={ 'organization' === this.state.registrantType }
 							name="registrantType"
 							onChange={ this.handleChangeEvent } />
-						<span>A company or organization</span>
+						<span>{ this.props.translate( 'A company or organization' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 
@@ -136,7 +138,12 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 							<FormTextInput type="number" className="registrant-extra-info__dob-day" placeholder="DD" />
 						</div>
 					</div>
-					<FormSettingExplanation>e.g. 1970 12 31</FormSettingExplanation>
+					<FormSettingExplanation>{
+						this.props.translate( 'e.g. 1970 12 31', {
+							comment: 'This is describing a date format with fixed fields, so please do not ' +
+								'alter the numbers (Year, Month, Day). Please translate e.g("For example") if appropriate.'
+						} )
+					}</FormSettingExplanation>
 				</FormFieldset>
 
 				<FormFieldset>
