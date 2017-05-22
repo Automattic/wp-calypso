@@ -78,12 +78,7 @@ function addSympathy( initialStateLoader ) {
 		'font-size: 14px; color: red;'
 	);
 
-	try {
-		localforage.clear();
-	} catch ( e ) {
-		// no big deal
-	}
-
+	localforage.clear();
 	return () => createReduxStore( getInitialServerState() );
 }
 
