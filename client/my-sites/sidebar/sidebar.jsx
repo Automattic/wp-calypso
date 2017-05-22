@@ -146,6 +146,27 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	preview() {
+		const { siteId, canUserViewStats } = this.props;
+
+		if ( siteId && ! canUserViewStats ) {
+			return null;
+		}
+
+		const previewLink = '/preview' + this.props.siteSuffix;
+		return (
+			<SidebarItem
+				tipTarget="sitePreview"
+				label={ this.props.translate( 'Site Preview' ) }
+				className={ this.itemLinkClass( [ '/preview' ], 'preview' ) }
+				link={ previewLink }
+				onNavigate={ this.onNavigate }
+				icon="computer"
+				preloadSectionName="preview"
+			/>
+		);
+	}
+
 	ads() {
 		const { site, canUserManageOptions } = this.props;
 		const adsLink = '/ads/earnings' + this.props.siteSuffix;
@@ -535,6 +556,7 @@ export class MySitesSidebar extends Component {
 			<div>
 				<SidebarMenu>
 					<ul>
+						{ this.preview() }
 						{ this.stats() }
 						{ this.plan() }
 						{ this.store() }
