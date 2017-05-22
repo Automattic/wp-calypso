@@ -25,6 +25,10 @@ import {
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
 } from 'state/action-types';
+import {
+	getTwoFactorUserId,
+	getTwoFactorAuthNonce,
+} from 'state/login/selectors';
 
 const loginErrorMessages = {
 	empty_password: translate( 'Please be sure to enter your password.' ),
@@ -191,11 +195,9 @@ export const loginSocialUser = ( service, token ) => dispatch => {
 /**
  * Sends a two factor authentication recovery code to the given user.
  *
- * @param  {Number}    userId        Id of the user trying to log in.
- * @param  {String}    twoStepNonce  Nonce generated for verification code submission.
  * @return {Function}                Action thunk to trigger the request.
  */
-export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
+export const sendSmsCode = () => ( dispatch, getState ) => {
 	dispatch( {
 		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 		notice: {
@@ -207,8 +209,8 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
-			user_id: userId,
-			two_step_nonce: twoStepNonce,
+			user_id: getTwoFactorUserId( getState() ),
+			two_step_nonce: getTwoFactorAuthNonce( getState() ),
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} )

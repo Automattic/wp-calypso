@@ -41,10 +41,24 @@ class VerificationCodeForm extends Component {
 		twoStepCode: ''
 	};
 
+	componentWillMount() {
+		this.maybeSendSmsCode( this.props );
+	}
+
+	maybeSendSmsCode( props ) {
+		if ( props.twoFactorAuthType !== 'sms' ) {
+			return;
+		}
+
+		props.sendSmsCode();
+	}
+
 	componentWillReceiveProps = ( nextProps ) => {
 		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
 			// reset the code input value when changing pages
 			this.setState( { twoStepCode: '' } );
+
+			this.maybeSendSmsCode( nextProps );
 		}
 	};
 
