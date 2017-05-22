@@ -33,7 +33,10 @@ import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import { addQueryArgs } from 'lib/url';
 import FollowButton from 'reader/follow-button';
-import { READER_FOLLOWING_MANAGE_URL_INPUT } from 'reader/follow-button/follow-sources';
+import {
+	READER_FOLLOWING_MANAGE_URL_INPUT,
+	READER_FOLLOWING_MANAGE_RECOMMENDATION,
+} from 'reader/follow-button/follow-sources';
 import { resemblesUrl, addSchemeIfMissing, withoutHttp } from 'lib/url';
 import { getReaderFollowsCount } from 'state/selectors';
 
@@ -214,7 +217,10 @@ class FollowingManage extends Component {
 				</div>
 				{ hasFollows &&
 					! sitesQuery &&
-					<RecommendedSites sites={ take( recommendedSites, 2 ) } /> }
+					<RecommendedSites
+						sites={ take( recommendedSites, 2 ) }
+						followSource={ READER_FOLLOWING_MANAGE_RECOMMENDATION }
+					/> }
 				{ !! sitesQuery &&
 					! isFollowByUrlWithNoSearchResults &&
 					<FollowingManageSearchFeedsResults
