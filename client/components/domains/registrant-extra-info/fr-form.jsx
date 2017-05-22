@@ -153,7 +153,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					<FormTextInput
 						id="place_of_birth"
 						name="place_of_birth"
-						placeholder="Place or city of birth"
+						placeholder={ this.props.translate( 'Place or city of birth' ) }
 					/>
 				</FormFieldset>
 
@@ -167,7 +167,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						autoCorrect="off"
 						id="postal_code_of_birth"
 						name="postal_code_of_birth"
-						placeholder="ex 75008"
+						placeholder={ this.props.translate( 'ex 75008' ) }
 					/>
 				</FormFieldset>
 
@@ -181,7 +181,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						autoCorrect="off"
 						id="registrant_vat_id"
 						name="registrant_vat_id"
-						placeholder="ex XX123456789"
+						placeholder={ this.props.translate( 'ex XX123456789' ) }
 					/>
 				</FormFieldset>
 
@@ -195,7 +195,11 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						autoCorrect="off"
 						id="registrant_vat_id"
 						name="registrant_vat_id"
-						placeholder="ex 123 456 789 or 123 456 789 01234"
+						placeholder={
+							this.props.translate( 'ex 123 456 789 or 123 456 789 01234',
+								{ comment: 'ex is short for "example". The numbers are examples of the EU VAT format' }
+							)
+						}
 					/>
 				</FormFieldset>
 
@@ -209,7 +213,11 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						autoCorrect="off"
 						id="trademark_number"
 						name="trademark_number"
-						placeholder="ex 123456789"
+						placeholder={
+							this.props.translate( 'ex 123456789',
+								{ comment: 'ex is short for example. The number is the EU trademark number format.' }
+							)
+						}
 					/>
 				</FormFieldset>
 				{ this.props.children }
