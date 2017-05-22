@@ -111,6 +111,7 @@
 		"persist-redux": true,
 		"plans/personal-plan": true,
 		"plans/jetpack-config-v2": true,
+		"post-editor/delta-post-publish-flow": false,
 		"post-editor-github-link": false,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
