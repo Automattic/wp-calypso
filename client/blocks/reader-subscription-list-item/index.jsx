@@ -45,6 +45,7 @@ function ReaderSubscriptionListItem( {
 	showEmailSettings,
 	showLastUpdatedDate,
 	isFollowing,
+	showExtendedInformation = false,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
@@ -112,6 +113,14 @@ function ReaderSubscriptionListItem( {
 							<span className="reader-subscription-list-item__timestamp">
 								{ feed && feed.last_update && translate( 'updated %s', { args: lastUpdatedDate } ) }
 							</span> }
+
+					</div> }
+				{ showExtendedInformation &&
+					<div className="reader-subscription-list-item__extended">
+						{ feedUrl }<br />
+						feed id: { feedId }<br />
+						blog id: { siteId }<br />
+						subs: { feed && feed.subscribers_count }
 					</div> }
 			</div>
 			<div className="reader-subscription-list-item__options">
