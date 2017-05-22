@@ -15,7 +15,7 @@ import Card from 'components/card';
 import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SiteURLInput from '../site-url-input';
-import ReaderBack from '../../../blocks/reader-full-post/back';
+import ReaderBack from 'blocks/reader-full-post/back';
 
 import WordPressLogo from 'components/wordpress-logo';
 import JetpackLogo from 'components/jetpack-logo';
