@@ -395,19 +395,22 @@ function mediaButton( editor ) {
 
 		// Re-select image node if one was selected.
 		if ( 'IMG' === originalSelectedNode.nodeName ) {
-			let replacement = editor.selection.getStart();
-			if ( 'IMG' !== replacement.nodeName ) {
-				replacement = replacement.querySelector( 'img' );
-			}
-
-			if ( replacement ) {
-				editor.selection.select( replacement );
-				editor.selection.controlSelection.showResizeRect( replacement );
-			}
-
-			editor.nodeChanged();
+			reselectImage();
 		}
 	} );
+
+	function reselectImage() {
+		// Re-select image node
+		let replacement = editor.selection.getStart();
+		if ( 'IMG' !== replacement.nodeName ) {
+			replacement = replacement.querySelector( 'img' );
+		}
+
+		if ( replacement ) {
+			editor.selection.select( replacement );
+			editor.selection.controlSelection.showResizeRect( replacement );
+		}
+	}
 
 	function hideDropZoneOnDrag( event ) {
 		renderDropZone( { visible: event.type === 'dragend' } );
@@ -609,16 +612,7 @@ function mediaButton( editor ) {
 		// Replace selected content
 		editor.selection.setContent( markup );
 
-		// Re-select image node
-		let replacement = editor.selection.getStart();
-		if ( 'IMG' !== replacement.nodeName ) {
-			replacement = replacement.querySelector( 'img' );
-		}
-
-		if ( replacement ) {
-			editor.selection.select( replacement );
-			editor.selection.controlSelection.showResizeRect( replacement );
-		}
+		reselectImage();
 
 		editor.nodeChanged();
 	}
