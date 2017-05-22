@@ -378,7 +378,8 @@ function mediaButton( editor ) {
 				editor.fire( 'SetTextAreaContent', { content } );
 			}
 
-			// Re-select image node if one was selected.
+			// We have just replaced some image nodes, potentially losing selection/focus.
+			// So if an image node was selected and one isn't now, re-select it.
 			if ( 'IMG' === originalSelectedNode.nodeName ) {
 				reselectImage();
 			}
