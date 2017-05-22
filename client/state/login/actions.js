@@ -37,7 +37,7 @@ const loginErrorMessages = {
 		'Please double check your information and try again.' ),
 	account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
 		"WordPress.com and click the activation link. You'll be able to log in after that." ),
-	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
+	sms_code_throttled: translate( 'You can only request a code via SMS once per minute. Please wait and try again.' ),
 	forbidden_for_automattician: 'Cannot use social login with an Automattician account',
 };
 
