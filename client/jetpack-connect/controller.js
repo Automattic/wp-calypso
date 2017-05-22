@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import JetpackConnect from './index';
+import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackConnectAuthorizeForm from './authorize-form';
 import { setSection } from 'state/ui/actions';

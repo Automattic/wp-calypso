@@ -1,4 +1,0 @@
-{
-	"main": "index.node.js",
-	"browser": "index.web.js"
-}

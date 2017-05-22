@@ -141,7 +141,6 @@ const sections = [
 		module: 'jetpack-connect',
 		secondary: false,
 		enableLoggedOut: true,
-		isomorphic: true
 	},
 	{
 		name: 'signup',
