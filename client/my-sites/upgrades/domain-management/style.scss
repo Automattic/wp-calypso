@@ -428,7 +428,7 @@ input[type=radio].domain-management-list-item__radio {
 		padding-top: 10px;
 	}
 
-	.is-placeholder {
+	.domain-connect__is-placeholder {
 		span {
 			@include placeholder( 23% );
 
@@ -503,7 +503,7 @@ input[type=radio].domain-management-list-item__radio {
 		}
 	}
 
-	.is-placeholder {
+	.domain-connect__is-placeholder {
 		span{
 			@include placeholder( 23% );
 
