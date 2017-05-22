@@ -8,7 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import StepHeader from 'signup/step-header';
+import StepHeader from 'blocks/step-header';
 import NavigationLink from 'signup/navigation-link';
 
 class StepWrapper extends Component {
