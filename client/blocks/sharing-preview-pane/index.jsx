@@ -42,9 +42,11 @@ class SharingPreviewPane extends PureComponent {
 		]
 	};
 
-	state = {
-		selectedService: 'facebook'
-	};
+	constructor( props ) {
+		super( props );
+		const selectedService = this.props.connectedServices[ 0 ];
+		this.state = { selectedService };
+	}
 
 	selectPreview = ( selectedService ) => {
 		this.setState( { selectedService } );
@@ -95,8 +97,8 @@ class SharingPreviewPane extends PureComponent {
 	}
 
 	render() {
-		const { translate, connections, services } = this.props;
-		const activeServices = intersection( services, map( connections, 'service' ) );
+		const { translate, services, connectedServices } = this.props;
+		const activeServices = intersection( services, connectedServices );
 
 		return (
 			<div className="sharing-preview-pane">
@@ -133,12 +135,14 @@ const mapStateToProps = ( state, ownProps ) => {
 	const seoTitle = getSeoTitle( state, 'posts', { site, post } );
 	const currentUserId = getCurrentUserId( state );
 	const connections = getSiteUserConnections( state, siteId, currentUserId );
+	const connectedServices = map( connections, 'service' );
 
 	return {
 		site,
 		post,
 		seoTitle,
 		connections,
+		connectedServices,
 	};
 };
 
