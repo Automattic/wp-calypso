@@ -22,18 +22,20 @@ import {
 	SCHEDULED,
 	PUBLISHED,
 } from './constants';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {
-		section: PropTypes.string,
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 	};
 
-	static defaultProps = {
-		section: SCHEDULED,
+	state = {
+		selectedShareTab: SCHEDULED,
 	};
-
+	setFooterSection = selectedShareTab => () => this.setState( { selectedShareTab } );
 	renderFooterSectionItem( {
 		connectionName,
 		message,
@@ -76,37 +78,51 @@ class PublicizeActionsList extends PureComponent {
 		);
 	}
 
-	renderActionsList( status = SCHEDULED ) {
-		if ( this.props.section !== status ) {
-			return null;
-		}
-
+	renderActionsList = ( actions ) => (
+		<div>
+			{ actions.map( ( item, index ) => this.renderFooterSectionItem( item, index ) ) }
+		</div>
+	);
+	render() {
 		const {
 			postId,
+			siteId,
 			scheduledActions,
 			publishedActions,
-			siteId,
 		} = this.props;
-
-		const actions = status === SCHEDULED ? scheduledActions : publishedActions;
-
 		return (
 			<div>
-				<QuerySharePostActions siteId={ siteId } postId={ postId } status={ status } />
-				{ actions.map( ( item, index ) => this.renderFooterSectionItem( item, index ) ) }
-			</div>
-		);
-	}
-
-	render() {
-		return (
-			<div className="post-share__actions-list">
-				<div className="post-share__scheduled-list">
-					{ this.renderActionsList( SCHEDULED ) }
-				</div>
-
-				<div className="post-share__published-list">
-					{ this.renderActionsList( PUBLISHED ) }
+				<SectionNav className="post-share__footer-nav" selectedText={ 'some text' }>
+					<NavTabs label="Status" selectedText="Published">
+						<NavItem
+							selected={ this.state.selectedShareTab === SCHEDULED }
+							count={ this.props.scheduledActions.length }
+							onClick={ this.setFooterSection( SCHEDULED ) }
+						>
+							Scheduled
+						</NavItem>
+						<NavItem
+							selected={ this.state.selectedShareTab === PUBLISHED }
+							count={ this.props.publishedActions.length }
+							onClick={ this.setFooterSection( PUBLISHED ) }
+						>
+							Published
+						</NavItem>
+					</NavTabs>
+				</SectionNav>
+				<div className="post-share__actions-list">
+					<QuerySharePostActions siteId={ siteId } postId={ postId } status={ SCHEDULED } />
+					<QuerySharePostActions siteId={ siteId } postId={ postId } status={ PUBLISHED } />
+					{ this.state.selectedShareTab === SCHEDULED &&
+						<div className="post-share__scheduled-list">
+							{ this.renderActionsList( scheduledActions ) }
+						</div>
+					}
+					{ this.state.selectedShareTab === PUBLISHED &&
+						<div className="post-share__published-list">
+							{ this.renderActionsList( publishedActions ) }
+						</div>
+					}
 				</div>
 			</div>
 		);
