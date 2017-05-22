@@ -378,6 +378,11 @@ function mediaButton( editor ) {
 				editor.fire( 'SetTextAreaContent', { content } );
 			}
 
+			// Re-select image node if one was selected.
+			if ( 'IMG' === originalSelectedNode.nodeName ) {
+				reselectImage();
+			}
+
 			// Trigger an editor change so that dirty detection and
 			// autosave take effect
 			editor.fire( 'change' );
@@ -391,11 +396,6 @@ function mediaButton( editor ) {
 			// We also need to reset the counter of post/page images to update so if another image is
 			// edited and marked dirty, we can set the counter to correct number.
 			numOfImagesToUpdate = null;
-		}
-
-		// Re-select image node if one was selected.
-		if ( 'IMG' === originalSelectedNode.nodeName ) {
-			reselectImage();
 		}
 	} );
 
