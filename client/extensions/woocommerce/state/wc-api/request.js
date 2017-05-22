@@ -1,11 +1,28 @@
 /**
+ * External dependencies
+ */
+import { omit, mapValues, isArray, isObject } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import wp from 'lib/wp';
 
+const omitDeep = ( input, props ) => {
+	if ( isArray( input ) ) {
+		return input.map( elem => omitDeep( elem, props ) );
+	}
+
+	if ( isObject( input ) ) {
+		return mapValues( omit( input, props ), value => omitDeep( value, props ) );
+	}
+
+	return input;
+};
+
 const _request = ( func, path, siteId, body = {} ) => {
 	return func( { path: `/jetpack-blogs/${ siteId }/rest-api/` }, { path: '/wc/v2/' + path, ...body } )
-			.then( ( { data } ) => data );
+			.then( ( { data } ) => omitDeep( data, '_links' ) );
 };
 
 const addURLParam = ( url, param ) => url + ( -1 !== url.indexOf( '?' ) ? '?' : '&' ) + param;
