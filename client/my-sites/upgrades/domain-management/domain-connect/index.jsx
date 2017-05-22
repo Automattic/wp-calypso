@@ -6,7 +6,7 @@ import { makeLayout } from 'controller';
 
 export default ( router ) => {
 	router(
-		'/domain-connect/authorize/v2/domainTemplates/providers/:provider_id/services/:template_id/apply',
+		'/domain-connect/authorize/v2/domainTemplates/providers/:providerId/services/:templateId/apply',
 		domainConnectAuthorize,
 		makeLayout
 	);
