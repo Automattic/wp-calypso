@@ -7,6 +7,7 @@ import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
+
 /**
  * Internal dependencies
  */
@@ -16,7 +17,7 @@ import {
 	getTwoFactorAuthNonce,
 	getRequestError,
 	getRequestNotice,
-	getTwoFactorNotificationSent,
+	getTwoFactorSupportedAuthTypes,
 	isTwoFactorEnabled
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -24,6 +25,8 @@ import VerificationCodeForm from './two-factor-authentication/verification-code-
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
 import Notice from 'components/notice';
+
+const TWO_FACTOR_PRIORITY = { push: 0, authenticator: 1, sms: 2 };
 
 class Login extends Component {
 	static propTypes = {
@@ -62,10 +65,25 @@ class Login extends Component {
 		if ( ! this.props.twoFactorEnabled ) {
 			this.rebootAfterLogin();
 		} else {
+			const { twoFactorSupportedAuthTypes } = this.props;
+
+			const lowestPriority = Math.max(
+				twoFactorSupportedAuthTypes.length,
+				Object.keys( TWO_FACTOR_PRIORITY ).length
+			);
+
+			twoFactorSupportedAuthTypes.sort( ( a, b ) => {
+				const aPriority = TWO_FACTOR_PRIORITY.hasOwnProperty( a ) ? TWO_FACTOR_PRIORITY[ a ] : lowestPriority;
+				const bPriority = TWO_FACTOR_PRIORITY.hasOwnProperty( b ) ? TWO_FACTOR_PRIORITY[ b ] : lowestPriority;
+
+				return aPriority - bPriority;
+			} );
+
+			const twoFactorAuthType = twoFactorSupportedAuthTypes[ 0 ];
+
 			page( login( {
 				isNative: true,
-				// If no notification is sent, the user is using the authenticator for 2FA by default
-				twoFactorAuthType: this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' )
+				twoFactorAuthType: twoFactorAuthType
 			} ) );
 		}
 	};
@@ -163,7 +181,7 @@ export default connect(
 		requestError: getRequestError( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
-		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+		twoFactorSupportedAuthTypes: getTwoFactorSupportedAuthTypes( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
 	} ), {
 		recordTracksEvent,
