@@ -27,7 +27,11 @@ const StatsNavigation = props => {
 		<SectionNav selectedText={ periods[ period ] }>
 			<NavTabs label={ translate( 'Stats' ) }>
 				{ Object.keys( periods ).map( key => (
-					<NavItem path={ `/store/stats/${ type }/${ key }/${ slug }` } selected={ period === key }>
+					<NavItem
+						key={ key }
+						path={ `/store/stats/${ type }/${ key }/${ slug }` }
+						selected={ period === key }
+					>
 						{ periods[ key ] }
 					</NavItem>
 				) ) }
