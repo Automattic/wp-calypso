@@ -57,7 +57,7 @@ function animate() {
  * @param {function} options.onComplete - callback when scroll is finished
  * @param {HTMLElement} options.container - the container to scroll instead of window, if any
  */
-function scrollTo( options ) {
+export default function scrollTo( options ) {
 	const currentScroll = getCurrentScroll( options.container ),
 		tween = new TWEEN.Tween( currentScroll )
 		.easing( options.easing || TWEEN.Easing.Circular.Out )
@@ -78,4 +78,3 @@ function scrollTo( options ) {
 	}
 }
 
-export default scrollTo;
