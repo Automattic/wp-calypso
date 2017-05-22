@@ -37,10 +37,7 @@ const ConfirmCancelDomainLoadingPlaceholder = ( { purchaseId, selectedSite } ) =
 
 ConfirmCancelDomainLoadingPlaceholder.propTypes = {
 	purchaseId: React.PropTypes.number.isRequired,
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object
-	] )
+	selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
 };
 
 export default ConfirmCancelDomainLoadingPlaceholder;

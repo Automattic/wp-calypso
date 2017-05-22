@@ -1,39 +1,38 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	connect = require( 'react-redux' ).connect;
+import { connect } from 'react-redux';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var StoredCard = require( 'my-sites/upgrades/checkout/stored-card' ),
-	successNotice = require( 'state/notices/actions' ).successNotice,
-	errorNotice = require( 'state/notices/actions' ).errorNotice,
-	deleteStoredCard = require( 'state/stored-cards/actions' ).deleteStoredCard;
+import { deleteStoredCard } from 'state/stored-cards/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import { isDeletingStoredCard } from 'state/stored-cards/selectors';
+import StoredCard from 'my-sites/upgrades/checkout/stored-card';
 
 const CreditCardDelete = React.createClass( {
 	handleClick: function() {
-		this.props.deleteStoredCard( this.props.card ).then( () => {
-			this.props.successNotice( this.translate( 'Card deleted successfully' ) );
-		} ).catch( error => {
-			this.props.errorNotice( error.message );
-		} )
+		this.props
+			.deleteStoredCard( this.props.card )
+			.then( () => {
+				this.props.successNotice( this.translate( 'Card deleted successfully' ) );
+			} )
+			.catch( error => {
+				this.props.errorNotice( error.message );
+			} );
 	},
 
 	renderDeleteButton: function() {
-		var text = this.translate( 'Delete' );
-
-		if ( this.props.isDeleting ) {
-			text = this.translate( 'Deleting ' );
-		}
+		const text = this.props.isDeleting ? this.translate( 'Deleting ' ) : this.translate( 'Delete' );
 
 		return (
 			<button
 				className="button credit-card-delete__button"
 				disabled={ this.props.isDeleting }
-				onClick={ this.handleClick }>
+				onClick={ this.handleClick }
+			>
 				{ text }
 			</button>
 		);
@@ -47,18 +46,18 @@ const CreditCardDelete = React.createClass( {
 				{ this.renderDeleteButton() }
 			</div>
 		);
-	}
+	},
 } );
 
 export default connect(
 	state => {
 		return {
-			isDeleting: isDeletingStoredCard( state )
+			isDeleting: isDeletingStoredCard( state ),
 		};
 	},
 	{
 		deleteStoredCard,
 		errorNotice,
-		successNotice
+		successNotice,
 	}
 )( CreditCardDelete );
