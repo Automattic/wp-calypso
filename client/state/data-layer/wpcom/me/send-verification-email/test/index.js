@@ -21,10 +21,9 @@ import {
 describe( 'send-email-verification', () => {
 	describe( '#requestEmailVerification', () => {
 		const dispatchSpy = spy();
-		const nextSpy = spy();
 		const dummyAction = { type: 'DUMMY' };
 
-		requestEmailVerification( { dispatch: dispatchSpy }, dummyAction, nextSpy );
+		requestEmailVerification( { dispatch: dispatchSpy }, dummyAction );
 
 		it( 'should dispatch HTTP request to plans endpoint', () => {
 			expect( dispatchSpy ).to.have.been.calledOnce;
@@ -33,11 +32,6 @@ describe( 'send-email-verification', () => {
 				method: 'POST',
 				path: '/me/send-verification-email',
 			}, dummyAction ) );
-		} );
-
-		it( 'should pass the original action along the middleware chain', () => {
-			expect( nextSpy ).to.have.been.calledOnce;
-			expect( nextSpy ).to.have.been.calledWith( dummyAction );
 		} );
 	} );
 
