@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { requestUserDevices } from 'state/user-devices/actions';
-import { getUserDevices } from 'state/selectors';
 
 class QueryUserDevices extends Component {
 	static propTypes = {
@@ -16,9 +15,7 @@ class QueryUserDevices extends Component {
 	}
 
 	componentDidMount() {
-		if ( this.props.devices === null ) {
-			this.props.requestUserDevices();
-		}
+		this.props.requestUserDevices();
 	}
 
 	render() {
@@ -27,8 +24,6 @@ class QueryUserDevices extends Component {
 }
 
 export default connect(
-	state => ( {
-		devices: getUserDevices( state )
-	} ),
+	null,
 	{ requestUserDevices }
 )( QueryUserDevices );
