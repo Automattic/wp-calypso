@@ -72,6 +72,9 @@ function getLocation() {
 	if ( path.indexOf( '/following/edit' ) === 0 ) {
 		return 'following_edit';
 	}
+	if ( path.indexOf( '/following/manage' ) === 0 ) {
+		return 'following_manage';
+	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
 		return 'discover';
 	}

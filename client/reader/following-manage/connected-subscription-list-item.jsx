@@ -25,6 +25,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 		showEmailSettings: PropTypes.bool,
 		showLastUpdatedDate: PropTypes.bool,
 		isFollowing: PropTypes.bool,
+		followSource: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -54,6 +55,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 			showEmailSettings,
 			showLastUpdatedDate,
 			isFollowing,
+			followSource,
 		} = this.props;
 		const isEmailBlocked = userSettings.getSetting( 'subscription_delivery_email_blocked' );
 
@@ -68,6 +70,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 				showEmailSettings={ showEmailSettings && ! isEmailBlocked }
 				showLastUpdatedDate={ showLastUpdatedDate }
 				isFollowing={ isFollowing }
+				followSource={ followSource }
 			/>
 		);
 	}

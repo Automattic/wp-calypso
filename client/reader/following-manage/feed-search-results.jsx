@@ -13,6 +13,7 @@ import classnames from 'classnames';
 import ConnectedSubscriptionListItem from './connected-subscription-list-item';
 import SitesWindowScroller from './sites-window-scroller';
 import Button from 'components/button';
+import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'reader/follow-button/follow-sources';
 
 const FollowingManageSearchFeedsResults = ( {
 	showMoreResults,
@@ -53,6 +54,7 @@ const FollowingManageSearchFeedsResults = ( {
 					feedId={ +site.feed_ID }
 					siteId={ +site.blog_ID }
 					key={ `search-result-site-id-${ site.feed_ID || 0 }-${ site.blog_ID || 0 }` }
+					followSource={ READER_FOLLOWING_MANAGE_SEARCH_RESULT }
 				/>
 			)
 		);

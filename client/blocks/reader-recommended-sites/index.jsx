@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { recordAction, recordTrack } from 'reader/stats';
 import Button from 'components/button';
 import { requestSiteBlock } from 'state/reader/site-blocks/actions';
+// @todo move this out of following-manage
 import ConnectedSubscriptionListItem
 	from 'reader/following-manage/connected-subscription-list-item';
 
@@ -20,6 +21,7 @@ export class RecommendedSites extends React.PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 		sites: PropTypes.array,
+		followSource: PropTypes.string,
 	};
 
 	handleSiteDismiss = ( siteId, uiIndex ) => {
@@ -39,7 +41,7 @@ export class RecommendedSites extends React.PureComponent {
 	};
 
 	render() {
-		const { sites } = this.props;
+		const { sites, followSource } = this.props;
 
 		if ( isEmpty( sites ) ) {
 			return null;
@@ -71,6 +73,7 @@ export class RecommendedSites extends React.PureComponent {
 									siteId={ siteId }
 									showEmailSettings={ false }
 									showLastUpdatedDate={ false }
+									followSource={ followSource }
 								/>
 							</li>
 						);
