@@ -1,0 +1,68 @@
+.share-widget__container {
+	align-items: center;
+	background-color: $white;
+	background-image: url( '/calypso/images/extensions/woocommerce/woocommerce-share.svg' );
+	background-position: center bottom;
+	background-repeat: no-repeat;
+	background-size: 120%;
+	display: flex;
+	flex-direction: column;
+	min-height: 350px;
+	padding: 24px;
+
+	@include breakpoint( ">960px" ) {
+		padding: 48px 48px 72px;
+		min-height: 360px;
+	}
+
+	h2 {
+		font-size: 28px;
+		text-align: center;
+		line-height: 1.2em;
+		margin-bottom: 16px;
+	}
+
+	p {
+		color: $gray-text-min;
+		font-size: 14px;
+		text-align: center;
+	}
+
+	ul.share-widget__services {
+		list-style-type: none;
+		margin: 0;
+		display: flex;
+		justify-content: space-between;
+
+		li.share-widget__service {
+			margin: 0 4px;
+		}
+	}
+}
+
+.share-widget__service .social-logo {
+
+	&.facebook {
+		color: $color-facebook;
+	}
+
+	&.twitter {
+		color: $color-twitter;
+	}
+
+	&.google-plus {
+		color: $color-gplus;
+	}
+
+	&.linkedin {
+		color: $color-linkedin;
+	}
+
+	&.tumblr {
+		color: $color-tumblr;
+	}
+
+	&.pinterest {
+		color: $color-pinterest;
+	}
+}

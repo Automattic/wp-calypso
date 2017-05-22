@@ -9,9 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import { getSelectedSite } from 'state/ui/selectors';
 import Main from 'components/main';
+import Manage from './manage';
 import Setup from './setup';
 
 class Dashboard extends Component {
@@ -25,37 +25,15 @@ class Dashboard extends Component {
 		// TODO - is there a way to set an option on the store site?
 	}
 
-	renderStoreSetup = () => {
-		const { selectedSite } = this.props;
-		return (
-			<Setup
-				onFinished={ this.onStoreSetupFinished }
-				site={ selectedSite }
-			/>
-		);
-	}
-
-	renderStoreManagement = () => {
-		const { translate } = this.props;
-
-		return (
-			<Card>
-				<p>
-					{ translate( 'This is the start of something great!' ) }
-				</p>
-				<p>
-					{ translate( 'This will be the home for your WooCommerce Store integration with WordPress.com.' ) }
-				</p>
-			</Card>
-		);
-	}
-
 	render = () => {
-		const { storeSetupCompleted } = this.props;
+		const { selectedSite, storeSetupCompleted } = this.props;
 
 		return (
 			<Main className={ classNames( 'dashboard', this.props.className ) }>
-				{ storeSetupCompleted ? this.renderStoreManagement() : this.renderStoreSetup() }
+				{
+					storeSetupCompleted && <Manage site={ selectedSite } /> ||
+					<Setup onFinished={ this.onStoreSetupFinished } site={ selectedSite } />
+				}
 			</Main>
 		);
 	}
@@ -67,7 +45,7 @@ function mapStateToProps( state ) {
 
 	return {
 		selectedSite: getSelectedSite( state ),
-		storeSetupCompleted: false,
+		storeSetupCompleted: true, // false,
 	};
 }
 
