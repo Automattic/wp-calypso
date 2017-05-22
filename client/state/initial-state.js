@@ -68,7 +68,7 @@ function addSympathy( initialStateLoader ) {
 		) &&
 		! config.isEnabled( 'no-force-sympathy' ) // unless purposefully disabled
 	);
-	
+
 	if ( ! shouldAdd ) {
 		return initialStateLoader;
 	}
