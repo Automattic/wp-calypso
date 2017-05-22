@@ -10,6 +10,7 @@ import defer from 'lodash/defer';
 import config from 'config';
 import {
 	TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE,
+	TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_WEB_TOKEN,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 } from 'state/action-types';
@@ -52,6 +53,25 @@ const doAppPushRequest = ( store ) => {
 		} );
 };
 
+const sendAppPush = ( store ) => {
+	return request.post( 'https://wordpress.com/wp-login.php?action=send-push-notification-endpoint' )
+		.withCredentials()
+		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
+		.accept( 'application/json' )
+		.send( {
+			user_id: getTwoFactorUserId( store.getState() ),
+			two_step_nonce: getTwoFactorAuthNonce( store.getState() ),
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} ).then( response => {
+			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE, twoStepNonce: response.body.data.two_step_nonce } );
+			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_WEB_TOKEN, pushWebToken: response.body.data.push_web_token } );
+		} ).catch( error => {
+			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE, twoStepNonce: error.response.body.data.two_step_nonce } );
+			return Promise.reject( error );
+		} );
+};
+
 /***
  * Polling the login API for the status of the push notification.
  * The polling will stop on success or when store's polling progress
@@ -81,7 +101,9 @@ const doAppPushPolling = store => {
 
 const handleTwoFactorPushPoll = ( store, action, next ) => {
 	// this is deferred to allow reducer respond to TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START
-	defer( () => doAppPushPolling( store ) );
+	defer( () => {
+		sendAppPush( store ).then( () => doAppPushPolling( store ) );
+	} );
 	return next( action );
 };
 
