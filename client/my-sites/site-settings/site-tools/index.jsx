@@ -58,35 +58,35 @@ class SiteTools extends Component {
 		}
 
 		return (
-			<div className="delete-site-options">
+			<div className="site-tools">
 				<SectionHeader label={ translate( 'Site Tools' ) } />
 				<CompactCard
 					href={ changeAddressLink }
 					onClick={ this.trackChangeAddress }
-					className="delete-site-options__link">
-					<div className="delete-site-options__content">
-						<p className="delete-site-options__section-title">{ strings.changeSiteAddress }</p>
-						<p className="delete-site-options__section-desc">{ changeAddressLinkText }</p>
+					className="site-tools__link">
+					<div className="site-tools__content">
+						<p className="site-tools__section-title">{ strings.changeSiteAddress }</p>
+						<p className="site-tools__section-desc">{ changeAddressLinkText }</p>
 					</div>
 				</CompactCard>
 				{ config.isEnabled( 'settings/theme-setup' ) &&
 					<CompactCard
 						href={ themeSetupLink }
 						onClick={ this.trackThemeSetup }
-						className="delete-site-options__link">
-						<div className="delete-site-options__content">
-							<p className="delete-site-options__section-title">{ strings.themeSetup }</p>
-							<p className="delete-site-options__section-desc">{ themeSetupLinkText }</p>
+						className="site-tools__link">
+						<div className="site-tools__content">
+							<p className="site-tools__section-title">{ strings.themeSetup }</p>
+							<p className="site-tools__section-desc">{ themeSetupLinkText }</p>
 						</div>
 					</CompactCard>
 				}
 				<CompactCard
 					href={ startOverLink }
 					onClick={ this.trackStartOver }
-					className="delete-site-options__link">
-					<div className="delete-site-options__content">
-						<p className="delete-site-options__section-title">{ strings.startOver }</p>
-						<p className="delete-site-options__section-desc">
+					className="site-tools__link">
+					<div className="site-tools__content">
+						<p className="site-tools__section-title">{ strings.startOver }</p>
+						<p className="site-tools__section-desc">
 							{ translate(
 								'Keep your site\'s address and current theme, but remove all posts, ' +
 								'pages, and media so you can start fresh.'
@@ -97,12 +97,12 @@ class SiteTools extends Component {
 				<CompactCard
 					href={ deleteSiteLink }
 					onClick={ this.checkForSubscriptions }
-					className="delete-site-options__link">
-					<div className="delete-site-options__content">
-						<p className="delete-site-options__section-title is-warning">
+					className="site-tools__link">
+					<div className="site-tools__content">
+						<p className="site-tools__section-title is-warning">
 							{ strings.deleteSite }
 						</p>
-						<p className="delete-site-options__section-desc">
+						<p className="site-tools__section-desc">
 							{ translate(
 								'Delete all your posts, pages, media and data, ' +
 								'and give up your site\'s address'

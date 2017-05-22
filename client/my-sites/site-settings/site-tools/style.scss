@@ -2,7 +2,7 @@
  * Delete Site Options
  */
 
-.delete-site-options__section-title {
+.site-tools__section-title {
 	margin-bottom: 4px;
 	font-size: 14px;
 	line-height: 18px;
@@ -13,14 +13,14 @@
 	}
 }
 
-.delete-site-options__section-desc {
+.site-tools__section-desc {
 	margin-bottom: 0;
 	font-size: 13px;
 	color: $gray-text-min;
 	font-style: italic;
 }
 
-.delete-site-options__container {
+.site-tools__container {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -37,33 +37,33 @@
 	}
 }
 
-.delete-site-options__content {
+.site-tools__content {
 	flex: 0 1 auto;
 }
 
-.delete-site-options__link,
-.delete-site-options__link:hover,
-.delete-site-options__link:active,
-.delete-site-options__link:visited {
+.site-tools__link,
+.site-tools__link:hover,
+.site-tools__link:active,
+.site-tools__link:visited {
 	color: inherit;
 }
 
-.delete-site-options__link:hover {
-	.delete-site-options__noticon {
+.site-tools__link:hover {
+	.site-tools__noticon {
 		color: lighten( $gray, 10% );
 	}
 }
 
-.delete-site-options__option-marker {
+.site-tools__option-marker {
 	flex: 0 0 auto;
 	padding-left: 24px;
 }
 
-.delete-site-options__arrow {
+.site-tools__arrow {
 	transform: rotate( -90deg );
 }
 
-.delete-site-options__noticon {
+.site-tools__noticon {
 	font-size: 36px;
 	color: lighten( $gray, 20% );
 	line-height: 48px;
