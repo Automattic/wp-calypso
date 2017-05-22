@@ -13,6 +13,7 @@ import { getPostImage, getExcerptForPost } from './utils';
 import FacebookSharePreview from 'components/share/facebook-share-preview';
 import GooglePlusSharePreview from 'components/share/google-plus-share-preview';
 import TwitterSharePreview from 'components/share/twitter-share-preview';
+import TumblrSharePreview from 'components/share/tumblr-share-preview';
 import VerticalMenu from 'components/vertical-menu';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getSitePost } from 'state/posts/selectors';
@@ -39,6 +40,7 @@ class SharingPreviewPane extends PureComponent {
 			'facebook',
 			'google_plus',
 			'twitter',
+			'tumblr',
 		]
 	};
 
@@ -85,6 +87,8 @@ class SharingPreviewPane extends PureComponent {
 				return <FacebookSharePreview { ...previewProps } />;
 			case 'google_plus':
 				return <GooglePlusSharePreview { ...previewProps } />;
+			case 'tumblr':
+				return <TumblrSharePreview { ...previewProps } />;
 			case 'twitter':
 				return <TwitterSharePreview
 					{ ...previewProps }
