@@ -118,7 +118,7 @@ class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case 'retryingAuth':
-				noticeValues.text = translate( 'Error authorizing. Page is refreshing for an other attempt.' );
+				noticeValues.text = translate( 'Error authorizing. Page is refreshing for another attempt.' );
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
 				return noticeValues;
