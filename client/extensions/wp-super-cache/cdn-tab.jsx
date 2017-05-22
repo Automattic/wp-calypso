@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { pick } from 'lodash';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ const CdnTab = ( {
 	handleSubmitForm,
 	isRequesting,
 	isSaving,
-	siteUrl,
+	site,
 	translate,
 } ) => {
 	return (
@@ -70,7 +70,7 @@ const CdnTab = ( {
 							</FormLabel>
 
 							<FormTextInput
-								disabled={ isRequesting || isSaving }
+								disabled={ isRequesting || isSaving || ! ossdlcdn }
 								id="ossdl_off_cdn_url"
 								onChange={ handleChange( 'ossdl_off_cdn_url' ) }
 								value={ ossdl_off_cdn_url || '' } />
@@ -79,7 +79,7 @@ const CdnTab = ( {
 								{ translate(
 									'The new URL to be used in place of %(url)s for rewriting. No trailing / please.',
 									{
-										args: { url: siteUrl },
+										args: { url: get( site, 'URL' ) },
 									}
 								) }
 							</FormSettingExplanation>
@@ -91,7 +91,7 @@ const CdnTab = ( {
 							</FormLabel>
 
 							<FormTextInput
-								disabled={ isRequesting || isSaving }
+								disabled={ isRequesting || isSaving || ! ossdlcdn }
 								id="ossdl_off_include_dirs"
 								onChange={ handleChange( 'ossdl_off_include_dirs' ) }
 								value={ ossdl_off_include_dirs || '' } />
@@ -113,7 +113,7 @@ const CdnTab = ( {
 							</FormLabel>
 
 							<FormTextInput
-								disabled={ isRequesting || isSaving }
+								disabled={ isRequesting || isSaving || ! ossdlcdn }
 								id="ossdl_off_exclude"
 								onChange={ handleChange( 'ossdl_off_exclude' ) }
 								value={ ossdl_off_exclude || '' } />
@@ -136,7 +136,7 @@ const CdnTab = ( {
 							</FormLabel>
 
 							<FormTextInput
-								disabled={ isRequesting || isSaving }
+								disabled={ isRequesting || isSaving || ! ossdlcdn }
 								id="ossdl_cname"
 								onChange={ handleChange( 'ossdl_cname' ) }
 								value={ ossdl_cname || '' } />
@@ -147,9 +147,7 @@ const CdnTab = ( {
 									'off-site URL above). Use a comma as the delimiter. For pages with a large number of static files, ' +
 									'this can improve browser performance. CNAMEs may also need to be configured on your CDN.',
 									{
-										args: {
-											url: siteUrl,
-										},
+										args: { url: get( site, 'URL' ) },
 										components: {
 											a: (
 												<ExternalLink
@@ -167,7 +165,7 @@ const CdnTab = ( {
 						<FormFieldset>
 							<FormToggle
 								checked={ !! ossdl_https }
-								disabled={ isRequesting || isSaving }
+								disabled={ isRequesting || isSaving || ! ossdlcdn }
 								onChange={ handleAutosavingToggle( 'ossdl_https' ) }>
 							<span>
 								{ translate( 'Skip https URLs to avoid "mixed content" errors' ) }

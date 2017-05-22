@@ -11,14 +11,12 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../../action-types';
 import {
 	deleteCache,
-	receiveResults,
 	testCache,
 } from '../actions';
 
@@ -38,18 +36,6 @@ describe( 'actions', () => {
 			}
 		}
 	};
-
-	describe( '#receiveResults()', () => {
-		it( 'should return an action object', () => {
-			const action = receiveResults( siteId, results.data );
-
-			expect( action ).to.eql( {
-				type: WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
-				results: results.data,
-				siteId,
-			} );
-		} );
-	} );
 
 	describe( '#testCache()', () => {
 		useNock( nock => {
@@ -75,18 +61,11 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
-			return testCache( siteId )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith(
-					receiveResults( siteId, results.data )
-				);
-			} );
-		} );
-
 		it( 'should dispatch request success action when request completes', () => {
 			return testCache( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
+					data: results.data,
 					siteId,
 				} );
 			} );

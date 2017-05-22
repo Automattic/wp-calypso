@@ -20,9 +20,9 @@ describe( 'actions', () => {
 
 	useMockery( mockery => {
 		mockery.registerMock( 'state/reader/posts/actions', {
-			receivePosts: ( posts ) => {
+			receivePosts: posts => {
 				return Promise.resolve( posts );
-			}
+			},
 		} );
 
 		const actions = require( '../actions' );
@@ -54,7 +54,7 @@ describe( 'actions', () => {
 			recordUnfollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_RECORD_UNFOLLOW,
-				payload: { url: 'http://discover.wordpress.com' }
+				payload: { url: 'http://discover.wordpress.com' },
 			} );
 		} );
 	} );
@@ -64,7 +64,7 @@ describe( 'actions', () => {
 			const action = recordFollowError( 'http://discover.wordpress.com', 'invalid_feed' );
 			expect( action ).to.deep.equal( {
 				type: READER_FOLLOW_ERROR,
-				payload: { feedUrl: 'http://discover.wordpress.com', error: 'invalid_feed' }
+				payload: { feedUrl: 'http://discover.wordpress.com', error: 'invalid_feed' },
 			} );
 		} );
 	} );

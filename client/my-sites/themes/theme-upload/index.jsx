@@ -20,7 +20,6 @@ import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import { isATEnabled } from 'lib/automated-transfer';
 // Necessary for ThanksModal
 import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
@@ -296,18 +295,6 @@ class Upload extends React.Component {
 		);
 	}
 
-	renderNotAvailable() {
-		return (
-			<EmptyContent
-				title={ this.props.translate( 'Upload not available for this site' ) }
-				line={ this.props.translate( 'Please select a different site' ) }
-				action={ this.props.translate( 'Back to themes' ) }
-				actionURL={ this.props.backPath }
-				illustration={ '/calypso/images/drake/drake-whoops.svg' }
-			/>
-		);
-	}
-
 	render() {
 		const {
 			translate,
@@ -316,7 +303,6 @@ class Upload extends React.Component {
 			themeId,
 			upgradeJetpack,
 			backPath,
-			isJetpack,
 			isMultisite
 		} = this.props;
 
@@ -324,10 +310,6 @@ class Upload extends React.Component {
 
 		if ( isMultisite ) {
 			return this.renderNotAvailableForMultisite();
-		}
-
-		if ( ! isJetpack && ! this.props.atEnabled ) {
-			return this.renderNotAvailable();
 		}
 
 		return (
@@ -396,7 +378,6 @@ export default connect(
 			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
-			atEnabled: isATEnabled( site )
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },

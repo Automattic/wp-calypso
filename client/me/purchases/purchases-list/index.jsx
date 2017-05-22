@@ -13,7 +13,7 @@ import EmptyContent from 'components/empty-content';
 import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
-	isFetchingUserPurchases
+	isFetchingUserPurchases,
 } from 'state/purchases/selectors';
 import { getSites } from 'state/selectors';
 import { getPurchasesBySite } from 'lib/purchases';
@@ -50,7 +50,8 @@ class PurchasesList extends Component {
 						name={ site.name }
 						domain={ site.domain }
 						slug={ site.slug }
-						purchases={ site.purchases } />
+						purchases={ site.purchases }
+					/>
 				)
 			);
 		}
@@ -60,12 +61,15 @@ class PurchasesList extends Component {
 				<CompactCard className="purchases-list__no-content">
 					<EmptyContent
 						title={ this.props.translate( 'Looking to upgrade?' ) }
-						line={ this.props.translate( 'Our plans give your site the power to thrive. ' +
-								'Find the plan that works for you.' ) }
+						line={ this.props.translate(
+							'Our plans give your site the power to thrive. ' +
+								'Find the plan that works for you.'
+						) }
 						action={ this.props.translate( 'Upgrade Now' ) }
 						actionURL={ '/plans' }
 						illustration={ '/calypso/images/drake/drake-whoops.svg' }
-						isCompact />
+						isCompact
+					/>
 				</CompactCard>
 			);
 		}
@@ -83,11 +87,8 @@ class PurchasesList extends Component {
 
 PurchasesList.propTypes = {
 	noticeType: React.PropTypes.string,
-	purchases: React.PropTypes.oneOfType( [
-		React.PropTypes.array,
-		React.PropTypes.bool
-	] ),
-	sites: React.PropTypes.array.isRequired
+	purchases: React.PropTypes.oneOfType( [ React.PropTypes.array, React.PropTypes.bool ] ),
+	sites: React.PropTypes.array.isRequired,
 };
 
 export default connect(

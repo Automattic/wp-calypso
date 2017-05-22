@@ -12,9 +12,11 @@ export const itemsSchema = {
 				URL: { type: [ 'string', 'null' ] },
 				feed_URL: { type: [ 'string', 'null' ] },
 				is_following: { type: [ 'boolean', 'null' ] },
-				subscribers_count: { type: [ 'integer', 'null' ] }
-			}
-		}
+				subscribers_count: { type: [ 'integer', 'null' ] },
+				description: { type: [ 'string', 'null' ] },
+				last_update: { type: [ 'string', 'null' ] },
+			},
+		},
 	},
-	additionalProperties: false
+	additionalProperties: false,
 };

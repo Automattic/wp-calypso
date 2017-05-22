@@ -69,24 +69,15 @@ describe( 'reducer', () => {
 			const action = receiveUnfollowTag( { payload: TAG1.id } );
 			const state = items( prevState, action );
 
-			expect( state ).to.eql( keyById( [
-				unfollow( TAG1 ),
-				TAG2
-			] ) );
+			expect( state ).to.eql( keyById( [ unfollow( TAG1 ), TAG2 ] ) );
 		} );
 
 		it( 'should mark everything as unfollowed if requested to do so', () => {
-			const prevState = keyById( [
-				follow( TAG1 ),
-				follow( TAG2 ),
-			] );
+			const prevState = keyById( [ follow( TAG1 ), follow( TAG2 ) ] );
 			const action = receiveTags( { payload: [], resetFollowingData: true } );
 			const state = items( prevState, action );
 
-			expect( state ).to.eql( keyById( [
-				unfollow( TAG1 ),
-				unfollow( TAG2 ),
-			] ) );
+			expect( state ).to.eql( keyById( [ unfollow( TAG1 ), unfollow( TAG2 ) ] ) );
 		} );
 	} );
 } );

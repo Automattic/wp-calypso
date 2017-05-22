@@ -4,8 +4,8 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 
-const RecommendedNavigation = React.createClass( {
-	propTypes: { selected: PropTypes.oneOf( [ 'for-you', 'sites', 'tags' ] ).isRequired },
+class RecommendedNavigation extends React.Component {
+	static propTypes = { selected: PropTypes.oneOf( [ 'for-you', 'sites', 'tags' ] ).isRequired };
 
 	render() {
 		const current = this.props.selected;
@@ -34,7 +34,7 @@ const RecommendedNavigation = React.createClass( {
 				</NavTabs>
 			</SectionNav>
 		);
-	},
-} );
+	}
+}
 
 export default localize( RecommendedNavigation );

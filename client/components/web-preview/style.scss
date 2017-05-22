@@ -51,13 +51,13 @@
 	transition: transform 0.2s ease-out,
 		opacity 0.1s ease-in-out,
 		max-width 0.2s ease-out;
-	width: 100%;
 
 	.is-computer & {
 		max-width: 1200px;
 		@include breakpoint( ">960px" ) {
 			left: 24px;
 			right: 24px;
+			width: calc( 100% - 48px ); /* IE11 fix */
 		}
 	}
 

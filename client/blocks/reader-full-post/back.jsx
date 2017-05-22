@@ -22,7 +22,7 @@ const ReaderFullPostBack = ( { onBackClick, translate } ) => {
 };
 
 ReaderFullPostBack.propTypes = {
-	onBackClick: React.PropTypes.func.isRequired
+	onBackClick: React.PropTypes.func.isRequired,
 };
 
 export default localize( ReaderFullPostBack );

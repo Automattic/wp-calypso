@@ -178,8 +178,6 @@ export default {
 
 		removeSidebar( context );
 
-		userModule.fetch();
-
 		let intervalType = context.params.intervalType;
 		let locale = context.params.locale;
 		if ( context.params.localeOrInterval ) {
@@ -196,7 +194,7 @@ export default {
 				path={ context.path }
 				intervalType={ intervalType }
 				locale={ locale }
-				userModule={ userModule } />,
+			/>,
 			document.getElementById( 'primary' ),
 			context.store
 		);

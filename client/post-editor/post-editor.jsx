@@ -26,7 +26,7 @@ const actions = require( 'lib/posts/actions' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
-	VerifyEmailDialog = require( 'post-editor/verify-email-dialog' ),
+	VerifyEmailDialog = require( 'components/email-verification/email-verification-dialog' ),
 	utils = require( 'lib/posts/utils' ),
 	EditorPreview = require( './editor-preview' ),
 	stats = require( 'lib/posts/stats' ),
@@ -253,10 +253,11 @@ export const PostEditor = React.createClass( {
 							<EditorActionBar
 								isNew={ this.state.isNew }
 								onPrivatePublish={ this.onPublish }
-								post={ this.state.post }
 								savedPost={ this.state.savedPost }
 								site={ site }
 								type={ this.props.type }
+								isPostPrivate={ utils.isPrivate( this.state.post ) }
+								postAuthor={ this.state.post ? this.state.post.author : null }
 							/>
 							<div className="post-editor__site">
 								<Site
@@ -329,6 +330,7 @@ export const PostEditor = React.createClass( {
 						type={ this.props.type }
 						setPostDate={ this.setPostDate }
 						onSave={ this.onSave }
+						isPostPrivate={ utils.isPrivate( this.state.post ) }
 						/>
 					{ this.props.isSitePreviewable ?
 						<EditorPreview
@@ -349,7 +351,6 @@ export const PostEditor = React.createClass( {
 				: null }
 				{ this.state.showVerifyEmailDialog
 					? <VerifyEmailDialog
-						user={ this.props.user }
 						onClose={ this.closeVerifyEmailDialog }
 					/>
 				: null }

@@ -1,22 +1,12 @@
 /**
  * External Dependencies
  */
-import {
-	filter,
-	forEach,
-	has,
-	isUndefined,
-	map,
-	omit,
-	partition,
-	reject } from 'lodash';
+import { filter, forEach, has, isUndefined, map, omit, partition, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	READER_POSTS_RECEIVE
-} from 'state/action-types';
+import { READER_POSTS_RECEIVE } from 'state/action-types';
 import analytics from 'lib/analytics';
 import { runFastRules, runSlowRules } from './normalization-rules';
 import Dispatcher from 'dispatcher';
@@ -31,20 +21,20 @@ export function postToKey( post ) {
 	if ( post && post.feed_ID && post.feed_item_ID ) {
 		return {
 			feedId: post.feed_ID,
-			postId: post.feed_item_ID
+			postId: post.feed_item_ID,
 		};
 	}
 
 	if ( post.is_external ) {
 		return {
 			feedId: post.feed_ID,
-			postId: post.ID
+			postId: post.ID,
 		};
 	}
 
 	return {
 		postId: post.ID,
-		blogId: post.site_ID
+		blogId: post.site_ID,
 	};
 }
 
@@ -52,28 +42,32 @@ function fetchForKey( postKey ) {
 	if ( postKey.blogId ) {
 		return wpcom.undocumented().readSitePost( {
 			site: postKey.blogId,
-			postId: postKey.postId
+			postId: postKey.postId,
 		} );
 	}
 	return wpcom.undocumented().readFeedPost( postKey );
 }
 
 export function fetchPost( postKey ) {
-	return dispatch => fetchForKey( postKey ).then(
-		data => dispatch( receivePosts( [ data ] ) ),
-		err => dispatch( {
-			type: READER_POSTS_RECEIVE,
-			posts: [ {
-				feed_ID: postKey.feedId,
-				ID: postKey.postId,
-				site_ID: postKey.blogId,
-				is_external: ! postKey.blogId,
-				is_error: true,
-				global_ID: `${ postKey.feedId || 'na' }-${ postKey.blogId || 'na' }-${ postKey.postId }`,
-				error: err
-			} ]
-		} )
-	);
+	return dispatch =>
+		fetchForKey( postKey ).then(
+			data => dispatch( receivePosts( [ data ] ) ),
+			err =>
+				dispatch( {
+					type: READER_POSTS_RECEIVE,
+					posts: [
+						{
+							feed_ID: postKey.feedId,
+							ID: postKey.postId,
+							site_ID: postKey.blogId,
+							is_external: ! postKey.blogId,
+							is_error: true,
+							global_ID: `${ postKey.feedId || 'na' }-${ postKey.blogId || 'na' }-${ postKey.postId }`,
+							error: err,
+						},
+					],
+				} )
+		);
 }
 
 export function reloadPost( post ) {
@@ -112,20 +106,20 @@ export function receivePosts( posts ) {
 			slowPromise.then( post => {
 				dispatch( {
 					type: READER_POSTS_RECEIVE,
-					posts: [ post ]
+					posts: [ post ],
 				} );
 
 				// keep the old feed post store in sync
 				Dispatcher.handleServerAction( {
 					data: post,
-					type: action.RECEIVE_NORMALIZED_FEED_POST
+					type: action.RECEIVE_NORMALIZED_FEED_POST,
 				} );
 			} );
 		} );
 
 		dispatch( {
 			type: READER_POSTS_RECEIVE,
-			posts: normalizedPosts
+			posts: normalizedPosts,
 		} );
 
 		// keep the old feed post store in sync
@@ -133,7 +127,7 @@ export function receivePosts( posts ) {
 			const postForFlux = has( post, '_should_reload' ) ? omit( post, '_should_reload' ) : post;
 			Dispatcher.handleServerAction( {
 				data: postForFlux,
-				type: action.RECEIVE_NORMALIZED_FEED_POST
+				type: action.RECEIVE_NORMALIZED_FEED_POST,
 			} );
 		} );
 

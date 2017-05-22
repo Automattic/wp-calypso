@@ -26,15 +26,14 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_TAG_IMAGES_RECEIVE:
 			let images = action.images;
-			if ( state[ action.tag ] ) 	{
+			if ( state[ action.tag ] ) {
 				images = state[ action.tag ].concat( action.images );
 			}
 
 			return {
 				...state,
-				[ action.tag ]: images
+				[ action.tag ]: images,
 			};
-
 		// Always return default state - we don't want to serialize images yet
 		case SERIALIZE:
 		case DESERIALIZE:
@@ -59,7 +58,7 @@ export function requesting( state = {}, action ) {
 		case READER_TAG_IMAGES_REQUEST_FAILURE:
 			return {
 				...state,
-				[ action.tag ]: action.type === READER_TAG_IMAGES_REQUEST
+				[ action.tag ]: action.type === READER_TAG_IMAGES_REQUEST,
 			};
 
 		case SERIALIZE:
@@ -71,5 +70,5 @@ export function requesting( state = {}, action ) {
 
 export default combineReducers( {
 	items,
-	requesting
+	requesting,
 } );

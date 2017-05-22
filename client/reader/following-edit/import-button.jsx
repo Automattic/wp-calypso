@@ -12,28 +12,24 @@ import wpcom from 'lib/wp';
 import Button from 'components/button';
 import FilePicker from 'components/file-picker';
 
-const FollowingImportButton = React.createClass( {
-	propTypes: {
+class FollowingImportButton extends React.Component {
+	static propTypes = {
 		onError: React.PropTypes.func,
 		onImport: React.PropTypes.func,
 		onProgress: React.PropTypes.func,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onError: noop,
-			onImport: noop,
-			onProgress: noop,
-		};
-	},
+	static defaultProps = {
+		onError: noop,
+		onImport: noop,
+		onProgress: noop,
+	};
 
-	getInitialState() {
-		return {
-			disabled: false,
-		};
-	},
+	state = {
+		disabled: false,
+	};
 
-	onPick( files ) {
+	onPick = files => {
 		// we only care about the first file in the list
 		const file = files[ 0 ];
 		if ( ! file ) {
@@ -47,9 +43,9 @@ const FollowingImportButton = React.createClass( {
 		this.setState( {
 			disabled: true,
 		} );
-	},
+	};
 
-	onImport( err, data ) {
+	onImport = ( err, data ) => {
 		this.setState( {
 			disabled: false,
 		} );
@@ -61,11 +57,11 @@ const FollowingImportButton = React.createClass( {
 			data.fileName = this.fileName;
 			this.props.onImport( data );
 		}
-	},
+	};
 
-	onImportProgress( event ) {
+	onImportProgress = event => {
 		this.props.onProgress( event );
-	},
+	};
 
 	render() {
 		return (
@@ -75,7 +71,7 @@ const FollowingImportButton = React.createClass( {
 				</Button>
 			</FilePicker>
 		);
-	},
-} );
+	}
+}
 
 export default localize( FollowingImportButton );

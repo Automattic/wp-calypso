@@ -570,7 +570,7 @@ input[type=radio].domain-management-list-item__radio {
 }
 
 .dns__add-new,
-.dns__office365,
+.dns__template-form,
 .email-forwarding__add-new {
 	.email-forwarding__limit,
 	.dns__form-content,
@@ -882,9 +882,7 @@ ul.email-forwarding__list {
 	}
 
 	.name-servers__dns-templates-buttons {
-		button {
-			margin: 5px 5px 5px 0;
-		}
+		margin-top: 20px;
 	}
 
 	&.is-placeholder {

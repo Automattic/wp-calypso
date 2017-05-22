@@ -5,7 +5,6 @@ export const itemsSchema = {
 		properties: {
 			title: { type: 'string' },
 			slug: { type: 'string' },
-		}
-	}
+		},
+	},
 };
-

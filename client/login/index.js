@@ -7,6 +7,6 @@ import { makeLayout, redirectLoggedIn } from 'controller';
 
 export default router => {
 	if ( config.isEnabled( 'wp-login' ) ) {
-		router( '/login/:twoFactorAuthType?', redirectLoggedIn, login, makeLayout );
+		router( '/log-in/:twoFactorAuthType?', redirectLoggedIn, login, makeLayout );
 	}
 };

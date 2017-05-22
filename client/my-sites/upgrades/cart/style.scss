@@ -51,6 +51,15 @@
 			font-size: 13px;
 		}
 
+		.cart__free-with-plan {
+			text-decoration: line-through;
+		}
+
+		.cart__free-text {
+			color: $alert-green;
+			padding-left: 8px;
+		}
+
 		.product-monthly-price {
 			color: $gray;
 			display: block;
@@ -343,7 +352,7 @@ div.popover-cart__popover {
 
 .secondary-cart {
 	background: $white;
-	
+
 	@include breakpoint( "<660px" ) {
 		left: 0;
 		margin-top: 10px;

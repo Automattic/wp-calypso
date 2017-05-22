@@ -7,6 +7,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import ProductFormAdditionalDetailsCard from './product-form-additional-details-card';
+import ProductFormCategoriesCard from './product-form-categories-card';
 import ProductFormDetailsCard from './product-form-details-card';
 import ProductFormVariationsCard from './product-form-variations-card';
 import ProductFormDeliveryDetailsCard from './product-form-delivery-details-card';
@@ -20,25 +22,37 @@ export default class ProductForm extends Component {
 			name: PropTypes.string,
 		} ),
 		variations: PropTypes.array,
+		productCategories: PropTypes.array.isRequired,
 		editProduct: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
 		editProductVariation: PropTypes.func.isRequired,
 	};
 
 	render() {
-		const { product, variations, editProductVariation } = this.props;
+		const { product, productCategories, variations } = this.props;
+		const { editProduct, editProductVariation, editProductAttribute } = this.props;
+
 		return (
 			<div className={ classNames( 'products__form', this.props.className ) }>
 				<ProductFormDetailsCard
 					product={ product }
-					editProduct={ this.props.editProduct }
+					editProduct={ editProduct }
 				/>
-
+				<ProductFormAdditionalDetailsCard
+					product={ product }
+					editProduct={ this.props.editProduct }
+					editProductAttribute={ this.props.editProductAttribute }
+				/>
+				<ProductFormCategoriesCard
+					product={ product }
+					productCategories={ productCategories }
+					editProduct={ editProduct }
+				/>
 				<ProductFormVariationsCard
 					product={ product }
 					variations={ variations }
-					editProduct={ this.props.editProduct }
-					editProductAttribute={ this.props.editProductAttribute }
+					editProduct={ editProduct }
+					editProductAttribute={ editProductAttribute }
 					editProductVariation={ editProductVariation }
 				/>
 

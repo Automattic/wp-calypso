@@ -31,6 +31,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+	SITE_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -221,6 +222,12 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 					bearerToken: action.data.bearer_token
 				}
 			);
+		case SITE_REQUEST_FAILURE:
+			const { client_id } = state.queryObject;
+			if ( parseInt( client_id ) === action.siteId ) {
+				return Object.assign( {}, state, { clientNotResponding: true } );
+			}
+			return state;
 		case JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:

@@ -46,8 +46,7 @@ const devdocs = {
 	 */
 	devdocs: function( context ) {
 		function onSearchChange( searchTerm ) {
-			let query = context.query,
-				url = context.pathname;
+			const query = context.query;
 
 			if ( searchTerm ) {
 				query.term = searchTerm;
@@ -57,11 +56,13 @@ const devdocs = {
 
 			const queryString = qs.stringify( query ).replace( /%20/g, '+' ).trim();
 
+			let newUrl = context.pathname;
+
 			if ( queryString ) {
-				url += '?' + queryString;
+				newUrl += '?' + queryString;
 			}
 
-			page.replace( url,
+			page.replace( newUrl,
 				context.state,
 				false,
 				false );
@@ -154,7 +155,7 @@ const devdocs = {
 				title: 'Log In to start hacking',
 				line: 'Required to access the WordPress.com API',
 				action: 'Log In to WordPress.com',
-				actionURL: login( { redirectTo } ),
+				actionURL: login( { isNative: true, redirectTo } ),
 				secondaryAction: 'Register',
 				secondaryActionURL: '/start/developer',
 				illustration: '/calypso/images/drake/drake-nosites.svg'

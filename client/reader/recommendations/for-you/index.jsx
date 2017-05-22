@@ -21,61 +21,63 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getSiteUrl } from 'reader/route';
 import { decodeEntities } from 'lib/formatting';
 
-const RecommendedForYou = React.createClass( {
-	getInitialState() {
+class RecommendedForYou extends React.Component {
+	constructor( props, context ) {
+		super( props, context );
 		const recommendations = this.getRecommendations();
 		let fetching = false;
 		if ( recommendations.length === 0 ) {
 			fetchMore();
 			fetching = true;
 		}
-		return {
+
+		this.state = {
 			recommendations,
 			fetching,
 			page: 1,
 		};
-	},
+	}
 
-	getRecommendations() {
+	getRecommendations = () => {
 		const recs = RecommendedSites.get();
 		return recs.map( function( rec ) {
 			rec.site = SiteStore.get( rec.blog_id );
 			return rec;
 		} );
-	},
+	};
 
-	update() {
+	update = () => {
 		this.setState( { recommendations: this.getRecommendations() } );
-	},
+	};
 
 	componentDidMount() {
 		SiteStore.on( 'change', this.update );
 		RecommendedSites.on( 'change', this.update );
 		RecommendedSites.on( 'change', this.stopFetching );
-	},
+	}
 
 	componentWillUnmount() {
 		SiteStore.off( 'change', this.update );
 		RecommendedSites.off( 'change', this.update );
 		RecommendedSites.off( 'change', this.stopFetching );
-	},
+	}
 
-	loadMore( options ) {
+	loadMore = options => {
 		fetchMore();
 		this.setState( { fetching: true } );
 		if ( options.triggeredByScroll ) {
 			this.props.trackScrollPage( RecommendedSites.getPage() );
 		}
-	},
+	};
 
-	stopFetching() {
+	stopFetching = () => {
 		this.setState( {
 			fetching: false,
 			page: this.state.page + 1,
 		} );
-	},
+	};
 
-	renderPlaceholders() {
+	renderPlaceholders = () => {
 		const placeholders = [], number = this.state.recommendations.length ? 2 : 10;
 
 		times( number, i => {
@@ -89,13 +91,13 @@ const RecommendedForYou = React.createClass( {
 		} );
 
 		return placeholders;
-	},
+	};
 
-	getItemRef( rec ) {
+	getItemRef = rec => {
 		return 'recommendation-' + rec.blog_id;
-	},
+	};
 
-	trackSiteClick( event ) {
+	trackSiteClick = event => {
 		const clickedUrl = event.currentTarget.getAttribute( 'href' );
 		recordAction( 'click_site_on_recommended_for_you' );
 		recordGaEvent( 'Clicked Site on Recommended For You' );
@@ -103,9 +105,9 @@ const RecommendedForYou = React.createClass( {
 			clicked_url: clickedUrl,
 			recommendation_source: 'recommendations-page',
 		} );
-	},
+	};
 
-	renderItem( rec ) {
+	renderItem = rec => {
 		const site = rec.site && rec.site.toJS(),
 			itemKey = this.getItemRef( rec ),
 			title = site.name || ( site.URL && url.parse( site.URL ).hostname ),
@@ -123,7 +125,7 @@ const RecommendedForYou = React.createClass( {
 				</Actions>
 			</ListItem>
 		);
-	},
+	};
 
 	render() {
 		return (
@@ -147,7 +149,7 @@ const RecommendedForYou = React.createClass( {
 				/>
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default localize( RecommendedForYou );

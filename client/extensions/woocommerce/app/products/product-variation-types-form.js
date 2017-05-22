@@ -32,7 +32,8 @@ export default class ProductVariationTypesForm extends Component {
 	componentWillMount() {
 		const { product } = this.props;
 
-		if ( ! product.attributes ) {
+		const attributes = ( product.attributes && product.attributes.filter( attribute => attribute.variation ) ) || [];
+		if ( ! attributes.length ) {
 			this.addType();
 		}
 
@@ -86,7 +87,7 @@ export default class ProductVariationTypesForm extends Component {
 					onChange={ this.updateNameHandler }
 				/>
 				<TokenField
-					placeholder={ i18n.translate( 'Comma separate these' ) }
+					placeholder={ i18n.translate( 'Red, Green, Blue' ) }
 					value={ attribute.options }
 					name="values"
 					/* eslint-disable react/jsx-no-bind */

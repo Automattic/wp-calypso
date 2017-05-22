@@ -1,5 +1,6 @@
 // External dependencies
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import times from 'lodash/times';
 import trimStart from 'lodash/trimStart';
@@ -39,7 +40,8 @@ import { recordAction, recordFollow, recordGaEvent, recordTrack } from 'reader/s
 
 const initialLoadFeedCount = 20;
 
-const FollowingEdit = React.createClass( {
+const FollowingEdit = createReactClass( {
+	displayName: 'FollowingEdit',
 	mixins: [ URLSearch ],
 
 	propTypes: {

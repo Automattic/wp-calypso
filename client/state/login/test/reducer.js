@@ -15,6 +15,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'state/action-types';
@@ -22,6 +23,7 @@ import reducer, {
 	isRequesting,
 	isRequestingTwoFactorAuth,
 	requestError,
+	requestNotice,
 	requestSuccess,
 	twoFactorAuth,
 	twoFactorAuthRequestError,
@@ -33,6 +35,7 @@ describe( 'reducer', () => {
 			'isRequesting',
 			'magicLogin',
 			'requestError',
+			'requestNotice',
 			'requestSuccess',
 			'twoFactorAuth',
 			'isRequestingTwoFactorAuth',
@@ -235,6 +238,64 @@ describe( 'reducer', () => {
 		} );
 	} );
 
+	describe( 'requestNotice', () => {
+		it( 'should default to a null', () => {
+			const state = requestNotice( undefined, {} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should set `notice` object if a request was initiated', () => {
+			const state = requestNotice( null, {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
+				notice: {
+					message: 'foo'
+				}
+			} );
+
+			expect( state ).to.eql( {
+				message: 'foo'
+			} );
+		} );
+
+		it( 'should set `notice` object if a request was successful', () => {
+			const state = requestNotice( null, {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+				notice: {
+					message: 'foo'
+				}
+			} );
+
+			expect( state ).to.eql( {
+				message: 'foo'
+			} );
+		} );
+
+		it( 'should set requestNotice to null value if a request is unsuccessful', () => {
+			const state = requestNotice( null, {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should not persist state', () => {
+			const state = requestNotice( true, {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should not load persisted state', () => {
+			const state = requestNotice( true, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.null;
+		} );
+	} );
+
 	describe( 'requestSuccess', () => {
 		it( 'should default to a null', () => {
 			const state = requestSuccess( undefined, {} );
@@ -352,6 +413,14 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.null;
+		} );
+
+		it( 'should reset the "notice" value when an SMS code request is made', () => {
+			const state = requestSuccess( null, {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST
+			} );
+
+			expect( state ).to.eql( null );
 		} );
 
 		it( 'should reset the "two_step_nonce" value when a two factor authentication SMS code request returns new nonce', () => {

@@ -17,28 +17,25 @@ import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine'
 export function requestFollow( { dispatch }, action, next ) {
 	const { payload: { feedUrl } } = action;
 
-	dispatch( http( {
-		method: 'POST',
-		path: '/read/following/mine/new',
-		apiVersion: '1.1',
-		body: {
-			url: feedUrl,
-			source: config( 'readerFollowingSource' )
-		},
-		onSuccess: action,
-		onFailure: action,
-	} ) );
+	dispatch(
+		http( {
+			method: 'POST',
+			path: '/read/following/mine/new',
+			apiVersion: '1.1',
+			body: {
+				url: feedUrl,
+				source: config( 'readerFollowingSource' ),
+			},
+			onSuccess: action,
+			onFailure: action,
+		} )
+	);
 	next( action );
 }
 
 export function receiveFollow( store, action, next, response ) {
 	if ( response && response.subscribed ) {
-		next(
-			follow(
-				action.payload.feedUrl,
-				subscriptionFromApi( response.subscription )
-			)
-		);
+		next( follow( action.payload.feedUrl, subscriptionFromApi( response.subscription ) ) );
 	} else {
 		followError( store, action, next, response );
 	}
@@ -46,9 +43,7 @@ export function receiveFollow( store, action, next, response ) {
 
 export function followError( { dispatch }, action, next, response ) {
 	dispatch(
-		errorNotice(
-			translate( 'Sorry, there was a problem following that site. Please try again.' )
-		)
+		errorNotice( translate( 'Sorry, there was a problem following that site. Please try again.' ) )
 	);
 
 	if ( response && response.info ) {
@@ -59,5 +54,5 @@ export function followError( { dispatch }, action, next, response ) {
 }
 
 export default {
-	[ READER_FOLLOW ]: [ dispatchRequest( requestFollow, receiveFollow, followError ) ]
+	[ READER_FOLLOW ]: [ dispatchRequest( requestFollow, receiveFollow, followError ) ],
 };

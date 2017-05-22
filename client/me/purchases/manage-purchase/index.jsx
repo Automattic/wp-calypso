@@ -40,14 +40,11 @@ import {
 	getPurchase,
 	getSelectedSite,
 	goToList,
-	recordPageView
+	recordPageView,
 } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
-import {
-	getSelectedSite as getSelectedSiteSelector,
-	getSelectedSiteId,
-} from 'state/ui/selectors';
+import { getSelectedSite as getSelectedSiteSelector, getSelectedSiteId } from 'state/ui/selectors';
 import Gridicon from 'gridicons';
 import HeaderCake from 'components/header-cake';
 import {
@@ -87,12 +84,10 @@ class ManagePurchase extends Component {
 		hasLoadedSites: React.PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
 		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool,
-			React.PropTypes.undefined
-		] )
-	}
+		selectedSite: React.PropTypes.oneOfType(
+			[ React.PropTypes.object, React.PropTypes.bool, React.PropTypes.undefined ]
+		),
+	};
 
 	componentWillMount() {
 		if ( ! this.isDataValid() ) {
@@ -123,34 +118,39 @@ class ManagePurchase extends Component {
 	handleRenew = () => {
 		const purchase = getPurchase( this.props ),
 			renewItem = cartItems.getRenewalItemFromProduct( purchase, {
-				domain: purchase.meta
+				domain: purchase.meta,
 			} ),
 			renewItems = [ renewItem ];
 
 		// Track the renew now submit
-		analytics.tracks.recordEvent(
-			'calypso_purchases_renew_now_click',
-			{ product_slug: purchase.productSlug }
-		);
+		analytics.tracks.recordEvent( 'calypso_purchases_renew_now_click', {
+			product_slug: purchase.productSlug,
+		} );
 
 		if ( hasPrivacyProtection( purchase ) ) {
-			const privacyItem = cartItems.getRenewalItemFromCartItem( cartItems.domainPrivacyProtection( {
-				domain: purchase.meta
-			} ), {
-				id: purchase.id,
-				domain: purchase.domain
-			} );
+			const privacyItem = cartItems.getRenewalItemFromCartItem(
+				cartItems.domainPrivacyProtection( {
+					domain: purchase.meta,
+				} ),
+				{
+					id: purchase.id,
+					domain: purchase.domain,
+				}
+			);
 
 			renewItems.push( privacyItem );
 		}
 
 		if ( isRedeemable( purchase ) ) {
-			const redemptionItem = cartItems.getRenewalItemFromCartItem( cartItems.domainRedemption( {
-				domain: purchase.meta
-			} ), {
-				id: purchase.id,
-				domain: purchase.domain
-			} );
+			const redemptionItem = cartItems.getRenewalItemFromCartItem(
+				cartItems.domainRedemption( {
+					domain: purchase.meta,
+				} ),
+				{
+					id: purchase.id,
+					domain: purchase.domain,
+				}
+			);
 
 			renewItems.push( redemptionItem );
 		}
@@ -158,7 +158,7 @@ class ManagePurchase extends Component {
 		upgradesActions.addItems( renewItems );
 
 		page( '/checkout/' + this.props.selectedSite.slug );
-	}
+	};
 
 	renderRenewButton() {
 		const purchase = getPurchase( this.props );
@@ -168,7 +168,12 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		if ( ! isRenewable( purchase ) || isExpired( purchase ) || isExpiring( purchase ) || ! getSelectedSite( this.props ) ) {
+		if (
+			! isRenewable( purchase ) ||
+			isExpired( purchase ) ||
+			isExpiring( purchase ) ||
+			! getSelectedSite( this.props )
+		) {
 			return null;
 		}
 
@@ -207,17 +212,14 @@ class ManagePurchase extends Component {
 				? translate( 'Edit Payment Method' )
 				: translate( 'Add Credit Card' );
 
-			return (
-				<CompactCard href={ path }>{ text }</CompactCard>
-			);
+			return <CompactCard href={ path }>{ text }</CompactCard>;
 		}
 
 		return null;
 	}
 
 	renderCancelPurchaseNavItem() {
-		const purchase = getPurchase( this.props ),
-			{ id } = purchase;
+		const purchase = getPurchase( this.props ), { id } = purchase;
 		const { translate } = this.props;
 
 		if ( ! isCancelable( purchase ) || ! getSelectedSite( this.props ) ) {
@@ -261,11 +263,14 @@ class ManagePurchase extends Component {
 	}
 
 	renderCancelPrivacyProtection() {
-		const purchase = getPurchase( this.props ),
-			{ id } = purchase;
+		const purchase = getPurchase( this.props ), { id } = purchase;
 		const { translate } = this.props;
 
-		if ( isExpired( purchase ) || ! hasPrivacyProtection( purchase ) || ! getSelectedSite( this.props ) ) {
+		if (
+			isExpired( purchase ) ||
+			! hasPrivacyProtection( purchase ) ||
+			! getSelectedSite( this.props )
+		) {
 			return null;
 		}
 
@@ -316,12 +321,12 @@ class ManagePurchase extends Component {
 			description = theme.description;
 		} else if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
 			description = translate(
-				'Replaces your site\'s free address with the domain %(domain)s, ' +
-				'making it easier to remember and easier to share.',
+				"Replaces your site's free address with the domain %(domain)s, " +
+					'making it easier to remember and easier to share.',
 				{
 					args: {
 						domain: selectedSite.domain,
-					}
+					},
 				}
 			);
 		}
@@ -382,10 +387,7 @@ class ManagePurchase extends Component {
 
 		return (
 			<div>
-				<PurchaseSiteHeader
-					siteId={ selectedSiteId }
-					name={ siteName }
-					domain={ siteDomain } />
+				<PurchaseSiteHeader siteId={ selectedSiteId } name={ siteName } domain={ siteDomain } />
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPlanIcon() }
@@ -430,14 +432,17 @@ class ManagePurchase extends Component {
 		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
-		if ( ! isDataLoading( this.props ) && selectedSite && canEditPaymentDetails( selectedPurchase ) ) {
+		if (
+			! isDataLoading( this.props ) && selectedSite && canEditPaymentDetails( selectedPurchase )
+		) {
 			editCardDetailsPath = getEditCardDetailsPath( selectedSite, selectedPurchase );
 		}
 
 		return (
 			<span>
 				<QueryUserPurchases userId={ user.get().ID } />
-				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ selectedSiteId } themeId={ selectedPurchase.meta } /> }
+				{ isPurchaseTheme &&
+					<QueryCanonicalTheme siteId={ selectedSiteId } themeId={ selectedPurchase.meta } /> }
 				<Main className={ classes }>
 					<HeaderCake onClick={ goToList }>
 						{ titles.managePurchase }
@@ -447,7 +452,8 @@ class ManagePurchase extends Component {
 						handleRenew={ this.handleRenew }
 						selectedSite={ selectedSite }
 						selectedPurchase={ selectedPurchase }
-						editCardDetailsPath={ editCardDetailsPath } />
+						editCardDetailsPath={ editCardDetailsPath }
+					/>
 					{ this.renderPurchaseDetail() }
 				</Main>
 			</span>
@@ -455,21 +461,19 @@ class ManagePurchase extends Component {
 	}
 }
 
-export default connect(
-	( state, props ) => {
-		const selectedPurchase = getByPurchaseId( state, props.purchaseId );
-		const selectedSiteId = getSelectedSiteId( state );
-		const isPurchasePlan = selectedPurchase && isPlan( selectedPurchase );
-		const isPurchaseTheme = selectedPurchase && isTheme( selectedPurchase );
-		return {
-			hasLoadedSites: ! isRequestingSites( state ),
-			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-			selectedPurchase,
-			selectedSiteId,
-			selectedSite: getSelectedSiteSelector( state ),
-			plan: isPurchasePlan && applyTestFiltersToPlansList( selectedPurchase.productSlug, abtest ),
-			isPurchaseTheme,
-			theme: isPurchaseTheme && getCanonicalTheme( state, selectedSiteId, selectedPurchase.meta ),
-		};
-	}
-)( localize( ManagePurchase ) );
+export default connect( ( state, props ) => {
+	const selectedPurchase = getByPurchaseId( state, props.purchaseId );
+	const selectedSiteId = getSelectedSiteId( state );
+	const isPurchasePlan = selectedPurchase && isPlan( selectedPurchase );
+	const isPurchaseTheme = selectedPurchase && isTheme( selectedPurchase );
+	return {
+		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		selectedPurchase,
+		selectedSiteId,
+		selectedSite: getSelectedSiteSelector( state ),
+		plan: isPurchasePlan && applyTestFiltersToPlansList( selectedPurchase.productSlug, abtest ),
+		isPurchaseTheme,
+		theme: isPurchaseTheme && getCanonicalTheme( state, selectedSiteId, selectedPurchase.meta ),
+	};
+} )( localize( ManagePurchase ) );

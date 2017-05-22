@@ -17,7 +17,7 @@ import {
 	isOneTimePurchase,
 	isRenewing,
 	purchaseType,
-	showCreditCardExpiringWarning
+	showCreditCardExpiringWarning,
 } from 'lib/purchases';
 import { isPlan, isDomainProduct, isTheme } from 'lib/products-values';
 import Notice from 'components/notice';
@@ -39,7 +39,7 @@ class PurchaseItem extends Component {
 
 		if ( isRenewing( purchase ) ) {
 			return translate( 'Renews on %s', {
-				args: purchase.renewMoment.format( 'LL' )
+				args: purchase.renewMoment.format( 'LL' ),
 			} );
 		}
 
@@ -49,16 +49,16 @@ class PurchaseItem extends Component {
 					<Notice isCompact status="is-error" icon="notice">
 						{ translate( 'Expires %(timeUntilExpiry)s', {
 							args: {
-								timeUntilExpiry: purchase.expiryMoment.fromNow()
+								timeUntilExpiry: purchase.expiryMoment.fromNow(),
 							},
-							context: 'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"'
+							context: 'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 						} ) }
 					</Notice>
 				);
 			}
 
 			return translate( 'Expires on %s', {
-				args: purchase.expiryMoment.format( 'LL' )
+				args: purchase.expiryMoment.format( 'LL' ),
 			} );
 		}
 
@@ -67,9 +67,9 @@ class PurchaseItem extends Component {
 				<Notice isCompact status="is-error" icon="notice">
 					{ translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
-							timeSinceExpiry: purchase.expiryMoment.fromNow()
+							timeSinceExpiry: purchase.expiryMoment.fromNow(),
 						},
-						context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"'
+						context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 					} ) }
 				</Notice>
 			);
@@ -105,7 +105,8 @@ class PurchaseItem extends Component {
 
 	render() {
 		const { isPlaceholder, isDisconnectedSite, purchase } = this.props;
-		const classes = classNames( 'purchase-item',
+		const classes = classNames(
+			'purchase-item',
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
 			{ 'is-placeholder': isPlaceholder },
 			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
@@ -143,7 +144,9 @@ class PurchaseItem extends Component {
 						<div className="purchase-item__title">
 							{ getName( this.props.purchase ) }
 						</div>
-						<div className="purchase-item__purchase-type">{ purchaseType( this.props.purchase ) }</div>
+						<div className="purchase-item__purchase-type">
+							{ purchaseType( this.props.purchase ) }
+						</div>
 						<div className="purchase-item__purchase-date">
 							{ this.renewsOrExpiresOn() }
 						</div>
@@ -155,7 +158,7 @@ class PurchaseItem extends Component {
 		let props;
 		if ( ! isPlaceholder ) {
 			props = {
-				onClick: this.scrollToTop
+				onClick: this.scrollToTop,
 			};
 
 			if ( ! isDisconnectedSite ) {
@@ -175,7 +178,7 @@ PurchaseItem.propTypes = {
 	isPlaceholder: React.PropTypes.bool,
 	isDisconnectedSite: React.PropTypes.bool,
 	purchase: React.PropTypes.object,
-	slug: React.PropTypes.string
+	slug: React.PropTypes.string,
 };
 
 export default localize( PurchaseItem );

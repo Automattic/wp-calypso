@@ -32,14 +32,6 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
-	conciergeOfferOnCancel: {
-		datestamp: '20170410',
-		variations: {
-			showConciergeOffer: 50,
-			hideConciergeOffer: 50,
-		},
-		defaultVariation: 'showConciergeOffer',
-	},
 	presaleChatButton: {
 		datestamp: '20170328',
 		variations: {
@@ -75,13 +67,43 @@ module.exports = {
 		defaultVariation: 'skip',
 	},
 	jetpackPlansHeadlines: {
-		datestamp: '20170508',
+		datestamp: '20170519',
 		variations: {
-			headlineA: 25,
-			headlineB: 25,
-			headlineC: 25,
-			headlineD: 25
+			headlineA: 50,
+			headlineB: 50
 		},
 		defaultVariation: 'headlineA',
+	},
+	ATPromptOnCancel: {
+		datestamp: '20170515',
+		variations: {
+			hide: 20,
+			show: 80,
+		},
+		defaultVariation: 'hide',
+	},
+	ATUpgradeOnCancel: {
+		datestamp: '20170515',
+		variations: {
+			hide: 20,
+			show: 80,
+		},
+		defaultVariation: 'hide',
+	},
+	reduceThemesInSignupTest: {
+		datestamp: '20170518',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+	},
+	savingsInCheckoutSummary: {
+		datestamp: '20170516',
+		variations: {
+			hide: 50,
+			show: 50,
+		},
+		defaultVariation: 'show',
 	},
 };

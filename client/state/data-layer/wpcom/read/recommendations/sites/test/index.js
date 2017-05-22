@@ -73,10 +73,13 @@ describe( 'recommended sites', () => {
 
 			receiveRecommendedSitesResponse( { dispatch }, action, next, response );
 			expect( next ).to.not.have.been.called;
-			expect( dispatch ).calledWith( receiveRecommendedSites( {
-				sites: fromApi( response ),
-				seed
-			} ) );
+			expect( dispatch ).calledWith(
+				receiveRecommendedSites( {
+					sites: fromApi( response ),
+					seed,
+					offset: 0,
+				} )
+			);
 		} );
 	} );
 
@@ -112,7 +115,7 @@ describe( 'recommended sites', () => {
 					feedId: 1098976,
 					title: 'Make Something Mondays!',
 					url: 'http:\/\/makesomethingmondays.wordpress.com',
-				}
+				},
 			];
 
 			expect( fromApi( response ) ).eql( expected );

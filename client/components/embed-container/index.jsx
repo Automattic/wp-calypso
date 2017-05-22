@@ -1,18 +1,14 @@
 /**
- * A component that notices when the content has embeds that require outside JS. Load the outside JS and process the embeds
+ * External Dependencies
  */
-
-import React from 'react';
+import React, { PureComponent } from 'react';
 import ReactDom from 'react-dom';
-import PureMixin from 'react-pure-render/mixin';
-import filter from 'lodash/filter';
-import forEach from 'lodash/forEach';
-import forOwn from 'lodash/forOwn';
-import noop from 'lodash/noop';
-import assign from 'lodash/assign';
+import { assign, filter, forEach, forOwn, noop } from 'lodash';
 
+/**
+ * Internal Dependencies
+ */
 import { loadScript, loadjQueryDependentScript } from 'lib/load-script';
-
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:components:embed-container' );
@@ -22,21 +18,22 @@ const embedsToLookFor = {
 	'blockquote[class^="twitter-"], a[class^="twitter-"]': embedTwitter,
 	'fb\\\:post, [class^=fb-]': embedFacebook,
 	'[class^=tumblr-]': embedTumblr,
-	'.jetpack-slideshow': embedSlideshow
+	'.jetpack-slideshow': embedSlideshow,
+	'.embed-reddit': embedReddit,
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
 
 const SLIDESHOW_URLS = {
-	CSS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css${cacheBustQuery}`,
-	CYCLE_JS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.min.js${cacheBustQuery}`,
-	JS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js${cacheBustQuery}`,
-	SPINNER: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif${cacheBustQuery}`
+	CSS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css${ cacheBustQuery }`,
+	CYCLE_JS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.min.js${ cacheBustQuery }`,
+	JS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js${ cacheBustQuery }`,
+	SPINNER: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif${ cacheBustQuery }`,
 };
 
 function processEmbeds( domNode ) {
 	forOwn( embedsToLookFor, ( fn, embedSelector ) => {
-		let nodes = domNode.querySelectorAll( embedSelector );
+		const nodes = domNode.querySelectorAll( embedSelector );
 		forEach( filter( nodes, nodeNeedsProcessing ), fn );
 	} );
 }
@@ -54,13 +51,13 @@ function loadCSS( cssUrl ) {
 	const link = assign( document.createElement( 'link' ), {
 		rel: 'stylesheet',
 		type: 'text/css',
-		href: cssUrl
+		href: cssUrl,
 	} );
 
 	document.head.appendChild( link );
 }
 
-let loaders = {};
+const loaders = {};
 function loadAndRun( scriptUrl, callback ) {
 	let loader = loaders[ scriptUrl ];
 	if ( ! loader ) {
@@ -88,7 +85,10 @@ function embedInstagram( domNode ) {
 		return;
 	}
 
-	loadAndRun( 'https://platform.instagram.com/en_US/embeds.js', embedInstagram.bind( null, domNode ) );
+	loadAndRun(
+		'https://platform.instagram.com/en_US/embeds.js',
+		embedInstagram.bind( null, domNode )
+	);
 }
 
 function embedTwitter( domNode ) {
@@ -99,7 +99,10 @@ function embedTwitter( domNode ) {
 		return;
 	}
 
-	loadAndRun( 'https://platform.twitter.com/widgets.js', embedTwitter.bind( null, domNode ) );
+	loadAndRun(
+		'https://platform.twitter.com/widgets.js',
+		embedTwitter.bind( null, domNode )
+	);
 }
 
 function embedFacebook( domNode ) {
@@ -109,6 +112,11 @@ function embedFacebook( domNode ) {
 	}
 
 	loadAndRun( 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.2', noop );
+}
+
+function embedReddit( domNode ) {
+	debug( 'processing reddit for ', domNode );
+	loadAndRun( 'https://embed.redditmedia.com/widgets/platform.js', noop );
 }
 
 let tumblrLoader;
@@ -122,9 +130,14 @@ function embedTumblr( domNode ) {
 	tumblrLoader = true;
 
 	function removeScript() {
-		forEach( document.querySelectorAll( 'script[src="https://secure.assets.tumblr.com/post.js"]' ), function( el ) {
-			el.parentNode.removeChild( el );
-		} );
+		forEach(
+			document.querySelectorAll(
+				'script[src="https://secure.assets.tumblr.com/post.js"]'
+			),
+			function( el ) {
+				el.parentNode.removeChild( el );
+			}
+		);
 		tumblrLoader = false;
 	}
 
@@ -148,14 +161,16 @@ function createSlideshow() {
 	} );
 }
 
-let slideshowCSSPresent = document.head.querySelector( `link[href="${ SLIDESHOW_URLS.CSS }"]` );
+let slideshowCSSPresent = document.head.querySelector(
+	`link[href="${ SLIDESHOW_URLS.CSS }"]`
+);
 
 function embedSlideshow( domNode ) {
 	debug( 'processing slideshow for', domNode );
 
 	// set global variable required by JetpackSlideshow
 	window.jetpackSlideshowSettings = {
-		spinner: SLIDESHOW_URLS.SPINNER
+		spinner: SLIDESHOW_URLS.SPINNER,
 	};
 
 	if ( ! slideshowCSSPresent ) {
@@ -164,8 +179,10 @@ function embedSlideshow( domNode ) {
 	}
 
 	// Remove no JS warning so user doesn't have to look at it while several scripts load
-	const warningElements = domNode.parentNode.getElementsByClassName( 'jetpack-slideshow-noscript' );
-	forEach( warningElements, ( el ) => {
+	const warningElements = domNode.parentNode.getElementsByClassName(
+		'jetpack-slideshow-noscript'
+	);
+	forEach( warningElements, el => {
 		el.classList.add( 'hidden' );
 	} );
 
@@ -174,7 +191,7 @@ function embedSlideshow( domNode ) {
 		createSlideshow();
 	} else if ( window.jQuery && ! window.jQuery.prototype.cycle ) {
 		// Only jQuery exists
-		loadAndRun( SLIDESHOW_URLS.CYCLE_JS, ()=> {
+		loadAndRun( SLIDESHOW_URLS.CYCLE_JS, () => {
 			createSlideshow();
 		} );
 	} else {
@@ -185,24 +202,19 @@ function embedSlideshow( domNode ) {
 	}
 }
 
-export default React.createClass( {
-	mixins: [ PureMixin ],
-
+/**
+ * A component that notices when the content has embeds that require outside JS. Load the outside JS and process the embeds
+ */
+export default class EmbedContainer extends PureComponent {
 	componentDidMount() {
-		debug( 'did mount' );
 		processEmbeds( ReactDom.findDOMNode( this ) );
-	},
+	}
 
 	componentDidUpdate() {
-		debug( 'did update' );
 		processEmbeds( ReactDom.findDOMNode( this ) );
-	},
-
-	componentWillUnmount() {
-		debug( 'unmounting' );
-	},
+	}
 
 	render() {
 		return React.Children.only( this.props.children );
 	}
-} );
+}

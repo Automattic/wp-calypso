@@ -15,6 +15,10 @@ export const normalizeSettings = ( settings ) => {
 			case 'carousel_background_color':
 				memo[ key ] = settings [ key ] === '' ? 'black' : settings[ key ];
 				break;
+			case 'custom-content-types':
+			case 'jetpack_testimonial':
+			case 'jetpack_portfolio':
+				break;
 			case 'jetpack_protect_global_whitelist':
 				const whitelist = get( settings[ key ], [ 'local' ], [] );
 				memo[ key ] = whitelist.join( '\n' );
@@ -49,6 +53,10 @@ export const sanitizeSettings = ( settings ) => {
 	return Object.keys( settings ).reduce( ( memo, key ) => {
 		switch ( key ) {
 			case 'post_by_email_address':
+				break;
+			case 'custom-content-types':
+			case 'jetpack_testimonial':
+			case 'jetpack_portfolio':
 				break;
 			case 'infinite-scroll':
 				break;
@@ -115,10 +123,6 @@ export const filterSettingsByActiveModules = ( settings ) => {
 			'Phrases to Avoid',
 			'Redundant Expression',
 			'ignored_phrases',
-		],
-		'custom-content-types': [
-			'jetpack_testimonial',
-			'jetpack_portfolio',
 		],
 		comments: [
 			'highlander_comment_form_prompt',

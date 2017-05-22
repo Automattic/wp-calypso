@@ -23,7 +23,7 @@ describe( 'wrap-es6-functions', () => {
 		sandbox.stub( console, 'error' );
 
 		fromPairs( [
-			[ Array, [ 'keys', 'entries', 'values', 'findIndex', 'fill', 'find' ] ],
+			[ Array, [ 'keys', 'entries', 'values', 'findIndex', 'fill', 'find', 'includes' ] ],
 			[ String, [ 'codePointAt', 'normalize', 'repeat', 'startsWith', 'endsWith', 'includes' ] ],
 		], ( object, keys ) => {
 			keys.forEach( ( key ) => {
@@ -37,7 +37,7 @@ describe( 'wrap-es6-functions', () => {
 	} );
 
 	describe( 'Array', () => {
-		[ 'keys', 'entries', 'values' ].forEach( partial( assertCall, Array.prototype, [] ) );
+		[ 'keys', 'entries', 'values', 'includes' ].forEach( partial( assertCall, Array.prototype, [] ) );
 		[ 'findIndex', 'find' ].forEach( partial( assertCall, Array.prototype, [ () => true ] ) );
 		[ 'fill' ].forEach( partial( assertCall, Array.prototype, [ 1 ] ) );
 	} );

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
@@ -23,7 +24,9 @@ const DELIVERY_FREQUENCY_INSTANTLY = 'instantly',
 	DELIVERY_FREQUENCY_DAILY = 'daily',
 	DELIVERY_FREQUENCY_WEEKLY = 'weekly';
 
-var FollowingEditNotificationSettings = React.createClass( {
+const FollowingEditNotificationSettings = createReactClass( {
+	displayName: 'FollowingEditNotificationSettings',
+
 	propTypes: {
 		subscription: React.PropTypes.object.isRequired,
 		isEmailBlocked: React.PropTypes.bool,

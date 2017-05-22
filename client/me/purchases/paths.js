@@ -48,5 +48,5 @@ export default {
 	confirmCancelDomain,
 	editCardDetails,
 	managePurchase,
-	purchasesRoot
+	purchasesRoot,
 };

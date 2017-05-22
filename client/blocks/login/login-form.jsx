@@ -9,7 +9,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
@@ -19,22 +18,16 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isRequesting, getRequestError } from 'state/login/selectors';
-import { errorNotice } from 'state/notices/actions';
+import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
-		errorNotice: PropTypes.func.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		loginError: PropTypes.string,
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		requestError: PropTypes.object,
-		title: PropTypes.string,
 		translate: PropTypes.func.isRequired,
-	};
-
-	static defaultProps = {
-		title: '',
 	};
 
 	state = {
@@ -69,27 +62,6 @@ export class LoginForm extends Component {
 			this.props.recordTracksEvent( 'calypso_login_block_login_failure', {
 				error_message: error.message
 			} );
-
-			if ( error.field === 'global' ) {
-				if ( error.message === 'proxy_required' ) {
-					// TODO: Remove once the proxy requirement is removed from the API
-
-					let redirectTo = '';
-
-					if ( typeof window !== 'undefined' && window.location.search.indexOf( '?redirect_to=' ) === 0 ) {
-						redirectTo = window.location.search;
-					}
-
-					this.props.errorNotice(
-						<p>
-							{ 'This endpoint is restricted to proxied Automatticians for now. Please use ' }
-							<a href={ config( 'login_url' ) + redirectTo }>the old login page</a>.
-						</p>
-					);
-				} else {
-					this.props.errorNotice( error.message );
-				}
-			}
 		} );
 	};
 
@@ -102,74 +74,72 @@ export class LoginForm extends Component {
 		const { requestError } = this.props;
 
 		return (
-			<div>
-				<div className="login__form-header">
-					{ this.props.title }
-				</div>
+			<form onSubmit={ this.onSubmitForm } method="post">
+				<Card className="login__form">
+					<div className="login__form-userdata">
+						<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
+							{ this.props.translate( 'Username or Email Address' ) }
+						</label>
 
-				<form onSubmit={ this.onSubmitForm } method="post">
-					<Card className="login__form">
-						<div className="login__form-userdata">
-							<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
-								{ this.props.translate( 'Username or Email Address' ) }
-							</label>
+						<FormTextInput
+							className={
+								classNames( 'login__form-userdata-username-input', {
+									'is-error': requestError && requestError.field === 'usernameOrEmail'
+								} )
+							}
+							onChange={ this.onChangeField }
+							id="usernameOrEmail"
+							name="usernameOrEmail"
+							value={ this.state.usernameOrEmail }
+							{ ...isDisabled } />
 
-							<FormTextInput
-								className={
-									classNames( 'login__form-userdata-username-input', {
-										'is-error': requestError && requestError.field === 'usernameOrEmail'
-									} )
-								}
-								onChange={ this.onChangeField }
-								id="usernameOrEmail"
-								name="usernameOrEmail"
-								value={ this.state.usernameOrEmail }
+						{ requestError && requestError.field === 'usernameOrEmail' && (
+							<FormInputValidation isError text={ requestError.message } />
+						) }
+
+						<label htmlFor="password" className="login__form-userdata-username">
+							{ this.props.translate( 'Password' ) }
+						</label>
+
+						<FormPasswordInput
+							className={
+								classNames( 'login__form-userdata-username-password', {
+									'is-error': requestError && requestError.field === 'password'
+								} )
+							}
+							onChange={ this.onChangeField }
+							id="password"
+							name="password"
+							value={ this.state.password }
+							{ ...isDisabled } />
+
+						{ requestError && requestError.field === 'password' && (
+							<FormInputValidation isError text={ requestError.message } />
+						) }
+					</div>
+
+					<div className="login__form-remember-me">
+						<label>
+							<FormCheckbox
+								name="rememberMe"
+								checked={ this.state.rememberMe }
+								onChange={ this.onChangeRememberMe }
 								{ ...isDisabled } />
+							<span>{ this.props.translate( 'Keep me logged in' ) }</span>
+						</label>
+					</div>
 
-							{ requestError && requestError.field === 'usernameOrEmail' && (
-								<FormInputValidation isError text={ requestError.message } />
-							) }
+					<div className="login__form-action">
+						<FormsButton primary { ...isDisabled }>
+							{ this.props.translate( 'Log In' ) }
+						</FormsButton>
+					</div>
 
-							<label htmlFor="password" className="login__form-userdata-username">
-								{ this.props.translate( 'Password' ) }
-							</label>
-
-							<FormPasswordInput
-								className={
-									classNames( 'login__form-userdata-username-password', {
-										'is-error': requestError && requestError.field === 'password'
-									} )
-								}
-								onChange={ this.onChangeField }
-								id="password"
-								name="password"
-								value={ this.state.password }
-								{ ...isDisabled } />
-
-							{ requestError && requestError.field === 'password' && (
-								<FormInputValidation isError text={ requestError.message } />
-							) }
-						</div>
-
-						<div className="login__form-remember-me">
-							<label>
-								<FormCheckbox
-									name="rememberMe"
-									checked={ this.state.rememberMe }
-									onChange={ this.onChangeRememberMe }
-									{ ...isDisabled } />
-								<span>{ this.props.translate( 'Stay logged in' ) }</span>
-							</label>
-						</div>
-
-						<div className="login__form-action">
-							<FormsButton primary { ...isDisabled }>
-								{ this.props.translate( 'Log in' ) }
-							</FormsButton>
-						</div>
-					</Card>
-				</form>
-			</div>
+					<div className="login__form-social">
+						<SocialLoginForm onSuccess={ this.props.onSuccess } />
+					</div>
+				</Card>
+			</form>
 		);
 	}
 }
@@ -180,7 +150,6 @@ export default connect(
 		requestError: getRequestError( state ),
 	} ),
 	{
-		errorNotice,
 		loginUser,
 		recordTracksEvent,
 	}

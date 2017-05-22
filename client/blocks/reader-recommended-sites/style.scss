@@ -54,7 +54,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-recommended-sites__site-list-item {
 	display: flex;
-	flex: 1;
+	flex: 1 1 0%;
 	flex-direction: column;
 	list-style-type: none;
 	margin-top: -40px;
@@ -62,7 +62,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
 		flex-direction: row;
-		flex: 0;
+		flex: 0 1 auto;
 		margin-top: 0;
 
 		& + & {
@@ -72,7 +72,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
 		flex-direction: row;
-		flex: 0;
+		flex: 0 1 auto;
 		margin-top: 0;
 
 		& + & {
@@ -81,13 +81,18 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	> :nth-child(2) {
-		flex: 1;
+		flex: 1 1 auto;
 	}
 
 	.reader-recommended-sites__recommended-site-dismiss {
 		display: flex;
 		height: 30px;
 		justify-content: flex-end;
+
+		.button.is-borderless {
+			position: relative;
+			z-index: 0;
+		}
 
 		.button.is-borderless .gridicon,
 		.gridicon,
@@ -135,7 +140,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	&:first-child {
-		margin-right: 10px;
+		margin-right: 20px;
 
 		@media #{$reader-related-card-v2-breakpoint-small} {
 			margin-right: 0;
@@ -143,7 +148,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	&:last-child {
-		margin-left: 10px;
+		margin-left: 20px;
 
 		@media #{$reader-related-card-v2-breakpoint-small} {
 			margin-left: 0;
@@ -159,7 +164,13 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		}
 	}
 
+	&:only-child {
+		margin-left: 0;
+		margin-right: 0;
+	}
+
 	.reader-subscription-list-item__byline {
+		margin-right: 0;
 		padding-right: 0;
 	}
 

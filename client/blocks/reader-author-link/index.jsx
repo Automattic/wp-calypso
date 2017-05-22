@@ -12,7 +12,7 @@ import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import * as stats from 'reader/stats';
 
 const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
-	const recordAuthorClick = ( { } ) => {
+	const recordAuthorClick = ( {} ) => {
 		stats.recordAction( 'click_author' );
 		stats.recordGaEvent( 'Clicked Author Link' );
 		if ( post ) {
@@ -35,7 +35,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 
 	// If we have neither author.URL or siteUrl, just return children in a wrapper
 	if ( ! siteUrl ) {
-		return ( <span className={ classes }>{children}</span> );
+		return <span className={ classes }>{ children }</span>;
 	}
 
 	return (
@@ -48,7 +48,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 ReaderAuthorLink.propTypes = {
 	author: React.PropTypes.object.isRequired,
 	post: React.PropTypes.object, // for stats only,
-	siteUrl: React.PropTypes.string // used instead of author.URL if present
+	siteUrl: React.PropTypes.string, // used instead of author.URL if present
 };
 
 export default ReaderAuthorLink;

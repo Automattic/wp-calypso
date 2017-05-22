@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { pickBy } from 'lodash';
+import { compact, pickBy } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -18,16 +18,19 @@ import SubMasterbarNav from 'components/sub-masterbar-nav';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import { prependFilterKeys, getSortedFilterTerms, stripFilters, getSubjects } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
-import { isATEnabled } from 'lib/automated-transfer';
-import { getThemeShowcaseDescription, getThemeShowcaseTitle } from 'state/selectors';
+import {
+	getThemeFilterTerms,
+	getThemeFilterToTermTable,
+	getThemeShowcaseDescription,
+	getThemeShowcaseTitle,
+	prependThemeFilterKeys,
+} from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 
@@ -83,9 +86,17 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	doSearch( searchBoxContent ) {
-		const filter = getSortedFilterTerms( searchBoxContent );
-		const searchString = stripFilters( searchBoxContent );
-		const url = this.constructUrl( { filter, searchString } );
+		const filterRegex = /(\w+)\:([\w-]*)/g;
+		const { filterToTermTable } = this.props;
+
+		const filters = searchBoxContent.match( filterRegex ) || [];
+		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
+
+		const url = this.constructUrl( {
+			filter: compact( validFilters ).join( '+' ),
+			// Strip filters and excess whitespace
+			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
+		} );
 		page( url );
 	},
 
@@ -135,13 +146,12 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	showUploadButton() {
-		const { isMultisite, isJetpack, isLoggedIn } = this.props;
+		const { isMultisite, isLoggedIn } = this.props;
 
 		return (
 			config.isEnabled( 'manage/themes/upload' ) &&
 			isLoggedIn &&
-			! isMultisite &&
-			( isJetpack || this.props.atEnabled )
+			! isMultisite
 		);
 	},
 
@@ -157,6 +167,7 @@ const ThemeShowcase = React.createClass( {
 			isLoggedIn,
 			pathName,
 			title,
+			filterString,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -177,7 +188,7 @@ const ThemeShowcase = React.createClass( {
 			uri: this.constructUrl( { vertical: '' } ),
 			icon: 'star'
 		} ].concat(
-			getSubjects()
+			Object.keys( this.props.subjects )
 				.map( subject => subjectsMeta[ subject ] && {
 					label: subject,
 					uri: this.constructUrl( { vertical: subject } ),
@@ -203,7 +214,7 @@ const ThemeShowcase = React.createClass( {
 					<QueryThemeFilters />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
-						search={ prependFilterKeys( filter ) + search }
+						search={ filterString + search }
 						tier={ tier }
 						select={ this.onTierSelect } />
 					{ this.showUploadButton() && <Button className="themes__upload-button" compact icon
@@ -255,12 +266,14 @@ const ThemeShowcase = React.createClass( {
 } );
 
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
-	atEnabled: isATEnabled( getSelectedSite( state ) ),
 	isLoggedIn: !! getCurrentUserId( state ),
 	siteSlug: getSiteSlug( state, siteId ),
 	isJetpack: isJetpackSite( state, siteId ),
 	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
+	subjects: getThemeFilterTerms( state, 'subject' ) || {},
+	filterString: prependThemeFilterKeys( state, filter ),
+	filterToTermTable: getThemeFilterToTermTable( state ),
 } );
 
 const mapDispatchToProps = {

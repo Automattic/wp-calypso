@@ -45,6 +45,7 @@ import insertMenuPlugin from './plugins/insert-menu/plugin';
 import embedReversalPlugin from './plugins/embed-reversal/plugin';
 import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
 import mentionsPlugin from './plugins/mentions/plugin';
+import markdownPlugin from './plugins/markdown/plugin';
 
 [
 	wpcomPlugin,
@@ -68,6 +69,7 @@ import mentionsPlugin from './plugins/mentions/plugin';
 	wptextpatternPlugin,
 	toolbarPinPlugin,
 	embedReversalPlugin,
+	markdownPlugin,
 ].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
@@ -136,6 +138,7 @@ const PLUGINS = [
 	'wpcom/embedreversal',
 	'wpcom/trackpaste',
 	'wpcom/insertmenu',
+	'wpcom/markdown',
 ];
 
 mentionsPlugin();

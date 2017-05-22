@@ -127,7 +127,7 @@
 	}
 
 	.seo-settings__seo-form .form-text-input-with-affixes__prefix {
-		min-width: 60px;
+		min-width: 80px;
 		text-align: center;
 	}
 
@@ -190,6 +190,12 @@
 		@include breakpoint( "<660px") {
 			display: block;
 			margin-bottom: 8px;
+		}
+	}
+
+	.card {
+		&.is-placeholder div {
+			@include placeholder;
 		}
 	}
 }

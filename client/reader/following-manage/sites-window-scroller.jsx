@@ -9,7 +9,7 @@ import {
 	CellMeasurer,
 	InfiniteLoader,
 } from 'react-virtualized';
-import { debounce, noop } from 'lodash';
+import { debounce, noop, get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -27,10 +27,11 @@ class SitesWindowScroller extends Component {
 		sites: PropTypes.array.isRequired,
 		fetchNextPage: PropTypes.func,
 		remoteTotalCount: PropTypes.number.isRequired,
-		forceRefresh: PropTypes.bool,
+		forceRefresh: PropTypes.any, // forceRefresh can be anything. Whenever we want to force a refresh, it should change
 		windowScrollerRef: PropTypes.func,
+		showLastUpdatedDate: PropTypes.bool,
 	};
-	defaultProps = { windowScrollerRef: noop };
+	defaultProps = { windowScrollerRef: noop, showLastUpdatedDate: true };
 
 	heightCache = new CellMeasurerCache( {
 		fixedWidth: true,
@@ -39,9 +40,9 @@ class SitesWindowScroller extends Component {
 
 	siteRowRenderer = ( { index, key, style, parent } ) => {
 		const site = this.props.sites[ index ];
-		if ( ! site ) {
-			return null;
-		}
+		const feedUrl = get( site, 'feed_URL' );
+		const feedId = +get( site, 'feed_ID' );
+		const siteId = +get( site, 'blog_ID' );
 
 		return (
 			<CellMeasurer
@@ -58,10 +59,11 @@ class SitesWindowScroller extends Component {
 						className="following-manage__sites-window-scroller-row-wrapper"
 					>
 						<ConnectedSubscriptionListItem
-							url={ site.feed_URL }
-							feedId={ +site.feed_ID }
-							siteId={ +site.blog_ID }
+							url={ feedUrl }
+							feedId={ feedId }
+							siteId={ siteId }
 							onLoad={ measure }
+							showLastUpdatedDate={ this.props.showLastUpdatedDate }
 						/>
 					</div>
 				) }

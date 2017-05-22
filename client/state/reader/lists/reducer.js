@@ -86,7 +86,7 @@ export function subscribedLists( state = [], action ) {
 			return map( action.lists, 'ID' );
 		case READER_LISTS_UNFOLLOW_SUCCESS:
 			// Remove the unfollowed list ID from subscribedLists
-			return filter( state, ( listId ) => {
+			return filter( state, listId => {
 				return listId !== action.data.list.ID;
 			} );
 		case SERIALIZE:
@@ -117,7 +117,7 @@ export function updatedLists( state = [], action ) {
 			return union( state, [ newListId ] );
 		case READER_LIST_DISMISS_NOTICE:
 			// Remove the dismissed list ID
-			return filter( state, ( listId ) => {
+			return filter( state, listId => {
 				return listId !== action.listId;
 			} );
 		case SERIALIZE:
@@ -215,12 +215,12 @@ export function missingLists( state = [], action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
 			// Remove any valid lists from missingLists
-			return filter( state, ( list ) => {
+			return filter( state, list => {
 				return ! find( action.lists, { owner: list.owner, slug: list.slug } );
 			} );
 		case READER_LIST_REQUEST_SUCCESS:
 			// Remove any valid lists from missingLists
-			return filter( state, ( list ) => {
+			return filter( state, list => {
 				return action.data.list.owner !== list.owner && action.data.list.slug !== list.slug;
 			} );
 		case READER_LIST_REQUEST_FAILURE:
@@ -244,5 +244,5 @@ export default combineReducers( {
 	isRequestingList,
 	isRequestingLists,
 	errors,
-	missingLists
+	missingLists,
 } );

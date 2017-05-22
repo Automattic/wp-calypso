@@ -12,7 +12,7 @@ import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderExcerpt from 'blocks/reader-excerpt';
 
-const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } )=> {
+const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } ) => {
 	const canonicalMedia = post.canonical_media;
 	let featuredAsset;
 	if ( ! canonicalMedia ) {
@@ -31,7 +31,7 @@ const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpa
 	}
 
 	return (
-		<div className="reader-post-card__post" >
+		<div className="reader-post-card__post">
 			{ featuredAsset }
 			<div className="reader-post-card__post-details">
 				<AutoDirection>

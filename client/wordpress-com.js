@@ -315,7 +315,7 @@ sections.push( {
 
 sections.push( {
 	name: 'login',
-	paths: [ '/login' ],
+	paths: [ '/log-in' ],
 	module: 'login',
 	enableLoggedOut: true,
 	secondary: false,
@@ -343,6 +343,14 @@ sections.push( {
 	paths: [ '/me/chat' ],
 	module: 'me/happychat',
 	group: 'me',
+	secondary: true
+} );
+
+sections.push( {
+	name: 'comments',
+	paths: [ '/comments' ],
+	module: 'my-sites/comments',
+	group: 'sites',
 	secondary: true
 } );
 

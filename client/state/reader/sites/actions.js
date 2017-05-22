@@ -6,7 +6,7 @@ import {
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
-	READER_SITE_UPDATE
+	READER_SITE_UPDATE,
 } from 'state/action-types';
 
 export function requestSite( siteId ) {
@@ -14,14 +14,14 @@ export function requestSite( siteId ) {
 		dispatch( {
 			type: READER_SITE_REQUEST,
 			payload: {
-				ID: siteId
-			}
+				ID: siteId,
+			},
 		} );
 		return wpcom.undocumented().readSite( { site: siteId } ).then(
 			function success( data ) {
 				dispatch( {
 					type: READER_SITE_REQUEST_SUCCESS,
-					payload: data
+					payload: data,
 				} );
 				return data;
 			},
@@ -29,9 +29,9 @@ export function requestSite( siteId ) {
 				dispatch( {
 					type: READER_SITE_REQUEST_FAILURE,
 					payload: {
-						ID: siteId
+						ID: siteId,
 					},
-					error: err
+					error: err,
 				} );
 				throw err;
 			}
@@ -45,6 +45,6 @@ export function updateSites( sites ) {
 	}
 	return {
 		type: READER_SITE_UPDATE,
-		payload: sites
+		payload: sites,
 	};
 }

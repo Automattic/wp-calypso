@@ -83,7 +83,7 @@ const Checkout = React.createClass( {
 		}
 
 		window.scrollTo( 0, 0 );
-		this.props.loadTrackingTool( 'Lucky Orange' );
+		this.props.loadTrackingTool( 'HotJar' );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {

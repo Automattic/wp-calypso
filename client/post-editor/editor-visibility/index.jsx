@@ -166,7 +166,10 @@ const EditorVisibility = React.createClass( {
 				break;
 
 			case 'password':
-				reduxPostEdits = { password: this.props.savedPassword || ' ' };
+				reduxPostEdits = {
+					password: this.props.savedPassword || ' ',
+					sticky: false,
+				};
 				this.setState( { passwordIsValid: true } );
 				break;
 		}
@@ -193,7 +196,12 @@ const EditorVisibility = React.createClass( {
 		postActions.edit( {
 			status: 'private'
 		} );
-		this.props.editPost( siteId, postId, { password: '' } );
+
+		// Private posts cannot be sticky
+		this.props.editPost( siteId, postId, {
+			password: '',
+			sticky: false
+		} );
 
 		recordStat( 'visibility-set-private' );
 		recordEvent( 'Changed visibility', 'private' );

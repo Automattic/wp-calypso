@@ -12,8 +12,7 @@ export function getPost( state, postGlobalId ) {
 	return state.reader.posts.items[ postGlobalId ];
 }
 
-let previousItems = null,
-	postMapBySiteAndPost = {};
+let previousItems = null, postMapBySiteAndPost = {};
 /**
  * Get a single post by site ID and post ID
  * @param  {Object} state  Global state tree
@@ -33,7 +32,10 @@ export function getPostBySiteAndId( state, siteId, postId ) {
 		 */
 		const items = state.reader.posts.items,
 			// only internal (wpcom / jetpack) posts have a valid site_ID and post ID
-			internalPosts = filter( items, post => post && post.site_ID && post.ID && ! post.is_external );
+			internalPosts = filter(
+				items,
+				post => post && post.site_ID && post.ID && ! post.is_external
+			);
 
 		postMapBySiteAndPost = keyBy( internalPosts, post => {
 			return `${ post.site_ID }-${ post.ID }`;

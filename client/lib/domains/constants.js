@@ -68,7 +68,9 @@ const domainAvailability = {
 };
 
 const dnsTemplates = {
+	G_SUITE: 'g-suite',
 	MICROSOFT_OFFICE365: 'microsoft-office365',
+	ZOHO_MAIL: 'zoho-mail',
 };
 
 export default {

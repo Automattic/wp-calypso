@@ -18,17 +18,19 @@ describe( 'requestFollow', () => {
 		const next = spy();
 		const action = follow( 'http://example.com' );
 		requestFollow( { dispatch }, action, next );
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'POST',
-			path: '/read/following/mine/new',
-			apiVersion: '1.1',
-			body: {
-				url: 'http://example.com',
-				source: 'calypso',
-			},
-			onSuccess: action,
-			onFailure: action,
-		} ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http( {
+				method: 'POST',
+				path: '/read/following/mine/new',
+				apiVersion: '1.1',
+				body: {
+					url: 'http://example.com',
+					source: 'calypso',
+				},
+				onSuccess: action,
+				onFailure: action,
+			} )
+		);
 		expect( next ).to.have.been.calledWith( action );
 	} );
 } );
@@ -48,12 +50,11 @@ describe( 'receiveFollow', () => {
 				date_subscribed: '1976-09-15T12:00:00Z',
 				delivery_methods: {},
 				is_owner: false,
-			}
+			},
 		};
 		receiveFollow( { dispatch }, action, next, response );
-		expect( next ).to.be.calledWith( follow(
-			'http://example.com',
-			{
+		expect( next ).to.be.calledWith(
+			follow( 'http://example.com', {
 				ID: 1,
 				URL: 'http://example.com',
 				feed_URL: 'http://example.com',
@@ -61,9 +62,9 @@ describe( 'receiveFollow', () => {
 				feed_ID: 3,
 				date_subscribed: 211636800000,
 				delivery_methods: {},
-				is_owner: false
-			}
-		) );
+				is_owner: false,
+			} )
+		);
 	} );
 
 	it( 'should dispatch an error notice when subscribed is false', () => {
@@ -71,7 +72,7 @@ describe( 'receiveFollow', () => {
 		const next = spy();
 		const action = follow( 'http://example.com' );
 		const response = {
-			subscribed: false
+			subscribed: false,
 		};
 
 		receiveFollow( { dispatch }, action, next, response );
@@ -88,6 +89,6 @@ describe( 'followError', () => {
 
 		followError( { dispatch }, action, next );
 		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
-		expect( next ) .to.be.calledWith( unfollow( 'http://example.com' ) );
+		expect( next ).to.be.calledWith( unfollow( 'http://example.com' ) );
 	} );
 } );

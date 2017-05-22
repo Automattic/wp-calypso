@@ -22,7 +22,8 @@ import StandardPost from './standard';
 import FollowButton from 'reader/follow-button';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
-import { getDiscoverBlogName,
+import {
+	getDiscoverBlogName,
 	getSourceFollowUrl as getDiscoverFollowUrl,
 } from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
@@ -59,9 +60,9 @@ class ReaderPostCard extends React.Component {
 		// If we have an discover pick post available, send the discover pick to the full post view
 		const postToOpen = get( this.props, 'discoverPick.post' ) || this.props.post;
 		this.props.onClick( postToOpen );
-	}
+	};
 
-	handleCardClick = ( event ) => {
+	handleCardClick = event => {
 		const rootNode = ReactDom.findDOMNode( this ),
 			selection = window.getSelection && window.getSelection();
 
@@ -85,7 +86,10 @@ class ReaderPostCard extends React.Component {
 		}
 
 		// ignore clicks on anchors inside inline content
-		if ( closest( event.target, 'a', true, rootNode ) && closest( event.target, '.reader-excerpt', true, rootNode ) ) {
+		if (
+			closest( event.target, 'a', true, rootNode ) &&
+			closest( event.target, '.reader-excerpt', true, rootNode )
+		) {
 			return;
 		}
 
@@ -95,11 +99,12 @@ class ReaderPostCard extends React.Component {
 		}
 
 		// programattic ignore
-		if ( ! event.defaultPrevented ) { // some child handled it
+		if ( ! event.defaultPrevented ) {
+			// some child handled it
 			event.preventDefault();
 			this.propagateCardClick();
 		}
-	}
+	};
 
 	render() {
 		const {
@@ -136,22 +141,29 @@ class ReaderPostCard extends React.Component {
 
 		if ( isDiscover ) {
 			const discoverBlogName = getDiscoverBlogName( post ) || null;
-			discoverFollowButton = discoverBlogName &&
-				<DiscoverFollowButton siteName={ discoverBlogName } followUrl={ getDiscoverFollowUrl( post ) } />;
+			discoverFollowButton =
+				discoverBlogName &&
+				<DiscoverFollowButton
+					siteName={ discoverBlogName }
+					followUrl={ getDiscoverFollowUrl( post ) }
+				/>;
 		}
 
-		const readerPostActions = <ReaderPostActions
-			post={ get( discoverPick, 'post' ) || post }
-			site={ site }
-			visitUrl = { post.URL }
-			showVisit={ true }
-			showMenu={ true }
-			fullPost= { false }
-			showMenuFollow={ ! isDiscover }
-			onCommentClick={ onCommentClick }
-			showEdit={ false }
-			className="ignore-click"
-			iconSize={ 18 } />;
+		const readerPostActions = (
+			<ReaderPostActions
+				post={ get( discoverPick, 'post' ) || post }
+				site={ site }
+				visitUrl={ post.URL }
+				showVisit={ true }
+				showMenu={ true }
+				fullPost={ false }
+				showMenuFollow={ ! isDiscover }
+				onCommentClick={ onCommentClick }
+				showEdit={ false }
+				className="ignore-click"
+				iconSize={ 18 }
+			/>
+		);
 
 		let readerPostCard;
 		if ( isPhotoPost ) {
@@ -165,14 +177,16 @@ class ReaderPostCard extends React.Component {
 					expandCard={ expandCard }
 					postKey={ postKey }
 				>
-						{ discoverFollowButton }
-						{ readerPostActions }
+					{ discoverFollowButton }
+					{ readerPostActions }
 				</PhotoPost>
 			);
 		} else if ( isGalleryPost ) {
-			readerPostCard = <GalleryPost post={ post } title={ title } isDiscover={ isDiscover }>
+			readerPostCard = (
+				<GalleryPost post={ post } title={ title } isDiscover={ isDiscover }>
 					{ readerPostActions }
-				</GalleryPost>;
+				</GalleryPost>
+			);
 		} else {
 			readerPostCard = (
 				<StandardPost
@@ -184,7 +198,9 @@ class ReaderPostCard extends React.Component {
 					site={ site }
 					postKey={ postKey }
 				>
-					{ isDailyPostChallengeOrPrompt( post ) && site && <DailyPostButton post={ post } site={ site } tagName="span" /> }
+					{ isDailyPostChallengeOrPrompt( post ) &&
+						site &&
+						<DailyPostButton post={ post } site={ site } tagName="span" /> }
 					{ discoverFollowButton }
 					{ readerPostActions }
 				</StandardPost>
@@ -196,16 +212,23 @@ class ReaderPostCard extends React.Component {
 
 		if ( isDiscoverStream && ! isEmpty( discoverPick ) ) {
 			// create a post like object with some props from the discover post
-			const postForByline = Object.assign( {},
-				discoverPick.post || {},
-				{
-					date: post.date,
-					URL: post.URL,
-					primary_tag: post.primary_tag,
-				} );
-			postByline = <PostByline post={ postForByline } site={ discoverPick.site } showSiteName={ true } />;
+			const postForByline = Object.assign( {}, discoverPick.post || {}, {
+				date: post.date,
+				URL: post.URL,
+				primary_tag: post.primary_tag,
+			} );
+			postByline = (
+				<PostByline post={ postForByline } site={ discoverPick.site } showSiteName={ true } />
+			);
 		} else {
-			postByline = <PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName || isDiscover } />;
+			postByline = (
+				<PostByline
+					post={ post }
+					site={ site }
+					feed={ feed }
+					showSiteName={ showSiteName || isDiscover }
+				/>
+			);
 		}
 
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
@@ -213,7 +236,9 @@ class ReaderPostCard extends React.Component {
 		return (
 			<Card className={ classes } onClick={ ! isPhotoPost && this.handleCardClick }>
 				{ postByline }
-				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } followSource={ followSource } /> }
+				{ showPrimaryFollowButton &&
+					followUrl &&
+					<FollowButton siteUrl={ followUrl } followSource={ followSource } /> }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>
@@ -223,7 +248,7 @@ class ReaderPostCard extends React.Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		isExpanded: isReaderCardExpanded( state, ownProps.postKey )
+		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 	} ),
 	{ expandCard: expandCardAction }
 )( ReaderPostCard );

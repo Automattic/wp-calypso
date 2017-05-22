@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { noop } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
@@ -31,31 +31,21 @@ import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
 import CommentActions from './comment-actions';
 
-class PostComment extends React.Component {
-	constructor() {
-		super();
+class PostComment extends Component {
+	state = {
+		showReplies: false
+	};
 
-		this.state = {
-			showReplies: false
-		};
-
-		// bind event handlers to this instance
-		Object.getOwnPropertyNames( PostComment.prototype )
-			.filter( ( prop ) => prop.indexOf( 'handle' ) === 0 )
-			.filter( ( prop ) => typeof this[ prop ] === 'function' )
-			.forEach( ( prop ) => this[ prop ] = this[ prop ].bind( this ) );
-	}
-
-	handleToggleRepliesClick() {
+	handleToggleRepliesClick = () => {
 		this.setState( { showReplies: ! this.state.showReplies } );
 	}
 
-	handleReply() {
+	handleReply = () => {
 		this.props.onReplyClick( this.props.commentId );
 		this.setState( { showReplies: true } ); // show the comments when replying
 	}
 
-	handleAuthorClick( event ) {
+	handleAuthorClick = ( event ) => {
 		recordAction( 'comment_author_click' );
 		recordGaEvent( 'Clicked Author Name' );
 		recordTrack( 'calypso_reader_comment_author_click', {

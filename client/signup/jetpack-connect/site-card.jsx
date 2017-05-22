@@ -20,6 +20,7 @@ class SiteCard extends Component {
 			blogname: PropTypes.string.isRequired,
 			home_url: PropTypes.string.isRequired,
 			site_url: PropTypes.string.isRequired,
+			client_id: PropTypes.string.isRequired
 		} ).isRequired,
 	};
 
@@ -29,6 +30,7 @@ class SiteCard extends Component {
 			blogname,
 			home_url,
 			site_url,
+			client_id
 		} = this.props.queryObject;
 		const safeIconUrl = site_icon ? safeImageUrl( site_icon ) : false;
 		const siteIcon = safeIconUrl ? { img: safeIconUrl } : false;
@@ -47,7 +49,7 @@ class SiteCard extends Component {
 
 		return (
 			<CompactCard className="jetpack-connect__site">
-				<QuerySites allSites />
+				<QuerySites siteId={ parseInt( client_id ) } />
 				<Site site={ site } />
 			</CompactCard>
 		);

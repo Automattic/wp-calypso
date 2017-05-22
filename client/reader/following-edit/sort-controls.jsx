@@ -9,21 +9,19 @@ import noop from 'lodash/noop';
  * Module variables
  */
 
-const FollowingEditSortControls = React.createClass( {
-	propTypes: {
+class FollowingEditSortControls extends React.Component {
+	static propTypes = {
 		onSelectChange: React.PropTypes.func,
 		sortOrder: React.PropTypes.string,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onSelectChange: noop,
-		};
-	},
+	static defaultProps = {
+		onSelectChange: noop,
+	};
 
-	handleSelectChange( event ) {
+	handleSelectChange = event => {
 		this.props.onSelectChange( event.target.value );
-	},
+	};
 
 	render() {
 		const sortOrder = this.props.sortOrder;
@@ -43,7 +41,7 @@ const FollowingEditSortControls = React.createClass( {
 				</select>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( FollowingEditSortControls );

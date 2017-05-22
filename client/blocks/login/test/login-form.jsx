@@ -32,14 +32,5 @@ describe( 'LoginForm', function() {
 			expect( wrapper.find( FormPasswordInput ).length ).to.equal( 1 );
 			expect( wrapper.find( FormsButton ).length ).to.equal( 1 );
 		} );
-
-		it( 'shows the header text', () => {
-			const wrapper = shallow(
-				<LoginForm
-					translate={ noop }
-					title={ 'Sign in to connect to WordPress.com' } />
-			);
-			expect( wrapper.find( '.login__form-header' ).text() ).to.contain( 'Sign in to connect to WordPress.com' );
-		} );
 	} );
 } );

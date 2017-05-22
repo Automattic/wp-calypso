@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,28 +15,34 @@ import Tooltip from 'components/tooltip';
 import Button from 'components/button';
 import EditorActionBarViewLabel from './view-label';
 import EditorStatusLabel from 'post-editor/editor-status-label';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 
-export default React.createClass( {
+class EditorActionBar extends Component {
 
-	displayName: 'EditorActionBar',
-
-	propTypes: {
+	static propTypes = {
 		isNew: React.PropTypes.bool,
 		onPrivatePublish: React.PropTypes.func,
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
 		site: React.PropTypes.object,
-		type: React.PropTypes.string
-	},
+		type: React.PropTypes.string,
+		isPostPrivate: React.PropTypes.bool,
+		postAuthor: React.PropTypes.object,
+	};
 
-	getInitialState: function() {
-		return {
-			viewLinkTooltip: false
-		};
-	},
+	state = {
+		viewLinkTooltip: false
+	};
 
 	render() {
+		// We store privacy changes via Flux while we store password changes via Redux.
+		// This results in checking Flux for some items and Redux for others to correctly
+		// update based on post changes. Flux changes are passed down from parent components.
 		const multiUserSite = this.props.site && ! this.props.site.single_user_site;
+		const isPasswordProtected = utils.getVisibility( this.props.post ) === 'password';
+		const { isPostPrivate, postAuthor } = this.props;
 
 		return (
 			<div className="editor-action-bar">
@@ -52,11 +59,15 @@ export default React.createClass( {
 							require="post-editor/editor-author"
 							post={ this.props.post }
 							isNew={ this.props.isNew }
+							postAuthor={ postAuthor }
 						/>
 					}
 				</div>
 				<div className="editor-action-bar__cell is-right">
-					{ this.props.post && this.props.type === 'post' && <EditorSticky /> }
+					{ this.props.post && this.props.type === 'post' &&
+						! isPasswordProtected && ! isPostPrivate &&
+						<EditorSticky />
+					}
 					{ utils.isPublished( this.props.savedPost ) && (
 						<Button
 							href={ this.props.savedPost.URL }
@@ -82,4 +93,18 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, postId );
+
+		return {
+			siteId,
+			postId,
+			post
+		};
+	},
+)( EditorActionBar );
