@@ -355,13 +355,13 @@ class PostShare extends Component {
 						onMouseEnter={ this.showAddTooltip }
 						onMouseLeave={ this.hideAddTooltip }
 						ref="addAccountButton"
-						aria-label={ translate( 'Add account', { context: 'button label' } ) }>
+						aria-label={ translate( 'Add account' ) }>
 						<Gridicon icon="plus-small" size={ 18 } /><Gridicon icon="user" size={ 18 } />
 						<Tooltip
 							isVisible={ this.state.showAccountTooltip }
 							context={ this.refs && this.refs.addAccountButton }
 							position="bottom">
-							{ translate( 'Add account', { context: 'button tooltip' } ) }
+							{ translate( 'Add account' ) }
 						</Tooltip>
 					</Button>
 				</SectionHeader>
