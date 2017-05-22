@@ -41,11 +41,11 @@ class SiteTools extends Component {
 		const startOverLink = `/settings/start-over/${ selectedSite.slug }`;
 		const deleteSiteLink = `/settings/delete-site/${ selectedSite.slug }`;
 		let changeAddressLinkText = translate( 'Register a new domain or change your site\'s address.' );
-		const themeSetupLinkText = translate( 'Make your site look like your theme\'s demo.' );
+		const themeSetupLinkText = translate( 'Automatically make your site look like your theme\'s demo.' );
 		const strings = {
 			changeSiteAddress: translate( 'Change your site address' ),
 			themeSetup: translate( 'Theme setup' ),
-			startOver: translate( 'Empty your content' ),
+			startOver: translate( 'Delete your content' ),
 			deleteSite: translate( 'Delete your site' )
 		};
 
@@ -87,7 +87,10 @@ class SiteTools extends Component {
 					<div className="delete-site-options__content">
 						<p className="delete-site-options__section-title">{ strings.startOver }</p>
 						<p className="delete-site-options__section-desc">
-							{ translate( 'Keep your site address and site active, but remove all of your posts, pages, media, etc.' ) }
+							{ translate(
+								'Keep your site\'s address and current theme, but remove all posts, ' +
+								'pages, and media so you can start fresh.'
+							) }
 						</p>
 					</div>
 				</CompactCard>
@@ -101,8 +104,8 @@ class SiteTools extends Component {
 						</p>
 						<p className="delete-site-options__section-desc">
 							{ translate(
-								'All your posts, images, and data will be deleted. ' +
-								'And this site’s address will be lost.'
+								'Delete all your posts, pages, media and data, ' +
+								'and give up your site\'s address'
 							) }
 						</p>
 					</div>
