@@ -14,8 +14,7 @@ var tinymce = require( 'tinymce/tinymce' ),
 	debounce = require( 'lodash/debounce' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react'),
-	i18n = require( 'i18n-calypso' ),
-	Shortcode = require( 'lib/shortcode' );
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
@@ -42,8 +41,7 @@ function wpview( editor ) {
 		focus,
 		execCommandView,
 		execCommandBefore,
-		editToolbar,
-		removeToolbar;
+		toolbar;
 
 	/**
 	 * Replaces all marker nodes tied to this view instance.
@@ -839,7 +837,7 @@ function wpview( editor ) {
 				}
 
 				type = editor.dom.getAttrib( selected, 'data-wpview-type' );
-				this.visible( views.isEditable( type ) );
+				this.visible( views.isEditable( type, editor, getText( selected ) ) );
 			}.bind( this ) );
 		},
 		onClick: function() {
@@ -863,25 +861,16 @@ function wpview( editor ) {
 	} );
 
 	editor.once( 'preinit', function() {
-		editToolbar = editor.wp._createToolbar( [
+		toolbar = editor.wp._createToolbar( [
 			'wp_view_edit',
-			'wp_view_remove'
-		] );
-		removeToolbar = editor.wp._createToolbar( [
 			'wp_view_remove'
 		] );
 	} );
 
 	editor.on( 'wptoolbar', function( event ) {
 		if ( selected ) {
-
-			// Checks for ids in the gallery shortcode
-			const { attrs: { named: { ids } } } = Shortcode.parse(
-				decodeURIComponent( editor.dom.getAttrib( selected, 'data-wpview-text' ) )
-			);
-
 			event.element = selected;
-			event.toolbar = ids ? editToolbar : removeToolbar;
+			event.toolbar = toolbar;
 		}
 	} );
 }

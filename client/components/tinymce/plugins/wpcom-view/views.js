@@ -94,12 +94,20 @@ export default {
 		return content.replace( /<p>\s*<p data-wpview-marker=/g, '<p data-wpview-marker=' ).replace( /<\/p>\s*<\/p>/g, '</p>' );
 	},
 
-	isEditable( type ) {
-		return !! ( views[ type ] && views[ type ].edit );
+	isEditable( type, editor, content ) {
+		if ( ! views[ type ] ) {
+			return false;
+		}
+
+		if ( 'function' === typeof views[ type ].isEditable ) {
+			return views[ type ].isEditable( editor, content );
+		}
+
+		return 'function' === typeof views[ type ].edit;
 	},
 
 	edit( type, editor, content ) {
-		if ( ! this.isEditable( type ) ) {
+		if ( ! this.isEditable( type, editor, content ) ) {
 			return;
 		}
 
