@@ -16,50 +16,38 @@ import {
 /**
  * Internal dependencies
  */
-import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/upgrades/components/form';
+import { CountrySelect, Input, HiddenInput } from 'my-sites/upgrades/components/form';
 import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
-import { setDomainDetails } from 'lib/upgrades/actions';
+import { addGoogleAppsRegistrationData } from 'lib/upgrades/actions';
 import FormButton from 'components/forms/form-button';
-import { countries } from 'components/phone-input/data';
-import { toIcannFormat } from 'components/phone-input/phone-number';
-import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import wpcom from 'lib/wp';
 
 const countriesList = countriesListForDomainRegistrations();
 
-class DomainDetailsForm extends Component {
+class GoogleAppsDetailsForm extends Component {
 	constructor( props, context ) {
 		super( props, context );
 
 		this.fieldNames = [
 			'firstName',
 			'lastName',
-			'organization',
-			'email',
-			'phone',
-			'address1',
-			'address2',
-			'city',
-			'state',
-			'postalCode',
 			'countryCode'
+			'postalCode',
 		];
-
-		// add "tld spec" combiner
 
 		this.state = {
 			form: null,
+			isDialogVisible: false,
 			submissionCount: 0,
-			phoneCountryCode: 'US' // use geo to default dynamically
 		};
 	}
 
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
-			loadFunction: ( whoisDetails ) => whoisDetails,
+			loadFunction: wpcom.getDomainContactInformation.bind( wpcom ),
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
@@ -70,7 +58,8 @@ class DomainDetailsForm extends Component {
 	}
 
 	componentDidMount() {
-		analytics.pageView.record( '/checkout/domain-contact-information', 'Checkout > Domain Contact Information' );
+		// do something different here for G Apps?
+		analytics.pageView.record( '/checkout/domain-contact-information', 'Checkout > Google Apps Contact Information' );
 	}
 
 	sanitize = ( fieldValues, onComplete ) => {
@@ -88,10 +77,7 @@ class DomainDetailsForm extends Component {
 	}
 
 	validate = ( fieldValues, onComplete ) => {
-		const allFieldValues = Object.assign( {}, fieldValues );
-		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
-		const domainNames = this.props.domains; // make this work
-		wpcom.validateDomainContactInformation( allFieldValues, domainNames, this.generateValidationHandler( onComplete ) );
+		wpcom.validateGoogleAppsContactInformation( fieldValues, this.generateValidationHandler( onComplete ) );
 	}
 
 	generateValidationHandler( onComplete ) {
@@ -110,35 +96,9 @@ class DomainDetailsForm extends Component {
 	}
 
 	handleChangeEvent = ( event ) => {
-		// Resets the state field every time the user selects a different country
-		if ( event.target.name === 'country-code' ) {
-			this.formStateController.handleFieldChange( {
-				name: 'state',
-				value: '',
-				hideError: true
-			} );
-
-			if ( ! formState.getFieldValue( this.state.form, 'phone' ) ) {
-				this.setState( {
-					phoneCountryCode: event.target.value
-				} );
-			}
-		}
-
 		this.formStateController.handleFieldChange( {
 			name: event.target.name,
 			value: event.target.value
-		} );
-	}
-
-	handlePhoneChange = ( { value, countryCode } ) => {
-		this.formStateController.handleFieldChange( {
-			name: 'phone',
-			value
-		} );
-
-		this.setState( {
-			phoneCountryCode: countryCode
 		} );
 	}
 
@@ -180,25 +140,6 @@ class DomainDetailsForm extends Component {
 		);
 	}
 
-	renderOrganizationField() {
-		return <HiddenInput
-			label={ this.props.translate( 'Organization' ) }
-			text={ this.props.translate(
-				'Registering this domain for a company? + Add Organization Name',
-				'Registering these domains for a company? + Add Organization Name',
-				{
-					count: this.getNumberOfDomainRegistrations()
-				}
-			) }
-			{ ...this.getFieldProps( 'organization' ) } />;
-	}
-
-	renderEmailField() {
-		return (
-			<Input label={ this.props.translate( 'Email' ) } { ...this.getFieldProps( 'email' ) } />
-		);
-	}
-
 	renderCountryField() {
 		return (
 			<CountrySelect
@@ -206,54 +147,6 @@ class DomainDetailsForm extends Component {
 				countriesList={ countriesList }
 				{ ...this.getFieldProps( 'country-code' ) } />
 		);
-	}
-
-	renderFaxField() {
-		return (
-			<Input label={ this.props.translate( 'Fax' ) } { ...this.getFieldProps( 'fax' ) } />
-		);
-	}
-
-	renderPhoneField() {
-		const label = this.props.translate( 'Phone' );
-
-		return (
-			<FormPhoneMediaInput
-				label={ label }
-				countriesList={ countriesList }
-				countryCode={ this.state.phoneCountryCode }
-				onChange={ this.handlePhoneChange }
-				{ ...omit( this.getFieldProps( 'phone' ), 'onChange' ) } />
-		);
-	}
-
-	renderAddressFields() {
-		return (
-			<div>
-				<Input label={ this.props.translate( 'Address' ) } maxLength={ 40 } { ...this.getFieldProps( 'address-1' ) } />
-
-				<HiddenInput
-					label={ this.props.translate( 'Address Line 2' ) }
-					text={ this.props.translate( '+ Add Address Line 2' ) }
-					maxLength={ 40 }
-					{ ...this.getFieldProps( 'address-2' ) } />
-			</div>
-		);
-	}
-
-	renderCityField() {
-		return (
-			<Input label={ this.props.translate( 'City' ) } { ...this.getFieldProps( 'city' ) } />
-		);
-	}
-
-	renderStateField() {
-		const countryCode = formState.getFieldValue( this.state.form, 'countryCode' );
-
-		return <StateSelect
-			label={ this.props.translate( 'State' ) }
-			countryCode={ countryCode }
-			{ ...this.getFieldProps( 'state' ) } />;
 	}
 
 	renderPostalCodeField() {
@@ -274,11 +167,6 @@ class DomainDetailsForm extends Component {
 
 			if ( hasErrors ) {
 				this.focusFirstError();
-				return;
-			}
-
-			if ( ! this.allDomainRegistrationsHavePrivacy() ) {
-				this.openDialog();
 				return;
 			}
 
@@ -306,29 +194,19 @@ class DomainDetailsForm extends Component {
 
 	finish( options = {} ) {
 		const allFieldValues = Object.assign( {}, formState.getAllFieldValues( this.state.form ) );
-		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
-		setDomainDetails( allFieldValues );
+		addGoogleAppsRegistrationData( allFieldValues );
 	}
 
 	render() {
 		return (
 			<form>
 				{ this.renderNameFields() }
-				{ this.renderOrganizationField() }
-				{ this.renderEmailField() }
-				{ this.renderPhoneField() }
 				{ this.renderCountryField() }
-				{ this.renderAddressFields() }
-				{ this.renderCityField() }
-				{ this.renderStateField() }
 				{ this.renderPostalCodeField() }
-
 				{ this.renderSubmitButton() }
 			</form>
 		);
 	}
 }
 
-export default connect(
-	( state, { domain } ) => ( { whoisDetails: getWhois( state, domain ) } )
-)( localize( DomainDetailsForm ) );
+export default localize( GoogleAppsDetailsForm );

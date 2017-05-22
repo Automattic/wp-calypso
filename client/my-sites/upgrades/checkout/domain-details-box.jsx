@@ -17,8 +17,12 @@ import formState from 'lib/form-state';
 import { addPrivacyToAllDomains, removePrivacyFromAllDomains } from 'lib/upgrades/actions';
 
 class DomainDetailsBox extends Component {
-	componentDidMount() {
-		analytics.pageView.record( '/checkout/domain-contact-information', 'Checkout > Domain Contact Information' );
+	constructor( props, context ) {
+		super( props, context );
+
+		this.state = {
+			isDialogVisible: false
+		};
 	}
 
 	getNumberOfDomainRegistrations() {
@@ -30,7 +34,7 @@ class DomainDetailsBox extends Component {
 	}
 
 	shouldRenderPrivacySection() {
-		return cartItems.hasDomainRegistration( this.props.cart );
+		return cartItems.hasDomainRegistration( this.props.cart ) // && tld has optional privacy;
 	}
 
 	renderPrivacySection() {
@@ -48,6 +52,18 @@ class DomainDetailsBox extends Component {
 				isDialogVisible={ this.state.isDialogVisible }
 				productsList={ this.props.productsList } />
 		);
+	}
+
+	handleCheckboxChange = () => {
+		this.setPrivacyProtectionSubscriptions( ! this.allDomainRegistrationsHavePrivacy() );
+	}
+
+	closeDialog = () => {
+		this.setState( { isDialogVisible: false } );
+	}
+
+	openDialog = () => {
+		this.setState( { isDialogVisible: true } );
 	}
 
 	handlePrivacyDialogSelect = ( options ) => {
@@ -83,23 +99,26 @@ class DomainDetailsBox extends Component {
 
 	render() {
 		let title = this.props.translate( 'Domain Contact Information' );
+		let DetailsForm = 'DomainDetailsForm';
+		let classSet = classNames( {
+			'domain-details': true,
+			selected: true,
+		} );
 
 		if ( this.needsOnlyGoogleAppsDetails() ) {
-			classSet = classNames( {
-				'domain-details': true,
-				selected: true,
-				'only-google-apps-details': needsOnlyGoogleAppsDetails
-			} );
 			title = this.props.translate( 'G Suite Account Information' );
+			DetailsForm = 'GoogleAppDetailsForm';
+			classSet = classNames( {
+				...classSet,
+				'only-google-apps-details': true
+			} );
 		}
 
 		return (
 			<div>
 				{ this.shouldRenderPrivacySection() && this.renderPrivacySection() }
-				<PaymentBox
-					classSet={ classSet }
-					title={ title }>
-					<DomainDetailsForm />
+				<PaymentBox classSet={ classSet } title={ title }>
+					<DetailsForm />
 				</PaymentBox>
 			</div>
 		);
