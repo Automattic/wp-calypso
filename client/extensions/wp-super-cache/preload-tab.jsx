@@ -22,7 +22,7 @@ import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 import { cancelPreloadCache, preloadCache } from './state/cache/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isPreloading } from './state/cache/selectors';
+import { isPreloadingCache } from './state/cache/selectors';
 
 /**
  * Render cache preload interval number input
@@ -82,7 +82,7 @@ class PreloadTab extends Component {
 			handleChange,
 			handleSelect,
 			handleSubmitForm,
-			isPreloadingCache,
+			isPreloading,
 			isRequesting,
 			isSaving,
 			translate,
@@ -245,15 +245,15 @@ class PreloadTab extends Component {
 				{ is_preloading
 					? <Button
 							compact
-							busy={ isPreloadingCache }
-							disabled={ isPreloadingCache }
+							busy={ isPreloading }
+							disabled={ isPreloading }
 							onClick={ this.cancelPreload }>
 							{ translate( 'Cancel Cache Preload' ) }
 							</Button>
 					: <Button
 							compact
-							busy={ isPreloadingCache }
-							disabled={ isPreloadingCache }
+							busy={ isPreloading }
+							disabled={ isPreloading }
 							onClick={ this.preload }>
 							{ translate( 'Preload Cache Now' ) }
 						</Button>
@@ -269,7 +269,7 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			isPreloadingCache: isPreloading( state, siteId ),
+			isPreloading: isPreloadingCache( state, siteId ),
 		};
 	},
 	{
