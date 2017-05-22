@@ -1,6 +1,12 @@
 .reader-subscription-list-item {
 	display: flex;
 	flex-direction: row;
+
+	&.has-email-settings {
+		@include breakpoint( "<660px" ) {
+			min-height: 56px;
+		}
+	}
 }
 
 .reader-subscription-list-item__byline {
