@@ -98,6 +98,12 @@ export class EditorPublishButton extends Component {
 	onClick() {
 		this.trackClick();
 
+		// @TODO: Check feature flag for publish confirmation
+		if ( true ) {
+			
+			return;
+		}
+
 		if ( postUtils.isPublished( this.props.savedPost ) &&
 			! postUtils.isBackDatedPublished( this.props.savedPost )
 		) {
