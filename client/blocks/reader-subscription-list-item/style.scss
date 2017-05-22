@@ -180,10 +180,11 @@
 	height: 18px;
 	position: relative;
 		left: 0;
-		top: 4px;
+		top: 19px;
 
 	@include breakpoint( ">660px" ) {
 		left: -4px;
+		top: 4px;
 	}
 }
 
