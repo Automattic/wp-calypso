@@ -80,6 +80,9 @@ export class EditorAuthor extends Component {
 
 	userCanAssignAuthor() {
 		const { post, site } = this.props;
+		if ( ! post ) {
+			return false;
+		}
 		const reassignCapability = 'edit_others_' + post.type + 's';
 
 		// if user cannot edit others posts
