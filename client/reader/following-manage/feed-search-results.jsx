@@ -14,6 +14,7 @@ import ConnectedSubscriptionListItem from './connected-subscription-list-item';
 import SitesWindowScroller from './sites-window-scroller';
 import Button from 'components/button';
 import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'reader/follow-button/follow-sources';
+import { recordTracksRailcarRender } from 'reader/stats';
 
 const FollowingManageSearchFeedsResults = ( {
 	showMoreResults,
@@ -44,10 +45,20 @@ const FollowingManageSearchFeedsResults = ( {
 		);
 	}
 
+	function recordResultRender( index ) {
+		return function( railcar ) {
+			recordTracksRailcarRender(
+				'following_manage_search',
+				railcar,
+				{ ui_algo: 'following_manage_search', ui_position: index }
+			);
+		};
+	}
+
 	if ( ! showMoreResults ) {
 		const resultsToShow = map(
 			take( searchResults, 10 ),
-			site => (
+			( site, index ) => (
 				<ConnectedSubscriptionListItem
 					showLastUpdatedDate={ false }
 					url={ site.feed_URL || site.URL }
@@ -55,6 +66,8 @@ const FollowingManageSearchFeedsResults = ( {
 					siteId={ +site.blog_ID }
 					key={ `search-result-site-id-${ site.feed_ID || 0 }-${ site.blog_ID || 0 }` }
 					followSource={ READER_FOLLOWING_MANAGE_SEARCH_RESULT }
+					railcar={ site.railcar }
+					onRender={ recordResultRender( index ) }
 				/>
 			)
 		);

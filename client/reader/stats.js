@@ -181,6 +181,15 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 	}
 }
 
+export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
+	recordTrack( eventName, eventProperties );
+	recordTracksRailcarInteract(
+		eventName,
+		railcar,
+		pick( eventProperties, [ 'ui_position', 'ui_algo' ] )
+	);
+}
+
 export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 	const params = {
 		ref: 'http://wordpress.com/',

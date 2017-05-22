@@ -24,6 +24,7 @@ import {
 import untrailingslashit from 'lib/route/untrailingslashit';
 import ReaderSubscriptionListItemPlaceholder
 	from 'blocks/reader-subscription-list-item/placeholder';
+import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
 
 /**
  * Takes in a string and removes the starting https, www., and removes a trailing slash
@@ -45,6 +46,7 @@ function ReaderSubscriptionListItem( {
 	showEmailSettings,
 	showLastUpdatedDate,
 	isFollowing,
+	railcar,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
@@ -63,6 +65,23 @@ function ReaderSubscriptionListItem( {
 		return <ReaderSubscriptionListItemPlaceholder />;
 	}
 
+	function recordEvent( name ) {
+		const props = {
+			blog_ID: siteId,
+			feed_ID: feedId,
+		};
+		if ( railcar ) {
+			recordTrackWithRailcar( name, railcar, props );
+		} else {
+			recordTrack( name, props );
+		}
+	}
+
+	const recordTitleClick = () => recordEvent( 'calypso_reader_feed_link_clicked' );
+	const recordAuthorClick = () => recordEvent( 'calypso_reader_author_link_clicked' );
+	const recordSiteUrlClick = () => recordEvent( 'calypso_reader_recommended_site_clicked' );
+	const recordAvatarClick = () => recordEvent( 'calypso_reader_avatar_clicked' );
+
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>
 			<div className="reader-subscription-list-item__avatar">
@@ -74,12 +93,17 @@ function ReaderSubscriptionListItem( {
 					preferGravatar={ preferGravatar }
 					siteUrl={ streamUrl }
 					isCompact={ true }
+					onClick={ recordAvatarClick }
 				/>
 			</div>
 			<div className="reader-subscription-list-item__byline">
 				<span className="reader-subscription-list-item__site-title">
 					{
-						<a href={ streamUrl } className="reader-subscription-list-item__link">
+						<a
+							href={ streamUrl }
+							className="reader-subscription-list-item__link"
+							onClick={ recordTitleClick }
+						>
 							{ ' ' }{ siteTitle }{ ' ' }
 						</a>
 					}
@@ -91,7 +115,11 @@ function ReaderSubscriptionListItem( {
 						{ translate( 'by {{author/}}', {
 							components: {
 								author: (
-									<a href={ streamUrl } className="reader-subscription-list-item__link">
+									<a
+										href={ streamUrl }
+										className="reader-subscription-list-item__link"
+										onClick={ recordAuthorClick }
+									>
 										{ ' ' }{ authorName }{ ' ' }
 									</a>
 								),
@@ -105,6 +133,7 @@ function ReaderSubscriptionListItem( {
 							target="_blank"
 							rel="noopener noreferrer"
 							className="reader-subscription-list-item__site-url"
+							onClick={ recordSiteUrlClick }
 						>
 							{ formatUrlForDisplay( siteUrl ) }
 						</a>
@@ -120,6 +149,7 @@ function ReaderSubscriptionListItem( {
 					followSource={ followSource }
 					feedId={ feedId }
 					siteId={ siteId }
+					railcar={ railcar }
 				/>
 				{ isFollowing && showEmailSettings && <EmailSettings siteId={ siteId } /> }
 			</div>
