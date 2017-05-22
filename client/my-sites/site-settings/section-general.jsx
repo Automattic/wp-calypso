@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import GeneralForm from 'my-sites/site-settings/form-general';
-import DeleteSiteOptions from './delete-site-options';
+import SiteTools from './site-tools';
 import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
 
@@ -22,7 +22,7 @@ const SiteSettingsGeneral = ( {
 			<GeneralForm site={ site } />
 
 			{ config.isEnabled( 'manage/site-settings/delete-site' ) && site && ! site.jetpack && ! site.is_vip &&
-				<DeleteSiteOptions
+				<SiteTools
 					site={ site }
 					sitePurchases={ sitePurchases }
 					hasLoadedSitePurchasesFromServer={ hasLoadedSitePurchasesFromServer }
