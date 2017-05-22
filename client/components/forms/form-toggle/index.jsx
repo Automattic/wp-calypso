@@ -12,6 +12,8 @@ export default class FormToggle extends PureComponent {
 		disabled: PropTypes.bool,
 		id: PropTypes.string,
 		className: PropTypes.string,
+		textOn: PropTypes.string,
+		textOff: PropTypes.string,
 		toggling: PropTypes.bool,
 		'aria-label': PropTypes.string,
 		children: PropTypes.node
@@ -96,7 +98,11 @@ export default class FormToggle extends PureComponent {
 						aria-checked={ this.props.checked }
 						aria-label={ this.props[ 'aria-label' ] }
 						tabIndex={ this.props.disabled ? -1 : 0 }
-						></span>
+						>
+							<span className="form-toggle__label-text">
+								{ this.props.checked ? this.props.textOn : this.props.textOff }
+							</span>
+					</span>
 					<span className="form-toggle__label-content" onClick={ this.onLabelClick }>
 						{ this.props.children }
 					</span>
