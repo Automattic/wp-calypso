@@ -21,8 +21,8 @@ class DomainConnectAuthorize extends Component {
 		super( props );
 		this.state = {
 			action: null,
-			noticeType: null,
-			dnsTemplateConflictsRetrieved: false
+			dnsTemplateConflictsRetrieved: false,
+			noticeType: null
 		};
 	}
 
@@ -33,9 +33,9 @@ class DomainConnectAuthorize extends Component {
 		upgradesActions.getDnsTemplateConflicts( domain, providerId, params, ( error, data ) => {
 			if ( ! error ) {
 				this.setState( {
+					action: actionType.READY_TO_SUBMIT,
 					dnsTemplateConflicts: data.records,
-					dnsTemplateError: false,
-					action: actionType.READY_TO_SUBMIT
+					dnsTemplateError: false
 				} );
 			} else {
 				const errorMessage = error.message ||
@@ -43,10 +43,10 @@ class DomainConnectAuthorize extends Component {
 						'with your service provider to make sure they provided all the correct data.' );
 
 				this.setState( {
-					noticeType: noticeType.ERROR,
-					noticeMessage: errorMessage,
+					action: actionType.CLOSE,
 					dnsTemplateError: true,
-					action: actionType.CLOSE
+					noticeType: noticeType.ERROR,
+					noticeMessage: errorMessage
 				} );
 			}
 
@@ -73,14 +73,14 @@ class DomainConnectAuthorize extends Component {
 
 				this.setState( {
 					action: actionType.READY_TO_SUBMIT,
-					noticeType: noticeType.ERROR,
-					noticeMessage: errorMessage
+					noticeMessage: errorMessage,
+					noticeType: noticeType.ERROR
 				} );
 			} else {
 				this.setState( {
 					action: actionType.CLOSE,
-					noticeType: noticeType.SUCCESS,
-					noticeMessage: translate( 'Horray! Your new service is now all set up.' )
+					noticeMessage: translate( 'Horray! Your new service is now all set up.' ),
+					noticeType: noticeType.SUCCESS
 				} );
 			}
 		} );
@@ -94,8 +94,8 @@ class DomainConnectAuthorize extends Component {
 		if ( this.state.noticeType ) {
 			return (
 				<Notice
-					status={ this.state.noticeType }
 					showDismiss={ false }
+					status={ this.state.noticeType }
 					text={ this.state.noticeMessage }>
 				</Notice>
 			);
@@ -124,14 +124,14 @@ class DomainConnectAuthorize extends Component {
 						isPlaceholder={ ! this.state.dnsTemplateConflictsRetrieved }
 						providerId={ this.props.providerId } />
 					<DomainConnectAuthorizeConflicts
-						isPlaceholder={ ! this.state.dnsTemplateConflictsRetrieved }
-						conflictingRecords= { this.state.dnsTemplateConflicts } />
+						conflictingRecords= { this.state.dnsTemplateConflicts }
+						isPlaceholder={ ! this.state.dnsTemplateConflictsRetrieved } />
 					{ this.renderNotice() }
 					<DomainConnectAuthorizeFooter
 						isPlaceholder={ ! this.state.dnsTemplateConflictsRetrieved }
-						showAction={ this.state.action }
+						onClose={ this.handleClickClose }
 						onConfirm={ this.handleClickConfirm }
-						onClose={ this.handleClickClose } />
+						showAction={ this.state.action } />
 				</Card>
 			</Main>
 		);
