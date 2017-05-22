@@ -68,6 +68,7 @@
 		{ "value": 18, "langSlug": "eo", "name": "Esperanto", "wpLocale": "eo" },
 		{ "value": 19, "langSlug": "es", "name": "Español", "wpLocale": "es_ES", "popular": 2 },
 		{ "value": 484, "langSlug": "es-cl", "name": "Español de Chile", "wpLocale": "es_CL" },
+		{ "value": 902, "langSlug": "es-mx", "name": "Español de México", "wpLocale": "es_MX" },
 		{ "value": 20, "langSlug": "et", "name": "Eesti", "wpLocale": "et" },
 		{ "value": 429, "langSlug": "eu", "name": "Euskara", "wpLocale": "eu" },
 		{ "value": 21, "langSlug": "fa", "name": "فارسی", "wpLocale": "fa_IR", "rtl": true },
