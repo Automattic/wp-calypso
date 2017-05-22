@@ -145,6 +145,7 @@ function mediaButton( editor ) {
 	} )();
 
 	updateMedia = debounce( function() {
+		const originalSelectedNode = editor.selection.getNode();
 		let isTransientDetected = false,
 			transients = 0,
 			content, images;
@@ -390,6 +391,21 @@ function mediaButton( editor ) {
 			// We also need to reset the counter of post/page images to update so if another image is
 			// edited and marked dirty, we can set the counter to correct number.
 			numOfImagesToUpdate = null;
+		}
+
+		// Re-select image node if one was selected.
+		if ( 'IMG' === originalSelectedNode.nodeName ) {
+			let replacement = editor.selection.getStart();
+			if ( 'IMG' !== replacement.nodeName ) {
+				replacement = replacement.querySelector( 'img' );
+			}
+
+			if ( replacement ) {
+				editor.selection.select( replacement );
+				editor.selection.controlSelection.showResizeRect( replacement );
+			}
+
+			editor.nodeChanged();
 		}
 	} );
 
