@@ -98,4 +98,12 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
+	savingsInCheckoutSummary: {
+		datestamp: '20170516',
+		variations: {
+			hide: 50,
+			show: 50,
+		},
+		defaultVariation: 'show',
+	},
 };
