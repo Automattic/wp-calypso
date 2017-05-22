@@ -63,7 +63,7 @@ function addSympathy( initialStateLoader ) {
 	const shouldAdd = (
 		'development' === process.env.NODE_ENV && // only work in local dev mode
 		(
-			Math.random() > 0.75 || // clear 75% of the time
+			Math.random() < 0.25 || // clear 25% of the time
 			config.isEnabled( 'force-sympathy' ) // or whenever the flag is set
 		) &&
 		! config.isEnabled( 'no-force-sympathy' ) // unless purposefully disabled
