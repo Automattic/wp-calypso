@@ -58,41 +58,52 @@ export default class JSXTreeRenderer extends Component {
 	}
 }
 
-function stringifyComponent( elements, depth = 0 ) {
-	const TWO_SPACES = '  ';
+function stringifyComponent( elements, { depth = 0, inline = false } = {} ) {
+	const newLine = inline ? '' : '\n';
+	const MAX_STRING_LENGTH = 30;
+	const INDENT_UNIT = '  ';
 	let indent = '';
 
-	for ( let i = 0; i < depth; i++ ) {
-		indent += TWO_SPACES;
+	if ( inline ) {
+		indent += repeat( INDENT_UNIT, depth );
 	}
 
 	return indent + React.Children.toArray( elements )
-		.filter( element => !! element )
+
+		// ignore undefined and whitespace children
+		.filter( element => !! element && element !== ' ' )
+
 		.map( element => {
 			if ( typeof element === 'string' ) {
-				return truncate( element, 30 );
+				return truncate( element, MAX_STRING_LENGTH );
 			}
 
 			const name = getElementName( element );
 			const { props } = element;
 			const { children } = props;
 
-			let result = `<${ name }${ stringifyProps( props, indent + TWO_SPACES ) }`;
+			let result = `<${ name }${ stringifyProps( props, { indent: indent + INDENT_UNIT, inline } ) }`;
 
 			if ( children ) {
-				result += '>\n';
-				result += stringifyComponent( children, depth + 1 );
-				result += `\n${ indent }</${ name }>`;
+				result += '>';
+				result += newLine;
+				result += stringifyComponent( children, { depth: depth + 1 } );
+				result += newLine;
+				result += `${ indent }</${ name }>`;
 			} else {
 				result += ' />';
 			}
 
 			return result;
-		} ).join( `\n${ indent }` );
+		} )
+
+		.join( `${ newLine }${ indent }` );
 }
 
-function stringifyProps( props, indent ) {
+function stringifyProps( props, { indent, inline } ) {
 	const keys = Object.keys( props ).filter( key => key !== 'children' );
+	const newLine = inline ? '' : '\n';
+	indent = inline ? '' : indent;
 	let result = '';
 
 	if ( ! keys.length ) {
@@ -100,28 +111,45 @@ function stringifyProps( props, indent ) {
 	}
 
 	if ( keys.length > 1 ) {
-		result += `\n${ indent }`;
+		result += `${ newLine }${ indent }`;
 	} else {
 		result += ' ';
 	}
 
 	return result + keys.map( key => {
-		return `${ key }=${ stringifyPropValue( props[ key ] ) }`;
-	} ).join( `\n${ indent }` );
+		const value = props[ key ];
+		const isString = typeof value === 'string';
+		const before = isString ? '' : '{ ';
+		const after = isString ? '' : ' }';
+		return `${ key }=${ before }${ stringifyPropValue( props[ key ] ) }${ after }`;
+	} ).join( `${ newLine }${ indent }` );
 }
 
 function stringifyPropValue( value ) {
+	const MAX_STRING_LENGTH = 30;
+
 	switch ( typeof value ) {
-		case 'function': return '{ [function] }';
-		case 'string': return `"${ value }"`;
+		case 'function': return '[function]';
+		case 'string': return `"${ truncate( value, MAX_STRING_LENGTH ) }"`;
 		case 'boolean':
-		case 'number': return `{ ${ value } }`;
+		case 'number': return `${ value }`;
 		case 'object':
+
+			// react element
+			if ( value.props ) {
+				return stringifyComponent( value, { inline: true } );
+			}
+
+			// array
+			if ( Array.isArray( value ) ) {
+				return `[ ${ value.map( stringifyPropValue ).join( ', ' ) } ]`;
+			}
+
 			try {
-				return `{ ${ JSON.stringify( value ) } }`;
+				return `${ JSON.stringify( value ) }`;
 			} catch ( err ) {}
 		default:
-			return `{ '${ String( value ) }' }`;
+			return `'${ String( value ) }'`;
 	}
 }
 
@@ -166,6 +194,16 @@ function getRenderTree( internalInstance ) {
 	} catch ( e ) {
 		return null;
 	}
+}
+
+function repeat( string, times ) {
+	let result = '';
+
+	while ( times-- ) {
+		result += string;
+	}
+
+	return result;
 }
 
 function isWrapped( internalInstance ) {
