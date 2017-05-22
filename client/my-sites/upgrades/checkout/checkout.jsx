@@ -334,7 +334,7 @@ const Checkout = React.createClass( {
 
 		if ( ! this.isLoading() && this.needsDomainDetails() ) {
 			return (
-				<DomainDetailsForm
+				<DomainDetailsBox
 					cart={ this.props.cart }
 					productsList={ this.props.productsList } />
 			);

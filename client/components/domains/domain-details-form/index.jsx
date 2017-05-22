@@ -90,14 +90,14 @@ class DomainDetailsForm extends Component {
 	}
 
 	validate = ( fieldValues, onComplete ) => {
-		if ( this.needsOnlyGoogleAppsDetails() ) {
+		if ( this.props.needsOnlyGoogleAppsDetails ) { // make this work
 			wpcom.validateGoogleAppsContactInformation( fieldValues, this.generateValidationHandler( onComplete ) );
 			return;
 		}
 
 		const allFieldValues = Object.assign( {}, fieldValues );
 		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
-		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
+		const domainNames = this.props.domains; // make this work
 		wpcom.validateDomainContactInformation( allFieldValues, domainNames, this.generateValidationHandler( onComplete ) );
 	}
 
@@ -114,10 +114,6 @@ class DomainDetailsForm extends Component {
 		}
 
 		this.setState( { form } );
-	}
-
-	needsOnlyGoogleAppsDetails() {
-		return cartItems.hasGoogleApps( this.props.cart ) && ! cartItems.hasDomainRegistration( this.props.cart );
 	}
 
 	handleFormControllerError = ( error ) => {
@@ -175,7 +171,7 @@ class DomainDetailsForm extends Component {
 	}
 
 	needsFax() {
-		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && cartItems.hasTld( this.props.cart, 'nl' );
+		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && this.props.tlds; // make this actually work
 	}
 
 	renderSubmitButton() {
@@ -339,7 +335,7 @@ class DomainDetailsForm extends Component {
 	}
 
 	render() {
-		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails();
+		const needsOnlyGoogleAppsDetails = this.props.needsOnlyGoogleAppsDetails; // make this work
 
 		return (
 			<form>

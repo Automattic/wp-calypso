@@ -42,7 +42,7 @@ export function requestWhois( domain ) {
 		} );
 
 		return wpcom.undocumented().fetchWhois( domain )
-			.then( ( { whoisData } ) => {
+			.then( whoisData => {
 				dispatch( receiveWhois( domain, whoisData ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS,
