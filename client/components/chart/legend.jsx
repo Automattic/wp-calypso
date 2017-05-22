@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { find } from 'lodash';
+import { find, noop } from 'lodash';
 
 /**
  * Module variables
@@ -44,10 +44,19 @@ const Legend = React.createClass( {
 
 	propTypes: {
 		activeTab: React.PropTypes.object.isRequired,
-		tabs: React.PropTypes.array.isRequired,
-		activeCharts: React.PropTypes.array.isRequired,
-		availableCharts: React.PropTypes.array.isRequired,
-		clickHandler: React.PropTypes.func.isRequired
+		tabs: React.PropTypes.array,
+		activeCharts: React.PropTypes.array,
+		availableCharts: React.PropTypes.array,
+		clickHandler: React.PropTypes.func
+	},
+
+	getDefaultProps() {
+		return {
+			tabs: [],
+			availableCharts: [],
+			activeCharts: [],
+			clickHandler: noop,
+		};
 	},
 
 	onFilterChange: function( chartItem ) {
