@@ -20,9 +20,10 @@ const ProductFormVariationsCard = ( {
 	editProductAttribute,
 	editProductVariation
 } ) => {
+	// TODO When toggling between types, don't destory a user's previous edits. Save to component state and restore on toggle.
 	const handleToggle = () => {
 		if ( 'variable' !== product.type ) {
-			editProduct( product, { type: 'variable', dimensions: {} } );
+			editProduct( product, { type: 'variable' } );
 		} else {
 			const attributes = ( product.attributes && product.attributes.filter( attribute => ! attribute.variation ) ) || null;
 			editProduct( product, { type: 'simple', attributes } );

@@ -24,7 +24,7 @@ export default function FormCurrencyInput( {
 			className={ classes }
 			prefix={ currencySymbolPrefix }
 			suffix={ currencySymbolSuffix }
+			placeholder="0.00"
 		/>
 	);
 }
-

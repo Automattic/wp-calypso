@@ -70,7 +70,7 @@ const ProductFormVariationsRow = ( {
 				) }
 			</td>
 			<td>
-				<FormCurrencyInput
+				<FormCurrencyInput noWrap
 					currencySymbolPrefix="$"
 					name="price"
 					value={ variation.regular_price || '' }
@@ -85,6 +85,7 @@ const ProductFormVariationsRow = ( {
 						unit="in"
 						dimensions={ variation.dimensions }
 						onChange={ setDimension }
+						noWrap
 					/>
 					<div className="products__product-weight-input">
 						<FormTextInputWithAffixes
@@ -94,6 +95,7 @@ const ProductFormVariationsRow = ( {
 							value={ variation.weight || '' }
 							onChange={ setWeight }
 							size="4"
+							noWrap
 						/>
 					</div>
 				</div>
