@@ -45,6 +45,7 @@
     "copy-webpack-plugin": "3.0.1",
     "create-react-class": "15.5.3",
     "creditcards": "2.1.2",
+    "cyrillic-to-latin": "2.0.0",
     "debug": "2.2.0",
     "doctrine": "2.0.0",
     "dom-helpers": "2.4.0",

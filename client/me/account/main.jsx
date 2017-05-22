@@ -84,12 +84,24 @@ const Account = React.createClass( {
 		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
 	},
 
+	componentDidUpdate() {
+		const originalLangSlug = this.getOriginalUserSetting( 'locale_variant' ) || this.getOriginalUserSetting( 'language' );
+
+		if (  originalLangSlug !== null && ! this.state.langSlug ) {
+			this.setState( { langSlug: originalLangSlug } );
+		}
+	},
+
 	componentWillUnmount() {
 		debug( this.constructor.displayName + ' component is unmounting.' );
 	},
 
 	getUserSetting( settingName ) {
 		return this.props.userSettings.getSetting( settingName );
+	},
+
+	getOriginalUserSetting( settingName ) {
+		return this.props.userSettings.getOriginalSetting( settingName );
 	},
 
 	updateUserSetting( settingName, value ) {
@@ -106,7 +118,8 @@ const Account = React.createClass( {
 
 	updateLanguage( event ) {
 		const { value } = event.target;
-		const originalLanguage = this.props.userSettings.getOriginalSetting( 'language' );
+		const originalLanguage = this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' );
+		this.setState( { langSlug: value } );
 
 		this.updateUserSetting( 'language', value );
 		const redirect = value !== originalLanguage ? '/me/account' : false;
@@ -524,7 +537,8 @@ const Account = React.createClass( {
 						name="language"
 						onFocus={ this.recordFocusEvent( 'Interface Language Field' ) }
 						valueKey="langSlug"
-						value={ this.getUserSetting( 'language' ) || '' }
+						value={ this.state.langSlug }
+						defaultValue={ this.getOriginalUserSetting( 'locale_variant' ) || this.getOriginalUserSetting( 'language' ) }
 						onChange={ this.updateLanguage }
 					/>
 					{ this.thankTranslationContributors() }

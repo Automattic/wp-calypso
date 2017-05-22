@@ -147,6 +147,7 @@
 		{ "value": 459, "langSlug": "so", "name": "Afsoomaali", "wpLocale": "so_SO" },
 		{ "value": 66, "langSlug": "sq", "name": "Shqip", "wpLocale": "sq" },
 		{ "value": 67, "langSlug": "sr", "name": "Српски језик", "wpLocale": "sr_RS" },
+		{ "value": 901, "langSlug": "sr_latin",	"name": "Srpski (latinica)", "wpLocale": "sr_RS", "parent_locale_slug": "sr" },
 		{ "value": 441, "langSlug": "su", "name": "Basa Sunda", "wpLocale": "su_ID" },
 		{ "value": 68, "langSlug": "sv", "name": "Svenska", "wpLocale": "sv_SE", "popular": 17 },
 		{ "value": 69, "langSlug": "ta", "name": "தமிழ்", "wpLocale": "ta_IN" },

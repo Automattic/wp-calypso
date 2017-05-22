@@ -7,6 +7,7 @@ import qs from 'querystring';
  * Internal dependencies
  */
 import { getCurrentUserLocale } from 'state/current-user/selectors';
+import userSettings from 'lib/user-settings';
 
 /**
  * Module variables
@@ -76,7 +77,8 @@ export function injectLocalization( wpcom ) {
  */
 export function bindState( store ) {
 	function setLocaleFromState() {
-		setLocale( getCurrentUserLocale( store.getState() ) );
+		const requestLocale = userSettings.getSetting( 'locale_variant' ) || getCurrentUserLocale( store.getState() );
+		setLocale( requestLocale );
 	}
 
 	store.subscribe( setLocaleFromState );

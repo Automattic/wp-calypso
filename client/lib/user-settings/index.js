@@ -229,10 +229,11 @@ UserSettings.prototype.updateSetting = function( settingName, value ) {
 		 * If the two match, we don't consider the setting "changed".
 		 * user_login is a special case since the logic for validating and saving a username
 		 * is more complicated.
+		 * language is a special case too because a user may switch form a variant to the parent
 		 */
 		if (
 			this.settings[ settingName ] === this.unsavedSettings[ settingName ] &&
-			'user_login' !== settingName
+			'user_login' !== settingName && 'language' !== settingName
 		) {
 			debug( 'Removing ' + settingName + ' from changed settings.' );
 			delete this.unsavedSettings[ settingName ];

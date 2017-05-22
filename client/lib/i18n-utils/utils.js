@@ -9,8 +9,7 @@ import url from 'url';
  */
 import config from 'config';
 
-const localeRegex = /^[A-Z]{2,3}$/i;
-const localeWithRegionRegex = /^[A-Z]{2,3}-[A-Z]{2,3}$/i;
+const localeRegex = /^[A-Z]{2,3}(-[A-Z]{2,3})?(_[A-Z]{2,12})?$/i;
 
 function getPathParts( path ) {
 	// Remove trailing slash then split. If there is a trailing slash,
@@ -21,7 +20,7 @@ function getPathParts( path ) {
 const i18nUtils = {
 	getLanguage: function( langSlug ) {
 		let language;
-		if ( localeRegex.test( langSlug ) || localeWithRegionRegex.test( langSlug ) ) {
+		if ( localeRegex.test( langSlug ) ) {
 			language = find( config( 'languages' ), { langSlug: langSlug } ) ||
 				find( config( 'languages' ), { langSlug: langSlug.substring( 0, 2 ) } );
 		}
@@ -72,6 +71,12 @@ const i18nUtils = {
 		}
 
 		return parts.join( '/' ) + queryString;
+	},
+
+	languageFileUrl: function( localeSlug ) {
+		const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
+		return `${ protocol }widgets.wp.com/languages/calypso/${ localeSlug }.json`;
 	}
+
 };
 export default i18nUtils;
