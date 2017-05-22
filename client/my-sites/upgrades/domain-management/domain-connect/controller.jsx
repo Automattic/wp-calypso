@@ -15,8 +15,8 @@ export function domainConnectAuthorize( context, next ) {
 			locale={ i18nUtils.getLanguage( context.params.locale ) }
 			path={ context.path }
 			params={ context.query }
-			provider_id={ context.params.provider_id }
-			template_id={ context.params.template_id }
+			providerId={ context.params.providerId }
+			templateId={ context.params.templateId }
 		/>
 	);
 	context.secondary = null;

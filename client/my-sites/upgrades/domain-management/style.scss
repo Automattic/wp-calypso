@@ -415,66 +415,109 @@ input[type=radio].domain-management-list-item__radio {
 	h2 {
 		font-size: 20px;
 		font-weight: 600;
+		margin-bottom: 1em;
 	}
 
 	.domain-connect__button {
 		margin-right: 16px;
 		margin-top: 16px;
 	}
+
+	.domain-connect__footer {
+		border-top: 1px solid $gray-light;
+		padding-top: 10px;
+	}
+
+	.is-placeholder {
+		span {
+			@include placeholder( 23% );
+
+			display: block;
+			margin: 0.8em 0 0.8em 0;
+			height: 1em;
+
+			&:last-child {
+				width: 30%;
+			}
+
+			&:first-child {
+				width: 100%;
+			}
+		}
+	}
 }
 
-.domain-connect__dns-list > ul {
-	list-style: none;
-	margin: 15px 0 1.5em 0;
-	padding: 0;
+.domain-connect__dns-list {
+	ul {
+		list-style: none;
+		margin: 15px 0 1.5em 0;
+		padding: 0;
 
-	li {
-		border-top: 1px solid $gray-light;
-		display: flex;
-		justify-content: space-between;
-		overflow: auto;
-		padding: 10px 0;
-		position: relative;
+		li {
+			border-top: 1px solid $gray-light;
+			display: flex;
+			justify-content: space-between;
+			overflow: auto;
+			padding: 10px 0;
+			position: relative;
 
-		em {
-			color: $gray-text-min;
-			display: block;
-			font-size: 11px;
+			em {
+				color: $gray-text-min;
+				display: block;
+				font-size: 11px;
+			}
+
+			label {
+				background: $gray;
+				border-radius: 2px;
+				color: $white;
+				display: block;
+				font-size: 12px;
+				margin: 0 10px 0 0;
+				padding: 10px 5px;
+				text-align: center;
+			}
+
+			strong {
+				color: $gray-text-min;
+				font-weight: normal;
+			}
+
+			&.is-disabled {
+				opacity: 0.2;
+				cursor: not-allowed;
+			}
+
+			&:last-child {
+				border-bottom: 1px solid $gray-light;
+			}
 		}
 
-		label {
-			background: $gray;
-			border-radius: 2px;
-			color: $white;
-			display: block;
-			font-size: 12px;
-			margin: 0 10px 0 0;
-			padding: 10px 5px;
-			text-align: center;
+		.domain-connect__dns-list-type {
+			min-width: 60px;
 		}
 
-		strong {
-			color: $gray-text-min;
-			font-weight: normal;
-		}
-
-		&.is-disabled {
-			opacity: 0.2;
-			cursor: not-allowed;
-		}
-
-		&:last-child {
-			border-bottom: 1px solid $gray-light;
+		.domain-connect__dns-list-info {
+			width: 100%;
+			word-break: break-all;
 		}
 	}
 
-	.domain-connect__dns-list-type {
-		min-width: 60px;
-	}
+	.is-placeholder {
+		span{
+			@include placeholder( 23% );
 
-	.domain-connect__dns-list-info {
-		width: 100%;
-		word-break: break-all;
+			display: inline-block;
+
+			&:first-child {
+				width: 35%;
+			}
+
+			&:last-child {
+				float: right;
+				width: 22px;
+			}
+		}
 	}
 }
 
