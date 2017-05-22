@@ -15,7 +15,7 @@ import FollowersCount from 'blocks/followers-count';
 import SegmentedControl from 'components/segmented-control';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
-const StatsNavigation = props => {
+const StoreStatsNavigation = props => {
 	const { translate, slug, type, unit } = props;
 	const units = {
 		day: translate( 'Days' ),
@@ -37,7 +37,6 @@ const StatsNavigation = props => {
 				) ) }
 			</NavTabs>
 			<SegmentedControl
-				className="stats-navigation__control"
 				initialSelected="store"
 				options={ [
 					{ value: 'site', label: translate( 'Site' ), path: `/stats/${ unit }/${ slug }` },
@@ -49,7 +48,7 @@ const StatsNavigation = props => {
 	);
 };
 
-StatsNavigation.propTypes = {
+StoreStatsNavigation.propTypes = {
 	slug: PropTypes.string
 };
 
@@ -60,4 +59,4 @@ export default connect(
 			translate: i18n.translate,
 		};
 	}
-)( StatsNavigation );
+)( StoreStatsNavigation );

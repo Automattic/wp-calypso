@@ -9,11 +9,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
-import StatsNavigation from './stats-navigation';
+import Navigation from './store-stats-navigation';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import StatsChart from './stats-chart';
+import Chart from './store-stats-chart';
 
-class Stats extends Component {
+class StoreStats extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		unit: PropTypes.string.isRequired,
@@ -31,9 +31,9 @@ class Stats extends Component {
 			quantity: '30'
 		};
 		return (
-			<Main className="woocommerce stats" wideLayout={ true }>
-				<StatsNavigation unit={ unit } type="orders" />
-				<StatsChart
+			<Main className="store-stats woocommerce" wideLayout={ true }>
+				<Navigation unit={ unit } type="orders" />
+				<Chart
 					path={ path }
 					query={ ordersQuery }
 					selectedDate={ selectedDate }
@@ -44,7 +44,7 @@ class Stats extends Component {
 	}
 }
 
-const localizedStats = localize( Stats );
+const localizedStats = localize( StoreStats );
 
 export default connect(
 	state => {

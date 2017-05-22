@@ -15,7 +15,7 @@ import { getSiteStatsNormalizedData, isRequestingSiteStatsForQuery } from 'state
 import ElementChart from 'components/chart';
 import Legend from 'components/chart/legend';
 
-class StatsChart extends Component {
+class StoreStatsChart extends Component {
 	static propTypes = {
 		data: PropTypes.array.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
@@ -63,7 +63,7 @@ class StatsChart extends Component {
 			tooltipData: [],
 			className,
 		};
-	};
+	}
 
 	render() {
 		const { siteId, query, data } = this.props;
@@ -78,7 +78,7 @@ class StatsChart extends Component {
 		const isLoading = ! ! data.length;
 		const chartData = data.map( item => this.buildChartData( item, selectedTab ) );
 		return (
-			<Card className="stats-chart stats-module">
+			<Card className="store-stats-chart stats-module">
 				{ siteId && <QuerySiteStats
 					query={ query }
 					siteId={ siteId }
@@ -100,4 +100,4 @@ export default connect(
 			isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsOrders', query ),
 		};
 	}
-)( StatsChart );
+)( StoreStatsChart );
