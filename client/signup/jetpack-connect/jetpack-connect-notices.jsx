@@ -152,8 +152,6 @@ class JetpackConnectNotices extends Component {
 				noticeValues.icon = 'notice';
 				return noticeValues;
 		}
-
-		return;
 	}
 
 	render() {
