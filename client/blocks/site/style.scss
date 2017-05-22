@@ -49,15 +49,6 @@
 			line-height: 46px;
 		}
 
-		.site__home {
-			top: 11px;
-			line-height: 18px;
-		}
-
-		.site__home .gridicon {
-			margin-top: 0;
-		}
-
 	}
 }
 
@@ -69,6 +60,7 @@
 	padding: 16px;
 	position: relative;
 	width: 100%;
+	align-items: center;
 
 	&:focus {
 		outline: none;
@@ -91,6 +83,7 @@
 .site__info {
 	width: 0; // Firefox needs explicit width (even 0)
 	flex: 1 0 auto;
+	position: relative;
 }
 
 .site__title {
@@ -119,33 +112,14 @@
 }
 
 .site__home {
-	background: $blue-medium;
-	color: $white;
-	display: block;
-	width: 32px;
-	height: 32px;
+	flex: 0 1 auto;
+	color: $gray;
 	text-align: center;
 	text-transform: none;
 	overflow: initial;
-	opacity: 0;
-	transition: opacity 0.2s;
-	transform: translate3d(0, 0, 0);
-	position: absolute;
-		left: 16px;
-		top: 17px;
 
-	.gridicon {
-		margin-top: 5px;
-		vertical-align: middle;
-	}
-
-	.site.is-compact & {
-		width: 24px;
-		height: 24px;
-	}
-
-	&:hover {
-		color: $white;
+	.site__content:hover & {
+		color: $blue-medium;
 	}
 
 	@include breakpoint( "<660px" ) {
@@ -153,9 +127,6 @@
 	}
 }
 
-.site__content:hover .site__home {
-	opacity: 1;
-}
 
 .site__badge {
 	color: $gray;
