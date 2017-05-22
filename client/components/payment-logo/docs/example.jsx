@@ -15,11 +15,11 @@ const PaymentLogoExamples = React.createClass( {
 	render() {
 		return (
 			<div>
-				<PaymentLogo type="amex" /> { ' ' }
-				<PaymentLogo type="discover" /> { ' ' }
-				<PaymentLogo type="mastercard" /> { ' ' }
-				<PaymentLogo type="visa" /> { ' ' }
-				<PaymentLogo type="paypal" isCompact /> { ' ' }
+				<PaymentLogo type="amex" />{ ' ' }
+				<PaymentLogo type="discover" />{ ' ' }
+				<PaymentLogo type="mastercard" />{ ' ' }
+				<PaymentLogo type="visa" />{ ' ' }
+				<PaymentLogo type="paypal" isCompact />{ ' ' }
 				<PaymentLogo type="paypal" />
 			</div>
 		);
