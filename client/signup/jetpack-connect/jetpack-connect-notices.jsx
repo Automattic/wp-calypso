@@ -93,7 +93,7 @@ class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case 'notJetpack':
-				noticeValues.status = 'is-noticeType';
+				noticeValues.status = 'is-notice';
 				noticeValues.icon = 'status';
 				noticeValues.text = translate( 'Jetpack couldn\'t be found.' );
 				return noticeValues;
