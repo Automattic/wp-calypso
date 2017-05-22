@@ -8,20 +8,17 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { requestUserDevices } from 'state/user-devices/actions';
-import { isRequestingUserDevices } from 'state/selectors';
+import { getUserDevices } from 'state/selectors';
 
 class QueryUserDevices extends Component {
 	static propTypes = {
-		isRequesting: PropTypes.bool,
 		requestUserDevices: PropTypes.func
 	}
 
-	componentWillMount() {
-		if ( this.props.requesting ) {
-			return;
+	componentDidMount() {
+		if ( this.props.devices === null ) {
+			this.props.requestUserDevices();
 		}
-
-		this.props.requestUserDevices();
 	}
 
 	render() {
@@ -31,7 +28,7 @@ class QueryUserDevices extends Component {
 
 export default connect(
 	state => ( {
-		requesting: isRequestingUserDevices( state )
+		devices: getUserDevices( state )
 	} ),
 	{ requestUserDevices }
 )( QueryUserDevices );
