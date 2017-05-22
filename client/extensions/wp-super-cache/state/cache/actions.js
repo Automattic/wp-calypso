@@ -11,11 +11,15 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
+	WP_SUPER_CACHE_PRELOAD_CACHE,
+	WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE,
+	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../action-types';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { getSiteTitle } from 'state/sites/selectors';
 
 /*
  * Tests the cache for a site.
@@ -79,6 +83,72 @@ export const deleteCache = ( siteId, deleteAll, deleteExpired ) => {
 					type: WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 					siteId,
 				} );
+			} );
+	};
+};
+
+/*
+ * Preloads the cache for a site.
+ *
+ * @param  {Number} siteId Site ID
+ * @returns {Function} Action thunk that preloads the cache for a given site
+ */
+export const preloadCache = ( siteId ) => {
+	return ( dispatch, getState ) => {
+		dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE, siteId } );
+		dispatch( removeNotice( 'wpsc-preload-cache' ) );
+
+		return wp.req.post(
+			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
+			{ path: '/wp-super-cache/v1/preload', body: JSON.stringify( { enable: true } ), json: true } )
+			.then( () => {
+				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS, siteId } );
+				dispatch( successNotice(
+					translate( 'Cache preload completed successfully on %(siteTitle)s.',
+						{ args: { siteTitle: getSiteTitle( getState(), siteId ) } }
+					),
+					{ id: 'wpsc-preload-cache' }
+				) );
+			} )
+			.catch( () => {
+				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE, siteId } );
+				dispatch( errorNotice(
+					translate( 'There was a problem preloading the cache. Please try again.' ),
+					{ id: 'wpsc-preload-cache' }
+				) );
+			} );
+	};
+};
+
+/*
+ * Cancels preloading the cache for a site.
+ *
+ * @param  {Number} siteId Site ID
+ * @returns {Function} Action thunk that cancels preloading the cache for a given site
+ */
+export const cancelPreloadCache = ( siteId ) => {
+	return ( dispatch, getState ) => {
+		dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE, siteId } );
+		dispatch( removeNotice( 'wpsc-cancel-preload' ) );
+
+		return wp.req.post(
+			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
+			{ path: '/wp-super-cache/v1/preload', body: JSON.stringify( { enable: false } ), json: true } )
+			.then( () => {
+				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS, siteId } );
+				dispatch( successNotice(
+					translate( 'Cache preload cancelled successfully on %(siteTitle)s.',
+						{ args: { siteTitle: getSiteTitle( getState(), siteId ) } }
+					),
+					{ id: 'wpsc-cancel-preload' }
+				) );
+			} )
+			.catch( () => {
+				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE, siteId } );
+				dispatch( errorNotice(
+					translate( 'There was a problem cancelling the preload. Please try again.' ),
+					{ id: 'wpsc-cancel-preload' }
+				) );
 			} );
 	};
 };
