@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { localize } from 'i18n-calypso';
 import cookie from 'cookie';
 
 /**
@@ -21,7 +21,6 @@ import {
 import {
 	getAuthorizationData,
 	getAuthorizationRemoteSite,
-	getSSOSessions,
 	isCalypsoStartedConnection,
 	hasXmlrpcError,
 	hasExpiredSecretError,
@@ -31,7 +30,7 @@ import {
 	getAuthAttempts,
 	getSiteIdFromQueryObject
 } from 'state/jetpack-connect/selectors';
-import observe from 'lib/mixins/data-observe';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import { requestSites } from 'state/sites/actions';
@@ -39,18 +38,39 @@ import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
 import { urlToSlug } from 'lib/url';
-import Plans from './plans';
-import CheckoutData from 'components/data/checkout';
 import LoggedInForm from './auth-logged-in-form';
 import LoggedOutForm from './auth-logged-out-form';
 
-const JetpackConnectAuthorizeForm = React.createClass( {
-	displayName: 'JetpackConnectAuthorizeForm',
-	mixins: [ observe( 'userModule' ) ],
+class JetpackConnectAuthorizeForm extends Component {
+	static propTypes = {
+		authAttempts: PropTypes.number,
+		authorize: PropTypes.func,
+		calypsoStartedConnection: PropTypes.bool,
+		createAccount: PropTypes.func,
+		goBackToWpAdmin: PropTypes.func,
+		goToXmlrpcErrorFallbackUrl: PropTypes.func,
+		isAlreadyOnSitesList: PropTypes.bool,
+		isFetchingAuthorizationSite: PropTypes.bool,
+		isFetchingSites: PropTypes.bool,
+		jetpackConnectAuthorize: PropTypes.shape( {
+			queryObject: PropTypes.shape( {
+				client_id: PropTypes.string,
+				from: PropTypes.string,
+			} ).isRequired,
+		} ).isRequired,
+		recordTracksEvent: PropTypes.func,
+		requestHasExpiredSecretError: PropTypes.func,
+		requestHasXmlrpcError: PropTypes.func,
+		requestSites: PropTypes.func,
+		retryAuth: PropTypes.func,
+		selectedPlan: PropTypes.string,
+		siteSlug: PropTypes.string,
+		user: PropTypes.object,
+	}
 
 	componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
-	},
+	}
 
 	isSSO() {
 		const cookies = cookie.parse( document.cookie );
@@ -62,17 +82,17 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 			query.client_id &&
 			query.client_id === cookies.jetpack_sso_approved
 		);
-	},
+	}
 
 	renderNoQueryArgsError() {
 		return (
 			<Main className="jetpack-connect__main-error">
 				<EmptyContent
 					illustration="/calypso/images/drake/drake-whoops.svg"
-					title={ this.translate(
+					title={ this.props.translate(
 						'Oops, this URL should not be accessed directly'
 					) }
-					action={ this.translate( 'Get back to Jetpack Connect screen' ) }
+					action={ this.props.translate( 'Get back to Jetpack Connect screen' ) }
 					actionURL="/jetpack/connect"
 				/>
 				<LoggedOutFormLinks>
@@ -80,31 +100,21 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 				</LoggedOutFormLinks>
 			</Main>
 		);
-	},
-
-	renderPlansSelector() {
-		return (
-			<div>
-				<CheckoutData>
-					<Plans { ...this.props } showFirst={ true } />
-				</CheckoutData>
-			</div>
-		);
-	},
+	}
 
 	renderForm() {
-		const { userModule } = this.props;
-		const user = userModule.get();
-		const props = Object.assign( {}, this.props, {
-			user: user
-		} );
-
 		return (
-			( user )
-				? <LoggedInForm { ...props } isSSO={ this.isSSO() } />
-				: <LoggedOutForm { ...props } isSSO={ this.isSSO() } />
+			( this.props.user )
+				? <LoggedInForm
+					{ ...this.props }
+					isSSO={ this.isSSO() }
+				/>
+				: <LoggedOutForm
+					{ ...this.props }
+					isSSO={ this.isSSO() }
+				/>
 		);
-	},
+	}
 
 	render() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
@@ -117,10 +127,6 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 			this.renderForm();
 		}
 
-		if ( this.props.plansFirst && ! this.props.selectedPlan ) {
-			return this.renderPlansSelector();
-		}
-
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">
@@ -129,43 +135,38 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 			</MainWrapper>
 		);
 	}
-} );
+}
 
 export default connect(
 	state => {
 		const remoteSiteUrl = getAuthorizationRemoteSite( state );
 		const siteSlug = urlToSlug( remoteSiteUrl );
-		const requestHasXmlrpcError = () => {
-			return hasXmlrpcError( state );
-		};
-		const requestHasExpiredSecretError = () => {
-			return hasExpiredSecretError( state );
-		};
+		const requestHasExpiredSecretError = () => hasExpiredSecretError( state );
+		const requestHasXmlrpcError = () => hasXmlrpcError( state );
 		const selectedPlan = getSiteSelectedPlan( state, siteSlug ) || getGlobalSelectedPlan( state );
 		const siteId = getSiteIdFromQueryObject( state );
 
 		return {
-			siteSlug,
-			selectedPlan,
-			jetpackConnectAuthorize: getAuthorizationData( state ),
-			plansFirst: false,
-			jetpackSSOSessions: getSSOSessions( state ),
-			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
-			isFetchingSites: isRequestingSites( state ),
-			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
-			requestHasXmlrpcError,
-			requestHasExpiredSecretError,
-			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
 			authAttempts: getAuthAttempts( state, siteSlug ),
+			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
+			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
+			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
+			isFetchingSites: isRequestingSites( state ),
+			jetpackConnectAuthorize: getAuthorizationData( state ),
+			requestHasExpiredSecretError,
+			requestHasXmlrpcError,
+			selectedPlan,
+			siteSlug,
+			user: getCurrentUser( state ),
 		};
 	},
-	dispatch => bindActionCreators( {
-		requestSites,
-		recordTracksEvent,
+	{
 		authorize,
 		createAccount,
 		goBackToWpAdmin,
+		goToXmlrpcErrorFallbackUrl,
+		recordTracksEvent,
+		requestSites,
 		retryAuth,
-		goToXmlrpcErrorFallbackUrl
-	}, dispatch )
-)( JetpackConnectAuthorizeForm );
+	}
+)( localize( JetpackConnectAuthorizeForm ) );

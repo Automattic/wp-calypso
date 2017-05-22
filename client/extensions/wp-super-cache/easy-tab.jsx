@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { isEmpty, get, pick } from 'lodash';
+import { flowRight, get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +17,10 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
+import { testCache } from './state/cache/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteTitle } from 'state/sites/selectors';
+import { getCacheTestResults, isTestingCache } from './state/cache/selectors';
 
 class EasyTab extends Component {
 	static propTypes = {
@@ -23,22 +28,19 @@ class EasyTab extends Component {
 		fields: PropTypes.object,
 		handleAutosavingToggle: PropTypes.func.isRequired,
 		handleDeleteCache: PropTypes.func.isRequired,
-		handleTestCache: PropTypes.func.isRequired,
 		isDeleting: PropTypes.bool,
 		isRequesting: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		isTesting: PropTypes.bool,
 		site: PropTypes.object.isRequired,
+		siteId: PropTypes.number,
+		siteTitle: PropTypes.string,
+		testCache: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
-		cacheTestResults: {},
 		fields: {},
-		isDeleting: false,
-		isRequesting: true,
-		isSaving: false,
-		isTesting: false,
 	};
 
 	state = {
@@ -68,7 +70,9 @@ class EasyTab extends Component {
 		this.props.handleDeleteCache( true, false );
 	}
 
-	testCache = () => this.props.handleTestCache( this.state.httpOnly );
+	testCache = () => {
+		this.props.testCache( this.props.siteId, this.props.siteTitle, this.state.httpOnly );
+	}
 
 	render() {
 		const {
@@ -214,6 +218,22 @@ class EasyTab extends Component {
 	}
 }
 
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const siteTitle = getSiteTitle( state, siteId );
+		const isTesting = isTestingCache( state, siteId );
+		const cacheTestResults = getCacheTestResults( state, siteId );
+
+		return {
+			cacheTestResults,
+			isTesting,
+			siteTitle,
+		};
+	},
+	{ testCache },
+);
+
 const getFormSettings = settings => {
 	return pick( settings, [
 		'cache_mod_rewrite',
@@ -221,4 +241,7 @@ const getFormSettings = settings => {
 	] );
 };
 
-export default WrapSettingsForm( getFormSettings )( EasyTab );
+export default flowRight(
+	connectComponent,
+	WrapSettingsForm( getFormSettings )
+)( EasyTab );

@@ -1,6 +1,53 @@
-.reader-feed-header {
+.reader-feed-header .reader-feed-header__site {
 	display: flex;
 	flex-direction: column;
+	padding-top: 5px;
+}
+.reader-feed-header__site-icon {
+	align-self: center;
+	padding-bottom: 20px;
+}
+
+.reader-feed-header__site-icon .site-icon.is-blank {
+	display: none;
+}
+
+.reader-feed-header .reader-feed-header__site-badge {
+	color: $gray;
+	padding-right: 4px;
+	line-height: 0;
+	position: relative;
+	vertical-align: middle;
+}
+
+.reader-feed-header__site .reader-feed-header__site-title {
+	align-self: stretch;
+	font-family: $serif;
+	font-size: 21px;
+	font-weight: 600;
+	max-height: 16px * 4;
+	overflow: hidden;
+	position: relative;
+	text-align: center;
+	white-space: normal;
+
+	.reader-feed-header__site-title-link,
+	.reader-feed-header__site-title-link:visited {
+		color: $gray-dark;
+	}
+
+	&::after {
+		@include long-content-fade( $size: 15% );
+		height: 16px * 1.7;
+		top: auto;
+	}
+
+	@include breakpoint( "<960px" ) {
+		max-height: 16px * 5.9;
+	}
+}
+
+.reader-feed-header {
 	margin: 0 auto;
 	margin-bottom: 40px;
 	position: relative;
@@ -8,58 +55,6 @@
 
 	@include breakpoint( "<660px" ) {
 		margin: 20px 13px;
-	}
-
-	.site__content {
-		display: flex;
-		flex-direction: column;
-		padding: 0;
-	}
-
-	.site .site-icon {
-		height: 96px !important;
-		margin-right: 0;
-		width: 96px !important;
-
-		&.is-blank {
-			display: none;
-		}
-	}
-
-	.site__info {
-		margin-top: 20px;
-		width: 100%;
-	}
-
-	.site__title {
-		font-family: $serif;
-		font-size: 21px;
-		font-weight: 600;
-		overflow: hidden;
-		position: relative;
-		text-align: center;
-		white-space: normal;
-
-		&::after {
-			background: none;
-			content: '';
-			height: 22px;
-			@include long-content-fade( $size: 15% );
-			top: calc( 100% - 32px );
-
-			@include breakpoint( ">660px" ) {
-				@include long-content-fade( $size: 10% );
-				top: 0;
-			}
-		}
-
-		@include breakpoint( ">660px" ) {
-			height: 30px;
-		}
-	}
-
-	.site__domain {
-		display: none;
 	}
 
 	.reader-feed-header__back-and-follow {
@@ -119,8 +114,21 @@
 	}
 
 	.reader-feed-header__details {
+		align-self: stretch;
 		font-size: 14px;
+		max-height: 16px * 4;
+		overflow: hidden;
 		text-align: center;
+		position: relative;
+
+		.reader-feed-header__description {
+
+				&::after {
+					@include long-content-fade( $size: 15% );
+					height: 16px * 1.3;
+					top: auto;
+			}
+		}
 	}
 
 	.reader-feed-header__follow-count {
@@ -174,7 +182,6 @@
 	&.reader-feed-header__site {
 		margin: 0 auto;
 		padding: 0;
-		width: 100%;
 	}
 }
 

@@ -206,8 +206,26 @@
 	color: darken( $gray, 10% );
 }
 
+.following-manage__search-results .reader-subscription-list-item__options {
+	display: flex;
+	flex-direction: column;
+	min-width: 24px;
+
+	@include breakpoint( ">660px" ) {
+		min-width: 90px;
+	}
+
+	.button.follow-button {
+
+		@include breakpoint( ">660px" ) {
+			display: flex;
+		}
+	}
+}
+
 .following-manage__search-results.is-empty {
 	margin-top: 10px;
+	word-wrap: break-word;
 }
 
 .following-manage__subscriptions-list.is-empty {
@@ -223,10 +241,17 @@
 	}
 }
 
+.following-manage__url-follow-no-search-results-message {
+	margin-top: -5px;
+	padding-bottom: 15px;
+	color: darken( $gray, 10% )
+}
+
 .following-manage__url-follow {
 	border-bottom: 1px solid lighten( $gray, 30% );
 	padding: 13px 0 10px;
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 
 	.follow-button {

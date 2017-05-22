@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { flowRight } from 'lodash';
+import { flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,7 +15,7 @@ import Card from 'components/card';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import JetpackConnectNotices from './jetpack-connect-notices';
-import SiteURLInput from './site-url-input';
+import SiteUrlInput from './site-url-input';
 import {
 	getGlobalSelectedPlan,
 	getConnectingSite,
@@ -60,20 +60,20 @@ class JetpackConnectMain extends Component {
 		url: PropTypes.string,
 	};
 
-	state = {
-		currentUrl: '',
-		waitingForSites: false,
-		initialUrl: null,
-	};
+	state = this.props.url
+		? {
+			currentUrl: this.cleanUrl( this.props.url ),
+			shownUrl: this.props.url,
+			waitingForSites: false
+		} : {
+			currentUrl: '',
+			shownUrl: '',
+			waitingForSites: false
+		};
 
 	componentWillMount() {
 		if ( this.props.url ) {
-			let url = this.props.url;
-			if ( url && url.substr( 0, 4 ) !== 'http' ) {
-				url = 'http://' + url;
-			}
-			this.setState( { currentUrl: untrailingslashit( url ), initialUrl: url } );
-			this.checkUrl( url );
+			this.checkUrl( this.cleanUrl( this.props.url ) );
 		}
 	}
 
@@ -103,11 +103,6 @@ class JetpackConnectMain extends Component {
 		) {
 			return this.props.goToRemoteAuth( this.state.currentUrl );
 		}
-		if ( this.getStatus() === 'alreadyOwned' &&
-			! this.props.jetpackConnectSite.isRedirecting
-		) {
-			return this.props.goToPlans( this.state.currentUrl );
-		}
 
 		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
 			// eslint-disable-next-line react/no-did-update-set-state
@@ -117,11 +112,6 @@ class JetpackConnectMain extends Component {
 	}
 
 	dismissUrl = () => this.props.dismissUrl( this.state.currentUrl );
-
-	onURLChange = () => {
-		this.setState( { currentUrl: this.getCurrentUrl() } );
-		this.dismissUrl();
-	}
 
 	isCurrentUrlFetched() {
 		return this.props.jetpackConnectSite &&
@@ -136,8 +126,16 @@ class JetpackConnectMain extends Component {
 			this.props.jetpackConnectSite.isFetching;
 	}
 
-	getCurrentUrl() {
-		let url = this.refs.siteUrlInputRef.state.value.trim().toLowerCase();
+	handleUrlChange = ( event ) => {
+		const url = event.target.value;
+		this.setState( {
+			currentUrl: this.cleanUrl( url ),
+			shownUrl: url,
+		} );
+	}
+
+	cleanUrl( inputUrl ) {
+		let url = inputUrl.trim().toLowerCase();
 		if ( url && url.substr( 0, 4 ) !== 'http' ) {
 			url = 'http://' + url;
 		}
@@ -152,7 +150,7 @@ class JetpackConnectMain extends Component {
 		);
 	}
 
-	onURLEnter = () => {
+	handleUrlSubmit = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl
 		} );
@@ -234,10 +232,16 @@ class JetpackConnectMain extends Component {
 		if ( ! this.checkProperty( 'isJetpackActive' ) ) {
 			return 'notActiveJetpack';
 		}
-		if ( ! this.checkProperty( 'isJetpackConnected' ) ) {
+		if (
+			! this.checkProperty( 'isJetpackConnected' ) ||
+			( this.checkProperty( 'isJetpackConnected' ) && ! this.checkProperty( 'userOwnsSite' ) )
+		) {
 			return 'notConnectedJetpack';
 		}
-		if ( this.checkProperty( 'isJetpackConnected' ) ) {
+		if (
+			this.checkProperty( 'isJetpackConnected' ) &&
+			this.checkProperty( 'userOwnsSite' )
+		) {
 			return 'alreadyConnected';
 		}
 
@@ -295,12 +299,12 @@ class JetpackConnectMain extends Component {
 		 * I'm avoiding significantly changing this implementation
 		 * until propTypes have been around for a while.
 		 */
-		return [
+		return includes( [
 			'install',
 			'pro',
 			'premium',
 			'personal',
-		].includes( this.props.type );
+		], this.props.type );
 	}
 
 	getInstructionsData( status ) {
@@ -346,12 +350,11 @@ class JetpackConnectMain extends Component {
 					: null
 				}
 
-				<SiteURLInput ref="siteUrlInputRef"
-					url={ this.state.initialUrl }
+				<SiteUrlInput
+					url={ this.state.shownUrl }
 					onTosClick={ this.handleOnClickTos }
-					onChange={ this.onURLChange }
-					onClick={ this.onURLEnter }
-					onDismissClick={ this.onDismissClick }
+					onChange={ this.handleUrlChange }
+					onSubmit={ this.handleUrlSubmit }
 					isError={ this.getStatus() }
 					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() || this.state.waitingForSites }
 					isInstall={ this.isInstall() } />
@@ -455,7 +458,7 @@ class JetpackConnectMain extends Component {
 	render() {
 		const status = this.getStatus();
 		if (
-			[ 'notJetpack', 'notActiveJetpack' ].includes( status ) &&
+			includes( [ 'notJetpack', 'notActiveJetpack' ], status ) &&
 			! this.props.jetpackConnectSite.isDismissed
 		) {
 			return this.renderInstructions( this.getInstructionsData( status ) );

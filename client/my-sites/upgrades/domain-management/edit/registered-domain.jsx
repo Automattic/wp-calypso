@@ -122,25 +122,21 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	getVerticalNav() {
-		if ( this.props.domain.expired ) {
-			return null;
-		}
+		const { expirationMoment, expired, pendingTransfer } = this.props.domain;
+		const inNormalState = ! pendingTransfer && ! expired;
+		const inGracePeriod = this.moment().subtract( 18, 'days' ) <= expirationMoment;
 
 		return (
 			<VerticalNav>
-				{ this.emailNavItem() }
-				{ this.nameServersNavItem() }
-				{ this.contactsPrivacyNavItem() }
-				{ this.transferNavItem() }
+				{ inNormalState && this.emailNavItem() }
+				{ ( inNormalState || inGracePeriod ) && this.nameServersNavItem() }
+				{ ( inNormalState || inGracePeriod ) && this.contactsPrivacyNavItem() }
+				{ ( ! expired || inGracePeriod ) && this.transferNavItem() }
 			</VerticalNav>
 		);
 	},
 
 	emailNavItem() {
-		if ( this.props.domain.pendingTransfer ) {
-			return null;
-		}
-
 		const path = paths.domainManagementEmail(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -154,10 +150,6 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	nameServersNavItem() {
-		if ( this.props.domain.pendingTransfer ) {
-			return null;
-		}
-
 		const path = paths.domainManagementNameServers(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -171,10 +163,6 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	contactsPrivacyNavItem() {
-		if ( this.props.domain.pendingTransfer ) {
-			return null;
-		}
-
 		const path = paths.domainManagementContactsPrivacy(
 			this.props.selectedSite.slug,
 			this.props.domain.name

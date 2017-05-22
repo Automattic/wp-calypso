@@ -115,14 +115,14 @@ class MediaSettings extends Component {
 						<div className="site-settings__info-link-container">
 							<InfoPopover position="left">
 								<ExternalLink target="_blank" icon href="https://jetpack.com/support/photon" >
-									{ translate( 'Learn more about Photon.' ) }
+									{ translate( 'Learn more' ) }
 								</ExternalLink>
 							</InfoPopover>
 						</div>
 						<JetpackModuleToggle
 							siteId={ siteId }
 							moduleSlug="photon"
-							label={ translate( 'Speed up your images and photos with Photon' ) }
+							label={ translate( 'Speed up images and photos' ) }
 							description={ translate( 'Must be enabled to use tiled galleries.' ) }
 							disabled={ isRequestingOrSaving || photonModuleUnavailable }
 							/>

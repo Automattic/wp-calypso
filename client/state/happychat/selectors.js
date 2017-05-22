@@ -28,6 +28,16 @@ export const HAPPYCHAT_CHAT_STATUS_MISSED = 'missed';
 export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
 export const HAPPYCHAT_CHAT_STATUS_CLOSED = 'closed';
 
+/**
+ * Returns the geo location of the current user, based happychat session initiation (on ip)
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {?String}        Current user geo location
+ */
+export function getGeoLocation( state ) {
+	return state.happychat.geoLocation || null;
+}
+
 export const getHappychatChatStatus = createSelector(
 	state => state.happychat.chatStatus
 );

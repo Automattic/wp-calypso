@@ -293,7 +293,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderOverviewTab() {
-		const { download, isWpcomTheme, siteSlug, taxonomies } = this.props;
+		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium } = this.props;
 
 		return (
 			<div>
@@ -303,7 +303,7 @@ const ThemeSheet = React.createClass( {
 				<ThemeFeaturesCard taxonomies={ taxonomies }
 					siteSlug={ siteSlug }
 					isWpcomTheme={ isWpcomTheme } />
-				{ download && <ThemeDownloadCard href={ download } /> }
+				{ download && ! isPremium && <ThemeDownloadCard href={ download } /> }
 				{ isWpcomTheme && this.renderRelatedThemes() }
 				{ isWpcomTheme && this.renderNextTheme() }
 			</div>

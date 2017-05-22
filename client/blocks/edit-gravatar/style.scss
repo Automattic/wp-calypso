@@ -104,3 +104,38 @@
 .edit-gravatar__pop-over p:last-of-type {
 	margin-bottom: 0;
 }
+
+.edit-gravatar.is-unverified {
+	.file-picker {
+		pointer-events: none;
+	}
+
+	.gravatar {
+		opacity: 0.33;
+	}
+}
+
+.edit-gravatar .drop-zone {
+	border-radius: 50%;
+	width: 150px;
+	height: 150px;
+	border: 0;
+	margin: 0;
+}
+
+.edit-gravatar .drop-zone__content {
+	top: calc( 50% - 0.5em ); // align with button text
+}
+
+.edit-gravatar .drop-zone__content-text {
+	padding: 0 1em;
+}
+
+.edit-gravatar .drop-zone.is-active ~ .edit-gravatar__label-container {
+	visibility: hidden;
+}
+
+.edit-gravatar .drop-zone .gridicon {
+	height: 36px;
+	width: 36px;
+}

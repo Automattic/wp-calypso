@@ -18,23 +18,23 @@ import * as upgradesActions from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 
 class CartPlanAd extends Component {
-	addToCartAndRedirect( event ) {
+	addToCartAndRedirect = ( event ) => {
 		event.preventDefault();
 		upgradesActions.addItem( cartItems.premiumPlan( PLAN_PREMIUM, { isFreeTrial: false } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
-	}
+	};
 
-	shouldDisplayAd() {
-		const { cart, isDomainOnlySite, selectedSite } = this.props;
+	shouldDisplayAd = () => {
+		const { cart, isDomainOnly, selectedSite } = this.props;
 
-		return ! isDomainOnlySite &&
+		return ! isDomainOnly &&
 			cart.hasLoadedFromServer &&
 			! cartItems.hasDomainCredit( cart ) &&
 			cartItems.getDomainRegistrations( cart ).length === 1 &&
 			selectedSite &&
 			selectedSite.plan &&
 			! isPlan( selectedSite.plan );
-	}
+	};
 
 	render() {
 		if ( ! this.shouldDisplayAd() ) {
@@ -57,7 +57,7 @@ class CartPlanAd extends Component {
 
 CartPlanAd.propTypes = {
 	cart: PropTypes.object.isRequired,
-	isDomainOnlySite: PropTypes.bool,
+	isDomainOnly: PropTypes.bool,
 	selectedSite: PropTypes.oneOfType( [
 		PropTypes.bool,
 		PropTypes.object
@@ -69,7 +69,7 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {
-			isDomainOnlySite: isDomainOnlySite( state, selectedSiteId )
+			isDomainOnly: isDomainOnlySite( state, selectedSiteId )
 		};
 	}
 )( localize( CartPlanAd ) );

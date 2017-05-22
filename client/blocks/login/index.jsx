@@ -3,13 +3,14 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import DocumentHead from 'components/data/document-head';
 import LoginForm from './login-form';
 import {
 	getTwoFactorAuthNonce,
@@ -68,30 +69,8 @@ class Login extends Component {
 			return null;
 		}
 
-		let message;
-
-		if ( requestError.message === 'proxy_required' ) {
-			// TODO: Remove once the proxy requirement is removed from the API
-
-			let redirectTo = '';
-
-			if ( typeof window !== 'undefined' && window.location.search.indexOf( '?redirect_to=' ) === 0 ) {
-				redirectTo = window.location.search;
-			}
-
-			message = (
-				<div>
-					This endpoint is restricted to proxied Automatticians for now. Please use
-					{ ' ' }
-					<a href={ config( 'login_url' ) + redirectTo }>the old login page</a>.
-				</div>
-			);
-		} else {
-			message = requestError.message;
-		}
-
 		return (
-			<Notice status={ 'is-error' } showDismiss={ false }>{ message }</Notice>
+			<Notice status={ 'is-error' } showDismiss={ false }>{ requestError.message }</Notice>
 		);
 	}
 
@@ -117,7 +96,7 @@ class Login extends Component {
 			rememberMe,
 		} = this.state;
 
-		if ( twoStepNonce && [ 'authenticator', 'sms', 'backup' ].includes( twoFactorAuthType ) ) {
+		if ( twoStepNonce && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
 			return (
 				<VerificationCodeForm
 					rememberMe={ rememberMe }
@@ -143,6 +122,8 @@ class Login extends Component {
 
 		return (
 			<div>
+				<DocumentHead title={ translate( 'Log In', { textOnly: true } ) } />
+
 				<div className="login__form-header">
 					{ twoStepNonce ? translate( 'Two-Step Authentication' ) : translate( 'Log in to your account.' ) }
 				</div>

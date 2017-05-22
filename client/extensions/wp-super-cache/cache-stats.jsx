@@ -2,22 +2,26 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
+import { flowRight, get, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
+import { deleteFile } from './state/stats/actions';
+import { isDeletingFile } from './state/stats/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
-function getAge( { lower_age, upper_age } ) {
-	if ( lower_age && upper_age ) {
-		return `${ lower_age } - ${ upper_age }`;
-	} else if ( lower_age ) {
-		return lower_age;
-	} else if ( upper_age ) {
-		return upper_age;
+function getAge( lower, upper ) {
+	if ( lower && upper ) {
+		return `${ lower } - ${ upper }`;
+	} else if ( lower ) {
+		return lower;
+	} else if ( upper ) {
+		return upper;
 	}
 
 	return '';
@@ -25,19 +29,45 @@ function getAge( { lower_age, upper_age } ) {
 
 class CacheStats extends Component {
 	static propTypes = {
+		deleteFile: PropTypes.func.isRequired,
 		files: PropTypes.object,
 		header: PropTypes.string,
+		isDeleting: PropTypes.bool,
+		siteId: PropTypes.number,
 		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
 		files: [],
+		header: '',
 	};
+
+	state = {
+		url: '',
+	}
+
+	deleteFile = ( event ) => {
+		const url = get( event, 'currentTarget.dataset.url', '' );
+
+		if ( ! url ) {
+			return;
+		}
+
+		const {
+			isCached,
+			isSupercache,
+			siteId,
+		} = this.props;
+
+		this.setState( { url } );
+		this.props.deleteFile( siteId, url, isSupercache, isCached );
+	}
 
 	render() {
 		const {
 			files,
 			header,
+			isDeleting,
 			translate,
 		} = this.props;
 
@@ -45,7 +75,7 @@ class CacheStats extends Component {
 			<FoldableCard
 				compact
 				className="wp-super-cache__foldable-card"
-				header={ header || '' }>
+				header={ header }>
 				<table className="wp-super-cache__stats">
 					<thead>
 						<tr className="wp-super-cache__stats-header-row">
@@ -56,13 +86,24 @@ class CacheStats extends Component {
 						</tr>
 					</thead>
 					<tbody>
-						{ map( files, ( file, dir ) => (
-							<tr className="wp-super-cache__stat" key={ dir }>
-								<td className="wp-super-cache__stat-dir">{ dir }</td>
-								<td>{ file.files }</td>
-								<td className="wp-super-cache__stat-age">{ getAge( file ) }</td>
+						{ map( files, ( { files: count, lower_age, upper_age }, url ) => (
+							<tr className="wp-super-cache__stat" key={ url }>
+								<td className="wp-super-cache__stat-dir">
+									{ url }
+								</td>
+								<td>
+									{ count }
+								</td>
+								<td className="wp-super-cache__stat-age">
+									{ getAge( lower_age, upper_age ) }
+								</td>
 								<td className="wp-super-cache__stat-action">
-									<Button compact>
+									<Button
+										compact
+										busy={ isDeleting && ( this.state.url === url ) }
+										data-url={ url }
+										disabled={ isDeleting }
+										onClick={ this.deleteFile }>
 										{ translate( 'Delete' ) }
 									</Button>
 								</td>
@@ -75,4 +116,19 @@ class CacheStats extends Component {
 	}
 }
 
-export default localize( CacheStats );
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			isDeleting: isDeletingFile( state, siteId ),
+			siteId,
+		};
+	},
+	{ deleteFile }
+);
+
+export default flowRight(
+	connectComponent,
+	localize
+)( CacheStats );

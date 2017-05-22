@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import moment from 'moment';
 import {
 	has,
 	isEmpty,
@@ -15,7 +16,7 @@ import {
 	ANALYTICS_EVENT_RECORD,
 	HAPPYCHAT_CONNECT,
 	HAPPYCHAT_INITIALIZE,
-	HAPPYCHAT_SEND_BROWSER_INFO,
+	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
@@ -48,13 +49,15 @@ import {
 	setHappychatAvailable,
 	setHappychatChatStatus,
 	setReconnecting,
+	setGeoLocation,
 } from './actions';
 import {
 	getHappychatTranscriptTimestamp,
 	isHappychatConnectionUninitialized,
 	wasHappychatRecentlyActive,
 	isHappychatClientConnected,
-	isHappychatChatAssigned
+	isHappychatChatAssigned,
+	getGeoLocation,
 } from './selectors';
 import {
 	getCurrentUser,
@@ -120,7 +123,13 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 
 	// create new session id and get signed identity data for authenticating
 	return startSession()
-		.then( ( { session_id } ) => sign( { user, session_id } ) )
+		.then( ( { session_id, geo_location } ) => {
+			if ( geo_location && geo_location.country_long && geo_location.city ) {
+				dispatch( setGeoLocation( geo_location ) );
+			}
+
+			return sign( { user, session_id } );
+		} )
 		.then( ( { jwt } ) => connection.open( user.ID, jwt, locale ) )
 		.catch( e => debug( 'failed to start happychat session', e, e.stack ) );
 };
@@ -148,13 +157,20 @@ const sendMessage = ( connection, message ) => {
 	connection.notTyping();
 };
 
-const sendBrowserInfo = ( connection, siteUrl ) => {
-	const siteHelp = `Site I need help with: ${ siteUrl }\n`;
-	const screenRes = ( typeof screen === 'object' ) && `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
-	const browserSize = ( typeof window === 'object' ) && `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
-	const userAgent = ( typeof navigator === 'object' ) && `User Agent: ${ navigator.userAgent }`;
+export const sendInfo = ( connection, { getState }, siteUrl ) => {
+	const siteHelp = `\nSite I need help with: ${ siteUrl }`;
+	const screenRes = ( typeof screen === 'object' ) && `\nScreen Resolution: ${ screen.width }x${ screen.height }`;
+	const browserSize = ( typeof window === 'object' ) && `\nBrowser Size: ${ window.innerWidth }x${ window.innerHeight }`;
+	const userAgent = ( typeof navigator === 'object' ) && `\nUser Agent: ${ navigator.userAgent }`;
+	const localDateTime = `\nLocal Date: ${ moment().format( 'h:mm:ss a, MMMM Do YYYY' ) }`;
+
+	// Geo location
+	const state = getState();
+	const geoLocation = getGeoLocation( state );
+	const userLocation = ( null !== geoLocation ) ? `\nLocation: ${ geoLocation.city }, ${ geoLocation.country_long }` : '';
+
 	const msg = {
-		text: `Info\n ${ siteHelp } ${ screenRes } ${ browserSize } ${ userAgent }`,
+		text: `Info\n ${ siteHelp } ${ screenRes } ${ browserSize } ${ userAgent } ${ localDateTime } ${ userLocation }`,
 	};
 
 	debug( 'sending info message', msg );
@@ -294,8 +310,8 @@ export default function( connection = null ) {
 				connectIfRecentlyActive( connection, store );
 				break;
 
-			case HAPPYCHAT_SEND_BROWSER_INFO:
-				sendBrowserInfo( connection, action.siteUrl );
+			case HAPPYCHAT_SEND_USER_INFO:
+				sendInfo( connection, store, action.siteUrl );
 				break;
 
 			case HAPPYCHAT_SEND_MESSAGE:

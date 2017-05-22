@@ -31,7 +31,8 @@ describe( 'reducer', () => {
 			'currencyCode',
 			'capabilities',
 			'flags',
-			'gravatarStatus'
+			'gravatarStatus',
+			'emailVerification',
 		] );
 	} );
 

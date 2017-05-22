@@ -12,7 +12,6 @@ import {
 	getAuthorizationRemoteQueryData,
 	getAuthorizationRemoteSite,
 	getSessions,
-	getSSOSessions,
 	getSSO,
 	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,
@@ -241,36 +240,6 @@ describe( 'selectors', () => {
 			};
 
 			expect( getSessions( state ) ).to.eql( jetpackConnectSessions );
-		} );
-	} );
-
-	describe( '#getSSOSessions()', () => {
-		it( 'should return undefined if user has not started any single sign-on sessions', () => {
-			const state = {
-				jetpackConnect: {}
-			};
-
-			expect( getSSOSessions( state ) ).to.be.undefined;
-		} );
-
-		it( 'should return all of the user\'s single sign-on sessions', () => {
-			const jetpackSSOSessions = {
-				'wordpress.com': {
-					timestamp: 1234567890,
-					flowType: 'premium'
-				},
-				'jetpack.me': {
-					timestamp: 2345678901,
-					flowType: 'pro'
-				}
-			};
-			const state = {
-				jetpackConnect: {
-					jetpackSSOSessions
-				}
-			};
-
-			expect( getSSOSessions( state ) ).to.eql( jetpackSSOSessions );
 		} );
 	} );
 

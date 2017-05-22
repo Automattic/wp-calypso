@@ -19,7 +19,7 @@ import {
 	HAPPYCHAT_DISCONNECTED,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_RECONNECTING,
-	HAPPYCHAT_SEND_BROWSER_INFO,
+	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_SET_AVAILABLE,
@@ -34,6 +34,7 @@ import middleware, {
 	sendActionLogsAndEvents,
 	sendAnalyticsLogEvent,
 	sendRouteSetEventMessage,
+	sendInfo,
 } from '../middleware';
 import * as selectors from '../selectors';
 import {
@@ -125,14 +126,23 @@ describe( 'middleware', () => {
 		} );
 	} );
 
-	describe( 'HAPPYCHAT_SET_MESSAGE action', () => {
+	describe( 'HAPPYCHAT_SEND_USER_INFO action', () => {
+		const state = {
+			happychat: {
+				geoLocation: {
+					city: 'Timisoara'
+				}
+			}
+		};
+
 		it( 'should send relevant browser information to the connection', () => {
-			const action = { type: HAPPYCHAT_SEND_BROWSER_INFO, siteUrl: 'http://butt.holdings/' };
+			const getState = () => state;
 			const connection = { info: spy() };
-			middleware( connection )( { getState: noop } )( noop )( action );
+			const action = { type: HAPPYCHAT_SEND_USER_INFO, siteUrl: 'http://butt.holdings/' };
+			sendInfo( connection, { getState }, action );
 
 			expect( connection.info ).to.have.been.calledOnce;
-			expect( connection.info.firstCall.args[ 0 ].text ).to.include( action.siteUrl );
+			expect( connection.info.firstCall.args[ 0 ].text ).to.include( state.happychat.geoLocation.city );
 		} );
 	} );
 

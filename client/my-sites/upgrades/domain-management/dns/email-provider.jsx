@@ -44,9 +44,9 @@ class EmailProvider extends Component {
 
 		upgradesActions.applyDnsTemplate( domain, template.dnsTemplate, variables, ( error ) => {
 			if ( error ) {
-				notices.error( error.message || translate( 'The DNS records were not able to be added.' ) );
+				notices.error( error.message || translate( 'We weren\'t able to add DNS records for this service. Please try again.' ) );
 			} else {
-				notices.success( translate( 'All DNS records for this service have been added.' ), {
+				notices.success( translate( 'Hooray! We\'ve successfully added DNS records for this service.' ), {
 					duration: 5000
 				} );
 			}

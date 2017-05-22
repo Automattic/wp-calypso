@@ -7,11 +7,13 @@ import classNames from 'classnames';
 import { get, includes, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import QueryPostTypes from 'components/data/query-post-types';
+import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
@@ -55,6 +57,8 @@ import {
 	SCHEDULED,
 	PUBLISHED,
 } from './constants';
+import SectionHeader from 'components/section-header';
+import Tooltip from 'components/tooltip';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -89,6 +93,7 @@ class PostShare extends Component {
 		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title,
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
 		showSharingPreview: false,
+		showAccountTooltip: false,
 	};
 
 	setFooterSection = selectedShareTab => () => this.setState( { selectedShareTab } );
@@ -329,6 +334,10 @@ class PostShare extends Component {
 		}
 	}
 
+	showAddTooltip = () => this.setState( { showAccountTooltip: true } );
+
+	hideAddTooltip = () => this.setState( { showAccountTooltip: false } );
+
 	renderConnectionsSection() {
 		const { hasFetchedConnections, siteId, siteSlug, translate } = this.props;
 
@@ -339,9 +348,24 @@ class PostShare extends Component {
 
 		return (
 			<div className="post-share__services">
-				<h5 className="post-share__services-header">
-					{ translate( 'Connected services' ) }
-				</h5>
+				<SectionHeader className="post-share__services-header" label={ translate( 'Connected accounts' ) }>
+					<Button
+						compact
+						href={ '/sharing/' + siteId }
+						className="post-share__add-button"
+						onMouseEnter={ this.showAddTooltip }
+						onMouseLeave={ this.hideAddTooltip }
+						ref="addAccountButton"
+						aria-label={ translate( 'Add account' ) }>
+						<Gridicon icon="plus-small" size={ 18 } /><Gridicon icon="user" size={ 18 } />
+						<Tooltip
+							isVisible={ this.state.showAccountTooltip }
+							context={ this.refs && this.refs.addAccountButton }
+							position="bottom">
+							{ translate( 'Add account' ) }
+						</Tooltip>
+					</Button>
+				</SectionHeader>
 
 				<ConnectionsList { ...{
 					connections,
@@ -351,14 +375,6 @@ class PostShare extends Component {
 				} }
 					onToggle={ this.toggleConnection }
 				/>
-
-				<Button
-					href={ '/sharing/' + siteId }
-					compact={ true }
-					className="post-share__services-add"
-				>
-					{ translate( 'Add account' ) }
-				</Button>
 			</div>
 		);
 	}
@@ -452,7 +468,7 @@ class PostShare extends Component {
 
 					{ this.renderPrimarySection() }
 				</div>
-
+				<QueryPosts { ...{ siteId, postId } } />
 				<SharingPreviewModal
 					siteId={ siteId }
 					postId={ postId }

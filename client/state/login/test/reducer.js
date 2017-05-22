@@ -23,6 +23,7 @@ import reducer, {
 	isRequesting,
 	isRequestingTwoFactorAuth,
 	requestError,
+	requestNotice,
 	requestSuccess,
 	twoFactorAuth,
 	twoFactorAuthRequestError,
@@ -230,6 +231,64 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.null;
+		} );
+	} );
+
+	describe( 'requestNotice', () => {
+		it( 'should default to a null', () => {
+			const state = requestNotice( undefined, {} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should set `notice` object if a request was initiated', () => {
+			const state = requestNotice( null, {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
+				notice: {
+					message: 'foo'
+				}
+			} );
+
+			expect( state ).to.eql( {
+				message: 'foo'
+			} );
+		} );
+
+		it( 'should set `notice` object if a request was successful', () => {
+			const state = requestNotice( null, {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+				notice: {
+					message: 'foo'
+				}
+			} );
+
+			expect( state ).to.eql( {
+				message: 'foo'
+			} );
+		} );
+
+		it( 'should set requestNotice to null value if a request is unsuccessful', () => {
+			const state = requestNotice( null, {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should not persist state', () => {
+			const state = requestNotice( true, {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should not load persisted state', () => {
+			const state = requestNotice( true, {
 				type: DESERIALIZE
 			} );
 

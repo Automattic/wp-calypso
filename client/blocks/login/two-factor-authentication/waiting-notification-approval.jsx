@@ -40,8 +40,6 @@ class WaitingTwoFactorNotificationApproval extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.pushSuccess && nextProps.pushSuccess ) {
-			const { translate } = this.props;
-			this.props.successNotice( translate( 'Logging In…' ) );
 			this.props.onSuccess();
 		}
 	}
@@ -53,12 +51,14 @@ class WaitingTwoFactorNotificationApproval extends Component {
 			<form>
 				<Card className="two-factor-authentication__push-notification-screen is-compact">
 					<p>
-						{ translate( 'We sent a push notification to your {{strong}}WordPress mobile app{{/strong}}. ' +
+						{ translate(
+							'We sent a push notification to your {{strong}}WordPress mobile app{{/strong}}. ' +
 							'Once you get it and swipe or tap to confirm, this page will update.', {
 								components: {
 									strong: <strong />
 								}
-							} ) }
+							} )
+						}
 					</p>
 					<div>
 						<img className="two-factor-authentication__auth-code-preview"

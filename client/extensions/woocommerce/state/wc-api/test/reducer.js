@@ -16,7 +16,7 @@ describe( 'reducer', () => {
 	} );
 
 	it( 'should resist persisting', () => {
-		expect( reducer( undefined, { type: SERIALIZE } ) ).to.eql( {} );
+		expect( reducer( undefined, { type: SERIALIZE } ) ).to.eql( null );
 		expect( reducer( undefined, { type: DESERIALIZE } ) ).to.eql( {} );
 	} );
 

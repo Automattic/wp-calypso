@@ -6,6 +6,7 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { defer, findLast, noop, times, clamp, identity, map } from 'lodash';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -465,7 +466,7 @@ class ReaderStream extends React.Component {
 			<ReaderMain className={ classnames( 'following', this.props.className ) }>
 				{ this.props.showMobileBackToSidebar &&
 					<MobileBackToSidebar>
-						<h1>{ this.props.listName }</h1>
+						<h1>{ this.props.translate( 'Streams' ) }</h1>
 					</MobileBackToSidebar> }
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
@@ -479,9 +480,11 @@ class ReaderStream extends React.Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		blockedSites: getBlockedSites( state ),
-	} ),
-	{ resetCardExpansions }
-)( ReaderStream );
+export default localize(
+	connect(
+		state => ( {
+			blockedSites: getBlockedSites( state ),
+		} ),
+		{ resetCardExpansions }
+	)( ReaderStream )
+);
