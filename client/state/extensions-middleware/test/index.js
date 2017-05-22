@@ -7,8 +7,8 @@ import { spy, stub } from 'sinon';
 /**
  * Internal dependencies
  */
-import { addHandlers, removeHandlers, configureMiddleware } from '../extensions-middleware';
-import { local } from '../utils';
+import { addHandlers, removeHandlers, configureMiddleware } from '..';
+import { local } from '../../data-layer/utils';
 
 describe( 'Calypso Extensions Data Layer Middleware', () => {
 	let next;
@@ -30,8 +30,8 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 	it( 'should pass along actions without corresponding handlers', () => {
 		const action = { type: 'UNSUPPORTED_ACTION' };
 
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', {}, config );
+		const config = configureMiddleware( 'wpcomApi', Object.create( null ), Object.create( null ) );
+		addHandlers( 'wpcomApi', 'my-extension', {}, config );
 
 		config.middleware( store )( next )( action );
 
@@ -45,8 +45,8 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 			[ 'ADD' ]: [ adder ],
 		};
 
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		const config = configureMiddleware( 'wpcomApi', Object.create( null ), Object.create( null ) );
+		addHandlers( 'wpcomApi', 'my-extension', handlers, config );
 		const action = local( { type: 'ADD' } );
 
 		config.middleware( store )( next )( action );
@@ -61,8 +61,8 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 			[ 'ADD' ]: [ adder ],
 		};
 
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		const config = configureMiddleware( 'wpcomApi', Object.create( null ), Object.create( null ) );
+		addHandlers( 'wpcomApi', 'my-extension', handlers, config );
 		const action = { type: 'ADD', meta: { semigroup: true } };
 
 		config.middleware( store )( next )( action );
@@ -77,8 +77,8 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 			[ 'ADD' ]: [ adder ],
 		};
 
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		const config = configureMiddleware( 'wpcomApi', Object.create( null ), Object.create( null ) );
+		addHandlers( 'wpcomApi', 'my-extension', handlers, config );
 		const action = { type: 'ADD', meta: { dataLayer: { data: 42 } } };
 
 		config.middleware( store )( next )( action );
@@ -94,8 +94,8 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 			[ 'ADD' ]: [ adder ],
 		};
 
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		const config = configureMiddleware( 'wpcomApi', Object.create( null ), Object.create( null ) );
+		addHandlers( 'wpcomApi', 'my-extension', handlers, config );
 		const action = { type: 'ADD' };
 
 		config.middleware( store )( next )( action );
@@ -111,8 +111,8 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 			[ 'ADD' ]: [ adder ],
 		};
 
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		const config = configureMiddleware( 'wpcomApi', Object.create( null ), Object.create( null ) );
+		addHandlers( 'wpcomApi', 'my-extension', handlers, config );
 		const action = { type: 'ADD' };
 
 		config.middleware( store )( next )( action );
@@ -130,8 +130,8 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 			[ 'MATHS' ]: [ adder, doubler ],
 		};
 
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		const config = configureMiddleware( 'wpcomApi', Object.create( null ), Object.create( null ) );
+		addHandlers( 'wpcomApi', 'my-extension', handlers, config );
 		const action = { type: 'MATHS' };
 
 		config.middleware( store )( next )( action );
@@ -153,9 +153,9 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 			[ 'MATHS' ]: [ doubler ],
 		};
 
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'adder-extension', adderHandlers, config );
-		addHandlers( 'doubler-extension', doublerHandlers, config );
+		const config = configureMiddleware( 'wpcomApi', Object.create( null ), Object.create( null ) );
+		addHandlers( 'wpcomApi', 'adder-extension', adderHandlers, config );
+		addHandlers( 'wpcomApi', 'doubler-extension', doublerHandlers, config );
 		const action = { type: 'MATHS' };
 
 		config.middleware( store )( next )( action );
@@ -172,14 +172,14 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 			[ 'MATHS' ]: [ adder ],
 		};
 
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		const config = configureMiddleware( 'wpcomApi', Object.create( null ), Object.create( null ) );
+		addHandlers( 'wpcomApi', 'my-extension', handlers, config );
 		const action = { type: 'MATHS' };
 
 		config.middleware( store )( next )( action );
 		expect( adder ).to.have.been.calledWith( store, action );
 
-		removeHandlers( 'my-extension', config );
+		removeHandlers( 'wpcomApi', 'my-extension', config );
 
 		config.middleware( store )( next )( action );
 		expect( adder ).to.not.have.beenCalled;
@@ -202,9 +202,9 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		const mathsAction = { type: 'MATHS' };
 		const otherAction = { type: 'OTHER' };
 
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'adder-extension', adderHandlers, config );
-		addHandlers( 'doubler-extension', doublerHandlers, config );
+		const config = configureMiddleware( 'wpcomApi', Object.create( null ), Object.create( null ) );
+		addHandlers( 'wpcomApi', 'adder-extension', adderHandlers, config );
+		addHandlers( 'wpcomApi', 'doubler-extension', doublerHandlers, config );
 
 		config.middleware( store )( next )( mathsAction );
 		config.middleware( store )( next )( otherAction );
@@ -212,7 +212,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		expect( doubler ).to.have.been.calledWith( store, mathsAction );
 		expect( other ).to.have.been.calledWith( store, otherAction );
 
-		removeHandlers( 'adder-extension', config );
+		removeHandlers( 'wpcomApi', 'adder-extension', config );
 
 		config.middleware( store )( next )( mathsAction );
 		config.middleware( store )( next )( otherAction );
@@ -222,18 +222,17 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 	} );
 
 	it( 'should return false when trying to add handlers for the same extension twice.', () => {
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', {}, config );
+		const config = configureMiddleware( 'wpcomApi', Object.create( null ), Object.create( null ) );
+		addHandlers( 'wpcomApi', 'my-extension', {}, config );
 
-		expect( addHandlers( 'my-extension', {}, config ) ).to.eql( false );
+		expect( addHandlers( 'wpcomApi', 'my-extension', {}, config ) ).to.eql( false );
 	} );
 
 	it( 'should return false when trying to remove handlers for the same extension twice.', () => {
-		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', {}, config );
+		const config = configureMiddleware( 'wpcomApi', Object.create( null ), Object.create( null ) );
+		addHandlers( 'wpcomApi', 'my-extension', {}, config );
 
-		expect( removeHandlers( 'my-extension', config ) ).to.eql( true );
-		expect( removeHandlers( 'my-extension', config ) ).to.eql( false );
+		expect( removeHandlers( 'wpcomApi', 'my-extension', config ) ).to.eql( true );
+		expect( removeHandlers( 'wpcomApi', 'my-extension', config ) ).to.eql( false );
 	} );
 } );
-
