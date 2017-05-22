@@ -3,7 +3,6 @@
  */
 import {
 	get,
-	head,
 	includes,
 	last,
 	map,
@@ -42,8 +41,10 @@ export const getHappychatChatStatus = createSelector(
 	state => state.happychat.chatStatus
 );
 
+export const getHappychatLastActivityTimestamp = state => state.happychat.lastActivityTimestamp;
+
 export const getHappychatTranscriptTimestamp = state => (
-	state.happychat.transcript_timestamp || get( head( state.happychat.timeline ), 'timestamp' )
+	state.happychat.transcript_timestamp || getHappychatLastActivityTimestamp( state )
 );
 
 /**
@@ -111,8 +112,6 @@ export const canUserSendMessages = createSelector(
 	),
 	[ getHappychatConnectionStatus, getHappychatChatStatus ]
 );
-
-export const getHappychatLastActivityTimestamp = state => state.happychat.lastActivityTimestamp;
 
 export const wasHappychatRecentlyActive = state => {
 	const lastActive = getHappychatLastActivityTimestamp( state );
