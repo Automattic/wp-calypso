@@ -35,6 +35,23 @@ export const sanitizeSettings = settings => {
 			case 'cache_rejected_uri':
 			case 'cache_rejected_user_agent':
 				return setting.split( '\n' );
+			// Don't include read-only fields when saving.
+			case 'cache_direct_pages':
+			case 'cache_mobile_browsers':
+			case 'cache_mobile_prefixes':
+			case 'cache_mod_rewrite':
+			case 'cache_next_gc':
+			case 'cache_readonly':
+			case 'cache_writable':
+			case 'generated':
+			case 'is_preload_enabled':
+			case 'is_preloading':
+			case 'minimum_preload_interval':
+			case 'post_count':
+			case 'preload_refresh':
+			case 'supercache':
+			case 'wpcache':
+				return undefined;
 			default:
 				return setting;
 		}
