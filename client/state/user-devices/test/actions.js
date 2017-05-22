@@ -8,13 +8,11 @@ import { expect } from 'chai';
  */
 import {
 	USER_DEVICES_REQUEST,
-	USER_DEVICES_REQUEST_FAILURE,
-	USER_DEVICES_REQUEST_SUCCESS,
+	USER_DEVICES_ADD,
 } from 'state/action-types';
 import {
 	requestUserDevices,
-	userDevicesRequestSuccess,
-	userDevicesRequestFailure
+	userDevicesAdd,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -30,25 +28,15 @@ describe( 'actions', () => {
 
 	describe( '#userDevicesRequestSuccess()', () => {
 		it( 'should return an action object', () => {
-			const devices = [
-				{ device_id: 1 },
-				{ device_id: 2 }
-			];
-			const action = userDevicesRequestSuccess( { devices } );
+			const devices = {
+				1: { id: 1, name: 'Mobile Phone' },
+				2: { id: 2, name: 'Tablet' }
+			};
+			const action = userDevicesAdd( { devices } );
 
 			expect( action ).to.eql( {
-				type: USER_DEVICES_REQUEST_SUCCESS,
+				type: USER_DEVICES_ADD,
 				devices
-			} );
-		} );
-	} );
-
-	describe( '#userDevicesRequestFailure()', () => {
-		it( 'should return an action object', () => {
-			const action = userDevicesRequestFailure();
-
-			expect( action ).to.eql( {
-				type: USER_DEVICES_REQUEST_FAILURE
 			} );
 		} );
 	} );
