@@ -122,11 +122,7 @@ function editProductAttributeAction( edits, action ) {
 
 // TODO Check against a product's existing variations (retrieved from the API) and deal with those in the checks below.
 function editProductVariations( productEdits, variations ) {
-	// Adds the default "all variations" variation, which expects an empty attributes array.
-	const creates = productEdits && productEdits.creates || [ {
-		id: { index: Number( uniqueId() ) },
-		attributes: [],
-	} ];
+	const creates = productEdits && productEdits.creates || [];
 
 	// Add new variations that do not exist yet.
 	variations.forEach( ( variation ) => {
