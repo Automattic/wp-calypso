@@ -60,16 +60,16 @@ function deserialize( state ) {
  * @returns {Function} augmented initial state loader
  */
 function addSympathy( initialStateLoader ) {
-	if (
+	const shouldAdd = (
+		'development' === process.env.NODE_ENV && // only work in local dev mode
 		(
-			'development' !== process.env.NODE_ENV ||
-			( Math.random() > 0.75 ) ||
-			config.isEnabled( 'force-no-sympathy' )
+			Math.random() > 0.75 || // clear 75% of the time
+			config.isEnabled( 'force-sympathy' ) // or whenever the flag is set
 		) &&
-		(
-			! config.isEnabled( 'force-sympathy' )
-		)
-	) {
+		! config.isEnabled( 'no-force-sympathy' ) // unless purposefully disabled
+	);
+	
+	if ( ! shouldAdd ) {
 		return initialStateLoader;
 	}
 
