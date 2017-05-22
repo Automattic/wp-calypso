@@ -117,8 +117,9 @@ function ReaderSubscriptionListItem( {
 					</div> }
 				{ showExtendedInformation &&
 					<div className="reader-subscription-list-item__extended">
-						feed:{ feedUrl }<br />
+						{ feedUrl }<br />
 						feed id: { feedId }<br />
+						blog id: { siteId }<br />
 						subs: { feed && feed.subscribers_count }
 					</div> }
 			</div>
