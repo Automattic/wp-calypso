@@ -12,8 +12,8 @@
 }
 
 .component-detail__example {
+  @include clear-fix;
   position: relative;
-  overflow: hidden;
   margin-bottom: 20px;
   box-shadow:
     0 0 0 1px rgba(200, 215, 225, 0.5),
