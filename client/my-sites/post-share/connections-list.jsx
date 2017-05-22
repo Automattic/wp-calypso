@@ -54,10 +54,15 @@ class ConnectionsList extends PureComponent {
 			return null;
 		}
 
+		const brokenConnections = connections.filter( connection => connection.status === 'broken' );
+
+		if ( ! brokenConnections.length ) {
+			return null;
+		}
+
 		return (
 			<div>
-				{ connections
-					.filter( connection => connection.status === 'broken' )
+				{ brokenConnections
 					.map( connection => <Notice
 						key={ connection.keyring_connection_ID }
 						status="is-warning"

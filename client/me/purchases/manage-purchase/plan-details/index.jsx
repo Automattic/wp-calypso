@@ -62,8 +62,8 @@ class PurchasePlanDetails extends Component {
 
 		const headerText = translate( '%(planName)s Plan', {
 			args: {
-				planName: getName( purchase )
-			}
+				planName: getName( purchase ),
+			},
 		} );
 
 		return (
@@ -74,7 +74,9 @@ class PurchasePlanDetails extends Component {
 					{ pluginList.map( ( plugin, i ) => {
 						return (
 							<FormFieldset key={ i }>
-								<FormLabel htmlFor={ `plugin-${ plugin.slug }` }>{ this.renderPluginLabel( plugin.slug ) }</FormLabel>
+								<FormLabel htmlFor={ `plugin-${ plugin.slug }` }>
+									{ this.renderPluginLabel( plugin.slug ) }
+								</FormLabel>
 								<ClipboardButtonInput id={ `plugin-${ plugin.slug }` } value={ plugin.key } />
 							</FormFieldset>
 						);
@@ -87,11 +89,9 @@ class PurchasePlanDetails extends Component {
 
 // hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading,
 // selectedPurchase is used in getPurchase
-export default connect(
-	( state, props ) => ( {
-		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-		pluginList: props.selectedSite ? getPluginsForSite( state, props.selectedSite.ID ) : [],
-	} )
-)( localize( PurchasePlanDetails ) );
+export default connect( ( state, props ) => ( {
+	hasLoadedSites: ! isRequestingSites( state ),
+	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+	selectedPurchase: getByPurchaseId( state, props.purchaseId ),
+	pluginList: props.selectedSite ? getPluginsForSite( state, props.selectedSite.ID ) : [],
+} ) )( localize( PurchasePlanDetails ) );

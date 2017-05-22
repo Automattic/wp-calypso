@@ -10,6 +10,11 @@ import {
 } from 'state/action-types';
 
 /**
+ * External dependencies
+ */
+import includes from 'lodash/includes';
+
+/**
  * Returns an action object to be used in signalling that stats for a given type of stats and query
  * have been received.
  *
@@ -47,7 +52,10 @@ export function requestSiteStats( siteId, statType, query ) {
 			query
 		} );
 
-		const isUndocumented = 'statsPodcastDownloads' === statType;
+		const isUndocumented = includes( [
+			'statsPodcastDownloads',
+			'statsOrders'
+		], statType );
 		const options = 'statsVideo' === statType ? query.postId : query;
 		const site = isUndocumented
 			? wpcom.undocumented().site( siteId )

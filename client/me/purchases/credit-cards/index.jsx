@@ -16,7 +16,7 @@ import CreditCardDelete from './credit-card-delete';
 import {
 	getStoredCards,
 	hasLoadedStoredCardsFromServer,
-	isFetchingStoredCards
+	isFetchingStoredCards,
 } from 'state/stored-cards/selectors';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import { addCreditCard } from 'me/purchases/paths';
@@ -59,11 +59,7 @@ class CreditCards extends Component {
 		}
 
 		return (
-			<Button
-				primary
-				compact
-				className="credit-cards__add"
-				onClick={ this.goToAddCreditCard }>
+			<Button primary compact className="credit-cards__add" onClick={ this.goToAddCreditCard }>
 				{ this.props.translate( 'Add Credit Card' ) }
 			</Button>
 		);
@@ -88,10 +84,8 @@ class CreditCards extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		cards: getStoredCards( state ),
-		hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
-		isFetching: isFetchingStoredCards( state )
-	} )
-)( localize( CreditCards ) );
+export default connect( state => ( {
+	cards: getStoredCards( state ),
+	hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
+	isFetching: isFetchingStoredCards( state ),
+} ) )( localize( CreditCards ) );

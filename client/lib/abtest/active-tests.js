@@ -90,4 +90,20 @@ module.exports = {
 		},
 		defaultVariation: 'hide',
 	},
+	reduceThemesInSignupTest: {
+		datestamp: '20170518',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+	},
+	savingsInCheckoutSummary: {
+		datestamp: '20170516',
+		variations: {
+			hide: 50,
+			show: 50,
+		},
+		defaultVariation: 'show',
+	},
 };

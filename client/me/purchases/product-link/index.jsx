@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 
 /**
@@ -12,12 +12,16 @@ import config from 'config';
 import { domainManagementEdit } from 'my-sites/upgrades/paths';
 import { getThemeDetailsUrl } from 'state/themes/selectors';
 import { googleAppsSettingsUrl } from 'lib/google-apps';
-import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
+import {
+	isDomainProduct,
+	isGoogleApps,
+	isPlan,
+	isSiteRedirect,
+	isTheme,
+} from 'lib/products-values';
 
 const ProductLink = ( { selectedPurchase, selectedSite, productUrl } ) => {
-	let props = {},
-		url,
-		text;
+	let props = {}, url, text;
 
 	if ( ! selectedSite ) {
 		return <span />;
@@ -60,20 +64,15 @@ const ProductLink = ( { selectedPurchase, selectedSite, productUrl } ) => {
 
 ProductLink.propTypes = {
 	selectedPurchase: React.PropTypes.object.isRequired,
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object
-	] )
+	selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
 };
 
-export default connect(
-	( state, { selectedPurchase } ) => {
-		if ( isTheme( selectedPurchase ) ) {
-			return {
-				// No <QueryTheme /> component needed, since getThemeDetailsUrl() only needs the themeId which we pass here.
-				productUrl: getThemeDetailsUrl( state, selectedPurchase.meta, selectedPurchase.siteId )
-			};
-		}
-		return {};
+export default connect( ( state, { selectedPurchase } ) => {
+	if ( isTheme( selectedPurchase ) ) {
+		return {
+			// No <QueryTheme /> component needed, since getThemeDetailsUrl() only needs the themeId which we pass here.
+			productUrl: getThemeDetailsUrl( state, selectedPurchase.meta, selectedPurchase.siteId ),
+		};
 	}
-)( ProductLink );
+	return {};
+} )( ProductLink );
