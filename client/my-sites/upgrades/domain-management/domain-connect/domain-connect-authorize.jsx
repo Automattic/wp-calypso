@@ -64,7 +64,7 @@ class DomainConnectAuthorize extends Component {
 
 		this.setState( {
 			action: actionType.SUBMITTING,
-			notice: null
+			noticeType: null
 		} );
 
 		upgradesActions.applyDnsTemplate( domain, providerId, params, ( error ) => {
