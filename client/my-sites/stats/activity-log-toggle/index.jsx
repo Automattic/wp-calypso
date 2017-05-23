@@ -15,7 +15,8 @@ class ActivityLogToggle extends Component {
 		activateRewind: PropTypes.func,
 		deactivateRewind: PropTypes.func,
 		isActivatingRewind: PropTypes.bool,
-		isDeactivatingRewind: PropTypes.bool
+		isDeactivatingRewind: PropTypes.bool,
+		isActive: PropTypes.bool
 	};
 
 	activateRewind = event => {
@@ -29,32 +30,21 @@ class ActivityLogToggle extends Component {
 	};
 
 	render() {
+		const isToggling = this.props.isActivatingRewind || this.props.isDeactivatingRewind;
 		return (
 			<div>
 				<Button
 					primary={ true }
 					compact
-					onClick={ this.activateRewind }
-					className={ this.props.isActivatingRewind
+					onClick={ this.props.isActive ? this.deactivateRewind : this.activateRewind }
+					className={ isToggling
 					? 'is-busy'
 					: ''
 				}
 				>
-					{ this.props.translate( 'Activate Rewind' ) }
+					{ this.props.isActive ? this.props.translate( 'Deactivate Rewind' ) : this.props.translate( 'Activate Rewind' ) }
 				</Button>
-
-				<Button
-					primary={ true }
-					compact
-					onClick={ this.deactivateRewind }
-					className={ this.props.isDeactivatingRewind
-					? 'is-busy'
-					: ''
-				}
-				>
-					{ this.props.translate( 'Deactivate Rewind' ) }
-				</Button>
-				<br/><br/>
+				<br /><br />
 			</div>
 		);
 	}

@@ -142,6 +142,18 @@ export function status( state = {}, action ) {
 					{ data: action.data }
 				)
 			} );
+		case REWIND_DEACTIVATE_SUCCESS:
+			return merge( {}, state, {
+				[ action.siteId ]: {
+					data: { use_rewind: action.use_rewind }
+				}
+			} );
+		case REWIND_ACTIVATE_SUCCESS:
+			return merge( {}, state, {
+				[ action.siteId ]: {
+					data: { use_rewind: action.use_rewind }
+				}
+			} );
 	}
 	return state;
 }
