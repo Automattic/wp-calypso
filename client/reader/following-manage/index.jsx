@@ -41,7 +41,7 @@ import { resemblesUrl, addSchemeIfMissing, withoutHttp } from 'lib/url';
 import { getReaderFollowsCount } from 'state/selectors';
 
 const PAGE_SIZE = 4;
-let RECS_SEED = random( 0, 10000 );
+let recommendationsSeed = random( 0, 10000 );
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -64,7 +64,7 @@ class FollowingManage extends Component {
 	};
 
 	componentWillUnmount() {
-		RECS_SEED = random( 0, 1000 );
+		recommendationsSeed = random( 0, 1000 );
 	}
 
 	// TODO make this common between our different search pages?
@@ -175,7 +175,7 @@ class FollowingManage extends Component {
 				{ ! searchResults && <QueryReaderFeedsSearch query={ sitesQuery } /> }
 				{ this.shouldRequestMoreRecs() &&
 					<QueryReaderRecommendedSites
-						seed={ RECS_SEED }
+						seed={ recommendationsSeed }
 						offset={ recommendedSitesPagingOffset + PAGE_SIZE || 0 }
 					/> }
 				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
@@ -252,8 +252,11 @@ export default connect(
 	( state, ownProps ) => ( {
 		searchResults: getReaderFeedsForQuery( state, ownProps.sitesQuery ),
 		searchResultsCount: getReaderFeedsCountForQuery( state, ownProps.sitesQuery ),
-		recommendedSites: getReaderRecommendedSites( state, RECS_SEED ),
-		recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset( state, RECS_SEED ),
+		recommendedSites: getReaderRecommendedSites( state, recommendationsSeed ),
+		recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset(
+			state,
+			recommendationsSeed
+		),
 		blockedSites: getBlockedSites( state ),
 		readerAliasedFollowFeedUrl: getReaderAliasedFollowFeedUrl(
 			state,
