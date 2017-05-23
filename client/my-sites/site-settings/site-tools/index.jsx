@@ -40,21 +40,28 @@ class SiteTools extends Component {
 		const themeSetupLink = `/settings/theme-setup/${ selectedSite.slug }`;
 		const startOverLink = `/settings/start-over/${ selectedSite.slug }`;
 		const deleteSiteLink = `/settings/delete-site/${ selectedSite.slug }`;
-		let changeAddressLinkText = translate( 'Register a new domain or change your site\'s address.' );
-		const themeSetupLinkText = translate( 'Automatically make your site look like your theme\'s demo.' );
-		const strings = {
-			changeSiteAddress: translate( 'Change your site address' ),
-			themeSetup: translate( 'Theme setup' ),
-			startOver: translate( 'Delete your content' ),
-			deleteSite: translate( 'Delete your site permanently' )
-		};
+
+		const themeSetupText = translate( 'Automatically make your site look like your theme\'s demo.' );
+		const changeSiteAddress = translate( 'Change your site address' );
+		const themeSetup = translate( 'Theme setup' );
+		const startOver = translate( 'Delete your content' );
+		const startOverText = translate(
+			'Keep your site\'s address and current theme, but remove all posts, ' +
+			'pages, and media so you can start fresh.'
+		);
+		const deleteSite = translate( 'Delete your site permanently' );
+		const deleteSiteText = translate(
+			'Delete all your posts, pages, media and data, ' +
+			'and give up your site\'s address'
+		);
+
+		let changeAddressText = translate( 'Register a new domain or change your site\'s address.' );
+		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
+			changeAddressText = translate( 'Change your site address.' );
+		}
 
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
 			return null;
-		}
-
-		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			changeAddressLinkText = translate( 'Change your site address.' );
 		}
 
 		return (
@@ -65,8 +72,8 @@ class SiteTools extends Component {
 					onClick={ this.trackChangeAddress }
 					className="site-tools__link">
 					<div className="site-tools__content">
-						<p className="site-tools__section-title">{ strings.changeSiteAddress }</p>
-						<p className="site-tools__section-desc">{ changeAddressLinkText }</p>
+						<p className="site-tools__section-title">{ changeSiteAddress }</p>
+						<p className="site-tools__section-desc">{ changeAddressText }</p>
 					</div>
 				</CompactCard>
 				{ config.isEnabled( 'settings/theme-setup' ) &&
@@ -75,8 +82,8 @@ class SiteTools extends Component {
 						onClick={ this.trackThemeSetup }
 						className="site-tools__link">
 						<div className="site-tools__content">
-							<p className="site-tools__section-title">{ strings.themeSetup }</p>
-							<p className="site-tools__section-desc">{ themeSetupLinkText }</p>
+							<p className="site-tools__section-title">{ themeSetup }</p>
+							<p className="site-tools__section-desc">{ themeSetupText }</p>
 						</div>
 					</CompactCard>
 				}
@@ -85,13 +92,8 @@ class SiteTools extends Component {
 					onClick={ this.trackStartOver }
 					className="site-tools__link">
 					<div className="site-tools__content">
-						<p className="site-tools__section-title">{ strings.startOver }</p>
-						<p className="site-tools__section-desc">
-							{ translate(
-								'Keep your site\'s address and current theme, but remove all posts, ' +
-								'pages, and media so you can start fresh.'
-							) }
-						</p>
+						<p className="site-tools__section-title">{ startOver }</p>
+						<p className="site-tools__section-desc">{ startOverText }</p>
 					</div>
 				</CompactCard>
 				<CompactCard
@@ -100,14 +102,9 @@ class SiteTools extends Component {
 					className="site-tools__link">
 					<div className="site-tools__content">
 						<p className="site-tools__section-title is-warning">
-							{ strings.deleteSite }
+							{ deleteSite }
 						</p>
-						<p className="site-tools__section-desc">
-							{ translate(
-								'Delete all your posts, pages, media and data, ' +
-								'and give up your site\'s address'
-							) }
-						</p>
+						<p className="site-tools__section-desc">{ deleteSiteText }</p>
 					</div>
 				</CompactCard>
 				<DeleteSiteWarningDialog
