@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-
 import classNames from 'classnames';
 import compact from 'lodash/compact';
 
@@ -10,7 +9,6 @@ import compact from 'lodash/compact';
  * Internal dependencies
  */
 import allSitesFactory from 'lib/sites-list';
-
 const allSites = allSitesFactory();
 import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
 import SectionHeader from 'components/section-header';
@@ -28,8 +26,8 @@ export default React.createClass( {
 	},
 
 	getSecondaryPluginSites: function( site ) {
-		let secondarySites = allSites.getNetworkSites( site );
-		let secondaryPluginSites = site.plugin
+		const secondarySites = allSites.getNetworkSites( site );
+		const secondaryPluginSites = site.plugin
 			? PluginsStore.getSites( secondarySites, this.props.plugin.slug )
 			: secondarySites;
 		return compact( secondaryPluginSites );

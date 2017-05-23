@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-
 import titleCase from 'to-title-case';
 import find from 'lodash/find';
 import filter from 'lodash/filter';
@@ -12,7 +11,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-
 import Card from 'components/card';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -93,7 +91,7 @@ export default React.createClass( {
 					textOnly: true
 				} )
 			}
-		]
+		];
 	},
 
 	getInitialState: function() {
