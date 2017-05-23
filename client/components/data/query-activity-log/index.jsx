@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getActivityLogData } from 'state/activity-log/actions';
-import { isFetchingActivityLog } from 'state/activity-log/selectors';
+import { isFetchingActivityLog, getRewindStartDate } from 'state/activity-log/selectors';
 
 class QueryActivityLog extends Component {
 	static propTypes = {
@@ -29,7 +29,7 @@ class QueryActivityLog extends Component {
 		if ( props.requestingActivityLog ) {
 			return;
 		}
-		props.getActivityLogData( props.siteId );
+		props.getActivityLogData( props.siteId, this.props.startDate );
 	}
 
 	render() {
@@ -45,7 +45,8 @@ export const mapDispatchToProps = ( {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requestingActivityLog: isFetchingActivityLog( state, ownProps.siteId )
+			requestingActivityLog: isFetchingActivityLog( state, ownProps.siteId ),
+			startDate: getRewindStartDate( state, ownProps.siteId )
 		};
 	},
 	mapDispatchToProps

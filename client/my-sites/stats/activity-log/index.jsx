@@ -26,7 +26,8 @@ import {
 	isRestoring,
 	isAnythingRestoring,
 	isActivatingRewind,
-	isDeactivatingRewind
+	isDeactivatingRewind,
+	getRewindStartDate
 } from 'state/activity-log/selectors';
 import { requestRestore, activateRewind, deactivateRewind } from 'state/activity-log/actions';
 import ActivityLogToggle from '../activity-log-toggle';
@@ -349,7 +350,8 @@ export default connect(
 			isRestoring: timestamp => isRestoring( state, siteId, timestamp ),
 			isAnythingRestoring: isAnythingRestoring( state, siteId ),
 			isActivatingRewind: isActivatingRewind( state, siteId ),
-			isDeactivatingRewind: isDeactivatingRewind( state, siteId )
+			isDeactivatingRewind: isDeactivatingRewind( state, siteId ),
+			getRewindStartDate: getRewindStartDate( state, siteId ),
 		};
 	},
 	{

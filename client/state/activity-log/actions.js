@@ -142,9 +142,9 @@ export function rewindRestoreUpdateError( siteId, timestamp, error ) {
 }
 
 // This generates a fake data set for hourly backups
-const fakebackups = () => {
+const fakebackups = ( startDate ) => {
 	const today = moment( new Date().getTime() ),
-		beginning = moment( new Date( '2017-2-21 01:00:00' ).getTime() ),
+		beginning = moment( new Date( startDate ).getTime() ),
 		numHours = today.diff( beginning, 'hours' ),
 		backupLogs = [];
 
@@ -167,7 +167,7 @@ const fakebackups = () => {
 	return backupLogs;
 };
 
-export function getActivityLogData( siteId ) {
+export function getActivityLogData( siteId, startDate ) {
 	// const logs = [
 	// 	{
 	// 		title: 'Site backed up',
@@ -323,7 +323,7 @@ export function getActivityLogData( siteId ) {
 		dispatch( {
 			type: ACTIVITY_LOG_FETCH_SUCCESS,
 			siteId,
-			data: fakebackups()
+			data: fakebackups( startDate )
 		} );
 
 		// return wpcom.undocumented().getActivityLog( siteId )

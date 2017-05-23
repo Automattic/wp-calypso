@@ -27,6 +27,18 @@ export function isRewindActive( state, siteId ) {
 }
 
 /**
+ * Returns the date of the first available rewind point
+ * Returns null if the site is unknown
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  The ID of the site we're querying
+ * @return {String|Boolean}  Date of the first rewind point, false if not found.
+ */
+export function getRewindStartDate( state, siteId ) {
+	return get( state.activityLog.status, [ siteId, 'data', 'first_backup_when' ], false );
+}
+
+/**
  * Returns true if we are currently making a request to get status of Rewind
  * modules on the site. False otherwise.
  *
@@ -118,3 +130,4 @@ export function isActivatingRewind( state, siteId ) {
 export function isDeactivatingRewind( state, siteId ) {
 	return !! get( state.activityLog.requests, [ siteId, 'isDeactivatingRewind' ], false );
 }
+
