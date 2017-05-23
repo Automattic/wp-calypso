@@ -85,7 +85,7 @@ export class RecommendedSites extends React.PureComponent {
 									showEmailSettings={ false }
 									showLastUpdatedDate={ false }
 									followSource={ followSource }
-									onRender={ recordRecommendationRender( index ) }
+									onComponentMountWithNewRailcar={ recordRecommendationRender( index ) }
 								/>
 							</li>
 						);

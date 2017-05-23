@@ -22,7 +22,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 		feedId: PropTypes.number,
 		siteId: PropTypes.number,
 		onLoad: PropTypes.func,
-		onRender: PropTypes.func,
+		onComponentMountWithNewRailcar: PropTypes.func,
 		showEmailSettings: PropTypes.bool,
 		showLastUpdatedDate: PropTypes.bool,
 		isFollowing: PropTypes.bool,
@@ -32,7 +32,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 
 	static defaultProps = {
 		onLoad: noop,
-		onRender: noop,
+		onComponentMountWithNewRailcar: noop,
 		showEmailSettings: true,
 		showLastUpdatedDate: true,
 	};
@@ -40,7 +40,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 	componentDidMount() {
 		this.props.onLoad();
 		if ( this.props.railcar ) {
-			this.props.onRender( this.props.railcar );
+			this.props.onComponentMountWithNewRailcar( this.props.railcar );
 		}
 	}
 
@@ -49,7 +49,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 			this.props.onLoad();
 		}
 		if ( this.props.railcar && this.props.railcar !== prevProps.railcar ) {
-			this.props.onRender( this.props.railcar );
+			this.props.onComponentMountWithNewRailcar( this.props.railcar );
 		}
 	}
 

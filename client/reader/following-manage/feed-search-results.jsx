@@ -67,7 +67,7 @@ const FollowingManageSearchFeedsResults = ( {
 					key={ `search-result-site-id-${ site.feed_ID || 0 }-${ site.blog_ID || 0 }` }
 					followSource={ READER_FOLLOWING_MANAGE_SEARCH_RESULT }
 					railcar={ site.railcar }
-					onRender={ recordResultRender( index ) }
+					onComponentMountWithNewRailcar={ recordResultRender( index ) }
 				/>
 			)
 		);
