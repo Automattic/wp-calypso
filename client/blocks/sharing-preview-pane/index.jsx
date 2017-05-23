@@ -12,6 +12,7 @@ import { get, find } from 'lodash';
 import { getPostImage, getExcerptForPost } from './utils';
 import FacebookSharePreview from 'components/share/facebook-share-preview';
 import GooglePlusSharePreview from 'components/share/google-plus-share-preview';
+import LinkedinSharePreview from 'components/share/linkedin-share-preview';
 import TwitterSharePreview from 'components/share/twitter-share-preview';
 import TumblrSharePreview from 'components/share/tumblr-share-preview';
 import VerticalMenu from 'components/vertical-menu';
@@ -39,6 +40,7 @@ class SharingPreviewPane extends PureComponent {
 		services: [
 			'facebook',
 			'google_plus',
+			'linkedin',
 			'twitter',
 			'tumblr',
 		]
@@ -53,7 +55,7 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	renderPreview() {
-		const { post, message, connections } = this.props;
+		const { post, site, message, connections } = this.props;
 		const { selectedService } = this.state;
 		const connection = find( connections, { service: selectedService } );
 		if ( ! connection ) {
@@ -63,6 +65,7 @@ class SharingPreviewPane extends PureComponent {
 		const articleUrl = get( post, 'URL', '' );
 		const articleTitle = get( post, 'title', '' );
 		const articleContent = getExcerptForPost( post );
+		const siteDomain = get( site, 'domain', '' );
 		const imageUrl = getPostImage( post );
 		const {
 			external_name: externalName,
@@ -75,11 +78,13 @@ class SharingPreviewPane extends PureComponent {
 			articleUrl,
 			articleTitle,
 			articleContent,
+			externalDisplay,
 			externalName,
 			externalProfileURL,
 			externalProfilePicture,
 			message,
 			imageUrl,
+			siteDomain,
 		};
 
 		switch ( selectedService ) {
@@ -89,6 +94,8 @@ class SharingPreviewPane extends PureComponent {
 				return <GooglePlusSharePreview { ...previewProps } />;
 			case 'tumblr':
 				return <TumblrSharePreview { ...previewProps } />;
+			case 'linkedin':
+				return <LinkedinSharePreview { ...previewProps } />;
 			case 'twitter':
 				return <TwitterSharePreview
 					{ ...previewProps }
