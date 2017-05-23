@@ -60,11 +60,18 @@ However, after that second attempt comes back in as a failure we don't simply wa
 In order to give more time for adverse circumstances to correct themselves we double the waiting time and reissue after that new delay.
 This doubling happens on each failure until we have reached the maximum number of retry attempts whereupon the HTTP layer gives up and dispatches `onFailure`.
 
+### Unexpected delay times
+
+The actual delay algorithms are designed to mitigate congestion which can occur as a side-effect of simple retry delays.
+For example, if a specific API endpoint were to unexpectedly fail and cascade to ten thousand clients, we would want to make sure that those ten thousand clients don't all attempt their retry at or around the same time.
+By introducing pseudo-randomness and jitter into the calculated delay times we can spread out the failure resolution and prevent further failure cascades.
+Therefore the above diagrams give the general intention of the policies but the specifics are left up to the implementations themselves.
 
 ## Usage
 
 Without any specific effort a default policy attaches to the network requests.
 At the time of writing this is the exponential-backoff retry policy with an initial delay of 500 ms and up to three attempts.
+This means that _nothing needs to be done explicitly in order to take advantage of this retry mechanism_.
 
 If we want to choose a different default policy all we need do is add the `whenFailing` override to the HTTP request description.
 
