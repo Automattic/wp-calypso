@@ -9,7 +9,9 @@ import { get, isArray } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from './reducer';
 
-const getRawShippingZones = ( state, siteId ) => get( state, [ 'extensions', 'woocommerce', 'wcApi', siteId, 'shippingZones' ] );
+const getRawShippingZones = ( state, siteId ) => {
+	return get( state, [ 'extensions', 'woocommerce', 'wcApi', siteId, 'shippingZones' ] );
+};
 
 /**
  * @param {Object} state Whole Redux state tree
