@@ -20,9 +20,8 @@ import {
 	COMMENTS_REQUEST,
 	COMMENTS_REQUEST_SUCCESS,
 	COMMENTS_REQUEST_FAILURE,
-	DESERIALIZE,
-	SERIALIZE,
 } from '../action-types';
+import { withoutPersistence } from 'state/utils';
 import {
 	getCommentParentKey,
 	updateExistingIn
@@ -139,10 +138,6 @@ export function items( state = Immutable.Map(), action ) {
 										.set( 'placeholderError', action.error )
 				)
 			);
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return Immutable.Map();
 	}
 
 	return state;
@@ -164,10 +159,6 @@ export function requests( state = Immutable.Map(), action ) {
 				action,
 				( requestStatuses = Immutable.Map() ) => requestStatuses.set( action.requestId, action.type )
 			);
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return Immutable.Map();
 	}
 
 	return state;
@@ -183,17 +174,13 @@ export function totalCommentsCount( state = Immutable.Map(), action ) {
 	switch ( action.type ) {
 		case COMMENTS_COUNT_RECEIVE:
 			return updateSpecificState( state, action, action.totalCommentsCount );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return Immutable.Map();
 	}
 
 	return state;
 }
 
-export default combineReducers( {
+export default withoutPersistence( combineReducers( {
 	items,
 	requests,
 	totalCommentsCount
-} );
+} ) );
