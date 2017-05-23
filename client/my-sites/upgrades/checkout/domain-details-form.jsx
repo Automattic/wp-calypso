@@ -61,14 +61,19 @@ class DomainDetailsForm extends PureComponent {
 			'fax'
 		];
 
+		const steps = [
+			'mainForm',
+			...this.getRequiredExtraSteps()
+		];
+
 		this.state = {
 			form: null,
 			isDialogVisible: false,
 			submissionCount: 0,
 			phoneCountryCode: 'US',
 			registrantExtraInfo: null,
-			steps: [ 'mainForm', 'fr' ],
-			currentStep: 'mainForm',
+			steps,
+			currentStep: first( steps ),
 		};
 	}
 
@@ -204,6 +209,10 @@ class DomainDetailsForm extends PureComponent {
 		return allFieldValues;
 	}
 
+	getRequiredExtraSteps = () => {
+		return cartItems.hasTld( this.props.cart, 'fr' ) ? [ 'fr' ] : [];
+	}
+
 	getNumberOfDomainRegistrations() {
 		return cartItems.getDomainRegistrations( this.props.cart ).length;
 	}
@@ -223,12 +232,6 @@ class DomainDetailsForm extends PureComponent {
 			errorMessage: ( formState.getFieldErrorMessages( this.state.form, camelCase( name ) ) || [] ).join( '\n' ),
 			eventFormName: 'Checkout Form'
 		};
-	}
-
-	needsExtraRegistrantInfo = () => {
-		// FIXME: Source from API
-		return cartItems.hasTld( this.props.cart, 'fr' ) &&
-			! this.state.registrantExtraInfo;
 	}
 
 	needsFax = () => {
