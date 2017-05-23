@@ -17,7 +17,7 @@ import {
 import { errorNotice } from 'state/notices/actions';
 import { buildBody } from '../utils';
 
-export function requestPostEmailSubscription( { dispatch }, action, next ) {
+export function requestPostEmailSubscription( { dispatch }, action ) {
 	dispatch(
 		http( {
 			method: 'POST',
@@ -28,7 +28,6 @@ export function requestPostEmailSubscription( { dispatch }, action, next ) {
 			onFailure: action,
 		} )
 	);
-	next( action );
 }
 
 export function receivePostEmailSubscription( store, action, next, response ) {

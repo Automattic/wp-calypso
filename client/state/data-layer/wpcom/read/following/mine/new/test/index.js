@@ -15,9 +15,8 @@ import { requestFollow, receiveFollow, followError } from '../';
 describe( 'requestFollow', () => {
 	it( 'should dispatch a http request', () => {
 		const dispatch = spy();
-		const next = spy();
 		const action = follow( 'http://example.com' );
-		requestFollow( { dispatch }, action, next );
+		requestFollow( { dispatch }, action );
 		expect( dispatch ).to.have.been.calledWith(
 			http( {
 				method: 'POST',
@@ -31,7 +30,6 @@ describe( 'requestFollow', () => {
 				onFailure: action,
 			} )
 		);
-		expect( next ).to.have.been.calledWith( action );
 	} );
 } );
 
