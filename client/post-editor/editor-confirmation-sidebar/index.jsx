@@ -24,9 +24,12 @@ class EditorConfirmationSidebar extends React.Component {
 	render() {
 		return (
 			<RootChild>
-				<div>
-					<div className={ classnames( {
+				<div className={ classnames( {
 						'editor-confirmation-sidebar': true,
+						'is-active': this.props.isActive,
+				} ) } >
+					<div className={ classnames( {
+						'editor-confirmation-sidebar__overlay': true,
 						'is-active': this.props.isActive,
 					} ) } onClick={ this.props.hideSidebar }></div>
 					<div className={ classnames( {

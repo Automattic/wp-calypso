@@ -1,4 +1,12 @@
 .editor-confirmation-sidebar {
+	display: none;
+
+	&.is-active {
+		display: block;
+	}
+}
+
+.editor-confirmation-sidebar__overlay {
 	position: fixed;
 		top: 0;
 		right: 0;
