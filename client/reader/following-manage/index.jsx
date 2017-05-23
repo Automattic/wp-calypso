@@ -143,7 +143,7 @@ class FollowingManage extends Component {
 	};
 
 	reportFollowByUrlRender = () => {
-		const siteUrl = this.props.readerAliasedFeedFollowUrl;
+		const siteUrl = this.props.readerAliasedFollowFeedUrl;
 		const showingFollowByUrlButton = this.shouldShowFollowByUrl();
 
 		if ( siteUrl && showingFollowByUrlButton ) {
@@ -156,7 +156,7 @@ class FollowingManage extends Component {
 	shouldShowFollowByUrl = () => resemblesUrl( this.props.sitesQuery );
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.readerAliasedFeedFollowUrl !== prevProps.readerAliasedFeedFollowUrl ) {
+		if ( this.props.readerAliasedFollowFeedUrl !== prevProps.readerAliasedFollowFeedUrl ) {
 			this.reportFollowByUrlRender();
 		}
 	}
