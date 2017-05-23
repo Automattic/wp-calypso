@@ -44,29 +44,6 @@ import { recordTrack } from 'reader/stats';
 const PAGE_SIZE = 4;
 let recommendationsSeed = random( 0, 10000 );
 
-function reportOnPropChange( Wrapped, prop ) {
-	return class ReportOnPropChange extends Component {
-		static defaultProps = {
-			onPropChange: noop,
-		};
-		componentDidMount() {
-			this.props.onPropChange( this.props[ prop ] );
-		}
-
-		componentDidUpdate( prevProps ) {
-			if ( this.props[ prop ] !== prevProps[ prop ] ) {
-				this.props.onPropChange( this.props[ prop ] );
-			}
-		}
-
-		render() {
-			return <Wrapped { ...this.props } />;
-		}
-	};
-}
-
-const ReportingFollowButton = reportOnPropChange( FollowButton, 'siteUrl' );
-
 class FollowingManage extends Component {
 	static propTypes = {
 		sitesQuery: PropTypes.string,
@@ -171,6 +148,16 @@ class FollowingManage extends Component {
 		}
 	};
 
+	shouldShowFollowByUrl = () => resemblesUrl( this.props.sitesQuery );
+	componentDidUpdate() {
+		if (
+			this.shouldShowFollowByUrl
+			//url changed
+		) {
+			this.reportFollowByUrlRender(); //url
+		}
+	}
+
 	render() {
 		const {
 			sitesQuery,
@@ -188,6 +175,7 @@ class FollowingManage extends Component {
 		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
 		const hasFollows = followsCount > 0;
 		const showExistingSubscriptions = hasFollows && ! showMoreResults;
+<<<<<<< HEAD
 		const isSitesQueryUrl = resemblesUrl( sitesQuery );
 		let sitesQueryWithoutProtocol;
 		if ( isSitesQueryUrl ) {
@@ -198,6 +186,13 @@ class FollowingManage extends Component {
 			site => includes( blockedSites, site.blogId )
 		);
 		const isFollowByUrlWithNoSearchResults = isSitesQueryUrl && searchResultsCount === 0;
+=======
+		const sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
+		const offset = getRecommendedSitesPagingOffset( this.state.seed );
+		const recommendedSites = reject( getRecommendedSites( this.state.seed ), isSiteBlocked );
+		const showFollowByUrl = this.shouldShowFollowByUrl();
+		const isFollowByUrlWithNoSearchResults = showFollowByUrl && searchResultsCount === 0;
+>>>>>>> idea2
 
 		return (
 			<ReaderMain className="following-manage">
@@ -229,7 +224,7 @@ class FollowingManage extends Component {
 						/>
 					</CompactCard>
 
-					{ isSitesQueryUrl &&
+					{ showFollowByUrl &&
 						<div className="following-manage__url-follow">
 							{ isFollowByUrlWithNoSearchResults &&
 								<span className="following-manage__url-follow-no-search-results-message">
@@ -242,7 +237,7 @@ class FollowingManage extends Component {
 										}
 									) }
 								</span> }
-							<ReportingFollowButton
+							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
 								siteUrl={ this.props.readerAliasedFollowFeedUrl }
