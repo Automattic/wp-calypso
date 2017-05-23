@@ -5,6 +5,7 @@ import React, { PureComponent } from 'react';
 
 /* Internal dependecies */
 import { localize } from 'i18n-calypso';
+import { truncateArticleContent } from '../helpers';
 
 export class TumblrSharePreview extends PureComponent {
 	render() {
@@ -14,11 +15,13 @@ export class TumblrSharePreview extends PureComponent {
 			externalName,
 			message,
 			articleUrl,
+			articleTitle,
+			articleContent,
 			imageUrl,
-			postTitle,
 			translate,
 		} = this.props;
 
+		const summary = truncateArticleContent( 396, articleContent );
 		return (
 			<div className="tumblr-share-preview">
 				<div className="tumblr-share-preview__content">
@@ -41,7 +44,7 @@ export class TumblrSharePreview extends PureComponent {
 							</span>
 						</div>
 						<div className="tumblr-share-preview__post-title-part">
-							<h1 className="tumblr-share-preview__post-title">{ postTitle }</h1>
+							<div className="tumblr-share-preview__post-title">{ articleTitle }</div>
 						</div>
 						<div className="tumblr-share-preview__message">
 							<a className="tumblr-share-preview__message-link"
@@ -59,7 +62,7 @@ export class TumblrSharePreview extends PureComponent {
 						}
 						<div className="tumblr-share-preview__summery-part">
 							<blockquote className="tumblr-share-preview__summery">
-								Post contents goes here.
+								{ summary }
 							</blockquote>
 						</div>
 						<div className="tumblr-share-preview__article-link-line">
