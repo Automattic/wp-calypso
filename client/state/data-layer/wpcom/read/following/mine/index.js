@@ -7,7 +7,7 @@ import { forEach, map, omitBy, isArray, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/data-layer/utils';
+import { mergeHandlers } from 'state/action-watchers/utils';
 import followingNew from './new';
 import followingDelete from './delete';
 import {

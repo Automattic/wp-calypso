@@ -7,6 +7,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 /**
  * Internal dependencies
  */
+import actionWatchers from './action-watchers/middleware';
 import analyticsTracking from './analytics/reducer';
 import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';
@@ -144,13 +145,14 @@ export function createReduxStore( initialState = {} ) {
 
 	const middlewares = [
 		thunkMiddleware,
+		actionWatchers,
 		noticesMiddleware,
 		isBrowser && require( './happychat/middleware.js' ).default(),
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		require( './data-layer/wpcom-api-middleware.js' ).default,
 		isBrowser && require( './lib/middleware.js' ).default,
 		isBrowser && config.isEnabled( 'restore-last-location' ) && require( './routing/middleware.js' ).default,
-		isBrowser && require( './data-layer/extensions-middleware.js' ).default,
+		isBrowser && require( './action-watchers/extensions-middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
 		isBrowser && config.isEnabled( 'automated-transfer' ) && require( './automated-transfer/middleware.js' ).default,
 	].filter( Boolean );
