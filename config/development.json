@@ -116,7 +116,7 @@
 		"post-editor/image-editor": true,
 		"post-editor/media-advanced": false,
 		"press-this": true,
-		"publicize/preview": false,
+		"publicize-preview": false,
 		"publicize-scheduling": false,
 		"push-notifications": true,
 		"reader": true,

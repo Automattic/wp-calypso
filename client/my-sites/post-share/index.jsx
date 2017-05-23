@@ -182,7 +182,7 @@ class PostShare extends Component {
 
 		return (
 			<div className="post-share__button-actions">
-				{ ( isEnabled( 'publicize-scheduling' ) || isEnabled( 'publicize/preview' ) ) &&
+				{ ( isEnabled( 'publicize-preview' ) ) &&
 					<Button
 						className="post-share__preview-button"
 						onClick={ this.toggleSharingPreview }
