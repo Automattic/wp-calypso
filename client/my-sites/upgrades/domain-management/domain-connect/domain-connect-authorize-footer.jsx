@@ -34,6 +34,7 @@ class DomainConnectAuthorizeFooter extends Component {
 
 	renderActionConfirmCancel = () => {
 		const { translate } = this.props;
+		const notReadyToSubmit = actionType.READY_TO_SUBMIT !== this.props.showAction;
 
 		return (
 			<div>
@@ -44,18 +45,18 @@ class DomainConnectAuthorizeFooter extends Component {
 					}
 				</p>
 				<Button
-					busy={ actionType.READY_TO_SUBMIT !== this.props.showAction }
+					busy={ notReadyToSubmit }
 					className="domain-connect__button"
-					disabled={ actionType.READY_TO_SUBMIT !== this.props.showAction }
+					disabled={ notReadyToSubmit }
 					icon
 					onClick={ this.props.onConfirm }
 					primary>
 					<Gridicon icon="checkmark" /> { translate( 'Confirm' ) }
 				</Button>
 				<Button
-					busy={ actionType.READY_TO_SUBMIT !== this.props.showAction }
+					busy={ notReadyToSubmit }
 					className="domain-connect__button"
-					disabled={ actionType.READY_TO_SUBMIT !== this.props.showAction }
+					disabled={ notReadyToSubmit }
 					icon
 					onClick={ this.props.onClose }>
 					<Gridicon icon="cross" /> { translate( 'Cancel' ) }
