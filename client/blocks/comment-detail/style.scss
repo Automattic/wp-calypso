@@ -44,8 +44,28 @@
 	justify-content: space-between;
 	padding: 12px 8px;
 
-	&.is-preview {
+	&.is-preview:not( .is-bulk-edit ) {
 		cursor: pointer;
+	}
+
+	&.is-bulk-edit {
+		padding: 0;
+		.comment-detail__checkbox {
+			cursor: pointer;
+			padding: 12px 16px;
+			.form-checkbox {
+				margin-top: 4px;
+			}
+		}
+		.comment-detail__author-info {
+			padding: 12px 0;
+		}
+		.comment-detail__author-avatar {
+			padding-left: 0;
+		}
+		.comment-detail__comment-preview {
+			padding: 12px 8px;
+		}
 	}
 
 	.comment-detail.is-expanded & {

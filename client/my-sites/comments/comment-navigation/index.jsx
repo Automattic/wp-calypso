@@ -51,6 +51,7 @@ export class CommentNavigation extends Component {
 			doSearch,
 			query,
 			status: queryStatus,
+			toggleBulkEdit,
 			translate,
 		} = this.props;
 
@@ -70,7 +71,7 @@ export class CommentNavigation extends Component {
 					) }
 				</NavTabs>
 
-				<CommentNavigationButton>
+				<CommentNavigationButton onClick={ toggleBulkEdit } >
 					{ translate( 'Bulk Edit' ) }
 				</CommentNavigationButton>
 

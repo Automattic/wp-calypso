@@ -33,11 +33,16 @@ export class CommentDetail extends Component {
 		commentIsLiked: PropTypes.bool,
 		commentIsSpam: PropTypes.bool,
 		commentIsTrash: PropTypes.bool,
+		isBulkEdit: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
 		postUrl: PropTypes.string,
 		repliedToComment: PropTypes.bool,
 		siteId: PropTypes.number.isRequired,
+	};
+
+	static defaultProps = {
+		isBulkEdit: false,
 	};
 
 	state = {
@@ -64,6 +69,12 @@ export class CommentDetail extends Component {
 			isSpam: commentIsSpam,
 			isTrash: commentIsTrash,
 		} );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.isBulkEdit && ! this.props.isBulkEdit ) {
+			this.setState( { isExpanded: false } );
+		}
 	}
 
 	blockUser = () => {
@@ -102,6 +113,7 @@ export class CommentDetail extends Component {
 			authorUsername,
 			commentContent,
 			commentDate,
+			isBulkEdit,
 			postAuthorDisplayName,
 			postTitle,
 			postUrl,
@@ -121,6 +133,7 @@ export class CommentDetail extends Component {
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
 			'is-approved': isApproved,
+			'is-bulk-edit': isBulkEdit,
 			'is-expanded': isExpanded,
 			'is-liked': isLiked,
 			'is-spam': isSpam,
@@ -138,6 +151,7 @@ export class CommentDetail extends Component {
 					commentIsLiked={ isLiked }
 					commentIsSpam={ isSpam }
 					commentIsTrash={ isTrash }
+					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
 					toggleApprove={ this.toggleApprove }
 					toggleExpanded={ this.toggleExpanded }

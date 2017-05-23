@@ -27,6 +27,12 @@ export class CommentsManagement extends Component {
 		translate: PropTypes.func,
 	};
 
+	state = {
+		isBulkEdit: false,
+	};
+
+	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
+
 	render() {
 		const {
 			basePath,
@@ -35,17 +41,25 @@ export class CommentsManagement extends Component {
 			status,
 			translate,
 		} = this.props;
+		const { isBulkEdit } = this.state;
+
 		return (
 			<Main className="comments" wideLayout>
 				<PageViewTracker path={ basePath } title="Manage Comments" />
 				<DocumentHead title={ translate( 'Manage Comments' ) } />
 				<div className="comments__primary">
-					<CommentNavigation siteSlug={ siteSlug } status={ status } />
+					<CommentNavigation { ...{
+						siteSlug,
+						status,
+						toggleBulkEdit: this.toggleBulkEdit,
+					} } />
 					{ map( comments, ( { commentId, siteId } ) =>
-						<CommentDetail
-							key={ `comment-${ siteId }-${ commentId }` }
-							{ ...{ commentId, siteId } }
-						/>
+						<CommentDetail { ...{
+							commentId,
+							isBulkEdit,
+							key: `comment-${ siteId }-${ commentId }`,
+							siteId,
+						} } />
 					) }
 				</div>
 			</Main>
