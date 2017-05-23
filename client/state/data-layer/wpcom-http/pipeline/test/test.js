@@ -35,12 +35,12 @@ describe( '#processInboundChain', () => {
 
 	it( 'should pass through data given an empty chain', () => {
 		expect(
-			processInboundChain( [] )( getSites, {}, { value: 1 }, { error: 'bad' }, {} )
+			processInboundChain( [] )( getSites, {}, { value: 1 }, { error: 'bad' }, { header: 'foobar' } )
 		).to.eql( {
 			failures: [ getSites.onFailure ],
 			nextData: { value: 1 },
 			nextError: { error: 'bad' },
-			nextHeaders: {},
+			nextHeaders: { header: 'foobar' },
 			successes: [ getSites.onSuccess ],
 		} );
 	} );
