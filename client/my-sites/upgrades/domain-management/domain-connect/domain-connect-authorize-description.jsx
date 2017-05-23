@@ -5,6 +5,15 @@ import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 
 class DomainConnectAuthorizeDescription extends Component {
+	static propTypes = {
+		isLoading: PropTypes.bool,
+		providerId: PropTypes.string.isRequired
+	};
+
+	static defaultProps = {
+		isLoading: false
+	};
+
 	placeholder = () => {
 		return (
 			<div className="domain-connect__is-placeholder">
@@ -67,14 +76,5 @@ class DomainConnectAuthorizeDescription extends Component {
 		return null;
 	}
 }
-
-DomainConnectAuthorizeDescription.propTypes = {
-	isLoading: PropTypes.bool,
-	providerId: PropTypes.string.isRequired
-};
-
-DomainConnectAuthorizeDescription.defaultProps = {
-	isLoading: false
-};
 
 export default localize( DomainConnectAuthorizeDescription );
