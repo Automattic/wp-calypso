@@ -100,6 +100,7 @@ const FollowingManageSearchFeedsResults = ( {
 				fetchNextPage={ fetchNextPage }
 				remoteTotalCount={ searchResultsCount }
 				forceRefresh={ forceRefresh }
+				followSource={ READER_FOLLOWING_MANAGE_SEARCH_RESULT }
 			/>
 		</div>
 	);

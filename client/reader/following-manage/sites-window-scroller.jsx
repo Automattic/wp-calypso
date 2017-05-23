@@ -15,7 +15,6 @@ import { debounce, noop, get } from 'lodash';
  * Internal Dependencies
  */
 import ConnectedSubscriptionListItem from './connected-subscription-list-item';
-import { READER_SUBSCRIPTIONS } from 'reader/follow-button/follow-sources';
 
 /*
  * SitesWindowScroller is a component that takes in a list of site/feed objects.
@@ -29,6 +28,7 @@ class SitesWindowScroller extends Component {
 		forceRefresh: PropTypes.any, // forceRefresh can be anything. Whenever we want to force a refresh, it should change
 		windowScrollerRef: PropTypes.func,
 		showLastUpdatedDate: PropTypes.bool,
+		followSource: PropTypes.string,
 	};
 	defaultProps = { windowScrollerRef: noop, showLastUpdatedDate: true };
 
@@ -62,7 +62,7 @@ class SitesWindowScroller extends Component {
 							feedId={ feedId }
 							siteId={ siteId }
 							onLoad={ measure }
-							followSource={ READER_SUBSCRIPTIONS }
+							followSource={ this.props.followSource }
 							showLastUpdatedDate={ this.props.showLastUpdatedDate }
 						/>
 					</div>
