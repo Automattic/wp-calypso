@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { trim, debounce, random, take, reject, includes } from 'lodash';
+import { trim, debounce, noop, random, take, reject, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
@@ -43,6 +43,29 @@ import { recordTrack } from 'reader/stats';
 
 const PAGE_SIZE = 4;
 let recommendationsSeed = random( 0, 10000 );
+
+function reportOnPropChange( Wrapped, prop ) {
+	return class ReportOnPropChange extends Component {
+		static defaultProps = {
+			onPropChange: noop,
+		};
+		componentDidMount() {
+			this.props.onPropChange( this.props[ prop ] );
+		}
+
+		componentDidUpdate( prevProps ) {
+			if ( this.props[ prop ] !== prevProps[ prop ] ) {
+				this.props.onPropChange( this.props[ prop ] );
+			}
+		}
+
+		render() {
+			return <Wrapped { ...this.props } />;
+		}
+	};
+}
+
+const ReportingFollowButton = reportOnPropChange( FollowButton, 'siteUrl' );
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -140,6 +163,14 @@ class FollowingManage extends Component {
 		);
 	};
 
+	reportFollowByUrlRender = siteUrl => {
+		if ( siteUrl ) {
+			recordTrack( 'calypso_reader_following_manage_follow_by_url_render', {
+				url: siteUrl,
+			} );
+		}
+	};
+
 	render() {
 		const {
 			sitesQuery,
@@ -211,11 +242,12 @@ class FollowingManage extends Component {
 										}
 									) }
 								</span> }
-							<FollowButton
+							<ReportingFollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
 								siteUrl={ this.props.readerAliasedFollowFeedUrl }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
+								onPropChange={ this.reportFollowByUrlRender }
 							/>
 						</div> }
 				</div>
