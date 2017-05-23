@@ -121,14 +121,14 @@ class DomainConnectAuthorize extends Component {
 						}
 					</h2>
 					<DomainConnectAuthorizeDescription
-						isPlaceholder={ ! this.state.dnsTemplateConflictsRetrieved }
+						isLoading={ ! this.state.dnsTemplateConflictsRetrieved }
 						providerId={ this.props.providerId } />
 					<DomainConnectAuthorizeConflicts
 						conflictingRecords= { this.state.dnsTemplateConflicts }
-						isPlaceholder={ ! this.state.dnsTemplateConflictsRetrieved } />
+						isLoading={ ! this.state.dnsTemplateConflictsRetrieved } />
 					{ this.renderNotice() }
 					<DomainConnectAuthorizeFooter
-						isPlaceholder={ ! this.state.dnsTemplateConflictsRetrieved }
+						isLoading={ ! this.state.dnsTemplateConflictsRetrieved }
 						onClose={ this.handleClickClose }
 						onConfirm={ this.handleClickConfirm }
 						showAction={ this.state.action } />
