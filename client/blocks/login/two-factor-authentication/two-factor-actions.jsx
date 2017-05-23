@@ -15,6 +15,7 @@ import {
 	getTwoFactorAuthNonce,
 	isTwoFactorAuthTypeSupported,
 	isRequestingTwoFactorAuthPushPoll,
+	isRequestingSendPushNotification,
 } from 'state/login/selectors';
 import { sendSmsCode, sendPushNotification } from 'state/login/actions';
 import { login } from 'lib/paths';
@@ -24,6 +25,7 @@ class TwoFactorActions extends Component {
 		isAuthenticatorSupported: PropTypes.bool,
 		isSmsSupported: PropTypes.bool,
 		isRequestingTwoFactorAuthPushPoll: PropTypes.bool,
+		isRequestingSendPushNotification: PropTypes.bool,
 		sendPushNotification: PropTypes.func.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
@@ -67,7 +69,7 @@ class TwoFactorActions extends Component {
 	handleClickSendPush = ( event ) => {
 		event.preventDefault();
 
-		if ( this.state.isSendingPushNotificationAfterSmsResponse ) {
+		if ( this.state.isSendingPushNotificationAfterSmsResponse || this.props.isRequestingSendPushNotification ) {
 			return;
 		}
 
@@ -131,6 +133,7 @@ export default connect(
 		twoStepNonce: getTwoFactorAuthNonce( state ),
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isPushSupported: isTwoFactorAuthTypeSupported( state, 'push' ),
+		isRequestingSendPushNotification: isRequestingSendPushNotification( state ),
 		isRequestingTwoFactorAuthPushPoll: isRequestingTwoFactorAuthPushPoll( state ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 		userId: getTwoFactorUserId( state ),
