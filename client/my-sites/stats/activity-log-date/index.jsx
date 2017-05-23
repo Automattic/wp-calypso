@@ -31,6 +31,7 @@ const ActivityLogDate = React.createClass( {
 		return (
 			<Button
 				primary={ 'primary' === type }
+				disabled={ ! this.props.isRewindEnabled }
 				compact
 				onClick={ this.requestRestore }
 				className={ this.props.isRestoring( timestamp )

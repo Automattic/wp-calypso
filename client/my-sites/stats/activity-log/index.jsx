@@ -303,7 +303,7 @@ class ActivityLog extends Component {
 					siteId={ siteId }
 					requestRestore={ this.props.requestRestore }
 					isRestoring={ this.props.isRestoring }
-					isRewindEnabled={ true }
+					isRewindEnabled={ this.props.isRewindActive }
 				/>
 			)
 		);
