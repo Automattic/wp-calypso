@@ -43,25 +43,23 @@ class DomainConnectAuthorizeFooter extends Component {
 							'click Cancel and we won\'t make any changes.' )
 					}
 				</p>
-				<div>
-					<Button
-						busy={ actionType.READY_TO_SUBMIT !== this.props.showAction }
-						className="domain-connect__button"
-						disabled={ actionType.READY_TO_SUBMIT !== this.props.showAction }
-						icon
-						onClick={ this.props.onConfirm }
-						primary>
-						<Gridicon icon="checkmark" /> { translate( 'Confirm' ) }
-					</Button>
-					<Button
-						busy={ actionType.READY_TO_SUBMIT !== this.props.showAction }
-						className="domain-connect__button"
-						disabled={ actionType.READY_TO_SUBMIT !== this.props.showAction }
-						icon
-						onClick={ this.props.onClose }>
-						<Gridicon icon="cross" /> { translate( 'Cancel' ) }
-					</Button>
-				</div>
+				<Button
+					busy={ actionType.READY_TO_SUBMIT !== this.props.showAction }
+					className="domain-connect__button"
+					disabled={ actionType.READY_TO_SUBMIT !== this.props.showAction }
+					icon
+					onClick={ this.props.onConfirm }
+					primary>
+					<Gridicon icon="checkmark" /> { translate( 'Confirm' ) }
+				</Button>
+				<Button
+					busy={ actionType.READY_TO_SUBMIT !== this.props.showAction }
+					className="domain-connect__button"
+					disabled={ actionType.READY_TO_SUBMIT !== this.props.showAction }
+					icon
+					onClick={ this.props.onClose }>
+					<Gridicon icon="cross" /> { translate( 'Cancel' ) }
+				</Button>
 			</div>
 		);
 	}
@@ -70,13 +68,11 @@ class DomainConnectAuthorizeFooter extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div>
-				<Button
-					className="domain-connect__button"
-					onClick={ this.props.onClose }>
-					{ translate( 'Close' ) }
-				</Button>
-			</div>
+			<Button
+				className="domain-connect__button"
+				onClick={ this.props.onClose }>
+				{ translate( 'Close' ) }
+			</Button>
 		);
 	}
 
@@ -97,11 +93,7 @@ class DomainConnectAuthorizeFooter extends Component {
 			return this.placeholder();
 		}
 
-		return (
-			<div>
-				{ this.renderAction() }
-			</div>
-		);
+		return this.renderAction();
 	}
 }
 
