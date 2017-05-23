@@ -1,11 +1,11 @@
-.registrant-extra-info__optional {
+// We need .form-label for specificity
+.form-label.registrant-extra-info__optional {
 	display: flex;
-	// align-items: baseline;
 
-	&::after {
-		content: "Optional";
-		font-weight: 200;
+	div {
 		margin-left: 5px;
+		font-weight: 200;
+		font-style: italic;
 	}
 }
 

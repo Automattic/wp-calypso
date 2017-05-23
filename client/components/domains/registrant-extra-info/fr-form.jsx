@@ -209,6 +209,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 				<FormFieldset>
 					<FormLabel className="registrant-extra-info__optional">
 						{ this.props.translate( 'VAT Number' ) }
+						{ this.renderOptional() }
 					</FormLabel>
 					<FormTextInput
 						name="registrantVatId"
@@ -222,6 +223,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 				<FormFieldset>
 					<FormLabel className="registrant-extra-info__optional">
 						{ this.props.translate( 'SIREN or SIRET Number' ) }
+						{ this.renderOptional() }
 					</FormLabel>
 					<FormTextInput
 						name="sirenSiret"
@@ -239,6 +241,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 				<FormFieldset>
 					<FormLabel className="registrant-extra-info__optional">
 						{ this.props.translate( 'EU Trademark Number' ) }
+						{ this.renderOptional() }
 					</FormLabel>
 					<FormTextInput
 						name="trademarkNumber"
@@ -255,6 +258,12 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 				</FormFieldset>
 				{ this.props.children }
 			</form>
+		);
+	}
+
+	renderOptional = () => {
+		return (
+			<div>{ this.props.translate( 'Optional' ) }</div>
 		);
 	}
 }
