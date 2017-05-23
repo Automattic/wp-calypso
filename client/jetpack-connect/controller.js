@@ -25,6 +25,7 @@ import route from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import PlansLanding from './plans-landing';
 
 /**
  * Module variables
@@ -197,10 +198,9 @@ export default {
 	},
 
 	plansLanding( context ) {
-		const PlansLanding = require( './plans-landing' ),
-			analyticsPageTitle = 'Plans',
-			basePath = route.sectionify( context.path ),
-			analyticsBasePath = basePath + '/:site';
+		const analyticsPageTitle = 'Plans';
+		const basePath = route.sectionify( context.path );
+		const analyticsBasePath = basePath + '/:site';
 
 		removeSidebar( context );
 
