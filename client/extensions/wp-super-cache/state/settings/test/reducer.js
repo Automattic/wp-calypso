@@ -13,6 +13,9 @@ import {
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
+	WP_SUPER_CACHE_RESTORE_SETTINGS,
+	WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
+	WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
 	WP_SUPER_CACHE_SAVE_SETTINGS,
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
@@ -203,6 +206,81 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state.saveStatus ).to.eql( {} );
+		} );
+	} );
+
+	describe( 'restoring()', () => {
+		const previousState = deepFreeze( {
+			restoring: {
+				[ primarySiteId ]: true,
+			}
+		} );
+
+		it( 'should default to an empty object', () => {
+			const state = reducer( undefined, {} );
+
+			expect( state.restoring ).to.eql( {} );
+		} );
+
+		it( 'should set request to true if request in progress', () => {
+			const state = reducer( undefined, {
+				type: WP_SUPER_CACHE_RESTORE_SETTINGS,
+				siteId: primarySiteId,
+			} );
+
+			expect( state.restoring ).to.eql( {
+				[ primarySiteId ]: true,
+			} );
+		} );
+
+		it( 'should accumulate restoring values', () => {
+			const state = reducer( previousState, {
+				type: WP_SUPER_CACHE_RESTORE_SETTINGS,
+				siteId: secondarySiteId,
+			} );
+
+			expect( state.restoring ).to.eql( {
+				[ primarySiteId ]: true,
+				[ secondarySiteId ]: true,
+			} );
+		} );
+
+		it( 'should set request to false if request finishes successfully', () => {
+			const state = reducer( previousState, {
+				type: WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
+				siteId: primarySiteId,
+			} );
+
+			expect( state.restoring ).to.eql( {
+				[ primarySiteId ]: false,
+			} );
+		} );
+
+		it( 'should set request to false if request finishes with failure', () => {
+			const state = reducer( previousState, {
+				type: WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
+				siteId: primarySiteId,
+			} );
+
+			expect( state.restoring ).to.eql( {
+				[ primarySiteId ]: false,
+			} );
+		} );
+
+		it( 'should not persist state', () => {
+			const state = reducer( previousState, {
+				type: SERIALIZE,
+			} );
+
+			expect( state.restoring ).to.eql( {} );
+		} );
+
+		it( 'should not load persisted state', () => {
+			const state = reducer( previousState, {
+				type: DESERIALIZE,
+			} );
+
+			expect( state.restoring ).to.eql( {} );
 		} );
 	} );
 

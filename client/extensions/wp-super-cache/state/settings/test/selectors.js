@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	isRequestingSettings,
+	isRestoringSettings,
 	isSavingSettings,
 	isSettingsSaveSuccessful,
 	getSettings,
@@ -79,6 +80,72 @@ describe( 'selectors', () => {
 			const isRequesting = isRequestingSettings( state, primarySiteId );
 
 			expect( isRequesting ).to.be.true;
+		} );
+	} );
+
+	describe( 'isRestoringSettings()', () => {
+		it( 'should return false if no state exists', () => {
+			const state = {
+				extensions: {
+					wpSuperCache: {
+						settings: undefined,
+					}
+				}
+			};
+			const isRestoring = isRestoringSettings( state, primarySiteId );
+
+			expect( isRestoring ).to.be.false;
+		} );
+
+		it( 'should return false if the site is not attached', () => {
+			const state = {
+				extensions: {
+					wpSuperCache: {
+						settings: {
+							restoring: {
+								[ primarySiteId ]: true,
+							}
+						}
+					}
+				}
+			};
+			const isRestoring = isRestoringSettings( state, secondarySiteId );
+
+			expect( isRestoring ).to.be.false;
+		} );
+
+		it( 'should return false if the settings are not being restored', () => {
+			const state = {
+				extensions: {
+					wpSuperCache: {
+						settings: {
+							restoring: {
+								[ primarySiteId ]: false,
+							}
+						}
+					}
+				}
+			};
+			const isRestoring = isRestoringSettings( state, primarySiteId );
+
+			expect( isRestoring ).to.be.false;
+		} );
+
+		it( 'should return true if the settings are being restored', () => {
+			const state = {
+				extensions: {
+					wpSuperCache: {
+						settings: {
+							restoring: {
+								[ primarySiteId ]: true,
+							}
+						}
+					}
+				}
+			};
+			const isRestoring = isRestoringSettings( state, primarySiteId );
+
+			expect( isRestoring ).to.be.true;
 		} );
 	} );
 
