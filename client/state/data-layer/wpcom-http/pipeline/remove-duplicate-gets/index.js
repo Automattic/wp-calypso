@@ -92,6 +92,11 @@ export const removeDuplicateGets = outboundData => {
 		return outboundData;
 	}
 
+	// don't block automatic retries
+	if ( get( nextRequest, 'meta.dataLayer.retryCount', 0 ) > 0 ) {
+		return outboundData;
+	}
+
 	const key = buildKey( nextRequest );
 	const queued = requestQueue.get( key );
 	const request = addResponder( queued || { failures: [], successes: [] }, nextRequest );
