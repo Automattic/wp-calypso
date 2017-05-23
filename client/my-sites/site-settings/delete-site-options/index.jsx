@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { some } from 'lodash';
 
 /**
@@ -11,6 +11,8 @@ import CompactCard from 'components/card/compact';
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
 import config from 'config';
 import { tracks } from 'lib/analytics';
+import { localize } from 'i18n-calypso';
+import SectionHeader from 'components/section-header';
 
 const trackDeleteSiteOption = ( option ) => {
 	tracks.recordEvent( 'calypso_settings_delete_site_options', {
@@ -18,35 +20,33 @@ const trackDeleteSiteOption = ( option ) => {
 	} );
 };
 
-module.exports = React.createClass( {
-	displayName: 'DeleteSite',
+class SiteTools extends Component {
+	static propTypes = {
+		sitePurchases: PropTypes.array.isRequired,
+		hasLoadedSitePurchasesFromServer: PropTypes.bool.isRequired,
+		site: PropTypes.object.isRequired
+	}
 
-	propTypes: {
-		sitePurchases: React.PropTypes.array.isRequired,
-		hasLoadedSitePurchasesFromServer: React.PropTypes.bool.isRequired,
-		site: React.PropTypes.object.isRequired
-	},
-
-	getInitialState() {
-		return {
-			showDialog: false,
-			showStartOverDialog: false
-		};
-	},
+	state = {
+		showDialog: false,
+		showStartOverDialog: false,
+	}
 
 	render() {
+		const { translate } = this.props;
+
 		const selectedSite = this.props.site;
 		const changeAddressLink = `/domains/manage/${ selectedSite.slug }`;
 		const themeSetupLink = `/settings/theme-setup/${ selectedSite.slug }`;
 		const startOverLink = `/settings/start-over/${ selectedSite.slug }`;
 		const deleteSiteLink = `/settings/delete-site/${ selectedSite.slug }`;
-		let changeAddressLinkText = this.translate( 'Register a new domain or change your site\'s address.' );
-		const themeSetupLinkText = this.translate( 'Make your site look like your theme\'s demo.' );
+		let changeAddressLinkText = translate( 'Register a new domain or change your site\'s address.' );
+		const themeSetupLinkText = translate( 'Automatically make your site look like your theme\'s demo.' );
 		const strings = {
-			changeSiteAddress: this.translate( 'Change Site Address' ),
-			themeSetup: this.translate( 'Theme Setup' ),
-			startOver: this.translate( 'Start Over' ),
-			deleteSite: this.translate( 'Delete Site' )
+			changeSiteAddress: translate( 'Change your site address' ),
+			themeSetup: translate( 'Theme setup' ),
+			startOver: translate( 'Delete your content' ),
+			deleteSite: translate( 'Delete your site permanently' )
 		};
 
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
@@ -54,25 +54,19 @@ module.exports = React.createClass( {
 		}
 
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			changeAddressLinkText = this.translate( 'Change your site\'s address.' );
+			changeAddressLinkText = translate( 'Change your site address.' );
 		}
 
 		return (
 			<div className="delete-site-options">
+				<SectionHeader label={ translate( 'Site Tools' ) } />
 				<CompactCard
 					href={ changeAddressLink }
 					onClick={ this.trackChangeAddress }
 					className="delete-site-options__link">
 					<div className="delete-site-options__content">
-						<h2 className="delete-site-options__section-title">{ strings.changeSiteAddress }</h2>
+						<p className="delete-site-options__section-title">{ strings.changeSiteAddress }</p>
 						<p className="delete-site-options__section-desc">{ changeAddressLinkText }</p>
-						<p className="delete-site-options__section-footnote">
-							{ this.translate( 'Your current site address is "%(siteAddress)s."', {
-								args: {
-									siteAddress: selectedSite.slug
-								}
-							} ) }
-						</p>
 					</div>
 				</CompactCard>
 				{ config.isEnabled( 'settings/theme-setup' ) &&
@@ -81,7 +75,7 @@ module.exports = React.createClass( {
 						onClick={ this.trackThemeSetup }
 						className="delete-site-options__link">
 						<div className="delete-site-options__content">
-							<h2 className="delete-site-options__section-title">{ strings.themeSetup }</h2>
+							<p className="delete-site-options__section-title">{ strings.themeSetup }</p>
 							<p className="delete-site-options__section-desc">{ themeSetupLinkText }</p>
 						</div>
 					</CompactCard>
@@ -91,9 +85,12 @@ module.exports = React.createClass( {
 					onClick={ this.trackStartOver }
 					className="delete-site-options__link">
 					<div className="delete-site-options__content">
-						<h2 className="delete-site-options__section-title">{ strings.startOver }</h2>
+						<p className="delete-site-options__section-title">{ strings.startOver }</p>
 						<p className="delete-site-options__section-desc">
-							{ this.translate( 'Keep your URL and site active, but remove the content.' ) }
+							{ translate(
+								'Keep your site\'s address and current theme, but remove all posts, ' +
+								'pages, and media so you can start fresh.'
+							) }
 						</p>
 					</div>
 				</CompactCard>
@@ -102,22 +99,14 @@ module.exports = React.createClass( {
 					onClick={ this.checkForSubscriptions }
 					className="delete-site-options__link">
 					<div className="delete-site-options__content">
-						<h2 className="delete-site-options__section-title">{ strings.deleteSite }</h2>
-						<p className="delete-site-options__section-desc">
-							{ this.translate(
-								'All your posts, images, and data will be deleted. ' +
-								'And this site’s address ({{siteAddress /}}) will be lost.',
-								{
-									components: {
-										siteAddress: <strong>{ selectedSite.wpcom_url || selectedSite.slug }</strong>
-									}
-								}
-							) }
+						<p className="delete-site-options__section-title is-warning">
+							{ strings.deleteSite }
 						</p>
-						<p className="delete-site-options__section-footnote">
-							{
-								this.translate( 'Be careful! Once a site is deleted, it cannot be recovered. Please be sure before you proceed.' )
-							}
+						<p className="delete-site-options__section-desc">
+							{ translate(
+								'Delete all your posts, pages, media and data, ' +
+								'and give up your site\'s address'
+							) }
 						</p>
 					</div>
 				</CompactCard>
@@ -126,21 +115,21 @@ module.exports = React.createClass( {
 					onClose={ this.closeDialog } />
 			</div>
 		);
-	},
+	}
 
 	trackChangeAddress() {
 		trackDeleteSiteOption( 'change-address' );
-	},
+	}
 
 	trackThemeSetup() {
 		trackDeleteSiteOption( 'theme-setup' );
-	},
+	}
 
 	trackStartOver() {
 		trackDeleteSiteOption( 'start-over' );
-	},
+	}
 
-	checkForSubscriptions( event ) {
+	checkForSubscriptions = ( event ) => {
 		trackDeleteSiteOption( 'delete-site' );
 
 		if ( ! some( this.props.sitePurchases, 'active' ) ) {
@@ -149,9 +138,11 @@ module.exports = React.createClass( {
 
 		event.preventDefault();
 		this.setState( { showDialog: true } );
-	},
+	}
 
-	closeDialog() {
+	closeDialog = () => {
 		this.setState( { showDialog: false } );
 	}
-} );
+}
+
+export default localize( SiteTools );
