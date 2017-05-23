@@ -202,6 +202,8 @@
 @import 'devdocs/docs-example/style';
 @import 'devdocs/docs-selectors/style';
 @import 'devdocs/style';
+@import 'jetpack-connect/style';
+@import 'jetpack-connect/jetpack-new-site/style';
 @import 'layout/guided-tours/style';
 @import 'components/happychat/style';
 @import 'components/happychat/agent-w/style';
@@ -468,8 +470,6 @@
 @import 'reader/update-notice/style';
 @import 'signup/style';
 @import 'signup/flow-progress-indicator/style';
-@import 'signup/jetpack-connect/style';
-@import 'signup/jetpack-connect/jetpack-new-site/style';
 @import 'signup/locale-suggestions/style';
 @import 'signup/navigation-link/style';
 @import 'signup/processing-screen/style';

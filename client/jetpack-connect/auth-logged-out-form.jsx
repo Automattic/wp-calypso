@@ -18,7 +18,7 @@ import LocaleSuggestions from 'signup/locale-suggestions';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import versionCompare from 'lib/version-compare';
-import StepHeader from '../step-header';
+import StepHeader from 'signup/step-header';
 import SiteCard from './site-card';
 
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
