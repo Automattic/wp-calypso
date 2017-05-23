@@ -264,13 +264,9 @@ describe( 'reducer', () => {
 				postId: 1
 			} );
 
-			const serialized = comments( state, { type: SERIALIZE } );
+			expect( comments( state, { type: SERIALIZE } ) ).to.be.null;
 
-			expect( Object.getOwnPropertyNames( serialized.items ).length ).to.equal( 0 );
-			expect( Object.getOwnPropertyNames( serialized.requests ).length ).to.equal( 0 );
-			expect( Object.getOwnPropertyNames( serialized.totalCommentsCount ).length ).to.equal( 0 );
-
-			const deserialized = comments( serialized, { type: DESERIALIZE } );
+			const deserialized = comments( {}, { type: DESERIALIZE } );
 
 			expect( Immutable.Map.isMap( deserialized.items ) ).to.equal( true );
 			expect( deserialized.items.size ).to.equal( 0 );
