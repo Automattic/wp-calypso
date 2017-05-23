@@ -82,6 +82,7 @@ export class LoginForm extends Component {
 						</label>
 
 						<FormTextInput
+							autoCapitalize="off"
 							className={
 								classNames( 'login__form-userdata-username-input', {
 									'is-error': requestError && requestError.field === 'usernameOrEmail'
@@ -102,6 +103,7 @@ export class LoginForm extends Component {
 						</label>
 
 						<FormPasswordInput
+							autoCapitalize="off"
 							className={
 								classNames( 'login__form-userdata-username-password', {
 									'is-error': requestError && requestError.field === 'password'
