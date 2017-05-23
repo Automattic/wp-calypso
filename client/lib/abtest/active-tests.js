@@ -58,14 +58,6 @@ module.exports = {
 		},
 		defaultVariation: 'skip',
 	},
-	jetpackPlansHeadlines: {
-		datestamp: '20170519',
-		variations: {
-			headlineA: 50,
-			headlineB: 50
-		},
-		defaultVariation: 'headlineA',
-	},
 	ATPromptOnCancel: {
 		datestamp: '20170515',
 		variations: {

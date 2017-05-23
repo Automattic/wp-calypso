@@ -40,10 +40,6 @@ class JetpackPlansGrid extends Component {
 		let headerText = translate( 'Your site is now connected!' );
 		let subheaderText = translate( 'Now pick a plan that\'s right for you.' );
 
-		if ( abtest( 'jetpackPlansHeadlines' ) === 'headlineB' ) {
-			headerText = translate( 'Protect your site from data loss.' );
-		}
-
 		if ( showFirst ) {
 			headerText = translate( 'You are moments away from connecting your site' );
 		}
