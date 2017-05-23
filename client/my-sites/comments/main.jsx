@@ -22,7 +22,7 @@ export class CommentsManagement extends Component {
 		basePath: PropTypes.string,
 		comments: PropTypes.array,
 		siteId: PropTypes.number,
-		siteSlug: PropTypes.string.required,
+		siteSlug: PropTypes.string.isRequired,
 		status: PropTypes.string,
 		translate: PropTypes.func,
 	};

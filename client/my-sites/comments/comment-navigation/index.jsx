@@ -9,7 +9,7 @@ import { map } from 'lodash';
  * Internal dependencies
  */
 import UrlSearch from 'lib/url-search';
-import Button from 'components/button';
+import CommentNavigationButton from './comment-navigation-button';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
@@ -50,26 +50,29 @@ export class CommentNavigation extends Component {
 		const {
 			doSearch,
 			query,
+			status: queryStatus,
 			translate,
 		} = this.props;
 
+		const navItems = this.getNavItems();
+
 		return (
-			<SectionNav className="comment-navigation">
-				<NavTabs>
-					{ map( this.getNavItems(), ( { label }, status ) =>
+			<SectionNav className="comment-navigation" selectedText={ navItems[ queryStatus ].label }>
+				<NavTabs selectedText={ navItems[ queryStatus ].label }>
+					{ map( navItems, ( { label }, status ) =>
 						<NavItem
 							key={ status }
 							path={ this.getStatusPath( status ) }
-							selected={ this.props.status === status }
+							selected={ queryStatus === status }
 						>
 							{ label }
 						</NavItem>
 					) }
 				</NavTabs>
 
-				<Button compact>
+				<CommentNavigationButton>
 					{ translate( 'Bulk Edit' ) }
-				</Button>
+				</CommentNavigationButton>
 
 				<Search
 					delaySearch

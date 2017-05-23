@@ -28,7 +28,7 @@ export class CommentDetail extends Component {
 		authorUsername: PropTypes.string,
 		commentContent: PropTypes.string,
 		commentDate: PropTypes.string,
-		commentId: PropTypes.number.required,
+		commentId: PropTypes.number.isRequired,
 		commentIsApproved: PropTypes.bool,
 		commentIsLiked: PropTypes.bool,
 		commentIsSpam: PropTypes.bool,
@@ -37,7 +37,7 @@ export class CommentDetail extends Component {
 		postTitle: PropTypes.string,
 		postUrl: PropTypes.string,
 		repliedToComment: PropTypes.bool,
-		siteId: PropTypes.number.required,
+		siteId: PropTypes.number.isRequired,
 	};
 
 	state = {
@@ -128,7 +128,7 @@ export class CommentDetail extends Component {
 		} );
 
 		return (
-			<Card is-compact className={ classes }>
+			<Card className={ classes }>
 				<CommentDetailHeader
 					authorAvatarUrl={ authorAvatarUrl }
 					authorDisplayName={ authorDisplayName }
