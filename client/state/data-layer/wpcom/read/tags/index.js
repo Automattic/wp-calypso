@@ -13,7 +13,7 @@ import requestFollowHandler from 'state/data-layer/wpcom/read/tags/mine/new';
 import requestUnfollowHandler from 'state/data-layer/wpcom/read/tags/mine/delete';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { mergeHandlers } from 'state/data-layer/utils';
+import { mergeHandlers } from 'state/action-watchers/utils';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'state/notices/actions';
 
