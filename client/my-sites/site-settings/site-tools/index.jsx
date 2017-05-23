@@ -81,6 +81,11 @@ class SiteTools extends Component {
 			'and give up your site\'s address'
 		);
 
+		const importTitle = translate( 'Import' );
+		const importText = translate( 'Import content from another WordPress or Medium site' );
+		const exportTitle = translate( 'Export' );
+		const exportText = translate( 'Export content from your site. You own your data' );
+
 		let changeAddressText = translate( 'Register a new domain or change your site\'s address.' );
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
 			changeAddressText = translate( 'Change your site address.' );
@@ -133,11 +138,49 @@ class SiteTools extends Component {
 						</div>
 					</CompactCard>
 				}
+				<CompactCard
+					href={ this.getImportLink() }
+					className="site-tools__link">
+					<div className="site-tools__content">
+						<p className="site-tools__section-title">
+							{ importTitle }
+						</p>
+						<p className="site-tools__section-desc">{ importText }</p>
+					</div>
+				</CompactCard>
+				<CompactCard
+					href={ this.getExportLink() }
+					className="site-tools__link">
+					<div className="site-tools__content">
+						<p className="site-tools__section-title">
+							{ exportTitle }
+						</p>
+						<p className="site-tools__section-desc">{ exportText }</p>
+					</div>
+				</CompactCard>
 				<DeleteSiteWarningDialog
 					isVisible={ this.state.showDialog }
 					onClose={ this.closeDialog } />
 			</div>
 		);
+	}
+
+	getImportLink() {
+		const { jetpack, slug, options: { admin_url } } = this.props.site;
+
+		if ( jetpack ) {
+			return admin_url + 'import.php';
+		}
+		return `/settings/import/${ slug }`;
+	}
+
+	getExportLink() {
+		const { jetpack, slug, options: { admin_url } } = this.props.site;
+
+		if ( jetpack ) {
+			return admin_url + 'export.php';
+		}
+		return `/settings/export/${ slug }`;
 	}
 
 	trackChangeAddress() {
