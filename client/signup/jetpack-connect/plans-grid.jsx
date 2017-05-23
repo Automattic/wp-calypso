@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import StepHeader from '../step-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
-import { abtest } from 'lib/abtest';
 
 /**
  * Constants
