@@ -14,6 +14,7 @@ import {
 	getTwoFactorUserId,
 	getTwoFactorAuthNonce,
 	isTwoFactorAuthTypeSupported,
+	isRequestingTwoFactorAuthPushPoll,
 } from 'state/login/selectors';
 import { sendSmsCode } from 'state/login/actions';
 import { login } from 'lib/paths';
@@ -22,18 +23,41 @@ class TwoFactorActions extends Component {
 	static propTypes = {
 		isAuthenticatorSupported: PropTypes.bool,
 		isSmsSupported: PropTypes.bool,
+		isRequestingTwoFactorAuthPushPoll: PropTypes.bool,
 		twoFactorAuthType: PropTypes.string.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
 	};
 
-	sendSmsCode = ( event ) => {
+	state = {
+		isSendingSmsCodeAfterPollingStops: false
+	};
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.state.isSendingSmsCodeAfterPollingStops &&
+			this.props.isRequestingTwoFactorAuthPushPoll &&
+			! nextProps.isRequestingTwoFactorAuthPushPoll ) {
+			this.sendSmsCode( nextProps.twoStepNonce );
+		}
+	}
+
+	handleClickSendSms = ( event ) => {
 		event.preventDefault();
 
-		const { userId, twoStepNonce } = this.props;
+		if ( this.state.isSendingSmsCodeAfterPollingStops ) {
+			return;
+		}
 
+		if ( this.props.isRequestingTwoFactorAuthPushPoll ) {
+			this.setState( { isSendingSmsCodeAfterPollingStops: true } );
+		} else {
+			this.props.sendSmsCode();
+		}
+	};
+
+	sendSmsCode = ( twoStepNonce = this.props.twoStepNonce ) => {
 		page( login( { isNative: true, twoFactorAuthType: 'sms' } ) );
 
-		this.props.sendSmsCode( userId, twoStepNonce );
+		this.props.sendSmsCode( this.props.userId, twoStepNonce );
 	};
 
 	render() {
@@ -57,7 +81,7 @@ class TwoFactorActions extends Component {
 
 				{ isSmsSupported && twoFactorAuthType !== 'sms' && (
 					<p>
-						<a href="#" onClick={ this.sendSmsCode }>
+						<a href="#" onClick={ this.handleClickSendSms }>
 							{ translate( 'Code via text message' ) }
 						</a>
 					</p>
@@ -88,6 +112,7 @@ export default connect(
 		twoStepNonce: getTwoFactorAuthNonce( state ),
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isPushSupported: isTwoFactorAuthTypeSupported( state, 'push' ),
+		isRequestingTwoFactorAuthPushPoll: isRequestingTwoFactorAuthPushPoll( state ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 		userId: getTwoFactorUserId( state ),
 	} ),
