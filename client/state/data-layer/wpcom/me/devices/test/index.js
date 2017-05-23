@@ -19,11 +19,9 @@ describe( 'wpcom-api', () => {
 	describe( 'user devices', () => {
 		describe( '#requestUserDevices', () => {
 			it( 'should dispatch HTTP request to the users devices endpoint', () => {
-				const action = { type: 'DUMMY' };
 				const dispatch = spy();
-				const next = spy();
 
-				requestUserDevices( { dispatch }, action, next );
+				requestUserDevices( { dispatch } );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( http( {
@@ -41,9 +39,8 @@ describe( 'wpcom-api', () => {
 					{ device_id: 2, device_name: 'Tablet' }
 				];
 				const dispatch = spy();
-				const next = spy();
 
-				handleSuccess( { dispatch }, null, next, devices );
+				handleSuccess( { dispatch }, null, null, devices );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( {
