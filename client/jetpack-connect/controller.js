@@ -223,14 +223,6 @@ export default {
 		);
 	},
 
-	vaultpressLanding( context ) {
-		getPlansLandingPage( context, true, '/jetpack/connect/vaultpress', 'vaultpress' );
-	},
-
-	akismetLanding( context ) {
-		getPlansLandingPage( context, true, '/jetpack/connect/akismet', 'akismet' );
-	},
-
 	plansLanding( context ) {
 		getPlansLandingPage( context, false, '/jetpack/connect/store', 'jetpack' );
 	},

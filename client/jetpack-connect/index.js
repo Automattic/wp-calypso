@@ -48,11 +48,21 @@ export default function() {
 	page( '/jetpack/connect/store', controller.plansLanding );
 	page( '/jetpack/connect/store/:intervalType', controller.plansLanding );
 
-	page( '/jetpack/connect/vaultpress', controller.vaultpressLanding );
-	page( '/jetpack/connect/vaultpress/:intervalType', controller.vaultpressLanding );
+	page( '/jetpack/connect/vaultpress', '/jetpack/connect/store' );
+	page( '/jetpack/connect/vaultpress/:intervalType', context => {
+		const intervalType = context && context.params && context.params.intervalType
+			? context.params.intervalType
+			: '';
+		page.redirect( `/jetpack/connect/store/${ intervalType }` );
+	} );
 
-	page( '/jetpack/connect/akismet', controller.akismetLanding );
-	page( '/jetpack/connect/akismet/:intervalType', controller.akismetLanding );
+	page( '/jetpack/connect/akismet', '/jetpack/connect/store' );
+	page( '/jetpack/connect/akismet/:intervalType', context => {
+		const intervalType = context && context.params && context.params.intervalType
+			? context.params.intervalType
+			: '';
+		page.redirect( `/jetpack/connect/store/${ intervalType }` );
+	} );
 
 	page(
 		'/jetpack/connect/:locale?',
