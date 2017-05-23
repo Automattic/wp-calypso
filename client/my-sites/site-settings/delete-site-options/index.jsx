@@ -46,7 +46,7 @@ class SiteTools extends Component {
 			changeSiteAddress: translate( 'Change your site address' ),
 			themeSetup: translate( 'Theme setup' ),
 			startOver: translate( 'Delete your content' ),
-			deleteSite: translate( 'Delete your site' )
+			deleteSite: translate( 'Delete your site permanently' )
 		};
 
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
