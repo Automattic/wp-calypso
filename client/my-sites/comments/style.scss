@@ -1,0 +1,25 @@
+.comment-navigation.is-bulk-edit {
+	padding-right: 0;
+}
+
+.comment-navigation__tab {
+	padding: 16px;
+}
+
+.comment-navigation__actions {
+	padding: 11px 16px;
+
+	.button-group {
+		margin-right: 16px;
+	}
+}
+
+.comment-navigation__close-bulk {
+	margin-left: auto;
+	padding: 0;
+	a {
+		cursor: pointer;
+		display: inline-block;
+		padding: 10px 16px;
+	}
+}

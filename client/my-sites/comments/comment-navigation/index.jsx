@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 
@@ -9,7 +10,11 @@ import { map } from 'lodash';
  * Internal dependencies
  */
 import UrlSearch from 'lib/url-search';
-import CommentNavigationButton from './comment-navigation-button';
+import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
+import Count from 'components/count';
+import CommentNavigationTab from './comment-navigation-tab';
+import FormCheckbox from 'components/forms/form-checkbox';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
@@ -17,6 +22,7 @@ import SectionNav from 'components/section-nav';
 
 export class CommentNavigation extends Component {
 	static defaultProps = {
+		selectedCount: 0,
 		status: 'pending',
 	};
 
@@ -48,7 +54,9 @@ export class CommentNavigation extends Component {
 
 	render() {
 		const {
+			selectedCount,
 			doSearch,
+			isBulkEdit,
 			query,
 			status: queryStatus,
 			toggleBulkEdit,
@@ -56,6 +64,40 @@ export class CommentNavigation extends Component {
 		} = this.props;
 
 		const navItems = this.getNavItems();
+
+		if ( isBulkEdit ) {
+			return (
+			<SectionNav className="comment-navigation is-bulk-edit">
+				<CommentNavigationTab>
+					<FormCheckbox />
+					<Count count={ selectedCount } />
+				</CommentNavigationTab>
+				<CommentNavigationTab className="comment-navigation__actions">
+					<ButtonGroup>
+						<Button compact>
+							{ translate( 'Approve' ) }
+						</Button>
+						<Button compact>
+							{ translate( 'Unapprove' ) }
+						</Button>
+					</ButtonGroup>
+					<ButtonGroup>
+						<Button compact>
+							{ translate( 'Spam' ) }
+						</Button>
+						<Button compact>
+							{ translate( 'Trash' ) }
+						</Button>
+					</ButtonGroup>
+				</CommentNavigationTab>
+				<CommentNavigationTab className="comment-navigation__close-bulk">
+					<a onClick={ toggleBulkEdit }>
+						<Gridicon icon="cross" />
+					</a>
+				</CommentNavigationTab>
+			</SectionNav>
+			);
+		}
 
 		return (
 			<SectionNav className="comment-navigation" selectedText={ navItems[ queryStatus ].label }>
@@ -71,9 +113,11 @@ export class CommentNavigation extends Component {
 					) }
 				</NavTabs>
 
-				<CommentNavigationButton onClick={ toggleBulkEdit } >
-					{ translate( 'Bulk Edit' ) }
-				</CommentNavigationButton>
+				<CommentNavigationTab className="comment-navigation__actions">
+					<Button compact onClick={ toggleBulkEdit }>
+						{ translate( 'Bulk Edit' ) }
+					</Button>
+				</CommentNavigationTab>
 
 				<Search
 					delaySearch

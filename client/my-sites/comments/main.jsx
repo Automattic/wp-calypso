@@ -49,6 +49,7 @@ export class CommentsManagement extends Component {
 				<DocumentHead title={ translate( 'Manage Comments' ) } />
 				<div className="comments__primary">
 					<CommentNavigation { ...{
+						isBulkEdit,
 						siteSlug,
 						status,
 						toggleBulkEdit: this.toggleBulkEdit,
