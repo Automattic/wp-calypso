@@ -1,5 +1,9 @@
 module.exports = {
-	browser: true,
+	modulePaths: [
+		'<rootDir>/../test/',
+		'<rootDir>/../server/',
+		'<rootDir>/../client/',
+	],
 	testEnvironment: 'node',
 	testMatch: [ '**/test/*.js?(x)' ],
 	timers: 'fake',

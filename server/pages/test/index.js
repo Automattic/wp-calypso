@@ -15,14 +15,16 @@ import { createReduxStore } from 'state';
 
 describe( 'index', function() {
 	describe( 'when trying to renderToString() LayoutLoggedOut ', function() {
+		let LayoutLoggedOutFactory, props;
+
 		useMockery();
 
 		beforeAll( function() {
 			mockery.registerMock( 'lib/analytics', noop );
 
 			const LayoutLoggedOut = require( 'layout/logged-out' );
-			this.LayoutLoggedOutFactory = React.createFactory( LayoutLoggedOut );
-			this.props = {
+			LayoutLoggedOutFactory = React.createFactory( LayoutLoggedOut );
+			props = {
 				store: createReduxStore(),
 			};
 		} );
@@ -31,7 +33,7 @@ describe( 'index', function() {
 			assert.doesNotThrow(
 				ReactDomServer.renderToString.bind(
 					ReactDomServer,
-					this.LayoutLoggedOutFactory( this.props )
+					LayoutLoggedOutFactory( props )
 				)
 			);
 		} );
