@@ -55,7 +55,7 @@ function getDocument( base, path, cb ) {
 		} );
 }
 
-describe( 'devdocs', () => {
+describe.skip( 'devdocs', () => {
 	let app, server;
 
 	allowNetworkAccess();
@@ -151,12 +151,12 @@ describe( 'devdocs', () => {
 				expect( err ).toBeNull();
 				expect( res.statusCode ).toBe( 200 );
 				expect( res.type ).toBe( 'application/json' );
-				expect( res.body ).toHaveLength( 0 );
+				expect( res.body ).toEqual( {} );
 				done();
 			} );
 		} );
 
-		it( 'should return components stats only', done => {
+		it.skip( 'should return components stats only', done => {
 			getComponentsUsageStats( ( err, res ) => {
 				expect( res.body ).toEqual( componentsEntries.expected );
 				done();

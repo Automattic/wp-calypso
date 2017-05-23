@@ -50,16 +50,18 @@ export function useSandbox( config, sandboxCallback = noop ) {
 		config = undefined;
 	}
 
-	before( function() {
+	beforeAll( function() {
 		this.sandbox = sinon.sandbox.create( config );
 		sandboxCallback( this.sandbox );
 	} );
 
 	beforeEach( function() {
-		this.sandbox.reset();
+		if ( this.sandbox ) {
+			this.sandbox.reset();
+		}
 	} );
 
-	after( function() {
+	afterAll( function() {
 		if ( this.sandbox ) {
 			this.sandbox.restore();
 			this.sandbox = null;

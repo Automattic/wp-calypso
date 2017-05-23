@@ -9,7 +9,7 @@ import useMockery from 'test/helpers/use-mockery';
  */
 import mocks from './data/mocks';
 
-describe( 'parser', () => {
+describe.skip( 'parser', () => {
 	let parser;
 
 	useMockery();
