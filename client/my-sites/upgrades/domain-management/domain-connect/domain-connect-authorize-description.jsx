@@ -21,7 +21,7 @@ class DomainConnectAuthorizeDescription extends Component {
 		switch ( providerId ) {
 			case 'g-suite':
 				return translate( 'Howdy! It looks like you want to make your domain work with the ' +
-					'{{strong}}Google G Suite email service{{/strong}}.', {
+					'{{strong}}Google\'s G Suite email service{{/strong}}.', {
 						components: {
 							strong: <strong />
 						}
@@ -58,11 +58,9 @@ class DomainConnectAuthorizeDescription extends Component {
 		const description = this.getDescription();
 		if ( description ) {
 			return (
-				<div>
-					<p>
-						{ this.getDescription() }
-					</p>
-				</div>
+				<p>
+					{ description }
+				</p>
 			);
 		}
 
