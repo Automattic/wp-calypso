@@ -16,7 +16,7 @@ import {
 	isTwoFactorAuthTypeSupported,
 	isRequestingTwoFactorAuthPushPoll,
 } from 'state/login/selectors';
-import { sendSmsCode } from 'state/login/actions';
+import { sendSmsCode, sendPushNotification } from 'state/login/actions';
 import { login } from 'lib/paths';
 
 class TwoFactorActions extends Component {
@@ -24,12 +24,14 @@ class TwoFactorActions extends Component {
 		isAuthenticatorSupported: PropTypes.bool,
 		isSmsSupported: PropTypes.bool,
 		isRequestingTwoFactorAuthPushPoll: PropTypes.bool,
+		sendPushNotification: PropTypes.func.isRequired,
+		sendSmsCode: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
 	};
 
 	state = {
-		isSendingSmsCodeAfterPollingStops: false
+		isSendingSmsCodeAfterPollingStops: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -48,9 +50,11 @@ class TwoFactorActions extends Component {
 		}
 
 		if ( this.props.isRequestingTwoFactorAuthPushPoll ) {
+			// If a push request is in in progress, we need to wait for the
+			// response to obtain the new two factor nonce.
 			this.setState( { isSendingSmsCodeAfterPollingStops: true } );
 		} else {
-			this.props.sendSmsCode();
+			this.sendSmsCode();
 		}
 	};
 
@@ -58,6 +62,18 @@ class TwoFactorActions extends Component {
 		page( login( { isNative: true, twoFactorAuthType: 'sms' } ) );
 
 		this.props.sendSmsCode( this.props.userId, twoStepNonce );
+	};
+
+	handleClickSendPush = ( event ) => {
+		event.preventDefault();
+
+		if ( this.state.isSendingPushNotificationAfterSmsResponse ) {
+			return;
+		}
+
+		page( login( { isNative: true, twoFactorAuthType: 'push' } ) );
+
+		this.props.sendPushNotification( this.props.userId, this.props.twoStepNonce );
 	};
 
 	render() {
@@ -97,7 +113,7 @@ class TwoFactorActions extends Component {
 
 				{ isPushSupported && twoFactorAuthType !== 'push' && (
 					<p>
-						<a href={ login( { isNative: true, twoFactorAuthType: 'push' } ) }>
+						<a href="#" onClick={ this.handleClickSendPush }>
 							{ translate( 'The WordPress mobile app' ) }
 						</a>
 					</p>
@@ -118,5 +134,6 @@ export default connect(
 	} ),
 	{
 		sendSmsCode,
+		sendPushNotification,
 	}
 )( localize( TwoFactorActions ) );
