@@ -17,11 +17,9 @@ class DomainConnectAuthorizeConflicts extends Component {
 
 	placeholder = () => {
 		return (
-			<div>
-				<div className="domain-connect__is-placeholder">
-					<span></span>
-					<span></span>
-				</div>
+			<div className="domain-connect__is-placeholder">
+				<span></span>
+				<span></span>
 			</div>
 		);
 	}
@@ -42,25 +40,23 @@ class DomainConnectAuthorizeConflicts extends Component {
 								'DNS records for your domain:' )
 						}
 					</p>
-					<div className="domain-connect__dns-list">
-						<ul>
-							{
-								conflictingRecords.map( ( record, index ) => {
-									return (
-										<li key={ index }>
-											<div className="domain-connect__dns-list-type">
-												<label>{ record.type }</label>
-											</div>
-											<div className="domain-connect__dns-list-info">
-												<strong>{ record.name }</strong>
-												<em>{ record.data }</em>
-											</div>
-										</li>
-									);
-								} )
-							}
-						</ul>
-					</div>
+					<ul className="domain-connect__dns-list">
+						{
+							conflictingRecords.map( ( record, index ) => {
+								return (
+									<li key={ index }>
+										<div className="domain-connect__dns-list-type">
+											<label>{ record.type }</label>
+										</div>
+										<div className="domain-connect__dns-list-info">
+											<strong>{ record.name }</strong>
+											<em>{ record.data }</em>
+										</div>
+									</li>
+								);
+							} )
+						}
+					</ul>
 					<p>
 						{
 							translate( 'The services that these records were used for may no longer work if they ' +
