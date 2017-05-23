@@ -79,7 +79,7 @@ function ReaderSubscriptionListItem( {
 
 	const recordTitleClick = () => recordEvent( 'calypso_reader_feed_link_clicked' );
 	const recordAuthorClick = () => recordEvent( 'calypso_reader_author_link_clicked' );
-	const recordSiteUrlClick = () => recordEvent( 'calypso_reader_recommended_site_clicked' );
+	const recordSiteUrlClick = () => recordEvent( 'calypso_reader_site_url_clicked' );
 	const recordAvatarClick = () => recordEvent( 'calypso_reader_avatar_clicked' );
 
 	return (
