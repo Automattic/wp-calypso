@@ -28,7 +28,7 @@ class Login extends Component {
 	static propTypes = {
 		redirectLocation: PropTypes.string,
 		requestError: PropTypes.object,
-		getRequestNotice: PropTypes.object,
+		requestNotice: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
@@ -39,10 +39,20 @@ class Login extends Component {
 		rememberMe: false,
 	};
 
-	componentWillMount = () => {
-		if ( ! this.props.twoStepNonce && this.props.twoFactorAuthType && typeof window !== 'undefined' ) {
+	componentDidMount = () => {
+		if ( ! this.props.twoStepNonce && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has received a nonce
 			page( login( { isNative: true } ) );
+		}
+	};
+
+	componentWillReceiveProps = ( nextProps ) => {
+		const hasError = this.props.requestError !== nextProps.requestError;
+		const hasNotice = this.props.requestNotice !== nextProps.requestNotice;
+		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
+
+		if ( isNewPage || hasError || hasNotice ) {
+			window.scrollTo( 0, 0 );
 		}
 	};
 
@@ -70,7 +80,9 @@ class Login extends Component {
 		}
 
 		return (
-			<Notice status={ 'is-error' } showDismiss={ false }>{ requestError.message }</Notice>
+			<Notice status={ 'is-error' } showDismiss={ false }>
+				{ requestError.message }
+			</Notice>
 		);
 	}
 
@@ -82,7 +94,9 @@ class Login extends Component {
 		}
 
 		return (
-			<Notice status={ requestNotice.status } showDismiss={ false }>{ requestNotice.message }</Notice>
+			<Notice status={ requestNotice.status } showDismiss={ false }>
+				{ requestNotice.message }
+			</Notice>
 		);
 	}
 
