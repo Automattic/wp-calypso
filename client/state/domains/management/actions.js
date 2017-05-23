@@ -59,7 +59,7 @@ export function requestContactDetailsCache() {
 }
 
 /**
- * Returns an action object to be used in signalling that a WHOIS contact details
+ * Returns an action object to be used in signalling that a WHOIS details
  * object has been received.
  *
  * @param	{String}   domain		domain queried
@@ -75,7 +75,8 @@ export function receiveWhois( domain, whoisData ) {
 }
 
 /**
- * Triggers a network request to query domain contact details
+ * Triggers a network request to query WHOIS details
+ *
  * @param   {String}   domain	domain to query
  * @returns {Function}          Action thunk
  */
@@ -104,6 +105,14 @@ export function requestWhois( domain ) {
 	};
 }
 
+/**
+ * Sends a network request to the server to save updated WHOIS details
+ * at the domain's registrar.
+ *
+ * @param   {String}   domain		domain to query
+ * @param   {Object}   whoisData	whois details object
+ * @returns {Function}				Action thunk
+ */
 export function saveWhois( domain, whoisData ) {
 	return ( dispatch ) => {
 		dispatch( {
