@@ -46,10 +46,10 @@ In the diagram we can see that the initial request failed and then immediately t
 
 Please don't use this policy unless you have a very good reason not to use the exponential-backoff.
 Simple retries get reissued at a fixed interval after a failed request comes in.
-In the diagram we can see an attempt made with `maxTries` set to `3`.
+In the diagram we can see an attempt made with `maxAttempts` set to `3`.
 Once the initial request comes in as a failure we wait for `delay` ms and then send it out again.
 The same thing happens again after the second retry attempt.
-However, after the third attempt we give up because we limited the `maxTries` and the HTTP layer finally dispatches the `onFailure` action.
+However, after the third attempt we give up because we limited the `maxAttempts` and the HTTP layer finally dispatches the `onFailure` action.
 
 ### Exponential-backoff
 ![](https://cldup.com/_QCxJGuCXu.svg)
@@ -88,7 +88,7 @@ dispatch( http( {
 	method: 'GET',
 	onSuccess,
 	onFailure,
-	whenFailing: simpleRetry( { delay: 300, maxTries: 2 } ),
+	whenFailing: simpleRetry( { delay: 300, maxAttempts: 2 } ),
 }, action );
 
 // moar attempts for a notoriously slow and buggy server
@@ -99,7 +99,7 @@ dispatch( http( {
 	method: 'GET',
 	onSuccess,
 	onFailure,
-	whenFailing: exponentialBackoff( { delay: 4000, maxTries: 5 } ),
+	whenFailing: exponentialBackoff( { delay: 4000, maxAttempts: 5 } ),
 }, action );
 ```
 
