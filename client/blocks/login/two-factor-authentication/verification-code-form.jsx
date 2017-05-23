@@ -109,6 +109,7 @@ class VerificationCodeForm extends Component {
 						</FormLabel>
 
 						<FormTextInput
+							autoComplete="off"
 							value={ this.state.twoStepCode }
 							onChange={ this.onChangeField }
 							className={ classNames( { 'is-error': isError } ) }

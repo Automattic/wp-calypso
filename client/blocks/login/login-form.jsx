@@ -104,6 +104,7 @@ export class LoginForm extends Component {
 
 						<FormPasswordInput
 							autoCapitalize="off"
+							autoComplete="off"
 							className={
 								classNames( 'login__form-userdata-username-password', {
 									'is-error': requestError && requestError.field === 'password'
