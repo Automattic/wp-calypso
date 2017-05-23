@@ -142,6 +142,12 @@ export function status( state = {}, action ) {
 					{ data: action.data }
 				)
 			} );
+		case REWIND_STATUS_FAILED:
+			return merge( {}, state, {
+				[ action.siteId ]: {
+					data: { error: action.error }
+				}
+			} );
 		case REWIND_DEACTIVATE_SUCCESS:
 			return merge( {}, state, {
 				[ action.siteId ]: {

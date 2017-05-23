@@ -16,6 +16,18 @@ export function getRewindStatus( state, siteId ) {
 }
 
 /**
+ * Returns the error object from the Rewind status
+ * Returns null if the site is unknown
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  The ID of the site we're querying
+ * @return {Object}          Rewind error object
+ */
+export function getRewindStatusError( state, siteId ) {
+	return get( state.activityLog.status, [ siteId, 'data', 'error' ], {} );
+}
+
+/**
  * Is Rewind active for this site?
  *
  * @param  {Object}  state   Global state tree

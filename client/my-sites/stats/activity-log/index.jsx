@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { groupBy, map } from 'lodash';
+import { groupBy, map, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +27,8 @@ import {
 	isAnythingRestoring,
 	isActivatingRewind,
 	isDeactivatingRewind,
-	getRewindStartDate
+	getRewindStartDate,
+	getRewindStatusError
 } from 'state/activity-log/selectors';
 import { requestRestore, activateRewind, deactivateRewind } from 'state/activity-log/actions';
 import ActivityLogToggle from '../activity-log-toggle';
@@ -319,6 +320,8 @@ class ActivityLog extends Component {
 					section="activity"
 				/>
 				{ this.renderBanner( this.props.isAnythingRestoring ) }
+				<QueryRewindStatus siteId={ siteId } />
+				<ErrorStatus statusError={ this.props.getRewindStatusError } />
 				<ActivityLogToggle
 					siteId={ siteId }
 					isActive={ this.props.isRewindActive }
@@ -331,8 +334,31 @@ class ActivityLog extends Component {
 					{ logsGroupedByDate }
 				</section>
 				<QueryActivityLog siteId={ siteId } />
-				<QueryRewindStatus siteId={ siteId } />
 			</Main>
+		);
+	}
+}
+
+ActivityLog.propTypes = {
+	hasThreats: React.PropTypes.bool
+};
+
+ActivityLog.defaultProps = {
+	hasThreats: false
+};
+
+/**
+ * Temporary component for handling error status from the VP API
+ * if the site doesn't register for VP for whatever reason.
+ */
+class ErrorStatus extends Component {
+	render() {
+		const error = this.props.statusError;
+
+		return (
+			<div>
+				{ ! isEmpty( error ) && error.error + ': ' + error.message }
+			</div>
 		);
 	}
 }
@@ -352,6 +378,7 @@ export default connect(
 			isActivatingRewind: isActivatingRewind( state, siteId ),
 			isDeactivatingRewind: isDeactivatingRewind( state, siteId ),
 			getRewindStartDate: getRewindStartDate( state, siteId ),
+			getRewindStatusError: getRewindStatusError( state, siteId )
 		};
 	},
 	{

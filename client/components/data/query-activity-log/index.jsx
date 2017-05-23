@@ -26,7 +26,7 @@ class QueryActivityLog extends Component {
 	}
 
 	request( props ) {
-		if ( props.requestingActivityLog ) {
+		if ( props.requestingActivityLog || ! this.props.startDate ) {
 			return;
 		}
 		props.getActivityLogData( props.siteId, this.props.startDate );
