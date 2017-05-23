@@ -175,11 +175,11 @@ export class Login extends React.Component {
 		);
 
 		return compact( [
-			goBackLink,
 			lostPhoneLink,
 			helpLink,
 			showMagicLoginLink,
 			resetPasswordLink,
+			goBackLink,
 		] );
 	}
 
