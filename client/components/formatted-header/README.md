@@ -1,16 +1,16 @@
-StepHeader (JSX)
-================
+FormattedHeader (JSX)
+=====================
 
 This component displays a header and optional sub-header.
 
 #### How to use:
 
 ```js
-import StepHeader from 'blocks/step-header';
+import FormattedHeader from 'components/step-header';
 
 render() {
 	return (
-		<StepHeader
+		<FormattedHeader
 			headerText="A main title"
 			subHeaderText="A main title"
 		/>
