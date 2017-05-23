@@ -367,7 +367,7 @@ class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	renderDetailsForm() {
+	renderDetailsForm = () => {
 		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails();
 
 		return (
@@ -487,7 +487,16 @@ class DomainDetailsForm extends PureComponent {
 		}
 	}
 
-	renderMainDetailsForm = () => {
+	renderCurrentForm = () => {
+		switch ( this.state.currentStep ) {
+			case 'fr':
+				return this.renderExtraDetailsForm();
+			default:
+				return this.renderDetailsForm();
+		}
+	}
+
+	render = () => {
 		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails(),
 			classSet = classNames( {
 				'domain-details': true,
@@ -496,7 +505,10 @@ class DomainDetailsForm extends PureComponent {
 			} );
 
 		let title;
-		if ( needsOnlyGoogleAppsDetails ) {
+		// FIXME
+		if ( this.currentStep === 'fr' ) {
+			title = '.FR Extra Contact Details';
+		} else if ( needsOnlyGoogleAppsDetails ) {
 			title = this.props.translate( 'G Suite Account Information' );
 		} else {
 			title = this.props.translate( 'Domain Contact Information' );
@@ -508,30 +520,10 @@ class DomainDetailsForm extends PureComponent {
 				<PaymentBox
 					classSet={ classSet }
 					title={ title }>
-					{ this.renderDetailsForm() }
+					{ this.renderCurrentForm() }
 				</PaymentBox>
 			</div>
 		);
-	}
-
-	render = () => {
-		const classSet = classNames( {
-			'domain-details': true,
-			selected: true,
-		} );
-
-		if ( this.state.currentStep === 'fr' ) {
-			debug( "rendering 'fr' step" );
-			return (
-				<PaymentBox
-					classSet={ classSet }
-					title={ '.FR Extra Contact Details' }>
-					{ this.renderExtraDetailsForm() }
-				</PaymentBox>
-			);
-		}
-
-		return this.renderMainDetailsForm();
 	}
 }
 
