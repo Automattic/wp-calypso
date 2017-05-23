@@ -69,6 +69,7 @@ function ReaderSubscriptionListItem( {
 		const props = {
 			blog_ID: siteId,
 			feed_ID: feedId,
+			source: followSource,
 		};
 		if ( railcar ) {
 			recordTrackWithRailcar( name, railcar, props );
