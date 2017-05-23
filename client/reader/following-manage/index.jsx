@@ -242,7 +242,6 @@ class FollowingManage extends Component {
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
 								siteUrl={ this.props.readerAliasedFollowFeedUrl }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
-								onPropChange={ this.reportFollowByUrlRender }
 							/>
 						</div> }
 				</div>
