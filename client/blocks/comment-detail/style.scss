@@ -71,6 +71,8 @@
 
 .comment-detail__actions {
 	color: $gray;
+	user-select: none;
+
 	a {
 		color: $gray;
 		cursor: pointer;
@@ -90,8 +92,7 @@
 			display: inline;
 		}
 	}
-}
-.comment-detail__actions {
+
 	.is-approved .gridicon {
 		color: $alert-green;
 		fill: $alert-green;
