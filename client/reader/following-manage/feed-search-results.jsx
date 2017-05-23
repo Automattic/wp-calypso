@@ -36,7 +36,7 @@ const FollowingManageSearchFeedsResults = ( {
 	if ( ! searchResults ) {
 		return (
 			<div className={ classNames }>
-				{ times( 5, i => <ReaderSubscriptionListItemPlaceholder key={ `placeholder-${ i }` } /> ) }
+				{ times( 10, i => <ReaderSubscriptionListItemPlaceholder key={ `placeholder-${ i }` } /> ) }
 			</div>
 		);
 	} else if ( isEmpty ) {
