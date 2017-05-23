@@ -53,7 +53,6 @@ class PlansLanding extends Component {
 					hideFreePlan={ false }
 					intervalType={ intervalType }
 					isLanding={ true }
-					landingType={ 'jetpack' }
 					onSelect={ this.storeSelectedPlan }
 				/>
 			</div>
