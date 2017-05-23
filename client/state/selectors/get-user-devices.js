@@ -10,5 +10,5 @@ import { get, values } from 'lodash';
  * @return {Object}       current user's devices
  */
 export default function getUserDevices( state ) {
-	return values( get( state, 'userDevices.items', null ) );
+	return values( get( state, 'userDevices.items' ) );
 }

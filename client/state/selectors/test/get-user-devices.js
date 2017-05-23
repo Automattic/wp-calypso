@@ -9,6 +9,11 @@ import { expect } from 'chai';
 import { getUserDevices } from '../';
 
 describe( '#getUserDevices()', () => {
+	it( 'should return an empty array if there are no devices', () => {
+		const result = getUserDevices( {} );
+
+		expect( result ).to.be.empty;
+	} );
 	it( 'should return all available user devices', () => {
 		const items = {
 			1: { device_id: 1, device_name: 'Mobile Phone' },
