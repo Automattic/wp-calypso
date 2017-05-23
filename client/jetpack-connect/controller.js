@@ -214,10 +214,7 @@ export default {
 				context={ context }
 				destinationType={ context.params.destinationType }
 				intervalType={ context.params.intervalType }
-				isLanding={ true }
-				landingType={ 'jetpack' }
 				basePlansPath={ '/jetpack/connect/store' }
-				hideFreePlan={ false }
 			/>,
 			document.getElementById( 'primary' ),
 			context.store
