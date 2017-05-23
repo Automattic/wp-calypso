@@ -4,6 +4,8 @@
 import React, { PropTypes } from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -16,6 +18,8 @@ import FormCountrySelect from 'components/forms/form-country-select';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
+
+const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 
 const countriesList = countriesListForDomainRegistrations();
 
@@ -66,6 +70,29 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 			? individualFields
 			: organizationalFields;
 		return [ 'registrantType', ...conditionalFields ];
+	}
+
+	handleDobChangeEvent = ( event ) => {
+		this.handleChangeEvent( event );
+		// setState() is not syncronous :(
+		const updatedState = {
+			...this.state,
+			[ event.target.name ]: event.target.value,
+		};
+		const { dob_years: years, dob_months: months, dob_days: days } = updatedState;
+
+		if ( years && months && days ) {
+			const value = [ years, months, days ].join( '-' );
+			const pseudoEvent = {
+				target: {
+					name: 'dateOfBirth',
+					value
+				}
+			};
+			debug( 'Setting dateOfBirth to ' + value +
+				( moment( value, 'YYYY-MM-DD' ).isValid() ? '' : ' (invalid)' ) );
+			this.handleChangeEvent( pseudoEvent );
+		}
 	}
 
 	handleChangeEvent = ( event ) => {
@@ -123,19 +150,31 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 							<FormLabel>
 								{ this.props.translate( 'Year' ) }
 							</FormLabel>
-							<FormTextInput type="number" className="registrant-extra-info__dob-year" placeholder="YYYY" />
+							<FormTextInput className="registrant-extra-info__dob-year"
+								type="number"
+								placeholder="YYYY"
+								name="dob_years"
+								onChange={ this.handleDobChangeEvent } />
 						</div>
 						<div className="registrant-extra-info__dob-column">
 							<FormLabel>
 								{ this.props.translate( 'Month' ) }
 							</FormLabel>
-							<FormTextInput type="number" className="registrant-extra-info__dob-month" placeholder="MM" />
+							<FormTextInput className="registrant-extra-info__dob-month"
+								type="number"
+								placeholder="MM"
+								name="dob_months"
+								onChange={ this.handleDobChangeEvent } />
 						</div>
 						<div className="registrant-extra-info__dob-column">
 							<FormLabel>
 								{ this.props.translate( 'Day' ) }
 							</FormLabel>
-							<FormTextInput type="number" className="registrant-extra-info__dob-day" placeholder="DD" />
+							<FormTextInput className="registrant-extra-info__dob-day"
+								type="number"
+								placeholder="DD"
+								name="dob_days"
+								onChange={ this.handleDobChangeEvent } />
 						</div>
 					</div>
 					<FormSettingExplanation>{
