@@ -83,6 +83,7 @@ export class LoginForm extends Component {
 
 						<FormTextInput
 							autoCapitalize="off"
+							autoFocus
 							className={
 								classNames( 'login__form-userdata-username-input', {
 									'is-error': requestError && requestError.field === 'usernameOrEmail'
