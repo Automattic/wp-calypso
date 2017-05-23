@@ -6,9 +6,9 @@ import { isEmpty } from 'lodash';
 /**
  * Returns a boolean signifying whether there are user devices or not
  *
- * @param  {Object} state Global state tree
- * @return {Boolean}      true if the user has devices
+ * @param  {Object} userDevices user's devices slice of the state tree
+ * @return {Boolean}            true if the user has devices
  */
-export default function hasUserSettings( state ) {
-	return ! isEmpty( state.userDevices.items );
-}
+export const hasUserSettings = ( { userDevices } ) => ! isEmpty( userDevices );
+
+export default hasUserSettings;
