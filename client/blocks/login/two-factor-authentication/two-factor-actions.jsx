@@ -71,9 +71,12 @@ class TwoFactorActions extends Component {
 			return;
 		}
 
-		page( login( { isNative: true, twoFactorAuthType: 'push' } ) );
-
-		this.props.sendPushNotification( this.props.userId, this.props.twoStepNonce );
+		this.props.sendPushNotification( this.props.userId, this.props.twoStepNonce ).then( () => {
+			page( login( { isNative: true, twoFactorAuthType: 'push' } ) );
+		} )
+		.catch( () => {
+			// TODO: Display error notice
+		} );
 	};
 
 	render() {

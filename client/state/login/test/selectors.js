@@ -13,6 +13,7 @@ import {
 	getTwoFactorAuthNonce,
 	getRequestError,
 	getTwoFactorSupportedAuthTypes,
+	isRequestingSendPushNotification,
 	isRequestingTwoFactorAuth,
 	isRequestingTwoFactorAuthPushPoll,
 	isRequesting,
@@ -62,6 +63,28 @@ describe( 'selectors', () => {
 			} );
 
 			expect( nonce ).to.equal( 'abcdef123456' );
+		} );
+	} );
+
+	describe( 'isRequestingSendPushNotification', () => {
+		it( 'should return false by default', () => {
+			expect( isRequestingSendPushNotification( undefined ) ).to.be.false;
+		} );
+
+		it( 'should return true if the request is in progress', () => {
+			expect( isRequestingSendPushNotification( {
+				login: {
+					isRequestingSendPushNotification: true
+				}
+			} ) ).to.be.true;
+		} );
+
+		it( 'should return false if the request is not in progress', () => {
+			expect( isRequestingSendPushNotification( {
+				login: {
+					isRequestingSendPushNotification: false
+				}
+			} ) ).to.be.false;
 		} );
 	} );
 
