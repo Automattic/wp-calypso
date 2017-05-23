@@ -365,7 +365,7 @@ describe( 'utils', () => {
 
 		it( 'should remove keys if set back to initialState', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( { '10': 10 }, reset( '10' ) ) ).to.eql( { } );
+			expect( keyed( { 10: 10 }, reset( '10' ) ) ).to.eql( { } );
 		} );
 	} );
 
