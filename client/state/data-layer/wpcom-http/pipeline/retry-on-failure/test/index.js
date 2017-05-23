@@ -17,16 +17,12 @@ import { noRetry, simpleRetry, exponentialBackoff } from '../policies';
 const retryOnFailure = rof();
 const retryWithDelay = delay => rof( { getDelay: () => delay } );
 
-const failer = { type: 'FAIL' };
 const nextError = { fail: 'failed big time' };
-const succeeder = { type: 'SUCCEED' };
 
 const getSites = deepFreeze( http( {
 	method: 'GET',
 	path: '/sites',
 	apiVersion: 'v1',
-	onSuccess: succeeder,
-	onFailure: failer,
 } ) );
 
 const withRetries = retryCount => actionOrInbound =>
