@@ -18,10 +18,11 @@ import CommentNavigation from './comment-navigation';
 import { mockComments } from 'blocks/comment-detail/docs/mock-data';
 
 export class CommentsManagement extends Component {
-
 	static propTypes = {
 		basePath: PropTypes.string,
-		siteSlug: PropTypes.string,
+		comments: PropTypes.array,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string.required,
 		status: PropTypes.string,
 		translate: PropTypes.func,
 	};

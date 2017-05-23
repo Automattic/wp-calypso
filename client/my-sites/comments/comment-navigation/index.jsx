@@ -8,6 +8,7 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
+import UrlSearch from 'lib/url-search';
 import Button from 'components/button';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
@@ -46,7 +47,11 @@ export class CommentNavigation extends Component {
 		: `/comments/${ this.props.siteSlug }`;
 
 	render() {
-		const { translate } = this.props;
+		const {
+			doSearch,
+			query,
+			translate,
+		} = this.props;
 
 		return (
 			<SectionNav className="comment-navigation">
@@ -67,7 +72,10 @@ export class CommentNavigation extends Component {
 				</Button>
 
 				<Search
+					delaySearch
 					fitsContainer
+					initialValue={ query }
+					onSearch={ doSearch }
 					pinned
 				/>
 			</SectionNav>
@@ -75,4 +83,4 @@ export class CommentNavigation extends Component {
 	}
 }
 
-export default localize( CommentNavigation );
+export default localize( UrlSearch( CommentNavigation ) );
