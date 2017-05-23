@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { filter, get, reverse } from 'lodash';
+import { filter, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,6 @@ import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 import { isEnabled } from 'config';
 import purchasesPaths from 'me/purchases/paths';
-import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
@@ -100,15 +99,13 @@ class PlansFeaturesMain extends Component {
 			);
 		}
 
-		const signupPlans = [
-			hideFreePlan ? null : PLAN_FREE,
-			isPersonalPlanEnabled ? PLAN_PERSONAL : null,
-			PLAN_PREMIUM,
-			PLAN_BUSINESS
-		];
-
 		const plans = filter(
-			abtest( 'signupPlansReorderTest' ) === 'modified' ? reverse( signupPlans ) : signupPlans,
+			[
+				hideFreePlan ? null : PLAN_FREE,
+				isPersonalPlanEnabled ? PLAN_PERSONAL : null,
+				PLAN_PREMIUM,
+				PLAN_BUSINESS
+			],
 			value => !! value
 		);
 
