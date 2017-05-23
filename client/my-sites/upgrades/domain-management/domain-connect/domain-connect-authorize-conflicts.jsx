@@ -5,6 +5,16 @@ import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 
 class DomainConnectAuthorizeConflicts extends Component {
+	static propTypes = {
+		conflictingRecords: PropTypes.array,
+		isLoading: PropTypes.bool
+	};
+
+	static defaultProps = {
+		conflictingRecords: [],
+		isLoading: false
+	};
+
 	placeholder = () => {
 		return (
 			<div>
@@ -65,15 +75,5 @@ class DomainConnectAuthorizeConflicts extends Component {
 		return null;
 	}
 }
-
-DomainConnectAuthorizeConflicts.propTypes = {
-	conflictingRecords: PropTypes.array,
-	isLoading: PropTypes.bool
-};
-
-DomainConnectAuthorizeConflicts.defaultProps = {
-	conflictingRecords: [],
-	isLoading: false
-};
 
 export default localize( DomainConnectAuthorizeConflicts );

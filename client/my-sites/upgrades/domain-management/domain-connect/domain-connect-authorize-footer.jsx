@@ -12,6 +12,16 @@ import Button from 'components/button';
 import { actionType } from './constants';
 
 class DomainConnectAuthorizeFooter extends Component {
+	static propTypes = {
+		isLoading: PropTypes.bool,
+		onClose: PropTypes.func,
+		onConfirm: PropTypes.func,
+		showAction: PropTypes.oneOf( actionType )
+	};
+
+	static defaultProps = {
+		isLoading: false
+	};
 
 	placeholder = () => {
 		return (
@@ -94,16 +104,5 @@ class DomainConnectAuthorizeFooter extends Component {
 		);
 	}
 }
-
-DomainConnectAuthorizeFooter.propTypes = {
-	isLoading: PropTypes.bool,
-	onClose: PropTypes.func,
-	onConfirm: PropTypes.func,
-	showAction: PropTypes.oneOf( actionType )
-};
-
-DomainConnectAuthorizeFooter.defaultProps = {
-	isLoading: false
-};
 
 export default localize( DomainConnectAuthorizeFooter );
