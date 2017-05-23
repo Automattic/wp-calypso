@@ -64,7 +64,11 @@ function ReaderSubscriptionListItem( {
 	}
 
 	return (
-		<div className={ classnames( 'reader-subscription-list-item', className ) }>
+		<div
+			className={ classnames( 'reader-subscription-list-item', className, {
+				'has-email-settings': showEmailSettings && isFollowing,
+			} ) }
+		>
 			<div className="reader-subscription-list-item__avatar">
 				<ReaderAvatar
 					siteIcon={ siteIcon }
