@@ -22,14 +22,11 @@ class DomainConnectAuthorize extends Component {
 		templateId: PropTypes.string.isRequired
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			action: null,
-			dnsTemplateConflictsRetrieved: false,
-			noticeType: null
-		};
-	}
+	state = {
+		action: null,
+		dnsTemplateConflictsRetrieved: false,
+		noticeType: null
+	};
 
 	componentDidMount() {
 		const { providerId, params, translate } = this.props,
