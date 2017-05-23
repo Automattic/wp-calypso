@@ -144,7 +144,7 @@ class FollowingManage extends Component {
 
 	reportFollowByUrlRender = () => {
 		const siteUrl = this.props.readerAliasedFeedFollowUrl;
-		const showingFollowByUrlButton = this.props.showFollowByUrl();
+		const showingFollowByUrlButton = this.shouldShowFollowByUrl();
 
 		if ( siteUrl && showingFollowByUrlButton ) {
 			recordTrack( 'calypso_reader_following_manage_follow_by_url_render', {
