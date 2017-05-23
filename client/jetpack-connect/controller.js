@@ -6,7 +6,7 @@ import React from 'react';
 import isEmpty from 'lodash/isEmpty';
 import page from 'page';
 import Debug from 'debug';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -204,7 +204,7 @@ export default {
 
 		removeSidebar( context );
 
-		context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
+		context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
 
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
@@ -238,7 +238,7 @@ export default {
 		removeSidebar( context );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
+		context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
 
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
