@@ -34,6 +34,11 @@ const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
  * @returns {Promise}		Promise of result from the API
  */
 const doAppPushRequest = ( store ) => {
+	if ( ! getTwoFactorPushPollInProgress( store.getState() ) ) {
+		// we have since disabled polling, short circuit
+		return;
+	}
+
 	store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST } );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
@@ -69,14 +74,16 @@ const doAppPushRequest = ( store ) => {
 const doAppPushPolling = store => {
 	let retryCount = 0;
 	const retry = () => {
-		// if polling was stopped or not in progress - stop
-		if ( ! getTwoFactorPushPollInProgress( store.getState() ) ) {
-			return;
-		}
-
 		retryCount++;
 		setTimeout(
-			() => doAppPushRequest( store ).catch( retry ),
+			() => {
+				// if polling was stopped or not in progress - stop
+				if ( ! getTwoFactorPushPollInProgress( store.getState() ) ) {
+					return;
+				}
+
+				doAppPushRequest( store ).catch( retry );
+			},
 			( POLL_APP_PUSH_INTERVAL_SECONDS + Math.floor( retryCount / 10 ) ) * 1000 // backoff lineary
 		);
 	};
