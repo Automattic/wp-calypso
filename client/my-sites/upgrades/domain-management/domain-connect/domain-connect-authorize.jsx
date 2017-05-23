@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,6 +17,11 @@ import DomainConnectAuthorizeFooter from './domain-connect-authorize-footer';
 import { actionType, noticeType } from './constants';
 
 class DomainConnectAuthorize extends Component {
+	static propTypes = {
+		providerId: PropTypes.string.isRequired,
+		templateId: PropTypes.string.isRequired
+	};
+
 	constructor( props ) {
 		super( props );
 		this.state = {
