@@ -207,9 +207,7 @@ class FollowingManage extends Component {
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
-								siteUrl={ this.props.getReaderAliasedFollowFeedUrl(
-									addSchemeIfMissing( sitesQuery, 'http' )
-								) }
+								siteUrl={ this.props.readerAliasedFollowFeedUrl }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
 							/>
 						</div> }
@@ -252,7 +250,10 @@ export default connect(
 		getRecommendedSites: seed => getReaderRecommendedSites( state, seed ),
 		getRecommendedSitesPagingOffset: seed => getReaderRecommendedSitesPagingOffset( state, seed ),
 		isSiteBlocked: site => isSiteBlockedSelector( state, site.blogId ),
-		getReaderAliasedFollowFeedUrl: url => getReaderAliasedFollowFeedUrl( state, url ),
+		readerAliasedFollowFeedUrl: getReaderAliasedFollowFeedUrl(
+			state,
+			addSchemeIfMissing( ownProps.sitesQuery, 'http' )
+		),
 		followsCount: getReaderFollowsCount( state ),
 	} ),
 	{ requestFeedSearch }
