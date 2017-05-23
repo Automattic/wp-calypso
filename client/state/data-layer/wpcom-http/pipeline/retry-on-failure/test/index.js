@@ -86,18 +86,15 @@ describe( '#retryOnFailure', () => {
 		const inbound = { nextError, originalRequest, store };
 		const retryIt = retryWithDelay( 1337 );
 
+		// retry 1
 		expect( retryIt( inbound ) ).to.have.property( 'shouldAbort', true );
 		expect( dispatch ).to.have.not.been.called;
 
-		// retry 1
 		clock.tick( 1337 );
 		expect( dispatch ).to.have.been.calledWith( withRetries( 1 )( originalRequest ) );
 
 		// retry 2
-		expect( retryIt( {
-			...inbound,
-			originalRequest: dispatch.lastCall.args[ 0 ],
-		} ) ).to.have.property( 'shouldAbort', true );
+		expect( retryIt( { ...inbound, originalRequest: dispatch.lastCall.args[ 0 ] } ) ).to.have.property( 'shouldAbort', true );
 		expect( dispatch.callCount ).to.equal( 1 );
 
 		clock.tick( 1337 );
@@ -105,10 +102,7 @@ describe( '#retryOnFailure', () => {
 		expect( dispatch ).to.have.been.calledWith( withRetries( 2 )( originalRequest ) );
 
 		// retry 3
-		expect( retryIt( {
-			...inbound,
-			originalRequest: dispatch.lastCall.args[ 0 ],
-		} ) ).to.have.property( 'shouldAbort', true );
+		expect( retryIt( { ...inbound, originalRequest: dispatch.lastCall.args[ 0 ] } ) ).to.have.property( 'shouldAbort', true );
 		expect( dispatch.callCount ).to.equal( 2 );
 
 		clock.tick( 1337 );
