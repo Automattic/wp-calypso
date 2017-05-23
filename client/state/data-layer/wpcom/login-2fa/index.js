@@ -9,6 +9,7 @@ import defer from 'lodash/defer';
  */
 import config from 'config';
 import {
+	TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
@@ -33,6 +34,8 @@ const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
  * @returns {Promise}		Promise of result from the API
  */
 const doAppPushRequest = ( store ) => {
+	store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST } );
+
 	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
