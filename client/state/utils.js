@@ -2,7 +2,7 @@
  * External dependencies
  */
 import validator from 'is-my-json-valid';
-import { merge, flow, partialRight, reduce } from 'lodash';
+import { merge, flow, partialRight, reduce, isEqual, omit } from 'lodash';
 import { combineReducers } from 'redux';
 
 /**
@@ -107,13 +107,21 @@ export const keyedReducer = ( keyName, reducer ) => {
 		// pass the old sub-state from that item into the reducer
 		// we need this to update state and also to compare if
 		// we had any changes, thus the initialState
-		const isInitialState = ! state.hasOwnProperty( itemKey );
+		const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
 		const oldItemState = state[ itemKey ];
 		const newItemState = reducer( oldItemState, action );
 
 		// and do nothing if the new sub-state matches the old sub-state
-		if ( ! isInitialState && newItemState === oldItemState ) {
+		if ( newItemState === oldItemState ) {
 			return state;
+		}
+
+		// remove key from state if setting back to initial state
+		// if it didn't exist anyway, then do nothing.
+		if ( isEqual( newItemState, initialState ) ) {
+			return state.hasOwnProperty( itemKey )
+				? omit( state, itemKey )
+				: state;
 		}
 
 		// otherwise immutably update the super-state

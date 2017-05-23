@@ -280,11 +280,16 @@ describe( 'utils', () => {
 
 	describe( '#keyedReducer', () => {
 		const grow = name => ( { type: 'GROW', name } );
+		const reset = name => ( { type: 'RESET', name } );
 
-		const age = ( state = 0, action ) =>
-			'GROW' === action.type
-				? state + 1
-				: state;
+		const age = ( state = 0, action ) => {
+			if ( 'GROW' === action.type ) {
+				return state + 1;
+			} else if ( 'RESET' === action.type ) {
+				return 0;
+			}
+			return state;
+		};
 
 		const prevState = deepFreeze( {
 			Bonobo: 13,
@@ -356,6 +361,11 @@ describe( 'utils', () => {
 		it( 'should not initialize a state if no changes and not keyed (simple state)', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( prevState, { type: 'STAY', name: 'Calypso' } ) ).to.equal( prevState );
+		} );
+
+		it( 'should remove keys if set back to initialState', () => {
+			const keyed = keyedReducer( 'name', age );
+			expect( keyed( { '10': 10 }, reset( '10' ) ) ).to.eql( { } );
 		} );
 	} );
 
