@@ -93,6 +93,7 @@ class DomainDetailsForm extends PureComponent {
 		const sanitizedFieldValues = Object.assign( {}, fieldValues );
 		this.fieldNames.forEach( ( fieldName ) => {
 			if ( typeof fieldValues[ fieldName ] === 'string' ) {
+				// TODO: Deep
 				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
 				if ( fieldName === 'postalCode' ) {
 					sanitizedFieldValues[ fieldName ] = sanitizedFieldValues[ fieldName ].toUpperCase();
@@ -130,8 +131,7 @@ class DomainDetailsForm extends PureComponent {
 			return;
 		}
 
-		const allFieldValues = Object.assign( {}, fieldValues );
-		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
+		const allFieldValues = this.getAllFieldValues();
 		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
 		wpcom.validateDomainContactInformation( allFieldValues, domainNames, this.generateValidationHandler( onComplete ) );
 	}
@@ -192,11 +192,23 @@ class DomainDetailsForm extends PureComponent {
 		} );
 	}
 
+	getAllFieldValues = () => {
+		const allFieldValues = Object.assign(
+			{},
+			formState.getAllFieldValues( this.state.form ),
+			this.state.registrantExtraInfo
+				? { registrantExtraInfo: this.state.registrantExtraInfo }
+				: {}
+		);
+		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
+		return allFieldValues;
+	}
+
 	getNumberOfDomainRegistrations() {
 		return cartItems.getDomainRegistrations( this.props.cart ).length;
 	}
 
-	getFieldProps( name ) {
+	getFieldProps = ( name ) => {
 		return {
 			name,
 			ref: name,
@@ -256,10 +268,8 @@ class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	handleFrSubmit( registrantExtraInfo ) {
+	handleExtraChange = ( registrantExtraInfo ) => {
 		this.setState( { registrantExtraInfo } );
-		this.closeDialog( 'isFrDialogVisible' );
-		this.handleSubmitButtonClick();
 	}
 
 	renderNameFields = () => {
@@ -380,8 +390,9 @@ class DomainDetailsForm extends PureComponent {
 
 	renderExtraDetailsForm = () => {
 		return ( <ExtraInfoFrForm
-			onSubmit={ this.handleExtraSubmit }
-			onClose={ ( event ) => console.log( 'ExtraInfoFrForm closed', event ) } >
+			isProbablyOrganization={ Boolean( formState.getFieldValue( this.state.form, 'organization' ) ) }
+			values={ this.state.registrantExtraInfo }
+			onStateChange={ this.handleExtraChange } >
 				{ this.renderSubmitButton() }
 			</ExtraInfoFrForm>
 		);
@@ -459,18 +470,11 @@ class DomainDetailsForm extends PureComponent {
 		} );
 	}
 
-	finish( options = {} ) {
+	finish = ( options = {} ) => {
 		this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
 
-		const allFieldValues = Object.assign(
-			{},
-			formState.getAllFieldValues( this.state.form ),
-			this.state.registrantExtraInfo
-				? { registrantExtraInfo: this.state.registrantExtraInfo }
-				: {}
-		);
-		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
-		// TODO: pass extra fr contact details in here
+		const allFieldValues = this.getAllFieldValues();
+		debug( 'finish: allFieldValues:', allFieldValues );
 		setDomainDetails( allFieldValues );
 		addGoogleAppsRegistrationData( allFieldValues );
 	}

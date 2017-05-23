@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { noop } from 'lodash';
+import { isEqual, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import debugFactory from 'debug';
@@ -49,6 +49,13 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		} );
 	}
 
+	componentDidMount() {
+		// Make sure that we send an an initial update in case the user submits
+		// without changing anything.
+		this.props.onStateChange &&
+			this.props.onStateChange( this.state );
+	}
+
 	getRelevantFields( state ) {
 		const { countryOfBirth, registrantType } = state;
 		const bornInFrance = countryOfBirth === 'FR';
@@ -92,10 +99,17 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		this.setState( { [ event.target.name ]: event.target.value } );
 	}
 
-	componentWillUpdate( _ /* nextProps */, nextState ) {
+	shouldComponentUpdate = ( nextProps, nextState ) => {
+		return ! isEqual( this.state, nextState ) ||
+			! isEqual( this.props, nextProps );
+	}
+
+	componentWillUpdate = ( _ /* nextProps */, nextState ) => {
 		// This is pretty dirty :(
 		// The sooner we can get the contact details into the state, the better
-		this.props.onStateChanged && this.props.onStateChanged( nextState );
+		this.props.onStateChange &&
+			! isEqual( this.state, nextState ) &&
+			this.props.onStateChange( nextState );
 	}
 
 	render = () => {
