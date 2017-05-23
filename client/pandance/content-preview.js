@@ -29,12 +29,23 @@ PreviewBlock.props = {
 	id: React.PropTypes.number.isRequired
 };
 
+const getHeaderMessage = ( type ) => {
+	if ( type === 'final' ) {
+		return <div className="message-inside">
+			<p>Your site is ready for your customers at yoursite1234.wordpress.com! Why not make it easier to remember with a custom domain?</p>
+			<p><Button primary={ true } onClick={ () => page( '/domains' ) }>Find my domain</Button></p>
+		</div>;
+	}
+
+	return <div className="message-inside">
+		<p>Here is a preview of your site with the things you wanted to see on it. Take a look, then lets get a bit more info from you to make it your own.</p>
+		<p><Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button></p>
+	</div>;
+};
+
 export const ContentPreview = props => <div className="content-preview">
 	<div className="message">
-		<div className="message-inside">
-			<p>Here is a preview of your site with the things you wanted to see on it. Take a look, then lets get a bit more info from you to make it your own.</p>
-			<p><Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button></p>
-		</div>
+		{ getHeaderMessage( props.type ) }
 	</div>
 	<div className="content-container">
 		<Header />
@@ -46,6 +57,10 @@ export const ContentPreview = props => <div className="content-preview">
 	}
 	</div>
 </div>;
+
+ContentPreview.props = {
+	type: React.PropTypes.string
+};
 
 export default connect( ( state, props ) => ( {
 	selected: state.pandance.selected,

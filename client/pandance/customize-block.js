@@ -23,7 +23,7 @@ export default props => {
 		if ( nextBlockId ) {
 			page( '/pandance/customize/' + nextBlockId );
 		} else {
-			page( '/pandance/content-preview' );
+			page( '/pandance/create-account' );
 		}
 	};
 

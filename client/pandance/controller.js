@@ -15,6 +15,7 @@ import BusinessInfo from './business-info';
 import Blocks from './blocks';
 import ContentPreview from './content-preview';
 import CustomizeBlock from './customize-block';
+import CreateAccount from './create-account';
 import { setSection } from 'state/ui/actions';
 
 export function removeSidebar( context, next ) {
@@ -41,7 +42,8 @@ export function index( context ) {
 
 // last handler don't call next()
 export function contentPreview( context ) {
-	renderPage( context, wrap( <ContentPreview /> ) );
+	const type = context.query.type;
+	renderPage( context, wrap( <ContentPreview type={ type } /> ) );
 }
 
 export function customize( context ) {
@@ -68,4 +70,8 @@ export function customizeBlock( context ) {
 	}
 
 	page( '/pandance/customize/' +  nextBlockId );
+}
+
+export function createAccount( context ) {
+	renderPage( context, wrap( <CreateAccount /> ) );
 }
