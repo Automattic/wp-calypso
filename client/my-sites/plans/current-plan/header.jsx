@@ -47,7 +47,8 @@ class CurrentPlanHeader extends Component {
 		] ).isRequired,
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
-		translate: PropTypes.func
+		translate: PropTypes.func,
+		isAutomatedTransfer: PropTypes.bool,
 	};
 
 	renderPurchaseInfo() {
@@ -93,6 +94,7 @@ class CurrentPlanHeader extends Component {
 	render() {
 		const {
 			currentPlanSlug,
+			isAutomatedTransfer,
 			isPlaceholder,
 			title,
 			tagLine,
@@ -133,7 +135,7 @@ class CurrentPlanHeader extends Component {
 				<div className="current-plan__header-item">
 					<div className="current-plan__header-item-content">
 						<HappinessSupport
-							isJetpack={ !! selectedSite.jetpack }
+							isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 							isPlaceholder={ isPlaceholder }
 						/>
 					</div>
