@@ -39,7 +39,7 @@ import {
 } from 'reader/follow-button/follow-sources';
 import { resemblesUrl, addSchemeIfMissing, withoutHttp } from 'lib/url';
 import { getReaderFollowsCount } from 'state/selectors';
-import { recordTrack } from 'reader/stats';
+import { recordTrack, recordAction } from 'reader/stats';
 
 const PAGE_SIZE = 4;
 let recommendationsSeed = random( 0, 10000 );
@@ -79,6 +79,10 @@ class FollowingManage extends Component {
 			let searchUrl = '/following/manage';
 			if ( newValue ) {
 				searchUrl += '?' + qs.stringify( { q: newValue } );
+				recordTrack( 'calypso_reader_following_manage_search_performed', {
+					query: newValue,
+				} );
+				recordAction( 'manage_feed_search' );
 			}
 			page.replace( searchUrl );
 		}
@@ -87,6 +91,8 @@ class FollowingManage extends Component {
 	handleSearchClosed = () => {
 		this.scrollToTop();
 		this.setState( { showMoreResults: false } );
+		recordTrack( 'calypso_reader_following_manage_search_closed' );
+		recordAction( 'manage_feed_search_closed' );
 	};
 
 	scrollToTop = () => {
@@ -135,6 +141,7 @@ class FollowingManage extends Component {
 
 	handleShowMoreClicked = () => {
 		recordTrack( 'calypso_reader_following_manage_search_more_click' );
+		recordAction( 'manage_feed_search_more' );
 		page.replace(
 			addQueryArgs( { showMoreResults: true }, window.location.pathname + window.location.search )
 		);
