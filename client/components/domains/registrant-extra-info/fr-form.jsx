@@ -46,13 +46,6 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		this.setState( {
 			registrantType: this.props.isProbablyOrganization
 				? 'organization' : 'individual',
-			countryOfBirth: 'AU',
-			dateOfBirth: '1978-01-01',
-			placeOfBirth: 'dummyCity',
-			postalCodeOfBirth: '12345',
-			registrantVatId: 'XX123456789',
-			sirenSiret: '123456789',
-			trademarkNumber: '123456789',
 		} );
 	}
 
@@ -129,6 +122,18 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					</FormLabel>
 				</FormFieldset>
 
+				{ this.state.registrantType === 'individual'
+					? this.renderPersonalFields()
+					: this.renderOrganizationFields() }
+
+				{ this.props.children }
+			</form>
+		);
+	}
+
+	renderPersonalFields = () => {
+		return (
+			<div>
 				<FormFieldset>
 					<FormLabel>
 						{ this.props.translate( 'Country of Birth' ) }
@@ -183,29 +188,39 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					}</FormSettingExplanation>
 				</FormFieldset>
 
-				<FormFieldset>
-					<FormLabel>
-						{ this.props.translate( 'Place of Birth' ) }
-					</FormLabel>
-					<FormTextInput
-						name="placeOfBirth"
-						placeholder={ this.props.translate( 'Place or city of birth' ) }
-						onChange={ this.handleChangeEvent } />
-				</FormFieldset>
+				{ this.state.countryOfBirth === 'FR' && (
+					<FormFieldset>
+						<FormLabel>
+							{ this.props.translate( 'Place of Birth' ) }
+						</FormLabel>
+						<FormTextInput
+							name="placeOfBirth"
+							placeholder={ this.props.translate( 'Place or city of birth' ) }
+							onChange={ this.handleChangeEvent } />
+					</FormFieldset>
+				) }
 
-				<FormFieldset>
-					<FormLabel>
-						{ this.props.translate( 'Postal Code of Birth' ) }
-					</FormLabel>
-					<FormTextInput
-						name="postalCodeOfBirth"
-						autoCapitalize="off"
-						autoComplete="off"
-						autoCorrect="off"
-						placeholder={ this.props.translate( 'ex 75008' ) }
-						onChange={ this.handleChangeEvent } />
-				</FormFieldset>
+				{ this.state.countryOfBirth === 'FR' && (
+					<FormFieldset>
+						<FormLabel>
+							{ this.props.translate( 'Postal Code of Birth' ) }
+						</FormLabel>
+						<FormTextInput
+							name="postalCodeOfBirth"
+							autoCapitalize="off"
+							autoComplete="off"
+							autoCorrect="off"
+							placeholder={ this.props.translate( 'ex 75008' ) }
+							onChange={ this.handleChangeEvent } />
+					</FormFieldset>
+				) }
+			</div>
+		);
+	}
 
+	renderOrganizationFields = () => {
+		return (
+			<div>
 				<FormFieldset>
 					<FormLabel className="registrant-extra-info__optional">
 						{ this.props.translate( 'VAT Number' ) }
@@ -256,8 +271,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						}
 						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
-				{ this.props.children }
-			</form>
+			</div>
 		);
 	}
 
