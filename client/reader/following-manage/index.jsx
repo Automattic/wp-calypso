@@ -150,9 +150,8 @@ class FollowingManage extends Component {
 			followsCount,
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
-		const isSearching = !! sitesQuery;
 		const hasFollows = followsCount > 0;
-		const showExistingSubscriptions = ! isSearching && hasFollows;
+		const showExistingSubscriptions = hasFollows && ! showMoreResults;
 		const isSitesQueryUrl = resemblesUrl( sitesQuery );
 		let sitesQueryWithoutProtocol;
 		if ( isSitesQueryUrl ) {
