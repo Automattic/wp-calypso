@@ -44,19 +44,13 @@ import {
 	PLAN_BUSINESS,
 } from 'lib/plans/constants';
 
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
 import Banner from 'components/banner';
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
 import ActionsList from './publicize-actions-list';
 import CalendarButton from 'blocks/calendar-button';
 import formatCurrency from 'lib/format-currency';
-import {
-	SCHEDULED,
-	PUBLISHED,
-} from './constants';
+
 import SectionHeader from 'components/section-header';
 import Tooltip from 'components/tooltip';
 
@@ -89,14 +83,11 @@ class PostShare extends Component {
 	};
 
 	state = {
-		selectedShareTab: SCHEDULED,
 		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title,
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
 		showSharingPreview: false,
 		showAccountTooltip: false,
 	};
-
-	setFooterSection = selectedShareTab => () => this.setState( { selectedShareTab } );
 
 	hasConnections() {
 		return !! get( this.props, 'connections.length' );
@@ -263,44 +254,6 @@ class PostShare extends Component {
 		);
 	}
 
-	renderActionsSection() {
-		if ( ! this.props.hasRepublicizeSchedulingFeature ) {
-			return null;
-		}
-
-		const { postId, siteId, } = this.props;
-		const { selectedShareTab } = this.state;
-
-		return (
-			<div className="post-share__footer">
-				<SectionNav className="post-share__footer-nav" selectedText={ 'some text' }>
-					<NavTabs label="Status" selectedText="Published">
-						<NavItem
-							selected={ selectedShareTab === SCHEDULED }
-							count={ 4 }
-							onClick={ this.setFooterSection( SCHEDULED ) }
-						>
-							Scheduled
-						</NavItem>
-						<NavItem
-							selected={ selectedShareTab === PUBLISHED }
-							count={ 2 }
-							onClick={ this.setFooterSection( PUBLISHED ) }
-						>
-							Published
-						</NavItem>
-					</NavTabs>
-				</SectionNav>
-
-				<ActionsList
-					section={ selectedShareTab }
-					postId={ postId }
-					siteId={ siteId }
-				/>
-			</div>
-		);
-	}
-
 	renderRequestSharingNotice() {
 		const {
 			failure,
@@ -380,7 +333,7 @@ class PostShare extends Component {
 	}
 
 	renderPrimarySection() {
-		const { hasFetchedConnections, siteSlug, translate } = this.props;
+		const { hasFetchedConnections, siteSlug, translate, siteId, postId } = this.props;
 
 		if ( ! hasFetchedConnections ) {
 			return null;
@@ -407,7 +360,12 @@ class PostShare extends Component {
 				</div>
 
 				{ this.renderUpgradeToGetSchedulingNudge() }
-				{ this.renderActionsSection() }
+				{ this.props.hasRepublicizeSchedulingFeature &&
+					<ActionsList
+						siteId={ siteId }
+						postId={ postId }
+					/>
+				}
 			</div>
 		);
 	}
