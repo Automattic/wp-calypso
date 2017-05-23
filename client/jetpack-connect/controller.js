@@ -72,33 +72,6 @@ const jetpackConnectFirstStep = ( context, type ) => {
 	);
 };
 
-const getPlansLandingPage = ( context, hideFreePlan, path, landingType ) => {
-	const PlansLanding = require( './plans-landing' ),
-		analyticsPageTitle = 'Plans',
-		basePath = route.sectionify( context.path ),
-		analyticsBasePath = basePath + '/:site';
-
-	removeSidebar( context );
-
-	context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
-
-	analytics.tracks.recordEvent( 'calypso_plans_view' );
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-	renderWithReduxStore(
-		<PlansLanding
-			context={ context }
-			destinationType={ context.params.destinationType }
-			intervalType={ context.params.intervalType }
-			isLanding={ true }
-			landingType={ landingType }
-			basePlansPath={ path }
-			hideFreePlan={ hideFreePlan } />,
-		document.getElementById( 'primary' ),
-		context.store
-	);
-};
-
 export default {
 	redirectWithoutLocaleifLoggedIn( context, next ) {
 		if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
@@ -224,7 +197,31 @@ export default {
 	},
 
 	plansLanding( context ) {
-		getPlansLandingPage( context, false, '/jetpack/connect/store', 'jetpack' );
+		const PlansLanding = require( './plans-landing' ),
+			analyticsPageTitle = 'Plans',
+			basePath = route.sectionify( context.path ),
+			analyticsBasePath = basePath + '/:site';
+
+		removeSidebar( context );
+
+		context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
+
+		analytics.tracks.recordEvent( 'calypso_plans_view' );
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+		renderWithReduxStore(
+			<PlansLanding
+				context={ context }
+				destinationType={ context.params.destinationType }
+				intervalType={ context.params.intervalType }
+				isLanding={ true }
+				landingType={ 'jetpack' }
+				basePlansPath={ '/jetpack/connect/store' }
+				hideFreePlan={ false }
+			/>,
+			document.getElementById( 'primary' ),
+			context.store
+		);
 	},
 
 	plansSelection( context ) {
