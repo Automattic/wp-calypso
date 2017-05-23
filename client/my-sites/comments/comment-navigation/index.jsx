@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,16 +14,36 @@ import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 
-const DEFAULT_STATUS = 'pending';
-
 export class CommentNavigation extends Component {
-	getStatusPath = status => ( status && DEFAULT_STATUS !== status )
+	static defaultProps = {
+		status: 'pending',
+	};
+
+	getNavItems = () => {
+		const { translate } = this.props;
+
+		return {
+			pending: {
+				label: translate( 'Pending' ),
+			},
+			approved: {
+				label: translate( 'Approved' ),
+			},
+			spam: {
+				label: translate( 'Spam' ),
+			},
+			trash: {
+				label: translate( 'Trash' ),
+			},
+			all: {
+				label: translate( 'All' ),
+			},
+		};
+	}
+
+	getStatusPath = status => 'pending' !== status
 		? `/comments/${ status }/${ this.props.siteSlug }`
 		: `/comments/${ this.props.siteSlug }`;
-
-	isSelectedStatus = status => DEFAULT_STATUS === status
-		? ! this.props.status || status === this.props.status
-		: status === this.props.status;
 
 	render() {
 		const { translate } = this.props;
@@ -30,39 +51,15 @@ export class CommentNavigation extends Component {
 		return (
 			<SectionNav className="comment-navigation">
 				<NavTabs>
-					<NavItem
-						path={ this.getStatusPath( 'pending' ) }
-						selected={ this.isSelectedStatus( 'pending' ) }
-					>
-						{ translate( 'Pending' ) }
-					</NavItem>
-					<NavItem
-						count={ 15 }
-						path={ this.getStatusPath( 'approved' ) }
-						selected={ this.isSelectedStatus( 'approved' ) }
-					>
-						{ translate( 'Approved' ) }
-					</NavItem>
-					<NavItem
-						count={ 3 }
-						path={ this.getStatusPath( 'spam' ) }
-						selected={ this.isSelectedStatus( 'spam' ) }
-					>
-						{ translate( 'Spam' ) }
-					</NavItem>
-					<NavItem
-						path={ this.getStatusPath( 'trash' ) }
-						selected={ this.isSelectedStatus( 'trash' ) }
-					>
-						{ translate( 'Trash' ) }
-					</NavItem>
-					<NavItem
-						count={ 18 }
-						path={ this.getStatusPath( 'all' ) }
-						selected={ this.isSelectedStatus( 'all' ) }
-					>
-						{ translate( 'All' ) }
-					</NavItem>
+					{ map( this.getNavItems(), ( { label }, status ) =>
+						<NavItem
+							key={ status }
+							path={ this.getStatusPath( status ) }
+							selected={ this.props.status === status }
+						>
+							{ label }
+						</NavItem>
+					) }
 				</NavTabs>
 
 				<Button compact>
