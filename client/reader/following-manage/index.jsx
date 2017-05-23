@@ -127,7 +127,7 @@ class FollowingManage extends Component {
 	shouldRequestMoreRecs = () => {
 		const { recommendedSites, blockedSites } = this.props;
 
-		return reject( recommendedSites, site => includes( blockedSites, site ) ).length <= 4;
+		return reject( recommendedSites, site => includes( blockedSites, site.blogId ) ).length <= 4;
 	};
 
 	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
@@ -162,7 +162,7 @@ class FollowingManage extends Component {
 		}
 		const filteredRecommendedSites = reject(
 			recommendedSites,
-			site => includes( blockedSites, site )
+			site => includes( blockedSites, site.blogId )
 		);
 		const isFollowByUrlWithNoSearchResults = isSitesQueryUrl && searchResultsCount === 0;
 
@@ -255,7 +255,7 @@ export default connect(
 		recommendedSites: getReaderRecommendedSites( state, RECS_SEED ),
 		recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset( state, RECS_SEED ),
 		blockedSites: getBlockedSites( state ),
-		readerAliasedFollowFeedUrl: ownProps.sitesQuery && getReaderAliasedFollowFeedUrl(
+		readerAliasedFollowFeedUrl: getReaderAliasedFollowFeedUrl(
 			state,
 			addSchemeIfMissing( ownProps.sitesQuery, 'http' )
 		),
