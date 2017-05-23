@@ -38,7 +38,7 @@ export const basicJitter = delay => delay + random( delay );
  * @returns {Number} ms delay until next attempt
  */
 export const decorrelatedJitter = ( baseDelay, retryCount ) => {
-	const delay = Math.round( ( baseDelay * Math.pow( 2, retryCount ) ) / 2 );
+	const delay = Math.round( ( baseDelay * Math.pow( 2, retryCount - 1 ) ) / 2 );
 	const jitter = delay + random( 0, delay );
 
 	return random( baseDelay, jitter * 3 );

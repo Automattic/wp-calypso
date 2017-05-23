@@ -1,15 +1,12 @@
 /**
  * External dependencies
  */
-import { get, identity } from 'lodash';
+import { get, identity, merge } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	buildKey,
-	isGetRequest,
-} from '../utils';
+import { isGetRequest } from '../utils';
 
 import {
 	basicJitter,
@@ -17,35 +14,21 @@ import {
 } from './delays';
 import defaultPolicy from './policies';
 
-const retryCounts = new Map();
-
-/**
- * Empties the retryCounts
- *
- * FOR TESTING ONLY!
- */
-export const clearCounts = () => {
-	if ( 'undefined' !== typeof window ) {
-		throw new Error( '`clearCounts()` is not for use in production - only in testing!' );
-	}
-
-	retryCounts.clear();
+const standardDelays = {
+	SIMPLE_RETRY: basicJitter,
+	EXPONENTIAL_BACKOFF: decorrelatedJitter,
 };
 
-export const retryOnFailure = inboundData => {
+const defaults = {
+	getDelay: ( name, { delay, retryCount } ) => get( standardDelays, name, identity )( delay, retryCount ),
+};
+
+export const retryOnFailure = ( { getDelay } = defaults ) => inboundData => {
 	const {
 		nextError,
-		nextRequest,
 		originalRequest,
-		store,
+		store: { dispatch },
 	} = inboundData;
-
-	const key = buildKey( nextRequest );
-	const retryCount = retryCounts.get( key ) || 0;
-
-	// if we need to keep this in the queue
-	// we will resubmit it with new data
-	retryCounts.delete( key );
 
 	// if the request came back successfully
 	// then we have no need to intercept it
@@ -56,24 +39,22 @@ export const retryOnFailure = inboundData => {
 
 	// otherwise check if we should try again
 
-	if ( ! isGetRequest( nextRequest ) ) {
+	if ( ! isGetRequest( originalRequest ) ) {
 		return inboundData;
 	}
 
-	const { options: { whenFailing: policy = defaultPolicy } = {} } = nextRequest;
-	const { delay: rawDelay, maxTries, name } = policy;
+	const { options: { whenFailing: policy = defaultPolicy } = {} } = originalRequest;
+	const { delay, maxAttempts, name } = policy;
+	const retryCount = get( originalRequest, 'meta.dataLayer.retryCount', 0 ) + 1;
 
-	if ( 'NO_RETRY' === name || retryCount > maxTries ) {
+	if ( 'NO_RETRY' === name || retryCount > maxAttempts ) {
 		return inboundData;
 	}
 
-	const delay = get( {
-		SIMPLE_RETRY: basicJitter,
-		EXPONENTIAL_BACKOFF: decorrelatedJitter,
-	}, name, identity )( rawDelay, retryCount );
-
-	setTimeout( () => store.dispatch( originalRequest ), delay );
-	retryCounts.set( key, retryCount + 1 );
+	setTimeout(
+		() => dispatch( merge( originalRequest, { meta: { dataLayer: { retryCount } } } ) ),
+		getDelay( name, { delay, retryCount } )
+	);
 
 	return { ...inboundData, shouldAbort: true };
 };
