@@ -360,10 +360,12 @@ class PostShare extends Component {
 				</div>
 
 				{ this.renderUpgradeToGetSchedulingNudge() }
-				<ActionsList
-					siteId={ siteId }
-					postId={ postId }
-				/>
+				{ this.props.hasRepublicizeSchedulingFeature &&
+					<ActionsList
+						siteId={ siteId }
+						postId={ postId }
+					/>
+				}
 			</div>
 		);
 	}
