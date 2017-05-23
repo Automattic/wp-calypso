@@ -1,8 +1,13 @@
-export const actionType = {
-	CLOSE: 'action-close',
-	READY_TO_SUBMIT: 'action-ready-to-submit',
-	SUBMITTING: 'action-submitting'
-};
+/**
+ * External dependencies
+ */
+import keyMirror from 'key-mirror';
+
+export const actionType = keyMirror( {
+	CLOSE: null,
+	READY_TO_SUBMIT: null,
+	SUBMITTING: null
+} );
 
 export const noticeType = {
 	ERROR: 'is-error',
