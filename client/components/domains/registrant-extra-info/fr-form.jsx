@@ -96,7 +96,6 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	}
 
 	handleChangeEvent = ( event ) => {
-		console.log( 'handleChangeEvent… event.target.name:', event.target.name, 'event.target.value:', event.target.value );
 		this.setState( { [ event.target.name ]: event.target.value } );
 	}
 
@@ -115,16 +114,16 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					</FormLegend>
 					<FormLabel>
 						<FormRadio value="individual"
-							checked={ 'individual' === this.state.registrantType }
 							name="registrantType"
+							checked={ 'individual' === this.state.registrantType }
 							onChange={ this.handleChangeEvent } />
 						<span>{ this.props.translate( 'An individual' ) }</span>
 					</FormLabel>
 
 					<FormLabel>
 						<FormRadio value="organization"
-							checked={ 'organization' === this.state.registrantType }
 							name="registrantType"
+							checked={ 'organization' === this.state.registrantType }
 							onChange={ this.handleChangeEvent } />
 						<span>{ this.props.translate( 'A company or organization' ) }</span>
 					</FormLabel>
@@ -135,8 +134,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						{ this.props.translate( 'Country of Birth' ) }
 					</FormLabel>
 					<FormCountrySelect
-						name="country_code"
-						id="country_code"
+						name="countryOfBirth"
 						countriesList={ this.props.countriesList }
 						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
@@ -151,9 +149,9 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 								{ this.props.translate( 'Year' ) }
 							</FormLabel>
 							<FormTextInput className="registrant-extra-info__dob-year"
+								name="dob_years"
 								type="number"
 								placeholder="YYYY"
-								name="dob_years"
 								onChange={ this.handleDobChangeEvent } />
 						</div>
 						<div className="registrant-extra-info__dob-column">
@@ -161,9 +159,9 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 								{ this.props.translate( 'Month' ) }
 							</FormLabel>
 							<FormTextInput className="registrant-extra-info__dob-month"
+								name="dob_months"
 								type="number"
 								placeholder="MM"
-								name="dob_months"
 								onChange={ this.handleDobChangeEvent } />
 						</div>
 						<div className="registrant-extra-info__dob-column">
@@ -171,9 +169,9 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 								{ this.props.translate( 'Day' ) }
 							</FormLabel>
 							<FormTextInput className="registrant-extra-info__dob-day"
+								name="dob_days"
 								type="number"
 								placeholder="DD"
-								name="dob_days"
 								onChange={ this.handleDobChangeEvent } />
 						</div>
 					</div>
@@ -190,10 +188,9 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						{ this.props.translate( 'Place of Birth' ) }
 					</FormLabel>
 					<FormTextInput
-						id="place_of_birth"
-						name="place_of_birth"
+						name="placeOfBirth"
 						placeholder={ this.props.translate( 'Place or city of birth' ) }
-					/>
+						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
 
 				<FormFieldset>
@@ -201,13 +198,12 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						{ this.props.translate( 'Postal Code of Birth' ) }
 					</FormLabel>
 					<FormTextInput
+						name="postalCodeOfBirth"
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						id="postal_code_of_birth"
-						name="postal_code_of_birth"
 						placeholder={ this.props.translate( 'ex 75008' ) }
-					/>
+						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
 
 				<FormFieldset>
@@ -215,13 +211,12 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						{ this.props.translate( 'VAT Number' ) }
 					</FormLabel>
 					<FormTextInput
+						name="registrantVatId"
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						id="registrant_vat_id"
-						name="registrant_vat_id"
 						placeholder={ this.props.translate( 'ex XX123456789' ) }
-					/>
+						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
 
 				<FormFieldset>
@@ -229,17 +224,16 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						{ this.props.translate( 'SIREN or SIRET Number' ) }
 					</FormLabel>
 					<FormTextInput
-						autoCapitalize="off"
-						autoComplete="off"
-						autoCorrect="off"
-						id="registrant_vat_id"
-						name="registrant_vat_id"
+						name="sirenSiret"
 						placeholder={
 							this.props.translate( 'ex 123 456 789 or 123 456 789 01234',
 								{ comment: 'ex is short for "example". The numbers are examples of the EU VAT format' }
 							)
 						}
-					/>
+						autoCapitalize="off"
+						autoComplete="off"
+						autoCorrect="off"
+						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
 
 				<FormFieldset>
@@ -247,17 +241,17 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						{ this.props.translate( 'EU Trademark Number' ) }
 					</FormLabel>
 					<FormTextInput
+						name="trademarkNumber"
+						type="number"
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						id="trademark_number"
-						name="trademark_number"
 						placeholder={
 							this.props.translate( 'ex 123456789',
 								{ comment: 'ex is short for example. The number is the EU trademark number format.' }
 							)
 						}
-					/>
+						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
 				{ this.props.children }
 			</form>
