@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ class DomainConnectAuthorize extends Component {
 	}
 
 	componentDidMount() {
-		const { providerId, params } = this.props,
+		const { providerId, params, translate } = this.props,
 			{ domain } = params;
 
 		upgradesActions.getDnsTemplateConflicts( domain, providerId, params, ( error, data ) => {
@@ -57,7 +57,7 @@ class DomainConnectAuthorize extends Component {
 	}
 
 	handleClickConfirm = () => {
-		const { providerId, params } = this.props,
+		const { providerId, params, translate } = this.props,
 			{ domain } = params;
 
 		this.setState( {
@@ -104,7 +104,8 @@ class DomainConnectAuthorize extends Component {
 	}
 
 	render() {
-		const { domain } = this.props.params;
+		const { params, translate } = this.props,
+			{ domain } = params;
 
 		return (
 			<Main className="domain-connect__main">
@@ -137,4 +138,4 @@ class DomainConnectAuthorize extends Component {
 	}
 }
 
-export default DomainConnectAuthorize;
+export default localize( DomainConnectAuthorize );

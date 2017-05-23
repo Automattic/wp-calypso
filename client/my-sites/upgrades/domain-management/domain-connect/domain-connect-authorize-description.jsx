@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 class DomainConnectAuthorizeDescription extends Component {
 	placeholder = () => {
@@ -16,7 +16,7 @@ class DomainConnectAuthorizeDescription extends Component {
 	}
 
 	getDescription = () => {
-		const { providerId } = this.props;
+		const { providerId, translate } = this.props;
 
 		switch ( providerId ) {
 			case 'g-suite':
@@ -79,4 +79,4 @@ DomainConnectAuthorizeDescription.defaultProps = {
 	isPlaceholder: false
 };
 
-export default DomainConnectAuthorizeDescription;
+export default localize( DomainConnectAuthorizeDescription );

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
@@ -23,6 +23,8 @@ class DomainConnectAuthorizeFooter extends Component {
 	}
 
 	renderActionConfirmCancel = () => {
+		const { translate } = this.props;
+
 		return (
 			<div>
 				<p>
@@ -55,6 +57,8 @@ class DomainConnectAuthorizeFooter extends Component {
 	}
 
 	renderActionClose = () => {
+		const { translate } = this.props;
+
 		return (
 			<div>
 				<Button
@@ -102,4 +106,4 @@ DomainConnectAuthorizeFooter.defaultProps = {
 	isPlaceholder: false
 };
 
-export default DomainConnectAuthorizeFooter;
+export default localize( DomainConnectAuthorizeFooter );
