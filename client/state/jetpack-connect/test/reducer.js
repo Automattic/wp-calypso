@@ -554,6 +554,33 @@ describe( 'reducer', () => {
 				.to.be.true;
 		} );
 
+		it( 'should return the given state when a site request fails on a different site', () => {
+			const originalState = { queryObject: { client_id: '123' } };
+			const state = jetpackConnectAuthorize(
+				originalState,
+				{ type: SITE_REQUEST_FAILURE, siteId: 234 }
+			);
+			expect( state ).to.eql( originalState );
+		} );
+
+		it( 'should return the given state when a site request fails and no client id is set', () => {
+			const originalState = { queryObject: { jetpack_version: '4.0' } };
+			const state = jetpackConnectAuthorize(
+				originalState,
+				{ type: SITE_REQUEST_FAILURE, siteId: 123 }
+			);
+			expect( state ).to.eql( originalState );
+		} );
+
+		it( 'should return the given state when a site request fails and no query object is set', () => {
+			const originalState = { isAuthorizing: false };
+			const state = jetpackConnectAuthorize(
+				originalState,
+				{ type: SITE_REQUEST_FAILURE, siteId: 123 }
+			);
+			expect( state ).to.eql( originalState );
+		} );
+
 		it( 'should persist state when a site request to a different client fails', () => {
 			const state = jetpackConnectAuthorize(
 				{ queryObject: { client_id: '123' } },

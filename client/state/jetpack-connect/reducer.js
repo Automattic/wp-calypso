@@ -222,8 +222,11 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 				}
 			);
 		case SITE_REQUEST_FAILURE:
-			const { client_id } = state.queryObject;
-			if ( parseInt( client_id ) === action.siteId ) {
+			if (
+				state.queryObject &&
+				state.queryObject.client_id &&
+				parseInt( state.queryObject.client_id ) === action.siteId
+			) {
 				return Object.assign( {}, state, { clientNotResponding: true } );
 			}
 			return state;
