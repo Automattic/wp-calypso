@@ -121,6 +121,16 @@ export const isTwoFactorAuthTypeSupported = ( state, type ) => {
 };
 
 /**
+ * Determines whether a two factor authentication push request is in-progress.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Whether a login request is in-progress.
+ */
+export const isRequestingTwoFactorAuthPushPoll = ( state ) => {
+	return get( state, 'login.twoFactorAuthPushPoll.isRequesting', false );
+};
+
+/**
  * Determines whether a login request is in-progress.
  *
  * @param  {Object}   state  Global state tree

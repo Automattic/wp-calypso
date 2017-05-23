@@ -14,6 +14,7 @@ import {
 	getRequestError,
 	getTwoFactorSupportedAuthTypes,
 	isRequestingTwoFactorAuth,
+	isRequestingTwoFactorAuthPushPoll,
 	isRequesting,
 	isTwoFactorEnabled,
 	isTwoFactorAuthTypeSupported,
@@ -81,6 +82,32 @@ describe( 'selectors', () => {
 			expect( isRequestingTwoFactorAuth( {
 				login: {
 					isRequestingTwoFactorAuth: false
+				}
+			} ) ).to.be.false;
+		} );
+	} );
+
+	describe( 'isRequestingTwoFactorAuthPushPoll', () => {
+		it( 'should return false by default', () => {
+			expect( isRequestingTwoFactorAuthPushPoll( undefined ) ).to.be.false;
+		} );
+
+		it( 'should return true if the request is in progress', () => {
+			expect( isRequestingTwoFactorAuthPushPoll( {
+				login: {
+					twoFactorAuthPushPoll: {
+						isRequesting: true
+					}
+				}
+			} ) ).to.be.true;
+		} );
+
+		it( 'should return false if the request is not in progress', () => {
+			expect( isRequestingTwoFactorAuthPushPoll( {
+				login: {
+					twoFactorAuthPushPoll: {
+						isRequesting: false
+					}
 				}
 			} ) ).to.be.false;
 		} );
