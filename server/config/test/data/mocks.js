@@ -12,12 +12,12 @@ export default {
 	INVALID_PATH: {
 		...fs,
 		existsSync: () => false,
-		readFileSync: () => ''
+		readFileSync: () => '',
 	},
 
 	VALID_SECRETS: {
 		...fs,
-		existsSync: ( file ) => {
+		existsSync: file => {
 			switch ( path.basename( file ) ) {
 				case 'secrets.json':
 				case 'empty-secrets.json':
@@ -26,26 +26,26 @@ export default {
 
 			return false;
 		},
-		readFileSync: ( file ) => {
+		readFileSync: file => {
 			switch ( path.basename( file ) ) {
 				case 'secrets.json':
 					return toJSON( {
-						secret: 'very'
+						secret: 'very',
 					} );
 
 				case 'empty-secrets.json':
 					return toJSON( {
-						secret: 'fromempty'
+						secret: 'fromempty',
 					} );
 			}
 
 			return '';
-		}
+		},
 	},
 
 	VALID_ENV_FILES: {
 		...fs,
-		existsSync: ( file ) => {
+		existsSync: file => {
 			switch ( path.basename( file ) ) {
 				case '_shared.json':
 				case 'myenv.json':
@@ -56,7 +56,7 @@ export default {
 			return false;
 		},
 
-		readFileSync: ( file ) => {
+		readFileSync: file => {
 			switch ( path.basename( file ) ) {
 				case '_shared.json':
 					return toJSON( {
@@ -66,23 +66,23 @@ export default {
 							enabledFeature1: true,
 							disabledFeature1: false,
 							enabledFeature2: true,
-							disabledFeature2: false
-						}
+							disabledFeature2: false,
+						},
 					} );
 				case 'myenv.json':
 					return toJSON( {
 						myenv_only: 'myenv',
 						myenv_override: 'myenv',
-						myenvlocal_override: 'myenv'
+						myenvlocal_override: 'myenv',
 					} );
 				case 'myenv.local.json':
 					return toJSON( {
 						myenvlocal_only: 'myenvlocal',
-						myenvlocal_override: 'myenvlocal'
+						myenvlocal_override: 'myenvlocal',
 					} );
 			}
 
 			return '';
-		}
-	}
-}
+		},
+	},
+};

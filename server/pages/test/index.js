@@ -14,21 +14,28 @@ import { noop } from 'lodash';
 import { createReduxStore } from 'state';
 
 describe( 'index', function() {
-	context( 'when trying to renderToString() LayoutLoggedOut ', function() {
+	describe( 'when trying to renderToString() LayoutLoggedOut ', function() {
+		let LayoutLoggedOutFactory, props;
+
 		useMockery();
 
-		before( function() {
+		beforeAll( function() {
 			mockery.registerMock( 'lib/analytics', noop );
 
 			const LayoutLoggedOut = require( 'layout/logged-out' );
-			this.LayoutLoggedOutFactory = React.createFactory( LayoutLoggedOut );
-			this.props = {
+			LayoutLoggedOutFactory = React.createFactory( LayoutLoggedOut );
+			props = {
 				store: createReduxStore(),
 			};
 		} );
 
 		it( "doesn't throw an exception", function() {
-			assert.doesNotThrow( ReactDomServer.renderToString.bind( ReactDomServer, this.LayoutLoggedOutFactory( this.props ) ) );
+			assert.doesNotThrow(
+				ReactDomServer.renderToString.bind(
+					ReactDomServer,
+					LayoutLoggedOutFactory( props )
+				)
+			);
 		} );
 	} );
 } );

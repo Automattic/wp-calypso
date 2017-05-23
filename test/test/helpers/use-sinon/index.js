@@ -59,7 +59,9 @@ export function useSandbox( config, sandboxCallback = noop ) {
 	} );
 
 	beforeEach( function() {
-		sandbox.reset();
+		if ( sandbox ) {
+			sandbox.reset();
+		}
 	} );
 
 	after( function() {
