@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
-import FormCheckbox from 'components/forms/form-checkbox';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormDimensionsInput from '../../components/form-dimensions-input';
 import FormFieldSet from 'components/forms/form-fieldset';
@@ -17,6 +16,7 @@ import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormToggle from 'components/forms/form-toggle';
 
 const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 	const setDimension = ( e ) => {
@@ -97,7 +97,7 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 				<FormLabel>{ translate( 'Manage stock' ) }</FormLabel>
 				<div className="products__product-manage-stock">
 					<div className="products__product-manage-stock-checkbox">
-						<FormCheckbox
+						<FormToggle
 							checked={ Boolean( product.manage_stock ) }
 							name="manage_stock"
 							onChange={ toggleStock } />

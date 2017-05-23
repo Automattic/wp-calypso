@@ -422,14 +422,7 @@
 	.products__product-manage-stock-checkbox {
 		@include clear-fix();
 		padding: 12px;
-		background: $white;
-		border: 1px solid lighten( $gray, 20% );
 		display: flex;
-
-		input[type=checkbox] {
-			float: none;
-			margin: 0;
-		}
 
 		+ .form-text-input {
 			transform: translateX( -1px );
@@ -438,7 +431,17 @@
 
 	.form-text-input {
 		height: 42px;
+		width: 150px;
 	}
+
+	.form-toggle__switch {
+		vertical-align: middle;
+	}
+}
+
+.products__product-manage-stock-wrapper label,
+.products__product-backorders-wrapper label {
+	margin-bottom: 1em;
 }
 
 .products__product-form-variation-table {
@@ -524,7 +527,7 @@
 		flex-direction: column;
 
 		.products__product-manage-stock-wrapper {
-			width: 150px;
+			width: 200px;
 			margin-right: 32px;
 			margin-bottom: 12px;
 		}
