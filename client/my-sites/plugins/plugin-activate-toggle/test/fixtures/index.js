@@ -1,15 +1,27 @@
-export default {
-	site: {
+const exported = {
+    site: {
 		slug: 'test',
 		domain: '',
 		name: ''
 	},
-	plugin: {
+
+    plugin: {
 		slug: 'test'
 	},
-	notices: {
+
+    notices: {
 		completed: [],
 		errors: []
 	},
-	action: function() {}
+
+    action: function() {}
 };
+
+export default exported;
+
+export const {
+    site,
+    plugin,
+    notices,
+    action
+} = exported;

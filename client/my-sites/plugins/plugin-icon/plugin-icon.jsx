@@ -28,3 +28,7 @@ PluginIcon.propTypes = {
 };
 
 export default PluginIcon;
+
+export const {
+    propTypes
+} = PluginIcon;

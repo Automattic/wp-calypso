@@ -1,5 +1,5 @@
-export default {
-	site: {
+const exported = {
+    site: {
 		slug: 'test',
 		domain: '',
 		name: '',
@@ -7,11 +7,24 @@ export default {
 		options: { file_mod_disabled: false },
 		jetpack: true
 	},
-	plugin: { slug: 'test' },
-	notices: {
+
+    plugin: { slug: 'test' },
+
+    notices: {
 		completed: [],
 		errors: []
 	},
-	wporg: true,
-	action: function() {}
+
+    wporg: true,
+    action: function() {}
 };
+
+export default exported;
+
+export const {
+    site,
+    plugin,
+    notices,
+    wporg,
+    action
+} = exported;
