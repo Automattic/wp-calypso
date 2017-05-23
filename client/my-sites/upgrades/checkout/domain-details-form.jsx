@@ -263,7 +263,7 @@ class DomainDetailsForm extends PureComponent {
 				onDialogClose={ this.closeDialog }
 				onDialogOpen={ this.openDialog }
 				onDialogSelect={ this.handlePrivacyDialogSelect }
-				isDialogVisible={ this.state.isPrivacyDialogVisible }
+				isDialogVisible={ this.state.isDialogVisible }
 				productsList={ this.props.productsList } />
 		);
 	}
