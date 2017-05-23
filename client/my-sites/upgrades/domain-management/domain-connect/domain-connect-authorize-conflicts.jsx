@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 class DomainConnectAuthorizeConflicts extends Component {
 	placeholder = () => {
@@ -17,7 +17,7 @@ class DomainConnectAuthorizeConflicts extends Component {
 	}
 
 	render() {
-		const { isPlaceholder, conflictingRecords } = this.props;
+		const { isPlaceholder, conflictingRecords, translate } = this.props;
 
 		if ( isPlaceholder ) {
 			return this.placeholder();
@@ -76,4 +76,4 @@ DomainConnectAuthorizeConflicts.defaultProps = {
 	isPlaceholder: false
 };
 
-export default DomainConnectAuthorizeConflicts;
+export default localize( DomainConnectAuthorizeConflicts );
