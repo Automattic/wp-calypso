@@ -6,12 +6,10 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import Gridicon from 'gridicons';
-import { compact } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import QueryPlans from 'components/data/query-plans';
 import FeatureExample from 'components/feature-example';
 import FeatureComparison from 'my-sites/feature-comparison';
@@ -25,63 +23,12 @@ import { isFreePlan, isFreeJetpackPlan } from 'lib/products-values';
 import { isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getPlanBySlug } from 'state/plans/selectors';
+import { getPlan } from 'lib/plans';
 import {
 	PLAN_BUSINESS,
 	PLAN_JETPACK_BUSINESS,
-	FEATURE_ADVANCED_SEO,
-	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	FEATURE_ADVANCED_DESIGN,
-	FEATURE_UNLIMITED_STORAGE,
-	FEATURE_NO_ADS,
-	FEATURE_WORDADS_INSTANT,
-	FEATURE_VIDEO_UPLOADS,
-	FEATURE_GOOGLE_ANALYTICS,
-	FEATURE_NO_BRANDING,
-	FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-	FEATURE_BACKUP_ARCHIVE_UNLIMITED,
-	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-	FEATURE_AUTOMATED_RESTORES,
-	FEATURE_SPAM_AKISMET_PLUS,
-	FEATURE_EASY_SITE_MIGRATION,
-	FEATURE_PREMIUM_SUPPORT,
-	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
-	FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-	FEATURE_REPUBLICIZE,
-	FEATURE_REPUBLICIZE_SCHEDULING
+	FEATURE_ADVANCED_SEO
 } from 'lib/plans/constants';
-
-const businessPlanFeatures = [
-	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	FEATURE_ADVANCED_DESIGN,
-	FEATURE_UNLIMITED_STORAGE,
-	FEATURE_NO_ADS,
-	FEATURE_WORDADS_INSTANT,
-	FEATURE_VIDEO_UPLOADS,
-	FEATURE_GOOGLE_ANALYTICS,
-	FEATURE_NO_BRANDING
-];
-
-const jetpackBusinessPlanFeatures = compact( [
-	FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-	FEATURE_BACKUP_ARCHIVE_UNLIMITED,
-	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-	FEATURE_AUTOMATED_RESTORES,
-	FEATURE_SPAM_AKISMET_PLUS,
-	FEATURE_EASY_SITE_MIGRATION,
-	FEATURE_PREMIUM_SUPPORT,
-	FEATURE_WORDADS_INSTANT,
-	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
-	FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-	FEATURE_GOOGLE_ANALYTICS,
-	isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-	isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING
-] );
 
 const SeoPreviewNudge = ( { translate, domain, plan = {}, businessPlan = {}, isJetpack = false, planFeatures = [] } ) => {
 	let planPrice = translate( 'Free for life' );
@@ -105,7 +52,11 @@ const SeoPreviewNudge = ( { translate, domain, plan = {}, businessPlan = {}, isJ
 		? translate( '%(price)s per year', { args: { price: businessPlanPrice } } )
 		: translate( '%(price)s per month, billed yearly', { args: { price: businessPlanPrice } } );
 
-	const featuresToShow = planFeatures.filter( feature => ! planHasFeature( plan.product_slug, feature ) );
+	const featuresToShow = planFeatures.filter(
+		feature =>
+			! planHasFeature( plan.product_slug, feature ) &&
+			feature !== FEATURE_ADVANCED_SEO
+	);
 	return (
 		<div className="preview-upgrade-nudge">
 			<QueryPlans />
@@ -193,12 +144,13 @@ SeoPreviewNudge.propTypes = {
 const mapStateToProps = ( state, ownProps ) => {
 	const { site } = ownProps;
 	const isJetpack = isJetpackSite( state, site.ID );
+
 	return {
 		domain: site.domain,
 		plan: getPlanBySlug( state, site.plan.product_slug ),
 		businessPlan: getPlanBySlug( state, isJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS ),
 		isJetpack,
-		planFeatures: isJetpack ? jetpackBusinessPlanFeatures : businessPlanFeatures
+		planFeatures: getPlan( isJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS ).getFeatures()
 	};
 };
 
