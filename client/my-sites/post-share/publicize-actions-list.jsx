@@ -30,6 +30,8 @@ class PublicizeActionsList extends PureComponent {
 	static propTypes = {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
+		scheduledActions: PropTypes.array,
+		publishedActions: PropTypes.array,
 	};
 
 	state = {
