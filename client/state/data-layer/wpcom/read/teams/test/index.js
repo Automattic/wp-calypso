@@ -30,8 +30,6 @@ describe( 'wpcom-api', () => {
 				.get( '/rest/v1.2/read/teams' )
 				.reply( 200, successfulResponse )
 				.get( '/rest/v1.2/read/teams' )
-				.reply( 200, successfulResponse )
-				.get( '/rest/v1.2/read/teams' )
 				.reply( 500, new Error() )
 		);
 
