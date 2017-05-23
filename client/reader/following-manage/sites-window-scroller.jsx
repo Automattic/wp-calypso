@@ -15,12 +15,11 @@ import { debounce, noop, get } from 'lodash';
  * Internal Dependencies
  */
 import ConnectedSubscriptionListItem from './connected-subscription-list-item';
+import { READER_SUBSCRIPTIONS } from 'reader/follow-button/follow-sources';
 
-/**
+/*
  * SitesWindowScroller is a component that takes in a list of site/feed objects.
  * It renders a list of the sites/feeds.
- *
- * @returns {object} SitesWindowScroller React Component
  */
 class SitesWindowScroller extends Component {
 	static propTypes = {
@@ -63,6 +62,7 @@ class SitesWindowScroller extends Component {
 							feedId={ feedId }
 							siteId={ siteId }
 							onLoad={ measure }
+							followSource={ READER_SUBSCRIPTIONS }
 							showLastUpdatedDate={ this.props.showLastUpdatedDate }
 						/>
 					</div>
