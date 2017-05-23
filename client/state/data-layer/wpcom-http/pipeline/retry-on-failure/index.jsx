@@ -3,16 +3,13 @@
  */
 import { get, identity, merge } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { isGetRequest } from '../utils';
-
 import {
 	basicJitter,
 	decorrelatedJitter,
 } from './delays';
 import defaultPolicy from './policies';
+
+const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCase();
 
 const standardDelays = {
 	SIMPLE_RETRY: basicJitter,
