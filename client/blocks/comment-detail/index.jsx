@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 
@@ -13,6 +14,7 @@ import CommentDetailComment from './comment-detail-comment';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
+import { mockComment } from 'blocks/comment-detail/docs/mock-data';
 
 export class CommentDetail extends Component {
 	static propTypes = {
@@ -26,7 +28,7 @@ export class CommentDetail extends Component {
 		authorUsername: PropTypes.string,
 		commentContent: PropTypes.string,
 		commentDate: PropTypes.string,
-		commentId: PropTypes.number,
+		commentId: PropTypes.number.required,
 		commentIsApproved: PropTypes.bool,
 		commentIsLiked: PropTypes.bool,
 		commentIsSpam: PropTypes.bool,
@@ -35,7 +37,7 @@ export class CommentDetail extends Component {
 		postTitle: PropTypes.string,
 		postUrl: PropTypes.string,
 		repliedToComment: PropTypes.bool,
-		siteId: PropTypes.number,
+		siteId: PropTypes.number.required,
 	};
 
 	state = {
@@ -172,4 +174,32 @@ export class CommentDetail extends Component {
 	}
 }
 
-export default CommentDetail;
+const mapStateToProps = ( state, { commentId, siteId } ) => {
+	//const comment = getComment( state, siteId, commentId );
+	const comment = mockComment;
+
+	return {
+		authorAvatarUrl: comment.author.avatarUrl,
+		authorDisplayName: comment.author.displayName,
+		authorEmail: comment.author.email,
+		authorId: comment.author.id,
+		authorIp: comment.author.ip,
+		authorIsBlocked: comment.author.isBlocked,
+		authorUrl: comment.author.url,
+		authorUsername: comment.author.username,
+		commentContent: comment.content,
+		commentDate: comment.date,
+		commentId: commentId,
+		commentIsApproved: comment.isApproved,
+		commentIsLiked: comment.isLiked,
+		commentIsSpam: comment.isSpam,
+		commentIsTrash: comment.isTrash,
+		postAuthorDisplayName: comment.post.author.displayName,
+		postTitle: comment.post.title,
+		postUrl: comment.post.url,
+		repliedToComment: comment.replied,
+		siteId: siteId,
+	};
+};
+
+export default connect( mapStateToProps )( CommentDetail );
