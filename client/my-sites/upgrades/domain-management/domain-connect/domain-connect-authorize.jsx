@@ -67,7 +67,6 @@ class DomainConnectAuthorize extends Component {
 
 		upgradesActions.applyDnsTemplate( domain, providerId, params, ( error ) => {
 			if ( error ) {
-
 				const errorMessage = error.message ||
 					translate( 'We weren\'t able to add the DNS records needed for this service. Please try again.' );
 
