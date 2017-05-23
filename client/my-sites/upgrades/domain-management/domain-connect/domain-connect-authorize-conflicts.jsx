@@ -17,9 +17,9 @@ class DomainConnectAuthorizeConflicts extends Component {
 	}
 
 	render() {
-		const { isPlaceholder, conflictingRecords, translate } = this.props;
+		const { isLoading, conflictingRecords, translate } = this.props;
 
-		if ( isPlaceholder ) {
+		if ( isLoading ) {
 			return this.placeholder();
 		}
 
@@ -68,12 +68,12 @@ class DomainConnectAuthorizeConflicts extends Component {
 
 DomainConnectAuthorizeConflicts.propTypes = {
 	conflictingRecords: PropTypes.array,
-	isPlaceholder: PropTypes.bool
+	isLoading: PropTypes.bool
 };
 
 DomainConnectAuthorizeConflicts.defaultProps = {
 	conflictingRecords: [],
-	isPlaceholder: false
+	isLoading: false
 };
 
 export default localize( DomainConnectAuthorizeConflicts );

@@ -81,9 +81,9 @@ class DomainConnectAuthorizeFooter extends Component {
 	}
 
 	render() {
-		const { isPlaceholder } = this.props;
+		const { isLoading } = this.props;
 
-		if ( isPlaceholder ) {
+		if ( isLoading ) {
 			return this.placeholder();
 		}
 
@@ -96,14 +96,14 @@ class DomainConnectAuthorizeFooter extends Component {
 }
 
 DomainConnectAuthorizeFooter.propTypes = {
-	isPlaceholder: PropTypes.bool,
+	isLoading: PropTypes.bool,
 	onClose: PropTypes.func,
 	onConfirm: PropTypes.func,
 	showAction: PropTypes.oneOf( actionType )
 };
 
 DomainConnectAuthorizeFooter.defaultProps = {
-	isPlaceholder: false
+	isLoading: false
 };
 
 export default localize( DomainConnectAuthorizeFooter );

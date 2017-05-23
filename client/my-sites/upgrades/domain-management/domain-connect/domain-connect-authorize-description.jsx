@@ -49,9 +49,9 @@ class DomainConnectAuthorizeDescription extends Component {
 	}
 
 	render() {
-		const { isPlaceholder } = this.props;
+		const { isLoading } = this.props;
 
-		if ( isPlaceholder ) {
+		if ( isLoading ) {
 			return this.placeholder();
 		}
 
@@ -71,12 +71,12 @@ class DomainConnectAuthorizeDescription extends Component {
 }
 
 DomainConnectAuthorizeDescription.propTypes = {
-	isPlaceholder: PropTypes.bool,
+	isLoading: PropTypes.bool,
 	providerId: PropTypes.string.isRequired
 };
 
 DomainConnectAuthorizeDescription.defaultProps = {
-	isPlaceholder: false
+	isLoading: false
 };
 
 export default localize( DomainConnectAuthorizeDescription );
