@@ -37,7 +37,6 @@ class DomainConnectAuthorize extends Component {
 				this.setState( {
 					action: actionType.READY_TO_SUBMIT,
 					dnsTemplateConflicts: data.records,
-					dnsTemplateError: false
 				} );
 			} else {
 				const errorMessage = error.message ||
@@ -46,7 +45,6 @@ class DomainConnectAuthorize extends Component {
 
 				this.setState( {
 					action: actionType.CLOSE,
-					dnsTemplateError: true,
 					noticeType: noticeType.ERROR,
 					noticeMessage: errorMessage
 				} );
