@@ -1,15 +1,11 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import posts from './posts/reducer';
+import { combineReducersWithPersistence } from 'state/utils';
 import lists from './lists/reducer';
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	posts,
 	lists
 } );

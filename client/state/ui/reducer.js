@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -14,7 +9,7 @@ import {
 	DESERIALIZE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import editor from './editor/reducer';
 import dropZone from './drop-zone/reducer';
 import guidedTour from './guided-tours/reducer';
@@ -88,7 +83,7 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 	return state;
 };
 
-const reducer = combineReducers( {
+const reducer = combineReducersWithPersistence( {
 	section,
 	isLoading,
 	layoutFocus,
@@ -110,10 +105,13 @@ const reducer = combineReducers( {
 	isNotificationsOpen,
 } );
 
-export default function( state, action ) {
+const ui = function( state, action ) {
 	if ( SERIALIZE === action.type || DESERIALIZE === action.type ) {
 		return {};
 	}
 
 	return reducer( state, action );
-}
+};
+ui.hasCustomPersistence = true;
+
+export default ui;

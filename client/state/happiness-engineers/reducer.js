@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import { itemsSchema } from './schema';
 import {
 	HAPPINESS_ENGINEERS_FETCH,
@@ -45,7 +45,7 @@ export const items = createReducer( null, {
 	}
 }, itemsSchema );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	items
 } );

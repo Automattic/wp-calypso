@@ -1,15 +1,11 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
 	READER_SIDEBAR_LISTS_TOGGLE,
 	READER_SIDEBAR_TAGS_TOGGLE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 
 export function isListsOpen( state = false, action ) {
 	switch ( action.type ) {
@@ -29,7 +25,7 @@ export function isTagsOpen( state = false, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	isListsOpen,
 	isTagsOpen
 } );

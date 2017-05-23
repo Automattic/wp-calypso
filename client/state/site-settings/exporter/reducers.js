@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -12,25 +7,19 @@ import {
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	EXPORT_POST_TYPE_SET,
 	EXPORT_POST_TYPE_FIELD_SET,
-	SERIALIZE,
-	DESERIALIZE,
 	EXPORT_CLEAR,
 	EXPORT_COMPLETE,
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
 	EXPORT_FAILURE
 } from 'state/action-types';
-
+import { combineReducersWithPersistence } from 'state/utils';
 import { States } from './constants';
 
 export function selectedPostType( state = null, action ) {
 	switch ( action.type ) {
 		case EXPORT_POST_TYPE_SET:
 			return action.postType;
-		case SERIALIZE:
-			return null;
-		case DESERIALIZE:
-			return null;
 	}
 	return state;
 }
@@ -61,10 +50,6 @@ export function selectedAdvancedSettings( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: postTypes( state[ action.siteId ], action )
 			} );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -97,10 +82,6 @@ export function exportingState( state = {}, { type, siteId } ) {
 			return Object.assign( {}, state, {
 				[ siteId ]: States.READY
 			} );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -122,10 +103,6 @@ export function fetchingAdvancedSettings( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: false
 			} );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -142,10 +119,6 @@ export function advancedSettings( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: action.advancedSettings
 			} );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -156,16 +129,12 @@ export function downloadURL( state = null, action ) {
 			return action.downloadURL;
 		case EXPORT_CLEAR:
 			return null;
-		case SERIALIZE:
-			return null;
-		case DESERIALIZE:
-			return null;
 	}
 
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	selectedPostType,
 	selectedAdvancedSettings,
 	exportingState,

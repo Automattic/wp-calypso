@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_SETTINGS,
@@ -86,7 +82,7 @@ const items = createReducer( {}, {
 	} ),
 }, itemsSchema );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	requesting,
 	saveStatus,

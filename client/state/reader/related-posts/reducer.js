@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  */
-import { combineReducers } from 'redux';
 import assign from 'lodash/assign';
 import partial from 'lodash/partial';
 import map from 'lodash/map';
@@ -9,7 +8,8 @@ import map from 'lodash/map';
 /**
  * Internal Dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import {
 	READER_RELATED_POSTS_RECEIVE,
 	READER_RELATED_POSTS_REQUEST,
@@ -49,7 +49,7 @@ export const queuedRequests = createReducer(
 	}
 );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	queuedRequests,
 } );

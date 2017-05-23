@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -12,6 +7,7 @@ import {
 	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 
 /**
  * Tracks whether or not the modal should close.
@@ -62,7 +58,7 @@ export const uploadProgress = ( state = null, { type, percentage } ) => {
  */
 export const showError = ( state = false, { type } ) => type === VIDEO_EDITOR_SHOW_ERROR;
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	closeModal,
 	showError,
 	uploadProgress,

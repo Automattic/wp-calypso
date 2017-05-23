@@ -212,7 +212,7 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 		};
 	}
 
-	return ( state = initialState, action ) => {
+	const reducer = ( state = initialState, action ) => {
 		const { type } = action;
 
 		if ( 'production' !== process.env.NODE_ENV && 'type' in action && ! type ) {
@@ -226,6 +226,11 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 
 		return state;
 	};
+
+	//used to propagate actions properly when combined in combineReducersWithPersistence
+	reducer.hasCustomPersistence = true;
+
+	return reducer;
 }
 
 /**
@@ -273,27 +278,28 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  * @returns {function} wrapped reducer handling validation on DESERIALIZE and
  * returns initial state if no schema is provided on SERIALIZE and DESERIALIZE.
  */
-export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => {
-	const shouldDispatchAction = reducer.hasSchema || reducer.hasCustomPersistence;
+export const withSchemaValidation = ( schema, reducer ) => {
+	const wrappedReducer = ( state, action ) => {
+		if ( SERIALIZE === action.type ) {
+			return schema ? reducer( state, action ) : reducer( undefined, { type: '@@calypso/INIT' } );
+		}
+		if ( DESERIALIZE === action.type ) {
+			if ( ! schema ) {
+				return reducer( undefined, { type: '@@calypso/INIT' } );
+			}
 
-	if ( SERIALIZE === action.type ) {
-		return schema || shouldDispatchAction ? reducer( state, action ) : reducer( undefined, { type: '@@calypso/INIT' } );
-	}
-	if ( DESERIALIZE === action.type ) {
-		if ( shouldDispatchAction ) {
-			return reducer( state, action );
+			return state && isValidStateWithSchema( state, schema )
+				? state
+				: reducer( undefined, { type: '@@calypso/INIT' } );
 		}
 
-		if ( ! schema ) {
-			return reducer( undefined, { type: '@@calypso/INIT' } );
-		}
+		return reducer( state, action );
+	};
 
-		return state && isValidStateWithSchema( state, schema )
-			? state
-			: reducer( undefined, { type: '@@calypso/INIT' } );
-	}
+	//used to propagate actions properly when combined in combineReducersWithPersistence
+	wrappedReducer.hasCustomPersistence = true;
 
-	return reducer( state, action );
+	return wrappedReducer;
 };
 
 /**
@@ -364,15 +370,12 @@ export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => 
  * @returns {function} - Returns the combined reducer function
  */
 export function combineReducersWithPersistence( reducers ) {
-	const [ validatedReducers, validatedReducersHasSchema ] = reduce( reducers, ( [ validated, hasSchema ], next, key ) => {
-		const { schema } = next;
-		return [
-			{ ...validated, [ key ]: withSchemaValidation( schema, next ) },
-			hasSchema || !! schema || next.hasSchema || next.hasCustomPersistence
-		];
-	}, [ {}, false ] );
+	const validatedReducers = reduce( reducers, ( validated, next, key ) => {
+		const { schema, hasCustomPersistence } = next;
+		return { ...validated, [ key ]: hasCustomPersistence ? next : withSchemaValidation( schema, next ) };
+	}, {} );
 	const combined = combineReducers( validatedReducers );
-	combined.hasSchema = validatedReducersHasSchema;
+	combined.hasCustomPersistence = true;
 	return combined;
 }
 

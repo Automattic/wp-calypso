@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { merge } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { shortcodesSchema } from './schema';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import {
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
@@ -59,7 +58,7 @@ export const items = createReducer( {}, {
 	}
 }, shortcodesSchema );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	items
 } );

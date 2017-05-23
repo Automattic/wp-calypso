@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import keyBy from 'lodash/keyBy';
 
 /**
  * Internal dependencies
  */
-import { isValidStateWithSchema } from 'state/utils';
+import { combineReducersWithPersistence, isValidStateWithSchema } from 'state/utils';
+
 import * as schema from './schema';
 import taxonomies from './taxonomies/reducer';
 import {
@@ -35,10 +35,6 @@ export function requesting( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: POST_TYPES_REQUEST === action.type
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -64,14 +60,16 @@ export function items( state = {}, action ) {
 			if ( isValidStateWithSchema( state, schema.items ) ) {
 				return state;
 			}
-
 			return {};
+		case SERIALIZE:
+			return state;
 	}
 
 	return state;
 }
+items.hasCustomPersistence = true;
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	items,
 	taxonomies

@@ -1,12 +1,7 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
@@ -128,8 +123,8 @@ const isReady = createReducer( false, {
 	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: () => true,
 } );
 
-export default combineReducers( {
-	data: combineReducers( {
+export default combineReducersWithPersistence( {
+	data: combineReducersWithPersistence( {
 		phone,
 		phoneValidated,
 		email,

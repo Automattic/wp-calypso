@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 
 /**
  * Returns the updated editor last draft site ID state after an action has been
@@ -42,7 +38,7 @@ export function postId( state = null, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	siteId,
 	postId
 } );

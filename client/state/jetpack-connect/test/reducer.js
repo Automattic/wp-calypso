@@ -314,28 +314,6 @@ describe( 'reducer', () => {
 			expect( state ).to.have.property( 'installConfirmedByUser' )
 				.to.be.true;
 		} );
-
-		it( 'should not persist state', () => {
-			const originalState = deepFreeze( {
-				url: 'https://example.wordpress.com'
-			} );
-			const state = jetpackConnectSite( originalState, {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.be.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const originalState = deepFreeze( {
-				url: 'https://example.wordpress.com'
-			} );
-			const state = jetpackConnectSite( originalState, {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.be.eql( {} );
-		} );
 	} );
 
 	describe( '#jetpackConnectAuthorize()', () => {
@@ -636,19 +614,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not persist state', () => {
-			const original = deepFreeze( {
-				isAuthorizing: false,
-				site_id: 0,
-				authorizationError: false,
-				ssoUrl: 'http://example.wordpress.com'
-			} );
-
-			const state = jetpackSSO( original, { type: SERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
-
 		it( 'should set isValidating to true when validating', () => {
 			const state = jetpackSSO( undefined, {
 				type: JETPACK_CONNECT_SSO_VALIDATION_REQUEST
@@ -738,30 +703,6 @@ describe( 'reducer', () => {
 			const state = jetpackSSO( undefined, action );
 
 			expect( state ).to.have.property( 'ssoUrl', action.ssoUrl );
-		} );
-
-		it( 'should not persist state', () => {
-			const originalState = deepFreeze( {
-				ssoUrl: 'http://example.wordpress.com',
-				siteUrl: 'http://example.wordpress.com'
-			} );
-			const state = jetpackSSO( originalState, {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.be.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const originalState = deepFreeze( {
-				ssoUrl: 'http://example.wordpress.com',
-				siteUrl: 'http://example.wordpress.com'
-			} );
-			const state = jetpackSSO( originalState, {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.be.eql( {} );
 		} );
 	} );
 

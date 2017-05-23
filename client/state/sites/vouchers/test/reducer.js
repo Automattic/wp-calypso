@@ -8,10 +8,11 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import vouchersReducer, {
-	items as itemsReducer,
+	items,
 	requesting as requestReducer,
 	errors as errorsReducer
 } from '../reducer';
+import { withSchemaValidation } from 'state/utils';
 
 /**
  * Action types
@@ -43,6 +44,8 @@ import {
 } from './fixture';
 
 import { useSandbox } from 'test/helpers/use-sinon';
+
+const itemsReducer = withSchemaValidation( items.schema, items );
 
 describe( 'reducer', () => {
 	let sandbox;

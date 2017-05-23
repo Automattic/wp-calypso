@@ -1,13 +1,9 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import edits from './edits-reducer';
+import { combineReducersWithPersistence } from 'state/utils';
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	edits
 } );

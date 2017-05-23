@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -12,7 +7,7 @@ import {
 	USER_SUGGESTIONS_REQUEST_FAILURE,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -50,7 +45,7 @@ export const items = createReducer( {}, {
 	},
 }, itemsSchema );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	items,
 } );

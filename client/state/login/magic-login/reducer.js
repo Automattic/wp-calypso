@@ -1,12 +1,7 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 
 import {
 	CHECK_YOUR_EMAIL_PAGE,
@@ -89,7 +84,7 @@ export const requestEmailSuccess = createReducer( false, {
 	[ MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS ]: () => true,
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	emailAddressFormInput,
 	isFetchingEmail,
 	requestAuthError,

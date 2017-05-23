@@ -1,13 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import { siteRolesSchema } from './schema';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import {
 	SITE_ROLES_RECEIVE,
 	SITE_ROLES_REQUEST,
@@ -42,7 +37,7 @@ export const items = createReducer( {}, {
 	[ SITE_ROLES_RECEIVE ]: ( state, { siteId, roles } ) => ( { ...state, [ siteId ]: roles } )
 }, siteRolesSchema );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	items
 } );
