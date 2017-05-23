@@ -43,10 +43,6 @@ export const getHappychatChatStatus = createSelector(
 
 export const getHappychatLastActivityTimestamp = state => state.happychat.lastActivityTimestamp;
 
-export const getHappychatTranscriptTimestamp = state => (
-	state.happychat.transcript_timestamp || getHappychatLastActivityTimestamp( state )
-);
-
 /**
  * Gets the current happychat connection status
  * @param {Object} state - global redux state
