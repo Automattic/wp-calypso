@@ -27,6 +27,7 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { formatUrlForDisplay, getFeedTitle } from 'reader/lib/feed-display-helper';
 import { addQueryArgs } from 'lib/url';
+import { READER_SUBSCRIPTIONS } from 'reader/follow-button/follow-sources';
 
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {
@@ -125,6 +126,7 @@ class FollowingManageSubscriptions extends Component {
 							remoteTotalCount={ sortedFollows.length }
 							forceRefresh={ [ feeds, sortedFollows ] }
 							windowScrollerRef={ this.props.windowScrollerRef }
+							followSource={ READER_SUBSCRIPTIONS }
 						/> }
 					{ noSitesMatchQuery &&
 						<span>

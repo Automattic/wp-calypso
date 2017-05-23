@@ -39,6 +39,7 @@ import {
 } from 'reader/follow-button/follow-sources';
 import { resemblesUrl, addSchemeIfMissing, withoutHttp } from 'lib/url';
 import { getReaderFollowsCount } from 'state/selectors';
+import { recordTrack } from 'reader/stats';
 
 const PAGE_SIZE = 4;
 
@@ -130,6 +131,7 @@ class FollowingManage extends Component {
 	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
 
 	handleShowMoreClicked = () => {
+		recordTrack( 'calypso_reader_following_manage_search_more_click' );
 		page.replace(
 			addQueryArgs( { showMoreResults: true }, window.location.pathname + window.location.search )
 		);
