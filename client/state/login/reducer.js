@@ -13,8 +13,8 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
-	TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
+	TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 } from 'state/action-types';
@@ -55,7 +55,7 @@ export const twoFactorAuth = createReducer( null, {
 	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE ]: updateTwoStepNonce,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: updateTwoStepNonce,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: updateTwoStepNonce,
-	[ TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE ]: updateTwoStepNonce,
+	[ TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST_FAILURE ]: updateTwoStepNonce,
 	[ LOGIN_REQUEST_FAILURE ]: () => null
 } );
 
@@ -74,7 +74,7 @@ export const twoFactorAuthRequestError = createReducer( null, {
 export const twoFactorAuthPushPoll = createReducer( { inProgress: false, success: false }, {
 	[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START ]: state => ( { ...state, inProgress: true, success: false } ),
 	[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP ]: state => ( { ...state, inProgress: false } ),
-	[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED ]: state => ( { ...state, inProgress: false, success: true } ),
+	[ TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST_SUCCESS ]: state => ( { ...state, inProgress: false, success: true } ),
 } );
 
 export default combineReducersWithPersistence( {
