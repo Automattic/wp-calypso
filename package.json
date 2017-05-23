@@ -228,6 +228,7 @@
     "eslines": "0.0.13",
     "eslint": "3.8.1",
     "eslint-config-wpcalypso": "0.8.0",
+    "eslint-plugin-jest": "20.0.3",
     "eslint-plugin-react": "6.4.1",
     "eslint-plugin-wpcalypso": "3.3.0",
     "glob": "7.0.3",

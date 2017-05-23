@@ -13,7 +13,7 @@ const log = debug( 'calypso:test:use-mockery' );
  * @param  {[type]} afterActions  A callback invoked just before mockery has been spun down. Called with no params. Can return a Promise to indicate that it's doing async work.
  */
 export default function useMockery( beforeActions = noop, afterActions = noop ) {
-	before( function turnOnMockery() {
+	beforeAll( function turnOnMockery() {
 		// mockery can take a lot of resources, increasing timeout a bit so we don't run into errors
 		this.timeout( 10000 );
 		log( 'turning on mockery' );
@@ -25,7 +25,7 @@ export default function useMockery( beforeActions = noop, afterActions = noop ) 
 		return beforeActions( mockery );
 	} );
 
-	after( function turnOffMockery() {
+	afterAll( function turnOffMockery() {
 		log( 'turning off mockery' );
 		const actionReturn = afterActions( mockery );
 		mockery.deregisterAll();

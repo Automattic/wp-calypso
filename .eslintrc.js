@@ -1,9 +1,13 @@
 module.exports = {
 	root: true,
-	'extends': 'wpcalypso/react',
+	'extends': [
+		'wpcalypso/react',
+		'plugin:jest/recommended',
+	],
 	parser: 'babel-eslint',
 	env: {
 		browser: true,
+		'jest/globals': true,
 		mocha: true,
 		node: true
 	},
@@ -11,6 +15,9 @@ module.exports = {
 		asyncRequire: true,
 		PROJECT_NAME: true
 	},
+	plugins: [
+		'jest'
+	],
 	rules: {
 		camelcase: 0, // REST API objects include underscores
 		'max-len': [ 2, { code: 140 } ],

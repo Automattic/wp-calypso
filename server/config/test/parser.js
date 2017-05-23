@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import mockery from 'mockery';
 import useMockery from 'test/helpers/use-mockery';
 
@@ -15,7 +14,7 @@ describe( 'parser', () => {
 
 	useMockery();
 
-	before( () => {
+	beforeAll( () => {
 		mockery.registerAllowable( 'fs', true );
 	} );
 
@@ -33,7 +32,7 @@ describe( 'parser', () => {
 
 		const data = parser( '/invalid-path' );
 
-		expect( data ).to.eql( { serverData: {}, clientData: {} } );
+		expect( data ).toEqual( { serverData: {}, clientData: {} } );
 	} );
 
 	it( 'server should have secrets and client should not', () => {
@@ -42,8 +41,8 @@ describe( 'parser', () => {
 
 		const data = parser( '/valid-path' );
 
-		expect( data.clientData ).to.not.have.property( 'secret' );
-		expect( data.serverData ).to.have.property( 'secret' );
+		expect( data.clientData ).not.toHaveProperty( 'secret' );
+		expect( data.serverData ).toHaveProperty( 'secret' );
 	} );
 
 	it( 'should cascade configs', () => {
@@ -51,22 +50,20 @@ describe( 'parser', () => {
 		parser = require( 'config/parser' );
 
 		const { serverData: data } = parser( '/valid-path', {
-			env: 'myenv'
+			env: 'myenv',
 		} );
 
-		expect( data ).to.have.property( 'shared_only', 'shared' );
-		expect( data ).to.have.property( 'myenv_only', 'myenv' );
-		expect( data ).to.have.property( 'myenvlocal_only', 'myenvlocal' );
-		expect( data ).to.have.property( 'myenv_override', 'myenv' );
-		expect( data ).to.have.property( 'myenvlocal_override', 'myenvlocal' );
-		expect( data ).to.have.property( 'features' )
-			.that.is.an( 'object' )
-			.that.deep.equals( {
-				enabledFeature1: true,
-				enabledFeature2: true,
-				disabledFeature1: false,
-				disabledFeature2: false
-			} );
+		expect( data ).toHaveProperty( 'shared_only', 'shared' );
+		expect( data ).toHaveProperty( 'myenv_only', 'myenv' );
+		expect( data ).toHaveProperty( 'myenvlocal_only', 'myenvlocal' );
+		expect( data ).toHaveProperty( 'myenv_override', 'myenv' );
+		expect( data ).toHaveProperty( 'myenvlocal_override', 'myenvlocal' );
+		expect( typeof data ).toBe( 'object' ).that.deep.equals( {
+			enabledFeature1: true,
+			enabledFeature2: true,
+			disabledFeature1: false,
+			disabledFeature2: false,
+		} );
 	} );
 
 	it( 'should override enabled feature when disabledFeatures set', () => {
@@ -75,10 +72,10 @@ describe( 'parser', () => {
 
 		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv',
-			disabledFeatures: 'enabledFeature2'
+			disabledFeatures: 'enabledFeature2',
 		} );
 
-		expect( data ).to.have.deep.property( 'features.enabledFeature2', false );
+		expect( data ).toHaveProperty( 'features.enabledFeature2', false );
 	} );
 
 	it( 'should override disabled feature when enabledFeatures set', () => {
@@ -87,9 +84,9 @@ describe( 'parser', () => {
 
 		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv',
-			enabledFeatures: 'disabledFeature2'
+			enabledFeatures: 'disabledFeature2',
 		} );
 
-		expect( data ).to.have.deep.property( 'features.disabledFeature2', true );
+		expect( data ).toHaveProperty( 'features.disabledFeature2', true );
 	} );
 } );

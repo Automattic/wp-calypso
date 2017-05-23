@@ -1721,6 +1721,10 @@
       "version": "0.8.0",
       "dev": true
     },
+    "eslint-plugin-jest": {
+      "version": "20.0.3",
+      "dev": true
+    },
     "eslint-plugin-react": {
       "version": "6.4.1",
       "dev": true,
