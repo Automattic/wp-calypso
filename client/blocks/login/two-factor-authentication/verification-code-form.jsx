@@ -113,7 +113,9 @@ class VerificationCodeForm extends Component {
 							value={ this.state.twoStepCode }
 							onChange={ this.onChangeField }
 							className={ classNames( { 'is-error': isError } ) }
-							name="twoStepCode" />
+							name="twoStepCode"
+							pattern="[0-9]*"
+							type="tel" />
 
 						{ isError && (
 							<FormInputValidation isError text={ twoFactorAuthRequestError } />
