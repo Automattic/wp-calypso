@@ -9,6 +9,13 @@ import page from 'page';
 import controller from './controller';
 import sitesController from 'my-sites/controller';
 
+const redirectToStoreWithInterval = context => {
+	const intervalType = context && context.params && context.params.intervalType
+		? context.params.intervalType
+		: '';
+	page.redirect( `/jetpack/connect/store/${ intervalType }` );
+};
+
 export default function() {
 	page( '/jetpack/connect/install', controller.install );
 
@@ -49,20 +56,10 @@ export default function() {
 	page( '/jetpack/connect/store/:intervalType', controller.plansLanding );
 
 	page( '/jetpack/connect/vaultpress', '/jetpack/connect/store' );
-	page( '/jetpack/connect/vaultpress/:intervalType', context => {
-		const intervalType = context && context.params && context.params.intervalType
-			? context.params.intervalType
-			: '';
-		page.redirect( `/jetpack/connect/store/${ intervalType }` );
-	} );
+	page( '/jetpack/connect/vaultpress/:intervalType', redirectToStoreWithInterval );
 
 	page( '/jetpack/connect/akismet', '/jetpack/connect/store' );
-	page( '/jetpack/connect/akismet/:intervalType', context => {
-		const intervalType = context && context.params && context.params.intervalType
-			? context.params.intervalType
-			: '';
-		page.redirect( `/jetpack/connect/store/${ intervalType }` );
-	} );
+	page( '/jetpack/connect/akismet/:intervalType', redirectToStoreWithInterval );
 
 	page(
 		'/jetpack/connect/:locale?',
