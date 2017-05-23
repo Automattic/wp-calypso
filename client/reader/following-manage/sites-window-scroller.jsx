@@ -15,7 +15,6 @@ import { debounce, noop, get } from 'lodash';
  * Internal Dependencies
  */
 import ConnectedSubscriptionListItem from './connected-subscription-list-item';
-import { READER_SUBSCRIPTIONS } from 'reader/follow-button/follow-sources';
 
 /*
  * SitesWindowScroller is a component that takes in a list of site/feed objects.
