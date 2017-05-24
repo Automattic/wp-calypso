@@ -39,8 +39,7 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 	};
 
 	const setStockQuantity = ( e ) => {
-		const stock_quantity = e.target.value;
-		Number( stock_quantity ) >= 0 && editProduct( product, { stock_quantity } );
+		editProduct( product, { stock_quantity: e.target.value } );
 	};
 
 	const setBackorders = ( e ) => {
@@ -92,8 +91,7 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 		</Card>
 	);
 
-	const stockClasses = classNames( {
-		'products__product-form-stock': true,
+	const stockClasses = classNames( 'products__product-form-stock', {
 		'products__product-form-stock-disabled': ! product.manage_stock,
 	} );
 
@@ -112,7 +110,7 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 						<FormLabel>{ translate( 'Quantity' ) }</FormLabel>
 						<FormTextInput
 							name="stock_quantity"
-							value={ product.stock_quantity || 0 }
+							value={ product.stock_quantity || '' }
 							type="number"
 							min="0"
 							onChange={ setStockQuantity }
