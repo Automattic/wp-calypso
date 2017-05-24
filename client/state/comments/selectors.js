@@ -75,7 +75,7 @@ export const getPostOldestCommentDate = createSelector(
 export const getPostCommentsTree = createSelector(
 	( state, siteId, postId, status = 'approved' ) => {
 		const allItems = getPostCommentItems( state, siteId, postId );
-		const items = status !== 'all' ? filter( allItems, { status } ) : allItems;
+		const items = status !== 'all' ? filter( allItems, item => item.isPlaceholder || item.status === status ) : allItems;
 
 		return {
 			...keyBy( map( items, item => ( {
