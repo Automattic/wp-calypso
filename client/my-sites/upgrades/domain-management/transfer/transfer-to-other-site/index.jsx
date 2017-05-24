@@ -78,12 +78,11 @@ class TransferToOtherSite extends React.Component {
 					this.props.successNotice( successMessage, { duration: 10000, isPersistent: true } );
 					page( paths.domainManagementList( this.props.selectedSite.slug ) );
 				}, ( error ) => {
+					this.setState( { disableDialogButtons: false } );
+					closeDialog();
 					this.props.errorNotice( error.message || defaultErrorMessage );
-				} )
-			.then( () => {
-				this.setState( { disableDialogButtons: false } );
-				closeDialog();
-			} );
+				}
+			);
 	}
 
 	handleDialogClose = () => {
