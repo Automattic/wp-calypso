@@ -13,7 +13,7 @@
 
 	}
 
-	.step-header {
+	.formatted-header{
 		margin-bottom: 16px;
 	}
 }
@@ -512,8 +512,8 @@
 		margin-right: 0;
 	}
 
-	.step-header,
-	.step-header.is-without-subhead {
+	.formatted-header,
+	.formatted-header.is-without-subhead {
 		margin-bottom: 8px;
 	}
 }
