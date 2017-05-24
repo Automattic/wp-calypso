@@ -14,7 +14,6 @@ import {
 	incompleteUrlRedirects,
 	initAbTests,
 	legacyRedirects,
-	loadSubscriptions,
 	preloadReaderBundle,
 	prettyRedirects,
 	readA8C,
@@ -30,15 +29,7 @@ function forceTeamA8C( context, next ) {
 
 export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
-		page(
-			'/',
-			preloadReaderBundle,
-			loadSubscriptions,
-			initAbTests,
-			updateLastRoute,
-			sidebar,
-			following
-		);
+		page( '/', preloadReaderBundle, initAbTests, updateLastRoute, sidebar, following );
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/' );
@@ -50,7 +41,7 @@ export default function() {
 		page( '/read/feed', '/' );
 
 		// Feed stream
-		page( '/read/*', preloadReaderBundle, loadSubscriptions, initAbTests );
+		page( '/read/*', preloadReaderBundle, initAbTests );
 		page( '/read/blog/feed/:feed_id', legacyRedirects );
 		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page(
