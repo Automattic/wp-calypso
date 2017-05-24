@@ -1,15 +1,11 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import approve from './approve/reducer';
+import { combineReducersWithPersistence } from 'state/utils';
 import status from './status/reducer';
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	approve,
 	status
 } );

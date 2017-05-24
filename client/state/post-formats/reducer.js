@@ -1,13 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import { postFormatsItemsSchema } from './schema';
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,
@@ -43,7 +38,7 @@ export const items = createReducer( {}, {
 	}
 }, postFormatsItemsSchema );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	items
 } );

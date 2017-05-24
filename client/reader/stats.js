@@ -72,6 +72,9 @@ function getLocation() {
 	if ( path.indexOf( '/following/edit' ) === 0 ) {
 		return 'following_edit';
 	}
+	if ( path.indexOf( '/following/manage' ) === 0 ) {
+		return 'following_manage';
+	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
 		return 'discover';
 	}
@@ -176,6 +179,15 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
 		console.warn( 'Consider whitelisting reader track', eventName ); //eslint-disable-line no-console
 	}
+}
+
+export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
+	recordTrack( eventName, eventProperties );
+	recordTracksRailcarInteract(
+		eventName,
+		railcar,
+		pick( eventProperties, [ 'ui_position', 'ui_algo' ] )
+	);
 }
 
 export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {

@@ -1,16 +1,10 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import suggestions from './suggestions/reducer';
+import { combineReducersWithPersistence } from 'state/utils';
 import {
 	USER_RECEIVE,
-	DESERIALIZE,
-	SERIALIZE
 } from 'state/action-types';
 
 /**
@@ -26,16 +20,12 @@ export function items( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.user.ID ]: action.user
 			} );
-		case DESERIALIZE:
-			return {};
-		case SERIALIZE:
-			return {};
 	}
 
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	suggestions,
 } );

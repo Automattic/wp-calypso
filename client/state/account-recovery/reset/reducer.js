@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { stubTrue, stubFalse } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
@@ -26,7 +26,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
 } from 'state/action-types';
 
-const options = combineReducers( {
+const options = combineReducersWithPersistence( {
 	isRequesting: createReducer( false, {
 		[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: stubTrue,
 		[ ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE ]: stubFalse,
@@ -54,7 +54,7 @@ const method = createReducer( null, {
 	[ ACCOUNT_RECOVERY_RESET_SET_METHOD ]: ( state, action ) => action.method,
 } );
 
-const requestReset = combineReducers( {
+const requestReset = combineReducersWithPersistence( {
 	isRequesting: createReducer( false, {
 		[ ACCOUNT_RECOVERY_RESET_REQUEST ]: stubTrue,
 		[ ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS ]: stubFalse,
@@ -72,7 +72,7 @@ const key = createReducer( null, {
 	[ ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY ]: ( state, action ) => action.key,
 } );
 
-const validate = combineReducers( {
+const validate = combineReducersWithPersistence( {
 	isRequesting: createReducer( false, {
 		[ ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST ]: stubTrue,
 		[ ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS ]: stubFalse,
@@ -86,7 +86,7 @@ const validate = combineReducers( {
 	} ),
 } );
 
-const resetPassword = combineReducers( {
+const resetPassword = combineReducersWithPersistence( {
 	isRequesting: createReducer( false, {
 		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST ]: stubTrue,
 		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS ]: stubFalse,
@@ -104,7 +104,7 @@ const resetPassword = combineReducers( {
 	} ),
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	options,
 	userData,
 	method,

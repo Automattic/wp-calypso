@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import debugFactory from 'debug';
 import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
  */
-import { isValidStateWithSchema } from 'state/utils';
+import { combineReducersWithPersistence, isValidStateWithSchema } from 'state/utils';
+
 import {
 	settingsSchema,
 	systemSchema,
@@ -115,6 +115,7 @@ function system( state = {}, action ) {
 
 	return state;
 }
+system.hasCustomPersistence = true;
 
 // If you change this, also change the corresponding test
 const UNPERSISTED_SETTINGS_NODES = [
@@ -167,8 +168,9 @@ function settings( state = {}, action ) {
 
 	return state;
 }
+settings.hasCustomPersistence = true;
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	settings,
 	system
 } );

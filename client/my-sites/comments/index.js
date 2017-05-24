@@ -17,7 +17,7 @@ export default function() {
 			controller.sites
 		);
 
-		page( '/comments/:site',
+		page( '/comments/:status?/:site',
 			controller.siteSelection,
 			controller.navigation,
 			comments

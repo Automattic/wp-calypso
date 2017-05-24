@@ -1,54 +1,57 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import noop from 'lodash/noop';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
-export const Notice = React.createClass( {
-	dismissTimeout: null,
+export class Notice extends Component {
+	static defaultProps = {
+		className: '',
+		duration: 0,
+		icon: null,
+		isCompact: false,
+		onDismissClick: noop,
+		showDismiss: true,
+		status: null,
+		text: null,
+	};
 
-	getDefaultProps() {
-		return {
-			duration: 0,
-			status: null,
-			showDismiss: true,
-			className: '',
-			onDismissClick: noop
-		};
-	},
-
-	propTypes: {
+	static propTypes = {
+		className: PropTypes.string,
+		duration: React.PropTypes.number,
+		icon: PropTypes.string,
+		isCompact: PropTypes.bool,
+		onDismissClick: PropTypes.func,
+		showDismiss: PropTypes.bool,
 		status: PropTypes.oneOf( [
+			'is-error',
 			'is-info',
 			'is-success',
-			'is-error',
 			'is-warning',
 		] ),
-		showDismiss: PropTypes.bool,
-		isCompact: PropTypes.bool,
-		duration: React.PropTypes.number,
 		text: PropTypes.oneOfType( [
+			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) ),
 			PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
-			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) )
 		] ),
-		icon: PropTypes.string,
-		className: PropTypes.string
-	},
+		translate: PropTypes.func.isRequired,
+	};
+
+	dismissTimeout = null;
 
 	componentDidMount() {
 		if ( this.props.duration > 0 ) {
 			this.dismissTimeout = setTimeout( this.props.onDismissClick, this.props.duration );
 		}
-	},
+	}
 
 	componentWillUnmount() {
 		if ( this.dismissTimeout ) {
 			clearTimeout( this.dismissTimeout );
 		}
-	},
+	}
 
 	getIcon() {
 		let icon;
@@ -72,16 +75,24 @@ export const Notice = React.createClass( {
 		}
 
 		return icon;
-	},
+	}
 
 	render() {
-		const { status, className, isCompact, showDismiss } = this.props;
+		const {
+			children,
+			className,
+			icon,
+			isCompact,
+			onDismissClick,
+			showDismiss,
+			status,
+			text,
+			translate,
+		} = this.props;
 		const classes = classnames( 'notice', status, className, {
 			'is-compact': isCompact,
 			'is-dismissable': showDismiss
 		} );
-
-		const { icon, text, children, onDismissClick, translate } = this.props;
 
 		return (
 			<div className={ classes }>
@@ -95,12 +106,12 @@ export const Notice = React.createClass( {
 				{ showDismiss && (
 					<span tabIndex="0" className="notice__dismiss" onClick={ onDismissClick } >
 						<Gridicon icon="cross" size={ 24 } />
-						<span className="screen-reader-text">{ translate( 'Dismiss' ) }</span>
+						<span className="notice__screen-reader-text screen-reader-text">{ translate( 'Dismiss' ) }</span>
 					</span>
 				) }
 			</div>
 		);
 	}
-} );
+}
 
 export default localize( Notice );

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { find, get, isEqual, merge, omitBy, pickBy, reduce } from 'lodash';
 
 /**
@@ -23,9 +22,9 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	SERIALIZE,
 } from 'state/action-types';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 function updatePostSubscription( state, { payload, type } ) {
 	const follow = find( state, { blog_ID: +payload.blogId } );
@@ -196,7 +195,7 @@ export const lastSyncTime = createReducer( null, {
 	},
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	itemsCount,
 	lastSyncTime,

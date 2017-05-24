@@ -145,6 +145,7 @@ function mediaButton( editor ) {
 	} )();
 
 	updateMedia = debounce( function() {
+		const originalSelectedNode = editor.selection.getNode();
 		let isTransientDetected = false,
 			transients = 0,
 			content, images;
@@ -377,6 +378,12 @@ function mediaButton( editor ) {
 				editor.fire( 'SetTextAreaContent', { content } );
 			}
 
+			// We have just replaced some image nodes, potentially losing selection/focus.
+			// So if an image node was selected and one isn't now, re-select it.
+			if ( 'IMG' === originalSelectedNode.nodeName ) {
+				reselectImage();
+			}
+
 			// Trigger an editor change so that dirty detection and
 			// autosave take effect
 			editor.fire( 'change' );
@@ -392,6 +399,19 @@ function mediaButton( editor ) {
 			numOfImagesToUpdate = null;
 		}
 	} );
+
+	function reselectImage() {
+		// Re-select image node
+		let replacement = editor.selection.getStart();
+		if ( 'IMG' !== replacement.nodeName ) {
+			replacement = replacement.querySelector( 'img' );
+		}
+
+		if ( replacement ) {
+			editor.selection.select( replacement );
+			editor.selection.controlSelection.showResizeRect( replacement );
+		}
+	}
 
 	function hideDropZoneOnDrag( event ) {
 		renderDropZone( { visible: event.type === 'dragend' } );
@@ -593,16 +613,7 @@ function mediaButton( editor ) {
 		// Replace selected content
 		editor.selection.setContent( markup );
 
-		// Re-select image node
-		let replacement = editor.selection.getStart();
-		if ( 'IMG' !== replacement.nodeName ) {
-			replacement = replacement.querySelector( 'img' );
-		}
-
-		if ( replacement ) {
-			editor.selection.select( replacement );
-			editor.selection.controlSelection.showResizeRect( replacement );
-		}
+		reselectImage();
 
 		editor.nodeChanged();
 	}

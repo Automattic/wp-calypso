@@ -232,6 +232,7 @@ export const normalizers = {
 			// ’ in country names causes google's geo viz to break
 			return {
 				label: country.country_full.replace( /’/, "'" ),
+				countryCode: viewData.country_code,
 				value: viewData.views,
 				region: country.map_region,
 				backgroundImage: icon

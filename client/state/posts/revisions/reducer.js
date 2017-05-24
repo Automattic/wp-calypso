@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { keyBy, merge } from 'lodash';
 
 /**
@@ -12,9 +11,8 @@ import {
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -26,10 +24,6 @@ export function requesting( state = {}, action ) {
 					[ action.postId ]: action.type === POST_REVISIONS_REQUEST,
 				},
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -50,7 +44,7 @@ export function revisions( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	revisions,
 } );

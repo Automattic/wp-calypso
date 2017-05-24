@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { omit, get } from 'lodash';
 
 /**
@@ -21,8 +20,8 @@ import {
 	PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_EDIT_FAILURE,
 } from 'state/action-types';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 import { publicizeActionsSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 function updateDataForPost( newValue, state, siteId, postId, actionId ) {
 	if ( typeof actionId !== 'undefined' ) {
@@ -98,7 +97,7 @@ export const editingSharePostAction = createReducer( {}, {
 		( state, { siteId, postId, actionId } ) => updateDataForPost( true, state, siteId, postId, actionId ),
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	scheduled,
 	published,
 	fetchingSharePostActionsScheduled,

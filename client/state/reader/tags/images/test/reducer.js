@@ -11,8 +11,6 @@ import {
 	READER_TAG_IMAGES_RECEIVE,
 	READER_TAG_IMAGES_REQUEST,
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'state/action-types';
 import { items, requesting } from '../reducer';
 
@@ -100,26 +98,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				pineapple: false,
 				pen: false,
-			} );
-		} );
-
-		describe( 'persistence', () => {
-			it( 'never persists state', () => {
-				const original = deepFreeze( {
-					pineapple: false,
-					pen: true,
-				} );
-				const state = requesting( original, { type: SERIALIZE } );
-				expect( state ).to.eql( {} );
-			} );
-
-			it( 'never loads persisted state', () => {
-				const original = deepFreeze( {
-					pineapple: false,
-					pen: true,
-				} );
-				const state = requesting( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
 			} );
 		} );
 	} );

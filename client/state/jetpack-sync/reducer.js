@@ -1,7 +1,6 @@
 /**
  * External dependencis
  */
-import { combineReducers } from 'redux';
 import { pick, get } from 'lodash';
 
 /**
@@ -14,9 +13,8 @@ import {
 	JETPACK_SYNC_STATUS_REQUEST,
 	JETPACK_SYNC_STATUS_SUCCESS,
 	JETPACK_SYNC_STATUS_ERROR,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { getExpectedResponseKeys } from './utils';
 
 export function fullSyncRequest( state = {}, action ) {
@@ -45,9 +43,6 @@ export function fullSyncRequest( state = {}, action ) {
 					{ isRequesting: false, scheduled: false, error: action.error },
 				)
 			} );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -98,14 +93,11 @@ export function syncStatus( state = {}, action ) {
 					pick( action.data, getExpectedResponseKeys() )
 				)
 			} );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	syncStatus,
 	fullSyncRequest
 } );

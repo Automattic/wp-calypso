@@ -8,14 +8,6 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	signupPlansCallToAction: {
-		datestamp: '20170403',
-		variations: {
-			original: 0,
-			modified: 100, // Setting to 100% until strings are translated
-		},
-		defaultVariation: 'original',
-	},
 	signupSurveyStep: {
 		datestamp: '20170329',
 		variations: {
@@ -23,14 +15,6 @@ module.exports = {
 			hideSurveyStep: 80,
 		},
 		defaultVariation: 'hideSurveyStep',
-	},
-	signupPlansReorderTest: {
-		datestamp: '20170410',
-		variations: {
-			original: 50,
-			modified: 50,
-		},
-		defaultVariation: 'original',
 	},
 	presaleChatButton: {
 		datestamp: '20170328',
@@ -65,14 +49,6 @@ module.exports = {
 			show: 50,
 		},
 		defaultVariation: 'skip',
-	},
-	jetpackPlansHeadlines: {
-		datestamp: '20170519',
-		variations: {
-			headlineA: 50,
-			headlineB: 50
-		},
-		defaultVariation: 'headlineA',
 	},
 	ATPromptOnCancel: {
 		datestamp: '20170515',

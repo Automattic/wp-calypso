@@ -15,12 +15,15 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { withSchemaValidation } from 'state/utils';
 import reducer, {
-	items,
+	items as unwrappedItems,
 	requesting,
 	errors
 } from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
+
+const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
 
 describe( 'reducer', () => {
 	let sandbox;
@@ -263,24 +266,6 @@ describe( 'reducer', () => {
 				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
 			} );
 		} );
-
-		describe( 'persistence', () => {
-			it( 'never persists state', () => {
-				const original = deepFreeze( {
-					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
-				} );
-				const state = requesting( original, { type: SERIALIZE } );
-				expect( state ).to.eql( {} );
-			} );
-
-			it( 'never loads persisted state', () => {
-				const original = deepFreeze( {
-					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
-				} );
-				const state = requesting( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
-			} );
-		} );
 	} );
 
 	describe( '#errors()', () => {
@@ -396,24 +381,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
 				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error2
-			} );
-		} );
-
-		describe( 'persistence', () => {
-			it( 'never persists state', () => {
-				const original = deepFreeze( {
-					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': new Error()
-				} );
-				const state = errors( original, { type: SERIALIZE } );
-				expect( state ).to.eql( {} );
-			} );
-
-			it( 'never loads persisted state', () => {
-				const original = deepFreeze( {
-					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': new Error()
-				} );
-				const state = errors( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
 			} );
 		} );
 	} );

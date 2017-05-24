@@ -8,6 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
+import { withSchemaValidation } from 'state/utils';
 import {
 	MEDIA_DELETE,
 	SITE_DELETE,
@@ -31,7 +32,9 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import reducer, { items, requestingAll, requesting, deleting } from '../reducer';
+import reducer, { items as unwrappedItems, requestingAll, requesting, deleting } from '../reducer';
+
+const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

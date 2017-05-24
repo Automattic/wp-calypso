@@ -48,7 +48,41 @@ function deserialize( state ) {
 	return reducer( state, { type: DESERIALIZE } );
 }
 
-function loadInitialState( initialState ) {
+/**
+ * Adds "sympathy" by randomly clearing out persistent
+ * browser state and loading without it
+ *
+ * Can be overridden on the command-line with two flags
+ *   - ENABLE_FEATURES=force-sympathy make run (always sympathize)
+ *   - ENABLE_FEATURES=force-no-sympathy make run (always prevent sympathy)
+ *
+ * @param {Function} initialStateLoader normal unsympathetic state loader
+ * @returns {Function} augmented initial state loader
+ */
+function addSympathy( initialStateLoader ) {
+	const shouldAdd = (
+		'development' === process.env.NODE_ENV && // only work in local dev mode
+		(
+			Math.random() < 0.25 || // clear 25% of the time
+			config.isEnabled( 'force-sympathy' ) // or whenever the flag is set
+		) &&
+		! config.isEnabled( 'no-force-sympathy' ) // unless purposefully disabled
+	);
+
+	if ( ! shouldAdd ) {
+		return initialStateLoader;
+	}
+
+	console.log( // eslint-disable-line no-console
+		'%cSkipping initial state rehydration to recreate first-load experience.',
+		'font-size: 14px; color: red;'
+	);
+
+	localforage.clear();
+	return () => createReduxStore( getInitialServerState() );
+}
+
+const loadInitialState = addSympathy( initialState => {
 	debug( 'loading initial state', initialState );
 	if ( initialState === null ) {
 		debug( 'no initial state found in localforage' );
@@ -62,7 +96,7 @@ function loadInitialState( initialState ) {
 	const serverState = getInitialServerState();
 	const mergedState = Object.assign( {}, localforageState, serverState );
 	return createReduxStore( mergedState );
-}
+} );
 
 function loadInitialStateFailed( error ) {
 	debug( 'failed to load initial redux-store state', error );

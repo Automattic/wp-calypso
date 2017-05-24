@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { trim, debounce, random, take, reject } from 'lodash';
+import { trim, debounce, random, take, reject, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
@@ -20,7 +20,7 @@ import {
 	getReaderFeedsCountForQuery,
 	getReaderRecommendedSites,
 	getReaderRecommendedSitesPagingOffset,
-	isSiteBlocked as isSiteBlockedSelector,
+	getBlockedSites,
 	getReaderAliasedFollowFeedUrl,
 } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
@@ -33,11 +33,16 @@ import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import { addQueryArgs } from 'lib/url';
 import FollowButton from 'reader/follow-button';
-import { READER_FOLLOWING_MANAGE_URL_INPUT } from 'reader/follow-button/follow-sources';
+import {
+	READER_FOLLOWING_MANAGE_URL_INPUT,
+	READER_FOLLOWING_MANAGE_RECOMMENDATION,
+} from 'reader/follow-button/follow-sources';
 import { resemblesUrl, addSchemeIfMissing, withoutHttp } from 'lib/url';
 import { getReaderFollowsCount } from 'state/selectors';
+import { recordTrack, recordAction } from 'reader/stats';
 
 const PAGE_SIZE = 4;
+let recommendationsSeed = random( 0, 10000 );
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -57,8 +62,11 @@ class FollowingManage extends Component {
 
 	state = {
 		width: 800,
-		seed: random( 0, 10000 ),
 	};
+
+	componentWillUnmount() {
+		recommendationsSeed = random( 0, 1000 );
+	}
 
 	// TODO make this common between our different search pages?
 	updateQuery = newValue => {
@@ -71,6 +79,10 @@ class FollowingManage extends Component {
 			let searchUrl = '/following/manage';
 			if ( newValue ) {
 				searchUrl += '?' + qs.stringify( { q: newValue } );
+				recordTrack( 'calypso_reader_following_manage_search_performed', {
+					query: newValue,
+				} );
+				recordAction( 'manage_feed_search' );
 			}
 			page.replace( searchUrl );
 		}
@@ -79,6 +91,8 @@ class FollowingManage extends Component {
 	handleSearchClosed = () => {
 		this.scrollToTop();
 		this.setState( { showMoreResults: false } );
+		recordTrack( 'calypso_reader_following_manage_search_closed' );
+		recordAction( 'manage_feed_search_closed' );
 	};
 
 	scrollToTop = () => {
@@ -118,15 +132,16 @@ class FollowingManage extends Component {
 	}
 
 	shouldRequestMoreRecs = () => {
-		const { getRecommendedSites, isSiteBlocked } = this.props;
-		const recommendedSites = getRecommendedSites( this.state.seed );
+		const { recommendedSites, blockedSites } = this.props;
 
-		return reject( recommendedSites, isSiteBlocked ).length <= 4;
+		return reject( recommendedSites, site => includes( blockedSites, site.blogId ) ).length <= 4;
 	};
 
 	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
 
 	handleShowMoreClicked = () => {
+		recordTrack( 'calypso_reader_following_manage_search_more_click' );
+		recordAction( 'manage_feed_search_more' );
 		page.replace(
 			addQueryArgs( { showMoreResults: true }, window.location.pathname + window.location.search )
 		);
@@ -141,22 +156,23 @@ class FollowingManage extends Component {
 			searchResults,
 			searchResultsCount,
 			showMoreResults,
-			getRecommendedSites,
-			getRecommendedSitesPagingOffset,
-			isSiteBlocked,
+			recommendedSites,
+			recommendedSitesPagingOffset,
+			blockedSites,
 			followsCount,
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
-		const isSearching = !! sitesQuery;
 		const hasFollows = followsCount > 0;
-		const showExistingSubscriptions = ! isSearching && hasFollows;
+		const showExistingSubscriptions = hasFollows && ! showMoreResults;
 		const isSitesQueryUrl = resemblesUrl( sitesQuery );
 		let sitesQueryWithoutProtocol;
 		if ( isSitesQueryUrl ) {
 			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		}
-		const offset = getRecommendedSitesPagingOffset( this.state.seed );
-		const recommendedSites = reject( getRecommendedSites( this.state.seed ), isSiteBlocked );
+		const filteredRecommendedSites = reject(
+			recommendedSites,
+			site => includes( blockedSites, site.blogId )
+		);
 		const isFollowByUrlWithNoSearchResults = isSitesQueryUrl && searchResultsCount === 0;
 
 		return (
@@ -168,8 +184,8 @@ class FollowingManage extends Component {
 				{ ! searchResults && <QueryReaderFeedsSearch query={ sitesQuery } /> }
 				{ this.shouldRequestMoreRecs() &&
 					<QueryReaderRecommendedSites
-						seed={ this.state.seed }
-						offset={ offset + PAGE_SIZE || 0 }
+						seed={ recommendationsSeed }
+						offset={ recommendedSitesPagingOffset + PAGE_SIZE || 0 }
 					/> }
 				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
@@ -205,16 +221,17 @@ class FollowingManage extends Component {
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
-								siteUrl={ this.props.getReaderAliasedFollowFeedUrl(
-									addSchemeIfMissing( sitesQuery, 'http' )
-								) }
+								siteUrl={ this.props.readerAliasedFollowFeedUrl }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
 							/>
 						</div> }
 				</div>
 				{ hasFollows &&
 					! sitesQuery &&
-					<RecommendedSites sites={ take( recommendedSites, 2 ) } /> }
+					<RecommendedSites
+						sites={ take( filteredRecommendedSites, 2 ) }
+						followSource={ READER_FOLLOWING_MANAGE_RECOMMENDATION }
+					/> }
 				{ !! sitesQuery &&
 					! isFollowByUrlWithNoSearchResults &&
 					<FollowingManageSearchFeedsResults
@@ -244,10 +261,16 @@ export default connect(
 	( state, ownProps ) => ( {
 		searchResults: getReaderFeedsForQuery( state, ownProps.sitesQuery ),
 		searchResultsCount: getReaderFeedsCountForQuery( state, ownProps.sitesQuery ),
-		getRecommendedSites: seed => getReaderRecommendedSites( state, seed ),
-		getRecommendedSitesPagingOffset: seed => getReaderRecommendedSitesPagingOffset( state, seed ),
-		isSiteBlocked: site => isSiteBlockedSelector( state, site.blogId ),
-		getReaderAliasedFollowFeedUrl: url => getReaderAliasedFollowFeedUrl( state, url ),
+		recommendedSites: getReaderRecommendedSites( state, recommendationsSeed ),
+		recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset(
+			state,
+			recommendationsSeed
+		),
+		blockedSites: getBlockedSites( state ),
+		readerAliasedFollowFeedUrl: getReaderAliasedFollowFeedUrl(
+			state,
+			addSchemeIfMissing( ownProps.sitesQuery, 'http' )
+		),
 		followsCount: getReaderFollowsCount( state ),
 	} ),
 	{ requestFeedSearch }

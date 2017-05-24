@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import {
+	includes,
 	noop,
 	size,
 } from 'lodash';
@@ -17,6 +18,12 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
 } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -204,9 +211,26 @@ class Banner extends Component {
 			'banner',
 			className,
 			{ 'has-call-to-action': callToAction },
-			{ 'is-upgrade-personal': PLAN_PERSONAL === plan },
-			{ 'is-upgrade-premium': PLAN_PREMIUM === plan },
-			{ 'is-upgrade-business': PLAN_BUSINESS === plan },
+			{ 'is-upgrade-personal':
+				includes( [
+					PLAN_PERSONAL,
+					PLAN_JETPACK_PERSONAL,
+					PLAN_JETPACK_PERSONAL_MONTHLY,
+				], plan )
+			},
+			{ 'is-upgrade-premium':
+				includes( [
+					PLAN_PREMIUM,
+					PLAN_JETPACK_PREMIUM,
+					PLAN_JETPACK_PREMIUM_MONTHLY,
+				], plan ) },
+			{ 'is-upgrade-business':
+				includes( [
+					PLAN_BUSINESS,
+					PLAN_JETPACK_BUSINESS,
+					PLAN_JETPACK_BUSINESS_MONTHLY,
+				], plan )
+			},
 			{ 'is-dismissible': dismissPreferenceName }
 		);
 

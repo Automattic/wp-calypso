@@ -8,7 +8,8 @@ import { spy, stub } from 'sinon';
  * Internal dependencies
  */
 import { middleware } from '../wpcom-api-middleware';
-import { local, mergeHandlers } from '../utils';
+import { local } from '../utils';
+import { mergeHandlers } from 'state/action-watchers/utils';
 
 describe( 'WordPress.com API Middleware', () => {
 	let next;

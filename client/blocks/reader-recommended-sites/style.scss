@@ -169,6 +169,10 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		margin-right: 0;
 	}
 
+	.reader-subscription-list-item__avatar {
+		min-width: 0;
+	}
+
 	.reader-subscription-list-item__byline {
 		margin-right: 0;
 		padding-right: 0;

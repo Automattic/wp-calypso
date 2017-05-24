@@ -1,18 +1,12 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
 	RECEIPT_FETCH,
 	RECEIPT_FETCH_COMPLETED,
 	RECEIPT_FETCH_FAILED,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 
 export const initialReceiptState = {
 	data: null,
@@ -53,15 +47,11 @@ export function items( state = {}, action ) {
 				error: action.error,
 				isRequesting: false
 			} );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items
 } );

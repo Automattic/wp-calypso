@@ -19,6 +19,7 @@ import {
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled
 } from 'state/login/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
@@ -26,9 +27,10 @@ import Notice from 'components/notice';
 
 class Login extends Component {
 	static propTypes = {
+		recordTracksEvent: PropTypes.func.isRequired,
 		redirectLocation: PropTypes.string,
 		requestError: PropTypes.object,
-		getRequestNotice: PropTypes.object,
+		requestNotice: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
@@ -39,10 +41,20 @@ class Login extends Component {
 		rememberMe: false,
 	};
 
-	componentWillMount = () => {
-		if ( ! this.props.twoStepNonce && this.props.twoFactorAuthType && typeof window !== 'undefined' ) {
+	componentDidMount = () => {
+		if ( ! this.props.twoStepNonce && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has received a nonce
 			page( login( { isNative: true } ) );
+		}
+	};
+
+	componentWillReceiveProps = ( nextProps ) => {
+		const hasError = this.props.requestError !== nextProps.requestError;
+		const hasNotice = this.props.requestNotice !== nextProps.requestNotice;
+		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
+
+		if ( isNewPage || hasError || hasNotice ) {
+			window.scrollTo( 0, 0 );
 		}
 	};
 
@@ -59,6 +71,10 @@ class Login extends Component {
 	};
 
 	rebootAfterLogin = () => {
+		this.props.recordTracksEvent( 'calypso_login_success', {
+			two_factor_enabled: this.props.twoFactorEnabled
+		} );
+
 		window.location.href = this.props.redirectLocation || window.location.origin;
 	};
 
@@ -70,7 +86,9 @@ class Login extends Component {
 		}
 
 		return (
-			<Notice status={ 'is-error' } showDismiss={ false }>{ requestError.message }</Notice>
+			<Notice status={ 'is-error' } showDismiss={ false }>
+				{ requestError.message }
+			</Notice>
 		);
 	}
 
@@ -82,7 +100,9 @@ class Login extends Component {
 		}
 
 		return (
-			<Notice status={ requestNotice.status } showDismiss={ false }>{ requestNotice.message }</Notice>
+			<Notice status={ requestNotice.status } showDismiss={ false }>
+				{ requestNotice.message }
+			</Notice>
 		);
 	}
 
@@ -145,5 +165,7 @@ export default connect(
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
-	} ),
+	} ), {
+		recordTracksEvent,
+	}
 )( localize( Login ) );

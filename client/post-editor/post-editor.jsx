@@ -32,6 +32,7 @@ const actions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	analytics = require( 'lib/analytics' );
 
+import config from 'config';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
@@ -39,6 +40,7 @@ import { receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { hasBrokenSiteUserConnection } from 'state/selectors';
+import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
@@ -83,6 +85,7 @@ export const PostEditor = React.createClass( {
 			isSaving: false,
 			isPublishing: false,
 			notice: null,
+			showConfirmationSidebar: false,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
@@ -185,6 +188,14 @@ export const PostEditor = React.createClass( {
 		return this.props.setLayoutFocus( 'content' );
 	},
 
+	showConfirmationSidebar: function() {
+		this.setState( { showConfirmationSidebar: true } );
+	},
+
+	hideConfirmationSidebar: function() {
+		this.setState( { showConfirmationSidebar: false } );
+	},
+
 	toggleSidebar: function() {
 		if ( this.props.layoutFocus === 'sidebar' ) {
 			this.props.setEditorSidebar( 'closed' );
@@ -219,6 +230,7 @@ export const PostEditor = React.createClass( {
 		return (
 			<div className={ classes }>
 				<QueryPreferences />
+				<EditorConfirmationSidebar hideSidebar={ this.hideConfirmationSidebar } isActive={ this.state.showConfirmationSidebar } />
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
@@ -239,6 +251,7 @@ export const PostEditor = React.createClass( {
 						site={ site }
 						user={ this.props.user }
 						userUtils={ this.props.userUtils }
+						showConfirmationSidebar={ this.showConfirmationSidebar }
 						toggleSidebar={ this.toggleSidebar }
 						type={ this.props.type }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
@@ -645,6 +658,11 @@ export const PostEditor = React.createClass( {
 			...this.props.edits,
 			status: 'publish'
 		};
+
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+			this.showConfirmationSidebar();
+			return;
+		}
 
 		// determine if this is a private publish
 		if ( utils.isPrivate( this.state.post ) ) {

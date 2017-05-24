@@ -53,13 +53,13 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_login_block_login_submit' );
+		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password, this.state.rememberMe ).then( () => {
-			this.props.recordTracksEvent( 'calypso_login_block_login_success' );
+			this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 			this.props.onSuccess( this.state );
 		} ).catch( error => {
-			this.props.recordTracksEvent( 'calypso_login_block_login_failure', {
+			this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
 				error_message: error.message
 			} );
 		} );
@@ -82,6 +82,8 @@ export class LoginForm extends Component {
 						</label>
 
 						<FormTextInput
+							autoCapitalize="off"
+							autoFocus
 							className={
 								classNames( 'login__form-userdata-username-input', {
 									'is-error': requestError && requestError.field === 'usernameOrEmail'
@@ -102,6 +104,8 @@ export class LoginForm extends Component {
 						</label>
 
 						<FormPasswordInput
+							autoCapitalize="off"
+							autoComplete="off"
 							className={
 								classNames( 'login__form-userdata-username-password', {
 									'is-error': requestError && requestError.field === 'password'

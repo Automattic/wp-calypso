@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import {
 	EMAIL_VERIFY_REQUEST,
 	EMAIL_VERIFY_REQUEST_SUCCESS,
@@ -28,7 +24,7 @@ export const errorMessage = createReducer( '', {
 	[ EMAIL_VERIFY_STATE_RESET ]: () => '',
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	status,
 	errorMessage,
 } );

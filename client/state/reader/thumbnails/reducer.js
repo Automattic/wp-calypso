@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -11,9 +6,8 @@ import {
 	READER_THUMBNAIL_REQUEST_SUCCESS,
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 
 /**
  * Tracks mappings between embedUrls (iframe.src) --> thumbnails
@@ -43,10 +37,6 @@ export function items( state = {}, action ) {
 				...state,
 				[ action.embedUrl ]: action.thumbnailUrl,
 			};
-		// Always return default state - we don't want to serialize thumbnails
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -69,14 +59,11 @@ export function requesting( state = {}, action ) {
 				...state,
 				[ action.embedUrl ]: action.type === READER_THUMBNAIL_REQUEST,
 			};
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	requesting,
 } );

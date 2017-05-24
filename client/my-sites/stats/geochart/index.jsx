@@ -88,14 +88,19 @@ class StatsGeochart extends Component {
 		}
 
 		const mapData = map( data, ( country ) => {
-			return [ country.label, country.value ];
+			return [
+				{
+					v: country.countryCode,
+					f: country.label
+				},
+				country.value
+			];
 		} );
-		mapData.unshift( [
-			translate( 'Country' ).toString(),
-			translate( 'Views' ).toString()
-		] );
 
-		const chartData = window.google.visualization.arrayToDataTable( mapData );
+		const chartData = new window.google.visualization.DataTable();
+		chartData.addColumn( 'string', translate( 'Country' ).toString() );
+		chartData.addColumn( 'number', translate( 'Views' ).toString() );
+		chartData.addRows( mapData );
 		const node = this.refs.chart;
 		const width = node.clientWidth;
 

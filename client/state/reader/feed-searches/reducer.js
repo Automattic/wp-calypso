@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
+
 import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
 
 /**
@@ -63,7 +63,7 @@ export const total = createReducer(
 	}
 );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	total,
 } );

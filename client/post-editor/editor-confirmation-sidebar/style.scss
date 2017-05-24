@@ -1,0 +1,78 @@
+.editor-confirmation-sidebar {
+	display: none;
+
+	&.is-active {
+		display: block;
+	}
+}
+
+.editor-confirmation-sidebar__overlay {
+	position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+
+	z-index: z-index( 'root', '.editor-confirmation-sidebar__overlay' );
+	background: rgba( $white, 0.8 );
+
+	display: none;
+
+	&.is-active {
+		display: block;
+	}
+}
+
+.editor-confirmation-sidebar__sidebar {
+	@extend .sidebar;
+	width: 374px;
+	background: $sidebar-bg-color;
+	position: absolute;
+		left: auto;
+		right: -374px;
+	z-index: z-index( 'root', '.editor-confirmation-sidebar__sidebar' );
+	border-left: 1px solid darken( $sidebar-bg-color, 5% );
+	border-right: none;
+	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+	&.is-active {
+		transform: translateX( -374px );
+	}
+}
+
+.editor-confirmation-sidebar__ground-control {
+	@extend .card;
+	display: flex;
+	justify-content: space-between;
+	
+	position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+	padding: 9px 24px;
+}
+
+.editor-confirmation-sidebar__cancel {
+	flex-grow: 1;
+	color: $alert-red;
+}
+
+.editor-confirmation-sidebar__action .button {
+	background: $alert-green;
+	border-color: darken( $alert-green, 20% );
+	color: $white;
+
+	text-transform: none;
+	padding: 7px 22px;
+	margin-left: 12px;
+
+	&:hover,
+	&:focus {
+		border-color: darken( $alert-green, 40% );
+	}
+	&[disabled],
+	&:disabled {
+		background: lighten( $alert-green, 20% );
+		border-color: tint( $alert-green, 30% );
+	}
+}

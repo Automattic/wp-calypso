@@ -1,12 +1,7 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence, createReducer } from 'state/utils';
 
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
@@ -36,7 +31,7 @@ const requestError = createReducer( null, {
 	[ HELP_TICKET_CONFIGURATION_DISMISS_ERROR ]: () => null,
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	isReady,
 	isRequesting,
 	isUserEligible,

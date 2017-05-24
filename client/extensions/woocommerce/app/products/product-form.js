@@ -10,8 +10,8 @@ import classNames from 'classnames';
 import ProductFormAdditionalDetailsCard from './product-form-additional-details-card';
 import ProductFormCategoriesCard from './product-form-categories-card';
 import ProductFormDetailsCard from './product-form-details-card';
+import ProductFormSimpleCard from './product-form-simple-card';
 import ProductFormVariationsCard from './product-form-variations-card';
-import ProductFormDeliveryDetailsCard from './product-form-delivery-details-card';
 
 export default class ProductForm extends Component {
 	static propTypes = {
@@ -57,10 +57,12 @@ export default class ProductForm extends Component {
 				/>
 
 				{ 'simple' === product.type && (
-					<ProductFormDeliveryDetailsCard
-						product={ product }
-						editProduct={ this.props.editProduct }
-					/>
+					<div className="products__product-simple-cards">
+						<ProductFormSimpleCard
+							product={ product }
+							editProduct={ this.props.editProduct }
+						/>
+					</div>
 				) }
 			</div>
 		);

@@ -522,6 +522,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [
 					{
 						label: 'United States',
+						countryCode: 'US',
 						value: 1,
 						region: '021',
 						backgroundImage: '/calypso/images/flags/us.svg'
@@ -558,6 +559,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [
 					{
 						label: 'United States',
+						countryCode: 'US',
 						value: 10,
 						region: '021',
 						backgroundImage: '/calypso/images/flags/us.svg'
@@ -593,6 +595,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [
 					{
 						label: 'United States',
+						countryCode: 'US',
 						value: 100,
 						region: '021',
 						backgroundImage: '/calypso/images/flags/us.svg'
@@ -629,6 +632,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [
 					{
 						label: 'United States',
+						countryCode: 'US',
 						value: 100,
 						region: '021',
 						backgroundImage: '/calypso/images/flags/us.svg'
@@ -665,6 +669,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [
 					{
 						label: 'US\'A',
+						countryCode: 'US',
 						value: 100,
 						region: '021',
 						backgroundImage: '/calypso/images/flags/us.svg'
@@ -704,6 +709,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [
 					{
 						label: 'United States',
+						countryCode: 'US',
 						value: 100,
 						region: '021',
 						backgroundImage: '/calypso/images/flags/us.svg'

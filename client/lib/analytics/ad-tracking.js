@@ -46,6 +46,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	DCM_FLOODLIGHT_IFRAME_URL = 'https://6355556.fls.doubleclick.net/activityi',
 	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
 	MEDIA_WALLAH_URL = 'https://d3ir0rz7vxwgq5.cloudfront.net/mwData.min.js',
+	QUORA_URL = 'https://a.quora.com/qevents.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -58,7 +59,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		yahooPixelId: '10014088',
 		twitterPixelId: 'nvzbs',
 		dcmFloodlightAdvertiserId: '6355556',
-		linkedInPartnerId: '36622'
+		linkedInPartnerId: '36622',
+		quoraPixelId: '420845cb70e444938cf0728887a74ca1'
 	},
 
 	// This name is something we created to store a session id for DCM Floodlight session tracking
@@ -104,6 +106,10 @@ if ( ! window._linkedin_data_partner_id ) {
 	window._linkedin_data_partner_id = TRACKING_IDS.linkedInPartnerId;
 }
 
+if ( ! window.qp ) {
+	setupQuoraGlobal();
+}
+
 /**
  * Initializes Media Wallah tracking.
  * This is a rework of the obfuscated tracking code provided by Media Wallah.
@@ -132,6 +138,17 @@ function initMediaWallah() {
 	};
 
 	window.addEventListener ? window.addEventListener( 'load', init, false ) : window.attachEvent( 'onload', init );
+}
+
+/**
+ * Initializes Quora tracking.
+ * This is a rework of the obfuscated tracking code provided by Quora.
+ */
+function setupQuoraGlobal() {
+	const quoraPixel = window.qp = function() {
+		quoraPixel.qp ? quoraPixel.qp.apply( quoraPixel, arguments ) : quoraPixel.queue.push( arguments );
+	};
+	quoraPixel.queue = [];
 }
 
 /**
@@ -199,6 +216,9 @@ function loadTrackingScripts( callback ) {
 		},
 		function( onComplete ) {
 			loadScript.loadScript( MEDIA_WALLAH_URL, onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( QUORA_URL, onComplete );
 		}
 	], function( errors ) {
 		if ( ! some( errors ) ) {
@@ -216,6 +236,9 @@ function loadTrackingScripts( callback ) {
 
 			// init Media Wallah tracking
 			initMediaWallah();
+
+			// init Quora tracking
+			window.qp( 'init', TRACKING_IDS.quoraPixelId );
 
 			if ( typeof UET !== 'undefined' ) {
 				// bing's script creates the UET global for us
@@ -294,6 +317,9 @@ function retarget() {
 
 	// One by AOL
 	new Image().src = ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL;
+
+	// Quora
+	window.qp( 'track', 'ViewContent' );
 }
 
 /**
@@ -409,6 +435,7 @@ function recordOrder( cart, orderId ) {
 	// 3. Fire a single tracking event without any details about what was purchased
 	new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
 	new Image().src = PANDORA_CONVERSION_PIXEL_URL;
+	window.qp( 'track', 'Generic' );
 }
 
 /**

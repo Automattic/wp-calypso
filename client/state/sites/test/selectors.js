@@ -3276,6 +3276,14 @@ describe( 'selectors', () => {
 	describe( 'getJetpackComputedAttributes()', () => {
 		it( 'should return undefined attributes if a site is not Jetpack', () => {
 			const state = {
+				currentUser: {
+					id: 73705554,
+					capabilities: {
+						77203074: {
+							manage_options: false
+						}
+					}
+				},
 				sites: {
 					items: {
 						77203074: {
@@ -3293,10 +3301,19 @@ describe( 'selectors', () => {
 			expect( noNewAttributes.canManage ).to.equal( undefined );
 			expect( noNewAttributes.isMainNetworkSite ).to.equal( undefined );
 			expect( noNewAttributes.isSecondaryNetworkSite ).to.equal( undefined );
+			expect( noNewAttributes.isSiteUpgradeable ).to.equal( undefined );
 		} );
 
 		it( 'should return exists for attributes if a site is Jetpack', () => {
 			const state = {
+				currentUser: {
+					id: 73705554,
+					capabilities: {
+						77203074: {
+							manage_options: false
+						}
+					}
+				},
 				sites: {
 					items: {
 						77203074: {
@@ -3313,6 +3330,7 @@ describe( 'selectors', () => {
 			expect( noNewAttributes.canManage ).to.have.property;
 			expect( noNewAttributes.isMainNetworkSite ).to.have.property;
 			expect( noNewAttributes.isSecondaryNetworkSite ).to.have.property;
+			expect( noNewAttributes.isSiteUpgradeable ).to.have.property;
 		} );
 	} );
 } );
