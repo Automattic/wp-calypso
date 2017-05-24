@@ -1,0 +1,38 @@
+.product-image-uploader__wrapper {
+	background: $gray-light;
+	height: 250px;
+	width: 250px;
+	position: relative;
+	margin-bottom: 16px;
+	border: 1px dashed $gray;
+	border-radius: 5px;
+	@include breakpoint( ">960px" ) {
+		margin-bottom: 0;
+	}
+
+	.product-image-uploader__picker {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		text-align: center;
+		cursor: pointer;
+	}
+}
+
+.product-image-uploader__picker.compact {
+	background: $gray-light;
+	height: 50px;
+	width: 50px;
+	position: relative;
+	margin-bottom: 16px;
+	border: 1px dashed $gray;
+	border-radius: 5px;
+	cursor: pointer;
+
+	.file-picker {
+		display: block;
+		text-align: center;
+		padding-top: 12px;
+	}
+}

@@ -13,6 +13,7 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextArea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
+import ProductFormImages from './product-form-images';
 
 export default class ProductFormDetailsCard extends Component {
 
@@ -51,7 +52,7 @@ export default class ProductFormDetailsCard extends Component {
 	}
 
 	render() {
-		const { product } = this.props;
+		const { product, editProduct } = this.props;
 		const __ = i18n.translate;
 		return (
 			<Card className="products__product-form-details">
@@ -65,9 +66,10 @@ export default class ProductFormDetailsCard extends Component {
 					</FormLabel>
 				</div>
 				<div className="products__product-form-details-wrapper">
-					<div className="products__product-form-details-images">
-
-					</div>
+					<ProductFormImages
+						product={ product }
+						editProduct={ editProduct }
+					/>
 					<div className="products__product-form-details-basic">
 						<FormFieldSet>
 							<FormLabel htmlFor="name">{ __( 'Product name' ) }</FormLabel>

@@ -34,17 +34,83 @@
 		flex-direction: row;
 	}
 }
-/* TODO: remove placeholder styles once implemented */
-.products__product-form-details-images {
-	background: $gray-light;
-	height: 200px;
-	margin-bottom: 16px;
-	@include breakpoint( ">960px" ) {
-		margin-bottom: 0;
+
+.products__product-form-images {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+
+	.products__product-form-images-item {
+		position: relative;
+		display: inline-block;
+		margin-right: 16px;
+
+		img {
+			width: 60px;
+		}
+
+		&:first-child {
+			margin-right: 0;
+			margin-bottom: 16px;
+
+			img {
+				width: 300px;
+			}
+		}
+	}
+
+	figure {
+		position: relative;
+		overflow: hidden;
+		height: 0;
+		padding-bottom: 100%;
+	}
+
+	.products__product-form-images-item.preview figure::after {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	}
+
+	.products__product-form-images-item.preview img {
+		opacity: 0.7;
+	}
+
+	.spinner {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+	}
+
+	.products__product-form-images-item-remove {
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 28px;
+		height: 28px;
+		transform: translate( 25%, -25% );
+		border: 1px solid lighten( $gray, 10% );
+		border-radius: 50%;
+		background-color: $gray-light;
+		cursor: pointer;
+	}
+
+	.products__product-form-images-item-remove-icon.gridicon {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+		width: 24px;
+		height: 24px;
+		margin: 0;
+		color: lighten( $gray, 10% );
 	}
 }
 
-.products__product-form-details-images,
+.products__product-form-images-wrapper,
 .products__product-form-details-basic {
 	flex: 1;
 	@include breakpoint( ">960px" ) {
