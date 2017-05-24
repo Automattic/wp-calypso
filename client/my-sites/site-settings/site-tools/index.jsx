@@ -139,22 +139,18 @@ class SiteTools extends Component {
 					</CompactCard>
 				}
 				<CompactCard
-					href={ this.getImportLink() }
+					href={ this.getImportExportLink( 'import' ) }
 					className="site-tools__link">
 					<div className="site-tools__content">
-						<p className="site-tools__section-title">
-							{ importTitle }
-						</p>
+						<p className="site-tools__section-title">{ importTitle }</p>
 						<p className="site-tools__section-desc">{ importText }</p>
 					</div>
 				</CompactCard>
 				<CompactCard
-					href={ this.getExportLink() }
+					href={ this.getImportExportLink( 'export' ) }
 					className="site-tools__link">
 					<div className="site-tools__content">
-						<p className="site-tools__section-title">
-							{ exportTitle }
-						</p>
+						<p className="site-tools__section-title">{ exportTitle }</p>
 						<p className="site-tools__section-desc">{ exportText }</p>
 					</div>
 				</CompactCard>
@@ -165,22 +161,17 @@ class SiteTools extends Component {
 		);
 	}
 
-	getImportLink() {
+	getImportExportLink( direction ) {
+		if ( direction !== 'import' && direction !== 'export' ) {
+			return null;
+		}
+
 		const { jetpack, slug, options: { admin_url } } = this.props.site;
 
 		if ( jetpack ) {
-			return admin_url + 'import.php';
+			return `${ admin_url }${ direction }.php`;
 		}
-		return `/settings/import/${ slug }`;
-	}
-
-	getExportLink() {
-		const { jetpack, slug, options: { admin_url } } = this.props.site;
-
-		if ( jetpack ) {
-			return admin_url + 'export.php';
-		}
-		return `/settings/export/${ slug }`;
+		return `/settings/${ direction }/${ slug }`;
 	}
 
 	trackChangeAddress() {
