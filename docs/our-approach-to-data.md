@@ -395,14 +395,14 @@ handlers to avoid data shape errors.
 ### Opt-in to Persistence ( [#13542](https://github.com/Automattic/wp-calypso/pull/13542) )
 
 If we choose not to use `createReducer` we can opt-in to persistence by adding a schema as a property on the reducer. 
-We do this by combining all of our reducers using `combineReducersWithPersistence` at every level of the tree instead 
-of [combineReducers](http://redux.js.org/docs/api/combineReducers.html). Each reducer is then wrapped with 
+We do this by combining all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead 
+of [combineReducers](http://redux.js.org/docs/api/combineReducers.html) from `redux`. Each reducer is then wrapped with 
 `withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALZE` if a schema is present and 
 returns initial state on both `SERIALIZE` and `DESERIALZE` if a schema is not present.
 
 To opt-out of persistence we combine the reducers without any attached schema.
 ```javascript
-return combineReducersWithPersistence( {
+return combineReducers( {
     age,
     height,
 } );
@@ -411,7 +411,7 @@ return combineReducersWithPersistence( {
 To persist, we add the schema as a property on the reducer:
 ```javascript
 age.schema = ageSchema;
-return combineReducersWithPersistence( {
+return combineReducers( {
     age,
     height,
 } );
@@ -422,7 +422,7 @@ on `DESERIALIZE` so all we need to do is set a boolean bit on the reducer, to en
 incorrectly from the default handling provided by `withSchemaValidation`.
 ```javascript
 date.hasCustomPersistence = true;
-return combineReducersWithPersistence( {
+return combineReducers( {
     age,
     height,
     date,
