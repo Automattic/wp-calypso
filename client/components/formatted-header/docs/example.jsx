@@ -1,18 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
 import FormattedHeader from 'components/formatted-header';
 
-export default function FormattedHeaderExample() {
-	return (
-		<FormattedHeader
-			headerText="This is the header."
-			subHeaderText="This is the optional subheader."
-		/>
-	);
+export default class FormattedHeaderExample extends PureComponent {
+	static displayName = 'FormattedHeaderExample';
+
+	render() {
+		return (
+			<FormattedHeader
+				headerText="This is the header."
+				subHeaderText="This is the optional subheader."
+			/>
+		);
+	}
 }
