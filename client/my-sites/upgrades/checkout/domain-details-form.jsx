@@ -78,7 +78,7 @@ class DomainDetailsForm extends PureComponent {
 		};
 	}
 
-	componentWillMount = () => {
+	componentWillMount() {
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
 			loadFunction: wpcom.getDomainContactInformation.bind( wpcom ),
@@ -505,7 +505,7 @@ class DomainDetailsForm extends PureComponent {
 		}
 	}
 
-	render = () => {
+	render() {
 		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails(),
 			classSet = classNames( {
 				'domain-details': true,
