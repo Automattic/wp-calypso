@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormattedHeader from '..';
+import FormattedHeader from 'components/formatted-header';
 
 export default function FormattedHeaderExample() {
 	return (
