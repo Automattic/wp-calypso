@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
-import closest from 'component-closest';
 
 /**
  * Internal dependencies
@@ -93,7 +92,7 @@ class GoogleLoginButton extends Component {
 		if ( this.state.error ) {
 			this.setState( {
 				showError: ! this.state.showError,
-				errorRef: closest( event.target, '.social-buttons__button', true ),
+				errorRef: event.currentTarget,
 			} );
 
 			return;
@@ -115,7 +114,7 @@ class GoogleLoginButton extends Component {
 
 		this.setState( {
 			showError: true,
-			errorRef: closest( event.target, '.social-buttons__button', true ),
+			errorRef: event.currentTarget,
 		} );
 	}
 
