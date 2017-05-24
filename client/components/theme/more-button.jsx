@@ -85,7 +85,13 @@ class ThemeMoreButton extends React.Component {
 									onMouseOver={ this.focus }
 									onClick={ this.onClick( option.action, option.label ) }
 									key={ option.label }
-									href={ url }
+									/*
+									 * Use absolute link to work around IE11 bug with relative links in modals #5766
+									 * TODO (seear): remove when we drop support for IE11
+									 *
+									 * If we match a leading slash followed by a non-slash, prepend protocol+host+port
+									 */
+									href={ url.replace( /^\/[^\/]/, `${ window.location.origin }$&` ) }
 									target={ isOutsideCalypso( url ) ? '_blank' : null }>
 									{ option.label }
 								</a>
