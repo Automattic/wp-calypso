@@ -6,7 +6,7 @@ import { stubFalse, stubTrue } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 import {
 	SITE_MONITOR_SETTINGS_RECEIVE,
@@ -34,7 +34,7 @@ export const updating = keyedReducer( 'siteId', createReducer( {}, {
 	[ SITE_MONITOR_SETTINGS_UPDATE_FAILURE ]: stubFalse,
 } ) );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	requesting,
 	updating,

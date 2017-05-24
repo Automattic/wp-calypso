@@ -6,7 +6,7 @@ import {
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { productsListSchema } from './schema';
 
 // Stores the complete list of products, indexed by the product key
@@ -21,7 +21,7 @@ export const isFetching = createReducer( false, {
 	[ PRODUCTS_LIST_REQUEST_FAILURE ]: () => false
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	isFetching,
 	items,
 } );

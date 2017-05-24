@@ -6,7 +6,7 @@ import { uniqBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import { items as itemSchemas } from './schema';
 import {
@@ -64,7 +64,7 @@ export const items = createReducer( {}, {
 	} )
 }, itemSchemas );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	requesting,
 	saveRequests

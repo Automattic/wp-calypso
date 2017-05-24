@@ -18,7 +18,7 @@ import {
 	JETPACK_JUMPSTART_STATUS_REQUEST_SUCCESS,
 	JETPACK_JUMPSTART_STATUS_REQUEST_FAILURE
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 const createRequestReducer = ( data ) => {
 	return ( state, { siteId } ) => {
@@ -62,7 +62,7 @@ export const requests = createReducer( {}, {
 	[ JETPACK_JUMPSTART_STATUS_REQUEST_SUCCESS ]: createRequestReducer( { requesting: false } )
 } );
 
-export const reducer = combineReducersWithPersistence( {
+export const reducer = combineReducers( {
 	items,
 	requests
 } );

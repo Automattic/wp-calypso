@@ -6,7 +6,7 @@ import keyBy from 'lodash/keyBy';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, isValidStateWithSchema } from 'state/utils';
 
 import * as schema from './schema';
 import taxonomies from './taxonomies/reducer';
@@ -69,7 +69,7 @@ export function items( state = {}, action ) {
 }
 items.hasCustomPersistence = true;
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	requesting,
 	items,
 	taxonomies

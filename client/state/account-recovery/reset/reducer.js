@@ -6,7 +6,7 @@ import { stubTrue, stubFalse } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
@@ -26,7 +26,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
 } from 'state/action-types';
 
-const options = combineReducersWithPersistence( {
+const options = combineReducers( {
 	isRequesting: createReducer( false, {
 		[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: stubTrue,
 		[ ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE ]: stubFalse,
@@ -54,7 +54,7 @@ const method = createReducer( null, {
 	[ ACCOUNT_RECOVERY_RESET_SET_METHOD ]: ( state, action ) => action.method,
 } );
 
-const requestReset = combineReducersWithPersistence( {
+const requestReset = combineReducers( {
 	isRequesting: createReducer( false, {
 		[ ACCOUNT_RECOVERY_RESET_REQUEST ]: stubTrue,
 		[ ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS ]: stubFalse,
@@ -72,7 +72,7 @@ const key = createReducer( null, {
 	[ ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY ]: ( state, action ) => action.key,
 } );
 
-const validate = combineReducersWithPersistence( {
+const validate = combineReducers( {
 	isRequesting: createReducer( false, {
 		[ ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST ]: stubTrue,
 		[ ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS ]: stubFalse,
@@ -86,7 +86,7 @@ const validate = combineReducersWithPersistence( {
 	} ),
 } );
 
-const resetPassword = combineReducersWithPersistence( {
+const resetPassword = combineReducers( {
 	isRequesting: createReducer( false, {
 		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST ]: stubTrue,
 		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS ]: stubFalse,
@@ -104,7 +104,7 @@ const resetPassword = combineReducersWithPersistence( {
 	} ),
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	options,
 	userData,
 	method,

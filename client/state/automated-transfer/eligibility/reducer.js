@@ -9,7 +9,7 @@ import { property, sortBy } from 'lodash';
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as UPDATE,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 
 export const eligibilityHolds = ( state = [], action ) =>
 	UPDATE === action.type
@@ -26,7 +26,7 @@ export const lastUpdate = ( state = 0, action ) =>
 		? action.lastUpdate
 		: state;
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	eligibilityHolds,
 	eligibilityWarnings,
 	lastUpdate,

@@ -7,7 +7,7 @@ import {
 	PLANS_REQUEST_SUCCESS,
 	PLANS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -68,7 +68,7 @@ export const error = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	requesting,
 	error

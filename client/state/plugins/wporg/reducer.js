@@ -5,7 +5,7 @@ import {
 	WPORG_PLUGIN_DATA_RECEIVE,
 	FETCH_WPORG_PLUGIN_DATA,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 
 function updatePluginState( state = {}, pluginSlug, attributes ) {
 	return Object.assign( {},
@@ -37,7 +37,7 @@ export function items( state = {}, action ) {
 	}
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	fetchingItems
 } );

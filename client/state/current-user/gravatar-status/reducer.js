@@ -7,7 +7,7 @@ import {
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 export const isUploading = createReducer( false, {
 	[ GRAVATAR_UPLOAD_REQUEST ]: () => true,
@@ -23,7 +23,7 @@ export const tempImage = createReducer( {}, {
 	}
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	isUploading,
 	tempImage
 } );

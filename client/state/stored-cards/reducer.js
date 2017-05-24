@@ -10,7 +10,7 @@ import {
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { storedCardsSchema } from './schema';
 
 /**
@@ -88,7 +88,7 @@ export const isDeleting = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	hasLoadedFromServer,
 	isDeleting,
 	isFetching,

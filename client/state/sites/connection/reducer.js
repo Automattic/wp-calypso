@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
@@ -23,7 +23,7 @@ export const requesting = createReducer( {}, {
 	[ SITE_CONNECTION_STATUS_REQUEST_SUCCESS ]: createRequestingReducer( false ),
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	requesting,
 } );

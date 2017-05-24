@@ -7,7 +7,7 @@ import {
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 	READER_TAG_IMAGES_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 
 /**
  * Tracks all known image objects, indexed by tag name.
@@ -54,7 +54,7 @@ export function requesting( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	requesting,
 } );

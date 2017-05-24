@@ -6,7 +6,7 @@ import {
 	DROPZONE_HIDE
 } from 'state/action-types';
 
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 // TODO(biskobe) - Can be improved with `keyedReducer` instead of state spread.
 const isVisible = createReducer( {},
@@ -22,6 +22,6 @@ const isVisible = createReducer( {},
 	}
 );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	isVisible,
 } );

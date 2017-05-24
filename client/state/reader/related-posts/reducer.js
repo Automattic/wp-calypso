@@ -8,7 +8,7 @@ import map from 'lodash/map';
 /**
  * Internal Dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import {
 	READER_RELATED_POSTS_RECEIVE,
@@ -49,7 +49,7 @@ export const queuedRequests = createReducer(
 	}
 );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	queuedRequests,
 } );

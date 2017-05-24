@@ -10,7 +10,7 @@ import {
 	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 } from 'state/action-types';
 
-import { combineReducersWithPersistence, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 /**
  * Tracks all known site block statuses, indexed by site ID.
@@ -30,6 +30,6 @@ export const items = keyedReducer(
 	)
 );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 } );
