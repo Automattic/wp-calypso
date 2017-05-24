@@ -16,7 +16,7 @@ import { countWords } from 'lib/text-utils';
  */
 const user = userModule();
 
-class EditorWordCount extends PureComponent {
+export class EditorWordCount extends PureComponent {
 	static propTypes = {
 		selectedText: React.PropTypes.string
 	};
@@ -44,7 +44,7 @@ class EditorWordCount extends PureComponent {
 	}
 
 	getSelectedTextCount = () => {
-		const selectedText = textUtils.countWords( this.props.selectedText );
+		const selectedText = countWords( this.props.selectedText );
 
 		if ( ! selectedText ) {
 			return null;
@@ -87,7 +87,7 @@ class EditorWordCount extends PureComponent {
 				return null;
 		}
 
-		const wordCount = textUtils.countWords( ( this.props.selectedText || this.state.rawContent ) );
+		const wordCount = countWords( ( this.props.selectedText || this.state.rawContent ) );
 
 		return (
 			<div className="editor-word-count">
