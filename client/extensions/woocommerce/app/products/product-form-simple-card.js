@@ -94,15 +94,14 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 	const renderStock = () => (
 		<Card className="products__product-form-stock">
 			<div className="products__product-manage-stock-wrapper">
+				<div className="products__product-manage-stock-toggle">
+					<FormToggle
+						checked={ Boolean( product.manage_stock ) }
+						name="manage_stock"
+						onChange={ toggleStock } />
+				</div>
 				<FormLabel>{ translate( 'Manage stock' ) }</FormLabel>
 				<div className="products__product-manage-stock">
-					<div className="products__product-manage-stock-checkbox">
-						<FormToggle
-							checked={ Boolean( product.manage_stock ) }
-							name="manage_stock"
-							onChange={ toggleStock } />
-					</div>
-
 					{ product.manage_stock && (
 						<FormTextInput
 							name="stock_quantity"
