@@ -2,31 +2,19 @@
 	box-sizing: border-box;
 	font-size: 14px;
 
-	p {
-		clear: left;
-		margin: 0;
-
-		a {
-			@include breakpoint( ">660px" ) {
-				display: block;
-			}
-		}
-	}
-
 	.button {
 		float: none;
 		margin: 1em 0 .5em;
 		padding-left: 2em;
 		padding-right: 2em;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( "<960px" ) {
 			width: 100%;
 		}
 	}
 }
 
 .add-google-apps-card__product-logo {
-
 	@include breakpoint( "<660px" ) {
 		width: 236px;
 	}
@@ -69,7 +57,7 @@
 		font-size: 13px;
 		font-style: italic;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( "<960px" ) {
 			text-align: center;
 		}
 	}
@@ -84,11 +72,19 @@
 
 .add-google-apps-card__features {
 	box-sizing: border-box;
+	justify-content: justify-content;
 	margin: 1em 0;
+
+	@include breakpoint( ">960px" ) {
+		display: flex;
+		flex-flow: row wrap;
+	}
 }
 
 .add-google-apps-card__feature {
 	display: flex;
+	flex-basis: 50%;
+	justify-content: flex-start;
 	margin-bottom: 1em;
 }
 
@@ -96,8 +92,10 @@
 	align-items: flex-start;
 	padding: 0 1em 0 0;
 
-	img {
-		margin-top: 5px;
+	p {
+		@include breakpoint( ">960px" ) {
+			max-width: 200px;
+		}
 	}
 }
 
@@ -110,6 +108,10 @@
 		float: none;
 		margin: 1em 0;
 		width: 100%;
+
+		@include breakpoint( ">660px" ) {
+			display: none;
+		}
 	}
 }
 
