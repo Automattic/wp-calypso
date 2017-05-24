@@ -15,20 +15,20 @@ import FormSelect from 'components/forms/form-select';
 import ExtendedHeader from '../../../components/extended-header';
 
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPaymentCurrency } from '../../../state/wc-api/settings/payments/selectors';
-import { fetchPaymentCurrency } from '../../../state/wc-api/settings/payments/actions';
+import { getPaymentCurrencySettings } from '../../../state/wc-api/settings/general/selectors';
+import { fetchSettingsGeneral } from '../../../state/wc-api/settings/general/actions';
 
 class SettingsPaymentsLocationCurrency extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		currency: PropTypes.object,
-		fetchPaymentCurrency: PropTypes.func.isRequired,
+		fetchSettingsGeneral: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
 		const { siteId } = this.props;
 
-		this.props.fetchPaymentCurrency( siteId );
+		this.props.fetchSettingsGeneral( siteId );
 	}
 
 	constructor( props ) {
@@ -86,7 +86,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
-	const currency = getPaymentCurrency( state, siteId );
+	const currency = getPaymentCurrencySettings( state, siteId );
 	return {
 		currency,
 		siteId,
@@ -96,7 +96,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchPaymentCurrency
+			fetchSettingsGeneral
 		},
 		dispatch
 	);
