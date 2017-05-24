@@ -3,10 +3,13 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
-import isEmpty from 'lodash/isEmpty';
 import page from 'page';
 import Debug from 'debug';
 import { translate } from 'i18n-calypso';
+import {
+	get,
+	isEmpty,
+} from 'lodash';
 
 /**
  * Internal Dependencies
@@ -32,6 +35,12 @@ import PlansLanding from './plans-landing';
  */
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
 const userModule = userFactory();
+const analyticsPageTitleByType = {
+	install: 'Jetpack Install',
+	personal: 'Jetpack Connect Personal',
+	premium: 'Jetpack Connect Premium',
+	pro: 'Jetpack Install Pro',
+};
 
 const removeSidebar = ( context ) => {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
@@ -96,54 +105,19 @@ export default {
 		next();
 	},
 
-	personal( context ) {
-		const analyticsBasePath = '/jetpack/connect/personal',
-			analyticsPageTitle = 'Jetpack Connect Personal';
-
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		jetpackConnectFirstStep( context, 'personal' );
-	},
-
-	premium( context ) {
-		const analyticsBasePath = '/jetpack/connect/premium',
-			analyticsPageTitle = 'Jetpack Connect Premium';
-
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		jetpackConnectFirstStep( context, 'premium' );
-	},
-
 	newSite( context ) {
 		analytics.pageView.record( '/jetpack/new', 'Add a new site (Jetpack)' );
 		jetpackNewSiteSelector( context );
 	},
 
-	pro( context ) {
-		const analyticsBasePath = '/jetpack/connect/pro',
-			analyticsPageTitle = 'Jetpack Install Pro';
+	connect( context, options = {} ) {
+		const { pathname } = context;
+		const { type = false } = options;
+		const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
 
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+		analytics.pageView.record( pathname, analyticsPageTitle );
 
-		jetpackConnectFirstStep( context, 'pro' );
-	},
-
-	install( context ) {
-		const analyticsBasePath = '/jetpack/connect/install',
-			analyticsPageTitle = 'Jetpack Install';
-
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		jetpackConnectFirstStep( context, 'install' );
-	},
-
-	connect( context ) {
-		const analyticsBasePath = '/jetpack/connect',
-			analyticsPageTitle = 'Jetpack Connect';
-
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		jetpackConnectFirstStep( context, false );
+		jetpackConnectFirstStep( context, type );
 	},
 
 	authorizeForm( context ) {

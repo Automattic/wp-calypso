@@ -16,19 +16,26 @@ const redirectToStoreWithInterval = context => {
 	page.redirect( `/jetpack/connect/store/${ intervalType }` );
 };
 
+// Wrap controller.connect so we can pre-load known route options
+const getJetpackConnectHandler = ( options ) =>
+	( context ) => controller.connect( context, options );
+
 export default function() {
-	page( '/jetpack/connect/install', controller.install );
+	page( '/jetpack/connect/install', getJetpackConnectHandler( { type: 'install' } ) );
 
-	page( '/jetpack/connect/personal', controller.personal );
-	page( '/jetpack/connect/personal/:intervalType', controller.personal );
+	page( '/jetpack/connect/personal', getJetpackConnectHandler( { type: 'personal' } ) );
+	page( '/jetpack/connect/personal/yearly', getJetpackConnectHandler( { type: 'personal' } ) );
+	page( '/jetpack/connect/personal/monthly', getJetpackConnectHandler( { type: 'personal', interval: 'monthly' } ) );
 
-	page( '/jetpack/connect/premium', controller.premium );
-	page( '/jetpack/connect/premium/:intervalType', controller.premium );
+	page( '/jetpack/connect/premium', getJetpackConnectHandler( { type: 'premium' } ) );
+	page( '/jetpack/connect/premium/yearly', getJetpackConnectHandler( { type: 'premium' } ) );
+	page( '/jetpack/connect/premium/monthly', getJetpackConnectHandler( { type: 'premium', interval: 'monthly' } ) );
 
-	page( '/jetpack/connect/pro', controller.pro );
-	page( '/jetpack/connect/pro/:intervalType', controller.pro );
+	page( '/jetpack/connect/pro', getJetpackConnectHandler( { type: 'pro' } ) );
+	page( '/jetpack/connect/pro/yearly', getJetpackConnectHandler( { type: 'pro' } ) );
+	page( '/jetpack/connect/pro/monthly', getJetpackConnectHandler( { type: 'pro', interval: 'monthly' } ) );
 
-	page( '/jetpack/connect', controller.connect );
+	page( '/jetpack/connect', getJetpackConnectHandler() );
 
 	page( '/jetpack/connect/choose/:site', controller.plansPreSelection );
 
@@ -49,7 +56,7 @@ export default function() {
 	page(
 		'/jetpack/connect/install/:locale?',
 		controller.redirectWithoutLocaleifLoggedIn,
-		controller.install
+		getJetpackConnectHandler( { type: 'install' } )
 	);
 
 	page( '/jetpack/connect/store', controller.plansLanding );
