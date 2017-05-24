@@ -9,27 +9,25 @@ export const mockComments = [
 export const mockComment = {
 	content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 	date: '2017-05-12 16:00:00',
+	i_like: false,
 	id: 12345678,
-	isApproved: true,
-	isLiked: false,
-	isSpam: false,
-	isTrash: false,
 	replied: true,
+	status: 'approved',
 
 	author: {
-		avatarUrl: 'https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60?s=96&d=mm&r=G',
-		displayName: 'Test User',
+		avatar_URL: 'https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60?s=96&d=mm&r=G',
+		name: 'Test User',
 		email: 'test@test.com',
-		id: 12345678,
+		ID: 12345678,
 		ip: '127.0.0.1',
 		isBlocked: false,
-		url: 'http://discover.wordpress.com',
-		username: 'testuser',
+		URL: 'http://discover.wordpress.com',
+		nice_name: 'testuser',
 	},
 
 	post: {
-		author: { displayName: 'Test User' },
+		author: { nice_name: 'Test User' },
 		title: 'Test Post',
-		url: 'http://discover.wordpress.com',
+		link: 'http://discover.wordpress.com',
 	},
 };

@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -193,25 +193,25 @@ const mapStateToProps = ( state, { commentId, siteId } ) => {
 	const comment = mockComment;
 
 	return {
-		authorAvatarUrl: comment.author.avatarUrl,
-		authorDisplayName: comment.author.displayName,
-		authorEmail: comment.author.email,
-		authorId: comment.author.id,
-		authorIp: comment.author.ip,
-		authorIsBlocked: comment.author.isBlocked,
-		authorUrl: comment.author.url,
-		authorUsername: comment.author.username,
+		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
+		authorDisplayName: get( comment, 'author.name' ),
+		authorEmail: get( comment, 'author.email' ),
+		authorId: get( comment, 'author.ID' ),
+		authorIp: get( comment, 'author.ip' ), // TODO: not available in the current data structure
+		authorIsBlocked: get( comment, 'author.isBlocked' ), // TODO: not available in the current data structure
+		authorUrl: get( comment, 'author.URL' ),
+		authorUsername: get( comment, 'author.nice_name' ),
 		commentContent: comment.content,
 		commentDate: comment.date,
 		commentId: commentId,
-		commentIsApproved: comment.isApproved,
-		commentIsLiked: comment.isLiked,
-		commentIsSpam: comment.isSpam,
-		commentIsTrash: comment.isTrash,
-		postAuthorDisplayName: comment.post.author.displayName,
-		postTitle: comment.post.title,
-		postUrl: comment.post.url,
-		repliedToComment: comment.replied,
+		commentIsApproved: 'approved' === comment.status,
+		commentIsLiked: comment.i_like,
+		commentIsSpam: 'spam' === comment.status,
+		commentIsTrash: 'trash' === comment.status,
+		postAuthorDisplayName: get( comment, 'post.author.name' ),
+		postTitle: get( comment, 'post.title' ),
+		postUrl: get( comment, 'post.link' ),
+		repliedToComment: comment.replied, // TODO: not available in the current data structure
 		siteId: siteId,
 	};
 };
