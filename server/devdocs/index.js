@@ -236,7 +236,7 @@ module.exports = function() {
 			path = null;
 		}
 
-		if ( ! path || path.substring( 0, root.length + 1 ) !== root + '/' ) {
+		if ( ! path || path.substring( 0, root.length + 1 ) !== root + fspath.sep ) {
 			response
 				.status( 404 )
 				.send( 'File does not exist' );
