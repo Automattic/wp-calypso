@@ -75,18 +75,6 @@ export const commentsSchema = {
 	}
 };
 
-export const requestsSchema = {
-	type: 'object',
-	patternProperties: {
-		'^\\d+-\\d+$': {
-			type: 'object',
-			patternProperties: {
-				'^\\d+-\\d+.*$': { type: 'string' }
-			}
-		}
-	}
-};
-
 export const totalCommentsCountSchema = {
 	type: 'object',
 	patternProperties: {

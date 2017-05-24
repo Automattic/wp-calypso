@@ -26,7 +26,6 @@ import {
 } from './constants';
 import {
 	commentsSchema,
-	requestsSchema,
 	totalCommentsCountSchema
 } from './schema';
 
@@ -139,7 +138,6 @@ export function requests( state = {}, action ) {
 
 	return state;
 }
-requests.schema = requestsSchema;
 
 /***
  * Stores latest comments count for post we've seen from the server
