@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { compact, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,11 +21,26 @@ import {
  * fetcherMap :: String -> (Params -> Query -> [Body] -> Promise)
  *
  * @param {string} method name of HTTP method for request
+ * @param {string} wpcomReq wpcom.req object (exposed for easier testing)
  * @returns {Function} the fetcher
  */
-const fetcherMap = method => get( {
-	GET: wpcom.req.get.bind( wpcom.req ),
-	POST: wpcom.req.post.bind( wpcom.req ),
+export const fetcherMap = ( method, wpcomReq ) => get( {
+	GET: ( { path, query = {} }, callback ) => wpcomReq.get(
+		{ path },
+		query,
+		callback
+	),
+	POST: ( { body = {}, formData, path, query = {}, }, callback ) => wpcomReq.post(
+		Object.assign(
+			{ path },
+			formData && { formData }
+		),
+		query,
+		// NOTE: We prioritize formData over body, wpcom.js will overwrite any
+		// formData in presence of a body
+		formData ? null : body,
+		callback
+	),
 }, method, null );
 
 export const successMeta = data => ( { meta: { dataLayer: { data } } } );
@@ -40,20 +55,14 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 	}
 
 	const {
-		body,
-		formData,
 		method: rawMethod,
 		onProgress,
-		path,
-		query = {},
 	} = action;
 
 	const method = rawMethod.toUpperCase();
 
-	const request = fetcherMap( method )( ...compact( [
-		{ path, formData },
-		query,
-		method === 'POST' && body,
+	const request = fetcherMap( method, wpcom.req )(
+		action,
 		( error, data ) => {
 			const {
 				failures,
@@ -71,7 +80,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 				? failures.forEach( handler => dispatch( extendAction( handler, failureMeta( nextError ) ) ) )
 				: successes.forEach( handler => dispatch( extendAction( handler, successMeta( nextData ) ) ) );
 		}
-	] ) );
+	);
 
 	if ( 'POST' === method && onProgress ) {
 		request.upload.onprogress = event => dispatch( extendAction( onProgress, progressMeta( event ) ) );

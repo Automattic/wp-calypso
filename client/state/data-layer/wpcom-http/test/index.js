@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { noop } from 'lodash';
 import { spy } from 'sinon';
 
 /**
@@ -11,6 +12,7 @@ import useNock, { nock } from 'test/helpers/use-nock';
 import { extendAction } from 'state/utils';
 import {
 	failureMeta,
+	fetcherMap,
 	queueRequest,
 	successMeta,
 } from '../';
@@ -31,20 +33,22 @@ const failer = { type: 'FAIL' };
 const getMe = {
 	method: 'GET',
 	path: '/me',
-	apiVersion: 'v1.1',
+	query: {
+		apiVersion: '1.1',
+	},
 	onFailure: failer,
 	onSuccess: succeeder,
 };
 
 describe( '#queueRequest', () => {
-	let dispatch;
-	let next;
+	const dispatch = spy();
+	const next = spy();
 
 	useNock();
 
 	beforeEach( () => {
-		dispatch = spy();
-		next = spy();
+		dispatch.reset();
+		next.reset();
 	} );
 
 	it( 'should call `onSuccess` when a response returns with data', done => {
@@ -75,5 +79,102 @@ describe( '#queueRequest', () => {
 			expect( dispatch ).to.have.been.calledWith( extendAction( failer, failureMeta( error ) ) );
 			done();
 		}, 10 );
+	} );
+} );
+
+describe( '#fetcherMap', () => {
+	const wpcomReq = {
+		get: spy(),
+		post: spy(),
+	};
+
+	beforeEach( () => {
+		wpcomReq.get.reset();
+		wpcomReq.post.reset();
+	} );
+
+	describe( 'GET', () => {
+		it( 'should send with query', () => {
+			const getFooAction = {
+				method: 'GET',
+				path: '/foo',
+				query: {
+					apiNamespace: 'wp/v2',
+				},
+			};
+
+			fetcherMap( 'GET', wpcomReq )( getFooAction, noop );
+
+			expect( wpcomReq.get ).to.have.been.calledWith(
+				{ path: '/foo' },
+				{
+					apiNamespace: 'wp/v2',
+				},
+				noop
+			);
+		} );
+	} );
+
+	describe( 'POST', () => {
+		it( 'should send formData with query', () => {
+			const postFooAction = {
+				method: 'POST',
+				path: '/foo',
+				formData: [ [ 'foo', 'bar' ], ],
+				query: { apiVersion: '1.1' },
+			};
+
+			fetcherMap( 'POST', wpcomReq )( postFooAction, noop );
+
+			expect( wpcomReq.post ).to.have.been.calledWith(
+				{
+					path: '/foo',
+					formData: [ [ 'foo', 'bar' ], ],
+				},
+				{
+					apiVersion: '1.1',
+				},
+				null,
+				noop
+			);
+		} );
+
+		it( 'it should prioritize formData over body', () => {
+			const postFooAction = {
+				method: 'POST',
+				path: '/foo',
+				formData: [ [ 'foo', 'bar' ], ],
+				body: { lorem: 'ipsum' },
+			};
+
+			fetcherMap( 'POST', wpcomReq )( postFooAction, noop );
+
+			expect( wpcomReq.post ).to.have.been.calledWith(
+				{
+					path: '/foo',
+					formData: [ [ 'foo', 'bar' ], ],
+				},
+				{ },
+				null,
+				noop
+			);
+		} );
+
+		it( 'should send body in the absence of any formData', () => {
+			const postFooAction = {
+				method: 'POST',
+				path: '/foo',
+				body: { lorem: 'ipsum' },
+			};
+
+			fetcherMap( 'POST', wpcomReq )( postFooAction, noop );
+
+			expect( wpcomReq.post ).to.have.been.calledWith(
+				{ path: '/foo' },
+				{ },
+				{ lorem: 'ipsum' },
+				noop
+			);
+		} );
 	} );
 } );
