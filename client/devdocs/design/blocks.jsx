@@ -29,6 +29,7 @@ import FollowButton from 'blocks/follow-button/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
 import PostSelector from 'my-sites/post-selector/docs/example';
+import Site from 'blocks/site/docs/example';
 import SitesDropdown from 'components/sites-dropdown/docs/example';
 import SiteIcon from 'blocks/site-icon/docs/example';
 import Theme from 'components/theme/docs/example';
@@ -120,6 +121,7 @@ export default React.createClass( {
 					<PlanStorage />
 					<PostSchedule />
 					<PostSelector />
+					<Site />
 					<SitesDropdown />
 					<SiteIcon />
 					<Theme />
