@@ -19,8 +19,6 @@ import {
 	COMMENTS_REQUEST,
 	COMMENTS_REQUEST_SUCCESS,
 	COMMENTS_REQUEST_FAILURE,
-	DESERIALIZE,
-	SERIALIZE
 } from '../action-types';
 import { combineReducersWithPersistence } from 'state/utils';
 import {
@@ -106,14 +104,10 @@ export function items( state = {}, action ) {
 					placeholderError: error
 				} ) )
 			};
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
 }
-items.hasCustomPersistence = true;
 
 /***
  * Stores information regarding requests status per requestId
@@ -135,14 +129,10 @@ export function requests( state = {}, action ) {
 					[ requestId ]: type
 				}
 			};
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
 }
-requests.hasCustomPersistence = true;
 
 /***
  * Stores latest comments count for post we've seen from the server
@@ -159,14 +149,10 @@ export function totalCommentsCount( state = {}, action ) {
 				...state,
 				[ stateKey ]: action.totalCommentsCount
 			};
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
 }
-totalCommentsCount.hasCustomPersistence = true;
 
 export default combineReducersWithPersistence( {
 	items,
