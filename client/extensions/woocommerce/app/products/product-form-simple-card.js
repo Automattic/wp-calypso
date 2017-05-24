@@ -34,12 +34,19 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 	};
 
 	const toggleStock = () => {
-		editProduct( product, { manage_stock: ! product.manage_stock } );
+		let manage_stock = ! product.manage_stock;
+		let stock_quantity = product.stock_quantity;
+		if ( product.stock_quantity >= 0 && product.manage_stock ) {
+			manage_stock = false;
+			stock_quantity = '';
+		}
+		editProduct( product, { manage_stock, stock_quantity } );
 	};
 
 	const setStockQuantity = ( e ) => {
-		const stock_quantity = e.target.value;
-		Number( stock_quantity ) >= 0 && editProduct( product, { stock_quantity } );
+		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
+		const manage_stock = ( stock_quantity !== '' );
+		editProduct( product, { manage_stock, stock_quantity } );
 	};
 
 	const setBackorders = ( e ) => {
@@ -102,16 +109,13 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 							name="manage_stock"
 							onChange={ toggleStock } />
 					</div>
-
-					{ product.manage_stock && (
-						<FormTextInput
-							name="stock_quantity"
-							value={ product.stock_quantity || '' }
-							type="number"
-							min="0"
-							onChange={ setStockQuantity }
-							placeholder={ translate( 'Quantity' ) } />
-					) }
+					<FormTextInput
+						name="stock_quantity"
+						value={ product.stock_quantity || '' }
+						type="number"
+						min="0"
+						onChange={ setStockQuantity }
+						placeholder={ translate( 'Quantity' ) } />
 				</div>
 			</div>
 			{ product.manage_stock && (
