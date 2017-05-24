@@ -443,6 +443,7 @@ export default {
 	},
 	selectPlanInAdvance( planSlug, site ) {
 		return ( dispatch ) => {
+			debug( 'selectPlanInAdvance', planSlug );
 			dispatch( {
 				type: JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
 				plan: planSlug,

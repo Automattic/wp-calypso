@@ -54,6 +54,7 @@ const jetpackNewSiteSelector = ( context ) => {
 };
 
 const jetpackConnectFirstStep = ( context, type ) => {
+	debug( 'jetpackConnectFirstStep context', context );
 	removeSidebar( context );
 
 	userModule.fetch();
