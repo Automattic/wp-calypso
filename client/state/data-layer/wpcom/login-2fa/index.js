@@ -21,6 +21,7 @@ import {
 	getTwoFactorRememberMe,
 	getTwoFactorPushPollInProgress
 } from 'state/login/selectors';
+import queueOperation from 'lib/queued-operation';
 
 /***
  * Module constants
@@ -34,42 +35,65 @@ const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
  * @returns {Promise}		Promise of result from the API
  */
 const doAppPushRequest = ( store ) => {
-	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
-			user_id: getTwoFactorUserId( store.getState() ),
-			two_step_nonce: getTwoFactorAuthNonce( store.getState() ),
-			remember_me: getTwoFactorRememberMe( store.getState() ),
-			two_step_push_token: getTwoFactorPushToken( store.getState() ),
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-		} ).then( () => {
-			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
-		} ).catch( error => {
-			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE, twoStepNonce: error.response.body.data.two_step_nonce } );
-			return Promise.reject( error );
-		} );
+	return queueOperation( 'two_step_nonce',
+		() => {
+			if ( ! getTwoFactorPushPollInProgress( store.getState() ) ) {
+				return Promise.reject( new Error( 'Polling have been stopped' ) );
+			}
+
+			return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
+				.withCredentials()
+				.set( 'Content-Type', 'application/x-www-form-urlencoded' )
+				.accept( 'application/json' )
+				.send( {
+					user_id: getTwoFactorUserId( store.getState() ),
+					two_step_nonce: getTwoFactorAuthNonce( store.getState() ),
+					remember_me: getTwoFactorRememberMe( store.getState() ),
+					two_step_push_token: getTwoFactorPushToken( store.getState() ),
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
+				} ).then( () => {
+					store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
+				} ).catch( error => {
+					store.dispatch( {
+						type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE,
+						twoStepNonce: error.response.body.data.two_step_nonce
+					} );
+					return Promise.reject( error );
+				} );
+		}
+	);
 };
 
 const sendAppPush = ( store ) => {
-	return request.post( 'https://wordpress.com/wp-login.php?action=send-push-notification-endpoint' )
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
-			user_id: getTwoFactorUserId( store.getState() ),
-			two_step_nonce: getTwoFactorAuthNonce( store.getState() ),
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-		} ).then( response => {
-			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE, twoStepNonce: response.body.data.two_step_nonce } );
-			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_WEB_TOKEN, pushWebToken: response.body.data.push_web_token } );
-		} ).catch( error => {
-			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE, twoStepNonce: error.response.body.data.two_step_nonce } );
-			return Promise.reject( error );
-		} );
+	return queueOperation(
+		'two_step_nonce',
+		() => request.post( 'https://wordpress.com/wp-login.php?action=send-push-notification-endpoint' )
+			.withCredentials()
+			.set( 'Content-Type', 'application/x-www-form-urlencoded' )
+			.accept( 'application/json' )
+			.send( {
+				user_id: getTwoFactorUserId( store.getState() ),
+				two_step_nonce: getTwoFactorAuthNonce( store.getState() ),
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
+			} ).then( response => {
+				store.dispatch( {
+					type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE,
+					twoStepNonce: response.body.data.two_step_nonce
+				} );
+				store.dispatch( {
+					type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_WEB_TOKEN,
+					pushWebToken: response.body.data.push_web_token
+				} );
+			} ).catch( error => {
+				store.dispatch( {
+					type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE,
+					twoStepNonce: error.response.body.data.two_step_nonce
+				} );
+				return Promise.reject( error );
+			} )
+	);
 };
 
 /***

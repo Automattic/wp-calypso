@@ -29,6 +29,7 @@ import {
 	getTwoFactorUserId,
 	getTwoFactorAuthNonce,
 } from 'state/login/selectors';
+import queueOperation from 'lib/queued-operation';
 
 const loginErrorMessages = {
 	empty_password: translate( 'Please be sure to enter your password.' ),
@@ -131,27 +132,30 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_me ) => ( dispatch, getState ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
-	return createRequest( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint', {
-		user_id: getTwoFactorUserId( getState() ),
-		two_step_nonce: getTwoFactorAuthNonce( getState() ),
-		two_step_code,
-		remember_me,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	} ).then( () => {
-		dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
-	} )
-	.catch( ( error ) => {
-		const errorMessage = getMessageFromHTTPError( error );
+	return queueOperation(
+		'two_step_nonce',
+		() => createRequest( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint', {
+			user_id: getTwoFactorUserId( getState() ),
+			two_step_nonce: getTwoFactorAuthNonce( getState() ),
+			two_step_code,
+			remember_me,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} ).then( () => {
+			dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
+		} )
+		.catch( ( error ) => {
+			const errorMessage = getMessageFromHTTPError( error );
 
-		dispatch( {
-			type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
-			error: errorMessage,
-			twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
-		} );
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
+				error: errorMessage,
+				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
+			} );
 
-		return Promise.reject( errorMessage );
-	} );
+			return Promise.reject( errorMessage );
+		} )
+	);
 };
 
 /**
@@ -197,38 +201,41 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		},
 	} );
 
-	return createRequest( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint', {
-		user_id: getTwoFactorUserId( getState() ),
-		two_step_nonce: getTwoFactorAuthNonce( getState() ),
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	} ).then( ( response ) => {
-		const phoneNumber = get( response, 'body.data.phone_number' );
-		const message = translate( 'A text message with the verification code was just sent to your ' +
-			'phone number ending in %(phoneNumber)s', {
-				args: {
-					phoneNumber
-				}
-			}
-		);
-		dispatch( {
-			type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
-			notice: {
-				message,
-				status: 'is-success'
-			},
-			twoStepNonce: get( response, 'body.data.two_step_nonce' ),
-		} );
-	} ).catch( ( error ) => {
-		const field = 'global';
-		const message = getMessageFromHTTPError( error );
 
-		dispatch( {
-			type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
-			error: { message, field },
-			twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
-		} );
-	} );
+	return queueOperation( 'two_step_nonce',
+		() => createRequest( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint', {
+			user_id: getTwoFactorUserId( getState() ),
+			two_step_nonce: getTwoFactorAuthNonce( getState() ),
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} ).then( ( response ) => {
+			const phoneNumber = get( response, 'body.data.phone_number' );
+			const message = translate( 'A text message with the verification code was just sent to your ' +
+				'phone number ending in %(phoneNumber)s', {
+					args: {
+						phoneNumber
+					}
+				}
+			);
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+				notice: {
+					message,
+					status: 'is-success'
+				},
+				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
+			} );
+		} ).catch( ( error ) => {
+			const field = 'global';
+			const message = getMessageFromHTTPError( error );
+
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
+				error: { message, field },
+				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
+			} );
+		} )
+	);
 };
 
 export const startPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } );
