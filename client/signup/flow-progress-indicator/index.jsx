@@ -2,35 +2,28 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import flows from 'signup/config/flows';
+import ProgressBar from 'components/progress-bar';
 
-module.exports = React.createClass( {
-	displayName: 'FlowProgressIndicator',
+export default localize( ( { flowName, positionInFlow, translate } ) => {
+	const flow = flows.getFlow( flowName );
+	const flowLength = flow.steps.length;
 
-	getFlowLength: function() {
-		var flow = flows.getFlow( this.props.flowName );
-
-		return flow.steps.length;
-	},
-
-	render: function() {
-		if ( this.getFlowLength() > 1 ) {
-			return (
-				<div className="flow-progress-indicator">{
-					this.translate( 'Step %(stepNumber)d of %(stepTotal)d', {
-						args: {
-							stepNumber: this.props.positionInFlow + 1,
-							stepTotal: this.getFlowLength()
-						}
-					} )
-				}</div>
-			);
-		}
-
-		return null;
+	if ( flowLength > 1 ) {
+		return (
+			<div className="flow-progress-indicator__container">
+				<div className="flow-progress-indicator__progress-bar">
+					{ translate( 'Current progress:' ) }
+					<ProgressBar value={ positionInFlow } total={ flowLength } isPulsing />
+				</div>
+			</div>
+		);
 	}
+
+	return null;
 } );
