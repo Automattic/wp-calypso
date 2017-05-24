@@ -63,25 +63,6 @@ const jetpackNewSiteSelector = ( context ) => {
 	);
 };
 
-const jetpackConnectFirstStep = ( context, type ) => {
-	removeSidebar( context );
-
-	userModule.fetch();
-
-	renderWithReduxStore(
-		React.createElement( JetpackConnect, {
-			path: context.path,
-			context: context,
-			type: type,
-			userModule: userModule,
-			locale: context.params.locale,
-			url: context.query.url
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
-};
-
 export default {
 	redirectWithoutLocaleifLoggedIn( context, next ) {
 		if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
@@ -111,13 +92,31 @@ export default {
 	},
 
 	connect( context, options = {} ) {
-		const { pathname } = context;
+		const {
+			path,
+			pathname,
+		} = context;
 		const { type = false } = options;
 		const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
 
 		analytics.pageView.record( pathname, analyticsPageTitle );
 
-		jetpackConnectFirstStep( context, type );
+		removeSidebar( context );
+
+		userModule.fetch();
+
+		renderWithReduxStore(
+			React.createElement( JetpackConnect, {
+				context,
+				locale: context.params.locale,
+				path,
+				type,
+				url: context.query.url,
+				userModule,
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
+		);
 	},
 
 	authorizeForm( context ) {
