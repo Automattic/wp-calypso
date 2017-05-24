@@ -12,6 +12,7 @@ import analytics from 'lib/analytics';
 import DnsData from 'components/data/domain-management/dns' ;
 import DomainManagement from './domain-management';
 import DomainManagementData from 'components/data/domain-management';
+import QueryWhois from 'components/data/query-whois';
 import EmailData from 'components/data/domain-management/email' ;
 import EmailForwardingData from 'components/data/domain-management/email-forwarding' ;
 import NameserversData from 'components/data/domain-management/nameservers';
@@ -44,10 +45,8 @@ export default {
 		);
 
 		renderWithReduxStore(
-			<DomainManagementData
-				component={ DomainManagement.List.default }
-				context={ pageContext }
-				productsList={ productsList }
+			<QueryWhois
+				domain={ 'example.com' }
 			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
