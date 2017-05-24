@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import Immutable from 'immutable';
+import { orderBy, has, map, unionBy, reject } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -18,181 +19,140 @@ import {
 	COMMENTS_REQUEST,
 	COMMENTS_REQUEST_SUCCESS,
 	COMMENTS_REQUEST_FAILURE,
-	DESERIALIZE,
-	SERIALIZE,
 } from '../action-types';
 import { combineReducersWithPersistence } from 'state/utils';
-import {
-	getCommentParentKey,
-	updateExistingIn
-} from './utils';
 import {
 	PLACEHOLDER_STATE
 } from './constants';
 
-/***
- * Creates a function that updates like count
- * @param {Boolean} like true to like, false to unlike
- * @returns {Function} function that updates like count for comment
- */
-function getLikeSetter( { like = true, likeCount } ) {
-	return ( comment ) => comment.set( 'i_like', like )
-								.update( 'like_count', ( count ) => {
-									if ( typeof likeCount !== 'undefined' ) {
-										return likeCount;
-									}
+const getCommentDate = ( { date } ) => new Date( date );
 
-									return like ? count + 1 : count - 1;
-								} );
-}
+const getStateKey = ( siteId, postId ) => `${ siteId }-${ postId }`;
 
-/***
- * Updates a specific state in the general state
- * @param {Immutable.Map} state general state for all commentTargetId
- * @param {Object} action action object
- * @param {Number} action.siteId site identifier
- * @param {Number} action.postId post identifier
- * @param {Function|Object} updaterOrValue an updater function or a value
- * @returns {Immutable.Map} new state
- */
-function updateSpecificState( state, action, updaterOrValue ) {
-	const id = getCommentParentKey( action.siteId, action.postId );
-
-	if ( typeof updaterOrValue === 'function' ) {
-		return state.update( id, ( value ) => updaterOrValue( value ) );
+const updateComment = ( commentId, newProperties ) => comment => {
+	if ( comment.ID !== commentId ) {
+		return comment;
 	}
+	const updateLikeCount = has( newProperties, 'i_like' ) && ! has( newProperties, 'like_count' );
 
-	return state.set( id, updaterOrValue );
-}
+	return {
+		...comment,
+		...newProperties,
+		...updateLikeCount && {
+			like_count: newProperties.i_like ? comment.like_count + 1 : comment.like_count - 1
+		}
+	};
+};
 
 /***
  * Comments items reducer, stores a comments items Immutable.List per siteId, postId
- * @param {Immutable.Map} state redux state
+ * @param {Object} state redux state
  * @param {Object} action redux action
- * @returns {Immutable.Map} new redux state
+ * @returns {Object} new redux state
  */
-export function items( state = Immutable.Map(), action ) {
+export function items( state = {}, action ) {
+	const { siteId, postId, commentId } = action;
+	const stateKey = getStateKey( siteId, postId );
+
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) => {
-				updateExistingIn(
-					comments,
-					comment => comment.get( 'ID' ) === action.commentId,
-					comment => comment.set( 'status', action.status )
-				);
-			} );
+			const { status } = action;
+			return {
+				...state,
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { status } ) )
+			};
 		case COMMENTS_EDIT:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) => {
-				updateExistingIn(
-					comments,
-					comment => comment.get( 'ID' ) === action.commentId,
-					comment => comment.set( 'content', action.content )
-				);
-			} );
+			const { content } = action;
+			return {
+				...state,
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { content } ) )
+			};
 		case COMMENTS_RECEIVE:
-			// create set of ids for faster lookup for filter later
-			const newIds = Immutable.Set( action.comments.map( comment => comment.ID ) );
-
-			// we prefer freshly retrieved data, so throw away old data
-			return updateSpecificState( state, action, function( comments = Immutable.List() ) {
-				let newComments = comments.filter( ( comment ) => ! newIds.has( comment.get( 'ID' ) ) )
-											.concat( Immutable.fromJS( action.comments ) );
-
-				if ( ! action.skipSort ) {
-					newComments = newComments.sort( ( a, b ) => new Date( b.get( 'date' ) ) - new Date( a.get( 'date' ) ) );
-				}
-
-				return newComments;
-			} );
-
+			const { skipSort, comments } = action;
+			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
+			return {
+				...state,
+				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments
+			};
 		case COMMENTS_REMOVE:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) =>
-				comments.filter( ( comment ) => comment.get( 'ID' ) !== action.commentId )
-			);
+			return {
+				...state,
+				[ stateKey ]: reject( state[ stateKey ], { ID: commentId } )
+			};
 		case COMMENTS_LIKE:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) =>
-				updateExistingIn( comments,
-					( comment ) => comment.get( 'ID' ) === action.commentId,
-					getLikeSetter( { like: true } )
-				)
-			);
+			return {
+				...state,
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: true } ) )
+			};
 		case COMMENTS_LIKE_UPDATE:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) =>
-				updateExistingIn( comments,
-					( comment ) => comment.get( 'ID' ) === action.commentId,
-					getLikeSetter( { like: action.iLike, likeCount: action.likeCount } )
-				)
-			);
+			const { iLike, likeCount } = action;
+			return {
+				...state,
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: iLike, like_count: likeCount } ) )
+			};
 		case COMMENTS_UNLIKE:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) =>
-				updateExistingIn( comments,
-					( comment ) => comment.get( 'ID' ) === action.commentId,
-					getLikeSetter( { like: false } )
-				)
-			);
+			return {
+				...state,
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: false } ) )
+			};
 		case COMMENTS_ERROR:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) =>
-				updateExistingIn( comments,
-					( comment ) => comment.get( 'ID' ) === action.commentId,
-					( comment ) => comment.set( 'placeholderState', PLACEHOLDER_STATE.ERROR )
-										.set( 'placeholderError', action.error )
-				)
-			);
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return Immutable.Map();
+			const { error } = action;
+			return {
+				...state,
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, {
+					placeholderState: PLACEHOLDER_STATE.ERROR,
+					placeholderError: error
+				} ) )
+			};
 	}
 
 	return state;
 }
-items.hasCustomPersistence = true;
 
 /***
  * Stores information regarding requests status per requestId
- * @param {Immutable.Map} state redux state
+ * @param {Object} state redux state
  * @param {Object} action redux action
- * @returns {Immutable.Map} new redux state
+ * @returns {Object} new redux state
  */
-export function requests( state = Immutable.Map(), action ) {
+export function requests( state = {}, action ) {
 	switch ( action.type ) {
 		case COMMENTS_REQUEST:
 		case COMMENTS_REQUEST_SUCCESS:
 		case COMMENTS_REQUEST_FAILURE:
-			return updateSpecificState(
-				state,
-				action,
-				( requestStatuses = Immutable.Map() ) => requestStatuses.set( action.requestId, action.type )
-			);
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return Immutable.Map();
+			const { siteId, postId, requestId, type } = action;
+			const stateKey = getStateKey( siteId, postId );
+			return {
+				...state,
+				[ stateKey ]: {
+					...state[ stateKey ],
+					[ requestId ]: type
+				}
+			};
 	}
 
 	return state;
 }
-requests.hasCustomPersistence = true;
 
 /***
  * Stores latest comments count for post we've seen from the server
- * @param {Immutable.Map} state redux state, prev totalCommentsCount
+ * @param {Object} state redux state, prev totalCommentsCount
  * @param {Object} action redux action
- * @returns {Immutable.Map} new redux state
+ * @returns {Object} new redux state
  */
-export function totalCommentsCount( state = Immutable.Map(), action ) {
+export function totalCommentsCount( state = {}, action ) {
 	switch ( action.type ) {
 		case COMMENTS_COUNT_RECEIVE:
-			return updateSpecificState( state, action, action.totalCommentsCount );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return Immutable.Map();
+			const { siteId, postId } = action;
+			const stateKey = getStateKey( siteId, postId );
+			return {
+				...state,
+				[ stateKey ]: action.totalCommentsCount
+			};
 	}
 
 	return state;
 }
-totalCommentsCount.hasCustomPersistence = true;
 
 export default combineReducersWithPersistence( {
 	items,
