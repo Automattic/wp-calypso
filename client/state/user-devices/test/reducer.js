@@ -19,7 +19,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should store the user devices when a request is successful', () => {
+		it( 'should add devices to the initial state', () => {
 			const state = items( null, {
 				type: USER_DEVICES_ADD,
 				devices: {
@@ -34,7 +34,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should replace state when a request is successful', () => {
+		it( 'should add new devices to the state', () => {
 			const state = deepFreeze( {
 				1: { id: 1, name: 'Mobile Phone' },
 				2: { id: 2, name: 'Tablet' }
@@ -48,6 +48,8 @@ describe( 'reducer', () => {
 			} );
 
 			expect( newState ).to.eql( {
+				1: { id: 1, name: 'Mobile Phone' },
+				2: { id: 2, name: 'Tablet' },
 				3: { id: 3, name: 'Refrigerator' },
 				4: { id: 4, name: 'Microwave' }
 			} );

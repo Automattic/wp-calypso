@@ -7,5 +7,5 @@ import {
 } from 'state/action-types';
 
 export default createReducer( {}, {
-	[ USER_DEVICES_ADD ]: ( state, { devices } ) => devices
+	[ USER_DEVICES_ADD ]: ( state, { devices } ) => ( { ...state, ...devices } )
 } );
