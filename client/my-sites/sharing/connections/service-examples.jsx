@@ -33,6 +33,7 @@ const SERVICES_WHITELIST = [
 	'path',
 	'tumblr',
 	'twitter',
+	'google_photos',
 ];
 
 class SharingServiceExamples extends Component {
@@ -96,6 +97,27 @@ class SharingServiceExamples extends Component {
 					}
 				} ),
 			},
+		];
+	}
+
+	google_photos() {
+		return [
+			{
+				image: {
+					src: '/calypso/images/sharing/google-photos.png',
+					alt: this.props.translate(
+						'Connect to use photos stored in your Google account directly inside the editor',
+						{ textOnly: true }
+					)
+				},
+				label: this.props.translate(
+					'{{strong}}Connect{{/strong}} to use photos stored in your Google account directly inside the editor.', {
+						components: {
+							strong: <strong />
+						}
+					}
+				),
+			}
 		];
 	}
 
