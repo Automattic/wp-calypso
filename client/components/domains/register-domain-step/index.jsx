@@ -443,6 +443,7 @@ const RegisterDomainStep = React.createClass( {
 			domainRegistrationSuggestions = suggestions.map( function( suggestion ) {
 				return (
 					<DomainRegistrationSuggestion
+						isSignupStep={ this.props.isSignupStep }
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
@@ -454,6 +455,7 @@ const RegisterDomainStep = React.createClass( {
 
 			domainMappingSuggestion = (
 				<DomainMappingSuggestion
+					isSignupStep={ this.props.isSignupStep }
 					onButtonClick={ this.goToMapDomainStep }
 					selectedSite={ this.props.selectedSite }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
@@ -510,6 +512,7 @@ const RegisterDomainStep = React.createClass( {
 				selectedSite={ this.props.selectedSite }
 				offerMappingOption={ this.props.offerMappingOption }
 				placeholderQuantity={ SUGGESTION_QUANTITY }
+				isSignupStep={ this.props.isSignupStep }
 				cart={ this.props.cart } />
 		);
 	},

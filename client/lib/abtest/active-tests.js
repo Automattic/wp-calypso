@@ -91,5 +91,13 @@ module.exports = {
 			modified: 50,
 		},
 		defaultVariation: 'original',
-	}
+	},
+	selectCtaInDomainsSignup: {
+		datestamp: '20170529',
+		variations: {
+			original: 50,
+			select: 50,
+		},
+		defaultVariation: 'original',
+	},
 };
