@@ -2,7 +2,7 @@
  * External dependencies
  */
 import validator from 'is-my-json-valid';
-import { merge, flow, partialRight, reduce } from 'lodash';
+import { merge, flow, partialRight, reduce, isEqual, omit } from 'lodash';
 import { combineReducers } from 'redux';
 
 /**
@@ -89,8 +89,6 @@ export const keyedReducer = ( keyName, reducer ) => {
 		throw new TypeError( `Reducer passed into ``keyedReducer`` must be a function but I detected a ${ typeof reducer }` );
 	}
 
-	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
-
 	return ( state = {}, action ) => {
 		// don't allow coercion of key name: null => 0
 		if ( ! action.hasOwnProperty( keyName ) ) {
@@ -109,20 +107,21 @@ export const keyedReducer = ( keyName, reducer ) => {
 		// pass the old sub-state from that item into the reducer
 		// we need this to update state and also to compare if
 		// we had any changes, thus the initialState
-		const oldItemState = state.hasOwnProperty( itemKey )
-			? state[ itemKey ]
-			: initialState;
-
+		const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
+		const oldItemState = state[ itemKey ];
 		const newItemState = reducer( oldItemState, action );
 
 		// and do nothing if the new sub-state matches the old sub-state
-		// or if it matches the default state for the reducer, in which
-		// case nothing happened and we don't need to store it
-		if (
-			newItemState === oldItemState ||
-			newItemState === initialState
-		) {
+		if ( newItemState === oldItemState ) {
 			return state;
+		}
+
+		// remove key from state if setting back to initial state
+		// if it didn't exist anyway, then do nothing.
+		if ( isEqual( newItemState, initialState ) ) {
+			return state.hasOwnProperty( itemKey )
+				? omit( state, itemKey )
+				: state;
 		}
 
 		// otherwise immutably update the super-state
