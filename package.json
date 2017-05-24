@@ -155,6 +155,7 @@
     "test-test:watch": "nodemon -e js,jsx --exec npm run test-test",
     "test-integration:watch": "nodemon -e js,jsx --exec npm run test-integration",
     "lint": "bin/run-lint .",
+    "lint-fixable": "`npm bin`/eslint --ext=.js,.jsx --format=./bin/formatter.js client/ server/ test/",
     "css-lint": "stylelint 'client/**/*.scss' --syntax scss"
   },
   "devDependencies": {
