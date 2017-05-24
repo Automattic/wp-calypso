@@ -71,6 +71,7 @@ import VerticalMenu from 'components/vertical-menu/docs/example';
 import Banner from 'components/banner/docs/example';
 import EmojifyExample from 'components/emojify/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
+import FormattedHeader from 'components/formatted-header/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -135,6 +136,7 @@ let DesignAssets = React.createClass( {
 					<FeatureGate />
 					<FilePickers />
 					<FoldableCard />
+					<FormattedHeader />
 					<FormFields searchKeywords="input textbox textarea radio" />
 					<Gauge />
 					<GlobalNotices />
