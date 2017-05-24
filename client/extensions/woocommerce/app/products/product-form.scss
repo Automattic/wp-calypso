@@ -504,7 +504,7 @@
 	}
 
 	.products__product-backorders-wrapper label {
-		margin-bottom: 12px;
+		margin-bottom: 5px;
 	}
 
 	.products__product-backorders-wrapper select {
@@ -514,16 +514,12 @@
 	.products__product-stock-options-wrapper {
 		display: flex;
 		flex-direction: column;
-		margin-top: 16px;
+		margin-top: 6px;
 
 		.products__product-manage-stock {
-			width: 200px;
-			margin-right: 32px;
+			width: 150px;
+			margin-right: 24px;
 			margin-bottom: 12px;
-
-			.form-text-input {
-				margin-top: 8px;
-			}
 		}
 
 		.products__product-backorders-wrapper {
