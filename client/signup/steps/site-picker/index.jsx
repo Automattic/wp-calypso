@@ -2,49 +2,26 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import { getSite } from 'state/sites/selectors';
+import SitePickerSubmit from './site-picker-submit';
 import SiteSelector from 'components/site-selector';
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 
 class SitePicker extends Component {
+	componentWillMount() {
+		this.state = {
+			siteSlug: null
+		};
+	}
+
 	handleSiteSelect = ( siteSlug ) => {
-		const {
-				stepSectionName,
-				stepName,
-				goToStep,
-			} = this.props,
-			site = this.props.getSelectedSite( siteSlug ),
-			hasPlan = site && site.plan && site.plan.product_slug !== 'free_plan';
-
-		SignupActions.submitSignupStep(
-			{
-				stepName,
-				stepSectionName,
-				siteId: site.ID,
-				siteSlug: site.slug
-			},
-			[],
-			{}
-		);
-
-		SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
-			themeSlugWithRepo: 'pub/twentysixteen'
+		this.setState( {
+			siteSlug
 		} );
-
-		if ( hasPlan ) {
-			SignupActions.submitSignupStep( { stepName: 'plans', wasSkipped: true }, [], { cartItem: null, privacyItem: null } );
-
-			goToStep( 'user' );
-		} else {
-			goToStep( 'plans' );
-		}
 	};
 
 	filterSites = ( site ) => {
@@ -63,6 +40,21 @@ class SitePicker extends Component {
 	}
 
 	render() {
+		if ( this.state.siteSlug ) {
+			const {
+				stepSectionName,
+				stepName,
+				goToStep,
+			} = this.props;
+
+			return <SitePickerSubmit
+				siteSlug={ this.state.siteSlug }
+				stepSectionName={ stepSectionName }
+				stepName={ stepName }
+				goToStep={ goToStep }
+			/>;
+		}
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
@@ -76,10 +68,4 @@ class SitePicker extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		return {
-			getSelectedSite: ( siteId ) => getSite( state, siteId )
-		};
-	}
-)( SitePicker );
+export default SitePicker;
