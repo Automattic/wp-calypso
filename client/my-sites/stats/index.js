@@ -11,6 +11,9 @@ var controller = require( 'my-sites/controller' ),
 	config = require( 'config' );
 
 module.exports = function() {
+	if ( config.isEnabled( 'jetpack/activity-log' ) ) {
+		page( '/stats/activity/:site_id', controller.siteSelection, controller.navigation, statsController.activity_log );
+	}
 	if ( config.isEnabled( 'manage/stats' ) ) {
 		// Stat Overview Page
 		page( '/stats', controller.siteSelection, controller.navigation, statsController.overview );

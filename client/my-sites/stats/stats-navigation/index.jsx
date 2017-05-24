@@ -23,8 +23,10 @@ const StatsNavigation = ( props ) => {
 		day: translate( 'Days' ),
 		week: translate( 'Weeks' ),
 		month: translate( 'Months' ),
-		year: translate( 'Years' )
+		year: translate( 'Years' ),
+		activity: translate( 'Activity' ),
 	};
+
 	let statsControl;
 
 	if ( config.isEnabled( 'woocommerce/extension-stats' ) ) {
@@ -49,6 +51,12 @@ const StatsNavigation = ( props ) => {
 		}
 	}
 
+	const ActivityTab = config.isEnabled( 'jetpack/activity-log' ) && isJetpack
+		? <NavItem path={ '/stats/activity' + siteFragment } selected={ section === 'activity' }>
+				{ sectionTitles.activity }
+			</NavItem>
+		: null;
+
 	return (
 		<SectionNav selectedText={ sectionTitles[ section ] }>
 			{ isJetpack && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
@@ -68,6 +76,7 @@ const StatsNavigation = ( props ) => {
 				<NavItem path={ '/stats/year' + siteFragment } selected={ section === 'year' }>
 					{ sectionTitles.year }
 				</NavItem>
+				{ ActivityTab }
 			</NavTabs>
 			{ statsControl }
 			<FollowersCount />
