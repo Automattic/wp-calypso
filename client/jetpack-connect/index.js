@@ -10,16 +10,16 @@ import controller from './controller';
 import sitesController from 'my-sites/controller';
 
 export default function() {
-	page( '/jetpack/connect/install', controller.install );
+	page( '/jetpack/connect/install', controller.connect );
 
-	page( '/jetpack/connect/personal', controller.personal );
-	page( '/jetpack/connect/personal/:intervalType', controller.personal );
+	page( '/jetpack/connect/personal', controller.connect );
+	page( '/jetpack/connect/personal/:intervalType', controller.connect );
 
-	page( '/jetpack/connect/premium', controller.premium );
-	page( '/jetpack/connect/premium/:intervalType', controller.premium );
+	page( '/jetpack/connect/premium', controller.connect );
+	page( '/jetpack/connect/premium/:intervalType', controller.connect );
 
-	page( '/jetpack/connect/pro', controller.pro );
-	page( '/jetpack/connect/pro/:intervalType', controller.pro );
+	page( '/jetpack/connect/pro', controller.connect );
+	page( '/jetpack/connect/pro/:intervalType', controller.connect );
 
 	page( '/jetpack/connect', controller.connect );
 
