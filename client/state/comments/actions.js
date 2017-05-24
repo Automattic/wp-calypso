@@ -15,6 +15,7 @@ import {
 	COMMENTS_EDIT,
 	COMMENTS_EDIT_FAILURE,
 	COMMENTS_EDIT_SUCCESS,
+	COMMENTS_LIST_REQUEST,
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_REQUEST,
@@ -24,7 +25,7 @@ import {
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
 	COMMENTS_REMOVE,
-	COMMENTS_ERROR
+	COMMENTS_ERROR,
 } from '../action-types';
 import {
 	createRequestId
@@ -159,6 +160,11 @@ export function requestPostComments( siteId, postId, status = 'approved' ) {
 					.catch( ( err ) => commentsRequestFailure( dispatch, siteId, postId, requestId, err ) );
 	};
 }
+
+export const requestCommentsList = query => ( {
+	type: COMMENTS_LIST_REQUEST,
+	query,
+} );
 
 /***
  * Creates a placeholder comment for a given text and postId
