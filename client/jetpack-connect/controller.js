@@ -53,25 +53,6 @@ const jetpackNewSiteSelector = ( context ) => {
 	);
 };
 
-const jetpackConnectFirstStep = ( context, type ) => {
-	removeSidebar( context );
-
-	userModule.fetch();
-
-	renderWithReduxStore(
-		React.createElement( JetpackConnect, {
-			path: context.path,
-			context: context,
-			type: type,
-			userModule: userModule,
-			locale: context.params.locale,
-			url: context.query.url
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
-};
-
 const getPlansLandingPage = ( context, hideFreePlan, path, landingType ) => {
 	const PlansLanding = require( './plans-landing' ),
 		analyticsPageTitle = 'Plans',
@@ -122,54 +103,59 @@ export default {
 		next();
 	},
 
-	personal( context ) {
-		const analyticsBasePath = '/jetpack/connect/personal',
-			analyticsPageTitle = 'Jetpack Connect Personal';
-
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		jetpackConnectFirstStep( context, 'personal' );
-	},
-
-	premium( context ) {
-		const analyticsBasePath = '/jetpack/connect/premium',
-			analyticsPageTitle = 'Jetpack Connect Premium';
-
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		jetpackConnectFirstStep( context, 'premium' );
-	},
-
 	newSite( context ) {
 		analytics.pageView.record( '/jetpack/new', 'Add a new site (Jetpack)' );
 		jetpackNewSiteSelector( context );
 	},
 
-	pro( context ) {
-		const analyticsBasePath = '/jetpack/connect/pro',
-			analyticsPageTitle = 'Jetpack Install Pro';
-
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		jetpackConnectFirstStep( context, 'pro' );
-	},
-
-	install( context ) {
-		const analyticsBasePath = '/jetpack/connect/install',
-			analyticsPageTitle = 'Jetpack Install';
-
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		jetpackConnectFirstStep( context, 'install' );
-	},
-
 	connect( context ) {
-		const analyticsBasePath = '/jetpack/connect',
-			analyticsPageTitle = 'Jetpack Connect';
+		const { pathname = '/jetpack/connect' } = context;
 
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+		let type = false;
+		let analyticsPageTitle = 'Jetpack Connect';
 
-		jetpackConnectFirstStep( context, false );
+		switch ( pathname ) {
+			case '/jetpack/connect/personal':
+				type = 'personal';
+				analyticsPageTitle = 'Jetpack Connect Personal';
+				break;
+
+			case '/jetpack/connect/premium':
+				type = 'premium';
+				analyticsPageTitle = 'Jetpack Connect Personal';
+				break;
+
+			case '/jetpack/connect/pro':
+				type = 'pro';
+				analyticsPageTitle = 'Jetpack Connect Personal';
+				break;
+
+			case '/jetpack/connect/install':
+				type = 'install';
+				analyticsPageTitle = 'Jetpack Install';
+				break;
+		}
+
+		removeSidebar( context );
+
+		analytics.pageView.record( pathname, analyticsPageTitle );
+
+		userModule.fetch();
+
+		debug( 'JPC type: %s', type );
+
+		renderWithReduxStore(
+			React.createElement( JetpackConnect, {
+				path: context.path,
+				context: context,
+				type: type,
+				userModule: userModule,
+				locale: context.params.locale,
+				url: context.query.url
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
+		);
 	},
 
 	authorizeForm( context ) {
