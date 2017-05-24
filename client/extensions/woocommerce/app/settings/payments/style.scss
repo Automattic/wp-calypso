@@ -1,35 +1,37 @@
 // PAYMENT-METHOD-ROW
-.payments__method-suggested.payments__method-suggested {
-	font-size: 11px;
-	text-transform: uppercase;
-	color: $gray;
-}
+.payments__off-site-container {
 
-.payments__method-row p {
-	margin: 0;
-	padding: 0;
-}
-
-.payments__setup-column {
-	text-align: right;
-}
-
-.payments__methods-column-method {
-	width: 30%;
-
-	.payments__method-name {
-		font-size: 16px;
+	p.payments__method-suggested {
+		font-size: 11px;
+		text-transform: uppercase;
+		color: $gray;
 	}
-}
 
-.payments__method-information {
-	font-size: 13px;
-}
+	p.payments__method-suggested,
+	p.payments__method-name,
+	p.payments__method-information {
+		margin: 0;
+		padding: 0;
+	}
 
-.payments__methods-column-fees {
-	width: 45%;
-}
+	p.payments__method-information
+	p.payments__method-name {
+		font-size: 15px;
+	}
 
-.payments__methods-column-settings {
-	width: 20%;
+	.list-item-field:first-child {
+		flex: 0 0 30%;
+	}
+
+	.list-item-field:nth-child( 2 ) {
+		flex: 0 0 45%;
+	}
+
+	.list-item-field:nth-child( 3 ) {
+		flex: 0 0 20%;
+
+		.button {
+				align-self: center;
+		}
+	}
 }

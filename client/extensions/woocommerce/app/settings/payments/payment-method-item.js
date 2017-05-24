@@ -8,12 +8,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import TableRowField from '../../../components/table/table-row-field';
+import ListItem from '../../../components/list/list-item';
+import ListItemField from '../../../components/list/list-item-field';
 
-const PaymentMethodRow = ( { method, translate } ) => {
+const PaymentMethodItem = ( { method, translate } ) => {
 	return (
-		<tr className="payments__method-row">
-			<TableRowField>
+		<ListItem>
+			<ListItemField>
 				{
 					method.isSuggested &&
 					(
@@ -23,27 +24,27 @@ const PaymentMethodRow = ( { method, translate } ) => {
 					)
 				}
 				<p className="payments__method-name">{ method.label }</p>
-			</TableRowField>
-			<TableRowField className="payments__method-information">
-				<p>{ method.fee }</p>
-				<p>
+			</ListItemField>
+			<ListItemField>
+				<p className="payments__method-information">{ method.fee }</p>
+				<p className="payments__method-information">
 					<a href={ method.information }>
 						{ translate( 'More Information' ) }
 					</a>
 				</p>
-			</TableRowField>
-			<TableRowField className="payments__setup-column">
+			</ListItemField>
+			<ListItemField>
 				<Button compact>
 					{
 						translate( 'Set Up' )
 					}
 				</Button>
-			</TableRowField>
-		</tr>
+			</ListItemField>
+		</ListItem>
 	);
 };
 
-PaymentMethodRow.propTypes = {
+PaymentMethodItem.propTypes = {
 	method: PropTypes.shape( {
 		label: PropTypes.string.isRequired,
 		isSuggested: PropTypes.bool.isRequired,
@@ -52,4 +53,4 @@ PaymentMethodRow.propTypes = {
 	} ),
 };
 
-export default localize( PaymentMethodRow );
+export default localize( PaymentMethodItem );

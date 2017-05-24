@@ -9,11 +9,10 @@ import { localize } from 'i18n-calypso';
  */
 
 import ExtendedHeader from '../../../components/extended-header';
-import Table from '../../../components/table/table';
-import TableHeader from '../../../components/table/table-header';
-import TableRowField from '../../../components/table/table-row-field';
-import TableRows from '../../../components/table/table-rows';
-import PaymentMethodRow from './payment-method-row';
+import List from '../../../components/list/list';
+import ListHeader from '../../../components/list/list-header';
+import ListItemField from '../../../components/list/list-item-field';
+import PaymentMethodItem from './payment-method-item';
 
 class SettingsPaymentsOffSite extends Component {
 
@@ -28,9 +27,9 @@ class SettingsPaymentsOffSite extends Component {
 		],
 	};
 
-	renderMethodRow = ( method ) => {
+	renderMethodItem = ( method ) => {
 		return (
-			<PaymentMethodRow key={ method.label } method={ method } />
+			<PaymentMethodItem key={ method.label } method={ method } />
 		);
 	}
 
@@ -38,7 +37,7 @@ class SettingsPaymentsOffSite extends Component {
 		const { translate } = this.props;
 		const { methods } = this.state;
 		return (
-			<div>
+			<div className="payments__off-site-container">
 				<ExtendedHeader
 					label={ translate( 'Off-site credit card payment methods' ) }
 					description={
@@ -48,21 +47,19 @@ class SettingsPaymentsOffSite extends Component {
 							'information'
 						)
 					} />
-					<Table>
-						<TableHeader>
-							<TableRowField className="payments__methods-column-method">
+					<List>
+						<ListHeader>
+							<ListItemField className="payments__methods-column-method">
 								{ translate( 'Method' ) }
-							</TableRowField>
-							<TableRowField className="payments__methods-column-fees">
+							</ListItemField>
+							<ListItemField className="payments__methods-column-fees">
 								{ translate( 'Fees' ) }
-							</TableRowField>
-							<TableRowField className="payments__methods-column-settings">
-							</TableRowField>
-						</TableHeader>
-						<TableRows>
-							{ methods && methods.map( this.renderMethodRow ) }
-						</TableRows>
-					</Table>
+							</ListItemField>
+							<ListItemField className="payments__methods-column-settings">
+							</ListItemField>
+						</ListHeader>
+						{ methods && methods.map( this.renderMethodItem ) }
+					</List>
 			</div>
 		);
 	}

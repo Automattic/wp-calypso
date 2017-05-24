@@ -5,14 +5,14 @@ import React from 'react';
 
 import Card from 'components/card';
 
-const Table = ( { children } ) => {
+const List = ( { children } ) => {
 	return (
-		<Card className="table">
-			<table className="table__table">
+		<Card className="list">
+			<ul className="list__ul">
 				{ children }
-			</table>
+			</ul>
 		</Card>
 	);
 };
 
-export default Table;
+export default List;
