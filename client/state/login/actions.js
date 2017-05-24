@@ -238,5 +238,8 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 	);
 };
 
-export const startPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } );
+export const startPollAppPushAuth = successCallback => ( {
+	type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
+	successCallback
+} );
 export const stopPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );

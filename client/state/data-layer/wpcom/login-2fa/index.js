@@ -2,7 +2,6 @@
  * External dependencies
  */
 import request from 'superagent';
-import defer from 'lodash/defer';
 
 /**
  * Internal dependencies
@@ -103,7 +102,7 @@ const sendAppPush = ( store ) => {
  *
  * @param {Object}   store  Global redux store
  */
-const doAppPushPolling = store => {
+const doAppPushPolling = ( store, action ) => {
 	let retryCount = 0;
 	const retry = () => {
 		// if polling was stopped or not in progress - stop
@@ -113,22 +112,27 @@ const doAppPushPolling = store => {
 
 		retryCount++;
 		setTimeout(
-			() => doAppPushRequest( store ).catch( retry ),
+			() => doAppPushRequest( store ).then( action.successCallback, retry ),
 			( POLL_APP_PUSH_INTERVAL_SECONDS + Math.floor( retryCount / 10 ) ) * 1000 // backoff lineary
 		);
 	};
 
 	if ( getTwoFactorPushPollInProgress( store.getState() ) ) {
-		doAppPushRequest( store ).catch( retry );
+		doAppPushRequest( store ).then( action.successCallback, retry );
 	}
 };
 
 const handleTwoFactorPushPoll = ( store, action, next ) => {
-	// this is deferred to allow reducer respond to TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START
-	defer( () => {
-		sendAppPush( store ).then( () => doAppPushPolling( store ) );
-	} );
-	return next( action );
+	// We already polling? lets keep polling and just send new push and switch the polling
+	// TODO: That might fail due to throtolling limits
+	if ( getTwoFactorPushPollInProgress( store.getState() ) ) {
+		return sendAppPush( store );
+	}
+
+	// Allow the state to be changed to "polling in progress"
+	next( action );
+
+	sendAppPush( store ).then( () => doAppPushPolling( store, action ) );
 };
 
 export default {
