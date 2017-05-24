@@ -4,17 +4,13 @@
 }
 
 .design-type__choice {
+	display: block;
 	padding: 0;
 	margin: 0 10px 20px 10px;
 	width: 230px;
 	flex-grow: 1;
 	transition: all 100ms ease-in-out;
 	cursor: pointer;
-
-	a, svg {
-		display: block;
-		width: 100%;
-	}
 
 	h2 {
 		color: darken( $gray, 20% );
@@ -35,4 +31,91 @@
 		margin: 0 10px;
 		padding: 0;
 	}
+
+	&.is-card-link {
+		padding: 0;
+	}
+
+	.card__link-indicator {
+		display: none;
+	}
+
+	@at-root #{&}-image {
+		display: block;
+		width: 100%;
+	}
+}
+
+.design-type__choice--test {
+	&.is-card-link {
+		@include breakpoint( "<480px" ) {
+			padding-right: 48px;
+			margin-bottom: 1px;
+		}
+	}
+
+	&:first-of-type {
+		@include breakpoint( "<480px" ) {
+			border-radius: 5px 5px 0 0;
+		}
+	}
+
+	&:last-of-type {
+		@include breakpoint( "<480px" ) {
+			border-radius: 0 0 5px 5px;
+		}
+	}
+
+	.card__link-indicator {
+		@include breakpoint( "<480px" ) {
+			display: block;
+		}
+	}
+
+	.design-type__choice-image {
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
+	}
+
+	.design-type__choice-copy {
+		text-align: center;
+		padding: 15px;
+		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+
+		@include breakpoint( "<480px" ) {
+			text-align: left;
+			border-top: 0;
+		}
+	}
+
+	.design-type__choice-description {
+		margin: 1em 0 0;
+		color: $gray;
+		font-size: 0.875em;
+
+		@include breakpoint( "<480px" ) {
+			margin: 0;
+		}
+	}
+}
+
+.button.design-type__cta {
+	color: $blue-wordpress;
+
+	@include breakpoint( "<480px" ) {
+		border: 0;
+		padding: 0;
+		text-transform: none;
+		font-size: 1.1em;
+		line-height: 1.1;
+	}
+}
+
+.design-type__disclaimer {
+	text-align: center;
+	color: darken( $gray, 20 );
+	font-size: 0.875em;
+	width: 100%;
+	padding: 1.8em;
 }
