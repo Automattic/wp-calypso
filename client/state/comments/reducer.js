@@ -24,6 +24,11 @@ import { combineReducers } from 'state/utils';
 import {
 	PLACEHOLDER_STATE
 } from './constants';
+import {
+	commentsSchema,
+	requestsSchema,
+	totalCommentsCountSchema
+} from './schema';
 
 const getCommentDate = ( { date } ) => new Date( date );
 
@@ -108,6 +113,7 @@ export function items( state = {}, action ) {
 
 	return state;
 }
+items.schema = commentsSchema;
 
 /***
  * Stores information regarding requests status per requestId
@@ -133,6 +139,7 @@ export function requests( state = {}, action ) {
 
 	return state;
 }
+requests.schema = requestsSchema;
 
 /***
  * Stores latest comments count for post we've seen from the server
@@ -153,6 +160,7 @@ export function totalCommentsCount( state = {}, action ) {
 
 	return state;
 }
+totalCommentsCount.schema = totalCommentsCountSchema;
 
 export default combineReducers( {
 	items,
