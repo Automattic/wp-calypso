@@ -22,7 +22,7 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
 
@@ -195,7 +195,7 @@ export const lastSyncTime = createReducer( null, {
 	},
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	itemsCount,
 	lastSyncTime,

@@ -32,7 +32,7 @@ import {
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_SET_GEO_LOCATION,
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 } from './selectors';
@@ -268,7 +268,7 @@ export const lostFocusAt = ( state = null, action ) => {
 };
 lastActivityTimestamp.hasCustomPersistence = true;
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	chatStatus,
 	connectionError,
 	connectionStatus,

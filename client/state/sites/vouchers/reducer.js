@@ -11,7 +11,7 @@ import {
 	SITE_VOUCHERS_REQUEST_SUCCESS,
 	SITE_VOUCHERS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -117,7 +117,7 @@ export const errors = ( state = {}, { type, siteId, error } ) => {
 	return state;
 };
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	requesting,
 	errors

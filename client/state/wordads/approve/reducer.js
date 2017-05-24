@@ -8,7 +8,7 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 
 /**
  * Tracks all WordAds request status, indexed by site ID.
@@ -73,7 +73,7 @@ export function requestSuccess( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	requesting,
 	requestSuccess,
 	requestErrors,

@@ -6,7 +6,7 @@ import uniqBy from 'lodash/uniqBy';
 /**
  * Internal Dependencies
  */
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import {
 	GOOGLE_APPS_USERS_FETCH,
 	GOOGLE_APPS_USERS_FETCH_COMPLETED,
@@ -32,7 +32,7 @@ export function loaded( state = false, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	loaded
 } );

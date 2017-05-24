@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import {
 	TIMEZONES_RECEIVE,
@@ -30,7 +30,7 @@ export const isRequesting = ( state = false, { type } ) => (
 	type === TIMEZONES_REQUEST
 );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	rawOffsets,
 	labels,
 	byContinents,

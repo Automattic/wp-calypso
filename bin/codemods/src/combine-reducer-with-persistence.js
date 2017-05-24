@@ -2,19 +2,7 @@
  This codemod updates
 
  import { combineReducers } from 'redux'; to
- import { combineReducersWithPersistence } from 'state/utils';
-
- and updates
-
- combineReducers( {
-    //...
- } )
-
- with
-
- combineReducersWithPersistence( {
-    //...
- } )
+ import { combineReducers } from 'state/utils';
  */
 
 module.exports = function ( file, api ) {
@@ -54,7 +42,7 @@ module.exports = function ( file, api ) {
 		return j.importDeclaration(
 			[
 				j.importSpecifier(
-					j.identifier( 'combineReducersWithPersistence' ),
+					j.identifier( 'combineReducers' ),
 				)
 			],
 			j.literal( 'state/utils' )
@@ -62,16 +50,6 @@ module.exports = function ( file, api ) {
 	};
 	//note the extra whitespace coming from https://github.com/benjamn/recast/issues/371
 	firstInternalImport.insertAfter( combineReducersImport );
-
-	//update combineReducers call
-	const renameIdentifier = ( newName ) => imported => {
-		j( imported ).replaceWith( () => j.identifier( newName ) );
-	};
-	const combineReducerIdentifier = root.find( j.CallExpression ).find( j.Identifier ).filter(
-		( identifier ) => identifier.value.name === 'combineReducers'
-	);
-
-	combineReducerIdentifier.forEach( renameIdentifier( 'combineReducersWithPersistence' ) );
 
 	// print
 	return root.toSource( { quote: 'single' } );

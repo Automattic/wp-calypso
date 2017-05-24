@@ -2,11 +2,11 @@
  * Internal dependencies
  */
 import wporg from './wporg/reducer';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import premium from './premium/reducer';
 import installed from './installed/reducer';
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	wporg,
 	premium,
 	installed

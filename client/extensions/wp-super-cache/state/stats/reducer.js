@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import { statsSchema } from './schema';
 import {
@@ -96,7 +96,7 @@ const items = createReducer( {}, {
 	},
 }, statsSchema );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	deleting,
 	generateStatus,
 	items,

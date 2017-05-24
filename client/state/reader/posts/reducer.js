@@ -7,7 +7,7 @@ import keyBy from 'lodash/keyBy';
  * Internal dependencies
  */
 import { READER_POSTS_RECEIVE } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -27,6 +27,6 @@ export function items( state = {}, action ) {
 }
 items.schema = itemsSchema;
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 } );

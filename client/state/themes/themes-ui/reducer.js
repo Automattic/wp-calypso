@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { THEME_BACK_PATH_SET } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 
 // Destination for 'back' button on theme sheet
 function backPath( state = '/themes', action ) {
@@ -13,4 +13,4 @@ function backPath( state = '/themes', action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( { backPath } );
+export default combineReducers( { backPath } );

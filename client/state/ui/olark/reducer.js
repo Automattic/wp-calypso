@@ -9,7 +9,7 @@ import {
 	OLARK_OPERATORS_AWAY,
 	OLARK_SET_AVAILABILITY,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import {
 	STATUS_READY,
 	STATUS_TIMEOUT,
@@ -86,7 +86,7 @@ export function requesting( state = false, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	operatorStatus,
 	availability,
 	requesting,

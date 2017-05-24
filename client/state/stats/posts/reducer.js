@@ -6,7 +6,7 @@ import { get, merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { items as itemSchemas } from './schema';
 import {
 	POST_STATS_RECEIVE,
@@ -67,7 +67,7 @@ export function items( state = {}, action ) {
 }
 items.schema = itemSchemas;
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	requesting,
 	items
 } );

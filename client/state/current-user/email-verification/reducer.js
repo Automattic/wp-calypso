@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import {
 	EMAIL_VERIFY_REQUEST,
@@ -24,7 +24,7 @@ export const errorMessage = createReducer( '', {
 	[ EMAIL_VERIFY_STATE_RESET ]: () => '',
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	status,
 	errorMessage,
 } );

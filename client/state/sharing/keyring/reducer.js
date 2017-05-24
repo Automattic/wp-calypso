@@ -15,7 +15,7 @@ import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { itemSchema } from './schema';
 
 // Tracks fetching state for keyring connections
@@ -45,7 +45,7 @@ export const items = createReducer( {}, {
 	},
 }, itemSchema );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	isFetching,
 	items,
 } );

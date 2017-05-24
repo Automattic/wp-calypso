@@ -28,7 +28,7 @@ import {
 	READER_LISTS_REQUEST_FAILURE,
 	READER_LISTS_UNFOLLOW_SUCCESS,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
 
 /**
@@ -198,7 +198,7 @@ export function missingLists( state = [], action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	subscribedLists,
 	updatedLists,

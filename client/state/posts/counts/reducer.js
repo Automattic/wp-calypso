@@ -20,7 +20,7 @@ import {
 	POST_SAVE,
 	POSTS_RECEIVE,
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { countsSchema } from './schema';
 
 /**
@@ -183,7 +183,7 @@ export const counts = ( () => {
 	}, countsSchema );
 } )();
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	requesting,
 	counts
 } );

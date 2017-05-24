@@ -8,7 +8,7 @@ import {
 	PREVIEW_TYPE_SET,
 	PREVIEW_TYPE_RESET,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 
 export function currentPreviewUrl( state = null, action ) {
 	switch ( action.type ) {
@@ -39,7 +39,7 @@ export function activeDesignTool( state = null, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	currentPreviewUrl,
 	currentPreviewType,
 	activeDesignTool,
