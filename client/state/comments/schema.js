@@ -45,12 +45,17 @@ export const commentsSchema = {
 						},
 					},
 					parent: {
-						type: 'object',
-						properties: {
-							ID: { type: 'integer' },
-							link: { type: 'string' },
-							type: { type: 'string' }
-						}
+						oneOf: [
+							{ type: 'boolean' },
+							{
+								type: 'object',
+								properties: {
+									ID: { type: 'integer' },
+									link: { type: 'string' },
+									type: { type: 'string' }
+								}
+							}
+						]
 					},
 					post: {
 						type: 'object',
