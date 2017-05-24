@@ -211,6 +211,11 @@ class DomainDetailsForm extends PureComponent {
 	}
 
 	getRequiredExtraSteps = () => {
+		if ( ! config.isEnabled( 'domains/cctlds' ) ) {
+			// All we need to do to disable everything is not show the .FR form
+			return [];
+		}
+
 		return cartItems.hasTld( this.props.cart, 'fr' ) ? [ 'fr' ] : [];
 	}
 
