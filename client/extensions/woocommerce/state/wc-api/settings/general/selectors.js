@@ -10,7 +10,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from './reducer';
 
 const getRawGeneralSettings = ( state, siteId ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'wcApi', siteId, 'generalSettings' ] );
+	return get( state, [ 'extensions', 'woocommerce', 'wcApi', siteId, 'settingsGeneral' ] );
 };
 
 /**

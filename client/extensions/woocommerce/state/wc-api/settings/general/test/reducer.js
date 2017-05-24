@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer from '../../reducer';
+import reducer from '../../../reducer';
 import { LOADING } from '../reducer';
 import {
 	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL,
