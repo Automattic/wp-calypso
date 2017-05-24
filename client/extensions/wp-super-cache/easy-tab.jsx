@@ -173,7 +173,7 @@ class EasyTab extends Component {
 											}
 											<Gridicon
 												className="wp-super-cache__cache-test-results-icon"
-												icon={ get( attempts[ key ], 'status' ) === 'OK' ? 'checkmark-circle' : 'cross-circle' }
+												icon={ get( attempts[ key ], 'status', false ) ? 'checkmark-circle' : 'cross-circle' }
 												size={ 24 } />
 										</li>
 									) ) }
