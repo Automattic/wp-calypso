@@ -10,6 +10,8 @@ import {
 	toPairs,
 	unionWith,
 } from 'lodash';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
 
 /**
  * Prevent sending multiple identical GET requests
@@ -122,6 +124,11 @@ export const applyDuplicatesHandlers = inboundData => {
 	const queued = requestQueue.get( key );
 
 	if ( ! queued ) {
+		debug(
+			'applyDuplicatesHandler has entered an impossible state!' +
+			'A HTTP request is exiting the http pipeline without having entered it.' +
+			'There must be a bug somewhere'
+		);
 		return inboundData;
 	}
 

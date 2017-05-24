@@ -83,6 +83,6 @@ export const processOutboundChain = chain => ( originalRequest, store ) =>
 		.reduce( applyOutboundProcessor, { originalRequest, store, nextRequest: originalRequest } )
 		.nextRequest;
 
-export const processInbound = processInboundChain( outboundChain );
+export const processInbound = processInboundChain( inboundChain );
 
-export const processOutbound = processOutboundChain( inboundChain );
+export const processOutbound = processOutboundChain( outboundChain );
