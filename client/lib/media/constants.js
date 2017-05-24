@@ -195,3 +195,6 @@ export const MimeTypes = {
 	numbers: 'application/vnd.apple.numbers',
 	pages: 'application/vnd.apple.pages',
 };
+
+export const MEDIA_IMAGE_PHOTON = 'MEDIA_IMAGE_PHOTON';
+export const MEDIA_IMAGE_RESIZER = 'MEDIA_IMAGE_RESIZER';
