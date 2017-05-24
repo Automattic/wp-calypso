@@ -146,6 +146,7 @@ class ThemesSelection extends Component {
 					count={ themesCount }
 				/>
 				<ThemesList themes={ this.props.themes }
+					themesCount={ themesCount }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }

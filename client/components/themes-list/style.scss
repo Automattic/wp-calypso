@@ -12,8 +12,11 @@
 }
 
 .themes-list__spacer {
-	width: 230px;
 	height: 0px;
-	margin: 0 10px;
-	flex-grow: 1;
+}
+
+.themes-list__cell {
+	padding: 1px 10px 19px; // account for the top outline
+	margin: 0;	
+	box-sizing: border-box;
 }

@@ -2,16 +2,17 @@
  * External dependencies
  */
 import React from 'react';
-import times from 'lodash/times';
+import { findDOMNode } from 'react-dom';
 import { localize } from 'i18n-calypso';
-import { isEqual, noop } from 'lodash';
+import { isEqual, noop, debounce } from 'lodash';
+import { InfiniteLoader, WindowScroller } from 'react-virtualized';
 
 /**
  * Internal dependencies
  */
+import FlexboxGrid from 'components/flexbox-grid';
 import Theme from 'components/theme';
 import EmptyContent from 'components/empty-content';
-import InfiniteScroll from 'lib/mixins/infinite-scroll';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 
 /**
@@ -19,10 +20,9 @@ import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
  */
 export const ThemesList = React.createClass( {
 
-	mixins: [ InfiniteScroll( 'fetchNextPage' ) ],
-
 	propTypes: {
 		themes: React.PropTypes.array.isRequired,
+		themesCount: React.PropTypes.number,
 		emptyContent: React.PropTypes.element,
 		loading: React.PropTypes.bool.isRequired,
 		fetchNextPage: React.PropTypes.func.isRequired,
@@ -38,14 +38,11 @@ export const ThemesList = React.createClass( {
 		placeholderCount: React.PropTypes.number
 	},
 
-	fetchNextPage( options ) {
-		this.props.fetchNextPage( options );
-	},
-
 	getDefaultProps() {
 		return {
 			loading: false,
 			themes: [],
+			themesCount: 0,
 			fetchNextPage: noop,
 			placeholderCount: DEFAULT_THEME_QUERY.number,
 			optionsGenerator: () => [],
@@ -54,6 +51,16 @@ export const ThemesList = React.createClass( {
 			isPurchased: () => false,
 			isInstalling: () => false
 		};
+	},
+
+	componentDidMount() {
+		this.onResize();
+
+		window.addEventListener( 'resize', this.onResize );
+	},
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.onResize );
 	},
 
 	shouldComponentUpdate( nextProps ) {
@@ -65,41 +72,33 @@ export const ThemesList = React.createClass( {
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
 	},
 
-	renderTheme( theme, index ) {
-		return <Theme
-			key={ 'theme-' + theme.id }
-			buttonContents={ this.props.getButtonOptions( theme.id ) }
-			screenshotClickUrl={ this.props.getScreenshotUrl && this.props.getScreenshotUrl( theme.id ) }
-			onScreenshotClick={ this.props.onScreenshotClick }
-			onMoreButtonClick={ this.props.onMoreButtonClick }
-			actionLabel={ this.props.getActionLabel( theme.id ) }
-			index={ index }
-			theme={ theme }
-			active={ this.props.isActive( theme.id ) }
-			purchased={ this.props.isPurchased( theme.id ) }
-			installing={ this.props.isInstalling( theme.id ) } />;
+	isRowLoaded( { index } ) {
+		return !! this.props.themes[ index ];
 	},
 
-	renderLoadingPlaceholders() {
-		return times( this.props.placeholderCount, function( i ) {
-			return <Theme key={ 'placeholder-' + i } theme={ { id: 'placeholder-' + i, name: 'Loading…' } } isPlaceholder={ true } />;
-		} );
+	loadMoreRows( { stopIndex } ) {
+		if ( this.isRowLoaded( { index: stopIndex } ) || this.props.loading ) {
+			return;
+		}
+
+		this.props.fetchNextPage( { triggeredByScroll: true } );
 	},
 
-	// Invisible trailing items keep all elements same width in flexbox grid.
-	renderTrailingItems() {
-		const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
-		return times( NUM_SPACERS, function( i ) {
-			return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
-		} );
+	onScrollerRendered( scroller ) {
+		this._updatePosition = debounce(
+			() => scroller.updatePosition(),
+			1000,
+			{ leading: true }
+		);
 	},
 
-	renderEmpty() {
-		return this.props.emptyContent ||
-			<EmptyContent
-				title={ this.props.translate( 'Sorry, no themes found.' ) }
-				line={ this.props.translate( 'Try a different search or more filters?' ) }
-				/>;
+	onResize() {
+		this._width = findDOMNode( this ).offsetWidth;
+		this.forceUpdate();
+	},
+
+	onScroll() {
+		this._updatePosition();
 	},
 
 	render() {
@@ -109,10 +108,132 @@ export const ThemesList = React.createClass( {
 
 		return (
 			<div className="themes-list">
-				{ this.props.themes.map( this.renderTheme ) }
-				{ this.props.loading && this.renderLoadingPlaceholders() }
-				{ this.renderTrailingItems() }
+				<InfiniteLoader
+					isRowLoaded={ this.isRowLoaded }
+					loadMoreRows={ this.loadMoreRows }
+					rowCount={ 1000 }
+					threshold={ 20 }
+				>
+					{ ( { onRowsRendered, registerChild } ) => (
+						<WindowScroller ref={ this.onScrollerRendered } onScroll={ this.onScroll }>
+							{ ( { scrollTop } ) => {
+								return this.renderGrid( scrollTop, onRowsRendered, registerChild );
+							} }
+						</WindowScroller>
+					) }
+				</InfiniteLoader>
 			</div>
+		);
+	},
+
+	renderGrid( scrollTop, onRowsRendered, registerChild ) {
+		const minColumnWidth = 250;
+		const ssrSpacers = 20;
+		const pageLength = 20;
+
+		const columnCount = this._width === undefined ? 1 : Math.floor( this._width / minColumnWidth );
+		const rowCount = this._width === undefined
+			? this.props.themes.length + ssrSpacers
+			: Math.ceil( this.props.themesCount / columnCount );
+
+		const columnWidth = Math.floor( this._width / columnCount );
+
+		// The height of the a theme card is 0.75 times its width
+		// width an additional 54px reserved for theme info.
+		// We also need to account for 10px padding on each side ( columnWidth - 20 )
+		// of the card and 20px at the bottom ( 54 + 20 ).
+		const rowHeight = Math.floor( ( columnWidth - 20 ) * 0.75 ) + 74;
+
+		const onCellsRendered = ( { stopIndex } ) => {
+			if (
+				! this.props.loading &&
+				! this.isRowLoaded( stopIndex )
+			) {
+				onRowsRendered( {
+					startIndex: Math.min( this.props.themes.length, stopIndex ),
+					stopIndex: Math.min(
+						this.props.themes.length + pageLength - 1,
+						this.props.themesCount - 1,
+						stopIndex
+					)
+				} );
+			}
+		};
+
+		return (
+			<FlexboxGrid
+				width={ this._width }
+				minColumnWidth={ minColumnWidth }
+				columnCount={ columnCount }
+				rowCount={ rowCount }
+				rowHeight={ rowHeight }
+				scrollTop={ scrollTop }
+				cellRenderer={ this.renderCell }
+				overscanRowCount={ 3 }
+				onCellsRendered={ onCellsRendered }
+				ref={ registerChild }
+			/>
+		);
+	},
+
+	renderCell( { index, key, style } ) {
+		const theme = this.props.themes[ index ];
+
+		if (
+			( this._width === undefined && index >= this.props.themes.length ) ||
+			( this._width !== undefined && index >= this.props.themesCount )
+		) {
+			return (
+				<div key={ key } className="themes-list__spacer" style={ style }></div>
+			);
+		}
+
+		return (
+			<div key={ key } className="themes-list__cell" style={ style }>
+				{ index < this.props.themesCount &&
+					( theme
+							? this.renderTheme( theme, index )
+							: this.renderLoadingPlaceholder( index )
+					)
+				}
+			</div>
+		);
+	},
+
+	renderTheme( theme, index ) {
+		return (
+			<Theme
+				key={ 'theme-' + theme.id }
+				buttonContents={ this.props.getButtonOptions( theme.id ) }
+				screenshotClickUrl={ this.props.getScreenshotUrl && this.props.getScreenshotUrl( theme.id ) }
+				onScreenshotClick={ this.props.onScreenshotClick }
+				onMoreButtonClick={ this.props.onMoreButtonClick }
+				actionLabel={ this.props.getActionLabel( theme.id ) }
+				index={ index }
+				theme={ theme }
+				active={ this.props.isActive( theme.id ) }
+				purchased={ this.props.isPurchased( theme.id ) }
+				installing={ this.props.isInstalling( theme.id ) }
+			/>
+		);
+	},
+
+	renderLoadingPlaceholder( index ) {
+		return (
+			<Theme
+				key={ 'placeholder-' + index }
+				theme={ { id: 'placeholder-' + index, name: 'Loading…' } }
+				isPlaceholder={ true }
+			/>
+		);
+	},
+
+	renderEmpty() {
+		return this.props.emptyContent || (
+			<EmptyContent
+				title={ this.props.translate( 'Sorry, no themes found.' ) }
+				line={ this.props.translate( 'Try a different search or more filters?' ) }
+			/>
 		);
 	}
 } );
