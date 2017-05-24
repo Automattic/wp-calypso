@@ -411,12 +411,12 @@ class DomainDetailsForm extends PureComponent {
 		this.setPrivacyProtectionSubscriptions( ! this.allDomainRegistrationsHavePrivacy() );
 	}
 
-	closeDialog( dialogKey = 'isDialogVisible' ) {
-		this.setState( { [ dialogKey ]: false } );
+	closeDialog = () => {
+		this.setState( { isDialogVisible: false } );
 	}
 
-	openDialog( dialogKey = 'isDialogVisible' ) {
-		this.setState( { [ dialogKey ]: true } );
+	openDialog = () => {
+		this.setState( { isDialogVisible: true } );
 	}
 
 	focusFirstError() {
