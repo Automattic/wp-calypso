@@ -1,5 +1,5 @@
 export const mockComments = [
-	{ commentId: 1, siteId: 3584907 },
+	{ commentId: 12345678, siteId: 3584907 },
 	{ commentId: 2, siteId: 3584907 },
 	{ commentId: 3, siteId: 3584907 },
 	{ commentId: 4, siteId: 3584907 },

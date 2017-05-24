@@ -28,7 +28,7 @@ export class CommentDetail extends Component {
 		authorUsername: PropTypes.string,
 		commentContent: PropTypes.string,
 		commentDate: PropTypes.string,
-		commentId: PropTypes.number.isRequired,
+		commentId: PropTypes.number,
 		commentIsApproved: PropTypes.bool,
 		commentIsLiked: PropTypes.bool,
 		commentIsSpam: PropTypes.bool,
@@ -38,7 +38,7 @@ export class CommentDetail extends Component {
 		postTitle: PropTypes.string,
 		postUrl: PropTypes.string,
 		repliedToComment: PropTypes.bool,
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 	};
 
 	static defaultProps = {
