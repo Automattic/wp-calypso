@@ -7,6 +7,7 @@
   "directly_rtm_widget_ids",
   "discover_blog_id",
   "discover_feed_id",
+  "domains/cctlds",
   "env",
   "env_id",
   "facebook_api_key",

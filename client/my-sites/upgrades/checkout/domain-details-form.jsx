@@ -35,6 +35,7 @@ import { toIcannFormat } from 'components/phone-input/phone-number';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import wp from 'lib/wp';
 import ExtraInfoFrForm from 'components/domains/registrant-extra-info/fr-form';
+import config from 'config';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented(),
