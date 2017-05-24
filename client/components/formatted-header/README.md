@@ -6,7 +6,7 @@ This component displays a header and optional sub-header.
 #### How to use:
 
 ```js
-import FormattedHeader from 'components/step-header';
+import FormattedHeader from 'components/formatted-header';
 
 render() {
 	return (
