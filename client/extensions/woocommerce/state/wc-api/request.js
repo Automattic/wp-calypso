@@ -23,7 +23,7 @@ export default ( siteId ) => ( {
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v2/" prefix
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	get: ( path ) => _request( wp.req.get, path, siteId ),
+	get: ( path ) => _request( wp.req.get.bind( wp.req ), path, siteId ),
 
 	/**
 	 * Sends a POST request to the API
@@ -31,7 +31,7 @@ export default ( siteId ) => ( {
 	 * @param {Object} body Payload to send
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	post: ( path, body ) => _request( wp.req.post, path, siteId, body ),
+	post: ( path, body ) => _request( wp.req.post.bind( wp.req ), path, siteId, body ),
 
 	/**
 	 * Sends a PUT request to the API.
@@ -41,7 +41,7 @@ export default ( siteId ) => ( {
 	 * @param {Object} body Payload to send
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	put: ( path, body ) => _request( wp.req.post, addURLParam( path, '_method=put' ), siteId, body ),
+	put: ( path, body ) => _request( wp.req.post.bind( wp.req ), addURLParam( path, '_method=put' ), siteId, body ),
 
 	/**
 	 * Sends a DELETE request to the API.
@@ -50,5 +50,5 @@ export default ( siteId ) => ( {
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v2/" prefix
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	del: ( path ) => _request( wp.req.post, addURLParam( path, '_method=delete' ), siteId ),
+	del: ( path ) => _request( wp.req.post.bind( wp.req ), addURLParam( path, '_method=delete' ), siteId ),
 } );
