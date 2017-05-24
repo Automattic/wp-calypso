@@ -3,10 +3,9 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
+import { find, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
 
 /**
  * Internal dependencies
@@ -25,8 +24,6 @@ import VerificationCodeForm from './two-factor-authentication/verification-code-
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
 import Notice from 'components/notice';
-
-const TWO_FACTOR_PRIORITY = { push: 0, authenticator: 1, sms: 2 };
 
 class Login extends Component {
 	static propTypes = {
@@ -67,23 +64,11 @@ class Login extends Component {
 		} else {
 			const { twoFactorSupportedAuthTypes } = this.props;
 
-			const lowestPriority = Math.max(
-				twoFactorSupportedAuthTypes.length,
-				Object.keys( TWO_FACTOR_PRIORITY ).length
-			);
-
-			twoFactorSupportedAuthTypes.sort( ( a, b ) => {
-				const aPriority = TWO_FACTOR_PRIORITY.hasOwnProperty( a ) ? TWO_FACTOR_PRIORITY[ a ] : lowestPriority;
-				const bPriority = TWO_FACTOR_PRIORITY.hasOwnProperty( b ) ? TWO_FACTOR_PRIORITY[ b ] : lowestPriority;
-
-				return aPriority - bPriority;
-			} );
-
-			const twoFactorAuthType = twoFactorSupportedAuthTypes[ 0 ];
+			const twoFactorAuthType = find( [ 'push', 'authenticator', 'sms' ], type => includes( twoFactorSupportedAuthTypes, type ) );
 
 			page( login( {
 				isNative: true,
-				twoFactorAuthType: twoFactorAuthType
+				twoFactorAuthType
 			} ) );
 		}
 	};
