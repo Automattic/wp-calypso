@@ -419,10 +419,10 @@
 	flex-direction: row;
 	width: 100%;
 
-	.products__product-manage-stock-checkbox {
+	.products__product-manage-stock-toggle {
 		@include clear-fix();
 		padding: 12px;
-		display: flex;
+		display: inline-flex;
 
 		+ .form-text-input {
 			transform: translateX( -1px );
@@ -439,9 +439,22 @@
 	}
 }
 
-.products__product-manage-stock-wrapper label,
+.products__product-manage-stock-toggle,
+.products__product-manage-stock-wrapper .form-label {
+	display: inline-flex;
+}
+
+.products__product-manage-stock-wrapper .form-label {
+	font-weight: normal;
+	margin-bottom: 12px;
+}
+
 .products__product-backorders-wrapper label {
-	margin-bottom: 1em;
+	margin-bottom: 12px;
+}
+
+.products__product-backorders-wrapper select {
+	padding: 9px 32px 11px 14px;
 }
 
 .products__product-form-variation-table {
