@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import CommentDetailComment from './comment-detail-comment';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
+import { mockComment } from 'blocks/comment-detail/docs/mock-data';
 
 export class CommentDetail extends Component {
 	static propTypes = {
@@ -31,11 +33,16 @@ export class CommentDetail extends Component {
 		commentIsLiked: PropTypes.bool,
 		commentIsSpam: PropTypes.bool,
 		commentIsTrash: PropTypes.bool,
+		isBulkEdit: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
 		postUrl: PropTypes.string,
 		repliedToComment: PropTypes.bool,
 		siteId: PropTypes.number,
+	};
+
+	static defaultProps = {
+		isBulkEdit: false,
 	};
 
 	state = {
@@ -62,6 +69,12 @@ export class CommentDetail extends Component {
 			isSpam: commentIsSpam,
 			isTrash: commentIsTrash,
 		} );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.isBulkEdit && ! this.props.isBulkEdit ) {
+			this.setState( { isExpanded: false } );
+		}
 	}
 
 	blockUser = () => {
@@ -100,6 +113,7 @@ export class CommentDetail extends Component {
 			authorUsername,
 			commentContent,
 			commentDate,
+			isBulkEdit,
 			postAuthorDisplayName,
 			postTitle,
 			postUrl,
@@ -119,6 +133,7 @@ export class CommentDetail extends Component {
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
 			'is-approved': isApproved,
+			'is-bulk-edit': isBulkEdit,
 			'is-expanded': isExpanded,
 			'is-liked': isLiked,
 			'is-spam': isSpam,
@@ -126,7 +141,7 @@ export class CommentDetail extends Component {
 		} );
 
 		return (
-			<Card is-compact className={ classes }>
+			<Card className={ classes }>
 				<CommentDetailHeader
 					authorAvatarUrl={ authorAvatarUrl }
 					authorDisplayName={ authorDisplayName }
@@ -136,6 +151,7 @@ export class CommentDetail extends Component {
 					commentIsLiked={ isLiked }
 					commentIsSpam={ isSpam }
 					commentIsTrash={ isTrash }
+					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
 					toggleApprove={ this.toggleApprove }
 					toggleExpanded={ this.toggleExpanded }
@@ -172,4 +188,32 @@ export class CommentDetail extends Component {
 	}
 }
 
-export default CommentDetail;
+const mapStateToProps = ( state, { commentId, siteId } ) => {
+	//const comment = getComment( state, siteId, commentId );
+	const comment = mockComment;
+
+	return {
+		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
+		authorDisplayName: get( comment, 'author.name' ),
+		authorEmail: get( comment, 'author.email' ),
+		authorId: get( comment, 'author.ID' ),
+		authorIp: get( comment, 'author.ip' ), // TODO: not available in the current data structure
+		authorIsBlocked: get( comment, 'author.isBlocked' ), // TODO: not available in the current data structure
+		authorUrl: get( comment, 'author.URL' ),
+		authorUsername: get( comment, 'author.nice_name' ),
+		commentContent: comment.content,
+		commentDate: comment.date,
+		commentId: commentId,
+		commentIsApproved: 'approved' === comment.status,
+		commentIsLiked: comment.i_like,
+		commentIsSpam: 'spam' === comment.status,
+		commentIsTrash: 'trash' === comment.status,
+		postAuthorDisplayName: get( comment, 'post.author.name' ),
+		postTitle: get( comment, 'post.title' ),
+		postUrl: get( comment, 'post.link' ),
+		repliedToComment: comment.replied, // TODO: not available in the current data structure
+		siteId: siteId,
+	};
+};
+
+export default connect( mapStateToProps )( CommentDetail );
