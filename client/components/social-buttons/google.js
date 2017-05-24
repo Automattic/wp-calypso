@@ -69,7 +69,9 @@ class GoogleLoginButton extends Component {
 
 		// Handle click async if the library is not loaded yet
 		// the popup might be blocked by the browser in that case
-		this.initialize().then( gapi => gapi.auth2.getAuthInstance().signIn().then( responseHandler ) );
+		// options are documented here:
+		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
+		this.initialize().then( gapi => gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } ).then( responseHandler ) );
 	}
 
 	render() {
