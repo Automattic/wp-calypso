@@ -17,25 +17,23 @@ import FormRadio from 'components/forms/form-radio';
 import FormCountrySelect from 'components/forms/form-country-select';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 
-const countriesList = countriesListForDomainRegistrations();
-
 class RegistrantExtraInfoForm extends React.PureComponent {
 	static propTypes = {
+		countriesList: PropTypes.object.isRequired,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
-		countriesList: PropTypes.object,
 		onStateChanged: PropTypes.func, // Just until we can reduxify the contact details
 	}
 
 	static defaultProps = {
+		countriesList: { data: [] },
 		isVisible: true,
 		isProbablyOrganization: false,
 		onSubmit: noop,
-		countriesList: countriesList,
+		onStateChanged: noop,
 	}
 
 	constructor( props ) {
