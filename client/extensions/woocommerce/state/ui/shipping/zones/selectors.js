@@ -17,25 +17,28 @@ export const getShippingZones = ( state, siteId = getSelectedSiteId( state ) ) =
 	if ( ! areShippingZonesLoaded( state, siteId ) ) {
 		return [];
 	}
-	const zones = [ ...getAPIShippingZones() ];
-	const { creates, updates, deletes } = getShippingZonesEdits();
+	const zones = [ ...getAPIShippingZones( state, siteId ) ];
+	const { creates, updates, deletes } = getShippingZonesEdits( state, siteId );
 	deletes.forEach( ( { id } ) => remove( zones, { id } ) );
 	updates.forEach( ( update ) => {
 		const index = findIndex( zones, { id: update.id } );
 		if ( -1 === index ) {
 			return;
 		}
-		zones[ index ] = { ...zones[ index ], update };
+		zones[ index ] = { ...zones[ index ], ...update };
 	} );
 	return [ ...zones, ...creates ];
 };
 
 export const getCurrentlyEditingShippingZone = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const { currentlyEditingId, currentlyEditingChanges } = getShippingZonesEdits();
+	const { currentlyEditingId, currentlyEditingChanges } = getShippingZonesEdits( state, siteId );
 	if ( null === currentlyEditingId ) {
 		return null;
 	}
 	const zone = find( getShippingZones( state, siteId ), { id: currentlyEditingId } );
+	if ( ! zone ) {
+		return null;
+	}
 	return { ...zone, ...currentlyEditingChanges };
 };
 
