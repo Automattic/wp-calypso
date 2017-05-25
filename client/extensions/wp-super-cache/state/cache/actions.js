@@ -104,7 +104,7 @@ export const preloadCache = ( siteId ) => {
 			.then( () => {
 				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS, siteId } );
 				dispatch( successNotice(
-					translate( 'Cache preload completed successfully on %(siteTitle)s.',
+					translate( 'Cache preload started successfully on %(siteTitle)s.',
 						{ args: { siteTitle: getSiteTitle( getState(), siteId ) } }
 					),
 					{ id: 'wpsc-preload-cache' }
