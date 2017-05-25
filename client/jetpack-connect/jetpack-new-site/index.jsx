@@ -99,7 +99,7 @@ class JetpackNewSite extends Component {
 								ref="siteUrlInputRef"
 								onChange={ this.handleJetpackUrlChange }
 								onSubmit={ this.handleJetpackSubmit }
-								onTosClick={ this.handleOnClickTos }
+								handleOnClickTos={ this.handleOnClickTos }
 								url={ this.state.jetpackUrl }
 							/>
 						</Card>
@@ -119,7 +119,7 @@ class JetpackNewSite extends Component {
 									ref="siteUrlInputRef"
 									onChange={ this.handleJetpackUrlChange }
 									onSubmit={ this.handleJetpackSubmit }
-									onTosClick={ this.handleOnClickTos }
+									handleOnClickTos={ this.handleOnClickTos }
 									url={ this.state.jetpackUrl }
 								/>
 							</div>
