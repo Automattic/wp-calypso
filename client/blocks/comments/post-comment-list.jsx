@@ -13,6 +13,7 @@ import { get, size, takeRight } from 'lodash';
 import {
 	getPostCommentsTree,
 	getPostTotalCommentsCount,
+	getPostOldestCommentDate,
 	haveMoreCommentsToFetch
 } from 'state/comments/selectors';
 import {
@@ -199,7 +200,7 @@ class PostCommentList extends React.Component {
 		} );
 
 		if ( this.props.haveMoreCommentsToFetch ) {
-			this.props.requestPostComments( siteId, postId, this.props.commentsFilter );
+			this.props.requestPostComments( siteId, postId, this.props.commentsFilter, this.props.oldestCommentDateForPost );
 		}
 	}
 
@@ -310,7 +311,8 @@ export default connect(
 		{
 			commentsTree: getPostCommentsTree( state, ownProps.post.site_ID, ownProps.post.ID, ownProps.commentsFilter ),
 			totalCommentsCount: getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID ),
-			haveMoreCommentsToFetch: haveMoreCommentsToFetch( state, ownProps.post.site_ID, ownProps.post.ID )
+			haveMoreCommentsToFetch: haveMoreCommentsToFetch( state, ownProps.post.site_ID, ownProps.post.ID ),
+			oldestCommentDateForPost: getPostOldestCommentDate( state, ownProps.post.site_ID, ownProps.post.ID )
 		}
 	),
 	( dispatch ) => bindActionCreators( {

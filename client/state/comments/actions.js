@@ -1,7 +1,7 @@
 /***
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, isDate } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,7 +30,6 @@ import {
 	createRequestId
 } from './utils';
 import {
-	getPostOldestCommentDate,
 	getPostCommentRequests
 } from './selectors';
 import {
@@ -111,14 +110,13 @@ function commentsRequestFailure( dispatch, siteId, postId, requestId, err ) {
  * @param {String} status status filter. Defaults to approved posts
  * @returns {Function} thunk that requests comments for a given post
  */
-export function requestPostComments( siteId, postId, status = 'approved' ) {
+export function requestPostComments( siteId, postId, status = 'approved', before ) {
 	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
 		status = 'approved';
 	}
 
 	return ( dispatch, getState ) => {
 		const postCommentRequests = getPostCommentRequests( getState(), siteId, postId );
-		const oldestCommentDateForPost = getPostOldestCommentDate( getState(), siteId, postId );
 
 		const query = {
 			order: 'DESC',
@@ -126,8 +124,8 @@ export function requestPostComments( siteId, postId, status = 'approved' ) {
 			status
 		};
 
-		if ( oldestCommentDateForPost && oldestCommentDateForPost.toISOString ) {
-			query.before = oldestCommentDateForPost.toISOString();
+		if ( before && isDate( before ) && before.toISOString ) {
+			query.before = before.toISOString();
 		}
 
 		const requestId = createRequestId( siteId, postId, query );
