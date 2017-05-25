@@ -96,7 +96,6 @@ class JetpackNewSite extends Component {
 								{ this.props.translate( 'We’ll be using the Jetpack plugin to connect your site to WordPress.com.' ) }
 							</div>
 							<SiteURLInput
-								ref="siteUrlInputRef"
 								onChange={ this.handleJetpackUrlChange }
 								onSubmit={ this.handleJetpackSubmit }
 								handleOnClickTos={ this.handleOnClickTos }
@@ -116,7 +115,6 @@ class JetpackNewSite extends Component {
 							<div className="jetpack-new-site__mobile-jetpack-site">
 								<p>{ this.props.translate( 'Add an existing WordPress site with Jetpack:' ) }</p>
 								<SiteURLInput
-									ref="siteUrlInputRef"
 									onChange={ this.handleJetpackUrlChange }
 									onSubmit={ this.handleJetpackSubmit }
 									handleOnClickTos={ this.handleOnClickTos }
