@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { PLAN_FREE } from 'lib/plans/constants';
-import { getSiteBySlug } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import SignupActions from 'lib/signup/actions';
 
 class SitePickerSubmit extends React.Component {
@@ -58,7 +58,7 @@ class SitePickerSubmit extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			selectedSite: getSiteBySlug( state, ownProps.siteSlug )
+			selectedSite: getSite( state, ownProps.siteSlug )
 		};
 	}
 )( SitePickerSubmit );
