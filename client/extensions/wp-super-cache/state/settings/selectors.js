@@ -3,6 +3,10 @@
  */
 import { get } from 'lodash';
 
+function getSettingsState( state ) {
+	return state.extensions.wpSuperCache.settings;
+}
+
 /**
  * Returns true if we are requesting settings for the specified site ID, false otherwise.
  *
@@ -12,6 +16,17 @@ import { get } from 'lodash';
  */
 export function isRequestingSettings( state, siteId ) {
 	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'requesting', siteId ], false );
+}
+
+/**
+ * Returns true if we are restoring settings for the specified site ID, false otherwise.
+ *
+ * @param  {Object}  state Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean} Whether settings are being restored
+ */
+export function isRestoringSettings( state, siteId ) {
+	return get( getSettingsState( state ), [ 'restoring', siteId ], false );
 }
 
 /**

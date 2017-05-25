@@ -9,6 +9,9 @@ import {
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
+	WP_SUPER_CACHE_RESTORE_SETTINGS,
+	WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
+	WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
 	WP_SUPER_CACHE_SAVE_SETTINGS,
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
@@ -65,6 +68,20 @@ const saveStatus = createReducer( {}, {
 } );
 
 /**
+ * Returns the updated restoring state after an action has been dispatched.
+ * Restoring state tracks whether a settings restore request is in progress for a site.
+ *
+ * @param  {Object} state Current restoring state
+ * @param  {Object} action Action object
+ * @return {Object} Updated restoring state
+ */
+export const restoring = createReducer( {}, {
+	[ WP_SUPER_CACHE_RESTORE_SETTINGS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+	[ WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
+} );
+
+/**
  * Tracks the settings for a particular site.
  *
  * @param  {Object} state Current settings
@@ -85,5 +102,6 @@ const items = createReducer( {}, {
 export default combineReducers( {
 	items,
 	requesting,
+	restoring,
 	saveStatus,
 } );
