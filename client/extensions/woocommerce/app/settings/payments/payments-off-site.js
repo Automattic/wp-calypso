@@ -6,13 +6,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPaymentMethodsGroup } from '../../../state/wc-api/settings/payments/selectors';
-import { fetchPaymentMethods } from '../../../state/wc-api/settings/payments/actions';
-
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPaymentMethodsGroup } from '../../../state/wc-api/payment-methods/selectors';
+import { fetchPaymentMethods } from '../../../state/wc-api/payment-methods/actions';
 
 import ExtendedHeader from '../../../components/extended-header';
 import List from '../../../components/list/list';

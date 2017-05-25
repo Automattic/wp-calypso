@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import error from './error-reducer';
-import paymentMethods from './settings/payments/reducer';
+import paymentMethods from './payment-methods/reducer';
 import productCategories from './product-categories/reducer';
 
 import shippingZones from './shipping-zones/reducer';
