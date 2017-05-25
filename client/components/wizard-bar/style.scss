@@ -1,0 +1,39 @@
+.wizard-bar {
+	width: 100%;
+	display: inline-block;
+	position: relative;
+	height: 2px;
+	background-color: lighten( $gray, 20% );
+	border-radius: 4.5px;
+	border: 1px solid $white;
+}
+
+.wizard-bar__progress {
+	display: inline-block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	background-color: lighten( $blue-dark, 10% );
+	border-radius: 4.5px;
+	transition: width 200ms;
+}
+
+.wizard-bar__indicator {
+	position: absolute;
+	top: -10px;
+}
+
+.wizard-bar__indicator-icon {
+	fill: lighten( $blue-dark, 10% );
+}
+
+/* Percentage bar */
+.percentage-bar {
+	border-radius: 0;
+	height: 8px;
+	width: 150px;
+	.wizard-bar__progress {
+		border-radius: 0;
+	}
+}

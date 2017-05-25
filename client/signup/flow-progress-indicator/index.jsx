@@ -2,28 +2,26 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import flows from 'signup/config/flows';
-import ProgressBar from 'components/progress-bar';
+import WizardBar from 'components/wizard-bar';
 
-export default localize( ( { flowName, positionInFlow, translate } ) => {
+export default ( { flowName, positionInFlow } ) => {
 	const flow = flows.getFlow( flowName );
 	const flowLength = flow.steps.length;
 
 	if ( flowLength > 1 ) {
 		return (
-			<div className="flow-progress-indicator__container">
-				<div className="flow-progress-indicator__progress-bar">
-					{ translate( 'Current progress:' ) }
-					<ProgressBar value={ positionInFlow } total={ flowLength } isPulsing />
+			<div className="flow-progress-indicator">
+				<div className="flow-progress-indicator__wizard-bar">
+					<WizardBar value={ positionInFlow + 1 } total={ flowLength } isPulsing />
 				</div>
 			</div>
 		);
 	}
 
 	return null;
-} );
+};
