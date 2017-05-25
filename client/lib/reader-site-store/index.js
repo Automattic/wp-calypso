@@ -10,7 +10,6 @@ var Immutable = require( 'immutable' ),
 var Dispatcher = require( 'dispatcher' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	SiteStoreActionType = require( './constants' ).action,
-	FeedStoreActionType = require( 'lib/feed-store/constants' ).action,
 	State = require( './constants' ).state;
 
 import { withoutHttp } from 'lib/url';
@@ -121,12 +120,6 @@ SiteStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 		case SiteStoreActionType.RECEIVE_BULK_UPDATE:
 			setManySites( action.data );
-			break;
-		case FeedStoreActionType.RECEIVE_FETCH:
-			// check to see if the feed fetch had site meta
-			if ( action.data && action.data.meta && action.data.meta.data && action.data.meta.data.site ) {
-				setSite( action.data.meta.data.site );
-			}
 			break;
 	}
 } );

@@ -13,7 +13,6 @@ import { prepareSiteUrl } from './helper';
 import { isRequestInflight, requestTracker } from 'lib/inflight';
 import FeedSubscriptionStore from './index';
 import { action as SiteStoreActionTypes } from 'lib/reader-site-store/constants';
-import { action as FeedStoreActionTypes } from 'lib/feed-store/constants';
 
 const FeedSubscriptionActions = {
 	follow: function( url, fetchMeta = true ) {
@@ -176,13 +175,6 @@ const FeedSubscriptionActions = {
 			Dispatcher.handleServerAction( {
 				type: SiteStoreActionTypes.RECEIVE_BULK_UPDATE,
 				data: sites
-			} );
-		}
-
-		if ( feeds.length > 0 ) {
-			Dispatcher.handleServerAction( {
-				type: FeedStoreActionTypes.RECEIVE_BULK_UPDATE,
-				data: feeds
 			} );
 		}
 	},
