@@ -84,4 +84,12 @@ module.exports = {
 		},
 		defaultVariation: 'show',
 	},
+	siteCreationStepOne: {
+		datestamp: '20170524',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+	}
 };
