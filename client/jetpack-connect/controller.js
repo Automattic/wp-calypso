@@ -103,6 +103,19 @@ export default {
 
 		debug( 'entered connect flow with params %o', params );
 
+		let jpc_from = 'direct';
+		switch ( type ) {
+			case 'install':
+				jpc_from = 'jpdotcom';
+				break;
+			case 'pro':
+			case 'premium':
+			case 'personal':
+				jpc_from = 'ad';
+				break;
+		}
+		analytics.tracks.recordEvent( 'calypso_jpc_url_view', { jpc_from } );
+
 		analytics.pageView.record( pathname, analyticsPageTitle );
 
 		removeSidebar( context );
