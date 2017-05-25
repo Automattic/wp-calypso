@@ -421,15 +421,22 @@ export function getEditedPostSlug( state, siteId, postId ) {
  * Returns the most reliable preview URL for the post by site ID, post ID pair,
  * or null if a preview URL cannot be determined.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  postId Post ID
- * @return {?String}        Post preview URL
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  Site ID
+ * @param  {Number}  postId  Post ID
+ * @param  {Object}	 rawPost Raw post object. See my-sites/posts/post.jsx:361 ( export default connect() ) comment.
+ * @return {?String}         Post preview URL
  */
-export function getPostPreviewUrl( state, siteId, postId ) {
-	const post = getSitePost( state, siteId, postId );
-	if ( ! post ) {
-		return null;
+export function getPostPreviewUrl( state, siteId, postId, rawPost = null ) {
+	let post = null;
+
+	if ( siteId === null && postId === null && rawPost !== null ) {
+		post = rawPost;
+	} else {
+		post = getSitePost( state, siteId, postId );
+		if ( ! post ) {
+			return null;
+		}
 	}
 
 	const { URL: url, status } = post;
