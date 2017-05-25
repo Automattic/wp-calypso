@@ -14,7 +14,8 @@ export default function() {
 		page( '/devdocs', controller.sidebar, controller.devdocs );
 		page( '/devdocs/form-state-examples/:component?', controller.sidebar, controller.formStateExamples );
 		page( '/devdocs/design/typography', controller.sidebar, controller.typography );
-		page( '/devdocs/design/:component?', controller.sidebar, controller.design );
+		page( '/devdocs/design', controller.sidebar, controller.design );
+		page( '/devdocs/design/:component', controller.sidebar, controller.componentDetail );
 		page( '/devdocs/app-components/:component?',
 			( context ) => page.redirect( '/devdocs/blocks/' + ( context.params.component || '' ) ) );
 		page( '/devdocs/app-components', '/devdocs/blocks' );

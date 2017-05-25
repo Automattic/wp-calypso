@@ -9,12 +9,11 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 
-var Buttons = React.createClass( {
-	displayName: 'Buttons',
+var ButtonExample = React.createClass( {
+	displayName: 'ButtonExample',
 
 	mixins: [ PureRenderMixin ],
 
@@ -55,7 +54,7 @@ var Buttons = React.createClass( {
 	renderButtons: function() {
 		if ( ! this.state.compactButtons ) {
 			return (
-				<Card>
+				<div>
 					<div className="docs__design-button-row">
 						<Button>Button</Button>
 						<Button icon><Gridicon icon="heart" /> Icon button</Button>
@@ -120,11 +119,11 @@ var Buttons = React.createClass( {
 						<Button primary busy icon ><Gridicon icon="time" /></Button>
 						<Button primary busy >Primary busy button</Button>
 					</div>
-				</Card>
+				</div>
 			);
 		} else {
 			return (
-				<Card>
+				<div>
 					<div className="docs__design-button-row">
 						<Button compact >Compact button</Button>
 						<Button compact icon><Gridicon icon="heart" /> Compact icon button</Button>
@@ -189,7 +188,7 @@ var Buttons = React.createClass( {
 						<Button compact primary busy icon ><Gridicon icon="time" /></Button>
 						<Button compact primary busy >Primary busy button</Button>
 					</div>
-				</Card>
+				</div>
 			);
 		}
 	},
@@ -199,4 +198,4 @@ var Buttons = React.createClass( {
 	}
 } );
 
-module.exports = Buttons;
+module.exports = ButtonExample;

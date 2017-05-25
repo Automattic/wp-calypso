@@ -1,0 +1,86 @@
+
+.component-detail {
+  max-width: 800px;
+}
+
+.component-detail__title {
+  margin-bottom: 20px;
+  color: $gray-dark;
+  font-family: $serif;
+  font-size: 38px;
+  font-weight: bold;
+}
+
+.component-detail__example {
+  @include clear-fix;
+  position: relative;
+  margin-bottom: 20px;
+  box-shadow:
+    0 0 0 1px rgba(200, 215, 225, 0.5),
+    0 1px 2px #e9eff3;
+
+  .docs__design-toggle {
+    float: none;
+    position: static;
+    top: 0;
+  }
+}
+
+.component-detail__tree,
+.component-detail__render {
+  @include breakpoint('>960px') {
+    float: left;
+    width: 50%;
+  }
+}
+
+.component-detail__tree {
+  display: none;
+
+  @include breakpoint('>960px') {
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    box-shadow:
+      0 0 0 1px rgba(200, 215, 225, 0.5),
+      0 1px 2px #e9eff3;
+  }
+}
+
+.component-detail__render {
+  padding: 20px;
+  background: #fff;
+
+  @include breakpoint('>960px') {
+    box-sizing: border-box;
+    float: right;
+    width: 50%;
+    min-height: 200px;
+  }
+}
+
+.component-detail__render:last-child {
+  margin-bottom: 0;
+}
+
+.component-detail__icon {
+  display: none;
+
+  @include breakpoint('>960px') {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    margin: -14px 0 0 -14px;
+    background: #f3f6f8;
+    border: solid 1px #ddd;
+  }
+}
