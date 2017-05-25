@@ -60,7 +60,7 @@ const AddGoogleAppsCard = React.createClass( {
 								{ this.translate( 'Professional email and so much more.' ) }
 							</h2>
 
-							<p>
+							<p className="add-google-apps-card__sub-title">
 								{
 									this.translate(
 										"We've partnered with Google to offer you email, " +
