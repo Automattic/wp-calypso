@@ -1,6 +1,17 @@
+.add-google-apps-card__product-details {
+	@include breakpoint( ">960px" ) {
+		display: flex;
+		flex-basis: 50%;
+	}
+}
+
 .add-google-apps-card__description {
 	box-sizing: border-box;
 	font-size: 14px;
+
+	@include breakpoint( ">960px" ) {
+		max-width: 400px;
+	}
 
 	.button {
 		float: none;
@@ -68,6 +79,14 @@
 	font-size: 16px;
 	line-height: 120%;
 	margin: 0 0 10px 0;
+}
+
+.add-google-apps-card__logos {
+	margin-left: 100px;
+
+	@include breakpoint( "<960px" ) {
+		display: none;
+	}
 }
 
 .add-google-apps-card__features {
