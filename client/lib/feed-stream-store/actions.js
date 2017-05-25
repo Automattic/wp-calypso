@@ -10,7 +10,6 @@ import Dispatcher from 'dispatcher';
 import { action as ActionType } from './constants';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import feedPostListCache from './feed-stream-cache';
-import SiteStoreActions from 'lib/reader-site-store/actions';
 import wpcom from 'lib/wp';
 
 function getNextPageParams( store ) {
@@ -72,10 +71,6 @@ export function receivePage( id, error, data ) {
 					blogId: post.meta.data.discover_original_post.site_ID,
 					postId: post.meta.data.discover_original_post.ID
 				} );
-			}
-
-			if ( get( post, 'meta.data.site' ) ) {
-				SiteStoreActions.receiveFetch( post.site_ID, null, post.meta.data.site );
 			}
 
 			if ( post && get( post, 'meta.data.post' ) ) {
