@@ -414,33 +414,6 @@
 	}
 }
 
-.products__product-manage-stock {
-	display: inline-flex;
-	flex-direction: row;
-	width: 100%;
-
-	.products__product-manage-stock-checkbox {
-		@include clear-fix();
-		padding: 12px;
-		background: $white;
-		border: 1px solid lighten( $gray, 20% );
-		display: flex;
-
-		input[type=checkbox] {
-			float: none;
-			margin: 0;
-		}
-
-		+ .form-text-input {
-			transform: translateX( -1px );
-		}
-	}
-
-	.form-text-input {
-		height: 42px;
-	}
-}
-
 .products__product-form-variation-table {
 	.products__product-dimensions-weight {
 		flex-direction: row;
@@ -515,17 +488,37 @@
 		width: 150px;
 	}
 
-	.products__product-manage-stock {
-		width: 150px;
+	.products__product-form-stock-disabled {
+		height: 70px;
 	}
 
-	.products__product-form-stock {
+	.products__product-manage-stock-toggle,
+	.products__product-manage-stock-wrapper .form-label {
+		display: inline-flex;
+		cursor: pointer;
+	}
+
+	.products__product-manage-stock-toggle .form-label {
+		font-weight: normal;
+		margin-bottom: 12px;
+	}
+
+	.products__product-backorders-wrapper label {
+		margin-bottom: 5px;
+	}
+
+	.products__product-backorders-wrapper select {
+		padding: 9px 32px 11px 14px;
+	}
+
+	.products__product-stock-options-wrapper {
 		display: flex;
 		flex-direction: column;
+		margin-top: 6px;
 
-		.products__product-manage-stock-wrapper {
+		.products__product-manage-stock {
 			width: 150px;
-			margin-right: 32px;
+			margin-right: 24px;
 			margin-bottom: 12px;
 		}
 
