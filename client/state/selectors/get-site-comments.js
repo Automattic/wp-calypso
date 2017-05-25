@@ -10,7 +10,7 @@ import { get } from 'lodash';
  * @param {Number} siteId site for whose comments to find
  * @returns {Array<Object>} available comments for site
  */
-export const getCommentsForSite = ( state, siteId ) => {
+export const getSiteComments = ( state, siteId ) => {
 	const comments = get( state, 'comments.items', {} );
 
 	return Object.keys( comments )
@@ -18,4 +18,4 @@ export const getCommentsForSite = ( state, siteId ) => {
 		.reduce( ( list, key ) => [ ...list, ...comments[ key ] ], [] );
 };
 
-export default getCommentsForSite;
+export default getSiteComments;
