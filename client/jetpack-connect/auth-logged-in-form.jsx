@@ -69,7 +69,6 @@ class LoggedInForm extends Component {
 		requestHasExpiredSecretError: PropTypes.func.isRequired,
 		requestHasXmlrpcError: PropTypes.func.isRequired,
 		retryAuth: PropTypes.func.isRequired,
-		selectedPlan: PropTypes.string,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object.isRequired,
