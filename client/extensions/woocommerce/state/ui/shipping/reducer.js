@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
+import { combineReducers, keyedReducer } from 'state/utils';
 
 /**
  * Internal dependencies
  */
 import zones from './zones/reducer';
 
-export default combineReducers( {
+export default keyedReducer( 'siteId', combineReducers( {
 	zones,
-} );
+} ) );
