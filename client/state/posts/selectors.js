@@ -428,15 +428,16 @@ export function getEditedPostSlug( state, siteId, postId ) {
  * @return {?String}           Post preview URL
  */
 export function getPostPreviewUrl( state, siteId, postId, rawPost = null ) {
-	let post = null;
+	const shouldUseRawPost = siteId === null &&
+		postId === null &&
+		rawPost !== null;
 
-	if ( siteId === null && postId === null && rawPost !== null ) {
-		post = rawPost;
-	} else {
-		post = getSitePost( state, siteId, postId );
-		if ( ! post ) {
-			return null;
-		}
+	const post = shouldUseRawPost
+		? rawPost
+		: getSitePost( state, siteId, postId );
+
+	if ( ! post ) {
+		return null;
 	}
 
 	const { URL: url, status } = post;
