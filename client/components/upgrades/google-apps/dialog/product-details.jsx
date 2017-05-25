@@ -11,26 +11,39 @@ var GoogleAppsProductDetails = React.createClass( {
 	render: function() {
 		return (
 			<div className="google-apps-dialog__product-details">
-				<h3 className="google-apps-dialog__product-name">
-					{ /* Intentionally not translable as it is a brand name and Google keeps it in English */ }
-					<span className="google-apps-dialog__product-logo">G Suite</span>
-				</h3>
+				<div className="google-apps-dialog__product-intro">
+					<h3 className="google-apps-dialog__product-name">
+						{ /* Intentionally not translable as it is a brand name and Google keeps it in English */ }
+						<span className="google-apps-dialog__product-logo">G Suite</span>
+					</h3>
 
-				<h5 className="google-apps-dialog__file-storage">
-					{ this.translate( '30GB Online File Storage' ) }
-				</h5>
+					<p>
+						{
+							this.translate(
+								"We've partnered with Google to offer you email, storage, docs, calendars " +
+								'and more, integrated with your site.'
+							)
+						}
+					</p>
+				</div>
 
-				<h5 className="google-apps-dialog__professional-email">
-					{ this.translate( 'Professional Email Address' ) }
-				</h5>
+				<div className="google-apps-dialog__product-features">
+					<h5 className="google-apps-dialog__file-storage">
+						{ this.translate( '30GB Online File Storage' ) }
+					</h5>
 
-				<h4 className="google-apps-dialog__price-per-user">
-					{ this.translate( '%(price)s per user / month ', { args: { price: this.props.price } } ) }
-				</h4>
+					<h5 className="google-apps-dialog__professional-email">
+						{ this.translate( 'Professional Email Address' ) }
+					</h5>
 
-				<h5 className="google-apps-dialog__billing-period">
-					{ this.translate( 'Billed yearly — get 2 months free!' ) }
-				</h5>
+					<h4 className="google-apps-dialog__price-per-user">
+						{ this.translate( '%(price)s per user / month ', { args: { price: this.props.price } } ) }
+					</h4>
+
+					<h5 className="google-apps-dialog__billing-period">
+						{ this.translate( 'Billed yearly — get 2 months free!' ) }
+					</h5>
+				</div>
 			</div>
 		);
 	}
