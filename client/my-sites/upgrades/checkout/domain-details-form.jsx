@@ -516,7 +516,7 @@ class DomainDetailsForm extends PureComponent {
 
 		let title;
 		// FIXME
-		if ( this.currentStep === 'fr' ) {
+		if ( this.state.currentStep === 'fr' ) {
 			title = '.FR Extra Contact Details';
 		} else if ( needsOnlyGoogleAppsDetails ) {
 			title = this.props.translate( 'G Suite Account Information' );
