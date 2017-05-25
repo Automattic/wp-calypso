@@ -8,7 +8,7 @@ with a % of the size of the background.
 #### How to use:
 
 ```js
-var WizardBar = require( 'components/wizard-bar' );
+import WizardBar from 'components/wizard-bar';
 
 render: function() {
 	return <WizardBar

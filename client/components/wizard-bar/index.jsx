@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -48,9 +47,8 @@ export default class WizardBar extends React.Component {
 	}
 
 	render() {
-		const classes = classnames( this.props.className, 'wizard-bar' );
 		return (
-			<div className={ classes }>
+			<div className="wizard-bar">
 				{ this.renderBar() }
 			</div>
 		);

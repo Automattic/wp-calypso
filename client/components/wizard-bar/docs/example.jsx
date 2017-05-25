@@ -2,18 +2,13 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import WizardBar from 'components/wizard-bar';
 
-module.exports = React.createClass( {
-	displayName: 'WizardBar',
-
-	mixins: [ PureRenderMixin ],
-
+export default class WizardBarExample extends React.Component {
 	render() {
 		return (
 			<div>
@@ -23,4 +18,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
