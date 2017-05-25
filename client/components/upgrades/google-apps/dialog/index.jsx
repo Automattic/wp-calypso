@@ -8,6 +8,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
  * Internal dependencies
  */
 import { cartItems } from 'lib/cart-values';
+import CompactCard from 'components/card/compact';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
 import analyticsMixin from 'lib/mixins/analytics';
@@ -57,17 +58,23 @@ const GoogleAppsDialog = React.createClass( {
 
 		return (
 			<form className="google-apps-dialog card" onSubmit={ this.handleFormSubmit }>
-				{ this.header() }
-				<GoogleAppsProductDetails
-					price={ price }
-				/>
-				<ReactCSSTransitionGroup
-					transitionName="google-apps-dialog__users"
-					transitionEnterTimeout={ 200 }
-					transitionLeaveTimeout={ 200 }>
-					{ this.state.isAddingEmail && this.renderGoogleAppsUsers() }
-				</ReactCSSTransitionGroup>
-				{ this.footer() }
+				<CompactCard>
+					{ this.header() }
+				</CompactCard>
+				<CompactCard>
+					<GoogleAppsProductDetails
+						price={ price }
+					/>
+					<ReactCSSTransitionGroup
+						transitionName="google-apps-dialog__users"
+						transitionEnterTimeout={ 200 }
+						transitionLeaveTimeout={ 200 }>
+						{ this.state.isAddingEmail && this.renderGoogleAppsUsers() }
+					</ReactCSSTransitionGroup>
+				</CompactCard>
+				<CompactCard>
+					{ this.footer() }
+				</CompactCard>
 			</form>
 		);
 	},
@@ -97,7 +104,16 @@ const GoogleAppsDialog = React.createClass( {
 		return (
 			<header className="google-apps-dialog__header">
 				<h2 className="google-apps-dialog__title">
-					{ this.translate( 'Add Professional Email to %(domain)s', { args: { domain: this.props.domain } } ) }
+					{
+						this.translate(
+							'Add Professional email from Google to %(domain)s',
+							{
+								args: {
+									domain: this.props.domain
+								}
+							}
+						)
+					}
 				</h2>
 				<h5 className="google-apps-dialog__no-setup-required">
 					{ this.translate( 'No setup or software required, easy to manage from your dashboard' ) }
