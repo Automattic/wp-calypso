@@ -20,7 +20,7 @@ const SiteSettingsGeneral = ( {
 		<div className="site-settings__main general-settings">
 			<GeneralForm site={ site } />
 
-			{ site && ! site.jetpack && ! site.is_vip &&
+			{ site &&
 				<SiteTools
 					site={ site }
 					sitePurchases={ sitePurchases }

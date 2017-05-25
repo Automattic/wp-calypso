@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { some } from 'lodash';
+import { isEmpty, pickBy, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +33,21 @@ class SiteTools extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const {
+			translate,
+			site: { jetpack: isJetpack, is_vip: isVip },
+		} = this.props;
+
+		const showSection = {
+			changeAddress: ! isJetpack && ! isVip,
+			themeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
+			deleteContent: ! isJetpack && ! isVip,
+			deleteSite: ! isJetpack && ! isVip,
+		};
+
+		if ( isEmpty( pickBy( showSection ) ) ) {
+			return null;
+		}
 
 		const selectedSite = this.props.site;
 		const changeAddressLink = `/domains/manage/${ selectedSite.slug }`;
@@ -67,16 +81,18 @@ class SiteTools extends Component {
 		return (
 			<div className="site-tools">
 				<SectionHeader label={ translate( 'Site Tools' ) } />
-				<CompactCard
-					href={ changeAddressLink }
-					onClick={ this.trackChangeAddress }
-					className="site-tools__link">
-					<div className="site-tools__content">
-						<p className="site-tools__section-title">{ changeSiteAddress }</p>
-						<p className="site-tools__section-desc">{ changeAddressText }</p>
-					</div>
-				</CompactCard>
-				{ config.isEnabled( 'settings/theme-setup' ) &&
+				{ showSection.changeAddress &&
+					<CompactCard
+						href={ changeAddressLink }
+						onClick={ this.trackChangeAddress }
+						className="site-tools__link">
+						<div className="site-tools__content">
+							<p className="site-tools__section-title">{ changeSiteAddress }</p>
+							<p className="site-tools__section-desc">{ changeAddressText }</p>
+						</div>
+					</CompactCard>
+				}
+				{ showSection.themeSetup &&
 					<CompactCard
 						href={ themeSetupLink }
 						onClick={ this.trackThemeSetup }
@@ -87,26 +103,28 @@ class SiteTools extends Component {
 						</div>
 					</CompactCard>
 				}
-				<CompactCard
-					href={ startOverLink }
-					onClick={ this.trackStartOver }
-					className="site-tools__link">
-					<div className="site-tools__content">
-						<p className="site-tools__section-title">{ startOver }</p>
-						<p className="site-tools__section-desc">{ startOverText }</p>
-					</div>
-				</CompactCard>
-				<CompactCard
-					href={ deleteSiteLink }
-					onClick={ this.checkForSubscriptions }
-					className="site-tools__link">
-					<div className="site-tools__content">
-						<p className="site-tools__section-title is-warning">
-							{ deleteSite }
-						</p>
-						<p className="site-tools__section-desc">{ deleteSiteText }</p>
-					</div>
-				</CompactCard>
+				{ showSection.deleteContent &&
+					<CompactCard
+						href={ startOverLink }
+						onClick={ this.trackStartOver }
+						className="site-tools__link">
+						<div className="site-tools__content">
+							<p className="site-tools__section-title">{ startOver }</p>
+							<p className="site-tools__section-desc">{ startOverText }</p>
+						</div>
+					</CompactCard>
+				}
+				{ showSection.deleteSite &&
+					<CompactCard
+						href={ deleteSiteLink }
+						onClick={ this.checkForSubscriptions }
+						className="site-tools__link">
+						<div className="site-tools__content">
+							<p className="site-tools__section-title is-warning">{ deleteSite }</p>
+							<p className="site-tools__section-desc">{ deleteSiteText }</p>
+						</div>
+					</CompactCard>
+				}
 				<DeleteSiteWarningDialog
 					isVisible={ this.state.showDialog }
 					onClose={ this.closeDialog } />
