@@ -16,7 +16,7 @@ export default function() {
 	page( '/recommendations/start', '/' );
 
 	// Blog Recommendations no longer exists as its own page - redirect to /
-	page( '/recommendations', '/' );
+	page( '/recommendations', '/read/search' );
 
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
 	if ( config.isEnabled( 'reader/recommendations/posts' ) ) {
