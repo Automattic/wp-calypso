@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
-import FormattedHeader from 'components/formatted-header';
+import StepHeader from 'signup/step-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 
 /**
@@ -52,7 +52,7 @@ class JetpackPlansGrid extends Component {
 			}
 		}
 		return (
-			<FormattedHeader
+			<StepHeader
 				headerText={ headerText }
 				subHeaderText={ subheaderText }
 				step={ 1 }

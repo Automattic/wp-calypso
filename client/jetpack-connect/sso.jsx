@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
-import FormattedHeader from 'components/formatted-header';
+import StepHeader from 'signup/step-header';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
@@ -412,7 +412,7 @@ class JetpackSsoForm extends Component {
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__sso">
-					<FormattedHeader
+					<StepHeader
 						headerText={ translate( 'Connect with WordPress.com' ) }
 						subHeaderText={ this.getSubHeaderText() }
 					/>
