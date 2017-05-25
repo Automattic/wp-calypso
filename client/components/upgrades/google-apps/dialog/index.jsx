@@ -57,7 +57,7 @@ const GoogleAppsDialog = React.createClass( {
 		} );
 
 		return (
-			<form className="google-apps-dialog card" onSubmit={ this.handleFormSubmit }>
+			<form className="google-apps-dialog" onSubmit={ this.handleFormSubmit }>
 				<CompactCard>
 					{ this.header() }
 				</CompactCard>
