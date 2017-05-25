@@ -3,9 +3,9 @@
   "version": "0.17.0",
   "dependencies": {
     "5to6-codemod": {
-      "version": "1.8.0",
-      "from": "git://github.com/jsnmoon/5to6-codemod.git#34b2248a93cd491f4a7cd70249c8d5b56304d2c8",
-      "resolved": "git://github.com/jsnmoon/5to6-codemod.git#34b2248a93cd491f4a7cd70249c8d5b56304d2c8",
+      "version": "1.7.0",
+      "from": "git://github.com/5to6/5to6-codemod.git#60306b71d8dde341e4d4bb968e6fbaf6875e19ae",
+      "resolved": "git://github.com/5to6/5to6-codemod.git#60306b71d8dde341e4d4bb968e6fbaf6875e19ae",
       "dev": true,
       "dependencies": {
         "ast-types": {
