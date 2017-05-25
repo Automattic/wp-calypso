@@ -3,7 +3,7 @@
  */
 import React from 'react';
 
-export default () => (
+const ExistingSite = () => (
 	<svg width="173px" height="114px" viewBox="0 0 173 114" version="1.1" xmlns="http://www.w3.org/2000/svg">
 		<defs>
 			<rect id="path-3" x="0" y="0" width="149" height="97"></rect>
@@ -59,3 +59,5 @@ export default () => (
 		</g>
 	</svg>
 );
+
+export default ExistingSite;

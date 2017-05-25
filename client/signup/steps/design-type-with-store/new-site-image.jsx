@@ -3,7 +3,7 @@
  */
 import React from 'react';
 
-export default () => (
+const NewSiteImage = () => (
 	<svg width="172px" height="112px" viewBox="0 0 172 112" version="1.1" xmlns="http://www.w3.org/2000/svg">
 		<defs>
 			<polygon id="path-1" points="0 15.7603469 171.708196 15.7603469 171.708196 111.769139 0 111.769139"></polygon>
@@ -36,3 +36,5 @@ export default () => (
 		</g>
 	</svg>
 );
+
+export default NewSiteImage;
