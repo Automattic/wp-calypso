@@ -20,6 +20,21 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 
+// If we set a field to null, react decides it's uncontrolled and complains
+// and we don't particularly want to make the parent remember all our fields
+// so we use these values to plug missing.
+const emptyValues = {
+	countryOfBirth: '',
+	dob_days: '',
+	dob_months: '',
+	dob_years: '',
+	placeOfBirth: '',
+	postalCodeOfBirth: '',
+	registrantVatId: '',
+	sirenSiret: '',
+	trademarkNumber: '',
+};
+
 export function getRelevantFields( state ) {
 	const { countryOfBirth, registrantType } = state;
 	const bornInFrance = countryOfBirth === 'FR';
@@ -114,7 +129,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		const translate = this.props.translate;
 		const {
 			registrantType
-		} = this.props.values || {};
+		} = { ...emptyValues, ...this.props.values };
 
 		return (
 			<form>
@@ -159,8 +174,13 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	renderPersonalFields = () => {
 		const translate = this.props.translate;
 		const {
-			countryOfBirth
-		} = this.props.values || {};
+			countryOfBirth,
+			dob_days,
+			dob_months,
+			dob_years,
+			placeOfBirth,
+			postalCodeOfBirth,
+		} = { ...emptyValues, ...this.props.values };
 
 		return (
 			<div>
@@ -186,6 +206,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 							</FormLabel>
 							<FormTextInput className="registrant-extra-info__dob-year"
 								name="dob_years"
+								value={ dob_years }
 								type="number"
 								placeholder="YYYY"
 								onChange={ this.handleDobChangeEvent } />
@@ -196,6 +217,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 							</FormLabel>
 							<FormTextInput className="registrant-extra-info__dob-month"
 								name="dob_months"
+								value={ dob_months }
 								type="number"
 								placeholder="MM"
 								onChange={ this.handleDobChangeEvent } />
@@ -206,6 +228,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 							</FormLabel>
 							<FormTextInput className="registrant-extra-info__dob-day"
 								name="dob_days"
+								value={ dob_days }
 								type="number"
 								placeholder="DD"
 								onChange={ this.handleDobChangeEvent } />
@@ -226,6 +249,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						</FormLabel>
 						<FormTextInput
 							name="placeOfBirth"
+							value={ placeOfBirth }
 							placeholder={ translate( 'Place or city of birth' ) }
 							onChange={ this.handleChangeEvent } />
 					</FormFieldset>
@@ -238,6 +262,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						</FormLabel>
 						<FormTextInput
 							name="postalCodeOfBirth"
+							value={ postalCodeOfBirth }
 							autoCapitalize="off"
 							autoComplete="off"
 							autoCorrect="off"
@@ -251,6 +276,11 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	renderOrganizationFields = () => {
 		const translate = this.props.translate;
+		const {
+			registrantVatId,
+			sirenSiret,
+			trademarkNumber
+		} = { ...emptyValues, ...this.props.values };
 		return (
 			<div>
 				<FormFieldset>
@@ -260,6 +290,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					</FormLabel>
 					<FormTextInput
 						name="registrantVatId"
+						value={ registrantVatId }
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
@@ -274,6 +305,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					</FormLabel>
 					<FormTextInput
 						name="sirenSiret"
+						value={ sirenSiret }
 						placeholder={
 							translate( 'ex 123 456 789 or 123 456 789 01234',
 								{ comment: 'ex is short for "example". The numbers are examples of the EU VAT format' }
@@ -292,6 +324,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					</FormLabel>
 					<FormTextInput
 						name="trademarkNumber"
+						value={ trademarkNumber }
 						type="number"
 						autoCapitalize="off"
 						autoComplete="off"
