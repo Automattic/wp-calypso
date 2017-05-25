@@ -8,7 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormattedHeader from 'components/formatted-header';
+import StepHeader from 'signup/step-header';
 import NavigationLink from 'signup/navigation-link';
 
 class StepWrapper extends Component {
@@ -82,11 +82,11 @@ class StepWrapper extends Component {
 
 		return (
 			<div className={ classes }>
-				<FormattedHeader
+				<StepHeader
 					headerText={ this.headerText() }
 					subHeaderText={ this.subHeaderText() }>
 					{ ( headerButton ) }
-				</FormattedHeader>
+				</StepHeader>
 
 				<div className="step-wrapper__content is-animated-content">
 					{ stepContent }

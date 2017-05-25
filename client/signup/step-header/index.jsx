@@ -9,16 +9,16 @@ import classNames from 'classnames';
  */
 import { preventWidows } from 'lib/formatting';
 
-function FormattedHeader( { headerText, subHeaderText } ) {
-	const classes = classNames( 'formatted-header', {
+function StepHeader( { headerText, subHeaderText } ) {
+	const classes = classNames( 'step-header', {
 		'is-without-subhead': ! subHeaderText
 	} );
 
 	return (
 		<header className={ classes }>
-			<h1 className="formatted-header__title">{ preventWidows( headerText, 2 ) }</h1>
+			<h1 className="step-header__title">{ preventWidows( headerText, 2 ) }</h1>
 			{ subHeaderText && (
-				<p className="formatted-header__subtitle">
+				<p className="step-header__subtitle">
 					{ preventWidows( subHeaderText, 2 ) }
 				</p>
 			) }
@@ -26,9 +26,9 @@ function FormattedHeader( { headerText, subHeaderText } ) {
 	);
 }
 
-FormattedHeader.propTypes = {
+StepHeader.propTypes = {
 	headerText: PropTypes.string,
 	subHeaderText: React.PropTypes.node,
 };
 
-export default FormattedHeader;
+export default StepHeader;
