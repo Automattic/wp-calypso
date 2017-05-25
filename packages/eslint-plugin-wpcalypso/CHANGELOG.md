@@ -1,3 +1,7 @@
+#### v3.3.0 (2017-05-25)
+
+- New Rule: [`import-no-redux-combine-reducers`](docs/rules/import-no-redux-combine-reducers.md)
+
 #### v3.2.0 (2017-04-11)
 
 - Updated: jsx-classname-namespace: New "rootFiles" option to specify files in which components are to be considered as root (defaults to "index.js", "index.jsx") ([#34](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/34), thanks @bperson)
