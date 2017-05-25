@@ -86,7 +86,11 @@
 }
 
 .add-google-apps-card__logos {
+	align-items: center;
+	display: flex;
+	flex-grow: 1;
 	margin-left: 100px;
+	justify-content: center;
 
 	@include breakpoint( "<960px" ) {
 		display: none;

@@ -105,7 +105,7 @@ const AddGoogleAppsCard = React.createClass( {
 						</div>
 
 						<div className="add-google-apps-card__logos">
-							<img src="/calypso/images/g-suite/logos.png" width="262" height="209" />
+							<img src="/calypso/images/g-suite/logos-2x.png" width="262" height="209" />
 						</div>
 					</div>
 				</CompactCard>
