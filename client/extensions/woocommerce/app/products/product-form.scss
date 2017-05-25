@@ -110,6 +110,10 @@
 
 	.products__product-form-variation-all-row {
 		background: lighten( $gray, 30% );
+
+		.products__product-manage-stock-toggle {
+			display: inline;
+		}
 	}
 
 	.products__product-form-variation-row {
@@ -428,7 +432,11 @@
 	}
 
 	.products__product-manage-stock {
-		width: 150px;
+		width: 200px;
+
+		.form-text-input {
+			width: 110px;
+		}
 	}
 }
 

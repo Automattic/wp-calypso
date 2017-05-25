@@ -3,12 +3,17 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { isNumber } from 'lodash';
+import { find, isNumber } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
+import FormCurrencyInput from 'components/forms/form-currency-input';
+import FormDimensionsInput from '../../components/form-dimensions-input';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ProductFormVariationsModal from './product-form-variations-modal';
 import ProductFormVariationsRow from './product-form-variations-row';
 
@@ -26,11 +31,50 @@ class ProductFormVariationsTable extends React.Component {
 		this.state = {
 			showDialog: false,
 			selectedVariation: null,
+			regular_price: '',
+			weight: '',
+			dimensions: {},
+			stock_quantity: '',
+			manage_stock: false,
 		};
 
 		this.onShowDialog = this.onShowDialog.bind( this );
 		this.onCloseDialog = this.onCloseDialog.bind( this );
 	}
+
+	editAllVariations( field, value ) {
+		const { product, variations, editProductVariation } = this.props;
+		this.setState( { [ field ]: value } );
+		variations.map( function( variation ) {
+			editProductVariation( product, variation, { [ field ]: value } );
+		} );
+	}
+
+	setPrice = ( e ) => {
+		this.editAllVariations( 'regular_price', e.target.value );
+	}
+
+	setWeight = ( e ) => {
+		this.editAllVariations( 'weight', e.target.value );
+	}
+
+	setStockQuantity = ( e ) => {
+		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
+		this.editAllVariations( 'stock_quantity', stock_quantity );
+	}
+
+	setDimension = ( e ) => {
+		const dimensions = { ...this.state.dimensions, [ e.target.name ]: e.target.value };
+		this.editAllVariations( 'dimensions', dimensions );
+	}
+
+	toggleStock = () => {
+		const manage_stock = ! this.state.manage_stock;
+		if ( this.state.manage_stock ) {
+			this.editAllVariations( 'stock_quantity', '' );
+		}
+		this.editAllVariations( 'manage_stock', manage_stock );
+	};
 
 	onShowDialog( selectedVariation ) {
 		this.setState( {
@@ -76,7 +120,7 @@ class ProductFormVariationsTable extends React.Component {
 	renderVariationRow( variation ) {
 		const { product, variations, editProductVariation } = this.props;
 		const id = isNumber( variation.id ) && variation.id || 'index_' + variation.id.index;
-		const manageStock = variations && variations[ 0 ].manage_stock || false;
+		const manageStock = ( find( variations, ( v ) => v.manage_stock ) ) ? true : false;
 
 		return (
 			<ProductFormVariationsRow
@@ -90,8 +134,78 @@ class ProductFormVariationsTable extends React.Component {
 		);
 	}
 
+	renderBulkRow() {
+		const { translate, variations } = this.props;
+		const { regular_price, dimensions, weight, stock_quantity } = this.state;
+		const manageStock = ( find( variations, ( v ) => v.manage_stock ) ) ? true : false;
+
+		return (
+			<tr className="products__product-form-variation-all-row">
+				<td className="products__product-id">
+					<div className="products__product-name">
+						{ translate( 'All variations' ) }
+					</div>
+				</td>
+				<td>
+					<FormCurrencyInput noWrap
+						currencySymbolPrefix="$"
+						name="price"
+						value={ regular_price }
+						placeholder="0.00"
+						onChange={ this.setPrice }
+						size="4"
+					/>
+				</td>
+				<td>
+					<div className="products__product-dimensions-weight">
+						<FormDimensionsInput
+							className="products__product-dimensions-input"
+							unit="in"
+							noWrap
+							dimensions={ dimensions }
+							onChange={ this.setDimension }
+						/>
+						<div className="products__product-weight-input">
+							<FormTextInputWithAffixes
+								name="weight"
+								type="number"
+								suffix="g"
+								value={ weight }
+								size="4"
+								noWrap
+								onChange={ this.setWeight }
+							/>
+						</div>
+					</div>
+				</td>
+				<td>
+					<div className="products__product-manage-stock">
+						<div className="products__product-manage-stock-toggle">
+							<CompactFormToggle
+								checked={ manageStock }
+								onChange={ this.toggleStock }
+							/>
+						</div>
+						{ manageStock && ( <FormTextInput
+							name="stock_quantity"
+							value={ stock_quantity }
+							type="number"
+							placeholder={ translate( 'Quantity' ) }
+							onChange={ this.setStockQuantity }
+						/> ) }
+					</div>
+				</td>
+			</tr>
+		);
+	}
+
 	render() {
 		const { variations, translate } = this.props;
+
+		if ( ! variations || variations.length === 0 ) {
+			return null;
+		}
+
 		return (
 			<div className="products__product-form-variation-table-shadow">
 				<div className="products__product-form-variation-table-wrapper">
@@ -105,7 +219,8 @@ class ProductFormVariationsTable extends React.Component {
 							</tr>
 						</thead>
 						<tbody>
-							{ variations && variations.map( ( v ) => this.renderVariationRow( v ) ) }
+							{ this.renderBulkRow() }
+							{ variations.map( ( v ) => this.renderVariationRow( v ) ) }
 						</tbody>
 					</table>
 					{ this.renderModal() }

@@ -66,8 +66,7 @@ class ProductFormVariationsModal extends React.Component {
 		const { selectedVariation } = this.state;
 		const variation = this.selectedVariation();
 
-		const navVariations = ( variations && variations.filter( v => v.attributes.length > 0 ) ) || [];
-		const navItems = navVariations.map( function( v, i ) {
+		const navItems = variations && variations.map( function( v, i ) {
 			return (
 				<ModalNavItem key={ i } variation={ v } selected={ selectedVariation } />
 			);
