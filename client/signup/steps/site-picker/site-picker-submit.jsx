@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { PLAN_FREE } from 'lib/plans/constants';
-import { getSite } from 'state/sites/selectors';
+import { getSiteBySlug } from 'state/sites/selectors';
 import SignupActions from 'lib/signup/actions';
 
-class SitePickerSubmit extends Component {
+class SitePickerSubmit extends React.Component {
 	componentWillMount() {
 		const {
 				stepSectionName,
@@ -19,14 +19,15 @@ class SitePickerSubmit extends Component {
 				goToStep,
 				selectedSite
 			} = this.props,
-			hasPaidPlan = selectedSite && selectedSite.plan && selectedSite.plan.product_slug !== PLAN_FREE;
+			hasPaidPlan = selectedSite && selectedSite.plan && selectedSite.plan.product_slug !== PLAN_FREE,
+			{ ID: siteId, slug: siteSlug } = selectedSite;
 
 		SignupActions.submitSignupStep(
 			{
 				stepName,
 				stepSectionName,
-				siteId: selectedSite.ID,
-				siteSlug: selectedSite.slug
+				siteId,
+				siteSlug
 			},
 			[],
 			{}
@@ -37,11 +38,15 @@ class SitePickerSubmit extends Component {
 		} );
 
 		if ( hasPaidPlan ) {
-			SignupActions.submitSignupStep( { stepName: 'plans', wasSkipped: true }, [], { cartItem: null, privacyItem: null } );
+			SignupActions.submitSignupStep(
+				{ stepName: 'plans-site-selected', wasSkipped: true },
+				[],
+				{ cartItem: null, privacyItem: null }
+			);
 
 			goToStep( 'user' );
 		} else {
-			goToStep( 'plans' );
+			goToStep( 'plans-site-selected' );
 		}
 	}
 
@@ -53,7 +58,7 @@ class SitePickerSubmit extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			selectedSite: getSite( state, ownProps.siteSlug )
+			selectedSite: getSiteBySlug( state, ownProps.siteSlug )
 		};
 	}
 )( SitePickerSubmit );
