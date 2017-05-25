@@ -424,7 +424,7 @@ export function getEditedPostSlug( state, siteId, postId ) {
  * @param  {Object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
  * @param  {Number}  postId  Post ID
- * @param  {Object}	 rawPost Raw post object. See my-sites/posts/post.jsx:361 ( export default connect() ) comment.
+ * @param  {Object}  rawPost Raw post object. See my-sites/posts/post.jsx:361 ( export default connect() ) comment.
  * @return {?String}         Post preview URL
  */
 export function getPostPreviewUrl( state, siteId, postId, rawPost = null ) {
