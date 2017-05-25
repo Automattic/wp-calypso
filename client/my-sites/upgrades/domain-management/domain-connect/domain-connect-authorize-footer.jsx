@@ -13,19 +13,19 @@ import { actionType } from './constants';
 
 class DomainConnectAuthorizeFooter extends Component {
 	static propTypes = {
-		isLoading: PropTypes.bool,
+		isPlaceholder: PropTypes.bool,
 		onClose: PropTypes.func,
 		onConfirm: PropTypes.func,
 		showAction: PropTypes.oneOf( actionType )
 	};
 
 	static defaultProps = {
-		isLoading: false
+		isPlaceholder: false
 	};
 
 	placeholder = () => {
 		return (
-			<div className="domain-connect__footer is-placeholder">
+			<div className="domain-connect__is-placeholder">
 				<span></span>
 				<span></span>
 			</div>
@@ -88,9 +88,9 @@ class DomainConnectAuthorizeFooter extends Component {
 	}
 
 	render() {
-		const { isLoading } = this.props;
+		const { isPlaceholder } = this.props;
 
-		if ( isLoading ) {
+		if ( isPlaceholder ) {
 			return this.placeholder();
 		}
 

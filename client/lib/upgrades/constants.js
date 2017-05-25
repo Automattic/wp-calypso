@@ -23,7 +23,6 @@ module.exports.action = keyMirror( {
 	DNS_FETCH: null,
 	DNS_FETCH_COMPLETED: null,
 	DNS_FETCH_FAILED: null,
-	// DNS_GET_TEMPLATE_CONFLICTS_COMPLETED: null,
 	DOMAINS_FETCH: null,
 	DOMAINS_FETCH_COMPLETED: null,
 	DOMAINS_FETCH_FAILED: null,
