@@ -122,7 +122,7 @@ const GoogleAppsDialog = React.createClass( {
 					}
 				</h2>
 				<h5 className="google-apps-dialog__no-setup-required">
-					{ this.translate( 'No setup or software required, easy to manage from your dashboard' ) }
+					{ this.translate( 'No setup or software required. Easy to manage from your dashboard.' ) }
 				</h5>
 			</header>
 		);
@@ -167,7 +167,7 @@ const GoogleAppsDialog = React.createClass( {
 		const continueButtonHandler = this.state.isAddingEmail ? this.handleFormSubmit : this.handleAddEmail,
 			continueButtonText = this.state.isAddingEmail
 				? this.translate( 'Continue \u00BB' )
-				: this.translate( 'Add Email \u00BB' );
+				: this.translate( 'Yes, Add Email \u00BB' );
 
 		return (
 			<footer className="google-apps-dialog__footer">
