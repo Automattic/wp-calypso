@@ -9,7 +9,7 @@ import { get, isArray } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from './reducer';
 
-const getRawShippingZones = ( state, siteId ) => {
+export const getAPIShippingZones = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'wcApi', siteId, 'shippingZones' ] );
 };
 
@@ -19,7 +19,7 @@ const getRawShippingZones = ( state, siteId ) => {
  * @return {boolean} Whether the shipping zones list has been successfully loaded from the server
  */
 export const areShippingZonesLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isArray( getRawShippingZones( state, siteId ) );
+	return isArray( getAPIShippingZones( state, siteId ) );
 };
 
 /**
@@ -28,5 +28,5 @@ export const areShippingZonesLoaded = ( state, siteId = getSelectedSiteId( state
  * @return {boolean} Whether the shipping zones list is currently being retrieved from the server
  */
 export const areShippingZonesLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return LOADING === getRawShippingZones( state, siteId );
+	return LOADING === getAPIShippingZones( state, siteId );
 };
