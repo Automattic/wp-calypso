@@ -21,6 +21,7 @@ import {
 	WP_SUPER_CACHE_UPDATE_SETTINGS,
 } from '../action-types';
 import { normalizeSettings, sanitizeSettings } from './utils';
+import { requestNotices } from '../notices/actions';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteTitle } from 'state/sites/selectors';
 
@@ -91,6 +92,7 @@ export const saveSettings = ( siteId, settings ) => {
 			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
 			{ path: '/wp-super-cache/v1/settings', body: JSON.stringify( sanitizeSettings( settings ) ), json: true } )
 			.then( () => {
+				dispatch( requestNotices( siteId ) );
 				dispatch( updateSettings( siteId, settings ) );
 				dispatch( {
 					type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
