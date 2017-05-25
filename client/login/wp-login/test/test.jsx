@@ -9,11 +9,16 @@ import { identity } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { Login } from '../index.jsx';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Login', () => {
+	let Login;
+
 	useFakeDom();
+
+	before( () => {
+		Login = require( '../index.jsx' ).Login;
+	} );
 
 	describe( 'footerLinks', () => {
 		context( 'when state is not loaded', () => {
