@@ -100,4 +100,12 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
+	signupProgressIndicator: {
+		datestamp: '20170605',
+		variations: {
+			original: 50,
+			wizardbar: 50,
+		},
+		defaultVariation: 'original',
+	},
 };
