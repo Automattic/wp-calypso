@@ -120,7 +120,6 @@
 		"publicize-scheduling": false,
 		"push-notifications": true,
 		"reader": true,
-		"reader/combined-cards": true,
 		"reader/following-intro": true,
 		"reader/following-manage-refresh": true,
 		"reader/full-errors": true,
