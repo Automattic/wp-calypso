@@ -20,8 +20,9 @@
 }
 
 .wizard-bar__indicator {
-	position: absolute;
-	top: -10px;
+	display: flex;
+	justify-content: flex-end;
+	margin-top: -3px;
 }
 
 .wizard-bar__indicator-icon {
