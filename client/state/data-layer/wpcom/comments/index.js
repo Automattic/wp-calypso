@@ -16,7 +16,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/posts/%24post_ID/replies/
-const fetchPostComments = ( { dispatch }, action ) => {
+export const fetchPostComments = ( { dispatch }, action ) => {
 	const { siteId, postId, query } = action;
 
 	dispatch( http( {
@@ -27,7 +27,7 @@ const fetchPostComments = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-const addComments = ( { dispatch }, { siteId, postId }, next, { comments, found } ) => {
+export const addComments = ( { dispatch }, { siteId, postId }, next, { comments, found } ) => {
 	dispatch( {
 		type: COMMENTS_RECEIVE,
 		siteId,
@@ -49,7 +49,7 @@ const addComments = ( { dispatch }, { siteId, postId }, next, { comments, found 
 	}
 };
 
-const announceFailure = ( { dispatch } ) => dispatch( errorNotice( translate( 'Could not retrieve post of comments' ) ) );
+export const announceFailure = ( { dispatch } ) => dispatch( errorNotice( translate( 'Could not retrieve post of comments' ) ) );
 
 export default {
 	[ COMMENTS_REQUEST ]: [ dispatchRequest( fetchPostComments, addComments, announceFailure ) ]
