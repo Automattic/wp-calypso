@@ -381,7 +381,7 @@ module.exports = {
 		}
 	},
 
-	activity_log: function( context ) {
+	activityLog: function( context ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );

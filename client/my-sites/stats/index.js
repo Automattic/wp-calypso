@@ -12,7 +12,7 @@ var controller = require( 'my-sites/controller' ),
 
 module.exports = function() {
 	if ( config.isEnabled( 'jetpack/activity-log' ) ) {
-		page( '/stats/activity/:site_id', controller.siteSelection, controller.navigation, statsController.activity_log );
+		page( '/stats/activity/:site_id', controller.siteSelection, controller.navigation, statsController.activityLog );
 	}
 	if ( config.isEnabled( 'manage/stats' ) ) {
 		// Stat Overview Page
