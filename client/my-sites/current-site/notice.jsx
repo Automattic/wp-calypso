@@ -83,7 +83,7 @@ const SiteNotice = React.createClass( {
 	},
 
 	freeToPaidPlanNotice() {
-		if ( ! this.props.isEligibleForFreeToPaidUpsell ) {
+		if ( ! this.props.isEligibleForFreeToPaidUpsell || '/plans' === this.props.allSitesPath ) {
 			return null;
 		}
 		const eventName = 'calypso_upgrade_nudge_impression';
