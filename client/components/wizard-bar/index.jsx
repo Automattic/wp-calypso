@@ -28,8 +28,8 @@ export default class WizardBar extends React.Component {
 	}
 
 	renderBar() {
-		const completitionPercentage = this.getCompletionPercentage();
-		const styles = { width: completitionPercentage + '%' };
+		const completionPercentage = this.getCompletionPercentage();
+		const styles = { width: completionPercentage + '%' };
 		if ( this.props.color ) {
 			styles.backgroundColor = this.props.color;
 		}
@@ -39,7 +39,7 @@ export default class WizardBar extends React.Component {
 				<div className="wizard-bar__progress" style={ styles } />
 				<div
 					className="wizard-bar__indicator"
-					style={ { width: ( completitionPercentage + 1 ) + '%' } }
+					style={ { width: ( completionPercentage + 1 ) + '%' } }
 				>
 					{ <ProgressIcon /> }
 				</div>
