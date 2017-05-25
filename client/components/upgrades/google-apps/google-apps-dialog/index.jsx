@@ -48,11 +48,16 @@ const GoogleAppsDialog = React.createClass( {
 
 	render() {
 		const gapps = this.props.productsList && this.props.productsList.get().gapps;
-		let price = gapps && gapps.cost_display;
+		const price = gapps && gapps.cost_display;
 
 		// Gapps price is stored annually but we'd like to show a monthly price
-		price = price && price.replace( /(\d+\.?\d+)/, ( value ) => {
+		const monthlyPrice = price && price.replace( /(\d+\.?\d+)/, ( value ) => {
 			const number = ( Math.round( parseFloat( value ) / 10 * 100 ) / 100 );
+			return number % 1 === 0 ? number : number.toFixed( 2 );
+		} );
+
+		const annualPrice = price && price.replace( /(\d+\.?\d+)/, ( value ) => {
+			const number = parseFloat( value );
 			return number % 1 === 0 ? number : number.toFixed( 2 );
 		} );
 
@@ -63,7 +68,8 @@ const GoogleAppsDialog = React.createClass( {
 				</CompactCard>
 				<CompactCard>
 					<GoogleAppsProductDetails
-						price={ price }
+						monthlyPrice={ monthlyPrice }
+						annualPrice={ annualPrice }
 					/>
 					<ReactCSSTransitionGroup
 						transitionName="google-apps-dialog__users"
