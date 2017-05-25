@@ -20,6 +20,22 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 
+export function getRelevantFields( state ) {
+	const { countryOfBirth, registrantType } = state;
+	const bornInFrance = countryOfBirth === 'FR';
+	const birthPlaceFields = [ 'placeOfBirth', 'postalCodeOfBirth' ];
+	const individualFields = [
+		'countryOfBirth',
+		'dateOfBirth',
+		...( bornInFrance ? birthPlaceFields : [] ),
+	];
+	const organizationalFields = [ 'registrantVatId', 'sirenSiret', 'trademarkNumber' ];
+	const conditionalFields = registrantType === 'individual'
+		? individualFields
+		: organizationalFields;
+	return [ 'registrantType', ...conditionalFields ];
+}
+
 class RegistrantExtraInfoForm extends React.PureComponent {
 	static propTypes = {
 		countriesList: PropTypes.object.isRequired,
@@ -52,22 +68,6 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		// without changing anything.
 		this.props.onStateChange &&
 			this.props.onStateChange( this.state );
-	}
-
-	getRelevantFields( state ) {
-		const { countryOfBirth, registrantType } = state;
-		const bornInFrance = countryOfBirth === 'FR';
-		const birthPlaceFields = [ 'placeOfBirth', 'postalCodeOfBirth' ];
-		const individualFields = [
-			'countryOfBirth',
-			'dateOfBirth',
-			...( bornInFrance ? birthPlaceFields : [] ),
-		];
-		const organizationalFields = [ 'registrantVatId', 'sirenSiret', 'trademarkNumber' ];
-		const conditionalFields = registrantType === 'individual'
-			? individualFields
-			: organizationalFields;
-		return [ 'registrantType', ...conditionalFields ];
 	}
 
 	handleDobChangeEvent = ( event ) => {

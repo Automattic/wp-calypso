@@ -10,7 +10,7 @@ import { assign, orderBy } from 'lodash';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import EmptyComponent from 'test/helpers/react/empty-component';
-import ExtraInfoFrForm from 'components/domains/registrant-extra-info/fr-form';
+import { getRelevantFields } from 'components/domains/registrant-extra-info/fr-form';
 
 describe( 'Domain Suggestion', function() {
 	useFakeDom();
@@ -32,26 +32,24 @@ describe( 'Domain Suggestion', function() {
 
 		it( 'chooses correct attributes for individual born in France', () => {
 			const expectedFields = [ 'countryOfBirth', 'dateOfBirth', 'placeOfBirth', 'postalCodeOfBirth', 'registrantType' ];
-			const formObject = new ExtraInfoFrForm();
-			expect( orderBy( formObject.getRelevantFields( exampleState ) ) )
+
+			expect( orderBy( getRelevantFields( exampleState ) ) )
 				.to.eql( expectedFields );
 		} );
 
 		it( 'chooses correct attributes for individual born elsewhere', () => {
 			const expectedFields = [ 'countryOfBirth', 'dateOfBirth', 'registrantType' ];
-			const formObject = new ExtraInfoFrForm();
 			const testState = assign( {}, exampleState, { countryOfBirth: 'AU' } );
 
-			expect( orderBy( formObject.getRelevantFields( testState ) ) )
+			expect( orderBy( getRelevantFields( testState ) ) )
 				.to.eql( expectedFields );
 		} );
 
 		it( 'chooses correct attributes for organizations', () => {
 			const expectedFields = [ 'registrantType', 'registrantVatId', 'sirenSiret', 'trademarkNumber' ];
-			const formObject = new ExtraInfoFrForm();
 			const testState = assign( {}, exampleState, { registrantType: 'organization' } );
 
-			expect( orderBy( formObject.getRelevantFields( testState ) ) )
+			expect( orderBy( getRelevantFields( testState ) ) )
 				.to.eql( expectedFields );
 		} );
 	} );
