@@ -233,6 +233,7 @@ export const PostEditor = React.createClass( {
 				<EditorConfirmationSidebar
 					hideSidebar={ this.hideConfirmationSidebar }
 					isActive={ this.state.showConfirmationSidebar }
+					isPublishing={ this.state.isPublishing }
 					onPublish={ this.onPublish }
 				/>
 				<EditorDocumentHead />

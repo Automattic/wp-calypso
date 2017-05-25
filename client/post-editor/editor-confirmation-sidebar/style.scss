@@ -88,3 +88,12 @@
 		border-color: tint( $alert-green, 30% );
 	}
 }
+
+.editor-confirmation-sidebar__publishing-indicator {
+	padding: 3px 20px;
+	background-color: lighten( $gray, 20% );
+    position: fixed;
+    	right: 24px;
+    	top: 56px;
+    z-index: 9999;
+}
