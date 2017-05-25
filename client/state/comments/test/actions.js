@@ -8,11 +8,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import config from 'config';
+import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	COMMENTS_RECEIVE,
 	COMMENTS_REMOVE,
 	COMMENTS_REQUEST,
-	COMMENTS_REQUEST_SUCCESS,
 	COMMENTS_LIKE,
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE
@@ -24,9 +25,6 @@ import {
 	likeComment,
 	unlikeComment
 } from '../actions';
-import {
-	createRequestId
-} from '../utils';
 import {
 	NUMBER_OF_COMMENTS_PER_FETCH
 } from '../constants';
@@ -40,131 +38,58 @@ describe( 'actions', () => {
 		nock.cleanAll();
 	} );
 
-	describe( '#receivePost()', () => {
-		it( 'should return a thunk', () => {
-			const res = requestPostComments( SITE_ID, POST_ID );
-
-			expect( res ).to.be.a.function;
+	describe( '#requestPostComments()', () => {
+		useSandbox( ( sandbox ) => {
+			sandbox.stub( config, 'isEnabled' ).withArgs( 'comments/filters-in-posts' ).returns( true );
 		} );
 
-		it( 'should not dispatch a thing if the request is already in flight', () => {
-			const requestId = createRequestId( SITE_ID, POST_ID, {
-				order: 'DESC',
-				number: NUMBER_OF_COMMENTS_PER_FETCH,
-				status: 'approved'
-			} );
+		it( 'should return a comment request action', function() {
+			const action = requestPostComments( SITE_ID, POST_ID, 'trash', new Date( '2017-05-25T21:41:25.841Z' ) );
 
-			const dispatchSpy = sinon.spy();
-			const getStateStub = sinon.stub().returns( {
-				comments: {
-					items: {},
-					requests: {
-						'91750058-287': {
-							[ requestId ]: COMMENTS_REQUEST
-						}
-					}
-				}
-			} );
-
-			requestPostComments( SITE_ID, POST_ID )( dispatchSpy, getStateStub );
-
-			expect( dispatchSpy ).to.not.have.been.called;
-		} );
-
-		it( 'should dispatch correct first request actions', function() {
-			const dispatchSpy = sinon.spy();
-			const getStateStub = sinon.stub().returns( {
-				comments: {
-					items: {},
-					requests: {}
-				}
-			} );
-
-			nock( API_DOMAIN )
-				.get( `/rest/v1.1/sites/${ SITE_ID }/posts/${ POST_ID }/replies/` )
-				.query( { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, status: 'approved' } )
-				.reply( 200, { found: 123, comments: [] } );
-
-			const reqPromise = requestPostComments( SITE_ID, POST_ID )( dispatchSpy, getStateStub );
-
-			expect( dispatchSpy ).to.have.been.calledWith( {
+			expect( action ).to.eql( {
 				type: COMMENTS_REQUEST,
-				requestId: createRequestId( SITE_ID, POST_ID, {
+				siteId: SITE_ID,
+				postId: POST_ID,
+				query: {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
-					status: 'approved'
-				} )
-			} );
-
-			return reqPromise.then( () => {
-				expect( dispatchSpy ).to.have.been.calledWith( {
-					type: COMMENTS_REQUEST_SUCCESS,
-					siteId: SITE_ID,
-					postId: POST_ID,
-					requestId: createRequestId( SITE_ID, POST_ID, {
-						order: 'DESC',
-						number: NUMBER_OF_COMMENTS_PER_FETCH,
-						status: 'approved'
-					} )
-				} );
-			} );
-		} );
-
-		it( 'should dispatch correct consecutive request actions', function() {
-			const beforeDate = '2016-02-03T04:19:26.352Z';
-			const dispatchSpy = sinon.spy();
-			const getStateSpy = sinon.stub().returns( {
-				comments: {
-					items: {
-						'91750058-287': [ { ID: 123, parent: false, date: beforeDate } ]
-					},
-					requests: {
-						'91750058-287': { }
-					}
+					status: 'trash',
+					before: '2017-05-25T21:41:25.841Z'
 				}
 			} );
+		} );
 
-			nock( API_DOMAIN )
-				.get( `/rest/v1.1/sites/${ SITE_ID }/posts/${ POST_ID }/replies/` )
-				.query( { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH } )
-				.reply( 200, { found: 123, comments: [] } )
-				.get( `/rest/v1.1/sites/${ SITE_ID }/posts/${ POST_ID }/replies/` )
-				.query( { order: 'DESC', number: NUMBER_OF_COMMENTS_PER_FETCH, before: beforeDate, status: 'approved' } )
-				.reply( 200, { found: 123, comments: [] } );
+		it( 'should return a comment request action with a default status of approved', function() {
+			const action = requestPostComments( SITE_ID, POST_ID, undefined, new Date( '2017-05-25T21:41:25.841Z' ) );
 
-			const reqPromise = requestPostComments( SITE_ID, POST_ID )( dispatchSpy, getStateSpy );
-
-			expect( dispatchSpy ).to.have.been.calledWith( {
+			expect( action ).to.eql( {
 				type: COMMENTS_REQUEST,
-				requestId: createRequestId(
-					SITE_ID,
-					POST_ID,
-					{
-						order: 'DESC',
-						number: NUMBER_OF_COMMENTS_PER_FETCH,
-						before: new Date( beforeDate ).toISOString(),
-						status: 'approved'
-					} )
-			} );
-
-			return reqPromise.then( () => {
-				expect( dispatchSpy ).to.have.been.calledWith( {
-					type: COMMENTS_REQUEST_SUCCESS,
-					siteId: SITE_ID,
-					postId: POST_ID,
-					requestId: createRequestId(
-						SITE_ID,
-						POST_ID,
-						{
-							order: 'DESC',
-							number: NUMBER_OF_COMMENTS_PER_FETCH,
-							before: new Date( beforeDate ).toISOString(),
-							status: 'approved'
-						} )
-				} );
+				siteId: SITE_ID,
+				postId: POST_ID,
+				query: {
+					order: 'DESC',
+					number: NUMBER_OF_COMMENTS_PER_FETCH,
+					status: 'approved',
+					before: '2017-05-25T21:41:25.841Z'
+				}
 			} );
 		} );
-	} ); // requestPostComments
+
+		it( 'should return a comment request action with no before filter if none provided', function() {
+			const action = requestPostComments( SITE_ID, POST_ID, undefined, null );
+
+			expect( action ).to.eql( {
+				type: COMMENTS_REQUEST,
+				siteId: SITE_ID,
+				postId: POST_ID,
+				query: {
+					order: 'DESC',
+					number: NUMBER_OF_COMMENTS_PER_FETCH,
+					status: 'approved',
+				}
+			} );
+		} );
+	} );
 
 	describe( '#writeComment()', () => {
 		before( () => {
