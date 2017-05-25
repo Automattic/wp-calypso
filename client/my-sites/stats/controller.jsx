@@ -18,6 +18,7 @@ import { savePreference } from 'state/preferences/actions';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 const analyticsPageTitle = 'Stats';
@@ -381,14 +382,12 @@ module.exports = {
 	},
 
 	activity_log: function( context ) {
-		let siteId = context.params.site_id;
-		const site = getSite( context.store.getState(), siteId );
-		siteId = site ? ( site.ID || 0 ) : 0;
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
 
-		const isJetpack = isJetpackSite( context.store.getState(), siteId );
-
-		if ( 0 === siteId || ! isJetpack ) {
-			window.location = '/stats';
+		if ( siteId && ! isJetpack ) {
+			page.redirect( '/stats' );
 		} else {
 			analytics.pageView.record( '/stats/activity/:site', analyticsPageTitle + ' > Activity ' );
 
