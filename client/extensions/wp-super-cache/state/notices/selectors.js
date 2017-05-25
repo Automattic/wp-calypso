@@ -22,5 +22,5 @@ export function isRequestingNotices( state, siteId ) {
  * @return {Object} Notices
  */
 export function getNotices( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'notices', 'items', siteId ], null );
+	return get( state, [ 'extensions', 'wpSuperCache', 'notices', 'items', siteId ], {} );
 }
