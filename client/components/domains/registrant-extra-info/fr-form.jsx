@@ -48,6 +48,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		countriesList: { data: [] },
 		isVisible: true,
 		isProbablyOrganization: false,
+		values: {},
 		onSubmit: noop,
 		onStateChanged: noop,
 	}
@@ -57,60 +58,63 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	}
 
 	componentWillMount() {
-		this.setState( {
+		const defaults = {
 			registrantType: this.props.isProbablyOrganization
 				? 'organization' : 'individual',
-		} );
-	}
+			countryOfBirth: 'FR',
+		};
 
-	componentDidMount() {
-		// Make sure that we send an an initial update in case the user submits
-		// without changing anything.
-		this.props.onStateChange &&
-			this.props.onStateChange( this.state );
+		const values = {
+			...defaults,
+			...this.props.values,
+		};
+
+		// It's possible for the parent to pass in null and still have a form
+		// that the user is happy with, so we pass one state out
+		// immediatly to to make sure there's something valid in the parent
+		this.props.onStateChange( values );
 	}
 
 	handleDobChangeEvent = ( event ) => {
-		this.handleChangeEvent( event );
 		// setState() is not syncronous :(
-		const updatedState = {
-			...this.state,
+		const newState = this.newStateFromEvent( event );
+		const { dob_years, dob_months, dob_days } = newState;
+
+		const dateOfBirth = ( dob_years && dob_months && dob_days ) &&
+			[ dob_years, dob_months, dob_days ].join( '-' );
+
+		if ( dateOfBirth ) {
+			debug( 'Setting dateOfBirth to ' + dateOfBirth +
+				( moment( dateOfBirth, 'YYYY-MM-DD' ).isValid() ? '' : ' (invalid)' ) );
+		}
+
+		this.props.onStateChange( {
+			...newState,
+			...( dateOfBirth ? { dateOfBirth } : {} )
+		} );
+	}
+
+	newStateFromEvent( event ) {
+		return {
+			...this.props.values,
 			[ event.target.name ]: event.target.value,
 		};
-		const { dob_years: years, dob_months: months, dob_days: days } = updatedState;
-
-		if ( years && months && days ) {
-			const value = [ years, months, days ].join( '-' );
-			const pseudoEvent = {
-				target: {
-					name: 'dateOfBirth',
-					value
-				}
-			};
-			debug( 'Setting dateOfBirth to ' + value +
-				( moment( value, 'YYYY-MM-DD' ).isValid() ? '' : ' (invalid)' ) );
-			this.handleChangeEvent( pseudoEvent );
-		}
 	}
 
 	handleChangeEvent = ( event ) => {
-		this.setState( { [ event.target.name ]: event.target.value } );
+		this.props.onStateChange( this.newStateFromEvent( event ) );
 	}
 
-	shouldComponentUpdate = ( nextProps, nextState ) => {
-		return ! isEqual( this.state, nextState ) ||
-			! isEqual( this.props, nextProps );
-	}
-
-	componentWillUpdate = ( _ /* nextProps */, nextState ) => {
-		// This is pretty dirty :(
-		// The sooner we can get the contact details into the state, the better
-		this.props.onStateChange &&
-			! isEqual( this.state, nextState ) &&
-			this.props.onStateChange( nextState );
+	// We need a deep comparison to check inside props.values
+	shouldComponentUpdate = ( nextProps ) => {
+		return ! isEqual( this.props, nextProps );
 	}
 
 	render = () => {
+		const {
+			registrantType
+		} = this.props.values || {};
+
 		return (
 			<form>
 				<FormFieldset>
@@ -120,7 +124,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					<FormLabel>
 						<FormRadio value="individual"
 							name="registrantType"
-							checked={ 'individual' === this.state.registrantType }
+							checked={ 'individual' === registrantType }
 							onChange={ this.handleChangeEvent } />
 						<span>{ this.props.translate( 'An individual' ) }</span>
 					</FormLabel>
@@ -128,13 +132,13 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					<FormLabel>
 						<FormRadio value="organization"
 							name="registrantType"
-							checked={ 'organization' === this.state.registrantType }
+							checked={ 'organization' === registrantType }
 							onChange={ this.handleChangeEvent } />
 						<span>{ this.props.translate( 'A company or organization' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 
-				{ this.state.registrantType === 'individual'
+				{ 'individual' === registrantType
 					? this.renderPersonalFields()
 					: this.renderOrganizationFields() }
 
@@ -144,6 +148,10 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	}
 
 	renderPersonalFields = () => {
+		const {
+			countryOfBirth
+		} = this.props.values || {};
+
 		return (
 			<div>
 				<FormFieldset>
@@ -152,6 +160,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					</FormLabel>
 					<FormCountrySelect
 						name="countryOfBirth"
+						value={ countryOfBirth }
 						countriesList={ this.props.countriesList }
 						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
@@ -200,7 +209,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					}</FormSettingExplanation>
 				</FormFieldset>
 
-				{ this.state.countryOfBirth === 'FR' && (
+				{ countryOfBirth === 'FR' && (
 					<FormFieldset>
 						<FormLabel>
 							{ this.props.translate( 'Place of Birth' ) }
@@ -212,7 +221,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					</FormFieldset>
 				) }
 
-				{ this.state.countryOfBirth === 'FR' && (
+				{ countryOfBirth === 'FR' && (
 					<FormFieldset>
 						<FormLabel>
 							{ this.props.translate( 'Postal Code of Birth' ) }
