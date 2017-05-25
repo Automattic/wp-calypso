@@ -1,14 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component, PropTypes } from 'react';
 
-var GoogleAppsProductDetails = React.createClass( {
-	propTypes: {
-		price: React.PropTypes.string.isRequired
-	},
+/**
+ * Internal dependencies
+ */
+import { localize } from 'i18n-calypso';
 
-	render: function() {
+class GoogleAppsProductDetails extends Component {
+	static propTypes = {
+		price: PropTypes.string.isRequired
+	};
+
+	render() {
+		const { translate } = this.props;
+
 		return (
 			<div className="google-apps-dialog__product-details">
 				<div className="google-apps-dialog__product-intro">
@@ -19,7 +26,7 @@ var GoogleAppsProductDetails = React.createClass( {
 
 					<p>
 						{
-							this.translate(
+							translate(
 								"We've partnered with Google to offer you email, storage, docs, calendars " +
 								'and more, integrated with your site.'
 							)
@@ -29,24 +36,24 @@ var GoogleAppsProductDetails = React.createClass( {
 
 				<div className="google-apps-dialog__product-features">
 					<h5 className="google-apps-dialog__file-storage">
-						{ this.translate( '30GB Online File Storage' ) }
+						{ translate( '30GB Online File Storage' ) }
 					</h5>
 
 					<h5 className="google-apps-dialog__professional-email">
-						{ this.translate( 'Professional Email Address' ) }
+						{ translate( 'Professional Email Address' ) }
 					</h5>
 
 					<h4 className="google-apps-dialog__price-per-user">
-						{ this.translate( '%(price)s per user / month ', { args: { price: this.props.price } } ) }
+						{ translate( '%(price)s per user / month ', { args: { price: this.props.price } } ) }
 					</h4>
 
 					<h5 className="google-apps-dialog__billing-period">
-						{ this.translate( 'Billed yearly — get 2 months free!' ) }
+						{ translate( 'Billed yearly — get 2 months free!' ) }
 					</h5>
 				</div>
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = GoogleAppsProductDetails;
+export default localize( GoogleAppsProductDetails );
