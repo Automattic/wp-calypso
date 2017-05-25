@@ -583,6 +583,7 @@ export class MySitesSidebar extends Component {
 			<Sidebar>
 				<SidebarRegion>
 					<CurrentSite
+						allSitesPath={ this.props.allSitesPath }
 						isPreviewShowing={ this.props.isPreviewShowing }
 						onClick={ this.onPreviewSite }
 					/>
