@@ -1792,8 +1792,8 @@ Undocumented.prototype.applyDnsTemplate = function( domain, template, variables,
 	return this.wpcom.req.post( '/domains/' + domain + '/dns/template/' + template, { variables }, callback );
 };
 
-Undocumented.prototype.getDnsTemplateConflicts = function( domain, template, variables, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/dns/template/' + template + '/conflicts', { variables }, callback );
+Undocumented.prototype.getDnsTemplateRecords = function( domain, template, variables, callback ) {
+	return this.wpcom.req.post( '/domains/' + domain + '/dns/template/' + template + '/preview', { variables }, callback );
 };
 
 Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {

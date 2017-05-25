@@ -592,6 +592,10 @@ input[type=radio].domain-management-list-item__radio {
 		margin-bottom: 1em;
 	}
 
+	a {
+		cursor: pointer;
+	}
+
 	.domain-connect__button {
 		margin-right: 16px;
 		margin-top: 16px;
@@ -620,8 +624,19 @@ input[type=radio].domain-management-list-item__radio {
 		}
 	}
 
-	ul.domain-connect__dns-list {
-		margin-bottom: 1.5em;
+	.domain-connect__dns-records {
+		background-color: $gray-light;
+		color: $gray-text-min;
+
+		* {
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		& > * + * {
+			margin-top: 1.5em;
+		}
 	}
 }
 

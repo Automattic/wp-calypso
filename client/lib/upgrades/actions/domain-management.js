@@ -296,12 +296,6 @@ function applyDnsTemplate( domainName, template, variables, onComplete ) {
 	} );
 }
 
-function getDnsTemplateConflicts( domainName, template, variables, onComplete ) {
-	wpcom.getDnsTemplateConflicts( domainName, template, variables, ( error, data ) => {
-		onComplete( error, data );
-	} );
-}
-
 function fetchNameservers( domainName ) {
 	const nameservers = NameserversStore.getByDomainName( domainName );
 
@@ -578,7 +572,6 @@ export {
 	fetchSiteRedirect,
 	fetchWapiDomainInfo,
 	fetchWhois,
-	getDnsTemplateConflicts,
 	requestTransferCode,
 	resendIcannVerification,
 	resendVerificationEmailForwarding,
