@@ -18,6 +18,7 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_REQUEST,
+	COMMENTS_REQUEST_FAILURE,
 	COMMENTS_LIKE,
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
@@ -31,6 +32,24 @@ import {
 	NUMBER_OF_COMMENTS_PER_FETCH,
 	PLACEHOLDER_STATE
 } from './constants';
+
+/***
+ * Internal handler for comments request failure
+ * @param {Function} dispatch redux dispatch function
+ * @param {String} siteId site identifier
+ * @param {String} postId post identifier
+ * @param {String} requestId request identifier
+ * @param {Object} err error object
+ */
+function commentsRequestFailure( dispatch, siteId, postId, requestId, err ) {
+	dispatch( {
+		type: COMMENTS_REQUEST_FAILURE,
+		siteId,
+		postId,
+		requestId,
+		error: err
+	} );
+}
 
 /***
  * Creates a thunk that requests comments for a given post
