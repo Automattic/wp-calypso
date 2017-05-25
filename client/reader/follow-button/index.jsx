@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FollowButtonContainer from 'blocks/follow-button/redux';
+import FollowButtonContainer from 'blocks/follow-button';
 import FollowButton from 'blocks/follow-button/button';
 import {
 	recordFollow as recordFollowTracks,
