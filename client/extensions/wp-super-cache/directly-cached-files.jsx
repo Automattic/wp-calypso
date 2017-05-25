@@ -46,10 +46,7 @@ class DirectlyCachedFiles extends Component {
 		} = this.props;
 		const cache_direct_pages = fields.cache_direct_pages || [];
 		const cache_path = fields.cache_path || '';
-		const notices = pick( this.props.notices, [
-			'cache_readonly',
-			'cache_writable',
-		] );
+		const notices = pick( this.props.notices, 'cache_readonly' );
 
 		return (
 			<div>
@@ -71,13 +68,6 @@ class DirectlyCachedFiles extends Component {
 						showDismiss={ false }
 						status={ notices.cache_readonly.type ? `is-${ notices.cache_readonly.type }` : 'is-info' }
 						text={ notices.cache_readonly.message || '' } />
-					}
-
-					{ notices && notices.cache_writable && notices.cache_writable.message &&
-					<Notice
-						showDismiss={ false }
-						status={ notices.cache_writable.type ? `is-${ notices.cache_writable.type }` : 'is-info' }
-						text={ notices.cache_writable.message || '' } />
 					}
 
 					<p>
