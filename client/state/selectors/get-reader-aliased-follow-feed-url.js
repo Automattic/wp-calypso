@@ -1,12 +1,14 @@
 /**
  * External Dependencies
  */
-import { find, includes } from 'lodash';
+import { find, includes, some } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import { prepareComparableUrl } from 'state/reader/follows/utils';
+
+export const commonExtensions = [ 'rss', 'rss.xml', 'feed', 'feed/atom', 'atom.xml', 'atom' ];
 
 /**
  * This selector will usually return the same feedUrl passed in.
@@ -21,11 +23,18 @@ import { prepareComparableUrl } from 'state/reader/follows/utils';
 export default function getReaderAliasedFollowFeedUrl( state, feedUrl ) {
 	const urlKey = prepareComparableUrl( feedUrl );
 
+	// first check for exact match
 	if ( state.reader.follows.items[ urlKey ] ) {
 		return urlKey;
 	}
 
-	const foundAlias = find( state.reader.follows.items, f => includes( f.alias_feed_URLs, urlKey ) );
+	// then check if any follows have saved aliases OR if there is a matching autodiscoverable alias
+	const foundAlias = find(
+		state.reader.follows.items,
+		( follow, key ) =>
+			includes( follow.alias_feed_URLs, urlKey ) ||
+			some( commonExtensions, ext => `${ urlKey }/${ ext }` === key )
+	);
 	if ( foundAlias ) {
 		return foundAlias.feed_URL;
 	}
