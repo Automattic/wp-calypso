@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import page from 'page';
 
 /**
@@ -14,11 +13,8 @@ import RefreshFeedHeader from 'blocks/reader-feed-header';
 import EmptyContent from './empty';
 import Stream from 'reader/stream';
 import FeedError from 'reader/feed-error';
-import { getSite } from 'state/reader/sites/selectors';
-import { getFeed } from 'state/reader/feeds/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderFeed from 'components/data/query-reader-feed';
 import FeedFeatured from './featured';
+import needs, { readerSite, readerFeed } from 'lib/needs';
 
 class SiteStream extends React.Component {
 	static propTypes = {
@@ -70,17 +66,14 @@ class SiteStream extends React.Component {
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				<RefreshFeedHeader site={ site } feed={ feed } showBack={ this.props.showBack } />
 				{ featuredContent }
-				{ ! site && <QueryReaderSite siteId={ this.props.siteId } /> }
-				{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }
 			</Stream>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const site = getSite( state, ownProps.siteId );
-	return {
-		site: site,
-		feed: site && site.feed_ID && getFeed( state, site.feed_ID ),
-	};
-} )( localize( SiteStream ) );
+export default needs( [
+	readerSite( { site: 'siteId' } ),
+	readerFeed( { feed: 'feedId' } ),
+] )(
+	localize( SiteStream )
+);
