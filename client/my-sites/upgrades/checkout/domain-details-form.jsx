@@ -499,6 +499,7 @@ class DomainDetailsForm extends PureComponent {
 
 	renderCurrentForm = () => {
 		switch ( this.state.currentStep ) {
+			// TODO: gather up tld specific stuff
 			case 'fr':
 				return this.renderExtraDetailsForm();
 			default:
@@ -515,7 +516,7 @@ class DomainDetailsForm extends PureComponent {
 			} );
 
 		let title;
-		// FIXME
+		// TODO: gather up tld specific stuff
 		if ( this.state.currentStep === 'fr' ) {
 			title = '.FR Extra Contact Details';
 		} else if ( needsOnlyGoogleAppsDetails ) {
