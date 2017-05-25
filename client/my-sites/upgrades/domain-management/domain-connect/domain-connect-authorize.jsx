@@ -7,14 +7,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card/compact';
+import CompactCard from 'components/card/compact';
 import Main from 'components/main';
 import Notice from 'components/notice';
-import upgradesActions from 'lib/upgrades/actions';
 import DomainConnectAuthorizeDescription from './domain-connect-authorize-description';
-import DomainConnectAuthorizeConflicts from './domain-connect-authorize-conflicts';
+import DomainConnectAuthorizeRecords from './domain-connect-authorize-records';
 import DomainConnectAuthorizeFooter from './domain-connect-authorize-footer';
 import { actionType, noticeType } from './constants';
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 class DomainConnectAuthorize extends Component {
 	static propTypes = {
@@ -24,7 +26,8 @@ class DomainConnectAuthorize extends Component {
 
 	state = {
 		action: null,
-		dnsTemplateConflictsRetrieved: false,
+		dnsTemplateRecordsRetrieved: false,
+		dnsTemplateError: false,
 		noticeType: null
 	};
 
@@ -32,13 +35,14 @@ class DomainConnectAuthorize extends Component {
 		const { providerId, params, translate } = this.props,
 			{ domain } = params;
 
-		upgradesActions.getDnsTemplateConflicts( domain, providerId, params, ( error, data ) => {
-			if ( ! error ) {
+		wpcom.getDnsTemplateRecords( domain, providerId, params )
+			.then( data => {
 				this.setState( {
 					action: actionType.READY_TO_SUBMIT,
-					dnsTemplateConflicts: data.records,
+					dnsTemplateConflicts: data && data.conflicting_records,
+					dnsTemplateRecords: data && data.new_records
 				} );
-			} else {
+			}, error => {
 				const errorMessage = error.message ||
 					translate( 'We aren\'t able to set up the service with the information given. Please check ' +
 						'with your service provider to make sure they provided all the correct data.' );
@@ -46,14 +50,14 @@ class DomainConnectAuthorize extends Component {
 				this.setState( {
 					action: actionType.CLOSE,
 					noticeType: noticeType.ERROR,
-					noticeMessage: errorMessage
+					noticeMessage: errorMessage,
+					dnsTemplateError: true
 				} );
-			}
-
-			this.setState( {
-				dnsTemplateConflictsRetrieved: true
+			} ).then( () => {
+				this.setState( {
+					dnsTemplateRecordsRetrieved: true
+				} );
 			} );
-		} );
 	}
 
 	handleClickConfirm = () => {
@@ -65,8 +69,14 @@ class DomainConnectAuthorize extends Component {
 			noticeType: null
 		} );
 
-		upgradesActions.applyDnsTemplate( domain, providerId, params, ( error ) => {
-			if ( error ) {
+		wpcom.applyDnsTemplate( domain, providerId, params )
+			.then( () => {
+				this.setState( {
+					action: actionType.CLOSE,
+					noticeMessage: translate( 'Horray! Your new service is now all set up.' ),
+					noticeType: noticeType.SUCCESS
+				} );
+			}, error => {
 				const errorMessage = error.message ||
 					translate( 'We weren\'t able to add the DNS records needed for this service. Please try again.' );
 
@@ -75,14 +85,7 @@ class DomainConnectAuthorize extends Component {
 					noticeMessage: errorMessage,
 					noticeType: noticeType.ERROR
 				} );
-			} else {
-				this.setState( {
-					action: actionType.CLOSE,
-					noticeMessage: translate( 'Horray! Your new service is now all set up.' ),
-					noticeType: noticeType.SUCCESS
-				} );
-			}
-		} );
+			} );
 	}
 
 	handleClickClose = () => {
@@ -109,7 +112,7 @@ class DomainConnectAuthorize extends Component {
 
 		return (
 			<Main className="domain-connect__main">
-				<Card>
+				<CompactCard>
 					<h2>
 						{
 							translate( 'Authorize DNS Changes for %(domain)s',
@@ -121,18 +124,22 @@ class DomainConnectAuthorize extends Component {
 						}
 					</h2>
 					<DomainConnectAuthorizeDescription
-						isLoading={ ! this.state.dnsTemplateConflictsRetrieved }
-						providerId={ this.props.providerId } />
-					<DomainConnectAuthorizeConflicts
-						conflictingRecords= { this.state.dnsTemplateConflicts }
-						isLoading={ ! this.state.dnsTemplateConflictsRetrieved } />
+						isPlaceholder={ ! this.state.dnsTemplateRecordsRetrieved }
+						providerId={ this.props.providerId }
+						dnsTemplateError={ this.state.dnsTemplateError } />
+					<DomainConnectAuthorizeRecords
+						dnsTemplateRecords={ this.state.dnsTemplateRecords }
+						dnsTemplateConflicts={ this.state.dnsTemplateConflicts }
+						isPlaceholder={ ! this.state.dnsTemplateRecordsRetrieved } />
 					{ this.renderNotice() }
+				</CompactCard>
+				<CompactCard>
 					<DomainConnectAuthorizeFooter
-						isLoading={ ! this.state.dnsTemplateConflictsRetrieved }
+						isPlaceholder={ ! this.state.dnsTemplateRecordsRetrieved }
 						onClose={ this.handleClickClose }
 						onConfirm={ this.handleClickConfirm }
 						showAction={ this.state.action } />
-				</Card>
+				</CompactCard>
 			</Main>
 		);
 	}
