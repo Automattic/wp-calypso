@@ -233,7 +233,6 @@
     "glob": "7.0.3",
     "husky": "0.13.3",
     "jscodeshift": "0.3.30",
-    "lodash-deep": "1.5.3",
     "md5-file": "3.1.0",
     "mixedindentlint": "1.2.0",
     "mocha": "3.1.0",
