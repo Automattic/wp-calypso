@@ -111,6 +111,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	}
 
 	render = () => {
+		const translate = this.props.translate;
 		const {
 			registrantType
 		} = this.props.values || {};
@@ -119,14 +120,22 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 			<form>
 				<FormFieldset>
 					<FormLegend>
-						{ this.props.translate( "Who's this domain for?" ) }
+						{ translate( 'Registering a .FR domain' ) }
+					</FormLegend>
+					{ translate(
+						"Almost done! in order to complete your registration, we're required to collect some additional information:"
+					) }
+				</FormFieldset>
+				<FormFieldset>
+					<FormLegend>
+						{ translate( "Who's this domain for?" ) }
 					</FormLegend>
 					<FormLabel>
 						<FormRadio value="individual"
 							name="registrantType"
 							checked={ 'individual' === registrantType }
 							onChange={ this.handleChangeEvent } />
-						<span>{ this.props.translate( 'An individual' ) }</span>
+						<span>{ translate( 'An individual' ) }</span>
 					</FormLabel>
 
 					<FormLabel>
@@ -134,7 +143,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 							name="registrantType"
 							checked={ 'organization' === registrantType }
 							onChange={ this.handleChangeEvent } />
-						<span>{ this.props.translate( 'A company or organization' ) }</span>
+						<span>{ translate( 'A company or organization' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 
