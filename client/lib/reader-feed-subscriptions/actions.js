@@ -13,7 +13,6 @@ import { prepareSiteUrl } from './helper';
 import { isRequestInflight, requestTracker } from 'lib/inflight';
 import FeedSubscriptionStore from './index';
 import { action as SiteStoreActionTypes } from 'lib/reader-site-store/constants';
-import { action as FeedStoreActionTypes } from 'lib/feed-store/constants';
 
 const FeedSubscriptionActions = {
 	follow: function( url, fetchMeta = true ) {
@@ -178,13 +177,6 @@ const FeedSubscriptionActions = {
 				data: sites
 			} );
 		}
-
-		if ( feeds.length > 0 ) {
-			Dispatcher.handleServerAction( {
-				type: FeedStoreActionTypes.RECEIVE_BULK_UPDATE,
-				data: feeds
-			} );
-		}
 	},
 };
 
@@ -213,7 +205,7 @@ function receiveSubscriptionMeta( subscription ) {
 
 	if ( get( subscription, 'meta.data.feed' ) ) {
 		Dispatcher.handleServerAction( {
-			type: FeedStoreActionTypes.RECEIVE_FETCH,
+			type: 'RECEIVE_FEED_FETCH',
 			feedId: subscription.meta.data.feed.feed_ID,
 			data: subscription.meta.data.feed
 		} );

@@ -17,8 +17,7 @@ const Dispatcher = require( 'dispatcher' ),
 const Emitter = require( 'lib/mixins/emitter' ),
 	ActionTypes = require( './constants' ).action,
 	ErrorTypes = require( './constants' ).error,
-	States = require( './constants' ).state,
-	FeedActionTypes = require( 'lib/feed-store/constants' ).action;
+	States = require( './constants' ).state;
 
 import { prepareComparableUrl, prepareSiteUrl } from './helper';
 
@@ -395,13 +394,6 @@ FeedSubscriptionStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case ActionTypes.RECEIVE_FEED_SUBSCRIPTIONS:
 			if ( action.data && ! action.data.errors ) {
 				FeedSubscriptionStore.receiveSubscriptions( action.data );
-			}
-			break;
-		case FeedActionTypes.RECEIVE_FETCH:
-			if ( action.data && action.data.is_following ) {
-				// Use the feed URL in as the primary URL
-				const subscription = Object.assign( {}, action.data, { URL: action.data.feed_URL } );
-				addSubscription( subscription );
 			}
 			break;
 	}
