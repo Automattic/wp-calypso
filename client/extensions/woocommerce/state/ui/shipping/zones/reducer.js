@@ -17,7 +17,7 @@ import {
 } from '../../../action-types';
 import { nextBucketIndex, getBucket } from '../../helpers';
 
-const initialState = {
+export const initialState = {
 	creates: [],
 	updates: [],
 	deletes: [],
@@ -39,11 +39,16 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_CANCEL ] = ( state ) => {
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_CLOSE ] = ( state ) => {
 	const { currentlyEditingChanges, currentlyEditingId } = state;
-	if ( null === currentlyEditingId || isEmpty( currentlyEditingChanges ) ) {
+	if ( null === currentlyEditingId ) {
 		return state;
 	}
+	if ( isEmpty( currentlyEditingChanges ) ) {
+		return { ...state,
+			currentlyEditingId: null,
+		};
+	}
 
-	const bucket = getBucket( currentlyEditingId );
+	const bucket = getBucket( { id: currentlyEditingId } );
 	let found = false;
 	const newBucket = state[ bucket ].map( zone => {
 		if ( isEqual( currentlyEditingId, zone.id ) ) {
@@ -86,7 +91,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_REMOVE ] = ( state, { payload: { id } } ) => 
 		currentlyEditingId: null,
 	};
 
-	const bucket = getBucket( id );
+	const bucket = getBucket( { id } );
 	if ( 'updates' === bucket ) {
 		newState.deletes = [ ...state.deletes, { id } ];
 	}
