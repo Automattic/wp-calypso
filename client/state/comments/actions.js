@@ -108,6 +108,7 @@ function commentsRequestFailure( dispatch, siteId, postId, requestId, err ) {
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {String} status status filter. Defaults to approved posts
+ * @param {Date} before will retrieve comments before this date
  * @returns {Function} thunk that requests comments for a given post
  */
 export function requestPostComments( siteId, postId, status = 'approved', before ) {
