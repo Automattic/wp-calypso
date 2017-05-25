@@ -23,22 +23,25 @@ import JetpackLogo from 'components/jetpack-logo';
 class JetpackNewSite extends Component {
 	constructor() {
 		super();
-		this.onURLEnter = this.onURLEnter.bind( this );
 		this.handleOnClickTos = this.handleOnClickTos.bind( this );
 		this.handleBack = this.handleBack.bind( this );
 	}
+
+	state = { jetpackUrl: '' }
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_view' );
 	}
 
+	handleJetpackUrlChange = ( event ) => this.setState( { jetpackUrl: event.target.value } );
+
 	getNewWpcomSiteUrl() {
 		return config( 'signup_url' ) + '?ref=calypso-selector';
 	}
 
-	onURLEnter( url ) {
+	handleJetpackSubmit = () => {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_connect_click' );
-		page( '/jetpack/connect?url=' + url );
+		page( '/jetpack/connect?url=' + this.state.jetpackUrl );
 	}
 
 	handleOnClickTos() {
@@ -92,9 +95,13 @@ class JetpackNewSite extends Component {
 							<div className="jetpack-new-site__card-description">
 								{ this.props.translate( 'We’ll be using the Jetpack plugin to connect your site to WordPress.com.' ) }
 							</div>
-							<SiteURLInput ref="siteUrlInputRef"
+							<SiteURLInput
+								ref="siteUrlInputRef"
+								onChange={ this.handleJetpackUrlChange }
+								onSubmit={ this.handleJetpackSubmit }
 								onTosClick={ this.handleOnClickTos }
-								onClick={ this.onURLEnter } />
+								url={ this.state.jetpackUrl }
+							/>
 						</Card>
 						<Card className="jetpack-new-site__mobile">
 							<div className="jetpack-new-site__mobile-wpcom-site">
@@ -108,9 +115,13 @@ class JetpackNewSite extends Component {
 							</div>
 							<div className="jetpack-new-site__mobile-jetpack-site">
 								<p>{ this.props.translate( 'Add an existing WordPress site with Jetpack:' ) }</p>
-								<SiteURLInput ref="siteUrlInputRef"
+								<SiteURLInput
+									ref="siteUrlInputRef"
+									onChange={ this.handleJetpackUrlChange }
+									onSubmit={ this.handleJetpackSubmit }
 									onTosClick={ this.handleOnClickTos }
-									onClick={ this.onURLEnter } />
+									url={ this.state.jetpackUrl }
+								/>
 							</div>
 						</Card>
 					</div>
