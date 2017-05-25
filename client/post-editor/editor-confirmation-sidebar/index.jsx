@@ -25,6 +25,14 @@ class EditorConfirmationSidebar extends React.Component {
 		this.props.hideSidebar();
 	};
 
+	renderPublishingIndicator = () => {
+		return this.props.isPublishing && (
+			<div className="editor-confirmation-sidebar__publishing-indicator">
+				<Gridicon size={ 36 } icon="ellipsis" /> Publishing...
+			</div>
+		);
+	};
+
 	render() {
 		const showOverlay = this.props.isActive || this.props.isPublishing;
 
@@ -34,10 +42,7 @@ class EditorConfirmationSidebar extends React.Component {
 						'editor-confirmation-sidebar': true,
 						'is-active': showOverlay,
 				} ) } >
-					<div className={ classnames( {
-						'editor-confirmation-sidebar__publishing-indicator': true,
-						'is-active': this.props.isPublishing,
-					} ) } ><Gridicon size={ 36 } icon="ellipsis" /> Publishing...</div>
+					{ this.renderPublishingIndicator() }
 					<div className={ classnames( {
 						'editor-confirmation-sidebar__overlay': true,
 						'is-active': showOverlay,
