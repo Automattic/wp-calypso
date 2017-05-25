@@ -8,13 +8,7 @@ import { forEach } from 'lodash';
  * Internal dependencies
  */
 import { recommendedForYou, recommendedPosts } from './controller';
-import {
-	initAbTests,
-	loadSubscriptions,
-	preloadReaderBundle,
-	sidebar,
-	updateLastRoute,
-} from 'reader/controller';
+import { initAbTests, preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
 import config from 'config';
 
 export default function() {
@@ -25,7 +19,6 @@ export default function() {
 	page(
 		'/recommendations',
 		preloadReaderBundle,
-		loadSubscriptions,
 		initAbTests,
 		updateLastRoute,
 		sidebar,
@@ -44,14 +37,10 @@ export default function() {
 				'/recommendations/coldtopics',
 			],
 			path => {
-				page.apply( page, [
-					path,
-					preloadReaderBundle,
-					loadSubscriptions,
-					updateLastRoute,
-					sidebar,
-					recommendedPosts,
-				] );
+				page.apply(
+					page,
+					[ path, preloadReaderBundle, updateLastRoute, sidebar, recommendedPosts ]
+				);
 			}
 		);
 	}
