@@ -60,10 +60,6 @@ class ProductCreate extends React.Component {
 		// TODO: Add action dispatch to trash this product.
 	}
 
-	onDuplicate = () => {
-		// TODO: Add action dispatch to duplicate this product.
-	}
-
 	onSave = () => {
 		// TODO: Add action dispatch to save this product.
 	}
@@ -75,7 +71,6 @@ class ProductCreate extends React.Component {
 			<Main className={ className }>
 				<ProductHeader
 					onTrash={ this.onTrash }
-					onDuplicate={ this.onDuplicate }
 					onSave={ this.onSave }
 				/>
 				<ProductForm
