@@ -13,7 +13,8 @@ import { get, size, takeRight } from 'lodash';
 import {
 	getPostCommentsTree,
 	getPostTotalCommentsCount,
-	haveMoreCommentsToFetch
+	haveMoreCommentsToFetch,
+	getPostOldestCommentDate,
 } from 'state/comments/selectors';
 import {
 	requestPostComments
@@ -48,7 +49,7 @@ class PostCommentList extends React.Component {
 			post: { ID: postId, site_ID: siteId }
 		} = this.props;
 
-		this.props.requestPostComments( siteId, postId, this.props.commentsFilter );
+		this.props.requestPostComments( siteId, postId, this.props.commentsFilter, this.props.before );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -65,7 +66,7 @@ class PostCommentList extends React.Component {
 				this.props.post.ID !== nextPostId ||
 				this.props.commentsFilter !== nextCommentsFilter )
 			) {
-			this.props.requestPostComments( nextSiteId, nextPostId, this.props.commentsFilter );
+			this.props.requestPostComments( nextSiteId, nextPostId, this.props.commentsFilter, this.props.before );
 		}
 	}
 
@@ -199,7 +200,7 @@ class PostCommentList extends React.Component {
 		} );
 
 		if ( this.props.haveMoreCommentsToFetch ) {
-			this.props.requestPostComments( siteId, postId, this.props.commentsFilter );
+			this.props.requestPostComments( siteId, postId, this.props.commentsFilter, this.props.before );
 		}
 	}
 
@@ -310,7 +311,8 @@ export default connect(
 		{
 			commentsTree: getPostCommentsTree( state, ownProps.post.site_ID, ownProps.post.ID, ownProps.commentsFilter ),
 			totalCommentsCount: getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID ),
-			haveMoreCommentsToFetch: haveMoreCommentsToFetch( state, ownProps.post.site_ID, ownProps.post.ID )
+			haveMoreCommentsToFetch: haveMoreCommentsToFetch( state, ownProps.post.site_ID, ownProps.post.ID ),
+			before: getPostOldestCommentDate( state, ownProps.post.site_ID, ownProps.post.ID )
 		}
 	),
 	( dispatch ) => bindActionCreators( {
