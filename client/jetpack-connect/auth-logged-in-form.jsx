@@ -25,7 +25,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SiteCard from './site-card';
 import Spinner from 'components/spinner';
-import FormattedHeader from 'components/formatted-header';
+import StepHeader from 'signup/step-header';
 import userUtilities from 'lib/user/utils';
 import versionCompare from 'lib/version-compare';
 import { decodeEntities } from 'lib/formatting';
@@ -146,7 +146,7 @@ class LoggedInForm extends Component {
 
 		return (
 			<div>
-				<FormattedHeader
+				<StepHeader
 					headerText={ headerText }
 					subHeaderText={ subHeaderText } />
 				{ siteCard }
