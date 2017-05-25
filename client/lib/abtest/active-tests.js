@@ -57,6 +57,7 @@ module.exports = {
 			show: 80,
 		},
 		defaultVariation: 'hide',
+		allowExistingUsers: true,
 	},
 	ATUpgradeOnCancel: {
 		datestamp: '20170515',
@@ -65,6 +66,7 @@ module.exports = {
 			show: 80,
 		},
 		defaultVariation: 'hide',
+		allowExistingUsers: true,
 	},
 	reduceThemesInSignupTest: {
 		datestamp: '20170518',
