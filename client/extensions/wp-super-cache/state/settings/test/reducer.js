@@ -25,6 +25,7 @@ import {
 	DESERIALIZE,
 } from 'state/action-types';
 import reducer from '../reducer';
+import { restoring } from '../reducer';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
@@ -211,76 +212,74 @@ describe( 'reducer', () => {
 
 	describe( 'restoring()', () => {
 		const previousState = deepFreeze( {
-			restoring: {
-				[ primarySiteId ]: true,
-			}
+			[ primarySiteId ]: true,
 		} );
 
 		it( 'should default to an empty object', () => {
-			const state = reducer( undefined, {} );
+			const state = restoring( undefined, {} );
 
-			expect( state.restoring ).to.eql( {} );
+			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should set request to true if request in progress', () => {
-			const state = reducer( undefined, {
+			const state = restoring( undefined, {
 				type: WP_SUPER_CACHE_RESTORE_SETTINGS,
 				siteId: primarySiteId,
 			} );
 
-			expect( state.restoring ).to.eql( {
+			expect( state ).to.eql( {
 				[ primarySiteId ]: true,
 			} );
 		} );
 
 		it( 'should accumulate restoring values', () => {
-			const state = reducer( previousState, {
+			const state = restoring( previousState, {
 				type: WP_SUPER_CACHE_RESTORE_SETTINGS,
 				siteId: secondarySiteId,
 			} );
 
-			expect( state.restoring ).to.eql( {
+			expect( state ).to.eql( {
 				[ primarySiteId ]: true,
 				[ secondarySiteId ]: true,
 			} );
 		} );
 
 		it( 'should set request to false if request finishes successfully', () => {
-			const state = reducer( previousState, {
+			const state = restoring( previousState, {
 				type: WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
 				siteId: primarySiteId,
 			} );
 
-			expect( state.restoring ).to.eql( {
+			expect( state ).to.eql( {
 				[ primarySiteId ]: false,
 			} );
 		} );
 
 		it( 'should set request to false if request finishes with failure', () => {
-			const state = reducer( previousState, {
+			const state = restoring( previousState, {
 				type: WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
 				siteId: primarySiteId,
 			} );
 
-			expect( state.restoring ).to.eql( {
+			expect( state ).to.eql( {
 				[ primarySiteId ]: false,
 			} );
 		} );
 
 		it( 'should not persist state', () => {
-			const state = reducer( previousState, {
+			const state = restoring( previousState, {
 				type: SERIALIZE,
 			} );
 
-			expect( state.restoring ).to.eql( {} );
+			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
+			const state = restoring( previousState, {
 				type: DESERIALIZE,
 			} );
 
-			expect( state.restoring ).to.eql( {} );
+			expect( state ).to.eql( {} );
 		} );
 	} );
 

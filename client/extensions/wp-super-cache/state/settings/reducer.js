@@ -79,7 +79,7 @@ const saveStatus = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object} Updated restoring state
  */
-const restoring = createReducer( {}, {
+export const restoring = createReducer( {}, {
 	[ WP_SUPER_CACHE_RESTORE_SETTINGS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
 	[ WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
 	[ WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
