@@ -7,7 +7,7 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
+import ConnectedReaderSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
 import ReaderSubscriptionListItemPlaceholder
 	from 'blocks/reader-subscription-list-item/placeholder';
 import Card from 'components/card';
