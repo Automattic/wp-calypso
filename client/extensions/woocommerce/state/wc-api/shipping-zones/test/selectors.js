@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { areShippingZonesLoaded, areShippingZonesLoading } from '../selectors';
+import { getAPIShippingZones, areShippingZonesLoaded, areShippingZonesLoading } from '../selectors';
 import { LOADING } from '../reducer';
 
 describe( 'selectors', () => {
@@ -18,6 +18,7 @@ describe( 'selectors', () => {
 				},
 			};
 
+			expect( getAPIShippingZones( state, 123 ) ).to.be.falsey;
 			expect( areShippingZonesLoaded( state, 123 ) ).to.be.false;
 			expect( areShippingZonesLoading( state, 123 ) ).to.be.false;
 		} );
@@ -35,6 +36,7 @@ describe( 'selectors', () => {
 				},
 			};
 
+			expect( getAPIShippingZones( state, 123 ) ).to.deep.equal( [] );
 			expect( areShippingZonesLoaded( state, 123 ) ).to.be.true;
 			expect( areShippingZonesLoading( state, 123 ) ).to.be.false;
 		} );
@@ -52,6 +54,7 @@ describe( 'selectors', () => {
 				},
 			};
 
+			expect( getAPIShippingZones( state, 123 ) ).to.equal( LOADING );
 			expect( areShippingZonesLoaded( state, 123 ) ).to.be.false;
 			expect( areShippingZonesLoading( state, 123 ) ).to.be.true;
 		} );
@@ -69,6 +72,7 @@ describe( 'selectors', () => {
 				},
 			};
 
+			expect( getAPIShippingZones( state, 456 ) ).to.be.falsey;
 			expect( areShippingZonesLoaded( state, 456 ) ).to.be.false;
 			expect( areShippingZonesLoading( state, 456 ) ).to.be.false;
 		} );
@@ -103,9 +107,11 @@ describe( 'selectors', () => {
 				},
 			};
 
+			expect( getAPIShippingZones( stateLoaded ) ).to.deep.equal( [] );
 			expect( areShippingZonesLoaded( stateLoaded ) ).to.be.true;
 			expect( areShippingZonesLoading( stateLoaded ) ).to.be.false;
 
+			expect( getAPIShippingZones( stateLoading ) ).to.equal( LOADING );
 			expect( areShippingZonesLoaded( stateLoading ) ).to.be.false;
 			expect( areShippingZonesLoading( stateLoading ) ).to.be.true;
 		} );
