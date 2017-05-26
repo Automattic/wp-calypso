@@ -56,6 +56,7 @@ class TagEmptyContent extends React.Component {
 
 		return (
 			<EmptyContent
+				className="tag-stream__empty-content"
 				title={ this.props.translate( 'No recent posts' ) }
 				line={ message }
 				action={ action }
