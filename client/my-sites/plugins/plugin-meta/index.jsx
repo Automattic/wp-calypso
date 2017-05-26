@@ -493,8 +493,7 @@ class PluginMeta extends Component {
 					<div style={ { marginBottom: 16 } } />
 				}
 
-				{ ! this.props.selectedSite &&
-					get( this.props.selectedSite, 'jetpack' ) &&
+				{ this.props.selectedSite && ! get( this.props.selectedSite, 'jetpack' ) &&
 					! this.hasBusinessPlan() &&
 					! this.isWpcomPreinstalled() &&
 					<div className="plugin-meta__upgrade_nudge">
