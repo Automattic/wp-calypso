@@ -30,8 +30,6 @@ import AsyncLoad from 'components/async-load';
 
 // these three are included to ensure that the stores required have been loaded and can accept actions
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions'; // eslint-disable-line no-unused-vars
-import PostEmailSubscriptionStore from 'lib/reader-post-email-subscriptions'; // eslint-disable-line no-unused-vars
-import CommentEmailSubscriptionStore from 'lib/reader-comment-email-subscriptions'; // eslint-disable-line no-unused-vars
 
 const analyticsPageTitle = 'Reader';
 
