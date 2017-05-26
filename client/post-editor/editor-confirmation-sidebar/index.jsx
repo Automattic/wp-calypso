@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,24 +16,36 @@ class EditorConfirmationSidebar extends React.Component {
 	static propTypes = {
 		hideSidebar: React.PropTypes.func,
 		isActive: React.PropTypes.bool,
+		isPublishing: React.PropTypes.bool,
 		onPublish: React.PropTypes.func,
 	};
 
 	closeAndPublish = () => {
-		this.props.hideSidebar();
 		this.props.onPublish( true );
+		this.props.hideSidebar();
+	};
+
+	renderPublishingIndicator = () => {
+		return this.props.isPublishing && (
+			<div className="editor-confirmation-sidebar__publishing-indicator">
+				<Gridicon size={ 36 } icon="ellipsis" /> Publishing...
+			</div>
+		);
 	};
 
 	render() {
+		const showOverlay = this.props.isActive || this.props.isPublishing;
+
 		return (
 			<RootChild>
 				<div className={ classnames( {
 						'editor-confirmation-sidebar': true,
-						'is-active': this.props.isActive,
+						'is-active': showOverlay,
 				} ) } >
+					{ this.renderPublishingIndicator() }
 					<div className={ classnames( {
 						'editor-confirmation-sidebar__overlay': true,
-						'is-active': this.props.isActive,
+						'is-active': showOverlay,
 					} ) } onClick={ this.props.hideSidebar }></div>
 					<div className={ classnames( {
 						'editor-confirmation-sidebar__sidebar': true,
