@@ -27,8 +27,8 @@ class EditorConfirmationSidebar extends React.Component {
 		return (
 			<RootChild>
 				<div className={ classnames( {
-						'editor-confirmation-sidebar': true,
-						'is-active': this.props.isActive,
+					'editor-confirmation-sidebar': true,
+					'is-active': this.props.isActive,
 				} ) } >
 					<div className={ classnames( {
 						'editor-confirmation-sidebar__overlay': true,
@@ -39,9 +39,11 @@ class EditorConfirmationSidebar extends React.Component {
 						'is-active': this.props.isActive,
 					} ) }>
 						<div className="editor-confirmation-sidebar__ground-control">
-							<div className="editor-confirmation-sidebar__cancel" onClick={ this.props.hideSidebar }>Cancel</div>
+							<div className="editor-confirmation-sidebar__cancel" onClick={ this.props.hideSidebar }>
+								{ this.props.translate( 'Cancel' ) }
+							</div>
 							<div className="editor-confirmation-sidebar__action">
-								Are you sure? <Button onClick={ this.closeAndPublish } compact>Yea, do it!</Button>
+								<Button onClick={ this.closeAndPublish } compact>{ this.props.translate( 'Publish' ) }</Button>
 							</div>
 						</div>
 					</div>
