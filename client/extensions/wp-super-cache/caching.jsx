@@ -30,6 +30,7 @@ const Caching = ( {
 	isSaving,
 	notices: {
 		htaccess_ro,
+		mod_rewrite_missing,
 	},
 	translate,
 } ) => {
@@ -54,6 +55,13 @@ const Caching = ( {
 						showDismiss={ false }
 						status="is-warning"
 						text={ htaccess_ro.message } />
+					}
+
+					{ mod_rewrite_missing && mod_rewrite_missing.message &&
+					<Notice
+						showDismiss={ false }
+						status="is-warning"
+						text={ mod_rewrite_missing.message } />
 					}
 					<FormFieldset>
 						<FormToggle
