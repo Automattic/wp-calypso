@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+
 import {
 	SITE_MONITOR_SETTINGS_RECEIVE,
 	SITE_MONITOR_SETTINGS_REQUEST,

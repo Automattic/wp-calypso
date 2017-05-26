@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
+
 import {
 	DIRECTLY_INITIALIZATION_START,
 	DIRECTLY_INITIALIZATION_SUCCESS,

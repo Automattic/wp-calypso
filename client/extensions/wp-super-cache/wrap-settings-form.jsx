@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import {
 	flowRight,
 	isEqual,
-	keys,
 	omit,
 	pick,
 } from 'lodash';
@@ -182,13 +181,12 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		submitForm = () => {
 			const {
 				fields,
-				settingsFields,
 				siteId,
 			} = this.props;
 
 			this.props.removeNotice( 'wpsc-cache-delete' );
 			this.props.removeNotice( 'wpsc-settings-save' );
-			this.props.saveSettings( siteId, pick( fields, settingsFields ) );
+			this.props.saveSettings( siteId, fields );
 		};
 
 		handleDeleteCache = ( deleteAll, deleteExpired ) => {
@@ -226,25 +224,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const isSaveSuccessful = isSettingsSaveSuccessful( state, siteId );
 			const settings = getSettings( state, siteId );
 			const isRequesting = isRequestingSettings( state, siteId ) && ! settings;
-			// Don't include read-only fields when saving.
-			const settingsFields = keys( omit( settings, [
-				'cache_direct_pages',
-				'cache_disable_locking',
-				'cache_mobile_browsers',
-				'cache_mobile_prefixes',
-				'cache_mod_rewrite',
-				'cache_next_gc',
-				'cache_readonly',
-				'cache_writable',
-				'generated',
-				'is_preload_enabled',
-				'is_preloading',
-				'minimum_preload_interval',
-				'post_count',
-				'preload_refresh',
-				'supercache',
-				'wpcache',
-			] ) );
 			const isDeleting = isDeletingCache( state, siteId );
 			const isDeleteSuccessful = isCacheDeleteSuccessful( state, siteId );
 
@@ -255,7 +234,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				isSaveSuccessful,
 				isSaving,
 				settings,
-				settingsFields,
 				site,
 				siteId,
 			};

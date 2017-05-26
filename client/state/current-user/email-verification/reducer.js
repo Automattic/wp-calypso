@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
+
 import {
 	EMAIL_VERIFY_REQUEST,
 	EMAIL_VERIFY_REQUEST_SUCCESS,

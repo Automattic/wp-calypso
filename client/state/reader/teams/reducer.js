@@ -1,14 +1,9 @@
 /**
- * External Dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 import { itemsSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 export const items = createReducer(
 	[],

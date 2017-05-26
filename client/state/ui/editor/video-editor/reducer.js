@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -12,6 +7,7 @@ import {
 	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 
 /**
  * Tracks whether or not the modal should close.

@@ -7,30 +7,16 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-import { recommendedForYou, recommendedPosts } from './controller';
-import {
-	initAbTests,
-	loadSubscriptions,
-	preloadReaderBundle,
-	sidebar,
-	updateLastRoute,
-} from 'reader/controller';
+import { recommendedPosts } from './controller';
+import { preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
 import config from 'config';
 
 export default function() {
 	// Cold Start no longer exists - redirect to /
 	page( '/recommendations/start', '/' );
 
-	// Blog Recommendations
-	page(
-		'/recommendations',
-		preloadReaderBundle,
-		loadSubscriptions,
-		initAbTests,
-		updateLastRoute,
-		sidebar,
-		recommendedForYou
-	);
+	// Blog Recommendations no longer exists as its own page - redirect to /
+	page( '/recommendations', '/read/search' );
 
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
 	if ( config.isEnabled( 'reader/recommendations/posts' ) ) {
@@ -44,14 +30,10 @@ export default function() {
 				'/recommendations/coldtopics',
 			],
 			path => {
-				page.apply( page, [
-					path,
-					preloadReaderBundle,
-					loadSubscriptions,
-					updateLastRoute,
-					sidebar,
-					recommendedPosts,
-				] );
+				page.apply(
+					page,
+					[ path, preloadReaderBundle, updateLastRoute, sidebar, recommendedPosts ]
+				);
 			}
 		);
 	}

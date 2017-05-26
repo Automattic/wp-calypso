@@ -17,9 +17,12 @@ import {
 	SITE_STATS_REQUEST_SUCCESS,
 } from 'state/action-types';
 import reducer, {
-	items,
+	items as unwrappedItems,
 	requests
 } from '../reducer';
+import { withSchemaValidation } from 'state/utils';
+
+const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
 
 /**
  * Test Data

@@ -34,6 +34,7 @@ import {
 	getSitePostsLastPageForQuery
 } from 'state/posts/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
+import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
 
@@ -51,6 +52,7 @@ const PostSelectorPosts = React.createClass( {
 	propTypes: {
 		siteId: PropTypes.number.isRequired,
 		query: PropTypes.object,
+		queryWithVersion: PropTypes.object,
 		posts: PropTypes.array,
 		lastPage: PropTypes.number,
 		loading: PropTypes.bool,
@@ -95,7 +97,7 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( this.props.query, nextProps.query ) ||
+		if ( ! isEqual( this.props.queryWithVersion, nextProps.queryWithVersion ) ||
 				this.props.siteId !== nextProps.siteId ) {
 			this.setState( {
 				requestedPages: [ 1 ]
@@ -191,7 +193,7 @@ const PostSelectorPosts = React.createClass( {
 			return this.props.showTypeLabels;
 		}
 
-		return 'any' === this.props.query.type;
+		return 'any' === this.props.queryWithVersion.type;
 	},
 
 	isLastPage() {
@@ -234,8 +236,8 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	getPageForIndex( index ) {
-		const { query, lastPage } = this.props;
-		const perPage = query.number || DEFAULT_POSTS_PER_PAGE;
+		const { queryWithVersion, lastPage } = this.props;
+		const perPage = queryWithVersion.number || DEFAULT_POSTS_PER_PAGE;
 		const page = Math.ceil( index / perPage );
 
 		return Math.max( Math.min( page, lastPage || Infinity ), 1 );
@@ -393,7 +395,7 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	render() {
-		const { className, siteId, query } = this.props;
+		const { className, siteId, queryWithVersion } = this.props;
 		const { requestedPages, searchTerm } = this.state;
 		const isCompact = this.isCompact();
 		const isTypeLabelsVisible = this.isTypeLabelsVisible();
@@ -409,7 +411,7 @@ const PostSelectorPosts = React.createClass( {
 					<QueryPosts
 						key={ `page-${ page }` }
 						siteId={ siteId }
-						query={ { ...query, page } } />
+						query={ { ...queryWithVersion, page } } />
 				) ) }
 				{ isTypeLabelsVisible && siteId && (
 					<QueryPostTypes siteId={ siteId } />
@@ -421,7 +423,7 @@ const PostSelectorPosts = React.createClass( {
 				) }
 				<div className="post-selector__results">
 					<AutoSizer
-						key={ JSON.stringify( query ) }
+						key={ JSON.stringify( queryWithVersion ) }
 						disableHeight={ isCompact }>
 						{ ( { height, width } ) => (
 							<List
@@ -444,11 +446,18 @@ const PostSelectorPosts = React.createClass( {
 
 export default connect( ( state, ownProps ) => {
 	const { siteId, query } = ownProps;
+
+	const apiVersion = ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '99' )
+		? '1.2'
+		: undefined;
+	const queryWithVersion = { ...query, apiVersion };
+
 	return {
-		posts: getSitePostsForQueryIgnoringPage( state, siteId, query ),
-		found: getSitePostsFoundForQuery( state, siteId, query ),
-		lastPage: getSitePostsLastPageForQuery( state, siteId, query ),
-		loading: isRequestingSitePostsForQueryIgnoringPage( state, siteId, query ),
-		postTypes: getPostTypes( state, siteId )
+		posts: getSitePostsForQueryIgnoringPage( state, siteId, queryWithVersion ),
+		found: getSitePostsFoundForQuery( state, siteId, queryWithVersion ),
+		lastPage: getSitePostsLastPageForQuery( state, siteId, queryWithVersion ),
+		loading: isRequestingSitePostsForQueryIgnoringPage( state, siteId, queryWithVersion ),
+		postTypes: getPostTypes( state, siteId ),
+		queryWithVersion: queryWithVersion
 	};
 } )( PostSelectorPosts );

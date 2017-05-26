@@ -1,16 +1,11 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
 	CONNECTION_LOST,
 	CONNECTION_RESTORED
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 export const connectionState = createReducer( 'CHECKING', {
 	[ CONNECTION_LOST ]: () => 'OFFLINE',

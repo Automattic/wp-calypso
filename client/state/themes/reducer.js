@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { mapValues, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ThemeQueryManager from 'lib/query-manager/theme';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -36,7 +36,6 @@ import {
 	getSerializedThemesQuery,
 	getThemeIdFromStylesheet
 } from './utils';
-import { createReducer, isValidStateWithSchema } from 'state/utils';
 import {
 	queriesSchema,
 	activeThemesSchema,
@@ -85,10 +84,6 @@ export function activationRequests( state = {}, action ) {
 				...state,
 				[ action.siteId ]: THEME_ACTIVATE === action.type
 			};
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -132,10 +127,6 @@ export function activeThemeRequests( state = {}, action ) {
 				...state,
 				[ action.siteId ]: ACTIVE_THEME_REQUEST === action.type
 			};
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -160,10 +151,6 @@ export function themeRequests( state = {}, action ) {
 					[ action.themeId ]: THEME_REQUEST === action.type
 				} )
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -188,10 +175,6 @@ export function themeInstalls( state = {}, action ) {
 					[ action.themeId ]: THEME_INSTALL === action.type
 				} )
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -238,10 +221,6 @@ export function queryRequests( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ serializedQuery ]: THEMES_REQUEST === action.type
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;

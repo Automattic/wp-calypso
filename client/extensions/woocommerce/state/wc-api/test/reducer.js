@@ -8,16 +8,10 @@ import { expect } from 'chai';
  */
 import reducer from '../reducer';
 import { error } from '../actions';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should initialize to an empty object', () => {
 		expect( reducer( undefined, { type: '@@UNKNOWN_ACTION' } ) ).to.eql( {} );
-	} );
-
-	it( 'should resist persisting', () => {
-		expect( reducer( undefined, { type: SERIALIZE } ) ).to.eql( null );
-		expect( reducer( undefined, { type: DESERIALIZE } ) ).to.eql( {} );
 	} );
 
 	it( 'should create a site object when an action for that site occurrs.', () => {

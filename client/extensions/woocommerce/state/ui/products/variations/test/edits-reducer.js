@@ -151,19 +151,7 @@ describe( 'edits-reducer', () => {
 				variation: true
 			} ) );
 
-			expect( edits1[ 0 ].creates[ 1 ].attributes ).to.eql( attributes );
-		} );
-
-		it( 'should add "all variations" variation to "creates"', () => {
-			const product = { id: 48 };
-
-			const edits1 = reducer( undefined, editProductAttribute( product, null, {
-				name: 'Color',
-				options: [ 'Blue' ],
-				variation: true
-			} ) );
-
-			expect( edits1[ 0 ].creates[ 0 ].attributes ).to.eql( [] );
+			expect( edits1[ 0 ].creates[ 0 ].attributes ).to.eql( attributes );
 		} );
 
 		it( 'should remove invalid variations from "creates"', () => {
@@ -176,7 +164,7 @@ describe( 'edits-reducer', () => {
 				variation: true
 			} ) );
 
-			expect( edits1[ 0 ].creates[ 1 ].attributes ).to.eql( attributes );
+			expect( edits1[ 0 ].creates[ 0 ].attributes ).to.eql( attributes );
 
 			const smallAttributes = [ { name: 'Color', option: 'Blue' }, { name: 'Size', option: 'Small' } ];
 			const mediumAttributes = [ { name: 'Color', option: 'Blue' }, { name: 'Size', option: 'Medium' } ];
@@ -194,9 +182,9 @@ describe( 'edits-reducer', () => {
 				variation: true
 			} ) );
 
-			expect( edits2[ 0 ].creates.length ).to.eql( 3 );
-			expect( edits2[ 0 ].creates[ 1 ].attributes ).to.eql( smallAttributes );
-			expect( edits2[ 0 ].creates[ 2 ].attributes ).to.eql( mediumAttributes );
+			expect( edits2[ 0 ].creates.length ).to.eql( 2 );
+			expect( edits2[ 0 ].creates[ 0 ].attributes ).to.eql( smallAttributes );
+			expect( edits2[ 0 ].creates[ 1 ].attributes ).to.eql( mediumAttributes );
 		} );
 
 		it( 'should preserve variations that are still valid', () => {
@@ -228,15 +216,15 @@ describe( 'edits-reducer', () => {
 				uid: 'edit_1'
 			} );
 
-			const blueMediumVariation = edits2[ 0 ].creates[ 2 ];
+			const blueMediumVariation = edits2[ 0 ].creates[ 1 ];
 			const edits3 = reducer( edits2, editProductVariation( product, blueMediumVariation, { regular_price: '2.99' } ) );
 
 			const blueMediumAttributes = [ { name: 'Color', option: 'Blue' }, { name: 'Size', option: 'Medium' } ];
 
 			const edits4 = reducer( edits3, editProductAttribute( product, product.attributes[ 0 ], { options: [ 'Blue', 'Red' ] } ) );
-			expect( edits4[ 0 ].creates.length ).to.eql( 5 );
-			expect( edits4[ 0 ].creates[ 2 ].attributes ).to.eql( blueMediumAttributes );
-			expect( edits4[ 0 ].creates[ 2 ].regular_price ).to.equal( '2.99' );
+			expect( edits4[ 0 ].creates.length ).to.eql( 4 );
+			expect( edits4[ 0 ].creates[ 1 ].attributes ).to.eql( blueMediumAttributes );
+			expect( edits4[ 0 ].creates[ 1 ].regular_price ).to.equal( '2.99' );
 		} );
 	} );
 } );

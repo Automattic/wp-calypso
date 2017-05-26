@@ -1,7 +1,6 @@
 /**
 * External dependencies
 */
-import { combineReducers } from 'redux';
 import forEach from 'lodash/forEach';
 
 /**
@@ -18,8 +17,8 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { combineReducers, isValidStateWithSchema } from 'state/utils';
 import { pluginInstructionSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
 
 /*
  * Tracks the requesting state for premium plugin "instructions" (the list
@@ -31,9 +30,6 @@ export function isRequesting( state = {}, action ) {
 			return Object.assign( {}, state, { [ action.siteId ]: true } );
 		case PLUGIN_SETUP_INSTRUCTIONS_RECEIVE:
 			return Object.assign( {}, state, { [ action.siteId ]: false } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 		default:
 			return state;
 	}
@@ -47,9 +43,6 @@ export function hasRequested( state = {}, action ) {
 	switch ( action.type ) {
 		case PLUGIN_SETUP_INSTRUCTIONS_RECEIVE:
 			return Object.assign( {}, state, { [ action.siteId ]: true } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 		default:
 			return state;
 	}
@@ -75,7 +68,7 @@ export function plugins( state = {}, action ) {
 			}
 			return state;
 		case SERIALIZE:
-			let processedState = {};
+			const processedState = {};
 			// Save the error state as a string message.
 			forEach( state, ( pluginList, key ) => {
 				processedState[ key ] = pluginList.map( ( item ) => {
@@ -95,6 +88,7 @@ export function plugins( state = {}, action ) {
 			return state;
 	}
 }
+plugins.hasCustomPersistence = true;
 
 /*
  * Tracks the list of premium plugin objects for a single site

@@ -35,7 +35,7 @@ class SocialLoginForm extends Component {
 	render() {
 		return (
 			<div className="login__social">
-				<p>
+				<p className="login__social-text">
 					{ this.props.translate( 'Or login with your existing social profile:' ) }
 				</p>
 

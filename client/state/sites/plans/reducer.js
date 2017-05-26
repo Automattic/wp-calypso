@@ -14,8 +14,6 @@ import {
 	SITE_PLANS_TRIAL_CANCEL,
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 	SITE_PLANS_TRIAL_CANCEL_FAILED,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 
 export const initialSiteState = {
@@ -82,13 +80,6 @@ export function plans( state = {}, action ) {
 				error: action.error,
 				isRequesting: false
 			} );
-
-		case SERIALIZE:
-			//TODO: we have full instances of moment.js on sites.plans[siteID].data
-			return {};
-
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;

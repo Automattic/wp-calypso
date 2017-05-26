@@ -12,6 +12,7 @@ import {
 	SITES_RECEIVE,
 } from 'state/action-types';
 import courses from './courses/reducer';
+import { combineReducers } from 'state/utils';
 import directly from './directly/reducer';
 import ticket from './ticket/reducer';
 import { createReducer } from 'state/utils';

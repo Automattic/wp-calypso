@@ -354,6 +354,16 @@ export class SharingService extends Component {
 		return externalAccounts.length && hasAnyConnectionOptions;
 	}
 
+	renderLogo() {
+		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
+			<SocialLogo
+				icon={ replace( this.props.service.ID, '_', '-' ) }
+				size={ 48 }
+				className="sharing-service__logo" />
+		);
+	}
+
 	render() {
 		const connections = this.getConnections();
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
@@ -364,10 +374,7 @@ export class SharingService extends Component {
 
 		const header = (
 			<div>
-				<SocialLogo
-					icon={ replace( this.props.service.ID, '_', '-' ) }
-					size={ 48 }
-					className="sharing-service__logo" />
+				{ this.renderLogo() }
 
 				<div className="sharing-service__name">
 					<h2>{ this.props.service.label }</h2>

@@ -32,6 +32,7 @@ import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/map
 import versionCompare from 'lib/version-compare';
 import getComputedAttributes from 'lib/site/computed-attributes';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
+import { isSiteUpgradeable } from 'state/selectors';
 
 /**
  * Returns a raw site object by its ID.
@@ -102,6 +103,7 @@ export function getJetpackComputedAttributes( state, siteId ) {
 		canManage: canJetpackSiteManage( state, siteId ),
 		isMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
 		isSecondaryNetworkSite: isJetpackSiteSecondaryNetworkSite( state, siteId ),
+		isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
 	};
 }
 

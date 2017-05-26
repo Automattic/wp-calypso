@@ -2,11 +2,12 @@
  * External dependencies
  */
 import thunkMiddleware from 'redux-thunk';
-import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 
 /**
  * Internal dependencies
  */
+import { combineReducers } from 'state/utils';
 import analyticsTracking from './analytics/reducer';
 import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';

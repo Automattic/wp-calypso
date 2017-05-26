@@ -1,13 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import { postFormatsItemsSchema } from './schema';
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,

@@ -1,14 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import magicLogin from './magic-login/reducer';
-
 import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,

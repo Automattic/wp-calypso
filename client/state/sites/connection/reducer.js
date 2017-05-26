@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
+
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,

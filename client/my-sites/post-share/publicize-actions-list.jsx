@@ -22,25 +22,29 @@ import {
 	SCHEDULED,
 	PUBLISHED,
 } from './constants';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import { isEnabled } from 'config';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {
-		section: PropTypes.string,
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
+		scheduledActions: PropTypes.array,
+		publishedActions: PropTypes.array,
 	};
 
-	static defaultProps = {
-		section: SCHEDULED,
+	state = {
+		selectedShareTab: SCHEDULED,
 	};
-
+	setFooterSection = selectedShareTab => () => this.setState( { selectedShareTab } );
 	renderFooterSectionItem( {
 		connectionName,
 		message,
 		shareDate,
 		service,
 	}, index ) {
-		const { translate } = this.props;
 		return (
 			<CompactCard className="post-share__footer-items" key={ index }>
 				<div className="post-share__footer-item">
@@ -60,53 +64,80 @@ class PublicizeActionsList extends PureComponent {
 						{ message }
 					</div>
 				</div>
-
-				<EllipsisMenu>
-					<PopoverMenuItem icon="visible">
-						{ translate( 'Preview' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem icon="pencil">
-						{ translate( 'Edit' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem icon="trash">
-						{ translate( 'Trash' ) }
-					</PopoverMenuItem>
-				</EllipsisMenu>
+				{ this.renderElipsisMenu() }
 			</CompactCard>
 		);
 	}
 
-	renderActionsList( status = SCHEDULED ) {
-		if ( this.props.section !== status ) {
-			return null;
+	renderElipsisMenu() {
+		const actions = [];
+		const { translate } = this.props;
+
+		if ( isEnabled( 'publicize-preview' ) ) {
+			actions.push( <PopoverMenuItem icon="visible">
+				{ translate( 'Preview' ) }
+			</PopoverMenuItem> );
 		}
 
-		const {
-			postId,
-			scheduledActions,
-			publishedActions,
-			siteId,
-		} = this.props;
+		if ( this.state.selectedShareTab === SCHEDULED ) {
+			actions.push( <PopoverMenuItem icon="trash">
+				{ translate( 'Trash' ) }
+			</PopoverMenuItem> );
+		}
 
-		const actions = status === SCHEDULED ? scheduledActions : publishedActions;
-
-		return (
-			<div>
-				<QuerySharePostActions siteId={ siteId } postId={ postId } status={ status } />
-				{ actions.map( ( item, index ) => this.renderFooterSectionItem( item, index ) ) }
-			</div>
-		);
+		if ( actions.length === 0 ) {
+			return <div />;
+		}
+		return ( <EllipsisMenu>
+			{ actions }
+		</EllipsisMenu> );
 	}
 
+	renderActionsList = ( actions ) => (
+		<div>
+			{ actions.map( ( item, index ) => this.renderFooterSectionItem( item, index ) ) }
+		</div>
+	);
 	render() {
+		const {
+			postId,
+			siteId,
+			scheduledActions,
+			publishedActions,
+		} = this.props;
 		return (
-			<div className="post-share__actions-list">
-				<div className="post-share__scheduled-list">
-					{ this.renderActionsList( SCHEDULED ) }
-				</div>
-
-				<div className="post-share__published-list">
-					{ this.renderActionsList( PUBLISHED ) }
+			<div>
+				<SectionNav className="post-share__footer-nav" selectedText={ 'some text' }>
+					<NavTabs label="Status" selectedText="Published">
+						<NavItem
+							selected={ this.state.selectedShareTab === SCHEDULED }
+							count={ this.props.scheduledActions.length }
+							onClick={ this.setFooterSection( SCHEDULED ) }
+						>
+							Scheduled
+						</NavItem>
+						<NavItem
+							selected={ this.state.selectedShareTab === PUBLISHED }
+							count={ this.props.publishedActions.length }
+							onClick={ this.setFooterSection( PUBLISHED ) }
+						>
+							Published
+						</NavItem>
+					</NavTabs>
+				</SectionNav>
+				<div className="post-share__actions-list">
+					<QuerySharePostActions siteId={ siteId } postId={ postId } status={ SCHEDULED } />
+					<QuerySharePostActions siteId={ siteId } postId={ postId } status={ PUBLISHED } />
+					{ this.state.selectedShareTab === SCHEDULED &&
+						<div className="post-share__scheduled-list">
+							{ this.renderActionsList( scheduledActions ) }
+						</div>
+					}
+					{ this.state.selectedShareTab === PUBLISHED &&
+						<div className="post-share__published-list">
+							{ this.renderActionsList( publishedActions ) }
+						</div>
+					}
 				</div>
 			</div>
 		);

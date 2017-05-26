@@ -10,8 +10,6 @@ import deepFreeze from 'deep-freeze';
 import {
 	GOOGLE_APPS_USERS_FETCH,
 	GOOGLE_APPS_USERS_FETCH_COMPLETED,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 
 import {
@@ -23,18 +21,6 @@ describe( 'reducer', () => {
 	describe( '#items()', () => {
 		it( 'should default to an empty array', () => {
 			const state = items( undefined, {} );
-
-			assert.deepEqual( state, [] );
-		} );
-
-		it( 'should return empty array for serialize', () => {
-			const state = items( deepFreeze( [ 1, 2 ] ), { type: SERIALIZE } );
-
-			assert.deepEqual( state, [] );
-		} );
-
-		it( 'should return empty array for deserialize', () => {
-			const state = items( deepFreeze( [ 1, 2 ] ), { type: DESERIALIZE } );
 
 			assert.deepEqual( state, [] );
 		} );

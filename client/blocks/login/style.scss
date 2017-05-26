@@ -28,6 +28,7 @@
 
 .login__form-action {
 	margin-top: 10px;
+	overflow: auto;
 
 	button {
 		width: 100%;
@@ -48,9 +49,17 @@
 		margin-right: 10px;
 	}
 
-	label{
+	label {
 		font-size: 14px;
 	}
+}
+
+.login__form-social {
+	margin-top: 20px;
+}
+
+.login__social-text {
+	text-align: center;
 }
 
 .login__social-buttons {
@@ -84,15 +93,15 @@
 	margin: 0 10px 10px;
 }
 
-.wp-login__footer{
-	a{
+.wp-login__footer {
+	a {
 		font-size: 14px;
 
-		&:hover{
+		&:hover {
 			color: $blue-medium;
 		}
 	}
-	.gridicon{
+	.gridicon {
 		vertical-align: text-bottom;
 	}
 }

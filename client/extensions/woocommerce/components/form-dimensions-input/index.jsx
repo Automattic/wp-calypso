@@ -17,8 +17,9 @@ function FormDimensionsInput( {
 	unit,
 	onChange,
 	translate,
+	noWrap,
 } ) {
-	const classes = classNames( 'form-dimensions-input', className );
+	const classes = classNames( 'form-dimensions-input', className, { 'no-wrap': noWrap } );
 
 	return (
 		<div className={ classes }>
@@ -43,6 +44,7 @@ function FormDimensionsInput( {
 				placeholder={ translate( 'H' ) }
 				suffix={ unit }
 				type="number"
+				noWrap={ noWrap }
 				value={ dimensions && dimensions.height || '' }
 				onChange={ onChange }
 				className="form-dimensions-input__height"

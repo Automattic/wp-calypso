@@ -20,5 +20,6 @@ module.exports = {
 		'wpcalypso/jsx-classname-namespace': [ 2, {
 			rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
 		} ],
+		'wpcalypso/import-no-redux-combine-reducers': 2
 	}
 };

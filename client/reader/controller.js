@@ -5,7 +5,6 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import config from 'config';
 
 /**
  * Internal Dependencies
@@ -22,7 +21,6 @@ import {
 	setPageTitle,
 } from './controller-helper';
 import FeedError from 'reader/feed-error';
-import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
 import StreamComponent from 'reader/following/main';
 import { getPrettyFeedUrl, getPrettySiteUrl } from 'reader/route';
 import { recordTrack } from 'reader/stats';
@@ -32,8 +30,6 @@ import AsyncLoad from 'components/async-load';
 
 // these three are included to ensure that the stores required have been loaded and can accept actions
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions'; // eslint-disable-line no-unused-vars
-import PostEmailSubscriptionStore from 'lib/reader-post-email-subscriptions'; // eslint-disable-line no-unused-vars
-import CommentEmailSubscriptionStore from 'lib/reader-comment-email-subscriptions'; // eslint-disable-line no-unused-vars
 
 const analyticsPageTitle = 'Reader';
 
@@ -124,13 +120,6 @@ const exported = {
 
 	preloadReaderBundle( context, next ) {
 		preload( 'reader' );
-		next();
-	},
-
-	loadSubscriptions( context, next ) {
-		if ( ! config.isEnabled( 'reader/following-manage-refresh' ) ) {
-			FeedSubscriptionActions.fetchAll();
-		}
 		next();
 	},
 
@@ -315,7 +304,6 @@ export const {
 	updateLastRoute,
 	incompleteUrlRedirects,
 	preloadReaderBundle,
-	loadSubscriptions,
 	sidebar,
 	unmountSidebar,
 	following,

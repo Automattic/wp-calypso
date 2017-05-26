@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { merge } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { shortcodesSchema } from './schema';
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import {
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,

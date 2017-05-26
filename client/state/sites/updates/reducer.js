@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { isEmpty, merge, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 import {
 	SITE_RECEIVE,

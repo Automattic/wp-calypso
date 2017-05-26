@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { merge } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import itemsSchema from './schema';
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import {
 	POST_LIKES_RECEIVE,
 	POST_LIKES_REQUEST,

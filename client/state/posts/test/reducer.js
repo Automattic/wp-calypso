@@ -214,26 +214,6 @@ describe( 'reducer', () => {
 				'2916284:{"search":"Hello"}': false
 			} );
 		} );
-
-		it( 'should never persist state', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"Hello"}': true
-			} );
-
-			const state = queryRequests( original, { type: SERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should never load persisted state', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"Hello"}': true
-			} );
-
-			const state = queryRequests( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( '#queries()', () => {
@@ -689,30 +669,6 @@ describe( 'reducer', () => {
 				}
 			} );
 		} );
-
-		it( 'never persists state', () => {
-			const state = siteRequests( deepFreeze( {
-				2916284: {
-					841: true
-				}
-			} ), {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'never loads persisted state', () => {
-			const state = siteRequests( deepFreeze( {
-				2916284: {
-					841: true
-				}
-			} ), {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( '#edits()', () => {
@@ -1117,30 +1073,6 @@ describe( 'reducer', () => {
 					}
 				}
 			} );
-		} );
-
-		it( 'should not persist state', () => {
-			const state = edits( deepFreeze( {
-				2916284: {
-					'': {
-						title: 'Ribs & Chicken'
-					}
-				}
-			} ), { type: SERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const state = edits( deepFreeze( {
-				2916284: {
-					'': {
-						title: 'Ribs & Chicken'
-					}
-				}
-			} ), { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import {
 	uniqBy,
 	omit,
@@ -11,6 +10,7 @@ import {
  * Internal dependencies
  */
 import status from './status/reducer';
+import { combineReducers, createReducer } from 'state/utils';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -23,11 +23,8 @@ import {
 	PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { pluginsSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 /*
  * Tracks the requesting state for installed plugins on a per-site index.
@@ -38,9 +35,6 @@ export function isRequesting( state = {}, action ) {
 			return Object.assign( {}, state, { [ action.siteId ]: true } );
 		case PLUGINS_RECEIVE:
 			return Object.assign( {}, state, { [ action.siteId ]: false } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 		default:
 			return state;
 	}

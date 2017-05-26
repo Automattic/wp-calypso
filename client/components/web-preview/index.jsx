@@ -19,6 +19,7 @@ import Spinner from 'components/spinner';
 import RootChild from 'components/root-child';
 import SeoPreviewPane from 'components/seo-preview-pane';
 import { setPreviewShowing } from 'state/ui/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -151,6 +152,8 @@ export class WebPreview extends Component {
 
 	setDeviceViewport( device = 'computer' ) {
 		this.setState( { device } );
+
+		this.props.recordTracksEvent( 'calypso_web_preview_select_viewport_device', { device } );
 	}
 
 	setLoaded() {
@@ -269,4 +272,4 @@ WebPreview.defaultProps = {
 	hasSidebar: false,
 };
 
-export default connect( null, { setPreviewShowing } )( localize( WebPreview ) );
+export default connect( null, { recordTracksEvent, setPreviewShowing } )( localize( WebPreview ) );
