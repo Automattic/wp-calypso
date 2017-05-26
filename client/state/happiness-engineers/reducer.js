@@ -6,7 +6,7 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import { itemsSchema } from './schema';
 import {
@@ -45,7 +45,7 @@ export const items = createReducer( null, {
 	}
 }, itemsSchema );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	requesting,
 	items
 } );

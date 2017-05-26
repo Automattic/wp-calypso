@@ -10,7 +10,7 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import ConnectedSubscriptionListItem from './connected-subscription-list-item';
+import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
 import SitesWindowScroller from './sites-window-scroller';
 import Button from 'components/button';
 import ReaderSubscriptionListItemPlaceholder

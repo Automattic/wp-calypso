@@ -3,12 +3,13 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import FormCheckbox from 'components/forms/form-checkbox';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormDimensionsInput from '../../components/form-dimensions-input';
 import FormFieldSet from 'components/forms/form-fieldset';
@@ -38,8 +39,7 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 	};
 
 	const setStockQuantity = ( e ) => {
-		const stock_quantity = e.target.value;
-		Number( stock_quantity ) >= 0 && editProduct( product, { stock_quantity } );
+		editProduct( product, { stock_quantity: e.target.value } );
 	};
 
 	const setBackorders = ( e ) => {
@@ -91,19 +91,23 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 		</Card>
 	);
 
-	const renderStock = () => (
-		<Card className="products__product-form-stock">
-			<div className="products__product-manage-stock-wrapper">
-				<FormLabel>{ translate( 'Manage stock' ) }</FormLabel>
-				<div className="products__product-manage-stock">
-					<div className="products__product-manage-stock-checkbox">
-						<FormCheckbox
-							checked={ Boolean( product.manage_stock ) }
-							name="manage_stock"
-							onChange={ toggleStock } />
-					</div>
+	const stockClasses = classNames( 'products__product-form-stock', {
+		'products__product-form-stock-disabled': ! product.manage_stock,
+	} );
 
-					{ product.manage_stock && (
+	const renderStock = () => (
+		<Card className={ stockClasses }>
+			<div className="products__product-manage-stock-toggle">
+				<CompactFormToggle
+					checked={ Boolean( product.manage_stock ) }
+					name="manage_stock"
+					onChange={ toggleStock } />
+				<FormLabel onClick={ toggleStock }>{ translate( 'Manage stock' ) }</FormLabel>
+			</div>
+			<div className="products__product-stock-options-wrapper">
+				{ product.manage_stock && (
+					<div className="products__product-manage-stock">
+						<FormLabel>{ translate( 'Quantity' ) }</FormLabel>
 						<FormTextInput
 							name="stock_quantity"
 							value={ product.stock_quantity || '' }
@@ -111,23 +115,23 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 							min="0"
 							onChange={ setStockQuantity }
 							placeholder={ translate( 'Quantity' ) } />
-					) }
-				</div>
-			</div>
-			{ product.manage_stock && (
-				<div className="products__product-backorders-wrapper">
-					<FormLabel>{ translate( 'Backorders' ) }</FormLabel>
-					<FormSelect name="backorders" onChange={ setBackorders } value={ product.backorders || 'no' } >
-						<option value="no">{ translate( 'Do not allow' ) }</option>
-						<option value="notify">{ translate( 'Allow, but notify customer' ) }</option>
-						<option value="yes">{ translate( 'Allow' ) }</option>
-					</FormSelect>
+					</div>
+				) }
+				{ product.manage_stock && (
+					<div className="products__product-backorders-wrapper">
+						<FormLabel>{ translate( 'Backorders' ) }</FormLabel>
+						<FormSelect name="backorders" onChange={ setBackorders } value={ product.backorders || 'no' } >
+							<option value="no">{ translate( 'Do not allow' ) }</option>
+							<option value="notify">{ translate( 'Allow, but notify customer' ) }</option>
+							<option value="yes">{ translate( 'Allow' ) }</option>
+						</FormSelect>
 
-					<FormSettingExplanation>{ translate(
-						'Backorders allow customers to purchase products that are out of stock.'
-					) }</FormSettingExplanation>
-				</div>
-			) }
+						<FormSettingExplanation>{ translate(
+							'Backorders allow customers to purchase products that are out of stock.'
+						) }</FormSettingExplanation>
+					</div>
+				) }
+			</div>
 		</Card>
 	);
 

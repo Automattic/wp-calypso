@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import edits from './edits-reducer';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import variations from './variations/reducer';
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	edits,
 	variations,
 } );

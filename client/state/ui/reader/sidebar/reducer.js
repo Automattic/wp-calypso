@@ -5,7 +5,7 @@ import {
 	READER_SIDEBAR_LISTS_TOGGLE,
 	READER_SIDEBAR_TAGS_TOGGLE
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 
 export function isListsOpen( state = false, action ) {
 	switch ( action.type ) {
@@ -25,7 +25,7 @@ export function isTagsOpen( state = false, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	isListsOpen,
 	isTagsOpen
 } );

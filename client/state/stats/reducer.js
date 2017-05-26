@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import posts from './posts/reducer';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import lists from './lists/reducer';
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	posts,
 	lists
 } );

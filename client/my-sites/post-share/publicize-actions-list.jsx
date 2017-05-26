@@ -25,6 +25,7 @@ import {
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+import { isEnabled } from 'config';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {
@@ -44,7 +45,6 @@ class PublicizeActionsList extends PureComponent {
 		shareDate,
 		service,
 	}, index ) {
-		const { translate } = this.props;
 		return (
 			<CompactCard className="post-share__footer-items" key={ index }>
 				<div className="post-share__footer-item">
@@ -64,20 +64,33 @@ class PublicizeActionsList extends PureComponent {
 						{ message }
 					</div>
 				</div>
-
-				<EllipsisMenu>
-					<PopoverMenuItem icon="visible">
-						{ translate( 'Preview' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem icon="pencil">
-						{ translate( 'Edit' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem icon="trash">
-						{ translate( 'Trash' ) }
-					</PopoverMenuItem>
-				</EllipsisMenu>
+				{ this.renderElipsisMenu() }
 			</CompactCard>
 		);
+	}
+
+	renderElipsisMenu() {
+		const actions = [];
+		const { translate } = this.props;
+
+		if ( isEnabled( 'publicize-preview' ) ) {
+			actions.push( <PopoverMenuItem icon="visible">
+				{ translate( 'Preview' ) }
+			</PopoverMenuItem> );
+		}
+
+		if ( this.state.selectedShareTab === SCHEDULED ) {
+			actions.push( <PopoverMenuItem icon="trash">
+				{ translate( 'Trash' ) }
+			</PopoverMenuItem> );
+		}
+
+		if ( actions.length === 0 ) {
+			return <div />;
+		}
+		return ( <EllipsisMenu>
+			{ actions }
+		</EllipsisMenu> );
 	}
 
 	renderActionsList = ( actions ) => (

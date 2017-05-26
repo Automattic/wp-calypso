@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import suggestions from './suggestions/reducer';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import {
 	USER_RECEIVE,
 } from 'state/action-types';
@@ -25,7 +25,7 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	suggestions,
 } );

@@ -7,7 +7,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import analyticsTracking from './analytics/reducer';
 import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';
@@ -71,7 +71,7 @@ import config from 'config';
  */
 
 // Consolidate the extension reducers under 'extensions' for namespacing.
-const extensions = combineReducersWithPersistence( extensionsModule.reducers() );
+const extensions = combineReducers( extensionsModule.reducers() );
 
 const reducers = {
 	analyticsTracking,
@@ -129,7 +129,7 @@ const reducers = {
 	wordads,
 };
 
-export const reducer = combineReducersWithPersistence( reducers );
+export const reducer = combineReducers( reducers );
 
 /**
  * @typedef {Object} ReduxStore

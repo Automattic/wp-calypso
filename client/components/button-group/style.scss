@@ -9,18 +9,23 @@
 			z-index: z-index( 'button-group-parent', '.button-group .button:focus' );
 			box-shadow: inset 1px 0 0 $blue-medium, 0 0 0 2px $blue-light;
 		}
+
 		&.is-primary:focus {
 			box-shadow: inset 1px 0 0 $blue-dark, 0 0 0 2px $blue-light;
 		}
+
 		&.is-scary:focus {
 			box-shadow: inset 1px 0 0 $alert-red, 0 0 0 2px lighten( $alert-red, 20% );
 		}
+
 		&.is-primary.is-scary:focus {
 			box-shadow: inset 1px 0 0 darken( $alert-red, 30% ), 0 0 0 2px lighten( $alert-red, 20% );
 		}
+
 		&:first-child:focus {
 			box-shadow: 0 0 0 2px $blue-light;
 		}
+
 		&.is-scary:first-child:focus {
 			box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
 		}
@@ -40,4 +45,29 @@
 	.section-header & .button {
 		margin-right: 0;
 	}
+
+	&.is-primary {
+		&.is-busy {
+			background-size: 120px 100%;
+			background-image: linear-gradient( -45deg, $blue-medium 28%, darken( $blue-medium, 5% ) 28%, darken( $blue-medium, 5% ) 72%, $blue-medium 72%);
+		}
+	}
+
+	&.is-busy {
+		animation: button__busy-animation 3000ms infinite linear;
+		background-size: 120px 100%;
+		background-image: linear-gradient( -45deg, lighten( $gray, 30% ) 28%, $white 28%, $white 72%, lighten( $gray, 30% ) 72%);
+		display: inline-block;
+		border-radius: 4px;
+
+		.button {
+			background-color: transparent;
+		}
+	}
+
+}
+
+
+@keyframes button__busy-animation {
+  0%   { background-position: 240px 0; }
 }

@@ -230,7 +230,11 @@ export const PostEditor = React.createClass( {
 		return (
 			<div className={ classes }>
 				<QueryPreferences />
-				<EditorConfirmationSidebar hideSidebar={ this.hideConfirmationSidebar } isActive={ this.state.showConfirmationSidebar } />
+				<EditorConfirmationSidebar
+					hideSidebar={ this.hideConfirmationSidebar }
+					isActive={ this.state.showConfirmationSidebar }
+					onPublish={ this.onPublish }
+				/>
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
@@ -653,13 +657,13 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
-	onPublish: function() {
+	onPublish: function( isConfirmed = false ) {
 		const edits = {
 			...this.props.edits,
 			status: 'publish'
 		};
 
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) && false === isConfirmed ) {
 			this.showConfirmationSidebar();
 			return;
 		}

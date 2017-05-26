@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { itemsSchema } from './schema';
 
 export const items = createReducer(
@@ -18,7 +18,7 @@ export const isRequesting = createReducer( false, {
 	[ READER_TEAMS_RECEIVE ]: () => false,
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	isRequesting,
 } );

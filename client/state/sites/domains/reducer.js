@@ -7,7 +7,7 @@ import {
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -79,7 +79,7 @@ export const errors = ( state = {}, action ) => {
 	return state;
 };
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	requesting,
 	errors

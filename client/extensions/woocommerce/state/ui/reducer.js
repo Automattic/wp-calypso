@@ -3,9 +3,9 @@
  */
 import products from './products/reducer';
 import shipping from './shipping/reducer';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	products,
 	shipping,
 } );

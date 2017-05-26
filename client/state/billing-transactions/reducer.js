@@ -10,7 +10,7 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { billingTransactionsSchema } from './schema';
 
 /**
@@ -53,7 +53,7 @@ export const sendingReceiptEmail = createReducer( {}, {
 	[ BILLING_RECEIPT_EMAIL_SEND_SUCCESS ]: ( state, { receiptId } ) => ( { ...state, [ receiptId ]: false } ),
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	requesting,
 	sendingReceiptEmail,

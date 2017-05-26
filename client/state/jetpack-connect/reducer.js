@@ -33,7 +33,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { combineReducersWithPersistence, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, isValidStateWithSchema } from 'state/utils';
 import {
 	jetpackConnectSessionsSchema,
 	jetpackAuthAttemptsSchema,
@@ -304,7 +304,7 @@ export function jetpackConnectSelectedPlans( state = {}, action ) {
 }
 jetpackConnectSelectedPlans.schema = jetpackConnectSelectedPlansSchema;
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	jetpackConnectSite,
 	jetpackSSO,
 	jetpackConnectAuthorize,

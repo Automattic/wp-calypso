@@ -147,6 +147,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'archive.org',
 		'codepen.io',
 		'www.audiomack.com',
+		'player.theplatform.com',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();

@@ -6,7 +6,7 @@ import {
 	WORDADS_STATUS_REQUEST_SUCCESS,
 	WORDADS_STATUS_REQUEST_FAILURE
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { wordadsStatusSchema } from './schema';
 
 export const items = createReducer( {}, {
@@ -21,7 +21,7 @@ export const fetchingItems = createReducer( {}, {
 	[ WORDADS_STATUS_REQUEST_FAILURE ]: ( state, action ) => Object.assign( {}, state, { [ action.siteId ]: false } ),
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	fetchingItems
 } );

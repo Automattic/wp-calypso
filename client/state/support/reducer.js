@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import {
 	SUPPORT_USER_ACTIVATE,
 	SUPPORT_USER_TOKEN_FETCH,
@@ -63,7 +63,7 @@ export function username( state = null, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	errorMessage,
 	isSupportUser,
 	isTransitioning,

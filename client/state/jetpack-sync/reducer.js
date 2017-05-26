@@ -14,7 +14,7 @@ import {
 	JETPACK_SYNC_STATUS_SUCCESS,
 	JETPACK_SYNC_STATUS_ERROR,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { getExpectedResponseKeys } from './utils';
 
 export function fullSyncRequest( state = {}, action ) {
@@ -97,7 +97,7 @@ export function syncStatus( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	syncStatus,
 	fullSyncRequest
 } );

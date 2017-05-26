@@ -14,7 +14,7 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 import { decodeEntities } from 'lib/formatting';
 import { itemsSchema } from './schema';
 
@@ -121,7 +121,7 @@ export const lastFetched = createReducer(
 	}
 );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	lastFetched,
 	queuedRequests,

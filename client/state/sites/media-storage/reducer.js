@@ -12,7 +12,7 @@ import {
 	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
 	SITE_MEDIA_STORAGE_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -53,7 +53,7 @@ export function fetchingItems( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	fetchingItems
 } );

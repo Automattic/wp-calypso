@@ -13,7 +13,7 @@ import {
 	EXPORT_STARTED,
 	EXPORT_FAILURE
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { States } from './constants';
 
 export function selectedPostType( state = null, action ) {
@@ -134,7 +134,7 @@ export function downloadURL( state = null, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	selectedPostType,
 	selectedAdvancedSettings,
 	exportingState,

@@ -42,7 +42,8 @@ var DomainSearchResults = React.createClass( {
 		offerMappingOption: React.PropTypes.bool,
 		onClickResult: React.PropTypes.func.isRequired,
 		onAddMapping: React.PropTypes.func,
-		onClickMapping: React.PropTypes.func
+		onClickMapping: React.PropTypes.func,
+		isSignupStep: React.PropTypes.bool,
 	},
 
 	renderDomainAvailability: function() {
@@ -75,6 +76,7 @@ var DomainSearchResults = React.createClass( {
 					buttonContent={ this.props.buttonContent }
 					selectedSite={ this.props.selectedSite }
 					cart={ this.props.cart }
+					isSignupStep={ this.props.isSignupStep }
 					onButtonClick={ this.props.onClickResult.bind( null, availableDomain ) } />
 				);
 		} else if ( suggestions.length !== 0 && includes( [ MAPPABLE, UNKNOWN ], lastDomainStatus ) && this.props.products.domain_map ) {
@@ -139,6 +141,7 @@ var DomainSearchResults = React.createClass( {
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
+						isSignupStep={ this.props.isSignupStep }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						onButtonClick={ this.props.onClickResult.bind( null, suggestion ) } />
@@ -152,6 +155,7 @@ var DomainSearchResults = React.createClass( {
 						products={ this.props.products }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						isSignupStep={ this.props.isSignupStep }
 						cart={ this.props.cart } />
 				);
 			}

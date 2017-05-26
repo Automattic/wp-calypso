@@ -10,7 +10,7 @@ import {
  * Internal dependencies
  */
 import status from './status/reducer';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -122,7 +122,7 @@ function plugin( state, action ) {
 	}
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	isRequesting,
 	plugins,
 	status
