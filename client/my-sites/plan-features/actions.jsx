@@ -19,6 +19,7 @@ const PlanFeaturesActions = ( {
 	primaryUpgrade = false,
 	freePlan = false,
 	onUpgradeClick = noop,
+	currentPlanMatch,
 	isPlaceholder = false,
 	isPopular,
 	isInSignup,
@@ -37,7 +38,10 @@ const PlanFeaturesActions = ( {
 		className
 	);
 
-	if ( current && ! isInSignup ) {
+	if (
+		( current || currentPlanMatch ) &&
+		! isInSignup
+	) {
 		upgradeButton = (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
 				{ canPurchase ? translate( 'Manage Plan' ) : translate( 'View Plan' ) }
@@ -86,6 +90,7 @@ PlanFeaturesActions.propTypes = {
 	available: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	freePlan: PropTypes.bool,
+	currentPlanMatch: PropTypes.bool.isRequired,
 	isPlaceholder: PropTypes.bool,
 	isLandingPage: PropTypes.bool
 };

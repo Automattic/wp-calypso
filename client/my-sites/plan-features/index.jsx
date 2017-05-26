@@ -105,7 +105,14 @@ class PlanFeatures extends Component {
 
 	renderMobileView() {
 		const {
-			canPurchase, translate, planProperties, isInSignup, isLandingPage, intervalType, site, basePlansPath
+			basePlansPath,
+			canPurchase,
+			intervalType,
+			isInSignup,
+			isLandingPage,
+			planProperties,
+			site,
+			translate,
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -126,6 +133,7 @@ class PlanFeatures extends Component {
 			const {
 				available,
 				currencyCode,
+				currentPlanMatch,
 				current,
 				features,
 				onUpgradeClick,
@@ -139,6 +147,7 @@ class PlanFeatures extends Component {
 				hideMonthly
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
+
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
@@ -165,6 +174,7 @@ class PlanFeatures extends Component {
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
+						currentPlanMatch={ currentPlanMatch }
 						primaryUpgrade={ primaryUpgrade }
 						available = { available }
 						onUpgradeClick={ onUpgradeClick }
@@ -174,6 +184,7 @@ class PlanFeatures extends Component {
 						isLandingPage={ isLandingPage }
 						isPopular = { popular }
 						planName ={ planConstantObj.getTitle() }
+						manageHref={ `/plans/my-plan/${ site.slug }` }
 					/>
 					<FoldableCard
 						header={ translate( 'Show features' ) }
@@ -271,6 +282,7 @@ class PlanFeatures extends Component {
 			const {
 				available,
 				current,
+				currentPlanMatch,
 				onUpgradeClick,
 				planName,
 				primaryUpgrade,
@@ -291,6 +303,7 @@ class PlanFeatures extends Component {
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
+						currentPlanMatch={ currentPlanMatch }
 						available = { available }
 						primaryUpgrade={ primaryUpgrade }
 						planName ={ planConstantObj.getTitle() }
@@ -385,6 +398,7 @@ class PlanFeatures extends Component {
 			const {
 				available,
 				current,
+				currentPlanMatch,
 				onUpgradeClick,
 				planName,
 				primaryUpgrade,
@@ -402,6 +416,7 @@ class PlanFeatures extends Component {
 					<PlanFeaturesActions
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
+						currentPlanMatch={ currentPlanMatch }
 						current={ current }
 						available = { available }
 						primaryUpgrade={ primaryUpgrade }
@@ -468,6 +483,7 @@ export default connect(
 				const newPlan = isNew( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
 				const showMonthlyPrice = ! relatedMonthlyPlan && showMonthly;
+				const currentPlanMatch = !! ( sitePlan && ( getPlanClass( sitePlan.product_slug ) === getPlanClass( plan ) ) );
 
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
 					isPlaceholder = true;
@@ -478,6 +494,7 @@ export default connect(
 					available: available,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
+					currentPlanMatch,
 					discountPrice: getPlanDiscountedRawPrice( state,
 						selectedSiteId,
 						plan,
