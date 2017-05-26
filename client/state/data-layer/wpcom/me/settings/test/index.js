@@ -44,14 +44,6 @@ describe( 'wpcom-api', () => {
 					path: '/me/settings',
 				}, action ) );
 			} );
-
-			it( 'should pass the original action along the middleware chain', () => {
-				const action = { type: 'DUMMY' };
-
-				settingsModule.requestUserSettings( { dispatch }, action, next );
-
-				expect( next ).to.have.been.calledWith( action );
-			} );
 		} );
 
 		describe( '#storeFetchedUserSettings', () => {
@@ -106,7 +98,6 @@ describe( 'wpcom-api', () => {
 					path: '/me/settings',
 					body: { foo: 'baz' }
 				}, action ) );
-				expect( next ).to.have.been.calledWith( action );
 			} );
 
 			it( 'should dispatch POST request to me/settings using explicit settingsOverride', () => {
@@ -125,7 +116,6 @@ describe( 'wpcom-api', () => {
 					path: '/me/settings',
 					body: { foo: 'baz' }
 				}, action ) );
-				expect( next ).to.have.been.calledWith( action );
 			} );
 
 			it( 'should not dispatch any HTTP request when there are no unsaved settings', () => {
@@ -140,7 +130,6 @@ describe( 'wpcom-api', () => {
 				settingsModule.saveUserSettings( { dispatch, getState }, action, next );
 
 				expect( dispatch ).to.not.have.been.called;
-				expect( next ).to.have.been.calledWith( action );
 			} );
 		} );
 

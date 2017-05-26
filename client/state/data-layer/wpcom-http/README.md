@@ -123,7 +123,7 @@ Notice how we can store that information inside of the responder actions just li
 ```js
 const missileMiddleware = ( store, action, next ) => {
 	if ( FIRE_ZE_MISSILES !== action.type ) {
-		return next( action );
+		return;
 	}
 
 	dispatch( http( {
@@ -142,7 +142,7 @@ import { getProgress } from 'state/data-layer/wpcom-http/utils';
 
 const packageMiddleware = ( store, action, next ) => {
 	if ( CREATE_PACKAGE !== action.type ) {
-		return next;
+		return;
 	}
 
 	const progress = getProgress( action );
@@ -227,10 +227,6 @@ const likePost = ( { dispatch }, action, next ) => {
 		// (not implemented yet)
 		whenOffline: QUEUE_REQUEST,
 	}, action ) );
-	
-	// feed LIKE_POST action along to reducers
-	// and skip additional data-layer middleware
-	next( action );
 }
 
 /**

@@ -36,8 +36,6 @@ describe( 'comment-email-subscriptions', () => {
 					onFailure: action,
 				} )
 			);
-
-			expect( next ).to.have.been.calledWith( action );
 		} );
 	} );
 

@@ -88,16 +88,6 @@ describe( 'get follow subscriptions', () => {
 				} )
 			);
 		} );
-
-		it( 'should pass the original action along the middleware chain', () => {
-			const action = requestPageAction();
-			const dispatch = sinon.spy();
-			const next = sinon.spy();
-
-			requestPage( { dispatch }, action, next );
-
-			expect( next ).to.have.been.calledWith( action );
-		} );
 	} );
 
 	describe( '#receivePageSuccess', () => {

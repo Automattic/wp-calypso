@@ -63,16 +63,6 @@ describe( 'unfollow tag request', () => {
 				} )
 			);
 		} );
-
-		it( 'should pass the original action along the middleware chain', () => {
-			const action = requestUnfollowAction( slug );
-			const dispatch = sinon.spy();
-			const next = sinon.spy();
-
-			requestUnfollow( { dispatch }, action, next );
-
-			expect( next ).to.have.been.calledWith( action );
-		} );
 	} );
 
 	describe( '#receiveUnfollowSuccess', () => {

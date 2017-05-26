@@ -86,7 +86,8 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( handlers )( store )( next )( action );
 
-		expect( next ).to.not.have.been.calledWith( action );
+		expect( next ).to.have.been.calledOnce;
+		expect( next ).to.have.been.calledWith( action );
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
@@ -99,7 +100,7 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( handlers )( store )( next )( action );
 
-		expect( next ).to.have.been.calledOnce;
+		expect( next ).to.have.been.calledTwice;
 		expect( next ).to.have.been.calledWith( local( action ) );
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );

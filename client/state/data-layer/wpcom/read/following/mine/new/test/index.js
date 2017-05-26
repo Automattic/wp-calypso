@@ -31,7 +31,6 @@ describe( 'requestFollow', () => {
 				onFailure: action,
 			} )
 		);
-		expect( next ).to.have.been.calledWith( action );
 	} );
 } );
 

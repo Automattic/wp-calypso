@@ -12,7 +12,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { subscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 
-export function requestCommentEmailUnsubscription( { dispatch }, action, next ) {
+export function requestCommentEmailUnsubscription( { dispatch }, action ) {
 	dispatch(
 		http( {
 			method: 'POST',
@@ -23,7 +23,6 @@ export function requestCommentEmailUnsubscription( { dispatch }, action, next ) 
 			onFailure: action,
 		} )
 	);
-	next( action );
 }
 
 export function receiveCommentEmailUnsubscription( store, action, next, response ) {

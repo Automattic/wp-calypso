@@ -31,7 +31,6 @@ describe( 'requestUnfollow', () => {
 				onFailure: action,
 			} )
 		);
-		expect( next ).to.have.been.calledWith( action );
 	} );
 } );
 
@@ -44,7 +43,6 @@ describe( 'receiveUnfollow', () => {
 			subscribed: false,
 		};
 		receiveUnfollow( { dispatch }, action, next, response );
-		expect( next ).to.be.calledWith( action );
 	} );
 
 	it( 'should dispatch an error notice and refollow when subscribed is true', () => {

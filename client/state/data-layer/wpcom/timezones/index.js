@@ -50,7 +50,7 @@ export const fromApi = ( { manual_utc_offsets, timezones, timezones_by_continent
 /*
  * Start a request to WordPress.com server to get the timezones data
  */
-export const fetchTimezones = ( { dispatch }, action, next ) => {
+export const fetchTimezones = ( { dispatch } ) => {
 	wpcom.req.get( '/timezones', { apiNamespace: 'wpcom/v2' } )
 		.then( data => {
 			dispatch( timezonesRequestSuccess() );
@@ -59,8 +59,6 @@ export const fetchTimezones = ( { dispatch }, action, next ) => {
 		.catch( error => {
 			dispatch( timezonesRequestFailure( error ) );
 		} );
-
-	return next( action );
 };
 
 export default {

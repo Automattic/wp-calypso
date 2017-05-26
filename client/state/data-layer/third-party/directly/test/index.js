@@ -64,11 +64,6 @@ describe( 'Directly data layer', () => {
 			expect( directly.askQuestion ).to.have.been.calledWith( questionText, name, email );
 		} );
 
-		it( 'should pass the action through', () => {
-			askQuestion( store, action, next );
-			expect( next ).to.have.been.calledWith( action );
-		} );
-
 		it( 'should dispatch an analytics event', () => (
 			askQuestion( store, action, next )
 				.then( () => expect( analytics.recordTracksEvent ).to.have.been.calledWith( 'calypso_directly_ask_question' ) )
@@ -81,11 +76,6 @@ describe( 'Directly data layer', () => {
 		it( 'should invoke the corresponding Directly function', () => {
 			initialize( store, action, next );
 			expect( directly.initialize ).to.have.been.calledOnce;
-		} );
-
-		it( 'should pass the action through', () => {
-			initialize( store, action, next );
-			expect( next ).to.have.been.calledWith( action );
 		} );
 
 		it( 'should dispatch an analytics event once initialization starts', () => {

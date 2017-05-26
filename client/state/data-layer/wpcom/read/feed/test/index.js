@@ -39,16 +39,6 @@ describe( 'wpcom-api', () => {
 					} )
 				);
 			} );
-
-			it( 'should pass the original action along the middleware chain', () => {
-				const action = requestFeedSearch( query );
-				const dispatch = sinon.spy();
-				const next = sinon.spy();
-
-				initiateFeedSearch( { dispatch }, action, next );
-
-				expect( next ).to.have.been.calledWith( action );
-			} );
 		} );
 
 		describe( '#receiveFeeds', () => {
