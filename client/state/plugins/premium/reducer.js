@@ -17,7 +17,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { combineReducersWithPersistence, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, isValidStateWithSchema } from 'state/utils';
 import { pluginInstructionSchema } from './schema';
 
 /*
@@ -154,7 +154,7 @@ function pluginStatus( state, action ) {
 	}
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	isRequesting,
 	hasRequested,
 	plugins

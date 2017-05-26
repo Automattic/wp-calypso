@@ -15,7 +15,7 @@ import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 function isValidParameters( context ) {
 	const validParameters = {
 		type: [ 'orders' ],
-		period: [ 'day', 'week', 'month', 'year' ],
+		unit: [ 'day', 'week', 'month', 'year' ],
 	};
 	return Object.keys( validParameters )
 		.every( param => includes( validParameters[ param ], context.params[ param ] ) );
@@ -28,9 +28,8 @@ export default function StatsController( context ) {
 
 	const props = {
 		type: context.params.type,
-		period: context.params.period,
+		unit: context.params.unit,
 		startDate: context.query.start_date,
-		endDate: context.query.end_date,
 	};
 	renderWithReduxStore(
 		<AsyncLoad

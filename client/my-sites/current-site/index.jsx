@@ -178,7 +178,7 @@ class CurrentSite extends Component {
 					: <AllSites />
 				}
 				{ ! isJetpack && this.getDomainWarnings() }
-				<SiteNotice site={ selectedSite } />
+				<SiteNotice site={ selectedSite } allSitesPath={ this.props.allSitesPath } />
 			</Card>
 		);
 	}

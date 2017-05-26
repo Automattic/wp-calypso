@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { pick } from 'lodash';
+import { connect } from 'react-redux';
+import { flowRight, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +20,9 @@ import FormToggle from 'components/forms/form-toggle/compact';
 import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
+import { cancelPreloadCache, preloadCache } from './state/cache/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isPreloadingCache } from './state/cache/selectors';
 
 /**
  * Render cache preload interval number input
@@ -67,6 +71,10 @@ class PreloadTab extends Component {
 		return options;
 	}
 
+	preload = () => this.props.preloadCache( this.props.siteId );
+
+	cancelPreload = () => this.props.cancelPreloadCache( this.props.siteId );
+
 	render() {
 		const {
 			fields,
@@ -74,6 +82,7 @@ class PreloadTab extends Component {
 			handleChange,
 			handleSelect,
 			handleSubmitForm,
+			isPreloading,
 			isRequesting,
 			isSaving,
 			translate,
@@ -234,14 +243,40 @@ class PreloadTab extends Component {
 				<SectionHeader label={ translate( 'Preload Cache' ) } />
 				<Card>
 				{ is_preloading
-					? <Button compact>{ translate( 'Cancel Cache Preload' ) }</Button>
-					: <Button compact>{ translate( 'Preload Cache Now' ) }</Button>
+					? <Button
+							compact
+							busy={ isPreloading }
+							disabled={ isPreloading }
+							onClick={ this.cancelPreload }>
+							{ translate( 'Cancel Cache Preload' ) }
+							</Button>
+					: <Button
+							compact
+							busy={ isPreloading }
+							disabled={ isPreloading }
+							onClick={ this.preload }>
+							{ translate( 'Preload Cache Now' ) }
+						</Button>
 				}
 				</Card>
 			</div>
 		);
 	}
 }
+
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			isPreloading: isPreloadingCache( state, siteId ),
+		};
+	},
+	{
+		cancelPreloadCache,
+		preloadCache,
+	},
+);
 
 const getFormSettings = settings => {
 	return pick( settings, [
@@ -259,4 +294,7 @@ const getFormSettings = settings => {
 	] );
 };
 
-export default WrapSettingsForm( getFormSettings )( PreloadTab );
+export default flowRight(
+	connectComponent,
+	WrapSettingsForm( getFormSettings )
+)( PreloadTab );

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { createReducer, combineReducersWithPersistence } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import magicLogin from './magic-login/reducer';
 import {
 	LOGIN_REQUEST,
@@ -77,7 +77,7 @@ export const twoFactorAuthPushPoll = createReducer( { inProgress: false, success
 	[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED ]: state => ( { ...state, inProgress: false, success: true } ),
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	isRequesting,
 	isRequestingTwoFactorAuth,
 	magicLogin,

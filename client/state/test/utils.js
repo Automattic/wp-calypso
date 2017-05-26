@@ -27,7 +27,7 @@ describe( 'utils', () => {
 	let keyedReducer;
 	let reducer;
 	let withSchemaValidation;
-	let combineReducersWithPersistence;
+	let combineReducers;
 	let isValidStateWithSchema;
 	let withoutPersistence;
 
@@ -39,7 +39,7 @@ describe( 'utils', () => {
 			extendAction,
 			keyedReducer,
 			withSchemaValidation,
-			combineReducersWithPersistence,
+			combineReducers,
 			isValidStateWithSchema,
 			withoutPersistence,
 		} = require( 'state/utils' ) );
@@ -281,11 +281,16 @@ describe( 'utils', () => {
 	} );
 	describe( '#keyedReducer', () => {
 		const grow = name => ( { type: 'GROW', name } );
+		const reset = name => ( { type: 'RESET', name } );
 
-		const age = ( state = 0, action ) =>
-			'GROW' === action.type
-				? state + 1
-				: state;
+		const age = ( state = 0, action ) => {
+			if ( 'GROW' === action.type ) {
+				return state + 1;
+			} else if ( 'RESET' === action.type ) {
+				return 0;
+			}
+			return state;
+		};
 
 		const prevState = deepFreeze( {
 			Bonobo: 13,
@@ -357,6 +362,11 @@ describe( 'utils', () => {
 		it( 'should not initialize a state if no changes and not keyed (simple state)', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( prevState, { type: 'STAY', name: 'Calypso' } ) ).to.equal( prevState );
+		} );
+
+		it( 'should remove keys if set back to initialState', () => {
+			const keyed = keyedReducer( 'name', age );
+			expect( keyed( { 10: 10 }, reset( '10' ) ) ).to.eql( { } );
 		} );
 	} );
 
@@ -431,7 +441,7 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( '#combineReducersWithPersistence', () => {
+	describe( '#combineReducers', () => {
 		const load = { type: DESERIALIZE };
 		const write = { type: SERIALIZE };
 		const grow = { type: 'GROW' };
@@ -475,7 +485,7 @@ describe( 'utils', () => {
 		let reducers;
 
 		beforeEach( () => {
-			reducers = combineReducersWithPersistence( {
+			reducers = combineReducers( {
 				age,
 				height
 			} );
@@ -512,12 +522,12 @@ describe( 'utils', () => {
 		} );
 
 		it( 'nested reducers work on load', () => {
-			reducers = combineReducersWithPersistence( {
+			reducers = combineReducers( {
 				age,
 				height,
 				date
 			} );
-			const nested = combineReducersWithPersistence( {
+			const nested = combineReducers( {
 				person: reducers,
 				count
 			} );
@@ -529,12 +539,12 @@ describe( 'utils', () => {
 		} );
 
 		it( 'nested reducers work on persist', () => {
-			reducers = combineReducersWithPersistence( {
+			reducers = combineReducers( {
 				age,
 				height,
 				date
 			} );
-			const nested = combineReducersWithPersistence( {
+			const nested = combineReducers( {
 				person: reducers,
 				count
 			} );
@@ -546,15 +556,15 @@ describe( 'utils', () => {
 		} );
 
 		it( 'deeply nested reducers work on load', () => {
-			reducers = combineReducersWithPersistence( {
+			reducers = combineReducers( {
 				age,
 				height,
 				date
 			} );
-			const nested = combineReducersWithPersistence( {
+			const nested = combineReducers( {
 				person: reducers,
 			} );
-			const veryNested = combineReducersWithPersistence( {
+			const veryNested = combineReducers( {
 				bob: nested,
 				count
 			} );
@@ -566,15 +576,15 @@ describe( 'utils', () => {
 		} );
 
 		it( 'deeply nested reducers work on persist', () => {
-			reducers = combineReducersWithPersistence( {
+			reducers = combineReducers( {
 				age,
 				height,
 				date
 			} );
-			const nested = combineReducersWithPersistence( {
+			const nested = combineReducers( {
 				person: reducers,
 			} );
-			const veryNested = combineReducersWithPersistence( {
+			const veryNested = combineReducers( {
 				bob: nested,
 				count
 			} );
@@ -586,14 +596,14 @@ describe( 'utils', () => {
 		} );
 
 		it( 'deeply nested reducers work with reducer with a custom handler', () => {
-			reducers = combineReducersWithPersistence( {
+			reducers = combineReducers( {
 				height,
 				date
 			} );
-			const nested = combineReducersWithPersistence( {
+			const nested = combineReducers( {
 				person: reducers,
 			} );
-			const veryNested = combineReducersWithPersistence( {
+			const veryNested = combineReducers( {
 				bob: nested,
 				count
 			} );
@@ -605,7 +615,7 @@ describe( 'utils', () => {
 		} );
 
 		it( 'uses the provided validation from withSchemaValidation', () => {
-			reducers = combineReducersWithPersistence( {
+			reducers = combineReducers( {
 				height: withSchemaValidation( schema, height ),
 				count
 			} );
@@ -618,7 +628,7 @@ describe( 'utils', () => {
 		} );
 
 		it( 'uses the provided validation from createReducer', () => {
-			reducers = combineReducersWithPersistence( {
+			reducers = combineReducers( {
 				height: createReducer( 160, {}, schema ),
 				count
 			} );

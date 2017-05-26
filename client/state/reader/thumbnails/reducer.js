@@ -7,7 +7,7 @@ import {
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 
 /**
  * Tracks mappings between embedUrls (iframe.src) --> thumbnails
@@ -63,7 +63,7 @@ export function requesting( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	requesting,
 } );

@@ -52,7 +52,6 @@ import {
 	setGeoLocation,
 } from './actions';
 import {
-	getHappychatTranscriptTimestamp,
 	isHappychatConnectionUninitialized,
 	wasHappychatRecentlyActive,
 	isHappychatClientConnected,
@@ -134,10 +133,11 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 		.catch( e => debug( 'failed to start happychat session', e, e.stack ) );
 };
 
-export const requestTranscript = ( connection, { getState, dispatch } ) => {
-	const timestamp = getHappychatTranscriptTimestamp( getState() );
-	debug( 'requesting transcript', timestamp );
-	return connection.transcript( timestamp ).then(
+export const requestTranscript = ( connection, { dispatch } ) => {
+	debug( 'requesting current session transcript' );
+
+	// passing a null timestamp will request the latest session's transcript
+	return connection.transcript( null ).then(
 		result => dispatch( receiveChatTranscript( result.messages, result.timestamp ) ),
 		e => debug( 'failed to get transcript', e )
 	);

@@ -10,7 +10,7 @@ import {
 	JETPACK_DISCONNECT_REQUEST_FAILURE,
 	JETPACK_DISCONNECT_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 const createRequestReducer = ( requesting ) => {
 	return ( state, { siteId } ) => ( {
@@ -51,7 +51,7 @@ export const disconnectRequests = createReducer( {}, {
 	[ JETPACK_DISCONNECT_REQUEST_SUCCESS ]: createRequestReducer( false )
 } );
 
-export const reducer = combineReducersWithPersistence( {
+export const reducer = combineReducers( {
 	items,
 	requests,
 	disconnectRequests

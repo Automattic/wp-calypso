@@ -76,6 +76,7 @@ export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
 export getSelectedOrAllSites from './get-selected-or-all-sites';
 export getSharingButtons from './get-sharing-buttons';
+export getSiteComments from './get-site-comments';
 export getSiteConnectionStatus from './get-site-connection-status';
 export getSiteDefaultPostFormat from './get-site-default-post-format';
 export getSiteGmtOffset from './get-site-gmt-offset';

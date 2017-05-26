@@ -22,7 +22,6 @@ class JetpackPlansGrid extends Component {
 		hideFreePlan: PropTypes.bool,
 		intervalType: PropTypes.string,
 		isLanding: PropTypes.bool,
-		landingType: PropTypes.string,
 		onSelect: PropTypes.func,
 		selectedSite: PropTypes.object,
 		showFirst: PropTypes.bool,
@@ -31,7 +30,6 @@ class JetpackPlansGrid extends Component {
 	renderConnectHeader() {
 		const {
 			isLanding,
-			landingType,
 			showFirst,
 			translate,
 		} = this.props;
@@ -45,11 +43,6 @@ class JetpackPlansGrid extends Component {
 		if ( isLanding ) {
 			headerText = translate( 'Pick a plan that\'s right for you.' );
 			subheaderText = '';
-
-			if ( landingType === 'vaultpress' ) {
-				headerText = translate( 'Select your VaultPress plan.' );
-				subheaderText = translate( 'VaultPress backup and security plans are now cheaper as part of Jetpack.' );
-			}
 		}
 		return (
 			<StepHeader

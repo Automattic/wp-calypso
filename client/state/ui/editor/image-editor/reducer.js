@@ -14,7 +14,7 @@ import {
 	IMAGE_EDITOR_STATE_RESET_ALL,
 	IMAGE_EDITOR_IMAGE_HAS_LOADED
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { AspectRatios } from './constants';
 
 export const defaultTransform = {
@@ -176,7 +176,7 @@ export function aspectRatio( state = AspectRatios.FREE, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	hasChanges,
 	fileInfo,
 	transform,

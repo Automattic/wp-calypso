@@ -9,7 +9,7 @@ import {
 	DESERIALIZE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import editor from './editor/reducer';
 import dropZone from './drop-zone/reducer';
 import guidedTour from './guided-tours/reducer';
@@ -83,7 +83,7 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 	return state;
 };
 
-const reducer = combineReducersWithPersistence( {
+const reducer = combineReducers( {
 	section,
 	isLoading,
 	layoutFocus,

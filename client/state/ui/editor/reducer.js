@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { EDITOR_START, POST_SAVE_SUCCESS } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import imageEditor from './image-editor/reducer';
 import videoEditor from './video-editor/reducer';
 import lastDraft from './last-draft/reducer';
@@ -27,7 +27,7 @@ export function postId( state = null, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	postId,
 	imageEditor,
 	videoEditor,

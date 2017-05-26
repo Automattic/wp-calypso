@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import { itemsSchema } from './schema';
 import {
@@ -46,7 +46,7 @@ export const items = createReducer( {}, {
 	}
 }, itemsSchema );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	requesting,
 	items
 } );

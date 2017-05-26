@@ -1788,8 +1788,8 @@ Undocumented.prototype.updateDns = function( domain, records, fn ) {
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
 };
 
-Undocumented.prototype.applyDnsTemplate = function( domain, template, variables, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/dns/template/' + template, { variables }, callback );
+Undocumented.prototype.applyDnsTemplate = function( domain, provider, service, variables, callback ) {
+	return this.wpcom.req.post( '/domains/' + domain + '/dns/providers/' + provider + '/services/' + service, { variables }, callback );
 };
 
 Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
@@ -123,8 +123,8 @@ const isReady = createReducer( false, {
 	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: () => true,
 } );
 
-export default combineReducersWithPersistence( {
-	data: combineReducersWithPersistence( {
+export default combineReducers( {
+	data: combineReducers( {
 		phone,
 		phoneValidated,
 		email,

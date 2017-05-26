@@ -15,7 +15,7 @@ export class Notice extends Component {
 		isCompact: false,
 		onDismissClick: noop,
 		showDismiss: true,
-		status: 'is-info',
+		status: null,
 		text: null,
 	};
 

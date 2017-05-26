@@ -6,7 +6,7 @@ import {
 	RECEIPT_FETCH_COMPLETED,
 	RECEIPT_FETCH_FAILED,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 
 export const initialReceiptState = {
 	data: null,
@@ -52,6 +52,6 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items
 } );

@@ -6,7 +6,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import {
 	THEME_UPLOAD_START,
@@ -116,7 +116,7 @@ export const inProgress = createReducer( {}, {
 	} ),
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	uploadedThemeId,
 	uploadError,
 	progressLoaded,

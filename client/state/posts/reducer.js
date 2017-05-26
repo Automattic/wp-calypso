@@ -7,7 +7,7 @@ import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues, map
  * Internal dependencies
  */
 import PostQueryManager from 'lib/query-manager/post';
-import { combineReducersWithPersistence, createReducer, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 import {
 	EDITOR_START,
 	EDITOR_STOP,
@@ -295,7 +295,7 @@ export function edits( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	counts,
 	items,
 	siteRequests,

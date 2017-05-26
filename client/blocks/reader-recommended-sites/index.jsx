@@ -13,9 +13,7 @@ import { connect } from 'react-redux';
 import { recordAction, recordTrackWithRailcar, recordTracksRailcarRender } from 'reader/stats';
 import Button from 'components/button';
 import { requestSiteBlock } from 'state/reader/site-blocks/actions';
-// @todo move this out of following-manage
-import ConnectedSubscriptionListItem
-	from 'reader/following-manage/connected-subscription-list-item';
+import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
 
 export class RecommendedSites extends React.PureComponent {
 	static propTypes = {

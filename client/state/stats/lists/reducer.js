@@ -6,7 +6,7 @@ import { merge, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import { getSerializedStatsQuery } from './utils';
 import { itemSchema } from './schema';
@@ -90,7 +90,7 @@ export function items( state = {}, action ) {
 }
 items.schema = itemSchema;
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	requests,
 	items
 } );

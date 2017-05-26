@@ -20,7 +20,7 @@ import {
 	JETPACK_SETTINGS_RECEIVE,
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 const createItemsReducer = ( active ) => {
 	return ( state, { siteId, moduleSlug } ) => {
@@ -121,7 +121,7 @@ export const requests = createReducer( {}, {
 	[ JETPACK_MODULES_REQUEST_SUCCESS ]: createModuleListRequestReducer( false )
 } );
 
-export const reducer = combineReducersWithPersistence( {
+export const reducer = combineReducers( {
 	items,
 	requests
 } );

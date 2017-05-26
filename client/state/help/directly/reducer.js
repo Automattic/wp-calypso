@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import {
 	DIRECTLY_INITIALIZATION_START,
@@ -21,6 +21,6 @@ export const status = createReducer( STATUS_UNINITIALIZED, {
 	[ DIRECTLY_INITIALIZATION_ERROR ]: () => STATUS_ERROR,
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	status,
 } );

@@ -7,7 +7,7 @@ import {
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
 import { getSerializedDomainsSuggestionsQuery } from './utils';
 
@@ -85,7 +85,7 @@ export function errors( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	requesting,
 	errors

@@ -6,7 +6,7 @@ import { isEqual, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import {
 	ROUTE_SET,
@@ -34,7 +34,7 @@ const current = createReducer( {}, {
 			: state,
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	initial,
 	current,
 } );

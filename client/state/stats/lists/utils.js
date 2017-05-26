@@ -104,6 +104,61 @@ export function getSerializedStatsQuery( query = {} ) {
 	return JSON.stringify( sortBy( toPairs( query ), ( pair ) => pair[ 0 ] ) );
 }
 
+/**
+ * Return data in a format used by 'components/chart`. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Object} payload - response
+ * @param {array} nullAttributes - properties on data objects to be initialized with
+ * a null value
+ * @return {array} - Array of data objects
+ */
+function parseChartData( payload, nullAttributes = [] ) {
+	if ( ! payload || ! payload.data ) {
+		return [];
+	}
+
+	return payload.data.map( function( record ) {
+		// Initialize data
+		const dataRecord = nullAttributes.reduce( ( memo, attribute ) => {
+			memo[ attribute ] = null;
+			return memo;
+		}, {} );
+
+		// Fill Field Values
+		record.forEach( function( value, i ) {
+			// Remove W from weeks
+			if ( 'period' === payload.fields[ i ] ) {
+				value = value.replace( /W/g, '-' );
+			}
+			dataRecord[ payload.fields[ i ] ] = value;
+		} );
+
+		dataRecord.labelDay = '';
+		dataRecord.labelWeek = '';
+		dataRecord.labelMonth = '';
+		dataRecord.labelYear = '';
+		dataRecord.classNames = [];
+
+		if ( dataRecord.period ) {
+			const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
+			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' );
+			if ( date.isValid() ) {
+				const dayOfWeek = date.toDate().getDay();
+				if ( ( 'day' === payload.unit ) && ( ( 6 === dayOfWeek ) || ( 0 === dayOfWeek ) ) ) {
+					dataRecord.classNames.push( 'is-weekend' );
+				}
+				dataRecord.labelDay = localizedDate.format( 'MMM D' );
+				dataRecord.labelWeek = localizedDate.format( 'MMM D' );
+				dataRecord.labelMonth = localizedDate.format( 'MMM' );
+				dataRecord.labelYear = localizedDate.format( 'YYYY' );
+			}
+		}
+
+		return dataRecord;
+	} );
+}
+
 export const normalizers = {
 	/**
 	 * Returns a normalized payload from `/sites/{ site }/stats`
@@ -621,51 +676,11 @@ export const normalizers = {
 	},
 
 	statsVisits( payload ) {
-		if ( ! payload || ! payload.data ) {
-			return [];
-		}
+		return parseChartData( payload, [ 'visits', 'likes', 'visitors', 'comments', 'posts' ] );
+	},
 
-		const attributes = [ 'visits', 'likes', 'visitors', 'comments', 'posts' ];
-
-		return payload.data.map( function( record ) {
-			// Initialize data
-			const dataRecord = attributes.reduce( ( memo, attribute ) => {
-				memo[ attribute ] = null;
-				return memo;
-			}, {} );
-
-			// Fill Field Values
-			record.forEach( function( value, i ) {
-				// Remove W from weeks
-				if ( 'period' === payload.fields[ i ] ) {
-					value = value.replace( /W/g, '-' );
-				}
-				dataRecord[ payload.fields[ i ] ] = value;
-			} );
-
-			dataRecord.labelDay = '';
-			dataRecord.labelWeek = '';
-			dataRecord.labelMonth = '';
-			dataRecord.labelYear = '';
-			dataRecord.classNames = [];
-
-			if ( dataRecord.period ) {
-				const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
-				const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' );
-				if ( date.isValid() ) {
-					const dayOfWeek = date.toDate().getDay();
-					if ( ( 'day' === payload.unit ) && ( ( 6 === dayOfWeek ) || ( 0 === dayOfWeek ) ) ) {
-						dataRecord.classNames.push( 'is-weekend' );
-					}
-					dataRecord.labelDay = localizedDate.format( 'MMM D' );
-					dataRecord.labelWeek = localizedDate.format( 'MMM D' );
-					dataRecord.labelMonth = localizedDate.format( 'MMM' );
-					dataRecord.labelYear = localizedDate.format( 'YYYY' );
-				}
-			}
-
-			return dataRecord;
-		} );
+	statsOrders( payload ) {
+		return parseChartData( payload );
 	},
 
 	/*

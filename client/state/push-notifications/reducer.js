@@ -7,7 +7,7 @@ import omit from 'lodash/omit';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, isValidStateWithSchema } from 'state/utils';
 
 import {
 	settingsSchema,
@@ -170,7 +170,7 @@ function settings( state = {}, action ) {
 }
 settings.hasCustomPersistence = true;
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	settings,
 	system
 } );

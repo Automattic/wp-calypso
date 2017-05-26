@@ -15,7 +15,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { combineReducersWithPersistence, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -72,7 +72,7 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	requesting,
 	items
 } );

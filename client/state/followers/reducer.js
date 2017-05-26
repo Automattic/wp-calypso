@@ -18,7 +18,7 @@ import {
 	FOLLOWER_REMOVE_REQUEST,
 	FOLLOWER_REMOVE_SUCCESS,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { getSerializedQuery, normalizeFollower } from 'state/followers/utils';
 import { FOLLOWERS_PER_PAGE } from 'state/followers/constants';
 
@@ -92,7 +92,7 @@ export function removeFromSiteRequests( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	queries,
 	queryRequests,

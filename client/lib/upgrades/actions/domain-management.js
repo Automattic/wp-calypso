@@ -283,8 +283,8 @@ function deleteDns( domainName, record, onComplete ) {
 	} );
 }
 
-function applyDnsTemplate( domainName, template, variables, onComplete ) {
-	wpcom.applyDnsTemplate( domainName, template, variables, ( error, data ) => {
+function applyDnsTemplate( domainName, provider, service, variables, onComplete ) {
+	wpcom.applyDnsTemplate( domainName, provider, service, variables, ( error, data ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DNS_APPLY_TEMPLATE_COMPLETED,

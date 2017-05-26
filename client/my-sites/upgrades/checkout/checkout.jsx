@@ -299,9 +299,13 @@ const Checkout = React.createClass( {
 			} );
 		}
 
+		if ( selectedSiteId ) {
+			this.props.requestSite( selectedSiteId );
+		}
+
 		if (
 			( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) ||
-			( isDomainOnly && cartItems.hasPlan( cart ) )
+			( isDomainOnly && cartItems.hasPlan( cart ) && ! selectedSiteId )
 		) {
 			notices.info(
 				translate( 'Almost done…' )
@@ -319,10 +323,6 @@ const Checkout = React.createClass( {
 				);
 
 				return;
-			}
-
-			if ( selectedSiteId ) {
-				this.props.requestSite( selectedSiteId );
 			}
 		}
 
