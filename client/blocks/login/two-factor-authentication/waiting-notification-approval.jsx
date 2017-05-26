@@ -31,17 +31,7 @@ class WaitingTwoFactorNotificationApproval extends Component {
 	};
 
 	componentDidMount() {
-		this.props.startPollAppPushAuth();
-	}
-
-	componentWillUnmount() {
-		this.props.stopPollAppPushAuth();
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.pushSuccess && nextProps.pushSuccess ) {
-			this.props.onSuccess();
-		}
+		this.props.startPollAppPushAuth( this.props.onSuccess );
 	}
 
 	render() {

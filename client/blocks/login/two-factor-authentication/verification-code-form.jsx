@@ -17,8 +17,6 @@ import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import { loginUserWithTwoFactorVerificationCode } from 'state/login/actions';
 import {
-	getTwoFactorUserId,
-	getTwoFactorAuthNonce,
 	getTwoFactorAuthRequestError,
 	isRequestingTwoFactorAuth,
 } from 'state/login/selectors';
@@ -41,6 +39,18 @@ class VerificationCodeForm extends Component {
 		twoStepCode: ''
 	};
 
+	componentWillMount() {
+		this.maybeSendSmsCode( this.props );
+	}
+
+	maybeSendSmsCode( props ) {
+		if ( props.twoFactorAuthType !== 'sms' ) {
+			return;
+		}
+
+		props.sendSmsCode();
+	}
+
 	componentWillReceiveProps = ( nextProps ) => {
 		const hasError = this.props.twoFactorAuthRequestError !== nextProps.twoFactorAuthRequestError;
 		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
@@ -48,6 +58,8 @@ class VerificationCodeForm extends Component {
 		if ( isNewPage ) {
 			// Resets the code input value when changing pages
 			this.setState( { twoStepCode: '' } );
+
+			this.maybeSendSmsCode( nextProps );
 		}
 
 		if ( ( isNewPage || hasError ) && ( this.input !== null ) ) {
@@ -64,10 +76,10 @@ class VerificationCodeForm extends Component {
 	onCodeSubmit = ( event ) => {
 		event.preventDefault();
 
-		const { userId, twoStepNonce, rememberMe } = this.props;
+		const { rememberMe } = this.props;
 		const { twoStepCode } = this.state;
 
-		this.props.loginUserWithTwoFactorVerificationCode( userId, twoStepCode, twoStepNonce, rememberMe ).then( () => {
+		this.props.loginUserWithTwoFactorVerificationCode( twoStepCode, rememberMe ).then( () => {
 			this.props.onSuccess();
 		} ).catch( ( errorMessage ) => {
 			this.props.recordTracksEvent( 'calypso_two_factor_verification_code_failure', {
@@ -156,8 +168,6 @@ export default connect(
 	( state ) => ( {
 		isRequestingTwoFactorAuth: isRequestingTwoFactorAuth( state ),
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
-		userId: getTwoFactorUserId( state ),
-		twoStepNonce: getTwoFactorAuthNonce( state ),
 	} ),
 	{
 		loginUserWithTwoFactorVerificationCode,

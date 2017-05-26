@@ -15,7 +15,6 @@ import {
 	getTwoFactorAuthNonce,
 	isTwoFactorAuthTypeSupported,
 } from 'state/login/selectors';
-import { sendSmsCode } from 'state/login/actions';
 import { login } from 'lib/paths';
 
 class TwoFactorActions extends Component {
@@ -29,11 +28,7 @@ class TwoFactorActions extends Component {
 	sendSmsCode = ( event ) => {
 		event.preventDefault();
 
-		const { userId, twoStepNonce } = this.props;
-
 		page( login( { isNative: true, twoFactorAuthType: 'sms' } ) );
-
-		this.props.sendSmsCode( userId, twoStepNonce );
 	};
 
 	render() {
@@ -90,8 +85,5 @@ export default connect(
 		isPushSupported: isTwoFactorAuthTypeSupported( state, 'push' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 		userId: getTwoFactorUserId( state ),
-	} ),
-	{
-		sendSmsCode,
-	}
+	} )
 )( localize( TwoFactorActions ) );

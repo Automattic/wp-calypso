@@ -25,6 +25,11 @@ import {
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
 } from 'state/action-types';
+import {
+	getTwoFactorUserId,
+	getTwoFactorAuthNonce,
+} from 'state/login/selectors';
+import queueOperation from 'lib/queued-operation';
 
 const loginErrorMessages = {
 	empty_password: translate( 'Please be sure to enter your password.' ),
@@ -37,7 +42,7 @@ const loginErrorMessages = {
 		'Please double check your information and try again.' ),
 	account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
 		"WordPress.com and click the activation link. You'll be able to log in after that." ),
-	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
+	sms_code_throttled: translate( 'You can only request a code via SMS once per minute. Please wait and try again.' ),
 	forbidden_for_automattician: 'Cannot use social login with an Automattician account',
 };
 
@@ -68,6 +73,14 @@ function getMessageFromHTTPError( error ) {
 	return get( error, 'response.body.data', error.message );
 }
 
+function createRequest( url, body ) {
+	return request.post( url )
+		.withCredentials()
+		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
+		.accept( 'application/json' )
+		.send( body );
+}
+
 /**
  * Attempt to login a user.
  *
@@ -82,11 +95,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 		usernameOrEmail
 	} );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=login-endpoint' )
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
+	return createRequest( 'https://wordpress.com/wp-login.php?action=login-endpoint', {
 			username: usernameOrEmail,
 			password,
 			remember_me: rememberMe,
@@ -116,28 +125,23 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 /**
  * Attempt to login a user when a two factor verification code is sent.
  *
- * @param  {Number}    user_id        Id of the user trying to log in.
  * @param  {String}    two_step_code  Verification code for the user.
- * @param  {String}    two_step_nonce Nonce generated for verification code submission.
  * @param  {Boolean}   remember_me       Flag for remembering the user for a while after logging in.
  * @return {Function}                 Action thunk to trigger the login process.
  */
-export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, two_step_nonce, remember_me ) => dispatch => {
+export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_me ) => ( dispatch, getState ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
-			user_id,
+	return queueOperation(
+		'two_step_nonce',
+		() => createRequest( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint', {
+			user_id: getTwoFactorUserId( getState() ),
+			two_step_nonce: getTwoFactorAuthNonce( getState() ),
 			two_step_code,
-			two_step_nonce,
 			remember_me,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
-		} )
-		.then( () => {
+		} ).then( () => {
 			dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
 		} )
 		.catch( ( error ) => {
@@ -150,7 +154,8 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 			} );
 
 			return Promise.reject( errorMessage );
-		} );
+		} )
+	);
 };
 
 /**
@@ -163,39 +168,32 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 export const loginSocialUser = ( service, token ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=social-login-endpoint' )
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
-			service,
-			token,
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-		} )
-		.then( () => {
-			dispatch( { type: SOCIAL_LOGIN_REQUEST_SUCCESS } );
-		} )
-		.catch( ( error ) => {
-			const errorMessage = getMessageFromHTTPError( error );
+	return createRequest( 'https://wordpress.com/wp-login.php?action=social-login-endpoint', {
+		service,
+		token,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+	} ).then( () => {
+		dispatch( { type: SOCIAL_LOGIN_REQUEST_SUCCESS } );
+	} )
+	.catch( ( error ) => {
+		const errorMessage = getMessageFromHTTPError( error );
 
-			dispatch( {
-				type: SOCIAL_LOGIN_REQUEST_FAILURE,
-				error: errorMessage,
-			} );
-
-			return Promise.reject( errorMessage );
+		dispatch( {
+			type: SOCIAL_LOGIN_REQUEST_FAILURE,
+			error: errorMessage,
 		} );
+
+		return Promise.reject( errorMessage );
+	} );
 };
 
 /**
  * Sends a two factor authentication recovery code to the given user.
  *
- * @param  {Number}    userId        Id of the user trying to log in.
- * @param  {String}    twoStepNonce  Nonce generated for verification code submission.
  * @return {Function}                Action thunk to trigger the request.
  */
-export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
+export const sendSmsCode = () => ( dispatch, getState ) => {
 	dispatch( {
 		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 		notice: {
@@ -203,16 +201,14 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 		},
 	} );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' )
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
-			user_id: userId,
-			two_step_nonce: twoStepNonce,
+
+	return queueOperation( 'two_step_nonce',
+		() => createRequest( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint', {
+			user_id: getTwoFactorUserId( getState() ),
+			two_step_nonce: getTwoFactorAuthNonce( getState() ),
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
-		} )
-		.then( ( response ) => {
+		} ).then( ( response ) => {
 			const phoneNumber = get( response, 'body.data.phone_number' );
 			const message = translate( 'A text message with the verification code was just sent to your ' +
 				'phone number ending in %(phoneNumber)s', {
@@ -238,8 +234,12 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 				error: { message, field },
 				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
 			} );
-		} );
+		} )
+	);
 };
 
-export const startPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } );
+export const startPollAppPushAuth = successCallback => ( {
+	type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
+	successCallback
+} );
 export const stopPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );
