@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, pick } from 'lodash';
+import { flowRight, get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -53,11 +53,13 @@ class PreloadTab extends Component {
 
 	handlePreloadRefreshChange = () => {
 		this.setState( { preloadRefresh: ! this.state.preloadRefresh }, () => {
-			if ( this.state.preloadRefresh ) {
-				return;
-			}
+			const { fields, setFieldValue } = this.props;
 
-			this.props.setFieldValue( 'preload_interval', '0' );
+			if ( this.state.preloadRefresh ) {
+				setFieldValue( 'preload_interval', get( fields, 'minimum_preload_interval', '0' ) );
+			} else {
+				setFieldValue( 'preload_interval', '0' );
+			}
 		} );
 	}
 
