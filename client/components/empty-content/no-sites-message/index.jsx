@@ -17,7 +17,7 @@ const NoSitesMessage = ( { translate } ) => {
 			line={ translate( 'Would you like to start one?' ) }
 			action={ translate( 'Create Site' ) }
 			actionURL={ config( 'signup_url' ) + '?ref=calypso-nosites' }
-			illustration={ '/calypso/images/drake/drake-nosites.svg' }
+			illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 		/>
 	);
 };
