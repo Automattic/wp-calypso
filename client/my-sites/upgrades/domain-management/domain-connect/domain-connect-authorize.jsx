@@ -21,7 +21,7 @@ const wpcom = wp.undocumented();
 class DomainConnectAuthorize extends Component {
 	static propTypes = {
 		providerId: PropTypes.string.isRequired,
-		templateId: PropTypes.string.isRequired
+		serviceId: PropTypes.string.isRequired
 	};
 
 	state = {
@@ -32,10 +32,10 @@ class DomainConnectAuthorize extends Component {
 	};
 
 	componentDidMount() {
-		const { providerId, params, translate } = this.props,
+		const { providerId, serviceId, params, translate } = this.props,
 			{ domain } = params;
 
-		wpcom.getDnsTemplateRecords( domain, providerId, params )
+		wpcom.getDnsTemplateRecords( domain, providerId, serviceId, params )
 			.then( data => {
 				this.setState( {
 					action: actionType.READY_TO_SUBMIT,
@@ -61,7 +61,7 @@ class DomainConnectAuthorize extends Component {
 	}
 
 	handleClickConfirm = () => {
-		const { providerId, params, translate } = this.props,
+		const { providerId, serviceId, params, translate } = this.props,
 			{ domain } = params;
 
 		this.setState( {
@@ -69,7 +69,7 @@ class DomainConnectAuthorize extends Component {
 			noticeType: null
 		} );
 
-		wpcom.applyDnsTemplate( domain, providerId, params )
+		wpcom.applyDnsTemplate( domain, providerId, serviceId, params )
 			.then( () => {
 				this.setState( {
 					action: actionType.CLOSE,
