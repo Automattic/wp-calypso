@@ -488,11 +488,14 @@ class PluginMeta extends Component {
 					<PluginAutomatedTransfer plugin={ this.props.plugin } />
 				}
 
-				{ ( get( this.props.selectedSite, 'jetpack' ) || this.hasBusinessPlan() || this.isWpcomPreinstalled() ) &&
+				{ ( this.props.selectedSite &&
+					get( this.props.selectedSite, 'jetpack' ) || this.hasBusinessPlan() || this.isWpcomPreinstalled() ) &&
 					<div style={ { marginBottom: 16 } } />
 				}
 
-				{ ! get( this.props.selectedSite, 'jetpack' ) && ! this.hasBusinessPlan() && ! this.isWpcomPreinstalled() &&
+				{ this.props.selectedSite && ! get( this.props.selectedSite, 'jetpack' ) &&
+					! this.hasBusinessPlan() &&
+					! this.isWpcomPreinstalled() &&
 					<div className="plugin-meta__upgrade_nudge">
 						<Banner
 							feature={ FEATURE_UPLOAD_PLUGINS }
