@@ -312,6 +312,14 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plan-features__renew-or-expiry {
+	margin-bottom: 1.4em;
+
+	@include breakpoint( ">660px" ) {
+		height: 28px;
+	}
+}
+
 .plan-features__header-banner {
 	box-sizing: border-box;
 	position: absolute;
