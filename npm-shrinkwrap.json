@@ -619,12 +619,8 @@
       "version": "1.0.0"
     },
     "batch": {
-      "version": "0.5.3",
+      "version": "0.6.1",
       "dev": true
-    },
-    "bcrypt-pbkdf": {
-      "version": "1.0.1",
-      "optional": true
     },
     "beeper": {
       "version": "1.1.1",
@@ -774,7 +770,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000670"
+      "version": "1.0.30000671"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -1398,10 +1394,6 @@
         }
       }
     },
-    "ecc-jsbn": {
-      "version": "0.1.1",
-      "optional": true
-    },
     "editions": {
       "version": "1.3.3",
       "dev": true
@@ -1573,22 +1565,15 @@
           "version": "2.7.3",
           "dev": true
         },
-        "source-map": {
-          "version": "0.2.0",
-          "dev": true,
-          "optional": true
+        "estraverse": {
+          "version": "1.9.3",
+          "dev": true
         }
       }
     },
     "escope": {
       "version": "3.6.0",
-      "dev": true,
-      "dependencies": {
-        "estraverse": {
-          "version": "4.2.0",
-          "dev": true
-        }
-      }
+      "dev": true
     },
     "esformatter": {
       "version": "0.7.3",
@@ -1674,21 +1659,7 @@
     },
     "eslines": {
       "version": "0.0.13",
-      "dev": true,
-      "dependencies": {
-        "fast-levenshtein": {
-          "version": "1.1.4",
-          "dev": true
-        },
-        "optionator": {
-          "version": "0.8.1",
-          "dev": true
-        },
-        "wordwrap": {
-          "version": "1.0.0",
-          "dev": true
-        }
-      }
+      "dev": true
     },
     "eslint": {
       "version": "3.8.1",
@@ -1706,12 +1677,16 @@
           "version": "1.5.0",
           "dev": true
         },
-        "estraverse": {
-          "version": "4.2.0",
+        "fast-levenshtein": {
+          "version": "2.0.6",
           "dev": true
         },
         "inquirer": {
           "version": "0.12.0",
+          "dev": true
+        },
+        "optionator": {
+          "version": "0.8.2",
           "dev": true
         },
         "strip-bom": {
@@ -1728,6 +1703,10 @@
         },
         "user-home": {
           "version": "2.0.0",
+          "dev": true
+        },
+        "wordwrap": {
+          "version": "1.0.0",
           "dev": true
         }
       }
@@ -1777,7 +1756,7 @@
       }
     },
     "estraverse": {
-      "version": "1.9.3",
+      "version": "4.2.0",
       "dev": true
     },
     "estree-walker": {
@@ -1885,7 +1864,7 @@
       "version": "1.0.2"
     },
     "fast-levenshtein": {
-      "version": "2.0.6",
+      "version": "1.1.4",
       "dev": true
     },
     "fast-luhn": {
@@ -2011,7 +1990,7 @@
       "dev": true
     },
     "flow-parser": {
-      "version": "0.46.0",
+      "version": "0.47.0",
       "dev": true
     },
     "flux": {
@@ -2865,21 +2844,7 @@
     },
     "jest-environment-jsdom": {
       "version": "17.0.2",
-      "dev": true,
-      "dependencies": {
-        "acorn": {
-          "version": "4.0.13",
-          "dev": true
-        },
-        "jsdom": {
-          "version": "9.12.0",
-          "dev": true
-        },
-        "webidl-conversions": {
-          "version": "4.0.1",
-          "dev": true
-        }
-      }
+      "dev": true
     },
     "jest-environment-node": {
       "version": "17.0.2",
@@ -3045,10 +3010,6 @@
         }
       }
     },
-    "jodid25519": {
-      "version": "1.0.2",
-      "optional": true
-    },
     "jquery": {
       "version": "1.11.3"
     },
@@ -3067,10 +3028,6 @@
     "js-yaml": {
       "version": "3.8.4",
       "dev": true
-    },
-    "jsbn": {
-      "version": "0.1.1",
-      "optional": true
     },
     "jscodeshift": {
       "version": "0.3.30",
@@ -3143,18 +3100,12 @@
       }
     },
     "jsdom": {
-      "version": "7.2.2",
+      "version": "9.12.0",
       "dev": true,
-      "optional": true,
       "dependencies": {
         "acorn": {
-          "version": "2.7.0",
+          "version": "4.0.13",
           "dev": true
-        },
-        "acorn-globals": {
-          "version": "1.0.9",
-          "dev": true,
-          "optional": true
         }
       }
     },
@@ -3289,7 +3240,7 @@
       }
     },
     "levelup": {
-      "version": "1.3.6"
+      "version": "1.3.7"
     },
     "leven": {
       "version": "1.0.2",
@@ -3939,7 +3890,7 @@
       "version": "0.6.1"
     },
     "optionator": {
-      "version": "0.8.2",
+      "version": "0.8.1",
       "dev": true,
       "dependencies": {
         "wordwrap": {
@@ -4222,13 +4173,7 @@
       }
     },
     "prismjs": {
-      "version": "1.6.0",
-      "dependencies": {
-        "clipboard": {
-          "version": "1.6.1",
-          "optional": true
-        }
-      }
+      "version": "1.6.0"
     },
     "private": {
       "version": "0.1.7"
@@ -4355,10 +4300,6 @@
         },
         "eslint": {
           "version": "2.13.1",
-          "dev": true
-        },
-        "estraverse": {
-          "version": "4.2.0",
           "dev": true
         },
         "file-entry-cache": {
@@ -4861,31 +4802,27 @@
       "dev": true
     },
     "serve-index": {
-      "version": "1.8.0",
+      "version": "1.9.0",
       "dev": true,
       "dependencies": {
         "accepts": {
           "version": "1.3.3",
           "dev": true
         },
+        "debug": {
+          "version": "2.6.8",
+          "dev": true
+        },
         "escape-html": {
           "version": "1.0.3",
           "dev": true
         },
-        "http-errors": {
-          "version": "1.5.1",
-          "dev": true
-        },
-        "inherits": {
-          "version": "2.0.3",
+        "ms": {
+          "version": "2.0.0",
           "dev": true
         },
         "negotiator": {
           "version": "0.6.1",
-          "dev": true
-        },
-        "setprototypeof": {
-          "version": "1.0.2",
           "dev": true
         }
       }
@@ -5451,12 +5388,8 @@
     "tween.js": {
       "version": "16.3.1"
     },
-    "tweetnacl": {
-      "version": "0.14.5",
-      "optional": true
-    },
     "twemoji": {
-      "version": "2.2.5"
+      "version": "2.3.0"
     },
     "type-check": {
       "version": "0.3.2",
@@ -5638,9 +5571,8 @@
       "version": "0.2.9"
     },
     "webidl-conversions": {
-      "version": "2.0.1",
-      "dev": true,
-      "optional": true
+      "version": "4.0.1",
+      "dev": true
     },
     "webpack": {
       "version": "1.13.1",
@@ -5964,11 +5896,6 @@
           "dev": true
         }
       }
-    },
-    "whatwg-url-compat": {
-      "version": "0.6.5",
-      "dev": true,
-      "optional": true
     },
     "which": {
       "version": "1.2.14"
