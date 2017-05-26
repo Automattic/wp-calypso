@@ -32,6 +32,11 @@
 	}
 }
 
+/* clamp to 3 lines for search-rec excerpts */
+ .is-reader-page .search-stream .reader-related-card-v2__excerpt.post-excerpt {
+	max-height: 15px * 1.6 * 3;
+}
+
 // Custom breakpoints needed to match Related Posts
 $reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
 $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
