@@ -16,7 +16,7 @@ export function domainConnectAuthorize( context, next ) {
 			path={ context.path }
 			params={ context.query }
 			providerId={ context.params.providerId }
-			templateId={ context.params.templateId }
+			serviceId={ context.params.serviceId }
 		/>
 	);
 	context.secondary = null;
