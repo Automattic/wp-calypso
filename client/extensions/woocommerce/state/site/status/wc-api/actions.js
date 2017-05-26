@@ -4,18 +4,20 @@
 import {
 	WOOCOMMERCE_API_SET_ERROR,
 	WOOCOMMERCE_API_CLEAR_ERROR,
-} from '../action-types';
+} from '../../../action-types';
 
-export function error( siteId, originalAction, data, time = Date.now() ) {
+export function setError( siteId, originalAction, data, time = Date.now() ) {
 	return {
 		type: WOOCOMMERCE_API_SET_ERROR,
-		payload: { siteId, originalAction, data, time },
+		siteId,
+		payload: { originalAction, data, time },
 	};
 }
 
 export function clearError( siteId ) {
 	return {
 		type: WOOCOMMERCE_API_CLEAR_ERROR,
-		payload: { siteId },
+		siteId,
 	};
 }
+

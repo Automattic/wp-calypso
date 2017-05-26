@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import request from '../../request';
-import { error } from '../../actions';
+import { setError } from '../../../site/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL,
 	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL_SUCCESS,
@@ -42,6 +42,6 @@ export const fetchSettingsGeneral = ( siteId ) => ( dispatch, getState ) => {
 			dispatch( fetchSettingsGeneralSuccess( siteId, data ) );
 		} )
 		.catch( err => {
-			dispatch( error( siteId, getAction, err ) );
+			dispatch( setError( siteId, getAction, err ) );
 		} );
 };

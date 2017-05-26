@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../../reducer';
+import wcReducer from '../../../reducer';
 import {
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
 } from '../../../action-types';
@@ -70,23 +71,23 @@ describe( 'fetchProductCategoriesSuccess', () => {
 			{ id: 13, name: 'Bad Slug', slug: 15 },
 		];
 
-		let newState = reducer( state, fetchProductCategoriesSuccess( siteId, missingId ) );
-		expect( newState[ siteId ].error.data.message ).to.equal( 'Invalid Categories Array' );
+		let newState = wcReducer( state, fetchProductCategoriesSuccess( siteId, missingId ) );
+		expect( newState.site[ siteId ].status.wcApi.error.data.message ).to.equal( 'Invalid Categories Array' );
 
-		newState = reducer( state, fetchProductCategoriesSuccess( siteId, missingName ) );
-		expect( newState[ siteId ].error.data.message ).to.equal( 'Invalid Categories Array' );
+		newState = wcReducer( state, fetchProductCategoriesSuccess( siteId, missingName ) );
+		expect( newState.site[ siteId ].status.wcApi.error.data.message ).to.equal( 'Invalid Categories Array' );
 
-		newState = reducer( state, fetchProductCategoriesSuccess( siteId, missingSlug ) );
-		expect( newState[ siteId ].error.data.message ).to.equal( 'Invalid Categories Array' );
+		newState = wcReducer( state, fetchProductCategoriesSuccess( siteId, missingSlug ) );
+		expect( newState.site[ siteId ].status.wcApi.error.data.message ).to.equal( 'Invalid Categories Array' );
 
-		newState = reducer( state, fetchProductCategoriesSuccess( siteId, badId ) );
-		expect( newState[ siteId ].error.data.message ).to.equal( 'Invalid Categories Array' );
+		newState = wcReducer( state, fetchProductCategoriesSuccess( siteId, badId ) );
+		expect( newState.site[ siteId ].status.wcApi.error.data.message ).to.equal( 'Invalid Categories Array' );
 
-		newState = reducer( state, fetchProductCategoriesSuccess( siteId, badName ) );
-		expect( newState[ siteId ].error.data.message ).to.equal( 'Invalid Categories Array' );
+		newState = wcReducer( state, fetchProductCategoriesSuccess( siteId, badName ) );
+		expect( newState.site[ siteId ].status.wcApi.error.data.message ).to.equal( 'Invalid Categories Array' );
 
-		newState = reducer( state, fetchProductCategoriesSuccess( siteId, badSlug ) );
-		expect( newState[ siteId ].error.data.message ).to.equal( 'Invalid Categories Array' );
+		newState = wcReducer( state, fetchProductCategoriesSuccess( siteId, badSlug ) );
+		expect( newState.site[ siteId ].status.wcApi.error.data.message ).to.equal( 'Invalid Categories Array' );
 	} );
 } );
 

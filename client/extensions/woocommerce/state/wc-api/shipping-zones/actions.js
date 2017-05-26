@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import request from '../request';
-import { error } from '../actions';
+import { setError } from '../../site/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_FETCH_SHIPPING_ZONES,
 	WOOCOMMERCE_API_FETCH_SHIPPING_ZONES_SUCCESS,
@@ -39,6 +39,6 @@ export const fetchShippingZones = ( siteId ) => ( dispatch, getState ) => {
 			dispatch( fetchShippingZonesSuccess( siteId, data ) );
 		} )
 		.catch( err => {
-			dispatch( error( siteId, getAction, err ) );
+			dispatch( setError( siteId, getAction, err ) );
 		} );
 };
