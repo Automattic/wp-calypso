@@ -184,29 +184,27 @@ export class CommentDetail extends Component {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
-	return {
-		authorAvatarUrl: get( ownProps, 'author.avatar_URL' ),
-		authorDisplayName: get( ownProps, 'author.name' ),
-		authorEmail: get( ownProps, 'author.email' ),
-		authorId: get( ownProps, 'author.ID' ),
-		authorIp: get( ownProps, 'author.ip' ), // TODO: not available in the current data structure
-		authorIsBlocked: get( ownProps, 'author.isBlocked' ), // TODO: not available in the current data structure
-		authorUrl: get( ownProps, 'author.URL' ),
-		authorUsername: get( ownProps, 'author.nice_name' ),
-		commentContent: ownProps.content,
-		commentDate: ownProps.date,
-		commentId: ownProps.commentId,
-		commentIsApproved: 'approved' === ownProps.status,
-		commentIsLiked: ownProps.i_like,
-		commentIsSpam: 'spam' === ownProps.status,
-		commentIsTrash: 'trash' === ownProps.status,
-		postAuthorDisplayName: get( ownProps, 'post.author.name' ),
-		postTitle: get( ownProps, 'post.title' ),
-		postUrl: get( ownProps, 'post.link' ),
-		repliedToComment: ownProps.replied, // TODO: not available in the current data structure
-		siteId: ownProps.siteId,
-	};
-};
+const mapStateToProps = ( state, ownProps ) => ( {
+	authorAvatarUrl: get( ownProps, 'author.avatar_URL' ),
+	authorDisplayName: get( ownProps, 'author.name' ),
+	authorEmail: get( ownProps, 'author.email' ),
+	authorId: get( ownProps, 'author.ID' ),
+	authorIp: get( ownProps, 'author.ip' ), // TODO: not available in the current data structure
+	authorIsBlocked: get( ownProps, 'author.isBlocked' ), // TODO: not available in the current data structure
+	authorUrl: get( ownProps, 'author.URL' ),
+	authorUsername: get( ownProps, 'author.nice_name' ),
+	commentContent: ownProps.content,
+	commentDate: ownProps.date,
+	commentId: ownProps.commentId,
+	commentIsApproved: 'approved' === ownProps.status,
+	commentIsLiked: ownProps.i_like,
+	commentIsSpam: 'spam' === ownProps.status,
+	commentIsTrash: 'trash' === ownProps.status,
+	postAuthorDisplayName: get( ownProps, 'post.author.name' ),
+	postTitle: get( ownProps, 'post.title' ),
+	postUrl: get( ownProps, 'post.link' ),
+	repliedToComment: ownProps.replied, // TODO: not available in the current data structure
+	siteId: ownProps.siteId,
+} );
 
 export default connect( mapStateToProps )( CommentDetail );
