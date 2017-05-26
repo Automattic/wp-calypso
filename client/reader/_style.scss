@@ -366,10 +366,10 @@
 	}
 
 	&.is-drake {
-		margin-top: -90px;
+		margin-top: -72px;
 
-		@include breakpoint( "<480px" ) {
-			margin-top: -72px;
+		@include breakpoint( ">480px" ) {
+			margin-top: -90px;
 		}
 
 		.empty-content__title {
