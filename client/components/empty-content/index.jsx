@@ -28,6 +28,8 @@ class EmptyContent extends Component {
 		isCompact: false,
 	};
 
+	static displayName = 'EmptyContent';
+
 	primaryAction() {
 		if ( 'string' !== typeof this.props.action ) {
 			return this.props.action;
