@@ -14,13 +14,12 @@ import CommentDetailComment from './comment-detail-comment';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
-import { mockComment } from 'blocks/comment-detail/docs/mock-data';
 
 export class CommentDetail extends Component {
 	static propTypes = {
 		authorAvatarUrl: PropTypes.string,
 		authorDisplayName: PropTypes.string,
-		authorEmail: PropTypes.string,
+		authorEmail: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.string ] ),
 		authorId: PropTypes.number,
 		authorIp: PropTypes.string,
 		authorIsBlocked: PropTypes.bool,
@@ -188,31 +187,28 @@ export class CommentDetail extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { commentId, siteId } ) => {
-	//const comment = getComment( state, siteId, commentId );
-	const comment = mockComment;
-
+const mapStateToProps = ( state, ownProps ) => {
 	return {
-		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
-		authorDisplayName: get( comment, 'author.name' ),
-		authorEmail: get( comment, 'author.email' ),
-		authorId: get( comment, 'author.ID' ),
-		authorIp: get( comment, 'author.ip' ), // TODO: not available in the current data structure
-		authorIsBlocked: get( comment, 'author.isBlocked' ), // TODO: not available in the current data structure
-		authorUrl: get( comment, 'author.URL' ),
-		authorUsername: get( comment, 'author.nice_name' ),
-		commentContent: comment.content,
-		commentDate: comment.date,
-		commentId: commentId,
-		commentIsApproved: 'approved' === comment.status,
-		commentIsLiked: comment.i_like,
-		commentIsSpam: 'spam' === comment.status,
-		commentIsTrash: 'trash' === comment.status,
-		postAuthorDisplayName: get( comment, 'post.author.name' ),
-		postTitle: get( comment, 'post.title' ),
-		postUrl: get( comment, 'post.link' ),
-		repliedToComment: comment.replied, // TODO: not available in the current data structure
-		siteId: siteId,
+		authorAvatarUrl: get( ownProps, 'author.avatar_URL' ),
+		authorDisplayName: get( ownProps, 'author.name' ),
+		authorEmail: get( ownProps, 'author.email' ),
+		authorId: get( ownProps, 'author.ID' ),
+		authorIp: get( ownProps, 'author.ip' ), // TODO: not available in the current data structure
+		authorIsBlocked: get( ownProps, 'author.isBlocked' ), // TODO: not available in the current data structure
+		authorUrl: get( ownProps, 'author.URL' ),
+		authorUsername: get( ownProps, 'author.nice_name' ),
+		commentContent: ownProps.content,
+		commentDate: ownProps.date,
+		commentId: ownProps.commentId,
+		commentIsApproved: 'approved' === ownProps.status,
+		commentIsLiked: ownProps.i_like,
+		commentIsSpam: 'spam' === ownProps.status,
+		commentIsTrash: 'trash' === ownProps.status,
+		postAuthorDisplayName: get( ownProps, 'post.author.name' ),
+		postTitle: get( ownProps, 'post.title' ),
+		postUrl: get( ownProps, 'post.link' ),
+		repliedToComment: ownProps.replied, // TODO: not available in the current data structure
+		siteId: ownProps.siteId,
 	};
 };
 

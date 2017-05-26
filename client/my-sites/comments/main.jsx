@@ -4,11 +4,12 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
+import { filter, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import getSiteComments from 'state/selectors/get-site-comments';
 import getSiteId from 'state/selectors/get-site-id';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -16,7 +17,6 @@ import DocumentHead from 'components/data/document-head';
 import CommentDetail from 'blocks/comment-detail';
 import CommentNavigation from './comment-navigation';
 import QuerySiteComments from 'components/data/query-site-comments';
-import { mockComments } from 'blocks/comment-detail/docs/mock-data';
 
 export class CommentsManagement extends Component {
 	static propTypes = {
@@ -38,6 +38,7 @@ export class CommentsManagement extends Component {
 		const {
 			basePath,
 			comments,
+			siteId,
 			siteSlug,
 			status,
 			translate,
@@ -47,7 +48,7 @@ export class CommentsManagement extends Component {
 		return (
 			<Main className="comments" wideLayout>
 				<PageViewTracker path={ basePath } title="Manage Comments" />
-				<QuerySiteComments siteId={ this.props.siteId } />
+				<QuerySiteComments siteId={ siteId } status="all" />
 				<DocumentHead title={ translate( 'Manage Comments' ) } />
 				<div className="comments__primary">
 					<CommentNavigation { ...{
@@ -56,13 +57,14 @@ export class CommentsManagement extends Component {
 						status,
 						toggleBulkEdit: this.toggleBulkEdit,
 					} } />
-					{ map( comments, ( { commentId, siteId } ) =>
-						<CommentDetail { ...{
-							commentId,
-							isBulkEdit,
-							key: `comment-${ siteId }-${ commentId }`,
-							siteId,
-						} } />
+					{ map( comments, comment =>
+						<CommentDetail
+							commentId={ comment.ID }
+							isBulkEdit={ isBulkEdit }
+							key={ `comment-${ siteId }-${ comment.ID }` }
+							siteId={ siteId }
+							{ ...comment }
+						/>
 					) }
 				</div>
 			</Main>
@@ -70,11 +72,12 @@ export class CommentsManagement extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteSlug } ) => {
+const mapStateToProps = ( state, { siteSlug, status } ) => {
 	const siteId = getSiteId( state, siteSlug );
-
-	// const comments = getSiteComments( state, siteId, status );
-	const comments = mockComments;
+	const siteComments = getSiteComments( state, siteId );
+	const comments = 'all' === status
+		? siteComments
+		: filter( siteComments, comment => status === comment.status );
 
 	return {
 		comments,
