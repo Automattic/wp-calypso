@@ -27,6 +27,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		fill: lighten( $gray, 10% );
 		margin-right: 5px;
 		position: relative;
+			left: -2px;
 			top: 2px;
 	}
 }
@@ -85,13 +86,20 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	.reader-recommended-sites__recommended-site-dismiss {
+		align-items: flex-start;
 		display: flex;
 		height: 30px;
 		justify-content: flex-end;
 
 		.button.is-borderless {
+			padding: 0;
 			position: relative;
 			z-index: 0;
+			top: -2px;
+
+			@include breakpoint( "<660px" ) {
+				top: 8px;
+			}
 		}
 
 		.button.is-borderless .gridicon,
@@ -100,15 +108,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			fill: lighten( $gray, 10% );
 			width: 14px;
 			height: 14px;
-			top: -5px;
-
-			@media #{$reader-related-card-v2-breakpoint-medium} {
-				top: -2px;
-			}
-
-			@include breakpoint( "<660px" ) {
-				top: 3px;
-			}
 		}
 	}
 
