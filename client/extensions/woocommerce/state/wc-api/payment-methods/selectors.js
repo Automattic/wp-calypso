@@ -35,11 +35,11 @@ export const arePaymentMethodsLoading = ( state, siteId = getSelectedSiteId( sta
  * Gets group of payment methods. (offline, off-site, on-site)
  *
  * @param {Object} state Global state tree
- * @param {Number} siteId wpcom site id
  * @param {String} type type of payment method
+ * @param {Number} siteId wpcom site id
  * @return {Array} Array of Payment Methods
  */
-export function getPaymentMethodsGroup( state, siteId, type ) {
+export function getPaymentMethodsGroup( state, type, siteId = getSelectedSiteId( state ) ) {
 	const wcApi = state.extensions.woocommerce.wcApi || {};
 	const siteData = wcApi[ siteId ] || {};
 	let methods;

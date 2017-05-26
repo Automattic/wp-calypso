@@ -9,7 +9,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPaymentMethodsGroup } from '../../../state/wc-api/payment-methods/selectors';
 import { fetchPaymentMethods } from '../../../state/wc-api/payment-methods/actions';
 
@@ -21,14 +20,12 @@ import PaymentMethodItem from './payment-method-item';
 
 class SettingsPaymentsOffSite extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
 		paymentMethods: PropTypes.array,
 		fetchPaymentMethods: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
-		const { siteId } = this.props;
-		this.props.fetchPaymentMethods( siteId );
+		this.props.fetchPaymentMethods();
 	}
 
 	renderMethodItem = ( method ) => {
@@ -70,11 +67,9 @@ class SettingsPaymentsOffSite extends Component {
 }
 
 function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
-	const paymentMethods = getPaymentMethodsGroup( state, siteId, 'off-site' );
+	const paymentMethods = getPaymentMethodsGroup( state, 'off-site' );
 	return {
-		paymentMethods,
-		siteId,
+		paymentMethods
 	};
 }
 

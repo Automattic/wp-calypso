@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import getPaymentMethodDetails from '../../../lib/get-payment-method-details';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { error } from '../actions';
 import {
@@ -27,6 +28,9 @@ export const fetchPaymentMethodsSuccess = ( siteId, data ) => {
 };
 
 export const fetchPaymentMethods = ( siteId ) => ( dispatch, getState ) => {
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( getState() );
+	}
 	if ( arePaymentMethodsLoaded( getState(), siteId ) || arePaymentMethodsLoading( getState(), siteId ) ) {
 		return;
 	}
