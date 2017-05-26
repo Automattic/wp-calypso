@@ -42,16 +42,24 @@ const renderCachePreloadInterval = ( {
 		onChange={ handleChange( 'preload_interval' ) }
 		step="1"
 		type="number"
-		value={ preload_interval || '' } />
+		value={ preload_interval || '0' } />
 );
 
 class PreloadTab extends Component {
-	state = {
-		preloadRefresh: true,
+	componentWillReceiveProps( nextProps ) {
+		this.state = {
+			preloadRefresh: parseInt( nextProps.fields.preload_interval, 10 ) === 0 ? false : true
+		};
 	}
 
 	handlePreloadRefreshChange = () => {
-		this.setState( { preloadRefresh: ! this.state.preloadRefresh } );
+		this.setState( { preloadRefresh: ! this.state.preloadRefresh }, () => {
+			if ( this.state.preloadRefresh ) {
+				return;
+			}
+
+			this.props.setFieldValue( 'preload_interval', '0' );
+		} );
 	}
 
 	getPreloadPostsOptions( post_count ) {
