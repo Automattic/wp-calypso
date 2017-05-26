@@ -30,13 +30,12 @@ import { isPreloadingCache } from './state/cache/selectors';
  */
 const renderCachePreloadInterval = ( {
 	handleChange,
-	isRequesting,
-	isSaving,
+	isDisabled,
 	preload_interval,
 } ) => (
 	<FormTextInput
 		className="wp-super-cache__preload-interval"
-		disabled={ isRequesting || isSaving }
+		disabled={ isDisabled }
 		min="0"
 		name="preload_interval"
 		onChange={ handleChange( 'preload_interval' ) }
@@ -174,8 +173,7 @@ class PreloadTab extends Component {
 											components: {
 												number: renderCachePreloadInterval( {
 													handleChange,
-													isRequesting,
-													isSaving,
+													isDisabled: isRequesting || isSaving || ! this.state.preloadRefresh,
 													preload_interval,
 												} )
 											}
