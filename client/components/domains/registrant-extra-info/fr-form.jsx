@@ -138,7 +138,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						{ translate( 'Registering a .FR domain' ) }
 					</FormLegend>
 					{ translate(
-						"Almost done! in order to complete your registration, we're required to collect some additional information:"
+						'We need some extra details to register domains ending in ".fr".'
 					) }
 				</FormFieldset>
 				<FormFieldset>
