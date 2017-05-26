@@ -4,12 +4,14 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 import { editProduct, editProductAttribute } from '../../state/ui/products/actions';
 import { getCurrentlyEditingProduct } from '../../state/ui/products/selectors';
@@ -17,6 +19,7 @@ import { getProductVariationsWithLocalEdits } from '../../state/ui/products/vari
 import { editProductVariation } from '../../state/ui/products/variations/actions';
 import { fetchProductCategories } from '../../state/wc-api/product-categories/actions';
 import { getProductCategories } from '../../state/wc-api/product-categories/selectors';
+import { createProduct } from '../../state/wc-api/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
 
@@ -61,7 +64,26 @@ class ProductCreate extends React.Component {
 	}
 
 	onSave = () => {
-		// TODO: Add action dispatch to save this product.
+		const { siteId, product, translate } = this.props;
+
+		const successAction = () => {
+			return successNotice(
+				translate( '%(product)s successfully created.', {
+					args: { product: product.name },
+				} ),
+				{ duration: 4000 }
+			);
+		};
+
+		const errorAction = () => {
+			return errorNotice(
+				translate( 'There was a problem saving %(product)s. Please try again.', {
+					args: { product: product.name },
+				} )
+			);
+		};
+
+		this.props.createProduct( siteId, product, successAction, errorAction );
 	}
 
 	render() {
@@ -103,6 +125,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			createProduct,
 			editProduct,
 			editProductAttribute,
 			editProductVariation,
@@ -112,4 +135,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( ProductCreate );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCreate ) );
