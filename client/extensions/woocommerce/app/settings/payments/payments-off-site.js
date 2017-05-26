@@ -33,23 +33,6 @@ class SettingsPaymentsOffSite extends Component {
 		);
 	}
 
-	state = {
-		methods: [
-			{
-				label: 'PayPal Standard',
-				isSuggested: true,
-				fee: '2.9% + 30c per transaction',
-				informationUrl: 'http://paypal.com',
-			},
-		],
-	};
-
-	renderMethodItem = ( method ) => {
-		return (
-			<PaymentMethodItem key={ method.label } method={ method } />
-		);
-	}
-
 	render() {
 		const { translate, paymentMethods } = this.props;
 
