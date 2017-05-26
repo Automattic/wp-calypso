@@ -14,9 +14,7 @@ import {
 	omit,
 	overSome,
 	pickBy,
-	partial,
-	flatMap,
-	head,
+	partial
 } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -50,11 +48,7 @@ import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
 } from 'state/site-settings/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isJetpackModuleActive,
 	isHiddenSite,
@@ -99,10 +93,6 @@ function getGeneralTabUrl( slug ) {
 
 function getJetpackPluginUrl( slug ) {
 	return `/plugins/jetpack/${ slug }`;
-}
-
-function getPluginDetailUrl( slug, siteSlug ) {
-	return `/plugins/${ slug }/${ siteSlug }`;
 }
 
 function stateForSite( site ) {
@@ -403,11 +393,9 @@ export const SeoForm = React.createClass( {
 			'All in One SEO Pack Pro',
 		];
 
-		const plugins = flatMap( activePlugins, plugin => (
-			{ name: get( plugin, 'name', '' ), slug: get( plugin, 'slug', '' ) }
-		) );
-
-		return plugins.filter( plugin => includes( conflictingSeoPlugins, plugin.name ) );
+		return activePlugins
+			.filter( ( { name } ) => includes( conflictingSeoPlugins, name ) )
+			.map( ( { name, slug } ) => ( { name, slug } ) );
 	},
 
 	render() {
@@ -486,7 +474,7 @@ export const SeoForm = React.createClass( {
 
 		const conflictedSeoPlugin = siteIsJetpack
 			// Let's just pick the first one to keep the notice short.
-			? head( this.getConflictingSeoPlugins( activePlugins, siteIsJetpack ) )
+			? this.getConflictingSeoPlugins( activePlugins )[ 0 ]
 			: false;
 
 		/* eslint-disable react/jsx-no-target-blank */
@@ -525,7 +513,7 @@ export const SeoForm = React.createClass( {
 							{ args: { pluginName: conflictedSeoPlugin.name } }
 						) }
 					>
-						<NoticeAction href={ getPluginDetailUrl( conflictedSeoPlugin.slug, slug ) }>
+						<NoticeAction href={ `/plugins/${ conflictedSeoPlugin.slug }/${ slug }` }>
 							{ translate( 'View Plugin' ) }
 						</NoticeAction>
 					</Notice>
@@ -801,7 +789,6 @@ const mapStateToProps = ( state, ownProps ) => {
 		siteId,
 		siteIsJetpack,
 		selectedSite: getSelectedSite( state ),
-		siteSlug: getSelectedSiteSlug( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible && isAdvancedSeoSupported,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
