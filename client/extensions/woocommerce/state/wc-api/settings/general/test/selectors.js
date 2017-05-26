@@ -73,21 +73,7 @@ describe( 'selectors', () => {
 			expect( areSettingsGeneralLoading( state, 456 ) ).to.be.false;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
-			const stateLoaded = {
-				extensions: {
-					woocommerce: {
-						wcApi: {
-							123: {
-								settingsGeneral: [],
-							},
-						},
-					},
-				},
-				ui: {
-					selectedSiteId: 123,
-				},
-			};
+		it( 'should get the siteId from the UI tree if not provided when state is loading.', () => {
 			const stateLoading = {
 				extensions: {
 					woocommerce: {
@@ -103,11 +89,28 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( areSettingsGeneralLoaded( stateLoaded ) ).to.be.true;
-			expect( areSettingsGeneralLoading( stateLoaded ) ).to.be.false;
-
 			expect( areSettingsGeneralLoaded( stateLoading ) ).to.be.false;
 			expect( areSettingsGeneralLoading( stateLoading ) ).to.be.true;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided when state is loaded.', () => {
+			const stateLoaded = {
+				extensions: {
+					woocommerce: {
+						wcApi: {
+							123: {
+								settingsGeneral: [],
+							},
+						},
+					},
+				},
+				ui: {
+					selectedSiteId: 123,
+				},
+			};
+
+			expect( areSettingsGeneralLoaded( stateLoaded ) ).to.be.true;
+			expect( areSettingsGeneralLoading( stateLoaded ) ).to.be.false;
 		} );
 	} );
 } );

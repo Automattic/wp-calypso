@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
  */
 import AddressView from '../../../components/address-view';
 import Card from 'components/card';
-import FormSelect from 'components/forms/form-select';
 import ExtendedHeader from '../../../components/extended-header';
+import FormSelect from 'components/forms/form-select';
 
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPaymentCurrencySettings } from '../../../state/wc-api/settings/general/selectors';
@@ -20,14 +20,16 @@ import { fetchSettingsGeneral } from '../../../state/wc-api/settings/general/act
 
 class SettingsPaymentsLocationCurrency extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		currency: PropTypes.object,
+		currency: PropTypes.shape( {
+			options: PropTypes.object,
+			value: PropTypes.string,
+		} ),
 		fetchSettingsGeneral: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
 	};
 
 	componentDidMount() {
 		const { siteId } = this.props;
-
 		this.props.fetchSettingsGeneral( siteId );
 	}
 

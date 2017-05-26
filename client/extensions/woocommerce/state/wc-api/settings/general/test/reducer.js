@@ -13,8 +13,8 @@ import {
 } from '../../../../action-types';
 import { fetchSettingsGeneralSuccess } from '../actions';
 
-describe( 'fetch settuings general', () => {
-	it( 'should mark the settings general tree as being "loading"', () => {
+describe( 'fetch settings general', () => {
+	it( 'should mark the settings general tree as "loading"', () => {
 		const siteId = 123;
 		const state = {};
 
