@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import detailsMappings from './detailsMappings';
+import detailsMappings from './details-mappings';
 
 /**
  * Gets additional gateway details

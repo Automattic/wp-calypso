@@ -4,7 +4,6 @@
 import error from './error-reducer';
 import paymentMethods from './payment-methods/reducer';
 import productCategories from './product-categories/reducer';
-
 import shippingZones from './shipping-zones/reducer';
 
 const initialState = {};

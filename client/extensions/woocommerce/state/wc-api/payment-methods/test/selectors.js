@@ -73,21 +73,7 @@ describe( 'selectors', () => {
 			expect( arePaymentMethodsLoading( state, 456 ) ).to.be.false;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
-			const stateLoaded = {
-				extensions: {
-					woocommerce: {
-						wcApi: {
-							123: {
-								paymentMethods: [],
-							},
-						},
-					},
-				},
-				ui: {
-					selectedSiteId: 123,
-				},
-			};
+		it( 'should get the siteId from the UI tree if not provided when methods are loading.', () => {
 			const stateLoading = {
 				extensions: {
 					woocommerce: {
@@ -103,11 +89,28 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( arePaymentMethodsLoaded( stateLoaded ) ).to.be.true;
-			expect( arePaymentMethodsLoading( stateLoaded ) ).to.be.false;
-
 			expect( arePaymentMethodsLoaded( stateLoading ) ).to.be.false;
 			expect( arePaymentMethodsLoading( stateLoading ) ).to.be.true;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided when methods are loaded.', () => {
+			const stateLoaded = {
+				extensions: {
+					woocommerce: {
+						wcApi: {
+							123: {
+								paymentMethods: [],
+							},
+						},
+					},
+				},
+				ui: {
+					selectedSiteId: 123,
+				},
+			};
+
+			expect( arePaymentMethodsLoaded( stateLoaded ) ).to.be.true;
+			expect( arePaymentMethodsLoading( stateLoaded ) ).to.be.false;
 		} );
 	} );
 } );

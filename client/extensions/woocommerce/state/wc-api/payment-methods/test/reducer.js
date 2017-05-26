@@ -14,7 +14,7 @@ import {
 import { fetchPaymentMethodsSuccess } from '../actions';
 
 describe( 'fetch payment methods', () => {
-	it( 'should mark the payment methods tree as being "loading"', () => {
+	it( 'should mark the payment methods tree as "loading"', () => {
 		const siteId = 123;
 		const state = {};
 
@@ -28,12 +28,12 @@ describe( 'fetch payment methods - success', () => {
 		const siteId = 123;
 		const state = {};
 
-		const zones = [
+		const methods = [
 			{ id: 'foo', title: 'foo' },
 			{ id: 'bar', title: 'bar' },
 		];
-		const newState = reducer( state, fetchPaymentMethodsSuccess( siteId, zones ) );
+		const newState = reducer( state, fetchPaymentMethodsSuccess( siteId, methods ) );
 		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].paymentMethods ).to.deep.equal( zones );
+		expect( newState[ siteId ].paymentMethods ).to.deep.equal( methods );
 	} );
 } );

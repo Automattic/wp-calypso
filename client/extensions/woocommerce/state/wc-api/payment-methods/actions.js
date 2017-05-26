@@ -28,10 +28,11 @@ export const fetchPaymentMethodsSuccess = ( siteId, data ) => {
 };
 
 export const fetchPaymentMethods = ( siteId ) => ( dispatch, getState ) => {
+	const state = getState();
 	if ( ! siteId ) {
-		siteId = getSelectedSiteId( getState() );
+		siteId = getSelectedSiteId( state );
 	}
-	if ( arePaymentMethodsLoaded( getState(), siteId ) || arePaymentMethodsLoading( getState(), siteId ) ) {
+	if ( arePaymentMethodsLoaded( state, siteId ) || arePaymentMethodsLoading( state, siteId ) ) {
 		return;
 	}
 
