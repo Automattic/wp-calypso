@@ -57,6 +57,8 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
 		onStateChanged: PropTypes.func, // Just until we can reduxify the contact details
+		countryCode: PropTypes.string,
+		isProbablyOrganization: PropTypes.bool,
 	}
 
 	static defaultProps = {
@@ -76,7 +78,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		const defaults = {
 			registrantType: this.props.isProbablyOrganization
 				? 'organization' : 'individual',
-			countryOfBirth: 'FR',
+			countryOfBirth: this.props.countryCode || 'FR',
 		};
 
 		const values = {

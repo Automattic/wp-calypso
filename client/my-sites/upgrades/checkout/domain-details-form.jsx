@@ -400,6 +400,7 @@ class DomainDetailsForm extends PureComponent {
 	renderExtraDetailsForm = () => {
 		return ( <ExtraInfoFrForm
 			isProbablyOrganization={ Boolean( formState.getFieldValue( this.state.form, 'organization' ) ) }
+			countryCode={ formState.getFieldValue( this.state.form, 'countryCode' ) }
 			values={ this.state.registrantExtraInfo }
 			countriesList={ countriesList }
 			onStateChange={ this.handleExtraChange } >
