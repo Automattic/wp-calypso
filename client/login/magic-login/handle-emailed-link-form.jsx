@@ -112,7 +112,7 @@ class HandleEmailedLinkForm extends React.Component {
 				className={ classNames( {
 					'magic-login__is-fetching-auth': isFetching,
 				} ) }
-				illustration={ '/calypso/images/drake/drake-nosites.svg' }
+				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 				illustrationWidth={ 500 }
 				line={ line }
 				title={ title }
