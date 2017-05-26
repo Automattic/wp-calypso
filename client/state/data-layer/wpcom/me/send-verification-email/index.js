@@ -9,14 +9,12 @@ import {
 	EMAIL_VERIFY_REQUEST_FAILURE,
 } from 'state/action-types';
 
-export const requestEmailVerification = function( { dispatch }, action, next ) {
+export const requestEmailVerification = function( { dispatch }, action ) {
 	dispatch( http( {
 		apiVersion: '1.1',
 		method: 'POST',
 		path: '/me/send-verification-email',
 	}, action ) );
-
-	return next( action );
 };
 
 export const handleError = ( { dispatch }, action, next, rawError ) => {

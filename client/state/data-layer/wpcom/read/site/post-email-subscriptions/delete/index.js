@@ -12,7 +12,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { subscribeToNewPostEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 
-export function requestPostEmailUnsubscription( { dispatch }, action, next ) {
+export function requestPostEmailUnsubscription( { dispatch }, action ) {
 	dispatch(
 		http( {
 			method: 'POST',
@@ -23,7 +23,6 @@ export function requestPostEmailUnsubscription( { dispatch }, action, next ) {
 			onFailure: action,
 		} )
 	);
-	next( action );
 }
 
 export function receivePostEmailUnsubscription( store, action, next, response ) {

@@ -17,7 +17,7 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'state/notices/actions';
 
-export function requestTags( store, action, next ) {
+export function requestTags( store, action ) {
 	const path = action.payload && action.payload.slug
 		? `/read/tags/${ action.payload.slug }`
 		: '/read/tags';
@@ -31,14 +31,12 @@ export function requestTags( store, action, next ) {
 			onFailure: action,
 		} )
 	);
-
-	next( action );
 }
 
 export function receiveTagsSuccess( store, action, next, apiResponse ) {
 	let tags = fromApi( apiResponse );
 	if ( ! apiResponse || ( ! apiResponse.tag && ! apiResponse.tags ) ) {
-		receiveTagsError( store, action, next );
+		receiveTagsError( store, action );
 		return;
 	}
 

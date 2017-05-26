@@ -59,9 +59,8 @@ describe( 'get follow subscriptions', () => {
 		it( 'should request first page + set syncing to true', () => {
 			const action = { type: READER_FOLLOWS_SYNC_START };
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
-			syncReaderFollows( { dispatch }, action, next );
+			syncReaderFollows( { dispatch }, action );
 
 			expect( isSyncingFollows() ).ok;
 			expect( dispatch ).calledWith( requestPageAction() );
@@ -72,9 +71,8 @@ describe( 'get follow subscriptions', () => {
 		it( 'should dispatch HTTP request to following/mine endpoint', () => {
 			const action = requestPageAction();
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
-			requestPage( { dispatch }, action, next );
+			requestPage( { dispatch }, action );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith(
@@ -88,16 +86,6 @@ describe( 'get follow subscriptions', () => {
 				} )
 			);
 		} );
-
-		it( 'should pass the original action along the middleware chain', () => {
-			const action = requestPageAction();
-			const dispatch = sinon.spy();
-			const next = sinon.spy();
-
-			requestPage( { dispatch }, action, next );
-
-			expect( next ).to.have.been.calledWith( action );
-		} );
 	} );
 
 	describe( '#receivePageSuccess', () => {
@@ -105,10 +93,9 @@ describe( 'get follow subscriptions', () => {
 			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
 			const action = requestPageAction(); // no feeds
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
-			syncReaderFollows( { dispatch }, startSyncAction, next );
-			receivePage( { dispatch }, action, next, successfulApiResponse );
+			syncReaderFollows( { dispatch }, startSyncAction );
+			receivePage( { dispatch }, action, null, successfulApiResponse );
 
 			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( requestPageAction( 1 ) );
@@ -126,7 +113,6 @@ describe( 'get follow subscriptions', () => {
 			const action = requestPageAction(); // no feeds
 			const ignoredDispatch = noop;
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
 			const getState = () => ( {
 				reader: {
@@ -142,9 +128,9 @@ describe( 'get follow subscriptions', () => {
 				},
 			} );
 
-			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction, next );
-			receivePage( { dispatch: ignoredDispatch }, action, next, successfulApiResponse );
-			receivePage( { dispatch, getState }, action, next, {
+			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction );
+			receivePage( { dispatch: ignoredDispatch }, action, null, successfulApiResponse );
+			receivePage( { dispatch, getState }, action, null, {
 				number: 0,
 				page: 2,
 				total_subscriptions: 10,
@@ -168,7 +154,6 @@ describe( 'get follow subscriptions', () => {
 			const action = requestPageAction(); // no feeds
 			const ignoredDispatch = noop;
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
 			const getState = () => ( {
 				reader: {
@@ -184,16 +169,15 @@ describe( 'get follow subscriptions', () => {
 				},
 			} );
 
-			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction, next );
-			receivePage( { dispatch: ignoredDispatch }, action, next, successfulApiResponse );
+			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction );
+			receivePage( { dispatch: ignoredDispatch }, action, null, successfulApiResponse );
 
 			updateSeenOnFollow(
 				{ dispatch: ignoredDispatch },
 				follow( 'http://feed.example.com' ),
-				next
 			);
 
-			receivePage( { dispatch, getState }, action, next, {
+			receivePage( { dispatch, getState }, action, null, {
 				number: 0,
 				page: 2,
 				total_subscriptions: 10,
@@ -222,9 +206,8 @@ describe( 'get follow subscriptions', () => {
 		it( 'should dispatch an error notice', () => {
 			const action = requestPageAction();
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
-			receiveError( { dispatch }, action, next );
+			receiveError( { dispatch }, action );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWithMatch( {

@@ -15,9 +15,8 @@ import { requestUnfollow, receiveUnfollow, unfollowError } from '../';
 describe( 'requestUnfollow', () => {
 	it( 'should dispatch a http request', () => {
 		const dispatch = spy();
-		const next = spy();
 		const action = unfollow( 'http://example.com' );
-		requestUnfollow( { dispatch }, action, next );
+		requestUnfollow( { dispatch }, action );
 		expect( dispatch ).to.have.been.calledWith(
 			http( {
 				method: 'POST',
@@ -31,7 +30,6 @@ describe( 'requestUnfollow', () => {
 				onFailure: action,
 			} )
 		);
-		expect( next ).to.have.been.calledWith( action );
 	} );
 } );
 

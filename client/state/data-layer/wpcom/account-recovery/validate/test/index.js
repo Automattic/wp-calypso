@@ -3,7 +3,6 @@
  */
 import { assert } from 'chai';
 import sinon from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,7 +44,7 @@ describe( 'handleValidateRequest()', () => {
 				}
 			} );
 
-			handleValidateRequest( { dispatch }, { userData, method, key }, noop );
+			handleValidateRequest( { dispatch }, { userData, method, key } );
 		} );
 
 		it( 'should dispatch SET_VALIDATION_KEY action on success', ( done ) => {
@@ -60,7 +59,7 @@ describe( 'handleValidateRequest()', () => {
 				}
 			} );
 
-			handleValidateRequest( { dispatch }, { userData, method, key }, noop );
+			handleValidateRequest( { dispatch }, { userData, method, key } );
 		} );
 	} );
 
@@ -86,7 +85,7 @@ describe( 'handleValidateRequest()', () => {
 				done();
 			} );
 
-			handleValidateRequest( { dispatch }, { userData, method, key }, noop );
+			handleValidateRequest( { dispatch }, { userData, method, key } );
 		} );
 	} );
 } );
