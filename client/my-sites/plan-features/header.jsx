@@ -40,7 +40,6 @@ class PlanFeaturesHeader extends Component {
 
 	render() {
 		const {
-			current,
 			planType,
 			popular,
 			newPlan,
@@ -58,7 +57,7 @@ class PlanFeaturesHeader extends Component {
 					newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon>
 				}
 				{
-					current && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon>
+					this.isPlanCurrent() && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon>
 				}
 				<div className="plan-features__header-figure" >
 					<PlanIcon plan={ planType } />
