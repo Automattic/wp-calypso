@@ -89,7 +89,7 @@ export class CommentList extends Component {
 		} = this.state;
 
 		const filteredComments = 'all' === status
-			? comments
+			? filter( comments, comment => 'approved' === comment.status || 'unapproved' === comment.status )
 			: filter( comments, comment => status === comment.status );
 
 		return (
