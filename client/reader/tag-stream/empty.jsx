@@ -61,7 +61,7 @@ class TagEmptyContent extends React.Component {
 				action={ action }
 				secondaryAction={ secondaryAction }
 				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
-				illustrationWidth={ 500 }
+				illustrationWidth={ 400 }
 			/>
 		);
 	}

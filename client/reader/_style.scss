@@ -359,19 +359,22 @@
 
 .is-group-reader .main .empty-content,
 .is-reader-page .main .empty-content {
-	margin-top: -90px;
 	padding-top: 0;
 
-	img {
-		min-height: 150px;
+	.empty-content__title {
+		margin-top: -10px;
 	}
 
-	@include breakpoint( "<480px" ) {
-		margin-top: -72px;
-	}
+	&.drake {
+		margin-top: -90px;
 
-	.empty-content__illustration {
-		min-height: 100px;
+		@include breakpoint( "<480px" ) {
+			margin-top: -72px;
+		}
+
+		.empty-content__title {
+			margin-top: 0;
+		}
 	}
 }
 
