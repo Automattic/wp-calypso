@@ -234,6 +234,10 @@ export const PostEditor = React.createClass( {
 					hideSidebar={ this.hideConfirmationSidebar }
 					isActive={ this.state.showConfirmationSidebar }
 					onPublish={ this.onPublish }
+					post={ this.state.post }
+					site={ site }
+					savedPost={ this.state.savedPost }
+					onPrivatePublish={ this.onPublish }
 				/>
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
