@@ -259,6 +259,7 @@ export default React.createClass( {
 	isPreviewEnabled: function() {
 		return this.props.hasContent &&
 			! ( this.props.isNew && ! this.props.isDirty ) &&
+			! ( postUtils.isPublished( this.props.savedPost ) && ! this.props.isDirty ) &&
 			! this.props.isSaveBlocked;
 	},
 
