@@ -40,6 +40,10 @@ export function continueApiPlan( plan ) {
 }
 */
 
+/**
+ * Action Creator: Clear the current product API plan.
+ * @return {Object} action
+ */
 export function clearApiPlan() {
 	return {
 		type: WOOCOMMERCE_EDIT_PRODUCT_APIPLAN_CLEAR,
@@ -47,6 +51,7 @@ export function clearApiPlan() {
 }
 
 // The functions below are used internally and for testing.
+// TODO: Finalize these action creators.
 
 export function createApiPlan( plan ) {
 	return {
