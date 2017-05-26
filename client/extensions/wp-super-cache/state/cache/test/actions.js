@@ -12,7 +12,6 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
 	WP_SUPER_CACHE_TEST_CACHE,
-	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../../action-types';
 import {
@@ -61,21 +60,12 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch request success action when request completes', () => {
+		it( 'should dispatch receive action when request completes', () => {
 			return testCache( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
-					data: results.data,
 					siteId,
-				} );
-			} );
-		} );
-
-		it( 'should dispatch fail action when request fails', () => {
-			return testCache( failedSiteId )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: WP_SUPER_CACHE_TEST_CACHE_FAILURE,
-					siteId: failedSiteId,
+					results
 				} );
 			} );
 		} );
