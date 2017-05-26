@@ -110,6 +110,45 @@ dispatch( http( {
 }, action );
 ```
 
+## Exponential-backoff delays
+
+The actual delays for the exponential backoff are (at the time of this writing) calculated with a randomized jitter algorithm.
+The following histograms represent trial calculations for retry attempts numbered by graph, each containing five thousand delay computations.
+The shapes of the histograms illustrate what kinds of delay values are typical, normalized to the base delay.
+
+<img src="https://cldup.com/Rf-Emw5MJ2.png" />
+<img src="https://cldup.com/1okGMI4UDk.png" />
+<img src="https://cldup.com/fd4wocHuWF.png" />
+<img src="https://cldup.com/3PeG4ELGck.png" />
+<img src="https://cldup.com/B3Bl8rKnO2.png" />
+
+We can see from the graphs that it's possible for later retry attempts to have shorter delays than earlier retry attempts.
+Now let's examine what happens when we analyze the average total delay time when a request resolves after a given number of retries.
+These next histograms show the total delay time for all requests given the number of retries, each with five thousand trial calculations.
+
+<img src="https://cldup.com/xvXKvAQ2tr.png" />
+<img src="https://cldup.com/yvt0G3KnEg.png" />
+<img src="https://cldup.com/0TcRLxeMf4.png" />
+<img src="https://cldup.com/z52VCOosOM.png" />
+
+The entire wait time comes out with the originally-desired exponential shape.
+That is to say, we expect the total wait time to be exponential with the number of retry attempts it requires before resolution.
+The following table summaries then total wait times, normalized to the base delay.
+
+| # Retries | Total Wait Time |
+| --- | --- |
+| 1 | 1.627 |
+| 2 | 4.368 |
+| 3 | 9.385 |
+| 4 | 18.91 |
+| 5 | 37.34 |
+
+From this table we can see that in the average case even if a request takes five retry attempts it should be resolved within about 45 seconds.
+With four attempts, we can see that the vast majority will resolve within about 35s.
+With three attempts, almost everything will resolve within about 20s.
+With two attempts, everything within 10s.
+Finally with a single retry we will have resolution within 2s.
+
 **Notes**
 
 <sup>1</sup> Tandem Technical Report 85.7, June 1985, PN87614
