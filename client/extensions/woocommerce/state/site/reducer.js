@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
+import { combineReducers } from 'state/utils';
 
 /**
  * Internal dependencies
