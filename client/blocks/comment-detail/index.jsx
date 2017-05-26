@@ -111,6 +111,7 @@ export class CommentDetail extends Component {
 			commentIsLiked,
 			commentIsSpam,
 			commentIsTrash,
+			deleteForever,
 			isBulkEdit,
 			postAuthorDisplayName,
 			postTitle,
@@ -145,6 +146,7 @@ export class CommentDetail extends Component {
 					commentIsLiked={ commentIsLiked }
 					commentIsSpam={ commentIsSpam }
 					commentIsTrash={ commentIsTrash }
+					deleteForever={ deleteForever }
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
 					toggleApprove={ this.toggleApprove }

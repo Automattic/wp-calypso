@@ -31,6 +31,12 @@ export class CommentList extends Component {
 		}
 	}
 
+	deleteForever = commentId => () => {
+		this.setState( {
+			comments: filter( this.state.comments, comment => commentId !== comment.ID ),
+		} );
+	}
+
 	toggleCommentLike = commentId => {
 		const comments = map( this.state.comments, comment => {
 			if ( commentId === comment.ID ) {
@@ -97,6 +103,7 @@ export class CommentList extends Component {
 				{ map( filteredComments, comment =>
 					<CommentDetail
 						commentId={ comment.ID }
+						deleteForever={ this.deleteForever( comment.ID ) }
 						isBulkEdit={ isBulkEdit }
 						key={ `comment-${ siteId }-${ comment.ID }` }
 						setCommentStatus={ this.setCommentStatus }
