@@ -1,0 +1,37 @@
+// PAYMENT-METHOD-ROW
+.payments__off-site-container {
+
+	p.payments__method-suggested {
+		font-size: 11px;
+		text-transform: uppercase;
+		color: $gray;
+	}
+
+	p.payments__method-suggested,
+	p.payments__method-name,
+	p.payments__method-information {
+		margin: 0;
+		padding: 0;
+	}
+
+	p.payments__method-information
+	p.payments__method-name {
+		font-size: 15px;
+	}
+
+	.list-item-field:first-child {
+		flex: 0 0 30%;
+	}
+
+	.list-item-field:nth-child( 2 ) {
+		flex: 0 0 45%;
+	}
+
+	.list-item-field:nth-child( 3 ) {
+		flex: 0 0 20%;
+
+		.button {
+			align-self: center;
+		}
+	}
+}
