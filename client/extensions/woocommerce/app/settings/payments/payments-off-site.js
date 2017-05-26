@@ -1,8 +1,14 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPaymentMethodsGroup } from '../../../state/wc-api/settings/payments/selectors';
+import { fetchPaymentMethods } from '../../../state/wc-api/settings/payments/actions';
 
 /**
  * Internal dependencies
@@ -15,27 +21,26 @@ import ListItemField from '../../../components/list/list-item-field';
 import PaymentMethodItem from './payment-method-item';
 
 class SettingsPaymentsOffSite extends Component {
-
-	state = {
-		methods: [
-			{
-				label: 'PayPal Standard',
-				isSuggested: true,
-				fee: '2.9% + 30c per transaction',
-				informationUrl: 'http://paypal.com',
-			},
-		],
+	static propTypes = {
+		siteId: PropTypes.number.isRequired,
+		paymentMethods: PropTypes.array,
+		fetchPaymentMethods: PropTypes.func.isRequired,
 	};
+
+	componentDidMount() {
+		const { siteId } = this.props;
+		this.props.fetchPaymentMethods( siteId );
+	}
 
 	renderMethodItem = ( method ) => {
 		return (
-			<PaymentMethodItem key={ method.label } method={ method } />
+			<PaymentMethodItem key={ method.title } method={ method } />
 		);
 	}
 
 	render() {
-		const { translate } = this.props;
-		const { methods } = this.state;
+		const { translate, paymentMethods } = this.props;
+
 		return (
 			<div className="payments__off-site-container">
 				<ExtendedHeader
@@ -58,12 +63,29 @@ class SettingsPaymentsOffSite extends Component {
 							<ListItemField className="payments__methods-column-settings">
 							</ListItemField>
 						</ListHeader>
-						{ methods && methods.map( this.renderMethodItem ) }
+						{ paymentMethods && paymentMethods.map( this.renderMethodItem ) }
 					</List>
 			</div>
 		);
 	}
-
 }
 
-export default localize( SettingsPaymentsOffSite );
+function mapStateToProps( state ) {
+	const siteId = getSelectedSiteId( state );
+	const paymentMethods = getPaymentMethodsGroup( state, siteId, 'off-site' );
+	return {
+		paymentMethods,
+		siteId,
+	};
+}
+
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchPaymentMethods
+		},
+		dispatch
+	);
+}
+
+export default localize( connect( mapStateToProps, mapDispatchToProps )( SettingsPaymentsOffSite ) );

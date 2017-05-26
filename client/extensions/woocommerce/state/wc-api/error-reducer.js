@@ -34,4 +34,3 @@ function clearApiError( siteState ) {
 
 	return { ...remaining };
 }
-
