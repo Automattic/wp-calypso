@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import settingsGeneral from './settings/general/reducer';
 import error from './error-reducer';
 import productCategories from './product-categories/reducer';
 import shippingZones from './shipping-zones/reducer';
@@ -9,6 +10,7 @@ const initialState = {};
 
 const handlers = {
 	...productCategories,
+	...settingsGeneral,
 	...shippingZones,
 	...error,
 };
@@ -31,4 +33,3 @@ export default function( state = initialState, action ) {
 
 	return state;
 }
-
