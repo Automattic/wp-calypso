@@ -14,7 +14,9 @@ import {
 	omit,
 	overSome,
 	pickBy,
-	partial
+	partial,
+	flatMap,
+	head,
 } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -48,7 +50,11 @@ import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
 } from 'state/site-settings/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'state/ui/selectors';
 import {
 	isJetpackModuleActive,
 	isHiddenSite,
@@ -65,6 +71,7 @@ import {
 	isJetpackBusiness
 } from 'lib/products-values';
 import { hasFeature } from 'state/sites/plans/selectors';
+import { getPlugins } from 'state/plugins/installed/selectors';
 import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -92,6 +99,10 @@ function getGeneralTabUrl( slug ) {
 
 function getJetpackPluginUrl( slug ) {
 	return `/plugins/jetpack/${ slug }`;
+}
+
+function getPluginDetailUrl( slug, siteSlug ) {
+	return `/plugins/${ slug }/${ siteSlug }`;
 }
 
 function stateForSite( site ) {
@@ -384,6 +395,21 @@ export const SeoForm = React.createClass( {
 		this.setState( { showPreview: false } );
 	},
 
+	getConflictingSeoPlugins( activePlugins ) {
+		const conflictingSeoPlugins = [
+			'Yoast SEO',
+			'Yoast SEO Premium',
+			'All In One SEO Pack',
+			'All in One SEO Pack Pro',
+		];
+
+		const plugins = flatMap( activePlugins, plugin => (
+			{ name: get( plugin, 'name', '' ), slug: get( plugin, 'slug', '' ) }
+		) );
+
+		return plugins.filter( plugin => includes( conflictingSeoPlugins, plugin.name ) );
+	},
+
 	render() {
 		const {
 			siteId,
@@ -397,6 +423,7 @@ export const SeoForm = React.createClass( {
 			isSitePrivate,
 			isSiteHidden,
 			isVerificationToolsActive,
+			activePlugins,
 			translate,
 		} = this.props;
 		const {
@@ -457,6 +484,11 @@ export const SeoForm = React.createClass( {
 			</Button>
 		);
 
+		const conflictedSeoPlugin = siteIsJetpack
+			// Let's just pick the first one to keep the notice short.
+			? head( this.getConflictingSeoPlugins( activePlugins, siteIsJetpack ) )
+			: false;
+
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div>
@@ -480,6 +512,21 @@ export const SeoForm = React.createClass( {
 					>
 						<NoticeAction href={ generalTabUrl }>
 							{ translate( 'Privacy Settings' ) }
+						</NoticeAction>
+					</Notice>
+				}
+
+				{ conflictedSeoPlugin &&
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate(
+							'Your SEO settings are managed by the following plugin: %(pluginName)s',
+							{ args: { pluginName: conflictedSeoPlugin.name } }
+						) }
+					>
+						<NoticeAction href={ getPluginDetailUrl( conflictedSeoPlugin.slug, slug ) }>
+							{ translate( 'View Plugin' ) }
 						</NoticeAction>
 					</Notice>
 				}
@@ -523,7 +570,7 @@ export const SeoForm = React.createClass( {
 				}
 
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
-					{ showAdvancedSeo &&
+					{ showAdvancedSeo && ! conflictedSeoPlugin &&
 						<div>
 							<SectionHeader label={ translate( 'Page Title Structure' ) }>
 								{ seoSubmitButton }
@@ -548,7 +595,7 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
-					{ ( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) &&
+					{ ! conflictedSeoPlugin && ( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) &&
 						<div>
 							<SectionHeader label={ translate( 'Website Meta' ) }>
 								{ seoSubmitButton }
@@ -754,6 +801,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		siteId,
 		siteIsJetpack,
 		selectedSite: getSelectedSite( state ),
+		siteSlug: getSelectedSiteSlug( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible && isAdvancedSeoSupported,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
@@ -763,6 +811,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
 		isVerificationToolsActive: isJetpackModuleActive( state, siteId, 'verification-tools' ),
+		activePlugins: getPlugins( state, [ { ID: siteId } ], 'active' ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),
