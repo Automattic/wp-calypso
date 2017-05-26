@@ -43,7 +43,7 @@ export function getPaymentMethodsGroup( state, type, siteId = getSelectedSiteId(
 	const wcApi = state.extensions.woocommerce.wcApi || {};
 	const siteData = wcApi[ siteId ] || {};
 	let methods;
-	if ( ! Array.isArray( siteData.paymentMethods ) ) {
+	if ( ! isArray( siteData.paymentMethods ) ) {
 		methods = [];
 	} else {
 		methods = siteData.paymentMethods.filter( ( method ) => {
