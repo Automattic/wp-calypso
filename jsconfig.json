@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": true,
 		"module": "commonjs",
-		"target": "ES6",
+		"target": "es2017",
 		"baseUrl": ".",
 		"paths": {
 			"*": [ "test/*", "server/*", "client/*" ]
