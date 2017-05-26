@@ -103,6 +103,10 @@ class JetpackConnectMain extends Component {
 		) {
 			return this.props.goToRemoteAuth( this.state.currentUrl );
 		}
+		if ( this.getStatus() === 'alreadyOwned' &&
+			! this.props.jetpackConnectSite.isRedirecting ) {
+			return this.props.goToPlans( this.state.currentUrl );
+		}
 
 		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
 			// eslint-disable-next-line react/no-did-update-set-state
