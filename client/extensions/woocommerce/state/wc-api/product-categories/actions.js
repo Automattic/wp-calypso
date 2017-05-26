@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import wp from 'lib/wp';
-import { error } from '../actions';
+import { setError } from '../../site/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
@@ -26,7 +26,7 @@ export function fetchProductCategories( siteId ) {
 				dispatch( fetchProductCategoriesSuccess( siteId, data ) );
 			} )
 			.catch( err => {
-				dispatch( error( siteId, getAction, err ) );
+				dispatch( setError( siteId, getAction, err ) );
 			} );
 	};
 }
@@ -38,7 +38,7 @@ export function fetchProductCategoriesSuccess( siteId, data ) {
 			payload: { siteId }
 		};
 
-		return error( siteId, originalAction, { message: 'Invalid Categories Array', data } );
+		return setError( siteId, originalAction, { message: 'Invalid Categories Array', data } );
 	}
 
 	return {

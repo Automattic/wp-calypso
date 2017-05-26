@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import wp from 'lib/wp';
-import { error } from '../actions';
+import { setError } from '../../site/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_CREATE_PRODUCT,
 	WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
@@ -30,7 +30,7 @@ export function createProduct( siteId, product, successAction = null, failureAct
 		const { id, ...productData } = product;
 
 		if ( typeof id === 'number' ) {
-			return error( siteId, createAction, {
+			return setError( siteId, createAction, {
 				message: 'Attempting to create a product which already has a valid id.',
 				product,
 			} );
@@ -52,7 +52,7 @@ export function createProduct( siteId, product, successAction = null, failureAct
 				}
 			} )
 			.catch( err => {
-				dispatch( error( siteId, createAction, err ) );
+				dispatch( setError( siteId, createAction, err ) );
 				if ( failureAction ) {
 					dispatch( failureAction( err ) );
 				}
@@ -67,7 +67,7 @@ export function createProductSuccess( siteId, product ) {
 			payload: { siteId, product },
 		};
 
-		return error( siteId, originalAction, {
+		return setError( siteId, originalAction, {
 			message: 'Invalid Product Object',
 			product
 		} );
