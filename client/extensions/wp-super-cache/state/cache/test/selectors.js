@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import {
 	isCacheDeleteSuccessful,
 	isDeletingCache,
+	isPreloadingCache,
 	isTestingCache,
 	getCacheDeleteStatus,
 	getCacheTestResults,
@@ -325,6 +326,72 @@ describe( 'selectors', () => {
 			const results = getCacheTestResults( state, primarySiteId );
 
 			expect( results ).to.eql( primaryResults );
+		} );
+	} );
+
+	describe( 'isPreloadingCache()', () => {
+		it( 'should return false if no state exists', () => {
+			const state = {
+				extensions: {
+					wpSuperCache: {
+						cache: {}
+					},
+				}
+			};
+			const isPreloading = isPreloadingCache( state, primarySiteId );
+
+			expect( isPreloading ).to.be.false;
+		} );
+
+		it( 'should return false if the site is not attached', () => {
+			const state = {
+				extensions: {
+					wpSuperCache: {
+						cache: {
+							preloading: {
+								[ primarySiteId ]: true,
+							}
+						}
+					}
+				}
+			};
+			const isPreloading = isPreloadingCache( state, secondarySiteId );
+
+			expect( isPreloading ).to.be.false;
+		} );
+
+		it( 'should return false if the cache is not preloading', () => {
+			const state = {
+				extensions: {
+					wpSuperCache: {
+						cache: {
+							preloading: {
+								[ primarySiteId ]: false,
+							}
+						}
+					}
+				}
+			};
+			const isPreloading = isPreloadingCache( state, primarySiteId );
+
+			expect( isPreloading ).to.be.false;
+		} );
+
+		it( 'should return true if the cache is preloading', () => {
+			const state = {
+				extensions: {
+					wpSuperCache: {
+						cache: {
+							preloading: {
+								[ primarySiteId ]: true,
+							}
+						}
+					}
+				}
+			};
+			const isPreloading = isPreloadingCache( state, primarySiteId );
+
+			expect( isPreloading ).to.be.true;
 		} );
 	} );
 } );
