@@ -68,7 +68,7 @@ describe( '#isCurrentSitePlanMatch()', () => {
 	} );
 
 	before( () => {
-		isCurrentSitePlanMatch = require( '../is-current-site-plan-match' ).default;
+		isCurrentSitePlanMatch = require( '../is-current-site-plan-match' );
 	} );
 
 	it( 'should return null if the site is not known', () => {

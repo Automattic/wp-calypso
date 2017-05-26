@@ -3,38 +3,14 @@
  */
 import { getSitePlanSlug } from 'state/sites/selectors';
 import { getPlanSlug } from 'state/plans/selectors';
-
-/**
- * Constants
- */
-const MONTHLY_SUFFIX = '_monthly';
-
-/**
- * Returns true if plan slugs match independently of intervals,
- * e.g. 'plan_business' matches 'plan_business_monthly' and vice-versa.
- *
- * Currently, this means comparing plans with a monthly suffix.
- * If other intervals are introduced, this code will need to be
- * updated accordingly.
- *
- * For example:
- *   isIntervalIndependentSlugMatch( 'plan_a', 'plan_b' ) => false
- *   isIntervalIndependentSlugMatch( 'plan_a', 'plan_b_monthly' ) => false
- *   isIntervalIndependentSlugMatch( 'plan_a', 'plan_a' ) => true
- *   isIntervalIndependentSlugMatch( 'plan_a', 'plan_a_monthly' ) => true
- *   isIntervalIndependentSlugMatch( 'plan_a_monthly', 'plan_a' ) => true
- *
- * This function is exported for testing purposes and is not meant for general use.
- * @private
- *
- * @param  {String}  planSlugA plan slug
- * @param  {String}  planSlugB plan slug
- * @return {Boolean} Whether the plan slugs match independently of their interval.
- */
-export const isIntervalIndependentSlugMatch = ( planSlugA, planSlugB ) =>
-	planSlugA === planSlugB ||
-	`${ planSlugA }${ MONTHLY_SUFFIX }` === planSlugB ||
-	planSlugA === `${ planSlugB }${ MONTHLY_SUFFIX }`;
+import {
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+} from 'lib/plans/constants';
 
 /**
  * Returns true if site's plan matches provided plan independently of intervals.
@@ -55,5 +31,30 @@ export default function isCurrentSitePlanMatch( state, siteId, planProductId ) {
 		return null;
 	}
 
-	return isIntervalIndependentSlugMatch( sitePlanSlug, comparisonPlanSlug );
+	if ( sitePlanSlug === comparisonPlanSlug ) {
+		return true;
+	}
+
+	switch ( sitePlanSlug ) {
+		case PLAN_JETPACK_BUSINESS:
+		case PLAN_JETPACK_BUSINESS_MONTHLY:
+			return (
+				comparisonPlanSlug === PLAN_JETPACK_BUSINESS ||
+				comparisonPlanSlug === PLAN_JETPACK_BUSINESS_MONTHLY
+			);
+		case PLAN_JETPACK_PERSONAL:
+		case PLAN_JETPACK_PERSONAL_MONTHLY:
+			return (
+				comparisonPlanSlug === PLAN_JETPACK_PERSONAL ||
+				comparisonPlanSlug === PLAN_JETPACK_PERSONAL_MONTHLY
+			);
+		case PLAN_JETPACK_PREMIUM:
+		case PLAN_JETPACK_PREMIUM_MONTHLY:
+			return (
+				comparisonPlanSlug === PLAN_JETPACK_PREMIUM ||
+				comparisonPlanSlug === PLAN_JETPACK_PREMIUM_MONTHLY
+			);
+	}
+
+	return false;
 }
