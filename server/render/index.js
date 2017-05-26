@@ -6,6 +6,7 @@ import superagent from 'superagent';
 import Lru from 'lru';
 import { isEmpty, pick } from 'lodash';
 import debugFactory from 'debug';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -79,6 +80,10 @@ export function serverRender( req, res ) {
 
 	if ( context.lang !== config( 'i18n_default_locale_slug' ) ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
+	}
+
+	if ( moment.locale() !== 'en' ) {
+		context.localeFile = `moment-locale-${ moment.locale() }`;
 	}
 
 	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user && isEmpty( context.query ) ) {
