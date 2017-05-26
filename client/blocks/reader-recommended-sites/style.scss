@@ -95,10 +95,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			padding: 0;
 			position: relative;
 			z-index: 0;
-			top: 8px;
+			top: 5px;
 
 			@include breakpoint( ">660px" ) {
 				top: -2px;
+			}
+
+			@media #{$reader-related-card-v2-breakpoint-small}{
+				top: 8px;
 			}
 		}
 
