@@ -1,8 +1,14 @@
-// Styles recommended by twemoji
+// Adapted from styles recommended by twemoji
 // https://github.com/twitter/twemoji#inline-styles
 .emojify__emoji {
-	height: 1em;
-	width: 1em;
+	height: 1.2em;
+	width: 1.2em;
 	margin: 0 .05em 0 .1em;
 	vertical-align: -0.1em;
+}
+
+.emojify__solo .emojify__emoji {
+	height: 2em;
+	width: 2em;
+	vertical-align: -0.2em;
 }

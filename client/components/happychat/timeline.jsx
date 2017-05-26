@@ -35,7 +35,8 @@ const debug = require( 'debug' )( 'calypso:happychat:timeline' );
 
 const linksNotEmpty = ( { links } ) => ! isEmpty( links );
 
-const messageParagraph = ( { message, key } ) => <p key={ key }><Emojify>{ message }</Emojify></p>;
+const messageParagraph = ( { message, key } ) =>
+	<p key={ key }><Emojify soloClassName="emojify__solo">{ message }</Emojify></p>;
 
 /*
  * Given a message and array of links contained within that message, returns the message

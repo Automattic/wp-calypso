@@ -24,13 +24,18 @@ export default class Emojify extends PureComponent {
 	}
 
 	parseEmoji = () => {
-		const { className } = this.props;
+		const { className, soloClassName } = this.props;
 
 		twemoji.parse( this.refs.emojified, {
 			base: config( 'twemoji_cdn_url' ),
 			size: '72x72',
 			className: className
 		} );
+
+		if ( soloClassName != null ) {
+			this.refs.emojified.className =
+				this.refs.emojified.textContent ? '' : soloClassName;
+		}
 	}
 
 	render() {
