@@ -4,12 +4,14 @@
 import { local } from './utils';
 import { mergeHandlers } from 'state/action-watchers/utils';
 
-import httpHandlers from './wpcom-http';
+import httpHandlers from './http';
+import wpcomHttpHandlers from './wpcom-http';
 import thirdPartyHandlers from './third-party';
 import wpcomHandlers from './wpcom';
 
 const mergedHandlers = mergeHandlers(
 	httpHandlers,
+	wpcomHttpHandlers,
 	thirdPartyHandlers,
 	wpcomHandlers,
 );
