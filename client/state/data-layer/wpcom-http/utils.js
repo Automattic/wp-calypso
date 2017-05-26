@@ -20,6 +20,14 @@ export const getData = action => get( action, 'meta.dataLayer.data', null );
 export const getError = action => get( action, 'meta.dataLayer.error', null );
 
 /**
+ * Returns (response) headers data from an HTTP request action if available
+ *
+ * @param {Object} action may contain HTTP response headers data
+ * @returns {?*} headers data if available
+ */
+export const getHeaders = action => get( action, 'meta.dataLayer.headers', null );
+
+/**
  * @typedef {Object} ProgressData
  * @property {number} loaded number of bytes already transferred
  * @property {number} total total number of bytes to transfer

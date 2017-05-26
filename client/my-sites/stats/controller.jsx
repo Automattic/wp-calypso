@@ -15,9 +15,10 @@ import titlecase from 'to-title-case';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { savePreference } from 'state/preferences/actions';
-import { getSite } from 'state/sites/selectors';
+import { getSite, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 const analyticsPageTitle = 'Stats';
@@ -374,6 +375,29 @@ module.exports = {
 			};
 			renderWithReduxStore(
 				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/comment-follows" { ...props } />,
+				document.getElementById( 'primary' ),
+				context.store
+			);
+		}
+	},
+
+	activityLog: function( context ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+
+		if ( siteId && ! isJetpack ) {
+			page.redirect( '/stats' );
+		} else {
+			analytics.pageView.record( '/stats/activity/:site', analyticsPageTitle + ' > Activity ' );
+
+			const props = {
+				path: context.path,
+				siteId,
+				context,
+			};
+			renderWithReduxStore(
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/activity-log" { ...props } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);

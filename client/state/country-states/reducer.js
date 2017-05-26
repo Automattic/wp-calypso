@@ -7,7 +7,7 @@ import {
 	COUNTRY_STATES_REQUEST_FAILURE,
 	COUNTRY_STATES_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { itemSchema } from './schema';
 
 // Stores the complete list of states, indexed by locale key
@@ -22,7 +22,7 @@ export const isFetching = createReducer( {}, {
 	[ COUNTRY_STATES_REQUEST_FAILURE ]: ( state, { countryCode } ) => ( { ...state, [ countryCode ]: false } )
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	isFetching,
 	items,
 } );

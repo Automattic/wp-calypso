@@ -9,7 +9,7 @@ import {
 	DESERIALIZE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import editor from './editor/reducer';
 import dropZone from './drop-zone/reducer';
 import guidedTour from './guided-tours/reducer';
@@ -39,6 +39,10 @@ export function selectedSiteId( state = null, action ) {
 
 	return state;
 }
+
+export const siteSelectionInitialized = createReducer( false, {
+	[ SELECTED_SITE_SET ]: () => true,
+} );
 
 //TODO: do we really want to mix strings and booleans?
 export function section( state = false, action ) {
@@ -83,7 +87,7 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 	return state;
 };
 
-const reducer = combineReducersWithPersistence( {
+const reducer = combineReducers( {
 	section,
 	isLoading,
 	layoutFocus,
@@ -91,6 +95,7 @@ const reducer = combineReducersWithPersistence( {
 	isPreviewShowing,
 	queryArguments,
 	selectedSiteId,
+	siteSelectionInitialized,
 	dropZone,
 	guidedTour,
 	editor,

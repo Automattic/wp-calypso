@@ -124,6 +124,8 @@ class FollowingManage extends Component {
 		this.updatePosition = setInterval( () => {
 			this.windowScrollerRef && this.windowScrollerRef.updatePosition();
 		}, 300 );
+
+		this.reportFollowByUrlRender();
 	}
 
 	componentWillUnmount() {
@@ -147,6 +149,25 @@ class FollowingManage extends Component {
 		);
 	};
 
+	reportFollowByUrlRender = () => {
+		const siteUrl = this.props.readerAliasedFollowFeedUrl;
+		const showingFollowByUrlButton = this.shouldShowFollowByUrl();
+
+		if ( siteUrl && showingFollowByUrlButton ) {
+			recordTrack( 'calypso_reader_following_manage_follow_by_url_render', {
+				url: siteUrl,
+			} );
+		}
+	};
+
+	shouldShowFollowByUrl = () => resemblesUrl( this.props.sitesQuery );
+
+	componentDidUpdate( prevProps ) {
+		if ( this.props.readerAliasedFollowFeedUrl !== prevProps.readerAliasedFollowFeedUrl ) {
+			this.reportFollowByUrlRender();
+		}
+	}
+
 	render() {
 		const {
 			sitesQuery,
@@ -160,20 +181,18 @@ class FollowingManage extends Component {
 			recommendedSitesPagingOffset,
 			blockedSites,
 			followsCount,
+			readerAliasedFollowFeedUrl,
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
 		const hasFollows = followsCount > 0;
 		const showExistingSubscriptions = hasFollows && ! showMoreResults;
-		const isSitesQueryUrl = resemblesUrl( sitesQuery );
-		let sitesQueryWithoutProtocol;
-		if ( isSitesQueryUrl ) {
-			sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
-		}
+		const sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
+		const showFollowByUrl = this.shouldShowFollowByUrl();
+		const isFollowByUrlWithNoSearchResults = showFollowByUrl && searchResultsCount === 0;
 		const filteredRecommendedSites = reject(
 			recommendedSites,
 			site => includes( blockedSites, site.blogId )
 		);
-		const isFollowByUrlWithNoSearchResults = isSitesQueryUrl && searchResultsCount === 0;
 
 		return (
 			<ReaderMain className="following-manage">
@@ -205,7 +224,7 @@ class FollowingManage extends Component {
 						/>
 					</CompactCard>
 
-					{ isSitesQueryUrl &&
+					{ showFollowByUrl &&
 						<div className="following-manage__url-follow">
 							{ isFollowByUrlWithNoSearchResults &&
 								<span className="following-manage__url-follow-no-search-results-message">
@@ -221,7 +240,7 @@ class FollowingManage extends Component {
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
-								siteUrl={ this.props.readerAliasedFollowFeedUrl }
+								siteUrl={ readerAliasedFollowFeedUrl }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
 							/>
 						</div> }
@@ -267,10 +286,8 @@ export default connect(
 			recommendationsSeed
 		),
 		blockedSites: getBlockedSites( state ),
-		readerAliasedFollowFeedUrl: getReaderAliasedFollowFeedUrl(
-			state,
-			addSchemeIfMissing( ownProps.sitesQuery, 'http' )
-		),
+		readerAliasedFollowFeedUrl: ownProps.sitesQuery &&
+			getReaderAliasedFollowFeedUrl( state, addSchemeIfMissing( ownProps.sitesQuery, 'http' ) ),
 		followsCount: getReaderFollowsCount( state ),
 	} ),
 	{ requestFeedSearch }

@@ -1,17 +1,21 @@
 /**
  * Internal dependencies
  */
+import settingsGeneral from './settings/general/reducer';
 import error from './error-reducer';
 import paymentMethods from './payment-methods/reducer';
 import productCategories from './product-categories/reducer';
 import shippingZones from './shipping-zones/reducer';
+import products from './products/reducer';
 
 const initialState = {};
 
 const handlers = {
 	...paymentMethods,
 	...productCategories,
+	...settingsGeneral,
 	...shippingZones,
+	...products,
 	...error,
 };
 

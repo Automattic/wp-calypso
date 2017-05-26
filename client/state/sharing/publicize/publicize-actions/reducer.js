@@ -20,7 +20,7 @@ import {
 	PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_EDIT_FAILURE,
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { publicizeActionsSchema } from './schema';
 
 function updateDataForPost( newValue, state, siteId, postId, actionId ) {
@@ -97,7 +97,7 @@ export const editingSharePostAction = createReducer( {}, {
 		( state, { siteId, postId, actionId } ) => updateDataForPost( true, state, siteId, postId, actionId ),
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	scheduled,
 	published,
 	fetchingSharePostActionsScheduled,

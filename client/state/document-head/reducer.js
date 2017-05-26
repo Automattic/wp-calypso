@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import {
 	DOCUMENT_HEAD_LINK_SET,
@@ -27,7 +27,7 @@ export const link = createReducer( [], {
 	[ DOCUMENT_HEAD_LINK_SET ]: ( state, action ) => ( action.link )
 }, linkSchema );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	link,
 	meta,
 	title,

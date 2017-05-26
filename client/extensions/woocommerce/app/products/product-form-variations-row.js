@@ -7,12 +7,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormTextInput from 'components/forms/form-text-input';
-import FormCurrencyInput from 'components/forms/form-currency-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormDimensionsInput from '../../components/form-dimensions-input';
 import formattedVariationName from '../../lib/formatted-variation-name';
+import FormCurrencyInput from 'components/forms/form-currency-input';
+import FormDimensionsInput from '../../components/form-dimensions-input';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
 const ProductFormVariationsRow = ( {
 	product,
@@ -37,43 +36,30 @@ const ProductFormVariationsRow = ( {
 	};
 
 	const setStockQuantity = ( e ) => {
-		editProductVariation( product, variation, { stock_quantity: e.target.value } );
-	};
-
-	const toggleStock = () => {
-		editProductVariation( product, variation, { manage_stock: ! variation.manage_stock } );
+		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
+		editProductVariation( product, variation, { stock_quantity } );
 	};
 
 	const showDialog = () => {
 		onShowDialog( variation.id );
 	};
 
-	// A variation with empty attributes is a 'fallback variation'.
-	// We use this for the "All variations" row in the table, as defaults for the other variations.
-	const fallbackRow = ! variation.attributes.length;
-	const rowClassName = 'products__product-form-variation-' + ( fallbackRow && 'all-row' || 'row' );
-
 	return (
-		<tr className={ rowClassName }>
+		<tr className="products__product-form-variation-row">
 			<td className="products__product-id">
-				{ ! fallbackRow && (
-					<div className="products__product-name-thumb">
-						<div className="products__product-form-variation-image"></div>
-						<span className="products__product-name products__variation-settings-link" onClick={ showDialog }>
-							{ formattedVariationName( variation ) }
-						</span>
-					</div>
-				) || (
-					<div className="products__product-name">
-						{ translate( 'All variations' ) }
-					</div>
-				) }
+				<div className="products__product-name-thumb">
+					<div className="products__product-form-variation-image"></div>
+					<span className="products__product-name products__variation-settings-link" onClick={ showDialog }>
+						{ formattedVariationName( variation ) }
+					</span>
+				</div>
 			</td>
 			<td>
 				<FormCurrencyInput noWrap
 					currencySymbolPrefix="$"
 					name="price"
 					value={ variation.regular_price || '' }
+					placeholder="0.00"
 					onChange={ setPrice }
 					size="4"
 				/>
@@ -102,20 +88,13 @@ const ProductFormVariationsRow = ( {
 			</td>
 			<td>
 				<div className="products__product-manage-stock">
-					{ fallbackRow && (
-						<div className="products__product-manage-stock-checkbox">
-							<FormCheckbox checked={ Boolean( variation.manage_stock ) } onChange={ toggleStock } />
-						</div>
-					) }
-					{ manageStock && (
-						<FormTextInput
-							name="stock_quantity"
-							value={ variation.stock_quantity || '' }
-							type="number"
-							onChange={ setStockQuantity }
-							placeholder={ translate( 'Quantity' ) }
-						/>
-					) }
+					{ manageStock && ( <FormTextInput
+						name="stock_quantity"
+						value={ variation.stock_quantity || '' }
+						type="number"
+						onChange={ setStockQuantity }
+						placeholder={ translate( 'Quantity' ) }
+					/> ) }
 				</div>
 			</td>
 		</tr>

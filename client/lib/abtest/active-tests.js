@@ -57,6 +57,7 @@ module.exports = {
 			show: 80,
 		},
 		defaultVariation: 'hide',
+		allowExistingUsers: true,
 	},
 	ATUpgradeOnCancel: {
 		datestamp: '20170515',
@@ -65,6 +66,7 @@ module.exports = {
 			show: 80,
 		},
 		defaultVariation: 'hide',
+		allowExistingUsers: true,
 	},
 	reduceThemesInSignupTest: {
 		datestamp: '20170518',
@@ -81,5 +83,21 @@ module.exports = {
 			show: 50,
 		},
 		defaultVariation: 'show',
+	},
+	siteCreationStepOne: {
+		datestamp: '20170524',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+	},
+	selectCtaInDomainsSignup: {
+		datestamp: '20170529',
+		variations: {
+			original: 50,
+			select: 50,
+		},
+		defaultVariation: 'original',
 	},
 };

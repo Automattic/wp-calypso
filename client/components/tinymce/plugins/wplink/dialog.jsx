@@ -345,6 +345,7 @@ var LinkDialog = React.createClass( {
 							<PostSelector
 								siteId={ this.props.site.ID }
 								type="any"
+								excludePrivateTypes={ true }
 								status="publish"
 								orderBy="date"
 								order="DESC"

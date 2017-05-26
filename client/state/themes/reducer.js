@@ -7,7 +7,7 @@ import { mapValues, omit } from 'lodash';
  * Internal dependencies
  */
 import ThemeQueryManager from 'lib/query-manager/theme';
-import { combineReducersWithPersistence, createReducer, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -369,7 +369,7 @@ export const themeFilters = createReducer( {}, {
 	[ THEME_FILTERS_ADD ]: ( state, { filters } ) => ( filters )
 }, themeFiltersSchema );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	queries,
 	queryRequests,
 	queryRequestErrors,

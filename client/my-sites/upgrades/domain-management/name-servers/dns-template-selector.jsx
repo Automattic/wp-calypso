@@ -21,7 +21,7 @@ class DnsTemplateSelector extends Component {
 				options={
 					templates.map( ( template ) => {
 						return {
-							value: template.dnsTemplate,
+							value: template.dnsTemplateService,
 							label: template.name
 						};
 					} )

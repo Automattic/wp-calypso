@@ -21,7 +21,7 @@ import {
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE_FAILURE
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { normalizeSettings } from './utils';
 
 const createRequestsReducer = ( data ) => {
@@ -133,7 +133,7 @@ export const saveRequests = createReducer( {}, {
 	} )
 } );
 
-export const reducer = combineReducersWithPersistence( {
+export const reducer = combineReducers( {
 	items,
 	requests,
 	saveRequests

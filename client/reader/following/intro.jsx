@@ -6,7 +6,6 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -38,9 +37,7 @@ class FollowingIntro extends React.Component {
 
 	render() {
 		const { isNewReader, translate, dismiss, userId } = this.props;
-		const linkElement = config.isEnabled( 'reader/following-manage-refresh' )
-			? <a onClick={ this.props.handleManageLinkClick } href="/following/manage" />
-			: <a onClick={ this.props.handleManageLinkClick } href="/following/edit" />;
+		const linkElement = <a onClick={ this.props.handleManageLinkClick } href="/following/manage" />;
 
 		// Only show the banner to new Readers with an odd user ID (simple A/B test)
 		if ( ! isNewReader || ! userId || isEven( userId ) ) {

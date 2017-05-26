@@ -41,7 +41,7 @@ const PaymentMethodItem = ( { method, translate } ) => {
 			<ListItemField>
 				<Button compact>
 					{
-						translate( 'Set Up' )
+						translate( 'Set up' )
 					}
 				</Button>
 			</ListItemField>

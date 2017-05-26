@@ -6,7 +6,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import exporter from './exporter/reducers';
 import { items as itemSchemas } from './schema';
@@ -86,7 +86,7 @@ export const items = createReducer( {}, {
 	}
 }, itemSchemas );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	exporter,
 	items,
 	requesting,

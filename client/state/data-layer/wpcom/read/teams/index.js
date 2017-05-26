@@ -4,7 +4,7 @@
 import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
 import wpcom from 'lib/wp';
 
-export function handleTeamsRequest( store, action, next ) {
+export function handleTeamsRequest( store ) {
 	wpcom.req.get( '/read/teams', { apiVersion: '1.2' } ).then(
 		payload => {
 			store.dispatch( {
@@ -20,7 +20,6 @@ export function handleTeamsRequest( store, action, next ) {
 			} );
 		}
 	);
-	next( action );
 }
 
 export default {

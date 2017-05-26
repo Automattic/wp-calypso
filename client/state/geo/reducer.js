@@ -7,7 +7,7 @@ import {
 	GEO_REQUEST_FAILURE,
 	GEO_REQUEST_SUCCESS
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { geoSchema } from './schema';
 
 /**
@@ -36,7 +36,7 @@ export const geo = createReducer( null, {
 	[ GEO_RECEIVE ]: ( state, action ) => action.geo
 }, geoSchema );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	requesting,
 	geo
 } );

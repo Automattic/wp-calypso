@@ -12,8 +12,6 @@ import { action as ActionTypes } from './constants';
 import { prepareSiteUrl } from './helper';
 import { isRequestInflight, requestTracker } from 'lib/inflight';
 import FeedSubscriptionStore from './index';
-import { action as SiteStoreActionTypes } from 'lib/reader-site-store/constants';
-import { action as FeedStoreActionTypes } from 'lib/feed-store/constants';
 
 const FeedSubscriptionActions = {
 	follow: function( url, fetchMeta = true ) {
@@ -174,15 +172,8 @@ const FeedSubscriptionActions = {
 
 		if ( sites.length > 0 ) {
 			Dispatcher.handleServerAction( {
-				type: SiteStoreActionTypes.RECEIVE_BULK_UPDATE,
+				type: 'RECEIVE_BULK_SITE_UPDATE',
 				data: sites
-			} );
-		}
-
-		if ( feeds.length > 0 ) {
-			Dispatcher.handleServerAction( {
-				type: FeedStoreActionTypes.RECEIVE_BULK_UPDATE,
-				data: feeds
 			} );
 		}
 	},
@@ -205,7 +196,7 @@ function getNextPageParams() {
 function receiveSubscriptionMeta( subscription ) {
 	if ( get( subscription, 'meta.data.site' ) ) {
 		Dispatcher.handleServerAction( {
-			type: SiteStoreActionTypes.RECEIVE_FETCH,
+			type: 'RECEIVE_FETCH_SITE',
 			siteId: subscription.meta.data.site.ID,
 			data: subscription.meta.data.site
 		} );
@@ -213,7 +204,7 @@ function receiveSubscriptionMeta( subscription ) {
 
 	if ( get( subscription, 'meta.data.feed' ) ) {
 		Dispatcher.handleServerAction( {
-			type: FeedStoreActionTypes.RECEIVE_FETCH,
+			type: 'RECEIVE_FEED_FETCH',
 			feedId: subscription.meta.data.feed.feed_ID,
 			data: subscription.meta.data.feed
 		} );

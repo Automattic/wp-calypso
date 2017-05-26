@@ -37,7 +37,7 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { sitesSchema } from './schema';
-import { createReducer, keyedReducer, combineReducersWithPersistence } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 /**
  * Constants
@@ -255,7 +255,7 @@ export const deleting = keyedReducer( 'siteId', createReducer( {}, {
 	[ SITE_DELETE_SUCCESS ]: stubFalse
 } ) );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	connection,
 	deleting,
 	domains,

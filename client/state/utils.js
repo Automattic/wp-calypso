@@ -3,7 +3,7 @@
  */
 import validator from 'is-my-json-valid';
 import { merge, flow, partialRight, reduce, isEqual, omit } from 'lodash';
-import { combineReducers } from 'redux';
+import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 
 /**
  * Internal dependencies
@@ -322,7 +322,7 @@ export const withSchemaValidation = ( schema, reducer ) => {
  *
  * age.schema = schema;
  *
- * const combinedReducer = combineReducersWithPersistence( {
+ * const combinedReducer = combineReducers( {
  *     age,
  *     height
  * } );
@@ -354,7 +354,7 @@ export const withSchemaValidation = ( schema, reducer ) => {
  * };
  * date.hasCustomPersistence = true;
  *
- * const combinedReducer = combineReducersWithPersistence( {
+ * const combinedReducer = combineReducers( {
  *     date,
  *     height
  * } );
@@ -368,12 +368,12 @@ export const withSchemaValidation = ( schema, reducer ) => {
  * @param {object} reducers - object containing the reducers to merge
  * @returns {function} - Returns the combined reducer function
  */
-export function combineReducersWithPersistence( reducers ) {
+export function combineReducers( reducers ) {
 	const validatedReducers = reduce( reducers, ( validated, next, key ) => {
 		const { schema, hasCustomPersistence } = next;
 		return { ...validated, [ key ]: hasCustomPersistence ? next : withSchemaValidation( schema, next ) };
 	}, {} );
-	const combined = combineReducers( validatedReducers );
+	const combined = combine( validatedReducers );
 	combined.hasCustomPersistence = true;
 	return combined;
 }

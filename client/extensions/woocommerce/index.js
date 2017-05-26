@@ -182,6 +182,6 @@ export default function() {
 
 	// Add pages that use my-sites navigation instead
 	if ( config.isEnabled( 'woocommerce/extension-stats' ) ) {
-		page( '/store/stats/:type/:period/:site', siteSelection, navigation, StatsController );
+		page( '/store/stats/:type/:unit/:site', siteSelection, navigation, StatsController );
 	}
 }

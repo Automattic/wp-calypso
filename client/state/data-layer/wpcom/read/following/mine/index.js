@@ -63,7 +63,7 @@ let seenSubscriptions = null;
 export const isSyncingFollows = () => syncingFollows;
 export const resetSyncingFollows = () => syncingFollows = false;
 
-export function syncReaderFollows( store, action, next ) {
+export function syncReaderFollows( store ) {
 	if ( isSyncingFollows() ) {
 		return;
 	}
@@ -72,11 +72,9 @@ export function syncReaderFollows( store, action, next ) {
 	seenSubscriptions = new Set();
 
 	store.dispatch( requestPageAction( 1 ) );
-
-	next( action );
 }
 
-export function requestPage( store, action, next ) {
+export function requestPage( store, action ) {
 	store.dispatch(
 		http( {
 			method: 'GET',
@@ -91,8 +89,6 @@ export function requestPage( store, action, next ) {
 			onError: action,
 		} )
 	);
-
-	next( action );
 }
 
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
@@ -128,11 +124,10 @@ export function receivePage( store, action, next, apiResponse ) {
 	syncingFollows = false;
 }
 
-export function updateSeenOnFollow( store, action, next ) {
+export function updateSeenOnFollow( store, action ) {
 	if ( seenSubscriptions ) {
 		seenSubscriptions.add( action.payload.feedUrl );
 	}
-	next( action );
 }
 
 export function receiveError( store ) {

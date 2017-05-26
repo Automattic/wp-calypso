@@ -2,15 +2,15 @@ Follow Button
 =========
 
 This component is used to display a follow/unfollow button.
-It has two parts, the actual button and a container that works with the FeedSubscriptionStore.
+It has two parts, the actual button and a container that works with Redux state.
 For most uses, the container is the easiest route.
 
 #### How to use the container:
 
 ```js
-var FollowButtonContainer = require( 'components/follow-button' );
+import FollowButtonContainer from 'blocks/follow-button';
 
-render: function() {
+render() {
 	return (
 		<div className="your-stuff">
 			  <FollowButtonContainer siteUrl="http://trailnose.com" />
@@ -25,9 +25,9 @@ render: function() {
 
 #### How to use the button directly:
 ```js
-var FollowButton = require( 'components/follow-button/button' );
+import FollowButton from 'blocks/follow-button/button';
 
-render: function() {
+render() {
 	return (
 		<div className="your-stuff">
 			  <FollowButton following={ false } />

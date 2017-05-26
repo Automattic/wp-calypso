@@ -20,7 +20,7 @@ import {
 	COMMENTS_REQUEST_SUCCESS,
 	COMMENTS_REQUEST_FAILURE,
 } from '../action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import {
 	PLACEHOLDER_STATE
 } from './constants';
@@ -38,9 +38,9 @@ const updateComment = ( commentId, newProperties ) => comment => {
 	return {
 		...comment,
 		...newProperties,
-		...updateLikeCount && {
+		...( updateLikeCount && {
 			like_count: newProperties.i_like ? comment.like_count + 1 : comment.like_count - 1
-		}
+		} )
 	};
 };
 
@@ -154,7 +154,7 @@ export function totalCommentsCount( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	requests,
 	totalCommentsCount

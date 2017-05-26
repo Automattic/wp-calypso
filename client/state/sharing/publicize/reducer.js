@@ -21,7 +21,7 @@ import {
 	PUBLICIZE_SHARE_FAILURE,
 	PUBLICIZE_SHARE_DISMISS
 } from 'state/action-types';
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { connectionsSchema } from './schema';
 import sharePostActions from './publicize-actions/reducer';
 
@@ -77,7 +77,7 @@ export const connections = createReducer( {}, {
 	[ PUBLICIZE_CONNECTION_UPDATE ]: ( state, { connection } ) => ( { ...state, [ connection.ID ]: connection } ),
 }, connectionsSchema );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	fetchingConnection,
 	fetchingConnections,
 	fetchedConnections,

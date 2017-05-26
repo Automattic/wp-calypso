@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import lists from './lists/reducer';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import feeds from './feeds/reducer';
 import follows from './follows/reducer';
 import sites from './sites/reducer';
@@ -15,7 +15,7 @@ import teams from './teams/reducer';
 import feedSearches from './feed-searches/reducer';
 import recommendedSites from './recommended-sites/reducer';
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	feeds,
 	follows,
 	lists,

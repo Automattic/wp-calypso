@@ -47,9 +47,8 @@ describe( 'recommended sites', () => {
 	describe( '#requestRecommendedSites', () => {
 		it( 'should dispatch an http request and call through next', () => {
 			const dispatch = spy();
-			const next = spy();
 			const action = requestRecommendedSitesAction( { seed } );
-			requestRecommendedSites( { dispatch }, action, next );
+			requestRecommendedSites( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWith(
 				http( {
 					method: 'GET',
@@ -60,8 +59,6 @@ describe( 'recommended sites', () => {
 					onFailure: action,
 				} )
 			);
-
-			expect( next ).to.have.been.calledWith( action );
 		} );
 	} );
 
@@ -69,10 +66,8 @@ describe( 'recommended sites', () => {
 		it( 'should dispatch action with sites if successful', () => {
 			const dispatch = spy();
 			const action = requestRecommendedSitesAction( { seed } );
-			const next = spy();
 
-			receiveRecommendedSitesResponse( { dispatch }, action, next, response );
-			expect( next ).to.not.have.been.called;
+			receiveRecommendedSitesResponse( { dispatch }, action, null, response );
 			expect( dispatch ).calledWith(
 				receiveRecommendedSites( {
 					sites: fromApi( response ),

@@ -70,9 +70,8 @@ describe( '#fetchPostRevisions', () => {
 	it( 'should dispatch HTTP request to tag endpoint', () => {
 		const action = requestPostRevisions( 12345678, 10 );
 		const dispatch = sinon.spy();
-		const next = sinon.spy();
 
-		fetchPostRevisions( { dispatch }, action, next );
+		fetchPostRevisions( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( http( {
@@ -89,9 +88,8 @@ describe( '#receiveSuccess', () => {
 	it( 'should normalize the revisions and dispatch `receivePostRevisions` and `receivePostRevisionsSuccess`', () => {
 		const action = requestPostRevisions( 12345678, 10 );
 		const dispatch = sinon.spy();
-		const next = sinon.spy();
 
-		receiveSuccess( { dispatch }, action, next, successfulPostRevisionsResponse );
+		receiveSuccess( { dispatch }, action, null, successfulPostRevisionsResponse );
 
 		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWith( receivePostRevisionsSuccess( 12345678, 10 ) );
@@ -103,10 +101,9 @@ describe( '#receiveError', () => {
 	it( 'should dispatch `receivePostRevisionsFailure`', () => {
 		const action = requestPostRevisions( 12345678, 10 );
 		const dispatch = sinon.spy();
-		const next = sinon.spy();
 		const rawError = new Error( 'Foo Bar' );
 
-		receiveError( { dispatch }, action, next, rawError );
+		receiveError( { dispatch }, action, null, rawError );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( receivePostRevisionsFailure( 12345678, 10, rawError ) );

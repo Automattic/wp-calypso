@@ -1,14 +1,12 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
+
 import classNames from 'classnames';
 
-export default React.createClass( {
-
-	displayName: 'ButtonGroup',
-
-	propTypes: {
+class ButtonGroup extends PureComponent {
+	static propTypes = {
 		children( props ) {
 			let error = null;
 			React.Children.forEach( props.children, ( child ) => {
@@ -18,13 +16,22 @@ export default React.createClass( {
 			} );
 			return error;
 		}
-	},
+	};
 
 	render() {
-		const buttonGroupClasses = classNames( 'button-group', this.props.className );
+		const buttonGroupClasses = classNames(
+			'button-group',
+			this.props.className,
+			{
+				'is-busy': this.props.busy,
+				'is-primary': this.props.primary
+			},
+		);
 
 		return (
 			<span className={ buttonGroupClasses }>{ this.props.children }</span>
 		);
 	}
-} );
+}
+
+export default ButtonGroup;

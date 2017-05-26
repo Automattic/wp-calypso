@@ -7,7 +7,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import analyticsTracking from './analytics/reducer';
 import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';
@@ -62,6 +62,7 @@ import timezones from './timezones/reducer';
 import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
+import userDevices from './user-devices/reducer';
 import userSettings from './user-settings/reducer';
 import wordads from './wordads/reducer';
 import config from 'config';
@@ -71,7 +72,7 @@ import config from 'config';
  */
 
 // Consolidate the extension reducers under 'extensions' for namespacing.
-const extensions = combineReducersWithPersistence( extensionsModule.reducers() );
+const extensions = combineReducers( extensionsModule.reducers() );
 
 const reducers = {
 	analyticsTracking,
@@ -125,11 +126,12 @@ const reducers = {
 	themes,
 	ui,
 	users,
+	userDevices,
 	userSettings,
 	wordads,
 };
 
-export const reducer = combineReducersWithPersistence( reducers );
+export const reducer = combineReducers( reducers );
 
 /**
  * @typedef {Object} ReduxStore

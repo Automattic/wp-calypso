@@ -43,6 +43,7 @@ class CurrentPlan extends Component {
 		isExpiring: PropTypes.bool,
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
+		isAutomatedTransfer: PropTypes.bool,
 	};
 
 	isLoading() {
@@ -85,6 +86,7 @@ class CurrentPlan extends Component {
 			shouldShowDomainWarnings,
 			hasDomainsLoaded,
 			translate,
+			isAutomatedTransfer,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug,
@@ -130,6 +132,7 @@ class CurrentPlan extends Component {
 						currentPlanSlug={ currentPlanSlug }
 						currentPlan={ currentPlan }
 						isExpiring={ isExpiring }
+						isAutomatedTransfer={ isAutomatedTransfer }
 					/>
 					<ProductPurchaseFeaturesList
 						plan={ currentPlanSlug }
@@ -156,6 +159,7 @@ export default connect(
 			selectedSite,
 			selectedSiteId,
 			domains,
+			isAutomatedTransfer,
 			context: ownProps.context,
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),

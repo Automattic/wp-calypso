@@ -1,12 +1,15 @@
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
+	WP_SUPER_CACHE_PRELOAD_CACHE,
+	WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE,
+	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
@@ -45,6 +48,19 @@ const deleteStatus = createReducer( {}, {
 } );
 
 /**
+ * Returns the updated preloading state after an action has been dispatched.
+ * Preloading state tracks whether the preload for a site is currently in progress.
+ * @param  {Object} state Current preloading state
+ * @param  {Object} action Action object
+ * @return {Object} Updated preloading state
+ */
+const preloading = createReducer( {}, {
+	[ WP_SUPER_CACHE_PRELOAD_CACHE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+	[ WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
+} );
+
+/**
  * Returns the updated cache testing state after an action has been dispatched.
  * Testing state tracks whether the cache test for a site is currently in progress.
  *
@@ -69,8 +85,9 @@ const items = createReducer( {}, {
 	[ WP_SUPER_CACHE_TEST_CACHE_SUCCESS ]: ( state, { siteId, data } ) => ( { ...state, [ siteId ]: data } ),
 } );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	deleteStatus,
 	items,
+	preloading,
 	testing,
 } );

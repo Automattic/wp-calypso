@@ -18,15 +18,12 @@ const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 class PlansLanding extends Component {
 	static propTypes = {
 		basePlansPath: PropTypes.string,
-		hideFreePlan: PropTypes.bool,
 		intervalType: PropTypes.string,
-		isLanding: PropTypes.bool,
-		landingType: PropTypes.string,
 	};
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_landing_view', {
-			jpc_from: this.props.landingType
+			jpc_from: 'jetpack',
 		} );
 	}
 
@@ -44,10 +41,7 @@ class PlansLanding extends Component {
 	render() {
 		const {
 			basePlansPath,
-			hideFreePlan,
 			intervalType,
-			isLanding,
-			landingType,
 		} = this.props;
 		return (
 			<div>
@@ -56,10 +50,9 @@ class PlansLanding extends Component {
 				<PlansGrid
 					basePlansPath={ basePlansPath }
 					calypsoStartedConnection={ true }
-					hideFreePlan={ hideFreePlan }
+					hideFreePlan={ false }
 					intervalType={ intervalType }
-					isLanding={ isLanding }
-					landingType={ landingType }
+					isLanding={ true }
 					onSelect={ this.storeSelectedPlan }
 				/>
 			</div>

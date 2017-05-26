@@ -9,10 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPaymentMethodsGroup } from '../../../state/wc-api/payment-methods/selectors';
-import { fetchPaymentMethods } from '../../../state/wc-api/payment-methods/actions';
-
 import ExtendedHeader from '../../../components/extended-header';
+import { fetchPaymentMethods } from '../../../state/wc-api/payment-methods/actions';
+import { getPaymentMethodsGroup } from '../../../state/wc-api/payment-methods/selectors';
 import List from '../../../components/list/list';
 import ListHeader from '../../../components/list/list-header';
 import ListItemField from '../../../components/list/list-item-field';
@@ -31,6 +30,23 @@ class SettingsPaymentsOffSite extends Component {
 	renderMethodItem = ( method ) => {
 		return (
 			<PaymentMethodItem key={ method.title } method={ method } />
+		);
+	}
+
+	state = {
+		methods: [
+			{
+				label: 'PayPal Standard',
+				isSuggested: true,
+				fee: '2.9% + 30c per transaction',
+				informationUrl: 'http://paypal.com',
+			},
+		],
+	};
+
+	renderMethodItem = ( method ) => {
+		return (
+			<PaymentMethodItem key={ method.label } method={ method } />
 		);
 	}
 

@@ -15,6 +15,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import CommentDetail from 'blocks/comment-detail';
 import CommentNavigation from './comment-navigation';
+import QuerySiteComments from 'components/data/query-site-comments';
 import { mockComments } from 'blocks/comment-detail/docs/mock-data';
 
 export class CommentsManagement extends Component {
@@ -46,6 +47,7 @@ export class CommentsManagement extends Component {
 		return (
 			<Main className="comments" wideLayout>
 				<PageViewTracker path={ basePath } title="Manage Comments" />
+				<QuerySiteComments siteId={ this.props.siteId } />
 				<DocumentHead title={ translate( 'Manage Comments' ) } />
 				<div className="comments__primary">
 					<CommentNavigation { ...{

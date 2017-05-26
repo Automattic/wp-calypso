@@ -12,7 +12,7 @@ import {
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducersWithPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -44,7 +44,7 @@ export function revisions( state = {}, action ) {
 	return state;
 }
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	requesting,
 	revisions,
 } );

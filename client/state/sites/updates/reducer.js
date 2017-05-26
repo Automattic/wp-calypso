@@ -6,7 +6,7 @@ import { isEmpty, merge, stubFalse, stubTrue } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducersWithPersistence, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 import {
 	SITE_RECEIVE,
@@ -72,7 +72,7 @@ export const errors = keyedReducer( 'siteId', createReducer( undefined, {
 	[ SITE_UPDATES_REQUEST_FAILURE ]: stubTrue,
 } ) );
 
-export default combineReducersWithPersistence( {
+export default combineReducers( {
 	items,
 	requesting,
 	wordpressUpdateStatus,

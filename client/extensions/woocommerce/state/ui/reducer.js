@@ -2,8 +2,10 @@
  * Internal dependencies
  */
 import products from './products/reducer';
-import { combineReducersWithPersistence } from 'state/utils';
+import shipping from './shipping/reducer';
+import { combineReducers } from 'state/utils';
 
-export default combineReducersWithPersistence( {
-	products
+export default combineReducers( {
+	products,
+	shipping,
 } );

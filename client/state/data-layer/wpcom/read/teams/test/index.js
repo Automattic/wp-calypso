@@ -24,26 +24,14 @@ export const successfulResponse = {
 };
 
 describe( 'wpcom-api', () => {
-	const nextSpy = sinon.spy();
-
 	describe( 'teams request', () => {
 		useNock( nock =>
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/read/teams' )
 				.reply( 200, successfulResponse )
 				.get( '/rest/v1.2/read/teams' )
-				.reply( 200, successfulResponse )
-				.get( '/rest/v1.2/read/teams' )
 				.reply( 500, new Error() )
 		);
-
-		it( 'handleTeamsRequest should pass the action forward', () => {
-			const dispatch = sinon.spy();
-			const action = requestTeams();
-
-			handleTeamsRequest( { dispatch }, action, nextSpy );
-			expect( nextSpy ).calledWith( action );
-		} );
 
 		it( 'should dispatch RECEIVE action when request completes', done => {
 			const dispatch = sinon.spy( action => {
@@ -56,7 +44,7 @@ describe( 'wpcom-api', () => {
 				}
 			} );
 
-			handleTeamsRequest( { dispatch }, requestTeams(), nextSpy );
+			handleTeamsRequest( { dispatch }, requestTeams() );
 		} );
 
 		it( 'should dispatch RECEIVE action with error when request errors', done => {
@@ -71,7 +59,7 @@ describe( 'wpcom-api', () => {
 				}
 			} );
 
-			handleTeamsRequest( { dispatch }, requestTeams(), nextSpy );
+			handleTeamsRequest( { dispatch }, requestTeams() );
 		} );
 	} );
 } );

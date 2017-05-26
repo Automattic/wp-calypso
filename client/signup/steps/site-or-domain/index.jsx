@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,9 +13,11 @@ import { tlds } from 'lib/domains/constants';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import SiteOrDomainChoice from './choice';
+import { getCurrentUserId } from 'state/current-user/selectors';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
+import ExistingSite from 'signup/steps/design-type-with-store/existing-site';
 import { externalRedirect } from 'lib/route/path';
 import NavigationLink from 'signup/navigation-link';
 
@@ -53,20 +56,36 @@ class SiteOrDomain extends Component {
 	getChoices() {
 		const { translate } = this.props;
 
-		return [
+		const choices = [
 			{
 				type: 'page',
 				label: translate( 'New site' ),
 				image: <NewSiteImage />,
 				description: translate( 'Choose a theme, customize, and launch your site. Free domain included with all plans.' )
-			},
+			}
+		];
+
+		if ( this.props.isLoggedIn ) {
+			choices.push(
+				{
+					type: 'existing-site',
+					label: translate( 'Existing WordPress.com site' ),
+					image: <ExistingSite />,
+					description: translate( 'Use with a site you already started. Free domain included with all plans.' )
+				}
+			);
+		}
+
+		choices.push(
 			{
 				type: 'domain',
 				label: translate( 'Just buy a domain' ),
 				image: <DomainImage />,
 				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' )
-			},
-		];
+			}
+		);
+
+		return choices;
 	}
 
 	renderChoices() {
@@ -119,26 +138,35 @@ class SiteOrDomain extends Component {
 		const domain = this.getDomainName();
 		const tld = domain.split( '.' ).slice( 1 ).join( '.' );
 		const domainItem = cartItems.domainRegistration( { productSlug: tlds[ tld ], domain } );
+		const siteUrl = domain;
 
 		SignupActions.submitSignupStep( {
 			stepName,
 			domainItem,
 			designType,
 			siteSlug: domain,
-			siteUrl: domain,
+			siteUrl,
 			isPurchasingItem: true,
-		}, [], { domainItem } );
+		}, [], { designType, domainItem, siteUrl } );
 
 		if ( designType === 'domain' ) {
 			// we can skip the next two steps in the `domain-first` flow if the
 			// user is only purchasing a domain
+			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
 			SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
 				themeSlugWithRepo: 'pub/twentysixteen'
 			} );
-			SignupActions.submitSignupStep( { stepName: 'plans', wasSkipped: true }, [], { cartItem: null, privacyItem: null } );
+			SignupActions.submitSignupStep(
+				{ stepName: 'plans-site-selected', wasSkipped: true },
+				[],
+				{ cartItem: null, privacyItem: null }
+			);
 			goToStep( 'user' );
-		} else {
+		} else if ( designType === 'existing-site' ) {
 			goToNextStep();
+		} else {
+			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
+			goToStep( 'themes' );
 		}
 	};
 
@@ -158,4 +186,10 @@ class SiteOrDomain extends Component {
 	}
 }
 
-export default localize( SiteOrDomain );
+export default connect(
+	( state ) => {
+		return {
+			isLoggedIn: !! getCurrentUserId( state )
+		};
+	}
+)( localize( SiteOrDomain ) );

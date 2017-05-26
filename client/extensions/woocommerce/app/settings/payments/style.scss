@@ -1,3 +1,7 @@
+.payments__currency-select {
+	width: 100%;
+}
+
 // PAYMENT-METHOD-ROW
 .payments__off-site-container {
 
@@ -31,7 +35,7 @@
 		flex: 0 0 20%;
 
 		.button {
-				align-self: center;
+			align-self: center;
 		}
 	}
 }
