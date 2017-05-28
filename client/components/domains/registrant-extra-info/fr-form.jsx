@@ -244,12 +244,12 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 				{ countryOfBirth === 'FR' && (
 					<FormFieldset>
 						<FormLabel>
-							{ translate( 'Place of Birth' ) }
+							{ translate( 'City of Birth' ) }
 						</FormLabel>
 						<FormTextInput
 							name="placeOfBirth"
 							value={ placeOfBirth }
-							placeholder={ translate( 'Place or city of birth' ) }
+							placeholder={ translate( 'City of birth' ) }
 							onChange={ this.handleChangeEvent } />
 					</FormFieldset>
 				) }
