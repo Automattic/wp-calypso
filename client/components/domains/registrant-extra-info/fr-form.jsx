@@ -25,9 +25,9 @@ const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 // so we use these values to plug missing.
 const emptyValues = {
 	countryOfBirth: '',
-	dob_days: '',
-	dob_months: '',
-	dob_years: '',
+	dobDays: '',
+	dobMonths: '',
+	dobYears: '',
 	placeOfBirth: '',
 	postalCodeOfBirth: '',
 	registrantVatId: '',
@@ -95,10 +95,10 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	handleDobChangeEvent = ( event ) => {
 		// setState() is not syncronous :(
 		const newState = this.newStateFromEvent( event );
-		const { dob_years, dob_months, dob_days } = newState;
+		const { dobYears, dobMonths, dobDays } = newState;
 
-		const dateOfBirth = ( dob_years && dob_months && dob_days ) &&
-			[ dob_years, dob_months, dob_days ].join( '-' );
+		const dateOfBirth = ( dobYears && dobMonths && dobDays ) &&
+			[ dobYears, dobMonths, dobDays ].join( '-' );
 
 		if ( dateOfBirth ) {
 			debug( 'Setting dateOfBirth to ' + dateOfBirth +
@@ -174,9 +174,9 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		const translate = this.props.translate;
 		const {
 			countryOfBirth,
-			dob_days,
-			dob_months,
-			dob_years,
+			dobDays,
+			dobMonths,
+			dobYears,
 			placeOfBirth,
 			postalCodeOfBirth,
 		} = { ...emptyValues, ...this.props.values };
@@ -204,8 +204,8 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 								{ translate( 'Year' ) }
 							</FormLabel>
 							<FormTextInput className="registrant-extra-info__dob-year"
-								name="dob_years"
-								value={ dob_years }
+								name="dobYears"
+								value={ dobYears }
 								type="number"
 								placeholder="YYYY"
 								onChange={ this.handleDobChangeEvent } />
@@ -215,8 +215,8 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 								{ translate( 'Month' ) }
 							</FormLabel>
 							<FormTextInput className="registrant-extra-info__dob-month"
-								name="dob_months"
-								value={ dob_months }
+								name="dobMonths"
+								value={ dobMonths }
 								type="number"
 								placeholder="MM"
 								onChange={ this.handleDobChangeEvent } />
@@ -226,8 +226,8 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 								{ translate( 'Day' ) }
 							</FormLabel>
 							<FormTextInput className="registrant-extra-info__dob-day"
-								name="dob_days"
-								value={ dob_days }
+								name="dobDays"
+								value={ dobDays }
 								type="number"
 								placeholder="DD"
 								onChange={ this.handleDobChangeEvent } />
