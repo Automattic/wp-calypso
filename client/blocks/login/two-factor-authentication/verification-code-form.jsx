@@ -17,8 +17,6 @@ import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import { loginUserWithTwoFactorVerificationCode } from 'state/login/actions';
 import {
-	getTwoFactorUserId,
-	getTwoFactorAuthNonce,
 	getTwoFactorAuthRequestError,
 	isRequestingTwoFactorAuth,
 } from 'state/login/selectors';
@@ -33,8 +31,6 @@ class VerificationCodeForm extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		rememberMe: PropTypes.bool.isRequired,
 		isSmsSupported: PropTypes.bool,
-		twoStepNonce: PropTypes.string.isRequired,
-		userId: PropTypes.number.isRequired,
 	};
 
 	state = {
@@ -64,10 +60,10 @@ class VerificationCodeForm extends Component {
 	onCodeSubmit = ( event ) => {
 		event.preventDefault();
 
-		const { userId, twoStepNonce, rememberMe } = this.props;
+		const { rememberMe } = this.props;
 		const { twoStepCode } = this.state;
 
-		this.props.loginUserWithTwoFactorVerificationCode( userId, twoStepCode, twoStepNonce, rememberMe ).then( () => {
+		this.props.loginUserWithTwoFactorVerificationCode( twoStepCode, rememberMe ).then( () => {
 			this.props.onSuccess();
 		} ).catch( ( errorMessage ) => {
 			this.props.recordTracksEvent( 'calypso_two_factor_verification_code_failure', {
@@ -156,8 +152,6 @@ export default connect(
 	( state ) => ( {
 		isRequestingTwoFactorAuth: isRequestingTwoFactorAuth( state ),
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
-		userId: getTwoFactorUserId( state ),
-		twoStepNonce: getTwoFactorAuthNonce( state ),
 	} ),
 	{
 		loginUserWithTwoFactorVerificationCode,

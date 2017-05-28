@@ -12,6 +12,7 @@ import {
 	LOGIN_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
+	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -382,20 +383,21 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should reset the "two_step_nonce" value when a two factor authentication request fails and returns a new nonce', () => {
+		it( 'should update the "two_step_nonce" value when requested', () => {
 			const data = {
 				two_step_id: 12345678,
-				two_step_nonce: 'abcdefgh1234',
+				two_step_nonce_authenticator: 'abcdefgh1234',
 			};
 
 			const state = twoFactorAuth( data, {
-				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
-				twoStepNonce: 'foo'
+				type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
+				twoStepNonce: 'foo',
+				nonceType: 'authenticator'
 			} );
 
 			expect( state ).to.eql( {
 				two_step_id: 12345678,
-				two_step_nonce: 'foo'
+				two_step_nonce_authenticator: 'foo'
 			} );
 		} );
 
@@ -426,7 +428,7 @@ describe( 'reducer', () => {
 		it( 'should reset the "two_step_nonce" value when a two factor authentication SMS code request returns new nonce', () => {
 			const data = {
 				two_step_id: 12345678,
-				two_step_nonce: 'abcdefgh1234',
+				two_step_nonce_sms: 'abcdefgh1234',
 			};
 
 			const state = twoFactorAuth( data, {
@@ -436,14 +438,14 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				two_step_id: 12345678,
-				two_step_nonce: 'foo'
+				two_step_nonce_sms: 'foo'
 			} );
 		} );
 
 		it( 'should reset the "two_step_nonce" value when a failed two factor authentication SMS code request returns new nonce', () => {
 			const data = {
 				two_step_id: 12345678,
-				two_step_nonce: 'abcdefgh1234',
+				two_step_nonce_sms: 'abcdefgh1234',
 			};
 
 			const state = twoFactorAuth( data, {
@@ -453,7 +455,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				two_step_id: 12345678,
-				two_step_nonce: 'foo'
+				two_step_nonce_sms: 'foo'
 			} );
 		} );
 	} );

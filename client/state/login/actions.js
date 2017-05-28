@@ -13,6 +13,7 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
@@ -25,6 +26,10 @@ import {
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
 } from 'state/action-types';
+import {
+	getTwoFactorUserId,
+	getTwoFactorAuthNonce,
+} from 'state/login/selectors';
 
 const loginErrorMessages = {
 	empty_password: translate( 'Please be sure to enter your password.' ),
@@ -113,26 +118,37 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 		} );
 };
 
+const getNonceTypeFromCode = ( code ) => {
+	switch ( code.length ) {
+		case 6:
+			return 'authenticator';
+		case 7:
+			return 'sms';
+		case 8:
+			return 'backup';
+	}
+};
+
 /**
  * Attempt to login a user when a two factor verification code is sent.
  *
- * @param  {Number}    user_id        Id of the user trying to log in.
  * @param  {String}    two_step_code  Verification code for the user.
- * @param  {String}    two_step_nonce Nonce generated for verification code submission.
  * @param  {Boolean}   remember_me       Flag for remembering the user for a while after logging in.
  * @return {Function}                 Action thunk to trigger the login process.
  */
-export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, two_step_nonce, remember_me ) => dispatch => {
+export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_me ) => ( dispatch, getState ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
+
+	const nonceType = getNonceTypeFromCode( two_step_code );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
-			user_id,
+			user_id: getTwoFactorUserId( getState() ),
 			two_step_code,
-			two_step_nonce,
+			two_step_nonce: getTwoFactorAuthNonce( getState(), nonceType ),
 			remember_me,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
@@ -144,9 +160,14 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 			const errorMessage = getMessageFromHTTPError( error );
 
 			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
+				twoStepNonce: get( error, `response.body.data.two_step_nonce_${ nonceType }` ),
+				nonceType,
+			} );
+
+			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 				error: errorMessage,
-				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
 			} );
 
 			return Promise.reject( errorMessage );
