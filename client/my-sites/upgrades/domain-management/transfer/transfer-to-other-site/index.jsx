@@ -15,7 +15,8 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import SiteSelector from 'components/site-selector';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { getSites } from 'state/selectors';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import Main from 'components/main';
@@ -27,6 +28,7 @@ import SectionHeader from 'components/section-header';
 import TransferConfirmationDialog from './confirmation-dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import wp from 'lib/wp';
+import { PLAN_FREE } from 'lib/plans/constants';
 
 const wpcom = wp.undocumented();
 
@@ -51,6 +53,7 @@ class TransferToOtherSite extends React.Component {
 		return site.capabilities.manage_options &&
 			! site.jetpack &&
 			! get( site, 'options.is_domain_only', false ) &&
+			! ( this.props.domainsWithPlansOnly && get( site, 'plan.product_slug' ) === PLAN_FREE ) &&
 			site.ID !== this.props.selectedSite.ID;
 	}
 
@@ -117,16 +120,22 @@ class TransferToOtherSite extends React.Component {
 			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
 		}
 
-		const { selectedDomainName: domainName, translate } = this.props;
+		const { selectedDomainName: domainName, domainsWithPlansOnly, translate } = this.props;
+		let message;
+		if ( domainsWithPlansOnly ) {
+			message = translate( 'Please choose a site with a paid plan ' +
+				'you\'re an administrator on to transfer {{strong}}%(domainName)s{{/strong}} to:',
+				{ args: { domainName }, components: { strong: <strong /> } } );
+		} else {
+			message = translate( 'Please choose a site you\'re an administrator on to transfer {{strong}}%(domainName)s{{/strong}} to:',
+				{ args: { domainName }, components: { strong: <strong /> } } );
+		}
 
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Transfer Domain To Another Site' ) } />
 				<Card className="transfer-to-other-site__card">
-					<p>
-						{ translate( 'Please choose a site you\'re an administrator on to transfer {{strong}}%(domainName)s{{/strong}} to:',
-							{ args: { domainName }, components: { strong: <strong /> } } ) }
-					</p>
+					<p>{ message }</p>
 					<SiteSelector
 						filter={ this.isSiteEligible }
 						sites={ this.props.sites }
@@ -149,6 +158,7 @@ export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
 		sites: getSites( state ),
+		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 	} ),
 	{
 		successNotice,
