@@ -42,19 +42,20 @@ export function requestContactDetailsCache() {
 			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 		} );
 
-		return wpcom.undocumented().getDomainContactInformation()
-			.then( cacheData => {
-				dispatch( receiveContactDetailsCache( cacheData ) );
-				dispatch( {
-					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
-				} );
-			} )
-			.catch( error => {
+		wpcom.undocumented().getDomainContactInformation( ( error, cacheData ) => {
+			if ( error ) {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
 					error
 				} );
+				return;
+			}
+
+			dispatch( receiveContactDetailsCache( cacheData ) );
+			dispatch( {
+				type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
 			} );
+		} );
 	};
 }
 
