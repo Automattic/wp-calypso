@@ -33,3 +33,4 @@ render: function() {
 * `href` (Optional): If set then the card becomes a link, with a Gridicon chevron on the right.
 * `target` (Optional): If set and used with `href` then this controls where the link opens. It also changes the Gridicon to "external"
 * `compact` (Optional): Whether the card should be rendered as compact
+* `highlight` (Optional): Whether the card should be rendered as highlighted
