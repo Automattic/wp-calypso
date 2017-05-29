@@ -45,7 +45,7 @@ export default class Emojify extends PureComponent {
 		}
 
 		return (
-			<div ref="emojified">{ this.props.children }</div>
+			<div className="emojify" ref="emojified">{ this.props.children }</div>
 		);
 	}
 }
