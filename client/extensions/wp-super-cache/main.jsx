@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 
@@ -21,8 +21,21 @@ import { Tabs } from './constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNotices } from './state/notices/selectors';
 
-const WPSuperCache = ( { notices, site, siteId, tab } ) => {
-	const renderTab = isReadOnly => {
+class WPSuperCache extends Component {
+	static propTypes = {
+		notices: PropTypes.object.isRequired,
+		site: PropTypes.object,
+		siteId: PropTypes.number,
+		tab: PropTypes.string,
+	};
+
+	static defaultProps = {
+		tab: '',
+	};
+
+	renderTab( isReadOnly ) {
+		const { tab } = this.props;
+
 		switch ( tab ) {
 			case Tabs.ADVANCED:
 				return <AdvancedTab isReadOnly={ isReadOnly } />;
@@ -35,38 +48,35 @@ const WPSuperCache = ( { notices, site, siteId, tab } ) => {
 			default:
 				return <EasyTab isReadOnly={ isReadOnly } />;
 		}
-	};
+	}
 
-	const cacheDisabled = get( notices, 'cache_disabled' );
-	const cacheDisabledMessage = get( notices.cache_disabled, 'message' );
+	render() {
+		const {
+			notices,
+			site,
+			siteId,
+			tab,
+		} = this.props;
+		const cacheDisabled = get( notices, 'cache_disabled' );
+		const cacheDisabledMessage = get( notices.cache_disabled, 'message' );
 
-	return (
-		<Main className="wp-super-cache__main">
-			<QueryNotices siteId={ siteId } />
+		return (
+			<Main className="wp-super-cache__main">
+				<QueryNotices siteId={ siteId } />
 
-			{ cacheDisabled &&
-			<Notice
-				showDismiss={ false }
-				status="is-error"
-				text={ cacheDisabledMessage } />
-			}
+				{ cacheDisabled &&
+				<Notice
+					showDismiss={ false }
+					status="is-error"
+					text={ cacheDisabledMessage } />
+				}
 
-			<Navigation activeTab={ tab } site={ site } />
-			{ renderTab( !! cacheDisabled ) }
-		</Main>
-	);
-};
-
-WPSuperCache.propTypes = {
-	notices: PropTypes.object.isRequired,
-	site: PropTypes.object,
-	siteId: PropTypes.number,
-	tab: PropTypes.string,
-};
-
-WPSuperCache.defaultProps = {
-	tab: '',
-};
+				<Navigation activeTab={ tab } site={ site } />
+				{ this.renderTab( !! cacheDisabled ) }
+			</Main>
+		);
+	}
+}
 
 const connectComponent = connect(
 	( state ) => {
