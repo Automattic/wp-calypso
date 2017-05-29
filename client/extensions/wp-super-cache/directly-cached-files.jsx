@@ -13,7 +13,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
@@ -46,7 +45,6 @@ class DirectlyCachedFiles extends Component {
 		} = this.props;
 		const cache_direct_pages = fields.cache_direct_pages || [];
 		const cache_path = fields.cache_path || '';
-		const notices = pick( this.props.notices, 'cache_readonly' );
 
 		return (
 			<div>
@@ -63,13 +61,6 @@ class DirectlyCachedFiles extends Component {
 					</Button>
 				</SectionHeader>
 				<Card className="wp-super-cache__directly-cached-files">
-					{ notices && notices.cache_readonly && notices.cache_readonly.message &&
-					<Notice
-						showDismiss={ false }
-						status={ notices.cache_readonly.type ? `is-${ notices.cache_readonly.type }` : 'is-info' }
-						text={ notices.cache_readonly.message || '' } />
-					}
-
 					<p>
 						{ translate(
 							'Directly cached files are files created directly off %(cache_path)s where your blog lives. This ' +
@@ -79,57 +70,55 @@ class DirectlyCachedFiles extends Component {
 							}
 						) }
 					</p>
-						{ notices && ! notices.cache_readonly &&
-						<div>
-							<p>
+					<div>
+						<p>
+							{ translate(
+								'For example: to cache {{em}}%(url)s/about/{{/em}}, you would enter %(url)s/about/ or /about/. ' +
+								'The cached file will be generated the next time an anonymous user visits that page.',
+								{
+									args: { url: site && site.URL },
+									components: { em: <em /> },
+								}
+							) }
+						</p>
+						<form>
+							<FormFieldset>
+								<FormTextInput
+									disabled={ isRequesting || isSaving }
+									onChange={ handleChange( 'new_direct_page' ) }
+									onKeyDown={ this.onKeyDown }
+									ref="newDirectPage" />
+							</FormFieldset>
+
+							{ cache_direct_pages.length > 0 &&
+							<FormLabel>
 								{ translate(
-									'For example: to cache {{em}}%(url)s/about/{{/em}}, you would enter %(url)s/about/ or /about/. ' +
-									'The cached file will be generated the next time an anonymous user visits that page.',
-									{
-										args: { url: site && site.URL },
-										components: { em: <em /> },
-									}
+									'Existing Direct Page',
+									'Existing Direct Pages',
+									{ count: cache_direct_pages.length }
 								) }
-							</p>
-							<form>
-								<FormFieldset>
+							</FormLabel>
+							}
+
+							{ cache_direct_pages.map( ( page, index ) => (
+								<FormFieldset key={ index }>
 									<FormTextInput
 										disabled={ isRequesting || isSaving }
-										onChange={ handleChange( 'new_direct_page' ) }
-										onKeyDown={ this.onKeyDown }
-										ref="newDirectPage" />
+										key={ index }
+										onChange={ setFieldArrayValue( 'cache_direct_pages', index ) }
+										value={ page || '' } />
 								</FormFieldset>
+							) ) }
 
-								{ cache_direct_pages.length > 0 &&
-								<FormLabel>
-									{ translate(
-										'Existing Direct Page',
-										'Existing Direct Pages',
-										{ count: cache_direct_pages.length }
-									) }
-								</FormLabel>
-								}
-
-								{ cache_direct_pages.map( ( page, index ) => (
-									<FormFieldset key={ index }>
-										<FormTextInput
-											disabled={ isRequesting || isSaving }
-											key={ index }
-											onChange={ setFieldArrayValue( 'cache_direct_pages', index ) }
-											value={ page || '' } />
-									</FormFieldset>
-								) ) }
-
-								{ cache_direct_pages.length > 0 &&
-								<FormSettingExplanation>
-									{ translate(
-										'Make the textbox blank to remove it from the list of direct pages and delete the cached file.'
-									) }
-								</FormSettingExplanation>
-								}
-							</form>
-						</div>
-						}
+							{ cache_direct_pages.length > 0 &&
+							<FormSettingExplanation>
+								{ translate(
+									'Make the textbox blank to remove it from the list of direct pages and delete the cached file.'
+								) }
+							</FormSettingExplanation>
+							}
+						</form>
+					</div>
 				</Card>
 			</div>
 		);
