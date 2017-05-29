@@ -7,7 +7,7 @@ import { makeLayout, redirectLoggedIn } from 'controller';
 
 export default router => {
 	if ( config.isEnabled( 'magic-login' ) ) {
-		router( '/login/link', redirectLoggedIn, magicLogin, makeLayout );
+		router( '/log-in/link', redirectLoggedIn, magicLogin, makeLayout );
 	}
 
 	if ( config.isEnabled( 'wp-login' ) ) {

@@ -17,6 +17,7 @@ import Gridicon from 'gridicons';
 import Main from 'components/main';
 import LoginBlock from 'blocks/login';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
@@ -25,6 +26,7 @@ import { login } from 'lib/paths';
 export class Login extends React.Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
+		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 	};
@@ -32,7 +34,8 @@ export class Login extends React.Component {
 	onMagicLoginRequestClick = event => {
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
-		page( login( { twoFactorAuthType: 'link' } ) );
+		this.props.resetMagicLoginRequestForm();
+		page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
 	};
 
 	goBack = event => {
@@ -60,7 +63,7 @@ export class Login extends React.Component {
 			</a>
 		);
 
-		const showMagicLoginLink = isEnabled( 'magic-login' ) && ! twoFactorAuthType && (
+		const magicLoginLink = isEnabled( 'magic-login' ) && ! twoFactorAuthType && (
 			<a href="#"
 				key="magic-login-link"
 				onClick={ this.onMagicLoginRequestClick }>
@@ -97,7 +100,7 @@ export class Login extends React.Component {
 		return compact( [
 			lostPhoneLink,
 			helpLink,
-			showMagicLoginLink,
+			magicLoginLink,
 			resetPasswordLink,
 			backToWpcomLink,
 		] );
@@ -139,7 +142,8 @@ const mapState = state => {
 };
 
 const mapDispatch = {
-	recordTracksEvent
+	recordTracksEvent,
+	resetMagicLoginRequestForm,
 };
 
 export default connect( mapState, mapDispatch )( localize( Login ) );

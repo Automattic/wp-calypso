@@ -21,13 +21,13 @@ import {
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 	MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
-	MAGIC_LOGIN_SHOW_REQUEST_FORM,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 	MAGIC_LOGIN_REQUEST_AUTH_ERROR,
 	MAGIC_LOGIN_REQUEST_AUTH_FETCH,
 	MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
+	MAGIC_LOGIN_RESET_REQUEST_FORM,
 	SERIALIZE,
 } from 'state/action-types';
 
@@ -376,9 +376,9 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( LINK_EXPIRED_PAGE );
 		} );
 
-		it( 'should be request form on show request form', () => {
+		it( 'should be request form on reset request form', () => {
 			const state = currentView( undefined, {
-				type: MAGIC_LOGIN_SHOW_REQUEST_FORM,
+				type: MAGIC_LOGIN_RESET_REQUEST_FORM,
 			} );
 			expect( state ).to.equal( REQUEST_FORM );
 		} );

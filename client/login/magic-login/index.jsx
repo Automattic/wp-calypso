@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { compact } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -10,32 +9,31 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
+import notices from 'notices';
+import { login } from 'lib/paths';
 import {
 	CHECK_YOUR_EMAIL_PAGE,
 	INTERSTITIAL_PAGE,
 	LINK_EXPIRED_PAGE,
 } from 'state/login/magic-login/constants';
-import config, { isEnabled } from 'config';
-import EmailedLoginLinkSuccessfully from '../magic-login/emailed-login-link-successfully';
-import EmailedLoginLinkExpired from '../magic-login/emailed-login-link-expired';
 import {
 	getMagicLoginEmailAddressFormInput,
 	getMagicLoginCurrentView,
 } from 'state/selectors';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
-import HandleEmailedLinkForm from '../magic-login/handle-emailed-link-form';
 import {
 	hideMagicLoginRequestForm,
 	showMagicLoginInterstitialPage,
-	showMagicLoginRequestForm,
 } from 'state/login/magic-login/actions';
-import Main from 'components/main';
-import RequestLoginEmailForm from '../magic-login/request-login-email-form';
 import { recordTracksEvent } from 'state/analytics/actions';
+import Main from 'components/main';
+import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
+import EmailedLoginLinkExpired from './emailed-login-link-expired';
+import HandleEmailedLinkForm from './handle-emailed-link-form';
+import RequestLoginEmailForm from './request-login-email-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import GlobalNotices from 'components/global-notices';
-import notices from 'notices';
-import { login } from 'lib/paths';
 
 class MagicLogin extends React.Component {
 	static propTypes = {
@@ -45,7 +43,6 @@ class MagicLogin extends React.Component {
 		magicLoginView: PropTypes.string,
 		recordTracksEvent: PropTypes.func.isRequired,
 		showMagicLoginInterstitialPage: PropTypes.func.isRequired,
-		showMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -53,7 +50,7 @@ class MagicLogin extends React.Component {
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_login_enter_password_instead_click' );
 
-		page( login() );
+		page( login( { isNative: true } ) );
 	};
 
 	magicLoginMainContent() {
@@ -92,17 +89,15 @@ class MagicLogin extends React.Component {
 		} = this.props;
 
 		return (
-			<Main className="wp-login">
+			<Main className="magic-login">
 				<PageViewTracker path="/login" title="Login" />
 
 				<GlobalNotices id="notices" notices={ notices.list } />
 
 				{ this.magicLoginMainContent() || (
 					<div>
-						<div className="wp-login__container">
-							<RequestLoginEmailForm />
-						</div>
-						<div className="wp-login__footer">
+						<RequestLoginEmailForm />
+						<div className="magic-login__footer">
 							<a href="#"
 								key="enter-password-link"
 								onClick={ this.onClickEnterPasswordInstead }>
@@ -129,7 +124,6 @@ const mapState = state => {
 const mapDispatch = {
 	hideMagicLoginRequestForm,
 	showMagicLoginInterstitialPage,
-	showMagicLoginRequestForm,
 	recordTracksEvent,
 };
 
