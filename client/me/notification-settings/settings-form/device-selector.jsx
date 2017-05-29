@@ -22,7 +22,7 @@ class NotificationSettingsFormDeviceSelector extends PureComponent {
 	render() {
 		const { devices } = this.props;
 		if ( size( devices ) === 1 ) {
-			return ( <StreamHeader title={ first( devices ).device_name } /> );
+			return ( <StreamHeader title={ first( devices ).name } /> );
 		}
 
 		return (
@@ -32,7 +32,7 @@ class NotificationSettingsFormDeviceSelector extends PureComponent {
 						value={ this.props.selectedDeviceIndex }
 						onChange={ this.props.onChange } >
 						{ map( devices, ( device, index ) => {
-							return <option key={ index } value={ index }>{ device.device_name }</option>;
+							return <option key={ index } value={ index }>{ device.name }</option>;
 						} ) }
 					</FormSelect>
 				</div>

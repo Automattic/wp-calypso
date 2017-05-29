@@ -11,7 +11,7 @@ import Immutable from 'immutable';
 import Labels from './labels';
 import Stream from './stream';
 import StreamSelector from './stream-selector';
-import { getUserDevices, hasUserDevices, isRequestingUserDevices } from 'state/selectors';
+import { getUserDevices } from 'state/selectors';
 
 /**
  * Module variables
@@ -71,7 +71,7 @@ class NotificationSettingsForm extends PureComponent {
 						settingKeys={ this.props.settingKeys }
 						settings={ this.props.settings.get( streams.EMAIL ) }
 						onToggle={ this.props.onToggle } />
-					{ this.props.showDevices &&
+					{ this.props.devices && this.props.devices.length > 0 &&
 						<Stream
 							key={ streams.DEVICES }
 							blogId={ this.props.blogId }
@@ -96,7 +96,6 @@ class NotificationSettingsForm extends PureComponent {
 
 export default connect(
 	state => ( {
-		devices: getUserDevices( state ),
-		showDevices: hasUserDevices( state ) && ! isRequestingUserDevices( state )
+		devices: getUserDevices( state )
 	} )
 )( NotificationSettingsForm );

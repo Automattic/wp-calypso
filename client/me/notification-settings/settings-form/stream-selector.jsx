@@ -30,7 +30,7 @@ class NotificationSettingsFormStreamSelector extends PureComponent {
 		const options = [ 'timeline', 'email' ]
 			.map( stream => <option key={ stream } value={ stream }>{ getLabelForStream( stream ) }</option> )
 			.concat( map( this.props.devices, device => (
-				<option key={ device.device_id } value={ device.device_id }>{ device.device_name }</option>
+				<option key={ device.id } value={ device.id }>{ device.name }</option>
 			) ) );
 
 		return (
