@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import ExtendedHeader from '../../../components/extended-header';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 import ShippingZone from './shipping-zone';
 import ShippingZoneDialog from './shipping-zone-dialog';
 

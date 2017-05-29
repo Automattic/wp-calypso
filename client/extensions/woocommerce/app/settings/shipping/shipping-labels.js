@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import ExtendedHeader from '../../../components/extended-header';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';

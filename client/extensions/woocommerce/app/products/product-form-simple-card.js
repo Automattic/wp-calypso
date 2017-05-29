@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormCurrencyInput from 'components/forms/form-currency-input';
-import FormDimensionsInput from '../../components/form-dimensions-input';
+import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';

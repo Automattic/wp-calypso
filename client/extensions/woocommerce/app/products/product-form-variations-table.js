@@ -10,7 +10,7 @@ import { find, isNumber } from 'lodash';
  */
 import Dialog from 'components/dialog';
 import FormCurrencyInput from 'components/forms/form-currency-input';
-import FormDimensionsInput from '../../components/form-dimensions-input';
+import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import CompactFormToggle from 'components/forms/form-toggle/compact';

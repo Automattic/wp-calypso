@@ -8,8 +8,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import ListItem from '../../../components/list/list-item';
-import ListItemField from '../../../components/list/list-item-field';
+import ListItem from 'woocommerce/components/list/list-item';
+import ListItemField from 'woocommerce/components/list/list-item-field';
 
 const PaymentMethodItem = ( { method, translate } ) => {
 	return (

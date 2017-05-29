@@ -7,9 +7,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AddressView from '../../../components/address-view';
+import AddressView from 'woocommerce/components/address-view';
 import Card from 'components/card';
-import ExtendedHeader from '../../../components/extended-header';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 import Notice from 'components/notice';
 
 class ShippingOrigin extends Component {
