@@ -15,11 +15,11 @@ describe( 'Emojify', function() {
 	useFakeDom();
 
 	context( 'component rendering', () => {
-		it( 'wraps a string in a span', () => {
+		it( 'wraps a string in a div', () => {
 			const wrapper = shallow(
 				<Emojify>Foo</Emojify>
 			);
-			expect( wrapper.find( 'span' ).node.ref ).to.equal( 'emojified' );
+			expect( wrapper.find( 'div' ).node.ref ).to.equal( 'emojified' );
 		} );
 
 		it( 'wraps a block in a div', () => {
@@ -39,8 +39,8 @@ describe( 'Emojify', function() {
 			delete global.Image;
 
 			expect( wrapper.html() ).to.equal(
-				'<span><img draggable="false" class="emojify__emoji" alt="🙂" ' +
-				'src="https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/72x72/1f642.png"></span>'
+				'<div class="emojify"><img draggable="false" class="emojify__emoji" alt="🙂" ' +
+				'src="https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/72x72/1f642.png"></div>'
 			);
 		} );
 

@@ -38,12 +38,6 @@ export default class Emojify extends PureComponent {
 	}
 
 	render() {
-		if ( 'string' === typeof this.props.children ) {
-			return (
-				<span ref="emojified">{ this.props.children }</span>
-			);
-		}
-
 		return (
 			<div className="emojify" ref="emojified">{ this.props.children }</div>
 		);
