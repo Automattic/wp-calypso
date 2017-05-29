@@ -11,5 +11,5 @@ import { get } from 'lodash';
  * @return {Object}              Contact details
  */
 export default function getWhois( state, domain ) {
-	return get( state, [ 'domains.management.items', domain ], false );
+	return get( state, [ 'domains.management.items', domain ], {} );
 }
