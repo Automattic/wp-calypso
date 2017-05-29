@@ -26,6 +26,7 @@ const Caching = ( {
 	handleAutosavingToggle,
 	handleRadio,
 	handleSubmitForm,
+	isReadOnly,
 	isRequesting,
 	isSaving,
 	notices: {
@@ -34,6 +35,7 @@ const Caching = ( {
 	},
 	translate,
 } ) => {
+	const isDisabled = isRequesting || isSaving || isReadOnly;
 	const htaccessMessage = get( htaccess_ro, 'message' );
 	const modRewriteMessage = get( mod_rewrite_missing, 'message' );
 
@@ -43,7 +45,7 @@ const Caching = ( {
 				<Button
 					compact
 					primary
-					disabled={ isRequesting || isSaving }
+					disabled={ isDisabled }
 					onClick={ handleSubmitForm }>
 					{ isSaving
 						? translate( 'Saving…' )
@@ -69,7 +71,7 @@ const Caching = ( {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! is_cache_enabled }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'is_cache_enabled' ) }>
 							<span>
 								{ translate( 'Enable Page Caching' ) }
@@ -81,7 +83,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ 'mod_rewrite' === cache_type }
-								disabled={ isRequesting || isSaving || ! is_cache_enabled }
+								disabled={ isDisabled || ! is_cache_enabled }
 								name="cache_type"
 								onChange={ handleRadio }
 								value="mod_rewrite" />
@@ -93,7 +95,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ 'PHP' === cache_type }
-								disabled={ isRequesting || isSaving || ! is_cache_enabled }
+								disabled={ isDisabled || ! is_cache_enabled }
 								name="cache_type"
 								onChange={ handleRadio }
 								value="PHP" />
@@ -110,7 +112,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ 'wpcache' === cache_type }
-								disabled={ isRequesting || isSaving || ! is_cache_enabled }
+								disabled={ isDisabled || ! is_cache_enabled }
 								name="cache_type"
 								onChange={ handleRadio }
 								value="wpcache" />

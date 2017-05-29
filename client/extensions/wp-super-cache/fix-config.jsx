@@ -18,6 +18,7 @@ import { isRestoringSettings } from './state/settings/selectors';
 
 class FixConfig extends Component {
 	static propTypes = {
+		isReadOnly: PropTypes.bool.isRequired,
 		isRestoring: PropTypes.bool.isRequired,
 		restoreSettings: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
@@ -27,7 +28,11 @@ class FixConfig extends Component {
 	restoreSettings = () => this.props.restoreSettings( this.props.siteId );
 
 	render() {
-		const { isRestoring, translate } = this.props;
+		const {
+			isReadOnly,
+			isRestoring,
+			translate,
+		} = this.props;
 
 		return (
 			<div>
@@ -36,7 +41,7 @@ class FixConfig extends Component {
 					<Button
 						compact
 						busy={ isRestoring }
-						disabled={ isRestoring }
+						disabled={ isRestoring || isReadOnly }
 						onClick={ this.restoreSettings }>
 						{ translate( 'Restore Default Configuration' ) }
 					</Button>

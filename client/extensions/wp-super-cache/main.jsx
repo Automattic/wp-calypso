@@ -25,7 +25,7 @@ const WPSuperCache = ( { notices, site, siteId, tab } ) => {
 	const renderTab = isReadOnly => {
 		switch ( tab ) {
 			case Tabs.ADVANCED:
-				return <AdvancedTab />;
+				return <AdvancedTab isReadOnly={ isReadOnly } />;
 			case Tabs.CDN:
 				return <CdnTab />;
 			case Tabs.CONTENTS:

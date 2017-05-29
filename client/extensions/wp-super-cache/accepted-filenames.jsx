@@ -23,6 +23,7 @@ class AcceptedFilenames extends Component {
 		fields: PropTypes.object,
 		handleChange: PropTypes.func.isRequired,
 		handleSubmitForm: PropTypes.func.isRequired,
+		isReadOnly: PropTypes.bool.isRequired,
 		isRequesting: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		setFieldValue: PropTypes.func.isRequired,
@@ -38,6 +39,7 @@ class AcceptedFilenames extends Component {
 	renderToggle = ( fieldName, fieldLabel ) => {
 		const {
 			fields: { pages },
+			isReadOnly,
 			isRequesting,
 			isSaving,
 		} = this.props;
@@ -45,7 +47,7 @@ class AcceptedFilenames extends Component {
 		return (
 			<FormToggle
 				checked={ !! pages && !! pages[ fieldName ] }
-				disabled={ isRequesting || isSaving }
+				disabled={ isRequesting || isSaving || isReadOnly }
 				onChange={ this.handleToggle( fieldName ) }>
 				<span>
 					{ fieldLabel }
@@ -77,6 +79,7 @@ class AcceptedFilenames extends Component {
 			fields,
 			handleChange,
 			handleSubmitForm,
+			isReadOnly,
 			isRequesting,
 			isSaving,
 			translate,
@@ -85,6 +88,7 @@ class AcceptedFilenames extends Component {
 			cache_acceptable_files,
 			cache_rejected_uri,
 		} = fields;
+		const isDisabled = isRequesting || isSaving || isReadOnly;
 
 		return (
 			<div>
@@ -92,7 +96,7 @@ class AcceptedFilenames extends Component {
 					<Button
 						compact
 						primary
-						disabled={ isRequesting || isSaving }
+						disabled={ isDisabled }
 						onClick={ handleSubmitForm }>
 						{ isSaving
 							? translate( 'Saving…' )
@@ -142,7 +146,7 @@ class AcceptedFilenames extends Component {
 								{ translate( 'Do not cache pages that contain the following strings:' ) }
 							</FormLabel>
 							<FormTextarea
-								disabled={ isRequesting || isSaving }
+								disabled={ isDisabled }
 								onChange={ handleChange( 'cache_rejected_uri' ) }
 								value={ cache_rejected_uri } />
 							<FormSettingExplanation>
@@ -160,7 +164,7 @@ class AcceptedFilenames extends Component {
 								{ translate( 'Whitelisted filenames:' ) }
 							</FormLabel>
 							<FormTextarea
-								disabled={ isRequesting || isSaving }
+								disabled={ isDisabled }
 								onChange={ handleChange( 'cache_acceptable_files' ) }
 								value={ cache_acceptable_files } />
 							<FormSettingExplanation>
