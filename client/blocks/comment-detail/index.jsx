@@ -121,18 +121,14 @@ export class CommentDetail extends Component {
 			isExpanded,
 		} = this.state;
 
-		const isApproved = 'approved' === commentStatus;
-		const isSpam = 'spam' === commentStatus;
-		const isTrash = 'trash' === commentStatus;
-
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
-			'is-approved': isApproved,
+			'is-approved': 'approved' === commentStatus,
 			'is-bulk-edit': isBulkEdit,
 			'is-expanded': isExpanded,
 			'is-liked': commentIsLiked,
-			'is-spam': isSpam,
-			'is-trash': isTrash,
+			'is-spam': 'spam' === commentStatus,
+			'is-trash': 'trash' === commentStatus,
 		} );
 
 		return (
@@ -142,10 +138,8 @@ export class CommentDetail extends Component {
 					authorDisplayName={ authorDisplayName }
 					authorUrl={ authorUrl }
 					commentContent={ commentContent }
-					commentIsApproved={ isApproved }
 					commentIsLiked={ commentIsLiked }
-					commentIsSpam={ isSpam }
-					commentIsTrash={ isTrash }
+					commentStatus={ commentStatus }
 					deleteForever={ deleteForever }
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
