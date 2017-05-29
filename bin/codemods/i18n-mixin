@@ -17,8 +17,8 @@ const child_process = require( 'child_process' );
 /**
  * Internal dependencies
  */
-const config = require( './config' );
-const helpers = require( './helpers' );
+const config = require( './src/config' );
+const helpers = require( './src/helpers' );
 
 const args = process.argv.slice( 2 );
 if ( args.length === 0 ) {
@@ -28,7 +28,7 @@ if ( args.length === 0 ) {
 
 const binArgs = [
 	// jscodeshift options
-	'--transform=bin/codemods/i18n-mixin-to-localize.js',
+	'--transform=bin/codemods/src/i18n-mixin-to-localize.js',
 	...config.jscodeshiftArgs,
 
 	// Recast options via 5to6
