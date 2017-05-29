@@ -17,7 +17,11 @@ import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
-import { isPublicizeEnabled, isSchedulingPublicizeShareAction } from 'state/selectors';
+import {
+	isPublicizeEnabled,
+	isSchedulingPublicizeShareAction,
+	getScheduledPublicizeShareActionTime,
+} from 'state/selectors';
 import {
 	getSiteSlug,
 	getSitePlanSlug,
@@ -294,17 +298,22 @@ class PostShare extends Component {
 			requesting,
 			success,
 			translate,
-			scheduling,
 		} = this.props;
 
-		if ( scheduling ) {
+		if ( this.props.scheduling ) {
 			return (
 				<Notice status="is-warning" showDismiss={ false }>
 					{ translate( 'We are writing your shares to the calendar…' ) }
 				</Notice>
 			);
 		}
-
+		if ( this.props.scheduledAt ) {
+			return (
+				<Notice status="is-success" onDismissClick={ this.dismiss }>
+					{ translate( 'We`ll share your post on %s.', { args: this.props.scheduledAt } ) }
+				</Notice>
+			);
+		}
 		if ( requesting ) {
 			return (
 				<Notice status="is-warning" showDismiss={ false }>
@@ -501,6 +510,7 @@ export default connect(
 			requesting: isRequestingSharePost( state, siteId, postId ),
 			failed: sharePostFailure( state, siteId, postId ),
 			success: sharePostSuccessMessage( state, siteId, postId ),
+			scheduledAt: getScheduledPublicizeShareActionTime( state, siteId, postId ),
 			businessRawPrice: getSitePlanRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
 			businessDiscountedRawPrice: getPlanDiscountedRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
 			userCurrency: getCurrentUserCurrencyCode( state ),

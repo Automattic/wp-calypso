@@ -19,6 +19,7 @@ import {
 	PUBLICIZE_SHARE_ACTION_EDIT,
 	PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_EDIT_FAILURE,
+	PUBLICIZE_SHARE_DISMISS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
@@ -105,13 +106,15 @@ export const editingSharePostAction = createReducer( {}, {
 		( state, { siteId, postId, actionId } ) => updateDataForPost( true, state, siteId, postId, actionId ),
 } );
 
-export const schedulingSharePostAction = createReducer( {}, {
-	[ PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS ]:
-		( state, { siteId, postId } ) => updateDataForPost( false, state, siteId, postId ),
+export const schedulingSharePostActionStatus = createReducer( {}, {
+	[ PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS ]: ( state, { siteId, postId, share_date } ) =>
+		updateDataForPost( { status: 'success', shareDate: share_date }, state, siteId, postId ),
 	[ PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE ]:
-		( state, { siteId, postId } ) => updateDataForPost( false, state, siteId, postId ),
+		( state, { siteId, postId } ) => updateDataForPost( { status: 'failure' }, state, siteId, postId ),
 	[ PUBLICIZE_SHARE_ACTION_SCHEDULE ]:
-		( state, { siteId, postId } ) => updateDataForPost( true, state, siteId, postId ),
+		( state, { siteId, postId } ) => updateDataForPost( { status: 'requesting' }, state, siteId, postId ),
+	[ PUBLICIZE_SHARE_DISMISS ]:
+		( state, { siteId, postId } ) => updateDataForPost( undefined, state, siteId, postId ),
 } );
 
 export default combineReducers( {
@@ -121,5 +124,5 @@ export default combineReducers( {
 	fetchingSharePostActionsPublished,
 	deletingSharePostAction,
 	editingSharePostAction,
-	schedulingSharePostAction,
+	schedulingSharePostActionStatus,
 } );

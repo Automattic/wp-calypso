@@ -10,5 +10,7 @@ import { get } from 'lodash';
  * @return {Boolean} true if we are scheduling publicize share action for a post
  */
 export default function isSchedulingPublicizeShareAction( state, siteId, postId ) {
-	return get( state, [ 'sharing', 'publicize', 'sharePostActions', 'schedulingSharePostAction', siteId, postId ], false );
+	return get( state,
+		[ 'sharing', 'publicize', 'sharePostActions', 'schedulingSharePostActionStatus', siteId, postId, 'status' ],
+	false ) === 'requesting';
 }
