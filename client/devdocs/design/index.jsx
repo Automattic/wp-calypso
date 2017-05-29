@@ -71,6 +71,7 @@ import VerticalMenu from 'components/vertical-menu/docs/example';
 import Banner from 'components/banner/docs/example';
 import EmojifyExample from 'components/emojify/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
+import PreviewCard from 'components/preview-card/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -149,6 +150,7 @@ let DesignAssets = React.createClass( {
 					<Notices />
 					<PaymentLogo />
 					<Popovers />
+					<PreviewCard />
 					<ProgressBar />
 					<Ranges />
 					<Rating />
