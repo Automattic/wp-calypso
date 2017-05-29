@@ -134,7 +134,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		} = { ...emptyValues, ...this.props.values };
 
 		return (
-			<form>
+			<form className="registrant-extra-info__form">
 				<FormFieldset>
 					{ translate(
 						'We need some extra details to register domains ending in ".fr".'
@@ -262,6 +262,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						<FormTextInput
 							id="postalCodeOfBirth"
 							value={ postalCodeOfBirth }
+							type="number"
 							autoCapitalize="off"
 							autoComplete="off"
 							autoCorrect="off"

@@ -9,17 +9,19 @@
 	}
 }
 
-.registrant-extra-info__dob-inputs {
-	flex-direction: row;
-	display: flex;
-
+// Turn off all the number spinners
+.registrant-extra-info__form {
 	// Turn off number spinners
 	input[type=number]::-webkit-inner-spin-button,
 	input[type=number]::-webkit-outer-spin-button {
 		-webkit-appearance: none;
 		margin: 0;
-		background: pink;
 	}
+}
+
+.registrant-extra-info__dob-inputs {
+	flex-direction: row;
+	display: flex;
 
 	.registrant-extra-info__dob-year {
 		box-sizing: content-box;
