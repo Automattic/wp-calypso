@@ -87,7 +87,7 @@ describe( 'selectors', () => {
 			}
 		};
 
-		it( 'should return null if no state exists', () => {
+		it( 'should return empty object if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
@@ -95,10 +95,10 @@ describe( 'selectors', () => {
 			};
 			const notices = getNotices( state, primarySiteId );
 
-			expect( notices ).to.be.null;
+			expect( notices ).to.be.empty;
 		} );
 
-		it( 'should return null if the site is not attached', () => {
+		it( 'should return empty object if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -112,7 +112,7 @@ describe( 'selectors', () => {
 			};
 			const notices = getNotices( state, secondarySiteId );
 
-			expect( notices ).to.be.null;
+			expect( notices ).to.be.empty;
 		} );
 
 		it( 'should return the notices for a siteId', () => {

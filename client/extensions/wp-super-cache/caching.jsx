@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { pick } from 'lodash';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle/compact';
+import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
@@ -27,8 +28,15 @@ const Caching = ( {
 	handleSubmitForm,
 	isRequesting,
 	isSaving,
+	notices: {
+		htaccess_ro,
+		mod_rewrite_missing,
+	},
 	translate,
 } ) => {
+	const htaccessMessage = get( htaccess_ro, 'message' );
+	const modRewriteMessage = get( mod_rewrite_missing, 'message' );
+
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Caching' ) }>
@@ -45,6 +53,19 @@ const Caching = ( {
 			</SectionHeader>
 			<Card>
 				<form>
+					{ htaccessMessage &&
+					<Notice
+						showDismiss={ false }
+						status="is-warning"
+						text={ htaccessMessage } />
+					}
+
+					{ modRewriteMessage &&
+					<Notice
+						showDismiss={ false }
+						status="is-warning"
+						text={ modRewriteMessage } />
+					}
 					<FormFieldset>
 						<FormToggle
 							checked={ !! is_cache_enabled }
