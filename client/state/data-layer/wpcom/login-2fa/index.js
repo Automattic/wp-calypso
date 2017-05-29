@@ -39,7 +39,7 @@ const doAppPushRequest = ( store ) => {
 		.accept( 'application/json' )
 		.send( {
 			user_id: getTwoFactorUserId( store.getState() ),
-			two_step_nonce: getTwoFactorAuthNonce( store.getState() ),
+			two_step_nonce: getTwoFactorAuthNonce( store.getState(), 'push' ),
 			remember_me: getTwoFactorRememberMe( store.getState() ),
 			two_step_push_token: getTwoFactorPushToken( store.getState() ),
 			client_id: config( 'wpcom_signup_id' ),

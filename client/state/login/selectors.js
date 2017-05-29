@@ -83,8 +83,7 @@ export const isTwoFactorEnabled = ( state ) => {
 	}
 
 	return (
-		twoFactorAuth.two_step_id !== '' &&
-		twoFactorAuth.two_step_nonce !== ''
+		twoFactorAuth.user_id !== ''
 	);
 };
 

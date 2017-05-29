@@ -11,8 +11,6 @@ import page from 'page';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import {
-	getTwoFactorUserId,
-	getTwoFactorAuthNonce,
 	isTwoFactorAuthTypeSupported,
 } from 'state/login/selectors';
 import { sendSmsCode } from 'state/login/actions';
@@ -23,17 +21,14 @@ class TwoFactorActions extends Component {
 		isAuthenticatorSupported: PropTypes.bool,
 		isSmsSupported: PropTypes.bool,
 		twoFactorAuthType: PropTypes.string.isRequired,
-		twoStepNonce: PropTypes.string.isRequired,
 	};
 
 	sendSmsCode = ( event ) => {
 		event.preventDefault();
 
-		const { userId, twoStepNonce } = this.props;
-
 		page( login( { isNative: true, twoFactorAuthType: 'sms' } ) );
 
-		this.props.sendSmsCode( userId, twoStepNonce );
+		this.props.sendSmsCode( );
 	};
 
 	render() {
@@ -85,11 +80,9 @@ class TwoFactorActions extends Component {
 
 export default connect(
 	( state ) => ( {
-		twoStepNonce: getTwoFactorAuthNonce( state ),
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isPushSupported: isTwoFactorAuthTypeSupported( state, 'push' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
-		userId: getTwoFactorUserId( state ),
 	} ),
 	{
 		sendSmsCode,

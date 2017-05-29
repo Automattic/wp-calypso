@@ -210,13 +210,11 @@ export const loginSocialUser = ( service, token ) => dispatch => {
 };
 
 /**
- * Sends a two factor authentication recovery code to the given user.
+ * Sends a two factor authentication recovery code to the 2FA user
  *
- * @param  {Number}    userId        Id of the user trying to log in.
- * @param  {String}    twoStepNonce  Nonce generated for verification code submission.
  * @return {Function}                Action thunk to trigger the request.
  */
-export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
+export const sendSmsCode = () => ( dispatch, getState ) => {
 	dispatch( {
 		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 		notice: {
@@ -228,8 +226,8 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
-			user_id: userId,
-			two_step_nonce: twoStepNonce,
+			user_id: getTwoFactorUserId( getState() ),
+			two_step_nonce: getTwoFactorAuthNonce( getState(), 'sms' ),
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
@@ -248,7 +246,7 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 					message,
 					status: 'is-success'
 				},
-				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
+				twoStepNonce: get( response, 'body.data.two_step_nonce_sms' ),
 			} );
 		} ).catch( ( error ) => {
 			const field = 'global';
@@ -257,7 +255,7 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 				error: { message, field },
-				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
+				twoStepNonce: get( error, 'response.body.data.two_step_nonce_sms' )
 			} );
 		} );
 };
