@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { pick } from 'lodash';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,6 +34,9 @@ const Caching = ( {
 	},
 	translate,
 } ) => {
+	const htaccessMessage = get( htaccess_ro, 'message' );
+	const modRewriteMessage = get( mod_rewrite_missing, 'message' );
+
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Caching' ) }>
@@ -50,18 +53,18 @@ const Caching = ( {
 			</SectionHeader>
 			<Card>
 				<form>
-					{ htaccess_ro && htaccess_ro.message &&
+					{ htaccessMessage &&
 					<Notice
 						showDismiss={ false }
 						status="is-warning"
-						text={ htaccess_ro.message } />
+						text={ htaccessMessage } />
 					}
 
-					{ mod_rewrite_missing && mod_rewrite_missing.message &&
+					{ modRewriteMessage &&
 					<Notice
 						showDismiss={ false }
 						status="is-warning"
-						text={ mod_rewrite_missing.message } />
+						text={ modRewriteMessage } />
 					}
 					<FormFieldset>
 						<FormToggle
