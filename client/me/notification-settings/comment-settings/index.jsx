@@ -18,7 +18,6 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import SettingsForm from 'me/notification-settings/settings-form';
 import QueryUserDevices from 'components/data/query-user-devices';
 import store from 'lib/notification-settings-store';
-import { isRequestingUserDevices } from 'state/selectors';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
@@ -49,7 +48,7 @@ class NotificationCommentsSettings extends Component {
 	};
 
 	renderForm = () => {
-		if ( ! this.props.isRequestingDevices && this.state.settings ) {
+		if ( this.state.settings ) {
 			return ( <SettingsForm
 				sourceId={ 'other' }
 				settings={ this.state.settings }
@@ -89,8 +88,6 @@ class NotificationCommentsSettings extends Component {
 }
 
 export default connect(
-	state => ( {
-		isRequestingDevices: isRequestingUserDevices( state )
-	} ),
+	null,
 	{ successNotice, errorNotice }
 )( localize( NotificationCommentsSettings ) );

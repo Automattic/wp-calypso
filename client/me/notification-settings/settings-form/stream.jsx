@@ -10,7 +10,6 @@ import { size } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isRequestingUserDevices } from 'state/selectors';
 import StreamHeader from './stream-header';
 import DeviceSelector from './device-selector';
 import StreamOptions from './stream-options';
@@ -38,8 +37,8 @@ class NotificationSettingsFormStream extends PureComponent {
 	getStreamSettings = () => {
 		let { stream, settings } = this.props;
 
-		if ( this.props.devices && ! this.props.requestingUserDevices && size( this.props.devices ) > 0 ) {
-			stream = parseInt( this.props.devices[ this.state.selectedDeviceIndex ].device_id, 10 );
+		if ( this.props.devices && size( this.props.devices ) > 0 ) {
+			stream = parseInt( this.props.devices[ this.state.selectedDeviceIndex ].id, 10 );
 			settings = this.props.settings.find( device => device.get( 'device_id' ) === stream );
 		}
 
@@ -72,6 +71,4 @@ class NotificationSettingsFormStream extends PureComponent {
 	}
 }
 
-export default connect(
-	state => ( { requestingUserDevices: isRequestingUserDevices( state ) } )
-)( NotificationSettingsFormStream );
+export default connect()( NotificationSettingsFormStream );

@@ -10,7 +10,7 @@ import Immutable from 'immutable';
 /**
  * Internal dependencies
  */
-import { getSites, isRequestingUserDevices } from 'state/selectors';
+import { getSites } from 'state/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import Blog from './blog';
@@ -34,9 +34,9 @@ class BlogsSettings extends Component {
 	};
 
 	render() {
-		const { sites, requestingSites, requestingDevices, translate } = this.props;
+		const { sites, requestingSites, translate } = this.props;
 
-		if ( ! sites || requestingDevices || ! this.props.settings ) {
+		if ( ! sites || ! this.props.settings ) {
 			return <Placeholder />;
 		}
 
@@ -87,7 +87,6 @@ class BlogsSettings extends Component {
 const mapStateToProps = state => ( {
 	sites: getSites( state ),
 	requestingSites: isRequestingSites( state ),
-	requestingDevices: isRequestingUserDevices( state )
 } );
 
 export default connect( mapStateToProps )( localize( BlogsSettings ) );
