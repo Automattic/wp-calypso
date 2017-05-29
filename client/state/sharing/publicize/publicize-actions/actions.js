@@ -135,7 +135,8 @@ export function schedulePostShareAction( siteId, postId, message, share_date, co
 				type: PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 				siteId,
 				postId,
-				item: data,
+				share_date,
+				items: data,
 				connections
 			} ) );
 	};

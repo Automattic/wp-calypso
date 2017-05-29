@@ -17,7 +17,7 @@ import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
-import { isPublicizeEnabled } from 'state/selectors';
+import { isPublicizeEnabled, isSchedulingPublicizeShareAction } from 'state/selectors';
 import {
 	getSiteSlug,
 	getSitePlanSlug,
@@ -294,7 +294,16 @@ class PostShare extends Component {
 			requesting,
 			success,
 			translate,
+			scheduling,
 		} = this.props;
+
+		if ( scheduling ) {
+			return (
+				<Notice status="is-warning" showDismiss={ false }>
+					{ translate( 'We are writing your shares to the calendar…' ) }
+				</Notice>
+			);
+		}
 
 		if ( requesting ) {
 			return (
@@ -487,6 +496,7 @@ export default connect(
 			hasRepublicizeSchedulingFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE_SCHEDULING ),
 			siteSlug: getSiteSlug( state, siteId ),
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
+			scheduling: isSchedulingPublicizeShareAction( state, siteId, postId ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			requesting: isRequestingSharePost( state, siteId, postId ),
 			failed: sharePostFailure( state, siteId, postId ),
