@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
@@ -93,9 +94,12 @@ const CancelPrivacyProtection = React.createClass( {
 				this.resetState();
 
 				notices.success(
-					this.translate( 'You have successfully canceled privacy protection for %(domain)s.', {
-						args: { domain },
-					} ),
+					this.props.translate(
+						'You have successfully canceled privacy protection for %(domain)s.',
+						{
+							args: { domain },
+						}
+					),
 					{ persistent: true }
 				);
 
@@ -115,7 +119,7 @@ const CancelPrivacyProtection = React.createClass( {
 
 		return (
 			<p>
-				{ this.translate(
+				{ this.props.translate(
 					'You are about to cancel the privacy protection upgrade for {{strong}}%(domain)s{{/strong}}. ' +
 						'{{br/}}' +
 						'This will make your personal details public.',
@@ -134,8 +138,8 @@ const CancelPrivacyProtection = React.createClass( {
 		return (
 			<strong>
 				{ isRefundable( purchase )
-					? this.translate( 'You will receive a refund when the upgrade is cancelled.' )
-					: this.translate( 'You will not receive a refund when the upgrade is cancelled.' ) }
+					? this.props.translate( 'You will receive a refund when the upgrade is cancelled.' )
+					: this.props.translate( 'You will not receive a refund when the upgrade is cancelled.' ) }
 			</strong>
 		);
 	},
@@ -148,8 +152,8 @@ const CancelPrivacyProtection = React.createClass( {
 				disabled={ this.state.disabled }
 			>
 				{ this.state.cancelling
-					? this.translate( 'Processing…' )
-					: this.translate( 'Cancel Privacy Protection' ) }
+					? this.props.translate( 'Processing…' )
+					: this.props.translate( 'Cancel Privacy Protection' ) }
 			</Button>
 		);
 	},
@@ -162,7 +166,7 @@ const CancelPrivacyProtection = React.createClass( {
 				<Notice status="is-error" showDismiss={ false }>
 					{ error }
 					{ ' ' }
-					{ this.translate( 'Please try again later or {{a}}contact support.{{/a}}', {
+					{ this.props.translate( 'Please try again later or {{a}}contact support.{{/a}}', {
 						components: { a: <a href={ CALYPSO_CONTACT } /> },
 					} ) }
 				</Notice>
@@ -229,4 +233,4 @@ export default connect(
 		selectedSite: getSelectedSiteSelector( state ),
 	} ),
 	{ cancelPrivacyProtection }
-)( CancelPrivacyProtection );
+)( localize( CancelPrivacyProtection ) );

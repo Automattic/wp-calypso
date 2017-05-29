@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import page from 'page';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -133,7 +134,7 @@ const ConfirmCancelDomain = React.createClass( {
 			if ( error ) {
 				notices.error(
 					error.message ||
-						this.translate(
+						this.props.translate(
 							'Unable to cancel your purchase. Please try again later or contact support.'
 						)
 				);
@@ -142,7 +143,7 @@ const ConfirmCancelDomain = React.createClass( {
 			}
 
 			notices.success(
-				this.translate( '%(purchaseName)s was successfully cancelled and refunded.', {
+				this.props.translate( '%(purchaseName)s was successfully cancelled and refunded.', {
 					args: { purchaseName },
 				} ),
 				{ persistent: true }
@@ -205,7 +206,7 @@ const ConfirmCancelDomain = React.createClass( {
 				<FormLabel>
 					<FormCheckbox checked={ this.state.confirmed } onChange={ this.onConfirmationChange } />
 					<span>
-						{ this.translate(
+						{ this.props.translate(
 							'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.',
 							{
 								components: {
@@ -227,7 +228,7 @@ const ConfirmCancelDomain = React.createClass( {
 		if ( this.state.submitting ) {
 			return (
 				<FormButton isPrimary={ true } disabled={ true }>
-					{ this.translate( 'Cancelling Domain…' ) }
+					{ this.props.translate( 'Cancelling Domain…' ) }
 				</FormButton>
 			);
 		}
@@ -237,14 +238,14 @@ const ConfirmCancelDomain = React.createClass( {
 		if ( selectedReason && 'misspelled' === selectedReason.value ) {
 			return (
 				<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed }>
-					{ this.translate( 'Cancel Anyway' ) }
+					{ this.props.translate( 'Cancel Anyway' ) }
 				</FormButton>
 			);
 		}
 
 		return (
 			<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed }>
-				{ this.translate( 'Cancel Domain' ) }
+				{ this.props.translate( 'Cancel Domain' ) }
 			</FormButton>
 		);
 	},
@@ -274,10 +275,10 @@ const ConfirmCancelDomain = React.createClass( {
 				</HeaderCake>
 				<Card>
 					<FormSectionHeading className="is-primary">
-						{ this.translate( 'Canceling %(domain)s', { args: { domain } } ) }
+						{ this.props.translate( 'Canceling %(domain)s', { args: { domain } } ) }
 					</FormSectionHeading>
 					<p>
-						{ this.translate(
+						{ this.props.translate(
 							'Since domain cancellation can cause your site to stop working, ' +
 								'we’d like to make sure we help you take the right action. ' +
 								'Please select the best option below.'
@@ -289,7 +290,7 @@ const ConfirmCancelDomain = React.createClass( {
 						selectedText={
 							selectedReason
 								? selectedReason.label
-								: this.translate( 'Please let us know why you wish to cancel.' )
+								: this.props.translate( 'Please let us know why you wish to cancel.' )
 						}
 						options={ cancellationReasons }
 						onSelect={ this.onReasonChange }
@@ -321,4 +322,4 @@ export default connect(
 		receiveDeletedSite,
 		setAllSitesSelected,
 	}
-)( ConfirmCancelDomain );
+)( localize( ConfirmCancelDomain ) );
