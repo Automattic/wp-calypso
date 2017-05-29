@@ -338,13 +338,43 @@ a.comment-detail__author-more-element {
 	fill: $alert-red;
 }
 
-
 .comment-detail__reply {
 	line-height: 0;
 
 	textarea {
 		border: none;
 		resize: vertical;
+	}
+}
+
+.comment-detail__placeholder {
+	@include placeholder();
+
+	span,
+	strong,
+	.comment-detail__comment-preview {
+		color: transparent;
+		background-color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+
+	&.is-expanded .comment-detail__header {
+		border: none;
+	}
+
+	.comment-detail__author-avatar-image {
+		display: inline-block;
+		height: 100%;
+		width: 100%;
+	}
+
+	.comment-detail__author-info {
+		text-overflow: initial;
+	}
+
+	.comment-detail__comment-preview {
+		margin: 0 8px;
+		width: 100%;
 	}
 }
 

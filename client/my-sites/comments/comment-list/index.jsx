@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, get, keyBy, map, omit } from 'lodash';
+import { filter, get, isEmpty, keyBy, map, omit } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -17,6 +17,7 @@ import {
 import { getNotices } from 'state/notices/selectors';
 import getSiteComments from 'state/selectors/get-site-comments';
 import CommentDetail from 'blocks/comment-detail';
+import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentNavigation from '../comment-navigation';
 
 export class CommentList extends Component {
@@ -150,6 +151,9 @@ export class CommentList extends Component {
 					status,
 					toggleBulkEdit: this.toggleBulkEdit,
 				} } />
+				{ isEmpty( comments ) &&
+					<CommentDetailPlaceholder />
+				}
 				<ReactCSSTransitionGroup
 					transitionEnterTimeout={ 150 }
 					transitionLeaveTimeout={ 150 }
