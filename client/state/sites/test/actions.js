@@ -85,7 +85,7 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true' )
+					.get( '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active' )
 					.reply( 200, {
 						sites: [
 							{ ID: 2916284, name: 'WordPress.com Example Blog' },
@@ -123,7 +123,7 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true' )
+					.get( '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active' )
 					.reply( 403, {
 						error: 'authorization_required',
 						message: 'An active access token must be used to access sites.'
