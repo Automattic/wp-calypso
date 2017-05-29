@@ -29,7 +29,7 @@ const WPSuperCache = ( { notices, site, siteId, tab } ) => {
 			case Tabs.CDN:
 				return <CdnTab />;
 			case Tabs.CONTENTS:
-				return <ContentsTab />;
+				return <ContentsTab isReadOnly={ isReadOnly } />;
 			case Tabs.PRELOAD:
 				return <PreloadTab />;
 			default:
