@@ -418,7 +418,7 @@ const EditorVisibility = React.createClass( {
 		const dropdownItems = [
 			{
 				label: this.props.translate( 'Public', { context: 'Editor: Radio label to set post visible to public' } ),
-				icon: 'visible',
+				icon: 'globe',
 				value: 'public',
 				onClick: () => {
 					this.updateDropdownVisibility( 'public' );
@@ -426,7 +426,7 @@ const EditorVisibility = React.createClass( {
 			},
 			{
 				label: this.props.translate( 'Private', { context: 'Editor: Radio label to set post to private' } ),
-				icon: 'not-visible',
+				icon: 'user',
 				value: 'private',
 				onClick: this.onSetToPrivate
 			},
