@@ -83,28 +83,18 @@ export const updateSettings = ( siteId, settings ) => ( { type: WP_SUPER_CACHE_U
  */
 export const saveSettings = ( siteId, settings ) => {
 	return ( dispatch ) => {
-		dispatch( {
-			type: WP_SUPER_CACHE_SAVE_SETTINGS,
-			siteId,
-		} );
+		dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS, siteId } );
 
 		return wp.req.post(
 			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
 			{ path: '/wp-super-cache/v1/settings', body: JSON.stringify( sanitizeSettings( settings ) ), json: true } )
 			.then( () => {
-				dispatch( requestNotices( siteId ) );
 				dispatch( updateSettings( siteId, settings ) );
-				dispatch( {
-					type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
-					siteId,
-				} );
+				dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS, siteId } );
+				dispatch( requestNotices( siteId ) );
 			} )
 			.catch( error => {
-				dispatch( {
-					type: WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
-					siteId,
-					error,
-				} );
+				dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE, siteId, error } );
 			} );
 	};
 };
