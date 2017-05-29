@@ -14,10 +14,10 @@ describe( 'shouldShowVideoEditorError()', () => {
 			ui: {
 				editor: {
 					videoEditor: {
-						showError: true
-					}
-				}
-			}
+						showError: true,
+					},
+				},
+			},
 		} );
 
 		expect( showError ).to.be.true;

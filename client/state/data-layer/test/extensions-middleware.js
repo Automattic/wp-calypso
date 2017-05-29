@@ -236,4 +236,3 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		expect( removeHandlers( 'my-extension', config ) ).to.eql( false );
 	} );
 } );
-

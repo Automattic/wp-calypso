@@ -14,10 +14,10 @@ describe( 'isRequestingSharingButtons()', () => {
 			sites: {
 				sharingButtons: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
-			}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
+			},
 		};
 		const isSuccessful = isSharingButtonsSaveSuccessful( state, 2916285 );
 
@@ -29,10 +29,10 @@ describe( 'isRequestingSharingButtons()', () => {
 			sites: {
 				sharingButtons: {
 					saveRequests: {
-						2916284: { saving: false, status: 'success' }
-					}
-				}
-			}
+						2916284: { saving: false, status: 'success' },
+					},
+				},
+			},
 		};
 		const isSuccessful = isSharingButtonsSaveSuccessful( state, 2916284 );
 
@@ -44,10 +44,10 @@ describe( 'isRequestingSharingButtons()', () => {
 			sites: {
 				sharingButtons: {
 					saveRequests: {
-						2916284: { saving: false, status: 'error' }
-					}
-				}
-			}
+						2916284: { saving: false, status: 'error' },
+					},
+				},
+			},
 		};
 		const isSuccessful = isSharingButtonsSaveSuccessful( state, 2916284 );
 

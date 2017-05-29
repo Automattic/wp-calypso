@@ -28,7 +28,9 @@ describe( 'ButtonGroup', function() {
 	} );
 
 	it( 'should contains the same number of .button nodes than <Button>s it receives', function() {
-		const buttonGroup = shallow( <ButtonGroup><Button>test</Button><Button>test2</Button></ButtonGroup> );
+		const buttonGroup = shallow(
+			<ButtonGroup><Button>test</Button><Button>test2</Button></ButtonGroup>
+		);
 		assert.equal( 2, buttonGroup.find( Button ).length );
 	} );
 

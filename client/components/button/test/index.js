@@ -59,7 +59,9 @@ describe( 'Button', () => {
 		} );
 
 		it( 'including target and rel props renders a link with target and rel attributes', () => {
-			const button = shallow( <Button href="https://wordpress.com/" target="_blank" rel="noopener noreferrer" /> );
+			const button = shallow(
+				<Button href="https://wordpress.com/" target="_blank" rel="noopener noreferrer" />
+			);
 
 			expect( button ).to.have.prop( 'target' ).equal( '_blank' );
 			expect( button ).to.have.prop( 'rel' ).equal( 'noopener noreferrer' );
@@ -87,7 +89,9 @@ describe( 'Button', () => {
 
 		it( 'renders button with type attribute set to type prop if specified', () => {
 			const typeProp = 'submit';
-			const submitButton = shallow( <Button target="_blank" rel="noopener noreferrer" type={ typeProp } /> );
+			const submitButton = shallow(
+				<Button target="_blank" rel="noopener noreferrer" type={ typeProp } />
+			);
 
 			expect( submitButton ).to.have.prop( 'type' ).equal( typeProp );
 		} );

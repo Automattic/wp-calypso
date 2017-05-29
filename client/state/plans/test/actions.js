@@ -22,7 +22,7 @@ import {
 	ACTION_PLANS_REQUEST_SUCCESS,
 	ACTION_PLANS_REQUEST_FAILURE,
 	WPCOM_RESPONSE as wpcomResponse,
-	ERROR_MESSAGE_RESPONSE as errorResponse
+	ERROR_MESSAGE_RESPONSE as errorResponse,
 } from './fixture';
 
 describe( 'actions', () => {

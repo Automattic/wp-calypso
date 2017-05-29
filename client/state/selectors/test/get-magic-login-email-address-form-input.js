@@ -23,7 +23,7 @@ describe( 'getMagicLoginEmailAddressFormInput()', () => {
 		const val = getMagicLoginEmailAddressFormInput( {
 			login: {
 				magicLogin: {
-					emailAddressFormInput: 'robertantonwilson@example.com'
+					emailAddressFormInput: 'robertantonwilson@example.com',
 				},
 			},
 		} );

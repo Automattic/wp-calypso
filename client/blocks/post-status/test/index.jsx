@@ -7,26 +7,26 @@ import { shallow } from 'enzyme';
 import identity from 'lodash/identity';
 import Gridicon from 'gridicons';
 
-describe( 'PostStatus', ( ) => {
+describe( 'PostStatus', () => {
 	let PostStatus;
 
-	before( ( ) => {
+	before( () => {
 		PostStatus = require( '..' ).PostStatus;
 	} );
 
-	context( 'no post', ( ) => {
-		it( 'should be empty', ( ) => {
-			const PostStatusComponent = ( <PostStatus translate={ identity } /> );
+	context( 'no post', () => {
+		it( 'should be empty', () => {
+			const PostStatusComponent = <PostStatus translate={ identity } />;
 			const wrapper = shallow( PostStatusComponent );
 
 			expect( wrapper ).to.be.empty;
 		} );
 	} );
 
-	context( 'post', ( ) => {
-		context( 'sticky', ( ) => {
-			it( 'should render the primary components', ( ) => {
-				const PostStatusComponent = ( <PostStatus post={ { sticky: true } } translate={ identity } /> );
+	context( 'post', () => {
+		context( 'sticky', () => {
+			it( 'should render the primary components', () => {
+				const PostStatusComponent = <PostStatus post={ { sticky: true } } translate={ identity } />;
 				const wrapper = shallow( PostStatusComponent );
 
 				expect( wrapper ).to.have.descendants( 'span' );
@@ -37,10 +37,12 @@ describe( 'PostStatus', ( ) => {
 			} );
 		} );
 
-		context( 'not sticky', ( ) => {
-			context( 'pending', ( ) => {
-				it( 'should render the primary components', ( ) => {
-					const PostStatusComponent = ( <PostStatus post={ { sticky: false, status: 'pending' } } translate={ identity } /> );
+		context( 'not sticky', () => {
+			context( 'pending', () => {
+				it( 'should render the primary components', () => {
+					const PostStatusComponent = (
+						<PostStatus post={ { sticky: false, status: 'pending' } } translate={ identity } />
+					);
 					const wrapper = shallow( PostStatusComponent );
 
 					expect( wrapper ).to.have.descendants( 'span' );
@@ -51,9 +53,11 @@ describe( 'PostStatus', ( ) => {
 				} );
 			} );
 
-			context( 'future', ( ) => {
-				it( 'should render the primary components', ( ) => {
-					const PostStatusComponent = ( <PostStatus post={ { sticky: false, status: 'future' } } translate={ identity } /> );
+			context( 'future', () => {
+				it( 'should render the primary components', () => {
+					const PostStatusComponent = (
+						<PostStatus post={ { sticky: false, status: 'future' } } translate={ identity } />
+					);
 					const wrapper = shallow( PostStatusComponent );
 
 					expect( wrapper ).to.have.descendants( 'span' );
@@ -64,9 +68,11 @@ describe( 'PostStatus', ( ) => {
 				} );
 			} );
 
-			context( 'trash', ( ) => {
-				it( 'should render the primary components', ( ) => {
-					const PostStatusComponent = ( <PostStatus post={ { sticky: false, status: 'trash' } } translate={ identity } /> );
+			context( 'trash', () => {
+				it( 'should render the primary components', () => {
+					const PostStatusComponent = (
+						<PostStatus post={ { sticky: false, status: 'trash' } } translate={ identity } />
+					);
 					const wrapper = shallow( PostStatusComponent );
 
 					expect( wrapper ).to.have.descendants( 'span' );
@@ -77,9 +83,11 @@ describe( 'PostStatus', ( ) => {
 				} );
 			} );
 
-			context( 'unhandled status', ( ) => {
-				it( 'should be empty', ( ) => {
-					const PostStatusComponent = ( <PostStatus post={ { sticky: false, status: 'wow' } } translate={ identity } /> );
+			context( 'unhandled status', () => {
+				it( 'should be empty', () => {
+					const PostStatusComponent = (
+						<PostStatus post={ { sticky: false, status: 'wow' } } translate={ identity } />
+					);
 					const wrapper = shallow( PostStatusComponent );
 
 					expect( wrapper ).to.be.empty;

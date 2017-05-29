@@ -8,11 +8,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	items,
-	requests,
-	totalCommentsCount,
-} from '../reducer';
+import { items, requests, totalCommentsCount } from '../reducer';
 import {
 	COMMENTS_LIKE,
 	COMMENTS_LIKE_UPDATE,
@@ -22,14 +18,10 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_REMOVE,
 	COMMENTS_REQUEST,
-	COMMENTS_REQUEST_FAILURE
+	COMMENTS_REQUEST_FAILURE,
 } from '../../action-types';
-import {
-	createRequestId
-} from '../utils';
-import {
-	PLACEHOLDER_STATE
-} from '../constants';
+import { createRequestId } from '../utils';
+import { PLACEHOLDER_STATE } from '../constants';
 
 const commentsNestedTree = [
 	{ ID: 11, parent: { ID: 9 }, text: 'eleven', date: '2016-01-31T10:07:18-08:00' },
@@ -37,7 +29,7 @@ const commentsNestedTree = [
 	{ ID: 9, parent: { ID: 6 }, text: 'nine', date: '2016-01-28T11:07:18-08:00' },
 	{ ID: 8, parent: false, text: 'eight', date: '2016-01-28T10:17:18-08:00' },
 	{ ID: 7, parent: false, text: 'seven', date: '2016-01-28T10:08:18-08:00' },
-	{ ID: 6, parent: false, text: 'six', date: '2016-01-28T10:07:18-08:00' }
+	{ ID: 6, parent: false, text: 'six', date: '2016-01-28T10:07:18-08:00' },
 ];
 
 describe( 'reducer', () => {
@@ -47,7 +39,7 @@ describe( 'reducer', () => {
 				type: COMMENTS_RECEIVE,
 				siteId: 1,
 				postId: 1,
-				comments: [ ...commentsNestedTree ].sort( () => Math.random() * 2 % 2 ? -1 : 1 )
+				comments: [ ...commentsNestedTree ].sort( () => ( Math.random() * 2 % 2 ? -1 : 1 ) ),
 			} );
 			const ids = map( response[ '1-1' ], 'ID' );
 
@@ -57,14 +49,14 @@ describe( 'reducer', () => {
 
 		it( 'should build correct items list on consecutive calls', () => {
 			const state = deepFreeze( {
-				'1-1': commentsNestedTree.slice( 0, 2 )
+				'1-1': commentsNestedTree.slice( 0, 2 ),
 			} );
 
 			const response = items( state, {
 				type: COMMENTS_RECEIVE,
 				siteId: 1,
 				postId: 1,
-				comments: commentsNestedTree.slice( 1, commentsNestedTree.length )
+				comments: commentsNestedTree.slice( 1, commentsNestedTree.length ),
 			} );
 
 			expect( response[ '1-1' ] ).to.have.lengthOf( 6 );
@@ -77,7 +69,7 @@ describe( 'reducer', () => {
 				type: COMMENTS_REMOVE,
 				siteId: 1,
 				postId: 1,
-				commentId: removedCommentId
+				commentId: removedCommentId,
 			} );
 
 			expect( result[ '1-1' ] ).to.have.lengthOf( commentsNestedTree.length - 1 );
@@ -85,15 +77,15 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should increase like counts and set i_like', () => {
-			const state = deepFreeze( { '1-1': [
-				{ ID: 123, like_count: 100, i_like: false }
-			] } );
+			const state = deepFreeze( {
+				'1-1': [ { ID: 123, like_count: 100, i_like: false } ],
+			} );
 
 			const result = items( state, {
 				type: COMMENTS_LIKE,
 				siteId: 1,
 				postId: 1,
-				commentId: 123
+				commentId: 123,
 			} );
 
 			expect( result[ '1-1' ][ 0 ].like_count ).to.equal( 101 );
@@ -101,15 +93,15 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should decrease like counts and unset i_like', () => {
-			const state = deepFreeze( { '1-1': [
-				{ ID: 123, like_count: 100, i_like: true }
-			] } );
+			const state = deepFreeze( {
+				'1-1': [ { ID: 123, like_count: 100, i_like: true } ],
+			} );
 
 			const result = items( state, {
 				type: COMMENTS_UNLIKE,
 				siteId: 1,
 				postId: 1,
-				commentId: 123
+				commentId: 123,
 			} );
 
 			expect( result[ '1-1' ][ 0 ].like_count ).to.equal( 99 );
@@ -117,9 +109,9 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should update like for a comment', () => {
-			const state = deepFreeze( { '1-1': [
-				{ ID: 123, like_count: 100, i_like: true }
-			] } );
+			const state = deepFreeze( {
+				'1-1': [ { ID: 123, like_count: 100, i_like: true } ],
+			} );
 
 			const result = items( state, {
 				type: COMMENTS_LIKE_UPDATE,
@@ -127,7 +119,7 @@ describe( 'reducer', () => {
 				postId: 1,
 				commentId: 123,
 				iLike: false,
-				likeCount: 80
+				likeCount: 80,
 			} );
 
 			expect( result[ '1-1' ][ 0 ].like_count ).to.equal( 80 );
@@ -135,20 +127,22 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set error state on a placeholder', () => {
-			const state = deepFreeze( { '1-1': [
-				{
-					ID: 'placeholder-123',
-					placeholderState: PLACEHOLDER_STATE.PENDING,
-					isPlaceholder: true
-				}
-			] } );
+			const state = deepFreeze( {
+				'1-1': [
+					{
+						ID: 'placeholder-123',
+						placeholderState: PLACEHOLDER_STATE.PENDING,
+						isPlaceholder: true,
+					},
+				],
+			} );
 
 			const result = items( state, {
 				type: COMMENTS_ERROR,
 				siteId: 1,
 				postId: 1,
 				commentId: 'placeholder-123',
-				error: 'error_message'
+				error: 'error_message',
 			} );
 
 			expect( result[ '1-1' ][ 0 ].placeholderState ).to.equal( PLACEHOLDER_STATE.ERROR );
@@ -160,13 +154,17 @@ describe( 'reducer', () => {
 		it( 'should set state of query according to the action', () => {
 			const postId = 1;
 			const siteId = 1;
-			const requestId = createRequestId( siteId, postId, { after: new Date(), order: 'DESC', number: 10 } );
+			const requestId = createRequestId(
+				siteId,
+				postId,
+				{ after: new Date(), order: 'DESC', number: 10 }
+			);
 
 			const action = {
 				type: COMMENTS_REQUEST,
 				siteId,
 				postId,
-				requestId: requestId
+				requestId: requestId,
 			};
 
 			const response = requests( undefined, action );
@@ -185,7 +183,7 @@ describe( 'reducer', () => {
 				type: COMMENTS_COUNT_RECEIVE,
 				totalCommentsCount: 123,
 				siteId: 1,
-				postId: 1
+				postId: 1,
 			} );
 
 			expect( response[ '1-1' ] ).to.eql( 123 );

@@ -133,7 +133,7 @@ describe( 'Users Store', () => {
 		it( 'getUpdatedParams returns correct params', () => {
 			const updatedParams = UsersStore.getUpdatedParams( options );
 			assert.equal( updatedParams.offset, 0 );
-			assert.equal( updatedParams.number, usersData.found )
+			assert.equal( updatedParams.number, usersData.found );
 		} );
 
 		it( 'Polling updates expected users', () => {
@@ -163,8 +163,7 @@ describe( 'Users Store', () => {
 		} );
 
 		it( 'Error should restore the updated user', () => {
-			const userId = usersData.users[ 0 ].ID,
-				user = UsersStore.getUser( siteId, userId );
+			const userId = usersData.users[ 0 ].ID, user = UsersStore.getUser( siteId, userId );
 			let userAgain, userRestored;
 
 			assert.equal( user.name, 'Test One' );

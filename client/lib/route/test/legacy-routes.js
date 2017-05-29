@@ -15,7 +15,7 @@ let features = [];
 describe( 'legacy-routes', function() {
 	describe( '#isLegacyRoute()', () => {
 		before( () => {
-			sinon.stub( config, 'isEnabled', ( flag ) => {
+			sinon.stub( config, 'isEnabled', flag => {
 				return features.indexOf( flag ) > -1;
 			} );
 		} );

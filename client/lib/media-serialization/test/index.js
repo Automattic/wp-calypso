@@ -15,12 +15,16 @@ describe( 'MediaSerialization', function() {
 
 	describe( '#deserialize()', function() {
 		it( 'should parse a caption shortcode string containing an image', function() {
-			const parsed = deserialize( '[caption id="attachment_1627" align="aligncenter" width="660"]<img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /> Ceramic[/caption]' );
+			const parsed = deserialize(
+				'[caption id="attachment_1627" align="aligncenter" width="660"]<img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /> Ceramic[/caption]'
+			);
 
 			expect( parsed.type ).to.equal( MediaTypes.IMAGE );
 			expect( parsed.media.ID ).to.equal( 1627 );
 			expect( parsed.media.caption ).to.equal( 'Ceramic' );
-			expect( parsed.media.URL ).to.equal( 'https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg' );
+			expect( parsed.media.URL ).to.equal(
+				'https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg'
+			);
 			expect( parsed.media.alt ).to.equal( 'Example' );
 			expect( parsed.media.transient ).to.be.false;
 			expect( parsed.media.width ).to.equal( 660 );
@@ -30,11 +34,15 @@ describe( 'MediaSerialization', function() {
 		} );
 
 		it( 'should parse an image string', function() {
-			const parsed = deserialize( '<img class="size-full wp-image-1627 alignright" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" />' );
+			const parsed = deserialize(
+				'<img class="size-full wp-image-1627 alignright" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" />'
+			);
 
 			expect( parsed.type ).to.equal( MediaTypes.IMAGE );
 			expect( parsed.media.ID ).to.equal( 1627 );
-			expect( parsed.media.URL ).to.equal( 'https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg' );
+			expect( parsed.media.URL ).to.equal(
+				'https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg'
+			);
 			expect( parsed.media.alt ).to.equal( 'Example' );
 			expect( parsed.media.transient ).to.be.false;
 			expect( parsed.media.width ).to.equal( 660 );
@@ -54,7 +62,9 @@ describe( 'MediaSerialization', function() {
 
 			expect( parsed.type ).to.equal( MediaTypes.IMAGE );
 			expect( parsed.media.ID ).to.equal( 1627 );
-			expect( parsed.media.URL ).to.equal( 'https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg' );
+			expect( parsed.media.URL ).to.equal(
+				'https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg'
+			);
 			expect( parsed.media.alt ).to.equal( 'Example' );
 			expect( parsed.media.transient ).to.be.false;
 			expect( parsed.media.width ).to.equal( 660 );
@@ -64,21 +74,23 @@ describe( 'MediaSerialization', function() {
 		} );
 
 		it( 'should detect transient images', function() {
-			const parsed = deserialize( '<img src="blob:http%3A//wordpress.com/75205e1a-0f78-4a0b-b0e2-5f47a3471769" class="size-full wp-image-1627 alignright" alt="Example" width="660" height="660" />' );
+			const parsed = deserialize(
+				'<img src="blob:http%3A//wordpress.com/75205e1a-0f78-4a0b-b0e2-5f47a3471769" class="size-full wp-image-1627 alignright" alt="Example" width="660" height="660" />'
+			);
 
 			expect( parsed.media.transient ).to.be.true;
 		} );
 
 		it( 'should favor natural dimensions over inferred', function() {
 			let img = document.createElement( 'img' );
-			[ 'width', 'height' ].forEach( ( dimension ) => {
+			[ 'width', 'height' ].forEach( dimension => {
 				Object.defineProperty( img, dimension, {
-					get: () => 660
+					get: () => 660,
 				} );
 			} );
-			[ 'naturalWidth', 'naturalHeight' ].forEach( ( dimension ) => {
+			[ 'naturalWidth', 'naturalHeight' ].forEach( dimension => {
 				Object.defineProperty( img, dimension, {
-					get: () => 1320
+					get: () => 1320,
 				} );
 			} );
 			const parsed = deserialize( img );
@@ -92,9 +104,9 @@ describe( 'MediaSerialization', function() {
 			let img = document.createElement( 'img' );
 			img.width = 660;
 			img.height = 660;
-			[ 'naturalWidth', 'naturalHeight' ].forEach( ( dimension ) => {
+			[ 'naturalWidth', 'naturalHeight' ].forEach( dimension => {
 				Object.defineProperty( img, dimension, {
-					get: () => 1320
+					get: () => 1320,
 				} );
 			} );
 			img.setAttribute( 'width', '990' );
@@ -124,7 +136,7 @@ describe( 'MediaSerialization', function() {
 				height: 804,
 				width: 1150,
 				exif: {},
-				meta: {}
+				meta: {},
 			};
 			const parsed = deserialize( media );
 

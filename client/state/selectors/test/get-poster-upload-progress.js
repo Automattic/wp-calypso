@@ -15,10 +15,10 @@ describe( 'getPosterUploadProgress()', () => {
 			ui: {
 				editor: {
 					videoEditor: {
-						uploadProgress: percentage
-					}
-				}
-			}
+						uploadProgress: percentage,
+					},
+				},
+			},
 		} );
 
 		expect( uploadProgress ).to.eql( percentage );

@@ -9,13 +9,13 @@ import { expect } from 'chai';
 import { getTimezonesLabels } from '../';
 
 describe( 'getTimezonesLabels()', () => {
-	it( 'should return {} if `timezones` aren\'t synced', () => {
+	it( "should return {} if `timezones` aren't synced", () => {
 		const state = {
 			timezones: {
 				byContinents: {},
 				labels: {},
 				rawOffsets: {},
-			}
+			},
 		};
 
 		const timezonesLabels = getTimezonesLabels( state );
@@ -33,7 +33,7 @@ describe( 'getTimezonesLabels()', () => {
 					'Indian/Comoro': 'Comoro',
 				},
 				rawOffsets: {},
-			}
+			},
 		};
 
 		const labels = getTimezonesLabels( state );

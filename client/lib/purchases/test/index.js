@@ -15,7 +15,7 @@ import {
 	DOMAIN_MAPPING_PURCHASE_EXPIRED,
 	PLAN_PURCHASE,
 	SITE_REDIRECT_PURCHASE,
-	SITE_REDIRECT_PURCHASE_EXPIRED
+	SITE_REDIRECT_PURCHASE_EXPIRED,
 } from './data';
 import { isRemovable, isCancelable } from '../index';
 

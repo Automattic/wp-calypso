@@ -6,9 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	createRequestId,
-} from '../utils';
+import { createRequestId } from '../utils';
 
 describe( 'utils', () => {
 	describe( '#createRequestId()', () => {
@@ -17,8 +15,8 @@ describe( 'utils', () => {
 			const firstQuery = {};
 			const secondQuery = {};
 
-			props.forEach( ( prop ) => firstQuery[ prop ] = prop );
-			props.reverse().forEach( ( prop ) => secondQuery[ prop ] = prop );
+			props.forEach( prop => firstQuery[ prop ] = prop );
+			props.reverse().forEach( prop => secondQuery[ prop ] = prop );
 
 			const firstQueryId = createRequestId( 1, 1, firstQuery );
 			const secondQueryId = createRequestId( 1, 1, secondQuery );

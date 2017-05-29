@@ -13,11 +13,7 @@ import { PostRelativeTime } from 'blocks/post-relative-time';
 
 describe( 'PostRelativeTime', () => {
 	it( 'should contain a time gridicon', () => {
-		const wrapper = shallow(
-			<PostRelativeTime
-				moment={ moment }
-			/>
-		);
+		const wrapper = shallow( <PostRelativeTime moment={ moment } /> );
 
 		const icon = wrapper.find( '.post-relative-time__icon' );
 		expect( icon.props().icon ).to.be.equal( 'time' );
@@ -27,12 +23,7 @@ describe( 'PostRelativeTime', () => {
 	it( 'should display a recent time if there is no post', () => {
 		const post = null;
 
-		const wrapper = shallow(
-			<PostRelativeTime
-				post={ post }
-				moment={ moment }
-			/>
-		);
+		const wrapper = shallow( <PostRelativeTime post={ post } moment={ moment } /> );
 
 		const text = wrapper.find( '.post-relative-time__text' ).text();
 		expect( text ).to.equal( 'a few seconds ago' );
@@ -42,15 +33,10 @@ describe( 'PostRelativeTime', () => {
 		const post = {
 			status: 'draft',
 			modified: '2016-09-14T15:47:33-04:00',
-			date: '2016-09-13T15:47:33-04:00'
+			date: '2016-09-13T15:47:33-04:00',
 		};
 
-		const wrapper = shallow(
-			<PostRelativeTime
-				post={ post }
-				moment={ moment }
-			/>
-		);
+		const wrapper = shallow( <PostRelativeTime post={ post } moment={ moment } /> );
 
 		const text = wrapper.find( '.post-relative-time__text' ).text();
 		expect( text ).to.equal( moment( post.modified ).fromNow() );
@@ -60,15 +46,10 @@ describe( 'PostRelativeTime', () => {
 		const post = {
 			status: 'pending',
 			modified: '2016-09-14T15:47:33-04:00',
-			date: '2016-09-13T15:47:33-04:00'
+			date: '2016-09-13T15:47:33-04:00',
 		};
 
-		const wrapper = shallow(
-			<PostRelativeTime
-				post={ post }
-				moment={ moment }
-			/>
-		);
+		const wrapper = shallow( <PostRelativeTime post={ post } moment={ moment } /> );
 
 		const text = wrapper.find( '.post-relative-time__text' ).text();
 		expect( text ).to.equal( moment( post.modified ).fromNow() );
@@ -78,15 +59,10 @@ describe( 'PostRelativeTime', () => {
 		const post = {
 			status: 'publish',
 			modified: '2016-09-14T15:47:33-04:00',
-			date: '2016-09-13T15:47:33-04:00'
+			date: '2016-09-13T15:47:33-04:00',
 		};
 
-		const wrapper = shallow(
-			<PostRelativeTime
-				post={ post }
-				moment={ moment }
-			/>
-		);
+		const wrapper = shallow( <PostRelativeTime post={ post } moment={ moment } /> );
 
 		const text = wrapper.find( '.post-relative-time__text' ).text();
 		expect( text ).to.equal( moment( post.date ).fromNow() );
@@ -95,12 +71,7 @@ describe( 'PostRelativeTime', () => {
 	it( 'should render placeholder when post is null', () => {
 		const post = null;
 
-		const wrapper = shallow(
-			<PostRelativeTime
-				post={ post }
-				moment={ moment }
-			/>
-		);
+		const wrapper = shallow( <PostRelativeTime post={ post } moment={ moment } /> );
 
 		expect( wrapper.hasClass( 'is-placeholder' ) ).to.be.true;
 	} );

@@ -14,10 +14,10 @@ describe( 'getJetpackSettingsSaveRequestStatus()', () => {
 			jetpack: {
 				settings: {
 					saveRequests: {
-						12345678: { saving: true, status: 'pending' }
-					}
-				}
-			}
+						12345678: { saving: true, status: 'pending' },
+					},
+				},
+			},
 		};
 		const status = getJetpackSettingsSaveRequestStatus( state, 87654321 );
 
@@ -29,10 +29,10 @@ describe( 'getJetpackSettingsSaveRequestStatus()', () => {
 			jetpack: {
 				settings: {
 					saveRequests: {
-						12345678: { saving: false, status: 'success' }
-					}
-				}
-			}
+						12345678: { saving: false, status: 'success' },
+					},
+				},
+			},
 		};
 		const status = getJetpackSettingsSaveRequestStatus( state, 12345678 );
 
@@ -44,10 +44,10 @@ describe( 'getJetpackSettingsSaveRequestStatus()', () => {
 			jetpack: {
 				settings: {
 					saveRequests: {
-						12345678: { saving: false, status: 'error' }
-					}
-				}
-			}
+						12345678: { saving: false, status: 'error' },
+					},
+				},
+			},
 		};
 		const status = getJetpackSettingsSaveRequestStatus( state, 12345678 );
 
@@ -59,10 +59,10 @@ describe( 'getJetpackSettingsSaveRequestStatus()', () => {
 			jetpack: {
 				settings: {
 					saveRequests: {
-						12345678: { saving: true, status: 'pending' }
-					}
-				}
-			}
+						12345678: { saving: true, status: 'pending' },
+					},
+				},
+			},
 		};
 		const status = getJetpackSettingsSaveRequestStatus( state, 12345678 );
 

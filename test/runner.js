@@ -20,8 +20,7 @@ const debug = require( 'debug' )( 'test-runner' ),
 /**
  * Internal dependencies
  */
-const boot = require( './boot-test' ),
-	setup = require( './setup' );
+const boot = require( './boot-test' ), setup = require( './setup' );
 
 program
 	.usage( '[options] [files]' )
@@ -36,7 +35,7 @@ program.parse( process.argv );
 
 const mocha = new Mocha( {
 	ui: 'bdd',
-	reporter: program.reporter
+	reporter: program.reporter,
 } );
 
 if ( program.grep ) {
@@ -59,7 +58,11 @@ files = files.reduce( ( memo, filePath ) => {
 	if ( ! filePath.startsWith( process.env.TEST_ROOT ) ) {
 		console.warn(
 			chalk.red.bold( 'WARNING:' ),
-			chalk.yellow( 'Invalid argument passed to test runner. Paths must match test root `' + process.env.TEST_ROOT + '`.' )
+			chalk.yellow(
+				'Invalid argument passed to test runner. Paths must match test root `' +
+					process.env.TEST_ROOT +
+					'`.'
+			)
 		);
 		console.warn( ' - ' + filePath + '\n' );
 
@@ -70,18 +73,14 @@ files = files.reduce( ( memo, filePath ) => {
 	if ( /\.jsx?$/i.test( filePath ) ) {
 		if ( ! filePath.includes( '/test/' ) ) {
 			// did we just forget the test directory?
-			const pathGuess = path.join(
-				path.dirname( filePath ),
-				'test',
-				path.basename( filePath )
-			);
+			const pathGuess = path.join( path.dirname( filePath ), 'test', path.basename( filePath ) );
 
 			if ( fs.existsSync( pathGuess ) ) {
 				console.warn(
 					chalk.red.bold( 'WARNING:' ),
 					chalk.yellow(
-						'It appears that you\'re trying to use the test runner ' +
-						'on a file under test, not the test file itself.'
+						"It appears that you're trying to use the test runner " +
+							'on a file under test, not the test file itself.'
 					),
 					chalk.green( '\n Did you mean to run against…\n  ' ),
 					chalk.blue( pathGuess ),
@@ -93,7 +92,10 @@ files = files.reduce( ( memo, filePath ) => {
 				// then ask the developer if the guessed file
 				// was the intended file and allow that guess
 				// to replace the accidentally-requested file
-				if ( process.stdout.isTTY && true === readlineSync.keyInYN( 'Y to continue, any other key to abort: ' ) ) {
+				if (
+					process.stdout.isTTY &&
+					true === readlineSync.keyInYN( 'Y to continue, any other key to abort: ' )
+				) {
 					return memo.concat( pathGuess );
 				}
 

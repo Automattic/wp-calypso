@@ -16,7 +16,7 @@ import {
 	TERMS_REQUEST,
 	TERMS_REQUEST_FAILURE,
 	TERMS_REQUEST_SUCCESS,
-	SERIALIZE
+	SERIALIZE,
 } from 'state/action-types';
 import reducer, { queries, queryRequests } from '../reducer';
 
@@ -24,20 +24,31 @@ import reducer, { queries, queryRequests } from '../reducer';
  * Test Data
  */
 const testTerms = [
-	{ ID: 111, name: 'Chicken', slug: 'chicken', description: 'colonel sanders', post_count: 1, parent: 0 },
-	{ ID: 123, name: 'Ribs', slug: 'ribs', description: 'i want my baby back * 3 ribs', post_count: 100, parent: 0 },
+	{
+		ID: 111,
+		name: 'Chicken',
+		slug: 'chicken',
+		description: 'colonel sanders',
+		post_count: 1,
+		parent: 0,
+	},
+	{
+		ID: 123,
+		name: 'Ribs',
+		slug: 'ribs',
+		description: 'i want my baby back * 3 ribs',
+		post_count: 100,
+		parent: 0,
+	},
 ];
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'queries',
-			'queryRequests'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'queries', 'queryRequests' ] );
 	} );
 
 	describe( 'queryRequests()', () => {
@@ -52,15 +63,15 @@ describe( 'reducer', () => {
 				type: TERMS_REQUEST,
 				siteId: 2916284,
 				query: { search: 'Ribs' },
-				taxonomy: 'category'
+				taxonomy: 'category',
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					category: {
-						'{"search":"ribs"}': true
-					}
-				}
+						'{"search":"ribs"}': true,
+					},
+				},
 			} );
 		} );
 
@@ -68,25 +79,25 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				2916284: {
 					category: {
-						'{"search":"ribs"}': true
-					}
-				}
+						'{"search":"ribs"}': true,
+					},
+				},
 			} );
 
 			const state = queryRequests( original, {
 				type: TERMS_REQUEST,
 				siteId: 2916284,
 				query: { search: 'AND Chicken' },
-				taxonomy: 'category'
+				taxonomy: 'category',
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					category: {
 						'{"search":"ribs"}': true,
-						'{"search":"and chicken"}': true
-					}
-				}
+						'{"search":"and chicken"}': true,
+					},
+				},
 			} );
 		} );
 
@@ -97,15 +108,15 @@ describe( 'reducer', () => {
 				query: { search: 'Ribs' },
 				found: testTerms.length,
 				terms: testTerms,
-				taxonomy: 'category'
+				taxonomy: 'category',
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					category: {
-						'{"search":"ribs"}': false
-					}
-				}
+						'{"search":"ribs"}': false,
+					},
+				},
 			} );
 		} );
 
@@ -115,15 +126,15 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 				query: { search: 'Ribs' },
 				error: new Error(),
-				taxonomy: 'category'
+				taxonomy: 'category',
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					category: {
-						'{"search":"ribs"}': false
-					}
-				}
+						'{"search":"ribs"}': false,
+					},
+				},
 			} );
 		} );
 	} );
@@ -143,7 +154,7 @@ describe( 'reducer', () => {
 				found: 2,
 				terms: testTerms,
 				taxonomy: 'category',
-				query
+				query,
 			} );
 
 			expect( state ).to.have.keys( [ '2916284' ] );
@@ -158,7 +169,7 @@ describe( 'reducer', () => {
 				type: TERMS_RECEIVE,
 				siteId: 2916284,
 				terms: testTerms,
-				taxonomy: 'category'
+				taxonomy: 'category',
 			} );
 
 			expect( state ).to.have.keys( [ '2916284' ] );
@@ -174,7 +185,7 @@ describe( 'reducer', () => {
 				found: 2,
 				terms: testTerms,
 				taxonomy: 'category',
-				query: { search: 'i' }
+				query: { search: 'i' },
 			};
 
 			const original = deepFreeze( queries( undefined, action ) );
@@ -184,14 +195,16 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should accumulate query request success', () => {
-			const original = deepFreeze( queries( undefined, {
-				type: TERMS_RECEIVE,
-				siteId: 2916284,
-				found: 2,
-				terms: testTerms,
-				taxonomy: 'category',
-				query: { search: 'i' }
-			} ) );
+			const original = deepFreeze(
+				queries( undefined, {
+					type: TERMS_RECEIVE,
+					siteId: 2916284,
+					found: 2,
+					terms: testTerms,
+					taxonomy: 'category',
+					query: { search: 'i' },
+				} )
+			);
 
 			const state = queries( original, {
 				type: TERMS_RECEIVE,
@@ -199,7 +212,7 @@ describe( 'reducer', () => {
 				query: { search: 'nom' },
 				found: 1,
 				terms: [ { ID: 777, name: 'Noms' } ],
-				taxonomy: 'post_tag'
+				taxonomy: 'post_tag',
 			} );
 
 			expect( state ).to.have.keys( [ '2916284' ] );
@@ -207,18 +220,20 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should omit removed term', () => {
-			const original = deepFreeze( queries( undefined, {
-				type: TERMS_RECEIVE,
-				siteId: 2916284,
-				terms: testTerms,
-				taxonomy: 'category'
-			} ) );
+			const original = deepFreeze(
+				queries( undefined, {
+					type: TERMS_RECEIVE,
+					siteId: 2916284,
+					terms: testTerms,
+					taxonomy: 'category',
+				} )
+			);
 
 			const state = queries( original, {
 				type: TERM_REMOVE,
 				siteId: 2916284,
 				taxonomy: 'category',
-				termId: testTerms[ 0 ].ID
+				termId: testTerms[ 0 ].ID,
 			} );
 
 			expect( state ).to.have.keys( [ '2916284' ] );
@@ -228,14 +243,16 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should persist state', () => {
-			const original = deepFreeze( queries( undefined, {
-				type: TERMS_RECEIVE,
-				siteId: 2916284,
-				found: 2,
-				terms: testTerms,
-				taxonomy: 'category',
-				query: { search: 'i' }
-			} ) );
+			const original = deepFreeze(
+				queries( undefined, {
+					type: TERMS_RECEIVE,
+					siteId: 2916284,
+					found: 2,
+					terms: testTerms,
+					taxonomy: 'category',
+					query: { search: 'i' },
+				} )
+			);
 
 			const state = queries( original, { type: SERIALIZE } );
 
@@ -245,14 +262,16 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should load persisted state', () => {
-			const original = deepFreeze( queries( undefined, {
-				type: TERMS_RECEIVE,
-				siteId: 2916284,
-				found: 2,
-				terms: testTerms,
-				taxonomy: 'category',
-				query: { search: 'i' }
-			} ) );
+			const original = deepFreeze(
+				queries( undefined, {
+					type: TERMS_RECEIVE,
+					siteId: 2916284,
+					found: 2,
+					terms: testTerms,
+					taxonomy: 'category',
+					query: { search: 'i' },
+				} )
+			);
 
 			const serialized = queries( original, { type: SERIALIZE } );
 			const state = queries( serialized, { type: DESERIALIZE } );
@@ -261,11 +280,14 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not load invalid persisted state', () => {
-			const state = queries( {
-				2916284: {
-					category: '{~!--BROKEN'
-				}
-			}, { type: DESERIALIZE } );
+			const state = queries(
+				{
+					2916284: {
+						category: '{~!--BROKEN',
+					},
+				},
+				{ type: DESERIALIZE }
+			);
 
 			expect( state ).to.eql( {} );
 		} );

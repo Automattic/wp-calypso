@@ -23,7 +23,9 @@ describe( 'Login', () => {
 	describe( 'footerLinks', () => {
 		context( 'when state is not loaded', () => {
 			it( 'should not have a return button', () => {
-				const login = shallow( <Login queryArguments={ { redirect_to: '' } } translate={ identity } /> );
+				const login = shallow(
+					<Login queryArguments={ { redirect_to: '' } } translate={ identity } />
+				);
 
 				expect( login.find( '.wp-login__footer > a' ).length ).to.equal( 1 );
 			} );
@@ -32,7 +34,9 @@ describe( 'Login', () => {
 		context( 'after state is loaded', () => {
 			context( 'there is no history', () => {
 				it( 'should not have a return button', () => {
-					const login = shallow( <Login queryArguments={ { redirect_to: '' } } translate={ identity } /> );
+					const login = shallow(
+						<Login queryArguments={ { redirect_to: '' } } translate={ identity } />
+					);
 					login.setState( { loaded: true } );
 
 					expect( login.find( '.wp-login__footer > a' ).length ).to.equal( 1 );
@@ -45,7 +49,9 @@ describe( 'Login', () => {
 				} );
 
 				it( 'should have a return button if there is history', () => {
-					const login = shallow( <Login queryArguments={ { redirect_to: '' } } translate={ identity } /> );
+					const login = shallow(
+						<Login queryArguments={ { redirect_to: '' } } translate={ identity } />
+					);
 					login.setState( { loaded: true } );
 
 					expect( login.find( '.wp-login__footer > a' ).length ).to.equal( 2 );

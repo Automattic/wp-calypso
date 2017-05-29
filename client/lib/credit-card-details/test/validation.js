@@ -16,7 +16,7 @@ describe( 'validation', function() {
 		'expiration-date': '01/' + moment().add( 1, 'years' ).format( 'YY' ),
 		cvv: '111',
 		country: 'US',
-		'postal-code': '90210'
+		'postal-code': '90210',
 	};
 
 	describe( '#validateCardDetails', () => {
@@ -33,20 +33,20 @@ describe( 'validation', function() {
 
 			expect( result ).to.be.eql( {
 				errors: {
-					'expiration-date': [ 'Credit card expiration date is invalid' ]
-				}
+					'expiration-date': [ 'Credit card expiration date is invalid' ],
+				},
 			} );
 		} );
 
 		it( 'should return error when cvv is the wrong length', function() {
-			const invalidCVVCard = { ...validCard, 'cvv': '12345' };
+			const invalidCVVCard = { ...validCard, cvv: '12345' };
 
 			const result = validateCardDetails( invalidCVVCard );
 
 			expect( result ).to.be.eql( {
 				errors: {
-					'cvv': [ 'Credit card cvv code is invalid' ]
-				}
+					cvv: [ 'Credit card cvv code is invalid' ],
+				},
 			} );
 		} );
 	} );

@@ -17,8 +17,11 @@ describe( 'ThemesList', function() {
 	useMockery( mockery => {
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
-		mockery.registerMock( 'components/pulsing-dot', React.createClass( { render: () => <div/> } ) );
-		mockery.registerMock( './more-button', React.createClass( { render: () => <div/> } ) );
+		mockery.registerMock(
+			'components/pulsing-dot',
+			React.createClass( { render: () => <div /> } )
+		);
+		mockery.registerMock( './more-button', React.createClass( { render: () => <div /> } ) );
 		ThemesList = require( '../' ).ThemesList;
 	} );
 
@@ -34,14 +37,14 @@ describe( 'ThemesList', function() {
 					id: '2',
 					name: 'picard',
 					screenshot: '/theme/picard/screenshot.png',
-				}
+				},
 			],
 			lastPage: true,
 			loading: false,
 			fetchNextPage: noop,
 			getButtonOptions: noop,
 			onScreenshotClick: noop,
-			translate: x => x // Mock translate()
+			translate: x => x, // Mock translate()
 		};
 
 		this.themesList = React.createElement( ThemesList, this.props );
@@ -63,7 +66,10 @@ describe( 'ThemesList', function() {
 
 		it( 'should render a div with a className of "themes-list"', function() {
 			assert( this.themesListElement, 'element does not exist' );
-			assert( this.themesListElement.props.className === 'themes-list', 'className does not equal "themes-list"' );
+			assert(
+				this.themesListElement.props.className === 'themes-list',
+				'className does not equal "themes-list"'
+			);
 		} );
 
 		context( 'when no themes are found', function() {

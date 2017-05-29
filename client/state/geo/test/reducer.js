@@ -13,18 +13,15 @@ import {
 	GEO_REQUEST,
 	GEO_REQUEST_FAILURE,
 	GEO_REQUEST_SUCCESS,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
 import reducer, { requesting, geo } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
+	useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
 
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'geo'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'geo' ] );
 	} );
 
 	describe( 'requesting()', () => {
@@ -36,7 +33,7 @@ describe( 'reducer', () => {
 
 		it( 'should set site ID to true value if request in progress', () => {
 			const state = requesting( undefined, {
-				type: GEO_REQUEST
+				type: GEO_REQUEST,
 			} );
 
 			expect( state ).to.eql( true );
@@ -44,7 +41,7 @@ describe( 'reducer', () => {
 
 		it( 'should set site ID to false if request succeeds', () => {
 			const state = requesting( true, {
-				type: GEO_REQUEST_SUCCESS
+				type: GEO_REQUEST_SUCCESS,
 			} );
 
 			expect( state ).to.eql( false );
@@ -52,7 +49,7 @@ describe( 'reducer', () => {
 
 		it( 'should set site ID to false if request fails', () => {
 			const state = requesting( true, {
-				type: GEO_REQUEST_FAILURE
+				type: GEO_REQUEST_FAILURE,
 			} );
 
 			expect( state ).to.eql( false );
@@ -75,8 +72,8 @@ describe( 'reducer', () => {
 					country_short: 'US',
 					country_long: 'United States',
 					region: 'Ohio',
-					city: 'Mason'
-				}
+					city: 'Mason',
+				},
 			} );
 
 			expect( state ).to.eql( {
@@ -85,7 +82,7 @@ describe( 'reducer', () => {
 				country_short: 'US',
 				country_long: 'United States',
 				region: 'Ohio',
-				city: 'Mason'
+				city: 'Mason',
 			} );
 		} );
 
@@ -96,7 +93,7 @@ describe( 'reducer', () => {
 				country_short: 'US',
 				country_long: 'United States',
 				region: 'Ohio',
-				city: 'Mason'
+				city: 'Mason',
 			} );
 			const state = geo( original, { type: DESERIALIZE } );
 
@@ -106,13 +103,13 @@ describe( 'reducer', () => {
 				country_short: 'US',
 				country_long: 'United States',
 				region: 'Ohio',
-				city: 'Mason'
+				city: 'Mason',
 			} );
 		} );
 
 		it( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
-				country_short: true
+				country_short: true,
 			} );
 			const state = geo( original, { type: DESERIALIZE } );
 

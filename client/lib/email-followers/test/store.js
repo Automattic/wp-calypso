@@ -42,8 +42,7 @@ describe( 'Email Followers Store', function() {
 		} );
 
 		it( 'Fetching more email followers should update the array in the store', function() {
-			var followers = EmailFollowersStore.getFollowers( options ),
-				followersAgain;
+			var followers = EmailFollowersStore.getFollowers( options ), followersAgain;
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.fetchedMoreFollowers );
 			followersAgain = EmailFollowersStore.getFollowers( options );
@@ -67,8 +66,7 @@ describe( 'Email Followers Store', function() {
 			Dispatcher.handleServerAction( actions.fetchedFollowers );
 		} );
 		it( 'Should remove a single follower.', function() {
-			var followers = EmailFollowersStore.getFollowers( options ),
-				followersAgain;
+			var followers = EmailFollowersStore.getFollowers( options ), followersAgain;
 
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );

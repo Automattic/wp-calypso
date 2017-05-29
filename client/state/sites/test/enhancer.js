@@ -21,7 +21,7 @@ import sitesSync from '../enhancer';
  */
 const EXAMPLE_SITE = {
 	ID: 2916284,
-	name: 'WordPress.com Example Blog'
+	name: 'WordPress.com Example Blog',
 };
 
 describe( 'sitesSync()', () => {
@@ -33,13 +33,13 @@ describe( 'sitesSync()', () => {
 
 	useFakeDom();
 
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		Site = require( 'lib/site' );
 		sitesListFactory = require( 'lib/sites-list' );
 
 		store = sitesSync( () => ( {
 			dispatch: sandbox.spy(),
-			getState: sandbox.stub().returns( state )
+			getState: sandbox.stub().returns( state ),
 		} ) )();
 
 		sitesList = sitesListFactory();
@@ -62,7 +62,7 @@ describe( 'sitesSync()', () => {
 
 		expect( store.dispatch ).to.have.been.calledWithMatch( {
 			type: SITES_UPDATE,
-			sites: [ match.instanceOf( Site ) ]
+			sites: [ match.instanceOf( Site ) ],
 		} );
 	} );
 
@@ -73,7 +73,7 @@ describe( 'sitesSync()', () => {
 
 		expect( store.dispatch ).to.have.been.calledWithMatch( {
 			type: SITE_RECEIVE,
-			site: match( { name: 'WordPress.com Example Blog!' } )
+			site: match( { name: 'WordPress.com Example Blog!' } ),
 		} );
 	} );
 

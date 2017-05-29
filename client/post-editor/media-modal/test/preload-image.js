@@ -14,7 +14,7 @@ describe( '#preloadImage()', function() {
 	let sandbox, Image;
 
 	useFakeDom();
-	useSandbox( ( newSandbox ) => {
+	useSandbox( newSandbox => {
 		sandbox = newSandbox;
 		Image = sandbox.stub( global.window, 'Image' );
 	} );

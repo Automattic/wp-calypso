@@ -28,7 +28,12 @@ describe( 'index', function() {
 		} );
 
 		it( "doesn't throw an exception", function() {
-			assert.doesNotThrow( ReactDomServer.renderToString.bind( ReactDomServer, this.LayoutLoggedOutFactory( this.props ) ) );
+			assert.doesNotThrow(
+				ReactDomServer.renderToString.bind(
+					ReactDomServer,
+					this.LayoutLoggedOutFactory( this.props )
+				)
+			);
 		} );
 	} );
 } );

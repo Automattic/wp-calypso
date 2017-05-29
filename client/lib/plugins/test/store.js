@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai' ;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
@@ -63,7 +63,10 @@ describe( 'Plugins Store', () => {
 			} );
 
 			it( 'should accept sites as an array of objects or object', () => {
-				assert.deepEqual( PluginsStore.getPlugin( site, 'akismet' ), PluginsStore.getPlugin( [ site ], 'akismet' ) );
+				assert.deepEqual(
+					PluginsStore.getPlugin( site, 'akismet' ),
+					PluginsStore.getPlugin( [ site ], 'akismet' )
+				);
 			} );
 
 			it( 'should return an object with attribute sites array', () => {
@@ -137,7 +140,7 @@ describe( 'Plugins Store', () => {
 				assert.isObject( Aksimet );
 			} );
 
-			it( 'Should have return undefined for a site if the plugin doesn\'t exist', () => {
+			it( "Should have return undefined for a site if the plugin doesn't exist", () => {
 				assert.isUndefined( PluginsStore.getSitePlugin( site, 'non-plugin-slug' ) );
 			} );
 		} );
@@ -153,12 +156,14 @@ describe( 'Plugins Store', () => {
 				assert.isObject( Plugins[ 0 ] );
 			} );
 
-			it( 'Should have return undefined if site doesn\'t exist', () => {
-				assert.isUndefined( PluginsStore.getSitePlugins( {
-					ID: 1,
-					jetpack: false,
-					plan: { product_slug: 'free_plan' }
-				} ) );
+			it( "Should have return undefined if site doesn't exist", () => {
+				assert.isUndefined(
+					PluginsStore.getSitePlugins( {
+						ID: 1,
+						jetpack: false,
+						plan: { product_slug: 'free_plan' },
+					} )
+				);
 			} );
 		} );
 
@@ -186,7 +191,7 @@ describe( 'Plugins Store', () => {
 			const UpdatedStore = PluginsStore.getPlugins( {
 				ID: 123,
 				jetpack: false,
-				plan: { product_slug: 'free_plan' }
+				plan: { product_slug: 'free_plan' },
 			} );
 			assert.lengthOf( UpdatedStore, 0 );
 		} );
@@ -273,7 +278,7 @@ describe( 'Plugins Store', () => {
 				HelloDolly = PluginsStore.getSitePlugin( site, 'hello-dolly' );
 			} );
 
-			it( 'doesn\'t remove update when lauched', () => {
+			it( "doesn't remove update when lauched", () => {
 				assert.isNotNull( HelloDolly.update );
 			} );
 		} );

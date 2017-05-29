@@ -50,15 +50,25 @@ describe( 'index', function() {
 	} );
 
 	describe( 'component state', function() {
-		xit( "should initially consider as selected the user's primary site, when is not specified something different", function() {
-			const sitesDropdown = shallow( <SitesDropdown /> );
-			expect( sitesDropdown.instance().state.selectedSiteSlug ).to.be.equal( 'primary.wordpress.com' );
-		} );
+		xit(
+			"should initially consider as selected the user's primary site, when is not specified something different",
+			function() {
+				const sitesDropdown = shallow( <SitesDropdown /> );
+				expect( sitesDropdown.instance().state.selectedSiteSlug ).to.be.equal(
+					'primary.wordpress.com'
+				);
+			}
+		);
 
-		xit( 'should initially consider as selected the site whose id is passed as `selectedSiteId` prop', function() {
-			const sitesDropdown = shallow( <SitesDropdown selectedSiteId={ 42 } /> );
-			expect( sitesDropdown.instance().state.selectedSiteSlug ).to.be.equal( 'foo.wordpress.com' );
-		} );
+		xit(
+			'should initially consider as selected the site whose id is passed as `selectedSiteId` prop',
+			function() {
+				const sitesDropdown = shallow( <SitesDropdown selectedSiteId={ 42 } /> );
+				expect( sitesDropdown.instance().state.selectedSiteSlug ).to.be.equal(
+					'foo.wordpress.com'
+				);
+			}
+		);
 	} );
 
 	describe( 'selectSite', function() {
@@ -68,8 +78,8 @@ describe( 'index', function() {
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
-					onSiteSelect: siteSelectedSpy
-				}
+					onSiteSelect: siteSelectedSpy,
+				},
 			};
 
 			SitesDropdown.prototype.selectSite.call( fakeContext, 'foobar' );
@@ -88,8 +98,8 @@ describe( 'index', function() {
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
-					onClose: noop
-				}
+					onClose: noop,
+				},
 			};
 
 			SitesDropdown.prototype.onClose.call( fakeContext );
@@ -103,8 +113,8 @@ describe( 'index', function() {
 			const fakeContext = {
 				setState: noop,
 				props: {
-					onClose: onCloseSpy
-				}
+					onClose: onCloseSpy,
+				},
 			};
 
 			SitesDropdown.prototype.onClose.call( fakeContext );
@@ -113,15 +123,18 @@ describe( 'index', function() {
 	} );
 
 	describe( 'getSelectedSite', function() {
-		xit( 'should return a site on the basis of the component `selectedSiteSlug` state property', function() {
-			const fakeState = {
-				selectedSiteSlug: 'foo.wordpress.com'
-			};
-			const selectedSite = SitesDropdown.prototype.getSelectedSite.call( { state: fakeState } );
-			expect( selectedSite ).to.be.eql( {
-				ID: 42,
-				slug: 'foo.wordpress.com'
-			} );
-		} );
+		xit(
+			'should return a site on the basis of the component `selectedSiteSlug` state property',
+			function() {
+				const fakeState = {
+					selectedSiteSlug: 'foo.wordpress.com',
+				};
+				const selectedSite = SitesDropdown.prototype.getSelectedSite.call( { state: fakeState } );
+				expect( selectedSite ).to.be.eql( {
+					ID: 42,
+					slug: 'foo.wordpress.com',
+				} );
+			}
+		);
 	} );
 } );

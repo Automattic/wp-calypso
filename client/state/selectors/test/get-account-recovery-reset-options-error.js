@@ -31,7 +31,7 @@ describe( 'getAccountRecoveryResetOptionsError()', () => {
 		const state = {
 			accountRecovery: {
 				reset: {
-					options: {}
+					options: {},
 				},
 			},
 		};

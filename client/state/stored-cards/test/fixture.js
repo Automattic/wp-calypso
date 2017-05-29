@@ -12,7 +12,7 @@ export const STORED_CARDS_FROM_API = [
 		remember: '1',
 		meta: [],
 		added: '2015-10-22 11:14:05',
-		last_used: '2015-10-22 11:14:05'
+		last_used: '2015-10-22 11:14:05',
 	},
 	{
 		user_id: '12345678',
@@ -27,6 +27,6 @@ export const STORED_CARDS_FROM_API = [
 		remember: '1',
 		meta: [],
 		added: '2015-02-06 20:28:11',
-		last_used: '2015-10-22 11:10:10'
-	}
+		last_used: '2015-10-22 11:10:10',
+	},
 ];

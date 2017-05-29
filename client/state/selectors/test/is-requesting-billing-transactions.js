@@ -12,8 +12,8 @@ describe( 'isRequestingBillingTransactions()', () => {
 	it( 'should return true if the billing transactions are being fetched', () => {
 		const state = {
 			billingTransactions: {
-				requesting: true
-			}
+				requesting: true,
+			},
 		};
 		const output = isRequestingBillingTransactions( state );
 		expect( output ).to.be.true;
@@ -22,8 +22,8 @@ describe( 'isRequestingBillingTransactions()', () => {
 	it( 'should return false if the billing transactions are currently not being fetched', () => {
 		const state = {
 			billingTransactions: {
-				requesting: false
-			}
+				requesting: false,
+			},
 		};
 		const output = isRequestingBillingTransactions( state );
 		expect( output ).to.be.false;

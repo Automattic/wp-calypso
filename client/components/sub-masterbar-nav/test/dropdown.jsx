@@ -14,7 +14,7 @@ import Item from '../item';
 describe( 'Dropdown', () => {
 	const options = [
 		{ label: 'sites', uri: '/sites', icon: 'star' },
-		{ label: 'more', uri: '/more', icon: 'star' }
+		{ label: 'more', uri: '/more', icon: 'star' },
 	];
 
 	it( 'should render a dropdown given a list of options and the current selection', () => {

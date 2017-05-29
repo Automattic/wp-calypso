@@ -14,8 +14,8 @@ describe( 'selectors', () => {
 					hasLoadedFromServer: true,
 					isFetching: false,
 					isDeleting: false,
-					items: STORED_CARDS_FROM_API
-				}
+					items: STORED_CARDS_FROM_API,
+				},
 			} );
 
 			expect( getStoredCards( state ) ).to.be.eql( STORED_CARDS_FROM_API );
@@ -29,8 +29,8 @@ describe( 'selectors', () => {
 					hasLoadedFromServer: true,
 					isFetching: false,
 					isDeleting: false,
-					items: STORED_CARDS_FROM_API
-				}
+					items: STORED_CARDS_FROM_API,
+				},
 			} );
 
 			expect( getStoredCardById( state, '12345' ) ).to.be.eql( STORED_CARDS_FROM_API[ 1 ] );
@@ -44,8 +44,8 @@ describe( 'selectors', () => {
 					hasLoadedFromServer: true,
 					isFetching: false,
 					isDeleting: false,
-					items: STORED_CARDS_FROM_API
-				}
+					items: STORED_CARDS_FROM_API,
+				},
 			} );
 
 			expect( hasLoadedStoredCardsFromServer( state ) ).to.be.true;

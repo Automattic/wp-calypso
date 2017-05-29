@@ -24,7 +24,7 @@ describe( 'localStorage', function() {
 
 	describe( 'when window.localStorage is not working correctly', function() {
 		const window = {
-			localStorage: {}
+			localStorage: {},
 		};
 
 		before( () => {

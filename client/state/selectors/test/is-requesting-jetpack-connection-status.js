@@ -12,12 +12,12 @@ import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-connection';
 describe( 'isRequestingJetpackConnectionStatus()', () => {
 	it( 'should return true if the connection status is being fetched', () => {
 		const stateIn = {
-				jetpack: {
-					connection: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+			jetpack: {
+				connection: {
+					requests: REQUESTS_FIXTURE,
+				},
 			},
+		},
 			siteId = 87654321;
 		const output = isRequestingJetpackConnectionStatus( stateIn, siteId );
 		expect( output ).to.be.true;
@@ -25,12 +25,12 @@ describe( 'isRequestingJetpackConnectionStatus()', () => {
 
 	it( 'should return false if the connection status is not being fetched', () => {
 		const stateIn = {
-				jetpack: {
-					connection: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+			jetpack: {
+				connection: {
+					requests: REQUESTS_FIXTURE,
+				},
 			},
+		},
 			siteId = 12345678;
 		const output = isRequestingJetpackConnectionStatus( stateIn, siteId );
 		expect( output ).to.be.false;
@@ -38,12 +38,12 @@ describe( 'isRequestingJetpackConnectionStatus()', () => {
 
 	it( 'should return null if the site is not known yet', () => {
 		const stateIn = {
-				jetpack: {
-					connection: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+			jetpack: {
+				connection: {
+					requests: REQUESTS_FIXTURE,
+				},
 			},
+		},
 			siteId = 88888888;
 		const output = isRequestingJetpackConnectionStatus( stateIn, siteId );
 		expect( output ).to.be.null;

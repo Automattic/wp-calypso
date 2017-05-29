@@ -13,7 +13,7 @@ describe( 'isUserRegistrationDaysWithinRange()', () => {
 	const state = 'state';
 	const registrationDate = 'registrationDate';
 	const moment = {
-		diff: stub()
+		diff: stub(),
 	};
 
 	let getCurrentUserDate;

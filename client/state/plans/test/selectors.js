@@ -1,4 +1,3 @@
-
 /**
  * External dependencies
  */
@@ -8,21 +7,12 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	getPlans,
-	isRequestingPlans,
-	getPlan,
-	getPlanRawPrice,
-	getPlanSlug
-} from '../selectors';
+import { getPlans, isRequestingPlans, getPlan, getPlanRawPrice, getPlanSlug } from '../selectors';
 
 /**
  * Fixture data
  */
-import {
-	PLANS,
-	getStateInstance
-} from './fixture';
+import { PLANS, getStateInstance } from './fixture';
 
 describe( 'selectors', () => {
 	describe( '#getPlans()', () => {
@@ -57,11 +47,13 @@ describe( 'selectors', () => {
 		it( 'should return annual raw price', () => {
 			const state = deepFreeze( {
 				plans: {
-					items: [ {
-						product_id: 1003,
-						raw_price: 99
-					} ]
-				}
+					items: [
+						{
+							product_id: 1003,
+							raw_price: 99,
+						},
+					],
+				},
 			} );
 			const price = getPlanRawPrice( state, 1003 );
 			expect( price ).to.eql( 99 );
@@ -69,11 +61,13 @@ describe( 'selectors', () => {
 		it( 'should return monthly price plan object', () => {
 			const state = deepFreeze( {
 				plans: {
-					items: [ {
-						product_id: 1003,
-						raw_price: 99
-					} ]
-				}
+					items: [
+						{
+							product_id: 1003,
+							raw_price: 99,
+						},
+					],
+				},
 			} );
 			const price = getPlanRawPrice( state, 1003, true );
 			expect( price ).to.eql( 8.25 );
@@ -81,11 +75,13 @@ describe( 'selectors', () => {
 		it( 'should return monthly price plan object when raw price is 0', () => {
 			const state = deepFreeze( {
 				plans: {
-					items: [ {
-						product_id: 1003,
-						raw_price: 0
-					} ]
-				}
+					items: [
+						{
+							product_id: 1003,
+							raw_price: 0,
+						},
+					],
+				},
 			} );
 			const price = getPlanRawPrice( state, 1003, true );
 			expect( price ).to.eql( 0 );
@@ -93,10 +89,12 @@ describe( 'selectors', () => {
 		it( 'should return null when raw price is missing', () => {
 			const state = deepFreeze( {
 				plans: {
-					items: [ {
-						product_id: 1003
-					} ]
-				}
+					items: [
+						{
+							product_id: 1003,
+						},
+					],
+				},
 			} );
 			const price = getPlanRawPrice( state, 1003, true );
 			expect( price ).to.eql( null );
@@ -104,11 +102,13 @@ describe( 'selectors', () => {
 		it( 'should return null when plan is not available', () => {
 			const state = deepFreeze( {
 				plans: {
-					items: [ {
-						product_id: 1003,
-						raw_price: 99
-					} ]
-				}
+					items: [
+						{
+							product_id: 1003,
+							raw_price: 99,
+						},
+					],
+				},
 			} );
 			const price = getPlanRawPrice( state, 44, true );
 			expect( price ).to.eql( null );
@@ -119,11 +119,13 @@ describe( 'selectors', () => {
 		it( 'should return plan product_slug', () => {
 			const state = {
 				plans: {
-					items: [ {
-						product_id: 1003,
-						product_slug: 'value_bundle'
-					} ]
-				}
+					items: [
+						{
+							product_id: 1003,
+							product_slug: 'value_bundle',
+						},
+					],
+				},
 			};
 
 			const planSlug = getPlanSlug( state, 1003 );
@@ -134,11 +136,13 @@ describe( 'selectors', () => {
 		it( 'should return null if plan is missing', () => {
 			const state = {
 				plans: {
-					items: [ {
-						product_id: 1003,
-						product_slug: 'value_bundle'
-					} ]
-				}
+					items: [
+						{
+							product_id: 1003,
+							product_slug: 'value_bundle',
+						},
+					],
+				},
 			};
 
 			const planSlug = getPlanSlug( state, 1337 );
@@ -146,13 +150,15 @@ describe( 'selectors', () => {
 			expect( planSlug ).to.equal( null );
 		} );
 
-		it( 'should return null if plan doesn\'t have product_slug', () => {
+		it( "should return null if plan doesn't have product_slug", () => {
 			const state = {
 				plans: {
-					items: [ {
-						product_id: 1003
-					} ]
-				}
+					items: [
+						{
+							product_id: 1003,
+						},
+					],
+				},
 			};
 
 			const planSlug = getPlanSlug( state, 1003 );
