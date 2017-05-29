@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { get, includes, map } from 'lodash';
+import { get, includes, map, difference } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
 import Gridicon from 'gridicons';
@@ -28,7 +28,12 @@ import {
 	hasFetchedConnections as siteHasFetchedConnections,
 } from 'state/sharing/publicize/selectors';
 
-import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
+import {
+	fetchConnections as requestConnections,
+	sharePost,
+	dismissShareConfirmation,
+} from 'state/sharing/publicize/actions';
+import { schedulePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
 import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
 import PostMetadata from 'lib/post-metadata';
 import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
@@ -131,8 +136,23 @@ class PostShare extends Component {
 	};
 
 	sharePost = () => {
+		const {
+			postId,
+			siteId,
+			connections,
+		} = this.props;
 		if ( this.state.scheduledDate ) {
-			// TODO: Here we actually schedule a post
+			const servicesToPublish = difference(
+				connections.map( connection => connection.keyring_connection_ID ),
+				this.state.skipped
+			);
+			this.props.schedulePostShareAction(
+				siteId,
+				postId,
+				this.state.message,
+				this.state.scheduledDate.format( 'X' ),
+				servicesToPublish,
+			);
 		} else {
 			this.props.sharePost( this.props.siteId, this.props.postId, this.state.skipped, this.state.message );
 		}
@@ -451,7 +471,6 @@ class PostShare extends Component {
 		);
 	}
 }
-
 export default connect(
 	( state, props ) => {
 		const { siteId } = props;
@@ -477,5 +496,5 @@ export default connect(
 			userCurrency: getCurrentUserCurrencyCode( state ),
 		};
 	},
-	{ requestConnections, sharePost, dismissShareConfirmation }
+	{ requestConnections, sharePost, dismissShareConfirmation, schedulePostShareAction }
 )( localize( PostShare ) );
