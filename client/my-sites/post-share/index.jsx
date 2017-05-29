@@ -87,6 +87,7 @@ class PostShare extends Component {
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
 		showSharingPreview: false,
 		showAccountTooltip: false,
+		scheduledDate: null,
 	};
 
 	hasConnections() {
@@ -103,6 +104,13 @@ class PostShare extends Component {
 		}
 
 		this.setState( { skipped } );
+	};
+
+	scheduleDate = date => {
+		if ( date.isBefore( Date.now() ) ) {
+			date = null;
+		}
+		this.setState( { scheduledDate: date } );
 	};
 
 	skipConnection( { keyring_connection_ID } ) {
@@ -123,7 +131,11 @@ class PostShare extends Component {
 	};
 
 	sharePost = () => {
-		this.props.sharePost( this.props.siteId, this.props.postId, this.state.skipped, this.state.message );
+		if ( this.state.scheduledDate ) {
+			// TODO: Here we actually schedule a post
+		} else {
+			this.props.sharePost( this.props.siteId, this.props.postId, this.state.skipped, this.state.message );
+		}
 	};
 
 	isButtonDisabled() {
@@ -169,7 +181,7 @@ class PostShare extends Component {
 			onClick={ this.sharePost }
 			disabled={ this.isButtonDisabled() }
 		>
-			{ translate( 'Share post' ) }
+			{ this.state.scheduledDate ? translate( 'Schedule post' ) : translate( 'Share post' ) }
 		</Button>;
 
 		if ( ! hasRepublicizeSchedulingFeature ) {
@@ -199,8 +211,10 @@ class PostShare extends Component {
 						className="post-share__schedule-button"
 						disabled={ this.isButtonDisabled() }
 						title={ translate( 'Set date and time' ) }
+						selectedDay={ this.state.scheduledDate }
 						tabIndex={ 3 }
 						siteId={ siteId }
+						onDateChange={ this.scheduleDate }
 						popoverPosition="bottom left" />
 				</ButtonGroup>
 			</div>
