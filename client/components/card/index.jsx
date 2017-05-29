@@ -15,19 +15,22 @@ export default React.createClass( {
 		tagName: React.PropTypes.string,
 		target: React.PropTypes.string,
 		compact: React.PropTypes.bool,
-		children: React.PropTypes.node
+		children: React.PropTypes.node,
+		highlight: React.PropTypes.bool,
 	},
 
 	getDefaultProps() {
 		return {
-			tagName: 'div'
+			tagName: 'div',
+			highlight: false,
 		};
 	},
 
 	render: function() {
 		const className = classnames( 'card', this.props.className, {
 			'is-card-link': !! this.props.href,
-			'is-compact': this.props.compact
+			'is-compact': this.props.compact,
+			'is-highlighted': this.props.highlight,
 		} );
 
 		const omitProps = [ 'compact', 'tagName' ];

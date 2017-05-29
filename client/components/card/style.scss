@@ -28,6 +28,10 @@
 	&.is-card-link {
 		padding-right: 48px;
 	}
+
+	&.is-highlighted {
+		border-left: 3px solid $blue-wordpress;
+	}
 }
 
 // Clickable Card
