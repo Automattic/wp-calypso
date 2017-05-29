@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { includes, keys, reduce, some, map } from 'lodash';
+import { includes, keys, reduce, some, map, every } from 'lodash';
 import store from 'store';
 import i18n from 'i18n-calypso';
 
@@ -89,9 +89,12 @@ ABTest.prototype.init = function( name ) {
 	}
 
 	const languageSlugs = map( config( 'languages' ), 'langSlug' );
-	const localeTargets = [ 'not-en', 'any' ].concat( languageSlugs );
 
-	if ( testConfig.localeTargets && ! includes( localeTargets, testConfig.localeTargets ) ) {
+	if (
+		testConfig.localeTargets &&
+		! every( testConfig.localeTargets, ( target ) => {
+			return languageSlugs.indexOf( target ) !== -1;
+		} ) ) {
 		throw new Error( 'localeTargets can by "any", "not-en" or any single locale slug.' );
 	}
 
@@ -105,16 +108,13 @@ ABTest.prototype.init = function( name ) {
 	this.variationNames = variationNames;
 	this.experimentId = name + '_' + variationDatestamp;
 
-	this.localeTarget = 'en';
-	this.localeTargetExclude = false;
+	this.localeTargets = [ 'en' ];
 
-	if ( testConfig.localeTargets ) {
-		if ( testConfig.localeTargets === 'any' ) {
-			this.localeTarget = false;
-		} else if ( testConfig.localeTargets === 'not-en' ) {
-			this.localeTargetExclude = true;
+	if ( 'undefined' !== typeof testConfig.localeTargets ) {
+		if ( testConfig.localeTargets === false ) {
+			this.localeTargets = false;
 		} else {
-			this.localeTarget = testConfig.localeTargets;
+			this.localeTargets = testConfig.localeTargets;
 		}
 	}
 
@@ -160,28 +160,23 @@ ABTest.prototype.isEligibleForAbTest = function() {
 		return false;
 	}
 
-	if ( this.localeTarget ) {
-		const localeMatcher = new RegExp( '^' + this.localeTarget + '-?', 'i' );
-		let isTargetLocale = true;
+	if ( this.localeTargets ) {
+		const localeMatcher = new RegExp( '^(' + this.localeTargets.join( '|' ) + ')', 'i' );
 
 		if ( isUserSignedIn() && ! user.get().localeSlug.match( localeMatcher ) ) {
 			debug( '%s: User has a %s locale', this.experimentId, this.localeTarget );
-			isTargetLocale = false;
+			return false;
 		}
 		if ( ! isUserSignedIn() && ! clientLanguage.match( localeMatcher ) ) {
 			debug( '%s: Logged-out user has a %s navigator.language preference', this.experimentId, this.localeTarget );
-			isTargetLocale = false;
+			return false;
 		}
 		if ( ! isUserSignedIn() && ! clientLanguagesPrimary.match( localeMatcher ) ) {
 			debug( '%s: Logged-out user has a %s navigator.languages primary preference', this.experimentId, this.localeTarget );
-			isTargetLocale = false;
+			return false;
 		}
 		if ( ! isUserSignedIn() && ! localeFromSession.match( localeMatcher ) ) {
 			debug( '%s: Logged-out user has the %s locale in session', this.experimentId, this.localeTarget );
-			isTargetLocale = false;
-		}
-
-		if ( ( this.localeTargetExclude && isTargetLocale ) || ( ! this.localeTargetExclude && ! isTargetLocale ) ) {
 			return false;
 		}
 	}

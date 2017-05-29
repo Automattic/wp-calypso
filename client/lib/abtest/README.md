@@ -32,7 +32,7 @@ You should include the following information:
 
 There are also several optional configuration settings available:
 
-* `targetLocales` - By default, tests only run on users where the locale is set to English. You can also run for all locales by setting `targetLocales` to `any`, for all non English locales by setting it to `not-en`, or for a specific locale by setting the value to the locale slug, i.e: `targetLocales: 'de'`
+* `targetLocales` - By default, tests only run on users where the locale is set to English. You can also run for all locales by setting `targetLocales` to false, or to any specific locale or locales  `targetLocales: ['de']`
 Don't forget: any test that runs for locales other than English means strings will need to be translated.
 
 Next, in your code, import the `abtest` method from the `abtest` module:

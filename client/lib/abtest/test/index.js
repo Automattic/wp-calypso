@@ -40,16 +40,16 @@ describe( 'abtest', () => {
 					show: 50
 				},
 				defaultVariation: 'hide',
-				localeTargets: 'any',
+				localeTargets: false,
 			},
-			mockedTestNotEnLocale: {
+			multipeLocaleNotEn: {
 				datestamp: '20160627',
 				variations: {
 					hide: 50,
 					show: 50
 				},
 				defaultVariation: 'hide',
-				localeTargets: 'not-en',
+				localeTargets: [ 'fr', 'de' ],
 			},
 			mockedTestFrLocale: {
 				datestamp: '20160627',
@@ -58,7 +58,7 @@ describe( 'abtest', () => {
 					show: 50
 				},
 				defaultVariation: 'hide',
-				localeTargets: 'fr',
+				localeTargets: [ 'fr' ],
 			},
 			mockedTestAllowExisting: {
 				datestamp: '20160627',
@@ -173,14 +173,14 @@ describe( 'abtest', () => {
 					expect( setSpy ).to.have.been.calledOnce;
 				} );
 			} );
-			describe( 'not-en locales only', () => {
+			describe( 'specific locales only', () => {
 				it( 'should return default and skip store.set for new users with English settings', () => {
-					expect( abtest( 'mockedTestNotEnLocale' ) ).to.equal( 'hide' );
+					expect( abtest( 'multipeLocaleNotEn' ) ).to.equal( 'hide' );
 					expect( setSpy ).not.to.have.been.called;
 				} );
 				it( 'should call store.set for new users with non-English settings', () => {
 					mockedUser.localeSlug = 'de';
-					abtest( 'mockedTestNotEnLocale' );
+					abtest( 'multipeLocaleNotEn' );
 					expect( setSpy ).to.have.been.calledOnce;
 				} );
 			} );
