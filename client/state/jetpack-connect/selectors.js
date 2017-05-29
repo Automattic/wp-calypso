@@ -77,12 +77,12 @@ const isRedirectingToWpAdmin = function( state ) {
 	return !! authorizationData.isRedirectingToWpAdmin;
 };
 
-const getFlowType = function( state, siteSlug ) {
+const getPreSelectedPlan = function( state, siteSlug ) {
 	const sessions = getSessions( state );
 	siteSlug = urlToSlug( siteSlug );
 
 	if ( siteSlug && sessions[ siteSlug ] ) {
-		return sessions[ siteSlug ].flowType;
+		return sessions[ siteSlug ].selectedPlan;
 	}
 	return false;
 };
@@ -165,7 +165,7 @@ export default {
 	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,
-	getFlowType,
+	getPreSelectedPlan,
 	getJetpackSiteByUrl,
 	hasXmlrpcError,
 	hasExpiredSecretError,
