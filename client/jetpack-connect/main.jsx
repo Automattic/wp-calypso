@@ -149,7 +149,7 @@ class JetpackConnectMain extends Component {
 		return this.props.checkUrl(
 			url,
 			!! this.props.getJetpackSiteByUrl( url ),
-			this.props.type
+			this.props.selectedPlan
 		);
 	}
 

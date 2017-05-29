@@ -7,7 +7,7 @@ export const jetpackConnectSessionsSchema = {
 			required: [ 'timestamp' ],
 			properties: {
 				timestamp: { type: 'number' },
-				flowType: { type: 'string' }
+				selectedPlan: { type: 'string' }
 			},
 			additionalProperties: false
 		}

@@ -76,17 +76,19 @@ export default {
 		};
 	},
 
-	checkUrl( url, isUrlOnSites, flowType ) {
+	checkUrl( url, isUrlOnSites, selectedPlan ) {
 		return ( dispatch ) => {
 			if ( _fetching[ url ] ) {
 				return;
 			}
+			const action = {
+				type: JETPACK_CONNECT_CHECK_URL,
+				selectedPlan,
+				url,
+			};
+
 			if ( isUrlOnSites ) {
-				dispatch( {
-					type: JETPACK_CONNECT_CHECK_URL,
-					url: url,
-					flowType: flowType
-				} );
+				dispatch( action );
 				setTimeout( () => {
 					dispatch( {
 						type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
@@ -106,13 +108,8 @@ export default {
 				return;
 			}
 			_fetching[ url ] = true;
-			setTimeout( () => {
-				dispatch( {
-					type: JETPACK_CONNECT_CHECK_URL,
-					url: url,
-					flowType: flowType
-				} );
-			}, 1 );
+			setTimeout( () => dispatch( action ), 1 );
+
 			Promise.all( [
 				wpcom.undocumented().getSiteConnectInfo( url, 'exists' ),
 				wpcom.undocumented().getSiteConnectInfo( url, 'isWordPress' ),
