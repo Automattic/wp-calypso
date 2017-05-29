@@ -332,17 +332,74 @@
 	min-width: 75px;
 }
 
-/* TODO: remove placeholder styles once implemented */
 .products__product-form-variation-image {
-	background: $gray-light;
-	height: 40px;
-	width: 40px;
+	height: 55px;
+	width: 55px;
 	margin-bottom: 16px;
 	margin-right: 0px;
 	flex-shrink: 0;
+	position: relative;
+
+	&:hover {
+		cursor: pointer;
+	}
+
+	.product-image-uploader__picker {
+		min-width: 100%;
+	}
+
+	.products__product-form-variation-image-remove {
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 14px;
+		height: 14px;
+		transform: translate( 25%, -25% );
+		border: 1px solid lighten( $gray, 10% );
+		border-radius: 50%;
+		background-color: $gray-light;
+		cursor: pointer;
+	}
+
+	.products__product-form-variation-image-remove-icon.gridicon {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+		width: 12px;
+		height: 12px;
+		margin: 0;
+		color: lighten( $gray, 10% );
+	}
+
+	figure {
+		position: relative;
+		overflow: hidden;
+		height: 0;
+		padding-bottom: 100%;
+	}
+
+	.products__product-form-variation-image.preview figure::after {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	}
+
+	.products__product-form-variation-image.preview img {
+		opacity: 0.7;
+	}
+
+	.spinner {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+	}
 }
 
-.products__product-form-variation-table-wrapper .products__product-form-variation-image{
+.products__product-form-variation-table-wrapper .products__product-form-variation-image {
 	margin-bottom: 0;
 	margin-right: 8px;
 }
