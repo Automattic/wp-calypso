@@ -29,6 +29,14 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import PlansLanding from './plans-landing';
+import {
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+} from 'lib/plans/constants';
 
 /**
  * Module variables
@@ -40,6 +48,34 @@ const analyticsPageTitleByType = {
 	personal: 'Jetpack Connect Personal',
 	premium: 'Jetpack Connect Premium',
 	pro: 'Jetpack Install Pro',
+};
+
+/**
+ * Calculate plan based on type and interval.
+ *
+ * @param   {String?} type     Flow type: personal | premium | pro
+ * @param   {String?} interval Interval: yearly | monthly
+ * @returns {String?}          Jetpack plan slug
+ */
+const calculatePlan = ( type, interval ) => {
+	if ( type === 'personal' ) {
+		if ( interval === 'monthly' ) {
+			return PLAN_JETPACK_PERSONAL_MONTHLY;
+		}
+		return PLAN_JETPACK_PERSONAL;
+	}
+	if ( type === 'premium' ) {
+		if ( interval === 'monthly' ) {
+			return PLAN_JETPACK_PREMIUM_MONTHLY;
+		}
+		return PLAN_JETPACK_PREMIUM;
+	}
+	if ( type === 'pro' ) {
+		if ( interval === 'monthly' ) {
+			return PLAN_JETPACK_BUSINESS_MONTHLY;
+		}
+		return PLAN_JETPACK_BUSINESS;
+	}
 };
 
 const removeSidebar = ( context ) => {
@@ -98,10 +134,15 @@ export default {
 			pathname,
 			params
 		} = context;
-		const { type = false } = params;
+		const {
+			interval,
+			locale,
+			type = false,
+		} = params;
 		const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
+		const selectedPlan = calculatePlan( type, interval );
 
-		debug( 'entered connect flow with params %o', params );
+		debug( 'enter connect with params %o, selectedPlan %o', params, selectedPlan );
 
 		let jpc_from = 'direct';
 		switch ( type ) {
@@ -125,8 +166,9 @@ export default {
 		renderWithReduxStore(
 			React.createElement( JetpackConnect, {
 				context,
-				locale: context.params.locale,
+				locale,
 				path,
+				selectedPlan,
 				type,
 				url: context.query.url,
 				userModule,
