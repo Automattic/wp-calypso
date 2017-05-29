@@ -22,7 +22,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNotices } from './state/notices/selectors';
 
 const WPSuperCache = ( { notices, site, siteId, tab } ) => {
-	const renderTab = () => {
+	const renderTab = isReadOnly => {
 		switch ( tab ) {
 			case Tabs.ADVANCED:
 				return <AdvancedTab />;
@@ -33,7 +33,7 @@ const WPSuperCache = ( { notices, site, siteId, tab } ) => {
 			case Tabs.PRELOAD:
 				return <PreloadTab />;
 			default:
-				return <EasyTab />;
+				return <EasyTab isReadOnly={ isReadOnly } />;
 		}
 	};
 
@@ -52,7 +52,7 @@ const WPSuperCache = ( { notices, site, siteId, tab } ) => {
 			}
 
 			<Navigation activeTab={ tab } site={ site } />
-			{ renderTab() }
+			{ renderTab( !! cacheDisabled ) }
 		</Main>
 	);
 };
