@@ -17,8 +17,8 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: HAPPYCHAT_SET_GEO_LOCATION,
 				geoLocation: {
-					country_long: 'Romania'
-				}
+					country_long: 'Romania',
+				},
 			} );
 		} );
 	} );

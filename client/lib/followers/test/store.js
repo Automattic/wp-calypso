@@ -42,8 +42,7 @@ describe( 'WPCOM Followers Store', function() {
 		} );
 
 		it( 'Fetching more followers should update the array in the store', function() {
-			var followers = FollowersStore.getFollowers( options ),
-				followersAgain;
+			var followers = FollowersStore.getFollowers( options ), followersAgain;
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.fetchedMoreFollowers );
 			followersAgain = FollowersStore.getFollowers( options );
@@ -67,8 +66,7 @@ describe( 'WPCOM Followers Store', function() {
 			Dispatcher.handleServerAction( actions.fetchedFollowers );
 		} );
 		it( 'Should remove a single follower.', function() {
-			var followers = FollowersStore.getFollowers( options ),
-				followersAgain;
+			var followers = FollowersStore.getFollowers( options ), followersAgain;
 
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );

@@ -6,7 +6,7 @@ export { nock };
 
 const log = debug( 'calypso:test:use-nock' );
 
-export const useNock = ( setupCallback ) => {
+export const useNock = setupCallback => {
 	if ( setupCallback ) {
 		before( partial( setupCallback, nock ) );
 	}

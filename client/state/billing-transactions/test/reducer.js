@@ -16,22 +16,20 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
 import reducer, { requesting, items, sendingReceiptEmail } from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'items',
-			'sendingReceiptEmail',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys(
+			[ 'requesting', 'items', 'sendingReceiptEmail' ]
+		);
 	} );
 
 	describe( '#requesting()', () => {
@@ -67,7 +65,7 @@ describe( 'reducer', () => {
 
 		it( 'should not persist state', () => {
 			const state = requesting( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.eql( false );
@@ -75,7 +73,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = requesting( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.eql( false );
@@ -88,14 +86,14 @@ describe( 'reducer', () => {
 				{
 					id: '12345678',
 					amount: '$1.23',
-				}
+				},
 			],
 			upcoming: [
 				{
 					id: '87654321',
 					amount: '$4.56',
-				}
-			]
+				},
+			],
 		};
 
 		it( 'should default to empty object', () => {
@@ -107,39 +105,42 @@ describe( 'reducer', () => {
 		it( 'should store the billing transactions properly', () => {
 			const state = items( null, {
 				type: BILLING_TRANSACTIONS_RECEIVE,
-				...billingTransactions
+				...billingTransactions,
 			} );
 
 			expect( state ).to.eql( billingTransactions );
 		} );
 
 		it( 'should override previous billing transactions', () => {
-			const state = items( deepFreeze( {
-				past: [
-					{
-						id: '11223344',
-						amount: '$3.43',
-						desc: 'test'
-					}
-				],
-				upcoming: [
-					{
-						id: '88776655',
-						amount: '$1.11',
-						product: 'example'
-					}
-				]
-			} ), {
-				type: BILLING_TRANSACTIONS_RECEIVE,
-				...billingTransactions
-			} );
+			const state = items(
+				deepFreeze( {
+					past: [
+						{
+							id: '11223344',
+							amount: '$3.43',
+							desc: 'test',
+						},
+					],
+					upcoming: [
+						{
+							id: '88776655',
+							amount: '$1.11',
+							product: 'example',
+						},
+					],
+				} ),
+				{
+					type: BILLING_TRANSACTIONS_RECEIVE,
+					...billingTransactions,
+				}
+			);
 
 			expect( state ).to.eql( billingTransactions );
 		} );
 
 		it( 'should persist state', () => {
 			const state = items( deepFreeze( billingTransactions ), {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.eql( billingTransactions );
@@ -147,18 +148,21 @@ describe( 'reducer', () => {
 
 		it( 'should load valid persisted state', () => {
 			const state = items( deepFreeze( billingTransactions ), {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.eql( billingTransactions );
 		} );
 
 		it( 'should not load invalid persisted state', () => {
-			const state = items( deepFreeze( {
-				example: 'test'
-			} ), {
-				type: DESERIALIZE
-			} );
+			const state = items(
+				deepFreeze( {
+					example: 'test',
+				} ),
+				{
+					type: DESERIALIZE,
+				}
+			);
 
 			expect( state ).to.eql( {} );
 		} );
@@ -183,7 +187,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				12345678: true,
-				...state
+				...state,
 			} );
 		} );
 
@@ -195,7 +199,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				12345678: false,
-				...state
+				...state,
 			} );
 		} );
 
@@ -207,13 +211,13 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				12345678: false,
-				...state
+				...state,
 			} );
 		} );
 
 		it( 'should not persist state', () => {
 			const state = sendingReceiptEmail( currentState, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.eql( {} );
@@ -221,7 +225,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = sendingReceiptEmail( currentState, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.eql( {} );

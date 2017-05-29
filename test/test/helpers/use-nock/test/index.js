@@ -7,10 +7,7 @@ describe( 'useNock', () => {
 
 	describe( 'Messy without useNock', () => {
 		it( 'sets up a persistent interceptor', () => {
-			nock( 'wordpress.com' )
-				.persist()
-				.get( '/me' )
-				.reply( 200, { id: 42 } );
+			nock( 'wordpress.com' ).persist().get( '/me' ).reply( 200, { id: 42 } );
 		} );
 	} );
 
@@ -26,10 +23,7 @@ describe( 'useNock', () => {
 		useNock();
 
 		it( 'sets up a persistent interceptor', () => {
-			nock( 'wordpress.com' )
-				.persist()
-				.get( '/me' )
-				.reply( 200, { id: 42 } );
+			nock( 'wordpress.com' ).persist().get( '/me' ).reply( 200, { id: 42 } );
 
 			expect( nock.isDone() ).to.be.false;
 		} );

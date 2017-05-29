@@ -14,15 +14,19 @@ function addFile( file ) {
 }
 
 function getConfig() {
-	return reduce( files, ( config, file ) => {
-		const fileConfig = fileToConfig( tail( file.split( '/' ) ) );
+	return reduce(
+		files,
+		( config, file ) => {
+			const fileConfig = fileToConfig( tail( file.split( '/' ) ) );
 
-		return mergeWith( config, fileConfig, ( object, source ) => {
-			if ( Array.isArray( object ) ) {
-				return object.concat( source );
-			}
-		} );
-	}, {} );
+			return mergeWith( config, fileConfig, ( object, source ) => {
+				if ( Array.isArray( object ) ) {
+					return object.concat( source );
+				}
+			} );
+		},
+		{}
+	);
 }
 
 function fileToConfig( pathParts, folderConfig = {} ) {
@@ -45,5 +49,5 @@ function getFileName( pathParts ) {
 
 module.exports = {
 	addFile,
-	getConfig
+	getConfig,
 };

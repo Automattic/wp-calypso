@@ -45,7 +45,7 @@ describe( 'Item', () => {
 		expect( icon.prop( 'icon' ) ).to.equal( 'globe' );
 	} );
 
-	it( 'should display a \'star\' gridicon by default', () => {
+	it( "should display a 'star' gridicon by default", () => {
 		const item = shallow( <Item label={ 'test item' } /> );
 		const icon = item.find( Gridicon );
 

@@ -25,8 +25,8 @@ describe( 'index', () => {
 			features: {
 				flagA: false,
 				flagB: false,
-				flagC: true
-			}
+				flagC: true,
+			},
 		} );
 
 		it( 'has to return value of the provided key', () => {
@@ -60,15 +60,7 @@ describe( 'index', () => {
 			} );
 
 			it( `should not throw an error when given key doesn't exist (NODE_ENV != development)`, () => {
-				const envs = [
-					'client',
-					'desktop',
-					'horizon',
-					'production',
-					'stage',
-					'test',
-					'wpcalypso',
-				];
+				const envs = [ 'client', 'desktop', 'horizon', 'production', 'stage', 'test', 'wpcalypso' ];
 
 				envs.forEach( env => {
 					process.env.NODE_ENV = env;

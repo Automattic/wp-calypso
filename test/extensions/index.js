@@ -4,7 +4,7 @@
 module.exports = {
 	reducers: function() {
 		return {
-			helloDolly: require( 'extensions/hello-dolly/state/reducer' )
+			helloDolly: require( 'extensions/hello-dolly/state/reducer' ),
 		};
-	}
+	},
 };

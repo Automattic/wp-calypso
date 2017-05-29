@@ -19,7 +19,7 @@ var TrackInputChanges = require( '../' );
 const spies = {
 	onNewValue: null,
 	onChange: null,
-	onBlur: null
+	onBlur: null,
 };
 
 const DummyInput = React.createClass( {
@@ -33,7 +33,7 @@ const DummyInput = React.createClass( {
 
 	render() {
 		return <div />;
-	}
+	},
 } );
 
 describe( 'TrackInputChanges#onNewValue', function() {
@@ -55,10 +55,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		}
 		tree = ReactDom.render(
 			<TrackInputChanges onNewValue={ spies.onNewValue }>
-				<DummyInput
-					onChange={ spies.onChange }
-					onBlur={ spies.onBlur }
-				/>
+				<DummyInput onChange={ spies.onChange } onBlur={ spies.onBlur } />
 			</TrackInputChanges>,
 			container
 		);
@@ -108,18 +105,14 @@ describe( 'TrackInputChanges#onNewValue', function() {
 	} );
 
 	it( 'should throw if multiple child elements', function() {
-		expect( () => ReactDom.render(
-			<TrackInputChanges onNewValue={ spies.onNewValue }>
-				<DummyInput
-					onChange={ spies.onChange }
-					onBlur={ spies.onBlur }
-				/>
-				<DummyInput
-					onChange={ spies.onChange }
-					onBlur={ spies.onBlur }
-				/>
-			</TrackInputChanges>,
-			container
-		) ).to.throw;
+		expect( () =>
+			ReactDom.render(
+				<TrackInputChanges onNewValue={ spies.onNewValue }>
+					<DummyInput onChange={ spies.onChange } onBlur={ spies.onBlur } />
+					<DummyInput onChange={ spies.onChange } onBlur={ spies.onBlur } />
+				</TrackInputChanges>,
+				container
+			)
+		 ).to.throw;
 	} );
 } );

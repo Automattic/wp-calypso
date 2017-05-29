@@ -9,17 +9,14 @@ import { stub, spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	DESERIALIZE,
-	SERIALIZE,
-} from 'state/action-types';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { testSchema } from './mocks/schema';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'utils', () => {
 	const currentState = deepFreeze( {
-			test: [ 'one', 'two', 'three' ]
-		} ),
+		test: [ 'one', 'two', 'three' ],
+	} ),
 		actionSerialize = { type: SERIALIZE },
 		actionDeserialize = { type: DESERIALIZE };
 	let createReducer;
@@ -31,7 +28,7 @@ describe( 'utils', () => {
 	let isValidStateWithSchema;
 	let withoutPersistence;
 
-	useMockery( ( mockery ) => {
+	useMockery( mockery => {
 		mockery.registerMock( 'lib/warn', noop );
 
 		( {
@@ -47,39 +44,43 @@ describe( 'utils', () => {
 
 	describe( 'extendAction()', () => {
 		it( 'should return an updated action object, merging data', () => {
-			const action = extendAction( {
-				type: 'ACTION_TEST',
-				meta: {
-					preserve: true
+			const action = extendAction(
+				{
+					type: 'ACTION_TEST',
+					meta: {
+						preserve: true,
+					},
+				},
+				{
+					meta: {
+						ok: true,
+					},
 				}
-			}, {
-				meta: {
-					ok: true
-				}
-			} );
+			);
 
 			expect( action ).to.eql( {
 				type: 'ACTION_TEST',
 				meta: {
 					preserve: true,
-					ok: true
-				}
+					ok: true,
+				},
 			} );
 		} );
 
 		it( 'should return an updated action thunk, merging data on dispatch', () => {
 			const dispatch = spy();
 			const action = extendAction(
-				( thunkDispatch ) => thunkDispatch( {
-					type: 'ACTION_TEST',
-					meta: {
-						preserve: true
-					}
-				} ),
+				thunkDispatch =>
+					thunkDispatch( {
+						type: 'ACTION_TEST',
+						meta: {
+							preserve: true,
+						},
+					} ),
 				{
 					meta: {
-						ok: true
-					}
+						ok: true,
+					},
 				}
 			);
 
@@ -88,26 +89,27 @@ describe( 'utils', () => {
 				type: 'ACTION_TEST',
 				meta: {
 					preserve: true,
-					ok: true
-				}
+					ok: true,
+				},
 			} );
 		} );
 
 		it( 'should return an updated nested action thunk, merging data on dispatch', () => {
 			const dispatch = spy();
 			const action = extendAction(
-				( thunkDispatch ) => thunkDispatch(
-					( nestedThunkDispatch ) => nestedThunkDispatch( {
-						type: 'ACTION_TEST',
-						meta: {
-							preserve: true
-						}
-					} )
-				),
+				thunkDispatch =>
+					thunkDispatch( nestedThunkDispatch =>
+						nestedThunkDispatch( {
+							type: 'ACTION_TEST',
+							meta: {
+								preserve: true,
+							},
+						} )
+					 ),
 				{
 					meta: {
-						ok: true
-					}
+						ok: true,
+					},
 				}
 			);
 
@@ -117,8 +119,8 @@ describe( 'utils', () => {
 				type: 'ACTION_TEST',
 				meta: {
 					preserve: true,
-					ok: true
-				}
+					ok: true,
+				},
 			} );
 		} );
 	} );
@@ -136,31 +138,23 @@ describe( 'utils', () => {
 			it( 'should return initial state when invalid action passed', () => {
 				const invalidAction = {};
 
-				expect(
-					reducer( currentState, invalidAction )
-				).to.be.deep.equal( currentState );
+				expect( reducer( currentState, invalidAction ) ).to.be.deep.equal( currentState );
 			} );
 
 			it( 'should return initial state when unknown action type passed', () => {
 				const unknownAction = {
-					type: 'UNKNOWN'
+					type: 'UNKNOWN',
 				};
 
-				expect(
-					reducer( currentState, unknownAction )
-				).to.be.deep.equal( currentState );
+				expect( reducer( currentState, unknownAction ) ).to.be.deep.equal( currentState );
 			} );
 
 			it( 'should return default null state when serialize action type passed', () => {
-				expect(
-					reducer( currentState, actionSerialize )
-				).to.be.null;
+				expect( reducer( currentState, actionSerialize ) ).to.be.null;
 			} );
 
 			it( 'should return default null state when deserialize action type passed', () => {
-				expect(
-					reducer( currentState, actionDeserialize )
-				).to.be.null;
+				expect( reducer( currentState, actionDeserialize ) ).to.be.null;
 			} );
 
 			it( 'should throw an error when passed an undefined type', () => {
@@ -169,42 +163,37 @@ describe( 'utils', () => {
 		} );
 
 		context( 'with reducers and default state provided', () => {
-			const initialState = {},
-				TEST_ADD = 'TEST_ADD';
+			const initialState = {}, TEST_ADD = 'TEST_ADD';
 
 			before( () => {
 				reducer = createReducer( initialState, {
 					[ TEST_ADD ]: ( state, action ) => {
 						return {
-							test: [ ...state.test, action.value ]
+							test: [ ...state.test, action.value ],
 						};
-					}
+					},
 				} );
 			} );
 
 			it( 'should return default {} state when SERIALIZE action type passed', () => {
-				expect(
-					reducer( currentState, actionSerialize )
-				).to.be.equal( initialState );
+				expect( reducer( currentState, actionSerialize ) ).to.be.equal( initialState );
 			} );
 
 			it( 'should return default {} state when DESERIALIZE action type passed', () => {
-				expect(
-					reducer( currentState, actionDeserialize )
-				).to.be.equal( initialState );
+				expect( reducer( currentState, actionDeserialize ) ).to.be.equal( initialState );
 			} );
 
 			it( 'should add new value to test array when acc action passed', () => {
 				const addAction = {
 					type: TEST_ADD,
-					value: 'four'
+					value: 'four',
 				};
 
 				const newState = reducer( currentState, addAction );
 
 				expect( newState ).to.not.equal( currentState );
 				expect( newState ).to.be.eql( {
-					test: [ 'one', 'two', 'three', 'four' ]
+					test: [ 'one', 'two', 'three', 'four' ],
 				} );
 			} );
 		} );
@@ -217,21 +206,17 @@ describe( 'utils', () => {
 			} );
 
 			it( 'should return initial state when serialize action type passed', () => {
-				expect(
-					reducer( currentState, actionSerialize )
-				).to.be.deep.equal( currentState );
+				expect( reducer( currentState, actionSerialize ) ).to.be.deep.equal( currentState );
 			} );
 
 			it( 'should return initial state when valid initial state and deserialize action type passed', () => {
-				expect(
-					reducer( currentState, actionDeserialize )
-				).to.be.deep.equal( currentState );
+				expect( reducer( currentState, actionDeserialize ) ).to.be.deep.equal( currentState );
 			} );
 
 			it( 'should return default state when invalid initial state and deserialize action type passed', () => {
-				expect(
-					reducer( { invalid: 'state' }, actionDeserialize )
-				).to.be.deep.equal( initialState );
+				expect( reducer( { invalid: 'state' }, actionDeserialize ) ).to.be.deep.equal(
+					initialState
+				);
 			} );
 		} );
 
@@ -241,30 +226,30 @@ describe( 'utils', () => {
 			before( () => {
 				reducer = createReducer( null, {
 					[ SERIALIZE ]: () => overriddenState,
-					[ DESERIALIZE ]: () => overriddenState
+					[ DESERIALIZE ]: () => overriddenState,
 				} );
 			} );
 
 			it( 'should return overridden state when serialize action type passed', () => {
-				expect(
-					reducer( currentState, actionSerialize )
-				).to.be.deep.equal( overriddenState );
+				expect( reducer( currentState, actionSerialize ) ).to.be.deep.equal( overriddenState );
 			} );
 
 			it( 'should return overridden state when deserialize action type passed', () => {
-				expect(
-					reducer( currentState, actionDeserialize )
-				).to.be.deep.equal( overriddenState );
+				expect( reducer( currentState, actionDeserialize ) ).to.be.deep.equal( overriddenState );
 			} );
 		} );
 
 		it( 'should cache the serialize result on custom serialization behavior', () => {
 			const monitor = stub().returnsArg( 0 );
 
-			reducer = createReducer( [], {
-				[ SERIALIZE ]: monitor,
-				TEST_ADD: ( state ) => [ ...state, state.length ]
-			}, testSchema );
+			reducer = createReducer(
+				[],
+				{
+					[ SERIALIZE ]: monitor,
+					TEST_ADD: state => [ ...state, state.length ],
+				},
+				testSchema
+			);
 
 			let state;
 			state = reducer( state, { type: SERIALIZE } );
@@ -324,7 +309,7 @@ describe( 'utils', () => {
 		it( 'should create keyed state given simple reducers', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( undefined, grow( 'Calypso' ) ) ).to.eql( {
-				Calypso: 1
+				Calypso: 1,
 			} );
 		} );
 
@@ -366,7 +351,7 @@ describe( 'utils', () => {
 
 		it( 'should remove keys if set back to initialState', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( { 10: 10 }, reset( '10' ) ) ).to.eql( { } );
+			expect( keyed( { 10: 10 }, reset( '10' ) ) ).to.eql( {} );
 		} );
 	} );
 
@@ -380,10 +365,7 @@ describe( 'utils', () => {
 			minimum: 0,
 		};
 
-		const age = ( state = 0, action ) =>
-			'GROW' === action.type
-				? state + 1
-				: state;
+		const age = ( state = 0, action ) => ( 'GROW' === action.type ? state + 1 : state );
 
 		const date = ( state = new Date( 0 ), action ) => {
 			switch ( action.type ) {
@@ -450,20 +432,11 @@ describe( 'utils', () => {
 			minimum: 0,
 		};
 
-		const age = ( state = 0, action ) =>
-			'GROW' === action.type
-				? state + 1
-				: state;
+		const age = ( state = 0, action ) => ( 'GROW' === action.type ? state + 1 : state );
 		age.schema = schema;
 
-		const height = ( state = 160, action ) =>
-			'GROW' === action.type
-				? state + 1
-				: state;
-		const count = ( state = 1, action ) =>
-			'GROW' === action.type
-				? state + 1
-				: state;
+		const height = ( state = 160, action ) => ( 'GROW' === action.type ? state + 1 : state );
+		const count = ( state = 1, action ) => ( 'GROW' === action.type ? state + 1 : state );
 
 		const date = ( state = new Date( 0 ), action ) => {
 			switch ( action.type ) {
@@ -487,13 +460,13 @@ describe( 'utils', () => {
 		beforeEach( () => {
 			reducers = combineReducers( {
 				age,
-				height
+				height,
 			} );
 		} );
 
 		const appState = deepFreeze( {
 			age: 20,
-			height: 171
+			height: 171,
 		} );
 
 		it( 'should return initial state on init', () => {
@@ -525,28 +498,32 @@ describe( 'utils', () => {
 			reducers = combineReducers( {
 				age,
 				height,
-				date
+				date,
 			} );
 			const nested = combineReducers( {
 				person: reducers,
-				count
+				count,
 			} );
 			const valid = nested( { person: { age: 22, date: 224 } }, load );
-			expect( valid ).to.eql( { person: { age: 22, height: 160, date: new Date( 224 ) }, count: 1 } );
+			expect( valid ).to.eql(
+				{ person: { age: 22, height: 160, date: new Date( 224 ) }, count: 1 }
+			);
 
 			const invalid = nested( { person: { age: -5, height: 100, date: -5 } }, load );
-			expect( invalid ).to.eql( { person: { age: 0, height: 160, date: new Date( 0 ) }, count: 1 } );
+			expect( invalid ).to.eql(
+				{ person: { age: 0, height: 160, date: new Date( 0 ) }, count: 1 }
+			);
 		} );
 
 		it( 'nested reducers work on persist', () => {
 			reducers = combineReducers( {
 				age,
 				height,
-				date
+				date,
 			} );
 			const nested = combineReducers( {
 				person: reducers,
-				count
+				count,
 			} );
 			const valid = nested( { person: { age: 22, date: new Date( 224 ) } }, write );
 			expect( valid ).to.eql( { person: { age: 22, height: 160, date: 224 }, count: 1 } );
@@ -559,65 +536,81 @@ describe( 'utils', () => {
 			reducers = combineReducers( {
 				age,
 				height,
-				date
+				date,
 			} );
 			const nested = combineReducers( {
 				person: reducers,
 			} );
 			const veryNested = combineReducers( {
 				bob: nested,
-				count
+				count,
 			} );
 			const valid = veryNested( { bob: { person: { age: 22, date: 224 } }, count: 122 }, load );
-			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160, date: new Date( 224 ) } }, count: 1 } );
+			expect( valid ).to.eql(
+				{ bob: { person: { age: 22, height: 160, date: new Date( 224 ) } }, count: 1 }
+			);
 
-			const invalid = veryNested( { bob: { person: { age: -5, height: 22, date: -500 } }, count: 123 }, load );
-			expect( invalid ).to.eql( { bob: { person: { age: 0, height: 160, date: new Date( 0 ) } }, count: 1 } );
+			const invalid = veryNested(
+				{ bob: { person: { age: -5, height: 22, date: -500 } }, count: 123 },
+				load
+			);
+			expect( invalid ).to.eql(
+				{ bob: { person: { age: 0, height: 160, date: new Date( 0 ) } }, count: 1 }
+			);
 		} );
 
 		it( 'deeply nested reducers work on persist', () => {
 			reducers = combineReducers( {
 				age,
 				height,
-				date
+				date,
 			} );
 			const nested = combineReducers( {
 				person: reducers,
 			} );
 			const veryNested = combineReducers( {
 				bob: nested,
-				count
+				count,
 			} );
-			const valid = veryNested( { bob: { person: { age: 22, date: new Date( 234 ) } }, count: 122 }, write );
+			const valid = veryNested(
+				{ bob: { person: { age: 22, date: new Date( 234 ) } }, count: 122 },
+				write
+			);
 			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160, date: 234 } }, count: 1 } );
 
-			const invalid = veryNested( { bob: { person: { age: -5, height: 22, date: new Date( -5 ) } }, count: 123 }, write );
+			const invalid = veryNested(
+				{ bob: { person: { age: -5, height: 22, date: new Date( -5 ) } }, count: 123 },
+				write
+			);
 			expect( invalid ).to.eql( { bob: { person: { age: -5, height: 160, date: -5 } }, count: 1 } );
 		} );
 
 		it( 'deeply nested reducers work with reducer with a custom handler', () => {
 			reducers = combineReducers( {
 				height,
-				date
+				date,
 			} );
 			const nested = combineReducers( {
 				person: reducers,
 			} );
 			const veryNested = combineReducers( {
 				bob: nested,
-				count
+				count,
 			} );
 			const valid = veryNested( { bob: { person: { date: new Date( 234 ) } }, count: 122 }, write );
 			expect( valid ).to.eql( { bob: { person: { height: 160, date: 234 } }, count: 1 } );
 
-			const invalid = veryNested( { bob: { person: { height: 22, date: new Date( -5 ) } }, count: 123 }, write );
+			const invalid = veryNested(
+				{ bob: { person: { height: 22, date: new Date( -5 ) } }, count: 123 },
+				write
+			);
 			expect( invalid ).to.eql( { bob: { person: { height: 160, date: -5 } }, count: 1 } );
 		} );
 
 		it( 'uses the provided validation from withSchemaValidation', () => {
 			reducers = combineReducers( {
 				height: withSchemaValidation( schema, height ),
-				count
+				count,
 			} );
 
 			const valid = reducers( { height: 22, count: 44 }, write );
@@ -630,7 +623,7 @@ describe( 'utils', () => {
 		it( 'uses the provided validation from createReducer', () => {
 			reducers = combineReducers( {
 				height: createReducer( 160, {}, schema ),
-				count
+				count,
 			} );
 
 			const valid = reducers( { height: 22, count: 44 }, write );

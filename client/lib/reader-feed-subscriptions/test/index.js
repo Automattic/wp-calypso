@@ -24,16 +24,16 @@ describe( 'store', function() {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
 			data: { url: siteUrl },
-			error: null
+			error: null,
 		} );
 
-		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.immutablyEqual( immutable.fromJS(
-			{
+		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.immutablyEqual(
+			immutable.fromJS( {
 				URL: siteUrl,
 				comparableUrl: 'trailnose.com',
-				state: 'SUBSCRIBED'
-			}
-		) );
+				state: 'SUBSCRIBED',
+			} )
+		);
 	} );
 
 	it( 'should unfollow an existing feed', function() {
@@ -43,14 +43,14 @@ describe( 'store', function() {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
 			data: { url: siteUrl },
-			error: null
+			error: null,
 		} );
 
 		Dispatcher.handleViewAction( {
 			type: 'UNFOLLOW_READER_FEED',
 			url: siteUrl,
 			data: { url: siteUrl },
-			error: null
+			error: null,
 		} );
 
 		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.be.undefined;
@@ -64,7 +64,7 @@ describe( 'store', function() {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
 			data: { url: siteUrl },
-			error: null
+			error: null,
 		} );
 
 		// The action from the API response
@@ -75,17 +75,19 @@ describe( 'store', function() {
 				subscribed: true,
 				subscription: {
 					URL: siteUrl,
-					feed_ID: 123
-				}
-			}
+					feed_ID: 123,
+				},
+			},
 		} );
 
-		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.immutablyEqual( immutable.fromJS( {
-			URL: siteUrl,
-			comparableUrl: 'trailnose.com',
-			feed_ID: 123,
-			state: 'SUBSCRIBED'
-		} ) );
+		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.immutablyEqual(
+			immutable.fromJS( {
+				URL: siteUrl,
+				comparableUrl: 'trailnose.com',
+				feed_ID: 123,
+				state: 'SUBSCRIBED',
+			} )
+		);
 	} );
 
 	it( 'should not store a follow if there is an API error', function() {
@@ -96,7 +98,7 @@ describe( 'store', function() {
 			type: 'FOLLOW_READER_FEED',
 			url: zeldmanSiteUrl,
 			data: { url: zeldmanSiteUrl },
-			error: null
+			error: null,
 		} );
 
 		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( zeldmanSiteUrl ) ).to.eq( true );
@@ -107,7 +109,7 @@ describe( 'store', function() {
 			type: 'RECEIVE_FOLLOW_READER_FEED',
 			url: zeldmanSiteUrl,
 			data: null,
-			error: new Error( 'There was a problem' )
+			error: new Error( 'There was a problem' ),
 		} );
 
 		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( zeldmanSiteUrl ) ).to.eq( false );
@@ -121,8 +123,8 @@ describe( 'store', function() {
 			url: zeldmanSiteUrl,
 			data: {
 				info: 'unable_to_follow',
-				subscribed: false
-			}
+				subscribed: false,
+			},
 		} );
 
 		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( zeldmanSiteUrl ) ).to.eq( false );
@@ -138,10 +140,12 @@ describe( 'store', function() {
 			type: 'FOLLOW_READER_FEED',
 			url: zeldmanSiteUrl,
 			data: { url: zeldmanSiteUrl },
-			error: null
+			error: null,
 		} );
 
-		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.zeldman.com' ) ).to.eq( true );
+		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.zeldman.com' ) ).to.eq(
+			true
+		);
 	} );
 
 	it( 'should receive a list of subscriptions', function() {
@@ -149,36 +153,59 @@ describe( 'store', function() {
 
 		Dispatcher.handleViewAction( {
 			type: 'RECEIVE_FEED_SUBSCRIPTIONS',
-			data: { page: 1, total_subscriptions: 505, subscriptions: [ { ID: 1, URL: 'http://www.banana.com', feed_ID: 123 }, { ID: 2, URL: 'http://www.feijoa.com' } ] },
-			error: null
+			data: {
+				page: 1,
+				total_subscriptions: 505,
+				subscriptions: [
+					{ ID: 1, URL: 'http://www.banana.com', feed_ID: 123 },
+					{ ID: 2, URL: 'http://www.feijoa.com' },
+				],
+			},
+			error: null,
 		} );
 
-		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.feijoa.com' ) ).to.eq( true );
-		expect( FeedSubscriptionStore.getSubscription( 'http://www.banana.com' ) ).to.immutablyEqual( immutable.fromJS( {
-			ID: 1,
-			URL: 'http://www.banana.com',
-			comparableUrl: 'www.banana.com',
-			feed_ID: 123,
-			state: 'SUBSCRIBED'
-		} ) );
+		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.feijoa.com' ) ).to.eq(
+			true
+		);
+		expect( FeedSubscriptionStore.getSubscription( 'http://www.banana.com' ) ).to.immutablyEqual(
+			immutable.fromJS( {
+				ID: 1,
+				URL: 'http://www.banana.com',
+				comparableUrl: 'www.banana.com',
+				feed_ID: 123,
+				state: 'SUBSCRIBED',
+			} )
+		);
 		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 505 );
 
 		// Receiving second page (subscriptions should be merged)
 		Dispatcher.handleViewAction( {
 			type: 'RECEIVE_FEED_SUBSCRIPTIONS',
-			data: { page: 2, total_subscriptions: 505, subscriptions: [ { ID: 3, URL: 'http://www.dragonfruit.com', feed_ID: 456 } ] },
-			error: null
+			data: {
+				page: 2,
+				total_subscriptions: 505,
+				subscriptions: [ { ID: 3, URL: 'http://www.dragonfruit.com', feed_ID: 456 } ],
+			},
+			error: null,
 		} );
 
-		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.feijoa.com' ) ).to.eq( true );
-		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.dragonfruit.com' ) ).to.eq( true );
-		expect( FeedSubscriptionStore.getSubscription( 'http://www.dragonfruit.com' ) ).to.immutablyEqual( immutable.fromJS( {
-			ID: 3,
-			URL: 'http://www.dragonfruit.com',
-			comparableUrl: 'www.dragonfruit.com',
-			feed_ID: 456,
-			state: 'SUBSCRIBED'
-		} ) );
+		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.feijoa.com' ) ).to.eq(
+			true
+		);
+		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.dragonfruit.com' ) ).to.eq(
+			true
+		);
+		expect(
+			FeedSubscriptionStore.getSubscription( 'http://www.dragonfruit.com' )
+		).to.immutablyEqual(
+			immutable.fromJS( {
+				ID: 3,
+				URL: 'http://www.dragonfruit.com',
+				comparableUrl: 'www.dragonfruit.com',
+				feed_ID: 456,
+				state: 'SUBSCRIBED',
+			} )
+		);
 	} );
 
 	it( 'should not add duplicate subscriptions', function() {
@@ -189,10 +216,12 @@ describe( 'store', function() {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
 			data: { url: siteUrl },
-			error: null
+			error: null,
 		} );
 
-		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.tomato.com' ) ).to.eq( true );
+		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.tomato.com' ) ).to.eq(
+			true
+		);
 		expect( FeedSubscriptionStore.getSubscriptions().count ).to.eq( 1 );
 	} );
 
@@ -204,7 +233,7 @@ describe( 'store', function() {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
 			data: { url: siteUrl },
-			error: null
+			error: null,
 		} );
 
 		// The action from the API response
@@ -215,9 +244,9 @@ describe( 'store', function() {
 				subscribed: true,
 				subscription: {
 					URL: siteUrl,
-					feed_ID: 123
-				}
-			}
+					feed_ID: 123,
+				},
+			},
 		} );
 
 		// Then unfollow....
@@ -225,7 +254,7 @@ describe( 'store', function() {
 			type: 'UNFOLLOW_READER_FEED',
 			url: siteUrl,
 			data: { url: siteUrl },
-			error: null
+			error: null,
 		} );
 
 		// Then re-follow...
@@ -233,7 +262,7 @@ describe( 'store', function() {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
 			data: { url: siteUrl },
-			error: null
+			error: null,
 		} );
 
 		// The subscription data from the first follow response should still exist
@@ -252,7 +281,7 @@ describe( 'store', function() {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
 			data: { url: siteUrl },
-			error: null
+			error: null,
 		} );
 
 		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 1 );
@@ -262,7 +291,7 @@ describe( 'store', function() {
 			type: 'UNFOLLOW_READER_FEED',
 			url: siteUrl,
 			data: { url: siteUrl },
-			error: null
+			error: null,
 		} );
 
 		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 0 );
@@ -272,7 +301,7 @@ describe( 'store', function() {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
 			data: { url: siteUrl },
-			error: null
+			error: null,
 		} );
 
 		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 1 );

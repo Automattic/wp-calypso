@@ -24,8 +24,8 @@ describe( 'Data Layer', () => {
 					oceanName: 'ARCTIC',
 					dataLayer: {
 						forceRefresh: true,
-					}
-				}
+					},
+				},
 			};
 			const localAction = local( action );
 

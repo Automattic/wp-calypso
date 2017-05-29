@@ -11,11 +11,7 @@ import {
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 } from 'state/action-types';
-import {
-	apiNotReady,
-	receiveUnregisterDevice,
-	sendSubscriptionToWPCOM,
-} from '../actions';
+import { apiNotReady, receiveUnregisterDevice, sendSubscriptionToWPCOM } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -66,7 +62,7 @@ describe( 'actions', () => {
 		const getState = () => ( { pushNotifications: { settings: {}, system: {} } } );
 
 		describe( 'success', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( API_DOMAIN )
 					.persist()
 					.post( `/rest/v1.1/devices/new` )
@@ -77,7 +73,7 @@ describe( 'actions', () => {
 				return sendSubscriptionToWPCOM( 'someTruthyValue' )( spy, getState ).then( () => {
 					expect( spy ).to.have.been.calledWithMatch( {
 						type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
-						data: {}
+						data: {},
 					} );
 				} );
 			} );

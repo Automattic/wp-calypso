@@ -12,9 +12,9 @@ describe( 'getSiteSettings()', () => {
 	const state = {
 		siteSettings: {
 			items: {
-				2916284: { default_category: 'chicken' }
-			}
-		}
+				2916284: { default_category: 'chicken' },
+			},
+		},
 	};
 
 	it( 'should return null if the site is not tracked', () => {

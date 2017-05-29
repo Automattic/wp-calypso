@@ -12,8 +12,8 @@ describe( 'getSiteTimezoneName()', () => {
 	it( 'should return null if the site has never been fetched', () => {
 		const stateTree = {
 			siteSettings: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 
 		const timezone = getSiteTimezoneName( stateTree, 2916284 );
@@ -24,9 +24,9 @@ describe( 'getSiteTimezoneName()', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
-					2916284: {}
-				}
-			}
+					2916284: {},
+				},
+			},
 		};
 
 		const timezone = getSiteTimezoneName( stateTree, 2916284 );
@@ -39,10 +39,10 @@ describe( 'getSiteTimezoneName()', () => {
 				items: {
 					2916284: {
 						timezone_string: 'Europe/Skopje',
-						gmt_offset: 11
-					}
-				}
-			}
+						gmt_offset: 11,
+					},
+				},
+			},
 		};
 
 		const timezone = getSiteTimezoneName( stateTree, 2916284 );
@@ -55,10 +55,10 @@ describe( 'getSiteTimezoneName()', () => {
 				items: {
 					2916284: {
 						timezone_string: '',
-						gmt_offset: '11'
-					}
-				}
-			}
+						gmt_offset: '11',
+					},
+				},
+			},
 		};
 
 		const timezone = getSiteTimezoneName( stateTree, 2916284 );
@@ -71,10 +71,10 @@ describe( 'getSiteTimezoneName()', () => {
 				items: {
 					2916284: {
 						timezone_string: '',
-						gmt_offset: '-11'
-					}
-				}
-			}
+						gmt_offset: '-11',
+					},
+				},
+			},
 		};
 
 		const timezone = getSiteTimezoneName( stateTree, 2916284 );

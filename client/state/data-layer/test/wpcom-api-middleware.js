@@ -122,11 +122,14 @@ describe( 'WordPress.com API Middleware', () => {
 	it( 'should call all given handlers (different lists)', () => {
 		const adder = spy();
 		const doubler = spy();
-		const handlers = mergeHandlers( {
-			[ 'MATHS' ]: [ adder ],
-		}, {
-			[ 'MATHS' ]: [ doubler ],
-		} );
+		const handlers = mergeHandlers(
+			{
+				[ 'MATHS' ]: [ adder ],
+			},
+			{
+				[ 'MATHS' ]: [ doubler ],
+			}
+		);
 		const action = { type: 'MATHS' };
 
 		middleware( handlers )( store )( next )( action );

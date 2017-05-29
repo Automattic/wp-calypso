@@ -10,15 +10,15 @@ import { getSites } from '../';
 
 const currentUserState = {
 	currentUser: {
-		id: 12345678
+		id: 12345678,
 	},
 	users: {
 		items: {
 			12345678: {
-				primary_blog: 2916288
-			}
-		}
-	}
+				primary_blog: 2916288,
+			},
+		},
+	},
 };
 
 describe( 'getSites()', () => {
@@ -26,8 +26,8 @@ describe( 'getSites()', () => {
 		const state = {
 			...currentUserState,
 			sites: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 		const sites = getSites( state );
 		expect( sites ).to.eql( [] );
@@ -44,8 +44,8 @@ describe( 'getSites()', () => {
 						name: 'WordPress.com Example Blog',
 						URL: 'https://example.wordpress.com',
 						options: {
-							unmapped_url: 'https://example.wordpress.com'
-						}
+							unmapped_url: 'https://example.wordpress.com',
+						},
 					},
 					2916285: {
 						ID: 2916285,
@@ -53,10 +53,10 @@ describe( 'getSites()', () => {
 						name: 'WordPress.com Way Better Example Blog',
 						URL: 'https://example2.wordpress.com',
 						options: {
-							unmapped_url: 'https://example2.wordpress.com'
-						}
-					}
-				}
+							unmapped_url: 'https://example2.wordpress.com',
+						},
+					},
+				},
 			},
 			siteSettings: {
 				items: {},
@@ -84,8 +84,8 @@ describe( 'getSites()', () => {
 					2916289: {
 						ID: 2916289,
 						name: 'WordPress.com Another Example Blog',
-					}
-				}
+					},
+				},
 			},
 			siteSettings: {
 				items: {},

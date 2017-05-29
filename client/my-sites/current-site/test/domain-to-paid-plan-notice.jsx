@@ -17,8 +17,8 @@ describe( 'DomainToPaidPlanNotice', function() {
 	const abtests = [];
 	let DomainToPaidPlanNotice;
 
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'lib/abtest', { abtest: ( test ) => abtests[ test ] } );
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/abtest', { abtest: test => abtests[ test ] } );
 	} );
 
 	before( () => {

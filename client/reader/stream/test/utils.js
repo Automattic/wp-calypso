@@ -222,17 +222,19 @@ describe( 'reader stream', () => {
 			const items = [ post(), post(), post(), post(), post() ];
 			const injectedItems = injectRecommendations( items, recs, 1 );
 
-			expect( injectedItems ).eql( [
-				post(),
-				createRecBlock( [ rec(), rec() ], 0 ),
-				post(),
-				createRecBlock( [ rec(), rec() ], 2 ),
-				post(),
-				createRecBlock( [ rec(), rec() ], 4 ),
-				post(),
-				createRecBlock( [ rec(), rec() ], 6 ),
-				post(),
-			] );
+			expect( injectedItems ).eql(
+				[
+					post(),
+					createRecBlock( [ rec(), rec() ], 0 ),
+					post(),
+					createRecBlock( [ rec(), rec() ], 2 ),
+					post(),
+					createRecBlock( [ rec(), rec() ], 4 ),
+					post(),
+					createRecBlock( [ rec(), rec() ], 6 ),
+					post(),
+				]
+			);
 		} );
 
 		it( 'should gracefully run out of recs by inserting until it runs out', () => {
@@ -240,12 +242,9 @@ describe( 'reader stream', () => {
 			const items = [ post(), post(), post() ];
 			const injectedItems = injectRecommendations( items, recs, 1 );
 
-			expect( injectedItems ).eql( [
-				post(),
-				createRecBlock( [ rec(), rec() ], 0 ),
-				post(),
-				post(),
-			] );
+			expect( injectedItems ).eql(
+				[ post(), createRecBlock( [ rec(), rec() ], 0 ), post(), post() ]
+			);
 		} );
 
 		it( 'should inject 2 recs for each 4 regular posts when cards per rec = 4', () => {
@@ -253,14 +252,9 @@ describe( 'reader stream', () => {
 			const items = [ post(), post(), post(), post(), post() ];
 			const injectedItems = injectRecommendations( items, recs, 4 );
 
-			expect( injectedItems ).eql( [
-				post(),
-				post(),
-				post(),
-				post(),
-				createRecBlock( [ rec(), rec() ], 0 ),
-				post(),
-			] );
+			expect( injectedItems ).eql(
+				[ post(), post(), post(), post(), createRecBlock( [ rec(), rec() ], 0 ), post() ]
+			);
 		} );
 	} );
 } );

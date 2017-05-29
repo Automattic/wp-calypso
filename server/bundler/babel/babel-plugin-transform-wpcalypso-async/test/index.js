@@ -9,7 +9,7 @@ const babel = require( 'babel-core' );
 describe( 'babel-plugin-transform-wpcalypso-async', () => {
 	function transform( code, async = true ) {
 		return babel.transform( code, {
-			plugins: [ 'syntax-jsx', [ __dirname + '/../', { async } ] ]
+			plugins: [ 'syntax-jsx', [ __dirname + '/../', { async } ] ],
 		} ).code;
 	}
 
@@ -36,7 +36,9 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			it( 'should replace a require string prop with hoisting', () => {
 				const code = transform( 'export default () => <AsyncLoad require="foo" />;' );
 
-				expect( code ).to.equal( 'var _ref = function (callback) {\n  require.ensure("foo", function (require) {\n    callback(require("foo").__esModule ? require("foo").default : require("foo"));\n  }, "async-load-foo");\n};\n\nexport default (() => <AsyncLoad require={_ref} />);' );
+				expect( code ).to.equal(
+					'var _ref = function (callback) {\n  require.ensure("foo", function (require) {\n    callback(require("foo").__esModule ? require("foo").default : require("foo"));\n  }, "async-load-foo");\n};\n\nexport default (() => <AsyncLoad require={_ref} />);'
+				);
 			} );
 		} );
 
@@ -44,7 +46,9 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			it( 'should replace a require string prop with hoisting', () => {
 				const code = transform( 'export default () => <AsyncLoad require="foo" />;', false );
 
-				expect( code ).to.equal( 'var _ref = function (callback) {\n  callback(require("foo").__esModule ? require("foo").default : require("foo"));\n};\n\nexport default (() => <AsyncLoad require={_ref} />);' );
+				expect( code ).to.equal(
+					'var _ref = function (callback) {\n  callback(require("foo").__esModule ? require("foo").default : require("foo"));\n};\n\nexport default (() => <AsyncLoad require={_ref} />);'
+				);
 			} );
 		} );
 	} );
@@ -66,13 +70,17 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			it( 'should call require directly after ensure when no callback', () => {
 				const code = transform( 'asyncRequire( "foo/bar" );' );
 
-				expect( code ).to.equal( 'require.ensure("foo/bar", function (require) {\n  require("foo/bar").__esModule ? require("foo/bar").default : require("foo/bar");\n}, "async-load-foo-bar");' );
+				expect( code ).to.equal(
+					'require.ensure("foo/bar", function (require) {\n  require("foo/bar").__esModule ? require("foo/bar").default : require("foo/bar");\n}, "async-load-foo-bar");'
+				);
 			} );
 
 			it( 'should invoke callback with require after ensure', () => {
 				const code = transform( 'asyncRequire( "foo/bar", cb );' );
 
-				expect( code ).to.equal( 'require.ensure("foo/bar", function (require) {\n  cb(require("foo/bar").__esModule ? require("foo/bar").default : require("foo/bar"));\n}, "async-load-foo-bar");' );
+				expect( code ).to.equal(
+					'require.ensure("foo/bar", function (require) {\n  cb(require("foo/bar").__esModule ? require("foo/bar").default : require("foo/bar"));\n}, "async-load-foo-bar");'
+				);
 			} );
 		} );
 
@@ -80,13 +88,17 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			it( 'should call require directly when no callback', () => {
 				const code = transform( 'asyncRequire( "foo" );', false );
 
-				expect( code ).to.equal( 'require("foo").__esModule ? require("foo").default : require("foo");' );
+				expect( code ).to.equal(
+					'require("foo").__esModule ? require("foo").default : require("foo");'
+				);
 			} );
 
 			it( 'should invoke callback with require', () => {
 				const code = transform( 'asyncRequire( "foo", cb );', false );
 
-				expect( code ).to.equal( 'cb(require("foo").__esModule ? require("foo").default : require("foo"));' );
+				expect( code ).to.equal(
+					'cb(require("foo").__esModule ? require("foo").default : require("foo"));'
+				);
 			} );
 		} );
 	} );

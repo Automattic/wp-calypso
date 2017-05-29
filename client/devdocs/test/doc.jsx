@@ -19,8 +19,8 @@ describe( 'SingleDoc', () => {
 		mockery.registerMock( './service', {
 			fetch( path, cb ) {
 				cb( fetchResponse );
-			}
-		}	);
+			},
+		} );
 	} );
 
 	before( () => {

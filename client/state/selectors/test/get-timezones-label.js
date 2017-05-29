@@ -9,13 +9,13 @@ import { expect } from 'chai';
 import { getTimezonesLabel } from '../';
 
 describe( 'getTimezonesLabel()', () => {
-	it( 'should return null if `timezones` aren\'t synced', () => {
+	it( "should return null if `timezones` aren't synced", () => {
 		const state = {
 			timezones: {
 				byContinents: {},
 				labels: {},
 				rawOffsets: {},
-			}
+			},
 		};
 
 		const label = getTimezonesLabel( state );
@@ -23,7 +23,7 @@ describe( 'getTimezonesLabel()', () => {
 		expect( label ).to.eql( null );
 	} );
 
-	it( 'should return null if `key` isn\'t defined', () => {
+	it( "should return null if `key` isn't defined", () => {
 		const state = {
 			timezones: {
 				byContinents: {},
@@ -33,7 +33,7 @@ describe( 'getTimezonesLabel()', () => {
 					'Indian/Comoro': 'Comoro',
 				},
 				rawOffsets: {},
-			}
+			},
 		};
 
 		const label = getTimezonesLabel( state );
@@ -50,7 +50,7 @@ describe( 'getTimezonesLabel()', () => {
 					'Indian/Comoro': 'Comoro',
 				},
 				rawOffsets: {},
-			}
+			},
 		};
 
 		const label = getTimezonesLabel( state, 'America/Boa_Vista' );

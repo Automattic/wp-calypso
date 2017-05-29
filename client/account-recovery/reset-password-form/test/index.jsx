@@ -36,10 +36,7 @@ describe( 'ResetPasswordForm', () => {
 
 	it( 'should render as expected', () => {
 		const wrapper = shallow(
-			<ResetPasswordFormComponent
-				resetOptions={ exampleResetOptions }
-				translate={ identity }
-			/>
+			<ResetPasswordFormComponent resetOptions={ exampleResetOptions } translate={ identity } />
 		);
 
 		expect( wrapper.find( ResetOptionSet ) ).to.have.length( 2 );
@@ -70,10 +67,7 @@ describe( 'ResetPasswordForm', () => {
 
 		it( 'should be disabled if no reset option is selected', function() {
 			const wrapper = mount(
-				<ResetPasswordFormComponent
-					resetOptions={ exampleResetOptions }
-					translate={ identity }
-				/>
+				<ResetPasswordFormComponent resetOptions={ exampleResetOptions } translate={ identity } />
 			);
 
 			// Expect the button to be disabled
@@ -82,14 +76,12 @@ describe( 'ResetPasswordForm', () => {
 
 		it( 'should be enabled if a reset option is selected', function() {
 			const wrapper = mount(
-				<ResetPasswordFormComponent
-					resetOptions={ exampleResetOptions }
-					translate={ identity }
-				/>
+				<ResetPasswordFormComponent resetOptions={ exampleResetOptions } translate={ identity } />
 			);
 			wrapper.setState( { selectedMethod: 'primary_email' } );
 
-			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.not.be.ok;
+			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.not.be
+				.ok;
 		} );
 
 		it( 'should be disabled when isRequesting is true.', function() {

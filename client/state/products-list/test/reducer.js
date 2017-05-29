@@ -15,21 +15,15 @@ import {
 	PRODUCTS_LIST_REQUEST_FAILURE,
 	SERIALIZE,
 } from 'state/action-types';
-import reducer, {
-	items,
-	isFetching,
-} from '../reducer';
+import reducer, { items, isFetching } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'items',
-			'isFetching'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'isFetching' ] );
 	} );
 
 	describe( '#items()', () => {
@@ -40,23 +34,28 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should store the product list received', () => {
-			const productsList = [ {
-				guided_transfer: {
-					product_id: 40,
-					product_name: 'Guided Transfer',
-					product_slug: 'guided_transfer',
-					prices: { USD: 129, AUD: 169 },
-					is_domain_registration: false,
-					description: 'Guided Transfer',
-					cost: 129,
-					cost_display: '$129',
-				}
-			} ];
+			const productsList = [
+				{
+					guided_transfer: {
+						product_id: 40,
+						product_name: 'Guided Transfer',
+						product_slug: 'guided_transfer',
+						prices: { USD: 129, AUD: 169 },
+						is_domain_registration: false,
+						description: 'Guided Transfer',
+						cost: 129,
+						cost_display: '$129',
+					},
+				},
+			];
 
-			const state = items( {}, {
-				type: PRODUCTS_LIST_RECEIVE,
-				productsList
-			} );
+			const state = items(
+				{},
+				{
+					type: PRODUCTS_LIST_RECEIVE,
+					productsList,
+				}
+			);
 
 			expect( state ).to.eql( productsList );
 		} );
@@ -73,7 +72,7 @@ describe( 'reducer', () => {
 						description: 'Guided Transfer',
 						cost: '129',
 						cost_display: '$129',
-					}
+					},
 				} );
 				const state = items( original, { type: SERIALIZE } );
 				expect( state ).to.eql( original );
@@ -90,7 +89,7 @@ describe( 'reducer', () => {
 						description: 'Guided Transfer',
 						cost: '129',
 						cost_display: '$129',
-					}
+					},
 				} );
 				const state = items( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( original );
@@ -102,7 +101,7 @@ describe( 'reducer', () => {
 						id: 40,
 						name: 'Guided Transfer',
 						slug: 'guided_transfer',
-					}
+					},
 				} );
 				const state = items( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( {} );

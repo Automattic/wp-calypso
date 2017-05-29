@@ -32,7 +32,7 @@ describe( 'getAccountRecoveryResetRequestError()', () => {
 		const state = deepFreeze( {
 			accountRecovery: {
 				reset: {
-					requestReset: {}
+					requestReset: {},
 				},
 			},
 		} );

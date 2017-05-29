@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getThemeFilterTermsTable } from 'state/selectors';
-import { state } from './fixtures/theme-filters';
+import { getThemeFilterTermsTable } from 'state/selectors';
+import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterTermsTable()', () => {
 	it( 'should return a dictionary mapping terms to taxonomies', () => {
@@ -23,7 +23,7 @@ describe( 'getThemeFilterTermsTable()', () => {
 			clean: 'style',
 			minimal: 'style',
 			'feature:video': 'feature',
-			wordads: 'feature'
+			wordads: 'feature',
 		} );
 	} );
 } );

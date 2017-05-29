@@ -12,7 +12,7 @@ import QueryManager, { DELETE_PATCH_KEY } from '../';
 describe( 'QueryManager', () => {
 	let sandbox, manager;
 
-	useSandbox( ( _sandbox ) => sandbox = _sandbox );
+	useSandbox( _sandbox => sandbox = _sandbox );
 
 	beforeEach( () => {
 		manager = new QueryManager();
@@ -23,14 +23,14 @@ describe( 'QueryManager', () => {
 			manager = new QueryManager( {
 				items: {
 					144: { ID: 144 },
-					152: { ID: 152 }
+					152: { ID: 152 },
 				},
 				queries: {
 					'[]': {
 						itemKeys: [ 152 ],
-						found: 1
-					}
-				}
+						found: 1,
+					},
+				},
 			} );
 
 			expect( manager.getItems() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
@@ -274,7 +274,7 @@ describe( 'QueryManager', () => {
 			expect( newManager.getItems() ).to.eql( [] );
 		} );
 
-		it( 'should do nothing if #mergeItem() returns undefined but the item didn\'t exist', () => {
+		it( "should do nothing if #mergeItem() returns undefined but the item didn't exist", () => {
 			manager = manager.receive();
 			sandbox.stub( manager, 'mergeItem' ).returns( undefined );
 			const newManager = manager.receive( { ID: 144 } );
@@ -313,20 +313,14 @@ describe( 'QueryManager', () => {
 			manager = manager.receive( { ID: 144 }, { query: {}, mergeQuery: true } );
 			manager = manager.receive( { ID: 152 }, { query: {}, mergeQuery: true } );
 
-			expect( manager.getItems( {} ) ).to.eql( [
-				{ ID: 144 },
-				{ ID: 152 }
-			] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
 		} );
 
 		it( 'should de-dupe received items into query set when merging', () => {
 			manager = manager.receive( { ID: 144 }, { query: {}, mergeQuery: true } );
 			manager = manager.receive( [ { ID: 144 }, { ID: 152 } ], { query: {}, mergeQuery: true } );
 
-			expect( manager.getItems( {} ) ).to.eql( [
-				{ ID: 144 },
-				{ ID: 152 }
-			] );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
 		} );
 
 		it( 'should remove a tracked query item when it no longer matches', () => {

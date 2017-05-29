@@ -30,7 +30,7 @@ describe( 'isEligibleForFreeToPaidUpsell', () => {
 			canCurrentUser,
 			isMappedDomainSite,
 			isSiteOnFreePlan,
-			isUserRegistrationDaysWithinRange
+			isUserRegistrationDaysWithinRange,
 		} );
 	} );
 

@@ -12,8 +12,8 @@ describe( 'isRtl()', () => {
 	it( 'should return null if there is no current user', () => {
 		const result = isRtl( {
 			currentUser: {
-				id: null
-			}
+				id: null,
+			},
 		} );
 
 		expect( result ).to.be.null;
@@ -23,12 +23,12 @@ describe( 'isRtl()', () => {
 		const result = isRtl( {
 			users: {
 				items: {
-					123: { ID: 123 }
-				}
+					123: { ID: 123 },
+				},
 			},
 			currentUser: {
-				id: 123
-			}
+				id: 123,
+			},
 		} );
 
 		expect( result ).to.be.null;
@@ -38,12 +38,12 @@ describe( 'isRtl()', () => {
 		const result = isRtl( {
 			users: {
 				items: {
-					123: { ID: 123, isRTL: true }
-				}
+					123: { ID: 123, isRTL: true },
+				},
 			},
 			currentUser: {
-				id: 123
-			}
+				id: 123,
+			},
 		} );
 
 		expect( result ).to.be.true;
@@ -53,12 +53,12 @@ describe( 'isRtl()', () => {
 		const result = isRtl( {
 			users: {
 				items: {
-					123: { ID: 123, isRTL: false }
-				}
+					123: { ID: 123, isRTL: false },
+				},
 			},
 			currentUser: {
-				id: 123
-			}
+				id: 123,
+			},
 		} );
 
 		expect( result ).to.be.false;

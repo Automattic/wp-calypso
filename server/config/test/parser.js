@@ -51,7 +51,7 @@ describe( 'parser', () => {
 		parser = require( 'config/parser' );
 
 		const { serverData: data } = parser( '/valid-path', {
-			env: 'myenv'
+			env: 'myenv',
 		} );
 
 		expect( data ).to.have.property( 'shared_only', 'shared' );
@@ -59,14 +59,12 @@ describe( 'parser', () => {
 		expect( data ).to.have.property( 'myenvlocal_only', 'myenvlocal' );
 		expect( data ).to.have.property( 'myenv_override', 'myenv' );
 		expect( data ).to.have.property( 'myenvlocal_override', 'myenvlocal' );
-		expect( data ).to.have.property( 'features' )
-			.that.is.an( 'object' )
-			.that.deep.equals( {
-				enabledFeature1: true,
-				enabledFeature2: true,
-				disabledFeature1: false,
-				disabledFeature2: false
-			} );
+		expect( data ).to.have.property( 'features' ).that.is.an( 'object' ).that.deep.equals( {
+			enabledFeature1: true,
+			enabledFeature2: true,
+			disabledFeature1: false,
+			disabledFeature2: false,
+		} );
 	} );
 
 	it( 'should override enabled feature when disabledFeatures set', () => {
@@ -75,7 +73,7 @@ describe( 'parser', () => {
 
 		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv',
-			disabledFeatures: 'enabledFeature2'
+			disabledFeatures: 'enabledFeature2',
 		} );
 
 		expect( data ).to.have.deep.property( 'features.enabledFeature2', false );
@@ -87,7 +85,7 @@ describe( 'parser', () => {
 
 		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv',
-			enabledFeatures: 'disabledFeature2'
+			enabledFeatures: 'disabledFeature2',
 		} );
 
 		expect( data ).to.have.deep.property( 'features.disabledFeature2', true );

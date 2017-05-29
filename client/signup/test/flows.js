@@ -19,7 +19,7 @@ describe( 'Signup Flows Configuration', () => {
 		useFakeDom();
 		useFilesystemMocks( __dirname );
 
-		useMockery( ( mockery ) => {
+		useMockery( mockery => {
 			mockery.registerMock( 'lib/abtest', {
 				abtest: noop,
 			} );
@@ -66,7 +66,7 @@ describe( 'Signup Flows Configuration', () => {
 		getABTestVariationSpy.onCall( 2 ).returns( 'showSiteTitleStep' );
 		getABTestVariationSpy.onCall( 3 ).returns( 'showSiteTitleStep' );
 
-		useMockery( ( mockery ) => {
+		useMockery( mockery => {
 			mockery.registerMock( 'lib/abtest', ABTestMock );
 		} );
 
@@ -96,7 +96,7 @@ describe( 'Signup Flows Configuration', () => {
 		it( 'should return flow unmodified if variation is not valid', () => {
 			const myFlow = {
 				name: 'test flow name',
-				steps: [ 1, 2, 3 ]
+				steps: [ 1, 2, 3 ],
 			};
 
 			assert.equal( flows.getABTestFilteredFlow( 'main', myFlow ), myFlow );
@@ -113,7 +113,7 @@ describe( 'Signup Flows Configuration', () => {
 
 		const myFlow = {
 			name: 'test flow name',
-			steps: [ 'step1', 'step2', 'step3', 'step4' ]
+			steps: [ 'step1', 'step2', 'step3', 'step4' ],
 		};
 
 		Object.freeze( myFlow );

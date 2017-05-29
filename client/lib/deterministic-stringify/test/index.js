@@ -35,12 +35,15 @@ describe( 'index', function() {
 		var options, optionsDifferentSort;
 		options = {
 			b: [ 2, 1 ],
-			a: true
+			a: true,
 		};
 		optionsDifferentSort = {
 			a: true,
-			b: [ 1, 2 ]
+			b: [ 1, 2 ],
 		};
-		assert.equal( deterministicStringify( options ), deterministicStringify( optionsDifferentSort ) );
+		assert.equal(
+			deterministicStringify( options ),
+			deterministicStringify( optionsDifferentSort )
+		);
 	} );
 } );

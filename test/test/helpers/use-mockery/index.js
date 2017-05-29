@@ -20,7 +20,7 @@ export default function useMockery( beforeActions = noop, afterActions = noop ) 
 		mockery.enable( {
 			warnOnReplace: false,
 			warnOnUnregistered: false,
-			useCleanCache: true // have to use this with a large set of tests
+			useCleanCache: true, // have to use this with a large set of tests
 		} );
 		return beforeActions( mockery );
 	} );

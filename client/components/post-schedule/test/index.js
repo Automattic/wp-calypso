@@ -118,4 +118,3 @@ describe( 'parseAndValidateNumber', () => {
 		expect( parseAndValidateNumber( '99' ) ).to.equal( 99 );
 	} );
 } );
-

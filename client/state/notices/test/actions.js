@@ -16,20 +16,19 @@ describe( 'actions', function() {
 
 			expect( action ).to.eql( {
 				type: NOTICE_REMOVE,
-				noticeId: 123
+				noticeId: 123,
 			} );
 		} );
 	} );
 
 	describe( 'successNotice()', function() {
 		it( 'should return action object with a proper text', function() {
-			const text = 'potato',
-				action = successNotice( text );
+			const text = 'potato', action = successNotice( text );
 
 			expect( action.type ).to.eql( NOTICE_CREATE );
 			expect( action.notice ).to.include( {
 				text,
-				status: 'is-success'
+				status: 'is-success',
 			} );
 		} );
 
@@ -37,20 +36,19 @@ describe( 'actions', function() {
 			const action = successNotice( '' );
 
 			expect( action.notice ).to.include( {
-				showDismiss: true
+				showDismiss: true,
 			} );
 		} );
 	} );
 
 	describe( 'errorNotice()', function() {
 		it( 'should return action object with a proper text', function() {
-			const text = 'potato',
-				action = errorNotice( text );
+			const text = 'potato', action = errorNotice( text );
 
 			expect( action.type ).to.eql( NOTICE_CREATE );
 			expect( action.notice ).to.include( {
 				text,
-				status: 'is-error'
+				status: 'is-error',
 			} );
 		} );
 	} );

@@ -16,7 +16,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: CURRENT_USER_ID_SET,
-				userId: 73705554
+				userId: 73705554,
 			} );
 		} );
 	} );

@@ -6,20 +6,15 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isRequestingGeo,
-	getGeo,
-	getGeoCountry,
-	getGeoCountryShort
-} from '../selectors';
+import { isRequestingGeo, getGeo, getGeoCountry, getGeoCountryShort } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isRequestingGeo()', () => {
 		it( 'should return requesting state', () => {
 			const isRequesting = isRequestingGeo( {
 				geo: {
-					requesting: true
-				}
+					requesting: true,
+				},
 			} );
 
 			expect( isRequesting ).to.be.true;
@@ -36,9 +31,9 @@ describe( 'selectors', () => {
 						country_short: 'US',
 						country_long: 'United States',
 						region: 'Ohio',
-						city: 'Mason'
-					}
-				}
+						city: 'Mason',
+					},
+				},
 			} );
 
 			expect( geo ).to.eql( {
@@ -47,7 +42,7 @@ describe( 'selectors', () => {
 				country_short: 'US',
 				country_long: 'United States',
 				region: 'Ohio',
-				city: 'Mason'
+				city: 'Mason',
 			} );
 		} );
 	} );
@@ -56,8 +51,8 @@ describe( 'selectors', () => {
 		it( 'should return null if no geo data state', () => {
 			const country = getGeoCountry( {
 				geo: {
-					geo: null
-				}
+					geo: null,
+				},
 			} );
 
 			expect( country ).to.be.null;
@@ -72,9 +67,9 @@ describe( 'selectors', () => {
 						country_short: 'US',
 						country_long: 'United States',
 						region: 'Ohio',
-						city: 'Mason'
-					}
-				}
+						city: 'Mason',
+					},
+				},
 			} );
 
 			expect( country ).to.equal( 'United States' );
@@ -85,8 +80,8 @@ describe( 'selectors', () => {
 		it( 'should return null if no geo data state', () => {
 			const country = getGeoCountryShort( {
 				geo: {
-					geo: null
-				}
+					geo: null,
+				},
 			} );
 
 			expect( country ).to.be.null;
@@ -101,9 +96,9 @@ describe( 'selectors', () => {
 						country_short: 'US',
 						country_long: 'United States',
 						region: 'Ohio',
-						city: 'Mason'
-					}
-				}
+						city: 'Mason',
+					},
+				},
 			} );
 
 			expect( country ).to.equal( 'US' );

@@ -11,7 +11,7 @@ import {
 	CONNECTION_LOST,
 	CONNECTION_RESTORED,
 	NOTICE_REMOVE,
-	NOTICE_CREATE
+	NOTICE_CREATE,
 } from 'state/action-types';
 import { connectionLost, connectionRestored } from '../actions';
 
@@ -32,15 +32,16 @@ describe( 'state/application actions', () => {
 		} );
 
 		it( 'should dispatch a notice with connectionLost information ', () => {
-			expect( dispatch.calledWithMatch( {
-				type: NOTICE_CREATE,
-				notice: {
-					noticeId: 'connectionLost',
-					text: exampleText
-				}
-			} ) ).ok;
+			expect(
+				dispatch.calledWithMatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						noticeId: 'connectionLost',
+						text: exampleText,
+					},
+				} )
+			).ok;
 		} );
-
 	} );
 
 	describe( '#connectionRestored()', () => {
@@ -59,14 +60,15 @@ describe( 'state/application actions', () => {
 		} );
 
 		it( 'should dispatch a notice with connectionRestored information ', () => {
-			expect( dispatch.calledWithMatch( {
-				type: NOTICE_CREATE,
-				notice: {
-					noticeId: 'connectionRestored',
-					text: exampleText
-				}
-			} ) ).ok;
+			expect(
+				dispatch.calledWithMatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						noticeId: 'connectionRestored',
+						text: exampleText,
+					},
+				} )
+			).ok;
 		} );
-
 	} );
 } );

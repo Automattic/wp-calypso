@@ -31,11 +31,14 @@ describe( 'EditorNotice', () => {
 				message="publishFailure"
 				isSitePreviewable={ true }
 				onViewClick={ spy }
-				error={ new Error( 'NO_CONTENT' ) } />
+				error={ new Error( 'NO_CONTENT' ) }
+			/>
 		);
 
 		expect( wrapper.find( Notice ) ).to.not.have.descendants( NoticeAction );
-		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).equal( 'You haven\'t written anything yet!' );
+		expect( wrapper.find( Notice ) ).to.have
+			.prop( 'text' )
+			.equal( "You haven't written anything yet!" );
 		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-error' );
 		expect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
 	} );
@@ -47,7 +50,8 @@ describe( 'EditorNotice', () => {
 				type="post"
 				status="is-error"
 				message="publishFailure"
-				error={ new Error() } />
+				error={ new Error() }
+			/>
 		);
 
 		expect( wrapper ).to.have.descendants( Notice );
@@ -69,19 +73,26 @@ describe( 'EditorNotice', () => {
 					URL: 'https://example.wordpress.com',
 					title: 'Example Site',
 					slug: 'example.wordpress.com',
-				} } />
+				} }
+			/>
 		);
 
 		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).eql(
 			translate( 'Page published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 				components: {
-					siteLink: <a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">Example Site</a>,
+					siteLink: (
+						<a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">
+							Example Site
+						</a>
+					),
 					a: <a href="/page/example.wordpress.com" />,
-				}
+				},
 			} )
 		);
 		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
-		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'href' ).equal( 'https://example.wordpress.com/published-page' );
+		expect( wrapper.find( NoticeAction ) ).to.have
+			.prop( 'href' )
+			.equal( 'https://example.wordpress.com/published-page' );
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'children' ).equal( 'View Page' );
 	} );
 
@@ -92,8 +103,8 @@ describe( 'EditorNotice', () => {
 				type="jetpack-portfolio"
 				typeObject={ {
 					labels: {
-						view_item: 'View Project'
-					}
+						view_item: 'View Project',
+					},
 				} }
 				message="published"
 				status="is-success"
@@ -101,19 +112,26 @@ describe( 'EditorNotice', () => {
 				action="view"
 				site={ {
 					URL: 'https://example.wordpress.com',
-					title: 'Example Site'
-				} } />
+					title: 'Example Site',
+				} }
+			/>
 		);
 
 		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).eql(
 			translate( 'Post published on {{siteLink/}}!', {
 				components: {
-					siteLink: <a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">Example Site</a>
-				}
+					siteLink: (
+						<a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">
+							Example Site
+						</a>
+					),
+				},
 			} )
 		);
 		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
-		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'href' ).equal( 'https://example.wordpress.com/published-project' );
+		expect( wrapper.find( NoticeAction ) ).to.have
+			.prop( 'href' )
+			.equal( 'https://example.wordpress.com/published-project' );
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'children' ).equal( 'View Project' );
 	} );
 
@@ -134,15 +152,20 @@ describe( 'EditorNotice', () => {
 					URL: 'https://example.wordpress.com',
 					title: 'Example Site',
 					slug: 'example.wordpress.com',
-				} } />
+				} }
+			/>
 		);
 
 		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).eql(
 			translate( 'Page published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 				components: {
-					siteLink: <a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">Example Site</a>,
+					siteLink: (
+						<a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">
+							Example Site
+						</a>
+					),
 					a: <a href="/page/example.wordpress.com" />,
-				}
+				},
 			} )
 		);
 		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );

@@ -14,10 +14,10 @@ describe( 'shouldCloseVideoEditorModal()', () => {
 			ui: {
 				editor: {
 					videoEditor: {
-						closeModal: false
-					}
-				}
-			}
+						closeModal: false,
+					},
+				},
+			},
 		} );
 
 		expect( shouldClose ).to.be.false;

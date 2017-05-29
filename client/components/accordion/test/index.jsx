@@ -35,7 +35,9 @@ describe( 'Accordion', function() {
 	} );
 
 	it( 'should accept an icon prop to be rendered', function() {
-		const wrapper = shallow( <Accordion title="Section" icon={ <Gridicon icon="time" /> }>Content</Accordion> );
+		const wrapper = shallow(
+			<Accordion title="Section" icon={ <Gridicon icon="time" /> }>Content</Accordion>
+		);
 
 		expect( wrapper ).to.have.className( 'has-icon' );
 		expect( wrapper.find( '.accordion__icon' ) ).to.have.descendants( Gridicon );
@@ -49,7 +51,13 @@ describe( 'Accordion', function() {
 	} );
 
 	it( 'should accept a status prop to be rendered in the toggle', () => {
-		const status = { type: 'error', text: 'Warning!', url: 'https://wordpress.com', position: 'top left', onClick() {} };
+		const status = {
+			type: 'error',
+			text: 'Warning!',
+			url: 'https://wordpress.com',
+			position: 'top left',
+			onClick() {},
+		};
 		const wrapper = shallow( <Accordion title="Section" status={ status }>Content</Accordion> );
 
 		expect( wrapper ).to.have.className( 'has-status' );
@@ -70,7 +78,9 @@ describe( 'Accordion', function() {
 		} );
 
 		it( 'should accept an onToggle function handler to be invoked when toggled', function( done ) {
-			const wrapper = shallow( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
+			const wrapper = shallow(
+				<Accordion title="Section" onToggle={ finishTest }>Content</Accordion>
+			);
 
 			simulateClick( wrapper );
 
@@ -86,7 +96,9 @@ describe( 'Accordion', function() {
 
 		it( 'should always use the initialExpanded prop, if specified', function( done ) {
 			const wrapper = shallow(
-				<Accordion initialExpanded={ true } title="Section" onToggle={ finishTest }>Content</Accordion>
+				<Accordion initialExpanded={ true } title="Section" onToggle={ finishTest }>
+					Content
+				</Accordion>
 			);
 
 			simulateClick( wrapper );

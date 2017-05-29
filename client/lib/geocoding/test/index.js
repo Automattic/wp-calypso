@@ -31,11 +31,13 @@ describe( 'geocoding', () => {
 			expect( geocode( TEST_ADDRESS ) ).to.be.an.instanceof( Promise );
 		} );
 
-		it( 'should call to the Google Maps API', ( done ) => {
-			geocode( TEST_ADDRESS ).then( ( results ) => {
-				expect( results ).to.eql( [ 1, 2, 3 ] );
-				done();
-			} ).catch( done );
+		it( 'should call to the Google Maps API', done => {
+			geocode( TEST_ADDRESS )
+				.then( results => {
+					expect( results ).to.eql( [ 1, 2, 3 ] );
+					done();
+				} )
+				.catch( done );
 		} );
 	} );
 } );

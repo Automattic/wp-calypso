@@ -39,8 +39,7 @@ describe( 'TreeConvert', () => {
 		} );
 
 		it( 'should handle bad parent data, falling back to parent 0', () => {
-			const badMenu = cloneDeep( menuBadParent ),
-				treeified = converter.treeify( badMenu.items );
+			const badMenu = cloneDeep( menuBadParent ), treeified = converter.treeify( badMenu.items );
 
 			// "About us" should become a top-level item
 			expect( treeified ).to.have.length( 3 );
@@ -50,15 +49,13 @@ describe( 'TreeConvert', () => {
 
 	describe( 'untreeify', () => {
 		it( 'should turn a tree into a parent child list', () => {
-			const treeified = converter.treeify( menu.items ),
-				list = converter.untreeify( treeified );
+			const treeified = converter.treeify( menu.items ), list = converter.untreeify( treeified );
 
 			expect( list ).to.have.length( 9 );
 		} );
 
 		it( 'should add the "order" property to items', () => {
-			const treeified = converter.treeify( menu.items ),
-				list = converter.untreeify( treeified );
+			const treeified = converter.treeify( menu.items ), list = converter.untreeify( treeified );
 
 			expect( list[ 0 ] ).to.have.property( 'order' );
 		} );

@@ -7,10 +7,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import mockery from 'mockery';
 import noop from 'lodash/noop';
-import {
-	receiveTheme,
-	themeRequestFailure,
-} from 'state/themes/actions';
+import { receiveTheme, themeRequestFailure } from 'state/themes/actions';
 
 /**
  * Internal dependencies
@@ -32,10 +29,10 @@ describe( 'main', function() {
 			mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 			mockery.registerMock( 'lib/wp', {
 				me: () => ( {
-					get: noop
+					get: noop,
 				} ),
 				undocumented: () => ( {
-					getProducts: noop
+					getProducts: noop,
 				} ),
 			} );
 
@@ -52,7 +49,7 @@ describe( 'main', function() {
 				download: 'https://public-api.wordpress.com/rest/v1/themes/download/twentysixteen.zip',
 				taxonomies: {},
 				stylesheet: 'pub/twentysixteen',
-				demo_uri: 'https://twentysixteendemo.wordpress.com/'
+				demo_uri: 'https://twentysixteendemo.wordpress.com/',
 			};
 		} );
 

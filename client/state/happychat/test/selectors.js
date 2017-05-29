@@ -30,8 +30,8 @@ describe( 'selectors', () => {
 		it( 'should return false if no activity', () => {
 			const result = wasHappychatRecentlyActive( {
 				happychat: {
-					lastActivityTimestamp: null
-				}
+					lastActivityTimestamp: null,
+				},
 			} );
 
 			expect( result ).to.be.false;
@@ -40,8 +40,8 @@ describe( 'selectors', () => {
 		it( 'should return false if last activity was 3 hours ago', () => {
 			const result = wasHappychatRecentlyActive( {
 				happychat: {
-					lastActivityTimestamp: NOW - ( TIME_HOUR * 3 )
-				}
+					lastActivityTimestamp: NOW - TIME_HOUR * 3,
+				},
 			} );
 
 			expect( result ).to.be.false;
@@ -50,8 +50,8 @@ describe( 'selectors', () => {
 		it( 'should return true if last activity was 5 minutes ago', () => {
 			const result = wasHappychatRecentlyActive( {
 				happychat: {
-					lastActivityTimestamp: NOW - ( TIME_MINUTE * 5 )
-				}
+					lastActivityTimestamp: NOW - TIME_MINUTE * 5,
+				},
 			} );
 
 			expect( result ).to.be.true;
@@ -74,15 +74,15 @@ describe( 'selectors', () => {
 		const timeline = [
 			{ timestamp: ( NOW - FIVE_MINUTES ) / 1000 },
 			{ timestamp: ( NOW - ONE_MINUTE ) / 1000 },
-			{ timestamp: ( NOW ) / 1000 },
+			{ timestamp: NOW / 1000 },
 		];
 
 		it( 'returns false if Happychat is focused', () => {
 			const state = {
 				happychat: {
 					timeline,
-					lostFocusAt: null
-				}
+					lostFocusAt: null,
+				},
 			};
 			expect( hasUnreadMessages( state ) ).to.be.false;
 		} );
@@ -91,8 +91,8 @@ describe( 'selectors', () => {
 			const state = {
 				happychat: {
 					timeline,
-					lostFocusAt: NOW + ONE_MINUTE
-				}
+					lostFocusAt: NOW + ONE_MINUTE,
+				},
 			};
 			expect( hasUnreadMessages( state ) ).to.be.false;
 		} );
@@ -101,8 +101,8 @@ describe( 'selectors', () => {
 			const state = {
 				happychat: {
 					timeline,
-					lostFocusAt: NOW - ONE_MINUTE - ONE_MINUTE
-				}
+					lostFocusAt: NOW - ONE_MINUTE - ONE_MINUTE,
+				},
 			};
 			expect( hasUnreadMessages( state ) ).to.be.true;
 		} );
@@ -112,8 +112,8 @@ describe( 'selectors', () => {
 		it( 'should return null if geoLocation is not set', () => {
 			const selected = getGeoLocation( {
 				happychat: {
-					geoLocation: null
-				}
+					geoLocation: null,
+				},
 			} );
 			expect( selected ).to.equal( null );
 		} );
@@ -121,9 +121,9 @@ describe( 'selectors', () => {
 			const selected = getGeoLocation( {
 				happychat: {
 					geoLocation: {
-						city: 'Timisoara'
-					}
-				}
+						city: 'Timisoara',
+					},
+				},
 			} );
 			expect( selected.city ).to.equal( 'Timisoara' );
 		} );

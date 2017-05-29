@@ -19,8 +19,15 @@ import useMockery from 'test/helpers/use-mockery';
 const DUMMY_SITE_ID = 2916284;
 
 describe( 'MediaLibraryList item selection', function() {
-	let mount, MediaLibrarySelectedData, MediaLibrarySelectedStore,
-		MediaActions, fixtures, Dispatcher, MediaList, wrapper, mediaList;
+	let mount,
+		MediaLibrarySelectedData,
+		MediaLibrarySelectedStore,
+		MediaActions,
+		fixtures,
+		Dispatcher,
+		MediaList,
+		wrapper,
+		mediaList;
 
 	useFakeDom();
 	useMockery();
@@ -40,8 +47,8 @@ describe( 'MediaLibraryList item selection', function() {
 	before( function() {
 		mockery.registerMock( 'lib/wp', {
 			me: () => ( {
-				get: noop
-			} )
+				get: noop,
+			} ),
 		} );
 		mockery.registerMock( 'components/infinite-list', EmptyComponent );
 		mockery.registerMock( './list-item', EmptyComponent );
@@ -57,7 +64,7 @@ describe( 'MediaLibraryList item selection', function() {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_MEDIA_ITEMS',
 			siteId: DUMMY_SITE_ID,
-			data: fixtures
+			data: fixtures,
 		} );
 
 		MediaList = require( '../list' ).MediaLibraryList;
@@ -79,7 +86,8 @@ describe( 'MediaLibraryList item selection', function() {
 						filterRequiresUpgrade={ false }
 						site={ { ID: DUMMY_SITE_ID } }
 						media={ fixtures.media }
-						mediaScale={ 0.24 } />
+						mediaScale={ 0.24 }
+					/>
 				</MediaLibrarySelectedData>
 			);
 			mediaList = wrapper.find( MediaList ).get( 0 );
@@ -162,7 +170,8 @@ describe( 'MediaLibraryList item selection', function() {
 						site={ { ID: DUMMY_SITE_ID } }
 						media={ fixtures.media }
 						mediaScale={ 0.24 }
-						single />
+						single
+					/>
 				</MediaLibrarySelectedData>
 			);
 			mediaList = wrapper.find( MediaList ).get( 0 );
