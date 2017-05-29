@@ -71,6 +71,7 @@ import VerticalMenu from 'components/vertical-menu/docs/example';
 import Banner from 'components/banner/docs/example';
 import EmojifyExample from 'components/emojify/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
+import ExtraInfoFrForm from 'components/domains/registrant-extra-info/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -136,6 +137,11 @@ let DesignAssets = React.createClass( {
 					<FilePickers />
 					<FoldableCard />
 					<FormFields searchKeywords="input textbox textarea radio" />
+					{
+						( config.isEnabled( 'domains/cctlds' ) || true )
+							? <ExtraInfoFrForm />
+							: null
+					}
 					<Gauge />
 					<GlobalNotices />
 					<Gravatar />
