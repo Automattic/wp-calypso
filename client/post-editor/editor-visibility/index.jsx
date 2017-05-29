@@ -345,7 +345,11 @@ const EditorVisibility = React.createClass( {
 								<Gridicon
 									icon="info-outline"
 									size={ 18 }
-									className={ classNames( 'editor-visibility__dialog-info', { is_active: this.state.showVisibilityInfotips } ) }
+									className={
+										classNames(
+											'editor-visibility__dialog-info',
+											{ is_active: this.state.showVisibilityInfotips }
+										) }
 									onClick={ this.toggleVisibilityInfotips }
 								/>
 							</FormLegend>
@@ -452,6 +456,7 @@ const EditorVisibility = React.createClass( {
 							<DropdownItem
 								selected={ option.value === visibility }
 								key={ option.value }
+								value={ option.value }
 								onClick={ option.onClick }
 							>
 								<Gridicon icon={ option.icon } size={ 18 } />
