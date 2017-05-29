@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingContactDetailsCache } from 'state/selectors/is-requesting-contact-details-cache';
+import { isRequestingContactDetailsCache } from 'state/selectors';
 import { requestContactDetailsCache } from 'state/domains/management/actions';
 
 class QueryContactDetailsCache extends Component {
