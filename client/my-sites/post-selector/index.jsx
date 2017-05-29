@@ -29,7 +29,7 @@ export default React.createClass( {
 		orderBy: PropTypes.oneOf( [ 'title', 'date', 'modified', 'comment_count', 'ID' ] ),
 		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
 		showTypeLabels: PropTypes.bool,
-		surpressFirstPageLoad: PropTypes.bool,
+		suppressFirstPageLoad: PropTypes.bool,
 	},
 
 	getDefaultProps() {
@@ -39,7 +39,7 @@ export default React.createClass( {
 			multiple: false,
 			orderBy: 'title',
 			order: 'ASC',
-			surpressFirstPageLoad: false,
+			suppressFirstPageLoad: false,
 		};
 	},
 
@@ -81,7 +81,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { siteId, multiple, onChange, emptyMessage, createLink, selected, showTypeLabels, surpressFirstPageLoad } = this.props;
+		const { siteId, multiple, onChange, emptyMessage, createLink, selected, showTypeLabels, suppressFirstPageLoad } = this.props;
 
 		return (
 			<PostSelectorPosts
@@ -94,7 +94,7 @@ export default React.createClass( {
 				createLink={ createLink }
 				selected={ selected }
 				showTypeLabels={ showTypeLabels }
-				surpressFirstPageLoad={ surpressFirstPageLoad }
+				suppressFirstPageLoad={ suppressFirstPageLoad }
 			/>
 		);
 	}

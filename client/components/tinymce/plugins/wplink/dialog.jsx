@@ -353,7 +353,7 @@ var LinkDialog = React.createClass( {
 								order="DESC"
 								selected={ this.getSelectedPostId() }
 								onChange={ this.setExistingContent }
-								surpressFirstPageLoad={ ! this.props.firstLoad }
+								suppressFirstPageLoad={ ! this.props.firstLoad }
 								emptyMessage={ this.translate( 'No posts found' ) } />
 						) }
 					</FormLabel>
