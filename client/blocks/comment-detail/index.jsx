@@ -28,10 +28,8 @@ export class CommentDetail extends Component {
 		commentContent: PropTypes.string,
 		commentDate: PropTypes.string,
 		commentId: PropTypes.number,
-		commentIsApproved: PropTypes.bool,
 		commentIsLiked: PropTypes.bool,
-		commentIsSpam: PropTypes.bool,
-		commentIsTrash: PropTypes.bool,
+		commentStatus: PropTypes.string,
 		isBulkEdit: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
@@ -74,8 +72,8 @@ export class CommentDetail extends Component {
 	edit = () => noop;
 
 	toggleApprove = () => {
-		const { commentId, commentIsApproved, setCommentStatus } = this.props;
-		setCommentStatus( commentId, commentIsApproved ? 'unapproved' : 'approved' );
+		const { commentId, commentStatus, setCommentStatus } = this.props;
+		setCommentStatus( commentId, 'approved' === commentStatus ? 'unapproved' : 'approved' );
 	};
 
 	toggleExpanded = () => {
@@ -88,13 +86,13 @@ export class CommentDetail extends Component {
 	};
 
 	toggleSpam = () => {
-		const { commentId, commentIsSpam, setCommentStatus } = this.props;
-		setCommentStatus( commentId, commentIsSpam ? 'approved' : 'spam' );
+		const { commentId, commentStatus, setCommentStatus } = this.props;
+		setCommentStatus( commentId, 'spam' === commentStatus ? 'approved' : 'spam' );
 	};
 
 	toggleTrash = () => {
-		const { commentId, commentIsTrash, setCommentStatus } = this.props;
-		setCommentStatus( commentId, commentIsTrash ? 'approved' : 'trash' );
+		const { commentId, commentStatus, setCommentStatus } = this.props;
+		setCommentStatus( commentId, 'trash' === commentStatus ? 'approved' : 'trash' );
 	};
 
 	render() {
@@ -107,10 +105,8 @@ export class CommentDetail extends Component {
 			authorUsername,
 			commentContent,
 			commentDate,
-			commentIsApproved,
 			commentIsLiked,
-			commentIsSpam,
-			commentIsTrash,
+			commentStatus,
 			deleteForever,
 			isBulkEdit,
 			postAuthorDisplayName,
@@ -125,14 +121,18 @@ export class CommentDetail extends Component {
 			isExpanded,
 		} = this.state;
 
+		const isApproved = 'approved' === commentStatus;
+		const isSpam = 'spam' === commentStatus;
+		const isTrash = 'trash' === commentStatus;
+
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
-			'is-approved': commentIsApproved,
+			'is-approved': isApproved,
 			'is-bulk-edit': isBulkEdit,
 			'is-expanded': isExpanded,
 			'is-liked': commentIsLiked,
-			'is-spam': commentIsSpam,
-			'is-trash': commentIsTrash,
+			'is-spam': isSpam,
+			'is-trash': isTrash,
 		} );
 
 		return (
@@ -142,10 +142,10 @@ export class CommentDetail extends Component {
 					authorDisplayName={ authorDisplayName }
 					authorUrl={ authorUrl }
 					commentContent={ commentContent }
-					commentIsApproved={ commentIsApproved }
+					commentIsApproved={ isApproved }
 					commentIsLiked={ commentIsLiked }
-					commentIsSpam={ commentIsSpam }
-					commentIsTrash={ commentIsTrash }
+					commentIsSpam={ isSpam }
+					commentIsTrash={ isTrash }
 					deleteForever={ deleteForever }
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
@@ -196,10 +196,8 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	commentContent: ownProps.content,
 	commentDate: ownProps.date,
 	commentId: ownProps.commentId,
-	commentIsApproved: 'approved' === ownProps.status,
 	commentIsLiked: ownProps.i_like,
-	commentIsSpam: 'spam' === ownProps.status,
-	commentIsTrash: 'trash' === ownProps.status,
+	commentStatus: ownProps.status,
 	postAuthorDisplayName: get( ownProps, 'post.author.name' ),
 	postTitle: get( ownProps, 'post.title' ),
 	postUrl: get( ownProps, 'post.link' ),
