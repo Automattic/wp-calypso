@@ -39,7 +39,7 @@ RUN     npm install --production || npm install --production
 COPY     . /calypso
 
 # Build javascript bundles and change ownership
-RUN	CALYPSO_ENV=production make build && chown -R nobody /calypso
+RUN	CALYPSO_ENV=production npm run build && chown -R nobody /calypso
 
 USER    nobody
 CMD     NODE_ENV=production node build/bundle.js
