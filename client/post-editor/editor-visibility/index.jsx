@@ -252,9 +252,15 @@ const EditorVisibility = React.createClass( {
 		let message;
 
 		if ( this.props.type === 'page' ) {
-			message = this.props.translate( 'Private pages are only visible to administrators and editors of this site. Would you like to privately publish this page now?' );
+			message = this.props.translate(
+				'Private pages are only visible to administrators and editors of this site. ' +
+				'Would you like to privately publish this page now?'
+			);
 		} else {
-			message = this.props.translate( 'Private posts are only visible to administrators and editors of this site. Would you like to privately publish this post now?' );
+			message = this.props.translate(
+				'Private posts are only visible to administrators and editors of this site. ' +
+				'Would you like to privately publish this post now?'
+			);
 		}
 
 		accept( message, ( accepted ) => {
