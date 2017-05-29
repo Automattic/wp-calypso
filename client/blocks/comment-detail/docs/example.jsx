@@ -24,11 +24,9 @@ const mockComment = {
 	content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contemnit enim disserendi elegantiam, confuse loquitur. Suo genere perveniant ad extremum; Id mihi magnum videtur. Vide, quantum, inquam, fallare, Torquate. Aliter homines, aliter philosophos loqui putas oportere? Perge porro; Quibus ego vehementer assentior. Tubulo putas dicere? Sed ille, ut dixi, vitiose. Refert tamen, quo modo. Quid nunc honeste dicit? Scrupulum, inquam, abeunti; Quam si explicavisset, non tam haesitaret. Sed quid sentiat, non videtis. At enim sequor utilitatem. Si longus, levis.',
 	date: '2017-05-12 16:00:00',
 	id: 12345678,
-	isApproved: true,
 	isLiked: false,
-	isSpam: false,
-	isTrash: false,
 	replied: true,
+	status: 'approved',
 };
 
 const mockPost = {
@@ -57,10 +55,8 @@ export const CommentDetailExample = () =>
 			commentContent={ mockComment.content }
 			commentDate={ mockComment.date }
 			commentId={ mockComment.id }
-			commentIsApproved={ mockComment.isApproved }
 			commentIsLiked={ mockComment.isLiked }
-			commentIsSpam={ mockComment.isSpam }
-			commentIsTrash={ mockComment.isTrash }
+			commentStatus={ mockComment.status }
 			repliedToComment={ mockComment.replied }
 
 			postAuthorDisplayName={ mockPost.authorDisplayName }
@@ -82,10 +78,8 @@ export const CommentDetailExample = () =>
 			commentContent={ mockComment.content }
 			commentDate={ mockComment.date }
 			commentId={ mockComment.id }
-			commentIsApproved={ mockComment.isApproved }
 			commentIsLiked={ mockComment.isLiked }
-			commentIsSpam={ mockComment.isSpam }
-			commentIsTrash={ mockComment.isTrash }
+			commentStatus={ mockComment.status }
 			repliedToComment={ mockComment.replied }
 
 			postAuthorDisplayName={ mockPost.authorDisplayName }
@@ -107,10 +101,8 @@ export const CommentDetailExample = () =>
 			commentContent={ mockComment.content }
 			commentDate={ mockComment.date }
 			commentId={ mockComment.id }
-			commentIsApproved={ mockComment.isApproved }
 			commentIsLiked={ mockComment.isLiked }
-			commentIsSpam={ mockComment.isSpam }
-			commentIsTrash={ mockComment.isTrash }
+			commentStatus={ mockComment.status }
 			repliedToComment={ mockComment.replied }
 
 			postAuthorDisplayName={ mockPost.authorDisplayName }

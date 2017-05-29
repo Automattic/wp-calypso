@@ -14,13 +14,12 @@ import CommentDetailComment from './comment-detail-comment';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
-import { mockComment } from 'blocks/comment-detail/docs/mock-data';
 
 export class CommentDetail extends Component {
 	static propTypes = {
 		authorAvatarUrl: PropTypes.string,
 		authorDisplayName: PropTypes.string,
-		authorEmail: PropTypes.string,
+		authorEmail: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.string ] ),
 		authorId: PropTypes.number,
 		authorIp: PropTypes.string,
 		authorIsBlocked: PropTypes.bool,
@@ -29,16 +28,16 @@ export class CommentDetail extends Component {
 		commentContent: PropTypes.string,
 		commentDate: PropTypes.string,
 		commentId: PropTypes.number,
-		commentIsApproved: PropTypes.bool,
 		commentIsLiked: PropTypes.bool,
-		commentIsSpam: PropTypes.bool,
-		commentIsTrash: PropTypes.bool,
+		commentStatus: PropTypes.string,
 		isBulkEdit: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
 		postUrl: PropTypes.string,
 		repliedToComment: PropTypes.bool,
+		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
+		toggleCommentLike: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -47,27 +46,16 @@ export class CommentDetail extends Component {
 
 	state = {
 		authorIsBlocked: false,
-		isApproved: false,
-		isExpanded: false,
-		isLiked: false,
-		isSpam: false,
-		isTrash: false,
 	};
 
 	componentWillMount() {
 		const {
 			authorIsBlocked,
-			commentIsApproved,
 			commentIsLiked,
-			commentIsSpam,
-			commentIsTrash,
 		} = this.props;
 		this.setState( {
 			authorIsBlocked,
-			isApproved: commentIsApproved,
 			isLiked: commentIsLiked,
-			isSpam: commentIsSpam,
-			isTrash: commentIsTrash,
 		} );
 	}
 
@@ -84,7 +72,8 @@ export class CommentDetail extends Component {
 	edit = () => noop;
 
 	toggleApprove = () => {
-		this.setState( { isApproved: ! this.state.isApproved } );
+		const { commentId, commentStatus, setCommentStatus } = this.props;
+		setCommentStatus( commentId, 'approved' === commentStatus ? 'unapproved' : 'approved' );
 	};
 
 	toggleExpanded = () => {
@@ -92,15 +81,18 @@ export class CommentDetail extends Component {
 	}
 
 	toggleLike = () => {
-		this.setState( { isLiked: ! this.state.isLiked } );
+		const { commentId, toggleCommentLike } = this.props;
+		toggleCommentLike( commentId );
 	};
 
 	toggleSpam = () => {
-		this.setState( { isSpam: ! this.state.isSpam } );
+		const { commentId, commentStatus, setCommentStatus } = this.props;
+		setCommentStatus( commentId, 'spam' === commentStatus ? 'approved' : 'spam' );
 	};
 
 	toggleTrash = () => {
-		this.setState( { isTrash: ! this.state.isTrash } );
+		const { commentId, commentStatus, setCommentStatus } = this.props;
+		setCommentStatus( commentId, 'trash' === commentStatus ? 'approved' : 'trash' );
 	};
 
 	render() {
@@ -113,6 +105,9 @@ export class CommentDetail extends Component {
 			authorUsername,
 			commentContent,
 			commentDate,
+			commentIsLiked,
+			commentStatus,
+			deleteForever,
 			isBulkEdit,
 			postAuthorDisplayName,
 			postTitle,
@@ -123,21 +118,17 @@ export class CommentDetail extends Component {
 
 		const {
 			authorIsBlocked,
-			isApproved,
 			isExpanded,
-			isLiked,
-			isSpam,
-			isTrash,
 		} = this.state;
 
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
-			'is-approved': isApproved,
+			'is-approved': 'approved' === commentStatus,
 			'is-bulk-edit': isBulkEdit,
 			'is-expanded': isExpanded,
-			'is-liked': isLiked,
-			'is-spam': isSpam,
-			'is-trash': isTrash,
+			'is-liked': commentIsLiked,
+			'is-spam': 'spam' === commentStatus,
+			'is-trash': 'trash' === commentStatus,
 		} );
 
 		return (
@@ -147,10 +138,9 @@ export class CommentDetail extends Component {
 					authorDisplayName={ authorDisplayName }
 					authorUrl={ authorUrl }
 					commentContent={ commentContent }
-					commentIsApproved={ isApproved }
-					commentIsLiked={ isLiked }
-					commentIsSpam={ isSpam }
-					commentIsTrash={ isTrash }
+					commentIsLiked={ commentIsLiked }
+					commentStatus={ commentStatus }
+					deleteForever={ deleteForever }
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
 					toggleApprove={ this.toggleApprove }
@@ -188,32 +178,25 @@ export class CommentDetail extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { commentId, siteId } ) => {
-	//const comment = getComment( state, siteId, commentId );
-	const comment = mockComment;
-
-	return {
-		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
-		authorDisplayName: get( comment, 'author.name' ),
-		authorEmail: get( comment, 'author.email' ),
-		authorId: get( comment, 'author.ID' ),
-		authorIp: get( comment, 'author.ip' ), // TODO: not available in the current data structure
-		authorIsBlocked: get( comment, 'author.isBlocked' ), // TODO: not available in the current data structure
-		authorUrl: get( comment, 'author.URL' ),
-		authorUsername: get( comment, 'author.nice_name' ),
-		commentContent: comment.content,
-		commentDate: comment.date,
-		commentId: commentId,
-		commentIsApproved: 'approved' === comment.status,
-		commentIsLiked: comment.i_like,
-		commentIsSpam: 'spam' === comment.status,
-		commentIsTrash: 'trash' === comment.status,
-		postAuthorDisplayName: get( comment, 'post.author.name' ),
-		postTitle: get( comment, 'post.title' ),
-		postUrl: get( comment, 'post.link' ),
-		repliedToComment: comment.replied, // TODO: not available in the current data structure
-		siteId: siteId,
-	};
-};
+const mapStateToProps = ( state, ownProps ) => ( {
+	authorAvatarUrl: get( ownProps, 'author.avatar_URL' ),
+	authorDisplayName: get( ownProps, 'author.name' ),
+	authorEmail: get( ownProps, 'author.email' ),
+	authorId: get( ownProps, 'author.ID' ),
+	authorIp: get( ownProps, 'author.ip' ), // TODO: not available in the current data structure
+	authorIsBlocked: get( ownProps, 'author.isBlocked' ), // TODO: not available in the current data structure
+	authorUrl: get( ownProps, 'author.URL' ),
+	authorUsername: get( ownProps, 'author.nice_name' ),
+	commentContent: ownProps.content,
+	commentDate: ownProps.date,
+	commentId: ownProps.commentId,
+	commentIsLiked: ownProps.i_like,
+	commentStatus: ownProps.status,
+	postAuthorDisplayName: get( ownProps, 'post.author.name' ),
+	postTitle: get( ownProps, 'post.title' ),
+	postUrl: get( ownProps, 'post.link' ),
+	repliedToComment: ownProps.replied, // TODO: not available in the current data structure
+	siteId: ownProps.siteId,
+} );
 
 export default connect( mapStateToProps )( CommentDetail );

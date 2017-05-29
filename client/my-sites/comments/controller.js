@@ -12,7 +12,9 @@ import CommentsManagement from './main';
 
 export const comments = function( context ) {
 	const siteSlug = route.getSiteFragment( context.path );
-	const status = ( siteSlug !== context.params.status ) ? context.params.status : 'approved';
+	const status = ( context.params.status && siteSlug !== context.params.status )
+		? context.params.status
+		: 'unapproved';
 
 	renderWithReduxStore(
 		<CommentsManagement
