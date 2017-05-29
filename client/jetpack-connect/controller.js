@@ -67,6 +67,7 @@ export default {
 	redirectWithoutLocaleifLoggedIn( context, next ) {
 		if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
 			const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
+			debug( 'redirectWithoutLocaleifLoggedIn to %s', urlWithoutLocale );
 			return page.redirect( urlWithoutLocale );
 		}
 
@@ -91,13 +92,16 @@ export default {
 		jetpackNewSiteSelector( context );
 	},
 
-	connect( context, options = {} ) {
+	connect( context ) {
 		const {
 			path,
 			pathname,
+			params
 		} = context;
-		const { type = false } = options;
+		const { type = false } = params;
 		const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
+
+		debug( 'entered connect flow with params %o', params );
 
 		analytics.pageView.record( pathname, analyticsPageTitle );
 

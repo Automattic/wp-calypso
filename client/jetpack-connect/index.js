@@ -16,26 +16,15 @@ const redirectToStoreWithInterval = context => {
 	page.redirect( `/jetpack/connect/store/${ intervalType }` );
 };
 
-// Wrap controller.connect so we can pre-load known route options
-const getJetpackConnectHandler = ( options ) =>
-	( context ) => controller.connect( context, options );
-
 export default function() {
-	page( '/jetpack/connect/install', getJetpackConnectHandler( { type: 'install' } ) );
+	page( '/jetpack/connect/:type(personal|premium|pro)/:interval(yearly|monthly)?', controller.connect );
 
-	page( '/jetpack/connect/personal', getJetpackConnectHandler( { type: 'personal' } ) );
-	page( '/jetpack/connect/personal/yearly', getJetpackConnectHandler( { type: 'personal' } ) );
-	page( '/jetpack/connect/personal/monthly', getJetpackConnectHandler( { type: 'personal', interval: 'monthly' } ) );
+	page( '/jetpack/connect/:type(install)/:locale?',
+		controller.redirectWithoutLocaleifLoggedIn,
+		controller.connect
+	);
 
-	page( '/jetpack/connect/premium', getJetpackConnectHandler( { type: 'premium' } ) );
-	page( '/jetpack/connect/premium/yearly', getJetpackConnectHandler( { type: 'premium' } ) );
-	page( '/jetpack/connect/premium/monthly', getJetpackConnectHandler( { type: 'premium', interval: 'monthly' } ) );
-
-	page( '/jetpack/connect/pro', getJetpackConnectHandler( { type: 'pro' } ) );
-	page( '/jetpack/connect/pro/yearly', getJetpackConnectHandler( { type: 'pro' } ) );
-	page( '/jetpack/connect/pro/monthly', getJetpackConnectHandler( { type: 'pro', interval: 'monthly' } ) );
-
-	page( '/jetpack/connect', getJetpackConnectHandler() );
+	page( '/jetpack/connect', controller.connect );
 
 	page( '/jetpack/connect/choose/:site', controller.plansPreSelection );
 
@@ -51,12 +40,6 @@ export default function() {
 		controller.redirectWithoutLocaleifLoggedIn,
 		controller.saveQueryObject,
 		controller.authorizeForm
-	);
-
-	page(
-		'/jetpack/connect/install/:locale?',
-		controller.redirectWithoutLocaleifLoggedIn,
-		getJetpackConnectHandler( { type: 'install' } )
 	);
 
 	page( '/jetpack/connect/store', controller.plansLanding );
