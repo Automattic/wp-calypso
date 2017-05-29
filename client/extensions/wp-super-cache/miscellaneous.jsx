@@ -65,6 +65,14 @@ const Miscellaneous = ( {
 							</span>
 						</FormToggle>
 						}
+						{ ! compressionDisabled &&
+						<Notice
+							isCompact
+							className="wp-super-cache__toggle-notice"
+							text={ translate( 'Compression is disabled by default because some hosts have problems ' +
+								'with compressed files. Switching it on and off clears the cache.' ) }
+							/>
+						}
 
 						<FormToggle
 							checked={ !! dont_cache_logged_in }
@@ -113,8 +121,8 @@ const Miscellaneous = ( {
 						{ cache_mod_rewrite &&
 							<Notice
 								isCompact
-								className="wp-super-cache__miscellaneous-304-notice"
-								status="is-error"
+								className="wp-super-cache__toggle-notice"
+								status="is-warning"
 								text={ translate( '304 browser caching is only supported when mod_rewrite caching ' +
 									'is not used.' ) }
 							/>
@@ -123,7 +131,7 @@ const Miscellaneous = ( {
 						{ ! cache_mod_rewrite &&
 							<Notice
 								isCompact
-								className="wp-super-cache__miscellaneous-304-notice"
+								className="wp-super-cache__toggle-notice"
 								text={ translate( '304 support is disabled by default because some hosts have had problems with the ' +
 									'headers used in the past.' ) }
 							/>
