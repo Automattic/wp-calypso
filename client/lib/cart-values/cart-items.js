@@ -283,6 +283,12 @@ function hasDomainRegistration( cart ) {
 	return some( getAll( cart ), isDomainRegistration );
 }
 
+function hasOnlyDomainRegistrationsWithPrivacySupport( cart ) {
+	return every( getDomainRegistrations( cart ), function( cartItem ) {
+		return ! privacyNotAvailable( cartItem );
+	} );
+}
+
 function hasDomainMapping( cart ) {
 	return some( getAll( cart ), productsValues.isDomainMapping );
 }
@@ -714,6 +720,16 @@ function isRenewal( cartItem ) {
 }
 
 /**
+ * Determines whether a cart item does not supports privacy
+ *
+ * @param {Object} cartItem - `CartItemValue` object
+ * @returns {boolean} true if item does not support privacu
+ */
+function privacyNotAvailable( cartItem ) {
+	return cartItem.extra && cartItem.extra.privacy_not_available;
+}
+
+/**
  * Get the included domain for a cart item
  *
  * @param {Object} cartItem - `CartItemValue` object
@@ -802,6 +818,7 @@ module.exports = {
 	hasDomainInCart,
 	hasDomainMapping,
 	hasDomainRegistration,
+	hasOnlyDomainRegistrationsWithPrivacySupport,
 	hasFreeTrial,
 	hasGoogleApps,
 	hasOnlyFreeTrial,
