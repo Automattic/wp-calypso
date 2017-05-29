@@ -161,7 +161,7 @@ export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_
 
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-				twoStepNonce: get( error, `response.body.data.two_step_nonce_${ nonceType }` ),
+				twoStepNonce: get( error, 'response.body.data.two_step_nonce' ),
 				nonceType,
 			} );
 
@@ -246,7 +246,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 					message,
 					status: 'is-success'
 				},
-				twoStepNonce: get( response, 'body.data.two_step_nonce_sms' ),
+				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
 			} );
 		} ).catch( ( error ) => {
 			const field = 'global';
@@ -255,7 +255,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 				error: { message, field },
-				twoStepNonce: get( error, 'response.body.data.two_step_nonce_sms' )
+				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
 			} );
 		} );
 };
