@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {String} domain	the domain in question
  * @return {Boolean} If the request is in progress
  */
-export function isRequestingWhois( state, domain ) {
+export default function isRequestingWhois( state, domain ) {
 	return get( state, [ 'domains.management.requesting', domain ], false );
 }
