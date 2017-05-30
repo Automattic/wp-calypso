@@ -14,11 +14,6 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	errorNotice,
-	removeNotice,
-	successNotice,
-} from 'state/notices/actions';
 import { generateStats } from './state/stats/actions';
 import {
 	getSiteTitle,
@@ -27,7 +22,6 @@ import {
 import {
 	getStats,
 	isGeneratingStats,
-	isStatsGenerationSuccessful,
 } from './state/stats/selectors';
 
 class ContentsTab extends Component {
@@ -64,30 +58,6 @@ class ContentsTab extends Component {
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.isGenerating || ! prevProps.isGenerating ) {
-			return;
-		}
-
-		const {
-			isSuccessful,
-			siteTitle,
-			translate,
-		} = this.props;
-
-		if ( isSuccessful ) {
-			this.props.successNotice(
-				translate( 'Cache stats regenerated on %(site)s.', { args: { site: siteTitle } } ),
-				{ id: 'wpsc-cache-stats' }
-			);
-		} else {
-			this.props.errorNotice(
-				translate( 'There was a problem regenerating the stats. Please try again.' ),
-				{ id: 'wpsc-cache-stats' }
-			);
-		}
-	}
-
 	deleteCache = () => {
 		this.setState( { isDeleting: true } );
 		this.props.handleDeleteCache( false, false );
@@ -103,10 +73,7 @@ class ContentsTab extends Component {
 		this.props.handleDeleteCache( true, false );
 	}
 
-	generateStats = () => {
-		this.props.removeNotice( 'wpsc-cache-stats' );
-		this.props.generateStats( this.props.siteId );
-	}
+	generateStats = () => this.props.generateStats( this.props.siteId );
 
 	render() {
 		const {
@@ -268,24 +235,17 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const stats = getStats( state, siteId );
 		const isGenerating = isGeneratingStats( state, siteId );
-		const isSuccessful = isStatsGenerationSuccessful( state, siteId );
 		const isMultisite = isJetpackSiteMultiSite( state, siteId );
 		const siteTitle = getSiteTitle( state, siteId );
 
 		return {
 			isGenerating,
 			isMultisite,
-			isSuccessful,
 			siteTitle,
 			stats,
 		};
 	},
-	{
-		errorNotice,
-		generateStats,
-		removeNotice,
-		successNotice,
-	},
+	{ generateStats },
 );
 
 const getFormSettings = settings => {

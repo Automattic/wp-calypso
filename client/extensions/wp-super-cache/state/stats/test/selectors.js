@@ -8,10 +8,8 @@ import { expect } from 'chai';
  */
 import {
 	getStats,
-	getStatsGenerationStatus,
 	isDeletingFile,
 	isGeneratingStats,
-	isStatsGenerationSuccessful,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -79,129 +77,6 @@ describe( 'selectors', () => {
 			const isGenerating = isGeneratingStats( state, primarySiteId );
 
 			expect( isGenerating ).to.be.true;
-		} );
-	} );
-
-	describe( 'isStatsGenerationSuccessful()', () => {
-		it( 'should return false if the site is not attached', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							generateStatus: {
-								[ primarySiteId ]: { generating: true, status: 'pending' }
-							}
-						}
-					}
-				}
-			};
-			const isSuccessful = isStatsGenerationSuccessful( state, secondarySiteId );
-
-			expect( isSuccessful ).to.be.false;
-		} );
-
-		it( 'should return true if the stats generation request status is success', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							generateStatus: {
-								[ primarySiteId ]: { generating: false, status: 'success' }
-							}
-						}
-					}
-				}
-			};
-			const isSuccessful = isStatsGenerationSuccessful( state, primarySiteId );
-
-			expect( isSuccessful ).to.be.true;
-		} );
-
-		it( 'should return false if the stats generation request status is error', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							generateStatus: {
-								[ primarySiteId ]: { generating: false, status: 'error' }
-							}
-						}
-					}
-				}
-			};
-			const isSuccessful = isStatsGenerationSuccessful( state, primarySiteId );
-
-			expect( isSuccessful ).to.be.false;
-		} );
-	} );
-
-	describe( 'getStatsGenerationStatus()', () => {
-		it( 'should return undefined if the site is not attached', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							generateStatus: {
-								[ primarySiteId ]: { generating: true, status: 'pending' }
-							}
-						}
-					}
-				}
-			};
-			const status = getStatsGenerationStatus( state, secondarySiteId );
-
-			expect( status ).to.be.undefined;
-		} );
-
-		it( 'should return success if the stats generation request status is success', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							generateStatus: {
-								[ primarySiteId ]: { generating: false, status: 'success' }
-							}
-						}
-					}
-				}
-			};
-			const status = getStatsGenerationStatus( state, primarySiteId );
-
-			expect( status ).to.eql( 'success' );
-		} );
-
-		it( 'should return error if the stats generation request status is error', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							generateStatus: {
-								[ primarySiteId ]: { generating: false, status: 'error' }
-							}
-						}
-					}
-				}
-			};
-			const status = getStatsGenerationStatus( state, primarySiteId );
-
-			expect( status ).to.eql( 'error' );
-		} );
-
-		it( 'should return pending if the stats generation request status is pending', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						stats: {
-							generateStatus: {
-								[ primarySiteId ]: { generating: true, status: 'pending' }
-							}
-						}
-					}
-				}
-			};
-			const status = getStatsGenerationStatus( state, primarySiteId );
-
-			expect( status ).to.eql( 'pending' );
 		} );
 	} );
 
