@@ -75,8 +75,10 @@ class EditorConfirmationSidebar extends React.Component {
 								<Button onClick={ this.closeAndPublish } compact>{ this.props.translate( 'Publish' ) }</Button>
 							</div>
 						</div>
-						<div className="editor-confirmation-sidebar__privacy-control">
-							{ this.renderPrivacyControl() }
+						<div className="editor-confirmation-sidebar__content-wrap">
+							<div className="editor-confirmation-sidebar__privacy-control">
+								{ this.renderPrivacyControl() }
+							</div>
 						</div>
 					</div>
 				</div>
