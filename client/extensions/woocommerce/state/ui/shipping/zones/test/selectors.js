@@ -56,6 +56,32 @@ describe( 'selectors', () => {
 			expect( getShippingZones( state ) ).to.deep.equal( [] );
 		} );
 
+		it( 'should return the WC-API zones list if there are no edits in the state', () => {
+			const state = {
+				extensions: {
+					woocommerce: {
+						wcApi: {
+							123: {
+								shippingZones: [
+									{ id: 1, name: 'Zone1' },
+									{ id: 2, name: 'Zone2' },
+								],
+							},
+						},
+						ui: {},
+					},
+				},
+				ui: {
+					selectedSiteId: 123,
+				},
+			};
+
+			expect( getShippingZones( state ) ).to.deep.equal( [
+				{ id: 1, name: 'Zone1' },
+				{ id: 2, name: 'Zone2' },
+			] );
+		} );
+
 		it( 'should apply the "edits" changes to the zone list', () => {
 			const state = {
 				extensions: {

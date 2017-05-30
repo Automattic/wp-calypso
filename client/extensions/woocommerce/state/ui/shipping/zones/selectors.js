@@ -25,8 +25,13 @@ export const getShippingZones = ( state, siteId = getSelectedSiteId( state ) ) =
 	}
 	const zones = [ ...getAPIShippingZones( state, siteId ) ];
 
+	const edits = getShippingZonesEdits( state, siteId );
+	if ( ! edits ) {
+		return zones;
+	}
+
 	// Overlay the current edits on top of (a copy of) the wc-api zones
-	const { creates, updates, deletes } = getShippingZonesEdits( state, siteId );
+	const { creates, updates, deletes } = edits;
 	deletes.forEach( ( { id } ) => remove( zones, { id } ) );
 	updates.forEach( ( update ) => {
 		const index = findIndex( zones, { id: update.id } );
@@ -45,15 +50,18 @@ export const getShippingZones = ( state, siteId = getSelectedSiteId( state ) ) =
  * (including the non-committed changes). If no zone is being edited, this will return null.
  */
 export const getCurrentlyEditingShippingZone = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const { currentlyEditingId, currentlyEditingChanges } = getShippingZonesEdits( state, siteId );
-	if ( null === currentlyEditingId ) {
+	const edits = getShippingZonesEdits( state, siteId );
+	if ( ! edits ) {
 		return null;
 	}
-	const zone = find( getShippingZones( state, siteId ), { id: currentlyEditingId } );
+	if ( null === edits.currentlyEditingId ) {
+		return null;
+	}
+	const zone = find( getShippingZones( state, siteId ), { id: edits.currentlyEditingId } );
 	if ( ! zone ) {
 		return null;
 	}
-	return { ...zone, ...currentlyEditingChanges };
+	return { ...zone, ...edits.currentlyEditingChanges };
 };
 
 /**
