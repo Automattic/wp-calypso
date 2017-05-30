@@ -14,7 +14,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
-import SiteURLInput from '../site-url-input';
+import SiteUrlInput from '../site-url-input';
 import ReaderBack from 'blocks/reader-full-post/back';
 
 import WordPressLogo from 'components/wordpress-logo';
@@ -95,7 +95,7 @@ class JetpackNewSite extends Component {
 							<div className="jetpack-new-site__card-description">
 								{ this.props.translate( 'We’ll be using the Jetpack plugin to connect your site to WordPress.com.' ) }
 							</div>
-							<SiteURLInput
+							<SiteUrlInput
 								onChange={ this.handleJetpackUrlChange }
 								onSubmit={ this.handleJetpackSubmit }
 								handleOnClickTos={ this.handleOnClickTos }
@@ -114,7 +114,7 @@ class JetpackNewSite extends Component {
 							</div>
 							<div className="jetpack-new-site__mobile-jetpack-site">
 								<p>{ this.props.translate( 'Add an existing WordPress site with Jetpack:' ) }</p>
-								<SiteURLInput
+								<SiteUrlInput
 									onChange={ this.handleJetpackUrlChange }
 									onSubmit={ this.handleJetpackSubmit }
 									handleOnClickTos={ this.handleOnClickTos }
