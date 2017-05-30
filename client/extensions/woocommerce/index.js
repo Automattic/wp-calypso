@@ -15,7 +15,7 @@ import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
 import Shipping from './app/settings/shipping';
-import StatsController from './app/stats/controller';
+import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
 
 const getStorePages = () => {
