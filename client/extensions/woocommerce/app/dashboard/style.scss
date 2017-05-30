@@ -1,0 +1,135 @@
+.dashboard__setup-wrapper {
+	@include breakpoint( ">960px" ) {
+		padding: 32px;
+	}
+}
+
+.dashboard__setup-header {
+	text-align: center;
+	padding-top: 16px;
+
+	img {
+		max-width: 160px;
+		margin-bottom: 12px;
+	}
+
+	.dashboard__setup-header-title {
+		margin: 0 auto 12px;
+		max-width: 450px;
+	}
+
+	.dashboard__setup-header-subtitle {
+		color: $gray;
+		margin: 0 auto 32px;
+		max-width: 450px;
+	}
+}
+
+.dashboard__setup-task {
+	padding: 24px;
+	margin-left: -24px;
+	margin-right: -24px;
+	border-top: 1px solid lighten( $gray, 30% );
+	display: flex;
+
+	@include breakpoint( ">960px" ) {
+		margin-left: -32px;
+		margin-right: -32px;
+		padding: 32px;
+		align-items: center;
+	}
+
+	.dashboard__setup-task-status {
+		background:  lighten( $gray, 30% );
+		border:  1px solid lighten( $gray, 20% );
+		height: 24px;
+		text-align: center;
+		width: 24px;
+		flex-shrink: 0;
+		border-radius: 100%;
+		margin-right: 24px;
+		margin-top: 4px;
+
+		@include breakpoint( ">960px" ) {
+			height: 48px;
+			width: 48px;
+		}
+
+		.gridicon {
+			height: 18px;
+			width: 18px;
+			padding: 3px;
+
+			@include breakpoint( ">960px" ) {
+				padding: 6px;
+				height: 36px;
+				width: 36px;
+			}
+		}
+	}
+
+	.dashboard__setup-task-label-and-actions {
+		@include breakpoint( ">660px" ) {
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	.dashboard__setup-task-label {
+		h2 {
+			color: $gray-text;
+			font-size: 20px;
+		}
+
+		p {
+			color: $gray;
+			font-size: 14px;
+			margin-bottom: 12px;
+		}
+	}
+
+	.dashboard__setup-task-actions {
+		display: flex;
+		align-items: center;
+
+		@include breakpoint( ">660px" ) {
+			display: block;
+			text-align: right;
+			width: 320px;
+		}
+
+		.dashboard__setup-task-primary-actions {
+			.button {
+				white-space: nowrap;
+				margin-right: 8px;
+
+				@include breakpoint( ">660px" ) {
+					margin: 2px 0 2px 8px;
+				}
+			}
+		}
+
+		.dashboard__setup-task-secondary-actions {
+			a {
+				font-size: 12px;
+			}
+		}
+	}
+}
+
+.dashboard__setup-footer {
+	align-items: center;
+	border-top: none;
+	display: flex;
+	justify-content: center;
+	border-top: 1px solid lighten( $gray, 30% );
+	padding: 24px 24px 0 24px;
+	margin-left: -24px;
+	margin-right: -24px;
+
+	@include breakpoint( ">960px" ) {
+		margin-left: -32px;
+		margin-right: -32px;
+		padding: 32px 32px 0 32px;
+	}
+}
