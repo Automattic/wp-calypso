@@ -20,7 +20,7 @@ class PurchaseSiteHeader extends Component {
 		siteId: React.PropTypes.number,
 		name: React.PropTypes.string,
 		domain: React.PropTypes.string,
-	}
+	};
 
 	// Disconnected sites can't render the `Site` component, but there can be
 	// purchases from disconnected sites. Here we spoof the Site header.
@@ -49,13 +49,9 @@ class PurchaseSiteHeader extends Component {
 		let header;
 
 		if ( isPlaceholder ) {
-			header = (
-				<SitePlaceholder />
-			);
+			header = <SitePlaceholder />;
 		} else if ( site ) {
-			header = (
-				<Site isCompact site={ site } indicator={ false } />
-			);
+			header = <Site isCompact site={ site } indicator={ false } />;
 		} else {
 			header = this.renderFauxSite( name, domain );
 		}
@@ -69,8 +65,6 @@ class PurchaseSiteHeader extends Component {
 	}
 }
 
-export default connect(
-	( state, { siteId } ) => ( {
-		site: getSite( state, siteId )
-	} )
-)( PurchaseSiteHeader );
+export default connect( ( state, { siteId } ) => ( {
+	site: getSite( state, siteId ),
+} ) )( PurchaseSiteHeader );

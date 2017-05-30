@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import merge from 'lodash/merge';
 import keyBy from 'lodash/keyBy';
 
@@ -16,7 +15,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { isValidStateWithSchema } from 'state/utils';
+import { combineReducers, isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -38,10 +37,6 @@ export function requesting( state = {}, action ) {
 					[ action.postType ]: POST_TYPES_TAXONOMIES_REQUEST === action.type
 				}
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -70,6 +65,8 @@ export function items( state = {}, action ) {
 			}
 
 			return {};
+		case SERIALIZE:
+			return state;
 	}
 
 	return state;

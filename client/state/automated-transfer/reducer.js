@@ -1,17 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import eligibility from './eligibility/reducer';
-import {
-	keyedReducer,
-	withSchemaValidation,
-} from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
 import { transferStates } from './constants';
 import { automatedTransfer as schema } from './schema';
 import {

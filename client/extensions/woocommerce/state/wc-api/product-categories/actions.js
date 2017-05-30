@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import wp from 'lib/wp';
-import { error } from '../actions';
+import { setError } from '../../site/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
@@ -20,12 +20,13 @@ export function fetchProductCategories( siteId ) {
 		const jpPath = `/jetpack-blogs/${ siteId }/rest-api/`;
 		const apiPath = '/wc/v2/products/categories';
 
+		// TODO: Modify this to use the extensions data layer.
 		return wp.req.get( { path: jpPath }, { path: apiPath } )
 			.then( ( { data } ) => {
 				dispatch( fetchProductCategoriesSuccess( siteId, data ) );
 			} )
 			.catch( err => {
-				dispatch( error( siteId, getAction, err ) );
+				dispatch( setError( siteId, getAction, err ) );
 			} );
 	};
 }
@@ -37,7 +38,7 @@ export function fetchProductCategoriesSuccess( siteId, data ) {
 			payload: { siteId }
 		};
 
-		return error( siteId, originalAction, { message: 'Invalid Categories Array', data } );
+		return setError( siteId, originalAction, { message: 'Invalid Categories Array', data } );
 	}
 
 	return {

@@ -1,0 +1,71 @@
+/**
+ * Delete Site Options
+ */
+
+.site-tools__section-title {
+	margin-bottom: 4px;
+	font-size: 14px;
+	line-height: 18px;
+	color: $gray-dark;
+
+	&.is-warning {
+		color: $alert-red;
+	}
+}
+
+.site-tools__section-desc {
+	margin-bottom: 0;
+	font-size: 13px;
+	color: $gray-text-min;
+	font-style: italic;
+}
+
+.site-tools__container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+
+	&::after {
+		display: none;
+	}
+
+	@include breakpoint( ">480px" ) {
+		&.is-compact {
+			padding: 24px;
+		}
+	}
+}
+
+.site-tools__content {
+	flex: 0 1 auto;
+}
+
+.site-tools__link,
+.site-tools__link:hover,
+.site-tools__link:active,
+.site-tools__link:visited {
+	color: inherit;
+}
+
+.site-tools__link:hover {
+	.site-tools__noticon {
+		color: lighten( $gray, 10% );
+	}
+}
+
+.site-tools__option-marker {
+	flex: 0 0 auto;
+	padding-left: 24px;
+}
+
+.site-tools__arrow {
+	transform: rotate( -90deg );
+}
+
+.site-tools__noticon {
+	font-size: 36px;
+	color: lighten( $gray, 20% );
+	line-height: 48px;
+	cursor: pointer;
+}

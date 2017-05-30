@@ -48,7 +48,8 @@ button {
 		color: $gray-dark;
 	}
 	&[disabled],
-	&:disabled {
+	&:disabled,
+	&.disabled {
 		color: lighten( $gray, 30% );
 		background: $white;
 		border-color: lighten( $gray, 30% );
@@ -131,6 +132,7 @@ button {
 	&.is-busy {
 		background-size: 120px 100%;
 		background-image: linear-gradient( -45deg, $blue-medium 28%, darken( $blue-medium, 5% ) 28%, darken( $blue-medium, 5% ) 72%, $blue-medium 72%);
+		border-color: darken( $blue-medium, 8% );
 	}
 }
 

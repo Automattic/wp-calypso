@@ -13,7 +13,8 @@ import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
-import { getSites, isSiteUpgradeable } from 'state/selectors';
+import { getSites } from 'state/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export const Sites = React.createClass( {
@@ -47,18 +48,15 @@ export const Sites = React.createClass( {
 
 		// Filter out sites with no upgrades on particular routes
 		if ( /^\/domains/.test( path ) || /^\/plans/.test( this.props.sourcePath ) ) {
-			return this.props.isSiteUpgradeable( site.ID );
+			return ! site.isJetpack || site.isSiteUpgradable;
 		}
 
 		return site;
 	},
 
-	onSiteSelect: function( slug ) {
-		let path = this.props.path;
-		if ( path === '/sites' ) {
-			path = '/stats/insights';
-		}
-		page( addSiteFragment( path, slug ) );
+	onSiteSelect: function( siteId ) {
+		this.props.selectSite( siteId, this.props.path );
+		return true;
 	},
 
 	getHeaderText() {
@@ -98,12 +96,19 @@ export const Sites = React.createClass( {
 	}
 } );
 
+const selectSite = ( siteId, rawPath ) => ( dispatch, getState ) => {
+	const path = ( rawPath === '/sites' )
+		? '/stats/insights'
+		: rawPath;
+	page( addSiteFragment( path, getSiteSlug( getState(), siteId ) ) );
+};
+
 export default connect(
 	( state ) => {
 		return {
 			selectedSite: getSelectedSite( state ),
 			sites: getSites( state ),
-			isSiteUpgradeable: isSiteUpgradeable.bind( null, state ),
 		};
-	}
+	},
+	{ selectSite }
 )( Sites );

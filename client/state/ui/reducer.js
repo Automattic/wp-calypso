@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -14,7 +9,7 @@ import {
 	DESERIALIZE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import editor from './editor/reducer';
 import dropZone from './drop-zone/reducer';
 import guidedTour from './guided-tours/reducer';
@@ -44,6 +39,10 @@ export function selectedSiteId( state = null, action ) {
 
 	return state;
 }
+
+export const siteSelectionInitialized = createReducer( false, {
+	[ SELECTED_SITE_SET ]: () => true,
+} );
 
 //TODO: do we really want to mix strings and booleans?
 export function section( state = false, action ) {
@@ -96,6 +95,7 @@ const reducer = combineReducers( {
 	isPreviewShowing,
 	queryArguments,
 	selectedSiteId,
+	siteSelectionInitialized,
 	dropZone,
 	guidedTour,
 	editor,
@@ -110,10 +110,13 @@ const reducer = combineReducers( {
 	isNotificationsOpen,
 } );
 
-export default function( state, action ) {
+const ui = function( state, action ) {
 	if ( SERIALIZE === action.type || DESERIALIZE === action.type ) {
 		return {};
 	}
 
 	return reducer( state, action );
-}
+};
+ui.hasCustomPersistence = true;
+
+export default ui;

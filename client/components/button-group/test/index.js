@@ -32,6 +32,11 @@ describe( 'ButtonGroup', function() {
 		assert.equal( 2, buttonGroup.find( Button ).length );
 	} );
 
+	it( 'should get the busy `is-busy` class when passed the `busy` prop', function() {
+		const buttonGroup = shallow( <ButtonGroup busy /> );
+		assert.equal( 1, buttonGroup.find( '.is-busy' ).length );
+	} );
+
 	it( 'should throw an error if any of the children is not a <Button>', function() {
 		shallow( <ButtonGroup><div id="test">test</div></ButtonGroup> );
 

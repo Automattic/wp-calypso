@@ -3,7 +3,6 @@
  */
 import { assert } from 'chai';
 import sinon from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,7 +45,7 @@ describe( 'handleResetPasswordRequest()', () => {
 				done();
 			} );
 
-			handleResetPasswordRequest( { dispatch }, params, noop );
+			handleResetPasswordRequest( { dispatch }, params );
 		} );
 	} );
 
@@ -72,7 +71,7 @@ describe( 'handleResetPasswordRequest()', () => {
 				done();
 			} );
 
-			handleResetPasswordRequest( { dispatch }, params, noop );
+			handleResetPasswordRequest( { dispatch }, params );
 		} );
 	} );
 } );

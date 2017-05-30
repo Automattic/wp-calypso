@@ -10,20 +10,20 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { recordAction, recordTrack } from 'reader/stats';
+import { recordAction, recordTrackWithRailcar, recordTracksRailcarRender } from 'reader/stats';
 import Button from 'components/button';
 import { requestSiteBlock } from 'state/reader/site-blocks/actions';
-import ConnectedSubscriptionListItem
-	from 'reader/following-manage/connected-subscription-list-item';
+import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
 
 export class RecommendedSites extends React.PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 		sites: PropTypes.array,
+		followSource: PropTypes.string,
 	};
 
 	handleSiteDismiss = ( siteId, uiIndex ) => {
-		recordTrack( 'calypso_reader_recommended_site_dismissed', {
+		recordTrackWithRailcar( 'calypso_reader_recommended_site_dismissed', this.props.railcar, {
 			ui_position: uiIndex,
 		} );
 		recordAction( 'calypso_reader_recommended_site_dismissed' );
@@ -31,7 +31,7 @@ export class RecommendedSites extends React.PureComponent {
 	};
 
 	handleSiteClick = ( siteId, uiIndex ) => {
-		recordTrack( 'calypso_reader_recommended_site_clicked', {
+		recordTrackWithRailcar( 'calypso_reader_recommended_site_clicked', this.props.railcar, {
 			ui_position: uiIndex,
 			siteId,
 		} );
@@ -39,10 +39,20 @@ export class RecommendedSites extends React.PureComponent {
 	};
 
 	render() {
-		const { sites } = this.props;
+		const { sites, followSource } = this.props;
 
 		if ( isEmpty( sites ) ) {
 			return null;
+		}
+
+		function recordRecommendationRender( index ) {
+			return function( railcar ) {
+				recordTracksRailcarRender(
+					'recommended_site',
+					railcar,
+					{ ui_algo: 'following_manage_recommended_site', ui_position: index }
+				);
+			};
 		}
 
 		return (
@@ -69,8 +79,11 @@ export class RecommendedSites extends React.PureComponent {
 								</div>
 								<ConnectedSubscriptionListItem
 									siteId={ siteId }
+									railcar={ site.railcar }
 									showEmailSettings={ false }
 									showLastUpdatedDate={ false }
+									followSource={ followSource }
+									onComponentMountWithNewRailcar={ recordRecommendationRender( index ) }
 								/>
 							</li>
 						);

@@ -29,7 +29,7 @@ export default React.createClass( {
 		const showCheckmark = this.props.highlight || ! this.props.unavailable;
 		return (
 			<li className={ classes }>
-				{ showCheckmark && <Gridicon className="plan-compare-card-item__checkmark" size={ 18 } icon="checkmark" /> }
+				{ showCheckmark && <span className="plan-compare-card__item-checkmark"><Gridicon size={ 18 } icon="checkmark" /></span> }
 				{ this.props.children }
 			</li>
 		);

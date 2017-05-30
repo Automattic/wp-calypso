@@ -6,6 +6,7 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { defer, findLast, noop, times, clamp, identity, map } from 'lodash';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -36,7 +37,6 @@ import PostLifecycle from './post-lifecycle';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import { showSelectedPost } from 'reader/utils';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
-import config from 'config';
 import { keysAreEqual } from 'lib/feed-stream-store/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
@@ -100,7 +100,7 @@ class ReaderStream extends React.Component {
 		showPrimaryFollowButtonOnCards: true,
 		showMobileBackToSidebar: true,
 		isDiscoverStream: false,
-		shouldCombineCards: config.isEnabled( 'reader/combined-cards' ),
+		shouldCombineCards: true,
 		transformStreamItems: identity,
 	};
 
@@ -479,9 +479,11 @@ class ReaderStream extends React.Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		blockedSites: getBlockedSites( state ),
-	} ),
-	{ resetCardExpansions }
-)( ReaderStream );
+export default localize(
+	connect(
+		state => ( {
+			blockedSites: getBlockedSites( state ),
+		} ),
+		{ resetCardExpansions }
+	)( ReaderStream )
+);

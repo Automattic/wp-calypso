@@ -312,10 +312,10 @@ Undocumented.prototype.jetpackLogin = function( siteId, _wp_nonce, redirect_uri,
 	return this.wpcom.req.get( { path: endpointUrl }, params );
 };
 
-Undocumented.prototype.jetpackAuthorize = function( siteId, code, state, redirect_uri, secret ) {
+Undocumented.prototype.jetpackAuthorize = function( siteId, code, state, redirect_uri, secret, jp_version ) {
 	debug( '/jetpack-blogs/:site_id:/authorize query' );
 	const endpointUrl = '/jetpack-blogs/' + siteId + '/authorize';
-	const params = { code, state, redirect_uri, secret };
+	const params = { code, state, redirect_uri, secret, jp_version };
 	return this.wpcom.req.post( { path: endpointUrl }, params );
 };
 

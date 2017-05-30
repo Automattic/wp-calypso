@@ -14,7 +14,7 @@ import { errorNotice } from 'state/notices/actions';
 import { follow, unfollow, recordFollowError } from 'state/reader/follows/actions';
 import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine';
 
-export function requestFollow( { dispatch }, action, next ) {
+export function requestFollow( { dispatch }, action ) {
 	const { payload: { feedUrl } } = action;
 
 	dispatch(
@@ -30,7 +30,6 @@ export function requestFollow( { dispatch }, action, next ) {
 			onFailure: action,
 		} )
 	);
-	next( action );
 }
 
 export function receiveFollow( store, action, next, response ) {

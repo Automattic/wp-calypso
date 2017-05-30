@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -170,7 +171,6 @@ class MediaSettings extends Component {
 				</Card>
 				{ this.renderVideoUpgradeNudge() }
 			</div>
-
 		);
 	}
 }
@@ -181,13 +181,13 @@ export default connect(
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 		const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'photon' );
-
-		const isVideoPressAvailable = [
+		const plansIncludingVideoPress = [
 			PLAN_JETPACK_BUSINESS,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 			PLAN_JETPACK_PREMIUM,
 			PLAN_JETPACK_PREMIUM_MONTHLY,
-		].includes( sitePlanSlug );
+		];
+		const isVideoPressAvailable = includes( plansIncludingVideoPress, sitePlanSlug );
 
 		return {
 			carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),

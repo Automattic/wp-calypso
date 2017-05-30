@@ -14,13 +14,11 @@ import { debounce, noop, get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import ConnectedSubscriptionListItem from './connected-subscription-list-item';
+import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
 
-/**
+/*
  * SitesWindowScroller is a component that takes in a list of site/feed objects.
  * It renders a list of the sites/feeds.
- *
- * @returns {object} SitesWindowScroller React Component
  */
 class SitesWindowScroller extends Component {
 	static propTypes = {
@@ -30,6 +28,7 @@ class SitesWindowScroller extends Component {
 		forceRefresh: PropTypes.any, // forceRefresh can be anything. Whenever we want to force a refresh, it should change
 		windowScrollerRef: PropTypes.func,
 		showLastUpdatedDate: PropTypes.bool,
+		followSource: PropTypes.string,
 	};
 	defaultProps = { windowScrollerRef: noop, showLastUpdatedDate: true };
 
@@ -63,6 +62,7 @@ class SitesWindowScroller extends Component {
 							feedId={ feedId }
 							siteId={ siteId }
 							onLoad={ measure }
+							followSource={ this.props.followSource }
 							showLastUpdatedDate={ this.props.showLastUpdatedDate }
 						/>
 					</div>

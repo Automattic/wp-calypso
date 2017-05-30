@@ -2,8 +2,8 @@
  * External dependencies
  */
 import validator from 'is-my-json-valid';
-import { merge, flow, partialRight, reduce } from 'lodash';
-import { combineReducers } from 'redux';
+import { merge, flow, partialRight, reduce, isEqual, omit } from 'lodash';
+import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 
 /**
  * Internal dependencies
@@ -89,8 +89,6 @@ export const keyedReducer = ( keyName, reducer ) => {
 		throw new TypeError( `Reducer passed into ``keyedReducer`` must be a function but I detected a ${ typeof reducer }` );
 	}
 
-	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
-
 	return ( state = {}, action ) => {
 		// don't allow coercion of key name: null => 0
 		if ( ! action.hasOwnProperty( keyName ) ) {
@@ -109,20 +107,21 @@ export const keyedReducer = ( keyName, reducer ) => {
 		// pass the old sub-state from that item into the reducer
 		// we need this to update state and also to compare if
 		// we had any changes, thus the initialState
-		const oldItemState = state.hasOwnProperty( itemKey )
-			? state[ itemKey ]
-			: initialState;
-
+		const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
+		const oldItemState = state[ itemKey ];
 		const newItemState = reducer( oldItemState, action );
 
 		// and do nothing if the new sub-state matches the old sub-state
-		// or if it matches the default state for the reducer, in which
-		// case nothing happened and we don't need to store it
-		if (
-			newItemState === oldItemState ||
-			newItemState === initialState
-		) {
+		if ( newItemState === oldItemState ) {
 			return state;
+		}
+
+		// remove key from state if setting back to initial state
+		// if it didn't exist anyway, then do nothing.
+		if ( isEqual( newItemState, initialState ) ) {
+			return state.hasOwnProperty( itemKey )
+				? omit( state, itemKey )
+				: state;
 		}
 
 		// otherwise immutably update the super-state
@@ -212,7 +211,7 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 		};
 	}
 
-	return ( state = initialState, action ) => {
+	const reducer = ( state = initialState, action ) => {
 		const { type } = action;
 
 		if ( 'production' !== process.env.NODE_ENV && 'type' in action && ! type ) {
@@ -226,6 +225,11 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 
 		return state;
 	};
+
+	//used to propagate actions properly when combined in combineReducersWithPersistence
+	reducer.hasCustomPersistence = true;
+
+	return reducer;
 }
 
 /**
@@ -273,27 +277,28 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  * @returns {function} wrapped reducer handling validation on DESERIALIZE and
  * returns initial state if no schema is provided on SERIALIZE and DESERIALIZE.
  */
-export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => {
-	const shouldDispatchAction = reducer.hasSchema || reducer.hasCustomPersistence;
+export const withSchemaValidation = ( schema, reducer ) => {
+	const wrappedReducer = ( state, action ) => {
+		if ( SERIALIZE === action.type ) {
+			return schema ? reducer( state, action ) : reducer( undefined, { type: '@@calypso/INIT' } );
+		}
+		if ( DESERIALIZE === action.type ) {
+			if ( ! schema ) {
+				return reducer( undefined, { type: '@@calypso/INIT' } );
+			}
 
-	if ( SERIALIZE === action.type ) {
-		return schema || shouldDispatchAction ? reducer( state, action ) : reducer( undefined, { type: '@@calypso/INIT' } );
-	}
-	if ( DESERIALIZE === action.type ) {
-		if ( shouldDispatchAction ) {
-			return reducer( state, action );
+			return state && isValidStateWithSchema( state, schema )
+				? state
+				: reducer( undefined, { type: '@@calypso/INIT' } );
 		}
 
-		if ( ! schema ) {
-			return reducer( undefined, { type: '@@calypso/INIT' } );
-		}
+		return reducer( state, action );
+	};
 
-		return state && isValidStateWithSchema( state, schema )
-			? state
-			: reducer( undefined, { type: '@@calypso/INIT' } );
-	}
+	//used to propagate actions properly when combined in combineReducersWithPersistence
+	wrappedReducer.hasCustomPersistence = true;
 
-	return reducer( state, action );
+	return wrappedReducer;
 };
 
 /**
@@ -317,7 +322,7 @@ export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => 
  *
  * age.schema = schema;
  *
- * const combinedReducer = combineReducersWithPersistence( {
+ * const combinedReducer = combineReducers( {
  *     age,
  *     height
  * } );
@@ -349,7 +354,7 @@ export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => 
  * };
  * date.hasCustomPersistence = true;
  *
- * const combinedReducer = combineReducersWithPersistence( {
+ * const combinedReducer = combineReducers( {
  *     date,
  *     height
  * } );
@@ -363,16 +368,13 @@ export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => 
  * @param {object} reducers - object containing the reducers to merge
  * @returns {function} - Returns the combined reducer function
  */
-export function combineReducersWithPersistence( reducers ) {
-	const [ validatedReducers, validatedReducersHasSchema ] = reduce( reducers, ( [ validated, hasSchema ], next, key ) => {
-		const { schema } = next;
-		return [
-			{ ...validated, [ key ]: withSchemaValidation( schema, next ) },
-			hasSchema || !! schema || next.hasSchema || next.hasCustomPersistence
-		];
-	}, [ {}, false ] );
-	const combined = combineReducers( validatedReducers );
-	combined.hasSchema = validatedReducersHasSchema;
+export function combineReducers( reducers ) {
+	const validatedReducers = reduce( reducers, ( validated, next, key ) => {
+		const { schema, hasCustomPersistence } = next;
+		return { ...validated, [ key ]: hasCustomPersistence ? next : withSchemaValidation( schema, next ) };
+	}, {} );
+	const combined = combine( validatedReducers );
+	combined.hasCustomPersistence = true;
 	return combined;
 }
 

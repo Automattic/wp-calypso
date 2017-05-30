@@ -65,8 +65,10 @@ import {
 	isJetpackBusiness
 } from 'lib/products-values';
 import { hasFeature } from 'state/sites/plans/selectors';
+import { getPlugins } from 'state/plugins/installed/selectors';
 import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import {
 	requestSiteSettings,
@@ -384,6 +386,19 @@ export const SeoForm = React.createClass( {
 		this.setState( { showPreview: false } );
 	},
 
+	getConflictingSeoPlugins( activePlugins ) {
+		const conflictingSeoPlugins = [
+			'Yoast SEO',
+			'Yoast SEO Premium',
+			'All In One SEO Pack',
+			'All in One SEO Pack Pro',
+		];
+
+		return activePlugins
+			.filter( ( { name } ) => includes( conflictingSeoPlugins, name ) )
+			.map( ( { name, slug } ) => ( { name, slug } ) );
+	},
+
 	render() {
 		const {
 			siteId,
@@ -397,6 +412,7 @@ export const SeoForm = React.createClass( {
 			isSitePrivate,
 			isSiteHidden,
 			isVerificationToolsActive,
+			activePlugins,
 			translate,
 		} = this.props;
 		const {
@@ -457,10 +473,16 @@ export const SeoForm = React.createClass( {
 			</Button>
 		);
 
+		const conflictedSeoPlugin = siteIsJetpack
+			// Let's just pick the first one to keep the notice short.
+			? this.getConflictingSeoPlugins( activePlugins )[ 0 ]
+			: null;
+
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
+				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{
 					siteIsJetpack &&
 					<QueryJetpackModules siteId={ siteId } />
@@ -480,6 +502,21 @@ export const SeoForm = React.createClass( {
 					>
 						<NoticeAction href={ generalTabUrl }>
 							{ translate( 'Privacy Settings' ) }
+						</NoticeAction>
+					</Notice>
+				}
+
+				{ conflictedSeoPlugin &&
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate(
+							'Your SEO settings are managed by the following plugin: %(pluginName)s',
+							{ args: { pluginName: conflictedSeoPlugin.name } }
+						) }
+					>
+						<NoticeAction href={ `/plugins/${ conflictedSeoPlugin.slug }/${ slug }` }>
+							{ translate( 'View Plugin' ) }
 						</NoticeAction>
 					</Notice>
 				}
@@ -523,7 +560,7 @@ export const SeoForm = React.createClass( {
 				}
 
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
-					{ showAdvancedSeo &&
+					{ showAdvancedSeo && ! conflictedSeoPlugin &&
 						<div>
 							<SectionHeader label={ translate( 'Page Title Structure' ) }>
 								{ seoSubmitButton }
@@ -548,7 +585,7 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
-					{ ( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) &&
+					{ ! conflictedSeoPlugin && ( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) &&
 						<div>
 							<SectionHeader label={ translate( 'Website Meta' ) }>
 								{ seoSubmitButton }
@@ -763,6 +800,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
 		isVerificationToolsActive: isJetpackModuleActive( state, siteId, 'verification-tools' ),
+		activePlugins: getPlugins( state, [ { ID: siteId } ], 'active' ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),

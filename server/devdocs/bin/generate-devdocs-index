@@ -12,14 +12,13 @@
 var fs = require( 'fs' ),
 	fspath = require( 'path' ),
 	lunr = require( 'lunr' ),
+	globby = require( 'globby' ),
 	root = fspath.dirname( fspath.join( __dirname, '..', '..' ) );
 
 function main() {
 	// extract list of files to index and remove leading ./'s
-	var fileList = process.
-		argv.
-		splice( 2, process.argv.length ).
-		map( function ( fileWithPath ) {
+	var fileList = globby.sync( process.argv.slice( 2 ) )
+		.map( function ( fileWithPath ) {
 			return fileWithPath.replace( /^\.\//, '' );
 		} );
 

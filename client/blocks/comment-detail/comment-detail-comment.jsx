@@ -14,7 +14,7 @@ export class CommentDetailComment extends Component {
 	static propTypes = {
 		authorAvatarUrl: PropTypes.string,
 		authorDisplayName: PropTypes.string,
-		authorEmail: PropTypes.string,
+		authorEmail: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.string ] ),
 		authorId: PropTypes.number,
 		authorIp: PropTypes.string,
 		authorIsBlocked: PropTypes.bool,

@@ -34,7 +34,7 @@ const AdvancedTab = ( {
 	return (
 		<div>
 			<QueryNotices siteId={ siteId } />
-			<Caching />
+			<Caching notices={ notices } />
 			<Miscellaneous notices={ notices } />
 			<Advanced />
 			<CacheLocation />

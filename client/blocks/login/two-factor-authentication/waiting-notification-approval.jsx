@@ -14,8 +14,6 @@ import {
 	stopPollAppPushAuth,
 } from 'state/login/actions';
 import {
-	getTwoFactorUserId,
-	getTwoFactorAuthNonce,
 	isTwoFactorAuthTypeSupported,
 	getTwoFactorPushPollSuccess,
 } from 'state/login/selectors';
@@ -77,8 +75,6 @@ class WaitingTwoFactorNotificationApproval extends Component {
 export default connect(
 	( state ) => ( {
 		isSmsAuthSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
-		twoStepNonce: getTwoFactorAuthNonce( state ),
-		userId: getTwoFactorUserId( state ),
 		pushSuccess: getTwoFactorPushPollSuccess( state ),
 	} ),
 	{

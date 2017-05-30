@@ -392,35 +392,17 @@ If you are not satisfied with the default handling, it is possible to implement 
 `DESERIALIZE` action handlers in your reducers to customize data persistence. Always use a schema with your custom 
 handlers to avoid data shape errors. 
 
-### Not persisting data
+### Opt-in to Persistence ( [#13542](https://github.com/Automattic/wp-calypso/pull/13542) )
 
-Some subtrees may choose to never persist data. One such example of this is our online connection state. If connection 
-values are persisted we will not be able to reliably tell when the application is offline or online.
-
-If persisting state causes application errors, opting out of persistence is straightforward: in the `createReducer` util
-provide only the default state value as a first param and don't provide a schema as a third param. Behind the scenes 
-data is never going to be persisted and is always regenerated with default value. In this example, it happens to be `'CHECKING'`
-```javascript
-export const connectionState = createReducer( 'CHECKING', {
-	[CONNECTION_LOST]: () => 'OFFLINE',
-	[CONNECTION_RESTORED]: () => 'ONLINE'
-} );
-```
-
-### Opt-in to Persistence ( [#13359](https://github.com/Automattic/wp-calypso/pull/13359) )
-
-Currently reducers are persisted by default if no handlers are given for `SERIALIZE` and `DESERIALIZE`. This is a major 
-problem since many people may not realize that this is happening, and we can run into the data shape errors as 
-noted above.
-
-In the **future** we can opt-in to persistence by adding a schema as a property on the reducer. We do this by combining 
-all of our reducers using `combineReducersWithPersistence` at every level of the tree instead of [combineReducers](http://redux.js.org/docs/api/combineReducers.html).
-Each reducer is then wrapped with `withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALZE` 
-if a schema is present and returns initial state on both `SERIALIZE` and `DESERIALZE` if a schema is not present.
+If we choose not to use `createReducer` we can opt-in to persistence by adding a schema as a property on the reducer. 
+We do this by combining all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead 
+of [combineReducers](http://redux.js.org/docs/api/combineReducers.html) from `redux`. Each reducer is then wrapped with 
+`withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALZE` if a schema is present and 
+returns initial state on both `SERIALIZE` and `DESERIALZE` if a schema is not present.
 
 To opt-out of persistence we combine the reducers without any attached schema.
 ```javascript
-return combineReducersWithPersistence( {
+return combineReducers( {
     age,
     height,
 } );
@@ -429,7 +411,7 @@ return combineReducersWithPersistence( {
 To persist, we add the schema as a property on the reducer:
 ```javascript
 age.schema = ageSchema;
-return combineReducersWithPersistence( {
+return combineReducers( {
     age,
     height,
 } );
@@ -440,9 +422,15 @@ on `DESERIALIZE` so all we need to do is set a boolean bit on the reducer, to en
 incorrectly from the default handling provided by `withSchemaValidation`.
 ```javascript
 date.hasCustomPersistence = true;
-return combineReducersWithPersistence( {
+return combineReducers( {
     age,
     height,
     date,
 } );
 ```
+
+### Not persisting data
+
+Some subtrees may choose to never persist data. One such example of this is our online connection state. If connection 
+values are persisted we will not be able to reliably tell when the application is offline or online. Please remember
+to reason about if items should be persisted. 

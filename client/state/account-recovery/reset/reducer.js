@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { stubTrue, stubFalse } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
+
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,

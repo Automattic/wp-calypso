@@ -2,11 +2,12 @@
  * External dependencies
  */
 import thunkMiddleware from 'redux-thunk';
-import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 
 /**
  * Internal dependencies
  */
+import { combineReducers } from 'state/utils';
 import analyticsTracking from './analytics/reducer';
 import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';
@@ -61,6 +62,7 @@ import timezones from './timezones/reducer';
 import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
+import userDevices from './user-devices/reducer';
 import userSettings from './user-settings/reducer';
 import wordads from './wordads/reducer';
 import config from 'config';
@@ -124,6 +126,7 @@ const reducers = {
 	themes,
 	ui,
 	users,
+	userDevices,
 	userSettings,
 	wordads,
 };

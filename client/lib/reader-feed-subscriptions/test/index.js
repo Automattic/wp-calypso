@@ -6,8 +6,7 @@ const chai = require( 'chai' ),
 	Dispatcher = require( 'dispatcher' ),
 	immutable = require( 'immutable' );
 
-const FeedActionTypes = require( 'lib/feed-store/constants' ).action,
-	FeedSubscriptionStore = require( '../index' );
+const FeedSubscriptionStore = require( '../index' );
 
 describe( 'store', function() {
 	beforeEach( function() {
@@ -277,64 +276,5 @@ describe( 'store', function() {
 		} );
 
 		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 1 );
-	} );
-
-	it( 'should pick up a subscription from a feed result', () => {
-		const feed_URL = 'http://example.com/atom';
-		Dispatcher.handleServerAction( {
-			type: FeedActionTypes.RECEIVE_FETCH,
-			data: {
-				feed_ID: 1,
-				is_following: true,
-				feed_URL
-			}
-		} );
-
-		expect( FeedSubscriptionStore.getSubscription( feed_URL ).get( 'feed_ID' ) ).to.eql( 1 );
-	} );
-
-	it( 'should sort existing subscriptions into the correct place when accepting them', () => {
-		// take a feed with no sub date
-		Dispatcher.handleServerAction( {
-			type: FeedActionTypes.RECEIVE_FETCH,
-			data: {
-				is_following: true,
-				feed_URL: 'http://example.com/atom',
-				feed_ID: 789
-			}
-		} );
-
-		// take a set of subs that do have dates
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_FEED_SUBSCRIPTIONS',
-			data: {
-				page: 1,
-				total_subscriptions: 999,
-				subscriptions: [
-					{
-						ID: 1,
-						URL: 'http://www.dragonfruit.com',
-						feed_ID: 123,
-						date_subscribed: '2016-01-01T00:00:00Z'
-					},
-					{
-						ID: 2,
-						URL: 'http://example.com/atom',
-						feed_ID: 789,
-						date_subscribed: '2016-01-01T00:00:03Z'
-					},
-					{
-						ID: 3,
-						URL: 'http://www.dragonfruit3.com',
-						feed_ID: 456,
-						date_subscribed: '2016-01-01T00:00:03Z'
-					}
-				]
-			}
-		} );
-
-		expect( FeedSubscriptionStore.getSubscriptions().count ).to.eql( 3 );
-		expect( FeedSubscriptionStore.getSubscriptions().list.count() ).to.eql( 3 );
-		expect( FeedSubscriptionStore.getSubscriptions().list.get( 1 ).get( 'feed_ID' ) ).to.eql( 456 );
 	} );
 } );

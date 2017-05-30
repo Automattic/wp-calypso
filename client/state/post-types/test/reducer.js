@@ -88,26 +88,6 @@ describe( 'reducer', () => {
 				2916284: false
 			} );
 		} );
-
-		it( 'should not persist state', () => {
-			const state = requesting( deepFreeze( {
-				2916284: true
-			} ), {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const state = requesting( deepFreeze( {
-				2916284: true
-			} ), {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( '#items()', () => {

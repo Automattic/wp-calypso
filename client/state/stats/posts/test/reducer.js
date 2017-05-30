@@ -16,7 +16,10 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { requesting, items } from '../reducer';
+import { requesting, items as unwrappedItems } from '../reducer';
+import { withSchemaValidation } from 'state/utils';
+
+const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -152,32 +155,6 @@ describe( 'reducer', () => {
 					2454: { views: false }
 				}
 			} );
-		} );
-
-		it( 'should not persist state', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					2454: { views: true }
-				}
-			}	);
-			const state = requesting( previousState, {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					2454: { views: true }
-				}
-			}	);
-			const state = requesting( previousState, {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 

@@ -2,32 +2,55 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import getSiteId from 'state/selectors/get-site-id';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
+import CommentList from './comment-list';
+import QuerySiteComments from 'components/data/query-site-comments';
 
 export class CommentsManagement extends Component {
-
 	static propTypes = {
 		basePath: PropTypes.string,
+		comments: PropTypes.array,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string.isRequired,
+		status: PropTypes.string,
 		translate: PropTypes.func,
 	};
 
 	render() {
-		const { translate, basePath } = this.props;
+		const {
+			basePath,
+			siteId,
+			siteSlug,
+			status,
+			translate,
+		} = this.props;
+
 		return (
-			<Main className="comments">
+			<Main className="comments" wideLayout>
 				<PageViewTracker path={ basePath } title="Manage Comments" />
+				<QuerySiteComments siteId={ siteId } status="all" />
 				<DocumentHead title={ translate( 'Manage Comments' ) } />
-				<div>Hello World!</div>
+				<CommentList
+					siteId={ siteId }
+					siteSlug={ siteSlug }
+					status={ status }
+				/>
 			</Main>
 		);
 	}
 }
 
-export default localize( CommentsManagement );
+const mapStateToProps = ( state, { siteSlug } ) => ( {
+	siteId: getSiteId( state, siteSlug ),
+} );
+
+export default connect( mapStateToProps )( localize( CommentsManagement ) );

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { get, isEqual, reduce } from 'lodash';
 
 /**
@@ -10,14 +9,13 @@ import { get, isEqual, reduce } from 'lodash';
 import {
 	CURRENT_USER_ID_SET,
 	CURRENT_USER_FLAGS_RECEIVE,
-	DESERIALIZE,
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
 	SITES_UPDATE,
 	PLANS_RECEIVE
 } from 'state/action-types';
-import { createReducer, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
 import gravatarStatus from './gravatar-status/reducer';
 import emailVerification from './email-verification/reducer';
@@ -85,17 +83,11 @@ export function capabilities( state = {}, action ) {
 				memo[ site.ID ] = site.capabilities;
 				return memo;
 			}, state );
-
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, capabilitiesSchema ) ) {
-				return state;
-			}
-
-			return {};
 	}
 
 	return state;
 }
+capabilities.schema = capabilitiesSchema;
 
 export default combineReducers( {
 	id,

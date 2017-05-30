@@ -15,11 +15,14 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { withSchemaValidation } from 'state/utils';
 import reducer, {
-	items,
+	items as unwrappedItems,
 	fetchingItems
 } from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
+
+const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
 
 describe( 'reducer', () => {
 	let sandbox;
@@ -225,38 +228,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				2916284: false,
 				77203074: true
-			} );
-		} );
-
-		describe( 'persistence', () => {
-			it( 'never persists state', () => {
-				const original = deepFreeze( {
-					2916284: {
-						max_storage_bytes: 3221225472,
-						storage_used_bytes: 56000
-					},
-					77203074: {
-						max_storage_bytes: 3221225472,
-						storage_used_bytes: 323506
-					}
-				} );
-				const state = fetchingItems( original, { type: SERIALIZE } );
-				expect( state ).to.eql( {} );
-			} );
-
-			it( 'never loads persisted state', () => {
-				const original = deepFreeze( {
-					2916284: {
-						max_storage_bytes: 3221225472,
-						storage_used_bytes: 56000
-					},
-					77203074: {
-						max_storage_bytes: 3221225472,
-						storage_used_bytes: 323506
-					}
-				} );
-				const state = fetchingItems( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
 			} );
 		} );
 	} );

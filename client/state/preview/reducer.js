@@ -3,9 +3,6 @@
  */
 import * as ActionTypes from 'state/action-types';
 import { previewSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
-
-const initialState = {};
 
 const siteInitialState = {
 	previousCustomizations: [],
@@ -43,7 +40,7 @@ function siteReducer( newState = siteInitialState, action ) {
 	return state;
 }
 
-export default function( state = initialState, action ) {
+const preview = function( state = {}, action ) {
 	switch ( action.type ) {
 		case ActionTypes.PREVIEW_MARKUP_RECEIVE:
 		case ActionTypes.PREVIEW_CUSTOMIZATIONS_CLEAR:
@@ -51,13 +48,9 @@ export default function( state = initialState, action ) {
 		case ActionTypes.PREVIEW_CUSTOMIZATIONS_UNDO:
 		case ActionTypes.PREVIEW_CUSTOMIZATIONS_SAVED:
 			return Object.assign( {}, state, { [ action.siteId ]: siteReducer( state[ action.siteId ], action ) } );
-		case ActionTypes.SERIALIZE:
-			return state;
-		case ActionTypes.DESERIALIZE:
-			if ( isValidStateWithSchema( state, previewSchema ) ) {
-				return state;
-			}
-			return initialState;
 	}
 	return state;
-}
+};
+preview.schema = previewSchema;
+
+export default preview;

@@ -17,6 +17,7 @@ export default React.createClass( {
 
 	propTypes: {
 		type: PropTypes.string,
+		excludePrivateTypes: PropTypes.bool,
 		siteId: PropTypes.number.isRequired,
 		status: PropTypes.string,
 		multiple: PropTypes.bool,
@@ -27,7 +28,8 @@ export default React.createClass( {
 		createLink: PropTypes.string,
 		orderBy: PropTypes.oneOf( [ 'title', 'date', 'modified', 'comment_count', 'ID' ] ),
 		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
-		showTypeLabels: PropTypes.bool
+		showTypeLabels: PropTypes.bool,
+		suppressFirstPageLoad: PropTypes.bool,
 	},
 
 	getDefaultProps() {
@@ -36,7 +38,8 @@ export default React.createClass( {
 			status: 'publish,private',
 			multiple: false,
 			orderBy: 'title',
-			order: 'ASC'
+			order: 'ASC',
+			suppressFirstPageLoad: false,
 		};
 	},
 
@@ -55,12 +58,21 @@ export default React.createClass( {
 	},
 
 	getQuery() {
-		const { type, status, excludeTree, orderBy, order } = this.props;
+		const { type, status, excludeTree, orderBy, order, excludePrivateTypes } = this.props;
 		const { search } = this.state;
 
-		return reduce( { type, status, excludeTree, orderBy, order, search }, ( memo, value, key ) => {
+		return reduce( { type, status, excludeTree, orderBy, order, excludePrivateTypes, search }, ( memo, value, key ) => {
 			if ( null === value || undefined === value ) {
 				return memo;
+			}
+
+			// if we don't have a search term, default to ordering by date
+			if ( key === 'orderBy' && search !== '' ) {
+				value = 'date';
+			}
+
+			if ( key === 'order' && search !== '' ) {
+				value = 'DESC';
 			}
 
 			memo[ snakeCase( key ) ] = value;
@@ -69,7 +81,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { siteId, multiple, onChange, emptyMessage, createLink, selected, showTypeLabels } = this.props;
+		const { siteId, multiple, onChange, emptyMessage, createLink, selected, showTypeLabels, suppressFirstPageLoad } = this.props;
 
 		return (
 			<PostSelectorPosts
@@ -82,6 +94,7 @@ export default React.createClass( {
 				createLink={ createLink }
 				selected={ selected }
 				showTypeLabels={ showTypeLabels }
+				suppressFirstPageLoad={ suppressFirstPageLoad }
 			/>
 		);
 	}

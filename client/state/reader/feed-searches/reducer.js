@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+
 import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
 
 /**
@@ -24,17 +24,12 @@ import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
  * @param  {Object} action Action payload
  * @return {Array}        Updated state
  */
-export const items = createReducer(
-	{},
-	{
-		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => {
-			const current = state[ action.query ] || [];
-			return {
-				...state,
-				[ action.query ]: uniqBy( current.concat( action.payload.feeds ), 'feed_URL' ),
-			};
-		},
-	}
+export const items = keyedReducer(
+	'query',
+	createReducer( null, {
+		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) =>
+			uniqBy( ( state || [] ).concat( action.payload.feeds ), 'feed_URL' ),
+	} )
 );
 
 /**
@@ -53,14 +48,11 @@ export const items = createReducer(
  * @param  {Object} action Action payload
  * @return {Array}         Updated state
  */
-export const total = createReducer(
-	{},
-	{
-		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => ( {
-			...state,
-			[ action.query ]: action.payload.total,
-		} ),
-	}
+export const total = keyedReducer(
+	'query',
+	createReducer( null, {
+		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => action.payload.total,
+	} )
 );
 
 export default combineReducers( {

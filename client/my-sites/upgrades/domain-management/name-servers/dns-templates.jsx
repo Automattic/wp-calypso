@@ -32,7 +32,8 @@ class DnsTemplates extends Component {
 						} ),
 					placeholder: 'google-site-verification=...',
 					validationPattern: /^google-site-verification=\w{43}$/,
-					dnsTemplate: dnsTemplates.G_SUITE
+					dnsTemplateProvider: dnsTemplates.G_SUITE.PROVIDER,
+					dnsTemplateService: dnsTemplates.G_SUITE.SERVICE
 				},
 				{
 					name: 'Office 365',
@@ -44,7 +45,8 @@ class DnsTemplates extends Component {
 						} ),
 					placeholder: 'MS=ms...',
 					validationPattern: /^MS=ms\d{8}$/,
-					dnsTemplate: dnsTemplates.MICROSOFT_OFFICE365,
+					dnsTemplateProvider: dnsTemplates.MICROSOFT_OFFICE365.PROVIDER,
+					dnsTemplateService: dnsTemplates.MICROSOFT_OFFICE365.SERVICE,
 					modifyVariables: ( variables ) => Object.assign(
 						{},
 						variables,
@@ -56,7 +58,8 @@ class DnsTemplates extends Component {
 					label: translate( 'Zoho Mail CNAME zb code' ),
 					placeholder: 'zb...',
 					validationPattern: /^zb\w{1,100}$/,
-					dnsTemplate: dnsTemplates.ZOHO_MAIL
+					dnsTemplateProvider: dnsTemplates.ZOHO_MAIL.PROVIDER,
+					dnsTemplateService: dnsTemplates.ZOHO_MAIL.SERVICE
 				}
 			]
 		};

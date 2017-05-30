@@ -1,29 +1,26 @@
 /**
  * Internal dependencies
  */
-import error from './error-reducer';
+import settingsGeneral from './settings/general/reducer';
+import paymentMethods from './payment-methods/reducer';
 import productCategories from './product-categories/reducer';
-import {
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
+import shippingZones from './shipping-zones/reducer';
+import products from './products/reducer';
 
 const initialState = {};
 
 const handlers = {
+	...paymentMethods,
 	...productCategories,
-	...error,
+	...settingsGeneral,
+	...shippingZones,
+	...products,
 };
 
 export default function( state = initialState, action ) {
 	const { type, payload } = action;
 	const { siteId } = payload || {};
 	const handler = handlers[ type ];
-
-	// Necessary to ensure this data is not persisted.
-	if ( type === SERIALIZE || type === DESERIALIZE ) {
-		return initialState;
-	}
 
 	if ( handler ) {
 		if ( ! siteId ) {
@@ -38,4 +35,3 @@ export default function( state = initialState, action ) {
 
 	return state;
 }
-

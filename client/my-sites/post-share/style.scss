@@ -33,17 +33,8 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 }
 
 .post-share__main {
-	border-top: $section-border;
 	display: flex;
 	flex-direction: column-reverse;
-
-	@include breakpoint( ">480px" ) {
-		flex-direction: row;
-	}
-
-	@include breakpoint( ">660px" ) {
-		flex-direction: column-reverse;
-	}
 
 	@include breakpoint( ">960px" ) {
 		flex-direction: row;
@@ -66,57 +57,24 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 }
 
 .post-share__form {
-	flex: 3;
+	flex: 3 0 0;
 	padding-bottom: 16px;
 
 	@include breakpoint( ">480px" ) {
-		border-right: $section-border;
-	}
-
-	@include breakpoint( ">660px" ) {
-		border-right-width: 0;
-	}
-
-	@include breakpoint( ">960px" ) {
-		border-right-width: 1px;
+		padding-bottom: 24px;
 	}
 
 	.editor-sharing__publicize-message {
 			margin-top: 0;
 
-		@include breakpoint( ">480px" ) {
-			margin-top: 11px;
-		}
-
-		@include breakpoint( ">660px" ) {
-			margin-top: 0;
-		}
-
-		@include breakpoint( ">960px" ) {
-			margin-top: 11px;
-		}
-
 		.editor-sharing__message-heading {
-			border-top: $section-border;
-			border-bottom: $section-border;
-			line-height: 15px;
-			margin-bottom: 8px;
+			box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 0 0 transparentize( lighten( $gray, 20% ), .5 );
+			line-height: 28px;
+			margin-bottom: 0;
 			padding: 11px 16px;
 
 			@include breakpoint( ">480px" ) {
-				border-top: 0;
-				padding: 0 24px 11px;
-			}
-
-			@include breakpoint( ">660px" ) {
-				border-top: $section-border;
-				line-height: 28px;
-				padding-top: 11px;
-			}
-
-			@include breakpoint( ">960px" ) {
-				border-top: 0;
-				padding-top: 0;
+				padding: 11px 24px;
 			}
 		}
 
@@ -124,12 +82,10 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 			margin: 16px 16px 8px;
 
 			@include breakpoint( ">480px" ) {
-				margin-right: 24px;
-				margin-left: 24px;
+				margin: 24px 24px 8px;
 			}
 
 			&.form-textarea {
-				margin-top: 8px;
 				padding: 8px;
 				width: calc(100% - 32px);
 
@@ -142,27 +98,26 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 }
 
 .post-share__services {
-	flex: 2;
-	flex-direction: column;
-	display: flex;
-	flex-wrap: wrap;
-	margin-top: 11px;
-	padding-bottom: 16px;
+	flex: 2 1 0;
+
+	@include breakpoint( ">960px" ) {
+		border-left: $section-border;
+	}
 }
 
 .post-share__services-header {
-	border-bottom: $section-border;
-	font-size: 14px;
-	line-height: 15px;
-	margin-bottom: 16px;
-	padding: 0 16px 11px;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 0 0 transparentize( lighten( $gray, 20% ), .5 );
+}
+
+.post-share__services .section-header__actions {
+	flex: 0 0 auto;
+}
+
+.post-share__connections {
+	padding: 16px;
 
 	@include breakpoint( ">480px" ) {
-		padding: 0 24px 11px;
-	}
-
-	@include breakpoint( ">660px" ) {
-		line-height: 28px;
+		padding: 24px;
 	}
 }
 
@@ -170,16 +125,11 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	align-items: center;
 	cursor: pointer;
 	display: flex;
-	padding-bottom: 16px;
 	color: lighten( $gray, 20% );
-	margin: 0 16px;
-
-	@include breakpoint( ">480px" ) {
-		margin: 0 24px;
-	}
+	margin-top: 16px;
 
 	&:first-of-type {
-		margin-top: 8px;
+		margin-top: 0;
 	}
 
 	&.is-broken {
@@ -321,15 +271,6 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
 
-.post-share__preview-button {
-	width: auto;
-	margin: 0 0 0 5px;
-	@include breakpoint( "<480px" ) {
-		width: 100%;
-		margin: 0 0 5px 0;
-	}
-}
-
 .post-share__share-combo {
 	display: flex;
 	margin-left: 8px;
@@ -338,7 +279,6 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 .post-share__schedule-button {
 	padding-right: 8px;
 	padding-left: 8px;
-	margin-left: -1px;
 }
 
 .post-share__share-combo .button:last-child {
@@ -451,7 +391,7 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
 .post-share__timestamp-value {
 	@include breakpoint( ">480px" ) {
-		padding-left: 2px;
+		padding-left: 0;
 	}
 
 	@include breakpoint( ">660px" ) {
@@ -459,7 +399,7 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
 
 	@include breakpoint( ">960px" ) {
-		padding-left: 2px;
+		padding-left: 0;
 	}
 }
 

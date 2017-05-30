@@ -1,9 +1,36 @@
 /*rtl:ignore*/
 
+.social-buttons__button {
+	svg {
+		margin-top: -2px;
+
+		&.disabled {
+			display: none;
+		}
+	}
+}
+
+.social-buttons__button.disabled {
+	svg.enabled {
+		display: none;
+	}
+
+	svg.disabled {
+		display: inline;
+	}
+}
+
 .social-buttons__logo {
 	vertical-align: middle;
 }
 
 .social-buttons__service-name {
 	margin-left: 9px;
+}
+
+.social-buttons__error {
+	.popover__inner {
+		padding: 10px;
+		max-width: 200px;
+	}
 }

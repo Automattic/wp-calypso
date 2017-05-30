@@ -121,14 +121,7 @@ export const ReaderSidebar = createReactClass( {
 										{ this.props.translate( 'Followed Sites' ) }
 									</span>
 								</a>
-								<a
-									href={
-										config.isEnabled( 'reader/following-manage-refresh' )
-											? '/following/manage'
-											: '/following/edit'
-									}
-									className="sidebar__button"
-								>
+								<a href="/following/manage" className="sidebar__button">
 									{ this.props.translate( 'Manage' ) }
 								</a>
 							</li>
@@ -230,14 +223,16 @@ export const shouldRenderAppPromo = ( options = {} ) => {
 		isUserOnChromeOs = /\bCrOS\b/.test( navigator.userAgent ),
 	} = options;
 
-	return every( [
-		! isDesktopPromoDisabled,
-		isUserLocaleEnglish,
-		! isViewportMobile,
-		! isUserOnChromeOs,
-		isDesktopPromoConfiguredToRun,
-		! isUserDesktopAppUser,
-	] );
+	return every(
+		[
+			! isDesktopPromoDisabled,
+			isUserLocaleEnglish,
+			! isViewportMobile,
+			! isUserOnChromeOs,
+			isDesktopPromoConfiguredToRun,
+			! isUserDesktopAppUser,
+		]
+	);
 };
 
 export default connect(

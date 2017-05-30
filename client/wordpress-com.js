@@ -136,8 +136,15 @@ const sections = [
 		group: 'sites'
 	},
 	{
+		name: 'jetpack-connect',
+		paths: [ '/jetpack' ],
+		module: 'jetpack-connect',
+		secondary: false,
+		enableLoggedOut: true,
+	},
+	{
 		name: 'signup',
-		paths: [ '/start', '/jetpack' ],
+		paths: [ '/start' ],
 		module: 'signup',
 		secondary: false,
 		enableLoggedOut: true,

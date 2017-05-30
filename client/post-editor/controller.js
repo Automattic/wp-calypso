@@ -71,8 +71,11 @@ function maybeRedirect( context ) {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 
-	const path = getEditorPath( state, siteId, postId );
+	let path = getEditorPath( state, siteId, postId, 'post', context.query );
 	if ( path !== context.pathname ) {
+		if ( context.querystring ) {
+			path += `?${ context.querystring }`;
+		}
 		page.redirect( path );
 		return true;
 	}

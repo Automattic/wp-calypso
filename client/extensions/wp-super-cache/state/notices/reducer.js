@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
+
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_NOTICES,

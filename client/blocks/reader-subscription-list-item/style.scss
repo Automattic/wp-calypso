@@ -1,6 +1,12 @@
 .reader-subscription-list-item {
 	display: flex;
 	flex-direction: row;
+
+	&.has-email-settings {
+		@include breakpoint( "<660px" ) {
+			min-height: 56px;
+		}
+	}
 }
 
 .reader-subscription-list-item__byline {
@@ -49,6 +55,10 @@
 	height: 32px;
 	min-height: 32px;
 	min-width: 32px;
+}
+
+.reader-subscription-list-item .site-icon {
+	margin-top: 5px;
 }
 
 .reader-subscription-list-item {
@@ -180,10 +190,11 @@
 	height: 18px;
 	position: relative;
 		left: 0;
-		top: 4px;
+		top: 19px;
 
 	@include breakpoint( ">660px" ) {
 		left: -4px;
+		top: 4px;
 	}
 }
 
@@ -309,4 +320,3 @@
 .reader-subscription-list-item__avatar {
 	min-width: 44px;
 }
-

@@ -43,7 +43,7 @@ class SocialSignupForm extends Component {
 		return (
 			<div className="signup-form__social">
 				<p>
-					{ this.props.translate( 'Or create account using social profile:' ) }
+					{ this.props.translate( 'Or create an account using your existing social profile:' ) }
 				</p>
 
 				<div className="signup-form__social-buttons">
@@ -56,10 +56,10 @@ class SocialSignupForm extends Component {
 						responseHandler={ this.handleFacebookResponse } />
 				</div>
 
-				<p>
+        <p>
 					{ this.props.translate(
-						"Connect to your existing social profile to get started faster. We'll never post without your permission."
-					) }
+            "Connect to your existing social profile to get started faster. We'll never post without your permission."
+          ) }
 				</p>
 			</div>
 		);

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { pick } from 'lodash';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,22 +14,29 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle/compact';
+import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
 const Caching = ( {
 	fields: {
-		cache_mod_rewrite,
+		cache_type,
 		is_cache_enabled,
-		is_super_cache_enabled,
 	},
 	handleAutosavingToggle,
 	handleRadio,
 	handleSubmitForm,
 	isRequesting,
 	isSaving,
+	notices: {
+		htaccess_ro,
+		mod_rewrite_missing,
+	},
 	translate,
 } ) => {
+	const htaccessMessage = get( htaccess_ro, 'message' );
+	const modRewriteMessage = get( mod_rewrite_missing, 'message' );
+
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Caching' ) }>
@@ -46,6 +53,19 @@ const Caching = ( {
 			</SectionHeader>
 			<Card>
 				<form>
+					{ htaccessMessage &&
+					<Notice
+						showDismiss={ false }
+						status="is-warning"
+						text={ htaccessMessage } />
+					}
+
+					{ modRewriteMessage &&
+					<Notice
+						showDismiss={ false }
+						status="is-warning"
+						text={ modRewriteMessage } />
+					}
 					<FormFieldset>
 						<FormToggle
 							checked={ !! is_cache_enabled }
@@ -60,11 +80,11 @@ const Caching = ( {
 					<FormFieldset className="wp-super-cache__cache-type-fieldset">
 						<FormLabel>
 							<FormRadio
-								checked={ !! is_super_cache_enabled && !! cache_mod_rewrite }
+								checked={ 'mod_rewrite' === cache_type }
 								disabled={ isRequesting || isSaving || ! is_cache_enabled }
-								name="is_super_cache_enabled"
+								name="cache_type"
 								onChange={ handleRadio }
-								value="1" />
+								value="mod_rewrite" />
 							<span>
 								{ translate( 'Use mod_rewrite to serve cache files.' ) }
 							</span>
@@ -72,11 +92,11 @@ const Caching = ( {
 
 						<FormLabel>
 							<FormRadio
-								checked={ ! cache_mod_rewrite }
+								checked={ 'PHP' === cache_type }
 								disabled={ isRequesting || isSaving || ! is_cache_enabled }
-								name="is_super_cache_enabled"
+								name="cache_type"
 								onChange={ handleRadio }
-								value="2" />
+								value="PHP" />
 							<span>
 								{ translate(
 									'Use PHP to serve cache files. {{em}}(Recommended){{/em}}',
@@ -89,11 +109,11 @@ const Caching = ( {
 
 						<FormLabel>
 							<FormRadio
-								checked={ ! is_super_cache_enabled }
+								checked={ 'wpcache' === cache_type }
 								disabled={ isRequesting || isSaving || ! is_cache_enabled }
-								name="is_super_cache_enabled"
+								name="cache_type"
 								onChange={ handleRadio }
-								value="0" />
+								value="wpcache" />
 							<span>
 								{ translate( 'Legacy page caching.' ) }
 							</span>
@@ -116,9 +136,8 @@ const Caching = ( {
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'cache_mod_rewrite',
+		'cache_type',
 		'is_cache_enabled',
-		'is_super_cache_enabled',
 	] );
 };
 

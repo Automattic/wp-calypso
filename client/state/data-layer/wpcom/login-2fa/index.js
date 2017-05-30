@@ -9,7 +9,7 @@ import defer from 'lodash/defer';
  */
 import config from 'config';
 import {
-	TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE,
+	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 } from 'state/action-types';
@@ -39,7 +39,7 @@ const doAppPushRequest = ( store ) => {
 		.accept( 'application/json' )
 		.send( {
 			user_id: getTwoFactorUserId( store.getState() ),
-			two_step_nonce: getTwoFactorAuthNonce( store.getState() ),
+			two_step_nonce: getTwoFactorAuthNonce( store.getState(), 'push' ),
 			remember_me: getTwoFactorRememberMe( store.getState() ),
 			two_step_push_token: getTwoFactorPushToken( store.getState() ),
 			client_id: config( 'wpcom_signup_id' ),
@@ -47,7 +47,11 @@ const doAppPushRequest = ( store ) => {
 		} ).then( () => {
 			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
 		} ).catch( error => {
-			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE, twoStepNonce: error.response.body.data.two_step_nonce } );
+			store.dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
+				nonceType: 'push',
+				twoStepNonce: error.response.body.data.two_step_nonce
+			} );
 			return Promise.reject( error );
 		} );
 };
@@ -79,10 +83,9 @@ const doAppPushPolling = store => {
 	}
 };
 
-const handleTwoFactorPushPoll = ( store, action, next ) => {
+const handleTwoFactorPushPoll = ( store ) => {
 	// this is deferred to allow reducer respond to TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START
 	defer( () => doAppPushPolling( store ) );
-	return next( action );
 };
 
 export default {

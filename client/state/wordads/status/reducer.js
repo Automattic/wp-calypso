@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -11,7 +6,7 @@ import {
 	WORDADS_STATUS_REQUEST_SUCCESS,
 	WORDADS_STATUS_REQUEST_FAILURE
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { wordadsStatusSchema } from './schema';
 
 export const items = createReducer( {}, {

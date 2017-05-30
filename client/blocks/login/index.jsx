@@ -13,12 +13,12 @@ import page from 'page';
 import DocumentHead from 'components/data/document-head';
 import LoginForm from './login-form';
 import {
-	getTwoFactorAuthNonce,
 	getRequestError,
 	getRequestNotice,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled
 } from 'state/login/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
@@ -26,23 +26,33 @@ import Notice from 'components/notice';
 
 class Login extends Component {
 	static propTypes = {
+		recordTracksEvent: PropTypes.func.isRequired,
 		redirectLocation: PropTypes.string,
 		requestError: PropTypes.object,
-		getRequestNotice: PropTypes.object,
+		requestNotice: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
-		twoStepNonce: PropTypes.string,
 	};
 
 	state = {
 		rememberMe: false,
 	};
 
-	componentWillMount = () => {
-		if ( ! this.props.twoStepNonce && this.props.twoFactorAuthType && typeof window !== 'undefined' ) {
-			// Disallow access to the 2FA pages unless the user has received a nonce
+	componentDidMount = () => {
+		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
+			// Disallow access to the 2FA pages unless the user has 2FA enabled
 			page( login( { isNative: true } ) );
+		}
+	};
+
+	componentWillReceiveProps = ( nextProps ) => {
+		const hasError = this.props.requestError !== nextProps.requestError;
+		const hasNotice = this.props.requestNotice !== nextProps.requestNotice;
+		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
+
+		if ( isNewPage || hasError || hasNotice ) {
+			window.scrollTo( 0, 0 );
 		}
 	};
 
@@ -59,6 +69,10 @@ class Login extends Component {
 	};
 
 	rebootAfterLogin = () => {
+		this.props.recordTracksEvent( 'calypso_login_success', {
+			two_factor_enabled: this.props.twoFactorEnabled
+		} );
+
 		window.location.href = this.props.redirectLocation || window.location.origin;
 	};
 
@@ -70,7 +84,9 @@ class Login extends Component {
 		}
 
 		return (
-			<Notice status={ 'is-error' } showDismiss={ false }>{ requestError.message }</Notice>
+			<Notice status={ 'is-error' } showDismiss={ false }>
+				{ requestError.message }
+			</Notice>
 		);
 	}
 
@@ -82,21 +98,23 @@ class Login extends Component {
 		}
 
 		return (
-			<Notice status={ requestNotice.status } showDismiss={ false }>{ requestNotice.message }</Notice>
+			<Notice status={ requestNotice.status } showDismiss={ false }>
+				{ requestNotice.message }
+			</Notice>
 		);
 	}
 
 	renderContent() {
 		const {
 			twoFactorAuthType,
-			twoStepNonce,
+			twoFactorEnabled,
 		} = this.props;
 
 		const {
 			rememberMe,
 		} = this.state;
 
-		if ( twoStepNonce && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
+		if ( twoFactorEnabled && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
 			return (
 				<VerificationCodeForm
 					rememberMe={ rememberMe }
@@ -106,7 +124,7 @@ class Login extends Component {
 			);
 		}
 
-		if ( twoStepNonce && twoFactorAuthType === 'push' ) {
+		if ( twoFactorEnabled && twoFactorAuthType === 'push' ) {
 			return (
 				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } />
 			);
@@ -144,6 +162,7 @@ export default connect(
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
-		twoStepNonce: getTwoFactorAuthNonce( state ),
-	} ),
+	} ), {
+		recordTracksEvent,
+	}
 )( localize( Login ) );

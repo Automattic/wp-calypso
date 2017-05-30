@@ -101,44 +101,18 @@
 	border-spacing: 24px 16px;
 	border-collapse: collapse;
 
+	.form-dimensions-input {
+		.form-dimensions-input__length,
+		.form-dimensions-input__width {
+			border-right-width: 0;
+		}
+	}
+
 	.products__product-form-variation-all-row {
 		background: lighten( $gray, 30% );
-	}
 
-	.products__product-dimensions-weight {
-		display: flex;
-		justify-content: flex-start;
-
-		.products__product-dimensions-input {
-			margin-right: 8px;
-		}
-	}
-
-	.products__product-manage-stock {
-		display: inline-flex;
-		flex-direction: row;
-		width: 100%;
-
-		.products__product-manage-stock-checkbox {
-			@include clear-fix();
-			padding: 12px;
-			background: $white;
-			border: 1px solid lighten( $gray, 20% );
-			display: flex;
-
-			input[type=checkbox] {
-				float: none;
-				margin: 0;
-			}
-
-			+ .form-text-input {
-				transform: translateX( -1px );
-			}
-		}
-
-		.form-text-input {
-			height: 42px;
-			width: 70px;
+		.products__product-manage-stock-toggle {
+			display: inline;
 		}
 	}
 
@@ -174,7 +148,7 @@
 }
 
 .products__product-form-variation-table th {
-	font-size: 13px;
+	font-size: 14px;
 	vertical-align: bottom;
 	min-width: 122px;
 
@@ -185,12 +159,6 @@
 
 .products__product-dimensions-input {
 	display: flex;
-}
-
-.products__product-dimensions-length,
-.products__product-dimensions-width,
-.products__product-dimensions-height {
-	width: 120px
 }
 
 .products__all-variations {
@@ -257,7 +225,7 @@
 }
 
 .products__product-form-sku {
-		color: $gray;
+		color: $gray-text-min;
 }
 
 .products__variation-settings-link {
@@ -390,7 +358,7 @@
 .products__additional-details-preview-label {
 	text-transform: uppercase;
 	font-size: 11px;
-	color: $gray;
+	color: $gray-text-min;
 }
 
 .products__additional-details-preview-title {
@@ -447,5 +415,133 @@
 	.products__additional-details-form-remove {
 		width: 24px;
 		height: 24px;
+	}
+}
+
+.products__product-form-variation-table {
+	.products__product-dimensions-weight {
+		flex-direction: row;
+
+		.form-fieldset.products__product-dimensions-input {
+			margin-bottom: 0;
+		}
+
+		.products__product-dimensions-input {
+			margin-right: 8px;
+		}
+	}
+
+	.products__product-manage-stock {
+		width: 200px;
+
+		.form-text-input {
+			width: 110px;
+		}
+	}
+}
+
+.products__product-dimensions-weight {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+
+	.form-fieldset.products__product-dimensions-input {
+		margin-bottom: 12px;
+		width: 342px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+
+		.form-fieldset.products__product-dimensions-input {
+			margin-right: 24px;
+			margin-bottom: 0;
+		}
+	}
+
+	.products__product-weight-input {
+		width: 150px;
+
+		@include breakpoint( ">480px" ) {
+			.form-text-input {
+				min-width: 60px;
+				max-width: 100px;
+			}
+		}
+	}
+
+	.form-fieldset {
+		margin-bottom: 0;
+	}
+}
+
+.products__product-simple-cards {
+	margin-top: -1em;
+	border-top: 0;
+
+	.card {
+		margin-top: -1em;
+	}
+
+	@include breakpoint( ">480px" ) {
+		.form-dimensions-input__length,
+		.form-dimensions-input__width,
+		.form-dimensions-input__height {
+			min-width: 60px;
+			max-width: 100px;
+		}
+	}
+
+	.products__product-form-price .form-text-input-with-affixes {
+		width: 150px;
+	}
+
+	.products__product-form-stock-disabled {
+		height: 70px;
+	}
+
+	.products__product-manage-stock-toggle,
+	.products__product-manage-stock-wrapper .form-label {
+		display: inline-flex;
+		cursor: pointer;
+	}
+
+	.products__product-manage-stock-toggle .form-label {
+		font-weight: normal;
+		margin-bottom: 12px;
+	}
+
+	.products__product-backorders-wrapper label {
+		margin-bottom: 5px;
+	}
+
+	.products__product-backorders-wrapper select {
+		padding: 9px 32px 11px 14px;
+	}
+
+	.products__product-stock-options-wrapper {
+		display: flex;
+		flex-direction: column;
+		margin-top: 6px;
+
+		.products__product-manage-stock {
+			width: 150px;
+			margin-right: 24px;
+			margin-bottom: 12px;
+		}
+
+		.products__product-backorders-wrapper {
+			label + select {
+				min-width: 150px;
+			}
+		}
+
+		@include breakpoint( ">960px" ) {
+			flex-direction: row;
+
+			.products__product-manage-stock-wrapper {
+				margin-bottom: 0;
+			}
+		}
 	}
 }

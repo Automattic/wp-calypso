@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { omit, get } from 'lodash';
 
 /**
@@ -20,11 +19,24 @@ import {
 	PUBLICIZE_SHARE_ACTION_EDIT,
 	PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_EDIT_FAILURE,
+	PUBLICIZE_SHARE_DISMISS,
+	PUBLICIZE_SHARE_ACTION_SCHEDULE,
+	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
+	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
 } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 import { publicizeActionsSchema } from './schema';
-import { createReducer } from 'state/utils';
 
-function updateDataForPost( newValue, state, siteId, postId, actionId ) {
+/**
+ * Updates deeply nested data for the siteId/postId subtree
+ * @param {mixed} newValue - new value to assign in the subtree
+ * @param {Object} state previous state
+ * @param {number} siteId siteId
+ * @param {number} postId siteId
+ * @param {number} actionId This parameter is optional. If passed, it will update value nested deeper in the actionId subtree
+ * @returns {Object} New mutated state
+ */
+export function updateDataForPost( newValue, state, siteId, postId, actionId ) {
 	if ( typeof actionId !== 'undefined' ) {
 		newValue = {
 			...get( state, [ siteId, postId ], {} ),
@@ -54,6 +66,11 @@ export const scheduled = createReducer( {}, {
 		),
 	[ PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS ]:
 		( state, { siteId, postId, item } ) => updateDataForPost( item, state, siteId, postId, item.ID ),
+	[ PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS ]:
+		( state, { siteId, postId, items } ) => {
+			items.forEach( item => state = updateDataForPost( item, state, siteId, postId, item.ID ) );
+			return state;
+		}
 
 }, publicizeActionsSchema );
 
@@ -98,6 +115,17 @@ export const editingSharePostAction = createReducer( {}, {
 		( state, { siteId, postId, actionId } ) => updateDataForPost( true, state, siteId, postId, actionId ),
 } );
 
+export const schedulingSharePostActionStatus = createReducer( {}, {
+	[ PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS ]: ( state, { siteId, postId, share_date } ) =>
+		updateDataForPost( { status: 'success', shareDate: share_date }, state, siteId, postId ),
+	[ PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE ]:
+		( state, { siteId, postId } ) => updateDataForPost( { status: 'failure' }, state, siteId, postId ),
+	[ PUBLICIZE_SHARE_ACTION_SCHEDULE ]:
+		( state, { siteId, postId } ) => updateDataForPost( { status: 'requesting' }, state, siteId, postId ),
+	[ PUBLICIZE_SHARE_DISMISS ]:
+		( state, { siteId, postId } ) => updateDataForPost( undefined, state, siteId, postId ),
+} );
+
 export default combineReducers( {
 	scheduled,
 	published,
@@ -105,4 +133,5 @@ export default combineReducers( {
 	fetchingSharePostActionsPublished,
 	deletingSharePostAction,
 	editingSharePostAction,
+	schedulingSharePostActionStatus,
 } );

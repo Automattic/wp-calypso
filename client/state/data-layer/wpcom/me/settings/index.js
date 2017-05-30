@@ -35,15 +35,11 @@ function fromApi( apiResponse ) {
 /*
  * Fetch settings from the WordPress.com API at /me/settings endpoint
  */
-export const requestUserSettings = ( { dispatch }, action, next ) => {
-	dispatch( http( {
-		apiVersion: '1.1',
-		method: 'GET',
-		path: '/me/settings',
-	}, action ) );
-
-	return next( action );
-};
+export const requestUserSettings = ( { dispatch }, action ) => dispatch( http( {
+	apiVersion: '1.1',
+	method: 'GET',
+	path: '/me/settings',
+}, action ) );
 
 /*
  * Store the fetched user settings to Redux state
@@ -55,7 +51,7 @@ export const storeFetchedUserSettings = ( { dispatch }, action, next, data ) => 
 /*
  * Post settings to WordPress.com API at /me/settings endpoint
  */
-export function saveUserSettings( { dispatch, getState }, action, next ) {
+export function saveUserSettings( { dispatch, getState }, action ) {
 	const { settingsOverride } = action;
 	const settings = settingsOverride || getUnsavedUserSettings( getState() );
 
@@ -67,8 +63,6 @@ export function saveUserSettings( { dispatch, getState }, action, next ) {
 			body: settings,
 		}, action ) );
 	}
-
-	return next( action );
 }
 
 /*

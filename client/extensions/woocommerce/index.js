@@ -9,7 +9,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import ProductCreate from './app/products/product-create';
@@ -153,18 +152,12 @@ function addStorePage( storePage, storeNavigation ) {
 }
 
 function createStoreNavigation( context, next ) {
-	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
-
 	renderWithReduxStore(
-		React.createElement(
-			StoreSidebar, {
-				path: context.path,
-				site: selectedSite,
-				sidebarItems: getStoreSidebarItems(),
-				sidebarItemButtons: getStoreSidebarItemButtons(),
-			}
-		),
+		React.createElement( StoreSidebar, {
+			path: context.path,
+			sidebarItems: getStoreSidebarItems(),
+			sidebarItemButtons: getStoreSidebarItemButtons(),
+		} ),
 		document.getElementById( 'secondary' ),
 		context.store
 	);
@@ -182,6 +175,6 @@ export default function() {
 
 	// Add pages that use my-sites navigation instead
 	if ( config.isEnabled( 'woocommerce/extension-stats' ) ) {
-		page( '/store/stats/:type/:period/:site', siteSelection, navigation, StatsController );
+		page( '/store/stats/:type/:unit/:site', siteSelection, navigation, StatsController );
 	}
 }

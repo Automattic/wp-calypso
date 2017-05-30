@@ -318,7 +318,7 @@ export default {
 	},
 	authorize( queryObject ) {
 		return ( dispatch ) => {
-			const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
+			const { _wp_nonce, client_id, redirect_uri, scope, secret, state, jp_version } = queryObject;
 			debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
 			tracksEvent( dispatch, 'calypso_jpc_authorize' );
 			dispatch( {
@@ -332,7 +332,14 @@ export default {
 					type: JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 					data
 				} );
-				return wpcom.undocumented().jetpackAuthorize( client_id, data.code, state, redirect_uri, secret );
+				return wpcom.undocumented().jetpackAuthorize(
+					client_id,
+					data.code,
+					state,
+					redirect_uri,
+					secret,
+					jp_version
+				);
 			} )
 			.then( ( data ) => {
 				tracksEvent( dispatch, 'calypso_jpc_authorize_success', {

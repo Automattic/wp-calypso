@@ -16,19 +16,23 @@ import SegmentedControl from 'components/segmented-control';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 const StatsNavigation = props => {
-	const { translate, slug, type, period } = props;
-	const periods = {
+	const { translate, slug, type, unit } = props;
+	const units = {
 		day: translate( 'Days' ),
 		week: translate( 'Weeks' ),
 		month: translate( 'Months' ),
 		year: translate( 'Years' ),
 	};
 	return (
-		<SectionNav selectedText={ periods[ period ] }>
+		<SectionNav selectedText={ units[ unit ] }>
 			<NavTabs label={ translate( 'Stats' ) }>
-				{ Object.keys( periods ).map( key => (
-					<NavItem path={ `/store/stats/${ type }/${ key }/${ slug }` } selected={ period === key }>
-						{ periods[ key ] }
+				{ Object.keys( units ).map( key => (
+					<NavItem
+						key={ key }
+						path={ `/store/stats/${ type }/${ key }/${ slug }` }
+						selected={ unit === key }
+					>
+						{ units[ key ] }
 					</NavItem>
 				) ) }
 			</NavTabs>
@@ -36,7 +40,7 @@ const StatsNavigation = props => {
 				className="stats-navigation__control"
 				initialSelected="store"
 				options={ [
-					{ value: 'site', label: translate( 'Site' ), path: `/stats/${ period }/${ slug }` },
+					{ value: 'site', label: translate( 'Site' ), path: `/stats/${ unit }/${ slug }` },
 					{ value: 'store', label: translate( 'Store' ) },
 				] }
 			/>

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -15,7 +10,7 @@ import {
 	JETPACK_DISCONNECT_REQUEST_FAILURE,
 	JETPACK_DISCONNECT_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 const createRequestReducer = ( requesting ) => {
 	return ( state, { siteId } ) => ( {
