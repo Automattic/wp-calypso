@@ -1,33 +1,9 @@
-/**
- * External dependencies
- */
-import mockery from 'mockery';
-import useMockery from 'test/helpers/use-mockery';
+jest.mock( 'fs' );
 
-/**
- * Internal dependencies
- */
-import mocks from './data/mocks';
-
-describe.skip( 'parser', () => {
+describe( 'parser', () => {
 	let parser;
 
-	useMockery();
-
-	beforeAll( () => {
-		mockery.registerAllowable( 'fs', true );
-	} );
-
-	beforeEach( () => {
-		parser = null;
-	} );
-
-	afterEach( () => {
-		mockery.resetCache(); // reset require cache
-	} );
-
 	it( 'should return empty objects for an invalid path', () => {
-		mockery.registerMock( 'fs', mocks.INVALID_PATH );
 		parser = require( 'config/parser' );
 
 		const data = parser( '/invalid-path' );
@@ -36,18 +12,17 @@ describe.skip( 'parser', () => {
 	} );
 
 	it( 'server should have secrets and client should not', () => {
-		mockery.registerMock( 'fs', mocks.VALID_SECRETS );
+		require( 'fs' ).__setValidSecrets();
 		parser = require( 'config/parser' );
 
 		const data = parser( '/valid-path' );
-		console.log( data );
 
 		expect( data.clientData ).not.toHaveProperty( 'secret' );
 		expect( data.serverData ).toHaveProperty( 'secret' );
 	} );
 
 	it( 'should cascade configs', () => {
-		mockery.registerMock( 'fs', mocks.VALID_ENV_FILES );
+		require( 'fs' ).__setValidEnvFiles();
 		parser = require( 'config/parser' );
 
 		const { serverData: data } = parser( '/valid-path', {
@@ -59,7 +34,7 @@ describe.skip( 'parser', () => {
 		expect( data ).toHaveProperty( 'myenvlocal_only', 'myenvlocal' );
 		expect( data ).toHaveProperty( 'myenv_override', 'myenv' );
 		expect( data ).toHaveProperty( 'myenvlocal_override', 'myenvlocal' );
-		expect( typeof data ).toBe( 'object' ).that.deep.equals( {
+		expect( data ).toHaveProperty( 'features', {
 			enabledFeature1: true,
 			enabledFeature2: true,
 			disabledFeature1: false,
@@ -68,7 +43,7 @@ describe.skip( 'parser', () => {
 	} );
 
 	it( 'should override enabled feature when disabledFeatures set', () => {
-		mockery.registerMock( 'fs', mocks.VALID_ENV_FILES );
+		require( 'fs' ).__setValidEnvFiles();
 		parser = require( 'config/parser' );
 
 		const { serverData: data } = parser( '/valid-path', {
@@ -80,7 +55,7 @@ describe.skip( 'parser', () => {
 	} );
 
 	it( 'should override disabled feature when enabledFeatures set', () => {
-		mockery.registerMock( 'fs', mocks.VALID_ENV_FILES );
+		require( 'fs' ).__setValidEnvFiles();
 		parser = require( 'config/parser' );
 
 		const { serverData: data } = parser( '/valid-path', {

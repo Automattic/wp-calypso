@@ -15,7 +15,7 @@ const log = debug( 'calypso:test:use-mockery' );
 export default function useMockery( beforeActions = noop, afterActions = noop ) {
 	before( function turnOnMockery() {
 		// mockery can take a lot of resources, increasing timeout a bit so we don't run into errors
-		//this.timeout( 10000 );
+		this.timeout( 10000 );
 		log( 'turning on mockery' );
 		mockery.enable( {
 			warnOnReplace: false,

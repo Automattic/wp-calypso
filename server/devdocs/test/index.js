@@ -1,22 +1,31 @@
+jest.mock( 'config', () => ( {
+	isEnabled: () => true,
+} ) );
+jest.mock( 'devdocs/components-usage-stats.json', () => ( {
+	'components/foo': { count: 10 },
+	'components/foo/docs/': { count: 1 },
+	'foo/components/bar': { count: 1 },
+	'my-page/index.js': { count: 1 },
+} ) );
+jest.mock( 'devdocs/search-index', () => ( {
+	index: {},
+} ) );
+jest.mock( 'lunr', () => ( {
+	Index: {
+		load: () => null,
+	},
+} ) );
+
 /**
  * External dependencies
  */
 import fs from 'fs';
 import fspath from 'path';
 import request from 'superagent';
-import mockery from 'mockery';
-import useMockery from 'test/helpers/use-mockery';
-import { allowNetworkAccess } from 'test/helpers/nock-control';
-
-/**
- * Internal dependencies
- */
-var devdocs;
 
 /**
  * Module variables
  */
-
 const componentsEntries = {
 	valid: {
 		'components/foo': { count: 10 },
@@ -30,10 +39,6 @@ const componentsEntries = {
 		foo: { count: 10 },
 	},
 };
-
-function getComponentsUsageStatsMock() {
-	return Object.assign( {}, componentsEntries.valid, componentsEntries.invalid );
-}
 
 function getComponentsUsageStats( cb ) {
 	request.get( 'http://localhost:9993/devdocs/service/components-usage-stats' ).end( cb );
@@ -56,27 +61,9 @@ function getDocument( base, path, cb ) {
 }
 
 describe( 'devdocs', () => {
-	let app, server;
-
-	allowNetworkAccess();
-	useMockery();
+	let app, devdocs, server;
 
 	beforeAll( done => {
-		mockery.registerMock( 'config', {
-			isEnabled: () => true,
-		} );
-		// for speed - the real search index is very large
-		mockery.registerMock( 'devdocs/search-index', {
-			index: {},
-		} );
-		mockery.registerMock( 'lunr', {
-			Index: {
-				load: () => null,
-			},
-		} );
-
-		mockery.registerMock( 'devdocs/components-usage-stats.json', getComponentsUsageStatsMock() );
-
 		devdocs = require( '../' );
 		app = devdocs();
 		server = app.listen( 9993, done );
@@ -151,13 +138,6 @@ describe( 'devdocs', () => {
 				expect( err ).toBeNull();
 				expect( res.statusCode ).toBe( 200 );
 				expect( res.type ).toBe( 'application/json' );
-				expect( res.body ).toEqual( {} );
-				done();
-			} );
-		} );
-
-		it.skip( 'should return components stats only', done => {
-			getComponentsUsageStats( ( err, res ) => {
 				expect( res.body ).toEqual( componentsEntries.expected );
 				done();
 			} );
