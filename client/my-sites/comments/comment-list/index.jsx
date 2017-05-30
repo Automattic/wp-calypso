@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { filter, map } from 'lodash';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
  * Internal dependencies
@@ -100,18 +101,24 @@ export class CommentList extends Component {
 					status,
 					toggleBulkEdit: this.toggleBulkEdit,
 				} } />
-				{ map( filteredComments, comment =>
-					<CommentDetail
-						commentId={ comment.ID }
-						deleteForever={ this.deleteForever( comment.ID ) }
-						isBulkEdit={ isBulkEdit }
-						key={ `comment-${ siteId }-${ comment.ID }` }
-						setCommentStatus={ this.setCommentStatus }
-						siteId={ siteId }
-						toggleCommentLike={ this.toggleCommentLike }
-						{ ...comment }
-					/>
-				) }
+				<ReactCSSTransitionGroup
+					transitionEnterTimeout={ 0 }
+					transitionLeaveTimeout={ 150 }
+					transitionName="comment-detail__transition"
+				>
+					{ map( filteredComments, comment =>
+						<CommentDetail
+							commentId={ comment.ID }
+							deleteForever={ this.deleteForever( comment.ID ) }
+							isBulkEdit={ isBulkEdit }
+							key={ `comment-${ siteId }-${ comment.ID }` }
+							setCommentStatus={ this.setCommentStatus }
+							siteId={ siteId }
+							toggleCommentLike={ this.toggleCommentLike }
+							{ ...comment }
+						/>
+					) }
+				</ReactCSSTransitionGroup>
 			</div>
 		);
 	}

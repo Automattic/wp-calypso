@@ -18,6 +18,15 @@
 	}
 }
 
+.comment-detail__transition-leave {
+	opacity: 1;
+
+	&.comment-detail__transition-leave-active {
+		opacity: 0.01;
+		transition: opacity .15s linear;
+	}
+}
+
 .comment-detail__author-avatar {
 	flex-shrink: 0;
 }
