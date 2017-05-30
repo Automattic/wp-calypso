@@ -1,16 +1,55 @@
 #!/bin/sh
 
-echo "\nBy contributing to this project, you license the materials you contribute under the GNU General Public License v2 (or later). All materials must have GPLv2 compatible licenses — see .github/CONTRIBUTING.md for details.\n\n"
+remote="$1"
+url="$2"
+sha40=0000000000000000000000000000000000000000
 
-current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
-if [ 'master' = $current_branch ]
-then
-    read -p "You're about to push ¡¡¡[ master ]!!!, is that what you intended? [y|n] " -r < /dev/tty
-    echo
-    if echo $REPLY | grep -E '^[Yy]$' > /dev/null
-    then
-        exit 0 # push will execute
-    fi
-    exit 1 # push will not execute
-fi
+printf "\nBy contributing to this project, you license the materials you contribute under the GNU General Public License v2 (or later). All materials must have GPLv2 compatible licenses — see .github/CONTRIBUTING.md for details.\n\n"
+
+while read local_ref local_sha remote_ref remote_sha
+do
+
+	# PUSH TO DELETE BRANCH - git push origin :master
+	if [ "$local_sha" = "$sha40" ]
+	then
+		if [ "refs/heads/master" = "$remote_ref" ]
+		then
+			printf "\n\033[41mPUSH ABORTED:\033[0m you are about to DELETE remote master. If that is what you intended, repeat the push command with --no-verify to avoid this check.\n"
+			exit 1 # push would not be executed
+		fi
+
+		# Any other branch would be OK
+		exit 0 # push would be executed
+
+	fi
+
+	# PUSH TO MASTER - git push origin master:master
+	if [ "refs/heads/master" = "$remote_ref" ]
+	then
+		printf "\n\033[41mPUSH ABORTED:\033[0m you are about to PUSH to remote master. If that is what you intended, repeat the push command with --no-verify to avoid this check.\n"
+
+		printf "Running the linter in the whole codebase to detect parsing errors, just in case. This may take a while."
+		./bin/run-lint .
+		linter_exit_code=$?
+
+		if [ ! 0 = "$linter_exit_code" ]
+		then
+			printf "\nThe linter has reported some PARSING ERRORS. Please, resolve them before pushing to master. If you may want to execute the linter again before pushing, run: ./bin/run-lint . \n"
+		fi
+
+		exit 1 # push would not be executed
+	fi
+
+	# PUSH TO TOPIC BRANCH - git push origin topic-branch:topic-branch
+	./bin/run-lint $(git diff --name-only $(git merge-base $(git rev-parse --abbrev-ref HEAD) origin/master)..HEAD client/ server/ test/ | grep ".jsx*$")
+	linter_exit_code=$?
+
+	if [ ! 0 = "$linter_exit_code" ]
+	then
+		printf "\n\033[41mPUSH ABORTED:\033[0m the linter reported some problems. If you are aware of them and it is OK, you can repeat the push command with --no-verify to avoid this check. If you may want to run the linter again, execute: ./bin/run-lint \$(git diff --name-only \$(git merge-base \$(git rev-parse --abbrev-ref HEAD) origin/master)..HEAD client/ server/ test/) \n"
+	fi
+	exit $linter_exit_code
+
+done
+
 exit 0
