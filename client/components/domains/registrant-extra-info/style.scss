@@ -2,10 +2,10 @@
 .form-label.registrant-extra-info__optional {
 	display: flex;
 
-	div {
-		margin-left: 5px;
+	.registrant-extra-info__optional-label {
+		color: darken( $gray, 20% );
 		font-weight: 200;
-		font-style: italic;
+		margin-left: 5px;
 	}
 }
 

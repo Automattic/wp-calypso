@@ -348,7 +348,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	renderOptional = () => {
 		return (
-			<div>{ this.props.translate( 'Optional' ) }</div>
+			<span className="registrant-extra-info__optional-label">{ this.props.translate( 'Optional' ) }</span>
 		);
 	}
 }
