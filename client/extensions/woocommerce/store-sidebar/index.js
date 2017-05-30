@@ -2,11 +2,13 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
  */
+import { getSelectedSiteIdWithFallback } from '../state/sites/selectors';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarItem from 'layout/sidebar/item';
@@ -14,7 +16,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarSeparator from 'layout/sidebar/separator';
 import StoreGroundControl from './store-ground-control';
 
-export default class StoreSidebar extends Component {
+class StoreSidebar extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		sidebarItems: PropTypes.arrayOf( PropTypes.shape( {
@@ -38,11 +40,11 @@ export default class StoreSidebar extends Component {
 	}
 
 	itemLink = ( path ) => {
-		const link = path.replace( ':site', this.props.site.slug );
+		const link = this.props.site ? path.replace( ':site', this.props.site.slug ) : '#';
 		return link;
 	}
 
-	itemLinkClass = ( path, existingClasses ) => {
+	itemLinkClass = ( path, existingClasses, disabled ) => {
 		const classSet = {};
 
 		if ( typeof existingClasses !== 'undefined' ) {
@@ -53,6 +55,10 @@ export default class StoreSidebar extends Component {
 			existingClasses.forEach( function( className ) {
 				classSet[ className ] = true;
 			} );
+		}
+
+		if ( disabled ) {
+			classSet[ 'is-placeholder' ] = true;
 		}
 
 		classSet.selected = this.isItemLinkSelected( path );
@@ -70,19 +76,19 @@ export default class StoreSidebar extends Component {
 		}, this );
 	}
 
-	renderSidebarMenuItems = ( items, buttons ) => {
+	renderSidebarMenuItems = ( items, buttons, disabled ) => {
 		return items.map( function( item, index ) {
 			const itemLink = this.itemLink( item.path );
 			const itemButton = buttons.filter( button => button.parentSlug === item.slug ).map( button => {
 				return (
-					<SidebarButton href={ this.itemLink( button.path ) } key={ button.slug } >
+					<SidebarButton href={ this.itemLink( button.path ) } key={ button.slug } disabled={ disabled } >
 						{ button.label }
 					</SidebarButton>
 				);
 			} );
 			return (
 				<SidebarItem
-					className={ this.itemLinkClass( itemLink, item.slug ) }
+					className={ this.itemLinkClass( itemLink, item.slug, disabled ) }
 					icon={ item.icon }
 					key={ index }
 					label={ item.label }
@@ -99,22 +105,25 @@ export default class StoreSidebar extends Component {
 	render = () => {
 		const { sidebarItems, sidebarItemButtons, site } = this.props;
 
-		// The store sidebar only makes sense in the context of a site
-		if ( ! site ) {
-			return null;
-		}
-
 		return (
 			<Sidebar className="store-sidebar__sidebar">
 				<StoreGroundControl site={ site } />
 				<SidebarMenu>
 					<ul>
-						{ this.renderSidebarMenuItems( sidebarItems.filter( item => item.isPrimary ), sidebarItemButtons ) }
+						{ this.renderSidebarMenuItems( sidebarItems.filter( item => item.isPrimary ), sidebarItemButtons, ! site ) }
 						<SidebarSeparator />
-						{ this.renderSidebarMenuItems( sidebarItems.filter( item => ! item.isPrimary ), sidebarItemButtons ) }
+						{ this.renderSidebarMenuItems( sidebarItems.filter( item => ! item.isPrimary ), sidebarItemButtons, ! site ) }
 					</ul>
 				</SidebarMenu>
 			</Sidebar>
 		);
 	}
 }
+
+function mapStateToProps( state ) {
+	return {
+		site: getSelectedSiteIdWithFallback( state )
+	};
+}
+
+export default connect( mapStateToProps )( StoreSidebar );
