@@ -23,6 +23,7 @@ import {
  * Internal dependencies
  */
 import { getContactDetailsCache } from 'state/selectors';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
 import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/upgrades/components/form';
 import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
@@ -439,6 +440,8 @@ class DomainDetailsForm extends PureComponent {
 				return;
 			}
 
+			this.props.updateContactDetailsCache( this.getAllFieldValues() );
+
 			if ( this.hasAnotherStep() ) {
 				return this.switchToNextStep();
 			}
@@ -543,5 +546,6 @@ class DomainDetailsForm extends PureComponent {
 }
 
 export default connect(
-	state => ( { contactDetails: getContactDetailsCache( state ) } )
+	state => ( { contactDetails: getContactDetailsCache( state ) } ),
+	{ updateContactDetailsCache }
 )( localize( DomainDetailsForm ) );

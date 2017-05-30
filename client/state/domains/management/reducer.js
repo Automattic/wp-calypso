@@ -8,6 +8,7 @@ import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
+	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
 	DOMAIN_MANAGEMENT_WHOIS_RECEIVE,
 	DOMAIN_MANAGEMENT_WHOIS_REQUEST,
 	DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE,
@@ -68,6 +69,13 @@ export const saving = createReducer( false, {
  */
 export const items = createReducer( {}, {
 	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE ]: ( state, { cacheData } ) => ( { ...state, _contactDetailsCache: cacheData } ),
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE ]: ( state, { cacheData } ) => ( {
+		...state,
+		_contactDetailsCache: {
+			...state._contactDetailsCache,
+			...cacheData
+		}
+	} ),
 	[ DOMAIN_MANAGEMENT_WHOIS_RECEIVE ]: ( state, { domain, whoisData } ) => ( { ...state, [ domain ]: whoisData } ),
 	[ DOMAIN_MANAGEMENT_WHOIS_UPDATE ]: ( state, { domain, whoisData } ) => ( {
 		...state,
