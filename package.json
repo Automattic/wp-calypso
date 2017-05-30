@@ -204,6 +204,7 @@
     "test-integration": "cross-env NODE_ENV=test NODE_PATH=test:integration:client TEST_ROOT=integration test/runner.js",
     "test-integration:watch": "nodemon -e js,jsx --exec npm run -s test-integration",
     "test-server": "cross-env NODE_ENV=test jest --projects server",
+    "test-server:ci": "cross-env NODE_ENV=test MOCHA_FILE=./test-results-server.xml jest --projects server --maxWorkers=2",
     "test-server:watch": "npm run -s test-server -- --watchAll",
     "test-test": "cross-env NODE_ENV=test NODE_PATH=test:client TEST_ROOT=test node test/runner.js",
     "test-test:watch": "nodemon -e js,jsx --exec npm run -s test-test",
