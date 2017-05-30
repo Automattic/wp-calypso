@@ -131,12 +131,12 @@ export function schedulePostShareAction( siteId, postId, message, share_date, co
 				error,
 				connections
 			} ) )
-			.then( data => dispatch( {
+			.then( items => dispatch( {
 				type: PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 				siteId,
 				postId,
 				share_date,
-				items: data,
+				items,
 				connections
 			} ) );
 	};

@@ -158,7 +158,7 @@ class PostShare extends Component {
 				servicesToPublish,
 			);
 		} else {
-			this.props.sharePost( this.props.siteId, this.props.postId, this.state.skipped, this.state.message );
+			this.props.sharePost( siteId, postId, this.state.skipped, this.state.message );
 		}
 	};
 
