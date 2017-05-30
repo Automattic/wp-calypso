@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { isEmpty, pickBy, some } from 'lodash';
 
 /**
@@ -13,6 +14,15 @@ import config from 'config';
 import { tracks } from 'lib/analytics';
 import { localize } from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { isVipSite } from 'state/selectors';
+import {
+	getSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+	getPurchasesError,
+} from 'state/purchases/selectors';
+import notices from 'notices';
 
 const trackDeleteSiteOption = ( option ) => {
 	tracks.recordEvent( 'calypso_settings_delete_site_options', {
@@ -21,21 +31,24 @@ const trackDeleteSiteOption = ( option ) => {
 };
 
 class SiteTools extends Component {
-	static propTypes = {
-		sitePurchases: PropTypes.array.isRequired,
-		hasLoadedSitePurchasesFromServer: PropTypes.bool.isRequired,
-		site: PropTypes.object.isRequired
-	}
-
 	state = {
 		showDialog: false,
 		showStartOverDialog: false,
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.purchasesError ) {
+			notices.error( nextProps.purchasesError );
+		}
+	}
+
 	render() {
 		const {
 			translate,
-			site: { jetpack: isJetpack, is_vip: isVip },
+			sitePurchasesLoaded,
+			siteSlug,
+			isJetpack,
+			isVip,
 		} = this.props;
 
 		const showSection = {
@@ -49,11 +62,14 @@ class SiteTools extends Component {
 			return null;
 		}
 
-		const selectedSite = this.props.site;
-		const changeAddressLink = `/domains/manage/${ selectedSite.slug }`;
-		const themeSetupLink = `/settings/theme-setup/${ selectedSite.slug }`;
-		const startOverLink = `/settings/start-over/${ selectedSite.slug }`;
-		const deleteSiteLink = `/settings/delete-site/${ selectedSite.slug }`;
+		if ( ! sitePurchasesLoaded ) {
+			return null;
+		}
+
+		const changeAddressLink = `/domains/manage/${ siteSlug }`;
+		const themeSetupLink = `/settings/theme-setup/${ siteSlug }`;
+		const startOverLink = `/settings/start-over/${ siteSlug }`;
+		const deleteSiteLink = `/settings/delete-site/${ siteSlug }`;
 
 		const themeSetupText = translate( 'Automatically make your site look like your theme\'s demo.' );
 		const changeSiteAddress = translate( 'Change your site address' );
@@ -72,10 +88,6 @@ class SiteTools extends Component {
 		let changeAddressText = translate( 'Register a new domain or change your site\'s address.' );
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
 			changeAddressText = translate( 'Change your site address.' );
-		}
-
-		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
-			return null;
 		}
 
 		return (
@@ -160,4 +172,16 @@ class SiteTools extends Component {
 	}
 }
 
-export default localize( SiteTools );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			siteSlug: getSelectedSiteSlug( state ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isVip: isVipSite( state, siteId ),
+			sitePurchasesLoaded: hasLoadedSitePurchasesFromServer( state ),
+			sitePurchases: getSitePurchases( state, siteId ),
+			purchasesError: getPurchasesError( state ),
+		};
+	}
+)( localize( SiteTools ) );

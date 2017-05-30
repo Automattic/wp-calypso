@@ -11,22 +11,11 @@ import GeneralForm from 'my-sites/site-settings/form-general';
 import SiteTools from './site-tools';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const SiteSettingsGeneral = ( {
-	hasLoadedSitePurchasesFromServer,
-	site,
-	sitePurchases
-} ) => {
+const SiteSettingsGeneral = ( { site } ) => {
 	return (
 		<div className="site-settings__main general-settings">
 			<GeneralForm site={ site } />
-
-			{ site &&
-				<SiteTools
-					site={ site }
-					sitePurchases={ sitePurchases }
-					hasLoadedSitePurchasesFromServer={ hasLoadedSitePurchasesFromServer }
-				/>
-			}
+			<SiteTools />
 		</div>
 	);
 };
