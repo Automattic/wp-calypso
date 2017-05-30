@@ -24,9 +24,7 @@ import {
 	isCalypsoStartedConnection,
 	hasXmlrpcError,
 	hasExpiredSecretError,
-	getSiteSelectedPlan,
 	isRemoteSiteOnSitesList,
-	getGlobalSelectedPlan,
 	getAuthAttempts,
 	getSiteIdFromQueryObject
 } from 'state/jetpack-connect/selectors';
@@ -63,7 +61,6 @@ class JetpackConnectAuthorizeForm extends Component {
 		requestHasXmlrpcError: PropTypes.func,
 		requestSites: PropTypes.func,
 		retryAuth: PropTypes.func,
-		selectedPlan: PropTypes.string,
 		siteSlug: PropTypes.string,
 		user: PropTypes.object,
 	}
@@ -143,7 +140,6 @@ export default connect(
 		const siteSlug = urlToSlug( remoteSiteUrl );
 		const requestHasExpiredSecretError = () => hasExpiredSecretError( state );
 		const requestHasXmlrpcError = () => hasXmlrpcError( state );
-		const selectedPlan = getSiteSelectedPlan( state, siteSlug ) || getGlobalSelectedPlan( state );
 		const siteId = getSiteIdFromQueryObject( state );
 
 		return {
@@ -155,7 +151,6 @@ export default connect(
 			jetpackConnectAuthorize: getAuthorizationData( state ),
 			requestHasExpiredSecretError,
 			requestHasXmlrpcError,
-			selectedPlan,
 			siteSlug,
 			user: getCurrentUser( state ),
 		};
