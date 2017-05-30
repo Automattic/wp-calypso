@@ -34,4 +34,4 @@ render: function() {
 * `tagName` (Optional): Allows you to control the tag name of the card wrapper (only if `href` is not specified).
 * `target` (Optional): If set and used with `href` then this controls where the link opens. It also changes the Gridicon to "external"
 * `compact` (Optional): Whether the card should be rendered as compact
-* `highlight` (Optional): Whether the card should be rendered as highlighted
+* `highlight` (Optional): The specific highlight of this card. Can be one of the following: `false` (no highlight, default), `info`, `success`, `error` or `warning`.

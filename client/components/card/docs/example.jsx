@@ -38,7 +38,10 @@ var Cards = React.createClass( {
 					<Card className="awesome sauce">I am a third Card with custom classes!</Card>
 					<Card href="#cards">I am a linkable Card</Card>
 					<Card href="#cards" target="_blank" rel="noopener noreferrer">I am a externally linked Card</Card>
-					<Card highlight>I am a highlighted Card</Card>
+					<Card highlight="info">I am a Card, highlighted as info</Card>
+					<Card highlight="success">I am a Card, highlighted as success</Card>
+					<Card highlight="error">I am a Card, highlighted as error</Card>
+					<Card highlight="warning">I am a Card, highlighted as warning</Card>
 				</div>
 			);
 		} else {
@@ -49,7 +52,10 @@ var Cards = React.createClass( {
 					<CompactCard className="awesome sauce">I am a third CompactCard with custom classes!</CompactCard>
 					<CompactCard href="#cards">I am a linkable CompactCard</CompactCard>
 					<CompactCard href="#cards" target="_blank" rel="noopener noreferrer">I am a externally linked CompactCard</CompactCard>
-					<CompactCard highlight>I am a highlighted CompactCard</CompactCard>
+					<CompactCard highlight="info">I am a CompactCard, highlighted as info</CompactCard>
+					<CompactCard highlight="success">I am a CompactCard, highlighted as success</CompactCard>
+					<CompactCard highlight="error">I am a CompactCard, highlighted as error</CompactCard>
+					<CompactCard highlight="warning">I am a CompactCard, highlighted as warning</CompactCard>
 				</div>
 			);
 		}

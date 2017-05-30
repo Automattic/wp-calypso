@@ -29,8 +29,27 @@
 		padding-right: 48px;
 	}
 
-	&.is-highlighted {
-		border-left: 3px solid $blue-wordpress;
+	&.is-error,
+	&.is-info,
+	&.is-success,
+	&.is-warning {
+		border-left: 3px solid;
+	}
+
+	&.is-error {
+		border-left-color: $alert-red;
+	}
+
+	&.is-info {
+		border-left-color: $blue-wordpress;
+	}
+
+	&.is-success {
+		border-left-color: $alert-green;
+	}
+
+	&.is-warning {
+		border-left-color: $alert-yellow;
 	}
 }
 

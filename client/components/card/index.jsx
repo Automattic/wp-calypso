@@ -16,7 +16,13 @@ export default React.createClass( {
 		target: React.PropTypes.string,
 		compact: React.PropTypes.bool,
 		children: React.PropTypes.node,
-		highlight: React.PropTypes.bool,
+		highlight: React.PropTypes.oneOf( [
+			false,
+			'error',
+			'info',
+			'success',
+			'warning',
+		] ),
 	},
 
 	getDefaultProps() {
@@ -26,14 +32,22 @@ export default React.createClass( {
 		};
 	},
 
+	getHighlightClass() {
+		const { highlight } = this.props;
+		if ( ! highlight ) {
+			return '';
+		}
+
+		return 'is-' + highlight;
+	},
+
 	render: function() {
 		const className = classnames( 'card', this.props.className, {
 			'is-card-link': !! this.props.href,
 			'is-compact': this.props.compact,
-			'is-highlighted': this.props.highlight,
-		} );
+		}, this.getHighlightClass() );
 
-		const omitProps = [ 'compact', 'tagName' ];
+		const omitProps = [ 'compact', 'highlight', 'tagName' ];
 
 		let linkIndicator;
 		if ( this.props.href ) {
