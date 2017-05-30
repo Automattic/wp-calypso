@@ -65,8 +65,6 @@ export class Login extends React.Component {
 		this.props.showMagicLoginRequestForm();
 	};
 
-	state = { loaded: false };
-
 	magicLoginMainContent() {
 		const {
 			magicLoginView,
@@ -97,13 +95,6 @@ export class Login extends React.Component {
 		}
 	}
 
-	componentDidMount() {
-		// Turning off eslint rule, as this flag is telling us when the component is
-		// loaded in the browser, which isn't guaranteed until componentDidMount() fires.
-		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { loaded: true } );
-	}
-
 	goBack = event => {
 		event.preventDefault();
 
@@ -130,15 +121,14 @@ export class Login extends React.Component {
 				</a>;
 		}
 
-		let goBackLink;
-		if ( this.state.loaded && window.history.length > 1 ) {
-			goBackLink = ! magicLoginView && <a
-				href="#"
-				key="back-link"
-				onClick={ this.goBack }>
-					<Gridicon icon="arrow-left" size={ 18 } /> { translate( 'Return' ) }
-				</a>;
-		}
+		const backToWpcomLink = ! magicLoginView && (
+			<a
+				href="https://wordpress.com"
+				key="return-to-wpcom-link"
+			>
+				<Gridicon icon="arrow-left" size={ 18 } /> { translate( 'Back to WordPress.com' ) }
+			</a>
+		);
 
 		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView && ! twoFactorAuthType && (
 			<a href="#"
@@ -179,7 +169,7 @@ export class Login extends React.Component {
 			helpLink,
 			showMagicLoginLink,
 			resetPasswordLink,
-			goBackLink,
+			backToWpcomLink,
 		] );
 	}
 
