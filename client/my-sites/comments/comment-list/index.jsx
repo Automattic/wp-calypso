@@ -188,7 +188,11 @@ export class CommentList extends Component {
 					<CommentDetailPlaceholder />
 				}
 				{ 0 === size( filteredComments ) &&
-					<EmptyContent { ...this.getEmptyMessage() } />
+					<EmptyContent
+						illustration="/calypso/images/comments/illustration_comments_gray.svg"
+						illustrationWidth={ 150 }
+						{ ...this.getEmptyMessage() }
+					/>
 				}
 				<ReactCSSTransitionGroup
 					transitionEnterTimeout={ 150 }
