@@ -12,18 +12,26 @@
 
 	.product-image-uploader__picker {
 		position: absolute;
-		top: 50%;
+		top: 55%;
 		left: 50%;
 		transform: translate(-50%, -50%);
 		text-align: center;
 		cursor: pointer;
+
+		.gridicon {
+			color: darken( $gray, 10% );
+		}
+
+		p {
+			font-size: 14px;
+		}
 	}
 }
 
 .product-image-uploader__picker.compact {
 	background: $gray-light;
-	height: 50px;
-	width: 50px;
+	height: 55px;
+	width: 55px;
 	position: relative;
 	margin-bottom: 16px;
 	border: 1px dashed $gray;
@@ -33,7 +41,7 @@
 	.file-picker {
 		display: block;
 		text-align: center;
-		padding-top: 12px;
+		padding-top: 16px;
 	}
 }
 

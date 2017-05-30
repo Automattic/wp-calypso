@@ -44,14 +44,32 @@
 		position: relative;
 		display: inline-block;
 		margin-right: 16px;
+		margin-bottom: 16px;
+
+		&:nth-child(4) {
+		@include breakpoint( ">960px" ) {
+			margin-right: 0;
+			}
+		}
+
+		&:nth-child(2) {
+			clear: left;
+		}
+
+		figure {
+			border: 1px solid lighten( $gray, 30% );
+		}
 
 		img {
-			width: 60px;
+			width: 55px;
 		}
 
 		&:first-child {
 			margin-right: 0;
-			margin-bottom: 16px;
+			clear: both;
+			@include breakpoint( "<960px" ) {
+				margin-right: 40%;
+			}
 
 			img {
 				width: 300px;
@@ -96,6 +114,10 @@
 		border-radius: 50%;
 		background-color: $gray-light;
 		cursor: pointer;
+
+		&:hover {
+			background: lighten( $gray, 30% );
+		}
 	}
 
 	.products__product-form-images-item-remove-icon.gridicon {
@@ -107,12 +129,31 @@
 		height: 24px;
 		margin: 0;
 		color: lighten( $gray, 10% );
+
+		&:hover {
+			color: $gray;
+		}
 	}
+}
+
+.products__product-form-images-wrapper {
+	flex: 1;
+	margin-bottom: 16px;
+	@include breakpoint( ">960px" ) {
+		margin-bottom: 0;
+	}
+}
+
+.products__product-form-images-wrapper .form-setting-explanation {
+	margin: 0;
+}
+
+.products__product-form-details-basic {
+	flex: 2
 }
 
 .products__product-form-images-wrapper,
 .products__product-form-details-basic {
-	flex: 1;
 	@include breakpoint( ">960px" ) {
 		margin-right: 32px;
 	}
