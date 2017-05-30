@@ -91,10 +91,6 @@ export default function( id ) {
 	function queryPosts( options ) {
 		let query = assign( {}, _defaultQuery, options );
 
-		if ( query.siteId && typeof query.siteId === 'string' ) {
-			query.siteId = query.siteId.replace( /::/g, '/' );
-		}
-
 		if ( query.status === 'draft,pending' ) {
 			query.orderBy = 'modified';
 		}
