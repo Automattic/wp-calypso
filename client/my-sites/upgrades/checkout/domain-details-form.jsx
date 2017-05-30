@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -21,6 +22,8 @@ import {
 /**
  * Internal dependencies
  */
+import { getContactDetailsCache } from 'state/selectors';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
 import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/upgrades/components/form';
 import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
@@ -81,7 +84,7 @@ class DomainDetailsForm extends PureComponent {
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
-			loadFunction: wpcom.getDomainContactInformation.bind( wpcom ),
+			initialFields: this.props.contactDetails,
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
@@ -437,6 +440,8 @@ class DomainDetailsForm extends PureComponent {
 				return;
 			}
 
+			this.props.updateContactDetailsCache( this.getAllFieldValues() );
+
 			if ( this.hasAnotherStep() ) {
 				return this.switchToNextStep();
 			}
@@ -540,4 +545,7 @@ class DomainDetailsForm extends PureComponent {
 	}
 }
 
-export default localize( DomainDetailsForm );
+export default connect(
+	state => ( { contactDetails: getContactDetailsCache( state ) } ),
+	{ updateContactDetailsCache }
+)( localize( DomainDetailsForm ) );
