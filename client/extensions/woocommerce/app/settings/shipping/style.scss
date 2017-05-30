@@ -1,6 +1,6 @@
 .shipping__credit-card-description {
 	margin-bottom: 4px;
-	color: $gray;
+	color: $gray-text-min;
 	padding-bottom: 8px;
 	font-size: 12px;
 	line-height: 18px;
@@ -69,7 +69,7 @@
 .shipping__zones-row-method-description,
 .shipping__card-name {
 	margin-bottom: 0;
-	color: $gray;
+	color: $gray-text-min;
 	font-size: 13px;
 }
 
@@ -127,7 +127,7 @@
 
 .shipping__card-date {
 	float: right;
-	color: $gray;
+	color: $gray-text-min;
 	font-style: italic;
 }
 
