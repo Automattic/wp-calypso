@@ -175,6 +175,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	renderPersonalFields = () => {
 		const translate = this.props.translate;
+		const screenReaderText = 'screen-reader-text';
 		const {
 			countryOfBirth,
 			dobDays,
@@ -203,43 +204,47 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 					</FormLegend>
 					<div className="registrant-extra-info__dob-inputs">
 						<div className="registrant-extra-info__dob-column">
-							<FormLabel htmlFor="dobYears">
+							<FormLabel htmlFor="dobYears" className={ screenReaderText }>
 								{ translate( 'Year' ) }
 							</FormLabel>
 							<FormTextInput className="registrant-extra-info__dob-year"
 								id="dobYears"
 								value={ dobYears }
+								max="4"
 								type="number"
 								placeholder="YYYY"
 								onChange={ this.handleDobChangeEvent } />
 						</div>
 						<div className="registrant-extra-info__dob-column">
-							<FormLabel htmlFor="dobMonths">
+							<FormLabel htmlFor="dobMonths" className={ screenReaderText }>
 								{ translate( 'Month' ) }
 							</FormLabel>
 							<FormTextInput className="registrant-extra-info__dob-month"
 								id="dobMonths"
 								value={ dobMonths }
+								max="2"
 								type="number"
 								placeholder="MM"
 								onChange={ this.handleDobChangeEvent } />
 						</div>
 						<div className="registrant-extra-info__dob-column">
-							<FormLabel htmlFor="dobDays">
+							<FormLabel htmlFor="dobDays" className={ screenReaderText }>
 								{ translate( 'Day' ) }
 							</FormLabel>
 							<FormTextInput className="registrant-extra-info__dob-day"
 								id="dobDays"
 								value={ dobDays }
+								max="2"
 								type="number"
 								placeholder="DD"
 								onChange={ this.handleDobChangeEvent } />
 						</div>
 					</div>
 					<FormSettingExplanation>{
-						translate( 'e.g. 1970 12 31', {
+						translate( 'Year/Month/Day - e.g. 1970/12/31', {
 							comment: 'This is describing a date format with fixed fields, so please do not ' +
-								'alter the numbers (Year, Month, Day). Please translate e.g("For example") if appropriate.'
+								'alter the numbers (Year, Month, Day). Please translate e.g("For example") if appropriate and also ' +
+								'the words, Year, Month, Day, individually.'
 						} )
 					}</FormSettingExplanation>
 				</FormFieldset>
