@@ -206,6 +206,27 @@
 	margin-bottom: 0;
 }
 
+.products__product-form-details-basic-name {
+	margin-bottom: 8px;
+}
+
+.products__product-form-details-basic-sku {
+	.form-label {
+		display: inline;
+		margin-right: 4px;
+		color: $gray-text-min;
+		font-weight: normal;
+	}
+
+	input {
+		width: 65%;
+	}
+
+	.form-click-to-edit-input__text {
+		color: $gray-text-min;
+	}
+}
+
 .products__variation-types-form-wrapper {
 	padding: 24px;
 	border-top: 1px solid $gray-light;
