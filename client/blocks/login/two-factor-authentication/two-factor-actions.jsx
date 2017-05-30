@@ -18,8 +18,11 @@ import { login } from 'lib/paths';
 
 class TwoFactorActions extends Component {
 	static propTypes = {
-		isAuthenticatorSupported: PropTypes.bool,
-		isSmsSupported: PropTypes.bool,
+		isAuthenticatorSupported: PropTypes.bool.isRequired,
+		isPushSupported: PropTypes.bool.isRequired,
+		isSmsSupported: PropTypes.bool.isRequired,
+		sendSmsCode: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
 	};
 

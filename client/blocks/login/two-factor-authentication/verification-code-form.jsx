@@ -26,11 +26,15 @@ import TwoFactorActions from './two-factor-actions';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
+		isRequestingTwoFactorAuth: PropTypes.bool.isRequired,
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		rememberMe: PropTypes.bool.isRequired,
-		isSmsSupported: PropTypes.bool,
+		sendSmsCode: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+		twoFactorAuthRequestError: PropTypes.string,
+		twoFactorAuthType: PropTypes.string.isRequired,
 	};
 
 	state = {
