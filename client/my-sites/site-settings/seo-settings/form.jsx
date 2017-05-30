@@ -68,6 +68,7 @@ import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import {
 	requestSiteSettings,
@@ -475,12 +476,13 @@ export const SeoForm = React.createClass( {
 		const conflictedSeoPlugin = siteIsJetpack
 			// Let's just pick the first one to keep the notice short.
 			? this.getConflictingSeoPlugins( activePlugins )[ 0 ]
-			: false;
+			: null;
 
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
+				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{
 					siteIsJetpack &&
 					<QueryJetpackModules siteId={ siteId } />
