@@ -197,7 +197,7 @@ class PlansFeaturesMain extends Component {
 				<FAQItem
 					question={ translate( 'Do you sell domains?' ) }
 					answer={ translate(
-						'Yes! The personal, premium, and business plans include a free custom domain. That includes new' +
+						'Yes! The Personal, Premium, and Business plans include a free custom domain. That includes new' +
 						' domains purchased through WordPress.com or your own existing domain that you can map' +
 						' to your WordPress.com site. {{a}}Find out more about domains.{{/a}}',
 						{
@@ -213,11 +213,10 @@ class PlansFeaturesMain extends Component {
 				/>
 
 				<FAQItem
-					question={ translate( 'Can I upload my own plugins?' ) }
+					question={ translate( 'Can I install plugins?' ) }
 					answer={ translate(
-						'While uploading your own plugins is not available on WordPress.com, we include the most' +
-						' popular plugin functionality within our sites automatically. The premium and business' +
-						' plans even include their own set of plugins suites tailored just' +
+						'Yes! With the WordPress.com Business plan you can search for and install community plugins.' +
+						' All other plans include their own set of plugins suites tailored just' +
 						' for them. {{a}}Check out all included plugins{{/a}}.',
 						{
 							components: { a: <a href={ `/plugins/${ site.slug }` } /> }
@@ -226,12 +225,11 @@ class PlansFeaturesMain extends Component {
 				/>
 
 				<FAQItem
-					question={ translate( 'Can I install my own theme?' ) }
+					question={ translate( 'Can I upload my own theme?' ) }
 					answer={ translate(
-						'We don’t currently allow custom themes to be uploaded to WordPress.com. We do this to keep' +
-						' your site secure but all themes in our {{a}}theme directory{{/a}} have been reviewed' +
-						' by our team and represent the highest quality. The business plan even supports' +
-						' unlimited premium theme access.',
+						'Yes! With the WordPress.com Business plan you can upload any theme you\'d like.' +
+						' All plans allow access to search our {{a}}directory of free and premium themes{{/a}}' +
+						' which have been reviewed by our team and represent the highest quality.',
 						{
 							components: { a: <a href={ `/themes/${ site.slug }` } /> }
 						}
@@ -243,14 +241,14 @@ class PlansFeaturesMain extends Component {
 					answer={ translate(
 						'No. All WordPress.com sites include our specially tailored WordPress hosting to ensure' +
 						' your site stays available and secure at all times. You can even use your own domain' +
-						' when you upgrade to the premium or business plan.'
+						' when you upgrade to the Personal, Premium, or Business plan.'
 					) }
 				/>
 
 				<FAQItem
 					question={ translate( 'Do you offer email accounts?' ) }
 					answer={ translate(
-						'Yes. If you register a new domain with our premium or business plans, you can optionally' +
+						'Yes. If you register a new domain with our Personal, Premium, or Business plans, you can optionally' +
 						' add G Suite. You can also set up email forwarding for any custom domain' +
 						' registered through WordPress.com. {{a}}Find out more about email{{/a}}.',
 						{
