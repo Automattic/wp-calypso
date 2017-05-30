@@ -57,11 +57,12 @@ class WPSuperCache extends Component {
 			siteId,
 			tab,
 		} = this.props;
+		const mainClassName = 'wp-super-cache__main';
 		const cacheDisabled = get( notices, 'cache_disabled' );
 		const cacheDisabledMessage = get( notices.cache_disabled, 'message' );
 
 		return (
-			<Main className="wp-super-cache__main">
+			<Main className={ mainClassName }>
 				<QueryNotices siteId={ siteId } />
 
 				{ cacheDisabled &&
