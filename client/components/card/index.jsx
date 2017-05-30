@@ -35,7 +35,7 @@ export default React.createClass( {
 	getHighlightClass() {
 		const { highlight } = this.props;
 		if ( ! highlight ) {
-			return '';
+			return false;
 		}
 
 		return 'is-' + highlight;
