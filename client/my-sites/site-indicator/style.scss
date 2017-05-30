@@ -111,6 +111,7 @@
 
 	// Links within the action message
 	a,
+	.button.is-borderless.is-scary,
 	.site-indicator__action-button {
 		border-bottom: 1px solid rgba( 255, 255, 255, 0.6 );
 		color: $white;
