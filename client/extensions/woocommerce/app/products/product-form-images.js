@@ -125,7 +125,7 @@ class ProductFormImages extends Component {
 					compact
 					className="products__product-form-images-item-remove">
 					<Gridicon
-						icon="cross"
+						icon="cross-small"
 						size={ 24 }
 						className="products__product-form-images-item-remove-icon" />
 				</Button>
