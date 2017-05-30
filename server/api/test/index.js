@@ -8,13 +8,11 @@ import unmodifiedConfig from 'config';
 /**
  * Internal dependencies
  */
-import { allowNetworkAccess } from 'test/helpers/nock-control';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe.skip( 'api', function() {
+describe( 'api', function() {
 	let app, config, localRequest, sandbox;
 
-	allowNetworkAccess();
 	useSandbox( newSandbox => sandbox = newSandbox );
 
 	beforeAll( () => {
