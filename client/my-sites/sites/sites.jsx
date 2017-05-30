@@ -55,7 +55,7 @@ export const Sites = React.createClass( {
 
 	onSiteSelect: function( slug ) {
 		let path = this.props.path;
-		if ( path === '/sites' ) {
+		if ( /^\/sites/.test( path ) ) {
 			path = '/stats/insights';
 		}
 		page( addSiteFragment( path, slug ) );
