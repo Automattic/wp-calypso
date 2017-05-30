@@ -31,7 +31,7 @@ class EmailedLoginLinkExpired extends React.Component {
 				<EmptyContent
 					action={ translate( 'Return to WordPress.com' ) }
 					actionURL={ '/' }
-					illustration={ '/calypso/images/drake/drake-404.svg' }
+					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					illustrationWidth={ 500 }
 					line={ translate( 'Maybe try resetting your password instead' ) }
 					secondaryAction={ translate( 'Reset my password' ) }
