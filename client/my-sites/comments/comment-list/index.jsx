@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, get, isEmpty, keyBy, map, omit } from 'lodash';
+import { filter, get, keyBy, map, omit, size } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -19,6 +19,7 @@ import getSiteComments from 'state/selectors/get-site-comments';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentNavigation from '../comment-navigation';
+import EmptyContent from 'components/empty-content';
 
 export class CommentList extends Component {
 	static propTypes = {
@@ -37,6 +38,73 @@ export class CommentList extends Component {
 		if ( ! this.props.comments.length ) {
 			this.setState( { comments: keyBy( nextProps.comments, 'ID' ) } );
 		}
+	}
+
+	deleteForever = commentId => () => {
+		this.props.removeNotice( `comment-notice-${ commentId }` );
+		this.showNotice( commentId, 'delete', 'trash' );
+
+		this.setState( { comments: omit( this.state.comments, commentId ) } );
+	}
+
+	getEmptyMessage = () => {
+		const { status, translate } = this.props;
+
+		switch ( status ) {
+			case 'unapproved':
+				return {
+					title: translate( 'No new comments yet.' ),
+					line: translate( 'Your queue is clear.' ),
+				};
+			case 'approved':
+				return {
+					title: translate( 'No approved comments.' ),
+					line: translate( 'Your queue is clear.' ),
+				};
+			case 'spam':
+				return {
+					title: translate( 'No spam comments.' ),
+					line: translate( 'Your queue is clear.' ),
+				};
+			case 'trash':
+				return {
+					title: translate( 'No deleted comments.' ),
+					line: translate( 'Your queue is clear.' ),
+				};
+			case 'all':
+				return {
+					title: translate( 'No comments yet.' ),
+					line: translate( 'Your queue is clear.' ),
+				};
+		}
+	}
+
+	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
+		const comment = this.state.comments[ commentId ];
+
+		if ( status === comment.status ) {
+			return;
+		}
+
+		// If the comment is not approved anymore, also remove the like, otherwise keep its previous value
+		const newLikeValue = 'approved' === status ? comment.i_like : false;
+
+		this.props.removeNotice( `comment-notice-${ commentId }` );
+
+		if ( options.showNotice ) {
+			this.showNotice( commentId, status, comment.status );
+		}
+
+		this.setState( {
+			comments: {
+				...this.state.comments,
+				[ commentId ]: {
+					...comment,
+					i_like: newLikeValue,
+					status,
+				},
+			},
+		} );
 	}
 
 	showNotice = ( commentId, newStatus, previousStatus ) => {
@@ -69,12 +137,7 @@ export class CommentList extends Component {
 		this.props.createNotice( type, message, options );
 	}
 
-	deleteForever = commentId => () => {
-		this.props.removeNotice( `comment-notice-${ commentId }` );
-		this.showNotice( commentId, 'delete', 'trash' );
-
-		this.setState( { comments: omit( this.state.comments, commentId ) } );
-	}
+	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
 	toggleCommentLike = commentId => {
 		const comment = this.state.comments[ commentId ];
@@ -97,36 +160,6 @@ export class CommentList extends Component {
 			},
 		} );
 	}
-
-	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
-		const comment = this.state.comments[ commentId ];
-
-		if ( status === comment.status ) {
-			return;
-		}
-
-		// If the comment is not approved anymore, also remove the like, otherwise keep its previous value
-		const newLikeValue = 'approved' === status ? comment.i_like : false;
-
-		this.props.removeNotice( `comment-notice-${ commentId }` );
-
-		if ( options.showNotice ) {
-			this.showNotice( commentId, status, comment.status );
-		}
-
-		this.setState( {
-			comments: {
-				...this.state.comments,
-				[ commentId ]: {
-					...comment,
-					i_like: newLikeValue,
-					status,
-				},
-			},
-		} );
-	}
-
-	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
 	render() {
 		const {
@@ -151,8 +184,11 @@ export class CommentList extends Component {
 					status,
 					toggleBulkEdit: this.toggleBulkEdit,
 				} } />
-				{ isEmpty( comments ) &&
+				{ null === filteredComments &&
 					<CommentDetailPlaceholder />
+				}
+				{ 0 === size( filteredComments ) &&
+					<EmptyContent { ...this.getEmptyMessage() } />
 				}
 				<ReactCSSTransitionGroup
 					transitionEnterTimeout={ 150 }
