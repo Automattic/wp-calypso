@@ -262,7 +262,7 @@ class ActivityLog extends Component {
 	render() {
 		const { siteId, slug, isJetpack } = this.props;
 		const logs = this.logs();
-		const logsGroupsedByDate = map(
+		const logsGroupedByDate = map(
 			groupBy(
 				logs.map( this.update_logs, this ),
 				( log ) => new Date( log.timestamp ).toDateString()
@@ -273,7 +273,6 @@ class ActivityLog extends Component {
 						key={ 'activity-log-' + timestamp }
 						logs={ daily_logs }
 						siteId={ siteId }
-						isRestoring={ false }
 						isRewindEnabled={ true }
 					/>
 				);
@@ -289,7 +288,7 @@ class ActivityLog extends Component {
 					section="activity"
 				/>
 				<section className="activity-log__wrapper">
-					{ logsGroupsedByDate }
+					{ logsGroupedByDate }
 				</section>
 			</Main>
 		);

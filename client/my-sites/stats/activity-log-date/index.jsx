@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -13,13 +13,15 @@ import Button from 'components/button';
 import ActivityLogItem from '../activity-log-item';
 
 class ActivityLogDate extends Component {
-	constructor( props, context ) {
-		super( props, context );
+	static propTypes = {
+		isRewindEnabled: PropTypes.bool,
+		logs: PropTypes.object,
+		siteId: PropTypes.string,
+	};
 
-		this.state = {
-			timestamp: this.props.logs[ 0 ].timestamp
-		};
-	}
+	static defaultProps = {
+		isRewindEnabled: true,
+	};
 
 	/**
 	 * Return a button to rewind to this point.
