@@ -29,6 +29,7 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import PlansLanding from './plans-landing';
+import { SITES_ONCE_CHANGED } from 'state/action-types';
 
 /**
  * Module variables
@@ -201,15 +202,31 @@ export default {
 	plansSelection( context ) {
 		const Plans = require( './plans' ),
 			CheckoutData = require( 'components/data/checkout' ),
-			state = context.store.getState(),
+			{ getState, dispatch } = context.store,
+			state = getState(),
 			siteId = getSelectedSiteId( state ),
 			isJetpack = isJetpackSite( state, siteId ),
 			analyticsPageTitle = 'Plans',
 			basePath = route.sectionify( context.path ),
 			analyticsBasePath = basePath + '/:site';
 
-		if ( ! isJetpack ) {
-			return;
+		if ( siteId && ! isJetpack ) {
+			page.redirect( '/stats' );
+		}
+
+		const redirectIfNotJetpack = () => {
+			const updatedstate = getState();
+			const selectedSiteId = getSelectedSiteId( updatedstate );
+			if ( ! isJetpackSite( updatedstate, selectedSiteId ) ) {
+				page.redirect( '/stats' );
+			}
+		};
+
+		if ( ! siteId ) {
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: redirectIfNotJetpack
+			} );
 		}
 
 		removeSidebar( context );
