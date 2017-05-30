@@ -28,7 +28,7 @@ import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import MainWrapper from './main-wrapper';
-import StepHeader from '../signup/step-header';
+import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
 import untrailingslashit from 'lib/route/untrailingslashit';
 import {
@@ -383,7 +383,7 @@ class JetpackConnectMain extends Component {
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
 					<QuerySites allSites />
-					<StepHeader
+					<FormattedHeader
 						headerText={ this.getTexts().headerTitle }
 						subHeaderText={ this.getTexts().headerSubtitle }
 						step={ 1 }
@@ -424,7 +424,7 @@ class JetpackConnectMain extends Component {
 			<MainWrapper isWide>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
-					<StepHeader
+					<FormattedHeader
 						headerText={ instructionsData.headerTitle }
 						subHeaderText={ instructionsData.headerSubtitle }
 						step={ 1 }
