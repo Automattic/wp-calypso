@@ -4,7 +4,7 @@
 import { AnonymousUser, WordPressUser } from './models/comment-author';
 import { CommentInfo } from './models/comment-info';
 import { Approved, Pending, Spam, Trash } from './models/comment-status';
-import { LoadedComment } from './models/comment';
+import { LoadedComment, LoadingComment } from './models/comment';
 
 const toAuthor = ( { avatar_URL, email, ID, name } ) =>
 	ID > 0
@@ -32,6 +32,10 @@ const toInfo = ( { content, date, i_like, parent, status } ) => {
 };
 
 export const fromApi = ( siteId, comment ) => {
+	if ( ! comment.content ) {
+		return new LoadingComment( siteId, comment.ID );
+	}
+
 	return new LoadedComment( {
 		siteId,
 		postId: comment.post.ID,
