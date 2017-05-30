@@ -21,6 +21,7 @@ import {
 	isPublicizeEnabled,
 	isSchedulingPublicizeShareAction,
 	getScheduledPublicizeShareActionTime,
+	isSchedulingPublicizeShareActionError,
 } from 'state/selectors';
 import {
 	getSiteSlug,
@@ -316,6 +317,15 @@ class PostShare extends Component {
 				</Notice>
 			);
 		}
+
+		if ( this.props.schedulingFailed ) {
+			return (
+				<Notice status="is-error" onDismissClick={ this.dismiss }>
+					{ translate( 'Scheduling share failed. Please don\'t be mad.' ) }
+				</Notice>
+			);
+		}
+
 		if ( requesting ) {
 			return (
 				<Notice status="is-warning" showDismiss={ false }>
@@ -510,6 +520,7 @@ export default connect(
 			scheduling: isSchedulingPublicizeShareAction( state, siteId, postId ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			requesting: isRequestingSharePost( state, siteId, postId ),
+			schedulingFailed: isSchedulingPublicizeShareActionError( state, siteId, postId ),
 			failed: sharePostFailure( state, siteId, postId ),
 			success: sharePostSuccessMessage( state, siteId, postId ),
 			scheduledAt: getScheduledPublicizeShareActionTime( state, siteId, postId ),
