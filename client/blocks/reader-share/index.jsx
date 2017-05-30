@@ -64,10 +64,6 @@ const actionMap = {
 };
 
 function buildQuerystringForPost( post ) {
-	const primarySite = sitesList.getPrimary();
-	if ( ! primarySite ) {
-		return;
-	}
 	const args = {};
 
 	if ( post.content_embeds && post.content_embeds.length ) {
