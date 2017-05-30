@@ -15,7 +15,7 @@ import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import StatsFirstView from '../stats-first-view';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from '../stats-navigation';
-import ActivityLogDate from '../activity-log-date';
+import ActivityLogDay from '../activity-log-day';
 
 class ActivityLog extends Component {
 	componentDidMount() {
@@ -269,7 +269,7 @@ class ActivityLog extends Component {
 			),
 			( daily_logs, timestamp ) => {
 				return (
-					<ActivityLogDate
+					<ActivityLogDay
 						key={ 'activity-log-' + timestamp }
 						logs={ daily_logs }
 						siteId={ siteId }

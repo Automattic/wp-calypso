@@ -12,7 +12,7 @@ import FoldableCard from 'components/foldable-card';
 import Button from 'components/button';
 import ActivityLogItem from '../activity-log-item';
 
-class ActivityLogDate extends Component {
+class ActivityLogDay extends Component {
 	static propTypes = {
 		isRewindEnabled: PropTypes.bool,
 		logs: PropTypes.object,
@@ -56,8 +56,8 @@ class ActivityLogDate extends Component {
 		} = this.props;
 		return (
 			<div>
-				<div className="activity-log-date__day">{ moment( logs[ 0 ].timestamp ).format( 'LL' )}</div>
-				<div className="activity-log-date__events"> { logs.length } { translate( 'Events' ) }</div>
+				<div className="activity-log-day__day">{ moment( logs[ 0 ].timestamp ).format( 'LL' )}</div>
+				<div className="activity-log-day__events"> { logs.length } { translate( 'Events' ) }</div>
 			</div>
 		);
 	}
@@ -68,7 +68,7 @@ class ActivityLogDate extends Component {
 		} = this.props;
 
 		return (
-			<div className="activity-log-date">
+			<div className="activity-log-day">
 				<FoldableCard
 					header={ this.getEventsHeading() }
 					summary={ this.getRewindButton( 'primary' ) }
@@ -97,4 +97,4 @@ class ActivityLogDate extends Component {
 	}
 }
 
-export default localize( ActivityLogDate );
+export default localize( ActivityLogDay );
