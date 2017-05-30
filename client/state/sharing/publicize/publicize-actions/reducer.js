@@ -36,7 +36,7 @@ import { publicizeActionsSchema } from './schema';
  * @param {number} actionId This parameter is optional. If passed, it will update value nested deeper in the actionId subtree
  * @returns {Object} New mutated state
  */
-function updateDataForPost( newValue, state, siteId, postId, actionId ) {
+export function updateDataForPost( newValue, state, siteId, postId, actionId ) {
 	if ( typeof actionId !== 'undefined' ) {
 		newValue = {
 			...get( state, [ siteId, postId ], {} ),
