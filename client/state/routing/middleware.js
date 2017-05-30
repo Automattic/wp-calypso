@@ -22,25 +22,28 @@ export const restoreLastLocation = () => {
 			return next( action );
 		}
 
-		localforage.getItem( LAST_PATH ).then( ( lastPath ) => {
-			if ( ! hasInitialized &&
-					lastPath && lastPath !== '/' &&
-					action.path === '/' &&
-					! isOutsideCalypso( lastPath ) ) {
-				debug( 'redir to', lastPath );
-				page( lastPath );
-			} else if ( action.path !== lastPath &&
-					! isOutsideCalypso( action.path ) ) {
-				debug( 'saving', action.path );
-				localforage.setItem( LAST_PATH, action.path );
-			}
+		localforage.getItem( LAST_PATH ).then(
+			( lastPath ) => {
+				if ( ! hasInitialized &&
+						lastPath && lastPath !== '/' &&
+						action.path === '/' &&
+						! isOutsideCalypso( lastPath ) ) {
+					debug( 'redir to', lastPath );
+					page( lastPath );
+				} else if ( action.path !== lastPath &&
+						! isOutsideCalypso( action.path ) ) {
+					debug( 'saving', action.path );
+					localforage.setItem( LAST_PATH, action.path );
+				}
 
-			if ( ! hasInitialized ) {
-				hasInitialized = true;
-			}
+				if ( ! hasInitialized ) {
+					hasInitialized = true;
+				}
 
-			return next( action );
-		} );
+				return next( action );
+			},
+			() => next( action )
+		);
 	};
 };
 
