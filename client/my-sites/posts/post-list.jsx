@@ -6,7 +6,7 @@ var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' );
 
 import { connect } from 'react-redux';
-import { debounce, isEmpty, isEqual, omit } from 'lodash';
+import { debounce, isEqual, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +22,7 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	mapStatus = route.mapPostStatus;
 
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { hasInitializedSites } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 var GUESSED_POST_HEIGHT = 250;
@@ -258,7 +259,7 @@ var Posts = React.createClass( {
 			i;
 
 		// posts have loaded, sites have loaded, and we have a site instance or are viewing all-sites
-		if ( posts.length ) {
+		if ( posts.length && this.props.hasSites ) {
 			postList = (
 				<InfiniteList
 					key={ 'list-' + this.props.listId } // to reset scroll for new list
@@ -301,6 +302,6 @@ var Posts = React.createClass( {
 export default connect(
 	( state ) => ( {
 		selectedSiteId: getSelectedSiteId( state ),
-		hasSites: ! isEmpty( state.sites.items )
+		hasSites: hasInitializedSites( state )
 	} )
 )( PostList );
