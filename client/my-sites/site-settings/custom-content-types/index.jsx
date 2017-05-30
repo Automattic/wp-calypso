@@ -15,6 +15,7 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
+import { isJetpackSite } from 'state/sites/selectors';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
@@ -25,8 +26,13 @@ class CustomContentTypes extends Component {
 			activatingCustomContentTypesModule,
 			customContentTypesModuleActive,
 			fields,
-			siteId
+			siteId,
+			siteIsJetpack,
 		} = this.props;
+
+		if ( ! siteIsJetpack ) {
+			return;
+		}
 
 		if ( customContentTypesModuleActive !== false ) {
 			return;
@@ -146,7 +152,6 @@ CustomContentTypes.defaultProps = {
 };
 
 CustomContentTypes.propTypes = {
-	onSubmitForm: PropTypes.func.isRequired,
 	handleAutosavingToggle: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
@@ -159,6 +164,7 @@ export default connect(
 
 		return {
 			siteId,
+			siteIsJetpack: isJetpackSite( state, siteId ),
 			customContentTypesModuleActive: isJetpackModuleActive( state, siteId, 'custom-content-types' ),
 			activatingCustomContentTypesModule: isActivatingJetpackModule( state, siteId, 'custom-content-types' ),
 		};
