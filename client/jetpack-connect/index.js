@@ -10,23 +10,19 @@ import controller from './controller';
 import sitesController from 'my-sites/controller';
 
 const redirectToStoreWithInterval = context => {
-	const intervalType = context && context.params && context.params.intervalType
-		? context.params.intervalType
+	const interval = context && context.params && context.params.interval
+		? context.params.interval
 		: '';
-	page.redirect( `/jetpack/connect/store/${ intervalType }` );
+	page.redirect( `/jetpack/connect/store/${ interval }` );
 };
 
 export default function() {
-	page( '/jetpack/connect/install', controller.install );
+	page( '/jetpack/connect/:type(personal|premium|pro)/:interval(yearly|monthly)?', controller.connect );
 
-	page( '/jetpack/connect/personal', controller.personal );
-	page( '/jetpack/connect/personal/:intervalType', controller.personal );
-
-	page( '/jetpack/connect/premium', controller.premium );
-	page( '/jetpack/connect/premium/:intervalType', controller.premium );
-
-	page( '/jetpack/connect/pro', controller.pro );
-	page( '/jetpack/connect/pro/:intervalType', controller.pro );
+	page( '/jetpack/connect/:type(install)/:locale?',
+		controller.redirectWithoutLocaleifLoggedIn,
+		controller.connect
+	);
 
 	page( '/jetpack/connect', controller.connect );
 
@@ -40,26 +36,20 @@ export default function() {
 	);
 
 	page(
-		'/jetpack/connect/authorize/:intervalType/:locale',
+		'/jetpack/connect/authorize/:interval/:locale',
 		controller.redirectWithoutLocaleifLoggedIn,
 		controller.saveQueryObject,
 		controller.authorizeForm
 	);
 
-	page(
-		'/jetpack/connect/install/:locale?',
-		controller.redirectWithoutLocaleifLoggedIn,
-		controller.install
-	);
-
 	page( '/jetpack/connect/store', controller.plansLanding );
-	page( '/jetpack/connect/store/:intervalType', controller.plansLanding );
+	page( '/jetpack/connect/store/:interval', controller.plansLanding );
 
 	page( '/jetpack/connect/vaultpress', '/jetpack/connect/store' );
-	page( '/jetpack/connect/vaultpress/:intervalType', redirectToStoreWithInterval );
+	page( '/jetpack/connect/vaultpress/:interval', redirectToStoreWithInterval );
 
 	page( '/jetpack/connect/akismet', '/jetpack/connect/store' );
-	page( '/jetpack/connect/akismet/:intervalType', redirectToStoreWithInterval );
+	page( '/jetpack/connect/akismet/:interval', redirectToStoreWithInterval );
 
 	page(
 		'/jetpack/connect/:locale?',
@@ -74,7 +64,7 @@ export default function() {
 	);
 
 	page(
-		'/jetpack/connect/plans/:intervalType/:site',
+		'/jetpack/connect/plans/:interval/:site',
 		sitesController.siteSelection,
 		controller.plansSelection
 	);

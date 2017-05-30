@@ -20,7 +20,7 @@ class JetpackPlansGrid extends Component {
 	static propTypes = {
 		basePlansPath: PropTypes.string,
 		hideFreePlan: PropTypes.bool,
-		intervalType: PropTypes.string,
+		interval: PropTypes.string,
 		isLanding: PropTypes.bool,
 		onSelect: PropTypes.func,
 		selectedSite: PropTypes.object,
@@ -65,7 +65,7 @@ class JetpackPlansGrid extends Component {
 							isLandingPage={ ! this.props.selectedSite }
 							basePlansPath={ this.props.basePlansPath }
 							onUpgradeClick={ this.props.onSelect }
-							intervalType={ this.props.intervalType }
+							interval={ this.props.interval }
 							hideFreePlan={ this.props.hideFreePlan }
 							displayJetpackPlans={ true } />
 					</div>
