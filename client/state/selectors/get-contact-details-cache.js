@@ -10,5 +10,5 @@ import { get } from 'lodash';
  * @return {Object}              Contact details
  */
 export default function getContactDetailsCache( state ) {
-	return get( state, 'domains.management.items._contactDetailsCache', {} );
+	return get( state, 'domains.management.items._contactDetailsCache', false );
 }
