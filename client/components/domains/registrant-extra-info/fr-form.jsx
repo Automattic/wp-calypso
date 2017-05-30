@@ -195,6 +195,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						id="countryOfBirth"
 						value={ countryOfBirth }
 						countriesList={ this.props.countriesList }
+						className="registrant-extra-info__form-country-select"
 						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
 
@@ -274,7 +275,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 							autoCapitalize="off"
 							autoComplete="off"
 							autoCorrect="off"
-							placeholder={ translate( 'ex 75008' ) }
+							placeholder={ translate( 'ex. 75008' ) }
 							onChange={ this.handleChangeEvent } />
 					</FormFieldset>
 				) }
@@ -303,7 +304,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ translate( 'ex XX123456789' ) }
+						placeholder={ translate( 'ex. XX123456789' ) }
 						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
 
@@ -317,7 +318,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						id="sirenSiret"
 						value={ sirenSiret }
 						placeholder={
-							translate( 'ex 123 456 789 or 123 456 789 01234',
+							translate( 'ex. 123 456 789 or 123 456 789 01234',
 								{ comment: 'ex is short for "example". The numbers are examples of the EU VAT format' }
 							)
 						}
@@ -341,7 +342,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						autoComplete="off"
 						autoCorrect="off"
 						placeholder={
-							translate( 'ex 123456789',
+							translate( 'ex. 123456789',
 								{ comment: 'ex is short for example. The number is the EU trademark number format.' }
 							)
 						}
