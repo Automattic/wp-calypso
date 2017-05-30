@@ -216,7 +216,7 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Can I install plugins?' ) }
 					answer={ translate(
 						'Yes! With the WordPress.com Business plan you can search for and install community plugins.' +
-						' All other plans include their own set of plugins suites tailored just' +
+						' All plans also include their own set of pre-installed plugins suites tailored just' +
 						' for them. {{a}}Check out all included plugins{{/a}}.',
 						{
 							components: { a: <a href={ `/plugins/${ site.slug }` } /> }
