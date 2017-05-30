@@ -15,6 +15,9 @@ import {
 	PUBLICIZE_SHARE_ACTION_EDIT,
 	PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_EDIT_FAILURE,
+	PUBLICIZE_SHARE_ACTION_SCHEDULE,
+	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
+	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
 } from 'state/action-types';
 
 export function fetchPostShareActionsScheduled( siteId, postId ) {
@@ -119,5 +122,39 @@ export function editPostShareAction( siteId, postId, actionId, message, share_da
 				dispatch( { type: PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS, siteId, postId, actionId, item: data.item } );
 			}
 		);
+	};
+}
+
+export function schedulePostShareAction( siteId, postId, message, share_date, connections ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: PUBLICIZE_SHARE_ACTION_SCHEDULE,
+			siteId,
+			postId,
+			connections,
+		} );
+
+		return Promise.all(
+			connections.map( connection_id => wpcom.req.post( {
+				path: `/sites/${ siteId }/posts/${ postId }/publicize/scheduled-actions/`,
+				body: { message, share_date, connection_id },
+				apiNamespace: 'wpcom/v2',
+			} ) )
+		)
+			.catch( error => dispatch( {
+				type: PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
+				siteId,
+				postId,
+				error,
+				connections
+			} ) )
+			.then( items => dispatch( {
+				type: PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
+				siteId,
+				postId,
+				share_date,
+				items,
+				connections
+			} ) );
 	};
 }

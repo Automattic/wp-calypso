@@ -75,6 +75,8 @@ export getReaderRecommendedSitesPagingOffset from './get-reader-recommended-site
 export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
 export getSelectedOrAllSites from './get-selected-or-all-sites';
+export getScheduledPublicizeShareActionTime from './get-scheduled-publicize-share-action-time';
+export isSchedulingPublicizeShareActionError from './is-scheduling-publicize-share-action-error';
 export getSharingButtons from './get-sharing-buttons';
 export getSiteComments from './get-site-comments';
 export getSiteConnectionStatus from './get-site-connection-status';
@@ -145,6 +147,7 @@ export isFollowing from './is-following';
 export isHiddenSite from './is-hidden-site';
 export isFetchingPublicizeShareActionsScheduled from './is-fetching-publicize-share-actions-scheduled';
 export isFetchingPublicizeShareActionsPublished from './is-fetching-publicize-share-actions-published';
+export isSchedulingPublicizeShareAction from './is-scheduling-publicize-share-action';
 export isJetpackModuleActive from './is-jetpack-module-active';
 export isJetpackModuleUnavailableInDevelopmentMode from './is-jetpack-module-unavailable-in-development-mode';
 export isJetpackSettingsSaveFailure from './is-jetpack-settings-save-failure';
@@ -200,3 +203,4 @@ export prependThemeFilterKeys from './prepend-theme-filter-keys';
 export shouldCloseVideoEditorModal from './should-close-video-editor-modal';
 export shouldShowVideoEditorError from './should-show-video-editor-error';
 export shouldSyncReaderFollows from './should-sync-reader-follows';
+
