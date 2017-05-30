@@ -38,7 +38,7 @@ import {
 	READER_FOLLOWING_MANAGE_URL_INPUT,
 	READER_FOLLOWING_MANAGE_RECOMMENDATION,
 } from 'reader/follow-button/follow-sources';
-import { resemblesUrl, withoutHttp } from 'lib/url';
+import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
 import { getReaderFollowsCount } from 'state/selectors';
 import { recordTrack, recordAction } from 'reader/stats';
 
@@ -243,7 +243,7 @@ class FollowingManage extends Component {
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
-								siteUrl={ readerAliasedFollowFeedUrl }
+								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
 							/>
 						</div> }
