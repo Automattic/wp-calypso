@@ -18,6 +18,7 @@ import FilePicker from 'components/file-picker';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import MediaStore from 'lib/media/store';
+import MediaValidationStore from 'lib/media/validation-store';
 
 class ProductImageUploader extends Component {
 	static propTypes = {
@@ -39,10 +40,47 @@ class ProductImageUploader extends Component {
 		onFinish: noop,
 	}
 
+	state = {
+		errors: [],
+	};
+
+	showError = ( media, transientId ) => {
+		const { onError, errorNotice, translate } = this.props;
+		const { errors } = this.state;
+
+		onError( {
+			file: media,
+			transientId,
+		} );
+
+		let extraDetails;
+		const validationError = errors[ transientId ] || [];
+		switch ( head( validationError ) ) {
+			case 'EXCEEDS_MAX_UPLOAD_SIZE' :
+				extraDetails = translate( 'This file exceeds the maximum upload size.' );
+				break;
+			case 'EXCEEDS_PLAN_STORAGE_LIMIT' :
+			case 'NOT_ENOUGH_SPACE' :
+				extraDetails = translate( 'You have reached your plan storage limit.' );
+				break;
+		}
+
+		const message = translate( 'There was a problem uploading %s.', {
+			args: media && media.file || translate( 'your image' )
+		} );
+		errorNotice( extraDetails && ( message + ' ' + extraDetails ) || message );
+	}
+
+	storeValidationErrors = () => {
+		const { siteId } = this.props;
+		this.setState( {
+			errors: MediaValidationStore.getAllErrors( siteId ),
+		} );
+	}
+
 	onPick = ( files ) => {
 		const { siteId, multiple } = this.props;
-		const { translate, errorNotice } = this.props;
-		const { onSelect, onUpload, onError, onFinish } = this.props;
+		const { onSelect, onUpload, onFinish } = this.props;
 
 		// DropZone supplies an array, FilePicker supplies a FileList
 		let images = Array.isArray( files ) ? MediaUtils.filterItemsByMimePrefix( files, 'image' ) : [ ...files ];
@@ -79,21 +117,19 @@ class ProductImageUploader extends Component {
 			if ( ! isUploadInProgress ) {
 				if ( media ) {
 					const file = find( filesToUpload, ( f ) => f.ID === transientId );
-					onUpload( {
-						ID: media.ID,
-						transientId,
-						URL: media.URL,
-						placeholder: file.preview,
-					} );
-					uploadedIds.push( transientId );
+					if ( media.URL ) {
+						onUpload( {
+							ID: media.ID,
+							transientId,
+							URL: media.URL,
+							placeholder: file.preview,
+						} );
+						uploadedIds.push( transientId );
+					} else {
+						this.showError( media, transientId );
+					}
 				} else {
-					onError( {
-						file: media,
-						transientId,
-					} );
-					errorNotice( translate( 'There was a problem uploading %s.', {
-						args: media && media.file || translate( 'an image' )
-					} ) );
+					this.showError( media, transientId );
 				}
 
 				transientIds.shift();
@@ -104,6 +140,7 @@ class ProductImageUploader extends Component {
 			}
 		};
 
+		MediaValidationStore.on( 'change', this.storeValidationErrors );
 		MediaStore.on( 'change', handleUpload );
 		MediaActions.add( siteId, filesToUpload );
 	}
@@ -140,8 +177,24 @@ class ProductImageUploader extends Component {
 		} );
 	}
 
+	renderPlaceholder() {
+		const { translate } = this.props;
+		return (
+			<div className="product-image-uploader__wrapper placeholder">
+				<div className="product-image-uploader__picker">
+						<Gridicon icon="add-outline" size={ 36 } />
+						<p>{ translate( 'Loading' ) }</p>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
-		const { compact, children, multiple } = this.props;
+		const { compact, children, multiple, siteId } = this.props;
+
+		if ( ! siteId ) {
+			return this.renderPlaceholder();
+		}
 
 		if ( children !== undefined ) {
 			return (

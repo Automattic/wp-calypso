@@ -36,3 +36,11 @@
 		padding-top: 12px;
 	}
 }
+
+.product-image-uploader__wrapper.placeholder {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	cursor: default;
+	.product-image-uploader__picker {
+		cursor: default;
+	}
+}
