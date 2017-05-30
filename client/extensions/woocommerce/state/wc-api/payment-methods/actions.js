@@ -4,7 +4,7 @@
 import getPaymentMethodDetails from '../../../lib/get-payment-method-details';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
-import { error } from '../actions';
+import { setError } from '../../site/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS,
 	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS_SUCCESS,
@@ -48,6 +48,6 @@ export const fetchPaymentMethods = ( siteId ) => ( dispatch, getState ) => {
 			dispatch( fetchPaymentMethodsSuccess( siteId, data ) );
 		} )
 		.catch( err => {
-			dispatch( error( siteId, getAction, err ) );
+			dispatch( setError( siteId, getAction, err ) );
 		} );
 };
