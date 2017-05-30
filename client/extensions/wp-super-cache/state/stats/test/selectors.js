@@ -20,7 +20,9 @@ describe( 'selectors', () => {
 		it( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
-					wpSuperCache: undefined,
+					wpSuperCache: {
+						stats: undefined,
+					}
 				}
 			};
 			const isGenerating = isGeneratingStats( state, primarySiteId );
@@ -33,8 +35,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpSuperCache: {
 						stats: {
-							generateStatus: {
-								[ primarySiteId ]: { generating: true, status: 'pending' }
+							generating: {
+								[ primarySiteId ]: true,
 							}
 						}
 					}
@@ -50,8 +52,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpSuperCache: {
 						stats: {
-							generateStatus: {
-								[ primarySiteId ]: { generating: false, status: 'success' }
+							generating: {
+								[ primarySiteId ]: false,
 							}
 						}
 					}
@@ -67,8 +69,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpSuperCache: {
 						stats: {
-							generateStatus: {
-								[ primarySiteId ]: { generating: true, status: 'pending' }
+							generating: {
+								[ primarySiteId ]: true,
 							}
 						}
 					}

@@ -19,35 +19,17 @@ import {
 } from '../action-types';
 
 /**
- * Returns the updated stats generation state after an action has been dispatched.
- * Stats generation state tracks whether the stats for a site are currently being generated.
+ * Returns the updated generating state after an action has been dispatched.
+ * Generating state tracks whether the stats for a site are currently being generated.
  *
- * @param  {Object} state Current stats generation state
+ * @param  {Object} state Current generating state
  * @param  {Object} action Action object
- * @return {Object} Updated stats generation state
+ * @return {Object} Updated generating state
  */
-const generateStatus = createReducer( {}, {
-	[ WP_SUPER_CACHE_GENERATE_STATS ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			generating: true,
-			status: 'pending',
-		}
-	} ),
-	[ WP_SUPER_CACHE_GENERATE_STATS_SUCCESS ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			generating: false,
-			status: 'success',
-		}
-	} ),
-	[ WP_SUPER_CACHE_GENERATE_STATS_FAILURE ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			generating: false,
-			status: 'error',
-		}
-	} )
+export const generating = createReducer( {}, {
+	[ WP_SUPER_CACHE_GENERATE_STATS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+	[ WP_SUPER_CACHE_GENERATE_STATS_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ WP_SUPER_CACHE_GENERATE_STATS_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
 } );
 
 /**
@@ -97,6 +79,6 @@ const items = createReducer( {}, {
 
 export default combineReducers( {
 	deleting,
-	generateStatus,
+	generating,
 	items,
 } );

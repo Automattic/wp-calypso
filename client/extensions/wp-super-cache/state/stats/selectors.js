@@ -15,7 +15,7 @@ function getStatsState( state ) {
  * @return {Boolean} Whether stats are being generated
  */
 export function isGeneratingStats( state, siteId ) {
-	return get( getStatsState( state ), [ 'generateStatus', siteId, 'generating' ], false );
+	return get( getStatsState( state ), [ 'generating', siteId ], false );
 }
 
 /**
