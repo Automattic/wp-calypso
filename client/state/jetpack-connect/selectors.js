@@ -84,7 +84,7 @@ const getPreSelectedPlan = function( state, siteSlug ) {
 	if ( siteSlug && sessions[ siteSlug ] ) {
 		return sessions[ siteSlug ].selectedPlan;
 	}
-	return false;
+	return null;
 };
 
 const getAuthAttempts = ( state, slug ) => {

@@ -422,14 +422,14 @@ describe( 'selectors', () => {
 			expect( getPreSelectedPlan( state, 'example.com/example123' ) ).to.eql( PLAN_JETPACK_PREMIUM );
 		} );
 
-		it( 'should return false if there\'s no session for a site', () => {
+		it( 'should return null if there\'s no session for a site', () => {
 			const state = {
 				jetpackConnect: {
 					jetpackConnectSessions: {}
 				}
 			};
 
-			expect( getPreSelectedPlan( state, 'sitetest' ) ).to.be.false;
+			expect( getPreSelectedPlan( state, 'sitetest' ) ).to.be.null;
 		} );
 	} );
 
