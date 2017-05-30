@@ -190,7 +190,7 @@ class ContentsTab extends Component {
 				</div>
 
 				<Card>
-					{ cache_max_time &&
+					{ cache_max_time > 0 &&
 						<p>
 							{ translate(
 								'Expired files are files older than %(cache_max_time)d seconds. They are still used by ' +
