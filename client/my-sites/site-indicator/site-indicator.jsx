@@ -16,7 +16,6 @@ import ProgressIndicator from 'components/progress-indicator';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import analytics from 'lib/analytics';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
-import QuerySiteUpdates from 'components/data/query-site-updates';
 import { canCurrentUser } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getUpdatesBySiteId } from 'state/sites/updates/selectors';
@@ -375,7 +374,6 @@ class SiteIndicator extends Component {
 		return (
 			<div className="site-indicator__wrapper">
 				{ siteIsJetpack && <QuerySiteConnectionStatus siteId={ site.ID } /> }
-				{ siteIsJetpack && <QuerySiteUpdates siteId={ site.ID } /> }
 
 				{ this.showIndicator() && this.renderIndicator() }
 			</div>
