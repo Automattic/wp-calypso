@@ -10,7 +10,7 @@ import { shallow } from 'enzyme';
  */
 import ValidationFieldset from '..';
 
-describe( 'WpcomLoginForm', () => {
+describe( 'ValidationFieldset', () => {
 	it( 'should pass className prop to the child FormFieldset component.', () => {
 		const wrapper = shallow( <ValidationFieldset className="test__foo-bar" /> );
 
