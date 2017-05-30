@@ -428,16 +428,16 @@ class DomainDetailsForm extends PureComponent {
 	handleSubmitButtonClick = ( event ) => {
 		event && event.preventDefault();
 
-		if ( this.hasAnotherStep() ) {
-			return this.switchToNextStep();
-		}
-
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.recordSubmit();
 
 			if ( hasErrors ) {
 				this.focusFirstError();
 				return;
+			}
+
+			if ( this.hasAnotherStep() ) {
+				return this.switchToNextStep();
 			}
 
 			if ( ! this.allDomainRegistrationsHavePrivacy() ) {
