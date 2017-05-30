@@ -40,6 +40,7 @@ describe.skip( 'parser', () => {
 		parser = require( 'config/parser' );
 
 		const data = parser( '/valid-path' );
+		console.log( data );
 
 		expect( data.clientData ).not.toHaveProperty( 'secret' );
 		expect( data.serverData ).toHaveProperty( 'secret' );

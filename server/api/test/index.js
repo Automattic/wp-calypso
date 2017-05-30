@@ -11,7 +11,7 @@ import unmodifiedConfig from 'config';
 import { allowNetworkAccess } from 'test/helpers/nock-control';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'api', function() {
+describe.skip( 'api', function() {
 	let app, config, localRequest, sandbox;
 
 	allowNetworkAccess();

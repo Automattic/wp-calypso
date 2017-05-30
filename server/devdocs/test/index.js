@@ -55,7 +55,7 @@ function getDocument( base, path, cb ) {
 		} );
 }
 
-describe.skip( 'devdocs', () => {
+describe( 'devdocs', () => {
 	let app, server;
 
 	allowNetworkAccess();
