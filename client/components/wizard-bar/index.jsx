@@ -11,6 +11,7 @@ import ProgressIcon from './progress-icon';
 export default class WizardBar extends React.Component {
 	static defaultProps = {
 		total: 100,
+		color: '#006fb5',
 	};
 
 	static propTypes = {
@@ -28,19 +29,20 @@ export default class WizardBar extends React.Component {
 
 	renderBar() {
 		const completionPercentage = this.getCompletionPercentage();
-		const styles = { width: completionPercentage + '%' };
-		if ( this.props.color ) {
-			styles.backgroundColor = this.props.color;
-		}
+		const progressStyle = {
+			width: completionPercentage + '%',
+			backgroundColor: this.props.color,
+		};
+		const indicatorStyle = {
+			width: completionPercentage === 0 ? '7px' : `${ completionPercentage }%`,
+			marginLeft: completionPercentage === 0 ? '-4px' : 0,
+		};
 
 		return (
 			<div>
-				<div className="wizard-bar__progress" style={ styles } />
-				<div
-					className="wizard-bar__indicator"
-					style={ { width: ( completionPercentage + 1 ) + '%' } }
-				>
-					{ <ProgressIcon /> }
+				<div className="wizard-bar__progress" style={ progressStyle } />
+				<div className="wizard-bar__indicator" style={ indicatorStyle }>
+					{ <ProgressIcon color={ this.props.color } /> }
 				</div>
 			</div>
 		);
