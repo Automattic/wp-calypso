@@ -88,7 +88,8 @@ const PostsNavigation = React.createClass( {
 
 		const author = this.props.author ? '/my' : '',
 			statusSlug = this.props.statusSlug ? '/' + this.props.statusSlug : '',
-			siteFilter = this.props.siteId ? '/' + this.props.siteId : '';
+			siteFilter = this.props.siteSlug ? '/' + this.props.siteSlug : '';
+
 		let showMyFilter = true;
 
 		this.filterStatuses = {
