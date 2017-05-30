@@ -36,6 +36,7 @@ const loginErrorMessages = {
 	empty_username: translate( 'Please enter a username or email address.' ),
 	incorrect_password: translate( "Oops, looks like that's not the right password. Please try again!" ),
 	invalid_two_step_code: translate( "Hmm, that's not a valid verification code. Please double-check your app and try again." ),
+	invalid_two_step_nonce: translate( 'Your session has expired, please go back to the login screen.' ),
 	invalid_email: translate( "Oops, looks like that's not the right address. Please try again!" ),
 	invalid_username: translate( "We don't seem to have an account with that name. Double-check the spelling and try again!" ),
 	unknown: translate( "Hmm, we can't find a WordPress.com account with this username and password combo. " +
