@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { isNumber } from 'lodash';
-
-/**
  * Returns an index object to be used for temporary IDs before saving edits to
  * the server.
  *
@@ -22,5 +17,5 @@ export function nextBucketIndex( bucketEdits ) {
  * @return {String} 'updates' for existing objects, 'creates' for new objects.
  */
 export function getBucket( object ) {
-	return object && isNumber( object.id ) && 'updates' || 'creates';
+	return object && object.id && 'updates' || 'creates';
 }

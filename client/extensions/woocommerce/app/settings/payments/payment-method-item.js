@@ -11,7 +11,22 @@ import Button from 'components/button';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 
-const PaymentMethodItem = ( { method, translate } ) => {
+const PaymentMethodItem = ( { method, translate, onCancel, onEdit, currentlyEditingId } ) => {
+	let editButtonText = translate( 'Set up' );
+	if ( currentlyEditingId === method.id ) {
+		editButtonText = translate( 'Cancel' );
+	} else {
+		editButtonText = translate( 'Set up' );
+	}
+
+	const onEditHandler = () => {
+		if ( currentlyEditingId === method.id ) {
+			onCancel( method );
+		} else {
+			onEdit( method );
+		}
+	};
+
 	return (
 		<ListItem>
 			<ListItemField>
@@ -39,9 +54,9 @@ const PaymentMethodItem = ( { method, translate } ) => {
 
 			</ListItemField>
 			<ListItemField>
-				<Button compact>
+				<Button compact onClick={ onEditHandler }>
 					{
-						translate( 'Set up' )
+						editButtonText
 					}
 				</Button>
 			</ListItemField>
@@ -50,12 +65,16 @@ const PaymentMethodItem = ( { method, translate } ) => {
 };
 
 PaymentMethodItem.propTypes = {
+	currentlyEditingId: PropTypes.string,
 	method: PropTypes.shape( {
 		title: PropTypes.string.isRequired,
 		isSuggested: PropTypes.bool,
 		fees: PropTypes.string,
+		id: PropTypes.string,
 		informationUrl: PropTypes.string,
 	} ),
+	onCancel: PropTypes.func,
+	onEdit: PropTypes.func,
 };
 
 export default localize( PaymentMethodItem );
