@@ -93,6 +93,9 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	}
 
 	handleDobChangeEvent = ( event ) => {
+		// TODO FIXME: Sanitize and validate individual fields and resulting
+		// date
+
 		// setState() is not syncronous :(
 		const newState = this.newStateFromEvent( event );
 		const { dobYears, dobMonths, dobDays } = newState;

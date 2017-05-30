@@ -278,6 +278,7 @@ class DomainDetailsForm extends PureComponent {
 	}
 
 	handleExtraChange = ( registrantExtraInfo ) => {
+		// TODO FIXME: sanitize and validate!
 		this.setState( { registrantExtraInfo } );
 	}
 
