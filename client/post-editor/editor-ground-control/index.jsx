@@ -200,7 +200,7 @@ export default React.createClass( {
 					{ postUtils.isPage( this.props.post )
 						? postScheduler
 						: <PostListFetcher
-							siteID={ this.props.site.ID }
+							siteId={ this.props.site.ID }
 							status="publish,future"
 							before={ this.state.lastDayOfTheMonth.format() }
 							after={ this.state.firstDayOfTheMonth.format() }
