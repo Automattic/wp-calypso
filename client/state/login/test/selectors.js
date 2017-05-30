@@ -51,14 +51,26 @@ describe( 'selectors', () => {
 			expect( id ).to.be.null;
 		} );
 
-		it( 'should return the two factor auth nonce if there is such', () => {
+		it( 'should return the two factor auth nonce for push if there is such', () => {
 			const nonce = getTwoFactorAuthNonce( {
 				login: {
 					twoFactorAuth: {
-						two_step_nonce: 'abcdef123456',
+						two_step_nonce_push: 'abcdef123456',
 					}
 				}
-			} );
+			}, 'push' );
+
+			expect( nonce ).to.equal( 'abcdef123456' );
+		} );
+
+		it( 'should return the two factor auth nonce for sms if there is such', () => {
+			const nonce = getTwoFactorAuthNonce( {
+				login: {
+					twoFactorAuth: {
+						two_step_nonce_sms: 'abcdef123456',
+					}
+				}
+			}, 'sms' );
 
 			expect( nonce ).to.equal( 'abcdef123456' );
 		} );

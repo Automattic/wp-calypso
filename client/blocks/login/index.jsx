@@ -13,7 +13,6 @@ import page from 'page';
 import DocumentHead from 'components/data/document-head';
 import LoginForm from './login-form';
 import {
-	getTwoFactorAuthNonce,
 	getRequestError,
 	getRequestNotice,
 	getTwoFactorNotificationSent,
@@ -34,7 +33,6 @@ class Login extends Component {
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
-		twoStepNonce: PropTypes.string,
 	};
 
 	state = {
@@ -42,8 +40,8 @@ class Login extends Component {
 	};
 
 	componentDidMount = () => {
-		if ( ! this.props.twoStepNonce && this.props.twoFactorAuthType ) {
-			// Disallow access to the 2FA pages unless the user has received a nonce
+		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
+			// Disallow access to the 2FA pages unless the user has 2FA enabled
 			page( login( { isNative: true } ) );
 		}
 	};
@@ -109,14 +107,14 @@ class Login extends Component {
 	renderContent() {
 		const {
 			twoFactorAuthType,
-			twoStepNonce,
+			twoFactorEnabled,
 		} = this.props;
 
 		const {
 			rememberMe,
 		} = this.state;
 
-		if ( twoStepNonce && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
+		if ( twoFactorEnabled && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
 			return (
 				<VerificationCodeForm
 					rememberMe={ rememberMe }
@@ -126,7 +124,7 @@ class Login extends Component {
 			);
 		}
 
-		if ( twoStepNonce && twoFactorAuthType === 'push' ) {
+		if ( twoFactorEnabled && twoFactorAuthType === 'push' ) {
 			return (
 				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } />
 			);
@@ -164,7 +162,6 @@ export default connect(
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
-		twoStepNonce: getTwoFactorAuthNonce( state ),
 	} ), {
 		recordTracksEvent,
 	}

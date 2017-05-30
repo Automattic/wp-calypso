@@ -13,6 +13,7 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
@@ -25,18 +26,24 @@ import {
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
 } from 'state/action-types';
+import {
+	getTwoFactorUserId,
+	getTwoFactorAuthNonce,
+} from 'state/login/selectors';
 
 const loginErrorMessages = {
 	empty_password: translate( 'Please be sure to enter your password.' ),
 	empty_username: translate( 'Please enter a username or email address.' ),
 	incorrect_password: translate( "Oops, looks like that's not the right password. Please try again!" ),
 	invalid_two_step_code: translate( "Hmm, that's not a valid verification code. Please double-check your app and try again." ),
+	invalid_two_step_nonce: translate( 'Your session has expired, please go back to the login screen.' ),
 	invalid_email: translate( "Oops, looks like that's not the right address. Please try again!" ),
 	invalid_username: translate( "We don't seem to have an account with that name. Double-check the spelling and try again!" ),
 	unknown: translate( "Hmm, we can't find a WordPress.com account with this username and password combo. " +
 		'Please double check your information and try again.' ),
 	account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
 		"WordPress.com and click the activation link. You'll be able to log in after that." ),
+	sms_code_throttled: translate( 'You can only request a code via SMS once per minute. Please wait and try again.' ),
 	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
 	forbidden_for_automattician: 'Cannot use social login with an Automattician account',
 };
@@ -116,13 +123,11 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 /**
  * Attempt to login a user when a two factor verification code is sent.
  *
- * @param  {Number}    user_id        Id of the user trying to log in.
  * @param  {String}    two_step_code  Verification code for the user.
- * @param  {String}    two_step_nonce Nonce generated for verification code submission.
  * @param  {Boolean}   remember_me       Flag for remembering the user for a while after logging in.
  * @return {Function}                 Action thunk to trigger the login process.
  */
-export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, two_step_nonce, remember_me ) => dispatch => {
+export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_me, twoFactorAuthType ) => ( dispatch, getState ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
@@ -130,9 +135,9 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
-			user_id,
+			user_id: getTwoFactorUserId( getState() ),
 			two_step_code,
-			two_step_nonce,
+			two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
 			remember_me,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
@@ -144,9 +149,14 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 			const errorMessage = getMessageFromHTTPError( error );
 
 			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
+				twoStepNonce: get( error, 'response.body.data.two_step_nonce' ),
+				twoFactorAuthType,
+			} );
+
+			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 				error: errorMessage,
-				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
 			} );
 
 			return Promise.reject( errorMessage );
@@ -189,13 +199,11 @@ export const loginSocialUser = ( service, token ) => dispatch => {
 };
 
 /**
- * Sends a two factor authentication recovery code to the given user.
+ * Sends a two factor authentication recovery code to the 2FA user
  *
- * @param  {Number}    userId        Id of the user trying to log in.
- * @param  {String}    twoStepNonce  Nonce generated for verification code submission.
  * @return {Function}                Action thunk to trigger the request.
  */
-export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
+export const sendSmsCode = () => ( dispatch, getState ) => {
 	dispatch( {
 		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 		notice: {
@@ -207,8 +215,8 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
-			user_id: userId,
-			two_step_nonce: twoStepNonce,
+			user_id: getTwoFactorUserId( getState() ),
+			two_step_nonce: getTwoFactorAuthNonce( getState(), 'sms' ),
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
