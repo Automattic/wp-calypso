@@ -55,14 +55,10 @@ class SiteTools extends Component {
 			changeAddress: ! isJetpack && ! isVip,
 			themeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
 			deleteContent: ! isJetpack && ! isVip,
-			deleteSite: ! isJetpack && ! isVip,
+			deleteSite: ! isJetpack && ! isVip && sitePurchasesLoaded,
 		};
 
 		if ( isEmpty( pickBy( showSection ) ) ) {
-			return null;
-		}
-
-		if ( ! sitePurchasesLoaded ) {
 			return null;
 		}
 
