@@ -216,3 +216,27 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	top: 11px;
 	z-index: z-index( 'root', '.search-stream__sort-picker' );
 }
+
+
+.search-stream__headers {
+	color: $gray;
+	display: flex;
+	font-weight: 600;
+	list-style-type: none;
+	margin: 0;
+	padding-top: 20px;
+	text-transform: uppercase;
+}
+
+.search-stream .search-stream__site-header {
+	margin-left: 40px;
+	max-width: 265px;
+	width: 100%;
+}
+
+.search-stream .search-stream__post-header,
+.search-stream .search-stream__site-header {
+	border-bottom: 2px solid lighten( $gray, 30% );
+	padding-bottom: 10px;
+	width: 100%;
+}
