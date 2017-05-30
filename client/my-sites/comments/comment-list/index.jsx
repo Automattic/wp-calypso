@@ -3,12 +3,17 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { filter, map } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
  * Internal dependencies
  */
+import {
+	createNotice,
+	removeNotice,
+} from 'state/notices/actions';
 import getSiteComments from 'state/selectors/get-site-comments';
 import CommentDetail from 'blocks/comment-detail';
 import CommentNavigation from '../comment-navigation';
@@ -32,7 +37,56 @@ export class CommentList extends Component {
 		}
 	}
 
+	getNoticeContent = ( commentId, newStatus, previousStatus ) => {
+		this.props.removeNotice( `${ commentId }-newStatus` );
+
+		const { translate } = this.props;
+		const options = {
+			button: translate( 'Undo' ),
+			duration: 5000,
+			id: `${ commentId }-newStatus`,
+			isPersistent: true,
+			onClick: () => this.setCommentStatus( commentId, previousStatus ),
+		};
+
+		switch ( newStatus ) {
+			case 'approved':
+				return {
+					type: 'is-success',
+					message: translate( 'Comment approved.' ),
+					options,
+				};
+			case 'unapproved':
+				return {
+					type: 'is-info',
+					message: translate( 'Comment unapproved.' ),
+					options,
+				};
+			case 'spam':
+				return {
+					type: 'is-warning',
+					message: translate( 'Comment marked as spam.' ),
+					options,
+				};
+			case 'trash':
+				return {
+					type: 'is-error',
+					message: translate( 'Comment moved to trash.' ),
+					options,
+				};
+			case 'delete':
+				return {
+					type: 'is-error',
+					message: translate( 'Comment deleted permanently.' ),
+					options,
+				};
+		}
+	}
+
 	deleteForever = commentId => () => {
+		const notice = this.getNoticeContent( commentId, 'delete', 'trash' );
+		this.props.createNotice( notice.type, notice.message, notice.options );
+
 		this.setState( {
 			comments: filter( this.state.comments, comment => commentId !== comment.ID ),
 		} );
@@ -56,11 +110,11 @@ export class CommentList extends Component {
 	};
 
 	setCommentStatus = ( commentId, status ) => {
-		let statusChanged = false;
+		let previousStatus = null;
 
 		const comments = map( this.state.comments, comment => {
 			if ( commentId === comment.ID && status !== comment.status ) {
-				statusChanged = true;
+				previousStatus = comment.status;
 				// If status changes to unapproved/spam/trash, also remove the like
 				return {
 					...comment,
@@ -71,7 +125,11 @@ export class CommentList extends Component {
 			return comment;
 		} );
 
-		if ( statusChanged ) {
+		// If previousStatus !== null it means the status changed
+		if ( previousStatus ) {
+			const notice = this.getNoticeContent( commentId, status, previousStatus );
+			this.props.createNotice( notice.type, notice.message, notice.options );
+
 			this.setState( { comments } );
 		}
 	};
@@ -132,4 +190,9 @@ const mapStateToProps = ( state, { siteId } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( CommentList );
+const mapDispatchToProps = {
+	createNotice,
+	removeNotice,
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentList ) );
