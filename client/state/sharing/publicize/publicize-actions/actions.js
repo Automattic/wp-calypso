@@ -78,10 +78,11 @@ export function deletePostShareAction( siteId, postId, actionId ) {
 		} );
 
 		const deleteActionPath = `/sites/${ siteId }/posts/${ postId }/publicize/scheduled-actions/${ actionId }`;
-		return wpcom.req.del(
+		return wpcom.req.get(
 			{
 				path: deleteActionPath,
 				apiNamespace: 'wpcom/v2',
+				method: 'DELETE',
 			},
 			( error, data ) => {
 				if ( error || ! data.success ) {
