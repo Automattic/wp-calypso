@@ -22,6 +22,8 @@ import {
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode
 } from 'state/selectors';
+import SpamFilteringSettings from './spam-filtering-settings';
+import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
 class SiteSettingsFormSecurity extends Component {
 	renderSectionHeader( title, showButton = true, disableButton = false ) {
@@ -43,6 +45,8 @@ class SiteSettingsFormSecurity extends Component {
 
 	render() {
 		const {
+			akismetUnavailable,
+			dirtyFields,
 			fields,
 			handleAutosavingToggle,
 			handleSubmitForm,
@@ -53,8 +57,9 @@ class SiteSettingsFormSecurity extends Component {
 			protectModuleActive,
 			protectModuleUnavailable,
 			setFieldValue,
+			settings,
 			siteId,
-			translate
+			translate,
 		} = this.props;
 
 		if ( ! jetpackSettingsUiSupported ) {
@@ -62,6 +67,7 @@ class SiteSettingsFormSecurity extends Component {
 		}
 
 		const disableProtect = ! protectModuleActive || protectModuleUnavailable;
+		const disableSpamFiltering = ! fields.akismet || akismetUnavailable;
 
 		return (
 			<form
@@ -78,6 +84,18 @@ class SiteSettingsFormSecurity extends Component {
 					isRequestingSettings={ isRequestingSettings }
 					onChangeField={ onChangeField }
 					setFieldValue={ setFieldValue }
+				/>
+
+				<QueryJetpackSettings siteId={ siteId } />
+
+				{ this.renderSectionHeader( translate( 'Spam filtering' ), true, disableSpamFiltering ) }
+				<SpamFilteringSettings
+					dirtyFields={ dirtyFields }
+					fields={ fields }
+					currentAkismetKey={ settings.wordpress_api_key }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					onChangeField={ onChangeField }
 				/>
 
 				{ this.renderSectionHeader( translate( 'WordPress.com sign in' ), false ) }
@@ -97,23 +115,27 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, siteId, 'protect' );
+		const protectIsUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, siteId, 'protect' );
+		const akismetIsUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, siteId, 'akismet' );
 		const jetpackSettingsUiSupported = siteSupportsJetpackSettingsUi( state, siteId );
 
 		return {
 			jetpackSettingsUiSupported,
 			protectModuleActive,
-			protectModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+			protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
+			akismetUnavailable: siteInDevMode && akismetIsUnavailableInDevMode,
 		};
 	}
 );
 
 const getFormSettings = partialRight( pick, [
+	'akismet',
 	'protect',
 	'jetpack_protect_global_whitelist',
 	'sso',
 	'jetpack_sso_match_by_email',
 	'jetpack_sso_require_two_step',
+	'wordpress_api_key'
 ] );
 
 export default flowRight(
