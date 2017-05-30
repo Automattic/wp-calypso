@@ -38,7 +38,6 @@ class ConnectedSubscriptionListItem extends React.Component {
 	};
 
 	componentDidMount() {
-		this.props.onLoad();
 		if ( this.props.railcar ) {
 			this.props.onComponentMountWithNewRailcar( this.props.railcar );
 		}
