@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +28,7 @@ import { addItem } from 'lib/upgrades/actions';
 import { selectPlanInAdvance, goBackToWpAdmin, completeFlow } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
+import { isRequestingPlans, getPlanBySlugSelector } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { canCurrentUser } from 'state/selectors';
 import {
@@ -153,57 +154,29 @@ class Plans extends Component {
 
 	autoselectPlan() {
 		const {
+			getPlanBySlug,
 			preSelectedPlan,
 			selectedPlan,
 		} = this.props;
 		if ( ! this.props.showFirst ) {
-			if ( preSelectedPlan === PLAN_JETPACK_PERSONAL || selectedPlan === PLAN_JETPACK_PERSONAL ) {
-				const plan = this.props.getPlanBySlug( PLAN_JETPACK_PERSONAL );
+			const checkPlan = preSelectedPlan || selectedPlan;
+			if ( includes( [
+				PLAN_JETPACK_BUSINESS,
+				PLAN_JETPACK_BUSINESS_MONTHLY,
+				PLAN_JETPACK_PERSONAL,
+				PLAN_JETPACK_PERSONAL_MONTHLY,
+				PLAN_JETPACK_PREMIUM,
+				PLAN_JETPACK_PREMIUM_MONTHLY,
+			], checkPlan ) ) {
+				const plan = getPlanBySlug( checkPlan );
 				if ( plan ) {
 					this.selectPlan( plan );
 					return;
 				}
-			}
-			if ( preSelectedPlan === PLAN_JETPACK_PERSONAL_MONTHLY || selectedPlan === PLAN_JETPACK_PERSONAL_MONTHLY ) {
-				const plan = this.props.getPlanBySlug( PLAN_JETPACK_PERSONAL_MONTHLY );
-				if ( plan ) {
-					this.selectPlan( plan );
-					return;
-				}
-			}
-			if ( preSelectedPlan === PLAN_JETPACK_BUSINESS || selectedPlan === PLAN_JETPACK_BUSINESS ) {
-				const plan = this.props.getPlanBySlug( PLAN_JETPACK_BUSINESS );
-				if ( plan ) {
-					this.selectPlan( plan );
-					return;
-				}
-			}
-			if ( preSelectedPlan === PLAN_JETPACK_BUSINESS_MONTHLY || selectedPlan === PLAN_JETPACK_BUSINESS_MONTHLY ) {
-				const plan = this.props.getPlanBySlug( PLAN_JETPACK_BUSINESS_MONTHLY );
-				if ( plan ) {
-					this.selectPlan( plan );
-					return;
-				}
-			}
-			if ( preSelectedPlan === PLAN_JETPACK_PREMIUM || selectedPlan === PLAN_JETPACK_PREMIUM ) {
-				const plan = this.props.getPlanBySlug( PLAN_JETPACK_PREMIUM );
-				if ( plan ) {
-					this.selectPlan( plan );
-					return;
-				}
-			}
-			if ( preSelectedPlan === PLAN_JETPACK_PREMIUM_MONTHLY || selectedPlan === PLAN_JETPACK_PREMIUM_MONTHLY ) {
-				const plan = this.props.getPlanBySlug( PLAN_JETPACK_PREMIUM_MONTHLY );
-				if ( plan ) {
-					this.selectPlan( plan );
-					return;
-				}
-			}
-			if (
-				preSelectedPlan === PLAN_JETPACK_FREE ||
-				selectedPlan === 'free' ||
-				selectedPlan === PLAN_JETPACK_FREE
-			) {
+			} else if ( includes( [
+				'free',
+				PLAN_JETPACK_FREE,
+			], checkPlan ) ) {
 				this.selectFreeJetpackPlan();
 			}
 		}
@@ -317,9 +290,6 @@ export default connect(
 		const selectedSiteSlug = selectedSite ? selectedSite.slug : '*';
 
 		const selectedPlan = getSiteSelectedPlan( state, selectedSiteSlug ) || getGlobalSelectedPlan( state );
-		const searchPlanBySlug = ( planSlug ) => {
-			return getPlanBySlug( state, planSlug );
-		};
 
 		return {
 			selectedSite,
@@ -332,7 +302,7 @@ export default connect(
 			canPurchasePlans: selectedSite ? canCurrentUser( state, selectedSite.ID, 'manage_options' ) : true,
 			preSelectedPlan: getPreSelectedPlan( state, selectedSiteSlug ),
 			isRequestingPlans: isRequestingPlans( state ),
-			getPlanBySlug: searchPlanBySlug,
+			getPlanBySlug: ( planSlug ) => getPlanBySlugSelector( state, planSlug ),
 			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSiteSlug ),
 			redirectingToWpAdmin: isRedirectingToWpAdmin( state ),
 		};
