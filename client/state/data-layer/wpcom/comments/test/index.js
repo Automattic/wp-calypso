@@ -108,14 +108,20 @@ describe( 'wpcom-api', () => {
 		describe( '#announceFailure', () => {
 			it( 'should dispatch an error notice', () => {
 				const dispatch = spy();
+				const getState = () => ( {
+					posts: {
+						queries: {}
+					}
+				} );
 
-				announceFailure( { dispatch } );
+				announceFailure( { dispatch, getState }, { siteId: 101010, postId: 1010 } );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWithMatch( {
 					type: NOTICE_CREATE,
 					notice: {
-						status: 'is-error'
+						status: 'is-error',
+						text: 'Could not retrieve comments for requested post'
 					}
 				} );
 			} );
