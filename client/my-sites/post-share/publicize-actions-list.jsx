@@ -46,7 +46,7 @@ class PublicizeActionsList extends PureComponent {
 	setFooterSection = selectedShareTab => () => this.setState( { selectedShareTab } );
 
 	renderFooterSectionItem( {
-		actionId,
+		ID: actionId,
 		connectionName,
 		message,
 		shareDate,
@@ -117,7 +117,7 @@ class PublicizeActionsList extends PureComponent {
 		};
 	}
 
-	closeDeleteDialog( dialogAction ) {
+	closeDeleteDialog = ( dialogAction ) => {
 		if ( dialogAction === 'delete' ) {
 			const {
 				siteId,
@@ -128,7 +128,7 @@ class PublicizeActionsList extends PureComponent {
 		}
 
 		this.setState( { showDeleteDialog: false } );
-	}
+	};
 
 	renderActionsList = ( actions ) => (
 			<div>
