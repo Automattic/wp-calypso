@@ -135,16 +135,6 @@ class ContentsTab extends Component {
 						</div>
 					}
 
-					{ ( wpcache || supercache ) &&
-						<p className="wp-super-cache__cache-stat-refresh">
-							{ translate(
-								'Cache stats last generated: %(generated)d minutes ago.',
-								{
-									args: { generated: ( get( stats, 'generated', 0 ) ) },
-								}
-							) }
-						</p>
-					}
 						<Button
 							compact
 							busy={ isGenerating }
