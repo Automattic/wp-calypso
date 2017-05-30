@@ -159,7 +159,7 @@ class ContentsTab extends Component {
 				{ ! isEmpty( get( wpcache, 'cached_list' ) ) &&
 					<CacheStats
 						files={ wpcache.cached_list }
-						header={ translate( 'Fresh WP-Cached Files' ) }
+						header={ translate( 'Fresh Full Cache Files' ) }
 						isCached={ true }
 						isSupercache={ false } />
 				}
@@ -167,7 +167,7 @@ class ContentsTab extends Component {
 				{ ! isEmpty( get( wpcache, 'expired_list' ) ) &&
 					<CacheStats
 						files={ wpcache.expired_list }
-						header={ translate( 'Stale WP-Cached Files' ) }
+						header={ translate( 'Stale Full Cache Files' ) }
 						isCached={ false }
 						isSupercache={ false } />
 				}
