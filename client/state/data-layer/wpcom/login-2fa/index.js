@@ -9,8 +9,8 @@ import defer from 'lodash/defer';
  */
 import config from 'config';
 import {
-	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
+	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 } from 'state/action-types';
 import {
@@ -45,11 +45,10 @@ const doAppPushRequest = ( store ) => {
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} ).then( () => {
-			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
+			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_SUCCESS } );
 		} ).catch( error => {
 			store.dispatch( {
-				type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-				nonceType: 'push',
+				type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_FAILURE,
 				twoStepNonce: error.response.body.data.two_step_nonce
 			} );
 			return Promise.reject( error );

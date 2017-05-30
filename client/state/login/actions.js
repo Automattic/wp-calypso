@@ -13,7 +13,6 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
-	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
@@ -149,14 +148,10 @@ export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_
 			const errorMessage = getMessageFromHTTPError( error );
 
 			dispatch( {
-				type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-				twoStepNonce: get( error, 'response.body.data.two_step_nonce' ),
-				twoFactorAuthType,
-			} );
-
-			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 				error: errorMessage,
+				twoFactorAuthType,
+				twoStepNonce: get( error, 'response.body.data.two_step_nonce' ),
 			} );
 
 			return Promise.reject( errorMessage );

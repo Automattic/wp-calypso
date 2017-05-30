@@ -12,7 +12,7 @@ import {
 	LOGIN_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
-	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
+	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -386,18 +386,17 @@ describe( 'reducer', () => {
 		it( 'should update the "two_step_nonce" value when requested', () => {
 			const data = {
 				two_step_id: 12345678,
-				two_step_nonce_authenticator: 'abcdefgh1234',
+				two_step_nonce_push: 'abcdefgh1234',
 			};
 
 			const state = twoFactorAuth( data, {
-				type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
+				type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_FAILURE,
 				twoStepNonce: 'foo',
-				nonceType: 'authenticator'
 			} );
 
 			expect( state ).to.eql( {
 				two_step_id: 12345678,
-				two_step_nonce_authenticator: 'foo'
+				two_step_nonce_push: 'foo'
 			} );
 		} );
 
