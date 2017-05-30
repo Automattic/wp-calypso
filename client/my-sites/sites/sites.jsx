@@ -55,11 +55,7 @@ export const Sites = React.createClass( {
 	},
 
 	onSiteSelect: function( siteId ) {
-		let path = this.props.path;
-		if ( path === '/sites' ) {
-			path = '/stats/insights';
-		}
-		page( addSiteFragment( path, this.props.getSiteSlug( siteId ) ) );
+		this.props.selectSite( siteId, this.props.path );
 		return true;
 	},
 
@@ -100,12 +96,19 @@ export const Sites = React.createClass( {
 	}
 } );
 
+const selectSite = ( siteId, rawPath ) => ( dispatch, getState ) => {
+	const path = ( rawPath === '/sites' )
+		? '/stats/insights'
+		: rawPath;
+	page( addSiteFragment( path, getSiteSlug( getState(), siteId ) ) );
+};
+
 export default connect(
 	( state ) => {
 		return {
 			selectedSite: getSelectedSite( state ),
 			sites: getSites( state ),
-			getSiteSlug: siteId => getSiteSlug( state, siteId )
 		};
-	}
+	},
+	{ selectSite }
 )( Sites );
