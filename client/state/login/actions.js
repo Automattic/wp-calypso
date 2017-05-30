@@ -18,6 +18,9 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST,
+	TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -37,7 +40,7 @@ const loginErrorMessages = {
 		'Please double check your information and try again.' ),
 	account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
 		"WordPress.com and click the activation link. You'll be able to log in after that." ),
-	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
+	sms_code_throttled: translate( 'You can only request a code via SMS once per minute. Please wait and try again.' ),
 	forbidden_for_automattician: 'Cannot use social login with an Automattician account',
 };
 
@@ -236,6 +239,41 @@ export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 				error: { message, field },
+				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
+			} );
+		} );
+};
+
+/**
+ * Sends a two factor authentication recovery code to the given user.
+ *
+ * @param  {Number}    userId        Id of the user trying to log in.
+ * @param  {String}    twoStepNonce  Nonce generated for verification code submission.
+ * @return {Function}                Action thunk to trigger the request.
+ */
+export const sendPushNotification = ( userId, twoStepNonce ) => dispatch => {
+	dispatch( {
+		type: TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST,
+	} );
+
+	return request.post( 'https://wordpress.com/wp-login.php?action=send-push-notification-endpoint' )
+		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
+		.accept( 'application/json' )
+		.send( {
+			user_id: userId,
+			two_step_nonce: twoStepNonce,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} )
+		.then( ( response ) => {
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST_SUCCESS,
+				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
+				pushWebToken: response.body.data.push_web_token
+			} );
+		} ).catch( ( error ) => {
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST_FAILURE,
 				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
 			} );
 		} );

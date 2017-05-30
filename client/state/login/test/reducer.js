@@ -15,6 +15,9 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST,
+	TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -22,6 +25,7 @@ import {
 import reducer, {
 	isRequesting,
 	isRequestingTwoFactorAuth,
+	isRequestingSendPushNotification,
 	requestError,
 	requestNotice,
 	requestSuccess,
@@ -39,6 +43,7 @@ describe( 'reducer', () => {
 			'requestSuccess',
 			'twoFactorAuth',
 			'isRequestingTwoFactorAuth',
+			'isRequestingSendPushNotification',
 			'twoFactorAuthRequestError',
 			'twoFactorAuthPushPoll',
 		] );
@@ -85,6 +90,54 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = isRequesting( true, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.false;
+		} );
+	} );
+
+	describe( 'isRequestingSendPushNotification', () => {
+		it( 'should default to a false', () => {
+			const state = isRequestingSendPushNotification( undefined, {} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should set isRequesting to true value if a request is initiated', () => {
+			const state = isRequestingSendPushNotification( undefined, {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST,
+			} );
+
+			expect( state ).to.be.true;
+		} );
+
+		it( 'should set isRequesting to false value if a request was unsuccessful', () => {
+			const state = isRequestingSendPushNotification( undefined, {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST_FAILURE,
+			} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should set isRequesting to false value if a request was successful', () => {
+			const state = isRequestingSendPushNotification( undefined, {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST_SUCCESS,
+			} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should not persist state', () => {
+			const state = isRequestingSendPushNotification( true, {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should not load persisted state', () => {
+			const state = isRequestingSendPushNotification( true, {
 				type: DESERIALIZE
 			} );
 

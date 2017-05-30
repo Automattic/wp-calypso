@@ -25,17 +25,6 @@ export const getTwoFactorAuthNonce = ( state ) => {
 	return get( state, 'login.twoFactorAuth.two_step_nonce', null );
 };
 
-/**
- * Retrieve the type of notification sent for the two factor authentication process.
- * Returns null if there is no such information yet, or user does not have 2FA enabled.
- *
- * @param  {Object}   state  Global state tree
- * @return {?String}         The type of 2FA notification. enum: 'sms', 'push', 'none'.
- */
-export const getTwoFactorNotificationSent = ( state ) => {
-	return get( state, 'login.twoFactorAuth.two_step_notification_sent', null );
-};
-
 /***
  * Retrieve a token to be used for push notification auth polling
  *
@@ -129,6 +118,26 @@ export const getTwoFactorSupportedAuthTypes = ( state ) => {
 export const isTwoFactorAuthTypeSupported = ( state, type ) => {
 	const supportedAuthTypes = getTwoFactorSupportedAuthTypes( state );
 	return supportedAuthTypes && supportedAuthTypes.indexOf( type ) >= 0;
+};
+
+/**
+ * Determines whether a two factor authentication push request is in-progress.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Whether the request is in-progress.
+ */
+export const isRequestingTwoFactorAuthPushPoll = ( state ) => {
+	return get( state, 'login.twoFactorAuthPushPoll.isRequesting', false );
+};
+
+/**
+ * Determines whether a request to send the push notification is in-progress.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Whether the request is in-progress.
+ */
+export const isRequestingSendPushNotification = ( state ) => {
+	return get( state, 'login.isRequestingSendPushNotification', false );
 };
 
 /**

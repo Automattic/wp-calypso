@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
+import { find, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
@@ -16,7 +16,7 @@ import {
 	getTwoFactorAuthNonce,
 	getRequestError,
 	getRequestNotice,
-	getTwoFactorNotificationSent,
+	getTwoFactorSupportedAuthTypes,
 	isTwoFactorEnabled
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -62,10 +62,13 @@ class Login extends Component {
 		if ( ! this.props.twoFactorEnabled ) {
 			this.rebootAfterLogin();
 		} else {
+			const { twoFactorSupportedAuthTypes } = this.props;
+
+			const twoFactorAuthType = find( [ 'push', 'authenticator', 'sms' ], type => includes( twoFactorSupportedAuthTypes, type ) );
+
 			page( login( {
 				isNative: true,
-				// If no notification is sent, the user is using the authenticator for 2FA by default
-				twoFactorAuthType: this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' )
+				twoFactorAuthType
 			} ) );
 		}
 	};
@@ -163,7 +166,7 @@ export default connect(
 		requestError: getRequestError( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
-		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+		twoFactorSupportedAuthTypes: getTwoFactorSupportedAuthTypes( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
 	} ), {
 		recordTracksEvent,

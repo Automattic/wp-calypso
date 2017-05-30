@@ -9,8 +9,9 @@ import defer from 'lodash/defer';
  */
 import config from 'config';
 import {
-	TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
+	TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST,
+	TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 } from 'state/action-types';
 import {
@@ -33,6 +34,13 @@ const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
  * @returns {Promise}		Promise of result from the API
  */
 const doAppPushRequest = ( store ) => {
+	if ( ! getTwoFactorPushPollInProgress( store.getState() ) ) {
+		// we have since disabled polling, short circuit
+		return;
+	}
+
+	store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST } );
+
 	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
@@ -45,9 +53,13 @@ const doAppPushRequest = ( store ) => {
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} ).then( () => {
-			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
+			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST_SUCCESS } );
 		} ).catch( error => {
-			store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE, twoStepNonce: error.response.body.data.two_step_nonce } );
+			store.dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_PUSH_REQUEST_FAILURE,
+				twoStepNonce: error.response.body.data.two_step_nonce
+			} );
+
 			return Promise.reject( error );
 		} );
 };
@@ -62,14 +74,16 @@ const doAppPushRequest = ( store ) => {
 const doAppPushPolling = store => {
 	let retryCount = 0;
 	const retry = () => {
-		// if polling was stopped or not in progress - stop
-		if ( ! getTwoFactorPushPollInProgress( store.getState() ) ) {
-			return;
-		}
-
 		retryCount++;
 		setTimeout(
-			() => doAppPushRequest( store ).catch( retry ),
+			() => {
+				// if polling was stopped or not in progress - stop
+				if ( ! getTwoFactorPushPollInProgress( store.getState() ) ) {
+					return;
+				}
+
+				doAppPushRequest( store ).catch( retry );
+			},
 			( POLL_APP_PUSH_INTERVAL_SECONDS + Math.floor( retryCount / 10 ) ) * 1000 // backoff lineary
 		);
 	};
