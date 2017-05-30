@@ -15,7 +15,6 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS,
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_STATS,
 } from '../../action-types';
 import {
 	DESERIALIZE,
@@ -222,7 +221,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'items()', () => {
-		describe( 'WP_SUPER_CACHE_RECEIVE_STATS', () => {
+		describe( 'WP_SUPER_CACHE_GENERATE_STATS_SUCCESS', () => {
 			const primaryStats = { generated: 1493997829 };
 			const secondaryStats = { generated: 0 };
 			const previousState = deepFreeze( {
@@ -239,7 +238,7 @@ describe( 'reducer', () => {
 
 			it( 'should index stats by site ID', () => {
 				const state = reducer( undefined, {
-					type: WP_SUPER_CACHE_RECEIVE_STATS,
+					type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 					siteId: primarySiteId,
 					stats: primaryStats,
 				} );
@@ -251,7 +250,7 @@ describe( 'reducer', () => {
 
 			it( 'should accumulate stats', () => {
 				const state = reducer( previousState, {
-					type: WP_SUPER_CACHE_RECEIVE_STATS,
+					type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 					siteId: secondarySiteId,
 					stats: secondaryStats,
 				} );
@@ -264,7 +263,7 @@ describe( 'reducer', () => {
 
 			it( 'should override previous stats of same site ID', () => {
 				const state = reducer( previousState, {
-					type: WP_SUPER_CACHE_RECEIVE_STATS,
+					type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 					siteId: primarySiteId,
 					stats: secondaryStats,
 				} );
@@ -280,7 +279,7 @@ describe( 'reducer', () => {
 					supercache: {},
 				};
 				const state = reducer( previousState, {
-					type: WP_SUPER_CACHE_RECEIVE_STATS,
+					type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 					siteId: primarySiteId,
 					stats: newStats,
 				} );

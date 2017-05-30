@@ -13,7 +13,6 @@ import {
 	WP_SUPER_CACHE_DELETE_FILE,
 	WP_SUPER_CACHE_DELETE_FILE_FAILURE,
 	WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_STATS,
 	WP_SUPER_CACHE_GENERATE_STATS,
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
@@ -73,7 +72,7 @@ const deleting = createReducer( {}, {
  * @return {Object} Updated stats
  */
 const items = createReducer( {}, {
-	[ WP_SUPER_CACHE_RECEIVE_STATS ]: ( state, { siteId, stats } ) => ( { ...state, [ siteId ]: stats } ),
+	[ WP_SUPER_CACHE_GENERATE_STATS_SUCCESS ]: ( state, { siteId, stats } ) => ( { ...state, [ siteId ]: stats } ),
 	[ WP_SUPER_CACHE_DELETE_FILE_SUCCESS ]: ( state, { siteId, url, isSupercache, isCached } ) => {
 		const cacheType = isSupercache ? 'supercache' : 'wpcache';
 		const listType = isCached ? 'cached_list' : 'expired_list';

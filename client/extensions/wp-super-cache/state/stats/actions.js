@@ -14,19 +14,9 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS,
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_STATS,
 } from '../action-types';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteTitle } from 'state/sites/selectors';
-
-/**
- * Returns an action object to be used in signalling that stats have been received.
- *
- * @param  {Number} siteId Site ID
- * @param  {Object} stats Stats object
- * @return {Object} Action object
- */
-export const receiveStats = ( siteId, stats ) => ( { type: WP_SUPER_CACHE_RECEIVE_STATS, siteId, stats } );
 
 /*
  * Retrieves stats for a site.
@@ -41,8 +31,7 @@ export const generateStats = ( siteId ) => {
 
 		return wp.req.get( { path: `/jetpack-blogs/${ siteId }/rest-api/` }, { path: '/wp-super-cache/v1/stats' } )
 			.then( ( { data } ) => {
-				dispatch( receiveStats( siteId, data ) );
-				dispatch( { type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS, siteId } );
+				dispatch( { type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS, siteId, stats: data } );
 				dispatch( successNotice(
 					translate( 'Cache stats regenerated on %(siteTitle)s.',
 						{ args: { siteTitle: getSiteTitle( getState(), siteId ) } }
