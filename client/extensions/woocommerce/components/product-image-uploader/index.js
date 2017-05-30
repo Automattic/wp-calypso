@@ -150,7 +150,7 @@ class ProductImageUploader extends Component {
 		return (
 			<div className="product-image-uploader__picker compact">
 				<FilePicker multiple={ multiple } accept="image/*" onPick={ this.onPick } >
-					<Gridicon icon="add-outline" size={ 24 } />
+					<Gridicon icon="add-image" size={ 24 } />
 				</FilePicker>
 			</div>
 		);
@@ -162,7 +162,7 @@ class ProductImageUploader extends Component {
 			<div className="product-image-uploader__wrapper">
 				<div className="product-image-uploader__picker">
 					<FilePicker multiple={ multiple } accept="image/*" onPick={ this.onPick }>
-						<Gridicon icon="add-outline" size={ 36 } />
+						<Gridicon icon="add-image" size={ 36 } />
 						<p>{ translate( 'Add images' ) }</p>
 					</FilePicker>
 				</div>
