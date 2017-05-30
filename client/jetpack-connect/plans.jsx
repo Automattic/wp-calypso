@@ -5,7 +5,10 @@ import { connect } from 'react-redux';
 import page from 'page';
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
+import {
+	get,
+	includes,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -142,14 +145,14 @@ class Plans extends Component {
 	}
 
 	hasPlan( site ) {
-		return site &&
-			site.plan &&
-			( site.plan.product_slug === PLAN_JETPACK_BUSINESS ||
-				site.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY ||
-				site.plan.product_slug === PLAN_JETPACK_PREMIUM ||
-				site.plan.product_slug === PLAN_JETPACK_PREMIUM_MONTHLY ||
-				site.plan.product_slug === PLAN_JETPACK_PERSONAL ||
-				site.plan.product_slug === PLAN_JETPACK_PERSONAL_MONTHLY );
+		return includes( [
+			PLAN_JETPACK_BUSINESS,
+			PLAN_JETPACK_BUSINESS_MONTHLY,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PERSONAL_MONTHLY,
+			PLAN_JETPACK_PREMIUM,
+			PLAN_JETPACK_PREMIUM_MONTHLY,
+		], get( site, 'plan.product_slug' ) );
 	}
 
 	autoselectPlan() {
