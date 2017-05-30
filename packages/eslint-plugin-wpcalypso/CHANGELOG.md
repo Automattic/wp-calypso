@@ -1,3 +1,7 @@
+#### v3.4.0 (2017-05-26)
+
+- New Rule: [`redux-no-bound-selectors`](docs/rules/redux-no-bound-selectors.md)
+
 #### v3.3.0 (2017-05-25)
 
 - New Rule: [`import-no-redux-combine-reducers`](docs/rules/import-no-redux-combine-reducers.md)
