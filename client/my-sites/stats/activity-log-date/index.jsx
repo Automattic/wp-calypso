@@ -13,9 +13,10 @@ import Button from 'components/button';
 import ActivityLogItem from '../activity-log-item';
 
 class ActivityLogDate extends Component {
+	constructor( props, context ) {
+		super( props, context );
 
-	getInitialState() {
-		return {
+		this.state = {
 			timestamp: this.props.logs[ 0 ].timestamp
 		};
 	}
@@ -23,31 +24,21 @@ class ActivityLogDate extends Component {
 	/**
 	 * Return a button to rewind to this point.
 	 *
-	 * @param {int} timestamp The index of the backup to restore.
 	 * @param {string} type Whether the button will be a primary or not.
 	 * @returns { object } Button to display.
 	 */
-	getRewindButton( timestamp, type = '' ) {
+	getRewindButton( type = '' ) {
 		return (
 			<Button
 				primary={ 'primary' === type }
 				disabled={ ! this.props.isRewindEnabled }
 				compact
-				onClick={ this.requestRestore }
-				className={ this.props.isRestoring( timestamp )
-					? 'is-busy'
-					: ''
-				}
 			>
 				<Gridicon icon={ 'history' } size={ 18 } /> {
 				this.props.translate( 'Rewind to this day' )
 			}
 			</Button>
 		);
-	}
-
-	requestRestore() {
-		this.props.requestRestore( this.props.siteId, this.state.timestamp );
 	}
 
 	/**
@@ -73,14 +64,13 @@ class ActivityLogDate extends Component {
 		const {
 			logs
 		} = this.props;
-		const mostRecentBackup = logs[ 0 ].timestamp;
 
 		return (
 			<div className="activity-log-date">
 				<FoldableCard
 					header={ this.getEventsHeading() }
-					summary={ this.getRewindButton( mostRecentBackup, 'primary' ) }
-					expandedSummary={ this.getRewindButton( mostRecentBackup ) }
+					summary={ this.getRewindButton( 'primary' ) }
+					expandedSummary={ this.getRewindButton() }
 				>
 					{ logs.map( ( log, index ) => {
 						return (
@@ -96,7 +86,6 @@ class ActivityLogDate extends Component {
 								actionText={ log.actionText }
 								status={ log.status }
 								className={ log.className }
-								requestRestore={ this.props.requestRestore }
 							/>
 						);
 					} ) }
