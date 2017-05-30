@@ -14,6 +14,7 @@ import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
 import { getSites } from 'state/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export const Sites = React.createClass( {
@@ -53,12 +54,9 @@ export const Sites = React.createClass( {
 		return site;
 	},
 
-	onSiteSelect: function( slug ) {
-		let path = this.props.path;
-		if ( path === '/sites' ) {
-			path = '/stats/insights';
-		}
-		page( addSiteFragment( path, slug ) );
+	onSiteSelect: function( siteId ) {
+		this.props.selectSite( siteId, this.props.path );
+		return true;
 	},
 
 	getHeaderText() {
@@ -98,11 +96,19 @@ export const Sites = React.createClass( {
 	}
 } );
 
+const selectSite = ( siteId, rawPath ) => ( dispatch, getState ) => {
+	const path = ( rawPath === '/sites' )
+		? '/stats/insights'
+		: rawPath;
+	page( addSiteFragment( path, getSiteSlug( getState(), siteId ) ) );
+};
+
 export default connect(
 	( state ) => {
 		return {
 			selectedSite: getSelectedSite( state ),
 			sites: getSites( state ),
 		};
-	}
+	},
+	{ selectSite }
 )( Sites );
