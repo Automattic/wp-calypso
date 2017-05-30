@@ -29,7 +29,8 @@ export default function StatsController( context ) {
 	const props = {
 		type: context.params.type,
 		unit: context.params.unit,
-		startDate: context.query.start_date,
+		path: context.pathname,
+		startDate: context.query.startDate,
 	};
 	renderWithReduxStore(
 		<AsyncLoad
