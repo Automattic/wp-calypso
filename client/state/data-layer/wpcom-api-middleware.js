@@ -14,6 +14,25 @@ const mergedHandlers = mergeHandlers(
 	wpcomHandlers,
 );
 
+const shouldNext = action => {
+	const meta = action.meta;
+	if ( ! meta ) {
+		return true;
+	}
+
+	const data = meta.dataLayer;
+	if ( ! data ) {
+		return true;
+	}
+
+	// is a network response, don't reissue
+	if ( data.data || data.error || data.headers ) {
+		return false;
+	}
+
+	return true;
+};
+
 /**
  * WPCOM Middleware API
  *
@@ -83,7 +102,9 @@ export const middleware = handlers => store => next => {
 		// make sure we pass along this action
 		// eventually this will return to the
 		// simpler `return next( action )`
-		nextActions.add( action );
+		if ( shouldNext( action ) ) {
+			nextActions.add( action );
+		}
 		nextActions.forEach( localNext );
 	};
 };
