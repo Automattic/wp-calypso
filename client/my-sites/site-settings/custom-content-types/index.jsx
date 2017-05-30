@@ -15,6 +15,7 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
+import { requestPostTypes } from 'state/post-types/actions';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
@@ -52,6 +53,13 @@ class CustomContentTypes extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
+	requestSitePostTypes = () => {
+		const { siteId } = this.props;
+		if ( siteId ) {
+			this.props.requestPostTypes( siteId );
+		}
+	}
+
 	renderToggle( name, label, description ) {
 		const {
 			activatingCustomContentTypesModule,
@@ -63,7 +71,7 @@ class CustomContentTypes extends Component {
 				<CompactFormToggle
 					checked={ !! fields[ name ] }
 					disabled={ this.isFormPending() || activatingCustomContentTypesModule }
-					onChange={ handleAutosavingToggle( name ) }
+					onChange={ handleAutosavingToggle( name, this.requestSitePostTypes ) }
 				>
 					{ label }
 				</CompactFormToggle>
@@ -164,6 +172,7 @@ export default connect(
 		};
 	},
 	{
-		activateModule
+		activateModule,
+		requestPostTypes
 	}
 )( localize( CustomContentTypes ) );
