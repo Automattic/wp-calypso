@@ -53,8 +53,8 @@ Req.prototype.put = function( params, query, body, fn ) {
 	// params can be a string
 	params = 'string' === typeof params ? { path: params } : params;
 
-	// request method
-	params.method = 'post';
+	// in v1 endpoints, DELETE and PUT operations use http POST, but for v2 endpoints we must allow this to be overridden
+	params.method = params.method || 'post';
 
 	return sendRequest.call( this.wpcom, params, query, body, fn );
 };
