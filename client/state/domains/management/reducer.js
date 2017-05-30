@@ -27,9 +27,9 @@ import {
  * @return {Object}        Updated state
  */
 export const requesting = createReducer( false, {
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST ]: ( state ) => ( { ...state, contactDetailsCache: true } ),
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS ]: ( state ) => ( { ...state, contactDetailsCache: false } ),
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE ]: ( state ) => ( { ...state, contactDetailsCache: false } ),
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST ]: ( state ) => ( { ...state, _contactDetailsCache: true } ),
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS ]: ( state ) => ( { ...state, _contactDetailsCache: false } ),
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE ]: ( state ) => ( { ...state, _contactDetailsCache: false } ),
 	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST ]: ( state, { domain } ) => ( { ...state, [ domain ]: true } ),
 	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS ]: ( state, { domain } ) => ( { ...state, [ domain ]: false } ),
 	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE ]: ( state, { domain } ) => ( { ...state, [ domain ]: false } )
@@ -67,7 +67,7 @@ export const saving = createReducer( false, {
  * @return {Object}        Updated state
  */
 export const items = createReducer( {}, {
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE ]: ( state, { cacheData } ) => ( { ...state, contactDetailsCache: cacheData } ),
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE ]: ( state, { cacheData } ) => ( { ...state, _contactDetailsCache: cacheData } ),
 	[ DOMAIN_MANAGEMENT_WHOIS_RECEIVE ]: ( state, { domain, whoisData } ) => ( { ...state, [ domain ]: whoisData } ),
 	[ DOMAIN_MANAGEMENT_WHOIS_UPDATE ]: ( state, { domain, whoisData } ) => ( {
 		...state,

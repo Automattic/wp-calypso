@@ -11,5 +11,5 @@ import { get } from 'lodash';
  * @return {Boolean} If the request is in progress
  */
 export default function isRequestingContactDetailsCache( state ) {
-	return get( state, 'domains.management.requesting.contactDetailsCache', false );
+	return get( state, 'domains.management.requesting._contactDetailsCache', false );
 }
