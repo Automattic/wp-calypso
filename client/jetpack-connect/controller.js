@@ -129,11 +129,11 @@ export default {
 
 		removeSidebar( context );
 
-		let intervalType = context.params.intervalType;
+		let interval = context.params.interval;
 		let locale = context.params.locale;
 		if ( context.params.localeOrInterval ) {
 			if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
-				intervalType = context.params.localeOrInterval;
+				interval = context.params.localeOrInterval;
 			} else {
 				locale = context.params.localeOrInterval;
 			}
@@ -143,7 +143,7 @@ export default {
 		renderWithReduxStore(
 			<JetpackConnectAuthorizeForm
 				path={ context.path }
-				intervalType={ intervalType }
+				interval={ interval }
 				locale={ locale }
 			/>,
 			document.getElementById( 'primary' ),
@@ -190,7 +190,7 @@ export default {
 			<PlansLanding
 				context={ context }
 				destinationType={ context.params.destinationType }
-				intervalType={ context.params.intervalType }
+				interval={ context.params.interval }
 				basePlansPath={ '/jetpack/connect/store' }
 			/>,
 			document.getElementById( 'primary' ),
@@ -226,7 +226,7 @@ export default {
 					context={ context }
 					destinationType={ context.params.destinationType }
 					basePlansPath={ '/jetpack/connect/plans' }
-					intervalType={ context.params.intervalType } />
+					interval={ context.params.interval } />
 			</CheckoutData>,
 			document.getElementById( 'primary' ),
 			context.store

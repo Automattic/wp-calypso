@@ -10,10 +10,10 @@ import controller from './controller';
 import sitesController from 'my-sites/controller';
 
 const redirectToStoreWithInterval = context => {
-	const intervalType = context && context.params && context.params.intervalType
-		? context.params.intervalType
+	const interval = context && context.params && context.params.interval
+		? context.params.interval
 		: '';
-	page.redirect( `/jetpack/connect/store/${ intervalType }` );
+	page.redirect( `/jetpack/connect/store/${ interval }` );
 };
 
 export default function() {
@@ -36,20 +36,20 @@ export default function() {
 	);
 
 	page(
-		'/jetpack/connect/authorize/:intervalType/:locale',
+		'/jetpack/connect/authorize/:interval/:locale',
 		controller.redirectWithoutLocaleifLoggedIn,
 		controller.saveQueryObject,
 		controller.authorizeForm
 	);
 
 	page( '/jetpack/connect/store', controller.plansLanding );
-	page( '/jetpack/connect/store/:intervalType', controller.plansLanding );
+	page( '/jetpack/connect/store/:interval', controller.plansLanding );
 
 	page( '/jetpack/connect/vaultpress', '/jetpack/connect/store' );
-	page( '/jetpack/connect/vaultpress/:intervalType', redirectToStoreWithInterval );
+	page( '/jetpack/connect/vaultpress/:interval', redirectToStoreWithInterval );
 
 	page( '/jetpack/connect/akismet', '/jetpack/connect/store' );
-	page( '/jetpack/connect/akismet/:intervalType', redirectToStoreWithInterval );
+	page( '/jetpack/connect/akismet/:interval', redirectToStoreWithInterval );
 
 	page(
 		'/jetpack/connect/:locale?',
@@ -64,7 +64,7 @@ export default function() {
 	);
 
 	page(
-		'/jetpack/connect/plans/:intervalType/:site',
+		'/jetpack/connect/plans/:interval/:site',
 		sitesController.siteSelection,
 		controller.plansSelection
 	);
