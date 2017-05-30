@@ -32,15 +32,25 @@ const toInfo = ( { content, date, i_like, parent, status } ) => {
 };
 
 export const fromApi = ( siteId, comment ) => {
-	if ( ! comment.content ) {
+	if (
+		siteId &&
+		comment.post && comment.post.ID &&
+		comment.ID &&
+		comment.author &&
+		comment.content
+	) {
+		return new LoadedComment( {
+			siteId,
+			postId: comment.post.ID,
+			commentId: comment.ID,
+			author: toAuthor( comment.author ),
+			info: toInfo( comment ),
+		} );
+	}
+
+	if ( siteId && comment.ID ) {
 		return new LoadingComment( siteId, comment.ID );
 	}
 
-	return new LoadedComment( {
-		siteId,
-		postId: comment.post.ID,
-		commentId: comment.ID,
-		author: toAuthor( comment.author ),
-		info: toInfo( comment ),
-	} );
+	return null;
 };
