@@ -278,7 +278,7 @@ const PostsNavigation = React.createClass( {
 	 */
 	_setPostCounts( siteId, scope ) {
 		// print default filters for `All my Sites`
-		if ( ! siteId|| null === this.props.siteId ) {
+		if ( ! siteId || null === this.props.siteId ) {
 			return this._defaultStateOptions();
 		}
 
