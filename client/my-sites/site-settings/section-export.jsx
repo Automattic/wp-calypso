@@ -23,7 +23,7 @@ const SiteSettingsExport = ( { isJetpack, site, siteSlug, translate } ) => {
 	return (
 		<Main>
 			<HeaderCake backHref={ '/settings/general/' + siteSlug }>
-				<h1>{ translate( 'Import' ) }</h1>
+				<h1>{ translate( 'Export' ) }</h1>
 			</HeaderCake>
 			{ isJetpack && <EmptyContent
 				illustration="/calypso/images/drake/drake-jetpack.svg"
