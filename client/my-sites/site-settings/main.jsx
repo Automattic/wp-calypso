@@ -8,10 +8,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Main from 'components/main';
-import notices from 'notices';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import GeneralSettings from './section-general';
@@ -27,9 +25,6 @@ export class SiteSettingsComponent extends Component {
 	static propTypes = {
 		section: PropTypes.string,
 		// Connected props
-		sitePurchases: PropTypes.array.isRequired,
-		purchasesError: PropTypes.object,
-		hasLoadedSitePurchasesFromServer: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
 		jetpackSettingsUiSupported: PropTypes.bool
 	};
@@ -38,23 +33,12 @@ export class SiteSettingsComponent extends Component {
 		section: 'general'
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.purchasesError ) {
-			notices.error( nextProps.purchasesError );
-		}
-	}
-
 	getSection() {
 		const { section, hostSlug } = this.props;
 
 		switch ( section ) {
 			case 'general':
-				return (
-					<GeneralSettings
-						sitePurchases={ this.props.sitePurchases }
-						hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer }
-					/>
-				);
+				return <GeneralSettings />;
 			case 'import':
 				return <ImportSettings />;
 			case 'export':
@@ -93,9 +77,6 @@ export default connect(
 
 		return {
 			siteId,
-			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
-			purchasesError: getPurchasesError( state ),
-			sitePurchases: getSitePurchases( state, siteId ),
 			jetpackSettingsUiSupported: jetpackSite && jetpackUiSupported,
 		};
 	}

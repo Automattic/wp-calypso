@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { some } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { isEmpty, pickBy, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +14,15 @@ import config from 'config';
 import { tracks } from 'lib/analytics';
 import { localize } from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { isVipSite } from 'state/selectors';
+import {
+	getSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+	getPurchasesError,
+} from 'state/purchases/selectors';
+import notices from 'notices';
 
 const trackDeleteSiteOption = ( option ) => {
 	tracks.recordEvent( 'calypso_settings_delete_site_options', {
@@ -21,25 +31,41 @@ const trackDeleteSiteOption = ( option ) => {
 };
 
 class SiteTools extends Component {
-	static propTypes = {
-		sitePurchases: PropTypes.array.isRequired,
-		hasLoadedSitePurchasesFromServer: PropTypes.bool.isRequired,
-		site: PropTypes.object.isRequired
-	}
-
 	state = {
 		showDialog: false,
 		showStartOverDialog: false,
 	}
 
-	render() {
-		const { translate } = this.props;
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.purchasesError ) {
+			notices.error( nextProps.purchasesError );
+		}
+	}
 
-		const selectedSite = this.props.site;
-		const changeAddressLink = `/domains/manage/${ selectedSite.slug }`;
-		const themeSetupLink = `/settings/theme-setup/${ selectedSite.slug }`;
-		const startOverLink = `/settings/start-over/${ selectedSite.slug }`;
-		const deleteSiteLink = `/settings/delete-site/${ selectedSite.slug }`;
+	render() {
+		const {
+			translate,
+			sitePurchasesLoaded,
+			siteSlug,
+			isJetpack,
+			isVip,
+		} = this.props;
+
+		const showSection = {
+			changeAddress: ! isJetpack && ! isVip,
+			themeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
+			deleteContent: ! isJetpack && ! isVip,
+			deleteSite: ! isJetpack && ! isVip && sitePurchasesLoaded,
+		};
+
+		if ( isEmpty( pickBy( showSection ) ) ) {
+			return null;
+		}
+
+		const changeAddressLink = `/domains/manage/${ siteSlug }`;
+		const themeSetupLink = `/settings/theme-setup/${ siteSlug }`;
+		const startOverLink = `/settings/start-over/${ siteSlug }`;
+		const deleteSiteLink = `/settings/delete-site/${ siteSlug }`;
 
 		const themeSetupText = translate( 'Automatically make your site look like your theme\'s demo.' );
 		const changeSiteAddress = translate( 'Change your site address' );
@@ -60,23 +86,21 @@ class SiteTools extends Component {
 			changeAddressText = translate( 'Change your site address.' );
 		}
 
-		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
-			return null;
-		}
-
 		return (
 			<div className="site-tools">
 				<SectionHeader label={ translate( 'Site Tools' ) } />
-				<CompactCard
-					href={ changeAddressLink }
-					onClick={ this.trackChangeAddress }
-					className="site-tools__link">
-					<div className="site-tools__content">
-						<p className="site-tools__section-title">{ changeSiteAddress }</p>
-						<p className="site-tools__section-desc">{ changeAddressText }</p>
-					</div>
-				</CompactCard>
-				{ config.isEnabled( 'settings/theme-setup' ) &&
+				{ showSection.changeAddress &&
+					<CompactCard
+						href={ changeAddressLink }
+						onClick={ this.trackChangeAddress }
+						className="site-tools__link">
+						<div className="site-tools__content">
+							<p className="site-tools__section-title">{ changeSiteAddress }</p>
+							<p className="site-tools__section-desc">{ changeAddressText }</p>
+						</div>
+					</CompactCard>
+				}
+				{ showSection.themeSetup &&
 					<CompactCard
 						href={ themeSetupLink }
 						onClick={ this.trackThemeSetup }
@@ -87,26 +111,28 @@ class SiteTools extends Component {
 						</div>
 					</CompactCard>
 				}
-				<CompactCard
-					href={ startOverLink }
-					onClick={ this.trackStartOver }
-					className="site-tools__link">
-					<div className="site-tools__content">
-						<p className="site-tools__section-title">{ startOver }</p>
-						<p className="site-tools__section-desc">{ startOverText }</p>
-					</div>
-				</CompactCard>
-				<CompactCard
-					href={ deleteSiteLink }
-					onClick={ this.checkForSubscriptions }
-					className="site-tools__link">
-					<div className="site-tools__content">
-						<p className="site-tools__section-title is-warning">
-							{ deleteSite }
-						</p>
-						<p className="site-tools__section-desc">{ deleteSiteText }</p>
-					</div>
-				</CompactCard>
+				{ showSection.deleteContent &&
+					<CompactCard
+						href={ startOverLink }
+						onClick={ this.trackStartOver }
+						className="site-tools__link">
+						<div className="site-tools__content">
+							<p className="site-tools__section-title">{ startOver }</p>
+							<p className="site-tools__section-desc">{ startOverText }</p>
+						</div>
+					</CompactCard>
+				}
+				{ showSection.deleteSite &&
+					<CompactCard
+						href={ deleteSiteLink }
+						onClick={ this.checkForSubscriptions }
+						className="site-tools__link">
+						<div className="site-tools__content">
+							<p className="site-tools__section-title is-warning">{ deleteSite }</p>
+							<p className="site-tools__section-desc">{ deleteSiteText }</p>
+						</div>
+					</CompactCard>
+				}
 				<DeleteSiteWarningDialog
 					isVisible={ this.state.showDialog }
 					onClose={ this.closeDialog } />
@@ -142,4 +168,16 @@ class SiteTools extends Component {
 	}
 }
 
-export default localize( SiteTools );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			siteSlug: getSelectedSiteSlug( state ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isVip: isVipSite( state, siteId ),
+			sitePurchasesLoaded: hasLoadedSitePurchasesFromServer( state ),
+			sitePurchases: getSitePurchases( state, siteId ),
+			purchasesError: getPurchasesError( state ),
+		};
+	}
+)( localize( SiteTools ) );
