@@ -9,6 +9,7 @@ import findIndex from 'lodash/findIndex';
 import map from 'lodash/map';
 import result from 'lodash/result';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ import Count from 'components/count';
 class SelectDropdown extends Component {
 	static propTypes = {
 		selectedText: PropTypes.string,
+		selectedIcon: PropTypes.element,
 		selectedCount: PropTypes.number,
 		initialSelected: PropTypes.string,
 		className: PropTypes.string,
@@ -36,7 +38,8 @@ class SelectDropdown extends Component {
 			PropTypes.shape( {
 				value: PropTypes.string.isRequired,
 				label: PropTypes.string.isRequired,
-				path: PropTypes.string
+				path: PropTypes.string,
+				icon: PropTypes.element
 			} )
 		)
 	}
@@ -134,6 +137,19 @@ class SelectDropdown extends Component {
 		return result( find( options, { value: selectedValue } ), 'label' );
 	}
 
+	getSelectedIcon() {
+		const { options, selectedIcon } = this.props;
+		const { selected } = this.state;
+
+		if ( selectedIcon ) {
+			return selectedIcon;
+		}
+
+		// return currently selected icon
+		const selectedValue = selected ? selected : this.getInitialSelectedItem( this.props );
+		return result( find( options, { value: selectedValue } ), 'icon' );
+	}
+
 	dropdownOptions() {
 		let refIndex = 0;
 		const self = this;
@@ -192,6 +208,7 @@ class SelectDropdown extends Component {
 					selected={ this.state.selected === item.value }
 					onClick={ this.onSelectItem( item ) }
 					path={ item.path }
+					item={ item.icon }
 				>
 					{ item.label }
 				</DropdownItem>
@@ -219,6 +236,7 @@ class SelectDropdown extends Component {
 		const dropdownClassName = classNames( dropdownClasses );
 
 		const selectedText = this.getSelectedText();
+		const selectedIcon = this.getSelectedIcon();
 
 		return (
 			<div style={ this.props.style } className={ dropdownClassName }>
@@ -240,6 +258,10 @@ class SelectDropdown extends Component {
 						className="select-dropdown__header"
 					>
 						<span className="select-dropdown__header-text">
+							{
+								selectedIcon.type === Gridicon &&
+								selectedIcon
+							}
 							{ selectedText }
 						</span>
 						{
