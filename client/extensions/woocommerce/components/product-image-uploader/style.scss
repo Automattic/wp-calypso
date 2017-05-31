@@ -21,7 +21,8 @@
 		display: flex;
 		align-items: center;
 
-		.file-picker {
+		.file-picker,
+		.product-image-uploader__file-picker {
 			margin: 0 auto;
 
 			p {
@@ -55,7 +56,8 @@
 		width: 30%;
 	}
 
-	.file-picker {
+	.file-picker,
+	.product-image-uploader__file-picker {
 		display: block;
 		text-align: center;
 		border: 1px dashed $gray;

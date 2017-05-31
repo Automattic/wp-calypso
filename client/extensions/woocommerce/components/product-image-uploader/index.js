@@ -182,8 +182,10 @@ class ProductImageUploader extends Component {
 		return (
 			<div className="product-image-uploader__wrapper placeholder">
 				<div className="product-image-uploader__picker">
+					<div className="product-image-uploader__file-picker">
 						<Gridicon icon="add-image" size={ 36 } />
 						<p>{ translate( 'Loading' ) }</p>
+					</div>
 				</div>
 			</div>
 		);
