@@ -169,6 +169,10 @@ const PostsNavigation = React.createClass( {
 				count = 0;
 			}
 
+			if ( null === count || false === count ) {
+				count = 0;
+			}
+
 			statusItems.push(
 				<NavItem
 					className={ 'is-' + status }
