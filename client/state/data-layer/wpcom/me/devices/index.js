@@ -25,11 +25,11 @@ const devicesFromApi = devices => keyBy( devices.map(
  * @param   {Function} dispatch Redux dispatcher
  * @returns {Object} dispatched http action
  */
-export const requestUserDevices = ( { dispatch } ) => dispatch( http( {
+export const requestUserDevices = ( { dispatch }, action ) => dispatch( http( {
 	apiVersion: '1.1',
 	method: 'GET',
 	path: '/notifications/devices',
-} ) );
+}, action ) );
 
 /**
  * Dispatches a user devices add action then the request for user devices succeeded.

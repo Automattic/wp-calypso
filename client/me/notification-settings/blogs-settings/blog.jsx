@@ -39,7 +39,6 @@ class BlogSettings extends Component {
 			site: { ID: sourceId },
 			settings,
 			disableToggle,
-			devices,
 			hasUnsavedChanges,
 			onToggle,
 			onSave,
@@ -63,7 +62,6 @@ class BlogSettings extends Component {
 						return <SettingsForm
 							{ ...{
 								sourceId,
-								devices,
 								settings,
 								hasUnsavedChanges,
 								isApplyAllVisible: ! disableToggle,
