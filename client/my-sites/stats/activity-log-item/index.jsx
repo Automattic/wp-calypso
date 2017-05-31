@@ -122,16 +122,6 @@ class ActivityLogItem extends Component {
 		);
 	}
 
-	getDetails() {
-		const {
-			description
-		} = this.props;
-
-		return ( description &&
-			<div>{ description }</div>
-		);
-	}
-
 	getHeader() {
 		return (
 			<div className="activity-log-item__card-header">
@@ -144,6 +134,7 @@ class ActivityLogItem extends Component {
 	render() {
 		const {
 			className,
+			description
 		} = this.props;
 
 		const classes = classNames(
@@ -163,7 +154,7 @@ class ActivityLogItem extends Component {
 					expandedSummary={ this.getSummary() }
 					clickableHeader={ true }
 				>
-					{ this.getDetails() }
+					{ description }
 				</FoldableCard>
 			</div>
 		);
