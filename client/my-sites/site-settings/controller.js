@@ -56,9 +56,34 @@ function renderPage( context, component ) {
 	);
 }
 
-module.exports = {
+const controller = {
 	redirectToGeneral() {
 		page.redirect( '/settings/general' );
+	},
+
+	redirectIfCantDeleteSite( context ) {
+		const state = context.store.getState();
+		const dispatch = context.store.dispatch;
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
+
+		if ( siteId && ! canDeleteSite( state, siteId ) ) {
+			return page.redirect( '/settings/general/' + siteSlug );
+		}
+
+		if ( ! siteId ) {
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: () => {
+					const updatedState = context.store.getState();
+					const updatedSiteId = getSelectedSiteId( updatedState );
+					const updatedSiteSlug = getSelectedSiteSlug( updatedState );
+					if ( ! canDeleteSite( updatedState, updatedSiteId ) ) {
+						return page.redirect( '/settings/general/' + updatedSiteSlug );
+					}
+				}
+			} );
+		}
 	},
 
 	siteSettings( context ) {
@@ -111,25 +136,9 @@ module.exports = {
 	},
 
 	deleteSite( context ) {
-		const { dispatch, getState } = context.store;
-		const siteSlug = getSelectedSiteSlug( getState() );
-		const siteId = getSelectedSiteId( getState() );
+		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
 
-		const redirectIfCantDelete = () => {
-			if ( ! canDeleteSite( getState(), getSelectedSite( getState() ) ) ) {
-				return page( '/settings/general/' + getSelectedSiteSlug( getState() ) );
-			}
-		};
-
-		if ( siteId && ! canDeleteSite( getState(), siteId ) ) {
-			return page( '/settings/general/' + siteSlug );
-		}
-		if ( ! siteId ) {
-			dispatch( {
-				type: SITES_ONCE_CHANGED,
-				listener: redirectIfCantDelete
-			} );
-		}
+		redirectIfCantDeleteSite( context );
 
 		renderPage(
 			context,
@@ -138,27 +147,9 @@ module.exports = {
 	},
 
 	startOver( context ) {
-		const { getState, dispatch } = context.store;
-		const state = getState();
-		const siteId = getSelectedSiteId( state );
-		const siteSlug = getSelectedSiteSlug( state );
+		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
 
-		const redirectIfCantDelete = () => {
-			if ( ! canDeleteSite( getState(), getSelectedSiteId( getState() ) ) ) {
-				return page( '/settings/general/' + getSelectedSiteSlug( getState() ) );
-			}
-		};
-
-		if ( siteId && ! canDeleteSite( state, siteId ) ) {
-			return page( '/settings/general/' + siteSlug );
-		}
-
-		if ( ! siteId ) {
-			dispatch( {
-				type: SITES_ONCE_CHANGED,
-				listener: redirectIfCantDelete
-			} );
-		}
+		redirectIfCantDeleteSite( context );
 
 		renderPage(
 			context,
@@ -210,3 +201,6 @@ module.exports = {
 	}
 
 };
+
+export default controller;
+
