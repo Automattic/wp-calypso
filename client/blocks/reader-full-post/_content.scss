@@ -334,15 +334,13 @@
 // Longreads-Specific Full Post View Styles
 .blog-70135762 .reader-full-post__story-content {
 	
-	.publisher-intro {
-		img {
-			margin-bottom: 0;
-		}
+	.publisher-intro img {
+		margin-bottom: 0;
+	}
 
-		@include breakpoint( "<660px" ) {
-			p:first-child {
-				margin-bottom: 0;
-			}
+	@include breakpoint( "<660px" ) {
+		.publisher-intro p:first-child {
+			margin-bottom: 0;
 		}
 	}
 }
