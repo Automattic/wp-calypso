@@ -3,15 +3,17 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import Navigation from './store-stats-navigation';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Chart from './store-stats-chart';
+import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
+import DatePicker from 'my-sites/stats/stats-date-picker';
 
 class StoreStats extends Component {
 	static propTypes = {
@@ -22,8 +24,8 @@ class StoreStats extends Component {
 	};
 
 	render() {
-		const { siteId, unit, startDate, path } = this.props;
-		const today = this.props.moment().format( 'YYYY-MM-DD' );
+		const { siteId, unit, startDate, path, slug } = this.props;
+		const today = moment().format( 'YYYY-MM-DD' );
 		const selectedDate = startDate || today;
 		const ordersQuery = {
 			unit,
@@ -32,7 +34,7 @@ class StoreStats extends Component {
 		};
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
-				<Navigation unit={ unit } type="orders" />
+				<Navigation unit={ unit } type="orders" slug={ slug } />
 				<Chart
 					path={ path }
 					query={ ordersQuery }
@@ -40,17 +42,29 @@ class StoreStats extends Component {
 					siteId={ siteId }
 					unit={ unit }
 				/>
+				<StatsPeriodNavigation
+					date={ selectedDate }
+					period={ unit }
+					url={ `/store/stats/orders/${ unit }/${ slug }` }
+				>
+					<DatePicker
+						period={ unit }
+						date={ selectedDate }
+						query={ ordersQuery }
+						statsType="statsOrders"
+						showQueryDate
+					/>
+				</StatsPeriodNavigation>
 			</Main>
 		);
 	}
 }
 
-const localizedStats = localize( StoreStats );
-
 export default connect(
 	state => {
 		return {
+			slug: getSelectedSiteSlug( state ),
 			siteId: getSelectedSiteId( state ),
 		};
 	}
-)( localizedStats );
+)( StoreStats );
