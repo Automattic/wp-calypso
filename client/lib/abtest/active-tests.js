@@ -71,8 +71,8 @@ module.exports = {
 	reduceThemesInSignupTest: {
 		datestamp: '20170518',
 		variations: {
-			original: 50,
-			modified: 50,
+			original: 0,
+			modified: 100,
 		},
 		defaultVariation: 'original',
 	},
