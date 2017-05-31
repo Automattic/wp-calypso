@@ -26,6 +26,8 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import { isEnabled } from 'config';
+import Dialog from 'components/dialog';
+import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {
@@ -37,9 +39,14 @@ class PublicizeActionsList extends PureComponent {
 
 	state = {
 		selectedShareTab: SCHEDULED,
+		showDeleteDialog: false,
+		selectedScheduledShareId: null
 	};
+
 	setFooterSection = selectedShareTab => () => this.setState( { selectedShareTab } );
+
 	renderFooterSectionItem( {
+		ID: actionId,
 		connectionName,
 		message,
 		shareDate,
@@ -64,25 +71,33 @@ class PublicizeActionsList extends PureComponent {
 						{ message }
 					</div>
 				</div>
-				{ this.renderElipsisMenu() }
+				{ this.renderElipsisMenu( actionId ) }
 			</CompactCard>
 		);
 	}
 
-	renderElipsisMenu() {
+	renderElipsisMenu( publicizeActionId ) {
 		const actions = [];
 		const { translate } = this.props;
 
 		if ( isEnabled( 'publicize-preview' ) ) {
-			actions.push( <PopoverMenuItem icon="visible">
-				{ translate( 'Preview' ) }
-			</PopoverMenuItem> );
+			actions.push(
+				<PopoverMenuItem key="1" icon="visible">
+					{ translate( 'Preview' ) }
+				</PopoverMenuItem>
+			);
 		}
 
 		if ( this.state.selectedShareTab === SCHEDULED ) {
-			actions.push( <PopoverMenuItem icon="trash">
-				{ translate( 'Trash' ) }
-			</PopoverMenuItem> );
+			actions.push(
+				<PopoverMenuItem
+					onClick={ this.deleteScheduledAction( publicizeActionId ) }
+					key="2"
+					icon="trash"
+				>
+					{ translate( 'Trash' ) }
+				</PopoverMenuItem>
+			);
 		}
 
 		if ( actions.length === 0 ) {
@@ -93,11 +108,54 @@ class PublicizeActionsList extends PureComponent {
 		</EllipsisMenu> );
 	}
 
+	deleteScheduledAction( actionId ) {
+		return () => {
+			this.setState( {
+				showDeleteDialog: true,
+				selectedScheduledShareId: actionId
+			} );
+		};
+	}
+
+	closeDeleteDialog = ( dialogAction ) => {
+		if ( dialogAction === 'delete' ) {
+			const {
+				siteId,
+				postId
+			} = this.props;
+
+			this.props.deletePostShareAction( siteId, postId, this.state.selectedScheduledShareId );
+		}
+
+		this.setState( { showDeleteDialog: false } );
+	};
+
 	renderActionsList = ( actions ) => (
-		<div>
-			{ actions.map( ( item, index ) => this.renderFooterSectionItem( item, index ) ) }
-		</div>
-	);
+			<div>
+				{ actions.map( ( item, index ) => this.renderFooterSectionItem( item, index ) ) }
+			</div>
+		);
+
+	renderDeleteDialog() {
+		const { translate } = this.props;
+
+		const buttons = [
+			{ action: 'cancel', label: translate( 'Cancel' ) },
+			{ action: 'delete', label: translate( 'Delete scheduled share' ), isPrimary: true },
+		];
+
+		return (
+			<Dialog
+				isVisible={ this.state.showDeleteDialog }
+				buttons={ buttons }
+				onClose={ this.closeDeleteDialog }
+			>
+				<h1>{ translate( 'Confirmation' ) }</h1>
+				<p>{ translate( 'Do you want to delete the scheduled share?' ) }</p>
+			</Dialog>
+		);
+	}
+
 	render() {
 		const {
 			postId,
@@ -105,6 +163,7 @@ class PublicizeActionsList extends PureComponent {
 			scheduledActions,
 			publishedActions,
 		} = this.props;
+
 		return (
 			<div>
 				<SectionNav className="post-share__footer-nav" selectedText={ 'some text' }>
@@ -139,6 +198,8 @@ class PublicizeActionsList extends PureComponent {
 						</div>
 					}
 				</div>
+
+				{ this.renderDeleteDialog() }
 			</div>
 		);
 	}
@@ -151,4 +212,5 @@ export default connect(
 			publishedActions: getPostSharePublishedActions( state, siteId, postId ),
 		};
 	},
+	{ deletePostShareAction },
 )( localize( PublicizeActionsList ) );
