@@ -20,6 +20,7 @@ class DirectlyCachedFiles extends Component {
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.isSaveSuccessful && this.props.isSaveSuccessful ) {
 			this.refs.newDirectPage.refs.textField.value = '';
+			this.props.replaceFields( { new_direct_page: undefined } );
 		}
 	}
 
