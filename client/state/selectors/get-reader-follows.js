@@ -16,7 +16,7 @@ import createSelector from 'lib/create-selector';
  */
 const getReaderFollows = createSelector(
 	state => filter( values( state.reader.follows.items ), item => ! item.error ),
-	state => [ state.reader.follows.items ],
+	state => [ state.reader.follows.items, state.reader.feeds.items, state.reader.sites.items ],
 );
 
 export default getReaderFollows;
