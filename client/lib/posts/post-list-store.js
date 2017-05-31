@@ -272,7 +272,7 @@ export default function( id ) {
 			return _activeList.id;
 		}
 
-		getSiteID() {
+		getSiteId() {
 			return _activeList.query.siteId;
 		}
 
