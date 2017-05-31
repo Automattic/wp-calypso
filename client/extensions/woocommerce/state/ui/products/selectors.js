@@ -8,7 +8,7 @@ import { get, find, isNumber } from 'lodash';
  */
 import { getProduct } from '../../products/selectors';
 
-function getEditsState( state ) {
+export function getAllProductEdits( state ) {
 	const woocommerce = state.extensions.woocommerce;
 	return get( woocommerce, 'ui.products.edits', {} );
 }
@@ -21,7 +21,7 @@ function getEditsState( state ) {
  * @return {Object} The current accumulated edits
  */
 export function getProductEdits( state, productId ) {
-	const edits = getEditsState( state );
+	const edits = getAllProductEdits( state );
 	const bucket = isNumber( productId ) && 'updates' || 'creates';
 	const array = get( edits, bucket, [] );
 
@@ -51,7 +51,7 @@ export function getProductWithLocalEdits( state, productId ) {
  * @return {Object} Product object that is merged between fetched data and edits
  */
 export function getCurrentlyEditingProduct( state ) {
-	const edits = getEditsState( state ) || {};
+	const edits = getAllProductEdits( state ) || {};
 	const { currentlyEditingId } = edits;
 
 	return getProductWithLocalEdits( state, currentlyEditingId );
