@@ -29,8 +29,7 @@ describe( 'wpcom-api', () => {
 				const query = {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
-					status: 'trash',
-					before: '2017-05-25T21:41:25.841Z'
+					status: 'trash'
 				};
 				const action = {
 					type: 'DUMMY_ACTION',
@@ -39,8 +38,15 @@ describe( 'wpcom-api', () => {
 					query
 				};
 				const dispatch = spy();
+				const getState = () => ( {
+					comments: {
+						items: {
+							'101010-1010': []
+						}
+					}
+				} );
 
-				fetchPostComments( { dispatch }, action );
+				fetchPostComments( { dispatch, getState }, action );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( http( {
@@ -48,6 +54,45 @@ describe( 'wpcom-api', () => {
 					method: 'GET',
 					path: '/sites/101010/posts/1010/replies',
 					query
+				}, action ) );
+			} );
+
+			it( 'should dispatch an HTTP request to the post replies endpoint, before the oldest comment in state', () => {
+				const query = {
+					order: 'DESC',
+					number: NUMBER_OF_COMMENTS_PER_FETCH,
+					status: 'trash',
+				};
+				const action = {
+					type: 'DUMMY_ACTION',
+					siteId: '101010',
+					postId: '1010',
+					query
+				};
+				const dispatch = spy();
+				const getState = () => ( {
+					comments: {
+						items: {
+							'101010-1010': [
+								{ id: 1, date: '2017-05-25T21:41:25.841Z' },
+								{ id: 2, date: '2017-05-25T20:41:25.841Z' },
+								{ id: 3, date: '2017-05-25T19:41:25.841Z' }
+							]
+						}
+					}
+				} );
+
+				fetchPostComments( { dispatch, getState }, action );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith( http( {
+					apiVersion: '1.1',
+					method: 'GET',
+					path: '/sites/101010/posts/1010/replies',
+					query: {
+						...query,
+						before: '2017-05-25T19:41:25.841Z'
+					}
 				}, action ) );
 			} );
 		} );
