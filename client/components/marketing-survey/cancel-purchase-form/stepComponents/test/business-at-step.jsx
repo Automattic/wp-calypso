@@ -10,7 +10,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { BusinessATStep }	from '../business-at-step';
+import { BusinessATStep } from '../business-at-step';
 
 describe( 'BusinessATStep', function() {
 	describe( 'rendering translated content', function() {

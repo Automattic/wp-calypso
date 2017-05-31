@@ -10,7 +10,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { UpgradeATStep }	from '../upgrade-at-step';
+import { UpgradeATStep } from '../upgrade-at-step';
 
 describe( 'UpgradeATStep', function() {
 	const selectedSite = { slug: 'site_slug' };
