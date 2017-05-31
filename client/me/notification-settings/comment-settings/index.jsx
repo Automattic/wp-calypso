@@ -73,7 +73,7 @@ class NotificationCommentsSettings extends Component {
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				<Navigation { ...{ path } } />
+				<Navigation path={ path } />
 
 				<Card>
 					<FormSectionHeading className="is-primary">
