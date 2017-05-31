@@ -24,12 +24,8 @@ var async = require( 'async' ),
 	};
 
 function main() {
-	// extract list of files to index and remove leading ./'s
 	const outFilePath = 'server/devdocs/components-usage-stats.json';
-	const fileList = globby.sync( process.argv.slice( 2 ) )
-		.map( function( fileWithPath ) {
-			return fileWithPath.replace( /^\.\//, '' );
-		} );
+	const fileList = globby.sync( process.argv.slice( 2 ) );
 
 	if ( fileList.length === 0 ) {
 		process.stderr.write( 'You must pass a list of files to process (try "npm run build-devcods:components-usage-stats"' );

@@ -16,11 +16,7 @@ var fs = require( 'fs' ),
 	root = fspath.dirname( fspath.join( __dirname, '..', '..' ) );
 
 function main() {
-	// extract list of files to index and remove leading ./'s
-	var fileList = globby.sync( process.argv.slice( 2 ) )
-		.map( function ( fileWithPath ) {
-			return fileWithPath.replace( /^\.\//, '' );
-		} );
+	const fileList = globby.sync( process.argv.slice( 2 ) );
 
 	if( fileList.length === 0 ) {
 		process.stderr.write( 'You must pass a list of files to process (try "npm run build-devdocs:index"' );
