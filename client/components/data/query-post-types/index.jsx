@@ -33,11 +33,12 @@ class QueryPostTypes extends Component {
 			themeSlug
 		} = this.props;
 		const {
+			postTypeSettings: nextPostTypeSettings,
 			siteId: nextSiteId,
 			themeSlug: nextThemeSlug
 		} = nextProps;
 		const hasThemeChanged = themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug;
-		const hasPostTypeSettingChanged = ! isEqual( postTypeSettings, nextProps.postTypeSettings );
+		const hasPostTypeSettingChanged = ! isEqual( postTypeSettings, nextPostTypeSettings );
 
 		if ( siteId !== nextSiteId || hasThemeChanged || hasPostTypeSettingChanged ) {
 			this.request( nextProps );
