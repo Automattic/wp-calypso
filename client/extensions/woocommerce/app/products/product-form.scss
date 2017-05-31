@@ -373,10 +373,18 @@
 	}
 
 	figure {
-		position: relative;
+		width: 60px;
+		height: 60px;
 		overflow: hidden;
-		height: 0;
-		padding-bottom: 100%;
+
+		img {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			height: 100%;
+			width: auto;
+			transform: translate( -50%,-50% );
+		}
 	}
 
 	.products__product-form-variation-image.preview figure::after {
@@ -396,6 +404,15 @@
 		top: 50%;
 		left: 50%;
 		transform: translate( -50%, -50% );
+	}
+}
+
+.products__product-form-variation-image.uploader .product-image-uploader__picker {
+	height: 55px;
+	width: 55px;
+
+	.file-picker {
+		height: inherit;
 	}
 }
 

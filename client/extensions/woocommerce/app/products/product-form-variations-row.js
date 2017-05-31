@@ -116,10 +116,6 @@ class ProductFormVariationsRow extends Component {
 	renderImage = () => {
 		const { src, placeholder, isUploading } = this.state;
 
-		const classes = classNames( 'products__product-form-variation-image', {
-			preview: null === src,
-		} );
-
 		let image;
 		if ( src && ! isUploading ) {
 			image = (
@@ -138,6 +134,11 @@ class ProductFormVariationsRow extends Component {
 				</figure>
 			);
 		}
+
+		const classes = classNames( 'products__product-form-variation-image', {
+			preview: null === src,
+			uploader: ! image,
+		} );
 
 		const removeButton = image && (
 			<Button

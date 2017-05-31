@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { head, uniqueId, find, noop } from 'lodash';
 import Gridicon from 'gridicons';
@@ -212,13 +213,18 @@ class ProductImageUploader extends Component {
 	}
 
 	renderPlaceholder() {
-		const { translate } = this.props;
+		const { translate, compact } = this.props;
+
+		const classes = classNames( 'product-image-uploader__wrapper placeholder', {
+			compact,
+		} );
+
 		return (
-			<div className="product-image-uploader__wrapper placeholder">
+			<div className={ classes }>
 				<div className="product-image-uploader__picker">
 					<div className="product-image-uploader__file-picker">
 						<Gridicon icon="add-image" size={ 36 } />
-						<p>{ translate( 'Loading' ) }</p>
+						<p>{ ! compact && translate( 'Loading' ) }</p>
 					</div>
 				</div>
 			</div>
