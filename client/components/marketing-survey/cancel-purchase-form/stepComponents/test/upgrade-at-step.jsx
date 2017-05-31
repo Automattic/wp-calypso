@@ -64,7 +64,7 @@ describe( 'UpgradeATStep', function() {
 	} );
 
 	it( 'should fire tracks event when button is clicked', function() {
-		const	recordTracksEvent = stub();
+		const recordTracksEvent = stub();
 		const wrapper = shallow(
 			<UpgradeATStep recordTracksEvent={ recordTracksEvent } translate={ noop } selectedSite={ selectedSite } />
 		);
