@@ -86,6 +86,7 @@ export const PostEditor = React.createClass( {
 			isPublishing: false,
 			notice: null,
 			showConfirmationSidebar: false,
+			showConfirmationSidebarOverlay: false,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
@@ -192,8 +193,16 @@ export const PostEditor = React.createClass( {
 		this.setState( { showConfirmationSidebar: true } );
 	},
 
-	hideConfirmationSidebar: function() {
+	closeConfirmationSidebar: function() {
 		this.setState( { showConfirmationSidebar: false } );
+	},
+
+	showConfirmationSidebarOverlay: function() {
+		this.setState( { showConfirmationSidebarOverlay: true } );
+	},
+
+	closeConfirmationSidebarOverlay: function() {
+		this.setState( { showConfirmationSidebarOverlay: false } );
 	},
 
 	toggleSidebar: function() {
@@ -231,8 +240,10 @@ export const PostEditor = React.createClass( {
 			<div className={ classes }>
 				<QueryPreferences />
 				<EditorConfirmationSidebar
-					hideSidebar={ this.hideConfirmationSidebar }
-					isActive={ this.state.showConfirmationSidebar }
+					closeOverlay={ this.closeConfirmationSidebarOverlay }
+					closeSidebar={ this.closeConfirmationSidebar }
+					isOverlayActive={ this.state.showConfirmationSidebarOverlay }
+					isSidebarActive={ this.state.showConfirmationSidebar }
 					onPublish={ this.onPublish }
 					post={ this.state.post }
 					site={ site }
@@ -668,8 +679,14 @@ export const PostEditor = React.createClass( {
 		};
 
 		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) && false === isConfirmed ) {
+			this.showConfirmationSidebarOverlay();
 			this.showConfirmationSidebar();
 			return;
+		}
+
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+			this.closeConfirmationSidebarOverlay();
+			this.closeConfirmationSidebar();
 		}
 
 		// determine if this is a private publish
