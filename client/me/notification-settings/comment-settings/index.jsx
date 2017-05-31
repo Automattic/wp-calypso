@@ -34,14 +34,15 @@ class NotificationCommentsSettings extends Component {
 	}
 
 	onChange = () => {
+		const { translate } = this.props;
 		const state = store.getStateFor( 'other' );
 
 		if ( state.error ) {
-			this.props.errorNotice( this.props.translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice( translate( 'There was a problem saving your changes. Please, try again.' ) );
 		}
 
 		if ( state.status === 'success' ) {
-			this.props.successNotice( this.props.translate( 'Settings saved successfully!' ) );
+			this.props.successNotice( translate( 'Settings saved successfully!' ) );
 		}
 
 		this.setState( state );
