@@ -1,0 +1,79 @@
+.activity-log-banner {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-content: flex-start;
+	align-items: flex-start;
+	border-left: 3px solid $gray;
+	padding-left: 8px;
+
+	// Success!
+	&.is-success {
+		border-left-color: $alert-green;
+		.activity-log-banner__icon {
+			background-color: $alert-green;
+		}
+	}
+
+	// Warning
+	&.is-warning {
+		border-left-color: $alert-yellow;
+		.activity-log-banner__icon {
+			background-color: $alert-yellow;
+		}
+	}
+
+	// Error! OHNO!
+	&.is-error {
+		border-left-color: $alert-red;
+		.activity-log-banner__icon {
+			background-color: $alert-red;
+		}
+	}
+
+	// General notice
+	&.is-info {
+		border-left-color: $blue-wordpress;
+		.activity-log-banner__icon {
+			background-color: $blue-wordpress;
+		}
+	}
+
+}
+
+.activity-log-banner__icon {
+	width: 24px;
+	height: 24px;
+	margin-left: 2px;
+	margin-right: 16px;
+	padding: 8px;
+	border-radius: 50%;
+	color: $white;
+
+	background-color: $gray;
+}
+
+.activity-log-banner__content {
+	flex-grow: 1;
+	flex-shrink: 0;
+	flex-basis: 200px;
+}
+	.activity-log-banner__title {
+		margin-bottom: 8px;
+		font-weight: 600;
+	}
+	.activity-log-banner__body {
+	}
+
+	.activity-log-banner__action {
+		width: 50px;
+	}
+// /.activity-log-banner__content
+
+.activity-log-banner__dismiss {
+	color: $gray;
+	cursor: pointer;
+	margin-top: -8px;
+	margin-right: -8px;
+}

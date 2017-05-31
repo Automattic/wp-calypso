@@ -1,0 +1,104 @@
+/**
+ * External dependencies
+ */
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import Card from 'components/card';
+import Gridicon from 'gridicons';
+
+class ActivityLogBanner extends Component {
+	static propTypes = {
+		icon: PropTypes.string,
+		isDismissable: PropTypes.bool.isRequired,
+		onDismissClick: PropTypes.func,
+		status: PropTypes.oneOf( [
+			'is-error',
+			'is-info',
+			'is-success',
+			'is-warning',
+		] ),
+		title: PropTypes.node.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		isDismissable: false,
+		onDismissClick: noop,
+		status: null,
+		title: '',
+	};
+
+	getIcon() {
+		// Allow an icon prop to override auto-icon (even null!)
+		const { icon } = this.props;
+		if ( typeof icon !== 'undefined' ) {
+			return icon;
+		}
+
+		switch ( this.props.status ) {
+			case 'is-error':
+			case 'is-warning':
+				return 'notice-outline';
+
+			case 'is-info':
+				return 'info-outline';
+
+			case 'is-success':
+				return 'star';
+		}
+
+		return null;
+	}
+
+	render() {
+		const {
+			isDismissable,
+			onDismissClick,
+			children,
+			title,
+			translate,
+			status,
+		} = this.props;
+
+		const icon = this.getIcon();
+		const classes = classNames( 'activity-log-banner', status, {
+			// dismissable: isDismissable,
+		} );
+
+		return (
+			<Card className={ classes }>
+				{ icon && (
+					<div className="activity-log-banner__icon">
+						<Gridicon icon={ icon } size={ 24 } />
+					</div>
+				) }
+				<div className="activity-log-banner__content">
+					{ title && (
+						<h2 className="activity-log-banner__title">{ title }</h2>
+					) }
+					{ children && (
+						<div className="activity-log-banner__body">{ children }</div>
+					) }
+				</div>
+				{ isDismissable && (
+					<button
+						className="activity-log-banner__dismiss"
+						onClick={ onDismissClick }
+						type="button"
+					>
+						<span className="activity-log-banner__screen-reader-text screen-reader-text">{ translate( 'Dismiss' ) }</span>
+						<Gridicon icon="cross" size={ 24 } />
+					</button>
+				) }
+			</Card>
+		);
+	}
+}
+
+export default localize( ActivityLogBanner );
