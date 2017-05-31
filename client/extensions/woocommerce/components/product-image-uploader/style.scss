@@ -67,6 +67,7 @@
 		cursor: pointer;
 		background: $gray-light;
 		position: relative;
+		box-sizing: border-box;
 
 		.gridicon {
 			position: absolute;
