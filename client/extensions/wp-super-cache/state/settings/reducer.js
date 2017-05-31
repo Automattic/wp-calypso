@@ -15,7 +15,6 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS,
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
-	WP_SUPER_CACHE_UPDATE_SETTINGS,
 } from '../action-types';
 
 /**
@@ -90,13 +89,6 @@ export const restoring = createReducer( {}, {
  */
 const items = createReducer( {}, {
 	[ WP_SUPER_CACHE_RECEIVE_SETTINGS ]: ( state, { siteId, settings } ) => ( { ...state, [ siteId ]: settings } ),
-	[ WP_SUPER_CACHE_UPDATE_SETTINGS ]: ( state, { siteId, settings } ) => ( {
-		...state,
-		[ siteId ]: {
-			...state[ siteId ],
-			...settings,
-		}
-	} ),
 }, itemsSchema );
 
 export default combineReducers( {
