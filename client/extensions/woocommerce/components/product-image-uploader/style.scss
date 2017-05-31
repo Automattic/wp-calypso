@@ -49,6 +49,7 @@
 	width: 18.4%;
 	position: relative;
 	margin-bottom: 16px;
+	align-self: stretch;
 
 	@include breakpoint( ">960px" ) {
 		width: 30%;
@@ -58,15 +59,12 @@
 		display: block;
 		text-align: center;
 		border: 1px dashed $gray;
-		height: 60px;
+		min-height: 60px;
+		height: 100%;
 		border-radius: 5px;
 		cursor: pointer;
 		background: $gray-light;
 		position: relative;
-
-		@include breakpoint( ">960px" ) {
-			height: 72px;
-		}
 
 		.gridicon {
 			position: absolute;
