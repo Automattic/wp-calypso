@@ -44,7 +44,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should return a comment request action', function() {
-			const action = requestPostComments( SITE_ID, POST_ID, 'trash', new Date( '2017-05-25T21:41:25.841Z' ) );
+			const action = requestPostComments( SITE_ID, POST_ID, 'trash' );
 
 			expect( action ).to.eql( {
 				type: COMMENTS_REQUEST,
@@ -53,14 +53,13 @@ describe( 'actions', () => {
 				query: {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
-					status: 'trash',
-					before: '2017-05-25T21:41:25.841Z'
+					status: 'trash'
 				}
 			} );
 		} );
 
 		it( 'should return a comment request action with a default status of approved', function() {
-			const action = requestPostComments( SITE_ID, POST_ID, undefined, new Date( '2017-05-25T21:41:25.841Z' ) );
+			const action = requestPostComments( SITE_ID, POST_ID, undefined );
 
 			expect( action ).to.eql( {
 				type: COMMENTS_REQUEST,
@@ -69,23 +68,7 @@ describe( 'actions', () => {
 				query: {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
-					status: 'approved',
-					before: '2017-05-25T21:41:25.841Z'
-				}
-			} );
-		} );
-
-		it( 'should return a comment request action with no before filter if none provided', function() {
-			const action = requestPostComments( SITE_ID, POST_ID, undefined, null );
-
-			expect( action ).to.eql( {
-				type: COMMENTS_REQUEST,
-				siteId: SITE_ID,
-				postId: POST_ID,
-				query: {
-					order: 'DESC',
-					number: NUMBER_OF_COMMENTS_PER_FETCH,
-					status: 'approved',
+					status: 'approved'
 				}
 			} );
 		} );
