@@ -5,7 +5,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Immutable from 'immutable';
 import classNames from 'classnames';
-import { size } from 'lodash';
+import { size, first } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,18 +32,20 @@ class NotificationSettingsFormStream extends PureComponent {
 		onToggle: PropTypes.func.isRequired
 	};
 
-	state = { selectedDeviceIndex: 0 };
+	state = { selectedDeviceId: null };
 
 	getStreamSettings = () => {
 		let { stream, settings } = this.props;
 
 		if ( this.props.devices && size( this.props.devices ) > 0 ) {
-			stream = parseInt( this.props.devices[ this.state.selectedDeviceIndex ].id, 10 );
+			stream = parseInt( this.state.selectedDeviceId || first( this.props.devices ).id, 10 );
 			settings = this.props.settings.find( device => device.get( 'device_id' ) === stream );
 		}
 
 		return { stream, settings };
 	};
+
+	onChangeDevices = event => this.setState( { selectedDeviceId: parseInt( event.target.value, 10 ) } );
 
 	render() {
 		const { stream, settings } = this.getStreamSettings();
@@ -54,8 +56,8 @@ class NotificationSettingsFormStream extends PureComponent {
 					if ( this.props.devices ) {
 						return <DeviceSelector
 							devices={ this.props.devices }
-							selectedDeviceIndex={ this.state.selectedDeviceIndex }
-							onChange={ event => this.setState( { selectedDeviceIndex: parseInt( event.target.value, 10 ) } ) } />;
+							selectedDeviceId={ stream }
+							onChange={ this.onChangeDevices } />;
 					}
 
 					return ( <StreamHeader stream={ this.props.stream } /> );

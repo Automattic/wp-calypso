@@ -15,7 +15,7 @@ import FormSelect from 'components/forms/form-select';
 class NotificationSettingsFormDeviceSelector extends PureComponent {
 	static propTypes = {
 		devices: PropTypes.array.isRequired,
-		selectedDeviceIndex: PropTypes.number.isRequired,
+		selectedDeviceId: PropTypes.number.isRequired,
 		onChange: PropTypes.func.isRequired
 	};
 
@@ -29,11 +29,11 @@ class NotificationSettingsFormDeviceSelector extends PureComponent {
 			<div className="notification-settings-form-header">
 				<div className="notification-settings-form-header__title">
 					<FormSelect
-						value={ this.props.selectedDeviceIndex }
+						value={ this.props.selectedDeviceId }
 						onChange={ this.props.onChange } >
-						{ map( devices, ( device, index ) => {
-							return <option key={ index } value={ index }>{ device.name }</option>;
-						} ) }
+						{ map( devices, ( { id, name } ) => (
+							<option key={ id } value={ id }>{ name }</option>
+						) ) }
 					</FormSelect>
 				</div>
 			</div>
