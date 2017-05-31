@@ -27,7 +27,11 @@ test:
           - server/**/*.jsx
     - MOCHA_FILE=./test-results-client.xml npm run test-client -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
         parallel: true
-    - npm run test-server:ci
+    - npm run test-server:ci:
+        parallel: true
+        files:
+          - server/**/test/*.js
+          - server/**/test/*.jsx
     - MOCHA_FILE=./test-results-test.xml npm run test-test -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
         parallel: true
   post:
