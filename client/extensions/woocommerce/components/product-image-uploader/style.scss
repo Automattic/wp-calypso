@@ -64,6 +64,10 @@
 		background: $gray-light;
 		position: relative;
 
+		@include breakpoint( ">960px" ) {
+			height: 72px;
+		}
+
 		.gridicon {
 			position: absolute;
 			top: 50%;
