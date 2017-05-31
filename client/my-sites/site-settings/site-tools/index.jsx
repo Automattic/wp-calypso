@@ -70,13 +70,13 @@ class SiteTools extends Component {
 		const deleteSite = translate( 'Delete your site permanently' );
 		const deleteSiteText = translate(
 			'Delete all your posts, pages, media and data, ' +
-			'and give up your site\'s address'
+			'and give up your site\'s address.'
 		);
 
 		const importTitle = translate( 'Import' );
-		const importText = translate( 'Import content from another WordPress or Medium site' );
+		const importText = translate( 'Import content from another WordPress or Medium site.' );
 		const exportTitle = translate( 'Export' );
-		const exportText = translate( 'Export content from your site. You own your data' );
+		const exportText = translate( 'Export content from your site. You own your data.' );
 
 		let changeAddressText = translate( 'Register a new domain or change your site\'s address.' );
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
