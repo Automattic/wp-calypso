@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEmpty, pickBy, some } from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,24 +45,14 @@ class SiteTools extends Component {
 	render() {
 		const {
 			translate,
-			sitePurchasesLoaded,
 			siteSlug,
-			isJetpack,
-			isVip,
 			importUrl,
 			exportUrl,
+			showChangeAddress,
+			showDeleteContent,
+			showDeleteSite,
+			showThemeSetup,
 		} = this.props;
-
-		const showSection = {
-			changeAddress: ! isJetpack && ! isVip,
-			themeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
-			deleteContent: ! isJetpack && ! isVip,
-			deleteSite: ! isJetpack && ! isVip && sitePurchasesLoaded,
-		};
-
-		if ( isEmpty( pickBy( showSection ) ) ) {
-			return null;
-		}
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
 		const themeSetupLink = `/settings/theme-setup/${ siteSlug }`;
@@ -96,7 +86,7 @@ class SiteTools extends Component {
 		return (
 			<div className="site-tools">
 				<SectionHeader label={ translate( 'Site Tools' ) } />
-				{ showSection.changeAddress &&
+				{ showChangeAddress &&
 					<CompactCard
 						href={ changeAddressLink }
 						onClick={ this.trackChangeAddress }
@@ -107,7 +97,7 @@ class SiteTools extends Component {
 						</div>
 					</CompactCard>
 				}
-				{ showSection.themeSetup &&
+				{ showThemeSetup &&
 					<CompactCard
 						href={ themeSetupLink }
 						onClick={ this.trackThemeSetup }
@@ -118,7 +108,7 @@ class SiteTools extends Component {
 						</div>
 					</CompactCard>
 				}
-				{ showSection.deleteContent &&
+				{ showDeleteContent &&
 					<CompactCard
 						href={ startOverLink }
 						onClick={ this.trackStartOver }
@@ -129,7 +119,7 @@ class SiteTools extends Component {
 						</div>
 					</CompactCard>
 				}
-				{ showSection.deleteSite &&
+				{ showDeleteSite &&
 					<CompactCard
 						href={ deleteSiteLink }
 						onClick={ this.checkForSubscriptions }
@@ -196,6 +186,8 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
 		const isJetpack = isJetpackSite( state, siteId );
+		const isVip = isVipSite( state, siteId );
+		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
 		let importUrl = `/settings/import/${ siteSlug }`;
 		let exportUrl = `/settings/export/${ siteSlug }`;
@@ -206,13 +198,14 @@ export default connect(
 
 		return {
 			siteSlug,
-			isJetpack,
-			isVip: isVipSite( state, siteId ),
-			sitePurchasesLoaded: hasLoadedSitePurchasesFromServer( state ),
 			sitePurchases: getSitePurchases( state, siteId ),
 			purchasesError: getPurchasesError( state ),
 			importUrl,
 			exportUrl,
+			showChangeAddress: ! isJetpack && ! isVip,
+			showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
+			showDeleteContent: ! isJetpack && ! isVip,
+			showDeleteSite: ! isJetpack && ! isVip && sitePurchasesLoaded,
 		};
 	}
 )( localize( SiteTools ) );
