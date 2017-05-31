@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteIdWithFallback } from 'woocommerce/state/sites/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { errorNotice as errorNoticeAction } from 'state/notices/actions';
 
 import DropZone from 'components/drop-zone';
@@ -59,9 +59,6 @@ class ProductImageUploader extends Component {
 		let extraDetails;
 		const validationError = errors[ transientId ] || [];
 		switch ( head( validationError ) ) {
-			case 'EXCEEDS_MAX_UPLOAD_SIZE' :
-				extraDetails = translate( 'This file exceeds the maximum upload size for this site.' );
-				break;
 			case 'EXCEEDS_PLAN_STORAGE_LIMIT' :
 			case 'NOT_ENOUGH_SPACE' :
 				extraDetails = translate( 'You have reached your plan storage limit.' );
@@ -86,10 +83,42 @@ class ProductImageUploader extends Component {
 		} );
 	}
 
+	// https://stackoverflow.com/a/20732091
+	displayableFileSize( size ) {
+		const i = Math.floor( Math.log( size ) / Math.log( 1024 ) );
+		return ( size / Math.pow( 1024, i ) ).toFixed( 2 ) * 1 + ' ' + [ 'B', 'kB', 'MB', 'GB', 'TB' ][ i ];
+	}
+
+	buildFilesToUpload = ( images ) => {
+		const { site, errorNotice, translate } = this.props;
+		const maxUploadSize = site.options && site.options.max_upload_size || null;
+		const displayableFileSize = this.displayableFileSize( maxUploadSize );
+		const filesToUpload = [];
+
+		images.forEach( function( image ) {
+			if ( maxUploadSize !== null && image.size > maxUploadSize ) {
+				errorNotice( translate( '%(name)s exceeds the maximum upload size (%(size)s) for this site.', {
+					args: {
+						name: image.name,
+						size: displayableFileSize,
+					},
+				} ) );
+				return;
+			}
+			filesToUpload.push( {
+				ID: uniqueId( 'product-images-' ),
+				fileContents: image,
+				fileName: image.name,
+				preview: URL.createObjectURL( image ),
+			} );
+		} );
+
+		return filesToUpload;
+	}
+
 	onPick = ( files ) => {
 		const { site, multiple } = this.props;
 		const { onSelect, onUpload, onFinish } = this.props;
-		const siteId = site.ID;
 
 		// DropZone supplies an array, FilePicker supplies a FileList
 		let images = Array.isArray( files ) ? MediaUtils.filterItemsByMimePrefix( files, 'image' ) : [ ...files ];
@@ -101,25 +130,21 @@ class ProductImageUploader extends Component {
 			images = [ images.shift() ];
 		}
 
-		const transientIds = [];
-		const filesToUpload = [];
-		images.forEach( function( image ) {
-			const transientId = uniqueId( 'product-images-' );
-			transientIds.push( transientId );
-			filesToUpload.push( {
-				ID: transientId,
-				fileContents: image,
-				fileName: image.name,
-				preview: URL.createObjectURL( image ),
-			} );
-		} );
+		const filesToUpload = this.buildFilesToUpload( images );
+		if ( filesToUpload.length === 0 ) {
+			return;
+		}
 
 		onSelect( filesToUpload );
+
+		const transientIds = filesToUpload.map( ( file ) => {
+			return file.ID;
+		} );
 
 		const uploadedIds = [];
 		const handleUpload = () => {
 			const transientId = head( transientIds );
-			const media = MediaStore.get( siteId, transientId );
+			const media = MediaStore.get( site.ID, transientId );
 			const isUploadInProgress = media && MediaUtils.isItemBeingUploaded( media );
 
 			// File has finished uploading or failed.
@@ -151,7 +176,7 @@ class ProductImageUploader extends Component {
 
 		MediaValidationStore.on( 'change', this.storeValidationErrors );
 		MediaStore.on( 'change', handleUpload );
-		MediaActions.add( siteId, filesToUpload );
+		MediaActions.add( site.ID, filesToUpload );
 	}
 
 	renderCompactUploader() {
@@ -221,7 +246,7 @@ class ProductImageUploader extends Component {
 }
 
 function mapStateToProps( state ) {
-	const site = getSelectedSiteIdWithFallback( state );
+	const site = getSelectedSiteWithFallback( state );
 	return {
 		site,
 	};
