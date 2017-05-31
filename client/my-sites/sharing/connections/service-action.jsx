@@ -60,7 +60,8 @@ const SharingServiceAction = ( {
 			scary={ warning }
 			compact
 			onClick={ onClick }
-			disabled={ isPending }>
+			disabled
+			title={ translate( 'Temporarily disabled' ) }>
 			{ label }
 		</Button>
 	);
