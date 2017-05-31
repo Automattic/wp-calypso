@@ -1,69 +1,63 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes, PureComponent, Component } from 'react';
 import { find, noop } from 'lodash';
 
 /**
  * Module variables
  */
-// TODO: remove and extend from PureComponent after porting the component to ES6
-const PureRenderMixin = require( 'react-pure-render/mixin' );
 
-const LegendItem = React.createClass( {
-	displayName: 'ModuleChartLegendItem',
+class LegendItem extends PureComponent {
+	static propTypes = {
+		attr: PropTypes.string.isRequired,
+		changeHandler: PropTypes.func.isRequired,
+		checked: PropTypes.bool.isRequired,
+		label: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string ] ),
+	};
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
-		checked: React.PropTypes.bool.isRequired,
-		label: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.string ] ),
-		attr: React.PropTypes.string.isRequired,
-		changeHandler: React.PropTypes.func.isRequired
-	},
-
-	clickHandler: function() {
+	clickHandler = () => {
 		this.props.changeHandler( this.props.attr );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<li className="chart__legend-option">
-				<label htmlFor="checkbox" className="chart__legend-label is-selectable" onClick={ this.clickHandler } >
-					<input type="checkbox" className="chart__legend-checkbox" checked={ this.props.checked } onChange={ function() {} } />
+				<label className="chart__legend-label is-selectable">
+					<input
+						checked={ this.props.checked }
+						className="chart__legend-checkbox"
+						onChange={ this.clickHandler }
+						type="checkbox"
+					/>
 					<span className={ this.props.className }></span>{ this.props.label }
 				</label>
 			</li>
 		);
 	}
+}
 
-} );
+class Legend extends Component {
+	static propTypes = {
+		activeCharts: PropTypes.array,
+		activeTab: PropTypes.object.isRequired,
+		availableCharts: PropTypes.array,
+		clickHandler: PropTypes.func,
+		tabs: PropTypes.array,
+	};
 
-const Legend = React.createClass( {
-	displayName: 'ModuleChartLegend',
+	static defaultProps = {
+		activeCharts: [],
+		availableCharts: [],
+		clickHandler: noop,
+		tabs: [],
+	};
 
-	propTypes: {
-		activeTab: React.PropTypes.object.isRequired,
-		tabs: React.PropTypes.array,
-		activeCharts: React.PropTypes.array,
-		availableCharts: React.PropTypes.array,
-		clickHandler: React.PropTypes.func
-	},
-
-	getDefaultProps() {
-		return {
-			tabs: [],
-			availableCharts: [],
-			activeCharts: [],
-			clickHandler: noop,
-		};
-	},
-
-	onFilterChange: function( chartItem ) {
+	onFilterChange = chartItem => {
 		this.props.clickHandler( chartItem );
-	},
+	};
 
-	render: function() {
+	render() {
 		const legendColors = [ 'chart__legend-color is-dark-blue' ],
 			activeTab = this.props.activeTab;
 
@@ -96,6 +90,6 @@ const Legend = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = Legend;
+export default Legend;
