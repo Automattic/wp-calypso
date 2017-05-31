@@ -19,14 +19,12 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS,
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
-	WP_SUPER_CACHE_UPDATE_SETTINGS,
 } from '../../action-types';
 import {
 	receiveSettings,
 	requestSettings,
 	restoreSettings,
 	saveSettings,
-	updateSettings,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -107,18 +105,6 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#updateSettings()', () => {
-		it( 'should return an action object', () => {
-			const action = updateSettings( siteId, settings.data );
-
-			expect( action ).to.eql( {
-				type: WP_SUPER_CACHE_UPDATE_SETTINGS,
-				settings: settings.data,
-				siteId,
-			} );
-		} );
-	} );
-
 	describe( 'saveSettings()', () => {
 		const updatedSettings = {
 			is_cache_enabled: false,
@@ -153,13 +139,11 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch update action when request completes', () => {
+		it( 'should dispatch receive action when request completes', () => {
 			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: WP_SUPER_CACHE_UPDATE_SETTINGS,
-					settings: updatedSettings,
-					siteId,
-				} );
+				expect( spy ).to.have.been.calledWith(
+					receiveSettings( siteId, apiResponse.data )
+				);
 			} );
 		} );
 
