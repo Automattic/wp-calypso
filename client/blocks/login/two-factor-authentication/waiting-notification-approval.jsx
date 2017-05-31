@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 
@@ -9,38 +8,12 @@ import React, { Component, PropTypes } from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
-import {
-	startPollAppPushAuth,
-	stopPollAppPushAuth,
-} from 'state/login/actions';
-import {
-	isTwoFactorAuthTypeSupported,
-	getTwoFactorPushPollSuccess,
-} from 'state/login/selectors';
 import TwoFactorActions from './two-factor-actions';
 
 class WaitingTwoFactorNotificationApproval extends Component {
 	static propTypes = {
-		onSuccess: PropTypes.func.isRequired,
-		pushSuccess: PropTypes.bool.isRequired,
-		startPollAppPushAuth: PropTypes.func.isRequired,
-		stopPollAppPushAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
-
-	componentDidMount() {
-		this.props.startPollAppPushAuth();
-	}
-
-	componentWillUnmount() {
-		this.props.stopPollAppPushAuth();
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.pushSuccess && nextProps.pushSuccess ) {
-			this.props.onSuccess();
-		}
-	}
 
 	render() {
 		const { translate } = this.props;
@@ -72,13 +45,4 @@ class WaitingTwoFactorNotificationApproval extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		isSmsAuthSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
-		pushSuccess: getTwoFactorPushPollSuccess( state ),
-	} ),
-	{
-		startPollAppPushAuth,
-		stopPollAppPushAuth,
-	}
-)( localize( WaitingTwoFactorNotificationApproval ) );
+export default localize( WaitingTwoFactorNotificationApproval );
