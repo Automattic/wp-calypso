@@ -16,13 +16,15 @@ import {
 	getRequestError,
 	getRequestNotice,
 	getTwoFactorNotificationSent,
-	isTwoFactorEnabled
+	getTwoFactorSupportedAuthTypes,
+	isTwoFactorEnabled,
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
 import Notice from 'components/notice';
+import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 
 class Login extends Component {
 	static propTypes = {
@@ -33,6 +35,7 @@ class Login extends Component {
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
+		twoFactorSupportedAuthTypes: PropTypes.array,
 	};
 
 	state = {
@@ -108,25 +111,37 @@ class Login extends Component {
 		const {
 			twoFactorAuthType,
 			twoFactorEnabled,
+			twoFactorSupportedAuthTypes,
 		} = this.props;
 
 		const {
 			rememberMe,
 		} = this.state;
 
+		let poller;
+		if ( twoFactorEnabled && twoFactorAuthType && includes( twoFactorSupportedAuthTypes, 'push' ) ) {
+			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
+		}
+
 		if ( twoFactorEnabled && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
 			return (
-				<VerificationCodeForm
-					rememberMe={ rememberMe }
-					onSuccess={ this.rebootAfterLogin }
-					twoFactorAuthType={ twoFactorAuthType }
-				/>
+				<div>
+					{ poller }
+					<VerificationCodeForm
+						rememberMe={ rememberMe }
+						onSuccess={ this.rebootAfterLogin }
+						twoFactorAuthType={ twoFactorAuthType }
+					/>
+				</div>
 			);
 		}
 
 		if ( twoFactorEnabled && twoFactorAuthType === 'push' ) {
 			return (
-				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } />
+				<div>
+					{ poller }
+					<WaitingTwoFactorNotificationApproval />
+				</div>
 			);
 		}
 
@@ -162,6 +177,7 @@ export default connect(
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+		twoFactorSupportedAuthTypes: getTwoFactorSupportedAuthTypes( state ),
 	} ), {
 		recordTracksEvent,
 	}
