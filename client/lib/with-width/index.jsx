@@ -37,12 +37,10 @@ export default ( EnhancedComponent, { domTarget } = {} ) => class WithWidth exte
 			'resize',
 			debounce( this.handleResize, 50 )
 		);
+		this.handleResize();
 	}
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.resizeEventListener );
-	}
-	componentDidMount() {
-		this.handleResize();
 	}
 
 	handleMount = c => this.divRef = c;
