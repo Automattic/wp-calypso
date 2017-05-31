@@ -48,6 +48,7 @@ import PostStatus from 'blocks/post-status/docs/example';
 import ReaderAuthorLink from 'blocks/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link/docs/example';
 import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
+import ReaderSearchStreamHeader from 'reader/search-stream/docs/search-stream-header';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
 import RelatedPostCardv2 from 'blocks/reader-related-card-v2/docs/example';
 import PlanPrice from 'my-sites/plan-price/docs/example';
@@ -146,6 +147,7 @@ export default React.createClass( {
 					<ReaderPostCard />
 					<ReaderCombinedCard />
 					<ReaderRecommendedSites />
+					<ReaderSearchStreamHeader />
 					<PlanPrice />
 					<PlanThankYouCard />
 					<DismissibleCard />
