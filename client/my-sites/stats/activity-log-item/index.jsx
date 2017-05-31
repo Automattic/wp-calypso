@@ -64,10 +64,8 @@ class ActivityLogItem extends Component {
 		);
 
 		return (
-			<div className="activity-log-item__icons">
-				<div className={ classes }>
-					<Gridicon icon={ icon } size={ 24 } />
-				</div>
+			<div className={ classes }>
+				<Gridicon icon={ icon } size={ 24 } />
 			</div>
 		);
 	}

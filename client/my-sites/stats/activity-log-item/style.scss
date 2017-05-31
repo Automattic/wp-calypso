@@ -69,12 +69,6 @@
 	background: $gray-light;
 }
 
-.activity-log-item__icons {
-	border-top: 4px solid $gray-light;
-	border-bottom: 4px solid $gray-light;
-	background: $gray-light;
-}
-
 .activity-log-item__icon {
 	// General notice
 	background: $gray;
@@ -84,6 +78,7 @@
 	height:32px;
 	width: 32px;
 	padding: 8px;
+	margin: 4px 0;
 
 	// Success
 	&.is-success {
@@ -99,7 +94,12 @@
 	&.is-error {
 		background: $alert-red;
 	}
+
+	.gridicon {
+		margin: auto;
+	}
 }
+
 .activity-log-item__icon .gridicon {
 	margin: auto;
 }
