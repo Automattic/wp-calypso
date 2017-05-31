@@ -38,6 +38,7 @@ class StoreStats extends Component {
 					query={ ordersQuery }
 					selectedDate={ selectedDate }
 					siteId={ siteId }
+					unit={ unit }
 				/>
 			</Main>
 		);
