@@ -4,7 +4,7 @@
 import {
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES ]: fetchProductCategories,

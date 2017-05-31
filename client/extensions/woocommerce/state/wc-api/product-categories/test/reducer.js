@@ -10,7 +10,7 @@ import reducer from '../../reducer';
 import wcReducer from '../../../reducer';
 import {
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
-} from '../../../action-types';
+} from 'woocommerce/state/action-types';
 import { fetchProductCategoriesSuccess } from '../actions';
 
 describe( 'fetchProductCategories', () => {

@@ -8,7 +8,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME,
 	WOOCOMMERCE_SHIPPING_ZONE_OPEN,
 	WOOCOMMERCE_SHIPPING_ZONE_REMOVE,
-} from '../../../action-types';
+} from 'woocommerce/state/action-types';
 
 export const addNewShippingZone = ( siteId ) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_ADD, siteId };

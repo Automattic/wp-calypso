@@ -10,7 +10,7 @@ import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_EDIT_PRODUCT,
 	WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from '../helpers';
 
 export default createReducer( null, {

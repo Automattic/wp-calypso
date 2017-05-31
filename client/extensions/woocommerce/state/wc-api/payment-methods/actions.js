@@ -8,7 +8,7 @@ import { setError } from '../../site/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS,
 	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS_SUCCESS,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 import {
 	arePaymentMethodsLoaded,
 	arePaymentMethodsLoading,

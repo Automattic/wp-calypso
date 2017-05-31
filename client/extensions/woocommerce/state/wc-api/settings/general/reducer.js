@@ -4,7 +4,7 @@
 import {
 	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL,
 	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL_SUCCESS,
-} from '../../../action-types';
+} from 'woocommerce/state/action-types';
 
 export const LOADING = 'LOADING';
 

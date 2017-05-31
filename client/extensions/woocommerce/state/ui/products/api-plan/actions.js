@@ -7,7 +7,7 @@ import {
 	WOOCOMMERCE_EDIT_PRODUCT_APIPLAN_CLEAR,
 	WOOCOMMERCE_EDIT_PRODUCT_APIPLAN_STEP_START,
 	WOOCOMMERCE_EDIT_PRODUCT_APIPLAN_STEP_END,
-} from '../../../action-types';
+} from 'woocommerce/state/action-types';
 
 /* TODO: Create the plan based on our current edits.
 export function createApiPlanForEdits( productCategoryEdit, productEdits, variationEdits ) {

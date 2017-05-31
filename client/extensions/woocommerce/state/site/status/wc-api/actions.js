@@ -4,7 +4,7 @@
 import {
 	WOOCOMMERCE_API_SET_ERROR,
 	WOOCOMMERCE_API_CLEAR_ERROR,
-} from '../../../action-types';
+} from 'woocommerce/state/action-types';
 
 export function setError( siteId, originalAction, data, time = Date.now() ) {
 	return {

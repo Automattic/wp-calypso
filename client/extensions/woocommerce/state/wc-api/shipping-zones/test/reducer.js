@@ -10,7 +10,7 @@ import reducer from '../../reducer';
 import { LOADING } from '../reducer';
 import {
 	WOOCOMMERCE_API_FETCH_SHIPPING_ZONES,
-} from '../../../action-types';
+} from 'woocommerce/state/action-types';
 import { fetchShippingZonesSuccess } from '../actions';
 
 describe( 'fetch shipping zones', () => {

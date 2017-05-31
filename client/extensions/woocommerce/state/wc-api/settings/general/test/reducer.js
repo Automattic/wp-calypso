@@ -10,7 +10,7 @@ import reducer from '../../../reducer';
 import { LOADING } from '../reducer';
 import {
 	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL,
-} from '../../../../action-types';
+} from 'woocommerce/state/action-types';
 import { fetchSettingsGeneralSuccess } from '../actions';
 
 describe( 'fetch settings general', () => {

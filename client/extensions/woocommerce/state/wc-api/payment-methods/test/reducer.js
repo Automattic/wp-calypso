@@ -10,7 +10,7 @@ import reducer from '../../reducer';
 import { LOADING } from '../reducer';
 import {
 	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS,
-} from '../../../action-types';
+} from 'woocommerce/state/action-types';
 import { fetchPaymentMethodsSuccess } from '../actions';
 
 describe( 'fetch payment methods', () => {

@@ -4,7 +4,7 @@
 import {
 	WOOCOMMERCE_API_CREATE_PRODUCT,
 	WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_API_CREATE_PRODUCT ]: createProduct,

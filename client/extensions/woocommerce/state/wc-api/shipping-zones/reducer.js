@@ -4,7 +4,7 @@
 import {
 	WOOCOMMERCE_API_FETCH_SHIPPING_ZONES,
 	WOOCOMMERCE_API_FETCH_SHIPPING_ZONES_SUCCESS,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 
 export const LOADING = 'LOADING';
 

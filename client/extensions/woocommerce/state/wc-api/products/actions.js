@@ -6,7 +6,7 @@ import { setError } from '../../site/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_CREATE_PRODUCT,
 	WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 
 /**
  * API call to create a product within designated WooCommerce site.

@@ -10,7 +10,7 @@ import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_EDIT_PRODUCT_VARIATION,
 	WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
-} from '../../../action-types';
+} from 'woocommerce/state/action-types';
 import { getBucket } from '../../helpers';
 import { editProductAttribute } from '../edits-reducer';
 import generateVariations from '../../../../lib/generate-variations';

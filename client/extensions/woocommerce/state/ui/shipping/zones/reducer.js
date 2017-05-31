@@ -14,7 +14,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME,
 	WOOCOMMERCE_SHIPPING_ZONE_OPEN,
 	WOOCOMMERCE_SHIPPING_ZONE_REMOVE,
-} from '../../../action-types';
+} from 'woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from '../../helpers';
 
 export const initialState = {

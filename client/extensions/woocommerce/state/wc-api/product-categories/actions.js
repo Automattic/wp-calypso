@@ -6,7 +6,7 @@ import { setError } from '../../site/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 
 export function fetchProductCategories( siteId ) {
 	return ( dispatch ) => {
