@@ -47,7 +47,7 @@ class BlogsSettings extends Component {
 				line={ translate( 'Would you like to start one?' ) }
 				action={ translate( 'Create Site' ) }
 				actionURL={ config( 'signup_url' ) + '?ref=calypso-nosites' }
-				illustration={ '/calypso/images/drake/drake-nosites.svg' } />;
+				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' } />;
 		}
 
 		const renderBlog = ( site, index, disableToggle = false ) => {
