@@ -16,6 +16,7 @@ import StatsFirstView from '../stats-first-view';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from '../stats-navigation';
 import ActivityLogDay from '../activity-log-day';
+import ActivityLogBanner from '../activity-log-banner';
 
 class ActivityLog extends Component {
 	componentDidMount() {
@@ -293,6 +294,7 @@ class ActivityLog extends Component {
 					slug={ slug }
 					section="activity"
 				/>
+				<ActivityLogBanner />
 				<section className="activity-log__wrapper">
 					{ logsGroupedByDate }
 				</section>
