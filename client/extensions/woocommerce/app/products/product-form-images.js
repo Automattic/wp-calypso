@@ -120,7 +120,7 @@ class ProductFormImages extends Component {
 		);
 	}
 
-	renderImage = ( image ) => {
+	renderImage = ( image, thumb = true ) => {
 		const { src } = image;
 		const id = image.id || image.transientId;
 
@@ -130,6 +130,7 @@ class ProductFormImages extends Component {
 
 		const classes = classNames( 'products__product-form-images-item', {
 			preview: null === src,
+			thumb,
 		} );
 
 		return (
@@ -159,7 +160,7 @@ class ProductFormImages extends Component {
 
 				<div className="products__product-form-images">
 					<div className="products__product-form-images-featured">
-						{ featuredImage && this.renderImage( featuredImage ) }
+						{ featuredImage && this.renderImage( featuredImage, false ) }
 					</div>
 
 					<div className="products__product-form-images-thumbs">
