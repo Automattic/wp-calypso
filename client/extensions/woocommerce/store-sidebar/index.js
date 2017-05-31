@@ -8,7 +8,7 @@ import React, { Component, PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteIdWithFallback } from '../state/sites/selectors';
+import { getSelectedSiteWithFallback } from '../state/sites/selectors';
 import { getLink } from '../lib/nav-utils';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
@@ -122,7 +122,7 @@ class StoreSidebar extends Component {
 
 function mapStateToProps( state ) {
 	return {
-		site: getSelectedSiteIdWithFallback( state )
+		site: getSelectedSiteWithFallback( state )
 	};
 }
 

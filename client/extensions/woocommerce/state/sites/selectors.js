@@ -13,7 +13,7 @@ import { getSite } from 'state/sites/selectors';
  * @param {Object} state Global state tree
  * @return {?Object} Site
  */
-export function getSelectedSiteIdWithFallback( state ) {
+export function getSelectedSiteWithFallback( state ) {
 	let siteId = getSelectedSiteId( state );
 	if ( ! siteId && ( 1 === getCurrentUserSiteCount( state ) ) ) {
 		siteId = getPrimarySiteId( state );
