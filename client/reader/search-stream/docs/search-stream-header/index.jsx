@@ -13,10 +13,9 @@ import SearchStreamHeader from '../../search-stream-header';
 import { POSTS, SITES } from '../../search-stream-header';
 
 class SearchStreamHeaderExample extends PureComponent {
-	static displayName = 'SearchStreamHeaderExample';
 	static propTypes = {
 		width: React.PropTypes.number.isRequired,
-	}
+	};
 
 	state = {
 		selected: POSTS,
@@ -28,11 +27,15 @@ class SearchStreamHeaderExample extends PureComponent {
 				<SearchStreamHeader
 					selected={ this.state.selected }
 					onSelection={ selected => this.setState( { selected } ) }
-					width={ this.props.width }
+					wideDisplay={ this.props.width > 700 }
 				/>
 			</Card>
 		);
 	}
 }
 
-export default withWidth( SearchStreamHeaderExample );
+// this is just so that the displayName gets set properly for devdocs
+const SearchStreamHeaderExampleWithWidth = withWidth( SearchStreamHeaderExample );
+SearchStreamHeaderExampleWithWidth.displayName = 'SearchStreamHeaderExample';
+
+export default SearchStreamHeaderExampleWithWidth;

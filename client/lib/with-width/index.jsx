@@ -17,6 +17,8 @@ import { debounce } from 'lodash';
  * @returns {object} the enhanced component
  */
 export default ( EnhancedComponent, { domTarget } = {} ) => class WithWidth extends React.Component {
+	static displayName = `WithWidth( ${ EnhancedComponent.displayName } )`;
+
 	state = {
 		width: 0,
 	};
@@ -25,7 +27,7 @@ export default ( EnhancedComponent, { domTarget } = {} ) => class WithWidth exte
 		const domElement = domTarget ? domTarget : this.divRef;
 
 		if ( domElement ) {
-			const width = this.domElement.getClientRects()[ 0 ].width;
+			const width = domElement.getClientRects()[ 0 ].width;
 			this.setState( { width } );
 		}
 	};
@@ -48,7 +50,7 @@ export default ( EnhancedComponent, { domTarget } = {} ) => class WithWidth exte
 	render() {
 		return (
 			<div ref={ this.handleMount }>
-				<EnhancedComponent { ...this.props } width={ this.state.width } />;
+				<EnhancedComponent { ...this.props } width={ this.state.width } />
 			</div>
 		);
 	}
