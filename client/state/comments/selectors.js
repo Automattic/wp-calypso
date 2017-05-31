@@ -18,15 +18,6 @@ import createSelector from 'lib/create-selector';
 export const getPostCommentItems = ( state, siteId, postId ) => get( state.comments.items, `${ siteId }-${ postId }` );
 
 /***
- * Get requests status map for post
- * @param {Object} state redux state
- * @param {Number} siteId site identification
- * @param {Number} postId site identification
- * @return {Object} requestIds
- */
-export const getPostCommentRequests = ( state, siteId, postId ) => get( state.comments.requests, `${ siteId }-${ postId }` );
-
-/***
  * Get total number of comments on the server for a given post
  * @param {Object} state redux state
  * @param {Number} siteId site identification
