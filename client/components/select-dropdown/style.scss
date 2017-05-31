@@ -53,7 +53,7 @@ $compact-header-height: 35;
 .select-dropdown__header {
 	height: #{ $header-height }px;
 	line-height: #{ $header-height - 3 }px;
-	padding: 0 #{ $side-margin + 20 }px 0 #{ $side-margin }px;
+	padding: 0 75px 0 #{ $side-margin }px;
 	box-sizing: border-box;
 
 	border-style: solid;

@@ -47,8 +47,9 @@ class SelectDropdownItem extends Component {
 					aria-selected={ this.props.selected } >
 					<span className="select-dropdown__item-text">
 						{
-							this.props.icon.type === Gridicon &&
-							this.props.icon
+							this.props.icon && this.props.icon.type === Gridicon
+								? this.props.icon
+								: null
 						}
 						{ this.props.children }
 					</span>

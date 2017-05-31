@@ -259,8 +259,9 @@ class SelectDropdown extends Component {
 					>
 						<span className="select-dropdown__header-text">
 							{
-								selectedIcon.type === Gridicon &&
-								selectedIcon
+								selectedIcon && selectedIcon.type === Gridicon
+									? selectedIcon
+									: null
 							}
 							{ selectedText }
 						</span>
