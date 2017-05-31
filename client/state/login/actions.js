@@ -13,17 +13,20 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
-	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
-	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
-	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
-	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
-	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
-	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
+	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
+	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
+	TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST,
+	TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import {
 	getTwoFactorUserId,
@@ -43,7 +46,8 @@ const loginErrorMessages = {
 	account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
 		"WordPress.com and click the activation link. You'll be able to log in after that." ),
 	sms_code_throttled: translate( 'You can only request a code via SMS once per minute. Please wait and try again.' ),
-	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
+	push_authentication_throttled: translate( 'You can only request a code via the WordPress mobile app once every ' +
+		'two minutes. Please wait and try again.' ),
 	forbidden_for_automattician: 'Cannot use social login with an Automattician account',
 };
 
@@ -122,9 +126,10 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 /**
  * Attempt to login a user when a two factor verification code is sent.
  *
- * @param  {String}    two_step_code  Verification code for the user.
+ * @param  {String}    two_step_code     Verification code for the user.
  * @param  {Boolean}   remember_me       Flag for remembering the user for a while after logging in.
- * @return {Function}                 Action thunk to trigger the login process.
+ * @param {String}     twoFactorAuthType two factor authentication method
+ * @return {Function}                    Action thunk to trigger the login process.
  */
 export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_me, twoFactorAuthType ) => ( dispatch, getState ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
@@ -224,6 +229,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 					}
 				}
 			);
+
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 				notice: {
@@ -238,6 +244,37 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
+				error: { message, field },
+				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
+			} );
+		} );
+};
+
+export const sendPushNotification = () => ( dispatch, getState ) => {
+	dispatch( {
+		type: TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST
+	} );
+
+	return request.post( 'https://wordpress.com/wp-login.php?action=send-push-notification-endpoint' )
+		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
+		.accept( 'application/json' )
+		.send( {
+			user_id: getTwoFactorUserId( getState() ),
+			two_step_nonce: getTwoFactorAuthNonce( getState(), 'push' ),
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} ).then( response => {
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST_SUCCESS,
+				twoStepNonce: response.body.data.two_step_nonce,
+				pushWebToken: response.body.data.push_web_token
+			} );
+		} ).catch( error => {
+			const field = 'global';
+			const message = getMessageFromHTTPError( error );
+
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_PUSH_NOTIFICATION_REQUEST_FAILURE,
 				error: { message, field },
 				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
 			} );
