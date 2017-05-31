@@ -261,23 +261,28 @@ class ActivityLog extends Component {
 	}
 
 	render() {
-		const { siteId, slug, isJetpack } = this.props;
+		const {
+			isJetpack,
+			moment,
+			siteId,
+			slug,
+		} = this.props;
 		const logs = this.logs();
 		const logsGroupedByDate = map(
 			groupBy(
 				logs.map( this.update_logs, this ),
-				( log ) => new Date( log.timestamp ).toDateString()
+				( log ) => moment( log.timestamp ).startOf( 'day' ).toISOString()
 			),
-			( daily_logs, timestamp ) => {
-				return (
-					<ActivityLogDay
-						key={ 'activity-log-' + timestamp }
-						logs={ daily_logs }
-						siteId={ siteId }
-						isRewindEnabled={ true }
-					/>
-				);
-			} );
+			( daily_logs, isoString ) => (
+				<ActivityLogDay
+					key={ isoString }
+					dateString={ moment( isoString ).format( 'LL' ) }
+					logs={ daily_logs }
+					siteId={ siteId }
+					isRewindEnabled={ true }
+				/>
+			)
+		);
 
 		return (
 			<Main wideLayout={ true }>

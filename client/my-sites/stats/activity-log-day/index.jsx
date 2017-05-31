@@ -16,7 +16,8 @@ class ActivityLogDay extends Component {
 	static propTypes = {
 		isRewindEnabled: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
+		dateString: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
@@ -50,12 +51,12 @@ class ActivityLogDay extends Component {
 	getEventsHeading() {
 		const {
 			logs,
-			moment,
-			translate
+			translate,
+			dateString
 		} = this.props;
 		return (
 			<div>
-				<div className="activity-log-day__day">{ moment( logs[ 0 ].timestamp ).format( 'LL' ) }</div>
+				<div className="activity-log-day__day">{ dateString }</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,
