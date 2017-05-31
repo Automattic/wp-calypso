@@ -19,7 +19,7 @@ describe( 'BusinessATStep', function() {
 
 		beforeEach( function() {
 			wrapper = shallow(
-				<BusinessATStep recordTracksEvent={ noop } translate={ translate }></BusinessATStep>
+				<BusinessATStep recordTracksEvent={ noop } translate={ translate } />
 			);
 		} );
 
