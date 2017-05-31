@@ -13,9 +13,9 @@ import useMockery from 'test/helpers/use-mockery';
 describe( 'WpcomLoginForm', () => {
 	let WpcomLoginForm, mockHostname;
 	const props = {
-		log: 'a',
-		pwd: 'b',
-		authorization: 'c',
+		log: 'log_text',
+		pwd: 'secret',
+		authorization: 'authorization_token',
 		redirectTo: 'https://test.wordpress.com',
 	};
 
@@ -44,14 +44,14 @@ describe( 'WpcomLoginForm', () => {
 
 		// form should include default hidden elements
 		expect( wrapper.find( 'form > input[type="hidden"]' ) ).to.have.length( 4 );
-		expect( wrapper.find( 'form > input[name="log"]' ).prop( 'value' ) ).to.equal( 'a' );
-		expect( wrapper.find( 'form > input[name="pwd"]' ).prop( 'value' ) ).to.equal( 'b' );
-		expect( wrapper.find( 'form > input[name="authorization"]' ).prop( 'value' ) ).to.equal( 'c' );
+		expect( wrapper.find( 'form > input[name="log"]' ).prop( 'value' ) ).to.equal( 'log_text' );
+		expect( wrapper.find( 'form > input[name="pwd"]' ).prop( 'value' ) ).to.equal( 'secret' );
+		expect( wrapper.find( 'form > input[name="authorization"]' ).prop( 'value' ) ).to.equal( 'authorization_token' );
 		expect( wrapper.find( 'form > input[name="redirect_to"]' ).prop( 'value' ) ).to.equal( 'https://test.wordpress.com' );
 
 		// when update a prop
-		wrapper.setProps( { log: 'log' } );
-		expect( wrapper.find( 'form > input[name="log"]' ).prop( 'value' ) ).to.equal( 'log' );
+		wrapper.setProps( { log: 'another_log' } );
+		expect( wrapper.find( 'form > input[name="log"]' ).prop( 'value' ) ).to.equal( 'another_log' );
 	} );
 
 	it( 'should render extra fields if extraFields prop is passed.', () => {
