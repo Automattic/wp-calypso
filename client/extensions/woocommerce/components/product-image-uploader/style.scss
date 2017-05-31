@@ -1,13 +1,14 @@
 .product-image-uploader__wrapper {
 	background: $gray-light;
 	height: 250px;
-	width: 250px;
+	width: 100%;
 	position: relative;
 	margin-bottom: 16px;
 	border: 1px dashed $gray;
 	border-radius: 5px;
 	@include breakpoint( ">960px" ) {
 		margin-bottom: 0;
+		width: 250px;
 	}
 
 	.product-image-uploader__picker {

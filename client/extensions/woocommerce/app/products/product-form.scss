@@ -62,17 +62,17 @@
 
 		img {
 			width: 55px;
+			display: block;
 		}
 
 		&:first-child {
 			margin-right: 0;
 			clear: both;
-			@include breakpoint( "<960px" ) {
-				margin-right: 40%;
-			}
+			width: 100%;
 
 			img {
-				width: 300px;
+				width: 100%;
+				height: auto;
 			}
 		}
 	}
@@ -80,8 +80,6 @@
 	figure {
 		position: relative;
 		overflow: hidden;
-		height: 0;
-		padding-bottom: 100%;
 	}
 
 	.products__product-form-images-item.preview figure::after {
@@ -137,10 +135,11 @@
 }
 
 .products__product-form-images-wrapper {
-	flex: 1;
+	width: 100%;
 	margin-bottom: 16px;
 	@include breakpoint( ">960px" ) {
 		margin-bottom: 0;
+		width: 250px;
 	}
 }
 
