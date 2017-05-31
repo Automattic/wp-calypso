@@ -60,7 +60,8 @@ const DnsList = React.createClass( {
 			return;
 		}
 
-		deleteDnsAction( this.props.selectedDomainName, record, ( error ) => {
+		const options = { deleteEmailForwards: confirmed };
+		deleteDnsAction( this.props.selectedDomainName, record, options, ( error ) => {
 			if ( error ) {
 				notices.error( error.message || this.translate( 'The DNS record has not been deleted.' ) );
 			} else {

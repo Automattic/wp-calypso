@@ -1781,9 +1781,18 @@ Undocumented.prototype.fetchDns = function( domainName, fn ) {
 	return this.wpcom.req.get( '/domains/' + domainName + '/dns', fn );
 };
 
-Undocumented.prototype.updateDns = function( domain, records, fn ) {
-	var filtered = reject( records, 'isBeingDeleted' ),
-		body = { dns: JSON.stringify( filtered ) };
+/**
+ * @param {Object} options
+ *   An object containing options to pass along to the endpoint.
+ *
+ * @param {boolean} options.deleteEmailForwards
+ *   If this is set to true the API call will also delete the user's Email
+ *   Forwards.
+ */
+Undocumented.prototype.updateDns = function( domain, records, options, fn ) {
+	var apiOptions = mapKeysRecursively( options, snakeCase ),
+		dns = JSON.stringify( records ),
+		body = Object.assign( {}, apiOptions, { dns } );
 
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
 };
