@@ -8,6 +8,7 @@ import { map, take, filter } from 'lodash';
  * Internal Dependencies
  */
 import AutoDirection from 'components/auto-direction';
+import Emojify from 'components/emojify';
 import { imageIsBigEnoughForGallery } from 'state/reader/posts/normalization-rules';
 import resizeImageUrl from 'lib/resize-image-url';
 import cssSafeUrl from 'lib/css-safe-url';
@@ -54,7 +55,11 @@ const PostGallery = ( { post, children, isDiscover } ) => {
 			<div className="reader-post-card__post-details">
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
-						<a className="reader-post-card__title-link" href={ post.URL }>{ post.title }</a>
+						<a className="reader-post-card__title-link" href={ post.URL }>
+							<Emojify>
+								{ post.title }
+							</Emojify>
+						</a>
 					</h1>
 				</AutoDirection>
 				<ReaderExcerpt post={ post } isDiscover={ isDiscover } />

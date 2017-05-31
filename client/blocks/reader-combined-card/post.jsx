@@ -12,6 +12,7 @@ import classnames from 'classnames';
  * Internal Dependencies
  */
 import AutoDirection from 'components/auto-direction';
+import Emojify from 'components/emojify';
 import ReaderExcerpt from 'blocks/reader-excerpt';
 import ReaderVisitLink from 'blocks/reader-visit-link';
 import ReaderAuthorLink from 'blocks/reader-author-link';
@@ -122,7 +123,9 @@ class ReaderCombinedCardPost extends React.Component {
 					<AutoDirection>
 						<h1 className="reader-combined-card__post-title">
 							<a className="reader-combined-card__post-title-link" href={ post.URL }>
-								{ post.title }
+								<Emojify>
+									{ post.title }
+								</Emojify>
 							</a>
 						</h1>
 					</AutoDirection>

@@ -7,7 +7,11 @@ import config from 'config';
 
 export default class Emojify extends PureComponent {
 	static propTypes = {
-		children: PropTypes.string.isRequired,
+		children: PropTypes.oneOfType( [
+			PropTypes.array.isRequired,
+			PropTypes.object.isRequired,
+			PropTypes.string.isRequired,
+		] ),
 		className: PropTypes.string
 	}
 
@@ -35,7 +39,7 @@ export default class Emojify extends PureComponent {
 
 	render() {
 		return (
-			<span ref="emojified">{ this.props.children }</span>
+			<div className="emojify" ref="emojified">{ this.props.children }</div>
 		);
 	}
 }

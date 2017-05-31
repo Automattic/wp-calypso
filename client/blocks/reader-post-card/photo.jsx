@@ -9,6 +9,7 @@ import classnames from 'classnames';
  * Internal Dependencies
  */
 import AutoDirection from 'components/auto-direction';
+import Emojify from 'components/emojify';
 import cssSafeUrl from 'lib/css-safe-url';
 
 class PostPhoto extends React.Component {
@@ -115,7 +116,9 @@ class PostPhoto extends React.Component {
 							href={ post.URL }
 							onClick={ this.props.onClick }
 						>
-							{ linkTitle }
+							<Emojify>
+								{ linkTitle }
+							</Emojify>
 						</a>
 					</h1>
 				</AutoDirection>
