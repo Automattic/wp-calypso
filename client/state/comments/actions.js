@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { isDate } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
@@ -56,29 +51,22 @@ function commentsRequestFailure( dispatch, siteId, postId, requestId, err ) {
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {String} status status filter. Defaults to approved posts
- * @param {Date}   before will retrieve comments before this date
  * @returns {Function} thunk that requests comments for a given post
  */
-export function requestPostComments( siteId, postId, status = 'approved', before ) {
+export function requestPostComments( siteId, postId, status = 'approved' ) {
 	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
 		status = 'approved';
-	}
-
-	const query = {
-		order: 'DESC',
-		number: NUMBER_OF_COMMENTS_PER_FETCH,
-		status
-	};
-
-	if ( before && isDate( before ) && before.toISOString ) {
-		query.before = before.toISOString();
 	}
 
 	return {
 		type: COMMENTS_REQUEST,
 		siteId,
 		postId,
-		query
+		query: {
+			order: 'DESC',
+			number: NUMBER_OF_COMMENTS_PER_FETCH,
+			status
+		}
 	};
 }
 

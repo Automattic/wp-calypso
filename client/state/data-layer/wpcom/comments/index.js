@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { isDate } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,16 +16,23 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
+import { getPostOldestCommentDate } from 'state/comments/selectors';
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/posts/%24post_ID/replies/
-export const fetchPostComments = ( { dispatch }, action ) => {
+export const fetchPostComments = ( { dispatch, getState }, action ) => {
 	const { siteId, postId, query } = action;
+	const before = getPostOldestCommentDate( getState(), siteId, postId );
 
 	dispatch( http( {
 		method: 'GET',
 		path: `/sites/${ siteId }/posts/${ postId }/replies`,
 		apiVersion: '1.1',
-		query
+		query: {
+			...query,
+			...( before && isDate( before ) && before.toISOString && {
+				before: before.toISOString()
+			} )
+		}
 	}, action ) );
 };
 
