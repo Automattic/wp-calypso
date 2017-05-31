@@ -20,7 +20,6 @@ const SharingServiceAction = ( {
 	removableConnections,
 	status,
 	translate,
-	service,
 } ) => {
 	let primary = false,
 		warning = false,
@@ -55,16 +54,13 @@ const SharingServiceAction = ( {
 		primary = true;
 	}
 
-	const isPublicize = service && 'publicize' === service.type;
-
 	return (
 		<Button
 			primary={ primary }
 			scary={ warning }
 			compact
 			onClick={ onClick }
-			disabled={ isPending || isPublicize }
-			title={ isPublicize ? translate( 'Temporarily disabled' ) : null }>
+			disabled={ isPending }>
 			{ label }
 		</Button>
 	);

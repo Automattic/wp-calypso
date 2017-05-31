@@ -350,7 +350,7 @@ const EditorDrawer = React.createClass( {
 				{ this.renderTaxonomies() }
 				{ this.renderFeaturedImage() }
 				{ this.renderPageOptions() }
-				{ false && this.renderSharing() }
+				{ this.renderSharing() }
 				{ this.renderPostFormats() }
 				{ this.renderSeo() }
 				{ this.renderMoreOptions() }

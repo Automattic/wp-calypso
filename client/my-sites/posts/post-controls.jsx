@@ -71,7 +71,7 @@ const getAvailableControls = props => {
 			text: translate( 'Stats' ),
 		} );
 
-		if ( false && isEnabled( 'republicize' ) ) {
+		if ( isEnabled( 'republicize' ) ) {
 			controls.main.push( {
 				className: 'share' + ( current === 'share' ? ' is-active' : '' ),
 				disabled: ! props.isPublicizeEnabled,
