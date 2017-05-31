@@ -59,7 +59,7 @@ export function isSettingsSaveSuccessful( state, siteId ) {
  * @return {Object} Settings
  */
 export function getSettings( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'items', siteId ], null );
+	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'items', siteId ], {} );
 }
 
 /**

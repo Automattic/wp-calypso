@@ -258,7 +258,7 @@ describe( 'selectors', () => {
 	describe( 'getSettings()', () => {
 		const primarySettings = { is_cache_enabled: true };
 
-		it( 'should return null if no state exists', () => {
+		it( 'should return empty object if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
@@ -266,10 +266,10 @@ describe( 'selectors', () => {
 			};
 			const settings = getSettings( state, primarySiteId );
 
-			expect( settings ).to.be.null;
+			expect( settings ).to.be.empty;
 		} );
 
-		it( 'should return null if the site is not attached', () => {
+		it( 'should return empty object if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -283,7 +283,7 @@ describe( 'selectors', () => {
 			};
 			const settings = getSettings( state, secondarySiteId );
 
-			expect( settings ).to.be.null;
+			expect( settings ).to.be.empty;
 		} );
 
 		it( 'should return the settings for a siteId', () => {
