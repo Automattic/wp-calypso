@@ -7,17 +7,27 @@
 	border: 1px dashed $gray;
 	border-radius: 5px;
 	@include breakpoint( ">960px" ) {
-		margin-bottom: 0;
 		width: 250px;
 	}
 
 	.product-image-uploader__picker {
 		position: absolute;
-		top: 55%;
-		left: 50%;
-		transform: translate(-50%, -50%);
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
 		text-align: center;
 		cursor: pointer;
+		display: flex;
+		align-items: center;
+
+		.file-picker {
+			margin: 0 auto;
+
+			p {
+				margin: 0;
+			}
+		}
 
 		.gridicon {
 			color: darken( $gray, 10% );
@@ -25,6 +35,12 @@
 
 		p {
 			font-size: 14px;
+		}
+
+		&:hover {
+			.gridicon {
+				color: darken( $gray, 30% );
+			}
 		}
 	}
 }
@@ -46,6 +62,21 @@
 		border-radius: 5px;
 		cursor: pointer;
 		background: $gray-light;
+		position: relative;
+
+		.gridicon {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate( -50%, -50% );
+			color: darken( $gray, 10% );
+		}
+	}
+
+	&:hover {
+		.gridicon {
+			color: darken( $gray, 30% );
+		}
 	}
 
 	&:nth-child( 6 ) {
