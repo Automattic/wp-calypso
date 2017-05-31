@@ -2,15 +2,15 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
-import { head, uniqueId, find, noop } from 'lodash';
 import { connect } from 'react-redux';
+import { head, uniqueId, find, noop } from 'lodash';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteIdWithFallback } from 'woocommerce/state/sites/selectors';
 import { errorNotice as errorNoticeAction } from 'state/notices/actions';
 
 import DropZone from 'components/drop-zone';
@@ -22,7 +22,10 @@ import MediaValidationStore from 'lib/media/validation-store';
 
 class ProductImageUploader extends Component {
 	static propTypes = {
-		siteId: PropTypes.number,
+		site: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+			options: PropTypes.object.isRequired,
+		} ),
 		multiple: PropTypes.bool,
 		compact: PropTypes.bool,
 		onSelect: PropTypes.func,
@@ -57,7 +60,7 @@ class ProductImageUploader extends Component {
 		const validationError = errors[ transientId ] || [];
 		switch ( head( validationError ) ) {
 			case 'EXCEEDS_MAX_UPLOAD_SIZE' :
-				extraDetails = translate( 'This file exceeds the maximum upload size.' );
+				extraDetails = translate( 'This file exceeds the maximum upload size for this site.' );
 				break;
 			case 'EXCEEDS_PLAN_STORAGE_LIMIT' :
 			case 'NOT_ENOUGH_SPACE' :
@@ -65,22 +68,28 @@ class ProductImageUploader extends Component {
 				break;
 		}
 
-		const message = translate( 'There was a problem uploading %s.', {
-			args: media && media.file || translate( 'your image' )
-		} );
+		let message;
+		if ( media && media.file ) {
+			message = translate( 'There was a problem uploading %s.', {
+				args: media.file
+			} );
+		} else {
+			message = translate( 'There was a problem uploading your image.' );
+		}
+
 		errorNotice( extraDetails && ( message + ' ' + extraDetails ) || message );
 	}
 
 	storeValidationErrors = () => {
-		const { siteId } = this.props;
 		this.setState( {
-			errors: MediaValidationStore.getAllErrors( siteId ),
+			errors: MediaValidationStore.getAllErrors( this.props.site.ID ),
 		} );
 	}
 
 	onPick = ( files ) => {
-		const { siteId, multiple } = this.props;
+		const { site, multiple } = this.props;
 		const { onSelect, onUpload, onFinish } = this.props;
+		const siteId = site.ID;
 
 		// DropZone supplies an array, FilePicker supplies a FileList
 		let images = Array.isArray( files ) ? MediaUtils.filterItemsByMimePrefix( files, 'image' ) : [ ...files ];
@@ -192,13 +201,13 @@ class ProductImageUploader extends Component {
 	}
 
 	render() {
-		const { compact, children, multiple, siteId } = this.props;
+		const { compact, children, multiple, site } = this.props;
 
-		if ( ! siteId ) {
+		if ( ! site ) {
 			return this.renderPlaceholder();
 		}
 
-		if ( children !== undefined ) {
+		if ( 'undefined' !== typeof children ) {
 			return (
 				<FilePicker multiple={ multiple } accept="image/*" onPick={ this.onPick }>
 					{ this.renderChildren() }
@@ -212,9 +221,9 @@ class ProductImageUploader extends Component {
 }
 
 function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSiteIdWithFallback( state );
 	return {
-		siteId,
+		site,
 	};
 }
 

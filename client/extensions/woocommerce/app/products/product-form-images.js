@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { isNumber, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,31 +19,35 @@ import Spinner from 'components/spinner';
 
 class ProductFormImages extends Component {
 	static propTypes = {
-		product: PropTypes.shape( {
-			images: PropTypes.array,
-		} ),
-		editProduct: PropTypes.func.isRequired,
+		images: PropTypes.arrayOf( PropTypes.shape( {
+			id: PropTypes.number.isRequired,
+			src: PropTypes.string.isRequired,
+		} ) ),
+		onUpload: PropTypes.func.isRequired,
+		onRemove: PropTypes.func.isRequired,
 	};
+
+	static defaultProps = {
+		onUpload: noop,
+		onRemove: noop,
+	}
 
 	constructor( props ) {
 		super( props );
-		const { product } = this.props;
-		const images = product.images || [];
+		const { images } = this.props;
+		// Images are stored incomponent state so that we can display placeholder images
+		// as they upload, along side previously uploaded images.
 		this.state = {
 			images,
 		};
 	}
 
 	onUpload = ( file ) => {
-		const { product, editProduct } = this.props;
-		const images = product.images && [ ...product.images ] || [];
-		images.push( {
-			id: file.ID,
-			src: file.URL,
-		} );
-		editProduct( product, { images } );
+		const { onUpload } = this.props;
+		onUpload( file );
 
-		const stateImages = [ ...this.state.images ].map( ( i ) => {
+		// Update a placeholder entry with the final source image.
+		const images = [ ...this.state.images ].map( ( i ) => {
 			if ( i.transientId === file.transientId ) {
 				return { ...i,
 					src: file.URL,
@@ -53,7 +58,7 @@ class ProductFormImages extends Component {
 		} );
 
 		this.setState( {
-			images: stateImages,
+			images,
 		} );
 	}
 
@@ -79,26 +84,48 @@ class ProductFormImages extends Component {
 		} );
 	}
 
-	removeImage = ( index ) => {
-		const { product, editProduct } = this.props;
-		const stateImages = [ ...this.state.images ];
-		const removedImage = stateImages.splice( index, 1 );
-		this.setState( {
-			images: stateImages,
-		} );
-
-		const id = removedImage[ 0 ].id || null;
-		if ( null !== id ) {
-			const images = product.images && [ ...product.images ].filter( i => i.id !== id ) || [];
-			editProduct( product, { images } );
+	removeImage = ( id ) => {
+		let images = [ ...this.state.images ];
+		if ( isNumber( id ) ) {
+			images = images.filter( i => i.id !== id ) || [];
+			this.props.onRemove( id );
+		} else {
+			images = images.filter( i => i.transientId !== id ) || [];
 		}
+
+		this.setState( {
+			images,
+		} );
 	}
 
-	renderImage = ( image, index ) => {
+	renderPlaceholder = ( image ) => {
+		const { placeholder } = image;
+		return (
+			<figure>
+				<img src={ placeholder || ( <span /> ) } />
+				<Spinner />
+			</figure>
+		);
+	}
+
+	renderUploaded = ( image ) => {
 		const { src, placeholder } = image;
+		return (
+			<figure>
+				<ImagePreloader
+					src={ src }
+					placeholder={ placeholder && ( <img src={ placeholder } /> ) || ( <span /> ) }
+				/>
+			</figure>
+		);
+	}
+
+	renderImage = ( image ) => {
+		const { src } = image;
+		const id = image.id || image.transientId;
 
 		const removeImage = () => {
-			this.removeImage( index );
+			this.removeImage( id );
 		};
 
 		const classes = classNames( 'products__product-form-images-item', {
@@ -106,20 +133,8 @@ class ProductFormImages extends Component {
 		} );
 
 		return (
-			<div className={ classes } key={ index }>
-				{ src && (
-					<figure>
-						<ImagePreloader
-							src={ src }
-							placeholder={ placeholder && ( <img src={ placeholder } /> ) || ( <span /> ) }
-						/>
-					</figure>
-				) || (
-					<figure>
-						<img src={ placeholder || ( <span /> ) } />
-						<Spinner />
-					</figure>
-				) }
+			<div className={ classes } key={ id }>
+				{ src && this.renderUploaded( image ) || this.renderPlaceholder( image ) }
 				<Button
 					onClick={ removeImage }
 					compact
@@ -135,21 +150,28 @@ class ProductFormImages extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const { images } = this.state;
+		const images = [ ...this.state.images ];
+		const featuredImage = images && images.shift() || null;
 
 		return (
 			<div className="products__product-form-images-wrapper">
 				<FormLabel>{ translate( 'Product Images' ) }</FormLabel>
 
 				<div className="products__product-form-images">
-					{ images.map( ( image, index ) =>
-						this.renderImage( image, index )
-					) }
+					<div className="products__product-form-images-featured">
+						{ featuredImage && this.renderImage( featuredImage ) }
+					</div>
+
+					<div className="products__product-form-images-thumbs">
+						{ images.map( ( image ) =>
+							this.renderImage( image )
+						) }
+					</div>
 					<ProductImageUploader
 						onSelect={ this.onSelect }
 						onUpload={ this.onUpload }
 						onError={ this.onError }
-						compact={ images.length > 0 }
+						compact={ this.state.images.length > 0 }
 					/>
 				</div>
 

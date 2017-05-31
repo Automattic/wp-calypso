@@ -85,8 +85,10 @@
 			width: 100%;
 			height: auto;
 		}
+	}
 
-		&:first-child {
+	.products__product-form-images-featured {
+		.products__product-form-images-item {
 			margin-right: 0;
 			clear: both;
 			width: 100%;

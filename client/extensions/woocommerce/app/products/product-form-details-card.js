@@ -51,8 +51,25 @@ export default class ProductFormDetailsCard extends Component {
 		editProduct( product, { featured: ! product.featured } );
 	}
 
-	render() {
+	onImageUpload = ( image ) => {
 		const { product, editProduct } = this.props;
+		const images = product.images && [ ...product.images ] || [];
+		images.push( {
+			id: image.ID,
+			src: image.URL,
+		} );
+		editProduct( product, { images } );
+	}
+
+	onImageRemove = ( id ) => {
+		const { product, editProduct } = this.props;
+		const images = product.images && [ ...product.images ].filter( i => i.id !== id ) || [];
+		editProduct( product, { images } );
+	}
+
+	render() {
+		const { product } = this.props;
+		const images = product.images || [];
 		const __ = i18n.translate;
 		return (
 			<Card className="products__product-form-details">
@@ -67,8 +84,9 @@ export default class ProductFormDetailsCard extends Component {
 				</div>
 				<div className="products__product-form-details-wrapper">
 					<ProductFormImages
-						product={ product }
-						editProduct={ editProduct }
+						images={ images }
+						onUpload={ this.onImageUpload }
+						onRemove={ this.onImageRemove }
 					/>
 					<div className="products__product-form-details-basic">
 						<FormFieldSet>
