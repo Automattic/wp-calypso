@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -16,7 +17,8 @@ class SelectDropdownItem extends Component {
 		isDropdownOpen: React.PropTypes.bool,
 		selected: React.PropTypes.bool,
 		onClick: React.PropTypes.func,
-		count: React.PropTypes.number
+		count: React.PropTypes.number,
+		icon: React.PropTypes.element,
 	}
 
 	static defaultProps = {
@@ -28,7 +30,8 @@ class SelectDropdownItem extends Component {
 		const optionClassName = classNames( this.props.className, {
 			'select-dropdown__item': true,
 			'is-selected': this.props.selected,
-			'is-disabled': this.props.disabled
+			'is-disabled': this.props.disabled,
+			'has-icon': !! this.props.icon
 		} );
 
 		return (
@@ -43,6 +46,10 @@ class SelectDropdownItem extends Component {
 					tabIndex={ this.props.isDropdownOpen ? 0 : '' }
 					aria-selected={ this.props.selected } >
 					<span className="select-dropdown__item-text">
+						{
+							this.props.icon.type === Gridicon &&
+							this.props.icon
+						}
 						{ this.props.children }
 					</span>
 					{
