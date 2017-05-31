@@ -9,12 +9,12 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Apostrophe',
-		slug: 'apostrophe',
+		name: 'Apostrophe 2',
+		slug: 'apostrophe-2',
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		demo_uri: 'https://apostrophedemo.wordpress.com',
+		demo_uri: 'https://apostrophe2demo.wordpress.com',
 		verticals: []
 	},
 	{
