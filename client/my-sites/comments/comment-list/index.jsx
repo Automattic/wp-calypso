@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, map } from 'lodash';
+import { filter, keyBy, map } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -34,7 +34,7 @@ export class CommentList extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.comments.length ) {
-			this.setState( { comments: nextProps.comments } );
+			this.setState( { comments: keyBy( nextProps.comments, 'ID' ) } );
 		}
 	}
 
@@ -112,33 +112,27 @@ export class CommentList extends Component {
 	};
 
 	setCommentStatus = ( commentId, status, isUndo = false ) => {
-		let previousStatus = null;
+		const comment = this.state.comments[ commentId ];
 
-		const comments = map( this.state.comments, comment => {
-			if ( commentId === comment.ID && status !== comment.status ) {
-				previousStatus = comment.status;
-				// If status changes to unapproved/spam/trash, also remove the like
-				return {
-					...comment,
-					i_like: 'approved' === status ? comment.i_like : false,
-					status,
-				};
-			}
-			return comment;
-		} );
-
-		// If previousStatus !== null it means the status changed
-		if ( previousStatus ) {
-			this.props.removeNotice( `comment-notice-${ commentId }` );
-
-			// If this is an undo action and we don't need to show a notice
-			if ( ! isUndo ) {
-				const notice = this.getNoticeContent( commentId, status, previousStatus );
-				this.props.createNotice( notice.type, notice.message, notice.options );
-			}
-
-			this.setState( { comments } );
+		if ( status === comment.status ) {
+			return;
 		}
+
+		this.props.removeNotice( `comment-notice-${ commentId }` );
+
+		// If this is an undo action and we don't need to show a notice
+		if ( ! isUndo ) {
+			const { message, options, type } = this.getNoticeContent( commentId, status, comment.status );
+			this.props.createNotice( type, message, options );
+		}
+
+		this.setState( {
+			comments: {
+				...this.state.comments,
+				[ commentId ]: { ...comment, status },
+			},
+		} )
+		;
 	};
 
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
