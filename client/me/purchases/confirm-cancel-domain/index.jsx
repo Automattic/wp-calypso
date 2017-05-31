@@ -119,7 +119,7 @@ const ConfirmCancelDomain = React.createClass( {
 		cancelAndRefundPurchase( purchase.id, data, error => {
 			this.setState( { submitting: false } );
 
-			const { isDomainOnlySite, selectedSite } = this.props;
+			const { isDomainOnlySite, translate, selectedSite } = this.props;
 
 			if ( isDomainOnlySite ) {
 				// Removing the domain from a domain-only site results
@@ -134,7 +134,7 @@ const ConfirmCancelDomain = React.createClass( {
 			if ( error ) {
 				notices.error(
 					error.message ||
-						this.props.translate(
+						translate(
 							'Unable to cancel your purchase. Please try again later or contact support.'
 						)
 				);
@@ -143,7 +143,7 @@ const ConfirmCancelDomain = React.createClass( {
 			}
 
 			notices.success(
-				this.props.translate( '%(purchaseName)s was successfully cancelled and refunded.', {
+				translate( '%(purchaseName)s was successfully cancelled and refunded.', {
 					args: { purchaseName },
 				} ),
 				{ persistent: true }

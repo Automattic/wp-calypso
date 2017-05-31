@@ -27,7 +27,7 @@ const CreditCardDelete = React.createClass( {
 
 	renderDeleteButton: function() {
 		const text = this.props.isDeleting
-			? this.props.translate( 'Deleting ' )
+			? this.props.translate( 'Deleting' )
 			: this.props.translate( 'Delete' );
 
 		return (

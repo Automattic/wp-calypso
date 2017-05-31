@@ -159,14 +159,14 @@ const CancelPrivacyProtection = React.createClass( {
 	},
 
 	renderNotice() {
-		const { error } = this.props;
+		const { error, translate } = this.props;
 
 		if ( error ) {
 			return (
 				<Notice status="is-error" showDismiss={ false }>
 					{ error }
 					{ ' ' }
-					{ this.props.translate( 'Please try again later or {{a}}contact support.{{/a}}', {
+					{ translate( 'Please try again later or {{a}}contact support.{{/a}}', {
 						components: { a: <a href={ CALYPSO_CONTACT } /> },
 					} ) }
 				</Notice>
