@@ -134,7 +134,7 @@ export class Login extends React.Component {
 			<a href="#"
 				key="magic-login-link"
 				onClick={ this.onMagicLoginRequestClick }>
-					{ translate( 'Email me a login link' ) }
+					{ translate( 'Email me a log in link' ) }
 			</a>
 		);
 
