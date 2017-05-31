@@ -16,9 +16,6 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
-	COMMENTS_REQUEST,
-	COMMENTS_REQUEST_SUCCESS,
-	COMMENTS_REQUEST_FAILURE,
 } from '../action-types';
 import { combineReducers } from 'state/utils';
 import {
@@ -110,31 +107,6 @@ export function items( state = {}, action ) {
 }
 
 /***
- * Stores information regarding requests status per requestId
- * @param {Object} state redux state
- * @param {Object} action redux action
- * @returns {Object} new redux state
- */
-export function requests( state = {}, action ) {
-	switch ( action.type ) {
-		case COMMENTS_REQUEST:
-		case COMMENTS_REQUEST_SUCCESS:
-		case COMMENTS_REQUEST_FAILURE:
-			const { siteId, postId, requestId, type } = action;
-			const stateKey = getStateKey( siteId, postId );
-			return {
-				...state,
-				[ stateKey ]: {
-					...state[ stateKey ],
-					[ requestId ]: type
-				}
-			};
-	}
-
-	return state;
-}
-
-/***
  * Stores latest comments count for post we've seen from the server
  * @param {Object} state redux state, prev totalCommentsCount
  * @param {Object} action redux action
@@ -156,6 +128,5 @@ export function totalCommentsCount( state = {}, action ) {
 
 export default combineReducers( {
 	items,
-	requests,
 	totalCommentsCount
 } );
