@@ -43,17 +43,16 @@
 	.products__product-form-images-item {
 		position: relative;
 		display: inline-block;
-		margin-right: 16px;
+		margin-right: 2%;
 		margin-bottom: 16px;
+		width: 18.4%;
 
-		&:nth-child(4) {
-		@include breakpoint( ">960px" ) {
+		&:nth-child( 6n ) {
 			margin-right: 0;
-			}
 		}
 
-		&:nth-child(2) {
-			clear: left;
+		&:nth-child( 7n ) {
+			clear: both;
 		}
 
 		figure {
@@ -61,19 +60,15 @@
 		}
 
 		img {
-			width: 55px;
 			display: block;
+			width: 100%;
+			height: auto;
 		}
 
 		&:first-child {
 			margin-right: 0;
 			clear: both;
 			width: 100%;
-
-			img {
-				width: 100%;
-				height: auto;
-			}
 		}
 	}
 

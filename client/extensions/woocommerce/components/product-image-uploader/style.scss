@@ -31,8 +31,8 @@
 
 .product-image-uploader__picker.compact {
 	background: $gray-light;
-	height: 55px;
-	width: 55px;
+	height: 60px;
+	width: 18.4%;
 	position: relative;
 	margin-bottom: 16px;
 	border: 1px dashed $gray;
@@ -43,6 +43,10 @@
 		display: block;
 		text-align: center;
 		padding-top: 16px;
+	}
+
+	&:nth-child( 7n ) {
+		clear: both;
 	}
 }
 
