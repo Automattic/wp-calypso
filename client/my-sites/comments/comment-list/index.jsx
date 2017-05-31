@@ -14,6 +14,7 @@ import {
 	createNotice,
 	removeNotice,
 } from 'state/notices/actions';
+import { getNotices } from 'state/notices/selectors';
 import getSiteComments from 'state/selectors/get-site-comments';
 import CommentDetail from 'blocks/comment-detail';
 import CommentNavigation from '../comment-navigation';
@@ -38,16 +39,17 @@ export class CommentList extends Component {
 	}
 
 	getNoticeContent = ( commentId, newStatus, previousStatus ) => {
-		this.props.removeNotice( `${ commentId }-newStatus` );
-
 		const { translate } = this.props;
 		const options = {
-			button: translate( 'Undo' ),
 			duration: 5000,
-			id: `${ commentId }-newStatus`,
+			id: `comment-notice-${ commentId }`,
 			isPersistent: true,
-			onClick: () => this.setCommentStatus( commentId, previousStatus ),
 		};
+
+		if ( 'delete' !== newStatus ) {
+			options.button = translate( 'Undo' );
+			options.onClick = () => this.setCommentStatus( commentId, previousStatus, true );
+		}
 
 		switch ( newStatus ) {
 			case 'approved':
@@ -109,7 +111,7 @@ export class CommentList extends Component {
 		this.setState( { comments } );
 	};
 
-	setCommentStatus = ( commentId, status ) => {
+	setCommentStatus = ( commentId, status, isUndo = false ) => {
 		let previousStatus = null;
 
 		const comments = map( this.state.comments, comment => {
@@ -127,8 +129,13 @@ export class CommentList extends Component {
 
 		// If previousStatus !== null it means the status changed
 		if ( previousStatus ) {
-			const notice = this.getNoticeContent( commentId, status, previousStatus );
-			this.props.createNotice( notice.type, notice.message, notice.options );
+			this.props.removeNotice( `comment-notice-${ commentId }` );
+
+			// If this is an undo action and we don't need to show a notice
+			if ( ! isUndo ) {
+				const notice = this.getNoticeContent( commentId, status, previousStatus );
+				this.props.createNotice( notice.type, notice.message, notice.options );
+			}
 
 			this.setState( { comments } );
 		}
@@ -186,6 +193,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 	const comments = getSiteComments( state, siteId );
 	return {
 		comments,
+		notices: getNotices( state ),
 		siteId,
 	};
 };
