@@ -30,7 +30,6 @@ function sendBootStatus( status ) {
 }
 
 console.log( chalk.yellow( '%s booted in %dms - http://%s:%s' ), pkg.name, ( Date.now() ) - start, host, port );
-console.info( chalk.cyan( '\nGetting bundles ready, hold on...' ) );
 
 server = http.createServer( app );
 
@@ -47,6 +46,8 @@ server.listen( { port, host }, function() {
 
 // Enable hot reloader in development
 if ( config( 'env' ) === 'development' ) {
+	console.info( chalk.cyan( '\nGetting bundles ready, hold on...' ) );
+
 	hotReloader = require( 'bundler/hot-reloader' );
 	compiler = app.get( 'compiler' );
 
