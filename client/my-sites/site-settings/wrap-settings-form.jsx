@@ -108,14 +108,20 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.trackEvent( 'Clicked Save Settings Button' );
 		};
 
-		submitForm = () => {
+		submitForm = ( callback ) => {
 			const { fields, settingsFields, siteId, jetpackSettingsUISupported } = this.props;
 			this.props.removeNotice( 'site-settings-save' );
 
-			this.props.saveSiteSettings( siteId, pick( fields, settingsFields.site ) );
+			const settingsRequests = [
+				this.props.saveSiteSettings( siteId, pick( fields, settingsFields.site ) )
+			];
+
 			if ( jetpackSettingsUISupported ) {
-				this.props.updateSettings( siteId, pick( fields, settingsFields.jetpack ) );
+				settingsRequests.push( this.props.updateSettings( siteId, pick( fields, settingsFields.jetpack ) ) );
 			}
+
+			Promise.all( settingsRequests )
+				.then( () => callback && callback() );
 		};
 
 		handleRadio = event => {
@@ -150,10 +156,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
 
-		handleAutosavingToggle = name => () => {
+		handleAutosavingToggle = ( name, callback ) => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] }, () => {
-				this.submitForm();
+				this.submitForm( callback );
 			} );
 		};
 
