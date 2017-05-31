@@ -11,6 +11,7 @@ import media from './media';
 import plugins from './plugins';
 import posts from './posts';
 import simplePayments from './simple-payments';
+import settings from './settings';
 
 export default mergeHandlers(
 	activity,
@@ -21,5 +22,6 @@ export default mergeHandlers(
 	media,
 	plugins,
 	posts,
+	settings,
 	simplePayments,
 );
