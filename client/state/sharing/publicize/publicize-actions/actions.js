@@ -86,7 +86,6 @@ export function deletePostShareAction( siteId, postId, actionId ) {
 			},
 			( error, data ) => {
 				if ( error || ! data ) {
-					// TODO: consider return an WP_Error instance istead of `! data.item`
 					return dispatch( { type: PUBLICIZE_SHARE_ACTION_DELETE_FAILURE, siteId, postId, actionId, error } );
 				}
 
