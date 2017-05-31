@@ -47,11 +47,32 @@
 		margin-bottom: 16px;
 		width: 18.4%;
 
-		&:nth-child( 6n ) {
-			margin-right: 0;
+		@include breakpoint( ">960px" ) {
+			width: 30%;
+			margin-right: 5%;
 		}
 
-		&:nth-child( 7n ) {
+		&:nth-child( 4 ) {
+			margin-right: 2%;
+
+			@include breakpoint( ">960px" ) {
+				margin-right: 0;
+			}
+		}
+
+		&:nth-child( 5 ) {
+			clear: both;
+		}
+
+		&:nth-child( 6 ) {
+			margin-right: 0;
+
+			@include breakpoint( ">960px" ) {
+				margin-right: 5%;
+			}
+		}
+
+		&:nth-child( 7 ) {
 			clear: both;
 		}
 

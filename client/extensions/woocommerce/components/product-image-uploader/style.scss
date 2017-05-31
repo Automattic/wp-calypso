@@ -30,23 +30,42 @@
 }
 
 .product-image-uploader__picker.compact {
-	background: $gray-light;
-	height: 60px;
 	width: 18.4%;
 	position: relative;
 	margin-bottom: 16px;
-	border: 1px dashed $gray;
-	border-radius: 5px;
-	cursor: pointer;
+
+	@include breakpoint( ">960px" ) {
+		width: 30%;
+	}
 
 	.file-picker {
 		display: block;
 		text-align: center;
-		padding-top: 16px;
+		border: 1px dashed $gray;
+		height: 60px;
+		border-radius: 5px;
+		cursor: pointer;
+		background: $gray-light;
 	}
 
-	&:nth-child( 7n ) {
+	&:nth-child( 6 ) {
+		margin-right: 0;
+
+		@include breakpoint( ">960px" ) {
+			margin-right: 5%;
+		}
+	}
+
+	&:nth-child( 7 ) {
 		clear: both;
+	}
+
+	&:nth-child( 7 ),
+	&:nth-child( 4 ) {
+		@include breakpoint( ">960px" ) {
+			clear: none;
+			margin-right: 0;
+		}
 	}
 }
 
