@@ -346,32 +346,30 @@ export class MySitesSidebar extends Component {
 	};
 
 	sharing() {
-		// Temporarily disable Sharing due to problems with publicize
-		return null;
-		//const { isJetpack, isSharingEnabledOnJetpackSite, site } = this.props;
-		//const sharingLink = '/sharing' + this.props.siteSuffix;
-		//
-		//if ( site && ! this.props.canUserPublishPosts ) {
-		//return null;
-		//}
-		//
-		//if ( ! this.props.siteId ) {
-		//return null;
-		//}
-		//
-		//if ( isJetpack && ! isSharingEnabledOnJetpackSite ) {
-		//return null;
-		//}
+		const { isJetpack, isSharingEnabledOnJetpackSite, site } = this.props;
+		const sharingLink = '/sharing' + this.props.siteSuffix;
 
-		//return (
-		//<SidebarItem
-		//label={ this.props.translate( 'Sharing' ) }
-		//className={ this.itemLinkClass( '/sharing', 'sharing' ) }
-		//link={ sharingLink }
-		//onNavigate={ this.onNavigate }
-		//icon="share"
-		//preloadSectionName="sharing" />
-	//);
+		if ( site && ! this.props.canUserPublishPosts ) {
+			return null;
+		}
+
+		if ( ! this.props.siteId ) {
+			return null;
+		}
+
+		if ( isJetpack && ! isSharingEnabledOnJetpackSite ) {
+			return null;
+		}
+
+		return (
+			<SidebarItem
+				label={ this.props.translate( 'Sharing' ) }
+				className={ this.itemLinkClass( '/sharing', 'sharing' ) }
+				link={ sharingLink }
+				onNavigate={ this.onNavigate }
+				icon="share"
+				preloadSectionName="sharing" />
+		);
 	}
 
 	users() {
