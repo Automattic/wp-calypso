@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import some from 'lodash/some';
 import get from 'lodash/get';
-import { findIndex, has, includes } from 'lodash';
+import { findIndex, includes } from 'lodash';
 import { isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
@@ -438,7 +438,7 @@ class PluginMeta extends Component {
 		}
 
 		return get( sections[ index ], 'paths', [] )[ 0 ];
-	},
+	}
 
 	render() {
 		const cardClasses = classNames( 'plugin-meta__information', {
@@ -446,7 +446,6 @@ class PluginMeta extends Component {
 			'has-site': !! this.props.selectedSite,
 			'is-placeholder': !! this.props.isPlaceholder
 		} );
-		let target = '_blank';
 
 		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
 		let actionLinks = get( plugin, 'action_links' );
@@ -455,11 +454,6 @@ class PluginMeta extends Component {
 		}
 
 		const path = this.getExtensionPath( plugin );
-
-		if ( path && has( actionLinks, 'Settings' ) ) {
-			actionLinks.Settings = `${ path }/${ this.props.slug }`;
-			target = '_self';
-		}
 
 		return (
 			<div className="plugin-meta">
@@ -475,12 +469,22 @@ class PluginMeta extends Component {
 							<div className="plugin-meta__meta">
 								{ this.renderAuthorUrl() }
 							</div>
+
+							{ path &&
+								<div className="plugin-meta__settings-link">
+									<Button primary
+										href={ `${ path }/${ this.props.slug }` }>
+										{ this.props.translate( 'Settings' ) }
+									</Button>
+								</div>
+							}
+
 							{ ! isEmpty( actionLinks ) &&
 								<div className="plugin-meta__action-links">
 									{ Object.keys( actionLinks ).map( ( linkTitle, index ) => (
 										<Button compact icon
 											href={ actionLinks[ linkTitle ] }
-											target={ target }
+											target="_blank"
 											key={ 'action-link-' + index }
 											rel="noopener noreferrer">
 												{ linkTitle } <Gridicon icon="external" />

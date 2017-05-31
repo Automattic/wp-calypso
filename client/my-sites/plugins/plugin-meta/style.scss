@@ -152,6 +152,12 @@
 	color: $alert-green;
 }
 
+.plugin-meta__settings-link {
+	clear: both;
+	padding-top: 24px;
+	text-transform: uppercase;
+}
+
 .plugin-meta__action-links {
 	display: flex;
 	flex-wrap: wrap;
