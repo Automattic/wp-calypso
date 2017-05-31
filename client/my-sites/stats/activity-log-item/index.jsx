@@ -19,6 +19,9 @@ import Gravatar from 'components/gravatar';
 class ActivityLogItem extends Component {
 
 	static propTypes = {
+		siteId: PropTypes.number.isRequired,
+		timestamp: PropTypes.number.isRequired,
+		requestRestore: PropTypes.func,
 		title: PropTypes.string,
 		subTitle: PropTypes.string,
 		className: PropTypes.string,
@@ -27,7 +30,6 @@ class ActivityLogItem extends Component {
 		user: PropTypes.object,
 		onClick: PropTypes.func,
 		actionText: PropTypes.string,
-		timestamp: PropTypes.number,
 		description: PropTypes.string
 	};
 
@@ -137,6 +139,15 @@ class ActivityLogItem extends Component {
 		);
 	}
 
+	getHeader() {
+		return (
+			<div className="activity-log-item__card-header">
+				{ this.getActor() }
+				{ this.getContent() }
+			</div>
+		);
+	}
+
 	render() {
 		const {
 			className,
@@ -154,7 +165,7 @@ class ActivityLogItem extends Component {
 				</div>
 				<FoldableCard
 					className="activity-log-item__card"
-					header={ <div className="activity-log-item__card-header">{ this.getActor() } { this.getContent() }</div> }
+					header={ this.getHeader() }
 					summary={ this.getSummary() }
 					expandedSummary={ this.getSummary() }
 					clickableHeader={ true }

@@ -15,8 +15,8 @@ import ActivityLogItem from '../activity-log-item';
 class ActivityLogDay extends Component {
 	static propTypes = {
 		isRewindEnabled: PropTypes.bool,
-		logs: PropTypes.array,
-		siteId: PropTypes.number,
+		logs: PropTypes.array.isRequired,
+		siteId: PropTypes.number.isRequired,
 	};
 
 	static defaultProps = {
@@ -81,7 +81,7 @@ class ActivityLogDay extends Component {
 					{ logs.map( ( log, index ) => {
 						return (
 							<ActivityLogItem
-								key={ 'activity-log' + index }
+								key={ index }
 								title={ log.title }
 								subTitle={ log.subTitle }
 								description={ log.description }
