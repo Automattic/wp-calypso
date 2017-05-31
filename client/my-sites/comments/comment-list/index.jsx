@@ -160,7 +160,7 @@ export class CommentList extends Component {
 					toggleBulkEdit: this.toggleBulkEdit,
 				} } />
 				<ReactCSSTransitionGroup
-					transitionEnterTimeout={ 0 }
+					transitionEnterTimeout={ 150 }
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-detail__transition"
 				>
