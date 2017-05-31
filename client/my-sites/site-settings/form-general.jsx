@@ -492,7 +492,7 @@ class SiteSettingsFormGeneral extends Component {
 				}
 
 				{ siteIsJetpack
-					? <div>
+					? <div className="site-settings__general-jetpack">
 						<SectionHeader label={ translate( 'Jetpack' ) }>
 							{ this.jetpackDisconnectOption() }
 							{ this.showPublicPostTypesCheckbox() || this.showApiCacheCheckbox()
