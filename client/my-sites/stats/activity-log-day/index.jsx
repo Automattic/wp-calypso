@@ -15,8 +15,8 @@ import ActivityLogItem from '../activity-log-item';
 class ActivityLogDay extends Component {
 	static propTypes = {
 		isRewindEnabled: PropTypes.bool,
-		logs: PropTypes.object,
-		siteId: PropTypes.string,
+		logs: PropTypes.array,
+		siteId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -36,9 +36,8 @@ class ActivityLogDay extends Component {
 				disabled={ ! this.props.isRewindEnabled }
 				compact
 			>
-				<Gridicon icon={ 'history' } size={ 18 } /> {
-				this.props.translate( 'Rewind to this day' )
-			}
+				<Gridicon icon={ 'history' } size={ 18 } />
+				{ this.props.translate( 'Rewind to this day' ) }
 			</Button>
 		);
 	}
@@ -56,8 +55,13 @@ class ActivityLogDay extends Component {
 		} = this.props;
 		return (
 			<div>
-				<div className="activity-log-day__day">{ moment( logs[ 0 ].timestamp ).format( 'LL' )}</div>
-				<div className="activity-log-day__events"> { logs.length } { translate( 'Events' ) }</div>
+				<div className="activity-log-day__day">{ moment( logs[ 0 ].timestamp ).format( 'LL' ) }</div>
+				<div className="activity-log-day__events">{
+					translate( '%d Event', '%d Events', {
+						args: logs.length,
+						count: logs.length,
+					} )
+				}</div>
 			</div>
 		);
 	}

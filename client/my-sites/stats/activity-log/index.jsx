@@ -179,6 +179,7 @@ class ActivityLog extends Component {
 				log.subTitle = translate( 'Security Threat Found!' );
 				log.icon = 'notice';
 				log.actionText = translate( 'Fix it' );
+				break;
 			// Backups
 			case 'site_backed_up':
 				log.subTitle = translate( 'Site Backed up' );

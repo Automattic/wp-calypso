@@ -23,7 +23,7 @@ class ActivityLogItem extends Component {
 		subTitle: PropTypes.string,
 		className: PropTypes.string,
 		icon: PropTypes.string,
-		status: PropTypes.string,
+		status: PropTypes.oneOf( [ 'is-success', 'is-warning', 'is-error', 'is-info' ] ),
 		user: PropTypes.object,
 		onClick: PropTypes.func,
 		actionText: PropTypes.string,
@@ -33,7 +33,8 @@ class ActivityLogItem extends Component {
 
 	static defaultProps = {
 		onClick: noop,
-		status: 'is-info'
+		status: 'is-info',
+		icon: 'info-outline'
 	};
 
 	getTime() {
@@ -63,7 +64,7 @@ class ActivityLogItem extends Component {
 		return (
 			<div className="activity-log-item__icons">
 				<div className={ classes }>
-					<Gridicon icon={ icon || 'info-outline' } size={ 24 } />
+					<Gridicon icon={ icon } size={ 24 } />
 				</div>
 			</div>
 		);
@@ -108,7 +109,7 @@ class ActivityLogItem extends Component {
 		event.stopPropagation();
 	};
 
-	getAction() {
+	getSummary() {
 		const {
 			translate,
 			actionText
@@ -154,8 +155,8 @@ class ActivityLogItem extends Component {
 				<FoldableCard
 					className="activity-log-item__card"
 					header={ <div className="activity-log-item__card-header">{ this.getActor() } { this.getContent() }</div> }
-					summary={ this.getAction() }
-					expandedSummary={ this.getAction() }
+					summary={ this.getSummary() }
+					expandedSummary={ this.getSummary() }
 					clickableHeader={ true }
 				>
 					{ this.getDetails() }
