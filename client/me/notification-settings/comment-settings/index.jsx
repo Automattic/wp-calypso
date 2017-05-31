@@ -89,5 +89,5 @@ class NotificationCommentsSettings extends Component {
 
 export default connect(
 	null,
-	{ successNotice, errorNotice }
+	{ errorNotice, successNotice }
 )( localize( NotificationCommentsSettings ) );
