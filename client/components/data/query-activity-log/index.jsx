@@ -8,11 +8,12 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getActivityLogData } from 'state/activity-log/actions';
-import { isFetchingActivityLog, getRewindStartDate } from 'state/activity-log/selectors';
+import { isFetchingActivityLog } from 'state/activity-log/selectors';
 
 class QueryActivityLog extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired
+		siteId: PropTypes.number.isRequired,
+		startDate: PropTypes.string,
 	};
 
 	componentWillMount() {
@@ -20,16 +21,16 @@ class QueryActivityLog extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
+		if ( this.props.siteId !== nextProps.siteId || this.props.startDate !== nextProps.startDate ) {
 			this.request( nextProps );
 		}
 	}
 
 	request( props ) {
-		if ( props.requestingActivityLog || ! this.props.startDate ) {
+		if ( props.requestingActivityLog || ! props.startDate ) {
 			return;
 		}
-		props.getActivityLogData( props.siteId, this.props.startDate );
+		props.getActivityLogData( props.siteId, props.startDate );
 	}
 
 	render() {
@@ -41,12 +42,10 @@ export const mapDispatchToProps = ( {
 	getActivityLogData
 } );
 
-
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requestingActivityLog: isFetchingActivityLog( state, ownProps.siteId ),
-			startDate: getRewindStartDate( state, ownProps.siteId )
+			requestingActivityLog: isFetchingActivityLog( state, ownProps.siteId )
 		};
 	},
 	mapDispatchToProps

@@ -44,10 +44,10 @@ export function isRewindActive( state, siteId ) {
  *
  * @param  {Object}  state   Global state tree
  * @param  {Number}  siteId  The ID of the site we're querying
- * @return {String|Boolean}  Date of the first rewind point, false if not found.
+ * @return {String}  Date of the first rewind point, empty string if nothing.
  */
 export function getRewindStartDate( state, siteId ) {
-	return get( state.activityLog.status, [ siteId, 'data', 'first_backup_when' ], false );
+	return get( state.activityLog.status, [ siteId, 'data', 'first_backup_when' ], '' );
 }
 
 /**
