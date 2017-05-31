@@ -15,7 +15,7 @@ import { tracks } from 'lib/analytics';
 import { localize } from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
 import { isVipSite } from 'state/selectors';
 import {
 	getSitePurchases,
@@ -49,6 +49,8 @@ class SiteTools extends Component {
 			siteSlug,
 			isJetpack,
 			isVip,
+			importUrl,
+			exportUrl,
 		} = this.props;
 
 		const showSection = {
@@ -139,7 +141,7 @@ class SiteTools extends Component {
 					</CompactCard>
 				}
 				<CompactCard
-					href={ this.getImportExportLink( 'import' ) }
+					href={ importUrl }
 					className="site-tools__link">
 					<div className="site-tools__content">
 						<p className="site-tools__section-title">{ importTitle }</p>
@@ -147,7 +149,7 @@ class SiteTools extends Component {
 					</div>
 				</CompactCard>
 				<CompactCard
-					href={ this.getImportExportLink( 'export' ) }
+					href={ exportUrl }
 					className="site-tools__link">
 					<div className="site-tools__content">
 						<p className="site-tools__section-title">{ exportTitle }</p>
@@ -159,19 +161,6 @@ class SiteTools extends Component {
 					onClose={ this.closeDialog } />
 			</div>
 		);
-	}
-
-	getImportExportLink( direction ) {
-		if ( direction !== 'import' && direction !== 'export' ) {
-			return null;
-		}
-
-		const { jetpack, slug, options: { admin_url } } = this.props.site;
-
-		if ( jetpack ) {
-			return `${ admin_url }${ direction }.php`;
-		}
-		return `/settings/${ direction }/${ slug }`;
 	}
 
 	trackChangeAddress() {
@@ -205,13 +194,25 @@ class SiteTools extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
+		const isJetpack = isJetpackSite( state, siteId );
+
+		let importUrl = `/settings/import/${ siteSlug }`;
+		let exportUrl = `/settings/export/${ siteSlug }`;
+		if ( isJetpack ) {
+			importUrl = getSiteAdminUrl( state, siteId, 'import.php' );
+			exportUrl = getSiteAdminUrl( state, siteId, 'export.php' );
+		}
+
 		return {
-			siteSlug: getSelectedSiteSlug( state ),
-			isJetpack: isJetpackSite( state, siteId ),
+			siteSlug,
+			isJetpack,
 			isVip: isVipSite( state, siteId ),
 			sitePurchasesLoaded: hasLoadedSitePurchasesFromServer( state ),
 			sitePurchases: getSitePurchases( state, siteId ),
 			purchasesError: getPurchasesError( state ),
+			importUrl,
+			exportUrl,
 		};
 	}
 )( localize( SiteTools ) );
