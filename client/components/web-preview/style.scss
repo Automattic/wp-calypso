@@ -38,6 +38,8 @@
 }
 
 .web-preview__content {
+	display: flex;
+	flex-direction: column;
 	box-shadow: 0 0 0 1px rgba( $gray, 0.5 );
 	background: $gray-light;
 	border-radius: 4px 4px 0 0;
