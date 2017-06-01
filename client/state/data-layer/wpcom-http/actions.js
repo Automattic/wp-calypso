@@ -47,7 +47,7 @@ export const http = ( {
 		body,
 		method,
 		path,
-		query: method === 'GET' ? { ...query, ...version } : version,
+		query: { ...query, ...version },
 		formData,
 		onSuccess: onSuccess || action,
 		onFailure: onFailure || action,
