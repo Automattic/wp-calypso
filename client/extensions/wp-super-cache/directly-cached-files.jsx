@@ -21,6 +21,9 @@ class DirectlyCachedFiles extends Component {
 		if ( ! prevProps.isSaveSuccessful && this.props.isSaveSuccessful ) {
 			this.refs.newDirectPage.refs.textField.value = '';
 			this.props.replaceFields( { new_direct_page: undefined } );
+
+			const directPages = this.props.fields.cache_direct_pages.filter( page => page.trim() !== '' );
+			this.props.replaceFields( { cache_direct_pages: directPages } );
 		}
 	}
 
