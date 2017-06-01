@@ -40,3 +40,7 @@ Enables users to select a domain to map
 register-domain-step
 --------------------
 Enables users to select a domain to register
+
+registrant-extra-info
+---------------------
+Forms to collect additional tld-specific user information
