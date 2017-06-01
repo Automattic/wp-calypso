@@ -66,25 +66,20 @@ class ProductCreate extends React.Component {
 	onSave = () => {
 		const { siteId, product, translate } = this.props;
 
-		const successAction = () => {
-			return successNotice(
-				translate( '%(product)s successfully created.', {
-					args: { product: product.name },
-				} ),
-				{ duration: 4000 }
-			);
-		};
+		const successAction = successNotice(
+			translate( '%(product)s successfully created.', {
+				args: { product: product.name },
+			} ),
+			{ duration: 4000 }
+		);
 
-		const errorAction = () => {
-			return errorNotice(
-				translate( 'There was a problem saving %(product)s. Please try again.', {
-					args: { product: product.name },
-				} )
-			);
-		};
+		const errorAction = errorNotice(
+			translate( 'There was a problem saving %(product)s. Please try again.', {
+				args: { product: product.name },
+			} )
+		);
 
-		// TODO: Handle success action and error action!
-		this.props.createProduct( siteId, product );
+		this.props.createProduct( siteId, product, successAction, errorAction );
 	}
 
 	render() {

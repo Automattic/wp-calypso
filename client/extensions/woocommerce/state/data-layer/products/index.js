@@ -38,10 +38,14 @@ function createProduct( { dispatch }, action, next ) {
 }
 
 function createProductSuccess( { dispatch }, action, next, response ) {
-	const { siteId } = action.payload;
+	const { siteId, successAction } = action.payload;
 	const { data } = response;
 
-	if ( ! isValidProduct( data ) ) {
+	if ( isValidProduct( data ) ) {
+		if ( successAction ) {
+			dispatch( successAction );
+		}
+	} else {
 		dispatch( setError( siteId, action, {
 			message: 'Invalid Product Object',
 			data
@@ -52,8 +56,11 @@ function createProductSuccess( { dispatch }, action, next, response ) {
 }
 
 function createProductFailure( { dispatch }, action, next, err ) {
-	const { siteId } = action.payload;
+	const { siteId, errorAction } = action.payload;
 
+	if ( errorAction ) {
+		dispatch( errorAction );
+	}
 	dispatch( setError( siteId, action, err ) );
 
 	return next( action );
