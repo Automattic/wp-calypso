@@ -14,6 +14,7 @@ import GoogleAppsProductDetails from './product-details';
 import analyticsMixin from 'lib/mixins/analytics';
 import { abtest } from 'lib/abtest';
 import { validate as validateGappsUsers, filter as filterUsers } from 'lib/domains/google-apps-users';
+import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 
 const GoogleAppsDialog = React.createClass( {
 	mixins: [ analyticsMixin( 'googleApps' ) ],
@@ -49,17 +50,8 @@ const GoogleAppsDialog = React.createClass( {
 	render() {
 		const gapps = this.props.productsList && this.props.productsList.get().gapps;
 		const price = gapps && gapps.cost_display;
-
-		// Gapps price is stored annually but we'd like to show a monthly price
-		const monthlyPrice = price && price.replace( /(\d+\.?\d+)/, ( value ) => {
-			const number = ( Math.round( parseFloat( value ) / 10 * 100 ) / 100 );
-			return number % 1 === 0 ? number : number.toFixed( 2 );
-		} );
-
-		const annualPrice = price && price.replace( /(\d+\.?\d+)/, ( value ) => {
-			const number = parseFloat( value );
-			return number % 1 === 0 ? number : number.toFixed( 2 );
-		} );
+		const monthlyPrice = getMonthlyPrice( price );
+		const annualPrice = getAnnualPrice( price );
 
 		return (
 			<form className="google-apps-dialog" onSubmit={ this.handleFormSubmit }>

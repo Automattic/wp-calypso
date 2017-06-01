@@ -1,18 +1,19 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	page = require( 'page' );
+import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-const Button = require( 'components/forms/form-button' ),
-	CompactCard = require( 'components/card/compact' ),
-	config = require( 'config' ),
-	paths = require( 'my-sites/upgrades/paths' ),
-	support = require( 'lib/url/support' ),
-	analyticsMixin = require( 'lib/mixins/analytics' );
+import Button from 'components/forms/form-button';
+import CompactCard from 'components/card/compact';
+import config from 'config';
+import paths from 'my-sites/upgrades/paths';
+import support from 'lib/url/support';
+import analyticsMixin from 'lib/mixins/analytics';
+import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 
 const AddGoogleAppsCard = React.createClass( {
 	propTypes: {
@@ -32,16 +33,8 @@ const AddGoogleAppsCard = React.createClass( {
 			price = gapps && gapps.cost_display,
 			selectedDomainName = this.props.selectedSite.domain;
 
-		const displayPrice = price.replace( /(\d+[.,]?\d+)/, ( val ) => {
-			const number = parseFloat( val );
-			return number % 1 === 0 ? number : this.numberFormat( number, 2 );
-		} );
-
-		// Gapps price is stored annually but we'd like to show a monthly price
-		const monthlyPrice = price.replace( /(\d+[.,]?\d+)/, ( val ) => {
-			const number = ( Math.round( parseFloat( val ) / 10 * 100 ) / 100 );
-			return this.numberFormat( number, 2 );
-		} );
+		const annualPrice = getAnnualPrice( price );
+		const monthlyPrice = getMonthlyPrice( price );
 
 		return (
 			<div>
@@ -95,7 +88,7 @@ const AddGoogleAppsCard = React.createClass( {
 										this.translate( '%(price)s billed yearly (2 months free!)',
 											{
 												args: {
-													price: displayPrice
+													price: annualPrice
 												}
 											}
 										)
