@@ -124,18 +124,18 @@ class SiteSettingsFormWriting extends Component {
 						</div>
 					)
 				}
+
+				<CustomContentTypes
+					handleAutosavingToggle={ handleAutosavingToggle }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+
 				{
 					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
 						<div>
 							<QueryJetpackModules siteId={ this.props.siteId } />
-
-							<CustomContentTypes
-								onSubmitForm={ this.props.handleSubmitForm }
-								handleAutosavingToggle={ handleAutosavingToggle }
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-								fields={ fields }
-							/>
 
 							<ThemeEnhancements
 								onSubmitForm={ this.props.handleSubmitForm }
