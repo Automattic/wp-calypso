@@ -149,3 +149,78 @@
 	margin-top: 1em;
 	text-align: center;
 }
+
+.domain-management-email {
+	.is-placeholder {
+		.section-header__label {
+			@include placeholder();
+
+			&::before {
+				display: none;
+			}
+		}
+
+		.google-apps-user-item__email,
+		.google-apps-user-item__manage-link {
+			@include placeholder();
+		}
+	}
+}
+
+.google-apps-users-card {
+	margin-bottom: 10px;
+}
+
+.google-apps-users-card__user-list {
+	&.card {
+		padding: 0;
+		@include clear-fix;
+	}
+}
+
+.google-apps-users-card__user-list-inner {
+	list-style: none;
+	margin: 0;
+
+	li {
+		border-top: 1px solid $gray-light;
+		padding: 20px 24px;
+		@include clear-fix;
+
+		&:first-of-type {
+			border-top: none;
+		}
+
+		&:last-of-type {
+			border-bottom: 1px solid $gray-light;
+		}
+	}
+
+	.notice {
+		margin: 0;
+	}
+}
+
+.google-apps-user-item__email {
+	float: left;
+}
+
+.google-apps-user-item__manage-link {
+	float: right;
+	font-size: 13px;
+}
+
+.domain-only-site__settings-notice {
+	color: darken( $gray, 20% );
+	margin-top: 30px;
+	text-align: center;
+
+	&::before {
+		background: lighten( $gray, 20% );
+		content: '';
+		display: block;
+		height: 1px;
+		margin: 0 auto 30px;
+		width: 60px;
+	}
+}
