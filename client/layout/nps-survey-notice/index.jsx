@@ -25,6 +25,7 @@ import {
 	isSectionAndSessionEligibleForNpsSurvey,
 	wasNpsSurveyShownThisSession,
 } from 'state/nps-survey/selectors';
+import analytics from 'lib/analytics';
 
 const SURVEY_NAME = 'calypso-global-notice-radio-buttons-v1';
 
@@ -58,6 +59,9 @@ class NpsSurveyNotice extends Component {
 			// (2) the user notices the notice more, since it will cause a change to the
 			//     screen they are already looking at
 			setTimeout( this.props.showNpsSurveyNotice, 3000 );
+
+			analytics.mc.bumpStat( 'calypso_nps_survey', 'displayed' );
+			analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
 		}
 	}
 
