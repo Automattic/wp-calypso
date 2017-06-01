@@ -96,7 +96,7 @@ class ProductImageUploader extends Component {
 		const filesToUpload = [];
 
 		images.forEach( function( image ) {
-			if ( maxUploadSize !== null && image.size > maxUploadSize ) {
+			if ( maxUploadSize && image.size > maxUploadSize ) {
 				errorNotice( translate( '%(name)s exceeds the maximum upload size (%(size)s) for this site.', {
 					args: {
 						name: image.name,

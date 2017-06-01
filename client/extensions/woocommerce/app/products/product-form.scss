@@ -44,7 +44,13 @@
 		position: relative;
 		display: inline-block;
 		margin-bottom: 16px;
-		margin-right: 16px;
+		margin-right: 8px;
+		margin-left: 8px;
+
+		@include breakpoint( ">960px" ) {
+			margin-left: 0;
+			margin-right: 16px;
+		}
 
 		figure {
 			border: 1px solid lighten( $gray, 30% );
@@ -60,6 +66,7 @@
 	.products__product-form-images-featured {
 		.products__product-form-images-item {
 			margin-right: 0;
+			margin-left: 0;
 			clear: both;
 			width: 100%;
 		}
@@ -89,9 +96,27 @@
 		transform: translate( -50%, -50% );
 	}
 
+	.products__product-form-images-thumbs {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+
+		@include breakpoint( ">960px" ) {
+			justify-content: flex-start;
+		}
+
+		.products__product-form-images-item.thumb {
+			&:nth-child( 3n ) {
+				@include breakpoint( ">960px" ) {
+						margin-right: 0;
+				}
+			}
+		}
+	}
+
 	.products__product-form-images-item.thumb figure {
-		width: 60px;
-		height: 60px;
+		width: 70px;
+		height: 70px;
 		overflow: hidden;
 
 		img {

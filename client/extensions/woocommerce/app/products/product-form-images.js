@@ -167,13 +167,14 @@ class ProductFormImages extends Component {
 						{ images.map( ( image ) =>
 							this.renderImage( image )
 						) }
+
+						<ProductImageUploader
+							onSelect={ this.onSelect }
+							onUpload={ this.onUpload }
+							onError={ this.onError }
+							compact={ this.state.images.length > 0 }
+						/>
 					</div>
-					<ProductImageUploader
-						onSelect={ this.onSelect }
-						onUpload={ this.onUpload }
-						onError={ this.onError }
-						compact={ this.state.images.length > 0 }
-					/>
 				</div>
 
 				<FormSettingExplanation>{ translate(
