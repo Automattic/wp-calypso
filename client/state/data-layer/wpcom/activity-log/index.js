@@ -2,6 +2,6 @@
  * Internal dependencies
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
-import status from './status';
+import rewind from './rewind';
 
-export default mergeHandlers( status );
+export default mergeHandlers( rewind );
