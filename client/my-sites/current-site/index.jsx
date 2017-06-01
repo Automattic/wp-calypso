@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -30,7 +29,6 @@ import { getSelectedOrAllSites } from 'state/selectors';
 class CurrentSite extends Component {
 	static propTypes = {
 		isJetpack: React.PropTypes.bool,
-		isPreviewShowing: React.PropTypes.bool,
 		siteCount: React.PropTypes.number.isRequired,
 		setLayoutFocus: React.PropTypes.func.isRequired,
 		selectedSiteId: React.PropTypes.number,
@@ -104,41 +102,6 @@ class CurrentSite extends Component {
 		);
 	}
 
-	previewSite = ( event ) => this.props.onClick && this.props.onClick( event );
-
-	renderSiteViewLink() {
-		const {
-			isPreviewShowing,
-			selectedSite,
-			translate,
-		} = this.props;
-
-		const viewText = selectedSite.is_previewable
-			? translate( 'Site Preview' )
-			: translate( 'View site' );
-
-		const viewIcon = selectedSite.is_previewable
-			? 'computer'
-			: 'external';
-
-		return (
-			<a
-				href={ selectedSite.URL }
-				onClick={ this.previewSite }
-				className={ classNames( 'current-site__view-site', {
-					selected: isPreviewShowing,
-				} ) }
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				<span className="current-site__view-site-text">
-					{ viewText }
-				</span>
-				<Gridicon icon={ viewIcon } />
-			</a>
-		);
-	}
-
 	render() {
 		const { isJetpack, selectedSite, translate, anySiteSelected } = this.props;
 
@@ -171,10 +134,7 @@ class CurrentSite extends Component {
 					</span>
 				}
 				{ selectedSite
-					? <div>
-						<Site site={ selectedSite } />
-						{ this.renderSiteViewLink() }
-					</div>
+					? <Site site={ selectedSite } />
 					: <AllSites />
 				}
 				{ ! isJetpack && this.getDomainWarnings() }
