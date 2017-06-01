@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -92,6 +93,7 @@ class CustomContentTypes extends Component {
 		return (
 			<div className="custom-content-types__module-settings">
 				<div className="custom-content-types__form-toggle-placeholder form-toggle__placeholder">
+					<Gridicon icon="checkmark" />
 					{ fieldLabel }
 				</div>
 

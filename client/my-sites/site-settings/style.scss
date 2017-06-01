@@ -199,6 +199,12 @@
 			@include placeholder;
 		}
 	}
+
+	.gridicons-checkmark {
+		margin-right: 12px;
+		vertical-align: bottom;
+		color: $alert-green;
+	}
 }
 
 .site-settings__general-settings,
