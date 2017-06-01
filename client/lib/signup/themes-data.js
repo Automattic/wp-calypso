@@ -9,7 +9,7 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Apostrophe 2',
+		name: 'Apostrophe',
 		slug: 'apostrophe-2',
 		repo: 'pub',
 		fallback: false,
