@@ -60,8 +60,8 @@ class NpsSurveyNotice extends Component {
 			//     screen they are already looking at
 			setTimeout( this.props.showNpsSurveyNotice, 3000 );
 
-			analytics.mc.bumpStat( 'calypso_nps_survey', 'displayed' );
-			analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
+			analytics.mc.bumpStat( 'calypso_nps_survey', 'notice_displayed' );
+			analytics.tracks.recordEvent( 'calypso_nps_notice_displayed' );
 		}
 	}
 
