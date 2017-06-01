@@ -235,5 +235,18 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		expect( removeHandlers( 'my-extension', config ) ).to.eql( true );
 		expect( removeHandlers( 'my-extension', config ) ).to.eql( false );
 	} );
+
+	it( 'should create a new middleware and handleAction function each time it is reconfigured.', () => {
+		const config = configureMiddleware( {}, { store: {}, next: () => {} } );
+		const middleware1 = config.middleware;
+		const handleAction1 = config.handleAction;
+
+		addHandlers( 'my-extension', {}, config );
+		const middleware2 = config.middleware;
+		const handleAction2 = config.handleAction;
+
+		expect( middleware1 ).to.not.equal( middleware2 );
+		expect( handleAction1 ).to.not.equal( handleAction2 );
+	} );
 } );
 

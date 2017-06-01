@@ -16,6 +16,9 @@ const configuration = configureMiddleware( Object.create( null ), Object.create(
 export function configureMiddleware( handlers, config = configuration ) {
 	config.handlers = handlers;
 	config.middleware = buildMiddleware( handlers );
+	if ( config.store && config.next ) {
+		config.handleAction = config.middleware( config.store )( config.next );
+	}
 	return config;
 }
 
@@ -50,7 +53,7 @@ export function removeHandlers( name, config = configuration ) {
 }
 
 export function buildMiddleware( handlersByExtension ) {
-	const allHandlers = Object.values( handlersByExtension ).reduce( mergeHandlers, Object.create( null ) );
+	const allHandlers = mergeHandlers( ...Object.values( handlersByExtension ) ) || [];
 
 	return middleware( allHandlers );
 }
@@ -58,5 +61,15 @@ export function buildMiddleware( handlersByExtension ) {
 /**
  * Extensions Middleware
  */
-export default configuration.middleware;
+export default store => next => {
+	configuration.store = store;
+	configuration.next = next;
+
+	// Re-generate configuration.handleAction.
+	configureMiddleware( configuration.handlers, configuration );
+
+	return action => {
+		return configuration.handleAction( action );
+	};
+};
 
