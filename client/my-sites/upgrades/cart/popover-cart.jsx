@@ -10,6 +10,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
 import CartMessagesMixin from './cart-messages-mixin';
@@ -45,13 +46,15 @@ const PopoverCart = React.createClass( {
 	mixins: [ CartMessagesMixin ],
 
 	render: function() {
-		var countBadge,
-			classes = classNames( {
-				'popover-cart': true,
-				pinned: this.props.pinned
-			} );
+		let countBadge;
+		const	classes = classNames( {
+			'popover-cart': true,
+			pinned: this.props.pinned
+		} );
 
-		if ( this.itemCount() ) {
+		if ( abtest( 'pulsingCartTestingAB' ) === 'modified' ) {
+			countBadge = <div className="cart__pulsing-badge"></div>;
+		} else if ( this.itemCount() ) {
 			countBadge = <div className="popover-cart__count-badge">{ this.itemCount() }</div>;
 		}
 
