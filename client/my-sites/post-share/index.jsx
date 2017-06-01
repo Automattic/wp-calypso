@@ -468,8 +468,6 @@ class PostShare extends Component {
 				<QueryPostTypes siteId={ siteId } />
 				<QueryPublicizeConnections siteId={ siteId } />
 
-				{ this.renderRequestSharingNotice() }
-
 				<div className={ classes }>
 					<div className="post-share__head">
 						<h4 className="post-share__title">
@@ -486,6 +484,7 @@ class PostShare extends Component {
 							) }
 						</div>
 					</div>
+					{ this.renderRequestSharingNotice() }
 
 					{ this.renderPrimarySection() }
 				</div>
