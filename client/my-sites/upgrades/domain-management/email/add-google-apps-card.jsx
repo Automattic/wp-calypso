@@ -74,7 +74,7 @@ const AddGoogleAppsCard = React.createClass( {
 									<span>
 										{
 											this.translate(
-												'{{strong}}%(price)s{{/strong}} per month / user',
+												'{{strong}}%(price)s{{/strong}} per user / month',
 												{
 													components: {
 														strong: <strong />
