@@ -187,13 +187,7 @@ export class CommentList extends Component {
 				{ null === filteredComments &&
 					<CommentDetailPlaceholder />
 				}
-				{ 0 === size( filteredComments ) &&
-					<EmptyContent
-						illustration="/calypso/images/comments/illustration_comments_gray.svg"
-						illustrationWidth={ 150 }
-						{ ...this.getEmptyMessage() }
-					/>
-				}
+
 				<ReactCSSTransitionGroup
 					transitionEnterTimeout={ 150 }
 					transitionLeaveTimeout={ 150 }
@@ -212,6 +206,14 @@ export class CommentList extends Component {
 						/>
 					) }
 				</ReactCSSTransitionGroup>
+
+				{ 0 === size( filteredComments ) &&
+					<EmptyContent
+						illustration="/calypso/images/comments/illustration_comments_gray.svg"
+						illustrationWidth={ 150 }
+						{ ...this.getEmptyMessage() }
+					/>
+				}
 			</div>
 		);
 	}
