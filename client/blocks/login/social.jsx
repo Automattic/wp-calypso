@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import { loginSocialUser } from 'state/login/actions';
-import { errorNotice, infoNotice } from 'state/notices/actions';
+import { errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
 import wpcom from 'lib/wp';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 
@@ -19,6 +19,7 @@ class SocialLoginForm extends Component {
 	static propTypes = {
 		errorNotice: PropTypes.func.isRequired,
 		infoNotice: PropTypes.func.isRequired,
+		removeNotice: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -37,8 +38,9 @@ class SocialLoginForm extends Component {
 			this.props.onSuccess();
 		} ).catch( error => {
 			if ( error === 'unknown_user' ) {
-				this.props.infoNotice( this.props.translate( 'Creating your account' ) );
+				const { notice } = this.props.infoNotice( this.props.translate( 'Creating your account' ) );
 				wpcom.undocumented().usersSocialNew( 'google', response.Zi.id_token, 'login', ( wpcomError, wpcomResponse ) => {
+					this.props.removeNotice( notice.noticeId );
 					if ( wpcomError ) {
 						this.props.errorNotice( wpcomError.message );
 					} else {
@@ -67,10 +69,13 @@ class SocialLoginForm extends Component {
 						responseHandler={ this.handleGoogleResponse } />
 				</div>
 
-				{ this.state.bearerToken &&
-					<WpcomLoginForm log={ this.state.username }
-									authorization={ 'Bearer ' + this.state.bearerToken }
-									redirectTo="/start" /> }
+				{ this.state.bearerToken && (
+					<WpcomLoginForm
+						log={ this.state.username }
+						authorization={ 'Bearer ' + this.state.bearerToken }
+						redirectTo="/start"
+					/>
+				) }
 			</div>
 		);
 	}
@@ -81,6 +86,7 @@ export default connect(
 	{
 		errorNotice,
 		infoNotice,
+		removeNotice,
 		loginSocialUser,
 	}
 )( localize( SocialLoginForm ) );
