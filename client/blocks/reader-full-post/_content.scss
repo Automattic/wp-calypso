@@ -333,9 +333,10 @@
 
 // Longreads-Specific Full Post View Styles
 .blog-70135762 .reader-full-post__story-content {
-	
+
 	.publisher-intro img {
-		margin-bottom: 0;
+		float: left;
+		margin: 0 20px 0 0;
 	}
 
 	@include breakpoint( "<660px" ) {
