@@ -111,6 +111,15 @@ A function which will get called on clicking the "Reset" image editor button. Th
 
 String of classes (class names) appended to the image editor wrapper (`.image-editor [className]`).
 
+### `doneButtonText`
+
+<table>
+	<tr><th>Type</th><td>string</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+</table>
+
+Already-translated string which will be used on the 'Done' button. If not used, it will default to 'Done'.
+
 ## Example
 
 ```js
@@ -124,5 +133,4 @@ render() {
 		/>
 	);
 }
-``
-
+```
