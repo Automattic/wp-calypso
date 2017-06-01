@@ -23,6 +23,7 @@ import {
 import {
 	hasAnsweredNpsSurvey,
 } from 'state/nps-survey/selectors';
+import analytics from 'lib/analytics';
 
 class NpsSurvey extends Component {
 	static propTypes = {
@@ -71,6 +72,9 @@ class NpsSurvey extends Component {
 			'is-recommendation-selected': Number.isInteger( this.state.score ),
 			'is-submitted': this.props.hasAnswered,
 		} );
+
+		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_displayed' );
+		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
 
 		return (
 			<Card className={ className }>
