@@ -20,7 +20,7 @@ const fetchRewindStatus = ( { dispatch }, action ) => {
 };
 
 const updateRewindStatus = ( { dispatch }, { siteId }, next, { data } ) => {
-	next( {
+	dispatch( {
 		type: REWIND_STATUS_REQUEST,
 		siteId,
 		data,
