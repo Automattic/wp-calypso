@@ -65,6 +65,11 @@ class NpsSurvey extends Component {
 		}, 0 );
 	}
 
+	componentWillMount() {
+		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_displayed' );
+		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
+	}
+
 	render() {
 		const { translate } = this.props;
 
@@ -72,9 +77,6 @@ class NpsSurvey extends Component {
 			'is-recommendation-selected': Number.isInteger( this.state.score ),
 			'is-submitted': this.props.hasAnswered,
 		} );
-
-		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_displayed' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
 
 		return (
 			<Card className={ className }>
