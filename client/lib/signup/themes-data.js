@@ -55,11 +55,11 @@ export const themes = [
 	},
 	{
 		name: 'Intergalactic',
-		slug: 'intergalactic',
+		slug: 'intergalactic-2',
 		repo: 'pub',
 		fallback: true,
 		design: 'blog',
-		demo_uri: 'https://intergalacticdemo.wordpress.com',
+		demo_uri: 'https://intergalactic2demo.wordpress.com',
 		verticals: []
 	},
 	{
