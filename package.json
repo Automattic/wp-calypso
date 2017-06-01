@@ -170,7 +170,7 @@
     "build-devdocs:index:_env": "node server/devdocs/bin/generate-devdocs-index \"**/*.md\" \".github/**.md\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
     "build-devdocs:proptypes-index": "npm run -s env -- npm run -s build-devdocs:proptypes-index:_env",
     "build-devdocs:proptypes-index:_env": "node server/devdocs/bin/generate-proptypes-index.js \"client/**/index.js\" \"client/**/index.jsx\" \"client/**/example.jsx\" \"!**/test/**\"",
-    "prebuild-docker": "touch env-config.sh",
+    "prebuild-docker": "npm run distclean && touch env-config.sh",
     "build-docker": "docker build -t wp-calypso .",
     "prebuild-server": "mkdirp build",
     "build-server": "npm run -s env -- webpack --display-error-details --config webpack.config.node.js",
