@@ -6,7 +6,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { setError } from '../../site/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_CREATE_PRODUCT,
-	WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
 } from '../../action-types';
 
 function createProduct( { dispatch }, action, next ) {
@@ -48,14 +47,6 @@ function createProductSuccess( { dispatch }, action, next, response ) {
 			data
 		} ) );
 	}
-
-	dispatch( {
-		type: WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
-		payload: {
-			siteId,
-			data,
-		}
-	} );
 
 	return next( action );
 }
