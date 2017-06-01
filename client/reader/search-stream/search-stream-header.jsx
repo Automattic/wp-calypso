@@ -43,7 +43,7 @@ class SearchStreamHeader extends Component {
 		}
 
 		return (
-			<div>
+			<div className="search-stream__header">
 				<SectionNav>
 					<NavTabs>
 						<NavItem
