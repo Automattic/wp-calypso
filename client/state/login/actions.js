@@ -35,6 +35,7 @@ const loginErrorMessages = {
 	account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
 		"WordPress.com and click the activation link. You'll be able to log in after that." ),
 	empty_password: translate( 'Please be sure to enter your password.' ),
+	empty_two_step_code: translate( 'Please enter a verification code.' ),
 	empty_username: translate( 'Please enter a username or email address.' ),
 	forbidden_for_automattician: 'Cannot use social login with an Automattician account',
 	incorrect_password: translate( "Oops, looks like that's not the right password. Please try again!" ),
@@ -42,6 +43,8 @@ const loginErrorMessages = {
 	invalid_two_step_code: translate( "Hmm, that's not a valid verification code. Please double-check your app and try again." ),
 	invalid_two_step_nonce: translate( 'Your session has expired, please go back to the login screen.' ),
 	invalid_username: translate( "We don't seem to have an account with that name. Double-check the spelling and try again!" ),
+	push_authentication_throttled: translate( 'You can only request a code via the WordPress mobile app once every ' +
+		'two minutes. Please wait and try again.' ),
 	sms_code_throttled: translate( 'You can only request a code via SMS once per minute. Please wait and try again.' ),
 	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
 	unknown: translate( "Hmm, we can't find a WordPress.com account with this username and password combo. " +
@@ -51,6 +54,7 @@ const loginErrorMessages = {
 const loginErrorFields = {
 	account_unactivated: 'global',
 	empty_password: 'password',
+	empty_two_step_code: 'twoStepCode',
 	empty_username: 'usernameOrEmail',
 	incorrect_password: 'password',
 	invalid_email: 'usernameOrEmail',
