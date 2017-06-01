@@ -195,7 +195,7 @@
     "rm": "node bin/rm.js",
     "preshrinkwrap": "npm prune",
     "postshrinkwrap": "node bin/trim-shrinkwrap.js && touch node_modules",
-    "prestart": "npm run -s install-if-needed && ( check-node-version --package || exit 0 )",
+    "prestart": "npm run -s install-if-needed && node bin/welcome.js && ( check-node-version --package || exit 0 )",
     "start": "npm run -s build",
     "poststart": "npm run -s env -- node build/bundle.js",
     "pretest": "npm run -s install-if-needed",
