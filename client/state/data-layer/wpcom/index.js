@@ -8,6 +8,7 @@ import me from './me';
 import plans from './plans';
 import posts from './posts';
 import read from './read';
+import rewind from './rewind';
 import sites from './sites';
 import timezones from './timezones';
 import themeFilters from './theme-filters';
@@ -21,6 +22,7 @@ export const handlers = mergeHandlers(
 	plans,
 	posts,
 	read,
+	rewind,
 	sites,
 	timezones,
 	themeFilters,
