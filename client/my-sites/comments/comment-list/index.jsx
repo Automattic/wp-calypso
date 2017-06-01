@@ -50,14 +50,13 @@ export class CommentList extends Component {
 			isPersistent: true,
 		};
 
-		if ( 'delete' !== newStatus && 'like' !== newStatus ) {
+		if ( 'delete' !== newStatus ) {
 			options.button = translate( 'Undo' );
 			options.onClick = () => this.setCommentStatus( commentId, previousStatus, { showNotice: false } );
 		}
 
 		switch ( newStatus ) {
 			case 'approved':
-			case 'like':
 				return createCommentNotice( 'is-success', translate( 'Comment approved.' ), options );
 			case 'unapproved':
 				return createCommentNotice( 'is-info', translate( 'Comment unapproved.' ), options );
@@ -84,9 +83,10 @@ export class CommentList extends Component {
 		const newLikeValue = ! comment.i_like;
 
 		if ( 'unapproved' === comment.status ) {
-			this.showNotice( commentId, 'like', 'unapproved' );
+			this.showNotice( commentId, 'approved', 'unapproved' );
 		}
 
+		// If like changes to true, also approve the comment
 		this.setState( {
 			comments: {
 				...this.state.comments,
@@ -108,6 +108,9 @@ export class CommentList extends Component {
 
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
+		// If the comment is not approved anymore, also remove the like, otherwise keep its previous value
+		const newLikeValue = 'approved' === status ? comment.i_like : false;
+
 		if ( options.showNotice ) {
 			this.showNotice( commentId, status, comment.status );
 		}
@@ -115,7 +118,11 @@ export class CommentList extends Component {
 		this.setState( {
 			comments: {
 				...this.state.comments,
-				[ commentId ]: { ...comment, status },
+				[ commentId ]: {
+					...comment,
+					i_like: newLikeValue,
+					status,
+				},
 			},
 		} );
 	}
