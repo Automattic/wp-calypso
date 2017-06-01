@@ -3,10 +3,10 @@
  */
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { setError } from '../../site/status/wc-api/actions';
+import { setError } from 'woocommerce/state/site/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_CREATE_PRODUCT,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 
 function createProduct( { dispatch }, action, next ) {
 	const { siteId, product } = action.payload;

@@ -4,7 +4,7 @@
 import { get } from 'lodash';
 import {
 	WOOCOMMERCE_API_CREATE_PRODUCT,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_API_CREATE_PRODUCT ]: productCreate,

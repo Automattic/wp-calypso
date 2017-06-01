@@ -3,7 +3,7 @@
  */
 import {
 	WOOCOMMERCE_API_CREATE_PRODUCT,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 
 /**
  * Action Creator: Create a new product
