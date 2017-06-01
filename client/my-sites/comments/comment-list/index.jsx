@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, keyBy, map } from 'lodash';
+import { filter, keyBy, map, omit } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -41,12 +41,15 @@ export class CommentList extends Component {
 	showNotice = ( commentId, newStatus, previousStatus ) => {
 		const {
 			createNotice: createCommentNotice,
+			removeNotice: removeCommentNotice,
 			translate,
 		} = this.props;
 
+		const noticeId = `comment-notice-${ commentId }`;
+
 		const options = {
 			duration: 5000,
-			id: `comment-notice-${ commentId }`,
+			id: noticeId,
 			isPersistent: true,
 		};
 
@@ -54,6 +57,8 @@ export class CommentList extends Component {
 			options.button = translate( 'Undo' );
 			options.onClick = () => this.setCommentStatus( commentId, previousStatus, { showNotice: false } );
 		}
+
+		removeCommentNotice( noticeId );
 
 		switch ( newStatus ) {
 			case 'approved':
@@ -65,17 +70,14 @@ export class CommentList extends Component {
 			case 'trash':
 				return createCommentNotice( 'is-error', translate( 'Comment moved to trash.' ), options );
 			case 'delete':
-				return createCommentNotice( 'is-error', translate( 'Comment delete permanently.' ), options );
+				return createCommentNotice( 'is-error', translate( 'Comment deleted permanently.' ), options );
 		}
 	}
 
 	deleteForever = commentId => () => {
-		const notice = this.getNoticeContent( commentId, 'delete', 'trash' );
-		this.props.createNotice( notice.type, notice.message, notice.options );
+		this.showNotice( commentId, 'delete', 'trash' );
 
-		this.setState( {
-			comments: filter( this.state.comments, comment => commentId !== comment.ID ),
-		} );
+		this.setState( { comments: omit( this.state.comments, commentId ) } );
 	}
 
 	toggleCommentLike = commentId => {
@@ -105,8 +107,6 @@ export class CommentList extends Component {
 		if ( status === comment.status ) {
 			return;
 		}
-
-		this.props.removeNotice( `comment-notice-${ commentId }` );
 
 		// If the comment is not approved anymore, also remove the like, otherwise keep its previous value
 		const newLikeValue = 'approved' === status ? comment.i_like : false;
