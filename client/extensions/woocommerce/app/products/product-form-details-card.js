@@ -13,6 +13,7 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextArea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
+import ProductFormImages from './product-form-images';
 
 export default class ProductFormDetailsCard extends Component {
 
@@ -50,8 +51,25 @@ export default class ProductFormDetailsCard extends Component {
 		editProduct( product, { featured: ! product.featured } );
 	}
 
+	onImageUpload = ( image ) => {
+		const { product, editProduct } = this.props;
+		const images = product.images && [ ...product.images ] || [];
+		images.push( {
+			id: image.ID,
+			src: image.URL,
+		} );
+		editProduct( product, { images } );
+	}
+
+	onImageRemove = ( id ) => {
+		const { product, editProduct } = this.props;
+		const images = product.images && [ ...product.images ].filter( i => i.id !== id ) || [];
+		editProduct( product, { images } );
+	}
+
 	render() {
 		const { product } = this.props;
+		const images = product.images || [];
 		const __ = i18n.translate;
 		return (
 			<Card className="products__product-form-details">
@@ -65,9 +83,11 @@ export default class ProductFormDetailsCard extends Component {
 					</FormLabel>
 				</div>
 				<div className="products__product-form-details-wrapper">
-					<div className="products__product-form-details-images">
-
-					</div>
+					<ProductFormImages
+						images={ images }
+						onUpload={ this.onImageUpload }
+						onRemove={ this.onImageRemove }
+					/>
 					<div className="products__product-form-details-basic">
 						<FormFieldSet>
 							<FormLabel htmlFor="name">{ __( 'Product name' ) }</FormLabel>
@@ -75,7 +95,11 @@ export default class ProductFormDetailsCard extends Component {
 						</FormFieldSet>
 						<FormFieldSet className="products__product-form-details-basic-description">
 							<FormLabel htmlFor="description">{ __( 'Description' ) }</FormLabel>
-							<FormTextArea name="description" value={ product.description || '' } onChange={ this.setDescription } />
+							<FormTextArea
+								name="description"
+								value={ product.description || '' }
+								onChange={ this.setDescription }
+								rows="8" />
 						</FormFieldSet>
 					</div>
 				</div>
