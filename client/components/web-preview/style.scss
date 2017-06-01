@@ -199,11 +199,15 @@
 
 .web-preview__placeholder {
 	width: 100%;
-	position: absolute;
-		top: 49px;
-		bottom: 0;
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
+	flex: 1;
+}
+
+.web-preview__inner {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
 .web-preview .spinner {

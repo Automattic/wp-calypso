@@ -147,19 +147,16 @@ export class MySitesSidebar extends Component {
 	}
 
 	preview() {
-		const { siteId, canUserViewStats } = this.props;
-
-		if ( siteId && ! canUserViewStats ) {
+		if ( ! this.props.siteId ) {
 			return null;
 		}
 
-		const previewLink = '/preview' + this.props.siteSuffix;
 		return (
 			<SidebarItem
 				tipTarget="sitePreview"
 				label={ this.props.translate( 'Site Preview' ) }
 				className={ this.itemLinkClass( [ '/preview' ], 'preview' ) }
-				link={ previewLink }
+				link={ '/preview' + this.props.siteSuffix }
 				onNavigate={ this.onNavigate }
 				icon="computer"
 				preloadSectionName="preview"
