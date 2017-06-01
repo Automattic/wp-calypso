@@ -71,6 +71,7 @@ describe( 'selectors', () => {
 	beforeEach( () => {
 		getSite.memoizedSelector.cache.clear();
 		getSiteCollisions.memoizedSelector.cache.clear();
+		getSiteBySlug.memoizedSelector.cache.clear();
 	} );
 
 	describe( '#getRawSite()', () => {
@@ -1437,6 +1438,7 @@ describe( 'selectors', () => {
 					items: {
 						77203199: {
 							ID: 77203199,
+
 							URL: 'https://testtwosites2014.wordpress.com/path/to/site'
 						}
 					}
@@ -1445,6 +1447,31 @@ describe( 'selectors', () => {
 			const site = getSiteBySlug( state, 'testtwosites2014.wordpress.com::path::to::site' );
 
 			expect( site ).to.equal( state.sites.items[ 77203199 ] );
+		} );
+
+		it( 'should return a matched site jetpack site when the sites conflict', () => {
+			const state = {
+				sites: {
+					items: {
+						1: {
+							ID: 1,
+							URL: 'https://example.com',
+							jetpack: false,
+							option: {
+								unmapped_url: 'https://abc.wordpress.com',
+								is_redirect: false,
+							}
+						},
+						2: {
+							ID: 2,
+							jetpack: true,
+							URL: 'https://example.com'
+						},
+					}
+				}
+			};
+			const site = getSiteBySlug( state, 'example.com' );
+			expect( site ).to.equal( state.sites.items[ 2 ] );
 		} );
 	} );
 
