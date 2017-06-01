@@ -12,5 +12,4 @@ const VerticalNav = React.createClass( {
 		);
 	}
 } );
-
 export default VerticalNav;

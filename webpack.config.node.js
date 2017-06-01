@@ -13,6 +13,8 @@ const webpack = require( 'webpack' ),
  */
 const config = require( 'config' );
 
+const bundleEnv = config( 'env' );
+
 /**
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
@@ -88,7 +90,15 @@ const webpackConfig = {
 				test: /\.json$/,
 				exclude: /(devdocs[\/\\]components-usage-stats.json)/,
 				loader: 'json-loader'
-			}
+			},
+			{
+				test: /\.scss$/,
+				loaders: [
+					'isomorphic-style-loader',
+					'css-loader?camelCase=dashes&importLoaders=1',
+					'sass-loader?outputStyle=' + ( bundleEnv === 'production' ? 'compressed' : 'nested' ),
+				]
+			},
 		]
 	},
 	resolve: {
