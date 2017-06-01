@@ -29,27 +29,20 @@
 		padding-right: 48px;
 	}
 
-	&.is-error,
-	&.is-info,
-	&.is-success,
-	&.is-warning {
-		border-left: 3px solid;
-	}
-
 	&.is-error {
-		border-left-color: $alert-red;
+		box-shadow: inset 3px 0 0 $alert-red;
 	}
 
 	&.is-info {
-		border-left-color: $blue-wordpress;
+		box-shadow: inset 3px 0 0 $blue-wordpress;
 	}
 
 	&.is-success {
-		border-left-color: $alert-green;
+		box-shadow: inset 3px 0 0 $alert-green;
 	}
 
 	&.is-warning {
-		border-left-color: $alert-yellow;
+		box-shadow: inset 3px 0 0 $alert-yellow;
 	}
 }
 
