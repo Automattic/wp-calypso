@@ -339,8 +339,8 @@
 		margin: 0 20px 0 0;
 	}
 
-	@include breakpoint( "<660px" ) {
-		.publisher-intro p:first-child {
+	.publisher-intro p:first-child {
+		@include breakpoint( "<660px" ) {
 			margin-bottom: 0;
 		}
 	}
