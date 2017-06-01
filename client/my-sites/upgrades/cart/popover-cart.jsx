@@ -52,10 +52,9 @@ const PopoverCart = React.createClass( {
 			pinned: this.props.pinned
 		} );
 
-		if ( abtest( 'pulsingCartTestingAB' ) === 'modified' ) {
-			countBadge = <div className="cart__pulsing-badge"></div>;
-		} else if ( this.itemCount() ) {
-			countBadge = <div className="popover-cart__count-badge">{ this.itemCount() }</div>;
+		if ( this.itemCount() ) {
+			const className = abtest( 'pulsingCartTestingAB' ) === 'modified' ? 'cart__pulsing-badge' : 'popover-cart__count-badge';
+			countBadge = <div className={ className }>{ this.itemCount() }</div>;
 		}
 
 		return (
