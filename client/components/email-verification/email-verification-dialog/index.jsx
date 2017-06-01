@@ -56,13 +56,17 @@ class VerifyEmailDialog extends Component {
 
 	render() {
 		const strings = {
-			confirmHeading: this.props.translate( 'Please confirm your email address' ),
+			confirmHeading: this.props.translate( 'Please verify your email address:' ),
 
-			confirmExplanation: this.props.translate( 'We sent you an email when you first signed up. ' +
-				'Please open the message and click the blue button.' ),
+			confirmExplanation: this.props.translate(
+				'When you first signed up for a WordPress.com account we sent you an email. ' +
+				'Please open it and click on the blue button to verify your email address.'
+			),
 
-			confirmReasoning: this.props.translate( 'Email confirmation allows us to assist when recovering ' +
-				'your account in the event you forget your password.' ),
+			confirmReasoning: this.props.translate(
+				'Verifying your email allows us to assist you if you ' +
+				'ever lose access to your account in the future.'
+			),
 
 			confirmEmail: this.props.translate(
 				'{{wrapper}}%(email)s{{/wrapper}} {{emailPreferences}}change{{/emailPreferences}}',
