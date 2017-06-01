@@ -428,7 +428,7 @@ const EditorVisibility = React.createClass( {
 		const dropdownItems = [
 			{
 				label: this.props.translate( 'Public', { context: 'Editor: Radio label to set post visible to public' } ),
-				icon: 'globe',
+				icon: <Gridicon icon="globe" size={ 18 } />,
 				value: 'public',
 				onClick: () => {
 					this.updateDropdownVisibility( 'public' );
@@ -436,13 +436,13 @@ const EditorVisibility = React.createClass( {
 			},
 			{
 				label: this.props.translate( 'Private', { context: 'Editor: Radio label to set post to private' } ),
-				icon: 'user',
+				icon: <Gridicon icon="user" size={ 18 } />,
 				value: 'private',
 				onClick: this.onSetToPrivate
 			},
 			{
 				label: this.props.translate( 'Password Protected', { context: 'Editor: Radio label to set post to password protected' } ),
-				icon: 'lock',
+				icon: <Gridicon icon="lock" size={ 18 } />,
 				value: 'password',
 				onClick: () => {
 					this.updateDropdownVisibility( 'password' );
@@ -457,14 +457,17 @@ const EditorVisibility = React.createClass( {
 					<FormLegend className="editor-fieldset__legend">
 						{ this.props.translate( 'Post Visibility' ) }
 					</FormLegend>
-					<SelectDropdown selectedText={ selectedItem ? selectedItem.label : this.props.translate( 'Select an option' ) }>
+					<SelectDropdown
+						selectedText={ selectedItem ? selectedItem.label : this.props.translate( 'Select an option' ) }
+						selectedIcon={ selectedItem.icon }
+					>
 						{ dropdownItems.map( option =>
 							<DropdownItem
 								selected={ option.value === visibility }
 								key={ option.value }
 								value={ option.value }
 								onClick={ option.onClick }
-								icon={ <Gridicon icon={ option.icon } size={ 18 } /> }
+								icon={ option.icon }
 							>
 								{ option.label }
 							</DropdownItem>
