@@ -12,14 +12,14 @@ import {
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-const fetchStatus = ( { dispatch }, action ) => {
+const fetchRewindStatus = ( { dispatch }, action ) => {
 	dispatch( http( {
 		method: 'GET',
 		path: `/activity-log/${ action.siteId }/rewind`,
 	}, action ) );
 };
 
-const addStatus = ( { dispatch }, { siteId }, next, { data } ) => {
+const updateRewindStatus = ( { dispatch }, { siteId }, next, { data } ) => {
 	next( {
 		type: REWIND_STATUS_REQUEST,
 		siteId,
@@ -28,5 +28,5 @@ const addStatus = ( { dispatch }, { siteId }, next, { data } ) => {
 };
 
 export default {
-	[ REWIND_STATUS_REQUEST ]: [ dispatchRequest( fetchStatus, addStatus, noop ) ],
+	[ REWIND_STATUS_REQUEST ]: [ dispatchRequest( fetchRewindStatus, updateRewindStatus, noop ) ],
 };
