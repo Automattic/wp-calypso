@@ -152,6 +152,53 @@ describe( 'selectors', () => {
 				}
 			} );
 		} );
+
+		it( 'should return a normalized site with correct slug when sites with collisions are passed in attributes', () => {
+			const site = getSite( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.com',
+							jetpack: false,
+							options: {
+								unmapped_url: 'https://example.wordpress.com'
+							}
+						},
+						3916284: {
+							ID: 3916284,
+							name: 'Jetpack Example Blog',
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								unmapped_url: 'https://example.com'
+							}
+						}
+					},
+				},
+				siteSettings: {
+					items: {},
+				},
+			}, 2916284 );
+
+			expect( site ).to.eql( {
+				ID: 2916284,
+				name: 'WordPress.com Example Blog',
+				URL: 'https://example.com',
+				title: 'WordPress.com Example Blog',
+				domain: 'example.wordpress.com',
+				slug: 'example.wordpress.com',
+				hasConflict: true,
+				jetpack: false,
+				is_customizable: false,
+				is_previewable: true,
+				options: {
+					default_post_format: 'standard',
+					unmapped_url: 'https://example.wordpress.com'
+				}
+			} );
+		} );
 	} );
 
 	describe( '#getSiteCollisions', () => {
@@ -1611,7 +1658,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getSitePlanSlug()', () => {
+	describe( '#getSitePlanSlug()', () => {
 		it( 'should return undefined if the plan slug is not known', () => {
 			const planSlug = getSitePlanSlug( {
 				sites: {

@@ -82,12 +82,16 @@ export const getSite = createSelector(
 			return null;
 		}
 
-		return {
+		const decoratedSite = {
 			...site,
-			...getComputedAttributes( site ),
-			...getJetpackComputedAttributes( state, siteId ),
 			hasConflict: isSiteConflicting( state, siteId ),
 			is_previewable: isSitePreviewable( state, siteId )
+		};
+
+		return {
+			...decoratedSite,
+			...getComputedAttributes( decoratedSite ),
+			...getJetpackComputedAttributes( state, siteId ),
 		};
 	},
 	( state ) => state.sites.items
