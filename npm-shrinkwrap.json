@@ -597,7 +597,7 @@
       "version": "6.24.1"
     },
     "babylon": {
-      "version": "6.17.1"
+      "version": "6.17.2"
     },
     "backo2": {
       "version": "1.0.2"
@@ -1521,7 +1521,7 @@
       }
     },
     "es5-ext": {
-      "version": "0.10.21",
+      "version": "0.10.22",
       "dev": true
     },
     "es6-iterator": {
@@ -2491,7 +2491,7 @@
       "version": "1.0.1"
     },
     "is-dotfile": {
-      "version": "1.0.2"
+      "version": "1.0.3"
     },
     "is-equal-shallow": {
       "version": "0.1.3"
@@ -2547,7 +2547,7 @@
       "dev": true
     },
     "is-plain-object": {
-      "version": "2.0.2",
+      "version": "2.0.3",
       "dev": true,
       "dependencies": {
         "isobject": {
@@ -2881,6 +2881,10 @@
           "dev": true
         }
       }
+    },
+    "jest-junit-reporter": {
+      "version": "1.1.0",
+      "dev": true
     },
     "jest-matcher-utils": {
       "version": "20.0.3",
@@ -3648,13 +3652,13 @@
       }
     },
     "node-abi": {
-      "version": "2.0.2"
+      "version": "2.0.3"
     },
     "node-contains": {
       "version": "1.0.0"
     },
     "node-dir": {
-      "version": "0.1.16",
+      "version": "0.1.17",
       "dependencies": {
         "minimatch": {
           "version": "3.0.4"
@@ -4138,8 +4142,8 @@
     },
     "prettier": {
       "version": "1.1.7",
-      "from": "git+https://github.com/Automattic/calypso-prettier.git#ee9c5e17a3fdc14ff344bbc945575f1b293f2b95",
-      "resolved": "git+https://github.com/Automattic/calypso-prettier.git#ee9c5e17a3fdc14ff344bbc945575f1b293f2b95",
+      "from": "git+https://github.com/Automattic/calypso-prettier.git#28be4a70ff31bd161c545de4fac66f8a9d094a48",
+      "resolved": "git+https://github.com/Automattic/calypso-prettier.git#28be4a70ff31bd161c545de4fac66f8a9d094a48",
       "dev": true,
       "dependencies": {
         "ast-types": {
