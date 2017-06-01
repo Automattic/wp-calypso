@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -21,7 +22,8 @@ const SelectDropdownDemo = React.createClass( {
 		return {
 			childSelected: 'Published',
 			selectedCount: 10,
-			compactButtons: false
+			compactButtons: false,
+			selectedIcon: null
 		};
 	},
 
@@ -123,6 +125,54 @@ const SelectDropdownDemo = React.createClass( {
 					<DropdownItem>Drafts</DropdownItem>
 					<DropdownSeparator />
 					<DropdownItem count={ 3 }>Trashed</DropdownItem>
+				</SelectDropdown>
+
+				<h3 style={ { marginTop: 20 } }>With Icons</h3>
+
+				<SelectDropdown
+					className="select-dropdown-example__fixed-width"
+					compact={ this.state.compactButtons }
+					onSelect={ this.onDropdownSelect }
+					selectedText="Published"
+					selectedCount={ 10 }
+					selectedIcon={ <Gridicon icon="align-image-left" size={ 18 } /> }
+				>
+
+					<DropdownLabel><strong>Statuses</strong></DropdownLabel>
+
+					<DropdownItem
+						count={ 10 }
+						selected={ this.state.childSelected === 'Published' }
+						icon={ <Gridicon icon="align-image-left" size={ 18 } /> }
+					>
+						Published
+					</DropdownItem>
+
+					<DropdownItem
+						count={ 4 }
+						selected={ this.state.childSelected === 'Scheduled' }
+						icon={ <Gridicon icon="calendar" size={ 18 } /> }
+					>
+						Scheduled
+					</DropdownItem>
+
+					<DropdownItem
+						count={ 3343 }
+						selected={ this.state.childSelected === 'Drafts' }
+						icon={ <Gridicon icon="create" size={ 18 } /> }
+					>
+						Drafts
+					</DropdownItem>
+
+					<DropdownSeparator />
+
+					<DropdownItem
+						count={ 3 }
+						selected={ this.state.childSelected === 'Trashed' }
+						icon={ <Gridicon icon="trash" size={ 18 } /> }
+					>
+						Trashed
+					</DropdownItem>
 				</SelectDropdown>
 
 			</div>
