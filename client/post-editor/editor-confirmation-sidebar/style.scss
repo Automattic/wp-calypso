@@ -54,6 +54,7 @@
   @include breakpoint( "<660px" ) {
 	transition: none;
 	border-left: none;
+	pointer-events: auto;
 
 	&.is-active {
 		height: auto;
