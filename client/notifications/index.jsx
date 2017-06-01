@@ -109,8 +109,6 @@ export class Notifications extends Component {
 
 	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
 
-	indicateRender = ( { unseen } ) => this.props.setIndicator( unseen );
-
 	receiveServiceWorkerMessage = event => {
 		// Receives messages from the service worker
 		// Older Firefox versions (pre v48) set event.origin to "" for service worker messages
@@ -155,6 +153,7 @@ export class Notifications extends Component {
 		const localeSlug = get( user.get(), 'localeSlug', config( 'i18n_default_locale_slug' ) );
 
 		const customMiddleware = {
+			APP_RENDER_NOTES: [ ( store, { newNoteCount } ) => this.props.setIndicator( newNoteCount ) ],
 			OPEN_LINK: [ ( store, { href } ) => window.open( href, '_blank' ) ],
 			OPEN_POST: [ ( store, { href } ) => window.open( href, '_blank' ) ],
 			VIEW_SETTINGS: [ () => {
@@ -176,7 +175,6 @@ export class Notifications extends Component {
 					isShowing={ this.props.isShowing }
 					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
-					onRender={ this.indicateRender }
 					wpcom={ wpcom }
 				/>
 			</div>
