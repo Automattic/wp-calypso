@@ -741,6 +741,17 @@
     "builtin-status-codes": {
       "version": "2.0.0"
     },
+    "bundle-loader": {
+      "version": "0.5.5",
+      "dependencies": {
+        "json5": {
+          "version": "0.5.1"
+        },
+        "loader-utils": {
+          "version": "1.1.0"
+        }
+      }
+    },
     "bytes": {
       "version": "2.4.0"
     },
@@ -770,7 +781,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000671"
+      "version": "1.0.30000672"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -2365,7 +2376,7 @@
       }
     },
     "i18n-calypso": {
-      "version": "1.7.3",
+      "version": "1.7.4",
       "dependencies": {
         "async": {
           "version": "1.5.2"
@@ -3562,7 +3573,7 @@
       "dev": true
     },
     "moment": {
-      "version": "2.10.6"
+      "version": "2.18.1"
     },
     "moment-timezone": {
       "version": "0.5.11"

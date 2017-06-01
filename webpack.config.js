@@ -65,7 +65,11 @@ const webpackConfig = {
 			{
 				include: /node_modules[\/\\]tinymce/,
 				loader: 'imports?this=>window',
-			}
+			},
+			{
+				include: /node_modules\/i18n-calypso/,
+				loader: path.join( __dirname, 'server', 'bundler', 'webpack', 'i18n-calypso-loader' )
+			},
 		]
 	},
 	resolve: {
@@ -94,13 +98,14 @@ const webpackConfig = {
 			'process.env': {
 				NODE_ENV: JSON.stringify( bundleEnv )
 			},
-			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
+			PROJECT_NAME: JSON.stringify( config( 'project' ) )
 		} ),
 		new WebpackStableBuildPlugin( {
 			seed: 0
 		} ),
 		new webpack.IgnorePlugin( /^props$/ ),
-		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] )
+		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] ),
+		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ )
 	],
 	externals: [ 'electron' ]
 };
