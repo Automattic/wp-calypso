@@ -133,6 +133,7 @@ module.exports = React.createClass( {
 						disabled={ this.state.submittingCode }
 						name="backup-code-entry"
 						autoComplete="off"
+						maxLength="8"
 						placeholder={ constants.eightDigitBackupCodePlaceholder }
 						valueLink={ this.linkState( 'backupCodeEntry' ) }
 						onFocus={ function() {
