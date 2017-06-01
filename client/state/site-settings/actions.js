@@ -1,16 +1,12 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import {
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
 	SITE_SETTINGS_SAVE,
-	SITE_SETTINGS_SAVE_FAILURE,
-	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE
 } from 'state/action-types';
-import { normalizeSettings } from './utils';
 
 /**
  * Returns an action object to be used in signalling that site settings have been received.
@@ -53,27 +49,16 @@ export const requestSiteSettings = ( siteId ) => ( {
 	siteId
 } );
 
-export function saveSiteSettings( siteId, settings ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_SETTINGS_SAVE,
-			siteId
-		} );
+/**
+ * Returns an action object to be used to trigger a request to save site settings.
+ *
+ * @param  {Number} siteId   Site ID
+ * @param  {Object} settings The new settings values to be saved
+ * @return {Object}          Action object
+ */
+export const saveSiteSettings = ( siteId, settings ) => ( {
+	type: SITE_SETTINGS_SAVE,
+	siteId,
+	settings
+} );
 
-		return wpcom.undocumented().settings( siteId, 'post', settings )
-			.then( ( { updated } ) => {
-				dispatch( updateSiteSettings( siteId, normalizeSettings( updated ) ) );
-				dispatch( {
-					type: SITE_SETTINGS_SAVE_SUCCESS,
-					siteId
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: SITE_SETTINGS_SAVE_FAILURE,
-					siteId,
-					error
-				} );
-			} );
-	};
-}
