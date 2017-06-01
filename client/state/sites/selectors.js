@@ -55,7 +55,8 @@ export const getRawSite = ( state, siteId ) => {
 export const getSiteBySlug = createSelector(
 	( state, siteSlug ) => (
 		find( state.sites.items, ( item, siteId ) => (
-			getSiteSlug( state, siteId ) === siteSlug
+			// find always passes the siteId as a string. We need it as a integer
+			getSiteSlug( state, parseInt( siteId, 10 ) ) === siteSlug
 		) ) || null
 	),
 	( state ) => state.sites.items
