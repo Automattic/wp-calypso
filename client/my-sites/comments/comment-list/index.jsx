@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, keyBy, map, omit } from 'lodash';
+import { filter, get, keyBy, map, omit } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -39,42 +39,37 @@ export class CommentList extends Component {
 	}
 
 	showNotice = ( commentId, newStatus, previousStatus ) => {
-		const {
-			createNotice: createCommentNotice,
-			removeNotice: removeCommentNotice,
-			translate,
-		} = this.props;
+		const { translate } = this.props;
 
-		const noticeId = `comment-notice-${ commentId }`;
+		const [ type, message ] = get( {
+			approved: [ 'is-success', translate( 'Comment approved.' ) ],
+			unapproved: [ 'is-info', translate( 'Comment unapproved.' ) ],
+			spam: [ 'is-warning', translate( 'Comment marked as spam.' ) ],
+			trash: [ 'is-error', translate( 'Comment moved to trash.' ) ],
+			'delete': [ 'is-error', translate( 'Comment deleted permanently.' ) ],
+		}, newStatus, [ null, null ] );
 
-		const options = {
-			duration: 5000,
-			id: noticeId,
-			isPersistent: true,
-		};
-
-		if ( 'delete' !== newStatus ) {
-			options.button = translate( 'Undo' );
-			options.onClick = () => this.setCommentStatus( commentId, previousStatus, { showNotice: false } );
+		if ( ! type ) {
+			return;
 		}
 
-		removeCommentNotice( noticeId );
+		const options = Object.assign(
+			{
+				duration: 5000,
+				id: `comment-notice-${ commentId }`,
+				isPersistent: true,
+			},
+			'delete' !== newStatus && {
+				button: translate( 'Undo' ),
+				onClick: () => this.setCommentStatus( commentId, previousStatus, { showNotice: false } ),
+			}
+		);
 
-		switch ( newStatus ) {
-			case 'approved':
-				return createCommentNotice( 'is-success', translate( 'Comment approved.' ), options );
-			case 'unapproved':
-				return createCommentNotice( 'is-info', translate( 'Comment unapproved.' ), options );
-			case 'spam':
-				return createCommentNotice( 'is-warning', translate( 'Comment marked as spam.' ), options );
-			case 'trash':
-				return createCommentNotice( 'is-error', translate( 'Comment moved to trash.' ), options );
-			case 'delete':
-				return createCommentNotice( 'is-error', translate( 'Comment deleted permanently.' ), options );
-		}
+		this.props.createNotice( type, message, options );
 	}
 
 	deleteForever = commentId => () => {
+		this.props.removeNotice( `comment-notice-${ commentId }` );
 		this.showNotice( commentId, 'delete', 'trash' );
 
 		this.setState( { comments: omit( this.state.comments, commentId ) } );
@@ -85,6 +80,7 @@ export class CommentList extends Component {
 		const newLikeValue = ! comment.i_like;
 
 		if ( 'unapproved' === comment.status ) {
+			this.props.removeNotice( `comment-notice-${ commentId }` );
 			this.showNotice( commentId, 'approved', 'unapproved' );
 		}
 
@@ -110,6 +106,8 @@ export class CommentList extends Component {
 
 		// If the comment is not approved anymore, also remove the like, otherwise keep its previous value
 		const newLikeValue = 'approved' === status ? comment.i_like : false;
+
+		this.props.removeNotice( `comment-notice-${ commentId }` );
 
 		if ( options.showNotice ) {
 			this.showNotice( commentId, status, comment.status );
