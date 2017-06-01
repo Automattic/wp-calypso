@@ -7,7 +7,7 @@ import { debounce } from 'lodash';
 /**
  * withWidth is a Hoc that hands down a width prop of how much available width there is for it to consume.
  * withWidth assumes that you care about the space at the dom location of the component, but you may also pass
- * in a domTarget in case you want to be tracking the width of a different compoenent
+ * in a domTarget in case you want to be tracking the width of a different component
  *
  * @example:
  * 1. widthWidth( Component )
