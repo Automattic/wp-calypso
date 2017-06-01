@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import { setError } from '../../site/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_CREATE_PRODUCT,
@@ -21,44 +22,50 @@ function createProduct( { dispatch }, action, next ) {
 		} ) );
 	}
 
-	const jetpackProps = { path: `/jetpack-blogs/${ siteId }/rest-api/` };
 	const httpProps = {
 		path: '/wc/v2/products',
 		body: JSON.stringify( productData ),
 		json: true,
 	};
 
-	wp.req.post( jetpackProps, httpProps )
-		.then( ( { data } ) => {
-			dispatch( createProductSuccess( siteId, data ) );
-		} )
-		.catch( err => {
-			dispatch( setError( siteId, action, err ) );
-		} );
+	dispatch( http( {
+		apiVersion: '1.1',
+		path: `/jetpack-blogs/${ siteId }/rest-api/`,
+		method: 'POST',
+		query: httpProps,
+	}, action ) );
 
 	return next( action );
 }
 
-export function createProductSuccess( siteId, product ) {
-	if ( ! isValidProduct( product ) ) {
-		const originalAction = {
-			type: WOOCOMMERCE_API_CREATE_PRODUCT,
-			payload: { siteId, product },
-		};
+function createProductSuccess( { dispatch }, action, next, response ) {
+	const { siteId } = action.payload;
+	const { data } = response;
 
-		return setError( siteId, originalAction, {
+	if ( ! isValidProduct( data ) ) {
+		dispatch( setError( siteId, action, {
 			message: 'Invalid Product Object',
-			product
-		} );
+			data
+		} ) );
 	}
 
-	return {
+	dispatch( {
 		type: WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
 		payload: {
 			siteId,
-			product,
+			data,
 		}
-	};
+	} );
+
+	return next( action );
+}
+
+function createProductFailure( { dispatch }, action, next, err ) {
+	const { siteId } = action.payload;
+
+	dispatch( setError( siteId, action, err ) );
+
+	return next( action );
 }
 
 function isValidProduct( product ) {
@@ -70,6 +77,12 @@ function isValidProduct( product ) {
 }
 
 export default {
-	[ WOOCOMMERCE_API_CREATE_PRODUCT ]: [ createProduct ],
+	[ WOOCOMMERCE_API_CREATE_PRODUCT ]: [
+		dispatchRequest(
+			createProduct,
+			createProductSuccess,
+			createProductFailure
+		)
+	],
 };
 
