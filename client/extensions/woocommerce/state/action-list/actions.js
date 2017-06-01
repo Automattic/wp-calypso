@@ -3,32 +3,32 @@
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_APIPLAN_CREATE,
-	WOOCOMMERCE_APIPLAN_CLEAR,
-	WOOCOMMERCE_APIPLAN_STEP_START,
-	WOOCOMMERCE_APIPLAN_STEP_END,
+	WOOCOMMERCE_ACTION_LIST_CREATE,
+	WOOCOMMERCE_ACTION_LIST_CLEAR,
+	WOOCOMMERCE_ACTION_LIST_STEP_START,
+	WOOCOMMERCE_ACTION_LIST_STEP_END,
 } from '../action-types';
 
 /**
- * Action Creator: Create new API plan.
+ * Action Creator: Create new Action List.
  *
- * @param {Object} plan The sequential plan for API requests.
+ * @param {Object} actionList The sequential actionList to be carried out
  * @return {Object} action
  */
-export function apiPlanCreate( plan ) {
+export function actionListCreate( actionList ) {
 	return {
-		type: WOOCOMMERCE_APIPLAN_CREATE,
-		payload: plan,
+		type: WOOCOMMERCE_ACTION_LIST_CREATE,
+		payload: actionList,
 	};
 }
 
 /**
- * Action Creator: Clear the current product API plan.
+ * Action Creator: Clear the current product Action List.
  * @return {Object} action
  */
-export function apiPlanClear() {
+export function actionListClear() {
 	return {
-		type: WOOCOMMERCE_APIPLAN_CLEAR,
+		type: WOOCOMMERCE_ACTION_LIST_CLEAR,
 	};
 }
 
@@ -39,9 +39,9 @@ export function apiPlanClear() {
  * @param {Date} [time=Date.now()] Optional timestamp.
  * @return {Object} action
  */
-export function apiPlanStepStarted( stepIndex, time = Date.now() ) {
+export function actionListStepStarted( stepIndex, time = Date.now() ) {
 	return {
-		type: WOOCOMMERCE_APIPLAN_STEP_START,
+		type: WOOCOMMERCE_ACTION_LIST_STEP_START,
 		payload: { stepIndex, time }
 	};
 }
@@ -54,9 +54,9 @@ export function apiPlanStepStarted( stepIndex, time = Date.now() ) {
  * @param {Date} [time=Date.now()] Optional timestamp.
  * @return {Object} action
  */
-export function apiPlanStepEnded( stepIndex, error, time = Date.now() ) {
+export function actionListStepEnded( stepIndex, error, time = Date.now() ) {
 	return {
-		type: WOOCOMMERCE_APIPLAN_STEP_END,
+		type: WOOCOMMERCE_ACTION_LIST_STEP_END,
 		payload: { stepIndex, error, time }
 	};
 }
