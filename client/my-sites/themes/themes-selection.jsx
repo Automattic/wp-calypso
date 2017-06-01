@@ -23,7 +23,8 @@ import {
 	isThemesLastPageForQuery,
 	isPremiumThemeAvailable,
 	isThemeActive,
-	isInstallingTheme
+	isInstallingTheme,
+	getLastThemeQuery
 } from 'state/themes/selectors';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import config from 'config';
@@ -163,6 +164,8 @@ class ThemesSelection extends Component {
 	}
 }
 
+const noThemes = [];
+
 const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
@@ -186,13 +189,20 @@ const ConnectedThemesSelection = connect(
 			number
 		};
 
+		const lastQuery = getLastThemeQuery( state, sourceSiteId ) || query;
+		const themesCount = getThemesFoundForQuery( state, sourceSiteId, lastQuery );
+
+		if ( ! isEqual( omit( query, PAGINATION_QUERY_KEYS ), omit( lastQuery, PAGINATION_QUERY_KEYS ) ) ) {
+			query.page = 1;
+		}
+
 		return {
 			query,
 			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
-			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
-			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
+			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, lastQuery ) || noThemes,
+			themesCount,
+			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ) && ! ( themesCount !== null ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: !! getCurrentUserId( state ),
 			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
