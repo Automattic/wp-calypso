@@ -54,6 +54,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
+import config from 'config';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -79,6 +80,7 @@ const ThemeSheet = React.createClass( {
 		isLoggedIn: React.PropTypes.bool,
 		isActive: React.PropTypes.bool,
 		isPurchased: React.PropTypes.bool,
+		isJetpack: React.PropTypes.bool,
 		siteId: React.PropTypes.number,
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
@@ -439,7 +441,7 @@ const ThemeSheet = React.createClass( {
 		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = this.props;
 		if ( isLoggedIn && ! isActive ) {
 			if ( isPremium && ! isPurchased ) { // purchase
-				return isJetpack
+				return config.isEnabled( 'jetpack/pijp' ) && isJetpack
 					? i18n.translate( 'Upgrade to activate', {
 						comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
 					} )
@@ -478,7 +480,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderPrice() {
-		if ( this.props.isJetpack ) {
+		if ( config.isEnabled( 'jetpack/pijp' ) && this.props.isJetpack ) {
 			return '';
 		}
 		let price = this.props.price;
@@ -488,9 +490,7 @@ const ThemeSheet = React.createClass( {
 			price = i18n.translate( 'Free' );
 		}
 
-		return price
-			? <span className="theme__sheet-action-bar-cost">{ price }</span>
-			: '';
+		return price ? <span className="theme__sheet-action-bar-cost">{ price }</span> : '';
 	},
 
 	renderButton() {

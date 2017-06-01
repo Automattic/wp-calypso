@@ -146,7 +146,7 @@ class ThemesSelection extends Component {
 					count={ themesCount }
 				/>
 				<ThemesList
-					isJetpack={ this.props.isJetpack }
+					isJetpack={ config.isEnabled( 'jetpack/pijp' ) && this.props.isJetpack }
 					themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }

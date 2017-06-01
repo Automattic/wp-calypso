@@ -43,7 +43,7 @@ const ConnectedThemesSelection = connectOptions(
 					return pickBy(
 						addTracking( props.options ),
 						( option, key ) => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) ) || (
-							'tryandcustomize' === key && props.hasUnlimitedPremiumThemes
+							config.isEnabled( 'jetpack/pijp' ) && 'tryandcustomize' === key && props.hasUnlimitedPremiumThemes
 						)
 					);
 				} }
@@ -97,7 +97,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 				<SidebarNavigation />
 				<CurrentTheme siteId={ siteId } />
 				{
-					( ! requestingSitePlans && ! hasUnlimitedPremiumThemes ) && <Banner
+					( config.isEnabled( 'jetpack/pijp' ) && ! requestingSitePlans && ! hasUnlimitedPremiumThemes ) && <Banner
 						plan={ PLAN_JETPACK_PREMIUM }
 						title={ translate( 'Access all our premium themes with our Business plan!' ) }
 						description={
@@ -117,7 +117,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 							<ConnectedThemesSelection
 								origin="wpcom"
 								defaultOption={ 'activate' }
-								secondaryOption={ hasUnlimitedPremiumThemes ? 'tryandcustomize' : '' }
+								secondaryOption={ config.isEnabled( 'jetpack/pijp' ) && hasUnlimitedPremiumThemes ? 'tryandcustomize' : '' }
 								search={ search }
 								tier={ tier }
 								filter={ filter }
@@ -141,7 +141,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								trackScrollPage={ props.trackScrollPage }
 								source="wpcom"
 								emptyContent={ emptyContent }
-								hasUnlimitedPremiumThemes={ hasUnlimitedPremiumThemes }
+								hasUnlimitedPremiumThemes={ config.isEnabled( 'jetpack/pijp' ) && hasUnlimitedPremiumThemes }
 							/>
 						</div>
 					}

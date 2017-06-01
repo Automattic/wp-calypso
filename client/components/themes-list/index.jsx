@@ -13,6 +13,7 @@ import Theme from 'components/theme';
 import EmptyContent from 'components/empty-content';
 import InfiniteScroll from 'lib/mixins/infinite-scroll';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
+import config from 'config';
 
 /**
  * Component
@@ -33,6 +34,7 @@ export const ThemesList = React.createClass( {
 		isActive: React.PropTypes.func,
 		isPurchased: React.PropTypes.func,
 		isInstalling: React.PropTypes.func,
+		isJetpack: React.PropTypes.bool,
 		// i18n function provided by localize()
 		translate: React.PropTypes.func,
 		placeholderCount: React.PropTypes.number
@@ -52,7 +54,8 @@ export const ThemesList = React.createClass( {
 			getActionLabel: () => '',
 			isActive: () => false,
 			isPurchased: () => false,
-			isInstalling: () => false
+			isInstalling: () => false,
+			isJetpack: false
 		};
 	},
 
@@ -74,7 +77,7 @@ export const ThemesList = React.createClass( {
 			onMoreButtonClick={ this.props.onMoreButtonClick }
 			actionLabel={ this.props.getActionLabel( theme.id ) }
 			index={ index }
-			isJetpack={ this.props.isJetpack }
+			isJetpack={ config.isEnabled( 'jetpack/pijp' ) && this.props.isJetpack }
 			theme={ theme }
 			active={ this.props.isActive( theme.id ) }
 			purchased={ this.props.isPurchased( theme.id ) }

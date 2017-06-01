@@ -421,7 +421,7 @@ export function getThemePurchaseUrl( state, themeId, siteId ) {
 	if ( ! isThemePremium( state, themeId ) ) {
 		return null;
 	}
-	if ( isJetpackSite( state, siteId ) ) {
+	if ( config.isEnabled( 'jetpack/pijp' ) && isJetpackSite( state, siteId ) ) {
 		return `/plans/${ getSiteSlug( state, siteId ) }`;
 	}
 	return `/checkout/${ getSiteSlug( state, siteId ) }/theme:${ themeId }`;

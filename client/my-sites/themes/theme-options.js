@@ -39,14 +39,14 @@ import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
-		label: ( state, siteId ) => isJetpackSite( state, siteId )
+		label: ( state, siteId ) => config.isEnabled( 'jetpack/pijp' ) && isJetpackSite( state, siteId )
 			? i18n.translate( 'Upgrade to activate', {
 				comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
 			} )
 			: i18n.translate( 'Purchase', {
 				context: 'verb'
 			} ),
-		extendedLabel: ( state, siteId ) => isJetpackSite( state, siteId )
+		extendedLabel: ( state, siteId ) => config.isEnabled( 'jetpack/pijp' ) && isJetpackSite( state, siteId )
 			? i18n.translate( 'Upgrade to activate', {
 				comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
 			} )
@@ -73,10 +73,10 @@ const activate = {
 	action: activateAction,
 	hideForTheme: ( state, themeId, siteId ) => (
 		! getCurrentUser( state ) ||
-		( isJetpackSiteMultiSite( state, siteId ) ) ||
+		( config.isEnabled( 'jetpack/pijp' ) && isJetpackSiteMultiSite( state, siteId ) ) ||
 		isThemeActive( state, themeId, siteId ) ||
 		( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-		( ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
+		( config.isEnabled( 'jetpack/pijp' ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
 	)
 };
 
@@ -195,10 +195,10 @@ export const connectOptions = connect(
 		return mapValues( ALL_THEME_OPTIONS, option => Object.assign(
 			{},
 			option,
-			'function' === typeof option.label
+			( config.isEnabled( 'jetpack/pijp' ) && ( 'function' === typeof option.label ) )
 				? { label: ( option.label )( state, siteId ) }
 				: { label: option.label },
-			'function' === typeof option.extendedLabel
+			( config.isEnabled( 'jetpack/pijp' ) && ( 'function' === typeof option.extendedLabel ) )
 				? { extendedLabel: ( option.extendedLabel )( state, siteId ) }
 				: { extendedLabel: option.extendedLabel },
 			option.getUrl
@@ -208,7 +208,7 @@ export const connectOptions = connect(
 				? { hideForTheme: mapHideForTheme( option.hideForTheme ) }
 				: {},
 			{
-				isJetpack: isJetpackSite( state, siteId )
+				isJetpack: config.isEnabled( 'jetpack/pijp' ) && isJetpackSite( state, siteId )
 			}
 		) );
 	},

@@ -230,7 +230,7 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	render() {
-		const { translate, filters } = this.props;
+		const { isJetpack, translate, filters } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
@@ -295,12 +295,16 @@ class ThemesMagicSearchCard extends React.Component {
 								/>
 							</div>
 						}
-						{ isPremiumThemesEnabled &&
-							<SegmentedControl
-								initialSelected={ this.props.tier }
-								options={ tiers }
-								onSelect={ this.props.select }
-							/>
+						{
+							(
+								( config.isEnabled( 'jetpack/pijp' ) && isPremiumThemesEnabled ) ||
+								( isPremiumThemesEnabled && ! isJetpack )
+							) &&
+								<SegmentedControl
+									initialSelected={ this.props.tier }
+									options={ tiers }
+									onSelect={ this.props.select }
+								/>
 						}
 					</div>
 				</StickyPanel>
