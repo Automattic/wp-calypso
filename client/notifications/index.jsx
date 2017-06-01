@@ -155,6 +155,8 @@ export class Notifications extends Component {
 		const localeSlug = get( user.get(), 'localeSlug', config( 'i18n_default_locale_slug' ) );
 
 		const customMiddleware = {
+			OPEN_LINK: [ ( store, { href } ) => window.open( href, '_blank' ) ],
+			OPEN_POST: [ ( store, { href } ) => window.open( href, '_blank' ) ],
 			VIEW_SETTINGS: [ () => {
 				this.props.checkToggle();
 				page( '/me/notifications' );
