@@ -38,50 +38,35 @@ export class CommentList extends Component {
 		}
 	}
 
-	getNoticeContent = ( commentId, newStatus, previousStatus ) => {
-		const { translate } = this.props;
+	showNotice = ( commentId, newStatus, previousStatus ) => {
+		const {
+			createNotice: createCommentNotice,
+			translate,
+		} = this.props;
+
 		const options = {
 			duration: 5000,
 			id: `comment-notice-${ commentId }`,
 			isPersistent: true,
 		};
 
-		if ( 'delete' !== newStatus ) {
+		if ( 'delete' !== newStatus && 'like' !== newStatus ) {
 			options.button = translate( 'Undo' );
-			options.onClick = () => this.setCommentStatus( commentId, previousStatus, true );
+			options.onClick = () => this.setCommentStatus( commentId, previousStatus, { showNotice: false } );
 		}
 
 		switch ( newStatus ) {
 			case 'approved':
-				return {
-					type: 'is-success',
-					message: translate( 'Comment approved.' ),
-					options,
-				};
+			case 'like':
+				return createCommentNotice( 'is-success', translate( 'Comment approved.' ), options );
 			case 'unapproved':
-				return {
-					type: 'is-info',
-					message: translate( 'Comment unapproved.' ),
-					options,
-				};
+				return createCommentNotice( 'is-info', translate( 'Comment unapproved.' ), options );
 			case 'spam':
-				return {
-					type: 'is-warning',
-					message: translate( 'Comment marked as spam.' ),
-					options,
-				};
+				return createCommentNotice( 'is-warning', translate( 'Comment marked as spam.' ), options );
 			case 'trash':
-				return {
-					type: 'is-error',
-					message: translate( 'Comment moved to trash.' ),
-					options,
-				};
+				return createCommentNotice( 'is-error', translate( 'Comment moved to trash.' ), options );
 			case 'delete':
-				return {
-					type: 'is-error',
-					message: translate( 'Comment deleted permanently.' ),
-					options,
-				};
+				return createCommentNotice( 'is-error', translate( 'Comment delete permanently.' ), options );
 		}
 	}
 
@@ -95,23 +80,26 @@ export class CommentList extends Component {
 	}
 
 	toggleCommentLike = commentId => {
-		const comments = map( this.state.comments, comment => {
-			if ( commentId === comment.ID ) {
-				const newLike = ! comment.i_like;
-				// If like changes to true, also approve the comment
-				return {
+		const comment = this.state.comments[ commentId ];
+		const newLikeValue = ! comment.i_like;
+
+		if ( 'unapproved' === comment.status ) {
+			this.showNotice( commentId, 'like', 'unapproved' );
+		}
+
+		this.setState( {
+			comments: {
+				...this.state.comments,
+				[ commentId ]: {
 					...comment,
-					i_like: newLike,
-					status: newLike ? 'approved' : comment.status,
-				};
-			}
-			return comment;
+					i_like: newLikeValue,
+					status: newLikeValue ? 'approved' : comment.status,
+				},
+			},
 		} );
+	}
 
-		this.setState( { comments } );
-	};
-
-	setCommentStatus = ( commentId, status, isUndo = false ) => {
+	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
 		const comment = this.state.comments[ commentId ];
 
 		if ( status === comment.status ) {
@@ -120,10 +108,8 @@ export class CommentList extends Component {
 
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
-		// If this is an undo action and we don't need to show a notice
-		if ( ! isUndo ) {
-			const { message, options, type } = this.getNoticeContent( commentId, status, comment.status );
-			this.props.createNotice( type, message, options );
+		if ( options.showNotice ) {
+			this.showNotice( commentId, status, comment.status );
 		}
 
 		this.setState( {
@@ -131,9 +117,8 @@ export class CommentList extends Component {
 				...this.state.comments,
 				[ commentId ]: { ...comment, status },
 			},
-		} )
-		;
-	};
+		} );
+	}
 
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
