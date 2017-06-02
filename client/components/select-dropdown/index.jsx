@@ -133,7 +133,7 @@ class SelectDropdown extends Component {
 		}
 
 		// return currently selected text
-		const selectedValue = selected ? selected : this.getInitialSelectedItem( this.props );
+		const selectedValue = selected || this.getInitialSelectedItem( this.props );
 		return result( find( options, { value: selectedValue } ), 'label' );
 	}
 
@@ -146,7 +146,7 @@ class SelectDropdown extends Component {
 		}
 
 		// return currently selected icon
-		const selectedValue = selected ? selected : this.getInitialSelectedItem( this.props );
+		const selectedValue = selected || this.getInitialSelectedItem( this.props );
 		return result( find( options, { value: selectedValue } ), 'icon' );
 	}
 
