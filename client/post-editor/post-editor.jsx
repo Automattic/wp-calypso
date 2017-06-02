@@ -89,7 +89,8 @@ export const PostEditor = React.createClass( {
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
-			isTitleFocused: false
+			isTitleFocused: false,
+			showPreview: false
 		};
 	},
 
