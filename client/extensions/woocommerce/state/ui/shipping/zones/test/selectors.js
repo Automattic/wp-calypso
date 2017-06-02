@@ -14,7 +14,7 @@ import {
 	canRemoveShippingZone,
 	canEditShippingZoneLocations
 } from '../selectors';
-import { LOADING } from '../../../../wc-api/shipping-zones/reducer';
+import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'selectors', () => {
 	describe( 'get shipping zones', () => {
@@ -22,7 +22,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
-						wcApi: {
+						sites: {
 							123: {
 								shippingZones: LOADING,
 							},
@@ -41,7 +41,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
-						wcApi: {
+						sites: {
 							123: {
 								shippingZones: null,
 							},
@@ -60,7 +60,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
-						wcApi: {
+						sites: {
 							123: {
 								shippingZones: [
 									{ id: 1, name: 'Zone1' },
@@ -86,7 +86,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
-						wcApi: {
+						sites: {
 							123: {
 								shippingZones: [
 									{ id: 1, name: 'Zone1' },
@@ -131,7 +131,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
-						wcApi: {
+						sites: {
 							123: {
 								shippingZones: [
 									{ id: 1, name: 'Zone1' },
@@ -167,7 +167,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
-						wcApi: {
+						sites: {
 							123: {
 								shippingZones: [
 									{ id: 1 },
@@ -198,7 +198,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
-						wcApi: {
+						sites: {
 							123: {
 								shippingZones: [
 									{ id: 1, name: 'MyZone' },
@@ -233,7 +233,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
-						wcApi: {
+						sites: {
 							123: {
 								shippingZones: [
 									{ id: 1, name: 'MyZone' },
@@ -267,7 +267,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
-						wcApi: {
+						sites: {
 							123: {
 								shippingZones: [],
 							},
