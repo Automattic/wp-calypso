@@ -9,6 +9,7 @@ import {
 	camelCase,
 	deburr,
 	first,
+	has,
 	head,
 	indexOf,
 	kebabCase,
@@ -475,7 +476,9 @@ class DomainDetailsForm extends PureComponent {
 	}
 
 	finish( options = {} ) {
-		this.setPrivacyProtectionSubscriptions( options.addPrivacy && options.addPrivacy !== false );
+		if ( has( options.addPrivacy ) ) {
+			this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
+		}
 
 		const allFieldValues = this.getAllFieldValues();
 		debug( 'finish: allFieldValues:', allFieldValues );
