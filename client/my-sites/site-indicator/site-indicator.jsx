@@ -62,7 +62,7 @@ class SiteIndicator extends Component {
 				return false;
 			}
 
-			return siteIsConnected === false;
+			return siteIsConnected;
 		}
 
 		return false;
@@ -275,6 +275,10 @@ class SiteIndicator extends Component {
 			return this.errorUpdating();
 		}
 
+		if ( this.hasWarning() ) {
+			return this.unsupportedJetpackVersion();
+		}
+
 		if ( this.hasUpdate() ) {
 			return this.updatesAvailable();
 		}
@@ -283,20 +287,16 @@ class SiteIndicator extends Component {
 			return this.errorAccessing();
 		}
 
-		if ( this.hasWarning() ) {
-			return this.unsupportedJetpackVersion();
-		}
-
 		return null;
 	}
 
 	getIcon() {
-		if ( this.hasUpdate() ) {
-			return 'sync';
-		}
-
 		if ( this.hasWarning() ) {
 			return 'notice';
+		}
+
+		if ( this.hasUpdate() ) {
+			return 'sync';
 		}
 
 		if ( this.hasError() ) {
