@@ -38,6 +38,11 @@ class FollowingManageSubscriptions extends Component {
 
 	filterFollowsByQuery( query ) {
 		const { follows } = this.props;
+
+		if ( ! query ) {
+			return follows;
+		}
+
 		const phraseRe = new RegExp( escapeRegexp( query ), 'i' );
 
 		return follows.filter( follow => {
