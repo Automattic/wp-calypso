@@ -360,7 +360,7 @@
 		right: 0;
 		width: 14px;
 		height: 14px;
-		transform: translate( 25%, -25% );
+		transform: translate( 33%, -33% );
 		border: 1px solid lighten( $gray, 10% );
 		border-radius: 50%;
 		background-color: $gray-light;
@@ -378,11 +378,14 @@
 		color: lighten( $gray, 10% );
 	}
 
+	&:not(.uploader) {
+		border: 1px solid lighten( $gray, 30% );
+	}
+
 	figure {
 		width: 40px;
 		height: 40px;
 		overflow: hidden;
-		border: 1px solid lighten( $gray, 30% );
 
 		img {
 			position: absolute;
@@ -428,6 +431,7 @@
 	display: inline-flex;
 	flex-direction: row;
 	align-items: center;
+	transform: translateY(2px);
 }
 
 .products__product-name {
