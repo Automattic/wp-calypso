@@ -69,7 +69,7 @@ function wpemoji( editor ) {
 			}
 		} );
 	} else if ( ! isWin ) {
-		// In MacOS inserting emoji doesn't trigger the stanradr keyboard events.
+		// In MacOS inserting emoji doesn't trigger the standard keyboard events.
 		// Thankfully it triggers the 'input' event.
 		// This works in Android and iOS as well.
 		editor.on( 'keydown keyup', function( event ) {
