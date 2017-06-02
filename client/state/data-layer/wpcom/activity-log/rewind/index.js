@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,14 +19,29 @@ const fetchRewindStatus = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-const updateRewindStatus = ( { dispatch }, { siteId }, next, { data } ) => {
+const fromApi = response => ( {
+	active: response.use_rewind,
+	firstBackup: response.first_backup_when,
+	error: { message: response.error },
+} );
+
+const updateRewindStatus = ( { dispatch }, { siteId }, next, data ) => {
 	dispatch( {
 		type: REWIND_STATUS_REQUEST,
 		siteId,
-		data,
+		...fromApi( data ),
+	} );
+};
+
+const rewindStatusError = ( { dispatch }, { siteId }, next, error ) => {
+	dispatch( {
+		type: REWIND_STATUS_REQUEST,
+		siteId,
+		error: pick( error, [ 'error', 'status', 'message' ] ),
+		active: false,
 	} );
 };
 
 export default {
-	[ REWIND_STATUS_REQUEST ]: [ dispatchRequest( fetchRewindStatus, updateRewindStatus, noop ) ],
+	[ REWIND_STATUS_REQUEST ]: [ dispatchRequest( fetchRewindStatus, updateRewindStatus, rewindStatusError ) ],
 };
