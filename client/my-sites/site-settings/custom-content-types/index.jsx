@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormTextInput from 'components/forms/form-text-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
@@ -73,9 +74,45 @@ class CustomContentTypes extends Component {
 				>
 					{ label }
 				</CompactFormToggle>
+
+				{ this.renderPostsPerPageField( name, label ) }
+
 				<FormSettingExplanation isIndented>
 					{ description }
 				</FormSettingExplanation>
+			</div>
+		);
+	}
+
+	renderPostsPerPageField( fieldName, postTypeLabel ) {
+		const {
+			fields,
+			onChangeField,
+			translate,
+		} = this.props;
+		const numberFieldName = fieldName + '_posts_per_page';
+		return (
+			<div className="custom-content-types__indented-form-field indented-form-field">
+				{ translate(
+					'Display {{field /}} %s per page load',
+					{
+						args: postTypeLabel.toLowerCase(),
+						components: {
+							field: (
+								<FormTextInput
+									name={ numberFieldName }
+									type="number"
+									step="1"
+									min="0"
+									id={ numberFieldName }
+									value={ 'undefined' === typeof fields[ numberFieldName ] ? 10 : fields[ numberFieldName ] }
+									onChange={ onChangeField( numberFieldName ) }
+									disabled={ this.isFormPending() }
+								/>
+							)
+						}
+					}
+				) }
 			</div>
 		);
 	}
@@ -153,6 +190,7 @@ CustomContentTypes.defaultProps = {
 
 CustomContentTypes.propTypes = {
 	handleAutosavingToggle: PropTypes.func.isRequired,
+	onChangeField: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,
