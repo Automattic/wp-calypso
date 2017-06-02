@@ -5,6 +5,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,9 +47,9 @@ class EditorConfirmationSidebar extends React.Component {
 		}
 
 		const { password, type, status } = this.props.post || {};
-		const isPrivateSite = this.props.site && this.props.site.is_private;
-		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
-		const savedPassword = this.props.savedPost ? this.props.savedPost.password : null;
+		const isPrivateSite = get( this.props, 'site.is_private' );
+		const savedStatus = get( this.props, 'savedPost.status' );
+		const savedPassword = get( this.props, 'savedPost.password' );
 		const props = {
 			onPrivatePublish: this.props.onPrivatePublish,
 			isPrivateSite,

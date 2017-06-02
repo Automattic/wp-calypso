@@ -32,12 +32,6 @@ import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 
-/**
- * Debug
- */
-import debugModule from 'debug';
-const debug = debugModule( 'calypso:editor-visibility' );
-
 const EditorVisibility = React.createClass( {
 	showingAcceptDialog: false,
 
@@ -193,7 +187,6 @@ const EditorVisibility = React.createClass( {
 	},
 
 	updateDropdownVisibility( newVisibility ) {
-		debug( 'updateDropdownVisibility', newVisibility );
 		const { siteId, postId } = this.props;
 		const defaultVisibility = 'draft' === this.props.status ? 'draft' : 'publish';
 		const postEdits = { status: defaultVisibility };
@@ -294,7 +287,6 @@ const EditorVisibility = React.createClass( {
 	},
 
 	renderPasswordInput() {
-		debug( 'renderPasswordInput' );
 		const value = this.props.password ? this.props.password.trim() : null;
 		const isError = ! this.state.passwordIsValid;
 		const errorMessage = this.props.translate( 'Password is empty.', { context: 'Editor: Error shown when password is empty.' } );
