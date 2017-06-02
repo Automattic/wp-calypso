@@ -17,7 +17,7 @@
           "dev": true
         },
         "recast": {
-          "version": "0.12.3",
+          "version": "0.12.4",
           "dev": true
         },
         "source-map": {
@@ -591,7 +591,7 @@
       "version": "6.24.1"
     },
     "babylon": {
-      "version": "6.17.1"
+      "version": "6.17.2"
     },
     "backo2": {
       "version": "1.0.2"
@@ -1515,7 +1515,7 @@
       }
     },
     "es5-ext": {
-      "version": "0.10.21",
+      "version": "0.10.22",
       "dev": true
     },
     "es6-iterator": {
@@ -2158,7 +2158,7 @@
       "version": "1.0.1"
     },
     "gridicons": {
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     "growl": {
       "version": "1.9.2",
@@ -3232,7 +3232,7 @@
       "version": "1.2.1"
     },
     "leveldown": {
-      "version": "1.7.0",
+      "version": "1.7.1",
       "dependencies": {
         "abstract-leveldown": {
           "version": "2.6.1"
@@ -3659,7 +3659,7 @@
       "version": "1.7.0"
     },
     "node-gyp": {
-      "version": "3.6.1",
+      "version": "3.6.2",
       "dependencies": {
         "minimatch": {
           "version": "3.0.4"
