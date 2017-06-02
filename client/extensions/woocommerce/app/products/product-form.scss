@@ -211,15 +211,19 @@
 }
 
 .products__product-form-details-basic-sku {
+	margin-top: 0;
+	margin-bottom: 4px;
+
 	.form-label {
 		display: inline;
 		margin-right: 4px;
-		color: $gray-text-min;
-		font-weight: normal;
+		color: $gray-dark;
+		font-size: 13px;
 	}
 
 	input {
 		width: 65%;
+		font-size: 13px;
 	}
 
 	.form-click-to-edit-input__text {
