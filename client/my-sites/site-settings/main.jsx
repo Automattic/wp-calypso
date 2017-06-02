@@ -13,8 +13,6 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import GeneralSettings from './section-general';
-import ImportSettings from './section-import';
-import ExportSettings from './section-export';
 import GuidedTransfer from 'my-sites/guided-transfer';
 import SiteSettingsNavigation from './navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -39,10 +37,6 @@ export class SiteSettingsComponent extends Component {
 		switch ( section ) {
 			case 'general':
 				return <GeneralSettings />;
-			case 'import':
-				return <ImportSettings />;
-			case 'export':
-				return <ExportSettings />;
 			case 'guidedTransfer':
 				return <GuidedTransfer hostSlug={ hostSlug } />;
 		}
