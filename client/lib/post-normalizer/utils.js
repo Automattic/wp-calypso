@@ -202,10 +202,7 @@ export function isFeaturedImageInContent( post ) {
 
 		const indexOfContentImage = findIndex(
 			post.images,
-			img => {
-				const imgPath = getPathname( img.src );
-				return imgPath === featuredImagePath;
-			},
+			img => getPathname( img.src ) === featuredImagePath,
 			1
 		); // skip first element in post.images because it is always the featuredImage
 
