@@ -82,15 +82,12 @@ class DomainDetailsForm extends PureComponent {
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
-			initialFields: this.props.contactDetails,
-			// loadFunction: this.loadFormState,
+			loadFunction: this.loadFormState,
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
 			onError: this.handleFormControllerError
 		} );
-
-		this.setState( { form: this.formStateController.getInitialState() } );
 	}
 
 	componentDidMount() {
