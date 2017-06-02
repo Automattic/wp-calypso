@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import {
 	isTwoFactorAuthTypeSupported,
 } from 'state/login/selectors';
-import { sendSmsCode } from 'state/login/actions';
+import { sendPushNotification, sendSmsCode } from 'state/login/actions';
 import { login } from 'lib/paths';
 
 class TwoFactorActions extends Component {
@@ -21,9 +21,18 @@ class TwoFactorActions extends Component {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
 		isPushSupported: PropTypes.bool.isRequired,
 		isSmsSupported: PropTypes.bool.isRequired,
+		sendPushNotification: PropTypes.func.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
+	};
+
+	sendPushNotification = ( event ) => {
+		event.preventDefault();
+
+		page( login( { isNative: true, twoFactorAuthType: 'push' } ) );
+
+		this.props.sendPushNotification();
 	};
 
 	sendSmsCode = ( event ) => {
@@ -31,7 +40,7 @@ class TwoFactorActions extends Component {
 
 		page( login( { isNative: true, twoFactorAuthType: 'sms' } ) );
 
-		this.props.sendSmsCode( );
+		this.props.sendSmsCode();
 	};
 
 	render() {
@@ -71,7 +80,7 @@ class TwoFactorActions extends Component {
 
 				{ isPushSupported && twoFactorAuthType !== 'push' && (
 					<p>
-						<a href={ login( { isNative: true, twoFactorAuthType: 'push' } ) }>
+						<a href="#" onClick={ this.sendPushNotification }>
 							{ translate( 'The WordPress mobile app' ) }
 						</a>
 					</p>
@@ -88,6 +97,7 @@ export default connect(
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 	} ),
 	{
+		sendPushNotification,
 		sendSmsCode,
 	}
 )( localize( TwoFactorActions ) );
