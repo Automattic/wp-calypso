@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CommentDetail from 'blocks/comment-detail';
+import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 
 // Mock data
 const mockAuthor = {
@@ -42,6 +43,8 @@ const mockSite = {
 
 export const CommentDetailExample = () =>
 	<div>
+		<CommentDetailPlaceholder />
+
 		<CommentDetail
 			authorAvatarUrl={ mockAuthor.avatarUrl }
 			authorDisplayName={ mockAuthor.displayName }
