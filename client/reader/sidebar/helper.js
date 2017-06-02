@@ -10,9 +10,9 @@ const exported = {
 	itemLinkClass: function( path, currentPath, additionalClasses ) {
 		const basePathLowerCase = decodeURIComponent( currentPath )
 			.split( '?' )[ 0 ]
-			.replace( /\/edit$/, '' )
+			.replace( /\/manage$/, '' )
 			.toLowerCase(),
-			pathLowerCase = decodeURIComponent( path ).replace( /\/edit$/, '' ).toLowerCase();
+			pathLowerCase = decodeURIComponent( path ).replace( /\/manage$/, '' ).toLowerCase();
 
 		let selected = basePathLowerCase === pathLowerCase, isActionButtonSelected = false;
 
@@ -21,9 +21,9 @@ const exported = {
 			selected = '/following' === basePathLowerCase;
 		}
 
-		// Are we on an edit page?
+		// Are we on the manage page?
 		const pathWithoutQueryString = currentPath.split( '?' )[ 0 ];
-		if ( selected && !! pathWithoutQueryString.match( /\/edit$/ ) ) {
+		if ( selected && !! pathWithoutQueryString.match( /\/manage$/ ) ) {
 			isActionButtonSelected = true;
 		}
 
