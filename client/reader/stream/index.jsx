@@ -482,7 +482,7 @@ export default localize(
 	connect(
 		state => ( {
 			blockedSites: getBlockedSites( state ),
-			totalSubs: getReaderFollows( state ),
+			totalSubs: getReaderFollows( state ).length,
 		} ),
 		{ resetCardExpansions },
 	)( ReaderStream ),
