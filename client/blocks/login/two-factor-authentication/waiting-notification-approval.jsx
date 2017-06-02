@@ -37,9 +37,7 @@ class WaitingTwoFactorNotificationApproval extends Component {
 					</div>
 				</Card>
 
-				<TwoFactorActions
-					twoFactorAuthType="push"
-				/>
+				<TwoFactorActions twoFactorAuthType="push" />
 			</form>
 		);
 	}
