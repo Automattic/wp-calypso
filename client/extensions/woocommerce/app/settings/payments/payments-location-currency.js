@@ -9,14 +9,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AddressView from '../../../components/address-view';
+import AddressView from 'woocommerce/components/address-view';
 import Card from 'components/card';
-import ExtendedHeader from '../../../components/extended-header';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormSelect from 'components/forms/form-select';
 
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPaymentCurrencySettings } from '../../../state/wc-api/settings/general/selectors';
-import { fetchSettingsGeneral } from '../../../state/wc-api/settings/general/actions';
+import { getPaymentCurrencySettings } from 'woocommerce/state/wc-api/settings/general/selectors';
+import { fetchSettingsGeneral } from 'woocommerce/state/wc-api/settings/general/actions';
 
 class SettingsPaymentsLocationCurrency extends Component {
 	static propTypes = {

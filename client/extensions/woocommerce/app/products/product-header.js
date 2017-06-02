@@ -8,7 +8,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import ActionHeader from '../../components/action-header';
+import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 
 const ProductHeader = ( { onTrash, onSave, translate } ) => {

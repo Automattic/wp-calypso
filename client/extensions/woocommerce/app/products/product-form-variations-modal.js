@@ -9,7 +9,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import formattedVariationName from '../../lib/formatted-variation-name';
+import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';

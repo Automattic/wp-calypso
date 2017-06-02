@@ -9,12 +9,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ExtendedHeader from '../../../components/extended-header';
-import { fetchPaymentMethods } from '../../../state/wc-api/payment-methods/actions';
-import { getPaymentMethodsGroup } from '../../../state/wc-api/payment-methods/selectors';
-import List from '../../../components/list/list';
-import ListHeader from '../../../components/list/list-header';
-import ListItemField from '../../../components/list/list-item-field';
+import ExtendedHeader from 'woocommerce/components/extended-header';
+import { fetchPaymentMethods } from 'woocommerce/state/wc-api/payment-methods/actions';
+import { getPaymentMethodsGroup } from 'woocommerce/state/wc-api/payment-methods/selectors';
+import List from 'woocommerce/components/list/list';
+import ListHeader from 'woocommerce/components/list/list-header';
+import ListItemField from 'woocommerce/components/list/list-item-field';
 import PaymentMethodItem from './payment-method-item';
 
 class SettingsPaymentsOffSite extends Component {

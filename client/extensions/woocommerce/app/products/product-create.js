@@ -13,13 +13,13 @@ import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
-import { editProduct, editProductAttribute } from '../../state/ui/products/actions';
-import { getCurrentlyEditingProduct } from '../../state/ui/products/selectors';
-import { getProductVariationsWithLocalEdits } from '../../state/ui/products/variations/selectors';
-import { editProductVariation } from '../../state/ui/products/variations/actions';
-import { fetchProductCategories } from '../../state/wc-api/product-categories/actions';
-import { getProductCategories } from '../../state/wc-api/product-categories/selectors';
-import { createProduct } from '../../state/wc-api/products/actions';
+import { editProduct, editProductAttribute } from 'woocommerce/state/ui/products/actions';
+import { getCurrentlyEditingProduct } from 'woocommerce/state/ui/products/selectors';
+import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
+import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
+import { fetchProductCategories } from 'woocommerce/state/wc-api/product-categories/actions';
+import { getProductCategories } from 'woocommerce/state/wc-api/product-categories/selectors';
+import { createProduct } from 'woocommerce/state/wc-api/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
 

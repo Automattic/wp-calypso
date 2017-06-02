@@ -7,9 +7,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import formattedVariationName from '../../lib/formatted-variation-name';
+import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import FormCurrencyInput from 'components/forms/form-currency-input';
-import FormDimensionsInput from '../../components/form-dimensions-input';
+import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
