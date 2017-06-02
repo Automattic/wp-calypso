@@ -27,22 +27,20 @@
 .comment-list__transition-enter {
 	opacity: 0.01;
 	visibility: hidden;
-
-	&.comment-list__transition-enter-active {
-		opacity: 1;
-		visibility: visible;
-		transition: all .15s linear;
-		transition-delay: .15s;
-	}
+}
+.comment-list__transition-enter-active {
+	opacity: 1;
+	visibility: visible;
+	transition: all .15s linear;
+	transition-delay: .15s;
 }
 
 .comment-list__transition-leave {
 	opacity: 1;
 	visibility: visible;
-
-	&.comment-list__transition-leave-active {
-		opacity: 0.01;
-		visibility: hidden;
-		transition: all 0.15s linear;
-	}
+}
+.comment-list__transition-leave-active {
+	opacity: 0.01;
+	visibility: hidden;
+	transition: all 0.15s linear;
 }
