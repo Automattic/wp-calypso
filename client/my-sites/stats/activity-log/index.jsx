@@ -21,6 +21,7 @@ import ErrorBanner from '../activity-log-banner/error-banner';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import QueryRewindStatus from 'components/data/query-rewind-status';
+import { activityLogRequest as activityLogRequestAction } from 'state/activity-log/actions';
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -40,8 +41,25 @@ class ActivityLog extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	componentWillMount() {
+		this.tryFetchLogs( this.props.siteId );
+	}
+
+	componentWillUpdate( { siteId } ) {
+		if ( siteId !== this.props.siteId ) {
+			this.tryFetchLogs( siteId );
+		}
+	}
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+	}
+
+	tryFetchLogs( siteId ) {
+		const {
+			activityLogRequest,
+		} = this.props;
+		siteId && activityLogRequest( siteId );
 	}
 
 	logs = () => [
@@ -313,16 +331,16 @@ class ActivityLog extends Component {
 			moment,
 			siteId,
 		} = this.props;
-		const logs = this.logs();
+		const logs = this.props.logs;
 		const logsGroupedByDate = map(
 			groupBy(
 				logs.map( this.update_logs, this ),
-				( log ) => moment( log.timestamp ).startOf( 'day' ).toISOString()
+				log => moment( log.timestamp ).startOf( 'day' ).format( 'x' )
 			),
-			( daily_logs, isoString ) => (
+			( daily_logs, timestamp ) => (
 				<ActivityLogDay
-					key={ isoString }
-					dateIsoString={ isoString }
+					key={ timestamp }
+					timestamp={ timestamp }
 					logs={ daily_logs }
 					siteId={ siteId }
 					isRewindEnabled={ true }
@@ -373,7 +391,14 @@ export default connect(
 			rewindStatusError: getRewindStatusError( state, siteId ),
 
 			// FIXME: Testing only
-			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false ),
+			isPressable: true,
+			logs: get( state, [
+				'activityLog',
+				'logItems',
+				siteId,
+			], [] ),
 		};
+	}, {
+		activityLogRequest: activityLogRequestAction,
 	}
 )( localize( ActivityLog ) );

@@ -18,7 +18,7 @@ class ActivityLogDay extends Component {
 		isRewindEnabled: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
 		siteId: PropTypes.number,
-		dateIsoString: PropTypes.string.isRequired,
+		timestamp: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
@@ -63,14 +63,15 @@ class ActivityLogDay extends Component {
 	 */
 	getEventsHeading() {
 		const {
-			dateIsoString,
 			logs,
 			moment,
+			timestamp,
 			translate,
 		} = this.props;
+		// FIXME: Reports invalid date
 		return (
 			<div>
-				<div className="activity-log-day__day">{ moment( dateIsoString ).format( 'LL' ) }</div>
+				<div className="activity-log-day__day">{ moment( timestamp, 'x' ).format( 'LL' ) }</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,
@@ -84,7 +85,7 @@ class ActivityLogDay extends Component {
 	render() {
 		const {
 			logs,
-			dateIsoString,
+			timestamp,
 		} = this.props;
 
 		// FIXME get real props
@@ -97,28 +98,26 @@ class ActivityLogDay extends Component {
 					summary={ this.getRewindButton( 'primary' ) }
 					expandedSummary={ this.getRewindButton() }
 				>
-					{ logs.map( ( log, index ) => {
-						return (
-							<ActivityLogItem
-								key={ index }
-								title={ log.title }
-								subTitle={ log.subTitle }
-								description={ log.description }
-								icon={ log.icon }
-								siteId={ this.props.siteId }
-								timestamp={ log.timestamp }
-								user={ log.user }
-								actionText={ log.actionText }
-								status={ log.status }
-								className={ log.className }
-							/>
-						);
-					} ) }
+					{ logs.map( ( log, index ) => (
+						<ActivityLogItem
+							key={ index }
+							title={ log.name }
+							subTitle={ log.subTitle }
+							description={ log.description }
+							icon={ log.icon }
+							siteId={ this.props.siteId }
+							timestamp={ log.ts_site }
+							user={ log.user }
+							actionText={ log.actionText }
+							status={ log.status }
+							className={ log.className }
+						/>
+					) ) } ) }
 				</FoldableCard>
 				<ActivityLogConfirmDialog
 					isVisible={ this.state.isRestoreConfirmDialogOpen }
 					siteName={ siteName }
-					dateIsoString={ dateIsoString }
+					timestamp={ timestamp }
 					onClose={ this.handleRestoreDialogClose }
 					onConfirm={ this.handleRestoreDialogConfirm }
 				/>
