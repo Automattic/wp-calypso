@@ -18,7 +18,7 @@ import SitesWindowScroller from './sites-window-scroller';
 import SyncReaderFollows from 'components/data/sync-reader-follows';
 import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';
-import { getReaderFollowsWithSitesAndFeeds, getReaderFollowsCount } from 'state/selectors';
+import { getReaderFollows, getReaderFollowsCount } from 'state/selectors';
 import UrlSearch from 'lib/url-search';
 import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
 import EllipsisMenu from 'components/ellipsis-menu';
@@ -138,7 +138,7 @@ class FollowingManageSubscriptions extends Component {
 }
 
 const mapStateToProps = state => {
-	const follows = getReaderFollowsWithSitesAndFeeds( state );
+	const follows = getReaderFollows( state );
 	const followsCount = getReaderFollowsCount( state );
 	return { follows, followsCount };
 };
