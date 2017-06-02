@@ -127,6 +127,7 @@ class SiteSettingsFormWriting extends Component {
 
 				<CustomContentTypes
 					handleAutosavingToggle={ handleAutosavingToggle }
+					onChangeField={ onChangeField }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
@@ -196,7 +197,9 @@ const getFormSettings = settings => {
 		'default_post_format',
 		'custom-content-types',
 		'jetpack_testimonial',
+		'jetpack_testimonial_posts_per_page',
 		'jetpack_portfolio',
+		'jetpack_portfolio_posts_per_page',
 		'infinite-scroll',
 		'infinite_scroll',
 		'minileven',
