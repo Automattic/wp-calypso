@@ -16,7 +16,7 @@ import { LOADING } from 'woocommerce/state/constants';
  * if the zones are currently being fetched, or a "falsy" value if that haven't been fetched at all.
  */
 export const getAPIShippingZones = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'wcApi', siteId, 'shippingZones' ] );
+	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'shippingZones' ] );
 };
 
 /**

@@ -17,7 +17,7 @@ const preInitializedState = {
 const loadingState = {
 	extensions: {
 		woocommerce: {
-			wcApi: {
+			sites: {
 				123: {
 					shippingZones: LOADING,
 				},
@@ -28,7 +28,7 @@ const loadingState = {
 const loadedState = {
 	extensions: {
 		woocommerce: {
-			wcApi: {
+			sites: {
 				123: {
 					shippingZones: [],
 				},

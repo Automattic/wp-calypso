@@ -10,7 +10,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const getRawGeneralSettings = ( state, siteId ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'wcApi', siteId, 'settingsGeneral' ] );
+	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'general' ] );
 };
 
 /**
@@ -35,12 +35,11 @@ export const areSettingsGeneralLoading = ( state, siteId = getSelectedSiteId( st
  * Gets payment currency from API data.
  *
  * @param {Object} state Global state tree
- * @param {Number} siteId wpcom site id
+ * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
  * @return {Object} Payment Currency Settings
  */
-export function getPaymentCurrencySettings( state, siteId ) {
-	const wcApi = state.extensions.woocommerce.wcApi || {};
-	const siteData = wcApi[ siteId ] || {};
-	const currency = find( siteData.settingsGeneral, ( item ) => item.id === 'woocommerce_currency' );
+export function getPaymentCurrencySettings( state, siteId = getSelectedSiteId( state ) ) {
+	const generalSettings = getRawGeneralSettings( state, siteId );
+	const currency = find( generalSettings, ( item ) => item.id === 'woocommerce_currency' );
 	return currency || {};
 }

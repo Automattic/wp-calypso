@@ -10,7 +10,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const getRawPaymentMethods = ( state, siteId ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'wcApi', siteId, 'paymentMethods' ] );
+	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'paymentMethods' ] );
 };
 
 /**
@@ -40,15 +40,11 @@ export const arePaymentMethodsLoading = ( state, siteId = getSelectedSiteId( sta
  * @return {Array} Array of Payment Methods
  */
 export function getPaymentMethodsGroup( state, type, siteId = getSelectedSiteId( state ) ) {
-	const wcApi = state.extensions.woocommerce.wcApi || {};
-	const siteData = wcApi[ siteId ] || {};
-	let methods;
-	if ( ! isArray( siteData.paymentMethods ) ) {
-		methods = [];
-	} else {
-		methods = siteData.paymentMethods.filter( ( method ) => {
-			return method.methodType === type;
-		} );
+	const methods = getRawPaymentMethods( state, siteId );
+	if ( ! isArray( methods ) ) {
+		return [];
 	}
-	return methods || [];
+	return methods.filter( ( method ) => {
+		return method.methodType === type;
+	} );
 }

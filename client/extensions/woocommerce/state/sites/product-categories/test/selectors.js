@@ -34,7 +34,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
-						wcApi: {
+						sites: {
 							[ 123 ]: {
 								productCategories: categories123,
 							},

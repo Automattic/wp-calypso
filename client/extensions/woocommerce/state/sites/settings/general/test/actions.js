@@ -74,7 +74,7 @@ describe( 'actions', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {
-						wcApi: {
+						sites: {
 							[ siteId ]: {
 								settingsGeneral: LOADING
 							}

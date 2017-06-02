@@ -6,8 +6,8 @@
  * @return {Array} List of product categories
  */
 export function getProductCategories( state, siteId ) {
-	const wcApi = state.extensions.woocommerce.wcApi || {};
-	const siteData = wcApi[ siteId ] || {};
+	const sites = state.extensions.woocommerce.sites || {};
+	const siteData = sites[ siteId ] || {};
 
 	return siteData.productCategories || [];
 }

@@ -31,7 +31,7 @@ describe( 'reducer', () => {
 		const state = { [ siteId ]: {
 			paymentMethods: {},
 			productCategories: 'LOADING',
-			settingsGeneral: {},
+			settings: { general: {} },
 			shippingZones: {},
 			products: {},
 		} };
@@ -55,7 +55,7 @@ describe( 'reducer', () => {
 		const state = { [ siteId ]: {
 			paymentMethods: {},
 			productCategories: 'LOADING',
-			settingsGeneral: {},
+			settings: { general: {} },
 			shippingZones: {},
 			products: {},
 		} };
@@ -68,6 +68,6 @@ describe( 'reducer', () => {
 		const newState = reducer( state, action );
 		expect( newState[ siteId ] ).to.exist;
 		expect( newState[ siteId ].productCategories ).to.eql( [] );
-		expect( newState[ siteId ].settingsGeneral ).to.eql( {} );
+		expect( newState[ siteId ].settings ).to.eql( { general: {} } );
 	} );
 } );
