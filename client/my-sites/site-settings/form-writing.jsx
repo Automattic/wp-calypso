@@ -125,6 +125,10 @@ class SiteSettingsFormWriting extends Component {
 					)
 				}
 
+				{
+					this.renderSectionHeader( translate( 'Custom content types' ) )
+				}
+
 				<CustomContentTypes
 					handleAutosavingToggle={ handleAutosavingToggle }
 					onChangeField={ onChangeField }

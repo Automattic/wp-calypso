@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
@@ -160,24 +159,20 @@ class CustomContentTypes extends Component {
 	render() {
 		const { translate } = this.props;
 		return (
-			<div>
-				<SectionHeader label={ translate( 'Custom content types' ) } />
+			<Card className="custom-content-types site-settings">
+				<FormFieldset>
+					<div className="custom-content-types__info-link-container site-settings__info-link-container">
+						<InfoPopover position="left">
+							<ExternalLink href="https://support.wordpress.com/custom-post-types/" icon target="_blank">
+								{ translate( 'Learn more about Custom Content Types.' ) }
+							</ExternalLink>
+						</InfoPopover>
+					</div>
 
-				<Card className="custom-content-types__card site-settings">
-					<FormFieldset>
-						<div className="custom-content-types__info-link-container site-settings__info-link-container">
-							<InfoPopover position="left">
-								<ExternalLink href="https://support.wordpress.com/custom-post-types/" icon target="_blank">
-									{ translate( 'Learn more about Custom Content Types.' ) }
-								</ExternalLink>
-							</InfoPopover>
-						</div>
-
-						{ this.renderTestimonialSettings() }
-						{ this.renderPortfolioSettings() }
-					</FormFieldset>
-				</Card>
-			</div>
+					{ this.renderTestimonialSettings() }
+					{ this.renderPortfolioSettings() }
+				</FormFieldset>
+			</Card>
 		);
 	}
 }
