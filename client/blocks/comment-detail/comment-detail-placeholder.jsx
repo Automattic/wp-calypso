@@ -15,8 +15,6 @@ export const CommentDetailPlaceholder = () =>
 				<div className="comment-detail__author-avatar">
 					<span className="comment-detail__author-avatar-image" />
 				</div>
-				<strong />
-				<span />
 			</div>
 			<div className="comment-detail__comment-preview" />
 		</div>
