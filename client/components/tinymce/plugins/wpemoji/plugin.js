@@ -103,7 +103,7 @@ function wpemoji( editor ) {
 	// Convert Twemoji compatible pasted emoji replacement images into our format.
 	editor.on( 'PastePostProcess', function( event ) {
 		tinymce.each( editor.dom.$( 'img.emoji', event.node ), function( image ) {
-			if ( image.alt && window.twemoji.test( image.alt ) ) {
+			if ( image.alt && twemoji.test( image.alt ) ) {
 				setImgAttr( image );
 			}
 		} );
