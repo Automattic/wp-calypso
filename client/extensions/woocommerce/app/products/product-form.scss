@@ -207,18 +207,20 @@
 }
 
 .products__product-form-details-basic-name {
-	margin-bottom: 8px;
+	margin-bottom: 4px;
 }
 
 .products__product-form-details-basic-sku {
 	margin-top: 0;
-	margin-bottom: 4px;
+	margin-bottom: 12px;
+	font-size: 13px;
 
 	.form-label {
 		display: inline;
 		margin-right: 4px;
 		color: $gray-dark;
 		font-size: 13px;
+		line-height: 35px;
 	}
 
 	input {
@@ -226,8 +228,33 @@
 		font-size: 13px;
 	}
 
+	.form-click-to-edit-input__wrapper {
+		min-height: 35px;
+		display: inline-block;
+		transform: translateY(5px);
+
+		&.editing {
+			transform: none;
+		}
+	}
+
 	.form-click-to-edit-input__text {
 		color: $gray-text-min;
+		display: inline-block;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		max-width: 220px;
+	}
+
+	.form-text-input {
+		width: 220px;
+		margin-bottom: 5px;
+		padding: 4px 8px;
+	}
+
+	.button {
+		padding: 0;
 	}
 }
 

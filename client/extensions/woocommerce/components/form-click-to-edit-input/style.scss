@@ -2,13 +2,12 @@
 
 	.gridicon {
 		margin-left: 8px;
-		width: 16px;
-		height: 16px;
-	}
+		width: 13px;
+		height: 13px;
+		top: 0;
 
-	.gridicons-pencil {
-		top: -3px;
-		margin-top: 0;
+		&.gridicons-checkmark {
+			top: 5px;
+		}
 	}
-
 }
