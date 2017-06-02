@@ -33,7 +33,7 @@ const SiteSettingsExport = ( { isJetpack, site, siteSlug, translate } ) => {
 				actionURL={ site.options.admin_url + 'export.php' }
 				actionTarget="_blank"
 			/> }
-			{ ! isJetpack && <ExporterContainer /> }
+			{ isJetpack === false && <ExporterContainer /> }
 		</Main>
 	);
 };
