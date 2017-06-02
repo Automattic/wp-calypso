@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { isEqual, noop } from 'lodash';
+import { connect } from 'react-redux';
+import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import debugFactory from 'debug';
@@ -10,6 +11,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { getContactDetailsCache } from 'state/selectors';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -40,36 +43,27 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		countriesList: PropTypes.object.isRequired,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
-		onStateChanged: PropTypes.func, // Just until we can reduxify the contact details
-		countryCode: PropTypes.string,
-		isProbablyOrganization: PropTypes.bool,
 	}
 
 	static defaultProps = {
 		countriesList: { data: [] },
 		isVisible: true,
-		isProbablyOrganization: false,
-		values: {},
 		onSubmit: noop,
-		onStateChanged: noop,
 	}
 
-	componentWillMount() {
+	constructor( props ) {
+		super( props );
+
 		const defaults = {
-			registrantType: this.props.isProbablyOrganization
+			registrantType: this.props.contactDetails.organization
 				? 'organization' : 'individual',
-			countryOfBirth: this.props.countryCode || 'FR',
+			countryOfBirth: this.props.contactDetails.countryCode || 'FR',
 		};
 
-		const values = {
+		this.props.contactDetails.registrantExtraInfo = {
 			...defaults,
-			...this.props.values,
+			...this.props.contactDetails.registrantExtraInfo
 		};
-
-		// It's possible for the parent to pass in null and still have a form
-		// that the user is happy with, so we pass one state out
-		// immediatly to to make sure there's something valid in the parent
-		this.props.onStateChange( values );
 	}
 
 	handleDobChangeEvent = ( event ) => {
@@ -83,38 +77,39 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		const dateOfBirth = ( dobYears && dobMonths && dobDays ) &&
 			[ dobYears, dobMonths, dobDays ].join( '-' );
 
-		if ( dateOfBirth ) {
-			debug( 'Setting dateOfBirth to ' + dateOfBirth +
-				( moment( dateOfBirth, 'YYYY-MM-DD' ).isValid() ? '' : ' (invalid)' ) );
+		if ( ! dateOfBirth ) {
+			return;
 		}
 
-		this.props.onStateChange( {
-			...newState,
-			...( dateOfBirth ? { dateOfBirth } : {} )
-		} );
+		debug( 'Setting dateOfBirth to ' + dateOfBirth +
+			( moment( dateOfBirth, 'YYYY-MM-DD' ).isValid() ? '' : ' (invalid)' ) );
+
+		this.props.updateContactDetailsCache( {
+			registrantExtraInfo: {
+				...this.props.contactDetails.registrantExtraInfo,
+				dateOfBirth
+			} } );
 	}
 
 	newStateFromEvent( event ) {
 		return {
-			...this.props.values,
+			...this.props.contactDetails.registrantExtraInfo,
 			[ event.target.id ]: event.target.value,
 		};
 	}
 
 	handleChangeEvent = ( event ) => {
-		this.props.onStateChange( this.newStateFromEvent( event ) );
-	}
-
-	// We need a deep comparison to check inside props.values
-	shouldComponentUpdate( nextProps ) {
-		return ! isEqual( this.props, nextProps );
+		this.props.updateContactDetailsCache( {
+			registrantExtraInfo: this.newStateFromEvent( event )
+		} );
 	}
 
 	render() {
 		const translate = this.props.translate;
+		const registrantExtraInfo = this.props.contactDetails.registrantExtraInfo;
 		const {
 			registrantType
-		} = { ...emptyValues, ...this.props.values };
+		} = { ...emptyValues, ...registrantExtraInfo };
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -160,6 +155,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	renderPersonalFields() {
 		const translate = this.props.translate;
+		const registrantExtraInfo = this.props.contactDetails.registrantExtraInfo;
 		const screenReaderText = 'screen-reader-text';
 		const {
 			countryOfBirth,
@@ -168,7 +164,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 			dobYears,
 			placeOfBirth,
 			postalCodeOfBirth,
-		} = { ...emptyValues, ...this.props.values };
+		} = { ...emptyValues, ...registrantExtraInfo };
 
 		return (
 			<div>
@@ -275,11 +271,12 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	renderOrganizationFields() {
 		const translate = this.props.translate;
+		const registrantExtraInfo = this.props.contactDetails.registrantExtraInfo;
 		const {
 			registrantVatId,
 			sirenSiret,
 			trademarkNumber
-		} = { ...emptyValues, ...this.props.values };
+		} = { ...emptyValues, ...registrantExtraInfo };
 		return (
 			<div>
 				<FormFieldset>
@@ -349,4 +346,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	}
 }
 
-export default localize( RegistrantExtraInfoForm );
+export default connect(
+	state => ( { contactDetails: getContactDetailsCache( state ) } ),
+	{ updateContactDetailsCache }
+)( localize( RegistrantExtraInfoForm ) );

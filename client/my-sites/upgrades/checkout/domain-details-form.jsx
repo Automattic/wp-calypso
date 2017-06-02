@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -21,6 +22,8 @@ import {
 /**
  * Internal dependencies
  */
+import { getContactDetailsCache } from 'state/selectors';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
 import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/upgrades/components/form';
 import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
@@ -70,16 +73,17 @@ class DomainDetailsForm extends PureComponent {
 			isDialogVisible: false,
 			submissionCount: 0,
 			phoneCountryCode: 'US',
-			registrantExtraInfo: null,
 			steps,
 			currentStep: first( steps ),
 		};
 	}
 
+
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
-			loadFunction: wpcom.getDomainContactInformation.bind( wpcom ),
+			initialFields: this.props.contactDetails,
+			// loadFunction: this.loadFormState,
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
@@ -91,6 +95,16 @@ class DomainDetailsForm extends PureComponent {
 
 	componentDidMount() {
 		analytics.pageView.record( '/checkout/domain-contact-information', 'Checkout > Domain Contact Information' );
+	}
+
+	componentDidUpdate() {
+		// will this fire too often? more/better debounce needed?
+		// this.updateContactDetailsCache( this.getAllFieldValues() );
+	}
+
+	loadFormState = ( fn ) => {
+		// intersect fieldnames and details
+		fn( null, this.props.contactDetails );
 	}
 
 	sanitize = ( fieldValues, onComplete ) => {
@@ -186,13 +200,7 @@ class DomainDetailsForm extends PureComponent {
 	}
 
 	getAllFieldValues() {
-		const allFieldValues = Object.assign(
-			{},
-			formState.getAllFieldValues( this.state.form ),
-			this.state.registrantExtraInfo
-				? { registrantExtraInfo: this.state.registrantExtraInfo }
-				: {}
-		);
+		const allFieldValues = this.props.contactDetails;
 		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
 		return allFieldValues;
 	}
@@ -228,7 +236,7 @@ class DomainDetailsForm extends PureComponent {
 	}
 
 	needsFax() {
-		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && cartItems.hasTld( this.props.cart, 'nl' );
+		return this.props.contactDetails.countryCode === 'NL' && cartItems.hasTld( this.props.cart, 'nl' );
 	}
 
 	allDomainRegistrationsHavePrivacy() {
@@ -386,12 +394,8 @@ class DomainDetailsForm extends PureComponent {
 	}
 
 	renderExtraDetailsForm() {
-		return ( <ExtraInfoFrForm
-			isProbablyOrganization={ Boolean( formState.getFieldValue( this.state.form, 'organization' ) ) }
-			countryCode={ formState.getFieldValue( this.state.form, 'countryCode' ) }
-			values={ this.state.registrantExtraInfo }
-			countriesList={ countriesList }
-			onStateChange={ this.handleExtraChange } >
+		return (
+			<ExtraInfoFrForm countriesList={ countriesList } >
 				{ this.renderSubmitButton() }
 			</ExtraInfoFrForm>
 		);
@@ -423,6 +427,8 @@ class DomainDetailsForm extends PureComponent {
 				this.focusFirstError();
 				return;
 			}
+
+			//this.props.updateContactDetailsCache( this.getAllFieldValues() );
 
 			if ( this.hasAnotherStep() ) {
 				return this.switchToNextStep();
@@ -528,4 +534,7 @@ class DomainDetailsForm extends PureComponent {
 	}
 }
 
-export default localize( DomainDetailsForm );
+export default connect(
+	state => ( { contactDetails: getContactDetailsCache( state ) } ),
+	{ updateContactDetailsCache }
+)( localize( DomainDetailsForm ) );
