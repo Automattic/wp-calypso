@@ -116,21 +116,25 @@ class CustomContentTypes extends Component {
 			translate
 		} = this.props;
 		const fieldLabel = translate( 'Testimonials' );
-		const fieldDescription = translate(
-			'Add, organize, and display {{link}}testimonials{{/link}}. If your theme doesn’t support testimonials yet, ' +
-			'you can display them using the shortcode ( [testimonials] ).',
-			{
-				components: {
-					link: <a href="https://support.wordpress.com/testimonials/" />
-				}
+		const translateArgs = {
+			components: {
+				link: <a href="https://support.wordpress.com/testimonials/" />
 			}
+		};
+		const supportedDescription = translate(
+			'Your theme has built-in {{link}}testimonial{{/link}} support.',
+			translateArgs,
+		);
+		const notSupportedDescription = translate(
+			'Enable {{link}}testimonials{{/link}} and display them using the shortcode [testimonials].',
+			translateArgs,
 		);
 
 		if ( isTestimonialSupported ) {
-			return this.renderSupportedContentType( 'jetpack_testimonial', fieldLabel, fieldDescription );
+			return this.renderSupportedContentType( 'jetpack_testimonial', fieldLabel, supportedDescription );
 		}
 
-		return this.renderContentTypeSettings( 'jetpack_testimonial', fieldLabel, fieldDescription );
+		return this.renderContentTypeSettings( 'jetpack_testimonial', fieldLabel, notSupportedDescription );
 	}
 
 	renderPortfolioSettings() {
@@ -139,21 +143,25 @@ class CustomContentTypes extends Component {
 			translate
 		} = this.props;
 		const fieldLabel = translate( 'Portfolios' );
-		const fieldDescription = translate(
-			'Add, organize, and display {{link}}portfolios{{/link}}. If your theme doesn’t support portfolios yet, ' +
-			'you can display them using the shortcode ( [portfolios] ).',
-			{
-				components: {
-					link: <a href="https://support.wordpress.com/portfolios/" />
-				}
+		const translateArgs = {
+			components: {
+				link: <a href="https://support.wordpress.com/portfolios/" />
 			}
+		};
+		const supportedDescription = translate(
+			'Your theme has built-in {{link}}portfolio{{/link}} support.',
+			translateArgs,
+		);
+		const notSupportedDescription = translate(
+			'Enable {{link}}portfolios{{/link}} and display them using the shortcode [portfolios].',
+			translateArgs,
 		);
 
 		if ( isPortfolioSupported ) {
-			return this.renderSupportedContentType( 'jetpack_portfolio', fieldLabel, fieldDescription );
+			return this.renderSupportedContentType( 'jetpack_portfolio', fieldLabel, supportedDescription );
 		}
 
-		return this.renderContentTypeSettings( 'jetpack_portfolio', fieldLabel, fieldDescription );
+		return this.renderContentTypeSettings( 'jetpack_portfolio', fieldLabel, notSupportedDescription );
 	}
 
 	render() {
