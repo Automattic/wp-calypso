@@ -102,7 +102,7 @@ class SiteSettingsImport extends Component {
 					<h1>{ translate( 'Import' ) }</h1>
 				</HeaderCake>
 				{ isJetpack && <EmptyContent
-					illustration="/calypso/images/drake/drake-jetpack.svg"
+					illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 					title={ translate( 'Want to import into your site?' ) }
 					line={ translate( 'Visit your site\'s wp-admin for all your import and export needs.' ) }
 					action={ translate( 'Import into %(title)s', { args: { title } } ) }

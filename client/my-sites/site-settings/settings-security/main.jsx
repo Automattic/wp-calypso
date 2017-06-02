@@ -30,7 +30,7 @@ const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 				actionURL={ '/settings/general/' + site.slug }
 				title={ translate( 'No security configuration is required.' ) }
 				line={ translate( 'Security management is automatic for WordPress.com sites.' ) }
-				illustration="/calypso/images/drake/drake-jetpack.svg"
+				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 			/>
 		);
 	}

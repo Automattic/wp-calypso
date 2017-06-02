@@ -185,7 +185,7 @@ const PluginsMain = React.createClass( {
 		if ( selectedSite ) {
 			emptyContentData.actionURL = '/plugins/' + selectedSite.slug;
 			if ( this.props.selectedSiteIsJetpack ) {
-				emptyContentData.illustration = '/calypso/images/drake/drake-jetpack.svg';
+				emptyContentData.illustration = '/calypso/images/illustrations/illustration-jetpack.svg';
 				emptyContentData.title = this.translate( 'Plugins can\'t be updated on %(siteName)s.', {
 					textOnly: true,
 					args: { siteName: selectedSite.title }
