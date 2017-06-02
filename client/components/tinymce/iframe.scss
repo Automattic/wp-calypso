@@ -10,6 +10,11 @@ body {
 p {
 	margin: 0 0 24px 0;
 
+	.mce-content-body & {
+		/* To override lightgray/content.min.css */
+		line-height: inherit;
+	}
+
 	&:last-child {
 		margin-bottom: 0;
 	}
