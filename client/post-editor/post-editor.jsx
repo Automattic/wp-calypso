@@ -82,11 +82,10 @@ export const PostEditor = React.createClass( {
 	getInitialState() {
 		return {
 			...this.getPostEditState(),
+			confirmationSidebar: 'closed',
 			isSaving: false,
 			isPublishing: false,
 			notice: null,
-			showConfirmationSidebar: false,
-			showConfirmationSidebarOverlay: false,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
@@ -189,20 +188,10 @@ export const PostEditor = React.createClass( {
 		return this.props.setLayoutFocus( 'content' );
 	},
 
-	showConfirmationSidebar: function() {
-		this.setState( { showConfirmationSidebar: true } );
-	},
-
-	closeConfirmationSidebar: function() {
-		this.setState( { showConfirmationSidebar: false } );
-	},
-
-	showConfirmationSidebarOverlay: function() {
-		this.setState( { showConfirmationSidebarOverlay: true } );
-	},
-
-	closeConfirmationSidebarOverlay: function() {
-		this.setState( { showConfirmationSidebarOverlay: false } );
+	setConfirmationSidebar: function( state ) {
+		const allowedStates = [ 'closed', 'open', 'publishing' ];
+		const confirmationSidebar = allowedStates.indexOf( state ) > -1 ? state : 'closed';
+		this.setState( { confirmationSidebar } );
 	},
 
 	toggleSidebar: function() {
@@ -240,15 +229,13 @@ export const PostEditor = React.createClass( {
 			<div className={ classes }>
 				<QueryPreferences />
 				<EditorConfirmationSidebar
-					closeOverlay={ this.closeConfirmationSidebarOverlay }
-					closeSidebar={ this.closeConfirmationSidebar }
-					isOverlayActive={ this.state.showConfirmationSidebarOverlay }
-					isSidebarActive={ this.state.showConfirmationSidebar }
+					onPrivatePublish={ this.onPublish }
 					onPublish={ this.onPublish }
 					post={ this.state.post }
-					site={ site }
 					savedPost={ this.state.savedPost }
-					onPrivatePublish={ this.onPublish }
+					setState={ this.setConfirmationSidebar }
+					site={ site }
+					state={ this.state.confirmationSidebar }
 				/>
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
@@ -270,7 +257,6 @@ export const PostEditor = React.createClass( {
 						site={ site }
 						user={ this.props.user }
 						userUtils={ this.props.userUtils }
-						showConfirmationSidebar={ this.showConfirmationSidebar }
 						toggleSidebar={ this.toggleSidebar }
 						type={ this.props.type }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
@@ -679,14 +665,12 @@ export const PostEditor = React.createClass( {
 		};
 
 		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) && false === isConfirmed ) {
-			this.showConfirmationSidebarOverlay();
-			this.showConfirmationSidebar();
+			this.setConfirmationSidebar( 'open' );
 			return;
 		}
 
 		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
-			this.closeConfirmationSidebarOverlay();
-			this.closeConfirmationSidebar();
+			this.setConfirmationSidebar( 'closed' );
 		}
 
 		// determine if this is a private publish

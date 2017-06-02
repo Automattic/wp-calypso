@@ -20,24 +20,21 @@ import { getEditedPost } from 'state/posts/selectors';
 
 class EditorConfirmationSidebar extends React.Component {
 	static propTypes = {
-		closeOverlay: React.PropTypes.func,
-		closeSidebar: React.PropTypes.func,
-		isOverlayActive: React.PropTypes.bool,
-		isSidebarActive: React.PropTypes.bool,
+		onPrivatePublish: React.PropTypes.func,
 		onPublish: React.PropTypes.func,
 		post: React.PropTypes.object,
-		site: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
-		onPrivatePublish: React.PropTypes.func,
+		setState: React.PropTypes.func,
+		site: React.PropTypes.object,
+		state: React.PropTypes.string,
 	};
 
-	closeOverlayAndSidebar = () => {
-		this.props.closeSidebar();
-		this.props.closeOverlay();
+	closeOverlay = () => {
+		this.props.setState( 'closed' );
 	};
 
 	closeAndPublish = () => {
-		this.closeOverlayAndSidebar();
+		this.closeOverlay();
 		this.props.onPublish( true );
 	};
 
@@ -66,22 +63,25 @@ class EditorConfirmationSidebar extends React.Component {
 	}
 
 	render() {
+		const isSidebarActive = this.props.state === 'open';
+		const isOverlayActive = this.props.state !== 'closed';
+
 		return (
 			<RootChild>
 				<div className={ classnames( {
 					'editor-confirmation-sidebar': true,
-					'is-active': this.props.isOverlayActive || this.props.isSidebarActive,
+					'is-active': isOverlayActive,
 				} ) } >
 					<div className={ classnames( {
 						'editor-confirmation-sidebar__overlay': true,
-						'is-active': this.props.isOverlayActive,
-					} ) } onClick={ this.closeOverlayAndSidebar } />
+						'is-active': isOverlayActive,
+					} ) } onClick={ this.closeOverlay } />
 					<div className={ classnames( {
 						'editor-confirmation-sidebar__sidebar': true,
-						'is-active': this.props.isSidebarActive,
+						'is-active': isSidebarActive,
 					} ) }>
 						<div className="editor-confirmation-sidebar__ground-control">
-							<div className="editor-confirmation-sidebar__cancel" onClick={ this.closeOverlayAndSidebar }>
+							<div className="editor-confirmation-sidebar__cancel" onClick={ this.closeOverlay }>
 								{ this.props.translate( 'Cancel' ) }
 							</div>
 							<div className="editor-confirmation-sidebar__action">
