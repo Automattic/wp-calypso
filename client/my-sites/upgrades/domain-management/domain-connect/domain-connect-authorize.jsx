@@ -69,11 +69,11 @@ class DomainConnectAuthorize extends Component {
 			noticeType: null
 		} );
 
-		wpcom.applyDnsTemplate( domain, providerId, serviceId, params )
+		wpcom.applyDnsTemplateSyncFlow( domain, providerId, serviceId, params )
 			.then( () => {
 				this.setState( {
 					action: actionType.CLOSE,
-					noticeMessage: translate( 'Horray! Your new service is now all set up.' ),
+					noticeMessage: translate( 'Hurray! Your new service is now all set up.' ),
 					noticeType: noticeType.SUCCESS
 				} );
 			}, error => {
