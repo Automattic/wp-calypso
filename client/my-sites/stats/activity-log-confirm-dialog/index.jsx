@@ -20,15 +20,7 @@ class ActivityLogConfirmDialog extends Component {
 		siteName: 'YourAwesomeSite', // FIXME: real site name
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			showDialog: true,
-		};
-
-		this.onCloseDialog = this.onCloseDialog.bind( this );
-	}
+	state = { showDialog: true };
 
 	renderButtons() {
 		const { translate } = this.props;
@@ -44,9 +36,7 @@ class ActivityLogConfirmDialog extends Component {
 		);
 	}
 
-	onCloseDialog() {
-		this.setState( { showDialog: false } );
-	}
+	onCloseDialog = () => this.setState( { showDialog: false } );
 
 	render() {
 		const {
