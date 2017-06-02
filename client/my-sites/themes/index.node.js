@@ -35,7 +35,7 @@ export default function( router ) {
 			loggedOut,
 			makeLayout
 		);
-		router( '/themes/upload/*', makeLayout );
+		router( '/themes/upload*', makeLayout );
 		// Redirect legacy (Atlas-based Theme Showcase v4) routes
 		router( [
 			'/themes/:site?/search/:search',

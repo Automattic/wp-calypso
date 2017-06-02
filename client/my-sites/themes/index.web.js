@@ -41,6 +41,8 @@ export default function( router ) {
 				makeLayout
 			);
 		} else {
+			router( '/themes/upload*', '/themes' );
+
 			const loggedOutRoutes = [
 				'/themes/:tier(free|premium)?',
 				'/themes/:tier(free|premium)?/filter/:filter',
