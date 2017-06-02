@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import wp from 'lib/wp';
-import { setError } from '../../site/status/wc-api/actions';
+import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
@@ -66,4 +66,3 @@ function isValidProductCategory( category ) {
 		category.slug && ( 'string' === typeof category.slug )
 	);
 }
-

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import request from '../../request';
-import { setError } from '../../../site/status/wc-api/actions';
+import { setError } from '../../status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL,
 	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL_SUCCESS,

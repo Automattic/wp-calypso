@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import wp from 'lib/wp';
-import { setError } from '../../site/status/wc-api/actions';
+import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_CREATE_PRODUCT,
 	WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
@@ -89,4 +89,3 @@ function isValidProduct( product ) {
 		product.type && ( 'string' === typeof product.type )
 	);
 }
-

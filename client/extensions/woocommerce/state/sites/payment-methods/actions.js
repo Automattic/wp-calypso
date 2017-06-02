@@ -4,7 +4,7 @@
 import getPaymentMethodDetails from '../../../lib/get-payment-method-details';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
-import { setError } from '../../site/status/wc-api/actions';
+import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS,
 	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS_SUCCESS,
