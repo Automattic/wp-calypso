@@ -122,7 +122,7 @@ $compact-header-height: 35;
 	}
 
 	.gridicon {
-		margin-right: #{ ( $side-margin / 4 ) }px;
+		margin-right: #{ ( $side-margin / 2 ) }px;
 		vertical-align: text-bottom;
 
 		.is-compact & {
@@ -227,7 +227,7 @@ $compact-header-height: 35;
 	}
 
 	.gridicon {
-		margin-right: #{ ( $side-margin / 4 ) }px;
+		margin-right: #{ ( $side-margin / 2 ) }px;
 		vertical-align: text-bottom;
 	}
 }
