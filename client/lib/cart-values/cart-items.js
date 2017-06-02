@@ -410,7 +410,11 @@ function themeItem( themeSlug, source ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainRegistration( properties ) {
-	return assign( domainItem( properties.productSlug, properties.domain, properties.source ), { is_domain_registration: true } );
+	return assign( domainItem( properties.productSlug, properties.domain, properties.source ),
+		{
+			is_domain_registration: true,
+			...( properties.extra ? { extra: properties.extra } : {} ),
+		} );
 }
 
 /**
