@@ -19,17 +19,14 @@ import { getFeed } from 'state/reader/feeds/selectors';
 const getReaderFollowsWithSitesAndFeeds = createSelector(
 	state => {
 		const items = filter( values( state.reader.follows.items ), item => ! item.error );
-		items.forEach( item => {
-			if ( item.blog_ID ) {
-				item.site = getSite( state, item.blog_ID );
-			}
-			if ( item.feed_ID ) {
-				item.feed = getFeed( state, item.feed_ID );
-			}
-		} );
-		return items;
+		// this is important. don't mutate the original items.
+		return items.map( item => ( {
+			...item,
+			site: getSite( state, item.blog_ID ),
+			feed: getFeed( state, item.feed_ID ),
+		} ) );
 	},
-	state => [ state.reader.follows.items, state.reader.feeds.items, state.reader.sites.items ],
+	state => [ state.reader.follows.items, state.reader.feeds.items, state.reader.sites.items ]
 );
 
 export default getReaderFollowsWithSitesAndFeeds;

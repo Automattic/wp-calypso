@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ describe( 'getReaderFollowsWithSitesAndFeeds()', () => {
 	const feedTwo = {
 		feed_ID: 2,
 	};
-	const state = {
+	const state = deepFreeze( {
 		reader: {
 			follows: {
 				items: {
@@ -57,7 +58,7 @@ describe( 'getReaderFollowsWithSitesAndFeeds()', () => {
 				},
 			},
 		},
-	};
+	} );
 
 	it( 'should not return follows with an error set and should fill in feed and site when available', () => {
 		const follows = getReaderFollowsWithSitesAndFeeds( state );
@@ -66,11 +67,13 @@ describe( 'getReaderFollowsWithSitesAndFeeds()', () => {
 				URL: 'http://discover.wordpress.com',
 				blog_ID: 1,
 				site: siteOne,
+				feed: undefined,
 			},
 			{
 				URL: 'http://example.com',
 				feed_ID: 1,
 				feed: feedOne,
+				site: undefined,
 			},
 			{
 				URL: 'http://fancy.example.com',
