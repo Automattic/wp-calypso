@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import some from 'lodash/some';
 import get from 'lodash/get';
-import { findIndex, includes } from 'lodash';
+import { find, includes } from 'lodash';
 import { isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
@@ -428,16 +428,12 @@ class PluginMeta extends Component {
 		analytics.ga.recordEvent( 'Plugins', 'Clicked Update All Sites Plugin', 'Plugin Name', this.props.pluginSlug );
 	}
 
-	getExtensionPath( plugin ) {
-		const pluginSlug = get( plugin, 'slug' );
+	getExtensionSettingsPath( plugin ) {
+		const pluginSlug = get( plugin, 'slug', '' );
 		const sections = sectionsModule.get();
-		const index = findIndex( sections, { name: pluginSlug } );
+		const section = find( sections, ( value => value.name === pluginSlug ) );
 
-		if ( ( index === -1 ) || ! includes( sections[ index ].envId, config( 'env_id' ) ) ) {
-			return '';
-		}
-
-		return get( sections[ index ], 'paths', [] )[ 0 ];
+		return get( section, 'settings_path' );
 	}
 
 	render() {
@@ -453,7 +449,7 @@ class PluginMeta extends Component {
 			actionLinks = this.getDefaultActionLinks( plugin );
 		}
 
-		const path = this.getExtensionPath( plugin );
+		const path = this.getExtensionSettingsPath( plugin );
 
 		return (
 			<div className="plugin-meta">
