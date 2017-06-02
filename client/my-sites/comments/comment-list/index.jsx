@@ -184,12 +184,9 @@ export class CommentList extends Component {
 					status,
 					toggleBulkEdit: this.toggleBulkEdit,
 				} } />
-				{ null === filteredComments &&
-					<CommentDetailPlaceholder />
-				}
 
 				<ReactCSSTransitionGroup
-					transitionEnterTimeout={ 150 }
+					transitionEnterTimeout={ 300 }
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-detail__transition"
 				>
@@ -207,13 +204,26 @@ export class CommentList extends Component {
 					) }
 				</ReactCSSTransitionGroup>
 
-				{ 0 === size( filteredComments ) &&
-					<EmptyContent
-						illustration="/calypso/images/comments/illustration_comments_gray.svg"
-						illustrationWidth={ 150 }
-						{ ...this.getEmptyMessage() }
-					/>
-				}
+				<ReactCSSTransitionGroup
+					transitionEnterTimeout={ 300 }
+					transitionLeaveTimeout={ 150 }
+					transitionName="comment-list__transition"
+				>
+					{ null === filteredComments &&
+						<CommentDetailPlaceholder
+							key="comment-detail-placeholder"
+						/>
+					}
+
+					{ 0 === size( filteredComments ) &&
+						<EmptyContent
+							illustration="/calypso/images/comments/illustration_comments_gray.svg"
+							illustrationWidth={ 150 }
+							key="comment-list-empty"
+							{ ...this.getEmptyMessage() }
+						/>
+					}
+				</ReactCSSTransitionGroup>
 			</div>
 		);
 	}
