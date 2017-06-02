@@ -21,7 +21,6 @@ import debugFactory from 'debug';
 import Dispatcher from 'dispatcher';
 import Emitter from 'lib/mixins/emitter';
 import FeedPostStore from 'lib/feed-post-store';
-import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import * as FeedStreamActions from './actions';
 import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
@@ -383,7 +382,8 @@ export default class FeedStream {
 					// we don't have the information to render this x-post
 					return false;
 				}
-				const isFollowing = FeedSubscriptionStore.getIsFollowingBySiteUrl( xPostMetadata.siteURL );
+				// const isFollowing = FeedSubscriptionStore.getIsFollowingBySiteUrl( xPostMetadata.siteURL );
+				const isFollowing = false;
 				// x-post sites are tagged with `+subdomain`
 				const siteName = `+${ url.parse( post.site_URL ).hostname.split( '.' )[ 0 ] }`;
 				// keep track of where we cross-posted to, so we can add

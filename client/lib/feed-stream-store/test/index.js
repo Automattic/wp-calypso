@@ -11,7 +11,7 @@ import set from 'lodash/set';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import useMockery from 'test/helpers/use-mockery';
 
-let PostListStore, FeedPostStore, FeedSubscriptionStore;
+let PostListStore, FeedPostStore;
 
 describe( 'FeedPostList', function() {
 	useFilesystemMocks( __dirname );
@@ -23,7 +23,6 @@ describe( 'FeedPostList', function() {
 	before( function() {
 		PostListStore = require( '../feed-stream' );
 		FeedPostStore = require( 'lib/feed-post-store' );
-		FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' );
 	} );
 
 	it( 'should require an id, a fetcher, a keyMaker', function() {
@@ -210,7 +209,6 @@ describe( 'FeedPostList', function() {
 		beforeEach( function() {
 			fetcherStub = sinon.stub();
 			sinon.stub( FeedPostStore, 'get' );
-			isFollowingStub = sinon.stub( FeedSubscriptionStore, 'getIsFollowingBySiteUrl' );
 			store = new PostListStore( {
 				id: 'test',
 				fetcher: fetcherStub,
@@ -284,7 +282,6 @@ describe( 'FeedPostList', function() {
 		} );
 		afterEach( function() {
 			FeedPostStore.get.restore();
-			FeedSubscriptionStore.getIsFollowingBySiteUrl.restore();
 		} );
 
 		it( 'rolls up x-posts and matching x-comments', function() {
