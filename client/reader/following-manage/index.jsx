@@ -22,7 +22,6 @@ import {
 	getReaderRecommendedSitesPagingOffset,
 	getBlockedSites,
 	getReaderAliasedFollowFeedUrl,
-	isFollowing,
 } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
@@ -183,7 +182,6 @@ class FollowingManage extends Component {
 			blockedSites,
 			followsCount,
 			readerAliasedFollowFeedUrl,
-			isFollowingUrl,
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
 		const hasFollows = followsCount > 0;
@@ -228,18 +226,6 @@ class FollowingManage extends Component {
 
 					{ showFollowByUrl &&
 						<div className="following-manage__url-follow">
-							{ isFollowByUrlWithNoSearchResults &&
-								! isFollowingUrl &&
-								<span className="following-manage__url-follow-no-search-results-message">
-									{ translate(
-										'Sorry, no sites that we could find match {{italic}}%(site1)s{{/italic}}. ' +
-											'Try to follow {{italic}}%(site2)s{{/italic}} anyway?',
-										{
-											components: { italic: <i /> },
-											args: { site1: sitesQuery, site2: sitesQuery },
-										}
-									) }
-								</span> }
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
@@ -290,8 +276,6 @@ export default connect(
 		),
 		blockedSites: getBlockedSites( state ),
 		readerAliasedFollowFeedUrl: sitesQuery && getReaderAliasedFollowFeedUrl( state, sitesQuery ),
-		isFollowingUrl: sitesQuery &&
-			isFollowing( state, { feedUrl: getReaderAliasedFollowFeedUrl( state, sitesQuery ) } ),
 		followsCount: getReaderFollowsCount( state ),
 	} ),
 	{ requestFeedSearch }
