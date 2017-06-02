@@ -215,12 +215,21 @@ class SiteIndicator extends Component {
 		const { translate } = this.props;
 		return (
 			<span>
-				{ translate( 'Jetpack %(version)s is required', { args: { version: config( 'jetpack_min_version' ) } } ) }.
-				<a
-					onClick={ this.makeAnalyticsRecordEventHandler( 'Clicked Update Jetpack Now Link' ) }
-					href={ this.props.site.options.admin_url + 'plugins.php?plugin_status=upgrade' }
-					>{ translate( 'Update now' ) }
-				</a>.
+				{
+					translate( 'Jetpack %(version)s is required. {{link}}Update now{{/link}}', {
+						args: {
+							version: config( 'jetpack_min_version' )
+						},
+						components: {
+							link: (
+								<a
+									onClick={ this.makeAnalyticsRecordEventHandler( 'Clicked Update Jetpack Now Link' ) }
+									href={ this.props.site.options.admin_url + 'plugins.php?plugin_status=upgrade' }
+								/>
+							)
+						}
+					} )
+				}
 			</span> );
 	}
 
