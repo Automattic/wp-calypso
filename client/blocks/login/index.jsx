@@ -74,7 +74,18 @@ class Login extends Component {
 			two_factor_enabled: this.props.twoFactorEnabled
 		} );
 
-		window.location.href = this.props.redirectLocation || window.location.origin;
+		const { redirectLocation } = this.props;
+
+		let newHref;
+
+		if ( redirectLocation && redirectLocation.match( /^[\/-a-z0-9.]+$/i ) ) {
+			// only redirect to paths on the current domain
+			newHref = redirectLocation;
+		} else {
+			newHref = window.location.origin;
+		}
+
+		window.location.href = newHref;
 	};
 
 	renderError() {
