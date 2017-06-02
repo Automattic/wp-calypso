@@ -251,8 +251,12 @@ export const handlers = {
 	[ GRAVATAR_RECEIVE_IMAGE_FAILURE ]: ( dispatch, action ) => {
 		dispatch( errorNotice( action.errorMessage ) );
 	},
-	[ GRAVATAR_UPLOAD_REQUEST_FAILURE ]: dispatchError( translate( 'New Gravatar was not saved.' ) ),
-	[ GRAVATAR_UPLOAD_REQUEST_SUCCESS ]: dispatchSuccess( translate( 'New Gravatar uploaded successfully!' ) ),
+	[ GRAVATAR_UPLOAD_REQUEST_FAILURE ]: dispatchError(
+		translate( 'Hmm, your new Gravatar was not saved. Please try uploading again.' )
+	),
+	[ GRAVATAR_UPLOAD_REQUEST_SUCCESS ]: dispatchSuccess(
+		translate( 'You successfully uploaded a new Gravatar — looking sharp!' )
+	),
 	[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: onJetpackModuleActivationActionMessage,
 	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: onJetpackModuleActivationActionMessage,
 	[ JETPACK_MODULE_ACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,
