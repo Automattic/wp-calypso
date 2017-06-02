@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { get, includes, map, difference } from 'lodash';
+import { get, includes, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
 import Gridicon from 'gridicons';
@@ -147,10 +147,9 @@ class PostShare extends Component {
 			connections,
 		} = this.props;
 		if ( this.state.scheduledDate ) {
-			const servicesToPublish = difference(
-				connections.map( connection => connection.keyring_connection_ID ),
-				this.state.skipped
-			);
+			const servicesToPublish = connections
+				.filter( connection => this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 )
+				.map( connection => connection.ID );
 			this.props.schedulePostShareAction(
 				siteId,
 				postId,
