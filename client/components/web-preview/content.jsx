@@ -9,6 +9,7 @@ import noop from 'lodash/noop';
 import page from 'page';
 import shallowCompare from 'react-addons-shallow-compare';
 import { v4 as uuid } from 'uuid';
+import addQueryArgs from 'lib/route/add-query-args';
 
 /**
  * Internal dependencies
@@ -23,7 +24,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
 
-export class WebPreview extends Component {
+export class WebPreviewContent extends Component {
 	constructor( props ) {
 		super( props );
 
@@ -39,13 +40,6 @@ export class WebPreview extends Component {
 		};
 
 		this.setIframeInstance = ref => this.iframe = ref;
-
-		this.selectSEO = this.setDeviceViewport.bind( this, 'seo' );
-		this.setDeviceViewport = this.setDeviceViewport.bind( this );
-		this.setIframeMarkup = this.setIframeMarkup.bind( this );
-		this.setIframeUrl = this.setIframeUrl.bind( this );
-		this.setLoaded = this.setLoaded.bind( this );
-		this.handleMessage = this.handleMessage.bind( this );
 	}
 
 	componentWillMount() {
@@ -62,10 +56,10 @@ export class WebPreview extends Component {
 		if ( this.props.previewMarkup ) {
 			this.setIframeMarkup( this.props.previewMarkup );
 		}
-		// if ( this.props.showPreview ) {
-		// 	document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
-		// }
-		// this.props.setPreviewShowing( this.props.showPreview );
+
+		if ( typeof this.props.onDeviceUpdate === 'function' ) {
+			this.props.onDeviceUpdate( this.state.device );
+		}
 	}
 
 	componentWillUnmount() {
@@ -90,20 +84,49 @@ export class WebPreview extends Component {
 			debug( 'removing iframe contents' );
 			this.setIframeMarkup( '' );
 		}
+		// Focus preview when showing modal
+		if ( this.props.showPreview && ! prevProps.showPreview && this.state.loaded ) {
+			this.focusIfNeeded();
+		}
 	}
 
-	handleMessage( e ) {
+	handleMessage = ( e ) => {
+		let data;
 		try {
-			const data = JSON.parse( e.data );
-			if ( data.channel !== 'preview-' + this.previewId ) {
+			data = JSON.parse( e.data );
+		} catch ( err ) {
+			return;
+		}
+
+		if ( ! data || data.channel !== 'preview-' + this.previewId ) {
+			return;
+		}
+		debug( 'message from iframe', data );
+
+		switch ( data.type ) {
+			case 'link':
+				page( data.payload.replace( /^https:\/\/wordpress\.com\//i, '/' ) );
+				if ( typeof this.props.onClose === 'function' ) {
+					this.props.onClose();
+				}
 				return;
-			}
-			switch ( data.type ) {
-				case 'link':
-					page( data.payload.replace( 'https://wordpress.com', '' ) );
-					return;
-			}
-		} catch ( err ) {}
+			case 'close':
+				if ( typeof this.props.onClose === 'function' ) {
+					this.props.onClose();
+				}
+				return;
+			case 'partially-loaded':
+				this.setLoaded();
+				return;
+		}
+	}
+
+	focusIfNeeded = () => {
+		// focus content unless we are running in closed modal or on empty page
+		if ( this.iframe.contentWindow && this.state.iframeUrl !== 'about:blank' ) {
+			debug( 'focusing iframe contents' );
+			this.iframe.contentWindow.focus();
+		}
 	}
 
 	setIframeMarkup( content ) {
@@ -117,8 +140,8 @@ export class WebPreview extends Component {
 		this.iframe.contentDocument.close();
 	}
 
-	setIframeUrl( iframeUrl ) {
-		if ( ! this.iframe ) {
+	setIframeUrl = ( iframeUrl ) => {
+		if ( ! this.iframe || ( ! this.props.showPreview && this.props.isModalWindow ) ) {
 			return;
 		}
 
@@ -129,8 +152,10 @@ export class WebPreview extends Component {
 
 		debug( 'setIframeUrl', iframeUrl );
 		try {
-			// TODO: proper qs manipulation
-			this.iframe.contentWindow.location.replace( iframeUrl + '&calypso_token=' + this.previewId );
+			const newUrl = iframeUrl === 'about:blank'
+				? iframeUrl
+				: addQueryArgs( { calypso_token: this.previewId }, iframeUrl );
+			this.iframe.contentWindow.location.replace( newUrl );
 			this.setState( {
 				loaded: false,
 				iframeUrl: iframeUrl,
@@ -138,13 +163,25 @@ export class WebPreview extends Component {
 		} catch ( e ) {}
 	}
 
-	setDeviceViewport( device = 'computer' ) {
+	setDeviceViewport = ( device = 'computer' ) => {
 		this.setState( { device } );
 
 		this.props.recordTracksEvent( 'calypso_web_preview_select_viewport_device', { device } );
+
+		if ( typeof this.props.onDeviceUpdate === 'function' ) {
+			this.props.onDeviceUpdate( device );
+		}
 	}
 
-	setLoaded() {
+	selectSEO = () => {
+		this.setDeviceViewport( 'seo' );
+	}
+
+	setLoaded = () => {
+		if ( this.state.loaded ) {
+			debug( 'already loaded' );
+			return;
+		}
 		if ( ! this.state.iframeUrl && ! this.props.previewMarkup ) {
 			debug( 'preview loaded, but nothing to show' );
 			return;
@@ -156,6 +193,8 @@ export class WebPreview extends Component {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
 		this.setState( { loaded: true } );
+
+		this.focusIfNeeded();
 	}
 
 	render() {
@@ -182,7 +221,7 @@ export class WebPreview extends Component {
 					selectSeoPreview={ this.selectSEO }
 				/>
 				<div className="web-preview__placeholder">
-					{ ! this.state.loaded && 'seo' !== this.state.device &&
+					{ this.props.showPreview && ! this.state.loaded && 'seo' !== this.state.device &&
 						<div>
 							<Spinner />
 							{ this.props.loadingMessage &&
@@ -192,14 +231,20 @@ export class WebPreview extends Component {
 							}
 						</div>
 					}
-					<iframe
-						ref={ this.setIframeInstance }
-						className="web-preview__frame"
+					<div
+						className={ classNames( 'web-preview__frame-wrapper', {
+							'is-resizable': ! this.props.isModalWindow
+						} ) }
 						style={ { display: ( 'seo' === this.state.device ? 'none' : 'inherit' ) } }
-						src="about:blank"
-						onLoad={ this.setLoaded }
-						title={ this.props.iframeTitle || translate( 'Preview' ) }
-					/>
+					>
+						<iframe
+							ref={ this.setIframeInstance }
+							className="web-preview__frame"
+							src="about:blank"
+							onLoad={ this.setLoaded }
+							title={ this.props.iframeTitle || translate( 'Preview' ) }
+						/>
+					</div>
 					{ 'seo' === this.state.device &&
 						<SeoPreviewPane />
 					}
@@ -209,7 +254,7 @@ export class WebPreview extends Component {
 	}
 }
 
-WebPreview.propTypes = {
+WebPreviewContent.propTypes = {
 	// Display the preview
 	showPreview: PropTypes.bool,
 	// Show external link button (only if there is a previewUrl)
@@ -241,9 +286,13 @@ WebPreview.propTypes = {
 	iframeTitle: PropTypes.string,
 	// Makes room for a sidebar if desired
 	hasSidebar: React.PropTypes.bool,
+	// Called after user switches device
+	onDeviceUpdate: React.PropTypes.func,
+	// Flag that differentiates modal window from inline embeds
+	isModalWindow: React.PropTypes.bool
 };
 
-WebPreview.defaultProps = {
+WebPreviewContent.defaultProps = {
 	showExternal: true,
 	showClose: true,
 	showSEO: true,
@@ -252,7 +301,9 @@ WebPreview.defaultProps = {
 	previewMarkup: null,
 	onLoad: noop,
 	onClose: noop,
+	onDeviceUpdate: noop,
 	hasSidebar: false,
+	isModalWindow: false,
 };
 
-export default connect( null, { recordTracksEvent } )( localize( WebPreview ) );
+export default connect( null, { recordTracksEvent } )( localize( WebPreviewContent ) );
