@@ -155,7 +155,7 @@ export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 				twoStepNonce: get( error, 'response.body.data.two_step_nonce' ),
-				twoFactorAuthType,
+				nonceType: twoFactorAuthType,
 			} );
 
 			dispatch( {
