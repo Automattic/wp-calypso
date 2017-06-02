@@ -52,15 +52,13 @@ export class CommentList extends Component {
 
 		const defaultLine = translate( 'Your queue is clear.' );
 
-		const [ title, line ] = get( {
+		return get( {
 			unapproved: [ translate( 'No new comments yet.' ), defaultLine ],
 			approved: [ translate( 'No approved comments.' ), defaultLine ],
 			spam: [ translate( 'No spam comments.' ), defaultLine ],
 			trash: [ translate( 'No deleted comments.' ), defaultLine ],
 			all: [ translate( 'No comments yet.' ), defaultLine ],
 		}, status, [ '', '' ] );
-
-		return { title, line };
 	}
 
 	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
@@ -160,6 +158,8 @@ export class CommentList extends Component {
 			? filter( comments, comment => 'approved' === comment.status || 'unapproved' === comment.status )
 			: filter( comments, comment => status === comment.status );
 
+		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
+
 		return (
 			<div className="comment-list">
 				<CommentNavigation { ...{
@@ -204,7 +204,8 @@ export class CommentList extends Component {
 							illustration="/calypso/images/comments/illustration_comments_gray.svg"
 							illustrationWidth={ 150 }
 							key="comment-list-empty"
-							{ ...this.getEmptyMessage() }
+							line={ emptyMessageLine }
+							title={ emptyMessageTitle }
 						/>
 					}
 				</ReactCSSTransitionGroup>
