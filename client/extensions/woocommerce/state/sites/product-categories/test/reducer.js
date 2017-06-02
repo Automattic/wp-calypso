@@ -6,88 +6,68 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer from '../../reducer';
-import wcReducer from '../../../reducer';
+import reducer from 'woocommerce/state/sites/reducer';
+import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
+	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
 } from 'woocommerce/state/action-types';
-import { fetchProductCategoriesSuccess } from '../actions';
 
-describe( 'fetchProductCategories', () => {
-	it( 'should only create a site node', () => {
+describe( 'reducer', () => {
+	it( 'should mark the product category tree as "loading"', () => {
 		const siteId = 123;
-		const state = {};
+		const action = {
+			type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
+			siteId,
+		};
 
-		const newSiteData = reducer( state, { type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES, payload: { siteId } } );
-		expect( newSiteData[ siteId ] ).to.eql( {} );
+		const newState = reducer( {}, action );
+		expect( newState[ siteId ] ).to.exist;
+		expect( newState[ siteId ].productCategories ).to.eql( LOADING );
 	} );
-} );
 
-describe( 'fetchProductCategoriesSuccess', () => {
 	it( 'should store data from the action', () => {
 		const siteId = 123;
-		const state = {};
-
+		const state = { [ siteId ]: {
+			paymentMethods: {},
+			productCategories: 'LOADING',
+			settingsGeneral: {},
+			shippingZones: {},
+			products: {},
+		} };
 		const categories = [
 			{ id: 1, name: 'cat1', slug: 'cat-1' },
 			{ id: 2, name: 'cat2', slug: 'cat-2' },
 		];
-		const newState = reducer( state, fetchProductCategoriesSuccess( siteId, categories ) );
+		const action = {
+			type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
+			data: categories,
+			siteId,
+		};
+
+		const newState = reducer( state, action );
 		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].productCategories ).to.equal( categories );
+		expect( newState[ siteId ].productCategories ).to.eql( categories );
 	} );
 
-	it( 'should not allow invalid category objects', () => {
+	it( 'should not affect other state trees', () => {
 		const siteId = 123;
-		const state = {};
+		const state = { [ siteId ]: {
+			paymentMethods: {},
+			productCategories: 'LOADING',
+			settingsGeneral: {},
+			shippingZones: {},
+			products: {},
+		} };
+		const action = {
+			type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
+			data: [],
+			siteId,
+		};
 
-		const missingId = [
-			{ id: 12, name: 'ok', slug: 'ok' },
-			{ name: 'badId', slug: 'bad-id' },
-		];
-
-		const missingName = [
-			{ id: 12, name: 'ok', slug: 'ok' },
-			{ id: 13, slug: 'missing-name' },
-		];
-
-		const missingSlug = [
-			{ id: 12, name: 'ok', slug: 'ok' },
-			{ id: 13, name: 'Missing Slug' },
-		];
-
-		const badId = [
-			{ id: 12, name: 'ok', slug: 'ok' },
-			{ id: 'bad', name: 'Bad Id', slug: 'bad-id' },
-		];
-
-		const badName = [
-			{ id: 12, name: 'ok', slug: 'ok' },
-			{ id: 13, name: 12.3, slug: 'bad-name' },
-		];
-
-		const badSlug = [
-			{ id: 12, name: 'ok', slug: 'ok' },
-			{ id: 13, name: 'Bad Slug', slug: 15 },
-		];
-
-		let newState = wcReducer( state, fetchProductCategoriesSuccess( siteId, missingId ) );
-		expect( newState.site[ siteId ].status.wcApi.error.data.message ).to.equal( 'Invalid Categories Array' );
-
-		newState = wcReducer( state, fetchProductCategoriesSuccess( siteId, missingName ) );
-		expect( newState.site[ siteId ].status.wcApi.error.data.message ).to.equal( 'Invalid Categories Array' );
-
-		newState = wcReducer( state, fetchProductCategoriesSuccess( siteId, missingSlug ) );
-		expect( newState.site[ siteId ].status.wcApi.error.data.message ).to.equal( 'Invalid Categories Array' );
-
-		newState = wcReducer( state, fetchProductCategoriesSuccess( siteId, badId ) );
-		expect( newState.site[ siteId ].status.wcApi.error.data.message ).to.equal( 'Invalid Categories Array' );
-
-		newState = wcReducer( state, fetchProductCategoriesSuccess( siteId, badName ) );
-		expect( newState.site[ siteId ].status.wcApi.error.data.message ).to.equal( 'Invalid Categories Array' );
-
-		newState = wcReducer( state, fetchProductCategoriesSuccess( siteId, badSlug ) );
-		expect( newState.site[ siteId ].status.wcApi.error.data.message ).to.equal( 'Invalid Categories Array' );
+		const newState = reducer( state, action );
+		expect( newState[ siteId ] ).to.exist;
+		expect( newState[ siteId ].productCategories ).to.eql( [] );
+		expect( newState[ siteId ].settingsGeneral ).to.eql( {} );
 	} );
 } );
-

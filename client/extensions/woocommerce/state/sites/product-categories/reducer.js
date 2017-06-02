@@ -1,24 +1,19 @@
 /**
  * Internal dependencies
  */
+import { createReducer } from 'state/utils';
+import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
 	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export default {
-	[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES ]: fetchProductCategories,
-	[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS ]: fetchProductCategoriesSuccess,
-};
+export default createReducer( {}, {
+	[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES ]: () => {
+		return LOADING;
+	},
 
-function fetchProductCategories( siteData ) {
-	// TODO: Update stats in the tree to show that this request is pending.
-	return siteData;
-}
-
-function fetchProductCategoriesSuccess( siteData, action ) {
-	const { data } = action.payload;
-
-	return { ...siteData, productCategories: data };
-}
-
+	[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS ]: ( state, { data } ) => {
+		return data;
+	},
+} );

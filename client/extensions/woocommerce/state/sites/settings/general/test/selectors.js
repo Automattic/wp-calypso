@@ -7,110 +7,80 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { areSettingsGeneralLoaded, areSettingsGeneralLoading } from '../selectors';
-import { LOADING } from '../reducer';
+import { LOADING } from 'woocommerce/state/constants';
+
+const preInitializedState = {
+	extensions: {
+		woocommerce: {},
+	},
+};
+const loadingState = {
+	extensions: {
+		woocommerce: {
+			wcApi: {
+				123: {
+					settingsGeneral: LOADING,
+				},
+			},
+		},
+	},
+};
+const loadedState = {
+	extensions: {
+		woocommerce: {
+			wcApi: {
+				123: {
+					settingsGeneral: [],
+				},
+			},
+		},
+	},
+};
+
+const loadingStateWithUi = { ...loadingState, ui: { selectedSiteId: 123 } };
 
 describe( 'selectors', () => {
-	describe( 'settings general loading state', () => {
+	describe( '#areSettingsGeneralLoaded', () => {
 		it( 'when woocommerce state is not available.', () => {
-			const state = {
-				extensions: {
-					woocommerce: {},
-				},
-			};
-
-			expect( areSettingsGeneralLoaded( state, 123 ) ).to.be.false;
-			expect( areSettingsGeneralLoading( state, 123 ) ).to.be.false;
-		} );
-
-		it( 'when settings are loaded.', () => {
-			const state = {
-				extensions: {
-					woocommerce: {
-						wcApi: {
-							123: {
-								settingsGeneral: [],
-							},
-						},
-					},
-				},
-			};
-
-			expect( areSettingsGeneralLoaded( state, 123 ) ).to.be.true;
-			expect( areSettingsGeneralLoading( state, 123 ) ).to.be.false;
+			expect( areSettingsGeneralLoaded( preInitializedState, 123 ) ).to.be.false;
 		} );
 
 		it( 'when settings are currently being fetched.', () => {
-			const state = {
-				extensions: {
-					woocommerce: {
-						wcApi: {
-							123: {
-								settingsGeneral: LOADING,
-							},
-						},
-					},
-				},
-			};
+			expect( areSettingsGeneralLoaded( loadingState, 123 ) ).to.be.false;
+		} );
 
-			expect( areSettingsGeneralLoaded( state, 123 ) ).to.be.false;
-			expect( areSettingsGeneralLoading( state, 123 ) ).to.be.true;
+		it( 'when settings are loaded.', () => {
+			expect( areSettingsGeneralLoaded( loadedState, 123 ) ).to.be.true;
 		} );
 
 		it( 'when settings are loaded only for a different site.', () => {
-			const state = {
-				extensions: {
-					woocommerce: {
-						wcApi: {
-							123: {
-								settingsGeneral: [],
-							},
-						},
-					},
-				},
-			};
-
-			expect( areSettingsGeneralLoaded( state, 456 ) ).to.be.false;
-			expect( areSettingsGeneralLoading( state, 456 ) ).to.be.false;
+			expect( areSettingsGeneralLoaded( loadedState, 456 ) ).to.be.false;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided when state is loading.', () => {
-			const stateLoading = {
-				extensions: {
-					woocommerce: {
-						wcApi: {
-							123: {
-								settingsGeneral: LOADING,
-							},
-						},
-					},
-				},
-				ui: {
-					selectedSiteId: 123,
-				},
-			};
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( areSettingsGeneralLoaded( loadingStateWithUi ) ).to.be.false;
+		} );
+	} );
 
-			expect( areSettingsGeneralLoaded( stateLoading ) ).to.be.false;
-			expect( areSettingsGeneralLoading( stateLoading ) ).to.be.true;
+	describe( '#areSettingsGeneralLoading', () => {
+		it( 'when woocommerce state is not available.', () => {
+			expect( areSettingsGeneralLoading( preInitializedState, 123 ) ).to.be.false;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided when state is loaded.', () => {
-			const stateLoaded = {
-				extensions: {
-					woocommerce: {
-						wcApi: {
-							123: {
-								settingsGeneral: [],
-							},
-						},
-					},
-				},
-				ui: {
-					selectedSiteId: 123,
-				},
-			};
+		it( 'when settings are currently being fetched.', () => {
+			expect( areSettingsGeneralLoading( loadingState, 123 ) ).to.be.true;
+		} );
 
-			expect( areSettingsGeneralLoaded( stateLoaded ) ).to.be.true;
-			expect( areSettingsGeneralLoading( stateLoaded ) ).to.be.false;
+		it( 'when settings are loaded.', () => {
+			expect( areSettingsGeneralLoading( loadedState, 123 ) ).to.be.false;
+		} );
+
+		it( 'when settings are loaded only for a different site.', () => {
+			expect( areSettingsGeneralLoading( loadedState, 456 ) ).to.be.false;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( areSettingsGeneralLoading( loadingStateWithUi ) ).to.be.true;
 		} );
 	} );
 } );

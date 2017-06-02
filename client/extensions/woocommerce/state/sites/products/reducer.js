@@ -1,24 +1,25 @@
 /**
  * Internal dependencies
  */
+import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_API_CREATE_PRODUCT,
 	WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export default {
+export default createReducer( {}, {
 	[ WOOCOMMERCE_API_CREATE_PRODUCT ]: createProduct,
 	[ WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS ]: createProductSuccess,
-};
+} );
 
-function createProduct( siteData ) {
+function createProduct( state ) {
 	// TODO: Update state to show pending status.
-	return siteData;
+	return state;
 }
 
-function createProductSuccess( siteData, action ) {
-	const { product } = action.payload;
-	const products = siteData.products || [];
+function createProductSuccess( state, action ) {
+	const { product } = action;
+	const products = state.products || [];
 
 	let found = false;
 	const newProducts = products.map( ( p ) => {
@@ -33,6 +34,5 @@ function createProductSuccess( siteData, action ) {
 		newProducts.push( product );
 	}
 
-	return siteData;
+	return state;
 }
-

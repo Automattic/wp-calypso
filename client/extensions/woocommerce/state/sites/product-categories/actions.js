@@ -12,7 +12,7 @@ export function fetchProductCategories( siteId ) {
 	return ( dispatch ) => {
 		const getAction = {
 			type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
-			payload: { siteId },
+			siteId,
 		};
 
 		dispatch( getAction );
@@ -35,7 +35,7 @@ export function fetchProductCategoriesSuccess( siteId, data ) {
 	if ( ! isValidCategoriesArray( data ) ) {
 		const originalAction = {
 			type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
-			payload: { siteId }
+			siteId,
 		};
 
 		return setError( siteId, originalAction, { message: 'Invalid Categories Array', data } );
@@ -43,10 +43,8 @@ export function fetchProductCategoriesSuccess( siteId, data ) {
 
 	return {
 		type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
-		payload: {
-			siteId,
-			data,
-		}
+		siteId,
+		data,
 	};
 }
 

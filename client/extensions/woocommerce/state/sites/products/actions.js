@@ -21,7 +21,8 @@ export function createProduct( siteId, product, successAction = null, failureAct
 	return ( dispatch ) => {
 		const createAction = {
 			type: WOOCOMMERCE_API_CREATE_PRODUCT,
-			payload: { siteId, product },
+			siteId,
+			product,
 		};
 
 		dispatch( createAction );
@@ -64,7 +65,8 @@ export function createProductSuccess( siteId, product ) {
 	if ( ! isValidProduct( product ) ) {
 		const originalAction = {
 			type: WOOCOMMERCE_API_CREATE_PRODUCT,
-			payload: { siteId, product },
+			siteId,
+			product,
 		};
 
 		return setError( siteId, originalAction, {
@@ -75,10 +77,8 @@ export function createProductSuccess( siteId, product ) {
 
 	return {
 		type: WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
-		payload: {
-			siteId,
-			product,
-		}
+		siteId,
+		product,
 	};
 }
 

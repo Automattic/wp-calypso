@@ -17,9 +17,9 @@ import { editProduct, editProductAttribute } from 'woocommerce/state/ui/products
 import { getCurrentlyEditingProduct } from 'woocommerce/state/ui/products/selectors';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
-import { fetchProductCategories } from 'woocommerce/state/wc-api/product-categories/actions';
-import { getProductCategories } from 'woocommerce/state/wc-api/product-categories/selectors';
-import { createProduct } from 'woocommerce/state/wc-api/products/actions';
+import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
+import { getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
+import { createProduct } from 'woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
 

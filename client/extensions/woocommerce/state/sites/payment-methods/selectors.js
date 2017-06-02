@@ -7,7 +7,7 @@ import { get, isArray } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { LOADING } from './reducer';
+import { LOADING } from 'woocommerce/state/constants';
 
 const getRawPaymentMethods = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'wcApi', siteId, 'paymentMethods' ] );

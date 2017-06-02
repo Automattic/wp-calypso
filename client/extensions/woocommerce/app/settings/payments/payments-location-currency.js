@@ -15,8 +15,8 @@ import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormSelect from 'components/forms/form-select';
 
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPaymentCurrencySettings } from 'woocommerce/state/wc-api/settings/general/selectors';
-import { fetchSettingsGeneral } from 'woocommerce/state/wc-api/settings/general/actions';
+import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 
 class SettingsPaymentsLocationCurrency extends Component {
 	static propTypes = {

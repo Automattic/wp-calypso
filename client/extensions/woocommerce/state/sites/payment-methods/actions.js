@@ -20,10 +20,8 @@ export const fetchPaymentMethodsSuccess = ( siteId, data ) => {
 	} );
 	return {
 		type: WOOCOMMERCE_API_FETCH_PAYMENT_METHODS_SUCCESS,
-		payload: {
-			siteId,
-			data: paymentMethods,
-		},
+		siteId,
+		data: paymentMethods,
 	};
 };
 
@@ -38,7 +36,7 @@ export const fetchPaymentMethods = ( siteId ) => ( dispatch, getState ) => {
 
 	const getAction = {
 		type: WOOCOMMERCE_API_FETCH_PAYMENT_METHODS,
-		payload: { siteId },
+		siteId,
 	};
 
 	dispatch( getAction );
