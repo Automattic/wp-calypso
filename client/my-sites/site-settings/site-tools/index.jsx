@@ -97,6 +97,22 @@ class SiteTools extends Component {
 						</div>
 					</CompactCard>
 				}
+				<CompactCard
+					href={ importUrl }
+					className="site-tools__link">
+					<div className="site-tools__content">
+						<p className="site-tools__section-title">{ importTitle }</p>
+						<p className="site-tools__section-desc">{ importText }</p>
+					</div>
+				</CompactCard>
+				<CompactCard
+					href={ exportUrl }
+					className="site-tools__link">
+					<div className="site-tools__content">
+						<p className="site-tools__section-title">{ exportTitle }</p>
+						<p className="site-tools__section-desc">{ exportText }</p>
+					</div>
+				</CompactCard>
 				{ showThemeSetup &&
 					<CompactCard
 						href={ themeSetupLink }
@@ -130,22 +146,6 @@ class SiteTools extends Component {
 						</div>
 					</CompactCard>
 				}
-				<CompactCard
-					href={ importUrl }
-					className="site-tools__link">
-					<div className="site-tools__content">
-						<p className="site-tools__section-title">{ importTitle }</p>
-						<p className="site-tools__section-desc">{ importText }</p>
-					</div>
-				</CompactCard>
-				<CompactCard
-					href={ exportUrl }
-					className="site-tools__link">
-					<div className="site-tools__content">
-						<p className="site-tools__section-title">{ exportTitle }</p>
-						<p className="site-tools__section-desc">{ exportText }</p>
-					</div>
-				</CompactCard>
 				<DeleteSiteWarningDialog
 					isVisible={ this.state.showDialog }
 					onClose={ this.closeDialog } />
