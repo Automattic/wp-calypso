@@ -42,6 +42,7 @@ class ActivityLog extends Component {
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+		this.props.dispatch( { type: 'ACTIVITY_LOG_FETCH', siteId: this.props.siteId } );
 	}
 
 	logs = () => [
