@@ -1,35 +1,35 @@
 /**
  * External dependencies
  */
-// import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
+import { once } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import WebPreviewContent from 'components/web-preview/content';
 
-let initialLoad = true;
+const ensureRoutingOnFrameMessage = once( () => {
+	window.addEventListener( 'message', ( event ) => {
+		try {
+			const data = JSON.parse( event.data );
+			if ( data.channel !== 'preview-asdf123' ) {
+				return;
+			}
+
+			switch ( data.type ) {
+				case 'link':
+					page( data.payload.replace( 'https://wordpress.com', '' ) );
+					return;
+			}
+		} catch ( err ) {}
+	} );
+} );
 
 export default {
 	preview: function( context, next ) {
-		if ( initialLoad ) {
-			initialLoad = false;
-			window.addEventListener( 'message', ( e ) => {
-				try {
-					const data = JSON.parse( e.data );
-					if ( data.channel === 'preview-asdf123' ) {
-						switch ( data.type ) {
-							case 'link':
-								page( data.payload.replace( 'https://wordpress.com', '' ) );
-								return;
-						}
-					}
-				} catch ( err ) {}
-			} );
-		}
-
+		ensureRoutingOnFrameMessage();
 		context.primary = (
 			<div style={ { height: '100%' } }>
 				<WebPreviewContent
