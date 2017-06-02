@@ -202,7 +202,6 @@ describe( 'FeedPostList', function() {
 	describe( 'Filter followed x-posts', function() {
 		var fetcherStub,
 			store,
-			isFollowingStub,
 			posts,
 			filteredPosts,
 			xPostedTo;
@@ -285,7 +284,6 @@ describe( 'FeedPostList', function() {
 		} );
 
 		it( 'rolls up x-posts and matching x-comments', function() {
-			isFollowingStub.returns( false );
 			filteredPosts = store.filterFollowedXPosts( posts );
 			// in other words any +mentions get rolled up from the original post
 			// the two +mentions from comment https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts#comment-1234
@@ -294,7 +292,6 @@ describe( 'FeedPostList', function() {
 		} );
 
 		it( 'when following origin site, filters followed x-posts, but leaves comment notices', function() {
-			isFollowingStub.returns( true );
 			filteredPosts = store.filterFollowedXPosts( posts );
 			expect( filteredPosts.length ).to.equal( 2 );
 			expect( filteredPosts[ 0 ].meta.data.post.site_URL ).to.equal( 'http://foo.bar.com' );
@@ -302,7 +299,6 @@ describe( 'FeedPostList', function() {
 		} );
 
 		it( 'updates sites x-posted to', function() {
-			isFollowingStub.returns( false );
 			filteredPosts = store.filterFollowedXPosts( posts );
 			xPostedTo = store.getSitesCrossPostedTo( 'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts' );
 			expect( xPostedTo.length ).to.equal( 5 );

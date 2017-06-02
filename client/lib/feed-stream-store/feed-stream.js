@@ -10,6 +10,7 @@ import {
 	map,
 	noop,
 	defer,
+	find,
 } from 'lodash';
 import moment from 'moment';
 import url from 'url';
@@ -382,8 +383,8 @@ export default class FeedStream {
 					// we don't have the information to render this x-post
 					return false;
 				}
-				// const isFollowing = FeedSubscriptionStore.getIsFollowingBySiteUrl( xPostMetadata.siteURL );
-				const isFollowing = false;
+				// TODO: @blowery / @bluefuton -- how can we solve this? Does this solution address the issue
+				const isFollowing = !! find( posts, p => p.site_URL === xPostMetadata.siteURL );
 				// x-post sites are tagged with `+subdomain`
 				const siteName = `+${ url.parse( post.site_URL ).hostname.split( '.' )[ 0 ] }`;
 				// keep track of where we cross-posted to, so we can add
