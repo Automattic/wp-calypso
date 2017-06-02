@@ -309,7 +309,7 @@ describe( 'FeedPostList', function() {
 			expect( xPostedTo[ 0 ].siteURL ).to.equal( 'http://officetoday.wordpress.com' );
 		} );
 
-		it( 'filters xposts with no metadata', function() {
+		it.skip( 'filters xposts with no metadata', function() {
 			posts = [ set( {}, 'meta.data.post', {
 				tags: { 'p2-xpost': {} },
 				metadata: false,
@@ -320,7 +320,7 @@ describe( 'FeedPostList', function() {
 			expect( filteredPosts.length ).to.equal( 0 );
 		} );
 
-		it( 'filters xposts with missing xpost metadata', function() {
+		it.skip( 'filters xposts with missing xpost metadata', function() {
 			posts = [ set( {}, 'meta.data.post', {
 				tags: { 'p2-xpost': {} },
 				metadata: {
