@@ -17,7 +17,7 @@ const SiteSettingsExport = ( { isJetpack, site, translate } ) => {
 	if ( isJetpack ) {
 		return (
 			<EmptyContent
-				illustration="/calypso/images/drake/drake-jetpack.svg"
+				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 				title={ translate( 'Want to export your site?' ) }
 				line={ translate( 'Visit your site\'s wp-admin for all your import and export needs.' ) }
 				action={ translate( 'Export %(siteTitle)s', { args: { siteTitle: site.title } } ) }
