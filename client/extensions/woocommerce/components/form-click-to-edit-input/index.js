@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { noop } from 'lodash';
 
@@ -82,8 +83,12 @@ class FormClickToEditInput extends Component {
 
 	renderText() {
 		const { value, placeholder, disabled } = this.props;
+		const classes = classNames( 'form-click-to-edit-input__wrapper', {
+			'is-empty': ! ( value ),
+			'has-value': ( value ),
+		} );
 		return (
-			<span className="form-click-to-edit-input__wrapper">
+			<span className={ classes }>
 				<span className="form-click-to-edit-input__text">
 					{ value || placeholder }
 				</span>
