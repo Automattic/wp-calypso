@@ -1,9 +1,8 @@
 /**
  * External Dependencies
  */
-import { filter, findIndex, findLastIndex, forEach, get, map, noop, defer, find } from 'lodash';
+import { filter, findIndex, findLastIndex, forEach, get, map, noop, defer } from 'lodash';
 import moment from 'moment';
-import url from 'url';
 import debugFactory from 'debug';
 
 /**
@@ -15,10 +14,8 @@ import FeedPostStore from 'lib/feed-post-store';
 import * as FeedStreamActions from './actions';
 import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
-import XPostHelper from 'reader/xpost-helper';
 import { setLastStoreId } from 'reader/controller-helper';
 import * as stats from 'reader/stats';
-import { prepareComparableUrl } from 'state/reader/follows/utils';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
@@ -372,45 +369,41 @@ export default class FeedStream {
 	 * @returns {array} posts - a filtered list of posts
 	 */
 	filterFollowedXPosts( posts ) {
-		return posts.filter( postWrapper => {
-			const post = this.getPostFromMetadata( postWrapper );
-			//note that the post hasn't been normalized yet.
-			if ( post && post.tags && post.tags[ 'p2-xpost' ] ) {
-				const xPostMetadata = XPostHelper.getXPostMetadata( post );
-				if ( ! xPostMetadata.postURL ) {
-					// we don't have the information to render this x-post
-					return false;
-				}
-				// TODO: @blowery / @bluefuton -- how can we solve this? Does this solution address the issue
-				const isFollowing = !! find(
-					posts,
-					p =>
-						prepareComparableUrl( this.getPostFromMetadata( p ).site_URL ) ===
-						prepareComparableUrl( xPostMetadata.siteURL ),
-				);
-				// x-post sites are tagged with `+subdomain`
-				const siteName = `+${ url.parse( post.site_URL ).hostname.split( '.' )[ 0 ] }`;
-				// keep track of where we cross-posted to, so we can add
-				// this info to the original post.
-				const xPostedBy = {
-					siteURL: post.site_URL,
-					siteName: siteName,
-				};
-				this.addXPost( xPostMetadata.postURL, xPostedBy );
-				// also keep track of origin comment urls, so we can roll up
-				// multiple x-posts from a single origin comment.
-				if ( xPostMetadata.commentURL ) {
-					this.addXPost( xPostMetadata.commentURL, xPostedBy );
-					return this.xPostedByURL[ xPostMetadata.commentURL ].length === 1;
-				}
-				if ( ! isFollowing ) {
-					//only leave the topmost as a notice
-					return this.xPostedByURL[ xPostMetadata.postURL ].length === 1;
-				}
-				return false;
-			}
-			return true;
-		} );
+		// 		// TODO: this is broken for now -- reduxifying streams should fix this.
+		return posts;
+		// return posts.filter( postWrapper => {
+		// 	const post = this.getPostFromMetadata( postWrapper );
+		// 	//note that the post hasn't been normalized yet.
+		// 	if ( post && post.tags && post.tags[ 'p2-xpost' ] ) {
+		// 		const xPostMetadata = XPostHelper.getXPostMetadata( post );
+		// 		if ( ! xPostMetadata.postURL ) {
+		// 			// we don't have the information to render this x-post
+		// 			return false;
+		// 		}
+		// 		const isFollowing = FeedSubscriptionStore.getIsFollowingBySiteUrl( xPostMetadata.siteURL );
+		// 		// x-post sites are tagged with `+subdomain`
+		// 		const siteName = `+${ url.parse( post.site_URL ).hostname.split( '.' )[ 0 ] }`;
+		// 		// keep track of where we cross-posted to, so we can add
+		// 		// this info to the original post.
+		// 		const xPostedBy = {
+		// 			siteURL: post.site_URL,
+		// 			siteName: siteName,
+		// 		};
+		// 		this.addXPost( xPostMetadata.postURL, xPostedBy );
+		// 		// also keep track of origin comment urls, so we can roll up
+		// 		// multiple x-posts from a single origin comment.
+		// 		if ( xPostMetadata.commentURL ) {
+		// 			this.addXPost( xPostMetadata.commentURL, xPostedBy );
+		// 			return this.xPostedByURL[ xPostMetadata.commentURL ].length === 1;
+		// 		}
+		// 		if ( ! isFollowing ) {
+		// 			//only leave the topmost as a notice
+		// 			return this.xPostedByURL[ xPostMetadata.postURL ].length === 1;
+		// 		}
+		// 		return false;
+		// 	}
+		// 	return true;
+		// } );
 	}
 
 	filterNewPosts( posts ) {
