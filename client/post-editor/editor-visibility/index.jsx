@@ -238,7 +238,7 @@ const EditorVisibility = React.createClass( {
 		this.setState( {
 			showPopover: false
 		} );
-		setTimeout( () => this.props.onPrivatePublish(), 0 );
+		setTimeout( () => this.props.onPrivatePublish( true ), 0 );
 	},
 
 	onSetToPrivate() {
