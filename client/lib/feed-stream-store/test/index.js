@@ -276,7 +276,10 @@ describe( 'FeedPostList', function() {
 					metadata: false,
 					site_name: 'Example',
 					site_URL: 'http://example.wordpress.com'
-				} )
+				} ),
+				set( {}, 'meta.data.post', {
+					site_URL: 'https://restapiusertests.wordpress.com/'
+				} ),
 			];
 		} );
 		afterEach( function() {
@@ -293,7 +296,7 @@ describe( 'FeedPostList', function() {
 
 		it( 'when following origin site, filters followed x-posts, but leaves comment notices', function() {
 			filteredPosts = store.filterFollowedXPosts( posts );
-			expect( filteredPosts.length ).to.equal( 2 );
+			expect( filteredPosts.length ).to.equal( 3 );
 			expect( filteredPosts[ 0 ].meta.data.post.site_URL ).to.equal( 'http://foo.bar.com' );
 			expect( filteredPosts[ 1 ].meta.data.post.site_URL ).to.equal( 'http://dailypost.wordpress.com' );
 		} );
