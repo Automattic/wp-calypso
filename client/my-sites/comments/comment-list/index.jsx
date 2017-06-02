@@ -50,33 +50,17 @@ export class CommentList extends Component {
 	getEmptyMessage = () => {
 		const { status, translate } = this.props;
 
-		switch ( status ) {
-			case 'unapproved':
-				return {
-					title: translate( 'No new comments yet.' ),
-					line: translate( 'Your queue is clear.' ),
-				};
-			case 'approved':
-				return {
-					title: translate( 'No approved comments.' ),
-					line: translate( 'Your queue is clear.' ),
-				};
-			case 'spam':
-				return {
-					title: translate( 'No spam comments.' ),
-					line: translate( 'Your queue is clear.' ),
-				};
-			case 'trash':
-				return {
-					title: translate( 'No deleted comments.' ),
-					line: translate( 'Your queue is clear.' ),
-				};
-			case 'all':
-				return {
-					title: translate( 'No comments yet.' ),
-					line: translate( 'Your queue is clear.' ),
-				};
-		}
+		const defaultLine = translate( 'Your queue is clear.' );
+
+		const [ title, line ] = get( {
+			unapproved: [ translate( 'No new comments yet.' ), defaultLine ],
+			approved: [ translate( 'No approved comments.' ), defaultLine ],
+			spam: [ translate( 'No spam comments.' ), defaultLine ],
+			trash: [ translate( 'No deleted comments.' ), defaultLine ],
+			all: [ translate( 'No comments yet.' ), defaultLine ],
+		}, status, [ '', '' ] );
+
+		return { title, line };
 	}
 
 	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
