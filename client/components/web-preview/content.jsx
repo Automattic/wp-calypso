@@ -6,7 +6,9 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import noop from 'lodash/noop';
+import page from 'page';
 import shallowCompare from 'react-addons-shallow-compare';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -25,6 +27,8 @@ export class WebPreview extends Component {
 	constructor( props ) {
 		super( props );
 
+		this.previewId = uuid();
+
 		this._hasTouch = false;
 		this._isMobile = false;
 
@@ -41,6 +45,7 @@ export class WebPreview extends Component {
 		this.setIframeMarkup = this.setIframeMarkup.bind( this );
 		this.setIframeUrl = this.setIframeUrl.bind( this );
 		this.setLoaded = this.setLoaded.bind( this );
+		this.handleMessage = this.handleMessage.bind( this );
 	}
 
 	componentWillMount() {
@@ -50,6 +55,7 @@ export class WebPreview extends Component {
 	}
 
 	componentDidMount() {
+		window.addEventListener( 'message', this.handleMessage );
 		if ( this.props.previewUrl ) {
 			this.setIframeUrl( this.props.previewUrl );
 		}
@@ -60,6 +66,10 @@ export class WebPreview extends Component {
 		// 	document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		// }
 		// this.props.setPreviewShowing( this.props.showPreview );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'message', this.handleMessage );
 	}
 
 	shouldComponentUpdate( nextProps, nextState ) {
@@ -80,6 +90,20 @@ export class WebPreview extends Component {
 			debug( 'removing iframe contents' );
 			this.setIframeMarkup( '' );
 		}
+	}
+
+	handleMessage( e ) {
+		try {
+			const data = JSON.parse( e.data );
+			if ( data.channel !== 'preview-' + this.previewId ) {
+				return;
+			}
+			switch ( data.type ) {
+				case 'link':
+					page( data.payload.replace( 'https://wordpress.com', '' ) );
+					return;
+			}
+		} catch ( err ) {}
 	}
 
 	setIframeMarkup( content ) {
@@ -105,7 +129,8 @@ export class WebPreview extends Component {
 
 		debug( 'setIframeUrl', iframeUrl );
 		try {
-			this.iframe.contentWindow.location.replace( iframeUrl );
+			// TODO: proper qs manipulation
+			this.iframe.contentWindow.location.replace( iframeUrl + '&calypso_token=' + this.previewId );
 			this.setState( {
 				loaded: false,
 				iframeUrl: iframeUrl,
