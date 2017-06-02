@@ -23,7 +23,7 @@ const SelectDropdownDemo = React.createClass( {
 			childSelected: 'Published',
 			selectedCount: 10,
 			compactButtons: false,
-			selectedIcon: null
+			selectedIcon: <Gridicon icon="align-image-left" size={ 18 } />
 		};
 	},
 
@@ -133,33 +133,32 @@ const SelectDropdownDemo = React.createClass( {
 					className="select-dropdown-example__fixed-width"
 					compact={ this.state.compactButtons }
 					onSelect={ this.onDropdownSelect }
-					selectedText="Published"
-					selectedCount={ 10 }
-					selectedIcon={ <Gridicon icon="align-image-left" size={ 18 } /> }
+					selectedText={ this.state.childSelected }
+					selectedIcon={ this.state.selectedIcon }
 				>
 
 					<DropdownLabel><strong>Statuses</strong></DropdownLabel>
 
 					<DropdownItem
-						count={ 10 }
 						selected={ this.state.childSelected === 'Published' }
 						icon={ <Gridicon icon="align-image-left" size={ 18 } /> }
+						onClick={ this.selectItem.bind( this, 'Published', null, <Gridicon icon="align-image-left" size={ 18 } /> ) }
 					>
 						Published
 					</DropdownItem>
 
 					<DropdownItem
-						count={ 4 }
 						selected={ this.state.childSelected === 'Scheduled' }
 						icon={ <Gridicon icon="calendar" size={ 18 } /> }
+						onClick={ this.selectItem.bind( this, 'Scheduled', null, <Gridicon icon="calendar" size={ 18 } /> ) }
 					>
 						Scheduled
 					</DropdownItem>
 
 					<DropdownItem
-						count={ 3343 }
 						selected={ this.state.childSelected === 'Drafts' }
 						icon={ <Gridicon icon="create" size={ 18 } /> }
+						onClick={ this.selectItem.bind( this, 'Drafts', null, <Gridicon icon="create" size={ 18 } /> ) }
 					>
 						Drafts
 					</DropdownItem>
@@ -170,6 +169,7 @@ const SelectDropdownDemo = React.createClass( {
 						count={ 3 }
 						selected={ this.state.childSelected === 'Trashed' }
 						icon={ <Gridicon icon="trash" size={ 18 } /> }
+						onClick={ this.selectItem.bind( this, 'Trashed', null, <Gridicon icon="trash" size={ 18 } /> ) }
 					>
 						Trashed
 					</DropdownItem>
@@ -179,12 +179,13 @@ const SelectDropdownDemo = React.createClass( {
 		);
 	},
 
-	selectItem: function( childSelected, count, event ) {
+	selectItem: function( childSelected, count, icon, event ) {
 		event.preventDefault();
 
 		this.setState( {
 			childSelected: childSelected,
-			selectedCount: count
+			selectedCount: count,
+			selectedIcon: icon
 		} );
 
 		console.log( 'Select Dropdown Item (selected):', childSelected );
