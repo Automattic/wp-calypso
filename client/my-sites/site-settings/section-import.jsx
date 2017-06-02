@@ -18,7 +18,9 @@ import MediumImporter from 'my-sites/importer/importer-medium';
 import { fetchState } from 'lib/importer/actions';
 import { appStates, WORDPRESS, MEDIUM } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import Main from 'components/main';
+import HeaderCake from 'components/header-cake';
 
 class SiteSettingsImport extends Component {
 	static propTypes = {
@@ -73,7 +75,7 @@ class SiteSettingsImport extends Component {
 	}
 
 	render() {
-		const { site, translate } = this.props;
+		const { site, siteSlug, translate } = this.props;
 		if ( ! site ) {
 			return null;
 		}
@@ -94,22 +96,20 @@ class SiteSettingsImport extends Component {
 			}
 		);
 
-		if ( isJetpack ) {
-			return (
-				<EmptyContent
+		return (
+			<Main>
+				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
+					<h1>{ translate( 'Import' ) }</h1>
+				</HeaderCake>
+				{ isJetpack && <EmptyContent
 					illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 					title={ translate( 'Want to import into your site?' ) }
 					line={ translate( 'Visit your site\'s wp-admin for all your import and export needs.' ) }
 					action={ translate( 'Import into %(title)s', { args: { title } } ) }
 					actionURL={ adminUrl + 'import.php' }
 					actionTarget="_blank"
-				/>
-			);
-		}
-
-		return (
-			<div className="section-import">
-				<EmailVerificationGate>
+				/> }
+				{ ! isJetpack && <EmailVerificationGate>
 					<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
 					<CompactCard>
 						<header>
@@ -130,8 +130,8 @@ class SiteSettingsImport extends Component {
 					<CompactCard href={ adminUrl + 'import.php' } target="_blank" rel="noopener noreferrer">
 						{ translate( 'Other importers' ) }
 					</CompactCard>
-				</EmailVerificationGate>
-			</div>
+				</EmailVerificationGate> }
+			</Main>
 		);
 	}
 }
@@ -139,5 +139,6 @@ class SiteSettingsImport extends Component {
 export default connect(
 	( state ) => ( {
 		site: getSelectedSite( state ),
+		siteSlug: getSelectedSiteSlug( state ),
 	} )
 )( localize( SiteSettingsImport ) );

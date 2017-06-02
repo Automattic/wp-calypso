@@ -68,14 +68,6 @@ class TwoFactorActions extends Component {
 						</a>
 					</p>
 				) }
-
-				{ isPushSupported && twoFactorAuthType !== 'push' && (
-					<p>
-						<a href={ login( { isNative: true, twoFactorAuthType: 'push' } ) }>
-							{ translate( 'The WordPress mobile app' ) }
-						</a>
-					</p>
-				) }
 			</Card>
 		);
 	}

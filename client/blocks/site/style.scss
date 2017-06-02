@@ -11,6 +11,8 @@
 	position: relative;
 
 	&.is-loading {
+		pointer-events: none;
+
 		.site-icon {
 			animation: pulse-light 0.8s ease-in-out infinite;
 		}

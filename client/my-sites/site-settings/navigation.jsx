@@ -29,28 +29,8 @@ export class SiteSettingsNavigation extends Component {
 			discussion: translate( 'Discussion', { context: 'settings screen' } ),
 			traffic: translate( 'Traffic', { context: 'settings screen' } ),
 			security: translate( 'Security', { context: 'settings screen' } ),
-			'import': translate( 'Import', { context: 'settings screen' } ),
-			'export': translate( 'Export', { context: 'settings screen' } ),
 		};
 	}
-
-	getImportPath = () => {
-		const { site } = this.props,
-			path = '/settings/import';
-
-		if ( site.jetpack ) {
-			return `${ site.options.admin_url }import.php`;
-		}
-
-		return [ path, site.slug ].join( '/' );
-	};
-
-	getExportPath = () => {
-		const { site } = this.props;
-		return site.jetpack
-			? `${ site.options.admin_url }export.php`
-			: `/settings/export/${ site.slug }`;
-	};
 
 	render() {
 		const { section, site } = this.props;
@@ -104,23 +84,6 @@ export class SiteSettingsNavigation extends Component {
 							selected={ section === 'security' } >
 								{ strings.security }
 						</NavItem>
-					}
-
-					<NavItem
-						path={ this.getImportPath() }
-						selected={ section === 'import' }
-						isExternalLink={ !! site.jetpack } >
-							{ strings.import }
-					</NavItem>
-
-					{
-						config.isEnabled( 'manage/export' ) &&
-							<NavItem
-								path={ this.getExportPath() }
-								selected={ section === 'export' }
-								isExternalLink={ !! site.jetpack } >
-									{ strings.export }
-							</NavItem>
 					}
 				</NavTabs>
 			</SectionNav>

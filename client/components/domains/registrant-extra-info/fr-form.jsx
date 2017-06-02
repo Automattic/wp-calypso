@@ -248,7 +248,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						<FormTextInput
 							id="placeOfBirth"
 							value={ placeOfBirth }
-							placeholder={ translate( 'City of birth' ) }
+							placeholder={ translate( 'City of Birth' ) }
 							onChange={ this.handleChangeEvent } />
 					</FormFieldset>
 				) }

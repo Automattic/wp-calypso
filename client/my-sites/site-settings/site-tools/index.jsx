@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEmpty, pickBy, some } from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,7 @@ import { tracks } from 'lib/analytics';
 import { localize } from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
 import { isVipSite } from 'state/selectors';
 import {
 	getSitePurchases,
@@ -45,22 +45,14 @@ class SiteTools extends Component {
 	render() {
 		const {
 			translate,
-			sitePurchasesLoaded,
 			siteSlug,
-			isJetpack,
-			isVip,
+			importUrl,
+			exportUrl,
+			showChangeAddress,
+			showDeleteContent,
+			showDeleteSite,
+			showThemeSetup,
 		} = this.props;
-
-		const showSection = {
-			changeAddress: ! isJetpack && ! isVip,
-			themeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
-			deleteContent: ! isJetpack && ! isVip,
-			deleteSite: ! isJetpack && ! isVip && sitePurchasesLoaded,
-		};
-
-		if ( isEmpty( pickBy( showSection ) ) ) {
-			return null;
-		}
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
 		const themeSetupLink = `/settings/theme-setup/${ siteSlug }`;
@@ -78,8 +70,13 @@ class SiteTools extends Component {
 		const deleteSite = translate( 'Delete your site permanently' );
 		const deleteSiteText = translate(
 			'Delete all your posts, pages, media and data, ' +
-			'and give up your site\'s address'
+			'and give up your site\'s address.'
 		);
+
+		const importTitle = translate( 'Import' );
+		const importText = translate( 'Import content from another WordPress or Medium site.' );
+		const exportTitle = translate( 'Export' );
+		const exportText = translate( 'Export content from your site. You own your data.' );
 
 		let changeAddressText = translate( 'Register a new domain or change your site\'s address.' );
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
@@ -89,7 +86,7 @@ class SiteTools extends Component {
 		return (
 			<div className="site-tools">
 				<SectionHeader label={ translate( 'Site Tools' ) } />
-				{ showSection.changeAddress &&
+				{ showChangeAddress &&
 					<CompactCard
 						href={ changeAddressLink }
 						onClick={ this.trackChangeAddress }
@@ -100,7 +97,23 @@ class SiteTools extends Component {
 						</div>
 					</CompactCard>
 				}
-				{ showSection.themeSetup &&
+				<CompactCard
+					href={ importUrl }
+					className="site-tools__link">
+					<div className="site-tools__content">
+						<p className="site-tools__section-title">{ importTitle }</p>
+						<p className="site-tools__section-desc">{ importText }</p>
+					</div>
+				</CompactCard>
+				<CompactCard
+					href={ exportUrl }
+					className="site-tools__link">
+					<div className="site-tools__content">
+						<p className="site-tools__section-title">{ exportTitle }</p>
+						<p className="site-tools__section-desc">{ exportText }</p>
+					</div>
+				</CompactCard>
+				{ showThemeSetup &&
 					<CompactCard
 						href={ themeSetupLink }
 						onClick={ this.trackThemeSetup }
@@ -111,7 +124,7 @@ class SiteTools extends Component {
 						</div>
 					</CompactCard>
 				}
-				{ showSection.deleteContent &&
+				{ showDeleteContent &&
 					<CompactCard
 						href={ startOverLink }
 						onClick={ this.trackStartOver }
@@ -122,7 +135,7 @@ class SiteTools extends Component {
 						</div>
 					</CompactCard>
 				}
-				{ showSection.deleteSite &&
+				{ showDeleteSite &&
 					<CompactCard
 						href={ deleteSiteLink }
 						onClick={ this.checkForSubscriptions }
@@ -171,13 +184,28 @@ class SiteTools extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isVip = isVipSite( state, siteId );
+		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
+
+		let importUrl = `/settings/import/${ siteSlug }`;
+		let exportUrl = `/settings/export/${ siteSlug }`;
+		if ( isJetpack ) {
+			importUrl = getSiteAdminUrl( state, siteId, 'import.php' );
+			exportUrl = getSiteAdminUrl( state, siteId, 'export.php' );
+		}
+
 		return {
-			siteSlug: getSelectedSiteSlug( state ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isVip: isVipSite( state, siteId ),
-			sitePurchasesLoaded: hasLoadedSitePurchasesFromServer( state ),
+			siteSlug,
 			sitePurchases: getSitePurchases( state, siteId ),
 			purchasesError: getPurchasesError( state ),
+			importUrl,
+			exportUrl,
+			showChangeAddress: ! isJetpack && ! isVip,
+			showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
+			showDeleteContent: ! isJetpack && ! isVip,
+			showDeleteSite: ! isJetpack && ! isVip && sitePurchasesLoaded,
 		};
 	}
 )( localize( SiteTools ) );
