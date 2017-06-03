@@ -311,8 +311,12 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .search-stream .reader-subscription-list-item__byline {
 	margin-right: 0;
+
+	.reader-subscription-list-item__site-title::after {
+		width: 10%;
+	}
 }
 
-.search-stream {
+.search-stream .reader-subscription-list-item__site-excerpt {
 	margin-top: 3px;
 }
