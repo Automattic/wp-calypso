@@ -9,14 +9,17 @@ export default function removeContentStyles( post, dom ) {
 	}
 
 	// if there are any specials in the post, skip it
-	if ( dom.querySelector( '.gallery, .tiled-gallery, blockquote[class^="instagram-"], blockquote[class^="twitter-"]' ) ) {
+	if ( dom.querySelector( 'blockquote[class^="instagram-"], blockquote[class^="twitter-"]' ) ) {
 		return post;
 	}
 
 	// remove most style attributes
 	const styled = dom.querySelectorAll( '[style]' );
 	forEach( styled, function( element ) {
-		element.removeAttribute( 'style' );
+		// Leave inline styles intact for gallery markup
+		if ( ! element.matches( '.gallery-row, .gallery-group' ) ) {
+			element.removeAttribute( 'style' );
+		}
 	} );
 
 	// remove all style elements
