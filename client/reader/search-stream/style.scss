@@ -399,3 +399,25 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	padding-bottom: 10px;
 	width: 100%;
 }
+
+// Site Results
+.search-stream .reader-subscription-list-item__options {
+	position: absolute;
+		right: 15px;
+
+	@include breakpoint( ">660px" ) {
+		right: 0;
+	}
+}
+
+.search-stream .reader-subscription-list-item__site-title {
+	width: calc( 100% - 60px );
+}
+
+.search-stream .reader-subscription-list-item__byline {
+	margin-right: 0;
+}
+
+.search-stream {
+	margin-top: 3px;
+}
