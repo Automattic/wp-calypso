@@ -60,9 +60,9 @@ const reduce = combineReducers(
 );
 const store = createStore( reduce );
 
-const wrapConsole = fn => message => {
+const wrapConsole = fn => ( message, ...args ) => {
 	store.dispatch( { type: 'WebpackBuildLog', message } );
-	fn.call( this, message );
+	fn.call( window, message, ...args );
 };
 
 
