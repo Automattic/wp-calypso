@@ -11,15 +11,13 @@ import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
 import Site from 'blocks/site';
 import sitesFactory from 'lib/sites-list';
-import eventRecorder from 'me/event-recorder';
+import { recordCheckboxEvent, recordClickEvent } from 'me/event-recorder';
 
 const sites = sitesFactory();
 
 export default React.createClass( {
 
 	displayName: 'ProfileLinksAddWordPress',
-
-	mixins: [ eventRecorder ],
 
 	// an empty initial state is required to keep render and handleCheckedChange
 	// code simpler / easier to maintain
@@ -146,7 +144,7 @@ export default React.createClass( {
 					<li
 						key={ site.ID }
 						className="profile-links-add-wordpress__item"
-						onClick={ this.recordCheckboxEvent( 'Add WordPress Site' ) }
+						onClick={ recordCheckboxEvent( 'Add WordPress Site' ) }
 					>
 						<input
 							className="profile-links-add-wordpress__checkbox"
@@ -178,14 +176,14 @@ export default React.createClass( {
 				{ this.possiblyRenderError() }
 				<FormButton
 					disabled={ ( 0 === checkedCount ) ? true : false }
-					onClick={ this.recordClickEvent( 'Add WordPress Sites Button' ) }
+					onClick={ recordClickEvent( 'Add WordPress Sites Button' ) }
 				>
 					{ this.translate( 'Add Site', 'Add Sites', { count: checkedCount } ) }
 				</FormButton>
 				<FormButton
 					className="profile-links-add-wordpress__cancel"
 					isPrimary={ false }
-					onClick={ this.recordClickEvent( 'Cancel Add WordPress Sites Button', this.onCancel ) }
+					onClick={ recordClickEvent( 'Cancel Add WordPress Sites Button', this.onCancel ) }
 				>
 					{ this.translate( 'Cancel' ) }
 				</FormButton>
@@ -207,7 +205,7 @@ export default React.createClass( {
 									jetpackLink: <a
 													href="#"
 													className="profile-links-add-wordpress__jetpack-link"
-													onClick={ this.recordClickEvent( 'Jetpack Link in Profile Links', this.onJetpackMe ) }
+													onClick={ recordClickEvent( 'Jetpack Link in Profile Links', this.onJetpackMe ) }
 												/>
 								}
 							}
@@ -215,14 +213,14 @@ export default React.createClass( {
 					}
 				</p>
 				<FormButton
-					onClick={ this.recordClickEvent( 'Create Sites Button in Profile Links', this.onCreateSite ) }
+					onClick={ recordClickEvent( 'Create Sites Button in Profile Links', this.onCreateSite ) }
 					>
 					{ this.translate( 'Create Site' ) }
 				</FormButton>
 				<FormButton
 					className="profile-links-add-wordpress__cancel"
 					isPrimary={ false }
-					onClick={ this.recordClickEvent( 'Cancel Add WordPress Sites Button', this.onCancel ) }
+					onClick={ recordClickEvent( 'Cancel Add WordPress Sites Button', this.onCancel ) }
 				>
 					{ this.translate( 'Cancel' ) }
 				</FormButton>
