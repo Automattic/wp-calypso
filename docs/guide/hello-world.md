@@ -4,7 +4,11 @@ After learning a bit about the values of the project, let’s get a taste of the
 
 First [get setup with Calypso locally](../install.md) if you haven't already.
 
-Load [http://calypso.localhost:3000](http://calypso.localhost:3000/) in your browser. All good? Cool, now let’s build our _Hello, World!_.
+Load [http://calypso.localhost:3000](http://calypso.localhost:3000/) in your browser. 
+
+For this example to work, you need to have signed into WordPress **and** have already set up at least one site.
+
+All good? Cool, now let’s build our _Hello, World!_.
 
 ## Adding a new section
 
