@@ -30,16 +30,15 @@ const reducer = ( state = IDLE, { message } ) => {
 			return BUILDING;
 		case '[HMR] App is up to date.':
 		case '[WDS] Nothing changed.':
-			// Once completed, set the status to idle unless there's an error
-			return state === ERROR ? ERROR : IDLE;
-		case '[WDS] Errors while compiling.':
-			return ERROR;
 		case '[WDS] App hot update...':
 		case 'Reloading CSS: ':
-			return IDLE;
+			// Once completed, set the status to idle unless there's an error
+			return state === ERROR || state === NEEDS_RELOAD ? state : IDLE;
+		case '[WDS] Errors while compiling.':
+			return ERROR;
 		case '[HMR] Cannot find update. Need to do a full reload!':
 		case `[HMR] The following modules couldn't be hot updated: (They would need a full reload!)`: // eslint-disable-line
-			return NEEDS_RELOAD;
+			return state === ERROR ? ERROR : NEEDS_RELOAD;
 	}
 	return state;
 };
@@ -57,7 +56,7 @@ console.log = wrapConsole( console.log );
 
 class WebpackBuildMonitor extends React.Component {
 	componentDidMount() {
-		this.unsubscribe = store.subscribe( () => this.setState( store.getState() ) );
+		this.unsubscribe = store.subscribe( () => this.setState( { status: store.getState() } ) );
 	}
 
 	componentWillUnmount() {
