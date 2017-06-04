@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { noop, split } from 'lodash';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import debugFactory from 'debug';
@@ -159,13 +159,11 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		const screenReaderText = 'screen-reader-text';
 		const {
 			countryOfBirth,
-			dobDays,
-			dobMonths,
-			dobYears,
+			dateOfBirth,
 			placeOfBirth,
 			postalCodeOfBirth,
 		} = { ...emptyValues, ...registrantExtraInfo };
-
+		const [ dobYears, dobMonths, dobDays ] = split( dateOfBirth, '-' );
 		return (
 			<div>
 				<FormFieldset>
