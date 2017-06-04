@@ -78,7 +78,7 @@ class Login extends Component {
 
 		let newHref;
 
-		if ( redirectLocation && redirectLocation.match( /^[\/-a-z0-9.]+$/i ) ) {
+		if ( redirectLocation && redirectLocation.match( /^(?!\/\/)[\/\-a-z0-9.]+$/i ) ) {
 			// only redirect to paths on the current domain
 			newHref = redirectLocation;
 		} else {
