@@ -2,7 +2,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { keyBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,10 +13,8 @@ import config from 'config';
 import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
 import Site from 'blocks/site';
-import sitesFactory from 'lib/sites-list';
 import { recordCheckboxEvent, recordClickEvent } from 'me/event-recorder';
-
-const sites = sitesFactory();
+import { getPublicSites, getSites } from 'state/selectors';
 
 class ProfileLinksAddWordPress extends Component {
 	// an empty initial state is required to keep render and handleCheckedChange
@@ -48,6 +48,7 @@ class ProfileLinksAddWordPress extends Component {
 	}
 
 	onAddableSubmit = ( event ) => {
+		const { sites } = this.props;
 		const links = [];
 		let siteID, site, inputName;
 
@@ -56,11 +57,13 @@ class ProfileLinksAddWordPress extends Component {
 		for ( inputName in this.state ) {
 			if ( 'site-' === inputName.substr( 0, 5 ) && this.state[ inputName ] ) {
 				siteID = parseInt( inputName.substr( 5 ), 10 ); // strip leading "site-" from inputName to get siteID
-				site = sites.getSite( siteID );
-				links.push( {
-					title: site.name,
-					value: site.URL
-				} );
+				site = sites[ siteID ];
+				if ( site ) {
+					links.push( {
+						title: site.name,
+						value: site.URL
+					} );
+				}
 			}
 		}
 
@@ -131,7 +134,7 @@ class ProfileLinksAddWordPress extends Component {
 
 	renderAddableSites() {
 		return (
-			sites.getPublic().map( ( site ) => {
+			this.props.publicSites.map( ( site ) => {
 				const inputName = 'site-' + site.ID;
 				const checkedState = this.state[ inputName ];
 
@@ -233,10 +236,15 @@ class ProfileLinksAddWordPress extends Component {
 	render() {
 		return (
 			<div>
-				{ 0 === sites.getPublic().length ? this.renderInvitationForm() : this.renderAddableSitesForm() }
+				{ 0 === this.props.publicSites.length ? this.renderInvitationForm() : this.renderAddableSitesForm() }
 			</div>
 		);
 	}
 }
 
-export default localize( ProfileLinksAddWordPress );
+export default connect(
+	( state ) => ( {
+		sites: keyBy( getSites( state ), 'ID' ),
+		publicSites: getPublicSites( state ),
+	} )
+)( localize( ProfileLinksAddWordPress ) );
