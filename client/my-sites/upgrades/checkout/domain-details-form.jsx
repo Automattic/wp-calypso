@@ -94,11 +94,6 @@ class DomainDetailsForm extends PureComponent {
 		analytics.pageView.record( '/checkout/domain-contact-information', 'Checkout > Domain Contact Information' );
 	}
 
-	componentDidUpdate() {
-		// will this fire too often? more/better debounce needed?
-		// this.updateContactDetailsCache( this.getAllFieldValues() );
-	}
-
 	loadFormState = ( fn ) => {
 		// intersect fieldnames and details
 		fn( null, this.props.contactDetails );
@@ -119,6 +114,10 @@ class DomainDetailsForm extends PureComponent {
 		onComplete( sanitizedFieldValues );
 	}
 
+	isCurrentStep( step ) {
+		return this.state.currentStep === step;
+	}
+
 	hasAnotherStep() {
 		return this.state.currentStep !== last( this.state.steps );
 	}
@@ -135,7 +134,7 @@ class DomainDetailsForm extends PureComponent {
 			return;
 		}
 
-		const allFieldValues = this.getAllFieldValues();
+		const allFieldValues = this.getMainFieldValues();
 		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
 		wpcom.validateDomainContactInformation( allFieldValues, domainNames, this.generateValidationHandler( onComplete ) );
 	}
@@ -194,6 +193,12 @@ class DomainDetailsForm extends PureComponent {
 		this.setState( {
 			phoneCountryCode: countryCode
 		} );
+	}
+
+	getMainFieldValues() {
+		const mainFieldValues = Object.assign( {}, formState.getAllFieldValues( this.state.form ) );
+		mainFieldValues.phone = toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] );
+		return mainFieldValues;
 	}
 
 	getAllFieldValues() {
@@ -420,11 +425,15 @@ class DomainDetailsForm extends PureComponent {
 				return;
 			}
 
-			//this.props.updateContactDetailsCache( this.getAllFieldValues() );
+			if ( this.isCurrentStep( 'mainForm' ) ) {
+				this.props.updateContactDetailsCache( this.getMainFieldValues() );
+			}
 
 			if ( this.hasAnotherStep() ) {
 				return this.switchToNextStep();
 			}
+
+			this.props.updateContactDetailsCache( this.getAllFieldValues() );
 
 			if ( ! this.allDomainRegistrationsHavePrivacy() ) {
 				this.openDialog();
