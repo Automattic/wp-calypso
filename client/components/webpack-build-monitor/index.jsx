@@ -1,9 +1,12 @@
 /* eslint-disable no-console */
+/* eslint-disable wpcalypso/import-no-redux-combine-reducers */
 
 /**
  * External dependencies
  */
 import React from 'react';
+import { createStore, combineReducers } from 'redux';
+import cx from 'classnames';
 
 /**
  * Internal dependencies
@@ -16,8 +19,7 @@ const STATUS_BUILDING = 'STATUS_BUILDING';
 const STATUS_ERROR = 'STATUS_ERROR';
 const STATUS_IDLE = 'STATUS_IDLE';
 
-// Reducer for the CSS build status
-const cssStatus = ( state = STATUS_IDLE, message ) => {
+const cssStatusReducer = ( state = STATUS_IDLE, { message } ) => {
 	switch ( message ) {
 		case 'Building CSS…':
 			return STATUS_BUILDING;
@@ -27,8 +29,7 @@ const cssStatus = ( state = STATUS_IDLE, message ) => {
 	return state;
 };
 
-// Reducer for the JS build status
-const jsStatus = ( state = STATUS_IDLE, message ) => {
+const jsStatusReducer = ( state = STATUS_IDLE, { message } ) => {
 	switch ( message ) {
 		case '[WDS] App updated. Recompiling...':
 			return STATUS_BUILDING;
@@ -43,65 +44,67 @@ const jsStatus = ( state = STATUS_IDLE, message ) => {
 };
 
 // Reducer for the Webpack Dev Server status
-const wdsStatus = ( state = CONNECTED, message ) => {
+const wdsStatusReducer = ( state = CONNECTED, { message } ) => {
 	switch ( message ) {
 		case '[WDS] Disconnected!':
 			return DISCONNECTED;
+		case '[WDS] Hot Module Replacement enabled.':
+			return CONNECTED;
 	}
 	return state;
 };
 
 // Reducer for the component state
-const getState = ( state = {}, message ) => {
-	return {
-		cssStatus: cssStatus( state.cssStatus, message ),
-		jsStatus: jsStatus( state.jsStatus, message ),
-		wdsStatus: wdsStatus( state.wdsStatus, message ),
-	};
+const reduce = combineReducers(
+	{ cssStatus: cssStatusReducer, jsStatus: jsStatusReducer, wdsStatus: wdsStatusReducer },
+);
+const store = createStore( reduce );
+
+const wrapConsole = fn => message => {
+	store.dispatch( { type: 'WebpackBuildLog', message } );
+	fn.call( this, message );
 };
 
-class WebpackBuildMonitor extends React.Component {
-	constructor() {
-		super();
-		this.state = getState();
 
-		// Spy on console to watch for messages from Webpack Dev Server
-		console.error = this.wrapConsoleFn( console.error );
-		console.log = this.wrapConsoleFn( console.log );
+console.error = wrapConsole( console.error );
+console.log = wrapConsole( console.log );
+
+class WebpackBuildMonitor extends React.Component {
+	componentDidMount() {
+		this.unsubscribe = store.subscribe( () => this.setState( store.getState() ) );
 	}
 
-	wrapConsoleFn = ( fn ) => ( message ) => {
-		this.setState( getState( this.state, message ) );
-		fn.call( this, message );
+	componentWillUnmount() {
+		this.unsubscribe();
 	}
 
 	render() {
-		if ( this.state.wdsStatus === DISCONNECTED ) {
-			return (
-				<div className="webpack-build-monitor is-error">
-					Dev server disconnected
-				</div>
-			);
+		const { cssStatus, jsStatus, wdsStatus } = store.getState();
+
+		const isDisconnected = wdsStatus === DISCONNECTED;
+		const isError = cssStatus === STATUS_ERROR || jsStatus === STATUS_ERROR;
+		const isBuilding = cssStatus === STATUS_BUILDING || jsStatus === STATUS_BUILDING;
+		const isIdle = cssStatus === STATUS_IDLE && jsStatus === STATUS_IDLE;
+
+		const text =
+			( isDisconnected && 'Dev Server disconnected' ) ||
+			( isError && 'Build error' ) ||
+			( isBuilding && 'Rebuilding' );
+
+		const classnames = cx( 'webpack-build-monitor', {
+			'is-error': isError,
+		} );
+
+		if ( isIdle ) {
+			return null;
 		}
 
-		if ( this.state.cssStatus === STATUS_ERROR || this.state.jsStatus === STATUS_ERROR ) {
-			return (
-				<div className="webpack-build-monitor is-error">
-					Build error
-				</div>
-			);
-		}
-
-		if ( this.state.cssStatus === STATUS_BUILDING || this.state.jsStatus === STATUS_BUILDING ) {
-			return (
-				<div className="webpack-build-monitor ">
-					<Spinner size={ 11 } className="webpack-build-monitor__spinner" />
-					Rebuilding
-				</div>
-			);
-		}
-
-		return null;
+		return (
+			<div className={ classnames }>
+				{ isBuilding && <Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
+				{ text }
+			</div>
+		);
 	}
 }
 
