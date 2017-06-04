@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,28 +16,25 @@ import { recordCheckboxEvent, recordClickEvent } from 'me/event-recorder';
 
 const sites = sitesFactory();
 
-export default React.createClass( {
-
-	displayName: 'ProfileLinksAddWordPress',
-
+class ProfileLinksAddWordPress extends Component {
 	// an empty initial state is required to keep render and handleCheckedChange
 	// code simpler / easier to maintain
-	getInitialState() {
-		return {};
-	},
+	state = {};
 
-	handleCheckedChanged( event ) {
+	handleCheckedChanged = ( event ) => {
 		const updates = {};
 		updates[ event.target.name ] = event.target.checked;
 		this.setState( updates );
-	},
+	};
 
-	onSelect( inputName, event ) {
-		const updates = {};
-		event.preventDefault();
-		updates[ inputName ] = ! this.state[ inputName ];
-		this.setState( updates );
-	},
+	onSelect = ( inputName ) => {
+		return ( event ) => {
+			const updates = {};
+			event.preventDefault();
+			updates[ inputName ] = ! this.state[ inputName ];
+			this.setState( updates );
+		};
+	};
 
 	getCheckedCount() {
 		let checkedCount = 0;
@@ -47,9 +45,9 @@ export default React.createClass( {
 			}
 		}
 		return checkedCount;
-	},
+	}
 
-	onAddableSubmit( event ) {
+	onAddableSubmit = ( event ) => {
 		const links = [];
 		let siteID, site, inputName;
 
@@ -67,37 +65,38 @@ export default React.createClass( {
 		}
 
 		this.props.userProfileLinks.addProfileLinks( links, this.onSubmitResponse );
-	},
+	};
 
-	onCancel( event ) {
+	onCancel = ( event ) => {
 		event.preventDefault();
 		this.props.onCancel();
-	},
+	};
 
-	onCreateSite( event ) {
+	onCreateSite = ( event ) => {
 		event.preventDefault();
 		window.open( config( 'signup_url' ) + '?ref=me-profile-links' );
 		this.props.onCancel();
-	},
+	};
 
-	onJetpackMe( event ) {
+	onJetpackMe = ( event ) => {
 		event.preventDefault();
 		window.open( 'http://jetpack.me/' );
 		this.props.onCancel();
-	},
+	};
 
-	onSubmitResponse( error, data ) {
+	onSubmitResponse = ( error, data ) => {
+		const { translate } = this.props;
 		if ( error ) {
 			this.setState(
 				{
-					lastError: this.translate( 'Unable to add any links right now. Please try again later.' )
+					lastError: translate( 'Unable to add any links right now. Please try again later.' )
 				}
 			);
 			return;
 		} else if ( data.malformed ) {
 			this.setState(
 				{
-					lastError: this.translate( 'An unexpected error occurred. Please try again later.' )
+					lastError: translate( 'An unexpected error occurred. Please try again later.' )
 				}
 			);
 			return;
@@ -107,13 +106,13 @@ export default React.createClass( {
 		}
 
 		this.props.onSuccess();
-	},
+	};
 
-	clearLastError() {
+	clearLastError = () => {
 		this.setState( {
 			lastError: false
 		} );
-	},
+	};
 
 	possiblyRenderError() {
 		if ( ! this.state.lastError ) {
@@ -128,7 +127,7 @@ export default React.createClass( {
 				{ this.state.lastError }
 			</Notice>
 		);
-	},
+	}
 
 	renderAddableSites() {
 		return (
@@ -155,20 +154,21 @@ export default React.createClass( {
 						<Site
 							site={ site }
 							indicator={ false }
-							onSelect={ this.onSelect.bind( this, inputName ) } />
+							onSelect={ this.onSelect( inputName ) } />
 					</li>
 				);
 			} )
 		);
-	},
+	}
 
 	renderAddableSitesForm() {
+		const { translate } = this.props;
 		const checkedCount = this.getCheckedCount();
 
 		return (
 			<form className="profile-links-add-wordpress" onSubmit={ this.onAddableSubmit }>
 				<p>
-					{ this.translate( 'Please select one or more sites to add to your profile.' ) }
+					{ translate( 'Please select one or more sites to add to your profile.' ) }
 				</p>
 				<ul className="profile-links-add-wordpress__list">
 					{ this.renderAddableSites() }
@@ -178,27 +178,29 @@ export default React.createClass( {
 					disabled={ ( 0 === checkedCount ) ? true : false }
 					onClick={ recordClickEvent( 'Add WordPress Sites Button' ) }
 				>
-					{ this.translate( 'Add Site', 'Add Sites', { count: checkedCount } ) }
+					{ translate( 'Add Site', 'Add Sites', { count: checkedCount } ) }
 				</FormButton>
 				<FormButton
 					className="profile-links-add-wordpress__cancel"
 					isPrimary={ false }
 					onClick={ recordClickEvent( 'Cancel Add WordPress Sites Button', this.onCancel ) }
 				>
-					{ this.translate( 'Cancel' ) }
+					{ translate( 'Cancel' ) }
 				</FormButton>
 			</form>
 		);
-	},
+	}
 
 	renderInvitationForm() {
+		const { translate } = this.props;
+
 		return (
 			<form>
 				<p>
 					{
-						this.translate(
+						translate(
 							'You have no public sites on WordPress.com yet, but if you like you ' +
-							'can create one now.  You may also add self-hosted WordPress ' +
+							'can create one now. You may also add self-hosted WordPress ' +
 							'sites here after installing {{jetpackLink}}Jetpack{{/jetpackLink}} on them.',
 							{
 								components: {
@@ -215,18 +217,18 @@ export default React.createClass( {
 				<FormButton
 					onClick={ recordClickEvent( 'Create Sites Button in Profile Links', this.onCreateSite ) }
 					>
-					{ this.translate( 'Create Site' ) }
+					{ translate( 'Create Site' ) }
 				</FormButton>
 				<FormButton
 					className="profile-links-add-wordpress__cancel"
 					isPrimary={ false }
 					onClick={ recordClickEvent( 'Cancel Add WordPress Sites Button', this.onCancel ) }
 				>
-					{ this.translate( 'Cancel' ) }
+					{ translate( 'Cancel' ) }
 				</FormButton>
 			</form>
 		);
-	},
+	}
 
 	render() {
 		return (
@@ -235,4 +237,6 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( ProfileLinksAddWordPress );
