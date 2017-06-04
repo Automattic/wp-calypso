@@ -10,11 +10,11 @@ export const themes = [
 	},
 	{
 		name: 'Apostrophe',
-		slug: 'apostrophe',
+		slug: 'apostrophe-2',
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		demo_uri: 'https://apostrophedemo.wordpress.com',
+		demo_uri: 'https://apostrophe2demo.wordpress.com',
 		verticals: []
 	},
 	{
