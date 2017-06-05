@@ -286,8 +286,7 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Will upgrading affect my content?' ) }
 					answer={ translate(
 						'Plans add extra features to your site, but they do not affect the content of your site' +
-						" or your site's followers. You will never lose content by upgrading or downgrading" +
-						" your site's plan."
+						" or your site's followers."
 					) }
 				/>
 
