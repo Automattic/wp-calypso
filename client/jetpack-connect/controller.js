@@ -53,9 +53,9 @@ const analyticsPageTitleByType = {
 /**
  * Calculate plan based on flow type and interval.
  *
- * @param   {String?} flowType personal | premium | pro
- * @param   {String?} interval yearly | monthly
- * @returns {String?}          Jetpack plan slug
+ * @param   {?String} flowType personal | premium | pro
+ * @param   {?String} interval yearly | monthly
+ * @returns {?String}          Jetpack plan slug
  */
 const calculatePlan = ( flowType, interval ) => {
 	if ( flowType === 'personal' ) {
