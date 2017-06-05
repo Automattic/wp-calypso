@@ -58,7 +58,7 @@ class PreloadTab extends Component {
 			const { fields, setFieldValue } = this.props;
 
 			if ( this.state.preloadRefresh ) {
-				setFieldValue( 'preload_interval', get( fields, 'minimum_preload_interval', 0 ), true );
+				setFieldValue( 'preload_interval', get( fields, 'minimum_preload_interval', 30 ), true );
 			} else {
 				setFieldValue( 'preload_interval', 0, true );
 			}
