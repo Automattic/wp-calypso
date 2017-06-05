@@ -9,6 +9,10 @@ import { pick } from 'lodash';
 import {
 	REWIND_STATUS_REQUEST,
 } from 'state/action-types';
+import {
+	rewindStatusError,
+	updateRewindStatus,
+} from 'state/activity-log/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -21,27 +25,20 @@ const fetchRewindStatus = ( { dispatch }, action ) => {
 
 const fromApi = response => ( {
 	active: response.use_rewind,
-	firstBackup: response.first_backup_when,
-	error: { message: response.error },
+	firstBackupDate: response.first_backup_when,
 } );
 
-const updateRewindStatus = ( { dispatch }, { siteId }, next, data ) => {
-	dispatch( {
-		type: REWIND_STATUS_REQUEST,
-		siteId,
-		...fromApi( data ),
-	} );
+const receiveRewindStatus = ( { dispatch }, { siteId }, next, data ) => {
+	dispatch( updateRewindStatus( siteId, fromApi( data ) ) );
 };
 
-const rewindStatusError = ( { dispatch }, { siteId }, next, error ) => {
-	dispatch( {
-		type: REWIND_STATUS_REQUEST,
+const receiveStatusError = ( { dispatch }, { siteId }, next, error ) => {
+	dispatch( rewindStatusError(
 		siteId,
-		error: pick( error, [ 'error', 'status', 'message' ] ),
-		active: false,
-	} );
+		pick( error, [ 'error', 'status', 'message' ]
+	) ) );
 };
 
 export default {
-	[ REWIND_STATUS_REQUEST ]: [ dispatchRequest( fetchRewindStatus, updateRewindStatus, rewindStatusError ) ],
+	[ REWIND_STATUS_REQUEST ]: [ dispatchRequest( fetchRewindStatus, receiveRewindStatus, receiveStatusError ) ],
 };
