@@ -28,7 +28,7 @@ import { isPreloadingCache } from './state/cache/selectors';
  * Render cache preload interval number input
  * @returns { object } React element containing the preload interval number input
  */
-const renderCachePreloadInterval = ( {
+const CachePreloadInterval = ( {
 	handleChange,
 	isDisabled,
 	preload_interval,
@@ -173,7 +173,7 @@ class PreloadTab extends Component {
 										{
 											count: preload_interval || 0,
 											components: {
-												number: renderCachePreloadInterval( {
+												number: CachePreloadInterval( {
 													handleChange,
 													isDisabled: isRequesting || isSaving || ! this.state.preloadRefresh,
 													preload_interval,
