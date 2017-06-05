@@ -118,7 +118,7 @@ const Checkout = React.createClass( {
 	},
 
 	addProductToCart: function() {
-		const planSlug = getUpgradePlanSlugFromPath( this.props.product, this.props.selectedSite );
+		const planSlug = getUpgradePlanSlugFromPath( this.props.product );
 
 		let cartItem,
 			cartMeta;
@@ -135,6 +135,13 @@ const Checkout = React.createClass( {
 		if ( startsWith( this.props.product, 'domain-mapping' ) ) {
 			cartMeta = this.props.product.split( ':' )[ 1 ];
 			cartItem = domainMapping( { domain: cartMeta } );
+		}
+
+		if ( this.props.purchaseId ) {
+			cartItem = cartItems.getRenewalItemFromCartItem( cartItem, {
+				id: this.props.purchaseId,
+				domain: this.props.selectedSiteSlug
+			} );
 		}
 
 		if ( cartItem ) {

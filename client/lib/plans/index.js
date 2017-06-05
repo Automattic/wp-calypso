@@ -60,10 +60,9 @@ export function canUpgradeToPlan( planKey, site ) {
 	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
 }
 
-export function getUpgradePlanSlugFromPath( path, site ) {
+export function getUpgradePlanSlugFromPath( path ) {
 	return find( Object.keys( PLANS_LIST ), planKey => (
-		( planKey === path || getPlanPath( planKey ) === path ) &&
-		canUpgradeToPlan( planKey, site )
+		planKey === path || getPlanPath( planKey ) === path
 	) );
 }
 
