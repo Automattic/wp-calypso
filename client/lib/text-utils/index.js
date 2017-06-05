@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import JsDiff from 'diff';
+import { diffWords } from 'diff';
 import { reduce } from 'lodash';
 
 function countWords( content ) {
@@ -29,8 +29,6 @@ function countWords( content ) {
 
 	return 0;
 }
-
-const diffWords = JsDiff.diffWords;
 
 function countDiffWords( diffChanges ) {
 	return reduce(
