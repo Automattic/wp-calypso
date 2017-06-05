@@ -73,7 +73,7 @@ export function removeComment( siteId, postId, commentId ) {
  * @param {Number|undefined} parentCommentId parent comment identifier
  * @returns {Function} a thunk that creates a comment for a given post
  */
-export const writeComment = ( commentText, siteId, postId, parentCommentId ) => ( {
+export const writeComment = ( commentText, siteId, postId, parentCommentId = null ) => ( {
 	type: COMMENTS_WRITE,
 	siteId,
 	postId,
