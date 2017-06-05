@@ -33,7 +33,7 @@ export default class ProductFormDetailsCard extends Component {
 
 		const { product } = props;
 		this.state = {
-			updateSkuOnNameChange: ! product.name ? true : false,
+			updateSkuOnNameChange: ! product.name,
 		};
 
 		this.setName = this.setName.bind( this );
@@ -116,14 +116,20 @@ export default class ProductFormDetailsCard extends Component {
 					<div className="products__product-form-details-basic">
 						<FormFieldSet className="products__product-form-details-basic-name">
 							<FormLabel htmlFor="name">{ __( 'Product name' ) }</FormLabel>
-							<FormTextInput name="name" value={ product.name || '' } onChange={ this.setName } />
+							<FormTextInput
+								id="name"
+								value={ product.name || '' }
+								onChange={ this.setName }
+							/>
 						</FormFieldSet>
 						<FormFieldSet className="products__product-form-details-basic-sku">
 							<FormLabel htmlFor="sku">{ __( 'SKU:' ) }</FormLabel>
 							<FormClickToEditInput
-								name="sku"
+								id="sku"
 								value={ product.sku || '' }
 								placeholder="-"
+								updateAriaLabel={ __( 'Update SKU' ) }
+								editAriaLabel={ __( 'Edit SKU' ) }
 								onChange={ this.setSku }
 								disabled={ product.name || product.sku ? false : true }
 							/>
@@ -131,7 +137,7 @@ export default class ProductFormDetailsCard extends Component {
 						<FormFieldSet className="products__product-form-details-basic-description">
 							<FormLabel htmlFor="description">{ __( 'Description' ) }</FormLabel>
 							<FormTextArea
-								name="description"
+								id="description"
 								value={ product.description || '' }
 								onChange={ this.setDescription }
 								rows="8" />

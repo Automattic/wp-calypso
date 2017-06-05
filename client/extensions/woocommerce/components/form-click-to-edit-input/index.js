@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { noop } from 'lodash';
+import { noop, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +19,8 @@ class FormClickToEditInput extends Component {
 		value: PropTypes.string,
 		placeholder: PropTypes.string,
 		disabled: PropTypes.bool,
+		updateAriaLabel: PropTypes.string,
+		editAriaLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -26,6 +28,8 @@ class FormClickToEditInput extends Component {
 		placeholder: '',
 		value: '',
 		disabled: false,
+		updateAriaLabel: '',
+		editAriaLabel: '',
 	};
 
 	state = {
@@ -67,13 +71,15 @@ class FormClickToEditInput extends Component {
 		return (
 			<span className="form-click-to-edit-input__wrapper editing">
 				<FormTextInput
-					{ ...props }
+					{ ...omit( props, [ 'updateAriaLabel', 'editAriaLabel' ] ) }
+					onBlur={ this.editEnd }
 					autoFocus
 					className="form-click-to-edit-input__input"
 				/>
 				<Button
 					borderless
 					onClick={ this.editEnd }
+					aria-label={ this.props.updateAriaLabel }
 				>
 					<Gridicon icon="checkmark" />
 				</Button>
@@ -82,14 +88,17 @@ class FormClickToEditInput extends Component {
 	}
 
 	renderText() {
-		const { value, placeholder, disabled } = this.props;
+		const { value, placeholder, disabled, editAriaLabel } = this.props;
 		const classes = classNames( 'form-click-to-edit-input__wrapper', {
 			'is-empty': ! ( value ),
 			'has-value': ( value ),
 		} );
 		return (
 			<span className={ classes }>
-				<span className="form-click-to-edit-input__text">
+				<span
+					className="form-click-to-edit-input__text"
+					onClick={ ! disabled && this.editStart }
+				>
 					{ value || placeholder }
 				</span>
 
@@ -97,6 +106,7 @@ class FormClickToEditInput extends Component {
 					<Button
 						borderless
 						onClick={ this.editStart }
+						aria-label={ editAriaLabel }
 					>
 						<Gridicon icon="pencil" />
 					</Button>
