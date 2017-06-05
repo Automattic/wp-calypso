@@ -33,7 +33,7 @@ const getHeaderMessage = ( type ) => {
 	if ( type === 'final' ) {
 		return <div className="message-inside">
 			<p>Your site is ready for your customers at yoursite1234.wordpress.com! Why not make it easier to remember with a custom domain?</p>
-			<p><Button primary={ true } onClick={ () => page( '/domains' ) }>Find my domain</Button></p>
+			<p><Button primary={ true } onClick={ () => page( '/domains' ) }>Find&nbsp;my&nbsp;domain</Button></p>
 		</div>;
 	}
 

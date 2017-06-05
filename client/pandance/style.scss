@@ -193,3 +193,14 @@ p {
 		pointer-events: none;
 	}
 }
+
+.account-step {
+	.form-fieldset {
+		margin-bottom: 10px;
+	}
+
+	.button {
+		float: right;
+		margin-top: 10px;
+	}
+}
