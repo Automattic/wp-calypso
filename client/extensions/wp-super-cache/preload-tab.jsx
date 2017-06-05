@@ -50,7 +50,7 @@ class PreloadTab extends Component {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		this.setState( { preloadRefresh: parseInt( nextProps.fields.preload_interval, 10 ) === 0 ? false : true } );
+		this.setState( { preloadRefresh: parseInt( nextProps.fields.preload_interval, 10 ) !== 0 ? true : false } );
 	}
 
 	handlePreloadRefreshChange = () => {
