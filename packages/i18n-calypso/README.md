@@ -186,9 +186,9 @@ var city = getCity(), // returns string
 
 // Mixing strings and markup
 // NOTE: This will return a React component, not a string
-var component = i18n.translate( 'My hat has {{numHats/}} corners', {
+var component = i18n.translate( 'I bought my hat in {{country/}}.', {
         components: {
-            numHats: <input name="someName" type="text" />
+            country: <input name="someName" type="text" />
         }
     } );
 
