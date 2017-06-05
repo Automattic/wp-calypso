@@ -17,7 +17,7 @@ export function getRewindStatus( siteId ) {
 export function updateRewindStatus( siteId, status ) {
 	return {
 		type: REWIND_STATUS_UPDATE,
-		...status,
+		status,
 	};
 }
 
