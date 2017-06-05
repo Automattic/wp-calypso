@@ -116,7 +116,7 @@ class ProductFormVariationsRow extends Component {
 	renderImage = () => {
 		const { src, placeholder, isUploading } = this.state;
 
-		let image;
+		let image = null;
 		if ( src && ! isUploading ) {
 			image = (
 				<figure>
@@ -160,7 +160,9 @@ class ProductFormVariationsRow extends Component {
 					onSelect={ this.onSelect }
 					onUpload={ this.onUpload }
 					onError={ this.onError }
-				>{image}</ProductImageUploader>
+				>
+					{image}
+				</ProductImageUploader>
 				{removeButton}
 			</div>
 		);

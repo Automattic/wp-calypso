@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { head, uniqueId, find, noop } from 'lodash';
+import { head, uniqueId, find, noop, trim } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
@@ -238,7 +238,7 @@ class ProductImageUploader extends Component {
 			return this.renderPlaceholder();
 		}
 
-		if ( 'undefined' !== typeof children ) {
+		if ( '' !== trim( children ) ) {
 			return (
 				<FilePicker multiple={ multiple } accept="image/*" onPick={ this.onPick }>
 					{ this.renderChildren() }
