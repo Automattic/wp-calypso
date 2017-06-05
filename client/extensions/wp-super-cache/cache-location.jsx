@@ -18,6 +18,7 @@ import WrapSettingsForm from './wrap-settings-form';
 const CacheLocation = ( {
 	fields: {
 		cache_path,
+		default_cache_path,
 	},
 	handleChange,
 	handleSubmitForm,
@@ -55,7 +56,7 @@ const CacheLocation = ( {
 								'/cache/ which translates to {{cacheLocation/}}',
 								{
 									components: {
-										cacheLocation: <span>{ cache_path || '' }</span>,
+										cacheLocation: <span>{ default_cache_path || '' }</span>,
 									}
 								}
 							) }
@@ -70,6 +71,7 @@ const CacheLocation = ( {
 const getFormSettings = settings => {
 	return pick( settings, [
 		'cache_path',
+		'default_cache_path',
 	] );
 };
 
