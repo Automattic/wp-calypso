@@ -4,7 +4,6 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
@@ -252,8 +251,5 @@ export default connect(
 	( state ) => ( {
 		currentUser: getCurrentUser( state )
 	} ),
-	( dispatch ) => bindActionCreators( {
-		writeComment,
-		removeComment
-	}, dispatch )
+	{ writeComment, removeComment }
 )( PostCommentForm );
