@@ -29,6 +29,7 @@ export class CommentList extends Component {
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
+		toggleCommentLike: PropTypes.func,
 		translate: PropTypes.func,
 	};
 
@@ -107,14 +108,13 @@ export class CommentList extends Component {
 
 	toggleCommentLike = commentId => {
 		const comment = this.props.comments[ commentId ];
-		const newLikeValue = ! comment.i_like;
 
 		if ( 'unapproved' === comment.status ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
 			this.showNotice( commentId, 'approved', 'unapproved' );
 		}
 
-		this.props.setCommentLike( commentId, newLikeValue );
+		this.props.toggleCommentLike( commentId );
 	}
 
 	render() {
@@ -237,6 +237,22 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		} );
 	}
 
+	toggleCommentLike = commentId => {
+		const comment = this.state.comments[ commentId ];
+		const likeValue = ! comment.i_like;
+		// If like changes to true, also approve the comment
+		this.setState( {
+			comments: {
+				...this.state.comments,
+				[ commentId ]: {
+					...comment,
+					i_like: likeValue,
+					status: likeValue ? 'approved' : comment.status,
+				}
+			},
+		} );
+	}
+
 	render() {
 		return (
 			<WrappedCommentList
@@ -245,6 +261,7 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 				deleteComment={ this.deleteComment }
 				setCommentLike={ this.setCommentLike }
 				setCommentStatus={ this.setCommentStatus }
+				toggleCommentLike={ this.toggleCommentLike }
 			/>
 		);
 	}

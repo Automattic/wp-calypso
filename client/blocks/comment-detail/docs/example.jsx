@@ -48,8 +48,8 @@ const mockComments = [
 
 const CommentList = ( {
 	comments,
-	setCommentLike,
 	setCommentStatus,
+	toggleCommentLike,
 } ) =>
 	<div>
 		{ map( comments, ( comment, index ) =>
@@ -58,7 +58,7 @@ const CommentList = ( {
 				{ ...comment }
 				setCommentStatus={ setCommentStatus }
 				siteId={ mockSite.id }
-				toggleCommentLike={ () => setCommentLike( comment.ID, ! comment.i_like ) }
+				toggleCommentLike={ toggleCommentLike }
 			/>
 		) }
 	</div>;
