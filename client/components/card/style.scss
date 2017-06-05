@@ -28,6 +28,22 @@
 	&.is-card-link {
 		padding-right: 48px;
 	}
+
+	&.is-error {
+		box-shadow: inset 3px 0 0 $alert-red;
+	}
+
+	&.is-info {
+		box-shadow: inset 3px 0 0 $blue-wordpress;
+	}
+
+	&.is-success {
+		box-shadow: inset 3px 0 0 $alert-green;
+	}
+
+	&.is-warning {
+		box-shadow: inset 3px 0 0 $alert-yellow;
+	}
 }
 
 // Clickable Card
