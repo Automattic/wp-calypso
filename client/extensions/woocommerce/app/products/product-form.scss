@@ -217,6 +217,14 @@
 	margin-bottom: 0;
 }
 
+.products__categories-card {
+	.form-fieldset {
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+}
+
 .products__product-form-details-basic-name {
 	margin-bottom: 4px;
 }
