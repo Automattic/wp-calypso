@@ -151,7 +151,7 @@ const AddGoogleAppsCard = React.createClass( {
 
 						<div className="add-google-apps-card__feature">
 							<div className="add-google-apps-card__feature-block">
-								<img src="/calypso/images/g-suite/logo_sheets_48dp.svg" />
+								<img src="/calypso/images/g-suite/logo_hangouts_48dp.svg" />
 							</div>
 							<div className="add-google-apps-card__feature-block">
 								<h5 className="add-google-apps-card__feature-header">
