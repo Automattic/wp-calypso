@@ -3,7 +3,6 @@
  */
 import { assert } from 'sinon';
 import chai from 'chai';
-import chaiEnzyme from 'chai-enzyme';
 import sinonChai from 'sinon-chai';
 
 /**
@@ -13,7 +12,6 @@ import immutableChai from './test/helpers/immutable-chai';
 
 chai.use( immutableChai );
 chai.use( sinonChai );
-chai.use( chaiEnzyme() );
 assert.expose( chai.assert, { prefix: '' } );
 
 // Make sure we can share test helpers between Mocha and Jest
