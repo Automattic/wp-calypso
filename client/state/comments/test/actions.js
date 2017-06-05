@@ -86,6 +86,18 @@ describe( 'actions', () => {
 				commentText: 'comment text',
 			} );
 		} );
+
+		it( 'should return a write comment action with the specified parent comment id', function() {
+			const action = writeComment( 'comment text', SITE_ID, POST_ID, 10 );
+
+			expect( action ).to.eql( {
+				type: COMMENTS_WRITE,
+				siteId: SITE_ID,
+				postId: POST_ID,
+				parentCommentId: 10,
+				commentText: 'comment text',
+			} );
+		} );
 	} );
 
 	describe( '#removeComment()', () => {
