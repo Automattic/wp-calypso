@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import ActivityLogBanner from './activity-log-banner';
 import Button from 'components/button';
 
-function ActivityLogErrorBanner( {
+function ErrorBanner( {
 	translate,
 } ) {
 	return (
@@ -32,4 +32,4 @@ function ActivityLogErrorBanner( {
 	);
 }
 
-export default localize( ActivityLogErrorBanner );
+export default localize( ErrorBanner );

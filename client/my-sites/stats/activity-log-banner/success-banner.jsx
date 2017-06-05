@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import ActivityLogBanner from './activity-log-banner';
 import Button from 'components/button';
 
-function ActivityLogSuccessBanner( {
+function SuccessBanner( {
 	translate,
 	moment,
 } ) {
@@ -41,4 +41,4 @@ function ActivityLogSuccessBanner( {
 	);
 }
 
-export default localize( ActivityLogSuccessBanner );
+export default localize( SuccessBanner );

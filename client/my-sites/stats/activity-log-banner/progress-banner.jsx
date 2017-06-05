@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import ActivityLogBanner from './activity-log-banner';
 import ProgressBar from 'components/progress-bar';
 
-function ActivityLogSuccessBanner( {
+function SuccessBanner( {
 	translate,
 	moment,
 } ) {
@@ -38,4 +38,4 @@ function ActivityLogSuccessBanner( {
 	);
 }
 
-export default localize( ActivityLogSuccessBanner );
+export default localize( SuccessBanner );
