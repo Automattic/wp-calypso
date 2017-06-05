@@ -9,7 +9,7 @@ import { map } from 'lodash';
  */
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
-import { CommentFaker } from 'my-sites/comments/comment-list';
+import CommentFaker from './comment-faker';
 
 // Mock data
 const mockComment = {
