@@ -20,6 +20,7 @@ const fetchRewindStatus = ( { dispatch }, action ) => {
 	dispatch( http( {
 		method: 'GET',
 		path: `/activity-log/${ action.siteId }/rewind`,
+		apiVersion: '1',
 	}, action ) );
 };
 
@@ -28,11 +29,11 @@ const fromApi = response => ( {
 	firstBackupDate: response.first_backup_when,
 } );
 
-const receiveRewindStatus = ( { dispatch }, { siteId }, next, data ) => {
+export const receiveRewindStatus = ( { dispatch }, { siteId }, next, data ) => {
 	dispatch( updateRewindStatus( siteId, fromApi( data ) ) );
 };
 
-const receiveStatusError = ( { dispatch }, { siteId }, next, error ) => {
+export const receiveRewindStatusError = ( { dispatch }, { siteId }, next, error ) => {
 	dispatch( rewindStatusError(
 		siteId,
 		pick( error, [ 'error', 'status', 'message' ]
@@ -40,5 +41,9 @@ const receiveStatusError = ( { dispatch }, { siteId }, next, error ) => {
 };
 
 export default {
-	[ REWIND_STATUS_REQUEST ]: [ dispatchRequest( fetchRewindStatus, receiveRewindStatus, receiveStatusError ) ],
+	[ REWIND_STATUS_REQUEST ]: [ dispatchRequest(
+		fetchRewindStatus,
+		receiveRewindStatus,
+		receiveRewindStatusError
+	) ],
 };
