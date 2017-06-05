@@ -150,7 +150,6 @@ export class CommentList extends Component {
 				>
 					{ map( filteredComments, comment =>
 						<CommentDetail
-							commentId={ comment.ID }
 							deleteForever={ this.deleteForever( comment.ID ) }
 							isBulkEdit={ isBulkEdit }
 							key={ `comment-${ siteId }-${ comment.ID }` }

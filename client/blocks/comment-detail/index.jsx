@@ -189,7 +189,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	authorUsername: get( ownProps, 'author.nice_name' ),
 	commentContent: ownProps.content,
 	commentDate: ownProps.date,
-	commentId: ownProps.commentId,
+	commentId: ownProps.ID,
 	commentIsLiked: ownProps.i_like,
 	commentStatus: ownProps.status,
 	postAuthorDisplayName: get( ownProps, 'post.author.name' ),
