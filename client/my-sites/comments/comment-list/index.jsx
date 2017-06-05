@@ -23,28 +23,24 @@ import EmptyContent from 'components/empty-content';
 
 export class CommentList extends Component {
 	static propTypes = {
-		comments: PropTypes.array,
+		comments: PropTypes.object,
+		deleteComment: PropTypes.func,
+		setCommentLike: PropTypes.func,
+		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
 	};
 
 	state = {
-		comments: [],
 		isBulkEdit: false,
 	};
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.comments.length ) {
-			this.setState( { comments: keyBy( nextProps.comments, 'ID' ) } );
-		}
-	}
 
 	deleteForever = commentId => () => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 		this.showNotice( commentId, 'delete', 'trash' );
 
-		this.setState( { comments: omit( this.state.comments, commentId ) } );
+		this.props.deleteCommentPermanently( commentId );
 	}
 
 	getEmptyMessage = () => {
@@ -62,14 +58,11 @@ export class CommentList extends Component {
 	}
 
 	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
-		const comment = this.state.comments[ commentId ];
+		const comment = this.props.comments[ commentId ];
 
 		if ( status === comment.status ) {
 			return;
 		}
-
-		// If the comment is not approved anymore, also remove the like, otherwise keep its previous value
-		const newLikeValue = 'approved' === status ? comment.i_like : false;
 
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
@@ -77,16 +70,7 @@ export class CommentList extends Component {
 			this.showNotice( commentId, status, comment.status );
 		}
 
-		this.setState( {
-			comments: {
-				...this.state.comments,
-				[ commentId ]: {
-					...comment,
-					i_like: newLikeValue,
-					status,
-				},
-			},
-		} );
+		this.props.setCommentStatus( commentId, status );
 	}
 
 	showNotice = ( commentId, newStatus, previousStatus ) => {
@@ -122,7 +106,7 @@ export class CommentList extends Component {
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
 	toggleCommentLike = commentId => {
-		const comment = this.state.comments[ commentId ];
+		const comment = this.props.comments[ commentId ];
 		const newLikeValue = ! comment.i_like;
 
 		if ( 'unapproved' === comment.status ) {
@@ -130,27 +114,17 @@ export class CommentList extends Component {
 			this.showNotice( commentId, 'approved', 'unapproved' );
 		}
 
-		// If like changes to true, also approve the comment
-		this.setState( {
-			comments: {
-				...this.state.comments,
-				[ commentId ]: {
-					...comment,
-					i_like: newLikeValue,
-					status: newLikeValue ? 'approved' : comment.status,
-				},
-			},
-		} );
+		this.props.setCommentLike( commentId, newLikeValue );
 	}
 
 	render() {
 		const {
+			comments,
 			siteId,
 			siteSlug,
 			status,
 		} = this.props;
 		const {
-			comments,
 			isBulkEdit,
 		} = this.state;
 
@@ -214,6 +188,63 @@ export class CommentList extends Component {
 	}
 }
 
+const CommentFaker = WrappedCommentList => class extends Component {
+	state = {
+		comments: {},
+		isBulkEdit: false,
+	};
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ! this.props.comments.length ) {
+			this.setState( { comments: keyBy( nextProps.comments, 'ID' ) } );
+		}
+	}
+
+	deleteCommentPermanently = commentId => this.setState( { comments: omit( this.state.comments, commentId ) } );
+
+	setCommentLike = ( commentId, likeValue ) => {
+		const comment = this.state.comments[ commentId ];
+		// If like changes to true, also approve the comment
+		this.setState( {
+			comments: {
+				...this.state.comments,
+				[ commentId ]: {
+					...comment,
+					i_like: likeValue,
+					status: likeValue ? 'approved' : comment.status,
+				}
+			},
+		} );
+	}
+
+	setCommentStatus = ( commentId, status ) => {
+		const comment = this.state.comments[ commentId ];
+		// If the comment is not approved anymore, also remove the like, otherwise keep its previous value
+		this.setState( {
+			comments: {
+				...this.state.comments,
+				[ commentId ]: {
+					...comment,
+					i_like: 'approved' === status ? comment.i_like : false,
+					status,
+				}
+			},
+		} );
+	}
+
+	render() {
+		return (
+			<WrappedCommentList
+				{ ...this.props }
+				comments={ this.state.comments }
+				deleteComment={ this.deleteComment }
+				setCommentLike={ this.setCommentLike }
+				setCommentStatus={ this.setCommentStatus }
+			/>
+		);
+	}
+};
+
 const mapStateToProps = ( state, { siteId } ) => {
 	const comments = getSiteComments( state, siteId );
 	return {
@@ -228,4 +259,4 @@ const mapDispatchToProps = {
 	removeNotice,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentList ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentFaker( CommentList ) ) );
