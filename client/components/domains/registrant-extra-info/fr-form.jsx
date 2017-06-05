@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { noop, split } from 'lodash';
+import { isEqual, noop, toInteger } from 'lodash';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import debugFactory from 'debug';
@@ -20,6 +20,10 @@ import FormRadio from 'components/forms/form-radio';
 import FormCountrySelect from 'components/forms/form-country-select';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+
+// We use this for basic birth date validation.
+// Twill need to be updated once Ray gets us to the singularity.
+const currentPlausibleHumanLifespan = 140;
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 
@@ -66,24 +70,44 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		};
 	}
 
+	componentDidUpdate( prevProps, prevState ) {
+		const dateOfBirth = this.compileDateOfBirth();
+
+		if ( dateOfBirth && ! isEqual( prevState, this.state ) ) {
+			this.setDateOfBirth( dateOfBirth );
+		}
+	}
+
 	handleDobChangeEvent = ( event ) => {
-		// TODO FIXME: Sanitize and validate individual fields and resulting
-		// date
+		this.setState( {
+			...this.state,
+			[ event.target.id ]: event.target.value,
+		} );
+	}
 
-		// setState() is not syncronous :(
-		const newState = this.newStateFromEvent( event );
-		const { dobYears, dobMonths, dobDays } = newState;
+	compileDateOfBirth() {
+		const { dobYears, dobMonths, dobDays } = this.state;
+		let dateOfBirth = false;
 
-		const dateOfBirth = ( dobYears && dobMonths && dobDays ) &&
-			[ dobYears, dobMonths, dobDays ].join( '-' );
-
-		if ( ! dateOfBirth ) {
-			return;
+		if ( new Date().getFullYear() - toInteger( dobYears ) > currentPlausibleHumanLifespan ) {
+			// @todo: set error state
+			return false;
 		}
 
-		debug( 'Setting dateOfBirth to ' + dateOfBirth +
-			( moment( dateOfBirth, 'YYYY-MM-DD' ).isValid() ? '' : ' (invalid)' ) );
+		if ( dobYears && dobMonths && dobDays ) {
+			dateOfBirth = [ dobYears, dobMonths, dobDays ].join( '-' );
+		}
 
+		if ( dateOfBirth && moment( dateOfBirth, 'YYYY-MM-DD' ).isValid() ) {
+			return dateOfBirth;
+		}
+
+		// @todo: set error state
+		return false;
+	}
+
+	setDateOfBirth( dateOfBirth ) {
+		debug( 'Setting dateOfBirth to ' + dateOfBirth );
 		this.props.updateContactDetailsCache( {
 			registrantExtraInfo: {
 				...this.props.contactDetails.registrantExtraInfo,
@@ -106,10 +130,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	render() {
 		const translate = this.props.translate;
-		const registrantExtraInfo = this.props.contactDetails.registrantExtraInfo;
-		const {
-			registrantType
-		} = { ...emptyValues, ...registrantExtraInfo };
+		const registrantType = this.props.contactDetails.registrantExtraInfo.registrantType;
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -159,11 +180,13 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		const screenReaderText = 'screen-reader-text';
 		const {
 			countryOfBirth,
-			dateOfBirth,
+			dobYears,
+			dobMonths,
+			dobDays,
 			placeOfBirth,
 			postalCodeOfBirth,
-		} = { ...emptyValues, ...registrantExtraInfo };
-		const [ dobYears, dobMonths, dobDays ] = split( dateOfBirth, '-' );
+		} = { ...emptyValues, ...registrantExtraInfo, ...this.state };
+
 		return (
 			<div>
 				<FormFieldset>
@@ -275,6 +298,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 			sirenSiret,
 			trademarkNumber
 		} = { ...emptyValues, ...registrantExtraInfo };
+
 		return (
 			<div>
 				<FormFieldset>
