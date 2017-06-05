@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -29,11 +30,11 @@ const ContactsPrivacyCard = React.createClass( {
 	render() {
 		return (
 			<div>
-				<SectionHeader label={ this.translate( 'Domain Contacts' ) } />
+				<SectionHeader label={ this.props.translate( 'Domain Contacts' ) } />
 
 				<CompactCard className="contacts-privacy-card">
 					<p className="settings-explanation">
-						{ this.translate(
+						{ this.props.translate(
 							'Domain owners are required to make their contact information available to the public. ' +
 							'{{a}}Learn more.{{/a}}',
 							{
@@ -57,7 +58,7 @@ const ContactsPrivacyCard = React.createClass( {
 		if ( ! this.props.privacyAvailable ) {
 			return (
 				<Notice status="is-info" showDismiss={ false }>
-					{ this.translate( 'Privacy Protection is not available for this domain.' ) }
+					{ this.props.translate( 'Privacy Protection is not available for this domain.' ) }
 				</Notice>
 			);
 		}
@@ -65,7 +66,7 @@ const ContactsPrivacyCard = React.createClass( {
 		if ( this.props.hasPrivacyProtection && this.props.privateDomain ) {
 			return (
 				<Notice status="is-success" showDismiss={ false }>
-					{ this.translate(
+					{ this.props.translate(
 						'{{strong}}Privacy Protection{{/strong}} is turned on for this domain. ' +
 						'Your contact information is {{strong}}private{{/strong}}. ',
 						{
@@ -79,7 +80,7 @@ const ContactsPrivacyCard = React.createClass( {
 		} else if ( this.props.hasPrivacyProtection && ! this.props.privateDomain ) {
 			return (
 				<Notice status="is-warning" showDismiss={ false }>
-					{ this.translate(
+					{ this.props.translate(
 						'{{strong}}Privacy Protection{{/strong}} is temporarily ' +
 						'disabled for this domain while the domain is being transferred. ' +
 						'Your contact information is {{strong}}public{{/strong}}. ' +
@@ -97,7 +98,7 @@ const ContactsPrivacyCard = React.createClass( {
 
 		return (
 			<Notice status="is-warning" showDismiss={ false }>
-				{ this.translate(
+				{ this.props.translate(
 					'{{strong}}Privacy Protection{{/strong}} is turned off for this domain. ' +
 					'Your contact information is {{strong}}public{{/strong}}. ' +
 					'{{a}}Enable Privacy Protection{{/a}}',
@@ -115,4 +116,4 @@ const ContactsPrivacyCard = React.createClass( {
 	}
 } );
 
-module.exports = ContactsPrivacyCard;
+module.exports = localize( ContactsPrivacyCard );
