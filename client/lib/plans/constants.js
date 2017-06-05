@@ -188,7 +188,7 @@ export const PLANS_LIST = {
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
 		getPathSlug: () => 'business',
 		getDescription: ( abtest ) => {
-			if ( abtest( 'businessPlanDescriptionAT' ) === 'pluginsAndThemes' ) {
+			if ( abtest && abtest( 'businessPlanDescriptionAT' ) === 'pluginsAndThemes' ) {
 				return i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
 				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
 				' Google Analytics support, unlimited' +
