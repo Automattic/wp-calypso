@@ -237,8 +237,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		} )
 		.then( ( response ) => {
 			const phoneNumber = get( response, 'body.data.phone_number' );
-			const message = translate( 'A text message with the verification code was just sent to your ' +
-				'phone number ending in %(phoneNumber)s', {
+			const message = translate( 'Message sent to phone number ending in %(phoneNumber)s', {
 					args: {
 						phoneNumber
 					}
