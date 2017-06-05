@@ -209,9 +209,7 @@ class DomainDetailsForm extends PureComponent {
 	}
 
 	getAllFieldValues() {
-		const allFieldValues = this.props.contactDetails;
-		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
-		return allFieldValues;
+		return this.props.contactDetails;
 	}
 
 	getRequiredExtraSteps() {
