@@ -175,7 +175,7 @@
     "prebuild-server": "mkdirp build",
     "build-server": "npm run -s env -- webpack --display-error-details --config webpack.config.node.js",
     "bundle": "npm run -s env -- node server/bundler/bin/bundler.js",
-    "clean": "run-p -s clean:*",
+    "clean": "npm run -s clean:build && npm run -s clean:devdocs && npm run -s clean:public",
     "clean:build": "npm run -s rm -- build && npm run -s rm -- server/bundler .json && npm run -s rm -- .babel-cache",
     "clean:devdocs": "npm run -s rm -- server/devdocs/search-index.js && npm run -s rm -- server/devdocs/proptypes-index.json && npm run -s rm -- server/devdocs/components-usage-stats.json",
     "clean:public": "npm run -s rm -- public .css .css.map .js .js.map",
