@@ -16,6 +16,8 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import utils from 'lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
+import { getSiteConnectionStatus } from 'state/selectors';
 
 export class PluginInstallButton extends Component {
 	installAction = () => {
@@ -233,16 +235,29 @@ export class PluginInstallButton extends Component {
 		);
 	}
 
-	render() {
-		const { selectedSite } = this.props;
-		if ( selectedSite.unreachable ) {
+	renderNoticeOrButton() {
+		const { selectedSite, siteIsConnected } = this.props;
+
+		if ( siteIsConnected === false ) {
 			return this.renderUnreachableNotice();
 		}
+
 		if ( ! selectedSite.canUpdateFiles ) {
 			return this.renderDisabledNotice();
 		}
 
 		return this.renderButton();
+	}
+
+	render() {
+		const { selectedSite } = this.props;
+
+		return (
+			<div>
+				{ selectedSite && <QuerySiteConnectionStatus siteId={ selectedSite.ID } /> }
+				{ this.renderNoticeOrButton() }
+			</div>
+		);
 	}
 }
 
@@ -257,7 +272,9 @@ PluginInstallButton.propTypes = {
 };
 
 export default connect(
-	null,
+	( state, ownProps ) => ( {
+		siteIsConnected: ownProps.selectedSite && getSiteConnectionStatus( state, ownProps.selectedSite.ID ),
+	} ),
 	{
 		recordGoogleEvent,
 		recordTracksEvent
