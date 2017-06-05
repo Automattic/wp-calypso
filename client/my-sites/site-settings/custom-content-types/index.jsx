@@ -129,7 +129,7 @@ class CustomContentTypes extends Component {
 		const fieldLabel = translate( 'Testimonials' );
 		const fieldDescription = translate(
 			'Add, organize, and display {{link}}testimonials{{/link}}. If your theme doesn’t support testimonials yet, ' +
-			'you can display them using the shortcode ( [testimonials] ).',
+			'you can display them using the shortcode [testimonials].',
 			{
 				components: {
 					link: <a href="https://support.wordpress.com/testimonials/" />
@@ -145,7 +145,7 @@ class CustomContentTypes extends Component {
 		const fieldLabel = translate( 'Portfolio Projects' );
 		const fieldDescription = translate(
 			'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
-			'you can display them using the shortcode ( [portfolio] ).',
+			'you can display them using the shortcode [portfolio].',
 			{
 				components: {
 					link: <a href="https://support.wordpress.com/portfolios/" />
