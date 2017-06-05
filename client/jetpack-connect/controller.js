@@ -29,14 +29,7 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import PlansLanding from './plans-landing';
-import {
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-} from 'lib/plans/constants';
+import { calculatePlan } from './utils';
 
 /**
  * Module variables
@@ -48,34 +41,6 @@ const analyticsPageTitleByType = {
 	personal: 'Jetpack Connect Personal',
 	premium: 'Jetpack Connect Premium',
 	pro: 'Jetpack Install Pro',
-};
-
-/**
- * Calculate plan based on flow type and interval.
- *
- * @param   {?String} flowType personal | premium | pro
- * @param   {?String} interval yearly | monthly
- * @returns {?String}          Jetpack plan slug
- */
-const calculatePlan = ( flowType, interval ) => {
-	if ( flowType === 'personal' ) {
-		if ( interval === 'monthly' ) {
-			return PLAN_JETPACK_PERSONAL_MONTHLY;
-		}
-		return PLAN_JETPACK_PERSONAL;
-	}
-	if ( flowType === 'premium' ) {
-		if ( interval === 'monthly' ) {
-			return PLAN_JETPACK_PREMIUM_MONTHLY;
-		}
-		return PLAN_JETPACK_PREMIUM;
-	}
-	if ( flowType === 'pro' ) {
-		if ( interval === 'monthly' ) {
-			return PLAN_JETPACK_BUSINESS_MONTHLY;
-		}
-		return PLAN_JETPACK_BUSINESS;
-	}
 };
 
 const removeSidebar = ( context ) => {
@@ -135,7 +100,7 @@ export default {
 			params
 		} = context;
 		const {
-			interval,
+			interval = 'yearly',
 			locale,
 			type = false,
 		} = params;
