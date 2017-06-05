@@ -30,12 +30,12 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import PlansLanding from './plans-landing';
 import {
-	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
 } from 'lib/plans/constants';
 
 /**
@@ -51,26 +51,26 @@ const analyticsPageTitleByType = {
 };
 
 /**
- * Calculate plan based on type and interval.
+ * Calculate plan based on flow type and interval.
  *
- * @param   {String?} type     Flow type: personal | premium | pro
- * @param   {String?} interval Interval: yearly | monthly
+ * @param   {String?} flowType personal | premium | pro
+ * @param   {String?} interval yearly | monthly
  * @returns {String?}          Jetpack plan slug
  */
-const calculatePlan = ( type, interval ) => {
-	if ( type === 'personal' ) {
+const calculatePlan = ( flowType, interval ) => {
+	if ( flowType === 'personal' ) {
 		if ( interval === 'monthly' ) {
 			return PLAN_JETPACK_PERSONAL_MONTHLY;
 		}
 		return PLAN_JETPACK_PERSONAL;
 	}
-	if ( type === 'premium' ) {
+	if ( flowType === 'premium' ) {
 		if ( interval === 'monthly' ) {
 			return PLAN_JETPACK_PREMIUM_MONTHLY;
 		}
 		return PLAN_JETPACK_PREMIUM;
 	}
-	if ( type === 'pro' ) {
+	if ( flowType === 'pro' ) {
 		if ( interval === 'monthly' ) {
 			return PLAN_JETPACK_BUSINESS_MONTHLY;
 		}

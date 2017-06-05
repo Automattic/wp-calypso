@@ -6,9 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	PLAN_JETPACK_PREMIUM,
-} from 'lib/plans/constants';
+import { PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
 import {
 	getConnectingSite,
 	getAuthorizationData,
