@@ -25,9 +25,9 @@ const fetchRewindStatus = ( { dispatch }, action ) => {
 };
 
 const fromApi = response => ( {
-	active: response.use_rewind,
+	active: Boolean( response.use_rewind ),
 	firstBackupDate: response.first_backup_when,
-	isPressable: response.is_pressable,
+	isPressable: Boolean( response.is_pressable ),
 	plan: response.plan,
 } );
 
