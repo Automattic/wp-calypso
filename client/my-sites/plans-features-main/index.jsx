@@ -215,9 +215,9 @@ class PlansFeaturesMain extends Component {
 				<FAQItem
 					question={ translate( 'Can I install plugins?' ) }
 					answer={ translate(
-						'Yes! With the WordPress.com Business plan you can search for and install community plugins.' +
-						' All plans also include their own set of pre-installed plugins suites tailored just' +
-						' for them. {{a}}Check out all included plugins{{/a}}.',
+						'Yes! With the WordPress.com Business plan you can search for and install external plugins.' +
+						' All plans already come with a custom set of plugins tailored just for them.' +
+						' {{a}}Check out all included plugins{{/a}}.',
 						{
 							components: { a: <a href={ `/plugins/${ site.slug }` } /> }
 						}
@@ -228,8 +228,8 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Can I upload my own theme?' ) }
 					answer={ translate(
 						'Yes! With the WordPress.com Business plan you can upload any theme you\'d like.' +
-						' All plans allow access to search our {{a}}directory of free and premium themes{{/a}}' +
-						' which have been reviewed by our team and represent the highest quality.',
+						' All plans give you access to our {{a}}directory of free and premium themes{{/a}}.' +
+						' These are among the highest-quality WordPress themes, hand-picked and reviewed by our team.',
 						{
 							components: { a: <a href={ `/themes/${ site.slug }` } /> }
 						}
@@ -249,7 +249,7 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Do you offer email accounts?' ) }
 					answer={ translate(
 						'Yes. If you register a new domain with our Personal, Premium, or Business plans, you can optionally' +
-						' add G Suite. You can also set up email forwarding for any custom domain' +
+						' add Google-powered G Suite. You can also set up email forwarding for any custom domain' +
 						' registered through WordPress.com. {{a}}Find out more about email{{/a}}.',
 						{
 							components: {

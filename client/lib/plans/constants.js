@@ -600,7 +600,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_UPLOAD_THEMES ]: {
 		getSlug: () => FEATURE_UPLOAD_THEMES,
-		getTitle: () => i18n.translate( 'Upload themes' ),
+		getTitle: () => i18n.translate( 'Upload Themes' ),
 		getDescription: () => i18n.translate( 'Upload custom themes on your site.' )
 	},
 
