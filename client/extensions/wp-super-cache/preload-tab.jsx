@@ -31,7 +31,7 @@ import { isPreloadingCache } from './state/cache/selectors';
 const CachePreloadInterval = ( {
 	handleChange,
 	isDisabled,
-	preload_interval,
+	preload_interval = 0,
 } ) => (
 	<FormTextInput
 		className="wp-super-cache__preload-interval"
@@ -41,7 +41,7 @@ const CachePreloadInterval = ( {
 		onChange={ handleChange( 'preload_interval' ) }
 		step="1"
 		type="number"
-		value={ preload_interval || '0' } />
+		value={ preload_interval } />
 );
 
 class PreloadTab extends Component {
@@ -56,9 +56,9 @@ class PreloadTab extends Component {
 			const { fields, setFieldValue } = this.props;
 
 			if ( this.state.preloadRefresh ) {
-				setFieldValue( 'preload_interval', get( fields, 'minimum_preload_interval', '0' ), true );
+				setFieldValue( 'preload_interval', get( fields, 'minimum_preload_interval', 0 ), true );
 			} else {
-				setFieldValue( 'preload_interval', '0', true );
+				setFieldValue( 'preload_interval', 0, true );
 			}
 		} );
 	}
