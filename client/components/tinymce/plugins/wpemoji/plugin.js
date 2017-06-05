@@ -85,19 +85,8 @@ function wpemoji( editor ) {
 		} );
 	}
 
-	editor.on( 'setcontent', function( event ) {
-		const selection = editor.selection,
-			node = selection.getNode();
-
-		if ( twemoji.test( node.textContent || node.innerText ) ) {
-			replaceEmoji( node );
-
-			// In IE all content in the editor is left selected after wp.emoji.parse()...
-			// Collapse the selection to the beginning.
-			if ( env.ie && env.ie < 9 && event.load && node && node.nodeName === 'BODY' ) {
-				selection.collapse( true );
-			}
-		}
+	editor.on( 'setcontent', function() {
+		parseNode( editor.selection.getNode() );
 	} );
 
 	// Convert Twemoji compatible pasted emoji replacement images into our format.
