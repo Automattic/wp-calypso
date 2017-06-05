@@ -62,7 +62,7 @@ class GoogleAppsProductDetails extends Component {
 					</h5>
 
 					<h5 className="google-apps-dialog__product-feature">
-						<img src="/calypso/images/g-suite/logo_sheets_48dp.svg" />
+						<img src="/calypso/images/g-suite/logo_hangouts_48dp.svg" />
 						<p>{ translate( 'Video and voice calls' ) }</p>
 					</h5>
 				</div>
