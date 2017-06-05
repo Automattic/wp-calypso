@@ -13,7 +13,6 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import CommentList from './comment-list';
-import QuerySiteComments from 'components/data/query-site-comments';
 
 export class CommentsManagement extends Component {
 	static propTypes = {
@@ -37,7 +36,6 @@ export class CommentsManagement extends Component {
 		return (
 			<Main className="comments" wideLayout>
 				<PageViewTracker path={ basePath } title="Manage Comments" />
-				<QuerySiteComments siteId={ siteId } status="all" />
 				<DocumentHead title={ translate( 'Manage Comments' ) } />
 				<CommentList
 					siteId={ siteId }

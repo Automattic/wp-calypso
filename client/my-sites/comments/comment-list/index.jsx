@@ -20,6 +20,7 @@ import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
+import QuerySiteComments from 'components/data/query-site-comments';
 
 export class CommentList extends Component {
 	static propTypes = {
@@ -162,6 +163,7 @@ export class CommentList extends Component {
 
 		return (
 			<div className="comment-list">
+				<QuerySiteComments siteId={ siteId } status="all" />
 				<CommentNavigation { ...{
 					isBulkEdit,
 					siteSlug,

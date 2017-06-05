@@ -50,7 +50,7 @@ export class CommentNavigation extends Component {
 
 	getStatusPath = status => 'unapproved' !== status
 		? `/comments/${ status }/${ this.props.siteSlug }`
-		: `/comments/${ this.props.siteSlug }`;
+		: `/comments/pending/${ this.props.siteSlug }`;
 
 	render() {
 		const {
