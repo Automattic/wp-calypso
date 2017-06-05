@@ -8,6 +8,12 @@
 
 .foldable-card.products__variation-card {
 	margin-bottom: 16px;
+
+	.foldable-card__header {
+		@include breakpoint( ">480px" ) {
+			padding: 24px;
+		}
+	}
 }
 
 .foldable-card.products__variation-card .foldable-card__content {
@@ -566,6 +572,26 @@
 
 	&.is-expanded {
 		margin-bottom: 16px;
+	}
+
+	.foldable-card__header {
+		padding: 16px;
+
+		@include breakpoint( ">480px" ) {
+			padding: 24px;
+		}
+
+		.foldable-card__expand {
+			@include breakpoint( ">480px" ) {
+				width: 63px;
+			}
+		}
+	}
+
+	.foldable-card__content {
+		@include breakpoint( ">480px" ) {
+			padding: 24px;
+		}
 	}
 }
 
