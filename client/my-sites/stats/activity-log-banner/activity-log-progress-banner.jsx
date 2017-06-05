@@ -26,7 +26,7 @@ function ActivityLogSuccessBanner( {
 		>
 			<p>{ translate(
 				'We\'re in the process of restoring your site back to %s.' +
-				'You\'ll recieve a notification once it\'s complete!',
+				'You\'ll be notified once it\'s complete.',
 				{ args: moment( date ).format( 'LLLL' ) }
 			) }</p>
 
