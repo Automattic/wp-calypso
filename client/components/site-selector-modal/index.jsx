@@ -13,10 +13,7 @@ import { localize } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import Button from 'components/button';
 import SitesDropdown from 'components/sites-dropdown';
-import sitesListFactory from 'lib/sites-list';
-import { getPrimarySiteId } from 'state/selectors';
-
-const sitesList = sitesListFactory();
+import { getPrimarySiteId, getVisibleSites } from 'state/selectors';
 
 class SiteSelectorModal extends Component {
 	static propTypes = {
@@ -45,8 +42,8 @@ class SiteSelectorModal extends Component {
 	constructor( props ) {
 		super( props );
 
-		const { primarySiteId } = this.props;
-		let filteredSiteIds = sitesList.getVisible().map( ( site ) => site.ID );
+		const { primarySiteId, visibleSites } = this.props;
+		let filteredSiteIds = visibleSites.map( ( site ) => site.ID );
 
 		if ( props.filter ) {
 			filteredSiteIds = filteredSiteIds.filter( props.filter );
@@ -110,6 +107,7 @@ class SiteSelectorModal extends Component {
 
 export default connect(
 	( state ) => ( {
-		primarySiteId: getPrimarySiteId( state )
+		primarySiteId: getPrimarySiteId( state ),
+		visibleSites: getVisibleSites( state )
 	} )
 )( localize( SiteSelectorModal ) );
