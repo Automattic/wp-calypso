@@ -13,7 +13,8 @@ import Button from 'components/button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { isMonthly, getYearlyPlanByMonthly } from 'lib/plans/constants';
+import { isMonthly } from 'lib/plans/constants';
+import { getYearlyPlanByMonthly } from 'lib/plans';
 import { planItem } from 'lib/cart-values/cart-items';
 import { addItem } from 'lib/upgrades/actions';
 import {

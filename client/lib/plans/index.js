@@ -22,8 +22,14 @@ import {
 	FEATURES_LIST,
 	PLANS_LIST,
 	PLAN_FREE,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_FREE,
-	PLAN_PERSONAL
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_PERSONAL,
 } from 'lib/plans/constants';
 
 /**
@@ -141,6 +147,32 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 
 		return ! isJetpackPlan( plan );
 	} );
+}
+
+export function getMonthlyPlanByYearly( plan ) {
+	switch ( plan ) {
+		case PLAN_JETPACK_PREMIUM:
+			return PLAN_JETPACK_PREMIUM_MONTHLY;
+		case PLAN_JETPACK_BUSINESS:
+			return PLAN_JETPACK_BUSINESS_MONTHLY;
+		case PLAN_JETPACK_PERSONAL:
+			return PLAN_JETPACK_PERSONAL_MONTHLY;
+		default:
+			return '';
+	}
+}
+
+export function getYearlyPlanByMonthly( plan ) {
+	switch ( plan ) {
+		case PLAN_JETPACK_PREMIUM_MONTHLY:
+			return PLAN_JETPACK_PREMIUM;
+		case PLAN_JETPACK_BUSINESS_MONTHLY:
+			return PLAN_JETPACK_BUSINESS;
+		case PLAN_JETPACK_PERSONAL_MONTHLY:
+			return PLAN_JETPACK_PERSONAL;
+		default:
+			return '';
+	}
 }
 
 export const isPlanFeaturesEnabled = () => {

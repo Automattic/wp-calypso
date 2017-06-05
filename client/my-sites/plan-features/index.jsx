@@ -31,12 +31,14 @@ import {
 	isMonthly,
 	getPlanFeaturesObject,
 	getPlanClass,
-	getMonthlyPlanByYearly,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 } from 'lib/plans/constants';
-import { isFreePlan } from 'lib/plans';
+import {
+	getMonthlyPlanByYearly,
+	isFreePlan,
+} from 'lib/plans';
 import {
 	getPlanPath,
 	canUpgradeToPlan,
