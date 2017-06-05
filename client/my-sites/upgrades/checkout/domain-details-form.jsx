@@ -12,6 +12,7 @@ import {
 	first,
 	head,
 	indexOf,
+	isEqual,
 	kebabCase,
 	last,
 	map,
@@ -92,6 +93,12 @@ class DomainDetailsForm extends PureComponent {
 
 	componentDidMount() {
 		analytics.pageView.record( '/checkout/domain-contact-information', 'Checkout > Domain Contact Information' );
+	}
+
+	componentDidUpdate( prevProps, prevState ) {
+		if ( ! isEqual( prevState.form, this.state.form ) ) {
+			this.props.updateContactDetailsCache( this.getMainFieldValues( this.state.form ) );
+		}
 	}
 
 	loadFormState = ( fn ) => {
@@ -425,15 +432,9 @@ class DomainDetailsForm extends PureComponent {
 				return;
 			}
 
-			if ( this.isCurrentStep( 'mainForm' ) ) {
-				this.props.updateContactDetailsCache( this.getMainFieldValues() );
-			}
-
 			if ( this.hasAnotherStep() ) {
 				return this.switchToNextStep();
 			}
-
-			this.props.updateContactDetailsCache( this.getAllFieldValues() );
 
 			if ( ! this.allDomainRegistrationsHavePrivacy() ) {
 				this.openDialog();
