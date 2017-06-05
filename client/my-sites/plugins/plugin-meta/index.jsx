@@ -8,7 +8,6 @@ import i18n from 'i18n-calypso';
 import some from 'lodash/some';
 import get from 'lodash/get';
 import { find, includes } from 'lodash';
-import { isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
 import sectionsModule from 'sections';
@@ -19,6 +18,7 @@ import sectionsModule from 'sections';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
 import ExternalLink from 'components/external-link';
@@ -296,19 +296,6 @@ class PluginMeta extends Component {
 		}
 	}
 
-	getDefaultActionLinks( plugin ) {
-		let adminUrl = get( this.props, 'selectedSite.options.admin_url' );
-		const pluginSlug = get( plugin, 'slug' );
-
-		if ( pluginSlug === 'vaultpress' ) {
-			adminUrl += '/admin.php?page=vaultpress';
-		}
-
-		return adminUrl
-			? { [ i18n.translate( 'WP Admin' ) ]: adminUrl }
-			: null;
-	}
-
 	getUpdateWarning() {
 		const newVersions = this.getAvailableNewVersions();
 		if ( newVersions.length > 0 ) {
@@ -444,11 +431,6 @@ class PluginMeta extends Component {
 		} );
 
 		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
-		let actionLinks = get( plugin, 'action_links' );
-		if ( get( plugin, 'active' ) && isEmpty( actionLinks ) ) {
-			actionLinks = this.getDefaultActionLinks( plugin );
-		}
-
 		const path = this.getExtensionSettingsPath( plugin );
 
 		return (
@@ -465,43 +447,30 @@ class PluginMeta extends Component {
 							<div className="plugin-meta__meta">
 								{ this.renderAuthorUrl() }
 							</div>
-
-							{ path &&
-								<div className="plugin-meta__settings-link">
-									<Button primary
-										href={ `${ path }/${ this.props.slug }` }>
-										{ this.props.translate( 'Settings' ) }
-									</Button>
-								</div>
-							}
-
-							{ ! isEmpty( actionLinks ) &&
-								<div className="plugin-meta__action-links">
-									{ Object.keys( actionLinks ).map( ( linkTitle, index ) => (
-										<Button compact icon
-											href={ actionLinks[ linkTitle ] }
-											target="_blank"
-											key={ 'action-link-' + index }
-											rel="noopener noreferrer">
-												{ linkTitle } <Gridicon icon="external" />
-										</Button>
-									) ) }
-								</div>
-							}
 						</div>
 						{ this.renderActions() }
 					</div>
-					{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) &&
-						<PluginInformation
-							plugin={ this.props.plugin }
-							isPlaceholder={ this.props.isPlaceholder }
-							site={ this.props.selectedSite }
-							pluginVersion={ plugin && plugin.version }
-							siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
-							hasUpdate={ this.getAvailableNewVersions().length > 0 }
-						/>
-					}
 				</Card>
+
+				{ path &&
+					<CompactCard
+						href={ `${ path }/${ this.props.slug }` }>
+						{ this.props.translate( 'Edit plugin settings' ) }
+					</CompactCard>
+				}
+
+				{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) &&
+				<Card className="plugin-meta__plugin-information-wrapper">
+					<PluginInformation
+						plugin={ this.props.plugin }
+						isPlaceholder={ this.props.isPlaceholder }
+						site={ this.props.selectedSite }
+						pluginVersion={ plugin && plugin.version }
+						siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
+						hasUpdate={ this.getAvailableNewVersions().length > 0 }
+					/>
+				</Card>
+				}
 
 				{ this.props.atEnabled &&
 					this.maybeDisplayUnsupportedNotice()
