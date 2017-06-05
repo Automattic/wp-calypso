@@ -45,10 +45,12 @@ const CachePreloadInterval = ( {
 );
 
 class PreloadTab extends Component {
+	state = {
+		preloadRefresh: true,
+	};
+
 	componentWillReceiveProps( nextProps ) {
-		this.state = {
-			preloadRefresh: parseInt( nextProps.fields.preload_interval, 10 ) === 0 ? false : true
-		};
+		this.setState( { preloadRefresh: parseInt( nextProps.fields.preload_interval, 10 ) === 0 ? false : true } );
 	}
 
 	handlePreloadRefreshChange = () => {
