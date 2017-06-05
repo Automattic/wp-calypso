@@ -58,6 +58,9 @@ export getPastBillingTransaction from './get-past-billing-transaction';
 export getPastBillingTransactions from './get-past-billing-transactions';
 export getPosterUploadProgress from './get-poster-upload-progress';
 export getPosterUrl from './get-poster-url';
+export getPostRevision from './get-post-revision';
+export getPostRevisions from './get-post-revisions';
+export getPostRevisionChanges from './get-post-revision-changes';
 export getPublicizeConnection from './get-publicize-connection';
 export getPostLikes from './get-post-likes';
 export getPrimarySiteId from './get-primary-site-id';
@@ -202,4 +205,3 @@ export prependThemeFilterKeys from './prepend-theme-filter-keys';
 export shouldCloseVideoEditorModal from './should-close-video-editor-modal';
 export shouldShowVideoEditorError from './should-show-video-editor-error';
 export shouldSyncReaderFollows from './should-sync-reader-follows';
-
