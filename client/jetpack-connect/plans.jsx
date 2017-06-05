@@ -31,7 +31,10 @@ import { addItem } from 'lib/upgrades/actions';
 import { selectPlanInAdvance, goBackToWpAdmin, completeFlow } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { isRequestingPlans, getPlanBySlugSelector } from 'state/plans/selectors';
+import {
+	getPlanBySlug as getPlanBySlugSelector,
+	isRequestingPlans,
+} from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { canCurrentUser } from 'state/selectors';
 import {
