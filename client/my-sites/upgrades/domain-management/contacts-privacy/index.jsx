@@ -34,7 +34,7 @@ const ContactsPrivacy = React.createClass( {
 		}
 
 		const domain = getSelectedDomain( this.props ),
-			{ hasPrivacyProtection, privateDomain, currentUserCanManage } = domain,
+			{ hasPrivacyProtection, privateDomain, privacyAvailable, currentUserCanManage } = domain,
 			contactInformation = privateDomain
 				? findPrivacyServiceWhois( this.props.whois.data )
 				: findRegistrantWhois( this.props.whois.data );
@@ -54,6 +54,7 @@ const ContactsPrivacy = React.createClass( {
 						selectedSite={ this.props.selectedSite }
 						hasPrivacyProtection={ hasPrivacyProtection }
 						privateDomain={ privateDomain }
+						privacyAvailable={ privacyAvailable }
 						currentUserCanManage={ currentUserCanManage } />
 
 					<VerticalNavItem
@@ -61,7 +62,7 @@ const ContactsPrivacy = React.createClass( {
 						{ this.translate( 'Edit Contact Info' ) }
 					</VerticalNavItem>
 
-					{ ! hasPrivacyProtection && (
+					{ ! hasPrivacyProtection && privacyAvailable && (
 						<VerticalNavItem
 							path={ paths.domainManagementPrivacyProtection( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
 							{ this.translate( 'Privacy Protection' ) }

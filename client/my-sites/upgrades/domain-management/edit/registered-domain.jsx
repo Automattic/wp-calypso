@@ -53,25 +53,28 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	getPrivacyProtection() {
-		const { hasPrivacyProtection, privateDomain, name, pendingTransfer } = this.props.domain,
+		const { hasPrivacyProtection, privateDomain, privacyAvailable, name, pendingTransfer } = this.props.domain,
 			{ slug } = this.props.selectedSite,
 			{ translate } = this.props,
 			privacyPath = paths.domainManagementContactsPrivacy( slug, name ),
 			transferPath = paths.domainManagementTransferOut( slug, name );
+		let label;
+
+		if ( ! privacyAvailable ) {
+			return false;
+		}
 
 		if ( pendingTransfer ) {
-			return this.getLabel( {
+			label = this.getLabel( {
 				status: 'is-warning',
 				icon: 'notice',
 				message: translate( 'Pending Transfer', {
 					context: 'An icon label when domain is pending transfer.'
 				} )
 			} );
-		}
-
-		if ( hasPrivacyProtection ) {
+		} else if ( hasPrivacyProtection ) {
 			if ( privateDomain ) {
-				return this.getLabel( {
+				label = this.getLabel( {
 					status: 'is-success',
 					icon: 'lock',
 					href: privacyPath,
@@ -79,26 +82,32 @@ const RegisteredDomain = React.createClass( {
 						context: 'An icon label when Privacy Protection is enabled.'
 					} )
 				} );
+			} else {
+				label = this.getLabel( {
+					status: 'is-warning',
+					icon: 'notice',
+					href: transferPath,
+					message: translate( 'Disabled for Transfer', {
+						context: 'An icon label when Privacy Protection is temporarily disabled for transfer.'
+					} )
+				} );
 			}
-
-			return this.getLabel( {
+		} else {
+			label = this.getLabel( {
 				status: 'is-warning',
 				icon: 'notice',
-				href: transferPath,
-				message: translate( 'Disabled for Transfer', {
-					context: 'An icon label when Privacy Protection is temporarily disabled for transfer.'
+				href: privacyPath,
+				message: translate( 'None', {
+					context: 'An icon label when Privacy Protection is not purchased by the user.'
 				} )
 			} );
 		}
 
-		return this.getLabel( {
-			status: 'is-warning',
-			icon: 'notice',
-			href: privacyPath,
-			message: translate( 'None', {
-				context: 'An icon label when Privacy Protection is not purchased by the user.'
-			} )
-		} );
+		return (
+			<Property label={ translate( 'Privacy Protection' ) }>
+				{ label }
+			</Property>
+		);
 	},
 
 	handlePaymentSettingsClick() {
@@ -208,9 +217,7 @@ const RegisteredDomain = React.createClass( {
 
 						{ this.getAutoRenewalOrExpirationDate() }
 
-						<Property label={ translate( 'Privacy Protection' ) }>
-							{ this.getPrivacyProtection() }
-						</Property>
+						{ this.getPrivacyProtection() }
 
 						<SubscriptionSettings
 							onClick={ this.handlePaymentSettingsClick } />
