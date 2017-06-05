@@ -13,41 +13,52 @@ import Gridicon from 'gridicons';
 
 class ActivityLogConfirmDialog extends Component {
 	static propTypes = {
+		isVisible: PropTypes.bool.isRequired,
+		onClose: PropTypes.func.isRequired,
+		onConfirm: PropTypes.func.isRequired,
 		siteName: PropTypes.string.isRequired,
+		dateIsoString: PropTypes.string.isRequired,
+
+		// Localize
+		translate: PropTypes.func.isRequired,
+		moment: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
-		siteName: 'YourAwesomeSite', // FIXME: real site name
+		isVisible: false,
 	};
 
-	state = { showDialog: true };
-
 	renderButtons() {
-		const { translate } = this.props;
+		const {
+			onClose,
+			onConfirm,
+			translate,
+		} = this.props;
 		return (
 			<div>
-				<Button onClick={ this.onCloseDialog }>
+				<Button onClick={ onClose }>
 					{ translate( 'Cancel' ) }
 				</Button>
-				<Button primary scary onClick={ this.onCloseDialog }>
+				<Button primary scary onClick={ onConfirm }>
 					{ translate( 'Restore' ) }
 				</Button>
 			</div>
 		);
 	}
 
-	onCloseDialog = () => this.setState( { showDialog: false } );
-
 	render() {
 		const {
-			translate,
+			isVisible,
+			moment,
 			siteName,
+			dateIsoString,
+			translate,
 		} = this.props;
 
 		return (
 			<Dialog
 				additionalClassNames="activity-log-confirm-dialog"
-				isVisible={ this.state.showDialog }
+				isVisible={ isVisible }
 			>
 				<h1>{ translate( 'Restore Site' ) }</h1>
 				<p className="activity-log-confirm-dialog__highlight">
@@ -63,8 +74,10 @@ class ActivityLogConfirmDialog extends Component {
 					<Gridicon icon={ 'history' } />
 					{
 						translate( 'Restoring to {{b}}%(time)s{{/b}}', {
-							args: { time: '31 May, 2017 at 3:58 PM.', /* FIXME: real time */ },
-							components: { b: <b /> }
+							args: {
+								time: moment( dateIsoString ).format( 'LLL' ),
+							},
+							components: { b: <b /> },
 						} )
 					}
 				</div>

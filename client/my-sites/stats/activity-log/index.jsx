@@ -19,7 +19,6 @@ import ActivityLogDay from '../activity-log-day';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import SuccessBanner from '../activity-log-banner/success-banner';
-import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 
 class ActivityLog extends Component {
 	componentDidMount() {
@@ -289,7 +288,7 @@ class ActivityLog extends Component {
 			( daily_logs, isoString ) => (
 				<ActivityLogDay
 					key={ isoString }
-					dateString={ moment( isoString ).format( 'LL' ) }
+					dateIsoString={ isoString }
 					logs={ daily_logs }
 					siteId={ siteId }
 					isRewindEnabled={ true }
@@ -307,7 +306,6 @@ class ActivityLog extends Component {
 					section="activity"
 				/>
 				{ this.renderBanner() }
-				<ActivityLogConfirmDialog />
 				<section className="activity-log__wrapper">
 					{ logsGroupedByDate }
 				</section>
