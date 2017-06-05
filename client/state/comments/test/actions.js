@@ -11,12 +11,12 @@ import { expect } from 'chai';
 import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	COMMENTS_RECEIVE,
 	COMMENTS_REMOVE,
 	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
 	COMMENTS_LIKE_UPDATE,
-	COMMENTS_UNLIKE
+	COMMENTS_UNLIKE,
+	COMMENTS_WRITE
 } from '../../action-types';
 import {
 	requestPostComments,
@@ -75,54 +75,18 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#writeComment()', () => {
-		before( () => {
-			nock( API_DOMAIN )
-				.post( `/rest/v1.1/sites/${ SITE_ID }/posts/${ POST_ID }/replies/new`, { content: 'hi' } )
-				.reply( 200,
-				{
-					ID: 13,
-					post: {
-						ID: POST_ID,
-						title: 'My awesome post!',
-						type: 'post',
-					},
-					author: { ID: 1234 },
-					date: '2016-02-05T11:17:03+00:00',
-					content: '<p>hi<\/p>\n',
-					status: 'approved',
-					parent: false,
-					type: 'comment'
-				} );
-		} );
+		it( 'should return a write comment action', function() {
+			const action = writeComment( 'comment text', SITE_ID, POST_ID );
 
-		it( 'should dispatch correct actions', function() {
-			const dispatchSpy = sinon.spy();
-			const writeCommentThunk = writeComment( 'hi', SITE_ID, POST_ID );
-
-			const reqPromise = writeCommentThunk( dispatchSpy );
-
-			const firstSpyCallArg = dispatchSpy.args[ 0 ][ 0 ];
-
-			expect( firstSpyCallArg.type ).to.eql( COMMENTS_RECEIVE );
-			expect( firstSpyCallArg.comments[ 0 ].ID.indexOf( 'placeholder-' ) ).to.equal( 0 );
-
-			return reqPromise.then( ( comment ) => {
-				expect( comment ).to.be.object;
-				expect( comment ).to.not.equal( undefined );
-				expect( comment ).to.not.equal( null );
-
-				const secondSpyCallArg = dispatchSpy.args[ 1 ][ 0 ];
-				const thirdSpyCallArg = dispatchSpy.args[ 2 ][ 0 ];
-
-				expect( secondSpyCallArg.type ).to.eql( COMMENTS_REMOVE );
-				expect( secondSpyCallArg.commentId.indexOf( 'placeholder-' ) ).to.equal( 0 );
-
-				expect( thirdSpyCallArg.type ).to.eql( COMMENTS_RECEIVE );
-				expect( thirdSpyCallArg.comments.length ).to.eql( 1 );
-				expect( thirdSpyCallArg.comments[ 0 ].ID ).to.be.a.number;
+			expect( action ).to.eql( {
+				type: COMMENTS_WRITE,
+				siteId: SITE_ID,
+				postId: POST_ID,
+				parentCommentId: null,
+				commentText: 'comment text',
 			} );
 		} );
-	} ); // writeComment
+	} );
 
 	describe( '#removeComment()', () => {
 		it( 'should dispatch remove for a placeholder when provided', () => {
