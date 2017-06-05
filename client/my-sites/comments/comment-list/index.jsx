@@ -187,11 +187,17 @@ export class CommentList extends Component {
 	}
 }
 
-const CommentFaker = WrappedCommentList => class extends Component {
+export const CommentFaker = WrappedCommentList => class extends Component {
 	state = {
 		comments: {},
 		isBulkEdit: false,
 	};
+
+	componentWillMount() {
+		if ( this.props.comments.length ) {
+			this.setState( { comments: keyBy( this.props.comments, 'ID' ) } );
+		}
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.comments.length ) {
