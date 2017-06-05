@@ -179,25 +179,32 @@ export class CommentDetail extends Component {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	authorAvatarUrl: get( ownProps, 'author.avatar_URL' ),
-	authorDisplayName: get( ownProps, 'author.name' ),
-	authorEmail: get( ownProps, 'author.email' ),
-	authorId: get( ownProps, 'author.ID' ),
-	authorIp: get( ownProps, 'author.ip' ), // TODO: not available in the current data structure
-	authorIsBlocked: get( ownProps, 'author.isBlocked' ), // TODO: not available in the current data structure
-	authorUrl: get( ownProps, 'author.URL' ),
-	authorUsername: get( ownProps, 'author.nice_name' ),
-	commentContent: ownProps.content,
-	commentDate: ownProps.date,
-	commentId: ownProps.ID,
-	commentIsLiked: ownProps.i_like,
-	commentStatus: ownProps.status,
-	postAuthorDisplayName: get( ownProps, 'post.author.name' ),
-	postTitle: get( ownProps, 'post.title' ),
-	postUrl: get( ownProps, 'post.link' ),
-	repliedToComment: ownProps.replied, // TODO: not available in the current data structure
-	siteId: ownProps.siteId,
-} );
+const mapStateToProps = ( state, ownProps ) => {
+	// TODO: replace with
+	// `const comment = ownProps.comment || getComment( ownProps.commentId );`
+	// when the selector is ready.
+	const comment = ownProps.comment;
+
+	return ( {
+		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
+		authorDisplayName: get( comment, 'author.name' ),
+		authorEmail: get( comment, 'author.email' ),
+		authorId: get( comment, 'author.ID' ),
+		authorIp: get( comment, 'author.ip' ), // TODO: not available in the current data structure
+		authorIsBlocked: get( comment, 'author.isBlocked' ), // TODO: not available in the current data structure
+		authorUrl: get( comment, 'author.URL' ),
+		authorUsername: get( comment, 'author.nice_name' ),
+		commentContent: comment.content,
+		commentDate: comment.date,
+		commentId: comment.ID,
+		commentIsLiked: comment.i_like,
+		commentStatus: comment.status,
+		postAuthorDisplayName: get( comment, 'post.author.name' ),
+		postTitle: get( comment, 'post.title' ),
+		postUrl: get( comment, 'post.link' ),
+		repliedToComment: comment.replied, // TODO: not available in the current data structure
+		siteId: comment.siteId,
+	} );
+};
 
 export default connect( mapStateToProps )( CommentDetail );

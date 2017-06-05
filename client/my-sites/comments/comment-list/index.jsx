@@ -150,13 +150,13 @@ export class CommentList extends Component {
 				>
 					{ map( filteredComments, comment =>
 						<CommentDetail
+							comment={ comment }
 							deleteCommentPermanently={ this.deleteCommentPermanently( comment.ID ) }
 							isBulkEdit={ isBulkEdit }
 							key={ `comment-${ siteId }-${ comment.ID }` }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
 							toggleCommentLike={ this.toggleCommentLike }
-							{ ...comment }
 						/>
 					) }
 				</ReactCSSTransitionGroup>

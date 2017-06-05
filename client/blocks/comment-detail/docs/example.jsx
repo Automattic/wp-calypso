@@ -52,10 +52,10 @@ const CommentList = ( {
 	toggleCommentLike,
 } ) =>
 	<div>
-		{ map( comments, ( comment, index ) =>
+		{ map( comments, comment =>
 			<CommentDetail
-				key={ index }
-				{ ...comment }
+				comment={ comment }
+				key={ comment.ID }
 				setCommentStatus={ setCommentStatus }
 				siteId={ mockSite.id }
 				toggleCommentLike={ toggleCommentLike }
