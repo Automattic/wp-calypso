@@ -18,10 +18,10 @@ class ActivityLogBanner extends Component {
 		isDismissable: PropTypes.bool.isRequired,
 		onDismissClick: PropTypes.func,
 		status: PropTypes.oneOf( [
-			'is-error',
-			'is-info',
-			'is-success',
-			'is-warning',
+			'error',
+			'info',
+			'success',
+			'warning',
 		] ),
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -42,14 +42,14 @@ class ActivityLogBanner extends Component {
 		}
 
 		switch ( this.props.status ) {
-			case 'is-error':
-			case 'is-warning':
+			case 'error':
+			case 'warning':
 				return 'notice-outline';
 
-			case 'is-info':
+			case 'info':
 				return 'info-outline';
 
-			case 'is-success':
+			case 'success':
 				return 'star';
 		}
 
@@ -67,12 +67,15 @@ class ActivityLogBanner extends Component {
 		} = this.props;
 
 		const icon = this.getIcon();
-		const classes = classNames( 'activity-log-banner', status, {
-			// dismissable: isDismissable,
+		const classes = classNames( 'activity-log-banner', {
+			'is-error': 'error' === status,
+			'is-info': 'info' === status,
+			'is-success': 'success' === status,
+			'is-warning': 'warning' === status,
 		} );
 
 		return (
-			<Card className={ classes }>
+			<Card highlight={ status } className={ classes }>
 				{ icon && (
 					<div className="activity-log-banner__icon">
 						<Gridicon icon={ icon } size={ 24 } />

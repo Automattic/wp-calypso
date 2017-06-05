@@ -17,7 +17,7 @@ function ActivityLogErrorBanner( {
 		<ActivityLogBanner
 			isDismissable
 			onDismissClick={ /* FIXME */ function() {} }
-			status="is-error"
+			status="error"
 			title={ translate( 'Problem restoring your site' ) }
 		>
 			<p>{ translate( 'We came across a problem while trying to restore your site.' ) }</p>

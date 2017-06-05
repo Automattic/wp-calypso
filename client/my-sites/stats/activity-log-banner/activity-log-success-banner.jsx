@@ -23,7 +23,7 @@ function ActivityLogSuccessBanner( {
 		<ActivityLogBanner
 			isDismissable
 			onDismissClick={ handleDismiss }
-			status="is-success"
+			status="success"
 			title={ translate( 'Your site has been successfully restored' ) }
 		>
 			<p>{ translate(

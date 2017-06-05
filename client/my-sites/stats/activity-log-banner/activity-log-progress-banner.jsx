@@ -21,7 +21,7 @@ function ActivityLogSuccessBanner( {
 
 	return (
 		<ActivityLogBanner
-			status="is-info"
+			status="info"
 			title={ translate( 'Currently restoring your site' ) }
 		>
 			<p>{ translate(
