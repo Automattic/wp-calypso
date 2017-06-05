@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import { loginSocialUser } from 'state/login/actions';
 import { errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 import wpcom from 'lib/wp';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 
@@ -19,6 +20,7 @@ class SocialLoginForm extends Component {
 	static propTypes = {
 		errorNotice: PropTypes.func.isRequired,
 		infoNotice: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 		removeNotice: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -35,6 +37,10 @@ class SocialLoginForm extends Component {
 		}
 
 		this.props.loginSocialUser( 'google', response.Zi.id_token ).then( () => {
+			this.props.recordTracksEvent( 'calypso_social_login_form_login_success', {
+				social_account_type: 'google',
+			} );
+
 			this.props.onSuccess();
 		} ).catch( error => {
 			if ( error.code === 'unknown_user' ) {
@@ -42,8 +48,17 @@ class SocialLoginForm extends Component {
 				wpcom.undocumented().usersSocialNew( 'google', response.Zi.id_token, 'login', ( wpcomError, wpcomResponse ) => {
 					this.props.removeNotice( notice.noticeId );
 					if ( wpcomError ) {
+						this.props.recordTracksEvent( 'calypso_social_login_form_signup_fail', {
+							social_account_type: 'google',
+							error: wpcomError.message
+						} );
+
 						this.props.errorNotice( wpcomError.message );
 					} else {
+						this.props.recordTracksEvent( 'calypso_social_login_form_signup_success', {
+							social_account_type: 'google',
+						} );
+
 						this.setState( {
 							username: wpcomResponse.username,
 							bearerToken: wpcomResponse.bearer_token
@@ -51,6 +66,11 @@ class SocialLoginForm extends Component {
 					}
 				} );
 			} else {
+				this.props.recordTracksEvent( 'calypso_social_login_form_login_fail', {
+					social_account_type: 'google',
+					error: error.message
+				} );
+
 				this.props.errorNotice( error.message );
 			}
 		} );
@@ -88,5 +108,6 @@ export default connect(
 		infoNotice,
 		removeNotice,
 		loginSocialUser,
+		recordTracksEvent,
 	}
 )( localize( SocialLoginForm ) );
