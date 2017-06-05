@@ -8,11 +8,13 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
  * Internal dependencies
  */
 import { cartItems } from 'lib/cart-values';
+import CompactCard from 'components/card/compact';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
 import analyticsMixin from 'lib/mixins/analytics';
 import { abtest } from 'lib/abtest';
 import { validate as validateGappsUsers, filter as filterUsers } from 'lib/domains/google-apps-users';
+import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 
 const GoogleAppsDialog = React.createClass( {
 	mixins: [ analyticsMixin( 'googleApps' ) ],
@@ -47,27 +49,30 @@ const GoogleAppsDialog = React.createClass( {
 
 	render() {
 		const gapps = this.props.productsList && this.props.productsList.get().gapps;
-		let price = gapps && gapps.cost_display;
-
-		// Gapps price is stored annually but we'd like to show a monthly price
-		price = price && price.replace( /(\d+\.?\d+)/, ( value ) => {
-			const number = ( Math.round( parseFloat( value ) / 10 * 100 ) / 100 );
-			return number % 1 === 0 ? number : number.toFixed( 2 );
-		} );
+		const price = gapps && gapps.cost_display;
+		const monthlyPrice = getMonthlyPrice( price );
+		const annualPrice = getAnnualPrice( price );
 
 		return (
-			<form className="google-apps-dialog card" onSubmit={ this.handleFormSubmit }>
-				{ this.header() }
-				<GoogleAppsProductDetails
-					price={ price }
-				/>
-				<ReactCSSTransitionGroup
-					transitionName="google-apps-dialog__users"
-					transitionEnterTimeout={ 200 }
-					transitionLeaveTimeout={ 200 }>
-					{ this.state.isAddingEmail && this.renderGoogleAppsUsers() }
-				</ReactCSSTransitionGroup>
-				{ this.footer() }
+			<form className="google-apps-dialog" onSubmit={ this.handleFormSubmit }>
+				<CompactCard>
+					{ this.header() }
+				</CompactCard>
+				<CompactCard>
+					<GoogleAppsProductDetails
+						monthlyPrice={ monthlyPrice }
+						annualPrice={ annualPrice }
+					/>
+					<ReactCSSTransitionGroup
+						transitionName="google-apps-dialog__users"
+						transitionEnterTimeout={ 200 }
+						transitionLeaveTimeout={ 200 }>
+						{ this.state.isAddingEmail && this.renderGoogleAppsUsers() }
+					</ReactCSSTransitionGroup>
+				</CompactCard>
+				<CompactCard>
+					{ this.footer() }
+				</CompactCard>
 			</form>
 		);
 	},
@@ -97,10 +102,19 @@ const GoogleAppsDialog = React.createClass( {
 		return (
 			<header className="google-apps-dialog__header">
 				<h2 className="google-apps-dialog__title">
-					{ this.translate( 'Add Professional Email to %(domain)s', { args: { domain: this.props.domain } } ) }
+					{
+						this.translate(
+							'Add Professional email from Google to %(domain)s',
+							{
+								args: {
+									domain: this.props.domain
+								}
+							}
+						)
+					}
 				</h2>
 				<h5 className="google-apps-dialog__no-setup-required">
-					{ this.translate( 'No setup or software required, easy to manage from your dashboard' ) }
+					{ this.translate( 'No setup or software required. Easy to manage from your dashboard.' ) }
 				</h5>
 			</header>
 		);
@@ -145,7 +159,7 @@ const GoogleAppsDialog = React.createClass( {
 		const continueButtonHandler = this.state.isAddingEmail ? this.handleFormSubmit : this.handleAddEmail,
 			continueButtonText = this.state.isAddingEmail
 				? this.translate( 'Continue \u00BB' )
-				: this.translate( 'Add Email \u00BB' );
+				: this.translate( 'Yes, Add Email \u00BB' );
 
 		return (
 			<footer className="google-apps-dialog__footer">
