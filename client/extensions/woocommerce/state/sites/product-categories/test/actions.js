@@ -26,7 +26,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v2/products/categories' } )
+				.query( { path: '/wc/v3/products/categories' } )
 				.reply( 200, {
 					data: [ {
 						id: 10,
