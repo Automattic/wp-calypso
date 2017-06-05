@@ -356,23 +356,8 @@ export default connect(
 			editUrl: getEditorPath( state, post.site_ID, post.ID, 'post' ),
 			isPostFromSingleUserSite: isSingleUserSite( state, post.site_ID ),
 			isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
-			selectedSiteId,
-
-			/*
-			 * getPostPreviewUrl() relies on the post to be in Redux.
-			 *
-			 * There is an out of sync issue, because the posts list is fetched
-			 * through Flux and the Redux store is not filled with the proper
-			 * Posts data.
-			 *
-			 * This is a hack to work around that issue for the moment. It must
-			 * be removed when the posts list is updated to fetch the posts
-			 * through the newer QueryPosts component.
-			 *
-			 * FIXME(biskobe,mcsf): undo hack
-			 * //previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID ),
-			 */
-			previewUrl: getPostPreviewUrl( state, null, null, post )
+			previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID ),
+			selectedSiteId
 		};
 	},
 	{ setPreviewUrl, setLayoutFocus }
