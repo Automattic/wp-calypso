@@ -27,6 +27,8 @@ const fetchRewindStatus = ( { dispatch }, action ) => {
 const fromApi = response => ( {
 	active: response.use_rewind,
 	firstBackupDate: response.first_backup_when,
+	isPressable: response.is_pressable,
+	plan: response.plan,
 } );
 
 export const receiveRewindStatus = ( { dispatch }, { siteId }, next, data ) => {

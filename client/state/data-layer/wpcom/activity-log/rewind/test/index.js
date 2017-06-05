@@ -50,6 +50,8 @@ describe( 'receiveRewindStatus', () => {
 				SITE_ID, {
 					active: true,
 					firstBackupDate: '2017-05-04 05:00:00',
+					isPressable: false,
+					plan: 'jetpack-premium',
 				}
 			)
 		);
