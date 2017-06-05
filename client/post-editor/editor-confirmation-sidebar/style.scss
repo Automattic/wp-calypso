@@ -35,6 +35,12 @@
 	}
 }
 
+.editor-confirmation-sidebar__publishing-button {
+	position: absolute;
+		top: 56px;
+		right: 16px;
+}
+
 .editor-confirmation-sidebar__sidebar {
 	@extend .sidebar;
 	width: 374px;
