@@ -142,7 +142,7 @@ class CustomContentTypes extends Component {
 
 	renderPortfolioSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Portfolio projects' );
+		const fieldLabel = translate( 'Portfolio Projects' );
 		const fieldDescription = translate(
 			'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
 			'you can display them using the shortcode ( [portfolios] ).',
