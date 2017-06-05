@@ -25,7 +25,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v2/payment_gateways' } )
+				.query( { path: '/wc/v2/payment_gateways&_method=get' } )
 				.reply( 200, {
 					data: [ {
 						id: 'bacs',
