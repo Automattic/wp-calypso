@@ -4,6 +4,15 @@
 import React, { Component } from 'react';
 import { keyBy, omit } from 'lodash';
 
+/**
+ * `CommentFaker` is a HOC to easily test the Comments Management without the necessity of real data or actions.
+ *
+ * It takes the comments passed via props (with mock data, Redux-connected, etc.) and puts them in its internal state.
+ * Then passes them and various actions (status and like setters) to the actual comment list component.
+ *
+ * Once data and actions will be completely Reduxified, it will be enough to remove the `CommentFaker` call
+ * and use the `mapDispatchToProps` actions instead, leaving this component still useful for testing purposes.
+ */
 export const CommentFaker = WrappedCommentList => class extends Component {
 	state = {
 		comments: {},
