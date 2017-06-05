@@ -16,6 +16,14 @@ module.exports = {
 		},
 		defaultVariation: 'hideSurveyStep',
 	},
+	businessPlanDescriptionAT: {
+		datestamp: '20170605',
+		variations: {
+			original: 50,
+			pluginsAndThemes: 50,
+		},
+		defaultVariation: 'original',
+	},
 	presaleChatButton: {
 		datestamp: '20170328',
 		variations: {

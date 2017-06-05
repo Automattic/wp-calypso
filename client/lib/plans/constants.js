@@ -187,13 +187,25 @@ export const PLANS_LIST = {
 		getStoreSlug: () => PLAN_BUSINESS,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
 		getPathSlug: () => 'business',
-		getDescription: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
+		getDescription: ( abtest ) => {
+			if ( abtest( 'businessPlanDescriptionAT' ) === 'pluginsAndThemes' ) {
+				return i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
+				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
+				' Google Analytics support, unlimited' +
+				' storage, and the ability to remove WordPress.com branding.', {
+					components: {
+						strong: <strong className="plans__features plan-features__targeted-description-heading" />
+					}
+				} );
+			}
+			return i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
 			' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
 			' storage, and the ability to remove WordPress.com branding.', {
 				components: {
 					strong: <strong className="plans__features plan-features__targeted-description-heading" />
 				}
-			} ),
+			} );
+		},
 		getFeatures: () => compact( [ // pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
