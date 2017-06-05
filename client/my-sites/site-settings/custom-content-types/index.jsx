@@ -93,7 +93,7 @@ class CustomContentTypes extends Component {
 		return (
 			<div className="custom-content-types__indented-form-field indented-form-field">
 				{ translate(
-					'Display {{field /}} %s per page load',
+					'Display {{field /}} %s per page',
 					{
 						args: postTypeLabel.toLowerCase(),
 						components: {
