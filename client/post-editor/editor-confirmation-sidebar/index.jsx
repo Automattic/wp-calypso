@@ -85,7 +85,7 @@ class EditorConfirmationSidebar extends React.Component {
 								{ this.props.translate( 'Cancel' ) }
 							</div>
 							<div className="editor-confirmation-sidebar__action">
-								<Button onClick={ this.closeAndPublish } compact>{ this.props.translate( 'Publish' ) }</Button>
+								<Button onClick={ this.closeAndPublish }>{ this.props.translate( 'Publish' ) }</Button>
 							</div>
 						</div>
 						<div className="editor-confirmation-sidebar__content-wrap">
