@@ -30,6 +30,7 @@ export class CommentDetail extends Component {
 		commentId: PropTypes.number,
 		commentIsLiked: PropTypes.bool,
 		commentStatus: PropTypes.string,
+		deleteCommentPermanently: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
@@ -107,7 +108,7 @@ export class CommentDetail extends Component {
 			commentDate,
 			commentIsLiked,
 			commentStatus,
-			deleteForever,
+			deleteCommentPermanently,
 			isBulkEdit,
 			postAuthorDisplayName,
 			postTitle,
@@ -140,7 +141,7 @@ export class CommentDetail extends Component {
 					commentContent={ commentContent }
 					commentIsLiked={ commentIsLiked }
 					commentStatus={ commentStatus }
-					deleteForever={ deleteForever }
+					deleteCommentPermanently={ deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
 					toggleApprove={ this.toggleApprove }

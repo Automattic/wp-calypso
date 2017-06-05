@@ -24,7 +24,7 @@ import EmptyContent from 'components/empty-content';
 export class CommentList extends Component {
 	static propTypes = {
 		comments: PropTypes.object,
-		deleteComment: PropTypes.func,
+		deleteCommentPermanently: PropTypes.func,
 		setCommentLike: PropTypes.func,
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
@@ -37,7 +37,7 @@ export class CommentList extends Component {
 		isBulkEdit: false,
 	};
 
-	deleteForever = commentId => () => {
+	deleteCommentPermanently = commentId => () => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 		this.showNotice( commentId, 'delete', 'trash' );
 
@@ -150,7 +150,7 @@ export class CommentList extends Component {
 				>
 					{ map( filteredComments, comment =>
 						<CommentDetail
-							deleteForever={ this.deleteForever( comment.ID ) }
+							deleteCommentPermanently={ this.deleteCommentPermanently( comment.ID ) }
 							isBulkEdit={ isBulkEdit }
 							key={ `comment-${ siteId }-${ comment.ID }` }
 							setCommentStatus={ this.setCommentStatus }
@@ -258,7 +258,7 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 			<WrappedCommentList
 				{ ...this.props }
 				comments={ this.state.comments }
-				deleteComment={ this.deleteComment }
+				deleteCommentPermanently={ this.deleteCommentPermanently }
 				setCommentLike={ this.setCommentLike }
 				setCommentStatus={ this.setCommentStatus }
 				toggleCommentLike={ this.toggleCommentLike }
