@@ -15,6 +15,7 @@ import LoginForm from './login-form';
 import {
 	getRequestError,
 	getRequestNotice,
+	getTwoFactorAuthRequestError,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 } from 'state/login/selectors';
@@ -32,6 +33,7 @@ class Login extends Component {
 		requestError: PropTypes.object,
 		requestNotice: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
+		twoFactorAuthRequestError: PropTypes.object,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
 	};
@@ -48,11 +50,12 @@ class Login extends Component {
 	};
 
 	componentWillReceiveProps = ( nextProps ) => {
-		const hasError = this.props.requestError !== nextProps.requestError;
+		const hasLoginError = this.props.requestError !== nextProps.requestError;
+		const hasTwoFactorAuthError = this.props.twoFactorAuthRequestError !== nextProps.twoFactorAuthRequestError;
 		const hasNotice = this.props.requestNotice !== nextProps.requestNotice;
 		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
 
-		if ( isNewPage || hasError || hasNotice ) {
+		if ( isNewPage || hasLoginError || hasTwoFactorAuthError || hasNotice ) {
 			window.scrollTo( 0, 0 );
 		}
 	};
@@ -89,15 +92,15 @@ class Login extends Component {
 	};
 
 	renderError() {
-		const { requestError } = this.props;
+		const error = this.props.requestError || this.props.twoFactorAuthRequestError;
 
-		if ( ! requestError || requestError.field !== 'global' ) {
+		if ( ! error || error.field !== 'global' ) {
 			return null;
 		}
 
 		return (
 			<Notice status={ 'is-error' } showDismiss={ false }>
-				{ requestError.message }
+				{ error.message }
 			</Notice>
 		);
 	}
@@ -184,6 +187,7 @@ export default connect(
 	( state ) => ( {
 		requestError: getRequestError( state ),
 		requestNotice: getRequestNotice( state ),
+		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 	} ), {

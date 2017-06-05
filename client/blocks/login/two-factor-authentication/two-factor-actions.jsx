@@ -19,7 +19,6 @@ import { login } from 'lib/paths';
 class TwoFactorActions extends Component {
 	static propTypes = {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
-		isPushSupported: PropTypes.bool.isRequired,
 		isSmsSupported: PropTypes.bool.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -37,13 +36,15 @@ class TwoFactorActions extends Component {
 	render() {
 		const {
 			isAuthenticatorSupported,
-			isPushSupported,
 			isSmsSupported,
 			translate,
 			twoFactorAuthType,
 		} = this.props;
 
-		if ( twoFactorAuthType === 'sms' && ! isAuthenticatorSupported && ! isPushSupported ) {
+		const isSmsAvailable = isSmsSupported && twoFactorAuthType !== 'sms';
+		const isAuthenticatorAvailable = isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
+
+		if ( ! isSmsAvailable && ! isAuthenticatorAvailable ) {
 			return null;
 		}
 
@@ -53,7 +54,7 @@ class TwoFactorActions extends Component {
 					{ translate( 'Or continue to your account using:' ) }
 				</p>
 
-				{ isSmsSupported && twoFactorAuthType !== 'sms' && (
+				{ isSmsAvailable && (
 					<p>
 						<a href="#" onClick={ this.sendSmsCode }>
 							{ translate( 'Code via text message' ) }
@@ -61,7 +62,7 @@ class TwoFactorActions extends Component {
 					</p>
 				) }
 
-				{ isAuthenticatorSupported && twoFactorAuthType !== 'authenticator' && (
+				{ isAuthenticatorAvailable && (
 					<p>
 						<a href={ login( { isNative: true, twoFactorAuthType: 'authenticator' } ) }>
 							{ translate( 'Your Authenticator app' ) }
@@ -76,7 +77,6 @@ class TwoFactorActions extends Component {
 export default connect(
 	( state ) => ( {
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
-		isPushSupported: isTwoFactorAuthTypeSupported( state, 'push' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 	} ),
 	{
