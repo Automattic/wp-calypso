@@ -310,13 +310,6 @@
 	border-spacing: 24px 16px;
 	border-collapse: collapse;
 
-	.form-dimensions-input {
-		.form-dimensions-input__length,
-		.form-dimensions-input__width {
-			border-right-width: 0;
-		}
-	}
-
 	.products__product-form-variation-all-row {
 		background: lighten( $gray, 30% );
 
