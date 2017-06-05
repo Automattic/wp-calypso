@@ -35,8 +35,12 @@ function countDiffWords( diffChanges ) {
 		diffChanges,
 		( accumulator, change ) => {
 			const count = countWords( change.value );
-			change.added && ( accumulator.added += count );
-			change.removed && ( accumulator.removed += count );
+			if ( change.added ) {
+				accumulator.added += count;
+			}
+			if ( change.removed ) {
+				accumulator.removed += count;
+			}
 			return accumulator;
 		},
 		{
