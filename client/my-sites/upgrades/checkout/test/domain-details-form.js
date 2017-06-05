@@ -45,13 +45,13 @@ describe( 'Domain Details Form', () => {
 	const domainProduct = domainRegistration( {
 		productSlug: 'normal_domain',
 		domain: 'test.test',
+		extra: {
+			privacy_available: true
+		},
 	} );
 
 	const domainProductWithoutPrivacy = domainRegistration( {
 		productSlug: 'unprivate_domain',
-		extra: {
-			privacy_not_available: true
-		},
 	} );
 
 	it( 'does not blow up with default props', () => {

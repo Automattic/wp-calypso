@@ -285,7 +285,7 @@ function hasDomainRegistration( cart ) {
 
 function hasOnlyDomainRegistrationsWithPrivacySupport( cart ) {
 	return every( getDomainRegistrations( cart ), function( cartItem ) {
-		return ! privacyNotAvailable( cartItem );
+		return privacyAvailable( cartItem );
 	} );
 }
 
@@ -724,13 +724,13 @@ function isRenewal( cartItem ) {
 }
 
 /**
- * Determines whether a cart item does not supports privacy
+ * Determines whether a cart item supports privacy
  *
  * @param {Object} cartItem - `CartItemValue` object
- * @returns {boolean} true if item does not support privacu
+ * @returns {boolean} true if item supports privacy
  */
-function privacyNotAvailable( cartItem ) {
-	return cartItem.extra && cartItem.extra.privacy_not_available;
+function privacyAvailable( cartItem ) {
+	return cartItem.extra && cartItem.extra.privacy_available;
 }
 
 /**
