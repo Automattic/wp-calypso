@@ -156,21 +156,22 @@ ABTest.prototype.isEligibleForAbTest = function() {
 
 	if ( this.localeTargets ) {
 		const localeMatcher = new RegExp( '^(' + this.localeTargets.join( '|' ) + ')', 'i' );
+		const userLocale = user.get().localeSlug;
 
-		if ( isUserSignedIn() && ! user.get().localeSlug.match( localeMatcher ) ) {
-			debug( '%s: User has a %s locale', this.experimentId, this.localeTarget );
+		if ( isUserSignedIn() && ! userLocale.match( localeMatcher ) ) {
+			debug( '%s: User has a %s locale', this.experimentId, userLocale );
 			return false;
 		}
 		if ( ! isUserSignedIn() && ! clientLanguage.match( localeMatcher ) ) {
-			debug( '%s: Logged-out user has a %s navigator.language preference', this.experimentId, this.localeTarget );
+			debug( '%s: Logged-out user has a %s navigator.language preference', this.experimentId, userLocale );
 			return false;
 		}
 		if ( ! isUserSignedIn() && ! clientLanguagesPrimary.match( localeMatcher ) ) {
-			debug( '%s: Logged-out user has a %s navigator.languages primary preference', this.experimentId, this.localeTarget );
+			debug( '%s: Logged-out user has a %s navigator.languages primary preference', this.experimentId, userLocale );
 			return false;
 		}
 		if ( ! isUserSignedIn() && ! localeFromSession.match( localeMatcher ) ) {
-			debug( '%s: Logged-out user has the %s locale in session', this.experimentId, this.localeTarget );
+			debug( '%s: Logged-out user has the %s locale in session', this.experimentId, userLocale );
 			return false;
 		}
 	}
