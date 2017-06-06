@@ -88,7 +88,7 @@ export default React.createClass( {
 		return (
 			<div className={ siteClass }>
 				<a className="site__content"
-					href={ this.props.homeLink ? site.slug : this.props.href }
+					href={ this.props.homeLink ? site.URL : this.props.href }
 					data-tip-target={ this.props.tipTarget }
 					target={ this.props.externalLink && '_blank' }
 					title={ this.props.homeLink

@@ -185,7 +185,7 @@ describe( 'selectors', () => {
 			expect( site ).to.eql( {
 				ID: 2916284,
 				name: 'WordPress.com Example Blog',
-				URL: 'https://example.com',
+				URL: 'https://example.wordpress.com',
 				title: 'WordPress.com Example Blog',
 				domain: 'example.wordpress.com',
 				slug: 'example.wordpress.com',
