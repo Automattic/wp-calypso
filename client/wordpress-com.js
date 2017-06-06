@@ -165,6 +165,7 @@ const sections = [
 		module: 'my-sites/themes',
 		enableLoggedOut: true,
 		secondary: true,
+		secondaryLoggedOut: false,
 		group: 'sites',
 		isomorphic: true,
 		title: 'Themes'
