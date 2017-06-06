@@ -19,18 +19,18 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 	};
 
 	componentWillMount() {
-		if ( this.props.comments.length ) {
-			this.setState( { comments: keyBy( this.props.comments, 'ID' ) } );
-		}
+		this.getCommentsFromProps( this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.comments.length ) {
-			this.setState( { comments: keyBy( nextProps.comments, 'ID' ) } );
+			this.getCommentsFromProps( nextProps );
 		}
 	}
 
 	deleteCommentPermanently = commentId => this.setState( { comments: omit( this.state.comments, commentId ) } );
+
+	getCommentsFromProps = ( { comments } ) => this.setState( { comments: keyBy( comments, 'ID' ) } );
 
 	setCommentLike = ( commentId, likeValue ) => {
 		const comment = this.state.comments[ commentId ];
