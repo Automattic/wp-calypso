@@ -38,7 +38,7 @@ export class CommentList extends Component {
 		isBulkEdit: false,
 	};
 
-	deleteCommentPermanently = commentId => () => {
+	deleteCommentPermanently = commentId => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 		this.showNotice( commentId, 'delete', 'trash' );
 
@@ -152,7 +152,7 @@ export class CommentList extends Component {
 					{ map( filteredComments, comment =>
 						<CommentDetail
 							comment={ comment }
-							deleteCommentPermanently={ this.deleteCommentPermanently( comment.ID ) }
+							deleteCommentPermanently={ this.deleteCommentPermanently }
 							isBulkEdit={ isBulkEdit }
 							key={ `comment-${ siteId }-${ comment.ID }` }
 							setCommentStatus={ this.setCommentStatus }

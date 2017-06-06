@@ -68,14 +68,19 @@ export class CommentDetail extends Component {
 
 	blockUser = () => {
 		this.setState( { authorIsBlocked: ! this.state.authorIsBlocked } );
-	};
+	}
+
+	deleteCommentPermanently = () => {
+		const { commentId, deleteCommentPermanently } = this.props;
+		deleteCommentPermanently( commentId );
+	}
 
 	edit = () => noop;
 
 	toggleApprove = () => {
 		const { commentId, commentStatus, setCommentStatus } = this.props;
 		setCommentStatus( commentId, 'approved' === commentStatus ? 'unapproved' : 'approved' );
-	};
+	}
 
 	toggleExpanded = () => {
 		this.setState( { isExpanded: ! this.state.isExpanded } );
@@ -84,17 +89,17 @@ export class CommentDetail extends Component {
 	toggleLike = () => {
 		const { commentId, toggleCommentLike } = this.props;
 		toggleCommentLike( commentId );
-	};
+	}
 
 	toggleSpam = () => {
 		const { commentId, commentStatus, setCommentStatus } = this.props;
 		setCommentStatus( commentId, 'spam' === commentStatus ? 'approved' : 'spam' );
-	};
+	}
 
 	toggleTrash = () => {
 		const { commentId, commentStatus, setCommentStatus } = this.props;
 		setCommentStatus( commentId, 'trash' === commentStatus ? 'approved' : 'trash' );
-	};
+	}
 
 	render() {
 		const {
@@ -108,7 +113,6 @@ export class CommentDetail extends Component {
 			commentDate,
 			commentIsLiked,
 			commentStatus,
-			deleteCommentPermanently,
 			isBulkEdit,
 			postAuthorDisplayName,
 			postTitle,
@@ -141,7 +145,7 @@ export class CommentDetail extends Component {
 					commentContent={ commentContent }
 					commentIsLiked={ commentIsLiked }
 					commentStatus={ commentStatus }
-					deleteCommentPermanently={ deleteCommentPermanently }
+					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
 					toggleApprove={ this.toggleApprove }
