@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActivityLogBanner from './activity-log-banner';
+import ActivityLogBanner from './index';
 import Button from 'components/button';
 
 function ErrorBanner( {

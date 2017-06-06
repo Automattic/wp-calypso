@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
@@ -67,15 +66,12 @@ class ActivityLogBanner extends Component {
 		} = this.props;
 
 		const icon = this.getIcon();
-		const classes = classNames( 'activity-log-banner', {
-			'is-error': 'error' === status,
-			'is-info': 'info' === status,
-			'is-success': 'success' === status,
-			'is-warning': 'warning' === status,
-		} );
 
 		return (
-			<Card highlight={ status } className={ classes }>
+			<Card
+				className="activity-log-banner"
+				highlight={ status }
+			>
 				{ icon && (
 					<div className="activity-log-banner__icon">
 						<Gridicon icon={ icon } size={ 24 } />
