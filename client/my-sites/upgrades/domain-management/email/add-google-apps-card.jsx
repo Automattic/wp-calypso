@@ -41,21 +41,21 @@ const AddGoogleAppsCard = React.createClass( {
 		return (
 			<div>
 				<CompactCard>
-					<header className="add-google-apps-card__header">
-						<h3 className="add-google-apps-card__product-logo">
+					<header className="email__add-google-apps-card-header">
+						<h3 className="email__add-google-apps-card-product-logo">
 							{ /* Intentionally not translated */ }
 							<strong>G Suite</strong>
 						</h3>
 					</header>
 				</CompactCard>
 				<CompactCard>
-					<div className="add-google-apps-card__product-details">
-						<div className="add-google-apps-card__description">
-							<h2 className="add-google-apps-card__title">
+					<div className="email__add-google-apps-card-product-details">
+						<div className="email__add-google-apps-card-description">
+							<h2 className="email__add-google-apps-card-title">
 								{ translate( 'Professional email and so much more.' ) }
 							</h2>
 
-							<p className="add-google-apps-card__sub-title">
+							<p className="email__add-google-apps-card-sub-title">
 								{
 									translate(
 										"We've partnered with Google to offer you email, " +
@@ -64,8 +64,8 @@ const AddGoogleAppsCard = React.createClass( {
 								}
 							</p>
 
-							<div className="add-google-apps-card__price">
-								<h4 className="add-google-apps-card__price-per-user">
+							<div className="email__add-google-apps-card-price">
+								<h4 className="email__add-google-apps-card-price-per-user">
 									<span>
 										{
 											translate(
@@ -85,7 +85,7 @@ const AddGoogleAppsCard = React.createClass( {
 
 								{ this.renderAddGoogleAppsButton() }
 
-								<h5 className="add-google-apps-card__billing-period">
+								<h5 className="email__add-google-apps-card-billing-period">
 									{
 										translate( '%(price)s billed yearly (2 months free!)',
 											{
@@ -99,19 +99,19 @@ const AddGoogleAppsCard = React.createClass( {
 							</div>
 						</div>
 
-						<div className="add-google-apps-card__logos">
+						<div className="email__add-google-apps-card-logos">
 							<img src="/calypso/images/g-suite/logos-2x.png" width="262" height="209" />
 						</div>
 					</div>
 				</CompactCard>
 				<CompactCard>
-					<div className="add-google-apps-card__features">
-						<div className="add-google-apps-card__feature">
-							<div className="add-google-apps-card__feature-block">
+					<div className="email__add-google-apps-card-features">
+						<div className="email__add-google-apps-card-feature">
+							<div className="email__add-google-apps-card-feature-block">
 								<img src="/calypso/images/g-suite/logo_gmail_48dp.svg" />
 							</div>
-							<div className="add-google-apps-card__feature-block">
-								<h5 className="add-google-apps-card__feature-header">
+							<div className="email__add-google-apps-card-feature-block">
+								<h5 className="email__add-google-apps-card-feature-header">
 									{
 										translate(
 											'Gmail for @%(domain)s',
@@ -127,36 +127,36 @@ const AddGoogleAppsCard = React.createClass( {
 							</div>
 						</div>
 
-						<div className="add-google-apps-card__feature">
-							<div className="add-google-apps-card__feature-block">
+						<div className="email__add-google-apps-card-feature">
+							<div className="email__add-google-apps-card-feature-block">
 								<img src="/calypso/images/g-suite/logo_drive_48dp.svg" />
 							</div>
-							<div className="add-google-apps-card__feature-block">
-								<h5 className="add-google-apps-card__feature-header">
+							<div className="email__add-google-apps-card-feature-block">
+								<h5 className="email__add-google-apps-card-feature-header">
 									{ translate( 'Keep all your files secure' ) }
 								</h5>
 								<p>{ translate( 'Get 30GB of storage for all your files synced across devices.' ) }</p>
 							</div>
 						</div>
 
-						<div className="add-google-apps-card__feature">
-							<div className="add-google-apps-card__feature-block">
+						<div className="email__add-google-apps-card-feature">
+							<div className="email__add-google-apps-card-feature-block">
 								<img src="/calypso/images/g-suite/logo_docs_48dp.svg" />
 							</div>
-							<div className="add-google-apps-card__feature-block">
-								<h5 className="add-google-apps-card__feature-header">
+							<div className="email__add-google-apps-card-feature-block">
+								<h5 className="email__add-google-apps-card-feature-header">
 									{ translate( 'Docs, spreadsheets and forms' ) }
 								</h5>
 								<p>{ translate( 'Create and edit documents to get your work done faster.' ) }</p>
 							</div>
 						</div>
 
-						<div className="add-google-apps-card__feature">
-							<div className="add-google-apps-card__feature-block">
+						<div className="email__add-google-apps-card-feature">
+							<div className="email__add-google-apps-card-feature-block">
 								<img src="/calypso/images/g-suite/logo_hangouts_48dp.svg" />
 							</div>
-							<div className="add-google-apps-card__feature-block">
-								<h5 className="add-google-apps-card__feature-header">
+							<div className="email__add-google-apps-card-feature-block">
+								<h5 className="email__add-google-apps-card-feature-header">
 									{ translate( 'Connect with your team' ) }
 								</h5>
 								<p>{ translate( 'Use text chats, voice calls, or video calls, with built in screen sharing' ) }</p>
@@ -164,11 +164,11 @@ const AddGoogleAppsCard = React.createClass( {
 						</div>
 					</div>
 
-					<div className="add-google-apps-card__secondary-button">
+					<div className="email__add-google-apps-card-secondary-button">
 						{ this.renderAddGoogleAppsButton() }
 					</div>
 
-					<div className="add-google-apps-card__learn-more">
+					<div className="email__add-google-apps-card-learn-more">
 						<p>
 							{
 								translate(
