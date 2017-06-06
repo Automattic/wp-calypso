@@ -83,8 +83,8 @@ export default React.createClass( {
 				role="alert"
 				aria-live="polite"
 			>
-				<Gridicon icon="cog" size={ 18 } />
 				{ this.renderLabel() }
+				<Gridicon icon="cog" size={ 18 } />
 			</button>
 		);
 	},

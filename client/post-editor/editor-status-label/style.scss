@@ -4,15 +4,16 @@
 	display: block;
 	font-size: 11px;
 	line-height: 1.65;
-	padding-left: 18px;
 	text-align: left;
 	text-transform: uppercase;
 
 	.gridicon {
 		display: inline-block;
 		fill: lighten( $gray, 10% );
-		position: absolute;
-			left: 14px;
+		position: relative;
+			top: -1px;
+			right: -2px;
+		vertical-align: middle;
 	}
 
 	strong {
@@ -34,6 +35,18 @@
 	&.is-plain {
 		padding-left: 0;
 		cursor: default;
+	}
+
+	&:hover {
+		color: $gray-dark;
+
+		.gridicon {
+			fill: $gray-dark;
+		}
+
+		strong {
+			color: $gray-dark;
+		}
 	}
 }
 
