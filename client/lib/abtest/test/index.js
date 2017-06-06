@@ -197,7 +197,23 @@ describe( 'abtest', () => {
 				} );
 			} );
 		} );
-
+		describe( 'new-user-no-locale', () => {
+			beforeEach( () => {
+				mockedUser = {
+					localeSlug: false,
+					date: DATE_AFTER
+				};
+			} );
+			it( 'should call store.set for new users with no locale for en only test', () => {
+				abtest( 'mockedTest' );
+				expect( setSpy ).to.have.been.calledOnce;
+			} );
+			it( 'show return default and skip store.set for new users with no locale for fr test', () => {
+				navigator.language = 'de';
+				expect( abtest( 'mockedTestFrLocale' ) ).to.equal( 'hide' );
+				expect( setSpy ).not.to.have.been.called;
+			} );
+		} );
 		describe( 'logged-out users', () => {
 			beforeEach( () => {
 				mockedUser = false;
