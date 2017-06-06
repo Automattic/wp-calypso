@@ -130,6 +130,7 @@ function editProductVariations( productEdits, variations ) {
 			creates.push( {
 				id: { index: Number( uniqueId() ) },
 				attributes: variation.attributes,
+				sku: variation.sku,
 				visible: true,
 			} );
 		}

@@ -10,6 +10,7 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
+import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -49,6 +50,12 @@ class ProductFormVariationsModal extends React.Component {
 		editProductVariation( product, variation, { description: e.target.value } );
 	}
 
+	setSku = ( sku ) => {
+		const { product, editProductVariation } = this.props;
+		const variation = this.selectedVariation();
+		editProductVariation( product, variation, { sku } );
+	}
+
 	toggleVisible() {
 		const { product, editProductVariation } = this.props;
 		const variation = this.selectedVariation();
@@ -82,11 +89,25 @@ class ProductFormVariationsModal extends React.Component {
 
 				<div className="products__product-form-modal-contents">
 					<h2>{ formattedVariationName( variation ) }</h2>
-					<span className="products__product-form-sku">SKU:</span>
+					<FormFieldSet className="products__product-form-details-basic-sku">
+						<FormLabel htmlFor="sku">{ translate( 'SKU:' ) }</FormLabel>
+						<FormClickToEditInput
+							id="sku"
+							value={ variation.sku || '' }
+							placeholder="-"
+							onChange={ this.setSku }
+							updateAriaLabel={ translate( 'Update SKU' ) }
+							editAriaLabel={ translate( 'Edit SKU' ) }
+						/>
+					</FormFieldSet>
 
 					<FormFieldSet className="products__product-form-variation-description">
 						<FormLabel htmlFor="description">{ translate( 'Description' ) }</FormLabel>
-						<FormTextArea name="description" value={ variation.description || '' } onChange={ this.setDescription } />
+						<FormTextArea
+							id="description"
+							value={ variation.description || '' }
+							onChange={ this.setDescription }
+						/>
 						<FormSettingExplanation>{ translate(
 								'This will be displayed in addition to the main product description when this variation is selected.'
 						) }</FormSettingExplanation>
