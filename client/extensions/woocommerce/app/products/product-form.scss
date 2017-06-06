@@ -600,12 +600,15 @@
 	display: flex;
 
 	label:first-child {
-		width: 44%;
-		padding-left: 16px;
-		@include breakpoint( ">660px" ) {
-			width: 42%;
-		}
+		width: calc( 40% - 1px );
+		margin-left: 16px;
+		margin-right: 8px;
+	}
 
+	label:last-child {
+		width: calc( 40% - 1px );
+		margin-left: 8px;
+		margin-right: 16px;
 	}
 }
 
@@ -633,16 +636,26 @@
 	background: $gray-light;
 	padding: 8px;
 	border: 1px solid lighten( $gray, 30% );
-	padding: 16px 16px 4px 16px;
+	padding: 16px 0 0 0;
 	margin-bottom: 8px;
 	@include breakpoint( ">960px" ) {
-		margin-right: 24px;
 		margin-bottom: 16px;
 	}
 
 	.form-setting-explanation {
 		padding: 10px;
 		padding-top: 0;
+	}
+
+	.products__additional-details-form-remove {
+		.button {
+			padding: 4px 6px 7px;
+
+			@include breakpoint( ">660px" ) {
+				padding-left: 12px;
+				padding-right: 12px;
+			}
+		}
 	}
 }
 
@@ -700,12 +713,13 @@
 
 	.form-text-input {
 		width: 40%;
-		margin-right: 24px;
+		margin-right: 8px;
+		margin-left: 16px;
 	}
 
 	.token-field {
-		width: 50%;
-		margin-right: 16px;
+		width: 40%;
+		margin-left: 8px;
 	}
 }
 
