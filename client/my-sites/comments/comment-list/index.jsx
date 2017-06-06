@@ -25,6 +25,7 @@ import QuerySiteComments from 'components/data/query-site-comments';
 
 export class CommentList extends Component {
 	static propTypes = {
+		applyBulkAction: PropTypes.func,
 		comments: PropTypes.array,
 		deleteCommentPermanently: PropTypes.func,
 		setCommentLike: PropTypes.func,
@@ -45,6 +46,18 @@ export class CommentList extends Component {
 			this.setState( { selectedComments: [] } );
 		}
 	}
+
+	applyBulkAction = status => () => {
+		this.props.removeNotice( 'comment-notice-bulk' );
+
+		this.props.applyBulkAction( this.state.selectedComments, status );
+		this.showBulkNotice( status );
+
+		this.setState( {
+			isBulkEdit: false,
+			selectedComments: [],
+		} );
+	};
 
 	deleteCommentPermanently = commentId => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
@@ -85,6 +98,30 @@ export class CommentList extends Component {
 		}
 
 		this.props.setCommentStatus( commentId, status );
+	}
+
+	showBulkNotice = newStatus => {
+		const { translate } = this.props;
+
+		const [ type, message ] = get( {
+			approved: [ 'is-success', translate( 'All selected comments approved.' ) ],
+			unapproved: [ 'is-info', translate( 'All selected comments unapproved.' ) ],
+			spam: [ 'is-warning', translate( 'All selected comments marked as spam.' ) ],
+			trash: [ 'is-error', translate( 'All selected comments moved to trash.' ) ],
+			'delete': [ 'is-error', translate( 'All selected comments deleted permanently.' ) ],
+		}, newStatus, [ null, null ] );
+
+		if ( ! type ) {
+			return;
+		}
+
+		const options = {
+			duration: 5000,
+			id: 'comment-notice-bulk',
+			isPersistent: true,
+		};
+
+		this.props.createNotice( type, message, options );
 	}
 
 	showNotice = ( commentId, newStatus, previousStatus ) => {
@@ -165,6 +202,7 @@ export class CommentList extends Component {
 			<div className="comment-list">
 				<QuerySiteComments siteId={ siteId } status="all" />
 				<CommentNavigation
+					applyBulkAction={ this.applyBulkAction }
 					isBulkEdit={ isBulkEdit }
 					isSelectedAll={ this.isSelectedAll() }
 					selectedCount={ selectedComments.length }

@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
+import { includes, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +19,14 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
+
+const bulkActions = {
+	unapproved: [ 'approve', 'spam', 'trash' ],
+	approved: [ 'unapprove', 'spam', 'trash' ],
+	spam: [ 'approve', 'delete' ],
+	trash: [ 'approve', 'spam', 'delete' ],
+	all: [ 'approve', 'unapprove', 'spam', 'trash' ],
+};
 
 export class CommentNavigation extends Component {
 	static defaultProps = {
@@ -53,13 +61,16 @@ export class CommentNavigation extends Component {
 		? `/comments/${ status }/${ this.props.siteSlug }`
 		: `/comments/pending/${ this.props.siteSlug }`;
 
+	statusHasAction = action => includes( bulkActions[ this.props.status ], action );
+
 	render() {
 		const {
-			selectedCount,
+			applyBulkAction,
 			doSearch,
 			isBulkEdit,
 			isSelectedAll,
 			query,
+			selectedCount,
 			status: queryStatus,
 			toggleBulkEdit,
 			toggleSelectAll,
@@ -80,20 +91,53 @@ export class CommentNavigation extends Component {
 				</CommentNavigationTab>
 				<CommentNavigationTab className="comment-navigation__actions">
 					<ButtonGroup>
-						<Button compact>
-							{ translate( 'Approve' ) }
-						</Button>
-						<Button compact>
-							{ translate( 'Unapprove' ) }
-						</Button>
+						{ this.statusHasAction( 'approve' ) &&
+							<Button
+								compact
+								disabled={ ! selectedCount }
+								onClick={ applyBulkAction( 'approved' ) }
+							>
+								{ translate( 'Approve' ) }
+							</Button>
+						}
+						{ this.statusHasAction( 'unapprove' ) &&
+							<Button
+								compact
+								disabled={ ! selectedCount }
+								onClick={ applyBulkAction( 'unapproved' ) }
+							>
+								{ translate( 'Unapprove' ) }
+							</Button>
+						}
 					</ButtonGroup>
 					<ButtonGroup>
-						<Button compact>
-							{ translate( 'Spam' ) }
-						</Button>
-						<Button compact>
-							{ translate( 'Trash' ) }
-						</Button>
+						{ this.statusHasAction( 'spam' ) &&
+							<Button
+								compact
+								disabled={ ! selectedCount }
+								onClick={ applyBulkAction( 'spam' ) }
+							>
+								{ translate( 'Spam' ) }
+							</Button>
+						}
+						{ this.statusHasAction( 'trash' ) &&
+							<Button
+								compact
+								disabled={ ! selectedCount }
+								onClick={ applyBulkAction( 'trash' ) }
+							>
+								{ translate( 'Trash' ) }
+							</Button>
+						}
+						{ this.statusHasAction( 'delete' ) &&
+							<Button
+								compact
+								disabled={ ! selectedCount }
+								onClick={ applyBulkAction( 'delete' ) }
+							>
+								{ translate( 'Delete' ) }
+							</Button>
+						}
 					</ButtonGroup>
 				</CommentNavigationTab>
 				<CommentNavigationTab className="comment-navigation__close-bulk">
