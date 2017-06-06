@@ -11,7 +11,10 @@ import MagicLogin from './magic-login';
 
 export default {
 	login( context, next ) {
-		context.primary = <WPLogin twoFactorAuthType={ context.params.twoFactorAuthType } />;
+		const { params } = context;
+
+		context.primary = <WPLogin twoFactorAuthType={ params.twoFactorAuthType } />;
+
 		next();
 	},
 

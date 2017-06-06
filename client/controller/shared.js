@@ -7,8 +7,9 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
-import { setSection as setSectionAction } from 'state/ui/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getLanguage } from 'lib/i18n-utils';
+import { setSection as setSectionAction } from 'state/ui/actions';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
@@ -39,4 +40,18 @@ export function setSection( section ) {
 
 		next();
 	};
+}
+
+export function setUpLocale( context, next ) {
+	const { lang } = context.params;
+	const language = getLanguage( lang );
+
+	if ( language ) {
+		context.lang = lang;
+		if ( language.rtl ) {
+			context.isRTL = true;
+		}
+	}
+
+	next();
 }
