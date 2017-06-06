@@ -79,6 +79,10 @@
 		width: 100%;
 		height: 100%;
 
+		@include breakpoint( ">960px" ) {
+			height: 72px;
+		}
+
 		.gridicon {
 			position: absolute;
 			top: 50%;
@@ -101,4 +105,9 @@
 	.product-image-uploader__picker {
 		cursor: default;
 	}
+}
+
+.product-image-uploader__wrapper.placeholder.compact {
+	width: 55px;
+	height: 55px;
 }
