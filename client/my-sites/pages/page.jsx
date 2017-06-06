@@ -34,6 +34,7 @@ import {
 	hasStaticFrontPage,
 	isSitePreviewable,
 } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isFrontPage,
 	isPostsPage,
@@ -478,12 +479,16 @@ export default connect(
 	( state, props ) => {
 		const site = getSite( state, props.page.site_ID );
 		const siteSlugOrId = get( site, 'slug' ) || get( site, 'ID', null );
+		const selectedSiteId = getSelectedSiteId( state );
+		const isPreviewable =
+			false !== isSitePreviewable( state, props.page.site_ID ) &&
+			site && site.ID === selectedSiteId;
 
 		return {
 			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
 			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
 			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
-			isPreviewable: false !== isSitePreviewable( state, props.page.site_ID ),
+			isPreviewable,
 			previewURL: getPreviewURL( props.page ),
 			site,
 			siteSlugOrId,
