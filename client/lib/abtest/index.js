@@ -159,7 +159,7 @@ ABTest.prototype.isEligibleForAbTest = function() {
 
 	if ( this.localeTargets ) {
 		const localeMatcher = new RegExp( '^(' + this.localeTargets.join( '|' ) + ')', 'i' );
-		const userLocale = user.get().localeSlug;
+		const userLocale = user.get().localeSlug || 'en';
 
 		if ( isUserSignedIn() && ! userLocale.match( localeMatcher ) ) {
 			debug( '%s: User has a %s locale', this.experimentId, userLocale );
