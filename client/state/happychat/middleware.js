@@ -260,7 +260,7 @@ export const sendAnalyticsLogEvent = ( connection, { meta: { analytics: analytic
 			const eventMessage = getEventMessageFromTracksData( { name, properties } );
 			if ( eventMessage ) {
 				// Once we want these events to appear in production we should change this to sendEvent
-				connection.sendStagingEvent( eventMessage );
+				connection.sendEvent( eventMessage );
 			}
 
 			// Always send a log for every tracks event
@@ -286,7 +286,7 @@ export const sendActionLogsAndEvents = ( connection, { getState }, action ) => {
 	const eventMessage = getEventMessageFromActionData( action );
 	if ( eventMessage ) {
 		// Once we want these events to appear in production we should change this to sendEvent
-		connection.sendStagingEvent( eventMessage );
+		connection.sendEvent( eventMessage );
 	}
 };
 
