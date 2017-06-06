@@ -53,7 +53,7 @@ $compact-header-height: 35;
 .select-dropdown__header {
 	height: #{ $header-height }px;
 	line-height: #{ $header-height - 3 }px;
-	padding: 0 75px 0 #{ $side-margin }px;
+	padding: 0 85px 0 #{ $side-margin }px;
 	box-sizing: border-box;
 
 	border-style: solid;
@@ -258,5 +258,16 @@ $compact-header-height: 35;
 		font-size: 12px;
 		text-transform: uppercase;
 		padding: 0px #{ $side-margin }px;
+	}
+}
+
+.select-dropdown__icon {
+	position: relative;
+	top: 7px;
+	margin-right: 8px;
+
+	.is-compact .select-dropdown__header-text & {
+		margin-right: 4px;
+		top: 5px;
 	}
 }

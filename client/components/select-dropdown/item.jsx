@@ -8,6 +8,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Count from 'components/count';
+import Gridicon from 'gridicons';
 
 class SelectDropdownItem extends Component {
 	static propTypes = {
@@ -15,20 +16,24 @@ class SelectDropdownItem extends Component {
 		path: React.PropTypes.string,
 		isDropdownOpen: React.PropTypes.bool,
 		selected: React.PropTypes.bool,
+		disabled: React.PropTypes.bool,
 		onClick: React.PropTypes.func,
-		count: React.PropTypes.number
+		count: React.PropTypes.number,
+		icon: React.PropTypes.string
 	}
 
 	static defaultProps = {
 		isDropdownOpen: false,
-		selected: false
+		selected: false,
+		disabled: false
 	}
 
 	render() {
 		const optionClassName = classNames( this.props.className, {
 			'select-dropdown__item': true,
 			'is-selected': this.props.selected,
-			'is-disabled': this.props.disabled
+			'is-disabled': this.props.disabled,
+			'has-icon': this.props.icon
 		} );
 
 		return (
@@ -43,6 +48,9 @@ class SelectDropdownItem extends Component {
 					tabIndex={ this.props.isDropdownOpen ? 0 : '' }
 					aria-selected={ this.props.selected } >
 					<span className="select-dropdown__item-text">
+						{ this.props.icon &&
+							<Gridicon icon={ this.props.icon } className="select-dropdown__icon" />
+						}
 						{ this.props.children }
 					</span>
 					{
