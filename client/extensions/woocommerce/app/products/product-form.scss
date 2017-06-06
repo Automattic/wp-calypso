@@ -777,7 +777,6 @@
 		@include breakpoint( ">480px" ) {
 			.form-text-input {
 				min-width: 60px;
-				max-width: 100px;
 			}
 		}
 	}
