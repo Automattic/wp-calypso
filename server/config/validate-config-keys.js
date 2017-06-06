@@ -46,7 +46,9 @@ const sharedConfig = parseConfig( '_shared.json' );
  * invalid. Such a missing value could and likely would
  * cause runtime errors in Calypso
  */
-environmentKeys.forEach( ( [ filename, keys ] ) => {
+environmentKeys.forEach( ( envKey ) => {
+	const filename = envKey[ 0 ];
+	const keys = envKey[ 1 ];
 	keys.forEach( key => {
 		if ( ! sharedConfig.hasOwnProperty( key ) ) {
 			console.error(
