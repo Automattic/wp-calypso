@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, get, map, size } from 'lodash';
+import { filter, find, get, map, size } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -24,7 +24,7 @@ import EmptyContent from 'components/empty-content';
 
 export class CommentList extends Component {
 	static propTypes = {
-		comments: PropTypes.object,
+		comments: PropTypes.array,
 		deleteCommentPermanently: PropTypes.func,
 		setCommentLike: PropTypes.func,
 		setCommentStatus: PropTypes.func,
@@ -60,7 +60,7 @@ export class CommentList extends Component {
 	}
 
 	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
-		const comment = this.props.comments[ commentId ];
+		const comment = find( this.props.comments, [ 'ID', commentId ] );
 
 		if ( status === comment.status ) {
 			return;
@@ -108,7 +108,7 @@ export class CommentList extends Component {
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
 	toggleCommentLike = commentId => {
-		const comment = this.props.comments[ commentId ];
+		const comment = find( this.props.comments, [ 'ID', commentId ] );
 
 		if ( 'unapproved' === comment.status ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
