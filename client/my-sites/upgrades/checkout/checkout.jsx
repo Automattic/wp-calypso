@@ -15,8 +15,6 @@ const analytics = require( 'lib/analytics' ),
 	clearSitePlans = require( 'state/sites/plans/actions' ).clearSitePlans,
 	clearPurchases = require( 'state/purchases/actions' ).clearPurchases,
 	DomainDetailsForm = require( './domain-details-form' ),
-	domainMapping = require( 'lib/cart-values/cart-items' ).domainMapping,
-	noAdsItem = require( 'lib/cart-values/cart-items' ).noAdsItem,
 	fetchReceiptCompleted = require( 'state/receipts/actions' ).fetchReceiptCompleted,
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
 	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails,
@@ -28,9 +26,13 @@ const analytics = require( 'lib/analytics' ),
 	SecurePaymentForm = require( './secure-payment-form' ),
 	SecurePaymentFormPlaceholder = require( './secure-payment-form-placeholder' ),
 	supportPaths = require( 'lib/url/support' ),
-	themeItem = require( 'lib/cart-values/cart-items' ).themeItem,
 	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
+import {
+	domainMapping,
+	noAdsItem,
+	themeItem
+} from 'lib/cart-values/cart-items';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import {
 	isValidFeatureKey,
