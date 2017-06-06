@@ -43,7 +43,7 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 export const addComments = ( { dispatch }, { query: { siteId } }, next, { comments } ) => {
 	const byPost = groupBy( comments, ( { post: { ID } } ) => ID );
 
-	console.log( comments.map( c => fromApi( siteId, c ) ) ); // eslint-disable-line no-console
+	window.comments = comments.map( c => fromApi( siteId, c ) );
 
 	forEach( byPost, ( postComments, postId ) => dispatch( {
 		type: COMMENTS_RECEIVE,
