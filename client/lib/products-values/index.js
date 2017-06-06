@@ -12,6 +12,7 @@ import {
  * Internal dependencies
  */
 import {
+	JETPACK_PLANS,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
 	PLAN_PERSONAL,
@@ -134,20 +135,10 @@ function isEnterprise( product ) {
 }
 
 function isJetpackPlan( product ) {
-	const jetpackProducts = [
-		PLAN_JETPACK_FREE,
-		PLAN_JETPACK_PREMIUM,
-		PLAN_JETPACK_PREMIUM_MONTHLY,
-		PLAN_JETPACK_BUSINESS,
-		PLAN_JETPACK_BUSINESS_MONTHLY,
-		PLAN_JETPACK_PERSONAL,
-		PLAN_JETPACK_PERSONAL_MONTHLY
-	];
-
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return ( jetpackProducts.indexOf( product.product_slug ) >= 0 );
+	return ( JETPACK_PLANS.indexOf( product.product_slug ) >= 0 );
 }
 
 function isJetpackBusiness( product ) {
