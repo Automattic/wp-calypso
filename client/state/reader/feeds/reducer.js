@@ -66,6 +66,7 @@ function adaptFeed( feed ) {
 		subscribers_count: feed.subscribers_count,
 		description: feed.description && decodeEntities( feed.description ),
 		last_update: feed.last_update,
+		image: feed.image,
 	};
 }
 
