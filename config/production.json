@@ -97,7 +97,7 @@
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
-		"wpcom_user_bootstrap": true
+		"wpcom-user-bootstrap": true
 	},
 	"rtl": false,
 	"jetpack_min_version": "3.3",

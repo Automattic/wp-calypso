@@ -125,7 +125,7 @@
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-stats": false,
 		"wp-login": true,
-		"wpcom_user_bootstrap": true
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",
 	"wpcom_signup_id": "39911",

@@ -165,6 +165,6 @@
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-stats": false,
 		"wp-login": true,
-		"wpcom_user_bootstrap": false
+		"wpcom-user-bootstrap": false
 	}
 }

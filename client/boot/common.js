@@ -143,7 +143,7 @@ export const locales = currentUser => {
 
 	// When the user is not bootstrapped, we also bootstrap the
 	// locale strings
-	if ( ! config.isEnabled( 'wpcom_user_bootstrap' ) ) {
+	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		switchUserLocale( currentUser );
 	}
 

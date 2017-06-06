@@ -101,6 +101,6 @@
 		"upgrades/in-app-purchase": false,
 		"upgrades/paypal": true,
 		"upgrades/premium-themes": true,
-		"wpcom_user_bootstrap": false
+		"wpcom-user-bootstrap": false
 	}
 }

@@ -61,7 +61,7 @@ User.prototype.initialize = function() {
 		return;
 	}
 
-	if ( config.isEnabled( 'wpcom_user_bootstrap' ) ) {
+	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		this.data = window.currentUser || false;
 
 		// Store the current user in localStorage so that we can use it to determine
@@ -131,7 +131,7 @@ User.prototype.fetch = function() {
 
 	me.get( { meta: 'flags' }, function( error, data ) {
 		if ( error ) {
-			if ( ! config.isEnabled( 'wpcom_user_bootstrap' ) && error.error === 'authorization_required' ) {
+			if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && error.error === 'authorization_required' ) {
 				/**
 				 * if the user bootstrap is disabled (in development), we need to rely on a request to
 				 * /me to determine if the user is logged in.
