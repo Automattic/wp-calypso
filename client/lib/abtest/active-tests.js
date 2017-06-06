@@ -51,12 +51,13 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	domainToPaidPlanUpsellNudge: {
-		datestamp: '20170429',
+		datestamp: '20170607',
 		variations: {
 			skip: 50,
 			show: 50,
 		},
 		defaultVariation: 'skip',
+		allowExistingUsers: true,
 	},
 	ATPromptOnCancel: {
 		datestamp: '20170515',
