@@ -40,16 +40,6 @@ class EditorConfirmationSidebar extends React.Component {
 		this.props.onPublish( true );
 	};
 
-	isFutureDated( post ) {
-		if ( ! post ) {
-			return false;
-		}
-
-		const oneMinute = 1000 * 60;
-
-		return post && ( +new Date() + oneMinute < +new Date( post.date ) );
-	}
-
 	getPublishButtonLabel( publishButtonStatus ) {
 		switch ( publishButtonStatus ) {
 			case 'update':
