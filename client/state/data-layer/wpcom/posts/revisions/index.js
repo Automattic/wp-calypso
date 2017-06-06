@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-import { flow, forEach, map, omit } from 'lodash';
-import mapKeys from 'lodash/fp/mapKeys';
-import mapValues from 'lodash/fp/mapValues';
-import pick from 'lodash/fp/pick';
+import { flow, forEach, map, mapKeys, mapValues, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,13 +32,13 @@ export function normalizeRevision( revision ) {
 	return {
 		...omit( revision, [ 'title', 'content', 'excerpt', 'date', 'date_gmt', 'modified', 'modified_gmt' ] ),
 		...flow(
-			pick( [ 'title', 'content', 'excerpt' ] ),
-			mapValues( ( val = {} ) => val.rendered )
+			r => pick( r, [ 'title', 'content', 'excerpt' ] ),
+			r => mapValues( r, ( val = {} ) => val.rendered )
 		)( revision ),
 		...flow(
-			pick( [ 'date_gmt', 'modified_gmt' ] ),
-			mapValues( val => `${ val }Z` ),
-			mapKeys( key => key.slice( 0, -'_gmt'.length ) )
+			r => pick( r, [ 'date_gmt', 'modified_gmt' ] ),
+			r => mapValues( r, val => `${ val }Z` ),
+			r => mapKeys( r, ( val, key ) => key.slice( 0, -'_gmt'.length ) )
 		)( revision )
 	};
 }
