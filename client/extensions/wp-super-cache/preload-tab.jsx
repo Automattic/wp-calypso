@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, pick } from 'lodash';
+import { flowRight, get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,30 +28,41 @@ import { isPreloadingCache } from './state/cache/selectors';
  * Render cache preload interval number input
  * @returns { object } React element containing the preload interval number input
  */
-const renderCachePreloadInterval = ( {
+const CachePreloadInterval = ( {
 	handleChange,
-	isRequesting,
-	isSaving,
-	preload_interval,
+	isDisabled,
+	preload_interval = 0,
 } ) => (
 	<FormTextInput
 		className="wp-super-cache__preload-interval"
-		disabled={ isRequesting || isSaving }
+		disabled={ isDisabled }
 		min="0"
 		name="preload_interval"
 		onChange={ handleChange( 'preload_interval' ) }
 		step="1"
 		type="number"
-		value={ preload_interval || '' } />
+		value={ preload_interval } />
 );
 
 class PreloadTab extends Component {
 	state = {
 		preloadRefresh: true,
+	};
+
+	componentWillReceiveProps( nextProps ) {
+		this.setState( { preloadRefresh: parseInt( nextProps.fields.preload_interval, 10 ) !== 0 } );
 	}
 
 	handlePreloadRefreshChange = () => {
-		this.setState( { preloadRefresh: ! this.state.preloadRefresh } );
+		this.setState( { preloadRefresh: ! this.state.preloadRefresh }, () => {
+			const { fields, setFieldValue } = this.props;
+
+			if ( this.state.preloadRefresh ) {
+				setFieldValue( 'preload_interval', get( fields, 'minimum_preload_interval', 30 ), true );
+			} else {
+				setFieldValue( 'preload_interval', 0, true );
+			}
+		} );
 	}
 
 	getPreloadPostsOptions( post_count ) {
@@ -164,10 +175,9 @@ class PreloadTab extends Component {
 										{
 											count: preload_interval || 0,
 											components: {
-												number: renderCachePreloadInterval( {
+												number: CachePreloadInterval( {
 													handleChange,
-													isRequesting,
-													isSaving,
+													isDisabled: isRequesting || isSaving || ! this.state.preloadRefresh,
 													preload_interval,
 												} )
 											}

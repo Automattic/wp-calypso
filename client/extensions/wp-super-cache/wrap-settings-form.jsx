@@ -157,7 +157,11 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
 
-		setFieldValue = ( field, value ) => this.props.updateFields( { [ field ]: value } );
+		setFieldValue = ( field, value, autosave = false ) => {
+			this.props.updateFields( { [ field ]: value }, () => {
+				autosave && this.submitForm();
+			} );
+		};
 
 		// Update a field that is stored as an array element.
 		setFieldArrayValue = ( name, index ) => event => {
