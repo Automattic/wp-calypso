@@ -108,4 +108,14 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
+	pulsingCartTestingAB: {
+		datestamp: '20170601',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+		allowAnyLocale: true,
+	},
 };

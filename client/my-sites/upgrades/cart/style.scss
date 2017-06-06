@@ -227,6 +227,27 @@
 	text-align: center;
 }
 
+.count-badge-pulsing {
+	box-shadow: 0 0 0 rgba(0,170,220, 0.4);
+	animation: pulsing-badge 2s infinite;
+}
+
+.count-badge-pulsing:hover {
+	animation: none;
+}
+
+@keyframes pulsing-badge {
+	0% {
+		box-shadow: 0 0 0 0 rgba(0,170,220, 0.4);
+	}
+	70% {
+		box-shadow: 0 0 0 10px rgba(0,170,220, 0);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(0,170,220, 0);
+	}
+}
+
 div.popover-cart__popover {
 	width: 330px;
 
