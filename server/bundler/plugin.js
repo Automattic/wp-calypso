@@ -8,15 +8,20 @@ ChunkFileNames.prototype.apply = function( compiler ) {
 			return this.asString( [
 				"// \"0\" is the signal for \"already loaded\"",
 				"if ( installedChunks[ chunkId ] === 0 ) {",
-				this.indent("return callback.call( null, " + this.requireFn + " );"),
+				this.indent("return Promise.resolve();"),
 				"}",
-				"// an array means \"currently loading\".",
-				"if ( installedChunks[ chunkId ] !== undefined ) {",
-				this.indent( "installedChunks[ chunkId ].push( callback );" ),
+				"// a Promise means \"currently loading\".",
+				"if ( installedChunks[ chunkId ] ) {",
+				this.indent( "return installedChunks[ chunkId ][2];" ),
 				" } else { ",
 				this.indent( [
 					"// start chunk loading",
-					"installedChunks[ chunkId ] = [ callback ];",
+					"var promise = new Promise( function( resolve, reject ) {",
+					this.indent( [
+						"installedChunks[ chunkId ] = [ resolve, reject ];"
+					] ),
+					"} );",
+					"installedChunks[ chunkId ][2] = promise;",
 					"window.__chunkErrors = window.__chunkErrors || {};",
 					"window.__chunkErrors[ " + JSON.stringify( chunkMaps.name ) + "[chunkId]||chunkId ]=null;",
 					"var head = document.getElementsByTagName('head')[0];",
@@ -30,11 +35,12 @@ ChunkFileNames.prototype.apply = function( compiler ) {
 						"script.onerror = script.onload = script.onreadystatechange = null;",
 						"delete installedChunks[ chunkId ];",
 						"window.__chunkErrors[ " + JSON.stringify( chunkMaps.name ) + "[chunkId]||chunkId ]=new Error();",
-						"callback.call( null, " + this.requireFn + ")"
+						"return Promise.resolve();"
 					] ),
 					"};",
-					"script.src = " + this.requireFn + ".p + (" + JSON.stringify( chunkMaps.name ) + "[chunkId]||chunkId) + '.' + (" + JSON.stringify( chunkMaps.hash ) + "[chunkId]||chunkID) + ( isDebug ? '' : '.m' ) + '.js';",
-					"head.appendChild( script );"
+					"script.src = " + this.requireFn + ".p + (" + JSON.stringify( chunkMaps.name ) + "[chunkId]||chunkId) + '.' + (" + JSON.stringify( chunkMaps.hash ) + "[chunkId]||chunkID) + ( isDebug ? '' : '.min' ) + '.js';",
+					"head.appendChild( script );",
+					"return promise;"
 				] ),
 				"}"
 			] );
