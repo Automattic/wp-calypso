@@ -55,7 +55,7 @@ function getExternals() {
 
 const webpackConfig = {
 	devtool: 'source-map',
-	entry: 'index.js',
+	entry: path.join( __dirname, 'index.js' ),
 	target: 'node',
 	output: {
 		path: path.join( __dirname, 'build' ),
@@ -93,7 +93,7 @@ const webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '', '.json', '.js', '.jsx' ],
-		root: [ path.join( __dirname, 'server' ), path.join( __dirname, 'client' ), __dirname ],
+		root: [ __dirname, path.join( __dirname, 'server' ), path.join( __dirname, 'client' ), path.join( __dirname, 'client', 'extensions' ) ],
 		modulesDirectories: [ 'node_modules' ]
 	},
 	node: {
