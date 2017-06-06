@@ -95,10 +95,6 @@ function domainManagementTransferToAnotherUser( siteName, domainName ) {
 	return domainManagementTransfer( siteName, domainName, 'other-user' );
 }
 
-function domainManagementTransferToOtherSite( siteName, domainName ) {
-	return domainManagementTransfer( siteName, domainName, 'other-site' );
-}
-
 function getSectionName( pathname ) {
 	const regExp = new RegExp( '^' + domainManagementRoot() + '/[^/]+/([^/]+)', 'g' ),
 		matches = regExp.exec( pathname );
@@ -123,6 +119,5 @@ module.exports = {
 	domainManagementTransfer,
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,
-	domainManagementTransferToOtherSite,
 	getSectionName
 };
