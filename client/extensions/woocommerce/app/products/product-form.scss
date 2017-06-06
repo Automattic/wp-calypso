@@ -27,6 +27,11 @@
 	}
 }
 
+.products__form .token-field__input,
+.products__form .token-field__token-text {
+	font-size: 16px;
+}
+
 .products__product-form-details-wrapper {
 	display: flex;
 	flex-direction: column;
