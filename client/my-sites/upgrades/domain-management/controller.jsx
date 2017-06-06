@@ -312,6 +312,30 @@ export default {
 		);
 	},
 
+	domainManagementTransferToOtherSite( pageContext ) {
+		const state = pageContext.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
+		if ( isAutomatedTransfer ) {
+			const siteSlug = getSelectedSiteSlug( state );
+			page.redirect( `/domains/manage/${ siteSlug }` );
+			return;
+		}
+
+		setTitle(
+			i18n.translate( 'Transfer Domain' ),
+			pageContext
+		);
+
+		renderWithReduxStore(
+			<TransferData
+				component={ DomainManagement.TransferToOtherSite }
+				selectedDomainName={ pageContext.params.domain } />,
+			document.getElementById( 'primary' ),
+			pageContext.store
+		);
+	},
+
 	domainManagementTransferToOtherUser( pageContext ) {
 		const state = pageContext.store.getState();
 		const siteId = getSelectedSiteId( state );
