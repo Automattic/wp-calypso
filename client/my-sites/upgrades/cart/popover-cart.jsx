@@ -53,7 +53,9 @@ const PopoverCart = React.createClass( {
 		} );
 
 		if ( this.itemCount() ) {
-			const className = abtest( 'pulsingCartTestingAB' ) === 'modified' ? 'cart__pulsing-badge' : 'popover-cart__count-badge';
+			const className = abtest( 'pulsingCartTestingAB' ) === 'modified'
+					? 'popover-cart__count-badge count-badge-pulsing'
+					: 'popover-cart__count-badge';
 			countBadge = <div className={ className }>{ this.itemCount() }</div>;
 		}
 
