@@ -154,8 +154,8 @@ class SearchStream extends React.Component {
 					</CompactCard>
 					{ query &&
 						<SearchStreamHeader
-							selected={ this.state.selected }
-							onSelection={ this.handleSearchTypeSelected }
+							selected={ searchType }
+							onSelection={ this.handleSearchTypeSelection }
 							wideDisplay={ wideDisplay }
 						/> }
 				</div>
