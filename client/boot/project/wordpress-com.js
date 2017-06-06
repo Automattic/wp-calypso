@@ -24,6 +24,7 @@ const config = require( 'config' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
 	nuxWelcome = require( 'layout/nux-welcome' ),
 	emailVerification = require( 'components/email-verification' ),
+	languageChangeConfirmation = require( 'components/language-change-confirmation' ),
 	viewport = require( 'lib/viewport' ),
 	pushNotificationsInit = require( 'state/push-notifications/actions' ).init,
 	syncHandler = require( 'lib/wp/sync-handler' ),
@@ -175,6 +176,8 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	} );
 
 	page( '*', emailVerification );
+
+	page( '*', languageChangeConfirmation );
 
 	// delete any lingering local storage data from signup
 	if ( ! startsWith( window.location.pathname, '/start' ) ) {

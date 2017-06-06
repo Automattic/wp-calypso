@@ -69,7 +69,7 @@ export function saveUserSettings( { dispatch, getState }, action ) {
  * After settings were successfully saved, update the settings stored in the Redux state,
  * clear the unsaved settings list, and re-fetch info about the user.
  */
-export const finishUserSettingsSave = ( { dispatch }, { settingsOverride }, next, data ) => {
+export const finishUserSettingsSave = ( { dispatch }, { settingsOverride, onSuccess }, next, data ) => {
 	dispatch( updateUserSettings( fromApi( data ) ) );
 	dispatch( clearUnsavedUserSettings( settingsOverride ? keys( settingsOverride ) : null ) );
 
@@ -77,9 +77,23 @@ export const finishUserSettingsSave = ( { dispatch }, { settingsOverride }, next
 	// The require() trick is used to avoid excessive mocking in unit tests.
 	// TODO: Replace it with standard 'import' when the `lib/user` module is Reduxized
 	require( 'lib/user' )().fetch();
+
+	// If the action has an `onSuccess` property, use it as an action creator to dispatch
+	// a 'callback action'.
+	if ( onSuccess ) {
+		dispatch( onSuccess( data ) );
+	}
+};
+
+export const failedUserSettingsSave = ( { dispatch }, { onFailure }, next, error ) => {
+	// If the action has an `onFailure` property, use it as an action creator to dispatch
+	// a 'callback action'.
+	if ( onFailure ) {
+		dispatch( onFailure( error ) );
+	}
 };
 
 export default {
 	[ USER_SETTINGS_REQUEST ]: [ dispatchRequest( requestUserSettings, storeFetchedUserSettings, noop ) ],
-	[ USER_SETTINGS_SAVE ]: [ dispatchRequest( saveUserSettings, finishUserSettingsSave, noop ) ],
+	[ USER_SETTINGS_SAVE ]: [ dispatchRequest( saveUserSettings, finishUserSettingsSave, failedUserSettingsSave ) ],
 };

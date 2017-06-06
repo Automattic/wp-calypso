@@ -22,6 +22,7 @@ describe( 'MySitesSidebar', () => {
 		mockery.registerMock( './publish-menu', EmptyComponent );
 		mockery.registerMock( 'layout/sidebar', EmptyComponent );
 		mockery.registerMock( 'components/tooltip', EmptyComponent );
+		mockery.registerMock( 'components/language-picker/button', EmptyComponent );
 
 		MySitesSidebar = require( '../sidebar' ).MySitesSidebar;
 	} );
