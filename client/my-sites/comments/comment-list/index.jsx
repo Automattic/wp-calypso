@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, get, keyBy, map, omit, size } from 'lodash';
+import { filter, find, get, map, size } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -18,6 +18,7 @@ import { getNotices } from 'state/notices/selectors';
 import getSiteComments from 'state/selectors/get-site-comments';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
+import CommentFaker from 'blocks/comment-detail/docs/comment-faker';
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import QuerySiteComments from 'components/data/query-site-comments';
@@ -25,27 +26,24 @@ import QuerySiteComments from 'components/data/query-site-comments';
 export class CommentList extends Component {
 	static propTypes = {
 		comments: PropTypes.array,
+		deleteCommentPermanently: PropTypes.func,
+		setCommentLike: PropTypes.func,
+		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
+		toggleCommentLike: PropTypes.func,
 		translate: PropTypes.func,
 	};
 
 	state = {
-		comments: [],
 		isBulkEdit: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.comments.length ) {
-			this.setState( { comments: keyBy( nextProps.comments, 'ID' ) } );
-		}
-	}
-
-	deleteForever = commentId => () => {
+	deleteCommentPermanently = commentId => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 		this.showNotice( commentId, 'delete', 'trash' );
 
-		this.setState( { comments: omit( this.state.comments, commentId ) } );
+		this.props.deleteCommentPermanently( commentId );
 	}
 
 	getEmptyMessage = () => {
@@ -63,14 +61,11 @@ export class CommentList extends Component {
 	}
 
 	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
-		const comment = this.state.comments[ commentId ];
+		const comment = find( this.props.comments, [ 'ID', commentId ] );
 
 		if ( status === comment.status ) {
 			return;
 		}
-
-		// If the comment is not approved anymore, also remove the like, otherwise keep its previous value
-		const newLikeValue = 'approved' === status ? comment.i_like : false;
 
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
@@ -78,16 +73,7 @@ export class CommentList extends Component {
 			this.showNotice( commentId, status, comment.status );
 		}
 
-		this.setState( {
-			comments: {
-				...this.state.comments,
-				[ commentId ]: {
-					...comment,
-					i_like: newLikeValue,
-					status,
-				},
-			},
-		} );
+		this.props.setCommentStatus( commentId, status );
 	}
 
 	showNotice = ( commentId, newStatus, previousStatus ) => {
@@ -123,35 +109,24 @@ export class CommentList extends Component {
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
 	toggleCommentLike = commentId => {
-		const comment = this.state.comments[ commentId ];
-		const newLikeValue = ! comment.i_like;
+		const comment = find( this.props.comments, [ 'ID', commentId ] );
 
 		if ( 'unapproved' === comment.status ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
 			this.showNotice( commentId, 'approved', 'unapproved' );
 		}
 
-		// If like changes to true, also approve the comment
-		this.setState( {
-			comments: {
-				...this.state.comments,
-				[ commentId ]: {
-					...comment,
-					i_like: newLikeValue,
-					status: newLikeValue ? 'approved' : comment.status,
-				},
-			},
-		} );
+		this.props.toggleCommentLike( commentId );
 	}
 
 	render() {
 		const {
+			comments,
 			siteId,
 			siteSlug,
 			status,
 		} = this.props;
 		const {
-			comments,
 			isBulkEdit,
 		} = this.state;
 
@@ -178,14 +153,13 @@ export class CommentList extends Component {
 				>
 					{ map( filteredComments, comment =>
 						<CommentDetail
-							commentId={ comment.ID }
-							deleteForever={ this.deleteForever( comment.ID ) }
+							comment={ comment }
+							deleteCommentPermanently={ this.deleteCommentPermanently }
 							isBulkEdit={ isBulkEdit }
 							key={ `comment-${ siteId }-${ comment.ID }` }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
 							toggleCommentLike={ this.toggleCommentLike }
-							{ ...comment }
 						/>
 					) }
 				</ReactCSSTransitionGroup>
@@ -230,4 +204,4 @@ const mapDispatchToProps = {
 	removeNotice,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentList ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentFaker( CommentList ) ) );

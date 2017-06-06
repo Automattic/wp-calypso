@@ -19,7 +19,7 @@ export const CommentDetailHeader = ( {
 	commentContent,
 	commentIsLiked,
 	commentStatus,
-	deleteForever,
+	deleteCommentPermanently,
 	edit,
 	isBulkEdit,
 	isExpanded,
@@ -41,7 +41,7 @@ export const CommentDetailHeader = ( {
 					edit={ edit }
 					commentIsLiked={ commentIsLiked }
 					commentStatus={ commentStatus }
-					deleteForever={ deleteForever }
+					deleteCommentPermanently={ deleteCommentPermanently }
 					toggleApprove={ toggleApprove }
 					toggleLike={ toggleLike }
 					toggleSpam={ toggleSpam }

@@ -20,7 +20,7 @@ export const CommentDetailActions = ( {
 	edit,
 	commentIsLiked,
 	commentStatus,
-	deleteForever,
+	deleteCommentPermanently,
 	toggleApprove,
 	toggleLike,
 	toggleSpam,
@@ -99,7 +99,7 @@ export const CommentDetailActions = ( {
 			{ hasAction( commentStatus, 'delete' ) &&
 				<a
 					className="comment-detail__action-delete"
-					onClick={ deleteForever }
+					onClick={ deleteCommentPermanently }
 				>
 					<Gridicon icon="trash" />
 					<span>{ translate( 'Delete Permanently' ) }</span>
