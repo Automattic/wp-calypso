@@ -95,7 +95,7 @@ ABTest.prototype.init = function( name ) {
 		! every( testConfig.localeTargets, ( target ) => {
 			return languageSlugs.indexOf( target ) !== -1;
 		} ) ) {
-		throw new Error( 'localeTargets can by "any", "not-en" or any single locale slug.' );
+		throw new Error( 'localeTargets array contains invalid language slugs.' );
 	}
 
 	const variationDatestamp = testConfig.datestamp;
