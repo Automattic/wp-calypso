@@ -38,6 +38,7 @@ import { openChat as openHappychat } from 'state/ui/happychat/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
 import {
+	hasUserAskedADirectlyQuestion,
 	isDirectlyFailed,
 	isDirectlyReady,
 	isDirectlyUninitialized,
@@ -492,14 +493,16 @@ const HelpContact = React.createClass( {
 					onSubmit: this.submitDirectlyQuestion,
 					buttonLabel: translate( 'Ask an Expert' ),
 					formDescription: translate(
-						'{{p}}Get help from an {{strong}}Expert User{{/strong}} of WordPress.com. ' +
+						'Get help from an {{strong}}Expert User{{/strong}} of WordPress.com. ' +
 						'These are other users, like yourself, who have been selected because ' +
-						'of their knowledge to help answer your questions.{{/p}}' +
-						'{{p}}{{strong}}Please do not{{/strong}} provide financial or contact ' +
-						'information when submitting this form.{{/p}}',
+						'of their knowledge to help answer your questions.' +
+						'{{br/}}{{br/}}' +
+						'{{strong}}Please do not{{/strong}} provide financial or contact ' +
+						'information when submitting this form.',
 						{
 							components: {
-								p: <p />,
+								// Need to use linebreaks since the entire text is wrapped in a <p>...</p>
+								br: <br />,
 								strong: <strong />
 							}
 						} ),
@@ -621,6 +624,26 @@ const HelpContact = React.createClass( {
 
 		const supportVariation = this.getSupportVariation();
 
+		if ( supportVariation === SUPPORT_DIRECTLY && this.props.hasAskedADirectlyQuestion ) {
+			// We're taking the Directly confirmation outside the standard `confirmation` state object
+			// that other variations use, because we need this to persist even if the component is
+			// removed and re-mounted. Using `confirmation` in component state would mean you could
+			// ask a new Directy question every time you left the help section and came back.
+			const directlyConfirmation = {
+				title: this.props.translate( 'We\'re on it!' ),
+				message: this.props.translate(
+					'Our {{strong}}Expert Users{{/strong}} have received your question and ' +
+					'you will be hearing back shortly. Feel free to close this page if you need ' +
+					'and we\'ll send you an email when our experts respond.',
+					{
+						components: {
+							strong: <strong />
+						}
+					} )
+			};
+			return <HelpContactConfirmation { ...directlyConfirmation } />;
+		}
+
 		const contactFormProps = Object.assign(
 			this.getContactFormCommonProps( supportVariation ),
 			this.getContactFormPropsVariation( supportVariation ),
@@ -662,6 +685,7 @@ export default connect(
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
+			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
 			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),

@@ -4,6 +4,7 @@
 import { combineReducers, createReducer } from 'state/utils';
 
 import {
+	DIRECTLY_ASK_QUESTION,
 	DIRECTLY_INITIALIZATION_START,
 	DIRECTLY_INITIALIZATION_SUCCESS,
 	DIRECTLY_INITIALIZATION_ERROR,
@@ -15,6 +16,16 @@ import {
 	STATUS_ERROR,
 } from './constants';
 
+export const questionAsked = ( state = null, action ) => {
+	switch ( action.type ) {
+		case DIRECTLY_ASK_QUESTION:
+			const { questionText, name, email } = action;
+			return { questionText, name, email };
+	}
+
+	return state;
+};
+
 export const status = createReducer( STATUS_UNINITIALIZED, {
 	[ DIRECTLY_INITIALIZATION_START ]: () => STATUS_INITIALIZING,
 	[ DIRECTLY_INITIALIZATION_SUCCESS ]: () => STATUS_READY,
@@ -22,5 +33,6 @@ export const status = createReducer( STATUS_UNINITIALIZED, {
 } );
 
 export default combineReducers( {
+	questionAsked,
 	status,
 } );
