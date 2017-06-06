@@ -51,6 +51,10 @@ Used for displaying the text on the dropdown header.
 
 Used for displaying the count on the dropdown header.
 
+`selectedIcon`
+
+Used for displaying the Gridicon on the dropdown header.
+
 `className`
 
 Optional extra class(es) to be applied to the `.select-dropdown`.
@@ -70,6 +74,10 @@ Boolean representing the selected visual state. `selected={ true }` creates a bl
 Optional number to show a Count next to the item text.
 
 ![selected example screenshot](https://cldup.com/BOZktaoqTT.png)
+
+`icon`
+
+Optional name of Gridicon to show in front of item text.
 
 `path`
 
@@ -167,6 +175,8 @@ var options = [
 		label: // *required* - (string) displayed to user
 		isLabel: // optional - (boolean) set this item like a static label
 		path: // optional - (string) URL to navigate when clicked
+		icon: // optional - (string) Gridicon name to display in front of label
+		count: // optional - (number) Count to show next to label
 	},
 	// ...
 ];

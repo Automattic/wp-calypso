@@ -25,6 +25,7 @@ class SelectDropdown extends Component {
 	static propTypes = {
 		selectedText: PropTypes.string,
 		selectedCount: PropTypes.number,
+		selectedIcon: PropTypes.string,
 		initialSelected: PropTypes.string,
 		className: PropTypes.string,
 		style: PropTypes.object,
