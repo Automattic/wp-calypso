@@ -27,7 +27,7 @@ describe( 'actions', () => {
 	describe( '#receiveNotificationSettings()', () => {
 		it( 'should return an action object', () => {
 			const settings = {};
-			const action = receiveNotificationSettings( {} );
+			const action = receiveNotificationSettings( { settings } );
 
 			expect( action ).to.eql( { type: NOTIFICATION_SETTINGS_RECEIVE, settings } );
 		} );

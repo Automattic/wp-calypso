@@ -18,7 +18,7 @@ export const requestNotificationSettings = () => ( { type: NOTIFICATION_SETTINGS
  * @param  {Object} settings User Notification Settings
  * @return {Object}          action object
  */
-export const receiveNotificationSettings = settings => ( {
+export const receiveNotificationSettings = ( { settings } ) => ( {
 	type: NOTIFICATION_SETTINGS_RECEIVE,
 	settings
 } );
