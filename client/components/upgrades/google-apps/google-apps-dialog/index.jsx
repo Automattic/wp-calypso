@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -99,11 +100,13 @@ const GoogleAppsDialog = React.createClass( {
 	},
 
 	header() {
+		const { translate } = this.props;
+
 		return (
 			<header className="google-apps-dialog__header">
 				<h2 className="google-apps-dialog__title">
 					{
-						this.translate(
+						translate(
 							'Add Professional email from Google to %(domain)s',
 							{
 								args: {
@@ -114,13 +117,15 @@ const GoogleAppsDialog = React.createClass( {
 					}
 				</h2>
 				<h5 className="google-apps-dialog__no-setup-required">
-					{ this.translate( 'No setup or software required. Easy to manage from your dashboard.' ) }
+					{ translate( 'No setup or software required. Easy to manage from your dashboard.' ) }
 				</h5>
 			</header>
 		);
 	},
 
 	maybeShowKeepSearching() {
+		const { translate } = this.props;
+
 		if ( abtest( 'multiDomainRegistrationV1' ) === 'singlePurchaseFlow' ) {
 			return null;
 		}
@@ -129,19 +134,21 @@ const GoogleAppsDialog = React.createClass( {
 				className="google-apps-dialog__keepsearching-button button"
 				href="#"
 				onClick={ this.handleFormKeepSearching }>
-				{ this.translate( 'Keep Searching' ) }
+				{ translate( 'Keep Searching' ) }
 			</button>
 		);
 	},
 
 	checkoutButtonOrLink() {
+		const { translate } = this.props;
+
 		if ( abtest( 'multiDomainRegistrationV1' ) === 'singlePurchaseFlow' ) {
 			return (
 				<a
 					className="google-apps-dialog__cancel-link"
 					href="#"
 					onClick={ this.handleFormCheckout }>
-					{ this.translate( "No thanks, I don't need email or will use another provider." ) }
+					{ translate( "No thanks, I don't need email or will use another provider." ) }
 				</a>
 			);
 		}
@@ -150,16 +157,17 @@ const GoogleAppsDialog = React.createClass( {
 			<button className="google-apps-dialog__checkout-button button"
 							href="#"
 							onClick={ this.handleFormCheckout }>
-				{ this.translate( 'Checkout' ) }
+				{ translate( 'Checkout' ) }
 			</button>
 		);
 	},
 
 	footer() {
-		const continueButtonHandler = this.state.isAddingEmail ? this.handleFormSubmit : this.handleAddEmail,
+		const { translate } = this.props,
+			continueButtonHandler = this.state.isAddingEmail ? this.handleFormSubmit : this.handleAddEmail,
 			continueButtonText = this.state.isAddingEmail
-				? this.translate( 'Continue \u00BB' )
-				: this.translate( 'Yes, Add Email \u00BB' );
+				? translate( 'Continue \u00BB' )
+				: translate( 'Yes, Add Email \u00BB' );
 
 		return (
 			<footer className="google-apps-dialog__footer">
@@ -211,10 +219,12 @@ const GoogleAppsDialog = React.createClass( {
 	},
 
 	getFields() {
+		const { translate } = this.props;
+
 		return {
-			firstName: this.translate( 'First Name' ),
-			lastName: this.translate( 'Last Name' ),
-			email: this.translate( 'Email Address' )
+			firstName: translate( 'First Name' ),
+			lastName: translate( 'Last Name' ),
+			email: translate( 'Email Address' )
 		};
 	},
 
@@ -253,4 +263,4 @@ const GoogleAppsDialog = React.createClass( {
 	}
 } );
 
-export default GoogleAppsDialog;
+export default localize( GoogleAppsDialog );

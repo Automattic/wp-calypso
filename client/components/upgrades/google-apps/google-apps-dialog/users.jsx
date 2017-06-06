@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import clone from 'lodash/clone';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -35,17 +36,18 @@ const GoogleAppsUsers = React.createClass( {
 
 	render() {
 		const fields = this.props.fields || this.getInitialFields(),
-			allUserInputs = fields.map( this.inputsForUser );
+			allUserInputs = fields.map( this.inputsForUser ),
+			{ translate } = this.props;
 
 		return (
 			<div className="google-apps-dialog__users" key="google-apps-dialog__users">
-				<h4>{ this.translate( 'New G Suite User:' ) }</h4>
+				<h4>{ translate( 'New G Suite User:' ) }</h4>
 
 				{ allUserInputs }
 
 				<button className="google-apps-dialog__add-another-user-button"
 						onClick={ this.addUser }>
-					{ this.translate( 'Add Another User' ) }
+					{ translate( 'Add Another User' ) }
 				</button>
 			</div>
 		);
@@ -56,14 +58,21 @@ const GoogleAppsUsers = React.createClass( {
 	},
 
 	inputsForUser( user, index ) {
-		const contactText = this.translate( 'contact', { context: 'part of e-mail address', comment: 'As it would be part of an e-mail address contact@example.com' } );
+		const { translate } = this.props,
+			contactText = translate(
+				'contact',
+				{
+					context: 'part of e-mail address',
+					comment: 'As it would be part of an e-mail address contact@example.com'
+				}
+			);
 
 		return (
 			<div className="google-apps-dialog__user-fields" key={ `google-apps-dialog-user-${ index }` }>
 				<FormFieldset>
 					<FormTextInputWithAffixes
 						className={ this.fieldClasses( 'email' ) }
-						placeholder={ this.translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+						placeholder={ translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
 						name="email"
 						value={ user.email.value }
 						suffix={ '@' + this.props.domain }
@@ -76,7 +85,7 @@ const GoogleAppsUsers = React.createClass( {
 
 				<FormFieldset className={ this.fieldClasses( 'first-name' ) }>
 					<FormTextInput
-						placeholder={ this.translate( 'First Name' ) }
+						placeholder={ translate( 'First Name' ) }
 						name="firstName"
 						value={ user.firstName.value }
 						maxLength={ 60 }
@@ -89,7 +98,7 @@ const GoogleAppsUsers = React.createClass( {
 
 				<FormFieldset className={ this.fieldClasses( 'last-name' ) }>
 					<FormTextInput
-						placeholder={ this.translate( 'Last Name' ) }
+						placeholder={ translate( 'Last Name' ) }
 						name="lastName"
 						value={ user.lastName.value }
 						maxLength={ 60 }
@@ -133,4 +142,4 @@ const GoogleAppsUsers = React.createClass( {
 	}
 } );
 
-export default GoogleAppsUsers;
+export default localize( GoogleAppsUsers );

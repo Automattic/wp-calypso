@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -31,7 +32,8 @@ const AddGoogleAppsCard = React.createClass( {
 		const gapps = this.props.products.gapps,
 			googleAppsSupportUrl = support.ADDING_GOOGLE_APPS_TO_YOUR_SITE,
 			price = gapps && gapps.cost_display,
-			selectedDomainName = this.props.selectedSite.domain;
+			selectedDomainName = this.props.selectedSite.domain,
+			{ translate } = this.props;
 
 		const annualPrice = getAnnualPrice( price );
 		const monthlyPrice = getMonthlyPrice( price );
@@ -50,12 +52,12 @@ const AddGoogleAppsCard = React.createClass( {
 					<div className="add-google-apps-card__product-details">
 						<div className="add-google-apps-card__description">
 							<h2 className="add-google-apps-card__title">
-								{ this.translate( 'Professional email and so much more.' ) }
+								{ translate( 'Professional email and so much more.' ) }
 							</h2>
 
 							<p className="add-google-apps-card__sub-title">
 								{
-									this.translate(
+									translate(
 										"We've partnered with Google to offer you email, " +
 										'storage, docs, calendars, and more integrated with your site.'
 									)
@@ -66,7 +68,7 @@ const AddGoogleAppsCard = React.createClass( {
 								<h4 className="add-google-apps-card__price-per-user">
 									<span>
 										{
-											this.translate(
+											translate(
 												'{{strong}}%(price)s{{/strong}} per user / month',
 												{
 													components: {
@@ -85,7 +87,7 @@ const AddGoogleAppsCard = React.createClass( {
 
 								<h5 className="add-google-apps-card__billing-period">
 									{
-										this.translate( '%(price)s billed yearly (2 months free!)',
+										translate( '%(price)s billed yearly (2 months free!)',
 											{
 												args: {
 													price: annualPrice
@@ -111,7 +113,7 @@ const AddGoogleAppsCard = React.createClass( {
 							<div className="add-google-apps-card__feature-block">
 								<h5 className="add-google-apps-card__feature-header">
 									{
-										this.translate(
+										translate(
 											'Gmail for @%(domain)s',
 											{
 												args: {
@@ -121,7 +123,7 @@ const AddGoogleAppsCard = React.createClass( {
 										)
 									}
 								</h5>
-								<p>{ this.translate( 'Professional ad-free email that works with most email clients.' ) }</p>
+								<p>{ translate( 'Professional ad-free email that works with most email clients.' ) }</p>
 							</div>
 						</div>
 
@@ -131,9 +133,9 @@ const AddGoogleAppsCard = React.createClass( {
 							</div>
 							<div className="add-google-apps-card__feature-block">
 								<h5 className="add-google-apps-card__feature-header">
-									{ this.translate( 'Keep all your files secure' ) }
+									{ translate( 'Keep all your files secure' ) }
 								</h5>
-								<p>{ this.translate( 'Get 30GB of storage for all your files synced across devices.' ) }</p>
+								<p>{ translate( 'Get 30GB of storage for all your files synced across devices.' ) }</p>
 							</div>
 						</div>
 
@@ -143,9 +145,9 @@ const AddGoogleAppsCard = React.createClass( {
 							</div>
 							<div className="add-google-apps-card__feature-block">
 								<h5 className="add-google-apps-card__feature-header">
-									{ this.translate( 'Docs, spreadsheets and forms' ) }
+									{ translate( 'Docs, spreadsheets and forms' ) }
 								</h5>
-								<p>{ this.translate( 'Create and edit documents to get your work done faster.' ) }</p>
+								<p>{ translate( 'Create and edit documents to get your work done faster.' ) }</p>
 							</div>
 						</div>
 
@@ -155,9 +157,9 @@ const AddGoogleAppsCard = React.createClass( {
 							</div>
 							<div className="add-google-apps-card__feature-block">
 								<h5 className="add-google-apps-card__feature-header">
-									{ this.translate( 'Connect with your team' ) }
+									{ translate( 'Connect with your team' ) }
 								</h5>
-								<p>{ this.translate( 'Use text chats, voice calls, or video calls, with built in screen sharing' ) }</p>
+								<p>{ translate( 'Use text chats, voice calls, or video calls, with built in screen sharing' ) }</p>
 							</div>
 						</div>
 					</div>
@@ -169,7 +171,7 @@ const AddGoogleAppsCard = React.createClass( {
 					<div className="add-google-apps-card__learn-more">
 						<p>
 							{
-								this.translate(
+								translate(
 									'{{strong}}No setup or software required.{{/strong}} ' +
 									'{{a}}Learn more about integrating G Suite with your site.{{/a}}',
 									{
@@ -193,6 +195,8 @@ const AddGoogleAppsCard = React.createClass( {
 	},
 
 	renderAddGoogleAppsButton() {
+		const { translate } = this.props;
+
 		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
 			return null;
 		}
@@ -201,7 +205,7 @@ const AddGoogleAppsCard = React.createClass( {
 			<Button
 				type="button"
 				onClick={ this.goToAddGoogleApps }>
-				{ this.translate( 'Add G Suite' ) }
+				{ translate( 'Add G Suite' ) }
 			</Button>
 		);
 	},
@@ -219,4 +223,4 @@ const AddGoogleAppsCard = React.createClass( {
 	}
 } );
 
-module.exports = AddGoogleAppsCard;
+export default localize( AddGoogleAppsCard );
