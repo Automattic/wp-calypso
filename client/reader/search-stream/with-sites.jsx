@@ -31,11 +31,6 @@ class SearchStream extends React.Component {
 		query: PropTypes.string,
 	};
 
-	state = {
-		selected: POSTS,
-		title: this.getTitle(),
-	};
-
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.query !== this.props.query ) {
 			this.updateState( nextProps );
@@ -53,6 +48,11 @@ class SearchStream extends React.Component {
 
 	getTitle = ( props = this.props ) => {
 		return props.query;
+	};
+
+	state = {
+		selected: POSTS,
+		title: this.getTitle(),
 	};
 
 	updateQuery = newValue => {
@@ -108,6 +108,7 @@ class SearchStream extends React.Component {
 		const { query, translate, searchType } = this.props;
 		// const emptyContent = <EmptyContent query={ query } />;
 		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
+		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -127,8 +128,7 @@ class SearchStream extends React.Component {
 		} );
 
 		return (
-			<ReaderMain className="search-stream" wideLayout>
-				{ /* just for width measurement */ }
+			<div>
 				<DocumentHead title={ documentTitle } />
 				<div className="search-stream__fixed-area" style={ { width: this.props.width } }>
 					<CompactCard className="search-stream__input-card">
@@ -156,7 +156,7 @@ class SearchStream extends React.Component {
 						<SearchStreamHeader
 							selected={ this.state.selected }
 							onSelection={ this.handleSearchTypeSelected }
-							wideDisplay={ this.props.width > WIDE_DISPLAY_CUTOFF }
+							wideDisplay={ wideDisplay }
 						/> }
 				</div>
 				{ wideDisplay &&
@@ -174,9 +174,16 @@ class SearchStream extends React.Component {
 						{ ( searchType === POSTS && <PostResults { ...this.props } /> ) ||
 							<SiteResults query={ query } /> }
 					</div> }
-			</ReaderMain>
+			</div>
 		);
 	}
 }
 
-export default localize( withWidth( SearchStream ) );
+// wrapping with Main so that we can use withWidth helper to pass down whole width of Main
+const wrapWithMain = Component => props => (
+	<ReaderMain className="search-stream" wideLayout>
+		<Component { ...props } />
+	</ReaderMain>
+);
+
+export default localize( wrapWithMain( withWidth( SearchStream ) ) );
