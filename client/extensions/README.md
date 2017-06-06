@@ -57,6 +57,17 @@ const renderHelloWorld = ( context ) => {
 
 *Note:* you have access to all the components and blocks that Calypso offers (check out `/devdocs/design` and `/devdocs/blocks` to browse them). With those you can build an entirely new section that is consistent with the experience of the whole app. We encourage you to use them as much as possible, and to contribute back to the core project if you find issues or have suggestions for new ones.
 
+## Imports
+
+Importing from other javascript modules can be done from one of three root contexts:
+- / (root of the Calypso repository)
+- /client (the client subdirectory)
+- /client/extensions (the extensions subdirectory)
+
+The last one is especially convenient in extension development as it makes the following possible:
+
+```import myReducer from 'my-extension/state/reducer';```
+
 ## State
 
 Calypso has almost transitioned to a single-state store provided by Redux. The end scenario is that your extension would have access to the entire state tree and would be allowed to add a sub-tree. This is a work in progress and we need to figure out what are the requirements and safeguards we need to put in place.
