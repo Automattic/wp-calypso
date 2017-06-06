@@ -16,6 +16,9 @@ import StatsFirstView from '../stats-first-view';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from '../stats-navigation';
 import ActivityLogDay from '../activity-log-day';
+import ErrorBanner from '../activity-log-banner/error-banner';
+import ProgressBanner from '../activity-log-banner/progress-banner';
+import SuccessBanner from '../activity-log-banner/success-banner';
 
 class ActivityLog extends Component {
 	componentDidMount() {
@@ -260,6 +263,15 @@ class ActivityLog extends Component {
 		return log;
 	}
 
+	renderBanner() {
+		// FIXME: Logic to select/show 1 banner
+		return <div>
+			<ErrorBanner />
+			<ProgressBanner />
+			<SuccessBanner />
+		</div>;
+	}
+
 	render() {
 		const {
 			isJetpack,
@@ -293,6 +305,7 @@ class ActivityLog extends Component {
 					slug={ slug }
 					section="activity"
 				/>
+				{ this.renderBanner() }
 				<section className="activity-log__wrapper">
 					{ logsGroupedByDate }
 				</section>
