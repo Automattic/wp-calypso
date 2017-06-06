@@ -4,6 +4,7 @@
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,15 +13,17 @@ import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
-import analyticsMixin from 'lib/mixins/analytics';
 import { abtest } from 'lib/abtest';
 import { validate as validateGappsUsers, filter as filterUsers } from 'lib/domains/google-apps-users';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
+import {
+	recordTracksEvent,
+	recordGoogleEvent,
+	composeAnalytics,
+} from 'state/analytics/actions';
 
-const GoogleAppsDialog = React.createClass( {
-	mixins: [ analyticsMixin( 'googleApps' ) ],
-
-	propTypes: {
+class GoogleAppsDialog extends React.Component {
+	static propTypes = {
 		domain: React.PropTypes.string.isRequired,
 		productsList: React.PropTypes.object.isRequired,
 		onAddGoogleApps: React.PropTypes.func.isRequired,
@@ -28,7 +31,7 @@ const GoogleAppsDialog = React.createClass( {
 		onGoBack: React.PropTypes.func,
 		analyticsSection: React.PropTypes.string,
 		initialGoogleAppsCartItem: React.PropTypes.object
-	},
+	};
 
 	getInitialState() {
 		return {
@@ -36,17 +39,17 @@ const GoogleAppsDialog = React.createClass( {
 			users: null,
 			validationErrors: null
 		};
-	},
+	}
 
 	componentWillMount() {
 		if ( this.props.initialState ) {
 			this.setState( this.props.initialState );
 		}
-	},
+	}
 
 	removeValidationErrors() {
 		this.setState( { validationErrors: null } );
-	},
+	}
 
 	render() {
 		const gapps = this.props.productsList && this.props.productsList.get().gapps;
@@ -76,7 +79,7 @@ const GoogleAppsDialog = React.createClass( {
 				</CompactCard>
 			</form>
 		);
-	},
+	}
 
 	renderGoogleAppsUsers() {
 		return (
@@ -87,17 +90,17 @@ const GoogleAppsDialog = React.createClass( {
 				onChange={ this.setUsers }
 				onBlur={ this.save } />
 		);
-	},
+	}
 
 	setUsers( users ) {
 		this.setState( { users: users } );
-	},
+	}
 
 	save() {
 		if ( this.props.onSave ) {
 			this.props.onSave( this.state );
 		}
-	},
+	}
 
 	header() {
 		const { translate } = this.props;
@@ -121,7 +124,7 @@ const GoogleAppsDialog = React.createClass( {
 				</h5>
 			</header>
 		);
-	},
+	}
 
 	maybeShowKeepSearching() {
 		const { translate } = this.props;
@@ -137,7 +140,7 @@ const GoogleAppsDialog = React.createClass( {
 				{ translate( 'Keep Searching' ) }
 			</button>
 		);
-	},
+	}
 
 	checkoutButtonOrLink() {
 		const { translate } = this.props;
@@ -160,7 +163,7 @@ const GoogleAppsDialog = React.createClass( {
 				{ translate( 'Checkout' ) }
 			</button>
 		);
-	},
+	}
 
 	footer() {
 		const { translate } = this.props,
@@ -180,43 +183,43 @@ const GoogleAppsDialog = React.createClass( {
 				</button>
 			</footer>
 		);
-	},
+	}
 
 	handleAddEmail( event ) {
 		event.preventDefault();
 
-		this.recordEvent( 'addEmailButtonClick', this.props.analyticsSection );
+		this.props.recordAddEmailButtonClick( this.props.analyticsSection );
 
 		this.setState( { isAddingEmail: true } );
-	},
+	}
 
 	handleFormSubmit( event ) {
 		event.preventDefault();
 
-		this.recordEvent( 'formSubmit', this.props.analyticsSection );
+		this.props.recordFormSubmit( this.props.analyticsSection );
 
 		if ( ! this.validateForm() ) {
 			return;
 		}
 
 		this.props.onAddGoogleApps( this.getGoogleAppsCartItem() );
-	},
+	}
 
 	handleFormCheckout( event ) {
 		event.preventDefault();
 
-		this.recordEvent( 'cancelButtonClick', this.props.analyticsSection );
+		this.props.recordCancelButtonClick( this.props.analyticsSection );
 
 		this.props.onClickSkip();
-	},
+	}
 
 	handleFormKeepSearching( event ) {
 		event.preventDefault();
 
-		this.recordEvent( 'keepSearchingButtonClick' );
+		this.props.recordKeepSearching();
 
 		this.props.onGoBack();
-	},
+	}
 
 	getFields() {
 		const { translate } = this.props;
@@ -226,7 +229,7 @@ const GoogleAppsDialog = React.createClass( {
 			lastName: translate( 'Last Name' ),
 			email: translate( 'Email Address' )
 		};
-	},
+	}
 
 	validateForm() {
 		const validation = validateGappsUsers( {
@@ -240,7 +243,7 @@ const GoogleAppsDialog = React.createClass( {
 			return false;
 		}
 		return true;
-	},
+	}
 
 	getGoogleAppsCartItem() {
 		let users = filterUsers( {
@@ -261,6 +264,52 @@ const GoogleAppsDialog = React.createClass( {
 			users
 		} );
 	}
-} );
+}
 
-export default localize( GoogleAppsDialog );
+const recordKeepSearching = () => recordGoogleEvent(
+	'Domain Search',
+	'Click "Keep Searching" Button in Google Apps Dialog'
+);
+
+const recordCancelButtonClick = ( section ) => composeAnalytics(
+	recordTracksEvent(
+		'calypso_google_apps_cancel_button_click',
+		{ section }
+	),
+	recordGoogleEvent(
+		'Domain Search',
+		'Clicked "Cancel" Button in Google Apps Dialog'
+	)
+);
+
+const recordAddEmailButtonClick = ( section ) => composeAnalytics(
+	recordTracksEvent(
+		'calypso_google_apps_add_email_button_click',
+		{ section }
+	),
+	recordGoogleEvent(
+		'Domain Search',
+		'Clicked "Add Email" Button in Google Apps Dialog'
+	)
+);
+
+const recordFormSubmit = ( section ) => composeAnalytics(
+	recordTracksEvent(
+		'calypso_google_apps_form_submit',
+		{ section }
+	),
+	recordGoogleEvent(
+		'Domain Search',
+		'Submitted Form in Google Apps Dialog'
+	)
+);
+
+export default connect(
+	null,
+	{
+		recordAddEmailButtonClick,
+		recordCancelButtonClick,
+		recordFormSubmit,
+		recordKeepSearching,
+	}
+)( localize( GoogleAppsDialog ) );

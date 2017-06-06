@@ -4,6 +4,7 @@
 import React from 'react';
 import clone from 'lodash/clone';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,18 +13,20 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
-import AnalyticsMixin from 'lib/mixins/analytics';
+import {
+	recordTracksEvent,
+	recordGoogleEvent,
+	composeAnalytics,
+} from 'state/analytics/actions';
 
-const GoogleAppsUsers = React.createClass( {
-	mixins: [ AnalyticsMixin( 'googleApps' ) ],
-
+class GoogleAppsUsers extends React.Component {
 	componentWillMount() {
 		this.props.onChange( this.props.fields ? this.props.fields : this.getInitialFields() );
-	},
+	}
 
 	getInitialFields() {
 		return [ this.getNewUserFields() ];
-	},
+	}
 
 	getNewUserFields() {
 		return {
@@ -32,7 +35,7 @@ const GoogleAppsUsers = React.createClass( {
 			lastName: { value: '', error: null },
 			domain: { value: this.props.domain, error: null }
 		};
-	},
+	}
 
 	render() {
 		const fields = this.props.fields || this.getInitialFields(),
@@ -51,11 +54,11 @@ const GoogleAppsUsers = React.createClass( {
 				</button>
 			</div>
 		);
-	},
+	}
 
 	fieldClasses( fieldName ) {
 		return `google-apps-dialog__user-field google-apps-dialog__user-${ fieldName }`;
-	},
+	}
 
 	inputsForUser( user, index ) {
 		const { translate } = this.props,
@@ -110,23 +113,23 @@ const GoogleAppsUsers = React.createClass( {
 				</FormFieldset>
 			</div>
 		);
-	},
+	}
 
 	recordInputFocus( index, fieldName ) {
 		const field = this.props.fields[ index ],
 			inputValue = field ? field.value : '';
 
-		this.recordEvent( 'inputFocus', index, fieldName, inputValue );
-	},
+		this.props.recordInputFocus( index, fieldName, inputValue );
+	}
 
 	addUser( event ) {
 		event.preventDefault();
 
-		this.recordEvent( 'addUserClick', this.props.analyticsSection );
+		this.props.recordAddUserClick( this.props.analyticsSection );
 
 		const updatedFields = this.props.fields.concat( [ this.getNewUserFields() ] );
 		this.props.onChange( updatedFields );
-	},
+	}
 
 	updateField( index, event ) {
 		event.preventDefault();
@@ -140,6 +143,30 @@ const GoogleAppsUsers = React.createClass( {
 
 		this.props.onChange( updatedFields );
 	}
-} );
+}
 
-export default localize( GoogleAppsUsers );
+const recordAddUserClick = ( section ) => composeAnalytics(
+	recordTracksEvent(
+		'calypso_google_apps_add_user_button_click',
+		{ section }
+	),
+	recordGoogleEvent(
+		'Domain Search',
+		'Clicked "Add User" Button in Google Apps Dialog'
+	)
+);
+
+const recordInputFocus = ( userIndex, fieldName, inputValue ) => recordGoogleEvent(
+	'Domain Search',
+	`Focused On "${ fieldName }" Input for User #${ userIndex } in Google Apps Dialog`,
+	'Input Value',
+	inputValue
+);
+
+export default connect(
+	null,
+	{
+		recordAddUserClick,
+		recordInputFocus,
+	}
+)( localize( GoogleAppsUsers ) );
