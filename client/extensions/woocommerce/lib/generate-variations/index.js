@@ -1,10 +1,20 @@
 /**
+ * External dependencies
+ */
+import { trim } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import formattedVariationName from '../formatted-variation-name';
+
+/**
  * Generates variation objects based on a product's attributes.
  *
  * @param {Object} product Product object.
  * @return {Array} Array of variation objects.
  */
-export default function generateVariations( { attributes } ) {
+export default function generateVariations( { name, attributes } ) {
 	const variationTypes = [];
 	const variationAttributes = (
 		attributes &&
@@ -21,8 +31,17 @@ export default function generateVariations( { attributes } ) {
 	} );
 
 	return cartesian( ...variationTypes ).map( function( combination ) {
-		return { attributes: combination };
+		const sku = generateDefaultSku( name, combination );
+		return {
+			attributes: combination,
+			sku,
+		};
 	} );
+}
+
+function generateDefaultSku( productName, attributes ) {
+	const sku = ( productName && ( productName + '-' ) || '' ) + formattedVariationName( { attributes } );
+	return trim( sku.toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' ) );
 }
 
 // http://stackoverflow.com/a/29585704
