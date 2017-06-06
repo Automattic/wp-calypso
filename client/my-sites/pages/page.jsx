@@ -482,7 +482,7 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 		const isPreviewable =
 			false !== isSitePreviewable( state, props.page.site_ID ) &&
-			site.ID === selectedSiteId;
+			site && site.ID === selectedSiteId;
 
 		return {
 			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
