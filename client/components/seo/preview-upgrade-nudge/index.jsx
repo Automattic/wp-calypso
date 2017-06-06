@@ -13,6 +13,7 @@ import QueryPlans from 'components/data/query-plans';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { preventWidows } from 'lib/formatting';
 import { isJetpackSite } from 'state/sites/selectors';
+import FeatureExample from 'components/feature-example';
 import Banner from 'components/banner';
 import {
 	PLAN_BUSINESS,
