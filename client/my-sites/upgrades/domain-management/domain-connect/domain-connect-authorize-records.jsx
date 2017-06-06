@@ -85,7 +85,7 @@ class DomainConnectAuthorizeRecords extends Component {
 			return (
 				<Card className="domain-connect__dns-records">
 					<p>
-						{ translate( 'We\'re going add the these records:' ) }
+						{ translate( 'We\'re going add these records:' ) }
 					</p>
 					{ this.renderDnsRecords( dnsTemplateRecords ) }
 				</Card>

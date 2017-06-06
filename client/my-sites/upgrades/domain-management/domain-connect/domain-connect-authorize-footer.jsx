@@ -36,12 +36,20 @@ class DomainConnectAuthorizeFooter extends Component {
 		const { translate } = this.props;
 		const notReadyToSubmit = actionType.READY_TO_SUBMIT !== this.props.showAction;
 
+		const confirm = translate( 'Confirm' );
+		const cancel = translate( 'Cancel' );
+
 		return (
 			<div>
 				<p>
 					{
-						translate( 'When you\'re ready to proceed, click Confirm. If this isn\'t what you meant to do, ' +
-							'click Cancel and we won\'t make any changes.' )
+						translate( 'When you\'re ready to proceed, click %(confirm)s. If this isn\'t what you meant to do, ' +
+							'click %(cancel)s and we won\'t make any changes.', {
+								args: {
+									confirm: confirm,
+									cancel: cancel
+								}
+							} )
 					}
 				</p>
 				<Button

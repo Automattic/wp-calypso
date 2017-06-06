@@ -60,7 +60,6 @@ class DomainConnectAuthorizeDescription extends Component {
 			return this.placeholder();
 		}
 
-		// const description = this.getDescription();
 		if ( templateDescription[ providerId ] ) {
 			return (
 				<p>
