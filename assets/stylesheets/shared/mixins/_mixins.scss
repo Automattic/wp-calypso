@@ -14,6 +14,9 @@
 //======================================================
 // Copied _extends rules that are used in @media
 //======================================================
+
+// DO NOT USE: noticons are DEPRECATED
+// see http://calypso.localhost:3000/devdocs/docs/icons.md
 @mixin noticon-style { //copy of %noticon
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
