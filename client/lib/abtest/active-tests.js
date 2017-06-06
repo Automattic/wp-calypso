@@ -116,6 +116,6 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: true,
-		allowAnyLocale: true,
+		localeTargets: 'any',
 	},
 };
