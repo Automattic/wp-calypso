@@ -67,6 +67,7 @@
 }
 
 // Custom breakpoints needed to match Related Posts
+$reader-post-card-breakpoint: "( min-width: 1012px )";
 $reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
 $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
@@ -254,6 +255,10 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	width: 100%;
 }
 
+.search-stream .search-stream__post-results {
+	max-width: 660px;
+}
+
 .search-stream .search-stream__site-results {
 	max-width: 265px;
 	min-width: 265px;
@@ -263,12 +268,13 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		border: 0;
 	}
 
-	.reader-subscription-list-item .follow-button__label {
+	.reader-subscription-list-item .follow-button__label,
+	.reader-subscription-list-item__settings-label {
 		display: none;
 	}
 }
 
-// Posts and sites Sites SectionNav
+// Posts and Sites SectionNav
 .search-stream .section-nav {
 	background: inherit;
 	border-bottom: 2px solid lighten( $gray, 30% );
@@ -322,8 +328,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	width: 100%;
 }
 
-// search-stream-header
-// Posts and Sites SectionNav
+// Search stream Posts and Sites header
 .search-stream__header .section-nav {
 	background: inherit;
 	border-bottom: 2px solid lighten( $gray, 30% );
@@ -400,28 +405,35 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	width: 100%;
 }
 
-// Site Results
+// Site Results options
 .search-stream .reader-subscription-list-item__options {
+	align-items: flex-end;
+	display: flex;
+	flex-direction: column;
 	position: absolute;
 		right: 15px;
 
 	@include breakpoint( ">660px" ) {
 		right: 0;
 	}
-}
 
-.search-stream .reader-subscription-list-item__site-title {
-	width: calc( 100% - 60px );
+	.gridicons-cog {
+		@include breakpoint( ">660px" ) {
+			left: -2px;
+		}
+
+		@media #{$reader-post-card-breakpoint} {
+			top: 15px;
+		}
+	}
 }
 
 .search-stream .reader-subscription-list-item__byline {
+	flex: none;
 	margin-right: 0;
+	width: calc( 100% - 70px );
 
 	.reader-subscription-list-item__site-title::after {
 		width: 10%;
 	}
-}
-
-.search-stream .reader-subscription-list-item__site-excerpt {
-	margin-top: 3px;
 }
