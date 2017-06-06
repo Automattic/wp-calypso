@@ -83,6 +83,10 @@ Optional icon to show before the item text.
 
 Optional URL to navigate to when option is clicked.
 
+`disabled`
+
+Optional bool to disable dropdown item.
+
 `onClick`
 
 Optional callback that will be applied when a `DropdownItem` has been clicked. This could be used for updating a parent's state, tracking analytics, etc.

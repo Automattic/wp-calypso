@@ -18,6 +18,7 @@ class SelectDropdownItem extends Component {
 		selected: React.PropTypes.bool,
 		onClick: React.PropTypes.func,
 		count: React.PropTypes.number,
+		disabled: React.PropTypes.bool,
 		icon: React.PropTypes.element,
 	}
 

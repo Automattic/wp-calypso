@@ -123,6 +123,7 @@ const SelectDropdownDemo = React.createClass( {
 					<DropdownItem count={ 10 } selected={ true } >Published publish publish publish</DropdownItem>
 					<DropdownItem count={ 4 } > Scheduled scheduled</DropdownItem>
 					<DropdownItem>Drafts</DropdownItem>
+					<DropdownItem disabled={ true }>Disabled Item</DropdownItem>
 					<DropdownSeparator />
 					<DropdownItem count={ 3 }>Trashed</DropdownItem>
 				</SelectDropdown>
