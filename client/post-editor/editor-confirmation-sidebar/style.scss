@@ -71,7 +71,6 @@
 .editor-confirmation-sidebar__ground-control {
 	@extend .card;
 	display: flex;
-	//justify-content: flex-end;
 	flex-direction: row;
 	flex-wrap: wrap;
 	position: relative;
@@ -91,7 +90,6 @@
 	border-color: darken( $alert-green, 20% );
 	color: $white;
 
-	text-transform: none;
 	padding: 7px 22px;
 	margin-left: 12px;
 
