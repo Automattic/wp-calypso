@@ -31,7 +31,7 @@ module.exports = {
 			original: 80
 		},
 		defaultVariation: 'original',
-		allowAnyLocale: true,
+		localeTargets: 'any',
 	},
 	newSiteWithJetpack: {
 		datestamp: '20170419',

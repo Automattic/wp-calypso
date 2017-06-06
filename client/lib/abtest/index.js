@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { includes, keys, reduce, some } from 'lodash';
+import { includes, keys, reduce, some, map, every, isArray } from 'lodash';
 import store from 'store';
 import i18n from 'i18n-calypso';
 
@@ -11,6 +11,7 @@ import i18n from 'i18n-calypso';
  */
 import activeTests from 'lib/abtest/active-tests';
 import analytics from 'lib/analytics';
+import config from 'config';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 
@@ -62,6 +63,9 @@ const parseDateStamp = ( datestamp ) => {
 	return date;
 };
 
+const languageSlugs = map( config( 'languages' ), 'langSlug' );
+const langSlugIsValid = ( slug ) => languageSlugs.indexOf( slug ) !== -1;
+
 ABTest.prototype.init = function( name ) {
 	if ( ! /^[A-Za-z\d]+$/.test( name ) ) {
 		throw new Error( 'The test name "' + name + '" should be camel case' );
@@ -87,6 +91,20 @@ ABTest.prototype.init = function( name ) {
 		throw new Error( 'A default variation is specified for ' + name + ' but it is not part of the variations' );
 	}
 
+	// Default: only run for 'en' locale.
+	this.localeTargets = [ 'en' ];
+	if ( testConfig.localeTargets ) {
+		if ( 'any' === testConfig.localeTargets ) {
+			// Allow any locales.
+			this.localeTargets = false;
+		} else if ( isArray( testConfig.localeTargets ) && every( testConfig.localeTargets, langSlugIsValid ) ) {
+			// Allow specific locales.
+			this.localeTargets = testConfig.localeTargets;
+		} else {
+			throw new Error( 'localeTargets can be either "any" or an array of one or more valid language slugs' );
+		}
+	}
+
 	const variationDatestamp = testConfig.datestamp;
 
 	this.name = name;
@@ -96,7 +114,7 @@ ABTest.prototype.init = function( name ) {
 	this.defaultVariation = testConfig.defaultVariation;
 	this.variationNames = variationNames;
 	this.experimentId = name + '_' + variationDatestamp;
-	this.allowAnyLocale = testConfig.allowAnyLocale === true;
+
 	this.allowExistingUsers = testConfig.allowExistingUsers === true;
 };
 
@@ -133,28 +151,30 @@ ABTest.prototype.isEligibleForAbTest = function() {
 	const clientLanguage = client.language || client.userLanguage || 'en';
 	const clientLanguagesPrimary = ( client.languages && client.languages.length ) ? client.languages[ 0 ] : 'en';
 	const localeFromSession = i18n.getLocaleSlug() || 'en';
-	const englishMatcher = /^en-?/i;
 
 	if ( ! store.enabled ) {
 		debug( '%s: Local storage is not enabled', this.experimentId );
 		return false;
 	}
 
-	if ( ! this.allowAnyLocale ) {
-		if ( isUserSignedIn() && user.get().localeSlug !== 'en' ) {
-			debug( '%s: User has a non-English locale', this.experimentId );
+	if ( this.localeTargets ) {
+		const localeMatcher = new RegExp( '^(' + this.localeTargets.join( '|' ) + ')', 'i' );
+		const userLocale = user.get().localeSlug;
+
+		if ( isUserSignedIn() && ! userLocale.match( localeMatcher ) ) {
+			debug( '%s: User has a %s locale', this.experimentId, userLocale );
 			return false;
 		}
-		if ( ! isUserSignedIn() && ! clientLanguage.match( englishMatcher ) ) {
-			debug( '%s: Logged-out user has a non-English navigator.language preference', this.experimentId );
+		if ( ! isUserSignedIn() && ! clientLanguage.match( localeMatcher ) ) {
+			debug( '%s: Logged-out user has a %s navigator.language preference', this.experimentId, userLocale );
 			return false;
 		}
-		if ( ! isUserSignedIn() && ! clientLanguagesPrimary.match( englishMatcher ) ) {
-			debug( '%s: Logged-out user has a non-English navigator.languages primary preference', this.experimentId );
+		if ( ! isUserSignedIn() && ! clientLanguagesPrimary.match( localeMatcher ) ) {
+			debug( '%s: Logged-out user has a %s navigator.languages primary preference', this.experimentId, userLocale );
 			return false;
 		}
-		if ( ! isUserSignedIn() && ! localeFromSession.match( englishMatcher ) ) {
-			debug( '%s: Logged-out user has a non-English locale in session', this.experimentId );
+		if ( ! isUserSignedIn() && ! localeFromSession.match( localeMatcher ) ) {
+			debug( '%s: Logged-out user has the %s locale in session', this.experimentId, userLocale );
 			return false;
 		}
 	}
