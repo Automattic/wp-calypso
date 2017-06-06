@@ -162,11 +162,11 @@ class GoogleAppsDialog extends React.Component {
 	}
 
 	footer() {
-		const { translate } = this.props,
-			continueButtonHandler = this.state.isAddingEmail ? this.handleFormSubmit : this.handleAddEmail,
-			continueButtonText = this.state.isAddingEmail
-				? translate( 'Continue \u00BB' )
-				: translate( 'Yes, Add Email \u00BB' );
+		const { translate } = this.props;
+		const continueButtonHandler = this.state.isAddingEmail ? this.handleFormSubmit : this.handleAddEmail;
+		const continueButtonText = this.state.isAddingEmail
+			? translate( 'Continue \u00BB' )
+			: translate( 'Yes, Add Email \u00BB' );
 
 		return (
 			<footer className="google-apps-dialog__footer">

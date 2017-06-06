@@ -61,14 +61,14 @@ class GoogleAppsUsers extends React.Component {
 	}
 
 	inputsForUser( user, index ) {
-		const { translate } = this.props,
-			contactText = translate(
-				'contact',
-				{
-					context: 'part of e-mail address',
-					comment: 'As it would be part of an e-mail address contact@example.com'
-				}
-			);
+		const { translate } = this.props;
+		const contactText = translate(
+			'contact',
+			{
+				context: 'part of e-mail address',
+				comment: 'As it would be part of an e-mail address contact@example.com'
+			}
+		);
 
 		return (
 			<div className="google-apps-dialog__user-fields" key={ `google-apps-dialog-user-${ index }` }>
@@ -116,8 +116,8 @@ class GoogleAppsUsers extends React.Component {
 	}
 
 	recordInputFocus = ( index, fieldName ) => {
-		const field = this.props.fields[ index ],
-			inputValue = field ? field.value : '';
+		const field = this.props.fields[ index ];
+		const inputValue = field ? field.value : '';
 
 		this.props.recordInputFocus( index, fieldName, inputValue );
 	};
@@ -134,9 +134,10 @@ class GoogleAppsUsers extends React.Component {
 	updateField = ( index, event ) => {
 		event.preventDefault();
 
-		const fieldName = event.target.name,
-			newValue = fieldName === 'email' ? event.target.value.trim() : event.target.value,
-			updatedFields = clone( this.props.fields );
+		const fieldName = event.target.name;
+		const newValue = fieldName === 'email' ? event.target.value.trim() : event.target.value;
+		const updatedFields = clone( this.props.fields );
+
 		updatedFields[ index ] = clone( updatedFields[ index ] );
 		updatedFields[ index ][ fieldName ] = clone( updatedFields[ index ][ fieldName ] );
 		updatedFields[ index ][ fieldName ].value = newValue;
