@@ -122,10 +122,6 @@ class DomainDetailsForm extends PureComponent {
 		onComplete( sanitizedFieldValues );
 	}
 
-	isCurrentStep( step ) {
-		return this.state.currentStep === step;
-	}
-
 	hasAnotherStep() {
 		return this.state.currentStep !== last( this.state.steps );
 	}
