@@ -99,6 +99,19 @@ export function getThemeRequestErrors( state, themeId, siteId ) {
 }
 
 /**
+ * Returns theme query request error object or null if no error
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  Site ID
+ * @param  {Object}  query  Theme query object
+ * @return {Object}          error object if present or null otherwise
+ */
+export function getQueryRequestError( state, siteId, query ) {
+	const serializedQuery = getSerializedThemesQuery( query, siteId );
+	return get( state.themes.queryRequestErrors, [ siteId, serializedQuery ], null );
+}
+
+/**
  * Returns an array of normalized themes for the themes query, or null if no
  * themes have been received.
  *

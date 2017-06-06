@@ -95,6 +95,8 @@ describe( 'logged-out', () => {
 		} );
 
 		it( 'renders without error when no themes are present', () => {
+			this.store.dispatch( receiveThemes( [], 'wpcom', DEFAULT_THEME_QUERY, 0 ) );
+
 			let markup;
 			assert.doesNotThrow( () => {
 				markup = renderToString( this.layout );
