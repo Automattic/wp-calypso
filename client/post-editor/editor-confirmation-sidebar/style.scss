@@ -71,7 +71,7 @@
 .editor-confirmation-sidebar__ground-control {
 	@extend .card;
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-end;
 	flex-direction: row;
 	flex-wrap: wrap;
 	position: relative;
@@ -82,9 +82,8 @@
 	width: 100%;
 }
 
-.editor-confirmation-sidebar__cancel {
-	flex-grow: 1;
-	color: $alert-red;
+.editor-confirmation-sidebar__close {
+  margin-right: auto;
 }
 
 .editor-confirmation-sidebar__action .button {

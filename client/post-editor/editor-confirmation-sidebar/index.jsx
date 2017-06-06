@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -81,8 +82,14 @@ class EditorConfirmationSidebar extends React.Component {
 						'is-active': isSidebarActive,
 					} ) }>
 						<div className="editor-confirmation-sidebar__ground-control">
-							<div className="editor-confirmation-sidebar__cancel" onClick={ this.closeOverlay }>
-								{ this.props.translate( 'Cancel' ) }
+							<div className="editor-confirmation-sidebar__close">
+								<Button
+									borderless
+									onClick={ this.closeOverlay }
+									title={ this.props.translate( 'Close sidebar' ) }
+									aria-label={ this.props.translate( 'Close sidebar' ) }>
+									<Gridicon icon="cross" />
+								</Button>
 							</div>
 							<div className="editor-confirmation-sidebar__action">
 								<Button onClick={ this.closeAndPublish }>{ this.props.translate( 'Publish' ) }</Button>
