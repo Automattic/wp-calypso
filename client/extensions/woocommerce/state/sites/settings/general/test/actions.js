@@ -76,7 +76,9 @@ describe( 'actions', () => {
 					woocommerce: {
 						sites: {
 							[ siteId ]: {
-								settingsGeneral: LOADING
+								settings: {
+									general: LOADING
+								}
 							}
 						}
 					}

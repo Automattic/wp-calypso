@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import {
 	arePaymentMethodsLoaded,
 	arePaymentMethodsLoading,
-	getPaymentMethodsGroup
+	getPaymentMethodsGroup,
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
@@ -110,7 +110,7 @@ describe( 'selectors', () => {
 			expect( getPaymentMethodsGroup( loadingState, 'offline', 123 ) ).to.be.empty;
 		} );
 
-		it( 'should get the payments matching the given type.', () => {
+		it( 'should get the payments methods matching the given type.', () => {
 			expect( getPaymentMethodsGroup( loadedState, 'offline', 123 ) ).to.eql( [ {
 				id: 'bacs',
 				title: 'Direct bank transfer',
