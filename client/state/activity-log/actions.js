@@ -10,6 +10,7 @@ import {
 	REWIND_DEACTIVATE_SUCCESS,
 	REWIND_RESTORE,
 	REWIND_RESTORE_COMPLETED,
+	REWIND_RESTORE_UPDATE_ERROR,
 	REWIND_STATUS_ERROR,
 	REWIND_STATUS_REQUEST,
 	REWIND_STATUS_UPDATE,
@@ -109,13 +110,24 @@ export function rewindStatusError( siteId, error ) {
 export function rewindRestore( siteId, timestamp ) {
 	return {
 		type: REWIND_RESTORE,
+		siteId,
 		timestamp,
 	};
 }
 
-export function rewindCompleteRestore( siteId ) {
+export function rewindCompleteRestore( siteId, timestamp ) {
 	return {
 		type: REWIND_RESTORE_COMPLETED,
 		siteId,
+		timestamp,
+	};
+}
+
+export function rewindRestoreUpdateError( siteId, timestamp, errorMessage ) {
+	return {
+		type: REWIND_RESTORE_UPDATE_ERROR,
+		siteId,
+		timestamp,
+		errorMessage,
 	};
 }
