@@ -18,21 +18,22 @@ import wpcom from 'lib/wp';
 const debug = debugFactory( 'calypso:abtests' );
 const user = userFactory();
 
-function ABTest( name ) {
+function ABTest( name, geoLocation ) {
 	if ( ! ( this instanceof ABTest ) ) {
-		return new ABTest( name );
+		return new ABTest( name, geoLocation );
 	}
 
-	this.init( name );
+	this.init( name, geoLocation );
 }
 
 /**
  * Returns a user's variation, setting it if he or she is not already a participant
  *
  * @param {String} name - The name of the A/B test
+ * @param {String} geoLocation - Location of current user
  * @returns {String} - The user's variation
  */
-export const abtest = ( name ) => new ABTest( name ).getVariationAndSetAsNeeded();
+export const abtest = ( name, geoLocation = false ) => new ABTest( name, geoLocation ).getVariationAndSetAsNeeded();
 
 /**
  * Returns a user's variation
@@ -63,10 +64,11 @@ const parseDateStamp = ( datestamp ) => {
 	return date;
 };
 
+
 const languageSlugs = map( config( 'languages' ), 'langSlug' );
 const langSlugIsValid = ( slug ) => languageSlugs.indexOf( slug ) !== -1;
 
-ABTest.prototype.init = function( name ) {
+ABTest.prototype.init = function( name, geoLocation ) {
 	if ( ! /^[A-Za-z\d]+$/.test( name ) ) {
 		throw new Error( 'The test name "' + name + '" should be camel case' );
 	}
@@ -114,6 +116,15 @@ ABTest.prototype.init = function( name ) {
 	this.defaultVariation = testConfig.defaultVariation;
 	this.variationNames = variationNames;
 	this.experimentId = name + '_' + variationDatestamp;
+
+	if ( testConfig.countryCodeTarget ) {
+		if ( false !== geoLocation ) {
+			this.countryCodeTarget = testConfig.countryCodeTarget;
+			this.geoLocation = geoLocation;
+		} else {
+			throw new Error( 'Test config has geoTarget, but no geoLocation passed to abtest function' );
+		}
+	}
 
 	this.allowExistingUsers = testConfig.allowExistingUsers === true;
 };
@@ -177,6 +188,11 @@ ABTest.prototype.isEligibleForAbTest = function() {
 			debug( '%s: Logged-out user has the %s locale in session', this.experimentId, userLocale );
 			return false;
 		}
+	}
+
+	if ( this.countryCodeTarget && this.countryCodeTarget !== this.geoLocation ) {
+		debug( '%s: geoLocation is %s, test targets %s', this.experimentId, this.geoLocation, this.countryCodeTarget );
+		return false;
 	}
 
 	if ( this.hasBeenInPreviousSeriesTest() ) {
