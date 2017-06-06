@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
 /**
@@ -13,38 +12,39 @@ import DropdownItem from 'components/select-dropdown/item';
 import DropdownLabel from 'components/select-dropdown/label';
 import DropdownSeparator from 'components/select-dropdown/separator';
 
-const SelectDropdownDemo = React.createClass( {
-	displayName: 'SelectDropdown',
+class SelectDropdownDemo extends React.Component {
+	static defaultProps = {
+		options: [
+			{ value: 'status-options', label: 'Statuses', isLabel: true },
+			{ value: 'published', label: 'Published', count: 12 },
+			{ value: 'scheduled', label: 'Scheduled' },
+			{ value: 'drafts', label: 'Drafts' },
+			null,
+			{ value: 'trashed', label: 'Trashed' }
+		]
+	}
 
-	mixins: [ PureRenderMixin ],
+	constructor( props ) {
+		super( props );
 
-	getInitialState: function() {
-		return {
+		this.toggleButtons = this.toggleButtons.bind( this );
+		this.selectItem = this.selectItem.bind( this );
+
+		const initialState = {
 			childSelected: 'Published',
 			selectedCount: 10,
 			compactButtons: false,
 			selectedIcon: <Gridicon icon="align-image-left" size={ 18 } />
 		};
-	},
 
-	getDefaultProps: function() {
-		return {
-			options: [
-				{ value: 'status-options', label: 'Statuses', isLabel: true },
-				{ value: 'published', label: 'Published', count: 12 },
-				{ value: 'scheduled', label: 'Scheduled' },
-				{ value: 'drafts', label: 'Drafts' },
-				null,
-				{ value: 'trashed', label: 'Trashed' }
-			]
-		};
-	},
+		this.state = initialState;
+	}
 
-	toggleButtons: function() {
+	toggleButtons() {
 		this.setState( { compactButtons: ! this.state.compactButtons } );
-	},
+	}
 
-	render: function() {
+	render() {
 		const toggleButtonsText = this.state.compactButtons
 			? 'Normal Buttons'
 			: 'Compact Buttons';
@@ -77,7 +77,7 @@ const SelectDropdownDemo = React.createClass( {
 					<DropdownItem
 						count={ 10 }
 						selected={ this.state.childSelected === 'Published' }
-						onClick={ this.selectItem.bind( this, 'Published', 10 ) }
+						onClick={ this.getSelectItemHandler( 'Published', 10 ) }
 					>
 						Published
 					</DropdownItem>
@@ -85,7 +85,7 @@ const SelectDropdownDemo = React.createClass( {
 					<DropdownItem
 						count={ 4 }
 						selected={ this.state.childSelected === 'Scheduled' }
-						onClick={ this.selectItem.bind( this, 'Scheduled', 4 ) }
+						onClick={ this.getSelectItemHandler( 'Scheduled', 4 ) }
 					>
 						Scheduled
 					</DropdownItem>
@@ -93,7 +93,7 @@ const SelectDropdownDemo = React.createClass( {
 					<DropdownItem
 						count={ 3343 }
 						selected={ this.state.childSelected === 'Drafts' }
-						onClick={ this.selectItem.bind( this, 'Drafts', 3343 ) }
+						onClick={ this.getSelectItemHandler( 'Drafts', 3343 ) }
 					>
 						Drafts
 					</DropdownItem>
@@ -103,7 +103,7 @@ const SelectDropdownDemo = React.createClass( {
 					<DropdownItem
 						count={ 3 }
 						selected={ this.state.childSelected === 'Trashed' }
-						onClick={ this.selectItem.bind( this, 'Trashed', 3 ) }
+						onClick={ this.getSelectItemHandler( 'Trashed', 3 ) }
 					>
 						Trashed
 					</DropdownItem>
@@ -143,7 +143,7 @@ const SelectDropdownDemo = React.createClass( {
 					<DropdownItem
 						selected={ this.state.childSelected === 'Published' }
 						icon={ <Gridicon icon="align-image-left" size={ 18 } /> }
-						onClick={ this.selectItem.bind( this, 'Published', null, <Gridicon icon="align-image-left" size={ 18 } /> ) }
+						onClick={ this.getSelectItemHandler( 'Published', null, <Gridicon icon="align-image-left" size={ 18 } /> ) }
 					>
 						Published
 					</DropdownItem>
@@ -151,7 +151,7 @@ const SelectDropdownDemo = React.createClass( {
 					<DropdownItem
 						selected={ this.state.childSelected === 'Scheduled' }
 						icon={ <Gridicon icon="calendar" size={ 18 } /> }
-						onClick={ this.selectItem.bind( this, 'Scheduled', null, <Gridicon icon="calendar" size={ 18 } /> ) }
+						onClick={ this.getSelectItemHandler( 'Scheduled', null, <Gridicon icon="calendar" size={ 18 } /> ) }
 					>
 						Scheduled
 					</DropdownItem>
@@ -159,7 +159,7 @@ const SelectDropdownDemo = React.createClass( {
 					<DropdownItem
 						selected={ this.state.childSelected === 'Drafts' }
 						icon={ <Gridicon icon="create" size={ 18 } /> }
-						onClick={ this.selectItem.bind( this, 'Drafts', null, <Gridicon icon="create" size={ 18 } /> ) }
+						onClick={ this.getSelectItemHandler( 'Drafts', null, <Gridicon icon="create" size={ 18 } /> ) }
 					>
 						Drafts
 					</DropdownItem>
@@ -170,7 +170,7 @@ const SelectDropdownDemo = React.createClass( {
 						count={ 3 }
 						selected={ this.state.childSelected === 'Trashed' }
 						icon={ <Gridicon icon="trash" size={ 18 } /> }
-						onClick={ this.selectItem.bind( this, 'Trashed', null, <Gridicon icon="trash" size={ 18 } /> ) }
+						onClick={ this.getSelectItemHandler( 'Trashed', null, <Gridicon icon="trash" size={ 18 } /> ) }
 					>
 						Trashed
 					</DropdownItem>
@@ -178,11 +178,16 @@ const SelectDropdownDemo = React.createClass( {
 
 			</div>
 		);
-	},
+	}
 
-	selectItem: function( childSelected, count, icon, event ) {
-		event.preventDefault();
+	getSelectItemHandler = ( name, count, icon ) => {
+		return event => {
+			event.preventDefault();
+			this.selectItem( name, count, icon );
+		};
+	}
 
+	selectItem( childSelected, count, icon ) {
 		this.setState( {
 			childSelected: childSelected,
 			selectedCount: count,
@@ -190,11 +195,11 @@ const SelectDropdownDemo = React.createClass( {
 		} );
 
 		console.log( 'Select Dropdown Item (selected):', childSelected );
-	},
+	}
 
-	onDropdownSelect: function( option ) {
+	onDropdownSelect( option ) {
 		console.log( 'Select Dropdown (selected):', option );
 	}
-} );
+}
 
-module.exports = SelectDropdownDemo;
+export default SelectDropdownDemo;
