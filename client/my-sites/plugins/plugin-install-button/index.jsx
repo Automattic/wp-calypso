@@ -24,6 +24,7 @@ export class PluginInstallButton extends Component {
 		const {
 			isEmbed,
 			selectedSite,
+			siteId,
 			isInstalling,
 			plugin,
 			notices,
@@ -40,13 +41,13 @@ export class PluginInstallButton extends Component {
 		if ( isEmbed ) {
 			recordGAEvent( 'Plugins', 'Install with no selected site', 'Plugin Name', plugin.slug );
 			recordEvent( 'calypso_plugin_install_click_from_sites_list', {
-				site: selectedSite.ID,
+				site: siteId,
 				plugin: plugin.slug
 			} );
 		} else {
 			recordGAEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', plugin.slug );
 			recordEvent( 'calypso_plugin_install_click_from_plugin_info', {
-				site: selectedSite.ID,
+				site: siteId,
 				plugin: plugin.slug
 			} );
 		}
@@ -55,13 +56,13 @@ export class PluginInstallButton extends Component {
 	updateJetpackAction = () => {
 		const {
 			plugin,
-			selectedSite,
+			siteId,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent } = this.props;
 
 		recordGAEvent( 'Plugins', 'Update jetpack', 'Plugin Name', plugin.slug );
 		recordEvent( 'calypso_plugin_update_jetpack', {
-			site: selectedSite.ID,
+			site: siteId,
 			plugin: plugin.slug
 		} );
 	}
@@ -79,7 +80,7 @@ export class PluginInstallButton extends Component {
 	}
 
 	getDisabledInfo() {
-		const { translate, selectedSite } = this.props;
+		const { translate, selectedSite, siteId } = this.props;
 		if ( ! selectedSite ) { // we don't have enough info
 			return null;
 		}
@@ -106,7 +107,7 @@ export class PluginInstallButton extends Component {
 						{ translate( 'Plugin install is not available for %(site)s:', { args: { site: selectedSite.title } } ) }
 					</p>
 				);
-				const list = reasons.map( ( reason, i ) => ( <li key={ 'reason-i' + i + '-' + selectedSite.ID } >{ reason }</li> ) );
+				const list = reasons.map( ( reason, i ) => ( <li key={ 'reason-i' + i + '-' + siteId } >{ reason }</li> ) );
 				html.push( <ul className="plugin-action__disabled-info-list" key="reason-shell-list">{ list }</ul> );
 			} else {
 				html.push(
@@ -250,11 +251,11 @@ export class PluginInstallButton extends Component {
 	}
 
 	render() {
-		const { selectedSite } = this.props;
+		const { siteId } = this.props;
 
 		return (
 			<div>
-				{ selectedSite && <QuerySiteConnectionStatus siteId={ selectedSite.ID } /> }
+				<QuerySiteConnectionStatus siteId={ siteId } />
 				{ this.renderNoticeOrButton() }
 			</div>
 		);
@@ -272,9 +273,14 @@ PluginInstallButton.propTypes = {
 };
 
 export default connect(
-	( state, ownProps ) => ( {
-		siteIsConnected: ownProps.selectedSite && getSiteConnectionStatus( state, ownProps.selectedSite.ID ),
-	} ),
+	( state, { selectedSite } ) => {
+		const siteId = selectedSite && selectedSite.ID;
+
+		return {
+			siteId,
+			siteIsConnected: getSiteConnectionStatus( state, siteId ),
+		};
+	},
 	{
 		recordGoogleEvent,
 		recordTracksEvent
