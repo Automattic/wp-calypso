@@ -11,13 +11,13 @@ import {
 /**
  * Internal Dependencies
  */
-import { getSiteBySlug } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import Dialog from 'components/dialog';
 
 class TransferConfirmationDialog extends React.PureComponent {
 	static propTypes = {
 		isVisible: React.PropTypes.bool.isRequired,
-		targetSiteSlug: React.PropTypes.string.isRequired,
+		targetSiteId: React.PropTypes.string.isRequired,
 		disableDialogButtons: React.PropTypes.bool.isRequired,
 		domainName: React.PropTypes.string.isRequired,
 		onConfirmTransfer: React.PropTypes.func.isRequired,
@@ -60,6 +60,6 @@ class TransferConfirmationDialog extends React.PureComponent {
 
 export default connect(
 	( state, ownProps ) => ( {
-		targetSite: getSiteBySlug( state, ownProps.targetSiteSlug )
+		targetSite: getSite( state, ownProps.targetSiteId )
 	} )
 )( localize( TransferConfirmationDialog ) );

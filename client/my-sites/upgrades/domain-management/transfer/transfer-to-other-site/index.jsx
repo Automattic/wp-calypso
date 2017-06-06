@@ -40,7 +40,7 @@ class TransferToOtherSite extends React.Component {
 	};
 
 	state = {
-		targetSiteSlug: '',
+		targetSiteId: null,
 		showConfirmationDialog: false,
 		disableDialogButtons: false
 	};
@@ -57,9 +57,9 @@ class TransferToOtherSite extends React.Component {
 			site.ID !== this.props.selectedSite.ID;
 	}
 
-	handleSiteSelect = ( targetSiteSlug ) => {
+	handleSiteSelect = ( targetSiteId ) => {
 		this.setState( {
-			targetSiteSlug,
+			targetSiteId,
 			showConfirmationDialog: true,
 		} );
 	}
@@ -143,7 +143,7 @@ class TransferToOtherSite extends React.Component {
 					/>
 				</Card>
 				<TransferConfirmationDialog
-					targetSiteSlug={ this.state.targetSiteSlug }
+					targetSiteId={ this.state.targetSiteId }
 					domainName={ this.props.selectedDomainName }
 					onConfirmTransfer={ this.handleConfirmTransfer }
 					onClose={ this.handleDialogClose }
