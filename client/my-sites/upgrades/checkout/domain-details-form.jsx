@@ -17,6 +17,7 @@ import {
 	last,
 	map,
 	omit,
+	pick,
 	reduce,
 } from 'lodash';
 
@@ -102,8 +103,8 @@ class DomainDetailsForm extends PureComponent {
 	}
 
 	loadFormState = ( fn ) => {
-		// intersect fieldnames and details
-		fn( null, this.props.contactDetails );
+		// only load the properties relevant to the main form fields
+		fn( null, pick( this.props.contactDetails, this.fieldNames ) );
 	}
 
 	sanitize = ( fieldValues, onComplete ) => {
