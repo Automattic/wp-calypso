@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { keyBy, omit } from 'lodash';
+import { get, keyBy, omit } from 'lodash';
 
 /**
  * `CommentFaker` is a HOC to easily test the Comments Management without the necessity of real data or actions.
@@ -64,22 +64,10 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		} );
 	}
 
-	toggleCommentLike = commentId => {
-		const comment = this.state.comments[ commentId ];
-		const likeValue = ! comment.i_like;
-
-		// If like changes to true, also approve the comment
-		this.setState( {
-			comments: {
-				...this.state.comments,
-				[ commentId ]: {
-					...comment,
-					i_like: likeValue,
-					status: likeValue ? 'approved' : comment.status,
-				}
-			},
-		} );
-	}
+	toggleCommentLike = commentId => this.setCommentLike(
+		commentId,
+		! get( this.state.comments, [ commentId, 'i_like' ], false )
+	);
 
 	render() {
 		return (
