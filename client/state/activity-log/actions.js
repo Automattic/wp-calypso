@@ -8,9 +8,8 @@ import {
 	REWIND_DEACTIVATE_FAILURE,
 	REWIND_DEACTIVATE_REQUEST,
 	REWIND_DEACTIVATE_SUCCESS,
-	REWIND_RESTORE_FAILURE,
-	REWIND_RESTORE_REQUEST,
-	REWIND_RESTORE_SUCCESS,
+	REWIND_RESTORE,
+	REWIND_RESTORE_COMPLETED,
 	REWIND_STATUS_ERROR,
 	REWIND_STATUS_REQUEST,
 	REWIND_STATUS_UPDATE,
@@ -107,25 +106,16 @@ export function rewindStatusError( siteId, error ) {
  * @param {number} timestamp Unix timestamp to restore site to
  * @return {Object} action object
  */
-export function rewind( siteId, timestamp ) {
+export function rewindRestore( siteId, timestamp ) {
 	return {
-		type: REWIND_RESTORE_REQUEST,
+		type: REWIND_RESTORE,
 		timestamp,
 	};
 }
 
-export function rewindSuccess( siteId, timestamp ) {
+export function rewindCompleteRestore( siteId ) {
 	return {
-		type: REWIND_RESTORE_SUCCESS,
+		type: REWIND_RESTORE_COMPLETED,
 		siteId,
-		timestamp,
-	};
-}
-
-export function rewindFailure( siteId, timestamp ) {
-	return {
-		type: REWIND_RESTORE_FAILURE,
-		siteId,
-		timestamp,
 	};
 }
