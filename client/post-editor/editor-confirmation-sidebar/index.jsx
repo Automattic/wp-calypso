@@ -39,6 +39,24 @@ class EditorConfirmationSidebar extends React.Component {
 		this.props.onPublish( true );
 	};
 
+	isFutureDated( post ) {
+		if ( ! post ) {
+			return false;
+		}
+
+		const oneMinute = 1000 * 60;
+
+		return post && ( +new Date() + oneMinute < +new Date( post.date ) );
+	}
+
+	getButtonLabel() {
+		if ( this.isFutureDated( this.props.post ) ) {
+			return this.props.translate( 'Schedule' );
+		}
+
+		return this.props.translate( 'Publish' );
+	}
+
 	renderPrivacyControl() {
 		if ( ! this.props.post ) {
 			return;
@@ -92,7 +110,7 @@ class EditorConfirmationSidebar extends React.Component {
 								</Button>
 							</div>
 							<div className="editor-confirmation-sidebar__action">
-								<Button onClick={ this.closeAndPublish }>{ this.props.translate( 'Publish' ) }</Button>
+								<Button onClick={ this.closeAndPublish }>{ this.getButtonLabel() }</Button>
 							</div>
 						</div>
 						<div className="editor-confirmation-sidebar__content-wrap">
