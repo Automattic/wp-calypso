@@ -110,6 +110,18 @@ export default React.createClass( {
 		);
 	},
 
+	renderSecondaryButtons() {
+		return (
+			<MediaModalSecondaryActions
+				selectedItems={ this.props.selectedItems }
+				onViewDetails={ this.props.onViewDetails }
+				onDelete={ this.props.onDeleteItem }
+				site={ this.props.site }
+				view={ 'LIST' }
+			/>
+		);
+	},
+
 	render() {
 		const { site, onAddMedia } = this.props;
 
@@ -126,13 +138,8 @@ export default React.createClass( {
 		const card = (
 			<Card className="media-library__header">
 				{ this.renderUploadButtons() }
-				<MediaModalSecondaryActions
-					selectedItems={ this.props.selectedItems }
-					onViewDetails={ this.props.onViewDetails }
-					onDelete={ this.props.onDeleteItem }
-					site={ this.props.site }
-					view={ 'LIST' }
-				/>
+				{ this.renderSecondaryButtons() }
+
 				<MediaLibraryScale
 					onChange={ this.props.onMediaScaleChange } />
 			</Card>
