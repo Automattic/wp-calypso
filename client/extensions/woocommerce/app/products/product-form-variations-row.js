@@ -15,7 +15,7 @@ import Button from 'components/button';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormWeightInput from 'woocommerce/components/form-weight-input';
 import ImagePreloader from 'components/image-preloader';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
 import Spinner from 'components/spinner';
@@ -194,19 +194,14 @@ class ProductFormVariationsRow extends Component {
 					<div className="products__product-dimensions-weight">
 						<FormDimensionsInput
 							className="products__product-dimensions-input"
-							unit="in"
 							dimensions={ variation.dimensions }
 							onChange={ this.setDimension }
 							noWrap
 						/>
 						<div className="products__product-weight-input">
-							<FormTextInputWithAffixes
-								name="weight"
-								type="number"
-								suffix="g"
-								value={ variation.weight || '' }
+							<FormWeightInput
+								value={ variation.weight }
 								onChange={ this.setWeight }
-								size="4"
 								noWrap
 							/>
 						</div>
