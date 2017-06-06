@@ -7,6 +7,7 @@ import find from 'lodash/find';
 import filter from 'lodash/filter';
 import findIndex from 'lodash/findIndex';
 import map from 'lodash/map';
+import get from 'lodash/get';
 import classNames from 'classnames';
 
 /**
@@ -123,16 +124,17 @@ class SelectDropdown extends Component {
 	}
 
 	getSelectedObject() {
-		const { options, selectedText } = this.props;
+		const { options } = this.props;
 		const { selected } = this.state;
 
-		if ( selectedText ) {
-			return selectedText;
-		}
-
-		// return currently selected text
+		// return currently selected object
 		const selectedValue = selected ? selected : this.getInitialSelectedItem( this.props );
 		return find( options, { value: selectedValue } );
+	}
+
+	getSelectedText() {
+		const { selectedText } = this.props;
+		return selectedText ? selectedText : get( this.getSelectedObject(), 'label' );
 	}
 
 	dropdownOptions() {
@@ -222,9 +224,9 @@ class SelectDropdown extends Component {
 		const dropdownClassName = classNames( dropdownClasses );
 
 		const selectedItem = this.getSelectedObject();
-		const selectedIcon = this.props.selectedIcon || selectedItem.icon;
-		const selectedCount = this.props.selectedCount || selectedItem.count;
-		const selectedText = this.props.selectedText || selectedItem.label;
+		const selectedIcon = this.props.selectedIcon || get( selectedItem, 'icon' );
+		const selectedCount = this.props.selectedCount || get( selectedItem, 'count' );
+		const selectedText = this.props.selectedText || get( selectedItem, 'label' );
 
 		return (
 			<div style={ this.props.style } className={ dropdownClassName }>
