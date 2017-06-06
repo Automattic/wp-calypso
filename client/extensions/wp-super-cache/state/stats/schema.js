@@ -1,3 +1,11 @@
+export const cacheSchema = {
+	cached: { type: 'integer' },
+	cached_list: { type: 'object' },
+	expired: { type: 'integer' },
+	expired_list: { type: 'object' },
+	fsize: { type: 'integer' },
+};
+
 export const statsSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -8,23 +16,11 @@ export const statsSchema = {
 			items: {
 				supercache: {
 					type: 'object',
-					items: {
-						cached: { type: 'integer' },
-						cached_list: { type: 'object' },
-						expired: { type: 'integer' },
-						expired_list: { type: 'object' },
-						fsize: { type: 'integer' },
-					}
+					items: cacheSchema,
 				},
 				wpcache: {
 					type: 'object',
-					items: {
-						cached: { type: 'integer' },
-						cached_list: { type: 'object' },
-						expired: { type: 'integer' },
-						expired_list: { type: 'object' },
-						fsize: { type: 'integer' },
-					}
+					items: cacheSchema,
 				}
 			}
 		}
