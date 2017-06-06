@@ -4,7 +4,7 @@
 import {
 	WOOCOMMERCE_EDIT_PRODUCT,
 	WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 
 export function editProduct( product, data ) {
 	return {

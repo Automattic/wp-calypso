@@ -3,7 +3,7 @@
  */
 import {
 	WOOCOMMERCE_EDIT_PRODUCT_VARIATION,
-} from '../../../action-types';
+} from 'woocommerce/state/action-types';
 
 /**
  * Edits a product variation.

@@ -11,7 +11,7 @@ import {
 	WOOCOMMERCE_EDIT_PRODUCT_APIPLAN_CLEAR,
 	WOOCOMMERCE_EDIT_PRODUCT_APIPLAN_STEP_START,
 	WOOCOMMERCE_EDIT_PRODUCT_APIPLAN_STEP_END,
-} from '../../../action-types';
+} from 'woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_EDIT_PRODUCT_APIPLAN_CREATE ]: handleApiPlanCreate,
