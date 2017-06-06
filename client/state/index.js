@@ -21,6 +21,7 @@ import componentsUsageStats from './components-usage-stats/reducer';
 import consoleDispatcher from './console-dispatch';
 import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
+import delayedDispatch from './delayed-dispatch';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
 import geo from './geo/reducer';
@@ -146,6 +147,7 @@ export function createReduxStore( initialState = {} ) {
 	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
 	const middlewares = [
+		delayedDispatch,
 		thunkMiddleware,
 		noticesMiddleware,
 		isBrowser && require( './happychat/middleware.js' ).default(),
