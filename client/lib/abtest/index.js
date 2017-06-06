@@ -91,11 +91,14 @@ ABTest.prototype.init = function( name ) {
 		throw new Error( 'A default variation is specified for ' + name + ' but it is not part of the variations' );
 	}
 
+	// Default: only run for 'en' locale.
 	this.localeTargets = [ 'en' ];
 	if ( testConfig.localeTargets ) {
 		if ( 'any' === testConfig.localeTargets ) {
+			// Allow any locales.
 			this.localeTargets = false;
 		} else if ( isArray( testConfig.localeTargets ) && every( testConfig.localeTargets, langSlugIsValid ) ) {
+			// Allow specific locales.
 			this.localeTargets = testConfig.localeTargets;
 		} else {
 			throw new Error( 'localeTargets can be either "any" or an array of one or more valid language slugs' );
