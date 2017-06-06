@@ -1,0 +1,4 @@
+{
+	"build": "test",
+	"calypso_config": "desktop"
+}

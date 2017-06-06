@@ -1,0 +1,9 @@
+.DS_Store
+.idea
+node_modules/
+release
+desktop/config.json
+publish/publish-config.js
+publish/node_modules/
+resource/secrets
+build

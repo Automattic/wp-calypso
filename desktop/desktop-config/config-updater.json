@@ -1,0 +1,15 @@
+{
+	"build": "updater",
+	"calypso_config": "desktop",
+	"debug": {
+		"enabled_by_default": false,
+		"namespace": "desktop:*",
+		"clear_log": false,
+		"colors": true
+	},
+	"updater": {
+		"url": "https://public-api.wordpress.com/rest/v1.1/desktop/",
+		"delay": 2000,
+		"interval": 600000
+	}
+}

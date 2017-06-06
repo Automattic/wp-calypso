@@ -1,0 +1,10 @@
+{
+	"build": "development",
+	"calypso_config": "desktop",
+	"debug": {
+		"enabled_by_default": true,
+		"namespace": "desktop:*",
+		"clear_log": false,
+		"colors": true
+	}
+}

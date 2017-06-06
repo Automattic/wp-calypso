@@ -1,0 +1,9 @@
+{
+	"build": "release",
+	"calypso_config": "desktop",
+	"updater": {
+		"url": "https://public-api.wordpress.com/rest/v1.1/desktop/",
+		"delay": 2000,
+		"interval": 43200000
+	}
+}
