@@ -12,9 +12,9 @@ You can install Calypso directly on your machine by following the next steps, or
 
 ## Prerequisites
 
-**On Mac OS X or Linux**, to be able to clone the repository and run the application you need:
+To be able to clone the repository and run the application you need:
 
--	Install the [Node.js](http://nodejs.org/) and matching [NPM](https://www.npmjs.com/) [versions](https://nodejs.org/en/download/releases/) listed in the engines section of [package.json](https://github.com/Automattic/wp-calypso/blob/master/package.json). On Mac OS X using [nvm](https://github.com/creationix/nvm) or [n](https://github.com/tj/n) makes it easy to manage `node` versions.
+-	Install the [Node.js](http://nodejs.org/) and matching [NPM](https://www.npmjs.com/) [versions](https://nodejs.org/en/download/releases/) listed in the engines section of [package.json](https://github.com/Automattic/wp-calypso/blob/master/package.json). On Mac OS X and Linux using [nvm](https://github.com/creationix/nvm) or [n](https://github.com/tj/n) makes it easy to manage `node` versions. On Windows you may want to try [nvm-windows](https://github.com/coreybutler/nvm-windows) or [nodist](https://github.com/marcelklehr/nodist).
 -	[Git](http://git-scm.com/). Try the `git` command from your terminal, if it's not found then use this [installer](http://git-scm.com/download/).
 
 ## Installing and Running
@@ -35,7 +35,7 @@ See [Development Workflow](../docs/development-workflow.md) for more.
 
 ### Starting the node debugger
 
-The `make run` command will pass anything set in the `NODE_ARGS` environment variable as an option to the Node command.  This means that if you want to start up the debugger on a specific port you can run `NODE_ARGS="--debug=5858" make run`.  Starting the built-in inspector can also by done by running `NODE_ARGS="--inspect" make run`.  In either case, if you would like to debug the build process as well, it might be convenient to have the inspector break on the first line and wait for you.  In that case, you should also pass in the `--debug-brk` option like so `NODE_ARGS="--inspect --debug-brk" make run`.
+The `npm start` command will pass anything set in the `NODE_ARGS` environment variable as an option to the Node command.  This means that if you want to start up the debugger on a specific port you can run `NODE_ARGS="--debug=5858" npm start`.  Starting the built-in inspector can also by done by running `NODE_ARGS="--inspect" npm start`.  In either case, if you would like to debug the build process as well, it might be convenient to have the inspector break on the first line and wait for you.  In that case, you should also pass in the `--debug-brk` option like so `NODE_ARGS="--inspect --debug-brk" npm start`.
 
 ## Using a portable development environment
 
