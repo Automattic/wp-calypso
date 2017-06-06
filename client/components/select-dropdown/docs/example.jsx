@@ -109,27 +109,7 @@ class SelectDropdownDemo extends React.Component {
 					</DropdownItem>
 				</SelectDropdown>
 
-				<h3 style={ { marginTop: 20 } }>max-width: 220px;</h3>
-
-				<SelectDropdown
-					className="select-dropdown-example__fixed-width"
-					compact={ this.state.compactButtons }
-					onSelect={ this.onDropdownSelect }
-					selectedText="Published publish publish publish"
-					selectedCount={ 454 }
-				>
-
-					<DropdownLabel><strong>Statuses</strong></DropdownLabel>
-					<DropdownItem count={ 10 } selected={ true } >Published publish publish publish</DropdownItem>
-					<DropdownItem count={ 4 } > Scheduled scheduled</DropdownItem>
-					<DropdownItem>Drafts</DropdownItem>
-					<DropdownItem disabled={ true }>Disabled Item</DropdownItem>
-					<DropdownSeparator />
-					<DropdownItem count={ 3 }>Trashed</DropdownItem>
-				</SelectDropdown>
-
 				<h3 style={ { marginTop: 20 } }>With Icons in Items Passed as Options</h3>
-
 				<SelectDropdown
 					compact={ this.state.compactButtons }
 					onSelect={ this.onDropdownSelect }
@@ -142,7 +122,6 @@ class SelectDropdownDemo extends React.Component {
 				/>
 
 				<h3 style={ { marginTop: 20 } }>With Icons in Items Passed as Children</h3>
-
 				<SelectDropdown
 					compact={ this.state.compactButtons }
 					onSelect={ this.onDropdownSelect }
@@ -155,7 +134,7 @@ class SelectDropdownDemo extends React.Component {
 					<DropdownItem
 						selected={ this.state.childSelected === 'Published' }
 						icon={ <Gridicon icon="align-image-left" size={ 18 } /> }
-						onClick={ this.getSelectItemHandler( 'Published', null, <Gridicon icon="align-image-left" size={ 18 } /> ) }
+						onClick={ this.getSelectItemHandler( 'Published', 10, <Gridicon icon="align-image-left" size={ 18 } /> ) }
 					>
 						Published
 					</DropdownItem>
@@ -163,7 +142,7 @@ class SelectDropdownDemo extends React.Component {
 					<DropdownItem
 						selected={ this.state.childSelected === 'Scheduled' }
 						icon={ <Gridicon icon="calendar" size={ 18 } /> }
-						onClick={ this.getSelectItemHandler( 'Scheduled', null, <Gridicon icon="calendar" size={ 18 } /> ) }
+						onClick={ this.getSelectItemHandler( 'Scheduled', 4, <Gridicon icon="calendar" size={ 18 } /> ) }
 					>
 						Scheduled
 					</DropdownItem>
@@ -171,7 +150,7 @@ class SelectDropdownDemo extends React.Component {
 					<DropdownItem
 						selected={ this.state.childSelected === 'Drafts' }
 						icon={ <Gridicon icon="create" size={ 18 } /> }
-						onClick={ this.getSelectItemHandler( 'Drafts', null, <Gridicon icon="create" size={ 18 } /> ) }
+						onClick={ this.getSelectItemHandler( 'Drafts', 3343, <Gridicon icon="create" size={ 18 } /> ) }
 					>
 						Drafts
 					</DropdownItem>
@@ -182,10 +161,28 @@ class SelectDropdownDemo extends React.Component {
 						count={ 3 }
 						selected={ this.state.childSelected === 'Trashed' }
 						icon={ <Gridicon icon="trash" size={ 18 } /> }
-						onClick={ this.getSelectItemHandler( 'Trashed', null, <Gridicon icon="trash" size={ 18 } /> ) }
+						onClick={ this.getSelectItemHandler( 'Trashed', 3, <Gridicon icon="trash" size={ 18 } /> ) }
 					>
 						Trashed
 					</DropdownItem>
+				</SelectDropdown>
+
+				<h3 style={ { marginTop: 20 } }>max-width: 220px;</h3>
+				<SelectDropdown
+					className="select-dropdown-example__fixed-width"
+					compact={ this.state.compactButtons }
+					onSelect={ this.onDropdownSelect }
+					selectedText="Published publish publish publish"
+					selectedCount={ 10 }
+				>
+
+					<DropdownLabel><strong>Statuses</strong></DropdownLabel>
+					<DropdownItem count={ 10 } selected={ true } >Published publish publish publish</DropdownItem>
+					<DropdownItem count={ 4 } > Scheduled scheduled</DropdownItem>
+					<DropdownItem count={ 3343 }>Drafts</DropdownItem>
+					<DropdownItem disabled={ true }>Disabled Item</DropdownItem>
+					<DropdownSeparator />
+					<DropdownItem count={ 3 }>Trashed</DropdownItem>
 				</SelectDropdown>
 
 			</div>
