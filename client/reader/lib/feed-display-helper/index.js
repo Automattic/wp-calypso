@@ -15,10 +15,10 @@ const exported = {
 
 	// Use either the site name, feed name or display URL for the feed name
 	getFeedTitle: function( siteData, feedData, displayUrl ) {
-		var feedTitle;
+		let feedTitle;
 
-		if ( siteData && siteData.get( 'name' ) ) {
-			feedTitle = siteData.get( 'name' );
+		if ( siteData && siteData.name ) {
+			feedTitle = siteData.name;
 		} else if ( feedData && feedData.name ) {
 			feedTitle = feedData.name;
 		} else {
@@ -41,14 +41,14 @@ const exported = {
 	},
 
 	getSiteUrl: function( siteData, feedData, subscription ) {
-		var siteUrl;
+		let siteUrl;
 
-		if ( siteData && siteData.get( 'URL' ) ) {
-			siteUrl = siteData.get( 'URL' );
+		if ( siteData && siteData.URL ) {
+			siteUrl = siteData.URL;
 		} else if ( feedData && feedData.URL ) {
 			siteUrl = feedData.URL;
-		} else if ( subscription && subscription.get( 'URL' ) ) {
-			siteUrl = subscription.get( 'URL' );
+		} else if ( subscription && subscription.URL ) {
+			siteUrl = subscription.URL;
 		}
 
 		return siteUrl;

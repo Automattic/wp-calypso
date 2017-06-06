@@ -202,4 +202,3 @@ export prependThemeFilterKeys from './prepend-theme-filter-keys';
 export shouldCloseVideoEditorModal from './should-close-video-editor-modal';
 export shouldShowVideoEditorError from './should-show-video-editor-error';
 export shouldSyncReaderFollows from './should-sync-reader-follows';
-
