@@ -8,7 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, isEmpty, pick } from 'lodash';
+import { get, isEmpty, pick, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -122,7 +122,8 @@ function getCurrentCommitShortChecksum() {
 function getDefaultContext( request ) {
 	let initialServerState = {};
 	// We don't cache routes with query params
-	if ( isEmpty( request.query ) ) {
+
+	if ( isEmpty( omit( request.query, 'page' ) ) ) {
 		// context.pathname is set to request.path, see server/isomorphic-routing#getEnhancedContext()
 		const serializeCachedServerState = stateCache.get( request.path ) || {};
 		initialServerState = getInitialServerState( serializeCachedServerState );
