@@ -13,10 +13,10 @@ import Button from 'components/button';
 
 const ProductHeader = ( { onTrash, onSave, translate } ) => {
 	const trashButton = onTrash &&
-		<Button borderless onClick={ onTrash }><Gridicon icon="trash" /></Button>;
+		<Button borderless compact onClick={ onTrash }><Gridicon icon="trash" /></Button>;
 
 	const saveButton = onSave &&
-		<Button primary onClick={ onSave }>{ translate( 'Save' ) }</Button>;
+		<Button primary compact onClick={ onSave }>{ translate( 'Save' ) }</Button>;
 
 	return (
 		<ActionHeader>
@@ -32,4 +32,3 @@ ProductHeader.propTypes = {
 };
 
 export default localize( ProductHeader );
-
