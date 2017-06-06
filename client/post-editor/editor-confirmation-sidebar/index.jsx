@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
+import { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 
 class EditorConfirmationSidebar extends React.Component {
 	static propTypes = {
@@ -37,6 +39,32 @@ class EditorConfirmationSidebar extends React.Component {
 		this.closeOverlay();
 		this.props.onPublish( true );
 	};
+
+	getPublishButtonLabel( publishButtonStatus ) {
+		switch ( publishButtonStatus ) {
+			case 'update':
+				return this.props.translate( 'Update' );
+			case 'schedule':
+				return this.props.translate( 'Schedule' );
+			case 'publish':
+				return this.props.translate( 'Publish' );
+			case 'requestReview':
+				return this.props.translate( 'Submit for Review' );
+		}
+	}
+
+	renderPublishButton() {
+		if ( ! this.props.site || ! this.props.post || ! this.props.savedPost ) {
+			return;
+		}
+
+		const publishButtonStatus = getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost );
+		const buttonLabel = this.getPublishButtonLabel( publishButtonStatus );
+
+		return (
+			<Button onClick={ this.closeAndPublish }>{ buttonLabel }</Button>
+		);
+	}
 
 	renderPrivacyControl() {
 		if ( ! this.props.post ) {
@@ -81,11 +109,17 @@ class EditorConfirmationSidebar extends React.Component {
 						'is-active': isSidebarActive,
 					} ) }>
 						<div className="editor-confirmation-sidebar__ground-control">
-							<div className="editor-confirmation-sidebar__cancel" onClick={ this.closeOverlay }>
-								{ this.props.translate( 'Cancel' ) }
+							<div className="editor-confirmation-sidebar__close">
+								<Button
+									borderless
+									onClick={ this.closeOverlay }
+									title={ this.props.translate( 'Close sidebar' ) }
+									aria-label={ this.props.translate( 'Close sidebar' ) }>
+									<Gridicon icon="cross" />
+								</Button>
 							</div>
 							<div className="editor-confirmation-sidebar__action">
-								<Button onClick={ this.closeAndPublish } compact>{ this.props.translate( 'Publish' ) }</Button>
+								{ this.renderPublishButton() }
 							</div>
 						</div>
 						<div className="editor-confirmation-sidebar__content-wrap">

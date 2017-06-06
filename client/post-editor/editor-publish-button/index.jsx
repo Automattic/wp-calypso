@@ -123,7 +123,6 @@ export class EditorPublishButton extends Component {
 			<Button
 				className="editor-publish-button"
 				primary
-				compact
 				busy={ this.props.busy }
 				onClick={ this.onClick }
 				disabled={ ! this.isEnabled() }

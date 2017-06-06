@@ -71,20 +71,18 @@
 .editor-confirmation-sidebar__ground-control {
 	@extend .card;
 	display: flex;
-	justify-content: space-between;
 	flex-direction: row;
 	flex-wrap: wrap;
 	position: relative;
 		top: 0;
 		left: 0;
 		right: 0;
-	padding: 9px 24px;
+	padding: 0 24px;
 	width: 100%;
 }
 
-.editor-confirmation-sidebar__cancel {
-	flex-grow: 1;
-	color: $alert-red;
+.editor-confirmation-sidebar__close {
+  margin-right: auto;
 }
 
 .editor-confirmation-sidebar__action .button {
@@ -92,9 +90,8 @@
 	border-color: darken( $alert-green, 20% );
 	color: $white;
 
-	text-transform: none;
 	padding: 7px 22px;
-	margin-left: 12px;
+	margin: 4px 0 4px 12px;
 
 	&:hover,
 	&:focus {
