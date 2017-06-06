@@ -20,6 +20,7 @@ export const sitesSchema = {
 				},
 				visible: { type: 'boolean' },
 				is_private: { type: 'boolean' },
+				is_vip: { type: 'boolean' },
 				options: { type: 'object' },
 				meta: { type: 'object' },
 				is_multisite: { type: 'boolean' },
