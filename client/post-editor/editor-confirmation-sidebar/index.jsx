@@ -18,6 +18,7 @@ import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
+import { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 
 class EditorConfirmationSidebar extends React.Component {
 	static propTypes = {
@@ -49,12 +50,30 @@ class EditorConfirmationSidebar extends React.Component {
 		return post && ( +new Date() + oneMinute < +new Date( post.date ) );
 	}
 
-	getButtonLabel() {
-		if ( this.isFutureDated( this.props.post ) ) {
-			return this.props.translate( 'Schedule' );
+	getPublishButtonLabel( publishButtonStatus ) {
+		switch ( publishButtonStatus ) {
+			case 'update':
+				return this.props.translate( 'Update' );
+			case 'schedule':
+				return this.props.translate( 'Schedule' );
+			case 'publish':
+				return this.props.translate( 'Publish' );
+			case 'requestReview':
+				return this.props.translate( 'Submit for Review' );
+		}
+	}
+
+	renderPublishButton() {
+		if ( ! this.props.site || ! this.props.post || ! this.props.savedPost ) {
+			return;
 		}
 
-		return this.props.translate( 'Publish' );
+		const publishButtonStatus = getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost );
+		const buttonLabel = this.getPublishButtonLabel( publishButtonStatus );
+
+		return (
+			<Button onClick={ this.closeAndPublish }>{ buttonLabel }</Button>
+		);
 	}
 
 	renderPrivacyControl() {
@@ -110,7 +129,7 @@ class EditorConfirmationSidebar extends React.Component {
 								</Button>
 							</div>
 							<div className="editor-confirmation-sidebar__action">
-								<Button onClick={ this.closeAndPublish }>{ this.getButtonLabel() }</Button>
+								{ this.renderPublishButton() }
 							</div>
 						</div>
 						<div className="editor-confirmation-sidebar__content-wrap">
