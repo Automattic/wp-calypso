@@ -33,13 +33,11 @@ class GoogleAppsDialog extends React.Component {
 		initialGoogleAppsCartItem: React.PropTypes.object
 	};
 
-	getInitialState() {
-		return {
-			isAddingEmail: false,
-			users: null,
-			validationErrors: null
-		};
-	}
+	state = {
+		isAddingEmail: false,
+		users: null,
+		validationErrors: null
+	};
 
 	componentWillMount() {
 		if ( this.props.initialState ) {
@@ -92,15 +90,13 @@ class GoogleAppsDialog extends React.Component {
 		);
 	}
 
-	setUsers( users ) {
-		this.setState( { users: users } );
-	}
+	setUsers = ( users ) => this.setState( { users: users } );
 
-	save() {
+	save = () => {
 		if ( this.props.onSave ) {
 			this.props.onSave( this.state );
 		}
-	}
+	};
 
 	header() {
 		const { translate } = this.props;
@@ -185,15 +181,15 @@ class GoogleAppsDialog extends React.Component {
 		);
 	}
 
-	handleAddEmail( event ) {
+	handleAddEmail = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordAddEmailButtonClick( this.props.analyticsSection );
 
 		this.setState( { isAddingEmail: true } );
-	}
+	};
 
-	handleFormSubmit( event ) {
+	handleFormSubmit = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordFormSubmit( this.props.analyticsSection );
@@ -203,23 +199,23 @@ class GoogleAppsDialog extends React.Component {
 		}
 
 		this.props.onAddGoogleApps( this.getGoogleAppsCartItem() );
-	}
+	};
 
-	handleFormCheckout( event ) {
+	handleFormCheckout = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordCancelButtonClick( this.props.analyticsSection );
 
 		this.props.onClickSkip();
-	}
+	};
 
-	handleFormKeepSearching( event ) {
+	handleFormKeepSearching = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordKeepSearching();
 
 		this.props.onGoBack();
-	}
+	};
 
 	getFields() {
 		const { translate } = this.props;

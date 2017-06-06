@@ -38,9 +38,9 @@ class GoogleAppsUsers extends React.Component {
 	}
 
 	render() {
-		const fields = this.props.fields || this.getInitialFields(),
-			allUserInputs = fields.map( this.inputsForUser ),
-			{ translate } = this.props;
+		const fields = this.props.fields || this.getInitialFields();
+		const allUserInputs = fields.map( this.inputsForUser );
+		const { translate } = this.props;
 
 		return (
 			<div className="google-apps-dialog__users" key="google-apps-dialog__users">
@@ -115,23 +115,23 @@ class GoogleAppsUsers extends React.Component {
 		);
 	}
 
-	recordInputFocus( index, fieldName ) {
+	recordInputFocus = ( index, fieldName ) => {
 		const field = this.props.fields[ index ],
 			inputValue = field ? field.value : '';
 
 		this.props.recordInputFocus( index, fieldName, inputValue );
-	}
+	};
 
-	addUser( event ) {
+	addUser = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordAddUserClick( this.props.analyticsSection );
 
 		const updatedFields = this.props.fields.concat( [ this.getNewUserFields() ] );
 		this.props.onChange( updatedFields );
-	}
+	};
 
-	updateField( index, event ) {
+	updateField = ( index, event ) => {
 		event.preventDefault();
 
 		const fieldName = event.target.name,
@@ -142,7 +142,7 @@ class GoogleAppsUsers extends React.Component {
 		updatedFields[ index ][ fieldName ].value = newValue;
 
 		this.props.onChange( updatedFields );
-	}
+	};
 }
 
 const recordAddUserClick = ( section ) => composeAnalytics(
