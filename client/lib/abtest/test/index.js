@@ -40,7 +40,7 @@ describe( 'abtest', () => {
 					show: 50
 				},
 				defaultVariation: 'hide',
-				localeTargets: false,
+				localeTargets: 'any',
 			},
 			multipeLocaleNotEn: {
 				datestamp: '20160627',

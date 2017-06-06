@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { includes, keys, reduce, some, map, every } from 'lodash';
+import { includes, keys, reduce, some, map, every, isArray } from 'lodash';
 import store from 'store';
 import i18n from 'i18n-calypso';
 
@@ -63,6 +63,9 @@ const parseDateStamp = ( datestamp ) => {
 	return date;
 };
 
+const languageSlugs = map( config( 'languages' ), 'langSlug' );
+const langSlugIsValid = ( slug ) => languageSlugs.indexOf( slug ) !== -1;
+
 ABTest.prototype.init = function( name ) {
 	if ( ! /^[A-Za-z\d]+$/.test( name ) ) {
 		throw new Error( 'The test name "' + name + '" should be camel case' );
@@ -88,14 +91,15 @@ ABTest.prototype.init = function( name ) {
 		throw new Error( 'A default variation is specified for ' + name + ' but it is not part of the variations' );
 	}
 
-	const languageSlugs = map( config( 'languages' ), 'langSlug' );
-
-	if (
-		testConfig.localeTargets &&
-		! every( testConfig.localeTargets, ( target ) => {
-			return languageSlugs.indexOf( target ) !== -1;
-		} ) ) {
-		throw new Error( 'localeTargets array contains invalid language slugs.' );
+	this.localeTargets = [ 'en' ];
+	if ( testConfig.localeTargets ) {
+		if ( 'any' === testConfig.localeTargets ) {
+			this.localeTargets = false;
+		} else if ( isArray( testConfig.localeTargets ) && every( testConfig.localeTargets, langSlugIsValid ) ) {
+			this.localeTargets = testConfig.localeTargets;
+		} else {
+			throw new Error( 'localeTargets can be either "any" or an array of one or more valid language slugs' );
+		}
 	}
 
 	const variationDatestamp = testConfig.datestamp;
@@ -107,16 +111,6 @@ ABTest.prototype.init = function( name ) {
 	this.defaultVariation = testConfig.defaultVariation;
 	this.variationNames = variationNames;
 	this.experimentId = name + '_' + variationDatestamp;
-
-	this.localeTargets = [ 'en' ];
-
-	if ( 'undefined' !== typeof testConfig.localeTargets ) {
-		if ( testConfig.localeTargets === false ) {
-			this.localeTargets = false;
-		} else {
-			this.localeTargets = testConfig.localeTargets;
-		}
-	}
 
 	this.allowExistingUsers = testConfig.allowExistingUsers === true;
 };
