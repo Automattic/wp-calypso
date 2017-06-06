@@ -29,19 +29,15 @@ function Transfer( props ) {
 				{ translate( 'Transfer Domain' ) }
 			</Header>
 			<VerticalNav>
-				<VerticalNavItem path={ paths.domainManagementTransferOut( slug, selectedDomainName ) }>
+				<VerticalNavItem path={
+					paths.domainManagementTransferOut( slug, selectedDomainName )
+				}>
 					{ translate( 'Transfer to another registrar' ) }
 				</VerticalNavItem>
-				{ ! isAutomatedTransfer && ! isDomainOnly &&
-					<VerticalNavItem path={ paths.domainManagementTransferToAnotherUser( slug, selectedDomainName ) }>
-						{ translate( 'Transfer to another user' ) }
-					</VerticalNavItem>
-				}
-				{ ! isAutomatedTransfer &&
-					<VerticalNavItem path={ paths.domainManagementTransferToOtherSite( slug, selectedDomainName ) }>
-						{ translate( 'Transfer to another WordPress.com site' ) }
-					</VerticalNavItem>
-				}
+					{ ! isAutomatedTransfer && ! isDomainOnly &&
+						<VerticalNavItem path={ paths.domainManagementTransferToAnotherUser( slug, selectedDomainName ) }>
+							{ translate( 'Transfer to another user' ) }
+						</VerticalNavItem> }
 			</VerticalNav>
 		</Main>
 	);

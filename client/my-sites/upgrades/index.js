@@ -120,12 +120,6 @@ module.exports = function() {
 	);
 
 	page(
-		paths.domainManagementTransferToOtherSite( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementTransferToOtherSite
-	);
-
-	page(
 		paths.domainManagementRoot(),
 		controller.siteSelection,
 		controller.sites
