@@ -128,10 +128,22 @@ class SelectDropdownDemo extends React.Component {
 					<DropdownItem count={ 3 }>Trashed</DropdownItem>
 				</SelectDropdown>
 
-				<h3 style={ { marginTop: 20 } }>With Icons</h3>
+				<h3 style={ { marginTop: 20 } }>With Icons in Items Passed as Options</h3>
 
 				<SelectDropdown
-					className="select-dropdown-example__fixed-width"
+					compact={ this.state.compactButtons }
+					onSelect={ this.onDropdownSelect }
+					options={ [
+						{ value: 'published', label: 'Published', icon: <Gridicon icon="align-image-left" size={ 18 } /> },
+						{ value: 'scheduled', label: 'Scheduled', icon: <Gridicon icon="calendar" size={ 18 } /> },
+						{ value: 'drafts', label: 'Drafts', icon: <Gridicon icon="create" size={ 18 } /> },
+						{ value: 'trashed', label: 'Trashed', icon: <Gridicon icon="trash" size={ 18 } /> },
+					] }
+				/>
+
+				<h3 style={ { marginTop: 20 } }>With Icons in Items Passed as Children</h3>
+
+				<SelectDropdown
 					compact={ this.state.compactButtons }
 					onSelect={ this.onDropdownSelect }
 					selectedText={ this.state.childSelected }
