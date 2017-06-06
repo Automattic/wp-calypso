@@ -44,12 +44,11 @@ import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { getSiteBySlug } from 'state/sites/selectors';
 import { getLanguage } from 'lib/i18n-utils';
 
-import _sites from 'lib/sites-list';
 import _user from 'lib/user';
 
-const sites = _sites();
 const user = _user();
 
 /**
@@ -271,7 +270,7 @@ const Account = React.createClass( {
 	},
 
 	onSiteSelect( siteSlug ) {
-		const selectedSite = sites.getSite( siteSlug );
+		const selectedSite = this.props.getSiteBySlug( siteSlug );
 		if ( selectedSite ) {
 			this.updateUserSetting( 'primary_site_ID', selectedSite.ID );
 		}
@@ -711,7 +710,9 @@ const Account = React.createClass( {
 
 export default compose(
 	connect(
-		null,
+		( state ) => ( {
+			getSiteBySlug: ( siteId ) => getSiteBySlug( state, siteId ),
+		} ),
 		dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch ),
 	),
 	localize,
