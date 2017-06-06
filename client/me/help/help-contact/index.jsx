@@ -492,13 +492,14 @@ const HelpContact = React.createClass( {
 					onSubmit: this.submitDirectlyQuestion,
 					buttonLabel: translate( 'Ask an Expert' ),
 					formDescription: translate(
-						'Chat with an {{strong}}Expert User{{/strong}} of WordPress.com. ' +
-						'These are other users, like yourself, that have been selected ' +
-						'because of their knowledge to help answer your questions. ' +
-						'{{strong}}Please do not{{/strong}} provide financial or ' +
-						'contact information when submitting this form.',
+						'{{p}}Get help from an {{strong}}Expert User{{/strong}} of WordPress.com. ' +
+						'These are other users, like yourself, who have been selected because ' +
+						'of their knowledge to help answer your questions.{{/p}}' +
+						'{{p}}{{strong}}Please do not{{/strong}} provide financial or contact ' +
+						'information when submitting this form.{{/p}}',
 						{
 							components: {
+								p: <p />,
 								strong: <strong />
 							}
 						} ),
