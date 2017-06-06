@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { concat, partition, map } from 'lodash';
+import { concat, partition, map, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +20,7 @@ export default createSelector(
 	( state ) => {
 		const primarySiteId = getPrimarySiteId( state );
 		const [ primarySite, sites ] = partition( state.sites.items, { ID: primarySiteId } );
-		return map( concat( primarySite, sites ), site => getSite( state, site.ID ) );
+		return map( concat( primarySite, sortBy( sites, [ 'name', 'URL' ] ) ), site => getSite( state, site.ID ) );
 	},
 	( state ) => state.sites.items
 );
