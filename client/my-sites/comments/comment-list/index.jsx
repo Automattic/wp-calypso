@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, get, includes, map, size, without } from 'lodash';
+import { find, get, includes, map, size, without } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -53,10 +53,6 @@ export class CommentList extends Component {
 		this.props.deleteCommentPermanently( commentId );
 	}
 
-	filterCommentsByStatus = () => 'all' === this.props.status
-		? filter( this.props.comments, ( { status } ) => ( 'approved' === status || 'unapproved' === status ) )
-		: filter( this.props.comments, ( { status } ) => ( this.props.status === status ) );
-
 	getEmptyMessage = () => {
 		const { status, translate } = this.props;
 
@@ -73,12 +69,12 @@ export class CommentList extends Component {
 
 	isCommentSelected = commentId => includes( this.state.selectedComments, commentId );
 
-	isSelectedAll = () => this.filterCommentsByStatus().length === this.state.selectedComments.length;
+	isSelectedAll = () => this.props.comments.length === this.state.selectedComments.length;
 
 	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
 		const comment = find( this.props.comments, [ 'ID', commentId ] );
 
-		if ( status === comment.status ) {
+		if ( comment && status === comment.status ) {
 			return;
 		}
 
@@ -147,12 +143,13 @@ export class CommentList extends Component {
 		this.setState( {
 			selectedComments: this.isSelectedAll()
 				? []
-				: map( this.filterCommentsByStatus(), comment => comment.ID ),
+				: map( this.props.comments, comment => comment.ID ),
 		} );
 	}
 
 	render() {
 		const {
+			comments,
 			siteId,
 			siteSlug,
 			status,
@@ -161,8 +158,6 @@ export class CommentList extends Component {
 			isBulkEdit,
 			selectedComments,
 		} = this.state;
-
-		const filteredComments = this.filterCommentsByStatus();
 
 		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
 
@@ -184,7 +179,7 @@ export class CommentList extends Component {
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-detail__transition"
 				>
-					{ map( filteredComments, comment =>
+					{ map( comments, comment =>
 						<CommentDetail
 							comment={ comment }
 							deleteCommentPermanently={ this.deleteCommentPermanently }
@@ -204,13 +199,13 @@ export class CommentList extends Component {
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
 				>
-					{ null === filteredComments &&
+					{ null === comments &&
 						<CommentDetailPlaceholder
 							key="comment-detail-placeholder"
 						/>
 					}
 
-					{ 0 === size( filteredComments ) &&
+					{ 0 === size( comments ) &&
 						<EmptyContent
 							illustration="/calypso/images/comments/illustration_comments_gray.svg"
 							illustrationWidth={ 150 }
