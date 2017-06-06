@@ -1,0 +1,24 @@
+version: '2'
+services:
+  calypso:
+    image: node:6.10.2
+    extra_hosts:
+      - 'calypso.localhost:0.0.0.0'
+    environment:
+      CALYPSO_ENV: 'development'
+      NODE_ENV: 'development'
+      HOST: 'calypso.localhost'
+      PORT: 3000
+    ports:
+      - '3000:3000'
+    restart: "no"
+    volumes:
+      - ./:/calypso
+      - node_modules_volume:/calypso/node_modules
+      - hooks_volume:/calypso/.git/hooks
+    working_dir: /calypso
+    command: ["make", "run"]
+    tty: true # colors!
+volumes:
+  node_modules_volume:
+  hooks_volume:
