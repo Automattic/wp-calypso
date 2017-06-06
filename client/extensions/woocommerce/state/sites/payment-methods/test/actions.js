@@ -12,8 +12,8 @@ import { LOADING } from 'woocommerce/state/constants';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS,
-	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS_SUCCESS,
+	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
+	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
@@ -42,7 +42,7 @@ describe( 'actions', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchPaymentMethods( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_API_FETCH_PAYMENT_METHODS, siteId } );
+			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST, siteId } );
 		} );
 
 		it( 'should dispatch a success action with payment information when request completes', () => {
@@ -52,7 +52,7 @@ describe( 'actions', () => {
 
 			return response.then( () => {
 				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_API_FETCH_PAYMENT_METHODS_SUCCESS,
+					type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 					siteId,
 					data: [ {
 						id: 'bacs',

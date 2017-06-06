@@ -4,14 +4,14 @@
 import wp from 'lib/wp';
 import { setError } from '../status/wc-api/actions';
 import {
-	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
-	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 export function fetchProductCategories( siteId ) {
 	return ( dispatch ) => {
 		const getAction = {
-			type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
+			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 			siteId,
 		};
 
@@ -34,7 +34,7 @@ export function fetchProductCategories( siteId ) {
 export function fetchProductCategoriesSuccess( siteId, data ) {
 	if ( ! isValidCategoriesArray( data ) ) {
 		const originalAction = {
-			type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
+			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 			siteId,
 		};
 
@@ -42,7 +42,7 @@ export function fetchProductCategoriesSuccess( siteId, data ) {
 	}
 
 	return {
-		type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
+		type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 		siteId,
 		data,
 	};

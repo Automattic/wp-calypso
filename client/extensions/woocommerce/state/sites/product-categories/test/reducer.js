@@ -9,15 +9,15 @@ import { expect } from 'chai';
 import reducer from 'woocommerce/state/sites/reducer';
 import { LOADING } from 'woocommerce/state/constants';
 import {
-	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
-	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should mark the product category tree as "loading"', () => {
 		const siteId = 123;
 		const action = {
-			type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
+			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 			siteId,
 		};
 
@@ -40,7 +40,7 @@ describe( 'reducer', () => {
 			{ id: 2, name: 'cat2', slug: 'cat-2' },
 		];
 		const action = {
-			type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
+			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 			data: categories,
 			siteId,
 		};
@@ -60,7 +60,7 @@ describe( 'reducer', () => {
 			products: {},
 		} };
 		const action = {
-			type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
+			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 			data: [],
 			siteId,
 		};

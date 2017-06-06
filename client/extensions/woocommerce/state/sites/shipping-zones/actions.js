@@ -4,8 +4,8 @@
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
 import {
-	WOOCOMMERCE_API_FETCH_SHIPPING_ZONES,
-	WOOCOMMERCE_API_FETCH_SHIPPING_ZONES_SUCCESS,
+	WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
+	WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import {
 	areShippingZonesLoaded,
@@ -18,7 +18,7 @@ export const fetchShippingZones = ( siteId ) => ( dispatch, getState ) => {
 	}
 
 	const getAction = {
-		type: WOOCOMMERCE_API_FETCH_SHIPPING_ZONES,
+		type: WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
 		siteId,
 	};
 
@@ -27,7 +27,7 @@ export const fetchShippingZones = ( siteId ) => ( dispatch, getState ) => {
 	return request( siteId ).get( 'shipping/zones' )
 		.then( ( data ) => {
 			dispatch( {
-				type: WOOCOMMERCE_API_FETCH_SHIPPING_ZONES_SUCCESS,
+				type: WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
 				siteId,
 				data,
 			} );

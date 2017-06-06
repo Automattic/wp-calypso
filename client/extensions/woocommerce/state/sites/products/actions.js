@@ -4,8 +4,8 @@
 import wp from 'lib/wp';
 import { setError } from '../status/wc-api/actions';
 import {
-	WOOCOMMERCE_API_CREATE_PRODUCT,
-	WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
+	WOOCOMMERCE_PRODUCT_CREATE,
+	WOOCOMMERCE_PRODUCT_CREATE_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 /**
@@ -20,7 +20,7 @@ import {
 export function createProduct( siteId, product, successAction = null, failureAction = null ) {
 	return ( dispatch ) => {
 		const createAction = {
-			type: WOOCOMMERCE_API_CREATE_PRODUCT,
+			type: WOOCOMMERCE_PRODUCT_CREATE,
 			siteId,
 			product,
 		};
@@ -64,7 +64,7 @@ export function createProduct( siteId, product, successAction = null, failureAct
 export function createProductSuccess( siteId, product ) {
 	if ( ! isValidProduct( product ) ) {
 		const originalAction = {
-			type: WOOCOMMERCE_API_CREATE_PRODUCT,
+			type: WOOCOMMERCE_PRODUCT_CREATE,
 			siteId,
 			product,
 		};
@@ -76,7 +76,7 @@ export function createProductSuccess( siteId, product ) {
 	}
 
 	return {
-		type: WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
+		type: WOOCOMMERCE_PRODUCT_CREATE_SUCCESS,
 		siteId,
 		product,
 	};

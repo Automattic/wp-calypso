@@ -8,14 +8,14 @@ import { createReducer } from 'state/utils';
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_EDIT_PRODUCT,
-	WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
+	WOOCOMMERCE_PRODUCT_EDIT,
+	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 } from 'woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from '../helpers';
 
 export default createReducer( null, {
-	[ WOOCOMMERCE_EDIT_PRODUCT ]: editProductAction,
-	[ WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE ]: editProductAttributeAction,
+	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
+	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
 } );
 
 function editProductAction( edits, action ) {

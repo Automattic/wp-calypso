@@ -9,15 +9,15 @@ import debugFactory from 'debug';
 import { createReducer } from 'state/utils';
 
 import {
-	WOOCOMMERCE_API_SET_ERROR,
-	WOOCOMMERCE_API_CLEAR_ERROR,
+	WOOCOMMERCE_ERROR_SET,
+	WOOCOMMERCE_ERROR_CLEAR,
 } from 'woocommerce/state/action-types';
 
 const debug = debugFactory( 'woocommerce:errors:wc-api' );
 
 export default createReducer( null, {
-	[ WOOCOMMERCE_API_SET_ERROR ]: setApiError,
-	[ WOOCOMMERCE_API_CLEAR_ERROR ]: clearApiError,
+	[ WOOCOMMERCE_ERROR_SET ]: setApiError,
+	[ WOOCOMMERCE_ERROR_CLEAR ]: clearApiError,
 } );
 
 function setApiError( error, action ) {

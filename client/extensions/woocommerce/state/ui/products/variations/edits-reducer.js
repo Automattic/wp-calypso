@@ -8,16 +8,16 @@ import { find, isEqual, uniqueId } from 'lodash';
  */
 import { createReducer } from 'state/utils';
 import {
-	WOOCOMMERCE_EDIT_PRODUCT_VARIATION,
-	WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
+	WOOCOMMERCE_PRODUCT_VARIATION_EDIT,
+	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 } from 'woocommerce/state/action-types';
 import { getBucket } from '../../helpers';
 import { editProductAttribute } from '../edits-reducer';
 import generateVariations from '../../../../lib/generate-variations';
 
 export default createReducer( null, {
-	[ WOOCOMMERCE_EDIT_PRODUCT_VARIATION ]: editProductVariationAction,
-	[ WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE ]: editProductAttributeAction,
+	[ WOOCOMMERCE_PRODUCT_VARIATION_EDIT ]: editProductVariationAction,
+	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
 } );
 
 function editProductVariationAction( edits, action ) {

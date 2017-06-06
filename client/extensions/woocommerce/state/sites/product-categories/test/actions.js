@@ -11,9 +11,9 @@ import { fetchProductCategories } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
-	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
-	WOOCOMMERCE_API_SET_ERROR,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+	WOOCOMMERCE_ERROR_SET,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
@@ -53,7 +53,7 @@ describe( 'actions', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchProductCategories( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES, siteId } );
+			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST, siteId } );
 		} );
 
 		it( 'should dispatch a success action with product category information when request completes', () => {
@@ -63,7 +63,7 @@ describe( 'actions', () => {
 
 			return response.then( () => {
 				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
+					type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 					siteId,
 					data: [ {
 						id: 10,
@@ -82,7 +82,7 @@ describe( 'actions', () => {
 			const response = fetchProductCategories( errorSiteId )( dispatch, getState );
 
 			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWithMatch( { type: WOOCOMMERCE_API_SET_ERROR } );
+				expect( dispatch ).to.have.been.calledWithMatch( { type: WOOCOMMERCE_ERROR_SET } );
 			} );
 		} );
 	} );

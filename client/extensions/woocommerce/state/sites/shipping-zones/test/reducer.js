@@ -9,15 +9,15 @@ import { expect } from 'chai';
 import reducer from 'woocommerce/state/sites/reducer';
 import { LOADING } from 'woocommerce/state/constants';
 import {
-	WOOCOMMERCE_API_FETCH_SHIPPING_ZONES,
-	WOOCOMMERCE_API_FETCH_SHIPPING_ZONES_SUCCESS,
+	WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
+	WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should mark the shipping zones tree as being "loading"', () => {
 		const siteId = 123;
 		const action = {
-			type: WOOCOMMERCE_API_FETCH_SHIPPING_ZONES,
+			type: WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
 			siteId
 		};
 
@@ -32,7 +32,7 @@ describe( 'reducer', () => {
 			{ id: 1, name: 'USA' },
 		];
 		const action = {
-			type: WOOCOMMERCE_API_FETCH_SHIPPING_ZONES_SUCCESS,
+			type: WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
 			siteId,
 			data: zones,
 		};

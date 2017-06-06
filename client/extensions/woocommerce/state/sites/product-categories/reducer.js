@@ -4,16 +4,16 @@
 import { createReducer } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import {
-	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
-	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 export default createReducer( {}, {
-	[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES ]: () => {
+	[ WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST ]: () => {
 		return LOADING;
 	},
 
-	[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS ]: ( state, { data } ) => {
+	[ WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS ]: ( state, { data } ) => {
 		return data;
 	},
 } );

@@ -6,8 +6,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
 import {
-	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS,
-	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS_SUCCESS,
+	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
+	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import {
 	arePaymentMethodsLoaded,
@@ -19,7 +19,7 @@ export const fetchPaymentMethodsSuccess = ( siteId, data ) => {
 		return { ...method, ...getPaymentMethodDetails( method.id ) };
 	} );
 	return {
-		type: WOOCOMMERCE_API_FETCH_PAYMENT_METHODS_SUCCESS,
+		type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 		siteId,
 		data: paymentMethods,
 	};
@@ -35,7 +35,7 @@ export const fetchPaymentMethods = ( siteId ) => ( dispatch, getState ) => {
 	}
 
 	const getAction = {
-		type: WOOCOMMERCE_API_FETCH_PAYMENT_METHODS,
+		type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
 		siteId,
 	};
 

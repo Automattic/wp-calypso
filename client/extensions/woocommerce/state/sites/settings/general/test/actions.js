@@ -12,8 +12,8 @@ import { LOADING } from 'woocommerce/state/constants';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL,
-	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL_SUCCESS,
+	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
+	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
@@ -44,7 +44,7 @@ describe( 'actions', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchSettingsGeneral( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL, siteId } );
+			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST, siteId } );
 		} );
 
 		it( 'should dispatch a success action with settings information when request completes', () => {
@@ -54,7 +54,7 @@ describe( 'actions', () => {
 
 			return response.then( () => {
 				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL_SUCCESS,
+					type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 					siteId,
 					data: [ {
 						id: 'woocommerce_default_country',

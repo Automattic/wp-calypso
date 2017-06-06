@@ -2,13 +2,13 @@
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_API_SET_ERROR,
-	WOOCOMMERCE_API_CLEAR_ERROR,
+	WOOCOMMERCE_ERROR_SET,
+	WOOCOMMERCE_ERROR_CLEAR,
 } from 'woocommerce/state/action-types';
 
 export function setError( siteId, originalAction, data, time = Date.now() ) {
 	return {
-		type: WOOCOMMERCE_API_SET_ERROR,
+		type: WOOCOMMERCE_ERROR_SET,
 		siteId,
 		payload: { originalAction, data, time },
 	};
@@ -16,7 +16,7 @@ export function setError( siteId, originalAction, data, time = Date.now() ) {
 
 export function clearError( siteId ) {
 	return {
-		type: WOOCOMMERCE_API_CLEAR_ERROR,
+		type: WOOCOMMERCE_ERROR_CLEAR,
 		siteId,
 	};
 }

@@ -4,18 +4,18 @@
 import { createReducer } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import {
-	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL,
-	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL_SUCCESS,
+	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
+	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 // TODO: Handle error
 
 export default createReducer( {}, {
-	[ WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL ]: () => {
+	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST ]: () => {
 		return LOADING;
 	},
 
-	[ WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL_SUCCESS ]: ( state, { data } ) => {
+	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS ]: ( state, { data } ) => {
 		return data;
 	},
 } );

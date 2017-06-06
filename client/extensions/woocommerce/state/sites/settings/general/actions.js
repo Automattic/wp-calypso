@@ -4,8 +4,8 @@
 import request from '../../request';
 import { setError } from '../../status/wc-api/actions';
 import {
-	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL,
-	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL_SUCCESS,
+	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
+	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import {
 	areSettingsGeneralLoaded,
@@ -21,7 +21,7 @@ export const fetchSettingsGeneral = ( siteId ) => ( dispatch, getState ) => {
 	}
 
 	const getAction = {
-		type: WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL,
+		type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 		siteId,
 	};
 
@@ -30,7 +30,7 @@ export const fetchSettingsGeneral = ( siteId ) => ( dispatch, getState ) => {
 	return request( siteId ).get( 'settings/general' )
 		.then( ( data ) => {
 			dispatch( {
-				type: WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL_SUCCESS,
+				type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 				siteId,
 				data,
 			} );
