@@ -59,7 +59,8 @@ class ProductFormVariationsModal extends React.Component {
 	toggleVisible() {
 		const { product, editProductVariation } = this.props;
 		const variation = this.selectedVariation();
-		editProductVariation( product, variation, { visible: ! variation.visible } );
+		const status = 'publish' === variation.status ? 'private' : 'publish';
+		editProductVariation( product, variation, { status } );
 	}
 
 	switchVariation( selectedVariation ) {
@@ -117,7 +118,7 @@ class ProductFormVariationsModal extends React.Component {
 						{ translate( 'Visible' ) }
 						<FormToggle
 							onChange={ this.toggleVisible }
-							checked={ variation.visible }
+							checked={ 'publish' === variation.status }
 						/>
 					</FormLabel>
 					<FormSettingExplanation>{ translate(
