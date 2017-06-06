@@ -40,12 +40,22 @@ export class CommentList extends Component {
 		selectedComments: [],
 	};
 
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.status !== nextProps.status ) {
+			this.setState( { selectedComments: [] } );
+		}
+	}
+
 	deleteCommentPermanently = commentId => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 		this.showNotice( commentId, 'delete', 'trash' );
 
 		this.props.deleteCommentPermanently( commentId );
 	}
+
+	filterCommentsByStatus = () => 'all' === this.props.status
+		? filter( this.props.comments, ( { status } ) => ( 'approved' === status || 'unapproved' === status ) )
+		: filter( this.props.comments, ( { status } ) => ( this.props.status === status ) );
 
 	getEmptyMessage = () => {
 		const { status, translate } = this.props;
@@ -62,6 +72,8 @@ export class CommentList extends Component {
 	}
 
 	isCommentSelected = commentId => includes( this.state.selectedComments, commentId );
+
+	isSelectedAll = () => this.filterCommentsByStatus().length === this.state.selectedComments.length;
 
 	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
 		const comment = find( this.props.comments, [ 'ID', commentId ] );
@@ -131,32 +143,41 @@ export class CommentList extends Component {
 		} );
 	}
 
+	toggleSelectAll = () => {
+		this.setState( {
+			selectedComments: this.isSelectedAll()
+				? []
+				: map( this.filterCommentsByStatus(), comment => comment.ID ),
+		} );
+	}
+
 	render() {
 		const {
-			comments,
 			siteId,
 			siteSlug,
 			status,
 		} = this.props;
 		const {
 			isBulkEdit,
+			selectedComments,
 		} = this.state;
 
-		const filteredComments = 'all' === status
-			? filter( comments, comment => 'approved' === comment.status || 'unapproved' === comment.status )
-			: filter( comments, comment => status === comment.status );
+		const filteredComments = this.filterCommentsByStatus();
 
 		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
 
 		return (
 			<div className="comment-list">
 				<QuerySiteComments siteId={ siteId } status="all" />
-				<CommentNavigation { ...{
-					isBulkEdit,
-					siteSlug,
-					status,
-					toggleBulkEdit: this.toggleBulkEdit,
-				} } />
+				<CommentNavigation
+					isBulkEdit={ isBulkEdit }
+					isSelectedAll={ this.isSelectedAll() }
+					selectedCount={ selectedComments.length }
+					siteSlug={ siteSlug }
+					status={ status }
+					toggleBulkEdit={ this.toggleBulkEdit }
+					toggleSelectAll={ this.toggleSelectAll }
+				/>
 
 				<ReactCSSTransitionGroup
 					transitionEnterTimeout={ 300 }

@@ -22,6 +22,7 @@ import SectionNav from 'components/section-nav';
 
 export class CommentNavigation extends Component {
 	static defaultProps = {
+		isSelectedAll: false,
 		selectedCount: 0,
 		status: 'unapproved',
 	};
@@ -57,9 +58,11 @@ export class CommentNavigation extends Component {
 			selectedCount,
 			doSearch,
 			isBulkEdit,
+			isSelectedAll,
 			query,
 			status: queryStatus,
 			toggleBulkEdit,
+			toggleSelectAll,
 			translate,
 		} = this.props;
 
@@ -69,7 +72,10 @@ export class CommentNavigation extends Component {
 			return (
 			<SectionNav className="comment-navigation is-bulk-edit">
 				<CommentNavigationTab>
-					<FormCheckbox />
+					<FormCheckbox
+						checked={ isSelectedAll }
+						onChange={ toggleSelectAll }
+					/>
 					<Count count={ selectedCount } />
 				</CommentNavigationTab>
 				<CommentNavigationTab className="comment-navigation__actions">
