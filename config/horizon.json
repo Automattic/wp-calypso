@@ -4,7 +4,6 @@
 	"client_slug": "browser",
 	"hostname": "horizon.wordpress.com",
 	"i18n_default_locale_slug": "en",
-	"wpcom_user_bootstrap": true,
 	"rtl": false,
 	"jetpack_min_version": "3.3-dev",
 	"signup_url": "/start",
@@ -94,7 +93,8 @@
 		"upgrades/premium-themes": true,
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
-		"upgrades/presale-chat": true
+		"upgrades/presale-chat": true,
+		"wpcom_user_bootstrap": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"wpcom_signup_id": "39911",

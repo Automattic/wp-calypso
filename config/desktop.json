@@ -4,7 +4,6 @@
 	"client_slug": "desktop",
 	"hostname": "127.0.0.1",
 	"i18n_default_locale_slug": "en",
-	"wpcom_user_bootstrap": false,
 	"signup_url": "/start/desktop",
 	"login_url": "/oauth-login",
 	"logout_url": "/logout",
@@ -83,7 +82,8 @@
 		"upgrades/paypal": false,
 		"upgrades/premium-themes": true,
 		"upgrades/presale-chat": true,
-		"upgrades/removal-survey": true
+		"upgrades/removal-survey": true,
+		"wpcom_user_bootstrap": false
 	},
 	"readerFollowingSource": "desktop",
 	"rtl": false,

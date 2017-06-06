@@ -4,7 +4,6 @@
 	"client_slug": "browser",
 	"hostname": "wordpress.com",
 	"i18n_default_locale_slug": "en",
-	"wpcom_user_bootstrap": true,
 	"signup_url": "/start",
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
@@ -97,7 +96,8 @@
 		"upgrades/premium-themes": true,
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
-		"upgrades/presale-chat": true
+		"upgrades/presale-chat": true,
+		"wpcom_user_bootstrap": true
 	},
 	"rtl": false,
 	"jetpack_min_version": "3.3",

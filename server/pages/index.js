@@ -203,7 +203,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 	const context = getDefaultContext( req );
 
-	if ( config( 'wpcom_user_bootstrap' ) ) {
+	if ( config.isEnabled( 'wpcom_user_bootstrap' ) ) {
 		const user = require( 'user-bootstrap' );
 
 		protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
