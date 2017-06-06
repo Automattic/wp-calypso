@@ -8,6 +8,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import FoldableCard from 'components/foldable-card';
 import Button from 'components/button';
 import ActivityLogItem from '../activity-log-item';
@@ -17,12 +18,23 @@ class ActivityLogDay extends Component {
 		isRewindEnabled: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
 		siteId: PropTypes.number,
-		dateString: PropTypes.string.isRequired,
+		dateIsoString: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
 		isRewindEnabled: true,
 	};
+
+	state = {
+		isRestoreConfirmDialogOpen: false,
+	};
+
+	handleRestoreClick = () => this.setState( { isRestoreConfirmDialogOpen: true } );
+
+	handleRestoreDialogClose = () => this.setState( { isRestoreConfirmDialogOpen: false } );
+
+	// FIXME: Handle confirm correctly
+	handleRestoreDialogConfirm = () => this.setState( { isRestoreConfirmDialogOpen: false } );
 
 	/**
 	 * Return a button to rewind to this point.
@@ -35,9 +47,10 @@ class ActivityLogDay extends Component {
 			<Button
 				primary={ 'primary' === type }
 				disabled={ ! this.props.isRewindEnabled }
+				onClick={ this.handleRestoreClick }
 				compact
 			>
-				<Gridicon icon={ 'history' } size={ 18 } />
+				<Gridicon icon="history" size={ 18 } />
 				{ this.props.translate( 'Rewind to this day' ) }
 			</Button>
 		);
@@ -50,13 +63,14 @@ class ActivityLogDay extends Component {
 	 */
 	getEventsHeading() {
 		const {
+			dateIsoString,
 			logs,
+			moment,
 			translate,
-			dateString
 		} = this.props;
 		return (
 			<div>
-				<div className="activity-log-day__day">{ dateString }</div>
+				<div className="activity-log-day__day">{ moment( dateIsoString ).format( 'LL' ) }</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,
@@ -69,8 +83,12 @@ class ActivityLogDay extends Component {
 
 	render() {
 		const {
-			logs
+			logs,
+			dateIsoString,
 		} = this.props;
+
+		// FIXME get real props
+		const siteName = 'Placeholder site name';
 
 		return (
 			<div className="activity-log-day">
@@ -97,6 +115,13 @@ class ActivityLogDay extends Component {
 						);
 					} ) }
 				</FoldableCard>
+				<ActivityLogConfirmDialog
+					isVisible={ this.state.isRestoreConfirmDialogOpen }
+					siteName={ siteName }
+					dateIsoString={ dateIsoString }
+					onClose={ this.handleRestoreDialogClose }
+					onConfirm={ this.handleRestoreDialogConfirm }
+				/>
 			</div>
 		);
 	}

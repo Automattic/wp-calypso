@@ -288,7 +288,7 @@ class ActivityLog extends Component {
 			( daily_logs, isoString ) => (
 				<ActivityLogDay
 					key={ isoString }
-					dateString={ moment( isoString ).format( 'LL' ) }
+					dateIsoString={ isoString }
 					logs={ daily_logs }
 					siteId={ siteId }
 					isRewindEnabled={ true }
