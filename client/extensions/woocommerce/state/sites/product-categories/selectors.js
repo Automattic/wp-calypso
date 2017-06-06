@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get, isArray } from 'lodash';
+
+/**
  * Gets product categories from API data.
  *
  * @param {Object} state Global state tree
@@ -6,8 +11,9 @@
  * @return {Array} List of product categories
  */
 export function getProductCategories( state, siteId ) {
-	const sites = state.extensions.woocommerce.sites || {};
-	const siteData = sites[ siteId ] || {};
-
-	return siteData.productCategories || [];
+	const categories = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'productCategories' ], [] );
+	if ( ! isArray( categories ) ) {
+		return [];
+	}
+	return categories;
 }

@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getProductCategories } from '../selectors';
+import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'selectors', () => {
 	describe( '#getProductCategories()', () => {
@@ -14,6 +15,22 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					woocommerce: {}
+				}
+			};
+
+			expect( getProductCategories( state, 123 ) ).to.eql( [] );
+		} );
+
+		it( 'should return an empty array if data is still loading.', () => {
+			const state = {
+				extensions: {
+					woocommerce: {
+						sites: {
+							123: {
+								productCategories: LOADING,
+							}
+						}
+					}
 				}
 			};
 
@@ -35,10 +52,10 @@ describe( 'selectors', () => {
 				extensions: {
 					woocommerce: {
 						sites: {
-							[ 123 ]: {
+							123: {
 								productCategories: categories123,
 							},
-							[ 345 ]: {
+							345: {
 								productCategories: categories345,
 							},
 						}
