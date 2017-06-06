@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, get, map, size } from 'lodash';
+import { filter, find, get, includes, map, size, without } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -37,6 +37,7 @@ export class CommentList extends Component {
 
 	state = {
 		isBulkEdit: false,
+		selectedComments: [],
 	};
 
 	deleteCommentPermanently = commentId => {
@@ -59,6 +60,8 @@ export class CommentList extends Component {
 			all: [ translate( 'No comments yet.' ), defaultLine ],
 		}, status, [ '', '' ] );
 	}
+
+	isCommentSelected = commentId => includes( this.state.selectedComments, commentId );
 
 	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
 		const comment = find( this.props.comments, [ 'ID', commentId ] );
@@ -119,6 +122,15 @@ export class CommentList extends Component {
 		this.props.toggleCommentLike( commentId );
 	}
 
+	toggleCommentSelected = commentId => {
+		const { selectedComments } = this.state;
+		this.setState( {
+			selectedComments: this.isCommentSelected( commentId )
+				? without( selectedComments, commentId )
+				: [ ...selectedComments, commentId ],
+		} );
+	}
+
 	render() {
 		const {
 			comments,
@@ -156,10 +168,12 @@ export class CommentList extends Component {
 							comment={ comment }
 							deleteCommentPermanently={ this.deleteCommentPermanently }
 							isBulkEdit={ isBulkEdit }
+							commentIsSelected={ this.isCommentSelected( comment.ID ) }
 							key={ `comment-${ siteId }-${ comment.ID }` }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
 							toggleCommentLike={ this.toggleCommentLike }
+							toggleCommentSelected={ this.toggleCommentSelected }
 						/>
 					) }
 				</ReactCSSTransitionGroup>
