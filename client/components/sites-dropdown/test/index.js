@@ -59,26 +59,21 @@ describe( 'index', function() {
 	describe( 'selectSite', function() {
 		it( 'should update the `selectedSiteSlug`, and `open` state properties', function() {
 			const setStateSpy = sinon.spy();
-			const setLocallySelectedSiteIdSpy = sinon.spy();
 			const siteSelectedSpy = sinon.spy();
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
 					onSiteSelect: siteSelectedSpy,
-					setLocallySelectedSiteId: setLocallySelectedSiteIdSpy,
 				}
 			};
 
-			SitesDropdown.prototype.selectSite.call( fakeContext, 'primary.wordpress.com' );
+			SitesDropdown.prototype.selectSite.call( fakeContext, 12345 );
 
 			sinon.assert.calledOnce( siteSelectedSpy );
-			sinon.assert.calledWith( siteSelectedSpy, 1 );
-
-			sinon.assert.calledOnce( setLocallySelectedSiteIdSpy );
-			sinon.assert.calledWith( setLocallySelectedSiteIdSpy, 'foobar' );
+			sinon.assert.calledWith( siteSelectedSpy, 12345 );
 
 			sinon.assert.calledOnce( setStateSpy );
-			sinon.assert.calledWith( setStateSpy, { open: false, selectedSiteId: 1 } );
+			sinon.assert.calledWith( setStateSpy, { open: false, selectedSiteId: 12345 } );
 		} );
 	} );
 
