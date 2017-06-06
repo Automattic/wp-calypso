@@ -22,6 +22,7 @@ const HAPPYCHAT_INACTIVE_TIMEOUT_MS = 1000 * 60 * 10;
 export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
 export const HAPPYCHAT_CHAT_STATUS_ASSIGNED = 'assigned';
 export const HAPPYCHAT_CHAT_STATUS_ASSIGNING = 'assigning';
+export const HAPPYCHAT_CHAT_STATUS_BLOCKED = 'blocked';
 export const HAPPYCHAT_CHAT_STATUS_CLOSED = 'closed';
 export const HAPPYCHAT_CHAT_STATUS_DEFAULT = 'default';
 export const HAPPYCHAT_CHAT_STATUS_NEW = 'new';
@@ -70,7 +71,12 @@ export const isHappychatChatAssigned = createSelector(
  */
 export const hasActiveHappychatSession = createSelector(
 	state => ! includes(
-		[ HAPPYCHAT_CHAT_STATUS_DEFAULT, HAPPYCHAT_CHAT_STATUS_NEW, HAPPYCHAT_CHAT_STATUS_CLOSED ],
+		[
+			HAPPYCHAT_CHAT_STATUS_BLOCKED,
+			HAPPYCHAT_CHAT_STATUS_CLOSED,
+			HAPPYCHAT_CHAT_STATUS_DEFAULT,
+			HAPPYCHAT_CHAT_STATUS_NEW,
+		],
 		state.happychat.chatStatus
 	),
 	state => state.happychat.chatStatus
@@ -117,6 +123,7 @@ export const canUserSendMessages = state => (
 	isHappychatAvailable( state ) &&
 	! includes(
 		[
+			HAPPYCHAT_CHAT_STATUS_BLOCKED,
 			HAPPYCHAT_CHAT_STATUS_DEFAULT,
 			HAPPYCHAT_CHAT_STATUS_PENDING,
 			HAPPYCHAT_CHAT_STATUS_MISSED,
