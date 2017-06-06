@@ -123,11 +123,11 @@ export function rewindCompleteRestore( siteId, timestamp ) {
 	};
 }
 
-export function rewindRestoreUpdateError( siteId, timestamp, errorMessage ) {
+export function rewindRestoreUpdateError( siteId, timestamp, error ) {
 	return {
 		type: REWIND_RESTORE_UPDATE_ERROR,
 		siteId,
 		timestamp,
-		errorMessage,
+		error,
 	};
 }

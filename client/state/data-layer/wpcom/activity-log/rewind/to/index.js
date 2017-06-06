@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { pick } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
@@ -10,7 +15,6 @@ import {
 } from 'state/activity-log/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-
 const requestRestore = ( { dispatch }, action ) => {
 	dispatch( http( {
 		method: 'POST',
@@ -23,8 +27,12 @@ export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp } ) => 
 	dispatch( rewindCompleteRestore( siteId, timestamp ) );
 };
 
-export const receiveRestoreError = ( { dispatch }, { siteId, timestamp }, next, { message } ) => {
-	dispatch( rewindRestoreUpdateError( siteId, timestamp, message ) );
+export const receiveRestoreError = ( { dispatch }, { siteId, timestamp }, next, error ) => {
+	dispatch( rewindRestoreUpdateError(
+		siteId,
+		timestamp,
+		pick( error, [ 'error', 'status', 'message' ] )
+	) );
 };
 
 export default {

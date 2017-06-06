@@ -40,8 +40,8 @@ export const receiveRewindStatus = ( { dispatch }, { siteId }, next, data ) => {
 export const receiveRewindStatusError = ( { dispatch }, { siteId }, next, error ) => {
 	dispatch( rewindStatusError(
 		siteId,
-		pick( error, [ 'error', 'status', 'message' ]
-	) ) );
+		pick( error, [ 'error', 'status', 'message' ] )
+	) );
 };
 
 const statusHandler = {
