@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import { flatten, find, isEmpty, isEqual, reduce } from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
@@ -16,6 +16,7 @@ const analytics = require( 'lib/analytics' ),
 	clearPurchases = require( 'state/purchases/actions' ).clearPurchases,
 	DomainDetailsForm = require( './domain-details-form' ),
 	domainMapping = require( 'lib/cart-values/cart-items' ).domainMapping,
+	noAdsItem = require( 'lib/cart-values/cart-items' ).noAdsItem,
 	fetchReceiptCompleted = require( 'state/receipts/actions' ).fetchReceiptCompleted,
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
 	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails,
@@ -118,29 +119,26 @@ const Checkout = React.createClass( {
 	},
 
 	addProductToCart: function() {
-		const planSlug = getUpgradePlanSlugFromPath( this.props.product );
+		const { product, productsList, purchaseId, selectedSiteSlug } = this.props;
+		const meta = product.split( ':' )[ 1 ];
+		const productSlug = getUpgradePlanSlugFromPath( product ) || product.split( ':' )[ 0 ];
 
-		let cartItem,
-			cartMeta;
+		let cartItem = getCartItemForPlan( productSlug );
 
-		if ( planSlug ) {
-			cartItem = getCartItemForPlan( planSlug );
+		if ( 'theme' === productSlug ) {
+			cartItem = themeItem( meta );
+		} else if ( 'domain-mapping' === productSlug ) {
+			cartItem = domainMapping( { domain: meta } );
+		} else if ( 'no-ads' === productSlug ) {
+			cartItem = noAdsItem();
+		} else if ( meta ) {
+			cartItem = Object.assign( { meta }, productsList.data[ productSlug ] );
 		}
 
-		if ( startsWith( this.props.product, 'theme' ) ) {
-			cartMeta = this.props.product.split( ':' )[ 1 ];
-			cartItem = themeItem( cartMeta );
-		}
-
-		if ( startsWith( this.props.product, 'domain-mapping' ) ) {
-			cartMeta = this.props.product.split( ':' )[ 1 ];
-			cartItem = domainMapping( { domain: cartMeta } );
-		}
-
-		if ( this.props.purchaseId ) {
+		if ( cartItem && purchaseId ) {
 			cartItem = cartItems.getRenewalItemFromCartItem( cartItem, {
-				id: this.props.purchaseId,
-				domain: this.props.selectedSiteSlug
+				id: purchaseId,
+				domain: selectedSiteSlug
 			} );
 		}
 
