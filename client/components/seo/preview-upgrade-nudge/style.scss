@@ -74,4 +74,15 @@
 	.feature-example__gradient {
 		background: linear-gradient( to bottom, rgba(243, 246, 248, 0), rgba( 243, 246, 248, 1) );
 	}
+
+	.preview-upgrade-nudge__banner {
+		bottom: 0;
+		margin: 0;
+		position: absolute;
+		width: 100%;
+
+		.banner__title {
+			text-decoration: none !important;
+		}
+	}
 }
