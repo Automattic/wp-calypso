@@ -8,6 +8,9 @@ import {
 	REWIND_DEACTIVATE_FAILURE,
 	REWIND_DEACTIVATE_REQUEST,
 	REWIND_DEACTIVATE_SUCCESS,
+	REWIND_RESTORE,
+	REWIND_RESTORE_COMPLETED,
+	REWIND_RESTORE_UPDATE_ERROR,
 	REWIND_STATUS_ERROR,
 	REWIND_STATUS_REQUEST,
 	REWIND_STATUS_UPDATE,
@@ -93,6 +96,38 @@ export function rewindStatusError( siteId, error ) {
 	return {
 		type: REWIND_STATUS_ERROR,
 		siteId,
+		error,
+	};
+}
+
+/**
+ * Restore a site to the given timestamp.
+ *
+ * @param {String|number} siteId the site ID
+ * @param {number} timestamp Unix timestamp to restore site to
+ * @return {Object} action object
+ */
+export function rewindRestore( siteId, timestamp ) {
+	return {
+		type: REWIND_RESTORE,
+		siteId,
+		timestamp,
+	};
+}
+
+export function rewindCompleteRestore( siteId, timestamp ) {
+	return {
+		type: REWIND_RESTORE_COMPLETED,
+		siteId,
+		timestamp,
+	};
+}
+
+export function rewindRestoreUpdateError( siteId, timestamp, error ) {
+	return {
+		type: REWIND_RESTORE_UPDATE_ERROR,
+		siteId,
+		timestamp,
 		error,
 	};
 }

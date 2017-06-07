@@ -6,6 +6,8 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
+import { mergeHandlers } from 'state/action-watchers/utils';
+import restoreHandler from './to';
 import {
 	REWIND_STATUS_REQUEST,
 } from 'state/action-types';
@@ -38,14 +40,16 @@ export const receiveRewindStatus = ( { dispatch }, { siteId }, next, data ) => {
 export const receiveRewindStatusError = ( { dispatch }, { siteId }, next, error ) => {
 	dispatch( rewindStatusError(
 		siteId,
-		pick( error, [ 'error', 'status', 'message' ]
-	) ) );
+		pick( error, [ 'error', 'status', 'message' ] )
+	) );
 };
 
-export default {
+const statusHandler = {
 	[ REWIND_STATUS_REQUEST ]: [ dispatchRequest(
 		fetchRewindStatus,
 		receiveRewindStatus,
 		receiveRewindStatusError
 	) ],
 };
+
+export default mergeHandlers( restoreHandler, statusHandler );
