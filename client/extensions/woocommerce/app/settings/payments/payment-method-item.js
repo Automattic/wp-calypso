@@ -15,8 +15,6 @@ const PaymentMethodItem = ( { method, translate, onCancel, onEdit, currentlyEdit
 	let editButtonText = translate( 'Set up' );
 	if ( currentlyEditingId === method.id ) {
 		editButtonText = translate( 'Cancel' );
-	} else {
-		editButtonText = translate( 'Set up' );
 	}
 
 	const onEditHandler = () => {
