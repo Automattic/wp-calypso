@@ -120,6 +120,15 @@ $compact-header-height: 35;
 		right: 40px;
 		top: #{ ( $header-height - 18 - 2 ) / 2 }px;
 	}
+
+	.gridicon {
+		margin-right: #{ ( $side-margin / 2 ) }px;
+		vertical-align: text-bottom;
+
+		.is-compact & {
+			display: none;
+		}
+	}
 }
 
 .select-dropdown__header-text {
@@ -215,6 +224,11 @@ $compact-header-height: 35;
 		&.is-selected:hover {
 			color: $white;
 		}
+	}
+
+	.gridicon {
+		margin-right: #{ ( $side-margin / 2 ) }px;
+		vertical-align: text-bottom;
 	}
 }
 

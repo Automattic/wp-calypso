@@ -464,8 +464,8 @@ const EditorVisibility = React.createClass( {
 								key={ option.value }
 								value={ option.value }
 								onClick={ option.onClick }
+								icon={ <Gridicon icon={ option.icon } size={ 18 } /> }
 							>
-								<Gridicon icon={ option.icon } size={ 18 } />
 								{ option.label }
 							</DropdownItem>
 						) }
