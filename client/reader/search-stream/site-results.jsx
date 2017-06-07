@@ -14,6 +14,7 @@ import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import ReaderInfiniteStream from 'components/reader-infinite-stream';
 import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
+import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
 
 const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
@@ -45,11 +46,10 @@ class SitesResults extends React.Component {
 					sort={ pickSort( this.props.sort ) }
 				/>
 				<ReaderInfiniteStream
-					itemType={ 'site' }
 					items={ searchResults || [ {}, {}, {}, {}, {} ] }
 					showLastUpdatedDate={ false }
 					fetchNextPage={ this.fetchNextPage }
-					forceRefresh={ searchResults }
+					rowRenderer={ siteRowRenderer }
 				/>
 			</div>
 		);
