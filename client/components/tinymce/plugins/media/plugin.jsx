@@ -831,8 +831,8 @@ function mediaButton( editor ) {
 	// send contextmenu event up to desktop app
 	if ( config.isEnabled( 'desktop' ) ) {
 		const ipc = require( 'electron' ).ipcRenderer; // From Electron
-		editor.on( 'contextmenu', function( ev ) {
-			ipc.send( 'mce-contextmenu', ev );
+		editor.on( 'contextmenu', function() {
+			ipc.send( 'mce-contextmenu', { sender: true } );
 		} );
 	}
 
