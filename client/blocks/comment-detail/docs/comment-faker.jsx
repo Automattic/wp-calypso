@@ -28,7 +28,19 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		}
 	}
 
-	deleteCommentPermanently = commentId => this.doAction( [ commentId ], { status: 'delete' } );
+	deleteCommentPermanently = commentId => this.setCommentStatusOrLike( [ commentId ], { status: 'delete' } );
+
+	filterCommentsByStatus = () => 'all' === this.props.status
+		? filter( this.state.comments, ( { status } ) => ( 'approved' === status || 'unapproved' === status ) )
+		: filter( this.state.comments, ( { status } ) => ( this.props.status === status ) );
+
+	getCommentsFromProps = ( { comments } ) => this.setState( { comments: keyBy( comments, 'ID' ) } );
+
+	setBulkStatus = ( commentIds, status ) => this.setCommentStatusOrLike( commentIds, { status } );
+
+	setCommentLike = ( commentId, i_like ) => this.setCommentStatusOrLike( [ commentId ], { i_like } );
+
+	setCommentStatus = ( commentId, status ) => this.setCommentStatusOrLike( [ commentId ], { status } );
 
 	/**
 	 * Sets a status and/or a like value to a list of comments.
@@ -38,7 +50,7 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 	 * @param {bool}   action.i_like
 	 * @param {string} action.status
 	 */
-	doAction = ( commentIds, { i_like, status } ) => {
+	setCommentStatusOrLike = ( commentIds, { i_like, status } ) => {
 		if ( 'delete' === status ) {
 			return this.setState( {
 				comments: omit( this.state.comments, commentIds ),
@@ -57,6 +69,7 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 			}
 
 			if ( isNil( status ) ) {
+				// If like changes to true, also approve the comment
 				newStatusValue = i_like ? 'approved' : comment.status;
 			} else {
 				newStatusValue = status;
@@ -75,18 +88,6 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		} } );
 	}
 
-	filterCommentsByStatus = () => 'all' === this.props.status
-		? filter( this.state.comments, ( { status } ) => ( 'approved' === status || 'unapproved' === status ) )
-		: filter( this.state.comments, ( { status } ) => ( this.props.status === status ) );
-
-	getCommentsFromProps = ( { comments } ) => this.setState( { comments: keyBy( comments, 'ID' ) } );
-
-	setBulkStatus = ( commentIds, status ) => this.doAction( commentIds, { status } );
-
-	setCommentLike = ( commentId, i_like ) => this.doAction( [ commentId ], { i_like } );
-
-	setCommentStatus = ( commentId, status ) => this.doAction( [ commentId ], { status } );
-
 	/**
 	 * Resets the status and the like value of a list of comments to their previous values.
 	 *
@@ -98,7 +99,7 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 	 * @param {bool}   comments[].i_like
 	 * @param {string} comments[].status
 	 */
-	undoAction = comments => {
+	undoSetCommentStatusOrLike = comments => {
 		const editedComments = keyBy( map( comments, ( { ID, i_like, status } ) => ( {
 			...this.state.comments[ ID ],
 			i_like,
@@ -111,7 +112,7 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		} } );
 	}
 
-	undoBulkStatus = comments => this.undoAction( comments );
+	undoBulkStatus = comments => this.undoSetCommentStatusOrLike( comments );
 
 	render = () =>
 		<WrappedCommentList
