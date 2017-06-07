@@ -7,7 +7,7 @@ import find from 'lodash/find';
 import filter from 'lodash/filter';
 import findIndex from 'lodash/findIndex';
 import map from 'lodash/map';
-import result from 'lodash/result';
+import get from 'lodash/get';
 import classNames from 'classnames';
 
 /**
@@ -17,6 +17,7 @@ import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import DropdownLabel from 'components/select-dropdown/label';
 import Count from 'components/count';
+import Gridicon from 'gridicons';
 
 /**
  * SelectDropdown
@@ -25,6 +26,7 @@ class SelectDropdown extends Component {
 	static propTypes = {
 		selectedText: PropTypes.string,
 		selectedCount: PropTypes.number,
+		selectedIcon: PropTypes.string,
 		initialSelected: PropTypes.string,
 		className: PropTypes.string,
 		style: PropTypes.object,
@@ -121,17 +123,18 @@ class SelectDropdown extends Component {
 		return selectedItem && selectedItem.value;
 	}
 
-	getSelectedText() {
-		const { options, selectedText } = this.props;
+	getSelectedObject() {
+		const { options } = this.props;
 		const { selected } = this.state;
 
-		if ( selectedText ) {
-			return selectedText;
-		}
-
-		// return currently selected text
+		// return currently selected object
 		const selectedValue = selected ? selected : this.getInitialSelectedItem( this.props );
-		return result( find( options, { value: selectedValue } ), 'label' );
+		return find( options, { value: selectedValue } );
+	}
+
+	getSelectedText() {
+		const { selectedText } = this.props;
+		return selectedText ? selectedText : get( this.getSelectedObject(), 'label' );
 	}
 
 	dropdownOptions() {
@@ -192,6 +195,8 @@ class SelectDropdown extends Component {
 					selected={ this.state.selected === item.value }
 					onClick={ this.onSelectItem( item ) }
 					path={ item.path }
+					icon={ item.icon }
+					count={ item.count }
 				>
 					{ item.label }
 				</DropdownItem>
@@ -218,7 +223,10 @@ class SelectDropdown extends Component {
 
 		const dropdownClassName = classNames( dropdownClasses );
 
-		const selectedText = this.getSelectedText();
+		const selectedItem = this.getSelectedObject();
+		const selectedIcon = this.props.selectedIcon || get( selectedItem, 'icon' );
+		const selectedCount = this.props.selectedCount || get( selectedItem, 'count' );
+		const selectedText = this.props.selectedText || get( selectedItem, 'label' );
 
 		return (
 			<div style={ this.props.style } className={ dropdownClassName }>
@@ -240,11 +248,19 @@ class SelectDropdown extends Component {
 						className="select-dropdown__header"
 					>
 						<span className="select-dropdown__header-text">
+							{
+								selectedIcon &&
+								<Gridicon
+									icon={ selectedIcon }
+									size={ this.props.compact ? 18 : 24 }
+									className="select-dropdown__icon"
+								/>
+							}
 							{ selectedText }
 						</span>
 						{
-							'number' === typeof this.props.selectedCount &&
-							<Count count={ this.props.selectedCount } />
+							'number' === typeof selectedCount &&
+							<Count count={ selectedCount } />
 						}
 					</div>
 

@@ -125,6 +125,28 @@ const SelectDropdownDemo = React.createClass( {
 					<DropdownItem count={ 3 }>Trashed</DropdownItem>
 				</SelectDropdown>
 
+				<h3 style={ { marginTop: 20 } }>With Gridicons on options prop</h3>
+				<SelectDropdown
+					compact={ this.state.compactButtons }
+					onSelect={ this.onDropdownSelect }
+					options={ [
+						{ value: 'posts', label: 'Posts', icon: 'posts', count: 12 },
+						{ value: 'images', label: 'Images', icon: 'image-multiple', count: 5 },
+						{ value: 'mentions', label: 'Mentions', icon: 'mention', count: 1 },
+						{ value: 'sales', label: 'Sales', icon: 'money', count: 999 },
+					] }
+				/>
+
+				<h3 style={ { marginTop: 20 } }>With Gridicons on children</h3>
+				<SelectDropdown
+					compact={ this.state.compactButtons }
+					selectedText="Tablet"
+					selectedIcon="tablet"
+				>
+					<DropdownItem icon="computer">Desktop</DropdownItem>
+					<DropdownItem icon="tablet" selected={ true }>Tablet</DropdownItem>
+					<DropdownItem icon="phone">Mobile</DropdownItem>
+				</SelectDropdown>
 			</div>
 		);
 	},
