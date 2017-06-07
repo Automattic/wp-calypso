@@ -46,6 +46,7 @@ import embedReversalPlugin from './plugins/embed-reversal/plugin';
 import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
 import mentionsPlugin from './plugins/mentions/plugin';
 import markdownPlugin from './plugins/markdown/plugin';
+import wpEmojiPlugin from './plugins/wpemoji/plugin';
 
 [
 	wpcomPlugin,
@@ -70,6 +71,7 @@ import markdownPlugin from './plugins/markdown/plugin';
 	toolbarPinPlugin,
 	embedReversalPlugin,
 	markdownPlugin,
+	wpEmojiPlugin,
 ].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
@@ -121,6 +123,7 @@ const PLUGINS = [
 	'wplink',
 	'AtD',
 	'directionality',
+	'wpemoji',
 	'wpcom/autoresize',
 	'wpcom/media',
 	'wpcom/advanced',
