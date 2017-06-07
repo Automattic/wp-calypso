@@ -191,5 +191,7 @@ export default function() {
 	}
 }
 
+// TODO: This could probably be done in a better way through the same mechanisms
+// that bring in the rest of the extension code. Maybe extension-loader?
 initExtension();
 

@@ -1,23 +1,18 @@
 /**
  * Internal dependencies
  */
-import { get } from 'lodash';
 import {
-	WOOCOMMERCE_API_CREATE_PRODUCT,
-} from 'woocommerce/state/action-types';
+	WOOCOMMERCE_PRODUCT_UPDATED,
+} from '../../action-types';
 
 export default {
-	[ WOOCOMMERCE_API_CREATE_PRODUCT ]: productCreate,
+	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdated,
 };
 
-function productCreate( siteData, action ) {
-	const data = get( action, 'meta.dataLayer.data.data' );
+function productUpdated( siteData, action ) {
+	const { data } = action.payload;
 
-	if ( data ) {
-		return updateCachedProduct( siteData, data );
-	}
-
-	return siteData;
+	return updateCachedProduct( siteData, data );
 }
 
 function updateCachedProduct( siteData, product ) {

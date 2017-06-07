@@ -1,15 +1,16 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import request from 'woocommerce/state/wc-api/request';
 import { setError } from 'woocommerce/state/site/status/wc-api/actions';
+import { productUpdated } from 'woocommerce/state/wc-api/products/actions';
 import {
 	WOOCOMMERCE_API_CREATE_PRODUCT,
+	WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 function createProduct( { dispatch }, action, next ) {
-	const { siteId, product } = action.payload;
+	const { siteId, product, successAction, errorAction } = action;
 
 	// Filter out any id we might have.
 	const { id, ...productData } = product;
@@ -19,29 +20,35 @@ function createProduct( { dispatch }, action, next ) {
 			message: 'Attempting to create a product which already has a valid id.',
 			product,
 		} ) );
+		return;
 	}
 
-	const httpProps = {
-		path: '/wc/v2/products',
-		body: JSON.stringify( productData ),
-		json: true,
-	};
+	request( siteId ).post( 'products', productData )
+		.then( data => {
+			dispatch( {
+				type: WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
+				siteId,
+				data,
+				successAction,
+			} );
+		} )
+		.catch( err => {
+			dispatch( setError( siteId, action, { message: err.toString() } ) );
 
-	dispatch( http( {
-		apiVersion: '1.1',
-		path: `/jetpack-blogs/${ siteId }/rest-api/`,
-		method: 'POST',
-		query: httpProps,
-	}, action ) );
+			if ( errorAction ) {
+				dispatch( errorAction );
+			}
+		} );
 
 	return next( action );
 }
 
-function createProductSuccess( { dispatch }, action, next, response ) {
-	const { siteId, successAction } = action.payload;
-	const { data } = response;
+function createProductSuccess( { dispatch }, action ) {
+	const { siteId, data, successAction, errorAction } = action;
 
 	if ( isValidProduct( data ) ) {
+		dispatch( productUpdated( siteId, data ) );
+
 		if ( successAction ) {
 			dispatch( successAction );
 		}
@@ -50,20 +57,11 @@ function createProductSuccess( { dispatch }, action, next, response ) {
 			message: 'Invalid Product Object',
 			data
 		} ) );
+
+		if ( errorAction ) {
+			dispatch( errorAction );
+		}
 	}
-
-	return next( action );
-}
-
-function createProductFailure( { dispatch }, action, next, err ) {
-	const { siteId, errorAction } = action.payload;
-
-	if ( errorAction ) {
-		dispatch( errorAction );
-	}
-	dispatch( setError( siteId, action, err ) );
-
-	return next( action );
 }
 
 function isValidProduct( product ) {
@@ -75,12 +73,7 @@ function isValidProduct( product ) {
 }
 
 export default {
-	[ WOOCOMMERCE_API_CREATE_PRODUCT ]: [
-		dispatchRequest(
-			createProduct,
-			createProductSuccess,
-			createProductFailure
-		)
-	],
+	[ WOOCOMMERCE_API_CREATE_PRODUCT ]: [ createProduct ],
+	[ WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS ]: [ createProductSuccess ],
 };
 
