@@ -106,13 +106,6 @@
 	align-items: center;
 }
 
-
-.activity-log-item__card-header {
-	display: flex;
-	flex: 1;
-	align-items: center;
-}
-
 .activity-log-item__actor {
 	display: flex;
 	flex: 2 1;
@@ -134,29 +127,8 @@
 	color: $gray;
 }
 
-.activity-log-item__actor .gravatar {
-	float: left;
-	margin-right: 16px;
-}
-
-.activity-log-item__actor-role {
-	text-transform: uppercase;
-	font-size: 12px;
-	color: $gray;
-}
-
 .activity-log-item__content {
 	flex: 3 1;
-}
-
-.activity-log-item__content-title {
-	font-size: 14px;
-}
-
-.activity-log-item__content-sub-title {
-	font-size: 12px;
-	text-transform: uppercase;
-	color: $gray;
 }
 
 .activity-log-item__content-title {

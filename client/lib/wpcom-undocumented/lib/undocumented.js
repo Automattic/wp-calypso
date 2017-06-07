@@ -2326,81 +2326,11 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 };
 
 /**
- * Get Rewind status
- *
- * @param  {int} siteId -- the ID of the site.
- *
- * @return {Promise} Promise for handling result
- */
-Undocumented.prototype.rewindStatus = function( siteId ) {
-	return this.wpcom.req.get( {
-		path: `/activity-log/${ siteId }/rewind`
-	} );
-};
-
-/**
- * Activate Jetpack Rewind
- *
- * @param  {int} siteId -- The ID of the site
- *
- * @return {Promise} Promise for handling result
- */
-Undocumented.prototype.rewindActivate = function( siteId ) {
-	return this.wpcom.req.post( {
-		path: `/activity-log/${ siteId }/rewind/activate`
-	} );
-};
-
-/**
- * Deactivate Jetpack Rewind
- *
- * @param  {int} siteId -- The ID of the site
- *
- * @return {Promise} Promise for handling result
- */
-Undocumented.prototype.rewindDeactivate = function( siteId ) {
-	return this.wpcom.req.post( {
-		path: `/activity-log/${ siteId }/rewind/deactivate`
-	} );
-};
-
-/**
- * Fetch the Activity Log data for a given site.
- *
- * @param {int} siteId -- the ID of the site being transferred
- *
- * @return {Promise} Promise for handling result
- */
-Undocumented.prototype.rewindGetActivityLog = function( siteId ) {
-	// debug( '/sites/:site_id:/sync/status query' );
-
-	// @todo make this query an actual endpoint for activity log
-	// This is just here so we get a successful response from some endpoint called in the action
-	return this.wpcom.req.get({
-		path: '/sites/' + siteId
-	} );
-};
-
-/**
- * Initiate backup restore for a given site.
- *
- * @param  {int}    siteId  ID of the site to restore.
- * @param  {int} timestamp  Time stamp that identifies the backup to restore.
- *
- * @return {object} Contains path as item.
- */
-Undocumented.prototype.rewindRequestRestore = function( siteId, timestamp ) {
-	return this.wpcom.req.post( {
-		path: `/activity-log/${ siteId }/rewind/to/${ timestamp }`
-	} );
-};
-
-/**
  * Submit a response to the NPS Survey.
  * @param {string}     surveyName     The name of the NPS survey being submitted
  * @param {int}        score          The value for the survey response
  * @param {Function}   fn             The callback function
- * @returns {Promise} Response
+ * @returns {Promise}
  */
 Undocumented.prototype.submitNPSSurvey = function( surveyName, score, fn ) {
 	return this.wpcom.req.post( { path: `/nps/${ surveyName }` }, { apiVersion: '1.2' }, { score }, fn );
