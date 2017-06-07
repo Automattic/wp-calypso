@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, keyBy, map, omit, size } from 'lodash';
+import { find, get, keyBy, keys, map, omit, size } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -32,7 +32,6 @@ export class CommentList extends Component {
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
-		toggleCommentLike: PropTypes.func,
 		translate: PropTypes.func,
 		undoBulkStatus: PropTypes.func,
 	};
@@ -49,13 +48,10 @@ export class CommentList extends Component {
 	}
 
 	deleteCommentPermanently = commentId => {
-		// TODO: Replace with Redux getComment()
-		const comment = this.getComment( commentId );
-
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 		this.showNotice( commentId, 'delete', 'trash' );
 
-		this.props.deleteCommentPermanently( comment );
+		this.props.deleteCommentPermanently( commentId );
 	}
 
 	getComment = commentId => find( this.props.comments, [ 'ID', commentId ] );
@@ -81,7 +77,8 @@ export class CommentList extends Component {
 	setBulkStatus = status => () => {
 		this.props.removeNotice( 'comment-notice-bulk' );
 
-		this.props.setBulkStatus( this.state.selectedComments, status );
+		this.props.setBulkStatus( keys( this.state.selectedComments ), status );
+
 		this.showBulkNotice( status, this.state.selectedComments );
 
 		this.setState( {
@@ -104,7 +101,7 @@ export class CommentList extends Component {
 			this.showNotice( commentId, status, comment.status );
 		}
 
-		this.props.setCommentStatus( comment, status );
+		this.props.setCommentStatus( commentId, status );
 	}
 
 	showBulkNotice = ( newStatus, selectedComments ) => {
@@ -178,7 +175,7 @@ export class CommentList extends Component {
 			this.showNotice( commentId, 'approved', 'unapproved' );
 		}
 
-		this.props.toggleCommentLike( comment );
+		this.props.setCommentLike( commentId, ! comment.i_like );
 	}
 
 	toggleCommentSelected = commentId => {

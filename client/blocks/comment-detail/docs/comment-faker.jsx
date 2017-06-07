@@ -28,45 +28,42 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		}
 	}
 
-	deleteCommentPermanently = comment => this.doAction( [ comment ], { status: 'delete' } );
+	deleteCommentPermanently = commentId => this.doAction( [ commentId ], { status: 'delete' } );
 
 	/**
 	 * Sets a status and/or a like value to a list of comments.
 	 *
-	 * `comments` is the array of comments that will receive the action.
-	 * It can contain complete comment objects, but in fact it only needs their (current) `ID`, `i_like`, and `status` properties
-	 * in order to perform combined operations (e.g. disapproving a comment also removes its like).
-	 *
-	 * `action` can contain the new `i_like` and/or `status` value.
-	 *
-	 * @param {Array}  comments
-	 * @param {int}    comments[].ID
-	 * @param {bool}   comments[].i_like
-	 * @param {string} comments[].status
+	 * @param {Array}  commentIds
 	 * @param {Object} action
 	 * @param {bool}   action.i_like
-	 * @param {strint} action.status
+	 * @param {string} action.status
 	 */
-	doAction = ( comments, { i_like, status } ) => {
+	doAction = ( commentIds, { i_like, status } ) => {
 		if ( 'delete' === status ) {
 			return this.setState( {
-				comments: omit( this.state.comments, map( comments, comment => comment.ID ) ),
+				comments: omit( this.state.comments, commentIds ),
 			} );
 		}
 
-		const editedComments = keyBy( map( comments, comment => {
-			// If the comment is not approved anymore, also remove the like, otherwise keep its previous value
-			const newLikeValue = isNil( i_like )
-				? 'approved' === status ? comment.i_like : false
-				: i_like;
+		const editedComments = keyBy( map( commentIds, commentId => {
+			const comment = this.state.comments[ commentId ];
+			let newLikeValue, newStatusValue;
 
-			// If like changes to true, also approve the comment
-			const newStatusValue = isNil( status )
-			 ? i_like ? 'approved' : comment.status
-			 : status;
+			if ( isNil( i_like ) ) {
+				// If the comment is not approved anymore, also remove the like, otherwise keep its previous value
+				newLikeValue = 'approved' === status ? comment.i_like : false;
+			} else {
+				newLikeValue = i_like;
+			}
+
+			if ( isNil( status ) ) {
+				newStatusValue = i_like ? 'approved' : comment.status;
+			} else {
+				newStatusValue = status;
+			}
 
 			return {
-				...this.state.comments[ comment.ID ],
+				...comment,
 				i_like: newLikeValue,
 				status: newStatusValue,
 			};
@@ -84,13 +81,11 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 
 	getCommentsFromProps = ( { comments } ) => this.setState( { comments: keyBy( comments, 'ID' ) } );
 
-	setBulkStatus = ( comments, status ) => this.doAction( comments, { status } );
+	setBulkStatus = ( commentIds, status ) => this.doAction( commentIds, { status } );
 
-	setCommentLike = ( comment, i_like ) => this.doAction( [ comment ], { i_like } );
+	setCommentLike = ( commentId, i_like ) => this.doAction( [ commentId ], { i_like } );
 
-	setCommentStatus = ( comment, status ) => this.doAction( [ comment ], { status } );
-
-	toggleCommentLike = comment => this.setCommentLike( comment, ! comment.i_like );
+	setCommentStatus = ( commentId, status ) => this.doAction( [ commentId ], { status } );
 
 	/**
 	 * Resets the status and the like value of a list of comments to their previous values.
@@ -126,7 +121,6 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 			setBulkStatus={ this.setBulkStatus }
 			setCommentLike={ this.setCommentLike }
 			setCommentStatus={ this.setCommentStatus }
-			toggleCommentLike={ this.toggleCommentLike }
 			undoBulkStatus={ this.undoBulkStatus }
 		/>;
 };
