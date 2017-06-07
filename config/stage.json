@@ -5,7 +5,6 @@
 	"directly_rtm_widget_environment": "sandbox",
 	"hostname": "wordpress.com",
 	"i18n_default_locale_slug": "en",
-	"wpcom_user_bootstrap": true,
 	"rtl": false,
 	"jetpack_min_version": "3.3",
 	"signup_url": "/start",
@@ -102,7 +101,8 @@
 		"upgrades/premium-themes": true,
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
-		"upgrades/presale-chat": true
+		"upgrades/presale-chat": true,
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",
 	"wpcom_signup_id": "39911",
