@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import { includes, get } from 'lodash';
+import { includes, has, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSite, getSiteSlug } from 'state/sites/selectors';
+import { isLoggedOut } from 'state/selectors';
 
 /**
  * Returns the site object for the currently selected site.
@@ -137,5 +138,12 @@ export function hasSidebar( state ) {
 	if ( val === false ) {
 		return false;
 	}
-	return get( getSection( state ), 'secondary', true );
+
+	// Presence of sidebar may vary depending on logged-in state.
+	const section = getSection( state );
+	if ( has( section, 'secondaryLoggedOut' ) && isLoggedOut( state ) ) {
+		return section.secondaryLoggedOut;
+	}
+
+	return get( section, 'secondary', true );
 }

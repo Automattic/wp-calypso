@@ -373,8 +373,13 @@ module.exports = function() {
 						req.context = Object.assign( {}, req.context, { chunk: section.name } );
 					}
 
-					if ( section.secondary && req.context ) {
-						req.context.hasSecondary = true;
+					if ( req.context ) {
+						const isLoggedIn = !! req.cookies.wordpress_logged_in;
+						if ( isLoggedIn ) {
+							req.context.hasSecondary = !! section.secondary;
+						} else if ( 'secondaryLoggedOut' in section ) {
+							req.context.hasSecondary = !! section.secondaryLoggedOut;
+						}
 					}
 
 					if ( section.group && req.context ) {

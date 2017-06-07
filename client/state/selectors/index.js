@@ -76,6 +76,7 @@ export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
 export getSelectedOrAllSites from './get-selected-or-all-sites';
 export getScheduledPublicizeShareActionTime from './get-scheduled-publicize-share-action-time';
+export isLoggedOut from './is-logged-out';
 export isSchedulingPublicizeShareActionError from './is-scheduling-publicize-share-action-error';
 export getSharingButtons from './get-sharing-buttons';
 export getSiteComments from './get-site-comments';

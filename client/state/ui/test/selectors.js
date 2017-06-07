@@ -281,6 +281,9 @@ describe( 'selectors', () => {
 
 		it( 'should be true if true and secondary does not override it', () => {
 			expect( hasSidebar( {
+				currentUser: {
+					id: 73705554
+				},
 				ui: {
 					hasSidebar: true,
 					section: {}
@@ -290,10 +293,41 @@ describe( 'selectors', () => {
 
 		it( 'should fall back to the secondary prop on the current section when hasSidebar is true', () => {
 			expect( hasSidebar( {
+				currentUser: {
+					id: 73705554
+				},
 				ui: {
 					hasSidebar: true,
 					section: {
 						secondary: false
+					}
+				}
+			} ) ).to.be.false;
+		} );
+
+		it( 'should vary by logged in', () => {
+			expect( hasSidebar( {
+				currentUser: {
+					id: null
+				},
+				ui: {
+					hasSidebar: true,
+					section: {
+						secondary: false,
+						secondaryLoggedOut: true
+					}
+				}
+			} ) ).to.be.true;
+
+			expect( hasSidebar( {
+				currentUser: {
+					id: 73705554
+				},
+				ui: {
+					hasSidebar: true,
+					section: {
+						secondary: false,
+						secondaryLoggedOut: true
 					}
 				}
 			} ) ).to.be.false;
