@@ -84,7 +84,7 @@ class DomainDetailsForm extends PureComponent {
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
-			loadFunction: this.loadFormState,
+			loadFunction: this.loadFormStateFromRedux,
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
@@ -102,7 +102,7 @@ class DomainDetailsForm extends PureComponent {
 		}
 	}
 
-	loadFormState = ( fn ) => {
+	loadFormStateFromRedux = ( fn ) => {
 		// only load the properties relevant to the main form fields
 		fn( null, pick( this.props.contactDetails, this.fieldNames ) );
 	}
