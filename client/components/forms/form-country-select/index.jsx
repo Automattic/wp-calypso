@@ -34,7 +34,7 @@ export default localize( React.createClass( {
 
 		return (
 			<select
-				{ ...omit( this.props, 'className' ) }
+				{ ...omit( this.props, [ 'className', 'countriesList', 'translate', 'moment', 'numberFormat' ] ) }
 				className={ classnames( this.props.className, 'form-country-select' ) }
 				onChange={ this.props.onChange }
 			>
