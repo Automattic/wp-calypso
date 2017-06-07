@@ -60,7 +60,7 @@ class GoogleAppsUsers extends React.Component {
 		return `google-apps-dialog__user-field google-apps-dialog__user-${ fieldName }`;
 	}
 
-	inputsForUser( user, index ) {
+	inputsForUser = ( user, index ) => {
 		const { translate } = this.props;
 		const contactText = translate(
 			'contact',
@@ -113,7 +113,7 @@ class GoogleAppsUsers extends React.Component {
 				</FormFieldset>
 			</div>
 		);
-	}
+	};
 
 	recordInputFocus = ( index, fieldName ) => {
 		const field = this.props.fields[ index ];
