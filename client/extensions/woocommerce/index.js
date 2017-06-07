@@ -125,10 +125,10 @@ const getStorePages = () => {
 		{
 			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
 			configKey: 'woocommerce/extension-settings-tax',
-			path: '/store/settings/tax/:site',
+			path: '/store/settings/taxes/:site',
 			sidebarItem: {
 				isPrimary: false,
-				label: translate( 'Tax' ),
+				label: translate( 'Taxes' ),
 				parentSlug: 'settings',
 				slug: 'settings-tax',
 			},

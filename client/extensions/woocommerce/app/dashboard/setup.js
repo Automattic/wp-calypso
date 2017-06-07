@@ -125,7 +125,7 @@ class Setup extends Component {
 				actions: [
 					{
 						label: translate( 'Set up taxes' ),
-						path: getLink( '/store/settings/tax/:site', site ),
+						path: getLink( '/store/settings/taxes/:site', site ),
 					},
 					{
 						label: translate( 'I\'m not charging sales tax' ),

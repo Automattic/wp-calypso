@@ -42,32 +42,6 @@ class StoreSidebar extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	itemLinkClass = ( path, existingClasses, isChild, isDisabled ) => {
-		const classSet = {};
-
-		if ( typeof existingClasses !== 'undefined' ) {
-			if ( ! Array.isArray( existingClasses ) ) {
-				existingClasses = [ existingClasses ];
-			}
-
-			existingClasses.forEach( function( className ) {
-				classSet[ className ] = true;
-			} );
-		}
-
-		if ( isDisabled ) {
-			classSet[ 'is-placeholder' ] = true;
-		}
-
-		if ( isChild ) {
-			classSet[ 'is-child-item' ] = true;
-		}
-
-		classSet.selected = this.isItemLinkSelected( path );
-
-		return classNames( classSet );
-	}
-
 	isItemLinkSelected = ( paths ) => {
 		if ( ! Array.isArray( paths ) ) {
 			paths = [ paths ];
@@ -79,14 +53,16 @@ class StoreSidebar extends Component {
 	}
 
 	renderSidebarMenuItems = ( items, buttons, isDisabled ) => {
+		const { site } = this.props;
+
 		return items.map( function( item, index ) {
 			const isChild = ( 'undefined' !== typeof item.parentSlug );
-			const itemLink = getLink( item.path, this.props.site );
+			const itemLink = getLink( item.path, site );
 			const itemButton = buttons.filter( button => button.parentSlug === item.slug ).map( button => {
 				return (
 					<SidebarButton
 						disabled={ isDisabled }
-						href={ getLink( button.path, this.props.site ) }
+						href={ getLink( button.path, site ) }
 						key={ button.slug }
 					>
 						{ button.label }
@@ -100,10 +76,10 @@ class StoreSidebar extends Component {
 			if ( 'undefined' !== typeof item.parentSlug ) {
 				const links = [];
 				const parentItem = find( items, { slug: item.parentSlug } );
-				links.push( getLink( parentItem.path, this.props.site ) );
+				links.push( getLink( parentItem.path, site ) );
 
 				filter( items, { parentSlug: item.parentSlug } ).map( child => {
-					links.push( getLink( child.path, this.props.site ) );
+					links.push( getLink( child.path, site ) );
 				} );
 
 				if ( ! this.isItemLinkSelected( links ) ) {
@@ -111,9 +87,27 @@ class StoreSidebar extends Component {
 				}
 			}
 
+			// If we reach this point, this is not a child item
+			// lets see if its children, if any, are selected
+			const childLinks = [];
+			filter( items, { parentSlug: item.slug } ).map( child => {
+				childLinks.push( getLink( child.path, site ) );
+			} );
+
+			// Build the classnames for the item
+			const itemClasses = classNames( item.slug,
+				{
+					'has-selected-child': this.isItemLinkSelected( childLinks ),
+					'is-child-item': isChild,
+					'is-placeholder': isDisabled,
+					selected: this.isItemLinkSelected( itemLink ),
+				}
+			);
+
+			// Render the item
 			return (
 				<SidebarItem
-					className={ this.itemLinkClass( itemLink, item.slug, isChild, isDisabled ) }
+					className={ itemClasses }
 					icon={ isChild ? '' : item.icon }
 					key={ index }
 					label={ item.label }
