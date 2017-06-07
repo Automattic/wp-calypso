@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import request from 'woocommerce/state/wc-api/request';
-import { setError } from 'woocommerce/state/site/status/wc-api/actions';
-import { productUpdated } from 'woocommerce/state/wc-api/products/actions';
+import request from 'woocommerce/state/sites/request';
+import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
+import { productUpdated } from 'woocommerce/state/sites/products/actions';
 import {
-	WOOCOMMERCE_API_CREATE_PRODUCT,
-	WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
+	WOOCOMMERCE_PRODUCT_CREATE,
+	WOOCOMMERCE_PRODUCT_CREATE_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 function createProduct( { dispatch }, action, next ) {
@@ -26,7 +26,7 @@ function createProduct( { dispatch }, action, next ) {
 	request( siteId ).post( 'products', productData )
 		.then( data => {
 			dispatch( {
-				type: WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
+				type: WOOCOMMERCE_PRODUCT_CREATE_SUCCESS,
 				siteId,
 				data,
 				successAction,
@@ -73,7 +73,7 @@ function isValidProduct( product ) {
 }
 
 export default {
-	[ WOOCOMMERCE_API_CREATE_PRODUCT ]: [ createProduct ],
-	[ WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS ]: [ createProductSuccess ],
+	[ WOOCOMMERCE_PRODUCT_CREATE ]: [ createProduct ],
+	[ WOOCOMMERCE_PRODUCT_CREATE_SUCCESS ]: [ createProductSuccess ],
 };
 

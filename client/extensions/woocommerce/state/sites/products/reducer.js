@@ -3,22 +3,20 @@
  */
 import { createReducer } from 'state/utils';
 import {
-	WOOCOMMERCE_PRODUCT_CREATE,
-	WOOCOMMERCE_PRODUCT_CREATE_SUCCESS,
+	WOOCOMMERCE_PRODUCT_UPDATED,
 } from 'woocommerce/state/action-types';
 
 export default createReducer( {}, {
-	[ WOOCOMMERCE_PRODUCT_CREATE ]: createProduct,
-	[ WOOCOMMERCE_PRODUCT_CREATE_SUCCESS ]: createProductSuccess,
+	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdated,
 } );
 
-function createProduct( state ) {
-	// TODO: Update state to show pending status.
-	return state;
+function productUpdated( state, action ) {
+	const { data } = action.payload;
+
+	return updateCachedProduct( state, data );
 }
 
-function createProductSuccess( state, action ) {
-	const { product } = action;
+function updateCachedProduct( state, product ) {
 	const products = state.products || [];
 
 	let found = false;
@@ -34,5 +32,6 @@ function createProductSuccess( state, action ) {
 		newProducts.push( product );
 	}
 
-	return state;
+	return { ...state, product: newProducts };
 }
+

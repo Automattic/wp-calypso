@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_API_CREATE_PRODUCT,
+	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_UPDATED,
 } from 'woocommerce/state/action-types';
 
@@ -17,7 +17,7 @@ import {
  */
 export function createProduct( siteId, product, successAction = undefined, errorAction = undefined ) {
 	const action = {
-		type: WOOCOMMERCE_API_CREATE_PRODUCT,
+		type: WOOCOMMERCE_PRODUCT_CREATE,
 		siteId,
 		product,
 	};
