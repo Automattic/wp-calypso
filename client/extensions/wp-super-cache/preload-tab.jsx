@@ -18,11 +18,13 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle/compact';
 import Notice from 'components/notice';
+import QueryNotices from './data/query-notices';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 import { cancelPreloadCache, preloadCache } from './state/cache/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isPreloadingCache } from './state/cache/selectors';
+import { getNotices } from './state/notices/selectors';
 
 /**
  * Render cache preload interval number input
@@ -96,14 +98,17 @@ class PreloadTab extends Component {
 			isPreloading,
 			isRequesting,
 			isSaving,
+			notices: {
+				preload_disabled_by_admin,
+				preload_disabled_cache_off,
+				preload_disabled_supercache_off,
+			},
+			siteId,
 			translate,
 		} = this.props;
 
 		const {
-			is_cache_enabled,
-			is_preload_enabled,
 			is_preloading,
-			is_super_cache_enabled,
 			minimum_preload_interval,
 			post_count,
 			preload_email_volume,
@@ -120,25 +125,34 @@ class PreloadTab extends Component {
 			{ value: 'less', description: translate( 'Low (one email at the start and one at the end of preloading all posts)' ) },
 		];
 
-		if ( ! is_cache_enabled ) {
+		if ( preload_disabled_by_admin ) {
 			return (
 				<Notice
-					text={ translate( 'Caching must be enabled to use this feature.' ) }
-					showDismiss={ false } />
+					showDismiss={ false }
+					text={ translate( 'Preloading is disabled by the administrator of your site.' ) } />
 			);
 		}
 
-		if ( is_super_cache_enabled && ! is_preload_enabled ) {
+		if ( preload_disabled_cache_off ) {
 			return (
 				<Notice
-					text={ translate( 'Preloading of cache disabled. Please disable legacy page caching or talk to ' +
-						'your host administrator.' ) }
-					showDismiss={ false } />
+					showDismiss={ false }
+					text={ translate( 'Preloading is disabled as caching is disabled.' ) } />
+			);
+		}
+
+		if ( preload_disabled_supercache_off ) {
+			return (
+				<Notice
+					showDismiss={ false }
+					text={ translate( 'Preloading is disabled as supercaching is disabled.' ) } />
 			);
 		}
 
 		return (
 			<div>
+				<QueryNotices siteId={ siteId } />
+
 				<SectionHeader label={ ( 'Preload' ) }>
 					<Button
 						compact
@@ -280,6 +294,7 @@ const connectComponent = connect(
 
 		return {
 			isPreloading: isPreloadingCache( state, siteId ),
+			notices: getNotices( state, siteId ),
 		};
 	},
 	{
@@ -290,10 +305,7 @@ const connectComponent = connect(
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'is_cache_enabled',
-		'is_preload_enabled',
 		'is_preloading',
-		'is_super_cache_enabled',
 		'minimum_preload_interval',
 		'post_count',
 		'preload_email_volume',
