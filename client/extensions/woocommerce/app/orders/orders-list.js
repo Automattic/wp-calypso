@@ -13,6 +13,9 @@ import FormInputCheckbox from 'components/forms/form-checkbox';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { getOrders } from 'woocommerce/state/sites/orders/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import Table from 'woocommerce/components/table';
+import TableRow from 'woocommerce/components/table/table-row';
+import TableItem from 'woocommerce/components/table/table-item';
 
 class Orders extends Component {
 	componentDidMount() {
@@ -51,59 +54,69 @@ class Orders extends Component {
 	}
 
 	renderOrderItems = ( order, i ) => {
-		const { translate, moment } = this.props;
+		const { translate, moment, siteId } = this.props;
 		return (
-			<tr key={ i }>
-				<td className="orders__table-item orders__table-checkbox">
+			<TableRow key={ i }>
+				<TableItem className="orders__table-checkbox">
 					<FormInputCheckbox aria-label={ translate( 'Select order %(order)s', {
 						context: 'Label for checkbox',
 						args: {
 							order: order.number,
 						}
 					} ) } />
-				</td>
-				<th className="orders__table-item orders__table-name" scope="row">
-					<a className="orders__item-link" href="#">#{ order.number }</a>
+				</TableItem>
+				<TableItem className="orders__table-name" isRowHeader>
+					<a className="orders__item-link" href={ `/store/order/${ siteId }/${ order.number }` }>#{ order.number }</a>
 					<span className="orders__item-name">
 						{ `${ order.billing.first_name } ${ order.billing.last_name }` }
 					</span>
-				</th>
-				<td className="orders__table-item orders__table-date">
+				</TableItem>
+				<TableItem className="orders__table-date">
 					{ moment( order.date_modified ).format( 'LLL' ) }
-				</td>
-				<td className="orders__table-item orders__table-status">
+				</TableItem>
+				<TableItem className="orders__table-status">
 					{ this.getOrderStatus( order.status ) }
-				</td>
-				<td className="orders__table-item orders__table-total">
+				</TableItem>
+				<TableItem className="orders__table-total">
 					{ order.total }
-				</td>
-			</tr>
+				</TableItem>
+			</TableRow>
 		);
 	}
 
 	render() {
 		const { translate, orders } = this.props;
+		const headers = (
+			<TableRow>
+				<TableItem isHeader>
+					<FormInputCheckbox aria-label={ translate( 'Select All', {
+						context: 'Label for checkbox'
+					} ) } />
+				</TableItem>
+				<TableItem isHeader>{ translate( 'Order' ) }</TableItem>
+				<TableItem isHeader>{ translate( 'Date' ) }</TableItem>
+				<TableItem isHeader>{ translate( 'Fulfillment Status' ) }</TableItem>
+				<TableItem isHeader>{ translate( 'Total' ) }</TableItem>
+			</TableRow>
+		);
+
 		return (
-			<table className="orders__table">
-				<thead>
-					<tr>
-						<th className="orders__table-heading" scope="col">
-							<FormInputCheckbox aria-label={ translate( 'Select All', {
-								context: 'Label for checkbox'
-							} ) } />
-						</th>
-						<th className="orders__table-heading" scope="col">Order</th>
-						<th className="orders__table-heading" scope="col">Date</th>
-						<th className="orders__table-heading" scope="col">Fulfillment Status</th>
-						<th className="orders__table-heading" scope="col">Total</th>
-					</tr>
-				</thead>
-				<tbody>
-					{ orders.map( this.renderOrderItems ) }
-				</tbody>
-			</table>
+			<Table className="orders__table" header={ headers }>
+				{ orders.map( this.renderOrderItems ) }
+			</Table>
 		);
 	}
 }
 
-export default localize( Orders );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const orders = getOrders( state, siteId );
+
+		return {
+			siteId,
+			orders,
+		};
+	},
+	dispatch => bindActionCreators( { fetchOrders }, dispatch )
+)( localize( Orders ) );

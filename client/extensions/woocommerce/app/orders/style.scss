@@ -1,39 +1,20 @@
-.orders__table {
-	background: $white;
-	box-sizing: border-box;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
+.orders__item-link,
+.orders__item-name {
+	display: inline-block;
+	font-weight: normal;
+}
 
-	th, td {
-		padding: 16px 16px 14px;
-	}
+.orders__item-link {
+	margin-right: 5px;
+}
 
-	.orders__table-heading {
-		border-bottom: 1px solid lighten( $gray, 20% );
-	}
+.orders__item-status {
+	display: inline-block;
+	padding: 6px 8px;
+	background: lighten( $gray, 20% );
+	border-radius: 4px;
+}
 
-	.orders__table-item {
-		border-bottom: 1px solid lighten( $gray, 30% );
-	}
-
-	.orders__item-link,
-	.orders__item-name {
-		display: inline-block;
-		font-weight: normal;
-	}
-
-	.orders__item-link {
-		margin-right: 5px;
-	}
-
-	.orders__item-status {
-		display: inline-block;
-		padding: 6px 8px;
-		background: lighten( $gray, 20% );
-		border-radius: 4px;
-	}
-
-	.orders__table-total {
-		text-align: right;
-	}
+.orders__table-total {
+	text-align: right;
 }

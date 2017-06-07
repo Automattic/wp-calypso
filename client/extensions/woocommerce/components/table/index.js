@@ -9,7 +9,7 @@ import classnames from 'classnames';
  */
 import Card from 'components/card';
 
-const Table = ( { className, compact, header, children, ...props } ) => {
+const Table = ( { className, compact = false, header, children, ...props } ) => {
 	const classes = classnames( {
 		table: true,
 		'is-compact-table': compact,
