@@ -121,7 +121,7 @@ class ReaderStream extends React.Component {
 
 		let items = this.state && this.state.items;
 		if ( ! this.state || posts !== this.state.posts || recs !== this.state.recs ) {
-			items = injectRecommendations( posts, recs, getDistanceBetweenRecs() );
+			items = injectRecommendations( posts, recs, getDistanceBetweenRecs( totalSubs ) );
 		}
 
 		if ( props.shouldCombineCards ) {
