@@ -14,7 +14,7 @@ import config from 'config';
 import Button from 'components/button';
 import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'lib/upgrades/actions';
 import { clearPurchases } from 'state/purchases/actions';
-import { isHappychatAvailable, isHappychatChatActive } from 'state/happychat/selectors';
+import { isHappychatAvailable, hasActiveHappychatSession } from 'state/happychat/selectors';
 import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
@@ -363,7 +363,7 @@ class CancelPurchaseButton extends Component {
 export default connect(
 	state => ( {
 		isChatAvailable: isHappychatAvailable( state ),
-		isChatActive: isHappychatChatActive( state ),
+		isChatActive: hasActiveHappychatSession( state ),
 	} ),
 	{
 		clearPurchases,
