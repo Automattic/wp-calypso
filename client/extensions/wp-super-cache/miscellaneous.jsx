@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { pick } from 'lodash';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,7 +34,7 @@ const Miscellaneous = ( {
 	translate,
 } ) => {
 	const isDisabled = isRequesting || isSaving || isReadOnly;
-	const compressionDisabled = notices && notices.compression_disabled;
+	const compressionDisabledMessage = get( notices.compression_disabled, 'message' );
 
 	return (
 		<div>
@@ -43,14 +43,14 @@ const Miscellaneous = ( {
 			</SectionHeader>
 			<Card>
 				<form>
-					{ compressionDisabled && compressionDisabled.message &&
+					{ compressionDisabledMessage &&
 					<Notice
 						showDismiss={ false }
-						status={ compressionDisabled.type ? `is-${ compressionDisabled.type }` : 'is-info' }
-						text={ compressionDisabled.message } />
+						status="is-warning"
+						text={ compressionDisabledMessage } />
 					}
 					<FormFieldset>
-						{ ! compressionDisabled &&
+						{ ! compressionDisabledMessage &&
 						<FormToggle
 							checked={ !! cache_compression }
 							disabled={ isDisabled }
@@ -64,6 +64,14 @@ const Miscellaneous = ( {
 								) }
 							</span>
 						</FormToggle>
+						}
+						{ ! compressionDisabledMessage &&
+						<Notice
+							isCompact
+							className="wp-super-cache__toggle-notice"
+							text={ translate( 'Compression is disabled by default because some hosts have problems ' +
+								'with compressed files. Switching it on and off clears the cache.' ) }
+							/>
 						}
 
 						<FormToggle
@@ -113,8 +121,8 @@ const Miscellaneous = ( {
 						{ cache_mod_rewrite &&
 							<Notice
 								isCompact
-								className="wp-super-cache__miscellaneous-304-notice"
-								status="is-error"
+								className="wp-super-cache__toggle-notice"
+								status="is-warning"
 								text={ translate( '304 browser caching is only supported when mod_rewrite caching ' +
 									'is not used.' ) }
 							/>
@@ -123,7 +131,7 @@ const Miscellaneous = ( {
 						{ ! cache_mod_rewrite &&
 							<Notice
 								isCompact
-								className="wp-super-cache__miscellaneous-304-notice"
+								className="wp-super-cache__toggle-notice"
 								text={ translate( '304 support is disabled by default because some hosts have had problems with the ' +
 									'headers used in the past.' ) }
 							/>

@@ -39,7 +39,6 @@ export const itemsSchema = {
 				is_cache_enabled: { type: 'boolean' },
 				is_mfunc_enabled: { type: 'boolean' },
 				is_mobile_enabled: { type: 'boolean' },
-				is_preload_enabled: { type: 'boolean' },
 				is_preloading: { type: 'boolean' },
 				is_super_cache_enabled: { type: 'boolean' },
 				make_known_anon: { type: 'boolean' },

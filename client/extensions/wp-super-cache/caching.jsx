@@ -9,6 +9,7 @@ import { get, pick } from 'lodash';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
@@ -36,7 +37,6 @@ const Caching = ( {
 	translate,
 } ) => {
 	const isDisabled = isRequesting || isSaving || isReadOnly;
-	const htaccessMessage = get( htaccess_ro, 'message' );
 	const modRewriteMessage = get( mod_rewrite_missing, 'message' );
 
 	return (
@@ -55,11 +55,26 @@ const Caching = ( {
 			</SectionHeader>
 			<Card>
 				<form>
-					{ htaccessMessage &&
+					{ htaccess_ro &&
 					<Notice
 						showDismiss={ false }
 						status="is-warning"
-						text={ htaccessMessage } />
+						text={ translate( 'The .htaccess file is readonly and cannot be updated. Cache files ' +
+							'will still be served by PHP. See {{a}}Changing File Permissions{{/a}} on WordPress.org ' +
+							'for help on fixing this.',
+							{
+								components: {
+									a: (
+										<ExternalLink
+											icon={ true }
+											target="_blank"
+											href="https://codex.wordpress.org/Changing_File_Permissions"
+										/>
+									),
+								}
+							}
+						) }
+						/>
 					}
 
 					{ modRewriteMessage &&
