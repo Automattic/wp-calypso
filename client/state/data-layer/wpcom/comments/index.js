@@ -11,6 +11,7 @@ import {
 	COMMENTS_REQUEST,
 	COMMENTS_RECEIVE,
 	COMMENTS_REMOVE,
+  COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_WRITE,
 } from 'state/action-types';
@@ -18,7 +19,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
-import { getPostOldestCommentDate, getPostTotalCommentsCount } from 'state/comments/selectors';
+import { getPostOldestCommentDate } from 'state/comments/selectors';
 
 /***
  * Creates a placeholder comment for a given text and postId
@@ -117,14 +118,13 @@ export const addComments = ( { dispatch }, { siteId, postId }, next, { comments,
 	}
 };
 
-export const writePostCommentSuccess = ( { dispatch, getState }, { siteId, postId, parentCommentId, placeholderId }, next, comment ) => {
+export const writePostCommentSuccess = ( { dispatch }, { siteId, postId, parentCommentId, placeholderId }, next, comment ) => {
 	// remove placeholder from state
 	dispatch( { type: COMMENTS_REMOVE, siteId, postId, commentId: placeholderId } );
 	// add new comment to state with updated values from server
 	dispatch( { type: COMMENTS_RECEIVE, siteId, postId, comments: [ comment ], skipSort: !! parentCommentId } );
 	// increment comments count
-	const commentCount = getPostTotalCommentsCount( getState(), siteId, postId );
-	dispatch( { type: COMMENTS_COUNT_RECEIVE, siteId, postId, totalCommentsCount: commentCount + 1 } );
+	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
 };
 
 export const announceFailure = ( { dispatch, getState }, { siteId, postId } ) => {
