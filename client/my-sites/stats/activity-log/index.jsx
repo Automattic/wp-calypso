@@ -186,14 +186,14 @@ class ActivityLog extends Component {
 				/>
 				{ this.renderBanner( this.props.isAnythingRestoring ) }
 				<ErrorStatus statusError={ this.props.getRewindStatusError } />
-				<ActivityLogToggle
+				{ '' !== startDate && <ActivityLogToggle
 					siteId={ siteId }
 					isActive={ this.props.isRewindActive }
 					activateRewind={ this.props.activateRewind }
 					deactivateRewind={ this.props.deactivateRewind }
 					isActivatingRewind={ this.props.isActivatingRewind }
 					isDeactivatingRewind={ this.props.isDeactivatingRewind }
-				/>
+				/> }
 				<section className="activity-log__wrapper">
 					{ logsGroupedByDate }
 				</section>

@@ -154,13 +154,13 @@ export function status( state = {}, action ) {
 		case REWIND_DEACTIVATE_SUCCESS:
 			return merge( {}, state, {
 				[ action.siteId ]: {
-					data: { use_rewind: action.use_rewind }
+					data: { active: false }
 				}
 			} );
 		case REWIND_ACTIVATE_SUCCESS:
 			return merge( {}, state, {
 				[ action.siteId ]: {
-					data: { use_rewind: action.use_rewind }
+					data: { active: true }
 				}
 			} );
 	}

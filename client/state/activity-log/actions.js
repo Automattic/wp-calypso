@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { pick } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -151,7 +150,8 @@ const fakebackups = ( startDate ) => {
 	let i,
 		timeIncrement = today.toDate().getTime();
 
-	for ( i = 0; i < numHours; i++ ) {
+	// FIXME: Currently limited at 72 hours until we have a date picker. It's trying to load too much at once...
+	for ( i = 0; i < numHours && i < 72; i++ ) {
 		backupLogs.push(
 			{
 				title: 'Site backed up',
