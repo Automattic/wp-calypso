@@ -17,25 +17,45 @@ export function requestSite( siteId ) {
 				ID: siteId,
 			},
 		} );
-		return wpcom.undocumented().readSite( { site: siteId } ).then(
-			function success( data ) {
-				dispatch( {
-					type: READER_SITE_REQUEST_SUCCESS,
-					payload: data,
-				} );
-				return data;
-			},
-			function failure( err ) {
-				dispatch( {
-					type: READER_SITE_REQUEST_FAILURE,
-					payload: {
-						ID: siteId,
-					},
-					error: err,
-				} );
-				throw err;
-			}
-		);
+		return wpcom
+			.undocumented()
+			.readSite( {
+				site: siteId,
+				fields: [
+					'ID',
+					'name',
+					'title',
+					'URL',
+					'icon',
+					'is_jetpack',
+					'description',
+					'is_private',
+					'feed_ID',
+					'feed_URL',
+					'capabilities',
+					'prefer_feed',
+				].join( ',' ),
+				options: [ 'is_mapped_domain', 'unmapped_url', 'is_redirect' ].join( ',' ),
+			} )
+			.then(
+				function success( data ) {
+					dispatch( {
+						type: READER_SITE_REQUEST_SUCCESS,
+						payload: data,
+					} );
+					return data;
+				},
+				function failure( err ) {
+					dispatch( {
+						type: READER_SITE_REQUEST_FAILURE,
+						payload: {
+							ID: siteId,
+						},
+						error: err,
+					} );
+					throw err;
+				},
+			);
 	};
 }
 
