@@ -18,13 +18,23 @@ import {
 
 const siteId = 123;
 
+const emptyMethodChanges = {
+	creates: [],
+	updates: [],
+	deletes: [],
+};
+
+const emptyChanges = {
+	methods: emptyMethodChanges,
+};
+
 describe( 'reducer', () => {
 	describe( 'addNewShippingZone', () => {
 		it( 'should create a new zone and mark it as "editing", without commiting it to the "creates" bucket', () => {
 			const newState = reducer( initialState, addNewShippingZone( siteId ) );
 			expect( newState.creates ).to.be.empty;
 			expect( newState.currentlyEditingId ).to.deep.equal( { index: 0 } );
-			expect( newState.currentlyEditingChanges ).to.be.empty;
+			expect( newState.currentlyEditingChanges ).to.deep.equal( emptyChanges );
 		} );
 	} );
 
@@ -34,7 +44,7 @@ describe( 'reducer', () => {
 			expect( newState.creates ).to.be.empty;
 			expect( newState.updates ).to.be.empty;
 			expect( newState.currentlyEditingId ).to.equal( 1 );
-			expect( newState.currentlyEditingChanges ).to.be.empty;
+			expect( newState.currentlyEditingChanges ).to.deep.equal( emptyChanges );
 		} );
 
 		it( 'when the zone has a provisional ID', () => {
@@ -42,7 +52,7 @@ describe( 'reducer', () => {
 			expect( newState.creates ).to.be.empty;
 			expect( newState.updates ).to.be.empty;
 			expect( newState.currentlyEditingId ).to.deep.equal( { index: 0 } );
-			expect( newState.currentlyEditingChanges ).to.be.empty;
+			expect( newState.currentlyEditingChanges ).to.deep.equal( emptyChanges );
 		} );
 	} );
 
@@ -53,7 +63,7 @@ describe( 'reducer', () => {
 				updates: [],
 				deletes: [],
 				currentlyEditingId: 1,
-				currentlyEditingChanges: {},
+				currentlyEditingChanges: emptyChanges,
 			};
 
 			const newState = reducer( state, closeEditingShippingZone( siteId ) );
@@ -68,14 +78,14 @@ describe( 'reducer', () => {
 				updates: [ { id: 42 } ],
 				deletes: [],
 				currentlyEditingId: 1,
-				currentlyEditingChanges: { name: 'Hi There' },
+				currentlyEditingChanges: { name: 'Hi There', methods: emptyMethodChanges },
 			};
 
 			const newState = reducer( state, closeEditingShippingZone( siteId ) );
 			expect( newState.creates ).to.be.empty;
 			expect( newState.updates ).to.deep.equal( [
 				{ id: 42 },
-				{ id: 1, name: 'Hi There' },
+				{ id: 1, name: 'Hi There', methods: emptyMethodChanges },
 			] );
 			expect( newState.currentlyEditingId ).to.be.null;
 		} );
@@ -83,16 +93,16 @@ describe( 'reducer', () => {
 		it( 'should overwrite data on the "updates" bucket if the zone has a server-side ID', () => {
 			const state = {
 				creates: [],
-				updates: [ { id: 1, name: 'OldName' } ],
+				updates: [ { id: 1, name: 'OldName', methods: emptyMethodChanges } ],
 				deletes: [],
 				currentlyEditingId: 1,
-				currentlyEditingChanges: { name: 'Hi There' },
+				currentlyEditingChanges: { name: 'Hi There', methods: emptyMethodChanges },
 			};
 
 			const newState = reducer( state, closeEditingShippingZone( siteId ) );
 			expect( newState.creates ).to.be.empty;
 			expect( newState.updates ).to.deep.equal( [
-				{ id: 1, name: 'Hi There' },
+				{ id: 1, name: 'Hi There', methods: emptyMethodChanges },
 			] );
 			expect( newState.currentlyEditingId ).to.be.null;
 		} );
@@ -103,31 +113,31 @@ describe( 'reducer', () => {
 				updates: [],
 				deletes: [],
 				currentlyEditingId: { index: 1 },
-				currentlyEditingChanges: { name: 'Hi There' },
+				currentlyEditingChanges: { name: 'Hi There', methods: emptyMethodChanges },
 			};
 
 			const newState = reducer( state, closeEditingShippingZone( siteId ) );
 			expect( newState.updates ).to.be.empty;
 			expect( newState.creates ).to.deep.equal( [
 				{ id: { index: 0 } },
-				{ id: { index: 1 }, name: 'Hi There' },
+				{ id: { index: 1 }, name: 'Hi There', methods: emptyMethodChanges },
 			] );
 			expect( newState.currentlyEditingId ).to.be.null;
 		} );
 
 		it( 'should overwrite data on the "creates" bucket if the zone has a provisional ID', () => {
 			const state = {
-				creates: [ { id: { index: 0 }, name: 'OldName' } ],
+				creates: [ { id: { index: 0 }, name: 'OldName', methods: emptyMethodChanges } ],
 				updates: [],
 				deletes: [],
 				currentlyEditingId: { index: 0 },
-				currentlyEditingChanges: { name: 'Hi There' },
+				currentlyEditingChanges: { name: 'Hi There', methods: emptyMethodChanges },
 			};
 
 			const newState = reducer( state, closeEditingShippingZone( siteId ) );
 			expect( newState.updates ).to.be.empty;
 			expect( newState.creates ).to.deep.equal( [
-				{ id: { index: 0 }, name: 'Hi There' },
+				{ id: { index: 0 }, name: 'Hi There', methods: emptyMethodChanges },
 			] );
 			expect( newState.currentlyEditingId ).to.be.null;
 		} );
@@ -174,16 +184,16 @@ describe( 'reducer', () => {
 		it( 'should change the shipping zone name without committing it', () => {
 			const state = {
 				creates: [],
-				updates: [ { id: 1, name: 'Previous Name' } ],
+				updates: [ { id: 1, name: 'Previous Name', methods: emptyMethodChanges } ],
 				deletes: [],
 				currentlyEditingId: 1,
-				currentlyEditingChanges: { name: 'blah blah blah' },
+				currentlyEditingChanges: { name: 'blah blah blah', methods: emptyMethodChanges },
 			};
 
 			const newState = reducer( state, changeShippingZoneName( siteId, 'New Name' ) );
 			expect( newState.creates ).to.be.empty;
-			expect( newState.updates ).to.deep.equal( [ { id: 1, name: 'Previous Name' } ] );
-			expect( newState.currentlyEditingChanges ).to.deep.equal( { name: 'New Name' } );
+			expect( newState.updates ).to.deep.equal( [ { id: 1, name: 'Previous Name', methods: emptyMethodChanges } ] );
+			expect( newState.currentlyEditingChanges ).to.deep.equal( { name: 'New Name', methods: emptyMethodChanges } );
 			expect( newState.currentlyEditingId ).to.equal( 1 );
 		} );
 	} );
