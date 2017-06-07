@@ -35,7 +35,7 @@ export function getRewindStatusError( state, siteId ) {
  * @return {Boolean}         True if active, false if not.
  */
 export function isRewindActive( state, siteId ) {
-	return get( state.activityLog.status, [ siteId, 'data', 'use_rewind' ], false );
+	return get( state.activityLog.status, [ siteId, 'data', 'active' ], false );
 }
 
 /**
@@ -47,7 +47,7 @@ export function isRewindActive( state, siteId ) {
  * @return {String}  Date of the first rewind point, empty string if nothing.
  */
 export function getRewindStartDate( state, siteId ) {
-	return get( state.activityLog.status, [ siteId, 'data', 'first_backup_when' ], '' );
+	return get( state.activityLog.status, [ siteId, 'data', 'firstBackupDate' ], '' );
 }
 
 /**

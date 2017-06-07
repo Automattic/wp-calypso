@@ -12,7 +12,7 @@ import { isFetchingRewindStatus } from 'state/activity-log/selectors';
 
 class QueryRewindStatus extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired
+		siteId: PropTypes.number
 	};
 
 	componentWillMount() {

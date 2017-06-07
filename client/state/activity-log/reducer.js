@@ -21,6 +21,7 @@ import {
 	REWIND_DEACTIVATE_SUCCESS,
 	REWIND_DEACTIVATE_FAILED,
 	REWIND_STATUS_REQUEST,
+	REWIND_STATUS_UPDATE,
 	REWIND_STATUS_SUCCESS,
 	REWIND_STATUS_FAILED
 } from 'state/action-types';
@@ -37,6 +38,7 @@ export function requests( state = {}, action ) {
 			} );
 		case REWIND_STATUS_SUCCESS:
 		case REWIND_STATUS_FAILED:
+		case REWIND_STATUS_UPDATE:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign(
 					{},
@@ -136,16 +138,17 @@ export function items( state = {}, action ) {
 export function status( state = {}, action ) {
 	switch ( action.type ) {
 		case REWIND_STATUS_SUCCESS:
+		case REWIND_STATUS_UPDATE:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign(
 					{},
-					{ data: action.data }
+					{ data: action.status }
 				)
 			} );
 		case REWIND_STATUS_FAILED:
 			return merge( {}, state, {
 				[ action.siteId ]: {
-					data: { error: action.error }
+					data: { error: action.status }
 				}
 			} );
 		case REWIND_DEACTIVATE_SUCCESS:

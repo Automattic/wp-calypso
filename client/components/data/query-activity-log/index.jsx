@@ -12,7 +12,7 @@ import { isFetchingActivityLog } from 'state/activity-log/selectors';
 
 class QueryActivityLog extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		startDate: PropTypes.string,
 	};
 
