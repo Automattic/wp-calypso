@@ -154,7 +154,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				tipTarget="sitePreview"
-				label={ this.props.translate( 'Site Preview' ) }
+				label={ this.props.translate( 'View Site' ) }
 				className={ this.itemLinkClass( [ '/preview' ], 'preview' ) }
 				link={ '/preview' + this.props.siteSuffix }
 				onNavigate={ this.onNavigate }
@@ -553,7 +553,8 @@ export class MySitesSidebar extends Component {
 			<div>
 				<SidebarMenu>
 					<ul>
-						{ this.preview() }
+						{/* TODO: enable once we have the new view ready */}
+						{/* this.preview() */}
 						{ this.stats() }
 						{ this.plan() }
 						{ this.store() }
