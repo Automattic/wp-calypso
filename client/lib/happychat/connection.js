@@ -86,7 +86,7 @@ class Connection extends EventEmitter {
 	 * @param {string} locale representing the user selected locale
 	 * @param {array} groups of string happychat groups (wp.com, jpop) based on the site selected
 	 */
-	preferences( locale, groups ) {
+	setPreferences( locale, groups ) {
 		this.openSocket.then(
 			socket => socket.emit( 'preferences', { locale, groups } ),
 			e => debug( 'failed to send preferences', e )

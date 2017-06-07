@@ -58,12 +58,12 @@ import {
 	isHappychatClientConnected,
 	isHappychatChatAssigned,
 	getGeoLocation,
+	getGroups,
 } from './selectors';
 import {
 	getCurrentUser,
 	getCurrentUserLocale,
 } from 'state/current-user/selectors';
-import { getGroups } from 'lib/happychat';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
 
@@ -139,10 +139,13 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 
 export const updateChatPreferences = ( connection, { getState }, siteId ) => {
 	const state = getState();
-	const locale = getCurrentUserLocale( state );
-	const groups = getGroups( state, siteId );
 
-	connection.preferences( locale, groups );
+	if ( isHappychatClientConnected( state ) ) {
+		const locale = getCurrentUserLocale( state );
+		const groups = getGroups( state, siteId );
+
+		connection.setPreferences( locale, groups );
+	}
 };
 
 export const requestTranscript = ( connection, { dispatch } ) => {
