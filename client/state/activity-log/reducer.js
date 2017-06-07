@@ -2,8 +2,17 @@
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
-import rewindStatus from './rewind-status/reducer';
+import { activationRequesting } from './activation/reducer';
+import { logItems, logErrors } from './log/reducer';
+import { restoreProgress, restoreErrors } from './restore/reducer';
+import { rewindStatus, rewindStatusErrors } from './rewind-status/reducer';
 
 export default combineReducers( {
+	activationRequesting,
+	logErrors,
+	logItems,
+	restoreErrors,
+	restoreProgress,
 	rewindStatus,
+	rewindStatusErrors,
 } );
