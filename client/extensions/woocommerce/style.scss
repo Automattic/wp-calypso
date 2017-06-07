@@ -59,6 +59,15 @@
 	}
 
 	li {
+
+		&.has-selected-child a {
+			font-weight: bold;
+		}
+
+		&.has-selected-child svg {
+			fill: $gray-text-min;
+		}
+
 		&.is-child-item {
 			a {
 				font-size: 12px;
@@ -70,4 +79,8 @@
 			}
 		}
 	}
+}
+
+.settings-tax.is-child-item {
+	border-bottom: 1px solid lighten( $gray, 20% );
 }
