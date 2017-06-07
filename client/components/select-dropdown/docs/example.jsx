@@ -12,7 +12,9 @@ import DropdownItem from 'components/select-dropdown/item';
 import DropdownLabel from 'components/select-dropdown/label';
 import DropdownSeparator from 'components/select-dropdown/separator';
 
-class SelectDropdownDemo extends React.Component {
+class SelectDropdownExample extends React.PureComponent {
+	static displayName = 'SelectDropdownExample';
+
 	static defaultProps = {
 		options: [
 			{ value: 'status-options', label: 'Statuses', isLabel: true },
@@ -207,4 +209,4 @@ class SelectDropdownDemo extends React.Component {
 	}
 }
 
-export default SelectDropdownDemo;
+export default SelectDropdownExample;
