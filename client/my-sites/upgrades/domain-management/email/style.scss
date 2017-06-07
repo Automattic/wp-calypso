@@ -1,11 +1,11 @@
-.add-google-apps-card__product-details {
+.email__add-google-apps-card-product-details {
 	@include breakpoint( ">960px" ) {
 		display: flex;
 		flex-basis: 50%;
 	}
 }
 
-.add-google-apps-card__description {
+.email__add-google-apps-card-description {
 	box-sizing: border-box;
 	font-size: 14px;
 
@@ -25,7 +25,7 @@
 	}
 }
 
-.add-google-apps-card__product-logo {
+.email__add-google-apps-card-product-logo {
 	@include breakpoint( "<660px" ) {
 		width: 236px;
 	}
@@ -46,10 +46,10 @@
 	}
 }
 
-.add-google-apps-card__price {
+.email__add-google-apps-card-price {
 	margin: 2em 0 1em;
 
-	.add-google-apps-card__price-per-user {
+	.email__add-google-apps-card-price-per-user {
 		strong {
 			color: $gray-text;
 			font-size: 24px;
@@ -63,7 +63,7 @@
 		}
 	}
 
-	.add-google-apps-card__billing-period {
+	.email__add-google-apps-card-billing-period {
 		color: $gray-text-min;
 		font-size: 13px;
 		font-style: italic;
@@ -74,18 +74,18 @@
 	}
 }
 
-.add-google-apps-card__title {
+.email__add-google-apps-card-title {
 	color: $gray-dark;
 	font-size: 24px;
 	line-height: 120%;
 	margin: 0 0 10px 0;
 }
 
-.add-google-apps-card__sub-title {
+.email__add-google-apps-card-sub-title {
 	font-size: 18px;
 }
 
-.add-google-apps-card__logos {
+.email__add-google-apps-card-logos {
 	align-items: center;
 	display: flex;
 	flex-grow: 1;
@@ -97,7 +97,7 @@
 	}
 }
 
-.add-google-apps-card__features {
+.email__add-google-apps-card-features {
 	box-sizing: border-box;
 	justify-content: justify-content;
 	margin: 1em 0;
@@ -108,14 +108,14 @@
 	}
 }
 
-.add-google-apps-card__feature {
+.email__add-google-apps-card-feature {
 	display: flex;
 	flex-basis: 50%;
 	justify-content: flex-start;
 	margin-bottom: 1em;
 }
 
-.add-google-apps-card__feature-block {
+.email__add-google-apps-card-feature-block {
 	align-items: flex-start;
 	padding: 0 1em 0 0;
 
@@ -126,12 +126,12 @@
 	}
 }
 
-.add-google-apps-card__feature-header {
+.email__add-google-apps-card-feature-header {
 	font-size: 17px;
 	font-weight: 600;
 }
 
-.add-google-apps-card__secondary-button {
+.email__add-google-apps-card-secondary-button {
 	.button {
 		float: none;
 		margin: 1em 0;
@@ -143,7 +143,7 @@
 	}
 }
 
-.add-google-apps-card__learn-more {
+.email__add-google-apps-card-learn-more {
 	color: $gray-text-min;
 	font-size: 15px;
 	margin-top: 1em;

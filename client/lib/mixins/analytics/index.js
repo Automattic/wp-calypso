@@ -149,60 +149,6 @@ const EVENTS = {
 		}
 	},
 
-	googleApps: {
-		inputFocus( userIndex, fieldName, inputValue ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				`Focused On "${ fieldName }" Input for User #${ userIndex } in Google Apps Dialog`,
-				'Input Value',
-				inputValue
-			);
-		},
-
-		addUserClick( section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Add User" Button in Google Apps Dialog'
-			);
-
-			analytics.tracks.recordEvent( 'calypso_google_apps_add_user_button_click', { section } );
-		},
-
-		addEmailButtonClick( section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Add Email" Button in Google Apps Dialog'
-			);
-
-			analytics.tracks.recordEvent( 'calypso_google_apps_add_email_button_click', { section } );
-		},
-
-		cancelButtonClick( section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Cancel" Button in Google Apps Dialog'
-			);
-
-			analytics.tracks.recordEvent( 'calypso_google_apps_cancel_button_click', { section } );
-		},
-
-		keepSearchingButtonClick() {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Click "Keep Searching" Button in Google Apps Dialog'
-			);
-		},
-
-		formSubmit( section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Submitted Form in Google Apps Dialog'
-			);
-
-			analytics.tracks.recordEvent( 'calypso_google_apps_form_submit', { section } );
-		}
-	},
-
 	mapDomain: {
 		formSubmit( searchBoxValue ) {
 			analytics.ga.recordEvent(
