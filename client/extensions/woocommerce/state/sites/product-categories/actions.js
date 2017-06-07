@@ -18,7 +18,7 @@ export function fetchProductCategories( siteId ) {
 		dispatch( getAction );
 
 		const jpPath = `/jetpack-blogs/${ siteId }/rest-api/`;
-		const apiPath = '/wc/v2/products/categories';
+		const apiPath = '/wc/v3/products/categories';
 
 		// TODO: Modify this to use the extensions data layer.
 		return wp.req.get( { path: jpPath }, { path: apiPath } )

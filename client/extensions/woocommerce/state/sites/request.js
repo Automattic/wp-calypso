@@ -29,7 +29,7 @@ const _request = ( method, path, siteId, body ) => {
 			path: `/jetpack-blogs/${ siteId }/rest-api/`
 		},
 		{
-			path: `/wc/v2/${ path }&_method=${ method }`,
+			path: `/wc/v3/${ path }&_method=${ method }`,
 			body: body && JSON.stringify( body ),
 		}
 	).then( ( { data } ) => omitDeep( data, '_links' ) );
@@ -45,14 +45,14 @@ const _request = ( method, path, siteId, body ) => {
 export default ( siteId ) => ( {
 	/**
 	 * Sends a GET request to the API
-	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v2/" prefix
+	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
 	get: ( path ) => _request( 'get', path, siteId ),
 
 	/**
 	 * Sends a POST request to the API
-	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v2/" prefix
+	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @param {Object} body Payload to send
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
@@ -62,7 +62,7 @@ export default ( siteId ) => ( {
 	 * Sends a PUT request to the API.
 	 * Note that the underlying request will be a POST, with an special URL parameter to
 	 * be interpreted by the WPCOM server as a PUT request.
-	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v2/" prefix
+	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @param {Object} body Payload to send
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
@@ -72,7 +72,7 @@ export default ( siteId ) => ( {
 	 * Sends a DELETE request to the API.
 	 * Note that the underlying request will be a POST, with an special URL parameter to
 	 * be interpreted by the WPCOM server as a DELETE request.
-	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v2/" prefix
+	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
 	del: ( path ) => _request( 'delete', path, siteId ),
