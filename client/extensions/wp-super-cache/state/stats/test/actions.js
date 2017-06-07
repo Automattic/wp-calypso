@@ -14,12 +14,10 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS,
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_STATS,
 } from '../../action-types';
 import {
 	deleteFile,
 	generateStats,
-	receiveStats,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -60,18 +58,6 @@ describe( 'actions', () => {
 		}
 	};
 
-	describe( '#receiveStats()', () => {
-		it( 'should return an action object', () => {
-			const action = receiveStats( siteId, stats.data );
-
-			expect( action ).to.eql( {
-				type: WP_SUPER_CACHE_RECEIVE_STATS,
-				stats: stats.data,
-				siteId,
-			} );
-		} );
-	} );
-
 	describe( '#generateStats()', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com' )
@@ -96,18 +82,11 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
-			return generateStats( siteId )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith(
-					receiveStats( siteId, stats.data )
-				);
-			} );
-		} );
-
 		it( 'should dispatch request success action when request completes', () => {
 			return generateStats( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
+					stats: stats.data,
 					siteId,
 				} );
 			} );
