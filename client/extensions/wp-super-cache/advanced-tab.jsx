@@ -28,24 +28,25 @@ const AdvancedTab = ( {
 		is_cache_enabled,
 		is_super_cache_enabled,
 	},
+	isReadOnly,
 	notices,
 	siteId,
 } ) => {
 	return (
 		<div>
 			<QueryNotices siteId={ siteId } />
-			<Caching notices={ notices } />
-			<Miscellaneous notices={ notices } />
-			<Advanced />
-			<CacheLocation />
-			<ExpiryTime />
-			<AcceptedFilenames />
-			<RejectedUserAgents />
-			<LockDown />
+			<Caching isReadOnly={ isReadOnly } notices={ notices } />
+			<Miscellaneous isReadOnly={ isReadOnly } notices={ notices } />
+			<Advanced isReadOnly={ isReadOnly } />
+			<CacheLocation isReadOnly={ isReadOnly } />
+			<ExpiryTime isReadOnly={ isReadOnly } />
+			<AcceptedFilenames isReadOnly={ isReadOnly } />
+			<RejectedUserAgents isReadOnly={ isReadOnly } />
+			<LockDown isReadOnly={ isReadOnly } />
 			{ is_cache_enabled && is_super_cache_enabled &&
 				<DirectlyCachedFiles notices={ notices } />
 			}
-			<FixConfig />
+			<FixConfig isReadOnly={ isReadOnly } />
 		</div>
 	);
 };
@@ -55,9 +56,7 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const notices = getNotices( state, siteId );
 
-		return {
-			notices,
-		};
+		return { notices };
 	}
 );
 

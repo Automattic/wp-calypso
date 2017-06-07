@@ -36,6 +36,7 @@ class ContentsTab extends Component {
 		handleDeleteCache: PropTypes.func.isRequired,
 		isDeleting: PropTypes.bool,
 		isMultisite: PropTypes.bool,
+		isReadOnly: PropTypes.bool.isRequired,
 		site: PropTypes.object.isRequired,
 		siteTitle: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -116,9 +117,11 @@ class ContentsTab extends Component {
 			isDeleting,
 			isGenerating,
 			isMultisite,
+			isReadOnly,
 			stats,
 			translate,
 		} = this.props;
+		const isDisabled = isDeleting || isReadOnly;
 		const supercache = ( get( stats, 'supercache', {} ) );
 		const wpcache = ( get( stats, 'wpcache', {} ) );
 
@@ -236,14 +239,14 @@ class ContentsTab extends Component {
 							compact
 							primary
 							busy={ this.state.isDeletingExpired }
-							disabled={ isDeleting }
+							disabled={ isDisabled }
 							onClick={ this.deleteExpiredCache }>
 							{ translate( 'Delete Expired' ) }
 						</Button>
 						<Button
 							compact
 							busy={ this.state.isDeleting }
-							disabled={ isDeleting }
+							disabled={ isDisabled }
 							onClick={ this.deleteCache }>
 							{ translate( 'Delete Cache' ) }
 						</Button>
@@ -251,7 +254,7 @@ class ContentsTab extends Component {
 							<Button
 								compact
 								busy={ this.state.isDeletingAll }
-								disabled={ isDeleting }
+								disabled={ isDisabled }
 								onClick={ this.deleteAllCaches }>
 								{ translate( 'Delete Cache On All Blogs' ) }
 							</Button>

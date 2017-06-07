@@ -21,17 +21,20 @@ const RejectedUserAgents = ( {
 	},
 	handleChange,
 	handleSubmitForm,
+	isReadOnly,
 	isRequesting,
 	isSaving,
 	translate,
 } ) => {
+	const isDisabled = isRequesting || isSaving || isReadOnly;
+
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Rejected User Agents' ) }>
 				<Button
 					compact
 					primary
-					disabled={ isRequesting || isSaving }
+					disabled={ isDisabled }
 					onClick={ handleSubmitForm }>
 					{ isSaving
 						? translate( 'Saving…' )
@@ -43,7 +46,7 @@ const RejectedUserAgents = ( {
 				<form>
 					<FormFieldset>
 						<FormTextarea
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleChange( 'cache_rejected_user_agent' ) }
 							value={ cache_rejected_user_agent } />
 						<FormSettingExplanation>

@@ -22,6 +22,7 @@ const LockDown = ( {
 		cache_lock_down,
 	},
 	handleAutosavingToggle,
+	isReadOnly,
 	isRequesting,
 	isSaving,
 	translate,
@@ -39,7 +40,7 @@ const LockDown = ( {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! cache_lock_down }
-							disabled={ isRequesting || isSaving }
+							disabled={ isRequesting || isSaving || isReadOnly }
 							onChange={ handleAutosavingToggle( 'cache_lock_down' ) }>
 							<span>
 								{ translate( 'Enable lock down to prepare your server for an expected spike in traffic.' ) }

@@ -29,6 +29,7 @@ class EasyTab extends Component {
 		handleAutosavingToggle: PropTypes.func.isRequired,
 		handleDeleteCache: PropTypes.func.isRequired,
 		isDeleting: PropTypes.bool,
+		isReadOnly: PropTypes.bool.isRequired,
 		isRequesting: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		isTesting: PropTypes.bool,
@@ -85,6 +86,7 @@ class EasyTab extends Component {
 			},
 			handleAutosavingToggle,
 			isDeleting,
+			isReadOnly,
 			isRequesting,
 			isSaving,
 			isTesting,
@@ -107,7 +109,7 @@ class EasyTab extends Component {
 					<form>
 						<FormToggle
 							checked={ !! is_cache_enabled }
-							disabled={ isRequesting || isSaving }
+							disabled={ isRequesting || isSaving || isReadOnly }
 							onChange={ handleAutosavingToggle( 'is_cache_enabled' ) }>
 							<span>
 								{ translate( 'Enable Page Caching' ) }
@@ -196,7 +198,7 @@ class EasyTab extends Component {
 						<Button
 							compact
 							busy={ this.state.isDeleting }
-							disabled={ isDeleting }
+							disabled={ isDeleting || isReadOnly }
 							name="wp_delete_cache"
 							onClick={ this.deleteCache }>
 							{ translate( 'Delete Cache' ) }
@@ -205,7 +207,7 @@ class EasyTab extends Component {
 							<Button
 								compact
 								busy={ this.state.isDeletingAll }
-								disabled={ isDeleting }
+								disabled={ isDeleting || isReadOnly }
 								name="wp_delete_all_cache"
 								onClick={ this.deleteAllCaches }>
 								{ translate( 'Delete Cache On All Blogs' ) }

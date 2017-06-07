@@ -21,17 +21,20 @@ const CacheLocation = ( {
 	},
 	handleChange,
 	handleSubmitForm,
+	isReadOnly,
 	isRequesting,
 	isSaving,
 	translate,
 } ) => {
+	const isDisabled = isRequesting || isSaving || isReadOnly;
+
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Cache Location' ) }>
 				<Button
 					compact
 					primary
-					disabled={ isRequesting || isSaving }
+					disabled={ isDisabled }
 					onClick={ handleSubmitForm }>
 					{ isSaving
 						? translate( 'Saving…' )
@@ -43,7 +46,7 @@ const CacheLocation = ( {
 				<form>
 					<FormFieldset>
 						<FormTextInput
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleChange( 'cache_path' ) }
 							value={ cache_path || '' } />
 						<FormSettingExplanation>
