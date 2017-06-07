@@ -1,31 +1,15 @@
 /**
  * External dependencies
  */
-import { get, identity, merge } from 'lodash';
+import { get, merge } from 'lodash';
 
-import {
-	basicJitter,
-	decorrelatedJitter,
-} from './delays';
-import defaultPolicy from './policies';
+import { decorrelatedJitter as defaultDelay } from './delays';
+import { default as defaultPolicy } from './policies';
 
 const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCase();
 
-const standardDelays = {
-	SIMPLE_RETRY: basicJitter,
-	EXPONENTIAL_BACKOFF: decorrelatedJitter,
-};
-
-const defaults = {
-	getDelay: ( name, { delay, retryCount } ) => get( standardDelays, name, identity )( delay, retryCount ),
-};
-
-export const retryOnFailure = ( { getDelay } = defaults ) => inboundData => {
-	const {
-		nextError,
-		originalRequest,
-		store: { dispatch },
-	} = inboundData;
+export const retryOnFailure = ( getDelay = defaultDelay ) => inboundData => {
+	const { nextError, originalRequest, store: { dispatch } } = inboundData;
 
 	// if the request came back successfully
 	// then we have no need to intercept it
@@ -35,7 +19,6 @@ export const retryOnFailure = ( { getDelay } = defaults ) => inboundData => {
 	}
 
 	// otherwise check if we should try again
-
 	if ( ! isGetRequest( originalRequest ) ) {
 		return inboundData;
 	}
@@ -50,7 +33,7 @@ export const retryOnFailure = ( { getDelay } = defaults ) => inboundData => {
 
 	setTimeout(
 		() => dispatch( merge( originalRequest, { meta: { dataLayer: { retryCount } } } ) ),
-		getDelay( name, { delay, retryCount } )
+		getDelay( delay, retryCount ),
 	);
 
 	return { ...inboundData, shouldAbort: true };

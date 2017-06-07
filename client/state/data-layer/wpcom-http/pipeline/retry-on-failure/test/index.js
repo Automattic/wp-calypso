@@ -12,10 +12,10 @@ import { merge } from 'lodash';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { retryOnFailure as rof } from '../';
-import { noRetry, simpleRetry, exponentialBackoff } from '../policies';
+import { noRetry, exponentialBackoff } from '../policies';
 
 const retryOnFailure = rof();
-const retryWithDelay = delay => rof( { getDelay: () => delay } );
+const retryWithDelay = delay => rof( () => delay );
 
 const nextError = { fail: 'failed big time' };
 
@@ -62,7 +62,7 @@ describe( '#retryOnFailure', () => {
 	} );
 
 	it( 'should pass through POST requests', () => {
-		const originalRequest = { ...getSites, method: 'POST', options: { whenFailing: simpleRetry( { delay: 1000 } ) } };
+		const originalRequest = { ...getSites, method: 'POST' };
 		const inbound = { nextError, originalRequest, store };
 
 		expect( retryOnFailure( inbound ) ).to.equal( inbound );
@@ -82,7 +82,7 @@ describe( '#retryOnFailure', () => {
 	} );
 
 	it( 'should requeue only up to `maxAttempts`', () => {
-		const originalRequest = { ...getSites, options: { whenFailing: simpleRetry( { delay: 1000, maxAttempts: 3 } ) } };
+		const originalRequest = { ...getSites, options: { whenFailing: { maxAttempts: 3 } } };
 		const inbound = { nextError, originalRequest, store };
 		const retryIt = retryWithDelay( 1337 );
 
@@ -116,38 +116,6 @@ describe( '#retryOnFailure', () => {
 
 		clock.tick( 1337 );
 		expect( dispatch.callCount ).to.equal( 3 );
-	} );
-
-	it( 'should handle `simpleDelay`', () => {
-		const originalRequest = { ...getSites, options: { whenFailing: simpleRetry( { delay: 1000, maxAttempts: 3 } ) } };
-		const inbound = { nextError, originalRequest, store };
-
-		// retry 1
-		expect( retryOnFailure( inbound ) ).to.have.property( 'shouldAbort', true );
-		expect( dispatch ).to.have.not.been.called;
-
-		clock.tick( 2 * 1000 );
-		expect( dispatch ).to.have.been.calledOnce;
-
-		clock.tick( 20000 );
-		expect( dispatch ).to.have.been.calledOnce;
-
-		// retry 2 (should have same delay range)
-		expect( retryOnFailure( withRetries( 2 )( inbound ) ) ).to.have.property( 'shouldAbort', true );
-		expect( dispatch ).to.have.been.calledOnce;
-
-		clock.tick( 2 * 1000 );
-		expect( dispatch ).to.have.been.calledTwice;
-
-		clock.tick( 20000 );
-		expect( dispatch ).to.have.been.calledTwice;
-
-		// retry 3 (should not retry)
-		expect( retryOnFailure( withRetries( 3 )( inbound ) ) ).to.eql( withRetries( 3 )( inbound ) );
-		expect( dispatch ).to.have.been.calledTwice;
-
-		clock.tick( 20000 );
-		expect( dispatch ).to.have.been.calledTwice;
 	} );
 
 	it( 'should handle `exponentialBackoff`', () => {

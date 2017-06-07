@@ -18,17 +18,6 @@
 import { random } from 'lodash';
 
 /**
- * Computes basic delay with random jitter
- *
- * Returns a delay as short as the given delay
- * and as long as twice the given delay.
- *
- * @param {Number} delay number of ms for delay
- * @returns {Number} delay until next attempt
- */
-export const basicJitter = delay => delay + random( delay );
-
-/**
  * Computes "decorrelated jitter" delay
  *
  * @see https://www.awsarchitectureblog.com/2015/03/backoff.html
