@@ -34,9 +34,9 @@ import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
 import PostLifecycle from './post-lifecycle';
-import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import { showSelectedPost } from 'reader/utils';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
+import { getReaderFollows } from 'state/selectors';
 import { keysAreEqual } from 'lib/feed-stream-store/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
@@ -48,13 +48,12 @@ const HEADER_OFFSET_TOP = 46;
 const MIN_DISTANCE_BETWEEN_RECS = 4; // page size is 7, so one in the middle of every page and one on page boundries, sometimes
 const MAX_DISTANCE_BETWEEN_RECS = 30;
 
-function getDistanceBetweenRecs() {
+function getDistanceBetweenRecs( totalSubs ) {
 	// the distance between recs changes based on how many subscriptions the user has.
 	// We cap it at MAX_DISTANCE_BETWEEN_RECS.
 	// It grows at the natural log of the number of subs, times a multiplier, offset by a constant.
 	// This lets the distance between recs grow quickly as you add subs early on, and slow down as you
 	// become a common user of the reader.
-	const totalSubs = FeedSubscriptionStore.getTotalSubscriptions();
 	if ( totalSubs <= 0 ) {
 		// 0 means either we don't know yet, or the user actually has zero subs.
 		// if a user has zero subs, we don't show posts at all, so just treat 0 as 'unknown' and
@@ -64,7 +63,7 @@ function getDistanceBetweenRecs() {
 	const distance = clamp(
 		Math.floor( Math.log( totalSubs ) * Math.LOG2E * 5 - 6 ),
 		MIN_DISTANCE_BETWEEN_RECS,
-		MAX_DISTANCE_BETWEEN_RECS
+		MAX_DISTANCE_BETWEEN_RECS,
 	);
 	return distance;
 }
@@ -105,13 +104,13 @@ class ReaderStream extends React.Component {
 	};
 
 	getStateFromStores( props = this.props ) {
-		const { postsStore: store, recommendationsStore } = props;
+		const { postsStore: store, recommendationsStore, totalSubs } = props;
 
 		const posts = map( store.get(), props.transformStreamItems );
 		const recs = recommendationsStore ? recommendationsStore.get() : null;
 		// do we have enough recs? if we have a store, but not enough recs, we should fetch some more...
 		if ( recommendationsStore ) {
-			if ( ! recs || recs.length < posts.length * ( RECS_PER_BLOCK / getDistanceBetweenRecs() ) ) {
+			if ( ! recs || recs.length < posts.length * ( RECS_PER_BLOCK / getDistanceBetweenRecs( totalSubs ) ) ) {
 				if ( ! recommendationsStore.isFetchingNextPage() ) {
 					defer( () => fetchNextPage( recommendationsStore.id ) );
 				}
@@ -275,7 +274,7 @@ class ReaderStream extends React.Component {
 
 	isPostFullScreen() {
 		return !! window.location.pathname.match(
-			/^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i
+			/^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i,
 		);
 	}
 
@@ -483,7 +482,8 @@ export default localize(
 	connect(
 		state => ( {
 			blockedSites: getBlockedSites( state ),
+			totalSubs: getReaderFollows( state ).length,
 		} ),
-		{ resetCardExpansions }
-	)( ReaderStream )
+		{ resetCardExpansions },
+	)( ReaderStream ),
 );

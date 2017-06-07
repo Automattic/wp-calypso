@@ -28,9 +28,6 @@ import { preload } from 'sections-preload';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 
-// these three are included to ensure that the stores required have been loaded and can accept actions
-import FeedSubscriptionStore from 'lib/reader-feed-subscriptions'; // eslint-disable-line no-unused-vars
-
 const analyticsPageTitle = 'Reader';
 
 const activeAbTests = [
