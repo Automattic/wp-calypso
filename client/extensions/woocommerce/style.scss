@@ -38,6 +38,10 @@
 .store-sidebar__sidebar {
 	display: block;
 
+	.site {
+		padding: 6px 0;
+	}
+
 	.store-sidebar__ground-control {
 		align-items: center;
 		border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
@@ -50,13 +54,11 @@
 		flex: 0 0 auto;
 		margin-left: 7px;
 		margin-right: 7px;
-		padding: 21px 14px 22px;
 	}
 
 	.store-sidebar__ground-control-site {
 		border-left: 1px solid darken( $sidebar-bg-color, 10% );
 		display: inline-block;
 		flex-grow: 1;
-		padding: 12px 0;
 	}
 }
