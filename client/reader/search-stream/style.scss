@@ -36,10 +36,6 @@
 	}
 }
 
-.search-stream .search-stream__single-column-results {
-	padding-top: 150px;
-}
-
 .search-stream__input-card.card {
 	margin-bottom: 16px;
 	padding: 0;
@@ -50,7 +46,7 @@
 .search-stream__blank-suggestions {
 	font-size: 13px;
 	color: $gray;
-	margin-top: 0;
+	margin-top: 18px;
 	text-align:left;
 
 	a, a:visited {
@@ -228,7 +224,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 // Post and Site results
 .search-stream .search-stream__results {
 	display: flex;
-	margin-top: 140px;
 }
 
 .search-stream__headers {
