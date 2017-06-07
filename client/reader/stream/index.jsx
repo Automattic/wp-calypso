@@ -87,6 +87,7 @@ class ReaderStream extends React.Component {
 		isDiscoverStream: PropTypes.bool,
 		shouldCombineCards: PropTypes.bool,
 		transformStreamItems: PropTypes.func,
+		isMain: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -101,6 +102,7 @@ class ReaderStream extends React.Component {
 		isDiscoverStream: false,
 		shouldCombineCards: true,
 		transformStreamItems: identity,
+		isMain: true,
 	};
 
 	getStateFromStores( props = this.props ) {
@@ -459,10 +461,11 @@ class ReaderStream extends React.Component {
 			);
 			showingStream = true;
 		}
-
+		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
-			<ReaderMain className={ classnames( 'following', this.props.className ) }>
-				{ this.props.showMobileBackToSidebar &&
+			<TopLevel className={ classnames( 'following', this.props.className ) }>
+				{ this.props.isMain &&
+					this.props.showMobileBackToSidebar &&
 					<MobileBackToSidebar>
 						<h1>{ this.props.translate( 'Streams' ) }</h1>
 					</MobileBackToSidebar> }
@@ -473,7 +476,7 @@ class ReaderStream extends React.Component {
 				{ showingStream && store.isLastPage() && this.state.posts.length
 					? <div className="infinite-scroll-end" />
 					: null }
-			</ReaderMain>
+			</TopLevel>
 		);
 	}
 }
