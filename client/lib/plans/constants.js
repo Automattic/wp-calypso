@@ -366,7 +366,12 @@ export const PLANS_LIST = {
 		getSubtitle: () => i18n.translate( 'Protection, speed, and revenue.' ),
 		getProductId: () => 2000,
 		getStoreSlug: () => PLAN_JETPACK_PREMIUM,
-		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
+		availableFor: ( plan ) => includes( [
+			PLAN_JETPACK_FREE,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PERSONAL_MONTHLY,
+			PLAN_JETPACK_PREMIUM_MONTHLY,
+		], plan ),
 		getPathSlug: () => 'premium',
 		getDescription: () => i18n.translate(
 				'Generate income and save on video hosting costs. ' +
@@ -434,7 +439,7 @@ export const PLANS_LIST = {
 		getAudience: () => 'Best for hobbyists', //PLANS A/B TEST: Translate if test passes
 		getProductId: () => 2005,
 		getStoreSlug: () => PLAN_JETPACK_PERSONAL,
-		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () => i18n.translate(
 				'Essentials for every site. The most affordable solution to keep your' +
@@ -494,6 +499,7 @@ export const PLANS_LIST = {
 		getAudience: () => 'Best for organizations', //PLANS A/B TEST: Translate if test passes
 		getProductId: () => 2001,
 		availableFor: ( plan ) => includes( [
+			PLAN_JETPACK_BUSINESS_MONTHLY,
 			PLAN_JETPACK_FREE,
 			PLAN_JETPACK_PREMIUM,
 			PLAN_JETPACK_PREMIUM_MONTHLY,
