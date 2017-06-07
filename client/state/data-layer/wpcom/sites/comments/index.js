@@ -11,7 +11,6 @@ import { COMMENTS_LIST_REQUEST, COMMENTS_RECEIVE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
-import { fromApi } from 'state/comments/from-api';
 import { errorNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
 
@@ -42,8 +41,6 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 
 export const addComments = ( { dispatch }, { query: { siteId } }, next, { comments } ) => {
 	const byPost = groupBy( comments, ( { post: { ID } } ) => ID );
-
-	window.comments = comments.map( c => fromApi( siteId, c ) );
 
 	forEach( byPost, ( postComments, postId ) => dispatch( {
 		type: COMMENTS_RECEIVE,
