@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 
@@ -8,9 +10,25 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import FormInputCheckbox from 'components/forms/form-checkbox';
-import orders from './orders.json';
+import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
+import { getOrders } from 'woocommerce/state/sites/orders/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class Orders extends Component {
+	componentDidMount() {
+		const { siteId } = this.props;
+
+		if ( siteId ) {
+			this.props.fetchOrders( siteId );
+		}
+	}
+
+	componentWillReceiveProps( newProps ) {
+		if ( newProps.siteId !== this.props.siteId ) {
+			this.props.fetchOrders( newProps.siteId );
+		}
+	}
+
 	getOrderStatus = ( status ) => {
 		const { translate } = this.props;
 		const classes = `orders__item-status is-${ status }`;
@@ -64,7 +82,7 @@ class Orders extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, orders } = this.props;
 		return (
 			<table className="orders__table">
 				<thead>

@@ -11,7 +11,7 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 
 const OrderHeader = ( { translate, siteSlug } ) => {
-	const addLink = `/store/orders/${ siteSlug }/add`;
+	const addLink = `/store/order/${ siteSlug }`;
 
 	return (
 		<ActionHeader>
