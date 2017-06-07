@@ -15,7 +15,6 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import { recordAction, recordTrack } from 'reader/stats';
-import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 // import { SEARCH_RESULTS } from 'reader/follow-button/follow-sources';
 import SiteResults from './site-results';
 import PostResults from './post-results';
@@ -68,17 +67,6 @@ class SearchStream extends React.Component {
 
 	scrollToTop = () => {
 		window.scrollTo( 0, 0 );
-	};
-
-	placeholderFactory = ( { key, ...rest } ) => {
-		if ( ! this.props.query ) {
-			return (
-				<div className="search-stream__recommendation-list-item" key={ key }>
-					<RelatedPostCard { ...rest } />
-				</div>
-			);
-		}
-		return null;
 	};
 
 	useRelevanceSort = () => {

@@ -17,6 +17,7 @@ import { debounce, noop, get } from 'lodash';
  */
 import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
 
+// this component is being cleaned up in: https://github.com/Automattic/wp-calypso/pull/14577
 class ReaderInfiniteStream extends Component {
 	static propTypes = {
 		items: PropTypes.array.isRequired,
@@ -38,27 +39,6 @@ class ReaderInfiniteStream extends Component {
 		fixedWidth: true,
 		minHeight: 70,
 	} );
-
-	// eslint-disable-next-line no-unused-vars
-	postRowRenderer = ( { index, key, style, parent } ) => {
-		// todo: implement
-		return null;
-	};
-
-	// TODO: why doesn't this work?
-	siteRowRenderer = ( { index, key, style, parent } ) => {
-		const { followSource, showLastUpdatedDate, items } = this.props;
-		const site = items[ index ];
-
-		const feedUrl = get( site, 'feed_URL' );
-		const feedId = +get( site, 'feed_ID' );
-		const siteId = +get( site, 'blog_ID' );
-
-		const props = { url: feedUrl, feedId, siteId, followSource, showLastUpdatedDate };
-		return this.measuredRowRenderer(
-			{ ComponentToMeasure: ConnectedSubscriptionListItem, props, key, index, style, parent }
-		);
-	};
 
 	oldSiteRowRenderer = ( { index, key, style, parent } ) => {
 		const site = this.props.items[ index ];
@@ -94,22 +74,6 @@ class ReaderInfiniteStream extends Component {
 		);
 	};
 
-	measuredRowRenderer = ( { ComponentToMeasure, props, key, index, style } ) => (
-		<CellMeasurer
-			cache={ this.heightCache }
-			columnIndex={ 0 }
-			key={ key }
-			rowIndex={ index }
-			parent={ parent }
-		>
-			{ ( { measure } ) => (
-				<div key={ key } style={ style } className="reader-infinite-stream__row-wrapper">
-					<ComponentToMeasure { ...props } onLoad={ measure } />
-				</div>
-			) }
-		</CellMeasurer>
-	);
-
 	handleListMounted = registerChild => list => {
 		this.listRef = list;
 		registerChild( list ); // InfiniteLoader also wants a ref
@@ -126,11 +90,6 @@ class ReaderInfiniteStream extends Component {
 		return !! this.props.items[ index ];
 	};
 
-	// technically this function should return a promise that only resolves when the data is fetched.
-	// initially I had created a promise that would setInterval and see if the startIndex
-	// exists in sites, and if so the resolve. It was super hacky, and its muchs simpler to just fake that it instantly
-	// returns
-	// TODO: does a util function exist that return waitFor( thingToExistInStateTree )? that would be perfect.
 	loadMoreRows = ( { startIndex } ) => {
 		this.props.fetchNextPage( startIndex );
 		return Promise.resolve();
@@ -151,11 +110,7 @@ class ReaderInfiniteStream extends Component {
 	}
 
 	render() {
-		const rowRenderer = this.props.itemType === 'site'
-			? this.oldSiteRowRenderer
-			: this.postRowRenderer;
-
-		// todo implement an actual HasNextPage or take one in as a prop
+		const rowRenderer = this.oldSiteRowRenderer;
 		const rowCount = this.props.items.length < 150
 			? this.props.items.length + 1
 			: this.props.items.length;
