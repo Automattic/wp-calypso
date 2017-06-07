@@ -483,7 +483,10 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, {
 				type: READER_FOLLOW_ERROR,
-				payload: { feedUrl: 'http://discoverinvalid.wordpress.com', error: 'invalid_feed' },
+				payload: {
+					feedUrl: 'http://discoverinvalid.wordpress.com',
+					error: 'invalid_feed',
+				},
 			} );
 			expect( state[ 'discoverinvalid.wordpress.com' ] ).to.eql( {
 				is_following: true,
@@ -637,6 +640,42 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, syncComplete( [ 'http://example2.com' ] ) );
 			expect( state ).to.eql( {
+				'example2.com': {
+					feed_URL: 'http://example2.com',
+					ID: 2,
+					is_following: true,
+				},
+			} );
+		} );
+
+		it( 'should remove sites under the wrong key', () => {
+			const original = deepFreeze( {
+				'example.com/feed': {
+					feed_URL: 'http://example.com',
+					ID: 1,
+					is_following: true,
+				},
+				'example.com': {
+					feed_URL: 'http://example.com',
+					ID: 1,
+					is_following: true,
+				},
+				'example2.com': {
+					feed_URL: 'http://example2.com',
+					ID: 2,
+					is_following: true,
+				},
+			} );
+			const state = items(
+				original,
+				syncComplete( [ 'http://example.com', 'http://example2.com' ] )
+			);
+			expect( state ).to.eql( {
+				'example.com': {
+					feed_URL: 'http://example.com',
+					ID: 1,
+					is_following: true,
+				},
 				'example2.com': {
 					feed_URL: 'http://example2.com',
 					ID: 2,

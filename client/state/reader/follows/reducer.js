@@ -98,7 +98,11 @@ export const items = createReducer(
 			let urlKey = prepareComparableUrl( action.payload.feedUrl );
 			const newValues = { is_following: true };
 
-			const actualFeedUrl = get( action.payload, [ 'follow', 'feed_URL' ], action.payload.feedUrl );
+			const actualFeedUrl = get(
+				action.payload,
+				[ 'follow', 'feed_URL' ],
+				action.payload.feedUrl
+			);
 
 			const newState = { ...state };
 			// for the case where a user entered an exact url to follow something, sometimes the
@@ -176,7 +180,12 @@ export const items = createReducer(
 			// Only check items with an ID (the subscription ID) because those are what
 			// we show on the manage listing. Items without an ID are either inflight follows
 			// or follows that we picked up from a feed, site, or post object.
-			return omitBy( state, follow => follow.ID && ! seenSubscriptions.has( follow.feed_URL ) );
+			return omitBy(
+				state,
+				( follow, key ) =>
+					key !== prepareComparableUrl( follow.feed_URL ) ||
+					( follow.ID && ! seenSubscriptions.has( follow.feed_URL ) )
+			);
 		},
 		[ SERIALIZE ]: state => pickBy( state, item => item.is_following ),
 	},
