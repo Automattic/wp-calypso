@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { itemsSchema } from './schema';
 import {
 	REWIND_STATUS_ERROR,
 	REWIND_STATUS_UPDATE,
@@ -15,10 +16,9 @@ export const errors = createReducer( {}, {
 	[ REWIND_STATUS_ERROR ]: keyedReducer( 'siteId', ( state, { error } ) => error ),
 } );
 
-// FIXME: Add persistence scehma
 export const items = createReducer( {}, {
 	[ REWIND_STATUS_UPDATE ]: keyedReducer( 'siteId', ( state, { status } ) => status ),
-} );
+}, itemsSchema );
 
 export default combineReducers( {
 	errors,
