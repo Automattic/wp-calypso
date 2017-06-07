@@ -45,13 +45,22 @@ describe( 'Domain Details Form', () => {
 	const domainProduct = domainRegistration( {
 		productSlug: 'normal_domain',
 		domain: 'test.test',
+	} );
+
+	const domainProductWithExplicitPrivacy = domainRegistration( {
+		productSlug: 'normal_domain',
+		domain: 'test.test',
 		extra: {
 			privacy_available: true
 		},
 	} );
 
+
 	const domainProductWithoutPrivacy = domainRegistration( {
 		productSlug: 'unprivate_domain',
+		extra: {
+			privacy_available: false
+		},
 	} );
 
 	it( 'does not blow up with default props', () => {
@@ -70,7 +79,7 @@ describe( 'Domain Details Form', () => {
 		const propsWithDomain = merge(
 			{},
 			defaultProps,
-			{ cart: { products: [ domainProduct ] } }
+			{ cart: { products: [ domainProductWithExplicitPrivacy ] } }
 		);
 
 		const wrapper = shallow( <DomainDetailsForm { ...propsWithDomain } /> );
@@ -107,10 +116,21 @@ describe( 'Domain Details Form', () => {
 		const mixedSupportProps = merge(
 			{},
 			defaultProps,
-			{ cart: { products: [ domainProduct, domainProductWithoutPrivacy ] } }
+			{ cart: { products: [ domainProductWithExplicitPrivacy, domainProductWithoutPrivacy ] } }
 		);
 		const wrapper = shallow( <DomainDetailsForm { ...mixedSupportProps } /> );
 
 		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 0 );
+	} );
+
+	it( 'should render privacy upsell without explicit privacy support', () => {
+		const mixedSupportProps = merge(
+			{},
+			defaultProps,
+			{ cart: { products: [ domainProduct ] } }
+		);
+		const wrapper = shallow( <DomainDetailsForm { ...mixedSupportProps } /> );
+
+		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 1 );
 	} );
 } );

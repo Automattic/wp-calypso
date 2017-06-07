@@ -2,7 +2,7 @@
  * External dependencies
  */
 var update = require( 'react-addons-update' );
-import { every, assign, flow, isEqual, merge, reject, tail, some, uniq, flatten, filter, find } from 'lodash';
+import { every, assign, flow, isEqual, merge, reject, tail, some, uniq, flatten, filter, find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -284,9 +284,7 @@ function hasDomainRegistration( cart ) {
 }
 
 function hasOnlyDomainRegistrationsWithPrivacySupport( cart ) {
-	return every( getDomainRegistrations( cart ), function( cartItem ) {
-		return privacyAvailable( cartItem );
-	} );
+	return every( getDomainRegistrations( cart ), privacyAvailable );
 }
 
 function hasDomainMapping( cart ) {
@@ -730,7 +728,7 @@ function isRenewal( cartItem ) {
  * @returns {boolean} true if item supports privacy
  */
 function privacyAvailable( cartItem ) {
-	return cartItem.extra && cartItem.extra.privacy_available;
+	return get( cartItem, 'extra.privacy_available', true );
 }
 
 /**
