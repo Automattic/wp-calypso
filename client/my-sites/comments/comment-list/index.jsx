@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, includes, map, size, without } from 'lodash';
+import { find, get, keyBy, map, omit, size } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -38,12 +38,12 @@ export class CommentList extends Component {
 
 	state = {
 		isBulkEdit: false,
-		selectedComments: [],
+		selectedComments: {},
 	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.status !== nextProps.status ) {
-			this.setState( { selectedComments: [] } );
+			this.setState( { selectedComments: {} } );
 		}
 	}
 
@@ -55,7 +55,7 @@ export class CommentList extends Component {
 
 		this.setState( {
 			isBulkEdit: false,
-			selectedComments: [],
+			selectedComments: {},
 		} );
 	};
 
@@ -80,11 +80,12 @@ export class CommentList extends Component {
 		}, status, [ '', '' ] );
 	}
 
-	isCommentSelected = commentId => includes( this.state.selectedComments, commentId );
+	isCommentSelected = commentId => !! this.state.selectedComments[ commentId ];
 
-	isSelectedAll = () => this.props.comments.length === this.state.selectedComments.length;
+	isSelectedAll = () => this.props.comments.length === size( this.state.selectedComments );
 
 	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
+		// TODO: Replace with Redux getComment()
 		const comment = find( this.props.comments, [ 'ID', commentId ] );
 
 		if ( comment && status === comment.status ) {
@@ -157,6 +158,7 @@ export class CommentList extends Component {
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
 	toggleCommentLike = commentId => {
+		// TODO: Replace with Redux getComment()
 		const comment = find( this.props.comments, [ 'ID', commentId ] );
 
 		if ( 'unapproved' === comment.status ) {
@@ -169,18 +171,24 @@ export class CommentList extends Component {
 
 	toggleCommentSelected = commentId => {
 		const { selectedComments } = this.state;
+		// TODO: Replace with Redux getComment()
+		const { i_like, status } = find( this.props.comments, [ 'ID', commentId ] );
+
 		this.setState( {
 			selectedComments: this.isCommentSelected( commentId )
-				? without( selectedComments, commentId )
-				: [ ...selectedComments, commentId ],
+				? omit( selectedComments, commentId )
+				: {
+					...selectedComments,
+					[ commentId ]: { i_like, status },
+				},
 		} );
 	}
 
 	toggleSelectAll = () => {
 		this.setState( {
 			selectedComments: this.isSelectedAll()
-				? []
-				: map( this.props.comments, comment => comment.ID ),
+				? {}
+				: keyBy( map( this.props.comments, ( { ID, i_like, status } ) => ( { ID, i_like, status } ) ), 'ID' ),
 		} );
 	}
 
@@ -205,7 +213,7 @@ export class CommentList extends Component {
 					applyBulkAction={ this.applyBulkAction }
 					isBulkEdit={ isBulkEdit }
 					isSelectedAll={ this.isSelectedAll() }
-					selectedCount={ selectedComments.length }
+					selectedCount={ size( selectedComments ) }
 					siteSlug={ siteSlug }
 					status={ status }
 					toggleBulkEdit={ this.toggleBulkEdit }

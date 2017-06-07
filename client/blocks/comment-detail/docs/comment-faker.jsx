@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { filter, get, keyBy, map, omit } from 'lodash';
+import { filter, get, keyBy, keys, map, omit } from 'lodash';
 
 /**
  * `CommentFaker` is a HOC to easily test the Comments Management without the necessity of real data or actions.
@@ -28,7 +28,9 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		}
 	}
 
-	applyBulkAction = ( commentIds, status ) => {
+	applyBulkAction = ( selectedComments, status ) => {
+		const commentIds = keys( selectedComments );
+
 		if ( 'delete' === status ) {
 			this.setState( { comments: omit( this.state.comments, commentIds ) } );
 			return;
