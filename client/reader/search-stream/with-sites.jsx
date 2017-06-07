@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import cx from 'classnames';
 
 /**
  * Internal Dependencies
@@ -115,6 +116,10 @@ class SearchStream extends React.Component {
 			comment: 'A sort order, showing the most recent posts first.',
 		} );
 
+		const searchStreamResultsClasses = cx( 'search-stream__results', {
+			'is-two-columns': !! query,
+		} );
+
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
@@ -148,7 +153,7 @@ class SearchStream extends React.Component {
 						/> }
 				</div>
 				{ wideDisplay &&
-					<div className="search-stream__results">
+					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
 							<PostResults { ...this.props } />
 						</div>
@@ -170,7 +175,7 @@ class SearchStream extends React.Component {
 /* eslint-disable */
 // wrapping with Main so that we can use withWidth helper to pass down whole width of Main
 const wrapWithMain = Component => props => (
-	<ReaderMain className="search-stream" wideLayout>
+	<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
 		<Component { ...props } />
 	</ReaderMain>
 );

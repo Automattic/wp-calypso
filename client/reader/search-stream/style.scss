@@ -36,6 +36,15 @@
 	}
 }
 
+// fix for smaller breakpoint on the new site-search
+.is-reader-page .search-stream__with-sites .search-stream__fixed-area {
+	padding-top: 20px;
+
+	@include breakpoint( ">660px" ) {
+		padding-top: 77px;
+	}
+}
+
 .search-stream__input-card.card {
 	margin-bottom: 16px;
 	padding: 0;
@@ -333,6 +342,16 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	margin-left: 40px;
 	max-width: 265px;
 	width: 100%;
+}
+
+.search-stream__with-sites .search-stream__results {
+	padding-top: 120px;
+}
+.search-stream__with-sites .search-stream__results.is-two-columns {
+	padding-top: 135px;
+}
+.search-stream__single-column-results  {
+	padding-top: 120px;
 }
 
 .search-stream__post-header,
