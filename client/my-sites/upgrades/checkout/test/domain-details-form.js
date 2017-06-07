@@ -55,7 +55,6 @@ describe( 'Domain Details Form', () => {
 		},
 	} );
 
-
 	const domainProductWithoutPrivacy = domainRegistration( {
 		productSlug: 'unprivate_domain',
 		extra: {
