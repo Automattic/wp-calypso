@@ -296,7 +296,7 @@ describe( 'middleware', () => {
 		useSandbox( sandbox => {
 			connection = {
 				sendLog: sandbox.stub(),
-				sendStagingEvent: sandbox.stub(),
+				sendEvent: sandbox.stub(),
 			};
 		} );
 
@@ -309,7 +309,7 @@ describe( 'middleware', () => {
 			sendAnalyticsLogEvent( connection, { meta: { analytics: analyticsMeta } } );
 
 			expect( connection.sendLog ).not.to.have.been.called;
-			expect( connection.sendStagingEvent ).not.to.have.been.called;
+			expect( connection.sendEvent ).not.to.have.been.called;
 		} );
 
 		it( 'should send log events for all listed tracks events', () => {
@@ -337,7 +337,7 @@ describe( 'middleware', () => {
 			];
 			sendAnalyticsLogEvent( connection, { meta: { analytics: analyticsMeta } } );
 
-			expect( connection.sendStagingEvent.callCount ).to.equal( 2 );
+			expect( connection.sendEvent.callCount ).to.equal( 2 );
 		} );
 	} );
 
@@ -366,7 +366,7 @@ describe( 'middleware', () => {
 		useSandbox( sandbox => {
 			connection = {
 				sendLog: sandbox.stub(),
-				sendStagingEvent: sandbox.stub(),
+				sendEvent: sandbox.stub(),
 			};
 
 			getState = sandbox.stub();
@@ -389,7 +389,7 @@ describe( 'middleware', () => {
 			sendActionLogsAndEvents( connection, { getState }, action );
 
 			expect( connection.sendLog ).not.to.have.been.called;
-			expect( connection.sendStagingEvent ).not.to.have.been.called;
+			expect( connection.sendEvent ).not.to.have.been.called;
 		} );
 
 		it( 'should not send log events if the Happychat connection is unassigned', () => {
@@ -405,7 +405,7 @@ describe( 'middleware', () => {
 			sendActionLogsAndEvents( connection, { getState }, action );
 
 			expect( connection.sendLog ).not.to.have.been.called;
-			expect( connection.sendStagingEvent ).not.to.have.been.called;
+			expect( connection.sendEvent ).not.to.have.been.called;
 		} );
 
 		it( 'should send matching events when Happychat is connected and assigned', () => {
@@ -429,7 +429,7 @@ describe( 'middleware', () => {
 			expect( connection.sendLog.callCount ).to.equal( 4 );
 			// The two whitelisted analytics events and the HAPPYCHAT_BLUR action itself
 			// will be sent as customer events
-			expect( connection.sendStagingEvent.callCount ).to.equal( 3 );
+			expect( connection.sendEvent.callCount ).to.equal( 3 );
 		} );
 	} );
 } );
