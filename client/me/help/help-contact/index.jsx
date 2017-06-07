@@ -591,6 +591,7 @@ const HelpContact = React.createClass( {
 	 */
 	getView: function() {
 		const { olark, confirmation } = this.state;
+		const { translate } = this.props;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -630,11 +631,12 @@ const HelpContact = React.createClass( {
 			// removed and re-mounted. Using `confirmation` in component state would mean you could
 			// ask a new Directy question every time you left the help section and came back.
 			const directlyConfirmation = {
-				title: this.props.translate( 'We\'re on it!' ),
-				message: this.props.translate(
-					'Our {{strong}}Expert Users{{/strong}} have received your question and ' +
-					'you will be hearing back shortly. Feel free to close this page if you need ' +
-					'and we\'ll send you an email when our experts respond.',
+				title: translate( "We're on it!" ),
+				message: translate(
+					'We sent your question to our {{strong}}Expert Users{{/strong}}. ' +
+					'You will hear back via email as soon as an Expert has responded ' +
+					'(usually within an hour). For now you can close this window or ' +
+					'continue using WordPress.com.',
 					{
 						components: {
 							strong: <strong />
@@ -654,7 +656,7 @@ const HelpContact = React.createClass( {
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) &&
 					<Notice
 						status="is-warning"
-						text={ this.props.translate( 'We had trouble loading the support information for your account. ' +
+						text={ translate( 'We had trouble loading the support information for your account. ' +
 							'Please check your internet connection and reload the page, or try again later.' ) }
 						showDismiss={ false }
 					/>

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -9,11 +10,11 @@ import { expect } from 'chai';
 import { hasUserAskedADirectlyQuestion } from '../';
 
 describe( 'hasUserAskedADirectlyQuestion()', () => {
-	const questionData = {
+	const questionData = deepFreeze( {
 		questionText: 'ABC',
 		name: '123',
 		email: 'fake@wordpress.com'
-	};
+	} );
 
 	it( 'should be false when null', () => {
 		const state = { help: { directly: { questionAsked: null } } };
