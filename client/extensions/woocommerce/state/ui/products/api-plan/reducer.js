@@ -18,7 +18,7 @@ export default createReducer( null, {
 	[ WOOCOMMERCE_EDIT_PRODUCT_APIPLAN_CLEAR ]: handleApiPlanClear,
 	[ WOOCOMMERCE_EDIT_PRODUCT_APIPLAN_STEP_START ]: handleApiPlanStepStart,
 	[ WOOCOMMERCE_EDIT_PRODUCT_APIPLAN_STEP_END ]: handleApiPlanStepEnd,
-	// TODO: Handle edit actions (e.g. [ WOOCOMMERCE_EDIT_PRODUCT ]: handleEditProduct, )
+	// TODO: Handle edit actions (e.g. [ WOOCOMMERCE_PRODUCT_EDIT ]: handleEditProduct, )
 } );
 
 /* TODO: Handle edit actions (for category too)
@@ -62,4 +62,3 @@ function handleApiPlanStepEnd( apiPlan, action ) {
 
 	return newPlan;
 }
-

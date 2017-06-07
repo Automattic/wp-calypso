@@ -3,13 +3,13 @@
  */
 import { createReducer } from 'state/utils';
 import {
-	WOOCOMMERCE_API_CREATE_PRODUCT,
-	WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS,
+	WOOCOMMERCE_PRODUCT_CREATE,
+	WOOCOMMERCE_PRODUCT_CREATE_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 export default createReducer( {}, {
-	[ WOOCOMMERCE_API_CREATE_PRODUCT ]: createProduct,
-	[ WOOCOMMERCE_API_CREATE_PRODUCT_SUCCESS ]: createProductSuccess,
+	[ WOOCOMMERCE_PRODUCT_CREATE ]: createProduct,
+	[ WOOCOMMERCE_PRODUCT_CREATE_SUCCESS ]: createProductSuccess,
 } );
 
 function createProduct( state ) {

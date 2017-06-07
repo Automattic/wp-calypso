@@ -9,15 +9,15 @@ import { expect } from 'chai';
 import reducer from 'woocommerce/state/sites/reducer';
 import { LOADING } from 'woocommerce/state/constants';
 import {
-	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL,
-	WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL_SUCCESS,
+	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
+	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should mark the settings general tree as "loading"', () => {
 		const siteId = 123;
 		const action = {
-			type: WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL,
+			type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 			siteId,
 		};
 
@@ -32,7 +32,7 @@ describe( 'reducer', () => {
 			{},
 		];
 		const action = {
-			type: WOOCOMMERCE_API_FETCH_SETTINGS_GENERAL_SUCCESS,
+			type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 			siteId,
 			data: settings,
 		};

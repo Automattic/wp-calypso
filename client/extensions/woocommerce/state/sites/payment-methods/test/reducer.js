@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import reducer from '../../reducer';
 import { LOADING } from 'woocommerce/state/constants';
 import {
-	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS,
-	WOOCOMMERCE_API_FETCH_PAYMENT_METHODS_SUCCESS,
+	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
+	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
@@ -18,7 +18,7 @@ describe( 'reducer', () => {
 		const siteId = 123;
 		const state = {};
 		const action = {
-			type: WOOCOMMERCE_API_FETCH_PAYMENT_METHODS,
+			type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
 			siteId,
 			data: {},
 		};
@@ -31,7 +31,7 @@ describe( 'reducer', () => {
 		const siteId = 123;
 		const state = {};
 		const action = {
-			type: WOOCOMMERCE_API_FETCH_PAYMENT_METHODS_SUCCESS,
+			type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 			siteId,
 			data: [
 				{ id: 'foo', title: 'foo' },

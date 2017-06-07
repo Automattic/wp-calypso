@@ -12,8 +12,8 @@ import { LOADING } from 'woocommerce/state/constants';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	WOOCOMMERCE_API_FETCH_SHIPPING_ZONES,
-	WOOCOMMERCE_API_FETCH_SHIPPING_ZONES_SUCCESS,
+	WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
+	WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
@@ -39,7 +39,7 @@ describe( 'actions', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchShippingZones( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_API_FETCH_SHIPPING_ZONES, siteId } );
+			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_SHIPPING_ZONES_REQUEST, siteId } );
 		} );
 
 		it( 'should dispatch a success action with shipping zone information when request completes', () => {
@@ -49,7 +49,7 @@ describe( 'actions', () => {
 
 			return response.then( () => {
 				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_API_FETCH_SHIPPING_ZONES_SUCCESS,
+					type: WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
 					siteId,
 					data: [ {
 						id: 0,
