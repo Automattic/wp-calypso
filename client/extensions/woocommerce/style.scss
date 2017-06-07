@@ -57,4 +57,17 @@
 		display: inline-block;
 		flex-grow: 1;
 	}
+
+	li {
+		&.is-child-item {
+			a {
+				font-size: 12px;
+				padding: 8px 16px 8px 55px;
+			}
+
+			svg {
+				display: none;
+			}
+		}
+	}
 }

@@ -21,9 +21,10 @@ class StoreSidebar extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		sidebarItems: PropTypes.arrayOf( PropTypes.shape( {
-			icon: PropTypes.string.isRequired,
+			icon: PropTypes.string,
 			isPrimary: PropTypes.bool.isRequired,
 			label: PropTypes.string.isRequired,
+			parentSlug: PropTypes.string,
 			path: PropTypes.string.isRequired,
 			slug: PropTypes.string.isRequired,
 		} ) ),
@@ -40,7 +41,7 @@ class StoreSidebar extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	itemLinkClass = ( path, existingClasses, disabled ) => {
+	itemLinkClass = ( path, existingClasses, isChild, isDisabled ) => {
 		const classSet = {};
 
 		if ( typeof existingClasses !== 'undefined' ) {
@@ -53,8 +54,12 @@ class StoreSidebar extends Component {
 			} );
 		}
 
-		if ( disabled ) {
+		if ( isDisabled ) {
 			classSet[ 'is-placeholder' ] = true;
+		}
+
+		if ( isChild ) {
+			classSet[ 'is-child-item' ] = true;
 		}
 
 		classSet.selected = this.isItemLinkSelected( path );
@@ -72,13 +77,14 @@ class StoreSidebar extends Component {
 		}, this );
 	}
 
-	renderSidebarMenuItems = ( items, buttons, disabled ) => {
+	renderSidebarMenuItems = ( items, buttons, isDisabled ) => {
 		return items.map( function( item, index ) {
+			const isChild = ( 'undefined' !== typeof item.parentSlug );
 			const itemLink = getLink( item.path, this.props.site );
 			const itemButton = buttons.filter( button => button.parentSlug === item.slug ).map( button => {
 				return (
 					<SidebarButton
-						disabled={ disabled }
+						disabled={ isDisabled }
 						href={ getLink( button.path, this.props.site ) }
 						key={ button.slug }
 					>
@@ -88,8 +94,8 @@ class StoreSidebar extends Component {
 			} );
 			return (
 				<SidebarItem
-					className={ this.itemLinkClass( itemLink, item.slug, disabled ) }
-					icon={ item.icon }
+					className={ this.itemLinkClass( itemLink, item.slug, isChild, isDisabled ) }
+					icon={ isChild ? '' : item.icon }
 					key={ index }
 					label={ item.label }
 					link={ itemLink }
