@@ -15,7 +15,6 @@ export default {
 				<WebPreviewContent
 					previewUrl={ `https://${ context.params.site }/?iframe=true&preview=true` }
 					showClose={ false }
-					loadingMessage="Beep beep poop…"
 				/>
 			</div>
 		);
