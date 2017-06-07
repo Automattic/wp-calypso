@@ -33,29 +33,42 @@ describe( 'getSites()', () => {
 		expect( sites ).to.eql( [] );
 	} );
 
+	it( 'should return the primary site if the user has only one site', () => {
+		const state = {
+			...currentUserState,
+			sites: {
+				items: {
+					2916288: { ID: 2916288, name: 'WordPress.com Example Blog' }
+				}
+			}
+		};
+
+		const sites = getSites( state );
+		expect( sites ).to.have.length( 1 );
+	} );
+
+	it( 'should return the sites lists if the user has no primary site', () => {
+		const state = {
+			...currentUserState,
+			sites: {
+				items: {
+					2916287: { ID: 2916287, name: 'WordPress.com Example Blog' },
+					2916286: { ID: 2916286, name: 'WordPress.com Example Blog' }
+				}
+			}
+		};
+
+		const sites = getSites( state );
+		expect( sites ).to.have.length( 2 );
+	} );
+
 	it( 'should return all the sites in state', () => {
 		const state = {
 			...currentUserState,
 			sites: {
 				items: {
-					2916284: {
-						ID: 2916284,
-						visible: true,
-						name: 'WordPress.com Example Blog',
-						URL: 'https://example.wordpress.com',
-						options: {
-							unmapped_url: 'https://example.wordpress.com'
-						}
-					},
-					2916285: {
-						ID: 2916285,
-						visible: false,
-						name: 'WordPress.com Way Better Example Blog',
-						URL: 'https://example2.wordpress.com',
-						options: {
-							unmapped_url: 'https://example2.wordpress.com'
-						}
-					}
+					2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
+					2916285: { ID: 2916285, name: 'WordPress.com Way Better Example Blog' }
 				}
 			},
 			siteSettings: {
@@ -73,18 +86,9 @@ describe( 'getSites()', () => {
 			...currentUserState,
 			sites: {
 				items: {
-					2916287: {
-						ID: 2916287,
-						name: 'WordPress.com Example Blog',
-					},
-					2916288: {
-						ID: 2916288,
-						name: 'WordPress.com Way Better Example Blog',
-					},
-					2916289: {
-						ID: 2916289,
-						name: 'WordPress.com Another Example Blog',
-					}
+					2916287: { ID: 2916287, name: 'WordPress.com Example Blog' },
+					2916288: { ID: 2916288, name: 'WordPress.com Way Better Example Blog' },
+					2916289: { ID: 2916289, name: 'WordPress.com Another Example Blog' }
 				}
 			},
 			siteSettings: {
