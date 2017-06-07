@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { includes, noop } from 'lodash';
+import { flowRight, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import Gridicon from 'gridicons';
@@ -23,6 +24,8 @@ import { userCan } from 'lib/site/utils';
 import versionCompare from 'lib/version-compare';
 import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
 import config from 'config';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite, getSiteOption } from 'state/sites/selectors';
 
 /**
  * This function return true if the image editor can be
@@ -53,33 +56,6 @@ const enableImageEditing = ( site ) => {
 	return true;
 };
 
-/**
- * This function return true if the video editor can be
- * enabled/shown
- *
- * @param  {object} item - media item
- * @param  {object} site - current site
- * @return {boolean} `true` if the video editor can be enabled.
- */
-const enableVideoEditing = ( item, site ) => {
-	// do not show if the feature flag isn't set
-	if ( ! config.isEnabled( 'post-editor/video-editor' ) ) {
-		return false;
-	}
-
-	// do not allow for Jetpack site with VideoPress disabled
-	if ( get( site, 'jetpack', false ) ) {
-		if ( ! MediaUtils.isVideoPressItem( item ) ) {
-			return false;
-		}
-	// do not allow for wpcom site with VideoPress disabled
-	} else if ( ! site.options.videopress_enabled ) {
-		return false;
-	}
-
-	return true;
-};
-
 class EditorMediaModalDetailItem extends Component {
 	static propTypes = {
 		site: PropTypes.object,
@@ -100,6 +76,33 @@ class EditorMediaModalDetailItem extends Component {
 		onEdit: noop,
 		onRestore: noop,
 	};
+
+	/**
+	 * This function returns true if the video editor can be enabled/shown.
+	 *
+	 * @param  {Object}  item Media item
+	 * @return {Boolean} Whether the video editor can be enabled
+	 */
+	enableVideoEditing( item ) {
+		// do not show if the feature flag isn't set
+		if ( ! config.isEnabled( 'post-editor/video-editor' ) ) {
+			return false;
+		}
+
+		const { isJetpack, isVideoPressDisabled } = this.props;
+
+		// do not allow for Jetpack site with VideoPress disabled
+		if ( isJetpack ) {
+			if ( ! MediaUtils.isVideoPressItem( item ) ) {
+				return false;
+			}
+		// do not allow for wpcom site with VideoPress disabled
+		} else if ( isVideoPressDisabled ) {
+			return false;
+		}
+
+		return true;
+	}
 
 	renderEditButton() {
 		const {
@@ -200,9 +203,7 @@ class EditorMediaModalDetailItem extends Component {
 	}
 
 	renderVideoEditorButtons( item, classes ) {
-		const { site } = this.props;
-
-		if ( ! enableVideoEditing( item, site ) ) {
+		if ( ! this.enableVideoEditing( item ) ) {
 			return null;
 		}
 
@@ -332,4 +333,18 @@ class EditorMediaModalDetailItem extends Component {
 	}
 }
 
-export default localize( EditorMediaModalDetailItem );
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			isJetpack: isJetpackSite( state, siteId ),
+			isVideoPressDisabled: ! getSiteOption( state, siteId, 'videopress_enabled' ),
+		};
+	}
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+)( EditorMediaModalDetailItem );
