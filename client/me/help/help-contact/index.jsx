@@ -38,6 +38,7 @@ import { openChat as openHappychat } from 'state/ui/happychat/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
 import {
+	hasUserAskedADirectlyQuestion,
 	isDirectlyFailed,
 	isDirectlyReady,
 	isDirectlyUninitialized,
@@ -492,13 +493,16 @@ const HelpContact = React.createClass( {
 					onSubmit: this.submitDirectlyQuestion,
 					buttonLabel: translate( 'Ask an Expert' ),
 					formDescription: translate(
-						'Chat with an {{strong}}Expert User{{/strong}} of WordPress.com. ' +
-						'These are other users, like yourself, that have been selected ' +
-						'because of their knowledge to help answer your questions. ' +
-						'{{strong}}Please do not{{/strong}} provide financial or ' +
-						'contact information when submitting this form.',
+						'Get help from an {{strong}}Expert User{{/strong}} of WordPress.com. ' +
+						'These are other users, like yourself, who have been selected because ' +
+						'of their knowledge to help answer your questions.' +
+						'{{br/}}{{br/}}' +
+						'{{strong}}Please do not{{/strong}} provide financial or contact ' +
+						'information when submitting this form.',
 						{
 							components: {
+								// Need to use linebreaks since the entire text is wrapped in a <p>...</p>
+								br: <br />,
 								strong: <strong />
 							}
 						} ),
@@ -587,6 +591,7 @@ const HelpContact = React.createClass( {
 	 */
 	getView: function() {
 		const { olark, confirmation } = this.state;
+		const { translate } = this.props;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -620,6 +625,27 @@ const HelpContact = React.createClass( {
 
 		const supportVariation = this.getSupportVariation();
 
+		if ( supportVariation === SUPPORT_DIRECTLY && this.props.hasAskedADirectlyQuestion ) {
+			// We're taking the Directly confirmation outside the standard `confirmation` state object
+			// that other variations use, because we need this to persist even if the component is
+			// removed and re-mounted. Using `confirmation` in component state would mean you could
+			// ask a new Directy question every time you left the help section and came back.
+			const directlyConfirmation = {
+				title: translate( "We're on it!" ),
+				message: translate(
+					'We sent your question to our {{strong}}Expert Users{{/strong}}. ' +
+					'You will hear back via email as soon as an Expert has responded ' +
+					'(usually within an hour). For now you can close this window or ' +
+					'continue using WordPress.com.',
+					{
+						components: {
+							strong: <strong />
+						}
+					} )
+			};
+			return <HelpContactConfirmation { ...directlyConfirmation } />;
+		}
+
 		const contactFormProps = Object.assign(
 			this.getContactFormCommonProps( supportVariation ),
 			this.getContactFormPropsVariation( supportVariation ),
@@ -630,7 +656,7 @@ const HelpContact = React.createClass( {
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) &&
 					<Notice
 						status="is-warning"
-						text={ this.props.translate( 'We had trouble loading the support information for your account. ' +
+						text={ translate( 'We had trouble loading the support information for your account. ' +
 							'Please check your internet connection and reload the page, or try again later.' ) }
 						showDismiss={ false }
 					/>
@@ -661,6 +687,7 @@ export default connect(
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
+			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
 			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
