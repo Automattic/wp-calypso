@@ -41,16 +41,10 @@ export const sanitizeSettings = settings => {
 			case 'cache_mobile_prefixes':
 			case 'cache_mod_rewrite':
 			case 'cache_next_gc':
-			case 'cache_readonly':
-			case 'cache_writable':
-			case 'generated':
-			case 'is_preload_enabled':
 			case 'is_preloading':
 			case 'minimum_preload_interval':
 			case 'post_count':
 			case 'preload_refresh':
-			case 'supercache':
-			case 'wpcache':
 				return undefined;
 			default:
 				return setting;

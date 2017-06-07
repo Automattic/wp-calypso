@@ -14,18 +14,9 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS,
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_STATS,
 } from '../action-types';
-import { errorNotice, removeNotice } from 'state/notices/actions';
-
-/**
- * Returns an action object to be used in signalling that stats have been received.
- *
- * @param  {Number} siteId Site ID
- * @param  {Object} stats Stats object
- * @return {Object} Action object
- */
-export const receiveStats = ( siteId, stats ) => ( { type: WP_SUPER_CACHE_RECEIVE_STATS, siteId, stats } );
+import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { getSiteTitle } from 'state/sites/selectors';
 
 /*
  * Retrieves stats for a site.
@@ -34,25 +25,26 @@ export const receiveStats = ( siteId, stats ) => ( { type: WP_SUPER_CACHE_RECEIV
  * @returns {Function} Action thunk that requests stats for a given site
  */
 export const generateStats = ( siteId ) => {
-	return ( dispatch ) => {
-		dispatch( {
-			type: WP_SUPER_CACHE_GENERATE_STATS,
-			siteId,
-		} );
+	return ( dispatch, getState ) => {
+		dispatch( { type: WP_SUPER_CACHE_GENERATE_STATS, siteId } );
+		dispatch( removeNotice( 'wpsc-cache-stats' ) );
 
 		return wp.req.get( { path: `/jetpack-blogs/${ siteId }/rest-api/` }, { path: '/wp-super-cache/v1/stats' } )
 			.then( ( { data } ) => {
-				dispatch( receiveStats( siteId, data ) );
-				dispatch( {
-					type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
-					siteId,
-				} );
+				dispatch( { type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS, siteId, stats: data } );
+				dispatch( successNotice(
+					translate( 'Cache stats regenerated on %(siteTitle)s.',
+						{ args: { siteTitle: getSiteTitle( getState(), siteId ) } }
+					),
+					{ id: 'wpsc-cache-stats' }
+				) );
 			} )
 			.catch( () => {
-				dispatch( {
-					type: WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
-					siteId,
-				} );
+				dispatch( { type: WP_SUPER_CACHE_GENERATE_STATS_FAILURE, siteId } );
+				dispatch( errorNotice(
+					translate( 'There was a problem regenerating the stats. Please try again.' ),
+					{ id: 'wpsc-cache-stats' }
+				) );
 			} );
 	};
 };

@@ -14,11 +14,6 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	errorNotice,
-	removeNotice,
-	successNotice,
-} from 'state/notices/actions';
 import { generateStats } from './state/stats/actions';
 import {
 	getSiteTitle,
@@ -27,7 +22,6 @@ import {
 import {
 	getStats,
 	isGeneratingStats,
-	isStatsGenerationSuccessful,
 } from './state/stats/selectors';
 
 class ContentsTab extends Component {
@@ -36,6 +30,7 @@ class ContentsTab extends Component {
 		handleDeleteCache: PropTypes.func.isRequired,
 		isDeleting: PropTypes.bool,
 		isMultisite: PropTypes.bool,
+		isReadOnly: PropTypes.bool.isRequired,
 		site: PropTypes.object.isRequired,
 		siteTitle: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -64,30 +59,6 @@ class ContentsTab extends Component {
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.isGenerating || ! prevProps.isGenerating ) {
-			return;
-		}
-
-		const {
-			isSuccessful,
-			siteTitle,
-			translate,
-		} = this.props;
-
-		if ( isSuccessful ) {
-			this.props.successNotice(
-				translate( 'Cache stats regenerated on %(site)s.', { args: { site: siteTitle } } ),
-				{ id: 'wpsc-cache-stats' }
-			);
-		} else {
-			this.props.errorNotice(
-				translate( 'There was a problem regenerating the stats. Please try again.' ),
-				{ id: 'wpsc-cache-stats' }
-			);
-		}
-	}
-
 	deleteCache = () => {
 		this.setState( { isDeleting: true } );
 		this.props.handleDeleteCache( false, false );
@@ -103,10 +74,7 @@ class ContentsTab extends Component {
 		this.props.handleDeleteCache( true, false );
 	}
 
-	generateStats = () => {
-		this.props.removeNotice( 'wpsc-cache-stats' );
-		this.props.generateStats( this.props.siteId );
-	}
+	generateStats = () => this.props.generateStats( this.props.siteId );
 
 	render() {
 		const {
@@ -116,9 +84,11 @@ class ContentsTab extends Component {
 			isDeleting,
 			isGenerating,
 			isMultisite,
+			isReadOnly,
 			stats,
 			translate,
 		} = this.props;
+		const isDisabled = isDeleting || isReadOnly;
 		const supercache = ( get( stats, 'supercache', {} ) );
 		const wpcache = ( get( stats, 'wpcache', {} ) );
 
@@ -236,14 +206,14 @@ class ContentsTab extends Component {
 							compact
 							primary
 							busy={ this.state.isDeletingExpired }
-							disabled={ isDeleting }
+							disabled={ isDisabled }
 							onClick={ this.deleteExpiredCache }>
 							{ translate( 'Delete Expired' ) }
 						</Button>
 						<Button
 							compact
 							busy={ this.state.isDeleting }
-							disabled={ isDeleting }
+							disabled={ isDisabled }
 							onClick={ this.deleteCache }>
 							{ translate( 'Delete Cache' ) }
 						</Button>
@@ -251,7 +221,7 @@ class ContentsTab extends Component {
 							<Button
 								compact
 								busy={ this.state.isDeletingAll }
-								disabled={ isDeleting }
+								disabled={ isDisabled }
 								onClick={ this.deleteAllCaches }>
 								{ translate( 'Delete Cache On All Blogs' ) }
 							</Button>
@@ -268,24 +238,17 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const stats = getStats( state, siteId );
 		const isGenerating = isGeneratingStats( state, siteId );
-		const isSuccessful = isStatsGenerationSuccessful( state, siteId );
 		const isMultisite = isJetpackSiteMultiSite( state, siteId );
 		const siteTitle = getSiteTitle( state, siteId );
 
 		return {
 			isGenerating,
 			isMultisite,
-			isSuccessful,
 			siteTitle,
 			stats,
 		};
 	},
-	{
-		errorNotice,
-		generateStats,
-		removeNotice,
-		successNotice,
-	},
+	{ generateStats },
 );
 
 const getFormSettings = settings => {

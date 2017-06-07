@@ -25,7 +25,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SiteCard from './site-card';
 import Spinner from 'components/spinner';
-import StepHeader from 'signup/step-header';
+import FormattedHeader from 'components/formatted-header';
 import userUtilities from 'lib/user/utils';
 import versionCompare from 'lib/version-compare';
 import { decodeEntities } from 'lib/formatting';
@@ -69,7 +69,6 @@ class LoggedInForm extends Component {
 		requestHasExpiredSecretError: PropTypes.func.isRequired,
 		requestHasXmlrpcError: PropTypes.func.isRequired,
 		retryAuth: PropTypes.func.isRequired,
-		selectedPlan: PropTypes.string,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object.isRequired,
@@ -146,7 +145,7 @@ class LoggedInForm extends Component {
 
 		return (
 			<div>
-				<StepHeader
+				<FormattedHeader
 					headerText={ headerText }
 					subHeaderText={ subHeaderText } />
 				{ siteCard }

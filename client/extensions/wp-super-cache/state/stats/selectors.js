@@ -15,29 +15,7 @@ function getStatsState( state ) {
  * @return {Boolean} Whether stats are being generated
  */
 export function isGeneratingStats( state, siteId ) {
-	return get( getStatsState( state ), [ 'generateStatus', siteId, 'generating' ], false );
-}
-
-/**
- * Returns true if the stats were generated successfully.
- *
- * @param  {Object}  state Global state tree
- * @param  {Number}  siteId Site ID
- * @return {Boolean} Whether the stats generation was successful
- */
-export function isStatsGenerationSuccessful( state, siteId ) {
-	return getStatsGenerationStatus( state, siteId ) === 'success';
-}
-
-/**
- * Returns the status of the last stats generation request.
- *
- * @param  {Object}  state Global state tree
- * @param  {Number}  siteId Site ID
- * @return {String}  Stats generation request status (pending, success or error)
- */
-export function getStatsGenerationStatus( state, siteId ) {
-	return get( getStatsState( state ), [ 'generateStatus', siteId, 'status' ] );
+	return get( getStatsState( state ), [ 'generating', siteId ], false );
 }
 
 /**

@@ -13,42 +13,23 @@ import {
 	WP_SUPER_CACHE_DELETE_FILE,
 	WP_SUPER_CACHE_DELETE_FILE_FAILURE,
 	WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_STATS,
 	WP_SUPER_CACHE_GENERATE_STATS,
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 } from '../action-types';
 
 /**
- * Returns the updated stats generation state after an action has been dispatched.
- * Stats generation state tracks whether the stats for a site are currently being generated.
+ * Returns the updated generating state after an action has been dispatched.
+ * Generating state tracks whether the stats for a site are currently being generated.
  *
- * @param  {Object} state Current stats generation state
+ * @param  {Object} state Current generating state
  * @param  {Object} action Action object
- * @return {Object} Updated stats generation state
+ * @return {Object} Updated generating state
  */
-const generateStatus = createReducer( {}, {
-	[ WP_SUPER_CACHE_GENERATE_STATS ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			generating: true,
-			status: 'pending',
-		}
-	} ),
-	[ WP_SUPER_CACHE_GENERATE_STATS_SUCCESS ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			generating: false,
-			status: 'success',
-		}
-	} ),
-	[ WP_SUPER_CACHE_GENERATE_STATS_FAILURE ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: {
-			generating: false,
-			status: 'error',
-		}
-	} )
+export const generating = createReducer( {}, {
+	[ WP_SUPER_CACHE_GENERATE_STATS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+	[ WP_SUPER_CACHE_GENERATE_STATS_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ WP_SUPER_CACHE_GENERATE_STATS_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
 } );
 
 /**
@@ -73,7 +54,7 @@ const deleting = createReducer( {}, {
  * @return {Object} Updated stats
  */
 const items = createReducer( {}, {
-	[ WP_SUPER_CACHE_RECEIVE_STATS ]: ( state, { siteId, stats } ) => ( { ...state, [ siteId ]: stats } ),
+	[ WP_SUPER_CACHE_GENERATE_STATS_SUCCESS ]: ( state, { siteId, stats } ) => ( { ...state, [ siteId ]: stats } ),
 	[ WP_SUPER_CACHE_DELETE_FILE_SUCCESS ]: ( state, { siteId, url, isSupercache, isCached } ) => {
 		const cacheType = isSupercache ? 'supercache' : 'wpcache';
 		const listType = isCached ? 'cached_list' : 'expired_list';
@@ -98,6 +79,6 @@ const items = createReducer( {}, {
 
 export default combineReducers( {
 	deleting,
-	generateStatus,
+	generating,
 	items,
 } );

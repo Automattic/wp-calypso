@@ -1,14 +1,18 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import debugFactory from 'debug';
 import {
 	camelCase,
 	deburr,
+	first,
 	head,
+	indexOf,
 	kebabCase,
+	last,
 	map,
 	omit,
 	reduce,
@@ -30,11 +34,14 @@ import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import wp from 'lib/wp';
+import ExtraInfoFrForm from 'components/domains/registrant-extra-info/fr-form';
+import config from 'config';
 
+const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented(),
 	countriesList = countriesListForDomainRegistrations();
 
-class DomainDetailsForm extends Component {
+class DomainDetailsForm extends PureComponent {
 	constructor( props, context ) {
 		super( props, context );
 
@@ -53,11 +60,19 @@ class DomainDetailsForm extends Component {
 			'fax'
 		];
 
+		const steps = [
+			'mainForm',
+			...this.getRequiredExtraSteps()
+		];
+
 		this.state = {
 			form: null,
 			isDialogVisible: false,
 			submissionCount: 0,
-			phoneCountryCode: 'US'
+			phoneCountryCode: 'US',
+			registrantExtraInfo: null,
+			steps,
+			currentStep: first( steps ),
 		};
 	}
 
@@ -82,6 +97,7 @@ class DomainDetailsForm extends Component {
 		const sanitizedFieldValues = Object.assign( {}, fieldValues );
 		this.fieldNames.forEach( ( fieldName ) => {
 			if ( typeof fieldValues[ fieldName ] === 'string' ) {
+				// TODO: Deep
 				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
 				if ( fieldName === 'postalCode' ) {
 					sanitizedFieldValues[ fieldName ] = sanitizedFieldValues[ fieldName ].toUpperCase();
@@ -92,14 +108,23 @@ class DomainDetailsForm extends Component {
 		onComplete( sanitizedFieldValues );
 	}
 
+	hasAnotherStep() {
+		return this.state.currentStep !== last( this.state.steps );
+	}
+
+	switchToNextStep() {
+		const newStep = this.state.steps[ indexOf( this.state.steps, this.state.currentStep ) + 1 ];
+		debug( 'Switching to step: ' + newStep );
+		this.setState( { currentStep: newStep } );
+	}
+
 	validate = ( fieldValues, onComplete ) => {
 		if ( this.needsOnlyGoogleAppsDetails() ) {
 			wpcom.validateGoogleAppsContactInformation( fieldValues, this.generateValidationHandler( onComplete ) );
 			return;
 		}
 
-		const allFieldValues = Object.assign( {}, fieldValues );
-		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
+		const allFieldValues = this.getAllFieldValues();
 		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
 		wpcom.validateDomainContactInformation( allFieldValues, domainNames, this.generateValidationHandler( onComplete ) );
 	}
@@ -160,6 +185,27 @@ class DomainDetailsForm extends Component {
 		} );
 	}
 
+	getAllFieldValues() {
+		const allFieldValues = Object.assign(
+			{},
+			formState.getAllFieldValues( this.state.form ),
+			this.state.registrantExtraInfo
+				? { registrantExtraInfo: this.state.registrantExtraInfo }
+				: {}
+		);
+		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
+		return allFieldValues;
+	}
+
+	getRequiredExtraSteps() {
+		if ( ! config.isEnabled( 'domains/cctlds' ) ) {
+			// All we need to do to disable everything is not show the .FR form
+			return [];
+		}
+
+		return cartItems.hasTld( this.props.cart, 'fr' ) ? [ 'fr' ] : [];
+	}
+
 	getNumberOfDomainRegistrations() {
 		return cartItems.getDomainRegistrations( this.props.cart ).length;
 	}
@@ -190,9 +236,13 @@ class DomainDetailsForm extends Component {
 	}
 
 	renderSubmitButton() {
+		const continueText = this.hasAnotherStep()
+			? this.props.translate( 'Continue' )
+			: this.props.translate( 'Continue to Checkout' );
+
 		return (
 			<FormButton className="checkout__domain-details-form-submit-button" onClick={ this.handleSubmitButtonClick }>
-				{ this.props.translate( 'Continue to Checkout' ) }
+				{ continueText }
 			</FormButton>
 		);
 	}
@@ -212,6 +262,11 @@ class DomainDetailsForm extends Component {
 				isDialogVisible={ this.state.isDialogVisible }
 				productsList={ this.props.productsList } />
 		);
+	}
+
+	handleExtraChange = ( registrantExtraInfo ) => {
+		// TODO FIXME: sanitize and validate!
+		this.setState( { registrantExtraInfo } );
 	}
 
 	renderNameFields() {
@@ -330,6 +385,18 @@ class DomainDetailsForm extends Component {
 		);
 	}
 
+	renderExtraDetailsForm() {
+		return ( <ExtraInfoFrForm
+			isProbablyOrganization={ Boolean( formState.getFieldValue( this.state.form, 'organization' ) ) }
+			countryCode={ formState.getFieldValue( this.state.form, 'countryCode' ) }
+			values={ this.state.registrantExtraInfo }
+			countriesList={ countriesList }
+			onStateChange={ this.handleExtraChange } >
+				{ this.renderSubmitButton() }
+			</ExtraInfoFrForm>
+		);
+	}
+
 	handleCheckboxChange = () => {
 		this.setPrivacyProtectionSubscriptions( ! this.allDomainRegistrationsHavePrivacy() );
 	}
@@ -355,6 +422,10 @@ class DomainDetailsForm extends Component {
 			if ( hasErrors ) {
 				this.focusFirstError();
 				return;
+			}
+
+			if ( this.hasAnotherStep() ) {
+				return this.switchToNextStep();
 			}
 
 			if ( ! this.allDomainRegistrationsHavePrivacy() ) {
@@ -401,8 +472,8 @@ class DomainDetailsForm extends Component {
 	finish( options = {} ) {
 		this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
 
-		const allFieldValues = Object.assign( {}, formState.getAllFieldValues( this.state.form ) );
-		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
+		const allFieldValues = this.getAllFieldValues();
+		debug( 'finish: allFieldValues:', allFieldValues );
 		setDomainDetails( allFieldValues );
 		addGoogleAppsRegistrationData( allFieldValues );
 	}
@@ -415,6 +486,16 @@ class DomainDetailsForm extends Component {
 		}
 	}
 
+	renderCurrentForm() {
+		switch ( this.state.currentStep ) {
+			// TODO: gather up tld specific stuff
+			case 'fr':
+				return this.renderExtraDetailsForm();
+			default:
+				return this.renderDetailsForm();
+		}
+	}
+
 	render() {
 		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails(),
 			classSet = classNames( {
@@ -424,7 +505,10 @@ class DomainDetailsForm extends Component {
 			} );
 
 		let title;
-		if ( needsOnlyGoogleAppsDetails ) {
+		// TODO: gather up tld specific stuff
+		if ( this.state.currentStep === 'fr' ) {
+			title = this.props.translate( '.FR Registration' );
+		} else if ( needsOnlyGoogleAppsDetails ) {
 			title = this.props.translate( 'G Suite Account Information' );
 		} else {
 			title = this.props.translate( 'Domain Contact Information' );
@@ -434,9 +518,10 @@ class DomainDetailsForm extends Component {
 			<div>
 				{ cartItems.hasDomainRegistration( this.props.cart ) && this.renderPrivacySection() }
 				<PaymentBox
+					currentPage={ this.state.currentStep }
 					classSet={ classSet }
 					title={ title }>
-					{ this.renderDetailsForm() }
+					{ this.renderCurrentForm() }
 				</PaymentBox>
 			</div>
 		);

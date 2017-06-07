@@ -10,13 +10,13 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
-	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
-	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
-	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
-	TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 } from 'state/action-types';
 
 export const isRequesting = createReducer( false, {
@@ -45,18 +45,19 @@ export const requestNotice = createReducer( null, {
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { notice } ) => notice
 } );
 
-const updateTwoStepNonce = ( state, { twoStepNonce } ) => Object.assign( {}, state, {
-	two_step_nonce: twoStepNonce
+const updateTwoStepNonce = ( state, { twoStepNonce, nonceType } ) => Object.assign( {}, state, {
+	[ `two_step_nonce_${ nonceType }` ]: twoStepNonce
 } );
 
 export const twoFactorAuth = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data, rememberMe } ) => data ? { ...data, remember_me: rememberMe } : null,
-	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE ]: updateTwoStepNonce,
-	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: updateTwoStepNonce,
-	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: updateTwoStepNonce,
-	[ TWO_FACTOR_AUTHENTICATION_PUSH_UPDATE_NONCE ]: updateTwoStepNonce,
-	[ LOGIN_REQUEST_FAILURE ]: () => null
+	[ LOGIN_REQUEST_FAILURE ]: () => null,
+	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { twoStepNonce } ) =>
+		updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } ),
+	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { twoStepNonce } ) =>
+		updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } ),
+	[ TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE ]: updateTwoStepNonce,
 } );
 
 export const isRequestingTwoFactorAuth = createReducer( false, {

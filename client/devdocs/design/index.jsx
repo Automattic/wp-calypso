@@ -71,6 +71,9 @@ import VerticalMenu from 'components/vertical-menu/docs/example';
 import Banner from 'components/banner/docs/example';
 import EmojifyExample from 'components/emojify/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
+import FormattedHeader from 'components/formatted-header/docs/example';
+import EmptyContent from 'components/empty-content/docs/example';
+import ExtraInfoFrForm from 'components/domains/registrant-extra-info/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -102,20 +105,16 @@ let DesignAssets = React.createClass( {
 			<Main className="design">
 				{ component
 					? <HeaderCake onClick={ this.backToComponents } backText="All Components">
-						{ slugToCamelCase( component ) }
-					</HeaderCake>
-
+							{ slugToCamelCase( component ) }
+						</HeaderCake>
 					: <SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ filter }
-						placeholder="Search components…"
-						analyticsGroup="Docs" />
-				}
+							onSearch={ this.onSearch }
+							initialValue={ filter }
+							placeholder="Search components…"
+							analyticsGroup="Docs"
+						/> }
 
-				<Collection
-					component={ component }
-					filter={ filter }
-				>
+				<Collection component={ component } filter={ filter }>
 					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
 					<Banner />
 					<BulkSelect />
@@ -130,12 +129,15 @@ let DesignAssets = React.createClass( {
 					<DropZones searchKeywords="drag" />
 					<EllipsisMenu />
 					<EmojifyExample />
+					<EmptyContent />
 					<ExternalLink />
 					<FAQ />
 					<FeatureGate />
 					<FilePickers />
 					<FoldableCard />
+					<FormattedHeader />
 					<FormFields searchKeywords="input textbox textarea radio" />
+					{ config.isEnabled( 'domains/cctlds' ) && <ExtraInfoFrForm /> }
 					<Gauge />
 					<GlobalNotices />
 					<Gravatar />
@@ -169,32 +171,32 @@ let DesignAssets = React.createClass( {
 				</Collection>
 			</Main>
 		);
-	}
+	},
 } );
 
 if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-	const mapStateToProps = ( state ) => {
+	const mapStateToProps = state => {
 		const { componentsUsageStats } = state;
 
 		return componentsUsageStats;
 	};
 
-	const mapDispatchToProps = ( dispatch ) => {
-		return bindActionCreators( {
-			dispatchFetchComponentsUsageStats: fetchComponentsUsageStats
-		}, dispatch );
+	const mapDispatchToProps = dispatch => {
+		return bindActionCreators(
+			{
+				dispatchFetchComponentsUsageStats: fetchComponentsUsageStats,
+			},
+			dispatch
+		);
 	};
 
 	DesignAssets.propTypes = {
 		componentsUsageStats: PropTypes.object,
 		isFetching: PropTypes.bool,
-		dispatchFetchComponentsUsageStats: PropTypes.func
+		dispatchFetchComponentsUsageStats: PropTypes.func,
 	};
 
-	DesignAssets = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
+	DesignAssets = connect( mapStateToProps, mapDispatchToProps )( DesignAssets );
 }
 
 export default DesignAssets;

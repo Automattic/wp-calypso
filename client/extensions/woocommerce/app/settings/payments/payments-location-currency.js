@@ -1,17 +1,38 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import AddressView from '../../../components/address-view';
+import AddressView from 'woocommerce/components/address-view';
 import Card from 'components/card';
-import ExtendedHeader from '../../../components/extended-header';
+import ExtendedHeader from 'woocommerce/components/extended-header';
+import FormSelect from 'components/forms/form-select';
+
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 
 class SettingsPaymentsLocationCurrency extends Component {
+	static propTypes = {
+		currency: PropTypes.shape( {
+			options: PropTypes.object,
+			value: PropTypes.string,
+		} ),
+		fetchSettingsGeneral: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
+	};
+
+	componentDidMount() {
+		const { siteId } = this.props;
+		this.props.fetchSettingsGeneral( siteId );
+	}
+
 	constructor( props ) {
 		super( props );
 
@@ -26,8 +47,16 @@ class SettingsPaymentsLocationCurrency extends Component {
 		};
 	}
 
+	renderOption = ( option, options ) => {
+		return (
+			<option key={ option } value={ option }>
+				{ options[ option ] }
+			</option>
+		);
+	}
+
 	render() {
-		const { translate } = this.props;
+		const { currency, translate } = this.props;
 		return (
 			<div>
 				<ExtendedHeader
@@ -41,6 +70,15 @@ class SettingsPaymentsLocationCurrency extends Component {
 				<Card>
 					<AddressView
 						address={ this.state.address } />
+
+					<FormSelect className="payments__currency-select" value={ currency.value }>
+						{
+							currency.options &&
+							Object.keys( currency.options ).map(
+								( o ) => this.renderOption( o, currency.options )
+							)
+						}
+					</FormSelect>
 				</Card>
 			</div>
 		);
@@ -48,4 +86,22 @@ class SettingsPaymentsLocationCurrency extends Component {
 
 }
 
-export default localize( SettingsPaymentsLocationCurrency );
+function mapStateToProps( state ) {
+	const siteId = getSelectedSiteId( state );
+	const currency = getPaymentCurrencySettings( state, siteId );
+	return {
+		currency,
+		siteId,
+	};
+}
+
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchSettingsGeneral
+		},
+		dispatch
+	);
+}
+
+export default localize( connect( mapStateToProps, mapDispatchToProps )( SettingsPaymentsLocationCurrency ) );

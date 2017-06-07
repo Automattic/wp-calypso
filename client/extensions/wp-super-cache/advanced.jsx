@@ -31,10 +31,13 @@ const Advanced = ( {
 		refresh_current_only_on_comments,
 	},
 	handleAutosavingToggle,
+	isReadOnly,
 	isRequesting,
 	isSaving,
 	translate,
 } ) => {
+	const isDisabled = isRequesting || isSaving || isReadOnly;
+
 	return (
 		<div>
 			<SectionHeader
@@ -45,7 +48,7 @@ const Advanced = ( {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! is_mfunc_enabled }
-							disabled={ isRequesting || isSaving || !! cache_mod_rewrite }
+							disabled={ isDisabled || !! cache_mod_rewrite }
 							onChange={ handleAutosavingToggle( 'is_mfunc_enabled' ) }>
 							<span>
 								{ translate(
@@ -68,7 +71,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! is_mobile_enabled }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'is_mobile_enabled' ) }>
 							<span>
 								{ translate(
@@ -116,7 +119,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! disable_utf8 }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'disable_utf8' ) }>
 							<span>
 								{ translate(
@@ -128,7 +131,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! clear_cache_on_post_edit }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'clear_cache_on_post_edit' ) }>
 							<span>
 								{ translate( 'Clear all cache files when a post or page is published or updated.' ) }
@@ -137,7 +140,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! front_page_checks }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'front_page_checks' ) }>
 							<span>
 								{ translate(
@@ -151,7 +154,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! refresh_current_only_on_comments }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'refresh_current_only_on_comments' ) }>
 							<span>
 								{ translate( 'Only refresh current page when comments made.' ) }
@@ -160,7 +163,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! cache_list }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'cache_list' ) }>
 							<span>
 								{ translate( 'List the newest cached pages on this page.' ) }
@@ -169,7 +172,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ ! cache_disable_locking }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'cache_disable_locking' ) }>
 							<span>
 								{ translate( 'Coarse file locking. You do not need this as it will slow down your website.' ) }
@@ -178,7 +181,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! cache_late_init }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'cache_late_init' ) }>
 							<span>
 								{ translate(

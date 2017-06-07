@@ -32,10 +32,10 @@ class FollowingManageEmptyContent extends React.Component {
 				{ this.props.translate( 'Explore Discover' ) }
 			</a>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 		return (
 			<EmptyContent
+				className="is-drake"
 				action={ action }
 				title={ this.props.translate( "You haven't followed any sites yet" ) }
 				line={ this.props.translate( 'Search for a site above or explore Discover.' ) }
@@ -43,6 +43,7 @@ class FollowingManageEmptyContent extends React.Component {
 				illustrationWidth={ 500 }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

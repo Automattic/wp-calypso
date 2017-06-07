@@ -9,14 +9,13 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
 import Shipping from './app/settings/shipping';
-import StatsController from './app/stats/controller';
+import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
 
 const getStorePages = () => {
@@ -153,18 +152,12 @@ function addStorePage( storePage, storeNavigation ) {
 }
 
 function createStoreNavigation( context, next ) {
-	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
-
 	renderWithReduxStore(
-		React.createElement(
-			StoreSidebar, {
-				path: context.path,
-				site: selectedSite,
-				sidebarItems: getStoreSidebarItems(),
-				sidebarItemButtons: getStoreSidebarItemButtons(),
-			}
-		),
+		React.createElement( StoreSidebar, {
+			path: context.path,
+			sidebarItems: getStoreSidebarItems(),
+			sidebarItemButtons: getStoreSidebarItemButtons(),
+		} ),
 		document.getElementById( 'secondary' ),
 		context.store
 	);

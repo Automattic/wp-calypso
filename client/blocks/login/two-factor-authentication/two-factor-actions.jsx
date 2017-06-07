@@ -11,8 +11,6 @@ import page from 'page';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import {
-	getTwoFactorUserId,
-	getTwoFactorAuthNonce,
 	isTwoFactorAuthTypeSupported,
 } from 'state/login/selectors';
 import { sendSmsCode } from 'state/login/actions';
@@ -20,32 +18,33 @@ import { login } from 'lib/paths';
 
 class TwoFactorActions extends Component {
 	static propTypes = {
-		isAuthenticatorSupported: PropTypes.bool,
-		isSmsSupported: PropTypes.bool,
+		isAuthenticatorSupported: PropTypes.bool.isRequired,
+		isSmsSupported: PropTypes.bool.isRequired,
+		sendSmsCode: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
-		twoStepNonce: PropTypes.string.isRequired,
 	};
 
 	sendSmsCode = ( event ) => {
 		event.preventDefault();
 
-		const { userId, twoStepNonce } = this.props;
-
 		page( login( { isNative: true, twoFactorAuthType: 'sms' } ) );
 
-		this.props.sendSmsCode( userId, twoStepNonce );
+		this.props.sendSmsCode( );
 	};
 
 	render() {
 		const {
 			isAuthenticatorSupported,
-			isPushSupported,
 			isSmsSupported,
 			translate,
 			twoFactorAuthType,
 		} = this.props;
 
-		if ( twoFactorAuthType === 'sms' && ! isAuthenticatorSupported && ! isPushSupported ) {
+		const isSmsAvailable = isSmsSupported && twoFactorAuthType !== 'sms';
+		const isAuthenticatorAvailable = isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
+
+		if ( ! isSmsAvailable && ! isAuthenticatorAvailable ) {
 			return null;
 		}
 
@@ -55,7 +54,7 @@ class TwoFactorActions extends Component {
 					{ translate( 'Or continue to your account using:' ) }
 				</p>
 
-				{ isSmsSupported && twoFactorAuthType !== 'sms' && (
+				{ isSmsAvailable && (
 					<p>
 						<a href="#" onClick={ this.sendSmsCode }>
 							{ translate( 'Code via text message' ) }
@@ -63,18 +62,10 @@ class TwoFactorActions extends Component {
 					</p>
 				) }
 
-				{ isAuthenticatorSupported && twoFactorAuthType !== 'authenticator' && (
+				{ isAuthenticatorAvailable && (
 					<p>
 						<a href={ login( { isNative: true, twoFactorAuthType: 'authenticator' } ) }>
 							{ translate( 'Your Authenticator app' ) }
-						</a>
-					</p>
-				) }
-
-				{ isPushSupported && twoFactorAuthType !== 'push' && (
-					<p>
-						<a href={ login( { isNative: true, twoFactorAuthType: 'push' } ) }>
-							{ translate( 'The WordPress mobile app' ) }
 						</a>
 					</p>
 				) }
@@ -85,11 +76,8 @@ class TwoFactorActions extends Component {
 
 export default connect(
 	( state ) => ( {
-		twoStepNonce: getTwoFactorAuthNonce( state ),
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
-		isPushSupported: isTwoFactorAuthTypeSupported( state, 'push' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
-		userId: getTwoFactorUserId( state ),
 	} ),
 	{
 		sendSmsCode,

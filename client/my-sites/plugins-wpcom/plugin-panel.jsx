@@ -42,7 +42,7 @@ export const PluginPanel = ( {
 		const accessError = {
 			title: translate( 'Not Available' ),
 			line: translate( 'The page you requested could not be found' ),
-			illustration: '/calypso/images/drake/drake-404.svg',
+			illustration: '/calypso/images/illustrations/illustration-404.svg',
 			fullWidth: true
 		};
 		return (

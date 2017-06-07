@@ -18,8 +18,6 @@ import SitesWindowScroller from './sites-window-scroller';
 import SyncReaderFollows from 'components/data/sync-reader-follows';
 import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';
-import { getFeed as getReaderFeed, getFeeds } from 'state/reader/feeds/selectors';
-import { getSite as getReaderSite } from 'state/reader/sites/selectors';
 import { getReaderFollows, getReaderFollowsCount } from 'state/selectors';
 import UrlSearch from 'lib/url-search';
 import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
@@ -39,12 +37,17 @@ class FollowingManageSubscriptions extends Component {
 	};
 
 	filterFollowsByQuery( query ) {
-		const { getFeed, getSite, follows } = this.props;
+		const { follows } = this.props;
+
+		if ( ! query ) {
+			return follows;
+		}
+
 		const phraseRe = new RegExp( escapeRegexp( query ), 'i' );
 
 		return follows.filter( follow => {
-			const feed = getFeed( follow.feed_ID ); // todo grab feed and site for current sub
-			const site = getSite( follow.site_ID );
+			const feed = follow.feed;
+			const site = follow.site;
 			const siteName = getSiteName( { feed, site } );
 			const siteUrl = getSiteUrl( { feed, site } );
 			const siteDescription = getSiteDescription( { feed, site } );
@@ -59,12 +62,10 @@ class FollowingManageSubscriptions extends Component {
 	}
 
 	sortFollows( follows, sortOrder ) {
-		const { getFeed, getSite } = this.props;
-
 		if ( sortOrder === 'alpha' ) {
 			return sortBy( follows, follow => {
-				const feed = getFeed( follow.feed_ID );
-				const site = getSite( follow.site_ID );
+				const feed = follow.feed;
+				const site = follow.site;
 				const displayUrl = formatUrlForDisplay( follow.URL );
 				return trimStart( getFeedTitle( site, feed, displayUrl ).toLowerCase() );
 			} );
@@ -78,7 +79,7 @@ class FollowingManageSubscriptions extends Component {
 	};
 
 	render() {
-		const { width, translate, query, followsCount, sortOrder, feeds } = this.props;
+		const { width, translate, query, followsCount, sortOrder } = this.props;
 		const filteredFollows = this.filterFollowsByQuery( query );
 		const sortedFollows = this.sortFollows( filteredFollows, sortOrder );
 		const noSitesMatchQuery = isEmpty( sortedFollows );
@@ -124,7 +125,7 @@ class FollowingManageSubscriptions extends Component {
 							sites={ sortedFollows }
 							width={ width }
 							remoteTotalCount={ sortedFollows.length }
-							forceRefresh={ [ feeds, sortedFollows ] }
+							forceRefresh={ sortedFollows }
 							windowScrollerRef={ this.props.windowScrollerRef }
 							followSource={ READER_SUBSCRIPTIONS }
 						/> }
@@ -144,11 +145,7 @@ class FollowingManageSubscriptions extends Component {
 const mapStateToProps = state => {
 	const follows = getReaderFollows( state );
 	const followsCount = getReaderFollowsCount( state );
-	const feeds = getFeeds( state );
-	const getFeed = feedId => getReaderFeed( state, feedId );
-	const getSite = siteId => getReaderSite( state, siteId );
-
-	return { follows, followsCount, getFeed, getSite, feeds };
+	return { follows, followsCount };
 };
 
 export default connect( mapStateToProps )( localize( UrlSearch( FollowingManageSubscriptions ) ) );

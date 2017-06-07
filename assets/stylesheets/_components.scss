@@ -89,6 +89,7 @@
 @import 'components/domains/example-domain-suggestions/style';
 @import 'components/domains/map-domain-step/style';
 @import 'components/domains/register-domain-step/style';
+@import 'components/domains/registrant-extra-info/style';
 @import 'components/drop-zone/style';
 @import 'components/ellipsis-menu/style';
 @import 'components/email-verification/style';
@@ -100,6 +101,7 @@
 @import 'components/feature-example/style';
 @import 'components/first-view/style';
 @import 'components/foldable-card/style';
+@import 'components/formatted-header/style';
 @import 'components/forms/counted-textarea/style';
 @import 'components/forms/form-button/style';
 @import 'components/forms/form-buttons-bar/style';
@@ -194,6 +196,7 @@
 @import 'components/seo-preview-pane/style';
 @import 'components/tooltip/style';
 @import 'components/upgrades/credit-card-number-input/style';
+@import 'components/upgrades/google-apps/google-apps-dialog/style';
 @import 'components/user/style';
 @import 'components/version/style';
 @import 'components/vertical-nav/style';
@@ -372,6 +375,11 @@
 @import 'blocks/site/style';
 @import 'my-sites/sites/style';
 @import 'my-sites/stats/style';
+@import 'my-sites/stats/activity-log/style';
+@import 'my-sites/stats/activity-log-banner/style';
+@import 'my-sites/stats/activity-log-confirm-dialog/style';
+@import 'my-sites/stats/activity-log-day/style';
+@import 'my-sites/stats/activity-log-item/style';
 @import 'my-sites/stats/all-time/style';
 @import 'my-sites/stats/geochart/style';
 @import 'my-sites/stats/most-popular/style';
@@ -416,6 +424,7 @@
 @import 'my-sites/stats/stats-list/style';
 @import 'notices/style';
 @import 'my-sites/upgrades/domain-management/style';
+@import 'my-sites/upgrades/domain-management/email/style';
 @import 'my-sites/upgrades/domain-management/components/icann-verification/style';
 @import 'post-editor/style';
 @import 'post-editor/edit-post-status/style';
@@ -476,13 +485,13 @@
 @import 'signup/locale-suggestions/style';
 @import 'signup/navigation-link/style';
 @import 'signup/processing-screen/style';
-@import 'signup/step-header/style';
 @import 'signup/step-wrapper/style';
 @import 'signup/steps/design-type-with-store/pressable-store/style';
 @import 'signup/steps/design-type-with-store/style';
 @import 'signup/steps/design-type/style';
 @import 'signup/steps/domains/style';
 @import 'signup/steps/site-or-domain/style';
+@import 'signup/steps/site-picker/style';
 @import 'signup/steps/survey/style';
 @import 'signup/steps/plans/style';
 @import 'signup/steps/site/style';

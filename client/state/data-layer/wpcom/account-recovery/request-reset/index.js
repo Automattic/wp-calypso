@@ -9,7 +9,7 @@ import {
 	setResetMethod,
 } from 'state/account-recovery/reset/actions';
 
-export const handleRequestReset = ( { dispatch }, action, next ) => {
+export const handleRequestReset = ( { dispatch }, action ) => {
 	const {
 		userData,
 		method,
@@ -27,8 +27,6 @@ export const handleRequestReset = ( { dispatch }, action, next ) => {
 		dispatch( setResetMethod( method ) );
 	} )
 	.catch( ( error ) => dispatch( requestResetError( error ) ) );
-
-	return next( action );
 };
 
 export default {

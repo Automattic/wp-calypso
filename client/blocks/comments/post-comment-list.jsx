@@ -13,7 +13,7 @@ import { get, size, takeRight } from 'lodash';
 import {
 	getPostCommentsTree,
 	getPostTotalCommentsCount,
-	haveMoreCommentsToFetch
+	haveMoreCommentsToFetch,
 } from 'state/comments/selectors';
 import {
 	requestPostComments
@@ -310,7 +310,7 @@ export default connect(
 		{
 			commentsTree: getPostCommentsTree( state, ownProps.post.site_ID, ownProps.post.ID, ownProps.commentsFilter ),
 			totalCommentsCount: getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID ),
-			haveMoreCommentsToFetch: haveMoreCommentsToFetch( state, ownProps.post.site_ID, ownProps.post.ID )
+			haveMoreCommentsToFetch: haveMoreCommentsToFetch( state, ownProps.post.site_ID, ownProps.post.ID ),
 		}
 	),
 	( dispatch ) => bindActionCreators( {

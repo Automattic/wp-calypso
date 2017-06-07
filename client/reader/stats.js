@@ -8,7 +8,6 @@ import debugFactory from 'debug';
  * Internal Dependencies
  */
 import { mc, ga, tracks } from 'lib/analytics';
-import SubscriptionStore from 'lib/reader-feed-subscriptions';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 
@@ -89,7 +88,7 @@ function getLocation() {
 
 export function recordTrack( eventName, eventProperties ) {
 	debug( 'reader track', ...arguments );
-	const subCount = SubscriptionStore.getTotalSubscriptions();
+	const subCount = 0; // todo: fix subCount by moving to redux middleware for recordTrack
 
 	// Add location as ui_algo prop
 	const location = getLocation();

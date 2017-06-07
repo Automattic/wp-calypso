@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import config from 'config';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,78 +15,103 @@ import Animate from 'components/animate';
 import ProgressIndicator from 'components/progress-indicator';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import analytics from 'lib/analytics';
-import { userCan } from 'lib/site/utils';
+import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
+import { canCurrentUser } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getUpdatesBySiteId } from 'state/sites/updates/selectors';
+import { updateWordPress } from 'state/sites/updates/actions';
+import {
+	getSiteConnectionStatus,
+	isRequestingSiteConnectionStatus,
+	isSiteAutomatedTransfer,
+	isWordpressUpdateSuccessful,
+} from 'state/selectors';
 
-export default React.createClass( {
-	displayName: 'SiteIndicator',
+class SiteIndicator extends Component {
+	static propTypes = {
+		site: PropTypes.object,
 
-	propTypes: {
-		site: React.PropTypes.object.isRequired
-	},
+		// connected props
+		siteIsJetpack: PropTypes.bool,
+		siteUpdates: PropTypes.object,
+		siteIsConnected: PropTypes.bool,
+		requestingConnectionStatus: PropTypes.bool,
+	}
 
-	getInitialState() {
-		return { expand: false };
-	},
+	state = { expand: false };
 
 	hasUpdate() {
-		return this.props.site.updates && ! this.hasError() && this.props.site.updates.total > 0;
-	},
+		const { siteUpdates } = this.props;
+		return siteUpdates && ! this.hasError() && siteUpdates.total > 0;
+	}
 
 	hasError() {
-		var site = this.props.site;
-		if ( site.unreachable ) {
-			return true;
-		}
-		return false;
-	},
+		return this.props.siteIsConnected === false;
+	}
 
 	hasWarning() {
-		var site = this.props.site;
+		const {
+			requestingConnectionStatus,
+			site,
+			siteIsConnected,
+			siteIsJetpack,
+		} = this.props;
 
-		if ( site.jetpack && ! site.hasMinimumJetpackVersion ) {
-			if ( site.callingHome ) {
-				return false;
-			} else if ( typeof site.unreachable === 'undefined' ) {
-				if ( 'function' === typeof site.callHome ) {
-					site.callHome();
-				}
+		if ( siteIsJetpack && ! site.hasMinimumJetpackVersion ) {
+			if ( requestingConnectionStatus ) {
 				return false;
 			}
-			return true;
+
+			return siteIsConnected;
 		}
+
 		return false;
-	},
+	}
 
 	showIndicator() {
-		// Until WP.com and Automated Transfer sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
-		const { site } = this.props;
-		const isJetpackSite = site.jetpack && ! get( site, 'options.is_automated_transfer' );
-		return userCan( 'manage_options', site ) &&
-			isJetpackSite &&
-			( this.hasUpdate() || this.hasError() || this.hasWarning() || this.state.updateError );
-	},
+		const {
+			siteIsAutomatedTransfer,
+			siteIsJetpack,
+			userCanManage,
+		} = this.props;
 
-	toggleExpand() {
+		// Until WP.com sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
+		return (
+			userCanManage &&
+			siteIsJetpack &&
+			! siteIsAutomatedTransfer &&
+			( this.hasUpdate() || this.hasError() || this.hasWarning() || this.state.updateError )
+		);
+	}
+
+	toggleExpand = () => {
 		this.setState( {
 			updateError: false,
 			updateSucceed: false,
 			expand: ! this.state.expand
 		} );
 
-		analytics.ga.recordEvent( 'Site-Indicator', 'Clicked to ' + ( ! this.state.expand ? 'Expand' : 'Collapse' ) + ' the Site Indicator' );
-	},
+		const action = ! this.state.expand ? 'Expand' : 'Collapse';
+		analytics.ga.recordEvent( 'Site-Indicator', `Clicked to ${ action } the Site Indicator` );
+	}
 
 	updatesAvailable() {
-		if ( config.isEnabled( 'jetpack_core_inline_update' ) && this.props.site.updates.wordpress && this.props.site.updates.wp_update_version ) {
+		const { site, siteUpdates, translate } = this.props;
+		if ( config.isEnabled( 'jetpack_core_inline_update' ) && siteUpdates.wordpress && siteUpdates.wp_update_version ) {
 			return (
 				<span>
 					{
-						this.translate( 'A newer version of WordPress is available. {{link}}Update to %(version)s{{/link}}', {
+						translate( 'A newer version of WordPress is available. {{link}}Update to %(version)s{{/link}}', {
 							components: {
-								link: <button className="button is-link" onClick={ this.handleUpdate } />
+								link: (
+									<a
+										onClick={ this.handleUpdate }
+										href={ site.options.admin_url + 'update-core.php' }
+									/>
+								)
 							},
 							args: {
-								version: this.props.site.updates.wp_update_version
+								version: siteUpdates.wp_update_version
 							}
 						} )
 					}
@@ -93,13 +119,21 @@ export default React.createClass( {
 			);
 		}
 
-		if ( this.props.site.updates.plugins === this.props.site.updates.total && this.props.site.canUpdateFiles ) {
+		if ( siteUpdates.plugins === siteUpdates.total && site.canUpdateFiles ) {
 			return (
 				<span>
 					<a
 						onClick={ this.handlePluginsUpdate }
-						href={ '/plugins/updates/' + this.props.site.slug } >
-						{ this.translate( 'There is a plugin update available.', 'There are plugin updates available.', { count: this.props.site.updates.total } ) }
+						href={ '/plugins/updates/' + site.slug } >
+						{
+							translate(
+								'There is a plugin update available.',
+								'There are plugin updates available.',
+								{
+									count: siteUpdates.total
+								}
+							)
+						}
 					</a>
 				</span>
 			);
@@ -110,101 +144,148 @@ export default React.createClass( {
 				'Site-Indicator',
 				'Clicked updates available link to wp-admin updates',
 				'Total Updates',
-				this.props.site.updates && this.props.site.updates.total
+				siteUpdates && siteUpdates.total
 			);
 
 		return (
 			<span>
 				<a
 					onClick={ recordEvent }
-					href={ this.props.site.options.admin_url + 'update-core.php' } >
-					{ this.translate( 'There is an update available.', 'There are updates available.', { count: this.props.site.updates.total } ) }
+					href={ site.options.admin_url + 'update-core.php' } >
+					{ translate( 'There is an update available.', 'There are updates available.', { count: siteUpdates.total } ) }
 				</a>
 			</span>
 		);
-	},
+	}
 
-	onUpdateError() {
+	onUpdateError = () => {
 		this.setState( {
 			expand: true,
 			updating: false,
 			updateError: true
 		} );
-	},
+	}
 
-	onUpdateSuccess() {
+	onUpdateSuccess = () => {
 		this.setState( {
 			updating: false,
 			updateSucceed: true
 		} );
-		this.timer = setTimeout( function() {
+
+		this.timer = setTimeout( () => {
 			this.setState( { updateSucceed: false } );
 			this.timer = null;
-		}.bind( this ), 15000 );
-	},
+		}, 15000 );
+	}
 
-	handlePluginsUpdate() {
+	handlePluginsUpdate = () => {
+		const { siteUpdates } = this.props;
 		window.scrollTo( 0, 0 );
 		this.setState( { expand: false } );
-		analytics.ga.recordEvent( 'Site-Indicator', 'Clicked updates available link to plugins updates', 'Total Updates', this.props.site.updates && this.props.site.updates.total );
-	},
+		analytics.ga.recordEvent(
+			'Site-Indicator',
+			'Clicked updates available link to plugins updates',
+			'Total Updates',
+			siteUpdates && siteUpdates.total
+		);
+	}
 
-	handleUpdate() {
+	handleUpdate = () => {
+		const { wordpressUpdateSuccessful, site } = this.props;
+
 		this.setState( {
 			updating: true,
 			expand: false
 		} );
+
 		this.timer != null ? clearTimeout( this.timer ) : null;
-		this.props.site.updateWordPress( this.onUpdateError, this.onUpdateSuccess );
+
+		this.props.updateWordPress( site.ID ).then( () => {
+			if ( wordpressUpdateSuccessful ) {
+				this.onUpdateSuccess();
+			} else {
+				this.onUpdateError();
+			}
+		} );
 
 		analytics.ga.recordEvent( 'site-indicator', 'Triggered Update WordPress Core Version From Calypso' );
-	},
+	}
 
 	unsupportedJetpackVersion() {
+		const { translate } = this.props;
 		return (
 			<span>
-				{ this.translate( 'Jetpack %(version)s is required', { args: { version: config( 'jetpack_min_version' ) } } ) }.
-				<a
-					onClick={ this.makeAnalyticsRecordEventHandler( 'Clicked Update Jetpack Now Link' ) }
-					href={ this.props.site.options.admin_url + 'plugins.php?plugin_status=upgrade' }
-					>{ this.translate( 'Update now' ) }
-				</a>.
+				{
+					translate( 'Jetpack %(version)s is required. {{link}}Update now{{/link}}', {
+						args: {
+							version: config( 'jetpack_min_version' )
+						},
+						components: {
+							link: (
+								<a
+									onClick={ this.makeAnalyticsRecordEventHandler( 'Clicked Update Jetpack Now Link' ) }
+									href={ this.props.site.options.admin_url + 'plugins.php?plugin_status=upgrade' }
+								/>
+							)
+						}
+					} )
+				}
 			</span> );
-	},
+	}
 
-	makeAnalyticsRecordEventHandler( action ) {
-		return function() {
+	makeAnalyticsRecordEventHandler = ( action ) => {
+		return () => {
 			analytics.ga.recordEvent( 'Site-Indicator', action );
 		};
-	},
+	}
 
 	errorAccessing() {
+		const { site, translate } = this.props;
 		let accessFailedMessage;
 
 		// Don't show the button if the site is not defined.
-		if ( this.props.site ) {
-			accessFailedMessage = <span>{ this.translate( 'This site cannot be accessed.' ) } <DisconnectJetpackButton site={ this.props.site } text={ this.translate( 'Disconnect Site' ) } redirect="/sites" /></span>;
+		if ( site ) {
+			accessFailedMessage = (
+				<span>
+					{ translate( 'This site cannot be accessed.' ) }
+					<DisconnectJetpackButton site={ site } text={ translate( 'Disconnect Site' ) } redirect="/sites" />
+				</span>
+			);
 		} else {
-			accessFailedMessage = <span>{ this.translate( 'This site cannot be accessed.' ) }</span>;
+			accessFailedMessage = (
+				<span>{ translate( 'This site cannot be accessed.' ) }</span>
+			);
 		}
+
 		return accessFailedMessage;
-	},
+	}
 
 	errorUpdating() {
+		const { translate } = this.props;
+
 		return ( <span>
-			{ this.translate( 'There was a problem updating. {{link}}Update on site{{/link}}.',
+			{ translate( 'There was a problem updating. {{link}}Update on site{{/link}}.',
 				{
 					components: {
-						link: <a href={ this.props.site.options.admin_url + 'update-core.php' } onClick={ this.makeAnalyticsRecordEventHandler( 'Clicked Update On Site Link' ) } />
+						link: (
+							<a
+								href={ this.props.site.options.admin_url + 'update-core.php' }
+								onClick={ this.makeAnalyticsRecordEventHandler( 'Clicked Update On Site Link' ) }
+							/>
+						)
 					}
 				}
 			) }
 		</span> );
-	},
+	}
 
 	getText() {
 		if ( this.state.updateError ) {
 			return this.errorUpdating();
+		}
+
+		if ( this.hasWarning() ) {
+			return this.unsupportedJetpackVersion();
 		}
 
 		if ( this.hasUpdate() ) {
@@ -215,58 +296,55 @@ export default React.createClass( {
 			return this.errorAccessing();
 		}
 
-		if ( this.hasWarning() ) {
-			return this.unsupportedJetpackVersion();
-		}
-
 		return null;
-	},
+	}
 
 	getIcon() {
-		if ( this.hasUpdate() ) {
-			return 'sync';
-		}
-
 		if ( this.hasWarning() ) {
 			return 'notice';
+		}
+
+		if ( this.hasUpdate() ) {
+			return 'sync';
 		}
 
 		if ( this.hasError() ) {
 			return 'notice';
 		}
-	},
+	}
 
-	render() {
-		var indicatorClass, textClass, progressStatus;
+	renderUpdateProgress() {
+		let progressStatus;
 
-		if ( ! this.showIndicator() ) {
-			return null;
+		if ( this.state.updating ) {
+			progressStatus = 'processing';
+		}
+		if ( this.state.updateSucceed ) {
+			progressStatus = 'success';
 		}
 
+		return (
+			<div className="site-indicator__main">
+				<ProgressIndicator key="update-progress" status={ progressStatus } className="site-indicator__progress-indicator" />
+			</div>
+		);
+	}
+
+	renderIndicator() {
 		if ( this.state.updating || this.state.updateSucceed ) {
-			if ( this.state.updating ) {
-				progressStatus = 'processing';
-			}
-			if ( this.state.updateSucceed ) {
-				progressStatus = 'success';
-			}
-			return (
-				<div className="site-indicator">
-					<ProgressIndicator key="update-progress" status={ progressStatus } className="site-indicator__progress-indicator" />
-				</div>
-			);
+			return this.renderUpdateProgress();
 		}
 
-		indicatorClass = classNames( {
+		const indicatorClass = classNames( {
 			'is-expanded': this.state.expand,
 			'is-update': this.hasUpdate(),
 			'is-warning': this.hasWarning(),
 			'is-error': this.hasError(),
 			'is-action': true,
-			'site-indicator': true
+			'site-indicator__main': true
 		} );
 
-		textClass = classNames( {
+		const textClass = classNames( {
 			'is-updating': this.state.updating,
 			'is-updated': this.state.updateSucceed,
 			'site-indicator__action': true
@@ -283,8 +361,8 @@ export default React.createClass( {
 						</button>
 					</Animate>
 				}
-				{ this.state.expand
-					? <div className="site-indicator__message">
+				{ this.state.expand &&
+					<div className="site-indicator__message">
 						<div className={ textClass }>
 							{ this.getText() }
 						</div>
@@ -294,8 +372,37 @@ export default React.createClass( {
 							</Animate>
 						</button>
 					</div>
-					: null }
+				}
 			</div>
 		);
 	}
-} );
+
+	render() {
+		const { site, siteIsJetpack } = this.props;
+
+		return (
+			<div className="site-indicator__wrapper">
+				{ siteIsJetpack && <QuerySiteConnectionStatus siteId={ site.ID } /> }
+
+				{ this.showIndicator() && this.renderIndicator() }
+			</div>
+		);
+	}
+}
+
+export default connect(
+	( state, { site } ) => {
+		return {
+			wordpressUpdateSuccessful: site && isWordpressUpdateSuccessful( state, site.ID ),
+			requestingConnectionStatus: site && isRequestingSiteConnectionStatus( state, site.ID ),
+			siteIsConnected: site && getSiteConnectionStatus( state, site.ID ),
+			siteIsJetpack: site && isJetpackSite( state, site.ID ),
+			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer( state, site.ID ),
+			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),
+			userCanManage: site && canCurrentUser( state, site.ID, 'manage_options' ),
+		};
+	},
+	{
+		updateWordPress
+	}
+)( localize( SiteIndicator ) );

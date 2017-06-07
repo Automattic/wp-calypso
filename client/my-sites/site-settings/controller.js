@@ -24,6 +24,8 @@ import titlecase from 'to-title-case';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/selectors';
+import ImportSettings from './section-import';
+import ExportSettings from './section-export';
 
 /**
  * Module vars
@@ -97,17 +99,11 @@ module.exports = {
 	},
 
 	importSite( context ) {
-		renderPage(
-			context,
-			<SiteSettingsComponent section="import" />
-		);
+		renderPage( context, <ImportSettings /> );
 	},
 
 	exportSite( context ) {
-		renderPage(
-			context,
-			<SiteSettingsComponent section="export" />
-		);
+		renderPage( context, <ExportSettings /> );
 	},
 
 	guidedTransfer( context ) {

@@ -1,0 +1,226 @@
+.email__add-google-apps-card-product-details {
+	@include breakpoint( ">960px" ) {
+		display: flex;
+		flex-basis: 50%;
+	}
+}
+
+.email__add-google-apps-card-description {
+	box-sizing: border-box;
+	font-size: 14px;
+
+	@include breakpoint( ">960px" ) {
+		max-width: 400px;
+	}
+
+	.button {
+		float: none;
+		margin: 1em 0 .5em;
+		padding-left: 2em;
+		padding-right: 2em;
+
+		@include breakpoint( "<960px" ) {
+			width: 100%;
+		}
+	}
+}
+
+.email__add-google-apps-card-product-logo {
+	@include breakpoint( "<660px" ) {
+		width: 236px;
+	}
+
+	@include breakpoint( ">660px" ) {
+		float: left;
+	}
+
+	strong {
+		background: url('/calypso/images/upgrades/g-suite-logo.png') no-repeat left;
+		background-size: 73px;
+		display: inline-block;
+		height: 19px;
+		margin: 0 6px 0 0;
+		text-indent: -999999px;
+		vertical-align: text-top;
+		width: 73px;
+	}
+}
+
+.email__add-google-apps-card-price {
+	margin: 2em 0 1em;
+
+	.email__add-google-apps-card-price-per-user {
+		strong {
+			color: $gray-text;
+			font-size: 24px;
+			font-weight: 300;
+		}
+
+		span {
+			color: $gray-text-min;
+			font-size: 13px;
+			font-weight: normal;
+		}
+	}
+
+	.email__add-google-apps-card-billing-period {
+		color: $gray-text-min;
+		font-size: 13px;
+		font-style: italic;
+
+		@include breakpoint( "<960px" ) {
+			text-align: center;
+		}
+	}
+}
+
+.email__add-google-apps-card-title {
+	color: $gray-dark;
+	font-size: 24px;
+	line-height: 120%;
+	margin: 0 0 10px 0;
+}
+
+.email__add-google-apps-card-sub-title {
+	font-size: 18px;
+}
+
+.email__add-google-apps-card-logos {
+	align-items: center;
+	display: flex;
+	flex-grow: 1;
+	margin-left: 100px;
+	justify-content: center;
+
+	@include breakpoint( "<960px" ) {
+		display: none;
+	}
+}
+
+.email__add-google-apps-card-features {
+	box-sizing: border-box;
+	justify-content: justify-content;
+	margin: 1em 0;
+
+	@include breakpoint( ">960px" ) {
+		display: flex;
+		flex-flow: row wrap;
+	}
+}
+
+.email__add-google-apps-card-feature {
+	display: flex;
+	flex-basis: 50%;
+	justify-content: flex-start;
+	margin-bottom: 1em;
+}
+
+.email__add-google-apps-card-feature-block {
+	align-items: flex-start;
+	padding: 0 1em 0 0;
+
+	p {
+		@include breakpoint( ">960px" ) {
+			max-width: 200px;
+		}
+	}
+}
+
+.email__add-google-apps-card-feature-header {
+	font-size: 17px;
+	font-weight: 600;
+}
+
+.email__add-google-apps-card-secondary-button {
+	.button {
+		float: none;
+		margin: 1em 0;
+		width: 100%;
+
+		@include breakpoint( ">660px" ) {
+			display: none;
+		}
+	}
+}
+
+.email__add-google-apps-card-learn-more {
+	color: $gray-text-min;
+	font-size: 15px;
+	margin-top: 1em;
+	text-align: center;
+}
+
+.domain-management-email {
+	.is-placeholder {
+		.section-header__label {
+			@include placeholder();
+
+			&::before {
+				display: none;
+			}
+		}
+
+		.google-apps-user-item__email,
+		.google-apps-user-item__manage-link {
+			@include placeholder();
+		}
+	}
+}
+
+.google-apps-users-card {
+	margin-bottom: 10px;
+}
+
+.google-apps-users-card__user-list {
+	&.card {
+		padding: 0;
+		@include clear-fix;
+	}
+}
+
+.google-apps-users-card__user-list-inner {
+	list-style: none;
+	margin: 0;
+
+	li {
+		border-top: 1px solid $gray-light;
+		padding: 20px 24px;
+		@include clear-fix;
+
+		&:first-of-type {
+			border-top: none;
+		}
+
+		&:last-of-type {
+			border-bottom: 1px solid $gray-light;
+		}
+	}
+
+	.notice {
+		margin: 0;
+	}
+}
+
+.google-apps-user-item__email {
+	float: left;
+}
+
+.google-apps-user-item__manage-link {
+	float: right;
+	font-size: 13px;
+}
+
+.domain-only-site__settings-notice {
+	color: darken( $gray, 20% );
+	margin-top: 30px;
+	text-align: center;
+
+	&::before {
+		background: lighten( $gray, 20% );
+		content: '';
+		display: block;
+		height: 1px;
+		margin: 0 auto 30px;
+		width: 60px;
+	}
+}

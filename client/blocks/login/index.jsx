@@ -13,17 +13,18 @@ import page from 'page';
 import DocumentHead from 'components/data/document-head';
 import LoginForm from './login-form';
 import {
-	getTwoFactorAuthNonce,
 	getRequestError,
 	getRequestNotice,
+	getTwoFactorAuthRequestError,
 	getTwoFactorNotificationSent,
-	isTwoFactorEnabled
+	isTwoFactorEnabled,
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
 import Notice from 'components/notice';
+import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 
 class Login extends Component {
 	static propTypes = {
@@ -32,9 +33,9 @@ class Login extends Component {
 		requestError: PropTypes.object,
 		requestNotice: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
+		twoFactorAuthRequestError: PropTypes.object,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
-		twoStepNonce: PropTypes.string,
 	};
 
 	state = {
@@ -42,18 +43,19 @@ class Login extends Component {
 	};
 
 	componentDidMount = () => {
-		if ( ! this.props.twoStepNonce && this.props.twoFactorAuthType ) {
-			// Disallow access to the 2FA pages unless the user has received a nonce
+		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
+			// Disallow access to the 2FA pages unless the user has 2FA enabled
 			page( login( { isNative: true } ) );
 		}
 	};
 
 	componentWillReceiveProps = ( nextProps ) => {
-		const hasError = this.props.requestError !== nextProps.requestError;
+		const hasLoginError = this.props.requestError !== nextProps.requestError;
+		const hasTwoFactorAuthError = this.props.twoFactorAuthRequestError !== nextProps.twoFactorAuthRequestError;
 		const hasNotice = this.props.requestNotice !== nextProps.requestNotice;
 		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
 
-		if ( isNewPage || hasError || hasNotice ) {
+		if ( isNewPage || hasLoginError || hasTwoFactorAuthError || hasNotice ) {
 			window.scrollTo( 0, 0 );
 		}
 	};
@@ -75,19 +77,30 @@ class Login extends Component {
 			two_factor_enabled: this.props.twoFactorEnabled
 		} );
 
-		window.location.href = this.props.redirectLocation || window.location.origin;
+		const { redirectLocation } = this.props;
+
+		let newHref;
+
+		if ( redirectLocation && redirectLocation.match( /^(?!\/\/)[\/\-a-z0-9.]+$/i ) ) {
+			// only redirect to paths on the current domain
+			newHref = redirectLocation;
+		} else {
+			newHref = window.location.origin;
+		}
+
+		window.location.href = newHref;
 	};
 
 	renderError() {
-		const { requestError } = this.props;
+		const error = this.props.requestError || this.props.twoFactorAuthRequestError;
 
-		if ( ! requestError || requestError.field !== 'global' ) {
+		if ( ! error || error.field !== 'global' ) {
 			return null;
 		}
 
 		return (
 			<Notice status={ 'is-error' } showDismiss={ false }>
-				{ requestError.message }
+				{ error.message }
 			</Notice>
 		);
 	}
@@ -109,26 +122,38 @@ class Login extends Component {
 	renderContent() {
 		const {
 			twoFactorAuthType,
-			twoStepNonce,
+			twoFactorEnabled,
+			twoFactorNotificationSent,
 		} = this.props;
 
 		const {
 			rememberMe,
 		} = this.state;
 
-		if ( twoStepNonce && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
+		let poller;
+		if ( twoFactorEnabled && twoFactorAuthType && twoFactorNotificationSent === 'push' ) {
+			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
+		}
+
+		if ( twoFactorEnabled && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
 			return (
-				<VerificationCodeForm
-					rememberMe={ rememberMe }
-					onSuccess={ this.rebootAfterLogin }
-					twoFactorAuthType={ twoFactorAuthType }
-				/>
+				<div>
+					{ poller }
+					<VerificationCodeForm
+						rememberMe={ rememberMe }
+						onSuccess={ this.rebootAfterLogin }
+						twoFactorAuthType={ twoFactorAuthType }
+					/>
+				</div>
 			);
 		}
 
-		if ( twoStepNonce && twoFactorAuthType === 'push' ) {
+		if ( twoFactorEnabled && twoFactorAuthType === 'push' ) {
 			return (
-				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } />
+				<div>
+					{ poller }
+					<WaitingTwoFactorNotificationApproval />
+				</div>
 			);
 		}
 
@@ -162,9 +187,9 @@ export default connect(
 	( state ) => ( {
 		requestError: getRequestError( state ),
 		requestNotice: getRequestNotice( state ),
+		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
-		twoStepNonce: getTwoFactorAuthNonce( state ),
 	} ), {
 		recordTracksEvent,
 	}

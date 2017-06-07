@@ -318,7 +318,7 @@ export default {
 	},
 	authorize( queryObject ) {
 		return ( dispatch ) => {
-			const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
+			const { _wp_nonce, client_id, redirect_uri, scope, secret, state, jp_version } = queryObject;
 			debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
 			tracksEvent( dispatch, 'calypso_jpc_authorize' );
 			dispatch( {
@@ -332,7 +332,14 @@ export default {
 					type: JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 					data
 				} );
-				return wpcom.undocumented().jetpackAuthorize( client_id, data.code, state, redirect_uri, secret );
+				return wpcom.undocumented().jetpackAuthorize(
+					client_id,
+					data.code,
+					state,
+					redirect_uri,
+					secret,
+					jp_version
+				);
 			} )
 			.then( ( data ) => {
 				tracksEvent( dispatch, 'calypso_jpc_authorize_success', {
@@ -349,7 +356,12 @@ export default {
 				} );
 				// Update the user now that we are fully connected.
 				userFactory().fetch();
-				return wpcom.me().sites( { site_visibility: 'all', include_domain_only: true } );
+				return wpcom.me().sites( {
+					site_visibility: 'all',
+					include_domain_only: true,
+					fields: 'ID,URL,name,capabilities,jetpack,visible,is_private,is_vip,icon,plan,jetpack_modules,single_user_site,is_multisite,options', //eslint-disable-line max-len
+					options: 'is_mapped_domain,unmapped_url,admin_url,is_redirect,is_automated_transfer,allowed_file_types,show_on_front,main_network_site,jetpack_version,software_version,default_post_format,created_at,frame_nonce,publicize_permanently_disabled,page_on_front,page_for_posts,advanced_seo_front_page_description,advanced_seo_title_formats,verification_services_codes,podcasting_archive,is_domain_only' //eslint-disable-line max-len
+				} );
 			} )
 			.then( ( data ) => {
 				tracksEvent( dispatch, 'calypso_jpc_auth_sitesrefresh', {

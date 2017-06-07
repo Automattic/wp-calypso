@@ -61,3 +61,14 @@ export function isTestingCache( state, siteId ) {
 export function getCacheTestResults( state, siteId ) {
 	return get( getCacheState( state ), [ 'items', siteId ], {} );
 }
+
+/**
+ * Returns true if we are preloading the cache for the specified site ID, false otherwise.
+ *
+ * @param  {Object}  state Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean} Whether the cache is being preloaded
+ */
+export function isPreloadingCache( state, siteId ) {
+	return get( getCacheState( state ), [ 'preloading', siteId ], false );
+}

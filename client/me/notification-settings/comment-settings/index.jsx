@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
-import observe from 'lib/mixins/data-observe';
 import Main from 'components/main';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -16,50 +16,42 @@ import Navigation from '../navigation';
 import Card from 'components/card';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import SettingsForm from 'me/notification-settings/settings-form';
+import QueryUserDevices from 'components/data/query-user-devices';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
-const NotificationCommentsSettings = React.createClass( {
-	displayName: 'NotificationCommentsSettings',
-
-	mixins: [ observe( 'devices' ) ],
-
-	getInitialState() {
-		return {
-			settings: null
-		};
-	},
+class NotificationCommentsSettings extends Component {
+	state = { settings: null };
 
 	componentDidMount() {
 		store.on( 'change', this.onChange );
-		this.props.devices.get();
 		fetchSettings();
-	},
+	}
 
 	componentWillUnmount() {
 		store.off( 'change', this.onChange );
-	},
+	}
 
-	onChange() {
+	onChange = () => {
+		const { translate } = this.props;
 		const state = store.getStateFor( 'other' );
 
 		if ( state.error ) {
-			this.props.errorNotice( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice( translate( 'There was a problem saving your changes. Please, try again.' ) );
 		}
 
 		if ( state.status === 'success' ) {
-			this.props.successNotice( this.translate( 'Settings saved successfully!' ) );
+			this.props.successNotice( translate( 'Settings saved successfully!' ) );
 		}
 
 		this.setState( state );
-	},
+	};
 
-	renderForm() {
-		if ( this.props.devices.initialized && this.state.settings ) {
+	renderForm = () => {
+		if ( this.state.settings ) {
 			return ( <SettingsForm
 				sourceId={ 'other' }
-				devices={ this.props.devices }
 				settings={ this.state.settings }
 				settingKeys={ [ 'comment_like', 'comment_reply' ] }
 				hasUnsavedChanges={ this.state.hasUnsavedChanges }
@@ -68,29 +60,35 @@ const NotificationCommentsSettings = React.createClass( {
 		}
 
 		return ( <p className="notification-settings-comment-settings__placeholder">&nbsp;</p> );
-	},
+	};
 
 	render() {
+		const {
+			path,
+			translate
+		} = this.props;
+
 		return (
 			<Main>
+				<QueryUserDevices />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				<Navigation path={ this.props.path } />
+				<Navigation path={ path } />
 
 				<Card>
 					<FormSectionHeading className="is-primary">
-						{ this.translate( 'Comments on other sites' ) }
+						{ translate( 'Comments on other sites' ) }
 					</FormSectionHeading>
-					<p>{ this.translate( 'Control your notification settings when you comment on other blogs.' ) }</p>
+					<p>{ translate( 'Control your notification settings when you comment on other blogs.' ) }</p>
 					{ this.renderForm() }
 				</Card>
 			</Main>
 		);
 	}
-} );
+}
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
-)( NotificationCommentsSettings );
+	{ errorNotice, successNotice }
+)( localize( NotificationCommentsSettings ) );

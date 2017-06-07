@@ -7,14 +7,21 @@
 		width: 100%;
 		overflow: hidden;
 
-		opacity: 0;
-		visibility: hidden;
-		transform: translateZ(0) scale(.8); // Zoom out effect
+		&-appear,
+		&-enter {
+			height: 0;
+			opacity: 0.01;
+			transform: translateZ(0) scale(.8);
+		}
 
-		animation-delay: 0.3s;
-		animation-fill-mode: forwards;
-		animation-duration: 0.4s;
-		animation-name: increase;
+		&-appear-active,
+		&-enter-active {
+			height: auto;
+			opacity: 1;
+			transform: translateZ(0) scale(1);
+			transition-property: height, opacity, transform;
+			transition-duration: 400ms;
+		}
 
 		&:not(.domain-details) {
 			@include breakpoint( "<660px" ) {
@@ -184,7 +191,10 @@
 		}
 	}
 
+	// Turn off number spinners
 	input[type=number] {
+		-moz-appearance: textfield;
+
 		&::-webkit-outer-spin-button,
 		&::-webkit-inner-spin-button {
 			-webkit-appearance: none;
@@ -928,22 +938,6 @@
 .checkout__privacy-protection-free-text {
 	color: $alert-green;
 	padding-left: 8px;
-}
-
-@keyframes increase {
-	from {
-		height: 0;
-		opacity: 0;
-		visibility: hidden;
-		transform: translateZ(0) scale(.8);
-	}
-
-	to {
-		height: auto;
-		opacity: 1;
-		visibility: visible;
-		transform: translateZ(0) scale(1);
-	}
 }
 
 .credit-card-payment-box__progress-bar {

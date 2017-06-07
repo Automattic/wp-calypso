@@ -11,14 +11,12 @@ import analytics from 'lib/analytics';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import devicesFactory from 'lib/devices';
 import NotificationsComponent from 'me/notification-settings/main';
 import CommentSettingsComponent from 'me/notification-settings/comment-settings';
 import WPcomSettingsComponent from 'me/notification-settings/wpcom-settings';
 import NotificationSubscriptions from 'me/notification-settings/reader-subscriptions';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
-const devices = devicesFactory();
 
 export default {
 	notifications( context ) {
@@ -32,7 +30,6 @@ export default {
 		renderWithReduxStore(
 			React.createElement( NotificationsComponent, {
 				userSettings: userSettings,
-				devices: devices,
 				path: context.path
 			} ),
 			document.getElementById( 'primary' ),
@@ -51,7 +48,6 @@ export default {
 		renderWithReduxStore(
 			React.createElement( CommentSettingsComponent,
 				{
-					devices: devices,
 					path: context.path
 				}
 			),
@@ -71,7 +67,6 @@ export default {
 		renderWithReduxStore(
 			React.createElement( WPcomSettingsComponent,
 				{
-					devices: devices,
 					path: context.path
 				}
 			),

@@ -10,7 +10,6 @@ import deepFreeze from 'deep-freeze';
  */
 import {
 	items,
-	requests,
 	totalCommentsCount,
 } from '../reducer';
 import {
@@ -21,12 +20,7 @@ import {
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_RECEIVE,
 	COMMENTS_REMOVE,
-	COMMENTS_REQUEST,
-	COMMENTS_REQUEST_FAILURE
 } from '../../action-types';
-import {
-	createRequestId
-} from '../utils';
 import {
 	PLACEHOLDER_STATE
 } from '../constants';
@@ -155,29 +149,6 @@ describe( 'reducer', () => {
 			expect( result[ '1-1' ][ 0 ].placeholderError ).to.equal( 'error_message' );
 		} );
 	} ); // end of items
-
-	describe( '#requests', () => {
-		it( 'should set state of query according to the action', () => {
-			const postId = 1;
-			const siteId = 1;
-			const requestId = createRequestId( siteId, postId, { after: new Date(), order: 'DESC', number: 10 } );
-
-			const action = {
-				type: COMMENTS_REQUEST,
-				siteId,
-				postId,
-				requestId: requestId
-			};
-
-			const response = requests( undefined, action );
-			expect( response[ '1-1' ][ requestId ] ).to.be.eql( COMMENTS_REQUEST );
-
-			action.type = COMMENTS_REQUEST_FAILURE;
-			const failureResponse = requests( deepFreeze( response ), action );
-
-			expect( failureResponse[ '1-1' ][ requestId ] ).to.be.eql( COMMENTS_REQUEST_FAILURE );
-		} );
-	} ); // end of requests
 
 	describe( '#totalCommentsCount()', () => {
 		it( 'should update post comments count', () => {

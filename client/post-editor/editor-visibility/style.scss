@@ -6,6 +6,68 @@
 	margin: 0;
 }
 
+.editor-visibility__dropdown{
+	text-align: left;
+	width: 100%;
+
+	.select-dropdown,
+	.select-dropdown__container {
+		max-width: 100%;
+		width: 100%;
+	}
+
+	.form-text-input {
+		font-size: 13px;
+		margin-top: 8px;
+	}
+
+	.form-input-validation {
+		padding-bottom: 0;
+	}
+
+	.form-setting-explanation {
+		margin: -4px 0 8px 24px;
+
+		&.password {
+			margin-bottom: 0;
+		}
+	}
+
+	.gridicon {
+		cursor: pointer;
+		vertical-align: middle;
+		margin-right: 4px;
+
+		&:hover {
+			color: $gray-dark;
+		}
+	}
+
+	.gridicons-globe {
+		color: $alert-green;
+	}
+
+	.gridicons-user {
+		color: $alert-yellow;
+	}
+
+	.gridicons-lock {
+		color: $alert-red;
+	}
+
+	.gridicon.is_active {
+		color: $gray-dark;
+
+		&:hover {
+			color: lighten( $gray, 15% );
+		}
+	}
+
+	.is-selected .gridicon {
+		color: #fff;
+	}
+}
+
 .editor-visibility .button {
 	&.is-dialog-open,
 	&.is-touch,

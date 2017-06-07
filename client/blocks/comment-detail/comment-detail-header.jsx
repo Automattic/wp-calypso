@@ -17,10 +17,9 @@ export const CommentDetailHeader = ( {
 	authorDisplayName,
 	authorUrl,
 	commentContent,
-	commentIsApproved,
 	commentIsLiked,
-	commentIsSpam,
-	commentIsTrash,
+	commentStatus,
+	deleteCommentPermanently,
 	edit,
 	isBulkEdit,
 	isExpanded,
@@ -40,10 +39,9 @@ export const CommentDetailHeader = ( {
 				</div>
 				<CommentDetailActions
 					edit={ edit }
-					commentIsApproved={ commentIsApproved }
 					commentIsLiked={ commentIsLiked }
-					commentIsSpam={ commentIsSpam }
-					commentIsTrash={ commentIsTrash }
+					commentStatus={ commentStatus }
+					deleteCommentPermanently={ deleteCommentPermanently }
 					toggleApprove={ toggleApprove }
 					toggleLike={ toggleLike }
 					toggleSpam={ toggleSpam }

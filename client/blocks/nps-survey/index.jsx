@@ -23,6 +23,7 @@ import {
 import {
 	hasAnsweredNpsSurvey,
 } from 'state/nps-survey/selectors';
+import analytics from 'lib/analytics';
 
 class NpsSurvey extends Component {
 	static propTypes = {
@@ -62,6 +63,11 @@ class NpsSurvey extends Component {
 		setTimeout( () => {
 			this.props.onClose( afterClose );
 		}, 0 );
+	}
+
+	componentWillMount() {
+		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_displayed' );
+		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
 	}
 
 	render() {

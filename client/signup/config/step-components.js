@@ -9,12 +9,12 @@ import GetDotBlogPlansStepComponent from 'signup/steps/get-dot-blog-plans';
 import PlansStepComponent from 'signup/steps/plans';
 import SiteComponent from 'signup/steps/site';
 import SiteOrDomainComponent from 'signup/steps/site-or-domain';
+import SitePicker from 'signup/steps/site-picker';
 import SiteTitleComponent from 'signup/steps/site-title';
 import SurveyStepComponent from 'signup/steps/survey';
 import ThemeSelectionComponent from 'signup/steps/theme-selection';
 import UserSignupComponent from 'signup/steps/user';
 import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
-
 
 export default {
 	'design-type': DesignTypeComponent,
@@ -29,6 +29,7 @@ export default {
 	'plans-site-selected': PlansStepWithoutFreePlan,
 	site: SiteComponent,
 	'site-or-domain': SiteOrDomainComponent,
+	'site-picker': SitePicker,
 	'site-title': SiteTitleComponent,
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,

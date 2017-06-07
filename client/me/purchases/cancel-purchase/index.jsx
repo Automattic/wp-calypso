@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 
@@ -92,7 +93,7 @@ const CancelPurchase = React.createClass( {
 		const purchase = getPurchase( this.props ), { refundText, renewDate } = purchase;
 
 		if ( isRefundable( purchase ) ) {
-			return this.translate( '%(refundText)s to be refunded', {
+			return this.props.translate( '%(refundText)s to be refunded', {
 				args: { refundText },
 				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
 			} );
@@ -101,12 +102,12 @@ const CancelPurchase = React.createClass( {
 		const renewalDate = this.moment( renewDate ).format( 'LL' );
 
 		if ( isDomainRegistration( purchase ) ) {
-			return this.translate( 'Domain will be removed on %(renewalDate)s', {
+			return this.props.translate( 'Domain will be removed on %(renewalDate)s', {
 				args: { renewalDate },
 			} );
 		}
 
-		return this.translate( 'Subscription will be removed on %(renewalDate)s', {
+		return this.props.translate( 'Subscription will be removed on %(renewalDate)s', {
 			args: { renewalDate },
 		} );
 	},
@@ -135,13 +136,13 @@ const CancelPurchase = React.createClass( {
 		let heading;
 
 		if ( isDomainRegistration( purchase ) || isOneTimePurchase( purchase ) ) {
-			heading = this.translate( 'Cancel %(purchaseName)s', {
+			heading = this.props.translate( 'Cancel %(purchaseName)s', {
 				args: { purchaseName },
 			} );
 		}
 
 		if ( isSubscription( purchase ) ) {
-			heading = this.translate( 'Cancel Your %(purchaseName)s Subscription', {
+			heading = this.props.translate( 'Cancel Your %(purchaseName)s Subscription', {
 				args: { purchaseName },
 			} );
 		}
@@ -181,4 +182,4 @@ export default connect( ( state, props ) => ( {
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 	selectedPurchase: getByPurchaseId( state, props.purchaseId ),
 	selectedSite: getSelectedSiteSelector( state ),
-} ) )( CancelPurchase );
+} ) )( localize( CancelPurchase ) );

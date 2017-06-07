@@ -3,10 +3,13 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
-import isEmpty from 'lodash/isEmpty';
 import page from 'page';
 import Debug from 'debug';
 import { translate } from 'i18n-calypso';
+import {
+	get,
+	isEmpty,
+} from 'lodash';
 
 /**
  * Internal Dependencies
@@ -32,6 +35,12 @@ import PlansLanding from './plans-landing';
  */
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
 const userModule = userFactory();
+const analyticsPageTitleByType = {
+	install: 'Jetpack Install',
+	personal: 'Jetpack Connect Personal',
+	premium: 'Jetpack Connect Premium',
+	pro: 'Jetpack Install Pro',
+};
 
 const removeSidebar = ( context ) => {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
@@ -54,29 +63,11 @@ const jetpackNewSiteSelector = ( context ) => {
 	);
 };
 
-const jetpackConnectFirstStep = ( context, type ) => {
-	removeSidebar( context );
-
-	userModule.fetch();
-
-	renderWithReduxStore(
-		React.createElement( JetpackConnect, {
-			path: context.path,
-			context: context,
-			type: type,
-			userModule: userModule,
-			locale: context.params.locale,
-			url: context.query.url
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
-};
-
 export default {
 	redirectWithoutLocaleifLoggedIn( context, next ) {
 		if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
 			const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
+			debug( 'redirectWithoutLocaleifLoggedIn to %s', urlWithoutLocale );
 			return page.redirect( urlWithoutLocale );
 		}
 
@@ -96,54 +87,40 @@ export default {
 		next();
 	},
 
-	personal( context ) {
-		const analyticsBasePath = '/jetpack/connect/personal',
-			analyticsPageTitle = 'Jetpack Connect Personal';
-
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		jetpackConnectFirstStep( context, 'personal' );
-	},
-
-	premium( context ) {
-		const analyticsBasePath = '/jetpack/connect/premium',
-			analyticsPageTitle = 'Jetpack Connect Premium';
-
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		jetpackConnectFirstStep( context, 'premium' );
-	},
-
 	newSite( context ) {
 		analytics.pageView.record( '/jetpack/new', 'Add a new site (Jetpack)' );
 		jetpackNewSiteSelector( context );
 	},
 
-	pro( context ) {
-		const analyticsBasePath = '/jetpack/connect/pro',
-			analyticsPageTitle = 'Jetpack Install Pro';
-
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		jetpackConnectFirstStep( context, 'pro' );
-	},
-
-	install( context ) {
-		const analyticsBasePath = '/jetpack/connect/install',
-			analyticsPageTitle = 'Jetpack Install';
-
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		jetpackConnectFirstStep( context, 'install' );
-	},
-
 	connect( context ) {
-		const analyticsBasePath = '/jetpack/connect',
-			analyticsPageTitle = 'Jetpack Connect';
+		const {
+			path,
+			pathname,
+			params
+		} = context;
+		const { type = false } = params;
+		const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
 
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+		debug( 'entered connect flow with params %o', params );
 
-		jetpackConnectFirstStep( context, false );
+		analytics.pageView.record( pathname, analyticsPageTitle );
+
+		removeSidebar( context );
+
+		userModule.fetch();
+
+		renderWithReduxStore(
+			React.createElement( JetpackConnect, {
+				context,
+				locale: context.params.locale,
+				path,
+				type,
+				url: context.query.url,
+				userModule,
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
+		);
 	},
 
 	authorizeForm( context ) {
@@ -152,11 +129,11 @@ export default {
 
 		removeSidebar( context );
 
-		let intervalType = context.params.intervalType;
+		let interval = context.params.interval;
 		let locale = context.params.locale;
 		if ( context.params.localeOrInterval ) {
 			if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
-				intervalType = context.params.localeOrInterval;
+				interval = context.params.localeOrInterval;
 			} else {
 				locale = context.params.localeOrInterval;
 			}
@@ -166,7 +143,7 @@ export default {
 		renderWithReduxStore(
 			<JetpackConnectAuthorizeForm
 				path={ context.path }
-				intervalType={ intervalType }
+				interval={ interval }
 				locale={ locale }
 			/>,
 			document.getElementById( 'primary' ),
@@ -213,7 +190,7 @@ export default {
 			<PlansLanding
 				context={ context }
 				destinationType={ context.params.destinationType }
-				intervalType={ context.params.intervalType }
+				interval={ context.params.interval }
 				basePlansPath={ '/jetpack/connect/store' }
 			/>,
 			document.getElementById( 'primary' ),
@@ -249,7 +226,7 @@ export default {
 					context={ context }
 					destinationType={ context.params.destinationType }
 					basePlansPath={ '/jetpack/connect/plans' }
-					intervalType={ context.params.intervalType } />
+					interval={ context.params.interval } />
 			</CheckoutData>,
 			document.getElementById( 'primary' ),
 			context.store

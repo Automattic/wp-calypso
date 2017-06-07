@@ -8,7 +8,7 @@ import {
 	requestResetPasswordError,
 } from 'state/account-recovery/reset/actions';
 
-export const handleResetPasswordRequest = ( { dispatch }, action, next ) => {
+export const handleResetPasswordRequest = ( { dispatch }, action ) => {
 	const {
 		userData, // userData can be either { user } or { firstname, lastname, url }
 		method,
@@ -27,8 +27,6 @@ export const handleResetPasswordRequest = ( { dispatch }, action, next ) => {
 		path: '/account-recovery/reset'
 	} ).then( () => dispatch( requestResetPasswordSuccess() ) )
 	.catch( ( error ) => dispatch( requestResetPasswordError( error ) ) );
-
-	return next( action );
 };
 
 export default {

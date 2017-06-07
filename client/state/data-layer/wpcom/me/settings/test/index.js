@@ -16,11 +16,10 @@ import {
 } from 'state/user-settings/actions';
 
 describe( 'wpcom-api', () => {
-	let dispatch, next, settingsModule;
+	let dispatch, settingsModule;
 
 	useSandbox( sandbox => {
 		dispatch = sandbox.spy();
-		next = sandbox.spy();
 	} );
 
 	useMockery( () => {
@@ -35,7 +34,7 @@ describe( 'wpcom-api', () => {
 			it( 'should dispatch HTTP GET request to me/settings endpoint', () => {
 				const action = { type: 'DUMMY' };
 
-				settingsModule.requestUserSettings( { dispatch }, action, next );
+				settingsModule.requestUserSettings( { dispatch }, action );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( http( {
@@ -44,21 +43,13 @@ describe( 'wpcom-api', () => {
 					path: '/me/settings',
 				}, action ) );
 			} );
-
-			it( 'should pass the original action along the middleware chain', () => {
-				const action = { type: 'DUMMY' };
-
-				settingsModule.requestUserSettings( { dispatch }, action, next );
-
-				expect( next ).to.have.been.calledWith( action );
-			} );
 		} );
 
 		describe( '#storeFetchedUserSettings', () => {
 			it( 'should dispatch user settings update', () => {
 				const action = { type: 'DUMMY' };
 
-				settingsModule.storeFetchedUserSettings( { dispatch }, action, next, {
+				settingsModule.storeFetchedUserSettings( { dispatch }, action, null, {
 					language: 'qix',
 				} );
 
@@ -71,7 +62,7 @@ describe( 'wpcom-api', () => {
 			it( 'should decode HTML entities returned in some fields of HTTP response', () => {
 				const action = { type: 'DUMMY' };
 
-				settingsModule.storeFetchedUserSettings( { dispatch }, action, next, {
+				settingsModule.storeFetchedUserSettings( { dispatch }, action, null, {
 					display_name: 'baz &amp; qix',
 					description: 'foo &amp; bar',
 					user_URL: 'http://example.com?a=b&amp;c=d',
@@ -97,7 +88,7 @@ describe( 'wpcom-api', () => {
 				} );
 				const action = { type: 'DUMMY' };
 
-				settingsModule.saveUserSettings( { dispatch, getState }, action, next );
+				settingsModule.saveUserSettings( { dispatch, getState }, action, null );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( http( {
@@ -106,7 +97,6 @@ describe( 'wpcom-api', () => {
 					path: '/me/settings',
 					body: { foo: 'baz' }
 				}, action ) );
-				expect( next ).to.have.been.calledWith( action );
 			} );
 
 			it( 'should dispatch POST request to me/settings using explicit settingsOverride', () => {
@@ -116,7 +106,7 @@ describe( 'wpcom-api', () => {
 					settingsOverride: { foo: 'baz' }
 				};
 
-				settingsModule.saveUserSettings( { dispatch, getState }, action, next );
+				settingsModule.saveUserSettings( { dispatch, getState }, action, null );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( http( {
@@ -125,7 +115,6 @@ describe( 'wpcom-api', () => {
 					path: '/me/settings',
 					body: { foo: 'baz' }
 				}, action ) );
-				expect( next ).to.have.been.calledWith( action );
 			} );
 
 			it( 'should not dispatch any HTTP request when there are no unsaved settings', () => {
@@ -137,10 +126,9 @@ describe( 'wpcom-api', () => {
 				} );
 				const action = { type: 'DUMMY' };
 
-				settingsModule.saveUserSettings( { dispatch, getState }, action, next );
+				settingsModule.saveUserSettings( { dispatch, getState }, action, null );
 
 				expect( dispatch ).to.not.have.been.called;
-				expect( next ).to.have.been.calledWith( action );
 			} );
 		} );
 
@@ -148,7 +136,7 @@ describe( 'wpcom-api', () => {
 			it( 'should dispatch user settings update and clear all unsaved settings on full save', () => {
 				const action = { type: 'DUMMY' };
 
-				settingsModule.finishUserSettingsSave( { dispatch }, action, next, {
+				settingsModule.finishUserSettingsSave( { dispatch }, action, null, {
 					language: 'qix',
 				} );
 
@@ -165,7 +153,7 @@ describe( 'wpcom-api', () => {
 				};
 				const action = { type: 'DUMMY', settingsOverride: data };
 
-				settingsModule.finishUserSettingsSave( { dispatch }, action, next, data );
+				settingsModule.finishUserSettingsSave( { dispatch }, action, null, data );
 
 				expect( dispatch ).to.have.been.calledTwice;
 				expect( dispatch ).to.have.been.calledWith( updateUserSettings( {
@@ -179,7 +167,7 @@ describe( 'wpcom-api', () => {
 			it( 'should decode HTML entities returned in some fields of HTTP response', () => {
 				const action = { type: 'DUMMY' };
 
-				settingsModule.finishUserSettingsSave( { dispatch }, action, next, {
+				settingsModule.finishUserSettingsSave( { dispatch }, action, null, {
 					display_name: 'baz &amp; qix',
 					description: 'foo &amp; bar',
 					user_URL: 'http://example.com?a=b&amp;c=d',

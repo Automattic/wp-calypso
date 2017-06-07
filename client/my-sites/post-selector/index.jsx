@@ -28,7 +28,8 @@ export default React.createClass( {
 		createLink: PropTypes.string,
 		orderBy: PropTypes.oneOf( [ 'title', 'date', 'modified', 'comment_count', 'ID' ] ),
 		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
-		showTypeLabels: PropTypes.bool
+		showTypeLabels: PropTypes.bool,
+		suppressFirstPageLoad: PropTypes.bool,
 	},
 
 	getDefaultProps() {
@@ -37,7 +38,8 @@ export default React.createClass( {
 			status: 'publish,private',
 			multiple: false,
 			orderBy: 'title',
-			order: 'ASC'
+			order: 'ASC',
+			suppressFirstPageLoad: false,
 		};
 	},
 
@@ -64,13 +66,22 @@ export default React.createClass( {
 				return memo;
 			}
 
+			// if we don't have a search term, default to ordering by date
+			if ( key === 'orderBy' && search !== '' ) {
+				value = 'date';
+			}
+
+			if ( key === 'order' && search !== '' ) {
+				value = 'DESC';
+			}
+
 			memo[ snakeCase( key ) ] = value;
 			return memo;
 		}, {} );
 	},
 
 	render() {
-		const { siteId, multiple, onChange, emptyMessage, createLink, selected, showTypeLabels } = this.props;
+		const { siteId, multiple, onChange, emptyMessage, createLink, selected, showTypeLabels, suppressFirstPageLoad } = this.props;
 
 		return (
 			<PostSelectorPosts
@@ -83,6 +94,7 @@ export default React.createClass( {
 				createLink={ createLink }
 				selected={ selected }
 				showTypeLabels={ showTypeLabels }
+				suppressFirstPageLoad={ suppressFirstPageLoad }
 			/>
 		);
 	}

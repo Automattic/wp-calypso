@@ -16,6 +16,14 @@ module.exports = {
 		},
 		defaultVariation: 'hideSurveyStep',
 	},
+	businessPlanDescriptionAT: {
+		datestamp: '20170605',
+		variations: {
+			original: 50,
+			pluginsAndThemes: 50,
+		},
+		defaultVariation: 'original',
+	},
 	presaleChatButton: {
 		datestamp: '20170328',
 		variations: {
@@ -23,7 +31,7 @@ module.exports = {
 			original: 80
 		},
 		defaultVariation: 'original',
-		allowAnyLocale: true,
+		localeTargets: 'any',
 	},
 	newSiteWithJetpack: {
 		datestamp: '20170419',
@@ -43,12 +51,13 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	domainToPaidPlanUpsellNudge: {
-		datestamp: '20170429',
+		datestamp: '20170607',
 		variations: {
 			skip: 50,
 			show: 50,
 		},
 		defaultVariation: 'skip',
+		allowExistingUsers: true,
 	},
 	ATPromptOnCancel: {
 		datestamp: '20170515',
@@ -71,8 +80,8 @@ module.exports = {
 	reduceThemesInSignupTest: {
 		datestamp: '20170518',
 		variations: {
-			original: 50,
-			modified: 50,
+			original: 0,
+			modified: 100,
 		},
 		defaultVariation: 'original',
 	},
@@ -99,5 +108,15 @@ module.exports = {
 			select: 50,
 		},
 		defaultVariation: 'original',
+	},
+	pulsingCartTestingAB: {
+		datestamp: '20170601',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 };

@@ -15,13 +15,13 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS,
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_STATS,
 } from '../../action-types';
 import {
 	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
 import reducer from '../reducer';
+import { generating } from '../reducer';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
@@ -31,96 +31,76 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	describe( 'generateStatus()', () => {
+	describe( 'generating()', () => {
 		const previousState = deepFreeze( {
-			generateStatus: {
-				[ primarySiteId ]: {
-					generating: true,
-					status: 'pending',
-				}
-			}
+			[ primarySiteId ]: true,
 		} );
 
 		it( 'should default to an empty object', () => {
-			const state = reducer( undefined, {} );
+			const state = generating( undefined, {} );
 
-			expect( state.generateStatus ).to.eql( {} );
+			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set generate status to pending if request in progress', () => {
-			const state = reducer( undefined, {
+		it( 'should set generating value to true if request in progress', () => {
+			const state = generating( undefined, {
 				type: WP_SUPER_CACHE_GENERATE_STATS,
 				siteId: primarySiteId,
 			} );
 
-			expect( state.generateStatus ).to.eql( {
-				[ primarySiteId ]: {
-					generating: true,
-					status: 'pending',
-				}
+			expect( state ).to.eql( {
+				[ primarySiteId ]: true,
 			} );
 		} );
 
-		it( 'should accumulate generate request statuses', () => {
-			const state = reducer( previousState, {
+		it( 'should accumulate generating values', () => {
+			const state = generating( previousState, {
 				type: WP_SUPER_CACHE_GENERATE_STATS,
 				siteId: secondarySiteId,
 			} );
 
-			expect( state.generateStatus ).to.eql( {
-				[ primarySiteId ]: {
-					generating: true,
-					status: 'pending',
-				},
-				[ secondarySiteId ]: {
-					generating: true,
-					status: 'pending',
-				}
+			expect( state ).to.eql( {
+				[ primarySiteId ]: true,
+				[ secondarySiteId ]: true,
 			} );
 		} );
 
-		it( 'should set generate request to success if request finishes successfully', () => {
-			const state = reducer( previousState, {
+		it( 'should set generating value to false if request finishes successfully', () => {
+			const state = generating( previousState, {
 				type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 				siteId: primarySiteId,
 			} );
 
-			expect( state.generateStatus ).to.eql( {
-				[ primarySiteId ]: {
-					generating: false,
-					status: 'success',
-				}
+			expect( state ).to.eql( {
+				[ primarySiteId ]: false,
 			} );
 		} );
 
-		it( 'should set generate request to error if request finishes with failure', () => {
-			const state = reducer( previousState, {
+		it( 'should set generating value to false if request finishes with failure', () => {
+			const state = generating( previousState, {
 				type: WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 				siteId: primarySiteId,
 			} );
 
-			expect( state.generateStatus ).to.eql( {
-				[ primarySiteId ]: {
-					generating: false,
-					status: 'error',
-				}
+			expect( state ).to.eql( {
+				[ primarySiteId ]: false,
 			} );
 		} );
 
 		it( 'should not persist state', () => {
-			const state = reducer( previousState, {
+			const state = generating( previousState, {
 				type: SERIALIZE,
 			} );
 
-			expect( state.generateStatus ).to.eql( {} );
+			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
+			const state = generating( previousState, {
 				type: DESERIALIZE,
 			} );
 
-			expect( state.generateStatus ).to.eql( {} );
+			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -222,7 +202,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'items()', () => {
-		describe( 'WP_SUPER_CACHE_RECEIVE_STATS', () => {
+		describe( 'WP_SUPER_CACHE_GENERATE_STATS_SUCCESS', () => {
 			const primaryStats = { generated: 1493997829 };
 			const secondaryStats = { generated: 0 };
 			const previousState = deepFreeze( {
@@ -239,7 +219,7 @@ describe( 'reducer', () => {
 
 			it( 'should index stats by site ID', () => {
 				const state = reducer( undefined, {
-					type: WP_SUPER_CACHE_RECEIVE_STATS,
+					type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 					siteId: primarySiteId,
 					stats: primaryStats,
 				} );
@@ -251,7 +231,7 @@ describe( 'reducer', () => {
 
 			it( 'should accumulate stats', () => {
 				const state = reducer( previousState, {
-					type: WP_SUPER_CACHE_RECEIVE_STATS,
+					type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 					siteId: secondarySiteId,
 					stats: secondaryStats,
 				} );
@@ -264,7 +244,7 @@ describe( 'reducer', () => {
 
 			it( 'should override previous stats of same site ID', () => {
 				const state = reducer( previousState, {
-					type: WP_SUPER_CACHE_RECEIVE_STATS,
+					type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 					siteId: primarySiteId,
 					stats: secondaryStats,
 				} );
@@ -280,7 +260,7 @@ describe( 'reducer', () => {
 					supercache: {},
 				};
 				const state = reducer( previousState, {
-					type: WP_SUPER_CACHE_RECEIVE_STATS,
+					type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 					siteId: primarySiteId,
 					stats: newStats,
 				} );

@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_EDIT_PRODUCT_VARIATION,
-} from '../../../action-types';
+	WOOCOMMERCE_PRODUCT_VARIATION_EDIT,
+} from 'woocommerce/state/action-types';
 
 /**
  * Edits a product variation.
@@ -16,7 +16,7 @@ import {
  */
 export function editProductVariation( product, variation, data ) {
 	return {
-		type: WOOCOMMERCE_EDIT_PRODUCT_VARIATION,
+		type: WOOCOMMERCE_PRODUCT_VARIATION_EDIT,
 		payload: { product, variation, data },
 	};
 }

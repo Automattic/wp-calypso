@@ -28,6 +28,15 @@ export const PLAN_CHARGEBACK = 'chargeback';
 
 export const POPULAR_PLANS = [ PLAN_PREMIUM ];
 export const NEW_PLANS = [ PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ];
+export const JETPACK_PLANS = [
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+];
 export const JETPACK_MONTHLY_PLANS = [ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PERSONAL_MONTHLY ];
 
 export const PLAN_MONTHLY_PERIOD = 31;
@@ -187,13 +196,25 @@ export const PLANS_LIST = {
 		getStoreSlug: () => PLAN_BUSINESS,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
 		getPathSlug: () => 'business',
-		getDescription: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
+		getDescription: ( abtest ) => {
+			if ( abtest && abtest( 'businessPlanDescriptionAT' ) === 'pluginsAndThemes' ) {
+				return i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
+				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
+				' Google Analytics support, unlimited' +
+				' storage, and the ability to remove WordPress.com branding.', {
+					components: {
+						strong: <strong className="plans__features plan-features__targeted-description-heading" />
+					}
+				} );
+			}
+			return i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
 			' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
 			' storage, and the ability to remove WordPress.com branding.', {
 				components: {
 					strong: <strong className="plans__features plan-features__targeted-description-heading" />
 				}
-			} ),
+			} );
+		},
 		getFeatures: () => compact( [ // pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
@@ -600,7 +621,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_UPLOAD_THEMES ]: {
 		getSlug: () => FEATURE_UPLOAD_THEMES,
-		getTitle: () => i18n.translate( 'Upload themes' ),
+		getTitle: () => i18n.translate( 'Upload Themes' ),
 		getDescription: () => i18n.translate( 'Upload custom themes on your site.' )
 	},
 

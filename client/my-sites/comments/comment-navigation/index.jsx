@@ -23,14 +23,14 @@ import SectionNav from 'components/section-nav';
 export class CommentNavigation extends Component {
 	static defaultProps = {
 		selectedCount: 0,
-		status: 'pending',
+		status: 'unapproved',
 	};
 
 	getNavItems = () => {
 		const { translate } = this.props;
 
 		return {
-			pending: {
+			unapproved: {
 				label: translate( 'Pending' ),
 			},
 			approved: {
@@ -48,9 +48,9 @@ export class CommentNavigation extends Component {
 		};
 	}
 
-	getStatusPath = status => 'pending' !== status
+	getStatusPath = status => 'unapproved' !== status
 		? `/comments/${ status }/${ this.props.siteSlug }`
-		: `/comments/${ this.props.siteSlug }`;
+		: `/comments/pending/${ this.props.siteSlug }`;
 
 	render() {
 		const {

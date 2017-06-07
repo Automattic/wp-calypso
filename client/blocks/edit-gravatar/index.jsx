@@ -81,13 +81,15 @@ export class EditGravatar extends Component {
 
 			if ( extension ) {
 				errorMessage = translate(
-					'An image of filetype %s is not allowed',
+					'Sorry, %s files are not supported' +
+					' — please make sure your image is in JPG, GIF, or PNG format.',
 					{
 						args: extension
 					}
 				);
 			} else {
-				errorMessage = translate( 'An image of that filetype is not allowed' );
+				errorMessage = translate( 'Sorry, images of that filetype are not supported ' +
+				'— please make sure your image is in JPG, GIF, or PNG format.' );
 			}
 
 			receiveGravatarImageFailedAction( {
@@ -116,7 +118,7 @@ export class EditGravatar extends Component {
 
 		if ( error ) {
 			receiveGravatarImageFailedAction( {
-				errorMessage: translate( "We couldn't save that image, please try another one" ),
+				errorMessage: translate( "We couldn't save that image — please try another one." ),
 				statName: 'image_editor_error',
 			} );
 			return;
@@ -136,7 +138,7 @@ export class EditGravatar extends Component {
 			uploadGravatarAction( imageBlob, bearerToken, user.email );
 		} else {
 			receiveGravatarImageFailedAction( {
-				errorMessage: translate( "We can't save a new Gravatar now. Please try again later." ),
+				errorMessage: translate( "Hmm, we can't save a new Gravatar now. Please try again later." ),
 				statName: 'no_bearer_token',
 			} );
 		}
@@ -166,6 +168,7 @@ export class EditGravatar extends Component {
 						media={ { src: this.state.image } }
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.hideImageEditor }
+						doneButtonText={ this.props.translate( 'Change My Photo' ) }
 					/>
 				</Dialog>
 			);
@@ -203,7 +206,7 @@ export class EditGravatar extends Component {
 		const icon = ( user.email_verified ? 'cloud-upload' : 'notice' );
 		const buttonText = ( user.email_verified
 			? translate( 'Click to change photo' )
-			: translate( 'Verify email first' )
+			: translate( 'Verify your email' )
 		);
 		return (
 			<div
@@ -255,9 +258,10 @@ export class EditGravatar extends Component {
 						className="edit-gravatar__pop-over"
 						position="left" >
 						{ translate( '{{p}}The avatar you use on WordPress.com comes ' +
-							'from {{ExternalLink}}Gravatar{{/ExternalLink}} - a universal avatar service.{{/p}}' +
-							'{{p}}Your photo may be displayed on other sites where ' +
-							'you use your email address %(email)s.{{/p}}',
+							'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
+							'(it stands or "Global Avatar," get it?).{{/p}}' +
+							'{{p}}Your image may also appear on other sites using Gravatar ' +
+							"whenever you're logged in with your email address %(email)s.{{/p}}",
 							{
 								components: {
 									ExternalLink: <ExternalLink

@@ -3,7 +3,6 @@
  */
 import { assert } from 'chai';
 import sinon from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -78,7 +77,7 @@ describe( 'handleRequestResetOptions()', () => {
 				}
 			} );
 
-			handleRequestResetOptions( { dispatch }, { userData }, noop );
+			handleRequestResetOptions( { dispatch }, { userData } );
 		} );
 
 		it( 'should dispatch UPDATE_USER_DATA action on success', ( done ) => {
@@ -93,7 +92,7 @@ describe( 'handleRequestResetOptions()', () => {
 				}
 			} );
 
-			handleRequestResetOptions( { dispatch }, { userData }, noop );
+			handleRequestResetOptions( { dispatch }, { userData } );
 		} );
 	} );
 
@@ -119,7 +118,7 @@ describe( 'handleRequestResetOptions()', () => {
 				done();
 			} );
 
-			handleRequestResetOptions( { dispatch }, { userData }, noop );
+			handleRequestResetOptions( { dispatch }, { userData } );
 		} );
 	} );
 } );

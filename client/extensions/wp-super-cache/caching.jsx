@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { pick } from 'lodash';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle/compact';
+import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
@@ -25,17 +26,26 @@ const Caching = ( {
 	handleAutosavingToggle,
 	handleRadio,
 	handleSubmitForm,
+	isReadOnly,
 	isRequesting,
 	isSaving,
+	notices: {
+		htaccess_ro,
+		mod_rewrite_missing,
+	},
 	translate,
 } ) => {
+	const isDisabled = isRequesting || isSaving || isReadOnly;
+	const htaccessMessage = get( htaccess_ro, 'message' );
+	const modRewriteMessage = get( mod_rewrite_missing, 'message' );
+
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Caching' ) }>
 				<Button
 					compact
 					primary
-					disabled={ isRequesting || isSaving }
+					disabled={ isDisabled }
 					onClick={ handleSubmitForm }>
 					{ isSaving
 						? translate( 'Saving…' )
@@ -45,10 +55,23 @@ const Caching = ( {
 			</SectionHeader>
 			<Card>
 				<form>
+					{ htaccessMessage &&
+					<Notice
+						showDismiss={ false }
+						status="is-warning"
+						text={ htaccessMessage } />
+					}
+
+					{ modRewriteMessage &&
+					<Notice
+						showDismiss={ false }
+						status="is-warning"
+						text={ modRewriteMessage } />
+					}
 					<FormFieldset>
 						<FormToggle
 							checked={ !! is_cache_enabled }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'is_cache_enabled' ) }>
 							<span>
 								{ translate( 'Enable Page Caching' ) }
@@ -60,7 +83,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ 'mod_rewrite' === cache_type }
-								disabled={ isRequesting || isSaving || ! is_cache_enabled }
+								disabled={ isDisabled || ! is_cache_enabled }
 								name="cache_type"
 								onChange={ handleRadio }
 								value="mod_rewrite" />
@@ -72,7 +95,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ 'PHP' === cache_type }
-								disabled={ isRequesting || isSaving || ! is_cache_enabled }
+								disabled={ isDisabled || ! is_cache_enabled }
 								name="cache_type"
 								onChange={ handleRadio }
 								value="PHP" />
@@ -89,7 +112,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ 'wpcache' === cache_type }
-								disabled={ isRequesting || isSaving || ! is_cache_enabled }
+								disabled={ isDisabled || ! is_cache_enabled }
 								name="cache_type"
 								onChange={ handleRadio }
 								value="wpcache" />

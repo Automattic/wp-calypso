@@ -158,7 +158,7 @@ const devdocs = {
 				actionURL: login( { isNative: true, redirectTo } ),
 				secondaryAction: 'Register',
 				secondaryActionURL: '/start/developer',
-				illustration: '/calypso/images/drake/drake-nosites.svg'
+				illustration: '/calypso/images/illustrations/illustration-nosites.svg'
 			} ),
 			document.getElementById( 'primary' )
 		);

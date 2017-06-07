@@ -8,7 +8,10 @@ var React = require( 'react' ),
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { includes } from 'lodash';
+import {
+	get,
+	includes,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +29,12 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from './page-card-info';
-import { hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
+import {
+	getSite,
+	hasStaticFrontPage,
+	isSitePreviewable,
+} from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isFrontPage,
 	isPostsPage,
@@ -253,7 +261,10 @@ const Page = React.createClass( {
 	},
 
 	getCopyItem: function() {
-		const { page: post, site } = this.props;
+		const {
+			page: post,
+			siteSlugOrId,
+		} = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
 			! utils.userCan( 'edit_post', post )
@@ -261,7 +272,7 @@ const Page = React.createClass( {
 			return null;
 		}
 		return (
-			<PopoverMenuItem onClick={ this.copyPage } href={ `/page/${ site.slug }?copy=${ post.ID }` }>
+			<PopoverMenuItem onClick={ this.copyPage } href={ `/page/${ siteSlugOrId }?copy=${ post.ID }` }>
 				<Gridicon icon="clipboard" size={ 18 } />
 				{ this.translate( 'Copy' ) }
 			</PopoverMenuItem>
@@ -404,7 +415,7 @@ const Page = React.createClass( {
 		return (
 			<CompactCard className={ classNames( cardClasses ) } >
 				{ hierarchyIndent }
-				{ this.props.multisite ? <SiteIcon site={ site } size={ 34 } /> : null }
+				{ this.props.multisite ? <SiteIcon siteId={ page.site_ID } size={ 34 } /> : null }
 				<div className="page__main">
 					<a className="page__title"
 						href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
@@ -466,12 +477,21 @@ const Page = React.createClass( {
 
 export default connect(
 	( state, props ) => {
+		const site = getSite( state, props.page.site_ID );
+		const siteSlugOrId = get( site, 'slug' ) || get( site, 'ID', null );
+		const selectedSiteId = getSelectedSiteId( state );
+		const isPreviewable =
+			false !== isSitePreviewable( state, props.page.site_ID ) &&
+			site && site.ID === selectedSiteId;
+
 		return {
 			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
 			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
 			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
-			isPreviewable: false !== isSitePreviewable( state, props.site.ID ),
+			isPreviewable,
 			previewURL: getPreviewURL( props.page ),
+			site,
+			siteSlugOrId,
 		};
 	},
 	( dispatch ) => bindActionCreators( {

@@ -55,15 +55,15 @@ export default React.createClass( {
 	},
 
 	onSelect( event ) {
-		this.props.onSelect( event, this.props.site.slug );
+		this.props.onSelect( event, this.props.site.ID );
 	},
 
 	onMouseEnter( event ) {
-		this.props.onMouseEnter( event, this.props.site.slug );
+		this.props.onMouseEnter( event, this.props.site.ID );
 	},
 
 	onMouseLeave( event ) {
-		this.props.onMouseLeave( event, this.props.site.slug );
+		this.props.onMouseLeave( event, this.props.site.ID );
 	},
 
 	render() {

@@ -160,6 +160,17 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		it( 'should omit akismet from sanitized settings', () => {
+			const settings = {
+				some_other_setting: 123,
+				akismet: true
+			};
+
+			expect( sanitizeSettings( settings ) ).to.eql( {
+				some_other_setting: 123,
+			} );
+		} );
+
 		it( 'should skip infinite scroll settings if infinite_scroll is not defined', () => {
 			const settings = {
 				some_other_setting: 123,

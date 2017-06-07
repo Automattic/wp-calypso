@@ -14,6 +14,25 @@ const mergedHandlers = mergeHandlers(
 	wpcomHandlers,
 );
 
+const shouldNext = action => {
+	const meta = action.meta;
+	if ( ! meta ) {
+		return true;
+	}
+
+	const data = meta.dataLayer;
+	if ( ! data ) {
+		return true;
+	}
+
+	// is a network response, don't reissue
+	if ( data.data || data.error || data.headers ) {
+		return false;
+	}
+
+	return true;
+};
+
 /**
  * WPCOM Middleware API
  *
@@ -69,7 +88,24 @@ export const middleware = handlers => store => next => {
 			}
 		}
 
-		return handlerChain.forEach( handler => handler( store, action, localNext ) );
+		// as we transition to making next() implicit we want
+		// to limit the extent of our changes so make this new
+		// function which gives us the ability to incrementally
+		// remove the uses of `next( action )` inside the handlers
+		//
+		// this guarantees that we don't double-dispatch
+		const nextActions = new Set();
+		const safeNext = a => nextActions.add( a );
+
+		handlerChain.forEach( handler => handler( store, action, safeNext ) );
+
+		// make sure we pass along this action
+		// eventually this will return to the
+		// simpler `return next( action )`
+		if ( shouldNext( action ) ) {
+			nextActions.add( action );
+		}
+		nextActions.forEach( localNext );
 	};
 };
 

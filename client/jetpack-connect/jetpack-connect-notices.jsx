@@ -8,8 +8,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { urlToSlug } from 'lib/url';
 
 class JetpackConnectNotices extends Component {
 	static propTypes = {
@@ -42,7 +40,6 @@ class JetpackConnectNotices extends Component {
 			noticeType,
 			onDismissClick,
 			translate,
-			url,
 		} = this.props;
 
 		const noticeValues = {
@@ -96,19 +93,6 @@ class JetpackConnectNotices extends Component {
 				noticeValues.status = 'is-notice';
 				noticeValues.icon = 'status';
 				noticeValues.text = translate( 'Jetpack couldn\'t be found.' );
-				return noticeValues;
-
-			case 'alreadyConnected':
-			case 'alreadyOwned':
-				noticeValues.status = 'is-success';
-				noticeValues.icon = 'status';
-				noticeValues.text = translate( 'This site is already connected!' );
-				noticeValues.showDismiss = false;
-				noticeValues.children = (
-					<NoticeAction href={ '/plans/my-plan/' + urlToSlug( url ) }>
-						{ translate( 'Visit' ) }
-					</NoticeAction>
-				);
 				return noticeValues;
 
 			case 'wordpress.com':

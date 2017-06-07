@@ -37,7 +37,7 @@ import {
 	READER_FOLLOWING_MANAGE_URL_INPUT,
 	READER_FOLLOWING_MANAGE_RECOMMENDATION,
 } from 'reader/follow-button/follow-sources';
-import { resemblesUrl, addSchemeIfMissing, withoutHttp } from 'lib/url';
+import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
 import { getReaderFollowsCount } from 'state/selectors';
 import { recordTrack, recordAction } from 'reader/stats';
 
@@ -226,21 +226,10 @@ class FollowingManage extends Component {
 
 					{ showFollowByUrl &&
 						<div className="following-manage__url-follow">
-							{ isFollowByUrlWithNoSearchResults &&
-								<span className="following-manage__url-follow-no-search-results-message">
-									{ translate(
-										'Sorry, no sites that we could find match {{italic}}%(site1)s{{/italic}}. ' +
-											'Try to follow {{italic}}%(site2)s{{/italic}} anyway?',
-										{
-											components: { italic: <i /> },
-											args: { site1: sitesQuery, site2: sitesQuery },
-										}
-									) }
-								</span> }
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
-								siteUrl={ readerAliasedFollowFeedUrl }
+								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
 							/>
 						</div> }
@@ -277,17 +266,16 @@ class FollowingManage extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		searchResults: getReaderFeedsForQuery( state, ownProps.sitesQuery ),
-		searchResultsCount: getReaderFeedsCountForQuery( state, ownProps.sitesQuery ),
+	( state, { sitesQuery } ) => ( {
+		searchResults: getReaderFeedsForQuery( state, sitesQuery ),
+		searchResultsCount: getReaderFeedsCountForQuery( state, sitesQuery ),
 		recommendedSites: getReaderRecommendedSites( state, recommendationsSeed ),
 		recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset(
 			state,
 			recommendationsSeed
 		),
 		blockedSites: getBlockedSites( state ),
-		readerAliasedFollowFeedUrl: ownProps.sitesQuery &&
-			getReaderAliasedFollowFeedUrl( state, addSchemeIfMissing( ownProps.sitesQuery, 'http' ) ),
+		readerAliasedFollowFeedUrl: sitesQuery && getReaderAliasedFollowFeedUrl( state, sitesQuery ),
 		followsCount: getReaderFollowsCount( state ),
 	} ),
 	{ requestFeedSearch }

@@ -15,4 +15,6 @@ const AllSitesExample = () => (
 	</Card>
 );
 
+AllSitesExample.displayName = 'AllSites';
+
 export default AllSitesExample;

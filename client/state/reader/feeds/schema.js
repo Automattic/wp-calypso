@@ -15,6 +15,7 @@ export const itemsSchema = {
 				subscribers_count: { type: [ 'integer', 'null' ] },
 				description: { type: [ 'string', 'null' ] },
 				last_update: { type: [ 'string', 'null' ] },
+				image: { type: [ 'string', null ] },
 			},
 		},
 	},

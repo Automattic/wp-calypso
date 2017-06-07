@@ -32,6 +32,7 @@ import path from 'lib/route/path';
 
 describe( 'actions', () => {
 	let actions, sandbox, spy;
+	const mySitesPath = '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
 
 	useFakeDom();
 
@@ -209,11 +210,8 @@ describe( 'actions', () => {
 
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/sites' )
-					.query( {
-						site_visibility: 'all',
-						include_domain_only: true
-					} )
+					.filteringPath( () => mySitesPath )
+					.get( mySitesPath )
 					.reply( 200, {
 						sites: [ client_id ]
 					}, {

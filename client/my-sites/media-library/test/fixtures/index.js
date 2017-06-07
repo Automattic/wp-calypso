@@ -42,10 +42,15 @@ module.exports = {
 	media: [
 		{
 			ID: 1009,
-			guid: 'http://example.files.wordpress.com/2015/05/g1009.gif'
+			guid: 'http://example.files.wordpress.com/2015/05/g1009.gif',
+			URL: 'http://example.files.wordpress.com/2015/05/g1009.gif',
 		}, {
 			ID: 1008,
-			guid: 'http://example.files.wordpress.com/2015/05/g1008.gif'
+			guid: 'http://example.files.wordpress.com/2015/05/g1008.gif',
+			URL: 'http://example.files.wordpress.com/2015/05/g1009.gif',
+			thumbnails: {
+				fmt_hd: 'http://example.files.wordpress.com/2015/05/g1009-hd.gif'
+			}
 		}, {
 			ID: 1007,
 			guid: 'http://example.files.wordpress.com/2015/05/g1007.gif'

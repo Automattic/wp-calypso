@@ -36,7 +36,7 @@ import config from 'config';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
-import { receivePost, savePostSuccess } from 'state/posts/actions';
+import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { hasBrokenSiteUserConnection } from 'state/selectors';
@@ -82,10 +82,10 @@ export const PostEditor = React.createClass( {
 	getInitialState() {
 		return {
 			...this.getPostEditState(),
+			confirmationSidebar: 'closed',
 			isSaving: false,
 			isPublishing: false,
 			notice: null,
-			showConfirmationSidebar: false,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
@@ -188,12 +188,10 @@ export const PostEditor = React.createClass( {
 		return this.props.setLayoutFocus( 'content' );
 	},
 
-	showConfirmationSidebar: function() {
-		this.setState( { showConfirmationSidebar: true } );
-	},
-
-	hideConfirmationSidebar: function() {
-		this.setState( { showConfirmationSidebar: false } );
+	setConfirmationSidebar: function( state ) {
+		const allowedStates = [ 'closed', 'open', 'publishing' ];
+		const confirmationSidebar = allowedStates.indexOf( state ) > -1 ? state : 'closed';
+		this.setState( { confirmationSidebar } );
 	},
 
 	toggleSidebar: function() {
@@ -231,9 +229,13 @@ export const PostEditor = React.createClass( {
 			<div className={ classes }>
 				<QueryPreferences />
 				<EditorConfirmationSidebar
-					hideSidebar={ this.hideConfirmationSidebar }
-					isActive={ this.state.showConfirmationSidebar }
+					onPrivatePublish={ this.onPublish }
 					onPublish={ this.onPublish }
+					post={ this.state.post }
+					savedPost={ this.state.savedPost }
+					setState={ this.setConfirmationSidebar }
+					site={ site }
+					state={ this.state.confirmationSidebar }
 				/>
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
@@ -255,7 +257,6 @@ export const PostEditor = React.createClass( {
 						site={ site }
 						user={ this.props.user }
 						userUtils={ this.props.userUtils }
-						showConfirmationSidebar={ this.showConfirmationSidebar }
 						toggleSidebar={ this.toggleSidebar }
 						type={ this.props.type }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
@@ -664,8 +665,12 @@ export const PostEditor = React.createClass( {
 		};
 
 		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) && false === isConfirmed ) {
-			this.showConfirmationSidebar();
+			this.setConfirmationSidebar( 'open' );
 			return;
+		}
+
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+			this.setConfirmationSidebar( 'closed' );
 		}
 
 		// determine if this is a private publish
@@ -727,9 +732,15 @@ export const PostEditor = React.createClass( {
 	},
 
 	setPostDate: function( date ) {
+		const { siteId, postId } = this.props;
 		const dateValue = date ? date.format() : null;
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { date: dateValue } );
+
+		if ( siteId && postId ) {
+			this.props.editPost( siteId, postId, { date: dateValue } );
+		}
+
 		this.checkForDateChange( dateValue );
 	},
 
@@ -870,6 +881,7 @@ export default connect(
 			setEditorLastDraft,
 			resetEditorLastDraft,
 			receivePost,
+			editPost,
 			savePostSuccess,
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
 			setEditorSidebar: savePreference.bind( null, 'editor-sidebar' ),

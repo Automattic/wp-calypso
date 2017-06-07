@@ -2,21 +2,20 @@
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_EDIT_PRODUCT,
-	WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
-} from '../../action-types';
+	WOOCOMMERCE_PRODUCT_EDIT,
+	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
+} from 'woocommerce/state/action-types';
 
 export function editProduct( product, data ) {
 	return {
-		type: WOOCOMMERCE_EDIT_PRODUCT,
+		type: WOOCOMMERCE_PRODUCT_EDIT,
 		payload: { product, data },
 	};
 }
 
 export function editProductAttribute( product, attribute, data ) {
 	return {
-		type: WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
+		type: WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 		payload: { product, attribute, data },
 	};
 }
-

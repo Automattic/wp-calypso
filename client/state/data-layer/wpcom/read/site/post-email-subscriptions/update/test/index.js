@@ -20,7 +20,6 @@ describe( 'comment-email-subscriptions', () => {
 	describe( 'requestUpdatePostEmailSubscription', () => {
 		it( 'should dispatch an http request with revert info on the success and failure actions', () => {
 			const dispatch = spy();
-			const nextSpy = spy();
 			const getState = () => {
 				return {
 					reader: {
@@ -45,7 +44,7 @@ describe( 'comment-email-subscriptions', () => {
 					previousState: 'instantly',
 				},
 			} );
-			requestUpdatePostEmailSubscription( { dispatch, getState }, action, nextSpy );
+			requestUpdatePostEmailSubscription( { dispatch, getState }, action );
 
 			expect( dispatch ).to.have.been.calledWith(
 				http( {

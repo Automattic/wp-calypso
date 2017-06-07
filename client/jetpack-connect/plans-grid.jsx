@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
-import StepHeader from 'signup/step-header';
+import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 
 /**
@@ -20,7 +20,7 @@ class JetpackPlansGrid extends Component {
 	static propTypes = {
 		basePlansPath: PropTypes.string,
 		hideFreePlan: PropTypes.bool,
-		intervalType: PropTypes.string,
+		interval: PropTypes.string,
 		isLanding: PropTypes.bool,
 		onSelect: PropTypes.func,
 		selectedSite: PropTypes.object,
@@ -45,7 +45,7 @@ class JetpackPlansGrid extends Component {
 			subheaderText = '';
 		}
 		return (
-			<StepHeader
+			<FormattedHeader
 				headerText={ headerText }
 				subHeaderText={ subheaderText }
 				step={ 1 }
@@ -65,7 +65,7 @@ class JetpackPlansGrid extends Component {
 							isLandingPage={ ! this.props.selectedSite }
 							basePlansPath={ this.props.basePlansPath }
 							onUpgradeClick={ this.props.onSelect }
-							intervalType={ this.props.intervalType }
+							interval={ this.props.interval }
 							hideFreePlan={ this.props.hideFreePlan }
 							displayJetpackPlans={ true } />
 					</div>

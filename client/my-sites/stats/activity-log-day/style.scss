@@ -1,0 +1,37 @@
+// Activity Log
+.activity-log-day {
+	position: relative;
+	z-index: 2;
+
+	.card {
+		background: transparent;
+
+		.foldable-card__content {
+			padding: 0 0 24px;
+			background: transparent;
+		}
+	}
+
+	.foldable-card__header {
+		background: $white;
+	}
+
+	.foldable-card.card.is-expanded {
+		box-shadow: none;
+
+		.foldable-card__header {
+			box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+			0 1px 2px lighten( $gray, 30% );
+		}
+	}
+}
+
+.activity-log-day__day {
+	font-weight: 600;
+}
+
+.activity-log-day__events {
+	text-transform: uppercase;
+	font-size: 12px;
+	color: $gray;
+}

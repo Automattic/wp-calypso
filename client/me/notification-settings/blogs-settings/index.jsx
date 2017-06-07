@@ -26,7 +26,6 @@ class BlogsSettings extends Component {
 	static propTypes = {
 		sites: PropTypes.array.isRequired,
 		requestingSites: PropTypes.bool.isRequired,
-		devices: PropTypes.object.isRequired,
 		settings: PropTypes.instanceOf( Immutable.List ),
 		hasUnsavedChanges: PropTypes.bool.isRequired,
 		onToggle: PropTypes.func.isRequired,
@@ -37,7 +36,7 @@ class BlogsSettings extends Component {
 	render() {
 		const { sites, requestingSites, translate } = this.props;
 
-		if ( ! sites || ! this.props.devices.initialized || ! this.props.settings ) {
+		if ( ! sites || ! this.props.settings ) {
 			return <Placeholder />;
 		}
 
@@ -47,7 +46,7 @@ class BlogsSettings extends Component {
 				line={ translate( 'Would you like to start one?' ) }
 				action={ translate( 'Create Site' ) }
 				actionURL={ config( 'signup_url' ) + '?ref=calypso-nosites' }
-				illustration={ '/calypso/images/drake/drake-nosites.svg' } />;
+				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' } />;
 		}
 
 		const renderBlog = ( site, index, disableToggle = false ) => {
@@ -58,7 +57,6 @@ class BlogsSettings extends Component {
 				<Blog
 					key={ `blog-${ site.ID }` }
 					siteId={ site.ID }
-					devices={ this.props.devices }
 					disableToggle={ disableToggle }
 					hasUnsavedChanges={ this.props.hasUnsavedChanges }
 					settings={ this.props.settings.find( settings => settings.get( 'blog_id' ) === site.ID ) }
@@ -88,7 +86,7 @@ class BlogsSettings extends Component {
 
 const mapStateToProps = state => ( {
 	sites: getSites( state ),
-	requestingSites: isRequestingSites( state )
+	requestingSites: isRequestingSites( state ),
 } );
 
 export default connect( mapStateToProps )( localize( BlogsSettings ) );

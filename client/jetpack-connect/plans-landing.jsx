@@ -18,7 +18,7 @@ const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 class PlansLanding extends Component {
 	static propTypes = {
 		basePlansPath: PropTypes.string,
-		intervalType: PropTypes.string,
+		interval: PropTypes.string,
 	};
 
 	componentDidMount() {
@@ -41,7 +41,7 @@ class PlansLanding extends Component {
 	render() {
 		const {
 			basePlansPath,
-			intervalType,
+			interval,
 		} = this.props;
 		return (
 			<div>
@@ -51,7 +51,7 @@ class PlansLanding extends Component {
 					basePlansPath={ basePlansPath }
 					calypsoStartedConnection={ true }
 					hideFreePlan={ false }
-					intervalType={ intervalType }
+					interval={ interval }
 					isLanding={ true }
 					onSelect={ this.storeSelectedPlan }
 				/>

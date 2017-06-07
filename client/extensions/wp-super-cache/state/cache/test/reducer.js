@@ -12,6 +12,9 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
+	WP_SUPER_CACHE_PRELOAD_CACHE,
+	WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE,
+	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
@@ -195,6 +198,81 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state.testing ).to.eql( {} );
+		} );
+	} );
+
+	describe( 'preloading()', () => {
+		const previousState = deepFreeze( {
+			preloading: {
+				[ primarySiteId ]: true,
+			}
+		} );
+
+		it( 'should default to an empty object', () => {
+			const state = reducer( undefined, {} );
+
+			expect( state.preloading ).to.eql( {} );
+		} );
+
+		it( 'should set preloading value to true if request in progress', () => {
+			const state = reducer( undefined, {
+				type: WP_SUPER_CACHE_PRELOAD_CACHE,
+				siteId: primarySiteId,
+			} );
+
+			expect( state.preloading ).to.eql( {
+				[ primarySiteId ]: true,
+			} );
+		} );
+
+		it( 'should accumulate preloading values', () => {
+			const state = reducer( previousState, {
+				type: WP_SUPER_CACHE_PRELOAD_CACHE,
+				siteId: secondarySiteId,
+			} );
+
+			expect( state.preloading ).to.eql( {
+				[ primarySiteId ]: true,
+				[ secondarySiteId ]: true,
+			} );
+		} );
+
+		it( 'should set preloading value to false if request finishes successfully', () => {
+			const state = reducer( previousState, {
+				type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
+				siteId: primarySiteId,
+			} );
+
+			expect( state.preloading ).to.eql( {
+				[ primarySiteId ]: false,
+			} );
+		} );
+
+		it( 'should set preloading value to false if request finishes with failure', () => {
+			const state = reducer( previousState, {
+				type: WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE,
+				siteId: primarySiteId,
+			} );
+
+			expect( state.preloading ).to.eql( {
+				[ primarySiteId ]: false,
+			} );
+		} );
+
+		it( 'should not persist state', () => {
+			const state = reducer( previousState, {
+				type: SERIALIZE,
+			} );
+
+			expect( state.preloading ).to.eql( {} );
+		} );
+
+		it( 'should not load persisted state', () => {
+			const state = reducer( previousState, {
+				type: DESERIALIZE,
+			} );
+
+			expect( state.preloading ).to.eql( {} );
 		} );
 	} );
 

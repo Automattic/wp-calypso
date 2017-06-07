@@ -9,7 +9,9 @@ import { connect } from 'react-redux';
  */
 import { requestCommentsList } from 'state/comments/actions';
 
-const requestComments = ( { requestSiteComments, siteId, status } ) => requestSiteComments( { siteId, status } );
+const requestComments = ( { requestSiteComments, siteId, status } ) => (
+	siteId && requestSiteComments( { siteId, status } )
+);
 
 export class QuerySiteComments extends Component {
 	componentDidMount() {

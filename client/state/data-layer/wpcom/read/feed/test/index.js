@@ -23,9 +23,8 @@ describe( 'wpcom-api', () => {
 			it( 'should dispatch http request for feed search', () => {
 				const action = requestFeedSearch( query );
 				const dispatch = sinon.spy();
-				const next = sinon.spy();
 
-				initiateFeedSearch( { dispatch }, action, next );
+				initiateFeedSearch( { dispatch }, action );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(
@@ -39,26 +38,15 @@ describe( 'wpcom-api', () => {
 					} )
 				);
 			} );
-
-			it( 'should pass the original action along the middleware chain', () => {
-				const action = requestFeedSearch( query );
-				const dispatch = sinon.spy();
-				const next = sinon.spy();
-
-				initiateFeedSearch( { dispatch }, action, next );
-
-				expect( next ).to.have.been.calledWith( action );
-			} );
 		} );
 
 		describe( '#receiveFeeds', () => {
 			it( 'should dispatch an action with the feed results', () => {
 				const action = requestFeedSearch( query );
 				const dispatch = sinon.spy();
-				const next = sinon.spy();
 				const apiResponse = { feeds, total: 500 };
 
-				receiveFeeds( { dispatch }, action, next, apiResponse );
+				receiveFeeds( { dispatch }, action, null, apiResponse );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(
@@ -81,14 +69,12 @@ describe( 'wpcom-api', () => {
 			it( 'should dispatch error notice', () => {
 				const action = requestFeedSearch( query );
 				const dispatch = sinon.spy();
-				const next = sinon.spy();
 
-				receiveError( { dispatch }, action, next );
+				receiveError( { dispatch }, action );
 
 				expect( dispatch ).to.have.been.calledWithMatch( {
 					type: NOTICE_CREATE,
 				} );
-				expect( next ).callCount( 0 );
 			} );
 		} );
 	} );

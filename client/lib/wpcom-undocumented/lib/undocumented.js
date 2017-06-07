@@ -312,10 +312,10 @@ Undocumented.prototype.jetpackLogin = function( siteId, _wp_nonce, redirect_uri,
 	return this.wpcom.req.get( { path: endpointUrl }, params );
 };
 
-Undocumented.prototype.jetpackAuthorize = function( siteId, code, state, redirect_uri, secret ) {
+Undocumented.prototype.jetpackAuthorize = function( siteId, code, state, redirect_uri, secret, jp_version ) {
 	debug( '/jetpack-blogs/:site_id:/authorize query' );
 	const endpointUrl = '/jetpack-blogs/' + siteId + '/authorize';
-	const params = { code, state, redirect_uri, secret };
+	const params = { code, state, redirect_uri, secret, jp_version };
 	return this.wpcom.req.post( { path: endpointUrl }, params );
 };
 
@@ -1788,8 +1788,8 @@ Undocumented.prototype.updateDns = function( domain, records, fn ) {
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
 };
 
-Undocumented.prototype.applyDnsTemplate = function( domain, template, variables, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/dns/template/' + template, { variables }, callback );
+Undocumented.prototype.applyDnsTemplate = function( domain, provider, service, variables, callback ) {
+	return this.wpcom.req.post( '/domains/' + domain + '/dns/providers/' + provider + '/services/' + service, { variables }, callback );
 };
 
 Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
@@ -1851,6 +1851,19 @@ Undocumented.prototype.declineTransfer = function( domainName, fn ) {
 
 Undocumented.prototype.transferToUser = function( siteId, domainName, targetUserId, fn ) {
 	return this.wpcom.req.post( '/sites/' + siteId + '/domains/' + domainName + '/transfer-to-user/' + targetUserId, fn );
+};
+
+/**
+ * Transfers a domain to the specified site
+ *
+ * @param {int} [siteId] The site ID
+ * @param {string} [domainName] Name of the domain
+ * @param {int} [targetSiteId] The target site ID
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ */
+Undocumented.prototype.transferToSite = function( siteId, domainName, targetSiteId, fn ) {
+	return this.wpcom.req.post( `/sites/${ siteId }/domains/${ domainName }/transfer-to-site/${ targetSiteId }`, fn );
 };
 
 /*

@@ -22,9 +22,8 @@ describe( 'comment-email-subscriptions', () => {
 	describe( 'requestCommentEmailUnsubscription', () => {
 		it( 'should dispatch an http request and call through next', () => {
 			const dispatch = spy();
-			const next = spy();
 			const action = unsubscribeToNewCommentEmail( 1234 );
-			requestCommentEmailUnsubscription( { dispatch }, action, next );
+			requestCommentEmailUnsubscription( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWith(
 				http( {
 					method: 'POST',
@@ -35,8 +34,6 @@ describe( 'comment-email-subscriptions', () => {
 					onFailure: action,
 				} )
 			);
-
-			expect( next ).to.have.been.calledWith( action );
 		} );
 	} );
 

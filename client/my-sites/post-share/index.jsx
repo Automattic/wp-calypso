@@ -17,7 +17,12 @@ import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
-import { isPublicizeEnabled } from 'state/selectors';
+import {
+	isPublicizeEnabled,
+	isSchedulingPublicizeShareAction,
+	getScheduledPublicizeShareActionTime,
+	isSchedulingPublicizeShareActionError,
+} from 'state/selectors';
 import {
 	getSiteSlug,
 	getSitePlanSlug,
@@ -28,7 +33,12 @@ import {
 	hasFetchedConnections as siteHasFetchedConnections,
 } from 'state/sharing/publicize/selectors';
 
-import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
+import {
+	fetchConnections as requestConnections,
+	sharePost,
+	dismissShareConfirmation,
+} from 'state/sharing/publicize/actions';
+import { schedulePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
 import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
 import PostMetadata from 'lib/post-metadata';
 import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
@@ -87,6 +97,7 @@ class PostShare extends Component {
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
 		showSharingPreview: false,
 		showAccountTooltip: false,
+		scheduledDate: null,
 	};
 
 	hasConnections() {
@@ -103,6 +114,13 @@ class PostShare extends Component {
 		}
 
 		this.setState( { skipped } );
+	};
+
+	scheduleDate = date => {
+		if ( date.isBefore( Date.now() ) ) {
+			date = null;
+		}
+		this.setState( { scheduledDate: date } );
 	};
 
 	skipConnection( { keyring_connection_ID } ) {
@@ -123,10 +141,28 @@ class PostShare extends Component {
 	};
 
 	sharePost = () => {
-		this.props.sharePost( this.props.siteId, this.props.postId, this.state.skipped, this.state.message );
+		const {
+			postId,
+			siteId,
+			connections,
+		} = this.props;
+		if ( this.state.scheduledDate ) {
+			const servicesToPublish = connections
+				.filter( connection => this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 )
+				.map( connection => connection.ID );
+			this.props.schedulePostShareAction(
+				siteId,
+				postId,
+				this.state.message,
+				this.state.scheduledDate.format( 'X' ),
+				servicesToPublish,
+			);
+		} else {
+			this.props.sharePost( siteId, postId, this.state.skipped, this.state.message );
+		}
 	};
 
-	isButtonDisabled() {
+	isSharingPost() {
 		if ( this.props.requesting ) {
 			return true;
 		}
@@ -167,9 +203,9 @@ class PostShare extends Component {
 			className="post-share__button"
 			primary
 			onClick={ this.sharePost }
-			disabled={ this.isButtonDisabled() }
+			disabled={ this.isSharingPost() }
 		>
-			{ translate( 'Share post' ) }
+			{ this.state.scheduledDate ? translate( 'Schedule post' ) : translate( 'Share post' ) }
 		</Button>;
 
 		if ( ! hasRepublicizeSchedulingFeature ) {
@@ -191,16 +227,22 @@ class PostShare extends Component {
 					</Button>
 				}
 
-				<ButtonGroup className="post-share__share-combo">
+				<ButtonGroup
+					className="post-share__share-combo"
+					primary
+					busy={ this.isSharingPost() }
+				>
 					{ shareButton }
 
 					<CalendarButton
 						primary
 						className="post-share__schedule-button"
-						disabled={ this.isButtonDisabled() }
+						disabled={ this.isSharingPost() }
 						title={ translate( 'Set date and time' ) }
+						selectedDay={ this.state.scheduledDate }
 						tabIndex={ 3 }
 						siteId={ siteId }
+						onDateChange={ this.scheduleDate }
 						popoverPosition="bottom left" />
 				</ButtonGroup>
 			</div>
@@ -261,6 +303,31 @@ class PostShare extends Component {
 			success,
 			translate,
 		} = this.props;
+
+		if ( this.props.scheduling ) {
+			return (
+				<Notice status="is-warning" showDismiss={ false }>
+					{ translate( 'We are writing your shares to the calendar…' ) }
+				</Notice>
+			);
+		}
+		if ( this.props.scheduledAt ) {
+			return (
+				<Notice status="is-success" onDismissClick={ this.dismiss }>
+					{ translate( 'We`ll share your post on %s.', {
+						args: this.props.scheduledAt.format( 'ddd, MMMM Do YYYY, h:mm:ss a' )
+					} ) }
+				</Notice>
+			);
+		}
+
+		if ( this.props.schedulingFailed ) {
+			return (
+				<Notice status="is-error" onDismissClick={ this.dismiss }>
+					{ translate( 'Scheduling share failed. Please don\'t be mad.' ) }
+				</Notice>
+			);
+		}
 
 		if ( requesting ) {
 			return (
@@ -404,8 +471,6 @@ class PostShare extends Component {
 				<QueryPostTypes siteId={ siteId } />
 				<QueryPublicizeConnections siteId={ siteId } />
 
-				{ this.renderRequestSharingNotice() }
-
 				<div className={ classes }>
 					<div className="post-share__head">
 						<h4 className="post-share__title">
@@ -422,6 +487,7 @@ class PostShare extends Component {
 							) }
 						</div>
 					</div>
+					{ this.renderRequestSharingNotice() }
 
 					{ this.renderPrimarySection() }
 				</div>
@@ -437,7 +503,6 @@ class PostShare extends Component {
 		);
 	}
 }
-
 export default connect(
 	( state, props ) => {
 		const { siteId } = props;
@@ -454,14 +519,17 @@ export default connect(
 			hasRepublicizeSchedulingFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE_SCHEDULING ),
 			siteSlug: getSiteSlug( state, siteId ),
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
+			scheduling: isSchedulingPublicizeShareAction( state, siteId, postId ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			requesting: isRequestingSharePost( state, siteId, postId ),
+			schedulingFailed: isSchedulingPublicizeShareActionError( state, siteId, postId ),
 			failed: sharePostFailure( state, siteId, postId ),
 			success: sharePostSuccessMessage( state, siteId, postId ),
+			scheduledAt: getScheduledPublicizeShareActionTime( state, siteId, postId ),
 			businessRawPrice: getSitePlanRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
 			businessDiscountedRawPrice: getPlanDiscountedRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
 			userCurrency: getCurrentUserCurrencyCode( state ),
 		};
 	},
-	{ requestConnections, sharePost, dismissShareConfirmation }
+	{ requestConnections, sharePost, dismissShareConfirmation, schedulePostShareAction }
 )( localize( PostShare ) );

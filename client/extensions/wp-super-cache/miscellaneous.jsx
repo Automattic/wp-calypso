@@ -27,11 +27,13 @@ const Miscellaneous = ( {
 		use_304_headers,
 	},
 	handleAutosavingToggle,
+	isReadOnly,
 	isRequesting,
 	isSaving,
 	notices,
 	translate,
 } ) => {
+	const isDisabled = isRequesting || isSaving || isReadOnly;
 	const compressionDisabled = notices && notices.compression_disabled;
 
 	return (
@@ -51,7 +53,7 @@ const Miscellaneous = ( {
 						{ ! compressionDisabled &&
 						<FormToggle
 							checked={ !! cache_compression }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'cache_compression' ) }>
 							<span>
 								{ translate(
@@ -66,7 +68,7 @@ const Miscellaneous = ( {
 
 						<FormToggle
 							checked={ !! dont_cache_logged_in }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'dont_cache_logged_in' ) }>
 							<span>
 								{ translate(
@@ -80,7 +82,7 @@ const Miscellaneous = ( {
 
 						<FormToggle
 							checked={ !! cache_rebuild }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'cache_rebuild' ) }>
 							<span>
 								{ translate(
@@ -95,7 +97,7 @@ const Miscellaneous = ( {
 
 						<FormToggle
 							checked={ !! use_304_headers }
-							disabled={ isRequesting || isSaving || !! cache_mod_rewrite }
+							disabled={ isDisabled || !! cache_mod_rewrite }
 							onChange={ handleAutosavingToggle( 'use_304_headers' ) }>
 							<span>
 								{ translate(
@@ -129,7 +131,7 @@ const Miscellaneous = ( {
 
 						<FormToggle
 							checked={ !! no_cache_for_get }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'no_cache_for_get' ) }>
 							<span>
 								{ translate( 'Don’t cache pages with GET parameters. (?x=y at the end of a url)' ) }
@@ -138,7 +140,7 @@ const Miscellaneous = ( {
 
 						<FormToggle
 							checked={ !! make_known_anon }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'make_known_anon' ) }>
 							<span>
 								{ translate( 'Make known users anonymous so they’re served supercached static files.' ) }
@@ -147,7 +149,7 @@ const Miscellaneous = ( {
 
 						<FormToggle
 							checked={ !! cache_hello_world }
-							disabled={ isRequesting || isSaving }
+							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'cache_hello_world' ) }>
 							<span>
 								{ translate( 'Proudly tell the world your server is {{fry}}Stephen Fry proof{{/fry}}! ' +

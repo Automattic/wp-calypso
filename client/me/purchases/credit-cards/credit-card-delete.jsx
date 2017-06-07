@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -17,7 +18,7 @@ const CreditCardDelete = React.createClass( {
 		this.props
 			.deleteStoredCard( this.props.card )
 			.then( () => {
-				this.props.successNotice( this.translate( 'Card deleted successfully' ) );
+				this.props.successNotice( this.props.translate( 'Card deleted successfully' ) );
 			} )
 			.catch( error => {
 				this.props.errorNotice( error.message );
@@ -25,7 +26,9 @@ const CreditCardDelete = React.createClass( {
 	},
 
 	renderDeleteButton: function() {
-		const text = this.props.isDeleting ? this.translate( 'Deleting ' ) : this.translate( 'Delete' );
+		const text = this.props.isDeleting
+			? this.props.translate( 'Deleting' )
+			: this.props.translate( 'Delete' );
 
 		return (
 			<button
@@ -60,4 +63,4 @@ export default connect(
 		errorNotice,
 		successNotice,
 	}
-)( CreditCardDelete );
+)( localize( CreditCardDelete ) );

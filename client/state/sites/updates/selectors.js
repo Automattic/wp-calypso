@@ -4,5 +4,5 @@ export const isRequestingSiteUpdates = ( state, siteId ) => {
 };
 
 export const getUpdatesBySiteId = ( state, siteId ) => {
-	return state.sites.updates.items[ siteId ] || {};
+	return state.sites.updates.items[ siteId ] || null;
 };

@@ -18,11 +18,12 @@ export const getTwoFactorUserId = ( state ) => {
  * Retrieve the actual nonce for the two factor authentication process.
  * Returns null if there is no such information yet, or user does not have 2FA enabled.
  *
- * @param  {Object}   state  Global state tree
+ * @param	{Object}	state  Global state tree
+ * @param	{String}	nonceType nonce's type
  * @return {?String}         The nonce.
  */
-export const getTwoFactorAuthNonce = ( state ) => {
-	return get( state, 'login.twoFactorAuth.two_step_nonce', null );
+export const getTwoFactorAuthNonce = ( state, nonceType ) => {
+	return get( state, `login.twoFactorAuth.two_step_nonce_${ nonceType }`, null );
 };
 
 /**
@@ -82,8 +83,7 @@ export const isTwoFactorEnabled = ( state ) => {
 	}
 
 	return (
-		twoFactorAuth.two_step_id !== '' &&
-		twoFactorAuth.two_step_nonce !== ''
+		twoFactorAuth.user_id !== ''
 	);
 };
 

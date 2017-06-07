@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { pick } from 'lodash';
+import { connect } from 'react-redux';
+import { flowRight, get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,37 +18,53 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle/compact';
 import Notice from 'components/notice';
+import QueryNotices from './data/query-notices';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
+import { cancelPreloadCache, preloadCache } from './state/cache/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isPreloadingCache } from './state/cache/selectors';
+import { getNotices } from './state/notices/selectors';
 
 /**
  * Render cache preload interval number input
  * @returns { object } React element containing the preload interval number input
  */
-const renderCachePreloadInterval = ( {
+const CachePreloadInterval = ( {
 	handleChange,
-	isRequesting,
-	isSaving,
-	preload_interval,
+	isDisabled,
+	preload_interval = 0,
 } ) => (
 	<FormTextInput
 		className="wp-super-cache__preload-interval"
-		disabled={ isRequesting || isSaving }
+		disabled={ isDisabled }
 		min="0"
 		name="preload_interval"
 		onChange={ handleChange( 'preload_interval' ) }
 		step="1"
 		type="number"
-		value={ preload_interval || '' } />
+		value={ preload_interval } />
 );
 
 class PreloadTab extends Component {
 	state = {
 		preloadRefresh: true,
+	};
+
+	componentWillReceiveProps( nextProps ) {
+		this.setState( { preloadRefresh: parseInt( nextProps.fields.preload_interval, 10 ) !== 0 } );
 	}
 
 	handlePreloadRefreshChange = () => {
-		this.setState( { preloadRefresh: ! this.state.preloadRefresh } );
+		this.setState( { preloadRefresh: ! this.state.preloadRefresh }, () => {
+			const { fields, setFieldValue } = this.props;
+
+			if ( this.state.preloadRefresh ) {
+				setFieldValue( 'preload_interval', get( fields, 'minimum_preload_interval', 30 ), true );
+			} else {
+				setFieldValue( 'preload_interval', 0, true );
+			}
+		} );
 	}
 
 	getPreloadPostsOptions( post_count ) {
@@ -67,6 +84,10 @@ class PreloadTab extends Component {
 		return options;
 	}
 
+	preload = () => this.props.preloadCache( this.props.siteId );
+
+	cancelPreload = () => this.props.cancelPreloadCache( this.props.siteId );
+
 	render() {
 		const {
 			fields,
@@ -74,16 +95,20 @@ class PreloadTab extends Component {
 			handleChange,
 			handleSelect,
 			handleSubmitForm,
+			isPreloading,
 			isRequesting,
 			isSaving,
+			notices: {
+				preload_disabled_by_admin,
+				preload_disabled_cache_off,
+				preload_disabled_supercache_off,
+			},
+			siteId,
 			translate,
 		} = this.props;
 
 		const {
-			is_cache_enabled,
-			is_preload_enabled,
 			is_preloading,
-			is_super_cache_enabled,
 			minimum_preload_interval,
 			post_count,
 			preload_email_volume,
@@ -100,25 +125,34 @@ class PreloadTab extends Component {
 			{ value: 'less', description: translate( 'Low (one email at the start and one at the end of preloading all posts)' ) },
 		];
 
-		if ( ! is_cache_enabled ) {
+		if ( preload_disabled_by_admin ) {
 			return (
 				<Notice
-					text={ translate( 'Caching must be enabled to use this feature.' ) }
-					showDismiss={ false } />
+					showDismiss={ false }
+					text={ translate( 'Preloading is disabled by the administrator of your site.' ) } />
 			);
 		}
 
-		if ( is_super_cache_enabled && ! is_preload_enabled ) {
+		if ( preload_disabled_cache_off ) {
 			return (
 				<Notice
-					text={ translate( 'Preloading of cache disabled. Please disable legacy page caching or talk to ' +
-						'your host administrator.' ) }
-					showDismiss={ false } />
+					showDismiss={ false }
+					text={ translate( 'Preloading is disabled as caching is disabled.' ) } />
+			);
+		}
+
+		if ( preload_disabled_supercache_off ) {
+			return (
+				<Notice
+					showDismiss={ false }
+					text={ translate( 'Preloading is disabled as supercaching is disabled.' ) } />
 			);
 		}
 
 		return (
 			<div>
+				<QueryNotices siteId={ siteId } />
+
 				<SectionHeader label={ ( 'Preload' ) }>
 					<Button
 						compact
@@ -155,10 +189,9 @@ class PreloadTab extends Component {
 										{
 											count: preload_interval || 0,
 											components: {
-												number: renderCachePreloadInterval( {
+												number: CachePreloadInterval( {
 													handleChange,
-													isRequesting,
-													isSaving,
+													isDisabled: isRequesting || isSaving || ! this.state.preloadRefresh,
 													preload_interval,
 												} )
 											}
@@ -234,8 +267,20 @@ class PreloadTab extends Component {
 				<SectionHeader label={ translate( 'Preload Cache' ) } />
 				<Card>
 				{ is_preloading
-					? <Button compact>{ translate( 'Cancel Cache Preload' ) }</Button>
-					: <Button compact>{ translate( 'Preload Cache Now' ) }</Button>
+					? <Button
+							compact
+							busy={ isPreloading }
+							disabled={ isPreloading }
+							onClick={ this.cancelPreload }>
+							{ translate( 'Cancel Cache Preload' ) }
+							</Button>
+					: <Button
+							compact
+							busy={ isPreloading }
+							disabled={ isPreloading }
+							onClick={ this.preload }>
+							{ translate( 'Preload Cache Now' ) }
+						</Button>
 				}
 				</Card>
 			</div>
@@ -243,12 +288,24 @@ class PreloadTab extends Component {
 	}
 }
 
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			isPreloading: isPreloadingCache( state, siteId ),
+			notices: getNotices( state, siteId ),
+		};
+	},
+	{
+		cancelPreloadCache,
+		preloadCache,
+	},
+);
+
 const getFormSettings = settings => {
 	return pick( settings, [
-		'is_cache_enabled',
-		'is_preload_enabled',
 		'is_preloading',
-		'is_super_cache_enabled',
 		'minimum_preload_interval',
 		'post_count',
 		'preload_email_volume',
@@ -259,4 +316,7 @@ const getFormSettings = settings => {
 	] );
 };
 
-export default WrapSettingsForm( getFormSettings )( PreloadTab );
+export default flowRight(
+	connectComponent,
+	WrapSettingsForm( getFormSettings )
+)( PreloadTab );

@@ -331,6 +331,21 @@
 	}
 }
 
+// Longreads-Specific Full Post View Styles
+.blog-70135762 .reader-full-post__story-content {
+
+	.publisher-intro img {
+		float: left;
+		margin: 0 20px 0 0;
+	}
+
+	.publisher-intro p:first-child {
+		@include breakpoint( "<660px" ) {
+			margin-bottom: 0;
+		}
+	}
+}
+
 // gizmodo fixes
 .reader-full-post.feed-10080096 {
 	.align--bleed {

@@ -6,7 +6,6 @@ This module provides a consistent rendering component for empty content cases in
 ## Usage
 
 ```jsx
-
 // import the component
 import EmptyContentComponent from 'components/empty-content';
 
@@ -23,7 +22,7 @@ ReactDom.render(
 import EmptyContent from 'components/empty-content';
 
 // And use it inline inside the render method of another component
-render: function() {
+render() {
 	return(
 		<div>
 			<EmptyContent title="Your title" line="some text" />

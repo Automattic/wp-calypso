@@ -9,6 +9,7 @@ import page from 'page';
 import classNames from 'classnames';
 import {
 	filter,
+	flow,
 	get,
 	includes,
 	keyBy,
@@ -58,10 +59,10 @@ class SiteSelector extends Component {
 		onSiteSelect: PropTypes.func,
 		showRecentSites: PropTypes.bool,
 		recentSites: PropTypes.array,
-		getSite: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
-		visibleSites: PropTypes.array,
+		visibleSites: PropTypes.arrayOf( PropTypes.object ),
 		allSitesPath: PropTypes.string,
+		navigateToSite: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -124,23 +125,22 @@ class SiteSelector extends Component {
 	computeHighlightedSite() {
 		// site can be highlighted by either keyboard or by mouse and
 		// we need to switch seemlessly between the two
-		let highlightedSite, highlightedIndex;
+		let highlightedSiteId, highlightedIndex;
 		if ( this.state.isKeyboardEngaged ) {
 			debug( 'using highlight from last keyboard interaction' );
-			highlightedSite = this.visibleSites[ this.state.highlightedIndex ];
+			highlightedSiteId = this.visibleSites[ this.state.highlightedIndex ];
 			highlightedIndex = this.state.highlightedIndex;
 		} else if ( this.lastMouseHover ) {
 			debug( `restoring highlight from last mouse hover (${ this.lastMouseHover })` );
-			// @FIXME
-			highlightedSite = this.props.getSite( this.lastMouseHover ) || this.lastMouseHover;
-			highlightedIndex = this.visibleSites.indexOf( highlightedSite );
+			highlightedSiteId = this.props.highlightedSiteId || this.lastMouseHover;
+			highlightedIndex = this.visibleSites.indexOf( highlightedSiteId );
 		} else {
 			debug( 'reseting highlight as mouse left site selector' );
-			highlightedSite = null;
+			highlightedSiteId = null;
 			highlightedIndex = -1;
 		}
 
-		return { highlightedSite, highlightedIndex };
+		return { highlightedSiteId, highlightedIndex };
 	}
 
 	onKeyDown = ( event ) => {
@@ -152,7 +152,7 @@ class SiteSelector extends Component {
 			return;
 		}
 
-		const { highlightedSite, highlightedIndex } = this.computeHighlightedSite();
+		const { highlightedSiteId, highlightedIndex } = this.computeHighlightedSite();
 		let nextIndex = null;
 
 		switch ( event.key ) {
@@ -169,11 +169,11 @@ class SiteSelector extends Component {
 				}
 				break;
 			case 'Enter':
-				if ( highlightedSite ) {
-					if ( highlightedSite === ALL_SITES ) {
+				if ( highlightedSiteId ) {
+					if ( highlightedSiteId === ALL_SITES ) {
 						this.onSiteSelect( event, ALL_SITES );
 					} else {
-						this.onSiteSelect( event, highlightedSite.slug );
+						this.onSiteSelect( event, highlightedSiteId );
 					}
 				}
 				break;
@@ -188,8 +188,8 @@ class SiteSelector extends Component {
 		}
 	};
 
-	onSiteSelect = ( event, siteSlug ) => {
-		const handledByHost = this.props.onSiteSelect( siteSlug );
+	onSiteSelect = ( event, siteId ) => {
+		const handledByHost = this.props.onSiteSelect( siteId );
 		this.props.onClose( event );
 
 		const node = ReactDom.findDOMNode( this.refs.selector );
@@ -201,11 +201,7 @@ class SiteSelector extends Component {
 		// any number of things). handledByHost gives them the chance to avoid the simulated navigation,
 		// even for touchend
 		if ( ! handledByHost ) {
-			const pathname = this.getPathnameForSite( siteSlug );
-			if ( pathname ) {
-				// why pathname and not patnname + search? unsure. This currently strips querystrings.
-				page( pathname );
-			}
+			this.props.navigateToSite( siteId, this.props );
 		}
 	};
 
@@ -213,10 +209,10 @@ class SiteSelector extends Component {
 		this.onSiteSelect( event, ALL_SITES );
 	};
 
-	onSiteHover = ( event, siteSlug ) => {
-		if ( this.lastMouseHover !== siteSlug ) {
-			debug( `${ siteSlug } hovered` );
-			this.lastMouseHover = siteSlug;
+	onSiteHover = ( event, siteId ) => {
+		if ( this.lastMouseHover !== siteId ) {
+			debug( `${ siteId } hovered` );
+			this.lastMouseHover = siteId;
 		}
 	};
 
@@ -247,51 +243,18 @@ class SiteSelector extends Component {
 		}
 	};
 
-	getSiteBasePath( site ) {
-		let siteBasePath = this.props.siteBasePath;
-		const postsBase = ( site.jetpack || site.single_user_site ) ? '/posts' : '/posts/my';
-
-		// Default posts to /posts/my when possible and /posts when not
-		siteBasePath = siteBasePath.replace( /^\/posts\b(\/my)?/, postsBase );
-
-		// Default stats to /stats/slug when on a 3rd level post/page summary
-		if ( siteBasePath.match( /^\/stats\/(post|page)\// ) ) {
-			siteBasePath = '/stats';
-		}
-
-		if ( siteBasePath.match( /^\/domains\/manage\// ) ) {
-			siteBasePath = '/domains/manage';
-		}
-
-		return siteBasePath;
-	}
-
-	getPathnameForSite( slug ) {
-		const site = this.props.getSite( slug );
-
-		if ( slug === ALL_SITES ) {
-			// default posts links to /posts/my when possible and /posts when not
-			const postsBase = this.props.allSitesSingleUser ? '/posts' : '/posts/my';
-			const allSitesPath = this.props.allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
-
-			// There is currently no "all sites" version of the insights page
-			return allSitesPath.replace( /^\/stats\/insights\/?$/, '/stats/day' );
-		} else if ( this.props.siteBasePath ) {
-			return this.getSiteBasePath( site ) + '/' + site.slug;
-		}
-	}
-
 	isSelected( site ) {
 		const selectedSite = this.props.selected || this.props.selectedSite;
 		return (
 			( site === ALL_SITES && selectedSite === null ) ||
+			( selectedSite === site.ID ) ||
 			( selectedSite === site.domain ) ||
 			( selectedSite === site.slug )
 		);
 	}
 
-	isHighlighted( site ) {
-		return this.state.isKeyboardEngaged && this.visibleSites.indexOf( site ) === this.state.highlightedIndex;
+	isHighlighted( siteId ) {
+		return this.state.isKeyboardEngaged && this.visibleSites.indexOf( siteId ) === this.state.highlightedIndex;
 	}
 
 	shouldShowGroups() {
@@ -359,9 +322,9 @@ class SiteSelector extends Component {
 			return null;
 		}
 
-		this.visibleSites.push( site );
+		this.visibleSites.push( site.ID );
 
-		const isHighlighted = this.isHighlighted( site );
+		const isHighlighted = this.isHighlighted( site.ID );
 		return (
 			<Site
 				site={ site }
@@ -449,7 +412,53 @@ class SiteSelector extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+const navigateToSite = ( siteId, {
+	allSitesPath,
+	allSitesSingleUser,
+	siteBasePath,
+} ) => ( dispatch, getState ) => {
+	const pathname = getPathnameForSite( siteId );
+	if ( pathname ) {
+		page( pathname );
+	}
+
+	function getPathnameForSite() {
+		const site = getSite( getState(), siteId );
+		debug( 'getPathnameForSite', siteId, site );
+
+		if ( siteId === ALL_SITES ) {
+			// default posts links to /posts/my when possible and /posts when not
+			const postsBase = allSitesSingleUser ? '/posts' : '/posts/my';
+			const path = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
+
+			// There is currently no "all sites" version of the insights page
+			return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
+		} else if ( siteBasePath ) {
+			return getSiteBasePath( site ) + '/' + site.slug;
+		}
+	}
+
+	function getSiteBasePath( site ) {
+		let path = siteBasePath;
+		const postsBase = ( site.jetpack || site.single_user_site ) ? '/posts' : '/posts/my';
+
+		// Default posts to /posts/my when possible and /posts when not
+		path = path.replace( /^\/posts\b(\/my)?/, postsBase );
+
+		// Default stats to /stats/slug when on a 3rd level post/page summary
+		if ( path.match( /^\/stats\/(post|page)\// ) ) {
+			path = '/stats';
+		}
+
+		if ( path.match( /^\/domains\/manage\// ) ) {
+			path = '/domains/manage';
+		}
+
+		return path;
+	}
+};
+
+const mapState = ( state ) => {
 	const user = getCurrentUser( state );
 	const visibleSiteCount = get( user, 'visible_site_count', 0 );
 
@@ -459,10 +468,15 @@ export default connect( ( state ) => {
 		recentSites: getPreference( state, 'recentSites' ),
 		siteCount: get( user, 'site_count', 0 ),
 		visibleSiteCount: visibleSiteCount,
-		getSite: getSite.bind( null, state ),
 		selectedSite: getSelectedSite( state ),
 		visibleSites: getVisibleSites( state ),
 		allSitesSingleUser: areAllSitesSingleUser( state ),
 		isRequestingMissingSites: isRequestingMissingSites( state ),
 	};
-} )( searchSites( localize( SiteSelector ) ) );
+};
+
+export default flow(
+	localize,
+	searchSites,
+	connect( mapState, { navigateToSite } )
+)( SiteSelector );
