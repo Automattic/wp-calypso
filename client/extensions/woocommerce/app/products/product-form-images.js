@@ -11,7 +11,6 @@ import { isNumber, noop } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import ImagePreloader from 'components/image-preloader';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
@@ -156,8 +155,6 @@ class ProductFormImages extends Component {
 
 		return (
 			<div className="products__product-form-images-wrapper">
-				<FormLabel>{ translate( 'Product Images' ) }</FormLabel>
-
 				<div className="products__product-form-images">
 					<div className="products__product-form-images-featured">
 						{ featuredImage && this.renderImage( featuredImage, false ) }
