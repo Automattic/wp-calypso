@@ -122,11 +122,9 @@ class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		let editText = translate( 'Edit Image' );
-
-		if ( 'video' === mimePrefix ) {
-			editText = translate( 'Edit Thumbnail' );
-		}
+		const editText = 'video' === mimePrefix
+			? translate( 'Edit Thumbnail' )
+			: translate( 'Edit Image' );
 
 		return (
 			<Button
