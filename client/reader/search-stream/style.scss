@@ -125,11 +125,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		}
 	}
 
-	&:nth-child( 2 ),
-	&:nth-child( 3 ) {
-		margin-top: -40px;
-	}
-
 	.reader-related-card-v2__post {
 		max-height: 208px;
 
@@ -349,11 +344,13 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 }
 
 .search-stream__with-sites .search-stream__results {
-	padding-top: 120px;
+	padding-top: 83px;
+
+	&.is-two-columns {
+		padding-top: 135px;
+	}
 }
-.search-stream__with-sites .search-stream__results.is-two-columns {
-	padding-top: 135px;
-}
+
 .search-stream__single-column-results  {
 	padding-top: 120px;
 }
