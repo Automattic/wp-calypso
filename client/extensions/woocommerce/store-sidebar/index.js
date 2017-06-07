@@ -3,6 +3,7 @@
  */
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { find, filter } from 'lodash';
 import React, { Component, PropTypes } from 'react';
 
 /**
@@ -92,6 +93,24 @@ class StoreSidebar extends Component {
 					</SidebarButton>
 				);
 			} );
+
+			// If this item has a parentSlug, only render it if 1) the parent is
+			// currently selected, 2) it is currently selected, or 3) any of its
+			// siblings are selected
+			if ( 'undefined' !== typeof item.parentSlug ) {
+				const links = [];
+				const parentItem = find( items, { slug: item.parentSlug } );
+				links.push( getLink( parentItem.path, this.props.site ) );
+
+				filter( items, { parentSlug: item.parentSlug } ).map( child => {
+					links.push( getLink( child.path, this.props.site ) );
+				} );
+
+				if ( ! this.isItemLinkSelected( links ) ) {
+					return null;
+				}
+			}
+
 			return (
 				<SidebarItem
 					className={ this.itemLinkClass( itemLink, item.slug, isChild, isDisabled ) }
