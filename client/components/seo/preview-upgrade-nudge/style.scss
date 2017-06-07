@@ -2,49 +2,34 @@
 	display: flex;
 	flex-direction: column;
 
-	.preview-upgrade-nudge__plan {
-		width: 100px;
-		height: 100px;
-		display: flex;
-		border: solid 3px $border-ultra-light-gray;
-		border-radius: 50%;
-		align-self: center;
-		margin: 20px 0;
-	}
-
-	.preview-upgrade-nudge__plan-icon {
-		width: inherit;
-		height: inherit;
-		margin: 2px;
-		background: url('/calypso/images/plans/plan-business.svg') no-repeat;
-	}
-
-	.preview-upgrade-nudge__title {
-		text-align: center;
-		color: $gray-dark;
-		font-size: 24px;
-		font-weight: 300;
-		margin-bottom: 20px;
-
-		@include breakpoint( "<660px" ) {
-			font-size: 16px;
-		}
+	.preview-upgrade-nudge__banner {
+		margin: 24px;
+		text-decoration: none;
 	}
 
 	.preview-upgrade-nudge__features {
-		display: flex;
-		padding: 0 20px 10px;
-		max-width: 865px;
-		margin: 0 auto;
+		padding: 0 24px 16px;
+
+		@include breakpoint( ">660px" ) {
+			display: flex;
+		}
+
 
 		.feature-example {
-			width: 50%;
-			margin: 0 10px 0 16px;
+			margin: 0 0 16px 0;
+
+			@include breakpoint( ">660px" ) {
+				width: 50%;
+				margin: 0 16px 0 0;
+			}
 		}
 	}
 
 	.preview-upgrade-nudge__features-details {
-		width: 50%;
+
+		@include breakpoint( ">660px" ) {
+			width: 50%;
+		}
 	}
 
 	.preview-upgrade-nudge__features-title {
@@ -73,10 +58,5 @@
 
 	.feature-example__gradient {
 		background: linear-gradient( to bottom, rgba(243, 246, 248, 0), rgba( 243, 246, 248, 1) );
-	}
-
-	.preview-upgrade-nudge__banner {
-		width: 100%;
-		text-decoration: none;
 	}
 }

@@ -25,40 +25,42 @@ const SeoPreviewNudge = ( { translate, isJetpack = false } ) => {
 		<div className="preview-upgrade-nudge">
 			<QueryPlans />
 			<TrackComponentView eventName="calypso_seo_preview_upgrade_nudge_impression" />
-			<div className="preview-upgrade-nudge__plan">
-				<div className="preview-upgrade-nudge__plan-icon"></div>
-			</div>
-			<h2 className="preview-upgrade-nudge__title">{ translate( 'SEO Features' ) }</h2>
-			<div className="preview-upgrade-nudge__features">
-				<FeatureExample>
-					<img src="/calypso/images/advanced-seo-nudge.png" />
-				</FeatureExample>
-				<div className="preview-upgrade-nudge__features-details">
-					<p className="preview-upgrade-nudge__features-title">
-						{ translate( 'By upgrading to a Business Plan you\'ll enable SEO Tools on your site.' ) }
-					</p>
-					<ul className="preview-upgrade-nudge__features-list">
-						<li className="preview-upgrade-nudge__features-list-item">
-							<Gridicon className="preview-upgrade-nudge__features-list-item-checkmark" icon="checkmark" />
-							{ preventWidows( translate( 'Preview your site\'s posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader.' ) ) }
-						</li>
-						<li className="preview-upgrade-nudge__features-list-item">
-							<Gridicon className="preview-upgrade-nudge__features-list-item-checkmark" icon="checkmark" />
-							{ preventWidows( translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ) ) }
-						</li>
-						<li className="preview-upgrade-nudge__features-list-item">
-							<Gridicon className="preview-upgrade-nudge__features-list-item-checkmark" icon="checkmark" />
-							{ preventWidows( translate( 'Modify front page meta data in order to customize how your site appears to search engines.' ) ) }
-						</li>
-					</ul>
-				</div>
-			</div>
+
 			<Banner
 					plan={ isJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
 					title={ translate( 'Upgrade to a Business Plan to unlock the power of our SEO tools!' ) }
 					event="site_preview_seo_plan_upgrade"
 					className="preview-upgrade-nudge__banner"
 				/>
+
+			<div className="preview-upgrade-nudge__features">
+				<FeatureExample>
+					<img src="/calypso/images/advanced-seo-nudge.png" />
+				</FeatureExample>
+				<div className="preview-upgrade-nudge__features-details">
+					<ul className="preview-upgrade-nudge__features-list">
+						<li className="preview-upgrade-nudge__features-list-item">
+							<Gridicon className="preview-upgrade-nudge__features-list-item-checkmark" icon="checkmark" />
+							{ preventWidows( translate(
+								'Preview your site\'s content as it will appear on Facebook, Twitter, and the WordPress.com Reader.'
+							) ) }
+						</li>
+						<li className="preview-upgrade-nudge__features-list-item">
+							<Gridicon className="preview-upgrade-nudge__features-list-item-checkmark" icon="checkmark" />
+							{ preventWidows( translate(
+								'Control how page titles will appear on Google search results and social networks.'
+							) ) }
+						</li>
+						<li className="preview-upgrade-nudge__features-list-item">
+							<Gridicon className="preview-upgrade-nudge__features-list-item-checkmark" icon="checkmark" />
+							{ preventWidows( translate(
+								'Customize your front page meta data to change how your site appears to search engines.'
+							) ) }
+						</li>
+					</ul>
+				</div>
+			</div>
+
 		</div>
 	);
 };
