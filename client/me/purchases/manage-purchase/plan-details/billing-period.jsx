@@ -45,15 +45,15 @@ class PlanBillingPeriod extends Component {
 		if ( ! isMonthly( purchase.productSlug ) ) {
 			return (
 				<FormSettingExplanation>
-					{ translate( 'yearly' ) }
+					{ translate( 'Yearly' ) }
 				</FormSettingExplanation>
 			);
 		}
 
 		return (
 			<FormSelect onChange={ this.handleBillingPeriodChange } defaultValue="monthly">
-				<option value="monthly">{ translate( 'monthly' ) }</option>
-				<option value="yearly">{ translate( 'yearly' ) }</option>
+				<option value="monthly">{ translate( 'Monthly' ) }</option>
+				<option value="yearly">{ translate( 'Yearly' ) }</option>
 			</FormSelect>
 		);
 	}
