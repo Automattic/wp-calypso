@@ -110,6 +110,19 @@ describe( 'selectors', () => {
 			} );
 		} );
 
+		it( 'should return true if Happychat is available but client is not connected', () => {
+			messagingEnabledChatStatuses.forEach( status => {
+				const state = deepFreeze( {
+					happychat: {
+						connectionStatus: 'uninitialized',
+						isAvailable: true,
+						chatStatus: status
+					}
+				} );
+				expect( canUserSendMessages( state ) ).to.be.false;
+			} );
+		} );
+
 		it( 'should return true if Happychat is available and the chat status allows messaging', () => {
 			messagingEnabledChatStatuses.forEach( status => {
 				const state = deepFreeze( {
