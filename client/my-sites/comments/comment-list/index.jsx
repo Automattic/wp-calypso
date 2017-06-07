@@ -125,7 +125,7 @@ export class CommentList extends Component {
 			},
 			'delete' !== newStatus && {
 				button: translate( 'Undo' ),
-				onClick: () => this.props.undoBulkAction( selectedComments ),
+				onClick: () => this.undoBulkAction( selectedComments ),
 			}
 		);
 
@@ -197,6 +197,11 @@ export class CommentList extends Component {
 				? {}
 				: keyBy( map( this.props.comments, ( { ID, i_like, status } ) => ( { ID, i_like, status } ) ), 'ID' ),
 		} );
+	}
+
+	undoBulkAction = selectedComments => {
+		this.props.removeNotice( 'comment-notice-bulk' );
+		this.props.undoBulkAction( selectedComments );
 	}
 
 	render() {
