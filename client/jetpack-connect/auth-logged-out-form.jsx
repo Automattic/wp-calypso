@@ -100,14 +100,17 @@ class LoggedOutForm extends Component {
 		const {
 			isAuthorizing,
 			userData,
+			queryObject,
 		} = this.props.jetpackConnectAuthorize;
+
+		const redirectTo = addQueryArgs( queryObject, window.location.href );
 
 		return (
 			<div>
 				{ this.renderLocaleSuggestions() }
 				{ this.renderFormHeader() }
 				<SignupForm
-					getRedirectToAfterLoginUrl={ window.location.href }
+					getRedirectToAfterLoginUrl={ redirectTo }
 					disabled={ isAuthorizing }
 					submitting={ isAuthorizing }
 					submitForm={ this.handleSubmitSignup }
