@@ -36,7 +36,7 @@ A default policy attaches to all failed network requests unless specifically ove
 At the time of writing the default is the exponential-backoff retry policy with an initial delay of 1000 ms and up to three retry attempts.
 This means that _nothing needs to be done explicitly in order to take advantage of this retry mechanism_.
 Custom policies can specify that we don't want to attempt a retry at all; and we can change the initial delay and max retry count.
-These are added with the `whenFailing` override in the HTTP request description.
+These are added with the `retryPolicy` override in the HTTP request description.
 
 ```js
 // stop retry attempts
@@ -47,7 +47,7 @@ dispatch( http( {
 	method: 'GET',
 	onSuccess,
 	onFailure,
-	whenFailing: noRetry(),
+	retryPolicy: noRetry(),
 }, action );
 
 // moar attempts for a notoriously slow and buggy server
@@ -58,7 +58,7 @@ dispatch( http( {
 	method: 'GET',
 	onSuccess,
 	onFailure,
-	whenFailing: exponentialBackoff( { delay: 4000, maxAttempts: 5 } ),
+	retryPolicy: exponentialBackoff( { delay: 4000, maxAttempts: 5 } ),
 }, action );
 ```
 

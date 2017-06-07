@@ -52,7 +52,7 @@ describe( '#retryOnFailure', () => {
 	} );
 
 	it( 'should pass through no-retry failed requests', () => {
-		const originalRequest = { ...getSites, options: { whenFailing: noRetry() } };
+		const originalRequest = { ...getSites, options: { retryPolicy: noRetry() } };
 		const inbound = { nextError, originalRequest, store };
 
 		expect( retryOnFailure( inbound ) ).to.equal( inbound );
@@ -82,7 +82,7 @@ describe( '#retryOnFailure', () => {
 	} );
 
 	it( 'should requeue only up to `maxAttempts`', () => {
-		const originalRequest = { ...getSites, options: { whenFailing: { maxAttempts: 3 } } };
+		const originalRequest = { ...getSites, options: { retryPolicy: { maxAttempts: 3 } } };
 		const inbound = { nextError, originalRequest, store };
 		const retryIt = retryWithDelay( 1337 );
 
@@ -119,7 +119,7 @@ describe( '#retryOnFailure', () => {
 	} );
 
 	it( 'should handle `exponentialBackoff`', () => {
-		const originalRequest = { ...getSites, options: { whenFailing: exponentialBackoff( { delay: 1000, maxAttempts: 5 } ) } };
+		const originalRequest = { ...getSites, options: { retryPolicy: exponentialBackoff( { delay: 1000, maxAttempts: 5 } ) } };
 		const inbound = { nextError, originalRequest, store };
 
 		// retry 1

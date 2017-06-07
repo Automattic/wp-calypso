@@ -23,7 +23,7 @@ export const retryOnFailure = ( getDelay = defaultDelay ) => inboundData => {
 		return inboundData;
 	}
 
-	const { options: { whenFailing: policy = defaultPolicy } = {} } = originalRequest;
+	const { options: { retryPolicy: policy = defaultPolicy } = {} } = originalRequest;
 	const { delay, maxAttempts, name } = policy;
 	const retryCount = get( originalRequest, 'meta.dataLayer.retryCount', 0 ) + 1;
 
