@@ -17,7 +17,7 @@ function isImageLargeEnoughForFeature( image ) {
 		return false;
 	}
 	const imageIsTallEnough = 100 <= image.width;
-	const imageIsWideEnough = 85 <= image.height;
+	const imageIsWideEnough = 75 <= image.height;
 
 	return imageIsTallEnough && imageIsWideEnough;
 }
