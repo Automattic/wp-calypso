@@ -1,0 +1,53 @@
+.compact-tinymce {
+	.mce-toolbar .mce-btn-group .mce-btn.mce-listbox:hover {
+		border-left-color: lighten( $gray, 20% );
+		border-right-color: lighten( $gray, 20% );
+	}
+
+	.mce-edit-area {
+		border: 1px solid lighten( $gray, 20% ) !important;
+		margin-bottom: 4px;
+		padding-top: 36px;
+		padding-left: 8px;
+	}
+
+	.mce-tinymce .mce-stack-layout-item.mce-last {
+		border-top: 1px solid lighten( $gray, 20% );
+	}
+
+	div.mce-toolbar-grp {
+		background-color: rgba( $white, 0.92 );
+		border-color: lighten( $gray, 20% );
+		border-style: solid;
+		border-right-width: 1px;
+		padding: 0;
+		overflow-x: auto;
+		margin: 0 auto;
+	}
+
+	.mce-toolbar .mce-btn-group .mce-btn.mce-listbox {
+		margin: 0 2px 0 0;
+		padding: 0 8px;
+		vertical-align: top;
+		border-left: 1px solid lighten( $gray, 20% );
+		border-right: 1px solid lighten( $gray, 20% );
+		height: 36px;
+	}
+
+	.mce-toolbar .mce-btn-group .mce-btn:hover,
+	.mce-toolbar .mce-btn-group .mce-btn:focus,
+	.mce-toolbar .mce-btn-group .mce-btn.mce-listbox:hover,
+	.mce-toolbar .mce-btn-group .mce-btn.mce-listbox:focus {
+		box-shadow: none;
+	}
+
+	.mce-toolbar .mce-btn-group .mce-btn:hover .mce-ico,
+	.mce-toolbar .mce-btn-group .mce-btn:focus .mce-ico {
+		color: $gray-dark;
+	}
+
+	.mce-toolbar .mce-btn-group .mce-btn:hover .gridicon,
+	.mce-toolbar .mce-btn-group .mce-btn:focus .gridicon {
+		fill: $gray-dark;
+	}
+}

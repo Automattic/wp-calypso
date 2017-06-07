@@ -1,0 +1,8 @@
+.mce-container.mce-menu,
+.mce-container .mce-floatpanel.mce-popover {
+	z-index: 25 !important;
+}
+
+.mce-tinymce .mce-btn-group .mce-btn.mce-last {
+	position: initial;
+}
