@@ -28,6 +28,8 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		}
 	}
 
+	deleteCommentPermanently = comment => this.doAction( [ comment ], { status: 'delete' } );
+
 	/**
 	 * Sets a status and/or a like value to a list of comments.
 	 *
@@ -76,6 +78,20 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		} } );
 	}
 
+	filterCommentsByStatus = () => 'all' === this.props.status
+		? filter( this.state.comments, ( { status } ) => ( 'approved' === status || 'unapproved' === status ) )
+		: filter( this.state.comments, ( { status } ) => ( this.props.status === status ) );
+
+	getCommentsFromProps = ( { comments } ) => this.setState( { comments: keyBy( comments, 'ID' ) } );
+
+	setBulkStatus = ( comments, status ) => this.doAction( comments, { status } );
+
+	setCommentLike = ( comment, i_like ) => this.doAction( [ comment ], { i_like } );
+
+	setCommentStatus = ( comment, status ) => this.doAction( [ comment ], { status } );
+
+	toggleCommentLike = comment => this.setCommentLike( comment, ! comment.i_like );
+
 	/**
 	 * Resets the status and the like value of a list of comments to their previous values.
 	 *
@@ -100,23 +116,7 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		} } );
 	}
 
-	deleteCommentPermanently = comment => this.doAction( [ comment ], { status: 'delete' } );
-
-	setBulkStatus = ( comments, status ) => this.doAction( comments, { status } );
-
-	setCommentLike = ( comment, i_like ) => this.doAction( [ comment ], { i_like } );
-
-	setCommentStatus = ( comment, status ) => this.doAction( [ comment ], { status } );
-
-	toggleCommentLike = comment => this.setCommentLike( comment, ! comment.i_like );
-
 	undoBulkStatus = comments => this.undoAction( comments );
-
-	filterCommentsByStatus = () => 'all' === this.props.status
-		? filter( this.state.comments, ( { status } ) => ( 'approved' === status || 'unapproved' === status ) )
-		: filter( this.state.comments, ( { status } ) => ( this.props.status === status ) );
-
-	getCommentsFromProps = ( { comments } ) => this.setState( { comments: keyBy( comments, 'ID' ) } );
 
 	render = () =>
 		<WrappedCommentList
