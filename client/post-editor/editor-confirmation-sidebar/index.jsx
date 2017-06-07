@@ -64,6 +64,7 @@ class EditorConfirmationSidebar extends React.Component {
 		return (
 			<Button onClick={ this.closeAndPublish }>{ buttonLabel }</Button>
 		);
+	}
 
 	getBusyButtonLabel( publishButtonStatus ) {
 		switch ( publishButtonStatus ) {
