@@ -66,7 +66,9 @@ Importing from other javascript modules can be done from one of three root conte
 
 The last one is especially convenient in extension development as it makes the following possible:
 
-```import myReducer from 'my-extension/state/reducer';```
+```js
+import myReducer from 'my-extension/state/reducer';
+```
 
 ## State
 
