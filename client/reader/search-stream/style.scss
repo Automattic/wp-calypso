@@ -343,6 +343,10 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	max-width: 265px;
 	width: 100%;
 }
+// TODO: remove this after site on search lands
+.following.search-stream.main .reader__content {
+	padding-top: 105px;
+}
 
 .search-stream__with-sites .search-stream__results {
 	padding-top: 120px;
