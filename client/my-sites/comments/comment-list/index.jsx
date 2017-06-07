@@ -34,6 +34,7 @@ export class CommentList extends Component {
 		status: PropTypes.string,
 		toggleCommentLike: PropTypes.func,
 		translate: PropTypes.func,
+		undoBulkAction: PropTypes.func,
 	};
 
 	state = {
@@ -51,7 +52,7 @@ export class CommentList extends Component {
 		this.props.removeNotice( 'comment-notice-bulk' );
 
 		this.props.applyBulkAction( this.state.selectedComments, status );
-		this.showBulkNotice( status );
+		this.showBulkNotice( status, this.state.selectedComments );
 
 		this.setState( {
 			isBulkEdit: false,
@@ -101,7 +102,7 @@ export class CommentList extends Component {
 		this.props.setCommentStatus( commentId, status );
 	}
 
-	showBulkNotice = newStatus => {
+	showBulkNotice = ( newStatus, selectedComments ) => {
 		const { translate } = this.props;
 
 		const [ type, message ] = get( {
@@ -116,11 +117,17 @@ export class CommentList extends Component {
 			return;
 		}
 
-		const options = {
-			duration: 5000,
-			id: 'comment-notice-bulk',
-			isPersistent: true,
-		};
+		const options = Object.assign(
+			{
+				duration: 5000,
+				id: 'comment-notice-bulk',
+				isPersistent: true,
+			},
+			'delete' !== newStatus && {
+				button: translate( 'Undo' ),
+				onClick: () => this.props.undoBulkAction( selectedComments ),
+			}
+		);
 
 		this.props.createNotice( type, message, options );
 	}

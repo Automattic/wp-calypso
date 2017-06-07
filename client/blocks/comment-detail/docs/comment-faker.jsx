@@ -98,6 +98,21 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		! get( this.state.comments, [ commentId, 'i_like' ], false )
 	);
 
+	undoBulkAction = selectedComments => {
+		const editedComments = map( selectedComments, ( { ID, i_like, status } ) => ( {
+			...this.state.comments[ ID ],
+			i_like,
+			status,
+		} ) );
+
+		this.setState( {
+			comments: {
+				...this.state.comments,
+				...keyBy( editedComments, 'ID' ),
+			},
+		} );
+	}
+
 	render() {
 		return (
 			<WrappedCommentList
@@ -108,6 +123,7 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 				setCommentLike={ this.setCommentLike }
 				setCommentStatus={ this.setCommentStatus }
 				toggleCommentLike={ this.toggleCommentLike }
+				undoBulkAction={ this.undoBulkAction }
 			/>
 		);
 	}
