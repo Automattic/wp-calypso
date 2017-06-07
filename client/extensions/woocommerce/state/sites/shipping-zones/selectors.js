@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isArray } from 'lodash';
+import { every, get, isArray, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +25,8 @@ export const getAPIShippingZones = ( state, siteId = getSelectedSiteId( state ) 
  * @return {boolean} Whether the shipping zones list has been successfully loaded from the server
  */
 export const areShippingZonesLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isArray( getAPIShippingZones( state, siteId ) );
+	const zones = getAPIShippingZones( state, siteId );
+	return isArray( zones ) && every( zones, zone => isArray( zone.methodIds ) );
 };
 
 /**
@@ -34,5 +35,6 @@ export const areShippingZonesLoaded = ( state, siteId = getSelectedSiteId( state
  * @return {boolean} Whether the shipping zones list is currently being retrieved from the server
  */
 export const areShippingZonesLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return LOADING === getAPIShippingZones( state, siteId );
+	const zones = getAPIShippingZones( state, siteId );
+	return LOADING === zones || ( isArray( zones ) && some( zones, zone => LOADING === zone.methodIds ) );
 };

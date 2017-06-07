@@ -25,7 +25,35 @@ const loadingState = {
 		},
 	},
 };
-const loadedState = {
+const loadingMethodsState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					shippingZones: [
+						{ id: 1, methodIds: [ 3 ] },
+						{ id: 2, methodIds: LOADING },
+					],
+				},
+			},
+		},
+	},
+};
+const loadedWithMethodsState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					shippingZones: [
+						{ id: 1, methodIds: [ 3 ] },
+						{ id: 2, methodIds: [ 7, 42 ] },
+					],
+				},
+			},
+		},
+	},
+};
+const loadedEmptyState = {
 	extensions: {
 		woocommerce: {
 			sites: {
@@ -46,7 +74,15 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'when zones are loaded.', () => {
-			expect( areShippingZonesLoading( loadedState, 123 ) ).to.be.false;
+			expect( areShippingZonesLoading( loadedEmptyState, 123 ) ).to.be.false;
+		} );
+
+		it( 'when zones are loaded but some methods are not.', () => {
+			expect( areShippingZonesLoading( loadingMethodsState, 123 ) ).to.be.true;
+		} );
+
+		it( 'when zones are loaded and all methods are loaded too.', () => {
+			expect( areShippingZonesLoading( loadedWithMethodsState, 123 ) ).to.be.false;
 		} );
 
 		it( 'when zones are currently being fetched.', () => {
@@ -54,7 +90,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'when zones are loaded only for a different site.', () => {
-			expect( areShippingZonesLoading( loadedState, 456 ) ).to.be.false;
+			expect( areShippingZonesLoading( loadedEmptyState, 456 ) ).to.be.false;
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
@@ -68,7 +104,15 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'when zones are loaded.', () => {
-			expect( areShippingZonesLoaded( loadedState, 123 ) ).to.be.true;
+			expect( areShippingZonesLoaded( loadedEmptyState, 123 ) ).to.be.true;
+		} );
+
+		it( 'when zones are loaded but some methods are not.', () => {
+			expect( areShippingZonesLoaded( loadingMethodsState, 123 ) ).to.be.false;
+		} );
+
+		it( 'when zones are loaded and all methods are loaded too.', () => {
+			expect( areShippingZonesLoaded( loadedWithMethodsState, 123 ) ).to.be.true;
 		} );
 
 		it( 'when zones are currently being fetched.', () => {
@@ -76,7 +120,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'when zones are loaded only for a different site.', () => {
-			expect( areShippingZonesLoaded( loadedState, 456 ) ).to.be.false;
+			expect( areShippingZonesLoaded( loadedEmptyState, 456 ) ).to.be.false;
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
@@ -90,7 +134,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'when zones are loaded.', () => {
-			expect( getAPIShippingZones( loadedState, 123 ) ).to.deep.equal( [] );
+			expect( getAPIShippingZones( loadedEmptyState, 123 ) ).to.deep.equal( [] );
 		} );
 
 		it( 'when zones are currently being fetched.', () => {
@@ -98,7 +142,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'when zones are loaded only for a different site.', () => {
-			expect( getAPIShippingZones( loadedState, 456 ) ).to.be.falsey;
+			expect( getAPIShippingZones( loadedEmptyState, 456 ) ).to.be.falsey;
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {

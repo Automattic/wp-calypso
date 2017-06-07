@@ -15,7 +15,7 @@ export const addNewShippingZone = ( siteId ) => {
 };
 
 export const openShippingZoneForEdit = ( siteId, id ) => {
-	return { type: WOOCOMMERCE_SHIPPING_ZONE_OPEN, siteId, payload: { id } };
+	return { type: WOOCOMMERCE_SHIPPING_ZONE_OPEN, siteId, id };
 };
 
 export const closeEditingShippingZone = ( siteId ) => {
@@ -27,9 +27,9 @@ export const cancelEditingShippingZone = ( siteId ) => {
 };
 
 export const changeShippingZoneName = ( siteId, name ) => {
-	return { type: WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME, siteId, payload: { name } };
+	return { type: WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME, siteId, name };
 };
 
 export const deleteShippingZone = ( siteId, id ) => {
-	return { type: WOOCOMMERCE_SHIPPING_ZONE_REMOVE, siteId, payload: { id } };
+	return { type: WOOCOMMERCE_SHIPPING_ZONE_REMOVE, siteId, id };
 };

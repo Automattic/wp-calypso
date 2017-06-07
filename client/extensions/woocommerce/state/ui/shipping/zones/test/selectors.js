@@ -37,6 +37,28 @@ describe( 'selectors', () => {
 			expect( getShippingZones( state ) ).to.deep.equal( [] );
 		} );
 
+		it( 'when some zone methods are still being loaded', () => {
+			const state = {
+				extensions: {
+					woocommerce: {
+						wcApi: {
+							123: {
+								shippingZones: [
+									{ id: 0, name: 'Zone0', methodIds: LOADING },
+									{ id: 0, name: 'Zone0', methodIds: [] },
+								],
+							},
+						},
+					},
+				},
+				ui: {
+					selectedSiteId: 123,
+				},
+			};
+
+			expect( getShippingZones( state ) ).to.deep.equal( [] );
+		} );
+
 		it( 'when the zones didn\'t load', () => {
 			const state = {
 				extensions: {
@@ -63,8 +85,8 @@ describe( 'selectors', () => {
 						sites: {
 							123: {
 								shippingZones: [
-									{ id: 1, name: 'Zone1' },
-									{ id: 2, name: 'Zone2' },
+									{ id: 1, methodIds: [], name: 'Zone1' },
+									{ id: 2, methodIds: [], name: 'Zone2' },
 								],
 							},
 						},
@@ -77,8 +99,8 @@ describe( 'selectors', () => {
 			};
 
 			expect( getShippingZones( state ) ).to.deep.equal( [
-				{ id: 1, name: 'Zone1' },
-				{ id: 2, name: 'Zone2' },
+				{ id: 1, methodIds: [], name: 'Zone1' },
+				{ id: 2, methodIds: [], name: 'Zone2' },
 			] );
 		} );
 
@@ -89,9 +111,9 @@ describe( 'selectors', () => {
 						sites: {
 							123: {
 								shippingZones: [
-									{ id: 1, name: 'Zone1' },
-									{ id: 2, name: 'Zone2' },
-									{ id: 3, name: 'Zone3' },
+									{ id: 1, methodIds: [], name: 'Zone1' },
+									{ id: 2, methodIds: [], name: 'Zone2' },
+									{ id: 3, methodIds: [], name: 'Zone3' },
 								],
 							},
 						},
@@ -100,7 +122,7 @@ describe( 'selectors', () => {
 								shipping: {
 									zones: {
 										creates: [
-											{ id: { index: 0 }, name: 'NewZone4' },
+											{ id: { index: 0 }, methodIds: [], name: 'NewZone4' },
 										],
 										updates: [
 											{ id: 2, name: 'EditedZone2' },
@@ -121,9 +143,9 @@ describe( 'selectors', () => {
 			};
 
 			expect( getShippingZones( state ) ).to.deep.equal( [
-				{ id: 2, name: 'EditedZone2' },
-				{ id: 3, name: 'Zone3' },
-				{ id: { index: 0 }, name: 'NewZone4' },
+				{ id: 2, methodIds: [], name: 'EditedZone2' },
+				{ id: 3, methodIds: [], name: 'Zone3' },
+				{ id: { index: 0 }, methodIds: [], name: 'NewZone4' },
 			] );
 		} );
 
@@ -134,7 +156,7 @@ describe( 'selectors', () => {
 						sites: {
 							123: {
 								shippingZones: [
-									{ id: 1, name: 'Zone1' },
+									{ id: 1, methodIds: [], name: 'Zone1' },
 								],
 							},
 						},
@@ -158,7 +180,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getShippingZones( state ) ).to.deep.equal( [ { id: 1, name: 'Zone1' } ] );
+			expect( getShippingZones( state ) ).to.deep.equal( [ { id: 1, methodIds: [], name: 'Zone1' } ] );
 		} );
 	} );
 
@@ -170,7 +192,7 @@ describe( 'selectors', () => {
 						sites: {
 							123: {
 								shippingZones: [
-									{ id: 1 },
+									{ id: 1, methodIds: [] },
 								],
 							},
 						},
@@ -201,8 +223,8 @@ describe( 'selectors', () => {
 						sites: {
 							123: {
 								shippingZones: [
-									{ id: 1, name: 'MyZone' },
-									{ id: 2, name: 'Blah Blah' },
+									{ id: 1, methodIds: [], name: 'MyZone' },
+									{ id: 2, methodIds: [], name: 'Blah Blah' },
 								],
 							},
 						},
@@ -225,7 +247,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getCurrentlyEditingShippingZone( state ) ).to.deep.equal( { id: 1, name: 'MyZone' } );
+			expect( getCurrentlyEditingShippingZone( state ) ).to.deep.equal( { id: 1, methodIds: [], name: 'MyZone' } );
 			expect( isCurrentlyEditingShippingZone( state ) ).to.be.true;
 		} );
 
@@ -236,7 +258,7 @@ describe( 'selectors', () => {
 						sites: {
 							123: {
 								shippingZones: [
-									{ id: 1, name: 'MyZone' },
+									{ id: 1, methodIds: [], name: 'MyZone' },
 								],
 							},
 						},
@@ -259,7 +281,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getCurrentlyEditingShippingZone( state ) ).to.deep.equal( { id: 1, name: 'MyNewZone' } );
+			expect( getCurrentlyEditingShippingZone( state ) ).to.deep.equal( { id: 1, methodIds: [], name: 'MyNewZone' } );
 			expect( isCurrentlyEditingShippingZone( state ) ).to.be.true;
 		} );
 

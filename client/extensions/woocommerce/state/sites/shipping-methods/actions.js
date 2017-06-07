@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import request from '../request';
-import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
+import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_SHIPPING_METHODS_REQUEST,
 	WOOCOMMERCE_SHIPPING_METHODS_REQUEST_SUCCESS,
