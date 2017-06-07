@@ -101,12 +101,21 @@
 	flex-grow: 1;
 	display: flex;
 	margin: 0 4px;
+
+	&.is-standalone {
+		margin: 0 12px;
+	}
 }
 
 .editor-ground-control .editor-publish-button {
 	border-radius: 4px 0 0 4px;
 	flex-grow: 1;
 	padding: 5px 14px 7px;
+}
+
+.editor-ground-control .is-standalone .editor-publish-button {
+	border-radius: 4px;
+	padding: 7px 16px;
 }
 
 .editor-ground-control__time-button {
