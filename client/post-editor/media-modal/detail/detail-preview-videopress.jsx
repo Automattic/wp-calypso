@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { get, invoke, noop, pick } from 'lodash';
+import { get, invoke, noop } from 'lodash';
 import classNames from 'classnames';
 import debug from 'debug';
 
@@ -91,7 +91,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 			height = 480,
 			videopress_guid,
 			width = 854,
-		} = pick( item, [ 'videopress_guid', 'height', 'width' ] );
+		} = item;
 
 		if ( ! videopress_guid ) {
 			return;
