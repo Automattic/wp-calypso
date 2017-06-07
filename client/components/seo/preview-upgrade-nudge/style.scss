@@ -76,13 +76,7 @@
 	}
 
 	.preview-upgrade-nudge__banner {
-		bottom: 0;
-		margin: 0;
-		position: absolute;
 		width: 100%;
-
-		.banner__title {
-			text-decoration: none !important;
-		}
+		text-decoration: none;
 	}
 }
