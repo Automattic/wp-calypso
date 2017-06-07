@@ -282,7 +282,7 @@ const Post = React.createClass( {
 
 	viewPost( event ) {
 		event.preventDefault();
-		const { isPreviewable, previewUrl } = this.props;
+		const { isPreviewable, previewUrl, selectedSiteId } = this.props;
 
 		if ( this.props.post.status && this.props.post.status === 'future' ) {
 			this.analyticsEvents.previewPost;
@@ -290,7 +290,7 @@ const Post = React.createClass( {
 			this.analyticsEvents.viewPost;
 		}
 
-		if ( ! isPreviewable ) {
+		if ( ! isPreviewable || ! selectedSiteId ) {
 			return window.open( previewUrl );
 		}
 
