@@ -208,7 +208,7 @@ class SelectDropdown extends Component {
 					selected={ this.state.selected === item.value }
 					onClick={ this.onSelectItem( item ) }
 					path={ item.path }
-					item={ item.icon }
+					icon={ item.icon }
 				>
 					{ item.label }
 				</DropdownItem>

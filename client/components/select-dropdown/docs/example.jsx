@@ -27,9 +27,6 @@ class SelectDropdownDemo extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		this.toggleButtons = this.toggleButtons.bind( this );
-		this.selectItem = this.selectItem.bind( this );
-
 		const initialState = {
 			childSelected: 'Published',
 			selectedCount: 10,
@@ -40,7 +37,7 @@ class SelectDropdownDemo extends React.Component {
 		this.state = initialState;
 	}
 
-	toggleButtons() {
+	toggleButtons = () => {
 		this.setState( { compactButtons: ! this.state.compactButtons } );
 	}
 
@@ -158,7 +155,6 @@ class SelectDropdownDemo extends React.Component {
 					<DropdownSeparator />
 
 					<DropdownItem
-						count={ 3 }
 						selected={ this.state.childSelected === 'Trashed' }
 						icon={ <Gridicon icon="trash" size={ 18 } /> }
 						onClick={ this.getSelectItemHandler( 'Trashed', 3, <Gridicon icon="trash" size={ 18 } /> ) }
@@ -196,7 +192,7 @@ class SelectDropdownDemo extends React.Component {
 		};
 	}
 
-	selectItem( childSelected, count, icon ) {
+	selectItem = ( childSelected, count, icon ) => {
 		this.setState( {
 			childSelected: childSelected,
 			selectedCount: count,
