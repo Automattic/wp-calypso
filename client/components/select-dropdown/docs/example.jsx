@@ -12,7 +12,7 @@ import DropdownItem from 'components/select-dropdown/item';
 import DropdownLabel from 'components/select-dropdown/label';
 import DropdownSeparator from 'components/select-dropdown/separator';
 
-class SelectDropdownDemo extends React.PureComponent {
+class SelectDropdownExample extends React.PureComponent {
 	static displayName = 'SelectDropdownExample';
 
 	static defaultProps = {
@@ -209,4 +209,4 @@ class SelectDropdownDemo extends React.PureComponent {
 	}
 }
 
-export default SelectDropdownDemo;
+export default SelectDropdownExample;
