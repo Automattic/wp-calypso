@@ -16,6 +16,7 @@ import { isPremium } from 'lib/products-values';
 import paths from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
+import { AdWords, AdvertisingRemoved, MediaPost, WordAds } from './icons';
 
 const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/';
@@ -33,6 +34,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 
 			<PurchaseDetail
 				icon="speaker"
+				svgIcon={ <AdvertisingRemoved /> }
 				title={ i18n.translate( 'Advertising Removed' ) }
 				description={ isPremiumPlan
 					? i18n.translate( 'With your plan, all WordPress.com advertising has been removed from your site.' +
@@ -43,7 +45,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 
 			<QuerySiteVouchers siteId={ selectedSite.ID } />
 			<div>
-				<GoogleVoucherDetails selectedSite={ selectedSite } />
+				<GoogleVoucherDetails selectedSite={ selectedSite } svgIcon={ <AdWords /> } />
 			</div>
 
 			{ ! selectedFeature &&
@@ -63,6 +65,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 
 			<PurchaseDetail
 				icon="image-multiple"
+				svgIcon={ <MediaPost /> }
 				title={ i18n.translate( 'Video and audio posts' ) }
 				description={
 					i18n.translate(
@@ -76,6 +79,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 				isWordadsInstantActivationEligible( selectedSite ) &&
 				<PurchaseDetail
 					icon="speaker"
+					svgIcon={ <WordAds /> }
 					title={ i18n.translate( 'Easily monetize your site' ) }
 					description={
 						i18n.translate(

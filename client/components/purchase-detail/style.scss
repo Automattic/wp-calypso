@@ -52,6 +52,28 @@
 			}
 		}
 	}
+
+	&.with-svg-icon {
+		.purchase-detail__content {
+			@include breakpoint( ">660px" ) {
+				padding-right: 220px;
+			}
+		}
+
+		.purchase-detail__icon {
+			background: transparent;
+			width: 150px;
+			height: auto;
+			margin-top: 0;
+			transform: translate( 0, -50% );
+			padding: 0;
+
+			@include breakpoint( "<660px" ) {
+				width: 128px;
+				margin-top: 0;
+			}
+		}
+	}
 }
 
 .purchase-detail__content {

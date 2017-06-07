@@ -196,6 +196,35 @@ $plan-features-sidebar-width: 272px;
 	&.is-business-plan {
 		border-bottom: solid 2px $alert-purple;
 	}
+
+	&.big-icon {
+		border-bottom-width: 0;
+		padding-top: 35px;
+
+		.plan-features__header-title {
+			text-align: center;
+			line-height: 1;
+		}
+		.plan-features__header-figure {
+			position: relative;
+			width: 90%;
+			padding-top: 45%;
+			margin: 0 auto 10px;
+
+			.plan-icon {
+				position: absolute;
+				width: 100%;
+				height: auto;
+				bottom: 0;
+				left: 50%;
+				transform: translate( -50%, 0 );
+			}
+		}
+
+		.plan-price, .plan-features__header-timeframe {
+			text-align: center;
+		}
+	}
 }
 
 .plan-features__header-figure {
@@ -235,6 +264,14 @@ $plan-features-sidebar-width: 272px;
 	@include breakpoint( "<960px" ) {
 		font-size: 20px;
 	}
+}
+
+.plan-features__header-tagline {
+	font-size: 12px;
+	color: $blue-wordpress;
+	text-align: center;
+	line-height: 1;
+	margin: 1em 0 0;
 }
 
 .plan-features__header-price-group {

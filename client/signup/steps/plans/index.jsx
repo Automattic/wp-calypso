@@ -84,6 +84,7 @@ class PlansStep extends Component {
 					isInSignup={ true }
 					onUpgradeClick={ this.onSelectPlan }
 					showFAQ={ false }
+					showBigPlanIcon={ true }
 					displayJetpackPlans={ false }
 					domainName={ this.getDomainName() }
 				/>

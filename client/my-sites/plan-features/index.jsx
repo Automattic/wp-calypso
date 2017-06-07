@@ -52,7 +52,7 @@ import { abtest } from 'lib/abtest';
 class PlanFeatures extends Component {
 
 	render() {
-		const { planProperties } = this.props;
+		const { planProperties, showDescription } = this.props;
 
 		const tableClasses = classNames( 'plan-features__table',
 			`has-${ planProperties.length }-cols` );
@@ -69,9 +69,12 @@ class PlanFeatures extends Component {
 							<tr>
 								{ this.renderPlanHeaders() }
 							</tr>
-							<tr>
-								{ this.renderPlanDescriptions() }
-							</tr>
+							{
+								showDescription &&
+								<tr>
+									{ this.renderPlanDescriptions() }
+								</tr>
+							}
 							<tr>
 								{ this.renderTopButtons() }
 							</tr>
@@ -136,7 +139,8 @@ class PlanFeatures extends Component {
 				relatedMonthlyPlan,
 				primaryUpgrade,
 				isPlaceholder,
-				hideMonthly
+				hideMonthly,
+				showBigPlanIcon
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			return (
@@ -157,10 +161,14 @@ class PlanFeatures extends Component {
 						site={ site }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
+						showBigPlanIcon={ showBigPlanIcon }
 					/>
-					<p className="plan-features__description">
-						{ planConstantObj.getDescription( abtest ) }
-					</p>
+					{
+						! showBigPlanIcon &&
+						<p className="plan-features__description">
+							{ planConstantObj.getDescription( abtest ) }
+						</p>
+					}
 					<PlanFeaturesActions
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
@@ -193,7 +201,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { planProperties, intervalType, site, basePlansPath } = this.props;
+		const { planProperties, intervalType, site, basePlansPath, showBigPlanIcon } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -228,6 +236,7 @@ class PlanFeatures extends Component {
 						hideMonthly={ hideMonthly }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
+						showBigPlanIcon={ showBigPlanIcon }
 					/>
 				</td>
 			);
@@ -435,7 +444,8 @@ PlanFeatures.propTypes = {
 	basePlansPath: PropTypes.string,
 	selectedFeature: PropTypes.string,
 	intervalType: PropTypes.string,
-	site: PropTypes.object
+	site: PropTypes.object,
+	showBigPlanIcon: PropTypes.bool,
 };
 
 PlanFeatures.defaultProps = {
@@ -443,7 +453,8 @@ PlanFeatures.defaultProps = {
 	isInSignup: false,
 	basePlansPath: null,
 	intervalType: 'yearly',
-	site: {}
+	site: {},
+	showBigPlanIcon: false,
 };
 
 export default connect(

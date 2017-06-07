@@ -11,12 +11,13 @@ import { localize } from 'i18n-calypso';
 import { isPersonal } from 'lib/products-values';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import PurchaseDetail from 'components/purchase-detail';
+import { AdWords } from './icons';
 
 const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 	const plan = find( sitePlans.data, isPersonal );
 
 	return (
-		<div>
+		<div className="checkout-thank-you__use-svg-icon">
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
@@ -24,6 +25,7 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 
 			<PurchaseDetail
 				icon="speaker"
+				svgIcon={ <AdWords /> }
 				title={ translate( 'Advertising Removed' ) }
 				description={ translate(
 					'With your plan, all WordPress.com advertising has been removed from your site. ' +

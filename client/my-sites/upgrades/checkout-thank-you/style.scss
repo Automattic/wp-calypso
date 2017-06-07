@@ -92,8 +92,6 @@
 
 // Header subcomponent styles
 .checkout-thank-you__header {
-	background: $blue-medium;
-	color: $white;
 	padding: 48px 24px;
 	text-align: center;
 
@@ -105,37 +103,15 @@
 .checkout-thank-you__header-content {
 	margin: 0 auto;
 	max-width: 700px;
-
-	@include breakpoint( ">660px" ) {
-		display: flex;
-		text-align: left;
-	}
 }
 
 .checkout-thank-you__header-icon {
-	display: block;
 	margin: 0 auto;
 	position: relative;
 
 	@include breakpoint( ">660px" ) {
 		height: 132px;
-		margin-right: 32px;
 		width: 132px;
-	}
-
-	.gridicon {
-		background: white;
-		border-radius: 50%;
-		color: darken( $gray, 20% );
-		height: 48px;
-		padding: 21px;
-		width: 48px;
-
-		@include breakpoint( ">660px" ) {
-			height: 72px;
-			padding: 30px;
-			width: 72px;
-		}
 	}
 }
 

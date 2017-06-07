@@ -3,7 +3,6 @@
  */
 import classNames from 'classnames';
 import React from 'react';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -18,6 +17,7 @@ import {
 	isSiteRedirect
 } from 'lib/products-values';
 import { localize } from 'i18n-calypso';
+import ThankYouIcon from './icons/thank-you';
 
 class CheckoutThankYouHeader extends React.Component {
 	getHeading() {
@@ -129,19 +129,17 @@ class CheckoutThankYouHeader extends React.Component {
 	}
 
 	render() {
-		const icon = this.props.hasFailedPurchases ? 'notice' : 'trophy',
-			classes = {
-				'checkout-thank-you__header': true,
-				'is-placeholder': ! this.props.isDataLoaded
-			};
+		const classes = {
+			'checkout-thank-you__header': true,
+			'is-placeholder': ! this.props.isDataLoaded
+		};
 
 		return (
 			<div className={ classNames( classes ) }>
+				<div className="checkout-thank-you__header-icon">
+					{ this.props.hasFailedPurchases ? null : <ThankYouIcon /> }
+				</div>
 				<div className="checkout-thank-you__header-content">
-					<span className="checkout-thank-you__header-icon">
-						<Gridicon icon={ icon } size={ 72 } />
-					</span>
-
 					<div className="checkout-thank-you__header-copy">
 						<h1 className="checkout-thank-you__header-heading">
 							{ this.getHeading() }
