@@ -276,7 +276,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	position: relative;
 	height: 20px;
 	overflow: hidden;
-	white-space: nowrap;
 	margin-left: 10px;
 	color: $gray;
 
@@ -286,7 +285,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card__tag {
-	white-space: nowrap;
 
 	&::after {
 		content: ', '
