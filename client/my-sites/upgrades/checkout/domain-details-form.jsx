@@ -205,10 +205,6 @@ class DomainDetailsForm extends PureComponent {
 		return mainFieldValues;
 	}
 
-	getAllFieldValues() {
-		return this.props.contactDetails;
-	}
-
 	getRequiredExtraSteps() {
 		if ( ! config.isEnabled( 'domains/cctlds' ) ) {
 			// All we need to do to disable everything is not show the .FR form
@@ -475,7 +471,7 @@ class DomainDetailsForm extends PureComponent {
 	finish( options = {} ) {
 		this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
 
-		const allFieldValues = this.getAllFieldValues();
+		const allFieldValues = this.props.contactDetails;
 		debug( 'finish: allFieldValues:', allFieldValues );
 		setDomainDetails( allFieldValues );
 		addGoogleAppsRegistrationData( allFieldValues );
