@@ -65,12 +65,12 @@ export class CommentNavigation extends Component {
 
 	render() {
 		const {
-			applyBulkAction,
 			doSearch,
 			isBulkEdit,
 			isSelectedAll,
 			query,
 			selectedCount,
+			setBulkStatus,
 			status: queryStatus,
 			toggleBulkEdit,
 			toggleSelectAll,
@@ -95,7 +95,7 @@ export class CommentNavigation extends Component {
 							<Button
 								compact
 								disabled={ ! selectedCount }
-								onClick={ applyBulkAction( 'approved' ) }
+								onClick={ setBulkStatus( 'approved' ) }
 							>
 								{ translate( 'Approve' ) }
 							</Button>
@@ -104,7 +104,7 @@ export class CommentNavigation extends Component {
 							<Button
 								compact
 								disabled={ ! selectedCount }
-								onClick={ applyBulkAction( 'unapproved' ) }
+								onClick={ setBulkStatus( 'unapproved' ) }
 							>
 								{ translate( 'Unapprove' ) }
 							</Button>
@@ -115,7 +115,7 @@ export class CommentNavigation extends Component {
 							<Button
 								compact
 								disabled={ ! selectedCount }
-								onClick={ applyBulkAction( 'spam' ) }
+								onClick={ setBulkStatus( 'spam' ) }
 							>
 								{ translate( 'Spam' ) }
 							</Button>
@@ -124,7 +124,7 @@ export class CommentNavigation extends Component {
 							<Button
 								compact
 								disabled={ ! selectedCount }
-								onClick={ applyBulkAction( 'trash' ) }
+								onClick={ setBulkStatus( 'trash' ) }
 							>
 								{ translate( 'Trash' ) }
 							</Button>
@@ -133,7 +133,7 @@ export class CommentNavigation extends Component {
 							<Button
 								compact
 								disabled={ ! selectedCount }
-								onClick={ applyBulkAction( 'delete' ) }
+								onClick={ setBulkStatus( 'delete' ) }
 							>
 								{ translate( 'Delete' ) }
 							</Button>

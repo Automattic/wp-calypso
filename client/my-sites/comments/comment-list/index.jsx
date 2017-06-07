@@ -25,16 +25,16 @@ import QuerySiteComments from 'components/data/query-site-comments';
 
 export class CommentList extends Component {
 	static propTypes = {
-		applyBulkAction: PropTypes.func,
 		comments: PropTypes.array,
 		deleteCommentPermanently: PropTypes.func,
+		setBulkStatus: PropTypes.func,
 		setCommentLike: PropTypes.func,
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		toggleCommentLike: PropTypes.func,
 		translate: PropTypes.func,
-		undoBulkAction: PropTypes.func,
+		undoBulkStatus: PropTypes.func,
 	};
 
 	state = {
@@ -48,24 +48,17 @@ export class CommentList extends Component {
 		}
 	}
 
-	applyBulkAction = status => () => {
-		this.props.removeNotice( 'comment-notice-bulk' );
-
-		this.props.applyBulkAction( this.state.selectedComments, status );
-		this.showBulkNotice( status, this.state.selectedComments );
-
-		this.setState( {
-			isBulkEdit: false,
-			selectedComments: {},
-		} );
-	};
-
 	deleteCommentPermanently = commentId => {
+		// TODO: Replace with Redux getComment()
+		const comment = this.getComment( commentId );
+
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 		this.showNotice( commentId, 'delete', 'trash' );
 
-		this.props.deleteCommentPermanently( commentId );
+		this.props.deleteCommentPermanently( comment );
 	}
+
+	getComment = commentId => find( this.props.comments, [ 'ID', commentId ] );
 
 	getEmptyMessage = () => {
 		const { status, translate } = this.props;
@@ -85,9 +78,21 @@ export class CommentList extends Component {
 
 	isSelectedAll = () => this.props.comments.length === size( this.state.selectedComments );
 
+	setBulkStatus = status => () => {
+		this.props.removeNotice( 'comment-notice-bulk' );
+
+		this.props.setBulkStatus( this.state.selectedComments, status );
+		this.showBulkNotice( status, this.state.selectedComments );
+
+		this.setState( {
+			isBulkEdit: false,
+			selectedComments: {},
+		} );
+	};
+
 	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
 		// TODO: Replace with Redux getComment()
-		const comment = find( this.props.comments, [ 'ID', commentId ] );
+		const comment = this.getComment( commentId );
 
 		if ( comment && status === comment.status ) {
 			return;
@@ -99,7 +104,7 @@ export class CommentList extends Component {
 			this.showNotice( commentId, status, comment.status );
 		}
 
-		this.props.setCommentStatus( commentId, status );
+		this.props.setCommentStatus( comment, status );
 	}
 
 	showBulkNotice = ( newStatus, selectedComments ) => {
@@ -125,7 +130,7 @@ export class CommentList extends Component {
 			},
 			'delete' !== newStatus && {
 				button: translate( 'Undo' ),
-				onClick: () => this.undoBulkAction( selectedComments ),
+				onClick: () => this.undoBulkStatus( selectedComments ),
 			}
 		);
 
@@ -173,13 +178,13 @@ export class CommentList extends Component {
 			this.showNotice( commentId, 'approved', 'unapproved' );
 		}
 
-		this.props.toggleCommentLike( commentId );
+		this.props.toggleCommentLike( comment );
 	}
 
 	toggleCommentSelected = commentId => {
-		const { selectedComments } = this.state;
 		// TODO: Replace with Redux getComment()
-		const { i_like, status } = find( this.props.comments, [ 'ID', commentId ] );
+		const { i_like, status } = this.getComment( commentId );
+		const { selectedComments } = this.state;
 
 		this.setState( {
 			selectedComments: this.isCommentSelected( commentId )
@@ -199,9 +204,9 @@ export class CommentList extends Component {
 		} );
 	}
 
-	undoBulkAction = selectedComments => {
+	undoBulkStatus = selectedComments => {
 		this.props.removeNotice( 'comment-notice-bulk' );
-		this.props.undoBulkAction( selectedComments );
+		this.props.undoBulkStatus( selectedComments );
 	}
 
 	render() {
@@ -222,10 +227,10 @@ export class CommentList extends Component {
 			<div className="comment-list">
 				<QuerySiteComments siteId={ siteId } status="all" />
 				<CommentNavigation
-					applyBulkAction={ this.applyBulkAction }
 					isBulkEdit={ isBulkEdit }
 					isSelectedAll={ this.isSelectedAll() }
 					selectedCount={ size( selectedComments ) }
+					setBulkStatus={ this.setBulkStatus }
 					siteSlug={ siteSlug }
 					status={ status }
 					toggleBulkEdit={ this.toggleBulkEdit }
