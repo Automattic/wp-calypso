@@ -11,7 +11,7 @@ import {
 	COMMENTS_REQUEST,
 	COMMENTS_RECEIVE,
 	COMMENTS_REMOVE,
-  COMMENTS_COUNT_INCREMENT,
+	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
