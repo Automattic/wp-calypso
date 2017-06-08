@@ -83,7 +83,7 @@ export class CommentNavigation extends Component {
 		if ( isBulkEdit ) {
 			return (
 			<SectionNav className="comment-navigation is-bulk-edit">
-				<CommentNavigationTab>
+				<CommentNavigationTab className="comment-navigation__bulk-count">
 					<FormCheckbox
 						checked={ isSelectedAll }
 						onChange={ toggleSelectAll }
@@ -164,7 +164,7 @@ export class CommentNavigation extends Component {
 					) }
 				</NavTabs>
 
-				<CommentNavigationTab className="comment-navigation__actions">
+				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
 					<Button compact onClick={ toggleBulkEdit }>
 						{ translate( 'Bulk Edit' ) }
 					</Button>
