@@ -42,6 +42,7 @@ describe( 'utils', function() {
 
 		it( 'should not remove the :flow part of the URL', function() {
 			assert.equal( removeLocaleFromPath( '/start' ), '/start' );
+			assert.equal( removeLocaleFromPath( '/log-in' ), '/log-in' );
 			assert.equal( removeLocaleFromPath( '/start/flow' ), '/start/flow' );
 		} );
 
@@ -97,6 +98,7 @@ describe( 'utils', function() {
 
 		it( 'should return undefined when we lookup random words', function() {
 			expect( getLanguage( 'themes' ) ).to.equal( undefined );
+			expect( getLanguage( 'log-in' ) ).to.equal( undefined );
 		} );
 
 		it( 'should return a language with a three letter country code', function() {
