@@ -57,4 +57,30 @@
 		display: inline-block;
 		flex-grow: 1;
 	}
+
+	li {
+
+		&.has-selected-child a {
+			font-weight: bold;
+		}
+
+		&.has-selected-child svg {
+			fill: $gray-text-min;
+		}
+
+		&.is-child-item {
+			a {
+				font-size: 12px;
+				padding: 8px 16px 8px 55px;
+			}
+
+			svg {
+				display: none;
+			}
+		}
+	}
+}
+
+.settings-tax.is-child-item {
+	border-bottom: 1px solid lighten( $gray, 20% );
 }

@@ -98,7 +98,6 @@ const EditorPreview = React.createClass( {
 				onClose={ this.props.onClose }
 				previewUrl={ this.state.iframeUrl }
 				externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
-				loadingMessage="Beep beep boop…"
 			/>
 		);
 	}

@@ -39,7 +39,7 @@ export default {
 				stepSectionName = utils.getStepSectionName( context.params ),
 				urlWithoutLocale = utils.getStepUrl( flowName, stepName, stepSectionName );
 
-			if ( config( 'wpcom_user_bootstrap' ) ) {
+			if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 				return page.redirect( urlWithoutLocale );
 			}
 

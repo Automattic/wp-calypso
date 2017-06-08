@@ -19,13 +19,15 @@ import {
 // How much time needs to pass before we consider the session inactive:
 const HAPPYCHAT_INACTIVE_TIMEOUT_MS = 1000 * 60 * 10;
 
-export const HAPPYCHAT_CHAT_STATUS_DEFAULT = 'default';
+export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
 export const HAPPYCHAT_CHAT_STATUS_ASSIGNED = 'assigned';
 export const HAPPYCHAT_CHAT_STATUS_ASSIGNING = 'assigning';
-export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
-export const HAPPYCHAT_CHAT_STATUS_MISSED = 'missed';
-export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
+export const HAPPYCHAT_CHAT_STATUS_BLOCKED = 'blocked';
 export const HAPPYCHAT_CHAT_STATUS_CLOSED = 'closed';
+export const HAPPYCHAT_CHAT_STATUS_DEFAULT = 'default';
+export const HAPPYCHAT_CHAT_STATUS_NEW = 'new';
+export const HAPPYCHAT_CHAT_STATUS_MISSED = 'missed';
+export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
 
 /**
  * Returns the geo location of the current user, based happychat session initiation (on ip)
@@ -60,12 +62,23 @@ export const isHappychatChatAssigned = createSelector(
 	state => get( state, 'happychat.chatStatus' ) === HAPPYCHAT_CHAT_STATUS_ASSIGNED
 );
 
-export const isHappychatAcceptingChats = createSelector(
-	state => state.happychat.isAvailable
-);
-
-export const isHappychatChatActive = createSelector(
-	state => ! includes( [ HAPPYCHAT_CHAT_STATUS_DEFAULT ], state.happychat.chatStatus ) && isHappychatAcceptingChats( state ),
+/**
+ * Returns true if there's an active chat session in-progress. Chat sessions with
+ * the status `new`, `default`, or `closed` are considered inactive, as the session
+ * is not connected to an operator.
+ * @param {Object} state - global redux state
+ * @return {Boolean} Whether there's an active Happychat session happening
+ */
+export const hasActiveHappychatSession = createSelector(
+	state => ! includes(
+		[
+			HAPPYCHAT_CHAT_STATUS_BLOCKED,
+			HAPPYCHAT_CHAT_STATUS_CLOSED,
+			HAPPYCHAT_CHAT_STATUS_DEFAULT,
+			HAPPYCHAT_CHAT_STATUS_NEW,
+		],
+		state.happychat.chatStatus
+	),
 	state => state.happychat.chatStatus
 );
 
@@ -82,10 +95,12 @@ export const getHappychatStatus = createSelector(
 	state => state.happychat.chatStatus
 );
 
-export const isHappychatAvailable = createSelector(
-	state => isHappychatAcceptingChats( state ) || isHappychatChatActive( state ),
-	[ isHappychatAcceptingChats, isHappychatChatActive ]
-);
+/**
+ * Returns true if Happychat is available to take new chats.
+ * @param {Object} state - global redux state
+ * @return {Boolean} Whether Happychat is available for new chats
+ */
+export const isHappychatAvailable = state => isHappychatClientConnected( state ) && state.happychat.isAvailable;
 
 /**
  * Gets timeline chat events from the happychat state
@@ -97,16 +112,25 @@ export const getHappychatTimeline = createSelector(
 	state => map( state.happychat.timeline, 'id' )
 );
 
-export const canUserSendMessages = createSelector(
-	state => (
-		getHappychatConnectionStatus( state ) === 'connected' &&
-		! includes(
-			[	HAPPYCHAT_CHAT_STATUS_PENDING, HAPPYCHAT_CHAT_STATUS_MISSED,
-				HAPPYCHAT_CHAT_STATUS_ABANDONED ],
-			getHappychatChatStatus( state )
-		) && isHappychatAcceptingChats( state )
-	),
-	[ getHappychatConnectionStatus, getHappychatChatStatus ]
+/**
+ * Returns true if the user should be able to send messages to operators based on
+ * chat status. For example new chats and ongoing chats should be able to send messages,
+ * but blocked or pending chats should not.
+ * @param {Object} state - global redux state
+ * @return {Boolean} Whether the user is able to send messages
+ */
+export const canUserSendMessages = state => (
+	isHappychatAvailable( state ) &&
+	! includes(
+		[
+			HAPPYCHAT_CHAT_STATUS_BLOCKED,
+			HAPPYCHAT_CHAT_STATUS_DEFAULT,
+			HAPPYCHAT_CHAT_STATUS_PENDING,
+			HAPPYCHAT_CHAT_STATUS_MISSED,
+			HAPPYCHAT_CHAT_STATUS_ABANDONED
+		],
+		getHappychatChatStatus( state )
+	)
 );
 
 export const wasHappychatRecentlyActive = state => {

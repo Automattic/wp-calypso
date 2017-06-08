@@ -42,7 +42,7 @@ import linkJetpackCarousels from 'lib/post-normalizer/rule-content-link-jetpack-
 export const READER_CONTENT_WIDTH = 800,
 	PHOTO_ONLY_MIN_WIDTH = 440,
 	GALLERY_MIN_IMAGES = 4,
-	GALLERY_MIN_IMAGE_WIDTH = 350;
+	GALLERY_MIN_IMAGE_WIDTH = 100;
 
 function getCharacterCount( post ) {
 	if ( ! post || ! post.content_no_html ) {
@@ -111,30 +111,34 @@ export function classifyPost( post ) {
 	return post;
 }
 
-const fastPostNormalizationRules = flow( [
-	decodeEntities,
-	stripHtml,
-	preventWidows,
-	makeSiteIdSafeForApi,
-	pickPrimaryTag,
-	safeImageProperties( READER_CONTENT_WIDTH ),
-	withContentDom( [
-		removeStyles,
-		removeElementsBySelector,
-		makeImagesSafe(),
-		makeEmbedsSafe,
-		disableAutoPlayOnEmbeds,
-		disableAutoPlayOnMedia,
-		detectMedia,
-		detectPolls,
-		linkJetpackCarousels,
-	] ),
-	createBetterExcerpt,
-	pickCanonicalImage,
-	pickCanonicalMedia,
-	classifyPost,
-	addDiscoverProperties,
-] );
+const fastPostNormalizationRules = flow(
+	[
+		decodeEntities,
+		stripHtml,
+		preventWidows,
+		makeSiteIdSafeForApi,
+		pickPrimaryTag,
+		safeImageProperties( READER_CONTENT_WIDTH ),
+		withContentDom(
+			[
+				removeStyles,
+				removeElementsBySelector,
+				makeImagesSafe(),
+				makeEmbedsSafe,
+				disableAutoPlayOnEmbeds,
+				disableAutoPlayOnMedia,
+				detectMedia,
+				detectPolls,
+				linkJetpackCarousels,
+			],
+		),
+		createBetterExcerpt,
+		pickCanonicalImage,
+		pickCanonicalMedia,
+		classifyPost,
+		addDiscoverProperties,
+	],
+);
 
 export function runFastRules( post ) {
 	if ( ! post ) {
@@ -145,12 +149,9 @@ export function runFastRules( post ) {
 	return post;
 }
 
-const slowSyncRules = flow( [
-	keepValidImages( 144, 72 ),
-	pickCanonicalImage,
-	pickCanonicalMedia,
-	classifyPost,
-] );
+const slowSyncRules = flow(
+	[ keepValidImages( 144, 72 ), pickCanonicalImage, pickCanonicalMedia, classifyPost ],
+);
 
 export function runSlowRules( post ) {
 	post = Object.assign( {}, post );

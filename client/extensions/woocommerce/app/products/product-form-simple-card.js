@@ -17,7 +17,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormWeightInput from 'woocommerce/components/form-weight-input';
 
 const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 	const setDimension = ( e ) => {
@@ -60,28 +60,21 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 		</Card>
 	);
 
-	// TODO pull in dimension and weight units.
 	const renderDeliveryDetails = () => (
 		<Card className="products__product-form-delivery-details">
 			<div className="products__product-dimensions-weight">
 				<FormFieldSet className="products__product-dimensions-input">
 					<FormLabel>{ translate( 'Dimensions' ) }</FormLabel>
 					<FormDimensionsInput
-						unit={ translate( 'in' ) }
 						dimensions={ product.dimensions }
 						onChange={ setDimension }
 					/>
 				</FormFieldSet>
 				<FormFieldSet className="products__product-weight-input">
 					<FormLabel>{ translate( 'Weight' ) }</FormLabel>
-					<FormTextInputWithAffixes
-						name="weight"
-						type="number"
-						min="0"
-						suffix="g"
-						value={ product.weight || '' }
+					<FormWeightInput
+						value={ product.weight }
 						onChange={ setWeight }
-						size="4"
 					/>
 				</FormFieldSet>
 			</div>

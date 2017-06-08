@@ -3,8 +3,7 @@ Shrinkwrap
 We use
 [`npm-shrinkwrap.json`](https://github.com/Automattic/wp-calypso/blob/master/npm-shrinkwrap.json)
 to lock down our dependency versions. This allows us to freeze all dependencies at the
-exact version we have installed in our node_modules. Note that we use a couple of other
-tools rather than running `npm shrinkwrap` directly, since we have a mirror `npm` registry
+exact version we have installed in our node_modules. We have a mirror `npm` registry
 and therefore need to avoid adding the `from` and `resolved` fields that `npm shrinkwrap`
 [uses by default](https://github.com/npm/npm/issues/6444).
 
@@ -24,23 +23,20 @@ Testing instructions should ensure that a clean install works and Calypso runs a
 
 ## Generating npm-shrinkwrap.json
 
-- (Optional) Modify package.json. For example: `npm install --save lodash@4.11.1` or `npm uninstall --save left-pad`
-- Install [shonkwrap](https://github.com/skybet/shonkwrap) globally: `npm install -g shonkwrap`. This package attempts
-to remove the from/resolved fields if possible.
-- Run `make shrinkwrap` to generate a new npm-shrinkwrap.json
-- Verify that Calypso works as expected and that tests pass.
-- Commit the new npm-shrinkwrap.json and any changes to package.json
+If you don't edit `package.json` directly, you shouldn't need to do anything. For example, if you run `npm install --save left-pad`,
+the `npm-shrinkwrap.json` file will be updated automatically.
 
-Internally the script does the following:
+If you edit `package.json` manually, or you want to bump all our transitive dependencies to their most recent version,
+you'll need to run `npm run update-deps` (that will take a while). Internally, the script does the following:
 - Deletes local node_modules
 - Deletes your local copy of npm-shrinkwrap.json.
 - Runs `npm install --no-optional` twice. Due to npm 3 quirks, we need to call this twice before packages fully resolve themselves.
-- Runs `shonkwrap --dev` to generate a new npm-shrinkwrap.json.
+- Runs `npm shrinkwrap --dev` to generate a new `npm-shrinkwrap.json`.
 
 ## Testing
 
 To verify that the new npm-shrinkwrap.json works:
 
-- Run `make distclean` to delete local node_modules
+- Run `npm run distclean` to delete local node_modules
 - Run `npm install`
 - Verify that Calypso works as expected and that tests pass.

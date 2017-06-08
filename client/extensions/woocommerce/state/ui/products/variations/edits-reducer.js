@@ -131,7 +131,7 @@ function editProductVariations( productEdits, variations ) {
 				id: { index: Number( uniqueId() ) },
 				attributes: variation.attributes,
 				sku: variation.sku,
-				visible: true,
+				status: 'publish',
 			} );
 		}
 	} );

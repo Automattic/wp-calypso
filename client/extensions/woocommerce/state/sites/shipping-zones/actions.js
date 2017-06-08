@@ -11,6 +11,15 @@ import {
 	areShippingZonesLoaded,
 	areShippingZonesLoading,
 } from './selectors';
+import { fetchShippingZoneMethods } from '../shipping-zone-methods/actions';
+
+export const fetchShippingZonesSuccess = ( siteId, data ) => {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
+		siteId,
+		data,
+	};
+};
 
 export const fetchShippingZones = ( siteId ) => ( dispatch, getState ) => {
 	if ( areShippingZonesLoaded( getState(), siteId ) || areShippingZonesLoading( getState(), siteId ) ) {
@@ -25,14 +34,16 @@ export const fetchShippingZones = ( siteId ) => ( dispatch, getState ) => {
 	dispatch( getAction );
 
 	return request( siteId ).get( 'shipping/zones' )
-		.then( ( data ) => {
-			dispatch( {
-				type: WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
-				siteId,
-				data,
-			} );
-		} )
 		.catch( err => {
 			dispatch( setError( siteId, getAction, err ) );
+		} )
+		.then( ( data ) => {
+			if ( ! data ) {
+				return;
+			}
+			dispatch( fetchShippingZonesSuccess( siteId, data ) );
+			return Promise.all( data.map( zone => {
+				return fetchShippingZoneMethods( siteId, zone.id )( dispatch, getState );
+			} ) );
 		} );
 };

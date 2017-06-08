@@ -197,7 +197,7 @@ export class WebPreview extends Component {
 							selectSeoPreview={ this.setDeviceViewport.bind( null, 'seo' ) }
 						/>
 						<div className="web-preview__placeholder">
-							{ ! this.state.loaded && 'seo' !== this.state.device &&
+							{ this.props.showPreview && ! this.state.loaded && 'seo' !== this.state.device &&
 								<div>
 									<Spinner />
 									{ this.props.loadingMessage &&

@@ -670,7 +670,7 @@ export const PostEditor = React.createClass( {
 		}
 
 		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
-			this.setConfirmationSidebar( 'closed' );
+			this.setConfirmationSidebar( 'publishing' );
 		}
 
 		// determine if this is a private publish
@@ -700,6 +700,10 @@ export const PostEditor = React.createClass( {
 
 	onPublishFailure: function( error ) {
 		this.onSaveFailure( error, 'publishFailure' );
+
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+			this.setConfirmationSidebar( 'closed' );
+		}
 	},
 
 	onPublishSuccess: function() {
@@ -712,6 +716,10 @@ export const PostEditor = React.createClass( {
 			message = 'scheduled';
 		} else {
 			message = 'published';
+		}
+
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+			this.setConfirmationSidebar( 'closed' );
 		}
 
 		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ), savedPost.URL );

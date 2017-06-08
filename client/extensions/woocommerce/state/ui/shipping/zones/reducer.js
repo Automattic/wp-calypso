@@ -29,7 +29,7 @@ const reducer = {};
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_ADD ] = ( state ) => {
 	const id = nextBucketIndex( state.creates );
 	// The action of "adding" a zone must not alter the edits, since the user can cancel the zone edit later
-	return reducer[ WOOCOMMERCE_SHIPPING_ZONE_OPEN ]( state, { payload: { id } } );
+	return reducer[ WOOCOMMERCE_SHIPPING_ZONE_OPEN ]( state, { id } );
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_CANCEL ] = ( state ) => {
@@ -73,7 +73,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_CLOSE ] = ( state ) => {
 	};
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME ] = ( state, { payload: { name } } ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME ] = ( state, { name } ) => {
 	if ( null === state.currentlyEditingId ) {
 		return state;
 	}
@@ -84,14 +84,14 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME ] = ( state, { payload: { name } } 
 	};
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_OPEN ] = ( state, { payload: { id } } ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_OPEN ] = ( state, { id } ) => {
 	return { ...state,
 		currentlyEditingId: id,
 		currentlyEditingChanges: {}, // Always reset the current changes
 	};
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_REMOVE ] = ( state, { payload: { id } } ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_REMOVE ] = ( state, { id } ) => {
 	const newState = { ...state,
 		currentlyEditingId: null,
 	};

@@ -249,7 +249,7 @@ class Plans extends Component {
 		addItem( cartItem );
 		this.redirecting = true;
 		this.props.completeFlow();
-		page( checkoutPath );
+		page.redirect( checkoutPath );
 	}
 
 	storeSelectedPlan( cartItem ) {

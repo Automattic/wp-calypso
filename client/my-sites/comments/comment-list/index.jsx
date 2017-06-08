@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, get, map, size } from 'lodash';
+import { find, get, keyBy, keys, map, omit, size } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -27,17 +27,25 @@ export class CommentList extends Component {
 	static propTypes = {
 		comments: PropTypes.array,
 		deleteCommentPermanently: PropTypes.func,
+		setBulkStatus: PropTypes.func,
 		setCommentLike: PropTypes.func,
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
-		toggleCommentLike: PropTypes.func,
 		translate: PropTypes.func,
+		undoBulkStatus: PropTypes.func,
 	};
 
 	state = {
 		isBulkEdit: false,
+		selectedComments: {},
 	};
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.status !== nextProps.status ) {
+			this.setState( { selectedComments: {} } );
+		}
+	}
 
 	deleteCommentPermanently = commentId => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
@@ -45,6 +53,8 @@ export class CommentList extends Component {
 
 		this.props.deleteCommentPermanently( commentId );
 	}
+
+	getComment = commentId => find( this.props.comments, [ 'ID', commentId ] );
 
 	getEmptyMessage = () => {
 		const { status, translate } = this.props;
@@ -60,10 +70,28 @@ export class CommentList extends Component {
 		}, status, [ '', '' ] );
 	}
 
-	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
-		const comment = find( this.props.comments, [ 'ID', commentId ] );
+	isCommentSelected = commentId => !! this.state.selectedComments[ commentId ];
 
-		if ( status === comment.status ) {
+	isSelectedAll = () => this.props.comments.length === size( this.state.selectedComments );
+
+	setBulkStatus = status => () => {
+		this.props.removeNotice( 'comment-notice-bulk' );
+
+		this.props.setBulkStatus( keys( this.state.selectedComments ), status );
+
+		this.showBulkNotice( status, this.state.selectedComments );
+
+		this.setState( {
+			isBulkEdit: false,
+			selectedComments: {},
+		} );
+	};
+
+	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
+		// TODO: Replace with Redux getComment()
+		const comment = this.getComment( commentId );
+
+		if ( comment && status === comment.status ) {
 			return;
 		}
 
@@ -74,6 +102,36 @@ export class CommentList extends Component {
 		}
 
 		this.props.setCommentStatus( commentId, status );
+	}
+
+	showBulkNotice = ( newStatus, selectedComments ) => {
+		const { translate } = this.props;
+
+		const [ type, message ] = get( {
+			approved: [ 'is-success', translate( 'All selected comments approved.' ) ],
+			unapproved: [ 'is-info', translate( 'All selected comments unapproved.' ) ],
+			spam: [ 'is-warning', translate( 'All selected comments marked as spam.' ) ],
+			trash: [ 'is-error', translate( 'All selected comments moved to trash.' ) ],
+			'delete': [ 'is-error', translate( 'All selected comments deleted permanently.' ) ],
+		}, newStatus, [ null, null ] );
+
+		if ( ! type ) {
+			return;
+		}
+
+		const options = Object.assign(
+			{
+				duration: 5000,
+				id: 'comment-notice-bulk',
+				isPersistent: true,
+			},
+			'delete' !== newStatus && {
+				button: translate( 'Undo' ),
+				onClick: () => this.undoBulkStatus( selectedComments ),
+			}
+		);
+
+		this.props.createNotice( type, message, options );
 	}
 
 	showNotice = ( commentId, newStatus, previousStatus ) => {
@@ -109,6 +167,7 @@ export class CommentList extends Component {
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
 	toggleCommentLike = commentId => {
+		// TODO: Replace with Redux getComment()
 		const comment = find( this.props.comments, [ 'ID', commentId ] );
 
 		if ( 'unapproved' === comment.status ) {
@@ -116,7 +175,35 @@ export class CommentList extends Component {
 			this.showNotice( commentId, 'approved', 'unapproved' );
 		}
 
-		this.props.toggleCommentLike( commentId );
+		this.props.setCommentLike( commentId, ! comment.i_like );
+	}
+
+	toggleCommentSelected = commentId => {
+		// TODO: Replace with Redux getComment()
+		const { i_like, status } = this.getComment( commentId );
+		const { selectedComments } = this.state;
+
+		this.setState( {
+			selectedComments: this.isCommentSelected( commentId )
+				? omit( selectedComments, commentId )
+				: {
+					...selectedComments,
+					[ commentId ]: { i_like, status },
+				},
+		} );
+	}
+
+	toggleSelectAll = () => {
+		this.setState( {
+			selectedComments: this.isSelectedAll()
+				? {}
+				: keyBy( map( this.props.comments, ( { ID, i_like, status } ) => ( { ID, i_like, status } ) ), 'ID' ),
+		} );
+	}
+
+	undoBulkStatus = selectedComments => {
+		this.props.removeNotice( 'comment-notice-bulk' );
+		this.props.undoBulkStatus( selectedComments );
 	}
 
 	render() {
@@ -128,38 +215,41 @@ export class CommentList extends Component {
 		} = this.props;
 		const {
 			isBulkEdit,
+			selectedComments,
 		} = this.state;
-
-		const filteredComments = 'all' === status
-			? filter( comments, comment => 'approved' === comment.status || 'unapproved' === comment.status )
-			: filter( comments, comment => status === comment.status );
 
 		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
 
 		return (
 			<div className="comment-list">
 				<QuerySiteComments siteId={ siteId } status="all" />
-				<CommentNavigation { ...{
-					isBulkEdit,
-					siteSlug,
-					status,
-					toggleBulkEdit: this.toggleBulkEdit,
-				} } />
+				<CommentNavigation
+					isBulkEdit={ isBulkEdit }
+					isSelectedAll={ this.isSelectedAll() }
+					selectedCount={ size( selectedComments ) }
+					setBulkStatus={ this.setBulkStatus }
+					siteSlug={ siteSlug }
+					status={ status }
+					toggleBulkEdit={ this.toggleBulkEdit }
+					toggleSelectAll={ this.toggleSelectAll }
+				/>
 
 				<ReactCSSTransitionGroup
 					transitionEnterTimeout={ 300 }
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-detail__transition"
 				>
-					{ map( filteredComments, comment =>
+					{ map( comments, comment =>
 						<CommentDetail
 							comment={ comment }
 							deleteCommentPermanently={ this.deleteCommentPermanently }
 							isBulkEdit={ isBulkEdit }
+							commentIsSelected={ this.isCommentSelected( comment.ID ) }
 							key={ `comment-${ siteId }-${ comment.ID }` }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
 							toggleCommentLike={ this.toggleCommentLike }
+							toggleCommentSelected={ this.toggleCommentSelected }
 						/>
 					) }
 				</ReactCSSTransitionGroup>
@@ -169,13 +259,13 @@ export class CommentList extends Component {
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
 				>
-					{ null === filteredComments &&
+					{ null === comments &&
 						<CommentDetailPlaceholder
 							key="comment-detail-placeholder"
 						/>
 					}
 
-					{ 0 === size( filteredComments ) &&
+					{ 0 === size( comments ) &&
 						<EmptyContent
 							illustration="/calypso/images/comments/illustration_comments_gray.svg"
 							illustrationWidth={ 150 }
