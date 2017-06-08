@@ -76,7 +76,7 @@ class ReaderInfiniteStream extends Component {
 		>
 			{ ( { measure } ) => (
 				<div key={ key } style={ style } className="reader-infinite-stream__row-wrapper">
-					<ComponentToMeasure { ...props } onLoad={ measure } />
+					<ComponentToMeasure { ...props } onShouldMeasure={ measure } />
 				</div>
 			) }
 		</CellMeasurer>

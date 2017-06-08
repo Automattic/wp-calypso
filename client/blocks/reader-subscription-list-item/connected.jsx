@@ -21,7 +21,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 		translate: PropTypes.func,
 		feedId: PropTypes.number,
 		siteId: PropTypes.number,
-		onLoad: PropTypes.func,
+		onShouldMeasure: PropTypes.func,
 		onComponentMountWithNewRailcar: PropTypes.func,
 		showEmailSettings: PropTypes.bool,
 		showLastUpdatedDate: PropTypes.bool,
@@ -31,7 +31,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 	};
 
 	static defaultProps = {
-		onLoad: noop,
+		onShouldMeasure: noop,
 		onComponentMountWithNewRailcar: noop,
 		showEmailSettings: true,
 		showLastUpdatedDate: true,
@@ -41,11 +41,12 @@ class ConnectedSubscriptionListItem extends React.Component {
 		if ( this.props.railcar ) {
 			this.props.onComponentMountWithNewRailcar( this.props.railcar );
 		}
+		this.props.onShouldMeasure();
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props !== prevProps ) {
-			this.props.onLoad();
+			this.props.onShouldMeasure();
 		}
 		if ( this.props.railcar && this.props.railcar !== prevProps.railcar ) {
 			this.props.onComponentMountWithNewRailcar( this.props.railcar );
