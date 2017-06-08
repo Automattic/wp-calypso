@@ -1,19 +1,23 @@
 /**
  * Internal dependencies
  */
-// import {
-// 	REWIND_STATUS_ERROR,
-// 	REWIND_STATUS_UPDATE,
-// } from 'state/action-types';
 import {
-	createReducer,
-	keyedReducer,
-} from 'state/utils';
+	REWIND_ACTIVATE_FAILURE,
+	REWIND_ACTIVATE_REQUEST,
+	REWIND_ACTIVATE_SUCCESS,
+} from 'state/action-types';
+import { keyedReducer } from 'state/utils';
 
-// FIXME: Real action
-const unknownAction = '__NO_ACTION__';
+export const activationRequesting = keyedReducer( 'siteId', ( state = undefined, { type } ) => {
+	switch ( type ) {
+		// Request starts
+		case REWIND_ACTIVATE_REQUEST:
+			return true;
 
-export const activationRequesting = createReducer( {}, {
-	[ unknownAction ]: keyedReducer( 'siteId', () => true ),
-	[ unknownAction ]: keyedReducer( 'siteId', () => false ),
+		// Request ends
+		case REWIND_ACTIVATE_FAILURE:
+		case REWIND_ACTIVATE_SUCCESS:
+			return false;
+	}
+	return state;
 } );
