@@ -80,17 +80,6 @@ const getStorePages = () => {
 		},
 		{
 			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
-			configKey: 'woocommerce/extension-promotions',
-			path: '/store/promotions/:site',
-			sidebarItem: {
-				icon: 'money',
-				isPrimary: true,
-				label: translate( 'Promotions' ),
-				slug: 'promotions',
-			},
-		},
-		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
 			configKey: 'woocommerce/extension-settings',
 			path: '/store/settings/:site',
 			sidebarItem: {
