@@ -54,6 +54,7 @@ import Ribbon from 'components/ribbon/docs/example';
 import Timezone from 'components/timezone/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
+import InfoLink from 'components/info-link/docs/example';
 import InfoPopover from 'components/info-popover/docs/example';
 import Tooltip from 'components/tooltip/docs/example';
 import FoldableCard from 'components/foldable-card/docs/example';
@@ -144,6 +145,7 @@ let DesignAssets = React.createClass( {
 					<Gridicons />
 					<Headers />
 					<ImagePreloader />
+					<InfoLink />
 					<InfoPopover />
 					<Tooltip />
 					<InputChrono />
