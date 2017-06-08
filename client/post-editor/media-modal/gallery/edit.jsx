@@ -3,16 +3,18 @@
  */
 import React, { PropTypes } from 'react';
 import noop from 'lodash/noop';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import SectionHeader from 'components/section-header';
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 import SortableList from 'components/forms/sortable-list';
 import EditorMediaModalGalleryEditItem from './edit-item';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryEdit',
-
+const EditorMediaModalGalleryEdit = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		settings: PropTypes.object,
@@ -47,17 +49,28 @@ export default React.createClass( {
 		}
 
 		return (
-			<SortableList onChange={ this.onOrderChanged }>
-				{ settings.items.map( ( item ) => {
-					return (
-						<EditorMediaModalGalleryEditItem
-							key={ item.ID }
-							site={ site }
-							item={ item }
-							showRemoveButton={ settings.items.length > 1 } />
-					);
-				} ) }
-			</SortableList>
+			<div>
+				<SectionHeader>
+					<EllipsisMenu position="bottom right">
+						<PopoverMenuItem onClick={ this.props.onReverse }>
+							{ this.props.translate( 'Reverse Order' ) }
+						</PopoverMenuItem>
+					</EllipsisMenu>
+				</SectionHeader>
+				<SortableList onChange={ this.onOrderChanged }>
+					{ settings.items.map( ( item ) => {
+						return (
+							<EditorMediaModalGalleryEditItem
+								key={ item.ID }
+								site={ site }
+								item={ item }
+								showRemoveButton={ settings.items.length > 1 } />
+						);
+					} ) }
+				</SortableList>
+			</div>
 		);
 	}
 } );
+
+export default localize( EditorMediaModalGalleryEdit );
