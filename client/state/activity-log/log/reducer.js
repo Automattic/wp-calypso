@@ -13,7 +13,7 @@ import {
 // FIXME: Real action
 const unknownAction = '__NO_ACTION__';
 
-export const logErrors = createReducer( {}, {
+export const logError = createReducer( {}, {
 	[ unknownAction ]: keyedReducer( 'siteId', () => null ),
 } );
 

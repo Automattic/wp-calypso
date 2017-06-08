@@ -1,4 +1,4 @@
-export const itemsSchema = {
+export const rewindStatusSchema = {
 	type: 'object',
 	patternProperties: {
 		'^\\d+$': {
