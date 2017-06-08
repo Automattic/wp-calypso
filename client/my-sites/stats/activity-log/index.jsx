@@ -32,16 +32,19 @@ import {
 } from 'state/activity-log/selectors';
 import { requestRestore, activateRewind, deactivateRewind } from 'state/activity-log/actions';
 import ActivityLogToggle from '../activity-log-toggle';
+import DatePicker from 'my-sites/stats/stats-date-picker';
+import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class ActivityLog extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
-		startDate: PropTypes.string,
+		startDate: PropTypes.string
 	};
 
 	static defaultProps = {
 		siteId: '',
-		startDate: '',
+		startDate: ''
 	};
 
 	componentDidMount() {
@@ -173,6 +176,16 @@ class ActivityLog extends Component {
 			)
 		);
 
+		let date = moment().startOf( 'month' );
+		const selectedMonth = window.location.search.replace( '?startDate=', '' );
+		if ( selectedMonth.length > 0 ) {
+			date = moment( selectedMonth.split( '-' ) ).subtract( 1, 'months' );
+		}
+		const query = {
+			period: 'month',
+			date: date.endOf( 'month' ).format( 'YYYY-MM-DD' )
+		};
+
 		return (
 			<Main wideLayout={ true }>
 				<QueryRewindStatus siteId={ siteId } />
@@ -194,6 +207,19 @@ class ActivityLog extends Component {
 					isActivatingRewind={ this.props.isActivatingRewind }
 					isDeactivatingRewind={ this.props.isDeactivatingRewind }
 				/> }
+				<StatsPeriodNavigation
+					period="month"
+					date={ date }
+					url={ `/stats/activity/${ slug }` }
+					recordGoogleEvent={ this.changePeriod }
+				>
+					<DatePicker
+						isActivity={ true }
+						period="month"
+						date={ date }
+						query={ query }
+					/>
+				</StatsPeriodNavigation>
 				<section className="activity-log__wrapper">
 					{ logsGroupedByDate }
 				</section>
@@ -247,6 +273,7 @@ export default connect(
 	{
 		requestRestore,
 		activateRewind,
-		deactivateRewind
+		deactivateRewind,
+		recordGoogleEvent
 	}
 )( localize( ActivityLog ) );
