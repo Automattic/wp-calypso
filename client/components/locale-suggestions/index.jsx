@@ -2,8 +2,8 @@
  * External dependencies
  */
 import i18n from 'i18n-calypso';
-import React from 'react';
-import assign from 'lodash/assign';
+import React, { Component } from 'react';
+import { assign } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,77 +11,74 @@ import assign from 'lodash/assign';
 import i18nUtils from 'lib/i18n-utils';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import LocaleSuggestionStore from 'lib/locale-suggestions';
-
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
-	displayName: 'LocaleSuggestions',
-
-	getInitialState: function() {
-		return {
+class LocaleSuggestions extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
 			dismissed: false,
-			locales: LocaleSuggestionStore.get()
+			locales: LocaleSuggestionStore.get(),
 		};
-	},
+	}
 
-	componentWillMount: function() {
+	componentWillMount() {
 		if ( this.props.locale ) {
 			switchLocale( this.props.locale );
 		}
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		LocaleSuggestionStore.on( 'change', this.updateLocales );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		LocaleSuggestionStore.off( 'change', this.updateLocales );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.locale !== nextProps.locale ) {
 			switchLocale( nextProps.locale );
 		}
-	},
+	}
 
-	dismiss: function() {
+	dismiss = () => {
 		this.setState( { dismissed: true } );
-	},
+	};
 
-	handleLocaleSuggestionClick: function( locale, event ) {
+	handleLocaleSuggestionClick( locale, event ) {
 		// TODO: record analytics event here
 		this.reloadIfLanguageDirectionChanges( locale, event );
-	},
+	}
 
-	hasLocaleDirectionChanged: function( locale ) {
-		var localeData = assign( {}, i18nUtils.getLanguage( locale ) ),
+	hasLocaleDirectionChanged( locale ) {
+		const localeData = assign( {}, i18nUtils.getLanguage( locale ) ),
 			currentLocaleData = assign( {}, i18nUtils.getLanguage( i18n.getLocaleSlug() ) );
 
 		return localeData.rtl !== currentLocaleData.rtl;
-	},
+	}
 
-	reloadIfLanguageDirectionChanges: function( locale, event ) {
+	reloadIfLanguageDirectionChanges( locale, event ) {
 		if ( this.hasLocaleDirectionChanged( locale ) ) {
 			event.preventDefault();
 			window.location = this.getPathWithLocale( locale );
 		}
-	},
+	}
 
-	getPathWithLocale: function( locale ) {
+	getPathWithLocale = locale => {
 		return i18nUtils.addLocaleToPath( this.props.path, locale );
-	},
+	};
 
-	updateLocales: function() {
+	updateLocales = () => {
 		this.setState( { locales: LocaleSuggestionStore.get() } );
-	},
+	};
 
-	render: function() {
-		var usersOtherLocales, localeMarkup;
+	render() {
 		if ( ! this.state.locales || this.state.dismissed ) {
 			return null;
 		}
 
-		usersOtherLocales = this.state.locales.filter( function( locale ) {
+		const usersOtherLocales = this.state.locales.filter( function( locale ) {
 			return locale.locale !== i18n.getLocaleSlug();
 		} );
 
@@ -89,13 +86,15 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		localeMarkup = usersOtherLocales.map( function( locale, index ) {
+		const localeMarkup = usersOtherLocales.map( function( locale, index ) {
 			return (
 				<div className="locale-suggestions__list-item" key={ 'locale-' + index } dir="auto">
 					{ locale.availability_text }
-					<a href={ this.getPathWithLocale( locale.locale ) }
+					<a
+						href={ this.getPathWithLocale( locale.locale ) }
 						onClick={ this.handleLocaleSuggestionClick.bind( this, locale.locale ) }
-						className="locale-suggestions__locale-link">
+						className="locale-suggestions__locale-link"
+					>
 						{ locale.name }
 					</a>
 				</div>
@@ -110,4 +109,6 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default LocaleSuggestions;
