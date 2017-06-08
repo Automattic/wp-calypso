@@ -66,6 +66,7 @@ export class CommentNavigation extends Component {
 	render() {
 		const {
 			doSearch,
+			hasSearch,
 			isBulkEdit,
 			isSelectedAll,
 			query,
@@ -169,13 +170,15 @@ export class CommentNavigation extends Component {
 					</Button>
 				</CommentNavigationTab>
 
-				<Search
-					delaySearch
-					fitsContainer
-					initialValue={ query }
-					onSearch={ doSearch }
-					pinned
-				/>
+				{ hasSearch &&
+					<Search
+						delaySearch
+						fitsContainer
+						initialValue={ query }
+						onSearch={ doSearch }
+						pinned
+					/>
+				}
 			</SectionNav>
 		);
 	}
