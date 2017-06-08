@@ -15,6 +15,7 @@ import ExternalLink from 'components/external-link';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import Gridicon from 'gridicons';
 import Main from 'components/main';
+import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
@@ -25,6 +26,8 @@ import { login } from 'lib/paths';
 
 export class Login extends React.Component {
 	static propTypes = {
+		locale: PropTypes.string.isRequired,
+		path: PropTypes.string.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -39,73 +42,68 @@ export class Login extends React.Component {
 	};
 
 	footerLinks() {
-		const {
-			translate,
-			twoFactorAuthType
-		} = this.props;
+		const { translate, twoFactorAuthType } = this.props;
 
 		const backToWpcomLink = (
-			<a
-				href="https://wordpress.com"
-				key="return-to-wpcom-link"
-			>
+			<a href="https://wordpress.com" key="return-to-wpcom-link">
 				<Gridicon icon="arrow-left" size={ 18 } /> { translate( 'Back to WordPress.com' ) }
 			</a>
 		);
 
-		const magicLoginLink = isEnabled( 'magic-login' ) && ! twoFactorAuthType && (
-			<a href="#"
-				key="magic-login-link"
-				onClick={ this.onMagicLoginRequestClick }>
-					{ translate( 'Email me a login link' ) }
-			</a>
-		);
+		const magicLoginLink =
+			isEnabled( 'magic-login' ) &&
+			! twoFactorAuthType &&
+			<a href="#" key="magic-login-link" onClick={ this.onMagicLoginRequestClick }>
+				{ translate( 'Email me a login link' ) }
+			</a>;
 
-		const resetPasswordLink = ! twoFactorAuthType && (
-			<a
-				href={ config( 'login_url' ) + '?action=lostpassword' }
-				key="lost-password-link">
+		const resetPasswordLink =
+			! twoFactorAuthType &&
+			<a href={ config( 'login_url' ) + '?action=lostpassword' } key="lost-password-link">
 				{ this.props.translate( 'Lost your password?' ) }
-			</a>
-		);
+			</a>;
 
-		const lostPhoneLink = twoFactorAuthType && twoFactorAuthType !== 'backup' && (
-			<a
-				href={ login( { isNative: true, twoFactorAuthType: 'backup' } ) }
-				key="lost-phone-link">
+		const lostPhoneLink =
+			twoFactorAuthType &&
+			twoFactorAuthType !== 'backup' &&
+			<a href={ login( { isNative: true, twoFactorAuthType: 'backup' } ) } key="lost-phone-link">
 				{ this.props.translate( "I can't access my phone" ) }
-			</a>
-		);
+			</a>;
 
-		const helpLink = twoFactorAuthType && (
+		const helpLink =
+			twoFactorAuthType &&
 			<ExternalLink
 				key="help-link"
 				icon={ true }
 				target="_blank"
-				href="http://en.support.wordpress.com/security/two-step-authentication/">
+				href="http://en.support.wordpress.com/security/two-step-authentication/"
+			>
 				{ translate( 'Get help' ) }
-			</ExternalLink>
-		);
+			</ExternalLink>;
 
-		return compact( [
-			lostPhoneLink,
-			helpLink,
-			magicLoginLink,
-			resetPasswordLink,
-			backToWpcomLink,
-		] );
+		return compact(
+			[ lostPhoneLink, helpLink, magicLoginLink, resetPasswordLink, backToWpcomLink ],
+		);
+	}
+
+	renderLocaleSuggestions() {
+		const { twoFactorAuthType } = this.props;
+
+		if ( twoFactorAuthType ) {
+			return null;
+		}
+
+		return <LocaleSuggestions locale={ this.props.locale } path={ this.props.path } />;
 	}
 
 	render() {
-		const {
-			queryArguments,
-			translate,
-			twoFactorAuthType,
-		} = this.props;
+		const { queryArguments, translate, twoFactorAuthType } = this.props;
 
 		return (
 			<Main className="wp-login">
 				<PageViewTracker path="/login" title="Login" />
+
+				{ this.renderLocaleSuggestions() }
 
 				<GlobalNotices id="notices" notices={ notices.list } />
 
@@ -114,7 +112,8 @@ export class Login extends React.Component {
 						<LoginBlock
 							twoFactorAuthType={ twoFactorAuthType }
 							redirectLocation={ queryArguments.redirect_to }
-							title={ translate( 'Log in to your account.' ) } />
+							title={ translate( 'Log in to your account.' ) }
+						/>
 					</div>
 					<div className="wp-login__footer">
 						{ this.footerLinks() }
