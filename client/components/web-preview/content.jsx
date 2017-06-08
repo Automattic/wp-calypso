@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import page from 'page';
 import shallowCompare from 'react-addons-shallow-compare';
 import { v4 as uuid } from 'uuid';
@@ -25,21 +25,18 @@ import { recordTracksEvent } from 'state/analytics/actions';
 const debug = debugModule( 'calypso:web-preview' );
 
 export class WebPreviewContent extends Component {
-	constructor( props ) {
-		super( props );
+	previewId = uuid();
+	_hasTouch = false;
+	_isMobile = false;
 
-		this.previewId = uuid();
+	state = {
+		iframeUrl: null,
+		device: this.props.defaultViewportDevice || 'computer',
+		loaded: false
+	};
 
-		this._hasTouch = false;
-		this._isMobile = false;
-
-		this.state = {
-			iframeUrl: null,
-			device: props.defaultViewportDevice || 'computer',
-			loaded: false
-		};
-
-		this.setIframeInstance = ref => this.iframe = ref;
+	setIframeInstance = ( ref ) => {
+		this.iframe = ref;
 	}
 
 	componentWillMount() {
@@ -57,9 +54,7 @@ export class WebPreviewContent extends Component {
 			this.setIframeMarkup( this.props.previewMarkup );
 		}
 
-		if ( typeof this.props.onDeviceUpdate === 'function' ) {
-			this.props.onDeviceUpdate( this.state.device );
-		}
+		this.props.onDeviceUpdate( this.state.device );
 	}
 
 	componentWillUnmount() {
@@ -106,14 +101,10 @@ export class WebPreviewContent extends Component {
 		switch ( data.type ) {
 			case 'link':
 				page( data.payload.replace( /^https:\/\/wordpress\.com\//i, '/' ) );
-				if ( typeof this.props.onClose === 'function' ) {
-					this.props.onClose();
-				}
+				this.props.onClose();
 				return;
 			case 'close':
-				if ( typeof this.props.onClose === 'function' ) {
-					this.props.onClose();
-				}
+				this.props.onClose();
 				return;
 			case 'partially-loaded':
 				this.setLoaded();
