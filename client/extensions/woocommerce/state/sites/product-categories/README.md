@@ -11,7 +11,7 @@ Get the list of product categories from the remote site.
 
 ## Reducer
 
-A list of settings as returned from the site's API, saved on a per-site basis.
+A list of product categories as returned from the site's API, saved on a per-site basis.
 
 ```js
 {
