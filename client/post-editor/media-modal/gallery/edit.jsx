@@ -53,7 +53,7 @@ const EditorMediaModalGalleryEdit = React.createClass( {
 				<SectionHeader>
 					<EllipsisMenu position="bottom right">
 						<PopoverMenuItem onClick={ this.props.onReverse }>
-							{ this.props.translate( 'Reverse Order' ) }
+							{ this.props.translate( 'Reverse order' ) }
 						</PopoverMenuItem>
 					</EllipsisMenu>
 				</SectionHeader>
