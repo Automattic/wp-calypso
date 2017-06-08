@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -14,11 +15,13 @@ import FormFieldset from 'components/forms/form-fieldset';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
+import { isPostTypeSupported } from 'state/post-types/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
+import QueryPostTypes from 'components/data/query-post-types';
 
 class CustomContentTypes extends Component {
 	componentDidUpdate() {
@@ -58,6 +61,14 @@ class CustomContentTypes extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
+	renderDescription( description ) {
+		return (
+			<FormSettingExplanation isIndented>
+				{ description }
+			</FormSettingExplanation>
+		);
+	}
+
 	renderToggle( name, label, description ) {
 		const {
 			activatingCustomContentTypesModule,
@@ -73,9 +84,20 @@ class CustomContentTypes extends Component {
 				>
 					{ label }
 				</CompactFormToggle>
-				<FormSettingExplanation isIndented>
-					{ description }
-				</FormSettingExplanation>
+				{ this.renderDescription( description ) }
+			</div>
+		);
+	}
+
+	renderSupportedContentType( fieldName, fieldLabel, fieldDescription ) {
+		return (
+			<div className="custom-content-types__module-settings">
+				<div className="custom-content-types__form-toggle-placeholder form-toggle__placeholder">
+					<Gridicon icon="checkmark" />
+					{ fieldLabel }
+				</div>
+
+				{ this.renderDescription( fieldDescription ) }
 			</div>
 		);
 	}
@@ -89,41 +111,69 @@ class CustomContentTypes extends Component {
 	}
 
 	renderTestimonialSettings() {
-		const { translate } = this.props;
+		const {
+			isTestimonialSupported,
+			translate
+		} = this.props;
 		const fieldLabel = translate( 'Testimonials' );
-		const fieldDescription = translate(
-			'Add, organize, and display {{link}}testimonials{{/link}}. If your theme doesn’t support testimonials yet, ' +
-			'you can display them using the shortcode ( [testimonials] ).',
-			{
-				components: {
-					link: <a href="https://support.wordpress.com/testimonials/" />
-				}
+		const translateArgs = {
+			components: {
+				link: <a href="https://support.wordpress.com/testimonials/" />
 			}
+		};
+		const supportedDescription = translate(
+			'Your theme has built-in {{link}}testimonial{{/link}} support.',
+			translateArgs,
+		);
+		const notSupportedDescription = translate(
+			'Enable {{link}}testimonials{{/link}} and display them using the shortcode [testimonials].',
+			translateArgs,
 		);
 
-		return this.renderContentTypeSettings( 'jetpack_testimonial', fieldLabel, fieldDescription );
+		if ( isTestimonialSupported ) {
+			return this.renderSupportedContentType( 'jetpack_testimonial', fieldLabel, supportedDescription );
+		}
+
+		return this.renderContentTypeSettings( 'jetpack_testimonial', fieldLabel, notSupportedDescription );
 	}
 
 	renderPortfolioSettings() {
-		const { translate } = this.props;
+		const {
+			isPortfolioSupported,
+			translate
+		} = this.props;
 		const fieldLabel = translate( 'Portfolios' );
-		const fieldDescription = translate(
-			'Add, organize, and display {{link}}portfolios{{/link}}. If your theme doesn’t support portfolios yet, ' +
-			'you can display them using the shortcode ( [portfolios] ).',
-			{
-				components: {
-					link: <a href="https://support.wordpress.com/portfolios/" />
-				}
+		const translateArgs = {
+			components: {
+				link: <a href="https://support.wordpress.com/portfolios/" />
 			}
+		};
+		const supportedDescription = translate(
+			'Your theme has built-in {{link}}portfolio{{/link}} support.',
+			translateArgs,
+		);
+		const notSupportedDescription = translate(
+			'Enable {{link}}portfolios{{/link}} and display them using the shortcode [portfolios].',
+			translateArgs,
 		);
 
-		return this.renderContentTypeSettings( 'jetpack_portfolio', fieldLabel, fieldDescription );
+		if ( isPortfolioSupported ) {
+			return this.renderSupportedContentType( 'jetpack_portfolio', fieldLabel, supportedDescription );
+		}
+
+		return this.renderContentTypeSettings( 'jetpack_portfolio', fieldLabel, notSupportedDescription );
 	}
 
 	render() {
-		const { translate } = this.props;
+		const {
+			siteId,
+			translate
+		} = this.props;
+
 		return (
 			<div>
+				{ siteId && <QueryPostTypes siteId={ siteId } /> }
+
 				<SectionHeader label={ translate( 'Custom content types' ) } />
 
 				<Card className="custom-content-types__card site-settings">
@@ -165,6 +215,8 @@ export default connect(
 		return {
 			siteId,
 			siteIsJetpack: isJetpackSite( state, siteId ),
+			isPortfolioSupported: isPostTypeSupported( state, siteId, 'jetpack-portfolio' ),
+			isTestimonialSupported: isPostTypeSupported( state, siteId, 'jetpack-testimonial' ),
 			customContentTypesModuleActive: isJetpackModuleActive( state, siteId, 'custom-content-types' ),
 			activatingCustomContentTypesModule: isActivatingJetpackModule( state, siteId, 'custom-content-types' ),
 		};
