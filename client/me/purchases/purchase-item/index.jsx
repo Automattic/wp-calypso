@@ -63,11 +63,16 @@ class PurchaseItem extends Component {
 		}
 
 		if ( isExpired( purchase ) ) {
+			const expiredToday = purchase.expiryMoment < moment().add( 1, 'day' );
+			const expiredText = expiredToday
+				? purchase.expiryMoment.format( '[today]' )
+				: purchase.expiryMoment.fromNow();
+
 			return (
 				<Notice isCompact status="is-error" icon="notice">
 					{ translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
-							timeSinceExpiry: purchase.expiryMoment.fromNow(),
+							timeSinceExpiry: expiredText,
 						},
 						context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 					} ) }
