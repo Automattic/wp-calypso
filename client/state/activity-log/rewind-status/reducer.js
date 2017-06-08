@@ -6,17 +6,27 @@ import {
 	REWIND_STATUS_ERROR,
 	REWIND_STATUS_UPDATE,
 } from 'state/action-types';
-import {
-	createReducer,
-	keyedReducer,
-} from 'state/utils';
+import { keyedReducer } from 'state/utils';
 
-export const rewindStatus = createReducer( {}, {
-	[ REWIND_STATUS_ERROR ]: keyedReducer( 'siteId', () => null ),
-	[ REWIND_STATUS_UPDATE ]: keyedReducer( 'siteId', ( state, { status } ) => status ),
-}, rewindStatusSchema );
+export const rewindStatus = keyedReducer( 'siteId', ( state = undefined, { type, status } ) => {
+	switch ( type ) {
+		case REWIND_STATUS_ERROR:
+			return undefined;
+		case REWIND_STATUS_UPDATE:
+			return status;
+		default:
+			return state;
+	}
+} );
+rewindStatus.schema = rewindStatusSchema;
 
-export const rewindStatusError = createReducer( {}, {
-	[ REWIND_STATUS_ERROR ]: keyedReducer( 'siteId', ( state, { error } ) => error ),
-	[ REWIND_STATUS_UPDATE ]: keyedReducer( 'siteId', () => null ),
+export const rewindStatusError = keyedReducer( 'siteId', ( state = undefined, { type, error } ) => {
+	switch ( type ) {
+		case REWIND_STATUS_ERROR:
+			return error;
+		case REWIND_STATUS_UPDATE:
+			return undefined;
+		default:
+			return state;
+	}
 } );
