@@ -131,6 +131,7 @@ export isActivatingJetpackModule from './is-activating-jetpack-module';
 export isAmbiguousThemeFilterTerm from './is-ambiguous-theme-filter-term';
 export isAutomatedTransferActive from './is-automated-transfer-active';
 export isAutomatedTransferFailed from './is-automated-transfer-failed';
+export isCurrentSitePlanMatch from './is-current-site-plan-match';
 export isDeactivatingJetpackJumpstart from './is-deactivating-jetpack-jumpstart';
 export isDeactivatingJetpackModule from './is-deactivating-jetpack-module';
 export isDeletingPublicizeShareAction from './is-deleting-publicize-share-action';
