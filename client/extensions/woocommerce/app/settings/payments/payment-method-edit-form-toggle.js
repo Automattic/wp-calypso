@@ -23,7 +23,7 @@ const PaymentMethodEditFormToggle = ( props ) => {
 
 	return (
 		<FormToggle
-			{ ...omit( props, [ 'updateAriaLabel', 'editAriaLabel' ] ) }
+			{ ...omit( props, [ onChange ] ) }
 			checked={ checked }
 			name={ name }
 			onChange={ onChangeHandler } />
