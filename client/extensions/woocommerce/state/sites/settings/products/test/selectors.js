@@ -118,7 +118,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getDimensionsUnitSetting,', () => {
+	describe( '#getDimensionsUnitSetting', () => {
 		it( 'should get the dimensions unit setting from the state.', () => {
 			expect( getDimensionsUnitSetting( loadedState, 123 ) ).to.eql( dimensionsUnitSetting );
 		} );
