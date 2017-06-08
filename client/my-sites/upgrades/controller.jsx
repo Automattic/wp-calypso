@@ -196,7 +196,6 @@ module.exports = {
 					<Checkout
 						product={ product }
 						productsList={ productsList }
-						purchaseId={ context.params.purchaseId }
 						selectedFeature={ selectedFeature }
 					/>
 				</CheckoutData>

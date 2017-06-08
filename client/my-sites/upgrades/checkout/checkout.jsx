@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, find, isEmpty, isEqual, reduce } from 'lodash';
+import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
@@ -15,6 +15,7 @@ const analytics = require( 'lib/analytics' ),
 	clearSitePlans = require( 'state/sites/plans/actions' ).clearSitePlans,
 	clearPurchases = require( 'state/purchases/actions' ).clearPurchases,
 	DomainDetailsForm = require( './domain-details-form' ),
+	domainMapping = require( 'lib/cart-values/cart-items' ).domainMapping,
 	fetchReceiptCompleted = require( 'state/receipts/actions' ).fetchReceiptCompleted,
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
 	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails,
@@ -26,13 +27,9 @@ const analytics = require( 'lib/analytics' ),
 	SecurePaymentForm = require( './secure-payment-form' ),
 	SecurePaymentFormPlaceholder = require( './secure-payment-form-placeholder' ),
 	supportPaths = require( 'lib/url/support' ),
+	themeItem = require( 'lib/cart-values/cart-items' ).themeItem,
 	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
-import {
-	domainMapping,
-	noAdsItem,
-	themeItem
-} from 'lib/cart-values/cart-items';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import {
 	isValidFeatureKey,
@@ -121,27 +118,23 @@ const Checkout = React.createClass( {
 	},
 
 	addProductToCart: function() {
-		const { product, productsList, purchaseId, selectedSiteSlug } = this.props;
-		const meta = product.split( ':' )[ 1 ];
-		const productSlug = getUpgradePlanSlugFromPath( product ) || product.split( ':' )[ 0 ];
+		const planSlug = getUpgradePlanSlugFromPath( this.props.product, this.props.selectedSite );
 
-		let cartItem = getCartItemForPlan( productSlug );
+		let cartItem,
+			cartMeta;
 
-		if ( 'theme' === productSlug ) {
-			cartItem = themeItem( meta );
-		} else if ( 'domain-mapping' === productSlug ) {
-			cartItem = domainMapping( { domain: meta } );
-		} else if ( 'no-ads' === productSlug ) {
-			cartItem = noAdsItem();
-		} else if ( meta ) {
-			cartItem = Object.assign( { meta }, productsList.data[ productSlug ] );
+		if ( planSlug ) {
+			cartItem = getCartItemForPlan( planSlug );
 		}
 
-		if ( cartItem && purchaseId ) {
-			cartItem = cartItems.getRenewalItemFromCartItem( cartItem, {
-				id: purchaseId,
-				domain: selectedSiteSlug
-			} );
+		if ( startsWith( this.props.product, 'theme' ) ) {
+			cartMeta = this.props.product.split( ':' )[ 1 ];
+			cartItem = themeItem( cartMeta );
+		}
+
+		if ( startsWith( this.props.product, 'domain-mapping' ) ) {
+			cartMeta = this.props.product.split( ':' )[ 1 ];
+			cartItem = domainMapping( { domain: cartMeta } );
 		}
 
 		if ( cartItem ) {
