@@ -393,14 +393,18 @@ export class FullPostView extends React.Component {
 											siteLink: (
 												<a
 													href={ getStreamUrlFromPost( post ) }
+													/* eslint-disable wpcalypso/jsx-classname-namespace */
 													className="reader-related-card-v2__link"
+													/* eslint-enable wpcalypso/jsx-classname-namespace */
 												>
 													{ siteName }
 												</a>
 											),
 										},
 									} ) }
+									/* eslint-disable wpcalypso/jsx-classname-namespace */
 									className="is-same-site"
+									/* eslint-enable wpcalypso/jsx-classname-namespace */
 									onPostClick={ this.handleRelatedPostFromSameSiteClicked }
 								/> }
 
@@ -421,7 +425,9 @@ export class FullPostView extends React.Component {
 									siteId={ +post.site_ID }
 									postId={ +post.ID }
 									title={ relatedPostsFromOtherSitesTitle }
+									/* eslint-disable wpcalypso/jsx-classname-namespace */
 									className="is-other-site"
+									/* eslint-enable wpcalypso/jsx-classname-namespace */
 									onPostClick={ this.handleRelatedPostFromOtherSiteClicked }
 								/> }
 						</article>
