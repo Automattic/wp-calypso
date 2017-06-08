@@ -2276,6 +2276,14 @@ Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
 	return this.wpcom.req.get( '/sites/' + siteId + '/wordads/status', fn );
 };
 
+Undocumented.prototype.getLabeledUserImages = function( siteId, search, fn ) {
+	debug( '/sites/:site:/media/uic' );
+	return this.wpcom.req.get( '/sites/' + siteId + '/media/uic', {
+		apiVersion: '1.2',
+		search
+	}, fn );
+};
+
 /**
  * Initiate the Automated Transfer process, uploading a theme and/or selecting
  * a community plugin.
