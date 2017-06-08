@@ -28,7 +28,7 @@ class PublishMenu extends PureComponent {
 		siteId: PropTypes.number,
 		// connected props
 		allSingleSites: PropTypes.bool,
-		canUser: PropTypes.func,
+		canUserEditPosts: PropTypes.bool,
 		isJetpack: PropTypes.bool,
 		isSingleUser: PropTypes.bool,
 		postTypes: PropTypes.object,
@@ -66,7 +66,6 @@ class PublishMenu extends PureComponent {
 			{
 				name: 'post',
 				label: this.props.translate( 'Blog Posts' ),
-				capability: 'edit_posts',
 				config: 'manage/posts',
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
@@ -78,7 +77,6 @@ class PublishMenu extends PureComponent {
 			{
 				name: 'page',
 				label: this.props.translate( 'Pages' ),
-				capability: 'edit_pages',
 				queryable: true,
 				config: 'manage/pages',
 				link: '/pages',
@@ -92,7 +90,6 @@ class PublishMenu extends PureComponent {
 			items.push( {
 				name: 'media',
 				label: this.props.translate( 'Media' ),
-				capability: 'upload_files',
 				queryable: true,
 				config: 'manage/media',
 				link: '/media',
@@ -113,11 +110,7 @@ class PublishMenu extends PureComponent {
 	}
 
 	renderMenuItem( menuItem ) {
-		const { canUser, site, siteId, siteAdminUrl } = this.props;
-
-		if ( siteId && ! canUser( menuItem.capability ) ) {
-			return null;
-		}
+		const { site, siteId, siteAdminUrl } = this.props;
 
 		// Hide the sidebar link for media
 		if ( 'attachment' === menuItem.name ) {
@@ -204,10 +197,6 @@ class PublishMenu extends PureComponent {
 				config: 'manage/custom-post-types',
 				queryable: postType.api_queryable,
 
-				//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack
-				//version isn't up-to-date), silently assume we don't have the capability to edit this CPT.
-				capability: get( postType.capabilities, 'edit_posts' ),
-
 				// Required to build the menu item class name. Must be discernible from other
 				// items' paths in the same section for item highlighting to work properly.
 				link: '/types/' + postType.name,
@@ -219,6 +208,10 @@ class PublishMenu extends PureComponent {
 	}
 
 	render() {
+		if ( this.props.siteId && ! this.props.canUserEditPosts ) {
+			return null;
+		}
+
 		const menuItems = [
 			...this.getDefaultMenuItems(),
 			...this.getCustomMenuItems()
@@ -240,9 +233,7 @@ export default connect( ( state, { siteId } ) => {
 
 	return {
 		allSingleSites: areAllSitesSingleUser( state ),
-		// TODO: Instead of passing a canUser function prop, we should compute and filter
-		// the list of menuItems inside `connect` and pass it to `PostList` as a prop.
-		canUser: ( cap ) => canCurrentUser( state, siteId, cap ),
+		canUserEditPosts: canCurrentUser( state, siteId, 'edit_posts' ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
 		postTypes,
