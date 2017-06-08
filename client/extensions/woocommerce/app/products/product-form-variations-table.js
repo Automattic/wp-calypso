@@ -8,12 +8,12 @@ import { find, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import Dialog from 'components/dialog';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
+import FormWeightInput from 'woocommerce/components/form-weight-input';
 import ProductFormVariationsModal from './product-form-variations-modal';
 import ProductFormVariationsRow from './product-form-variations-row';
 
@@ -160,20 +160,15 @@ class ProductFormVariationsTable extends React.Component {
 					<div className="products__product-dimensions-weight">
 						<FormDimensionsInput
 							className="products__product-dimensions-input"
-							unit="in"
 							noWrap
 							dimensions={ dimensions }
 							onChange={ this.setDimension }
 						/>
 						<div className="products__product-weight-input">
-							<FormTextInputWithAffixes
-								name="weight"
-								type="number"
-								suffix="g"
+							<FormWeightInput
 								value={ weight }
-								size="4"
-								noWrap
 								onChange={ this.setWeight }
+								noWrap
 							/>
 						</div>
 					</div>
