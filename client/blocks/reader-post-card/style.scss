@@ -280,7 +280,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	color: $gray;
 
 	&::after {
-		@include long-content-fade( $size: 10% );
+		@include long-content-fade( $size: 20% );
 	}
 }
 
@@ -290,7 +290,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		content: ', '
 	}
 
-	&:last-child:after {
+	&:last-child::after {
 		display: none;
 	}
 }

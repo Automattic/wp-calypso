@@ -53,11 +53,10 @@
 	z-index: z-index( 'root', '.search-stream__input-card' );
 }
 
-// Top margins
+// Top margins for Sites in Search
 // Post recs and post results with suggested terms
 .search-stream .search-stream__recommendation-list-item:nth-child(2),
-.search-stream .search-stream__recommendation-list-item:nth-child(3),
-.search-stream .reader-post-card:nth-child(2) {
+.search-stream .search-stream__recommendation-list-item:nth-child(3) {
 	margin-top: 100px;
 }
 
@@ -72,22 +71,14 @@
 	}
 }
 
-.search-stream .search-stream__single-column-results .reader-post-card:nth-child(2) {
-	margin-top: 0;
-}
-
 // Post recs
 .search-stream.search-stream__with-sites .search-stream__recommendation-list-item:nth-child(2),
 .search-stream.search-stream__with-sites .search-stream__recommendation-list-item:nth-child(3) {
-	margin-top: 70px;
+	margin-top: 90px;
 
-	@include breakpoint( ">660px" ) {
-		margin-top: 90px;
+	@include breakpoint( "<660px" ) {
+		margin-top: 70px;
 	}
-}
-
-.search-stream.search-stream__with-sites .search-stream__single-column-results {
-	padding-top: 150px;
 }
 
 .search-stream.search-stream__with-sites .search-stream__single-column-results .search-stream__recommendation-list-item:nth-child(2) {
@@ -104,12 +95,6 @@
 	@media #{$reader-related-card-v2-breakpoint-small} {
 		margin-top: 0;
 	}
-}
-
-// Site results
-.search-stream.search-stream__with-sites .is-two-columns .search-stream__post-results .reader-post-card:nth-child(2),
-.search-stream.search-stream__with-sites .is-two-columns .search-stream__site-results {
-	margin-top: 150px;
 }
 
 // Search term suggestions
@@ -134,12 +119,12 @@
 	}
 }
 
-// Post recommendations in Search
-// Custom breakpoints needed to match Related Posts
-$reader-post-results-breakpoint: "( min-width: 1012px ) and ( max-width: 1080px )";
-$reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
-$reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
+// Custom breakpoints
+$reader-post-card-breakpoint-large: "( min-width: 961px ) and ( max-width: 1040px )";
+$reader-post-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 940px )";
+$reader-post-card-breakpoint-small: "( max-width: 550px )";
 
+// Post recommendations in Search
 .is-reader-page .search-stream .reader__content {
 	display: flex;
 	flex-flow: wrap;
@@ -404,7 +389,23 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	width: 100%;
 }
 
-// Custom card styling for post results
+.search-stream__results.is-two-columns {
+	margin-top: 140px;
+}
+
+.search-stream__single-column-results {
+	padding-top: 140px;
+
+	.follow-button {
+		float: none;
+	}
+
+	.reader-subscription-list-item__options {
+		min-width: 90px;
+	}
+}
+
+// Custom styling for cards in post results
 .search-stream .search-stream__results {
 	display: flex;
 
@@ -421,11 +422,53 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			top: 2px;
 		}
 
+		.reader-post-card__post {
+
+			@media #{$reader-post-card-breakpoint-large} {
+				flex-direction: column;
+			}
+
+			@include breakpoint( "<960px" ) {
+				flex-direction: column;
+			}
+		}
+
+		.reader-post-card.card.has-thumbnail .reader-featured-image {
+
+			@media #{$reader-post-card-breakpoint-large} {
+				height: 80px;
+				margin: 0 0 20px;
+				max-width: 100%;
+			}
+
+			@include breakpoint( "<960px" ) {
+				height: 80px;
+				margin: 0 0 20px;
+				max-width: 100%;
+			}
+		}
+
+		.reader-post-card.is-photo .reader-post-card__title {
+			white-space: normal;
+		}
+
 		.reader-post-card.is-gallery .reader-post-card__gallery-item:last-child {
 
-			@media #{$reader-post-results-breakpoint} {
+			@media #{$reader-post-card-breakpoint-large} {
 				display: none;
 			}
+
+			@include breakpoint( "<960px" ) {
+				display: block;
+			}
+		}
+	}
+
+	&.is-two-columns .search-stream__site-results {
+
+		.reader-subscription-list-item .gridicons-cog {
+			left: -2px;
+			top: 15px;
 		}
 	}
 }
