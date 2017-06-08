@@ -93,7 +93,7 @@ describe( 'wpcom-api', () => {
 					path: '/sites/2916284/posts/1010/replies',
 					query: {
 						...query,
-						before: '2017-05-25T19:41:25.1010Z'
+						before: '2017-05-25T19:41:25.841Z'
 					}
 				}, action ) );
 			} );
