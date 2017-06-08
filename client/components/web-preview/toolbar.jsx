@@ -87,13 +87,14 @@ class PreviewToolbar extends Component {
 						compact
 						className="web-preview__device-switcher"
 						selectedText={ selectedDevice.title }
-						selectedIcon={ selectedDevice.icon }
+						selectedIcon={ <Gridicon size={ 18 } icon={ selectedDevice.icon } /> }
 					>
 						{ devicesToShow.map( device => (
 							<DropdownItem
 								key={ device }
 								selected={ device === currentDevice }
 								onClick={ partial( setDeviceViewport, device ) }
+								icon={ <Gridicon size={ 18 } icon={ this.devices[ device ].icon } /> }
 							>
 								{ this.devices[ device ].title }
 							</DropdownItem>
