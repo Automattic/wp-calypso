@@ -275,12 +275,6 @@ module.exports = function() {
 			upgradesController.checkout
 		);
 
-		page(
-			'/checkout/:product/renew/:purchaseId/:domain',
-			controller.siteSelection,
-			upgradesController.checkout
-		);
-
 		// Visting /checkout without a plan or product should be redirected to /plans
 		page( '/checkout', '/plans' );
 	}
