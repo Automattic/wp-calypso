@@ -44,15 +44,12 @@ export class PlanFeaturesHeader extends Component {
 			isPlaceholder,
 			isSiteAT,
 			intervalType,
-			newPlan,
 			planType,
-			popular,
 			rawPrice,
 			relatedMonthlyPlan,
 			showBigPlanIcon,
 			site,
 			title,
-			translate,
 		} = this.props;
 
 		const headerClasses = classNames(
@@ -78,15 +75,7 @@ export class PlanFeaturesHeader extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<header className={ headerClasses } onClick={ this.props.onClick } >
-				{
-					popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon>
-				}
-				{
-					newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon>
-				}
-				{
-					this.isPlanCurrent() && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon>
-				}
+				{ this.renderRibbons() }
 				{ ! showBigPlanIcon && this.renderPlanIcon() }
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
@@ -98,6 +87,16 @@ export class PlanFeaturesHeader extends Component {
 			</header>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+
+	renderRibbons() {
+		const { popular, newPlan, translate } = this.props;
+
+		return [
+			popular && <Ribbon key="popular">{ translate( 'Popular' ) }</Ribbon>,
+			newPlan && <Ribbon key="new">{ translate( 'New' ) }</Ribbon>,
+			this.isPlanCurrent() && <Ribbon key="current">{ translate( 'Your Plan' ) }</Ribbon>,
+		];
 	}
 
 	renderPlanIcon() {
