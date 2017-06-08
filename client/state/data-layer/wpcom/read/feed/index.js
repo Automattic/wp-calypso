@@ -12,6 +12,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
+import queryKey from 'state/reader/feed-searches/query-key';
 
 export function initiateFeedSearch( store, action ) {
 	if ( ! ( action.payload && action.payload.query ) ) {
@@ -24,10 +25,14 @@ export function initiateFeedSearch( store, action ) {
 			path,
 			method: 'GET',
 			apiVersion: '1.1',
-			query: { q: action.payload.query, offset: action.payload.offset },
+			query: {
+				q: action.payload.query,
+				offset: action.payload.offset,
+				exclude_followed: action.payload.excludeFollowed,
+			},
 			onSuccess: action,
 			onFailure: action,
-		} )
+		} ),
 	);
 }
 
@@ -38,7 +43,7 @@ export function receiveFeeds( store, action, next, apiResponse ) {
 	} ) );
 
 	const total = apiResponse.total > 200 ? 200 : apiResponse.total;
-	store.dispatch( receiveFeedSearch( action.payload.query, feeds, total ) );
+	store.dispatch( receiveFeedSearch( queryKey( action.payload ), feeds, total ) );
 }
 
 export function receiveError( store, action, next, error ) {

@@ -22,7 +22,11 @@ class SitesResults extends React.Component {
 	};
 
 	fetchNextPage = offset => {
-		this.props.requestFeedSearch( this.props.query, offset );
+		this.props.requestFeedSearch( {
+			query: this.props.query,
+			offset,
+			excludeFollowed: false,
+		} );
 	};
 
 	render() {
@@ -30,7 +34,7 @@ class SitesResults extends React.Component {
 
 		return (
 			<div>
-				<QueryReaderFeedsSearch query={ query } />
+				<QueryReaderFeedsSearch query={ query } excludeFollowed={ false } />
 				<ReaderInfiniteStream
 					itemType={ 'site' }
 					items={ searchResults || [ {}, {}, {}, {}, {} ] }
@@ -45,7 +49,10 @@ class SitesResults extends React.Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		searchResults: getReaderFeedsForQuery( state, ownProps.query ),
+		searchResults: getReaderFeedsForQuery(
+			state,
+			{ query: ownProps.query, excludeFollowed: false },
+		),
 	} ),
-	{ requestFeedSearch }
+	{ requestFeedSearch },
 )( localize( SitesResults ) );
