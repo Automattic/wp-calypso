@@ -149,11 +149,11 @@ export default React.createClass( {
 	},
 
 	getDefaultActionLinks( plugin ) {
-		let adminUrl = get( this.props, 'selectedSite.options.admin_url' );
+		let adminUrl = get( this.props, 'site.options.admin_url' );
 		const pluginSlug = get( plugin, 'slug' );
 
 		if ( pluginSlug === 'vaultpress' ) {
-			adminUrl += '/admin.php?page=vaultpress';
+			adminUrl += 'admin.php?page=vaultpress'; // adminUrl has a trailing slash
 		}
 
 		return adminUrl
@@ -209,7 +209,7 @@ export default React.createClass( {
 			'is-singlesite': !! this.props.siteVersion
 		} );
 
-		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
+		const { plugin } = this.props;
 		let actionLinks = get( plugin, 'action_links' );
 
 		if ( get( plugin, 'active' ) && isEmpty( actionLinks ) ) {
