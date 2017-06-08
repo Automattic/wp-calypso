@@ -8,15 +8,20 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
-import Row from './table-row';
 
-const Table = ( { values, className, children } ) => {
+const Table = ( { className, compact, header, hasBorder, children, ...props } ) => {
+	const classes = classnames( {
+		table: true,
+		'has-border': hasBorder,
+		'is-compact': compact,
+	}, className );
 	return (
-		<Card className={ classnames( 'table', className ) }>
-			<table>
-				<thead>
-					<Row isHeader values={ values } />
-				</thead>
+		<Card className={ classes }>
+			<table { ...props }>
+				{ header
+					? <thead>{ header }</thead>
+					: null
+				}
 				<tbody>
 					{ children }
 				</tbody>
@@ -26,9 +31,11 @@ const Table = ( { values, className, children } ) => {
 };
 
 Table.propTypes = {
-	values: PropTypes.array,
 	className: PropTypes.string,
 	children: PropTypes.node,
+	compact: PropTypes.bool,
+	header: PropTypes.node,
+	hasBorder: PropTypes.bool,
 };
 
 export default Table;

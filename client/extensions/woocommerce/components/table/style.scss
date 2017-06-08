@@ -1,62 +1,97 @@
 .table {
 	table {
-		margin:	0;
+		margin: 0;
 	}
 
-	padding: .5em 0;
-}
+	.table-row {
+		line-height: 28px;
 
-.table-row {
-	line-height: 28px;
-
-	&.is-header {
-		color: $gray;
-		line-height: 40px;
-		&:hover {
-			background-color: initial;
-		}
-		.table-row__cell-title::after {
-			display: none;
+		&.is-header {
+			color: $gray-text-min;
+			line-height: 40px;
 		}
 	}
-	&:hover {
-		background-color: $gray-light;
 
-		.table-row__cell-title:after {
-			background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, $gray-light 90%);
+	.table-heading,
+	.table-item {
+		padding: 16px 16px 14px;
+		vertical-align: middle;
+	}
+
+	&.is-compact {
+		margin-bottom: 16px;
+
+		.table-row {
+			&.is-header {
+				.table-item__cell-title::after {
+					display: none;
+				}
+
+				&:hover {
+					background-color: initial;
+				}
+			}
+
+			&:hover {
+				background-color: $gray-light;
+
+				.table-item__cell-title:after {
+					background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, $gray-light 90%);
+				}
+			}
+		}
+
+		.table-heading,
+		.table-item {
+			text-align: right;
+			padding: 0 24px 0 0;
+			white-space: nowrap;
+			font-size: 14px;
+
+			&.is-title-cell {
+				padding: 0 0 0 24px;
+				text-align: left;
+				width: 100%;
+				// https://stackoverflow.com/questions/9789723/css-text-overflow-in-a-table-cell
+				max-width: 0;
+			}
+		}
+
+		.table-item__cell-title {
+			width: 100%;
+			position: relative;
+			overflow: hidden;
+
+			&::after {
+				background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, $white 90%);
+				position: absolute;
+				z-index: 1;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				content: "";
+				width: 48px;
+			}
 		}
 	}
-}
 
-.table-row__cell {
-	text-align: right;
-	padding: 0 24px 0 0;
-	white-space: nowrap;
-	font-size: 14px;
-	vertical-align: middle;
+	&.has-border {
+		padding: 0;
 
-	&.is-title-cell {
-		padding: 0 0 0 24px;
-		text-align: left;
-		width: 100%;
-		// https://stackoverflow.com/questions/9789723/css-text-overflow-in-a-table-cell
-		max-width: 0;
-	}
-}
+		thead .table-heading,
+		thead .table-item {
+			border-bottom: 1px solid lighten( $gray, 20% );
+		}
 
-.table-row__cell-title {
-	width: 100%;
-	position: relative;
-	overflow: hidden;
+		tbody .table-heading,
+		tbody .table-item {
+			border-bottom: 1px solid lighten( $gray, 30% );
+		}
 
-	&::after {
-		background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, $white 90%);
-		position: absolute;
-		z-index: 1;
-		right: 0;
-		top: 0;
-		bottom: 0;
-		content: "";
-		width: 48px;
+		// Remove the border from the last item in the body of the table.
+		tbody tr:last-child .table-heading,
+		tbody tr:last-child .table-item {
+			border: none;
+		}
 	}
 }
