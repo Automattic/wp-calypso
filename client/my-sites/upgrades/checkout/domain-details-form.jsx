@@ -26,6 +26,7 @@ import {
  */
 import { getContactDetailsCache } from 'state/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
+import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/upgrades/components/form';
 import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
@@ -522,6 +523,7 @@ class DomainDetailsForm extends PureComponent {
 					title={ title }>
 					{ this.renderCurrentForm() }
 				</PaymentBox>
+			<QueryContactDetailsCache />
 			</div>
 		);
 	}
