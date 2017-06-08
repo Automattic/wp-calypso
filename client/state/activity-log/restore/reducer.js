@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import deepFreeze from 'deep-freeze';
-
-/**
  * Internal dependencies
  */
 import {
@@ -16,14 +11,13 @@ import {
 	keyedReducer,
 } from 'state/utils';
 
-/**
- * Constants
- */
-const restoreStartState = deepFreeze( {
+// TODO (seear): Use real state when we add restore status data-layer
+const restoreStartState = () => ( {
 	percent: 0,
 	status: 'running',
 } );
-const restoreCompleteState = deepFreeze( {
+
+const restoreCompleteState = () => ( {
 	percent: 100,
 	status: 'success',
 } );
@@ -36,7 +30,7 @@ export const restoreError = keyedReducer( 'siteId', createReducer( {}, {
 } ) );
 
 export const restoreProgress = keyedReducer( 'siteId', createReducer( {}, {
-	[ REWIND_RESTORE ]: () => restoreStartState,
-	[ REWIND_RESTORE_COMPLETED ]: () => restoreCompleteState,
+	[ REWIND_RESTORE ]: restoreStartState,
+	[ REWIND_RESTORE_COMPLETED ]: restoreCompleteState,
 	[ REWIND_RESTORE_UPDATE_ERROR ]: stubNull,
 } ) );
