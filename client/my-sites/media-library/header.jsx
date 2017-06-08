@@ -25,6 +25,7 @@ export default React.createClass( {
 	propTypes: {
 		site: PropTypes.object,
 		filter: PropTypes.string,
+		source: PropTypes.string,
 		sliderPositionCount: PropTypes.number,
 		onMediaScaleChange: React.PropTypes.func,
 		onAddMedia: PropTypes.func,
