@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import {
 	arePaymentMethodsLoaded,
 	arePaymentMethodsLoading,
-	getPaymentMethodsGroup,
+	getApiPaymentMethods
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
@@ -50,7 +50,7 @@ const loadedState = {
 };
 
 const loadingStateWithUi = { ...loadingState, ui: { selectedSiteId: 123 } };
-const loadedStateWithUi = { ...loadedState, ui: { selectedSiteId: 123 } };
+// const loadedStateWithUi = { ...loadedState, ui: { selectedSiteId: 123 } };
 
 describe( 'selectors', () => {
 	describe( '#arePaymentMethodsLoading', () => {
@@ -97,41 +97,20 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getPaymentMethodsGroup', () => {
-		it( 'should be an empty array when woocommerce state is not available.', () => {
-			expect( getPaymentMethodsGroup( preInitializedState, 'offline', 123 ) ).to.be.empty;
+	describe( '#getApiPaymentMethods', () => {
+		it( 'should return paymentMethods when given populated state tree.', () => {
+			expect( getApiPaymentMethods( loadedState, 123 ) )
+				.to.deep.equal(
+					loadedState.extensions.woocommerce.sites[ 123 ].paymentMethods
+				);
 		} );
 
-		it( 'should be an empty array when there are no methods matching this type.', () => {
-			expect( getPaymentMethodsGroup( loadedState, 'nonexistent', 123 ) ).to.be.empty;
+		it( 'should return LOADING constant when given a loading state tree.', () => {
+			expect( getApiPaymentMethods( loadingState, 123 ) ).to.deep.equal( 'LOADING' );
 		} );
 
-		it( 'should be an empty array when methods are currently being fetched.', () => {
-			expect( getPaymentMethodsGroup( loadingState, 'offline', 123 ) ).to.be.empty;
-		} );
-
-		it( 'should get the payments methods matching the given type.', () => {
-			expect( getPaymentMethodsGroup( loadedState, 'offline', 123 ) ).to.eql( [ {
-				id: 'bacs',
-				title: 'Direct bank transfer',
-				description: 'Make your payment directly into our bank account.',
-				enabled: false,
-				method_title: 'BACS',
-				methodType: 'offline',
-				method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
-			} ] );
-		} );
-
-		it( 'should use the siteId in the UI tree if not provided.', () => {
-			expect( getPaymentMethodsGroup( loadedStateWithUi, 'offline' ) ).to.eql( [ {
-				id: 'bacs',
-				title: 'Direct bank transfer',
-				description: 'Make your payment directly into our bank account.',
-				enabled: false,
-				method_title: 'BACS',
-				methodType: 'offline',
-				method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
-			} ] );
+		it( 'should return undefined when given a pre-initialized state tree.', () => {
+			expect( getApiPaymentMethods( preInitializedState, 123 ) ).to.be.undefined;
 		} );
 	} );
 } );
