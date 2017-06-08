@@ -3,16 +3,16 @@
  */
 import { combineReducers } from 'state/utils';
 import { activationRequesting } from './activation/reducer';
-import { logItems, logErrors } from './log/reducer';
-import { restoreProgress, restoreErrors } from './restore/reducer';
-import { rewindStatus, rewindStatusErrors } from './rewind-status/reducer';
+import { logItems, logError } from './log/reducer';
+import { restoreProgress, restoreError } from './restore/reducer';
+import { rewindStatus, rewindStatusError } from './rewind-status/reducer';
 
 export default combineReducers( {
 	activationRequesting,
-	logErrors,
+	logError,
 	logItems,
-	restoreErrors,
+	restoreError,
 	restoreProgress,
 	rewindStatus,
-	rewindStatusErrors,
+	rewindStatusError,
 } );

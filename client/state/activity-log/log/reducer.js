@@ -1,10 +1,6 @@
 /**
  * Internal dependencies
  */
-// import {
-// 	REWIND_STATUS_ERROR,
-// 	REWIND_STATUS_UPDATE,
-// } from 'state/action-types';
 import { keyedReducer } from 'state/utils';
 
 // FIXME: No-op reducers

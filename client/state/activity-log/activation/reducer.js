@@ -1,4 +1,12 @@
 /**
+ * External dependencies
+ */
+import {
+	stubFalse,
+	stubTrue,
+} from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
@@ -6,18 +14,13 @@ import {
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
 } from 'state/action-types';
-import { keyedReducer } from 'state/utils';
+import {
+	createReducer,
+	keyedReducer,
+} from 'state/utils';
 
-export const activationRequesting = keyedReducer( 'siteId', ( state = undefined, { type } ) => {
-	switch ( type ) {
-		// Request starts
-		case REWIND_ACTIVATE_REQUEST:
-			return true;
-
-		// Request ends
-		case REWIND_ACTIVATE_FAILURE:
-		case REWIND_ACTIVATE_SUCCESS:
-			return false;
-	}
-	return state;
-} );
+export const activationRequesting = keyedReducer( 'siteId', createReducer( {}, {
+	[ REWIND_ACTIVATE_REQUEST ]: stubTrue,
+	[ REWIND_ACTIVATE_FAILURE ]: stubFalse,
+	[ REWIND_ACTIVATE_SUCCESS ]: stubFalse,
+} ) );
