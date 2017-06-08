@@ -63,7 +63,7 @@ const sortShippingZoneMethods = ( state, siteId, methods ) => {
 };
 
 const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
-	const methodIds = [ ...zone.methodIds ];
+	const methodIds = [ ...( zone.methodIds || [] ) ];
 	const edits = getShippingZoneMethodsEdits( state, zone.id, siteId );
 	const { creates, updates, deletes } = mergeMethodEdits( edits, extraEdits );
 

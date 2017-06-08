@@ -13,6 +13,39 @@ export const getShippingZonesEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'zones' ] );
 };
 
+export const orderShippingZones = ( zones ) => {
+	return [ ...zones ].sort( ( z1, z2 ) => {
+		//newly added zones should be on top and sorted by creation order
+		if ( ! isNumber( z1.id ) && ! isNumber( z2.id ) ) {
+			return z1.id.index - z2.id.index;
+		}
+
+		if ( ! isNumber( z1.id ) ) {
+			return -1;
+		}
+
+		if ( ! isNumber( z2.id ) ) {
+			return 1;
+		}
+
+		//Rest of the World should always be at the bottom
+		if ( 0 === z1.id ) {
+			return 1;
+		}
+
+		if ( 0 === z2.id ) {
+			return -1;
+		}
+
+		//Order by the order of creation, unless overriden
+		if ( z1.order === z2.order ) {
+			return z1.id - z2.id;
+		}
+
+		return z1.order - z2.order;
+	} );
+};
+
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
@@ -27,7 +60,7 @@ export const getShippingZones = ( state, siteId = getSelectedSiteId( state ) ) =
 
 	const edits = getShippingZonesEdits( state, siteId );
 	if ( ! edits ) {
-		return zones;
+		return orderShippingZones( zones );
 	}
 
 	// Overlay the current edits on top of (a copy of) the wc-api zones
@@ -40,7 +73,7 @@ export const getShippingZones = ( state, siteId = getSelectedSiteId( state ) ) =
 		}
 		zones[ index ] = { ...zones[ index ], ...update };
 	} );
-	return [ ...zones, ...creates ];
+	return orderShippingZones( [ ...zones, ...creates ] );
 };
 
 /**
@@ -59,7 +92,7 @@ export const getCurrentlyEditingShippingZone = ( state, siteId = getSelectedSite
 	}
 	const zone = find( getShippingZones( state, siteId ), { id: edits.currentlyEditingId } );
 	if ( ! zone ) {
-		return null;
+		return { id: edits.currentlyEditingId, ...edits.currentlyEditingChanges };
 	}
 	return { ...zone, ...edits.currentlyEditingChanges };
 };

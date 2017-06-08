@@ -170,11 +170,15 @@
 	font-size: 18px;
 }
 
-.shipping-methods__method-container {
+.shipping__method-container {
 	position: relative;
 	padding: 20px;
 	border-bottom: 1px solid lighten( $gray, 20% );
 	margin-bottom: 24px;
+
+	.form-text-input-with-affixes {
+		width: 200px;
+	}
 }
 
 .shipping-methods__free-shipping-option {
@@ -192,20 +196,14 @@
 	}
 }
 
-.shipping-methods__local-pickup {
-	.form-text-input-with-affixes {
-		width: 200px;
-	}
-}
-
-.shipping-methods__local-pickup-taxable {
+.shipping-methods__checkbox {
 	margin-right: 7px;
 	margin-top: 4px;
 }
 
-.shipping-methods__local-pickup-taxable-help {
-	display: inline-block;
-	position: absolute;
-	margin-left: 4px;
-	margin-top: 3px;
+.shipping__loading-spinner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
 }

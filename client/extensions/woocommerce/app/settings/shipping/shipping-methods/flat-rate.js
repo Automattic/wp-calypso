@@ -5,33 +5,47 @@ import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { isString } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormCheckbox from 'components/forms/form-checkbox';
+import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormFieldSet from 'components/forms/form-fieldset';
+import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import {
 	setShippingIsTaxable,
 	setShippingCost
-} from 'woocommerce/state/ui/shipping/zones/methods/local-pickup/actions';
+} from 'woocommerce/state/ui/shipping/zones/methods/flat-rate/actions';
 
-const LocalPickupMethod = ( { id, siteId, cost, tax_status, translate, actions } ) => {
+const FreeShippingMethod = ( { id, siteId, cost, tax_status, translate, actions } ) => {
 	const isTaxable = 'taxable' === tax_status;
+	const advancedCostInput = isString( cost );
 	const onTaxableChange = () => ( actions.setShippingIsTaxable( siteId, id, ! isTaxable ) );
 	const onCostChange = ( event ) => ( actions.setShippingCost( siteId, id, event.target.value ) );
 
+	const renderCostInput = () => {
+		if ( advancedCostInput ) {
+			return <FormTextInput
+				value={ cost }
+				onChange={ onCostChange } />;
+		}
+
+		//TODO: remove hardcoded currency settings
+		return <FormCurrencyInput
+			currencySymbolPrefix={ '$' }
+			currencySymbolSuffix={ '' }
+			value={ cost }
+			onChange={ onCostChange } />;
+	};
+
 	return (
-		<div className="shipping-methods__method-container shipping-methods__local-pickup">
+		<div>
 			<FormFieldSet>
-				<FormLabel>{ translate( 'How much will you charge for local pickup?' ) }</FormLabel>
-				<FormCurrencyInput
-					currencySymbolPrefix="$"
-					currencySymbolSuffix=""
-					value={ cost }
-					onChange={ onCostChange } />
+				<FormLabel>{ translate( 'Cost:' ) }</FormLabel>
+				{ renderCostInput() }
 			</FormFieldSet>
 			<FormFieldSet>
 				<FormCheckbox
@@ -44,7 +58,7 @@ const LocalPickupMethod = ( { id, siteId, cost, tax_status, translate, actions }
 	);
 };
 
-LocalPickupMethod.propTypes = {
+FreeShippingMethod.propTypes = {
 	siteId: PropTypes.number,
 	id: PropTypes.oneOfType( [ PropTypes.number, PropTypes.object ] ),
 	cost: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
@@ -59,4 +73,4 @@ export default connect(
 			setShippingCost
 		}, dispatch )
 	} )
-)( localize( LocalPickupMethod ) );
+)( localize( FreeShippingMethod ) );
