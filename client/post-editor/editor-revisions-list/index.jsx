@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { map } from 'lodash';
+import { get, map, uniq } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,7 @@ import { map } from 'lodash';
 import EditorRevisionsListHeader from './header';
 import EditorRevisionsListItem from './item';
 import QueryPostRevisions from 'components/data/query-post-revisions';
+import QueryUsers from 'components/data/query-users';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostRevision, getPostRevisions } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -48,12 +49,20 @@ class EditorRevisionsList extends PureComponent {
 	}
 
 	render() {
+		// NOTE: This supports revisions that have been hydrated with author
+		// info (`author` is an object) and the ones that haven't (author is a
+		// string, containing just the ID ).
+		const usersId = uniq( map( this.props.revisions, r => get( r, 'author.ID', r.author ) ) );
 		return (
 			<div>
 				<QueryPostRevisions
 					postId={ this.props.postId }
 					postType={ this.props.type }
 					siteId={ this.props.siteId }
+				/>
+				<QueryUsers
+					siteId={ this.props.siteId }
+					usersId={ usersId }
 				/>
 				<EditorRevisionsListHeader
 					loadRevision={ this.loadRevision }
