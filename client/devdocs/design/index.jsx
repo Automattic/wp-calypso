@@ -73,6 +73,7 @@ import EmojifyExample from 'components/emojify/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
 import FormattedHeader from 'components/formatted-header/docs/example';
 import EmptyContent from 'components/empty-content/docs/example';
+import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -153,6 +154,7 @@ let DesignAssets = React.createClass( {
 					<Ranges />
 					<Rating />
 					<Ribbon />
+					<ScreenReaderTextExample />
 					<SearchDemo />
 					<SectionHeader />
 					<SectionNav />
