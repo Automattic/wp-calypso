@@ -320,6 +320,8 @@ class ActivityLog extends Component {
 		const {
 			moment,
 			siteId,
+			slug,
+			startDate
 		} = this.props;
 		const logs = this.props.logs;
 
@@ -338,6 +340,12 @@ class ActivityLog extends Component {
 				/>
 			)
 		);
+
+		const date = moment( startDate ).startOf( 'month' );
+		const query = {
+			period: 'month',
+			date: date.endOf( 'month' ).format( 'YYYY-MM-DD' )
+		};
 
 		return (
 			<div>
