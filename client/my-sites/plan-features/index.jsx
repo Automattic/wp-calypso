@@ -52,7 +52,7 @@ import { abtest } from 'lib/abtest';
 class PlanFeatures extends Component {
 
 	render() {
-		const { planProperties, showDescription } = this.props;
+		const { planProperties, showBigPlanIcon } = this.props;
 
 		const tableClasses = classNames( 'plan-features__table',
 			`has-${ planProperties.length }-cols` );
@@ -60,7 +60,7 @@ class PlanFeatures extends Component {
 		return (
 			<div>
 				{ this.renderUpgradeDisabledNotice() }
-				<div className="plan-features__content">
+				<div className={ classNames( 'plan-features__content', { 'has-big-icon': showBigPlanIcon } ) }>
 					<div className="plan-features__mobile">
 						{ this.renderMobileView() }
 					</div>
@@ -70,7 +70,7 @@ class PlanFeatures extends Component {
 								{ this.renderPlanHeaders() }
 							</tr>
 							{
-								showDescription &&
+								! showBigPlanIcon &&
 								<tr>
 									{ this.renderPlanDescriptions() }
 								</tr>
@@ -108,7 +108,7 @@ class PlanFeatures extends Component {
 
 	renderMobileView() {
 		const {
-			canPurchase, translate, planProperties, isInSignup, isLandingPage, intervalType, site, basePlansPath
+			canPurchase, translate, planProperties, isInSignup, isLandingPage, intervalType, site, basePlansPath, showBigPlanIcon
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -140,7 +140,6 @@ class PlanFeatures extends Component {
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
-				showBigPlanIcon
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			return (

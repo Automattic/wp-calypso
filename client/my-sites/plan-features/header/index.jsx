@@ -58,7 +58,7 @@ export class PlanFeaturesHeader extends Component {
 		const headerClasses = classNames(
 			'plan-features__header',
 			getPlanClass( planType ),
-			{ 'big-icon': showBigPlanIcon }
+			{ 'has-big-icon': showBigPlanIcon }
 		);
 
 		const priceProps = { currencyCode, discountPrice, isPlaceholder, rawPrice, relatedMonthlyPlan, site };

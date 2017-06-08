@@ -19,15 +19,15 @@ export default function PlanFeaturesHeaderPrice( props ) {
 		site
 	} = props;
 
-	if ( isPlaceholder ) {
-		const isJetpackSite = !! site.jetpack;
-		const classes = classNames( 'is-placeholder', {
-			'plan-features__price': ! isJetpackSite,
-			'plan-features__price-jetpack': isJetpackSite
-		} );
+	const isJetpackSite = !! site.jetpack;
+	const classes = {
+		'plan-features__price': ! isJetpackSite,
+		'plan-features__price-jetpack': isJetpackSite,
+	};
 
+	if ( isPlaceholder ) {
 		return (
-			<div className={ classes } ></div>
+			<div className={ classNames( 'is-placeholder', classes ) } ></div>
 		);
 	}
 
@@ -50,10 +50,9 @@ export default function PlanFeaturesHeaderPrice( props ) {
 			</span>
 		);
 	}
-
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 	return (
-		<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } />
+		<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } className={ classNames( classes ) } />
 	);
 }

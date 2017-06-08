@@ -197,7 +197,7 @@ $plan-features-sidebar-width: 272px;
 		border-bottom: solid 2px $alert-purple;
 	}
 
-	&.big-icon {
+	&.has-big-icon {
 		border-bottom-width: 0;
 		padding-top: 35px;
 
@@ -221,8 +221,23 @@ $plan-features-sidebar-width: 272px;
 			}
 		}
 
-		.plan-price, .plan-features__header-timeframe {
+		.plan-features__price,
+		.plan-features__header-price-group,
+		.plan-features__header-timeframe {
 			text-align: center;
+
+			&.is-placeholder {
+				margin-left: auto;
+				margin-right: auto;
+			}
+		}
+
+		.plan-features__header-price-group {
+			display: block;
+
+			.plan-price {
+				display: inline-block;
+			}
 		}
 	}
 }
