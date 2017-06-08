@@ -55,14 +55,6 @@ const ContactsPrivacyCard = React.createClass( {
 	},
 
 	getNotice() {
-		if ( ! this.props.privacyAvailable ) {
-			return (
-				<Notice status="is-info" showDismiss={ false }>
-					{ this.props.translate( 'Privacy Protection is not available for this domain.' ) }
-				</Notice>
-			);
-		}
-
 		if ( this.props.hasPrivacyProtection && this.props.privateDomain ) {
 			return (
 				<Notice status="is-success" showDismiss={ false }>
