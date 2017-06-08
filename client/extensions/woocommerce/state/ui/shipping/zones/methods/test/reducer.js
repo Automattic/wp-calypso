@@ -23,7 +23,7 @@ describe( 'reducer', () => {
 			const newState = reducer( initialState, addMethodToShippingZone( siteId, 'flat_rate' ) );
 			expect( newState.creates.length ).to.equal( 1 );
 			expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
-			expect( newState.creates[ 0 ].method_id ).to.equal( 'flat_rate' );
+			expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
 			// Check that the method was initialized:
 			expect( newState.creates[ 0 ].cost ).to.be.a.number;
 		} );
@@ -66,7 +66,7 @@ describe( 'reducer', () => {
 		it( 'when the method has a server-side ID', () => {
 			const state = {
 				creates: [],
-				updates: [ { id: 7, method_id: 'free_shipping', title: 'MyMethod' } ],
+				updates: [ { id: 7, methodType: 'free_shipping', title: 'MyMethod' } ],
 				deletes: [],
 			};
 
@@ -75,7 +75,7 @@ describe( 'reducer', () => {
 			expect( newState.deletes ).to.deep.equal( [ { id: 7 } ] );
 			expect( newState.creates.length ).to.equal( 1 );
 			expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
-			expect( newState.creates[ 0 ].method_id ).to.equal( 'flat_rate' );
+			expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
 			expect( newState.creates[ 0 ]._originalId ).to.equal( 7 );
 			// Check that the method was initialized:
 			expect( newState.creates[ 0 ].cost ).to.be.a.number;
@@ -83,7 +83,7 @@ describe( 'reducer', () => {
 
 		it( 'when the method has a provisional ID', () => {
 			const state = {
-				creates: [ { id: { index: 0 }, method_id: 'free_shipping', title: 'MyMethod' } ],
+				creates: [ { id: { index: 0 }, methodType: 'free_shipping', title: 'MyMethod' } ],
 				updates: [],
 				deletes: [],
 			};
@@ -93,7 +93,7 @@ describe( 'reducer', () => {
 			expect( newState.deletes ).to.be.empty;
 			expect( newState.creates.length ).to.equal( 1 );
 			expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
-			expect( newState.creates[ 0 ].method_id ).to.equal( 'flat_rate' );
+			expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
 			expect( newState.creates[ 0 ]._originalId ).to.deep.equal( { index: 0 } );
 			// Check that the method was initialized:
 			expect( newState.creates[ 0 ].cost ).to.be.a.number;
@@ -101,7 +101,7 @@ describe( 'reducer', () => {
 
 		it( 'when the method already had been changed type', () => {
 			const state = {
-				creates: [ { id: { index: 0 }, method_id: 'free_shipping', _originalId: 7 } ],
+				creates: [ { id: { index: 0 }, methodType: 'free_shipping', _originalId: 7 } ],
 				updates: [],
 				deletes: [],
 			};
@@ -111,7 +111,7 @@ describe( 'reducer', () => {
 			expect( newState.deletes ).to.be.empty;
 			expect( newState.creates.length ).to.equal( 1 );
 			expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
-			expect( newState.creates[ 0 ].method_id ).to.equal( 'flat_rate' );
+			expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
 			expect( newState.creates[ 0 ]._originalId ).to.deep.equal( 7 );
 		} );
 	} );

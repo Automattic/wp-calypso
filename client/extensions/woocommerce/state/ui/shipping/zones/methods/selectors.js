@@ -131,7 +131,7 @@ export const getNewMethodTypeOptions = ( state, zoneId = null, siteId = getSelec
 		? getCurrentlyEditingShippingZoneMethods( state, siteId )
 		: getShippingZoneMethods( state, zoneId, siteId );
 
-	const currentMethodTypes = map( currentMethods, 'method_id' );
+	const currentMethodTypes = map( currentMethods, 'methodType' );
 	const allMethods = Object.keys( builtInShippingMethods );
 	allMethods.forEach( ( methodType ) => {
 		// A user can add as many "Local Pickup" methods as he wants for a given zone

@@ -540,9 +540,9 @@ describe( 'selectors', () => {
 									{ id: 1, methodIds: [ 7, 8, 9 ] },
 								],
 								shippingZoneMethods: {
-									7: { id: 7, method_id: 'local_pickup' },
-									8: { id: 8, method_id: 'free_shipping' },
-									9: { id: 9, method_id: 'flat_rate' },
+									7: { id: 7, methodType: 'local_pickup' },
+									8: { id: 8, methodType: 'free_shipping' },
+									9: { id: 9, methodType: 'flat_rate' },
 								},
 							},
 						},
@@ -578,8 +578,8 @@ describe( 'selectors', () => {
 									{ id: 1, methodIds: [ 7, 8 ] },
 								],
 								shippingZoneMethods: {
-									7: { id: 7, method_id: 'free_shipping' },
-									8: { id: 8, method_id: 'flat_rate' },
+									7: { id: 7, methodType: 'free_shipping' },
+									8: { id: 8, methodType: 'flat_rate' },
 								},
 							},
 						},
@@ -600,7 +600,7 @@ describe( 'selectors', () => {
 										currentlyEditingId: 1,
 										currentlyEditingChanges: {
 											methods: {
-												creates: [ { id: { index: 0 }, method_id: 'free_shipping' } ],
+												creates: [ { id: { index: 0 }, methodType: 'free_shipping' } ],
 												updates: [],
 												deletes: [],
 											}
@@ -629,7 +629,7 @@ describe( 'selectors', () => {
 									{ id: 1, methodIds: [ 7, 8 ] },
 								],
 								shippingZoneMethods: {
-									7: { id: 7, method_id: 'free_shipping' },
+									7: { id: 7, methodType: 'free_shipping' },
 								},
 							},
 						},
@@ -650,7 +650,7 @@ describe( 'selectors', () => {
 										currentlyEditingId: 1,
 										currentlyEditingChanges: {
 											methods: {
-												creates: [ { id: { index: 0 }, method_id: 'flat_rate' } ],
+												creates: [ { id: { index: 0 }, methodType: 'flat_rate' } ],
 												updates: [],
 												deletes: [],
 											}

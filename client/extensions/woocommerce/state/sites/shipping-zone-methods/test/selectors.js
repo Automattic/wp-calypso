@@ -38,7 +38,7 @@ describe( 'selectors', () => {
 						sites: {
 							123: {
 								shippingZoneMethods: {
-									17: { id: 17, method_id: 'free_shipping' },
+									17: { id: 17, methodType: 'free_shipping' },
 								},
 							},
 						},
@@ -46,7 +46,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getShippingZoneMethod( state, 17, 123 ) ).to.deep.equal( { id: 17, method_id: 'free_shipping' } );
+			expect( getShippingZoneMethod( state, 17, 123 ) ).to.deep.equal( { id: 17, methodType: 'free_shipping' } );
 		} );
 	} );
 
