@@ -74,7 +74,7 @@ class CustomContentTypes extends Component {
 					{ label }
 				</CompactFormToggle>
 
-				{ this.renderPostsPerPageField( name, label, ! fields[ name ] ) }
+				{ this.renderPostsPerPageField( name, label ) }
 
 				<FormSettingExplanation isIndented>
 					{ description }
@@ -83,7 +83,7 @@ class CustomContentTypes extends Component {
 		);
 	}
 
-	renderPostsPerPageField( fieldName, postTypeLabel, isDisabled = false ) {
+	renderPostsPerPageField( fieldName, postTypeLabel ) {
 		const {
 			fields,
 			onChangeField,
@@ -106,7 +106,7 @@ class CustomContentTypes extends Component {
 									id={ numberFieldName }
 									value={ 'undefined' === typeof fields[ numberFieldName ] ? 10 : fields[ numberFieldName ] }
 									onChange={ onChangeField( numberFieldName ) }
-									disabled={ this.isFormPending() || isDisabled }
+									disabled={ this.isFormPending() || ! fields[ fieldName ] }
 								/>
 							)
 						}
