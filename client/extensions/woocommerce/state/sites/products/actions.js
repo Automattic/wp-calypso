@@ -45,10 +45,8 @@ export function createProduct( siteId, product, successAction = undefined, error
 export function productUpdated( siteId, product ) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_UPDATED,
-		payload: { // TODO: Remove this payload and place directly in action after the wc-api reducer is updated.
-			siteId,
-			product,
-		}
+		siteId,
+		product,
 	};
 }
 

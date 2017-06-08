@@ -11,9 +11,9 @@ export default createReducer( {}, {
 } );
 
 function productUpdated( state, action ) {
-	const { data } = action.payload;
+	const { product } = action;
 
-	return updateCachedProduct( state, data );
+	return updateCachedProduct( state, product );
 }
 
 function updateCachedProduct( state, product ) {

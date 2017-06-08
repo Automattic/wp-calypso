@@ -30,6 +30,7 @@ function createProduct( { dispatch }, action, next ) {
 				siteId,
 				data,
 				successAction,
+				errorAction,
 			} );
 		} )
 		.catch( err => {
