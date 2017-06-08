@@ -12,6 +12,7 @@ import analytics from 'lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
+import { AdWords, CustomDomain, CustomizeTheme } from './icons';
 
 function trackOnboardingButtonClick() {
 	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );
@@ -25,6 +26,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
+				svgIcon={ <CustomDomain /> }
 			/>
 
 			<PurchaseDetail
@@ -40,6 +42,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 			{ ! selectedFeature &&
 				<PurchaseDetail
 					icon="customize"
+					svgIcon={ <CustomizeTheme /> }
 					title={ i18n.translate( 'Find a new theme' ) }
 					description={ i18n.translate( 'All our premium themes are now available at no extra cost. Try them out now.' ) }
 					buttonText={ i18n.translate( 'Browse premium themes' ) }
@@ -48,6 +51,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 
 			<PurchaseDetail
 				icon="stats-alt"
+				svgIcon={ <AdWords /> }
 				title={ i18n.translate( 'Stats from Google Analytics' ) }
 				description={ i18n.translate( 'Connect to Google Analytics for the perfect complement to WordPress.com stats.' ) }
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }

@@ -17,7 +17,7 @@ import {
 	isSiteRedirect
 } from 'lib/products-values';
 import { localize } from 'i18n-calypso';
-import ThankYouIcon from './icons/thank-you';
+import { ItemsFailed, ThankYou } from './icons';
 
 class CheckoutThankYouHeader extends React.Component {
 	getHeading() {
@@ -137,7 +137,7 @@ class CheckoutThankYouHeader extends React.Component {
 		return (
 			<div className={ classNames( classes ) }>
 				<div className="checkout-thank-you__header-icon">
-					{ this.props.hasFailedPurchases ? null : <ThankYouIcon /> }
+					{ this.props.hasFailedPurchases ? <ItemsFailed /> : <ThankYou /> }
 				</div>
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">

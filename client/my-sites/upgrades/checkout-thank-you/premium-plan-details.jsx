@@ -16,7 +16,7 @@ import { isPremium } from 'lib/products-values';
 import paths from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
-import { AdWords, AdvertisingRemoved, MediaPost, WordAds } from './icons';
+import { AdWords, AdvertisingRemoved, CustomDomain, CustomizeTheme, MediaPost, WordAds } from './icons';
 
 const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/';
@@ -30,6 +30,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
+				svgIcon={ <CustomDomain /> }
 			/>
 
 			<PurchaseDetail
@@ -51,6 +52,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 			{ ! selectedFeature &&
 				<PurchaseDetail
 					icon="customize"
+					svgIcon={ <CustomizeTheme /> }
 					title={ i18n.translate( 'Customize your theme' ) }
 					description={
 						i18n.translate(

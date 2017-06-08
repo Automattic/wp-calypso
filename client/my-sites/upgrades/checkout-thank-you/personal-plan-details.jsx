@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import { isPersonal } from 'lib/products-values';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import PurchaseDetail from 'components/purchase-detail';
-import { AdWords } from './icons';
+import { AdWords, CustomDomain } from './icons';
 
 const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 	const plan = find( sitePlans.data, isPersonal );
@@ -21,6 +21,7 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
+				svgIcon={ <CustomDomain /> }
 			/>
 
 			<PurchaseDetail
