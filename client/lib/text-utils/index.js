@@ -1,10 +1,11 @@
 /**
  * External Dependencies
  */
-import { diffWords } from 'diff';
 import { reduce } from 'lodash';
 
-function countWords( content ) {
+export { diffWords } from 'diff';
+
+export function countWords( content ) {
 	// Adapted from TinyMCE wordcount plugin:
 	// https://github.com/tinymce/tinymce/blob/4.2.6/js/tinymce/plugins/wordcount/plugin.js
 
@@ -30,7 +31,7 @@ function countWords( content ) {
 	return 0;
 }
 
-function countDiffWords( diffChanges ) {
+export function countDiffWords( diffChanges ) {
 	return reduce(
 		diffChanges,
 		( accumulator, change ) => {
@@ -49,9 +50,3 @@ function countDiffWords( diffChanges ) {
 		},
 	);
 }
-
-export default {
-	countDiffWords,
-	countWords,
-	diffWords,
-};
