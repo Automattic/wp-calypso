@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import { createElement } from 'react';
-import page from 'page';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -43,15 +42,8 @@ export const connections = ( context, next ) => {
 		notices.error( translate( 'You are not authorized to manage sharing settings for this site.' ) );
 	}
 
-	if ( site && site.jetpack && ! site.isModuleActive( 'publicize' ) ) {
-		// Redirect to sharing buttons if Jetpack Publicize module is not
-		// active, but ShareDaddy is active
-		page.redirect( site.isModuleActive( 'sharedaddy' ) ? '/sharing/buttons/' + sites.selected : '/stats' );
-	} else {
-		pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Connections' );
-
-		context.contentComponent = createElement( SharingConnections );
-	}
+	pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Connections' );
+	context.contentComponent = createElement( SharingConnections );
 
 	next();
 };
@@ -65,10 +57,6 @@ export const buttons = ( context, next ) => {
 
 	if ( site && ! utils.userCan( 'manage_options', site ) ) {
 		notices.error( translate( 'You are not authorized to manage sharing settings for this site.' ) );
-	}
-
-	if ( site && site.jetpack && ( ! site.isModuleActive( 'sharedaddy' ) || site.versionCompare( '3.4-dev', '<' ) ) ) {
-		notices.error( translate( 'This page is only available to Jetpack sites running version 3.4 or higher with the Sharing module activated.' ) );
 	}
 
 	context.contentComponent = createElement( SharingButtons );
