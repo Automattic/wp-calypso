@@ -19,7 +19,7 @@ import {
 } from 'state/posts/revisions/actions';
 
 /**
- * Normalize a WP REST API Post Revisions ressource for consumption in Calypso
+ * Normalize a WP REST API Post Revisions resource for consumption in Calypso
  *
  * @param {Object} revision Raw revision from the API
  * @returns {Object} the normalized revision
@@ -85,9 +85,10 @@ export const receiveSuccess = ( { dispatch }, { siteId, postId }, revisions ) =>
  * @param {Object} action Redux action
  */
 export const fetchPostRevisions = ( { dispatch }, action ) => {
-	const { siteId, postId } = action;
+	const { siteId, postId, postType } = action;
+	const resourceName = postType === 'page' ? 'pages' : 'posts';
 	dispatch( http( {
-		path: `/sites/${ siteId }/posts/${ postId }/revisions`,
+		path: `/sites/${ siteId }/${ resourceName }/${ postId }/revisions`,
 		method: 'GET',
 		query: {
 			apiNamespace: 'wp/v2',

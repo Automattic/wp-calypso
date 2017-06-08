@@ -13,6 +13,7 @@ import { map } from 'lodash';
 import EditorRevisionsListHeader from './header';
 import EditorRevisionsListItem from './item';
 import QueryPostRevisions from 'components/data/query-post-revisions';
+import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostRevision, getPostRevisions } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -49,7 +50,11 @@ class EditorRevisionsList extends PureComponent {
 	render() {
 		return (
 			<div>
-				<QueryPostRevisions postId={ this.props.postId } siteId={ this.props.siteId } />
+				<QueryPostRevisions
+					postId={ this.props.postId }
+					postType={ this.props.type }
+					siteId={ this.props.siteId }
+				/>
 				<EditorRevisionsListHeader
 					loadRevision={ this.loadRevision }
 					selectedRevisionId={ this.props.selectedRevisionId }
@@ -83,12 +88,14 @@ EditorRevisionsList.propTypes = {
 	selectedRevisionId: PropTypes.number,
 	selectRevision: PropTypes.func.isRequired,
 	siteId: PropTypes.number,
+	type: PropTypes.string,
 };
 
 export default connect(
 	( state, { selectedRevisionId } ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
+		const type = getEditedPostValue( state, siteId, postId, 'type' );
 		return {
 			postId,
 			revisions: getPostRevisions( state, siteId, postId, 'display' ),
@@ -96,6 +103,7 @@ export default connect(
 				state, siteId, postId, selectedRevisionId, 'editing'
 			),
 			siteId,
+			type,
 		};
 	},
 )( EditorRevisionsList );

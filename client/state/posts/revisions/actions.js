@@ -13,11 +13,14 @@ import {
  *
  * @param {String} siteId of the revisions
  * @param {String} postId of the revisions
+ * @param {String} [postType='post'] post type of the revisions
  * @return {Object} action object
  */
-export const requestPostRevisions = ( siteId, postId ) => ( {
+export const requestPostRevisions = ( siteId, postId, postType = 'post' ) => ( {
 	type: POST_REVISIONS_REQUEST,
-	siteId, postId,
+	postId,
+	postType,
+	siteId
 } );
 
 /**
