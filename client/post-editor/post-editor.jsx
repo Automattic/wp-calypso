@@ -274,7 +274,7 @@ export const PostEditor = React.createClass( {
 						allPostsUrl={ this.getAllPostsUrl() }
 					/>
 					<div className="post-editor__content">
-						<div className="editor">
+						<div className="post-editor__content-editor">
 							{ ! config.isEnabled( 'post-editor/delta-post-publish-preview' )
 								? <EditorNotice
 									{ ...this.state.notice }
@@ -307,7 +307,7 @@ export const PostEditor = React.createClass( {
 								site={ site }
 								post={ this.state.post }
 								maxWidth={ 1462 } />
-							<div className="editor__header">
+							<div className="post-editor__header">
 								<EditorTitle
 									onChange={ this.debouncedAutosave }
 									tabIndex={ 1 } />
@@ -320,7 +320,7 @@ export const PostEditor = React.createClass( {
 										/>
 									: null
 								}
-								<SegmentedControl className="editor__switch-mode" compact={ true }>
+								<SegmentedControl className="post-editor__switch-mode" compact={ true }>
 									<SegmentedControlItem
 										selected={ mode === 'tinymce' }
 										onClick={ this.switchEditorVisualMode }
@@ -335,7 +335,7 @@ export const PostEditor = React.createClass( {
 									</SegmentedControlItem>
 								</SegmentedControl>
 							</div>
-							<hr className="editor__header-divider" />
+							<hr className="post-editor__header-divider" />
 							<TinyMCE
 								ref={ this.storeEditor }
 								mode={ mode }

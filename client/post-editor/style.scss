@@ -99,22 +99,22 @@
 	}
 }
 
-.editor__header,
-.editor .mce-container-body,
-.editor .tinymce {
+.post-editor__header,
+.post-editor .mce-container-body,
+.post-editor .tinymce {
 	width: 100%;
 	max-width: 700px;
 	margin: 0 auto;
 }
 
-.focus-content .editor__header {
+.focus-content .post-editor__header {
 	@include breakpoint( ">660px" ) {
 		width: 700px;
 	}
 }
 
-.editor__header,
-.editor .mce-edit-area {
+.post-editor__header,
+.post-editor .mce-edit-area {
 	box-sizing: border-box;
 	padding: 0 16px;
 
@@ -128,17 +128,17 @@
 }
 
 // Component <Editor>
-.editor {
+.post-editor__content-editor {
 	position: relative;
 }
 
-.editor .editor-notice .notice {
+.post-editor__content-editor .editor-notice .notice {
 	@include breakpoint( ">660px" ) {
 		margin: 0;
 	}
 }
 
-.editor .tinymce {
+.post-editor .tinymce {
 	min-height: 100vh;
 	resize: none;
 	border-width: 0;
@@ -160,16 +160,16 @@
 	}
 }
 
-.editor__header {
+.post-editor__header {
 	position: relative;
 	padding-bottom: 27px;
 }
 
-.editor__switch-mode {
+.post-editor__switch-mode {
 	position: absolute;
 		right: 16px;
 	width: 160px;
-	z-index: z-index( 'root', '.editor__switch-mode' );
+	z-index: z-index( 'root', '.post-editor__switch-mode' );
 
 	@include breakpoint( ">960px" ) {
 		right: 32px;
@@ -180,7 +180,7 @@
 	}
 }
 
-.editor__switch-mode .segmented-control__item {
+.post-editor__switch-mode .segmented-control__item {
 	&:first-of-type {
 		.segmented-control__link {
 			border-bottom-left-radius: 0;
@@ -201,18 +201,18 @@
 	}
 }
 
-.editor__switch-mode .segmented-control__link {
+.post-editor__switch-mode .segmented-control__link {
 	background: $gray-light;
 	border-color: lighten( $gray, 20% );
 }
 
-.editor__switch-mode .segmented-control__item.is-selected .segmented-control__link {
+.post-editor__switch-mode .segmented-control__item.is-selected .segmented-control__link {
 	border-color: lighten( $gray, 20% );
 	border-bottom-color: $white;
 	background-color: $white;
 }
 
-.editor__header-divider {
+.post-editor__header-divider {
 	background-color: lighten( $gray, 25% );
 	max-width: 700px;
 	margin: 0 auto;
@@ -230,7 +230,7 @@
 	padding: 16px;
 }
 
-.editor .editor-featured-image {
+.post-editor__content-editor .editor-featured-image {
 	display: none;
 	border-bottom: 1px solid lighten( $gray, 20 );
 	border-top: 1px solid lighten( $gray, 20 );
