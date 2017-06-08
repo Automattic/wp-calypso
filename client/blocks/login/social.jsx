@@ -37,7 +37,7 @@ class SocialLoginForm extends Component {
 		this.props.loginSocialUser( 'google', response.Zi.id_token ).then( () => {
 			this.props.onSuccess();
 		} ).catch( error => {
-			if ( error === 'unknown_user' ) {
+			if ( error.code === 'unknown_user' ) {
 				const { notice } = this.props.infoNotice( this.props.translate( 'Creating your account' ) );
 				wpcom.undocumented().usersSocialNew( 'google', response.Zi.id_token, 'login', ( wpcomError, wpcomResponse ) => {
 					this.props.removeNotice( notice.noticeId );
@@ -51,7 +51,7 @@ class SocialLoginForm extends Component {
 					}
 				} );
 			} else {
-				this.props.errorNotice( error );
+				this.props.errorNotice( error.message );
 			}
 		} );
 	};
