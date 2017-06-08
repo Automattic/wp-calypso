@@ -1,7 +1,14 @@
 Routing Middleware
 ==================
 
-_As it stands, this piece of middleware does very little. It is unrelated to any potential future work on middleware-level routing in Calypso, but this module could be the place for it._
+This middleware listens to `ROUTE_TO` actions and as a side-effect calls 
+our current router, [Page.js](https://visionmedia.github.io/page.js/)
+to navigate to that route. 
+
+There are several benefits to dispatching a `ROUTE_TO` action instead of calling `page()` directly. 
+1. Provides clear intent
+2. Abstracts out router details, so we can more easily change router implementations.
+3. Easier to test, since we can verify that an action was dispatched.
 
 
 `restore-last-location`
