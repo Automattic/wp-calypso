@@ -30,13 +30,13 @@ class ActivityLogItem extends Component {
 		user: PropTypes.object,
 		onClick: PropTypes.func,
 		actionText: PropTypes.string,
-		description: PropTypes.string
+		description: PropTypes.string,
 	};
 
 	static defaultProps = {
 		onClick: noop,
 		status: 'is-info',
-		icon: 'info-outline'
+		icon: 'info-outline',
 	};
 
 	getTime() {
@@ -104,6 +104,11 @@ class ActivityLogItem extends Component {
 		);
 	}
 
+	handleRestore = event => {
+		this.props.requestRestore( this.props.siteId, this.props.timestamp );
+		event.stopPropagation();
+	};
+
 	getSummary() {
 		const {
 			translate,
@@ -113,7 +118,7 @@ class ActivityLogItem extends Component {
 		return ( actionText &&
 			<div className="activity-log-item__action">
 				<EllipsisMenu position="bottom right">
-					<PopoverMenuItem onClick={ noop } icon="undo">{ actionText }</PopoverMenuItem>
+					<PopoverMenuItem onClick={ this.handleRestore } icon="undo">{ actionText }</PopoverMenuItem>
 					<PopoverMenuItem icon="pencil">Option B</PopoverMenuItem>
 					<PopoverMenuSeparator />
 					<PopoverMenuItem icon="help">{ translate( 'More Info' ) }</PopoverMenuItem>
