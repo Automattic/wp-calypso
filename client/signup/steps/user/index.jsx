@@ -152,7 +152,7 @@ export class UserStep extends Component {
 		return (
 			<SignupForm
 				{ ...omit( this.props, [ 'translate' ] ) }
-				getRedirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
+				redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
 				disabled={ this.userCreationStarted() }
 				submitting={ this.userCreationStarted() }
 				save={ this.save }

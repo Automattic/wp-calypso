@@ -54,7 +54,7 @@ class SignupForm extends Component {
 		email: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
-		getRedirectToAfterLoginUrl: PropTypes.string.isRequired,
+		redirectToAfterLoginUrl: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
 		isSocialSignupEnabled: PropTypes.bool,
@@ -285,7 +285,7 @@ class SignupForm extends Component {
 
 		let link = login( {
 			isNative: config.isEnabled( 'login/native-login-links' ),
-			redirectTo: this.props.getRedirectToAfterLoginUrl
+			redirectTo: this.props.redirectToAfterLoginUrl
 		} );
 
 		return map( messages, ( message, error_code ) => {
