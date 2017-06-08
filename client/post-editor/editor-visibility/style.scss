@@ -6,7 +6,7 @@
 	margin: 0;
 }
 
-.editor-visibility__dropdown{
+.editor-visibility__dropdown {
 	text-align: left;
 	width: 100%;
 
@@ -14,6 +14,19 @@
 	.select-dropdown__container {
 		max-width: 100%;
 		width: 100%;
+	}
+
+	.select-dropdown__header {
+		padding: 0 #{ $side-margin + 20 }px 0 #{ $side-margin }px;
+		max-width: ( $sidebar-width-max - $accordion-padding * 2 );
+
+		@include breakpoint( "<960px" ) {
+			max-width: ( $sidebar-width-min - $accordion-padding * 2 );
+		}
+		@include breakpoint( "<660px" ) {
+			max-width: 100%;
+			min-width: ( $sidebar-width-max - $accordion-padding * 2 );
+		}
 	}
 
 	.form-text-input {
@@ -30,16 +43,6 @@
 
 		&.password {
 			margin-bottom: 0;
-		}
-	}
-
-	.gridicon {
-		cursor: pointer;
-		vertical-align: middle;
-		margin-right: 4px;
-
-		&:hover {
-			color: $gray-dark;
 		}
 	}
 
