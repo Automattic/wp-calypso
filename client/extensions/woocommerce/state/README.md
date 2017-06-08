@@ -5,11 +5,9 @@ This directory contains all of the behavior describing the application state for
 
 ## Structure
 
-### [`site`](site/README.md)
-
 ### [`ui`](ui/README.md)
 
-Holds data changed in the UI but not yet saved
+Tracks all UI state. Currently this includes "edit states" of API data.
 
 ### [`sites`](sites/README.md)
 
