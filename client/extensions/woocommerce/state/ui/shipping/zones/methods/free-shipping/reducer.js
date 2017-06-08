@@ -14,13 +14,13 @@ const initialState = {
 
 const reducer = {};
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_CONDITION ] = ( state, { payload: { condition } } ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_CONDITION ] = ( state, { condition } ) => {
 	return { ...state,
 		requires: condition,
 	};
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_MIN_COST ] = ( state, { payload: { cost } } ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_MIN_COST ] = ( state, { cost } ) => {
 	return { ...state,
 		min_amount: cost,
 	};

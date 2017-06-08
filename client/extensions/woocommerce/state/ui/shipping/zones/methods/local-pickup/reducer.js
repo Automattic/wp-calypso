@@ -14,13 +14,13 @@ const initialState = {
 
 const reducer = {};
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE ] = ( state, { payload: { isTaxable } } ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE ] = ( state, { isTaxable } ) => {
 	return { ...state,
 		taxable: isTaxable ? 'Taxable' : 'None',
 	};
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_COST ] = ( state, { payload: { cost } } ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_COST ] = ( state, { cost } ) => {
 	return { ...state,
 		cost,
 	};

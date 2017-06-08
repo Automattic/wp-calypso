@@ -33,7 +33,7 @@ export const initialState = {
 const reducer = {};
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
-	const method_id = action.payload.method_id;
+	const method_id = action.method_id;
 	const id = nextBucketIndex( state.creates );
 	let method = { id, method_id };
 	if ( builtInShippingMethods[ method_id ] ) {
@@ -44,7 +44,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
 	};
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { payload: { id } } ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { id } ) => {
 	const newState = { ...state };
 
 	const bucket = getBucket( { id } );
@@ -57,9 +57,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { payload: { id } 
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
-	const bucket = getBucket( { id: action.payload.id } );
-	const method = find( state[ bucket ], { id: action.payload.id } );
-	let originalId = action.payload.id;
+	const bucket = getBucket( { id: action.id } );
+	const method = find( state[ bucket ], { id: action.id } );
+	let originalId = action.id;
 	if ( method && ! isNil( method._originalId ) ) {
 		originalId = method._originalId;
 	}
@@ -70,7 +70,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
 	return state;
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { payload: { id, title } } ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { id, title } ) => {
 	const bucket = getBucket( { id } );
 	const index = findIndex( state[ bucket ], { id } );
 	if ( -1 === index ) {
@@ -93,9 +93,8 @@ const mainReducer = createReducer( initialState, reducer );
 export default ( state, action ) => {
 	const newState = mainReducer( state, action );
 
-	const payload = action.payload || {};
-	const id = payload.id;
-	const methodId = payload.method_id;
+	const id = action.id;
+	const methodId = action.method_id;
 	if ( id && methodId && builtInShippingMethods[ methodId ] ) {
 		const bucket = getBucket( { id } );
 		const index = findIndex( newState[ bucket ], { id } );
