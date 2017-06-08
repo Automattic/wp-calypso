@@ -2,8 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,7 +12,6 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import FollowersCount from 'blocks/followers-count';
 import SegmentedControl from 'components/segmented-control';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 const StoreStatsNavigation = props => {
 	const { translate, slug, type, unit } = props;
@@ -52,11 +50,4 @@ StoreStatsNavigation.propTypes = {
 	slug: PropTypes.string
 };
 
-export default connect(
-	state => {
-		return {
-			slug: getSelectedSiteSlug( state ),
-			translate: i18n.translate,
-		};
-	}
-)( StoreStatsNavigation );
+export default localize( StoreStatsNavigation );
