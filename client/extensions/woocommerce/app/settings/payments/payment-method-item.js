@@ -53,9 +53,7 @@ const PaymentMethodItem = ( { method, translate, onCancel, onEdit, currentlyEdit
 			</ListItemField>
 			<ListItemField>
 				<Button compact onClick={ onEditHandler }>
-					{
-						editButtonText
-					}
+					{ editButtonText }
 				</Button>
 			</ListItemField>
 		</ListItem>
