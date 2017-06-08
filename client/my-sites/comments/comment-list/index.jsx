@@ -255,6 +255,8 @@ export class CommentList extends Component {
 				</ReactCSSTransitionGroup>
 
 				<ReactCSSTransitionGroup
+					className="comment-list__transition-wrapper"
+					component="div"
 					transitionEnterTimeout={ 300 }
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
