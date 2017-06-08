@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 
@@ -24,12 +25,15 @@ export const CommentDetailHeader = ( {
 	edit,
 	isBulkEdit,
 	isExpanded,
+	postTitle,
+	postUrl,
 	toggleApprove,
 	toggleExpanded,
 	toggleLike,
 	toggleSelected,
 	toggleSpam,
 	toggleTrash,
+	translate,
 } ) => {
 	if ( isExpanded ) {
 		return (
@@ -66,16 +70,27 @@ export const CommentDetailHeader = ( {
 					/>
 				</label>
 			}
-			<div className="comment-detail__author-info">
+			<div className="comment-detail__author-preview">
 				<div className="comment-detail__author-avatar">
 					<img className="comment-detail__author-avatar-image" src={ authorAvatarUrl } />
 				</div>
-				<strong>
-					{ authorDisplayName }
-				</strong>
-				<span>
-					{ authorUrl }
-				</span>
+				<div className="comment-detail__author-info">
+					<div className="comment-detail__author-info-element">
+						<strong>
+							{ authorDisplayName }
+						</strong>
+						<span>
+							{ authorUrl }
+						</span>
+					</div>
+					<div className="comment-detail__author-info-element">
+						{ translate( 'on {{postLink/}}', {
+							components: {
+								postLink: <a href={ postUrl }>{ postTitle }</a>,
+							},
+						} ) }
+					</div>
+				</div>
 			</div>
 			<div className="comment-detail__comment-preview">
 				{ commentContent }
@@ -84,4 +99,4 @@ export const CommentDetailHeader = ( {
 	);
 };
 
-export default CommentDetailHeader;
+export default localize( CommentDetailHeader );

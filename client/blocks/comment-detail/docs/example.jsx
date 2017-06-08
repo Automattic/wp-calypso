@@ -34,6 +34,7 @@ const mockComment = {
 	},
 	replied: true,
 	status: 'approved',
+	URL: 'http://discover.wordpress.com',
 }
 
 const mockSite = {
