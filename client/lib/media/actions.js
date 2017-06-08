@@ -87,15 +87,40 @@ MediaActions.fetchNextPage = function( siteId ) {
 	} );
 };
 
-MediaActions.add = function( siteId, files ) {
-	if ( files instanceof window.FileList ) {
-		files = [ ...files ];
+const getFileUploader = () => ( file, siteId ) => {
+	// Determine upload mechanism by object type
+	const isUrl = 'string' === typeof file;
+
+	// Assign parent ID if currently editing post
+	const post = PostEditStore.get();
+	const title = file.title;
+	if ( post && post.ID ) {
+		file = {
+			parent_id: post.ID,
+			[ isUrl ? 'url' : 'file' ]: file
+		};
+	} else if ( file.fileContents ) {
+		//if there's no parent_id, but the file object is wrapping a Blob
+		//(contains fileContents, fileName etc) still wrap it in a new object
+		file = {
+			file: file
+		};
 	}
 
-	if ( ! Array.isArray( files ) ) {
-		files = [ files ];
+	if ( title ) {
+		file.title = title;
 	}
 
+	debug( 'Uploading media to %d from %o', siteId, file );
+
+	if ( isUrl ) {
+		return wpcom.site( siteId ).addMediaUrls( {}, file );
+	}
+
+	return wpcom.site( siteId ).addMediaFiles( {}, file );
+};
+
+function uploadFiles( uploader, files, siteId ) {
 	// We offset the current time when generating a fake date for the transient
 	// media so that the first uploaded media doesn't suddenly become newest in
 	// the set once it finishes uploading. This duration is pretty arbitrary,
@@ -125,37 +150,12 @@ MediaActions.add = function( siteId, files ) {
 			return Promise.resolve();
 		}
 
-		// Determine upload mechanism by object type
-		const isUrl = 'string' === typeof file;
-		const addHandler = isUrl ? 'addMediaUrls' : 'addMediaFiles';
-
-		// Assign parent ID if currently editing post
-		const post = PostEditStore.get();
-		const title = file.title;
-		if ( post && post.ID ) {
-			file = {
-				parent_id: post.ID,
-				[ isUrl ? 'url' : 'file' ]: file
-			};
-		} else if ( file.fileContents ) {
-			//if there's no parent_id, but the file object is wrapping a Blob
-			//(contains fileContents, fileName etc) still wrap it in a new object
-			file = {
-				file: file
-			};
-		}
-
-		if ( title ) {
-			file.title = title;
-		}
-
-		debug( 'Uploading media to %d from %o', siteId, file );
-
 		return lastUpload.then( () => {
 			// Achieve series upload by waiting for the previous promise to
 			// resolve before starting this item's upload
 			const action = { type: 'RECEIVE_MEDIA_ITEM', id: transientMedia.ID, siteId };
-			return wpcom.site( siteId )[ addHandler ]( {}, file ).then( ( data ) => {
+
+			return uploader( file, siteId ).then( ( data ) => {
 				Dispatcher.handleServerAction( Object.assign( action, {
 					data: data.media[ 0 ]
 				} ) );
@@ -169,6 +169,18 @@ MediaActions.add = function( siteId, files ) {
 			} );
 		} );
 	}, Promise.resolve() );
+}
+
+MediaActions.add = function( siteId, files ) {
+	if ( files instanceof window.FileList ) {
+		files = [ ...files ];
+	}
+
+	if ( ! Array.isArray( files ) ) {
+		files = [ files ];
+	}
+
+	return uploadFiles( getFileUploader(), files, siteId );
 };
 
 MediaActions.edit = function( siteId, item ) {
