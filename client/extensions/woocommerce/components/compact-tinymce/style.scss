@@ -41,6 +41,14 @@
 		box-shadow: none;
 	}
 
+	.mce-toolbar .mce-btn-group .mce-ico {
+		color: darken( $gray, 20% );
+	}
+
+	.mce-toolbar .mce-btn-group .mce-btn .gridicon {
+		fill: darken( $gray, 20% );
+	}
+
 	.mce-toolbar .mce-btn-group .mce-btn:hover .mce-ico,
 	.mce-toolbar .mce-btn-group .mce-btn:focus .mce-ico {
 		color: $gray-dark;
