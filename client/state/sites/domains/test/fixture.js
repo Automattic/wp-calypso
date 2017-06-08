@@ -31,6 +31,7 @@ export const DOMAIN_PRIMARY = {
 		status: 'no_subscription'
 	},
 	hasPrivacyProtection: false,
+	privacyAvailable: false,
 	hasRegistration: false,
 	hasZone: true,
 	isPendingIcannVerification: false,
@@ -65,6 +66,7 @@ export const DOMAIN_NOT_PRIMARY = {
 		status: 'no_subscription'
 	},
 	hasPrivacyProtection: false,
+	privacyAvailable: false,
 	hasRegistration: false,
 	hasZone: false,
 	isPendingIcannVerification: false,
@@ -100,6 +102,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 		status: 'no_subscription'
 	},
 	has_private_registration: false,
+	privacyAvailable: false,
 	has_registration: false,
 	has_zone: true,
 	current_user_can_manage: true,
@@ -132,6 +135,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 		status: 'no_subscription'
 	},
 	has_private_registration: false,
+	privacyAvailable: false,
 	has_registration: false,
 	has_zone: false,
 	current_user_can_manage: true,
