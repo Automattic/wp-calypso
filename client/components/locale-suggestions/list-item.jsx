@@ -28,7 +28,7 @@ class LocaleSuggestionsListItem extends Component {
 	};
 
 	hasLocaleDirectionChanged( locale ) {
-		const localeData = assign( {}, getLanguage( locale ) ),
+		const localeData = assign( {}, getLanguage( locale.locale ) ),
 			currentLocaleData = assign( {}, getLanguage( getLocaleSlug() ) );
 
 		return localeData.rtl !== currentLocaleData.rtl;
