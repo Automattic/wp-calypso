@@ -50,12 +50,12 @@ const ProductFormCategoriesCard = (
 	return (
 		<Card className="products__categories-card">
 			<div className="products__product-form-featured">
-				<FormLabel>
+				<FormLabel htmlFor="featured">{ translate( 'Featured' ) }
 					<CompactFormToggle
 						onChange={ toggleFeatured }
 						checked={ product.featured }
 					>
-					{ translate( 'Feature this product and promote it at your store' ) }
+					{ translate( 'Feature this product to promote it on your store' ) }
 				</CompactFormToggle>
 				</FormLabel>
 			</div>
