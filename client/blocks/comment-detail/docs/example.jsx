@@ -69,7 +69,7 @@ const CommentListFake = CommentFaker( CommentList );
 export const CommentDetailExample = () =>
 	<div>
 		<CommentDetailPlaceholder />
-		<CommentListFake comments={ mockComments } />
+		<CommentListFake comments={ mockComments } status="all" />
 	</div>;
 
 CommentDetailExample.displayName = 'CommentDetail';
