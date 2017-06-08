@@ -1,3 +1,11 @@
+################################
+##         DEPRECATED         ##
+################################
+
+# This file is deprecated. Instead of running "make ___" commands, you should
+# use the equivalent "npm run ___" commands instead.
+# See the "scripts" property of package.json for more information.
+
 .DEFAULT_GOAL := install
 
 install:
