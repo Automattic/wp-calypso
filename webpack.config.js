@@ -176,6 +176,7 @@ if ( calypsoEnv === 'development' ) {
 	const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 	webpackConfig.plugins.splice( 0, 0, new DashboardPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
+	webpackConfig.plugins.push( new webpack.WatchIgnorePlugin( [ path.resolve( __dirname, './node_modules/' ) ] ) );
 	webpackConfig.entry.build = [
 		'webpack-dev-server/client?/',
 		'webpack/hot/only-dev-server',
