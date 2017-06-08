@@ -2,13 +2,18 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+const debug = debugFactory( 'calypso:allendav' );
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import { areSetupChoicesLoading, getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import Main from 'components/main';
 import Manage from './manage';
@@ -20,18 +25,44 @@ class Dashboard extends Component {
 		className: PropTypes.string,
 	};
 
+	componentDidMount = () => {
+		const { selectedSite } = this.props;
+
+		if ( selectedSite && selectedSite.ID ) {
+			this.props.fetchSetupChoices( selectedSite.ID );
+		}
+	}
+
+	componentWillReceiveProps = ( newProps ) => {
+		const { selectedSite } = this.props;
+
+		const newSiteID = newProps.selectedSite && newProps.selectedSite.ID || null;
+		const oldSiteID = selectedSite && selectedSite.ID || null;
+
+		if ( oldSiteID !== newSiteID ) {
+			this.props.fetchSetupChoices( newSiteID );
+		}
+	}
+
 	onStoreSetupFinished = () => {
 		// TODO - save that setup has been finished to the store's state on WPCOM
-		// TODO - is there a way to set an option on the store site?
 	}
 
 	render = () => {
-		const { selectedSite, storeSetupCompleted } = this.props;
+		const { finishedInitialSetup, loading, selectedSite } = this.props;
+
+		debug( 'finishedInitialSetup=', finishedInitialSetup );
+		debug( 'selectedSite=', selectedSite );
+
+		if ( loading || ! selectedSite ) {
+			// TODO have a placholder/loading view instead
+			return null;
+		}
 
 		return (
 			<Main className={ classNames( 'dashboard', this.props.className ) }>
 				{
-					storeSetupCompleted && <Manage site={ selectedSite } /> ||
+					finishedInitialSetup && <Manage site={ selectedSite } /> ||
 					<Setup onFinished={ this.onStoreSetupFinished } site={ selectedSite } />
 				}
 			</Main>
@@ -41,12 +72,24 @@ class Dashboard extends Component {
 }
 
 function mapStateToProps( state ) {
-	// TODO - figure out from state if setup has been completed for this store yet
+	const finishedInitialSetup = getFinishedInitialSetup( state );
+	const loading = areSetupChoicesLoading( state );
+	const selectedSite = getSelectedSite( state );
 
 	return {
-		selectedSite: getSelectedSite( state ),
-		storeSetupCompleted: true, // false,
+		finishedInitialSetup,
+		loading,
+		selectedSite,
 	};
 }
 
-export default connect( mapStateToProps )( localize( Dashboard ) );
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchSetupChoices,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Dashboard ) );
