@@ -64,9 +64,9 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 			countryOfBirth: this.props.contactDetails.countryCode || 'FR',
 		};
 
-		this.props.contactDetails.registrantExtraInfo = {
+		this.props.contactDetails.extra = {
 			...defaults,
-			...this.props.contactDetails.registrantExtraInfo
+			...this.props.contactDetails.extra
 		};
 	}
 
@@ -108,20 +108,19 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	setDateOfBirth( dateOfBirth ) {
 		debug( 'Setting dateOfBirth to ' + dateOfBirth );
-		this.props.updateContactDetailsCache( { registrantExtraInfo: { dateOfBirth } } );
+		this.props.updateContactDetailsCache( { extra: { dateOfBirth } } );
 	}
 
 	handleChangeEvent = ( event ) => {
 		debug( 'Setting ' + event.target.id + ' to ' + event.target.value );
 		this.props.updateContactDetailsCache( {
-			registrantExtraInfo: { [ event.target.id ]: event.target.value },
+			extra: { [ event.target.id ]: event.target.value },
 		} );
 	}
 
 	render() {
 		const translate = this.props.translate;
-		const registrantType = this.props.contactDetails.registrantExtraInfo.registrantType;
-
+		const registrantType = this.props.contactDetails.extra.registrantType;
 		return (
 			<form className="registrant-extra-info__form">
 				<h1 className="registrant-extra-info__form-title">
@@ -166,7 +165,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	renderPersonalFields() {
 		const translate = this.props.translate;
-		const registrantExtraInfo = this.props.contactDetails.registrantExtraInfo;
+		const extra = this.props.contactDetails.extra;
 		const screenReaderText = 'screen-reader-text';
 		const {
 			countryOfBirth,
@@ -175,7 +174,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 			dobDays,
 			placeOfBirth,
 			postalCodeOfBirth,
-		} = { ...emptyValues, ...registrantExtraInfo, ...this.state };
+		} = { ...emptyValues, ...extra, ...this.state };
 
 		return (
 			<div>
@@ -282,12 +281,12 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	renderOrganizationFields() {
 		const translate = this.props.translate;
-		const registrantExtraInfo = this.props.contactDetails.registrantExtraInfo;
+		const extra = this.props.contactDetails.extra;
 		const {
 			registrantVatId,
 			sirenSiret,
 			trademarkNumber
-		} = { ...emptyValues, ...registrantExtraInfo };
+		} = { ...emptyValues, ...extra };
 
 		return (
 			<div>
