@@ -38,16 +38,6 @@ export class Login extends React.Component {
 		page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
 	};
 
-	goBack = event => {
-		event.preventDefault();
-
-		this.props.recordTracksEvent( 'calypso_login_go_back_click' );
-
-		if ( typeof window !== 'undefined' ) {
-			window.history.back();
-		}
-	};
-
 	footerLinks() {
 		const {
 			translate,
