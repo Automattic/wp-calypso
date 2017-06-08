@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { groupBy, map, get } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -22,6 +23,9 @@ import ProgressBanner from '../activity-log-banner/progress-banner';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import QueryRewindStatus from 'components/data/query-rewind-status';
 import QueryActivityLog from 'components/data/query-activity-log';
+import DatePicker from 'my-sites/stats/stats-date-picker';
+import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -318,7 +322,6 @@ class ActivityLog extends Component {
 
 	renderContent() {
 		const {
-			moment,
 			siteId,
 		} = this.props;
 		const logs = this.props.logs;
@@ -339,8 +342,31 @@ class ActivityLog extends Component {
 			)
 		);
 
+		let date = moment().startOf( 'month' );
+		const selectedMonth = window.location.search.replace( '?startDate=', '' );
+		if ( selectedMonth.length > 0 ) {
+			date = moment( selectedMonth.split( '-' ) ).subtract( 1, 'months' );
+		}
+		const query = {
+			period: 'month',
+			date: date.endOf( 'month' ).format( 'YYYY-MM-DD' )
+		};
+
 		return (
 			<div>
+				<StatsPeriodNavigation
+					period="month"
+					date={ date }
+					url={ `/stats/activity/${ slug }` }
+					recordGoogleEvent={ this.changePeriod }
+				>
+					<DatePicker
+						isActivity={ true }
+						period="month"
+						date={ date }
+						query={ query }
+					/>
+				</StatsPeriodNavigation>
 				{ this.renderBanner() }
 				<section className="activity-log__wrapper">
 					{ logsGroupedByDate }
@@ -390,5 +416,6 @@ export default connect(
 				siteId,
 			], [] ),
 		};
-	}
+	},
+	{ recordGoogleEvent }
 )( localize( ActivityLog ) );
