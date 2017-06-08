@@ -9,7 +9,7 @@ import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import qs from 'querystring';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { map, pick, reduce, startsWith } from 'lodash';
+import { filter, includes, map, pick, reduce, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -158,8 +158,21 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 		} );
 		context.store.dispatch( editPost( siteId, null, reduxPostAttributes ) );
 		actions.edit( postAttributes );
+
+		/**
+		 * A post metadata whitelist for Flux's `updateMetadata()` action.
+		 *
+		 * This is needed because blindly passing all post metadata to `updateMetadata()`
+		 * causes unforeseeable issues, such as Publicize not triggering on the copied post.
+		 *
+		 * @see https://github.com/Automattic/wp-calypso/issues/14840
+		 */
+		const whitelistedMetadata = filter( postToCopy.metadata, ( { key } ) => includes( [
+			'geo_latitude',
+			'geo_longitude',
+		], key ) );
 		actions.updateMetadata(
-			reduce( postToCopy.metadata, ( newMetadata, { key, value } ) => {
+			reduce( whitelistedMetadata, ( newMetadata, { key, value } ) => {
 				newMetadata[ key ] = value;
 				return newMetadata;
 			}, {} )
