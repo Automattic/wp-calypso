@@ -1316,8 +1316,7 @@
       }
     },
     "diff": {
-      "version": "1.4.0",
-      "dev": true
+      "version": "1.4.0"
     },
     "disparity": {
       "version": "2.0.0",

@@ -61,4 +61,56 @@ describe( 'index', () => {
 			) ).to.equal( 2 );
 		} );
 	} );
+
+	describe( '#countDiffWords', () => {
+		it( 'should return (0, 0) if input is empty', () => {
+			expect( textUtils.countDiffWords( [] ) )
+				.to.eql( {
+					added: 0,
+					removed: 0,
+				} );
+		} );
+
+		it( 'should count words in each change', () => {
+			expect( textUtils.countDiffWords( [
+				{
+					value: 'Hello World',
+					removed: true,
+				},
+				{
+					value: 'Goodbye Continent',
+					added: true,
+				},
+			] ) )
+				.to.eql( {
+					added: 2,
+					removed: 2,
+				} );
+		} );
+
+		it( 'should accumulate additions and deletions', () => {
+			expect( textUtils.countDiffWords( [
+				{
+					value: 'Hello',
+					removed: true,
+				},
+				{
+					value: 'Goodbye',
+					added: true,
+				},
+				{
+					value: 'World',
+					removed: true,
+				},
+				{
+					value: 'Continent',
+					added: true,
+				},
+			] ) )
+				.to.eql( {
+					added: 2,
+					removed: 2,
+				} );
+		} );
+	} );
 } );
