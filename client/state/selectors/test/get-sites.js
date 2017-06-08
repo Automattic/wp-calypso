@@ -101,7 +101,7 @@ describe( 'getSites()', () => {
 		expect( sites[ 0 ] ).to.have.property( 'ID', 2916288 );
 	} );
 
-	it( 'should returns sites in alphabetical order by name and url', () => {
+	it( 'should return sites in alphabetical order by name and url', () => {
 		const state = {
 			...currentUserState,
 			sites: {
