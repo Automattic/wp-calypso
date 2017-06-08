@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 import {
 	COMMENTS_REMOVE,
 	COMMENTS_RECEIVE,
-  COMMENTS_COUNT_INCREMENT,
+	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_WRITE,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
