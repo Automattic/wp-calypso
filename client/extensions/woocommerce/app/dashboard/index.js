@@ -5,13 +5,11 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-const debug = debugFactory( 'calypso:allendav' );
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { areSetupChoicesLoading, getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -50,9 +48,6 @@ class Dashboard extends Component {
 
 	render = () => {
 		const { finishedInitialSetup, loading, selectedSite } = this.props;
-
-		debug( 'finishedInitialSetup=', finishedInitialSetup );
-		debug( 'selectedSite=', selectedSite );
 
 		if ( loading || ! selectedSite ) {
 			// TODO have a placholder/loading view instead
