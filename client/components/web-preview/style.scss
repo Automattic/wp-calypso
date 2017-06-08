@@ -201,6 +201,9 @@ a.web-preview__external {
 }
 
 .web-preview__frame-wrapper {
+	position: absolute;
+		top: 0;
+		left: 0;
 	height: 100%;
 	width: 100%;
 
@@ -220,6 +223,7 @@ a.web-preview__external {
 }
 
 .web-preview__placeholder {
+	position: relative;
 	width: 100%;
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
