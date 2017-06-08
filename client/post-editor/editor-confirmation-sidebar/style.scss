@@ -44,18 +44,18 @@
 
 .editor-confirmation-sidebar__sidebar {
 	@extend .sidebar;
-	width: 374px;
+	width: $sidebar-width-max;
 	background: $sidebar-bg-color;
 	position: fixed;
 		left: auto;
-		right: -374px;
+		right: -$sidebar-width-max;
 	z-index: z-index( 'root', '.editor-confirmation-sidebar__sidebar' );
 	border-left: 1px solid darken( $sidebar-bg-color, 5% );
 	border-right: none;
 	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
 
 	&.is-active {
-		transform: translateX( -374px );
+		transform: translateX( -$sidebar-width-max );
 	}
 
   @include breakpoint( "<660px" ) {
