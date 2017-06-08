@@ -1,9 +1,14 @@
 .action-header__header {
 	width: 100%;
-	padding: 8px 24px 7px;
+	padding: 8px 16px 7px;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+
+	@include breakpoint( ">480px" ) {
+		padding-left: 24px;
+		padding-right: 24px;
+	}
 }
 
 .action-header__breadcrumbs {
