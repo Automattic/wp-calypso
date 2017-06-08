@@ -10,6 +10,7 @@ import { omit } from 'lodash';
 import FormToggle from 'components/forms/form-toggle';
 
 const PaymentMethodEditFormToggle = ( props ) => {
+	const { checked, name, onChange } = props;
 	const onChangeHandler = () => {
 		const fakeEvent = {
 			target: {
