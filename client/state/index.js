@@ -8,6 +8,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
+import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
 import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';
@@ -77,6 +78,7 @@ const extensions = combineReducers( extensionsModule.reducers() );
 const reducers = {
 	analyticsTracking,
 	accountRecovery,
+	activityLog,
 	application,
 	automatedTransfer,
 	billingTransactions,
