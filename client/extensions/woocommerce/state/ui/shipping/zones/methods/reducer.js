@@ -44,22 +44,22 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
 	};
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { id } ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { methodId } ) => {
 	const newState = { ...state };
 
-	const bucket = getBucket( { id } );
+	const bucket = getBucket( { id: methodId } );
 	if ( 'updates' === bucket ) {
-		newState.deletes = [ ...state.deletes, { id } ];
+		newState.deletes = [ ...state.deletes, { id: methodId } ];
 	}
-	newState[ bucket ] = reject( state[ bucket ], { id } );
+	newState[ bucket ] = reject( state[ bucket ], { id: methodId } );
 
 	return newState;
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
-	const bucket = getBucket( { id: action.id } );
-	const method = find( state[ bucket ], { id: action.id } );
-	let originalId = action.id;
+	const bucket = getBucket( { id: action.methodId } );
+	const method = find( state[ bucket ], { id: action.methodId } );
+	let originalId = action.methodId;
 	if ( method && ! isNil( method._originalId ) ) {
 		originalId = method._originalId;
 	}
@@ -70,9 +70,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
 	return state;
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { id, title } ) => {
-	const bucket = getBucket( { id } );
-	const index = findIndex( state[ bucket ], { id } );
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { methodId, title } ) => {
+	const bucket = getBucket( { id: methodId } );
+	const index = findIndex( state[ bucket ], { id: methodId } );
 	if ( -1 === index ) {
 		return state;
 	}
@@ -93,12 +93,13 @@ const mainReducer = createReducer( initialState, reducer );
 export default ( state, action ) => {
 	const newState = mainReducer( state, action );
 
-	const id = action.id;
-	const methodType = action.methodType;
-	if ( id && methodType && builtInShippingMethods[ methodType ] ) {
-		const bucket = getBucket( { id } );
-		const index = findIndex( newState[ bucket ], { id } );
+	const { methodId, methodType } = action;
+	// If the action has something to do with a built-in shipping method, fire its reducer
+	if ( methodId && methodType && builtInShippingMethods[ methodType ] ) {
+		const bucket = getBucket( { id: methodId } );
+		const index = findIndex( newState[ bucket ], { id: methodId } );
 		if ( -1 !== index ) {
+			// Only give the shipping method reducer data about the shipping method itself, not the whole tree
 			const methodState = newState[ bucket ][ index ];
 			const newMethodState = builtInShippingMethods[ methodType ]( methodState, action );
 			if ( newMethodState !== methodState ) {
