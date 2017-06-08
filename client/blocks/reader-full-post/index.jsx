@@ -6,7 +6,6 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
-import config from 'config';
 import { get } from 'lodash';
 
 /**
@@ -67,6 +66,7 @@ import ReaderFullPostContentPlaceholder from './placeholders/content';
 import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
 import { getLastStore } from 'reader/controller-helper';
 import { showSelectedPost } from 'reader/utils';
+import Emojify from 'components/emojify';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
@@ -77,20 +77,11 @@ export class FullPostView extends React.Component {
 
 	hasScrolledToCommentAnchor = false;
 
-	componentWillMount() {
-		const self = this;
-		asyncRequire( 'twemoji', twemoji => {
-			self.setState( { twemoji }, self.parseEmoji.bind( self ) );
-		} );
-	}
-
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.on( 'like-selection', this.handleLike );
 		KeyboardShortcuts.on( 'move-selection-down', this.goToNextPost );
 		KeyboardShortcuts.on( 'move-selection-up', this.goToPreviousPost );
-
-		this.parseEmoji();
 
 		// Send page view
 		this.hasSentPageView = false;
@@ -106,8 +97,6 @@ export class FullPostView extends React.Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		this.parseEmoji();
-
 		// Send page view if applicable
 		if (
 			get( prevProps, 'post.ID' ) !== get( this.props, 'post.ID' ) ||
@@ -234,18 +223,6 @@ export class FullPostView extends React.Component {
 		}, 0 );
 	};
 
-	parseEmoji = () => {
-		if ( ! this.refs.article ) {
-			return;
-		}
-
-		this.state &&
-			this.state.twemoji &&
-			this.state.twemoji.parse( this.refs.article, {
-				base: config( 'twemoji_cdn_url' ),
-			} );
-	};
-
 	attemptToSendPageView = () => {
 		const { post, site } = this.props;
 
@@ -369,84 +346,86 @@ export class FullPostView extends React.Component {
 							/> }
 
 					</div>
-					<article className="reader-full-post__story" ref="article">
-						<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
+					<Emojify>
+						<article className="reader-full-post__story" ref="article">
+							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
-						{ post.featured_image &&
-							! isFeaturedImageInContent( post ) &&
-							<FeaturedImage src={ post.featured_image } /> }
-						{ isLoading && <ReaderFullPostContentPlaceholder /> }
-						{ post.use_excerpt
-							? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
-							: <EmbedContainer>
-									<AutoDirection>
-										<div
-											className="reader-full-post__story-content"
-											dangerouslySetInnerHTML={ { __html: post.content } }
+							{ post.featured_image &&
+								! isFeaturedImageInContent( post ) &&
+								<FeaturedImage src={ post.featured_image } /> }
+							{ isLoading && <ReaderFullPostContentPlaceholder /> }
+							{ post.use_excerpt
+								? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
+								: <EmbedContainer>
+										<AutoDirection>
+											<div
+												className="reader-full-post__story-content"
+												dangerouslySetInnerHTML={ { __html: post.content } }
+											/>
+										</AutoDirection>
+									</EmbedContainer> }
+
+							{ post.use_excerpt &&
+								! isDiscoverPost( post ) &&
+								<PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> }
+							{ isDiscoverSitePick( post ) &&
+								<DiscoverSiteAttribution
+									attribution={ post.discover_metadata.attribution }
+									siteUrl={ getSiteUrl( post ) }
+									followUrl={ getSourceFollowUrl( post ) }
+								/> }
+							{ isDailyPostChallengeOrPrompt( post ) &&
+								<DailyPostButton post={ post } site={ site } tagName="span" /> }
+
+							<ReaderPostActions
+								post={ post }
+								site={ site }
+								onCommentClick={ this.handleCommentClick }
+								fullPost={ true }
+							/>
+
+							{ showRelatedPosts &&
+								<RelatedPostsFromSameSite
+									siteId={ +post.site_ID }
+									postId={ +post.ID }
+									title={ translate( 'More in {{ siteLink /}}', {
+										components: {
+											siteLink: (
+												<a
+													href={ getStreamUrlFromPost( post ) }
+													className="reader-related-card-v2__link"
+												>
+													{ siteName }
+												</a>
+											),
+										},
+									} ) }
+									className="is-same-site"
+									onPostClick={ this.handleRelatedPostFromSameSiteClicked }
+								/> }
+
+							<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
+								{ shouldShowComments( post )
+									? <Comments
+											ref="commentsList"
+											post={ post }
+											initialSize={ 10 }
+											pageSize={ 25 }
+											onCommentsUpdate={ this.checkForCommentAnchor }
 										/>
-									</AutoDirection>
-								</EmbedContainer> }
+									: null }
+							</div>
 
-						{ post.use_excerpt &&
-							! isDiscoverPost( post ) &&
-							<PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> }
-						{ isDiscoverSitePick( post ) &&
-							<DiscoverSiteAttribution
-								attribution={ post.discover_metadata.attribution }
-								siteUrl={ getSiteUrl( post ) }
-								followUrl={ getSourceFollowUrl( post ) }
-							/> }
-						{ isDailyPostChallengeOrPrompt( post ) &&
-							<DailyPostButton post={ post } site={ site } tagName="span" /> }
-
-						<ReaderPostActions
-							post={ post }
-							site={ site }
-							onCommentClick={ this.handleCommentClick }
-							fullPost={ true }
-						/>
-
-						{ showRelatedPosts &&
-							<RelatedPostsFromSameSite
-								siteId={ +post.site_ID }
-								postId={ +post.ID }
-								title={ translate( 'More in {{ siteLink /}}', {
-									components: {
-										siteLink: (
-											<a
-												href={ getStreamUrlFromPost( post ) }
-												className="reader-related-card-v2__link"
-											>
-												{ siteName }
-											</a>
-										),
-									},
-								} ) }
-								className="is-same-site"
-								onPostClick={ this.handleRelatedPostFromSameSiteClicked }
-							/> }
-
-						<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
-							{ shouldShowComments( post )
-								? <Comments
-										ref="commentsList"
-										post={ post }
-										initialSize={ 10 }
-										pageSize={ 25 }
-										onCommentsUpdate={ this.checkForCommentAnchor }
-									/>
-								: null }
-						</div>
-
-						{ showRelatedPosts &&
-							<RelatedPostsFromOtherSites
-								siteId={ +post.site_ID }
-								postId={ +post.ID }
-								title={ relatedPostsFromOtherSitesTitle }
-								className="is-other-site"
-								onPostClick={ this.handleRelatedPostFromOtherSiteClicked }
-							/> }
-					</article>
+							{ showRelatedPosts &&
+								<RelatedPostsFromOtherSites
+									siteId={ +post.site_ID }
+									postId={ +post.ID }
+									title={ relatedPostsFromOtherSitesTitle }
+									className="is-other-site"
+									onPostClick={ this.handleRelatedPostFromOtherSiteClicked }
+								/> }
+						</article>
+					</Emojify>
 				</div>
 			</ReaderMain>
 		);
