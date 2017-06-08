@@ -45,7 +45,16 @@ describe( '#restoreProgress()', () => {
 	} );
 
 	it( 'should null on errors', () => {
-		const state = restoreProgress( undefined, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) );
+		const prevState = deepFreeze( {
+			[ SITE_ID ]: {
+				active: false,
+				firstBackupDate: '',
+				isPressable: false,
+				plan: 'jetpack-free',
+			},
+		} );
+
+		const state = restoreProgress( prevState, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) );
 		expect( state[ SITE_ID ] ).to.be.null;
 	} );
 
@@ -71,5 +80,40 @@ describe( '#restoreProgress()', () => {
 } );
 
 describe( '#restoreError()', () => {
+	it( 'should insert errors', () => {
+		const state = restoreError( undefined, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) );
+		expect( state[ SITE_ID ] ).to.deep.equal( ERROR );
+	} );
+
+	it( 'should null on progress', () => {
+		const prevState = deepFreeze( {
+			[ SITE_ID ]: ERROR,
+		} );
+		const state = restoreError( prevState, rewindRestore( SITE_ID, TIMESTAMP ) );
+		expect( state[ SITE_ID ] ).to.be.null;
+	} );
+
+	it( 'should null on completion', () => {
+		const prevState = deepFreeze( {
+			[ SITE_ID ]: ERROR,
+		} );
+		const state = restoreError( prevState, rewindCompleteRestore( SITE_ID, TIMESTAMP ) );
+		expect( state[ SITE_ID ] ).to.be.null;
+	} );
+
+	it( 'should preserve other sites', () => {
+		const otherSiteId = 123456;
+		const prevState = deepFreeze( {
+			[ otherSiteId ]: {
+				active: false,
+				firstBackupDate: '',
+				isPressable: false,
+				plan: 'jetpack-free',
+			},
+		} );
+
+		const state = restoreError( prevState, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) );
+		expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] );
+	} );
 } );
 

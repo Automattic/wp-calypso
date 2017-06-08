@@ -31,6 +31,7 @@ const stubNull = () => null;
 
 export const restoreError = keyedReducer( 'siteId', createReducer( {}, {
 	[ REWIND_RESTORE ]: stubNull,
+	[ REWIND_RESTORE_COMPLETED ]: stubNull,
 	[ REWIND_RESTORE_UPDATE_ERROR ]: ( state, { error } ) => error,
 } ) );
 
