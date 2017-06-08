@@ -27,7 +27,7 @@ class ReaderInfiniteStream extends Component {
 		extraRenderItemProps: PropTypes.object,
 		minHeight: PropTypes.number,
 		renderEventName: PropTypes.string,
-		passthroughProp: PropTypes.any,
+		passthroughProp: PropTypes.any, // https://github.com/bvaughn/react-virtualized#pure-components. For use with things like sort etc.
 	};
 
 	static defaultProps = {
@@ -42,9 +42,8 @@ class ReaderInfiniteStream extends Component {
 		minHeight: this.props.minHeight,
 	} );
 
-	// todo what is eventName / ui_algo?
 	recordTraintrackForRowRender = ( { index, railcar, eventName } ) => {
-		recordTracksRailcarRender( eventName, railcar, { ui_algo: eventName, ui_position: index } );
+		recordTracksRailcarRender( eventName, railcar, { ui_position: index } );
 	};
 
 	rowRenderer = rowRendererProps => {
