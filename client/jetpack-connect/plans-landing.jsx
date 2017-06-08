@@ -14,6 +14,7 @@ import { selectPlanInAdvance } from 'state/jetpack-connect/actions';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getSite } from 'state/sites/selectors';
 import QueryPlans from 'components/data/query-plans';
+import addQueryArgs from 'lib/route/add-query-args';
 
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 
@@ -53,7 +54,7 @@ class PlansLanding extends Component {
 		let redirectUrl = CALYPSO_JETPACK_CONNECT;
 
 		if ( url ) {
-			redirectUrl += '?url=' + url;
+			redirectUrl = addQueryArgs( { url }, redirectUrl );
 		}
 
 		this.props.recordTracksEvent( 'calypso_jpc_plans_store_plan', {
