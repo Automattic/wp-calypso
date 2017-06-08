@@ -2,13 +2,15 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FormToggle from 'components/forms/form-toggle';
 
-const PaymentMethodEditFormToggle = ( { checked, name, onChange } ) => {
+const PaymentMethodEditFormToggle = ( props ) => {
+	const { checked, name, onChange } = props;
 	const onChangeHandler = () => {
 		const fakeEvent = {
 			target: {
@@ -21,6 +23,7 @@ const PaymentMethodEditFormToggle = ( { checked, name, onChange } ) => {
 
 	return (
 		<FormToggle
+			{ ...omit( props, [ 'updateAriaLabel', 'editAriaLabel' ] ) }
 			checked={ checked }
 			name={ name }
 			onChange={ onChangeHandler } />
