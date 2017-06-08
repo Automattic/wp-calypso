@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { NOTIFICATION_SETTINGS_REQUEST } from 'state/action-types';
-import { receiveNotificationSettings } from 'state/notification-settings/actions';
+import { updateNotificationSettings } from 'state/notification-settings/actions';
 import { errorNotice } from 'state/notices/actions';
 
 /**
@@ -34,7 +34,7 @@ export const requestNotificationSettings = ( { dispatch }, action ) => dispatch(
  * @param   {Object}   settings  raw notification settings object returned by the endpoint
  * @returns {Object}             disparched user devices add action
  */
-export const handleSuccess = ( { dispatch }, action, next, settings ) => dispatch( receiveNotificationSettings( {
+export const updateSettings = ( { dispatch }, action, next, settings ) => dispatch( updateNotificationSettings( {
 	settings
 } ) );
 
@@ -49,5 +49,5 @@ export const handleError = ( { dispatch } ) => dispatch(
 );
 
 export default {
-	[ NOTIFICATION_SETTINGS_REQUEST ]: [ dispatchRequest( requestNotificationSettings, handleSuccess, handleError ) ],
+	[ NOTIFICATION_SETTINGS_REQUEST ]: [ dispatchRequest( requestNotificationSettings, updateSettings, handleError ) ],
 };

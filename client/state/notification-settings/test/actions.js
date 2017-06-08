@@ -8,11 +8,11 @@ import { expect } from 'chai';
  */
 import {
 	NOTIFICATION_SETTINGS_REQUEST,
-	NOTIFICATION_SETTINGS_RECEIVE,
+	NOTIFICATION_SETTINGS_UPDATE,
 } from 'state/action-types';
 import {
 	requestNotificationSettings,
-	receiveNotificationSettings,
+	updateNotificationSettings,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -24,12 +24,12 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#receiveNotificationSettings()', () => {
+	describe( '#updateNotificationSettings()', () => {
 		it( 'should return an action object', () => {
 			const settings = {};
-			const action = receiveNotificationSettings( { settings } );
+			const action = updateNotificationSettings( { settings } );
 
-			expect( action ).to.eql( { type: NOTIFICATION_SETTINGS_RECEIVE, settings } );
+			expect( action ).to.eql( { type: NOTIFICATION_SETTINGS_UPDATE, settings } );
 		} );
 	} );
 } );

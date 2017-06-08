@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import {
-	NOTIFICATION_SETTINGS_RECEIVE,
 	NOTIFICATION_SETTINGS_REQUEST,
+	NOTIFICATION_SETTINGS_UPDATE,
 } from 'state/action-types';
 
 /**
@@ -18,7 +18,7 @@ export const requestNotificationSettings = () => ( { type: NOTIFICATION_SETTINGS
  * @param  {Object} settings User Notification Settings
  * @return {Object}          action object
  */
-export const receiveNotificationSettings = ( { settings } ) => ( {
-	type: NOTIFICATION_SETTINGS_RECEIVE,
+export const updateNotificationSettings = ( { settings } ) => ( {
+	type: NOTIFICATION_SETTINGS_UPDATE,
 	settings
 } );

@@ -8,10 +8,10 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { NOTIFICATION_SETTINGS_RECEIVE, NOTICE_CREATE } from 'state/action-types';
+import { NOTIFICATION_SETTINGS_UPDATE, NOTICE_CREATE } from 'state/action-types';
 import {
 	requestNotificationSettings,
-	handleSuccess,
+	updateSettings,
 	handleError,
 } from '../';
 
@@ -32,15 +32,15 @@ describe( 'wpcom-api', () => {
 			} );
 		} );
 
-		describe( '#handleSuccess', () => {
+		describe( '#updateSettings', () => {
 			it( 'should dispatch notification settings', () => {
 				const dispatch = spy();
 
-				handleSuccess( { dispatch }, null, null, {} );
+				updateSettings( { dispatch }, null, null, {} );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( {
-					type: NOTIFICATION_SETTINGS_RECEIVE,
+					type: NOTIFICATION_SETTINGS_UPDATE,
 					settings: {}
 				} );
 			} );
