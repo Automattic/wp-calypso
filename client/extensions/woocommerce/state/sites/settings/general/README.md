@@ -15,22 +15,26 @@ This is saved on a per-site basis, either as "LOADING" (when requesting settings
 
 ```js
 {
-	"settingsGeneral": "LOADING",
+	"settings": {
+		"general": "LOADING"
+	}
 	// or
-	"settingsGeneral": [ {
-		"id": "woocommerce_allowed_countries",
-		"label": "Selling location(s)",
-		"description": "This option lets you limit which countries you are willing to sell to.",
-		"type": "select",
-		"default": "all",
-		"options": {
-			"all": "Sell to all countries",
-			"all_except": "Sell to all countries, except for&hellip;",
-			"specific": "Sell to specific countries"
-		},
-		"tip": "This option lets you limit which countries you are willing to sell to.",
-		"value": "all",
-	}, { … } ],
+	"settings": {
+		"general": [ {
+			"id": "woocommerce_allowed_countries",
+			"label": "Selling location(s)",
+			"description": "This option lets you limit which countries you are willing to sell to.",
+			"type": "select",
+			"default": "all",
+			"options": {
+				"all": "Sell to all countries",
+				"all_except": "Sell to all countries, except for&hellip;",
+				"specific": "Sell to specific countries"
+			},
+			"tip": "This option lets you limit which countries you are willing to sell to.",
+			"value": "all",
+		}, { … } ],
+	},
 }
 ```
 
