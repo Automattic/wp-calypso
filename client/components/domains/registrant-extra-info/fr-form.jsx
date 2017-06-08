@@ -108,23 +108,13 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	setDateOfBirth( dateOfBirth ) {
 		debug( 'Setting dateOfBirth to ' + dateOfBirth );
-		this.props.updateContactDetailsCache( {
-			registrantExtraInfo: {
-				...this.props.contactDetails.registrantExtraInfo,
-				dateOfBirth
-			} } );
-	}
-
-	newStateFromEvent( event ) {
-		return {
-			...this.props.contactDetails.registrantExtraInfo,
-			[ event.target.id ]: event.target.value,
-		};
+		this.props.updateContactDetailsCache( { registrantExtraInfo: { dateOfBirth } } );
 	}
 
 	handleChangeEvent = ( event ) => {
+		debug( 'Setting ' + event.target.id + ' to ' + event.target.value );
 		this.props.updateContactDetailsCache( {
-			registrantExtraInfo: this.newStateFromEvent( event )
+			registrantExtraInfo: { [ event.target.id ]: event.target.value },
 		} );
 	}
 
