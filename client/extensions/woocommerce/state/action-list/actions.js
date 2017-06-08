@@ -18,12 +18,12 @@ import {
 export function actionListCreate( actionList ) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_CREATE,
-		payload: actionList,
+		actionList,
 	};
 }
 
 /**
- * Action Creator: Clear the current product Action List.
+ * Action Creator: Clear the current Action List.
  * @return {Object} action
  */
 export function actionListClear() {
@@ -42,7 +42,8 @@ export function actionListClear() {
 export function actionListStepStarted( stepIndex, time = Date.now() ) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_STEP_START,
-		payload: { stepIndex, time }
+		stepIndex,
+		time,
 	};
 }
 
@@ -57,7 +58,9 @@ export function actionListStepStarted( stepIndex, time = Date.now() ) {
 export function actionListStepEnded( stepIndex, error, time = Date.now() ) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_STEP_END,
-		payload: { stepIndex, error, time }
+		stepIndex,
+		error,
+		time,
 	};
 }
 

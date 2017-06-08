@@ -7,7 +7,7 @@ import {
 	WOOCOMMERCE_ACTION_LIST_CLEAR,
 	WOOCOMMERCE_ACTION_LIST_STEP_START,
 	WOOCOMMERCE_ACTION_LIST_STEP_END,
-} from '../action-types';
+} from 'woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_ACTION_LIST_CREATE ]: handleActionListCreate,
@@ -18,7 +18,8 @@ export default createReducer( null, {
 
 function handleActionListCreate( actionList, action ) {
 	// The action list given in the action is our new list.
-	return action.payload;
+	// TODO: validate action list?
+	return action.actionList;
 }
 
 function handleActionListClear() {
@@ -27,7 +28,7 @@ function handleActionListClear() {
 }
 
 function handleActionListStepStart( actionList, action ) {
-	const { stepIndex, time } = action.payload;
+	const { stepIndex, time } = action;
 	const step = actionList[ stepIndex ];
 
 	const newActionList = [ ...actionList ];
@@ -37,7 +38,7 @@ function handleActionListStepStart( actionList, action ) {
 }
 
 function handleActionListStepEnd( actionList, action ) {
-	const { stepIndex, error, time } = action.payload;
+	const { stepIndex, error, time } = action;
 	const step = actionList[ stepIndex ];
 
 	const newStep = { ...step, endTime: time };
