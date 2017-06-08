@@ -98,15 +98,6 @@ export default class ProductFormDetailsCard extends Component {
 
 		return (
 			<Card className="products__product-form-details">
-				<div className="products__product-form-details-featured">
-					<FormLabel>
-						{ __( 'Featured' ) }
-						<CompactFormToggle
-							onChange={ this.toggleFeatured }
-							checked={ product.featured }
-						/>
-					</FormLabel>
-				</div>
 				<div className="products__product-form-details-wrapper">
 					<ProductFormImages
 						images={ images }
@@ -142,6 +133,16 @@ export default class ProductFormDetailsCard extends Component {
 								onChange={ this.setDescription }
 								rows="8" />
 						</FormFieldSet>
+						<div className="products__product-form-details-featured">
+							<FormLabel>
+								<CompactFormToggle
+									onChange={ this.toggleFeatured }
+									checked={ product.featured }
+								>
+								{ __( 'Feature this product and promote it at your store' ) }
+							</CompactFormToggle>
+							</FormLabel>
+						</div>
 					</div>
 				</div>
 			</Card>

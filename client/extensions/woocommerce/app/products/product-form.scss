@@ -26,10 +26,12 @@
 }
 
 .products__product-form-details-featured {
-	text-align: right;
+	.form-toggle__label {
+		font-weight: 400;
+	}
 
 	.form-toggle__wrapper {
-		margin-left: 10px;
+		display: block;
 	}
 }
 
@@ -211,10 +213,6 @@
 
 .products__product-form-details-basic-description textarea {
 	resize: vertical;
-}
-
-.products__product-form-details-basic-description {
-	margin-bottom: 0;
 }
 
 .products__categories-card {
