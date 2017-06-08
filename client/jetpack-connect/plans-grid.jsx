@@ -65,7 +65,7 @@ class JetpackPlansGrid extends Component {
 							isLandingPage={ ! this.props.selectedSite }
 							basePlansPath={ this.props.basePlansPath }
 							onUpgradeClick={ this.props.onSelect }
-							interval={ this.props.interval }
+							intervalType={ this.props.interval }
 							hideFreePlan={ this.props.hideFreePlan }
 							displayJetpackPlans={ true } />
 					</div>

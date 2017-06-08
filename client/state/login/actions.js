@@ -65,29 +65,29 @@ const errorFields = {
  * Retrieves the first error message from the specified HTTP error.
  *
  * @param {Object} httpError HTTP error
- * @returns {{message: string, field: string}} an error message and the id of the corresponding field, if not global
+ * @returns {{code: string?, message: string, field: string}} an error message and the id of the corresponding field, if not global
  */
 function getErrorFromHTTPError( httpError ) {
 	let message;
 	let field = 'global';
 
-	const errorKey = get( httpError, 'response.body.data.errors[0]' );
+	const code = get( httpError, 'response.body.data.errors[0]' );
 
-	if ( errorKey ) {
-		if ( errorKey in errorMessages ) {
-			message = errorMessages[ errorKey ];
+	if ( code ) {
+		if ( code in errorMessages ) {
+			message = errorMessages[ code ];
 
-			if ( errorKey in errorFields ) {
-				field = errorFields[ errorKey ];
+			if ( code in errorFields ) {
+				field = errorFields[ code ];
 			}
 		} else {
-			message = errorKey;
+			message = code;
 		}
 	} else {
 		message = get( httpError, 'response.body.data', httpError.message );
 	}
 
-	return { message, field };
+	return { code, message, field };
 }
 
 /**

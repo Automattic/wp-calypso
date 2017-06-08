@@ -18,6 +18,7 @@ export const CommentDetailHeader = ( {
 	authorUrl,
 	commentContent,
 	commentIsLiked,
+	commentIsSelected,
 	commentStatus,
 	deleteCommentPermanently,
 	edit,
@@ -26,6 +27,7 @@ export const CommentDetailHeader = ( {
 	toggleApprove,
 	toggleExpanded,
 	toggleLike,
+	toggleSelected,
 	toggleSpam,
 	toggleTrash,
 } ) => {
@@ -58,7 +60,10 @@ export const CommentDetailHeader = ( {
 		>
 			{ isBulkEdit &&
 				<label className="comment-detail__checkbox">
-					<FormCheckbox />
+					<FormCheckbox
+						checked={ commentIsSelected }
+						onChange={ toggleSelected }
+					/>
 				</label>
 			}
 			<div className="comment-detail__author-info">

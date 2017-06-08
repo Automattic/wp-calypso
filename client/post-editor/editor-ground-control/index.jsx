@@ -23,6 +23,8 @@ import AsyncLoad from 'components/async-load';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
+import config from 'config';
+import classNames from 'classnames';
 
 export default React.createClass( {
 	displayName: 'EditorGroundControl',
@@ -285,6 +287,75 @@ export default React.createClass( {
 		}
 	},
 
+	renderGroundControlActionButtons: function() {
+		const publishComboClasses = classNames( 'editor-ground-control__publish-combo', {
+			'is-standalone': config.isEnabled( 'post-editor/delta-post-publish-flow' )
+		} );
+
+		return ( <div className="editor-ground-control__action-buttons">
+			<Button
+				borderless
+				className="editor-ground-control__preview-button"
+				disabled={ ! this.isPreviewEnabled() }
+				onClick={ this.onPreviewButtonClick }
+				tabIndex={ 4 }
+			>
+				<Gridicon icon="visible" /> <span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
+			</Button>
+			<Button
+				borderless
+				className="editor-ground-control__toggle-sidebar"
+				onClick={ this.props.toggleSidebar }
+			>
+				<Gridicon icon="cog" /> <span className="editor-ground-control__button-label"><EditorPostType isSettings /></span>
+			</Button>
+			<div className={ publishComboClasses }>
+				<EditorPublishButton
+					site={ this.props.site }
+					post={ this.props.post }
+					savedPost={ this.props.savedPost }
+					onSave={ this.props.onSave }
+					onPublish={ this.props.onPublish }
+					tabIndex={ 5 }
+					isPublishing={ this.props.isPublishing }
+					isSaveBlocked={ this.props.isSaveBlocked }
+					hasContent={ this.props.hasContent }
+					needsVerification={ this.state.needsVerification }
+					busy={ this.props.isPublishing || ( postUtils.isPublished( this.props.savedPost ) && this.props.isSaving ) }
+				/>
+				{ this.canPublishPost() &&
+				! config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+				<Button
+					primary
+					compact
+					ref="schedulePost"
+					className="editor-ground-control__time-button"
+					onClick={ this.toggleSchedulePopover }
+					aria-label={ this.translate( 'Schedule date and time to publish post.' ) }
+					aria-pressed={ !! this.state.showSchedulePopover }
+					title={ this.translate( 'Set date and time' ) }
+					tabIndex={ 6 }
+				>
+					{ postUtils.isFutureDated( this.props.post )
+						? <Gridicon icon="scheduled" />
+						: <Gridicon icon="calendar" />
+					}
+					<span className="editor-ground-control__time-button-label">
+									{ postUtils.isFutureDated( this.props.post )
+										? this.moment( this.props.post.date ).calendar()
+										: this.translate( 'Choose Date' )
+									}
+								</span>
+				</Button>
+				}
+			</div>
+			{ this.canPublishPost() &&
+			! config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.schedulePostPopover()
+			}
+		</div> );
+	},
+
 	render: function() {
 		return (
 			<Card className="editor-ground-control">
@@ -332,66 +403,7 @@ export default React.createClass( {
 						</span>
 					}
 				</div>
-				<div className="editor-ground-control__action-buttons">
-					<Button
-						borderless
-						className="editor-ground-control__preview-button"
-						disabled={ ! this.isPreviewEnabled() }
-						onClick={ this.onPreviewButtonClick }
-						tabIndex={ 4 }
-					>
-						<Gridicon icon="visible" /> <span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
-					</Button>
-					<Button
-						borderless
-						className="editor-ground-control__toggle-sidebar"
-						onClick={ this.props.toggleSidebar }
-					>
-						<Gridicon icon="cog" /> <span className="editor-ground-control__button-label"><EditorPostType isSettings /></span>
-					</Button>
-					<div className="editor-ground-control__publish-combo">
-						<EditorPublishButton
-							site={ this.props.site }
-							post={ this.props.post }
-							savedPost={ this.props.savedPost }
-							onSave={ this.props.onSave }
-							onPublish={ this.props.onPublish }
-							tabIndex={ 5 }
-							isPublishing={ this.props.isPublishing }
-							isSaveBlocked={ this.props.isSaveBlocked }
-							hasContent={ this.props.hasContent }
-							needsVerification={ this.state.needsVerification }
-							busy={ this.props.isPublishing || ( postUtils.isPublished( this.props.savedPost ) && this.props.isSaving ) }
-						/>
-						{ this.canPublishPost() &&
-							<Button
-								primary
-								compact
-								ref="schedulePost"
-								className="editor-ground-control__time-button"
-								onClick={ this.toggleSchedulePopover }
-								aria-label={ this.translate( 'Schedule date and time to publish post.' ) }
-								aria-pressed={ !! this.state.showSchedulePopover }
-								title={ this.translate( 'Set date and time' ) }
-								tabIndex={ 6 }
-							>
-								{ postUtils.isFutureDated( this.props.post )
-									? <Gridicon icon="scheduled" />
-									: <Gridicon icon="calendar" />
-								}
-								<span className="editor-ground-control__time-button-label">
-									{ postUtils.isFutureDated( this.props.post )
-										? this.moment( this.props.post.date ).calendar()
-										: this.translate( 'Choose Date' )
-									}
-								</span>
-							</Button>
-						}
-					</div>
-					{ this.canPublishPost() &&
-						this.schedulePostPopover()
-					}
-				</div>
+				{ this.renderGroundControlActionButtons() }
 			</Card>
 		);
 	}

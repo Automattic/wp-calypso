@@ -5,7 +5,6 @@
 	"hostname": "calypso.localhost",
 	"port": 3000,
 	"i18n_default_locale_slug": "en",
-	"wpcom_user_bootstrap": false,
 	"rtl": false,
 	"jetpack_min_version": "3.3",
 	"siftscience_key": "e00e878351",
@@ -101,6 +100,7 @@
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
 		"upgrades/paypal": true,
-		"upgrades/premium-themes": true
+		"upgrades/premium-themes": true,
+		"wpcom-user-bootstrap": false
 	}
 }

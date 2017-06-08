@@ -12,7 +12,7 @@
 .reader-subscription-list-item__byline {
 	color: darken( $gray, 30% );
 	margin-right: 16px;
-	flex: 1 0 0%;
+	flex: 1 1 auto;
 }
 
 .following-manage__subscriptions-list {
@@ -97,6 +97,11 @@
 	}
 }
 
+.reader-subscription-list-item__by-text,
+.reader-subscription-list-item__site-url-timestamp {
+	word-break: break-all;
+}
+
 .reader-subscription-list-item__site-excerpt {
 	max-height: 16px * 2.8;
 }
@@ -108,7 +113,6 @@
 .reader-subscription-list-item__site-url-timestamp {
 	display: flex;
 	flex-direction: row;
-	max-height: none;
 
 	@include breakpoint( "<960px" ) {
 		height: auto;

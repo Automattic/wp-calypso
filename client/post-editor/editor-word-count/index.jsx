@@ -9,7 +9,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import PostEditStore from 'lib/posts/post-edit-store';
 import userModule from 'lib/user';
-import textUtils from 'lib/text-utils';
+import { countWords } from 'lib/text-utils';
 
 /**
  * Module variables
@@ -64,7 +64,7 @@ export default React.createClass( {
 				return null;
 		}
 
-		const wordCount = textUtils.countWords( this.state.rawContent );
+		const wordCount = countWords( this.state.rawContent );
 
 		return (
 			<div className="editor-word-count">

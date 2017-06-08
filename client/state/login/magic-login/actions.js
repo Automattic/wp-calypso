@@ -18,11 +18,11 @@ import {
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
+	MAGIC_LOGIN_RESET_REQUEST_FORM,
 	MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
 	MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-	MAGIC_LOGIN_SHOW_REQUEST_FORM,
 } from 'state/action-types';
 
 export const showMagicLoginCheckYourEmailPage = () => {
@@ -43,9 +43,9 @@ export const showMagicLoginLinkExpiredPage = () => {
 	};
 };
 
-export const showMagicLoginRequestForm = () => {
+export const resetMagicLoginRequestForm = () => {
 	return {
-		type: MAGIC_LOGIN_SHOW_REQUEST_FORM,
+		type: MAGIC_LOGIN_RESET_REQUEST_FORM,
 	};
 };
 

@@ -7,7 +7,6 @@
 	"hostname": "calypso.localhost",
 	"port": 3000,
 	"i18n_default_locale_slug": "en",
-	"wpcom_user_bootstrap": false,
 	"rtl": false,
 	"jetpack_min_version": "3.3",
 	"siftscience_key": "e00e878351",
@@ -159,12 +158,12 @@
 		"woocommerce/extension-orders": true,
 		"woocommerce/extension-products": true,
 		"woocommerce/extension-products-import": true,
-		"woocommerce/extension-promotions": true,
 		"woocommerce/extension-settings": true,
 		"woocommerce/extension-settings-payments": true,
 		"woocommerce/extension-settings-shipping": true,
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-stats": false,
-		"wp-login": true
+		"wp-login": true,
+		"wpcom-user-bootstrap": false
 	}
 }

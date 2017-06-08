@@ -179,10 +179,7 @@ const writeFile = ( contents ) => {
 
 const main = ( () => {
 	console.log( 'Building: proptypes-index.json' );
-	const fileList = globby.sync( process.argv.slice( 2 ) )
-		.map( ( fileWithPath ) => {
-			return fileWithPath.replace( /^\.\//, '' );
-		} );
+	const fileList = globby.sync( process.argv.slice( 2 ) );
 
 	if ( fileList.length === 0 ) {
 		process.stderr.write( 'You must pass a list of files to process' );

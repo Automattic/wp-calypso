@@ -3,6 +3,7 @@
  */
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { find, filter } from 'lodash';
 import React, { Component, PropTypes } from 'react';
 
 /**
@@ -21,9 +22,10 @@ class StoreSidebar extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		sidebarItems: PropTypes.arrayOf( PropTypes.shape( {
-			icon: PropTypes.string.isRequired,
+			icon: PropTypes.string,
 			isPrimary: PropTypes.bool.isRequired,
 			label: PropTypes.string.isRequired,
+			parentSlug: PropTypes.string,
 			path: PropTypes.string.isRequired,
 			slug: PropTypes.string.isRequired,
 		} ) ),
@@ -40,28 +42,6 @@ class StoreSidebar extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	itemLinkClass = ( path, existingClasses, disabled ) => {
-		const classSet = {};
-
-		if ( typeof existingClasses !== 'undefined' ) {
-			if ( ! Array.isArray( existingClasses ) ) {
-				existingClasses = [ existingClasses ];
-			}
-
-			existingClasses.forEach( function( className ) {
-				classSet[ className ] = true;
-			} );
-		}
-
-		if ( disabled ) {
-			classSet[ 'is-placeholder' ] = true;
-		}
-
-		classSet.selected = this.isItemLinkSelected( path );
-
-		return classNames( classSet );
-	}
-
 	isItemLinkSelected = ( paths ) => {
 		if ( ! Array.isArray( paths ) ) {
 			paths = [ paths ];
@@ -72,24 +52,63 @@ class StoreSidebar extends Component {
 		}, this );
 	}
 
-	renderSidebarMenuItems = ( items, buttons, disabled ) => {
+	renderSidebarMenuItems = ( items, buttons, isDisabled ) => {
+		const { site } = this.props;
+
 		return items.map( function( item, index ) {
-			const itemLink = getLink( item.path, this.props.site );
+			const isChild = ( 'undefined' !== typeof item.parentSlug );
+			const itemLink = getLink( item.path, site );
 			const itemButton = buttons.filter( button => button.parentSlug === item.slug ).map( button => {
 				return (
 					<SidebarButton
-						disabled={ disabled }
-						href={ getLink( button.path, this.props.site ) }
+						disabled={ isDisabled }
+						href={ getLink( button.path, site ) }
 						key={ button.slug }
 					>
 						{ button.label }
 					</SidebarButton>
 				);
 			} );
+
+			// If this item has a parentSlug, only render it if 1) the parent is
+			// currently selected, 2) it is currently selected, or 3) any of its
+			// siblings are selected
+			if ( 'undefined' !== typeof item.parentSlug ) {
+				const links = [];
+				const parentItem = find( items, { slug: item.parentSlug } );
+				links.push( getLink( parentItem.path, site ) );
+
+				filter( items, { parentSlug: item.parentSlug } ).map( child => {
+					links.push( getLink( child.path, site ) );
+				} );
+
+				if ( ! this.isItemLinkSelected( links ) ) {
+					return null;
+				}
+			}
+
+			// If we reach this point, this is not a child item
+			// lets see if its children, if any, are selected
+			const childLinks = [];
+			filter( items, { parentSlug: item.slug } ).map( child => {
+				childLinks.push( getLink( child.path, site ) );
+			} );
+
+			// Build the classnames for the item
+			const itemClasses = classNames( item.slug,
+				{
+					'has-selected-child': this.isItemLinkSelected( childLinks ),
+					'is-child-item': isChild,
+					'is-placeholder': isDisabled,
+					selected: this.isItemLinkSelected( itemLink ),
+				}
+			);
+
+			// Render the item
 			return (
 				<SidebarItem
-					className={ this.itemLinkClass( itemLink, item.slug, disabled ) }
-					icon={ item.icon }
+					className={ itemClasses }
+					icon={ isChild ? '' : item.icon }
 					key={ index }
 					label={ item.label }
 					link={ itemLink }

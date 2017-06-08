@@ -76,12 +76,12 @@ class Setup extends Component {
 				actions: [
 					{
 						label: translate( 'Import' ),
-						path: getLink( '/store/products/:site/import', site ),
+						path: getLink( '/store/products/import/:site', site ),
 						slug: 'add-products-import',
 					},
 					{
 						label: 'Add a product',
-						path: getLink( '/store/products/:site/add', site ),
+						path: getLink( '/store/product/:site', site ),
 					}
 				]
 			},
@@ -94,7 +94,7 @@ class Setup extends Component {
 				actions: [
 					{
 						label: translate( 'Set up shipping' ),
-						path: getLink( '/store/settings/:site/shipping', site ),
+						path: getLink( '/store/settings/shipping/:site', site ),
 					},
 					{
 						label: translate( 'I won\'t be shipping' ),
@@ -112,7 +112,7 @@ class Setup extends Component {
 				actions: [
 					{
 						label: translate( 'Set up payments' ),
-						path: getLink( '/store/settings/:site/payments', site ),
+						path: getLink( '/store/settings/payments/:site', site ),
 					}
 				]
 			},
@@ -125,7 +125,7 @@ class Setup extends Component {
 				actions: [
 					{
 						label: translate( 'Set up taxes' ),
-						path: getLink( '/store/settings/:site/tax', site ),
+						path: getLink( '/store/settings/taxes/:site', site ),
 					},
 					{
 						label: translate( 'I\'m not charging sales tax' ),

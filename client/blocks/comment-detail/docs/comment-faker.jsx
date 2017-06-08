@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { get, keyBy, omit, values } from 'lodash';
+import { filter, get, isNil, keyBy, keys, map, omit } from 'lodash';
 
 /**
  * `CommentFaker` is a HOC to easily test the Comments Management without the necessity of real data or actions.
@@ -28,59 +28,102 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		}
 	}
 
-	deleteCommentPermanently = commentId => this.setState( { comments: omit( this.state.comments, commentId ) } );
+	deleteCommentPermanently = commentId => this.setCommentStatusOrLike( [ commentId ], { status: 'delete' } );
+
+	filterCommentsByStatus = () => 'all' === this.props.status
+		? filter( this.state.comments, ( { status } ) => ( 'approved' === status || 'unapproved' === status ) )
+		: filter( this.state.comments, ( { status } ) => ( this.props.status === status ) );
 
 	getCommentsFromProps = ( { comments } ) => this.setState( { comments: keyBy( comments, 'ID' ) } );
 
-	setCommentLike = ( commentId, likeValue ) => {
-		const comment = this.state.comments[ commentId ];
+	setBulkStatus = ( commentIds, status ) => this.setCommentStatusOrLike( commentIds, { status } );
 
-		// If like changes to true, also approve the comment
-		this.setState( {
-			comments: {
-				...this.state.comments,
-				[ commentId ]: {
-					...comment,
-					i_like: likeValue,
-					status: likeValue ? 'approved' : comment.status,
-				}
-			},
-		} );
+	setCommentLike = ( commentId, i_like ) => this.setCommentStatusOrLike( [ commentId ], { i_like } );
+
+	setCommentStatus = ( commentId, status ) => this.setCommentStatusOrLike( [ commentId ], { status } );
+
+	/**
+	 * Sets a status and/or a like value to a list of comments.
+	 *
+	 * @param {Array}  commentIds
+	 * @param {Object} action
+	 * @param {bool}   action.i_like
+	 * @param {string} action.status
+	 */
+	setCommentStatusOrLike = ( commentIds, { i_like, status } ) => {
+		if ( 'delete' === status ) {
+			return this.setState( {
+				comments: omit( this.state.comments, commentIds ),
+			} );
+		}
+
+		const editedComments = keyBy( map( commentIds, commentId => {
+			const comment = this.state.comments[ commentId ];
+			let newLikeValue, newStatusValue;
+
+			if ( isNil( i_like ) ) {
+				// If the comment is not approved anymore, also remove the like, otherwise keep its previous value
+				newLikeValue = 'approved' === status ? comment.i_like : false;
+			} else {
+				newLikeValue = i_like;
+			}
+
+			if ( isNil( status ) ) {
+				// If like changes to true, also approve the comment
+				newStatusValue = i_like ? 'approved' : comment.status;
+			} else {
+				newStatusValue = status;
+			}
+
+			return {
+				...comment,
+				i_like: newLikeValue,
+				status: newStatusValue,
+			};
+		} ), 'ID' );
+
+		this.setState( { comments: {
+			...this.state.comments,
+			...editedComments,
+		} } );
 	}
 
-	setCommentStatus = ( commentId, status ) => {
-		const comment = this.state.comments[ commentId ];
+	/**
+	 * Resets the status and the like value of a list of comments to their previous values.
+	 *
+	 * `comments` is the array of comments that will receive the action.
+	 * It can contain complete comment objects, but in fact it only needs their (previous) `ID`, `i_like`, and `status` properties.
+	 *
+	 * @param {Array}  comments
+	 * @param {int}    comments[].ID
+	 * @param {bool}   comments[].i_like
+	 * @param {string} comments[].status
+	 */
+	undoSetCommentStatusOrLike = comments => {
+		const editedComments = keyBy( map( comments, ( { ID, i_like, status } ) => ( {
+			...this.state.comments[ ID ],
+			i_like,
+			status,
+		} ) ), 'ID' );
 
-		// If the comment is not approved anymore, also remove the like, otherwise keep its previous value
-		this.setState( {
-			comments: {
-				...this.state.comments,
-				[ commentId ]: {
-					...comment,
-					i_like: 'approved' === status ? comment.i_like : false,
-					status,
-				}
-			},
-		} );
+		this.setState( { comments: {
+			...this.state.comments,
+			...editedComments,
+		} } );
 	}
 
-	toggleCommentLike = commentId => this.setCommentLike(
-		commentId,
-		! get( this.state.comments, [ commentId, 'i_like' ], false )
-	);
+	undoBulkStatus = comments => this.undoSetCommentStatusOrLike( comments );
 
-	render() {
-		return (
-			<WrappedCommentList
-				{ ...this.props }
-				comments={ values( this.state.comments ) }
-				deleteCommentPermanently={ this.deleteCommentPermanently }
-				setCommentLike={ this.setCommentLike }
-				setCommentStatus={ this.setCommentStatus }
-				toggleCommentLike={ this.toggleCommentLike }
-			/>
-		);
-	}
+	render = () =>
+		<WrappedCommentList
+			{ ...this.props }
+			comments={ this.filterCommentsByStatus() }
+			deleteCommentPermanently={ this.deleteCommentPermanently }
+			setBulkStatus={ this.setBulkStatus }
+			setCommentLike={ this.setCommentLike }
+			setCommentStatus={ this.setCommentStatus }
+			undoBulkStatus={ this.undoBulkStatus }
+		/>;
 };
 
 export default CommentFaker;

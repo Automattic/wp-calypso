@@ -29,6 +29,7 @@ export class CommentDetail extends Component {
 		commentDate: PropTypes.string,
 		commentId: PropTypes.number,
 		commentIsLiked: PropTypes.bool,
+		commentIsSelected: PropTypes.bool,
 		commentStatus: PropTypes.string,
 		deleteCommentPermanently: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
@@ -39,9 +40,11 @@ export class CommentDetail extends Component {
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
 		toggleCommentLike: PropTypes.func,
+		toggleCommentSelected: PropTypes.func,
 	};
 
 	static defaultProps = {
+		commentIsSelected: false,
 		isBulkEdit: false,
 	};
 
@@ -50,14 +53,8 @@ export class CommentDetail extends Component {
 	};
 
 	componentWillMount() {
-		const {
-			authorIsBlocked,
-			commentIsLiked,
-		} = this.props;
-		this.setState( {
-			authorIsBlocked,
-			isLiked: commentIsLiked,
-		} );
+		const { authorIsBlocked } = this.props;
+		this.setState( { authorIsBlocked } );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -91,6 +88,11 @@ export class CommentDetail extends Component {
 		toggleCommentLike( commentId );
 	}
 
+	toggleSelected = () => {
+		const { commentId, toggleCommentSelected } = this.props;
+		toggleCommentSelected( commentId );
+	}
+
 	toggleSpam = () => {
 		const { commentId, commentStatus, setCommentStatus } = this.props;
 		setCommentStatus( commentId, 'spam' === commentStatus ? 'approved' : 'spam' );
@@ -112,6 +114,7 @@ export class CommentDetail extends Component {
 			commentContent,
 			commentDate,
 			commentIsLiked,
+			commentIsSelected,
 			commentStatus,
 			isBulkEdit,
 			postAuthorDisplayName,
@@ -144,6 +147,7 @@ export class CommentDetail extends Component {
 					authorUrl={ authorUrl }
 					commentContent={ commentContent }
 					commentIsLiked={ commentIsLiked }
+					commentIsSelected={ commentIsSelected }
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
@@ -151,6 +155,7 @@ export class CommentDetail extends Component {
 					toggleApprove={ this.toggleApprove }
 					toggleExpanded={ this.toggleExpanded }
 					toggleLike={ this.toggleLike }
+					toggleSelected={ this.toggleSelected }
 					toggleSpam={ this.toggleSpam }
 					toggleTrash={ this.toggleTrash }
 				/>
