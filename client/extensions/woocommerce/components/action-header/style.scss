@@ -1,15 +1,22 @@
 .action-header__header {
 	width: 100%;
-	padding: 18px 24px;
+	padding: 8px 24px 7px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.action-header__breadcrumbs {
+	width: 60%;
 }
 
 .action-header__actions {
-	position: absolute;
-	top: 16px;
-	right: 24px;
+	width: 40%;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
 
 	.button {
-		margin-left: 16px;
-		margin-top: -7px;
+		margin-left: 12px;
 	}
 }
