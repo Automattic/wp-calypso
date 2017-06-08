@@ -44,35 +44,44 @@
 
 .editor-confirmation-sidebar__sidebar {
 	@extend .sidebar;
-	width: $sidebar-width-max;
+	width: $sidebar-width-min;
 	background: $sidebar-bg-color;
 	position: fixed;
 		left: auto;
-		right: -$sidebar-width-max;
+		right: -$sidebar-width-min;
 	z-index: z-index( 'root', '.editor-confirmation-sidebar__sidebar' );
 	border-left: 1px solid darken( $sidebar-bg-color, 5% );
 	border-right: none;
 	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
 
 	&.is-active {
-		transform: translateX( -$sidebar-width-max );
+		transform: translateX( -$sidebar-width-min );
 	}
 
-  @include breakpoint( "<660px" ) {
-	transition: none;
-	border-left: none;
-	pointer-events: auto;
+	@include breakpoint( ">960px" ) {
+		width: $sidebar-width-max;
+		right: -$sidebar-width-max;
 
-	&.is-active {
-		height: auto;
-		width: 100%;
-		position: fixed;
-			top: 47px;
-			right: auto;
-			left: 0;
-		transform: none;
+		&.is-active {
+			transform: translateX( -$sidebar-width-max );
+		}
 	}
-  }
+
+	@include breakpoint( "<660px" ) {
+		transition: none;
+		border-left: none;
+		pointer-events: auto;
+
+		&.is-active {
+			height: auto;
+			width: 100%;
+			position: fixed;
+				top: 47px;
+				right: auto;
+				left: 0;
+			transform: none;
+		}
+	}
 }
 
 .editor-confirmation-sidebar__ground-control {
