@@ -31,7 +31,13 @@ class FollowingIntro extends React.Component {
 
 	recordRenderTrack = ( props = this.props ) => {
 		if ( props.isNewReader === true ) {
+			// This is incorrect, but keeping the name for consistency.
+			// This event is more like `calypso_reader_following_rendered_for_new_reader`.
 			recordTrack( 'calypso_reader_following_intro_render' );
+		}
+		if ( props.isNewReader === true && ! isEven( userId ) ) {
+			// Added _actual for when a new Reader and odd userid sees the intro card
+			recordTrack( 'calypso_reader_following_intro_render_actual' );
 		}
 	};
 
