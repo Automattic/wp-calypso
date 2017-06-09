@@ -26,6 +26,7 @@ import QueryActivityLog from 'components/data/query-activity-log';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import ActivityLogRewindToggle from './activity-log-rewind-toggle';
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -218,6 +219,7 @@ class ActivityLog extends Component {
 					/>
 				</StatsPeriodNavigation>
 				{ this.renderBanner() }
+				<ActivityLogRewindToggle siteId={ siteId } />
 				<section className="activity-log__wrapper">
 					{ logsGroupedByDate }
 				</section>
