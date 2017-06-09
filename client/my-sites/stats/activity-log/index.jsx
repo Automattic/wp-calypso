@@ -28,10 +28,14 @@ class ActivityLog extends Component {
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
 
+		// FIXME: Testing only
+		isPressable: PropTypes.bool,
+
 		// localize
 		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 	}
@@ -283,16 +287,15 @@ class ActivityLog extends Component {
 		</div>;
 	}
 
+	// FIXME: This is for internal testing
 	renderErrorMessage() {
 		const {
-			siteId,
+			isPressable,
 			rewindStatusError,
-			translate
+			translate,
 		} = this.props;
 		const rewindError = get( rewindStatusError, [ 'message' ], false );
 
-		// FIXME: check if on pressable for testing only
-		const isPressable = get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false );
 		if ( ! isPressable && ! rewindError ) {
 			return translate( 'Currently only available for Pressable sites' );
 		}
@@ -363,6 +366,9 @@ export default connect(
 			siteId,
 			slug: getSiteSlug( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
+
+			// FIXME: Testing only
+			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false ),
 		};
 	}
 )( localize( ActivityLog ) );
