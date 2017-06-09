@@ -175,7 +175,10 @@ a.web-preview__external {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: flex-end;
-	display: none;
+
+	a.web-preview__external + & {
+		margin-left: 0;
+	}
 
 	.button {
 		margin: 4px;
