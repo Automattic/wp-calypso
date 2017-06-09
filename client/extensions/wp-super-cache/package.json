@@ -7,6 +7,7 @@
 	"section": {
 		"name": "wp-super-cache",
 		"paths": [ "/extensions/wp-super-cache" ],
+		"settings_path": "/extensions/wp-super-cache",
 		"module": "wp-super-cache",
 		"group": "sites",
 		"secondary": true

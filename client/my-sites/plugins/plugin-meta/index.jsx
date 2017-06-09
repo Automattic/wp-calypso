@@ -7,10 +7,10 @@ import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import some from 'lodash/some';
 import get from 'lodash/get';
-import { includes } from 'lodash';
-import { isEmpty } from 'lodash';
+import { find, includes } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
+import sectionsModule from 'sections';
 
 /**
  * Internal dependencies
@@ -18,6 +18,7 @@ import { localize, moment } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
 import ExternalLink from 'components/external-link';
@@ -41,6 +42,7 @@ import {
 	isEnterprise
 } from 'lib/products-values';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/selectors';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
@@ -294,19 +296,6 @@ class PluginMeta extends Component {
 		}
 	}
 
-	getDefaultActionLinks( plugin ) {
-		let adminUrl = get( this.props, 'selectedSite.options.admin_url' );
-		const pluginSlug = get( plugin, 'slug' );
-
-		if ( pluginSlug === 'vaultpress' ) {
-			adminUrl += '/admin.php?page=vaultpress';
-		}
-
-		return adminUrl
-			? { [ i18n.translate( 'WP Admin' ) ]: adminUrl }
-			: null;
-	}
-
 	getUpdateWarning() {
 		const newVersions = this.getAvailableNewVersions();
 		if ( newVersions.length > 0 ) {
@@ -426,6 +415,14 @@ class PluginMeta extends Component {
 		analytics.ga.recordEvent( 'Plugins', 'Clicked Update All Sites Plugin', 'Plugin Name', this.props.pluginSlug );
 	}
 
+	getExtensionSettingsPath( plugin ) {
+		const pluginSlug = get( plugin, 'slug', '' );
+		const sections = sectionsModule.get();
+		const section = find( sections, ( value => value.name === pluginSlug ) );
+
+		return get( section, 'settings_path' );
+	}
+
 	render() {
 		const cardClasses = classNames( 'plugin-meta__information', {
 			'has-button': this.hasOrgInstallButton(),
@@ -434,10 +431,7 @@ class PluginMeta extends Component {
 		} );
 
 		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
-		let actionLinks = get( plugin, 'action_links' );
-		if ( get( plugin, 'active' ) && isEmpty( actionLinks ) ) {
-			actionLinks = this.getDefaultActionLinks( plugin );
-		}
+		const path = this.getExtensionSettingsPath( plugin );
 
 		return (
 			<div className="plugin-meta">
@@ -453,33 +447,30 @@ class PluginMeta extends Component {
 							<div className="plugin-meta__meta">
 								{ this.renderAuthorUrl() }
 							</div>
-							{ ! isEmpty( actionLinks ) &&
-								<div className="plugin-meta__action-links">
-									{ Object.keys( actionLinks ).map( ( linkTitle, index ) => (
-										<Button compact icon
-											href={ actionLinks[ linkTitle ] }
-											target="_blank"
-											key={ 'action-link-' + index }
-											rel="noopener noreferrer">
-												{ linkTitle } <Gridicon icon="external" />
-										</Button>
-									) ) }
-								</div>
-							}
 						</div>
 						{ this.renderActions() }
 					</div>
-					{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) &&
-						<PluginInformation
-							plugin={ this.props.plugin }
-							isPlaceholder={ this.props.isPlaceholder }
-							site={ this.props.selectedSite }
-							pluginVersion={ plugin && plugin.version }
-							siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
-							hasUpdate={ this.getAvailableNewVersions().length > 0 }
-						/>
-					}
 				</Card>
+
+				{ path &&
+					<CompactCard
+						href={ `${ path }/${ this.props.slug }` }>
+						{ this.props.translate( 'Edit plugin settings' ) }
+					</CompactCard>
+				}
+
+				{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) &&
+				<Card className="plugin-meta__plugin-information-wrapper">
+					<PluginInformation
+						plugin={ this.props.plugin }
+						isPlaceholder={ this.props.isPlaceholder }
+						site={ this.props.selectedSite }
+						pluginVersion={ plugin && plugin.version }
+						siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
+						hasUpdate={ this.getAvailableNewVersions().length > 0 }
+					/>
+				</Card>
+				}
 
 				{ this.props.atEnabled &&
 					this.maybeDisplayUnsupportedNotice()
@@ -522,6 +513,7 @@ const mapStateToProps = state => {
 		atEnabled: isATEnabled( selectedSite ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
 		automatedTransferSite: isSiteAutomatedTransfer( state, siteId ),
+		slug: getSiteSlug( state, siteId ),
 	};
 };
 
