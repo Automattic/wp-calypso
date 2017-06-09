@@ -54,6 +54,11 @@ var PluginsDataActions = {
 			searchTerm: searchTerm
 		} );
 
+		if ( 'featured' === category ) {
+			this.fetchCuratedList( 'featured', 'woocommerce' );
+			return;
+		}
+
 		wporg.fetchPluginsList( {
 			pageSize: _LIST_DEFAULT_SIZE,
 			page: page,
@@ -76,6 +81,23 @@ var PluginsDataActions = {
 			}
 		} );
 	}, 25 ),
+
+	fetchCuratedList: function( category, slugs ) {
+		wporg.fetchPluginInformation( slugs, function( error, data ) {
+			debug( 'curated plugin list fetched from .org', category, slugs, error, data );
+			_fetchingLists[ category ] = null;
+			// _lastFetchedPagePerCategory[ category ] = page;
+			// _totalPagesPerCategory[ category ] = data.info.pages;
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_WPORG_PLUGINS_LIST',
+				action: 'FETCH_WPORG_PLUGINS_LIST',
+				page: 1,
+				category: category,
+				data: data ? utils.normalizePluginsList( [ data ] ) : null,
+				error: error
+			} );
+		} );
+	},
 
 	fetchNextCategoryPage: function( category, searchTerm ) {
 		var lastPage = _DEFAULT_FIRST_PAGE - 1;
