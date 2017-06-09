@@ -110,6 +110,7 @@ class CompactTinyMCE extends Component {
 		// TODO Investigate if there is a better way to do this in the future.
 		// The post editor adds a bunch of CSS rules that affect TinyMCE, in root components.
 		// To avoid making changes that affect the post editor at this time, we can load a small set of CSS.
+		// This mainly affects the text format drop down which renders outside of any elements that we can target.
 		tinymce.DOM.loadCSS( '/calypso/tinymce/skins/woocommerce/editor.css' );
 	}
 

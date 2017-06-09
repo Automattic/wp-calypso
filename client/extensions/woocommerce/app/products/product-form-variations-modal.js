@@ -32,7 +32,7 @@ class ProductFormVariationsModal extends React.Component {
 		const { selectedVariation } = props;
 
 		this.state = {
-			selectedVariation: selectedVariation,
+			selectedVariation,
 			editor: () => this.editorComponent( selectedVariation ),
 		};
 
