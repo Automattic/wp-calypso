@@ -14,7 +14,7 @@ import { LOADING } from 'woocommerce/state/constants';
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} Object containing payment methods
  */
-export const getPaymentMethods = ( state, siteId ) => {
+export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'paymentMethods' ] );
 };
 

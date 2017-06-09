@@ -50,7 +50,6 @@ const loadedState = {
 };
 
 const loadingStateWithUi = { ...loadingState, ui: { selectedSiteId: 123 } };
-// const loadedStateWithUi = { ...loadedState, ui: { selectedSiteId: 123 } };
 
 describe( 'selectors', () => {
 	describe( '#arePaymentMethodsLoading', () => {
