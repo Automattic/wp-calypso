@@ -226,6 +226,12 @@ function mediaButton( editor ) {
 			if ( current.media.transient ) {
 				transients++;
 				isTransientDetected = true;
+
+				// Mark the image as a transient in upload
+				editor.dom.$( img ).toggleClass( 'is-transient', true );
+			} else {
+				// Remove the transient flag if present
+				editor.dom.$( img ).toggleClass( 'is-transient', false );
 			}
 
 			if (

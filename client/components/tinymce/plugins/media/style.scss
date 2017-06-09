@@ -1,0 +1,10 @@
+img.is-transient {
+	transform: translate3d(0,0,0);
+
+	animation: pulse-image 2.5s ease-in-out infinite;
+	opacity: 0.25;
+}
+
+@keyframes pulse-image {
+	50% { opacity: 0.5; }
+}
