@@ -28,12 +28,14 @@ import PaymentMethodItem from './payment-method-item';
 class SettingsPaymentsOffSite extends Component {
 	static propTypes = {
 		closeEditingPaymentMethod: PropTypes.func.isRequired,
-		currentlyEditingMethod: PropTypes.object,
+		currentlyEditingMethod: PropTypes.shape( {
+			id: PropTypes.object,
+		} ),
 		fetchPaymentMethods: PropTypes.func.isRequired,
 		openPaymentMethodForEdit: PropTypes.func.isRequired,
-		paymentMethods: PropTypes.array,
-		paymentMethodSave: PropTypes.func,
-		siteId: PropTypes.number,
+		paymentMethods: PropTypes.array.isRequired,
+		paymentMethodSave: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
 	};
 
 	componentDidMount() {
@@ -41,8 +43,7 @@ class SettingsPaymentsOffSite extends Component {
 	}
 
 	onCancel = ( method ) => {
-		const { siteId } = this.props;
-		this.props.closeEditingPaymentMethod( siteId, method.id );
+		this.props.closeEditingPaymentMethod( this.props.siteId, method.id );
 	}
 
 	onEdit = ( method ) => {
@@ -51,8 +52,7 @@ class SettingsPaymentsOffSite extends Component {
 	}
 
 	onEditField = ( field, value ) => {
-		const { siteId } = this.props;
-		this.props.changePaymentMethodField( siteId, field, value );
+		this.props.changePaymentMethodField( this.props.siteId, field, value );
 	}
 
 	onSave = ( method ) => {

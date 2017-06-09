@@ -17,9 +17,18 @@ import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 class PaymentMethodEdit extends Component {
 
 	static propTypes = {
-		method: PropTypes.object,
-		translate: PropTypes.func,
-		onEditField: PropTypes.func,
+		method: PropTypes.shape( {
+			settings: PropTypes.shape( {
+				title: PropTypes.shape( {
+					id: PropTypes.string.isRequired,
+					label: PropTypes.string.isRequired,
+					type: PropTypes.string.isRequired,
+					value: PropTypes.string.isRequired,
+				} ),
+			} ),
+		} ),
+		translate: PropTypes.func.isRequired,
+		onEditField: PropTypes.func.isRequired,
 	};
 
 	onEditFieldHandler = ( e ) => {
@@ -31,7 +40,7 @@ class PaymentMethodEdit extends Component {
 	}
 
 	renderEditCheckbox = ( setting ) => {
-		const checked = setting.value === 'yes';
+		const checked = 'yes' === setting.value;
 		return (
 			<PaymentMethodEditFormToggle
 				checked={ checked }
@@ -45,11 +54,12 @@ class PaymentMethodEdit extends Component {
 		return (
 			<div className="payments__method-edit-field-container" key={ editField }>
 				{ setting.label }
-				{ setting.type === 'checkbox' && this.renderEditCheckbox( setting ) }
-				{ setting.type === 'email' && this.renderEditTextbox( setting ) }
-				{ setting.type === 'password' && this.renderEditPassword( setting ) }
-				{ setting.type === 'text' && this.renderEditTextbox( setting ) }
-				{ setting.type === 'select' && this.renderEditSelect( setting ) }
+				{ 'checkbox' === setting.type && this.renderEditCheckbox( setting ) }
+				{ 'email' === setting.type && this.renderEditTextbox( setting ) }
+				{ 'password' === setting.type && this.renderEditPassword( setting ) }
+				{ 'text' === setting.type && this.renderEditTextbox( setting ) }
+				{ 'select' === setting.type && this.renderEditSelect( setting ) }
+				<hr />
 			</div>
 		);
 	}
@@ -61,11 +71,11 @@ class PaymentMethodEdit extends Component {
 	}
 
 	renderEditSelect = ( setting ) => {
-		const optionKeys = Object.keys( setting.options );
+		const optionKeys = setting.options && Object.keys( setting.options );
 		return (
 			<FormSelect name={ setting.id } onChange={ this.onEditFieldHandler } value={ setting.value }>
-				{ optionKeys && optionKeys.map( ( option ) => {
-					return this.renderSelectOptions( option, setting.options[ option ] );
+				{ optionKeys.map( ( option ) => {
+					return this.renderSelectOption( option, setting.options[ option ] );
 				} ) }
 			</FormSelect>
 		);
@@ -77,7 +87,7 @@ class PaymentMethodEdit extends Component {
 		);
 	}
 
-	renderSelectOptions = ( key, title ) => {
+	renderSelectOption = ( key, title ) => {
 		return (
 			<option key={ key } value={ key }>{ title }</option>
 		);
@@ -85,16 +95,12 @@ class PaymentMethodEdit extends Component {
 
 	render() {
 		const { method, translate } = this.props;
-		const settingsFieldsKeys = Object.keys( method.settings );
+		const settingsFieldsKeys = method.settings && Object.keys( method.settings );
 		return (
 			<ListItem>
-				{
-					settingsFieldsKeys &&
-					settingsFieldsKeys.length &&
-					settingsFieldsKeys.map( this.renderEditField )
-				}
+				{	settingsFieldsKeys.map( this.renderEditField ) }
 				<Button primary onClick={ this.onSaveHandler }>
-					{ translate( 'save' ) }
+					{ translate( 'Save' ) }
 				</Button>
 			</ListItem>
 		);
