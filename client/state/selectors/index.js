@@ -41,6 +41,8 @@ export getJetpackSettings from './get-jetpack-settings';
 export getJetpackSettingsSaveError from './get-jetpack-settings-save-error';
 export getJetpackSettingsSaveRequestStatus from './get-jetpack-settings-save-request-status';
 export getReaderFollowsLastSyncTime from './get-reader-follows-last-sync-time';
+export getRewindStatusError from './get-rewind-status-error';
+export getRewindStartDate from './get-rewind-start-date';
 export getMagicLoginCurrentView from './get-magic-login-current-view';
 export getMagicLoginEmailAddressFormInput from './get-magic-login-email-address-form-input';
 export getMagicLoginEmailAddressFormInputIsValid from './get-magic-login-email-address-form-input-is-valid';
@@ -181,6 +183,8 @@ export isRequestingSiteConnectionStatus from './is-requesting-site-connection-st
 export isRequestingSiteMonitorSettings from './is-requesting-site-monitor-settings';
 export isRequestingTimezones from './is-requesting-timezones';
 export isRtl from './is-rtl';
+export isRewindActivating from './is-rewind-activating';
+export isRewindActive from './is-rewind-active';
 export isSavingSharingButtons from './is-saving-sharing-buttons';
 export isSendingBillingReceiptEmail from './is-sending-billing-receipt-email';
 export isSharingButtonsSaveSuccessful from './is-sharing-buttons-save-successful';
