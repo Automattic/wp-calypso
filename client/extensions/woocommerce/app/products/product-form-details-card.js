@@ -9,7 +9,6 @@ import { trim } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -38,7 +37,6 @@ export default class ProductFormDetailsCard extends Component {
 
 		this.setName = this.setName.bind( this );
 		this.setDescription = this.setDescription.bind( this );
-		this.toggleFeatured = this.toggleFeatured.bind( this );
 	}
 
 	// TODO: Consider consolidating the following set functions
@@ -70,11 +68,6 @@ export default class ProductFormDetailsCard extends Component {
 		editProduct( product, { description: e.target.value } );
 	}
 
-	toggleFeatured() {
-		const { product, editProduct } = this.props;
-		editProduct( product, { featured: ! product.featured } );
-	}
-
 	onImageUpload = ( image ) => {
 		const { product, editProduct } = this.props;
 		const images = product.images && [ ...product.images ] || [];
@@ -98,15 +91,6 @@ export default class ProductFormDetailsCard extends Component {
 
 		return (
 			<Card className="products__product-form-details">
-				<div className="products__product-form-details-featured">
-					<FormLabel>
-						{ __( 'Featured' ) }
-						<CompactFormToggle
-							onChange={ this.toggleFeatured }
-							checked={ product.featured }
-						/>
-					</FormLabel>
-				</div>
 				<div className="products__product-form-details-wrapper">
 					<ProductFormImages
 						images={ images }

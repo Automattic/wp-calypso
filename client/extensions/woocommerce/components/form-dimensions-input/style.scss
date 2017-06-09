@@ -25,9 +25,13 @@
 	.form-dimensions-input__width {
 		border-bottom-width: 0;
 		@include breakpoint( ">480px" ) {
-			border-right: 0;
 			border-bottom-width: 1px;
 		}
+	}
+
+	.form-dimensions-input__width,
+	.form-dimensions-input__height {
+		margin-left: -1px;
 	}
 
 	.form-dimensions-input__length,
