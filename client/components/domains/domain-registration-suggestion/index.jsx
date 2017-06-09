@@ -12,7 +12,6 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import Gridicon from 'gridicons';
 import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
 import { shouldBundleDomainWithPlan, getDomainPriceRule, hasDomainInCart } from 'lib/cart-values/cart-items';
-import { abtest } from 'lib/abtest';
 
 const DomainRegistrationSuggestion = React.createClass( {
 	propTypes: {
@@ -89,8 +88,7 @@ const DomainRegistrationSuggestion = React.createClass( {
 			buttonContent = <Gridicon icon="checkmark" />;
 		} else {
 			buttonClasses = 'add is-primary';
-			const allowUpgradeCta = ! isSignupStep || abtest( 'selectCtaInDomainsSignup' ) === 'original';
-			buttonContent = allowUpgradeCta && shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
+			buttonContent = ! isSignupStep && shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
 				? translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
 				: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}

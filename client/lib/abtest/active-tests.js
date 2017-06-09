@@ -101,14 +101,6 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
-	selectCtaInDomainsSignup: {
-		datestamp: '20170529',
-		variations: {
-			original: 50,
-			select: 50,
-		},
-		defaultVariation: 'original',
-	},
 	pulsingCartTestingAB: {
 		datestamp: '20170601',
 		variations: {
