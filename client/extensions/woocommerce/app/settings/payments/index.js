@@ -8,7 +8,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Main from 'components/main';
-// import SettingsPaymentsLocationCurrency from './payments-location-currency';
 import SettingsPaymentsOffline from './payments-offline';
 import SettingsPaymentsOffSite from './payments-off-site';
 import SettingsPaymentsOnSite from './payments-on-site';

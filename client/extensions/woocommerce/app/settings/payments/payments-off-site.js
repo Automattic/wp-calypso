@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import {
 	changePaymentMethodField,
 	closeEditingPaymentMethod,
-	openPaymentMethodForEdit
+	openPaymentMethodForEdit,
 } from 'woocommerce/state/ui/payments/methods/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';

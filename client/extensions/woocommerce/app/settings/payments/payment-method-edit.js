@@ -99,7 +99,7 @@ class PaymentMethodEdit extends Component {
 		const settingsFieldsKeys = method.settings && Object.keys( method.settings );
 		return (
 			<ListItem>
-				{	settingsFieldsKeys.map( this.renderEditField ) }
+				{ settingsFieldsKeys.map( this.renderEditField ) }
 				<hr />
 				<Button primary onClick={ this.onSaveHandler }>
 					{ translate( 'Save' ) }
