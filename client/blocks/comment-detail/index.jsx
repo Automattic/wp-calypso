@@ -152,6 +152,8 @@ export class CommentDetail extends Component {
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
+					postTitle={ postTitle }
+					postUrl={ postUrl }
 					toggleApprove={ this.toggleApprove }
 					toggleExpanded={ this.toggleExpanded }
 					toggleLike={ this.toggleLike }
@@ -210,7 +212,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentStatus: comment.status,
 		postAuthorDisplayName: get( comment, 'post.author.name' ),
 		postTitle: get( comment, 'post.title' ),
-		postUrl: get( comment, 'post.link' ),
+		postUrl: get( comment, 'URL' ),
 		repliedToComment: comment.replied, // TODO: not available in the current data structure
 		siteId: comment.siteId,
 	} );

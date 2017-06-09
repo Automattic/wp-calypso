@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 
@@ -10,7 +11,16 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import CommentDetailActions from './comment-detail-actions';
+import ExternalLink from 'components/external-link';
 import FormCheckbox from 'components/forms/form-checkbox';
+
+const controlExternalLink = isBulkEdit => event => {
+	if ( isBulkEdit ) {
+		event.preventDefault();
+	} else {
+		event.stopPropagation();
+	}
+};
 
 export const CommentDetailHeader = ( {
 	authorAvatarUrl,
@@ -24,12 +34,15 @@ export const CommentDetailHeader = ( {
 	edit,
 	isBulkEdit,
 	isExpanded,
+	postTitle,
+	postUrl,
 	toggleApprove,
 	toggleExpanded,
 	toggleLike,
 	toggleSelected,
 	toggleSpam,
 	toggleTrash,
+	translate,
 } ) => {
 	if ( isExpanded ) {
 		return (
@@ -56,26 +69,37 @@ export const CommentDetailHeader = ( {
 	return (
 		<div
 			className={ classNames( 'comment-detail__header', 'is-preview', { 'is-bulk-edit': isBulkEdit } ) }
-			onClick={ isBulkEdit ? noop : toggleExpanded }
+			onClick={ isBulkEdit ? toggleSelected : toggleExpanded }
 		>
 			{ isBulkEdit &&
 				<label className="comment-detail__checkbox">
-					<FormCheckbox
-						checked={ commentIsSelected }
-						onChange={ toggleSelected }
-					/>
+					<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
 				</label>
 			}
-			<div className="comment-detail__author-info">
+			<div className="comment-detail__author-preview">
 				<div className="comment-detail__author-avatar">
 					<img className="comment-detail__author-avatar-image" src={ authorAvatarUrl } />
 				</div>
-				<strong>
-					{ authorDisplayName }
-				</strong>
-				<span>
-					{ authorUrl }
-				</span>
+				<div className="comment-detail__author-info">
+					<div className="comment-detail__author-info-element">
+						<strong>
+							{ authorDisplayName }
+						</strong>
+						<span>
+							{ authorUrl }
+						</span>
+					</div>
+					<div className="comment-detail__author-info-element">
+						{ translate( 'on {{postLink/}}', {
+							components: {
+								postLink:
+									<ExternalLink href={ postUrl } onClick={ controlExternalLink( isBulkEdit ) }>
+										{ postTitle }
+									</ExternalLink>,
+							},
+						} ) }
+					</div>
+				</div>
 			</div>
 			<div className="comment-detail__comment-preview">
 				{ commentContent }
@@ -84,4 +108,4 @@ export const CommentDetailHeader = ( {
 	);
 };
 
-export default CommentDetailHeader;
+export default localize( CommentDetailHeader );
