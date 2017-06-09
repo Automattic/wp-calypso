@@ -11,6 +11,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
+import { isDefaultLocale } from 'lib/i18n-utils';
 import { isSectionIsomorphic } from 'state/ui/selectors';
 import {
 	getDocumentHeadFormattedTitle,
@@ -35,8 +36,6 @@ function bumpStat( group, name ) {
 		superagent.get( statUrl ).end();
 	}
 }
-
-const isDefaultLang = lang => lang === config( 'i18n_default_locale_slug' );
 
 /**
 * Render and cache supplied React element to a markup string.
@@ -79,7 +78,7 @@ export function serverRender( req, res ) {
 	const context = req.context;
 	let title, metas = [], links = [];
 
-	if ( ! isDefaultLang( context.lang ) ) {
+	if ( ! isDefaultLocale( context.lang ) ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
 	}
 
@@ -88,7 +87,7 @@ export function serverRender( req, res ) {
 		context.layout &&
 		! context.user &&
 		isEmpty( context.query ) &&
-		isDefaultLang( context.lang )
+		isDefaultLocale( context.lang )
 	) {
 		// context.pathname doesn't include querystring, so it's a suitable cache key.
 		let key = context.pathname;
