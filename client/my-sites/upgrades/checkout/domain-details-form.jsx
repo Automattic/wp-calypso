@@ -215,7 +215,7 @@ export class DomainDetailsForm extends PureComponent {
 			return [];
 		}
 
-		return cartItems.hasTld( this.props.cart, 'fr' ) ? [ 'fr' ] : [];
+		return cartItems.getTlds( this.props.cart );
 	}
 
 	getNumberOfDomainRegistrations() {
@@ -499,6 +499,7 @@ export class DomainDetailsForm extends PureComponent {
 	renderCurrentForm() {
 		switch ( this.state.currentStep ) {
 			// TODO: gather up tld specific stuff
+			case 'ca':
 			case 'fr':
 				return this.renderExtraDetailsForm();
 			default:
