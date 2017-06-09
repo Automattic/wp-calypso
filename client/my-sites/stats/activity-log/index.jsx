@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { groupBy, map } from 'lodash';
+import { groupBy, map, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +12,7 @@ import { groupBy, map } from 'lodash';
 import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { getRewindStatusError } from 'state/selectors';
 import StatsFirstView from '../stats-first-view';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from '../stats-navigation';
@@ -26,11 +27,19 @@ class ActivityLog extends Component {
 		isJetpack: PropTypes.bool,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
+		rewindStatusError: PropTypes.shape( {
+			error: PropTypes.string.isRequired,
+			message: PropTypes.string.isRequired,
+		} ),
+
+		// FIXME: Testing only
+		isPressable: PropTypes.bool,
 
 		// localize
 		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 	}
@@ -282,12 +291,27 @@ class ActivityLog extends Component {
 		</div>;
 	}
 
-	render() {
+	// FIXME: This is for internal testing
+	renderErrorMessage() {
 		const {
-			isJetpack,
+			isPressable,
+			rewindStatusError,
+			translate,
+		} = this.props;
+
+		// FIXME: Do something nicer with the error
+		if ( rewindStatusError ) {
+			return translate( 'Rewind error: %s', { args: rewindStatusError.message } );
+		}
+		if ( ! isPressable ) {
+			return translate( 'Currently only available for Pressable sites' );
+		}
+	}
+
+	renderContent() {
+		const {
 			moment,
 			siteId,
-			slug,
 		} = this.props;
 		const logs = this.logs();
 		const logsGroupedByDate = map(
@@ -307,6 +331,23 @@ class ActivityLog extends Component {
 		);
 
 		return (
+			<div>
+				{ this.renderBanner() }
+				<section className="activity-log__wrapper">
+					{ logsGroupedByDate }
+				</section>
+			</div>
+		);
+	}
+
+	render() {
+		const {
+			isJetpack,
+			siteId,
+			slug,
+		} = this.props;
+
+		return (
 			<Main wideLayout={ true }>
 				<QueryRewindStatus siteId={ siteId } />
 				<StatsFirstView />
@@ -316,10 +357,7 @@ class ActivityLog extends Component {
 					slug={ slug }
 					section="activity"
 				/>
-				{ this.renderBanner() }
-				<section className="activity-log__wrapper">
-					{ logsGroupedByDate }
-				</section>
+				{ this.renderErrorMessage() || this.renderContent() }
 			</Main>
 		);
 	}
@@ -331,7 +369,11 @@ export default connect(
 		return {
 			isJetpack: isJetpackSite( state, siteId ),
 			siteId,
-			slug: getSiteSlug( state, siteId )
+			slug: getSiteSlug( state, siteId ),
+			rewindStatusError: getRewindStatusError( state, siteId ),
+
+			// FIXME: Testing only
+			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false ),
 		};
 	}
 )( localize( ActivityLog ) );
