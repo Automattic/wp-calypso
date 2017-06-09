@@ -18,6 +18,7 @@ import Legend from 'components/chart/legend';
 import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
 import { calculateDelta } from 'woocommerce/app/store-stats/utils';
+import Delta from 'woocommerce/components/delta';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
@@ -96,13 +97,16 @@ class StoreStatsChart extends Component {
 								<Tab
 									key={ tab.attr }
 									index={ tabIndex }
+									label={ tab.label }
 									selected={ tabIndex === selectedTabIndex }
 									tabClick={ this.tabClick }
 								>
-									<div>{ tab.label }</div>
-									<div>{ itemChartData.value }</div>
-									<div>{ delta.value }</div>
-									<div>{ delta.since }</div>
+									<span className="store-stats-chart__value value">{ itemChartData.value }</span>
+									<Delta
+										decimalValue={ delta.value }
+										isIncreaseFavorable={ delta.isIncreaseFavorable }
+										sinceLabel={ delta.sinceLabel }
+									/>
 								</Tab>
 							);
 						}

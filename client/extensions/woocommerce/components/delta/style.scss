@@ -1,0 +1,42 @@
+.delta {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+
+	.delta__icon {
+		width: 20px;
+		height: 20px;
+		background-color: #E9EFF3;
+		border-radius: 5px;
+
+		&.is-good {
+			background-color: #4AB866;
+		}
+		&.is-bad {
+			background-color: #D54E21;
+		}
+		&.gridicon {
+			fill: white;
+			padding: 3px 1px;
+			margin: 0 12px 0 0;
+		}
+	}
+
+	.delta__description {
+		align-items: center;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+
+		.delta__description-value,
+		.delta__description-since {
+			font-size: 14px;
+			color: #537994;
+			line-height: 14px;
+		}
+
+		.delta__description-value {
+			margin-right: 6px;
+		}
+	}
+}

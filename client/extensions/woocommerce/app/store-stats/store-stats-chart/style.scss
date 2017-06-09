@@ -1,0 +1,53 @@
+.stats-tab {
+	a {
+		align-items: center;
+		display: flex;
+		flex-direction: row;
+		padding-bottom: 10px;
+		width: 100%;
+
+		.label {
+			width: 40%;
+		}
+
+		.value {
+			display: none;
+			float: none;
+		}
+
+		.store-stats-chart__value {
+			&.value {
+				display: inline-block;
+				padding-right: 10px;
+				text-align: right;
+				width: 25%;
+			}
+		}
+
+		.delta {
+			width: 35%;
+		}
+
+		@include breakpoint( '>480px' ) {
+			flex-direction: column;
+			justify-content: center;
+
+			.label {
+				width: 100%;
+			}
+
+			.store-stats-chart__value {
+				&.value {
+					width: 100%;
+					text-align: center;
+					padding: 0;
+				}
+			}
+
+			.delta {
+				width: 100%;
+				justify-content: center;
+			}
+		}
+	}
+}

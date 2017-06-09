@@ -34,7 +34,7 @@ const StatsNavigation = ( props ) => {
 			statsControl = (
 				<SegmentedControl
 					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-					className="stats-navigation__control"
+					className="stats-navigation__control for-woocommerce"
 					initialSelected="site"
 					options={ [
 						{
