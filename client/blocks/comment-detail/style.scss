@@ -73,13 +73,12 @@
 	flex-flow: row nowrap;
 	padding: 12px 8px;
 
-	&.is-preview:not( .is-bulk-edit ) {
+	&.is-preview {
 		cursor: pointer;
 	}
 
 	&.is-bulk-edit {
 		.comment-detail__checkbox {
-			cursor: pointer;
 			padding-left: 8px;
 			.form-checkbox {
 				margin: 0;
@@ -87,6 +86,11 @@
 		}
 		.comment-detail__author-preview {
 			padding: 0 12px;
+			.external-link:hover,
+			.external-link:focus {
+				color: $blue-wordpress;
+				outline: none;
+			}
 		}
 	}
 
