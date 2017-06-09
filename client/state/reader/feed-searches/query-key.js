@@ -11,5 +11,5 @@
  */
 export default function keyBy( query ) {
 	const excludeFollowed = query.excludeFollowed ? 'X' : 'A';
-	return `${ query.query }-${ excludeFollowed }`;
+	return `${ query.query }-${ excludeFollowed }-${ query.sort }`;
 }

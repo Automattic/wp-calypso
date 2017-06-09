@@ -29,6 +29,7 @@ export function initiateFeedSearch( store, action ) {
 				q: action.payload.query,
 				offset: action.payload.offset,
 				exclude_followed: action.payload.excludeFollowed,
+				sort: action.payload.sort,
 			},
 			onSuccess: action,
 			onFailure: action,

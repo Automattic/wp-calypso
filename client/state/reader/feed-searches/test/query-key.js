@@ -13,12 +13,12 @@ import queryKey from '../query-key';
 describe( 'query-key', () => {
 	it( 'should generate the expected query keys', () => {
 		[
-			[ requestFeedSearch( { query: 'one' } ), 'one-X' ],
-			[ requestFeedSearch( { query: 'one', offset: 10 } ), 'one-X' ],
-			[ requestFeedSearch( { query: 'one', excludeFollowed: false } ), 'one-A' ],
+			[ requestFeedSearch( { query: 'one' } ), 'one-X-relevance' ],
+			[ requestFeedSearch( { query: 'one', offset: 10 } ), 'one-X-relevance' ],
+			[ requestFeedSearch( { query: 'one', excludeFollowed: false } ), 'one-A-relevance' ],
 			[
 				requestFeedSearch( { query: 'one', excludeFollowed: false, sort: SORT_BY_LAST_UPDATED } ),
-				'one-A',
+				'one-A-last_updated',
 			],
 		].forEach( ( [ action, expectedKey ] ) => {
 			expect( queryKey( action.payload ) ).to.equal( expectedKey );
