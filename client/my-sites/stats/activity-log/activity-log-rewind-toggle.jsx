@@ -14,6 +14,10 @@ import {
 	activateRewind as activateRewindAction,
 	deactivateRewind as deactivateRewindAction,
 } from 'state/activity-log/actions';
+import {
+	isRewindActivating,
+	isRewindActive,
+} from 'state/selectors';
 
 class ActivityLogRewindToggle extends Component {
 	static propTypes = {
@@ -82,10 +86,9 @@ class ActivityLogRewindToggle extends Component {
 }
 
 export default connect(
-	// FIXME: Selectors!
-	() => ( {
-		isToggling: false,
-		isActive: false,
+	( state, { siteId }) => ( {
+		isToggling: isRewindActivating( siteId ),
+		isActive: isRewindActive( siteId ),
 	} ), {
 		activateRewind: activateRewindAction,
 		deactivateRewind: deactivateRewindAction,
