@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, noop, toInteger } from 'lodash';
+import { get, isEqual, noop, toInteger } from 'lodash';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import debugFactory from 'debug';
@@ -120,7 +120,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	render() {
 		const translate = this.props.translate;
-		const registrantType = this.props.contactDetails.extra.registrantType;
+		const registrantType = get( this.props, 'contactDetails.extra.registrantType', 'individual' );
 		return (
 			<form className="registrant-extra-info__form">
 				<h1 className="registrant-extra-info__form-title">
