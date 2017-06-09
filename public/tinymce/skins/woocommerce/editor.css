@@ -6,3 +6,7 @@
 .mce-tinymce .mce-btn-group .mce-btn.mce-last {
 	position: initial;
 }
+
+.mce-container.mce-menu {
+	margin-left: -1px;
+}
