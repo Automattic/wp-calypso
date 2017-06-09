@@ -1,8 +1,24 @@
 /**
  * External dependencies
  */
-var update = require( 'react-addons-update' );
-import { every, assign, flow, isEqual, merge, reject, tail, some, uniq, flatten, filter, find, get } from 'lodash';
+import update from 'react-addons-update';
+import {
+	assign,
+	every,
+	filter,
+	find,
+	flatten,
+	flow,
+	get,
+	isEqual,
+	map,
+	merge,
+	reject,
+	some,
+	trimStart,
+	tail,
+	uniq,
+} from 'lodash';
 
 /**
  * Internal dependencies
