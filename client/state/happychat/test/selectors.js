@@ -25,7 +25,12 @@ import {
 	isHappychatAvailable,
 	wasHappychatRecentlyActive,
 	getGeoLocation,
+	getGroups,
 } from '../selectors';
+import {
+	HAPPYCHAT_GROUP_WPCOM,
+	HAPPYCHAT_GROUP_JPOP
+} from '../constants';
 
 const TIME_SECOND = 1000;
 const TIME_MINUTE = TIME_SECOND * 60;
@@ -267,6 +272,45 @@ describe( 'selectors', () => {
 				}
 			} );
 			expect( selected.city ).to.equal( 'Timisoara' );
+		} );
+	} );
+
+	describe( '#getGroups()', () => {
+		it( 'should return default group for no sites', () => {
+			const siteId = 1;
+			const state = {
+				sites: {
+					items: {}
+				}
+			};
+
+			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
+		} );
+
+		it( 'should return default group for no siteId', () => {
+			const siteId = undefined;
+			const state = {
+				sites: {
+					items: {
+						1: {}
+					}
+				}
+			};
+
+			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
+		} );
+
+		it( 'should return JPOP group for jetpack site', () => {
+			const siteId = 1;
+			const state = {
+				sites: {
+					items: {
+						[ siteId ]: { jetpack: true }
+					}
+				}
+			};
+
+			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_JPOP ] );
 		} );
 	} );
 } );

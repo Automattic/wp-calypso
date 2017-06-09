@@ -21,14 +21,10 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
-import siteList from 'lib/sites-list';
 import ChatClosureNotice from '../chat-closure-notice';
 import { getSelectedSiteId } from 'state/ui/selectors';
-
-/**
- * Module variables
- */
-const sites = siteList();
+import { getHelpSelectedSiteId } from 'state/help/selectors';
+import { selectSiteId } from 'state/help/actions';
 
 export const HelpContactForm = React.createClass( {
 	mixins: [ LinkedStateMixin, PureRenderMixin ],
@@ -77,7 +73,6 @@ export const HelpContactForm = React.createClass( {
 			howYouFeel: 'unspecified',
 			message: '',
 			subject: '',
-			siteId: this.getSiteId()
 		};
 	},
 
@@ -91,24 +86,6 @@ export const HelpContactForm = React.createClass( {
 
 	componentDidUpdate() {
 		this.props.valueLink.requestChange( this.state );
-	},
-
-	getSiteId() {
-		if ( this.props.selectedSiteId ) {
-			return this.props.selectedSiteId;
-		}
-
-		const primarySite = sites.getPrimary();
-		if ( primarySite ) {
-			return primarySite.ID;
-		}
-
-		return null;
-	},
-
-	setSite( siteSlug ) {
-		const site = sites.getSite( siteSlug );
-		this.setState( { siteId: site.ID } );
 	},
 
 	trackClickStats( selectionName, selectedOption ) {
@@ -247,8 +224,8 @@ export const HelpContactForm = React.createClass( {
 					<div className="help-contact-form__site-selection">
 						<FormLabel>{ translate( 'Which site do you need help with?' ) }</FormLabel>
 						<SitesDropdown
-							selectedSiteId={ this.state.siteId }
-							onSiteSelect={ this.setSite } />
+							selectedSiteId={ this.props.selectedSiteId }
+							onSiteSelect={ this.props.onChangeSite } />
 					</div>
 				) }
 
@@ -275,8 +252,12 @@ export const HelpContactForm = React.createClass( {
 
 const mapStateToProps = ( state ) => {
 	return {
-		selectedSiteId: getSelectedSiteId( state )
+		selectedSiteId: getHelpSelectedSiteId( state ) || getSelectedSiteId( state )
 	};
 };
 
-export default connect( mapStateToProps )( localize( HelpContactForm ) );
+const mapDispatchToProps = {
+	onChangeSite: selectSiteId
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );

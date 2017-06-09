@@ -20,6 +20,7 @@ import {
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
+	HELP_CONTACT_FORM_SITE_SELECT,
 	ROUTE_SET,
 
 	COMMENTS_CHANGE_STATUS_SUCESS,
@@ -57,6 +58,7 @@ import {
 	isHappychatClientConnected,
 	isHappychatChatAssigned,
 	getGeoLocation,
+	getGroups,
 } from './selectors';
 import {
 	getCurrentUser,
@@ -99,6 +101,7 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 
 	const user = getCurrentUser( state );
 	const locale = getCurrentUserLocale( state );
+	const groups = getGroups( state );
 
 	// Notify that a new connection is being established
 	dispatch( setConnecting() );
@@ -129,8 +132,20 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 
 			return sign( { user, session_id } );
 		} )
-		.then( ( { jwt } ) => connection.open( user.ID, jwt, locale ) )
+		.then( ( { jwt } ) => connection.open( user.ID, jwt, locale, groups ) )
 		.catch( e => debug( 'failed to start happychat session', e, e.stack ) );
+};
+
+
+export const updateChatPreferences = ( connection, { getState }, siteId ) => {
+	const state = getState();
+
+	if ( isHappychatClientConnected( state ) ) {
+		const locale = getCurrentUserLocale( state );
+		const groups = getGroups( state, siteId );
+
+		connection.setPreferences( locale, groups );
+	}
 };
 
 export const requestTranscript = ( connection, { dispatch } ) => {
@@ -308,6 +323,10 @@ export default function( connection = null ) {
 
 			case HAPPYCHAT_INITIALIZE:
 				connectIfRecentlyActive( connection, store );
+				break;
+        
+			case HELP_CONTACT_FORM_SITE_SELECT:
+				updateChatPreferences( connection, store, action.siteId );
 				break;
 
 			case HAPPYCHAT_SEND_USER_INFO:

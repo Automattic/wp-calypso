@@ -13,8 +13,11 @@ import {
  */
 import createSelector from 'lib/create-selector';
 import {
+	HAPPYCHAT_GROUP_WPCOM,
+	HAPPYCHAT_GROUP_JPOP,
 	HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT
 } from './constants';
+import { isJetpackSite } from 'state/sites/selectors';
 
 // How much time needs to pass before we consider the session inactive:
 const HAPPYCHAT_INACTIVE_TIMEOUT_MS = 1000 * 60 * 10;
@@ -28,6 +31,23 @@ export const HAPPYCHAT_CHAT_STATUS_DEFAULT = 'default';
 export const HAPPYCHAT_CHAT_STATUS_NEW = 'new';
 export const HAPPYCHAT_CHAT_STATUS_MISSED = 'missed';
 export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
+
+/**
+ * Grab the group or groups for happychat based on siteId
+ * @param {object} state Current state
+ * @param {int} siteId The site id, if no siteId is present primary siteId will be used
+ * @returns {array} of groups for site Id
+ */
+export const getGroups = ( state, siteId ) => {
+	const groups = [];
+
+	if ( isJetpackSite( state, siteId ) ) {
+		groups.push( HAPPYCHAT_GROUP_JPOP );
+	} else {
+		groups.push( HAPPYCHAT_GROUP_WPCOM );
+	}
+	return groups;
+};
 
 /**
  * Returns the geo location of the current user, based happychat session initiation (on ip)

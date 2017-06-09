@@ -34,6 +34,7 @@ import middleware, {
 	sendActionLogsAndEvents,
 	sendAnalyticsLogEvent,
 	sendRouteSetEventMessage,
+	updateChatPreferences,
 	sendInfo,
 } from '../middleware';
 import * as selectors from '../selectors';
@@ -51,7 +52,16 @@ describe( 'middleware', () => {
 		const uninitializedState = deepFreeze( {
 			currentUser: { id: 1 },
 			happychat: { connectionStatus: 'uninitialized' },
-			users: { items: { 1: {} } }
+			users: { items: { 1: {} } },
+			help: { selectedSiteId: 2647731 },
+			sites: {
+				items: {
+					2647731: {
+						ID: 2647731,
+						name: 'Manual Automattic Updates',
+					}
+				}
+			}
 		} );
 
 		useSandbox( sandbox => {
@@ -155,7 +165,16 @@ describe( 'middleware', () => {
 		const uninitializedState = deepFreeze( {
 			currentUser: { id: 1 },
 			happychat: { connectionStatus: 'uninitialized' },
-			users: { items: { 1: {} } }
+			users: { items: { 1: {} } },
+			help: { selectedSiteId: 2647731 },
+			sites: {
+				items: {
+					2647731: {
+						ID: 2647731,
+						name: 'Manual Automattic Updates',
+					}
+				}
+			}
 		} );
 		let connection, store;
 
@@ -241,6 +260,49 @@ describe( 'middleware', () => {
 						...response,
 					} );
 				} );
+		} );
+	} );
+
+	describe( 'HELP_CONTACT_FORM_SITE_SELECT action', () => {
+		it( 'should send the locale and groups through the connection and send a preferences signal', () => {
+			const state = {
+				happychat: {
+					connectionStatus: 'connected'
+				},
+				currentUser: {
+					locale: 'en',
+				},
+				sites: {
+					items: {
+						1: { ID: 1 }
+					}
+				}
+			};
+			const getState = () => state;
+			const connection = {
+				setPreferences: stub(),
+			};
+			updateChatPreferences( connection, { getState }, 1 );
+			expect( connection.setPreferences ).to.have.been.called;
+		} );
+
+		it( 'should not send the locale and groups if there is no happychat connection', () => {
+			const state = {
+				currentUser: {
+					locale: 'en',
+				},
+				sites: {
+					items: {
+						1: { ID: 1 }
+					}
+				}
+			};
+			const getState = () => state;
+			const connection = {
+				setPreferences: stub(),
+			};
+			updateChatPreferences( connection, { getState }, 1 );
+			expect( connection.setPreferences ).to.have.not.been.called;
 		} );
 	} );
 
