@@ -1,29 +1,33 @@
 jest.mock( 'lib/analytics', () => {} );
 
+/**
+ * External dependencies
+ */
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
 
 /**
  * Internal dependencies
  */
-import { createReduxStore } from 'state';
+import LayoutLoggedOut from 'layout/logged-out';
 
-describe( 'index', function() {
-	describe( 'when trying to renderToString() LayoutLoggedOut ', function() {
-		let LayoutLoggedOutFactory, props;
-
-		beforeAll( function() {
-			const LayoutLoggedOut = require( 'layout/logged-out' );
-			LayoutLoggedOutFactory = React.createFactory( LayoutLoggedOut );
-			props = {
-				store: createReduxStore(),
+describe( 'index', () => {
+	describe( 'when trying to renderToString() LayoutLoggedOut ', () => {
+		it( "doesn't throw an exception", () => {
+			const LayoutLoggedOutFactory = React.createFactory( LayoutLoggedOut );
+			const props = {
+				store: {
+					dispatch: () => {},
+					getState: () => ( {
+						ui: {},
+					} ),
+					subscribe: () => {},
+				},
 			};
-		} );
 
-		it( "doesn't throw an exception", function() {
 			expect(
-                ReactDomServer.renderToString.bind( ReactDomServer, LayoutLoggedOutFactory( props ) )
-            ).not.toThrow();
+				ReactDomServer.renderToString.bind( ReactDomServer, LayoutLoggedOutFactory( props ) ),
+			).not.toThrow();
 		} );
 	} );
 } );
