@@ -12,5 +12,5 @@ import { get } from 'lodash';
  * @return {boolean} true if rewind is enabled
  */
 export default function isRewindActive( state, siteId ) {
-	return get( state.activityLog.rewindStatus, [ siteId, 'active' ], false );
+	return !! get( state.activityLog.rewindStatus, [ siteId, 'active' ], false );
 }
