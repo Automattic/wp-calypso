@@ -7,7 +7,7 @@ import { get, filter, find, findIndex, remove } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getApiPaymentMethods, arePaymentMethodsLoaded } from 'woocommerce/state/sites/payment-methods/selectors';
+import { getPaymentMethods, arePaymentMethodsLoaded } from 'woocommerce/state/sites/payment-methods/selectors';
 
 const getPaymentMethodsEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'payments', siteId, 'methods' ] );
@@ -28,11 +28,11 @@ export const getPaymentMethodEdits = ( state, siteId ) => {
  * @return {Array} The list of payment methods that the UI should show. That will be the list of methods returned by
  * the wc-api with the edits "overlayed" on top of them.
  */
-export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! arePaymentMethodsLoaded( state, siteId ) ) {
 		return [];
 	}
-	const methods = [ ...getApiPaymentMethods( state, siteId ) ];
+	const methods = [ ...getPaymentMethods( state, siteId ) ];
 	const edits = getPaymentMethodsEdits( state, siteId );
 	if ( ! edits ) {
 		return methods;
@@ -67,7 +67,7 @@ export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) 
  * @return {Array} Array of Payment Methods of requested type
  */
 export const getPaymentMethodsGroup = ( state, type, siteId = getSelectedSiteId( state ) ) => {
-	return filter( getPaymentMethods( state, siteId ), { methodType: type } );
+	return filter( getPaymentMethodsWithEdits( state, siteId ), { methodType: type } );
 };
 
 /**
@@ -85,7 +85,7 @@ export const getCurrentlyEditingPaymentMethod = ( state, siteId = getSelectedSit
 		return null;
 	}
 
-	const method = find( getPaymentMethods( state, siteId ), { id: edits.currentlyEditingId } );
+	const method = find( getPaymentMethodsWithEdits( state, siteId ), { id: edits.currentlyEditingId } );
 	if ( ! method || ! edits.currentlyEditingChanges ) {
 		return { ...method };
 	}

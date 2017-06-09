@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer, { initialState } from '../reducer';
+import reducer from '../reducer';
 import {
 	openPaymentMethodForEdit,
 	closeEditingPaymentMethod,
@@ -16,9 +16,16 @@ import {
 
 const siteId = 123;
 
+const initialState = {
+	creates: [],
+	updates: [],
+	deletes: [],
+	currentlyEditingId: null,
+};
+
 describe( 'reducer', () => {
 	describe( 'openPaymentMethodForEdit', () => {
-		it( 'when the method has a server-side ID', () => {
+		it( 'should set currentlyEditingId when the method has a server-side ID', () => {
 			const newState = reducer( initialState, openPaymentMethodForEdit( siteId, 1 ) );
 			expect( newState.creates ).to.be.empty;
 			expect( newState.updates ).to.be.empty;
@@ -26,7 +33,7 @@ describe( 'reducer', () => {
 			expect( newState.currentlyEditingChanges ).to.be.empty;
 		} );
 
-		it( 'when the method has a provisional ID', () => {
+		it( 'should set currentlyEditingId when the method has a provisional ID', () => {
 			const newState = reducer( initialState, openPaymentMethodForEdit( siteId, { index: 0 } ) );
 			expect( newState.creates ).to.be.empty;
 			expect( newState.updates ).to.be.empty;

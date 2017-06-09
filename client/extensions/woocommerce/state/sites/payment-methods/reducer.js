@@ -21,6 +21,7 @@ export default createReducer( {}, {
 		return data;
 	},
 	[ WOOCOMMERCE_PAYMENT_METHOD_UPDATE ]: ( state ) => {
+		// TODO: Return some sort of saving indicator
 		return state;
 	},
 

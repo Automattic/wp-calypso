@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import {
 	arePaymentMethodsLoaded,
 	arePaymentMethodsLoading,
-	getApiPaymentMethods
+	getPaymentMethods
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
@@ -97,20 +97,20 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getApiPaymentMethods', () => {
+	describe( '#getPaymentMethods', () => {
 		it( 'should return paymentMethods when given populated state tree.', () => {
-			expect( getApiPaymentMethods( loadedState, 123 ) )
+			expect( getPaymentMethods( loadedState, 123 ) )
 				.to.deep.equal(
 					loadedState.extensions.woocommerce.sites[ 123 ].paymentMethods
 				);
 		} );
 
 		it( 'should return LOADING constant when given a loading state tree.', () => {
-			expect( getApiPaymentMethods( loadingState, 123 ) ).to.deep.equal( 'LOADING' );
+			expect( getPaymentMethods( loadingState, 123 ) ).to.deep.equal( 'LOADING' );
 		} );
 
 		it( 'should return undefined when given a pre-initialized state tree.', () => {
-			expect( getApiPaymentMethods( preInitializedState, 123 ) ).to.be.undefined;
+			expect( getPaymentMethods( preInitializedState, 123 ) ).to.be.undefined;
 		} );
 	} );
 } );

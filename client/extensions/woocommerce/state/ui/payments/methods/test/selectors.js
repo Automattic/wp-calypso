@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getPaymentMethodEdits,
-	getPaymentMethods,
+	getPaymentMethodsWithEdits,
 	getCurrentlyEditingPaymentMethod,
 	getPaymentMethodsGroup,
 	isCurrentlyEditingPaymentMethod,
@@ -16,8 +16,8 @@ import {
 import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'selectors', () => {
-	describe( 'get payment methods', () => {
-		it( 'when the methods are being loaded', () => {
+	describe( 'getPaymentMethodEdits', () => {
+		it( 'should return empty array when the methods are being loaded', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -33,10 +33,10 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getPaymentMethods( state ) ).to.deep.equal( [] );
+			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [] );
 		} );
 
-		it( 'when the methods didn\'t load', () => {
+		it( 'should return empty array when the methods didn\'t load', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -52,7 +52,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getPaymentMethods( state ) ).to.deep.equal( [] );
+			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [] );
 		} );
 
 		it( 'should return the WC-API methods list if there are no edits in the state', () => {
@@ -75,7 +75,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getPaymentMethods( state ) ).to.deep.equal( [
+			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [
 				{ id: 1, name: 'Method1' },
 				{ id: 2, name: 'Method2' },
 			] );
@@ -119,7 +119,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getPaymentMethods( state ) ).to.deep.equal( [
+			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [
 				{ id: 2, name: 'EditedMethod2' },
 				{ id: 3, name: 'Method3' },
 				{ id: { index: 0 }, name: 'Method4' },
@@ -157,12 +157,12 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getPaymentMethods( state ) ).to.deep.equal( [ { id: 1, name: 'Method1' } ] );
+			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [ { id: 1, name: 'Method1' } ] );
 		} );
 	} );
 
-	describe( 'get payment method currently being edited', () => {
-		it( 'when there is no method being edited', () => {
+	describe( 'getCurrentlyEditingPaymentMethod', () => {
+		it( 'should return null when there is no method being edited', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -193,7 +193,7 @@ describe( 'selectors', () => {
 			expect( isCurrentlyEditingPaymentMethod( state ) ).to.be.false;
 		} );
 
-		it( 'when there is a method being edited, without changes in that method', () => {
+		it( 'should return method when there is a method being edited, without changes in that method', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -228,7 +228,7 @@ describe( 'selectors', () => {
 			expect( isCurrentlyEditingPaymentMethod( state ) ).to.be.true;
 		} );
 
-		it( 'when there is a method being edited, with changes in that method', () => {
+		it( 'should return method with changes when there is a method being edited, with changes in that method', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -262,7 +262,7 @@ describe( 'selectors', () => {
 			expect( isCurrentlyEditingPaymentMethod( state ) ).to.be.true;
 		} );
 
-		it( 'when there is a newly created method being edited', () => {
+		it( 'should return new method from creates when there is a newly created method being edited', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -295,8 +295,8 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'get payment methods group', () => {
-		it( 'when no methods in group exist', () => {
+	describe( 'getPaymentMethodsGroup', () => {
+		it( 'should return emoty array when no methods of type exist', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -317,7 +317,7 @@ describe( 'selectors', () => {
 
 			expect( getPaymentMethodsGroup( state, 'bang' ) ).to.deep.equal( [] );
 		} );
-		it( 'when method in group exists', () => {
+		it( 'should return array of one method of type passed when one exists', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -338,7 +338,7 @@ describe( 'selectors', () => {
 
 			expect( getPaymentMethodsGroup( state, 'bang' ) ).to.deep.equal( [ { id: 2, name: 'Method2', methodType: 'bang' } ] );
 		} );
-		it( 'when methods in group exists', () => {
+		it( 'should return array of all methods of type when multiple exist', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -364,7 +364,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'get payment method edits', () => {
+	describe( 'getPaymentMethodEdits', () => {
 		it( 'should return currently editing payment method changes when given populated state tree.', () => {
 			const state = {
 				extensions: {

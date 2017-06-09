@@ -14,7 +14,7 @@ import { LOADING } from 'woocommerce/state/constants';
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} Object containing payment methods
  */
-export const getApiPaymentMethods = ( state, siteId ) => {
+export const getPaymentMethods = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'paymentMethods' ] );
 };
 
@@ -24,7 +24,7 @@ export const getApiPaymentMethods = ( state, siteId ) => {
  * @return {boolean} Whether the payment methods list has been successfully loaded from the server
  */
 export const arePaymentMethodsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isArray( getApiPaymentMethods( state, siteId ) );
+	return isArray( getPaymentMethods( state, siteId ) );
 };
 
 /**
@@ -33,5 +33,5 @@ export const arePaymentMethodsLoaded = ( state, siteId = getSelectedSiteId( stat
  * @return {boolean} Whether the payment methods list is currently being retrieved from the server
  */
 export const arePaymentMethodsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return LOADING === getApiPaymentMethods( state, siteId );
+	return LOADING === getPaymentMethods( state, siteId );
 };
