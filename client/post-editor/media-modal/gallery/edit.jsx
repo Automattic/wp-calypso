@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import noop from 'lodash/noop';
+import { map, noop, reverse, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -41,18 +41,29 @@ const EditorMediaModalGalleryEdit = React.createClass( {
 	},
 
 	render() {
-		const { site, settings } = this.props;
+		const { onUpdateSetting, site, settings, translate } = this.props;
 
 		if ( ! site || ! settings.items ) {
 			return null;
 		}
 
+		const orders = {
+			[ translate( 'Reverse order' ) ]: reverse( [ ...settings.items ] ),
+			[ translate( 'Order alphabetically' ) ]: sortBy( settings.items, 'title' ),
+			[ translate( 'Order chronologically' ) ]: sortBy( settings.items, 'date' ),
+		};
+
 		return (
 			<div>
 				<EllipsisMenu popoverClassName="gallery__order-popover" position="bottom right">
-					<PopoverMenuItem onClick={ this.props.onReverse }>
-						{ this.props.translate( 'Reverse order' ) }
-					</PopoverMenuItem>
+					{ map( orders, ( orderedItems, name ) => {
+						const boundAction = () => onUpdateSetting( { items: orderedItems } );
+						return (
+							<PopoverMenuItem onClick={ boundAction }>
+								{ name }
+							</PopoverMenuItem>
+						);
+					} ) }
 				</EllipsisMenu>
 				<SortableList onChange={ this.onOrderChanged }>
 					{ settings.items.map( ( item ) => {
