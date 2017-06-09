@@ -2,29 +2,17 @@
  * External dependencies
  */
 import page from 'page';
-import React from 'react';
+import { values } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection } from 'my-sites/controller';
-import { renderWithReduxStore } from 'lib/react-helpers';
-import Main from 'components/main';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-
-const render = ( context ) => {
-	renderWithReduxStore( (
-		<Main className="wp-job-manager__main">
-			<SectionHeader label="WP Job Manager" />
-			<Card>
-				<p>This is the start of something great!</p>
-				<p>This will be the home for your WP Job Manager integration with WordPress.com.</p>
-			</Card>
-		</Main>
-	), document.getElementById( 'primary' ), context.store );
-};
+import { navigation, sites, siteSelection } from 'my-sites/controller';
+import { settings } from './app/controller';
+import { Tabs } from './constants';
 
 export default function() {
-	page( '/extensions/wp-job-manager/:site?', siteSelection, navigation, render );
+	page( '/extensions/wp-job-manager', sites );
+	page( `/extensions/wp-job-manager/:tab(${ values( Tabs ).map( tab => tab.slug ).join( '|' ) })?/:site`,
+		siteSelection, navigation, settings );
 }
