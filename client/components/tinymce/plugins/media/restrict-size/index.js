@@ -36,8 +36,8 @@ function getResizedImgUrlFromImgString( img ) {
 	}
 
 	return {
-		originalURL: parsed.media.URL,
-		resizedURL: resize( parsed.media.URL, Math.min( parsed.media.width || Infinity, MAX_WIDTH ) )
+		originalUrl: parsed.media.URL,
+		resizedUrl: resize( parsed.media.URL, Math.min( parsed.media.width || Infinity, MAX_WIDTH ) )
 	};
 }
 
@@ -52,7 +52,7 @@ function setImageSrc( img, opening, src, closing ) {
 		return img;
 	}
 
-	return `${ opening }${ url.resizedURL }" data-wpmedia-src="${ url.originalURL }${ closing }`;
+	return `${ opening }${ url.resizedUrl }" data-wpmedia-src="${ url.originalUrl }${ closing }`;
 }
 
 export function resetImages( content ) {
@@ -77,7 +77,7 @@ export default function( editor ) {
 		const resizedUrl = getResizedImgUrlFromImgString( event.content );
 
 		if ( resizedUrl !== null ) {
-			event.resizedImageUrl = resizedUrl.resizedURL;
+			event.resizedImageUrl = resizedUrl.resizedUrl;
 		}
 	} );
 
