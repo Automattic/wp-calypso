@@ -5,6 +5,7 @@ import React from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -72,7 +73,7 @@ export const CommentDetailHeader = ( {
 		>
 			{ isBulkEdit &&
 				<label className="comment-detail__checkbox">
-					<FormCheckbox checked={ commentIsSelected } />
+					<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
 				</label>
 			}
 			<div className="comment-detail__author-preview">
