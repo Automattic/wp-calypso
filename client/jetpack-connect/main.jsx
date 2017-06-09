@@ -25,7 +25,7 @@ import { isRequestingSites } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
-import LocaleSuggestions from 'signup/locale-suggestions';
+import LocaleSuggestions from 'components/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import MainWrapper from './main-wrapper';
 import FormattedHeader from 'components/formatted-header';
