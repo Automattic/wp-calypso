@@ -3,16 +3,16 @@
  */
 import React, { Component, PropTypes } from 'react';
 import i18n from 'i18n-calypso';
-import { trim } from 'lodash';
+import { trim, debounce } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
 import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormTextArea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import ProductFormImages from './product-form-images';
 
@@ -37,6 +37,7 @@ export default class ProductFormDetailsCard extends Component {
 
 		this.setName = this.setName.bind( this );
 		this.setDescription = this.setDescription.bind( this );
+		this.debouncedSetDescription = debounce( this.setDescription, 200 );
 	}
 
 	// TODO: Consider consolidating the following set functions
@@ -63,9 +64,9 @@ export default class ProductFormDetailsCard extends Component {
 		}
 	}
 
-	setDescription( e ) {
+	setDescription( description ) {
 		const { product, editProduct } = this.props;
-		editProduct( product, { description: e.target.value } );
+		editProduct( product, { description } );
 	}
 
 	onImageUpload = ( image ) => {
@@ -120,11 +121,10 @@ export default class ProductFormDetailsCard extends Component {
 						</FormFieldSet>
 						<FormFieldSet className="products__product-form-details-basic-description">
 							<FormLabel htmlFor="description">{ __( 'Description' ) }</FormLabel>
-							<FormTextArea
-								id="description"
+							<CompactTinyMCE
 								value={ product.description || '' }
-								onChange={ this.setDescription }
-								rows="8" />
+								onContentsChange={ this.debouncedSetDescription }
+							/>
 						</FormFieldSet>
 					</div>
 				</div>

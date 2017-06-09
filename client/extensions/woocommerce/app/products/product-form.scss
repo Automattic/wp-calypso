@@ -550,6 +550,12 @@
 		padding: 16px;
 		max-height: 80vh;
 		overflow-y: hidden;
+
+		.compact-tinymce {
+			padding: 16px;
+			padding-left: 0px;
+			max-width: 700px;
+		}
 	}
 
 	h1 {
