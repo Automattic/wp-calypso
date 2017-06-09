@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param {number|string} siteId the site ID
  * @return {String} Date of first rewind point, empty string if none available
  */
-export default function getRewindStatusError( state, siteId ) {
+export default function getRewindStartDate( state, siteId ) {
 	return get( state.activityLog.rewindStatus, [ siteId, 'firstBackupDate' ], '' );
 }
