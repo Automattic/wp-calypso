@@ -50,7 +50,6 @@ class PaymentMethodEdit extends Component {
 				{ setting.type === 'password' && this.renderEditPassword( setting ) }
 				{ setting.type === 'text' && this.renderEditTextbox( setting ) }
 				{ setting.type === 'select' && this.renderEditSelect( setting ) }
-				<hr />
 			</div>
 		);
 	}
@@ -94,7 +93,7 @@ class PaymentMethodEdit extends Component {
 					settingsFieldsKeys.length &&
 					settingsFieldsKeys.map( this.renderEditField )
 				}
-				<Button compact onClick={ this.onSaveHandler }>
+				<Button primary onClick={ this.onSaveHandler }>
 					{ translate( 'save' ) }
 				</Button>
 			</ListItem>
