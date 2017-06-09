@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { groupBy, map } from 'lodash';
@@ -19,8 +19,18 @@ import ActivityLogDay from '../activity-log-day';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import SuccessBanner from '../activity-log-banner/success-banner';
+import QueryRewindStatus from 'components/data/query-rewind-status';
 
 class ActivityLog extends Component {
+	static propTypes = {
+		isJetpack: PropTypes.bool,
+		siteId: PropTypes.number,
+		slug: PropTypes.string,
+
+		// localize
+		moment: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 	}
@@ -298,6 +308,7 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout={ true }>
+				<QueryRewindStatus siteId={ siteId } />
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
@@ -317,9 +328,9 @@ class ActivityLog extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
 		return {
-			isJetpack,
+			isJetpack: isJetpackSite( state, siteId ),
+			siteId,
 			slug: getSiteSlug( state, siteId )
 		};
 	}
