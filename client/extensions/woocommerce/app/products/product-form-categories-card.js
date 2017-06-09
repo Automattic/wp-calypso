@@ -49,16 +49,6 @@ const ProductFormCategoriesCard = (
 
 	return (
 		<Card className="products__categories-card">
-			<div className="products__product-form-featured">
-				<FormLabel htmlFor="featured">{ translate( 'Featured' ) }
-					<CompactFormToggle
-						onChange={ toggleFeatured }
-						checked={ product.featured }
-					>
-					{ translate( 'Feature this product to promote it on your store' ) }
-				</CompactFormToggle>
-				</FormLabel>
-			</div>
 			<FormFieldSet>
 				<FormLabel htmlFor="categories">{ translate( 'Category' ) }</FormLabel>
 				<TokenField
@@ -72,6 +62,16 @@ const ProductFormCategoriesCard = (
 					{ translate( 'Add a category so this product is easy to find.' ) }
 				</FormSettingExplanation>
 			</FormFieldSet>
+			<div className="products__product-form-featured">
+				<FormLabel htmlFor="featured">{ translate( 'Featured' ) }
+					<CompactFormToggle
+						onChange={ toggleFeatured }
+						checked={ product.featured }
+					>
+					{ translate( 'Feature this product to promote it on your store' ) }
+				</CompactFormToggle>
+				</FormLabel>
+			</div>
 		</Card>
 	);
 };
