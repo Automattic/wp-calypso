@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SortableList from 'components/forms/sortable-list';
@@ -50,13 +49,11 @@ const EditorMediaModalGalleryEdit = React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader>
-					<EllipsisMenu position="bottom right">
-						<PopoverMenuItem onClick={ this.props.onReverse }>
-							{ this.props.translate( 'Reverse order' ) }
-						</PopoverMenuItem>
-					</EllipsisMenu>
-				</SectionHeader>
+				<EllipsisMenu position="bottom right">
+					<PopoverMenuItem onClick={ this.props.onReverse }>
+						{ this.props.translate( 'Reverse order' ) }
+					</PopoverMenuItem>
+				</EllipsisMenu>
 				<SortableList onChange={ this.onOrderChanged }>
 					{ settings.items.map( ( item ) => {
 						return (
