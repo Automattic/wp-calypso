@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
 import moment from 'moment';
 
 // This generates a fake data set for hourly backups
@@ -38,6 +37,7 @@ const fakebackups = ( startDate ) => {
  *
  * @param {Object} state Global state tree
  * @param {number|string} siteId the site ID
+ * @param {string} startDate Date string of the first available backup FIXME: probably not needed with real data
  * @return {array} Array of activity log item objects
  */
 export default function getActivityLog( state, siteId, startDate ) {
