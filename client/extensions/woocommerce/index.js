@@ -122,17 +122,6 @@ const getStorePages = () => {
 				slug: 'settings-tax',
 			},
 		},
-		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
-			configKey: 'woocommerce/extension-extensions',
-			path: '/store/extensions/:site',
-			sidebarItem: {
-				icon: 'plugins',
-				isPrimary: false,
-				label: translate( 'Extensions' ),
-				slug: 'extensions',
-			},
-		},
 	];
 };
 
