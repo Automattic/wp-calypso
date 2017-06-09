@@ -39,12 +39,14 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 class ActivityLog extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
-		startDate: PropTypes.string
+		startDate: PropTypes.string,
+		firstDate: PropTypes.string
 	};
 
 	static defaultProps = {
 		siteId: '',
-		startDate: ''
+		startDate: '',
+		firstDate: ''
 	};
 
 	componentDidMount() {
@@ -153,9 +155,11 @@ class ActivityLog extends Component {
 			isJetpack,
 			activityLog,
 			moment,
-			siteId,
-			startDate,
+			siteId
 		} = this.props;
+		const startDate = this.props.startDate
+			? this.props.startDate
+			: moment().startOf( 'month' ).format( 'YYYY-MM-DD' );
 
 		const logs = ( activityLog && activityLog.data ? activityLog.data : [] );
 		const logsGroupedByDate = map(
@@ -179,7 +183,7 @@ class ActivityLog extends Component {
 		const date = moment( startDate ).startOf( 'month' );
 		const query = {
 			period: 'month',
-			date: date.endOf( 'month' ).format( 'YYYY-MM-DD' )
+			date: date.format( 'YYYY-MM-DD' )
 		};
 
 		return (
@@ -262,7 +266,7 @@ export default connect(
 			isAnythingRestoring: isAnythingRestoring( state, siteId ),
 			isActivatingRewind: isActivatingRewind( state, siteId ),
 			isDeactivatingRewind: isDeactivatingRewind( state, siteId ),
-			startDate: getRewindStartDate( state, siteId ),
+			firstDate: getRewindStartDate( state, siteId ),
 			getRewindStatusError: getRewindStatusError( state, siteId ),
 		};
 	},
