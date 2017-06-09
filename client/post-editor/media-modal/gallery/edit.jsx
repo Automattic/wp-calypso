@@ -59,7 +59,7 @@ const EditorMediaModalGalleryEdit = React.createClass( {
 					{ map( orders, ( orderedItems, name ) => {
 						const boundAction = () => onUpdateSetting( { items: orderedItems } );
 						return (
-							<PopoverMenuItem onClick={ boundAction }>
+							<PopoverMenuItem key={ name } onClick={ boundAction }>
 								{ name }
 							</PopoverMenuItem>
 						);
