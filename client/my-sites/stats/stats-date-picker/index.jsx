@@ -25,11 +25,13 @@ class StatsDatePicker extends Component {
 		summary: PropTypes.bool,
 		query: PropTypes.object,
 		statType: PropTypes.string,
-		showQueryDate: PropTypes.bool,
+		isActivity: PropTypes.bool,
+		showQueryDate: PropTypes.bool
 	};
 
 	static defaultProps = {
-		showQueryDate: false
+		showQueryDate: false,
+		isActivity: false
 	};
 
 	state = {
@@ -125,20 +127,32 @@ class StatsDatePicker extends Component {
 	}
 
 	render() {
-		const { summary, translate, query, showQueryDate } = this.props;
+		const { summary, translate, query, showQueryDate, isActivity } = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
-
-		const sectionTitle = translate( 'Stats for {{period/}}', {
-			components: {
-				period: (
-					<span className="period">
-						<span className="date">{ isSummarizeQuery ? this.dateForSummarize() : this.dateForDisplay() }</span>
+		const periodI18n = {
+			period: (
+				<span className="stats-date-picker__period period">
+					<span className="stats-date-picker__period date">
+						{
+							isSummarizeQuery
+								? this.dateForSummarize()
+								: this.dateForDisplay()
+						}
 					</span>
-				)
-			},
-			context: 'Stats: Main stats page heading',
-			comment: 'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"'
-		} );
+				</span>
+			)
+		};
+		const sectionTitle = isActivity
+			? translate( 'Activity for {{period/}}', {
+				components: periodI18n,
+				context: 'Activity Log: Main activity section heading',
+				comment: 'Example: "Activity for December 2017"'
+			} )
+			: translate( 'Stats for {{period/}}', {
+				components: periodI18n,
+				context: 'Stats: Main stats page heading',
+				comment: 'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"'
+			} );
 
 		return (
 			<div>
