@@ -72,17 +72,17 @@ class Media extends Component {
 		} );
 	};
 
-	closeDetailsModal() {
+	closeDetailsModal = () => {
 		this.setState( { editedImageItem: null, editedVideoItem: null, currentDetail: null, selectedItems: [] } );
-	};
+	}
 
-	editImage() {
+	editImage = () => {
 		this.setState( { currentDetail: null, editedImageItem: this.state.currentDetail } );
-	};
+	}
 
-	editVideo() {
+	editVideo = () => {
 		this.setState( { currentDetail: null, editedVideoItem: this.state.currentDetail } );
-	};
+	}
 
 	onImageEditorCancel = ( imageEditorProps ) => {
 		const {	resetAllImageEditorState } = imageEditorProps;
@@ -152,8 +152,8 @@ class Media extends Component {
 		this.setState( { currentDetail: this.state.editedVideoItem, editedVideoItem: null } );
 	};
 
-	onVideoEditorUpdatePoster( { ID, posterUrl } ) {
-		const site = this.props.sites.getSelectedSite();
+	onVideoEditorUpdatePoster = ( { ID, posterUrl } ) => {
+		const site = this.props.selectedSite;
 
 		// Photon does not support URLs with a querystring component.
 		posterUrl = posterUrl && posterUrl.split( '?' )[ 0 ];
@@ -170,7 +170,7 @@ class Media extends Component {
 		}
 
 		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
-	};
+	}
 
 	restoreOriginalMedia = ( siteId, item ) => {
 		if ( ! siteId || ! item ) {
