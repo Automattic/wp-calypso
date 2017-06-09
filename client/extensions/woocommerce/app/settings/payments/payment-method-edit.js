@@ -8,9 +8,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';
-import FormTextInput from 'components/forms/form-text-input';
 import FormSelect from 'components/forms/form-select';
+import FormTextInput from 'components/forms/form-text-input';
 import ListItem from 'woocommerce/components/list/list-item';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 
@@ -52,15 +54,14 @@ class PaymentMethodEdit extends Component {
 	renderEditField = ( editField ) => {
 		const setting = this.props.method.settings[ editField ];
 		return (
-			<div className="payments__method-edit-field-container" key={ editField }>
-				{ setting.label }
+			<FormFieldset className="payments__method-edit-field-container" key={ editField }>
+				<FormLabel>{ setting.label }</FormLabel>
 				{ 'checkbox' === setting.type && this.renderEditCheckbox( setting ) }
 				{ 'email' === setting.type && this.renderEditTextbox( setting ) }
 				{ 'password' === setting.type && this.renderEditPassword( setting ) }
 				{ 'text' === setting.type && this.renderEditTextbox( setting ) }
 				{ 'select' === setting.type && this.renderEditSelect( setting ) }
-				<hr />
-			</div>
+			</FormFieldset>
 		);
 	}
 
@@ -99,6 +100,7 @@ class PaymentMethodEdit extends Component {
 		return (
 			<ListItem>
 				{	settingsFieldsKeys.map( this.renderEditField ) }
+				<hr />
 				<Button primary onClick={ this.onSaveHandler }>
 					{ translate( 'Save' ) }
 				</Button>
