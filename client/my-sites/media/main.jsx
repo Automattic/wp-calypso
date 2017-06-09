@@ -153,7 +153,7 @@ class Media extends Component {
 	};
 
 	onVideoEditorUpdatePoster = ( { ID, posterUrl } ) => {
-		const site = this.props.sites.getSelectedSite();
+		const site = this.props.selectedSite;
 
 		// Photon does not support URLs with a querystring component.
 		const urlBeforeQuery = ( posterUrl || '' ).split( '?' )[ 0 ];
