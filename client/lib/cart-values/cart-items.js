@@ -45,7 +45,6 @@ import productsValues, {
 import sortProducts from 'lib/products-values/sort';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
 
-
 import {
 	PLAN_FREE,
 	PLAN_JETPACK_PREMIUM,
@@ -64,11 +63,9 @@ import {
  */
 function add( newCartItem ) {
 	function appendItem( products ) {
-		var isDuplicate;
-
 		products = products || [];
 
-		isDuplicate = products.some( function( existingCartItem ) {
+		const isDuplicate = products.some( function( existingCartItem ) {
 			return isEqual( newCartItem, existingCartItem );
 		} );
 
@@ -149,7 +146,7 @@ function remove( cartItemToRemove ) {
  * @returns {Function} the function that removes the items from a shopping cart
  */
 function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPlansOnly ) {
-	var dependencies = getDependentProducts( cartItemToRemove, cart, domainsWithPlansOnly ),
+	const dependencies = getDependentProducts( cartItemToRemove, cart, domainsWithPlansOnly ),
 		changes = dependencies.map( remove ).concat( remove( cartItemToRemove ) );
 
 	return flow.apply( null, changes );
@@ -168,7 +165,11 @@ function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
 		return isDependentProduct( cartItem, existingCartItem, domainsWithPlansOnly );
 	} );
 
-	return uniq( flatten( dependentProducts.concat( dependentProducts.map( dependentProduct => getDependentProducts( dependentProduct, cart ) ) ) ) );
+	return uniq( flatten(
+		dependentProducts.concat(
+			dependentProducts.map( dependentProduct => getDependentProducts( dependentProduct, cart ) )
+		)
+	) );
 }
 
 /**
@@ -399,7 +400,7 @@ function businessPlan( slug, properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainItem( productSlug, domain, source ) {
-	var extra = source ? { extra: { source: source } } : undefined;
+	const extra = source ? { extra: { source: source } } : undefined;
 
 	return Object.assign( {
 		product_slug: productSlug,
@@ -479,7 +480,7 @@ function googleApps( properties ) {
 }
 
 function googleAppsExtraLicenses( properties ) {
-	var item = domainItem( 'gapps_extra_license', properties.domain, properties.source );
+	const item = domainItem( 'gapps_extra_license', properties.domain, properties.source );
 
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
@@ -488,7 +489,7 @@ function fillGoogleAppsRegistrationData( cart, registrationData ) {
 	const googleAppsItems = filter( getAll( cart ), isGoogleApps );
 	return flow.apply( null, googleAppsItems.map( function( item ) {
 		item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
-		return add( item )
+		return add( item );
 	} ) );
 }
 
