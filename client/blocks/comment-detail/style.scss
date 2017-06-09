@@ -88,7 +88,7 @@
 			padding: 0 12px;
 			.external-link:hover,
 			.external-link:focus {
-				color: $blue-wordpress;
+				color: $gray;
 				outline: none;
 			}
 		}
@@ -102,6 +102,14 @@
 		box-sizing: border-box;
 		padding: 0 8px;
 		width: 40%;
+
+		.external-link {
+			color: $gray;
+			&:hover,
+			&:focus {
+				color: $link-highlight;
+			}
+		}
 	}
 }
 
