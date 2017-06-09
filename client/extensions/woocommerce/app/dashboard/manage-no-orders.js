@@ -24,10 +24,11 @@ class ManageNoOrders extends Component {
 		const { site, translate } = this.props;
 		return (
 			<ShareWidget
-				text={ translate( 'Now that your setup is complete it\'s time to spread the word' +
-					' and get those first orders rolling in. Share a link with your friends,' +
-					' family & followers now.' ) }
-				title={ translate( 'Your store is ready & the world is waiting!' ) }
+				text={ translate( 'Congratulations! Now that your setup is complete you can spread the word' +
+					' and get those first orders rolling in. Share your store with friends,' +
+					' family, and followers now.' ) }
+				title={ translate( 'Your store is ready, the world awaits!' ) }
+
 				urlToShare={ getLink( 'https://:site', site ) }
 			/>
 		);
@@ -39,9 +40,9 @@ class ManageNoOrders extends Component {
 			<ReadingWidget
 				className="dashboard__reading-widget"
 				site={ site }
-				text={ translate( 'Choice articles for new store owners to read. Get tips' +
-					' from seasoned merchants, learn best practices to keep your store' +
-					' ship-shape and prepare for success.' ) }
+				text={ translate( 'You’re not alone! Get tips from seasoned merchants,' +
+					' learn best practices to keep your store ship-shape,' +
+					' and find how to boost your sales and drive traffic.' ) }
 				title={ translate( 'Recommended reading' ) }
 			/>
 		);
@@ -76,14 +77,14 @@ class ManageNoOrders extends Component {
 			>
 				<p>
 					{
-						translate( 'Your store is live. You may want to double check' +
-							' your tax, shipping and payment configuration are set up correctly.' )
+						translate( 'Your store is live! It’s a good idea to double check' +
+							' your tax, shipping, and payment configurations are set up correctly.' )
 					}
 				</p>
 				<p>
 					{
 						translate( 'The easiest way to do this is to view your store, add' +
-							' a product to your cart and attempt to check out using different addresses.' )
+							' a product to your cart, and attempt to check out using different addresses.' )
 					}
 				</p>
 			</BasicWidget>
