@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
@@ -139,9 +140,11 @@ export class LoginForm extends Component {
 						</FormsButton>
 					</div>
 
-					<div className="login__form-social">
-						<SocialLoginForm onSuccess={ this.props.onSuccess } />
-					</div>
+					{ config.isEnabled( 'signup/social' ) && (
+						<div className="login__form-social">
+							<SocialLoginForm onSuccess={ this.props.onSuccess } />
+						</div>
+					) }
 				</Card>
 			</form>
 		);
