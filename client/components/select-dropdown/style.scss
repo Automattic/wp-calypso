@@ -125,7 +125,8 @@ $compact-header-height: 35;
 		vertical-align: text-bottom;
 
 		.is-compact & {
-			display: none;
+			position: relative;
+			top: 2px;
 		}
 	}
 }
