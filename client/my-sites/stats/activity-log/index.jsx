@@ -27,6 +27,10 @@ class ActivityLog extends Component {
 		isJetpack: PropTypes.bool,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
+		rewindStatusError: PropTypes.shape( {
+			error: PropTypes.string.isRequired,
+			message: PropTypes.string.isRequired,
+		} ),
 
 		// FIXME: Testing only
 		isPressable: PropTypes.bool,
@@ -294,13 +298,14 @@ class ActivityLog extends Component {
 			rewindStatusError,
 			translate,
 		} = this.props;
-		const rewindError = get( rewindStatusError, [ 'message' ], false );
 
-		if ( ! isPressable && ! rewindError ) {
+		// FIXME: Do something nicer with the error
+		if ( rewindStatusError ) {
+			return translate( 'Rewind error: %s', { args: rewindStatusError.message } );
+		}
+		if ( ! isPressable ) {
 			return translate( 'Currently only available for Pressable sites' );
 		}
-
-		return rewindError && rewindError + translate( ' Are you on a Premium or Pro plan?' );
 	}
 
 	renderContent() {
