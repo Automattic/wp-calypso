@@ -33,6 +33,7 @@ import {
 
 import reducer, {
 	emailAddressFormInput,
+	isFetchingAuth,
 	isFetchingEmail,
 	currentView,
 	requestAuthError,
@@ -46,6 +47,7 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'currentView',
 			'emailAddressFormInput',
+			'isFetchingAuth',
 			'isFetchingEmail',
 			'requestAuthError',
 			'requestAuthSuccess',
@@ -93,6 +95,50 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.equal( '' );
+		} );
+	} );
+
+	describe( 'isFetchingAuth', () => {
+		it( 'should default to false', () => {
+			const state = isFetchingAuth( undefined, {} );
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should be false on DESERIALIZE', () => {
+			const state = isFetchingAuth( undefined, {
+				type: DESERIALIZE,
+			} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should be false on SERIALIZE', () => {
+			const state = isFetchingAuth( undefined, {
+				type: SERIALIZE,
+			} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should be true on fetch', () => {
+			const state = isFetchingAuth( undefined, {
+				type: MAGIC_LOGIN_REQUEST_AUTH_FETCH,
+			} );
+			expect( state ).to.be.true;
+		} );
+
+		it( 'should be false on error', () => {
+			const state = isFetchingAuth( undefined, {
+				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
+			} );
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should be false on success', () => {
+			const state = isFetchingAuth( undefined, {
+				type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
+			} );
+			expect( state ).to.be.false;
 		} );
 	} );
 

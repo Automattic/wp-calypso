@@ -86,6 +86,7 @@ export const requestEmailSuccess = createReducer( false, {
 
 export default combineReducers( {
 	emailAddressFormInput,
+	isFetchingAuth,
 	isFetchingEmail,
 	requestAuthError,
 	requestAuthSuccess,

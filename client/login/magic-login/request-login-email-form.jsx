@@ -26,8 +26,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import LoggedOutForm from 'components/logged-out-form';
 import Notice from 'components/notice';
 import { localize } from 'i18n-calypso';
-
-//@TODO move this to wp-login compoenent
 import { getCurrentUser } from 'state/current-user/selectors';
 
 class RequestLoginEmailForm extends React.Component {
@@ -78,19 +76,19 @@ class RequestLoginEmailForm extends React.Component {
 				<h1 className="magic-login__form-header">
 					{ translate( 'Email me a login link.' ) }
 				</h1>
-				<LoggedOutForm onSubmit={ this.onSubmit }>
+				<p>{
+					translate( 'Get a link sent to the email address associated ' +
+						'with your account to log in instantly without your password.' )
+				}</p>
+				{ currentUser && currentUser.username &&
 					<p>{
-						translate( 'Get a link sent to the email address associated ' +
-							'with your account to log in instantly without your password.' )
-					}</p>
-					{ currentUser && currentUser.username &&
-						<p>{
-							translate( 'NOTE: You are already logged in as user: %(user)s', {
-								args: {
-									user: currentUser.username
-								}
-							} ) }</p>
-					}
+						translate( 'NOTE: You are already logged in as user: %(user)s', {
+							args: {
+								user: currentUser.username
+							}
+						} ) }</p>
+				}
+				<LoggedOutForm onSubmit={ this.onSubmit }>
 					<FormFieldset>
 						<FormTextInput
 							autoCapitalize="off"
