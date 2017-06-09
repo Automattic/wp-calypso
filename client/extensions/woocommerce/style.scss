@@ -31,6 +31,8 @@
 	@import 'components/widget-group/style';
 	@import 'components/sparkline/style';
 	@import 'app/store-stats/store-stats-chart/style';
+	@import 'app/store-stats/store-stats-navigation/style';
+	@import 'components/delta/style';
 
 	.components__action-header {
 		width: 100%;
