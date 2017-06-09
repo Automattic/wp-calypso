@@ -12,6 +12,8 @@ import { groupBy, map } from 'lodash';
 import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { getActivityLog } from 'state/selectors';
+import { getRewindStartDate } from 'state/selectors';
 import StatsFirstView from '../stats-first-view';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from '../stats-navigation';
@@ -289,7 +291,7 @@ class ActivityLog extends Component {
 			siteId,
 			slug,
 		} = this.props;
-		const logs = this.logs();
+		const logs = this.props.activityLog;
 		const logsGroupedByDate = map(
 			groupBy(
 				logs.map( this.update_logs, this ),
@@ -328,10 +330,12 @@ class ActivityLog extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const rewindStartDate = getRewindStartDate( state, siteId );
 		return {
 			isJetpack: isJetpackSite( state, siteId ),
 			siteId,
-			slug: getSiteSlug( state, siteId )
+			slug: getSiteSlug( state, siteId ),
+			activityLog: getActivityLog( state, siteId, rewindStartDate ),
 		};
 	}
 )( localize( ActivityLog ) );

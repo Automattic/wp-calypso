@@ -27,6 +27,7 @@ export getAccountRecoveryResetRequestError from './get-account-recovery-reset-re
 export getAccountRecoveryResetPasswordError from './get-account-recovery-reset-password-error';
 export getAccountRecoveryValidationKey from './get-account-recovery-validation-key';
 export getAccountRecoveryValidationError from './get-account-recovery-validation-error';
+export getActivityLog from './get-activity-log';
 export getBlockedSites from './get-blocked-sites';
 export getBillingTransactions from './get-billing-transactions';
 export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
