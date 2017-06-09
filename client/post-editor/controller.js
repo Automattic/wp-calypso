@@ -9,7 +9,7 @@ import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import qs from 'querystring';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { filter, includes, map, pick, reduce, startsWith } from 'lodash';
+import { map, pick, reduce, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -167,16 +167,18 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 		 *
 		 * @see https://github.com/Automattic/wp-calypso/issues/14840
 		 */
-		const whitelistedMetadata = filter( postToCopy.metadata, ( { key } ) => includes( [
+		const metadataWhitelist = [
 			'geo_latitude',
 			'geo_longitude',
-		], key ) );
-		actions.updateMetadata(
-			reduce( whitelistedMetadata, ( newMetadata, { key, value } ) => {
-				newMetadata[ key ] = value;
-				return newMetadata;
-			}, {} )
-		);
+		];
+
+		// Convert the metadata array into a metadata object, needed because `updateMetadata()` expects an object.
+		const metadata = reduce( postToCopy.metadata, ( newMetadata, { key, value } ) => {
+			newMetadata[ key ] = value;
+			return newMetadata;
+		}, {} );
+
+		actions.updateMetadata( pick( metadata, metadataWhitelist ) );
 	} ).catch( error => {
 		Dispatcher.handleServerAction( {
 			type: 'SET_POST_LOADING_ERROR',
