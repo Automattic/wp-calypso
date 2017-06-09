@@ -275,7 +275,7 @@ const CheckoutThankYou = React.createClass( {
 				</Card>
 
 				<Card className="checkout-thank-you__footer">
-					<HappinessSupport isJetpack={ wasJetpackPlanPurchased } />
+					<HappinessSupport isJetpack={ wasJetpackPlanPurchased } useIcon={ true } />
 				</Card>
 			</Main>
 		);
