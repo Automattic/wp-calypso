@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	HELP_SELECTED_SITE
+	HELP_CONTACT_FORM_SITE_SELECT
 } from 'state/action-types';
 import {
 	selectSiteId,
@@ -19,7 +19,7 @@ describe( 'actions', () => {
 			const action = selectSiteId( 1 );
 
 			expect( action ).to.eql( {
-				type: HELP_SELECTED_SITE,
+				type: HELP_CONTACT_FORM_SITE_SELECT,
 				siteId: 1,
 			} );
 		} );

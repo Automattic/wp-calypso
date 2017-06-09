@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import {
-	HELP_SELECTED_SITE,
+	HELP_CONTACT_FORM_SITE_SELECT,
 } from 'state/action-types';
 import courses from './courses/reducer';
 import { combineReducers } from 'state/utils';
@@ -18,7 +18,7 @@ import { createReducer } from 'state/utils';
  * @return {Object}        Updated state
  */
 export const selectedSiteId = createReducer( null, {
-	[ HELP_SELECTED_SITE ]: ( state, action ) => action.siteId,
+	[ HELP_CONTACT_FORM_SITE_SELECT ]: ( state, action ) => action.siteId,
 } );
 
 export default combineReducers( {

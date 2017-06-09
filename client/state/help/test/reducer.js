@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	HELP_SELECTED_SITE,
+	HELP_CONTACT_FORM_SITE_SELECT,
 } from 'state/action-types';
 import { selectedSiteId } from '../reducer';
 
@@ -21,7 +21,7 @@ describe( 'reducer', () => {
 
 		it( 'should store the site id received', () => {
 			const state = selectedSiteId( {}, {
-				type: HELP_SELECTED_SITE,
+				type: HELP_CONTACT_FORM_SITE_SELECT,
 				siteId: 1,
 			} );
 

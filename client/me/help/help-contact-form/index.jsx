@@ -252,7 +252,7 @@ export const HelpContactForm = React.createClass( {
 
 const mapStateToProps = ( state ) => {
 	return {
-		selectedSiteId: getHelpSelectedSiteId( state ) | getSelectedSiteId( state )
+		selectedSiteId: getHelpSelectedSiteId( state ) || getSelectedSiteId( state )
 	};
 };
 

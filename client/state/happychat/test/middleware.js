@@ -263,7 +263,7 @@ describe( 'middleware', () => {
 		} );
 	} );
 
-	describe( 'HELP_SELECTED_SITE action', () => {
+	describe( 'HELP_CONTACT_FORM_SITE_SELECT action', () => {
 		it( 'should send the locale and groups through the connection and send a preferences signal', () => {
 			const state = {
 				happychat: {

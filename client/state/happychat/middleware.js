@@ -20,7 +20,7 @@ import {
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
-	HELP_SELECTED_SITE,
+	HELP_CONTACT_FORM_SITE_SELECT,
 	ROUTE_SET,
 
 	COMMENTS_CHANGE_STATUS_SUCESS,
@@ -325,7 +325,7 @@ export default function( connection = null ) {
 				connectIfRecentlyActive( connection, store );
 				break;
         
-			case HELP_SELECTED_SITE:
+			case HELP_CONTACT_FORM_SITE_SELECT:
 				updateChatPreferences( connection, store, action.siteId );
 				break;
 
