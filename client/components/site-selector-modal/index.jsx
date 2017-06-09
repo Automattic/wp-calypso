@@ -36,24 +36,11 @@ class SiteSelectorModal extends Component {
 		// from localize()
 		translate: PropTypes.func.isRequired,
 		// connected props
-		primarySiteId: PropTypes.number
+		initialSiteId: PropTypes.number
 	}
 
-	constructor( props ) {
-		super( props );
-
-		const { primarySiteId, visibleSites } = this.props;
-		let filteredSiteIds = visibleSites.map( ( site ) => site.ID );
-
-		if ( props.filter ) {
-			filteredSiteIds = filteredSiteIds.filter( props.filter );
-		}
-
-		this.state = {
-			siteId: includes( filteredSiteIds, primarySiteId )
-				? primarySiteId
-				: filteredSiteIds[ 0 ]
-		};
+	state = {
+		siteId: this.props.initialSiteId
 	}
 
 	setSite = ( siteId ) => {
@@ -106,8 +93,20 @@ class SiteSelectorModal extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		primarySiteId: getPrimarySiteId( state ),
-		visibleSites: getVisibleSites( state )
-	} )
+	( state, { filter } ) => {
+		const primarySiteId = getPrimarySiteId( state );
+		const visibleSites = getVisibleSites( state );
+
+		let filteredSiteIds = visibleSites.map( ( site ) => site.ID );
+
+		if ( filter ) {
+			filteredSiteIds = filteredSiteIds.filter( filter );
+		}
+
+		return {
+			initialSiteId: includes( filteredSiteIds, primarySiteId )
+				? primarySiteId
+				: filteredSiteIds[ 0 ]
+		};
+	}
 )( localize( SiteSelectorModal ) );
