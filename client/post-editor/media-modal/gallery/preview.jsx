@@ -22,7 +22,6 @@ export default React.createClass( {
 		onUpdateSetting: PropTypes.func,
 		invalidItemDropped: PropTypes.bool,
 		onDismissInvalidItemDropped: PropTypes.func,
-		onReverse: PropTypes.func,
 	},
 
 	getInitialState() {
@@ -37,7 +36,6 @@ export default React.createClass( {
 			onUpdateSetting: () => {},
 			invalidItemDropped: false,
 			onDismissInvalidItemDropped: () => {},
-			onReverse: () => {},
 		};
 	},
 
@@ -70,8 +68,7 @@ export default React.createClass( {
 				<EditorMediaModalGalleryEdit
 					site={ site }
 					settings={ settings }
-					onUpdateSetting={ onUpdateSetting }
-					onReverse={ this.props.onReverse } />
+					onUpdateSetting={ onUpdateSetting } />
 			);
 		}
 
