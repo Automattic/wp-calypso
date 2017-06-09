@@ -13,7 +13,7 @@ const Table = ( { className, compact, header, hasBorder, children, ...props } ) 
 	const classes = classnames( {
 		table: true,
 		'has-border': hasBorder,
-		'is-compact': compact,
+		'is-compact-table': compact,
 	}, className );
 	return (
 		<Card className={ classes }>

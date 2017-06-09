@@ -3,23 +3,28 @@
 		margin: 0;
 	}
 
-	.table-row {
-		line-height: 28px;
+	padding: 0;
 
-		&.is-header {
-			color: $gray-text-min;
-			line-height: 40px;
+	&.has-border {
+		thead .table-heading,
+		thead .table-item {
+			border-bottom: 1px solid lighten( $gray, 20% );
+		}
+
+		tbody .table-heading,
+		tbody .table-item {
+			border-bottom: 1px solid lighten( $gray, 30% );
+		}
+
+		// Remove the border from the last item in the body of the table.
+		tbody tr:last-child .table-heading,
+		tbody tr:last-child .table-item {
+			border: none;
 		}
 	}
 
-	.table-heading,
-	.table-item {
-		padding: 16px 16px 14px;
-		vertical-align: middle;
-	}
-
-	&.is-compact {
-		margin-bottom: 16px;
+	&.is-compact-table {
+		padding: .5em 0;
 
 		.table-row {
 			&.is-header {
@@ -44,12 +49,19 @@
 		.table-heading,
 		.table-item {
 			text-align: right;
-			padding: 0 24px 0 0;
+			padding: 0 12px;
 			white-space: nowrap;
 			font-size: 14px;
 
+			&:first-child {
+				padding: 0 12px 0 24px;
+			}
+
+			&:last-child {
+				padding: 0 24px 0 12px;
+			}
+
 			&.is-title-cell {
-				padding: 0 0 0 24px;
 				text-align: left;
 				width: 100%;
 				// https://stackoverflow.com/questions/9789723/css-text-overflow-in-a-table-cell
@@ -74,24 +86,24 @@
 			}
 		}
 	}
+}
 
-	&.has-border {
-		padding: 0;
+.table-row {
+	line-height: 28px;
 
-		thead .table-heading,
-		thead .table-item {
-			border-bottom: 1px solid lighten( $gray, 20% );
-		}
-
-		tbody .table-heading,
-		tbody .table-item {
-			border-bottom: 1px solid lighten( $gray, 30% );
-		}
-
-		// Remove the border from the last item in the body of the table.
-		tbody tr:last-child .table-heading,
-		tbody tr:last-child .table-item {
-			border: none;
-		}
+	&.is-header {
+		color: $gray-text-min;
+		line-height: 40px;
 	}
 }
+
+.table-heading,
+.table-item {
+	padding: 16px 16px 14px;
+	vertical-align: middle;
+
+	&.is-row-heading {
+		font-weight: normal;
+	}
+}
+

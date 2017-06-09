@@ -11,6 +11,7 @@ import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
 import Gridicon from 'gridicons';
+import FormInputCheckbox from 'components/forms/form-checkbox';
 
 class Example extends Component {
 	state = {
@@ -29,7 +30,7 @@ class Example extends Component {
 	render() {
 		const titles = (
 			<TableRow isHeader>
-				{ [ 'Title', '', 'Qty', 'Total' ].map( ( item, i ) => <TableItem isHeader isTitle={ 0 == i }>{ item }</TableItem> ) }
+				{ [ 'Title', '', 'Qty', 'Total' ].map( ( item, i ) => <TableItem isHeader key={ i } isTitle={ 0 === i }>{ item }</TableItem> ) }
 			</TableRow>
 		);
 		const link = <a href="#">An internal Link!</a>;
@@ -45,6 +46,17 @@ class Example extends Component {
 			[ 'three', externalLink, <div>9</div>, 45 ],
 			[ link, externalLink, <Gridicon icon="cog" size={ 18 } />, 8 ],
 		];
+		const middleColValues = [
+			[ <FormInputCheckbox/>, placeholder, 'Thing 1', 65 ],
+			[ <FormInputCheckbox/>, placeholder, 'Thing 2', 66 ],
+			[ <FormInputCheckbox/>, placeholder, 'Thing 3', 67 ],
+			[ <FormInputCheckbox/>, placeholder, 'Thing 4', 68 ],
+		];
+		const middleColTitles = (
+			<TableRow isHeader>
+				{ [ <FormInputCheckbox/>, placeholder, 'Description', 'Total' ].map( ( item, i ) => <TableItem isHeader key={ i } isTitle={ 2 === i }>{ item }</TableItem> ) }
+			</TableRow>
+		);
 
 		return (
 			<div className="woocommerce">
@@ -65,12 +77,21 @@ class Example extends Component {
 						</TableRow>
 					) ) }
 				</Table>
+				<Table header={ middleColTitles } hasBorder={ this.state.hasBorder } compact={ this.state.isCompact }>
+					{ middleColValues.map( ( row, i ) => (
+						<TableRow key={ i }>
+							{ row.map( ( item, j ) => (
+								<TableItem key={ j } isRowHeader={ 2 === j } isTitle={ 2 === j }>{ item }</TableItem>
+							) ) }
+						</TableRow>
+					) ) }
+				</Table>
 				<div style={ { width: '50%' } }>
 					<Table header={ titles } hasBorder={ this.state.hasBorder } compact={ this.state.isCompact }>
 						{ values.map( ( row, i ) => (
 							<TableRow key={ i }>
 								{ row.map( ( item, j ) => (
-									<TableItem key={ j } isTitle={ 0 == j }>{ item }</TableItem>
+									<TableItem key={ j } isRowHeader={ 0 === j } isTitle={ 0 === j }>{ item }</TableItem>
 								) ) }
 							</TableRow>
 						) ) }
@@ -81,7 +102,7 @@ class Example extends Component {
 						{ values.map( ( row, i ) => (
 							<TableRow key={ i }>
 								{ row.map( ( item, j ) => (
-									<TableItem key={ j } isTitle={ 0 == j }>{ item }</TableItem>
+									<TableItem key={ j } isTitle={ 0 === j }>{ item }</TableItem>
 								) ) }
 							</TableRow>
 						) ) }
