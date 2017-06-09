@@ -11,7 +11,10 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import CommentDetailActions from './comment-detail-actions';
+import ExternalLink from 'components/external-link';
 import FormCheckbox from 'components/forms/form-checkbox';
+
+const stopPropagation = event => event.stopPropagation();
 
 export const CommentDetailHeader = ( {
 	authorAvatarUrl,
@@ -86,7 +89,10 @@ export const CommentDetailHeader = ( {
 					<div className="comment-detail__author-info-element">
 						{ translate( 'on {{postLink/}}', {
 							components: {
-								postLink: <a href={ postUrl }>{ postTitle }</a>,
+								postLink:
+									<ExternalLink href={ postUrl } onClick={ stopPropagation }>
+										{ postTitle }
+									</ExternalLink>,
 							},
 						} ) }
 					</div>
