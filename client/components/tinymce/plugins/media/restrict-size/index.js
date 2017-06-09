@@ -70,9 +70,11 @@ export default function( editor ) {
 		}
 
 		event.content = setImages( event.content );
+	} );
 
+	editor.on( 'BeforeSetWpcomMedia', ( event ) => {
 		/**
-		 * Also add the raw resized image URL so we can properly preload it in the editor
+		 * Add the resized image URL so we can properly preload it in the editor
 		 */
 		const resizedUrl = getResizedImgUrlFromImgString( event.content );
 
