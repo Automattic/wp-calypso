@@ -12,9 +12,11 @@ import {
 	rewindStatusError,
 } from '../reducer';
 import {
+	rewindActivateSuccess,
+	rewindDeactivateSuccess,
 	rewindStatusError as rewindStatusErrorAction,
 	updateRewindStatus,
-} from '../../actions';
+} from 'state/activity-log/actions';
 
 /**
  * Constants
@@ -36,6 +38,44 @@ describe( '#rewindStatus()', () => {
 	it( 'should update site item', () => {
 		const state = rewindStatus( undefined, STATUS_ACTION );
 		expect( state[ SITE_ID ] ).to.deep.equal( STATUS_ACTION.status );
+	} );
+
+	it( 'should update on activation success', () => {
+		const prevState = deepFreeze( {
+			[ SITE_ID ]: { active: false }
+		} );
+		const state = rewindStatus( prevState, rewindActivateSuccess( SITE_ID ) );
+		expect( state[ SITE_ID ].active ).to.be.true;
+	} );
+
+	it( 'should maintain other props on activation success', () => {
+		const prevState = deepFreeze( {
+			[ SITE_ID ]: {
+				active: false,
+				other: 'prop',
+			}
+		} );
+		const state = rewindStatus( prevState, rewindActivateSuccess( SITE_ID ) );
+		expect( state[ SITE_ID ].other ).to.equal( 'prop' );
+	} );
+
+	it( 'should update on deactivation success', () => {
+		const prevState = deepFreeze( {
+			[ SITE_ID ]: { active: true }
+		} );
+		const state = rewindStatus( prevState, rewindDeactivateSuccess( SITE_ID ) );
+		expect( state[ SITE_ID ].active ).to.be.false;
+	} );
+
+	it( 'should maintain other props on activation success', () => {
+		const prevState = deepFreeze( {
+			[ SITE_ID ]: {
+				active: true,
+				other: 'prop',
+			}
+		} );
+		const state = rewindStatus( prevState, rewindDeactivateSuccess( SITE_ID ) );
+		expect( state[ SITE_ID ].other ).to.equal( 'prop' );
 	} );
 
 	it( 'should preserve other site\'s status', () => {
