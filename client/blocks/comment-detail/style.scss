@@ -123,6 +123,14 @@
 		right: 0;
 		width: 30%;
 	}
+	@supports( -webkit-line-clamp: 2 ) {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		&:after {
+			background: transparent;
+		}
+	}
 }
 
 .comment-detail__actions {
