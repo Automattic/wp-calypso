@@ -312,7 +312,7 @@ function mediaButton( editor ) {
 
 			// To avoid an undesirable flicker after the image uploads but
 			// hasn't yet been loaded, we preload the image before rendering.
-			const imageUrl = media.URL;
+			const imageUrl = event.resizedImageUrl || media.URL;
 			if ( ! loadedImages.isLoaded( imageUrl ) ) {
 				const preloadImage = new Image();
 				preloadImage.src = imageUrl;

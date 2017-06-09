@@ -29,18 +29,30 @@ function resetImageSrc( img, opening, src, attributes, origAttr, origSrc, closin
 	return `${ opening }${ origSrc }${ attributes }${ closing }`;
 }
 
+function getResizedImgUrlFromImgString( img ) {
+	const parsed = deserialize( img );
+	if ( parsed.media.transient || ! parsed.media.ID ) {
+		return null;
+	}
+
+	return {
+		originalURL: parsed.media.URL,
+		resizedURL: resize( parsed.media.URL, Math.min( parsed.media.width || Infinity, MAX_WIDTH ) )
+	};
+}
+
 function setImageSrc( img, opening, src, closing ) {
 	if ( -1 !== img.indexOf( 'data-wpmedia-src' ) ) {
 		return img;
 	}
 
-	const parsed = deserialize( img );
-	if ( parsed.media.transient || ! parsed.media.ID ) {
+	const url = getResizedImgUrlFromImgString( img );
+
+	if ( url === null ) {
 		return img;
 	}
 
-	const url = resize( parsed.media.URL, Math.min( parsed.media.width || Infinity, MAX_WIDTH ) );
-	return `${ opening }${ url }" data-wpmedia-src="${ parsed.media.URL }${ closing }`;
+	return `${ opening }${ url.resizedURL }" data-wpmedia-src="${ url.originalURL }${ closing }`;
 }
 
 export function resetImages( content ) {
@@ -58,6 +70,15 @@ export default function( editor ) {
 		}
 
 		event.content = setImages( event.content );
+
+		/**
+		 * Also add the raw resized image URL so we can properly preload it in the editor
+		 */
+		const resizedUrl = getResizedImgUrlFromImgString( event.content );
+
+		if ( resizedUrl !== null ) {
+			event.resizedImageUrl = resizedUrl.resizedURL;
+		}
 	} );
 
 	editor.on( 'GetContent', ( event ) => {
