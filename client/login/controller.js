@@ -16,12 +16,10 @@ export default {
 		context.primary = (
 			<WPLogin locale={ lang } path={ path } twoFactorAuthType={ params.twoFactorAuthType } />
 		);
-
 		next();
 	},
 	magicLogin( context, next ) {
 		context.primary = <MagicLogin />;
-
 		next();
 	}
 };
