@@ -5,6 +5,8 @@ import React, { Component, PropTypes } from 'react';
 import { assign, uniqueId, noop } from 'lodash';
 import classNames from 'classnames';
 import tinymce from 'tinymce/tinymce';
+import 'tinymce/themes/modern/theme.js';
+import 'tinymce/plugins/lists/plugin.js';
 
 /**
  * Internal dependencies
@@ -14,8 +16,6 @@ import userFactory from 'lib/user';
 import { wpautop } from 'lib/formatting';
 // TinyMCE plugins & dependencies
 import wplinkPlugin from 'components/tinymce/plugins/wplink/plugin';
-import 'tinymce/themes/modern/theme.js';
-import 'tinymce/plugins/lists/plugin.js';
 
 class CompactTinyMCE extends Component {
 	static contextTypes = {
@@ -23,10 +23,10 @@ class CompactTinyMCE extends Component {
 	}
 
 	static propTypes = {
+		onContentsChange: PropTypes.func.isRequired,
 		height: PropTypes.number,
 		className: PropTypes.string,
 		value: PropTypes.string,
-		onContentsChange: PropTypes.func,
 	}
 
 	static defaultProps = {
@@ -49,7 +49,7 @@ class CompactTinyMCE extends Component {
 		this.mounted = true;
 
 		const setup = function( editor ) {
-			this._editor = editor;
+			this.editor = editor;
 
 			if ( ! this.mounted ) {
 				this.destroyEditor();
@@ -58,14 +58,14 @@ class CompactTinyMCE extends Component {
 
 			const { value, onContentsChange } = this.props;
 			editor.on( 'init', () => {
-				this._editor.setContent( wpautop( value ) );
+				this.editor.setContent( wpautop( value ) );
 			} );
 			if ( onContentsChange ) {
 				editor.on( 'change', () => {
-					onContentsChange( this._editor.getContent() );
+					onContentsChange( this.editor.getContent() );
 				} );
 				editor.on( 'keyup', () => {
-					onContentsChange( this._editor.getContent() );
+					onContentsChange( this.editor.getContent() );
 				} );
 			}
 		}.bind( this );
@@ -116,14 +116,14 @@ class CompactTinyMCE extends Component {
 
 	componentWillUnmount() {
 		this.mounted = false;
-		if ( this._editor ) {
+		if ( this.editor ) {
 			this.destroyEditor();
 		}
 	}
 
 	destroyEditor() {
-		tinymce.remove( this._editor );
-		this._editor = null;
+		tinymce.remove( this.editor );
+		this.editor = null;
 	}
 
 	localize() {
