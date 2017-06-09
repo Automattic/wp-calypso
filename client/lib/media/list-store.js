@@ -134,7 +134,7 @@ MediaListStore.isItemMatchingQuery = function( siteId, item ) {
 
 	matches = true;
 
-	if ( query.search ) {
+	if ( query.search && query.source === '' ) {
 		// WP_Query tests a post's title and content when performing a search.
 		// Since we're testing binary data, we match the title only.
 		//
