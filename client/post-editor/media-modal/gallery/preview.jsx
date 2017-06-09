@@ -21,7 +21,7 @@ export default React.createClass( {
 		settings: PropTypes.object,
 		onUpdateSetting: PropTypes.func,
 		invalidItemDropped: PropTypes.bool,
-		onDismissInvalidItemDropped: PropTypes.func,
+		onDismissInvalidItemDropped: PropTypes.func
 	},
 
 	getInitialState() {
@@ -35,7 +35,7 @@ export default React.createClass( {
 			settings: Object.freeze( {} ),
 			onUpdateSetting: () => {},
 			invalidItemDropped: false,
-			onDismissInvalidItemDropped: () => {},
+			onDismissInvalidItemDropped: () => {}
 		};
 	},
 
@@ -102,3 +102,4 @@ export default React.createClass( {
 		);
 	}
 } );
+
