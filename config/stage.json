@@ -102,6 +102,7 @@
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
+		"wp-login": true,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",
