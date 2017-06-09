@@ -79,7 +79,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="legal-type">
-						{ translate( 'Cira Agreement' ) }
+						{ translate( 'CIRA Agreement' ) }
 					</FormLabel>
 					<FormLabel>
 						<FormCheckbox id="cira_acceptance" value={ ciraAccepted } />
