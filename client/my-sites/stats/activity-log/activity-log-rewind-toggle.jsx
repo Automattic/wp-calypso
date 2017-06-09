@@ -86,9 +86,9 @@ class ActivityLogRewindToggle extends Component {
 }
 
 export default connect(
-	( state, { siteId }) => ( {
-		isToggling: isRewindActivating( siteId ),
-		isActive: isRewindActive( siteId ),
+	( state, { siteId } ) => ( {
+		isToggling: isRewindActivating( state, siteId ),
+		isActive: isRewindActive( state, siteId ),
 	} ), {
 		activateRewind: activateRewindAction,
 		deactivateRewind: deactivateRewindAction,
