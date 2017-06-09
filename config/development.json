@@ -57,6 +57,7 @@
 		"jetpack/api-cache": true,
 		"jetpack/activity-log": true,
 		"keyboard-shortcuts": true,
+		"login/native-login-links": true,
 		"happychat": true,
 		"magic-login": true,
 		"manage/customize": true,
