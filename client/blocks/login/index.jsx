@@ -25,8 +25,9 @@ import WaitingTwoFactorNotificationApproval from './two-factor-authentication/wa
 import { login } from 'lib/paths';
 import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
+import { isExternal, resemblesUrl } from 'lib/url';
 
-class Login extends Component {
+export class Login extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectLocation: PropTypes.string,
@@ -81,10 +82,11 @@ class Login extends Component {
 
 		let newHref;
 
-		if ( redirectLocation && redirectLocation.match( /^(?!\/\/)[\/\-a-z0-9.]+$/i ) ) {
+		if ( redirectLocation && ! ( resemblesUrl( redirectLocation ) && isExternal( redirectLocation ) ) ) {
 			// only redirect to paths on the current domain
 			newHref = redirectLocation;
 		} else {
+			// redirect to / by default
 			newHref = window.location.origin;
 		}
 

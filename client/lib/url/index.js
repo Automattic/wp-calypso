@@ -122,7 +122,7 @@ function resemblesUrl( query ) {
 
 	// Make sure the query has a protocol - hostname ends up blank otherwise
 	if ( ! parsedUrl.protocol ) {
-		parsedUrl = url.parse( 'http://' + query );
+		parsedUrl = url.parse( 'http:' + ( query.startsWith( '//' ) ? query : '//' + query ) );
 	}
 
 	if ( ! parsedUrl.hostname || parsedUrl.hostname.indexOf( '.' ) === -1 ) {
