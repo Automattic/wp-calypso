@@ -16,7 +16,7 @@ import {
 } from 'woocommerce/state/ui/payments/methods/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import { fetchPaymentMethods, paymentMethodSave } from 'woocommerce/state/sites/payment-methods/actions';
+import { fetchPaymentMethods, savePaymentMethod } from 'woocommerce/state/sites/payment-methods/actions';
 import { getCurrentlyEditingPaymentMethod, getPaymentMethodsGroup } from 'woocommerce/state/ui/payments/methods/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import List from 'woocommerce/components/list/list';
@@ -34,7 +34,7 @@ class SettingsPaymentsOffSite extends Component {
 		fetchPaymentMethods: PropTypes.func.isRequired,
 		openPaymentMethodForEdit: PropTypes.func.isRequired,
 		paymentMethods: PropTypes.array.isRequired,
-		paymentMethodSave: PropTypes.func.isRequired,
+		savePaymentMethod: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 	};
 
@@ -72,7 +72,7 @@ class SettingsPaymentsOffSite extends Component {
 			);
 		};
 
-		this.props.paymentMethodSave( siteId, method, successAction, errorAction );
+		this.props.savePaymentMethod( siteId, method, successAction, errorAction );
 	}
 
 	renderMethodItem = ( method ) => {
@@ -145,7 +145,7 @@ function mapDispatchToProps( dispatch ) {
 			closeEditingPaymentMethod,
 			fetchPaymentMethods,
 			openPaymentMethodForEdit,
-			paymentMethodSave,
+			savePaymentMethod,
 		},
 		dispatch
 	);
