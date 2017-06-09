@@ -1,34 +1,50 @@
 /**
  * External dependencies
  */
-var update = require( 'react-addons-update' );
-import { every, assign, flow, isEqual, merge, reject, tail, some, uniq, flatten, filter, find, get } from 'lodash';
+import update from 'react-addons-update';
+import {
+	assign,
+	every,
+	filter,
+	find,
+	flatten,
+	flow,
+	get,
+	isEqual,
+	merge,
+	reject,
+	some,
+	tail,
+	uniq,
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
-var productsValues = require( 'lib/products-values' ),
-	formatProduct = productsValues.formatProduct,
-	isCustomDesign = productsValues.isCustomDesign,
-	isDependentProduct = productsValues.isDependentProduct,
-	isDomainMapping = productsValues.isDomainMapping,
-	isDomainProduct = productsValues.isDomainProduct,
-	isDomainRedemption = productsValues.isDomainRedemption,
-	isDomainRegistration = productsValues.isDomainRegistration,
-	isGoogleApps = productsValues.isGoogleApps,
-	isNoAds = productsValues.isNoAds,
-	isPlan = productsValues.isPlan,
-	isPremium = productsValues.isPremium,
-	isPrivacyProtection = productsValues.isPrivacyProtection,
-	isSiteRedirect = productsValues.isSiteRedirect,
-	isSpaceUpgrade = productsValues.isSpaceUpgrade,
-	isUnlimitedSpace = productsValues.isUnlimitedSpace,
-	isUnlimitedThemes = productsValues.isUnlimitedThemes,
-	isVideoPress = productsValues.isVideoPress,
-	isJetpackPlan = productsValues.isJetpackPlan,
-	isFreeWordPressComDomain = productsValues.isFreeWordPressComDomain,
-	sortProducts = require( 'lib/products-values/sort' ),
-	PLAN_PERSONAL = require( 'lib/plans/constants' ).PLAN_PERSONAL;
+import productsValues, {
+	formatProduct,
+	isCustomDesign,
+	isDependentProduct,
+	isDomainMapping,
+	isDomainProduct,
+	isDomainRedemption,
+	isDomainRegistration,
+	isGoogleApps,
+	isNoAds,
+	isPlan,
+	isPremium,
+	isPrivacyProtection,
+	isSiteRedirect,
+	isSpaceUpgrade,
+	isUnlimitedSpace,
+	isUnlimitedThemes,
+	isVideoPress,
+	isJetpackPlan,
+	isFreeWordPressComDomain
+} from 'lib/products-values';
+import sortProducts from 'lib/products-values/sort';
+import { PLAN_PERSONAL } from 'lib/plans/constants';
+
 
 import {
 	PLAN_FREE,
