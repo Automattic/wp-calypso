@@ -8,7 +8,6 @@ import React from 'react';
  */
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import { shouldBundleDomainWithPlan, getDomainPriceRule } from 'lib/cart-values/cart-items';
-import { abtest } from 'lib/abtest';
 
 var DomainMappingSuggestion = React.createClass( {
 	propTypes: {
@@ -25,10 +24,10 @@ var DomainMappingSuggestion = React.createClass( {
 				cost: this.props.products.domain_map.cost_display
 			},
 			{ cart, domainsWithPlansOnly, isSignupStep, selectedSite } = this.props,
-			allowUpgradeCta = ! isSignupStep || abtest( 'selectCtaInDomainsSignup' ) === 'original',
-			buttonContent = allowUpgradeCta && shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
+			buttonContent = ! isSignupStep && shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
 				? this.translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
 				: this.translate( 'Map it', { context: 'Domain mapping suggestion button' } );
+
 		return (
 				<DomainSuggestion
 					priceRule={ getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion ) }
