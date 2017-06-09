@@ -71,7 +71,7 @@ class ActivityLogRewindToggle extends Component {
 				className={ classNames( 'activity-log__rewind-toggle', {
 					'is-busy': isSiteKnown && isToggling,
 				} ) }
-				disabled={ ! isSiteKnown }
+				disabled={ ! isSiteKnown || isToggling }
 				primary={ isSiteKnown && isActive }
 				onClick={ this.handleToggle }
 			>
