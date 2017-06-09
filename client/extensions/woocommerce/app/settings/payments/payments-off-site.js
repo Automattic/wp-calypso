@@ -29,7 +29,7 @@ class SettingsPaymentsOffSite extends Component {
 	static propTypes = {
 		closeEditingPaymentMethod: PropTypes.func.isRequired,
 		currentlyEditingMethod: PropTypes.shape( {
-			id: PropTypes.object,
+			id: PropTypes.string,
 		} ),
 		fetchPaymentMethods: PropTypes.func.isRequired,
 		openPaymentMethodForEdit: PropTypes.func.isRequired,
