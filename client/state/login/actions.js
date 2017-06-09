@@ -137,12 +137,12 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 /**
  * Attempt to login a user when a two factor verification code is sent.
  *
- * @param  {String}    two_step_code  Verification code for the user.
- * @param  {Boolean}   remember_me       Flag for remembering the user for a while after logging in.
+ * @param  {String}    twoStepCode  Verification code for the user.
+ * @param  {Boolean}   rememberMe       Flag for remembering the user for a while after logging in.
  * @param {String}     twoFactorAuthType Two factor authentication method
  * @return {Function}                 Action thunk to trigger the login process.
  */
-export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_me, twoFactorAuthType ) => ( dispatch, getState ) => {
+export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, rememberMe, twoFactorAuthType ) => ( dispatch, getState ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
@@ -151,9 +151,9 @@ export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_
 		.accept( 'application/json' )
 		.send( {
 			user_id: getTwoFactorUserId( getState() ),
-			two_step_code,
+			two_step_code: twoStepCode,
 			two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
-			remember_me,
+			remember_me: rememberMe,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
