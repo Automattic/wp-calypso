@@ -3,7 +3,6 @@
  */
 import { renderWithReduxStore } from 'lib/react-helpers';
 import React from 'react';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -11,6 +10,7 @@ import page from 'page';
 import route from 'lib/route';
 import CommentsManagement from './main';
 import controller from 'my-sites/controller';
+import { routeTo } from 'state/ui/actions';
 
 export const comments = function( context ) {
 	const siteSlug = route.getSiteFragment( context.path );
@@ -32,7 +32,9 @@ export const sites = function( context ) {
 	const siteSlug = route.getSiteFragment( context.path );
 
 	if ( status === siteSlug ) {
-		return page.redirect( `/comments/pending/${ siteSlug }` );
+		return context.store.dispatch(
+			routeTo( `/comments/pending/${ siteSlug }` )
+		);
 	}
 	controller.sites( context );
 };
