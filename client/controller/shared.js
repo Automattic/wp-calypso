@@ -12,26 +12,30 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getLanguage } from 'lib/i18n-utils';
 import { setSection as setSectionAction } from 'state/ui/actions';
 
-export function makeLayoutMiddleware( LayoutComponent ) {
+export function makeLayoutMiddleware( getLayoutComponent ) {
 	return ( context, next ) => {
 		const { store, primary, secondary } = context;
 
-		// On server, only render LoggedOutLayout when logged-out.
-		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
-			let redirectUri;
-			if ( context.isServerSide ) {
-				redirectUri = `${ context.protocol }://${ context.host }${ context.originalUrl }`;
+		getLayoutComponent( store ).then( ( LayoutComponent ) => {
+			// On server, only render LoggedOutLayout when logged-out.
+			if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
+				let redirectUri;
+				if ( context.isServerSide ) {
+					redirectUri = `${ context.protocol }://${ context.host }${ context.originalUrl }`;
+				}
+
+				context.layout = (
+					<LayoutComponent
+						store={ store }
+						primary={ primary }
+						secondary={ secondary }
+						redirectUri={ redirectUri }
+					/>
+				);
 			}
-			context.layout = (
-				<LayoutComponent
-					store={ store }
-					primary={ primary }
-					secondary={ secondary }
-					redirectUri={ redirectUri }
-				/>
-			);
-		}
-		next();
+
+			next();
+		} );
 	};
 }
 

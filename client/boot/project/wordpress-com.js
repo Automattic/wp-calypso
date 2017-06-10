@@ -33,18 +33,20 @@ import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
 function renderLayout( reduxStore ) {
-	const Layout = require( 'controller' ).ReduxWrappedLayout;
+	return require( 'controller' ).getReduxWrappedLayout( reduxStore ).then(
+		Layout => {
+			const layoutElement = React.createElement( Layout, {
+				store: reduxStore
+			} );
 
-	const layoutElement = React.createElement( Layout, {
-		store: reduxStore
-	} );
+			ReactDom.render(
+				layoutElement,
+				document.getElementById( 'wpcom' )
+			);
 
-	ReactDom.render(
-		layoutElement,
-		document.getElementById( 'wpcom' )
+			debug( 'Main layout rendered.' );
+		}
 	);
-
-	debug( 'Main layout rendered.' );
 }
 
 export function utils() {
@@ -85,7 +87,9 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.
 	if ( ! document.getElementById( 'primary' ) ) {
-		renderLayout( reduxStore );
+		page( '*', function( context, next ) {
+			renderLayout( reduxStore ).then( next );
+		} );
 
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
 			const Logger = require( 'lib/catch-js-errors' );
@@ -247,12 +251,14 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		if ( isMultiTreeLayout && previousLayoutIsSingleTree ) {
 			debug( 'Re-rendering multi-tree layout' );
 			ReactDom.unmountComponentAtNode( document.getElementById( 'wpcom' ) );
-			renderLayout( context.store );
+			renderLayout( context.store ).then( next );
 		} else if ( ! isMultiTreeLayout && ! previousLayoutIsSingleTree ) {
 			debug( 'Unmounting multi-tree layout' );
 			ReactDom.unmountComponentAtNode( document.getElementById( 'primary' ) );
 			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+			next();
+		} else {
+			next();
 		}
-		next();
 	} );
 }
