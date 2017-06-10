@@ -101,7 +101,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 // Generic recommended card styles
 .reader-related-card-v2.card.is-compact {
 	box-shadow: none;
-	flex: 1 1 0px;
+	flex: 1 1 0;
 	padding: 0;
 
 	@include breakpoint( "<480px" ) {
@@ -161,11 +161,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		.reader-related-card-v2__site-info {
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
-				flex: 3 0 0px;
+				flex: 3 0 0;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
-				flex: 3 0 0px;
+				flex: 3 0 0;
 			}
 		}
 
@@ -231,11 +231,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		.reader-related-card-v2__post {
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
-				flex: 3 0 0px;
+				flex: 3 0 0;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
-				flex: 3 0 0px;
+				flex: 3 0 0;
 			}
 		}
 
@@ -330,13 +330,13 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 				max-height: 106px;
 
 				@media #{$reader-related-card-v2-breakpoint-medium} {
-					flex: 3 0 0px;
+					flex: 3 0 0;
 					margin-top: 25px;
 					max-height: 125px;
 				}
 
 				@media #{$reader-related-card-v2-breakpoint-small} {
-					flex: 3 0 0px;
+					flex: 3 0 0;
 					margin-top: 25px;
 					max-height: 130px;
 				}
@@ -434,11 +434,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		.reader-related-card-v2__post {
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
-				flex: 3 0 0px;
+				flex: 3 0 0;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
-				flex: 3 0 0px;
+				flex: 3 0 0;
 			}
 		}
 
@@ -530,13 +530,13 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 				max-height: 106px;
 
 				@media #{$reader-related-card-v2-breakpoint-medium} {
-					flex: 3 0 0px;
+					flex: 3 0 0;
 					margin-top: 25px;
 					max-height: 125px;
 				}
 
 				@media #{$reader-related-card-v2-breakpoint-small} {
-					flex: 3 0 0px;
+					flex: 3 0 0;
 					margin-top: 25px;
 					max-height: 130px;
 				}
@@ -632,14 +632,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	min-height: 78px;
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
-		flex: 1 1 0px;
+		flex: 1 1 0;
 		height: auto;
 		margin: 0 15px 0 0;
 	}
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
 		height: auto;
-		flex: 1 1 0px;
+		flex: 1 1 0;
 		margin: 0 15px 0 0;
 	}
 }
