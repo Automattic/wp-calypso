@@ -10,7 +10,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
-import SiteIndicator from 'my-sites/site-indicator';
+import SiteIndicator from 'blocks/site-indicator';
 
 export default React.createClass( {
 	displayName: 'Site',
@@ -137,10 +137,7 @@ export default React.createClass( {
 						</span>
 					}
 				</a>
-				{ this.props.indicator
-					? <SiteIndicator site={ site } />
-					: null
-				}
+				{ this.props.indicator && <SiteIndicator site={ site } />  }
 			</div>
 		);
 	}
