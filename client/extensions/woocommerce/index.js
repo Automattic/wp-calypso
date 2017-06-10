@@ -11,12 +11,17 @@ import { translate } from 'i18n-calypso';
  */
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import installActionHandlers from './state/data-layer';
 import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
 import Shipping from './app/settings/shipping';
 import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
+
+function initExtension() {
+	installActionHandlers();
+}
 
 const getStorePages = () => {
 	return [
@@ -174,3 +179,8 @@ export default function() {
 		page( '/store/stats/:type/:unit/:site', siteSelection, navigation, StatsController );
 	}
 }
+
+// TODO: This could probably be done in a better way through the same mechanisms
+// that bring in the rest of the extension code. Maybe extension-loader?
+initExtension();
+

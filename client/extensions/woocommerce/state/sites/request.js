@@ -31,6 +31,7 @@ const _request = ( method, path, siteId, body ) => {
 		{
 			path: `/wc/v3/${ path }&_method=${ method }`,
 			body: body && JSON.stringify( body ),
+			json: true,
 		}
 	).then( ( { data } ) => omitDeep( data, '_links' ) );
 };
