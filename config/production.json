@@ -23,6 +23,7 @@
 		"help": true,
 		"help/courses": true,
 		"jetpack/api-cache": false,
+		"login/wp-login": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
@@ -97,7 +98,6 @@
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
-		"wp-login": true,
 		"wpcom-user-bootstrap": true
 	},
 	"rtl": false,

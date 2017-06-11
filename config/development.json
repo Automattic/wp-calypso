@@ -58,6 +58,7 @@
 		"jetpack/activity-log": true,
 		"keyboard-shortcuts": true,
 		"login/native-login-links": true,
+		"login/wp-login": true,
 		"happychat": true,
 		"magic-login": true,
 		"manage/customize": true,
@@ -165,7 +166,6 @@
 		"woocommerce/extension-settings-shipping": true,
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-stats": false,
-		"wp-login": true,
 		"wpcom-user-bootstrap": false
 	}
 }

@@ -26,6 +26,7 @@
 		"help/courses": true,
 		"jetpack/api-cache": true,
 		"jetpack_core_inline_update": true,
+		"login/wp-login": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
@@ -102,7 +103,6 @@
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
-		"wp-login": true,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",
