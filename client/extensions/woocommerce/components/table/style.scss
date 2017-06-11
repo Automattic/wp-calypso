@@ -5,26 +5,29 @@
 
 	padding: 0;
 
-	&.has-border {
-		thead .table-heading,
-		thead .table-item {
-			border-bottom: 1px solid lighten( $gray, 20% );
-		}
+	thead .table-heading,
+	thead .table-item {
+		border-bottom: 1px solid lighten( $gray, 20% );
+	}
 
-		tbody .table-heading,
-		tbody .table-item {
-			border-bottom: 1px solid lighten( $gray, 30% );
-		}
+	tbody .table-heading,
+	tbody .table-item {
+		border-bottom: 1px solid lighten( $gray, 30% );
+	}
 
-		// Remove the border from the last item in the body of the table.
-		tbody tr:last-child .table-heading,
-		tbody tr:last-child .table-item {
-			border: none;
-		}
+	// Remove the border from the last item in the body of the table.
+	tbody tr:last-child .table-heading,
+	tbody tr:last-child .table-item {
+		border: none;
 	}
 
 	&.is-compact-table {
 		padding: .5em 0;
+
+		.table-heading,
+		.table-item {
+			border-bottom: none;
+		}
 
 		.table-row {
 			&.is-header {
@@ -106,4 +109,3 @@
 		font-weight: normal;
 	}
 }
-

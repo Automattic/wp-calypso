@@ -9,10 +9,9 @@ import classnames from 'classnames';
  */
 import Card from 'components/card';
 
-const Table = ( { className, compact, header, hasBorder, children, ...props } ) => {
+const Table = ( { className, compact, header, children, ...props } ) => {
 	const classes = classnames( {
 		table: true,
-		'has-border': hasBorder,
 		'is-compact-table': compact,
 	}, className );
 	return (
@@ -35,7 +34,6 @@ Table.propTypes = {
 	children: PropTypes.node,
 	compact: PropTypes.bool,
 	header: PropTypes.node,
-	hasBorder: PropTypes.bool,
 };
 
 export default Table;

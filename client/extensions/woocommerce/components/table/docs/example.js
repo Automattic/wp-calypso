@@ -23,10 +23,6 @@ class Example extends Component {
 		this.setState( { isCompact: ! this.state.isCompact } );
 	}
 
-	onToggleBorder = () => {
-		this.setState( { hasBorder: ! this.state.hasBorder } );
-	}
-
 	render() {
 		const titles = (
 			<TableRow isHeader>
@@ -64,11 +60,8 @@ class Example extends Component {
 					<Button onClick={ this.onToggleCompact }>
 						{ this.state.isCompact ? 'Expanded' : 'Compact' }
 					</Button>
-					<Button onClick={ this.onToggleBorder }>
-						{ this.state.hasBorder ? 'Remove Border' : 'Add Border' }
-					</Button>
 				</div>
-				<Table header={ titles } hasBorder={ this.state.hasBorder } compact={ this.state.isCompact }>
+				<Table header={ titles } compact={ this.state.isCompact }>
 					{ values.map( ( row, i ) => (
 						<TableRow key={ i }>
 							{ row.map( ( item, j ) => (
@@ -77,7 +70,7 @@ class Example extends Component {
 						</TableRow>
 					) ) }
 				</Table>
-				<Table header={ middleColTitles } hasBorder={ this.state.hasBorder } compact={ this.state.isCompact }>
+				<Table header={ middleColTitles } compact={ this.state.isCompact }>
 					{ middleColValues.map( ( row, i ) => (
 						<TableRow key={ i }>
 							{ row.map( ( item, j ) => (
@@ -87,7 +80,7 @@ class Example extends Component {
 					) ) }
 				</Table>
 				<div style={ { width: '50%' } }>
-					<Table header={ titles } hasBorder={ this.state.hasBorder } compact={ this.state.isCompact }>
+					<Table header={ titles } compact={ this.state.isCompact }>
 						{ values.map( ( row, i ) => (
 							<TableRow key={ i }>
 								{ row.map( ( item, j ) => (
@@ -98,7 +91,7 @@ class Example extends Component {
 					</Table>
 				</div>
 				<div style={ { width: '33%' } }>
-					<Table header={ titles } hasBorder={ this.state.hasBorder } compact={ this.state.isCompact }>
+					<Table header={ titles } compact={ this.state.isCompact }>
 						{ values.map( ( row, i ) => (
 							<TableRow key={ i }>
 								{ row.map( ( item, j ) => (
