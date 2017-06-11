@@ -210,6 +210,9 @@ module.exports = React.createClass( {
 		}
 
 		switch ( valueData.type ) {
+			case 'raw':
+				value = valueData.value;
+				break;
 			case 'relative-date':
 				value = this.moment( valueData.value ).fromNow( true );
 				break;
