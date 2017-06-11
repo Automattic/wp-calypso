@@ -16,16 +16,37 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormCheckbox from 'components/forms/form-checkbox';
 
+const legalTypes = {
+	ABO: 'Aboriginal',
+	ASS: 'Association',
+	CCO: 'CanadianCorporation',
+	CCT: 'CanadianCitizen',
+	EDU: 'Educational Institution',
+	GOV: 'Government',
+	HOP: 'Hospital',
+	INB: 'IndianBand',
+	LAM: 'Library, Archive, or Museum',
+	LGR: 'Legal Representative',
+	MAJ: 'Her Majesty the Queen',
+	OMK: 'Protected by Trademarks Act',
+	PLT: 'Political Party',
+	PRT: 'Partnership',
+	RES: 'Permanent Resident',
+	TDM: 'Trademark Owner',
+	TRD: 'Trade Union',
+	TRS: 'Trust'
+};
+
 const defaultValues = {
 	legalType: 'CCW',
 	isVisible: true,
-	agreementAccepted: false,
+	ciraAgreementAccepted: false,
 	onSubmit: noop,
 };
 
 class RegistrantExtraInfoCaForm extends React.PureComponent {
 	static propTypes = {
-		agreementAccepted: PropTypes.bool,
+		ciraAgreementAccepted: PropTypes.bool,
 		legalType: PropTypes.string,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
@@ -50,7 +71,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		const {
 			legalType,
 			translate,
-			ciraAccepted
+			ciraAgreementAccepted
 		} = { ...defaultValues, ...this.props };
 		const agreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 
@@ -73,8 +94,8 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 					<FormSelect
 						id="legal-type"
 						value={ legalType }
-						countriesList={ this.props.countriesList }
-						className="registrant-extra-info__form-country-select"
+						legalTypes={ legalTypes }
+						className="registrant-extra-info__form-legal-type"
 						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
 				<FormFieldset>
@@ -87,7 +108,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 							translate( 'I have read and agree to the {{a}}CIRA Registrant Agreement{{/a}}',
 								{
 									components: {
-										a: <a href={ agreementUrl} />
+										a: <a href={ agreementUrl } />
 									}
 								}
 							)
