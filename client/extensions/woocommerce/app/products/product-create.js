@@ -22,6 +22,7 @@ import { getProductCategories } from 'woocommerce/state/sites/product-categories
 import { createProduct } from 'woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 class ProductCreate extends React.Component {
 	static propTypes = {
@@ -91,6 +92,7 @@ class ProductCreate extends React.Component {
 
 		return (
 			<Main className={ className }>
+				<SidebarNavigation />
 				<ProductHeader
 					onTrash={ this.onTrash }
 					onSave={ this.onSave }
