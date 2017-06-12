@@ -177,7 +177,7 @@ export const PLANS_LIST = {
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		] ),
 		getPromotedFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
@@ -285,7 +285,6 @@ export const PLANS_LIST = {
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' )
 	},
@@ -312,7 +311,6 @@ export const PLANS_LIST = {
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
