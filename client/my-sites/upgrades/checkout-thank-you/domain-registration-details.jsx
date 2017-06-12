@@ -56,7 +56,7 @@ export class DomainRegistrationDetails extends Component {
 		return (
 			<div>
 				<div className="checkout-thank-you__domain-registration-details-compact">
-					{ domainContactEmailVerified && this.renderEmailVerfication() }
+					{ ! domainContactEmailVerified && this.renderEmailVerfication() }
 					{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
 				</div>
 
