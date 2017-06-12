@@ -4,6 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -27,7 +28,10 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classes }>
-			<MasterbarLoggedOut title={ section.title } sectionName={ section.name } redirectUri={ redirectUri } />
+			{ ( 'jetpack' === config( 'project' ) )
+				? null
+				: <MasterbarLoggedOut title={ section.title } sectionName={ section.name } redirectUri={ redirectUri } />
+			}
 			<div id="content" className="layout__content">
 				<div id="primary" className="layout__primary">
 					{ primary }
