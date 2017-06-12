@@ -74,6 +74,7 @@ import LanguagePicker from 'components/language-picker/docs/example';
 import FormattedHeader from 'components/formatted-header/docs/example';
 import EmptyContent from 'components/empty-content/docs/example';
 import ExtraInfoFrForm from 'components/domains/registrant-extra-info/docs/example';
+import WizardBar from 'components/wizard-bar/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -168,6 +169,7 @@ let DesignAssets = React.createClass( {
 					<TokenFields />
 					<VerticalMenu />
 					<Version />
+					<WizardBar />
 				</Collection>
 			</Main>
 		);
