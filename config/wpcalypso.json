@@ -82,6 +82,7 @@
 		"post-editor/image-editor": true,
 		"press-this": true,
 		"preview-layout": true,
+		"publicize-scheduling": false,
 		"reader": true,
 		"reader/following-intro": true,
 		"reader/full-errors": true,
