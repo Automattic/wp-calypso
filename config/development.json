@@ -117,7 +117,7 @@
 		"post-editor/media-advanced": false,
 		"press-this": true,
 		"publicize-preview": false,
-		"publicize-scheduling": false,
+		"publicize-scheduling": true,
 		"push-notifications": true,
 		"reader": true,
 		"reader/following-intro": true,
