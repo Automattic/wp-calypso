@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get, isEmpty, omit } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
@@ -7,6 +12,9 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
+	SOCIAL_LOGIN_REQUEST,
+	SOCIAL_LOGIN_REQUEST_FAILURE,
+	SOCIAL_LOGIN_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -23,6 +31,15 @@ export const isRequesting = createReducer( false, {
 	[ LOGIN_REQUEST ]: () => true,
 	[ LOGIN_REQUEST_FAILURE ]: () => false,
 	[ LOGIN_REQUEST_SUCCESS ]: () => false,
+} );
+
+export const redirectTo = createReducer( null, {
+	[ LOGIN_REQUEST ]: () => null,
+	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
+	[ LOGIN_REQUEST_FAILURE ]: () => null,
+	[ SOCIAL_LOGIN_REQUEST ]: () => null,
+	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, action ) => get( action, 'redirectTo', null ),
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
 } );
 
 export const rememberMe = createReducer( null, {
@@ -57,7 +74,17 @@ const updateTwoStepNonce = ( state, { twoStepNonce, nonceType } ) => Object.assi
 
 export const twoFactorAuth = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
-	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data, rememberMe } ) => data ? { ...data } : null,
+	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => {
+		if ( data ) {
+			const rest = omit( data, 'redirect_to' );
+
+			if ( ! isEmpty( rest ) ) {
+				return rest;
+			}
+		}
+
+		return null;
+	},
 	[ LOGIN_REQUEST_FAILURE ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { twoStepNonce } ) =>
 		updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } ),
@@ -88,6 +115,7 @@ export default combineReducers( {
 	isRequesting,
 	isRequestingTwoFactorAuth,
 	magicLogin,
+	redirectTo,
 	rememberMe,
 	requestError,
 	requestNotice,

@@ -16,6 +16,7 @@ import Card from 'components/card';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
+import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { loginUser } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isRequesting, getRequestError } from 'state/login/selectors';
@@ -27,6 +28,7 @@ export class LoginForm extends Component {
 		loginError: PropTypes.string,
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
+		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 	};
@@ -55,11 +57,11 @@ export class LoginForm extends Component {
 		event.preventDefault();
 
 		const { password, rememberMe, usernameOrEmail } = this.state;
-		const { onSuccess } = this.props;
+		const { onSuccess, redirectTo } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
-		this.props.loginUser( usernameOrEmail, password, rememberMe ).then( () => {
+		this.props.loginUser( usernameOrEmail, password, rememberMe, redirectTo ).then( () => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 
 			onSuccess();
@@ -157,6 +159,7 @@ export class LoginForm extends Component {
 
 export default connect(
 	( state ) => ( {
+		redirectTo: getCurrentQueryArguments( state ).redirect_to,
 		isRequesting: isRequesting( state ),
 		requestError: getRequestError( state ),
 	} ),

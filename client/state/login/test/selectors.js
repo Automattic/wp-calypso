@@ -154,10 +154,10 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isTwoFactorEnabled()', () => {
-		it( 'should return null if there is no two factor information yet', () => {
+		it( 'should return false if there is no two factor information yet', () => {
 			const twoFactorEnabled = isTwoFactorEnabled( undefined );
 
-			expect( twoFactorEnabled ).to.be.null;
+			expect( twoFactorEnabled ).to.be.false;
 		} );
 
 		it( 'should return true if the request was successful and two-factor auth is enabled', () => {
@@ -166,40 +166,11 @@ describe( 'selectors', () => {
 					twoFactorAuth: {
 						user_id: 123456,
 						two_step_nonce: 'abcdef123456',
-						result: true,
 					}
 				}
 			} );
 
 			expect( twoFactorEnabled ).to.be.true;
-		} );
-
-		it( 'should return false if the request was successful and two-factor auth is not', () => {
-			const twoFactorEnabled = isTwoFactorEnabled( {
-				login: {
-					twoFactorAuth: {
-						user_id: '',
-						two_step_nonce: '',
-						result: true,
-					}
-				}
-			} );
-
-			expect( twoFactorEnabled ).to.be.false;
-		} );
-
-		it( 'should return false if the request was unsuccessful', () => {
-			const twoFactorEnabled = isTwoFactorEnabled( {
-				login: {
-					twoFactorAuth: {
-						user_id: '',
-						two_step_nonce: '',
-						result: false,
-					}
-				}
-			} );
-
-			expect( twoFactorEnabled ).to.be.false;
 		} );
 	} );
 

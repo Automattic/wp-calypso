@@ -96,10 +96,11 @@ function getErrorFromHTTPError( httpError ) {
  *
  * @param  {String}    usernameOrEmail    Username or email of the user.
  * @param  {String}    password           Password of the user.
- * @param  {Boolean}   rememberMe         Whether to persist the logged in state of the user.
+ * @param  {Boolean}   rememberMe         Whether to persist the logged in state of the user
+ * @param  {String}    redirectTo         Url to redirect the user to upon successful login
  * @return {Function}                     Action thunk to trigger the login process.
  */
-export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch => {
+export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) => dispatch => {
 	dispatch( {
 		type: LOGIN_REQUEST,
 	} );
@@ -112,6 +113,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 			username: usernameOrEmail,
 			password,
 			remember_me: rememberMe,
+			redirect_to: redirectTo,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} ).then( ( response ) => {
@@ -178,11 +180,12 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 /**
  * Attempt to login a user with an external social account.
  *
- * @param  {String}    service The external social service name.
- * @param  {String}    token   Authentication token provided by the external social service.
- * @return {Function}          Action thunk to trigger the login process.
+ * @param  {String}    service    The external social service name.
+ * @param  {String}    token      Authentication token provided by the external social service.
+ * @param  {String}    redirectTo Url to redirect the user to upon successful login
+ * @return {Function}             Action thunk to trigger the login process.
  */
-export const loginSocialUser = ( service, token ) => dispatch => {
+export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=social-login-endpoint' )
@@ -192,11 +195,15 @@ export const loginSocialUser = ( service, token ) => dispatch => {
 		.send( {
 			service,
 			token,
+			redirect_to: redirectTo,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
-		.then( () => {
-			dispatch( { type: SOCIAL_LOGIN_REQUEST_SUCCESS } );
+		.then( ( response ) => {
+			dispatch( {
+				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
+				redirectTo: get( response, 'body.data.redirect_to' ),
+			} );
 		} )
 		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );

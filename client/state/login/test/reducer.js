@@ -35,6 +35,7 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'isRequesting',
 			'magicLogin',
+			'redirectTo',
 			'rememberMe',
 			'requestError',
 			'requestNotice',
