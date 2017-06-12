@@ -17,6 +17,7 @@ import {
 import { receivePosts } from 'state/reader/posts/actions';
 import wpcom from 'lib/wp';
 import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from './utils';
+import { getDefaultSearchAlgorithm } from 'reader/search-helper';
 
 export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 	return function( dispatch ) {
@@ -43,11 +44,18 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 			query.size_global = 2;
 		}
 
-		return wpcom
-			.undocumented()
-			.readSitePostRelated( query )
-			.then(
-				response => {
+		if ( getDefaultSearchAlgorithm() ) {
+			query.algorithm = getDefaultSearchAlgorithm();
+		}
+
+		return wpcom.undocumented().readSitePostRelated( query ).then(
+			response => {
+				dispatch( {
+					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
+					payload: { siteId, postId, scope },
+				} );
+				const sites = filter( map( response && response.posts, 'meta.data.site' ), Boolean );
+				if ( sites && sites.length !== 0 ) {
 					dispatch( {
 						type: READER_RELATED_POSTS_REQUEST_SUCCESS,
 						payload: { siteId, postId, scope },
