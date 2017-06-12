@@ -2,7 +2,7 @@
  * External dependencies
  */
 var update = require( 'react-addons-update' );
-import { every, assign, flow, isEqual, merge, reject, tail, some, uniq, flatten, filter, find } from 'lodash';
+import { every, assign, flow, isEqual, merge, reject, tail, some, uniq, flatten, filter, find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -283,6 +283,10 @@ function hasDomainRegistration( cart ) {
 	return some( getAll( cart ), isDomainRegistration );
 }
 
+function hasOnlyDomainRegistrationsWithPrivacySupport( cart ) {
+	return every( getDomainRegistrations( cart ), privacyAvailable );
+}
+
 function hasDomainMapping( cart ) {
 	return some( getAll( cart ), productsValues.isDomainMapping );
 }
@@ -404,7 +408,11 @@ function themeItem( themeSlug, source ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainRegistration( properties ) {
-	return assign( domainItem( properties.productSlug, properties.domain, properties.source ), { is_domain_registration: true } );
+	return assign( domainItem( properties.productSlug, properties.domain, properties.source ),
+		{
+			is_domain_registration: true,
+			...( properties.extra ? { extra: properties.extra } : {} ),
+		} );
 }
 
 /**
@@ -714,6 +722,16 @@ function isRenewal( cartItem ) {
 }
 
 /**
+ * Determines whether a cart item supports privacy
+ *
+ * @param {Object} cartItem - `CartItemValue` object
+ * @returns {boolean} true if item supports privacy
+ */
+function privacyAvailable( cartItem ) {
+	return get( cartItem, 'extra.privacy_available', true );
+}
+
+/**
  * Get the included domain for a cart item
  *
  * @param {Object} cartItem - `CartItemValue` object
@@ -802,6 +820,7 @@ module.exports = {
 	hasDomainInCart,
 	hasDomainMapping,
 	hasDomainRegistration,
+	hasOnlyDomainRegistrationsWithPrivacySupport,
 	hasFreeTrial,
 	hasGoogleApps,
 	hasOnlyFreeTrial,

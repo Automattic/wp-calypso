@@ -9,6 +9,7 @@ import {
 	camelCase,
 	deburr,
 	first,
+	has,
 	head,
 	indexOf,
 	kebabCase,
@@ -231,6 +232,10 @@ class DomainDetailsForm extends PureComponent {
 		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && cartItems.hasTld( this.props.cart, 'nl' );
 	}
 
+	allDomainRegistrationsSupportPrivacy() {
+		return cartItems.hasOnlyDomainRegistrationsWithPrivacySupport( this.props.cart );
+	}
+
 	allDomainRegistrationsHavePrivacy() {
 		return cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0;
 	}
@@ -428,7 +433,8 @@ class DomainDetailsForm extends PureComponent {
 				return this.switchToNextStep();
 			}
 
-			if ( ! this.allDomainRegistrationsHavePrivacy() ) {
+			if ( this.allDomainRegistrationsSupportPrivacy() &&
+				! this.allDomainRegistrationsHavePrivacy() ) {
 				this.openDialog();
 				return;
 			}
@@ -470,7 +476,9 @@ class DomainDetailsForm extends PureComponent {
 	}
 
 	finish( options = {} ) {
-		this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
+		if ( has( options.addPrivacy ) ) {
+			this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
+		}
 
 		const allFieldValues = this.getAllFieldValues();
 		debug( 'finish: allFieldValues:', allFieldValues );
@@ -516,7 +524,11 @@ class DomainDetailsForm extends PureComponent {
 
 		return (
 			<div>
-				{ cartItems.hasDomainRegistration( this.props.cart ) && this.renderPrivacySection() }
+				{
+					cartItems.hasDomainRegistration( this.props.cart ) &&
+					this.allDomainRegistrationsSupportPrivacy() &&
+					this.renderPrivacySection()
+				}
 				<PaymentBox
 					currentPage={ this.state.currentStep }
 					classSet={ classSet }
