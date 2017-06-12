@@ -20,8 +20,8 @@ import { ModalViews } from 'state/ui/media-modal/constants';
  */
 const DUMMY_SITE = { ID: 1 };
 const DUMMY_MEDIA = [
-	{ ID: 100, date: '2015-06-19T11:36:09-04:00' },
-	{ ID: 200, date: '2015-06-19T09:36:09-04:00' }
+	{ ID: 100, date: '2015-06-19T11:36:09-04:00', mime_type: 'image/jpeg' },
+	{ ID: 200, date: '2015-06-19T09:36:09-04:00', mime_type: 'image/jpeg' }
 ];
 const EMPTY_COMPONENT = React.createClass( {
 	render: function() {
@@ -156,5 +156,61 @@ describe( 'EditorMediaModal', function() {
 			expect( tree.state.detailSelectedIndex ).to.equal( 0 );
 			done();
 		} );
+	} );
+
+	it( 'should show no buttons if editing an image', () => {
+		const tree = shallow(
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				mediaLibrarySelectedItems={ [] }
+				view={ ModalViews.IMAGE_EDITOR }
+				setView={ spy } />
+		).instance();
+
+		const buttons = tree.getModalButtons();
+
+		expect( buttons ).to.be.undefined;
+	} );
+
+	it( 'should show a copy button when viewing external media', () => {
+		const tree = shallow(
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				view={ ModalViews.DETAIL }
+				setView={ spy } />
+		).instance();
+
+		tree.setState( { source: 'external' } );
+		const buttons = tree.getModalButtons();
+
+		expect( buttons.length ).to.be.equals( 2 );
+		expect( buttons[ 1 ].label ).to.be.equals( 'Copy to media library' );
+	} );
+
+	it( 'should show a continue button when multiple images are selected', () => {
+		const tree = shallow(
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
+				view={ ModalViews.DETAIL }
+				setView={ spy } />
+		).instance();
+
+		const buttons = tree.getModalButtons();
+
+		expect( buttons[ 1 ].label ).to.be.equals( 'Continue' );
+	} );
+
+	it( 'should show an insert button if none or one local items are selected', () => {
+		const tree = shallow(
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				view={ ModalViews.DETAIL }
+				setView={ spy } />
+		).instance();
+
+		const buttons = tree.getModalButtons();
+
+		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
 	} );
 } );
