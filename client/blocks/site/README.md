@@ -9,13 +9,14 @@ This component displays a Site item using the data structure provided by sites-l
 import Site from 'blocks/site';
 
 render() {
-	return <Site site={ siteObject } indicator={ true } />;
+	return <Site siteId={ siteId } indicator={ true } />;
 }
 ```
 
 #### Props
 
-* `site (object)` - A site object from `sites-list`. It's required.
+* `siteId (number)` - A site ID. Required, unless a `site` object prop is provided (see below).
+* `site (object)` - A site object. Required, unless a `siteId` prop is provided. If both are provided, `siteId` takes precedence.
 * `indicator (bool)` - Whether to display the Site Indicator within the item or not.
 * `onSelect (func)` - A function to handle the event callback when clicking/tapping on the site.
 * `href (string)` - A URL to add to the anchor.

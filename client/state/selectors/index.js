@@ -80,6 +80,7 @@ export getReaderRecommendedSitesPagingOffset from './get-reader-recommended-site
 export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
 export getSelectedOrAllSites from './get-selected-or-all-sites';
+export getSelectedOrPrimarySiteId from './get-selected-or-primary-site-id';
 export getScheduledPublicizeShareActionTime from './get-scheduled-publicize-share-action-time';
 export hasUserAskedADirectlyQuestion from './has-user-asked-a-directly-question';
 export isSchedulingPublicizeShareActionError from './is-scheduling-publicize-share-action-error';

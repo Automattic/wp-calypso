@@ -52,7 +52,7 @@ class SiteSelector extends Component {
 		indicator: PropTypes.bool,
 		autoFocus: PropTypes.bool,
 		onClose: PropTypes.func,
-		selected: PropTypes.string,
+		selected: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 		hideSelected: PropTypes.bool,
 		filter: PropTypes.func,
 		groups: PropTypes.bool,
