@@ -40,7 +40,7 @@ class FollowingManageSearchFeedsResults extends React.Component {
 
 	fetchNextPage = offset =>
 		this.props.requestFeedSearch( {
-			query: this.props.sitesQuery,
+			query: this.props.query,
 			offset,
 			excludeFollowed: true,
 		} );
