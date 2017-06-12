@@ -62,3 +62,11 @@
 		flex-grow: 1;
 	}
 }
+
+.focus-sidebar {
+	@include breakpoint( "<660px" ) {
+		.sticky-panel, .products__form {
+			display: none;
+		}
+	}
+}
