@@ -69,7 +69,10 @@ export default connect(
 			state,
 			{ query: ownProps.query, excludeFollowed: false, sort: pickSort( ownProps.sort ) },
 		),
-		searchResultsCount: getReaderFeedsCountForQuery( state, ownProps.query ),
+		searchResultsCount: getReaderFeedsCountForQuery(
+			state,
+			{ query: ownProps.query, excludeFollowed: false },
+		),
 	} ),
 	{ requestFeedSearch },
 )( localize( withWidth( SiteResults ) ) );
