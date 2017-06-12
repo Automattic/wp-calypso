@@ -17,6 +17,11 @@ export class CommentDetailAuthor extends Component {
 		authorUsername: PropTypes.string,
 		blockUser: PropTypes.func,
 		commentDate: PropTypes.string,
+		showAuthorInfo: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		showAuthorInfo: false,
 	};
 
 	state = {
@@ -25,9 +30,13 @@ export class CommentDetailAuthor extends Component {
 
 	toggleExpanded = () => {
 		this.setState( { isExpanded: ! this.state.isExpanded } );
-	}
+	};
 
-	render() {
+	authorMoreInfo() {
+		if ( ! this.props.showAuthorInfo ) {
+			return null;
+		}
+
 		const {
 			authorAvatarUrl,
 			authorDisplayName,
@@ -37,9 +46,73 @@ export class CommentDetailAuthor extends Component {
 			authorUrl,
 			authorUsername,
 			blockUser,
+			translate,
+		} = this.props;
+		return (
+			<div className="comment-detail__author-more-info">
+				<div className="comment-detail__author-more-actions">
+					<div className="comment-detail__author-more-element comment-detail__author-more-element-author">
+						<div className="comment-detail__author-avatar">
+							<img className="comment-detail__author-avatar-image" src={ authorAvatarUrl } />
+						</div>
+						<div className="comment-detail__author-info">
+							<div className="comment-detail__author-name">
+								<strong>
+									{ authorDisplayName }
+								</strong>
+							</div>
+							<div className="comment-detail__author-username">
+								{ authorUsername }
+							</div>
+						</div>
+					</div>
+					<div className="comment-detail__author-more-element">
+						<Gridicon icon="mail" />
+								<span>
+									{ authorEmail }
+								</span>
+					</div>
+					<div className="comment-detail__author-more-element">
+						<Gridicon icon="link" />
+								<span>
+									{ authorUrl }
+								</span>
+					</div>
+					<div className="comment-detail__author-more-element">
+						<Gridicon icon="globe" />
+								<span>
+									{ authorIp }
+								</span>
+					</div>
+				</div>
+				<div className="comment-detail__author-more-actions">
+					<a
+						className={ classNames(
+									'comment-detail__author-more-element comment-detail__author-more-element-block-user',
+									{ 'is-blocked': authorIsBlocked }
+								) }
+						onClick={ blockUser }
+					>
+						<Gridicon icon="block" />
+								<span>{
+									authorIsBlocked
+										? translate( 'Unblock user' )
+										: translate( 'Block user' )
+								}</span>
+					</a>
+				</div>
+			</div>
+		);
+	}
+
+	render() {
+		const {
+			authorAvatarUrl,
+			authorDisplayName,
+			authorUrl,
 			commentDate,
 			moment,
-			translate,
+			showAuthorInfo,
 		} = this.props;
 		const { isExpanded } = this.state;
 
@@ -69,64 +142,14 @@ export class CommentDetailAuthor extends Component {
 							{ moment( commentDate ).format( 'MMMM D, YYYY H:mma' ) }
 						</div>
 					</div>
-					<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
-						<Gridicon icon="info-outline" />
-					</a>
-				</div>
-
-				<div className="comment-detail__author-more-info">
-					<div className="comment-detail__author-more-actions">
-						<div className="comment-detail__author-more-element comment-detail__author-more-element-author">
-							<div className="comment-detail__author-avatar">
-								<img className="comment-detail__author-avatar-image" src={ authorAvatarUrl } />
-							</div>
-							<div className="comment-detail__author-info">
-								<div className="comment-detail__author-name">
-									<strong>
-										{ authorDisplayName }
-									</strong>
-								</div>
-								<div className="comment-detail__author-username">
-									{ authorUsername }
-								</div>
-							</div>
-						</div>
-						<div className="comment-detail__author-more-element">
-							<Gridicon icon="mail" />
-							<span>
-								{ authorEmail }
-							</span>
-						</div>
-						<div className="comment-detail__author-more-element">
-							<Gridicon icon="link" />
-							<span>
-								{ authorUrl }
-							</span>
-						</div>
-						<div className="comment-detail__author-more-element">
-							<Gridicon icon="globe" />
-							<span>
-								{ authorIp }
-							</span>
-						</div>
-					</div>
-					<div className="comment-detail__author-more-actions">
-						<a
-							className={ classNames(
-								'comment-detail__author-more-element comment-detail__author-more-element-block-user',
-								{ 'is-blocked': authorIsBlocked }
-							) }
-							onClick={ blockUser }
-						>
-							<Gridicon icon="block" />
-							<span>{
-								authorIsBlocked
-									? translate( 'Unblock user' )
-									: translate( 'Block user' )
-							}</span>
+					{
+						showAuthorInfo &&
+						<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
+							<Gridicon icon="info-outline" />
 						</a>
-					</div>
+					}
 				</div>
+				{ this.authorMoreInfo() }
 			</div>
 		);
 	}
