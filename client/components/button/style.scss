@@ -68,9 +68,8 @@ button {
 	&.is-compact {
 		padding: 7px;
 		color: $gray-text-min;
-		font-size: 11px;
+		font-size: 12px;
 		line-height: 1;
-		text-transform: uppercase;
 
 		&:disabled {
 			color: lighten( $gray, 30% );
