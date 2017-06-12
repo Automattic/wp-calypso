@@ -43,6 +43,7 @@ const EditorVisibility = React.createClass( {
 	},
 
 	propTypes: {
+		context: React.PropTypes.string,
 		onPrivatePublish: React.PropTypes.func,
 		isPrivateSite: React.PropTypes.bool,
 		type: React.PropTypes.string,
@@ -179,7 +180,7 @@ const EditorVisibility = React.createClass( {
 
 		recordStat( 'visibility-set-' + newVisibility );
 		recordEvent( 'Changed visibility', newVisibility );
-		tracks.recordEvent( 'calypso_editor_visibility_set', { visibility: newVisibility } );
+		tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: newVisibility } );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( postEdits );
@@ -204,6 +205,10 @@ const EditorVisibility = React.createClass( {
 				this.setState( { passwordIsValid: true } );
 				break;
 		}
+
+		recordStat( 'visibility-set-' + newVisibility );
+		recordEvent( 'Changed visibility', newVisibility );
+		tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: newVisibility } );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( postEdits );
@@ -233,7 +238,7 @@ const EditorVisibility = React.createClass( {
 
 		recordStat( 'visibility-set-private' );
 		recordEvent( 'Changed visibility', 'private' );
-		tracks.recordEvent( 'calypso_editor_visibility_set', { visibility: 'private' } );
+		tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: 'private' } );
 	},
 
 	onPrivatePublish() {
