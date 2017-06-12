@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -20,11 +20,6 @@ import {
 	getPosterUrl,
 	shouldShowVideoEditorError,
 } from 'state/selectors';
-
-/**
- * Module variables
- */
-let isSelectingFrame = false;
 
 class VideoEditor extends Component {
 	static propTypes = {
@@ -47,6 +42,7 @@ class VideoEditor extends Component {
 	state = {
 		error: false,
 		isLoading: true,
+		isSelectingFrame: false,
 		pauseVideo: false,
 	};
 
@@ -73,24 +69,27 @@ class VideoEditor extends Component {
 			return;
 		}
 
-		isSelectingFrame = true;
-
 		this.setState( {
 			error: false,
-			pauseVideo: true
+			isSelectingFrame: true,
+			pauseVideo: true,
 		} );
 	}
 
+	/**
+   * Updates the poster by selecting a particular frame of the video.
+   * @param {number} currentTime - Time at which to capture the frame
+   */
 	updatePoster = ( currentTime ) => {
-		if ( ! isSelectingFrame ) {
+		if ( ! this.state.isSelectingFrame ) {
 			return;
 		}
 
 		const { media } = this.props;
-		const guid = media && media.videopress_guid ? media.videopress_guid : null;
+		const guid = get( media, 'videopress_guid', null );
 
 		if ( guid ) {
-			this.props.updatePoster( guid, { atTime: Math.floor( currentTime ) } );
+			this.props.updatePoster( guid, { atTime: currentTime } );
 		}
 	}
 
@@ -103,11 +102,10 @@ class VideoEditor extends Component {
 	}
 
 	pauseVideo = () => {
-		isSelectingFrame = false;
-
 		this.setState( {
 			error: false,
-			pauseVideo: true
+			isSelectingFrame: false,
+			pauseVideo: true,
 		} );
 	}
 
@@ -117,7 +115,7 @@ class VideoEditor extends Component {
 		}
 
 		const { media } = this.props;
-		const guid = media && media.videopress_guid ? media.videopress_guid : null;
+		const guid = get( media, 'videopress_guid', null );
 
 		if ( guid ) {
 			this.props.updatePoster( guid, { file } );
@@ -160,9 +158,10 @@ class VideoEditor extends Component {
 			translate,
 		} = this.props;
 		const {
-			isLoading,
-			pauseVideo,
 			error,
+			isLoading,
+			isSelectingFrame,
+			pauseVideo,
 		} = this.state;
 
 		const classes = classNames(
