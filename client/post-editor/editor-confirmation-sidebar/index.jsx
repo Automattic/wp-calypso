@@ -95,7 +95,8 @@ class EditorConfirmationSidebar extends React.Component {
 			password,
 			status,
 			savedStatus,
-			savedPassword
+			savedPassword,
+			context: 'confirmation-sidebar',
 		};
 
 		return (
