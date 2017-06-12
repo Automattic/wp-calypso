@@ -139,13 +139,18 @@ class FollowingManage extends Component {
 		return reject( recommendedSites, site => includes( blockedSites, site.blogId ) ).length <= 4;
 	};
 
-	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
+	fetchNextPage = offset =>
+		this.props.requestFeedSearch( {
+			query: this.props.sitesQuery,
+			offset,
+			excludeFollowed: true,
+		} );
 
 	handleShowMoreClicked = () => {
 		recordTrack( 'calypso_reader_following_manage_search_more_click' );
 		recordAction( 'manage_feed_search_more' );
 		page.replace(
-			addQueryArgs( { showMoreResults: true }, window.location.pathname + window.location.search )
+			addQueryArgs( { showMoreResults: true }, window.location.pathname + window.location.search ),
 		);
 	};
 
@@ -191,7 +196,7 @@ class FollowingManage extends Component {
 		const isFollowByUrlWithNoSearchResults = showFollowByUrl && searchResultsCount === 0;
 		const filteredRecommendedSites = reject(
 			recommendedSites,
-			site => includes( blockedSites, site.blogId )
+			site => includes( blockedSites, site.blogId ),
 		);
 
 		return (
@@ -200,7 +205,8 @@ class FollowingManage extends Component {
 				<MobileBackToSidebar>
 					<h1>{ translate( 'Streams' ) }</h1>
 				</MobileBackToSidebar>
-				{ ! searchResults && <QueryReaderFeedsSearch query={ sitesQuery } /> }
+				{ ! searchResults &&
+					<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } /> }
 				{ this.shouldRequestMoreRecs() &&
 					<QueryReaderRecommendedSites
 						seed={ recommendationsSeed }
@@ -267,16 +273,19 @@ class FollowingManage extends Component {
 
 export default connect(
 	( state, { sitesQuery } ) => ( {
-		searchResults: getReaderFeedsForQuery( state, sitesQuery ),
-		searchResultsCount: getReaderFeedsCountForQuery( state, sitesQuery ),
+		searchResults: getReaderFeedsForQuery( state, { query: sitesQuery, excludeFollowed: true } ),
+		searchResultsCount: getReaderFeedsCountForQuery(
+			state,
+			{ query: sitesQuery, excludeFollowed: true },
+		),
 		recommendedSites: getReaderRecommendedSites( state, recommendationsSeed ),
 		recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset(
 			state,
-			recommendationsSeed
+			recommendationsSeed,
 		),
 		blockedSites: getBlockedSites( state ),
 		readerAliasedFollowFeedUrl: sitesQuery && getReaderAliasedFollowFeedUrl( state, sitesQuery ),
 		followsCount: getReaderFollowsCount( state ),
 	} ),
-	{ requestFeedSearch }
+	{ requestFeedSearch },
 )( localize( FollowingManage ) );
