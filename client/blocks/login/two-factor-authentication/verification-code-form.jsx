@@ -64,11 +64,11 @@ class VerificationCodeForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const { rememberMe, twoFactorAuthType } = this.props;
+		const { onSuccess, rememberMe, twoFactorAuthType } = this.props;
 		const { twoStepCode } = this.state;
 
 		this.props.loginUserWithTwoFactorVerificationCode( twoStepCode, rememberMe, twoFactorAuthType ).then( () => {
-			this.props.onSuccess();
+			onSuccess();
 		} ).catch( ( error ) => {
 			this.props.recordTracksEvent( 'calypso_two_factor_verification_code_failure', {
 				error_message: error.message

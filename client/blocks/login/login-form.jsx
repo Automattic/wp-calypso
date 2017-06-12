@@ -54,11 +54,15 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
+		const { password, rememberMe, usernameOrEmail } = this.state;
+		const { onSuccess } = this.props;
+
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
-		this.props.loginUser( this.state.usernameOrEmail, this.state.password, this.state.rememberMe ).then( () => {
+		this.props.loginUser( usernameOrEmail, password, rememberMe ).then( () => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
-			this.props.onSuccess( this.state );
+
+			onSuccess();
 		} ).catch( error => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
 				error_message: error.message

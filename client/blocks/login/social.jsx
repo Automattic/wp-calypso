@@ -32,6 +32,8 @@ class SocialLoginForm extends Component {
 	};
 
 	handleGoogleResponse = ( response ) => {
+		const { onSuccess, translate } = this.props;
+
 		if ( ! response.Zi || ! response.Zi.id_token ) {
 			return;
 		}
@@ -41,12 +43,14 @@ class SocialLoginForm extends Component {
 				social_account_type: 'google',
 			} );
 
-			this.props.onSuccess();
+			onSuccess();
 		} ).catch( error => {
 			if ( error.code === 'unknown_user' ) {
-				const { notice } = this.props.infoNotice( this.props.translate( 'Creating your account' ) );
+				const { notice } = this.props.infoNotice( translate( 'Creating your account' ) );
+
 				wpcom.undocumented().usersSocialNew( 'google', response.Zi.id_token, 'login', ( wpcomError, wpcomResponse ) => {
 					this.props.removeNotice( notice.noticeId );
+
 					if ( wpcomError ) {
 						this.props.recordTracksEvent( 'calypso_social_login_form_signup_fail', {
 							social_account_type: 'google',
