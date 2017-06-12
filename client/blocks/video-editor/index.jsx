@@ -109,6 +109,10 @@ class VideoEditor extends Component {
 		} );
 	}
 
+	/**
+   * Uploads an image to use as the poster for the video.
+   * @param {object} file - Uploaded image
+   */
 	uploadImage = ( file ) => {
 		if ( ! file ) {
 			return;
