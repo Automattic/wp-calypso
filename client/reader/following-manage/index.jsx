@@ -262,36 +262,18 @@ class FollowingManage extends Component {
 	}
 }
 
-<<<<<<< HEAD
-export default connect(
-	( state, { sitesQuery } ) => ( {
-		searchResults: getReaderFeedsForQuery(
-			state,
-			{ query: sitesQuery, excludeFollowed: true, sort: SORT_BY_RELEVANCE },
-		),
-		searchResultsCount: getReaderFeedsCountForQuery(
-			state,
-			{ query: sitesQuery, excludeFollowed: true, sort: SORT_BY_RELEVANCE },
-		),
-		recommendedSites: getReaderRecommendedSites( state, recommendationsSeed ),
-		recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset(
-			state,
-			recommendationsSeed,
-		),
-		blockedSites: getBlockedSites( state ),
-		readerAliasedFollowFeedUrl: sitesQuery && getReaderAliasedFollowFeedUrl( state, sitesQuery ),
-		followsCount: getReaderFollowsCount( state ),
-	} ),
-	{ requestFeedSearch },
-)( localize( FollowingManage ) );
-=======
 export default connect( ( state, { sitesQuery } ) => ( {
-	searchResults: getReaderFeedsForQuery( state, sitesQuery ),
-	searchResultsCount: getReaderFeedsCountForQuery( state, sitesQuery ),
+	searchResults: getReaderFeedsForQuery(
+		state,
+		{ query: sitesQuery, excludeFollowed: true, sort: SORT_BY_RELEVANCE },
+	),
+	searchResultsCount: getReaderFeedsCountForQuery(
+		state,
+		{ query: sitesQuery, excludeFollowed: true, sort: SORT_BY_RELEVANCE },
+	),
 	recommendedSites: getReaderRecommendedSites( state, recommendationsSeed ),
 	recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset( state, recommendationsSeed ),
 	blockedSites: getBlockedSites( state ),
 	readerAliasedFollowFeedUrl: sitesQuery && getReaderAliasedFollowFeedUrl( state, sitesQuery ),
 	followsCount: getReaderFollowsCount( state ),
 } ) )( localize( FollowingManage ) );
->>>>>>> Reader: add infinite-stream component
