@@ -27,6 +27,7 @@ import DropdownItem from 'components/select-dropdown/item';
 import touchDetect from 'lib/touch-detect';
 import postActions from 'lib/posts/actions';
 import { recordEvent, recordStat } from 'lib/posts/stats';
+import { tracks } from 'lib/analytics';
 import accept from 'lib/accept';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -178,6 +179,7 @@ const EditorVisibility = React.createClass( {
 
 		recordStat( 'visibility-set-' + newVisibility );
 		recordEvent( 'Changed visibility', newVisibility );
+		tracks.recordEvent( 'calypso_editor_visibility_set', { visibility: newVisibility } );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( postEdits );
@@ -231,6 +233,7 @@ const EditorVisibility = React.createClass( {
 
 		recordStat( 'visibility-set-private' );
 		recordEvent( 'Changed visibility', 'private' );
+		tracks.recordEvent( 'calypso_editor_visibility_set', { visibility: 'private' } );
 	},
 
 	onPrivatePublish() {
