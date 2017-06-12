@@ -31,12 +31,10 @@ class EditorConfirmationSidebar extends React.Component {
 		state: React.PropTypes.string,
 	};
 
-	closeOverlay = () => {
-		this.props.setState( 'closed' );
-	};
+	getCloseOverlayHandler = ( context ) => () => this.props.setState( { state: 'closed', context } );
 
 	closeAndPublish = () => {
-		this.closeOverlay();
+		this.props.setState( { state: 'closed', context: 'publish' } );
 		this.props.onPublish( true );
 	};
 
@@ -135,7 +133,7 @@ class EditorConfirmationSidebar extends React.Component {
 					<div className={ classnames( {
 						'editor-confirmation-sidebar__overlay': true,
 						'is-active': isOverlayActive,
-					} ) } onClick={ this.closeOverlay }>
+					} ) } onClick={ this.getCloseOverlayHandler( 'dismiss_overlay' ) }>
 						{ this.renderPublishingBusyButton() }
 					</div>
 					<div className={ classnames( {
@@ -146,7 +144,7 @@ class EditorConfirmationSidebar extends React.Component {
 							<div className="editor-confirmation-sidebar__close">
 								<Button
 									borderless
-									onClick={ this.closeOverlay }
+									onClick={ this.getCloseOverlayHandler( 'dismiss_x' ) }
 									title={ this.props.translate( 'Close sidebar' ) }
 									aria-label={ this.props.translate( 'Close sidebar' ) }>
 									<Gridicon icon="cross" />

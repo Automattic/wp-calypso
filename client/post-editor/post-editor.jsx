@@ -189,10 +189,19 @@ export const PostEditor = React.createClass( {
 		return this.props.setLayoutFocus( 'content' );
 	},
 
-	setConfirmationSidebar: function( state ) {
+	setConfirmationSidebar: function( { state, context = null } ) {
 		const allowedStates = [ 'closed', 'open', 'publishing' ];
 		const confirmationSidebar = allowedStates.indexOf( state ) > -1 ? state : 'closed';
 		this.setState( { confirmationSidebar } );
+
+		switch ( confirmationSidebar ) {
+			case 'closed':
+				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_close', { context } );
+				break;
+			case 'open':
+				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_open' );
+				break;
+		}	
 	},
 
 	toggleSidebar: function() {
@@ -666,12 +675,12 @@ export const PostEditor = React.createClass( {
 		};
 
 		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) && false === isConfirmed ) {
-			this.setConfirmationSidebar( 'open' );
+			this.setConfirmationSidebar( { state: 'open' } );
 			return;
 		}
 
 		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
-			this.setConfirmationSidebar( 'publishing' );
+			this.setConfirmationSidebar( { state: 'publishing' } );
 		}
 
 		// determine if this is a private publish
@@ -703,7 +712,7 @@ export const PostEditor = React.createClass( {
 		this.onSaveFailure( error, 'publishFailure' );
 
 		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
-			this.setConfirmationSidebar( 'closed' );
+			this.setConfirmationSidebar( { state: 'closed', context: 'publish_failure' } );
 		}
 	},
 
@@ -720,7 +729,7 @@ export const PostEditor = React.createClass( {
 		}
 
 		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
-			this.setConfirmationSidebar( 'closed' );
+			this.setConfirmationSidebar( { state: 'closed', context: 'publish_success' } );
 		}
 
 		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ), savedPost.URL );
