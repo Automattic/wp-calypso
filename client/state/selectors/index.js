@@ -29,6 +29,8 @@ export getAccountRecoveryValidationKey from './get-account-recovery-validation-k
 export getAccountRecoveryValidationError from './get-account-recovery-validation-error';
 export getBlockedSites from './get-blocked-sites';
 export getBillingTransactions from './get-billing-transactions';
+export getContactDetailsCache from './get-contact-details-cache';
+export getWhois from './get-whois';
 export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
@@ -170,6 +172,7 @@ export isRegeneratingJetpackPostByEmail from './is-regenerating-jetpack-post-by-
 export isRequestingAccountRecoveryResetOptions from './is-requesting-account-recovery-reset-options';
 export isRequestingAccountRecoveryReset from './is-requesting-account-recovery-reset';
 export isRequestingBillingTransactions from './is-requesting-billing-transactions';
+export isRequestingContactDetailsCache from './is-requesting-contact-details-cache';
 export isRequestingJetpackConnectionStatus from './is-requesting-jetpack-connection-status';
 export isRequestingJetpackJumpstartStatus from './is-requesting-jetpack-jumpstart-status';
 export isRequestingJetpackSettings from './is-requesting-jetpack-settings';
@@ -183,6 +186,7 @@ export isRequestingSharingButtons from './is-requesting-sharing-buttons';
 export isRequestingSiteConnectionStatus from './is-requesting-site-connection-status';
 export isRequestingSiteMonitorSettings from './is-requesting-site-monitor-settings';
 export isRequestingTimezones from './is-requesting-timezones';
+export isRequestingWhois from './is-requesting-whois';
 export isRtl from './is-rtl';
 export isRewindActivating from './is-rewind-activating';
 export isRewindActive from './is-rewind-active';
