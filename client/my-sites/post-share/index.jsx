@@ -56,7 +56,11 @@ import {
 
 import Banner from 'components/banner';
 import SharingPreviewModal from './sharing-preview-modal';
-import ConnectionsList, { NoConnectionsNotice } from './connections-list';
+import ConnectionsList, {
+	NoConnectionsNotice,
+	ConnectionsWarning,
+} from './connections-list';
+
 import ActionsList from './publicize-actions-list';
 import CalendarButton from 'blocks/calendar-button';
 import formatCurrency from 'lib/format-currency';
@@ -296,6 +300,12 @@ class PostShare extends Component {
 		);
 	}
 
+	renderConnectionsWarning() {
+		return (
+			<ConnectionsWarning { ...this.props } />
+		);
+	}
+
 	renderRequestSharingNotice() {
 		const {
 			failure,
@@ -488,7 +498,7 @@ class PostShare extends Component {
 						</div>
 					</div>
 					{ this.renderRequestSharingNotice() }
-
+					{ this.renderConnectionsWarning() }
 					{ this.renderPrimarySection() }
 				</div>
 				<QueryPosts { ...{ siteId, postId } } />
