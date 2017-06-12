@@ -50,15 +50,14 @@ const FollowingStream = props => {
 					placeholder={ props.translate( 'Search billions of WordPress.com posts…' ) }
 				/>
 			</CompactCard>
-			<p className="search-stream__blank-suggestions">
+			<div className="search-stream__blank-suggestions">
 				{ suggestionList &&
 					props.translate( 'Suggestions: {{suggestions /}}.', {
 						components: {
 							suggestions: suggestionList,
 						},
 					} ) }&nbsp;
-			</p>
-			<hr className="search-stream__fixed-area-separator" />
+			</div>
 		</Stream>
 	);
 };

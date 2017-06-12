@@ -201,16 +201,14 @@ class SearchStream extends Component {
 								</ControlItem>
 							</SegmentedControl> }
 					</CompactCard>
-					<p className="search-stream__blank-suggestions">
+					<div className="search-stream__blank-suggestions">
 						{ suggestions &&
 							this.props.translate( 'Suggestions: {{suggestions /}}.', {
 								components: {
 									suggestions: suggestionList,
 								},
 							} ) }&nbsp;
-					</p>
-
-					<hr className="search-stream__fixed-area-separator" />
+					</div>
 				</div>
 			</Stream>
 		);
