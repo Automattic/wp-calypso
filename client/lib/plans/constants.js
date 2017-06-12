@@ -177,8 +177,7 @@ export const PLANS_LIST = {
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE
 		] ),
 		getPromotedFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
