@@ -15,8 +15,6 @@ import SiteIndicator from 'my-sites/site-indicator';
 import { getSite } from 'state/sites/selectors';
 
 const Site = React.createClass( {
-	displayName: 'Site',
-
 	getDefaultProps() {
 		return {
 			// onSelect callback
