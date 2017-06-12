@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { isNumber, noop } from 'lodash';
+import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -51,6 +51,7 @@ const Site = React.createClass( {
 		isSelected: React.PropTypes.bool,
 		isHighlighted: React.PropTypes.bool,
 		site: React.PropTypes.object,
+		siteId: React.PropTypes.number,
 		homeLink: React.PropTypes.bool,
 		showHomeIcon: React.PropTypes.bool,
 		compact: React.PropTypes.bool
@@ -148,9 +149,6 @@ const Site = React.createClass( {
 	}
 } );
 
-export default connect( ( state, { site } ) => {
-	if ( isNumber( site ) ) { // Accept site IDs
-		return { site: getSite( state, site ) };
-	}
-	return { site };
-} )( Site );
+export default connect( ( state, { siteId, site } ) => ( {
+	site: siteId ? getSite( state, siteId ) : site
+} ) )( Site );

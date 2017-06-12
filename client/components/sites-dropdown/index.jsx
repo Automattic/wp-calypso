@@ -81,7 +81,7 @@ export class SitesDropdown extends PureComponent {
 						{
 							this.props.isPlaceholder
 							? <SitePlaceholder />
-							: <Site site={ this.state.selectedSiteId } indicator={ false } />
+							: <Site siteId={ this.state.selectedSiteId } indicator={ false } />
 						}
 						<Gridicon icon="chevron-down" />
 					</div>
