@@ -1,0 +1,10 @@
+.editor-preview .web-preview__inner {
+	width: 100%;
+
+	&.is-visible {
+        position: absolute;
+		top: -46px;
+		left: 0;
+		z-index: z-index( 'root', '.web-preview' );
+    }
+}
