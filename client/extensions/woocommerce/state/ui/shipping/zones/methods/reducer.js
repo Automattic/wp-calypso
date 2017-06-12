@@ -73,9 +73,16 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { methodId, title } ) => {
 	const bucket = getBucket( { id: methodId } );
 	const index = findIndex( state[ bucket ], { id: methodId } );
+
 	if ( -1 === index ) {
-		return state;
+		return { ...state,
+			[ bucket ]: [
+				...state[ bucket ],
+				{ id: methodId, title },
+			],
+		};
 	}
+
 	const methodState = { ...state[ bucket ][ index ],
 		title,
 	};
@@ -91,28 +98,36 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { methodId, ti
 const mainReducer = createReducer( initialState, reducer );
 
 export default ( state, action ) => {
-	const newState = mainReducer( state, action );
+	if ( reducer[ action.type ] ) {
+		return mainReducer( state, action );
+	}
 
 	const { methodId, methodType } = action;
 	// If the action has something to do with a built-in shipping method, fire its reducer
 	if ( methodId && methodType && builtInShippingMethods[ methodType ] ) {
 		const bucket = getBucket( { id: methodId } );
-		const index = findIndex( newState[ bucket ], { id: methodId } );
-		if ( -1 !== index ) {
-			// Only give the shipping method reducer data about the shipping method itself, not the whole tree
-			const methodState = newState[ bucket ][ index ];
-			const newMethodState = builtInShippingMethods[ methodType ]( methodState, action );
-			if ( newMethodState !== methodState ) {
-				return { ...newState,
-					[ bucket ]: [
-						...newState[ bucket ].slice( 0, index ),
-						newMethodState,
-						...newState[ bucket ].slice( index + 1 ),
-					],
-				};
-			}
+		const index = findIndex( state[ bucket ], { id: methodId } );
+
+		// Only give the shipping method reducer data about the shipping method itself, not the whole tree
+		const methodState = -1 !== index ? state[ bucket ][ index ] : { id: methodId };
+		const newMethodState = builtInShippingMethods[ methodType ]( methodState, action );
+
+		if ( -1 === index ) {
+			return { ...state,
+				[ bucket ]: [ ...state[ bucket ], newMethodState ]
+			};
+		}
+
+		if ( newMethodState !== methodState ) {
+			return { ...state,
+				[ bucket ]: [
+					...state[ bucket ].slice( 0, index ),
+					newMethodState,
+					...state[ bucket ].slice( index + 1 ),
+				],
+			};
 		}
 	}
 
-	return newState;
+	return state;
 };

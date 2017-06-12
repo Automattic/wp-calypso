@@ -130,6 +130,19 @@ describe( 'reducer', () => {
 			expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title' } ] );
 		} );
 
+		it( 'when the method has a server-side ID and it has not been edited', () => {
+			const state = {
+				creates: [],
+				updates: [],
+				deletes: [],
+			};
+
+			const newState = reducer( state, changeShippingZoneMethodTitle( siteId, 1, 'New Title' ) );
+			expect( newState.creates ).to.be.empty;
+			expect( newState.deletes ).to.be.empty;
+			expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title' } ] );
+		} );
+
 		it( 'when the method has a provisional ID', () => {
 			const state = {
 				creates: [ { id: { index: 0 }, title: 'Trololol' } ],
@@ -156,6 +169,20 @@ describe( 'reducer', () => {
 			expect( newState.creates ).to.be.empty;
 			expect( newState.deletes ).to.be.empty;
 			expect( newState.updates ).to.deep.equal( [ { id: 1, cost: 42 } ] );
+		} );
+
+		it( 'when the method has a server-side ID and it has not been edited', () => {
+			const state = {
+				creates: [],
+				updates: [],
+				deletes: [],
+			};
+
+			const newState = reducer( state, setShippingCost( siteId, 1, 42 ) );
+			expect( newState.creates ).to.be.empty;
+			expect( newState.deletes ).to.be.empty;
+			expect( newState.updates.length ).to.equal( 1 );
+			expect( newState.updates[ 0 ] ).to.deep.include( { id: 1, cost: 42 } );
 		} );
 
 		it( 'when the method has a provisional ID', () => {
