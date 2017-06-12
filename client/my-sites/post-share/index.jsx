@@ -17,6 +17,7 @@ import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
+import NoticeAction from 'components/notice/notice-action';
 import {
 	isPublicizeEnabled,
 	isSchedulingPublicizeShareAction,
@@ -56,10 +57,7 @@ import {
 
 import Banner from 'components/banner';
 import SharingPreviewModal from './sharing-preview-modal';
-import ConnectionsList, {
-	NoConnectionsNotice,
-	ConnectionsWarning,
-} from './connections-list';
+import ConnectionsList, { NoConnectionsNotice } from './connections-list';
 
 import ActionsList from './publicize-actions-list';
 import CalendarButton from 'blocks/calendar-button';
@@ -301,8 +299,38 @@ class PostShare extends Component {
 	}
 
 	renderConnectionsWarning() {
+		const {
+			connections,
+			hasFetchedConnections,
+			siteSlug,
+			translate,
+		} = this.props;
+
+		if ( ! hasFetchedConnections || ! connections.length ) {
+			return null;
+		}
+
+		const brokenConnections = connections.filter( connection => connection.status === 'broken' );
+
+		if ( ! brokenConnections.length ) {
+			return null;
+		}
+
 		return (
-			<ConnectionsWarning { ...this.props } />
+			<div>
+				{ brokenConnections
+					.map( connection => <Notice
+						key={ connection.keyring_connection_ID }
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
+					>
+						<NoticeAction href={ `/sharing/${ siteSlug }` }>
+							{ translate( 'Reconnect' ) }
+						</NoticeAction>
+					</Notice> )
+				}
+			</div>
 		);
 	}
 
