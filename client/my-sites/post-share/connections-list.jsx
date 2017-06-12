@@ -37,42 +37,6 @@ class ConnectionsList extends PureComponent {
 		);
 	}
 
-	renderWarnings() {
-		const {
-			connections,
-			hasFetchedConnections,
-			siteSlug,
-			translate,
-		} = this.props;
-
-		if ( ! hasFetchedConnections || ! connections.length ) {
-			return null;
-		}
-
-		const brokenConnections = connections.filter( connection => connection.status === 'broken' );
-
-		if ( ! brokenConnections.length ) {
-			return null;
-		}
-
-		return (
-			<div>
-				{ brokenConnections
-					.map( connection => <Notice
-						key={ connection.keyring_connection_ID }
-						status="is-warning"
-						showDismiss={ false }
-						text={ translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
-					>
-						<NoticeAction href={ `/sharing/${ siteSlug }` }>
-							{ translate( 'Reconnect' ) }
-						</NoticeAction>
-					</Notice> )
-				}
-			</div>
-		);
-	}
-
 	render() {
 		const { connections, onToggle, siteId } = this.props;
 
@@ -99,6 +63,40 @@ class ConnectionsList extends PureComponent {
 		);
 	}
 }
+
+export const ConnectionsWarning = ( {
+	connections,
+	hasFetchedConnections,
+	siteSlug,
+	translate,
+} ) => {
+	if ( ! hasFetchedConnections || ! connections.length ) {
+		return null;
+	}
+
+	const brokenConnections = connections.filter( connection => connection.status === 'broken' );
+
+	if ( ! brokenConnections.length ) {
+		return null;
+	}
+
+	return (
+		<div>
+			{ brokenConnections
+				.map( connection => <Notice
+					key={ connection.keyring_connection_ID }
+					status="is-warning"
+					showDismiss={ false }
+					text={ translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
+				>
+					<NoticeAction href={ `/sharing/${ siteSlug }` }>
+						{ translate( 'Reconnect' ) }
+					</NoticeAction>
+				</Notice> )
+			}
+		</div>
+	);
+};
 
 export const NoConnectionsNotice = ( { siteSlug, translate } ) => (
 	<Notice
