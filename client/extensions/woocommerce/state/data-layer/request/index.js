@@ -10,7 +10,7 @@ import {
 	WOOCOMMERCE_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 
-export function handleRequest( { dispatch }, action , next ) {
+export function handleRequest( { dispatch }, action ) {
 	const { method, siteId, path, body } = action;
 
 	return request( siteId )[ method ]( path, body )
@@ -34,5 +34,5 @@ export function handleRequest( { dispatch }, action , next ) {
 
 export default {
 	[ WOOCOMMERCE_REQUEST ]: [ handleRequest ],
-}
+};
 
