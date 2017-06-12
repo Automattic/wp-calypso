@@ -373,7 +373,7 @@ sections.push( {
 	name: 'domain-connect-authorize',
 	paths: [ '/domain-connect/authorize' ],
 	module: 'my-sites/upgrades/domain-management/domain-connect',
-	enableLoggedOut: false,
+	enableLoggedOut: true,
 	secondary: false
 } );
 

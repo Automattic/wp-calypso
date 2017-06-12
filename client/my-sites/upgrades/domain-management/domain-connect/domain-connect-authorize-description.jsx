@@ -28,6 +28,10 @@ class DomainConnectAuthorizeDescription extends Component {
 	render() {
 		const { dnsTemplateError, isPlaceholder, providerId, translate } = this.props;
 
+		if ( isPlaceholder ) {
+			return this.placeholder();
+		}
+
 		// Note: these are only examples. The exact templates that we will use haven't yet been determined.
 		const templateDescription = {
 			'g-suite': translate( 'Howdy! It looks like you want to make your domain work with ' +
@@ -55,10 +59,6 @@ class DomainConnectAuthorizeDescription extends Component {
 				'about the service you\'re trying to set up. Contact your service provider\s support and ' +
 				'let them know about this error message.' )
 		};
-
-		if ( isPlaceholder ) {
-			return this.placeholder();
-		}
 
 		if ( templateDescription[ providerId ] ) {
 			return (
