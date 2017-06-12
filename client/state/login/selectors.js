@@ -46,14 +46,6 @@ export const getTwoFactorNotificationSent = ( state ) => {
 export const getTwoFactorPushToken = state => get( state, 'login.twoFactorAuth.push_web_token', null );
 
 /***
- * Retrieve the remember me flag that was set when logging in
- *
- * @param  {Object}   state  Global state tree
- * @return {Boolean}         Remember me flag for authentication
- */
-export const getTwoFactorRememberMe = state => get( state, 'login.twoFactorAuth.remember_me', false );
-
-/***
  * Retrieve the progress status of polling for push authentication
  *
  * @param  {Object}   state  Global state tree
@@ -159,4 +151,14 @@ export const getRequestError = ( state ) => {
  */
 export const getRequestNotice = ( state ) => {
 	return get( state, 'login.requestNotice', null );
+};
+
+/***
+ * Retrieve the remember me flag that was set when logging in.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Remember me flag for authentication
+ */
+export const getRememberMe = ( state ) => {
+	return get( state, 'login.rememberMe', false );
 };

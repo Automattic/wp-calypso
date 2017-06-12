@@ -38,10 +38,6 @@ class Login extends Component {
 		twoFactorNotificationSent: PropTypes.string,
 	};
 
-	state = {
-		rememberMe: false,
-	};
-
 	componentDidMount = () => {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
@@ -126,10 +122,6 @@ class Login extends Component {
 			twoFactorNotificationSent,
 		} = this.props;
 
-		const {
-			rememberMe,
-		} = this.state;
-
 		let poller;
 		if ( twoFactorEnabled && twoFactorAuthType && twoFactorNotificationSent === 'push' ) {
 			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
@@ -140,7 +132,6 @@ class Login extends Component {
 				<div>
 					{ poller }
 					<VerificationCodeForm
-						rememberMe={ rememberMe }
 						onSuccess={ this.rebootAfterLogin }
 						twoFactorAuthType={ twoFactorAuthType }
 					/>

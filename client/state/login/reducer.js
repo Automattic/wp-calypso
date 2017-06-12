@@ -25,6 +25,12 @@ export const isRequesting = createReducer( false, {
 	[ LOGIN_REQUEST_SUCCESS ]: () => false,
 } );
 
+export const rememberMe = createReducer( null, {
+	[ LOGIN_REQUEST ]: () => null,
+	[ LOGIN_REQUEST_SUCCESS ]: ( state, action ) => action.rememberMe,
+	[ LOGIN_REQUEST_FAILURE ]: () => false,
+} );
+
 export const requestError = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: () => null,
@@ -51,7 +57,7 @@ const updateTwoStepNonce = ( state, { twoStepNonce, nonceType } ) => Object.assi
 
 export const twoFactorAuth = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
-	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data, rememberMe } ) => data ? { ...data, remember_me: rememberMe } : null,
+	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data, rememberMe } ) => data ? { ...data } : null,
 	[ LOGIN_REQUEST_FAILURE ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { twoStepNonce } ) =>
 		updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } ),
@@ -82,6 +88,7 @@ export default combineReducers( {
 	isRequesting,
 	isRequestingTwoFactorAuth,
 	magicLogin,
+	rememberMe,
 	requestError,
 	requestNotice,
 	requestSuccess,

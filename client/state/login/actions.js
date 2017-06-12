@@ -27,8 +27,9 @@ import {
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 } from 'state/action-types';
 import {
-	getTwoFactorUserId,
+	getRememberMe,
 	getTwoFactorAuthNonce,
+	getTwoFactorUserId,
 } from 'state/login/selectors';
 
 const errorMessages = {
@@ -95,7 +96,7 @@ function getErrorFromHTTPError( httpError ) {
  *
  * @param  {String}    usernameOrEmail    Username or email of the user.
  * @param  {String}    password           Password of the user.
- * @param  {Boolean}   rememberMe         Whether to persist the logged in state of the user..
+ * @param  {Boolean}   rememberMe         Whether to persist the logged in state of the user.
  * @return {Function}                     Action thunk to trigger the login process.
  */
 export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch => {
@@ -135,11 +136,10 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
  * Attempt to login a user when a two factor verification code is sent.
  *
  * @param  {String}    twoStepCode  Verification code for the user.
- * @param  {Boolean}   rememberMe       Flag for remembering the user for a while after logging in.
  * @param {String}     twoFactorAuthType Two factor authentication method
  * @return {Function}                 Action thunk to trigger the login process.
  */
-export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, rememberMe, twoFactorAuthType ) => ( dispatch, getState ) => {
+export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAuthType ) => ( dispatch, getState ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
@@ -150,7 +150,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, rememberMe,
 			user_id: getTwoFactorUserId( getState() ),
 			two_step_code: twoStepCode,
 			two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
-			remember_me: rememberMe,
+			remember_me: getRememberMe( getState() ),
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} )

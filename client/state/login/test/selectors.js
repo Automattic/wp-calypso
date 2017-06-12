@@ -8,19 +8,19 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-  getRequestError,
-  getTwoFactorAuthNonce,
-  getTwoFactorAuthRequestError,
-  getTwoFactorPushPollInProgress,
-  getTwoFactorPushPollSuccess,
-  getTwoFactorPushToken,
-  getTwoFactorRememberMe,
-  getTwoFactorSupportedAuthTypes,
-  getTwoFactorUserId,
-  isRequesting,
-  isRequestingTwoFactorAuth,
-  isTwoFactorAuthTypeSupported,
-  isTwoFactorEnabled,
+	getRememberMe,
+	getRequestError,
+	getTwoFactorAuthNonce,
+	getTwoFactorAuthRequestError,
+	getTwoFactorPushPollInProgress,
+	getTwoFactorPushPollSuccess,
+	getTwoFactorPushToken,
+	getTwoFactorSupportedAuthTypes,
+	getTwoFactorUserId,
+	isRequesting,
+	isRequestingTwoFactorAuth,
+	isTwoFactorAuthTypeSupported,
+	isTwoFactorEnabled,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -260,18 +260,16 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getTwoFactorRememberMe()', () => {
+	describe( 'getRememberMe()', () => {
 		it( 'should return false by default', () => {
-			expect( getTwoFactorRememberMe( undefined ) ).to.be.false;
+			expect( getRememberMe( undefined ) ).to.be.false;
 		} );
 
 		it( "should return remember me flag when it's set", () => {
 			const rememberMe = true;
-			expect( getTwoFactorRememberMe( {
+			expect( getRememberMe( {
 				login: {
-					twoFactorAuth: {
-						remember_me: rememberMe
-					}
+					rememberMe
 				}
 			} ) ).to.eql( rememberMe );
 		} );

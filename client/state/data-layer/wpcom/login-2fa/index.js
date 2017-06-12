@@ -14,11 +14,11 @@ import {
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 } from 'state/action-types';
 import {
-  getTwoFactorAuthNonce,
-  getTwoFactorPushPollInProgress,
-  getTwoFactorPushToken,
-  getTwoFactorRememberMe,
-  getTwoFactorUserId,
+	getRememberMe,
+	getTwoFactorAuthNonce,
+	getTwoFactorPushPollInProgress,
+	getTwoFactorPushToken,
+	getTwoFactorUserId,
 } from 'state/login/selectors';
 
 /***
@@ -40,7 +40,7 @@ const doAppPushRequest = ( store ) => {
 		.send( {
 			user_id: getTwoFactorUserId( store.getState() ),
 			two_step_nonce: getTwoFactorAuthNonce( store.getState(), 'push' ),
-			remember_me: getTwoFactorRememberMe( store.getState() ),
+			remember_me: getRememberMe( store.getState() ),
 			two_step_push_token: getTwoFactorPushToken( store.getState() ),
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),

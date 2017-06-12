@@ -30,7 +30,6 @@ class VerificationCodeForm extends Component {
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
-		rememberMe: PropTypes.bool.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthRequestError: PropTypes.string,
@@ -64,12 +63,12 @@ class VerificationCodeForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const { onSuccess, rememberMe, twoFactorAuthType } = this.props;
+		const { onSuccess, twoFactorAuthType } = this.props;
 		const { twoStepCode } = this.state;
 
 		this.props.recordTracksEvent( 'calypso_two_factor_verification_code_submit' );
 
-		this.props.loginUserWithTwoFactorVerificationCode( twoStepCode, rememberMe, twoFactorAuthType ).then( () => {
+		this.props.loginUserWithTwoFactorVerificationCode( twoStepCode, twoFactorAuthType ).then( () => {
 			this.props.recordTracksEvent( 'calypso_two_factor_verification_code_success' );
 
 			onSuccess();
