@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { includes, map } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -19,6 +20,7 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
+import { routeTo } from 'state/ui/actions';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -28,6 +30,8 @@ const bulkActions = {
 	all: [ 'approve', 'unapprove', 'spam', 'trash' ],
 };
 
+const STATUSES = [ 'unapproved', 'approved', 'spam', 'trash', 'all' ];
+
 export class CommentNavigation extends Component {
 	static defaultProps = {
 		isSelectedAll: false,
@@ -35,31 +39,49 @@ export class CommentNavigation extends Component {
 		status: 'unapproved',
 	};
 
-	getNavItems = () => {
+	getNavLabels = () => {
 		const { translate } = this.props;
 
 		return {
-			unapproved: {
-				label: translate( 'Pending' ),
-			},
-			approved: {
-				label: translate( 'Approved' ),
-			},
-			spam: {
-				label: translate( 'Spam' ),
-			},
-			trash: {
-				label: translate( 'Trash' ),
-			},
-			all: {
-				label: translate( 'All' ),
-			},
+			unapproved: translate( 'Pending' ),
+			approved: translate( 'Approved' ),
+			spam: translate( 'Spam' ),
+			trash: translate( 'Trash' ),
+			all: translate( 'All' ),
 		};
+	};
+
+	getNavItem = ( siteSlug ) => ( status ) => {
+		const path = this.getStatusPath( status, siteSlug );
+		return {
+			onClick: this.routeToPath( path ),
+			path,
+			status,
+		};
+	};
+
+	componentWillMount() {
+		this.setState( {
+			navItems: map( STATUSES, this.getNavItem( this.props.siteSlug ) )
+		} );
 	}
 
-	getStatusPath = status => 'unapproved' !== status
-		? `/comments/${ status }/${ this.props.siteSlug }`
-		: `/comments/pending/${ this.props.siteSlug }`;
+	componentWillReceiveProps( { siteSlug } ) {
+		if ( this.props.siteSlug !== siteSlug ) {
+			this.setState( {
+				navItems: map( STATUSES, this.getNavItem( siteSlug ) )
+			} );
+		}
+	}
+
+	routeToPath = ( path ) => ( event ) => {
+		event.preventDefault();
+		this.props.routeTo( path );
+	};
+
+	getStatusPath = ( status, siteSlug ) => 'unapproved' !== status
+		? `/comments/${ status }/${ siteSlug }`
+		: `/comments/pending/${ siteSlug }`;
 
 	statusHasAction = action => includes( bulkActions[ this.props.status ], action );
 
@@ -78,7 +100,7 @@ export class CommentNavigation extends Component {
 			translate,
 		} = this.props;
 
-		const navItems = this.getNavItems();
+		const navLabels = this.getNavLabels();
 
 		if ( isBulkEdit ) {
 			return (
@@ -151,15 +173,16 @@ export class CommentNavigation extends Component {
 		}
 
 		return (
-			<SectionNav className="comment-navigation" selectedText={ navItems[ queryStatus ].label }>
-				<NavTabs selectedText={ navItems[ queryStatus ].label }>
-					{ map( navItems, ( { label }, status ) =>
+			<SectionNav className="comment-navigation" selectedText={ navLabels[ queryStatus ] }>
+				<NavTabs selectedText={ navLabels[ queryStatus ] }>
+					{ map( this.state.navItems, ( { status, path, onClick } ) =>
 						<NavItem
 							key={ status }
-							path={ this.getStatusPath( status ) }
+							path={ path }
 							selected={ queryStatus === status }
+							onClick={ onClick }
 						>
-							{ label }
+							{ navLabels[ status ] }
 						</NavItem>
 					) }
 				</NavTabs>
@@ -184,4 +207,6 @@ export class CommentNavigation extends Component {
 	}
 }
 
-export default localize( UrlSearch( CommentNavigation ) );
+export default connect( null, {
+	routeTo,
+} )( localize( UrlSearch( CommentNavigation ) ) );

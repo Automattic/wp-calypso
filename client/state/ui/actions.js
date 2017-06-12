@@ -4,6 +4,7 @@
 import {
 	SELECTED_SITE_SET,
 	ROUTE_SET,
+	ROUTE_TO,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE
@@ -48,6 +49,19 @@ export function setRoute( path, query = {} ) {
 		type: ROUTE_SET,
 		path,
 		query,
+	};
+}
+
+/**
+ * Returns an action object signalling to update the current route
+ *
+ * @param  {String} path    Route path
+ * @return {Object}         Action object
+ */
+export function routeTo( path ) {
+	return {
+		type: ROUTE_TO,
+		path,
 	};
 }
 

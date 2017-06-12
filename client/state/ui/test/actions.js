@@ -9,9 +9,10 @@ import { expect } from 'chai';
 import {
 	SELECTED_SITE_SET,
 	ROUTE_SET,
+	ROUTE_TO,
 	NOTIFICATIONS_PANEL_TOGGLE
 } from 'state/action-types';
-import { setSelectedSiteId, setRoute, toggleNotificationsPanel } from '../actions';
+import { setSelectedSiteId, setRoute, toggleNotificationsPanel, routeTo } from '../actions';
 
 describe( 'actions', () => {
 	describe( '#setSelectedSiteId()', () => {
@@ -33,6 +34,17 @@ describe( 'actions', () => {
 				type: ROUTE_SET,
 				path: '/foo',
 				query: {}
+			} );
+		} );
+	} );
+
+	describe( 'routeTo()', () => {
+		it( 'should return an action object', () => {
+			const action = routeTo( '/bar' );
+
+			expect( action ).to.eql( {
+				type: ROUTE_TO,
+				path: '/bar',
 			} );
 		} );
 	} );

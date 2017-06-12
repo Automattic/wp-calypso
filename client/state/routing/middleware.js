@@ -9,10 +9,17 @@ import page from 'page';
  */
 import localforage from 'lib/localforage';
 import { isOutsideCalypso } from 'lib/url';
-import { ROUTE_SET } from 'state/action-types';
+import { ROUTE_SET, ROUTE_TO } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:restore-last-location' );
 const LAST_PATH = 'last_path';
+
+export const routingMiddleware = () => ( next ) => ( action ) => {
+	if ( action.type === ROUTE_TO ) {
+		page( action.path );
+	}
+	return next( action );
+};
 
 export const restoreLastLocation = () => {
 	let hasInitialized = false;
@@ -47,4 +54,4 @@ export const restoreLastLocation = () => {
 	};
 };
 
-export default restoreLastLocation;
+export default routingMiddleware;
