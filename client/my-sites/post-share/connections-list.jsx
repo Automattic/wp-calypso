@@ -91,8 +91,6 @@ class ConnectionsList extends PureComponent {
 
 		return (
 			<div className="post-share__connections">
-				{ this.renderWarnings() }
-
 				{ connections.map( connection =>
 					<Connection { ...{
 						connection,
