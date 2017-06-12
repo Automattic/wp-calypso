@@ -10,13 +10,7 @@
 }
 
 .search-stream .search {
-	margin: 0;
-}
-
-.search-stream__fixed-area-separator {
-	margin-top: 31px;
 	margin-bottom: 0;
-	background: lighten( $gray, 20% );
 }
 
 .is-reader-page .search-stream .reader-post-card.card {
@@ -36,7 +30,15 @@
 	}
 }
 
-// fix for smaller breakpoint on the new site-search
+.search-stream .reader__content .reader-post-card:first-child {
+	margin-top: 120px;
+}
+
+.search-stream .search-stream__input-card.card{
+box-shadow: 0 0 0 2px lighten( $gray, 20% ), 0 1px 2px lighten( $gray, 20% );
+}
+
+// Fix for smaller breakpoint on the new site-search
 .is-reader-page .search-stream__with-sites .search-stream__fixed-area {
 	padding-top: 20px;
 
@@ -51,11 +53,67 @@
 	z-index: z-index( 'root', '.search-stream__input-card' );
 }
 
+// Top margins for Sites in Search
+// Post recs and post results with suggested terms
+.search-stream .search-stream__recommendation-list-item:nth-child(2),
+.search-stream .search-stream__recommendation-list-item:nth-child(3),
+.search-stream .reader-post-card:nth-child(2) {
+	margin-top: 100px;
+}
+
+.search-stream .search-stream__recommendation-list-item:nth-child(3) {
+
+	@media #{$reader-related-card-v2-breakpoint-medium} {
+		margin-top: 0;
+	}
+
+	@media #{$reader-related-card-v2-breakpoint-small} {
+		margin-top: 0;
+	}
+}
+
+// Post recs
+.search-stream.search-stream__with-sites .search-stream__recommendation-list-item:nth-child(2),
+.search-stream.search-stream__with-sites .search-stream__recommendation-list-item:nth-child(3) {
+	margin-top: 90px;
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 70px;
+	}
+}
+
+.search-stream.search-stream__with-sites .search-stream__single-column-results {
+	padding-top: 150px;
+}
+
+.search-stream.search-stream__with-sites .search-stream__single-column-results .search-stream__recommendation-list-item:nth-child(2) {
+	margin-top: -60px;
+}
+
+.search-stream.search-stream__with-sites .search-stream__single-column-results .search-stream__recommendation-list-item:nth-child(3) {
+	margin-top: -60px;
+
+	@media #{$reader-related-card-v2-breakpoint-medium} {
+		margin-top: 0;
+	}
+
+	@media #{$reader-related-card-v2-breakpoint-small} {
+		margin-top: 0;
+	}
+}
+
+// Site results
+.search-stream.search-stream__with-sites .is-two-columns .search-stream__post-results .reader-post-card:nth-child(2),
+.search-stream.search-stream__with-sites .is-two-columns .search-stream__site-results {
+	margin-top: 150px;
+}
+
 // Search term suggestions
 .search-stream__blank-suggestions {
+	border-bottom: 1px solid lighten( $gray, 20% );
 	font-size: 13px;
 	color: $gray;
-	margin-top: 18px;
+	padding-bottom: 15px;
 	text-align:left;
 
 	a, a:visited {
@@ -87,7 +145,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	border-bottom: 1px solid lighten( $gray, 20% );
 	display: flex;
 	flex-basis: calc( 50% - 15px );
-	margin: 0 0 0 15px;
+	margin-left: 15px;
 	padding: 18px 0 21px 0;
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
@@ -97,31 +155,35 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	@include breakpoint( "<660px" ) {
 		flex-basis: calc( 50% - 30px );
-		margin: 0 15px 0;
+		margin-left: 15px;
+		margin-right: 15px;
 	}
 
 	@media #{$reader-related-card-v2-breakpoint-small}  {
 		flex-basis: 100%;
-		margin: 0 15px 0;
+		margin-left: 15px;
+		margin-right: 15px;
 	}
 
 	&:nth-child( 2n ) {
 		flex-basis: calc( 50% - 15px );
-		margin: 0 15px 0 0;
+		margin-left: 0;
+		margin-right: 15px;
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
 			flex-basis: 100%;
-			margin: 0;
 		}
 
 		@include breakpoint( "<660px" ) {
 			flex-basis: calc( 50% - 30px );
-			margin: 0 15px 0;
+			margin-left: 15px;
+			margin-right: 15px;
 		}
 
 		@media #{$reader-related-card-v2-breakpoint-small} {
 			flex-basis: 100%;
-			margin: 0 15px 0;
+			margin-left: 15px;
+			margin-right: 15px;
 		}
 	}
 
@@ -210,26 +272,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 // Posts and Sites results
 .search-stream .search-stream__results.is-two-columns {
 	display: flex;
-}
-
-.search-stream .search-stream__recommendation-list-item:nth-child(2),
-.search-stream .search-stream__recommendation-list-item:nth-child(3) {
-	margin-top: 100px;
-
-	@include breakpoint( "<660px" ) {
-		margin-top: 80px;
-	}
-}
-
-.search-stream .search-stream__recommendation-list-item:nth-child(3) {
-
-	@media #{$reader-related-card-v2-breakpoint-medium} {
-		margin-top: 0;
-	}
-
-	@include breakpoint( "<480px" ) {
-		margin-top: 0;
-	}
 }
 
 // Post and Sites static headers
