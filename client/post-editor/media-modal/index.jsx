@@ -355,7 +355,15 @@ export class EditorMediaModal extends Component {
 			}
 		];
 
-		if ( ModalViews.GALLERY !== this.props.view && selectedItems.length > 1 &&
+		if ( this.state.source !== '' ) {
+			buttons.push( {
+				action: 'confirm',
+				label: this.props.labels.confirm || this.props.translate( 'Copy to media library' ),
+				isPrimary: true,
+				disabled: isDisabled || 0 === selectedItems.length,
+				onClick: this.confirmSelection
+			} );
+		} else if ( ModalViews.GALLERY !== this.props.view && selectedItems.length > 1 &&
 				! some( selectedItems, ( item ) => MediaUtils.getMimePrefix( item ) !== 'image' ) ) {
 			buttons.push( {
 				action: 'confirm',
