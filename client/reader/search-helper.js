@@ -13,6 +13,6 @@ if ( typeof window !== 'undefined' && window.location.search ) {
 	}
 }
 
-export default function getDefaultSearchAlgorithm() {
+export function getDefaultSearchAlgorithm() {
 	return algorithm;
 }

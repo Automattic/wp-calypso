@@ -14,7 +14,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 import queryKey from 'state/reader/feed-searches/query-key';
-import getDefaultSearchAlgorithm from 'reader/search-helper';
+import { getDefaultSearchAlgorithm } from 'reader/search-helper';
 
 export function initiateFeedSearch( store, action ) {
 	if ( ! ( action.payload && action.payload.query ) ) {
