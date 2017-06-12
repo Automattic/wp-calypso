@@ -61,7 +61,21 @@ export const total = keyedReducer(
 	} ),
 );
 
+/**
+ * Tracks the search algorithm being used for each query
+ *
+ * A map of query key to algorithm. Both are opaque to the reducer, effectively
+ * just a map of string to string.
+ */
+export const algorithm = keyedReducer(
+	'queryKey',
+	createReducer( null, {
+		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => action.payload.algorithm,
+	} ),
+);
+
 export default combineReducers( {
 	items,
 	total,
+	algorithm,
 } );

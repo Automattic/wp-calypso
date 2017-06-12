@@ -8,7 +8,7 @@ import freeze from 'deep-freeze';
  * Internal dependencies
  */
 import { receiveFeedSearch } from '../actions';
-import { items } from '../reducer';
+import { items, total, algorithm } from '../reducer';
 
 const queryKey = 'macrumor-F-ASC';
 const feeds = freeze( [
@@ -56,6 +56,34 @@ describe( 'reducer', () => {
 			expect( nextState ).to.eql( {
 				...prevState,
 				[ queryKey ]: feeds,
+			} );
+		} );
+	} );
+
+	describe( '#total', () => {
+		it( 'should default to an empty object', () => {
+			const state = algorithm( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should record the total', () => {
+			const state = freeze( {} );
+			expect( total( state, receiveFeedSearch( queryKey, feeds, 100, 'made-up' ) ) ).to.eql( {
+				[ queryKey ]: 100,
+			} );
+		} );
+	} );
+
+	describe( '#algorithm', () => {
+		it( 'should default to an empty object', () => {
+			const state = algorithm( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should record the algorithm', () => {
+			const state = freeze( {} );
+			expect( algorithm( state, receiveFeedSearch( queryKey, feeds, 100, 'made-up' ) ) ).to.eql( {
+				[ queryKey ]: 'made-up',
 			} );
 		} );
 	} );
