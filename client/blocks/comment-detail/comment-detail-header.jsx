@@ -14,7 +14,7 @@ import CommentDetailActions from './comment-detail-actions';
 import ExternalLink from 'components/external-link';
 import FormCheckbox from 'components/forms/form-checkbox';
 import AutoDirection from 'components/auto-direction';
-import { stripHTML } from 'lib/formatting';
+import { stripHTML, decodeEntities } from 'lib/formatting';
 
 const controlExternalLink = isBulkEdit => event => {
 	if ( isBulkEdit ) {
@@ -105,7 +105,7 @@ export const CommentDetailHeader = ( {
 			</div>
 			<AutoDirection>
 				<div className="comment-detail__comment-preview">
-					{ stripHTML( commentContent ) }
+					{ decodeEntities( stripHTML( commentContent ) ) }
 				</div>
 			</AutoDirection>
 		</div>
