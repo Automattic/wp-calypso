@@ -8,19 +8,19 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	getTwoFactorAuthRequestError,
-	getTwoFactorUserId,
-	getTwoFactorAuthNonce,
-	getRequestError,
-	getTwoFactorSupportedAuthTypes,
-	isRequestingTwoFactorAuth,
-	isRequesting,
-	isTwoFactorEnabled,
-	isTwoFactorAuthTypeSupported,
-	getTwoFactorPushToken,
-	getTwoFactorRememberMe,
-	getTwoFactorPushPollInProgress,
-	getTwoFactorPushPollSuccess,
+  getRequestError,
+  getTwoFactorAuthNonce,
+  getTwoFactorAuthRequestError,
+  getTwoFactorPushPollInProgress,
+  getTwoFactorPushPollSuccess,
+  getTwoFactorPushToken,
+  getTwoFactorRememberMe,
+  getTwoFactorSupportedAuthTypes,
+  getTwoFactorUserId,
+  isRequesting,
+  isRequestingTwoFactorAuth,
+  isTwoFactorAuthTypeSupported,
+  isTwoFactorEnabled,
 } from '../selectors';
 
 describe( 'selectors', () => {

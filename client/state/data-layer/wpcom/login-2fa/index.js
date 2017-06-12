@@ -14,11 +14,11 @@ import {
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 } from 'state/action-types';
 import {
-	getTwoFactorUserId,
-	getTwoFactorAuthNonce,
-	getTwoFactorPushToken,
-	getTwoFactorRememberMe,
-	getTwoFactorPushPollInProgress
+  getTwoFactorAuthNonce,
+  getTwoFactorPushPollInProgress,
+  getTwoFactorPushToken,
+  getTwoFactorRememberMe,
+  getTwoFactorUserId,
 } from 'state/login/selectors';
 
 /***
