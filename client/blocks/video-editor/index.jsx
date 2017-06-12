@@ -13,7 +13,7 @@ import classNames from 'classnames';
 import ProgressBar from 'components/progress-bar';
 import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
-import VideoEditorButtons from './video-editor-buttons';
+import VideoEditorControls from './video-editor-controls';
 import { updatePoster } from 'state/ui/editor/video-editor/actions';
 import {
 	getPosterUploadProgress,
@@ -198,7 +198,7 @@ class VideoEditor extends Component {
 						<span className="video-editor__text">
 							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
 						</span>
-						<VideoEditorButtons
+						<VideoEditorControls
 							isPosterUpdating={ uploadProgress && ! error }
 							isVideoLoading={ isLoading }
 							onCancel={ onCancel }
