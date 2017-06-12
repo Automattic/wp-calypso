@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import { mergeMethodEdits } from '../helpers';
 
 describe( 'mergeMethodEdits', () => {
-	it( 'when there are no saved edits', () => {
+	it( 'should return the current edits when there are no saved edits', () => {
 		const zoneMethodEdits = {
 			creates: [],
 			updates: [],
@@ -24,7 +24,7 @@ describe( 'mergeMethodEdits', () => {
 		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( currentMethodEdits );
 	} );
 
-	it( 'when there are no current edits', () => {
+	it( 'should return the saved edits when there are no current edits', () => {
 		const zoneMethodEdits = {
 			creates: [ { id: { index: 0 } } ],
 			updates: [ { id: 1, title: 'Wololo' } ],
@@ -39,7 +39,7 @@ describe( 'mergeMethodEdits', () => {
 		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( zoneMethodEdits );
 	} );
 
-	it( 'when there are new edits', () => {
+	it( 'should return the union of all the edits', () => {
 		const zoneMethodEdits = {
 			creates: [ { id: { index: 0 } } ],
 			updates: [ { id: 1, title: 'Wololo' } ],
@@ -58,7 +58,7 @@ describe( 'mergeMethodEdits', () => {
 		} );
 	} );
 
-	it( 'when there are new edits that must merge with previous ones', () => {
+	it( 'should merge edits for the same shipping zone method', () => {
 		const zoneMethodEdits = {
 			creates: [ { id: { index: 0 }, key: 'value', title: 'Wololo' } ],
 			updates: [ { id: 1, key: 'value', title: 'Wololo' } ],
@@ -77,7 +77,7 @@ describe( 'mergeMethodEdits', () => {
 		} );
 	} );
 
-	it( 'when there are deletes that cancel previous creates and updates', () => {
+	it( 'should remove previous updates or creates for a method that has been deleted', () => {
 		const zoneMethodEdits = {
 			creates: [ { id: { index: 0 }, title: 'Wololo' } ],
 			updates: [ { id: 1, title: 'Wololo' } ],

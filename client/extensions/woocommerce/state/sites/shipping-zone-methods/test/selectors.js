@@ -15,7 +15,7 @@ import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'selectors', () => {
 	describe( 'get shipping zone method', () => {
-		it( 'when shipping zone method does not exist', () => {
+		it( 'should return null when the shipping zone method does not exist', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -31,7 +31,7 @@ describe( 'selectors', () => {
 			expect( getShippingZoneMethod( state, 17, 123 ) ).to.be.falsey;
 		} );
 
-		it( 'when shipping zone method exists', () => {
+		it( 'should return the shipping zone method if it exists', () => {
 			const state = {
 				extensions: {
 					woocommerce: {

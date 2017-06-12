@@ -30,14 +30,14 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'removeMethodFromShippingZone', () => {
-		it( 'when the method has a server-side ID', () => {
+		it( 'should add the method ID to the "deletes" list if it is a server-side ID', () => {
 			const newState = reducer( initialState, removeMethodFromShippingZone( siteId, 1 ) );
 			expect( newState.creates ).to.be.empty;
 			expect( newState.updates ).to.be.empty;
 			expect( newState.deletes ).to.deep.equal( [ { id: 1 } ] );
 		} );
 
-		it( 'when the method has a server-side ID and it had previous edits', () => {
+		it( 'should delete any previous "updates" the method had', () => {
 			const state = {
 				creates: [],
 				updates: [ { id: 1, title: 'MyMethod' } ],
@@ -49,7 +49,7 @@ describe( 'reducer', () => {
 			expect( newState.deletes ).to.deep.equal( [ { id: 1 } ] );
 		} );
 
-		it( 'when the method has a provisional ID', () => {
+		it( 'should remove the method from the "creates" list if it had a provisional ID', () => {
 			const state = {
 				creates: [ { id: { index: 0 }, title: 'NewMethod' } ],
 				updates: [],
@@ -63,7 +63,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'changeShippingZoneMethodType', () => {
-		it( 'when the method has a server-side ID', () => {
+		it( 'should add the old method to "deletes" and add the new one to "creates" if it had a server-side ID', () => {
 			const state = {
 				creates: [],
 				updates: [ { id: 7, methodType: 'free_shipping', title: 'MyMethod' } ],
@@ -81,7 +81,7 @@ describe( 'reducer', () => {
 			expect( newState.creates[ 0 ].cost ).to.be.a.number;
 		} );
 
-		it( 'when the method has a provisional ID', () => {
+		it( 'should remove the old method from "creates" and replace it with the new one if it had a provisional ID', () => {
 			const state = {
 				creates: [ { id: { index: 0 }, methodType: 'free_shipping', title: 'MyMethod' } ],
 				updates: [],
@@ -99,7 +99,7 @@ describe( 'reducer', () => {
 			expect( newState.creates[ 0 ].cost ).to.be.a.number;
 		} );
 
-		it( 'when the method already had been changed type', () => {
+		it( 'should preserve the _originalId field if the method had already changed type before', () => {
 			const state = {
 				creates: [ { id: { index: 0 }, methodType: 'free_shipping', _originalId: 7 } ],
 				updates: [],
@@ -117,7 +117,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'changeShippingZoneMethodTitle', () => {
-		it( 'when the method has a server-side ID', () => {
+		it( 'should change the entry on "updates" if the method has a server-side ID', () => {
 			const state = {
 				creates: [],
 				updates: [ { id: 1, title: 'Trololol' } ],
@@ -130,7 +130,7 @@ describe( 'reducer', () => {
 			expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title' } ] );
 		} );
 
-		it( 'when the method has a server-side ID and it has not been edited', () => {
+		it( 'should add an entry on "updates" if the method has a server-side ID and it has not been edited', () => {
 			const state = {
 				creates: [],
 				updates: [],
@@ -143,7 +143,7 @@ describe( 'reducer', () => {
 			expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title' } ] );
 		} );
 
-		it( 'when the method has a provisional ID', () => {
+		it( 'should change the entry in "creates" if the method has a provisional ID', () => {
 			const state = {
 				creates: [ { id: { index: 0 }, title: 'Trololol' } ],
 				updates: [],
@@ -158,7 +158,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'edit a shipping zone method property', () => {
-		it( 'when the method has a server-side ID', () => {
+		it( 'should change the entry on "updates" if the method has a server-side ID', () => {
 			const state = {
 				creates: [],
 				updates: [ { id: 1 } ],
@@ -171,7 +171,7 @@ describe( 'reducer', () => {
 			expect( newState.updates ).to.deep.equal( [ { id: 1, cost: 42 } ] );
 		} );
 
-		it( 'when the method has a server-side ID and it has not been edited', () => {
+		it( 'should add an entry on "updates" if the method has a server-side ID and it has not been edited', () => {
 			const state = {
 				creates: [],
 				updates: [],
@@ -185,7 +185,7 @@ describe( 'reducer', () => {
 			expect( newState.updates[ 0 ] ).to.deep.include( { id: 1, cost: 42 } );
 		} );
 
-		it( 'when the method has a provisional ID', () => {
+		it( 'should change the entry in "creates" if the method has a provisional ID', () => {
 			const state = {
 				creates: [ { id: { index: 0 } } ],
 				updates: [],

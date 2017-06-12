@@ -39,7 +39,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'openShippingZoneForEdit', () => {
-		it( 'when the zone has a server-side ID', () => {
+		it( 'should not add anything to "updates" when the zone has a server-side ID', () => {
 			const newState = reducer( initialState, openShippingZoneForEdit( siteId, 1 ) );
 			expect( newState.creates ).to.be.empty;
 			expect( newState.updates ).to.be.empty;
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 			expect( newState.currentlyEditingChanges ).to.deep.equal( emptyChanges );
 		} );
 
-		it( 'when the zone has a provisional ID', () => {
+		it( 'should not add anything to "creates" when the zone has a provisional ID', () => {
 			const newState = reducer( initialState, openShippingZoneForEdit( siteId, { index: 0 } ) );
 			expect( newState.creates ).to.be.empty;
 			expect( newState.updates ).to.be.empty;

@@ -14,8 +14,8 @@ import {
 import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'selectors', () => {
-	describe( 'get shipping zone methods', () => {
-		it( 'when the zones are being loaded', () => {
+	describe( 'getShippingZoneMethods', () => {
+		it( 'should return an empty list when the zones are being loaded', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -34,7 +34,7 @@ describe( 'selectors', () => {
 			expect( getShippingZoneMethods( state, 1 ) ).to.deep.equal( [] );
 		} );
 
-		it( 'when the zone does not exist', () => {
+		it( 'should return an empty list when the zone does not exist', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -321,8 +321,8 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'get currently editing shipping zone methods', () => {
-		it( 'when the zones are being loaded', () => {
+	describe( 'getCurrentlyEditingShippingZoneMethods', () => {
+		it( 'should return an empty list when the zones are being loaded', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -341,7 +341,7 @@ describe( 'selectors', () => {
 			expect( getCurrentlyEditingShippingZoneMethods( state ) ).to.deep.equal( [] );
 		} );
 
-		it( 'when there is no zone currently being edited', () => {
+		it( 'should return an empty list when there is no zone currently being edited', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
@@ -530,8 +530,8 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'get type options to add a new shipping method to a zone', () => {
-		it( 'when there are no methods in the zone', () => {
+	describe( 'getNewMethodTypeOptions', () => {
+		it( 'should return all the built-in types when there are no methods in the zone', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
