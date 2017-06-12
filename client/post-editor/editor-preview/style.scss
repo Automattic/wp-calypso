@@ -1,10 +1,16 @@
 .editor-preview .web-preview__inner {
+	display: none;
+	opacity: 0;
+	transition: opacity 0.3s ease-in-out;
 	width: 100%;
 
 	&.is-visible {
+		display: flex;
+		opacity: 1;
         position: absolute;
-		top: -46px;
-		left: 0;
-		z-index: z-index( 'root', '.web-preview' );
+			top: -46px;
+			left: 0;
+			z-index: z-index( 'root', '.web-preview' );
+		visibility: visible;
     }
 }
