@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CommentDetailAuthor from './comment-detail-author';
+import AutoDirection from 'components/auto-direction';
 
 export class CommentDetailComment extends Component {
 	static propTypes = {
@@ -55,10 +56,11 @@ export class CommentDetailComment extends Component {
 						blockUser={ blockUser }
 						commentDate={ commentDate }
 					/>
-
-					<div className="comment-detail__comment-body">
-						{ commentContent }
-					</div>
+					<AutoDirection>
+						<div className="comment-detail__comment-body"
+							dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
+						/>
+					</AutoDirection>
 
 					{ repliedToComment &&
 						<div className="comment-detail__comment-reply">
