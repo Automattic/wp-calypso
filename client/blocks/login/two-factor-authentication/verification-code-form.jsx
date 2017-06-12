@@ -61,7 +61,7 @@ class VerificationCodeForm extends Component {
 		} );
 	};
 
-	onCodeSubmit = ( event ) => {
+	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
 		const { rememberMe, twoFactorAuthType } = this.props;
@@ -108,7 +108,7 @@ class VerificationCodeForm extends Component {
 		}
 
 		return (
-			<form onSubmit={ this.onCodeSubmit }>
+			<form onSubmit={ this.onSubmitForm }>
 				<Card className="two-factor-authentication__push-notification-screen is-compact">
 					<p>
 						{ helpText }
@@ -139,7 +139,6 @@ class VerificationCodeForm extends Component {
 
 					<FormButton
 						className="two-factor-authentication__form-button"
-						onClick={ this.onSubmit }
 						primary
 						disabled={ this.props.isRequestingTwoFactorAuth }
 					>{ translate( 'Continue' ) }</FormButton>
