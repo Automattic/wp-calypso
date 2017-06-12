@@ -26,15 +26,15 @@ class EditorConfirmationSidebar extends React.Component {
 		onPublish: React.PropTypes.func,
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
-		setState: React.PropTypes.func,
+		setStatus: React.PropTypes.func,
 		site: React.PropTypes.object,
-		state: React.PropTypes.string,
+		status: React.PropTypes.string,
 	};
 
-	getCloseOverlayHandler = ( context ) => () => this.props.setState( { state: 'closed', context } );
+	getCloseOverlayHandler = ( context ) => () => this.props.setStatus( { status: 'closed', context } );
 
 	closeAndPublish = () => {
-		this.props.setState( { state: 'closed', context: 'publish' } );
+		this.props.setStatus( { status: 'closed', context: 'publish' } );
 		this.props.onPublish( true );
 	};
 
@@ -104,7 +104,7 @@ class EditorConfirmationSidebar extends React.Component {
 	}
 
 	renderPublishingBusyButton() {
-		if ( 'publishing' !== this.props.state ) {
+		if ( 'publishing' !== this.props.status ) {
 			return;
 		}
 
@@ -121,8 +121,8 @@ class EditorConfirmationSidebar extends React.Component {
 	}
 
 	render() {
-		const isSidebarActive = this.props.state === 'open';
-		const isOverlayActive = this.props.state !== 'closed';
+		const isSidebarActive = this.props.status === 'open';
+		const isOverlayActive = this.props.status !== 'closed';
 
 		return (
 			<RootChild>
