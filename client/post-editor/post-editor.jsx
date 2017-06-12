@@ -359,6 +359,7 @@ export const PostEditor = React.createClass( {
 							isLoading={ this.state.isLoading }
 							previewUrl={ this.state.previewUrl }
 							externalUrl={ this.state.previewUrl }
+							defaultViewportDevice={ config.isEnabled( 'post-editor/delta-post-publish-preview' ) ? 'computer' : 'tablet' }
 						/>
 						: null }
 				</div>
@@ -817,6 +818,10 @@ export const PostEditor = React.createClass( {
 			};
 
 			window.scrollTo( 0, 0 );
+
+			if ( config.isEnabled( 'post-editor/delta-post-publish-preview' ) && this.props.isSitePreviewable ) {
+				this.iframePreview();
+			}
 		} else {
 			nextState.notice = null;
 		}
