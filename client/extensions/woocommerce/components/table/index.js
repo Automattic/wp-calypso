@@ -17,10 +17,7 @@ const Table = ( { className, compact, header, children, ...props } ) => {
 	return (
 		<Card className={ classes }>
 			<table { ...props }>
-				{ header
-					? <thead>{ header }</thead>
-					: null
-				}
+				{ header && <thead>{ header }</thead> }
 				<tbody>
 					{ children }
 				</tbody>
