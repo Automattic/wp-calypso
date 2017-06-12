@@ -17,6 +17,7 @@ export default createReducer( {}, {
 		data.forEach( method => {
 			newState[ method.id ] = {
 				id: method.id,
+				order: method.order,
 				// The "method_id" prop name is very confusing, change it for "methodType":
 				methodType: method.method_id,
 				// We only care about the settings values, not their definitions
