@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import { getSelectedOrPrimarySiteId } from '../';
 
 describe( 'getSelectedOrPrimarySiteId()', () => {
-	context( 'with no site selected', () => {
-		it( 'should return null if there is no current user', ( ) => {
+	context( 'with no current user', () => {
+		it( 'should return null if there is no site selected', ( ) => {
 			const siteId = getSelectedOrPrimarySiteId( {
 				currentUser: {},
 				ui: {},
@@ -18,7 +18,16 @@ describe( 'getSelectedOrPrimarySiteId()', () => {
 			expect( siteId ).to.be.null;
 		} );
 
-		it( 'should return current user\'s primary site\'s ID', () => {
+		it( 'should return the selected site\'s ID if there is one', ( ) => {
+			const siteId = getSelectedOrPrimarySiteId( {
+				ui: { selectedSiteId: 2916284 }
+			} );
+			expect( siteId ).to.equal( 2916284 );
+		} );
+	} );
+
+	context( 'with a current user', () => {
+		it( 'should return the current user\'s primary site\'s ID if there is no site selected', () => {
 			const siteId = getSelectedOrPrimarySiteId( {
 				currentUser: { id: 12345678 },
 				ui: {},
@@ -26,12 +35,12 @@ describe( 'getSelectedOrPrimarySiteId()', () => {
 			} );
 			expect( siteId ).to.equal( 7654321 );
 		} );
-	} );
 
-	context( 'with a site selected', () => {
-		it( 'should return the selected site\'s ID', ( ) => {
+		it( 'should return the selected site\'s ID if there is one', () => {
 			const siteId = getSelectedOrPrimarySiteId( {
-				ui: { selectedSiteId: 2916284 }
+				currentUser: { id: 12345678 },
+				ui: { selectedSiteId: 2916284 },
+				users: { items: { 12345678: { primary_blog: 7654321 } } },
 			} );
 			expect( siteId ).to.equal( 2916284 );
 		} );
