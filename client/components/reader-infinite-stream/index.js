@@ -50,7 +50,7 @@ class ReaderInfiniteStream extends Component {
 
 	rowRenderer = rowRendererProps => {
 		const railcar = get( this.props.items[ rowRendererProps.index ], 'railcar', undefined );
-		if ( this.props.renderEventName && ! this.recordedRender.has( rowRendererProps.index ) ) {
+		if ( railcar && this.props.renderEventName && ! this.recordedRender.has( rowRendererProps.index ) ) {
 			this.recordedRender.add( rowRendererProps.index );
 			this.recordTraintrackForRowRender( pickBy( {
 				index: rowRendererProps.index,
