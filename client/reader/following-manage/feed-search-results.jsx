@@ -17,7 +17,6 @@ import ReaderSubscriptionListItemPlaceholder
 import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'reader/follow-button/follow-sources';
 import InfiniteStream from 'components/reader-infinite-stream';
 import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
-import { getReaderFeedsCountForQuery } from 'state/selectors';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 
 class FollowingManageSearchFeedsResults extends React.Component {
