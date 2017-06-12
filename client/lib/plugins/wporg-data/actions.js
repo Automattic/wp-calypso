@@ -2,6 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:wporg-data:actions' );
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,6 +11,7 @@ var Dispatcher = require( 'dispatcher' ),
 	wporg = require( 'lib/wporg' ),
 	debounce = require( 'lodash/debounce' ),
 	utils = require( 'lib/plugins/utils' );
+import CuratedPlugins from 'lib/plugins/wporg-data/curated.json';
 
 /**
  * Constants
@@ -55,7 +57,14 @@ var PluginsDataActions = {
 		} );
 
 		if ( 'featured' === category ) {
-			this.fetchCuratedList( 'featured', 'woocommerce' );
+			this.fetchCuratedList( 'featured', [
+				'woocommerce',
+				'jetpack',
+				'bbpress',
+				'buddypress',
+				'akismet',
+				'vaultpress',
+			] );
 			return;
 		}
 
@@ -83,19 +92,20 @@ var PluginsDataActions = {
 	}, 25 ),
 
 	fetchCuratedList: function( category, slugs ) {
-		wporg.fetchPluginInformation( slugs, function( error, data ) {
-			debug( 'curated plugin list fetched from .org', category, slugs, error, data );
-			_fetchingLists[ category ] = null;
-			// _lastFetchedPagePerCategory[ category ] = page;
-			// _totalPagesPerCategory[ category ] = data.info.pages;
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_WPORG_PLUGINS_LIST',
-				action: 'FETCH_WPORG_PLUGINS_LIST',
-				page: 1,
-				category: category,
-				data: data ? utils.normalizePluginsList( [ data ] ) : null,
-				error: error
-			} );
+		const data = CuratedPlugins.filter( function( plugin ) {
+			return includes( slugs, plugin.slug );
+		} );
+		debug( 'curated plugin list', category, slugs );
+		_fetchingLists[ category ] = null;
+		_lastFetchedPagePerCategory[ category ] = 1;
+		_totalPagesPerCategory[ category ] = 1;
+		Dispatcher.handleServerAction( {
+			type: 'RECEIVE_WPORG_PLUGINS_LIST',
+			action: 'FETCH_WPORG_PLUGINS_LIST',
+			page: 1,
+			category: category,
+			data: utils.normalizePluginsList( data ),
+			error: null
 		} );
 	},
 
