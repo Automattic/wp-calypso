@@ -20,7 +20,7 @@ const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELE
 class SitesResults extends React.Component {
 	static propTypes = {
 		query: PropTypes.string,
-		sort: PropTypes.string,
+		sort: PropTypes.oneOf( [ SORT_BY_LAST_UPDATED, SORT_BY_RELEVANCE ] ),
 		requestFeedSearch: PropTypes.func,
 		searchResults: PropTypes.array,
 	};
