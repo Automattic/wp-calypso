@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { PureComponent, PropTypes } from 'react';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -29,10 +28,6 @@ class ConnectionsList extends PureComponent {
 		connections: [],
 	};
 
-	hasConnections() {
-		return !! get( this.props, 'connections.length' );
-	}
-
 	renderEmptyPlaceholder() {
 		return (
 			<div className="post-share__main">
@@ -50,7 +45,7 @@ class ConnectionsList extends PureComponent {
 			translate,
 		} = this.props;
 
-		if ( ! hasFetchedConnections || ! this.hasConnections() ) {
+		if ( ! hasFetchedConnections || ! connections.length ) {
 			return null;
 		}
 
@@ -81,7 +76,7 @@ class ConnectionsList extends PureComponent {
 	render() {
 		const { connections, onToggle, siteId } = this.props;
 
-		if ( ! siteId || ! this.hasConnections() ) {
+		if ( ! siteId || ! connections.length ) {
 			return null;
 		}
 
