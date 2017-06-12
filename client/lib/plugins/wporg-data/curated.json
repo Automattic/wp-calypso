@@ -1,0 +1,62 @@
+[
+	{
+		"name": "WooCommerce",
+		"author": "<a href=\"https://woocommerce.com\">Automattic</a>",
+		"rating": 92,
+		"icons": {
+			"1x": "https://ps.w.org/woocommerce/assets/icon-128x128.png?rev=144083",
+			"2x": "https://ps.w.org/woocommerce/assets/icon-256x256.png?rev=144083"
+		},
+		"slug": "woocommerce"
+	},
+	{
+		"name": "Jetpack by WordPress.com",
+		"author": "<a href=\"https://jetpack.com\">Automattic</a>",
+		"rating": 82,
+		"icons": {
+			"1x": "https://ps.w.org/jetpack/assets/icon-128x128.png?rev=969908",
+			"2x": "https://ps.w.org/jetpack/assets/icon-256x256.png?rev=969908"
+		},
+		"slug": "jetpack"
+	},
+	{
+		"name": "Akismet",
+		"author": "<a href=\"https://automattic.com/wordpress-plugins/\">Automattic</a>",
+		"rating": 96,
+		"icons": {
+			"1x": "https://ps.w.org/akismet/assets/icon-128x128.png?rev=969272",
+			"2x": "https://ps.w.org/akismet/assets/icon-256x256.png?rev=969272"
+		},
+		"slug": "akismet"
+	},
+	{
+		"name": "bbPress",
+		"author": "<a href=\"https://bbpress.org\">The bbPress Community</a>",
+		"rating": 84,
+		"icons": {
+			"1x": "https://ps.w.org/bbpress/assets/icon-128x128.png?rev=1534011",
+			"2x": "https://ps.w.org/bbpress/assets/icon-256x256.png?rev=1534011"
+		},
+		"slug": "bbpress"
+	},
+	{
+		"name": "BuddyPress",
+		"author": "<a href=\"https://buddypress.org/\">The BuddyPress Community</a>",
+		"rating": 88,
+		"icons": {
+			"1x": "https://ps.w.org/buddypress/assets/icon-128x128.png?rev=1309232",
+			"2x": "https://ps.w.org/buddypress/assets/icon-256x256.png?rev=1309232"
+		},
+		"slug": "buddypress"
+	},
+	{
+		"name": "VaultPress",
+		"author": "<a href=\"http://vaultpress.com/?utm_source=author-uri&amp;utm_medium=plugin-description&amp;utm_campaign=1.0\">Automattic</a>",
+		"rating": 88,
+		"icons": {
+			"1x": "https://ps.w.org/vaultpress/assets/icon-128x128.png?rev=986513",
+			"2x": "https://ps.w.org/vaultpress/assets/icon-256x256.png?rev=986513"
+		},
+		"slug": "woocommerce"
+	}
+]
