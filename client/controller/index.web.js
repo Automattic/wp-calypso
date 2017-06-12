@@ -11,7 +11,6 @@ import page from 'page';
  */
 import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
-import LayoutJetpack from 'layout/jetpack';
 import nuxWelcome from 'layout/nux-welcome';
 import translatorInvitation from 'layout/community-translator/invitation-utils';
 import { makeLayoutMiddleware } from './shared.js';
