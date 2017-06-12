@@ -14,6 +14,7 @@ import CommentDetailActions from './comment-detail-actions';
 import ExternalLink from 'components/external-link';
 import FormCheckbox from 'components/forms/form-checkbox';
 import AutoDirection from 'components/auto-direction';
+import { stripHTML } from 'lib/formatting';
 
 const controlExternalLink = isBulkEdit => event => {
 	if ( isBulkEdit ) {
@@ -103,9 +104,9 @@ export const CommentDetailHeader = ( {
 				</div>
 			</div>
 			<AutoDirection>
-				<div className="comment-detail__comment-preview"
-					dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
-				/>
+				<div className="comment-detail__comment-preview">
+					{ stripHTML( commentContent ) }
+				</div>
 			</AutoDirection>
 		</div>
 	);
