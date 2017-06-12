@@ -125,6 +125,7 @@ export class EditorMediaModal extends Component {
 		return {
 			filter: '',
 			detailSelectedIndex: 0,
+			source: '',
 			gallerySettings: props.initialGallerySettings
 		};
 	}
@@ -301,6 +302,9 @@ export class EditorMediaModal extends Component {
 		}
 	};
 
+	onSourceChange = () => {
+	};
+
 	onClose = () => {
 		this.props.onClose();
 	};
@@ -434,11 +438,13 @@ export class EditorMediaModal extends Component {
 						filter={ this.state.filter || this.props.defaultFilter || this.getFirstEnabledFilter() }
 						enabledFilters={ this.props.enabledFilters }
 						search={ this.state.search }
+						source={ this.state.source }
 						onAddMedia={ this.onAddMedia }
 						onAddAndEditImage={ this.onAddAndEditImage }
 						onFilterChange={ this.onFilterChange }
 						onScaleChange={ this.onScaleChange }
 						onSearch={ this.onSearch }
+						onSourceChange={ this.onSourceChange }
 						onEditItem={ this.editItem }
 						fullScreenDropZone={ false }
 						single={ this.props.single }
