@@ -158,12 +158,27 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 		} );
 		context.store.dispatch( editPost( siteId, null, reduxPostAttributes ) );
 		actions.edit( postAttributes );
-		actions.updateMetadata(
-			reduce( postToCopy.metadata, ( newMetadata, { key, value } ) => {
-				newMetadata[ key ] = value;
-				return newMetadata;
-			}, {} )
-		);
+
+		/**
+		 * A post metadata whitelist for Flux's `updateMetadata()` action.
+		 *
+		 * This is needed because blindly passing all post metadata to `updateMetadata()`
+		 * causes unforeseeable issues, such as Publicize not triggering on the copied post.
+		 *
+		 * @see https://github.com/Automattic/wp-calypso/issues/14840
+		 */
+		const metadataWhitelist = [
+			'geo_latitude',
+			'geo_longitude',
+		];
+
+		// Convert the metadata array into a metadata object, needed because `updateMetadata()` expects an object.
+		const metadata = reduce( postToCopy.metadata, ( newMetadata, { key, value } ) => {
+			newMetadata[ key ] = value;
+			return newMetadata;
+		}, {} );
+
+		actions.updateMetadata( pick( metadata, metadataWhitelist ) );
 	} ).catch( error => {
 		Dispatcher.handleServerAction( {
 			type: 'SET_POST_LOADING_ERROR',
