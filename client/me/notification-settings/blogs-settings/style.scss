@@ -17,7 +17,7 @@
 	}
 }
 
-.notification-settings-blog-settings-header,
+.blogs-settings__header,
 .notification-settings-blog-settings-placeholder__header {
 	display: flex;
 	color: $gray;
@@ -31,12 +31,12 @@
 	}
 }
 
-.notification-settings-blog-settings-header__legend {
+.blogs-settings__header-legend {
 	@extend %notification-settings-blog-settings-flexbox;
 	margin-right: 10px;
 }
 
-.notification-settings-blog-settings-header__expand {
+.blogs-settings__header-expand {
 	@extend %notification-settings-blog-settings-flexbox;
 	display: none;
 	color: lighten( $gray, 30% );

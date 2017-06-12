@@ -4,10 +4,12 @@
 import deepFreeze from 'deep-freeze';
 import assert from 'assert';
 import { noop } from 'lodash';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { createReduxStore } from 'state';
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
@@ -26,7 +28,6 @@ describe( 'index', function() {
 	useSandbox( newSandbox => sandbox = newSandbox );
 	useFakeDom.withContainer();
 	useMockery( mockery => {
-		require( 'test/helpers/mocks/data-poller' )( mockery );
 		mockery.registerMock( 'components/section-nav', EmptyComponent );
 		mockery.registerMock( 'components/sidebar-navigation', EmptyComponent );
 		mockery.registerMock( 'lib/analytics/ad-tracking', noop );
@@ -87,12 +88,17 @@ describe( 'index', function() {
 	} );
 
 	function renderWithProps( props = defaultProps ) {
-		return ReactDom.render(
-			<DomainList
-				{ ...props }
-			/>,
+		const store = createReduxStore(),
+			dom = ReactDom.render(
+			<ReduxProvider store={ store }>
+				<DomainList
+					{ ...props }
+				/>
+			</ReduxProvider>,
 			useFakeDom.getContainer()
 		);
+
+		return TestUtils.scryRenderedComponentsWithType( dom, DomainList )[ 0 ];
 	}
 
 	describe( 'regular cases', function() {

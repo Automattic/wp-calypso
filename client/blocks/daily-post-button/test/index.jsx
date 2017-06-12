@@ -20,11 +20,11 @@ describe( 'DailyPostButton', () => {
 	const sitesListMock = {
 		fetched: true,
 		data: sites,
-		getPrimary: stub()
+		getPrimary: stub(),
 	};
 	let DailyPostButton;
 
-	useMockery( ( mockery ) => {
+	useMockery( mockery => {
 		const statsMocks = {
 			recordAction: noop,
 			recordGaEvent: noop,
@@ -37,7 +37,7 @@ describe( 'DailyPostButton', () => {
 		mockery.registerMock( 'components/sites-popover', SitesPopover );
 	} );
 
-	before( () =>{
+	before( () => {
 		DailyPostButton = require( '../index' );
 		sitesListMock.getPrimary.returns( sitesListMock.data[ 0 ] );
 	} );
@@ -68,7 +68,9 @@ describe( 'DailyPostButton', () => {
 		} );
 
 		it( 'shows the sites list if showingMenu is true', () => {
-			const active = shallow( <DailyPostButton post={ dailyPromptPost } /> ).setState( { showingMenu: true } );
+			const active = shallow( <DailyPostButton post={ dailyPromptPost } /> ).setState( {
+				showingMenu: true,
+			} );
 			assert.isTrue( active.containsMatchingElement( <SitesPopover /> ) );
 		} );
 	} );
@@ -90,7 +92,7 @@ describe( 'DailyPostButton', () => {
 			assert.isTrue( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) );
 		} );
 
-		it( 'shows the site selector if the user has more than one site', ( done ) => {
+		it( 'shows the site selector if the user has more than one site', done => {
 			dailyPostButton.instance().renderSitesPopover = done;
 			dailyPostButton.simulate( 'click', { preventDefault: noop } );
 		} );

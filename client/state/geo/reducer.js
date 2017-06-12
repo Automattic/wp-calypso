@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -12,7 +7,7 @@ import {
 	GEO_REQUEST_FAILURE,
 	GEO_REQUEST_SUCCESS
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { geoSchema } from './schema';
 
 /**

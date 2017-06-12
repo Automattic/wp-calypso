@@ -20,8 +20,7 @@ const MyComponent = React.createClass( {
 		return (
 			<TransferData
 				component={ MyChildComponent }
-				selectedDomainName={ selectedDomainName }
-				sites={ sites } />
+				selectedDomainName={ selectedDomainName } />
 		);
 	}
 } );
@@ -33,7 +32,6 @@ The component expects to receive all listed props:
 
 * `component` - mentioned above
 * `selectedDomainName` - the domain name currently selected 
-* `sites` - a list of user sites 
 
 The child component should receive processed props defined during the render:
 
@@ -45,4 +43,4 @@ As well as:
 * `domains` - a list of domains, it's the result of a call to `DomainsStore.getBySite` for the current site
 * `wapiDomainInfo` - Wapi domain info, it's the result of a call to `WapiDomainInfoStore.getByDomainName` for the current domain  
 
-It's updated whenever `DomainsStore`, `WapiDomainInfoStore` or `sites` changes.
+It's updated whenever `DomainsStore`, `WapiDomainInfoStore` changes.

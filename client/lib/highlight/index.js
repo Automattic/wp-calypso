@@ -73,7 +73,7 @@ function walk( node, term, wrapperNode ) {
 		children = toArray( node.childNodes );
 
 		for ( var i = 0; i < children.length; i++ ) {
-			walk( children[i], term, wrapperNode );
+			walk( children[ i ], term, wrapperNode );
 		}
 
 	} else if ( node.nodeName === '#text' ) {

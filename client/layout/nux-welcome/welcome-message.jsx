@@ -47,7 +47,7 @@ module.exports = React.createClass( {
 		if ( welcomeSite ) {
 			postLink = '/post/' + welcomeSite.slug;
 			customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + welcomeSite.slug : adminURL + 'customize.php?return=' + encodeURIComponent( window.location.href );
-			sharingLink = config.isEnabled( 'manage/sharing' ) ? '/sharing/' + welcomeSite.slug : adminURL + 'options-general.php?page=sharing';
+			sharingLink = '/sharing/' + welcomeSite.slug;
 		}
 
 		if ( window.innerWidth <= 400 ) {
@@ -56,7 +56,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="NuxWelcomeMessage__primary-content">
-				<img src="/calypso/images/drake/drake-new.svg" />
+				<img src="/calypso/images/illustrations/illustration-write.svg" />
 				<h3 className="NuxWelcomeMessage__title">{ this.translate( 'Welcome to WordPress.com!' ) }</h3>
 				<p className="NuxWelcomeMessage__intro">
 					{ this.translate(

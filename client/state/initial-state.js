@@ -16,11 +16,13 @@ import {
 import localforage from 'lib/localforage';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
 import config from 'config';
+import User from 'lib/user';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:state' );
+const user = User();
 
 const DAY_IN_HOURS = 24;
 const HOUR_IN_MS = 3600000;
@@ -46,7 +48,41 @@ function deserialize( state ) {
 	return reducer( state, { type: DESERIALIZE } );
 }
 
-function loadInitialState( initialState ) {
+/**
+ * Adds "sympathy" by randomly clearing out persistent
+ * browser state and loading without it
+ *
+ * Can be overridden on the command-line with two flags
+ *   - ENABLE_FEATURES=force-sympathy npm start (always sympathize)
+ *   - ENABLE_FEATURES=force-no-sympathy npm start (always prevent sympathy)
+ *
+ * @param {Function} initialStateLoader normal unsympathetic state loader
+ * @returns {Function} augmented initial state loader
+ */
+function addSympathy( initialStateLoader ) {
+	const shouldAdd = (
+		'development' === process.env.NODE_ENV && // only work in local dev mode
+		(
+			Math.random() < 0.25 || // clear 25% of the time
+			config.isEnabled( 'force-sympathy' ) // or whenever the flag is set
+		) &&
+		! config.isEnabled( 'no-force-sympathy' ) // unless purposefully disabled
+	);
+
+	if ( ! shouldAdd ) {
+		return initialStateLoader;
+	}
+
+	console.log( // eslint-disable-line no-console
+		'%cSkipping initial state rehydration to recreate first-load experience.',
+		'font-size: 14px; color: red;'
+	);
+
+	localforage.clear();
+	return () => createReduxStore( getInitialServerState() );
+}
+
+const loadInitialState = addSympathy( initialState => {
 	debug( 'loading initial state', initialState );
 	if ( initialState === null ) {
 		debug( 'no initial state found in localforage' );
@@ -60,17 +96,26 @@ function loadInitialState( initialState ) {
 	const serverState = getInitialServerState();
 	const mergedState = Object.assign( {}, localforageState, serverState );
 	return createReduxStore( mergedState );
-}
+} );
 
 function loadInitialStateFailed( error ) {
 	debug( 'failed to load initial redux-store state', error );
 	return createReduxStore();
 }
 
+function isLoggedIn() {
+	const userData = user.get();
+	return !! userData && userData.ID;
+}
+
 export function persistOnChange( reduxStore, serializeState = serialize ) {
 	let state;
 
 	const throttledSaveState = throttle( function() {
+		if ( ! isLoggedIn() ) {
+			return;
+		}
+
 		const nextState = reduxStore.getState();
 		if ( state && nextState === state ) {
 			return;
@@ -78,7 +123,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 		state = nextState;
 
-		localforage.setItem( 'redux-state', serializeState( state ) )
+		localforage.setItem( 'redux-state-' + user.get().ID, serializeState( state ) )
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
@@ -94,8 +139,8 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 }
 
 export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
-	if ( config.isEnabled( 'persist-redux' ) && ! isSupportUserSession() ) {
-		localforage.getItem( 'redux-state' )
+	if ( config.isEnabled( 'persist-redux' ) && isLoggedIn() && ! isSupportUserSession() ) {
+		localforage.getItem( 'redux-state-' + user.get().ID )
 			.then( loadInitialState )
 			.catch( loadInitialStateFailed )
 			.then( persistOnChange )

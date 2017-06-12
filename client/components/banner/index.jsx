@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import {
+	includes,
 	noop,
 	size,
 } from 'lodash';
@@ -17,6 +18,12 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
 } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -34,6 +41,7 @@ class Banner extends Component {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
 		description: PropTypes.string,
+		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
 		event: PropTypes.string,
@@ -49,6 +57,7 @@ class Banner extends Component {
 	};
 
 	static defaultProps = {
+		disableHref: false,
 		dismissTemporary: false,
 		onClick: noop,
 	};
@@ -69,7 +78,7 @@ class Banner extends Component {
 		return href;
 	}
 
-	handleClick = () => {
+	handleClick = ( e ) => {
 		const {
 			event,
 			feature,
@@ -85,7 +94,7 @@ class Banner extends Component {
 				} );
 		}
 
-		onClick();
+		onClick( e );
 	}
 
 	getIcon() {
@@ -192,6 +201,7 @@ class Banner extends Component {
 		const {
 			callToAction,
 			className,
+			disableHref,
 			dismissPreferenceName,
 			dismissTemporary,
 			plan,
@@ -201,9 +211,26 @@ class Banner extends Component {
 			'banner',
 			className,
 			{ 'has-call-to-action': callToAction },
-			{ 'is-upgrade-personal': PLAN_PERSONAL === plan },
-			{ 'is-upgrade-premium': PLAN_PREMIUM === plan },
-			{ 'is-upgrade-business': PLAN_BUSINESS === plan },
+			{ 'is-upgrade-personal':
+				includes( [
+					PLAN_PERSONAL,
+					PLAN_JETPACK_PERSONAL,
+					PLAN_JETPACK_PERSONAL_MONTHLY,
+				], plan )
+			},
+			{ 'is-upgrade-premium':
+				includes( [
+					PLAN_PREMIUM,
+					PLAN_JETPACK_PREMIUM,
+					PLAN_JETPACK_PREMIUM_MONTHLY,
+				], plan ) },
+			{ 'is-upgrade-business':
+				includes( [
+					PLAN_BUSINESS,
+					PLAN_JETPACK_BUSINESS,
+					PLAN_JETPACK_BUSINESS_MONTHLY,
+				], plan )
+			},
 			{ 'is-dismissible': dismissPreferenceName }
 		);
 
@@ -223,7 +250,7 @@ class Banner extends Component {
 		return (
 			<Card
 				className={ classes }
-				href={ callToAction ? null : this.getHref() }
+				href={ disableHref || callToAction ? null : this.getHref() }
 				onClick={ callToAction ? noop : this.handleClick }
 			>
 				{ this.getIcon() }
@@ -234,8 +261,8 @@ class Banner extends Component {
 
 }
 
-const mapStateToProps = state => ( {
-	siteSlug: getSelectedSiteSlug( state ),
+const mapStateToProps = ( state, ownProps ) => ( {
+	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 } );
 
 export default connect(

@@ -69,3 +69,21 @@ a.post-item__title-link {
 	margin-top: -1px;
 	margin-right: 6px;
 }
+
+.post-item.is-mini.card.is-compact {
+	padding: 8px 16px;
+
+	.post-item__meta {
+		display: none;
+	}
+
+	.post-item__title {
+		display: inline;
+		font-size: 13px;
+		margin: 0;
+	}
+
+	.post-actions-ellipsis-menu {
+		margin: 0;
+	}
+}

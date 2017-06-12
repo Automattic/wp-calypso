@@ -15,13 +15,16 @@ import paths from 'my-sites/upgrades/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import {
 	canCurrentUser,
-	eligibleForFreeToPaidUpsell,
+	isEligibleForFreeToPaidUpsell,
 } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { isFinished as isJetpackPluginsFinished } from 'state/plugins/premium/selectors';
+import {
+	isStarted as isJetpackPluginsStarted,
+	isFinished as isJetpackPluginsFinished
+} from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { abtest } from 'lib/abtest';
+import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
 
 const SiteNotice = React.createClass( {
 	propTypes: {
@@ -80,11 +83,11 @@ const SiteNotice = React.createClass( {
 	},
 
 	freeToPaidPlanNotice() {
-		if ( ! this.props.eligibleForFreeToPaidUpsell || abtest( 'freeToPaidUpsell' ) !== 'sidebar' ) {
+		if ( ! this.props.isEligibleForFreeToPaidUpsell || '/plans' === this.props.allSitesPath ) {
 			return null;
 		}
-		const eventName = 'calypso_free_to_paid_plan_nudge_impression';
-		const eventProperties = { cta_name: 'current_site_free_to_paid_plan_nudge_notice' };
+		const eventName = 'calypso_upgrade_nudge_impression';
+		const eventProperties = { cta_name: 'free-to-paid-sidebar' };
 		return (
 			<Notice isCompact status="is-success" icon="info-outline">
 				{ this.translate( 'Free domain with a plan' ) }
@@ -93,7 +96,7 @@ const SiteNotice = React.createClass( {
 					href={ `/plans/my-plan/${ this.props.site.slug }` }
 				>
 					{ this.translate( 'Upgrade' ) }
-					<TrackComponentView event Name={ eventName } eventProperties={ eventProperties } />
+					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 				</NoticeAction>
 			</Notice>
 		);
@@ -129,6 +132,7 @@ const SiteNotice = React.createClass( {
 				{ this.domainCreditNotice() }
 				{ this.jetpackPluginsSetupNotice() }
 				{ this.freeToPaidPlanNotice() }
+				<DomainToPaidPlanNotice />
 			</div>
 		);
 	}
@@ -137,10 +141,10 @@ const SiteNotice = React.createClass( {
 export default connect( ( state, ownProps ) => {
 	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 	return {
-		eligibleForFreeToPaidUpsell: eligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
+		isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
 		hasDomainCredit: hasDomainCredit( state, siteId ),
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
-		pausedJetpackPluginsSetup: ! isJetpackPluginsFinished( state, siteId )
+		pausedJetpackPluginsSetup: isJetpackPluginsStarted( state, siteId ) && ! isJetpackPluginsFinished( state, siteId )
 	};
 }, ( dispatch ) => {
 	return {
@@ -150,8 +154,8 @@ export default connect( ( state, ownProps ) => {
 			}
 		) ),
 		clickFreeToPaidPlanNotice: () => dispatch( recordTracksEvent(
-			'calypso_free_to_paid_plan_nudge_click', {
-				cta_name: 'current_site_free_to_paid_plan_nudge_notice'
+			'calypso_upgrade_nudge_cta_click', {
+				cta_name: 'free-to-paid-sidebar'
 			}
 		) ),
 	};

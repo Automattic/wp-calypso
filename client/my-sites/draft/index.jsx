@@ -5,6 +5,7 @@ var React = require( 'react' ),
 	classnames = require( 'classnames' ),
 	noop = require( 'lodash/noop' ),
 	url = require( 'url' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -24,10 +25,10 @@ var CompactCard = require( 'components/card/compact' ),
 import Gravatar from 'components/gravatar';
 import photon from 'photon';
 import Notice from 'components/notice';
+import { getSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
-module.exports = React.createClass( {
-
-	displayName: 'Draft',
+const Draft = React.createClass( {
 
 	mixins: [ updatePostStatus ],
 
@@ -35,7 +36,6 @@ module.exports = React.createClass( {
 		showAllActions: React.PropTypes.bool,
 		post: React.PropTypes.object,
 		isPlaceholder: React.PropTypes.bool,
-		sites: React.PropTypes.object,
 		onTitleClick: React.PropTypes.func,
 		postImages: React.PropTypes.object,
 		selected: React.PropTypes.bool,
@@ -140,13 +140,13 @@ module.exports = React.createClass( {
 	render: function() {
 		var post = this.props.post,
 			image = null,
-			site, classes, imageUrl, editPostURL, title, excerpt;
+			site, classes, imageUrl, editPostURL, title;
 
 		if ( this.props.isPlaceholder ) {
 			return this.postPlaceholder();
 		}
 
-		site = this.props.sites.getSite( post.site_ID );
+		site = this.props.site;
 
 		if ( utils.userCan( 'edit_post', post ) ) {
 			editPostURL = utils.getEditURL( post, site );
@@ -167,36 +167,37 @@ module.exports = React.createClass( {
 			}
 		}
 
-		classes = [
-			'draft',
-			{
-				'has-all-actions': this.props.showAllActions,
-				'has-image': !! image,
-				'is-image-expanded': this.state.fullImage,
-				'is-trashed': this.props.post.status === 'trash' || this.state.isTrashing,
-				'is-placeholder': this.props.isPlaceholder,
-				'is-restoring': this.state.isRestoring,
-				'is-touch': hasTouch(),
-				'is-selected': this.props.selected
-			}
-		];
+		classes = classnames( 'draft', `is-${ post.format }`, {
+			'has-all-actions': this.props.showAllActions,
+			'has-image': !! image,
+			'is-image-expanded': this.state.fullImage,
+			'is-trashed': this.props.post.status === 'trash' || this.state.isTrashing,
+			'is-placeholder': this.props.isPlaceholder,
+			'is-restoring': this.state.isRestoring,
+			'is-touch': hasTouch(),
+			'is-selected': this.props.selected,
+		} );
 
 		title = post.title || <span className="draft__untitled">{ this.translate( 'Untitled' ) }</span>;
-		excerpt = post.excerpt ? <span className="draft__excerpt"><Gridicon icon="aside" size={ 18 } />{ post.excerpt }</span> : title;
 
 		// Render each Post
 		return (
-			<CompactCard className={ classnames.apply( null, classes ) } key={ 'draft-' + post.ID }>
+			<CompactCard className={ classes } key={ 'draft-' + post.ID }>
 				{ this.showStatusChange() }
 				<h3 className="draft__title">
 					{ post.status === 'pending' &&
 						<span className="draft__pending-label">{ this.translate( 'Pending' ) }</span> }
 					{ this.props.showAuthor && <Gravatar user={ post.author } size={ 22 } /> }
 					<a href={ editPostURL } onClick={ this.props.onTitleClick }>
-						{ post.format === 'aside' ? excerpt : title }
+						{ title }
 					</a>
 				</h3>
-				{ this.props.sites.selected ? this.draftActions() : <SiteIcon site={ site } size={ 32 } /> }
+				{ post.excerpt &&
+					<span className="draft__excerpt">
+						<a href={ editPostURL } onClick={ this.props.onTitleClick }>{ post.excerpt }</a>
+					</span>
+				}
+				{ this.props.selectedSiteId ? this.draftActions() : <SiteIcon site={ site } size={ 32 } /> }
 				{ image ? this.renderImage( imageUrl ) : null }
 				{ this.props.post.status === 'trash' ? this.restoreButton() : null }
 			</CompactCard>
@@ -307,3 +308,10 @@ module.exports = React.createClass( {
 		return this.props.showAllActions ? this.renderAllActions() : this.renderTrashAction();
 	}
 } );
+
+export default connect( ( state, { siteId } ) => {
+	return {
+		site: getSite( state, siteId ),
+		selectedSiteId: getSelectedSiteId( state ),
+	};
+} )( Draft );

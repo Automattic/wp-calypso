@@ -64,7 +64,7 @@
 
 .devdocs__doc {
 	h1, h2, h3, h4, h5, h6 {
-		font-family: Merriweather, Georgia, "Times New Roman", Times, serif;
+		font-family: $serif;
 		font-weight: 700;
 		line-height: 1.5em;
 		margin-bottom: 0.6em;
@@ -125,6 +125,11 @@
 			background: #2880e2;
 			color: $invert;
 		}
+	}
+
+	video {
+		max-width: 100%;
+		margin-bottom: 1em;
 	}
 }
 

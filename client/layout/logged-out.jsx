@@ -14,8 +14,8 @@ import { getSection } from 'state/ui/selectors';
 const LayoutLoggedOut = ( {
 	primary,
 	secondary,
-	tertiary,
 	section,
+	redirectUri,
 } ) => {
 	const classes = classNames( 'layout', {
 		[ 'is-group-' + section.group ]: !! section,
@@ -27,7 +27,7 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classes }>
-			<MasterbarLoggedOut title={ section.title } />
+			<MasterbarLoggedOut title={ section.title } sectionName={ section.name } redirectUri={ redirectUri } />
 			<div id="content" className="layout__content">
 				<div id="primary" className="layout__primary">
 					{ primary }
@@ -35,9 +35,6 @@ const LayoutLoggedOut = ( {
 				<div id="secondary" className="layout__secondary">
 					{ secondary }
 				</div>
-			</div>
-			<div id="tertiary">
-				{ tertiary }
 			</div>
 		</div>
 	);
@@ -47,11 +44,11 @@ LayoutLoggedOut.displayName = 'LayoutLoggedOut';
 LayoutLoggedOut.propTypes = {
 	primary: React.PropTypes.element,
 	secondary: React.PropTypes.element,
-	tertiary: React.PropTypes.element,
 	section: React.PropTypes.oneOfType( [
 		React.PropTypes.bool,
 		React.PropTypes.object,
-	] )
+	] ),
+	redirectUri: React.PropTypes.string
 };
 
 export default connect(

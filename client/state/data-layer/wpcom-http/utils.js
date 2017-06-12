@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Returns response data from an HTTP request success action if available
@@ -18,6 +18,14 @@ export const getData = action => get( action, 'meta.dataLayer.data', null );
  * @returns {?*} error data if available
  */
 export const getError = action => get( action, 'meta.dataLayer.error', null );
+
+/**
+ * Returns (response) headers data from an HTTP request action if available
+ *
+ * @param {Object} action may contain HTTP response headers data
+ * @returns {?*} headers data if available
+ */
+export const getHeaders = action => get( action, 'meta.dataLayer.headers', null );
 
 /**
  * @typedef {Object} ProgressData
@@ -61,10 +69,11 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  * @param {Function} initiator called if action lacks response meta; should create HTTP request
  * @param {Function} onSuccess called if the action meta includes response data
  * @param {Function} onError called if the action meta includes error data
- * @param {Function} [onProgress] called on progress events when uploading
+ * @param {Function} [onProgress] called on progress events when uploading. The default
+ *                                behavior of this optional handler is to do nothing.
  * @returns {?*} please ignore return values, they are undefined
  */
-export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = null ) => ( store, action, next ) => {
+export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = noop ) => ( store, action, next ) => {
 	const error = getError( action );
 	if ( error ) {
 		return onError( store, action, next, error );

@@ -33,15 +33,14 @@ class PurchaseCardDetails extends Component {
 	}
 
 	isDataValid( props = this.props ) {
-		const purchase = getPurchase( props ),
-			{ selectedSite } = props;
+		const purchase = getPurchase( props ), { selectedSite } = props;
 
 		return purchase && selectedSite;
 	}
 
 	getApiParams() {
 		return {
-			purchaseId: getPurchase( this.props ).id
+			purchaseId: getPurchase( this.props ).id,
 		};
 	}
 
@@ -50,10 +49,9 @@ class PurchaseCardDetails extends Component {
 	}
 
 	recordFormSubmitEvent() {
-		analytics.tracks.recordEvent(
-			'calypso_purchases_credit_card_form_submit',
-			{ product_slug: getPurchase( this.props ).productSlug }
-		);
+		analytics.tracks.recordEvent( 'calypso_purchases_credit_card_form_submit', {
+			product_slug: getPurchase( this.props ).productSlug,
+		} );
 	}
 
 	successCallback() {

@@ -12,10 +12,16 @@ import { useSandbox } from 'test/helpers/use-sinon';
 import timezonesReducer, {
 	byContinents,
 	labels,
+	isRequesting,
 	rawOffsets,
 } from '../reducer';
 
-import { timezonesReceive } from '../actions';
+import {
+	requestTimezones,
+	timezonesRequestSuccess,
+	timezonesReceive,
+	timezonesRequestFailure,
+} from '../actions';
 
 describe( 'reducer', () => {
 	let sandbox;
@@ -30,11 +36,12 @@ describe( 'reducer', () => {
 			'byContinents',
 			'labels',
 			'rawOffsets',
+			'isRequesting'
 		] );
 	} );
 
 	describe( '#rawOffsets()', () => {
-		it( 'should default to an empty Object', () => {
+		it( 'should default to an empty action object', () => {
 			expect( rawOffsets( undefined, {} ) ).to.eql( {} );
 		} );
 
@@ -130,7 +137,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#labels()', () => {
-		it( 'should default to an empty Object', () => {
+		it( 'should default to an empty action object', () => {
 			expect( rawOffsets( undefined, {} ) ).to.eql( {} );
 		} );
 
@@ -220,7 +227,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#byContinents()', () => {
-		it( 'should default to an empty Object', () => {
+		it( 'should default to an empty action object', () => {
 			expect( rawOffsets( undefined, {} ) ).to.eql( {} );
 		} );
 
@@ -352,6 +359,54 @@ describe( 'reducer', () => {
 			deepFreeze( initialStateONE );
 			const newStateONE = byContinents( initialStateONE, { type: 'DESERIALIZE' } );
 			expect( newStateONE ).to.eql( {} );
+		} );
+	} );
+
+	describe( '#isRequesting()', () => {
+		it( 'should default `isRequesting` to an empty action object', () => {
+			expect( isRequesting( undefined, {} ) ).to.eql( false );
+		} );
+
+		describe( 'requestTimezones() action', () => {
+			it( 'should index `isRequesting` state', () => {
+				const action = requestTimezones();
+				const newState = isRequesting( undefined, action );
+				expect( newState ).to.eql( true );
+			} );
+
+			it( 'should override `isRequesting` state', () => {
+				const action = requestTimezones();
+				const newState = isRequesting( false, action );
+				expect( newState ).to.eql( true );
+			} );
+		} );
+
+		describe( 'timezonesRequestSuccess() action', () => {
+			it( 'should index `isRequesting` state', () => {
+				const action = timezonesRequestSuccess();
+				const newState = isRequesting( undefined, action );
+				expect( newState ).to.eql( false );
+			} );
+
+			it( 'should override `isRequesting` state', () => {
+				const action = timezonesRequestSuccess();
+				const newState = isRequesting( true, action );
+				expect( newState ).to.eql( false );
+			} );
+		} );
+
+		describe( 'timezonesRequestFailure() action', () => {
+			it( 'should index `isRequesting` state', () => {
+				const action = timezonesRequestFailure();
+				const newState = isRequesting( undefined, action );
+				expect( newState ).to.eql( false );
+			} );
+
+			it( 'should override `isRequesting` state', () => {
+				const action = timezonesRequestFailure();
+				const newState = isRequesting( true, action );
+				expect( newState ).to.eql( false );
+			} );
 		} );
 	} );
 } );

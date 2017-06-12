@@ -1,18 +1,22 @@
 /**
+ * External dependencies
+ */
+import config from 'config';
+
+/**
  * Internal dependencies
  */
 import {
 	lostPassword,
 	forgotUsername,
-	resetPassword,
-	resetPasswordByTransactionId,
-	redirectLoggedIn
+	validateResetCode,
 } from './controller';
+import { makeLayout, redirectLoggedIn } from 'controller';
 
 export default function( router ) {
-	// Main route for account recovery is the lost password page
-	router( '/account-recovery', redirectLoggedIn, lostPassword );
-	router( '/account-recovery/forgot-username', redirectLoggedIn, forgotUsername );
-	router( '/account-recovery/reset-password', redirectLoggedIn, resetPassword );
-	router( '/account-recovery/reset-password/transaction-id', redirectLoggedIn, resetPasswordByTransactionId );
+	if ( config.isEnabled( 'account-recovery' ) ) {
+		router( '/account-recovery', redirectLoggedIn, lostPassword, makeLayout );
+		router( '/account-recovery/forgot-username', redirectLoggedIn, forgotUsername, makeLayout );
+		router( '/account-recovery/validate-reset-code', redirectLoggedIn, validateResetCode, makeLayout );
+	}
 }

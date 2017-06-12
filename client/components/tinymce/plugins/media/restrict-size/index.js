@@ -35,11 +35,11 @@ function setImageSrc( img, opening, src, closing ) {
 	}
 
 	const parsed = deserialize( img );
-	if ( parsed.media.transient || ! parsed.media.width || parsed.media.width < MAX_WIDTH ) {
+	if ( parsed.media.transient || ! parsed.media.ID ) {
 		return img;
 	}
 
-	const url = resize( parsed.media.URL, { w: MAX_WIDTH } );
+	const url = resize( parsed.media.URL, Math.min( parsed.media.width || Infinity, MAX_WIDTH ) );
 	return `${ opening }${ url }" data-wpmedia-src="${ parsed.media.URL }${ closing }`;
 }
 

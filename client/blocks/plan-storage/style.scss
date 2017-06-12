@@ -1,0 +1,41 @@
+.plan-storage {
+	display: flex;
+}
+
+.plan-storage__bar {
+	align-self: center; // flex-item behavior (parent element: .plans-storage)
+	display: flex; // flex-container bahavior
+	flex-flow: row wrap;
+	justify-content: space-between;
+	line-height: 12px;
+	width: 100%;
+}
+
+.plan-storage__storage-label,
+.plan-storage__storage-link {
+	font-size: 11px;
+	line-height: 1;
+	margin-top: 6px;
+}
+
+.plan-storage__storage-label {
+	color: $gray-dark;
+	font-weight: 500;
+}
+
+.plan-storage__storage-link {
+	margin-left: 12px;
+	text-decoration: none;
+}
+
+.plan-storage__bar .progress-bar__progress {
+	background-color: $alert-green;
+}
+
+.plan-storage__bar.is-warn .progress-bar__progress {
+	background-color: $alert-yellow;
+}
+
+.plan-storage__bar.is-alert .progress-bar__progress {
+	background-color: $alert-red;
+}

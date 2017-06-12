@@ -34,7 +34,7 @@ function jsonp( url, query, fn ) {
 	var prefix = '__jp',
 		timeout = 60000,
 		enc = encodeURIComponent,
-		target = document.getElementsByTagName( 'script' )[0] || document.head,
+		target = document.getElementsByTagName( 'script' )[ 0 ] || document.head,
 		script,
 		timer,
 		id;
@@ -56,19 +56,19 @@ function jsonp( url, query, fn ) {
 			script.parentNode.removeChild( script );
 		}
 
-		window[id] = noop;
+		window[ id ] = noop;
 		if ( timer ) {
 			clearTimeout( timer );
 		}
 	}
 
 	function cancel() {
-		if ( window[id] ) {
+		if ( window[ id ] ) {
 			cleanup();
 		}
 	}
 
-	window[id] = function( data ) {
+	window[ id ] = function( data ) {
 		debug( 'jsonp got', data );
 		cleanup();
 		if ( fn ) {

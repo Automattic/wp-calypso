@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import page from 'page';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -20,6 +21,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
+import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getName as getDomainName } from 'lib/purchases';
 import { getPurchase, goToCancelPurchase, isDataLoading, recordPageView } from '../utils';
@@ -30,8 +32,11 @@ import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import { receiveDeletedSite as receiveDeletedSiteDeprecated } from 'lib/sites-list/actions';
+import { receiveDeletedSite } from 'state/sites/actions';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import SelectDropdown from 'components/select-dropdown';
+import { setAllSitesSelected } from 'state/ui/actions';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 
@@ -40,12 +45,12 @@ const user = userFactory();
 const ConfirmCancelDomain = React.createClass( {
 	propTypes: {
 		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
+		isDomainOnlySite: React.PropTypes.bool,
 		purchaseId: React.PropTypes.number.isRequired,
+		receiveDeletedSite: React.PropTypes.func.isRequired,
 		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.object
-		] )
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
+		setAllSitesSelected: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
@@ -53,7 +58,7 @@ const ConfirmCancelDomain = React.createClass( {
 			selectedReason: null,
 			message: '',
 			confirmed: false,
-			submitting: false
+			submitting: false,
 		};
 	},
 
@@ -98,8 +103,7 @@ const ConfirmCancelDomain = React.createClass( {
 	onSubmit( event ) {
 		event.preventDefault();
 
-		const purchase = getPurchase( this.props ),
-			purchaseName = getDomainName( purchase );
+		const purchase = getPurchase( this.props ), purchaseName = getDomainName( purchase );
 
 		const data = {
 			domain_cancel_reason: this.state.selectedReason.value,
@@ -107,23 +111,40 @@ const ConfirmCancelDomain = React.createClass( {
 			confirm: true,
 			product_id: purchase.productId,
 			blog_id: purchase.siteId,
-			domain: purchaseName
+			domain: purchaseName,
 		};
 
 		this.setState( { submitting: true } );
 
-		cancelAndRefundPurchase( purchase.id, data, ( error ) => {
+		cancelAndRefundPurchase( purchase.id, data, error => {
 			this.setState( { submitting: false } );
 
+			const { isDomainOnlySite, translate, selectedSite } = this.props;
+
+			if ( isDomainOnlySite ) {
+				// Removing the domain from a domain-only site results
+				// in the site being deleted entirely. We need to call
+				// `receiveDeletedSiteDeprecated` here because the site
+				// exists in `sites-list` as well as the global store.
+				receiveDeletedSiteDeprecated( selectedSite );
+				this.props.receiveDeletedSite( selectedSite.ID );
+				this.props.setAllSitesSelected();
+			}
+
 			if ( error ) {
-				notices.error( error.message || this.translate( 'Unable to cancel your purchase. Please try again later or contact support.' ) );
+				notices.error(
+					error.message ||
+						translate(
+							'Unable to cancel your purchase. Please try again later or contact support.'
+						)
+				);
 
 				return;
 			}
 
 			notices.success(
-				this.translate( '%(purchaseName)s was successfully cancelled and refunded.', {
-					args: { purchaseName }
+				translate( '%(purchaseName)s was successfully cancelled and refunded.', {
+					args: { purchaseName },
 				} ),
 				{ persistent: true }
 			);
@@ -132,10 +153,9 @@ const ConfirmCancelDomain = React.createClass( {
 
 			this.props.clearPurchases();
 
-			analytics.tracks.recordEvent(
-				'calypso_domain_cancel_form_submit',
-				{ product_slug: purchase.productSlug }
-			);
+			analytics.tracks.recordEvent( 'calypso_domain_cancel_form_submit', {
+				product_slug: purchase.productSlug,
+			} );
 
 			page.redirect( paths.purchasesRoot() );
 		} );
@@ -151,7 +171,7 @@ const ConfirmCancelDomain = React.createClass( {
 
 	onMessageChange( event ) {
 		this.setState( {
-			message: event.target.value
+			message: event.target.value,
 		} );
 	},
 
@@ -168,7 +188,10 @@ const ConfirmCancelDomain = React.createClass( {
 					{ selectedReason.helpMessage }
 				</p>
 				{ selectedReason.showTextarea &&
-				<FormTextarea className="confirm-cancel-domain__reason-details" onChange={ this.onMessageChange } /> }
+					<FormTextarea
+						className="confirm-cancel-domain__reason-details"
+						onChange={ this.onMessageChange }
+					/> }
 			</div>
 		);
 	},
@@ -183,11 +206,12 @@ const ConfirmCancelDomain = React.createClass( {
 				<FormLabel>
 					<FormCheckbox checked={ this.state.confirmed } onChange={ this.onConfirmationChange } />
 					<span>
-						{ this.translate(
-							'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.', {
+						{ this.props.translate(
+							'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.',
+							{
 								components: {
-									strong: <strong />
-								}
+									strong: <strong />,
+								},
 							}
 						) }
 					</span>
@@ -203,26 +227,25 @@ const ConfirmCancelDomain = React.createClass( {
 
 		if ( this.state.submitting ) {
 			return (
-				<FormButton isPrimary={ true } disabled={ true } >
-					{ this.translate( 'Cancelling Domain…' ) }
+				<FormButton isPrimary={ true } disabled={ true }>
+					{ this.props.translate( 'Cancelling Domain…' ) }
 				</FormButton>
 			);
 		}
 
-		const selectedReason = this.state.selectedReason,
-			confirmed = this.state.confirmed;
+		const selectedReason = this.state.selectedReason, confirmed = this.state.confirmed;
 
 		if ( selectedReason && 'misspelled' === selectedReason.value ) {
 			return (
-				<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed } >
-					{ this.translate( 'Cancel Anyway' ) }
+				<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed }>
+					{ this.props.translate( 'Cancel Anyway' ) }
 				</FormButton>
 			);
 		}
 
 		return (
-			<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed } >
-				{ this.translate( 'Cancel Domain' ) }
+			<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed }>
+				{ this.props.translate( 'Cancel Domain' ) }
 			</FormButton>
 		);
 	},
@@ -234,7 +257,9 @@ const ConfirmCancelDomain = React.createClass( {
 					<QueryUserPurchases userId={ user.get().ID } />
 					<ConfirmCancelDomainLoadingPlaceholder
 						purchaseId={ this.props.purchaseId }
-						selectedSite={ this.props.selectedSite } />;
+						selectedSite={ this.props.selectedSite }
+					/>
+					;
 				</div>
 			);
 		}
@@ -250,42 +275,51 @@ const ConfirmCancelDomain = React.createClass( {
 				</HeaderCake>
 				<Card>
 					<FormSectionHeading className="is-primary">
-						{ this.translate( 'Canceling %(domain)s', { args: { domain } } ) }
+						{ this.props.translate( 'Canceling %(domain)s', { args: { domain } } ) }
 					</FormSectionHeading>
 					<p>
-						{ this.translate(
+						{ this.props.translate(
 							'Since domain cancellation can cause your site to stop working, ' +
-							'we’d like to make sure we help you take the right action. ' +
-							'Please select the best option below.'
+								'we’d like to make sure we help you take the right action. ' +
+								'Please select the best option below.'
 						) }
 					</p>
 					<SelectDropdown
-							className="confirm-cancel-domain__reasons-dropdown"
-							key="confirm-cancel-domain__reasons-dropdown"
-							selectedText={ selectedReason
-											? selectedReason.label
-											: this.translate( 'Please let us know why you wish to cancel.' ) }
-							options={ cancellationReasons }
-							onSelect={ this.onReasonChange } >
-					</SelectDropdown>
+						className="confirm-cancel-domain__reasons-dropdown"
+						key="confirm-cancel-domain__reasons-dropdown"
+						selectedText={
+							selectedReason
+								? selectedReason.label
+								: this.props.translate( 'Please let us know why you wish to cancel.' )
+						}
+						options={ cancellationReasons }
+						onSelect={ this.onReasonChange }
+					/>
 					{ this.renderHelpMessage() }
 					{ this.renderConfirmationCheckbox() }
 					{ this.renderSubmitButton() }
 				</Card>
 			</Main>
 		);
-	}
+	},
 } );
 
 export default connect(
-	( state, props ) => ( {
-		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-		selectedSite: getSelectedSiteSelector( state )
-	} ),
+	( state, props ) => {
+		const selectedSite = getSelectedSiteSelector( state );
+
+		return {
+			hasLoadedSites: ! isRequestingSites( state ),
+			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+			isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
+			selectedPurchase: getByPurchaseId( state, props.purchaseId ),
+			selectedSite,
+		};
+	},
 	{
 		clearPurchases,
-		refreshSitePlans
+		refreshSitePlans,
+		receiveDeletedSite,
+		setAllSitesSelected,
 	}
-)( ConfirmCancelDomain );
+)( localize( ConfirmCancelDomain ) );

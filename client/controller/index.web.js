@@ -17,47 +17,31 @@ import translatorInvitation from 'layout/community-translator/invitation-utils';
 import { makeLayoutMiddleware } from './shared.js';
 import { getCurrentUser } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
-import sitesFactory from 'lib/sites-list';
-import debugFactory from 'debug';
 
 /**
  * Re-export
  */
-export { setSection } from './shared.js';
+export { setSection, setUpLocale } from './shared.js';
 
 const user = userFactory();
-const sites = sitesFactory();
-const debug = debugFactory( 'calypso:controller' );
-const config = require( 'config' );
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, tertiary } ) => {
-	if ( 'jetpack' === config( 'project' ) ) {
-		return (
-			<ReduxProvider store={ store }>
-				<LayoutJetpack primary={ primary }
-					secondary={ secondary }
-					tertiary={ tertiary } />
-			</ReduxProvider>
-		);
-	}
-	return (
-		<ReduxProvider store={ store }>
-			{ getCurrentUser( store.getState() )
-				? <Layout primary={ primary }
-					secondary={ secondary }
-					tertiary={ tertiary }
-					user={ user }
-					sites={ sites }
-					nuxWelcome={ nuxWelcome }
-					translatorInvitation={ translatorInvitation }
-				/>
-				: <LayoutLoggedOut primary={ primary }
-					secondary={ secondary }
-					tertiary={ tertiary } />
-			}
-		</ReduxProvider>
-	);
-}
+export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
+	<ReduxProvider store={ store }>
+		{ getCurrentUser( store.getState() )
+			? <Layout primary={ primary }
+				secondary={ secondary }
+				user={ user }
+				nuxWelcome={ nuxWelcome }
+				translatorInvitation={ translatorInvitation }
+			/>
+			: <LayoutLoggedOut
+				primary={ primary }
+				secondary={ secondary }
+				redirectUri={ redirectUri }
+			/>
+		}
+	</ReduxProvider>
+);
 
 export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
@@ -79,51 +63,20 @@ export function clientRouter( route, ...middlewares ) {
 	page( route, ...middlewares, render );
 }
 
-function render( context ) {
-	context.layout
-		? renderSingleTree( context )
-		: renderSeparateTrees( context );
+export function redirectLoggedIn( context, next ) {
+	const currentUser = getCurrentUser( context.store.getState() );
+
+	if ( currentUser ) {
+		page.redirect( '/' );
+		return;
+	}
+
+	next();
 }
 
-function renderSingleTree( context ) {
+function render( context ) {
 	ReactDom.render(
 		context.layout,
 		document.getElementById( 'wpcom' )
 	);
-}
-
-function renderSeparateTrees( context ) {
-	renderPrimary( context );
-	renderSecondary( context );
-}
-
-function renderPrimary( context ) {
-	const { primary, store } = context;
-
-	if ( primary ) {
-		debug( 'Rendering primary', primary );
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				{ primary }
-			</ReduxProvider>,
-			document.getElementById( 'primary' )
-		);
-	}
-}
-
-function renderSecondary( context ) {
-	const { secondary, store } = context;
-
-	if ( secondary === null ) {
-		debug( 'Unmounting secondary' );
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	} else if ( secondary !== undefined ) {
-		debug( 'Rendering secondary' );
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				{ secondary }
-			</ReduxProvider>,
-			document.getElementById( 'secondary' )
-		);
-	}
 }

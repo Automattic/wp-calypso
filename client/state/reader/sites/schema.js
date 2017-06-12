@@ -9,8 +9,8 @@ export const readerSitesSchema = {
 			...sitesSchema.patternProperties[ '^\\d+$' ],
 			properties: {
 				...sitesSchema.patternProperties[ '^\\d+$' ].properties,
-				feed_ID: { type: 'number' }
-			}
-		}
-	}
+				feed_ID: { type: 'number' },
+			},
+		},
+	},
 };

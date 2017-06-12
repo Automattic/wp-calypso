@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var DomainSuggestion = require( 'components/domains/domain-suggestion' ),
-	{ shouldBundleDomainWithPlan, getDomainPriceRule } = require( 'lib/cart-values/cart-items' );
+import DomainSuggestion from 'components/domains/domain-suggestion';
+import { shouldBundleDomainWithPlan, getDomainPriceRule } from 'lib/cart-values/cart-items';
 
 var DomainMappingSuggestion = React.createClass( {
 	propTypes: {
+		isSignupStep: React.PropTypes.bool,
 		cart: React.PropTypes.object,
 		products: React.PropTypes.object.isRequired,
 		onButtonClick: React.PropTypes.func.isRequired,
@@ -22,18 +23,20 @@ var DomainMappingSuggestion = React.createClass( {
 				product_slug: this.props.products.domain_map.product_slug,
 				cost: this.props.products.domain_map.cost_display
 			},
-			buttonContent = shouldBundleDomainWithPlan( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion )
+			{ cart, domainsWithPlansOnly, isSignupStep, selectedSite } = this.props,
+			buttonContent = ! isSignupStep && shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
 				? this.translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
 				: this.translate( 'Map it', { context: 'Domain mapping suggestion button' } );
+
 		return (
 				<DomainSuggestion
-					priceRule={ getDomainPriceRule( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) }
+					priceRule={ getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion ) }
 					price={ this.props.products.domain_map && this.props.products.domain_map.cost_display }
 					extraClasses="is-visible domain-mapping-suggestion"
 					buttonClasses="map"
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					domainsWithPlansOnly={ domainsWithPlansOnly }
 					buttonContent={ buttonContent }
-					cart={ this.props.cart }
+					cart={ cart }
 					onButtonClick={ this.props.onButtonClick }>
 				<div className="domain-mapping-suggestion__domain-description">
 					<h3>

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { property, sortBy } from 'lodash';
 
 /**
@@ -10,6 +9,7 @@ import { property, sortBy } from 'lodash';
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as UPDATE,
 } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 
 export const eligibilityHolds = ( state = [], action ) =>
 	UPDATE === action.type

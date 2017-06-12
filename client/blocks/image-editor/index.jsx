@@ -240,6 +240,7 @@ const ImageEditor = React.createClass( {
 							onCancel={ this.props.onCancel && this.onCancel }
 							onDone={ this.onDone }
 							onReset={ this.onReset }
+							doneButtonText={ this.props.doneButtonText }
 						/>
 					</div>
 				</figure>

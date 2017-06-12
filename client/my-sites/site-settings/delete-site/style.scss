@@ -9,7 +9,7 @@
 	line-height: 16px;
 	text-transform: uppercase;
 	text-align: left;
-	color: $gray;
+	color: $gray-text-min;
 }
 
 .delete-site__content-list {
@@ -53,7 +53,7 @@ h1.delete-site__confirm-header {
 	margin-bottom: 8px;
 	font-size: 14px;
 	line-height: 24px;
-	color: $gray;
+	color: $gray-text-min;
 }
 
 .delete-site__target-domain {

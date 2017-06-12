@@ -52,6 +52,7 @@ describe( 'reducer', () => {
 			'queries',
 			'edits',
 			'likes',
+			'revisions',
 		] );
 	} );
 
@@ -212,26 +213,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				'2916284:{"search":"Hello"}': false
 			} );
-		} );
-
-		it( 'should never persist state', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"Hello"}': true
-			} );
-
-			const state = queryRequests( original, { type: SERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should never load persisted state', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"Hello"}': true
-			} );
-
-			const state = queryRequests( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -688,30 +669,6 @@ describe( 'reducer', () => {
 				}
 			} );
 		} );
-
-		it( 'never persists state', () => {
-			const state = siteRequests( deepFreeze( {
-				2916284: {
-					841: true
-				}
-			} ), {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'never loads persisted state', () => {
-			const state = siteRequests( deepFreeze( {
-				2916284: {
-					841: true
-				}
-			} ), {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( '#edits()', () => {
@@ -864,7 +821,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should should eliminate redundant data on posts received', () => {
+		it( 'should eliminate redundant data on posts received', () => {
 			const state = edits( deepFreeze( {
 				2916284: {
 					841: {
@@ -892,6 +849,124 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should handle term shape differences on posts received', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+						type: 'post',
+						terms: {
+							post_tag: [ 'chicken', 'ribs' ],
+							category: [ {
+								ID: 1,
+								name: 'uncategorized'
+							} ]
+						}
+					},
+					'': {
+						title: 'Unrelated'
+					}
+				}
+			} ), {
+				type: POSTS_RECEIVE,
+				posts: [ {
+					ID: 841,
+					site_ID: 2916284,
+					type: 'post',
+					title: 'Hello',
+					terms: {
+						post_tag: {
+							chicken: {
+								ID: 111,
+								name: 'chicken'
+							},
+							ribs: {
+								ID: 112,
+								name: 'ribs'
+							}
+						},
+						category: {
+							uncategorized: {
+								ID: 1,
+								name: 'uncategorized'
+							}
+						}
+					}
+				} ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World'
+					},
+					'': {
+						title: 'Unrelated'
+					}
+				}
+			} );
+		} );
+
+		it( 'should preserve term edit differences on posts received', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+						type: 'post',
+						terms: {
+							post_tag: [ 'ribs' ],
+							category: [ {
+								ID: 1,
+								name: 'uncategorized'
+							} ]
+						}
+					},
+					'': {
+						title: 'Unrelated'
+					}
+				}
+			} ), {
+				type: POSTS_RECEIVE,
+				posts: [ {
+					ID: 841,
+					site_ID: 2916284,
+					type: 'post',
+					title: 'Hello World',
+					terms: {
+						post_tag: {
+							chicken: {
+								ID: 111,
+								name: 'chicken'
+							}
+						},
+						category: {
+							uncategorized: {
+								ID: 1,
+								name: 'uncategorized'
+							}
+						}
+					}
+				} ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						terms: {
+							post_tag: [ 'ribs' ],
+							category: [ {
+								ID: 1,
+								name: 'uncategorized'
+							} ]
+						}
+					},
+					'': {
+						title: 'Unrelated'
+					}
+				}
+			} );
+		} );
+
 		it( 'should ignore reset edits action when discarded site doesn\'t exist', () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {
@@ -903,26 +978,33 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should discard edits when the post is saved', () => {
+		it( 'should copy edits when the post is saved and prior postId was null', () => {
 			const state = edits( deepFreeze( {
 				2916284: {
-					841: {
-						title: 'Hello World'
-					},
 					'': {
 						title: 'Ribs & Chicken'
+					},
+					842: {
+						title: 'I like turtles'
 					}
 				}
 			} ), {
 				type: POST_SAVE_SUCCESS,
 				siteId: 2916284,
-				postId: 841
+				postId: null,
+				savedPost: {
+					ID: 841,
+					title: 'Ribs'
+				}
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					'': {
+					841: {
 						title: 'Ribs & Chicken'
+					},
+					842: {
+						title: 'I like turtles'
 					}
 				}
 			} );
@@ -991,30 +1073,6 @@ describe( 'reducer', () => {
 					}
 				}
 			} );
-		} );
-
-		it( 'should not persist state', () => {
-			const state = edits( deepFreeze( {
-				2916284: {
-					'': {
-						title: 'Ribs & Chicken'
-					}
-				}
-			} ), { type: SERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const state = edits( deepFreeze( {
-				2916284: {
-					'': {
-						title: 'Ribs & Chicken'
-					}
-				}
-			} ), { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

@@ -11,31 +11,32 @@ import LikeButton from 'blocks/like-button/button';
 import Card from 'components/card/compact';
 
 const SimpleLikeButtonContainer = React.createClass( {
-
 	mixins: [ PureRenderMixin ],
 
 	getInitialState() {
 		return {
 			liked: !! this.props.liked,
-			count: this.props.likeCount || 0
+			count: this.props.likeCount || 0,
 		};
 	},
 
 	render() {
 		return (
-			<LikeButton { ...this.props }
+			<LikeButton
+				{ ...this.props }
 				onLikeToggle={ this.handleLikeToggle }
 				likeCount={ this.state.count }
 				liked={ this.state.liked }
-			/> );
+			/>
+		);
 	},
 
 	handleLikeToggle( newState ) {
 		this.setState( {
 			liked: newState,
-			count: this.state.count += ( newState ? 1 : -1 )
+			count: ( this.state.count += newState ? 1 : -1 ),
 		} );
-	}
+	},
 } );
 
 const LikeButtons = React.createClass( {
@@ -57,7 +58,7 @@ const LikeButtons = React.createClass( {
 				</Card>
 			</div>
 		);
-	}
+	},
 } );
 
 export default LikeButtons;

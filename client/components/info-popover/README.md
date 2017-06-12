@@ -5,18 +5,23 @@ InfoPopover
 
 ### `InfoPopover` Properties
 
+#### `autoRtl { bool } - default: true`
+
+Defines if the Popover should automatically be adjusted for right-to-left contexts.
+`autoRtl={ true }` will swap `right` and `left` position props in RTL context.
+
 #### `position`
 
 The `position` property can be one of the following values:
 
 - `top`
-- `top left`
 - `top right`
+- `right`
+- `bottom right`
 - `bottom`
 - `bottom left`
-- `bottom right`
 - `left`
-- `right`
+- `top left`
 
 #### `className`
 
@@ -33,7 +38,10 @@ The `popoverName` lets you specify the Google Analyics Event name that you want 
 Also reqires the `gaEventCategory` attribute.
 
 Turns into this even when opened:
+
+```js
 analytics.ga.recordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + 'Opened' );
+```
 
 #### `ignoreContext`
 
@@ -51,7 +59,6 @@ that can trigger the opening and closing of the InfoPopover then you need to pas
 
 
 ```js
-
 handleAction( event ) {
 	this.refs && this.refs.infoPop._onClick( event );
 },
@@ -72,5 +79,4 @@ render() {
 		</div>
 	)
 }
-
 ```

@@ -12,13 +12,15 @@ import EmptyComponent from 'test/helpers/react/empty-component';
 describe( 'MySitesSidebar', () => {
 	let MySitesSidebar;
 	useMockery( ( mockery ) => {
+		mockery.registerMock( 'lib/abtest', {
+			abtest: () => ''
+		} );
 		mockery.registerMock( 'page', function() {} );
 		mockery.registerMock( 'lib/analytics', {} );
 		mockery.registerMock( 'lib/products-values', {} );
 		mockery.registerMock( 'my-sites/current-site', EmptyComponent );
 		mockery.registerMock( './publish-menu', EmptyComponent );
 		mockery.registerMock( 'layout/sidebar', EmptyComponent );
-		mockery.registerMock( 'post-editor/drafts-button', EmptyComponent );
 		mockery.registerMock( 'components/tooltip', EmptyComponent );
 
 		MySitesSidebar = require( '../sidebar' ).MySitesSidebar;

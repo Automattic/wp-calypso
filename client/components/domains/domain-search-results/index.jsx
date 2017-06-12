@@ -1,29 +1,40 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	times = require( 'lodash/times' );
-
-import Notice from 'components/notice';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import React from 'react';
+import classNames from 'classnames';
+import {
+	includes,
+	times
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
-const DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
-	DomainMappingSuggestion = require( 'components/domains/domain-mapping-suggestion' ),
-	DomainSuggestion = require( 'components/domains/domain-suggestion' ),
-	{ isNextDomainFree } = require( 'lib/cart-values/cart-items' );
+import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
+import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
+import DomainSuggestion from 'components/domains/domain-suggestion';
+import { isNextDomainFree } from 'lib/cart-values/cart-items';
+import Notice from 'components/notice';
+import { getTld } from 'lib/domains';
+import { domainAvailability } from 'lib/domains/constants';
 
 var DomainSearchResults = React.createClass( {
 	propTypes: {
 		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
-		lastDomainError: React.PropTypes.object,
+		lastDomainStatus: React.PropTypes.string,
 		lastDomainSearched: React.PropTypes.string,
 		cart: React.PropTypes.object,
 		products: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object,
-		availableDomain: React.PropTypes.object,
+		availableDomain: React.PropTypes.oneOfType( [
+			React.PropTypes.object,
+			React.PropTypes.bool
+		] ),
 		suggestions: React.PropTypes.array,
 		placeholderQuantity: React.PropTypes.number.isRequired,
 		buttonLabel: React.PropTypes.string,
@@ -31,21 +42,19 @@ var DomainSearchResults = React.createClass( {
 		offerMappingOption: React.PropTypes.bool,
 		onClickResult: React.PropTypes.func.isRequired,
 		onAddMapping: React.PropTypes.func,
-		onClickMapping: React.PropTypes.func
-	},
-	isDomainMappable: function() {
-		return this.props.lastDomainError && this.props.lastDomainError.code === 'not_available_but_mappable';
+		onClickMapping: React.PropTypes.func,
+		isSignupStep: React.PropTypes.bool,
 	},
 
-	domainAvailability: function() {
-		var availableDomain = this.props.availableDomain,
+	renderDomainAvailability: function() {
+		const { availableDomain, lastDomainStatus, lastDomainSearched: domain, translate } = this.props,
 			availabilityElementClasses = classNames( {
 				'domain-search-results__domain-is-available': availableDomain,
 				'domain-search-results__domain-not-available': ! availableDomain
 			} ),
-			domain = this.props.lastDomainSearched,
 			suggestions = this.props.suggestions || [],
-			availabilityElement,
+			{ MAPPABLE, UNKNOWN } = domainAvailability;
+		let availabilityElement,
 			domainSuggestionElement,
 			mappingOffer;
 
@@ -55,7 +64,7 @@ var DomainSearchResults = React.createClass( {
 				<Notice
 					status="is-success"
 					showDismiss={ false }>
-					{ this.translate( '%(domain)s is available!', { args: { domain } } ) }
+					{ translate( '%(domain)s is available!', { args: { domain } } ) }
 				</Notice>
 			);
 
@@ -67,24 +76,27 @@ var DomainSearchResults = React.createClass( {
 					buttonContent={ this.props.buttonContent }
 					selectedSite={ this.props.selectedSite }
 					cart={ this.props.cart }
+					isSignupStep={ this.props.isSignupStep }
 					onButtonClick={ this.props.onClickResult.bind( null, availableDomain ) } />
 				);
-		} else if ( suggestions.length !== 0 && this.isDomainMappable() && this.props.products.domain_map ) {
+		} else if ( suggestions.length !== 0 && includes( [ MAPPABLE, UNKNOWN ], lastDomainStatus ) && this.props.products.domain_map ) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
-			if ( this.props.domainsWithPlansOnly ) {
-				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
+			if ( isNextDomainFree( this.props.cart ) ) {
+				mappingOffer = translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
+					'free.{{/small}}', { args: { domain }, components } );
+			} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
+				mappingOffer = translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
+					'%(cost)s.{{/small}}', { args: { domain, cost: this.props.products.domain_map.cost_display }, components } );
+			} else {
+				mappingOffer = translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
 					' with WordPress.com Premium.{{/small}}', { args: { domain }, components }
 				);
-			} else if ( isNextDomainFree( this.props.cart ) ) {
-				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
-					'free.{{/small}}', { args: { domain }, components } );
-			} else {
-				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
-					'%(cost)s.{{/small}}', { args: { domain, cost: this.props.products.domain_map.cost_display }, components } );
 			}
 
-			const domainUnavailableMessage = this.translate( '%(domain)s is taken.', { args: { domain } } );
+			const domainUnavailableMessage = lastDomainStatus === UNKNOWN
+				? translate( '.%(tld)s domains are not offered on WordPress.com.', { args: { tld: getTld( domain ) } } )
+				: translate( '%(domain)s is taken.', { args: { domain } } );
 
 			if ( this.props.offerMappingOption ) {
 				availabilityElement = (
@@ -109,16 +121,16 @@ var DomainSearchResults = React.createClass( {
 
 	handleAddMapping: function( event ) {
 		event.preventDefault();
-		this.props.onAddMapping( { domain_name: this.props.lastDomainSearched } );
+		this.props.onAddMapping( this.props.lastDomainSearched );
 	},
 
-	placeholders: function() {
+	renderPlaceholders: function() {
 		return times( this.props.placeholderQuantity, function( n ) {
 			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
 		} );
 	},
 
-	domainSuggestions: function() {
+	renderDomainSuggestions: function() {
 		var suggestionElements,
 			mappingOffer;
 
@@ -129,6 +141,7 @@ var DomainSearchResults = React.createClass( {
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
+						isSignupStep={ this.props.isSignupStep }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						onButtonClick={ this.props.onClickResult.bind( null, suggestion ) } />
@@ -142,11 +155,12 @@ var DomainSearchResults = React.createClass( {
 						products={ this.props.products }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						isSignupStep={ this.props.isSignupStep }
 						cart={ this.props.cart } />
 				);
 			}
 		} else {
-			suggestionElements = this.placeholders();
+			suggestionElements = this.renderPlaceholders();
 		}
 
 		return (
@@ -160,11 +174,18 @@ var DomainSearchResults = React.createClass( {
 	render: function() {
 		return (
 			<div className="domain-search-results">
-				{ this.domainAvailability() }
-				{ this.domainSuggestions() }
+				{ this.renderDomainAvailability() }
+				{ this.renderDomainSuggestions() }
 			</div>
 		);
 	}
 } );
 
-module.exports = DomainSearchResults;
+const mapStateToProps = ( state ) => {
+	const selectedSiteId = getSelectedSiteId( state );
+	return {
+		isSiteOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
+	};
+};
+
+export default connect( mapStateToProps )( localize( DomainSearchResults ) );

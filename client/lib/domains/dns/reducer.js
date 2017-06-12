@@ -131,7 +131,7 @@ function reducer( state, payload ) {
 				isBeingAdded: false
 			} );
 			break;
-		case ActionTypes.DNS_ADD_OFFICE_COMPLETED:
+		case ActionTypes.DNS_APPLY_TEMPLATE_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				records: action.records,
 				isFetching: false,

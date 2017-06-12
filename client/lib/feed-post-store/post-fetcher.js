@@ -1,8 +1,13 @@
-const assign = require( 'lodash/assign' ),
-	Immutable = require( 'immutable' ),
-	noop = require( 'lodash/noop' );
+/**
+ * External Dependencies
+ */
+import { assign, noop, omit } from 'lodash';
+import Immutable from 'immutable';
 
-const FeedPostStore = require( './' );
+/**
+ * Internal Dependencies
+ */
+import FeedPostStore from './';
 
 function PostFetcher( options ) {
 	assign( this, {
@@ -18,7 +23,7 @@ function PostFetcher( options ) {
 assign( PostFetcher.prototype, {
 
 	add: function( postKey ) {
-		this.postsToFetch = this.postsToFetch.add( Immutable.fromJS( postKey ) );
+		this.postsToFetch = this.postsToFetch.add( Immutable.fromJS( omit( postKey, 'localMoment' ) ) );
 
 		if ( ! this.batchQueued ) {
 			this.batchQueued = setTimeout( this.run.bind( this ), 100 );
@@ -26,7 +31,7 @@ assign( PostFetcher.prototype, {
 	},
 
 	remove: function( postKey ) {
-		this.postsToFetch = this.postsToFetch.delete( Immutable.fromJS( postKey ) );
+		this.postsToFetch = this.postsToFetch.delete( Immutable.fromJS( omit( postKey, 'localMoment' ) ) );
 	},
 
 	run: function() {

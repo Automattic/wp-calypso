@@ -48,7 +48,7 @@ function buildStrippedDom( content ) {
 	const dom = domForHtml( content );
 
 	// Ditch any photo captions, styles, scripts
-	const stripSelectors = '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
+	const stripSelectors = '.wp-caption, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
 	forEach( dom.querySelectorAll( stripSelectors ), removeElement );
 	return dom.innerHTML;
 }
@@ -68,7 +68,10 @@ export function formatExcerpt( content ) {
 
 	// remove styles for all p's that remain
 	toArray( dom.querySelectorAll( 'p' ) )
-		.forEach( element => element.removeAttribute( 'style' ) );
+		.forEach( element => {
+			element.removeAttribute( 'style' );
+			element.removeAttribute( 'align' );
+		} );
 
 	stripLeadingBreaklines( dom );
 

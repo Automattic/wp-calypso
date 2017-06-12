@@ -23,8 +23,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
-	JETPACK_CONNECT_ACTIVATE_MANAGE,
-	JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE
+	SITES_RECEIVE,
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import useFakeDom from 'test/helpers/use-fake-dom';
@@ -33,6 +32,7 @@ import path from 'lib/route/path';
 
 describe( 'actions', () => {
 	let actions, sandbox, spy;
+	const mySitesPath = '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
 
 	useFakeDom();
 
@@ -174,7 +174,6 @@ describe( 'actions', () => {
 			state: 12345678
 		};
 		const code = 'abcdefghi1234';
-		const activateManageSecret = 'klmnop1234';
 		const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
 
 		describe( 'success', () => {
@@ -204,7 +203,6 @@ describe( 'actions', () => {
 					} )
 					.reply( 200, {
 						result: 'connected',
-						activate_manage: activateManageSecret,
 						plans_url: '/plans/example.com'
 					}, {
 						'Content-Type': 'application/json'
@@ -212,10 +210,8 @@ describe( 'actions', () => {
 
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/sites' )
-					.query( {
-						site_visibility: 'all'
-					} )
+					.filteringPath( () => mySitesPath )
+					.get( mySitesPath )
 					.reply( 200, {
 						sites: [ client_id ]
 					}, {
@@ -256,10 +252,20 @@ describe( 'actions', () => {
 						siteId: client_id,
 						data: {
 							result: 'connected',
-							activate_manage: activateManageSecret,
 							plans_url: '/plans/example.com'
 						},
 						error: null
+					} );
+				} );
+			} );
+
+			it( 'should dispatch sites receive action when request completes', () => {
+				const { authorize } = actions;
+
+				return authorize( queryObject )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: SITES_RECEIVE,
+						sites: [ client_id ]
 					} );
 				} );
 			} );
@@ -484,85 +490,6 @@ describe( 'actions', () => {
 							status: 400
 						},
 						type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR
-					} );
-				} );
-			} );
-		} );
-	} );
-
-	describe( '#activateManage()', () => {
-		const siteId = '123456';
-		const state = {};
-		const secret = 'abcdefgh12345678';
-
-		describe( 'success', () => {
-			useNock( ( nock ) => {
-				nock( 'https://public-api.wordpress.com:443' )
-					.persist()
-					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/activate-manage', {
-						state,
-						secret
-					} )
-					.reply( 200, {
-						result: true
-					}, {
-						'Content-Type': 'application/json'
-					} );
-			} );
-
-			it( 'should dispatch activate manage action when thunk triggered', () => {
-				const { activateManage } = actions;
-
-				activateManage( siteId, state, secret )( spy );
-				expect( spy ).to.have.been.calledWith( {
-					type: JETPACK_CONNECT_ACTIVATE_MANAGE,
-					blogId: siteId
-				} );
-			} );
-
-			it( 'should dispatch receive action when request completes', () => {
-				const { activateManage } = actions;
-
-				return activateManage( siteId, state, secret )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
-						data: {
-							result: true
-						},
-						error: null
-					} );
-				} );
-			} );
-		} );
-
-		describe( 'failure', () => {
-			useNock( ( nock ) => {
-				nock( 'https://public-api.wordpress.com:443' )
-					.persist()
-					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/activate-manage', {
-						state,
-						secret
-					} )
-					.reply( 400, {
-						error: 'activation_error',
-						message: 'There was an error while activating the module.',
-					}, {
-						'Content-Type': 'application/json'
-					} );
-			} );
-
-			it( 'should dispatch receive action when request completes', () => {
-				const { activateManage } = actions;
-
-				return activateManage( siteId, state, secret )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
-						data: null,
-						error: {
-							error: 'activation_error',
-							message: 'There was an error while activating the module.',
-							status: 400
-						}
 					} );
 				} );
 			} );

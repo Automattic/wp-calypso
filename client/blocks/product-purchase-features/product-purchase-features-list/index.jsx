@@ -33,7 +33,6 @@ import GoogleAnalyticsStats from './google-analytics-stats';
 import JetpackAntiSpam from './jetpack-anti-spam';
 import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
-import JetpackSurveysPolls from './jetpack-surveys-polls';
 import JetpackWordPressCom from './jetpack-wordpress-com';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
@@ -234,9 +233,6 @@ class ProductPurchaseFeaturesList extends Component {
 			/>,
 			<JetpackAntiSpam
 				key="jetpackAntiSpam"
-			/>,
-			<JetpackSurveysPolls
-				key="jetpackSurveysPolls"
 			/>,
 			<JetpackWordPressCom
 				selectedSite={ selectedSite }

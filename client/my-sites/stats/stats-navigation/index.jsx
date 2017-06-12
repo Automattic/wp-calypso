@@ -2,9 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,21 +11,55 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import FollowersCount from 'blocks/followers-count';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import SegmentedControl from 'components/segmented-control';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import config from 'config';
 
 const StatsNavigation = ( props ) => {
-	const { translate, section, slug } = props;
+	const { translate, section, slug, siteId, isJetpack, isWooConnect } = props;
 	const siteFragment = slug ? '/' + slug : '';
 	const sectionTitles = {
 		insights: translate( 'Insights' ),
 		day: translate( 'Days' ),
 		week: translate( 'Weeks' ),
 		month: translate( 'Months' ),
-		year: translate( 'Years' )
+		year: translate( 'Years' ),
+		activity: translate( 'Activity' ),
 	};
+
+	let statsControl;
+
+	if ( config.isEnabled( 'woocommerce/extension-stats' ) ) {
+		if ( isWooConnect ) {
+			statsControl = (
+				<SegmentedControl
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+					className="stats-navigation__control"
+					initialSelected="site"
+					options={ [
+						{
+							value: 'site',
+							label: translate( 'Site' )
+						},
+						{
+							value: 'store',
+							label: translate( 'Store' ),
+							path: `/store/stats/orders/${ section }/${ slug }` }
+					] }
+				/>
+			);
+		}
+	}
+
+	const ActivityTab = config.isEnabled( 'jetpack/activity-log' ) && isJetpack
+		? <NavItem path={ '/stats/activity' + siteFragment } selected={ section === 'activity' }>
+				{ sectionTitles.activity }
+			</NavItem>
+		: null;
 
 	return (
 		<SectionNav selectedText={ sectionTitles[ section ] }>
+			{ isJetpack && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<NavTabs label={ translate( 'Stats' ) }>
 				<NavItem path={ '/stats/insights' + siteFragment } selected={ section === 'insights' }>
 					{ sectionTitles.insights }
@@ -44,26 +76,20 @@ const StatsNavigation = ( props ) => {
 				<NavItem path={ '/stats/year' + siteFragment } selected={ section === 'year' }>
 					{ sectionTitles.year }
 				</NavItem>
+				{ ActivityTab }
 			</NavTabs>
+			{ statsControl }
 			<FollowersCount />
 		</SectionNav>
 	);
 };
 
 StatsNavigation.propTypes = {
+	isJetpack: PropTypes.bool,
+	isWooConnect: PropTypes.bool,
 	section: PropTypes.string.isRequired,
 	slug: PropTypes.string,
+	siteId: PropTypes.number,
 };
 
-const connectComponent = connect(
-	state => {
-		return {
-			slug: getSelectedSiteSlug( state )
-		};
-	}
-);
-
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsNavigation );
+export default localize( StatsNavigation );

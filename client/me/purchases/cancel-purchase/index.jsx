@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 
@@ -13,8 +14,19 @@ import CancelPurchaseButton from './button';
 import CancelPurchaseLoadingPlaceholder from 'me/purchases/cancel-purchase/loading-placeholder';
 import CancelPurchaseRefundInformation from './refund-information';
 import CompactCard from 'components/card/compact';
-import { getName, isCancelable, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
-import { getPurchase, getSelectedSite, goToManagePurchase, recordPageView } from 'me/purchases/utils';
+import {
+	getName,
+	isCancelable,
+	isOneTimePurchase,
+	isRefundable,
+	isSubscription,
+} from 'lib/purchases';
+import {
+	getPurchase,
+	getSelectedSite,
+	goToManagePurchase,
+	recordPageView,
+} from 'me/purchases/utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
@@ -35,10 +47,7 @@ const CancelPurchase = React.createClass( {
 		hasLoadedSites: React.PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
 		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.object
-		] )
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
 	},
 
 	componentWillMount() {
@@ -64,15 +73,13 @@ const CancelPurchase = React.createClass( {
 			return true;
 		}
 
-		const purchase = getPurchase( props ),
-			selectedSite = getSelectedSite( props );
+		const purchase = getPurchase( props ), selectedSite = getSelectedSite( props );
 
 		return selectedSite && purchase && isCancelable( purchase );
 	},
 
 	redirect( props ) {
-		const purchase = getPurchase( props ),
-			selectedSite = getSelectedSite( props );
+		const purchase = getPurchase( props ), selectedSite = getSelectedSite( props );
 		let redirectPath = paths.purchasesRoot();
 
 		if ( selectedSite && purchase && ! isCancelable( purchase ) ) {
@@ -83,26 +90,25 @@ const CancelPurchase = React.createClass( {
 	},
 
 	renderFooterText() {
-		const purchase = getPurchase( this.props ),
-			{ refundText, renewDate } = purchase;
+		const purchase = getPurchase( this.props ), { refundText, renewDate } = purchase;
 
 		if ( isRefundable( purchase ) ) {
-			return this.translate( '%(refundText)s to be refunded', {
+			return this.props.translate( '%(refundText)s to be refunded', {
 				args: { refundText },
-				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"'
+				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
 			} );
 		}
 
 		const renewalDate = this.moment( renewDate ).format( 'LL' );
 
 		if ( isDomainRegistration( purchase ) ) {
-			return this.translate( 'Domain will be removed on %(renewalDate)s', {
-				args: { renewalDate }
+			return this.props.translate( 'Domain will be removed on %(renewalDate)s', {
+				args: { renewalDate },
 			} );
 		}
 
-		return this.translate( 'Subscription will be removed on %(renewalDate)s', {
-			args: { renewalDate }
+		return this.props.translate( 'Subscription will be removed on %(renewalDate)s', {
+			args: { renewalDate },
 		} );
 	},
 
@@ -130,14 +136,14 @@ const CancelPurchase = React.createClass( {
 		let heading;
 
 		if ( isDomainRegistration( purchase ) || isOneTimePurchase( purchase ) ) {
-			heading = this.translate( 'Cancel %(purchaseName)s', {
-				args: { purchaseName }
+			heading = this.props.translate( 'Cancel %(purchaseName)s', {
+				args: { purchaseName },
 			} );
 		}
 
 		if ( isSubscription( purchase ) ) {
-			heading = this.translate( 'Cancel Your %(purchaseName)s Subscription', {
-				args: { purchaseName }
+			heading = this.props.translate( 'Cancel Your %(purchaseName)s Subscription', {
+				args: { purchaseName },
 			} );
 		}
 
@@ -158,28 +164,22 @@ const CancelPurchase = React.createClass( {
 				<CompactCard className="cancel-purchase__product-information">
 					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
 					<div className="cancel-purchase__site-title">{ siteName || siteDomain }</div>
-					<ProductLink
-						selectedPurchase={ purchase }
-						selectedSite={ this.props.selectedSite } />
+					<ProductLink selectedPurchase={ purchase } selectedSite={ this.props.selectedSite } />
 				</CompactCard>
 				<CompactCard className="cancel-purchase__footer">
 					<div className="cancel-purchase__refund-amount">
 						{ this.renderFooterText( this.props ) }
 					</div>
-					<CancelPurchaseButton
-						purchase={ purchase }
-						selectedSite={ this.props.selectedSite } />
+					<CancelPurchaseButton purchase={ purchase } selectedSite={ this.props.selectedSite } />
 				</CompactCard>
 			</Main>
 		);
-	}
+	},
 } );
 
-export default connect(
-	( state, props ) => ( {
-		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-		selectedSite: getSelectedSiteSelector( state )
-	} )
-)( CancelPurchase );
+export default connect( ( state, props ) => ( {
+	hasLoadedSites: ! isRequestingSites( state ),
+	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+	selectedPurchase: getByPurchaseId( state, props.purchaseId ),
+	selectedSite: getSelectedSiteSelector( state ),
+} ) )( localize( CancelPurchase ) );

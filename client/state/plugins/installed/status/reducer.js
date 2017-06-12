@@ -23,8 +23,6 @@ import {
 	PLUGIN_REMOVE_REQUEST,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 
 /*
@@ -55,9 +53,6 @@ export default function status( state = {}, action ) {
 		case PLUGIN_INSTALL_REQUEST_FAILURE:
 		case PLUGIN_REMOVE_REQUEST_FAILURE:
 			return Object.assign( {}, state, { [ siteId ]: statusForSite( state[ siteId ], action ) } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 		default:
 			return state;
 	}

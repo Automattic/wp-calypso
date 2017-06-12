@@ -13,9 +13,6 @@ function domainManagementList( siteName ) {
 }
 
 function domainManagementEdit( siteName, domainName, slug ) {
-	// the site slug and domain name are equivalent for domain-only sites,
-	// which can omit the latter in this case.
-	domainName = domainName || siteName;
 	slug = slug || 'edit';
 
 	// Encodes only real domain names and not parameter placeholders
@@ -98,6 +95,10 @@ function domainManagementTransferToAnotherUser( siteName, domainName ) {
 	return domainManagementTransfer( siteName, domainName, 'other-user' );
 }
 
+function domainManagementTransferToOtherSite( siteName, domainName ) {
+	return domainManagementTransfer( siteName, domainName, 'other-site' );
+}
+
 function getSectionName( pathname ) {
 	const regExp = new RegExp( '^' + domainManagementRoot() + '/[^/]+/([^/]+)', 'g' ),
 		matches = regExp.exec( pathname );
@@ -113,14 +114,15 @@ module.exports = {
 	domainManagementEditContactInfo,
 	domainManagementEmail,
 	domainManagementEmailForwarding,
-	domainManagementNameServers,
 	domainManagementList,
-	domainManagementPrivacyProtection,
-	domainManagementRoot,
-	domainManagementRedirectSettings,
+	domainManagementNameServers,
 	domainManagementPrimaryDomain,
+	domainManagementPrivacyProtection,
+	domainManagementRedirectSettings,
+	domainManagementRoot,
 	domainManagementTransfer,
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,
+	domainManagementTransferToOtherSite,
 	getSectionName
 };

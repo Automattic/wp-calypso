@@ -35,6 +35,7 @@ var TokenField = React.createClass( {
 		onFocus: React.PropTypes.func,
 		disabled: React.PropTypes.bool,
 		tokenizeOnSpace: React.PropTypes.bool,
+		placeholder: React.PropTypes.string,
 		value: function( props ) {
 			const value = props.value;
 			if ( ! Array.isArray( value ) ) {
@@ -58,6 +59,7 @@ var TokenField = React.createClass( {
 			suggestions: Object.freeze( [] ),
 			maxSuggestions: 100,
 			value: Object.freeze( [] ),
+			placeholder: '',
 			displayTransform: identity,
 			saveTransform: function( token ) {
 				return token.trim();
@@ -169,7 +171,7 @@ var TokenField = React.createClass( {
 	},
 
 	_renderInput: function() {
-		const { autoCapitalize, autoComplete, maxLength, value } = this.props;
+		const { autoCapitalize, autoComplete, maxLength, value, placeholder } = this.props;
 
 		let props = {
 			autoCapitalize,
@@ -180,6 +182,10 @@ var TokenField = React.createClass( {
 			value: this.state.incompleteTokenValue,
 			onBlur: this._onBlur,
 		};
+
+		if ( value.length === 0 && placeholder ) {
+			props.placeholder = placeholder;
+		}
 
 		if ( ! ( maxLength && value.length >= maxLength ) ) {
 			props = { ...props, onChange: this._onInputChange };

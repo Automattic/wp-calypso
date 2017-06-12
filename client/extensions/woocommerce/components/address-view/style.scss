@@ -1,0 +1,11 @@
+.address-view__address {
+	margin-bottom: 24px;
+
+	p {
+		margin-bottom: 0;
+
+		&.address-view__address-name {
+			font-weight: bold;
+		}
+	}
+}

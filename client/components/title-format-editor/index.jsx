@@ -1,13 +1,18 @@
+/**
+ * External dependencies
+ */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import {
+	get,
 	head,
 	map,
 	max,
 	min,
 	noop,
 } from 'lodash';
+import moment from 'moment';
 
 // The following polyfills exist for the draft-js editor, since
 // we are unable to change its codebase and yet we are waiting
@@ -140,7 +145,7 @@ export class TitleFormatEditor extends Component {
 		this.skipOverTokens = this.skipOverTokens.bind( this );
 
 		this.state = {
-			editorState: EditorState.moveFocusToEnd(
+			editorState: EditorState.moveSelectionToEnd(
 				this.editorStateFrom( props )
 			)
 		};
@@ -149,7 +154,7 @@ export class TitleFormatEditor extends Component {
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.disabled && ! nextProps.disabled ) {
 			this.setState( {
-				editorState: EditorState.moveFocusToEnd(
+				editorState: EditorState.moveSelectionToEnd(
 					this.editorStateFrom( nextProps )
 				)
 			} );
@@ -388,6 +393,7 @@ export class TitleFormatEditor extends Component {
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );
 	const { translate } = ownProps;
+	const formattedDate = moment().locale( get( site, 'lang', '' ) ).format( 'MMMM YYYY' );
 
 	// Add example content for post/page title, tag name and archive dates
 	return ( {
@@ -395,7 +401,7 @@ const mapStateToProps = ( state, ownProps ) => {
 			site,
 			post: { title: translate( 'Example Title' ) },
 			tag: translate( 'Example Tag' ),
-			date: translate( 'August 2016' )
+			date: formattedDate
 		}
 	} );
 };

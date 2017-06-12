@@ -1,10 +1,87 @@
-.editor-visibility.button {
+.editor-visibility {
+	display: flex;
+	font-size: 13px;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0;
+}
+
+.editor-visibility__dropdown {
+	text-align: left;
+	width: 100%;
+
+	.select-dropdown,
+	.select-dropdown__container {
+		max-width: 100%;
+		width: 100%;
+	}
+
+	.select-dropdown__header {
+		padding: 0 #{ $side-margin + 20 }px 0 #{ $side-margin }px;
+		max-width: ( $sidebar-width-max - $accordion-padding * 2 );
+
+		@include breakpoint( "<960px" ) {
+			max-width: ( $sidebar-width-min - $accordion-padding * 2 );
+		}
+		@include breakpoint( "<660px" ) {
+			max-width: 100%;
+			min-width: ( $sidebar-width-max - $accordion-padding * 2 );
+		}
+	}
+
+	.form-text-input {
+		font-size: 13px;
+		margin-top: 8px;
+	}
+
+	.form-input-validation {
+		padding-bottom: 0;
+	}
+
+	.form-setting-explanation {
+		margin: -4px 0 8px 24px;
+
+		&.password {
+			margin-bottom: 0;
+		}
+	}
+
+	.gridicons-globe {
+		color: $alert-green;
+	}
+
+	.gridicons-user {
+		color: $alert-yellow;
+	}
+
+	.gridicons-lock {
+		color: $alert-red;
+	}
+
+	.gridicon.is_active {
+		color: $gray-dark;
+
+		&:hover {
+			color: lighten( $gray, 15% );
+		}
+	}
+
+	.is-selected .gridicon {
+		color: #fff;
+	}
+}
+
+.editor-visibility .button {
 	&.is-dialog-open,
 	&.is-touch,
 	&:hover {
 		.editor-visibility__label {
 			color: darken( $gray, 10% );
 		}
+	}
+
+	.gridicon {
+		margin-right: 4px;
 	}
 }
 

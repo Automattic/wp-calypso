@@ -11,30 +11,25 @@ import analytics from 'lib/analytics';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import devicesFactory from 'lib/devices';
-import sitesFactory from 'lib/sites-list';
-import userFactory from 'lib/user';
+import NotificationsComponent from 'me/notification-settings/main';
+import CommentSettingsComponent from 'me/notification-settings/comment-settings';
+import WPcomSettingsComponent from 'me/notification-settings/wpcom-settings';
+import NotificationSubscriptions from 'me/notification-settings/reader-subscriptions';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
-const devices = devicesFactory();
-const sites = sitesFactory();
-const user = userFactory();
 
 export default {
 	notifications( context ) {
-		const NotificationsComponent = require( 'me/notification-settings/main' ),
-			basePath = context.path;
+		const basePath = context.path;
 
-		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications' );
 
 		renderWithReduxStore(
 			React.createElement( NotificationsComponent, {
-				user: user,
 				userSettings: userSettings,
-				blogs: sites,
-				devices: devices,
 				path: context.path
 			} ),
 			document.getElementById( 'primary' ),
@@ -43,18 +38,16 @@ export default {
 	},
 
 	comments( context ) {
-		const CommentSettingsComponent = require( 'me/notification-settings/comment-settings' ),
-			basePath = context.path;
+		const basePath = context.path;
 
-		context.store.dispatch( setTitle( i18n.translate( 'Comments on other sites', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Comments on other sites', { textOnly: true } ) ) );
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 
 		renderWithReduxStore(
 			React.createElement( CommentSettingsComponent,
 				{
-					user: user,
-					devices: devices,
 					path: context.path
 				}
 			),
@@ -64,18 +57,16 @@ export default {
 	},
 
 	updates( context ) {
-		const WPcomSettingsComponent = require( 'me/notification-settings/wpcom-settings' ),
-			basePath = context.path;
+		const basePath = context.path;
 
-		context.store.dispatch( setTitle( i18n.translate( 'Updates from WordPress.com', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Updates from WordPress.com', { textOnly: true } ) ) );
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Updates from WordPress.com' );
 
 		renderWithReduxStore(
 			React.createElement( WPcomSettingsComponent,
 				{
-					user: user,
-					devices: devices,
 					path: context.path
 				}
 			),
@@ -85,10 +76,10 @@ export default {
 	},
 
 	notificationSubscriptions( context ) {
-		const NotificationSubscriptions = require( 'me/notification-settings/reader-subscriptions' ),
-			basePath = context.path;
+		const basePath = context.path;
 
-		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
 		analytics.ga.recordPageView( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 

@@ -5,7 +5,6 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { includes, reduce } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -120,7 +119,6 @@ const EditorSharingAccordion = React.createClass( {
 			<Accordion
 				title={ this.translate( 'Sharing' ) }
 				subtitle={ this.getSubtitle() }
-				icon={ <Gridicon icon="share" /> }
 				status={ status }
 				className={ classes }>
 				{ this.props.site && (

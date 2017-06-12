@@ -1,0 +1,39 @@
+.date-time-format,
+.date-time-format.is-expanded {
+	margin-top: -10px;
+	@include breakpoint( ">480px" ) {
+		margin-top: -16px;
+
+		.foldable-card__header,
+		.foldable-card__content {
+			padding-left: 24px;
+			padding-right: 24px;
+		}
+
+		.foldable-card__action {
+			padding-right: 16px;
+		}
+	}
+
+	.date-time-format__title {
+		font-weight: 600;
+		margin-bottom: 5px;
+	}
+
+	.date-time-format__info {
+		color: $gray-text-min;
+		font-size: 13px;
+		font-style: italic;
+	}
+}
+
+.date-time-format__custom-field {
+	.form-radio {
+		margin-top: 12px;
+	}
+
+	.form-text-input {
+		margin: 0 12px;
+		width: 100px;
+	}
+}

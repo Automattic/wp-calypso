@@ -8,7 +8,7 @@ import url from 'url';
  */
 import { X_POST } from 'lib/feed-post-store/display-types';
 
-export default {
+const exported = {
 	/**
 	 * Examines the post metadata, and returns metadata related to cross posts.
 	 * @param {object} post - post object
@@ -20,14 +20,15 @@ export default {
 			postURL: null,
 			commentURL: null,
 			blogId: null,
-			postId: null
+			postId: null,
 		};
 		if ( post && post.metadata ) {
 			const keys = Object.keys( post.metadata );
 			for ( let i = 0; i < keys.length; i++ ) {
 				const meta = post.metadata[ keys[ i ] ];
-				if ( meta.key === '_xpost_original_permalink' ||
-					meta.key === 'xcomment_original_permalink' ) {
+				if (
+					meta.key === '_xpost_original_permalink' || meta.key === 'xcomment_original_permalink'
+				) {
 					let parsedURL = url.parse( meta.value, false, false );
 					xPostMetadata.siteURL = `${ parsedURL.protocol }//${ parsedURL.host }`;
 					xPostMetadata.postURL = `${ xPostMetadata.siteURL }${ parsedURL.path }`;
@@ -42,8 +43,12 @@ export default {
 			}
 		}
 		return xPostMetadata;
-	}
+	},
 };
+
+export default exported;
+
+export const { getXPostMetadata } = exported;
 
 export function isXPost( post ) {
 	return post && post.display_type & X_POST;

@@ -15,12 +15,12 @@ import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
-export default {
-	followingEdit( context ) {
-		const basePath = route.sectionify( context.path ),
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage Followed Sites',
-			mcKey = 'following_edit',
-			search = context.query.s;
+const exported = {
+	followingManage( context ) {
+		const basePath = route.sectionify( context.path );
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage Followed Sites';
+		const mcKey = 'following_manage';
+		const { q: sitesQuery, s: subsQuery, sort: subsSortOrder, showMoreResults } = context.query;
 
 		setPageTitle( context, i18n.translate( 'Manage Followed Sites' ) );
 
@@ -28,15 +28,22 @@ export default {
 
 		renderWithReduxStore(
 			<AsyncLoad
-				require="reader/following-edit"
-				key="following-edit"
+				require="reader/following-manage"
+				key="following-manage"
 				initialFollowUrl={ context.query.follow }
-				search={ search }
+				sitesQuery={ sitesQuery }
+				subsQuery={ subsQuery }
+				showMoreResults={ Boolean( showMoreResults ) }
+				subsSortOrder={ subsSortOrder }
 				context={ context }
 				userSettings={ userSettings }
 			/>,
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };
+
+export default exported;
+
+export const { followingEdit, followingManage } = exported;

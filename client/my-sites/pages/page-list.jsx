@@ -2,8 +2,12 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	omit = require( 'lodash/omit' );
+	PureRenderMixin = require( 'react-pure-render/mixin' );
+
+import { connect } from 'react-redux';
+import {
+	omit,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,14 +15,21 @@ var React = require( 'react' ),
 var PostListFetcher = require( 'components/post-list-fetcher' ),
 	Page = require( './page' ),
 	infiniteScroll = require( 'lib/mixins/infinite-scroll' ),
-	observe = require( 'lib/mixins/data-observe' ),
 	EmptyContent = require( 'components/empty-content' ),
 	NoResults = require( 'my-sites/no-results' ),
 	actions = require( 'lib/posts/actions' ),
 	Placeholder = require( './placeholder' ),
-	mapStatus = require( 'lib/route' ).mapPostStatus;
+	mapStatus = require( 'lib/route' ).mapPostStatus,
+	sortPagesHierarchically = require( './helpers' ).sortPagesHierarchically;
 
 import BlogPostsPage from './blog-posts-page';
+import {
+	hasInitializedSites,
+} from 'state/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+} from 'state/ui/selectors';
 
 var PageList = React.createClass( {
 
@@ -27,15 +38,17 @@ var PageList = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
-		sites: React.PropTypes.object,
-		siteID: React.PropTypes.any
+		hasSites: React.PropTypes.bool.isRequired,
+		site: React.PropTypes.object,
+		siteId: React.PropTypes.any
 	},
 
 	render: function() {
 		return (
 			<PostListFetcher
 				type="page"
-				siteID={ this.props.siteID }
+				number={ 100 }
+				siteID={ this.props.siteId }
 				status={ mapStatus( this.props.status ) }
 				search={ this.props.search }>
 				<Pages
@@ -50,7 +63,7 @@ var Pages = React.createClass( {
 
 	displayName: 'Pages',
 
-	mixins: [ infiniteScroll( 'fetchPages' ), observe( 'sites' ) ],
+	mixins: [ infiniteScroll( 'fetchPages' ) ],
 
 	propTypes: {
 		context: React.PropTypes.object.isRequired,
@@ -59,15 +72,15 @@ var Pages = React.createClass( {
 		page: React.PropTypes.number.isRequired,
 		posts: React.PropTypes.array.isRequired,
 		search: React.PropTypes.string,
-		siteID: React.PropTypes.any,
-		sites: React.PropTypes.object.isRequired,
+		siteId: React.PropTypes.any,
+		hasSites: React.PropTypes.bool.isRequired,
 		trackScrollPage: React.PropTypes.func.isRequired,
 		hasRecentError: React.PropTypes.bool.isRequired
 	},
 
 	getDefaultProps: function() {
 		return {
-			perPage: 20,
+			perPage: 100,
 			loading: false,
 			hasRecentError: false,
 			lastPage: false,
@@ -131,7 +144,9 @@ var Pages = React.createClass( {
 					} ) }
 			/>;
 		} else {
-			newPageLink = this.props.siteID ? '/page/' + this.props.siteID : '/page';
+			const { site, siteId } = this.props;
+			const sitePart = site && site.slug || siteId;
+			newPageLink = this.props.siteId ? '/page/' + sitePart : '/page';
 
 			if ( this.props.hasRecentError ) {
 				attributes = {
@@ -193,61 +208,119 @@ var Pages = React.createClass( {
 			if ( i % 4 === 0 ) {
 				rows.push( <Placeholder.Marker key={ 'placeholder-marker-' + i } /> );
 			}
-			rows.push( <Placeholder.Page key={ 'placeholder-page-' + i } multisite={ this.props.siteID === false } /> );
+			rows.push( <Placeholder.Page key={ 'placeholder-page-' + i } multisite={ ! this.props.site } /> );
 		}
 	},
 
-	render: function() {
-		var pages = this.props.posts,
-			rows = [];
+	renderLoading: function() {
+		const rows = [];
+		this.addLoadingRows( rows, 1 );
 
-		// pages have loaded, sites have loaded, and we have a site instance or are viewing all-sites
-		if ( pages.length && this.props.sites.initialized ) {
-			if ( ! this.props.search ) {
-				// we're listing in reverse chrono. use the markers.
-				pages = this._insertTimeMarkers( pages );
+		return (
+			<div id="pages" className="pages__page-list">
+				{ rows }
+			</div>
+		);
+	},
+
+	renderPagesList: function( { pages } ) {
+		const { site } = this.props;
+		const status = this.props.status || 'published';
+
+		// Pages only display hierarchically for published pages on single-sites when
+		// there are 100 or fewer pages and no more pages to load (last page).
+		// Pages are not displayed hierarchically for search.
+		if ( site && status === 'published' &&
+			this.props.lastPage && pages.length <= 100 &&
+			! this.props.search ) {
+			return this.renderHierarchical( { pages, site } );
+		}
+
+		return this.renderChronological( { pages, site } );
+	},
+
+	renderHierarchical: function( { pages, site } ) {
+		pages = sortPagesHierarchically( pages );
+		const rows = pages.map( function( page ) {
+			return (
+				<Page key={ 'page-' + page.global_ID } page={ page } site={ site }
+					multisite={ false } hierarchical={ true } hierarchyLevel={ page.indentLevel || 0 } />
+			);
+		}, this );
+
+		return (
+			<div id="pages" className="pages__page-list">
+				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+				{ rows }
+			</div>
+		);
+	},
+
+	renderChronological: function( { pages, site } ) {
+		if ( ! this.props.search ) {
+			// we're listing in reverse chrono. use the markers.
+			pages = this._insertTimeMarkers( pages );
+		}
+		const rows = pages.map( function( page ) {
+			if ( ! ( 'site_ID' in page ) ) {
+				return page;
 			}
-			rows = pages.map( function( page ) {
-				if ( ! ( 'site_ID' in page ) ) {
-					return page;
-				}
-					// Get the site the page belongs to
-				var site = this.props.sites.getSite( page.site_ID );
 
-					// Render each page
-				return (
-						<Page key={ 'page-' + page.global_ID } page={ page } site={ site } multisite={ this.props.siteID === false } />
-					);
-			}, this );
+			// Render each page
+			return (
+				<Page key={ 'page-' + page.global_ID } page={ page } multisite={ this.props.siteID === false } />
+			);
+		}, this );
 
-			if ( this.props.loading ) {
-				this.addLoadingRows( rows, 1 );
-			}
-
-			const site = this.props.sites.getSelectedSite();
-			const status = this.props.status || 'published';
-
-			if ( site && status === 'published' ) {
-				rows.push(
-					<BlogPostsPage
-						key="blog-posts-page"
-						site={ site }
-					/>
-				);
-			}
-		} else if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
-			rows.push( <div key="page-list-no-results">{ this.getNoContentMessage() }</div> );
-		} else {
+		if ( this.props.loading ) {
 			this.addLoadingRows( rows, 1 );
 		}
 
+		const blogPostsPage = ( site && status === 'published' ) && (
+			<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+		);
+
 		return (
-			<div id="pages" className="page-list">
+			<div id="pages" className="pages__page-list">
+				{ blogPostsPage }
 				{ rows }
 				{ this.props.lastPage && pages.length ? <div className="infinite-scroll-end" /> : null }
 			</div>
 		);
-	}
+	},
+
+	renderNoContent: function() {
+		return (
+			<div id="pages" className="pages__page-list">
+				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
+			</div>
+		);
+	},
+
+	render: function() {
+		const {
+			hasSites,
+			loading,
+			posts,
+		} = this.props;
+
+		if ( posts.length && hasSites ) {
+			return this.renderPagesList( { pages: posts } );
+		}
+
+		if ( ( ! loading ) && hasSites ) {
+			return this.renderNoContent();
+		}
+
+		return this.renderLoading();
+	},
+
 } );
 
-module.exports = PageList;
+const mapState = ( state ) => ( {
+	hasSites: hasInitializedSites( state ),
+	site: getSelectedSite( state ),
+	siteId: getSelectedSiteId( state ),
+} );
+
+export default connect( mapState )( PageList );

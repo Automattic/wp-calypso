@@ -391,6 +391,8 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:ribs/delete` )
+				.reply( 200, { status: 'ok' } )
+				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ categoryTaxonomyName }/terms/slug:ribs/delete` )
 				.reply( 200, { status: 'ok' } );
 		} );
 
@@ -458,6 +460,108 @@ describe( 'actions', () => {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
+					termId: 10
+				} );
+				expect( spy ).to.not.have.been.calledWith( {
+					type: TERMS_RECEIVE,
+					siteId: siteId,
+					taxonomy: taxonomyName,
+					terms: []
+				} );
+			} );
+		} );
+
+		it( 'should dispatch a TERMS_RECEIVE for default category on Success', () => {
+			const state = {
+				posts: {
+					queries: {
+						[ siteId ]: new PostQueryManager( {
+							items: {}
+						} )
+					},
+				},
+				siteSettings: {
+					items: {
+						[ siteId ]: { default_category: 5 }
+					}
+				},
+				terms: {
+					queries: {
+						[ siteId ]: {
+							[ categoryTaxonomyName ]: new TermQueryManager( {
+								items: {
+									5: { ID: 5, name: 'chicken', slug: 'chicken', parent: 0, post_count: 10 },
+									10: { ID: 10, name: 'ribs', slug: 'ribs', parent: 5, post_count: 2 }
+								},
+								queries: {}
+							} )
+						}
+					}
+				}
+			};
+			const getState = () => state;
+
+			return deleteTerm( siteId, categoryTaxonomyName, 10, 'ribs' )( spy, getState ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: TERMS_RECEIVE,
+					siteId: siteId,
+					taxonomy: categoryTaxonomyName,
+					terms: [ { ID: 5, name: 'chicken', slug: 'chicken', parent: 0, post_count: 12 } ],
+					query: undefined,
+					found: undefined
+				} );
+				expect( spy ).to.have.been.calledWith( {
+					type: TERM_REMOVE,
+					siteId: siteId,
+					taxonomy: categoryTaxonomyName,
+					termId: 10
+				} );
+			} );
+		} );
+
+		it( 'should not dispatch a TERMS_RECEIVE for default category when prior category had no post_count', () => {
+			const state = {
+				posts: {
+					queries: {
+						[ siteId ]: new PostQueryManager( {
+							items: {}
+						} )
+					},
+				},
+				siteSettings: {
+					items: {
+						[ siteId ]: { default_category: 5 }
+					}
+				},
+				terms: {
+					queries: {
+						[ siteId ]: {
+							[ categoryTaxonomyName ]: new TermQueryManager( {
+								items: {
+									5: { ID: 5, name: 'chicken', slug: 'chicken', parent: 0, post_count: 10 },
+									10: { ID: 10, name: 'ribs', slug: 'ribs', parent: 5 }
+								},
+								queries: {}
+							} )
+						}
+					}
+				}
+			};
+			const getState = () => state;
+
+			return deleteTerm( siteId, categoryTaxonomyName, 10, 'ribs' )( spy, getState ).then( () => {
+				expect( spy ).to.not.have.been.calledWith( {
+					type: TERMS_RECEIVE,
+					siteId: siteId,
+					taxonomy: categoryTaxonomyName,
+					terms: [ { ID: 5, name: 'chicken', slug: 'chicken', parent: 0, post_count: 10 } ],
+					query: undefined,
+					found: undefined
+				} );
+				expect( spy ).to.have.been.calledWith( {
+					type: TERM_REMOVE,
+					siteId: siteId,
+					taxonomy: categoryTaxonomyName,
 					termId: 10
 				} );
 			} );

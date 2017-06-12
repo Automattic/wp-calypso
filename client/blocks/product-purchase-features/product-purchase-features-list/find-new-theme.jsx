@@ -17,7 +17,7 @@ export default localize( ( { selectedSite, translate } ) => {
 				title={ translate( 'Find a new theme' ) }
 				description={ translate( 'All our premium themes are now available at no extra cost. Try them out now.' ) }
 				buttonText={ translate( 'Browse premium themes' ) }
-				href={ '/design/' + selectedSite.slug }
+				href={ '/themes/' + selectedSite.slug }
 			/>
 		</div>
 	);

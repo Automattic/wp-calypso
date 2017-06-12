@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import StepHeader from 'signup/step-header';
+import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
 
-export default React.createClass( {
-	displayName: 'StepWrapper',
+class StepWrapper extends Component {
+	static propTypes = {
+		shouldHideNavButtons: PropTypes.bool,
+		translate: PropTypes.func.isRequired,
+	};
 
-	propTypes: {
-		shouldHideNavButtons: React.PropTypes.bool
-	},
-
-	renderBack: function() {
+	renderBack() {
 		if ( this.props.shouldHideNavButtons ) {
 			return null;
 		}
@@ -31,9 +31,9 @@ export default React.createClass( {
 				backUrl={ this.props.backUrl }
 				signupProgress={ this.props.signupProgress } />
 		);
-	},
+	}
 
-	renderSkip: function() {
+	renderSkip() {
 		if ( ! this.props.shouldHideNavButtons && this.props.goToNextStep ) {
 			return (
 				<NavigationLink
@@ -44,49 +44,53 @@ export default React.createClass( {
 					stepName={ this.props.stepName } />
 			);
 		}
-	},
+	}
 
-	headerText: function() {
+	headerText() {
 		if ( this.props.positionInFlow === 0 ) {
-			if ( this.props.headerText ) {
+			if ( this.props.headerText !== undefined ) {
 				return this.props.headerText;
 			}
-			return this.translate( 'Let\'s get started.' );
+
+			return this.props.translate( "Let's get started." );
 		}
 
-		if ( this.props.fallbackHeaderText ) {
+		if ( this.props.fallbackHeaderText !== undefined ) {
 			return this.props.fallbackHeaderText;
 		}
-	},
+	}
 
-	subHeaderText: function() {
+	subHeaderText() {
 		if ( this.props.positionInFlow === 0 ) {
-			if ( this.props.subHeaderText ) {
+			if ( this.props.subHeaderText !== undefined ) {
 				return this.props.subHeaderText;
 			}
-			return this.translate( 'Welcome to the best place for your WordPress website.' );
+
+			return this.props.translate( 'Welcome to the best place for your WordPress website.' );
 		}
 
-		if ( this.props.fallbackSubHeaderText ) {
+		if ( this.props.fallbackSubHeaderText !== undefined ) {
 			return this.props.fallbackSubHeaderText;
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		const { stepContent, headerButton } = this.props;
 		const classes = classNames( 'step-wrapper', {
-			'is-wide-layout': this.props.isWideLayout
+			'is-wide-layout': this.props.isWideLayout,
 		} );
 
 		return (
 			<div className={ classes }>
-				<StepHeader
+				<FormattedHeader
 					headerText={ this.headerText() }
 					subHeaderText={ this.subHeaderText() }>
 					{ ( headerButton ) }
-				</StepHeader>
+				</FormattedHeader>
+
 				<div className="step-wrapper__content is-animated-content">
 					{ stepContent }
+
 					<div className="step-wrapper__buttons">
 						{ this.renderBack() }
 						{ this.renderSkip() }
@@ -95,4 +99,6 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( StepWrapper );

@@ -125,7 +125,7 @@ export default React.createClass( {
 				} );
 				break;
 			case 'draft':
-				label = this.translate( '{{strong}}Draft saved{{/strong}} %(relativeTimeFromNow)s', {
+				label = this.translate( '{{strong}}Saved{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />

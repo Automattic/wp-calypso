@@ -34,7 +34,8 @@ const CreditCardForm = React.createClass( {
 		initialValues: PropTypes.object,
 		recordFormSubmitEvent: PropTypes.func.isRequired,
 		saveStoredCard: PropTypes.func,
-		successCallback: PropTypes.func.isRequired
+		successCallback: PropTypes.func.isRequired,
+		showUsedForExistingPurchasesInfo: PropTypes.bool,
 	},
 
 	getInitialState() {
@@ -273,6 +274,7 @@ const CreditCardForm = React.createClass( {
 							) }
 						</p>
 					</div>
+					{ this.renderUsedForExistingPurchases() }
 				</Card>
 
 				<CompactCard className="credit-card-form__footer">
@@ -288,6 +290,18 @@ const CreditCardForm = React.createClass( {
 				</CompactCard>
 			</form>
 		);
+	},
+	renderUsedForExistingPurchases() {
+		if ( this.props.showUsedForExistingPurchasesInfo ) {
+			return (
+				<div className="credit-card-form__card-terms">
+					<Gridicon icon="info-outline" size={ 18 } />
+					<p>
+						{ this.translate( 'This card will be used for future renewals of existing purchases.' ) }
+					</p>
+				</div>
+			);
+		}
 	}
 } );
 

@@ -18,10 +18,11 @@ import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
-function PostItem( { translate, globalId, post, editUrl, className } ) {
+function PostItem( { translate, globalId, post, editUrl, className, compact } ) {
 	const title = post ? post.title : null;
 	const classes = classnames( 'post-item', className, {
 		'is-untitled': ! title,
+		'is-mini': compact,
 		'is-placeholder': ! globalId
 	} );
 
@@ -51,7 +52,8 @@ PostItem.propTypes = {
 	translate: PropTypes.func,
 	globalId: PropTypes.string,
 	post: PropTypes.object,
-	className: PropTypes.string
+	className: PropTypes.string,
+	compact: PropTypes.bool
 };
 
 export default connect( ( state, ownProps ) => {

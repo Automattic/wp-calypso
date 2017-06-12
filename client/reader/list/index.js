@@ -6,9 +6,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from './controller';
-import readerController from 'reader/controller';
+import { listListing } from './controller';
+import { sidebar, updateLastRoute } from 'reader/controller';
 
 export default function() {
-	page( '/read/list/:user/:list', readerController.updateLastRoute, readerController.sidebar, controller.listListing );
+	page( '/read/list/:user/:list', updateLastRoute, sidebar, listListing );
 }

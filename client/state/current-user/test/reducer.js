@@ -8,6 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
+import { withSchemaValidation } from 'state/utils';
 import {
 	CURRENT_USER_ID_SET,
 	DESERIALIZE,
@@ -18,7 +19,8 @@ import {
 	SITES_RECEIVE,
 	SITES_UPDATE
 } from 'state/action-types';
-import reducer, { id, capabilities, currencyCode } from '../reducer';
+import reducer, { id, capabilities as unwrappedCapabilities, currencyCode } from '../reducer';
+const capabilities = withSchemaValidation( unwrappedCapabilities.schema, unwrappedCapabilities );
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -31,7 +33,8 @@ describe( 'reducer', () => {
 			'currencyCode',
 			'capabilities',
 			'flags',
-			'gravatarStatus'
+			'gravatarStatus',
+			'emailVerification',
 		] );
 	} );
 

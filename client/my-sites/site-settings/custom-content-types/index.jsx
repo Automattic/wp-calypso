@@ -8,14 +8,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
 import Card from 'components/card';
-import Button from 'components/button';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import FormTextInput from 'components/forms/form-text-input';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
+import { isJetpackSite } from 'state/sites/selectors';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import InfoPopover from 'components/info-popover';
+import ExternalLink from 'components/external-link';
 
 class CustomContentTypes extends Component {
 	componentDidUpdate() {
@@ -23,8 +26,13 @@ class CustomContentTypes extends Component {
 			activatingCustomContentTypesModule,
 			customContentTypesModuleActive,
 			fields,
-			siteId
+			siteId,
+			siteIsJetpack,
 		} = this.props;
+
+		if ( ! siteIsJetpack ) {
+			return;
+		}
 
 		if ( customContentTypesModuleActive !== false ) {
 			return;
@@ -50,82 +58,81 @@ class CustomContentTypes extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
-	renderToggle( name, label ) {
+	renderToggle( name, label, description ) {
 		const {
 			activatingCustomContentTypesModule,
 			fields,
-			handleToggle
+			handleAutosavingToggle
 		} = this.props;
 		return (
-			<FormToggle
-				className="custom-content-types__module-settings-toggle is-compact"
-				checked={ !! fields[ name ] }
-				disabled={ this.isFormPending() || activatingCustomContentTypesModule }
-				onChange={ handleToggle( name ) }
-			>
-				{ label }
-			</FormToggle>
+			<div>
+				<CompactFormToggle
+					checked={ !! fields[ name ] }
+					disabled={ this.isFormPending() || activatingCustomContentTypesModule }
+					onChange={ handleAutosavingToggle( name ) }
+				>
+					{ label }
+				</CompactFormToggle>
+
+				{ this.renderPostsPerPageField( name, label ) }
+
+				<FormSettingExplanation isIndented>
+					{ description }
+				</FormSettingExplanation>
+			</div>
 		);
 	}
 
-	renderHeader() {
+	renderPostsPerPageField( fieldName, postTypeLabel ) {
 		const {
-			onSubmitForm,
-			isSavingSettings,
-			translate
+			fields,
+			onChangeField,
+			translate,
 		} = this.props;
-		const formPending = this.isFormPending();
-
+		const numberFieldName = fieldName + '_posts_per_page';
 		return (
-			<SectionHeader label={ translate( 'Custom Content Types' ) }>
-				<Button
-					compact
-					primary
-					onClick={ onSubmitForm }
-					disabled={ formPending }
-				>
-					{ isSavingSettings
-						? translate( 'Saving…' )
-						: translate( 'Save Settings' )
+			<div className="custom-content-types__indented-form-field indented-form-field">
+				{ translate(
+					'Display {{field /}} %s per page',
+					{
+						args: postTypeLabel.toLowerCase(),
+						components: {
+							field: (
+								<FormTextInput
+									name={ numberFieldName }
+									type="number"
+									step="1"
+									min="0"
+									id={ numberFieldName }
+									value={ 'undefined' === typeof fields[ numberFieldName ] ? 10 : fields[ numberFieldName ] }
+									onChange={ onChangeField( numberFieldName ) }
+									disabled={ this.isFormPending() || ! fields[ fieldName ] }
+								/>
+							)
+						}
 					}
-				</Button>
-			</SectionHeader>
+				) }
+			</div>
 		);
 	}
 
 	renderContentTypeSettings( fieldName, fieldLabel, fieldDescription ) {
 		return (
 			<div className="custom-content-types__module-settings">
-				{ this.renderToggle( fieldName, fieldLabel ) }
-				<p className="form-setting-explanation">
-					{ fieldDescription }
-				</p>
+				{ this.renderToggle( fieldName, fieldLabel, fieldDescription ) }
 			</div>
 		);
 	}
 
 	renderTestimonialSettings() {
-		const {
-			site,
-			translate
-		} = this.props;
-		const fieldLabel = translate(
-			'Enable {{strong}}Testimonial{{/strong}} custom content types.',
-			{
-				components: {
-					strong: <strong />,
-				}
-			}
-		);
+		const { translate } = this.props;
+		const fieldLabel = translate( 'Testimonials' );
 		const fieldDescription = translate(
-			'The Testimonial custom content type allows you to add, organize, and display your ' +
-			'testimonials. If your theme doesn’t support it yet, you can display testimonials using ' +
-			'the {{shortcodeLink}}testimonial shortcode{{/shortcodeLink}} ( [testimonials] ) ' +
-			'or you can {{archiveLink}}view a full archive of your testimonials{{/archiveLink}}.',
+			'Add, organize, and display {{link}}testimonials{{/link}}. If your theme doesn’t support testimonials yet, ' +
+			'you can display them using the shortcode [testimonials].',
 			{
 				components: {
-					shortcodeLink: <a href="https://support.wordpress.com/testimonials-shortcode/" />,
-					archiveLink: <a href={ site.URL.replace( /\/$/, '' ) + '/testimonial' } />
+					link: <a href="https://support.wordpress.com/testimonials/" />
 				}
 			}
 		);
@@ -134,27 +141,14 @@ class CustomContentTypes extends Component {
 	}
 
 	renderPortfolioSettings() {
-		const {
-			site,
-			translate
-		} = this.props;
-		const fieldLabel = translate(
-			'Enable {{strong}}Portfolio{{/strong}} custom content types.',
-			{
-				components: {
-					strong: <strong />,
-				}
-			}
-		);
+		const { translate } = this.props;
+		const fieldLabel = translate( 'Portfolio Projects' );
 		const fieldDescription = translate(
-			'The Portfolio custom content type gives you an easy way to manage and showcase projects ' +
-			'on your site. If your theme doesn’t support it yet, you can display the portfolio using ' +
-			'the {{shortcodeLink}}portfolio shortcode{{/shortcodeLink}} ( [portfolio] ) ' +
-			'or you can {{archiveLink}}view a full archive of your portfolio projects{{/archiveLink}}.',
+			'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
+			'you can display them using the shortcode [portfolio].',
 			{
 				components: {
-					shortcodeLink: <a href="https://support.wordpress.com/portfolios/portfolio-shortcode/" />,
-					archiveLink: <a href={ site.URL.replace( /\/$/, '' ) + '/portfolio' } />
+					link: <a href="https://support.wordpress.com/portfolios/" />
 				}
 			}
 		);
@@ -163,17 +157,22 @@ class CustomContentTypes extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
 		return (
-			<div>
-				{ this.renderHeader() }
+			<Card className="custom-content-types site-settings">
+				<FormFieldset>
+					<div className="custom-content-types__info-link-container site-settings__info-link-container">
+						<InfoPopover position="left">
+							<ExternalLink href="https://support.wordpress.com/custom-post-types/" icon target="_blank">
+								{ translate( 'Learn more about Custom Content Types.' ) }
+							</ExternalLink>
+						</InfoPopover>
+					</div>
 
-				<Card className="custom-content-types__card site-settings">
-					<FormFieldset>
-						{ this.renderTestimonialSettings() }
-						{ this.renderPortfolioSettings() }
-					</FormFieldset>
-				</Card>
-			</div>
+					{ this.renderTestimonialSettings() }
+					{ this.renderPortfolioSettings() }
+				</FormFieldset>
+			</Card>
 		);
 	}
 }
@@ -185,8 +184,8 @@ CustomContentTypes.defaultProps = {
 };
 
 CustomContentTypes.propTypes = {
-	onSubmitForm: PropTypes.func.isRequired,
-	handleToggle: PropTypes.func.isRequired,
+	handleAutosavingToggle: PropTypes.func.isRequired,
+	onChangeField: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,
@@ -195,11 +194,10 @@ CustomContentTypes.propTypes = {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
 
 		return {
 			siteId,
-			site,
+			siteIsJetpack: isJetpackSite( state, siteId ),
 			customContentTypesModuleActive: isJetpackModuleActive( state, siteId, 'custom-content-types' ),
 			activatingCustomContentTypesModule: isActivatingJetpackModule( state, siteId, 'custom-content-types' ),
 		};

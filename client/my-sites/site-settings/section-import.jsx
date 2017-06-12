@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import config from 'config';
 
 /**
@@ -16,31 +18,24 @@ import MediumImporter from 'my-sites/importer/importer-medium';
 import { fetchState } from 'lib/importer/actions';
 import { appStates, WORDPRESS, MEDIUM } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import Main from 'components/main';
+import HeaderCake from 'components/header-cake';
 
-export default React.createClass( {
-	displayName: 'SiteSettingsImport',
+class SiteSettingsImport extends Component {
+	static propTypes = {
+		site: PropTypes.object,
+	}
 
-	propTypes: {
-		site: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			PropTypes.shape( {
-				slug: PropTypes.string.isRequired,
-				title: PropTypes.string.isRequired
-			} )
-		] )
-	},
+	state = getImporterState();
 
-	componentDidMount: function() {
+	componentDidMount() {
 		ImporterStore.on( 'change', this.updateState );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		ImporterStore.off( 'change', this.updateState );
-	},
-
-	getInitialState: function() {
-		return getImporterState();
-	},
+	}
 
 	/**
 	 * Finds the import status objects for a
@@ -49,7 +44,7 @@ export default React.createClass( {
 	 * @param {enum} type ImportConstants.IMPORT_TYPE_*
 	 * @returns {Array<Object>} ImportStatus objects
 	 */
-	getImports: function( type ) {
+	getImports( type ) {
 		const { api: { isHydrated }, importers } = this.state;
 		const { site } = this.props;
 		const { slug, title } = site;
@@ -69,21 +64,25 @@ export default React.createClass( {
 		}
 
 		return status.map( item => Object.assign( {}, item, { site, siteTitle } ) );
-	},
+	}
 
-	updateFromAPI: function() {
+	updateFromAPI = () => {
 		fetchState( this.props.site.ID );
-	},
+	}
 
-	updateState: function() {
+	updateState = () => {
 		this.setState( getImporterState() );
-	},
+	}
 
-	render: function() {
-		const { site } = this.props;
+	render() {
+		const { site, siteSlug, translate } = this.props;
+		if ( ! site ) {
+			return null;
+		}
+
 		const { jetpack: isJetpack, options: { admin_url: adminUrl }, slug, title: siteTitle } = site;
 		const title = siteTitle.length ? siteTitle : slug;
-		const description = this.translate(
+		const description = translate(
 			'Import another site\'s content into ' +
 			'{{strong}}%(title)s{{/strong}}. Once you start an ' +
 			'import, come back here to check on the progress. ' +
@@ -97,26 +96,26 @@ export default React.createClass( {
 			}
 		);
 
-		if ( isJetpack ) {
-			return (
-				<EmptyContent
-					illustration="/calypso/images/drake/drake-jetpack.svg"
-					title={ this.translate( 'Want to import into your site?' ) }
-					line={ this.translate( `Visit your site's wp-admin for all your import and export needs.` ) }
-					action={ this.translate( 'Import into %(title)s', { args: { title } } ) }
+		return (
+			<Main>
+				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
+					<h1>{ translate( 'Import' ) }</h1>
+				</HeaderCake>
+				{ isJetpack && <EmptyContent
+					illustration="/calypso/images/illustrations/illustration-jetpack.svg"
+					title={ translate( 'Want to import into your site?' ) }
+					line={ translate( 'Visit your site\'s wp-admin for all your import and export needs.' ) }
+					action={ translate( 'Import into %(title)s', { args: { title } } ) }
 					actionURL={ adminUrl + 'import.php' }
 					actionTarget="_blank"
-				/>
-			);
-		}
-
-		return (
-			<div className="section-import">
-				<EmailVerificationGate>
+				/> }
+				{ ! isJetpack && <EmailVerificationGate>
 					<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
 					<CompactCard>
 						<header>
-							<h1 className="importer__section-title">{ this.translate( 'Import Another Site' ) }</h1>
+							<h1 className="site-settings__importer-section-title importer__section-title">
+								{ translate( 'Import Another Site' ) }
+							</h1>
 							<p className="importer__section-description">{ description }</p>
 						</header>
 					</CompactCard>
@@ -129,10 +128,17 @@ export default React.createClass( {
 							<MediumImporter { ...{ key, site, importerStatus } } /> ) }
 
 					<CompactCard href={ adminUrl + 'import.php' } target="_blank" rel="noopener noreferrer">
-						{ this.translate( 'Other importers' ) }
+						{ translate( 'Other importers' ) }
 					</CompactCard>
-				</EmailVerificationGate>
-			</div>
+				</EmailVerificationGate> }
+			</Main>
 		);
 	}
-} );
+}
+
+export default connect(
+	( state ) => ( {
+		site: getSelectedSite( state ),
+		siteSlug: getSelectedSiteSlug( state ),
+	} )
+)( localize( SiteSettingsImport ) );

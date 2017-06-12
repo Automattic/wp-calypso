@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
@@ -13,7 +14,11 @@ import Button from 'components/button';
 import { cancelPrivacyProtection } from 'state/purchases/actions';
 import Card from 'components/card';
 import HeaderCake from 'components/header-cake';
-import { getByPurchaseId, getPurchasesError, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import {
+	getByPurchaseId,
+	getPurchasesError,
+	hasLoadedUserPurchasesFromServer,
+} from 'state/purchases/selectors';
 import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
@@ -34,16 +39,13 @@ const CancelPrivacyProtection = React.createClass( {
 		hasLoadedSites: React.PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
 		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.object
-		] )
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
 	},
 
 	getInitialState() {
 		return {
 			disabled: false,
-			cancelling: false
+			cancelling: false,
 		};
 	},
 
@@ -70,8 +72,7 @@ const CancelPrivacyProtection = React.createClass( {
 			return true;
 		}
 
-		const { selectedSite } = props,
-			purchase = getPurchase( props );
+		const { selectedSite } = props, purchase = getPurchase( props );
 
 		return selectedSite && purchase && hasPrivacyProtection( purchase );
 	},
@@ -84,20 +85,29 @@ const CancelPrivacyProtection = React.createClass( {
 
 		this.setState( {
 			disabled: true,
-			cancelling: true
+			cancelling: true,
 		} );
 
-		this.props.cancelPrivacyProtection( id ).then( () => {
-			this.resetState();
+		this.props
+			.cancelPrivacyProtection( id )
+			.then( () => {
+				this.resetState();
 
-			notices.success( this.translate( 'You have successfully canceled privacy protection for %(domain)s.', {
-				args: { domain }
-			} ), { persistent: true } );
+				notices.success(
+					this.props.translate(
+						'You have successfully canceled privacy protection for %(domain)s.',
+						{
+							args: { domain },
+						}
+					),
+					{ persistent: true }
+				);
 
-			page( paths.managePurchase( this.props.selectedSite.slug, id ) );
-		} ).catch( () => {
-			this.resetState();
-		} );
+				page( paths.managePurchase( this.props.selectedSite.slug, id ) );
+			} )
+			.catch( () => {
+				this.resetState();
+			} );
 	},
 
 	resetState() {
@@ -109,17 +119,15 @@ const CancelPrivacyProtection = React.createClass( {
 
 		return (
 			<p>
-				{
-					this.translate(
-						'You are about to cancel the privacy protection upgrade for {{strong}}%(domain)s{{/strong}}. ' +
+				{ this.props.translate(
+					'You are about to cancel the privacy protection upgrade for {{strong}}%(domain)s{{/strong}}. ' +
 						'{{br/}}' +
 						'This will make your personal details public.',
-						{
-							components: { strong: <strong />, br: <br /> },
-							args: { domain: purchase.meta }
-						}
-					)
-				}
+					{
+						components: { strong: <strong />, br: <br /> },
+						args: { domain: purchase.meta },
+					}
+				) }
 			</p>
 		);
 	},
@@ -129,11 +137,9 @@ const CancelPrivacyProtection = React.createClass( {
 
 		return (
 			<strong>
-				{
-					isRefundable( purchase )
-					? this.translate( 'You will receive a refund when the upgrade is cancelled.' )
-					: this.translate( 'You will not receive a refund when the upgrade is cancelled.' )
-				}
+				{ isRefundable( purchase )
+					? this.props.translate( 'You will receive a refund when the upgrade is cancelled.' )
+					: this.props.translate( 'You will not receive a refund when the upgrade is cancelled.' ) }
 			</strong>
 		);
 	},
@@ -143,26 +149,28 @@ const CancelPrivacyProtection = React.createClass( {
 			<Button
 				onClick={ this.cancel }
 				className="cancel-privacy-protection__cancel-button"
-				disabled={ this.state.disabled }>
-				{
-					this.state.cancelling
-						? this.translate( 'Processing…' )
-						: this.translate( 'Cancel Privacy Protection' ) }
+				disabled={ this.state.disabled }
+			>
+				{ this.state.cancelling
+					? this.props.translate( 'Processing…' )
+					: this.props.translate( 'Cancel Privacy Protection' ) }
 			</Button>
 		);
 	},
 
 	renderNotice() {
-		const { error } = this.props;
+		const { error, translate } = this.props;
 
 		if ( error ) {
-			return <Notice status="is-error" showDismiss={ false }>
-				{ error }
-				{ ' ' }
-				{ this.translate( 'Please try again later or {{a}}contact support.{{/a}}', {
-					components: { a: <a href={ CALYPSO_CONTACT } /> }
-				} ) }
-			</Notice>;
+			return (
+				<Notice status="is-error" showDismiss={ false }>
+					{ error }
+					{ ' ' }
+					{ translate( 'Please try again later or {{a}}contact support.{{/a}}', {
+						components: { a: <a href={ CALYPSO_CONTACT } /> },
+					} ) }
+				</Notice>
+			);
 		}
 
 		return null;
@@ -170,7 +178,7 @@ const CancelPrivacyProtection = React.createClass( {
 
 	render() {
 		const classes = classNames( 'cancel-privacy-protection__card', {
-			'is-placeholder': isDataLoading( this.props )
+			'is-placeholder': isDataLoading( this.props ),
 		} );
 
 		let notice,
@@ -195,7 +203,6 @@ const CancelPrivacyProtection = React.createClass( {
 		}
 
 		return (
-
 			<Main>
 				<QueryUserPurchases userId={ user.get().ID } />
 				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
@@ -214,7 +221,7 @@ const CancelPrivacyProtection = React.createClass( {
 				</Card>
 			</Main>
 		);
-	}
+	},
 } );
 
 export default connect(
@@ -223,7 +230,7 @@ export default connect(
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-		selectedSite: getSelectedSiteSelector( state )
+		selectedSite: getSelectedSiteSelector( state ),
 	} ),
 	{ cancelPrivacyProtection }
-)( CancelPrivacyProtection );
+)( localize( CancelPrivacyProtection ) );

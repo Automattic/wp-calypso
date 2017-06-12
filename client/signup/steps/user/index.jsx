@@ -22,11 +22,13 @@ export class UserStep extends Component {
 		flowName: PropTypes.string,
 		translate: PropTypes.func,
 		subHeaderText: PropTypes.string,
+		isSocialSignupEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		translate: identity,
-		suggestedUsername: identity
+		suggestedUsername: identity,
+		isSocialSignupEnabled: false,
 	};
 
 	state = {
@@ -51,17 +53,15 @@ export class UserStep extends Component {
 	setSubHeaderText( props ) {
 		let subHeaderText = props.subHeaderText;
 
-		/**
-		 * Update the step sub-header if they only want to create an account, without a site.
-		 */
-		if (
-			1 === signupUtils.getFlowSteps( props.flowName ).length &&
-			'userfirst' !== props.flowName
-		) {
+		if ( props.flowName === 'social' ) {
+			// Hides sub header for this particular flow
+			subHeaderText = '';
+		} else if ( 1 === signupUtils.getFlowSteps( props.flowName ).length ) {
+			// Displays specific sub header if users only want to create an account, without a site
 			subHeaderText = this.props.translate( 'Welcome to the wonderful WordPress.com community' );
 		}
 
-		this.setState( { subHeaderText: subHeaderText } );
+		this.setState( { subHeaderText } );
 	}
 
 	save = ( form ) => {
@@ -69,6 +69,17 @@ export class UserStep extends Component {
 			stepName: this.props.stepName,
 			form: form
 		} );
+	};
+
+	submit = ( data ) => {
+		SignupActions.submitSignupStep( {
+			processingMessage: this.props.translate( 'Creating your account' ),
+			flowName: this.props.flowName,
+			stepName: this.props.stepName,
+			...data
+		} );
+
+		this.props.goToNextStep();
 	};
 
 	submitForm = ( form, userData, analyticsData ) => {
@@ -86,16 +97,15 @@ export class UserStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
-		SignupActions.submitSignupStep( {
-			processingMessage: this.props.translate( 'Creating your account' ),
-			flowName: this.props.flowName,
+		this.submit( {
 			userData,
-			stepName: this.props.stepName,
 			form: formWithoutPassword,
 			queryArgs
 		} );
+	};
 
-		this.props.goToNextStep();
+	handleSocialResponse = ( service, token ) => {
+		this.submit( { service, token } );
 	};
 
 	userCreationComplete() {
@@ -149,6 +159,8 @@ export class UserStep extends Component {
 				submitForm={ this.submitForm }
 				submitButtonText={ this.submitButtonText() }
 				suggestedUsername={ this.props.suggestedUsername }
+				handleSocialResponse={ this.handleSocialResponse }
+				isSocialSignupEnabled={ this.props.isSocialSignupEnabled }
 			/>
 		);
 	}

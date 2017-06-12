@@ -23,9 +23,8 @@ describe( 'wrap-es6-functions', () => {
 		sandbox.stub( console, 'error' );
 
 		fromPairs( [
-			[ Array, [ 'keys', 'entries', 'values', 'findIndex', 'fill', 'find' ] ],
+			[ Array, [ 'keys', 'entries', 'values', 'findIndex', 'fill', 'find', 'includes' ] ],
 			[ String, [ 'codePointAt', 'normalize', 'repeat', 'startsWith', 'endsWith', 'includes' ] ],
-			[ RegExp, [ 'flags' ] ]
 		], ( object, keys ) => {
 			keys.forEach( ( key ) => {
 				if ( isFunction( object.prototype[ key ] ) ) {
@@ -38,7 +37,7 @@ describe( 'wrap-es6-functions', () => {
 	} );
 
 	describe( 'Array', () => {
-		[ 'keys', 'entries', 'values' ].forEach( partial( assertCall, Array.prototype, [] ) );
+		[ 'keys', 'entries', 'values', 'includes' ].forEach( partial( assertCall, Array.prototype, [] ) );
 		[ 'findIndex', 'find' ].forEach( partial( assertCall, Array.prototype, [ () => true ] ) );
 		[ 'fill' ].forEach( partial( assertCall, Array.prototype, [ 1 ] ) );
 	} );
@@ -47,9 +46,5 @@ describe( 'wrap-es6-functions', () => {
 		[ 'codePointAt', 'repeat' ].forEach( partial( assertCall, 'hello', [ 1 ] ) );
 		[ 'startsWith', 'endsWith', 'includes' ].forEach( partial( assertCall, 'hello', [ 'a' ] ) );
 		[ 'normalize' ].forEach( partial( assertCall, 'hello', [] ) );
-	} );
-
-	describe( 'RegExp', () => {
-		[ 'flags' ].forEach( partial( assertCall, /a/, [ 'g' ] ) );
 	} );
 } );

@@ -8,8 +8,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	DOCUMENT_HEAD_LINK_ADD,
-	DOCUMENT_HEAD_META_ADD,
+	DOCUMENT_HEAD_LINK_SET,
+	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 } from 'state/action-types';
@@ -57,18 +57,17 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( [ { property: 'og:site_name', content: 'WordPress.com' } ] );
 		} );
 
-		it( 'should add a new meta tag', () => {
+		it( 'should set a new meta tag', () => {
 			const state = deepFreeze( [ { content: 'some content', type: 'some type' } ] );
 			const newState = meta( state, {
-				type: DOCUMENT_HEAD_META_ADD,
-				meta: {
+				type: DOCUMENT_HEAD_META_SET,
+				meta: [ {
 					content: 'another content',
 					type: 'another type'
-				}
+				} ]
 			} );
 
 			const expectedState = [
-				...state,
 				{ content: 'another content', type: 'another type' }
 			];
 
@@ -83,18 +82,17 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( [] );
 		} );
 
-		it( 'should add a new link tag', () => {
+		it( 'should set a new link tag', () => {
 			const state = deepFreeze( [ { rel: 'some-rel', href: 'https://wordpress.org' } ] );
 			const newState = link( state, {
-				type: DOCUMENT_HEAD_LINK_ADD,
-				link: {
+				type: DOCUMENT_HEAD_LINK_SET,
+				link: [ {
 					rel: 'another-rel',
 					href: 'https://automattic.com'
-				}
+				} ]
 			} );
 
 			const expectedState = [
-				...state,
 				{ rel: 'another-rel', href: 'https://automattic.com' }
 			];
 

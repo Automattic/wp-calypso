@@ -17,7 +17,10 @@ import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
 import makeEmbedsSafe from 'lib/post-normalizer/rule-content-make-embeds-safe';
 import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
 import makeImagesSafe from 'lib/post-normalizer/rule-content-make-images-safe';
-import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
+import {
+	disableAutoPlayOnMedia,
+	disableAutoPlayOnEmbeds,
+} from 'lib/post-normalizer/rule-content-disable-autoplay';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import makeSiteIdSafeForApi from 'lib/post-normalizer/rule-make-site-id-safe-for-api';
@@ -31,15 +34,15 @@ import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-loa
 import pickCanonicalMedia from 'lib/post-normalizer/rule-pick-canonical-media';
 import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-elements-by-selector';
 import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
+import linkJetpackCarousels from 'lib/post-normalizer/rule-content-link-jetpack-carousels';
 
 /**
  * Module vars
  */
-export const
-	READER_CONTENT_WIDTH = 800,
+export const READER_CONTENT_WIDTH = 800,
 	PHOTO_ONLY_MIN_WIDTH = 440,
 	GALLERY_MIN_IMAGES = 4,
-	GALLERY_MIN_IMAGE_WIDTH = 350;
+	GALLERY_MIN_IMAGE_WIDTH = 100;
 
 function getCharacterCount( post ) {
 	if ( ! post || ! post.content_no_html ) {
@@ -63,15 +66,16 @@ const hasShortContent = post => getCharacterCount( post ) <= 100;
 export function classifyPost( post ) {
 	const canonicalImage = post.canonical_image;
 	const imagesForGallery = filter( post.content_images, imageIsBigEnoughForGallery );
-	let displayType = DISPLAY_TYPES.UNCLASSIFIED,
-		canonicalAspect;
+	let displayType = DISPLAY_TYPES.UNCLASSIFIED, canonicalAspect;
 
 	if ( imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
 		displayType ^= DISPLAY_TYPES.GALLERY;
-	} else if ( post.canonical_media &&
-				post.canonical_media.mediaType === 'image' &&
-				post.canonical_media.width >= PHOTO_ONLY_MIN_WIDTH &&
-				hasShortContent( post ) ) {
+	} else if (
+		post.canonical_media &&
+		post.canonical_media.mediaType === 'image' &&
+		post.canonical_media.width >= PHOTO_ONLY_MIN_WIDTH &&
+		hasShortContent( post )
+	) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
 	}
 
@@ -107,29 +111,34 @@ export function classifyPost( post ) {
 	return post;
 }
 
-const fastPostNormalizationRules = flow( [
-	decodeEntities,
-	stripHtml,
-	preventWidows,
-	makeSiteIdSafeForApi,
-	pickPrimaryTag,
-	safeImageProperties( READER_CONTENT_WIDTH ),
-	withContentDom( [
-		removeStyles,
-		removeElementsBySelector,
-		makeImagesSafe(),
-		makeEmbedsSafe,
-		disableAutoPlayOnEmbeds,
-		disableAutoPlayOnMedia,
-		detectMedia,
-		detectPolls,
-	] ),
-	createBetterExcerpt,
-	pickCanonicalImage,
-	pickCanonicalMedia,
-	classifyPost,
-	addDiscoverProperties,
-] );
+const fastPostNormalizationRules = flow(
+	[
+		decodeEntities,
+		stripHtml,
+		preventWidows,
+		makeSiteIdSafeForApi,
+		pickPrimaryTag,
+		safeImageProperties( READER_CONTENT_WIDTH ),
+		withContentDom(
+			[
+				removeStyles,
+				removeElementsBySelector,
+				makeImagesSafe(),
+				makeEmbedsSafe,
+				disableAutoPlayOnEmbeds,
+				disableAutoPlayOnMedia,
+				detectMedia,
+				detectPolls,
+				linkJetpackCarousels,
+			],
+		),
+		createBetterExcerpt,
+		pickCanonicalImage,
+		pickCanonicalMedia,
+		classifyPost,
+		addDiscoverProperties,
+	],
+);
 
 export function runFastRules( post ) {
 	if ( ! post ) {
@@ -140,12 +149,9 @@ export function runFastRules( post ) {
 	return post;
 }
 
-const slowSyncRules = flow( [
-	keepValidImages( 144, 72 ),
-	pickCanonicalImage,
-	pickCanonicalMedia,
-	classifyPost
-] );
+const slowSyncRules = flow(
+	[ keepValidImages( 144, 72 ), pickCanonicalImage, pickCanonicalMedia, classifyPost ],
+);
 
 export function runSlowRules( post ) {
 	post = Object.assign( {}, post );

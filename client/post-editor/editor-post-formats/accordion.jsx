@@ -5,28 +5,28 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { has, isEmpty } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
 import QueryPostFormats from 'components/data/query-post-formats';
-import siteUtils from 'lib/site/utils';
 import PostFormats from './';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
+import { getSiteDefaultPostFormat } from 'state/selectors';
 
 const EditorPostFormatsAccordion = React.createClass( {
 	propTypes: {
 		siteId: PropTypes.number,
 		site: PropTypes.object,
 		post: PropTypes.object,
-		postFormats: PropTypes.object
+		postFormats: PropTypes.object,
+		defaultPostFormat: PropTypes.string,
 	},
 
 	getFormatValue() {
-		const { post, site } = this.props;
+		const { post, defaultPostFormat } = this.props;
 		if ( ! post ) {
 			return;
 		}
@@ -35,7 +35,7 @@ const EditorPostFormatsAccordion = React.createClass( {
 			return post.format;
 		}
 
-		return siteUtils.getDefaultPostFormat( site );
+		return defaultPostFormat;
 	},
 
 	getSubtitle() {
@@ -68,7 +68,6 @@ const EditorPostFormatsAccordion = React.createClass( {
 					<Accordion
 						title={ this.translate( 'Post Format' ) }
 						subtitle={ this.getSubtitle() }
-						icon={ <Gridicon icon="types" /> }
 						className={ classes }>
 						<PostFormats value={ this.getFormatValue() } />
 					</Accordion>
@@ -85,7 +84,8 @@ export default connect(
 		return {
 			siteId,
 			site: getSelectedSite( state ),
-			postFormats: getPostFormats( state, siteId )
+			postFormats: getPostFormats( state, siteId ),
+			defaultPostFormat: getSiteDefaultPostFormat( state, siteId ),
 		};
 	}
 )( EditorPostFormatsAccordion );

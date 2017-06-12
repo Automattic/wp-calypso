@@ -61,7 +61,7 @@ User.prototype.initialize = function() {
 		return;
 	}
 
-	if ( config( 'wpcom_user_bootstrap' ) ) {
+	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		this.data = window.currentUser || false;
 
 		// Store the current user in localStorage so that we can use it to determine
@@ -131,7 +131,7 @@ User.prototype.fetch = function() {
 
 	me.get( { meta: 'flags' }, function( error, data ) {
 		if ( error ) {
-			if ( ! config( 'wpcom_user_bootstrap' ) && error.error === 'authorization_required' ) {
+			if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && error.error === 'authorization_required' ) {
 				/**
 				 * if the user bootstrap is disabled (in development), we need to rely on a request to
 				 * /me to determine if the user is logged in.
@@ -222,7 +222,12 @@ User.prototype.isRTL = function() {
 	return isRTL;
 };
 
-User.prototype.clear = function() {
+/**
+ * Clear any user data.
+ *
+ * @param {function}  onClear called when data has been cleared
+ */
+User.prototype.clear = function( onClear ) {
 	/**
 	 * Clear internal user data and empty localStorage cache
 	 * to discard any user reference that the application may hold
@@ -231,7 +236,7 @@ User.prototype.clear = function() {
 	delete this.settings;
 	store.clear();
 	if ( config.isEnabled( 'persist-redux' ) ) {
-		localforage.removeItem( 'redux-state' );
+		localforage.clear( onClear );
 	}
 };
 

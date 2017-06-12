@@ -1,15 +1,13 @@
 machine:
   node:
-    version: 6.9.4
+    version: 6.10.3
 test:
   pre:
-    - NODE_ENV=test make client/config/index.js:
-        parallel: true
     - ? |
           # make the build-server and i18n string data in parallel
-          if [[ "$CIRCLE_NODE_INDEX" == 0 ]]; then NODE_ENV=test make build-server; fi
+          if [[ "$CIRCLE_NODE_INDEX" == 0 ]]; then NODE_ENV=test npm run build-server; fi
           if ( [[ "$CIRCLE_NODE_INDEX" == 1 ]] || [[ "$CIRCLE_NODE_TOTAL" == 1 ]] ) && [[ "$CIRCLE_BRANCH" == "master" ]]; then
-            make translate; mkdir -p $CIRCLE_ARTIFACTS/translate; mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
+            npm run translate; mkdir -p $CIRCLE_ARTIFACTS/translate; mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
           elif [[ "$CIRCLE_NODE_INDEX" == 1 ]] || [[ "$CIRCLE_NODE_TOTAL" == 1 ]]; then
             git clone https://github.com/Automattic/gp-localci-client.git
             bash gp-localci-client/generate-new-strings-pot.sh $CIRCLE_BRANCH $CIRCLE_SHA1 $CIRCLE_ARTIFACTS/translate
@@ -17,6 +15,9 @@ test:
           fi
       : parallel: true
   override:
+    - bin/run-integration :
+        parallel: true
+    - npm run lint:config-defaults
     - bin/run-lint :
         parallel: true
         files:

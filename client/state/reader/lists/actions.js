@@ -33,7 +33,7 @@ import {
 export function receiveLists( lists ) {
 	return {
 		type: READER_LISTS_RECEIVE,
-		lists
+		lists,
 	};
 }
 
@@ -43,7 +43,7 @@ export function receiveLists( lists ) {
  * @return {Function}        Action thunk
  */
 export function requestSubscribedLists() {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: READER_LISTS_REQUEST,
 		} );
@@ -53,19 +53,19 @@ export function requestSubscribedLists() {
 				error ? reject( error ) : resolve( data );
 			} );
 		} )
-		.then( ( data ) => {
-			dispatch( receiveLists( data.lists ) );
-			dispatch( {
-				type: READER_LISTS_REQUEST_SUCCESS,
-				data
+			.then( data => {
+				dispatch( receiveLists( data.lists ) );
+				dispatch( {
+					type: READER_LISTS_REQUEST_SUCCESS,
+					data,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: READER_LISTS_REQUEST_FAILURE,
+					error,
+				} );
 			} );
-		} )
-		.catch( ( error ) => {
-			dispatch( {
-				type: READER_LISTS_REQUEST_FAILURE,
-				error
-			} );
-		} );
 	};
 }
 
@@ -77,7 +77,7 @@ export function requestSubscribedLists() {
  * @return {Function}        Action thunk
  */
 export function requestList( owner, slug ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: READER_LIST_REQUEST,
 		} );
@@ -90,7 +90,7 @@ export function requestList( owner, slug ) {
 					const errorInfo = {
 						error,
 						owner,
-						slug
+						slug,
 					};
 					reject( errorInfo );
 				} else {
@@ -98,20 +98,20 @@ export function requestList( owner, slug ) {
 				}
 			} );
 		} )
-		.then( ( data ) => {
-			dispatch( {
-				type: READER_LIST_REQUEST_SUCCESS,
-				data
+			.then( data => {
+				dispatch( {
+					type: READER_LIST_REQUEST_SUCCESS,
+					data,
+				} );
+			} )
+			.catch( errorInfo => {
+				dispatch( {
+					type: READER_LIST_REQUEST_FAILURE,
+					error: errorInfo.error,
+					owner: errorInfo.owner,
+					slug: errorInfo.slug,
+				} );
 			} );
-		} )
-		.catch( ( errorInfo ) => {
-			dispatch( {
-				type: READER_LIST_REQUEST_FAILURE,
-				error: errorInfo.error,
-				owner: errorInfo.owner,
-				slug: errorInfo.slug
-			} );
-		} );
 	};
 }
 
@@ -123,11 +123,11 @@ export function requestList( owner, slug ) {
  * @return {Function} Action promise
  */
 export function followList( owner, slug ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: READER_LISTS_FOLLOW,
 			owner,
-			slug
+			slug,
 		} );
 
 		const query = createQuery( owner, slug );
@@ -137,19 +137,19 @@ export function followList( owner, slug ) {
 				error ? reject( error ) : resolve( data );
 			} );
 		} )
-		.then( ( data ) => {
-			dispatch( receiveLists( [ data.list ] ) );
-			dispatch( {
-				type: READER_LISTS_FOLLOW_SUCCESS,
-				data
+			.then( data => {
+				dispatch( receiveLists( [ data.list ] ) );
+				dispatch( {
+					type: READER_LISTS_FOLLOW_SUCCESS,
+					data,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: READER_LISTS_FOLLOW_FAILURE,
+					error,
+				} );
 			} );
-		} )
-		.catch( ( error ) => {
-			dispatch( {
-				type: READER_LISTS_FOLLOW_FAILURE,
-				error
-			} );
-		} );
 	};
 }
 
@@ -161,11 +161,11 @@ export function followList( owner, slug ) {
  * @return {Function} Action promise
  */
 export function unfollowList( owner, slug ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: READER_LISTS_UNFOLLOW,
 			owner,
-			slug
+			slug,
 		} );
 
 		const query = createQuery( owner, slug );
@@ -175,18 +175,18 @@ export function unfollowList( owner, slug ) {
 				error ? reject( error ) : resolve( data );
 			} );
 		} )
-		.then( ( data ) => {
-			dispatch( {
-				type: READER_LISTS_UNFOLLOW_SUCCESS,
-				data
+			.then( data => {
+				dispatch( {
+					type: READER_LISTS_UNFOLLOW_SUCCESS,
+					data,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: READER_LISTS_UNFOLLOW_FAILURE,
+					error,
+				} );
 			} );
-		} )
-		.catch( ( error ) => {
-			dispatch( {
-				type: READER_LISTS_UNFOLLOW_FAILURE,
-				error
-			} );
-		} );
 	};
 }
 
@@ -205,10 +205,10 @@ export function updateListDetails( list ) {
 	const preparedSlug = decodeURIComponent( list.slug );
 	const preparedList = Object.assign( {}, list, { owner: preparedOwner, slug: preparedSlug } );
 
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: READER_LIST_UPDATE,
-			list
+			list,
 		} );
 
 		return new Promise( ( resolve, reject ) => {
@@ -217,14 +217,14 @@ export function updateListDetails( list ) {
 					dispatch( {
 						type: READER_LIST_UPDATE_FAILURE,
 						list,
-						error
+						error,
 					} );
 					reject( error );
 				} else {
 					dispatch( {
 						type: READER_LIST_UPDATE_SUCCESS,
 						list,
-						data
+						data,
 					} );
 					resolve();
 				}
@@ -240,10 +240,10 @@ export function updateListDetails( list ) {
  * @return {Function} Action thunk
  */
 export function dismissListNotice( listId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: READER_LIST_DISMISS_NOTICE,
-			listId
+			listId,
 		} );
 	};
 }
@@ -256,11 +256,11 @@ export function dismissListNotice( listId ) {
  * @return {Function} Action thunk
  */
 export function updateTitle( listId, newTitle ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: READER_LIST_UPDATE_TITLE,
 			listId,
-			title: newTitle
+			title: newTitle,
 		} );
 	};
 }
@@ -273,11 +273,11 @@ export function updateTitle( listId, newTitle ) {
  * @return {Function} Action thunk
  */
 export function updateDescription( listId, newDescription ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: READER_LIST_UPDATE_DESCRIPTION,
 			listId,
-			description: newDescription
+			description: newDescription,
 		} );
 	};
 }

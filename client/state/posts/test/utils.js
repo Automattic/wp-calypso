@@ -16,10 +16,76 @@ import {
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
 	getTermIdsFromEdits,
+	isTermsEqual,
 	mergeIgnoringArrays
 } from '../utils';
 
 describe( 'utils', () => {
+	describe( 'isTermsEqual', () => {
+		it( 'should return false if term edits are the same as saved terms', () => {
+			const isEqual = isTermsEqual( {
+				post_tag: [ 'ribs', 'chicken' ],
+				category: [ {
+					ID: 777,
+					name: 'amazing food'
+				} ]
+			}, {
+				post_tag: {
+					ribs: {
+						ID: 11,
+						name: 'ribs'
+					},
+					chicken: {
+						ID: 12,
+						name: 'chicken'
+					}
+				},
+				category: {
+					'amazing-food': {
+						ID: 777,
+						name: 'amazing food'
+					}
+				}
+			} );
+			expect( isEqual ).to.be.true;
+		} );
+
+		it( 'should return false if term edits are not the same as saved terms', () => {
+			const isEqual = isTermsEqual( {
+				post_tag: [ 'ribs' ],
+				category: [ {
+					ID: 777,
+					name: 'amazing food'
+				} ]
+			}, {
+				post_tag: {
+					ribs: {
+						ID: 11,
+						name: 'ribs'
+					},
+					chicken: {
+						ID: 12,
+						name: 'chicken'
+					}
+				},
+				category: {
+					'amazing-food': {
+						ID: 777,
+						name: 'amazing food'
+					}
+				}
+			} );
+			expect( isEqual ).to.be.false;
+		} );
+
+		it( 'should return false savedTerms is missing a taxonomy', () => {
+			const isEqual = isTermsEqual( {
+				post_tag: [ 'ribs' ]
+			}, {} );
+			expect( isEqual ).to.be.false;
+		} );
+	} );
+
 	describe( 'normalizePostForApi()', () => {
 		it( 'should return null if post is falsey', () => {
 			const normalizedPost = normalizePostForApi();

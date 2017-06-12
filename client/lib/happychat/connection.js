@@ -13,21 +13,26 @@ const debug = require( 'debug' )( 'calypso:happychat:connection' );
 
 class Connection extends EventEmitter {
 
-	open( user_id, token ) {
+	open( signer_user_id, jwt, locale, groups ) {
 		if ( ! this.openSocket ) {
 			this.openSocket = new Promise( resolve => {
 				const url = config( 'happychat_url' );
 				const socket = new IO( url );
 				socket
 					.once( 'connect', () => debug( 'connected' ) )
-					.on( 'init', () => resolve( socket ) )
+					.on( 'init', () => {
+						this.emit( 'connected' );
+						resolve( socket );
+					} )
 					.on( 'token', handler => {
-						handler( { signer_user_id: user_id, jwt: token } );
+						handler( { signer_user_id, jwt, locale, groups } );
 					} )
 					.on( 'unauthorized', () => {
 						socket.close();
 						debug( 'not authorized' );
 					} )
+					.on( 'disconnect', reason => this.emit( 'disconnect', reason ) )
+					.on( 'reconnecting', () => this.emit( 'reconnecting' ) )
 					// Received a chat message
 					.on( 'message', message => this.emit( 'message', message ) )
 					// Received chat status new/assigning/assigned/missed/pending/abandoned
@@ -60,6 +65,49 @@ class Connection extends EventEmitter {
 	send( message ) {
 		this.openSocket.then(
 			socket => socket.emit( 'message', { text: message, id: uuid() } ),
+			e => debug( 'failed to send message', e )
+		);
+	}
+
+	sendEvent( message ) {
+		this.openSocket.then(
+			socket => socket.emit( 'message', {
+				text: message,
+				id: uuid(),
+				type: 'customer-event',
+				meta: { forOperator: true, event_type: 'customer-event' }
+			} ),
+			e => debug( 'failed to send message', e )
+		);
+	}
+
+	/**
+	 * Update chat preferences (locale and groups)
+	 * @param {string} locale representing the user selected locale
+	 * @param {array} groups of string happychat groups (wp.com, jpop) based on the site selected
+	 */
+	setPreferences( locale, groups ) {
+		this.openSocket.then(
+			socket => socket.emit( 'preferences', { locale, groups } ),
+			e => debug( 'failed to send preferences', e )
+		);
+	}
+
+	sendLog( message ) {
+		this.openSocket.then(
+			socket => socket.emit( 'message', {
+				text: message,
+				id: uuid(),
+				type: 'log',
+				meta: { forOperator: true, event_type: 'log' }
+			} ),
+			e => debug( 'failed to send message', e )
+		);
+	}
+
+	info( message ) {
+		this.openSocket.then(
+			socket => socket.emit( 'message', { text: message.text, id: uuid(), meta: { forOperator: true } } ),
 			e => debug( 'failed to send message', e )
 		);
 	}

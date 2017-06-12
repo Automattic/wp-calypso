@@ -2,8 +2,6 @@
  * External dependencis
  */
 import { isEmpty, omit, pickBy } from 'lodash';
-import { combineReducers } from 'redux';
-
 /**
  * Internal dependencies
  */
@@ -18,8 +16,6 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-	JETPACK_CONNECT_ACTIVATE_MANAGE,
-	JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
@@ -33,12 +29,16 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+	SITE_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-
-import { isValidStateWithSchema } from 'state/utils';
-import { jetpackConnectSessionsSchema } from './schema';
+import { combineReducers, isValidStateWithSchema } from 'state/utils';
+import {
+	jetpackConnectSessionsSchema,
+	jetpackAuthAttemptsSchema,
+	jetpackConnectSelectedPlansSchema,
+} from './schema';
 import { isStale } from './utils';
 import { JETPACK_CONNECT_AUTHORIZE_TTL, AUTH_ATTEMPS_TTL } from './constants';
 import { urlToSlug } from 'lib/url';
@@ -78,6 +78,7 @@ export function jetpackConnectSessions( state = {}, action ) {
 	}
 	return state;
 }
+jetpackConnectSessions.hasCustomPersistence = true;
 
 export function jetpackConnectSite( state = {}, action ) {
 	const defaultState = {
@@ -121,9 +122,6 @@ export function jetpackConnectSite( state = {}, action ) {
 			return Object.assign( {}, state, { installConfirmedByUser: action.status } );
 		case JETPACK_CONNECT_COMPLETE_FLOW:
 			return {};
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -144,7 +142,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			);
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
 			if ( isEmpty( action.error ) && action.data ) {
-				const { plans_url, activate_manage } = action.data;
+				const { plans_url } = action.data;
 				return Object.assign(
 					{},
 					state,
@@ -153,8 +151,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 						authorizeSuccess: true,
 						autoAuthorize: false,
 						plansUrl: plans_url,
-						siteReceived: false,
-						activateManageSecret: activate_manage
+						siteReceived: false
 					}
 				);
 			}
@@ -179,24 +176,6 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 					siteReceived: true,
 					isAuthorizing: false,
 					queryObject: updateQueryObject
-				}
-			);
-		case JETPACK_CONNECT_ACTIVATE_MANAGE:
-			return Object.assign(
-				{},
-				state,
-				{ isActivating: true }
-			);
-		case JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE:
-			const error = action.error;
-			return Object.assign(
-				{},
-				state,
-				{
-					isActivating: false,
-					manageActivated: true,
-					manageActivatedError: error,
-					activateManageSecret: false
 				}
 			);
 		case JETPACK_CONNECT_QUERY_SET:
@@ -242,6 +221,15 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 					bearerToken: action.data.bearer_token
 				}
 			);
+		case SITE_REQUEST_FAILURE:
+			if (
+				state.queryObject &&
+				state.queryObject.client_id &&
+				parseInt( state.queryObject.client_id ) === action.siteId
+			) {
+				return Object.assign( {}, state, { clientNotResponding: true } );
+			}
+			return state;
 		case JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
@@ -255,6 +243,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 	}
 	return state;
 }
+jetpackConnectAuthorize.hasCustomPersistence = true;
 
 export function jetpackAuthAttempts( state = {}, action ) {
 	switch ( action.type ) {
@@ -272,12 +261,10 @@ export function jetpackAuthAttempts( state = {}, action ) {
 			return Object.assign( {}, state, { [ slug ]: { attempt: attemptNumber, timestamp: currentTimestamp } } );
 		case JETPACK_CONNECT_COMPLETE_FLOW:
 			return {};
-		case DESERIALIZE:
-		case SERIALIZE:
-			state;
 	}
 	return state;
 }
+jetpackAuthAttempts.schema = jetpackAuthAttemptsSchema;
 
 export function jetpackSSO( state = {}, action ) {
 	switch ( action.type ) {
@@ -299,9 +286,6 @@ export function jetpackSSO( state = {}, action ) {
 			return Object.assign( {}, state, { isAuthorizing: false, authorizationError: false, ssoUrl: action.ssoUrl } );
 		case JETPACK_CONNECT_SSO_AUTHORIZE_ERROR:
 			return Object.assign( {}, state, { isAuthorizing: false, authorizationError: action.error, ssoUrl: false } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -315,12 +299,10 @@ export function jetpackConnectSelectedPlans( state = {}, action ) {
 			return { '*': state[ '*' ] };
 		case JETPACK_CONNECT_COMPLETE_FLOW:
 			return {};
-		case SERIALIZE:
-		case DESERIALIZE:
-			return state;
 	}
 	return state;
 }
+jetpackConnectSelectedPlans.schema = jetpackConnectSelectedPlansSchema;
 
 export default combineReducers( {
 	jetpackConnectSite,

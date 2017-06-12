@@ -332,9 +332,9 @@ export const items = createReducer( defaultState, {
 	[DESERIALIZE]: state => fromJS( state )
 } );
 ```
-If your reducer state is already a plain object, you may choose to omit `SERIALIZE` and `DESERIALIZE` handlers, or 
-simply define them as returning the current state. However, please note that the subtree can still see errors from 
-changing data shapes, as described below.
+If your reducer state can be serialized by the browser without additional work (eg a plain object, string or boolean), 
+the `SERIALIZE` and `DESERIALIZE` handlers are not needed. However, please note that the subtree can still see errors 
+from changing data shapes, as described below.
 
 #### Problem: Data shapes change over time ( [#3101](https://github.com/Automattic/wp-calypso/pull/3101) )
 
@@ -380,6 +380,7 @@ export const itemsSchema = {
 
 A JSON Schema must be provided if the subtree chooses to persist state. If we find that our persisted data doesn't
 match our described data shape, we should throw it out and rebuild that section of the tree with our default state.
+
 When using `createReducer` util you can pass a schema as a third param and all that will be handled for you.
 ```javascript
 export const items = createReducer( defaultState, {
@@ -387,21 +388,49 @@ export const items = createReducer( defaultState, {
 }, itemsSchema );
 ```
 
-When you are not satisfied with the default handling you are also encouraged to implement your own `SERIALIZE` and
-`DESERIALIZE` action handlers in your reducers to customize data persistence. Always consider using schema to avoid
-errors when data shape changes. 
+If you are not satisfied with the default handling, it is possible to implement your own `SERIALIZE` and
+`DESERIALIZE` action handlers in your reducers to customize data persistence. Always use a schema with your custom 
+handlers to avoid data shape errors. 
+
+### Opt-in to Persistence ( [#13542](https://github.com/Automattic/wp-calypso/pull/13542) )
+
+If we choose not to use `createReducer` we can opt-in to persistence by adding a schema as a property on the reducer. 
+We do this by combining all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead 
+of [combineReducers](http://redux.js.org/docs/api/combineReducers.html) from `redux`. Each reducer is then wrapped with 
+`withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALZE` if a schema is present and 
+returns initial state on both `SERIALIZE` and `DESERIALZE` if a schema is not present.
+
+To opt-out of persistence we combine the reducers without any attached schema.
+```javascript
+return combineReducers( {
+    age,
+    height,
+} );
+```
+
+To persist, we add the schema as a property on the reducer:
+```javascript
+age.schema = ageSchema;
+return combineReducers( {
+    age,
+    height,
+} );
+```
+
+For a reducer that has custom handlers (needs to perform transforms), we assume the reducer is checking the schema already, 
+on `DESERIALIZE` so all we need to do is set a boolean bit on the reducer, to ensure that we don't return initial state
+incorrectly from the default handling provided by `withSchemaValidation`.
+```javascript
+date.hasCustomPersistence = true;
+return combineReducers( {
+    age,
+    height,
+    date,
+} );
+```
 
 ### Not persisting data
 
 Some subtrees may choose to never persist data. One such example of this is our online connection state. If connection 
-values are persisted we will not be able to reliably tell when the application is offline or online.
-
-If persisting state causes application errors, opting out of persistence is straightforward: in the `createReducer` util
-provide only the default state value as a first param and don't provide a schema as a third param. Behind the scenes 
-data is never going to be persisted and always regenerated with default value. In this example, it happens to be `'CHECKING'`
-```javascript
-export const connectionState = createReducer( 'CHECKING', {
-	[CONNECTION_LOST]: () => 'OFFLINE',
-	[CONNECTION_RESTORED]: () => 'ONLINE'
-} );
-```
+values are persisted we will not be able to reliably tell when the application is offline or online. Please remember
+to reason about if items should be persisted. 

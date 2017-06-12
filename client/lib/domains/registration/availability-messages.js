@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
  */
 import { getTld } from 'lib/domains';
 import support from 'lib/url/support';
+import { domainAvailability } from 'lib/domains/constants';
 
 function getAvailabilityNotice( domain, error ) {
 	let message,
@@ -16,8 +17,8 @@ function getAvailabilityNotice( domain, error ) {
 
 	const tld = getTld( domain );
 
-	switch ( error.code ) {
-		case 'available_but_not_registrable':
+	switch ( error ) {
+		case domainAvailability.NOT_REGISTRABLE:
 			if ( tld ) {
 				message = translate(
 					'To use a domain ending with {{strong}}.%(tld)s{{/strong}} on your site, ' +
@@ -33,7 +34,7 @@ function getAvailabilityNotice( domain, error ) {
 				severity = 'info';
 			}
 			break;
-		case 'tld_in_maintenance':
+		case domainAvailability.MAINTENANCE:
 			if ( tld ) {
 				message = translate(
 					'Domains ending with {{strong}}.%(tld)s{{/strong}} are undergoing maintenance. Please check back shortly.',
@@ -47,14 +48,16 @@ function getAvailabilityNotice( domain, error ) {
 				severity = 'info';
 			}
 			break;
-		case 'not_available_but_mappable':
-		case 'domain_registration_unavailable':
+		case domainAvailability.MAPPABLE:
+		case domainAvailability.AVAILABLE:
+		case domainAvailability.PURCHASES_DISABLED:
+		case domainAvailability.UNKNOWN:
 			// unavailable domains are displayed in the search results, not as a notice OR
 			// domain registrations are closed, in which case it is handled in parent
 			message = null;
 			break;
 
-		case 'not_mappable_blacklisted_domain':
+		case domainAvailability.BLACKLISTED:
 			if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
 				message = translate(
 					'Due to {{a1}}trademark policy{{/a1}}, ' +
@@ -73,49 +76,38 @@ function getAvailabilityNotice( domain, error ) {
 			}
 			break;
 
-		case 'not_mappable_forbidden_subdomain':
+		case domainAvailability.FORBIDDEN_SUBDOMAIN:
 			message = translate( 'Subdomains starting with \'www.\' cannot be mapped to a WordPress.com blog' );
 			break;
 
-		case 'not_mappable_forbidden_domain':
+		case domainAvailability.FORBIDDEN:
 			message = translate( 'Only the owner of the domain can map its subdomains.' );
 			break;
 
-		case 'not_mappable_invalid_tld':
-		case 'invalid_query':
+		case domainAvailability.INVALID_TLD:
+		case domainAvailability.INVALID:
 			message = translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
 				args: { domain: domain }
 			} );
 			break;
 
-		case 'not_mappable_mapped_domain':
+		case domainAvailability.MAPPED:
 			message = translate( 'This domain is already mapped to a WordPress.com site.' );
 			break;
 
-		case 'not_mappable_restricted_domain':
+		case domainAvailability.RESTRICTED:
 			message = translate(
 				'You cannot map another WordPress.com subdomain - try creating a new site or one of the custom domains below.'
 			);
 			break;
 
-		case 'not_mappable_recently_mapped':
+		case domainAvailability.RECENTLY_UNMAPPED:
 			message = translate( 'This domain was recently in use by someone else and is not available to map yet. ' +
 				'Please try again later or contact support.' );
 			break;
 
-		// Generic error message when domain is not mappable without an explicit unmappability reason
-		case 'not_mappable':
-			message = translate( 'Sorry, this domain cannot be mapped.' );
-			break;
-
-		case 'empty_query':
+		case domainAvailability.EMPTY_QUERY:
 			message = translate( 'Please enter a domain name or keyword.' );
-			break;
-
-		case 'empty_results':
-			message = translate( "We couldn't find any available domains for: %(domain)s", {
-				args: { domain }
-			} );
 			break;
 
 		default:

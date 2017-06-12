@@ -1,30 +1,30 @@
-import { combineReducers } from 'redux';
-import assign from 'lodash/assign';
-import omit from 'lodash/omit';
-import omitBy from 'lodash/omitBy';
-import keyBy from 'lodash/keyBy';
-import map from 'lodash/map';
-import trim from 'lodash/trim';
+/**
+ * External Dependencies
+ */
+import { assign, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
 
+/**
+ * Internal Dependencies
+ */
 import {
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
 	DESERIALIZE,
-	SERIALIZE
+	SERIALIZE,
 } from 'state/action-types';
-
-import { isValidStateWithSchema } from 'state/utils';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 import { readerSitesSchema } from './schema';
 import { withoutHttp } from 'lib/url';
+import { decodeEntities } from 'lib/formatting';
 
 const actionMap = {
 	[ SERIALIZE ]: handleSerialize,
 	[ DESERIALIZE ]: handleDeserialize,
 	[ READER_SITE_REQUEST_SUCCESS ]: handleRequestSuccess,
 	[ READER_SITE_REQUEST_FAILURE ]: handleRequestFailure,
-	[ READER_SITE_UPDATE ]: handleSiteUpdate
+	[ READER_SITE_UPDATE ]: handleSiteUpdate,
 };
 
 function defaultHandler( state ) {
@@ -45,12 +45,15 @@ function handleDeserialize( state ) {
 
 function handleRequestFailure( state, action ) {
 	// new object proceeds current state to prevent new errors from overwriting existing values
-	return assign( {
-		[ action.payload.ID ]: {
-			ID: action.payload.ID,
-			is_error: true
-		}
-	}, state );
+	return assign(
+		{
+			[ action.payload.ID ]: {
+				ID: action.payload.ID,
+				is_error: true,
+			},
+		},
+		state
+	);
 }
 
 function adaptSite( attributes ) {
@@ -62,6 +65,10 @@ function adaptSite( attributes ) {
 		attributes.slug = attributes.domain.replace( /\//g, '::' );
 	}
 	attributes.title = trim( attributes.name ) || attributes.domain;
+
+	if ( attributes.description ) {
+		attributes.description = decodeEntities( attributes.description );
+	}
 
 	// If a WordPress.com site has a mapped domain create a `wpcom_url`
 	// attribute to allow site selection with either domain.
@@ -82,7 +89,7 @@ function handleRequestSuccess( state, action ) {
 	const site = adaptSite( action.payload );
 	// TODO do we need to normalize site entries somehow?
 	return assign( {}, state, {
-		[ action.payload.ID ]: site
+		[ action.payload.ID ]: site,
 	} );
 }
 
@@ -95,12 +102,13 @@ export function items( state = {}, action ) {
 	const handler = actionMap[ action.type ] || defaultHandler;
 	return handler( state, action );
 }
+items.hasCustomPersistence = true;
 
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_SITE_REQUEST:
 			return assign( {}, state, {
-				[ action.payload.ID ]: true
+				[ action.payload.ID ]: true,
 			} );
 		case READER_SITE_REQUEST_SUCCESS:
 		case READER_SITE_REQUEST_FAILURE:
@@ -110,7 +118,29 @@ export function queuedRequests( state = {}, action ) {
 	return state;
 }
 
+export const lastFetched = createReducer(
+	{},
+	{
+		[ READER_SITE_REQUEST_SUCCESS ]: ( state, action ) => ( {
+			...state,
+			[ action.payload.ID ]: Date.now(),
+		} ),
+		[ READER_SITE_UPDATE ]: ( state, action ) => {
+			const updates = reduce(
+				action.payload,
+				( memo, site ) => {
+					memo[ site.ID ] = Date.now();
+					return memo;
+				},
+				{}
+			);
+			return assign( {}, state, updates );
+		},
+	}
+);
+
 export default combineReducers( {
 	items,
-	queuedRequests
+	queuedRequests,
+	lastFetched,
 } );

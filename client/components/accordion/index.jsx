@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { noop } from 'lodash';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -13,16 +14,18 @@ import AccordionStatus from './status';
 export default class Accordion extends Component {
 	static propTypes = {
 		initialExpanded: PropTypes.bool,
+		forceExpand: PropTypes.bool,
 		onToggle: PropTypes.func,
 		title: PropTypes.string.isRequired,
 		subtitle: PropTypes.string,
 		status: PropTypes.object,
-		icon: PropTypes.element
+		icon: PropTypes.element,
 	};
 
 	static defaultProps = {
 		initialExpanded: false,
-		onToggle: noop
+		forceExpand: false,
+		onToggle: noop,
 	};
 
 	constructor( props ) {
@@ -34,15 +37,18 @@ export default class Accordion extends Component {
 	}
 
 	toggleExpanded = () => {
-		const isExpanded = ! this.state.isExpanded;
+		this.setExpandedStatus( ! this.state.isExpanded );
+	};
+
+	setExpandedStatus = ( isExpanded ) => {
 		this.setState( { isExpanded } );
 		this.props.onToggle( isExpanded );
-	}
+	};
 
 	render() {
 		const { className, icon, title, subtitle, status, children } = this.props;
 		const classes = classNames( 'accordion', className, {
-			'is-expanded': this.state.isExpanded,
+			'is-expanded': this.state.isExpanded || this.props.forceExpand,
 			'has-icon': !! icon,
 			'has-subtitle': !! subtitle,
 			'has-status': !! status
@@ -55,6 +61,7 @@ export default class Accordion extends Component {
 						{ icon && <span className="accordion__icon">{ icon }</span> }
 						<span className="accordion__title">{ title }</span>
 						{ subtitle && <span className="accordion__subtitle">{ subtitle }</span> }
+						<span className="accordion__arrow"><Gridicon icon="dropdown" /></span>
 					</button>
 					{ status && <AccordionStatus { ...status } /> }
 				</header>

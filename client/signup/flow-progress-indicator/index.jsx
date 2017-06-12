@@ -1,36 +1,46 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var flows = require( 'signup/config/flows' );
+import { abtest } from 'lib/abtest';
+import flows from 'signup/config/flows';
+import WizardBar from 'components/wizard-bar';
 
-module.exports = React.createClass( {
-	displayName: 'FlowProgressIndicator',
+const FlowProgressIndicator = ( { flowName, positionInFlow, translate } ) => {
+	const flow = flows.getFlow( flowName );
+	const flowLength = flow.steps.length;
 
-	getFlowLength: function() {
-		var flow = flows.getFlow( this.props.flowName );
-
-		return flow.steps.length;
-	},
-
-	render: function() {
-		if ( this.getFlowLength() > 1 ) {
+	if ( flowLength > 1 ) {
+		if ( abtest( 'signupProgressIndicator' ) === 'wizardbar' ) {
 			return (
-				<div className="flow-progress-indicator">{
-					this.translate( 'Step %(stepNumber)d of %(stepTotal)d', {
-						args: {
-							stepNumber: this.props.positionInFlow + 1,
-							stepTotal: this.getFlowLength()
-						}
-					} )
-				}</div>
+				<div className="flow-progress-indicator">
+					<div className="flow-progress-indicator__wizard-bar">
+						<WizardBar value={ positionInFlow + 1 } total={ flowLength } />
+					</div>
+				</div>
 			);
 		}
 
-		return null;
+		return (
+			<div className="flow-progress-indicator">
+				{
+					translate( 'Step %(stepNumber)d of %(stepTotal)d', {
+						args: {
+							stepNumber: positionInFlow + 1,
+							stepTotal: flowLength
+						}
+					} )
+				}
+			</div>
+		);
 	}
-} );
+
+	return null;
+};
+
+export default localize( FlowProgressIndicator );

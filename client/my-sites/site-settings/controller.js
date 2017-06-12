@@ -18,10 +18,14 @@ import { sectionify } from 'lib/route/path';
 import SiteSettingsComponent from 'my-sites/site-settings/main';
 import sitesFactory from 'lib/sites-list';
 import StartOver from './start-over';
-import Taxonomies from './taxonomies';
+import ThemeSetup from './theme-setup';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import titlecase from 'to-title-case';
-import utils from 'lib/site/utils';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { canCurrentUser } from 'state/selectors';
+import ImportSettings from './section-import';
+import ExportSettings from './section-export';
 
 /**
  * Module vars
@@ -63,41 +67,28 @@ module.exports = {
 	siteSettings( context ) {
 		let analyticsPageTitle = 'Site Settings';
 		const basePath = route.sectionify( context.path );
-		const fiveMinutes = 5 * 60 * 1000;
-		let site = sites.getSelectedSite();
+		const siteId = getSelectedSiteId( context.store.getState() );
 		const section = sectionify( context.path ).split( '/' )[ 2 ];
+		const state = context.store.getState();
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Site Settings', { textOnly: true } ) ) );
 
 		// if site loaded, but user cannot manage site, redirect
-		if ( site && ! utils.userCan( 'manage_options', site ) ) {
+		if ( siteId && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
 			page.redirect( '/stats' );
 			return;
 		}
 
 		// if user went directly to jetpack settings page, redirect
-		if ( site.jetpack && ! config.isEnabled( 'manage/jetpack' ) ) {
-			window.location.href = '//wordpress.com/manage/' + site.ID;
+		if ( isJetpackSite( state, siteId ) && ! config.isEnabled( 'manage/jetpack' ) ) {
+			window.location.href = '//wordpress.com/manage/' + siteId;
 			return;
 		}
 
-		if ( ! site.latestSettings || new Date().getTime() - site.latestSettings > ( fiveMinutes ) ) {
-			if ( sites.initialized ) {
-				site.fetchSettings();
-			} else {
-				sites.once( 'change', function() {
-					site = sites.getSelectedSite();
-					site.fetchSettings();
-				} );
-			}
-		}
-
-		const upgradeToBusiness = () => page( '/checkout/' + site.domain + '/business' );
-
 		renderPage(
 			context,
-			<SiteSettingsComponent { ...{ sites, section, upgradeToBusiness } } />
+			<SiteSettingsComponent section={ section } />
 		);
 
 		// analytics tracking
@@ -108,23 +99,17 @@ module.exports = {
 	},
 
 	importSite( context ) {
-		renderPage(
-			context,
-			<SiteSettingsComponent sites={ sites } section="import" />
-		);
+		renderPage( context, <ImportSettings /> );
 	},
 
 	exportSite( context ) {
-		renderPage(
-			context,
-			<SiteSettingsComponent sites={ sites } section="export" />
-		);
+		renderPage( context, <ExportSettings /> );
 	},
 
 	guidedTransfer( context ) {
 		renderPage(
 			context,
-			<SiteSettingsComponent sites={ sites } section="guidedTransfer" hostSlug={ context.params.host_slug } />
+			<SiteSettingsComponent section="guidedTransfer" hostSlug={ context.params.host_slug } />
 		);
 	},
 
@@ -151,19 +136,9 @@ module.exports = {
 	},
 
 	startOver( context ) {
-		let site = sites.getSelectedSite();
-
-		if ( sites.initialized ) {
-			if ( ! canDeleteSite( site ) ) {
-				return page( '/settings/general/' + site.slug );
-			}
-		} else {
-			sites.once( 'change', function() {
-				site = sites.getSelectedSite();
-				if ( ! canDeleteSite( site ) ) {
-					return page( '/settings/general/' + site.slug );
-				}
-			} );
+		const site = getSelectedSite( context.store.getState() );
+		if ( site && ! canDeleteSite( site ) ) {
+			return page( '/settings/general/' + site.slug );
 		}
 
 		renderPage(
@@ -172,10 +147,19 @@ module.exports = {
 		);
 	},
 
-	taxonomies( context ) {
+	themeSetup( context ) {
+		const site = getSelectedSite( context.store.getState() );
+		if ( site && site.jetpack ) {
+			return page( '/settings/general/' + site.slug );
+		}
+
+		if ( ! config.isEnabled( 'settings/theme-setup' ) ) {
+			return page( '/settings/general/' + site.slug );
+		}
+
 		renderPage(
 			context,
-			<Taxonomies taxonomy={ context.params.taxonomy } postType="post" />
+			<ThemeSetup activeSiteDomain={ context.params.site_id } />
 		);
 	},
 

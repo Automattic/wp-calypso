@@ -17,34 +17,12 @@ const SitesListActions = {
 			logs
 		} );
 	},
-
-	disconnect( site ) {
-		debug( 'disconnect site', site );
-
-		if ( site.capabilities && site.capabilities.manage_options ) {
-			Dispatcher.handleViewAction( {
-				type: 'DISCONNECT_SITE',
-				action: 'DISCONNECT_SITE',
-				site
-			} );
-
-			wpcom.undocumented().disconnectJetpack( site.ID, function( error, data ) {
-				Dispatcher.handleViewAction( {
-					type: 'RECEIVE_DISCONNECTED_SITE',
-					action: 'DISCONNECT_SITE',
-					site,
-					error,
-					data
-				} );
-			} );
-		} else {
-			Dispatcher.handleViewAction( {
-				type: 'DISCONNECTING_SITE_ERROR',
-				action: 'DISCONNECT_SITE',
-				site,
-				error: { error: 'unauthorized_access' }
-			} );
-		}
+	// A way to remove a Disconnected Site from the old list store
+	disconnectedSite( site ) {
+		Dispatcher.handleViewAction( {
+			type: 'DISCONNECT_SITE',
+			site
+		} );
 	},
 
 	deleteSite( site, onComplete ) {

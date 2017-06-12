@@ -14,7 +14,7 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<div className="sharing-buttons-preview is-placeholder">
-				<ButtonsPreviewAction icon="edit" position="top-left" disabled={ true }>
+				<ButtonsPreviewAction icon="pencil" position="top-left" disabled={ true }>
 					{ this.translate( 'Edit label text', { context: 'Sharing: Buttons edit label' } ) }
 				</ButtonsPreviewAction>
 
@@ -38,10 +38,10 @@ module.exports = React.createClass( {
 				</div>
 
 				<div className="sharing-buttons-preview__button-tray-actions">
-					<ButtonsPreviewAction icon="edit" position="bottom-left" disabled={ true }>
+					<ButtonsPreviewAction icon="pencil" position="bottom-left" disabled={ true }>
 						{ this.translate( 'Edit visible buttons', { context: 'Sharing: Buttons edit label' } ) }
 					</ButtonsPreviewAction>
-					<ButtonsPreviewAction icon="edit" position="bottom-left" disabled={ true }>
+					<ButtonsPreviewAction icon="pencil" position="bottom-left" disabled={ true }>
 						{ this.translate( 'Edit “More” buttons', { context: 'Sharing: Buttons edit label' } ) }
 					</ButtonsPreviewAction>
 				</div>

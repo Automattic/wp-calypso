@@ -14,7 +14,7 @@ import {
 } from 'lib/plans/constants';
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'eligibleForFreeToPaidUpsell', () => {
+describe( 'isSiteOnFreePlan', () => {
 	const state = deepFreeze( {} );
 	let getCurrentPlan;
 	let isSiteOnFreePlan;
@@ -28,9 +28,9 @@ describe( 'eligibleForFreeToPaidUpsell', () => {
 		isSiteOnFreePlan = require( '../is-site-on-free-plan' );
 	} );
 
-	it( 'should return null when plan is not known', () => {
+	it( 'should return false when plan is not known', () => {
 		getCurrentPlan.returns( null );
-		expect( isSiteOnFreePlan( state, 'site1' ) ).to.be.null;
+		expect( isSiteOnFreePlan( state, 'site1' ) ).to.be.false;
 	} );
 
 	it( 'should return false when not on free plan', () => {

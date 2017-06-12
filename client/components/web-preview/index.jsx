@@ -4,23 +4,19 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import debugModule from 'debug';
 import noop from 'lodash/noop';
 import shallowCompare from 'react-addons-shallow-compare';
 
 /**
  * Internal dependencies
  */
-import Toolbar from './toolbar';
 import touchDetect from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
-import Spinner from 'components/spinner';
 import RootChild from 'components/root-child';
-import SeoPreviewPane from 'components/seo-preview-pane';
 import { setPreviewShowing } from 'state/ui/actions';
-
-const debug = debugModule( 'calypso:web-preview' );
+import { recordTracksEvent } from 'state/analytics/actions';
+import WebPreviewContent from './content';
 
 export class WebPreview extends Component {
 	constructor( props ) {
@@ -30,18 +26,11 @@ export class WebPreview extends Component {
 		this._isMobile = false;
 
 		this.state = {
-			iframeUrl: null,
 			device: props.defaultViewportDevice || 'computer',
-			loaded: false
 		};
-
-		this.setIframeInstance = ref => this.iframe = ref;
 
 		this.keyDown = this.keyDown.bind( this );
 		this.setDeviceViewport = this.setDeviceViewport.bind( this );
-		this.setIframeMarkup = this.setIframeMarkup.bind( this );
-		this.setIframeUrl = this.setIframeUrl.bind( this );
-		this.setLoaded = this.setLoaded.bind( this );
 	}
 
 	componentWillMount() {
@@ -51,12 +40,6 @@ export class WebPreview extends Component {
 	}
 
 	componentDidMount() {
-		if ( this.props.previewUrl ) {
-			this.setIframeUrl( this.props.previewUrl );
-		}
-		if ( this.props.previewMarkup ) {
-			this.setIframeMarkup( this.props.previewMarkup );
-		}
 		if ( this.props.showPreview ) {
 			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		}
@@ -68,34 +51,13 @@ export class WebPreview extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { showPreview, previewUrl } = this.props;
-
-		this.setIframeUrl( previewUrl );
-
-		if ( prevProps.showPreview !== showPreview ) {
-			this.props.setPreviewShowing( showPreview );
-		}
-
-		if ( ! this.props.showPreview ) {
-			this.setState( {
-				iframeUrl: null,
-				loaded: false,
-			} );
-		}
-		// If the previewMarkup changes, re-render the iframe contents
-		if ( this.props.previewMarkup && this.props.previewMarkup !== prevProps.previewMarkup ) {
-			this.setIframeMarkup( this.props.previewMarkup );
-		}
-		// If the previewMarkup is erased, remove the iframe contents
-		if ( ! this.props.previewMarkup && prevProps.previewMarkup ) {
-			debug( 'removing iframe contents' );
-			this.setIframeMarkup( '' );
-		}
+		const { showPreview } = this.props;
 
 		// add/remove listener if showPreview has changed
 		if ( showPreview === prevProps.showPreview ) {
 			return;
 		}
+		this.props.setPreviewShowing( showPreview );
 		if ( showPreview ) {
 			window.addEventListener( 'keydown', this.keyDown );
 			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
@@ -118,58 +80,11 @@ export class WebPreview extends Component {
 		}
 	}
 
-	setIframeMarkup( content ) {
-		if ( ! this.iframe ) {
-			debug( 'no iframe to update' );
-			return;
-		}
-		debug( 'adding markup to iframe', content.length );
-		this.iframe.contentDocument.open();
-		this.iframe.contentDocument.write( content );
-		this.iframe.contentDocument.close();
-	}
-
-	setIframeUrl( iframeUrl ) {
-		if ( ! this.props.showPreview || ! this.iframe ) {
-			return;
-		}
-
-		// Bail if we've already set this url
-		if ( iframeUrl === this.state.iframeUrl ) {
-			return;
-		}
-
-		debug( 'setIframeUrl', iframeUrl );
-		try {
-			this.iframe.contentWindow.location.replace( iframeUrl );
-			this.setState( {
-				loaded: false,
-				iframeUrl: iframeUrl,
-			} );
-		} catch ( e ) {}
-	}
-
 	setDeviceViewport( device = 'computer' ) {
 		this.setState( { device } );
 	}
 
-	setLoaded() {
-		if ( ! this.state.iframeUrl && ! this.props.previewMarkup ) {
-			debug( 'preview loaded, but nothing to show' );
-			return;
-		}
-		if ( this.props.previewMarkup ) {
-			debug( 'preview loaded with markup' );
-			this.props.onLoad( this.iframe.contentDocument );
-		} else {
-			debug( 'preview loaded for url:', this.state.iframeUrl );
-		}
-		this.setState( { loaded: true } );
-	}
-
 	render() {
-		const { translate } = this.props;
-
 		const className = classNames( this.props.className, 'web-preview', {
 			'is-touch': this._hasTouch,
 			'is-with-sidebar': this.props.hasSidebar,
@@ -178,7 +93,6 @@ export class WebPreview extends Component {
 			'is-tablet': this.state.device === 'tablet',
 			'is-phone': this.state.device === 'phone',
 			'is-seo': this.state.device === 'seo',
-			'is-loaded': this.state.loaded,
 		} );
 
 		return (
@@ -186,36 +100,11 @@ export class WebPreview extends Component {
 				<div className={ className }>
 					<div className="web-preview__backdrop" onClick={ this.props.onClose } />
 					<div className="web-preview__content">
-						<Toolbar setDeviceViewport={ this.setDeviceViewport }
-							device={ this.state.device }
+						<WebPreviewContent
 							{ ...this.props }
-							showExternal={ ( this.props.previewUrl ? this.props.showExternal : false ) }
-							showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
-							selectSeoPreview={ this.setDeviceViewport.bind( null, 'seo' ) }
+							onDeviceUpdate={ this.setDeviceViewport }
+							isModalWindow={ true }
 						/>
-						<div className="web-preview__placeholder">
-							{ ! this.state.loaded && 'seo' !== this.state.device &&
-								<div>
-									<Spinner />
-									{ this.props.loadingMessage &&
-										<span className="web-preview__loading-message">
-											{ this.props.loadingMessage }
-										</span>
-									}
-								</div>
-							}
-							<iframe
-								ref={ this.setIframeInstance }
-								className="web-preview__frame"
-								style={ { display: ('seo' === this.state.device ? 'none' : 'inherit') } }
-								src="about:blank"
-								onLoad={ this.setLoaded }
-								title={ this.props.iframeTitle || translate( 'Preview' ) }
-							/>
-							{ 'seo' === this.state.device &&
-								<SeoPreviewPane />
-							}
-						</div>
 					</div>
 				</div>
 			</RootChild>
@@ -269,4 +158,4 @@ WebPreview.defaultProps = {
 	hasSidebar: false,
 };
 
-export default connect( null, { setPreviewShowing } )( localize( WebPreview ) );
+export default connect( null, { recordTracksEvent, setPreviewShowing } )( localize( WebPreview ) );

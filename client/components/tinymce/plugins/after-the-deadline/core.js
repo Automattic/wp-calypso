@@ -47,18 +47,18 @@ AtDCore.prototype.showTypes = function( strings ) {
 	/* set some default types that we want to make optional */
 
 	/* grammar checker options */
-	types['Double Negatives'] = 1;
-	types['Hidden Verbs'] = 1;
-	types['Passive voice'] = 1;
-	types['Bias Language'] = 1;
+	types[ 'Double Negatives' ] = 1;
+	types[ 'Hidden Verbs' ] = 1;
+	types[ 'Passive voice' ] = 1;
+	types[ 'Bias Language' ] = 1;
 
 	/* style checker options */
-	types['Cliches'] = 1; // eslint-disable-line dot-notation
-	types['Complex Expression'] = 1;
-	types['Diacritical Marks'] = 1;
-	types['Jargon Language'] = 1;
-	types['Phrases to Avoid'] = 1;
-	types['Redundant Expression'] = 1;
+	types[ 'Cliches' ] = 1; // eslint-disable-line dot-notation
+	types[ 'Complex Expression' ] = 1;
+	types[ 'Diacritical Marks' ] = 1;
+	types[ 'Jargon Language' ] = 1;
+	types[ 'Phrases to Avoid' ] = 1;
+	types[ 'Redundant Expression' ] = 1;
 
 	this.map( show_types, function( type ) {
 		types[ type ] = undefined;
@@ -104,7 +104,7 @@ AtDCore.prototype.addToErrorStructure = function( errors, list, type, seps ) {
 	this.map( list, function( error ) {
 		var tokens = error.word.split( /\s+/ );
 		var pre = error.pre;
-		var first = tokens[0];
+		var first = tokens[ 0 ];
 
 		if ( errors[ '__' + first ] === undefined ) {
 			errors[ '__' + first ] = {};
@@ -155,7 +155,7 @@ AtDCore.prototype.processXML = function( responseXML ) {
 	types = {};
 
 	this.map( this.ignore_types, function( type ) {
-		types[type] = 1;
+		types[ type ] = 1;
 	} );
 
 	/* save suggestions in the editor object */
@@ -212,7 +212,7 @@ AtDCore.prototype.processXML = function( responseXML ) {
 					suggestion.moreinfo = errorUrl + '&theme=tinymce';
 				}
 
-				if ( types[errorDescription] === undefined ) {
+				if ( types[ errorDescription ] === undefined ) {
 					if ( errorType === 'suggestion' ) {
 						enrichment.push( { word: errorString, pre: errorContext } );
 					}
@@ -284,18 +284,18 @@ function TokenIterator( tokens ) {
 }
 
 TokenIterator.prototype.next = function() {
-	var current = this.tokens[this.index];
+	var current = this.tokens[ this.index ];
 	this.count = this.last;
 	this.last += current.length + 1;
 	this.index++;
 
 	/* strip single quotes from token, AtD does this when presenting errors */
 	if ( current !== '' ) {
-		if ( current[0] === '\'' ) {
+		if ( current[ 0 ] === '\'' ) {
 			current = current.substring( 1, current.length );
 		}
 
-		if ( current[current.length - 1] === '\'' ) {
+		if ( current[ current.length - 1 ] === '\'' ) {
 			current = current.substring( 0, current.length - 1 );
 		}
 	}
@@ -316,7 +316,7 @@ TokenIterator.prototype.skip = function( m, n ) {
 	this.last += n;
 
 	if ( this.index < this.tokens.length ) {
-		this.count = this.last - this.tokens[this.index].length;
+		this.count = this.last - this.tokens[ this.index ].length;
 	}
 };
 
@@ -376,9 +376,9 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 		}
 
 		// capture the replacement of the matched string
-		captured.push( parent.create( match[0].replace( regexp, replacement ) ) );
+		captured.push( parent.create( match[ 0 ].replace( regexp, replacement ) ) );
 
-		cursor = index + match[0].length;
+		cursor = index + match[ 0 ].length;
 
 		if ( cursor < text.length ) {
 			// capture right text node
@@ -414,11 +414,11 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 
 			while ( iterator.hasNext() ) {
 				token = iterator.next();
-				current = errors['__' + token];
+				current = errors[ '__' + token ];
 
 				if ( current !== undefined && current.pretoks !== undefined ) {
 					defaults = current.defaults;
-					current = current.pretoks['__' + previous];
+					current = current.pretoks[ '__' + previous ];
 
 					done = false;
 					prev = v.substr( 0, iterator.getCount() );
@@ -453,8 +453,8 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 				newNode = n;
 
 				for ( x = 0; x < doReplaces.length; x++ ) {
-					regexp = doReplaces[x][0];
-					result = doReplaces[x][1];
+					regexp = doReplaces[ x ][ 0 ];
+					result = doReplaces[ x ][ 1 ];
 
 					/* it's assumed that this function is only being called on text nodes (nodeType == 3), the iterating is necessary
 					   because eventually the whole thing gets wrapped in an mceItemHidden span and from there it's necessary to
@@ -498,14 +498,14 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 						contents = parent.contents( node );
 
 						for ( y = 0; y < contents.length; y++ ) {
-							if ( contents[y].nodeType === 3 && regexp.test( contents[y].nodeValue ) ) {
-								if ( parent.isIE() && contents[y].nodeValue.length > 0 && contents[y].nodeValue.substr( 0, 1 ) === ' ' ) {
-									nnode = parent.create( emptySpan + contents[y].nodeValue.substr( 1, contents[y].nodeValue.length - 1 ).replace( regexp, result ), true );
+							if ( contents[ y ].nodeType === 3 && regexp.test( contents[ y ].nodeValue ) ) {
+								if ( parent.isIE() && contents[ y ].nodeValue.length > 0 && contents[ y ].nodeValue.substr( 0, 1 ) === ' ' ) {
+									nnode = parent.create( emptySpan + contents[ y ].nodeValue.substr( 1, contents[ y ].nodeValue.length - 1 ).replace( regexp, result ), true );
 								} else {
-									nnode = parent.create( contents[y].nodeValue.replace( regexp, result ), true );
+									nnode = parent.create( contents[ y ].nodeValue.replace( regexp, result ), true );
 								}
 
-								parent.replaceWith( contents[y], nnode );
+								parent.replaceWith( contents[ y ], nnode );
 								parent.removeParent( nnode );
 
 								ecount++;

@@ -1,73 +1,190 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { identity, memoize, transform } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import analytics from 'lib/analytics';
 import Card from 'components/card';
 
-export default React.createClass( {
-	displayName: 'DesignType',
+import BlogImage from '../design-type-with-store/blog-image';
+import PageImage from '../design-type-with-store/page-image';
+import GridImage from '../design-type-with-store/grid-image';
+
+import { recordTracksEvent } from 'state/analytics/actions';
+import { abtest } from 'lib/abtest';
+
+class DesignTypeStep extends Component {
+	static propTypes = {
+		translate: PropTypes.func
+	};
+
+	static defaultProps = {
+		translate: identity
+	};
+
+	getChoiceHandlers = memoize( ( ) =>
+		transform( this.getChoices(), ( handlers, choice ) => {
+			handlers[ choice.type ] = ( event ) => this.handleChoiceClick( event, choice.type );
+		}, {} )
+	);
 
 	getChoices() {
-		return [
-			{ type: 'blog', label: this.translate( 'A list of my latest posts' ), image: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 230"><rect x="15" y="15" fill="#E8F0F5" width="280" height="70"/><rect x="15" y="98" fill="#C3EF96" width="194" height="85"/><rect x="15" y="195" fill="#C3EF96" width="194" height="35"/></svg> },
-			{ type: 'page', label: this.translate( 'A welcome page for my site' ), image: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 230"><rect fill="#E8F0F5" width="310" height="110"/><rect x="114" y="205" fill="#E8F0F5" width="82" height="25"/><rect x="15" y="205" fill="#E8F0F5" width="82" height="25"/><rect x="213" y="205" fill="#E8F0F5" width="82" height="25"/><rect x="15" y="36" fill="#D2DEE6" width="153" height="13"/><rect x="15" y="59" fill="#D2DEE6" width="113" height="13"/><rect x="15" y="82" fill="#C3EF96" width="30" height="13"/><rect x="15" y="125" fill="#C3EF96" width="280" height="65"/></svg> },
-			{ type: 'grid', label: this.translate( 'A grid of my latest posts' ), image: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 230"><rect x="15" y="15" fill="#E8F0F5" width="280" height="40"/><rect x="114" y="70" fill="#C3EF96" width="82" height="65"/><rect x="15" y="70" fill="#C3EF96" width="82" height="65"/><rect x="213" y="70" fill="#C3EF96" width="82" height="65"/><rect x="114" y="150" fill="#C3EF96" width="82" height="65"/><rect x="15" y="150" fill="#C3EF96" width="82" height="65"/><rect x="213" y="150" fill="#C3EF96" width="82" height="65"/></svg> },
-		];
-	},
+		const { translate } = this.props;
+		const modified = abtest( 'siteCreationStepOne' ) === 'modified';
 
-	renderChoice( choice ) {
+		if ( modified ) {
+			// Note: Don't make this translatable because it's only visible to English-language users.
+			return [
+				{
+					type: 'blog',
+					label: 'Start with a blog',
+					description: 'To share your ideas, stories, and photographs with your followers.',
+					image: <BlogImage />,
+				},
+				{
+					type: 'page',
+					label: 'Start with a website',
+					description: 'To promote your business organization, or brand and connect with your audience.',
+					image: <PageImage />,
+				},
+				{
+					type: 'grid',
+					label: 'Start with a portfolio',
+					description: 'To present your creative projects in a visual showcase.',
+					image: <GridImage />,
+				},
+			];
+		}
+
+		return [
+			{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
+			{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
+			{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
+		];
+	}
+
+	renderChoice = ( choice ) => {
+		const modified = abtest( 'siteCreationStepOne' ) === 'modified';
+		const choiceHandlers = this.getChoiceHandlers();
+
+		let choiceLabel = <h2>{ choice.label }</h2>;
+		let choiceCardClass = 'design-type__choice';
+		let choiceDescription = null;
+		let callToAction = null;
+
+		if ( modified ) {
+			choiceLabel = null;
+			choiceCardClass += ' design-type__choice--test';
+			choiceDescription = <p className="design-type__choice-description">{ choice.description }</p>;
+			callToAction = <span className="button is-compact design-type__cta">{ choice.label }</span>;
+		}
+
 		return (
-			<Card className="design-type__choice" key={ choice.type }>
-				<a className="design-type__choice__link" href="#" onClick={ ( event ) => this.handleChoiceClick( event, choice.type ) }>
+			<Card className={ choiceCardClass } key={ choice.type } href="#{choice.type}" onClick={ choiceHandlers[ choice.type ] }>
+				<div className="design-type__choice-image">
 					{ choice.image }
-					<h2>{ choice.label }</h2>
-				</a>
+				</div>
+				<div className="design-type__choice-copy">
+					{ choiceLabel }
+					{ callToAction }
+					{ choiceDescription }
+				</div>
 			</Card>
 		);
-	},
+	}
 
 	renderChoices() {
 		return (
 			<div className="design-type__list">
 				{ this.getChoices().map( this.renderChoice ) }
 				<div className="design-type__choice is-spacergif" />
+				{ this.getDisclaimer() }
 			</div>
 		);
-	},
+	}
+
+	getDisclaimer() {
+		const modified = abtest( 'siteCreationStepOne' ) === 'modified';
+
+		if ( modified ) {
+			// Note: Don't make this translatable because it's only visible to English-language users.
+			return (
+				<p className="design-type__disclaimer">
+					Not sure? Pick the closest option. You can always change your settings later.
+				</p>
+			);
+		}
+
+		return null;
+	}
+
+	getHeadertext() {
+		const { translate } = this.props;
+		const modified = abtest( 'siteCreationStepOne' ) === 'modified';
+
+		if ( modified ) {
+			// Note: Don't make this translatable because it's only visible to English-language users
+			return 'Hello! Let\'s create your new site.';
+		}
+
+		return translate( 'Let\'s get started.' );
+	}
+
+	getSubHeaderText() {
+		const { translate } = this.props;
+		const modified = abtest( 'siteCreationStepOne' ) === 'modified';
+
+		if ( modified ) {
+			// Note: Don't make this translatable because it's only visible to English-language users
+			return 'What kind of site do you need? Choose an option below:';
+		}
+
+		return translate( 'First up, what would you like your homepage to look like?' );
+	}
 
 	render() {
+		const { translate } = this.props;
+
 		return (
-			<div className="design-type__section-wrapper">
+			<div className="design-type">
 				<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
-					fallbackHeaderText={ this.translate( 'What would you like your homepage to look like?' ) }
-					fallbackSubHeaderText={ this.translate( 'This will help us figure out what kinds of designs to show you.' ) }
-					subHeaderText={ this.translate( 'First up, what would you like your homepage to look like?' ) }
+					fallbackHeaderText={ translate( 'What would you like your homepage to look like?' ) }
+					fallbackSubHeaderText={ translate( 'This will help us figure out what kinds of designs to show you.' ) }
+					headerText={ this.getHeadertext() }
+					subHeaderText={ this.getSubHeaderText() }
 					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderChoices() } />
 			</div>
 		);
-	},
+	}
 
 	handleChoiceClick( event, type ) {
 		event.preventDefault();
 		event.stopPropagation();
 		this.handleNextStep( type );
-	},
+	}
 
 	handleNextStep( designType ) {
-		analytics.tracks.recordEvent( 'calypso_triforce_select_design', { category: designType } );
+		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
 		this.props.goToNextStep();
 	}
-} );
+}
+
+export default connect(
+	null,
+	{
+		recordTracksEvent
+	}
+)( localize( DesignTypeStep ) );

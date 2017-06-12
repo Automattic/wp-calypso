@@ -8,32 +8,34 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	tinymce = require( 'tinymce/tinymce' ),
-	translate = require( 'i18n-calypso' ).translate;
-
-import { Provider as ReduxProvider } from 'react-redux';
+import ReactDom from 'react-dom';
+import React from 'react';
+import tinymce from 'tinymce/tinymce';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var LinkDialog = require( './dialog' );
+import LinkDialog from './dialog';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 function wpLink( editor ) {
-	var node, toolbar;
+	let node, toolbar, firstLoadComplete;
 
 	function render( visible = true ) {
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: editor.getParam( 'redux_store' ) },
-				React.createElement( LinkDialog, {
-					visible: visible,
-					editor: editor,
-					onClose: () => render( false )
-				} )
-			),
-			node
+		renderWithReduxStore(
+			React.createElement( LinkDialog, {
+				visible: visible,
+				editor: editor,
+				firstLoad: ! firstLoadComplete,
+				onClose: () => render( false )
+			} ),
+			node,
+			editor.getParam( 'redux_store' )
 		);
+		if ( visible ) {
+			firstLoadComplete = true;
+		}
 
 		if ( ! visible ) {
 			editor.focus();
@@ -84,7 +86,7 @@ function wpLink( editor ) {
 	} );
 
 	editor.on( 'pastepreprocess', function( event ) {
-		var pastedStr = event.content;
+		let pastedStr = event.content;
 
 		if ( ! editor.selection.isCollapsed() ) {
 			pastedStr = pastedStr.replace( /<[^>]+>/g, '' );
@@ -104,7 +106,7 @@ function wpLink( editor ) {
 	 * Link Preview
 	 */
 
-	tinymce.ui.WPLinkPreview = tinymce.ui.Control.extend( {
+	tinymce.ui.Factory.add( 'WPLinkPreview', tinymce.ui.Control.extend( {
 		url: '#',
 		renderHtml: function() {
 			return (
@@ -114,7 +116,7 @@ function wpLink( editor ) {
 			);
 		},
 		setURL: function( url ) {
-			var index, lastIndex;
+			let index, lastIndex;
 
 			if ( this.url !== url ) {
 				this.url = url;
@@ -138,7 +140,10 @@ function wpLink( editor ) {
 				}
 
 				// If the URL is longer that 40 chars, concatenate the beginning (after the domain) and ending with ...
-				if ( url.length > 40 && ( index = url.indexOf( '/' ) ) !== -1 && ( lastIndex = url.lastIndexOf( '/' ) ) !== -1 && lastIndex !== index ) {
+				if ( url.length > 40 &&
+					( index = url.indexOf( '/' ) ) !== -1 &&
+					( lastIndex = url.lastIndexOf( '/' ) ) !== -1 &&
+					lastIndex !== index ) {
 					// If the beginning + ending are shorter that 40 chars, show more of the ending
 					if ( index + url.length - lastIndex < 40 ) {
 						lastIndex = -( 40 - ( index + 1 ) );
@@ -150,17 +155,17 @@ function wpLink( editor ) {
 				tinymce.$( this.getEl().firstChild ).attr( 'href', this.url ).text( url );
 			}
 		}
-	} );
+	} ) );
 
 	editor.addButton( 'wp_link_preview', {
 		type: 'WPLinkPreview',
 		onPostRender: function() {
-			var self = this;
+			const self = this;
 
 			editor.on( 'wptoolbar', function( event ) {
-				var anchor = editor.dom.getParent( event.element, 'a' ),
-					$anchor,
-					href;
+				const anchor = editor.dom.getParent( event.element, 'a' );
+				let $anchor;
+				let href;
 
 				if ( anchor ) {
 					$anchor = editor.$( anchor );

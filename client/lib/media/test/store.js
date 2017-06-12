@@ -134,11 +134,11 @@ describe( 'MediaStore', function() {
 			dispatchReceiveMediaItems();
 		} );
 
-		it( 'should remove an item when REMOVE_MEDIA_ITEM is dispatched', function() {
+		it( 'should blank an item when REMOVE_MEDIA_ITEM is dispatched', function() {
 			dispatchReceiveMediaItems();
 			dispatchRemoveMediaItem();
 
-			expect( MediaStore.get( DUMMY_SITE_ID, DUMMY_MEDIA_ID ) ).to.be.undefined;
+			expect( MediaStore.get( DUMMY_SITE_ID, DUMMY_MEDIA_ID ) ).to.not.have.any.keys( 'guid', 'url' );
 		} );
 
 		it( 'should re-add an item when REMOVE_MEDIA_ITEM errors and includes data', function() {

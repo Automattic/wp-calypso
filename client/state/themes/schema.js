@@ -108,3 +108,27 @@ export const themeRequestErrorsSchema = {
 		}
 	}
 };
+
+export const themeFiltersSchema = {
+	type: 'object',
+	patternProperties: {
+		// Taxonomy ID
+		'^\\w+$': {
+			title: 'Taxonomy',
+			type: 'object',
+			patternProperties: {
+				// Term (i.e. filter) ID
+				'^\\w+$': {
+					title: 'Term',
+					type: 'object',
+					properties: {
+						name: { type: 'string' },
+						description: { type: 'string' },
+					}
+				}
+			},
+			uniqueItems: true
+		},
+	},
+	additionalProperties: false,
+};

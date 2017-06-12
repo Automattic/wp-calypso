@@ -2,8 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -14,28 +12,14 @@ import {
 	recordFollow as recordFollowTracks,
 	recordUnfollow as recordUnfollowTracks,
 } from 'reader/stats';
-import {
-	recordFollow as recordFollowAction,
-	recordUnfollow as recordUnfollowAction,
-} from 'state/reader/follows/actions';
 
 function ReaderFollowButton( props ) {
-	const {
-		onFollowToggle,
-		railcar,
-		followSource,
-		isButtonOnly,
-		dispatchRecordFollow,
-		dispatchRecordUnfollow,
-		siteUrl,
-	} = props;
+	const { onFollowToggle, railcar, followSource, isButtonOnly, siteUrl } = props;
 
 	function recordFollowToggle( isFollowing ) {
 		if ( isFollowing ) {
-			dispatchRecordFollow( siteUrl );
 			recordFollowTracks( siteUrl, railcar, { follow_source: followSource } );
 		} else {
-			dispatchRecordUnfollow( siteUrl );
 			recordUnfollowTracks( siteUrl, railcar, { follow_source: followSource } );
 		}
 
@@ -45,14 +29,10 @@ function ReaderFollowButton( props ) {
 	}
 
 	if ( isButtonOnly ) {
-		return (
-			<FollowButton { ...props } onFollowToggle={ recordFollowToggle } />
-		);
+		return <FollowButton { ...props } onFollowToggle={ recordFollowToggle } />;
 	}
 
-	return (
-		<FollowButtonContainer { ...props } onFollowToggle={ recordFollowToggle } />
-	);
+	return <FollowButtonContainer { ...props } onFollowToggle={ recordFollowToggle } />;
 }
 
 ReaderFollowButton.propTypes = {
@@ -61,12 +41,4 @@ ReaderFollowButton.propTypes = {
 	followSource: React.PropTypes.string,
 };
 
-export default connect(
-	( state ) => ( {} ), // eslint-disable-line no-unused-vars
-	( dispatch ) => bindActionCreators( {
-		dispatchRecordFollow: recordFollowAction,
-		dispatchRecordUnfollow: recordUnfollowAction,
-	}, dispatch ),
-	null,
-	{ pure: false } // we are not pure from the standpoint of the redux state tree
-)( ReaderFollowButton );
+export default ReaderFollowButton;

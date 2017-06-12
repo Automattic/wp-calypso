@@ -24,6 +24,27 @@ function wcpomAutoResize( editor ) {
 		return;
 	}
 
+	function isEndOfEditor() {
+		var range, start, body, element, child;
+		range = editor.selection.getRng();
+
+		if ( ( range.startOffset === 0 && range.endOffset !== 0 ) || ! range.collapsed ) {
+			return false;
+		}
+
+		start = range.startContainer;
+		body = editor.getBody();
+		element = start;
+		do {
+			child = element;
+			element = element.parentNode;
+			if ( element.childNodes[ element.childNodes.length - 1 ] !== child ) {
+				return false;
+			}
+		} while ( element !== body );
+		return true;
+	}
+
 	function resize( e ) {
 		var deltaSize, doc, body, docElm, DOM = tinymce.DOM, resizeHeight, myHeight,
 			marginTop, marginBottom, paddingTop, paddingBottom, borderTop, borderBottom;
@@ -50,9 +71,12 @@ function wcpomAutoResize( editor ) {
 		marginTop = editor.dom.getStyle( body, 'margin-top', true );
 		marginBottom = editor.dom.getStyle( body, 'margin-bottom', true );
 		paddingTop = editor.dom.getStyle( body, 'padding-top', true );
-		paddingBottom = editor.dom.getStyle( body, 'padding-bottom', true );
 		borderTop = editor.dom.getStyle( body, 'border-top-width', true );
 		borderBottom = editor.dom.getStyle( body, 'border-bottom-width', true );
+		// paddingBottom seems to get reset to 1 somewhere, so grab
+		// autoresize_bottom_margin directly here
+		paddingBottom = editor.getParam( 'autoresize_bottom_margin', 50 );
+
 		myHeight = body.offsetHeight + parseInt( marginTop, 10 ) + parseInt( marginBottom, 10 ) +
 			parseInt( paddingTop, 10 ) + parseInt( paddingBottom, 10 ) +
 			parseInt( borderTop, 10 ) + parseInt( borderBottom, 10 );
@@ -100,6 +124,13 @@ function wcpomAutoResize( editor ) {
 			// So we need to continue to resize the iframe down until the size gets fixed
 			if ( tinymce.isWebKit && deltaSize < 0 ) {
 				resize( e );
+			}
+
+			if ( e && e.type === 'keyup' ||
+				( e && e.type === 'nodechange' && e.element && e.element.tagName === 'BR' ) ) {
+				if ( isEndOfEditor() ) {
+					window.scrollTo( 0, document.body.scrollHeight );
+				}
 			}
 		}
 	}

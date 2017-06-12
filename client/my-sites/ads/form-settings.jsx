@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	notices = require( 'notices' ),
-	debug = require( 'debug' )( 'calypso:my-sites:ads-settings' );
+import React, { Component, PropTypes } from 'react';
+import notices from 'notices';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
@@ -12,51 +10,72 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	StateSelector = require( 'components/forms/us-state-selector' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormLegend = require( 'components/forms/form-legend' ),
-	FormRadio = require( 'components/forms/form-radio' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormSelect = require( 'components/forms/form-select' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	WordadsActions = require( 'lib/ads/actions' ),
-	SettingsStore = require( 'lib/ads/settings-store' ),
-	sites = require( 'lib/sites-list' )();
-
+import Card from 'components/card';
+import StateSelector from 'components/forms/us-state-selector';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
+import FormRadio from 'components/forms/form-radio';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormSelect from 'components/forms/form-select';
+import FormTextInput from 'components/forms/form-text-input';
+import WordadsActions from 'lib/ads/actions';
+import SettingsStore from 'lib/ads/settings-store';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { dismissWordAdsSuccess } from 'state/wordads/approve/actions';
 import { protectForm } from 'lib/protect-form';
 
-const AdsFormSettings = React.createClass( {
+class AdsFormSettings extends Component {
+	static propTypes = {
+		site: PropTypes.object.isRequired,
+		markChanged: PropTypes.func.isRequired,
+		markSaved: PropTypes.func.isRequired,
+	};
 
-	displayName: 'AdsFormSettings',
+	constructor( props ) {
+		super( props );
 
-	mixins: [ LinkedStateMixin ],
+		let store = this.getSettingsFromStore();
+		if ( ! store.tos ) {
+			store = this.defaultSettings();
+		}
 
-	propTypes: {
-		site: React.PropTypes.object.isRequired,
-		markChanged: React.PropTypes.func.isRequired,
-		markSaved: React.PropTypes.func.isRequired
-	},
+		this.state = store;
+	}
 
-	componentWillMount: function() {
-		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
+	componentWillMount() {
 		SettingsStore.on( 'change', this.updateSettings );
-		this._fetchIfEmpty();
-	},
+		this.fetchIfEmpty();
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		SettingsStore.removeListener( 'change', this.updateSettings );
 		SettingsStore.clearNotices();
-	},
+	}
 
-	updateSettings: function() {
-		var settings = this.getSettingsFromStore();
-		const site = sites.getSelectedSite();
+	componentWillReceiveProps( nextProps ) {
+		const { site } = this.props;
+		if ( ! nextProps || ! nextProps.site || ! nextProps.site.ID ) {
+			return;
+		}
+
+		if ( ! SettingsStore.settingsLoaded( nextProps.site.ID ) ) {
+			this.setState( this.defaultSettings() );
+		}
+
+		if ( site.ID !== nextProps.site.ID ) {
+			this.fetchIfEmpty( nextProps.site );
+			this.setState( this.getSettingsFromStore( nextProps.site ) );
+		}
+	}
+
+	updateSettings = () => {
+		const settings = this.getSettingsFromStore();
+		const { site } = this.props;
 		this.setState( settings );
 
 		// set/clear any notices on update
@@ -68,76 +87,60 @@ const AdsFormSettings = React.createClass( {
 		} else {
 			notices.clearNotices( 'notices' );
 		}
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
-		var site = this.props.site || sites.getSelectedSite();
-		if ( ! nextProps || ! nextProps.site || ! nextProps.site.ID ) {
-			return;
-		}
+	handleChange = ( event ) => {
+		const name = event.currentTarget.name;
+		const value = event.currentTarget.value;
 
-		if ( ! SettingsStore.settingsLoaded( nextProps.site.ID ) ) {
-			this.resetState();
-		}
+		this.setState( {
+			[ name ]: value,
+		} );
+	}
 
-		if ( site.ID !== nextProps.site.ID ) {
-			this._fetchIfEmpty( nextProps.site );
-			this.setState( this.getSettingsFromStore( nextProps.site ) );
-		}
-	},
+	handleToggle = ( event ) => {
+		const name = event.currentTarget.name;
 
-	getInitialState: function() {
-		var store = this.getSettingsFromStore();
-		if ( ! store.tos ) {
-			store = this.defaultSettings();
-		}
+		this.setState( {
+			[ name ]: ! this.state[ name ],
+		} );
+	}
 
-		return store;
-	},
+	handleResidentCheckbox = () => {
+		const isResident = ! this.state.us_checked;
 
-	handleRadio: function( event ) {
-		var name = event.currentTarget.name,
-			value = event.currentTarget.value,
-			updateObj = {};
-
-		updateObj[ name ] = value;
-		this.setState( updateObj );
-	},
-
-	handleResidentCheckbox: function() {
-		var isResident = ! this.state.us_checked;
 		this.setState( {
 			us_checked: isResident,
 			us_resident: isResident ? 'yes' : 'no'
 		} );
-	},
+	}
 
-	submitForm: function( event ) {
+	handleSubmit = ( event ) => {
+		const { site } = this.props;
 		event.preventDefault();
-		WordadsActions.updateSettings( sites.getSelectedSite(), this.packageState() );
-		this.setState( { notice: null, error: null } );
-		this.props.markSaved();
-	},
 
-	getSettingsFromStore: function( siteInstance ) {
-		var site = siteInstance || this.props.site || sites.getSelectedSite(),
+		WordadsActions.updateSettings( site, this.packageState() );
+		this.setState( {
+			notice: null,
+			error: null
+		} );
+		this.props.markSaved();
+	}
+
+	getSettingsFromStore( siteInstance ) {
+		const site = siteInstance || this.props.site,
 			store = SettingsStore.getById( site.ID );
 
 		store.us_checked = 'yes' === store.us_resident;
-		if ( site.jetpack ) {
+		if ( this.props.siteIsJetpack ) {
 			// JP doesn't matter, force yes to make things easier
 			store.show_to_logged_in = 'yes';
 		}
 
 		return store;
-	},
+	}
 
-	resetState: function() {
-		debug( 'wordads state reset' );
-		this.replaceState( this.defaultSettings() );
-	},
-
-	defaultSettings: function() {
+	defaultSettings() {
 		return {
 			addr1: '',
 			addr2: '',
@@ -158,9 +161,9 @@ const AdsFormSettings = React.createClass( {
 			error: {},
 			notice: null
 		};
-	},
+	}
 
-	packageState: function() {
+	packageState() {
 		return {
 			addr1: this.state.addr1,
 			addr2: this.state.addr2,
@@ -176,26 +179,25 @@ const AdsFormSettings = React.createClass( {
 			who_owns: this.state.who_owns,
 			zip: this.state.zip
 		};
-	},
+	}
 
-	_fetchIfEmpty: function( site ) {
+	fetchIfEmpty( site ) {
 		site = site || this.props.site;
 		if ( ! site || ! site.ID ) {
 			return;
 		}
 
 		if ( SettingsStore.settingsLoaded( site.ID ) ) {
-			debug( 'initial fetch not necessary' );
 			return;
 		}
 
 		// defer fetch requests to avoid dispatcher conflicts
 		setTimeout( function() {
-			WordadsActions.fetchSettings( site )
+			WordadsActions.fetchSettings( site );
 		}, 0 );
-	},
+	}
 
-	showAdsToOptions: function() {
+	showAdsToOptions() {
 		const { translate } = this.props;
 
 		return (
@@ -206,8 +208,9 @@ const AdsFormSettings = React.createClass( {
 						name="show_to_logged_in"
 						value="yes"
 						checked={ 'yes' === this.state.show_to_logged_in }
-						onChange={ this.handleRadio }
-						disabled={ this.state.isLoading } />
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 					<span>{ translate( 'Run ads for all users' ) }</span>
 				</FormLabel>
 
@@ -216,8 +219,9 @@ const AdsFormSettings = React.createClass( {
 						name="show_to_logged_in"
 						value="no"
 						checked={ 'no' === this.state.show_to_logged_in }
-						onChange={ this.handleRadio }
-						disabled={ this.state.isLoading } />
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 					<span>{ translate( 'Run ads only for logged-out users (less revenue)' ) }</span>
 				</FormLabel>
 
@@ -226,15 +230,16 @@ const AdsFormSettings = React.createClass( {
 						name="show_to_logged_in"
 						value="pause"
 						checked={ 'pause' === this.state.show_to_logged_in }
-						onChange={ this.handleRadio }
-						disabled={ this.state.isLoading } />
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 					<span>{ translate( 'Pause ads (no revenue)' ) }</span>
 				</FormLabel>
 			</FormFieldset>
 		);
-	},
+	}
 
-	additionalAdsOption: function() {
+	additionalAdsOption() {
 		const { translate } = this.props;
 
 		return (
@@ -243,8 +248,10 @@ const AdsFormSettings = React.createClass( {
 				<FormLabel>
 					<FormCheckbox
 						name="optimized_ads"
-						checkedLink={ this.linkState( 'optimized_ads' ) }
-						disabled={ this.state.isLoading } />
+						checked={ !! this.state.optimized_ads }
+						onChange={ this.handleToggle }
+						disabled={ this.state.isLoading }
+					/>
 					<span>
 						{ translate( 'Show optimized ads. ' ) }
 						<a target="_blank" rel="noopener noreferrer" href="https://wordads.co/optimized-ads/">
@@ -254,9 +261,9 @@ const AdsFormSettings = React.createClass( {
 				</FormLabel>
 			</FormFieldset>
 		);
-	},
+	}
 
-	siteOwnerOptions: function() {
+	siteOwnerOptions() {
 		const { translate } = this.props;
 
 		return (
@@ -266,22 +273,26 @@ const AdsFormSettings = React.createClass( {
 					<FormTextInput
 						name="paypal"
 						id="paypal"
-						valueLink={ this.linkState( 'paypal' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.paypal || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="who_owns">{ translate( 'Who owns this site?' ) }</FormLabel>
 					<FormSelect
 						name="who_owns"
 						id="who_owns"
-						valueLink={ this.linkState( 'who_owns' ) }
-						disabled={ this.state.isLoading }>
-							<option value="">{ translate( 'Select who owns this site' ) }</option>
-							<option value="person">{ translate( 'An Individual/Sole Proprietor' ) }</option>
-							<option value="corp">{ translate( 'A Corporation' ) }</option>
-							<option value="partnership">{ translate( 'A Partnership' ) }</option>
-							<option value="llc">{ translate( 'An LLC' ) }</option>
-							<option value="tax_exempt">{ translate( 'A Tax-Exempt Entity' ) }</option>
+						value={ this.state.who_owns || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					>
+						<option value="">{ translate( 'Select who owns this site' ) }</option>
+						<option value="person">{ translate( 'An Individual/Sole Proprietor' ) }</option>
+						<option value="corp">{ translate( 'A Corporation' ) }</option>
+						<option value="partnership">{ translate( 'A Partnership' ) }</option>
+						<option value="llc">{ translate( 'An LLC' ) }</option>
+						<option value="tax_exempt">{ translate( 'A Tax-Exempt Entity' ) }</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
@@ -290,15 +301,16 @@ const AdsFormSettings = React.createClass( {
 							name="us_resident"
 							checked={ this.state.us_checked }
 							disabled={ this.state.isLoading }
-							onChange={ this.handleResidentCheckbox } />
+							onChange={ this.handleResidentCheckbox }
+						/>
 						<span>{ translate( 'US Resident or based in the US' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 			</div>
 		);
-	},
+	}
 
-	taxOptions: function() {
+	taxOptions() {
 		const { translate } = this.props;
 
 		return (
@@ -310,8 +322,10 @@ const AdsFormSettings = React.createClass( {
 						name="taxid"
 						id="taxid"
 						placeholder={ this.state.taxid_last4 ? 'On file. Last Four Digits: '.concat( this.state.taxid_last4 ) : '' }
-						valueLink={ this.linkState( 'taxid' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.taxid || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
@@ -319,8 +333,10 @@ const AdsFormSettings = React.createClass( {
 					<FormTextInput
 						name="name"
 						id="name"
-						valueLink={ this.linkState( 'name' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.name || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
@@ -329,8 +345,10 @@ const AdsFormSettings = React.createClass( {
 						name="addr1"
 						id="addr1"
 						placeholder="Address Line 1"
-						valueLink={ this.linkState( 'addr1' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.addr1 || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
@@ -338,8 +356,10 @@ const AdsFormSettings = React.createClass( {
 						name="addr2"
 						id="addr2"
 						placeholder="Address Line 2"
-						valueLink={ this.linkState( 'addr2' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.addr2 || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
@@ -347,8 +367,10 @@ const AdsFormSettings = React.createClass( {
 					<FormTextInput
 						name="city"
 						id="city"
-						valueLink={ this.linkState( 'city' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.city || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
@@ -356,9 +378,11 @@ const AdsFormSettings = React.createClass( {
 					<StateSelector
 						name="state"
 						id="state"
-						className="settings__state"
-						valueLink={ this.linkState( 'state' ) }
-						disabled={ this.state.isLoading } />
+						className="ads__settings-state"
+						value={ this.state.state || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
@@ -366,63 +390,79 @@ const AdsFormSettings = React.createClass( {
 					<FormTextInput
 						name="zip"
 						id="zip"
-						valueLink={ this.linkState( 'zip' ) }
-						disabled={ this.state.isLoading } />
+						value={ this.state.zip || '' }
+						onChange={ this.handleChange }
+						disabled={ this.state.isLoading }
+					/>
 				</FormFieldset>
 			</div>
 		);
-	},
+	}
 
-	acceptCheckbox: function() {
-		return (
-			<FormFieldset className="wordads-tos__fieldset">
-				<FormLabel>
-					<FormCheckbox
-						name="tos"
-						checkedLink={ this.linkState( 'tos' ) }
-						disabled={ this.state.isLoading || 'signed' === this.state.tos } />
-					<span>{ this.props.translate( 'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.', {
-						components: { a: <a href="https://wordpress.com/automattic-ads-tos/" target="_blank" rel="noopener noreferrer" /> }
-					} ) }</span>
-				</FormLabel>
-			</FormFieldset>
-		);
-	},
-
-	render: function() {
+	acceptCheckbox() {
 		const { translate } = this.props;
 
 		return (
-			<Card className="settings">
-				<form id="wordads-settings" onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
+			<FormFieldset>
+				<FormLabel>
+					<FormCheckbox
+						name="tos"
+						checked={ !! this.state.tos }
+						onChange={ this.handleToggle }
+						disabled={ this.state.isLoading || 'signed' === this.state.tos }
+					/>
+					<span>
+						{
+							translate( 'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.', {
+								components: {
+									a: <a href="https://wordpress.com/automattic-ads-tos/" target="_blank" rel="noopener noreferrer" />
+								}
+							} )
+						}
+					</span>
+				</FormLabel>
+			</FormFieldset>
+		);
+	}
+
+	render() {
+		const { translate } = this.props;
+
+		return (
+			<Card>
+				<form id="wordads-settings" onSubmit={ this.handleSubmit } onChange={ this.props.markChanged }>
 					<FormButtonsBar>
-						<FormButton
-							disabled={ this.state.isLoading || this.state.isSubmitting }>
-								{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+						<FormButton disabled={ this.state.isLoading || this.state.isSubmitting }>
+							{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 						</FormButton>
 					</FormButtonsBar>
-					{ ! this.props.site.jetpack ? this.showAdsToOptions() : null }
-					{ ! this.props.site.jetpack ? this.additionalAdsOption() : null }
+
+					{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
+
 					<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
 					{ this.siteOwnerOptions() }
 					{ this.state.us_checked ? this.taxOptions() : null }
+
 					<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
 					{ this.acceptCheckbox() }
+
 					<FormButtonsBar>
-						<FormButton
-							disabled={ this.state.isLoading || this.state.isSubmitting }>
-								{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+						<FormButton disabled={ this.state.isLoading || this.state.isSubmitting }>
+							{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 						</FormButton>
 					</FormButtonsBar>
 				</form>
 			</Card>
 		);
 	}
-} );
+}
 
 export default compose(
 	connect(
-		null,
+		( state ) => ( {
+			site: getSelectedSite( state ),
+			siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+		} ),
 		{ dismissWordAdsSuccess },
 	),
 	localize,

@@ -47,29 +47,6 @@ const EVENTS = {
 		}
 	},
 	registerDomain: {
-		addDomainButtonClick( domainName, section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Add" Button on a Domain Registration',
-				'Domain Name',
-				domainName
-			);
-
-			analytics.tracks.recordEvent( 'calypso_domain_search_add_button_click', {
-				domain_name: domainName,
-				section
-			} );
-		},
-
-		removeDomainButtonClick( domainName ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Remove" Button on a Domain Registration',
-				'Domain Name',
-				domainName
-			);
-		},
-
 		mapDomainButtonClick( section ) {
 			analytics.ga.recordEvent(
 				'Domain Search',
@@ -156,65 +133,19 @@ const EVENTS = {
 				suggestion.domain_name
 			);
 
-			analytics.tracks.recordEvent( 'calypso_domain_search_submit_step', {
+			const tracksObjects = {
 				domain_name: suggestion.domain_name,
 				section,
 				type: domainType
-			} );
-		}
-	},
+			};
+			if ( suggestion.isRecommended ) {
+				tracksObjects.label = 'recommended';
+			}
+			if ( suggestion.isBestAlternative ) {
+				tracksObjects.label = 'best-alternative';
+			}
 
-	googleApps: {
-		inputFocus( userIndex, fieldName, inputValue ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				`Focused On "${ fieldName }" Input for User #${ userIndex } in Google Apps Dialog`,
-				'Input Value',
-				inputValue
-			);
-		},
-
-		addUserClick( section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Add User" Button in Google Apps Dialog'
-			);
-
-			analytics.tracks.recordEvent( 'calypso_google_apps_add_user_button_click', { section } );
-		},
-
-		addEmailButtonClick( section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Add Email" Button in Google Apps Dialog'
-			);
-
-			analytics.tracks.recordEvent( 'calypso_google_apps_add_email_button_click', { section } );
-		},
-
-		cancelButtonClick( section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Cancel" Button in Google Apps Dialog'
-			);
-
-			analytics.tracks.recordEvent( 'calypso_google_apps_cancel_button_click', { section } );
-		},
-
-		keepSearchingButtonClick() {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Click "Keep Searching" Button in Google Apps Dialog'
-			);
-		},
-
-		formSubmit( section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Submitted Form in Google Apps Dialog'
-			);
-
-			analytics.tracks.recordEvent( 'calypso_google_apps_form_submit', { section } );
+			analytics.tracks.recordEvent( 'calypso_domain_search_submit_step', tracksObjects );
 		}
 	},
 
@@ -250,20 +181,6 @@ const EVENTS = {
 				section
 			} );
 		},
-
-		addDomainButtonClick( domainName, section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Add" Button on a Domain Registration in Map Domain Step',
-				'Domain Name',
-				domainName
-			);
-
-			analytics.tracks.recordEvent( 'calypso_map_domain_step_add_domain_click', {
-				domain_name: domainName,
-				section
-			} );
-		}
 	},
 
 	siteRedirect: {

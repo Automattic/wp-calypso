@@ -10,18 +10,31 @@
 	z-index: z-index( 'root', '.is-group-editor::before' );
 }
 
+.is-group-editor .sidebar {
+	left: auto;
+	right: -273px;
+}
+
 @include breakpoint( "<660px" ) {
 	.is-group-editor.focus-sidebar::before {
 		background-color: lighten( $gray, 30% );
 	}
+
+	.is-group-editor .sidebar {
+		right: auto;
+	}
+
 }
 
 .is-group-editor .layout__content {
 	padding: 47px 0 0;
+	overflow: inherit;
 }
 
 .post-editor__inner {
 	position: relative;
+	top: 47px;
+	padding-bottom: 47px;
 }
 
 .post-editor__content {
@@ -43,12 +56,19 @@
 }
 
 .post-editor__content {
-	@include breakpoint( ">660px" ) {
-		margin-left: ( $sidebar-width-min + 1 );
-	}
+	margin: 0 auto; // born centered, so when width collapses for sidebar anim it doesn't move
+	left: 0;
 
-	@include breakpoint( ">960px" ) {
-		margin-left: ( $sidebar-width-max + 1 );
+	.focus-sidebar & {
+		@include breakpoint( ">960px" ) {
+			left: ( $sidebar-width-max / -2 );
+			width: calc( 100% - ( #{ $sidebar-width-max } ) ); // subtract sidebar width
+		}
+
+		@include breakpoint( "<960px" ) {
+			left: ( $sidebar-width-min / -2 );
+			width: calc( 100% - ( #{ $sidebar-width-min } ) ); // subtract sidebar width
+		}
 	}
 }
 
@@ -82,25 +102,25 @@
 .editor__header,
 .editor .mce-container-body,
 .editor .tinymce {
-	max-width: 100%;
+	width: 100%;
+	max-width: 700px;
 	margin: 0 auto;
+}
 
-	@include breakpoint( ">960px" ) {
+.focus-content .editor__header {
+	@include breakpoint( ">660px" ) {
 		width: 700px;
 	}
 }
 
 .editor__header,
 .editor .mce-edit-area {
+	box-sizing: border-box;
 	padding: 0 16px;
 
 	@include breakpoint( ">1040px" ) {
 		padding: 0;
 	}
-}
-
-.post-editor .drafts-button {
-	padding: 3px 8px;
 }
 
 .post-editor .draft .post-relative-time-status {
@@ -112,6 +132,12 @@
 	position: relative;
 }
 
+.editor .editor-notice .notice {
+	@include breakpoint( ">660px" ) {
+		margin: 0;
+	}
+}
+
 .editor .tinymce {
 	min-height: 100vh;
 	resize: none;
@@ -121,9 +147,11 @@
 	// typography for HTML view
 	font-family: $monospace;
 	font-size: 14px;
+	margin-bottom: 64px;
 
 	@include breakpoint( "<480px" ) {
 		padding: 24px 27px; /* 27px = 16px + the 11px padding on Visual mode */
+		margin-bottom: 0;
 	}
 
 	&:focus {
@@ -223,56 +251,4 @@
 		margin: 0 auto;
 		max-height: 400px;
 	}
-}
-
-.post-editor__confirmation-dialog.is-narrow {
-	max-width: 100%;
-	border-radius: 0;
-
-	@include breakpoint( ">660px" ) {
-		max-width: 550px;
-		border-radius: 3px;
-	}
-}
-
-.post-editor__confirmation-dialog-heading {
-	font-size: 22px;
-	line-height: 1.2;
-	margin: 0 0 4px 0;
-}
-
-.post-editor__confirmation-dialog-heading.is-variable-height {
-	height: auto;
-}
-
-.post-editor__confirmation-dialog-email,
-.post-editor__confirmation-dialog-explanation,
-.post-editor__confirmation-dialog-reasoning {
-	color: darken( $gray, 30 );
-	margin: 0 0 8px 0;
-}
-
-.post-editor__confirmation-dialog-email {
-	margin-bottom: 16px;
-	color: darken( $gray, 10 );
-}
-
-.post-editor__confirmation-dialog-email-wrapper {
-	display: inline-block;
-	max-width: 70%;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	margin-right: 5px;
-	vertical-align: bottom;
-}
-
-.post-editor__confirmation-dialog-reasoning {
-	color: darken( $gray, 10 );
-	font-size: 14px;
-	margin-bottom: 24px;
-}
-
-.post-editor__confirmation-dialog-spinner {
-	display: inline-block;
-	vertical-align: -25%;
 }

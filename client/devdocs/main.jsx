@@ -152,7 +152,7 @@ module.exports = React.createClass( {
 				{ parts.map( function( part, i ) {
 					var markMatch = part.match( /<mark>(.*?)<\/mark>/ );
 					if ( markMatch ) {
-						return <mark key={ 'mark' + i }>{markMatch[1]}</mark>;
+						return <mark key={ 'mark' + i }>{ markMatch[ 1 ] }</mark>;
 					} else {
 						return part;
 					}

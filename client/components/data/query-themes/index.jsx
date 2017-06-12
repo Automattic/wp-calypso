@@ -3,13 +3,13 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { isEqual } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { requestThemes } from 'state/themes/actions';
-import { isRequestingThemesForQuery } from 'state/themes/selectors';
+import { getThemesForQuery, isRequestingThemesForQuery } from 'state/themes/selectors';
 
 class QueryThemes extends Component {
 	static propTypes = {
@@ -32,6 +32,7 @@ class QueryThemes extends Component {
 
 		} ),
 		// Connected props
+		hasThemes: PropTypes.bool.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		requestThemes: PropTypes.func.isRequired,
 	}
@@ -50,7 +51,7 @@ class QueryThemes extends Component {
 	}
 
 	request() {
-		if ( ! this.props.isRequesting ) {
+		if ( ! this.props.isRequesting && ! this.props.hasThemes ) {
 			this.props.requestThemes( this.props.siteId, this.props.query );
 		}
 	}
@@ -62,6 +63,7 @@ class QueryThemes extends Component {
 
 export default connect(
 	( state, { query, siteId } ) => ( {
+		hasThemes: ! isEmpty( getThemesForQuery( state, siteId, query ) ),
 		isRequesting: isRequestingThemesForQuery( state, siteId, query ),
 	} ),
 	{ requestThemes }

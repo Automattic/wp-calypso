@@ -6,7 +6,7 @@ import noop from 'lodash/noop';
 import some from 'lodash/some';
 import assign from 'lodash/assign';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:ad-tracking' );
+const debug = debugFactory( 'calypso:analytics:ad-tracking' );
 import { clone, cloneDeep } from 'lodash';
 import cookie from 'cookie';
 import { v4 as uuid } from 'uuid';
@@ -18,6 +18,7 @@ import loadScript from 'lib/load-script';
 import config from 'config';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
+import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
 
 /**
  * Module variables
@@ -44,6 +45,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
 	DCM_FLOODLIGHT_IFRAME_URL = 'https://6355556.fls.doubleclick.net/activityi',
 	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
+	MEDIA_WALLAH_URL = 'https://d3ir0rz7vxwgq5.cloudfront.net/mwData.min.js',
+	QUORA_URL = 'https://a.quora.com/qevents.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -56,7 +59,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		yahooPixelId: '10014088',
 		twitterPixelId: 'nvzbs',
 		dcmFloodlightAdvertiserId: '6355556',
-		linkedInPartnerId: '36622'
+		linkedInPartnerId: '36622',
+		quoraPixelId: '420845cb70e444938cf0728887a74ca1'
 	},
 
 	// This name is something we created to store a session id for DCM Floodlight session tracking
@@ -100,6 +104,51 @@ if ( ! window.twq ) {
 
 if ( ! window._linkedin_data_partner_id ) {
 	window._linkedin_data_partner_id = TRACKING_IDS.linkedInPartnerId;
+}
+
+if ( ! window.qp ) {
+	setupQuoraGlobal();
+}
+
+/**
+ * Initializes Media Wallah tracking.
+ * This is a rework of the obfuscated tracking code provided by Media Wallah.
+ */
+function initMediaWallah() {
+	const mwOptions = {
+		uid: '',
+		custom: '',
+		account_id: 1015,
+		customer_id: 1012,
+		tag_action: 'visit',
+		timeout: 100 // in milliseconds
+	};
+
+	window.setBrowserAttributeData();
+	let counter = 0;
+	const init = function() {
+		if ( window.mwDataReady() ) {
+			document.body.appendChild( window.mwPixel( mwOptions ) );
+		} else if ( counter === mwOptions.timeout ) {
+			clearTimeout( init );
+		} else {
+			setTimeout( init, 1 );
+			counter++;
+		}
+	};
+
+	window.addEventListener ? window.addEventListener( 'load', init, false ) : window.attachEvent( 'onload', init );
+}
+
+/**
+ * Initializes Quora tracking.
+ * This is a rework of the obfuscated tracking code provided by Quora.
+ */
+function setupQuoraGlobal() {
+	const quoraPixel = window.qp = function() {
+		quoraPixel.qp ? quoraPixel.qp.apply( quoraPixel, arguments ) : quoraPixel.queue.push( arguments );
+	};
+	quoraPixel.queue = [];
 }
 
 /**
@@ -164,20 +213,32 @@ function loadTrackingScripts( callback ) {
 		},
 		function( onComplete ) {
 			loadScript.loadScript( LINKED_IN_SCRIPT_URL, onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( MEDIA_WALLAH_URL, onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( QUORA_URL, onComplete );
 		}
 	], function( errors ) {
 		if ( ! some( errors ) ) {
-			// update Facebook's tracking global
+			// init Facebook's tracking global
 			window.fbq( 'init', TRACKING_IDS.facebookInit );
 
-			// update Bing's tracking global
+			// init Bing's tracking global
 			const bingConfig = {
 				ti: TRACKING_IDS.bingInit,
 				q: window.uetq
 			};
 
-			// update Twitter's tracking global
+			// init Twitter's tracking global
 			window.twq( 'init', TRACKING_IDS.twitterPixelId );
+
+			// init Media Wallah tracking
+			initMediaWallah();
+
+			// init Quora tracking
+			window.qp( 'init', TRACKING_IDS.quoraPixelId );
 
 			if ( typeof UET !== 'undefined' ) {
 				// bing's script creates the UET global for us
@@ -197,11 +258,30 @@ function loadTrackingScripts( callback ) {
 }
 
 /**
+ * Returns whether ad tracking is allowed.
+ *
+ * This function returns false if:
+ *
+ * 1. 'ad-tracking' is disabled
+ * 2. `Do Not Track` is enabled
+ * 3. `document.location.href` may contain personally identifiable information
+ *
+ * @returns {Boolean}
+ */
+function isAdTrackingAllowed() {
+	return config.isEnabled( 'ad-tracking' ) && ! doNotTrack() && ! isPiiUrl();
+}
+
+/**
  * Fire tracking events for the purposes of retargeting on all Calypso pages
  *
  * @returns {void}
  */
 function retarget() {
+	if ( ! isAdTrackingAllowed() ) {
+		return;
+	}
+
 	if ( ! hasStartedFetchingScripts ) {
 		return loadTrackingScripts( retarget );
 	}
@@ -237,13 +317,45 @@ function retarget() {
 
 	// One by AOL
 	new Image().src = ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL;
+
+	// Quora
+	window.qp( 'track', 'ViewContent' );
+}
+
+/**
+ * Fire custom facebook conversion tracking event.
+ *
+ * @param {String} name - The name of the custom event.
+ * @param {Object} properties - The custom event attributes.
+ * @returns {void}
+ */
+function trackCustomFacebookConversionEvent( name, properties ) {
+	window.fbw && window.fbq(
+		'trackCustom',
+		name,
+		properties
+	);
+}
+
+/**
+ * Fire custom adwords conversation tracking event.
+ *
+ * @param {Object} properties - The custom event attributes.
+ * @returns {void}
+ */
+function trackCustomAdWordsRemarketingEvent( properties ) {
+	window.google_trackConversion && window.google_trackConversion( {
+		google_conversion_id: GOOGLE_CONVERSION_ID,
+		google_custom_params: properties,
+		google_remarketing_only: true
+	} );
 }
 
 /**
  * A generic function that we can export and call to track plans page views with our ad partners
  */
 function retargetViewPlans() {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -257,7 +369,7 @@ function retargetViewPlans() {
  * @returns {void}
  */
 function recordAddToCart( cartItem ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -298,7 +410,7 @@ function recordViewCheckout( cart ) {
  * @returns {void}
  */
 function recordOrder( cart, orderId ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -323,6 +435,7 @@ function recordOrder( cart, orderId ) {
 	// 3. Fire a single tracking event without any details about what was purchased
 	new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
 	new Image().src = PANDORA_CONVERSION_PIXEL_URL;
+	window.qp( 'track', 'Generic' );
 }
 
 /**
@@ -333,7 +446,7 @@ function recordOrder( cart, orderId ) {
  * @returns {void}
  */
 function recordProduct( product, orderId ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -465,7 +578,7 @@ function recordProduct( product, orderId ) {
  * @param {Number} orderId - the order id
  */
 function recordOrderInAtlas( cart, orderId ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -499,7 +612,7 @@ function recordOrderInAtlas( cart, orderId ) {
  * @returns {void}
  */
 function recordOrderInFloodlight( cart, orderId ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -524,7 +637,7 @@ function recordOrderInFloodlight( cart, orderId ) {
  * @returns {void}
  */
 function recordAliasInFloodlight() {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -544,7 +657,7 @@ function recordAliasInFloodlight() {
  * @returns {void}
  */
 function recordSignupStartInFloodlight() {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -564,7 +677,7 @@ function recordSignupStartInFloodlight() {
  * @returns {void}
  */
 function recordSignupCompletionInFloodlight() {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -585,7 +698,7 @@ function recordSignupCompletionInFloodlight() {
  * @returns {void}
  */
 function recordPageViewInFloodlight( urlPath ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -672,7 +785,7 @@ function tracksAnonymousUserId() {
  * @returns {void}
  */
 function recordParamsInFloodlight( params ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -725,7 +838,7 @@ function floodlightCacheBuster() {
  * @returns {void}
  */
 function recordOrderInCriteo( cart, orderId ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -743,7 +856,7 @@ function recordOrderInCriteo( cart, orderId ) {
  * @returns {void}
  */
 function recordViewCheckoutInCriteo( cart ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -774,7 +887,7 @@ function cartToCriteoItems( cart ) {
  * Records in Criteo that the visitor viewed the plans page
  */
 function recordPlansViewInCriteo() {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -792,7 +905,7 @@ function recordPlansViewInCriteo() {
  * @returns {void}
  */
 function recordInCriteo( eventName, eventProps ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -848,7 +961,7 @@ function criteoSiteType() {
  * @returns {void}
  */
 function recordOrderInGoogleAnalytics( cart, orderId ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -922,19 +1035,21 @@ module.exports = {
 	retarget: function( context, next ) {
 		const nextFunction = typeof next === 'function' ? next : noop;
 
-		if ( config.isEnabled( 'ad-tracking' ) ) {
-			retarget();
-		}
+		retarget();
 
 		nextFunction();
 	},
 
+	retargetViewPlans,
+
 	recordAliasInFloodlight,
 	recordPageViewInFloodlight,
-	retargetViewPlans,
+
 	recordAddToCart,
 	recordViewCheckout,
 	recordOrder,
 	recordSignupStart,
-	recordSignupCompletion
+	recordSignupCompletion,
+	trackCustomFacebookConversionEvent,
+	trackCustomAdWordsRemarketingEvent,
 };

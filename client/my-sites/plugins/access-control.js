@@ -20,14 +20,6 @@ const hasErrorCondition = ( site, type ) => {
 	return errorConditions[ type ];
 };
 
-const getWpcomPluginPageError = () => {
-	return {
-		title: i18n.translate( 'Oops! Not supported' ),
-		line: i18n.translate( 'This site doesn\'t support installing plugins. Switch to a self-hosted site to install and manage plugins' ),
-		illustration: '/calypso/images/drake/drake-whoops.svg'
-	};
-};
-
 const hasRestrictedAccess = ( site ) => {
 	site = site || sites.getSelectedSite();
 
@@ -36,7 +28,7 @@ const hasRestrictedAccess = ( site ) => {
 		return {
 			title: i18n.translate( 'Not Available' ),
 			line: i18n.translate( 'The page you requested could not be found' ),
-			illustration: '/calypso/images/drake/drake-404.svg',
+			illustration: '/calypso/images/illustrations/illustration-404.svg',
 			fullWidth: true
 		};
 	} else if ( hasErrorCondition( site, 'notMinimumJetpackVersion' ) ) {
@@ -53,10 +45,6 @@ const hasRestrictedAccess = ( site ) => {
 				dismissID: 'allSitesNotOnMinJetpackVersion' + config( 'jetpack_min_version' ) + '-' + site.ID
 			}
 		);
-	}
-
-	if ( ! sites.hasSiteWithPlugins() ) {
-		return getWpcomPluginPageError();
 	}
 };
 

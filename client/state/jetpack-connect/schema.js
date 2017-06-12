@@ -22,16 +22,12 @@ export const jetpackConnectAuthorizeSchema = {
 			type: 'object',
 			required: [ 'queryObject', 'timestamp' ],
 			properties: {
-				activateManageSecret: { type: 'string' },
 				authorizationCode: { type: 'string ' },
 				authorizeError: { type: 'boolean' },
 				authorizeSuccess: { type: 'boolean' },
 				autoAuthorize: { type: 'boolean' },
-				isActivating: { type: 'boolean' },
 				isAuthorizing: { type: 'boolean' },
 				isRedirectingToWpAdmin: { type: 'boolean' },
-				manageActivated: { type: 'boolean' },
-				manageActivatedError: { type: 'boolean' },
 				plansUrl: { type: 'string' },
 				queryObject: {
 					type: 'object',
@@ -59,5 +55,26 @@ export const jetpackConnectAuthorizeSchema = {
 			},
 			additionalProperties: false
 		}
+	}
+};
+
+export const jetpackAuthAttemptsSchema = {
+	type: 'object',
+	additionalProperties: false,
+	patternProperties: {
+		'^.+$': {
+			type: 'object',
+			required: [ 'attempt', 'timestamp' ],
+			attempt: { type: 'number' },
+			timestamp: { type: 'number' }
+		}
+	}
+};
+
+export const jetpackConnectSelectedPlansSchema = {
+	type: 'object',
+	additionalProperties: false,
+	patternProperties: {
+		'^.+$': { type: [ 'string', 'null' ] }
 	}
 };

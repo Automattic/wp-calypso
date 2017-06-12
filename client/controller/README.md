@@ -9,7 +9,6 @@ both versions are provided transparently in those cases (by `index.web.js` and
 
 These middlewares include:
 * `makeLayout`: creates a `Layout` (or `LayoutLoggedOut`) component in `context.layout`.
-  Accepts `primary`, `secondary`, and `tertiary` arguments which it will use to
-  populate the corresponding `<div>`s.
+  Accepts `primary` and `secondary` arguments which it will use to populate the corresponding `<div>`s.
 * `clientRouter`: Essentially an alias for `page`, which invokes a client-side
   `render` middleware after all other middlewares.

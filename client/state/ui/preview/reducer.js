@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -13,6 +8,7 @@ import {
 	PREVIEW_TYPE_SET,
 	PREVIEW_TYPE_RESET,
 } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 
 export function currentPreviewUrl( state = null, action ) {
 	switch ( action.type ) {

@@ -1,25 +1,20 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
-
+import { combineReducers } from 'state/utils';
 import {
 	SUPPORT_USER_ACTIVATE,
 	SUPPORT_USER_TOKEN_FETCH,
 	SUPPORT_USER_ERROR,
+	SUPPORT_USER_PREFILL,
+	SUPPORT_USER_SET_USERNAME,
 	SUPPORT_USER_TOGGLE_DIALOG,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 
 export function isSupportUser( state = false, { type } ) {
 	switch ( type ) {
 		case SUPPORT_USER_ACTIVATE:
 			return true;
-		case SERIALIZE:
-			return false;
-		case DESERIALIZE:
-			return false;
 	}
 
 	return state;
@@ -31,10 +26,6 @@ export function isTransitioning( state = false, { type } ) {
 			return true;
 		case SUPPORT_USER_ERROR:
 			return false;
-		case SERIALIZE:
-			return false;
-		case DESERIALIZE:
-			return false;
 	}
 	return state;
 }
@@ -42,13 +33,11 @@ export function isTransitioning( state = false, { type } ) {
 export function showDialog( state = false, { type } ) {
 	switch ( type ) {
 		case SUPPORT_USER_TOGGLE_DIALOG:
-			return !state;
+			return ! state;
 		case SUPPORT_USER_ERROR:
 			return true;
-		case SERIALIZE:
-			return false;
-		case DESERIALIZE:
-			return false;
+		case SUPPORT_USER_PREFILL:
+			return true;
 	}
 
 	return state;
@@ -60,12 +49,17 @@ export function errorMessage( state = null, action ) {
 			return action.errorMessage;
 		case SUPPORT_USER_ACTIVATE:
 			return null;
-		case SERIALIZE:
-			return null;
-		case DESERIALIZE:
-			return null;
 	}
 
+	return state;
+}
+
+export function username( state = null, action ) {
+	switch ( action.type ) {
+		case SUPPORT_USER_PREFILL:
+		case SUPPORT_USER_SET_USERNAME:
+			return action.username;
+	}
 	return state;
 }
 
@@ -74,4 +68,5 @@ export default combineReducers( {
 	isSupportUser,
 	isTransitioning,
 	showDialog,
+	username,
 } );

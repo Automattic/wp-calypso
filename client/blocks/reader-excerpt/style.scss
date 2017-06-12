@@ -1,0 +1,15 @@
+.reader-excerpt {
+	sup, sub {
+		vertical-align: baseline;
+		position: relative;
+		font-size: 0.83em;
+	}
+
+	sup {
+		top: -0.4em;
+	}
+
+	sub {
+		bottom: -0.2em;
+	}
+}

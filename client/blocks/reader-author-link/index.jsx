@@ -2,18 +2,17 @@
  * External dependencies
  */
 import React from 'react';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import * as stats from 'reader/stats';
 
-const authorNameBlacklist = [ 'admin' ];
-
 const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
-	const recordAuthorClick = ( { } ) => {
+	const recordAuthorClick = ( {} ) => {
 		stats.recordAction( 'click_author' );
 		stats.recordGaEvent( 'Clicked Author Link' );
 		if ( post ) {
@@ -28,7 +27,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 	const authorName = get( author, 'name', null );
 
 	// If the author name is blacklisted, don't return anything
-	if ( ! authorName || includes( authorNameBlacklist, authorName.toLowerCase() ) ) {
+	if ( ! authorName || isAuthorNameBlacklisted( authorName ) ) {
 		return null;
 	}
 
@@ -36,7 +35,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 
 	// If we have neither author.URL or siteUrl, just return children in a wrapper
 	if ( ! siteUrl ) {
-		return ( <span className={ classes }>{children}</span> );
+		return <span className={ classes }>{ children }</span>;
 	}
 
 	return (
@@ -49,7 +48,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 ReaderAuthorLink.propTypes = {
 	author: React.PropTypes.object.isRequired,
 	post: React.PropTypes.object, // for stats only,
-	siteUrl: React.PropTypes.string // used instead of author.URL if present
+	siteUrl: React.PropTypes.string, // used instead of author.URL if present
 };
 
 export default ReaderAuthorLink;

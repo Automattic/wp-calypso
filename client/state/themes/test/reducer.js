@@ -18,9 +18,9 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	THEME_ACTIVATE_REQUEST,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
-	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_ACTIVATE,
+	THEME_ACTIVATE_SUCCESS,
+	THEME_ACTIVATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
@@ -85,7 +85,8 @@ describe( 'reducer', () => {
 			'themesUI',
 			'uploadTheme',
 			'themePreviewOptions',
-			'themePreviewVisibility'
+			'themePreviewVisibility',
+			'themeFilters',
 		] );
 	} );
 
@@ -165,26 +166,6 @@ describe( 'reducer', () => {
 				'2916284:{"search":"Hello"}': false
 			} );
 		} );
-
-		it( 'should never persist state', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"Hello"}': true
-			} );
-
-			const state = queryRequests( original, { type: SERIALIZE } );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		it( 'should never load persisted state', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"Hello"}': true
-			} );
-
-			const state = queryRequests( original, { type: DESERIALIZE } );
-
-			expect( state ).to.deep.equal( {} );
-		} );
 	} );
 
 	describe( '#queryRequestErrors()', () => {
@@ -255,30 +236,6 @@ describe( 'reducer', () => {
 					'2916284:{"search":"Twenty"}': 'System error'
 				}
 			} );
-		} );
-
-		it( 'never persists state', () => {
-			const state = queryRequestErrors( deepFreeze( {
-				2916284: {
-					'2916284:{"search":"Twenty"}': null
-				}
-			} ), {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		it( 'never loads persisted state', () => {
-			const state = queryRequestErrors( deepFreeze( {
-				2916284: {
-					'2916284:{"search":"Twenty"}': null
-				}
-			} ), {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
 		} );
 	} );
 
@@ -351,6 +308,9 @@ describe( 'reducer', () => {
 			} ) );
 
 			const state = queries( original, { type: SERIALIZE } );
+
+			// _timestamp is not part of the data
+			delete state._timestamp;
 
 			expect( state ).to.deep.equal( {
 				2916284: {
@@ -540,30 +500,6 @@ describe( 'reducer', () => {
 				}
 			} );
 		} );
-
-		it( 'never persists state', () => {
-			const state = themeRequests( deepFreeze( {
-				2916284: {
-					841: true
-				}
-			} ), {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		it( 'never loads persisted state', () => {
-			const state = themeRequests( deepFreeze( {
-				2916284: {
-					841: true
-				}
-			} ), {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
 	} );
 
 	describe( '#themeRequestErrors()', () => {
@@ -714,7 +650,7 @@ describe( 'reducer', () => {
 
 		it( 'should track theme activate request success', () => {
 			const state = activeThemes( deepFreeze( {} ), {
-				type: THEME_ACTIVATE_REQUEST_SUCCESS,
+				type: THEME_ACTIVATE_SUCCESS,
 				themeStylesheet: 'twentysixteen',
 				siteId: 2211888,
 			} );
@@ -756,7 +692,7 @@ describe( 'reducer', () => {
 
 		it( 'should map site ID to true value if request in progress', () => {
 			const state = activationRequests( deepFreeze( {} ), {
-				type: THEME_ACTIVATE_REQUEST,
+				type: THEME_ACTIVATE,
 				siteId: 2916284,
 			} );
 
@@ -771,7 +707,7 @@ describe( 'reducer', () => {
 					2916284: true
 				} ),
 				{
-					type: THEME_ACTIVATE_REQUEST,
+					type: THEME_ACTIVATE,
 					siteId: 2916285,
 				}
 			);
@@ -788,7 +724,7 @@ describe( 'reducer', () => {
 					2916284: true
 				} ),
 				{
-					type: THEME_ACTIVATE_REQUEST_SUCCESS,
+					type: THEME_ACTIVATE_SUCCESS,
 					siteId: 2916284,
 					themeStylesheet: 'twentysixteen',
 				}
@@ -803,7 +739,7 @@ describe( 'reducer', () => {
 			const state = activationRequests( deepFreeze( {
 				2916284: true
 			} ), {
-				type: THEME_ACTIVATE_REQUEST_FAILURE,
+				type: THEME_ACTIVATE_FAILURE,
 				siteId: 2916284,
 				themeId: 'twentysixteen',
 				error: 'Unknown blog',
@@ -812,26 +748,6 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( {
 				2916284: false
 			} );
-		} );
-
-		it( 'never persists state', () => {
-			const state = activationRequests( deepFreeze( {
-				2916284: true
-			} ), {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		it( 'never loads persisted state', () => {
-			const state = activationRequests( deepFreeze( {
-				2916284: true
-			} ), {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
 		} );
 	} );
 
@@ -913,30 +829,6 @@ describe( 'reducer', () => {
 				}
 			} );
 		} );
-
-		it( 'never persists state', () => {
-			const state = themeInstalls( deepFreeze( {
-				2211667: {
-					karuna: true
-				}
-			} ), {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		it( 'never loads persisted state', () => {
-			const state = themeInstalls( deepFreeze( {
-				2211667: {
-					karuna: false
-				}
-			} ), {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
 	} );
 
 	describe( '#completedActivationRequests()', () => {
@@ -948,7 +840,7 @@ describe( 'reducer', () => {
 
 		it( 'should track theme activate request success', () => {
 			const state = completedActivationRequests( deepFreeze( {} ), {
-				type: THEME_ACTIVATE_REQUEST_SUCCESS,
+				type: THEME_ACTIVATE_SUCCESS,
 				siteId: 2211667,
 			} );
 
@@ -964,26 +856,6 @@ describe( 'reducer', () => {
 
 			expect( state ).to.have.keys( [ '2211667' ] );
 			expect( state ).to.deep.equal( { 2211667: false } );
-		} );
-
-		it( 'never persists state', () => {
-			const state = completedActivationRequests( deepFreeze( {
-				2916284: true
-			} ), {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		it( 'never loads persisted state', () => {
-			const state = completedActivationRequests( deepFreeze( {
-				2916284: true
-			} ), {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
 		} );
 	} );
 
@@ -1050,26 +922,6 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( {
 				2916284: false
 			} );
-		} );
-
-		it( 'never persists state', () => {
-			const state = activeThemeRequests( deepFreeze( {
-				2916284: true
-			} ), {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		it( 'never loads persisted state', () => {
-			const state = activeThemeRequests( deepFreeze( {
-				2916284: true
-			} ), {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
 		} );
 	} );
 } );

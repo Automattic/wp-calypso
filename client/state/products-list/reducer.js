@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -11,8 +6,8 @@ import {
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
 } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 import { productsListSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 // Stores the complete list of products, indexed by the product key
 export const items = createReducer( {}, {

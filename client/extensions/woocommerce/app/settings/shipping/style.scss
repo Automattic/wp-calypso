@@ -1,0 +1,211 @@
+.shipping__credit-card-description {
+	margin-bottom: 4px;
+	color: $gray-text-min;
+	padding-bottom: 8px;
+	font-size: 12px;
+	line-height: 18px;
+}
+
+.shipping__address {
+	margin-bottom: 24px;
+
+	p {
+		margin-bottom: 0;
+
+		&.shipping__address-name {
+			font-weight: bold;
+		}
+	}
+}
+
+.shipping__address-notice {
+	margin-bottom: 0;
+}
+
+.shipping__zones {
+	padding: 0;
+}
+
+.shipping__zones-row,
+.shipping__packages-row {
+	display: flex;
+	flex-direction: row;
+	padding: 16px 0;
+	align-items: center;
+
+	&:not( :last-child ) {
+		border-bottom: 1px solid lighten( $gray, 20% );
+	}
+}
+
+.shipping__zones-header,
+.shipping__packages-header {
+	background: $gray-light;
+	padding: 8px 0;
+	font-size: 13px;
+}
+
+.shipping__zones-row-icon,
+.shipping__packages-row-icon  {
+	width: 10%;
+	text-align: center;
+
+	svg {
+		margin-top: 4px;
+	}
+}
+
+.shipping__zones-row-location {
+	width: 35%;
+}
+
+.shipping__zones-row-location-name,
+.shipping__packages-row-details-name {
+	margin-bottom: 0;
+	font-size: 16px;
+}
+
+.shipping__zones-row-location-description,
+.shipping__zones-row-method-description,
+.shipping__card-name {
+	margin-bottom: 0;
+	color: $gray-text-min;
+	font-size: 13px;
+}
+
+.shipping__zones-row-methods {
+	width: 35%;
+}
+
+.shipping__zones-row-method:not( :last-child ) {
+	margin-bottom: 14px;
+}
+
+.shipping__zones-row-method-name {
+	margin-bottom: 0;
+}
+
+.shipping__zones-row-actions {
+	width: 20%;
+	text-align: center;
+}
+
+.shipping__labels-container.hidden {
+	height: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+.form-label.shipping__labels-paper-size,
+.form-label.shipping__cards-label {
+	margin-bottom: 4px;
+}
+
+.shipping__card {
+	margin-bottom: 14px;
+}
+
+.shipping__card-checkbox {
+	margin-top: 10px;
+	margin-right: 20px;
+}
+
+.payment-logo {
+	float: left;
+	margin-top: 10px;
+	margin-right: 14px;
+}
+
+.shipping__card-details {
+	float: left;
+}
+
+.shipping__card-number {
+	margin-bottom: 0;
+	font-weight: bold;
+}
+
+.shipping__card-date {
+	float: right;
+	color: $gray-text-min;
+	font-style: italic;
+}
+
+.shipping__packages {
+	padding: 0;
+}
+
+.shipping__packages-row-details {
+	width: 35%;
+}
+
+.shipping__packages-row-dimensions {
+	width: 35%;
+}
+
+.shipping__packages-row-actions {
+	width: 20%;
+	text-align: center;
+}
+
+&.shipping__zone-dialog {
+	max-width: 600px;
+	max-height: 80%;
+	display: flex;
+	flex-direction: column;
+
+	.dialog__content {
+		height: 100%;
+		overflow-y: scroll;
+	}
+
+	.dialog__action-buttons {
+		overflow: visible;
+	}
+}
+
+.shipping__zone-dialog-header {
+	margin-bottom: 24px;
+	padding-top: 8px;
+	font-size: 18px;
+}
+
+.shipping-methods__method-container {
+	position: relative;
+	padding: 20px;
+	border-bottom: 1px solid lighten( $gray, 20% );
+	margin-bottom: 24px;
+}
+
+.shipping-methods__free-shipping-option {
+	display: flex;
+	align-items: center;
+
+	.form-text-input-with-affixes {
+		width: 100px;
+		margin: 0 8px;
+	}
+
+	.form-text-input-with-affixes__prefix,
+	.form-currency-input {
+		padding: 4px 8px;
+	}
+}
+
+.shipping-methods__local-pickup {
+	.form-text-input-with-affixes {
+		width: 200px;
+	}
+}
+
+.shipping-methods__local-pickup-taxable {
+	margin-right: 7px;
+	margin-top: 4px;
+}
+
+.shipping-methods__local-pickup-taxable-help {
+	display: inline-block;
+	position: absolute;
+	margin-left: 4px;
+	margin-top: 3px;
+}

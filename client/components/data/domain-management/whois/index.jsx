@@ -1,18 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var StoreConnection = require( 'components/data/store-connection' ),
-	DomainsStore = require( 'lib/domains/store' ),
-	WhoisStore = require( 'lib/domains/whois/store' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import { getSelectedSite } from 'state/ui/selectors';
+import DomainsStore from 'lib/domains/store';
+import StoreConnection from 'components/data/store-connection';
+import upgradesActions from 'lib/upgrades/actions';
+import WhoisStore from 'lib/domains/whois/store';
 
-var stores = [
+const stores = [
 	DomainsStore,
 	WhoisStore
 ];
@@ -27,49 +28,42 @@ function getStateFromStores( props ) {
 	return {
 		domains,
 		whois: WhoisStore.getByDomainName( props.selectedDomainName ),
-		products: props.products,
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
 		context: props.context
 	};
 }
 
-module.exports = React.createClass( {
-	displayName: 'WhoisData',
-
-	propTypes: {
-		component: React.PropTypes.func.isRequired,
-		context: React.PropTypes.object.isRequired,
-		productsList: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		sites: React.PropTypes.object.isRequired
-	},
-
-	mixins: [ observe( 'productsList' ) ],
+class WhoisData extends Component {
+	static propTypes = {
+		component: PropTypes.func.isRequired,
+		context: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired
+	};
 
 	componentWillMount() {
 		this.loadDomains();
 		this.loadWhois();
-	},
+	}
 
 	componentWillUpdate() {
 		this.loadDomains();
 		this.loadWhois();
-	},
+	}
 
 	loadDomains() {
-		const selectedSite = this.props.sites.getSelectedSite();
+		const selectedSite = this.props.selectedSite;
 
 		if ( this.prevSelectedSite !== selectedSite ) {
 			upgradesActions.fetchDomains( selectedSite.ID );
 
 			this.prevSelectedSite = selectedSite;
 		}
-	},
+	}
 
 	loadWhois() {
 		upgradesActions.fetchWhois( this.props.selectedDomainName );
-	},
+	}
 
 	render() {
 		return (
@@ -77,10 +71,15 @@ module.exports = React.createClass( {
 				component={ this.props.component }
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
-				products={ this.props.productsList.get() }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() }
+				selectedSite={ this.props.selectedSite }
 				context={ this.props.context } />
 		);
 	}
-} );
+}
+
+export default connect( ( state ) => {
+	return {
+		selectedSite: getSelectedSite( state )
+	};
+} )( WhoisData );

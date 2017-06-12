@@ -21,6 +21,7 @@ export default React.createClass( {
 		analyticsPrefix: PropTypes.string,
 		taxonomy: PropTypes.string,
 		height: PropTypes.number,
+		compact: PropTypes.bool,
 	},
 
 	getDefaultProps() {
@@ -54,7 +55,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { className, taxonomy, onChange, selected, createLink, multiple, height } = this.props;
+		const { className, taxonomy, onChange, selected, createLink, multiple, height, compact } = this.props;
 
 		const classes = classNames( className );
 		const { search } = this.state;
@@ -74,6 +75,7 @@ export default React.createClass( {
 					createLink={ createLink }
 					multiple={ multiple }
 					height={ height }
+					compact={ compact }
 				/>
 			</div>
 		);

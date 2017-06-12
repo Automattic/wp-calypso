@@ -15,9 +15,10 @@ A flow is defined by two properties, `steps` and `destination`:
 - `steps` is an array listing the steps in the flow, in the order they should be presented to users. You can see a list of available steps from `/client/signup/config/steps.js`.
 - `destination` is a `string` or `function` that determines which page users should be redirected to once they complete the last step in the flow. If provided as a `function`, it is called with all of the dependencies provided in the signup flow, and the user is redirected to whatever it returns.
 
-There are also two optional properties:
+There are also three optional properties:
 - `description` is a brief description of what the flow is for.
 - `lastModified` is a date stamp for when the flow was last updated.
+- `disallowResume` is a boolean that, when true, will send you back to step 1 if you refreshed the page
 
 Example:
 ```javascript

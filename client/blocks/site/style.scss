@@ -11,6 +11,8 @@
 	position: relative;
 
 	&.is-loading {
+		pointer-events: none;
+
 		.site-icon {
 			animation: pulse-light 0.8s ease-in-out infinite;
 		}
@@ -32,6 +34,30 @@
 			.site__domain {
 				color: transparent;
 			}
+		}
+
+	}
+
+	&.is-compact {
+		.site__content {
+			padding: 0 16px;
+		}
+
+		.site__domain {
+			display: none;
+		}
+
+		.site__title {
+			line-height: 46px;
+		}
+
+		.site__home {
+			top: 11px;
+			line-height: 18px;
+		}
+
+		.site__home .gridicon {
+			margin-top: 0;
 		}
 
 	}
@@ -60,6 +86,7 @@
 	overflow: hidden;
 	align-self: center;
 	margin-right: 8px;
+	flex: 0 0 auto;
 }
 
 // The group of site title and domain
@@ -112,6 +139,11 @@
 	.gridicon {
 		margin-top: 5px;
 		vertical-align: middle;
+	}
+
+	.site.is-compact & {
+		width: 24px;
+		height: 24px;
 	}
 
 	&:hover {

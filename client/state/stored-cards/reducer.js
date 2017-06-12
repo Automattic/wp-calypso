@@ -1,14 +1,7 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
-	SERIALIZE,
-	DESERIALIZE,
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_FETCH,
 	STORED_CARDS_FETCH_COMPLETED,
@@ -17,7 +10,7 @@ import {
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { storedCardsSchema } from './schema';
 
 /**
@@ -48,11 +41,6 @@ export const hasLoadedFromServer = ( state = false, action ) => {
 	switch ( action.type ) {
 		case STORED_CARDS_FETCH_COMPLETED:
 			return true;
-
-		// return initial state when serializing/deserializing
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
 	}
 
 	return state;
@@ -74,11 +62,6 @@ export const isFetching = ( state = false, action ) => {
 		case STORED_CARDS_FETCH_COMPLETED:
 		case STORED_CARDS_FETCH_FAILED:
 			return false;
-
-		// return initial state when serializing/deserializing
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
 	}
 
 	return state;
@@ -99,11 +82,6 @@ export const isDeleting = ( state = false, action ) => {
 
 		case STORED_CARDS_DELETE_FAILED:
 		case STORED_CARDS_DELETE_COMPLETED:
-			return false;
-
-		// return initial state when serializing/deserializing
-		case SERIALIZE:
-		case DESERIALIZE:
 			return false;
 	}
 

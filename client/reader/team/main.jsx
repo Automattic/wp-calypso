@@ -8,10 +8,8 @@ import React from 'react';
  */
 import Stream from 'reader/stream';
 
-const TeamStream = ( props ) => {
-	return (
-		<Stream { ...props }></Stream>
-	);
+const TeamStream = props => {
+	return <Stream { ...props } shouldCombineCards={ false } />;
 };
 
 export default TeamStream;

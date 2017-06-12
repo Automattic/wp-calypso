@@ -1,15 +1,9 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import reset from './reset/reducer';
+import { combineReducers, createReducer } from 'state/utils';
 import settings from './settings/reducer';
-
-import { createReducer } from 'state/utils';
 
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,

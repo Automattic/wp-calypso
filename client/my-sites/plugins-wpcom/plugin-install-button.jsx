@@ -11,9 +11,12 @@ import page from 'page';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getEligibility } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { transferStates } from 'state/automated-transfer/constants';
 
 export const WpcomPluginInstallButton = props => {
 	const {
@@ -24,15 +27,23 @@ export const WpcomPluginInstallButton = props => {
 		siteId,
 		eligibilityData,
 		navigateTo,
-		initiateTransfer
+		initiateTransfer,
+		transferState,
+		trackButtonAction,
 	} = props;
+
+	if ( transferStates.COMPLETE === transferState ) {
+		return null;
+	}
 
 	function installButtonAction( event ) {
 		event.preventDefault();
+		trackButtonAction( plugin.slug );
+		const eligibilityHolds = get( eligibilityData, 'eligibilityHolds', [] );
+		const eligibilityWarnings = get( eligibilityData, 'eligibilityWarnings', [] );
 
-		const hasErrors = !! get( eligibilityData, 'eligibilityHolds', [] ).length;
-		const hasWarnings = !! get( eligibilityData, 'eligibilityWarnings', [] ).length;
-
+		const hasErrors = !! eligibilityHolds.length;
+		const hasWarnings = !! eligibilityWarnings.length;
 		if ( ! hasErrors && ! hasWarnings ) {
 			// No need to show eligibility warnings page, initiate transfer immediately
 			initiateTransfer( siteId, null, plugin.slug );
@@ -59,12 +70,14 @@ const mapStateToProps = state => {
 	return {
 		siteId: site.ID,
 		siteSlug: site.slug,
-		eligibilityData: getEligibility( state, site.ID )
+		eligibilityData: getEligibility( state, site.ID ),
+		transferState: getAutomatedTransferStatus( state, site.ID ),
 	};
 };
 
 const mapDispatchToProps = {
-	initiateTransfer: initiateThemeTransfer
+	initiateTransfer: initiateThemeTransfer,
+	trackButtonAction: ( plugin ) => recordTracksEvent( 'calypso_automated_transfer_click_plugin_install', { plugin } )
 };
 
 const withNavigation = WrappedComponent => props => <WrappedComponent { ...{ ...props, navigateTo: page } } />;

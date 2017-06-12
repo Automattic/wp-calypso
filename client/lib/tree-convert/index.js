@@ -28,14 +28,14 @@ TreeConvert.prototype.treeify = function( items ) {
 		indexedNodes = {};
 
 	items.forEach( function( item, i ) {
-		indexedNodes[items[i][ this.key ]] = item;
+		indexedNodes[ items[ i ][ this.key ] ] = item;
 	}, this );
 
 	items.forEach( function( item ) {
 		var parentNode;
 
 		if ( item.parent > 0 && indexedNodes[ item.parent ] ) {
-			parentNode = indexedNodes[item.parent];
+			parentNode = indexedNodes[ item.parent ];
 			parentNode.items = parentNode.items || [];
 			parentNode.items.push( item );
 		} else {

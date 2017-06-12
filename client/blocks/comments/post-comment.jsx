@@ -1,15 +1,16 @@
-/***
+/**
  * External dependencies
  */
-import React from 'react';
-import { noop } from 'lodash';
+import React, { Component } from 'react';
+import { get, noop, some } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
-/***
+/**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import {
 	getCurrentUser
 } from 'state/current-user/selectors';
@@ -21,39 +22,30 @@ import {
 	recordTrack
 } from 'reader/stats';
 import { getStreamUrl } from 'reader/route';
-import CommentLikeButtonContainer from './comment-likes';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
+import CommentEditForm from './comment-edit-form';
 import { PLACEHOLDER_STATE } from 'state/comments/constants';
 import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
+import CommentActions from './comment-actions';
 
-class PostComment extends React.Component {
-	constructor() {
-		super();
+class PostComment extends Component {
+	state = {
+		showReplies: false
+	};
 
-		this.state = {
-			showReplies: false
-		};
-
-		// bind event handlers to this instance
-		Object.getOwnPropertyNames( PostComment.prototype )
-			.filter( ( prop ) => prop.indexOf( 'handle' ) === 0 )
-			.filter( ( prop ) => typeof this[ prop ] === 'function' )
-			.forEach( ( prop ) => this[ prop ] = this[ prop ].bind( this ) );
-	}
-
-	handleToggleRepliesClick() {
+	handleToggleRepliesClick = () => {
 		this.setState( { showReplies: ! this.state.showReplies } );
 	}
 
-	handleReply() {
+	handleReply = () => {
 		this.props.onReplyClick( this.props.commentId );
 		this.setState( { showReplies: true } ); // show the comments when replying
 	}
 
-	handleAuthorClick( event ) {
+	handleAuthorClick = ( event ) => {
 		recordAction( 'comment_author_click' );
 		recordGaEvent( 'Clicked Author Name' );
 		recordTrack( 'calypso_reader_comment_author_click', {
@@ -65,7 +57,7 @@ class PostComment extends React.Component {
 	}
 
 	renderRepliesList() {
-		const commentChildrenIds = this.props.commentsTree.getIn( [ this.props.commentId, 'children' ] ).toJS();
+		const commentChildrenIds = get( this.props.commentsTree, [ this.props.commentId, 'children' ] );
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const exceedsMaxChildrenToShow = commentChildrenIds.length < this.props.maxChildrenToShow;
 		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow;
@@ -107,8 +99,8 @@ class PostComment extends React.Component {
 			{ showReplies
 				? <ol className="comments__list">
 					{
-						commentChildrenIds.reverse().map( ( childId ) =>
-							<PostComment { ...this.props } depth={ this.props.depth + 1 } key={ childId } commentId={ childId }/>
+						commentChildrenIds.map( ( childId ) =>
+							<PostComment { ...this.props } depth={ this.props.depth + 1 } key={ childId } commentId={ childId } />
 						)
 					}
 				</ol>
@@ -131,41 +123,14 @@ class PostComment extends React.Component {
 			onCommentSubmit={ this.props.onCommentSubmit } />;
 	}
 
-	renderCommentActions( comment ) {
-		const post = this.props.post;
-		const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
-		const showCancelReplyButton = this.props.activeReplyCommentID === this.props.commentId;
-
-		// Only render actions for non placeholders and approved
-		if ( comment.isPlaceholder || comment.status !== 'approved' ) {
-			return null;
-		}
-
-		return (
-			<div className="comments__comment-actions">
-				{ showReplyButton
-					? <button className="comments__comment-actions-reply" onClick={ this.handleReply }>
-						<Gridicon icon="reply" size={ 18 } />
-						<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
-					</button>
-					: null }
-				{ showCancelReplyButton && <button className="comments__comment-actions-cancel-reply" onClick={ this.props.onReplyCancel }>{ translate( 'Cancel reply' ) }</button> }
-				<CommentLikeButtonContainer
-					className="comments__comment-actions-like"
-					tagName="button"
-					siteId={ this.props.post.site_ID }
-					postId={ this.props.post.ID }
-					commentId={ comment.ID }
-				/>
-			</div>
-		);
-	}
-
 	render() {
+		// todo: connect this constants to the state (new selector)
 		const commentsTree = this.props.commentsTree;
-		const comment = commentsTree.getIn( [ this.props.commentId, 'data' ] ).toJS();
-		const haveReplyWithError = commentsTree.getIn( [ this.props.commentId, 'children' ] )
-			.some( ( childId ) => commentsTree.getIn( [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR );
+		const comment = get( commentsTree, [ this.props.commentId, 'data' ] );
+
+		// todo: connect this constants to the state (new selector)
+		const haveReplyWithError = some( get( commentsTree, [ this.props.commentId, 'children' ] ),
+			( childId ) => get( commentsTree, [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR );
 
 		// If it's a pending comment, use the current user as the author
 		if ( comment.isPlaceholder ) {
@@ -203,7 +168,9 @@ class PostComment extends React.Component {
 						: <Gravatar user={ comment.author } /> }
 
 					{ authorUrl
-						? <a href={ authorUrl } className="comments__comment-username" onClick={ this.handleAuthorClick }>{ comment.author.name }</a>
+						? <a href={ authorUrl } className="comments__comment-username" onClick={ this.handleAuthorClick }>
+								{ comment.author.name }
+							</a>
 						: <strong className="comments__comment-username">{ comment.author.name }</strong> }
 					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>
@@ -216,9 +183,30 @@ class PostComment extends React.Component {
 					? <p className="comments__comment-moderation">{ translate( 'Your comment is awaiting moderation.' ) }</p>
 					: null }
 
-				<PostCommentContent content={ comment.content } isPlaceholder={ comment.isPlaceholder } />
+				{ this.props.activeEditCommentId !== this.props.commentId &&
+					<PostCommentContent content={ comment.content } isPlaceholder={ comment.isPlaceholder } />
+				}
 
-				{ this.renderCommentActions( comment ) }
+				{ isEnabled( 'comments/moderation-tools-in-posts' ) && this.props.activeEditCommentId === this.props.commentId &&
+					<CommentEditForm
+						post={ this.props.post }
+						commentId={ this.props.commentId }
+						commentText={ comment.content }
+						onCommentSubmit={ this.props.onEditCommentCancel } />
+				}
+
+				<CommentActions
+					post={ this.props.post }
+					comment={ comment }
+					showModerationTools={ this.props.showModerationTools }
+					activeEditCommentId={ this.props.activeEditCommentId }
+					activeReplyCommentID={ this.props.activeReplyCommentID }
+					commentId={ this.props.commentId }
+					editComment={ this.props.onEditCommentClick }
+					editCommentCancel={ this.props.onEditCommentCancel }
+					handleReply={ this.handleReply }
+					onReplyCancel={ this.props.onReplyCancel } />
+
 				{ haveReplyWithError ? null : this.renderCommentForm() }
 				{ this.renderRepliesList() }
 			</li>

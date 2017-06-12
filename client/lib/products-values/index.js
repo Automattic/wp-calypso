@@ -1,15 +1,18 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/assign' ),
-	difference = require( 'lodash/difference' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	pick = require( 'lodash/pick' );
+import {
+	assign,
+	difference,
+	isEmpty,
+	pick,
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
+	JETPACK_PLANS,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
 	PLAN_PERSONAL,
@@ -27,9 +30,9 @@ import {
 	PLAN_MONTHLY_PERIOD,
 } from 'lib/plans/constants';
 
-var schema = require( './schema.json' );
+const schema = require( './schema.json' );
 
-var productDependencies = {
+const productDependencies = {
 	domain: {
 		domain_redemption: true,
 		gapps: true,
@@ -43,7 +46,7 @@ var productDependencies = {
 };
 
 function assertValidProduct( product ) {
-	var missingAttributes = difference( schema.required, Object.keys( product ) );
+	const missingAttributes = difference( schema.required, Object.keys( product ) );
 
 	if ( ! isEmpty( missingAttributes ) ) {
 		throw new Error( 'Missing required attributes for ProductValue: [' +
@@ -69,6 +72,13 @@ function isChargeback( product ) {
 	return product.product_slug === PLAN_CHARGEBACK;
 }
 
+function includesProduct( products, product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return ( products.indexOf( product.product_slug ) >= 0 );
+}
+
 function isFreePlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -91,7 +101,7 @@ function isFreeTrial( product ) {
 }
 
 function isPersonal( product ) {
-	var personalProducts = [ PLAN_PERSONAL, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ];
+	const personalProducts = [ PLAN_PERSONAL, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ];
 
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -100,7 +110,7 @@ function isPersonal( product ) {
 }
 
 function isPremium( product ) {
-	var premiumProducts = [ PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
+	const premiumProducts = [ PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
 
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -109,7 +119,7 @@ function isPremium( product ) {
 }
 
 function isBusiness( product ) {
-	var businessProducts = [ PLAN_BUSINESS, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
+	const businessProducts = [ PLAN_BUSINESS, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
 
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -125,12 +135,10 @@ function isEnterprise( product ) {
 }
 
 function isJetpackPlan( product ) {
-	var jetpackProducts = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ];
-
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return ( jetpackProducts.indexOf( product.product_slug ) >= 0 );
+	return ( JETPACK_PLANS.indexOf( product.product_slug ) >= 0 );
 }
 
 function isJetpackBusiness( product ) {
@@ -252,13 +260,13 @@ function getDomainProductRanking( product ) {
 }
 
 function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
-	var slug, dependentSlug, isPlansOnlyDependent = false;
+	let isPlansOnlyDependent = false;
 
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	slug = isDomainRegistration( product ) ? 'domain' : product.product_slug;
-	dependentSlug = isDomainRegistration( dependentProduct ) ? 'domain' : dependentProduct.product_slug;
+	const slug = isDomainRegistration( product ) ? 'domain' : product.product_slug;
+	const dependentSlug = isDomainRegistration( dependentProduct ) ? 'domain' : dependentProduct.product_slug;
 
 	if ( domainsWithPlansOnly ) {
 		isPlansOnlyDependent = isPlan( product ) && ( isDomainRegistration( dependentProduct ) || isDomainMapping( dependentProduct ) );
@@ -350,6 +358,7 @@ function isSpaceUpgrade( product ) {
 module.exports = {
 	formatProduct,
 	getDomainProductRanking,
+	includesProduct,
 	isBusiness,
 	isChargeback,
 	isCredits,

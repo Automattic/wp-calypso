@@ -38,7 +38,7 @@ export default ( createStore ) => ( ...args ) => {
 		// Preserve original behavior
 		const hasChanged = originalSet.apply( this, arguments );
 		if ( ! hasChanged ) {
-			return;
+			return false;
 		}
 
 		// If we're tracking the site in state, apply attributes atop what we
@@ -47,6 +47,8 @@ export default ( createStore ) => ( ...args ) => {
 		if ( storeSite ) {
 			store.dispatch( receiveSite( this ) );
 		}
+
+		return true;
 	};
 
 	return store;

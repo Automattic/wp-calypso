@@ -9,9 +9,17 @@ import url from 'url';
  */
 import safeImageURL from 'lib/safe-image-url';
 
-const IMAGE_SCALE_FACTOR = ( typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ) ? 2 : 1;
+const IMAGE_SCALE_FACTOR = typeof window !== 'undefined' &&
+	window.devicePixelRatio &&
+	window.devicePixelRatio > 1
+	? 2
+	: 1;
 
 const DEFAULT_PHOTON_QUALITY = 80; // 80 was chosen after some heuristic testing as the best blend of size and quality
+
+export function isPhotonHost( hostname ) {
+	return /^i[0-2]\.wp\.com$/.test( hostname );
+}
 
 export function imageSizeFromAttachments( post, imageUrl ) {
 	if ( ! post.attachments ) {
@@ -25,7 +33,7 @@ export function imageSizeFromAttachments( post, imageUrl ) {
 	if ( found ) {
 		return {
 			width: found.width,
-			height: found.height
+			height: found.height,
 		};
 	}
 }
@@ -121,6 +129,8 @@ export function thumbIsLikelyImage( thumb ) {
 /**
  * Determines if an iframe is from a source we trust.  We allow these to be the featured media and also give
  * them a free-er sandbox
+ * @param  {object} iframe the iframe to check
+ * @return {bool} true if whitelisted
  */
 export function iframeIsWhitelisted( iframe ) {
 	const iframeWhitelist = [
@@ -138,6 +148,16 @@ export function iframeIsWhitelisted( iframe ) {
 		'facebook.com',
 		'embed.itunes.apple.com',
 		'nyt.com',
+		'google.com',
+		'mixcloud.com',
+		'players.brightcove.net',
+		'embed.ted.com',
+		'fast.wistia.net',
+		'player.twitch.tv',
+		'archive.org',
+		'codepen.io',
+		'www.audiomack.com',
+		'player.theplatform.com',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
@@ -151,14 +171,23 @@ export function isCandidateForCanonicalImage( image ) {
 		return false;
 	}
 
-	if ( image.width < 350 ) {
+	if ( image.width < 100 ) {
 		return false;
 	}
 
-	if ( ( image.width * image.height ) < 30000 ) {
+	if ( image.width * image.height < 100 * 75 ) {
 		return false;
 	}
 	return true;
+}
+
+function getPathname( uri ) {
+	const parsedUrl = url.parse( uri );
+	const path = parsedUrl.pathname;
+	if ( isPhotonHost( parsedUrl.hostname ) ) {
+		return path.substring( path.indexOf( '/', 1 ) );
+	}
+	return path;
 }
 
 /** returns whether or not a posts featuredImages is contained within the contents
@@ -169,11 +198,13 @@ export function isCandidateForCanonicalImage( image ) {
  */
 export function isFeaturedImageInContent( post ) {
 	if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
-		const featuredImageUrl = url.parse( post.post_thumbnail.URL );
-		const indexOfContentImage = findIndex( post.images, img => {
-			const imgUrl = url.parse( img.src );
-			return imgUrl.pathname === featuredImageUrl.pathname;
-		}, 1 ); // skip first element in post.images because it is always the featuredImage
+		const featuredImagePath = getPathname( post.post_thumbnail.URL );
+
+		const indexOfContentImage = findIndex(
+			post.images,
+			img => getPathname( img.src ) === featuredImagePath,
+			1,
+		); // skip first element in post.images because it is always the featuredImage
 
 		if ( indexOfContentImage > 0 ) {
 			return indexOfContentImage;
@@ -187,20 +218,20 @@ export function deduceImageWidthAndHeight( image ) {
 	if ( image.height && image.width ) {
 		return {
 			height: image.height,
-			width: image.width
+			width: image.width,
 		};
 	}
 	if ( image.naturalHeight && image.natualWidth ) {
 		return {
 			height: image.naturalHeight,
-			width: image.naturalWidth
+			width: image.naturalWidth,
 		};
 	}
 	if ( image.dataset && image.dataset.origSize ) {
 		const [ width, height ] = image.dataset.origSize.split( ',' ).map( Number );
 		return {
 			width,
-			height
+			height,
 		};
 	}
 	return null;

@@ -26,47 +26,56 @@ describe( 'normalization-rules', () => {
 		} );
 
 		it( 'should classify a PHOTO_ONLY post', () => {
-			verifyClassification( {
-				canonical_media: {
-					mediaType: 'image',
-					width: 1000
+			verifyClassification(
+				{
+					canonical_media: {
+						mediaType: 'image',
+						width: 1000,
+					},
+					better_excerpt_no_html: repeat( 'no ', 10 ),
 				},
-				better_excerpt_no_html: repeat( 'no ', 10 )
-			}, [ DISPLAY_TYPES.PHOTO_ONLY ] );
+				[ DISPLAY_TYPES.PHOTO_ONLY ],
+			);
 		} );
 
 		it( 'should not classify a PHOTO_ONLY post if the content is too long', () => {
-			verifyClassification( {
-				canonical_media: {
-					mediaType: 'image',
-					width: 1000
+			verifyClassification(
+				{
+					canonical_media: {
+						mediaType: 'image',
+						width: 1000,
+					},
+					better_excerpt_no_html: repeat( 'no ', 100 ),
 				},
-				better_excerpt_no_html: repeat( 'no ', 100 )
-			}, [ DISPLAY_TYPES.UNCLASSIFIED ] );
+				[ DISPLAY_TYPES.UNCLASSIFIED ],
+			);
 		} );
 
 		it( 'should classify a PHOTO_ONLY post if it has enough images for a gallery, but not all of them are big enough', () => {
-			verifyClassification( {
-				canonical_media: {
-					mediaType: 'image',
-					width: 1000
+			verifyClassification(
+				{
+					canonical_media: {
+						mediaType: 'image',
+						width: 1000,
+					},
+					content_images: [
+						{
+							width: 1000,
+						},
+						{
+							width: 50,
+						},
+						{
+							width: 50,
+						},
+						{
+							width: 50,
+						},
+					],
+					better_excerpt_no_html: repeat( 'no ', 5 ),
 				},
-				content_images: [
-					{
-						width: 1000
-					},
-					{
-						width: 150
-					},
-					{
-						width: 150
-					},
-					{
-						width: 150
-					},
-				],
-				better_excerpt_no_html: repeat( 'no ', 5 )
-			}, [ DISPLAY_TYPES.PHOTO_ONLY ] );
+				[ DISPLAY_TYPES.PHOTO_ONLY ],
+			);
 		} );
 	} );
 
@@ -80,12 +89,12 @@ describe( 'normalization-rules', () => {
 				},
 				images: [
 					{
-						src: 'http://example.com/foo/bar/ping.jpg?w=2'
+						src: 'http://example.com/foo/bar/ping.jpg?w=2',
 					},
 					{
-						src: 'http://example.com/foo/bar/ping.jpg?w=20'
+						src: 'http://example.com/foo/bar/ping.jpg?w=20',
 					},
-				]
+				],
 			};
 			expect( isFeaturedImageInContent( post ) ).to.be.equal( 1 );
 		} );
@@ -98,7 +107,7 @@ describe( 'normalization-rules', () => {
 				images: [
 					{
 						src: 'http://example2.com/foo/bar/different.jpg?w=20',
-					}
+					},
 				],
 			};
 			expect( isFeaturedImageInContent( post ) ).to.be.not.ok;
@@ -136,15 +145,15 @@ describe( 'normalization-rules', () => {
 							{
 								name: 'Pick',
 								slug: 'pick',
-								id: 346750
+								id: 346750,
 							},
 							{
 								name: 'Standard Pick',
 								slug: 'standard-pick',
-								id: 337879995
-							}
+								id: 337879995,
+							},
 						],
-					}
+					},
 				};
 
 				addDiscoverProperties( discoverPost );

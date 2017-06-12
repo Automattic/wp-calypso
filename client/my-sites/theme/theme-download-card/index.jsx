@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
@@ -10,19 +9,19 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { localize } from 'i18n-calypso';
 
-const ThemeDownloadCard = React.createClass( {
+class ThemeDownloadCard extends React.PureComponent {
 
-	propTypes: {
-		theme: React.PropTypes.string.isRequired,
+	static propTypes = {
 		href: React.PropTypes.string
-	},
+	}
 
 	render() {
-		// When we don't generate zips, it's because we have released the theme on .org.
-		const downloadURI = this.props.href || ( 'https://downloads.wordpress.org/theme/' + this.props.theme + '.zip' );
+		const { href, translate } = this.props;
+
 		const downloadText =
-			i18n.translate( 'This theme is available for download to be used on your {{a}}WordPress self-hosted{{/a}} installation.', {
+			translate( 'This theme is available for download to be used on your {{a}}WordPress self-hosted{{/a}} installation.', {
 				components: {
 					a: <a href={ 'https://wordpress.org' } />
 				}
@@ -31,10 +30,10 @@ const ThemeDownloadCard = React.createClass( {
 			<Card className="theme-download-card">
 				<Gridicon icon="cloud-download" size={ 48 } />
 				<p>{ downloadText }</p>
-				<Button href={ downloadURI }>{ i18n.translate( 'Download' ) }</Button>
+				<Button href={ href }>{ translate( 'Download' ) }</Button>
 			</Card>
 		);
 	}
-} );
+}
 
-module.exports = ThemeDownloadCard;
+export default localize( ThemeDownloadCard );

@@ -29,7 +29,9 @@ describe( 'Importer store', () => {
 
 			queuePayload( 'no-imports' );
 			fetchTestState()
-				.then( () => { expect( hydratedState(), 'after fetch' ).to.be.true } )
+				.then( () => {
+					expect( hydratedState(), 'after fetch' ).to.be.true;
+				} )
 				.then( done )
 				.catch( done );
 		} );
@@ -39,7 +41,9 @@ describe( 'Importer store', () => {
 
 			queuePayload( 'defunct-importer' );
 			fetchTestState()
-				.then( () => { expect( hydratedState(), 'after fetch' ).to.be.true } )
+				.then( () => {
+					expect( hydratedState(), 'after fetch' ).to.be.true;
+				} )
 				.then( done )
 				.catch( done );
 		} );

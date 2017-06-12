@@ -162,7 +162,7 @@ const PluginsMain = React.createClass( {
 	},
 
 	getEmptyContentUpdateData() {
-		const emptyContentData = { illustration: '/calypso/images/drake/drake-ok.svg' },
+		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' },
 			{ selectedSite } = this.props;
 
 		if ( selectedSite ) {
@@ -185,7 +185,7 @@ const PluginsMain = React.createClass( {
 		if ( selectedSite ) {
 			emptyContentData.actionURL = '/plugins/' + selectedSite.slug;
 			if ( this.props.selectedSiteIsJetpack ) {
-				emptyContentData.illustration = '/calypso/images/drake/drake-jetpack.svg';
+				emptyContentData.illustration = '/calypso/images/illustrations/illustration-jetpack.svg';
 				emptyContentData.title = this.translate( 'Plugins can\'t be updated on %(siteName)s.', {
 					textOnly: true,
 					args: { siteName: selectedSite.title }

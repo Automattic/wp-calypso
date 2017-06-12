@@ -1,0 +1,106 @@
+.stats-views {
+	overflow-x: auto;
+}
+
+.stats-views__months {
+	.is-loading & {
+		display: none;
+	}
+	td, th {
+		padding: 6px;
+		text-align: center;
+		cursor: pointer;
+		user-select: none;
+		font-weight: normal;
+		font-size: 12px;
+		text-transform: uppercase;
+		letter-spacing: .1em;
+	}
+
+	th {
+		font-size: 11px;
+		color: darken( $gray,10 );
+	}
+}
+
+.stats-views__month,
+.stats-views__key-item {
+	background-color: none;
+
+	&.is-year {
+		background: none;
+		text-align: left;
+		font-size: 11px;
+		color: darken( $gray,10 );
+	}
+
+	&.level-0 {
+		background-color: lighten( $gray, 30% );
+	}
+
+	&.level-1 {
+		background-color: lighten( $gray, 20% );
+	}
+
+	&.level-2 {
+		background-color: lighten( $blue-light, 5% );
+	}
+
+	&.level-3 {
+		background-color: lighten( $blue-medium, 5% );
+	}
+
+	&.level-4 {
+		background-color: darken( $blue-medium, 10% );
+		color: white;
+	}
+
+	&.level-5 {
+		background-color: darken( $blue-medium, 30% );
+		color: white;
+	}
+}
+
+.stats-views__month-control {
+	max-width: 280px;
+	margin: 0px auto 10px;
+}
+
+.stats-views__key-container {
+	@include clear-fix;
+	padding-top: 10px;
+	float: right;
+
+	@include breakpoint( "<960px" ) {
+		float: none;
+		margin: 0 auto;
+		margin-bottom: 25px;
+		text-align: center;
+	}
+}
+
+.stats-views__key-label,
+.stats-views__key {
+	display: inline-block;
+}
+
+.stats-views__key-label {
+	font-size: 11px;
+	color: $gray;
+	letter-spacing: .1em;
+	text-transform: uppercase;
+}
+
+.stats-views__key {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	padding: 2px 9px 0 5px;
+
+	.stats-views__key-item {
+		width: 10px;
+		height: 10px;
+		float: left;
+		margin-left: 3px;
+	}
+}

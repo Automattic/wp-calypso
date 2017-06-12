@@ -19,8 +19,6 @@ class SignupThemesList extends Component {
 		surveyQuestion: PropTypes.string,
 		designType: PropTypes.string,
 		handleScreenshotClick: PropTypes.func,
-		handleThemeUpload: PropTypes.func,
-		showThemeUpload: PropTypes.bool,
 		translate: PropTypes.func
 	};
 
@@ -28,8 +26,6 @@ class SignupThemesList extends Component {
 		surveyQuestion: null,
 		designType: null,
 		handleScreenshotClick: noop,
-		handleThemeUpload: noop,
-		showThemeUpload: 'showThemeUpload' === abtest( 'signupThemeUpload' ),
 		translate: identity
 	};
 
@@ -38,6 +34,10 @@ class SignupThemesList extends Component {
 	}
 
 	getComputedThemes() {
+		if ( abtest( 'reduceThemesInSignupTest' ) === 'modified' ) {
+			return getThemes( this.props.surveyQuestion, this.props.designType, 3 );
+		}
+
 		return getThemes( this.props.surveyQuestion, this.props.designType );
 	}
 
@@ -64,12 +64,9 @@ class SignupThemesList extends Component {
 				onMoreButtonClick= { noop }
 				getActionLabel={ getActionLabel }
 				themes= { themes }
-				showThemeUpload= { this.props.showThemeUpload }
-				onThemeUpload= { this.props.handleThemeUpload }
 			/>
 		);
 	}
 }
 
 export default localize( SignupThemesList );
-

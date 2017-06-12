@@ -16,6 +16,8 @@ import {
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import PlanStorage from 'blocks/plan-storage';
 import FilterItem from './filter-item';
 
 export class MediaLibraryFilterBar extends Component {
@@ -97,23 +99,44 @@ export class MediaLibraryFilterBar extends Component {
 		);
 	}
 
+	renderSearchSection() {
+		if ( this.props.filterRequiresUpgrade ) {
+			return null;
+		}
+
+		return (
+			<Search
+				analyticsGroup="Media"
+				pinned
+				fitsContainer
+				onSearch={ this.props.onSearch }
+				initialValue={ this.props.search }
+				placeholder={ this.getSearchPlaceholderText() }
+				delaySearch={ true } />
+		);
+	}
+
+	renderPlanStorage() {
+		const eventName = 'calypso_upgrade_nudge_impression';
+		const eventProperties = { cta_name: 'plan-media-storage' };
+		return (
+			<PlanStorage siteId={ this.props.site.ID }>
+				<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+			</PlanStorage>
+		);
+	}
+
 	render() {
 		return (
-			<SectionNav selectedText={ this.getFilterLabel( this.props.filter ) } hasSearch={ true }>
-				<SectionNavTabs>
-					{ this.renderTabItems() }
-				</SectionNavTabs>
-				{ ! this.props.filterRequiresUpgrade &&
-					<Search
-						analyticsGroup="Media"
-						pinned
-						fitsContainer
-						onSearch={ this.props.onSearch }
-						initialValue={ this.props.search }
-						placeholder={ this.getSearchPlaceholderText() }
-						delaySearch={ true } />
-				}
-			</SectionNav>
+			<div className="media-library__filter-bar">
+				<SectionNav selectedText={ this.getFilterLabel( this.props.filter ) } hasSearch={ true }>
+					<SectionNavTabs>
+						{ this.renderTabItems() }
+					</SectionNavTabs>
+					{ this.renderSearchSection() }
+				</SectionNav>
+				{ this.renderPlanStorage() }
+			</div>
 		);
 	}
 }

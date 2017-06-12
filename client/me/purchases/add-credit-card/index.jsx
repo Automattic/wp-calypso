@@ -15,14 +15,14 @@ import { concatTitle } from 'lib/react-helpers';
 import { createPaygateToken } from 'lib/store-transactions';
 import CreditCardForm from 'blocks/credit-card-form';
 import DocumentHead from 'components/data/document-head';
-import HeaderCake from 'components/header-cake' ;
+import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import titles from 'me/purchases/titles';
 import purchasesPaths from 'me/purchases/paths';
 
 class AddCreditCard extends Component {
 	static propTypes = {
-		addStoredCard: PropTypes.func.isRequired
+		addStoredCard: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
@@ -49,14 +49,16 @@ class AddCreditCard extends Component {
 					createPaygateToken={ this.createPaygateToken }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
 					saveStoredCard={ this.props.addStoredCard }
-					successCallback={ this.goToBillingHistory } />
+					successCallback={ this.goToBillingHistory }
+					showUsedForExistingPurchasesInfo={ true }
+				/>
 			</Main>
 		);
 	}
 }
 
 const mapDispatchToProps = {
-	addStoredCard
+	addStoredCard,
 };
 
 export default connect( null, mapDispatchToProps )( AddCreditCard );

@@ -24,6 +24,7 @@ import StickyPanel from 'components/sticky-panel';
 import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import { isPluginActive } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class StatsSite extends Component {
@@ -109,7 +110,10 @@ class StatsSite extends Component {
 			<Main wideLayout={ true }>
 				<StatsFirstView />
 				<SidebarNavigation />
-				<StatsNavigation section={ period } />
+				<StatsNavigation
+					{ ...this.props }
+					section={ period }
+				/>
 				<div id="my-stats-content">
 					<ChartTabs
 						barClick={ this.barClick }
@@ -143,18 +147,35 @@ class StatsSite extends Component {
 								statType="statsTopPosts"
 								showSummaryLink />
 							<StatsModule
-								path="referrers"
-								moduleStrings={ moduleStrings.referrers }
+								path="searchterms"
+								moduleStrings={ moduleStrings.search }
 								period={ this.props.period }
 								query={ query }
-								statType="statsReferrers"
+								statType="statsSearchTerms"
 								showSummaryLink />
+							{ videoList }
+						</div>
+						<div className="stats__module-column">
+							<Countries
+								path="countries"
+								period={ this.props.period }
+								query={ query }
+								summary={ false } />
 							<StatsModule
 								path="clicks"
 								moduleStrings={ moduleStrings.clicks }
 								period={ this.props.period }
 								query={ query }
 								statType="statsClicks"
+								showSummaryLink />
+						</div>
+						<div className="stats__module-column">
+							<StatsModule
+								path="referrers"
+								moduleStrings={ moduleStrings.referrers }
+								period={ this.props.period }
+								query={ query }
+								statType="statsReferrers"
 								showSummaryLink />
 							<StatsModule
 								path="authors"
@@ -164,21 +185,6 @@ class StatsSite extends Component {
 								statType="statsTopAuthors"
 								className="stats__author-views"
 								showSummaryLink />
-						</div>
-						<div className="stats__module-column">
-							<Countries
-								path="countries"
-								period={ this.props.period }
-								query={ query }
-								summary={ false } />
-							<StatsModule
-								path="searchterms"
-								moduleStrings={ moduleStrings.search }
-								period={ this.props.period }
-								query={ query }
-								statType="statsSearchTerms"
-								showSummaryLink />
-							{ videoList }
 							{ podcastList }
 						</div>
 					</div>
@@ -191,9 +197,12 @@ class StatsSite extends Component {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
 		return {
-			isJetpack: isJetpackSite( state, siteId ),
+			isJetpack,
 			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),
+			isWooConnect: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
+			siteId,
 			slug: getSelectedSiteSlug( state )
 		};
 	},

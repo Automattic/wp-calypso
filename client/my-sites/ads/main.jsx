@@ -1,26 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:ads-settings' ),
-	find = require( 'lodash/find' );
+import React, { Component, PropTypes } from 'react';
+import { find } from 'lodash';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' ),
-	Main = require( 'components/main' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	AdsEarnings = require( 'my-sites/ads/form-earnings' ),
-	AdsSettings = require( 'my-sites/ads/form-settings' ),
-	AdsUtils = require( 'lib/ads/utils' ),
-	sites = require( 'lib/sites-list' )();
-
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import AdsEarnings from 'my-sites/ads/form-earnings';
+import AdsSettings from 'my-sites/ads/form-settings';
+import { canAccessWordads, isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import FeatureExample from 'components/feature-example';
-import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import FormButton from 'components/forms/form-button';
 import Card from 'components/card';
 import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
@@ -34,80 +31,81 @@ import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
-const AdsMain = React.createClass( {
+class AdsMain extends Component {
+	static propTypes = {
+		isRequestingWordadsStatus: PropTypes.bool.isRequired,
+		isUnsafe: PropTypes.oneOf( wordadsUnsafeValues ),
+		requestingWordAdsApproval: PropTypes.bool.isRequired,
+		requestWordAdsApproval: PropTypes.func.isRequired,
+		section: PropTypes.string.isRequired,
+		site: PropTypes.object.isRequired,
+		wordAdsError: PropTypes.string,
+		wordAdsSuccess: PropTypes.bool,
+	};
 
-	displayName: 'AdsMain',
-
-	PropTypes: {
-		site: React.PropTypes.object.isRequired,
-		requestingWordAdsApproval: React.PropTypes.bool.isRequired,
-		requestWordAdsApproval: React.PropTypes.func.isRequired,
-		wordAdsError: React.PropTypes.string.isRequired,
-		isRequestingWordadsStatus: React.PropTypes.bool.isRequired,
-		isUnsafe: React.PropTypes.oneOf( wordadsUnsafeValues ),
-		section: React.PropTypes.string.isRequired,
-		wordAdsSuccess: React.PropTypes.bool.isRequired
-	},
-
-	componentWillMount: function() {
-		debug( 'Mounting AdsMain React component.' );
-	},
-
-	getSelectedText: function() {
-		var selected = find( this.getFilters(), { path: this.props.path } );
+	getSelectedText() {
+		const selected = find( this.getFilters(), { path: this.props.path } );
 		if ( selected ) {
 			return selected.title;
 		}
 
 		return '';
-	},
+	}
 
-	getFilters: function() {
-		var site = sites.getSelectedSite(),
-			pathSuffix = sites.selected ? '/' + sites.selected : '',
-			filters = [];
+	getFilters() {
+		const {
+			site,
+			siteSlug,
+			translate
+		} = this.props;
+		const pathSuffix = siteSlug ? '/' + siteSlug : '';
 
-		if ( AdsUtils.canAccessWordads( site ) ) {
-			filters.push( {
-				title: this.translate( 'Earnings' ),
-				path: '/ads/earnings' + pathSuffix,
-				id: 'ads-earnings'
-			} );
+		return canAccessWordads( site )
+			? [
+				{
+					title: translate( 'Earnings' ),
+					path: '/ads/earnings' + pathSuffix,
+					id: 'ads-earnings'
+				},
+				{
+					title: translate( 'Settings' ),
+					path: '/ads/settings' + pathSuffix,
+					id: 'ads-settings'
+				}
+			]
+			: [];
+	}
 
-			filters.push( {
-				title: this.translate( 'Settings' ),
-				path: '/ads/settings' + pathSuffix,
-				id: 'ads-settings'
-			} );
-		}
-
-		return filters;
-	},
-
-	getComponent: function( section ) {
+	getComponent( section ) {
 		switch ( section ) {
 			case 'earnings':
 				return <AdsEarnings site={ this.props.site } />;
 			case 'settings':
-				return <AdsSettings site={ this.props.site } />;
+				return <AdsSettings />;
 			default:
 				return null;
 		}
-	},
+	}
 
-	dismissWordAdsError() {
-		const siteId = this.props.site ? this.props.site.ID : null;
+	handleDismissWordAdsError = () => {
+		const { siteId } = this.props;
 		this.props.dismissWordAdsError( siteId );
-	},
+	};
 
-	renderInstantActivationToggle: function( component ) {
+	renderInstantActivationToggle( component ) {
+		const {
+			siteId,
+			translate
+		} = this.props;
+
 		return ( <div>
-			<QueryWordadsStatus siteId={ this.props.site.ID } />
-			<Card className="rads__activate-wrapper">
-				<div className="rads__activate-header">
-					<h2 className="rads__activate-header-title">{ this.translate( 'WordAds Disabled' ) }</h2>
-					<div className="rads__activate-header-toggle">
+			<QueryWordadsStatus siteId={ siteId } />
+			<Card className="ads__activate-wrapper">
+				<div className="ads__activate-header">
+					<h2 className="ads__activate-header-title">{ translate( 'WordAds Disabled' ) }</h2>
+					<div className="ads__activate-header-toggle">
 						<FormButton
 							disabled={
 								this.props.site.options.wordads ||
@@ -117,55 +115,61 @@ const AdsMain = React.createClass( {
 							}
 							onClick={ this.props.requestWordAdsApproval }
 						>
-							{ this.translate( 'Join WordAds' ) }
+							{ translate( 'Join WordAds' ) }
 						</FormButton>
 					</div>
 				</div>
 				{ this.props.wordAdsError &&
-					<Notice status="is-error rads__activate-notice" onDismissClick={ this.dismissWordAdsError }>
+					<Notice status="is-error ads__activate-notice" onDismissClick={ this.handleDismissWordAdsError }>
 						{ this.props.wordAdsError }
 					</Notice>
 				}
 				{ this.props.isUnsafe === 'mature' &&
 					<Notice
-						status="is-warning rads__activate-notice"
+						status="is-warning ads__activate-notice"
 						showDismiss={ false }
-						text={ this.translate( 'Your site has been identified as serving mature content. Our advertisers would like to include only family-friendly sites in the program.' ) }
+						text={ translate(
+							'Your site has been identified as serving mature content. ' +
+							'Our advertisers would like to include only family-friendly sites in the program.'
+						) }
 					>
 						<NoticeAction href="https://wordads.co/2012/09/06/wordads-is-for-family-safe-sites/" external={ true }>
-							{ this.translate( 'Learn more' ) }
+							{ translate( 'Learn more' ) }
 						</NoticeAction>
 					</Notice>
 				}
 				{ this.props.isUnsafe === 'spam' &&
 					<Notice
-						status="is-warning rads__activate-notice"
+						status="is-warning ads__activate-notice"
 						showDismiss={ false }
-						text={ this.translate( 'Your site has been identified as serving automatically created or copied content. We cannot serve WordAds on these kind of sites.' ) }
+						text={ translate(
+							'Your site has been identified as serving automatically created or copied content. ' +
+							'We cannot serve WordAds on these kind of sites.'
+						) }
 					>
 					</Notice>
 				}
 				{ this.props.isUnsafe === 'private' &&
 					<Notice
-						status="is-warning rads__activate-notice"
+						status="is-warning ads__activate-notice"
 						showDismiss={ false }
-						text={ this.translate( 'Your site is marked as private. It needs to be public so that visitors can see the ads.' ) }
+						text={ translate( 'Your site is marked as private. It needs to be public so that visitors can see the ads.' ) }
 					>
-						<NoticeAction href={ '/settings/general/' + this.props.site.slug }>
-							{ this.translate( 'Change privacy settings' ) }
+						<NoticeAction href={ '/settings/general/' + this.props.siteSlug }>
+							{ translate( 'Change privacy settings' ) }
 						</NoticeAction>
 					</Notice>
 				}
 				{ this.props.isUnsafe === 'other' &&
 					<Notice
-						status="is-warning rads__activate-notice"
+						status="is-warning ads__activate-notice"
 						showDismiss={ false }
-						text={ this.translate( 'Your site cannot participate in WordAds program.' ) }
+						text={ translate( 'Your site cannot participate in WordAds program.' ) }
 					>
 					</Notice>
 				}
-				<p className="rads__activate-description">
-					{ this.translate(
+				<p className="ads__activate-description">
+					{ translate(
 						'WordAds allows you to make money from advertising that runs on your site. ' +
 						'Because you have a WordPress.com Premium plan, you can skip the review process and activate WordAds instantly. ' +
 						'{{a}}Learn more about the program.{{/a}}', {
@@ -181,16 +185,17 @@ const AdsMain = React.createClass( {
 				{ component }
 			</FeatureExample>
 		</div> );
-	},
+	}
 
-	render: function() {
+	render() {
+		const { translate } = this.props;
 		let component = this.getComponent( this.props.section );
 		let notice = null;
 
 		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
 			notice = (
 				<Notice status="is-success" showDismiss={ false }>
-					{ this.translate( 'You have joined the WordAds program. Please review these settings:' ) }
+					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
 				</Notice>
 			);
 		} else if ( ! this.props.site.options.wordads && isWordadsInstantActivationEligible( this.props.site ) ) {
@@ -198,11 +203,11 @@ const AdsMain = React.createClass( {
 		}
 
 		return (
-			<Main className="rads">
+			<Main className="ads">
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
-						{ this.getFilters().map( function( filterItem ) {
+						{ this.getFilters().map( ( filterItem ) => {
 							return (
 								<NavItem
 									key={ filterItem.id }
@@ -212,7 +217,7 @@ const AdsMain = React.createClass( {
 									{ filterItem.title }
 								</NavItem>
 							);
-						}, this ) }
+						} ) }
 					</NavTabs>
 				</SectionNav>
 				{ notice }
@@ -220,22 +225,40 @@ const AdsMain = React.createClass( {
 			</Main>
 		);
 	}
+}
+
+const mapStateToProps = ( state ) => {
+	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		site,
+		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
+		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
+		wordAdsError: getWordAdsErrorForSite( state, site ),
+		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
+		isUnsafe: isSiteWordadsUnsafe( state, siteId ),
+		isRequestingWordadsStatus: isRequestingWordadsStatus( state, siteId ),
+	};
+};
+
+const mapDispatchToProps = {
+	requestWordAdsApproval,
+	dismissWordAdsError,
+};
+
+const mergeProps = ( stateProps, dispatchProps, parentProps ) => ( {
+	...dispatchProps,
+	requestWordAdsApproval: () => ( ! stateProps.requestingWordAdsApproval )
+		? dispatchProps.requestWordAdsApproval( stateProps.siteId )
+		: null,
+	...parentProps,
+	...stateProps
 } );
 
 export default connect(
-	( state, ownProps ) => ( {
-		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, ownProps.site ),
-		wordAdsError: getWordAdsErrorForSite( state, ownProps.site ),
-		wordAdsSuccess: getWordAdsSuccessForSite( state, ownProps.site ),
-		isUnsafe: isSiteWordadsUnsafe( state, ownProps.site.ID ),
-		isRequestingWordadsStatus: isRequestingWordadsStatus( state, ownProps.site.ID )
-	} ),
-	{ requestWordAdsApproval, dismissWordAdsError },
-	( stateProps, dispatchProps, parentProps ) => Object.assign(
-		{},
-		dispatchProps,
-		{ requestWordAdsApproval: () => ( ! stateProps.requestingWordAdsApproval ) ? dispatchProps.requestWordAdsApproval( parentProps.site.ID ) : null },
-		parentProps,
-		stateProps
-	)
-)( AdsMain );
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)( localize( AdsMain ) );

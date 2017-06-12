@@ -27,15 +27,23 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { getPlan } from 'lib/plans';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 class CurrentPlan extends Component {
 	static propTypes = {
 		selectedSiteId: PropTypes.number,
 		selectedSite: PropTypes.object,
 		isRequestingSitePlans: PropTypes.bool,
-		context: PropTypes.object
+		context: PropTypes.object,
+		domains: PropTypes.array,
+		currentPlan: PropTypes.object,
+		isExpiring: PropTypes.bool,
+		shouldShowDomainWarnings: PropTypes.bool,
+		hasDomainsLoaded: PropTypes.bool,
+		isAutomatedTransfer: PropTypes.bool,
 	};
 
 	isLoading() {
@@ -67,40 +75,18 @@ class CurrentPlan extends Component {
 		};
 	}
 
-	renderDomainWarnings() {
-		const {
-			domains,
-			selectedSite,
-			hasDomainsLoaded
-		} = this.props;
-
-		if ( hasDomainsLoaded ) {
-			return (
-				<DomainWarnings
-					domains={ domains }
-					selectedSite={ selectedSite }
-					ruleWhiteList={ [
-						'newDomainsWithPrimary',
-						'newDomains',
-						'unverifiedDomainsCanManage',
-						'pendingGappsTosAcceptanceDomains',
-						'unverifiedDomainsCannotManage',
-						'wrongNSMappedDomains'
-					] }
-				/>
-			);
-		}
-	}
-
 	render() {
 		const {
 			selectedSite,
 			selectedSiteId,
+			domains,
 			context,
 			currentPlan,
 			isExpiring,
-			isJetpack,
+			shouldShowDomainWarnings,
+			hasDomainsLoaded,
 			translate,
+			isAutomatedTransfer,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug,
@@ -108,19 +94,34 @@ class CurrentPlan extends Component {
 
 		const { title, tagLine } = this.getHeaderWording( currentPlanSlug );
 
+		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
+		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
+
 		return (
 			<Main className="current-plan" wideLayout>
+				<SidebarNavigation />
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
-				{ selectedSiteId && ! isJetpack && <QuerySiteDomains siteId={ selectedSiteId } /> }
+				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 				<PlansNavigation
 					path={ context.path }
 					selectedSite={ selectedSite }
 				/>
 
-				{ ! isJetpack && this.renderDomainWarnings() }
+				{ showDomainWarnings && <DomainWarnings
+						domains={ domains }
+						selectedSite={ selectedSite }
+						ruleWhiteList={ [
+							'newDomainsWithPrimary',
+							'newDomains',
+							'unverifiedDomainsCanManage',
+							'pendingGappsTosAcceptanceDomains',
+							'unverifiedDomainsCannotManage',
+							'wrongNSMappedDomains'
+						] } />
+				}
 
 				<ProductPurchaseFeatures>
 					<CurrentPlanHeader
@@ -131,6 +132,7 @@ class CurrentPlan extends Component {
 						currentPlanSlug={ currentPlanSlug }
 						currentPlan={ currentPlan }
 						isExpiring={ isExpiring }
+						isAutomatedTransfer={ isAutomatedTransfer }
 					/>
 					<ProductPurchaseFeaturesList
 						plan={ currentPlanSlug }
@@ -146,19 +148,24 @@ class CurrentPlan extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const selectedSite = getSelectedSite( state ),
-			selectedSiteId = getSelectedSiteId( state );
+		const selectedSite = getSelectedSite( state );
+		const selectedSiteId = getSelectedSiteId( state );
+		const domains = getDecoratedSiteDomains( state, selectedSiteId );
+
+		const isWpcom = ! isJetpackSite( state, selectedSiteId );
+		const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 		return {
 			selectedSite,
 			selectedSiteId,
+			domains,
+			isAutomatedTransfer,
 			context: ownProps.context,
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
-			isJetpack: isJetpackSite( state, selectedSiteId ),
+			shouldShowDomainWarnings: isWpcom || isAutomatedTransfer,
+			hasDomainsLoaded: !! domains,
 			isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
-			domains: getDecoratedSiteDomains( state, selectedSiteId ),
-			hasDomainsLoaded: ! isRequestingSiteDomains( state, selectedSiteId )
 		};
 	}
 )( localize( CurrentPlan ) );

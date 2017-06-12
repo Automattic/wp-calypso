@@ -261,16 +261,10 @@ const connectComponent = connect(
 		const momentSiteZone = moment().utcOffset( timezoneOffset );
 		let date = rangeOfPeriod( period, momentSiteZone.locale( 'en' ) ).endOf;
 
-		let quantity = 10;
+		let quantity = 30;
 		switch ( period ) {
-			case 'day':
-				quantity = 30;
-				break;
-			case 'month':
-				quantity = 12;
-				break;
-			case 'week':
-				quantity = 13;
+			case 'year':
+				quantity = 10;
 				break;
 		}
 		const periodDifference = moment( date ).diff( moment( queryDate ), period );

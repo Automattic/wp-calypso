@@ -2,7 +2,7 @@
 
 ### How to add a new test file
 The single test runner supports automatic test discovery. We only need to put a test file into a `test` subfolder, next to the files we want to test.
-The runner uses this glob pattern `@(client|server|test)/**/test/*.@(js|jsx)` to find test files.
+The runner uses this glob pattern `@(client|server|test|integration)/**/test/*.@(js|jsx)` to find test files.
 
 We should use the same file names as the implementation files for the tests.
 Example: if we want to write unit tests covering the file `hello-world/index.jsx`, we should name a test file `hello-world/test/index.jsx`.
@@ -14,10 +14,10 @@ If we ever need to add non-test files to a `test` folder, we should put them in 
 
 ### How to run single test runner
 
-Executing `make test` from the root folder will run all test suites.
-Behind the scenes we maintain 3 test runners. This is because each folder (`client`, `server` & `test`) has a different `NODE_PATH` path.
+Executing `npm test` from the root folder will run all test suites.
+Behind the scenes we maintain 4 test runners. This is because each folder (`client`, `server`, `test`, and `integration`) has a different `NODE_PATH` path.
 
-We have also an npm run script for each folder: `npm run test-client`, `npm run test-server` and `npm run test-test`.
+We have also an npm run script for each folder: `npm run test-client`, `npm run test-server`, `npm run test-test`, `npm run test-integration`.
 We can pass a filename or set of files to these scripts to isolate your test run to a selected set of files.
 
 Example for client:
@@ -29,6 +29,8 @@ Example for client:
 > npm run test-client -- --reporter=dot #notice the -- separating out the params to pass to the runner
 > # runner knows about Mocha --grep flag
 > npm run test-client -- --grep "state ui" # to just run the state/ui tests
+> # run integration tests (these run daily)
+< npm run test-integration
 > # run single test suite from server folder
 > npm run test-server server/config/test/parser.js
 > # run single test suite from test folder

@@ -5,7 +5,7 @@ Simple interface to introduce animations to components on initial render. Used a
 
 #### How to use:
 
-```js
+```jsx
 import Animate from 'components/animate';
 
 render() {

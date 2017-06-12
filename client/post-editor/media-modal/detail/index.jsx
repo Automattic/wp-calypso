@@ -11,7 +11,6 @@ import { noop, partial } from 'lodash';
 var DetailItem = require( './detail-item' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	HeaderCake = require( 'components/header-cake' ),
-	EditorMediaModalDetailTitle = require( './detail-title' ),
 	preloadImage = require( '../preload-image' );
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
@@ -71,11 +70,7 @@ export const EditorMediaModalDetail = React.createClass( {
 
 		return (
 			<div className="editor-media-modal-detail">
-				<HeaderCake onClick={ onReturnToList } backText={ this.translate( 'Media Library' ) }>
-					<EditorMediaModalDetailTitle
-						site={ site }
-						item={ items[ selectedIndex ] } />
-				</HeaderCake>
+				<HeaderCake onClick={ onReturnToList } backText={ this.translate( 'Media Library' ) } />
 				<DetailItem
 					site={ site }
 					item={ item }

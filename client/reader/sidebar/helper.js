@@ -6,26 +6,33 @@ import some from 'lodash/some';
 import startsWith from 'lodash/startsWith';
 import assign from 'lodash/assign';
 
-module.exports = {
+const exported = {
 	itemLinkClass: function( path, currentPath, additionalClasses ) {
-		const basePathLowerCase = decodeURIComponent( currentPath ).split( '?' )[ 0 ].replace( /\/edit$/, '' ).toLowerCase(),
-			pathLowerCase = decodeURIComponent( path ).replace( /\/edit$/, '' ).toLowerCase();
+		const basePathLowerCase = decodeURIComponent( currentPath )
+			.split( '?' )[ 0 ]
+			.replace( /\/manage$/, '' )
+			.toLowerCase(),
+			pathLowerCase = decodeURIComponent( path ).replace( /\/manage$/, '' ).toLowerCase();
 
-		let selected = basePathLowerCase === pathLowerCase,
-			isActionButtonSelected = false;
+		let selected = basePathLowerCase === pathLowerCase, isActionButtonSelected = false;
 
 		// Following is a special case, because it can be at / or /following
 		if ( pathLowerCase === '/' && ! selected ) {
 			selected = '/following' === basePathLowerCase;
 		}
 
-		// Are we on an edit page?
+		// Are we on the manage page?
 		const pathWithoutQueryString = currentPath.split( '?' )[ 0 ];
-		if ( selected && !! pathWithoutQueryString.match( /\/edit$/ ) ) {
+		if ( selected && !! pathWithoutQueryString.match( /\/manage$/ ) ) {
 			isActionButtonSelected = true;
 		}
 
-		return classNames( assign( { selected: selected, 'is-action-button-selected': isActionButtonSelected }, additionalClasses ) );
+		return classNames(
+			assign(
+				{ selected: selected, 'is-action-button-selected': isActionButtonSelected },
+				additionalClasses
+			)
+		);
 	},
 
 	itemLinkClassStartsWithOneOf: function( paths, currentPath, additionalClasses ) {
@@ -37,5 +44,9 @@ module.exports = {
 		return some( paths, function( path ) {
 			return startsWith( currentPath.toLowerCase(), path.toLowerCase() );
 		} );
-	}
+	},
 };
+
+export default exported;
+
+export const { itemLinkClass, itemLinkClassStartsWithOneOf, pathStartsWithOneOf } = exported;

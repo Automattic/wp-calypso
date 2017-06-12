@@ -1,24 +1,30 @@
 .checkout {
 	position: relative;
 
-	.payment-box {
+	.checkout__payment-box-container {
 		margin-bottom: 0;
 		padding: 0;
 		width: 100%;
 		overflow: hidden;
 
-		opacity: 0;
-		visibility: hidden;
-		transform: translateZ(0) scale(.8); // Zoom out effect
+		&-appear,
+		&-enter {
+			height: 0;
+			opacity: 0.01;
+			transform: translateZ(0) scale(.8);
+		}
 
-		animation-delay: 0.3s;
-		animation-fill-mode: forwards;
-		animation-duration: 0.4s;
-		animation-name: increase;
+		&-appear-active,
+		&-enter-active {
+			height: auto;
+			opacity: 1;
+			transform: translateZ(0) scale(1);
+			transition-property: height, opacity, transform;
+			transition-duration: 400ms;
+		}
 
 		&:not(.domain-details) {
 			@include breakpoint( "<660px" ) {
-				background-color: transparent;
 				box-shadow: none;
 			}
 		}
@@ -125,9 +131,12 @@
 		}
 	}
 
+	.payment-box {
+		padding: 0;
+	}
+
 	.payment-box__content {
 		min-height: 140px;
-		margin-top: 10px;
 	}
 
 	h5 {
@@ -143,7 +152,7 @@
 		}
 	}
 
-	.box-padding {
+	.checkout__box-padding {
 		padding: 16px 8px;
 
 		@include breakpoint( ">660px" ) {
@@ -182,7 +191,10 @@
 		}
 	}
 
+	// Turn off number spinners
 	input[type=number] {
+		-moz-appearance: textfield;
+
 		&::-webkit-outer-spin-button,
 		&::-webkit-inner-spin-button {
 			-webkit-appearance: none;
@@ -209,6 +221,10 @@
 
 	.form-button {
 		margin-top: 20px;
+
+		@include breakpoint( "<660px" ) {
+			margin-bottom: 20px;
+		}
 	}
 
 	// Payment Boxes
@@ -218,7 +234,6 @@
 		color: darken( $gray, 10% );
 		margin: 16px 0;
 		padding: 0;
-		text-align: center;
 
 		@include breakpoint( ">660px" ) {
 			padding: 0;
@@ -245,8 +260,11 @@
 	}
 
 	.cart-coupon {
+		cursor: pointer;
 		display: none;
-		margin: 16px 0;
+		font-size: 14px;
+		margin: 5px 0 0;
+		padding: 10px 0;
 
 		// On larger screens, users can use the coupon functionality present on the sidebar
 		@include breakpoint( "<660px" ) {
@@ -261,12 +279,9 @@
 	}
 
 	.payment-box-actions {
-		@include breakpoint( ">660px" ) {
-			margin: 20px -30px 0px -30px;
-			padding: 20px 30px 0 30px;
-			border-top: 1px solid lighten( $gray, 30% );
-			@include clear-fix;
-		}
+		margin: 20px -30px 0px -30px;
+		padding: 20px 30px 0 30px;
+		@include clear-fix;
 	}
 
 	.credit-card-payment-box {
@@ -374,6 +389,18 @@
 		}
 	}
 
+	.checkout__summary-toggle {
+		cursor: pointer;
+		display: block;
+		font-size: 14px;
+		padding: 10px;
+		text-align: center;
+
+		@include breakpoint( ">660px" ) {
+			display: none;
+		}
+	}
+
 	// PayPal Payment Box
 	// -----------------------------------
 
@@ -434,13 +461,18 @@
 			min-height: 91px;
 			padding: 20px 20px 20px 80px;
 			position: relative;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
 
 			&::before {
 				color: $blue-medium;
 				left: 10px;
 				position: absolute;
-				top: 15px;
 				@include noticon( '\f205', 60px );
+				@include breakpoint( ">660px" ) {
+					left: 20px;
+				}
 			}
 
 			> h6 {
@@ -792,11 +824,6 @@
 }
 
 // If there's no sidebar, we don't show the cart on the checkout page.
-@include breakpoint( "<660px" ) {
-	.secondary-cart {
-		display: none;
-	}
-}
 
 @include breakpoint( ">660px" ) {
 	.pay-button {
@@ -812,9 +839,11 @@
 	display: block;
 	clear: both;
 	font-size: 12px;
+	padding-bottom: 5px;
 
 	@include breakpoint( "<660px" ) {
-		margin: 20px 0 0 0;
+		border-bottom: 1px solid lighten( $gray, 30% );
+		margin: 10px 0 0 0;
 		text-align: center;
 	}
 
@@ -875,7 +904,7 @@
 	}
 }
 
-.checkout__privacy-protection-checkbox__description {
+.checkout__privacy-protection-checkbox-description {
 	font-size: 13px;
 	padding-left: 16px;
 
@@ -911,18 +940,9 @@
 	padding-left: 8px;
 }
 
-@keyframes increase {
-	from {
-		height: 0;
-		opacity: 0;
-		visibility: hidden;
-		transform: translateZ(0) scale(.8);
-	}
-
-	to {
-		height: auto;
-		opacity: 1;
-		visibility: visible;
-		transform: translateZ(0) scale(1);
-	}
+.credit-card-payment-box__progress-bar {
+	color: $gray;
+	font-size: 12px;
+	padding-bottom: 1em;
+	text-align: center;
 }

@@ -17,7 +17,6 @@
 
 	strong {
 		color: darken( $gray, 10% );
-		display: block;
 	}
 
 	&.is-publish strong {
@@ -35,10 +34,6 @@
 	&.is-plain {
 		padding-left: 0;
 		cursor: default;
-
-		strong {
-			display: block;
-		}
 	}
 }
 

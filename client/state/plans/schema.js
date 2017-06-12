@@ -32,7 +32,7 @@ export const itemsSchema = {
 			product_id: { type: 'number' },
 			product_name: { type: 'string' },
 			product_name_en: { type: 'string' },
-			product_name_short: { type: 'string' },
+			product_name_short: { type: [ 'string', 'null' ] },
 			product_slug: { type: 'string' },
 			product_type: { type: 'string' },
 			raw_price: { type: 'number' },
@@ -40,7 +40,7 @@ export const itemsSchema = {
 			shortdesc: { type: 'string' },
 			store: { type: [ 'number', 'null' ] },
 			support_document: { type: 'string' },
-			tagline: { type: 'string' },
+			tagline: { type: [ 'string', 'null' ] },
 			width: { type: 'number' }
 		}
 	}

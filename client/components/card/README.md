@@ -8,9 +8,9 @@ The `CompactCard` component slightly modifies the `Card` component.
 
 #### How to use:
 
-```js
-var Card = require( 'components/card' ),
-	CompactCard = require( 'components/card/compact' );
+```jsx
+import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 
 render: function() {
   return (
@@ -31,5 +31,7 @@ render: function() {
 
 * `className`: You can add classes to either.
 * `href` (Optional): If set then the card becomes a link, with a Gridicon chevron on the right.
+* `tagName` (Optional): Allows you to control the tag name of the card wrapper (only if `href` is not specified).
 * `target` (Optional): If set and used with `href` then this controls where the link opens. It also changes the Gridicon to "external"
 * `compact` (Optional): Whether the card should be rendered as compact
+* `highlight` (Optional): The specific highlight of this card. Can be one of the following: `false` (no highlight, default), `info`, `success`, `error` or `warning`.

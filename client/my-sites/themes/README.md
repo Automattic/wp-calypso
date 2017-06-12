@@ -1,7 +1,7 @@
 Themes
 ======
 
-Displays the Theme Showcase, which currently resides on `/design` and handles multi-site, single-site and Jetpack-site views.
+Displays the Theme Showcase, which resides on `/themes` and handles multi-site, single-site and Jetpack-site views.
 
 ### `theme-options.js`
 

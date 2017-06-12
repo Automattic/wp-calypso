@@ -2,7 +2,7 @@
  * External dependencies
  */
 var update = require( 'react-addons-update' );
-import { every, assign, flow, isEqual, merge, reject, tail, some, uniq, flatten, filter, find } from 'lodash';
+import { every, assign, flow, isEqual, merge, reject, tail, some, uniq, flatten, filter, find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -215,14 +215,16 @@ function hasDomainCredit( cart ) {
 }
 
 /**
- * Whether the cart has a registration with .nl TLD
+ * Whether the cart has a registration with a specific TLD
  *
  * @param {Object} cart - cart as `CartValue` object
- * @returns {Boolean} - Whether or not the cart contains a .nl TLD
+ * @param {string} tld - TLD to look for, no leading dot
+ *
+ * @returns {Boolean} - Whether or not the cart contains a domain with that TLD
  */
-function hasNlTld( cart ) {
+function hasTld( cart, tld ) {
 	return some( getDomainRegistrations( cart ), function( cartItem ) {
-		return getDomainRegistrationTld( cartItem ) === '.nl';
+		return getDomainRegistrationTld( cartItem ) === '.' + tld;
 	} );
 }
 
@@ -279,6 +281,10 @@ function hasOnlyProductsOf( cart, productSlug ) {
  */
 function hasDomainRegistration( cart ) {
 	return some( getAll( cart ), isDomainRegistration );
+}
+
+function hasOnlyDomainRegistrationsWithPrivacySupport( cart ) {
+	return every( getDomainRegistrations( cart ), privacyAvailable );
 }
 
 function hasDomainMapping( cart ) {
@@ -402,7 +408,11 @@ function themeItem( themeSlug, source ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainRegistration( properties ) {
-	return assign( domainItem( properties.productSlug, properties.domain, properties.source ), { is_domain_registration: true } );
+	return assign( domainItem( properties.productSlug, properties.domain, properties.source ),
+		{
+			is_domain_registration: true,
+			...( properties.extra ? { extra: properties.extra } : {} ),
+		} );
 }
 
 /**
@@ -458,10 +468,17 @@ function googleAppsExtraLicenses( properties ) {
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
+function fillGoogleAppsRegistrationData( cart, registrationData ) {
+	const googleAppsItems = filter( getAll( cart ), isGoogleApps );
+	return flow.apply( null, googleAppsItems.map( function( item ) {
+		item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
+		return add( item )
+	} ) );
+}
+
 function hasGoogleApps( cart ) {
 	return some( getAll( cart ), isGoogleApps );
 }
-
 
 function customDesignItem() {
 	return {
@@ -705,6 +722,16 @@ function isRenewal( cartItem ) {
 }
 
 /**
+ * Determines whether a cart item supports privacy
+ *
+ * @param {Object} cartItem - `CartItemValue` object
+ * @returns {boolean} true if item supports privacy
+ */
+function privacyAvailable( cartItem ) {
+	return get( cartItem, 'extra.privacy_available', true );
+}
+
+/**
  * Get the included domain for a cart item
  *
  * @param {Object} cartItem - `CartItemValue` object
@@ -769,6 +796,7 @@ module.exports = {
 	domainPrivacyProtection,
 	domainRedemption,
 	domainRegistration,
+	fillGoogleAppsRegistrationData,
 	findFreeTrial,
 	getAll,
 	getAllSorted,
@@ -792,9 +820,9 @@ module.exports = {
 	hasDomainInCart,
 	hasDomainMapping,
 	hasDomainRegistration,
+	hasOnlyDomainRegistrationsWithPrivacySupport,
 	hasFreeTrial,
 	hasGoogleApps,
-	hasNlTld,
 	hasOnlyFreeTrial,
 	hasOnlyProductsOf,
 	hasOnlyRenewalItems,
@@ -803,6 +831,7 @@ module.exports = {
 	hasProduct,
 	hasRenewableSubscription,
 	hasRenewalItem,
+	hasTld,
 	noAdsItem,
 	planItem,
 	premiumPlan,

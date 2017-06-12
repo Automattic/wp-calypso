@@ -1,0 +1,125 @@
+.editor-confirmation-sidebar {
+	position: absolute;
+		top: -100px;
+		left: -100px;
+		width: 0;
+		height: 0;
+	overflow: hidden;
+	visibility: hidden;
+
+	&.is-active {
+		position: absolute;
+			top: 0;
+			left: 0;
+			width: auto;
+			height: auto;
+		overflow: auto;
+		visibility: visible;
+	}
+}
+
+.editor-confirmation-sidebar__overlay {
+	position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+
+	z-index: z-index( 'root', '.editor-confirmation-sidebar__overlay' );
+	background: rgba( $white, 0.8 );
+
+	display: none;
+
+	&.is-active {
+		display: block;
+	}
+}
+
+.editor-confirmation-sidebar__publishing-button {
+	position: absolute;
+		top: 53px;
+		right: 16px;
+		min-width: 142px;
+}
+
+.editor-confirmation-sidebar__sidebar {
+	@extend .sidebar;
+	width: $sidebar-width-min;
+	background: $sidebar-bg-color;
+	position: fixed;
+		left: auto;
+		right: -$sidebar-width-min;
+	z-index: z-index( 'root', '.editor-confirmation-sidebar__sidebar' );
+	border-left: 1px solid darken( $sidebar-bg-color, 5% );
+	border-right: none;
+	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+	&.is-active {
+		transform: translateX( -$sidebar-width-min );
+	}
+
+	@include breakpoint( ">960px" ) {
+		width: $sidebar-width-max;
+		right: -$sidebar-width-max;
+
+		&.is-active {
+			transform: translateX( -$sidebar-width-max );
+		}
+	}
+
+	@include breakpoint( "<660px" ) {
+		transition: none;
+		border-left: none;
+		pointer-events: auto;
+
+		&.is-active {
+			height: auto;
+			width: 100%;
+			position: fixed;
+				top: 47px;
+				right: auto;
+				left: 0;
+			transform: none;
+		}
+	}
+}
+
+.editor-confirmation-sidebar__ground-control {
+	@extend .card;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	position: relative;
+		top: 0;
+		left: 0;
+		right: 0;
+	padding: 0 24px;
+	width: 100%;
+}
+
+.editor-confirmation-sidebar__close {
+  margin-right: auto;
+}
+
+.editor-confirmation-sidebar__action .button {
+	background: $alert-green;
+	border-color: darken( $alert-green, 20% );
+	color: $white;
+
+	padding: 7px 22px;
+	margin: 4px 0 4px 12px;
+
+	&:hover,
+	&:focus {
+		border-color: darken( $alert-green, 40% );
+	}
+	&[disabled],
+	&:disabled {
+		background: lighten( $alert-green, 20% );
+		border-color: tint( $alert-green, 30% );
+	}
+}
+
+.editor-confirmation-sidebar__content-wrap {
+	padding: 0 24px 24px 24px
+}

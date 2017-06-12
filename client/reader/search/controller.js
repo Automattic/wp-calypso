@@ -10,30 +10,37 @@ import qs from 'qs';
  */
 import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import {
+	ensureStoreLoading,
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'reader/controller-helper';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
-function replaceSearchUrl( newValue ) {
+function replaceSearchUrl( newValue, sort ) {
 	let searchUrl = '/read/search';
 	if ( newValue ) {
-		searchUrl += '?' + qs.stringify( { q: newValue } );
+		searchUrl += '?' + qs.stringify( { q: newValue, sort } );
 	}
 	page.replace( searchUrl );
 }
 
-export default {
+const exported = {
 	search: function( context ) {
-		var basePath = '/read/search',
+		const basePath = '/read/search',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
-			searchSlug = context.query.q,
 			mcKey = 'search';
+
+		const { sort = 'relevance', q: searchSlug, show = 'Posts' } = context.query;
 
 		let store;
 		if ( searchSlug ) {
-			store = feedStreamFactory( 'search:' + searchSlug );
+			store = feedStreamFactory( `search:${ sort }:${ searchSlug }` );
+			store.isQuerySuggestion = context.query.isSuggestion === '1';
 			ensureStoreLoading( store, context );
 		} else {
 			store = feedStreamFactory( 'custom_recs_posts_with_images' );
@@ -43,16 +50,26 @@ export default {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		if ( searchSlug ) {
 			recordTrack( 'calypso_reader_search_performed', {
-				query: searchSlug
+				query: searchSlug,
+				sort,
 			} );
 		} else {
 			recordTrack( 'calypso_reader_search_loaded' );
 		}
 
-		const autoFocusInput = ( ! searchSlug ) || context.query.focus === '1';
+		const autoFocusInput = ! searchSlug || context.query.focus === '1';
+
+		function reportQueryChange( query ) {
+			replaceSearchUrl( query, sort !== 'relevance' ? sort : undefined );
+		}
+
+		function reportSortChange( newSort ) {
+			replaceSearchUrl( searchSlug, newSort !== 'relevance' ? newSort : undefined );
+		}
 
 		renderWithReduxStore(
-			<AsyncLoad require="reader/search-stream"
+			<AsyncLoad
+				require="reader/search-stream"
 				key="search"
 				postsStore={ store }
 				query={ searchSlug }
@@ -67,10 +84,16 @@ export default {
 				showBack={ false }
 				showPrimaryFollowButtonOnCards={ true }
 				autoFocusInput={ autoFocusInput }
-				onQueryChange={ replaceSearchUrl }
+				onQueryChange={ reportQueryChange }
+				onSortChange={ reportSortChange }
+				searchType={ show }
 			/>,
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };
+
+export default exported;
+
+export const { search } = exported;

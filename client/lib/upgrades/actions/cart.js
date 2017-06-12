@@ -31,6 +31,13 @@ function closeCartPopup() {
 	} );
 }
 
+function showCartOnMobile( show ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.CART_ON_MOBILE_SHOW,
+		show,
+	} );
+}
+
 function addPrivacyToAllDomains() {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_PRIVACY_PROTECTION_ADD
@@ -76,6 +83,13 @@ function addDomainToCart( domainSuggestion ) {
 	} ) );
 }
 
+function addGoogleAppsRegistrationData( registrationData ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.GOOGLE_APPS_REGISTRATION_DATA_ADD,
+		registrationData: registrationData
+	} );
+}
+
 function removeDomainFromCart( domainSuggestion ) {
 	removeItem( cartItems.domainRegistration( {
 		domain: domainSuggestion.domain_name,
@@ -92,6 +106,7 @@ function applyCoupon( coupon ) {
 
 export {
 	addDomainToCart,
+	addGoogleAppsRegistrationData,
 	addItem,
 	addItems,
 	addPrivacyToAllDomains,
@@ -101,5 +116,6 @@ export {
 	openCartPopup,
 	removeDomainFromCart,
 	removeItem,
-	removePrivacyFromAllDomains
+	removePrivacyFromAllDomains,
+	showCartOnMobile,
 };

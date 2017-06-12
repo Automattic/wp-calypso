@@ -17,25 +17,23 @@ export const successfulResponse = {
 	teams: [
 		{
 			title: 'Automattic',
-			slug: 'a8c'
-		}
+			slug: 'a8c',
+		},
 	],
-	number: 1
+	number: 1,
 };
 
 describe( 'wpcom-api', () => {
-	const nextSpy = sinon.spy();
-
 	describe( 'teams request', () => {
-		useNock( nock => (
+		useNock( nock =>
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/read/teams' )
 				.reply( 200, successfulResponse )
 				.get( '/rest/v1.2/read/teams' )
 				.reply( 500, new Error() )
-		) );
+		);
 
-		it( 'should dispatch RECEIVE action when request completes', ( done ) => {
+		it( 'should dispatch RECEIVE action when request completes', done => {
 			const dispatch = sinon.spy( action => {
 				if ( action.type === READER_TEAMS_RECEIVE ) {
 					expect( dispatch ).to.have.been.calledWith( {
@@ -46,10 +44,10 @@ describe( 'wpcom-api', () => {
 				}
 			} );
 
-			handleTeamsRequest( { dispatch }, requestTeams(), nextSpy, );
+			handleTeamsRequest( { dispatch }, requestTeams() );
 		} );
 
-		it( 'should dispatch RECEIVE action with error when request errors', ( done ) => {
+		it( 'should dispatch RECEIVE action with error when request errors', done => {
 			const dispatch = sinon.spy( action => {
 				if ( action.type === READER_TEAMS_RECEIVE ) {
 					expect( dispatch ).to.have.been.calledWith( {
@@ -61,7 +59,7 @@ describe( 'wpcom-api', () => {
 				}
 			} );
 
-			handleTeamsRequest( { dispatch }, requestTeams(), nextSpy, );
+			handleTeamsRequest( { dispatch }, requestTeams() );
 		} );
 	} );
 } );

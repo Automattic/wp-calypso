@@ -243,7 +243,7 @@ describe( 'selectors', () => {
 
 		const navigateToThemes = {
 			type: 'ROUTE_SET',
-			path: '/design/77203074',
+			path: '/themes/77203074',
 		};
 
 		const navigateToTest = {

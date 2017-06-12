@@ -2,55 +2,39 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
-import LostPasswordPage from 'account-recovery/lost-password';
-import ForgotUsernamePage from 'account-recovery/forgot-username';
-import ResetPasswordPage from 'account-recovery/reset-password';
-import ResetPasswordForm from 'account-recovery/reset-password/reset-password-form';
-import TransactionIdForm from 'account-recovery/reset-password/transaction-id-form';
-import { getCurrentUser } from 'state/current-user/selectors';
+import AccountRecoveryRoot from 'account-recovery/account-recovery-root';
+import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'account-recovery/constants';
 
-export function lostPassword( context, next ) {
-	context.primary = <LostPasswordPage basePath={ context.path } />;
-	next();
-}
-
-export function forgotUsername( context, next ) {
-	context.primary = <ForgotUsernamePage basePath={ context.path } />;
-	next();
-}
-
-export function resetPassword( context, next ) {
+export const lostPassword = ( context, next ) => {
 	context.primary = (
-		<ResetPasswordPage basePath={ context.path }>
-			<ResetPasswordForm />
-		</ResetPasswordPage>
+		<AccountRecoveryRoot
+			basePath={ context.path }
+			firstStep={ STEPS.LOST_PASSWORD }
+		/>
 	);
-
 	next();
-}
+};
 
-export function resetPasswordByTransactionId( context, next ) {
+export const forgotUsername = ( context, next ) => {
 	context.primary = (
-		<ResetPasswordPage basePath={ context.path }>
-			<TransactionIdForm />
-		</ResetPasswordPage>
+		<AccountRecoveryRoot
+			basePath={ context.path }
+			firstStep={ STEPS.FORGOT_USERNAME }
+		/>
 	);
-
 	next();
-}
+};
 
-export function redirectLoggedIn( context, next ) {
-	const currentUser = getCurrentUser( context.store.getState() );
-
-	if ( currentUser ) {
-		page.redirect( '/' );
-		return;
-	}
-
+export const validateResetCode = ( context, next ) => {
+	context.primary = (
+		<AccountRecoveryRoot
+			basePath={ context.path }
+			firstStep={ STEPS.VALIDATE_RESET_CODE }
+		/>
+	);
 	next();
-}
+};

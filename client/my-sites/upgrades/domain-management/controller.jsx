@@ -19,19 +19,19 @@ import paths from 'my-sites/upgrades/paths';
 import ProductsList from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
-import SitesList from 'lib/sites-list';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import TransferData from 'components/data/domain-management/transfer';
 import WhoisData from 'components/data/domain-management/whois';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 
-const productsList = new ProductsList(),
-	sites = new SitesList();
+const productsList = new ProductsList();
 
 const setTitle = function( title, pageContext ) {
 	pageContext.store.dispatch( setDocumentHeadTitle( title ) );
 };
 
-module.exports = {
+export default {
 	domainManagementList( pageContext ) {
 		setTitle(
 			i18n.translate( 'Domain Management' ),
@@ -114,9 +114,7 @@ module.exports = {
 			<WhoisData
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
-				productsList={ productsList }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -137,9 +135,7 @@ module.exports = {
 			<WhoisData
 				component={ DomainManagement.EditContactInfo }
 				context={ pageContext }
-				productsList={ productsList }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -245,9 +241,7 @@ module.exports = {
 			<WhoisData
 				component={ DomainManagement.PrivacyProtection }
 				context={ pageContext }
-				productsList={ productsList }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -290,15 +284,17 @@ module.exports = {
 		renderWithReduxStore(
 			<SiteRedirectData
 				component={ DomainManagement.SiteRedirect }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
 	},
 
-	domainManagementIndex() {
-		page.redirect( '/domains/manage' + ( sites.getSelectedSite() ? ( '/' + sites.getSelectedSite().slug ) : '' ) );
+	domainManagementIndex( pageContext ) {
+		const state = pageContext.store.getState();
+		const siteSlug = getSelectedSiteSlug( state );
+
+		page.redirect( '/domains/manage' + ( siteSlug ? `/${ siteSlug }` : '' ) );
 	},
 
 	domainManagementTransfer( pageContext ) {
@@ -310,15 +306,46 @@ module.exports = {
 		renderWithReduxStore(
 			<TransferData
 				component={ DomainManagement.Transfer }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites }
-			/>,
+				selectedDomainName={ pageContext.params.domain } />,
+			document.getElementById( 'primary' ),
+			pageContext.store
+		);
+	},
+
+	domainManagementTransferToOtherSite( pageContext ) {
+		const state = pageContext.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
+		if ( isAutomatedTransfer ) {
+			const siteSlug = getSelectedSiteSlug( state );
+			page.redirect( `/domains/manage/${ siteSlug }` );
+			return;
+		}
+
+		setTitle(
+			i18n.translate( 'Transfer Domain' ),
+			pageContext
+		);
+
+		renderWithReduxStore(
+			<TransferData
+				component={ DomainManagement.TransferToOtherSite }
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
 	},
 
 	domainManagementTransferToOtherUser( pageContext ) {
+		const state = pageContext.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
+		if ( isAutomatedTransfer ) {
+			const siteSlug = getSelectedSiteSlug( state );
+			page.redirect( `/domains/manage/${ siteSlug }` );
+			return;
+		}
+
 		setTitle(
 			i18n.translate( 'Transfer Domain' ),
 			pageContext
@@ -327,8 +354,7 @@ module.exports = {
 		renderWithReduxStore(
 			<TransferData
 				component={ DomainManagement.TransferToOtherUser }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -343,8 +369,7 @@ module.exports = {
 		renderWithReduxStore(
 			<TransferData
 				component={ DomainManagement.TransferOut }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);

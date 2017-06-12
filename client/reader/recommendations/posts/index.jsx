@@ -1,26 +1,32 @@
-var React = require( 'react' );
+/**
+ * External dependencies
+ */
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
-var Stream = require( 'reader/stream' ),
-	EmptyContent = require( './empty' ),
-	DocumentHead = require( 'components/data/document-head' );
+/**
+ * Internal dependencies
+ */
+import Stream from 'reader/stream';
+import EmptyContent from './empty';
+import DocumentHead from 'components/data/document-head';
 
-var RecommendationPostsStream = React.createClass( {
-
-	render: function() {
-		var title = this.translate( 'Recommended Posts' ),
-			emptyContent = ( <EmptyContent /> );
+class RecommendationPostsStream extends React.Component {
+	render() {
+		const title = this.props.translate( 'Recommended Posts' );
+		const emptyContent = <EmptyContent />;
 
 		return (
-			<Stream { ...this.props }
-				listName = { title }
-				emptyContent = { emptyContent }
-				showFollowInHeader = { true }
+			<Stream
+				{ ...this.props }
+				listName={ title }
+				emptyContent={ emptyContent }
+				showFollowInHeader={ true }
 			>
-				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
+				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 			</Stream>
 		);
 	}
+}
 
-} );
-
-module.exports = RecommendationPostsStream;
+export default localize( RecommendationPostsStream );

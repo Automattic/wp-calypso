@@ -1,24 +1,27 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
-import { pick, omit, merge, get, includes, reduce, isEqual } from 'lodash';
+import { pick, omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { plans } from './plans/reducer';
+import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
+import monitor from './monitor/reducer';
 import vouchers from './vouchers/reducer';
 import updates from './updates/reducer';
 import sharingButtons from './sharing-buttons/reducer';
-
 import mediaStorage from './media-storage/reducer';
 import {
 	MEDIA_DELETE,
-	SITE_FRONT_PAGE_SET_SUCCESS,
+	SITE_DELETE,
+	SITE_DELETE_FAILURE,
+	SITE_DELETE_SUCCESS,
 	SITE_DELETE_RECEIVE,
+	JETPACK_DISCONNECT_RECEIVE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -30,12 +33,11 @@ import {
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
 	SITES_UPDATE,
-	DESERIALIZE,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
+	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { sitesSchema } from './schema';
-import { isValidStateWithSchema, createReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 /**
  * Constants
@@ -53,21 +55,6 @@ const VALID_SITE_KEYS = Object.keys( sitesSchema.patternProperties[ '^\\d+$' ].p
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
-		case SITE_FRONT_PAGE_SET_SUCCESS: {
-			const { siteId, updatedOptions } = action;
-			const site = state[ siteId ];
-			if ( ! site ) {
-				break;
-			}
-
-			return {
-				...state,
-				[ siteId ]: merge( {}, site, {
-					options: updatedOptions,
-				} )
-			};
-		}
-
 		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
 			const prevSite = state[ action.siteId ];
 			if ( prevSite ) {
@@ -113,9 +100,12 @@ export function items( state = {}, action ) {
 			}, initialNextState );
 
 		case SITE_DELETE_RECEIVE:
-			return omit( state, action.site.ID );
+			return omit( state, action.siteId );
 
-		case THEME_ACTIVATE_REQUEST_SUCCESS: {
+		case JETPACK_DISCONNECT_RECEIVE:
+			return omit( state, action.siteId );
+
+		case THEME_ACTIVATE_SUCCESS: {
 			const { siteId, themeStylesheet } = action;
 			const site = state[ siteId ];
 			if ( ! site ) {
@@ -135,43 +125,67 @@ export function items( state = {}, action ) {
 		case SITE_SETTINGS_UPDATE:
 		case SITE_SETTINGS_RECEIVE: {
 			const { siteId, settings } = action;
-
-			// A site settings update may or may not include the icon property.
-			// If not, we should simply return state unchanged.
-			if ( ! settings.hasOwnProperty( 'site_icon' ) ) {
-				return state;
-			}
-
-			const mediaId = settings.site_icon;
-
-			// Similarly, return unchanged if next icon matches current value,
-			// accounting for the fact that a non-existent icon property is
-			// equivalent to setting the media icon as null
 			const site = state[ siteId ];
-			if ( ! site || ( ! site.icon && null === mediaId ) ||
-					( site.icon && site.icon.media_id === mediaId ) ) {
+
+			if ( ! site ) {
 				return state;
 			}
 
-			let nextSite;
-			if ( null === mediaId ) {
-				// Unset icon
-				nextSite = omit( site, 'icon' );
-			} else {
-				// Update icon, intentionally removing reference to the URL,
-				// shifting burden of URL lookup to selector
-				nextSite = {
-					...site,
-					icon: {
-						media_id: mediaId
-					}
-				};
-			}
+			let nextSite = site;
 
-			return {
-				...state,
-				[ siteId ]: nextSite
-			};
+			return reduce( [ 'blog_public', 'site_icon' ], ( memo, key ) => {
+				// A site settings update may or may not include the icon or blog_public property.
+				// If not, we should simply return state unchanged.
+				if ( ! settings.hasOwnProperty( key ) ) {
+					return memo;
+				}
+
+				switch ( key ) {
+					case 'blog_public':
+						const isPrivate = parseInt( settings.blog_public, 10 ) === -1;
+
+						if ( site.is_private === isPrivate ) {
+							return memo;
+						}
+
+						nextSite = {
+							...nextSite,
+							is_private: isPrivate
+						};
+						break;
+					case 'site_icon':
+						const mediaId = settings.site_icon;
+						// Return unchanged if next icon matches current value,
+						// accounting for the fact that a non-existent icon property is
+						// equivalent to setting the media icon as null
+						if ( ( ! site.icon && null === mediaId ) ||
+								( site.icon && site.icon.media_id === mediaId ) ) {
+							return memo;
+						}
+
+						if ( null === mediaId ) {
+							// Unset icon
+							nextSite = omit( nextSite, 'icon' );
+						} else {
+							// Update icon, intentionally removing reference to the URL,
+							// shifting burden of URL lookup to selector
+							nextSite = {
+								...nextSite,
+								icon: {
+									media_id: mediaId
+								}
+							};
+						}
+						break;
+				}
+
+				if ( memo === state ) {
+					memo = { ...state };
+				}
+
+				memo[ siteId ] = nextSite;
+				return memo;
+			}, state );
 		}
 
 		case MEDIA_DELETE: {
@@ -186,16 +200,11 @@ export function items( state = {}, action ) {
 
 			return state;
 		}
-
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, sitesSchema ) ) {
-				return state;
-			}
-			return {};
 	}
 
 	return state;
 }
+items.schema = sitesSchema;
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
@@ -232,13 +241,30 @@ export const requesting = createReducer( {}, {
 	}
 } );
 
+/**
+ * Returns the updated deleting state after an action has been dispatched.
+ * Deleting state tracks whether a network request is in progress for a site.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @return {Object}        Updated state
+ */
+export const deleting = keyedReducer( 'siteId', createReducer( {}, {
+	[ SITE_DELETE ]: stubTrue,
+	[ SITE_DELETE_FAILURE ]: stubFalse,
+	[ SITE_DELETE_SUCCESS ]: stubFalse
+} ) );
+
 export default combineReducers( {
+	connection,
+	deleting,
 	domains,
 	requestingAll,
 	items,
 	mediaStorage,
 	plans,
 	guidedTransfer,
+	monitor,
 	vouchers,
 	updates,
 	requesting,

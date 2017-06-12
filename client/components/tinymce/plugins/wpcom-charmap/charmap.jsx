@@ -294,12 +294,12 @@ export default React.createClass( {
 	renderCell( cell ) {
 		return (
 			<div
-				key={ cell[0] }
+				key={ cell[ 0 ] }
 				onClick={ this.onCellClick }
 				role="button"
-				title={ cell[1] }
+				title={ cell[ 1 ] }
 				className="wpcom-charmap__character">
-					{ String.fromCharCode( parseInt( cell[0], 10 ) ) }
+					{ String.fromCharCode( parseInt( cell[ 0 ], 10 ) ) }
 			</div>
 		);
 	},

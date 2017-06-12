@@ -1,4 +1,9 @@
+.is-reader-page .main.search-stream {
+	max-width: 960px;
+}
+
 .search-stream__intro {
+
 	@include breakpoint( "<660px" ) {
 		margin-left: 16px;
 	}
@@ -11,6 +16,7 @@
 .search-stream__fixed-area-separator {
 	margin-top: 31px;
 	margin-bottom: 0;
+	background: lighten( $gray, 20% );
 }
 
 .is-reader-page .search-stream .reader-post-card.card {
@@ -20,41 +26,69 @@
 .is-reader-page .search-stream__fixed-area {
 	background-color: $white;
 	position: fixed;
-	top: 0px;
-	padding-top: 77px;
+	top: 0;
+	padding-top: 47px;
 	z-index: 20;
-}
-
-// Custom breakpoints needed to match Related Posts
-$reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
-$reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
-
-// Recommendations in Search
-.is-reader-page .search-stream .reader__content {
-	display: flex;
-	flex-flow: wrap;
-	margin-top: 80px;
+	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 
 	@include breakpoint( ">660px" ) {
-		margin-top: 133px;
+		padding-top: 77px;
 	}
 }
 
-.is-reader-page .search-stream__input-card.card {
-	box-shadow: 0 0 0 2px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
- }
+// fix for smaller breakpoint on the new site-search
+.is-reader-page .search-stream__with-sites .search-stream__fixed-area {
+	padding-top: 20px;
 
- .is-reader-page .search-stream__blank-suggestions {
-	 margin-bottom: -15px;
- }
+	@include breakpoint( ">660px" ) {
+		padding-top: 77px;
+	}
+}
 
- .is-reader-page .search-stream__recommendation-list-item {
+.search-stream__input-card.card {
+	margin-bottom: 16px;
+	padding: 0;
+	z-index: z-index( 'root', '.search-stream__input-card' );
+}
+
+// Search term suggestions
+.search-stream__blank-suggestions {
+	font-size: 13px;
+	color: $gray;
+	margin-top: 18px;
+	text-align:left;
+
+	a, a:visited {
+		color: $blue-medium;
+	}
+
+	a:hover {
+		color: $blue-light;
+	}
+
+	@include breakpoint( "<660px" ) {
+		padding-left: 16px;
+	}
+}
+
+// Custom breakpoints needed to match Related Posts
+$reader-post-card-breakpoint: "( min-width: 1012px )";
+$reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
+$reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
+
+// Post recommendations in Search
+.is-reader-page .search-stream .reader__content {
+	display: flex;
+	flex-flow: wrap;
+}
+
+.is-reader-page .search-stream__recommendation-list-item {
 	box-sizing: border-box;
 	border-bottom: 1px solid lighten( $gray, 20% );
 	display: flex;
 	flex-basis: calc( 50% - 15px );
 	margin: 0 0 0 15px;
-	padding: 18px 0 32px 0;
+	padding: 18px 0 21px 0;
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
 		flex-basis: 100%;
@@ -71,7 +105,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		margin: 0 15px 0;
 	}
 
-	&:nth-child( 2n+0 ) {
+	&:nth-child( 2n ) {
 		flex-basis: calc( 50% - 15px );
 		margin: 0 15px 0 0;
 
@@ -92,14 +126,18 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	.reader-related-card-v2__post {
-		max-height: 205px;
-
-		@media #{$reader-related-card-v2-breakpoint-small} {
-			max-height: 100px;
-		}
+		max-height: 208px;
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
-			max-height: 100px;
+			max-height: 105px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			max-height: 206px;
+		}
+
+		@media #{$reader-related-card-v2-breakpoint-small} {
+			max-height: 103px;
 		}
 
 		.reader-related-card-v2__excerpt {
@@ -110,44 +148,29 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	 .has-thumbnail {
 
 		.reader-related-card-v2__post {
-			max-height: 200px;
+			max-height: 110px;
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
-				max-height: 145px;
+				max-height: 104px;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
-				max-height: 145px;
+				max-height: 104px;
 			}
 		}
 
-		.reader-related-card-v2__site-info {
-
-			@media #{$reader-related-card-v2-breakpoint-small} {
-				margin-top: 45px;
-			}
-
-			@media #{$reader-related-card-v2-breakpoint-medium} {
-				margin-top: 45px;
-			}
+		.reader-related-card-v2__meta {
+			margin-bottom: 18px;
 		}
 	}
 
 	.reader-related-card-v2__featured-image {
-		margin: 0 0 17px;
-
-		@media #{$reader-related-card-v2-breakpoint-medium} {
-			margin: 0 15px 0 0;
-		}
-
-		@media #{$reader-related-card-v2-breakpoint-small} {
-			margin: 0 15px 0 0;
-		}
+		margin: 0 0 14px;
 	}
 
 	.reader-related-card-v2__meta {
 		align-items: flex-start;
-		margin-bottom: 16px;
+		margin-bottom: 12px;
 
 		.reader-related-card-v2__byline,
 		.reader-related-card-v2__byline-author,
@@ -174,29 +197,16 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			margin: 4px 8px 0 0;
 		}
 	}
+}
+
+.is-reader-page .search-stream__input-card.card {
+	box-shadow: 0 0 0 2px lighten( $gray, 20% ), 0 1px 2px lighten( $gray, 30% );
+	margin-bottom: 0px;
  }
 
-.search-stream__input-card.card {
-	margin-bottom: 16px;
-	padding: 0;
-	z-index: z-index( 'root', '.search-stream__input-card' );
-}
-
-.search-stream__blank {
-	margin-top: 0;
-	text-align:center;
-}
-
-.search-stream__blank-suggestions {
-	font-size: 13px;
-	color: $gray;
-	margin-top: 0;
-	text-align:left;
-
-	@include breakpoint( "<660px" ) {
-		padding-left: 16px;
-	}
-}
+ .is-reader-page .search-stream__blank-suggestions {
+	 margin-bottom: -15px;
+ }
 
 .card.reader-search-card {
 
@@ -206,4 +216,148 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			z-index: z-index( 'root', '.reader-search-card' );
 		}
 	}
+}
+
+.search-stream__sort-picker {
+	position: absolute;
+	right: 50px;
+	top: 11px;
+	z-index: z-index( 'root', '.search-stream__sort-picker' );
+}
+
+// Post and Site results
+.search-stream .search-stream__results {
+	display: flex;
+}
+
+.search-stream__headers {
+	color: $gray;
+	display: flex;
+	font-weight: 600;
+	letter-spacing: .1em;
+	list-style-type: none;
+	margin: 0;
+	padding-top: 20px;
+	text-transform: uppercase;
+}
+
+.search-stream .search-stream__site-header {
+	margin-left: 40px;
+	max-width: 265px;
+	width: 100%;
+}
+
+.search-stream .search-stream__post-header,
+.search-stream .search-stream__site-header {
+	border-bottom: 2px solid lighten( $gray, 30% );
+	padding-bottom: 10px;
+	width: 100%;
+}
+
+.search-stream .search-stream__site-results {
+	max-width: 265px;
+	min-width: 265px;
+	margin-left: 40px;
+
+	.reader-infinite-stream__row-wrapper {
+		border: 0;
+	}
+
+	.reader-subscription-list-item .follow-button__label,
+	.reader-subscription-list-item__settings-label {
+		display: none;
+	}
+}
+
+// Search stream Posts and Sites header
+.search-stream__header .section-nav {
+	background: inherit;
+	border-bottom: 2px solid lighten( $gray, 30% );
+	box-shadow: none;
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.search-stream__header .section-nav-group {
+	display: flex;
+	flex: 1 0 0%;
+	width: 0;
+
+	@include breakpoint( "<480px" ) {
+		margin-top: 0;
+	}
+}
+
+.search-stream__header .section-nav-tabs__dropdown,
+.search-stream__header .section-nav__mobile-header {
+	display: none;
+}
+
+.search-stream__header .section-nav-tabs__list {
+	display: flex;
+
+	.section-nav-tab.is-selected {
+		border-bottom: 2px solid $gray-dark;
+	}
+
+	.section-nav-tab__link {
+		background-color: transparent;
+		color: $blue-wordpress;
+		padding: 16px;
+
+		&:hover {
+			color: $blue-medium;
+		}
+	}
+
+	.is-selected .section-nav-tab__link {
+		color: $gray-dark;
+	}
+}
+
+.search-stream__header .section-nav-tab__text {
+	font-weight: 600;
+	font-size: 13px;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	width: 100%;
+}
+
+.search-stream__headers {
+	color: $gray;
+	display: flex;
+	font-weight: 600;
+	list-style-type: none;
+	margin: 0;
+	padding-top: 20px;
+	text-transform: uppercase;
+}
+
+.search-stream__site-header {
+	margin-left: 40px;
+	max-width: 265px;
+	width: 100%;
+}
+// TODO: remove this after site on search lands
+.following.search-stream.main .reader__content {
+	padding-top: 105px;
+}
+
+.search-stream__with-sites .search-stream__results {
+	padding-top: 83px;
+
+	&.is-two-columns {
+		padding-top: 135px;
+	}
+}
+
+.search-stream__single-column-results  {
+	padding-top: 120px;
+}
+
+.search-stream__post-header,
+.search-stream__site-header {
+	border-bottom: 2px solid lighten( $gray, 30% );
+	padding-bottom: 10px;
+	width: 100%;
 }

@@ -8,16 +8,22 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import JetpackModuleToggle from '../jetpack-module-toggle';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import TokenField from 'components/token-field';
-import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
+import {
+	isJetpackModuleActive,
+	isJetpackModuleUnavailableInDevelopmentMode,
+	isJetpackSiteInDevelopmentMode
+} from 'state/selectors';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
 class AfterTheDeadline extends Component {
 	static defaultProps = {
@@ -34,20 +40,8 @@ class AfterTheDeadline extends Component {
 		fields: PropTypes.object,
 	};
 
-	state = {
-		advancedOptionsVisible: false,
-	};
-
 	onChangeIgnoredPhrases = ( phrases ) => {
 		this.props.setFieldValue( 'ignored_phrases', phrases.join( ',' ) );
-	};
-
-	onAdvancedOptionsClick = ( event ) => {
-		event.preventDefault();
-
-		this.setState( {
-			advancedOptionsVisible: ! this.state.advancedOptionsVisible,
-		} );
 	};
 
 	renderToggle( name, isDisabled, label ) {
@@ -55,17 +49,17 @@ class AfterTheDeadline extends Component {
 			fields,
 			handleToggle,
 			isRequestingSettings,
-			isSavingSettings
+			isSavingSettings,
+			moduleUnavailable
 		} = this.props;
 		return (
-			<FormToggle
-				className="composing__module-settings-toggle is-compact"
+			<CompactFormToggle
 				checked={ !! fields[ name ] }
-				disabled={ isRequestingSettings || isSavingSettings || isDisabled }
+				disabled={ isRequestingSettings || isSavingSettings || isDisabled || moduleUnavailable }
 				onChange={ handleToggle( name ) }
 			>
 				{ label }
-			</FormToggle>
+			</CompactFormToggle>
 		);
 	}
 
@@ -73,7 +67,7 @@ class AfterTheDeadline extends Component {
 		const { afterTheDeadlineModuleActive, translate } = this.props;
 
 		return (
-			<div className="composing__module-settings site-settings__child-settings">
+			<FormFieldset>
 				<FormLegend>
 					{ translate( 'Proofreading' ) }
 				</FormLegend>
@@ -92,7 +86,7 @@ class AfterTheDeadline extends Component {
 						'Posts or pages are updated'
 					) )
 				}
-			</div>
+			</FormFieldset>
 		);
 	}
 
@@ -100,7 +94,7 @@ class AfterTheDeadline extends Component {
 		const { afterTheDeadlineModuleActive, translate } = this.props;
 
 		return (
-			<div className="composing__module-settings site-settings__child-settings">
+			<FormFieldset>
 				<FormLegend>
 					{ translate( 'Automatic Language Detection' ) }
 				</FormLegend>
@@ -113,7 +107,7 @@ class AfterTheDeadline extends Component {
 						'Use automatically detected language to proofread posts and pages'
 					) )
 				}
-			</div>
+			</FormFieldset>
 		);
 	}
 
@@ -121,7 +115,7 @@ class AfterTheDeadline extends Component {
 		const { afterTheDeadlineModuleActive, translate } = this.props;
 
 		return (
-			<div className="composing__module-settings site-settings__child-settings">
+			<FormFieldset>
 				<FormLegend>
 					{ translate( 'English Options' ) }
 				</FormLegend>
@@ -139,18 +133,18 @@ class AfterTheDeadline extends Component {
 				{ this.renderToggle( 'Passive voice', ! afterTheDeadlineModuleActive, translate( 'Passive Voice' ) ) }
 				{ this.renderToggle( 'Phrases to Avoid', ! afterTheDeadlineModuleActive, translate( 'Phrases to Avoid' ) ) }
 				{ this.renderToggle( 'Redundant Expression', ! afterTheDeadlineModuleActive, translate( 'Redundant Phrases' ) ) }
-			</div>
+			</FormFieldset>
 		);
 	}
 
 	renderIgnoredPhrasesSection() {
-		const { afterTheDeadlineModuleActive, fields, translate } = this.props;
+		const { afterTheDeadlineModuleActive, fields, moduleUnavailable, translate } = this.props;
 		const ignoredPhrases = fields.ignored_phrases
 			? fields.ignored_phrases.split( ',' )
 			: [];
 
 		return (
-			<div className="composing__module-settings site-settings__child-settings">
+			<FormFieldset>
 				<FormLegend>
 					{ translate( 'Ignored Phrases' ) }
 				</FormLegend>
@@ -158,9 +152,9 @@ class AfterTheDeadline extends Component {
 				<TokenField
 					onChange={ this.onChangeIgnoredPhrases }
 					value={ ignoredPhrases }
-					disabled={ ! afterTheDeadlineModuleActive }
+					disabled={ ! afterTheDeadlineModuleActive || moduleUnavailable }
 				/>
-			</div>
+			</FormFieldset>
 		);
 	}
 
@@ -168,42 +162,39 @@ class AfterTheDeadline extends Component {
 		const {
 			isRequestingSettings,
 			isSavingSettings,
+			moduleUnavailable,
 			selectedSiteId,
 			translate
 		} = this.props;
 
-		return (
-			<FormFieldset>
-				<div className="composing__info-link-container">
-					<InfoPopover position={ 'left' }>
-						<ExternalLink href={ 'https://jetpack.com/support/spelling-and-grammar/' } target="_blank">
-							{ translate( 'Learn more about After the Deadline' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
+		const atdToggle = (
+			<JetpackModuleToggle
+				siteId={ selectedSiteId }
+				moduleSlug="after-the-deadline"
+				label={ translate( 'Check your spelling, style, and grammar' ) }
+				disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
+			/>
+		);
 
-				<JetpackModuleToggle
-					siteId={ selectedSiteId }
-					moduleSlug="after-the-deadline"
-					label={ translate( 'Check your spelling, style, and grammar' ) }
-					disabled={ isRequestingSettings || isSavingSettings }
-					/>
+		return (
+			<FoldableCard className="composing__foldable-card site-settings__foldable-card" header={ atdToggle }>
+				<QueryJetpackConnection siteId={ selectedSiteId } />
 
 				<div className="composing__module-settings site-settings__child-settings">
-					<a href="#" onClick={ this.onAdvancedOptionsClick }>
-						{ translate( 'Advanced Options' ) }
-					</a>
-				</div>
-
-				{ this.state.advancedOptionsVisible && (
-					<div>
-						{ this.renderProofreadingSection() }
-						{ this.renderAutoLanguageDetectionSection() }
-						{ this.renderEnglishOptionsSection() }
-						{ this.renderIgnoredPhrasesSection() }
+					<div className="composing__info-link-container site-settings__info-link-container">
+						<InfoPopover position="left">
+							<ExternalLink href="https://jetpack.com/support/spelling-and-grammar/" icon target="_blank">
+								{ translate( 'Learn more about After the Deadline.' ) }
+							</ExternalLink>
+						</InfoPopover>
 					</div>
-				) }
-			</FormFieldset>
+
+					{ this.renderProofreadingSection() }
+					{ this.renderAutoLanguageDetectionSection() }
+					{ this.renderEnglishOptionsSection() }
+					{ this.renderIgnoredPhrasesSection() }
+				</div>
+			</FoldableCard>
 		);
 	}
 }
@@ -211,10 +202,13 @@ class AfterTheDeadline extends Component {
 export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
+		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'after-the-deadline' );
 
 		return {
 			selectedSiteId,
 			afterTheDeadlineModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'after-the-deadline' ),
+			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		};
 	}
 )( localize( AfterTheDeadline ) );

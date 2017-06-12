@@ -107,18 +107,13 @@ const ComingSoonMessage = translate => (
 const ReaderPost = ( site, post ) => {
 	return (
 		<ReaderPreview
-			siteTitle={ site.name }
-			siteSlug={ site.slug }
-			siteIcon={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=32` }
-			postTitle={ get( post, 'title', '' ) }
+			site={ site }
+			post={ post }
 			postExcerpt={ formatExcerpt(
 				get( post, 'excerpt', false ) ||
 				get( post, 'content', false )
 			) }
 			postImage={ getPostImage( post ) }
-			postDate={ get( post, 'date', (new Date()).toISOString() ) }
-			authorName={ get( post, 'author.name', '' ) }
-			authorIcon={ get( post, 'author.avatar_URL', '' ) }
 		/>
 	);
 };

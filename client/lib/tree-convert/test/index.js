@@ -15,7 +15,7 @@ describe( 'TreeConvert', () => {
 
 	beforeEach( () => {
 		converter = TreeConvert();
-		menu = cloneDeep( menusFlat.menus[0] );
+		menu = cloneDeep( menusFlat.menus[ 0 ] );
 	} );
 
 	describe( 'treeify', () => {
@@ -23,19 +23,19 @@ describe( 'TreeConvert', () => {
 			const treeified = converter.treeify( menu.items );
 
 			expect( treeified ).to.have.length( 3 );
-			expect( treeified[2].items ).to.be.instanceOf( Array );
+			expect( treeified[ 2 ].items ).to.be.instanceOf( Array );
 		} );
 
 		it( 'should order sibling items by their "order" property', () => {
 			const treeified = converter.treeify( menu.items );
 
-			expect( treeified[1].items[0] ).to.have.property( 'name', 'Socks' );
+			expect( treeified[ 1 ].items[ 0 ] ).to.have.property( 'name', 'Socks' );
 		} );
 
 		it( 'should remove the "order" property from items, since order will be implicit', () => {
 			const treeified = converter.treeify( menu.items );
 
-			expect( treeified[1].items[0] ).not.to.have.property( 'order' );
+			expect( treeified[ 1 ].items[ 0 ] ).not.to.have.property( 'order' );
 		} );
 
 		it( 'should handle bad parent data, falling back to parent 0', () => {
@@ -44,7 +44,7 @@ describe( 'TreeConvert', () => {
 
 			// "About us" should become a top-level item
 			expect( treeified ).to.have.length( 3 );
-			expect( treeified[2] ).to.have.property( 'name', 'About us' );
+			expect( treeified[ 2 ] ).to.have.property( 'name', 'About us' );
 		} );
 	} );
 
@@ -60,15 +60,15 @@ describe( 'TreeConvert', () => {
 			const treeified = converter.treeify( menu.items ),
 				list = converter.untreeify( treeified );
 
-			expect( list[0] ).to.have.property( 'order' );
+			expect( list[ 0 ] ).to.have.property( 'order' );
 		} );
 
 		it( 'should not modify the original object', () => {
 			const treeified = converter.treeify( menu.items );
-			expect( treeified[1] ).to.have.property( 'items' );
+			expect( treeified[ 1 ] ).to.have.property( 'items' );
 
 			converter.untreeify( treeified );
-			expect( treeified[1] ).to.have.property( 'items' );
+			expect( treeified[ 1 ] ).to.have.property( 'items' );
 		} );
 	} );
 } );

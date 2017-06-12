@@ -9,18 +9,18 @@ import { find, pick } from 'lodash';
 /**
  * Internal Dependencies
  */
-import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { savePreference } from 'state/preferences/actions';
+import { getSite, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
-const sites = sitesFactory();
 const analyticsPageTitle = 'Stats';
 
 function rangeOfPeriod( period, date ) {
@@ -97,7 +97,7 @@ module.exports = {
 		}
 	},
 
-	insights: function( context, next ) {
+	insights: function( context ) {
 		const FollowList = require( 'lib/follow-list' );
 		let siteId = context.params.site_id;
 		const basePath = route.sectionify( context.path );
@@ -106,23 +106,8 @@ module.exports = {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
-		let site = sites.getSite( siteId );
-		if ( ! site ) {
-			site = sites.getSite( parseInt( siteId, 10 ) );
-		}
+		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? ( site.ID || 0 ) : 0;
-
-		// Check for a siteId and sites
-		if ( 0 === siteId ) {
-			if ( 0 === sites.data.length ) {
-				sites.once( 'change', function() {
-					page( context.path );
-				} );
-			} else {
-				// site is not in the user's site list
-				next();
-			}
-		}
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
@@ -181,7 +166,6 @@ module.exports = {
 		let chartTab;
 		let period;
 		let siteOffset = 0;
-		let momentSiteZone = i18n.moment();
 		let numPeriodAgo = 0;
 		const basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
@@ -189,10 +173,7 @@ module.exports = {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
-		let currentSite = sites.getSite( siteId );
-		if ( ! currentSite ) {
-			currentSite = sites.getSite( parseInt( siteId, 10 ) );
-		}
+		const currentSite = getSite( context.store.getState(), siteId );
 		siteId = currentSite ? ( currentSite.ID || 0 ) : 0;
 
 		const activeFilter = find( filters, ( filter ) => {
@@ -202,16 +183,6 @@ module.exports = {
 		if ( ! activeFilter ) {
 			next();
 		} else {
-			if ( 0 === siteId ) {
-				if ( 0 === sites.data.length ) {
-					sites.once( 'change', function() {
-						page( context.path );
-					} );
-				} else {
-					next();
-				}
-			}
-
 			if ( currentSite && currentSite.domain ) {
 				// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 				context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
@@ -220,12 +191,12 @@ module.exports = {
 			if ( currentSite && 'object' === typeof currentSite.options && 'undefined' !== typeof currentSite.options.gmt_offset ) {
 				siteOffset = currentSite.options.gmt_offset;
 			}
-			momentSiteZone = i18n.moment().utcOffset( siteOffset );
+			const momentSiteZone = i18n.moment().utcOffset( siteOffset );
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
 				date = i18n.moment( queryOptions.startDate ).locale( 'en' );
 				numPeriodAgo = getNumPeriodAgo( momentSiteZone, date, activeFilter.period );
 			} else {
-				date = rangeOfPeriod( activeFilter.period, momentSiteZone.clone().locale( 'en' ) ).startOf;
+				date = rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
 			}
 
 			numPeriodAgo = parseInt( numPeriodAgo, 10 );
@@ -284,26 +255,16 @@ module.exports = {
 		let momentSiteZone = i18n.moment();
 		const basePath = route.sectionify( context.path );
 
-		let site = sites.getSite( siteId );
-		if ( ! site ) {
-			site = sites.getSite( parseInt( siteId, 10 ) );
-		}
+		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? ( site.ID || 0 ) : 0;
 
 		const activeFilter = find( filters, ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
 		} );
 
-		// if we have a siteFragment, but no siteId, wait for the sites list
 		if ( siteFragment && 0 === siteId ) {
-			if ( 0 === sites.data.length ) {
-				sites.once( 'change', function() {
-					page( context.path );
-				} );
-			} else {
-				// site is not in the user's site list
-				window.location = '/stats';
-			}
+			// site is not in the user's site list
+			window.location = '/stats';
 		} else if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
 			next();
 		} else {
@@ -354,21 +315,11 @@ module.exports = {
 		const pathParts = context.path.split( '/' );
 		const postOrPage = pathParts[ 2 ] === 'post' ? 'post' : 'page';
 
-		let site = sites.getSite( siteId );
-		if ( ! site ) {
-			site = sites.getSite( parseInt( siteId, 10 ) );
-		}
+		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? ( site.ID || 0 ) : 0;
 
 		if ( 0 === siteId ) {
-			if ( 0 === sites.data.length ) {
-				sites.once( 'change', function() {
-					page( context.path );
-				} );
-			} else {
-				// site is not in the user's site list
-				window.location = '/stats';
-			}
+			window.location = '/stats';
 		} else {
 			analytics.pageView.record( '/stats/' + postOrPage + '/:post_id/:site',
 				analyticsPageTitle + ' > Single ' + titlecase( postOrPage ) );
@@ -393,24 +344,14 @@ module.exports = {
 		const followList = new FollowList();
 		const basePath = route.sectionify( context.path );
 
-		let site = sites.getSite( siteId );
-		if ( ! site ) {
-			site = sites.getSite( parseInt( siteId, 10 ) );
-		}
+		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? ( site.ID || 0 ) : 0;
 
 		const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
 			? site.slug : route.getSiteFragment( context.path );
 
 		if ( 0 === siteId ) {
-			if ( 0 === sites.data.length ) {
-				sites.once( 'change', function() {
-					page( context.path );
-				} );
-			} else {
-				// site is not in the user's site list
-				window.location = '/stats';
-			}
+			window.location = '/stats';
 		} else {
 			pageNum = parseInt( pageNum, 10 );
 
@@ -429,12 +370,34 @@ module.exports = {
 				perPage: 20,
 				total: 10,
 				domain: siteDomain,
-				sites,
 				siteId,
 				followList,
 			};
 			renderWithReduxStore(
 				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/comment-follows" { ...props } />,
+				document.getElementById( 'primary' ),
+				context.store
+			);
+		}
+	},
+
+	activityLog: function( context ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+
+		if ( siteId && ! isJetpack ) {
+			page.redirect( '/stats' );
+		} else {
+			analytics.pageView.record( '/stats/activity/:site', analyticsPageTitle + ' > Activity ' );
+
+			const props = {
+				path: context.path,
+				siteId,
+				context,
+			};
+			renderWithReduxStore(
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/activity-log" { ...props } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);

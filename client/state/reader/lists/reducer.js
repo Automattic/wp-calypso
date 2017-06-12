@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import keyBy from 'lodash/keyBy';
 import map from 'lodash/map';
 import union from 'lodash/union';
@@ -28,11 +27,9 @@ import {
 	READER_LISTS_REQUEST_SUCCESS,
 	READER_LISTS_REQUEST_FAILURE,
 	READER_LISTS_UNFOLLOW_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
 
 /**
  * Tracks all known list objects, indexed by list ID.
@@ -49,29 +46,23 @@ export function items( state = {}, action ) {
 		case READER_LIST_UPDATE_SUCCESS:
 			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
 		case READER_LIST_UPDATE_TITLE:
-			let listForTitleChange = Object.assign( {}, state[ action.listId ] );
+			const listForTitleChange = Object.assign( {}, state[ action.listId ] );
 			if ( ! listForTitleChange ) {
 				return state;
 			}
 			listForTitleChange.title = action.title;
 			return Object.assign( {}, state, keyBy( [ listForTitleChange ], 'ID' ) );
 		case READER_LIST_UPDATE_DESCRIPTION:
-			let listForDescriptionChange = Object.assign( {}, state[ action.listId ] );
+			const listForDescriptionChange = Object.assign( {}, state[ action.listId ] );
 			if ( ! listForDescriptionChange ) {
 				return state;
 			}
 			listForDescriptionChange.description = action.description;
 			return Object.assign( {}, state, keyBy( [ listForDescriptionChange ], 'ID' ) );
-		case SERIALIZE:
-			return state;
-		case DESERIALIZE:
-			if ( ! isValidStateWithSchema( state, itemsSchema ) ) {
-				return {};
-			}
-			return state;
 	}
 	return state;
 }
+items.schema = itemsSchema;
 
 /**
  * Tracks which list IDs the current user is subscribed to.
@@ -83,22 +74,16 @@ export function items( state = {}, action ) {
 export function subscribedLists( state = [], action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
-			return union( state, map( action.lists, 'ID' ) );
+			return map( action.lists, 'ID' );
 		case READER_LISTS_UNFOLLOW_SUCCESS:
 			// Remove the unfollowed list ID from subscribedLists
-			return filter( state, ( listId ) => {
+			return filter( state, listId => {
 				return listId !== action.data.list.ID;
 			} );
-		case SERIALIZE:
-			return state;
-		case DESERIALIZE:
-			if ( ! isValidStateWithSchema( state, subscriptionsSchema ) ) {
-				return [];
-			}
-			return state;
 	}
 	return state;
 }
+subscribedLists.schema = subscriptionsSchema;
 
 /**
  * Tracks which list IDs have been updated recently. Used to show the correct success message.
@@ -117,20 +102,13 @@ export function updatedLists( state = [], action ) {
 			return union( state, [ newListId ] );
 		case READER_LIST_DISMISS_NOTICE:
 			// Remove the dismissed list ID
-			return filter( state, ( listId ) => {
+			return filter( state, listId => {
 				return listId !== action.listId;
 			} );
-		case SERIALIZE:
-			return state;
-		case DESERIALIZE:
-			if ( ! isValidStateWithSchema( state, updatedListsSchema ) ) {
-				return [];
-			}
-			return state;
 	}
 	return state;
 }
-
+updatedLists.schema = updatedListsSchema;
 /**
  * Returns the updated requests state after an action has been dispatched.
  *
@@ -144,10 +122,6 @@ export function isRequestingList( state = false, action ) {
 		case READER_LIST_REQUEST_SUCCESS:
 		case READER_LIST_REQUEST_FAILURE:
 			return READER_LIST_REQUEST === action.type;
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
 	}
 
 	return state;
@@ -166,10 +140,6 @@ export function isRequestingLists( state = false, action ) {
 		case READER_LISTS_REQUEST_SUCCESS:
 		case READER_LISTS_REQUEST_FAILURE:
 			return READER_LISTS_REQUEST === action.type;
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
 	}
 
 	return state;
@@ -192,17 +162,11 @@ export function errors( state = {}, action ) {
 		case READER_LIST_DISMISS_NOTICE:
 			// Remove the dismissed list ID
 			return omit( state, action.listId );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			if ( ! isValidStateWithSchema( state, errorsSchema ) ) {
-				return {};
-			}
-			return state;
 	}
 
 	return state;
 }
+errors.schema = errorsSchema;
 
 /**
  * A missing list is one that's been requested, but we couldn't find (API response 404-ed).
@@ -215,12 +179,12 @@ export function missingLists( state = [], action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
 			// Remove any valid lists from missingLists
-			return filter( state, ( list ) => {
+			return filter( state, list => {
 				return ! find( action.lists, { owner: list.owner, slug: list.slug } );
 			} );
 		case READER_LIST_REQUEST_SUCCESS:
 			// Remove any valid lists from missingLists
-			return filter( state, ( list ) => {
+			return filter( state, list => {
 				return action.data.list.owner !== list.owner && action.data.list.slug !== list.slug;
 			} );
 		case READER_LIST_REQUEST_FAILURE:
@@ -229,9 +193,6 @@ export function missingLists( state = [], action ) {
 				return state;
 			}
 			return union( state, [ { owner: action.owner, slug: action.slug } ] );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return state;
 	}
 
 	return state;
@@ -244,5 +205,5 @@ export default combineReducers( {
 	isRequestingList,
 	isRequestingLists,
 	errors,
-	missingLists
+	missingLists,
 } );

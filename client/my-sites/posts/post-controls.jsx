@@ -4,7 +4,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import url from 'url';
 import classNames from 'classnames';
 import { includes, noop } from 'lodash';
 import Gridicon from 'gridicons';
@@ -16,15 +15,15 @@ import { isEnabled } from 'config';
 import { ga } from 'lib/analytics';
 import { userCan } from 'lib/posts/utils';
 import { isPublicizeEnabled } from 'state/selectors';
+import { getSiteSlug, isSitePreviewable } from 'state/sites/selectors';
 
-const view = () => ga.recordEvent( 'Posts', 'Clicked View Post' );
-const preview = () => ga.recordEvent( 'Posts', 'Clicked Preiew Post' );
 const edit = () => ga.recordEvent( 'Posts', 'Clicked Edit Post' );
 const copy = () => ga.recordEvent( 'Posts', 'Clicked Copy Post' );
 const viewStats = () => ga.recordEvent( 'Posts', 'Clicked View Post Stats' );
 
 const getAvailableControls = props => {
 	const {
+		current,
 		editURL,
 		fullWidth,
 		onDelete,
@@ -35,8 +34,9 @@ const getAvailableControls = props => {
 		onToggleShare,
 		onTrash,
 		post,
-		site,
+		siteSlug,
 		translate,
+		onViewPost,
 	} = props;
 	const controls = { main: [], more: [] };
 
@@ -46,7 +46,7 @@ const getAvailableControls = props => {
 	// Main Controls (not behind ... more link)
 	if ( userCan( 'edit_post', post ) ) {
 		controls.main.push( {
-			className: 'edit',
+			className: 'edit' + ( current === 'edit' ? ' is-active' : '' ),
 			href: editURL,
 			icon: 'pencil',
 			onClick: edit,
@@ -56,17 +56,16 @@ const getAvailableControls = props => {
 
 	if ( 'publish' === post.status ) {
 		controls.main.push( {
-			className: 'view',
+			className: 'view' + ( current === 'view' ? ' is-active' : '' ),
 			href: post.URL,
-			icon: 'external',
-			onClick: view,
-			target: '_blank',
+			icon: props.isPreviewable ? 'visible' : 'external',
+			onClick: onViewPost,
 			text: translate( 'View' ),
 		} );
 
 		controls.main.push( {
-			className: 'stats',
-			href: `/stats/post/${ post.ID }/${ site.slug }`,
+			className: 'stats' + ( current === 'stats' ? ' is-active' : '' ),
+			href: `/stats/post/${ post.ID }/${ siteSlug }`,
 			icon: 'stats-alt',
 			onClick: viewStats,
 			text: translate( 'Stats' ),
@@ -74,7 +73,7 @@ const getAvailableControls = props => {
 
 		if ( isEnabled( 'republicize' ) ) {
 			controls.main.push( {
-				className: 'share',
+				className: 'share' + ( current === 'share' ? ' is-active' : '' ),
 				disabled: ! props.isPublicizeEnabled,
 				icon: 'share',
 				onClick: onToggleShare,
@@ -82,23 +81,16 @@ const getAvailableControls = props => {
 			} );
 		}
 	} else if ( 'trash' !== post.status ) {
-		const parsedUrl = url.parse( post.URL, true );
-		parsedUrl.query.preview = true;
-		// NOTE: search needs to be cleared in order to rebuild query
-		// http://nodejs.org/api/url.html#url_url_format_urlobj
-		parsedUrl.search = '';
-
 		controls.main.push( {
-			className: 'view',
-			href: url.format( parsedUrl ),
-			icon: 'external',
-			onClick: preview,
+			className: 'view' + ( current === 'preview' ? ' is-active' : '' ),
+			icon: props.isPreviewable ? 'visible' : 'external',
+			onClick: onViewPost,
 			text: translate( 'Preview' ),
 		} );
 
 		if ( userCan( 'publish_post', post ) ) {
 			controls.main.push( {
-				className: 'publish',
+				className: 'publish' + ( current === 'publish' ? ' is-active' : '' ),
 				icon: 'reader',
 				onClick: onPublish,
 				text: translate( 'Publish' ),
@@ -106,7 +98,7 @@ const getAvailableControls = props => {
 		}
 	} else if ( userCan( 'delete_post', post ) ) {
 		controls.main.push( {
-			className: 'restore',
+			className: 'restore' + ( current === 'restore' ? ' is-active' : '' ),
 			icon: 'undo',
 			onClick: onRestore,
 			text: translate( 'Restore' ),
@@ -116,14 +108,14 @@ const getAvailableControls = props => {
 	if ( userCan( 'delete_post', post ) ) {
 		if ( 'trash' === post.status ) {
 			controls.main.push( {
-				className: 'trash is-scary',
+				className: 'trash is-scary' + ( current === 'delete-permanently' ? ' is-active' : '' ),
 				icon: 'trash',
 				onClick: onDelete,
 				text: translate( 'Delete Permanently' ),
 			} );
 		} else {
 			controls.main.push( {
-				className: 'trash',
+				className: 'trash' + ( current === 'trash' ? ' is-active' : '' ),
 				icon: 'trash',
 				onClick: onTrash,
 				text: translate( 'Trash' ),
@@ -136,8 +128,8 @@ const getAvailableControls = props => {
 		userCan( 'edit_post', post )
 	) {
 		controls.main.push( {
-			className: 'copy',
-			href: `/post/${ site.slug }?copy=${ post.ID }`,
+			className: 'copy' + ( current === 'copy' ? ' is-active' : '' ),
+			href: `/post/${ siteSlug }?copy=${ post.ID }`,
 			icon: 'clipboard',
 			onClick: copy,
 			text: translate( 'Copy' ),
@@ -153,14 +145,14 @@ const getAvailableControls = props => {
 
 	if ( controls.more.length ) {
 		controls.main.push( {
-			className: 'more',
+			className: 'more' + ( current === 'more' ? ' is-active' : '' ),
 			icon: 'ellipsis',
 			onClick: onShowMore,
 			text: translate( 'More' ),
 		} );
 
 		controls.more.push( {
-			className: 'back',
+			className: 'back' + ( current === 'back' ? ' is-active' : '' ),
 			icon: 'chevron-left',
 			onClick: onHideMore,
 			text: translate( 'Back' ),
@@ -211,9 +203,11 @@ export const PostControls = props => {
 };
 
 PostControls.propTypes = {
+	current: PropTypes.string,
 	editURL: PropTypes.string.isRequired,
 	fullWidth: PropTypes.bool,
 	isPublicizeEnabled: PropTypes.bool,
+	isPreviewable: PropTypes.bool,
 	onDelete: PropTypes.func,
 	onHideMore: PropTypes.func.isRequired,
 	onPublish: PropTypes.func,
@@ -221,11 +215,14 @@ PostControls.propTypes = {
 	onShowMore: PropTypes.func.isRequired,
 	onToggleShare: PropTypes.func,
 	onTrash: PropTypes.func,
+	onViewPost: PropTypes.func,
 	post: PropTypes.object.isRequired,
-	site: PropTypes.object,
+	siteId: PropTypes.number,
 	translate: PropTypes.func,
 };
 
-export default connect( ( state, { site, post } ) => ( {
-	isPublicizeEnabled: isPublicizeEnabled( state, site.ID, post.type ),
+export default connect( ( state, { siteId, post } ) => ( {
+	isPreviewable: false !== isSitePreviewable( state, siteId ),
+	isPublicizeEnabled: isPublicizeEnabled( state, siteId, post.type ),
+	siteSlug: getSiteSlug( state, siteId ),
 } ) )( localize( PostControls ) );

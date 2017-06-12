@@ -71,5 +71,17 @@ describe( 'Calypso Site', () => {
 			site.set( { arr: [ 1, 2, 3 ] } );
 			expect( changeCallback.called ).to.be.false;
 		} );
+
+		it( '`set` returns `true` when an attribute is updated', () => {
+			const site = Site( mockSiteData );
+
+			expect( site.set( { description: 'new description' } ) ).to.be.true;
+		} );
+
+		it( '`set` returns `false` when no attribute is updated', () => {
+			const site = Site( mockSiteData );
+
+			expect( site.set( { description: mockSiteData.description } ) ).to.be.false;
+		} );
 	} );
 } );

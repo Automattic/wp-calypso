@@ -25,12 +25,13 @@ import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
+import EditorVisibility from 'post-editor/editor-visibility';
 
-class EditPostStatus extends Component {
+export class EditPostStatus extends Component {
 
 	static propTypes = {
 		moment: PropTypes.func,
-		onDateChange: PropTypes.func,
+		setPostDate: PropTypes.func,
 		onSave: PropTypes.func,
 		post: PropTypes.object,
 		savedPost: PropTypes.object,
@@ -38,14 +39,16 @@ class EditPostStatus extends Component {
 		translate: PropTypes.func,
 		type: PropTypes.string,
 		postDate: PropTypes.string,
+		onPrivatePublish: PropTypes.func,
+		status: PropTypes.string,
+		isPostPrivate: PropTypes.bool,
 	};
 
 	constructor( props ) {
 		super( props );
 		this.state = {
 			showTZTooltip: false,
-			showPostSchedulePopover: false,
-			onDateChange: noop
+			showPostSchedulePopover: false
 		};
 	}
 
@@ -98,14 +101,15 @@ class EditPostStatus extends Component {
 	};
 
 	render() {
-		let isSticky, isPublished, isPending, canPublish, isScheduled;
-		const { translate } = this.props;
+		let isSticky, isPublished, isPending, canPublish, isScheduled, isPasswordProtected;
+		const { translate, isPostPrivate } = this.props;
 
 		if ( this.props.post ) {
+			isPasswordProtected = postUtils.getVisibility( this.props.post ) === 'password';
 			isSticky = this.props.post.sticky;
 			isPending = postUtils.isPending( this.props.post );
 			isPublished = postUtils.isPublished( this.props.savedPost );
-			isScheduled = this.props.savedPost.status === 'future';
+			isScheduled = this.props.savedPost && this.props.savedPost.status === 'future';
 			canPublish = siteUtils.userCan( 'publish_posts', this.props.site );
 		}
 
@@ -140,10 +144,7 @@ class EditPostStatus extends Component {
 					{ this.renderTZTooltop() }
 					{ this.renderPostSchedulePopover() }
 				</span>
-				<Revisions
-						revisions={ this.props.post && this.props.post.revisions }
-						adminUrl={ adminUrl } />
-				{ this.props.type === 'post' &&
+				{ this.props.type === 'post' && ! isPostPrivate && ! isPasswordProtected &&
 					<label className="edit-post-status__sticky">
 						<span className="edit-post-status__label-text">
 							{ translate( 'Stick to the front page' ) }
@@ -182,7 +183,36 @@ class EditPostStatus extends Component {
 						<Gridicon icon="undo" size={ 18 } /> { translate( 'Revert to draft' ) }
 					</Button>
 				}
+				{ this.renderPostVisibility() }
+				<Revisions
+					revisions={ this.props.post && this.props.post.revisions }
+					adminUrl={ adminUrl }
+				/>
 			</div>
+		);
+	}
+
+	renderPostVisibility() {
+		if ( ! this.props.post ) {
+			return;
+		}
+
+		const { password, type } = this.props.post || {};
+		const isPrivateSite = this.props.site && this.props.site.is_private;
+		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
+		const savedPassword = this.props.savedPost ? this.props.savedPost.password : null;
+		const props = {
+			status: this.props.status,
+			onPrivatePublish: this.props.onPrivatePublish,
+			isPrivateSite,
+			type,
+			password,
+			savedStatus,
+			savedPassword
+		};
+
+		return (
+			<EditorVisibility { ...props } />
 		);
 	}
 
@@ -206,7 +236,7 @@ class EditPostStatus extends Component {
 						selectedDay={ selectedDay }
 						timezone={ tz }
 						gmtOffset={ gmt }
-						onDateChange={ this.props.onDateChange }
+						onDateChange={ this.props.setPostDate }
 					/>
 				</div>
 			</Popover>
@@ -229,7 +259,7 @@ class EditPostStatus extends Component {
 			<Tooltip
 				context={ this.refs && this.refs.postStatusTooltip }
 				isVisible={ this.state.showTZTooltip }
-				position="right"
+				position="left"
 				onClose={ noop }
 			>
 				<div className="edit-post-status__full-date__tooltip">

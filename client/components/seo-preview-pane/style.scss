@@ -95,6 +95,49 @@
 
 	background-color: $white;
 	border: 1px solid lighten( $gray, 25% );
+
+	.reader-post-card {
+		padding: 10px;
+
+		a {
+			text-decoration: none;
+			pointer-events: none;
+			cursor: default;
+		}
+
+		.reader-post-card__timestamp-and-tag a {
+			color: $gray;
+		}
+
+		.reader-post-actions__item {
+			white-space: nowrap;
+
+			span, .comment-button, .like-button, .ellipsis-menu .button {
+				cursor: default;
+				pointer-events: none;
+
+				&:hover {
+					color: $gray;
+				}
+			}
+		}
+
+		&.card {
+			border-bottom: none;
+		}
+
+		.comment-button__label-status,
+		.like-button__label-status,
+		.reader-share__button-label {
+			@include breakpoint( "<960px" ) {
+				display: none;
+			}
+		}
+
+		@include breakpoint( ">960px" ) {
+			min-width: 480px;
+		}
+	}
 }
 
 .seo-preview-pane__message {

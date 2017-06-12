@@ -10,6 +10,7 @@
 	@extend .card;
 	display: block;
 	width: 100%;
+	min-height: 150px;
 	padding: 24px;
 	margin: 0;
 	background: lighten( $gray, 30% );
@@ -62,4 +63,11 @@
 	height: 24px;
 	margin: 0;
 	color: lighten( $gray, 10% );
+}
+
+.editor-drawer-well.is-hidden {
+	.editor-drawer-well__content, .editor-drawer-well__placeholder {
+		opacity: 0;
+		transition: 0.3s opacity;
+	}
 }

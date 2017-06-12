@@ -12,12 +12,16 @@ import {
 	JETPACK_CONNECTION_STATUS_REQUEST,
 	JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
 	JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
+	JETPACK_DISCONNECT_REQUEST,
+	JETPACK_DISCONNECT_REQUEST_FAILURE,
+	JETPACK_DISCONNECT_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
 import {
 	items as itemsReducer,
-	requests as requestsReducer
+	requests as requestsReducer,
+	disconnectRequests as disconnectRequestsReducer
 } from '../reducer';
 import {
 	items as ITEMS_FIXTURE,
@@ -143,6 +147,74 @@ describe( 'reducer', () => {
 					type: DESERIALIZE
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut ).to.eql( {} );
+		} );
+	} );
+
+	describe( 'disconnectRequests', () => {
+		it( 'state should default to an empty object', () => {
+			const state = disconnectRequestsReducer( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should set requesting to true for the specified site when disconnect request starts', () => {
+			const stateIn = REQUESTS_FIXTURE,
+				siteId = 12345678,
+				action = {
+					type: JETPACK_DISCONNECT_REQUEST,
+					siteId
+				};
+			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut ).to.eql( {
+				...REQUESTS_FIXTURE,
+				[ siteId ]: true
+			} );
+		} );
+
+		it( 'should set requesting to false for the specified site when disconnect request completes successfully', () => {
+			const stateIn = REQUESTS_FIXTURE,
+				siteId = 87654321,
+				action = {
+					type: JETPACK_DISCONNECT_REQUEST_SUCCESS,
+					siteId
+				};
+			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut ).to.eql( {
+				...REQUESTS_FIXTURE,
+				[ siteId ]: false
+			} );
+		} );
+
+		it( 'should set requesting to false for the specified site when disconnect request completes unsuccessfully', () => {
+			const stateIn = REQUESTS_FIXTURE,
+				siteId = 87654321,
+				action = {
+					type: JETPACK_DISCONNECT_REQUEST_FAILURE,
+					siteId
+				};
+			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
+
+			expect( stateOut ).to.eql( {
+				...REQUESTS_FIXTURE,
+				[ siteId ]: false
+			} );
+		} );
+
+		it( 'should not persist state', () => {
+			const stateIn = REQUESTS_FIXTURE,
+				action = {
+					type: SERIALIZE
+				};
+			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut ).to.eql( {} );
+		} );
+
+		it( 'should not load persisted state', () => {
+			const stateIn = REQUESTS_FIXTURE,
+				action = {
+					type: DESERIALIZE
+				};
+			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );
 		} );
 	} );

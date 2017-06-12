@@ -4,6 +4,7 @@
 import { expect } from 'chai';
 import request from 'superagent';
 import supertest from 'supertest';
+import unmodifiedConfig from 'config';
 
 /**
  * Internal dependencies
@@ -46,7 +47,7 @@ describe( 'api', function() {
 	} );
 
 	let maybeIt = it;
-	if ( process.env.NODE_ENV !== 'desktop' ) {
+	if ( unmodifiedConfig( 'env_id' ) !== 'desktop' ) {
 		maybeIt = maybeIt.skip;
 	}
 

@@ -60,10 +60,16 @@ function makeImageSafe( post, image, maxWidth ) {
 		imgSource = url.resolve( post.URL, imgSource );
 	}
 
-	const safeSource = ( maxWidth
+	let safeSource = ( maxWidth
 		? maxWidthPhotonishURL( safeImageURL( imgSource ), maxWidth )
 		: safeImageURL( imgSource )
 		);
+
+	// allow https sources through even if we can't make them 'safe'
+	// helps images that use querystring params and are from secure sources
+	if ( ! safeSource && startsWith( imgSource, 'https://' ) ) {
+		safeSource = imgSource;
+	}
 
 	removeUnwantedAttributes( image );
 

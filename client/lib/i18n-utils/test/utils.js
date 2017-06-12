@@ -1,21 +1,69 @@
 /**
  * External dependencies
  */
-const debug = require( 'debug' )( 'calypso:i18n-utils:test' ); // eslint-disable-line no-unused-vars
 import assert from 'assert';
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { removeLocaleFromPath, getLanguage, getLocaleFromPath } from 'lib/i18n-utils';
+import {
+	addLocaleToPath,
+	getLanguage,
+	getLocaleFromPath,
+	isDefaultLocale,
+	removeLocaleFromPath,
+} from 'lib/i18n-utils';
 
 describe( 'utils', function() {
+	describe( '#isDefaultLocale', function() {
+		it( 'should return false when a non-default locale provided', function() {
+			expect( isDefaultLocale( 'fr' ) ).to.be.false;
+		} );
+
+		it( 'should return true when a default locale provided', function() {
+			expect( isDefaultLocale( 'en' ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#addLocaleToPath', function() {
+		it( 'adds a locale to the path', function() {
+			assert.equal( addLocaleToPath( '/start/flow/step', 'fr' ), '/start/flow/step/fr' );
+		} );
+
+		it( 'adds a locale to the path, replacing any previous locale', function() {
+			assert.equal( addLocaleToPath( '/start/flow/step/de', 'fr' ), '/start/flow/step/fr' );
+		} );
+
+		it( 'adds a locale to the path, keeping query string intact', function() {
+			assert.equal(
+				addLocaleToPath( '/start/flow/step?foo=bar', 'fr' ),
+				'/start/flow/step/fr?foo=bar',
+			);
+		} );
+	} );
+
 	describe( '#removeLocaleFromPath', function() {
 		it( 'should remove the :lang part of the URL', function() {
 			assert.equal( removeLocaleFromPath( '/start/fr' ), '/start' );
 			assert.equal( removeLocaleFromPath( '/start/flow/fr' ), '/start/flow' );
 			assert.equal( removeLocaleFromPath( '/start/flow/step' ), '/start/flow/step' );
+		} );
+
+		it( 'should remove the :lang part of the URL, keeping any query string', function() {
+			assert.equal( removeLocaleFromPath( '/log-in/pl?foo=bar' ), '/log-in?foo=bar' );
+			assert.equal(
+				removeLocaleFromPath( '/start/flow/step/fr?foo=bar' ),
+				'/start/flow/step?foo=bar',
+			);
+		} );
+
+		it( 'should not change the URL if no lang is present', function() {
+			assert.equal( removeLocaleFromPath( '/log-in' ), '/log-in' );
+			assert.equal(
+				removeLocaleFromPath( '/start/flow/step?foo=bar' ),
+				'/start/flow/step?foo=bar',
+			);
 		} );
 
 		it( 'should not remove the :flow part of the URL', function() {
@@ -30,11 +78,11 @@ describe( 'utils', function() {
 		it( 'should not remove keys from an invite', function() {
 			assert.equal(
 				removeLocaleFromPath( '/accept-invite/site.wordpress.com/123456/es' ),
-				'/accept-invite/site.wordpress.com/123456'
+				'/accept-invite/site.wordpress.com/123456',
 			);
 			assert.equal(
 				removeLocaleFromPath( '/accept-invite/site.wordpress.com/123456/123456/123456/es' ),
-				'/accept-invite/site.wordpress.com/123456/123456/123456'
+				'/accept-invite/site.wordpress.com/123456/123456/123456',
 			);
 		} );
 	} );
@@ -46,7 +94,10 @@ describe( 'utils', function() {
 
 		it( 'should return locale string when at end of path', function() {
 			assert.equal( getLocaleFromPath( '/start/es' ), 'es' );
-			assert.equal( getLocaleFromPath( '/accept-invite/site.wordpress.com/123456/123456/123456/es' ), 'es' );
+			assert.equal(
+				getLocaleFromPath( '/accept-invite/site.wordpress.com/123456/123456/123456/es' ),
+				'es',
+			);
 		} );
 	} );
 
@@ -75,6 +126,7 @@ describe( 'utils', function() {
 
 		it( 'should return undefined when we lookup random words', function() {
 			expect( getLanguage( 'themes' ) ).to.equal( undefined );
+			expect( getLanguage( 'log-in' ) ).to.equal( undefined );
 		} );
 
 		it( 'should return a language with a three letter country code', function() {

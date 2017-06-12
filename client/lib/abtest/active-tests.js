@@ -8,139 +8,115 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	signupStore: {
-		datestamp: '20160927',
+	signupSurveyStep: {
+		datestamp: '20170329',
 		variations: {
-			designTypeWithoutStore: 0,
-			designTypeWithStore: 100,
+			showSurveyStep: 20,
+			hideSurveyStep: 80,
 		},
-		defaultVariation: 'designTypeWithStore',
-		allowExistingUsers: false,
+		defaultVariation: 'hideSurveyStep',
 	},
-	signupStoreBenchmarking: {
-		datestamp: '20160927',
+	businessPlanDescriptionAT: {
+		datestamp: '20170605',
 		variations: {
-			pressable: 97,
-			bluehost: 1,
-			bluehostWithWoo: 1,
-			siteground: 1
+			original: 50,
+			pluginsAndThemes: 50,
 		},
-		defaultVariation: 'pressable',
-		allowExistingUsers: false,
+		defaultVariation: 'original',
 	},
-	signupThemeUpload: {
-		datestamp: '20160928',
+	presaleChatButton: {
+		datestamp: '20170328',
 		variations: {
-			showThemeUpload: 10,
-			hideThemeUpload: 90,
+			showChatButton: 20,
+			original: 80
 		},
-		defaultVariation: 'hideThemeUpload',
-		allowExistingUsers: false,
+		defaultVariation: 'original',
+		localeTargets: 'any',
 	},
-	domainSuggestionPopover: {
-		datestamp: '20160809',
+	newSiteWithJetpack: {
+		datestamp: '20170419',
 		variations: {
-			showPopover: 80,
-			hidePopover: 20,
+			showNewJetpackSite: 10,
+			onlyDotComSites: 90,
 		},
-		defaultVariation: 'showPopover',
-		allowExistingUsers: false,
+		defaultVariation: 'onlyDotComSites',
 	},
-	designShowcaseWelcomeTour: {
-		datestamp: '20161206',
-		variations: {
-			enabled: 0,
-			disabled: 100,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-	themeSheetWelcomeTour: {
-		datestamp: '20161206',
-		variations: {
-			enabled: 0,
-			disabled: 100,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-	siteTitleStep: {
-		datestamp: '20170102',
-		variations: {
-			showSiteTitleStep: 5,
-			hideSiteTitleStep: 95,
-		},
-		defaultVariation: 'hideSiteTitleStep',
-		allowExistingUsers: false
-	},
-
-	jetpackConnectPlansFirst: {
-		datestamp: '20161024',
-		variations: {
-			showPlansBeforeAuth: 50,
-			showPlansAfterAuth: 50
-		},
-		defaultVariation: 'showPlansAfterAuth',
-		allowExistingUsers: true
-	},
-
-	siteTitleTour: {
-		datestamp: '20161207',
-		variations: {
-			disabled: 100,
-			enabled: 0,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-
-	userFirstSignup: {
-		datestamp: '20160124',
-		variations: {
-			userLast: 100,
-			userFirst: 0,
-		},
-		defaultVariation: 'userLast',
-		allowExistingUsers: false,
-	},
-
-	premiumSquaredPlansWording: {
-		datestamp: '20170111',
-		variations: {
-			withoutMarketingCopy: 50,
-			withMarketingCopy: 50
-		},
-		defaultVariation: 'withoutMarketingCopy',
-		allowExistingUsers: true
-	},
-
-	jetpackPlansTabs: {
-		datestamp: '20170117',
-		variations: {
-			tabs: 50,
-			noTabs: 50
-		},
-		defaultVariation: 'noTabs'
-	},
-
-	readerSearchOnFollowing: {
-		datestamp: '20170206',
+	chatOfferOnCancel: {
+		datestamp: '20170421',
 		variations: {
 			show: 50,
-			hide: 50
+			hide: 50,
+		},
+		defaultVariation: 'show',
+		allowExistingUsers: true,
+	},
+	domainToPaidPlanUpsellNudge: {
+		datestamp: '20170607',
+		variations: {
+			skip: 50,
+			show: 50,
+		},
+		defaultVariation: 'skip',
+		allowExistingUsers: true,
+	},
+	ATPromptOnCancel: {
+		datestamp: '20170515',
+		variations: {
+			hide: 20,
+			show: 80,
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
-		allowAnyLocale: true
 	},
-
-	freeToPaidUpsell: {
-		datestamp: '20170222',
+	ATUpgradeOnCancel: {
+		datestamp: '20170515',
 		variations: {
-			sidebar: 50,
-			disabled: 50
+			hide: 20,
+			show: 80,
 		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true
-	}
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	reduceThemesInSignupTest: {
+		datestamp: '20170518',
+		variations: {
+			original: 0,
+			modified: 100,
+		},
+		defaultVariation: 'original',
+	},
+	savingsInCheckoutSummary: {
+		datestamp: '20170516',
+		variations: {
+			hide: 50,
+			show: 50,
+		},
+		defaultVariation: 'show',
+	},
+	siteCreationStepOne: {
+		datestamp: '20170524',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+	},
+	pulsingCartTestingAB: {
+		datestamp: '20170601',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
+	signupProgressIndicator: {
+		datestamp: '20170612',
+		variations: {
+			original: 50,
+			wizardbar: 50,
+		},
+		defaultVariation: 'original',
+	},
 };

@@ -28,6 +28,10 @@
 // Components
 @import 'components';
 
+// Extensions
+@import 'extensions/woocommerce/style';
+@import 'extensions/wp-super-cache/style';
+
 // Devdocs
 @import 'devdocs/design/style';
 @import 'devdocs/design/syntax';

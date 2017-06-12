@@ -1,17 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import eligibility from './eligibility/reducer';
-import {
-	keyedReducer,
-	withSchemaValidation,
-} from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
 import { transferStates } from './constants';
 import { automatedTransfer as schema } from './schema';
 import {
@@ -25,7 +21,7 @@ import {
 export const status = ( state = null, action ) => get( {
 	[ ELIGIBILITY_UPDATE ]: state || transferStates.INQUIRING,
 	[ INITIATE ]: transferStates.START,
-	[ INITIATE_FAILURE ]: transferStates.INQUIRING,
+	[ INITIATE_FAILURE ]: transferStates.FAILURE,
 	[ SET_STATUS ]: action.status,
 	[ TRANSFER_UPDATE ]: 'complete' === action.status ? transferStates.COMPLETE : state,
 }, action.type, state );

@@ -1,0 +1,24 @@
+.reader-export-button {
+	cursor: pointer;
+
+	&:hover {
+		.reader-export-button__icon {
+			fill: $blue-medium;
+		}
+
+		.reader-export-button__label {
+			color: $blue-medium;
+		}
+	}
+}
+
+.reader-export-button__icon {
+	fill: $gray;
+	vertical-align: middle;
+}
+
+.reader-export-button__label {
+	font-size: 14px;
+	color: $gray;
+	padding-left: 4px;
+}

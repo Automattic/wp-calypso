@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { keyBy, omit, omitBy } from 'lodash';
-
 /**
  * Internal dependencies
  */
@@ -23,8 +21,9 @@ import {
 	PUBLICIZE_SHARE_FAILURE,
 	PUBLICIZE_SHARE_DISMISS
 } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 import { connectionsSchema } from './schema';
-import { createReducer } from 'state/utils';
+import sharePostActions from './publicize-actions/reducer';
 
 export const sharePostStatus = createReducer( {}, {
 	[ PUBLICIZE_SHARE ]: ( state, { siteId, postId } ) => ( { ...state, [ siteId ]: { ...state[ siteId ], [ postId ]: {
@@ -83,5 +82,6 @@ export default combineReducers( {
 	fetchingConnections,
 	fetchedConnections,
 	connections,
-	sharePostStatus
+	sharePostStatus,
+	sharePostActions,
 } );

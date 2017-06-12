@@ -10,7 +10,6 @@ import Dispatcher from 'dispatcher';
 import { action as ActionType } from './constants';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import feedPostListCache from './feed-stream-cache';
-import SiteStoreActions from 'lib/reader-site-store/actions';
 import wpcom from 'lib/wp';
 
 function getNextPageParams( store ) {
@@ -74,10 +73,6 @@ export function receivePage( id, error, data ) {
 				} );
 			}
 
-			if ( get( post, 'meta.data.site' ) ) {
-				SiteStoreActions.receiveFetch( post.site_ID, null, post.meta.data.site );
-			}
-
 			if ( post && get( post, 'meta.data.post' ) ) {
 				FeedPostStoreActions.receivePost( null, post.meta.data.post, {
 					feedId: post.feed_ID,
@@ -137,11 +132,18 @@ export function selectPrevItem( id ) {
 	} );
 }
 
-export function selectItem( id, selectedIndex ) {
+export function selectFirstItem( id ) {
+	Dispatcher.handleViewAction( {
+		type: ActionType.SELECT_FIRST_ITEM,
+		id
+	} );
+}
+
+export function selectItem( id, postKey ) {
 	Dispatcher.handleViewAction( {
 		type: ActionType.SELECT_ITEM,
 		id,
-		selectedIndex
+		postKey
 	} );
 }
 

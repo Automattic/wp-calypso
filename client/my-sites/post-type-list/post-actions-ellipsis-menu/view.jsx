@@ -22,18 +22,21 @@ class PostActionsEllipsisMenuView extends Component {
 		translate: PropTypes.func.isRequired,
 		status: PropTypes.string,
 		isPreviewable: PropTypes.bool,
+		onClick: PropTypes.func,
 		previewUrl: PropTypes.string,
 		setPreviewUrl: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
 	};
 
-	constructor() {
-		super( ...arguments );
+	static defaultProps = {
+		globalId: '',
+		status: 'draft',
+		isPreviewable: false,
+		onClick: () => {},
+		previewUrl: '',
+	};
 
-		this.previewPost = this.previewPost.bind( this );
-	}
-
-	previewPost( event ) {
+	previewPost = ( event ) => {
 		const { isPreviewable, previewUrl } = this.props;
 		mc.bumpStat( 'calypso_cpt_actions', 'view' );
 		if ( ! isPreviewable ) {
@@ -42,8 +45,9 @@ class PostActionsEllipsisMenuView extends Component {
 
 		this.props.setPreviewUrl( previewUrl );
 		this.props.setLayoutFocus( 'preview' );
+		this.props.onClick();
 		event.preventDefault();
-	}
+	};
 
 	render() {
 		const { translate, status, previewUrl } = this.props;

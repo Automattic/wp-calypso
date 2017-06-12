@@ -6,10 +6,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from './controller';
-import readerController from 'reader/controller';
+import { followingManage } from './controller';
+import { initAbTests, updateLastRoute, sidebar } from 'reader/controller';
 
 export default function() {
-	page( '/following/*', readerController.loadSubscriptions, readerController.initAbTests );
-	page( '/following/edit', readerController.updateLastRoute, readerController.sidebar, controller.followingEdit );
+	page( '/following/*', initAbTests );
+	page( '/following/manage', updateLastRoute, sidebar, followingManage );
+	page.redirect( '/following/edit*', '/following/manage' );
 }

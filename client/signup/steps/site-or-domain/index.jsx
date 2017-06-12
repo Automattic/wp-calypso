@@ -2,67 +2,173 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { cartItems } from 'lib/cart-values';
+import { tlds } from 'lib/domains/constants';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import Card from 'components/card';
+import SiteOrDomainChoice from './choice';
+import { getCurrentUserId } from 'state/current-user/selectors';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
-import BlogImage from 'signup/steps/design-type-with-store/blog-image';
-import PageImage from 'signup/steps/design-type-with-store/page-image';
+import DomainImage from 'signup/steps/design-type-with-store/domain-image';
+import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
+import ExistingSite from 'signup/steps/design-type-with-store/existing-site';
+import { externalRedirect } from 'lib/route/path';
+import NavigationLink from 'signup/navigation-link';
 
-export default class SiteOrDomain extends Component {
+class SiteOrDomain extends Component {
+	componentWillMount() {
+		if ( ! this.getDomainName() ) {
+			// /domains domain search is an external application to calypso,
+			// therefor a full redirect required:
+			externalRedirect( '/domains' );
+		}
+	}
+
+	getDomainName() {
+		const { queryObject, step } = this.props;
+
+		let domain, isValidDomain = false;
+
+		if ( queryObject && queryObject.new ) {
+			domain = queryObject.new;
+		} else if ( step && step.domainItem ) {
+			domain = step.domainItem.meta;
+		}
+
+		if ( domain ) {
+			const domainParts = domain.split( '.' );
+
+			if ( domainParts.length > 1 ) {
+				const tld = domainParts.slice( 1 ).join( '.' );
+				isValidDomain = !! tlds[ tld ];
+			}
+		}
+
+		return isValidDomain && domain;
+	}
+
 	getChoices() {
-		return [
+		const { translate } = this.props;
+
+		const choices = [
 			{
 				type: 'page',
-				label: 'Start a new site',
-				image: <BlogImage />
-			},
+				label: translate( 'New site' ),
+				image: <NewSiteImage />,
+				description: translate( 'Choose a theme, customize, and launch your site. Free domain included with all plans.' )
+			}
+		];
+
+		if ( this.props.isLoggedIn ) {
+			choices.push(
+				{
+					type: 'existing-site',
+					label: translate( 'Existing WordPress.com site' ),
+					image: <ExistingSite />,
+					description: translate( 'Use with a site you already started. Free domain included with all plans.' )
+				}
+			);
+		}
+
+		choices.push(
 			{
 				type: 'domain',
-				label: 'Just buy a domain',
-				image: <PageImage />
-			},
-		];
+				label: translate( 'Just buy a domain' ),
+				image: <DomainImage />,
+				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' )
+			}
+		);
+
+		return choices;
 	}
 
 	renderChoices() {
 		return (
 			<div className="site-or-domain__choices">
-				{ this.getChoices().map( ( choice ) => (
-					<Card className="site-or-domain__choice" key={ choice.type }>
-						<a href="#" onClick={ ( event ) => this.handleClickChoice( event, choice.type ) }>
-							{ choice.image }
-							<h2 className="site-or-domain__label">{ choice.label }</h2>
-						</a>
-					</Card>
+				{ this.getChoices().map( ( choice, index ) => (
+					<SiteOrDomainChoice
+						key={ `site-or-domain-choice-${ index }` }
+						choice={ choice }
+						handleClickChoice={ this.handleClickChoice }
+					/>
 				) ) }
 			</div>
 		);
 	}
 
-	handleClickChoice( event, designType ) {
-		event.preventDefault();
+	renderBackLink() {
+		// Hacky way to add back link to /domains
+		return (
+			<div className="site-or-domain__button">
+				<NavigationLink
+					direction="back"
+					flowName={ this.props.flowName }
+					positionInFlow={ 1 }
+					stepName={ this.props.stepName }
+					stepSectionName={ this.props.stepSectionName }
+					backUrl="/domains"
+					signupProgress={ this.props.signupProgress }
+				/>
+			</div>
+		);
+	}
 
-		const { stepName, goToStep, goToNextStep } = this.props;
+	renderScreen() {
+		return (
+			<div>
+				{ this.renderChoices() }
+				{ this.renderBackLink() }
+			</div>
+		);
+	}
 
-		SignupActions.submitSignupStep( { stepName }, [], { designType } );
+	handleClickChoice = ( designType ) => {
+		const {
+			stepName,
+			goToStep,
+			goToNextStep,
+		} = this.props;
+
+		const domain = this.getDomainName();
+		const tld = domain.split( '.' ).slice( 1 ).join( '.' );
+		const domainItem = cartItems.domainRegistration( { productSlug: tlds[ tld ], domain } );
+		const siteUrl = domain;
+
+		SignupActions.submitSignupStep( {
+			stepName,
+			domainItem,
+			designType,
+			siteSlug: domain,
+			siteUrl,
+			isPurchasingItem: true,
+		}, [], { designType, domainItem, siteUrl } );
 
 		if ( designType === 'domain' ) {
 			// we can skip the next two steps in the `domain-first` flow if the
 			// user is only purchasing a domain
+			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
 			SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
 				themeSlugWithRepo: 'pub/twentysixteen'
 			} );
-			SignupActions.submitSignupStep( { stepName: 'plans', wasSkipped: true }, [], { cartItem: null, privacyItem: null } );
+			SignupActions.submitSignupStep(
+				{ stepName: 'plans-site-selected', wasSkipped: true },
+				[],
+				{ cartItem: null, privacyItem: null }
+			);
 			goToStep( 'user' );
-		} else {
+		} else if ( designType === 'existing-site' ) {
 			goToNextStep();
+		} else {
+			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
+			goToStep( 'themes' );
 		}
-	}
+	};
 
 	render() {
 		return (
@@ -70,10 +176,20 @@ export default class SiteOrDomain extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
+				headerText={ this.props.headerText }
+				subHeaderText={ this.props.subHeaderText }
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
 				signupProgress={ this.props.signupProgress }
-				stepContent={ this.renderChoices() } />
+				stepContent={ this.renderScreen() } />
 		);
 	}
 }
+
+export default connect(
+	( state ) => {
+		return {
+			isLoggedIn: !! getCurrentUserId( state )
+		};
+	}
+)( localize( SiteOrDomain ) );
