@@ -42,13 +42,16 @@ class ReaderInfiniteStream extends Component {
 		minHeight: this.props.minHeight,
 	} );
 
+	recordedRender = new Set(); // used to ensure we only fire render event once per item
+
 	recordTraintrackForRowRender = ( { index, railcar, eventName } ) => {
 		recordTracksRailcarRender( eventName, railcar, { ui_position: index } );
 	};
 
 	rowRenderer = rowRendererProps => {
 		const railcar = get( this.props.items[ rowRendererProps.index ], 'railcar' );
-		if ( railcar && this.props.renderEventName ) {
+		if ( railcar && this.props.renderEventName && ! this.recordedRender.has( rowRendererProps.index ) ) {
+			this.recordedRender.add( rowRendererProps.index );
 			this.recordTraintrackForRowRender(
 				{
 					index: rowRendererProps.index,
