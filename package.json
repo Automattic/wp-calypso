@@ -177,7 +177,7 @@
     "build-server": "npm run -s env -- webpack --display-error-details --config webpack.config.node.js",
     "prebuild-jetpack": "npm run -s install-if-needed",
     "build-jetpack": "cross-env CALYPSO_ENV=jetpack run-p -s build-server build-css",
-    "postbuild-jetpack": "npm run -s bundle",
+    "postbuild-jetpack": "cross-env NODE_PATH=$NODE_PATH:server:client:. CALYPSO_ENV=jetpack node server/bundler/bin/bundler.js",
     "bundle": "npm run -s env -- node server/bundler/bin/bundler.js",
     "clean": "npm run -s clean:build && npm run -s clean:devdocs && npm run -s clean:public",
     "clean:build": "npm run -s rm -- build && npm run -s rm -- server/bundler .json && npm run -s rm -- .babel-cache",
