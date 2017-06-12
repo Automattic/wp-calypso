@@ -101,7 +101,6 @@ function getErrorFromHTTPError( httpError ) {
 export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch => {
 	dispatch( {
 		type: LOGIN_REQUEST,
-		usernameOrEmail
 	} );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=login-endpoint' )
@@ -117,7 +116,6 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 		} ).then( ( response ) => {
 			dispatch( {
 				type: LOGIN_REQUEST_SUCCESS,
-				usernameOrEmail,
 				rememberMe,
 				data: response.body && response.body.data,
 			} );
@@ -126,7 +124,6 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 
 			dispatch( {
 				type: LOGIN_REQUEST_FAILURE,
-				usernameOrEmail,
 				error,
 			} );
 
@@ -238,11 +235,11 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		.then( ( response ) => {
 			const phoneNumber = get( response, 'body.data.phone_number' );
 			const message = translate( 'Message sent to phone number ending in %(phoneNumber)s', {
-					args: {
-						phoneNumber
-					}
+				args: {
+					phoneNumber
 				}
-			);
+			} );
+
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 				notice: {
