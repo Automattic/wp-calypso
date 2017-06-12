@@ -9,7 +9,7 @@ import {
 	CellMeasurer,
 	InfiniteLoader,
 } from 'react-virtualized';
-import { debounce, noop, get } from 'lodash';
+import { debounce, noop, get, pickBy } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -49,16 +49,14 @@ class ReaderInfiniteStream extends Component {
 	};
 
 	rowRenderer = rowRendererProps => {
-		const railcar = get( this.props.items[ rowRendererProps.index ], 'railcar' );
-		if ( railcar && this.props.renderEventName && ! this.recordedRender.has( rowRendererProps.index ) ) {
+		const railcar = get( this.props.items[ rowRendererProps.index ], 'railcar', undefined );
+		if ( this.props.renderEventName && ! this.recordedRender.has( rowRendererProps.index ) ) {
 			this.recordedRender.add( rowRendererProps.index );
-			this.recordTraintrackForRowRender(
-				{
-					index: rowRendererProps.index,
-					railcar,
-					eventName: this.props.renderEventName,
-				},
-			);
+			this.recordTraintrackForRowRender( pickBy( {
+				index: rowRendererProps.index,
+				railcar,
+				eventName: this.props.renderEventName,
+			} ) );
 		}
 
 		return this.props.rowRenderer( {
