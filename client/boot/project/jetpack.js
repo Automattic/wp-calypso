@@ -100,4 +100,10 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		}
 		next();
 	} );
+
+	page.start( {
+		hashbang: true,
+		decodeURLComponents: false,
+	} );
+	page.base( window.pageBase );
 }

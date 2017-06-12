@@ -9,6 +9,7 @@ import page from 'page';
 import controller from './controller';
 
 export default function() {
-	page( '/writing', controller.writingSettings );
-	page( '/discussion', controller.discussionSettings );
+	page( '/test/writing', controller.writingSettings );
+	page( '/test/discussion', controller.discussionSettings );
+	page( '/test/', controller.writingSettings );
 }

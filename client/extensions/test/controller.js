@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
 
@@ -10,6 +9,7 @@ import page from 'page';
  */
 import WritingSettings from './writing';
 import DiscussionSettings from './discussion';
+import { renderPage } from 'lib/react-helpers';
 
 const loadPage = ( path ) => {
 	return () => page( path );
@@ -18,19 +18,13 @@ const loadPage = ( path ) => {
 const jetpackUi = {
 
 	// Writing Settings
-	writingSettings() {
-		ReactDom.render(
-			React.createElement( WritingSettings, { loadPage } ),
-			document.getElementById( 'primary' )
-		);
+	writingSettings( context ) {
+		renderPage( context, React.createElement( WritingSettings, { loadPage } ) );
 	},
 
 	// Discussion Settings
-	discussionSettings() {
-		ReactDom.render(
-			React.createElement( DiscussionSettings, { loadPage } ),
-			document.getElementById( 'primary' )
-		);
+	discussionSettings( context ) {
+		renderPage( context, React.createElement( DiscussionSettings, { loadPage } ) );
 	},
 };
 
