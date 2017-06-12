@@ -19,6 +19,7 @@ import Search from 'components/search';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlanStorage from 'blocks/plan-storage';
 import FilterItem from './filter-item';
+import config from 'config';
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
@@ -83,6 +84,10 @@ export class MediaLibraryFilterBar extends Component {
 		this.props.onFilterChange( filter );
 	};
 
+	changeSource = source => {
+		this.props.onSourceChange( source );
+	};
+
 	renderTabItems() {
 		const tabs = this.props.source === '' ? [ '', 'images', 'documents', 'videos', 'audio' ] : [];
 
@@ -95,6 +100,25 @@ export class MediaLibraryFilterBar extends Component {
 				disabled={ this.isFilterDisabled( filter ) }
 			>
 				{ this.getFilterLabel( filter ) }
+			</FilterItem>
+		);
+	}
+
+	renderMediaSource() {
+		if ( ! config.isEnabled( 'external-media' ) ) {
+			return null;
+		}
+
+		const nextService = this.props.source === '' ? 'google_photos' : '';
+		const { translate } = this.props;
+		const services = {
+			'': 'WordPress',
+			google_photos: translate( 'Photos from Google' ),
+		};
+
+		return (
+			<FilterItem onChange={ this.changeSource } value={ nextService }>
+				{ services[ this.props.source ] }
 			</FilterItem>
 		);
 	}
@@ -131,6 +155,7 @@ export class MediaLibraryFilterBar extends Component {
 			<div className="media-library__filter-bar">
 				<SectionNav selectedText={ this.getFilterLabel( this.props.filter ) } hasSearch={ true }>
 					<SectionNavTabs>
+						{ this.renderMediaSource() }
 						{ this.renderTabItems() }
 					</SectionNavTabs>
 					{ this.renderSearchSection() }
