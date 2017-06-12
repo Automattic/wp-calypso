@@ -1,3 +1,7 @@
+/**
+ * External dependencies
+ */
+import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,6 +13,7 @@ import {
 function _createRequestAction( method, siteId, path, body ) {
 	return {
 		type: WOOCOMMERCE_REQUEST,
+		requestId: uniqueId( 'request_' ),
 		method,
 		siteId,
 		path,
