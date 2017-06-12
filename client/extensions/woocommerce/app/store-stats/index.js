@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,23 +13,23 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Chart from './store-stats-chart';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import DatePicker from 'my-sites/stats/stats-date-picker';
+import { UNITS } from './constants';
 
 class StoreStats extends Component {
 	static propTypes = {
+		path: PropTypes.string.isRequired,
+		queryDate: PropTypes.string,
+		selectedDate: PropTypes.string,
 		siteId: PropTypes.number,
 		unit: PropTypes.string.isRequired,
-		startDate: PropTypes.string,
-		path: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { siteId, unit, startDate, path, slug } = this.props;
-		const today = moment().format( 'YYYY-MM-DD' );
-		const selectedDate = startDate || today;
+		const { siteId, unit, selectedDate, queryDate, path, slug } = this.props;
 		const ordersQuery = {
 			unit,
-			date: today,
-			quantity: '30'
+			date: queryDate,
+			quantity: UNITS[ unit ].quantity,
 		};
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
