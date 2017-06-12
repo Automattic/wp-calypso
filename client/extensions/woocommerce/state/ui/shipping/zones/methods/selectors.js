@@ -91,10 +91,7 @@ export const getShippingZoneMethods = ( state, zoneId, siteId = getSelectedSiteI
 	if ( ! areShippingZonesLoaded( state, siteId ) ) {
 		return [];
 	}
-	const zone = getShippingZone( state, zoneId, siteId );
-	if ( ! zone ) {
-		return [];
-	}
+	const zone = getShippingZone( state, zoneId, siteId ) || { id: zoneId, methodIds: [] };
 
 	return overlayShippingZoneMethods( state, zone, siteId );
 };

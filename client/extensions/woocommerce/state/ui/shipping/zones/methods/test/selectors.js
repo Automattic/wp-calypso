@@ -224,6 +224,45 @@ describe( 'selectors', () => {
 			expect( getShippingZoneMethods( state, 1 ) ).to.deep.equal( [ { id: { index: 0 }, title: 'NewMethod' } ] );
 		} );
 
+		it( 'should work for newly-created zones', () => {
+			const state = {
+				extensions: {
+					woocommerce: {
+						sites: {
+							123: {
+								shippingZones: [],
+								shippingZoneMethods: {},
+							},
+						},
+						ui: {
+							shipping: {
+								123: {
+									zones: {
+										creates: [ {
+											id: { index: 0 },
+											methods: {
+												creates: [ { id: { index: 0 }, title: 'MyNewMethodTitle' } ],
+												updates: [],
+												deletes: [],
+											},
+										} ],
+										updates: [],
+										deletes: [],
+										currentlyEditingId: null,
+									},
+								},
+							},
+						},
+					},
+				},
+				ui: {
+					selectedSiteId: 123,
+				},
+			};
+
+			expect( getShippingZoneMethods( state, { index: 0 } ) ).to.deep.equal( [ { id: { index: 0 }, title: 'MyNewMethodTitle' } ] );
+		} );
+
 		it( 'should sort the shipping methods', () => {
 			const state = {
 				extensions: {
