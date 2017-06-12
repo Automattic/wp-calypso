@@ -11,11 +11,12 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
+import { isDefaultLocale } from 'lib/i18n-utils';
 import { isSectionIsomorphic } from 'state/ui/selectors';
 import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
-	getDocumentHeadLink
+	getDocumentHeadLink,
 } from 'state/document-head/selectors';
 import { reducer } from 'state';
 import { SERIALIZE } from 'state/action-types';
@@ -25,7 +26,7 @@ const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
 const markupCache = new Lru( {
 	max: 3000,
-	maxAge: HOUR_IN_MS
+	maxAge: HOUR_IN_MS,
 } );
 
 function bumpStat( group, name ) {
@@ -77,11 +78,17 @@ export function serverRender( req, res ) {
 	const context = req.context;
 	let title, metas = [], links = [];
 
-	if ( context.lang !== config( 'i18n_default_locale_slug' ) ) {
+	if ( ! isDefaultLocale( context.lang ) ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
 	}
 
-	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user && isEmpty( context.query ) ) {
+	if (
+		config.isEnabled( 'server-side-rendering' ) &&
+		context.layout &&
+		! context.user &&
+		isEmpty( context.query ) &&
+		isDefaultLocale( context.lang )
+	) {
 		// context.pathname doesn't include querystring, so it's a suitable cache key.
 		let key = context.pathname;
 		if ( req.error ) {

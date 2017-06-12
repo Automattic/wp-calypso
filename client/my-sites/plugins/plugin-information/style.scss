@@ -1,16 +1,8 @@
 .plugin-information {
 	display: flex;
 	flex-wrap: wrap;
-	border-top: 1px solid lighten( $gray, 30% );
-	margin-top: 16px;
-	padding-top: 16px;
 	position: relative;
 	overflow: hidden;
-
-	@include breakpoint( '>480px' ) {
-		margin-top: 24px;
-		padding-top: 24px;
-	}
 }
 
 .plugin-information__description {
@@ -29,6 +21,18 @@
 .plugin-information__version-shell .version{
 	float: left;
 	margin: 0 16px 8px 0;
+}
+
+.plugin-information__action-links {
+	display: flex;
+	flex-wrap: wrap;
+	clear: both;
+
+	.button {
+		margin-top: 16px;
+		flex-shrink: 0;
+		margin-right: 10px;
+	}
 }
 
 .plugin-information__last-updated {

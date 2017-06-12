@@ -3,7 +3,7 @@
  */
 import config from 'config';
 import { login, magicLogin } from './controller';
-import { makeLayout, redirectLoggedIn } from 'controller';
+import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
 
 export default router => {
 	if ( config.isEnabled( 'magic-login' ) ) {
@@ -11,6 +11,12 @@ export default router => {
 	}
 
 	if ( config.isEnabled( 'wp-login' ) ) {
-		router( '/log-in/:twoFactorAuthType?', redirectLoggedIn, login, makeLayout );
+		router(
+			'/log-in/:twoFactorAuthType(authenticator|backup|sms|push)?/:lang?',
+			setUpLocale,
+			redirectLoggedIn,
+			login,
+			makeLayout,
+		);
 	}
 };

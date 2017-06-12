@@ -9,11 +9,13 @@ import { find, pick, compact, escape, unescape } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import TokenField from 'components/token-field';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
+// TODO Rename this card since it contains other controls, and may contain more in the future (like tax)
 const ProductFormCategoriesCard = (
 	{ product, productCategories, editProduct, translate }
 ) => {
@@ -32,6 +34,10 @@ const ProductFormCategoriesCard = (
 
 		const data = { id: product.id, categories: newCategories };
 		editProduct( product, data );
+	};
+
+	const toggleFeatured = () => {
+		editProduct( product, { featured: ! product.featured } );
 	};
 
 	const selectedCategories = product.categories || [];
@@ -56,6 +62,16 @@ const ProductFormCategoriesCard = (
 					{ translate( 'Add a category so this product is easy to find.' ) }
 				</FormSettingExplanation>
 			</FormFieldSet>
+			<div className="products__product-form-featured">
+				<FormLabel htmlFor="featured">{ translate( 'Featured' ) }
+					<CompactFormToggle
+						onChange={ toggleFeatured }
+						checked={ product.featured }
+					>
+					{ translate( 'Feature this product to promote it on your store' ) }
+				</CompactFormToggle>
+				</FormLabel>
+			</div>
 		</Card>
 	);
 };
@@ -70,4 +86,3 @@ ProductFormCategoriesCard.propTypes = {
 };
 
 export default localize( ProductFormCategoriesCard );
-

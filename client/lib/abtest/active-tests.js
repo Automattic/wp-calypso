@@ -111,4 +111,12 @@ module.exports = {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	signupProgressIndicator: {
+		datestamp: '20170612',
+		variations: {
+			original: 50,
+			wizardbar: 50,
+		},
+		defaultVariation: 'original',
+	},
 };
