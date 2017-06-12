@@ -56,6 +56,9 @@ translate:
 shrinkwrap:
 	@npm run update-deps
 
+analyze-bundles:
+	@npm run analyze-bundles
+
 urn:
 	@printf "⚱\n\n";
 	@npm start;
