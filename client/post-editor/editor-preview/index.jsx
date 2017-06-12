@@ -4,6 +4,7 @@
 import React from 'react';
 import url from 'url';
 import omit from 'lodash/omit';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -93,9 +94,14 @@ const EditorPreview = React.createClass( {
 	},
 
 	render() {
+		const previewFlow = config.isEnabled( 'post-editor/delta-post-publish-preview' );
+		const className = classNames( 'editor-preview', {
+			'is-fullscreen': previewFlow,
+		} );
+
 		return (
-			<div className="editor-preview">
-				{ config.isEnabled( 'post-editor/delta-post-publish-preview' )
+			<div className={ className }>
+				{ previewFlow
 					? <WebPreviewContent
 							showPreview={ this.props.showPreview }
 							defaultViewportDevice={ this.props.defaultViewportDevice }
