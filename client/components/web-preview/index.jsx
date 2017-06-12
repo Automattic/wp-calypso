@@ -123,6 +123,10 @@ WebPreview.propTypes = {
 	showSEO: PropTypes.bool,
 	// Show device viewport switcher
 	showDeviceSwitcher: PropTypes.bool,
+	// Show edit button
+	showEdit: PropTypes.bool,
+	// The URL for the edit button
+	editUrl: PropTypes.string,
 	// The URL that should be displayed in the iframe
 	previewUrl: PropTypes.string,
 	// The URL for the external link button
@@ -151,6 +155,8 @@ WebPreview.defaultProps = {
 	showClose: true,
 	showSEO: true,
 	showDeviceSwitcher: true,
+	showEdit: false,
+	editUrl: null,
 	previewUrl: null,
 	previewMarkup: null,
 	onLoad: noop,

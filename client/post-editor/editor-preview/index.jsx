@@ -104,10 +104,11 @@ const EditorPreview = React.createClass( {
 				{ previewFlow
 					? <WebPreviewContent
 							showPreview={ this.props.showPreview }
+							showEdit={ true }
+							showExternal={ false }
 							defaultViewportDevice={ this.props.defaultViewportDevice }
 							onClose={ this.props.onClose }
 							previewUrl={ this.state.iframeUrl }
-							externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
 						/>
 					: <WebPreview
 							showPreview={ this.props.showPreview }

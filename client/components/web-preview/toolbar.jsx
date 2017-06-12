@@ -9,6 +9,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
+import Button from 'components/button';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 
@@ -28,6 +29,10 @@ class PreviewToolbar extends Component {
 		showClose: PropTypes.bool,
 		// Show SEO button
 		showSEO: PropTypes.bool,
+		// Show edit button
+		showEdit: PropTypes.bool,
+		// The URL for the edit button
+		editUrl: PropTypes.string,
 		// The device to display, used for setting preview dimensions
 		device: PropTypes.string,
 		// Elements to render on the right side of the toolbar
@@ -56,12 +61,14 @@ class PreviewToolbar extends Component {
 	render() {
 		const {
 			device: currentDevice,
+			editUrl,
 			externalUrl,
 			onClose,
 			previewUrl,
 			setDeviceViewport,
 			showClose,
 			showDeviceSwitcher,
+			showEdit,
 			showExternal,
 			showSEO,
 			translate
@@ -100,6 +107,15 @@ class PreviewToolbar extends Component {
 							</DropdownItem>
 						) ) }
 					</SelectDropdown>
+				}
+				{ showEdit &&
+					<Button
+						borderless
+						className="web-preview__edit"
+						href={ editUrl }
+					>
+						<Gridicon icon="pencil" /> { translate( 'Edit' ) }
+					</Button>
 				}
 				{ showExternal &&
 					<a
