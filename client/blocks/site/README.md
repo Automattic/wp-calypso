@@ -16,7 +16,7 @@ render() {
 #### Props
 
 * `siteId (number)` - A site ID. Required, unless a `site` object prop is provided (see below).
-* `site (object)` - A site object. Required, unless a `siteId` prop is provided.
+* `site (object)` - A site object. Required, unless a `siteId` prop is provided. If both are provided, `siteId` takes precedence.
 * `indicator (bool)` - Whether to display the Site Indicator within the item or not.
 * `onSelect (func)` - A function to handle the event callback when clicking/tapping on the site.
 * `href (string)` - A URL to add to the anchor.
