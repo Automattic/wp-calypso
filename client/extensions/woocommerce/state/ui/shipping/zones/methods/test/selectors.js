@@ -68,8 +68,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [],
@@ -111,8 +111,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [ {
@@ -155,8 +155,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [ {
@@ -196,8 +196,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [ {
@@ -240,8 +240,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [ {
@@ -317,8 +317,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [],
@@ -353,8 +353,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [ {
@@ -407,8 +407,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [ {
@@ -455,8 +455,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [ {
@@ -505,8 +505,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [],
@@ -547,8 +547,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [],
@@ -584,8 +584,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [ {
@@ -634,8 +634,8 @@ describe( 'selectors', () => {
 							},
 						},
 						ui: {
-							123: {
-								shipping: {
+							shipping: {
+								123: {
 									zones: {
 										creates: [],
 										updates: [ {

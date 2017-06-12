@@ -10,7 +10,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getAPIShippingZones, areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
 
 export const getShippingZonesEdits = ( state, siteId ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', siteId, 'shipping', 'zones' ] );
+	return get( state, [ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'zones' ] );
 };
 
 /**

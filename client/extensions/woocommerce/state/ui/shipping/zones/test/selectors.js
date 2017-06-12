@@ -126,7 +126,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should NOT apply the uncommited changes made in the modal', () => {
+		it( 'should NOT apply the uncommitted changes made in the modal', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [
