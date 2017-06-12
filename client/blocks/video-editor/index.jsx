@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -19,7 +18,6 @@ import { updatePoster } from 'state/ui/editor/video-editor/actions';
 import {
 	getPosterUploadProgress,
 	getPosterUrl,
-	shouldCloseVideoEditorModal,
 	shouldShowVideoEditorError,
 } from 'state/selectors';
 
@@ -37,7 +35,6 @@ class VideoEditor extends Component {
 
 		// Connected props
 		posterUrl: PropTypes.string,
-		shouldCloseModal: PropTypes.bool,
 		shouldShowError: PropTypes.bool,
 		uploadProgress: PropTypes.number,
 	};
@@ -54,11 +51,7 @@ class VideoEditor extends Component {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.shouldCloseModal && ! nextProps.shouldShowError ) {
-			return;
-		}
-
-		if ( nextProps.shouldShowError ) {
+		if ( nextProps.shouldShowError && ! this.props.shouldShowError ) {
 			this.setState( {
 				error: true,
 				pauseVideo: false
@@ -67,10 +60,12 @@ class VideoEditor extends Component {
 			return;
 		}
 
-		this.props.onUpdatePoster( this.getVideoEditorProps( nextProps.posterUrl ) );
+		if ( this.props.posterUrl !== nextProps.posterUrl ) {
+			this.props.onUpdatePoster( this.getVideoEditorProps( nextProps.posterUrl ) );
+		}
 	}
 
-	handleSelectFrame = () => {
+	selectFrame = () => {
 		const { isLoading } = this.state;
 
 		if ( isLoading ) {
@@ -86,7 +81,7 @@ class VideoEditor extends Component {
 		} );
 	}
 
-	handlePause = ( currentTime ) => {
+	updatePoster = ( currentTime ) => {
 		if ( ! isSelectingFrame ) {
 			return;
 		}
@@ -99,15 +94,15 @@ class VideoEditor extends Component {
 		}
 	}
 
-	handleScriptLoadError = () => {
+	setError = () => {
 		this.setState( { error: true } );
 	}
 
-	handleVideoLoaded = () => {
+	setIsLoading = () => {
 		this.setState( { isLoading: false } );
 	}
 
-	handleUploadImageClick = () => {
+	pauseVideo = () => {
 		isSelectingFrame = false;
 
 		this.setState( {
@@ -116,7 +111,7 @@ class VideoEditor extends Component {
 		} );
 	}
 
-	handleUploadImage = ( file ) => {
+	uploadImage = ( file ) => {
 		if ( ! file ) {
 			return;
 		}
@@ -186,9 +181,9 @@ class VideoEditor extends Component {
 								className="video-editor__preview"
 								isPlaying={ ! pauseVideo }
 								item={ media }
-								onPause={ this.handlePause }
-								onScriptLoadError={ this.handleScriptLoadError }
-								onVideoLoaded={ this.handleVideoLoaded }
+								onPause={ this.updatePoster }
+								onScriptLoadError={ this.setError }
+								onVideoLoaded={ this.setIsLoading }
 							/>
 						</div>
 						{ uploadProgress && ! error && ! isSelectingFrame &&
@@ -204,9 +199,9 @@ class VideoEditor extends Component {
 							isPosterUpdating={ uploadProgress && ! error }
 							isVideoLoading={ isLoading }
 							onCancel={ onCancel }
-							onSelectFrame={ this.handleSelectFrame }
-							onUploadImage={ this.handleUploadImage }
-							onUploadImageClick={ this.handleUploadImageClick }
+							onSelectFrame={ this.selectFrame }
+							onUploadImage={ this.uploadImage }
+							onUploadImageClick={ this.pauseVideo }
 						/>
 					</div>
 				</figure>
@@ -219,12 +214,9 @@ export default connect(
 	( state ) => {
 		return {
 			posterUrl: getPosterUrl( state ),
-			shouldCloseModal: shouldCloseVideoEditorModal( state ),
 			shouldShowError: shouldShowVideoEditorError( state ),
 			uploadProgress: getPosterUploadProgress( state ),
 		};
 	},
-	dispatch => bindActionCreators( {
-		updatePoster,
-	}, dispatch ),
+	{ updatePoster }
 )( localize( VideoEditor ) );

@@ -7,14 +7,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	VIDEO_EDITOR_CLOSE_MODAL,
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 	VIDEO_EDITOR_UPDATE_POSTER,
 } from 'state/action-types';
 import {
-	closeModal,
 	setPosterUrl,
 	showError,
 	showUploadProgress,
@@ -44,16 +42,6 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: VIDEO_EDITOR_SET_POSTER_URL,
 				posterUrl: poster,
-			} );
-		} );
-	} );
-
-	describe( '#closeModal()', () => {
-		it( 'should return an action object', () => {
-			const action = closeModal();
-
-			expect( action ).to.eql( {
-				type: VIDEO_EDITOR_CLOSE_MODAL,
 			} );
 		} );
 	} );
