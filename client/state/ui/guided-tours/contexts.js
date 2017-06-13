@@ -56,16 +56,6 @@ const timeSinceUserRegistration = state => {
 };
 
 /**
- * Returns true if the user is considered "new" (less than a week since registration)
- *
- * @param {Object} state Global state tree
- * @return {Boolean} True if user is new, false otherwise
- */
-export const isNewUser = state => {
-	return isUserNewerThan( state, WEEK_IN_MILLISECONDS );
-};
-
-/**
  * Returns a selector that tests if the user is newer than a given time
  *
  * @param {Number} age Number of milliseconds
@@ -74,6 +64,16 @@ export const isNewUser = state => {
 export const isUserNewerThan = age => state => {
 	const userAge = timeSinceUserRegistration( state );
 	return userAge !== false ? userAge <= age : false;
+};
+
+/**
+ * Returns true if the user is considered "new" (less than a week since registration)
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True if user is new, false otherwise
+ */
+export const isNewUser = state => {
+	return isUserNewerThan( state, WEEK_IN_MILLISECONDS );
 };
 
 /**
