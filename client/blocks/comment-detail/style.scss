@@ -17,6 +17,14 @@
 		z-index: 1;
 	}
 
+	// If the comment is pending and collapsed, color it yellow.
+	&:not( .is-approved ):not( .is-expanded ) {
+		.comment-detail__header {
+			background: rgba( $alert-yellow, 0.085 );
+			box-shadow: inset 4px 0 0 0 $alert-yellow;
+		}
+	}
+
 	.gridicon {
 		margin-right: 4px;
 		vertical-align: middle;
@@ -246,7 +254,16 @@
 }
 
 .comment-detail__comment-content {
-	border-left: 3px solid lighten( $gray, 30% );
+	border-left: 4px solid lighten( $gray, 30% );
+}
+
+// If the comment is pending and expanded, color it yellow.
+.comment-detail:not( .is-approved ) .comment-detail__comment {
+	background: rgba( $alert-yellow, 0.085 );
+}
+
+.comment-detail:not( .is-approved ) .comment-detail__comment-content {
+	border-color: $alert-yellow;
 }
 
 .comment-detail__comment-body {
