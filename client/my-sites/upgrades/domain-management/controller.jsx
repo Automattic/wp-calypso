@@ -3,7 +3,6 @@
  */
 import page from 'page';
 import React from 'react';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -23,21 +22,11 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import TransferData from 'components/data/domain-management/transfer';
 import WhoisData from 'components/data/domain-management/whois';
-import { setDocumentHeadTitle } from 'state/document-head/actions';
 
 const productsList = new ProductsList();
 
-const setTitle = function( title, pageContext ) {
-	pageContext.store.dispatch( setDocumentHeadTitle( title ) );
-};
-
 export default {
 	domainManagementList( pageContext ) {
-		setTitle(
-			i18n.translate( 'Domain Management' ),
-			pageContext
-		);
-
 		analytics.pageView.record(
 			paths.domainManagementList( ':site' ),
 			'Domain Management'
@@ -55,13 +44,6 @@ export default {
 	},
 
 	domainManagementEdit( pageContext ) {
-		setTitle(
-			i18n.translate( 'Edit %(domain)s', {
-				args: { domain: pageContext.params.domain }
-			} ),
-			pageContext
-		);
-
 		analytics.pageView.record(
 			paths.domainManagementEdit( ':site', ':domain' ),
 			'Domain Management › Edit'
@@ -80,11 +62,6 @@ export default {
 	},
 
 	domainManagementPrimaryDomain: function( pageContext ) {
-		setTitle(
-			i18n.translate( 'Set Primary Domain' ),
-			pageContext
-		);
-
 		analytics.pageView.record(
 			paths.domainManagementPrimaryDomain( ':site', ':domain' ),
 			'Domain Management › Set Primary Domain'
@@ -100,11 +77,6 @@ export default {
 	},
 
 	domainManagementContactsPrivacy( pageContext ) {
-		setTitle(
-			i18n.translate( 'Contacts and Privacy' ),
-			pageContext
-		);
-
 		analytics.pageView.record(
 			paths.domainManagementContactsPrivacy( ':site', ':domain' ),
 			'Domain Management › Contacts and Privacy'
@@ -121,11 +93,6 @@ export default {
 	},
 
 	domainManagementEditContactInfo( pageContext ) {
-		setTitle(
-			i18n.translate( 'Edit Contact Info' ),
-			pageContext
-		);
-
 		analytics.pageView.record(
 			paths.domainManagementEditContactInfo( ':site', ':domain' ),
 			'Domain Management › Contacts and Privacy › Edit Contact Info'
@@ -142,11 +109,6 @@ export default {
 	},
 
 	domainManagementEmail( pageContext ) {
-		setTitle(
-			i18n.translate( 'Email' ),
-			pageContext
-		);
-
 		analytics.pageView.record(
 			paths.domainManagementEmail( ':site', pageContext.params.domain ? ':domain' : undefined ),
 			'Domain Management › Email'
@@ -165,11 +127,6 @@ export default {
 	},
 
 	domainManagementEmailForwarding( pageContext ) {
-		setTitle(
-			i18n.translate( 'Email Forwarding' ),
-			pageContext
-		);
-
 		analytics.pageView.record(
 			paths.domainManagementEmailForwarding( ':site', ':domain' ),
 			'Domain Management › Email › Email Forwarding'
@@ -186,11 +143,6 @@ export default {
 	},
 
 	domainManagementDns( pageContext ) {
-		setTitle(
-			i18n.translate( 'DNS Records' ),
-			pageContext
-		);
-
 		analytics.pageView.record(
 			paths.domainManagementDns( ':site', ':domain' ),
 			'Domain Management › Name Servers and DNS › DNS Records'
@@ -206,11 +158,6 @@ export default {
 		);
 	},
 	domainManagementNameServers( pageContext ) {
-		setTitle(
-			i18n.translate( 'Name Servers and DNS' ),
-			pageContext
-		);
-
 		analytics.pageView.record(
 			paths.domainManagementNameServers( ':site', ':domain' ),
 			'Domain Management › Name Servers and DNS'
@@ -227,11 +174,6 @@ export default {
 	},
 
 	domainManagementPrivacyProtection( pageContext ) {
-		setTitle(
-			i18n.translate( 'Privacy Protection' ),
-			pageContext
-		);
-
 		analytics.pageView.record(
 			paths.domainManagementPrivacyProtection( ':site', ':domain' ),
 			'Domain Management › Contacts and Privacy › Privacy Protection'
@@ -248,11 +190,6 @@ export default {
 	},
 
 	domainManagementAddGoogleApps( pageContext ) {
-		setTitle(
-			i18n.translate( 'Add G Suite' ),
-			pageContext
-		);
-
 		analytics.pageView.record(
 			paths.domainManagementAddGoogleApps( ':site', pageContext.params.domain ? ':domain' : undefined ),
 			'Domain Management › Add Google Apps'
@@ -271,11 +208,6 @@ export default {
 	},
 
 	domainManagementRedirectSettings( pageContext ) {
-		setTitle(
-			i18n.translate( 'Redirect Settings' ),
-			pageContext
-		);
-
 		analytics.pageView.record(
 			paths.domainManagementRedirectSettings( ':site', ':domain' ),
 			'Domain Management › Redirect Settings'
@@ -298,11 +230,6 @@ export default {
 	},
 
 	domainManagementTransfer( pageContext ) {
-		setTitle(
-			i18n.translate( 'Transfer Domain' ),
-			pageContext
-		);
-
 		renderWithReduxStore(
 			<TransferData
 				component={ DomainManagement.Transfer }
@@ -322,11 +249,6 @@ export default {
 			return;
 		}
 
-		setTitle(
-			i18n.translate( 'Transfer Domain' ),
-			pageContext
-		);
-
 		renderWithReduxStore(
 			<TransferData
 				component={ DomainManagement.TransferToOtherUser }
@@ -337,11 +259,6 @@ export default {
 	},
 
 	domainManagementTransferOut( pageContext ) {
-		setTitle(
-			i18n.translate( 'Transfer Domain' ),
-			pageContext
-		);
-
 		renderWithReduxStore(
 			<TransferData
 				component={ DomainManagement.TransferOut }
