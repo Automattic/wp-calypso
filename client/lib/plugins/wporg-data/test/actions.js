@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { assert, expect } from 'chai';
+import { assert } from 'chai';
 import { spy } from 'sinon';
 
 /**
@@ -51,7 +51,7 @@ describe( 'WPorg Data Actions', () => {
 	it( 'should call fetchCuratedList for the "featured" category', () => {
 		const curatedSpy = spy( WPorgActions, 'fetchCuratedList' );
 		WPorgActions.fetchPluginsList( 'featured', 1 );
-		expect( curatedSpy.called ).to.be.true;
+		assert.isTrue( curatedSpy.called );
 	} );
 
 	it( 'should not call wporg.fetchPluginsList for the "featured" category', () => {
