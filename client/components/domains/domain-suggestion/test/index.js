@@ -22,7 +22,7 @@ describe( 'Domain Suggestion', function() {
 	} );
 
 	before( () => {
-		DomainSuggestion = require( 'components/domains/domain-suggestion' );
+		DomainSuggestion = require( 'components/domains/domain-suggestion' ).DomainSuggestion;
 		DomainSuggestion.prototype.translate = identity;
 	} );
 
