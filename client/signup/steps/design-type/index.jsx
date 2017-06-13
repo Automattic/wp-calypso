@@ -65,7 +65,7 @@ export class DesignTypeStep extends Component {
 		const choiceHandlers = this.getChoiceHandlers();
 
 		return (
-			<Card className="design-type__choice" key={ choice.type } href="#{choice.type}" onClick={ choiceHandlers[ choice.type ] }>
+			<Card className="design-type__choice" key={ choice.type } href={ `#${ choice.type }` } onClick={ choiceHandlers[ choice.type ] }>
 				<div className="design-type__choice-image">
 					{ choice.image }
 				</div>
