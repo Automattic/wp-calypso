@@ -13,6 +13,9 @@
 
 .action-header__breadcrumbs {
 	width: 60%;
+	@include breakpoint( "<660px" ) {
+		padding-left: 24px;
+	}
 }
 
 .action-header__actions {

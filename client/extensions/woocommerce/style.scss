@@ -65,8 +65,28 @@
 
 .focus-sidebar {
 	@include breakpoint( "<660px" ) {
-		.sticky-panel, .products__form {
+		.sticky-panel,
+		.products__form,
+		.current-section {
 			display: none;
+		}
+	}
+}
+
+.focus-content {
+	@include breakpoint( "<660px" ) {
+		.site-icon,
+		.current-section__site-title,
+		.current-section__section-title {
+			display: none;
+		}
+
+		.current-section a {
+			position: fixed;
+			z-index: 1;
+			top: 18px;
+			background: transparent;
+			border: none;
 		}
 	}
 }
