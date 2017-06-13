@@ -19,9 +19,7 @@ class VideoEditorExample extends Component {
 		};
 	}
 
-	handleUpdatePoster = ( { poster } ) => {
-		this.setState( { poster } );
-	}
+	handleUpdatePoster = ( { posterUrl } ) => this.setState( { posterUrl } );
 
 	render() {
 		return (
@@ -31,7 +29,7 @@ class VideoEditorExample extends Component {
 						media={ this.state.media }
 						onUpdatePoster={ this.handleUpdatePoster }
 					/>
-					<div style={ { 'font-size': '10px', 'text-align': 'center' } }>
+					<div style={ { fontSize: '10px', textAlign: 'center' } }>
 						Free B-Roll provided by <a href="http://Videezy.com">Videezy.com</a>
 					</div>
 				</div>
@@ -42,8 +40,8 @@ class VideoEditorExample extends Component {
 					width: '50%'
 				} }>
 					<h4>Changes to the poster above are shown below</h4>
-					{ this.state.poster &&
-						<img src={ this.state.poster } />
+					{ this.state.posterUrl &&
+						<img src={ this.state.posterUrl } />
 					}
 				</div>
 			</div>
