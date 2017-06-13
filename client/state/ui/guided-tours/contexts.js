@@ -73,7 +73,7 @@ export const isUserNewerThan = age => state => {
  * @return {Boolean} True if user is new, false otherwise
  */
 export const isNewUser = state => {
-	return isUserNewerThan( state, WEEK_IN_MILLISECONDS );
+	return isUserNewerThan( WEEK_IN_MILLISECONDS )( state );
 };
 
 /**
