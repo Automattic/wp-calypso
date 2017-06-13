@@ -75,7 +75,7 @@ function markDirty( post, oldStatus ) {
 			continue;
 		}
 
-		if ( -1 === affectedSites.indexOf( list.query.siteId ) ) {
+		if ( -1 === affectedSites.indexOf( list.query.siteID ) ) {
 			continue;
 		}
 

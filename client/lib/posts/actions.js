@@ -429,7 +429,9 @@ PostActions = {
 	* @api public
 	*/
 	fetchNextPage: function( postListStoreId = 'default' ) {
-		const postListStore = postListStoreFactory( postListStoreId );
+		var params, id, siteID, postListStore;
+
+		postListStore = postListStoreFactory( postListStoreId );
 
 		if ( postListStore.isLastPage() || postListStore.isFetchingNextPage() ) {
 			return;
@@ -440,13 +442,13 @@ PostActions = {
 			postListStoreId: postListStoreId
 		} );
 
-		const id = postListStore.getID();
-		const params = postListStore.getNextPageParams();
-		const siteId = postListStore.getSiteId();
+		id = postListStore.getID();
+		params = postListStore.getNextPageParams();
+		siteID = postListStore.getSiteID();
 
-		if ( siteId ) {
+		if ( siteID ) {
 			wpcom
-				.site( siteId )
+				.site( siteID )
 				.postsList( params, PostActions.receivePage.bind( null, id, postListStoreId ) );
 		} else {
 			wpcom
@@ -466,7 +468,9 @@ PostActions = {
 	},
 
 	fetchUpdated: function( postListStoreId = 'default' ) {
-		const postListStore = postListStoreFactory( postListStoreId );
+		var id, params, siteID, postListStore;
+
+		postListStore = postListStoreFactory( postListStoreId );
 
 		if ( postListStore.isFetchingNextPage() ) {
 			return;
@@ -477,14 +481,14 @@ PostActions = {
 			postListStoreId: postListStoreId
 		} );
 
-		const id = postListStore.getID();
-		const params = postListStore.getUpdatesParams();
-		const siteId = postListStore.getSiteId();
+		id = postListStore.getID();
+		params = postListStore.getUpdatesParams();
+		siteID = postListStore.getSiteID();
 
-		if ( siteId ) {
-			debug( 'Fetching posts that have been updated for %s since %s %o', siteId, params.modified_after, params );
+		if ( siteID ) {
+			debug( 'Fetching posts that have been updated for %s since %s %o', siteID, params.modified_after, params );
 			wpcom
-				.site( siteId )
+				.site( siteID )
 				.postsList( params, PostActions.receiveUpdated.bind( null, id, postListStoreId ) );
 		} else {
 			debug( 'Fetching posts that have been updated since %s %o', params.modified_after, params );

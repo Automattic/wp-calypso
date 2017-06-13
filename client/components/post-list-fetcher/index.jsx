@@ -26,7 +26,7 @@ function dispatchQueryActions( postListStoreId, query ) {
 function queryPosts( props ) {
 	var query = {
 		type: props.type || 'post',
-		siteId: props.siteId,
+		siteID: props.siteID,
 		status: props.status,
 		author: props.author,
 		search: props.search,
@@ -81,7 +81,7 @@ function shouldQueryPosts( props, nextProps ) {
 		props.number !== nextProps.number ||
 		props.before !== nextProps.before ||
 		props.after !== nextProps.after ||
-		props.siteId !== nextProps.siteId ||
+		props.siteID !== nextProps.siteID ||
 		props.postListStoreId !== nextProps.postListStoreId;
 }
 
@@ -93,7 +93,7 @@ PostListFetcher = React.createClass( {
 		status: React.PropTypes.string,
 		author: React.PropTypes.number,
 		search: React.PropTypes.string,
-		siteId: React.PropTypes.number,
+		siteID: React.PropTypes.any,
 		withImages: React.PropTypes.bool,
 		withCounts: React.PropTypes.bool,
 		excludeTree: React.PropTypes.number,
