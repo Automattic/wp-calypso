@@ -141,3 +141,17 @@
 	background-size: 120%;
 	min-height: 290px;
 }
+
+.dashboard__manage-has-orders-header {
+	margin-bottom: 24px;
+	text-align: center;
+
+	h2 {
+		font-size: 24px;
+	}
+}
+
+.dashboard__manage-has-orders-stats-actions {
+	padding: 24px;
+	text-align: center;
+}

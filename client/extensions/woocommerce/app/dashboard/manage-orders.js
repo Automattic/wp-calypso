@@ -12,7 +12,6 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import ProcessOrdersWidget from 'woocommerce/components/process-orders-widget';
 import ReadingWidget from 'woocommerce/components/reading-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
-import WidgetGroup from 'woocommerce/components/widget-group';
 
 class ManageOrders extends Component {
 	static propTypes = {
@@ -22,65 +21,9 @@ class ManageOrders extends Component {
 	};
 
 	renderProcessOrdersWidget = () => {
-		const { site } = this.props;
 		return (
-			<ProcessOrdersWidget className="dashboard__process-orders-widget" site={ site } />
+			<ProcessOrdersWidget className="dashboard__process-orders-widget" />
 		);
-	}
-
-	possiblyRenderReviewsWidget = () => {
-		// TODO - implement in a follow-on PR
-		return null;
-	}
-
-	possiblyRenderInventoryWidget = () => {
-		// TODO - implement in a follow-on PR
-		return null;
-	}
-
-	possiblyRenderRevenueWidget = () => {
-		// TODO - implement in a follow-on PR
-		return null;
-	}
-
-	possiblyRenderTopSellersWidget = () => {
-		// TODO - implement in a follow-on PR
-		return null;
-	}
-
-	possiblyRenderTopReferrersWidget = () => {
-		// TODO - implement in a follow-on PR
-		return null;
-	}
-
-	possiblyRenderTrafficSpikeWidget = () => {
-		// TODO - implement in a follow-on PR
-		return null;
-	}
-
-	possiblyRenderSearchHolesWidget = () => {
-		// TODO - implement in a follow-on PR
-		return null;
-	}
-
-	possiblyRenderExitPagesWidget = () => {
-		// TODO - implement in a follow-on PR
-		return null;
-	}
-
-	possiblyRenderPoorConvertorsWidget = () => {
-		// TODO - implement in a follow-on PR
-		return null;
-	}
-
-	possiblyRenderAbandonedCartsWidget = () => {
-		// TODO - implement in a follow-on PR
-		return null;
-	}
-
-	possiblyRenderTrafficWidget = () => {
-		// TODO - implement in a follow-on PR
-		return null;
 	}
 
 	possiblyRenderShareWidget = () => {
@@ -97,48 +40,36 @@ class ManageOrders extends Component {
 
 	possiblyRenderReadingWidget = () => {
 		// TODO - connect to display preferences in a follow-on PR
-		const { translate } = this.props;
+		const { site, translate } = this.props;
 		return (
 			<ReadingWidget
-				className="dashboard__reading-widget"
-				title={ translate( 'Learn up' ) }
+				site={ site }
+				text={ translate( 'You’re not alone! Get tips from seasoned merchants,' +
+					' learn best practices to keep your store ship-shape,' +
+					' and find how to boost your sales and drive traffic.' ) }
+				title={ translate( 'Recommended reading' ) }
 			/>
 		);
 	}
 
 	render = () => {
 		const { site, translate } = this.props;
+		// TODO - replace store owner with current user's first name
 		return (
-			<div className="dashboard__manage-no-orders">
-				<h2>
-					{ translate( 'Welcome back, store owner' ) }
-					<br />
-					{ translate( 'You have new orders to process' ) }
-				</h2>
-				<WidgetGroup>
-					{ this.renderProcessOrdersWidget() }
-					{ this.possiblyRenderReviewsWidget() }
-					( this.possiblyRenderInventoryWidget() }
-				</WidgetGroup>
-				<WidgetGroup>
-					{ this.possiblyRenderRevenueWidget() }
-					{ this.possiblyRenderTopSellersWidget() }
-					( this.possiblyRenderTopReferrersWidget() }
-				</WidgetGroup>
-				<Button href={ getLink( '/store/stats/orders/day/:site', site ) }>
-					{ translate( 'View full reports' ) }
-				</Button>
-				<WidgetGroup
-					maxColumns={ 3 }
-					title={ translate( 'Here are some highlighted opportunities based on this weeks\' stats' ) }
-				>
-					{ this.possiblyRenderTrafficSpikeWidget() }
-					{ this.possiblyRenderSearchHolesWidget() }
-					( this.possiblyRenderExitPagesWidget() }
-					{ this.possiblyRenderPoorConvertorsWidget() }
-					{ this.possiblyRenderAbandonedCartsWidget() }
-					( this.possiblyRenderTrafficWidget() }
-				</WidgetGroup>
+			<div className="dashboard__manage-has-orders">
+				<div className="dashboard__manage-has-orders-header">
+					<h2>
+						{ translate( 'Welcome back, store owner' ) }
+						<br />
+						{ translate( 'You have new orders to process' ) }
+					</h2>
+				</div>
+				{ this.renderProcessOrdersWidget() }
+				<div className="dashboard__manage-has-orders-stats-actions">
+					<Button href={ getLink( '/store/stats/orders/day/:site', site ) }>
+						{ translate( 'View full reports' ) }
+					</Button>
+				</div>
 				{ this.possiblyRenderShareWidget() }
 				{ this.possiblyRenderReadingWidget() }
 			</div>

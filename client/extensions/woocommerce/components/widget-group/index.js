@@ -40,18 +40,18 @@ class WidgetGroup extends Component {
 		let rowIndex = 0;
 
 		if ( ! Array.isArray( children ) ) {
-			rows.push( this.renderRow( rowIndex, children ) );
+			rows.push( this.renderRow( rowIndex, [ children ] ) );
 		} else {
 			if ( firstWidgetFullWidth ) {
 				rows.push( this.renderRow( rowIndex, children ) );
 				childIndex = 1;
 			}
 
-			do {
+			while ( childIndex < children.length ) {
 				rowIndex++;
 				rows.push( this.renderRow( rowIndex, children.slice( childIndex, maxColumns ) ) );
 				childIndex += maxColumns;
-			} while ( childIndex < children.length );
+			}
 		}
 
 		return (

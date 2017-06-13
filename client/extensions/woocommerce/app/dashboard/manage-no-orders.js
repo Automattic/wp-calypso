@@ -28,7 +28,6 @@ class ManageNoOrders extends Component {
 					' and get those first orders rolling in. Share your store with friends,' +
 					' family, and followers now.' ) }
 				title={ translate( 'Your store is ready, the world awaits!' ) }
-
 				urlToShare={ getLink( 'https://:site', site ) }
 			/>
 		);
