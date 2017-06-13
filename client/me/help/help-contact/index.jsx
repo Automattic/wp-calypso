@@ -35,7 +35,6 @@ import QueryTicketSupportConfiguration from 'components/data/query-ticket-suppor
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import { sendChatMessage as sendHappychatMessage, sendUserInfo } from 'state/happychat/actions';
 import { openChat as openHappychat } from 'state/ui/happychat/actions';
-import { getHelpSelectedSite } from 'state/help/selectors';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
 import {
@@ -133,8 +132,7 @@ const HelpContact = React.createClass( {
 
 	startHappychat: function( contactForm ) {
 		this.props.openHappychat();
-		const { message } = contactForm;
-		const { selectedSite: site } = this.props;
+		const { message, site } = contactForm;
 
 		this.props.sendUserInfo( site.URL );
 		this.props.sendHappychatMessage( message );
@@ -148,8 +146,7 @@ const HelpContact = React.createClass( {
 	},
 
 	startChat: function( contactForm ) {
-		const { message, howCanWeHelp, howYouFeel } = contactForm;
-		const { selectedSite: site } = this.props;
+		const { message, howCanWeHelp, howYouFeel, site } = contactForm;
 
 		// Intentionally not translated since only HE's will see this in the olark console as a notification.
 		const notifications = [
@@ -195,8 +192,8 @@ const HelpContact = React.createClass( {
 	},
 
 	submitKayakoTicket: function( contactForm ) {
-		const { subject, message, howCanWeHelp, howYouFeel } = contactForm;
-		const { currentUserLocale, selectedSite: site } = this.props;
+		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
+		const { currentUserLocale } = this.props;
 
 		const ticketMeta = [
 			'How can you help: ' + howCanWeHelp,
@@ -537,7 +534,7 @@ const HelpContact = React.createClass( {
 
 	getContactFormCommonProps: function( variationSlug ) {
 		const { isSubmitting } = this.state;
-		const { currentUserLocale, selectedSite } = this.props;
+		const { currentUserLocale } = this.props;
 
 		// Let the user know we only offer support in English.
 		// We only need to show the message if:
@@ -552,7 +549,6 @@ const HelpContact = React.createClass( {
 		return {
 			disabled: isSubmitting,
 			showHelpLanguagePrompt: showHelpLanguagePrompt,
-			selectedSiteId: selectedSite.ID,
 			valueLink: { value: savedContactForm, requestChange: ( contactForm ) => savedContactForm = contactForm }
 		};
 	},
@@ -698,7 +694,6 @@ export default connect(
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
 			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
-			selectedSite: getHelpSelectedSite( state ),
 		};
 	},
 	{
