@@ -41,12 +41,42 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					woocommerce: {
-						wcApi: {
+						sites: {
 							123: {
 								shippingZones: [
-									{ id: 0, name: 'Zone0', methodIds: LOADING },
-									{ id: 0, name: 'Zone0', methodIds: [] },
+									{ id: 1, name: 'Zone0', methodIds: LOADING },
+									{ id: 2, name: 'Zone0', methodIds: [] },
 								],
+								shippingZoneLocations: {
+									1: { country: [], continent: [], state: [], postcode: [] },
+									2: { country: [], continent: [], state: [], postcode: [] },
+								},
+							},
+						},
+					},
+				},
+				ui: {
+					selectedSiteId: 123,
+				},
+			};
+
+			expect( getShippingZones( state ) ).to.deep.equal( [] );
+		} );
+
+		it( 'should return an empty list when some zone locations are still being loaded', () => {
+			const state = {
+				extensions: {
+					woocommerce: {
+						sites: {
+							123: {
+								shippingZones: [
+									{ id: 1, name: 'Zone0', methodIds: [] },
+									{ id: 2, name: 'Zone0', methodIds: [] },
+								],
+								shippingZoneLocations: {
+									1: LOADING,
+									2: { country: [], continent: [], state: [], postcode: [] },
+								},
 							},
 						},
 					},
@@ -88,6 +118,10 @@ describe( 'selectors', () => {
 									{ id: 1, methodIds: [], name: 'Zone1' },
 									{ id: 2, methodIds: [], name: 'Zone2' },
 								],
+								shippingZoneLocations: {
+									1: { country: [], continent: [], state: [], postcode: [] },
+									2: { country: [], continent: [], state: [], postcode: [] },
+								},
 							},
 						},
 						ui: {},
@@ -115,6 +149,11 @@ describe( 'selectors', () => {
 									{ id: 2, methodIds: [], name: 'Zone2' },
 									{ id: 3, methodIds: [], name: 'Zone3' },
 								],
+								shippingZoneLocations: {
+									1: { country: [], continent: [], state: [], postcode: [] },
+									2: { country: [], continent: [], state: [], postcode: [] },
+									3: { country: [], continent: [], state: [], postcode: [] },
+								},
 							},
 						},
 						ui: {
@@ -158,6 +197,9 @@ describe( 'selectors', () => {
 								shippingZones: [
 									{ id: 1, methodIds: [], name: 'Zone1' },
 								],
+								shippingZoneLocations: {
+									1: { country: [], continent: [], state: [], postcode: [] },
+								},
 							},
 						},
 						ui: {
@@ -194,6 +236,9 @@ describe( 'selectors', () => {
 								shippingZones: [
 									{ id: 1, methodIds: [] },
 								],
+								shippingZoneLocations: {
+									1: { country: [], continent: [], state: [], postcode: [] },
+								},
 							},
 						},
 						ui: {
@@ -226,6 +271,10 @@ describe( 'selectors', () => {
 									{ id: 1, methodIds: [], name: 'MyZone' },
 									{ id: 2, methodIds: [], name: 'Blah Blah' },
 								],
+								shippingZoneLocations: {
+									1: { country: [], continent: [], state: [], postcode: [] },
+									2: { country: [], continent: [], state: [], postcode: [] },
+								},
 							},
 						},
 						ui: {
@@ -260,6 +309,9 @@ describe( 'selectors', () => {
 								shippingZones: [
 									{ id: 1, methodIds: [], name: 'MyZone' },
 								],
+								shippingZoneLocations: {
+									1: { country: [], continent: [], state: [], postcode: [] },
+								},
 							},
 						},
 						ui: {

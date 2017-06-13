@@ -8,6 +8,14 @@ import { every, get, isArray, some } from 'lodash';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
+import {
+	areShippingZoneMethodsLoaded,
+	areShippingZoneMethodsLoading,
+} from '../shipping-zone-methods/selectors';
+import {
+	areShippingZoneLocationsLoaded,
+	areShippingZoneLocationsLoading,
+} from '../shipping-zone-locations/selectors';
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -26,7 +34,9 @@ export const getAPIShippingZones = ( state, siteId = getSelectedSiteId( state ) 
  */
 export const areShippingZonesLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const zones = getAPIShippingZones( state, siteId );
-	return isArray( zones ) && every( zones, zone => isArray( zone.methodIds ) );
+	return isArray( zones ) &&
+		every( zones, zone => areShippingZoneMethodsLoaded( state, zone.id, siteId ) ) &&
+		every( zones, zone => areShippingZoneLocationsLoaded( state, zone.id, siteId ) );
 };
 
 /**
@@ -36,5 +46,12 @@ export const areShippingZonesLoaded = ( state, siteId = getSelectedSiteId( state
  */
 export const areShippingZonesLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const zones = getAPIShippingZones( state, siteId );
-	return LOADING === zones || ( isArray( zones ) && some( zones, zone => LOADING === zone.methodIds ) );
+	if ( LOADING === zones ) {
+		return true;
+	}
+	if ( ! isArray( zones ) ) {
+		return false;
+	}
+	return some( zones, zone => areShippingZoneMethodsLoading( state, zone.id, siteId ) ) ||
+		some( zones, zone => areShippingZoneLocationsLoading( state, zone.id, siteId ) );
 };
