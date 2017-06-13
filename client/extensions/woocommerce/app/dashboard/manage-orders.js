@@ -17,6 +17,7 @@ class ManageOrders extends Component {
 	static propTypes = {
 		site: PropTypes.shape( {
 			slug: PropTypes.string.isRequired,
+			URL: PropTypes.string.isRequired,
 		} ),
 	};
 

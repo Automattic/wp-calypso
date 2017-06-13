@@ -4,12 +4,8 @@
 import config from 'config';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
-import url from 'url';
-
-/**
- * Internal dependencies
- */
 import SocialLogo from 'social-logos';
+import url from 'url';
 
 class ShareWidget extends Component {
 	static propTypes = {
