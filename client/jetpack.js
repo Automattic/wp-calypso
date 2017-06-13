@@ -8,6 +8,14 @@ const sections = [
 		secondary: false
 	},
 	{
+		name: 'main',
+		paths: [ 'extensions/test' ],
+		module: 'extensions/test',
+		group: 'jetpack',
+		enableLoggedOut: true,
+		secondary: false
+	},
+	{
 		name: 'discussion',
 		paths: [ 'extensions/test/discussion' ],
 		module: 'extensions/test',
