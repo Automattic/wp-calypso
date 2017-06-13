@@ -4,10 +4,12 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
@@ -224,18 +226,22 @@ export class EditorNotice extends Component {
 	}
 
 	render() {
-		const { siteId, message, status, onDismissClick } = this.props;
+		const { siteId, message, status, onDismissClick, isPreviewable } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
+		const previewFlow = config.isEnabled( 'post-editor/delta-post-publish-preview' ) && isPreviewable;
+		const classes = classNames( 'editor-notice', {
+			'is-global': previewFlow
+		} );
 
 		return (
-			<div className="editor-notice">
+			<div className={ classes }>
 				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				{ text && (
 					<Notice
 						{ ...{ status, text, onDismissClick } }
 						showDismiss={ true }
 					>
-						{ this.renderNoticeAction() }
+						{ ! previewFlow && this.renderNoticeAction() }
 					</Notice>
 				) }
 			</div>
