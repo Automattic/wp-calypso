@@ -72,7 +72,7 @@ export default connect(
 		),
 		searchResultsCount: getReaderFeedsCountForQuery(
 			state,
-			{ query: ownProps.query, excludeFollowed: false },
+			{ query: ownProps.query, excludeFollowed: false, sort: pickSort( ownProps.sort ) },
 		),
 	} ),
 	{ requestFeedSearch },
