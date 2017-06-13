@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,12 +18,14 @@ class GoogleLoginButton extends Component {
 		scope: PropTypes.string,
 		fetchBasicProfile: PropTypes.bool,
 		responseHandler: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired
+		translate: PropTypes.func.isRequired,
+		onClick: PropTypes.func,
 	};
 
 	static defaultProps = {
 		scope: 'https://www.googleapis.com/auth/plus.login',
 		fetchBasicProfile: true,
+		onClick: noop,
 	};
 
 	state = {
@@ -88,6 +91,8 @@ class GoogleLoginButton extends Component {
 
 	handleClick( event ) {
 		event.preventDefault();
+
+		this.props.onClick( event );
 
 		if ( this.state.error ) {
 			this.setState( {

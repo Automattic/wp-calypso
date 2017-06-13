@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 class FacebookLoginButton extends Component {
 	// See: https://developers.facebook.com/docs/javascript/reference/FB.init/v2.8
@@ -15,7 +16,8 @@ class FacebookLoginButton extends Component {
 		xfbml: PropTypes.bool,
 		responseHandler: PropTypes.func.isRequired,
 		scope: PropTypes.string,
-		translate: PropTypes.func.isRequired
+		translate: PropTypes.func.isRequired,
+		onClick: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -24,6 +26,7 @@ class FacebookLoginButton extends Component {
 		status: false,
 		xfbml: true,
 		scope: 'public_profile,email',
+		onClick: noop,
 	};
 
 	constructor( props ) {
@@ -72,6 +75,8 @@ class FacebookLoginButton extends Component {
 
 	handleClick( event ) {
 		event.preventDefault();
+
+		this.props.onClick( event );
 
 		const { responseHandler, scope } = this.props;
 
