@@ -92,6 +92,7 @@ describe( 'actions', () => {
 						method_title: 'BACS',
 						methodType: 'offline',
 						method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
+						settings: { enabled: { id: 'enabled', label: 'Enabled', type: 'checkbox', value: 'no' } },
 					} ]
 				} );
 			} );
