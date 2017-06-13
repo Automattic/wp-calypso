@@ -50,7 +50,7 @@
 }
 
 .comment-detail__author-info {
-	color: $gray;
+	color: $gray-text-min;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -88,7 +88,6 @@
 			padding: 0 12px;
 			.external-link:hover,
 			.external-link:focus {
-				color: $gray;
 				outline: none;
 			}
 		}
@@ -104,7 +103,7 @@
 		width: 40%;
 
 		.external-link {
-			color: $gray;
+			color: $gray-text-min;
 			&:hover,
 			&:focus {
 				color: $link-highlight;
@@ -146,7 +145,7 @@
 	user-select: none;
 
 	a {
-		color: $gray;
+		color: $gray-text-min;
 		cursor: pointer;
 		fill: $gray;
 		padding: 8px;
@@ -204,7 +203,6 @@
 }
 
 .comment-detail__post-info {
-	color: $gray;
 	overflow: hidden;
 	padding-left: 8px;
 	text-overflow: ellipsis;
@@ -216,7 +214,7 @@
 	}
 
 	a {
-		color: $gray;
+		color: $gray-text-min;
 		cursor: pointer;
 		fill: $gray;
 		&:focus,
@@ -244,7 +242,7 @@
 	padding: 16px;
 
 	a {
-		color: $gray;
+		color: $gray-text-min;
 		cursor: pointer;
 		fill: $gray;
 		&:focus,
