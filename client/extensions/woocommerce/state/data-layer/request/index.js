@@ -20,6 +20,12 @@ export function handleRequest( { dispatch }, action ) {
 				action,
 				data,
 			} );
+
+			if ( action.onSuccessAction ) {
+				// Append data and dispatch.
+				const onSuccess = { ...action.onSuccessAction, data };
+				dispatch( onSuccess );
+			}
 		} )
 		.catch( error => {
 			// TODO: Maybe phase out usage of this in favor of the failure action?
@@ -29,6 +35,12 @@ export function handleRequest( { dispatch }, action ) {
 				action,
 				error,
 			} );
+
+			if ( action.onFailureAction ) {
+				// Append error and dispatch.
+				const onFailure = { ...action.onFailureAction, error };
+				dispatch( onFailure );
+			}
 		} );
 }
 
