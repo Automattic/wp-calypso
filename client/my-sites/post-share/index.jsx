@@ -135,6 +135,7 @@ class PostShare extends Component {
 
 	toggleSharingPreview = () => {
 		const showSharingPreview = ! this.state.showSharingPreview;
+		analytics.tracks.recordEvent( 'calypso_publicize_share_preview_toggle', { show: showSharingPreview } );
 		this.setState( { showSharingPreview } );
 	}
 
