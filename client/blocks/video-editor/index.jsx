@@ -191,6 +191,7 @@ class VideoEditor extends Component {
 						</div>
 						{ uploadProgress && ! error && ! isSelectingFrame &&
 							<ProgressBar
+								className="video-editor__progress-bar"
 								isPulsing={ true }
 								total={ 100 }
 								value={ uploadProgress } />
