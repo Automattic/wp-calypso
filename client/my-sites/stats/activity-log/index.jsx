@@ -4,8 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { groupBy, map, get } from 'lodash';
-import moment from 'moment';
+import { groupBy, map, get, filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,14 +61,14 @@ class ActivityLog extends Component {
 			description: 'We backed up your site',
 			user: null,
 			type: 'site_backed_up',
-			timestamp: 1485220539222
+			timestamp: 1497356100000
 		},
 		{
 			title: 'Site has backed up Failed',
 			description: 'We couldn\'t establish a connection to your site.',
 			user: null,
 			type: 'site_backed_up_failed',
-			timestamp: 1485220539222
+			timestamp: 1497356200000
 		},
 		{
 			title: 'Suspicious code detected in 2 plugin files.',
@@ -77,7 +76,7 @@ class ActivityLog extends Component {
 			'Plugins: Yoast SEO and Advanced Custom Fields.',
 			user: null,
 			type: 'suspicious_code',
-			timestamp: 1485220539222,
+			timestamp: 1497356300000,
 			className: 'is-disabled',
 		},
 		{
@@ -85,14 +84,14 @@ class ActivityLog extends Component {
 			description: 'Akismet Plugin was successfully activated.',
 			user: { ID: 123, name: 'Jane A', role: 'Admin' },
 			type: 'plugin_activated',
-			timestamp: 1485220539222
+			timestamp: 1497356400000
 		},
 		{
 			title: 'Akismet deactivated',
 			description: 'Akismet Plugin was successfully deactivated.',
 			user: { ID: 123, name: 'Jane A', role: 'Admin' },
 			type: 'plugin_deactivated',
-			timestamp: 1485220539222
+			timestamp: 1497356500000
 		},
 		{
 			title: 'Jetpack version 4.6 is available',
@@ -100,42 +99,42 @@ class ActivityLog extends Component {
 			'auto-updates for Plugins and we\'ll manage those for you',
 			user: null,
 			type: 'plugin_needs_update',
-			timestamp: 1485220539222
+			timestamp: 1497356600000
 		},
 		{
 			title: 'Akismet updated to version 3.2',
 			description: 'Akismet Plugin was successfully updated to its latest version: 3.2.',
 			user: null,
 			type: 'plugin_updated',
-			timestamp: 1485220539222
+			timestamp: 1497356700000
 		},
 		{
 			title: 'Twenty Eighteen Theme was activated',
 			description: 'TwentyEighteen Plugin was successfully activated.',
 			user: { ID: 123, name: 'Jane A', role: 'Admin' },
 			type: 'theme_switched',
-			timestamp: 1485220539222
+			timestamp: 1497356800000
 		},
 		{
 			title: 'Twenty Sixteen updated to version 1.0.1',
 			description: 'Twenty Sixteen Plugin was successfully updated to its latest version: 1.0.1.',
 			user: { ID: 123, name: 'Jane A', role: 'Admin' },
 			type: 'theme_updated',
-			timestamp: 1485220539222
+			timestamp: 1497356900000
 		},
 		{
 			title: 'Site updated to Professional Plan, Thank you',
 			description: 'Professional Plan was successfully purchased for your site and is valid until February 15, 2018.',
 			user: { ID: 123, name: 'Jane A', role: 'Admin' },
 			type: 'plan_updated',
-			timestamp: 1485220539222
+			timestamp: 1497356910000
 		},
 		{
 			title: 'Professional Plan Renewed for another month',
 			description: 'Professional Plan was renewed for another month and is valid until February 28, 2017',
 			user: { ID: 123, name: 'Jane A', role: 'Admin' },
 			type: 'plan_renewed',
-			timestamp: 1485220539222
+			timestamp: 1497356920000
 		},
 		{
 			title: 'Photon was activated',
@@ -143,35 +142,35 @@ class ActivityLog extends Component {
 			'WordPress.com worldwide network.',
 			user: { ID: 123, name: 'Jane A', role: 'Admin' },
 			type: 'activate_jetpack_feature',
-			timestamp: 1485220539222
+			timestamp: 1497300010000
 		},
 		{
 			title: 'Custom CSS was deactivated',
 			description: 'Custom CSS module was deactivated.',
 			user: { ID: 123, name: 'Jane A', role: 'Admin' },
 			type: 'deactivate_jetpack_feature',
-			timestamp: 1485220539222
+			timestamp: 1497300020000
 		},
 		{
 			title: 'This is some really cool post',
 			description: '',
 			user: { ID: 123, name: 'Jane A', role: 'Admin' },
 			type: 'site_backed_up',
-			timestamp: 1485220539222
+			timestamp: 1495000000000
 		},
 		{
 			title: 'This is some really cool post',
 			description: '',
 			user: { ID: 123, name: 'Jane A', role: 'Admin' },
 			type: 'site_backed_up',
-			timestamp: 1485220539222
+			timestamp: 1497300020000
 		},
 		{
 			title: 'This is some really cool post',
 			description: '',
 			user: { ID: 123, name: 'Jane A', role: 'Admin' },
 			type: 'site_backed_up',
-			timestamp: 1485220539222
+			timestamp: 1493000000000
 		},
 		{
 			title: 'Jetpack updated to 4.5.1',
@@ -324,10 +323,13 @@ class ActivityLog extends Component {
 		const {
 			siteId,
 			slug,
+			moment,
 			startDate
 		} = this.props;
-		const logs = this.props.logs;
-
+		const startOfMonth = moment( startDate ).startOf( 'month' ),
+			startOfMonthMs = startOfMonth.valueOf(),
+			endOfMonthMs = moment( startDate ).endOf( 'month' ).valueOf();
+		const logs = filter( this.props.logs, obj => startOfMonthMs <= obj.ts_site && obj.ts_site <= endOfMonthMs );
 		const logsGroupedByDate = map(
 			groupBy(
 				logs.map( this.update_logs, this ),
@@ -343,25 +345,23 @@ class ActivityLog extends Component {
 				/>
 			)
 		);
-
-		const date = moment( startDate ).startOf( 'month' );
 		const query = {
 			period: 'month',
-			date: date.endOf( 'month' ).format( 'YYYY-MM-DD' )
+			date: startOfMonth.format( 'YYYY-MM-DD' )
 		};
 
 		return (
 			<div>
 				<StatsPeriodNavigation
 					period="month"
-					date={ date }
+					date={ startOfMonth }
 					url={ `/stats/activity/${ slug }` }
 					recordGoogleEvent={ this.changePeriod }
 				>
 					<DatePicker
 						isActivity={ true }
 						period="month"
-						date={ date }
+						date={ startOfMonth }
 						query={ query }
 					/>
 				</StatsPeriodNavigation>

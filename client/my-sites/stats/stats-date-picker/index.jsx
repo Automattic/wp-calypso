@@ -139,7 +139,6 @@ class StatsDatePicker extends Component {
 						</span>
 					)
 				},
-				context: 'Activity Log: Main activity section heading',
 				comment: 'Example: "Activity for December 2017"'
 			} )
 			: translate( 'Stats for {{period/}}', {
