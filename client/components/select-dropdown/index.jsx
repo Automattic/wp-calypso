@@ -221,19 +221,12 @@ class SelectDropdown extends Component {
 	}
 
 	render() {
-		const dropdownClasses = {
+		const dropdownClassName = classNames( this.props.className, {
 			'select-dropdown': true,
 			'is-compact': this.props.compact,
-			'is-open': this.state.isOpen
-		};
-
-		if ( this.props.className ) {
-			this.props.className.split( ' ' ).forEach( function( className ) {
-				dropdownClasses[ className ] = true;
-			} );
-		}
-
-		const dropdownClassName = classNames( dropdownClasses );
+			'is-open': this.state.isOpen,
+			'has-count': 'number' === typeof this.props.selectedCount
+		} );
 
 		const selectedText = this.getSelectedText();
 		const selectedIcon = this.getSelectedIcon();
