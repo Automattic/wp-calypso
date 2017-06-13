@@ -204,8 +204,8 @@ export class EditorNotice extends Component {
 	renderNoticeAction() {
 		const {
 			action,
-			isSitePreviewable: isPreviewable,
 			link,
+			isPreviewable,
 			onViewClick,
 		} = this.props;
 		if ( onViewClick && isPreviewable && link ) {
@@ -226,7 +226,7 @@ export class EditorNotice extends Component {
 	}
 
 	render() {
-		const { siteId, message, status, onDismissClick, isPreviewable } = this.props;
+		const { siteId, message, status, onDismissClick, isSitePreviewable: isPreviewable, } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
 		const previewFlow = config.isEnabled( 'post-editor/delta-post-publish-preview' ) && isPreviewable;
 		const classes = classNames( 'editor-notice', {
