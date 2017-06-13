@@ -100,22 +100,24 @@ class ActivityLogDay extends Component {
 					{ logs.map( ( log, index ) => {
 						return (
 							<div>
-							<ActivityLogItem
-								key={ index }
-								title={ log.title }
-								subTitle={ log.subTitle }
-								description={ log.description }
-								icon={ log.icon }
-								siteId={ this.props.siteId }
-								timestamp={ log.timestamp }
-								user={ log.user }
-								actionText={ log.actionText }
-								status={ log.status }
-								className={ log.className }
-							/>
-							<pre>
-							{ JSON.stringify( log, undefined, 2 ) }
-							</pre>
+								<ActivityLogItem
+									key={ index }
+									title={ log.name }
+									subTitle={ log.subTitle }
+									description={ log.description }
+									icon={ log.icon }
+									siteId={ this.props.siteId }
+									timestamp={ log.timestamp }
+									user={ log.user }
+									actionText={ log.actionText }
+									status={ log.status }
+									className={ log.className }
+								/>
+								<FoldableCard header={ `Debug info for ${ log.name }` }>
+									<pre>
+									{ JSON.stringify( log, undefined, 2 ) }
+									</pre>
+								</FoldableCard>
 							</div>
 						);
 					} ) }
