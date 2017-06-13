@@ -61,7 +61,7 @@ class FollowingIntro extends React.Component {
 									strong: <strong />,
 									span: <span className="following__intro-copy-hidden" />,
 								},
-							}
+							},
 						) }
 					</div>
 
@@ -88,7 +88,7 @@ class FollowingIntro extends React.Component {
 export default connect(
 	state => {
 		return {
-			isNewReader: getPreference( state, 'is_new_reader' )
+			isNewReader: getPreference( state, 'is_new_reader' ),
 		};
 	},
 	dispatch =>
@@ -103,6 +103,6 @@ export default connect(
 					return savePreference( 'is_new_reader', false );
 				},
 			},
-			dispatch
-		)
+			dispatch,
+		),
 )( localize( FollowingIntro ) );
