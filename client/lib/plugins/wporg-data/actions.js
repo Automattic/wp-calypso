@@ -2,7 +2,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -58,14 +57,7 @@ const PluginsDataActions = {
 		} );
 
 		if ( 'featured' === category ) {
-			this.fetchCuratedList( 'featured', [
-				'woocommerce',
-				'jetpack',
-				'bbpress',
-				'buddypress',
-				'akismet',
-				'vaultpress',
-			] );
+			this.fetchCuratedList();
 			return;
 		}
 
@@ -92,20 +84,17 @@ const PluginsDataActions = {
 		} );
 	}, 25 ),
 
-	fetchCuratedList: function( category, slugs ) {
-		const data = CuratedPlugins.filter( function( plugin ) {
-			return includes( slugs, plugin.slug );
-		} );
-		debug( 'curated plugin list', category, slugs );
-		_fetchingLists[ category ] = null;
-		_lastFetchedPagePerCategory[ category ] = 1;
-		_totalPagesPerCategory[ category ] = 1;
+	fetchCuratedList: function() {
+		debug( 'curated plugin list', CuratedPlugins );
+		_fetchingLists.featured = null;
+		_lastFetchedPagePerCategory.featured = 1;
+		_totalPagesPerCategory.featured = 1;
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_WPORG_PLUGINS_LIST',
 			action: 'FETCH_WPORG_PLUGINS_LIST',
 			page: 1,
-			category: category,
-			data: utils.normalizePluginsList( data ),
+			category: 'featured',
+			data: utils.normalizePluginsList( CuratedPlugins ),
 			error: null
 		} );
 	},
