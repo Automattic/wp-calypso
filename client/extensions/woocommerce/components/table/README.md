@@ -52,6 +52,7 @@ render: function() {
 
 #### Props `<TableItem/>`
 
+* `alignRight`: Apply `text-align: right` on an item.
 * `className`: Classes added to top level elment.
 * `isHeader`: Establishes item as being a column header.
 * `isRowHeader`: Establishes item as being a row header.
