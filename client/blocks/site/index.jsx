@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
@@ -11,10 +12,9 @@ import Gridicon from 'gridicons';
  */
 import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
+import { getSite } from 'state/sites/selectors';
 
-export default React.createClass( {
-	displayName: 'Site',
-
+const Site = React.createClass( {
 	getDefaultProps() {
 		return {
 			// onSelect callback
@@ -49,6 +49,7 @@ export default React.createClass( {
 		isSelected: React.PropTypes.bool,
 		isHighlighted: React.PropTypes.bool,
 		site: React.PropTypes.object,
+		siteId: React.PropTypes.number,
 		homeLink: React.PropTypes.bool,
 		showHomeIcon: React.PropTypes.bool,
 		compact: React.PropTypes.bool
@@ -145,3 +146,7 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state, { siteId, site } ) => ( {
+	site: siteId ? getSite( state, siteId ) : site
+} ) )( Site );

@@ -51,7 +51,7 @@ export class Login extends React.Component {
 		);
 
 		const magicLoginLink =
-			isEnabled( 'magic-login' ) &&
+			isEnabled( 'login/magic-login' ) &&
 			! twoFactorAuthType &&
 			<a href="#" key="magic-login-link" onClick={ this.onMagicLoginRequestClick }>
 				{ translate( 'Email me a login link' ) }

@@ -284,7 +284,10 @@ class SignupForm extends Component {
 			return;
 		}
 
-		let link = login( { isNative: true, redirectTo: this.props.getRedirectToAfterLoginUrl } );
+		let link = login( {
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: this.props.getRedirectToAfterLoginUrl
+		} );
 
 		return map( messages, ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
@@ -441,7 +444,7 @@ class SignupForm extends Component {
 			return;
 		}
 
-		const logInUrl = config.isEnabled( 'wp-login' )
+		const logInUrl = config.isEnabled( 'login/native-login-links' )
 			? login( { isNative: true } )
 			: this.localizeUrlWithSubdomain( config( 'login_url' ) );
 

@@ -26,17 +26,15 @@ class EditorConfirmationSidebar extends React.Component {
 		onPublish: React.PropTypes.func,
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
-		setState: React.PropTypes.func,
+		setStatus: React.PropTypes.func,
 		site: React.PropTypes.object,
-		state: React.PropTypes.string,
+		status: React.PropTypes.string,
 	};
 
-	closeOverlay = () => {
-		this.props.setState( 'closed' );
-	};
+	getCloseOverlayHandler = ( context ) => () => this.props.setStatus( { status: 'closed', context } );
 
 	closeAndPublish = () => {
-		this.closeOverlay();
+		this.props.setStatus( { status: 'closed', context: 'publish' } );
 		this.props.onPublish( true );
 	};
 
@@ -97,7 +95,8 @@ class EditorConfirmationSidebar extends React.Component {
 			password,
 			status,
 			savedStatus,
-			savedPassword
+			savedPassword,
+			context: 'confirmation-sidebar',
 		};
 
 		return (
@@ -106,7 +105,7 @@ class EditorConfirmationSidebar extends React.Component {
 	}
 
 	renderPublishingBusyButton() {
-		if ( 'publishing' !== this.props.state ) {
+		if ( 'publishing' !== this.props.status ) {
 			return;
 		}
 
@@ -123,8 +122,8 @@ class EditorConfirmationSidebar extends React.Component {
 	}
 
 	render() {
-		const isSidebarActive = this.props.state === 'open';
-		const isOverlayActive = this.props.state !== 'closed';
+		const isSidebarActive = this.props.status === 'open';
+		const isOverlayActive = this.props.status !== 'closed';
 
 		return (
 			<RootChild>
@@ -135,7 +134,7 @@ class EditorConfirmationSidebar extends React.Component {
 					<div className={ classnames( {
 						'editor-confirmation-sidebar__overlay': true,
 						'is-active': isOverlayActive,
-					} ) } onClick={ this.closeOverlay }>
+					} ) } onClick={ this.getCloseOverlayHandler( 'dismiss_overlay' ) }>
 						{ this.renderPublishingBusyButton() }
 					</div>
 					<div className={ classnames( {
@@ -146,7 +145,7 @@ class EditorConfirmationSidebar extends React.Component {
 							<div className="editor-confirmation-sidebar__close">
 								<Button
 									borderless
-									onClick={ this.closeOverlay }
+									onClick={ this.getCloseOverlayHandler( 'dismiss_x' ) }
 									title={ this.props.translate( 'Close sidebar' ) }
 									aria-label={ this.props.translate( 'Close sidebar' ) }>
 									<Gridicon icon="cross" />

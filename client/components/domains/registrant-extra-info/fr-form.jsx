@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { isEqual, noop } from 'lodash';
+import { connect } from 'react-redux';
+import { isEqual, noop, toInteger } from 'lodash';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import debugFactory from 'debug';
@@ -10,6 +11,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { getContactDetailsCache } from 'state/selectors';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -17,6 +20,10 @@ import FormRadio from 'components/forms/form-radio';
 import FormCountrySelect from 'components/forms/form-country-select';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+
+// We use this for basic birth date validation.
+// Twill need to be updated once Ray gets us to the singularity.
+const currentPlausibleHumanLifespan = 140;
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 
@@ -40,82 +47,80 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		countriesList: PropTypes.object.isRequired,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
-		onStateChanged: PropTypes.func, // Just until we can reduxify the contact details
-		countryCode: PropTypes.string,
-		isProbablyOrganization: PropTypes.bool,
 	}
 
 	static defaultProps = {
 		countriesList: { data: [] },
 		isVisible: true,
-		isProbablyOrganization: false,
-		values: {},
 		onSubmit: noop,
-		onStateChanged: noop,
 	}
 
-	componentWillMount() {
+	constructor( props ) {
+		super( props );
+
 		const defaults = {
-			registrantType: this.props.isProbablyOrganization
+			registrantType: this.props.contactDetails.organization
 				? 'organization' : 'individual',
-			countryOfBirth: this.props.countryCode || 'FR',
+			countryOfBirth: this.props.contactDetails.countryCode || 'FR',
 		};
 
-		const values = {
+		this.props.contactDetails.extra = {
 			...defaults,
-			...this.props.values,
+			...this.props.contactDetails.extra
 		};
+	}
 
-		// It's possible for the parent to pass in null and still have a form
-		// that the user is happy with, so we pass one state out
-		// immediatly to to make sure there's something valid in the parent
-		this.props.onStateChange( values );
+	componentDidUpdate( prevProps, prevState ) {
+		const dateOfBirth = this.compileDateOfBirth();
+
+		if ( dateOfBirth && ! isEqual( prevState, this.state ) ) {
+			this.setDateOfBirth( dateOfBirth );
+		}
 	}
 
 	handleDobChangeEvent = ( event ) => {
-		// TODO FIXME: Sanitize and validate individual fields and resulting
-		// date
-
-		// setState() is not syncronous :(
-		const newState = this.newStateFromEvent( event );
-		const { dobYears, dobMonths, dobDays } = newState;
-
-		const dateOfBirth = ( dobYears && dobMonths && dobDays ) &&
-			[ dobYears, dobMonths, dobDays ].join( '-' );
-
-		if ( dateOfBirth ) {
-			debug( 'Setting dateOfBirth to ' + dateOfBirth +
-				( moment( dateOfBirth, 'YYYY-MM-DD' ).isValid() ? '' : ' (invalid)' ) );
-		}
-
-		this.props.onStateChange( {
-			...newState,
-			...( dateOfBirth ? { dateOfBirth } : {} )
+		this.setState( {
+			...this.state,
+			[ event.target.id ]: event.target.value,
 		} );
 	}
 
-	newStateFromEvent( event ) {
-		return {
-			...this.props.values,
-			[ event.target.id ]: event.target.value,
-		};
+	compileDateOfBirth() {
+		const { dobYears, dobMonths, dobDays } = this.state || {};
+		let dateOfBirth = false;
+
+		if ( new Date().getFullYear() - toInteger( dobYears ) > currentPlausibleHumanLifespan ) {
+			// @todo: set error state
+			return false;
+		}
+
+		if ( dobYears && dobMonths && dobDays ) {
+			dateOfBirth = [ dobYears, dobMonths, dobDays ].join( '-' );
+		}
+
+		if ( dateOfBirth && moment( dateOfBirth, 'YYYY-MM-DD' ).isValid() ) {
+			return dateOfBirth;
+		}
+
+		// @todo: set error state
+		return false;
+	}
+
+	setDateOfBirth( dateOfBirth ) {
+		debug( 'Setting dateOfBirth to ' + dateOfBirth );
+		this.props.updateContactDetailsCache( { extra: { dateOfBirth } } );
 	}
 
 	handleChangeEvent = ( event ) => {
-		this.props.onStateChange( this.newStateFromEvent( event ) );
-	}
-
-	// We need a deep comparison to check inside props.values
-	shouldComponentUpdate( nextProps ) {
-		return ! isEqual( this.props, nextProps );
+		debug( 'Setting ' + event.target.id + ' to ' + event.target.value );
+		this.props.updateContactDetailsCache( {
+			extra: { [ event.target.id ]: event.target.value },
+		} );
 	}
 
 	render() {
 		const translate = this.props.translate;
-		const {
-			registrantType
-		} = { ...emptyValues, ...this.props.values };
-
+		const registrantType = this.props.contactDetails.extra.registrantType;
 		return (
 			<form className="registrant-extra-info__form">
 				<h1 className="registrant-extra-info__form-title">
@@ -160,15 +165,16 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	renderPersonalFields() {
 		const translate = this.props.translate;
+		const extra = this.props.contactDetails.extra;
 		const screenReaderText = 'screen-reader-text';
 		const {
 			countryOfBirth,
-			dobDays,
-			dobMonths,
 			dobYears,
+			dobMonths,
+			dobDays,
 			placeOfBirth,
 			postalCodeOfBirth,
-		} = { ...emptyValues, ...this.props.values };
+		} = { ...emptyValues, ...extra, ...this.state };
 
 		return (
 			<div>
@@ -275,11 +281,13 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	renderOrganizationFields() {
 		const translate = this.props.translate;
+		const extra = this.props.contactDetails.extra;
 		const {
 			registrantVatId,
 			sirenSiret,
 			trademarkNumber
-		} = { ...emptyValues, ...this.props.values };
+		} = { ...emptyValues, ...extra };
+
 		return (
 			<div>
 				<FormFieldset>
@@ -349,4 +357,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	}
 }
 
-export default localize( RegistrantExtraInfoForm );
+export default connect(
+	state => ( { contactDetails: getContactDetailsCache( state ) } ),
+	{ updateContactDetailsCache }
+)( localize( RegistrantExtraInfoForm ) );

@@ -22,7 +22,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import ChatClosureNotice from '../chat-closure-notice';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedOrPrimarySiteId } from 'state/selectors';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
 import { selectSiteId } from 'state/help/actions';
 
@@ -252,7 +252,7 @@ export const HelpContactForm = React.createClass( {
 
 const mapStateToProps = ( state ) => {
 	return {
-		selectedSiteId: getHelpSelectedSiteId( state ) || getSelectedSiteId( state )
+		selectedSiteId: getHelpSelectedSiteId( state ) || getSelectedOrPrimarySiteId( state )
 	};
 };
 

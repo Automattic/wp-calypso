@@ -1,22 +1,6 @@
-// Custom breakpoints needed to match original design
-
+// Custom breakpoints
 $reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
 $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
-
-.reader-related-card-v2__link-block {
-	cursor: pointer;
-	display: flex;
-	flex-direction: column;
-	position: relative;
-
-	@media #{$reader-related-card-v2-breakpoint-small} {
-		flex-direction: row;
-	}
-
-	@media #{$reader-related-card-v2-breakpoint-medium} {
-		flex-direction: row;
-	}
-}
 
 .reader-related-card-v2__heading {
 	color: $gray;
@@ -76,7 +60,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	flex-grow: 1;
 	list-style-type: none;
 	margin-top: -3px;
-	min-width: 0;
 
 	&:first-child {
 		margin-right: 10px;
@@ -115,9 +98,10 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 }
 
+// Generic recommended card styles
 .reader-related-card-v2.card.is-compact {
 	box-shadow: none;
-	flex: 1;
+	flex: 1 1 0;
 	padding: 0;
 
 	@include breakpoint( "<480px" ) {
@@ -177,11 +161,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		.reader-related-card-v2__site-info {
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
-				flex: 3;
+				flex: 3 0 0;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
-				flex: 3;
+				flex: 3 0 0;
 			}
 		}
 
@@ -247,11 +231,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		.reader-related-card-v2__post {
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
-				flex: 3;
+				flex: 3 0 0;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
-				flex: 3;
+				flex: 3 0 0;
 			}
 		}
 
@@ -346,13 +330,213 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 				max-height: 106px;
 
 				@media #{$reader-related-card-v2-breakpoint-medium} {
-					flex: 3;
+					flex: 3 0 0;
 					margin-top: 25px;
 					max-height: 125px;
 				}
 
 				@media #{$reader-related-card-v2-breakpoint-small} {
-					flex: 3;
+					flex: 3 0 0;
+					margin-top: 25px;
+					max-height: 130px;
+				}
+
+				@include breakpoint( "<480px" ) {
+					max-height: 121px;
+				}
+			}
+		}
+
+		.reader-related-card-v2 {
+			margin-top: -5px;
+		}
+
+		.reader-related-card-v2__featured-image {
+			margin: 0 0 14px;
+		}
+	}
+
+	&.is-same-site,
+	&.is-other-site {
+
+		.reader-related-card-v2 {
+
+			@media #{$reader-related-card-v2-breakpoint-medium} {
+				flex-direction: row;
+			}
+
+			@media #{$reader-related-card-v2-breakpoint-small} {
+				flex-direction: row;
+			}
+		}
+
+		.reader-related-card-v2__featured-image {
+
+			@media #{$reader-related-card-v2-breakpoint-medium} {
+				flex: 0 0 80px;
+				margin: 0 15px 0 0;
+				width: 80px;
+			}
+
+			@media #{$reader-related-card-v2-breakpoint-small} {
+				flex: 0 0 80px;
+				margin: 0 15px 0 0;
+				width: 80px;
+			}
+		}
+	}
+}
+
+// Wrapper for entire recommended block
+.reader-related-card-v2__blocks {
+	border-top: 1px solid lighten( $gray, 20% );
+	padding-top: 11px;
+
+	// Wrapper for site title, thumbnail, excerpt
+	.reader-related-card-v2__post {
+		max-height: 206px;
+
+		&::after {
+			@include long-content-fade( $size: 30% );
+			bottom: 0;
+			height: 22px;
+			top: auto;
+			visibility: visible;
+		}
+	}
+
+	&.is-same-site {
+
+		.reader-related-card-v2 {
+			margin-top: -6px;
+		}
+
+		.reader-related-card-v2__meta {
+			display: none !important; // Hides meta info in "More In Site" recs
+		}
+
+		.reader-related-card-v2__featured-image {
+			margin: 0 0 14px;
+		}
+
+		.has-thumbnail .reader-related-card-v2__post {
+		 max-height: 106px;
+
+			@media #{$reader-related-card-v2-breakpoint-medium} {
+				max-height: 108px;
+			}
+
+			@media #{$reader-related-card-v2-breakpoint-small} {
+				max-height: 104px;
+			}
+		}
+
+		.reader-related-card-v2__post {
+
+			@media #{$reader-related-card-v2-breakpoint-medium} {
+				flex: 3 0 0;
+			}
+
+			@media #{$reader-related-card-v2-breakpoint-small} {
+				flex: 3 0 0;
+			}
+		}
+
+		.reader-related-card-v2.has-thumbnail {
+			margin-top: 0;
+		}
+	}
+
+	&.is-other-site {
+		margin-top: 40px;
+
+		.reader-related-card-v2__post {
+			max-height: 206px;
+
+			@media #{$reader-related-card-v2-breakpoint-medium} {
+				max-height: 108px;
+			}
+
+			@media #{$reader-related-card-v2-breakpoint-small} {
+				max-height: 108px;
+			}
+
+			@include breakpoint( "<480px" ) {
+				max-height: 104px;
+			}
+		}
+
+		.reader-related-card-v2__featured-image {
+
+			@media #{$reader-related-card-v2-breakpoint-medium} {
+				margin: 0 15px 0 0;
+			}
+
+			@media #{$reader-related-card-v2-breakpoint-small} {
+				margin: 0 15px 0 0;
+			}
+		}
+
+		.reader-related-card-v2__meta {
+
+			@media #{$reader-related-card-v2-breakpoint-medium} {
+				position: absolute;
+				width: 100%;
+			}
+
+			@media #{$reader-related-card-v2-breakpoint-small} {
+				position: absolute;
+			}
+		}
+
+		.reader-related-card-v2__post {
+
+			@media #{$reader-related-card-v2-breakpoint-medium} {
+				margin-top: 55px;
+			}
+
+			@media #{$reader-related-card-v2-breakpoint-small} {
+				margin-top: 55px;
+			}
+		}
+
+		.has-thumbnail .reader-related-card-v2__site-info {
+
+			@media #{$reader-related-card-v2-breakpoint-medium} {
+				margin-top: 20px;
+			}
+
+			@media #{$reader-related-card-v2-breakpoint-small} {
+				margin-top: 20px;
+			}
+
+			.reader-related-card-v2__meta {
+				margin-bottom: 19px;
+
+				@media #{$reader-related-card-v2-breakpoint-medium} {
+					margin-top: -4px;
+					right: 0;
+					width: calc( 100% - 97px );
+				}
+
+				@media #{$reader-related-card-v2-breakpoint-small} {
+					margin-top: -4px;
+					right: 0;
+					width: calc( 100% - 97px );
+				}
+			}
+
+			.reader-related-card-v2__post {
+				max-height: 106px;
+
+				@media #{$reader-related-card-v2-breakpoint-medium} {
+					flex: 3 0 0;
+					margin-top: 25px;
+					max-height: 125px;
+				}
+
+				@media #{$reader-related-card-v2-breakpoint-small} {
+					flex: 3 0 0;
 					margin-top: 25px;
 					max-height: 130px;
 				}
@@ -412,7 +596,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2__byline {
 	display: flex;
-	flex: 1;
+	flex: 1 1 auto;
 	flex-direction: column;
 	font-size: 14px;
 	margin-top: 3px;
@@ -421,12 +605,10 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2__byline-author {
 	margin-top: -5px;
-	word-wrap: break-word;
 }
 
 .reader-related-card-v2__byline-site {
 	margin-top: -4px;
-	word-wrap: break-word;
 }
 
 .reader-related-card-v2__byline-author,
@@ -438,45 +620,10 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	max-height: 23px;
 	overflow: hidden;
 	position: relative;
+	word-wrap: break-word;
 
 	&::after {
 		@include long-content-fade( $size: 15% );
-	}
-}
-
-.reader-related-card-v2__meta .follow-button {
-	background: transparent;
-	border: 0;
-	border-radius: 0;
-	margin-bottom: 12px;
-	margin-top: -4px;
-	position: relative;
-	padding: 0;
-	z-index: z-index( '.reader-related-card-v2__meta', '.follow-button' );
-
-	.gridicon__follow {
-		fill: $blue-medium;
-	}
-
-	.follow-button__label {
-		color: $blue-medium;
-
-		@include breakpoint( "<960px" ) {
-			display: none;
-		}
-	}
-
-	.gridicon {
-		@include breakpoint( "<960px" ) {
-			padding-right: 0;
-		}
-	}
-
-	&.is-following {
-
-		.follow-button__label {
-			color: $alert-green;
-		}
 	}
 }
 
@@ -485,14 +632,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	min-height: 78px;
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
-		flex: 1;
+		flex: 1 1 0;
 		height: auto;
 		margin: 0 15px 0 0;
 	}
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
 		height: auto;
-		flex: 1;
+		flex: 1 1 0;
 		margin: 0 15px 0 0;
 	}
 }
@@ -543,15 +690,49 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	word-wrap: break-word;
 
 	&.post-excerpt {
+		display: -webkit-box;
 		font-size: 15px;
 		line-height: 25px;
+		max-height: none;
 		overflow : hidden;
 		text-overflow: ellipsis;
-		display: -webkit-box;
 		-webkit-box-orient: vertical;
-		max-height: none;
 		-webkit-line-clamp: initial;
 		word-wrap: break-word;
+	}
+}
+
+// Follow buttons in recommended posts
+.reader-related-card-v2__meta .follow-button {
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	margin-bottom: 12px;
+	margin-top: -4px;
+	position: relative;
+	padding: 0;
+	z-index: z-index( '.reader-related-card-v2__meta', '.follow-button' );
+
+	.gridicon__follow {
+		fill: $blue-medium;
+	}
+
+	.follow-button__label {
+		color: $blue-medium;
+
+		@include breakpoint( "<960px" ) {
+			display: none;
+		}
+	}
+
+	.gridicon {
+		@include breakpoint( "<960px" ) {
+			padding-right: 0;
+		}
+	}
+
+	&.is-following .follow-button__label {
+		color: $alert-green;
 	}
 }
 
@@ -575,11 +756,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	.reader-related-card-v2__site-info {
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
-			flex: 2;
+			flex: 2 0 0;
 		}
 
 		@media #{$reader-related-card-v2-breakpoint-small} {
-			flex: 2;
+			flex: 2 0 0;
 		}
 	}
 
@@ -607,7 +788,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 }
 
-// Targets RP cards on Devdocs
+// Targets Related Post cards on Devdocs
 .is-section-devdocs .reader-related-card-v2__blocks.is-same-site {
 	border: 0;
 	padding-top: 0;

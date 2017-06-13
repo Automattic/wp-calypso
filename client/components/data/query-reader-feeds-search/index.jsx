@@ -12,15 +12,22 @@ import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 class QueryFeedSearch extends Component {
 	static propTypes = {
 		query: PropTypes.string,
+		excludeFollowed: PropTypes.bool,
 		searchFeeds: PropTypes.func,
-	}
+	};
 
 	componentWillMount() {
-		this.props.requestFeedSearch( this.props.query );
+		this.props.requestFeedSearch( {
+			query: this.props.query,
+			excludeFollowed: this.props.excludeFollowed,
+		} );
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		nextProps.requestFeedSearch( nextProps.query );
+		nextProps.requestFeedSearch( {
+			query: nextProps.query,
+			excludeFollowed: nextProps.excludeFollowed,
+		} );
 	}
 
 	render() {

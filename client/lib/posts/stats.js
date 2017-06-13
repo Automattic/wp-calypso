@@ -57,6 +57,7 @@ export function recordSaveEvent() {
 	let statName = false;
 	let statEvent = false;
 	let usageAction = false;
+	let eventContext = null;
 
 	if ( ! post.ID && ! utils.isPublished( post ) ) {
 		tracksEventName += 'savedraft';
@@ -68,12 +69,18 @@ export function recordSaveEvent() {
 	} else if ( 'publish' === nextStatus || 'private' === nextStatus ) {
 		tracksEventName += 'publish';
 		usageAction = 'new';
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+			eventContext = 'confirmation_sidebar';
+		}
 	} else if ( 'pending' === nextStatus ) {
 		tracksEventName += 'pending';
 	} else if ( 'future' === nextStatus ) {
 		tracksEventName += 'schedule';
 		statName = 'status-schedule';
 		statEvent = 'Scheduled Post';
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+			eventContext = 'confirmation_sidebar';
+		}
 	}
 
 	if ( usageAction ) {
@@ -100,7 +107,8 @@ export function recordSaveEvent() {
 		post_type: post.type,
 		visibility: utils.getVisibility( post ),
 		current_status: currentStatus,
-		next_status: nextStatus
+		next_status: nextStatus,
+		context: eventContext,
 	} );
 }
 
