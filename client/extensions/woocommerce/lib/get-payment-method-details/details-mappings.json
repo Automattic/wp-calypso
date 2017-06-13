@@ -10,6 +10,9 @@
 	},
 	"paypal": {
 		"fees": "2.9% + 30c per transaction",
+		"fields": [
+			"email"
+		],
 		"informationUrl": "https://docs.woocommerce.com/document/paypal-standard/",
 		"isSuggested": true,
 		"methodType": "off-site"
