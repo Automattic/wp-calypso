@@ -99,6 +99,7 @@ class ActivityLogDay extends Component {
 				>
 					{ logs.map( ( log, index ) => {
 						return (
+							<div>
 							<ActivityLogItem
 								key={ index }
 								title={ log.title }
@@ -112,6 +113,10 @@ class ActivityLogDay extends Component {
 								status={ log.status }
 								className={ log.className }
 							/>
+							<pre>
+							{ JSON.stringify( log, undefined, 2 ) }
+							</pre>
+							</div>
 						);
 					} ) }
 				</FoldableCard>
