@@ -23,8 +23,6 @@ class VideoEditorUploadButton extends Component {
 		onUploadImage: noop,
 	};
 
-	setFormInstance = ref => this.form = ref;
-
 	uploadImage = files => {
 		const file = files[ 0 ];
 
