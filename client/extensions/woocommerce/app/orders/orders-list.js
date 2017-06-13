@@ -14,7 +14,12 @@ import Button from 'components/button';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { setCurrentPage } from 'woocommerce/state/ui/orders/actions';
-import { getOrders, getTotalOrdersPages } from 'woocommerce/state/sites/orders/selectors';
+import {
+	areOrdersLoading,
+	areOrdersLoaded,
+	getOrders,
+	getTotalOrdersPages
+} from 'woocommerce/state/sites/orders/selectors';
 import { getOrdersCurrentPage } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Table from 'woocommerce/components/table';
@@ -107,7 +112,7 @@ class Orders extends Component {
 	}
 
 	render() {
-		const { orders, totalPages, translate } = this.props;
+		const { orders, ordersLoading, ordersLoaded, totalPages, translate } = this.props;
 		const headers = (
 			<TableRow>
 				<TableItem isHeader>
@@ -122,10 +127,16 @@ class Orders extends Component {
 			</TableRow>
 		);
 
+		// @todo Designer needed :)
+		const placeholder = ( ordersLoading && ! ordersLoaded ) ? translate( 'Loading orders' ) : translate( 'No orders found.' );
+
 		return (
 			<div>
 				<Table className="orders__table" header={ headers }>
-					{ orders.map( this.renderOrderItems ) }
+					{ orders.length
+						? orders.map( this.renderOrderItems )
+						: <TableRow><TableItem colSpan="5">{ placeholder }</TableItem></TableRow>
+					}
 				</Table>
 				<ul>
 					{ times( totalPages, this.renderPageLink ) }
@@ -140,11 +151,15 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const currentPage = getOrdersCurrentPage( state, siteId );
 		const orders = getOrders( state, currentPage, siteId );
+		const ordersLoading = areOrdersLoading( state, currentPage, siteId );
+		const ordersLoaded = areOrdersLoaded( state, currentPage, siteId );
 		const totalPages = getTotalOrdersPages( state, siteId );
 
 		return {
 			currentPage,
 			orders,
+			ordersLoading,
+			ordersLoaded,
 			siteId,
 			totalPages,
 		};
