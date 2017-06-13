@@ -49,7 +49,7 @@ export class DesignTypeStep extends Component {
 			{
 				type: 'page',
 				label: translate( 'Start with a website' ),
-				description: translate( 'To promote your business organization, or brand and connect with your audience.' ),
+				description: translate( 'To promote your business, organization, or brand and connect with your audience.' ),
 				image: <PageImage />,
 			},
 			{
