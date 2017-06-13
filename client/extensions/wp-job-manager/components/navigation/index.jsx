@@ -60,23 +60,25 @@ class Navigation extends Component {
 		const { slug: listingsSlug } = Tabs.JOB_LISTINGS;
 		const { activeTab, site } = this.props;
 
-		return tabs.map( ( { slug } ) => {
+		return tabs.map( ( { slug: tabSlug } ) => {
 			let path = this.getSettingsPath();
 
-			if ( slug !== listingsSlug ) {
-				path = `${ path }/${ slug }`;
+			if ( tabSlug !== listingsSlug ) {
+				path = `${ path }/${ tabSlug }`;
 			}
 
-			if ( site ) {
-				path += `/${ site.slug }`;
+			const siteSlug = get( site, 'slug' );
+
+			if ( siteSlug ) {
+				path += `/${ siteSlug }`;
 			}
 
 			return (
 				<SectionNavTabItem
-					key={ `wp-job-manager-${ slug }` }
+					key={ `wp-job-manager-${ tabSlug }` }
 					path={ path }
-					selected={ ( activeTab || listingsSlug ) === slug }>
-					{ this.getLabel( slug ) }
+					selected={ ( activeTab || listingsSlug ) === tabSlug }>
+					{ this.getLabel( tabSlug ) }
 				</SectionNavTabItem>
 			);
 		} );

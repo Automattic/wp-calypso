@@ -2,12 +2,14 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import Navigation from '../components/navigation';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const WPJobManager = ( { site, tab } ) => {
 	const mainClassName = 'wp-job-manager__main';
@@ -28,4 +30,8 @@ WPJobManager.defaultProps = {
 	tab: '',
 };
 
-export default WPJobManager;
+const connectComponent = connect(
+	( state ) => ( { site: getSelectedSite( state ) || {} } )
+);
+
+export default connectComponent( WPJobManager );
