@@ -239,6 +239,7 @@ describe( 'actions', () => {
 						description: 'Pay via PayPal;',
 						enabled: false,
 						fees: '2.9% + 30c per transaction',
+						fields: [ 'email', 'paymentaction' ],
 						id: 'paypal',
 						informationUrl: 'https://docs.woocommerce.com/document/paypal-standard/',
 						isSuggested: true,
