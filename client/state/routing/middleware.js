@@ -23,7 +23,7 @@ export const restoreLastLocation = () => {
 	let hasInitialized = false;
 
 	return ( next ) => ( action ) => {
-		if ( action.type !== ROUTE_SET || ! action.path ) {
+		if ( action.type !== ROUTE_SET || ! action.path || ! action.query ) {
 			return next( action );
 		}
 
