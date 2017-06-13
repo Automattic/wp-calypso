@@ -21,10 +21,30 @@ describe( 'actions', () => {
 		let request;
 
 		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/read/sites/1' ).reply( 200, {
-				ID: 1,
-				name: 'My test site',
-			} );
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( '/rest/v1.1/read/sites/1' )
+				.query( {
+					fields: [
+						'ID',
+						'name',
+						'title',
+						'URL',
+						'icon',
+						'is_jetpack',
+						'description',
+						'is_private',
+						'feed_ID',
+						'feed_URL',
+						'capabilities',
+						'prefer_feed',
+						'options',  // have to include this to get options at all
+					].join( ',' ),
+					options: [ 'is_mapped_domain', 'unmapped_url', 'is_redirect' ].join( ',' ),
+				} )
+				.reply( 200, {
+					ID: 1,
+					name: 'My test site',
+				} );
 			request = requestSite( 1 )( spy );
 		} );
 
@@ -51,7 +71,7 @@ describe( 'actions', () => {
 				err => {
 					assert.fail( 'Errback should not be invoked!', err );
 					return err;
-				}
+				},
 			);
 		} );
 	} );
@@ -88,7 +108,7 @@ describe( 'actions', () => {
 						},
 						error: sinon.match.instanceOf( Error ),
 					} );
-				}
+				},
 			);
 		} );
 	} );
