@@ -12,15 +12,6 @@ import {
 	areShippingZoneLocationsLoading,
 } from './selectors';
 
-export const fetchShippingZoneLocationsSuccess = ( siteId, zoneId, data ) => {
-	return {
-		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS,
-		siteId,
-		zoneId,
-		data,
-	};
-};
-
 export const fetchShippingZoneLocations = ( siteId, zoneId ) => ( dispatch, getState ) => {
 	if ( areShippingZoneLocationsLoaded( getState(), zoneId, siteId ) ||
 		areShippingZoneLocationsLoading( getState(), zoneId, siteId ) ) {
@@ -37,7 +28,12 @@ export const fetchShippingZoneLocations = ( siteId, zoneId ) => ( dispatch, getS
 
 	return request( siteId ).get( 'shipping/zones/' + zoneId + '/locations' )
 		.then( ( data ) => {
-			dispatch( fetchShippingZoneLocationsSuccess( siteId, zoneId, data ) );
+			dispatch( {
+				type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS,
+				siteId,
+				zoneId,
+				data,
+			} );
 		} )
 		.catch( err => {
 			dispatch( setError( siteId, getAction, err ) );
