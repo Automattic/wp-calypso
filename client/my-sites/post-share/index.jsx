@@ -65,6 +65,7 @@ import formatCurrency from 'lib/format-currency';
 
 import SectionHeader from 'components/section-header';
 import Tooltip from 'components/tooltip';
+import analytics from 'lib/analytics';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -142,24 +143,37 @@ class PostShare extends Component {
 		this.props.dismissShareConfirmation( this.props.siteId, this.props.postId );
 	};
 
+
 	sharePost = () => {
 		const {
 			postId,
 			siteId,
 			connections,
 		} = this.props;
+		const servicesToPublish = connections
+			.filter( connection => this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 );
+		//Let's prepare array of service stats for tracks.
+		const numberOfAccountsPerService = servicesToPublish.reduce( ( counts, service ) => {
+			counts.service_all = counts.service_all + 1;
+			if ( ! counts[ 'service_' + service.service ] ) {
+				counts[ 'service_' + service.service ] = 0;
+			}
+			counts[ 'service_' + service.service ] = counts[ 'service_' + service.service ] + 1;
+			return counts;
+		}, { service_all: 0 } );
+
 		if ( this.state.scheduledDate ) {
-			const servicesToPublish = connections
-				.filter( connection => this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 )
-				.map( connection => connection.ID );
+
+			analytics.tracks.recordEvent( 'calypso_publicize_share_schedule', numberOfAccountsPerService );
 			this.props.schedulePostShareAction(
 				siteId,
 				postId,
 				this.state.message,
 				this.state.scheduledDate.format( 'X' ),
-				servicesToPublish,
+				servicesToPublish.map( connection => connection.ID ),
 			);
 		} else {
+			analytics.tracks.recordEvent( 'calypso_publicize_share_instantly', numberOfAccountsPerService );
 			this.props.sharePost( siteId, postId, this.state.skipped, this.state.message );
 		}
 	};
