@@ -37,8 +37,8 @@ This is saved on a per-site basis, either as "LOADING" (when requesting the loca
 			],
 		},
 		{
-			code: "AM",
-			name: "America",
+			code: 'NA',
+			name: "North America",
 			countries: [
 				{
 					code: "US",

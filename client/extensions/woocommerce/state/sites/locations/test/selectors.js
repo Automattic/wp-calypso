@@ -18,8 +18,8 @@ import { LOADING } from 'woocommerce/state/constants';
 
 const locations = [
 	{
-		code: 'AM',
-		name: 'America',
+		code: 'NA',
+		name: 'North America',
 		countries: [
 			{
 				code: 'US',
@@ -169,18 +169,18 @@ describe( 'selectors', () => {
 		it( 'should return the continents, sorted by name', () => {
 			expect( getContinents( loadedState ) ).to.deep.equal( [
 				{ code: 'AF', name: 'Africa' },
-				{ code: 'AM', name: 'America' },
+				{ code: 'NA', name: 'North America' },
 			] );
 		} );
 	} );
 
 	describe( '#getCountries', () => {
 		it( 'should return an empty list if the locations are not loaded', () => {
-			expect( getCountries( emptyState, 'AM' ) ).to.deep.equal( [] );
+			expect( getCountries( emptyState, 'NA' ) ).to.deep.equal( [] );
 		} );
 
 		it( 'should return an empty list if the locations are being loaded', () => {
-			expect( getCountries( loadingState, 'AM' ) ).to.deep.equal( [] );
+			expect( getCountries( loadingState, 'NA' ) ).to.deep.equal( [] );
 		} );
 
 		it( 'should return an empty list if the continent does not exist', () => {
@@ -188,7 +188,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return the countries from a continent, sorted by name', () => {
-			expect( getCountries( loadedState, 'AM' ) ).to.deep.equal( [
+			expect( getCountries( loadedState, 'NA' ) ).to.deep.equal( [
 				{ code: 'CA', name: 'Canada' },
 				{ code: 'US', name: 'United States' },
 			] );
@@ -238,7 +238,7 @@ describe( 'selectors', () => {
 			expect( hasStates( loadedState, 'SA' ) ).to.be.false;
 		} );
 
-		it( 'should return true if the countri has states', () => {
+		it( 'should return true if the country has states', () => {
 			expect( hasStates( loadedState, 'US' ) ).to.be.true;
 		} );
 	} );

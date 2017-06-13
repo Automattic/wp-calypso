@@ -40,8 +40,8 @@ describe( 'reducer', () => {
 				],
 			},
 			{
-				code: 'AM',
-				name: 'America',
+				code: 'NA',
+				name: 'North America',
 				countries: [
 					{
 						code: 'US',
