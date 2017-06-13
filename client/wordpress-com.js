@@ -363,7 +363,7 @@ sections.push( {
 
 sections.push( {
 	name: 'preview',
-	paths: [ '/preview' ],
+	paths: [ '/view' ],
 	module: 'my-sites/preview',
 	group: 'sites',
 	secondary: true
