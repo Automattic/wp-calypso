@@ -3,7 +3,7 @@
  */
 import ReactDom from 'react-dom';
 import React, { Component, PropTypes } from 'react';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 import classNames from 'classnames';
 
 class VideoEditorUploadButton extends Component {
@@ -23,13 +23,12 @@ class VideoEditorUploadButton extends Component {
 	setFormInstance = ref => this.form = ref;
 
 	handleChange = ( event ) => {
-		let files;
+		const files = get( event, 'target.files[0]' );
 
-		if ( event.target.files && event.target.files.length > 0 ) {
-			files = event.target.files[ 0 ];
+		if ( files ) {
+			this.props.onUploadImage( files );
 		}
 
-		this.props.onUploadImage( files );
 		ReactDom.findDOMNode( this.form ).reset();
 	}
 
