@@ -4,11 +4,11 @@
 import classNames from 'classnames';
 import React, { Component, PropTypes } from 'react';
 
-/**
- * Internal dependencies
- */
-
 class WidgetGroup extends Component {
+	static defaultProps = {
+		maxColumns: 2,
+	}
+
 	static propTypes = {
 		children: PropTypes.oneOfType( [
 			PropTypes.arrayOf( PropTypes.node ),
@@ -19,6 +19,12 @@ class WidgetGroup extends Component {
 		title: PropTypes.string,
 	}
 
+	/*
+	 * We render a single row of widgets (using cloneElement to
+	 * properly merge the widget's classname with a row-item class name
+	 * in order to take advantage of flexbox without introducing further
+	 * nesting)
+	 */
 	renderRow = ( rowIndex, children ) => {
 		return (
 			<div className="widget-group__row-container" key={ rowIndex }>
@@ -32,6 +38,11 @@ class WidgetGroup extends Component {
 		);
 	}
 
+	/*
+	 * A widget group will have one or more children. This method slices
+	 * the array of children into rows containing maxColumns children
+	 * and uses renderRow to assemble each of those rows
+	 */
 	renderChildren = () => {
 		const { children, firstWidgetFullWidth, maxColumns } = this.props;
 
@@ -63,9 +74,7 @@ class WidgetGroup extends Component {
 
 	render = () => {
 		const { children, className, title } = this.props;
-		const classes = classNames( {
-			'widget-group__group-container': true,
-		}, className );
+		const classes = classNames( 'widget-group__group-container', className );
 
 		return (
 			<div className={ classes } >
@@ -75,9 +84,5 @@ class WidgetGroup extends Component {
 		);
 	}
 }
-
-WidgetGroup.defaultProps = {
-	maxColumns: 2
-};
 
 export default WidgetGroup;

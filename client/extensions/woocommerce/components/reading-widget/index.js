@@ -5,12 +5,13 @@ import { connect } from 'react-redux';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
-import ExternalLink from 'components/external-link';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
+import config from 'config';
+import ExternalLink from 'components/external-link';
 import FormTextInput from 'components/forms/form-text-input';
 import { getSitePostsForQueryIgnoringPage } from 'state/posts/selectors';
 import humanDate from 'lib/human-date';
@@ -34,7 +35,7 @@ class ReadingWidget extends Component {
 
 	static defaultProps = {
 		query: { category: 'start-your-store', number: 3 },
-		siteId: 113771570,
+		siteId: config( 'woocommerce_blog_id' ),
 	}
 
 	getRolesAndLabels = () => {

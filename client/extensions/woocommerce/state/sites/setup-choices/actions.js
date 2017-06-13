@@ -3,12 +3,12 @@
  */
 import {
 	areSetupChoicesLoaded,
-	areSetupChoicesLoading
+	areSetupChoicesLoading,
 } from './selectors';
 import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST,
-	WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS
+	WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import wp from 'lib/wp';
 

@@ -63,7 +63,7 @@ describe( 'selectors', () => {
 			expect( areSetupChoicesLoaded( loadedState, 123 ) ).to.be.true;
 		} );
 
-		it( 'should be false when settings are loaded only for a different site.', () => {
+		it( 'should be false when setup choices are loaded only for a different site.', () => {
 			expect( areSetupChoicesLoaded( loadedState, 456 ) ).to.be.false;
 		} );
 

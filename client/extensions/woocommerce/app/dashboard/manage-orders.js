@@ -33,17 +33,16 @@ class ManageOrders extends Component {
 			<ShareWidget
 				text={ translate( 'Share a link to your store on social media.' ) }
 				title={ translate( 'Share your store' ) }
-				urlToShare={ getLink( 'https://:site', site ) }
+				urlToShare={ site.URL }
 			/>
 		);
 	}
 
 	possiblyRenderReadingWidget = () => {
 		// TODO - connect to display preferences in a follow-on PR
-		const { site, translate } = this.props;
+		const { translate } = this.props;
 		return (
 			<ReadingWidget
-				site={ site }
 				text={ translate( 'You’re not alone! Get tips from seasoned merchants,' +
 					' learn best practices to keep your store ship-shape,' +
 					' and find how to boost your sales and drive traffic.' ) }

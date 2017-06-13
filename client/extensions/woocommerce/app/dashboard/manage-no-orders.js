@@ -28,17 +28,16 @@ class ManageNoOrders extends Component {
 					' and get those first orders rolling in. Share your store with friends,' +
 					' family, and followers now.' ) }
 				title={ translate( 'Your store is ready, the world awaits!' ) }
-				urlToShare={ getLink( 'https://:site', site ) }
+				urlToShare={ site.URL }
 			/>
 		);
 	}
 
 	renderReadingWidget = () => {
-		const { site, translate } = this.props;
+		const { translate } = this.props;
 		return (
 			<ReadingWidget
 				className="dashboard__reading-widget"
-				site={ site }
 				text={ translate( 'You’re not alone! Get tips from seasoned merchants,' +
 					' learn best practices to keep your store ship-shape,' +
 					' and find how to boost your sales and drive traffic.' ) }
@@ -70,7 +69,7 @@ class ManageNoOrders extends Component {
 		return (
 			<BasicWidget
 				buttonLabel={ translate( 'View & test your store' ) }
-				buttonLink={ getLink( 'https://:site', site ) }
+				buttonLink={ site.URL }
 				className="dashboard__view-and-test-widget"
 				title={ translate( 'Test all the things' ) }
 			>

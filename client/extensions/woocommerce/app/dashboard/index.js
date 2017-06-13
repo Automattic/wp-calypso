@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { areSetupChoicesLoading, getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
 import Manage from './manage';
 import Setup from './setup';
@@ -69,7 +69,7 @@ class Dashboard extends Component {
 function mapStateToProps( state ) {
 	const finishedInitialSetup = getFinishedInitialSetup( state );
 	const loading = areSetupChoicesLoading( state );
-	const selectedSite = getSelectedSite( state );
+	const selectedSite = getSelectedSiteWithFallback( state );
 
 	return {
 		finishedInitialSetup,
