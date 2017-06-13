@@ -117,7 +117,31 @@ const Checkout = React.createClass( {
 		recordViewCheckout( props.cart );
 	},
 
-	addProductToCart: function() {
+	addProductToCart() {
+		if ( this.props.purchaseId ) {
+			this.addRenewItemToCart();
+		} else {
+			this.addNewItemToCart();
+		}
+	},
+
+	addRenewItemToCart() {
+		const { product, productsList, purchaseId, selectedSiteSlug } = this.props;
+		const { productSlug, meta } = product.split( ':' );
+
+		let cartItem = Object.assign( { meta }, productsList.data[ productSlug ] );
+
+		if ( purchaseId ) {
+			cartItem = cartItems.getRenewalItemFromCartItem( cartItem, {
+				id: purchaseId,
+				domain: selectedSiteSlug
+			} );
+		}
+
+		upgradesActions.addItem( cartItem );
+	},
+
+	addNewItemToCart() {
 		const planSlug = getUpgradePlanSlugFromPath( this.props.product, this.props.selectedSite );
 
 		let cartItem,
