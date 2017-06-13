@@ -1,8 +1,17 @@
 /**
  * Internal dependencies
  */
-import { keyedReducer } from 'state/utils';
+import {
+	ACTIVITY_LOG_UPDATE,
+} from 'state/activity-log/actions';
+import {
+	createReducer,
+	keyedReducer,
+} from 'state/utils';
 
 // FIXME: No-op reducers
 export const logError = keyedReducer( 'siteId', state => state );
-export const logItems = keyedReducer( 'siteId', state => state );
+
+export const logItems = keyedReducer( 'siteId', createReducer( [], {
+	[ ACTIVITY_LOG_UPDATE ]: ( state, { data } ) => data,
+} ) );

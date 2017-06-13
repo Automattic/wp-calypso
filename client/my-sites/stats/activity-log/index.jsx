@@ -21,6 +21,7 @@ import ErrorBanner from '../activity-log-banner/error-banner';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import QueryRewindStatus from 'components/data/query-rewind-status';
+import { activityLogRequest as activityLogRequestAction } from 'state/activity-log/actions';
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -40,9 +41,26 @@ class ActivityLog extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	componentWillMount() {
+		this.tryFetchLogs();
+	}
+
+	componentWillUpdate( { siteId } ) {
+		if ( siteId !== this.props.siteId ) {
+			this.tryFetchLogs();
+		}
+	}
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
-		this.props.dispatch( { type: 'ACTIVITY_LOG_FETCH', siteId: this.props.siteId } );
+	}
+
+	tryFetchLogs() {
+		const {
+			activityLogRequest,
+			siteId,
+		} = this.props;
+		siteId && activityLogRequest( siteId );
 	}
 
 	logs = () => [
@@ -314,7 +332,7 @@ class ActivityLog extends Component {
 			moment,
 			siteId,
 		} = this.props;
-		const logs = this.logs();
+		const logs = this.props.logs;
 		const logsGroupedByDate = map(
 			groupBy(
 				logs.map( this.update_logs, this ),
@@ -375,6 +393,13 @@ export default connect(
 
 			// FIXME: Testing only
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false ),
+			logs: get( state, [
+				'activityLog',
+				'logItems',
+				siteId,
+			], [] ),
 		};
+	}, {
+		activityLogRequest: activityLogRequestAction,
 	}
 )( localize( ActivityLog ) );
