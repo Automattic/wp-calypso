@@ -3,7 +3,7 @@
 }
 
 // PAYMENT-METHOD-ROW
-.payments__off-site-container {
+.payments__type-container {
 
 	p.payments__method-suggested {
 		font-size: 11px;
@@ -27,8 +27,16 @@
 		width: 30%;
 	}
 
-	.list-item-field:nth-child( 2 ) {
+	.payments__methods-offline .list-item-field:first-child {
 		width: 50%;
+	}
+
+	.list-item-field:nth-child( 2 ) {
+		width: 40%;
+	}
+
+	.payments__methods-offline .list-item-field:nth-child( 2 ) {
+		width: 0;
 	}
 
 	.list-item-field:nth-child( 3 ) {
@@ -45,14 +53,14 @@
 	width: 100%;
 }
 
-.payments__off-site-container {
+.payments__type-container {
 	.list__ul {
 		> div {
-			li:nth-child(2) {
+			li:nth-child( 2 ) {
 				padding: 16px;
 				border-top: 1px solid $gray-light;
 
-				@include breakpoint( ">480px" ) {
+				@include breakpoint( '>480px' ) {
 					padding: 24px;
 				}
 			}

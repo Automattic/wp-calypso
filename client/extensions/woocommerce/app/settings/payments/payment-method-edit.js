@@ -13,6 +13,7 @@ import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
+import FormTextarea from 'components/forms/form-textarea';
 import ListItem from 'woocommerce/components/list/list-item';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 
@@ -60,6 +61,7 @@ class PaymentMethodEdit extends Component {
 				{ 'email' === setting.type && this.renderEditTextbox( setting ) }
 				{ 'password' === setting.type && this.renderEditPassword( setting ) }
 				{ 'text' === setting.type && this.renderEditTextbox( setting ) }
+				{ 'textarea' === setting.type && this.renderEditTextarea( setting ) }
 				{ 'select' === setting.type && this.renderEditSelect( setting ) }
 			</FormFieldset>
 		);
@@ -85,6 +87,12 @@ class PaymentMethodEdit extends Component {
 	renderEditTextbox = ( setting ) => {
 		return (
 			<FormTextInput name={ setting.id } onChange={ this.onEditFieldHandler } value={ setting.value } />
+		);
+	}
+
+	renderEditTextarea = ( setting ) => {
+		return (
+			<FormTextarea name={ setting.id } onChange={ this.onEditFieldHandler } value={ setting.value } />
 		);
 	}
 
