@@ -13,6 +13,7 @@
 
 .action-header__breadcrumbs {
 	width: 60%;
+	font-size: 13px;
 	@include breakpoint( "<660px" ) {
 		padding-left: 24px;
 	}
@@ -26,5 +27,22 @@
 
 	.button {
 		margin-left: 12px;
+	}
+}
+
+.sticky-panel {
+	@include breakpoint( ">960px" ) {
+		position: fixed;
+		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
+		width: calc(100% - 273px);
+		top: 47px;
+		left: 273px;
+	}
+	@include breakpoint( "660px-960px" ) {
+		position: fixed;
+		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
+		width: calc(100% - 229px);
+		top: 47px;
+		left: 229px;
 	}
 }

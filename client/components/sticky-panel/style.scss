@@ -1,26 +1,5 @@
-.sticky-panel {
-	@include breakpoint( ">960px" ) {
-		position: fixed;
-		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
-		width: calc(100% - 273px);
-		top: 47px;
-		left: 273px;
-	}
-	@include breakpoint( "660px-960px" ) {
-		position: fixed;
-		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
-		width: calc(100% - 229px);
-		top: 47px;
-		left: 229px;
-	}
-}
-
 .sticky-panel__content {
 	position: relative;
-}
-
-.sticky-panel .action-header__breadcrumbs {
-	font-size: 13px;
 }
 
 .sticky-panel.is-sticky .sticky-panel__content {
