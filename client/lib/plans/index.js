@@ -20,6 +20,7 @@ import {
 } from 'lib/products-values';
 import {
 	FEATURES_LIST,
+	JETPACK_PLANS,
 	PLANS_LIST,
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
@@ -60,10 +61,10 @@ export function canUpgradeToPlan( planKey, site ) {
 	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
 }
 
-export function getUpgradePlanSlugFromPath( path, site ) {
-	return find( Object.keys( PLANS_LIST ), planKey => (
-		( planKey === path || getPlanPath( planKey ) === path ) &&
-		canUpgradeToPlan( planKey, site )
+export function getUpgradePlanSlugFromPath( path, isJetpack ) {
+	const planSlugs = Object.keys( PLANS_LIST );
+	return find( isJetpack ? JETPACK_PLANS : planSlugs, planKey => (
+		planKey === path || getPlanPath( planKey ) === path
 	) );
 }
 
