@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import PostShare from 'my-sites/post-share';
+import PostShare from 'blocks/post-share';
 import QueryPosts from 'components/data/query-posts';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getSite } from 'state/sites/selectors';
