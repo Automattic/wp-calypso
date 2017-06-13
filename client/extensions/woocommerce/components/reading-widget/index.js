@@ -156,9 +156,7 @@ class ReadingWidget extends Component {
 					/>
 				) }
 				{ expanded && (
-					<Button
-						disabled={ ! this.isFormSubmittable() }
-					>
+					<Button disabled={ ! this.isFormSubmittable() } >
 						{ translate( 'Subscribe' ) }
 					</Button>
 				) }

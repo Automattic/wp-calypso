@@ -8,11 +8,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { getLink } from '../../lib/nav-utils';
-import ProcessOrdersWidget from '../../components/process-orders-widget';
-import ReadingWidget from '../../components/reading-widget';
-import ShareWidget from '../../components/share-widget';
-import WidgetGroup from '../../components/widget-group';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import ProcessOrdersWidget from 'woocommerce/components/process-orders-widget';
+import ReadingWidget from 'woocommerce/components/reading-widget';
+import ShareWidget from 'woocommerce/components/share-widget';
+import WidgetGroup from 'woocommerce/components/widget-group';
 
 class ManageOrders extends Component {
 	static propTypes = {

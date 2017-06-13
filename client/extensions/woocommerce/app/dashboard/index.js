@@ -34,11 +34,11 @@ class Dashboard extends Component {
 	componentWillReceiveProps = ( newProps ) => {
 		const { selectedSite } = this.props;
 
-		const newSiteID = newProps.selectedSite && newProps.selectedSite.ID || null;
-		const oldSiteID = selectedSite && selectedSite.ID || null;
+		const newSiteId = newProps.selectedSite && newProps.selectedSite.ID || null;
+		const oldSiteId = selectedSite && selectedSite.ID || null;
 
-		if ( oldSiteID !== newSiteID ) {
-			this.props.fetchSetupChoices( newSiteID );
+		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchSetupChoices( newSiteId );
 		}
 	}
 

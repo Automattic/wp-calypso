@@ -9,7 +9,7 @@ import { get, isObject } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
-const getRawSetupChoices = ( state, siteId ) => {
+const getSetupChoices = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'setupChoices' ] );
 };
 
@@ -19,7 +19,7 @@ const getRawSetupChoices = ( state, siteId ) => {
  * @return {boolean} Whether the setup choices list has been successfully loaded from the server
  */
 export const areSetupChoicesLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isObject( getRawSetupChoices( state, siteId ) );
+	return isObject( getSetupChoices( state, siteId ) );
 };
 
 /**
@@ -28,7 +28,7 @@ export const areSetupChoicesLoaded = ( state, siteId = getSelectedSiteId( state 
  * @return {boolean} Whether the setup choices list is currently being retrieved from the server
  */
 export const areSetupChoicesLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return LOADING === getRawSetupChoices( state, siteId );
+	return LOADING === getSetupChoices( state, siteId );
 };
 
 /**
@@ -42,7 +42,7 @@ export function getFinishedInitialSetup( state, siteId = getSelectedSiteId( stat
 	if ( ! siteId ) {
 		return false;
 	}
-	const setupChoices = getRawSetupChoices( state, siteId );
+	const setupChoices = getSetupChoices( state, siteId );
 	if ( ! setupChoices ) {
 		return false;
 	}
