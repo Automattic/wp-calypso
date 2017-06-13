@@ -13,10 +13,10 @@ import { ROUTE_SET } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:restore-last-location' );
 const LAST_PATH = 'last_path';
-const ALLOWED_PATHS = /^\/(stats|plans|view|posts|pages|media|types|themes|sharing|people|plugins|domains)/i;
+const ALLOWED_PATHS_FOR_RESTORING = /^\/(stats|plans|view|posts|pages|media|types|themes|sharing|people|plugins|domains)/i;
 
 const isWhitelistedForRestoring = ( path ) => {
-	return !! path.match( ALLOWED_PATHS );
+	return !! path.match( ALLOWED_PATHS_FOR_RESTORING );
 };
 
 export const restoreLastLocation = () => {
