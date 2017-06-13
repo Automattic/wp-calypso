@@ -162,19 +162,40 @@
 		}
 	}
 
-	.is-approved .gridicon {
+	.comment-detail__action-like {
+		&:focus,
+		&:hover {
+			color: $orange-jazzy;
+		}
+	}
+
+	.comment-detail__action-approve {
+		&:focus,
+		&:hover {
+			color: $alert-green;
+		}
+	}
+
+	.comment-detail__action-spam,
+	.comment-detail__action-trash,
+	.comment-detail__action-delete {
+		&:focus,
+		&:hover {
+			color: $alert-red;
+		}
+	}
+
+	.is-approved {
 		color: $alert-green;
 	}
-	.is-liked .gridicon {
-		color: $alert-yellow;
+	.is-liked {
+		color: $orange-jazzy;
 	}
-	.is-spam .gridicon {
+	.is-spam {
 		color: $alert-red;
-		fill: $alert-red;
 	}
-	.is-trash .gridicon {
+	.is-trash {
 		color: $gray-dark;
-		fill: $gray-dark;
 	}
 }
 
@@ -215,7 +236,6 @@
 		&:focus,
 		&:hover {
 			color: $blue-wordpress;
-			fill: $blue-wordpress;
 		}
 	}
 }
