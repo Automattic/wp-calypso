@@ -48,7 +48,7 @@ var PageList = React.createClass( {
 			<PostListFetcher
 				type="page"
 				number={ 100 }
-				siteId={ this.props.siteId }
+				siteID={ this.props.siteId }
 				status={ mapStatus( this.props.status ) }
 				search={ this.props.search }>
 				<Pages
@@ -268,7 +268,7 @@ var Pages = React.createClass( {
 
 			// Render each page
 			return (
-				<Page key={ 'page-' + page.global_ID } page={ page } multisite={ this.props.siteId === false } />
+				<Page key={ 'page-' + page.global_ID } page={ page } multisite={ this.props.siteID === false } />
 			);
 		}, this );
 

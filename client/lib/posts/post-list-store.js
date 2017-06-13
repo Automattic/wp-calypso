@@ -29,7 +29,7 @@ import PostListCacheStore,
  * Module Variables
  */
 const _defaultQuery = {
-	siteId: false,
+	siteID: false,
 	type: 'post',
 	status: 'publish',
 	orderBy: 'date',
@@ -90,6 +90,10 @@ export default function( id ) {
 
 	function queryPosts( options ) {
 		let query = assign( {}, _defaultQuery, options );
+
+		if ( query.siteID && typeof query.siteID === 'string' ) {
+			query.siteID = query.siteID.replace( /::/g, '/' );
+		}
 
 		if ( query.status === 'draft,pending' ) {
 			query.orderBy = 'modified';
@@ -272,8 +276,8 @@ export default function( id ) {
 			return _activeList.id;
 		}
 
-		getSiteId() {
-			return _activeList.query.siteId;
+		getSiteID() {
+			return _activeList.query.siteID;
 		}
 
 		// Get list of posts from current object
@@ -348,7 +352,7 @@ export default function( id ) {
 				params.search = query.search;
 			}
 
-			if ( ! params.siteId ) {
+			if ( ! params.siteID ) {
 				// Only query from visible sites
 				params.site_visibility = 'visible';
 			}
@@ -372,7 +376,7 @@ export default function( id ) {
 				params.search = query.search;
 			}
 
-			if ( ! params.siteId ) {
+			if ( ! params.siteID ) {
 				// Only query from visible sites
 				params.site_visibility = 'visible';
 			}

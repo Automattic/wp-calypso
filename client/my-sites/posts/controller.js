@@ -84,6 +84,7 @@ module.exports = {
 		renderWithReduxStore(
 			React.createElement( Posts, {
 				context: context,
+				siteID: siteID,
 				author: author,
 				statusSlug: statusSlug,
 				search: search,

@@ -70,10 +70,10 @@ const PostsNavigation = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ||
+		if ( this.props.siteID !== nextProps.siteID ||
 			this.props.author !== nextProps.author ||
 			this.props.statusSlug !== nextProps.statusSlug ) {
-			this._setPostCounts( nextProps.siteId, nextProps.author ? 'mine' : 'all' );
+			this._setPostCounts( nextProps.siteID, nextProps.author ? 'mine' : 'all' );
 		}
 	},
 
@@ -88,8 +88,7 @@ const PostsNavigation = React.createClass( {
 
 		const author = this.props.author ? '/my' : '',
 			statusSlug = this.props.statusSlug ? '/' + this.props.statusSlug : '',
-			siteFilter = this.props.siteSlug ? '/' + this.props.siteSlug : '';
-
+			siteFilter = this.props.siteId ? '/' + this.props.siteId : '';
 		let showMyFilter = true;
 
 		this.filterStatuses = {
@@ -166,10 +165,6 @@ const PostsNavigation = React.createClass( {
 			}
 
 			if ( 'publish' === status && ! count ) {
-				count = 0;
-			}
-
-			if ( null === count || false === count ) {
 				count = 0;
 			}
 
@@ -276,17 +271,17 @@ const PostsNavigation = React.createClass( {
 	/**
 	 * Set immediately post filters state
 	 *
-	 * @param {String} siteId - site ID
+	 * @param {String} siteID - site ID
 	 * @param {String} scope - scope `all` or `mine`
 	 * @return {void}
 	 */
-	_setPostCounts( siteId, scope ) {
+	_setPostCounts( siteID, scope ) {
 		// print default filters for `All my Sites`
-		if ( ! siteId || null === this.props.siteId ) {
+		if ( ! siteID || null === this.props.siteId ) {
 			return this._defaultStateOptions();
 		}
 
-		if ( ! PostCountsStore.getTotalCount( siteId, 'all' ) ) {
+		if ( ! PostCountsStore.getTotalCount( siteID, 'all' ) ) {
 			return this.setState( {
 				show: true,
 				loading: true
@@ -296,11 +291,11 @@ const PostsNavigation = React.createClass( {
 		this.setState( {
 			show: true,
 			loading: false,
-			counts: this._getCounts( siteId, scope )
+			counts: this._getCounts( siteID, scope )
 		} );
 	},
 
-	_updatePostCounts( siteId = this.props.siteId, scope ) {
+	_updatePostCounts( siteID = this.props.siteId, scope ) {
 		scope = scope || ( this.props.author ? 'mine' : 'all' );
 
 		// is `All my sites` selected`
@@ -314,10 +309,10 @@ const PostsNavigation = React.createClass( {
 			counts: {}
 		};
 
-		if ( PostCountsStore.getTotalCount( siteId, 'all' ) ) {
-			state.counts = this._getCounts( siteId, scope );
+		if ( PostCountsStore.getTotalCount( siteID, 'all' ) ) {
+			state.counts = this._getCounts( siteID, scope );
 		} else {
-			debug( '[%s] clean counts', siteId || 'All my sites' );
+			debug( '[%s] clean counts', siteID || 'All my sites' );
 			state.show = false;
 			state.counts = {};
 		}
@@ -331,17 +326,17 @@ const PostsNavigation = React.createClass( {
 	 * `me` scope.
 	 * Also calc and remove unallowed statuses.
 	 *
-	 * @param {String} siteId - Site identifier
+	 * @param {String} siteID - Site identifier
 	 * @param {String} [scope] - Optional scope (mine or all)
 	 * @return {Object} counts
 	 */
-	_getCounts( siteId = this.props.siteId, scope ) {
+	_getCounts( siteID = this.props.siteId, scope ) {
 		var counts = {},
 			status;
 
 		scope = scope || ( this.props.author ? 'mine' : 'all' );
-		const all = PostCountsStore.get( siteId, 'all' );
-		const mine = PostCountsStore.get( siteId, 'mine' );
+		let all = PostCountsStore.get( siteID, 'all' );
+		let mine = PostCountsStore.get( siteID, 'mine' );
 
 		// make a copy of counts object
 		for ( status in all ) {
