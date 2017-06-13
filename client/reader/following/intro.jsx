@@ -14,6 +14,7 @@ import QueryPreferences from 'components/data/query-preferences';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
+import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'state/ui/guided-tours/contexts';
 
 class FollowingIntro extends React.Component {
 	componentDidMount() {
@@ -33,10 +34,10 @@ class FollowingIntro extends React.Component {
 	};
 
 	render() {
-		const { isNewReader, translate, dismiss } = this.props;
+		const { isNewReader, translate, dismiss, isNewUser } = this.props;
 		const linkElement = <a onClick={ this.props.handleManageLinkClick } href="/following/manage" />;
 
-		if ( ! isNewReader ) {
+		if ( ! isNewReader || ! isNewUser ) {
 			return null;
 		}
 
@@ -84,6 +85,7 @@ export default connect(
 	state => {
 		return {
 			isNewReader: getPreference( state, 'is_new_reader' ),
+			isNewUser: isUserNewerThan( state, WEEK_IN_MILLISECONDS * 2 ),
 		};
 	},
 	dispatch =>
