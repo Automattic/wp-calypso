@@ -35,6 +35,7 @@ import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { preventWidows } from 'lib/formatting';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -471,7 +472,10 @@ class SiteSettingsFormGeneral extends Component {
 						<SectionHeader label={ translate( 'Footer Credit' ) } />
 						<CompactCard className="site-settings__footer-credit-explanation">
 							<p>
-								{ translate( 'You can customize your website by changing the footer credit in customizer.' ) }
+								{ preventWidows(
+									translate( 'You can customize your website by changing the footer credit in customizer.' ),
+									2 )
+								}
 							</p>
 							<div>
 								<Button className="site-settings__footer-credit-change" href={ '/customize/identity/' + siteSlug }>
