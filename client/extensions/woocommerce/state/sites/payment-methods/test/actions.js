@@ -68,7 +68,6 @@ describe( 'actions', () => {
 
 	describe( '#fetchPaymentMethods', () => {
 		const siteId = '123';
-
 		it( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
