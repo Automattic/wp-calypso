@@ -49,7 +49,7 @@ class DomainSuggestion extends React.Component {
 	}
 }
 
-const DomainSuggestionPlaceholder = () => {
+function DomainSuggestionPlaceholder() {
 	const classes = classNames(
 		'domain-suggestion',
 		'card',
@@ -67,7 +67,7 @@ const DomainSuggestionPlaceholder = () => {
 			<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
 		</div>
 	);
-};
+}
 
 export default DomainSuggestion;
 
