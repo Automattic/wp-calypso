@@ -91,8 +91,7 @@ $compact-header-height: 35;
 		height: #{$compact-header-height }px;
 		line-height: #{$compact-header-height - 3 }px;
 		color: $gray-text-min;
-		font-size: 11px;
-		text-transform: uppercase;
+		font-size: 12px;
 
 		.count {
 			border-width: 0;
@@ -270,7 +269,6 @@ $compact-header-height: 35;
 
 	label {
 		font-size: 12px;
-		text-transform: uppercase;
 		padding: 0px #{ $side-margin }px;
 	}
 }
