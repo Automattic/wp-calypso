@@ -28,12 +28,7 @@ class FollowingIntro extends React.Component {
 
 	recordRenderTrack = ( props = this.props ) => {
 		if ( props.isNewReader === true ) {
-			// This is incorrect, but keeping the name for consistency.
-			// This event is more like `calypso_reader_following_rendered_for_new_reader`.
 			recordTrack( 'calypso_reader_following_intro_render' );
-
-			// Added _actual because the original event was fired incorrectly during A/B test
-			recordTrack( 'calypso_reader_following_intro_render_actual' );
 		}
 	};
 
