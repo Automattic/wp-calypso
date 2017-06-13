@@ -32,7 +32,10 @@ export default function( site ) {
 	// If a site has an `is_redirect` property use the `unmapped_url`
 	// for the slug and domain to match the wordpress.com original site.
 	if ( ( attributes.options && attributes.options.is_redirect ) || site.hasConflict ) {
-		attributes.URL = attributes.options.unmapped_url;
+		if ( site.hasConflict ) {
+			// we only need to use the unmapped URL for conflicting sites
+			attributes.URL = attributes.options.unmapped_url;
+		}
 		attributes.slug = withoutHttp( attributes.options.unmapped_url );
 		attributes.domain = attributes.slug;
 	}
