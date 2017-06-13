@@ -60,6 +60,7 @@
 		border-left: 1px solid darken( $sidebar-bg-color, 10% );
 		display: inline-block;
 		flex-grow: 1;
+		min-height: 58px;
 	}
 }
 
