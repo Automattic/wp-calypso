@@ -14,7 +14,8 @@ import classnames from 'classnames';
  */
 import ReaderImportButton from 'blocks/reader-import-button';
 import ReaderExportButton from 'blocks/reader-export-button';
-import SitesWindowScroller from './sites-window-scroller';
+import InfiniteStream from 'components/reader-infinite-stream';
+import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
 import SyncReaderFollows from 'components/data/sync-reader-follows';
 import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';
@@ -121,13 +122,17 @@ class FollowingManageSubscriptions extends Component {
 				</div>
 				<div className={ subsListClassNames }>
 					{ ! noSitesMatchQuery &&
-						<SitesWindowScroller
-							sites={ sortedFollows }
+						<InfiniteStream
+							items={ sortedFollows }
+							extraRenderItemProps={ {
+								followSource: READER_SUBSCRIPTIONS,
+							} }
 							width={ width }
-							remoteTotalCount={ sortedFollows.length }
-							forceRefresh={ sortedFollows }
+							passthroughProp={ sortOrder }
+							totalCount={ sortedFollows.length }
 							windowScrollerRef={ this.props.windowScrollerRef }
-							followSource={ READER_SUBSCRIPTIONS }
+							rowRenderer={ siteRowRenderer }
+							renderEventName={ 'following_manage_subscription' }
 						/> }
 					{ noSitesMatchQuery &&
 						<span>

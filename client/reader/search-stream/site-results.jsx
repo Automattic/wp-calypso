@@ -9,20 +9,24 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { getReaderFeedsForQuery } from 'state/selectors';
+import { getReaderFeedsCountForQuery, getReaderFeedsForQuery } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import ReaderInfiniteStream from 'components/reader-infinite-stream';
 import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
+import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
+import withWidth from 'lib/with-width';
 
 const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
-class SitesResults extends React.Component {
+class SiteResults extends React.Component {
 	static propTypes = {
 		query: PropTypes.string,
 		sort: PropTypes.oneOf( [ SORT_BY_LAST_UPDATED, SORT_BY_RELEVANCE ] ),
 		requestFeedSearch: PropTypes.func,
 		searchResults: PropTypes.array,
+		searchResultsCount: PropTypes.number,
+		width: PropTypes.number.isRequired,
 	};
 
 	fetchNextPage = offset => {
@@ -34,8 +38,10 @@ class SitesResults extends React.Component {
 		} );
 	};
 
+	hasNextPage = offset => offset < this.props.searchResultsCount;
+
 	render() {
-		const { query, searchResults } = this.props;
+		const { query, searchResults, width } = this.props;
 
 		return (
 			<div>
@@ -45,11 +51,13 @@ class SitesResults extends React.Component {
 					sort={ pickSort( this.props.sort ) }
 				/>
 				<ReaderInfiniteStream
-					itemType={ 'site' }
 					items={ searchResults || [ {}, {}, {}, {}, {} ] }
+					width={ width }
 					showLastUpdatedDate={ false }
 					fetchNextPage={ this.fetchNextPage }
-					forceRefresh={ searchResults }
+					hasNextPage={ this.hasNextPage }
+					rowRenderer={ siteRowRenderer }
+					renderEventName={ 'search_stream_sites' }
 				/>
 			</div>
 		);
@@ -62,6 +70,10 @@ export default connect(
 			state,
 			{ query: ownProps.query, excludeFollowed: false, sort: pickSort( ownProps.sort ) },
 		),
+		searchResultsCount: getReaderFeedsCountForQuery(
+			state,
+			{ query: ownProps.query, excludeFollowed: false, sort: pickSort( ownProps.sort ) },
+		),
 	} ),
 	{ requestFeedSearch },
-)( localize( SitesResults ) );
+)( localize( withWidth( SiteResults ) ) );
