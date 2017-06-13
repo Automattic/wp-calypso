@@ -28,7 +28,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 import Comments from 'blocks/comments';
-import PostShare from 'my-sites/post-share';
+import PostShare from 'blocks/post-share';
 
 import PostActions from 'blocks/post-actions';
 
