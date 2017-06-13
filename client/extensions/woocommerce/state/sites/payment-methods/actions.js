@@ -19,7 +19,18 @@ import {
 
 const fetchPaymentMethodsSuccess = ( siteId, data ) => {
 	const paymentMethods = data.map( ( method ) => {
-		return { ...method, ...getPaymentMethodDetails( method.id ) };
+		return {
+			...method,
+			settings: {
+				enabled: {
+					id: 'enabled',
+					label: 'Enabled',
+					type: 'checkbox',
+					value: method.enabled ? 'yes' : 'no',
+				},
+				...method.settings,
+			},
+			...getPaymentMethodDetails( method.id ) };
 	} );
 	return {
 		type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
