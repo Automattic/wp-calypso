@@ -36,7 +36,7 @@ export const HelpContactForm = React.createClass( {
 		showSubjectField: PropTypes.bool,
 		showSiteField: PropTypes.bool,
 		showHelpLanguagePrompt: PropTypes.bool,
-		selectedSite: PropTypes.object,
+		selectedSiteId: PropTypes.number,
 		siteFilter: PropTypes.func,
 		siteList: PropTypes.object,
 		disabled: PropTypes.bool,
@@ -223,7 +223,7 @@ export const HelpContactForm = React.createClass( {
 					<div className="help-contact-form__site-selection">
 						<FormLabel>{ translate( 'Which site do you need help with?' ) }</FormLabel>
 						<SitesDropdown
-							selectedSiteId={ this.props.selectedSite.ID }
+							selectedSiteId={ this.props.selectedSiteId }
 							onSiteSelect={ this.props.onChangeSite } />
 					</div>
 				) }

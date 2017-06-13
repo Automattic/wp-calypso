@@ -552,7 +552,7 @@ const HelpContact = React.createClass( {
 		return {
 			disabled: isSubmitting,
 			showHelpLanguagePrompt: showHelpLanguagePrompt,
-			selectedSite: selectedSite,
+			selectedSiteId: selectedSite.ID,
 			valueLink: { value: savedContactForm, requestChange: ( contactForm ) => savedContactForm = contactForm }
 		};
 	},

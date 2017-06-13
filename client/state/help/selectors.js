@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getPrimarySiteId } from 'state/selectors';
+import { getSelectedOrPrimarySiteId } from 'state/selectors';
 import { getRawSite } from 'state/sites/selectors';
 import createSelector from 'lib/create-selector';
 
@@ -10,7 +10,7 @@ export const getHelpSelectedSiteId = createSelector(
 );
 
 export const getHelpSelectedSite = ( state ) => {
-	const siteId = getHelpSelectedSiteId( state ) || getPrimarySiteId( state );
+	const siteId = getHelpSelectedSiteId( state ) || getSelectedOrPrimarySiteId( state );
 
 	return getRawSite( state, siteId );
 };
