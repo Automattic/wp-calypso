@@ -155,8 +155,8 @@ export class MySitesSidebar extends Component {
 			<SidebarItem
 				tipTarget="sitePreview"
 				label={ this.props.translate( 'View Site' ) }
-				className={ this.itemLinkClass( [ '/preview' ], 'preview' ) }
-				link={ '/preview' + this.props.siteSuffix }
+				className={ this.itemLinkClass( [ '/view' ], 'preview' ) }
+				link={ '/view' + this.props.siteSuffix }
 				onNavigate={ this.onNavigate }
 				icon="computer"
 				preloadSectionName="preview"
