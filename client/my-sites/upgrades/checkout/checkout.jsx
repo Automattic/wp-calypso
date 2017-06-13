@@ -127,7 +127,7 @@ const Checkout = React.createClass( {
 
 	addRenewItemToCart() {
 		const { product, productsList, purchaseId, selectedSiteSlug } = this.props;
-		const { productSlug, meta } = product.split( ':' );
+		const [ productSlug, meta ] = product.split( ':' );
 
 		let cartItem = Object.assign( { meta }, productsList.data[ productSlug ] );
 
