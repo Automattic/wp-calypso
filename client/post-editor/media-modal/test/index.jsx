@@ -23,6 +23,8 @@ const DUMMY_MEDIA = [
 	{ ID: 100, date: '2015-06-19T11:36:09-04:00', mime_type: 'image/jpeg' },
 	{ ID: 200, date: '2015-06-19T09:36:09-04:00', mime_type: 'image/jpeg' }
 ];
+const DUMMY_SOURCE_EXTERNAL = 'external';
+const DUMMY_SOURCE_INTERNAL = '';
 const EMPTY_COMPONENT = React.createClass( {
 	render: function() {
 		return <div />;
@@ -30,7 +32,7 @@ const EMPTY_COMPONENT = React.createClass( {
 } );
 
 describe( 'EditorMediaModal', function() {
-	let spy, translate, deleteMedia, accept, EditorMediaModal, setLibrarySelectedItems;
+	let spy, translate, deleteMedia, accept, EditorMediaModal, setLibrarySelectedItems, addExternal, changeSource, onClose;
 
 	translate = require( 'i18n-calypso' ).translate;
 
@@ -40,6 +42,9 @@ describe( 'EditorMediaModal', function() {
 		spy = sandbox.spy();
 		setLibrarySelectedItems = sandbox.stub();
 		deleteMedia = sandbox.stub();
+		addExternal = sandbox.stub();
+		changeSource = sandbox.stub();
+		onClose = sandbox.stub();
 		accept = sandbox.stub().callsArgWithAsync( 1, true );
 	} );
 
@@ -55,7 +60,7 @@ describe( 'EditorMediaModal', function() {
 		mockery.registerMock( 'lib/accept', accept );
 		mockery.registerMock( 'lib/analytics', { mc: { bumpStat: noop } } );
 		mockery.registerMock( 'component-closest', {} );
-		mockery.registerMock( 'lib/media/actions', { 'delete': deleteMedia, setLibrarySelectedItems: setLibrarySelectedItems } );
+		mockery.registerMock( 'lib/media/actions', { 'delete': deleteMedia, setLibrarySelectedItems, addExternal, changeSource } );
 		mockery.registerMock( 'lib/posts/actions', { blockSave: noop } );
 		mockery.registerMock( 'lib/posts/stats', {
 			recordEvent: noop,
@@ -212,5 +217,50 @@ describe( 'EditorMediaModal', function() {
 		const buttons = tree.getModalButtons();
 
 		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
+	} );
+
+	it( 'should copy to external media and reset to internal when source is external', done => {
+		const tree = shallow(
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
+				view={ ModalViews.DETAIL }
+				setView={ spy } />
+		).instance();
+
+		tree.setState( { source: 'external' } );
+		tree.confirmSelection();
+
+		process.nextTick( function() {
+			expect( addExternal ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA, DUMMY_SOURCE_EXTERNAL );
+			expect( changeSource ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_SOURCE_INTERNAL );
+			expect( tree.state.source ).to.be.equals( DUMMY_SOURCE_INTERNAL );
+			done();
+		} );
+	} );
+
+	it( 'should call onClose when confirming selection for internal source', done => {
+		const result = {
+			type: 'media',
+			items: DUMMY_MEDIA,
+			settings: undefined,
+		};
+
+		const tree = shallow(
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
+				view={ ModalViews.DETAIL }
+				onClose={ onClose }
+				setView={ spy } />
+		).instance();
+
+		tree.confirmSelection();
+
+		process.nextTick( function() {
+			expect( onClose ).to.have.been.calledWith( result );
+			expect( tree.state.source ).to.be.equals( DUMMY_SOURCE_INTERNAL );
+			done();
+		} );
 	} );
 } );

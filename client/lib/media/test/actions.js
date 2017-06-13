@@ -15,7 +15,7 @@ import useMockery from 'test/helpers/use-mockery';
 /**
  * Module variables
  */
-var DUMMY_SITE_ID = 1,
+const DUMMY_SITE_ID = 1,
 	DUMMY_ITEM = { ID: 100, title: 'Sunset' },
 	DUMMY_UPLOAD = {
 		lastModified: '2015-06-19T09:36:09-04:00',
@@ -36,6 +36,7 @@ var DUMMY_SITE_ID = 1,
 		media: [ { title: 'Image' } ],
 		meta: { next_page: 'value%3D2015-03-04T14%253A38%253A21%252B00%253A00%26id%3D2135' }
 	},
+	DUMMY_SOURCE = 'google_photos',
 	DUMMY_QUERY = { mime_type: 'audio/' };
 
 describe( 'MediaActions', function() {
@@ -414,6 +415,18 @@ describe( 'MediaActions', function() {
 				type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
 				siteId: DUMMY_SITE_ID,
 				itemId: DUMMY_ITEM.ID
+			} );
+		} );
+	} );
+
+	describe( '#changeSource()', () => {
+		it( 'should dispatch the `SET_MEDIA_SOURCE` action with the specified siteId and source', function() {
+			MediaActions.changeSource( DUMMY_SITE_ID, DUMMY_SOURCE );
+
+			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+				type: 'SET_MEDIA_SOURCE',
+				siteId: DUMMY_SITE_ID,
+				source: DUMMY_SOURCE
 			} );
 		} );
 	} );
