@@ -36,6 +36,7 @@ export const restoreLastLocation = () => {
 						isWhitelistedForRestoring( lastPath ) ) {
 					debug( 'redir to', lastPath );
 					page( lastPath );
+					return;
 				} else if ( action.path !== lastPath &&
 						! isOutsideCalypso( action.path ) ) {
 					debug( 'saving', action.path );
