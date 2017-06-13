@@ -93,14 +93,6 @@ module.exports = {
 		},
 		defaultVariation: 'show',
 	},
-	siteCreationStepOne: {
-		datestamp: '20170524',
-		variations: {
-			original: 50,
-			modified: 50,
-		},
-		defaultVariation: 'original',
-	},
 	pulsingCartTestingAB: {
 		datestamp: '20170601',
 		variations: {

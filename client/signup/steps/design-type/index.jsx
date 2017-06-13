@@ -4,7 +4,9 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity, memoize, transform } from 'lodash';
+import identity from 'lodash/identity';
+import memoize from 'lodash/memoize';
+import transform from 'lodash/transform';
 
 /**
  * Internal dependencies
@@ -18,9 +20,8 @@ import PageImage from '../design-type-with-store/page-image';
 import GridImage from '../design-type-with-store/grid-image';
 
 import { recordTracksEvent } from 'state/analytics/actions';
-import { abtest } from 'lib/abtest';
 
-class DesignTypeStep extends Component {
+export class DesignTypeStep extends Component {
 	static propTypes = {
 		translate: PropTypes.func
 	};
@@ -37,64 +38,40 @@ class DesignTypeStep extends Component {
 
 	getChoices() {
 		const { translate } = this.props;
-		const modified = abtest( 'siteCreationStepOne' ) === 'modified';
-
-		if ( modified ) {
-			// Note: Don't make this translatable because it's only visible to English-language users.
-			return [
-				{
-					type: 'blog',
-					label: 'Start with a blog',
-					description: 'To share your ideas, stories, and photographs with your followers.',
-					image: <BlogImage />,
-				},
-				{
-					type: 'page',
-					label: 'Start with a website',
-					description: 'To promote your business organization, or brand and connect with your audience.',
-					image: <PageImage />,
-				},
-				{
-					type: 'grid',
-					label: 'Start with a portfolio',
-					description: 'To present your creative projects in a visual showcase.',
-					image: <GridImage />,
-				},
-			];
-		}
 
 		return [
-			{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
-			{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
-			{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
+			{
+				type: 'blog',
+				label: translate( 'Start with a blog' ),
+				description: translate( 'To share your ideas, stories, and photographs with your followers.' ),
+				image: <BlogImage />,
+			},
+			{
+				type: 'page',
+				label: translate( 'Start with a website' ),
+				description: translate( 'To promote your business organization, or brand and connect with your audience.' ),
+				image: <PageImage />,
+			},
+			{
+				type: 'grid',
+				label: translate( 'Start with a portfolio' ),
+				description: translate( 'To present your creative projects in a visual showcase.' ),
+				image: <GridImage />,
+			},
 		];
 	}
 
 	renderChoice = ( choice ) => {
-		const modified = abtest( 'siteCreationStepOne' ) === 'modified';
 		const choiceHandlers = this.getChoiceHandlers();
 
-		let choiceLabel = <h2>{ choice.label }</h2>;
-		let choiceCardClass = 'design-type__choice';
-		let choiceDescription = null;
-		let callToAction = null;
-
-		if ( modified ) {
-			choiceLabel = null;
-			choiceCardClass += ' design-type__choice--test';
-			choiceDescription = <p className="design-type__choice-description">{ choice.description }</p>;
-			callToAction = <span className="button is-compact design-type__cta">{ choice.label }</span>;
-		}
-
 		return (
-			<Card className={ choiceCardClass } key={ choice.type } href="#{choice.type}" onClick={ choiceHandlers[ choice.type ] }>
+			<Card className="design-type__choice" key={ choice.type } href="#{choice.type}" onClick={ choiceHandlers[ choice.type ] }>
 				<div className="design-type__choice-image">
 					{ choice.image }
 				</div>
 				<div className="design-type__choice-copy">
-					{ choiceLabel }
-					{ callToAction }
-					{ choiceDescription }
+					<span className="button is-compact design-type__cta">{ choice.label }</span>
+					<p className="design-type__choice-description">{ choice.description }</p>
 				</div>
 			</Card>
 		);
@@ -105,48 +82,11 @@ class DesignTypeStep extends Component {
 			<div className="design-type__list">
 				{ this.getChoices().map( this.renderChoice ) }
 				<div className="design-type__choice is-spacergif" />
-				{ this.getDisclaimer() }
+				<p className="design-type__disclaimer">
+					{ this.props.translate( 'Not sure? Pick the closest option. You can always change your settings later.' ) }
+				</p>
 			</div>
 		);
-	}
-
-	getDisclaimer() {
-		const modified = abtest( 'siteCreationStepOne' ) === 'modified';
-
-		if ( modified ) {
-			// Note: Don't make this translatable because it's only visible to English-language users.
-			return (
-				<p className="design-type__disclaimer">
-					Not sure? Pick the closest option. You can always change your settings later.
-				</p>
-			);
-		}
-
-		return null;
-	}
-
-	getHeadertext() {
-		const { translate } = this.props;
-		const modified = abtest( 'siteCreationStepOne' ) === 'modified';
-
-		if ( modified ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			return 'Hello! Let\'s create your new site.';
-		}
-
-		return translate( 'Let\'s get started.' );
-	}
-
-	getSubHeaderText() {
-		const { translate } = this.props;
-		const modified = abtest( 'siteCreationStepOne' ) === 'modified';
-
-		if ( modified ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			return 'What kind of site do you need? Choose an option below:';
-		}
-
-		return translate( 'First up, what would you like your homepage to look like?' );
 	}
 
 	render() {
@@ -160,8 +100,8 @@ class DesignTypeStep extends Component {
 					positionInFlow={ this.props.positionInFlow }
 					fallbackHeaderText={ translate( 'What would you like your homepage to look like?' ) }
 					fallbackSubHeaderText={ translate( 'This will help us figure out what kinds of designs to show you.' ) }
-					headerText={ this.getHeadertext() }
-					subHeaderText={ this.getSubHeaderText() }
+					headerText={ translate( 'Hello! Let\'s create your new site.' ) }
+					subHeaderText={ translate( 'What kind of site do you need? Choose an option below:' ) }
 					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderChoices() } />
 			</div>
