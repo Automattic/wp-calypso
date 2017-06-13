@@ -14,8 +14,8 @@ import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
 import { shouldBundleDomainWithPlan, getDomainPriceRule, hasDomainInCart } from 'lib/cart-values/cart-items';
 import { tracks } from 'lib/analytics';
 
-const DomainRegistrationSuggestion = React.createClass( {
-	propTypes: {
+class DomainRegistrationSuggestion extends React.Component {
+	static propTypes = {
 		isSignupStep: React.PropTypes.bool,
 		cart: React.PropTypes.object,
 		suggestion: React.PropTypes.shape( {
@@ -30,7 +30,7 @@ const DomainRegistrationSuggestion = React.createClass( {
 		uiPosition: React.PropTypes.number,
 		fetchAlgo: React.PropTypes.string,
 		query: React.PropTypes.string
-	},
+	};
 
 	componentDidMount() {
 		if ( this.props.railcarId && isNumber( this.props.uiPosition ) ) {
@@ -49,7 +49,7 @@ const DomainRegistrationSuggestion = React.createClass( {
 				fetch_query: this.props.query
 			} );
 		}
-	},
+	}
 
 	onClick( event ) {
 		if ( this.props.railcarId ) {
@@ -60,13 +60,13 @@ const DomainRegistrationSuggestion = React.createClass( {
 		}
 
 		this.props.onButtonClick( event );
-	},
+	}
 
 	render() {
-		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, suggestion, translate } = this.props,
-			domain = suggestion.domain_name,
-			isAdded = hasDomainInCart( cart, domain ),
-			domainFlags = [];
+		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, suggestion, translate } = this.props;
+		const domain = suggestion.domain_name;
+		const isAdded = hasDomainInCart( cart, domain );
+		const domainFlags = [];
 
 		let buttonClasses, buttonContent;
 
@@ -145,6 +145,6 @@ const DomainRegistrationSuggestion = React.createClass( {
 			</DomainSuggestion>
 		);
 	}
-} );
+}
 
 export default localize( DomainRegistrationSuggestion );
