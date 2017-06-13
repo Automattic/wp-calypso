@@ -20,7 +20,7 @@ export class FacebookSharePreview extends PureComponent {
 			articleUrl,
 			externalProfilePicture,
 			externalProfileUrl,
-			externalName,
+			externalDisplay,
 			imageUrl,
 			message,
 			translate
@@ -35,10 +35,11 @@ export class FacebookSharePreview extends PureComponent {
 								src={ externalProfilePicture }
 							/>
 						</div>
+
 						<div className="facebook-share-preview__profile-line-part">
 							<div className="facebook-share-preview__profile-line">
 								<a className="facebook-share-preview__profile-name" href={ externalProfileUrl }>
-									{ externalName }
+									{ externalDisplay }
 								</a>
 								<span>
 									{
