@@ -58,15 +58,5 @@
 			"2x": "https://ps.w.org/vaultpress/assets/icon-256x256.png?rev=986513"
 		},
 		"slug": "vaultpress"
-	},
-	{
-		"name": "Hello Dolly",
-		"author": "<a href=\"http://ma.tt/\">Matt Mullenweg</a>",
-		"rating": 52,
-		"icons": {
-			"1x": "https://ps.w.org/hello-dolly/assets/icon-128x128.jpg?rev=969907",
-			"2x": "https://ps.w.org/hello-dolly/assets/icon-256x256.jpg?rev=969907"
-		},
-		"slug": "hello-dolly"
 	}
 ]
