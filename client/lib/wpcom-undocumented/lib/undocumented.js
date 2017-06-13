@@ -1795,7 +1795,7 @@ Undocumented.prototype.applyDnsTemplate = function( domain, provider, service, v
 
 Undocumented.prototype.applyDnsTemplateSyncFlow = function( domain, provider, service, variables, callback ) {
 	return this.wpcom.req.get( '/domain-connect/authorize/v2/domainTemplates/providers/' + provider + '/services/' +
-		service + '/apply', Object.assign( {}, { apiVersion: '1.3' }, variables ), callback );
+		service + '/apply/authorized', Object.assign( {}, { apiVersion: '1.3' }, variables ), callback );
 };
 
 Undocumented.prototype.getDnsTemplateRecords = function( domain, provider, service, variables, callback ) {
