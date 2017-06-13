@@ -9,6 +9,8 @@ import React, { PureComponent } from 'react';
 import Main from 'components/main';
 import Button from 'components/button';
 import Card from 'components/card';
+import Banner from 'components/banner';
+import FoldableCard from 'components/foldable-card';
 
 export default class JetpackWriting extends PureComponent {
 	render() {
@@ -19,6 +21,8 @@ export default class JetpackWriting extends PureComponent {
 					<p>Settings, or something, would go here.</p>
 					<Button onClick={ this.props.loadPage( '/test/discussion' ) }>Discussion</Button>
 				</Card>
+				<Banner title="WFT" description={ 'WTF!! A banner that works both in calypso and wp-admin?!?!?' } />
+				<FoldableCard header={ 'A foldable card, also?' }>WOW!</FoldableCard>
 			</Main>
 		);
 	}
