@@ -14,7 +14,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Chart from './store-stats-chart';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import DatePicker from 'my-sites/stats/stats-date-picker';
-import Example from 'woocommerce/components/table/docs/example';
 
 class StoreStats extends Component {
 	static propTypes = {
@@ -36,7 +35,6 @@ class StoreStats extends Component {
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
 				<Navigation unit={ unit } type="orders" slug={ slug } />
-				<Example/>
 				<Chart
 					path={ path }
 					query={ ordersQuery }
