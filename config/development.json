@@ -118,6 +118,7 @@
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"post-editor/media-advanced": false,
+		"post-editor/video-editor": true,
 		"press-this": true,
 		"publicize-preview": true,
 		"publicize-scheduling": true,

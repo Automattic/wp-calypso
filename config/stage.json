@@ -71,6 +71,7 @@
 		"plans/jetpack-config-v2": false,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
+		"post-editor/video-editor": false,
 		"press-this": true,
 		"preview-layout": true,
 		"push-notifications": true,

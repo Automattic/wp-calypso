@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { noop } from 'lodash';
 import classNames from 'classnames';
 import debug from 'debug';
 
@@ -21,19 +23,34 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		className: PropTypes.string,
 		isPlaying: PropTypes.bool,
 		item: PropTypes.object.isRequired,
+		onPause: PropTypes.func,
+		onScriptLoadError: PropTypes.func,
+		onVideoLoaded: PropTypes.func,
 	};
 
 	static defaultProps = {
 		isPlaying: false,
+		onPause: noop,
+		onScriptLoadError: noop,
+		onVideoLoaded: noop,
 	};
 
 	componentDidMount() {
 		this.loadInitializeScript();
+		window.addEventListener( 'message', this.receiveMessage, false );
 	}
 
 	componentWillUnmount() {
 		removeScriptCallback( videoPressUrl, this.onScriptLoaded );
 		this.destroy();
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isPlaying && ! nextProps.isPlaying ) {
+			this.pause();
+		} else if ( ! this.props.isPlaying && nextProps.isPlaying ) {
+			this.play();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -58,15 +75,18 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 
 	onScriptLoaded = ( error ) => {
-		if ( error ) {
-			log( `Script${ error.src } failed to load.` );
-			return;
-		}
-
 		const {
 			isPlaying,
 			item,
+			onScriptLoadError,
 		} = this.props;
+
+		if ( error ) {
+			log( `Script${ error.src } failed to load.` );
+			onScriptLoadError();
+
+			return;
+		}
 
 		if ( typeof window !== 'undefined' && window.videopress ) {
 			this.player = window.videopress( item.videopress_guid, this.video, {
@@ -77,7 +97,25 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		}
 	};
 
+	receiveMessage = ( event ) => {
+		if ( event.origin && event.origin !== location.origin ) {
+			return;
+		}
+
+		const data = event.data;
+
+		if ( ! data || 'videopress_loading_state' !== data.event || ! ( 'state' in data ) || ! ( 'converting' in data ) ) {
+			return;
+		}
+
+		if ( ( 'loaded' === data.state ) && ! data.converting ) {
+			this.props.onVideoLoaded();
+		}
+	}
+
 	destroy() {
+		window.removeEventListener( 'message', this.receiveMessage );
+
 		if ( ! this.player ) {
 			return;
 		}
@@ -88,6 +126,34 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		while ( this.video.firstChild ) {
 			this.video.removeChild( this.video.firstChild );
 		}
+	}
+
+	play() {
+		if ( ! this.player || ! this.player.state ) {
+			return;
+		}
+
+		if ( typeof this.player.state.play === 'function' ) {
+			this.player.state.play();
+		}
+	}
+
+	pause() {
+		if ( ! this.player || ! this.player.state ) {
+			return;
+		}
+
+		if ( typeof this.player.state.pause === 'function' ) {
+			this.player.state.pause();
+		}
+
+		let currentTime;
+
+		if ( typeof this.player.state.videoAt === 'function' ) {
+			currentTime = this.player.state.videoAt();
+		}
+
+		this.props.onPause( currentTime );
 	}
 
 	render() {
@@ -102,4 +168,6 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 }
 
-export default EditorMediaModalDetailPreviewVideoPress;
+export default connect(
+	null,
+)( EditorMediaModalDetailPreviewVideoPress );
