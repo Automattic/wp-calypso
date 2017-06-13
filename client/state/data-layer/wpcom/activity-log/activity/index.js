@@ -23,7 +23,7 @@ const activityLogRequest = ( { dispatch }, action ) => {
 };
 
 // FIXME: Implement fromApi
-const fromApi = response => response;
+const fromApi = ( { activities } ) => activities;
 
 export const receiveActivityLog = ( { dispatch }, { siteId }, next, data ) => {
 	dispatch( activityLogUpdate( siteId, fromApi( data ) ) );
@@ -39,7 +39,7 @@ export const receiveActivityLogError = ( { dispatch }, { siteId }, next, error )
 export default {
 	[ ACTIVITY_LOG_REQUEST ]: [ dispatchRequest(
 		activityLogRequest,
-		activityLogUpdate,
-		activityLogError,
+		receiveActivityLog,
+		receiveActivityLogError,
 	) ],
 };

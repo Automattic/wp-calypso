@@ -3,7 +3,7 @@
  */
 import {
 	ACTIVITY_LOG_UPDATE,
-} from 'state/activity-log/actions';
+} from 'state/action-types';
 import {
 	createReducer,
 	keyedReducer,
