@@ -368,6 +368,7 @@ export const PostEditor = React.createClass( {
 							isLoading={ this.state.isLoading }
 							previewUrl={ this.state.previewUrl }
 							externalUrl={ this.state.previewUrl }
+							editUrl={ this.props.editPath }
 							defaultViewportDevice={ config.isEnabled( 'post-editor/delta-post-publish-preview' ) ? 'computer' : 'tablet' }
 						/>
 						: null }
