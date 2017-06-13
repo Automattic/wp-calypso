@@ -108,27 +108,29 @@ class PreviewToolbar extends Component {
 						) ) }
 					</SelectDropdown>
 				}
-				{ showEdit &&
-					<Button
-						borderless
-						className="web-preview__edit"
-						href={ editUrl }
-					>
-						<Gridicon icon="pencil" /> { translate( 'Edit' ) }
-					</Button>
-				}
-				{ showExternal &&
-					<a
-						className="web-preview__external"
-						href={ externalUrl || previewUrl }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<Gridicon icon="external" />
-					</a>
-				}
-				<div className="web-preview__toolbar-tray">
-					{ this.props.children }
+				<div className="web-preview__toolbar-actions">
+					{ showEdit &&
+						<Button
+							className="web-preview__edit"
+							href={ editUrl }
+							onClick={ onClose }
+						>
+							<Gridicon icon="pencil" /> { translate( 'Edit' ) }
+						</Button>
+					}
+					{ showExternal &&
+						<a
+							className="web-preview__external"
+							href={ externalUrl || previewUrl }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<Gridicon icon="external" />
+						</a>
+					}
+					<div className="web-preview__toolbar-tray">
+						{ this.props.children }
+					</div>
 				</div>
 			</div>
 		);
