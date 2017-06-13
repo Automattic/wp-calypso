@@ -14,7 +14,6 @@ export default router => {
 		router(
 			'/log-in/:twoFactorAuthType(authenticator|backup|sms|push)?/:lang?',
 			setUpLocale,
-			redirectLoggedIn,
 			login,
 			makeLayout,
 		);
