@@ -70,6 +70,8 @@ import userSettings from './user-settings/reducer';
 import wordads from './wordads/reducer';
 import config from 'config';
 
+import { counter as reasonableDemo } from 'bs/reasonableDemo';
+
 /**
  * Module variables
  */
@@ -116,6 +118,7 @@ const reducers = {
 	purchases,
 	pushNotifications,
 	reader,
+	reasonableDemo,
 	receipts,
 	sharing,
 	shortcodes,

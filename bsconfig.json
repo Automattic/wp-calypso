@@ -1,0 +1,13 @@
+/* bsconfig.json */
+{
+  "name": "wp-calypso",
+  "sources": [
+    { "dir": "client", "subdirs": "components/reasonable-demo" }
+  ],
+  "bs-dependencies": [
+    "reason-react"
+  ],
+  "reason": {
+    "react-jsx": 2
+  }
+}

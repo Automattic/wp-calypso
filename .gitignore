@@ -1,6 +1,7 @@
 .webpack-cache
 .sass-cache
 .babel-cache
+.merlin
 .vagrant
 .unison
 .env
@@ -28,6 +29,9 @@ env-config.sh
 /config/*.local.json
 
 /build
+
+# ReasonML + Bucklescript
+/lib
 
 /public/*.js
 /public/*.js.map

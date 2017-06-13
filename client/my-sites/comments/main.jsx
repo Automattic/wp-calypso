@@ -15,6 +15,8 @@ import DocumentHead from 'components/data/document-head';
 import CommentList from './comment-list';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
+import { comp as ReasonableDemo, inc as incrementCounter } from 'bs/reasonableDemo';
+
 export class CommentsManagement extends Component {
 	static propTypes = {
 		basePath: PropTypes.string,
@@ -42,6 +44,7 @@ export class CommentsManagement extends Component {
 				<PageViewTracker path={ basePath } title="Comments" />
 				<DocumentHead title={ translate( 'Comments' ) } />
 				<SidebarNavigation />
+				<ReasonableDemo name="Click Count" count={ this.props.count } onClick={ this.props.incrementCounter } />
 				<CommentList
 					siteId={ siteId }
 					siteFragment={ siteFragment }
@@ -54,7 +57,10 @@ export class CommentsManagement extends Component {
 }
 
 const mapStateToProps = ( state, { siteFragment } ) => ( {
+	count: state.reasonableDemo,
 	siteId: getSiteId( state, siteFragment ),
 } );
 
-export default connect( mapStateToProps )( localize( CommentsManagement ) );
+const mapDispatchToProps = ( { incrementCounter } );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentsManagement ) );
