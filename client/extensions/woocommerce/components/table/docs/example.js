@@ -43,14 +43,18 @@ class Example extends Component {
 			[ link, externalLink, <Gridicon icon="cog" size={ 18 } />, 8 ],
 		];
 		const middleColValues = [
-			[ <FormInputCheckbox/>, placeholder, 'Thing 1', 65 ],
-			[ <FormInputCheckbox/>, placeholder, 'Thing 2', 66 ],
-			[ <FormInputCheckbox/>, placeholder, 'Thing 3', 67 ],
-			[ <FormInputCheckbox/>, placeholder, 'Thing 4', 68 ],
+			[ <FormInputCheckbox/>, 'Thing 1', 65 ],
+			[ <FormInputCheckbox/>, 'Thing 2', 66 ],
+			[ <FormInputCheckbox/>, 'Thing 3', 67 ],
+			[ <FormInputCheckbox/>, 'Thing 4', <Gridicon icon="cog" size={ 18 } /> ],
 		];
 		const middleColTitles = (
 			<TableRow isHeader>
-				{ [ <FormInputCheckbox/>, placeholder, 'Description', 'Total' ].map( ( item, i ) => <TableItem isHeader key={ i } isTitle={ 2 === i }>{ item }</TableItem> ) }
+				{ [
+					<FormInputCheckbox/>,
+					'Description',
+					'Total'
+				].map( ( item, i ) => <TableItem isHeader key={ i } isTitle={ 1 === i } alignRight={ 2 === i }>{ item }</TableItem> ) }
 			</TableRow>
 		);
 
@@ -74,7 +78,14 @@ class Example extends Component {
 					{ middleColValues.map( ( row, i ) => (
 						<TableRow key={ i }>
 							{ row.map( ( item, j ) => (
-								<TableItem key={ j } isRowHeader={ 2 === j } isTitle={ 2 === j }>{ item }</TableItem>
+								<TableItem
+									key={ j }
+									isRowHeader={ 1 === j }
+									isTitle={ 1 === j }
+									alignRight={ 2 === j }
+								>
+									{ item }
+								</TableItem>
 							) ) }
 						</TableRow>
 					) ) }

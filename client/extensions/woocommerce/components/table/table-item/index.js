@@ -14,13 +14,22 @@ function getScope( isHeader, isRowHeader ) {
 	return null;
 }
 
-const TableItem = ( { className, isHeader, isRowHeader, isTitle, children, ...props } ) => {
+const TableItem = ( {
+	className,
+	isHeader,
+	isRowHeader,
+	isTitle,
+	children,
+	alignRight,
+	...props
+} ) => {
 	const isHeading = isHeader || isRowHeader;
 	const classes = classNames( {
 		'table-heading': isHeader,
 		'table-item': ! isHeader,
 		'is-title-cell': isTitle,
 		'is-row-heading': isRowHeader,
+		'is-align-right': alignRight,
 	}, className );
 
 	const Cell = isHeading ? 'th' : 'td';
@@ -37,6 +46,7 @@ const TableItem = ( { className, isHeader, isRowHeader, isTitle, children, ...pr
 };
 
 TableItem.propTypes = {
+	alignRight: PropTypes.bool,
 	className: PropTypes.string,
 	isHeader: PropTypes.bool,
 	isRowHeader: PropTypes.bool,

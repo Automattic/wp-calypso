@@ -30,6 +30,7 @@
 		}
 
 		.table-row {
+			line-height: 28px;
 			&.is-header {
 				.table-item__cell-title::after {
 					display: none;
@@ -52,16 +53,16 @@
 		.table-heading,
 		.table-item {
 			text-align: right;
-			padding: 0 12px;
+			padding: 0 8px;
 			white-space: nowrap;
-			font-size: 14px;
+			font-size: 12px;
 
 			&:first-child {
-				padding: 0 12px 0 24px;
+				padding: 0 8px 0 16px;
 			}
 
 			&:last-child {
-				padding: 0 24px 0 12px;
+				padding: 0 16px 0 8px;
 			}
 
 			&.is-title-cell {
@@ -69,6 +70,10 @@
 				width: 100%;
 				// https://stackoverflow.com/questions/9789723/css-text-overflow-in-a-table-cell
 				max-width: 0;
+			}
+
+			svg {
+				margin: auto 0 auto auto;
 			}
 		}
 
@@ -92,20 +97,40 @@
 }
 
 .table-row {
-	line-height: 28px;
+	line-height: 36px;
 
 	&.is-header {
 		color: $gray-text-min;
-		line-height: 40px;
 	}
 }
 
 .table-heading,
 .table-item {
-	padding: 16px 16px 14px;
+	font-size: 14px;
+	padding: 6px 12px;
 	vertical-align: middle;
+
+	&:first-child {
+		padding: 6px 12px 6px 24px;
+	}
+
+	&:last-child {
+		padding: 6px 24px 6px 12px;
+	}
 
 	&.is-row-heading {
 		font-weight: normal;
+	}
+
+	&.is-align-right {
+		text-align: right;
+
+		svg {
+			margin: auto 0 auto auto;
+		}
+	}
+
+	svg {
+		display: block;
 	}
 }
