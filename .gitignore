@@ -27,6 +27,8 @@ env-config.sh
 # config overrides
 /config/*.local.json
 
+/coverage
+
 /build
 
 /public/*.js

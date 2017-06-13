@@ -232,6 +232,7 @@
     "test-integration:watch": "nodemon -e js,jsx --exec npm run -s test-integration",
     "test-server": "jest --projects server",
     "test-server:ci": "cross-env MOCHA_FILE=./test-results-server.xml jest -c=server/jest.config.ci.js -w=2",
+    "test-server:coverage": "npm run -s test-server -- --coverage",
     "test-server:watch": "npm run -s test-server -- --watch",
     "test-test": "cross-env NODE_ENV=test NODE_PATH=test:client:client/extensions TEST_ROOT=test node test/runner.js",
     "test-test:watch": "nodemon -e js,jsx --exec npm run -s test-test",

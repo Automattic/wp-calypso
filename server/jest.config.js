@@ -1,4 +1,5 @@
 module.exports = {
+	collectCoverageFrom: [ '**/server/**/*.js?(x)', '!**/jest.config.*' ],
 	modulePaths: [
 		'<rootDir>/test/',
 		'<rootDir>/server/',
