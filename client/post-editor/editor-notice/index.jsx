@@ -228,9 +228,8 @@ export class EditorNotice extends Component {
 	render() {
 		const { siteId, message, status, onDismissClick, isSitePreviewable: isPreviewable, } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
-		const previewFlow = config.isEnabled( 'post-editor/delta-post-publish-preview' ) && isPreviewable;
 		const classes = classNames( 'editor-notice', {
-			'is-global': previewFlow
+			'is-global': config.isEnabled( 'post-editor/delta-post-publish-preview' ) && isPreviewable,
 		} );
 
 		return (
@@ -241,7 +240,7 @@ export class EditorNotice extends Component {
 						{ ...{ status, text, onDismissClick } }
 						showDismiss={ true }
 					>
-						{ ! previewFlow && this.renderNoticeAction() }
+						{ this.renderNoticeAction() }
 					</Notice>
 				) }
 			</div>
