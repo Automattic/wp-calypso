@@ -18,7 +18,7 @@ test:
     - bin/run-integration :
         parallel: true
     - npm run lint:config-defaults
-    - bin/run-lint :
+    - ./node_modules/.bin/eslint-eslines :
         parallel: true
         files:
           - client/**/*.js

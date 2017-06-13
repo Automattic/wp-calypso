@@ -28,7 +28,7 @@ export default class Accordion extends Component {
 		onToggle: noop,
 	};
 
-	constructor( props ) {
+	constructor(props) {
 		super( ...arguments );
 
 		this.state = {
