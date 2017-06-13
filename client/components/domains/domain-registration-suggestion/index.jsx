@@ -51,7 +51,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 	}
 
-	onClick( event ) {
+	onButtonClick = () => {
 		if ( this.props.railcarId ) {
 			tracks.recordEvent( 'calypso_traintracks_interact', {
 				railcar: this.props.railcarId,
@@ -59,8 +59,8 @@ class DomainRegistrationSuggestion extends React.Component {
 			} );
 		}
 
-		this.props.onButtonClick( event );
-	}
+		this.props.onButtonClick( this.props.suggestion );
+	};
 
 	render() {
 		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, suggestion, translate } = this.props;
@@ -137,7 +137,7 @@ class DomainRegistrationSuggestion extends React.Component {
 					buttonContent={ buttonContent }
 					cart={ cart }
 					domainsWithPlansOnly={ domainsWithPlansOnly }
-					onButtonClick={ this.onClick }>
+					onButtonClick={ this.onButtonClick }>
 				<h3>
 					{ domain }
 					{ domainFlags }
