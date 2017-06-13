@@ -23,7 +23,7 @@ import {
 	isCurrentPlanPaid,
 } from 'state/sites/selectors';
 
-const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
+export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
 /**
  * Returns a selector that tests if the current user is in a given section
