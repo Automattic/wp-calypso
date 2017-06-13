@@ -175,6 +175,7 @@ class SearchStream extends Component {
 			>
 				{ this.props.showBack && <HeaderBack /> }
 				<div ref={ this.handleStreamMounted } />
+				<div style={ { height: '100px' } } />
 				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<DocumentHead title={ documentTitle } />
 					<MobileBackToSidebar>
