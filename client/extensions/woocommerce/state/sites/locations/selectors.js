@@ -15,7 +15,7 @@ import { LOADING } from 'woocommerce/state/constants';
  * @return {Array} The locations tree, as retrieved from the server. It can also be the string "LOADING"
  * if the locations are currently being fetched, or a "falsy" value if that haven't been fetched at all.
  */
-export const getRawLocations = ( state, siteId = getSelectedSiteId( state ) ) => {
+const getRawLocations = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'locations' ] );
 };
 

@@ -12,14 +12,6 @@ import {
 	areLocationsLoading,
 } from './selectors';
 
-const fetchLocationsSuccess = ( siteId, data ) => {
-	return {
-		type: WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,
-		siteId,
-		data,
-	};
-};
-
 export const fetchLocations = ( siteId ) => ( dispatch, getState ) => {
 	if ( areLocationsLoaded( getState(), siteId ) || areLocationsLoading( getState(), siteId ) ) {
 		return;
@@ -34,7 +26,11 @@ export const fetchLocations = ( siteId ) => ( dispatch, getState ) => {
 
 	return request( siteId ).get( 'data/continents' )
 		.then( ( data ) => {
-			dispatch( fetchLocationsSuccess( siteId, data ) );
+			dispatch( {
+				type: WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,
+				siteId,
+				data,
+			} );
 		} )
 		.catch( err => {
 			dispatch( setError( siteId, getAction, err ) );
