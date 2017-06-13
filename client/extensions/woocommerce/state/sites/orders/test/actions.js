@@ -8,7 +8,6 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { fetchOrders } from '../actions';
-import { LOADING } from 'woocommerce/state/constants';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
@@ -81,16 +80,23 @@ describe( 'actions', () => {
 				extensions: {
 					woocommerce: {
 						sites: {
-							[ siteId ]: {
-								orders: LOADING
+							123: {
+								orders: {
+									isLoading: {
+										1: true,
+									},
+									items: {},
+									pages: {},
+									totalPages: 1
+								}
 							}
 						}
 					}
 				}
 			} );
 			const dispatch = spy();
-			fetchOrders( siteId, 1 )( dispatch, getState );
-			expect( dispatch ).to.not.have.beenCalled;
+			fetchOrders( 123, 1 )( dispatch, getState );
+			expect( dispatch ).to.have.not.been.called;
 		} );
 	} );
 } );
