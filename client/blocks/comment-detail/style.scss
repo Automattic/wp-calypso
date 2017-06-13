@@ -147,13 +147,11 @@
 	a {
 		color: $gray-text-min;
 		cursor: pointer;
-		fill: $gray;
 		padding: 8px;
 		white-space: nowrap;
 		&:focus,
 		&:hover {
 			color: $blue-wordpress;
-			fill: $blue-wordpress;
 		}
 	}
 	span {
@@ -166,11 +164,9 @@
 
 	.is-approved .gridicon {
 		color: $alert-green;
-		fill: $alert-green;
 	}
 	.is-liked .gridicon {
 		color: $alert-yellow;
-		fill: $alert-yellow;
 	}
 	.is-spam .gridicon {
 		color: $alert-red;
@@ -216,7 +212,6 @@
 	a {
 		color: $gray-text-min;
 		cursor: pointer;
-		fill: $gray;
 		&:focus,
 		&:hover {
 			color: $blue-wordpress;
@@ -244,11 +239,9 @@
 	a {
 		color: $gray-text-min;
 		cursor: pointer;
-		fill: $gray;
 		&:focus,
 		&:hover {
 			color: $blue-wordpress;
-			fill: $blue-wordpress;
 		}
 	}
 }
