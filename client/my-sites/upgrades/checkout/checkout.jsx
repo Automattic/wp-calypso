@@ -117,6 +117,13 @@ const Checkout = React.createClass( {
 		recordViewCheckout( props.cart );
 	},
 
+	getProductSlugFromSynonym( slug ) {
+		if ( 'no-ads' === slug ) {
+			return 'no-adverts/no-adverts.php';
+		}
+		return slug;
+	},
+
 	addProductToCart() {
 		if ( this.props.purchaseId ) {
 			this.addRenewItemToCart();
@@ -126,10 +133,11 @@ const Checkout = React.createClass( {
 	},
 
 	addRenewItemToCart() {
-		const { product, productsList, purchaseId, selectedSiteSlug } = this.props;
-		const [ productSlug, meta ] = product.split( ':' );
+		const { product, purchaseId, selectedSiteSlug } = this.props;
+		const [ slug, meta ] = product.split( ':' );
+		const productSlug = this.getProductSlugFromSynonym( slug );
 
-		if ( ! purchaseId || ! productsList.data[ productSlug ] ) {
+		if ( ! purchaseId ) {
 			return;
 		}
 
