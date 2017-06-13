@@ -31,7 +31,6 @@ const VideoEditorControls = ( {
 				</Button>
 			}
 			<UploadButton
-				className="button video-editor__controls-button"
 				isPosterUpdating={ isPosterUpdating }
 				onClick={ onUploadImageClick }
 				onUploadImage={ onUploadImage }>
