@@ -294,7 +294,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	text-transform: uppercase;
 }
 
-.search-stream__site-header {
+.search-stream__site-header, .search-stream__site-results {
 	margin-left: 40px;
 	max-width: 265px;
 	width: 100%;
