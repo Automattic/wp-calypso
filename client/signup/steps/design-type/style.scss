@@ -54,6 +54,11 @@
 		@include breakpoint( "<480px" ) {
 			display: none;
 		}
+
+		svg {
+			display: block;
+			width: 100%;
+		}
 	}
 
 	@at-root #{&}-copy {
