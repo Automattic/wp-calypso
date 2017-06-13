@@ -66,6 +66,7 @@ import formatCurrency from 'lib/format-currency';
 import SectionHeader from 'components/section-header';
 import Tooltip from 'components/tooltip';
 import analytics from 'lib/analytics';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -520,6 +521,7 @@ class PostShare extends Component {
 
 		return (
 			<div className="post-share">
+				<TrackComponentView eventName="calypso_publicize_post_share_view" />
 				<QueryPostTypes siteId={ siteId } />
 				<QueryPublicizeConnections siteId={ siteId } />
 

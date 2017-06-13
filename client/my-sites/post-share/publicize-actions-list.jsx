@@ -28,6 +28,7 @@ import NavItem from 'components/section-nav/item';
 import { isEnabled } from 'config';
 import Dialog from 'components/dialog';
 import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
+import analytics from 'lib/analytics';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {
@@ -43,7 +44,10 @@ class PublicizeActionsList extends PureComponent {
 		selectedScheduledShareId: null
 	};
 
-	setFooterSection = selectedShareTab => () => this.setState( { selectedShareTab } );
+	setFooterSection = selectedShareTab => () => {
+		analytics.tracks.recordEvent( 'calypso_publicize_action_tab_click', { tab: selectedShareTab } );
+		this.setState( { selectedShareTab } );
+	};
 
 	renderFooterSectionItem( {
 		ID: actionId,
@@ -109,6 +113,7 @@ class PublicizeActionsList extends PureComponent {
 	}
 
 	deleteScheduledAction( actionId ) {
+		analytics.tracks.recordEvent( 'calypso_publicize_scheduled_delete' );
 		return () => {
 			this.setState( {
 				showDeleteDialog: true,
