@@ -15,7 +15,6 @@ import {
 } from '../actions';
 
 const siteId = 123;
-
 const initialState = {
 	creates: [],
 	updates: [],
