@@ -73,8 +73,10 @@ class SocialLoginForm extends Component {
 		} );
 	};
 
-	trackSocialLogin = () => {
-		this.props.recordTracksEvent( 'calypso_social_login_form_click_google' );
+	trackGoogleLogin = () => {
+		this.props.recordTracksEvent( 'calypso_social_login_form_click', {
+			social_account_type: 'google'
+		} );
 	};
 
 	render() {
@@ -88,7 +90,7 @@ class SocialLoginForm extends Component {
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse }
-						onClick={ this.trackSocialLogin } />
+						onClick={ this.trackGoogleLogin } />
 				</div>
 
 				{ this.state.bearerToken && (
