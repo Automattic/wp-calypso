@@ -190,7 +190,7 @@
     "lint": "run-s -s lint:*",
     "lint:config-defaults": "node server/config/validate-config-keys.js",
     "lint:css": "stylelint \"client/**/*.scss\" --syntax scss",
-    "lint:js": "eslint-eslines .",
+    "lint:js": "npm run -s install-if-needed && eslint-eslines .",
     "lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/config/index.js\"",
     "precommit": "npm run -s install-if-needed && node bin/pre-commit-hook.js",
     "prepush": "npm run -s install-if-needed && node bin/pre-push-hook.js",
