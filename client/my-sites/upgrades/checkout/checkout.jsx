@@ -129,14 +129,17 @@ const Checkout = React.createClass( {
 		const { product, productsList, purchaseId, selectedSiteSlug } = this.props;
 		const [ productSlug, meta ] = product.split( ':' );
 
-		let cartItem = Object.assign( { meta }, productsList.data[ productSlug ] );
-
-		if ( purchaseId ) {
-			cartItem = cartItems.getRenewalItemFromCartItem( cartItem, {
-				id: purchaseId,
-				domain: selectedSiteSlug
-			} );
+		if ( ! purchaseId || ! productsList.data[ productSlug ] ) {
+			return;
 		}
+
+		const cartItem = cartItems.getRenewalItemFromCartItem( {
+			meta,
+			product_slug: productSlug
+		}, {
+			id: purchaseId,
+			domain: selectedSiteSlug
+		} );
 
 		upgradesActions.addItem( cartItem );
 	},
