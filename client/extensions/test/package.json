@@ -1,0 +1,14 @@
+{
+	"name": "test",
+	"author": "Automattic",
+	"description": "Test",
+	"version": "0.0.1",
+	"env_id": [ "development", "wpcalypso" ],
+	"section": {
+		"name": "test",
+		"paths": [ "/extensions/test" ],
+		"module": "test",
+		"group": "sites",
+		"secondary": true
+	}
+}

@@ -1,4 +1,4 @@
-JETPACK_DIR="/Users/ryelle/Sites/woo/content/plugins/jetpack-ui"
+JETPACK_DIR="/home/javi/work/jetpackSandbox/wp-content/plugins/jetpack-ui"
 
 find ./public -iregex ".*manifest.*\.js" !  -iregex ".*\.m\.js" -exec mv {} $JETPACK_DIR/public/manifest.js \;
 find ./public -iregex ".*build.*\.js" !  -iregex ".*\.m\.js" -exec mv {} $JETPACK_DIR/public/build.js \;

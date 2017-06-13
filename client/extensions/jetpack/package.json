@@ -1,0 +1,14 @@
+{
+	"name": "jetpack",
+	"author": "Automattic",
+	"description": "Jetpack UI experiment",
+	"version": "0.0.1",
+	"env_id": [ "development", "wpcalypso" ],
+	"section": {
+		"name": "jetpack",
+		"paths": [ "/extensions/jetpack" ],
+		"module": "jetpack",
+		"group": "sites",
+		"secondary": true
+	}
+}

@@ -1,16 +1,16 @@
 const sections = [
 	{
 		name: 'writing',
-		paths: [ '/writing' ],
-		module: 'jetpack-ui',
+		paths: [ 'extensions/test/writing' ],
+		module: 'extensions/test',
 		group: 'jetpack',
 		enableLoggedOut: true,
 		secondary: false
 	},
 	{
 		name: 'discussion',
-		paths: [ '/discussion' ],
-		module: 'jetpack-ui',
+		paths: [ 'extensions/test/discussion' ],
+		module: 'extensions/test',
 		group: 'jetpack',
 		enableLoggedOut: true,
 		secondary: false
