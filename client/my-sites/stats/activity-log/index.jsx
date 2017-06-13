@@ -42,12 +42,12 @@ class ActivityLog extends Component {
 	};
 
 	componentWillMount() {
-		this.tryFetchLogs();
+		this.tryFetchLogs( this.props.siteId );
 	}
 
 	componentWillUpdate( { siteId } ) {
 		if ( siteId !== this.props.siteId ) {
-			this.tryFetchLogs();
+			this.tryFetchLogs( siteId );
 		}
 	}
 
@@ -55,10 +55,9 @@ class ActivityLog extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	tryFetchLogs() {
+	tryFetchLogs( siteId ) {
 		const {
 			activityLogRequest,
-			siteId,
 		} = this.props;
 		siteId && activityLogRequest( siteId );
 	}
@@ -392,7 +391,7 @@ export default connect(
 			rewindStatusError: getRewindStatusError( state, siteId ),
 
 			// FIXME: Testing only
-			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false ),
+			isPressable: true,
 			logs: get( state, [
 				'activityLog',
 				'logItems',
