@@ -12,6 +12,7 @@ const webpack = require( 'webpack' ),
  * Internal dependencies
  */
 const config = require( 'config' );
+const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 
 /**
  * This lists modules that must use commonJS `require()`s
@@ -81,7 +82,9 @@ const webpackConfig = {
 					plugins: [ [
 						path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
 						{ async: false }
-					] ]
+					] ],
+					cacheDirectory: './build/.babel-cache',
+					cacheIdentifier: cacheIdentifier,
 				}
 			},
 			{
