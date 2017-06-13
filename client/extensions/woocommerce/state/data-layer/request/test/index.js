@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { spy } from 'sinon';
+import { spy, match } from 'sinon';
 
 /**
  * Internal dependencies
@@ -37,15 +37,12 @@ describe( 'handlers', () => {
 			};
 
 			const action = get( siteId, 'placeholder_endpoint' );
-			const successAction = {
-				type: WOOCOMMERCE_API_REQUEST_SUCCESS,
-				action,
-				data: getResponse,
-			};
 
 			return handleRequest( store, action ).then( () => {
 				expect( store.dispatch ).to.have.been.calledOnce;
-				expect( store.dispatch ).to.have.been.calledWith( successAction );
+				expect( store.dispatch ).to.have.been.calledWith(
+					match( { type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: getResponse } )
+				);
 			} );
 		} );
 
@@ -57,14 +54,11 @@ describe( 'handlers', () => {
 			const action = get( siteId, 'bad_placeholder_endpoint' );
 			return handleRequest( store, action ).then( () => {
 				expect( store.dispatch ).to.have.been.calledTwice;
-
-				const errorSetAction = store.dispatch.getCall( 0 ).args[ 0 ];
-				expect( errorSetAction.type ).to.equal( WOOCOMMERCE_ERROR_SET );
-
-				const failureAction = store.dispatch.getCall( 1 ).args[ 0 ];
-				expect( failureAction.type ).to.equal( WOOCOMMERCE_API_REQUEST_FAILURE );
-				expect( failureAction.action ).to.equal( action );
-				expect( failureAction.error ).to.exist;
+				expect( store.dispatch ).to.have.been.calledWith( match( { type: WOOCOMMERCE_ERROR_SET } ) );
+				expect( store.dispatch ).to.have.been.calledWith(
+					match( { type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action } )
+						.and( match.has( 'error' ) )
+				);
 			} );
 		} );
 	} );
@@ -88,15 +82,12 @@ describe( 'handlers', () => {
 			};
 
 			const action = post( siteId, 'placeholder_endpoint', body );
-			const successAction = {
-				type: WOOCOMMERCE_API_REQUEST_SUCCESS,
-				action,
-				data: postResponse,
-			};
 
 			return handleRequest( store, action ).then( () => {
 				expect( store.dispatch ).to.have.been.calledOnce;
-				expect( store.dispatch ).to.have.been.calledWith( successAction );
+				expect( store.dispatch ).to.have.been.calledWith(
+					match( { type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: postResponse } )
+				);
 			} );
 		} );
 
@@ -108,14 +99,11 @@ describe( 'handlers', () => {
 			const action = post( siteId, 'bad_placeholder_endpoint', body );
 			return handleRequest( store, action ).then( () => {
 				expect( store.dispatch ).to.have.been.calledTwice;
-
-				const errorSetAction = store.dispatch.getCall( 0 ).args[ 0 ];
-				expect( errorSetAction.type ).to.equal( WOOCOMMERCE_ERROR_SET );
-
-				const failureAction = store.dispatch.getCall( 1 ).args[ 0 ];
-				expect( failureAction.type ).to.equal( WOOCOMMERCE_API_REQUEST_FAILURE );
-				expect( failureAction.action ).to.equal( action );
-				expect( failureAction.error ).to.exist;
+				expect( store.dispatch ).to.have.been.calledWith( match( { type: WOOCOMMERCE_ERROR_SET } ) );
+				expect( store.dispatch ).to.have.been.calledWith(
+					match( { type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action } )
+						.and( match.has( 'error' ) )
+				);
 			} );
 		} );
 	} );
@@ -139,15 +127,12 @@ describe( 'handlers', () => {
 			};
 
 			const action = put( siteId, 'placeholder_endpoint', body );
-			const successAction = {
-				type: WOOCOMMERCE_API_REQUEST_SUCCESS,
-				action,
-				data: putResponse,
-			};
 
 			return handleRequest( store, action ).then( () => {
 				expect( store.dispatch ).to.have.been.calledOnce;
-				expect( store.dispatch ).to.have.been.calledWith( successAction );
+				expect( store.dispatch ).to.have.been.calledWith(
+					match( { type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: putResponse } )
+				);
 			} );
 		} );
 
@@ -159,14 +144,11 @@ describe( 'handlers', () => {
 			const action = put( siteId, 'bad_placeholder_endpoint', body );
 			return handleRequest( store, action ).then( () => {
 				expect( store.dispatch ).to.have.been.calledTwice;
-
-				const errorSetAction = store.dispatch.getCall( 0 ).args[ 0 ];
-				expect( errorSetAction.type ).to.equal( WOOCOMMERCE_ERROR_SET );
-
-				const failureAction = store.dispatch.getCall( 1 ).args[ 0 ];
-				expect( failureAction.type ).to.equal( WOOCOMMERCE_API_REQUEST_FAILURE );
-				expect( failureAction.action ).to.equal( action );
-				expect( failureAction.error ).to.exist;
+				expect( store.dispatch ).to.have.been.calledWith( match( { type: WOOCOMMERCE_ERROR_SET } ) );
+				expect( store.dispatch ).to.have.been.calledWith(
+					match( { type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action } )
+						.and( match.has( 'error' ) )
+				);
 			} );
 		} );
 	} );
@@ -188,15 +170,12 @@ describe( 'handlers', () => {
 			};
 
 			const action = del( siteId, 'placeholder_endpoint' );
-			const successAction = {
-				type: WOOCOMMERCE_API_REQUEST_SUCCESS,
-				action,
-				data: deleteResponse,
-			};
 
 			return handleRequest( store, action ).then( () => {
 				expect( store.dispatch ).to.have.been.calledOnce;
-				expect( store.dispatch ).to.have.been.calledWith( successAction );
+				expect( store.dispatch ).to.have.been.calledWith(
+					match( { type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: deleteResponse } )
+				);
 			} );
 		} );
 
@@ -208,14 +187,11 @@ describe( 'handlers', () => {
 			const action = del( siteId, 'bad_placeholder_endpoint' );
 			return handleRequest( store, action ).then( () => {
 				expect( store.dispatch ).to.have.been.calledTwice;
-
-				const errorSetAction = store.dispatch.getCall( 0 ).args[ 0 ];
-				expect( errorSetAction.type ).to.equal( WOOCOMMERCE_ERROR_SET );
-
-				const failureAction = store.dispatch.getCall( 1 ).args[ 0 ];
-				expect( failureAction.type ).to.equal( WOOCOMMERCE_API_REQUEST_FAILURE );
-				expect( failureAction.action ).to.equal( action );
-				expect( failureAction.error ).to.exist;
+				expect( store.dispatch ).to.have.been.calledWith( match( { type: WOOCOMMERCE_ERROR_SET } ) );
+				expect( store.dispatch ).to.have.been.calledWith(
+					match( { type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action } )
+						.and( match.has( 'error' ) )
+				);
 			} );
 		} );
 	} );
