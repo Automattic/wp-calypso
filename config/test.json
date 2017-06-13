@@ -39,6 +39,7 @@
 		"devdocs/components-usage-stats": false,
 		"help": true,
 		"jetpack_core_inline_update": true,
+		"login/wp-login": true,
 		"keyboard-shortcuts": true,
 		"manage/customize": true,
 		"manage/edit-user": true,

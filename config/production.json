@@ -23,6 +23,7 @@
 		"help": true,
 		"help/courses": true,
 		"jetpack/api-cache": false,
+		"login/wp-login": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,
 		"manage/edit-user": true,

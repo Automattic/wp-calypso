@@ -32,6 +32,7 @@
 		"help/courses": true,
 		"jetpack/api-cache": true,
 		"jetpack_core_inline_update": true,
+		"login/wp-login": true,
 		"keyboard-shortcuts": true,
 		"manage/customize": true,
 		"manage/custom-post-types": true,
@@ -125,7 +126,6 @@
 		"woocommerce/extension-settings-shipping": true,
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-stats": false,
-		"wp-login": true,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",

@@ -112,7 +112,7 @@ class MagicLogin extends React.Component {
 }
 
 const mapState = state => {
-	const magicLoginEnabled = isEnabled( 'magic-login' );
+	const magicLoginEnabled = isEnabled( 'login/magic-login' );
 	return {
 		magicLoginEnabled,
 		magicLoginEmailAddress: getMagicLoginEmailAddressFormInput( state ),
