@@ -101,7 +101,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 // Generic recommended card styles
 .reader-related-card-v2.card.is-compact {
 	box-shadow: none;
-	flex: 1 1 0;
+	flex: 1 1 auto;
 	padding: 0;
 
 	@include breakpoint( "<480px" ) {
@@ -756,11 +756,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	.reader-related-card-v2__site-info {
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
-			flex: 2 0 0;
+			flex: 3 0 0;
 		}
 
 		@media #{$reader-related-card-v2-breakpoint-small} {
-			flex: 2 0 0;
+			flex: 3 0 0;
 		}
 	}
 

@@ -72,13 +72,13 @@
 	}
 }
 
-// Post recs
+// Post recs in Site Results
 .search-stream.search-stream__with-sites .search-stream__recommendation-list-item:nth-child(2),
 .search-stream.search-stream__with-sites .search-stream__recommendation-list-item:nth-child(3) {
-	margin-top: 90px;
+	margin-top: 70px;
 
-	@include breakpoint( "<660px" ) {
-		margin-top: 70px;
+	@include breakpoint( ">660px" ) {
+		margin-top: 90px;
 	}
 }
 
