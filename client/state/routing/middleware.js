@@ -13,12 +13,17 @@ import { ROUTE_SET } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:restore-last-location' );
 const LAST_PATH = 'last_path';
+const ALLOWED_PATHS_FOR_RESTORING = /^\/(stats|plans|view|posts|pages|media|types|themes|sharing|people|plugins|domains)/i;
+
+const isWhitelistedForRestoring = ( path ) => {
+	return !! path.match( ALLOWED_PATHS_FOR_RESTORING );
+};
 
 export const restoreLastLocation = () => {
 	let hasInitialized = false;
 
 	return ( next ) => ( action ) => {
-		if ( action.type !== ROUTE_SET || ! action.path ) {
+		if ( action.type !== ROUTE_SET || ! action.path || ! action.query ) {
 			return next( action );
 		}
 
@@ -26,8 +31,9 @@ export const restoreLastLocation = () => {
 			( lastPath ) => {
 				if ( ! hasInitialized &&
 						lastPath && lastPath !== '/' &&
-						action.path === '/' &&
-						! isOutsideCalypso( lastPath ) ) {
+						action.path === '/' && Object.keys( action.query ).length === 0 &&
+						! isOutsideCalypso( lastPath ) &&
+						isWhitelistedForRestoring( lastPath ) ) {
 					debug( 'redir to', lastPath );
 					page( lastPath );
 				} else if ( action.path !== lastPath &&
