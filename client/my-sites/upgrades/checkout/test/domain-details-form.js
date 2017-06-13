@@ -31,13 +31,15 @@ describe( 'Domain Details Form', () => {
 		mockery.registerMock( 'lib/analytics', {} );
 		mockery.registerMock( 'i18n-calypso', { localize: identity } );
 		mockery.registerMock( 'lib/wp', wpcomMock );
-		DomainDetailsForm = require( '../domain-details-form' );
+		DomainDetailsForm = require( '../domain-details-form' ).DomainDetailsForm;
 	} );
 
 	const defaultProps = {
 		productsList: {},
 		cart: {
 			products: [],
+		},
+		contactDetails: {
 		},
 		translate: identity,
 	};

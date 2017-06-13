@@ -48,7 +48,7 @@ const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' 
 const wpcom = wp.undocumented(),
 	countriesList = countriesListForDomainRegistrations();
 
-class DomainDetailsForm extends PureComponent {
+export class DomainDetailsForm extends PureComponent {
 	constructor( props, context ) {
 		super( props, context );
 
@@ -81,7 +81,6 @@ class DomainDetailsForm extends PureComponent {
 			currentStep: first( steps ),
 		};
 	}
-
 
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
