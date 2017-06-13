@@ -284,7 +284,7 @@
 }
 
 .comment-detail__author {
-	padding: 16px 0;
+	padding: 16px 0 0;
 }
 
 .comment-detail__author-preview {
@@ -295,8 +295,8 @@
 	transition: padding-bottom .3s linear;
 
 	.comment-detail__author-avatar {
-		height: 40px;
-		width: 40px;
+		height: 32px;
+		width: 32px;
 	}
 
 	.comment-detail__author-info {
