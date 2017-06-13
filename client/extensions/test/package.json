@@ -3,12 +3,14 @@
 	"author": "Automattic",
 	"description": "Test",
 	"version": "0.0.1",
-	"env_id": [ "development", "wpcalypso" ],
+	"env_id": [ "development", "wpcalypso", "jetpack" ],
 	"section": {
 		"name": "test",
-		"paths": [ "/extensions/test" ],
+		"paths": [ "/test/writing", "/test/discussion" ],
 		"module": "test",
-		"group": "sites",
-		"secondary": true
+		"group": "jetpack",
+		"enableLoggedOut": true,
+		"isomorphic": true,
+		"secondary": false
 	}
 }
