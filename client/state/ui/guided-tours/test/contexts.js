@@ -15,7 +15,7 @@ import {
 	SOURCE_UNKNOWN,
 } from 'components/tinymce/plugins/wpcom-track-paste/sources';
 
-const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24
+const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
 describe( 'selectors', () => {
 	let isUserNewerThan;
