@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -8,6 +9,8 @@
 import { SITES_BLOG_STICKER_ADD } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { removeBlogSticker } from 'state/sites/blog-stickers/actions';
+import { errorNotice } from 'state/notices/actions';
 
 export function requestBlogStickerAdd( { dispatch }, action ) {
 	dispatch(
@@ -18,14 +21,28 @@ export function requestBlogStickerAdd( { dispatch }, action ) {
 			apiVersion: '1.1',
 			onSuccess: action,
 			onFailure: action,
-		} )
+		} ),
 	);
+}
+
+export function receiveBlogStickerAdd( store, action, next, response ) {
+	// validate that it worked
+	const isAdded = !! ( response && response.success );
+	if ( ! isAdded ) {
+		receiveBlogStickerAddError( store, action, next );
+		return;
+	}
+}
+
+export function receiveBlogStickerAddError( { dispatch }, action, next ) {
+	dispatch(
+		errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) ),
+	);
+	next( removeBlogSticker( action.payload.siteId, action.payload.stickerName ) );
 }
 
 export default {
 	[ SITES_BLOG_STICKER_ADD ]: [
-		dispatchRequest(
-			requestBlogStickerAdd,
-		),
+		dispatchRequest( requestBlogStickerAdd, receiveBlogStickerAdd, receiveBlogStickerAddError ),
 	],
 };
