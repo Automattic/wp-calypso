@@ -40,6 +40,7 @@ import {
 import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
 import { getReaderFollowsCount } from 'state/selectors';
 import { recordTrack, recordAction } from 'reader/stats';
+import { SORT_BY_RELEVANCE } from 'state/reader/feed-searches/actions';
 
 const PAGE_SIZE = 4;
 let recommendationsSeed = random( 0, 10000 );
@@ -273,10 +274,13 @@ class FollowingManage extends Component {
 
 export default connect(
 	( state, { sitesQuery } ) => ( {
-		searchResults: getReaderFeedsForQuery( state, { query: sitesQuery, excludeFollowed: true } ),
+		searchResults: getReaderFeedsForQuery(
+			state,
+			{ query: sitesQuery, excludeFollowed: true, sort: SORT_BY_RELEVANCE },
+		),
 		searchResultsCount: getReaderFeedsCountForQuery(
 			state,
-			{ query: sitesQuery, excludeFollowed: true },
+			{ query: sitesQuery, excludeFollowed: true, sort: SORT_BY_RELEVANCE },
 		),
 		recommendedSites: getReaderRecommendedSites( state, recommendationsSeed ),
 		recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset(

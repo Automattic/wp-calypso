@@ -90,7 +90,7 @@ class SearchStream extends React.Component {
 
 	handleSearchTypeSelection = searchType =>
 		page.replace(
-			addQueryArgs( { show: searchType }, window.location.pathname + window.location.search )
+			addQueryArgs( { show: searchType }, window.location.pathname + window.location.search ),
 		);
 
 	render() {
@@ -159,13 +159,13 @@ class SearchStream extends React.Component {
 						</div>
 						{ query &&
 							<div className="search-stream__site-results">
-								<SiteResults query={ query } />
+								<SiteResults query={ query } sort={ sortOrder } />
 							</div> }
 					</div> }
 				{ ! wideDisplay &&
 					<div className="search-stream__single-column-results">
 						{ ( searchType === POSTS && <PostResults { ...this.props } /> ) ||
-							<SiteResults query={ query } /> }
+							<SiteResults query={ query } sort={ sortOrder } /> }
 					</div> }
 			</div>
 		);
