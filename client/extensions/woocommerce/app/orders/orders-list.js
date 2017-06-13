@@ -98,7 +98,10 @@ class Orders extends Component {
 		i++;
 		return (
 			<li key={ i }>
-				<Button compact borderless onClick={ this.onPageClick( i ) }>{ i }</Button>
+				{ ( i !== this.props.currentPage )
+					? <Button compact borderless onClick={ this.onPageClick( i ) }>{ i }</Button>
+					: <span>{ i }</span>
+				}
 			</li>
 		);
 	}
