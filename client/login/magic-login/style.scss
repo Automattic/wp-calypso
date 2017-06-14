@@ -27,6 +27,7 @@
 	padding: 0 24px;
 	text-decoration: none;
 	a {
+		color: darken( $gray, 20% );
 		font-size: 14px;
 
 		&:hover {

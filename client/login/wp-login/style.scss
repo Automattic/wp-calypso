@@ -12,7 +12,7 @@
 .wp-login__footer {
 	a {
 		border-bottom: 1px solid lighten( $gray, 20% );
-		color: $gray;
+		color: darken( $gray, 20% );
 		display: block;
 		font-weight: 500;
 		line-height: 4em;
