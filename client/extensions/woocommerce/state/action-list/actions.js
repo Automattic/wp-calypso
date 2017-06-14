@@ -37,10 +37,10 @@ export function actionListClear() {
  * Action Creator: Start action list step.
  *
  * @param {Number} [stepIndex] The index of the step. Defaults to zero (0), first index.
- * @param {Date} [time=Date.now()] Optional timestamp.
+ * @param {Date} [time] Optional timestamp.
  * @return {Object} action
  */
-export function actionListStepStart( stepIndex = 0, time = Date.now() ) {
+export function actionListStepStart( stepIndex = 0, time ) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_STEP_START,
 		stepIndex,
@@ -52,10 +52,10 @@ export function actionListStepStart( stepIndex = 0, time = Date.now() ) {
  * Action Creator: Mark step as successful.
  *
  * @param {Number} stepIndex The index of the step.
- * @param {Date} [time=Date.now()] Optional timestamp.
+ * @param {Date} [time] Optional timestamp.
  * @return {Object} action
  */
-export function actionListStepSuccess( stepIndex, time = Date.now() ) {
+export function actionListStepSuccess( stepIndex, time ) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,
 		stepIndex,
@@ -68,10 +68,10 @@ export function actionListStepSuccess( stepIndex, time = Date.now() ) {
  *
  * @param {Number} stepIndex The index of the step.
  * @param {Object} error The error from the failure.
- * @param {Date} [time=Date.now()] Optional timestamp.
+ * @param {Date} [time] Optional timestamp.
  * @return {Object} action
  */
-export function actionListStepFailure( stepIndex, error, time = Date.now() ) {
+export function actionListStepFailure( stepIndex, error, time ) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_STEP_FAILURE,
 		stepIndex,

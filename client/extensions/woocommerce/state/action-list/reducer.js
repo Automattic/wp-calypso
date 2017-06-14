@@ -31,16 +31,18 @@ function handleActionListClear() {
 
 function handleActionListStepStart( actionList, action ) {
 	const { stepIndex, time } = action;
+	const startTime = time || Date.now();
 	const step = actionList[ stepIndex ];
 
 	const newActionList = [ ...actionList ];
-	newActionList[ stepIndex ] = { ...step, startTime: time };
+	newActionList[ stepIndex ] = { ...step, startTime };
 
 	return newActionList;
 }
 
 function handleActionListStepSuccess( actionList, action ) {
-	const { stepIndex, time: endTime } = action;
+	const { stepIndex, time } = action;
+	const endTime = time || Date.now();
 	const step = actionList[ stepIndex ];
 
 	const newStep = { ...step, endTime };
@@ -52,7 +54,8 @@ function handleActionListStepSuccess( actionList, action ) {
 }
 
 function handleActionListStepFailure( actionList, action ) {
-	const { stepIndex, error, time: endTime } = action;
+	const { stepIndex, error, time } = action;
+	const endTime = time || Date.now();
 	const step = actionList[ stepIndex ];
 
 	const newStep = { ...step, error, endTime };
