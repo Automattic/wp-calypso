@@ -6,9 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	makeProductActionList,
-} from '../actions';
+import { makeProductActionList, } from '../';
 import { actionListStepSuccess, actionListStepFailure } from 'woocommerce/state/action-list/actions';
 import { createProduct } from 'woocommerce/state/sites/products/actions';
 
