@@ -7,6 +7,10 @@ module.exports = {
 	],
 	rootDir: './../../',
 	testEnvironment: 'node',
-	testMatch: [ '**/__integration__/*.js' ],
+	testMatch: [
+		'**/bin/**/__integration__/*.js',
+		'**/client/**/__integration__/*.js',
+		'**/server/**/__integration__/*.js',
+	],
 	verbose: true,
 };
