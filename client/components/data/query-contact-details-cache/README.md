@@ -1,4 +1,4 @@
-Query Sites
+Query ContactDetailsCache
 ===========
 
 `<QueryContactDetailsCache />` is a React component used to request the user's last entered contact details--if they exist.

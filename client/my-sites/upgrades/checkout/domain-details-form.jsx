@@ -210,9 +210,11 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	getMainFieldValues() {
-		const mainFieldValues = Object.assign( {}, formState.getAllFieldValues( this.state.form ) );
-		mainFieldValues.phone = toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] );
-		return mainFieldValues;
+		const mainFieldValues = formState.getAllFieldValues( this.state.form );
+		return {
+			...mainFieldValues,
+			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
+		};
 	}
 
 	getRequiredExtraSteps() {
