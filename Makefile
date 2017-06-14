@@ -69,4 +69,4 @@ docker-build:
 docker-run:
 	@npm run docker
 
-.PHONY: build test
+.PHONY: install run dashboard test lint eslint eslint-branch mixedindentlint config-defaults-lint build-server build build-desktop clean distclean translate shrinkwrap analyze-bundles urn docker-build docker-run
