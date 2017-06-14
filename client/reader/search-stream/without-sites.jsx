@@ -145,8 +145,8 @@ class SearchStream extends Component {
 						railcar={ suggestion.railcar }
 					/>,
 					', ',
-				]
-			)
+				],
+			),
 		);
 
 		const documentTitle = this.props.translate( '%s ‹ Reader', {
@@ -175,7 +175,10 @@ class SearchStream extends Component {
 			>
 				{ this.props.showBack && <HeaderBack /> }
 				<div ref={ this.handleStreamMounted } />
-				<div style={ { height: '100px' } } />
+				{/* for non-recs add more margin-top.  this is a soon-to-be-deleted hack */}
+				{ this.props.postsStore &&
+					! this.props.postsStore.algorithm &&
+					<div style={ { height: '100px' } } /> }
 				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<DocumentHead title={ documentTitle } />
 					<MobileBackToSidebar>
