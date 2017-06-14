@@ -13,7 +13,8 @@ import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
-import { editProduct, editProductAttribute } from 'woocommerce/state/ui/products/actions';
+import { editProduct, editProductAttribute, createProductActionList } from 'woocommerce/state/ui/products/actions';
+import { actionListStepStart } from 'woocommerce/state/action-list/actions';
 import { getCurrentlyEditingProduct } from 'woocommerce/state/ui/products/selectors';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
@@ -69,6 +70,7 @@ class ProductCreate extends React.Component {
 	onSave = () => {
 		const { siteId, product, translate } = this.props;
 
+		// TODO: Move these actions to the action-list handlers.
 		const successAction = successNotice(
 			translate( '%(product)s successfully created.', {
 				args: { product: product.name },
@@ -82,7 +84,8 @@ class ProductCreate extends React.Component {
 			} )
 		);
 
-		this.props.createProduct( siteId, product, successAction, errorAction );
+		this.props.createProductActionList();
+		this.props.actionListStepStart();
 	}
 
 	render() {
@@ -126,7 +129,9 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			actionListStepStart,
 			createProduct,
+			createProductActionList,
 			editProduct,
 			editProductAttribute,
 			editProductVariation,
