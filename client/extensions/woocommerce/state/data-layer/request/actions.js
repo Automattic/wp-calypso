@@ -7,12 +7,12 @@ import { uniqueId } from 'lodash';
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_REQUEST,
+	WOOCOMMERCE_API_REQUEST,
 } from 'woocommerce/state/action-types';
 
 function _createRequestAction( method, siteId, path, body ) {
 	return {
-		type: WOOCOMMERCE_REQUEST,
+		type: WOOCOMMERCE_API_REQUEST,
 		requestId: uniqueId( 'request_' ),
 		method,
 		siteId,

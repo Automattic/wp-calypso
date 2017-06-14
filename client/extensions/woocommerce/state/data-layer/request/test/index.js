@@ -13,8 +13,8 @@ import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WOOCOMMERCE_ERROR_SET,
-	WOOCOMMERCE_REQUEST_SUCCESS,
-	WOOCOMMERCE_REQUEST_FAILURE,
+	WOOCOMMERCE_API_REQUEST_SUCCESS,
+	WOOCOMMERCE_API_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 
 describe( 'handlers', () => {
@@ -38,7 +38,7 @@ describe( 'handlers', () => {
 
 			const action = get( siteId, 'placeholder_endpoint' );
 			const successAction = {
-				type: WOOCOMMERCE_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_API_REQUEST_SUCCESS,
 				action,
 				data: getResponse,
 			};
@@ -62,7 +62,7 @@ describe( 'handlers', () => {
 				expect( errorSetAction.type ).to.equal( WOOCOMMERCE_ERROR_SET );
 
 				const failureAction = store.dispatch.getCall( 1 ).args[ 0 ];
-				expect( failureAction.type ).to.equal( WOOCOMMERCE_REQUEST_FAILURE );
+				expect( failureAction.type ).to.equal( WOOCOMMERCE_API_REQUEST_FAILURE );
 				expect( failureAction.action ).to.equal( action );
 				expect( failureAction.error ).to.exist;
 			} );
@@ -89,7 +89,7 @@ describe( 'handlers', () => {
 
 			const action = post( siteId, 'placeholder_endpoint', body );
 			const successAction = {
-				type: WOOCOMMERCE_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_API_REQUEST_SUCCESS,
 				action,
 				data: postResponse,
 			};
@@ -113,7 +113,7 @@ describe( 'handlers', () => {
 				expect( errorSetAction.type ).to.equal( WOOCOMMERCE_ERROR_SET );
 
 				const failureAction = store.dispatch.getCall( 1 ).args[ 0 ];
-				expect( failureAction.type ).to.equal( WOOCOMMERCE_REQUEST_FAILURE );
+				expect( failureAction.type ).to.equal( WOOCOMMERCE_API_REQUEST_FAILURE );
 				expect( failureAction.action ).to.equal( action );
 				expect( failureAction.error ).to.exist;
 			} );
@@ -140,7 +140,7 @@ describe( 'handlers', () => {
 
 			const action = put( siteId, 'placeholder_endpoint', body );
 			const successAction = {
-				type: WOOCOMMERCE_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_API_REQUEST_SUCCESS,
 				action,
 				data: putResponse,
 			};
@@ -164,7 +164,7 @@ describe( 'handlers', () => {
 				expect( errorSetAction.type ).to.equal( WOOCOMMERCE_ERROR_SET );
 
 				const failureAction = store.dispatch.getCall( 1 ).args[ 0 ];
-				expect( failureAction.type ).to.equal( WOOCOMMERCE_REQUEST_FAILURE );
+				expect( failureAction.type ).to.equal( WOOCOMMERCE_API_REQUEST_FAILURE );
 				expect( failureAction.action ).to.equal( action );
 				expect( failureAction.error ).to.exist;
 			} );
@@ -189,7 +189,7 @@ describe( 'handlers', () => {
 
 			const action = del( siteId, 'placeholder_endpoint' );
 			const successAction = {
-				type: WOOCOMMERCE_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_API_REQUEST_SUCCESS,
 				action,
 				data: deleteResponse,
 			};
@@ -213,7 +213,7 @@ describe( 'handlers', () => {
 				expect( errorSetAction.type ).to.equal( WOOCOMMERCE_ERROR_SET );
 
 				const failureAction = store.dispatch.getCall( 1 ).args[ 0 ];
-				expect( failureAction.type ).to.equal( WOOCOMMERCE_REQUEST_FAILURE );
+				expect( failureAction.type ).to.equal( WOOCOMMERCE_API_REQUEST_FAILURE );
 				expect( failureAction.action ).to.equal( action );
 				expect( failureAction.error ).to.exist;
 			} );
