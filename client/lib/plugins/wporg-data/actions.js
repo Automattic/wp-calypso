@@ -1,31 +1,33 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:wporg-data:actions' );
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	wporg = require( 'lib/wporg' ),
-	debounce = require( 'lodash/debounce' ),
-	utils = require( 'lib/plugins/utils' );
+import Dispatcher from 'dispatcher';
+import wporg from 'lib/wporg';
+import debounce from 'lodash/debounce';
+import utils from 'lib/plugins/utils';
+import CuratedPlugins from 'lib/plugins/wporg-data/curated.json';
 
 /**
  * Constants
  */
-var _LIST_DEFAULT_SIZE = 24,
-	_DEFAULT_FIRST_PAGE = 0;
+const debug = debugFactory( 'calypso:wporg-data:actions' );
+const _LIST_DEFAULT_SIZE = 24;
+const _DEFAULT_FIRST_PAGE = 0;
 
 /**
  *  Local variables;
  */
-var _fetchingLists = {},
-	_currentSearchTerm = null,
-	_lastFetchedPagePerCategory = {},
-	_totalPagesPerCategory = {};
+let _fetchingLists = {};
+let _currentSearchTerm = null;
+let _lastFetchedPagePerCategory = {};
+let _totalPagesPerCategory = {};
 
-var PluginsDataActions = {
+const PluginsDataActions = {
 	fetchPluginsList: debounce( function( category, page, searchTerm ) {
 		// We need to debounce this method to avoid mixing diferent dispatch batches (and get an invariant violation from react)
 		// Since the infinite scroll mixin is launching a bunch of fetch requests at the same time, without debounce is too easy
@@ -54,6 +56,11 @@ var PluginsDataActions = {
 			searchTerm: searchTerm
 		} );
 
+		if ( 'featured' === category ) {
+			this.fetchCuratedList();
+			return;
+		}
+
 		wporg.fetchPluginsList( {
 			pageSize: _LIST_DEFAULT_SIZE,
 			page: page,
@@ -77,8 +84,23 @@ var PluginsDataActions = {
 		} );
 	}, 25 ),
 
+	fetchCuratedList: function() {
+		debug( 'curated plugin list', CuratedPlugins );
+		_fetchingLists.featured = null;
+		_lastFetchedPagePerCategory.featured = 1;
+		_totalPagesPerCategory.featured = 1;
+		Dispatcher.handleServerAction( {
+			type: 'RECEIVE_WPORG_PLUGINS_LIST',
+			action: 'FETCH_WPORG_PLUGINS_LIST',
+			page: 1,
+			category: 'featured',
+			data: utils.normalizePluginsList( CuratedPlugins ),
+			error: null
+		} );
+	},
+
 	fetchNextCategoryPage: function( category, searchTerm ) {
-		var lastPage = _DEFAULT_FIRST_PAGE - 1;
+		let lastPage = _DEFAULT_FIRST_PAGE - 1;
 		if ( typeof _lastFetchedPagePerCategory[ category ] !== 'undefined' ) {
 			lastPage = _lastFetchedPagePerCategory[ category ];
 		}
