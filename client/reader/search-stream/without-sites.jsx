@@ -177,7 +177,7 @@ class SearchStream extends Component {
 				<div ref={ this.handleStreamMounted } />
 				{/* for non-recs add more margin-top.  this is a soon-to-be-deleted hack */}
 				{ this.props.postsStore &&
-					! this.props.postsStore.algorithm &&
+					this.props.postsStore.id !== 'custom_recs_posts_with_images' &&
 					<div style={ { height: '100px' } } /> }
 				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<DocumentHead title={ documentTitle } />
