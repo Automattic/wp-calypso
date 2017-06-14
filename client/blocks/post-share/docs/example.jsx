@@ -31,7 +31,8 @@ const PostShareExample = ( { post = {}, site, siteId } ) => (
 
 		<Card>
 			<PostShare
-				post= { post }
+				disabled={ true }
+				post={ post }
 				siteId={ siteId } />
 		</Card>
 	</div>
