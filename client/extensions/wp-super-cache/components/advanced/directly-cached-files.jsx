@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { pick } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -34,12 +35,12 @@ class DirectlyCachedFiles extends Component {
 
 	render() {
 		const {
+			deleteFieldArrayValue,
 			fields,
 			handleChange,
 			handleSubmitForm,
 			isRequesting,
 			isSaving,
-			setFieldArrayValue,
 			site,
 			translate
 		} = this.props;
@@ -105,8 +106,10 @@ class DirectlyCachedFiles extends Component {
 									<FormTextInput
 										disabled={ isRequesting || isSaving }
 										key={ index }
-										onChange={ setFieldArrayValue( 'cache_direct_pages', index ) }
 										value={ page || '' } />
+									<Button borderless onClick={ deleteFieldArrayValue( 'cache_direct_pages', index ) }>
+										<Gridicon icon="cross" /> { translate( 'Remove' ) }
+									</Button>
 								</FormFieldset>
 							) ) }
 
