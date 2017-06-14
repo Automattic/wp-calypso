@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { compact } from 'lodash';
+import { compact, startCase } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -16,9 +16,8 @@ import Gridicon from 'gridicons';
 import Main from 'components/main';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 import { login } from 'lib/paths';
@@ -27,16 +26,43 @@ export class Login extends React.Component {
 	static propTypes = {
 		locale: PropTypes.string.isRequired,
 		path: PropTypes.string.isRequired,
+		recordPageView: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 	};
 
+	componentDidMount() {
+		this.recordPageView( this.props );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
+			this.recordPageView( nextProps );
+		}
+	}
+
+	recordPageView( props ) {
+		const { twoFactorAuthType } = props;
+
+		let url = '/log-in';
+		let title = 'Login';
+
+		if ( twoFactorAuthType ) {
+			url += `/${ twoFactorAuthType }`;
+			title += ` > Two-Step Authentication > ${ startCase( twoFactorAuthType ) }`;
+		}
+
+		this.props.recordPageView( url, title );
+	}
+
 	onMagicLoginRequestClick = event => {
 		event.preventDefault();
+
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
 		this.props.resetMagicLoginRequestForm();
+
 		page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
 	};
 
@@ -59,14 +85,14 @@ export class Login extends React.Component {
 		const resetPasswordLink =
 			! twoFactorAuthType &&
 			<a href={ config( 'login_url' ) + '?action=lostpassword' } key="lost-password-link">
-				{ this.props.translate( 'Lost your password?' ) }
+				{ translate( 'Lost your password?' ) }
 			</a>;
 
 		const lostPhoneLink =
 			twoFactorAuthType &&
 			twoFactorAuthType !== 'backup' &&
 			<a href={ login( { isNative: true, twoFactorAuthType: 'backup' } ) } key="lost-phone-link">
-				{ this.props.translate( "I can't access my phone" ) }
+				{ translate( "I can't access my phone" ) }
 			</a>;
 
 		const helpLink =
@@ -86,13 +112,13 @@ export class Login extends React.Component {
 	}
 
 	renderLocaleSuggestions() {
-		const { twoFactorAuthType } = this.props;
+		const { locale, path, twoFactorAuthType } = this.props;
 
 		if ( twoFactorAuthType ) {
 			return null;
 		}
 
-		return <LocaleSuggestions locale={ this.props.locale } path={ this.props.path } />;
+		return <LocaleSuggestions locale={ locale } path={ path } />;
 	}
 
 	renderFooter() {
@@ -109,8 +135,6 @@ export class Login extends React.Component {
 		return (
 			<div>
 				<Main className="wp-login__main">
-					<PageViewTracker path="/login" title="Login" />
-
 					{ this.renderLocaleSuggestions() }
 
 					<GlobalNotices id="notices" notices={ notices.list } />
@@ -128,6 +152,7 @@ export class Login extends React.Component {
 						</div>
 					</div>
 				</Main>
+
 				{ this.renderFooter() }
 			</div>
 		);
@@ -135,6 +160,7 @@ export class Login extends React.Component {
 }
 
 const mapDispatch = {
+	recordPageView,
 	recordTracksEvent,
 	resetMagicLoginRequestForm,
 };
