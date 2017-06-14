@@ -30,10 +30,9 @@ export default class FormTextInput extends PureComponent {
 	}
 
 	render() {
-		const {
-			inputRef,
-			...props
-		} = omit( this.props, 'isError', 'isValid', 'selectOnFocus' );
+		const { inputRef } = this.props;
+		const props = omit( this.props, 'isError', 'isValid', 'selectOnFocus', 'inputRef' );
+
 		const classes = classNames( 'form-text-input', this.props.className, {
 			'is-error': this.props.isError,
 			'is-valid': this.props.isValid
