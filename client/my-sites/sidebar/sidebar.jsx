@@ -313,13 +313,13 @@ export class MySitesSidebar extends Component {
 
 		let linkClass = 'upgrades-nudge';
 
-		if ( productsValues.isPlan( site.plan ) ) {
+		if ( site && productsValues.isPlan( site.plan ) ) {
 			linkClass += ' is-paid-plan';
 		}
 
-		let planName = site.plan.product_name_short;
+		let planName = site && site.plan.product_name_short;
 
-		if ( productsValues.isFreeTrial( site.plan ) ) {
+		if ( site && productsValues.isFreeTrial( site.plan ) ) {
 			planName = this.props.translate( 'Trial', {
 				context: 'Label in the sidebar indicating that the user is on the free trial for a plan.'
 			} );
@@ -407,7 +407,8 @@ export class MySitesSidebar extends Component {
 			usersLink = site.options.admin_url + 'users.php';
 		}
 
-		if ( ! config.isEnabled( 'jetpack/invites' ) && ! this.props.isSiteAutomatedTransfer && site.options && this.props.isJetpack ) {
+		if ( ! config.isEnabled( 'jetpack/invites' ) &&
+			! this.props.isSiteAutomatedTransfer && site && site.options && this.props.isJetpack ) {
 			addPeopleLink = site.options.admin_url + 'user-new.php';
 		}
 
