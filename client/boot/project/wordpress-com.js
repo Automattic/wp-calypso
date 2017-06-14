@@ -32,7 +32,7 @@ const config = require( 'config' ),
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
-function renderLayout( reduxStore ) {
+function renderLayoutAsync( reduxStore ) {
 	return require( 'controller' ).getReduxWrappedLayout( reduxStore ).then(
 		Layout => {
 			const layoutElement = React.createElement( Layout, {
@@ -88,7 +88,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	// Isomorphic sections will take care of rendering their Layout last themselves.
 	if ( ! document.getElementById( 'primary' ) ) {
 		page( '*', function( context, next ) {
-			renderLayout( reduxStore ).then( next );
+			renderLayoutAsync( reduxStore ).then( next );
 		} );
 
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
@@ -251,7 +251,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		if ( isMultiTreeLayout && previousLayoutIsSingleTree ) {
 			debug( 'Re-rendering multi-tree layout' );
 			ReactDom.unmountComponentAtNode( document.getElementById( 'wpcom' ) );
-			renderLayout( context.store ).then( next );
+			renderLayoutAsync( context.store ).then( next );
 		} else if ( ! isMultiTreeLayout && ! previousLayoutIsSingleTree ) {
 			debug( 'Unmounting multi-tree layout' );
 			ReactDom.unmountComponentAtNode( document.getElementById( 'primary' ) );
