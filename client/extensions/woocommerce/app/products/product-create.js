@@ -95,7 +95,7 @@ class ProductCreate extends React.Component {
 					onTrash={ this.onTrash }
 					onSave={ siteId && this.onSave || false }
 				/>
-				{ siteId && ( <ProductForm
+				<ProductForm
 					siteId={ siteId }
 					product={ product || { type: 'simple' } }
 					variations={ variations }
@@ -103,7 +103,7 @@ class ProductCreate extends React.Component {
 					editProduct={ this.props.editProduct }
 					editProductAttribute={ this.props.editProductAttribute }
 					editProductVariation={ this.props.editProductVariation }
-				/> ) }
+				/>
 			</Main>
 		);
 	}
