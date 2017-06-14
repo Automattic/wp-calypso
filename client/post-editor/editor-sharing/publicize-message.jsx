@@ -17,6 +17,7 @@ export default React.createClass( {
 	displayName: 'PublicizeMessage',
 
 	propTypes: {
+		message: React.PropTypes.bool,
 		message: React.PropTypes.string,
 		preview: React.PropTypes.string,
 		acceptableLength: React.PropTypes.number,
@@ -26,6 +27,7 @@ export default React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			disabled: false,
 			message: '',
 			acceptableLength: 140,
 			requireCount: false,
@@ -66,6 +68,7 @@ export default React.createClass( {
 		if ( this.props.requireCount ) {
 			return (
 				<CountedTextarea
+					disabled={ this.props.disabled }
 					value={ this.props.message }
 					placeholder={ this.props.preview }
 					countPlaceholderLength={ true }
@@ -80,6 +83,7 @@ export default React.createClass( {
 		} else {
 			return (
 				<FormTextarea
+					disabled={ this.props.disabled }				
 					value={ this.props.message }
 					placeholder={ this.props.preview }
 					onChange={ this.onChange }
