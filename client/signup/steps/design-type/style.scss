@@ -34,23 +34,51 @@
 
 	&.is-card-link {
 		padding: 0;
+
+		@include breakpoint( "<480px" ) {
+			padding-right: 48px;
+			margin-bottom: 1px;
+		}
 	}
 
 	.card__link-indicator {
 		display: none;
+		@include breakpoint( "<480px" ) {
+			display: block;
+		}
 	}
 
 	@at-root #{&}-image {
 		display: block;
 		width: 100%;
-	}
-}
-
-.design-type__choice--test {
-	&.is-card-link {
 		@include breakpoint( "<480px" ) {
-			padding-right: 48px;
-			margin-bottom: 1px;
+			display: none;
+		}
+
+		svg {
+			display: block;
+			width: 100%;
+		}
+	}
+
+	@at-root #{&}-copy {
+		text-align: center;
+		padding: 15px;
+		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+
+		@include breakpoint( "<480px" ) {
+			text-align: left;
+			border-top: 0;
+		}
+	}
+
+	@at-root #{&}-description {
+		margin: 1em 0 0;
+		color: $gray;
+		font-size: 0.875em;
+
+		@include breakpoint( "<480px" ) {
+			margin: 0;
 		}
 	}
 
@@ -63,39 +91,6 @@
 	&:last-of-type {
 		@include breakpoint( "<480px" ) {
 			border-radius: 0 0 5px 5px;
-		}
-	}
-
-	.card__link-indicator {
-		@include breakpoint( "<480px" ) {
-			display: block;
-		}
-	}
-
-	.design-type__choice-image {
-		@include breakpoint( "<480px" ) {
-			display: none;
-		}
-	}
-
-	.design-type__choice-copy {
-		text-align: center;
-		padding: 15px;
-		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
-
-		@include breakpoint( "<480px" ) {
-			text-align: left;
-			border-top: 0;
-		}
-	}
-
-	.design-type__choice-description {
-		margin: 1em 0 0;
-		color: $gray;
-		font-size: 0.875em;
-
-		@include breakpoint( "<480px" ) {
-			margin: 0;
 		}
 	}
 }

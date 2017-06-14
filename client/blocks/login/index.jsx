@@ -13,6 +13,7 @@ import page from 'page';
 import DocumentHead from 'components/data/document-head';
 import LoginForm from './login-form';
 import {
+	getRedirectTo,
 	getRequestError,
 	getRequestNotice,
 	getTwoFactorAuthRequestError,
@@ -29,17 +30,13 @@ import PushNotificationApprovalPoller from './two-factor-authentication/push-not
 class Login extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
-		redirectLocation: PropTypes.string,
+		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
 		requestNotice: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
 		twoFactorAuthRequestError: PropTypes.object,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
-	};
-
-	state = {
-		rememberMe: false,
 	};
 
 	componentDidMount = () => {
@@ -73,22 +70,16 @@ class Login extends Component {
 	};
 
 	rebootAfterLogin = () => {
+		const { redirectTo } = this.props;
+
 		this.props.recordTracksEvent( 'calypso_login_success', {
 			two_factor_enabled: this.props.twoFactorEnabled
 		} );
 
-		const { redirectLocation } = this.props;
+		// Redirects to / if no redirect url is available
+		const url = redirectTo ? redirectTo : window.location.origin;
 
-		let newHref;
-
-		if ( redirectLocation && redirectLocation.match( /^(?!\/\/)[\/\-a-z0-9.]+$/i ) ) {
-			// only redirect to paths on the current domain
-			newHref = redirectLocation;
-		} else {
-			newHref = window.location.origin;
-		}
-
-		window.location.href = newHref;
+		window.location.href = url;
 	};
 
 	renderError() {
@@ -126,10 +117,6 @@ class Login extends Component {
 			twoFactorNotificationSent,
 		} = this.props;
 
-		const {
-			rememberMe,
-		} = this.state;
-
 		let poller;
 		if ( twoFactorEnabled && twoFactorAuthType && twoFactorNotificationSent === 'push' ) {
 			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
@@ -140,7 +127,6 @@ class Login extends Component {
 				<div>
 					{ poller }
 					<VerificationCodeForm
-						rememberMe={ rememberMe }
 						onSuccess={ this.rebootAfterLogin }
 						twoFactorAuthType={ twoFactorAuthType }
 					/>
@@ -185,6 +171,7 @@ class Login extends Component {
 
 export default connect(
 	( state ) => ( {
+		redirectTo: getRedirectTo( state ),
 		requestError: getRequestError( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),

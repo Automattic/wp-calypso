@@ -22,6 +22,7 @@ const EditorPreview = React.createClass( {
 		isSaving: React.PropTypes.bool,
 		isLoading: React.PropTypes.bool,
 		previewUrl: React.PropTypes.string,
+		editUrl: React.PropTypes.string,
 		onClose: React.PropTypes.func,
 		postId: React.PropTypes.number
 	},
@@ -104,10 +105,12 @@ const EditorPreview = React.createClass( {
 				{ previewFlow
 					? <WebPreviewContent
 							showPreview={ this.props.showPreview }
+							showEdit={ true }
+							showExternal={ false }
 							defaultViewportDevice={ this.props.defaultViewportDevice }
 							onClose={ this.props.onClose }
 							previewUrl={ this.state.iframeUrl }
-							externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
+							editUrl={ this.props.editUrl }
 						/>
 					: <WebPreview
 							showPreview={ this.props.showPreview }

@@ -55,8 +55,13 @@ export function fetchPostShareActionsPublished( siteId, postId ) {
 			postId,
 		} );
 
-		const getPublishedPath = `/sites/${ siteId }/post/${ postId }/publicize/published`;
-		return wpcom.req.get( getPublishedPath, ( error, data ) => {
+		const getPublishedPath = `/sites/${ siteId }/posts/${ postId }/publicize/published-actions`;
+		return wpcom.req.get(
+			{
+				path: getPublishedPath,
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			}, ( error, data ) => {
 			if ( error || ! data.items ) {
 				return dispatch( { type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_FAILURE, siteId, postId, error } );
 			}

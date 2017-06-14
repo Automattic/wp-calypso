@@ -56,6 +56,7 @@ import DismissibleCard from 'blocks/dismissible-card/docs/example';
 import PostEditButton from 'blocks/post-edit-button/docs/example';
 import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
+import VideoEditor from 'blocks/video-editor/docs/example';
 import ReaderPostCard from 'blocks/reader-post-card/docs/example';
 import ReaderCombinedCard from 'blocks/reader-combined-card/docs/example';
 import ReaderRecommendedSites from 'blocks/reader-recommended-sites/docs/example';
@@ -117,6 +118,7 @@ export default React.createClass( {
 					<FollowButton />
 					<HappinessSupport />
 					<ImageEditor />
+					<VideoEditor />
 					<LikeButtons />
 					<Login />
 					<PostEditButton />

@@ -20,7 +20,11 @@ import NoticeAction from 'components/notice/notice-action';
 import MediaListData from 'components/data/media-list-data';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaActions from 'lib/media/actions';
-import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
+import {
+	ValidationErrors as MediaValidationErrors,
+	MEDIA_IMAGE_PHOTON,
+	MEDIA_IMAGE_RESIZER,
+} from 'lib/media/constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryList from './list';
@@ -160,6 +164,14 @@ const MediaLibraryContent = React.createClass( {
 		analytics.tracks.recordEvent( tracksEvent, tracksData );
 	},
 
+	getThumbnailType() {
+		if ( this.props.site.is_private ) {
+			return MEDIA_IMAGE_RESIZER;
+		}
+
+		return MEDIA_IMAGE_PHOTON;
+	},
+
 	renderMediaList: function() {
 		if ( ! this.props.site ) {
 			return <MediaLibraryList key="list-loading" />;
@@ -175,7 +187,7 @@ const MediaLibraryContent = React.createClass( {
 						filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
 						search={ this.props.search }
 						containerWidth={ this.props.containerWidth }
-						photon={ ! this.props.site.is_private }
+						thumbnailType={ this.getThumbnailType() }
 						single={ this.props.single }
 						scrollable={ this.props.scrollable }
 						onEditItem={ this.props.onEditItem } />

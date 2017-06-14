@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
+import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { loginSocialUser } from 'state/login/actions';
 import { errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -21,6 +22,7 @@ class SocialLoginForm extends Component {
 		errorNotice: PropTypes.func.isRequired,
 		infoNotice: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		redirectTo: PropTypes.string,
 		removeNotice: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -32,23 +34,27 @@ class SocialLoginForm extends Component {
 	};
 
 	handleGoogleResponse = ( response ) => {
+		const { onSuccess, redirectTo, translate } = this.props;
+
 		if ( ! response.Zi || ! response.Zi.id_token ) {
 			return;
 		}
 
-		this.props.loginSocialUser( 'google', response.Zi.id_token ).then( () => {
+		this.props.loginSocialUser( 'google', response.Zi.id_token, redirectTo ).then( () => {
 			this.props.recordTracksEvent( 'calypso_social_login_form_login_success', {
 				social_account_type: 'google',
 			} );
 
-			this.props.onSuccess();
+			onSuccess();
 		} ).catch( error => {
 			if ( error.code === 'unknown_user' ) {
-				const { notice } = this.props.infoNotice( this.props.translate( 'Creating your account' ) );
+				const { notice } = this.props.infoNotice( translate( 'Creating your account' ) );
+
 				wpcom.undocumented().usersSocialNew( 'google', response.Zi.id_token, 'login', ( wpcomError, wpcomResponse ) => {
 					this.props.removeNotice( notice.noticeId );
+
 					if ( wpcomError ) {
-						this.props.recordTracksEvent( 'calypso_social_login_form_signup_fail', {
+						this.props.recordTracksEvent( 'calypso_social_login_form_signup_failure', {
 							social_account_type: 'google',
 							error: wpcomError.message
 						} );
@@ -66,7 +72,7 @@ class SocialLoginForm extends Component {
 					}
 				} );
 			} else {
-				this.props.recordTracksEvent( 'calypso_social_login_form_login_fail', {
+				this.props.recordTracksEvent( 'calypso_social_login_form_login_failure', {
 					social_account_type: 'google',
 					error: error.message
 				} );
@@ -102,7 +108,9 @@ class SocialLoginForm extends Component {
 }
 
 export default connect(
-	null,
+	( state ) => ( {
+		redirectTo: getCurrentQueryArguments( state ).redirect_to,
+	} ),
 	{
 		errorNotice,
 		infoNotice,

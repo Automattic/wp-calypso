@@ -9,6 +9,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
+import Button from 'components/button';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 
@@ -28,6 +29,10 @@ class PreviewToolbar extends Component {
 		showClose: PropTypes.bool,
 		// Show SEO button
 		showSEO: PropTypes.bool,
+		// Show edit button
+		showEdit: PropTypes.bool,
+		// The URL for the edit button
+		editUrl: PropTypes.string,
 		// The device to display, used for setting preview dimensions
 		device: PropTypes.string,
 		// Elements to render on the right side of the toolbar
@@ -56,12 +61,14 @@ class PreviewToolbar extends Component {
 	render() {
 		const {
 			device: currentDevice,
+			editUrl,
 			externalUrl,
 			onClose,
 			previewUrl,
 			setDeviceViewport,
 			showClose,
 			showDeviceSwitcher,
+			showEdit,
 			showExternal,
 			showSEO,
 			translate
@@ -101,18 +108,29 @@ class PreviewToolbar extends Component {
 						) ) }
 					</SelectDropdown>
 				}
-				{ showExternal &&
-					<a
-						className="web-preview__external"
-						href={ externalUrl || previewUrl }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<Gridicon icon="external" />
-					</a>
-				}
-				<div className="web-preview__toolbar-tray">
-					{ this.props.children }
+				<div className="web-preview__toolbar-actions">
+					{ showEdit &&
+						<Button
+							className="web-preview__edit"
+							href={ editUrl }
+							onClick={ onClose }
+						>
+							<Gridicon icon="pencil" /> { translate( 'Edit' ) }
+						</Button>
+					}
+					{ showExternal &&
+						<a
+							className="web-preview__external"
+							href={ externalUrl || previewUrl }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<Gridicon icon="external" />
+						</a>
+					}
+					<div className="web-preview__toolbar-tray">
+						{ this.props.children }
+					</div>
 				</div>
 			</div>
 		);

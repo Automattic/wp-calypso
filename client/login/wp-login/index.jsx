@@ -12,7 +12,6 @@ import page from 'page';
  */
 import config, { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
-import { getCurrentQueryArguments } from 'state/ui/selectors';
 import Gridicon from 'gridicons';
 import Main from 'components/main';
 import LocaleSuggestions from 'components/locale-suggestions';
@@ -97,7 +96,7 @@ export class Login extends React.Component {
 	}
 
 	render() {
-		const { queryArguments, translate, twoFactorAuthType } = this.props;
+		const { translate, twoFactorAuthType } = this.props;
 
 		return (
 			<Main className="wp-login">
@@ -111,10 +110,10 @@ export class Login extends React.Component {
 					<div className="wp-login__container">
 						<LoginBlock
 							twoFactorAuthType={ twoFactorAuthType }
-							redirectLocation={ queryArguments.redirect_to }
 							title={ translate( 'Log in to your account.' ) }
 						/>
 					</div>
+
 					<div className="wp-login__footer">
 						{ this.footerLinks() }
 					</div>
@@ -124,15 +123,9 @@ export class Login extends React.Component {
 	}
 }
 
-const mapState = state => {
-	return {
-		queryArguments: getCurrentQueryArguments( state ),
-	};
-};
-
 const mapDispatch = {
 	recordTracksEvent,
 	resetMagicLoginRequestForm,
 };
 
-export default connect( mapState, mapDispatch )( localize( Login ) );
+export default connect( null, mapDispatch )( localize( Login ) );

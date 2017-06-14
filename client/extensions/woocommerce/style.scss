@@ -40,6 +40,10 @@
 .store-sidebar__sidebar {
 	display: block;
 
+	.site {
+		padding: 6px 0;
+	}
+
 	.store-sidebar__ground-control {
 		align-items: center;
 		border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
@@ -58,6 +62,35 @@
 		border-left: 1px solid darken( $sidebar-bg-color, 10% );
 		display: inline-block;
 		flex-grow: 1;
+		min-height: 58px;
+	}
+}
+
+.focus-sidebar {
+	@include breakpoint( "<660px" ) {
+		.sticky-panel,
+		.products__form,
+		.current-section {
+			display: none;
+		}
+	}
+}
+
+.focus-content {
+	@include breakpoint( "<660px" ) {
+		.site-icon,
+		.current-section__site-title,
+		.current-section__section-title {
+			display: none;
+		}
+
+		.current-section a {
+			position: fixed;
+			z-index: 1;
+			top: 18px;
+			background: transparent;
+			border: none;
+		}
 	}
 
 	li {

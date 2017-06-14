@@ -116,10 +116,26 @@ a.web-preview__external {
 	cursor: pointer;
 }
 
-.web-preview__external {
-	display: flex;
-	align-items: center;
+.web-preview__edit {
+	color: $gray;
+	border: none;
+	padding: 15px 12px;
+
+	&:visited {
+		color: $gray;
+	}
+
+	&:hover {
+		color: $gray-dark;
+	}
+
+}
+
+.web-preview__toolbar-actions {
 	margin-left: auto;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
 }
 
 .web-preview__device-switcher {
@@ -171,15 +187,6 @@ a.web-preview__external {
 }
 
 .web-preview__toolbar-tray {
-	margin-left: auto;
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: flex-end;
-
-	a.web-preview__external + & {
-		margin-left: 0;
-	}
-
 	.button {
 		margin: 4px;
 		&:not(:last-child) {

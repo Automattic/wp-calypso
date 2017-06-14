@@ -34,23 +34,28 @@ describe( 'MediaLibraryListItem image', function() {
 
 	const getPhotonUrl = () => photon( fixtures.media[ 0 ].URL, { width: WIDTH } );
 	const getResizedUrl = () => resize( fixtures.media[ 0 ].URL, { w: WIDTH } );
-	const getItem = usePhoton => <ListItemImage media={ fixtures.media[ 0 ] } scale={ 1 } photon={ usePhoton } maxImageWidth={ WIDTH } />;
+	const getItem = ( itemPos, type ) =>
+		<ListItemImage
+			media={ fixtures.media[ itemPos ] }
+			scale={ 1 }
+			maxImageWidth={ WIDTH }
+			thumbnailType={ type } />;
 
 	context( 'thumbnail display mode', function() {
-		it( 'defaults to photon when no photon parameter is passed', function() {
-			wrapper = shallow( getItem() );
+		it( 'defaults to photon when no thumbnail parameter is passed', function() {
+			wrapper = shallow( getItem( 0 ) );
 
 			expect( wrapper.props().src ).to.be.equal( getPhotonUrl() );
 		} );
 
-		it( 'returns a photon thumbnail for a public image', function() {
-			wrapper = shallow( getItem( true ) );
+		it( 'returns a photon thumbnail for type MEDIA_IMAGE_PHOTON', function() {
+			wrapper = shallow( getItem( 0, 'MEDIA_IMAGE_PHOTON' ) );
 
 			expect( wrapper.props().src ).to.be.equal( getPhotonUrl() );
 		} );
 
-		it( 'returns a resized thumbnail for a private image', function() {
-			wrapper = shallow( getItem( false ) );
+		it( 'returns a resized private thumbnail for type MEDIA_IMAGE_RESIZER', function() {
+			wrapper = shallow( getItem( 0, 'MEDIA_IMAGE_RESIZER' ) );
 
 			expect( wrapper.props().src ).to.be.equal( getResizedUrl() );
 		} );

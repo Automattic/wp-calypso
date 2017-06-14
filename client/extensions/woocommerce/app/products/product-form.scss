@@ -2,6 +2,12 @@
  * TODO: Variation modal width
  */
 
+.products__form {
+	@include breakpoint( ">660px" ) {
+		margin-top: 58px;
+	}
+}
+
 .form-label {
 	margin-bottom: 5px;
 }
