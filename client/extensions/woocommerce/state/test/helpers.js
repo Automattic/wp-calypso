@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import { mapValues } from 'lodash';
+
 export const createState = ( { ui, site } ) => {
 	return {
 		extensions: {
@@ -6,7 +11,7 @@ export const createState = ( { ui, site } ) => {
 					123: site,
 				},
 				ui: {
-					123: ui,
+					...mapValues( ui, branch => ( { 123: branch } ) ),
 				},
 			},
 		},
