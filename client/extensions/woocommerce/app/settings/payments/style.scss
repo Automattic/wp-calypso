@@ -2,6 +2,10 @@
 	width: 100%;
 }
 
+.payments__type-container .section-header__label:before {
+	display: none;
+}
+
 // PAYMENT-METHOD-ROW
 .payments__type-container {
 
