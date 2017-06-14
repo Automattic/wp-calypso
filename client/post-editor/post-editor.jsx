@@ -824,7 +824,7 @@ export const PostEditor = React.createClass( {
 				status: 'is-success',
 				message,
 				action,
-				link
+				link: config.isEnabled( 'post-editor/delta-post-publish-preview' ) ? null : link,
 			};
 
 			window.scrollTo( 0, 0 );
