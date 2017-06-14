@@ -34,7 +34,9 @@ describe( 'EditorMediaModal', function() {
 
 	translate = require( 'i18n-calypso' ).translate;
 
-	useMockery();
+	useMockery( () => {
+		mockery.registerSubstitute( 'event', 'component-event' );
+	} );
 	useFakeDom();
 	useSandbox( ( sandbox ) => {
 		spy = sandbox.spy();
