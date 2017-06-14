@@ -27,6 +27,7 @@ import DatePicker from 'my-sites/stats/stats-date-picker';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
+import { isRewindActive } from 'state/selectors';
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -177,7 +178,8 @@ class ActivityLog extends Component {
 			siteId,
 			slug,
 			moment,
-			startDate
+			startDate,
+			isRewindActive,
 		} = this.props;
 		const startOfMonth = moment( startDate ).startOf( 'month' ),
 			startOfMonthMs = startOfMonth.valueOf(),
@@ -194,7 +196,7 @@ class ActivityLog extends Component {
 					timestamp={ timestamp }
 					logs={ daily_logs }
 					siteId={ siteId }
-					isRewindEnabled={ true }
+					isRewindEnabled={ isRewindActive }
 				/>
 			)
 		);
@@ -219,7 +221,7 @@ class ActivityLog extends Component {
 					/>
 				</StatsPeriodNavigation>
 				{ this.renderBanner() }
-				<ActivityLogRewindToggle siteId={ siteId } />
+				{ ! isRewindActive && <ActivityLogRewindToggle siteId={ siteId } /> }
 				<section className="activity-log__wrapper">
 					{ logsGroupedByDate }
 				</section>
@@ -260,6 +262,7 @@ export default connect(
 			siteId,
 			slug: getSiteSlug( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
+			isRewindActive: isRewindActive( state, siteId ),
 
 			// FIXME: Testing only
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false ),

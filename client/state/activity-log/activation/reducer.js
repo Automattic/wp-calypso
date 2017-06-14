@@ -26,7 +26,4 @@ export const activationRequesting = keyedReducer( 'siteId', createReducer( {}, {
 	[ REWIND_ACTIVATE_REQUEST ]: stubTrue,
 	[ REWIND_ACTIVATE_FAILURE ]: stubFalse,
 	[ REWIND_ACTIVATE_SUCCESS ]: stubFalse,
-	[ REWIND_DEACTIVATE_REQUEST ]: stubTrue,
-	[ REWIND_DEACTIVATE_FAILURE ]: stubFalse,
-	[ REWIND_DEACTIVATE_SUCCESS ]: stubFalse,
 } ) );

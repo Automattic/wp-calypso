@@ -12,12 +12,8 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import {
 	activateRewind as activateRewindAction,
-	deactivateRewind as deactivateRewindAction,
 } from 'state/activity-log/actions';
-import {
-	isRewindActivating,
-	isRewindActive,
-} from 'state/selectors';
+import { isRewindActivating } from 'state/selectors';
 
 class ActivityLogRewindToggle extends Component {
 	static propTypes = {
@@ -25,12 +21,10 @@ class ActivityLogRewindToggle extends Component {
 		siteId: PropTypes.number,
 
 		// mappedSelectors
-		isActive: PropTypes.bool.isRequired,
-		isToggling: PropTypes.bool.isRequired,
+		isActivating: PropTypes.bool.isRequired,
 
 		// bound dispatch
 		activateRewind: PropTypes.func.isRequired,
-		deactivateRewind: PropTypes.func.isRequired,
 
 		// localize
 		translate: PropTypes.func.isRequired,
@@ -38,34 +32,24 @@ class ActivityLogRewindToggle extends Component {
 
 	static defaultProps = {
 		isActive: false,
-		isToggling: false,
+		isActivating: false,
 	};
 
-	handleToggle = () => {
+	activateRewind = () => {
 		const {
 			activateRewind,
-			deactivateRewind,
-			isActive,
 			siteId,
 		} = this.props;
-		if ( isActive ) {
-			deactivateRewind( siteId );
-		} else {
-			activateRewind( siteId );
-		}
-	}
+
+		activateRewind( siteId );
+	};
 
 	render() {
 		const {
-			isActive,
-			isToggling,
+			isActivating,
 			siteId,
 			translate,
 		} = this.props;
-
-		const buttonText = isActive
-			? translate( 'Deactivate Rewind' )
-			: translate( 'Activate Rewind' );
 
 		const isSiteKnown = !! siteId;
 
@@ -73,13 +57,13 @@ class ActivityLogRewindToggle extends Component {
 			<Button
 				compact={ true }
 				className={ classNames( 'activity-log__rewind-toggle', {
-					'is-busy': isSiteKnown && isToggling,
+					'is-busy': isSiteKnown && isActivating,
 				} ) }
-				disabled={ ! isSiteKnown || isToggling }
-				primary={ isSiteKnown && isActive }
-				onClick={ this.handleToggle }
+				disabled={ ! isSiteKnown || isActivating }
+				primary
+				onClick={ this.activateRewind }
 			>
-				{ buttonText }
+				{ translate( 'Activate Rewind' ) }
 			</Button>
 		);
 	}
@@ -87,10 +71,8 @@ class ActivityLogRewindToggle extends Component {
 
 export default connect(
 	( state, { siteId } ) => ( {
-		isToggling: isRewindActivating( state, siteId ),
-		isActive: isRewindActive( state, siteId ),
+		isActivating: isRewindActivating( state, siteId ),
 	} ), {
 		activateRewind: activateRewindAction,
-		deactivateRewind: deactivateRewindAction,
 	}
 )( localize( ActivityLogRewindToggle ) );

@@ -13,7 +13,6 @@ import {
 } from '../reducer';
 import {
 	rewindActivateSuccess,
-	rewindDeactivateSuccess,
 	rewindStatusError as rewindStatusErrorAction,
 	updateRewindStatus,
 } from 'state/activity-log/actions';
@@ -56,25 +55,6 @@ describe( '#rewindStatus()', () => {
 			}
 		} );
 		const state = rewindStatus( prevState, rewindActivateSuccess( SITE_ID ) );
-		expect( state[ SITE_ID ].other ).to.equal( 'prop' );
-	} );
-
-	it( 'should update on deactivation success', () => {
-		const prevState = deepFreeze( {
-			[ SITE_ID ]: { active: true }
-		} );
-		const state = rewindStatus( prevState, rewindDeactivateSuccess( SITE_ID ) );
-		expect( state[ SITE_ID ].active ).to.be.false;
-	} );
-
-	it( 'should maintain other props on activation success', () => {
-		const prevState = deepFreeze( {
-			[ SITE_ID ]: {
-				active: true,
-				other: 'prop',
-			}
-		} );
-		const state = rewindStatus( prevState, rewindDeactivateSuccess( SITE_ID ) );
 		expect( state[ SITE_ID ].other ).to.equal( 'prop' );
 	} );
 
