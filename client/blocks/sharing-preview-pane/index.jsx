@@ -4,7 +4,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, find } from 'lodash';
+import { get, find, map, intersection } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,9 +46,11 @@ class SharingPreviewPane extends PureComponent {
 		]
 	};
 
-	state = {
-		selectedService: 'facebook'
-	};
+	constructor( props ) {
+		super( props );
+		const selectedService = this.props.connectedServices[ 0 ];
+		this.state = { selectedService };
+	}
 
 	selectPreview = ( selectedService ) => {
 		this.setState( { selectedService } );
@@ -106,7 +108,8 @@ class SharingPreviewPane extends PureComponent {
 	}
 
 	render() {
-		const { translate, services } = this.props;
+		const { translate, services, connectedServices } = this.props;
+		const activeServices = intersection( services, connectedServices );
 
 		return (
 			<div className="sharing-preview-pane">
@@ -123,7 +126,7 @@ class SharingPreviewPane extends PureComponent {
 						</p>
 					</div>
 					<VerticalMenu onClick={ this.selectPreview }>
-						{ services.map( service => <SocialItem { ...{ key: service, service } } /> ) }
+						{ activeServices.map( service => <SocialItem { ...{ key: service, service } } /> ) }
 					</VerticalMenu>
 				</div>
 				<div className="sharing-preview-pane__preview-area">
@@ -143,12 +146,14 @@ const mapStateToProps = ( state, ownProps ) => {
 	const seoTitle = getSeoTitle( state, 'posts', { site, post } );
 	const currentUserId = getCurrentUserId( state );
 	const connections = getSiteUserConnections( state, siteId, currentUserId );
+	const connectedServices = map( connections, 'service' );
 
 	return {
 		site,
 		post,
 		seoTitle,
 		connections,
+		connectedServices,
 	};
 };
 
