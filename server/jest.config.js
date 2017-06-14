@@ -10,6 +10,6 @@ module.exports = {
 	testEnvironment: 'node',
 	testMatch: [ '**/server/**/test/*.js?(x)' ],
 	timers: 'fake',
-	setupTestFrameworkScriptFile: '<rootDir>/test/setup-test-framework.js',
+	setupTestFrameworkScriptFile: '<rootDir>/test/jest/setup-test-framework.js',
 	verbose: true,
 };

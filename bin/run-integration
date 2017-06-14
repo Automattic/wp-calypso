@@ -1,5 +1,5 @@
 #!/bin/bash
 if [[ "$RUN_ARGS" == "--nightly" ]];
 then
-    MOCHA_FILE=./test-results-integration.xml npm run test-integration -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX
+	npm run test-integration:ci
 fi

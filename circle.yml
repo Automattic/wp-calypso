@@ -15,7 +15,7 @@ test:
           fi
       : parallel: true
   override:
-    - bin/run-integration:
+    - npm run test-integration:ci:
         parallel: true
     - npm run lint:config-defaults
     - ./node_modules/.bin/eslint-eslines:
