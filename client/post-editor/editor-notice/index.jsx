@@ -226,10 +226,10 @@ export class EditorNotice extends Component {
 	}
 
 	render() {
-		const { siteId, message, status, onDismissClick, isPreviewable } = this.props;
+		const { siteId, message, status, onDismissClick } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
 		const classes = classNames( 'editor-notice', {
-			'is-global': config.isEnabled( 'post-editor/delta-post-publish-preview' ) && isPreviewable,
+			'is-global': config.isEnabled( 'post-editor/delta-post-publish-preview' ),
 		} );
 
 		return (

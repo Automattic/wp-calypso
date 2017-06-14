@@ -275,10 +275,12 @@ export const PostEditor = React.createClass( {
 					/>
 					<div className="post-editor__content">
 						<div className="editor">
-							<EditorNotice
-								{ ...this.state.notice }
-								onDismissClick={ this.hideNotice }
-								onViewClick={ this.onPreview } />
+							{ ! config.isEnabled( 'post-editor/delta-post-publish-preview' )
+								? <EditorNotice
+									{ ...this.state.notice }
+									onDismissClick={ this.hideNotice }
+									onViewClick={ this.onPreview } />
+								: null }
 							<EditorActionBar
 								isNew={ this.state.isNew }
 								onPrivatePublish={ this.onPublish }
@@ -373,6 +375,12 @@ export const PostEditor = React.createClass( {
 							editUrl={ this.props.editPath }
 							defaultViewportDevice={ config.isEnabled( 'post-editor/delta-post-publish-preview' ) ? 'computer' : 'tablet' }
 						/>
+						: null }
+					{ config.isEnabled( 'post-editor/delta-post-publish-preview' )
+						? <EditorNotice
+								{ ...this.state.notice }
+								onDismissClick={ this.hideNotice }
+								onViewClick={ this.onPreview } />
 						: null }
 				</div>
 				{ isTrashed
