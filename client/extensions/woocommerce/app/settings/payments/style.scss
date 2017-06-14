@@ -2,8 +2,12 @@
 	width: 100%;
 }
 
+.payments__type-container .section-header__label::before {
+	display: none;
+}
+
 // PAYMENT-METHOD-ROW
-.payments__off-site-container {
+.payments__type-container {
 
 	p.payments__method-suggested {
 		font-size: 11px;
@@ -23,17 +27,35 @@
 		font-size: 15px;
 	}
 
-	.list-item-field:first-child {
-		width: 30%;
+	.list-header + .list-item {
+		border-top: 0;
 	}
 
-	.list-item-field:nth-child( 2 ) {
-		width: 50%;
+	.list-item {
+		border-top: 1px solid $border-ultra-light-gray;
+	}
+
+	.payments__method-information {
+		font-size: 12px;
+	}
+
+	.payments__method-name {
+		font-size: 14px;
+	}
+
+	.list-item-field {
+		width: 30%;
+
+		&:nth-child( 2 ) {
+			width: 45%;
+		}
+
+		&:nth-child( 3 ) {
+			width: 25%;
+		}
 	}
 
 	.list-item-field:nth-child( 3 ) {
-		width: 20%;
-
 		.button {
 			align-self: flex-end;
 		}
@@ -45,17 +67,12 @@
 	width: 100%;
 }
 
-.payments__off-site-container {
-	.list__ul {
-		> div {
-			li:nth-child(2) {
-				padding: 16px;
-				border-top: 1px solid $gray-light;
+.payments__method-edit-fields {
+	padding: 16px;
+	border-top: 1px solid $border-ultra-light-gray;
+	width: 100%;
 
-				@include breakpoint( ">480px" ) {
-					padding: 24px;
-				}
-			}
-		}
+	@include breakpoint( '>480px' ) {
+		padding: 24px;
 	}
 }

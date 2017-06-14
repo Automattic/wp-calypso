@@ -13,7 +13,7 @@ import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
-import ListItem from 'woocommerce/components/list/list-item';
+import FormTextarea from 'components/forms/form-textarea';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 
 class PaymentMethodEdit extends Component {
@@ -60,6 +60,7 @@ class PaymentMethodEdit extends Component {
 				{ 'email' === setting.type && this.renderEditTextbox( setting ) }
 				{ 'password' === setting.type && this.renderEditPassword( setting ) }
 				{ 'text' === setting.type && this.renderEditTextbox( setting ) }
+				{ 'textarea' === setting.type && this.renderEditTextarea( setting ) }
 				{ 'select' === setting.type && this.renderEditSelect( setting ) }
 			</FormFieldset>
 		);
@@ -88,6 +89,12 @@ class PaymentMethodEdit extends Component {
 		);
 	}
 
+	renderEditTextarea = ( setting ) => {
+		return (
+			<FormTextarea name={ setting.id } onChange={ this.onEditFieldHandler } value={ setting.value } />
+		);
+	}
+
 	renderSelectOption = ( key, title ) => {
 		return (
 			<option key={ key } value={ key }>{ title }</option>
@@ -98,13 +105,12 @@ class PaymentMethodEdit extends Component {
 		const { method, translate } = this.props;
 		const settingsFieldsKeys = method.settings && Object.keys( method.settings );
 		return (
-			<ListItem>
+			<div className="payments__method-edit-fields">
 				{ settingsFieldsKeys.map( this.renderEditField ) }
-				<hr />
 				<Button primary onClick={ this.onSaveHandler }>
 					{ translate( 'Save' ) }
 				</Button>
-			</ListItem>
+			</div>
 		);
 	}
 
