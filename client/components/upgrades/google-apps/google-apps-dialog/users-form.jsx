@@ -93,4 +93,4 @@ class GoogleAppsUsersForm extends React.Component {
 	}
 }
 
-export default ( localize( GoogleAppsUsersForm ) );
+export default localize( GoogleAppsUsersForm );
