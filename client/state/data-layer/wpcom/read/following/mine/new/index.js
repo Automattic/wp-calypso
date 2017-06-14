@@ -38,7 +38,7 @@ export function requestFollow( { dispatch }, action ) {
 export function receiveFollow( store, action, next, response ) {
 	if ( response && response.subscribed ) {
 		const subscription = subscriptionFromApi( response.subscription );
-		next( follow( action.payload.feedUrl, subscriptionFromApi( subscription ) ) );
+		next( follow( action.payload.feedUrl, subscription ) );
 
 		// build up a notice to show
 		const site = getSite( store.getState(), subscription.blog_ID );

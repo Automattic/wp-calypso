@@ -28,7 +28,7 @@ describe( 'requestFollow', () => {
 				},
 				onSuccess: action,
 				onFailure: action,
-			} )
+			} ),
 		);
 	} );
 } );
@@ -50,7 +50,13 @@ describe( 'receiveFollow', () => {
 				is_owner: false,
 			},
 		};
-		receiveFollow( { dispatch }, action, next, response );
+		const getState = () => ( {
+			reader: {
+				sites: { items: {} },
+				feeds: { items: {} },
+			},
+		} );
+		receiveFollow( { dispatch, getState }, action, next, response );
 		expect( next ).to.be.calledWith(
 			follow( 'http://example.com', {
 				ID: 1,
@@ -61,7 +67,10 @@ describe( 'receiveFollow', () => {
 				date_subscribed: 211636800000,
 				delivery_methods: {},
 				is_owner: false,
-			} )
+			} ),
+		);
+		expect( dispatch ).to.be.calledWithMatch(
+			{ type: NOTICE_CREATE, notice: { status: 'is-success' } },
 		);
 	} );
 
@@ -74,7 +83,9 @@ describe( 'receiveFollow', () => {
 		};
 
 		receiveFollow( { dispatch }, action, next, response );
-		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
+		expect( dispatch ).to.be.calledWithMatch(
+			{ type: NOTICE_CREATE, notice: { status: 'is-error' } },
+		);
 		expect( next ).to.be.calledWith( unfollow( 'http://example.com' ) );
 	} );
 } );
