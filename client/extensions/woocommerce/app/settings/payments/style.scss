@@ -23,25 +23,27 @@
 		font-size: 15px;
 	}
 
-	.list-item-field:first-child {
+	.list-header + .list-item {
+		border-top: 0;
+	}
+
+	.list-item {
+		border-top: 1px solid lighten( $gray, 30% );
+	}
+
+	.list-item-field {
 		width: 30%;
-	}
 
-	.payments__methods-offline .list-item-field:first-child {
-		width: 50%;
-	}
+		&:nth-child(2) {
+			width: 45%;
+		}
 
-	.list-item-field:nth-child( 2 ) {
-		width: 40%;
-	}
-
-	.payments__methods-offline .list-item-field:nth-child( 2 ) {
-		width: 0;
+		&:nth-child(3) {
+			width: 25%;
+		}
 	}
 
 	.list-item-field:nth-child( 3 ) {
-		width: 20%;
-
 		.button {
 			align-self: flex-end;
 		}
@@ -56,6 +58,7 @@
 .payments__method-edit-pane {
 	padding: 16px;
 	border-top: 1px solid $gray-light;
+	width: 100%;
 
 	@include breakpoint( '>480px' ) {
 		padding: 24px;

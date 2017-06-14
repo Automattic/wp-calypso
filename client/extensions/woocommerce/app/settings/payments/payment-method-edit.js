@@ -107,7 +107,6 @@ class PaymentMethodEdit extends Component {
 		return (
 			<div className="payments__method-edit-pane">
 				{ settingsFieldsKeys.map( this.renderEditField ) }
-				<hr />
 				<Button primary onClick={ this.onSaveHandler }>
 					{ translate( 'Save' ) }
 				</Button>
