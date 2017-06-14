@@ -12,9 +12,8 @@ import { getSiteFragment, sectionify } from 'lib/route';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import WPJobManager from './main';
 
-export function settings( context ) {
+export function renderTab( context, component, tab = '' ) {
 	const siteId = getSiteFragment( context.path );
-	const { tab = '' } = context.params;
 	const basePath = sectionify( context.path );
 	let baseAnalyticsPath;
 
@@ -35,7 +34,11 @@ export function settings( context ) {
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
 	renderWithReduxStore(
-		React.createElement( WPJobManager, { context, tab } ),
+		React.createElement(
+			WPJobManager,
+			{ context, tab },
+			React.createElement( component ),
+		),
 		document.getElementById( 'primary' ),
 		context.store
 	);

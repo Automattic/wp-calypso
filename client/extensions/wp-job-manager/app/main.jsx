@@ -14,13 +14,19 @@ import Main from 'components/main';
 import Navigation from '../components/navigation';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const WPJobManager = ( { site, tab, translate } ) => {
+const WPJobManager = ( {
+	children,
+	site,
+	tab,
+	translate
+} ) => {
 	const mainClassName = 'wp-job-manager__main';
 
 	return (
 		<Main className={ mainClassName }>
 			<DocumentHead title={ translate( 'WP Job Manager' ) } />
 			<Navigation activeTab={ tab } site={ site } />
+			{ children }
 		</Main>
 	);
 };

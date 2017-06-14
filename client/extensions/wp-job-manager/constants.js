@@ -6,7 +6,7 @@ import { translate } from 'i18n-calypso';
 export const Tabs = {
 	JOB_LISTINGS: {
 		label: translate( 'Job Listings' ),
-		slug: 'job-listings',
+		slug: '',
 	},
 	JOB_SUBMISSION: {
 		label: translate( 'Job Submission' ),

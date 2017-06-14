@@ -2,17 +2,30 @@
  * External dependencies
  */
 import page from 'page';
-import { values } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { navigation, sites, siteSelection } from 'my-sites/controller';
-import { settings } from './app/controller';
-import { Tabs } from './constants';
+import { renderTab } from './app/controller';
+import { Tabs } from './constants';
+import JobListings from './components/job-listings';
+import JobSubmission from './components/job-submission';
+import Pages from './components/pages';
 
 export default function() {
+	const jobSubmissionSlug = get( Tabs, 'JOB_SUBMISSION.slug', '' );
+	const pagesSlug = get( Tabs, 'PAGES.slug', '' );
+
 	page( '/extensions/wp-job-manager', sites );
-	page( `/extensions/wp-job-manager/:tab(${ values( Tabs ).map( tab => tab.slug ).join( '|' ) })?/:site`,
-		siteSelection, navigation, settings );
+	page( '/extensions/wp-job-manager/:site', siteSelection, navigation, context => {
+		renderTab( context, JobListings );
+	} );
+	page( `/extensions/wp-job-manager/${ jobSubmissionSlug }/:site`, siteSelection, navigation, context => {
+		renderTab( context, JobSubmission, jobSubmissionSlug );
+	} );
+	page( `/extensions/wp-job-manager/${ pagesSlug }/:site`, siteSelection, navigation, context => {
+		renderTab( context, Pages, pagesSlug );
+	} );
 }
