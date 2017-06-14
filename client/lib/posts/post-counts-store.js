@@ -34,7 +34,7 @@ var _counts = {},
 function getSiteId( id ) {
 	var site, siteId;
 
-	id = id || PostListStore.getSiteID();
+	id = id || PostListStore.getSiteId();
 
 	site = sites.getSite( id );
 
