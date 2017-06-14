@@ -1,17 +1,11 @@
 /**
  * Internal dependencies
  */
-import {
-	COMMENTS_REMOVE,
-	COMMENTS_RECEIVE,
-	COMMENTS_COUNT_INCREMENT,
-	COMMENTS_WRITE,
-} from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { COMMENTS_WRITE } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
-	createPlaceholderComment,
-	handleSuccess,
+	dispatchNewCommentRequest,
+	updatePlaceholderComment,
 	handleWriteCommentFailure,
 } from 'state/data-layer/wpcom/sites/utils';
 
@@ -19,33 +13,11 @@ export const newPostReply = ( { dispatch }, action ) => {
 	if ( action.parentCommentId ) {
 		return;
 	}
-	const { siteId, postId, parentCommentId, commentText } = action;
-	const placeholder = createPlaceholderComment( commentText, postId, parentCommentId );
 
-	// Insert a placeholder
-	dispatch( {
-		type: COMMENTS_RECEIVE,
-		siteId,
-		postId,
-		comments: [ placeholder ],
-		skipSort: false
-	} );
-
-	dispatch( http( {
-		method: 'POST',
-		apiVersion: '1.1',
-		path: `/sites/${ siteId }/posts/${ postId }/replies/new`,
-		body: {
-			content: commentText
-		},
-		onSuccess: {
-			...action,
-			placeholderId: placeholder.ID
-		},
-		onFailure: action
-	} ) );
+	const path = `/sites/${ action.siteId }/posts/${ action.postId }/replies/new`;
+	dispatchNewCommentRequest( dispatch, action, path );
 };
 
 export default {
-	[ COMMENTS_WRITE ]: [ dispatchRequest( newPostReply, handleSuccess, handleWriteCommentFailure ) ]
+	[ COMMENTS_WRITE ]: [ dispatchRequest( newPostReply, updatePlaceholderComment, handleWriteCommentFailure ) ]
 };

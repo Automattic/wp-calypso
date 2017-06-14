@@ -15,15 +15,17 @@ import {
 } from 'state/action-types';
 import {
 	createPlaceholderComment,
+	dispatchNewCommentRequest,
 	updatePlaceholderComment,
 	handleWriteCommentFailure,
 } from '../utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
 describe( 'utility functions', () => {
-	describe( '#createPlaceholderComment()', () => {
-		useFakeTimers();
+	useFakeTimers();
 
+	describe( '#createPlaceholderComment()', () => {
 		it( 'should return a comment placeholder', () => {
 			const placeholder = createPlaceholderComment( 'comment text', 1, 2 );
 
@@ -38,6 +40,49 @@ describe( 'utility functions', () => {
 				status: 'pending',
 				type: 'comment'
 			} );
+		} );
+	} );
+
+	describe( '#dispatchNewCommentRequest()', () => {
+		const action = {
+			type: 'DUMMY',
+			siteId: 2916284,
+			postId: 1010,
+			commentText: 'comment text'
+		};
+		const placeholder = {
+			ID: 'placeholder-0',
+			content: 'comment text',
+			date: '1970-01-01T00:00:00.000Z',
+			isPlaceholder: true,
+			parent: false,
+			placeholderState: 'PENDING',
+			post: { ID: 1010 },
+			status: 'pending',
+			type: 'comment'
+		};
+
+		it( 'should dispatch a http request action to the specified path', () => {
+			const dispatch = spy();
+
+			dispatchNewCommentRequest( dispatch, action, '/sites/foo/comments' );
+
+			expect( dispatch ).to.have.been.calledTwice;
+			expect( dispatch ).to.have.been.calledWith( {
+				type: COMMENTS_RECEIVE,
+				siteId: 2916284,
+				postId: 1010,
+				skipSort: false,
+				comments: [ placeholder ],
+			} );
+			expect( dispatch ).to.have.been.calledWith( http( {
+				apiVersion: '1.1',
+				method: 'POST',
+				path: '/sites/foo/comments',
+				body: { content: 'comment text' },
+				onSuccess: { ...action, placeholderId: placeholder.ID },
+				onFailure: action
+			} ) );
 		} );
 	} );
 

@@ -11,6 +11,7 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
 } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { errorNotice } from 'state/notices/actions';
 
@@ -35,6 +36,43 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
 	isPlaceholder: true,
 	placeholderState: 'PENDING'
 } );
+
+/***
+ * Creates a placeholder comment for a given text and postId
+ * We need placehodler id to be unique in the context of siteId, postId for that specific user,
+ * date milliseconds will do for that purpose.
+ *
+ * @param {Function} dispatch redux dispatcher
+ * @param {Object}   action   redux action
+ * @param {String}   path     comments resource path
+ */
+export const dispatchNewCommentRequest = ( dispatch, action, path ) => {
+	const { siteId, postId, parentCommentId, commentText } = action;
+	const placeholder = createPlaceholderComment( commentText, postId, parentCommentId );
+
+	// Insert a placeholder
+	dispatch( {
+		type: COMMENTS_RECEIVE,
+		siteId,
+		postId,
+		comments: [ placeholder ],
+		skipSort: !! parentCommentId
+	} );
+
+	dispatch( http( {
+		method: 'POST',
+		apiVersion: '1.1',
+		path,
+		body: {
+			content: commentText
+		},
+		onSuccess: {
+			...action,
+			placeholderId: placeholder.ID
+		},
+		onFailure: action
+	} ) );
+};
 
 /***
  * updates the placeholder comments with server values
