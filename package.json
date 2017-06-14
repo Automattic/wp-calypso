@@ -203,7 +203,7 @@
     "postshrinkwrap": "node bin/trim-shrinkwrap.js && touch node_modules",
     "prestart": "npm run -s install-if-needed && node bin/welcome.js && ( check-node-version --package || exit 0 )",
     "start": "npm run -s build",
-    "poststart": "npm run -s env -- node build/bundle.js",
+    "poststart": "npm run -s env -- cross-env node $NODE_ARGS build/bundle.js",
     "pretest": "npm run -s install-if-needed",
     "test": "run-s -s test-client test-server test-test",
     "test-client": "cross-env NODE_ENV=test NODE_PATH=test:client:client/extensions TEST_ROOT=client node test/runner.js",
