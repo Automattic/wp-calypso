@@ -62,13 +62,13 @@ export function fetchPostShareActionsPublished( siteId, postId ) {
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
 			}, ( error, data ) => {
-				if ( error || ! data.items ) {
-					return dispatch( { type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_FAILURE, siteId, postId, error } );
-				}
+			if ( error || ! data.items ) {
+				return dispatch( { type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_FAILURE, siteId, postId, error } );
+			}
 
-				const actions = {};
-				data.items.forEach( action => ( actions[ action.ID ] = action ) );
-				dispatch( { type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_SUCCESS, siteId, postId, actions } );
+			const actions = {};
+			data.items.forEach( action => ( actions[ action.ID ] = action ) );
+			dispatch( { type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_SUCCESS, siteId, postId, actions } );
 		} );
 	};
 }
