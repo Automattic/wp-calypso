@@ -5,6 +5,7 @@ import React from 'react';
 import url from 'url';
 import omit from 'lodash/omit';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -112,6 +113,12 @@ const EditorPreview = React.createClass( {
 							onEdit={ this.props.onEdit }
 							previewUrl={ this.state.iframeUrl }
 							editUrl={ this.props.editUrl }
+							externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
+							loadingMessage={
+								this.props.translate( '{{strong}}One moment please…{{/strong}} loading your new post.',
+									{ components: { strong: <strong /> } }
+								)
+							}
 						/>
 					: <WebPreview
 							showPreview={ this.props.showPreview }
@@ -126,4 +133,4 @@ const EditorPreview = React.createClass( {
 	}
 } );
 
-module.exports = EditorPreview;
+module.exports = localize( EditorPreview );

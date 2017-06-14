@@ -22,3 +22,16 @@
 		visibility: visible;
     }
 }
+
+.editor-preview .web-preview__loading-message {
+	font-size: 16px;
+	position: relative;
+		z-index: z-index( 'root', '.web-preview' );
+
+	strong {
+		color: $gray-text-min;
+		display: block;
+		font-size: 24px;
+		margin-bottom: 5px;
+	}
+}
