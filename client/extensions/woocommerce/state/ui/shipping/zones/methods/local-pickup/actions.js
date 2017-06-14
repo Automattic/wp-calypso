@@ -7,7 +7,7 @@ import {
 } from 'woocommerce/state/action-types';
 
 /**
- * Changes the "taxable" setting.
+ * Changes the "tax_status" setting.
  * @param {Number} siteId Site ID.
  * @param {String} methodId ID of the shipping method to edit.
  * @param {Boolean} isTaxable Whether the shipping cost must be subject to taxes or not.

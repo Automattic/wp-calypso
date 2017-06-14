@@ -8,7 +8,7 @@ import {
 } from 'woocommerce/state/action-types';
 
 const initialState = {
-	taxable: 'None',
+	tax_status: 'None',
 	cost: 0,
 };
 
@@ -16,7 +16,7 @@ const reducer = {};
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE ] = ( state, { isTaxable } ) => {
 	return { ...state,
-		taxable: isTaxable ? 'Taxable' : 'None',
+		tax_status: isTaxable ? 'Taxable' : 'None',
 	};
 };
 

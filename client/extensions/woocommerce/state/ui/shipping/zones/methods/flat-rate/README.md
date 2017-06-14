@@ -7,5 +7,5 @@ charge the user a constant amount, independently of the order cost or weight.
 ## Reducer
 
 The shipping method has the following properties:
-* `taxable` (String): Whether the shipping cost is subject to taxes (`"Taxable"`) or not (`"None"`).
+* `tax_status` (String): Whether the shipping cost is subject to taxes (`"Taxable"`) or not (`"None"`).
 * `cost` (Number): The fixed cost (without taxes) that the customer will pay for shipping.

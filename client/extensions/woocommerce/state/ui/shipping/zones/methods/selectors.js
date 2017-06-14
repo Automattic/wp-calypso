@@ -153,4 +153,4 @@ export const getMethodTypeChangeOptions = ( state, currentMethodType, zoneId = n
 	return -1 === options.indexOf( currentMethodType ) ? [ ...options, currentMethodType ].sort() : options;
 };
 
-export const isTaxable = method => 'Taxable' === method.taxable;
+export const isTaxable = method => 'Taxable' === method.tax_status;
