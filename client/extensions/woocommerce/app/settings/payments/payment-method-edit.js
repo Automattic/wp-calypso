@@ -105,7 +105,7 @@ class PaymentMethodEdit extends Component {
 		const { method, translate } = this.props;
 		const settingsFieldsKeys = method.settings && Object.keys( method.settings );
 		return (
-			<div className="payments__method-edit-pane">
+			<div className="payments__method-edit-fields">
 				{ settingsFieldsKeys.map( this.renderEditField ) }
 				<Button primary onClick={ this.onSaveHandler }>
 					{ translate( 'Save' ) }

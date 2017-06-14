@@ -53,21 +53,19 @@ class PaymentMethodItem extends Component {
 	};
 
 	onCancel = () => {
-		const { method } = this.props;
-		this.props.closeEditingPaymentMethod( this.props.site.ID, method.id );
+		this.props.closeEditingPaymentMethod( this.props.site.ID, this.props.method.id );
 	}
 
-	onEdit = ( method ) => {
-		const { site } = this.props;
-		this.props.openPaymentMethodForEdit( site.ID, method.id );
+	onEdit = () => {
+		this.props.openPaymentMethodForEdit( this.props.site.ID, this.props.method.id );
 	}
 
 	onEditField = ( field, value ) => {
 		this.props.changePaymentMethodField( this.props.site.ID, field, value );
 	}
 
-	onSave = ( method ) => {
-		const { site, translate } = this.props;
+	onSave = () => {
+		const { method, site, translate } = this.props;
 
 		const successAction = () => {
 			this.props.closeEditingPaymentMethod( site.ID, method.id );

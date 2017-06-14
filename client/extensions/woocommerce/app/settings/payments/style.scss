@@ -2,7 +2,7 @@
 	width: 100%;
 }
 
-.payments__type-container .section-header__label:before {
+.payments__type-container .section-header__label::before {
 	display: none;
 }
 
@@ -46,11 +46,11 @@
 	.list-item-field {
 		width: 30%;
 
-		&:nth-child(2) {
+		&:nth-child( 2 ) {
 			width: 45%;
 		}
 
-		&:nth-child(3) {
+		&:nth-child( 3 ) {
 			width: 25%;
 		}
 	}
@@ -67,7 +67,7 @@
 	width: 100%;
 }
 
-.payments__method-edit-pane {
+.payments__method-edit-fields {
 	padding: 16px;
 	border-top: 1px solid $border-ultra-light-gray;
 	width: 100%;
