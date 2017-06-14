@@ -34,11 +34,23 @@ describe( 'MediaLibraryListItem video', function() {
 	} );
 
 	const expectedBackground = () => styleUrl( photon( fixtures.media[ 1 ].thumbnails.fmt_hd, { width: WIDTH } ) );
-	const getItem = () => <ListItemVideo media={ fixtures.media[ 1 ] } scale={ 1 } maxImageWidth={ WIDTH } />;
+	const getItem = type => <ListItemVideo media={ fixtures.media[ 1 ] } scale={ 1 } maxImageWidth={ WIDTH } thumbnailType={ type } />;
 
 	context( 'thumbnail display mode', function() {
-		it( 'returns a photon thumbnail for a video', function() {
+		it( 'defaults to photon', function() {
 			wrapper = shallow( getItem() );
+
+			expect( wrapper.props().style.backgroundImage ).to.be.equal( expectedBackground() );
+		} );
+
+		it( 'returns a photon thumbnail for type MEDIA_IMAGE_PHOTON', function() {
+			wrapper = shallow( getItem( 'MEDIA_IMAGE_PHOTON' ) );
+
+			expect( wrapper.props().style.backgroundImage ).to.be.equal( expectedBackground() );
+		} );
+
+		it( 'returns a photon thumbnail for type MEDIA_IMAGE_RESIZER', function() {
+			wrapper = shallow( getItem( 'MEDIA_IMAGE_RESIZER' ) );
 
 			expect( wrapper.props().style.backgroundImage ).to.be.equal( expectedBackground() );
 		} );
