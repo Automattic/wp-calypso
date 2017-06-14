@@ -19,31 +19,31 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
 
-const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
+const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) => {
 	const setDimension = ( e ) => {
 		const dimensions = { ...product.dimensions, [ e.target.name ]: e.target.value };
-		editProduct( product, { dimensions } );
+		editProduct( siteId, product, { dimensions } );
 	};
 
 	const setWeight = ( e ) => {
 		const weight = e.target.value;
-		Number( weight ) >= 0 && editProduct( product, { weight } );
+		Number( weight ) >= 0 && editProduct( siteId, product, { weight } );
 	};
 
 	const setPrice = ( e ) => {
-		editProduct( product, { regular_price: e.target.value } );
+		editProduct( siteId, product, { regular_price: e.target.value } );
 	};
 
 	const toggleStock = () => {
-		editProduct( product, { manage_stock: ! product.manage_stock } );
+		editProduct( siteId, product, { manage_stock: ! product.manage_stock } );
 	};
 
 	const setStockQuantity = ( e ) => {
-		editProduct( product, { stock_quantity: e.target.value } );
+		editProduct( siteId, product, { stock_quantity: e.target.value } );
 	};
 
 	const setBackorders = ( e ) => {
-		editProduct( product, { backorders: e.target.value } );
+		editProduct( siteId, product, { backorders: e.target.value } );
 	};
 
 	// TODO Pull in currency and currency position.
@@ -138,6 +138,7 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 };
 
 ProductFormSimpleCard.propTypes = {
+	siteId: PropTypes.number,
 	product: PropTypes.shape( {
 		dimensions: PropTypes.object,
 		weight: PropTypes.string,

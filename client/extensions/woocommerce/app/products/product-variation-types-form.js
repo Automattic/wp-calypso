@@ -20,6 +20,7 @@ export default class ProductVariationTypesForm extends Component {
 	};
 
 	static propTypes = {
+		siteId: PropTypes.number,
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
 			type: PropTypes.string.isRequired,
@@ -49,8 +50,8 @@ export default class ProductVariationTypesForm extends Component {
 	}
 
 	addType = () => {
-		const { product, editProductAttribute } = this.props;
-		editProductAttribute( product, null, this.getNewFields() );
+		const { siteId, product, editProductAttribute } = this.props;
+		editProductAttribute( siteId, product, null, this.getNewFields() );
 	}
 
 	updateNameHandler = ( e ) => {
@@ -61,16 +62,16 @@ export default class ProductVariationTypesForm extends Component {
 	}
 
 	updateName( attributeId, name ) {
-		const { product, editProductAttribute } = this.props;
+		const { siteId, product, editProductAttribute } = this.props;
 		const attribute = product.attributes && find( product.attributes, function( a ) {
 			return a.uid === attributeId;
 		} );
-		editProductAttribute( product, attribute, { name } );
+		editProductAttribute( siteId, product, attribute, { name } );
 	}
 
 	updateValues = ( values, attribute ) => {
-		const { product, editProductAttribute } = this.props;
-		editProductAttribute( product, attribute, { options: values } );
+		const { siteId, product, editProductAttribute } = this.props;
+		editProductAttribute( siteId, product, attribute, { options: values } );
 	}
 
 	renderInputs( attribute ) {

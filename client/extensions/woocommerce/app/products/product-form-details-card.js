@@ -19,6 +19,7 @@ import ProductFormImages from './product-form-images';
 export default class ProductFormDetailsCard extends Component {
 
 	static propTypes = {
+		siteId: PropTypes.number,
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
 			type: PropTypes.string.isRequired,
@@ -43,19 +44,19 @@ export default class ProductFormDetailsCard extends Component {
 	// TODO: Consider consolidating the following set functions
 	// into a general purpose Higher Order Component
 	setName( e ) {
-		const { product, editProduct } = this.props;
+		const { siteId, product, editProduct } = this.props;
 		const name = e.target.value;
-		editProduct( product, { name } );
+		editProduct( siteId, product, { name } );
 
 		if ( this.state.updateSkuOnNameChange ) {
 			const sku = trim( name ).toLowerCase().replace( /\s+/g, '-' );
-			editProduct( product, { sku } );
+			editProduct( siteId, product, { sku } );
 		}
 	}
 
 	setSku = ( sku ) => {
-		const { product, editProduct } = this.props;
-		editProduct( product, { sku } );
+		const { siteId, product, editProduct } = this.props;
+		editProduct( siteId, product, { sku } );
 
 		if ( this.state.updateSkuOnNameChange ) {
 			this.setState( {
@@ -65,24 +66,24 @@ export default class ProductFormDetailsCard extends Component {
 	}
 
 	setDescription( description ) {
-		const { product, editProduct } = this.props;
-		editProduct( product, { description } );
+		const { siteId, product, editProduct } = this.props;
+		editProduct( siteId, product, { description } );
 	}
 
 	onImageUpload = ( image ) => {
-		const { product, editProduct } = this.props;
+		const { siteId, product, editProduct } = this.props;
 		const images = product.images && [ ...product.images ] || [];
 		images.push( {
 			id: image.ID,
 			src: image.URL,
 		} );
-		editProduct( product, { images } );
+		editProduct( siteId, product, { images } );
 	}
 
 	onImageRemove = ( id ) => {
-		const { product, editProduct } = this.props;
+		const { siteId, product, editProduct } = this.props;
 		const images = product.images && [ ...product.images ].filter( i => i.id !== id ) || [];
-		editProduct( product, { images } );
+		editProduct( siteId, product, { images } );
 	}
 
 	render() {

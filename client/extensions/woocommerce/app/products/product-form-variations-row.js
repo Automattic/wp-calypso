@@ -22,6 +22,7 @@ import Spinner from 'components/spinner';
 
 class ProductFormVariationsRow extends Component {
 	static propTypes = {
+		siteId: PropTypes.number,
 		product: PropTypes.object.isRequired,
 		variation: PropTypes.object.isRequired,
 		manageStock: PropTypes.bool,
@@ -45,25 +46,25 @@ class ProductFormVariationsRow extends Component {
 
 	// TODO: Consildate the following set/toggle functions with a helper (along with the form-details functions).
 	setPrice = ( e ) => {
-		const { editProductVariation, product, variation } = this.props;
-		editProductVariation( product, variation, { regular_price: e.target.value } );
+		const { siteId, editProductVariation, product, variation } = this.props;
+		editProductVariation( siteId, product, variation, { regular_price: e.target.value } );
 	}
 
 	setWeight = ( e ) => {
-		const { editProductVariation, product, variation } = this.props;
-		editProductVariation( product, variation, { weight: e.target.value } );
+		const { siteId, editProductVariation, product, variation } = this.props;
+		editProductVariation( siteId, product, variation, { weight: e.target.value } );
 	}
 
 	setDimension = ( e ) => {
-		const { editProductVariation, product, variation } = this.props;
+		const { siteId, editProductVariation, product, variation } = this.props;
 		const dimensions = { ...variation.dimensions, [ e.target.name ]: e.target.value };
-		editProductVariation( product, variation, { dimensions } );
+		editProductVariation( siteId, product, variation, { dimensions } );
 	}
 
 	setStockQuantity = ( e ) => {
-		const { editProductVariation, product, variation } = this.props;
+		const { siteId, editProductVariation, product, variation } = this.props;
 		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
-		editProductVariation( product, variation, { stock_quantity } );
+		editProductVariation( siteId, product, variation, { stock_quantity } );
 	}
 
 	showDialog = () => {
@@ -81,7 +82,7 @@ class ProductFormVariationsRow extends Component {
 	}
 
 	onUpload = ( file ) => {
-		const { editProductVariation, product, variation } = this.props;
+		const { siteId, editProductVariation, product, variation } = this.props;
 		const image = {
 			src: file.URL,
 			id: file.ID,
@@ -90,7 +91,7 @@ class ProductFormVariationsRow extends Component {
 			transientId: null,
 			isUploading: false,
 		} );
-		editProductVariation( product, variation, { image } );
+		editProductVariation( siteId, product, variation, { image } );
 	}
 
 	onError = () => {
@@ -102,7 +103,7 @@ class ProductFormVariationsRow extends Component {
 	}
 
 	removeImage = () => {
-		const { editProductVariation, product, variation } = this.props;
+		const { siteId, editProductVariation, product, variation } = this.props;
 		this.setState( {
 			placeholder: null,
 			transientId: null,
@@ -110,7 +111,7 @@ class ProductFormVariationsRow extends Component {
 			src: null,
 			id: null,
 		} );
-		editProductVariation( product, variation, { image: {} } );
+		editProductVariation( siteId, product, variation, { image: {} } );
 	}
 
 	renderImage = () => {

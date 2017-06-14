@@ -21,7 +21,7 @@ export default createReducer( null, {
 } );
 
 function editProductVariationAction( edits, action ) {
-	const { product, variation, data } = action.payload;
+	const { product, variation, data } = action;
 	const prevEdits = edits || [];
 	const productId = product.id;
 	const bucket = getBucket( variation );
@@ -86,7 +86,7 @@ function editProductVariation( array, variation, data ) {
 
 function editProductAttributeAction( edits, action ) {
 	const prevEdits = edits || [];
-	const { product, attribute, data } = action.payload;
+	const { product, attribute, data } = action;
 	const attributes = editProductAttribute( product.attributes, attribute, data );
 	const variations = generateVariations( { ...product, attributes } );
 	let productEdits = null;
