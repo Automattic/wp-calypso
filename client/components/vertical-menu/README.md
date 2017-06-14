@@ -27,6 +27,7 @@ const announceIt = service =>
 ## Props
 
  - **onClick** - Function - click handler. Transparently passes data from list items into handler.
+ - **initalItemIndex** - Number - The index of the item to initially activate. defaults to 0
 
 ### SocialItem
 
