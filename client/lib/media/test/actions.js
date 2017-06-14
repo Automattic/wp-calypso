@@ -39,7 +39,7 @@ var DUMMY_SITE_ID = 1,
 	DUMMY_QUERY = { mime_type: 'audio/' };
 
 describe( 'MediaActions', function() {
-	let mediaGet, mediaList, mediaAdd, mediaAddUrls, mediaUpdate, mediaDelete,
+	let mediaGet, mediaList, mediaAdd, mediaAddUrls, mediaUpdate, mediaDelete, mediaListExternal,
 		MediaActions, sandbox, Dispatcher, PostEditStore, MediaListStore;
 
 	useFakeDom();
@@ -74,7 +74,10 @@ describe( 'MediaActions', function() {
 						};
 					}
 				};
-			}
+			},
+			undocumented: siteId => ( {
+				externalMediaList: mediaListExternal.bind( siteId ),
+			} ),
 		} );
 		mockery.registerMock( 'lodash/uniqueId', function() {
 			return 'media-1';
@@ -102,6 +105,7 @@ describe( 'MediaActions', function() {
 		sandbox.stub( Dispatcher, 'handleViewAction' );
 		mediaGet = sandbox.stub().callsArgWithAsync( 0, null, DUMMY_API_RESPONSE );
 		mediaList = sandbox.stub().callsArgWithAsync( 1, null, DUMMY_API_RESPONSE );
+		mediaListExternal = sandbox.stub().callsArgWithAsync( 1, null, DUMMY_API_RESPONSE );
 		mediaAdd = sandbox.stub().returns( Promise.resolve( DUMMY_API_RESPONSE ) );
 		mediaAddUrls = sandbox.stub().returns( Promise.resolve( DUMMY_API_RESPONSE ) );
 		mediaUpdate = sandbox.stub().callsArgWithAsync( 1, null, DUMMY_API_RESPONSE );
@@ -173,12 +177,34 @@ describe( 'MediaActions', function() {
 	} );
 
 	describe( '#fetchNextPage()', function() {
-		it( 'should call to the WordPress.com REST API', function( done ) {
+		it( 'should call to the internal WordPress.com REST API', function( done ) {
 			var query = MediaListStore.getNextPageQuery( DUMMY_SITE_ID );
 
 			MediaActions.fetchNextPage( DUMMY_SITE_ID );
 
 			expect( mediaList ).to.have.been.calledOn( DUMMY_SITE_ID );
+			process.nextTick( function() {
+				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+					type: 'RECEIVE_MEDIA_ITEMS',
+					error: null,
+					siteId: DUMMY_SITE_ID,
+					data: DUMMY_API_RESPONSE,
+					query: query
+				} );
+
+				done();
+			} );
+		} );
+
+		it( 'should call to the external WordPress.com REST API', function( done ) {
+			MediaListStore._activeQueries[ DUMMY_SITE_ID ] = { query: { source: 'external' } };
+
+			const query = MediaListStore.getNextPageQuery( DUMMY_SITE_ID );
+
+			MediaActions.fetchNextPage( DUMMY_SITE_ID );
+
+			expect( mediaListExternal ).to.have.been.calledWithMatch( { source: 'external' } );
+
 			process.nextTick( function() {
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 					type: 'RECEIVE_MEDIA_ITEMS',
