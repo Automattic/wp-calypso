@@ -18,10 +18,20 @@ import TumblrSharePreview from 'components/share/tumblr-share-preview';
 import VerticalMenu from 'components/vertical-menu';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getSitePost } from 'state/posts/selectors';
-import { getSeoTitle } from 'state/sites/selectors';
+import { getSeoTitle, getSiteSlug } from 'state/sites/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+
+const serviceNames = {
+	facebook: 'Facebook',
+	google_plus: 'Google Plus',
+	linkedin: 'LinkedIn',
+	twitter: 'Twitter',
+	tumblr: 'Tumblr'
+};
 
 class SharingPreviewPane extends PureComponent {
 
@@ -37,13 +47,7 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	static defaultProps = {
-		services: [
-			'facebook',
-			'google_plus',
-			'linkedin',
-			'twitter',
-			'tumblr',
-		]
+		services: Object.keys( serviceNames )
 	};
 
 	state = {
@@ -55,11 +59,17 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	renderPreview() {
-		const { post, site, message, connections } = this.props;
+		const { post, site, message, connections, translate, siteSlug } = this.props;
 		const { selectedService } = this.state;
 		const connection = find( connections, { service: selectedService } );
 		if ( ! connection ) {
-			return null;
+			return <Notice
+				text={ translate( 'Connect to %s to see the preview', { args: serviceNames[ selectedService ] } ) }
+				status="is-info"
+				showDismiss={ false }
+			>
+				<NoticeAction href={ '/sharing/' + siteSlug } >{ translate( 'Settings' ) }</NoticeAction>
+			</Notice>;
 		}
 
 		const articleUrl = get( post, 'URL', '' );
@@ -143,12 +153,14 @@ const mapStateToProps = ( state, ownProps ) => {
 	const seoTitle = getSeoTitle( state, 'posts', { site, post } );
 	const currentUserId = getCurrentUserId( state );
 	const connections = getSiteUserConnections( state, siteId, currentUserId );
+	const siteSlug = getSiteSlug( state, siteId );
 
 	return {
 		site,
 		post,
 		seoTitle,
 		connections,
+		siteSlug,
 	};
 };
 
