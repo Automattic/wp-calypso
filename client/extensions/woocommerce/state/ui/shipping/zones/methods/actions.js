@@ -6,6 +6,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED,
 } from 'woocommerce/state/action-types';
 
 /**
@@ -49,4 +50,15 @@ export const changeShippingZoneMethodType = ( siteId, methodId, methodType ) => 
  */
 export const changeShippingZoneMethodTitle = ( siteId, methodId, title ) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE, siteId, methodId, title };
+};
+
+/**
+ * Enables or disables the given shipping zone method.
+ * @param {Number} siteId Site ID.
+ * @param {String} methodId ID of the shipping method.
+ * @param {Boolean} enabled Whether to enable (true) or disable (false) the shipping method.
+ * @return {Object} Action object.
+ */
+export const toggleShippingZoneMethodEnabled = ( siteId, methodId, enabled ) => {
+	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED, siteId, methodId, enabled };
 };
