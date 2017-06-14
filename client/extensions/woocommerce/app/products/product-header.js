@@ -32,4 +32,3 @@ ProductHeader.propTypes = {
 };
 
 export default localize( ProductHeader );
-
