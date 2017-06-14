@@ -10,9 +10,12 @@ import config from 'config';
 import { READER_FOLLOW } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 import { follow, unfollow, recordFollowError } from 'state/reader/follows/actions';
 import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine';
+import { getFeed } from 'state/reader/feeds/selectors';
+import { getSite } from 'state/reader/sites/selectors';
+import { getSiteName } from 'reader/get-helpers';
 
 export function requestFollow( { dispatch }, action ) {
 	const { payload: { feedUrl } } = action;
@@ -28,13 +31,25 @@ export function requestFollow( { dispatch }, action ) {
 			},
 			onSuccess: action,
 			onFailure: action,
-		} )
+		} ),
 	);
 }
 
 export function receiveFollow( store, action, next, response ) {
 	if ( response && response.subscribed ) {
-		next( follow( action.payload.feedUrl, subscriptionFromApi( response.subscription ) ) );
+		const subscription = subscriptionFromApi( response.subscription );
+		next( follow( action.payload.feedUrl, subscriptionFromApi( subscription ) ) );
+
+		// build up a notice to show
+		const site = getSite( store.getState(), subscription.blog_ID );
+		const feed = getFeed( store.getState(), subscription.feed_ID );
+		const siteTitle = getSiteName( { feed, site } ) || subscription.URL;
+		store.dispatch(
+			successNotice(
+				translate( "You're now following %(siteTitle)s", { args: { siteTitle } } ),
+				{ duration: 5000 },
+			),
+		);
 	} else {
 		followError( store, action, next, response );
 	}
@@ -42,7 +57,9 @@ export function receiveFollow( store, action, next, response ) {
 
 export function followError( { dispatch }, action, next, response ) {
 	dispatch(
-		errorNotice( translate( 'Sorry, there was a problem following that site. Please try again.' ) )
+		errorNotice(
+			translate( 'Sorry, there was a problem following that site. Please try again.' ),
+		),
 	);
 
 	if ( response && response.info ) {
