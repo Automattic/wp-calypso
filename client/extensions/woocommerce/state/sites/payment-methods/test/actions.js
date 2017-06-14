@@ -35,6 +35,18 @@ describe( 'actions', () => {
 					method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
 				} ]
 			} )
+			.get( '/rest/v1.1/jetpack-blogs/456/rest-api/' )
+			.query( { path: '/wc/v3/payment_gateways&_method=get', json: true } )
+			.reply( 200, {
+				data: [ {
+					id: 'bacs',
+					title: 'Direct bank transfer',
+					description: 'Make your payment directly into our bank account.',
+					enabled: true,
+					method_title: 'BACS',
+					method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
+				} ]
+			} )
 			.post( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
 			.query( { path: '/wc/v3/payment_gateways/paypal&_method=put', json: true } )
 			.reply( 200, {
@@ -68,6 +80,34 @@ describe( 'actions', () => {
 
 	describe( '#fetchPaymentMethods', () => {
 		const siteId = '123';
+		const enabled = {
+			type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
+			siteId: 456,
+			data: [ {
+				id: 'bacs',
+				title: 'Direct bank transfer',
+				description: 'Make your payment directly into our bank account.',
+				enabled: true,
+				method_title: 'BACS',
+				methodType: 'offline',
+				method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
+				settings: { enabled: { id: 'enabled', label: 'Enabled', type: 'checkbox', value: 'yes' } },
+			} ]
+		};
+		const notEnabled = {
+			type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
+			siteId,
+			data: [ {
+				id: 'bacs',
+				title: 'Direct bank transfer',
+				description: 'Make your payment directly into our bank account.',
+				enabled: false,
+				method_title: 'BACS',
+				methodType: 'offline',
+				method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
+				settings: { enabled: { id: 'enabled', label: 'Enabled', type: 'checkbox', value: 'no' } },
+			} ]
+		};
 		it( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
@@ -81,20 +121,27 @@ describe( 'actions', () => {
 			const response = fetchPaymentMethods( siteId )( dispatch, getState );
 
 			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
-					siteId,
-					data: [ {
-						id: 'bacs',
-						title: 'Direct bank transfer',
-						description: 'Make your payment directly into our bank account.',
-						enabled: false,
-						method_title: 'BACS',
-						methodType: 'offline',
-						method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
-						settings: { enabled: { id: 'enabled', label: 'Enabled', type: 'checkbox', value: 'no' } },
-					} ]
-				} );
+				expect( dispatch ).to.have.been.calledWith( notEnabled );
+			} );
+		} );
+
+		it( 'should add an object keyed with enabled to settings with a value of no when method is not enabled', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			const response = fetchPaymentMethods( siteId )( dispatch, getState );
+
+			return response.then( () => {
+				expect( dispatch ).to.have.been.calledWith( notEnabled );
+			} );
+		} );
+
+		it( 'should add an object keyed with enabled to settings with a value of yes when method is enabled', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			const response = fetchPaymentMethods( 456 )( dispatch, getState );
+
+			return response.then( () => {
+				expect( dispatch ).to.have.been.calledWith( enabled );
 			} );
 		} );
 
