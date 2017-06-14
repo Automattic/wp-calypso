@@ -23,7 +23,9 @@ import happychat from './happychat/reducer';
 import mediaModal from './media-modal/reducer';
 import themeSetup from './theme-setup/reducers';
 import npsSurveyNotice from './nps-survey-notice/reducer';
+import config from 'config';
 
+const isJetpackAdminPage = config( 'env_id' ) === 'jetpack';
 /**
  * Tracks the currently selected site ID.
  *
@@ -31,7 +33,7 @@ import npsSurveyNotice from './nps-survey-notice/reducer';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function selectedSiteId( state = null, action ) {
+export function selectedSiteId( state = isJetpackAdminPage? 0 : null, action ) {
 	switch ( action.type ) {
 		case SELECTED_SITE_SET:
 			return action.siteId || null;
