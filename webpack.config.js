@@ -163,7 +163,7 @@ const jsLoader = {
 	exclude: /node_modules[\/\\](?!notifications-panel)/,
 	loader: 'babel',
 	query: {
-		cacheDirectory: './.babel-cache',
+		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
 		cacheIdentifier: cacheIdentifier,
 		plugins: [ [
 			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
