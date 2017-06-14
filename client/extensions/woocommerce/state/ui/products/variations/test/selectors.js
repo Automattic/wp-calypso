@@ -14,11 +14,14 @@ import {
 	getProductVariationsWithLocalEdits,
 } from '../selectors';
 
+const siteId = 123;
+
 describe( 'selectors', () => {
 	let state;
 
 	beforeEach( () => {
 		state = {
+			ui: { selectedSiteId: 123 },
 			extensions: {
 				woocommerce: {
 					products: [
@@ -31,7 +34,9 @@ describe( 'selectors', () => {
 					],
 					ui: {
 						products: {
-							variations: {
+							123: {
+								variations: {
+								}
 							}
 						}
 					},
@@ -44,18 +49,18 @@ describe( 'selectors', () => {
 		it( 'should get a variation from "creates"', () => {
 			const newVariation = { id: { index: 1 }, name: 'New Variation' };
 			const productId = { index: 0 };
-			const uiVariations = state.extensions.woocommerce.ui.products.variations;
-			set( uiVariations, 'edits[0].productId', productId );
-			set( uiVariations, 'edits[0].creates', [ newVariation ] );
+			const uiProducts = state.extensions.woocommerce.ui.products;
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], productId );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'creates' ], [ newVariation ] );
 
 			expect( getVariationEdits( state, productId, newVariation.id ) ).to.equal( newVariation );
 		} );
 
 		it( 'should get a variation from "updates"', () => {
 			const updateVariation = { id: 3, name: 'Existing Variation' };
-			const uiVariations = state.extensions.woocommerce.ui.products.variations;
-			set( uiVariations, 'edits[0].productId', 2 );
-			set( uiVariations, 'edits[0].updates', [ updateVariation ] );
+			const uiProducts = state.extensions.woocommerce.ui.products;
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 2 );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'updates' ], [ updateVariation ] );
 
 			expect( getVariationEdits( state, 2, updateVariation.id ) ).to.equal( updateVariation );
 		} );
@@ -76,9 +81,9 @@ describe( 'selectors', () => {
 	describe( 'getVariationWithLocalEdits', () => {
 		it( 'should get just edits for a variation in "creates"', () => {
 			const newVariation = { id: { index: 0 }, name: 'New Variation' };
-			const uiVariations = state.extensions.woocommerce.ui.products.variations;
-			set( uiVariations, 'edits[0].productId', 2 );
-			set( uiVariations, 'edits[0].creates', [ newVariation ] );
+			const uiProducts = state.extensions.woocommerce.ui.products;
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 2 );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'creates' ], [ newVariation ] );
 
 			expect( getVariationWithLocalEdits( state, 2, newVariation.id ) ).to.eql( newVariation );
 		} );
@@ -90,12 +95,12 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should get both fetched data and edits for a variation in "updates"', () => {
-			const uiVariations = state.extensions.woocommerce.ui.products.variations;
+			const uiProducts = state.extensions.woocommerce.ui.products;
 			const variations = state.extensions.woocommerce.variations;
 
 			const existingVariation = { id: 3, name: 'Existing Variation' };
-			set( uiVariations, 'edits[0].productId', 2 );
-			set( uiVariations, 'edits[0].updates', [ existingVariation ] );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 2 );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'updates' ], [ existingVariation ] );
 
 			const combinedVariation = { ...variations[ 0 ], ...existingVariation };
 			expect( getVariationWithLocalEdits( state, 2, 3 ) ).to.eql( combinedVariation );
@@ -121,10 +126,10 @@ describe( 'selectors', () => {
 
 		it( 'should get the last edited variation', () => {
 			const newVariation = { id: { index: 0 }, name: 'New Variation' };
-			const uiVariations = state.extensions.woocommerce.ui.products.variations;
-			set( uiVariations, 'edits[0].productId', 2 );
-			set( uiVariations, 'edits[0].creates', [ newVariation ] );
-			set( uiVariations, 'edits[0].currentlyEditingId', newVariation.id );
+			const uiProducts = state.extensions.woocommerce.ui.products;
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 2 );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'creates' ], [ newVariation ] );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'currentlyEditingId' ], newVariation.id );
 
 			expect( getCurrentlyEditingVariation( state, 2 ) ).to.eql( newVariation );
 		} );
@@ -136,9 +141,9 @@ describe( 'selectors', () => {
 		} );
 		it( 'should get variations from "creates"', () => {
 			const newVariation = { id: { index: 0 }, name: 'New Variation' };
-			const uiVariations = state.extensions.woocommerce.ui.products.variations;
-			set( uiVariations, 'edits[0].productId', 2 );
-			set( uiVariations, 'edits[0].creates', [ newVariation ] );
+			const uiProducts = state.extensions.woocommerce.ui.products;
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 2 );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'creates' ], [ newVariation ] );
 
 			expect( getProductVariationsWithLocalEdits( state, 2 ) ).to.eql( [ newVariation ] );
 		} );

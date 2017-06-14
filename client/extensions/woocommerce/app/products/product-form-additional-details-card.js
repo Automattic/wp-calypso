@@ -24,6 +24,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 	};
 
 	static propTypes = {
+		siteId: PropTypes.number,
 		product: PropTypes.shape( {
 			attributes: PropTypes.array,
 		} ),
@@ -48,8 +49,8 @@ class ProductFormAdditionalDetailsCard extends Component {
 	}
 
 	addAttribute = () => {
-		const { product, editProductAttribute } = this.props;
-		editProductAttribute( product, null, { name: '', options: [] } );
+		const { siteId, product, editProductAttribute } = this.props;
+		editProductAttribute( siteId, product, null, { name: '', options: [] } );
 	}
 
 	cardOpen = () => {
@@ -71,16 +72,16 @@ class ProductFormAdditionalDetailsCard extends Component {
 	}
 
 	removeAttribute( uid ) {
-		const { product, editProduct } = this.props;
+		const { siteId, product, editProduct } = this.props;
 		const attributes = [ ...product.attributes ];
 		const attribute = this.getAttribute( product, uid );
 		attributes.splice( attributes.indexOf( attribute ), 1 );
-		editProduct( product, { attributes } );
+		editProduct( siteId, product, { attributes } );
 	}
 
 	updateValues = ( values, attribute ) => {
-		const { product, editProductAttribute } = this.props;
-		editProductAttribute( product, attribute, { options: values } );
+		const { siteId, product, editProductAttribute } = this.props;
+		editProductAttribute( siteId, product, attribute, { options: values } );
 	}
 
 	updateNameHandler = ( e ) => {
@@ -91,9 +92,9 @@ class ProductFormAdditionalDetailsCard extends Component {
 	}
 
 	updateName( attributeId, name ) {
-		const { product, editProductAttribute } = this.props;
+		const { siteId, product, editProductAttribute } = this.props;
 		const attribute = this.getAttribute( product, attributeId );
-		editProductAttribute( product, attribute, { name } );
+		editProductAttribute( siteId, product, attribute, { name } );
 	}
 
 	renderInput( attribute ) {

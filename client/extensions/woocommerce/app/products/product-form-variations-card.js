@@ -20,6 +20,7 @@ class ProductFormVariationsCard extends Component {
 	};
 
 	static propTypes = {
+		siteId: PropTypes.number,
 		product: PropTypes.shape( {
 			type: PropTypes.string.isRequired,
 			name: PropTypes.string,
@@ -51,7 +52,7 @@ class ProductFormVariationsCard extends Component {
 	}
 
 	setProductTypeVariable() {
-		const { product, editProduct } = this.props;
+		const { siteId, product, editProduct } = this.props;
 		const attributes = product.attributes && [ ...product.attributes ] || [];
 		const productData = { ...product };
 		const simpleProduct = [ ...this.state.simpleProduct ];
@@ -67,7 +68,7 @@ class ProductFormVariationsCard extends Component {
 		} );
 
 		this.setState( { simpleProduct, variationAttributes: [] } );
-		editProduct( product, {
+		editProduct( siteId, product, {
 			...productData,
 			type: 'variable',
 			attributes,
@@ -75,7 +76,7 @@ class ProductFormVariationsCard extends Component {
 	}
 
 	setProductTypeSimple() {
-		const { product, editProduct } = this.props;
+		const { siteId, product, editProduct } = this.props;
 		const productData = { ...product };
 		const simpleProduct = this.state.simpleProduct;
 
@@ -88,7 +89,7 @@ class ProductFormVariationsCard extends Component {
 		const attributes = ( product.attributes && product.attributes.filter( attribute => ! attribute.variation ) ) || null;
 
 		this.setState( { variationAttributes, simpleProduct: [] } );
-		editProduct( product, {
+		editProduct( siteId, product, {
 			...productData,
 			type: 'simple',
 			attributes,
@@ -96,7 +97,8 @@ class ProductFormVariationsCard extends Component {
 	}
 
 	render() {
-		const { product, variations, translate, editProductAttribute, editProductVariation } = this.props;
+		const { siteId, product, variations, translate } = this.props;
+		const { editProductAttribute, editProductVariation } = this.props;
 		const variationToggleDescription = translate(
 			'%(productName)s has variations, for example size and color.', {
 				args: {
@@ -118,10 +120,12 @@ class ProductFormVariationsCard extends Component {
 				{ 'variable' === product.type && (
 					<div>
 						<ProductVariationTypesForm
+							siteId={ siteId }
 							product={ product }
 							editProductAttribute={ editProductAttribute }
 						/>
 						<ProductFormVariationsTable
+							siteId={ siteId }
 							product={ product }
 							variations={ variations }
 							editProductVariation={ editProductVariation }

@@ -39,19 +39,21 @@ class ProductCreate extends React.Component {
 	componentDidMount() {
 		const { product, siteId } = this.props;
 
-		if ( ! product ) {
-			this.props.editProduct( null, {
-				type: 'simple'
-			} );
-		}
-
 		if ( siteId ) {
+			if ( ! product ) {
+				this.props.editProduct( siteId, null, {
+					type: 'simple'
+				} );
+			}
 			this.props.fetchProductCategories( siteId );
 		}
 	}
 
 	componentWillReceiveProps( newProps ) {
 		if ( newProps.siteId !== this.props.siteId ) {
+			this.props.editProduct( newProps.siteId, null, {
+				type: 'simple'
+			} );
 			this.props.fetchProductCategories( newProps.siteId );
 		}
 	}
@@ -84,23 +86,24 @@ class ProductCreate extends React.Component {
 	}
 
 	render() {
-		const { product, className, variations, productCategories } = this.props;
+		const { siteId, product, className, variations, productCategories } = this.props;
 
 		return (
 			<Main className={ className }>
 				<SidebarNavigation />
 				<ProductHeader
 					onTrash={ this.onTrash }
-					onSave={ this.onSave }
+					onSave={ siteId && this.onSave || false }
 				/>
-				<ProductForm
+				{ siteId && ( <ProductForm
+					siteId={ siteId }
 					product={ product || { type: 'simple' } }
 					variations={ variations }
 					productCategories={ productCategories }
 					editProduct={ this.props.editProduct }
 					editProductAttribute={ this.props.editProductAttribute }
 					editProductVariation={ this.props.editProductVariation }
-				/>
+				/> ) }
 			</Main>
 		);
 	}
@@ -108,8 +111,8 @@ class ProductCreate extends React.Component {
 
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
-	const product = getCurrentlyEditingProduct( state );
-	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
+	const product = getCurrentlyEditingProduct( state, siteId );
+	const variations = product && getProductVariationsWithLocalEdits( state, product.id, siteId );
 	const productCategories = getProductCategories( state, siteId );
 
 	return {

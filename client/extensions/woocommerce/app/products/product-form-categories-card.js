@@ -17,7 +17,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 // TODO Rename this card since it contains other controls, and may contain more in the future (like tax)
 const ProductFormCategoriesCard = (
-	{ product, productCategories, editProduct, translate }
+	{ siteId, product, productCategories, editProduct, translate }
 ) => {
 	const handleChange = ( categoryNames ) => {
 		const newCategories = compact( categoryNames.map( ( name ) => {
@@ -33,11 +33,11 @@ const ProductFormCategoriesCard = (
 		} ) );
 
 		const data = { id: product.id, categories: newCategories };
-		editProduct( product, data );
+		editProduct( siteId, product, data );
 	};
 
 	const toggleFeatured = () => {
-		editProduct( product, { featured: ! product.featured } );
+		editProduct( siteId, product, { featured: ! product.featured } );
 	};
 
 	const selectedCategories = product.categories || [];
@@ -77,6 +77,7 @@ const ProductFormCategoriesCard = (
 };
 
 ProductFormCategoriesCard.propTypes = {
+	siteId: PropTypes.number,
 	product: PropTypes.shape( {
 		id: PropTypes.isRequired,
 		type: PropTypes.string.isRequired,

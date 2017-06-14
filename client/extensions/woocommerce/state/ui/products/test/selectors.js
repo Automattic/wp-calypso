@@ -13,11 +13,14 @@ import {
 	getCurrentlyEditingProduct,
 } from '../selectors';
 
+const siteId = 123;
+
 describe( 'selectors', () => {
 	let state;
 
 	beforeEach( () => {
 		state = {
+			ui: { selectedSiteId: 123 },
 			extensions: {
 				woocommerce: {
 					products: [
@@ -26,6 +29,8 @@ describe( 'selectors', () => {
 					],
 					ui: {
 						products: {
+							123: {
+							}
 						}
 					},
 				},
@@ -37,7 +42,7 @@ describe( 'selectors', () => {
 		it( 'should get a product from "creates"', () => {
 			const newProduct = { id: { index: 0 }, name: 'New Product' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
-			set( uiProducts, 'edits.creates', [ newProduct ] );
+			set( uiProducts, [ siteId, 'edits', 'creates' ], [ newProduct ] );
 
 			expect( getProductEdits( state, newProduct.id ) ).to.equal( newProduct );
 		} );
@@ -45,7 +50,7 @@ describe( 'selectors', () => {
 		it( 'should get a product from "updates"', () => {
 			const updateProduct = { id: 1, name: 'Existing Product' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
-			set( uiProducts, 'edits.updates', [ updateProduct ] );
+			set( uiProducts, [ siteId, 'edits', 'updates' ], [ updateProduct ] );
 
 			expect( getProductEdits( state, updateProduct.id ) ).to.equal( updateProduct );
 		} );
@@ -60,7 +65,7 @@ describe( 'selectors', () => {
 		it( 'should get just edits for a product in "creates"', () => {
 			const newProduct = { id: { index: 0 }, name: 'New Product' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
-			set( uiProducts, 'edits.creates', [ newProduct ] );
+			set( uiProducts, [ siteId, 'edits', 'creates' ], [ newProduct ] );
 
 			expect( getProductWithLocalEdits( state, newProduct.id ) ).to.eql( newProduct );
 		} );
@@ -76,7 +81,7 @@ describe( 'selectors', () => {
 			const products = state.extensions.woocommerce.products;
 
 			const existingProduct = { id: 1, name: 'Existing Product' };
-			set( uiProducts, 'edits.updates', [ existingProduct ] );
+			set( uiProducts, [ siteId, 'edits', 'updates' ], [ existingProduct ] );
 
 			const combinedProduct = { ...products[ 0 ], ...existingProduct };
 			expect( getProductWithLocalEdits( state, 1 ) ).to.eql( combinedProduct );
@@ -96,8 +101,8 @@ describe( 'selectors', () => {
 		it( 'should get the last edited product', () => {
 			const newProduct = { id: { index: 0 }, name: 'New Product' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
-			set( uiProducts, 'edits.creates', [ newProduct ] );
-			set( uiProducts, 'edits.currentlyEditingId', newProduct.id );
+			set( uiProducts, [ siteId, 'edits', 'creates' ], [ newProduct ] );
+			set( uiProducts, [ siteId, 'edits', 'currentlyEditingId' ], newProduct.id );
 
 			expect( getCurrentlyEditingProduct( state ) ).to.eql( newProduct );
 		} );

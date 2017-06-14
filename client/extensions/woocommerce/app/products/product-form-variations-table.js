@@ -20,6 +20,7 @@ import ProductFormVariationsRow from './product-form-variations-row';
 class ProductFormVariationsTable extends React.Component {
 
 	static propTypes = {
+		siteId: PropTypes.number,
 		variations: PropTypes.array,
 		product: PropTypes.object,
 		editProductVariation: PropTypes.func.isRequired,
@@ -43,10 +44,10 @@ class ProductFormVariationsTable extends React.Component {
 	}
 
 	editAllVariations( field, value ) {
-		const { product, variations, editProductVariation } = this.props;
+		const { siteId, product, variations, editProductVariation } = this.props;
 		this.setState( { [ field ]: value } );
 		variations.map( function( variation ) {
-			editProductVariation( product, variation, { [ field ]: value } );
+			editProductVariation( siteId, product, variation, { [ field ]: value } );
 		} );
 	}
 
@@ -91,7 +92,7 @@ class ProductFormVariationsTable extends React.Component {
 	}
 
 	renderModal() {
-		const { variations, product, editProductVariation, translate } = this.props;
+		const { siteId, variations, product, editProductVariation, translate } = this.props;
 		const { showDialog, selectedVariation } = this.state;
 
 		const buttons = [
@@ -107,6 +108,7 @@ class ProductFormVariationsTable extends React.Component {
 				additionalClassNames="woocommerce products__product-form-variation-dialog"
 			>
 				<ProductFormVariationsModal
+					siteId={ siteId }
 					product={ product }
 					variations={ variations }
 					selectedVariation={ selectedVariation }
@@ -118,12 +120,13 @@ class ProductFormVariationsTable extends React.Component {
 	}
 
 	renderVariationRow( variation ) {
-		const { product, variations, editProductVariation } = this.props;
+		const { siteId, product, variations, editProductVariation } = this.props;
 		const id = isNumber( variation.id ) && variation.id || 'index_' + variation.id.index;
 		const manageStock = ( find( variations, ( v ) => v.manage_stock ) ) ? true : false;
 
 		return (
 			<ProductFormVariationsRow
+				siteId={ siteId }
 				key={ id }
 				product={ product }
 				variation={ variation }

@@ -15,8 +15,8 @@ const ProductHeader = ( { onTrash, onSave, translate } ) => {
 	const trashButton = onTrash &&
 		<Button borderless onClick={ onTrash }><Gridicon icon="trash" /></Button>;
 
-	const saveButton = onSave &&
-		<Button primary onClick={ onSave }>{ translate( 'Save' ) }</Button>;
+	const saveButton = 'undefined' !== typeof onSave &&
+		<Button primary onClick={ onSave } disabled={ onSave === false }>{ translate( 'Save' ) }</Button>;
 
 	return (
 		<ActionHeader>
@@ -28,7 +28,10 @@ const ProductHeader = ( { onTrash, onSave, translate } ) => {
 
 ProductHeader.propTypes = {
 	onTrash: PropTypes.func,
-	onSave: PropTypes.func,
+	onSave: PropTypes.oneOfType( [
+		React.PropTypes.func,
+		React.PropTypes.bool,
+	] ),
 };
 
 export default localize( ProductHeader );

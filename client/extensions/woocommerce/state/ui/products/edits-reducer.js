@@ -19,8 +19,7 @@ export default createReducer( null, {
 } );
 
 function editProductAction( edits, action ) {
-	const { product, data } = action.payload;
-
+	const { product, data } = action;
 	const prevEdits = edits || {};
 	const bucket = getBucket( product );
 	const _product = product || { id: nextBucketIndex( prevEdits[ bucket ] ) };
@@ -34,7 +33,7 @@ function editProductAction( edits, action ) {
 }
 
 function editProductAttributeAction( edits, action ) {
-	const { product, attribute, data } = action.payload;
+	const { product, attribute, data } = action;
 	const attributes = product && product.attributes;
 
 	const prevEdits = edits || {};

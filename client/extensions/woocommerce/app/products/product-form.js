@@ -16,6 +16,7 @@ import ProductFormVariationsCard from './product-form-variations-card';
 export default class ProductForm extends Component {
 	static propTypes = {
 		className: PropTypes.string,
+		siteId: PropTypes.number,
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
 			type: PropTypes.string.isRequired,
@@ -29,26 +30,30 @@ export default class ProductForm extends Component {
 	};
 
 	render() {
-		const { product, productCategories, variations } = this.props;
+		const { siteId, product, productCategories, variations } = this.props;
 		const { editProduct, editProductVariation, editProductAttribute } = this.props;
 
 		return (
 			<div className={ classNames( 'products__form', this.props.className ) }>
 				<ProductFormDetailsCard
+					siteId={ siteId }
 					product={ product }
 					editProduct={ editProduct }
 				/>
 				<ProductFormAdditionalDetailsCard
+					siteId={ siteId }
 					product={ product }
 					editProduct={ this.props.editProduct }
 					editProductAttribute={ this.props.editProductAttribute }
 				/>
 				<ProductFormCategoriesCard
+					siteId={ siteId }
 					product={ product }
 					productCategories={ productCategories }
 					editProduct={ editProduct }
 				/>
 				<ProductFormVariationsCard
+					siteId={ siteId }
 					product={ product }
 					variations={ variations }
 					editProduct={ editProduct }
@@ -59,6 +64,7 @@ export default class ProductForm extends Component {
 				{ 'simple' === product.type && (
 					<div className="products__product-simple-cards">
 						<ProductFormSimpleCard
+							siteId={ siteId }
 							product={ product }
 							editProduct={ this.props.editProduct }
 						/>
