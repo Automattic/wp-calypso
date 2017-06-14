@@ -10,53 +10,53 @@
 		"slug": "woocommerce"
 	},
 	{
-		"name": "Jetpack by WordPress.com",
-		"author": "<a href=\"https://jetpack.com\">Automattic</a>",
-		"rating": 82,
-		"icons": {
-			"1x": "https://ps.w.org/jetpack/assets/icon-128x128.png?rev=969908",
-			"2x": "https://ps.w.org/jetpack/assets/icon-256x256.png?rev=969908"
-		},
-		"slug": "jetpack"
-	},
-	{
-		"name": "Akismet",
-		"author": "<a href=\"https://automattic.com/wordpress-plugins/\">Automattic</a>",
+		"name": "Yoast SEO",
+		"author": "<a href=\"https://yoast.com/\">Team Yoast</a>",
 		"rating": 96,
 		"icons": {
-			"1x": "https://ps.w.org/akismet/assets/icon-128x128.png?rev=969272",
-			"2x": "https://ps.w.org/akismet/assets/icon-256x256.png?rev=969272"
+			"1x": "https://ps.w.org/wordpress-seo/assets/icon-128x128.png?rev=1550389",
+			"2x": "https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389"
 		},
-		"slug": "akismet"
+		"slug": "wordpress-seo"
 	},
 	{
-		"name": "bbPress",
-		"author": "<a href=\"https://bbpress.org\">The bbPress Community</a>",
-		"rating": 84,
+		"name": "Google XML Sitemaps",
+		"author": "<a href=\"http://www.arnebrachhold.de/\">Arne Brachhold</a>",
+		"rating": 98,
 		"icons": {
-			"1x": "https://ps.w.org/bbpress/assets/icon-128x128.png?rev=1534011",
-			"2x": "https://ps.w.org/bbpress/assets/icon-256x256.png?rev=1534011"
+			"1x": "https://ps.w.org/google-sitemap-generator/assets/icon-128x128.png?rev=976338",
+			"2x": "https://ps.w.org/google-sitemap-generator/assets/icon-256x256.png?rev=976338"
 		},
-		"slug": "bbpress"
+		"slug": "google-sitemap-generator"
 	},
 	{
-		"name": "BuddyPress",
-		"author": "<a href=\"https://buddypress.org/\">The BuddyPress Community</a>",
-		"rating": 88,
+		"name": "TinyMCE Advanced",
+		"author": "<a href=\"http://www.laptoptips.ca/\">Andrew Ozz</a>",
+		"rating": 92,
 		"icons": {
-			"1x": "https://ps.w.org/buddypress/assets/icon-128x128.png?rev=1309232",
-			"2x": "https://ps.w.org/buddypress/assets/icon-256x256.png?rev=1309232"
+			"1x": "https://ps.w.org/tinymce-advanced/assets/icon-128x128.png?rev=971511",
+			"2x": "https://ps.w.org/tinymce-advanced/assets/icon-256x256.png?rev=971511"
 		},
-		"slug": "buddypress"
+		"slug": "tinymce-advanced"
 	},
 	{
-		"name": "VaultPress",
-		"author": "<a href=\"http://vaultpress.com/?utm_source=author-uri&amp;utm_medium=plugin-description&amp;utm_campaign=1.0\">Automattic</a>",
-		"rating": 88,
+		"name": "Google Analytics for WordPress by MonsterInsights",
+		"author": "<a href=\"https://www.monsterinsights.com/\">MonsterInsights</a>",
+		"rating": 78,
 		"icons": {
-			"1x": "https://ps.w.org/vaultpress/assets/icon-128x128.png?rev=986513",
-			"2x": "https://ps.w.org/vaultpress/assets/icon-256x256.png?rev=986513"
+			"1x": "https://ps.w.org/google-analytics-for-wordpress/assets/icon-128x128.png?rev=1598927",
+			"2x": "https://ps.w.org/google-analytics-for-wordpress/assets/icon-256x256.png?rev=1598927"
 		},
-		"slug": "vaultpress"
+		"slug": "google-analytics-for-wordpress"
+	},
+	{
+		"name": "Page Builder by SiteOrigin",
+		"author": "<a href=\"https://siteorigin.com\">SiteOrigin</a>",
+		"rating": 98,
+		"icons": {
+			"1x": "https://ps.w.org/siteorigin-panels/assets/icon-128x128.png?rev=1044755",
+			"2x": "https://ps.w.org/siteorigin-panels/assets/icon-256x256.png?rev=1044755"
+		},
+		"slug": "siteorigin-panels"
 	}
 ]
