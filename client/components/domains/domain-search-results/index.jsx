@@ -18,7 +18,7 @@ import {
  */
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
-import { DomainSuggestionPlaceholder } from 'components/domains/domain-suggestion';
+import DomainSuggestion from 'components/domains/domain-suggestion';
 import { isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
 import { getTld } from 'lib/domains';
@@ -133,7 +133,7 @@ class DomainSearchResults extends React.Component {
 
 	renderPlaceholders() {
 		return times( this.props.placeholderQuantity, function( n ) {
-			return <DomainSuggestionPlaceholder key={ 'suggestion-' + n } />;
+			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
 		} );
 	}
 

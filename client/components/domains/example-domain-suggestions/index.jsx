@@ -3,11 +3,12 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class DomainSuggestionsExample extends React.Component {
 	static propTypes = {
@@ -15,7 +16,7 @@ class DomainSuggestionsExample extends React.Component {
 	};
 
 	handleClickMappingLink = () => {
-		analytics.tracks.recordEvent( 'calypso_example_domain_suggestions_mapping_link_click' );
+		this.props.recordExampleSuggestionMappingLinkClick();
 	};
 
 	render() {
@@ -97,4 +98,13 @@ class DomainSuggestionsExample extends React.Component {
 	}
 }
 
-export default localize( DomainSuggestionsExample );
+const recordExampleSuggestionMappingLinkClick = () => recordTracksEvent(
+	'calypso_example_domain_suggestions_mapping_link_click'
+);
+
+export default connect(
+	null,
+	{
+		recordExampleSuggestionMappingLinkClick
+	}
+)( localize( DomainSuggestionsExample ) );

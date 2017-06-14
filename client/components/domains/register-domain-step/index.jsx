@@ -30,7 +30,7 @@ import { getAvailabilityNotice } from 'lib/domains/registration/availability-mes
 import SearchCard from 'components/search-card';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
-import { DomainSuggestionPlaceholder } from 'components/domains/domain-suggestion';
+import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import analyticsMixin from 'lib/mixins/analytics';
@@ -445,7 +445,7 @@ const RegisterDomainStep = React.createClass( {
 
 		if ( this.isLoadingSuggestions() ) {
 			domainRegistrationSuggestions = times( INITIAL_SUGGESTION_QUANTITY + 1, function( n ) {
-				return <DomainSuggestionPlaceholder key={ 'suggestion-' + n } />;
+				return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
 			} );
 		} else {
 			// only display two suggestions initially
