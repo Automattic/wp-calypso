@@ -29,7 +29,6 @@ const loadingState = {
 						},
 						products: {},
 						pages: {},
-						totalPages: 1
 					},
 				},
 			},
@@ -137,20 +136,20 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getTotalProductsPages', () => {
-		it( 'should be 1 (default) when woocommerce state is not available.', () => {
-			expect( getTotalProductsPages( preInitializedState, 123 ) ).to.eql( 1 );
+		it( 'should be 0 (default) when woocommerce state is not available.', () => {
+			expect( getTotalProductsPages( preInitializedState, 123 ) ).to.eql( 0 );
 		} );
 
-		it( 'should be 1 (default) when products are loading.', () => {
-			expect( getTotalProductsPages( loadingState, 123 ) ).to.eql( 1 );
+		it( 'should be 0 (default) when products are loading.', () => {
+			expect( getTotalProductsPages( loadingState, 123 ) ).to.eql( 0 );
 		} );
 
 		it( 'should be 3, the set page total, if the products are loaded.', () => {
 			expect( getTotalProductsPages( loadedState, 123 ) ).to.eql( 3 );
 		} );
 
-		it( 'should be 1 (default) when products are loaded only for a different site.', () => {
-			expect( getTotalProductsPages( loadedState, 456 ) ).to.eql( 1 );
+		it( 'should be 0 (default) when products are loaded only for a different site.', () => {
+			expect( getTotalProductsPages( loadedState, 456 ) ).to.eql( 0 );
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {

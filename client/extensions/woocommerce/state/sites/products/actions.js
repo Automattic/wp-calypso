@@ -74,7 +74,7 @@ export const fetchProducts = ( siteId, page ) => ( dispatch, getState ) => {
 	};
 	dispatch( fetchAction );
 
-	return request( siteId ).getWithHeaders( `products?page=${ page }` ).then( ( response ) => {
+	return request( siteId ).getWithHeaders( `products?page=${ page }&per_page=10` ).then( ( response ) => {
 		const { headers, data } = response;
 		const totalPages = headers[ 'X-WP-TotalPages' ];
 		dispatch( {

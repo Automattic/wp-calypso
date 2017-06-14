@@ -26,7 +26,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/products&page=1&_envelope&_method=get', json: true } )
+				.query( { path: '/wc/v3/products&page=1&per_page=10&_envelope&_method=get', json: true } )
 				.reply( 200, {
 					data: {
 						body: products,
@@ -35,7 +35,7 @@ describe( 'actions', () => {
 					}
 				} )
 				.get( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
-				.query( { path: '/wc/v3/products&page=invalid&_envelope&_method=get', json: true } )
+				.query( { path: '/wc/v3/products&page=invalid&per_page=10&_envelope&_method=get', json: true } )
 				.reply( 200, {
 					data: {
 						message: 'Invalid parameter(s): page',
