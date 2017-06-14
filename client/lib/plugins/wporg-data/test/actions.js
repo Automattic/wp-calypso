@@ -48,13 +48,13 @@ describe( 'WPorg Data Actions', () => {
 		assert.equal( mockedWporg.getActivity().fetchPluginsList, 1 );
 	} );
 
-	it( 'should call fetchCuratedList for the "featured" category', () => {
+	it( 'should return our Calypso curated feature list', () => {
 		const curatedSpy = spy( WPorgActions, 'fetchCuratedList' );
 		WPorgActions.fetchPluginsList( 'featured', 1 );
 		assert.isTrue( curatedSpy.called );
 	} );
 
-	it( 'should not call wporg.fetchPluginsList for the "featured" category', () => {
+	it( 'does not return the community featured list', () => {
 		WPorgActions.fetchPluginsList( 'featured', 1 );
 		assert.equal( mockedWporg.getActivity().fetchPluginsList, 0 );
 	} );
