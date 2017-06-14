@@ -62,8 +62,6 @@ MediaActions.fetch = function( siteId, itemId ) {
 };
 
 MediaActions.fetchNextPage = function( siteId ) {
-	var query;
-
 	if ( MediaListStore.isFetchingNextPage( siteId ) ) {
 		return;
 	}
@@ -73,10 +71,8 @@ MediaActions.fetchNextPage = function( siteId ) {
 		siteId: siteId
 	} );
 
-	query = MediaListStore.getNextPageQuery( siteId );
-
-	debug( 'Fetching media for %d using query %o', siteId, query );
-	wpcom.site( siteId ).mediaList( query, function( error, data ) {
+	const query = MediaListStore.getNextPageQuery( siteId );
+	const mediaReceived = ( error, data ) => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_MEDIA_ITEMS',
 			error: error,
@@ -84,7 +80,15 @@ MediaActions.fetchNextPage = function( siteId ) {
 			data: data,
 			query: query
 		} );
-	} );
+	};
+
+	debug( 'Fetching media for %d using query %o', siteId, query );
+
+	if ( ! query.source ) {
+		wpcom.site( siteId ).mediaList( query, mediaReceived );
+	} else {
+		wpcom.undocumented().externalMediaList( query, mediaReceived );
+	}
 };
 
 MediaActions.add = function( siteId, files ) {
