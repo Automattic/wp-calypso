@@ -84,13 +84,17 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		analytics.setSuperProps( superProps );
 	}
 
-	// Render Layout only for non-isomorphic sections.
+	// Ensure Layout is rendered.
 	// Isomorphic sections will take care of rendering their Layout last themselves.
-	if ( ! document.getElementById( 'primary' ) ) {
-		page( '*', function( context, next ) {
+	page( '*', function( context, next ) {
+		if ( ! document.getElementById( 'primary' ) ) {
 			renderLayoutAsync( reduxStore ).then( next );
-		} );
+		} else {
+			next();
+		}
+	} );
 
+	if ( ! document.getElementById( 'primary' ) ) {
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
 			const Logger = require( 'lib/catch-js-errors' );
 			const errorLogger = new Logger();
