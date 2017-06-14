@@ -32,7 +32,6 @@ class ReaderInfiniteStream extends Component {
 
 	static defaultProps = {
 		windowScrollerRef: noop,
-		showLastUpdatedDate: true,
 		minHeight: 70,
 		hasNextPage: () => false,
 	};
