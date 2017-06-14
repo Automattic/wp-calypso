@@ -85,11 +85,14 @@ class MagicLogin extends React.Component {
 
 	render() {
 		const {
+			magicLoginView,
 			translate,
 		} = this.props;
-
 		return (
-			<Main className="magic-login">
+			<Main className={ {
+				'magic-login': true,
+				'magic-login__request_link': ! magicLoginView,
+			} }>
 				<PageViewTracker path="/login" title="Login" />
 
 				<GlobalNotices id="notices" notices={ notices.list } />
