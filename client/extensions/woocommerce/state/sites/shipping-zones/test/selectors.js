@@ -14,6 +14,7 @@ const preInitializedState = {
 		woocommerce: {},
 	},
 };
+
 const loadingState = {
 	extensions: {
 		woocommerce: {
@@ -25,7 +26,8 @@ const loadingState = {
 		},
 	},
 };
-const loadingMethodsState = {
+
+const loadingMethodsAndLoadingLocationsState = {
 	extensions: {
 		woocommerce: {
 			sites: {
@@ -34,12 +36,17 @@ const loadingMethodsState = {
 						{ id: 1, methodIds: [ 3 ] },
 						{ id: 2, methodIds: LOADING },
 					],
+					shippingZoneLocations: {
+						1: LOADING,
+						2: { country: [], continent: [], state: [], postcode: [] },
+					},
 				},
 			},
 		},
 	},
 };
-const loadedWithMethodsState = {
+
+const loadedWithMethodsAndLoadingLocationsState = {
 	extensions: {
 		woocommerce: {
 			sites: {
@@ -48,11 +55,54 @@ const loadedWithMethodsState = {
 						{ id: 1, methodIds: [ 3 ] },
 						{ id: 2, methodIds: [ 7, 42 ] },
 					],
+					shippingZoneLocations: {
+						1: LOADING,
+						2: { country: [], continent: [], state: [], postcode: [] },
+					},
 				},
 			},
 		},
 	},
 };
+
+const loadingMethodsAndLoadedLocationsState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					shippingZones: [
+						{ id: 1, methodIds: [ 3 ] },
+						{ id: 2, methodIds: LOADING },
+					],
+					shippingZoneLocations: {
+						1: { country: [], continent: [], state: [], postcode: [] },
+						2: { country: [], continent: [], state: [], postcode: [] },
+					},
+				},
+			},
+		},
+	},
+};
+
+const loadedWithMethodsAndLocationsState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					shippingZones: [
+						{ id: 1, methodIds: [ 3 ] },
+						{ id: 2, methodIds: [ 7, 42 ] },
+					],
+					shippingZoneLocations: {
+						1: { country: [], continent: [], state: [], postcode: [] },
+						2: { country: [], continent: [], state: [], postcode: [] },
+					},
+				},
+			},
+		},
+	},
+};
+
 const loadedEmptyState = {
 	extensions: {
 		woocommerce: {
@@ -77,12 +127,20 @@ describe( 'selectors', () => {
 			expect( areShippingZonesLoading( loadedEmptyState, 123 ) ).to.be.false;
 		} );
 
-		it( 'when zones are loaded but some methods are not.', () => {
-			expect( areShippingZonesLoading( loadingMethodsState, 123 ) ).to.be.true;
+		it( 'when zones are loaded but some methods and locations are not.', () => {
+			expect( areShippingZonesLoading( loadingMethodsAndLoadingLocationsState, 123 ) ).to.be.true;
 		} );
 
-		it( 'when zones are loaded and all methods are loaded too.', () => {
-			expect( areShippingZonesLoading( loadedWithMethodsState, 123 ) ).to.be.false;
+		it( 'when zones and methods are loaded but some locations are not.', () => {
+			expect( areShippingZonesLoading( loadedWithMethodsAndLoadingLocationsState, 123 ) ).to.be.true;
+		} );
+
+		it( 'when zones and locations are loaded but some methods are not.', () => {
+			expect( areShippingZonesLoading( loadingMethodsAndLoadedLocationsState, 123 ) ).to.be.true;
+		} );
+
+		it( 'when zones are loaded and all methods and locations are loaded too.', () => {
+			expect( areShippingZonesLoading( loadedWithMethodsAndLocationsState, 123 ) ).to.be.false;
 		} );
 
 		it( 'when zones are currently being fetched.', () => {
@@ -107,12 +165,20 @@ describe( 'selectors', () => {
 			expect( areShippingZonesLoaded( loadedEmptyState, 123 ) ).to.be.true;
 		} );
 
-		it( 'when zones are loaded but some methods are not.', () => {
-			expect( areShippingZonesLoaded( loadingMethodsState, 123 ) ).to.be.false;
+		it( 'when zones are loaded but some methods and locations are not.', () => {
+			expect( areShippingZonesLoaded( loadingMethodsAndLoadingLocationsState, 123 ) ).to.be.false;
 		} );
 
-		it( 'when zones are loaded and all methods are loaded too.', () => {
-			expect( areShippingZonesLoaded( loadedWithMethodsState, 123 ) ).to.be.true;
+		it( 'when zones and methods are loaded but some locations are not.', () => {
+			expect( areShippingZonesLoaded( loadedWithMethodsAndLoadingLocationsState, 123 ) ).to.be.false;
+		} );
+
+		it( 'when zones and locations are loaded but some methods are not.', () => {
+			expect( areShippingZonesLoaded( loadingMethodsAndLoadedLocationsState, 123 ) ).to.be.false;
+		} );
+
+		it( 'when zones are loaded and all methods and locations are loaded too.', () => {
+			expect( areShippingZonesLoaded( loadedWithMethodsAndLocationsState, 123 ) ).to.be.true;
 		} );
 
 		it( 'when zones are currently being fetched.', () => {
