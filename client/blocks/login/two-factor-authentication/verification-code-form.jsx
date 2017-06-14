@@ -30,7 +30,6 @@ class VerificationCodeForm extends Component {
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
-		rememberMe: PropTypes.bool.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthRequestError: PropTypes.string,
@@ -61,14 +60,18 @@ class VerificationCodeForm extends Component {
 		} );
 	};
 
-	onCodeSubmit = ( event ) => {
+	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const { rememberMe, twoFactorAuthType } = this.props;
+		const { onSuccess, twoFactorAuthType } = this.props;
 		const { twoStepCode } = this.state;
 
-		this.props.loginUserWithTwoFactorVerificationCode( twoStepCode, rememberMe, twoFactorAuthType ).then( () => {
-			this.props.onSuccess();
+		this.props.recordTracksEvent( 'calypso_two_factor_verification_code_submit' );
+
+		this.props.loginUserWithTwoFactorVerificationCode( twoStepCode, twoFactorAuthType ).then( () => {
+			this.props.recordTracksEvent( 'calypso_two_factor_verification_code_success' );
+
+			onSuccess();
 		} ).catch( ( error ) => {
 			this.props.recordTracksEvent( 'calypso_two_factor_verification_code_failure', {
 				error_message: error.message
@@ -108,7 +111,7 @@ class VerificationCodeForm extends Component {
 		}
 
 		return (
-			<form onSubmit={ this.onCodeSubmit }>
+			<form onSubmit={ this.onSubmitForm }>
 				<Card className="two-factor-authentication__push-notification-screen is-compact">
 					<p>
 						{ helpText }
@@ -139,7 +142,6 @@ class VerificationCodeForm extends Component {
 
 					<FormButton
 						className="two-factor-authentication__form-button"
-						onClick={ this.onSubmit }
 						primary
 						disabled={ this.props.isRequestingTwoFactorAuth }
 					>{ translate( 'Continue' ) }</FormButton>

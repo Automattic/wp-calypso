@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Retrieve the user ID for the two factor authentication process.
@@ -46,14 +46,6 @@ export const getTwoFactorNotificationSent = ( state ) => {
 export const getTwoFactorPushToken = state => get( state, 'login.twoFactorAuth.push_web_token', null );
 
 /***
- * Retrieve the remember me flag that was set when logging in
- *
- * @param  {Object}   state  Global state tree
- * @return {Boolean}         Remember me flag for authentication
- */
-export const getTwoFactorRememberMe = state => get( state, 'login.twoFactorAuth.remember_me', false );
-
-/***
  * Retrieve the progress status of polling for push authentication
  *
  * @param  {Object}   state  Global state tree
@@ -70,21 +62,15 @@ export const getTwoFactorPushPollInProgress = state => get( state, 'login.twoFac
 export const getTwoFactorPushPollSuccess = state => get( state, 'login.twoFactorAuthPushPoll.success', false );
 
 /**
- * True if two factor authentication is enabled for the logging in user.
- * False if not, null if the information is not available yet.
+ * Determines whether two factor authentication is enabled for the logging in user.
  *
  * @param  {Object}   state  Global state tree
- * @return {?Boolean}        Whether 2FA is enabled
+ * @return {Boolean}        Whether 2FA is enabled
  */
 export const isTwoFactorEnabled = ( state ) => {
 	const twoFactorAuth = get( state, 'login.twoFactorAuth' );
-	if ( ! twoFactorAuth ) {
-		return null;
-	}
 
-	return (
-		twoFactorAuth.user_id !== ''
-	);
+	return ! isEmpty( twoFactorAuth );
 };
 
 /**
@@ -159,4 +145,24 @@ export const getRequestError = ( state ) => {
  */
 export const getRequestNotice = ( state ) => {
 	return get( state, 'login.requestNotice', null );
+};
+
+/***
+ * Retrieves the redirect url that was passed when logging in.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Url to redirect the user to upon successful login
+ */
+export const getRedirectTo = ( state ) => {
+	return get( state, 'login.redirectTo', null );
+};
+
+/***
+ * Retrieves the remember me flag that was set when logging in.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Remember me flag for authentication
+ */
+export const getRememberMe = ( state ) => {
+	return get( state, 'login.rememberMe', false );
 };

@@ -35,6 +35,8 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'isRequesting',
 			'magicLogin',
+			'redirectTo',
+			'rememberMe',
 			'requestError',
 			'requestNotice',
 			'requestSuccess',
@@ -372,7 +374,7 @@ describe( 'reducer', () => {
 				rememberMe: true
 			} );
 
-			expect( state ).to.eql( { ...data, remember_me: true } );
+			expect( state ).to.eql( { ...data } );
 		} );
 
 		it( 'should set twoFactorAuth to null value if a request is unsuccessful', () => {

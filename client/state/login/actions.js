@@ -27,8 +27,9 @@ import {
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 } from 'state/action-types';
 import {
-	getTwoFactorUserId,
+	getRememberMe,
 	getTwoFactorAuthNonce,
+	getTwoFactorUserId,
 } from 'state/login/selectors';
 
 const errorMessages = {
@@ -95,13 +96,13 @@ function getErrorFromHTTPError( httpError ) {
  *
  * @param  {String}    usernameOrEmail    Username or email of the user.
  * @param  {String}    password           Password of the user.
- * @param  {Boolean}   rememberMe         Whether to persist the logged in state of the user..
+ * @param  {Boolean}   rememberMe         Whether to persist the logged in state of the user
+ * @param  {String}    redirectTo         Url to redirect the user to upon successful login
  * @return {Function}                     Action thunk to trigger the login process.
  */
-export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch => {
+export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) => dispatch => {
 	dispatch( {
 		type: LOGIN_REQUEST,
-		usernameOrEmail
 	} );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=login-endpoint' )
@@ -112,12 +113,12 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 			username: usernameOrEmail,
 			password,
 			remember_me: rememberMe,
+			redirect_to: redirectTo,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} ).then( ( response ) => {
 			dispatch( {
 				type: LOGIN_REQUEST_SUCCESS,
-				usernameOrEmail,
 				rememberMe,
 				data: response.body && response.body.data,
 			} );
@@ -126,7 +127,6 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 
 			dispatch( {
 				type: LOGIN_REQUEST_FAILURE,
-				usernameOrEmail,
 				error,
 			} );
 
@@ -137,12 +137,11 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 /**
  * Attempt to login a user when a two factor verification code is sent.
  *
- * @param  {String}    two_step_code  Verification code for the user.
- * @param  {Boolean}   remember_me       Flag for remembering the user for a while after logging in.
+ * @param  {String}    twoStepCode  Verification code for the user.
  * @param {String}     twoFactorAuthType Two factor authentication method
  * @return {Function}                 Action thunk to trigger the login process.
  */
-export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_me, twoFactorAuthType ) => ( dispatch, getState ) => {
+export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAuthType ) => ( dispatch, getState ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
@@ -151,9 +150,9 @@ export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_
 		.accept( 'application/json' )
 		.send( {
 			user_id: getTwoFactorUserId( getState() ),
-			two_step_code,
+			two_step_code: twoStepCode,
 			two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
-			remember_me,
+			remember_me: getRememberMe( getState() ),
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
@@ -181,11 +180,12 @@ export const loginUserWithTwoFactorVerificationCode = ( two_step_code, remember_
 /**
  * Attempt to login a user with an external social account.
  *
- * @param  {String}    service The external social service name.
- * @param  {String}    token   Authentication token provided by the external social service.
- * @return {Function}          Action thunk to trigger the login process.
+ * @param  {String}    service    The external social service name.
+ * @param  {String}    token      Authentication token provided by the external social service.
+ * @param  {String}    redirectTo Url to redirect the user to upon successful login
+ * @return {Function}             Action thunk to trigger the login process.
  */
-export const loginSocialUser = ( service, token ) => dispatch => {
+export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=social-login-endpoint' )
@@ -195,11 +195,15 @@ export const loginSocialUser = ( service, token ) => dispatch => {
 		.send( {
 			service,
 			token,
+			redirect_to: redirectTo,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
-		.then( () => {
-			dispatch( { type: SOCIAL_LOGIN_REQUEST_SUCCESS } );
+		.then( ( response ) => {
+			dispatch( {
+				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
+				redirectTo: get( response, 'body.data.redirect_to' ),
+			} );
 		} )
 		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
@@ -238,11 +242,11 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		.then( ( response ) => {
 			const phoneNumber = get( response, 'body.data.phone_number' );
 			const message = translate( 'Message sent to phone number ending in %(phoneNumber)s', {
-					args: {
-						phoneNumber
-					}
+				args: {
+					phoneNumber
 				}
-			);
+			} );
+
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 				notice: {

@@ -8,19 +8,19 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	getTwoFactorAuthRequestError,
-	getTwoFactorUserId,
-	getTwoFactorAuthNonce,
+	getRememberMe,
 	getRequestError,
-	getTwoFactorSupportedAuthTypes,
-	isRequestingTwoFactorAuth,
-	isRequesting,
-	isTwoFactorEnabled,
-	isTwoFactorAuthTypeSupported,
-	getTwoFactorPushToken,
-	getTwoFactorRememberMe,
+	getTwoFactorAuthNonce,
+	getTwoFactorAuthRequestError,
 	getTwoFactorPushPollInProgress,
 	getTwoFactorPushPollSuccess,
+	getTwoFactorPushToken,
+	getTwoFactorSupportedAuthTypes,
+	getTwoFactorUserId,
+	isRequesting,
+	isRequestingTwoFactorAuth,
+	isTwoFactorAuthTypeSupported,
+	isTwoFactorEnabled,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -154,10 +154,10 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isTwoFactorEnabled()', () => {
-		it( 'should return null if there is no two factor information yet', () => {
+		it( 'should return false if there is no two factor information yet', () => {
 			const twoFactorEnabled = isTwoFactorEnabled( undefined );
 
-			expect( twoFactorEnabled ).to.be.null;
+			expect( twoFactorEnabled ).to.be.false;
 		} );
 
 		it( 'should return true if the request was successful and two-factor auth is enabled', () => {
@@ -166,40 +166,11 @@ describe( 'selectors', () => {
 					twoFactorAuth: {
 						user_id: 123456,
 						two_step_nonce: 'abcdef123456',
-						result: true,
 					}
 				}
 			} );
 
 			expect( twoFactorEnabled ).to.be.true;
-		} );
-
-		it( 'should return false if the request was successful and two-factor auth is not', () => {
-			const twoFactorEnabled = isTwoFactorEnabled( {
-				login: {
-					twoFactorAuth: {
-						user_id: '',
-						two_step_nonce: '',
-						result: true,
-					}
-				}
-			} );
-
-			expect( twoFactorEnabled ).to.be.false;
-		} );
-
-		it( 'should return false if the request was unsuccessful', () => {
-			const twoFactorEnabled = isTwoFactorEnabled( {
-				login: {
-					twoFactorAuth: {
-						user_id: '',
-						two_step_nonce: '',
-						result: false,
-					}
-				}
-			} );
-
-			expect( twoFactorEnabled ).to.be.false;
 		} );
 	} );
 
@@ -260,18 +231,16 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getTwoFactorRememberMe()', () => {
+	describe( 'getRememberMe()', () => {
 		it( 'should return false by default', () => {
-			expect( getTwoFactorRememberMe( undefined ) ).to.be.false;
+			expect( getRememberMe( undefined ) ).to.be.false;
 		} );
 
 		it( "should return remember me flag when it's set", () => {
 			const rememberMe = true;
-			expect( getTwoFactorRememberMe( {
+			expect( getRememberMe( {
 				login: {
-					twoFactorAuth: {
-						remember_me: rememberMe
-					}
+					rememberMe
 				}
 			} ) ).to.eql( rememberMe );
 		} );
