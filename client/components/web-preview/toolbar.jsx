@@ -41,6 +41,8 @@ class PreviewToolbar extends Component {
 		setDeviceViewport: PropTypes.func,
 		// Called when the close button is pressed
 		onClose: PropTypes.func.isRequired,
+		// Called when the edit button is clicked
+		onEdit: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -64,6 +66,7 @@ class PreviewToolbar extends Component {
 			editUrl,
 			externalUrl,
 			onClose,
+			onEdit,
 			previewUrl,
 			setDeviceViewport,
 			showClose,
@@ -113,7 +116,7 @@ class PreviewToolbar extends Component {
 						<Button
 							className="web-preview__edit"
 							href={ editUrl }
-							onClick={ onClose }
+							onClick={ onEdit }
 						>
 							<Gridicon icon="pencil" /> { translate( 'Edit' ) }
 						</Button>

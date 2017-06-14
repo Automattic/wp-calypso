@@ -109,6 +109,7 @@ const EditorPreview = React.createClass( {
 							showExternal={ false }
 							defaultViewportDevice={ this.props.defaultViewportDevice }
 							onClose={ this.props.onClose }
+							onEdit={ this.props.onEdit }
 							previewUrl={ this.state.iframeUrl }
 							editUrl={ this.props.editUrl }
 						/>
