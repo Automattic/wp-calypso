@@ -6,7 +6,7 @@
 	"env_id": [ "development", "wpcalypso", "jetpack" ],
 	"section": {
 		"name": "test",
-		"paths": [ "/test/writing", "/test/discussion" ],
+		"paths": [ "/test" ],
 		"module": "test",
 		"group": "jetpack",
 		"enableLoggedOut": true,
