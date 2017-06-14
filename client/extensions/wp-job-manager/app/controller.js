@@ -34,11 +34,9 @@ export function renderTab( context, component, tab = '' ) {
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
 	renderWithReduxStore(
-		React.createElement(
-			WPJobManager,
-			{ context, tab },
-			React.createElement( component ),
-		),
+		<WPJobManager tab={ tab }>
+			{ React.createElement( component ) }
+		</WPJobManager>,
 		document.getElementById( 'primary' ),
 		context.store
 	);
