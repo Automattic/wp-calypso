@@ -27,6 +27,21 @@ if ( needsInstall() ) {
 	const installResult = spawnSync( 'npm', [ 'install' ], {
 		shell: true,
 		stdio: 'inherit',
-	});
-	process.exit( installResult.status );
+	} ).status;
+	if ( installResult ) {
+		process.exit( installResult );
+	}
+
+	// Cleanup old Githooks (remove in a few months from June 2017)
+	const path = require( 'path' );
+	const rm = file => fs.existsSync( file ) && fs.unlinkSync( file );
+	rm( path.join( '.git', 'hooks', 'pre-push' ) );
+	rm( path.join( '.git', 'hooks', 'pre-commit' ) );
+	rm( path.join( 'bin', 'pre-push' ) );
+	rm( path.join( 'bin', 'pre-commit' ) );
+	process.exit( spawnSync( 'npm', [ 'run', 'install' ], {
+		shell: true,
+		stdio: 'inherit',
+		cwd: path.join( 'node_modules', 'husky' ),
+	} ).status );
 }
