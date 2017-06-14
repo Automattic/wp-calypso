@@ -53,17 +53,11 @@
 	width: 100%;
 }
 
-.payments__type-container {
-	.list__ul {
-		> div {
-			li:nth-child( 2 ) {
-				padding: 16px;
-				border-top: 1px solid $gray-light;
+.payments__method-edit-pane {
+	padding: 16px;
+	border-top: 1px solid $gray-light;
 
-				@include breakpoint( '>480px' ) {
-					padding: 24px;
-				}
-			}
-		}
+	@include breakpoint( '>480px' ) {
+		padding: 24px;
 	}
 }

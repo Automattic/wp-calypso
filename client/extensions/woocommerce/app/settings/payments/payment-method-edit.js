@@ -14,7 +14,6 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
-import ListItem from 'woocommerce/components/list/list-item';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 
 class PaymentMethodEdit extends Component {
@@ -106,13 +105,13 @@ class PaymentMethodEdit extends Component {
 		const { method, translate } = this.props;
 		const settingsFieldsKeys = method.settings && Object.keys( method.settings );
 		return (
-			<ListItem>
+			<div className="payments__method-edit-pane">
 				{ settingsFieldsKeys.map( this.renderEditField ) }
 				<hr />
 				<Button primary onClick={ this.onSaveHandler }>
 					{ translate( 'Save' ) }
 				</Button>
-			</ListItem>
+			</div>
 		);
 	}
 

@@ -1,76 +1,163 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
+import {
+	changePaymentMethodField,
+	closeEditingPaymentMethod,
+	openPaymentMethodForEdit,
+} from 'woocommerce/state/ui/payments/methods/actions';
+import { getCurrentlyEditingPaymentMethod } from 'woocommerce/state/ui/payments/methods/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
+import PaymentMethodEdit from './payment-method-edit';
+import { savePaymentMethod } from 'woocommerce/state/sites/payment-methods/actions';
 
-const PaymentMethodItem = ( { method, translate, onCancel, onEdit, currentlyEditingId } ) => {
-	let editButtonText = translate( 'Set up' );
-	if ( currentlyEditingId === method.id ) {
-		editButtonText = translate( 'Cancel' );
-	}
+class PaymentMethodItem extends Component {
+	static propTypes = {
+		closeEditingPaymentMethod: PropTypes.func.isRequired,
+		currentlyEditingId: PropTypes.string,
+		currentlyEditingMethod: PropTypes.shape( {
+			id: PropTypes.string,
+		} ),
+		method: PropTypes.shape( {
+			title: PropTypes.string.isRequired,
+			isSuggested: PropTypes.bool,
+			fees: PropTypes.string,
+			id: PropTypes.string,
+			informationUrl: PropTypes.string,
+		} ),
+		openPaymentMethodForEdit: PropTypes.func.isRequired,
+		savePaymentMethod: PropTypes.func.isRequired,
+	};
 
-	const onEditHandler = () => {
+	onEditHandler = () => {
+		const { method } = this.props;
+		const currentlyEditingId = this.props.currentlyEditingMethod &&
+			this.props.currentlyEditingMethod.id;
 		if ( currentlyEditingId === method.id ) {
-			onCancel( method );
+			this.onCancel( method );
 		} else {
-			onEdit( method );
+			this.onEdit( method );
 		}
 	};
 
-	return (
-		<ListItem>
-			<ListItemField>
-				{
-					method.isSuggested &&
-					(
-						<p className="payments__method-suggested">
-							{ translate( 'Suggested Method' ) }
+	onCancel = () => {
+		const { method } = this.props;
+		this.props.closeEditingPaymentMethod( this.props.site.ID, method.id );
+	}
+
+	onEdit = ( method ) => {
+		const { site } = this.props;
+		this.props.openPaymentMethodForEdit( site.ID, method.id );
+	}
+
+	onEditField = ( field, value ) => {
+		this.props.changePaymentMethodField( this.props.site.ID, field, value );
+	}
+
+	onSave = ( method ) => {
+		const { site, translate } = this.props;
+
+		const successAction = () => {
+			this.props.closeEditingPaymentMethod( site.ID, method.id );
+			return successNotice(
+				translate( 'Payment method successfully saved.' ),
+				{ duration: 4000 }
+			);
+		};
+
+		const errorAction = () => {
+			return errorNotice(
+				translate( 'There was a problem saving the payment method. Please try again.' )
+			);
+		};
+
+		this.props.savePaymentMethod( site.ID, method, successAction, errorAction );
+	}
+
+	render() {
+		const currentlyEditingId = this.props.currentlyEditingMethod &&
+			this.props.currentlyEditingMethod.id;
+		const { method, translate } = this.props;
+		let editButtonText = translate( 'Set up' );
+		if ( currentlyEditingId === method.id ) {
+			editButtonText = translate( 'Cancel' );
+		}
+
+		return (
+			<ListItem>
+				<ListItemField>
+					{
+						method.isSuggested &&
+						(
+							<p className="payments__method-suggested">
+								{ translate( 'Suggested Method' ) }
+							</p>
+						)
+					}
+					<p className="payments__method-name">{ method.title }</p>
+				</ListItemField>
+				<ListItemField>
+					{ method.fees && (
+						<p className="payments__method-information">{ method.fees }</p>
+					) }
+					{ method.informationUrl && (
+						<p className="payments__method-information">
+							<a href={ method.informationUrl }>
+								{ translate( 'More Information' ) }
+							</a>
 						</p>
-					)
-				}
-				<p className="payments__method-name">{ method.title }</p>
-			</ListItemField>
-			<ListItemField>
-				{ method.fees && (
-					<p className="payments__method-information">{ method.fees }</p>
-				) }
-				{ method.informationUrl && (
-					<p className="payments__method-information">
-						<a href={ method.informationUrl }>
-							{ translate( 'More Information' ) }
-						</a>
-					</p>
-				) }
+					) }
 
-			</ListItemField>
-			<ListItemField>
-				<Button compact onClick={ onEditHandler }>
-					{ editButtonText }
-				</Button>
-			</ListItemField>
-		</ListItem>
+				</ListItemField>
+				<ListItemField>
+					<Button compact onClick={ this.onEditHandler }>
+						{ editButtonText }
+					</Button>
+				</ListItemField>
+				{ currentlyEditingId === method.id && (
+					<PaymentMethodEdit
+						method={ this.props.currentlyEditingMethod }
+						onEditField={ this.onEditField }
+						onSave={ this.onSave } />
+				) }
+			</ListItem>
+		);
+	}
+}
+
+function mapStateToProps( state ) {
+	const currentlyEditingMethod = getCurrentlyEditingPaymentMethod( state );
+	const site = getSelectedSiteWithFallback( state );
+	return {
+		currentlyEditingMethod,
+		site,
+	};
+}
+
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			changePaymentMethodField,
+			closeEditingPaymentMethod,
+			openPaymentMethodForEdit,
+			savePaymentMethod,
+		},
+		dispatch
 	);
-};
+}
 
-PaymentMethodItem.propTypes = {
-	currentlyEditingId: PropTypes.string,
-	method: PropTypes.shape( {
-		title: PropTypes.string.isRequired,
-		isSuggested: PropTypes.bool,
-		fees: PropTypes.string,
-		id: PropTypes.string,
-		informationUrl: PropTypes.string,
-	} ),
-	onCancel: PropTypes.func,
-	onEdit: PropTypes.func,
-};
-
-export default localize( PaymentMethodItem );
+export default localize(
+	connect( mapStateToProps, mapDispatchToProps )( PaymentMethodItem )
+);
