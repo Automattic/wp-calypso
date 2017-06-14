@@ -10,6 +10,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
 import { trackClick } from './helpers';
@@ -18,6 +19,7 @@ import {
 	getCanonicalTheme,
 	getThemeDetailsUrl,
 	getThemeCustomizeUrl,
+	getThemeSetupUrl,
 	getThemeForumUrl,
 	isActivatingTheme,
 	hasActivatedTheme,
@@ -48,7 +50,9 @@ const ThanksModal = React.createClass( {
 		isActivating: PropTypes.bool.isRequired,
 		isThemeWpcom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
-		visitSiteUrl: PropTypes.string
+		visitSiteUrl: PropTypes.string,
+		isJetpackSite: PropTypes.bool.isRequired,
+		themeSetupUrl: PropTypes.string
 	},
 
 	onCloseModal() {
@@ -76,14 +80,28 @@ const ThanksModal = React.createClass( {
 	renderBody() {
 		return (
 			<ul>
+				{ config.isEnabled( 'settings/theme-setup' ) && ! this.props.isJetpackSite &&
+					<li>
+						{ this.renderThemeSetupInfo() }
+					</li>
+				}
 				<li>
 					{ this.props.source === 'list' ? this.renderThemeInfo() : this.renderCustomizeInfo() }
 				</li>
-			<li>
-				{ this.renderSupportInfo() }
-			</li>
+				<li>
+					{ this.renderSupportInfo() }
+				</li>
 			</ul>
 		);
+	},
+
+	renderThemeSetupInfo() {
+		return translate( 'Make your site look like the demo with {{a}}Theme Setup{{/a}}.', {
+			components: {
+				a: <a href={ this.props.themeSetupUrl }
+					onClick={ this.onLinkClick( 'setup' ) } />
+			}
+		} );
 	},
 
 	renderThemeInfo() {
@@ -192,7 +210,9 @@ export default connect(
 			visitSiteUrl: siteUrl + ( isJetpackSite( state, siteId ) ? '' : '?next=customize' ),
 			isActivating: !! ( isActivatingTheme( state, siteId ) ),
 			hasActivated: !! ( hasActivatedTheme( state, siteId ) ),
-			isThemeWpcom: isWpcomTheme( state, currentThemeId )
+			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
+			isJetpackSite: isJetpackSite( state, siteId ),
+			themeSetupUrl: getThemeSetupUrl( state, siteId )
 		};
 	},
 	{ clearActivated }
