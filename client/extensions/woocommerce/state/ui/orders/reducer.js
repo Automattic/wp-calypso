@@ -11,7 +11,7 @@ import { WOOCOMMERCE_UI_ORDERS_SET_PAGE } from 'woocommerce/state/action-types';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function currentPage( state = 0, action ) {
+export function currentPage( state = 1, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_UI_ORDERS_SET_PAGE:
 			return action.page;

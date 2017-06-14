@@ -24,7 +24,7 @@ const state = {
 						currentPage: 2,
 					},
 					234: {
-						currentPage: 1,
+						currentPage: 5,
 					},
 				},
 			},
@@ -43,7 +43,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should get the current order page for a second site in the state', () => {
-			expect( getOrdersCurrentPage( state, 234 ) ).to.eql( 1 );
+			expect( getOrdersCurrentPage( state, 234 ) ).to.eql( 5 );
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided', () => {

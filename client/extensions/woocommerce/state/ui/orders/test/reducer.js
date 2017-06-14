@@ -21,10 +21,10 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_UI_ORDERS_SET_PAGE,
 				siteId: 123,
-				page: 1,
+				page: 2,
 			};
 			const newState = reducer( undefined, action );
-			expect( newState ).to.eql( { 123: { currentPage: 1 } } );
+			expect( newState ).to.eql( { 123: { currentPage: 2 } } );
 		} );
 
 		it( 'should should update the current page when changed', () => {
@@ -33,7 +33,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 2,
 			};
-			const originalState = deepFreeze( { 123: { currentPage: 1 } } );
+			const originalState = deepFreeze( { 123: { currentPage: 3 } } );
 			const newState = reducer( originalState, action );
 			expect( newState ).to.eql( { 123: { currentPage: 2 } } );
 		} );
@@ -42,11 +42,22 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_UI_ORDERS_SET_PAGE,
 				siteId: 234,
+				page: 2,
+			};
+			const originalState = deepFreeze( { 123: { currentPage: 3 } } );
+			const newState = reducer( originalState, action );
+			expect( newState ).to.eql( { 123: { currentPage: 3 }, 234: { currentPage: 2 } } );
+		} );
+
+		it( 'should should remove the key when re-set to initial state', () => {
+			const action = {
+				type: WOOCOMMERCE_UI_ORDERS_SET_PAGE,
+				siteId: 123,
 				page: 1,
 			};
-			const originalState = deepFreeze( { 123: { currentPage: 2 } } );
+			const originalState = deepFreeze( { 123: { currentPage: 3 } } );
 			const newState = reducer( originalState, action );
-			expect( newState ).to.eql( { 123: { currentPage: 2 }, 234: { currentPage: 1 } } );
+			expect( newState ).to.eql( {} );
 		} );
 	} );
 } );
