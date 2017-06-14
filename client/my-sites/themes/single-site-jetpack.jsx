@@ -42,9 +42,7 @@ const ConnectedThemesSelection = connectOptions(
 				getOptions={ function( theme ) {
 					return pickBy(
 						addTracking( props.options ),
-						( option, key ) => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) ) || (
-							config.isEnabled( 'jetpack/pijp' ) && 'tryandcustomize' === key && props.hasUnlimitedPremiumThemes
-						)
+						( option, key ) => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
 					);
 				} }
 			/>

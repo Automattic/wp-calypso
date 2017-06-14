@@ -120,7 +120,10 @@ const tryandcustomize = {
 			// is less readily available since it needs to be fetched using the `QuerySitePlans` component.
 			( isJetpackSite( state, siteId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) )
 		) ||
-		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
+		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) ) ||
+		( config.isEnabled( 'jetpack/pijp' ) &&
+			isJetpackSite( state, siteId ) &&
+			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) )
 	)
 };
 
