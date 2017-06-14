@@ -21,7 +21,7 @@ import ErrorBanner from '../activity-log-banner/error-banner';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import QueryRewindStatus from 'components/data/query-rewind-status';
-import { activityLogRequest as activityLogRequestAction } from 'state/activity-log/actions';
+import QueryActivityLog from 'components/data/query-activity-log';
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -40,16 +40,6 @@ class ActivityLog extends Component {
 		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
-
-	componentWillMount() {
-		this.tryFetchLogs( this.props.siteId );
-	}
-
-	componentWillUpdate( { siteId } ) {
-		if ( siteId !== this.props.siteId ) {
-			this.tryFetchLogs( siteId );
-		}
-	}
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
@@ -332,10 +322,11 @@ class ActivityLog extends Component {
 			siteId,
 		} = this.props;
 		const logs = this.props.logs;
+
 		const logsGroupedByDate = map(
 			groupBy(
 				logs.map( this.update_logs, this ),
-				log => moment( log.timestamp ).startOf( 'day' ).format( 'x' )
+				log => moment( log.ts_site ).startOf( 'day' ).format( 'x' )
 			),
 			( daily_logs, timestamp ) => (
 				<ActivityLogDay
@@ -368,6 +359,7 @@ class ActivityLog extends Component {
 		return (
 			<Main wideLayout={ true }>
 				<QueryRewindStatus siteId={ siteId } />
+				<QueryActivityLog siteId={ siteId } />
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
@@ -391,14 +383,12 @@ export default connect(
 			rewindStatusError: getRewindStatusError( state, siteId ),
 
 			// FIXME: Testing only
-			isPressable: true,
+			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false ),
 			logs: get( state, [
 				'activityLog',
 				'logItems',
 				siteId,
 			], [] ),
 		};
-	}, {
-		activityLogRequest: activityLogRequestAction,
 	}
 )( localize( ActivityLog ) );

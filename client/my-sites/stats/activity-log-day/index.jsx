@@ -68,10 +68,10 @@ class ActivityLogDay extends Component {
 			timestamp,
 			translate,
 		} = this.props;
-		// FIXME: Reports invalid date
+
 		return (
 			<div>
-				<div className="activity-log-day__day">{ moment( timestamp, 'x' ).format( 'LL' ) }</div>
+				<div className="activity-log-day__day">{ moment( Number( timestamp ) ).format( 'LL' ) }</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,
@@ -112,7 +112,7 @@ class ActivityLogDay extends Component {
 							status={ log.status }
 							className={ log.className }
 						/>
-					) ) } ) }
+					) ) }
 				</FoldableCard>
 				<ActivityLogConfirmDialog
 					isVisible={ this.state.isRestoreConfirmDialogOpen }

@@ -58,34 +58,31 @@ describe( 'receiveActivityLog', () => {
 		const dispatch = sinon.spy();
 		receiveActivityLog( { dispatch }, { siteId: SITE_ID }, null, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWithMatch(
-			activityLogUpdate( SITE_ID, {
-				activities: [
-					{
-						ts_site: 1496692768557,
-						type: 'jetpack-audit',
-						action_trigger: 'publicize_save_published_action',
-						lag: 0,
-						jetpack_version: '5.0-alpha',
-						ts_utc: 1496692768557,
-						action: 'publicized',
-						es_retention: 'long',
-						group: 'post',
-						blog_id: 77203074,
-						hdfs_retention: 'long',
-						actor: {
-							displayname: 'User',
-							external_id: 1,
-							login: 'user'
-						},
-						ts_sent_action: 1496692768557,
-						name: 'post__publicized',
-						site_id: 1,
-						error_code: '',
-						ts_recieved_action: 1496692768557
+			activityLogUpdate( SITE_ID, [
+				{
+					ts_site: 1496692768557,
+					type: 'jetpack-audit',
+					action_trigger: 'publicize_save_published_action',
+					lag: 0,
+					jetpack_version: '5.0-alpha',
+					ts_utc: 1496692768557,
+					action: 'publicized',
+					es_retention: 'long',
+					group: 'post',
+					blog_id: 77203074,
+					hdfs_retention: 'long',
+					actor: {
+						displayname: 'User',
+						external_id: 1,
+						login: 'user'
 					},
-				],
-				found: 1,
-			} )
+					ts_sent_action: 1496692768557,
+					name: 'post__publicized',
+					site_id: 2,
+					error_code: '',
+					ts_recieved_action: 1496692768557
+				},
+			] )
 		);
 	} );
 } );
