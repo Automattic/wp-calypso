@@ -94,7 +94,7 @@ class MagicLogin extends React.Component {
 				'magic-login': true,
 				'magic-login__request_link': ! magicLoginView || magicLoginView === REQUEST_FORM,
 			} }>
-				<PageViewTracker path="/login" title="Login" />
+				<PageViewTracker path="/log-in/link" title="Login > Link" />
 
 				<GlobalNotices id="notices" notices={ notices.list } />
 
