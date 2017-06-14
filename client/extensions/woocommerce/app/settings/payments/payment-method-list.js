@@ -14,7 +14,6 @@ import { getPaymentMethodsGroup } from 'woocommerce/state/ui/payments/methods/se
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import List from 'woocommerce/components/list/list';
 import ListHeader from 'woocommerce/components/list/list-header';
-import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 import PaymentMethodItem from './payment-method-item';
 
