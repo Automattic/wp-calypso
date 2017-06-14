@@ -80,6 +80,8 @@ export class DomainDetailsForm extends PureComponent {
 			steps,
 			currentStep: first( steps ),
 		};
+
+		this.inputRefs = {};
 	}
 
 	componentWillMount() {
@@ -223,9 +225,12 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	getFieldProps( name ) {
+		const ref = name === 'state'
+			? { inputRef: el => this.inputRefs[ name ] = el }
+			: { ref: name };
 		return {
 			name,
-			ref: name,
+			...ref,
 			additionalClasses: 'checkout-field',
 			value: formState.getFieldValue( this.state.form, name ) || '',
 			isError: formState.isFieldInvalid( this.state.form, name ),
@@ -417,7 +422,8 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	focusFirstError() {
-		this.refs[ kebabCase( head( map( formState.getInvalidFields( this.state.form ), 'name' ) ) ) ].focus();
+		const firstErrorName = kebabCase( head( formState.getInvalidFields( this.state.form ) ).name );
+		( this.inputRefs[ firstErrorName ] || this.refs[ firstErrorName ] ).focus();
 	}
 
 	handleSubmitButtonClick = ( event ) => {
