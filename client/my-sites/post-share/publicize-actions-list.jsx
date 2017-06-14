@@ -113,7 +113,6 @@ class PublicizeActionsList extends PureComponent {
 	}
 
 	deleteScheduledAction( actionId ) {
-		analytics.tracks.recordEvent( 'calypso_publicize_scheduled_delete' );
 		return () => {
 			this.setState( {
 				showDeleteDialog: true,
@@ -128,7 +127,7 @@ class PublicizeActionsList extends PureComponent {
 				siteId,
 				postId
 			} = this.props;
-
+			analytics.tracks.recordEvent( 'calypso_publicize_scheduled_delete' );
 			this.props.deletePostShareAction( siteId, postId, this.state.selectedScheduledShareId );
 		}
 
