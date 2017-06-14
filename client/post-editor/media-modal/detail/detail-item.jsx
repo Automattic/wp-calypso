@@ -25,7 +25,7 @@ import versionCompare from 'lib/version-compare';
 import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, getSiteOption } from 'state/sites/selectors';
+import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 
 /**
  * This function return true if the image editor can be
@@ -84,20 +84,28 @@ class EditorMediaModalDetailItem extends Component {
 	 * @return {Boolean} Whether the video editor can be enabled
 	 */
 	enableVideoEditing( item ) {
-		// do not show if the feature flag isn't set
 		if ( ! config.isEnabled( 'post-editor/video-editor' ) ) {
 			return false;
 		}
 
-		const { isJetpack, isVideoPressDisabled } = this.props;
+		const {
+			isJetpack,
+			isVideoPressEnabled,
+			isVideoPressModuleActive,
+		} = this.props;
 
-		// do not allow for Jetpack site with VideoPress disabled
+		// Not a VideoPress video
+		if ( ! MediaUtils.isVideoPressItem( item ) ) {
+			return false;
+		}
+
+		// Jetpack and VideoPress disabled
 		if ( isJetpack ) {
-			if ( ! MediaUtils.isVideoPressItem( item ) ) {
+			if ( ! isVideoPressModuleActive ) {
 				return false;
 			}
-		// do not allow for wpcom site with VideoPress disabled
-		} else if ( isVideoPressDisabled ) {
+		// WP.com and VideoPress disabled
+		} else if ( ! isVideoPressEnabled ) {
 			return false;
 		}
 
@@ -337,7 +345,8 @@ const connectComponent = connect(
 
 		return {
 			isJetpack: isJetpackSite( state, siteId ),
-			isVideoPressDisabled: ! getSiteOption( state, siteId, 'videopress_enabled' ),
+			isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
+			isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
 		};
 	}
 );
