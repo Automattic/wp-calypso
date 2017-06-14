@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,6 +43,9 @@ class GoogleAppsUsersForm extends React.Component {
 				comment: 'As it would be part of an e-mail address contact@example.com'
 			}
 		);
+		const emailError = get( user, 'email.error', false );
+		const firstNameError = get( user, 'firstName.error', false );
+		const lastNameError = get( user, 'lastName.error', false );
 
 		return (
 			<div className="google-apps-dialog__user-fields" key={ `google-apps-dialog-user-${ index }` }>
@@ -50,39 +54,39 @@ class GoogleAppsUsersForm extends React.Component {
 						className={ this.fieldClasses( 'email' ) }
 						placeholder={ translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
 						name="email"
-						value={ user.email.value }
+						value={ get( user, 'email.value', '' ) }
 						suffix={ '@' + domain }
-						isError={ !! user.email.error }
+						isError={ emailError }
 						onChange={ this.updateInputField }
 						onBlur={ onBlur }
 						onClick={ this.recordInputFocusEmail } />
-					{ user.email.error ? <FormInputValidation text={ user.email.error } isError={ true } /> : null }
+					{ emailError ? <FormInputValidation text={ emailError } isError={ true } /> : null }
 				</FormFieldset>
 
 				<FormFieldset className={ this.fieldClasses( 'first-name' ) }>
 					<FormTextInput
 						placeholder={ translate( 'First Name' ) }
 						name="firstName"
-						value={ user.firstName.value }
+						value={ get( user, 'firstName.value', '' ) }
 						maxLength={ 60 }
-						isError={ !! user.firstName.error }
+						isError={ firstNameError }
 						onChange={ this.updateInputField }
 						onBlur={ onBlur }
 						onClick={ this.recordInputFocusFirstName } />
-					{ user.firstName.error ? <FormInputValidation text={ user.firstName.error } isError={ true } /> : null }
+					{ firstNameError ? <FormInputValidation text={ firstNameError } isError={ true } /> : null }
 				</FormFieldset>
 
 				<FormFieldset className={ this.fieldClasses( 'last-name' ) }>
 					<FormTextInput
 						placeholder={ translate( 'Last Name' ) }
 						name="lastName"
-						value={ user.lastName.value }
+						value={ get( user, 'lastName.value', '' ) }
 						maxLength={ 60 }
-						isError={ !! user.lastName.error }
+						isError={ lastNameError }
 						onChange={ this.updateInputField }
 						onBlur={ onBlur }
 						onClick={ this.recordInputFocusLastName } />
-					{ user.lastName.error ? <FormInputValidation text={ user.lastName.error } isError={ true } /> : null }
+					{ lastNameError ? <FormInputValidation text={ lastNameError } isError={ true } /> : null }
 				</FormFieldset>
 			</div>
 		);
