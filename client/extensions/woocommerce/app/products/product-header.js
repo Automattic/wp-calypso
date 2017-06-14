@@ -11,12 +11,12 @@ import Gridicon from 'gridicons';
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 
-const ProductHeader = ( { onTrash, onSave, translate, saveDisabled } ) => {
+const ProductHeader = ( { onTrash, onSave, translate } ) => {
 	const trashButton = onTrash &&
 		<Button borderless onClick={ onTrash }><Gridicon icon="trash" /></Button>;
 
-	const saveButton = onSave &&
-		<Button primary onClick={ onSave } disabled={ saveDisabled }>{ translate( 'Save' ) }</Button>;
+	const saveButton = 'undefined' !== typeof onSave &&
+		<Button primary onClick={ onSave } disabled={ onSave === false }>{ translate( 'Save' ) }</Button>;
 
 	return (
 		<ActionHeader>
@@ -28,12 +28,10 @@ const ProductHeader = ( { onTrash, onSave, translate, saveDisabled } ) => {
 
 ProductHeader.propTypes = {
 	onTrash: PropTypes.func,
-	onSave: PropTypes.func,
-	saveDisabled: PropTypes.bool,
-};
-
-ProductHeader.defaultProps = {
-	saveDisabled: false,
+	onSave: PropTypes.oneOfType( [
+		React.PropTypes.func,
+		React.PropTypes.bool,
+	] ),
 };
 
 export default localize( ProductHeader );

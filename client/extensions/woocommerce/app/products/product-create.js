@@ -93,8 +93,7 @@ class ProductCreate extends React.Component {
 				<SidebarNavigation />
 				<ProductHeader
 					onTrash={ this.onTrash }
-					onSave={ this.onSave }
-					saveDisabled={ ! siteId }
+					onSave={ siteId && this.onSave || false }
 				/>
 				{ siteId && ( <ProductForm
 					siteId={ siteId }
