@@ -2,6 +2,7 @@
  * External dependencies
  */
 import {
+	assign,
 	compact,
 	every,
 	filter,
@@ -55,7 +56,8 @@ export const getRawSite = ( state, siteId ) => {
 export const getSiteBySlug = createSelector(
 	( state, siteSlug ) => (
 		find( state.sites.items, ( item, siteId ) => (
-			getSiteSlug( state, siteId ) === siteSlug
+			// find always passes the siteId as a string. We need it as a integer
+			getSiteSlug( state, parseInt( siteId, 10 ) ) === siteSlug
 		) ) || null
 	),
 	( state ) => state.sites.items
@@ -72,7 +74,7 @@ export const getSiteBySlug = createSelector(
  */
 export const getSite = createSelector(
 	( state, siteId ) => {
-		const site = getRawSite( state, siteId ) ||
+		let site = getRawSite( state, siteId ) ||
 			// Support for non-ID site retrieval
 			// Replaces SitesList#getSite
 			getSiteBySlug( state, siteId );
@@ -81,13 +83,15 @@ export const getSite = createSelector(
 			return null;
 		}
 
-		return {
-			...site,
-			...getComputedAttributes( site ),
-			...getJetpackComputedAttributes( state, siteId ),
-			hasConflict: isSiteConflicting( state, siteId ),
-			is_previewable: isSitePreviewable( state, siteId )
-		};
+		// To avoid mutating the original site object, create a shallow clone
+		// before assigning computed properties
+		site = { ...site };
+		site.hasConflict = isSiteConflicting( state, siteId );
+		assign( site, getComputedAttributes( site ) );
+		assign( site, getJetpackComputedAttributes( state, siteId ) );
+		site.is_previewable = isSitePreviewable( state, siteId );
+
+		return site;
 	},
 	( state ) => state.sites.items
 );
