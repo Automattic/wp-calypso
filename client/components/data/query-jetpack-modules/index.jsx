@@ -12,13 +12,15 @@ import { fetchModuleList } from 'state/jetpack/modules/actions';
 
 class QueryJetpackModules extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		requestingModules: PropTypes.bool,
 		fetchModuleList: PropTypes.func
 	};
 
 	componentWillMount() {
-		this.request( this.props );
+		if ( this.props.siteId !== null ) {
+			this.request( this.props );
+		}
 	}
 
 	componentWillReceiveProps( nextProps ) {

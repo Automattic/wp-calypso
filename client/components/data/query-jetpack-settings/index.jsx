@@ -12,13 +12,15 @@ import { fetchSettings } from 'state/jetpack/settings/actions';
 
 class QueryJetpackSettings extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		requestingSettings: PropTypes.bool,
 		fetchSettings: PropTypes.func
 	};
 
 	componentWillMount() {
-		this.request( this.props );
+		if ( this.props.siteId !== null ) {
+			this.request( this.props );
+		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
