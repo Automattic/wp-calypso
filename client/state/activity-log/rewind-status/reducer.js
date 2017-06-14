@@ -3,6 +3,8 @@
  */
 import { rewindStatusSchema } from './schema';
 import {
+	REWIND_ACTIVATE_SUCCESS,
+	REWIND_DEACTIVATE_SUCCESS,
 	REWIND_STATUS_ERROR,
 	REWIND_STATUS_UPDATE,
 } from 'state/action-types';
@@ -16,6 +18,15 @@ const stubNull = () => null;
 export const rewindStatus = keyedReducer( 'siteId', createReducer( {}, {
 	[ REWIND_STATUS_ERROR ]: stubNull,
 	[ REWIND_STATUS_UPDATE ]: ( state, { status } ) => status,
+	[ REWIND_ACTIVATE_SUCCESS ]: ( state ) => ( {
+		...state,
+		active: true,
+	} ),
+	[ REWIND_DEACTIVATE_SUCCESS ]: ( state ) => ( {
+		...state,
+		active: false,
+	} ),
+
 }, rewindStatusSchema ) );
 
 export const rewindStatusError = keyedReducer( 'siteId', createReducer( {}, {
