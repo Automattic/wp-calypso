@@ -11,8 +11,9 @@ import reducer from '../reducer';
 import {
 	actionListCreate,
 	actionListClear,
-	actionListStepStarted,
-	actionListStepEnded,
+	actionListStepStart,
+	actionListStepSuccess,
+	actionListStepFailure,
 } from '../actions';
 
 describe( 'reducer', () => {
@@ -39,7 +40,7 @@ describe( 'reducer', () => {
 		];
 
 		const state1 = reducer( undefined, actionListCreate( actionList ) );
-		const state2 = reducer( state1, actionListStepStarted( 0, step0Start ) );
+		const state2 = reducer( state1, actionListStepStart( 0, step0Start ) );
 
 		expect( state1 ).to.equal( actionList );
 		expect( state2[ 0 ].startTime ).to.equal( step0Start );
@@ -55,8 +56,8 @@ describe( 'reducer', () => {
 		];
 
 		const state1 = reducer( undefined, actionListCreate( actionList ) );
-		const state2 = reducer( state1, actionListStepStarted( 0, step0Start ) );
-		const state3 = reducer( state2, actionListStepEnded( 0, undefined, step0End ) );
+		const state2 = reducer( state1, actionListStepStart( 0, step0Start ) );
+		const state3 = reducer( state2, actionListStepSuccess( 0, step0End ) );
 
 		expect( state1 ).to.equal( actionList );
 		expect( state3[ 0 ].startTime ).to.equal( step0Start );
@@ -78,8 +79,8 @@ describe( 'reducer', () => {
 		};
 
 		const state1 = reducer( undefined, actionListCreate( actionList ) );
-		const state2 = reducer( state1, actionListStepStarted( 0, step0Start ) );
-		const state3 = reducer( state2, actionListStepEnded( 0, error, step0End ) );
+		const state2 = reducer( state1, actionListStepStart( 0, step0Start ) );
+		const state3 = reducer( state2, actionListStepFailure( 0, error, step0End ) );
 
 		expect( state1 ).to.equal( actionList );
 		expect( state3[ 0 ].startTime ).to.equal( step0Start );

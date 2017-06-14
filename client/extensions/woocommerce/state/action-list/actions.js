@@ -6,7 +6,8 @@ import {
 	WOOCOMMERCE_ACTION_LIST_CREATE,
 	WOOCOMMERCE_ACTION_LIST_CLEAR,
 	WOOCOMMERCE_ACTION_LIST_STEP_START,
-	WOOCOMMERCE_ACTION_LIST_STEP_END,
+	WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,
+	WOOCOMMERCE_ACTION_LIST_STEP_FAILURE,
 } from '../action-types';
 
 /**
@@ -33,13 +34,13 @@ export function actionListClear() {
 }
 
 /**
- * Action Creator: Mark step as started.
+ * Action Creator: Start action list step.
  *
- * @param {Number} stepIndex The index of the step.
+ * @param {Number} [stepIndex] The index of the step. Defaults to zero (0), first index.
  * @param {Date} [time=Date.now()] Optional timestamp.
  * @return {Object} action
  */
-export function actionListStepStarted( stepIndex, time = Date.now() ) {
+export function actionListStepStart( stepIndex = 0, time = Date.now() ) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_STEP_START,
 		stepIndex,
@@ -48,16 +49,31 @@ export function actionListStepStarted( stepIndex, time = Date.now() ) {
 }
 
 /**
- * Action Creator: Mark step as ended.
+ * Action Creator: Mark step as successful.
  *
  * @param {Number} stepIndex The index of the step.
- * @param {Object|undefined} error Optional error message, if not present, success assumed.
  * @param {Date} [time=Date.now()] Optional timestamp.
  * @return {Object} action
  */
-export function actionListStepEnded( stepIndex, error, time = Date.now() ) {
+export function actionListStepSuccess( stepIndex, time = Date.now() ) {
 	return {
-		type: WOOCOMMERCE_ACTION_LIST_STEP_END,
+		type: WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,
+		stepIndex,
+		time,
+	};
+}
+
+/**
+ * Action Creator: Mark step as failed.
+ *
+ * @param {Number} stepIndex The index of the step.
+ * @param {Object} error The error from the failure.
+ * @param {Date} [time=Date.now()] Optional timestamp.
+ * @return {Object} action
+ */
+export function actionListStepFailure( stepIndex, error, time = Date.now() ) {
+	return {
+		type: WOOCOMMERCE_ACTION_LIST_STEP_FAILURE,
 		stepIndex,
 		error,
 		time,

@@ -6,14 +6,16 @@ import {
 	WOOCOMMERCE_ACTION_LIST_CREATE,
 	WOOCOMMERCE_ACTION_LIST_CLEAR,
 	WOOCOMMERCE_ACTION_LIST_STEP_START,
-	WOOCOMMERCE_ACTION_LIST_STEP_END,
+	WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,
+	WOOCOMMERCE_ACTION_LIST_STEP_FAILURE,
 } from 'woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_ACTION_LIST_CREATE ]: handleActionListCreate,
 	[ WOOCOMMERCE_ACTION_LIST_CLEAR ]: handleActionListClear,
 	[ WOOCOMMERCE_ACTION_LIST_STEP_START ]: handleActionListStepStart,
-	[ WOOCOMMERCE_ACTION_LIST_STEP_END ]: handleActionListStepEnd,
+	[ WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS ]: handleActionListStepSuccess,
+	[ WOOCOMMERCE_ACTION_LIST_STEP_FAILURE ]: handleActionListStepFailure,
 } );
 
 function handleActionListCreate( actionList, action ) {
@@ -37,14 +39,23 @@ function handleActionListStepStart( actionList, action ) {
 	return newActionList;
 }
 
-function handleActionListStepEnd( actionList, action ) {
-	const { stepIndex, error, time } = action;
+function handleActionListStepSuccess( actionList, action ) {
+	const { stepIndex, time: endTime } = action;
 	const step = actionList[ stepIndex ];
 
-	const newStep = { ...step, endTime: time };
-	if ( error ) {
-		newStep.error = error;
-	}
+	const newStep = { ...step, endTime };
+
+	const newActionList = [ ...actionList ];
+	newActionList[ stepIndex ] = newStep;
+
+	return newActionList;
+}
+
+function handleActionListStepFailure( actionList, action ) {
+	const { stepIndex, error, time: endTime } = action;
+	const step = actionList[ stepIndex ];
+
+	const newStep = { ...step, error, endTime };
 
 	const newActionList = [ ...actionList ];
 	newActionList[ stepIndex ] = newStep;
