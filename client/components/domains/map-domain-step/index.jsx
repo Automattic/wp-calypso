@@ -14,15 +14,17 @@ import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainProductPrice from 'components/domains/domain-product-price';
-import analyticsMixin from 'lib/mixins/analytics';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { recordAddDomainButtonClickInMapDomain } from 'state/domains/actions';
+import {
+	recordAddDomainButtonClickInMapDomain,
+	recordFormSubmitInMapDomain,
+	recordInputFocusInMapDomain,
+	recordGoButtonClickInMapDomain
+} from 'state/domains/actions';
 import Notice from 'components/notice';
 
-const MapDomainStep = React.createClass( {
-	mixins: [ analyticsMixin( 'mapDomain' ) ],
-
-	propTypes: {
+class MapDomainStep extends React.Component {
+	static propTypes = {
 		products: React.PropTypes.object.isRequired,
 		cart: React.PropTypes.object,
 		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] ),
@@ -31,39 +33,39 @@ const MapDomainStep = React.createClass( {
 		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
 		onRegisterDomain: React.PropTypes.func.isRequired,
 		onMapDomain: React.PropTypes.func.isRequired
-	},
+	};
 
-	getInitialState: function() {
-		return { searchQuery: this.props.initialQuery };
-	},
+	state = {
+		searchQuery: this.props.initialQuery
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		if ( this.props.initialState ) {
 			this.setState( Object.assign( {}, this.props.initialState, this.getInitialState() ) );
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this.save();
-	},
+	}
 
-	notice: function() {
+	notice() {
 		if ( this.state.notice ) {
-			return <Notice text={ this.state.notice } status={ `is-${ this.state.noticeSeverity }` } showDismiss={ false } />;
+			return (
+				<Notice
+					text={ this.state.notice }
+					status={ `is-${ this.state.noticeSeverity }` }
+					showDismiss={ false }
+				/>
+			);
 		}
-	},
+	}
 
-	save: function() {
-		if ( this.props.onSave ) {
-			this.props.onSave( this.state );
-		}
-	},
-
-	render: function() {
+	render() {
 		const suggestion = this.props.products.domain_map
 				? { cost: this.props.products.domain_map.cost_display, product_slug: this.props.products.domain_map.product_slug }
-				: { cost: null, product_slug: '' },
-			{ translate } = this.props;
+				: { cost: null, product_slug: '' };
+		const { translate } = this.props;
 
 		return (
 			<div className="map-domain-step">
@@ -110,9 +112,9 @@ const MapDomainStep = React.createClass( {
 				</form>
 			</div>
 		);
-	},
+	}
 
-	domainRegistrationUpsell: function() {
+	domainRegistrationUpsell() {
 		const { suggestion } = this.state;
 		if ( ! suggestion ) {
 			return;
@@ -139,33 +141,33 @@ const MapDomainStep = React.createClass( {
 					onButtonClick={ this.registerSuggestedDomain } />
 			</div>
 		);
-	},
+	}
 
-	registerSuggestedDomain: function( event ) {
+	registerSuggestedDomain = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordAddDomainButtonClickInMapDomain( this.state.suggestion.domain_name, this.props.analyticsSection );
 
 		return this.props.onRegisterDomain( this.state.suggestion );
-	},
+	};
 
-	recordInputFocus: function() {
-		this.recordEvent( 'inputFocus', this.state.searchQuery );
-	},
+	recordInputFocus = () => {
+		this.props.recordInputFocusInMapDomain( this.state.searchQuery );
+	};
 
-	recordGoButtonClick: function() {
-		this.recordEvent( 'goButtonClick', this.state.searchQuery, this.props.analyticsSection );
-	},
+	recordGoButtonClick = () => {
+		this.props.recordGoButtonClickInMapDomain( this.state.searchQuery, this.props.analyticsSection );
+	};
 
-	setSearchQuery: function( event ) {
+	setSearchQuery = ( event ) => {
 		this.setState( { searchQuery: event.target.value } );
-	},
+	};
 
-	handleFormSubmit: function( event ) {
+	handleFormSubmit = ( event ) => {
 		event.preventDefault();
 
 		const domain = getFixedDomainSearch( this.state.searchQuery );
-		this.recordEvent( 'formSubmit', this.state.searchQuery );
+		this.props.recordFormSubmitInMapDomain( this.state.searchQuery );
 		this.setState( { suggestion: null, notice: null } );
 
 		checkDomainAvailability( domain, ( error, result ) => {
@@ -186,8 +188,14 @@ const MapDomainStep = React.createClass( {
 					return;
 			}
 		} );
-	},
-} );
+	};
+
+	save = () => {
+		if ( this.props.onSave ) {
+			this.props.onSave( this.state );
+		}
+	};
+}
 
 export default connect(
 	state => ( {
@@ -195,5 +203,8 @@ export default connect(
 	} ),
 	{
 		recordAddDomainButtonClickInMapDomain,
+		recordFormSubmitInMapDomain,
+		recordInputFocusInMapDomain,
+		recordGoButtonClickInMapDomain
 	}
 )( localize( MapDomainStep ) );
