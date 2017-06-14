@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import FoldableCard from 'components/foldable-card';
 import Button from 'components/button';
 import ActivityLogItem from '../activity-log-item';
+import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
 
 class ActivityLogDay extends Component {
 	static propTypes = {
@@ -33,8 +35,19 @@ class ActivityLogDay extends Component {
 
 	handleRestoreDialogClose = () => this.setState( { isRestoreConfirmDialogOpen: false } );
 
-	// FIXME: Handle confirm correctly
-	handleRestoreDialogConfirm = () => this.setState( { isRestoreConfirmDialogOpen: false } );
+	handleRestoreDialogConfirm = () => {
+		const {
+			rewindRestore,
+			siteId,
+			// FIXME: update to timestamp
+			dateIsoString,
+		} = this.props;
+
+		const timestamp = this.props.moment( dateIsoString ).format( 'x' );
+
+		this.setState( { isRestoreConfirmDialogOpen: false } );
+		rewindRestore( siteId, timestamp );
+	};
 
 	/**
 	 * Return a button to rewind to this point.
@@ -127,4 +140,6 @@ class ActivityLogDay extends Component {
 	}
 }
 
-export default localize( ActivityLogDay );
+export default connect( null, {
+	rewindRestore: rewindRestoreAction
+} )( localize( ActivityLogDay ) );
