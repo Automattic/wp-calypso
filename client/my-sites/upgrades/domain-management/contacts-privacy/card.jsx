@@ -55,10 +55,13 @@ const ContactsPrivacyCard = React.createClass( {
 	},
 
 	getNotice() {
-		if ( this.props.hasPrivacyProtection && this.props.privateDomain ) {
+
+		const { hasPrivacyProtection, privateDomain, translate, selectedSite, selectedDomainName } = this.props;
+
+		if ( hasPrivacyProtection && privateDomain ) {
 			return (
 				<Notice status="is-success" showDismiss={ false }>
-					{ this.props.translate(
+					{ translate(
 						'{{strong}}Privacy Protection{{/strong}} is turned on for this domain. ' +
 						'Your contact information is {{strong}}private{{/strong}}. ',
 						{
@@ -69,10 +72,10 @@ const ContactsPrivacyCard = React.createClass( {
 					) }
 				</Notice>
 			);
-		} else if ( this.props.hasPrivacyProtection && ! this.props.privateDomain ) {
+		} else if ( hasPrivacyProtection && ! privateDomain ) {
 			return (
 				<Notice status="is-warning" showDismiss={ false }>
-					{ this.props.translate(
+					{ translate(
 						'{{strong}}Privacy Protection{{/strong}} is temporarily ' +
 						'disabled for this domain while the domain is being transferred. ' +
 						'Your contact information is {{strong}}public{{/strong}}. ' +
@@ -80,7 +83,7 @@ const ContactsPrivacyCard = React.createClass( {
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={ paths.domainManagementTransferOut( this.props.selectedSite.slug, this.props.selectedDomainName ) } />
+								a: <a href={ paths.domainManagementTransferOut( selectedSite.slug, selectedDomainName ) } />
 							}
 						}
 					) }
@@ -90,7 +93,7 @@ const ContactsPrivacyCard = React.createClass( {
 
 		return (
 			<Notice status="is-warning" showDismiss={ false }>
-				{ this.props.translate(
+				{ translate(
 					'{{strong}}Privacy Protection{{/strong}} is turned off for this domain. ' +
 					'Your contact information is {{strong}}public{{/strong}}. ' +
 					'{{a}}Enable Privacy Protection{{/a}}',
@@ -99,7 +102,7 @@ const ContactsPrivacyCard = React.createClass( {
 							strong: <strong />,
 							a: <a
 								href={ paths.domainManagementPrivacyProtection(
-									this.props.selectedSite.slug, this.props.selectedDomainName ) } />
+									selectedSite.slug, selectedDomainName ) } />
 						}
 					}
 				) }
