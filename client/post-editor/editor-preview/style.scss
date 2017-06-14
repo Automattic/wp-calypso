@@ -8,13 +8,13 @@
 	display: none;
 	opacity: 0;
 	position: fixed;
-		top: 46px;
+		top: 47px;
 		right: 0;
 		left: 0;
 		z-index: z-index( 'root', '.web-preview' );
 	transition: opacity 0.3s ease-in-out;
 	width: 100%;
-	height: calc( 100% - 46px );
+	height: calc( 100% - 47px );
 
 	&.is-visible {
 		display: flex;

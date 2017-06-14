@@ -39,8 +39,8 @@
 			@include breakpoint( ">660px" ) {
 				display: flex;
 				border-radius: 20px;
+				margin: 0;
 				overflow: hidden;
-				margin-bottom: 24px;
 			}
 		}
 
