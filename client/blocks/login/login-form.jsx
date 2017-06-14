@@ -145,7 +145,8 @@ export class LoginForm extends Component {
 							{ this.props.translate( 'Log In' ) }
 						</FormsButton>
 					</div>
-
+				</Card>
+				<Card>
 					{ config.isEnabled( 'signup/social' ) && (
 						<div className="login__form-social">
 							<SocialLoginForm onSuccess={ this.props.onSuccess } />
