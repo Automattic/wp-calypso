@@ -166,7 +166,7 @@ class SearchStream extends React.Component {
 					</div> }
 				{ ! wideDisplay &&
 					<div className="search-stream__single-column-results">
-						{ ( ( searchType === POSTS || ! this.query ) && <PostResults { ...this.props } /> ) ||
+						{ ( ( searchType === POSTS || ! query ) && <PostResults { ...this.props } /> ) ||
 							<SiteResults query={ query } sort={ sortOrder } /> }
 					</div> }
 			</div>
