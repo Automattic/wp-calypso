@@ -128,9 +128,12 @@
 	}
 }
 
+.reader-subscription-list-item__site-url {
+	margin-right: 8px;
+}
+
 .following-manage__subscriptions .reader-subscription-list-item__site-url {
 	display: inline;
-	margin-right: 8px;
 	max-width: 70%;
 	overflow: hidden;
 	text-overflow: ellipsis;
