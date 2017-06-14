@@ -157,6 +157,7 @@ class PlanFeatures extends Component {
 						site={ site }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
+						isInSignup={ isInSignup }
 					/>
 					<p className="plan-features__description">
 						{ planConstantObj.getDescription( abtest ) }
@@ -193,7 +194,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { planProperties, intervalType, site, basePlansPath } = this.props;
+		const { planProperties, intervalType, site, basePlansPath, isInSignup } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -228,6 +229,7 @@ class PlanFeatures extends Component {
 						hideMonthly={ hideMonthly }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
+						isInSignup={ isInSignup }
 					/>
 				</td>
 			);
