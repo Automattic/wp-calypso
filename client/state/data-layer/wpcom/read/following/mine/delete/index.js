@@ -10,10 +10,13 @@ import config from 'config';
 import { READER_UNFOLLOW } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 import { follow } from 'state/reader/follows/actions';
+import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
+import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
+import { getSiteName } from 'reader/get-helpers';
 
-export function requestUnfollow( { dispatch }, action ) {
+export function requestUnfollow( { dispatch, getState }, action ) {
 	const { payload: { feedUrl } } = action;
 	dispatch(
 		http( {
@@ -26,7 +29,24 @@ export function requestUnfollow( { dispatch }, action ) {
 			},
 			onSuccess: action,
 			onFailure: action,
-		} )
+		} ),
+	);
+
+	// build up a notice to show
+	const site = getSiteByFeedUrl( getState(), feedUrl );
+	const feed = getFeedByFeedUrl( getState(), feedUrl );
+	const siteTitle = getSiteName( { feed, site } ) || feedUrl;
+	dispatch(
+		successNotice(
+			translate( "You're no longer following %(siteTitle)s", { args: { siteTitle } } ),
+			{
+				duration: 7000,
+				button: translate( 'Undo' ),
+				onClick: () => {
+					dispatch( follow( action.payload.feedUrl ) );
+				},
+			},
+		),
 	);
 }
 
@@ -41,8 +61,8 @@ export function receiveUnfollow( store, action, next, response ) {
 export function unfollowError( { dispatch }, action, next ) {
 	dispatch(
 		errorNotice(
-			translate( 'Sorry, there was a problem unfollowing that site. Please try again.' )
-		)
+			translate( 'Sorry, there was a problem unfollowing that site. Please try again.' ),
+		),
 	);
 	next( follow( action.payload.feedUrl ) );
 }
