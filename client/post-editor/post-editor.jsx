@@ -90,7 +90,8 @@ export const PostEditor = React.createClass( {
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
 			isTitleFocused: false,
-			showPreview: false
+			showPreview: false,
+			isPostPublishPreview: false,
 		};
 	},
 
@@ -364,6 +365,7 @@ export const PostEditor = React.createClass( {
 						<EditorPreview
 							showPreview={ this.state.showPreview }
 							onClose={ this.onPreviewClose }
+							onEdit={ this.onPreviewEdit }
 							isSaving={ this.state.isSaving || this.state.isAutosaving }
 							isLoading={ this.state.isLoading }
 							previewUrl={ this.state.previewUrl }
@@ -653,7 +655,16 @@ export const PostEditor = React.createClass( {
 	},
 
 	onPreviewClose: function() {
-		this.setState( { showPreview: false } );
+		if ( this.state.isPostPublishPreview ) {
+			page.back( this.getAllPostsUrl() );
+		} else {
+			this.setState( { showPreview: false, isPostPublishPreview: false } );
+		}
+	},
+
+	onPreviewEdit: function() {
+		this.setState( { showPreview: false, isPostPublishPreview: false } );
+		return false;
 	},
 
 	onSaveDraftFailure: function( error ) {
@@ -830,6 +841,7 @@ export const PostEditor = React.createClass( {
 			window.scrollTo( 0, 0 );
 
 			if ( config.isEnabled( 'post-editor/delta-post-publish-preview' ) && this.props.isSitePreviewable ) {
+				this.setState( { isPostPublishPreview: true } );
 				this.iframePreview();
 			}
 		} else {
