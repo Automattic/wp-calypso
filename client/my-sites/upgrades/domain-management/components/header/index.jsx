@@ -7,6 +7,7 @@ const React = require( 'react' );
  * Internal dependencies
  */
 const HeaderCake = require( 'components/header-cake' );
+const DocumentHead = require( 'components/data/document-head' );
 
 const DomainManagementHeader = React.createClass( {
 	render() {
@@ -18,6 +19,7 @@ const DomainManagementHeader = React.createClass( {
 						{ this.props.children }
 					</span>
 				</div>
+				<DocumentHead title={ this.props.children } />
 			</HeaderCake>
 		);
 	},
