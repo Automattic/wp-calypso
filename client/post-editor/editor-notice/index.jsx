@@ -33,7 +33,7 @@ export class EditorNotice extends Component {
 		action: PropTypes.string,
 		link: PropTypes.string,
 		onViewClick: PropTypes.func,
-		isSitePreviewable: PropTypes.bool,
+		isPreviewable: PropTypes.bool,
 		onDismissClick: PropTypes.func,
 		error: PropTypes.object
 	}
@@ -226,7 +226,7 @@ export class EditorNotice extends Component {
 	}
 
 	render() {
-		const { siteId, message, status, onDismissClick, isSitePreviewable: isPreviewable, } = this.props;
+		const { siteId, message, status, onDismissClick, isPreviewable } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
 		const classes = classNames( 'editor-notice', {
 			'is-global': config.isEnabled( 'post-editor/delta-post-publish-preview' ) && isPreviewable,
@@ -260,6 +260,6 @@ export default connect( ( state ) => {
 		site: getSelectedSite( state ),
 		type: post.type,
 		typeObject: getPostType( state, siteId, post.type ),
-		isSitePreviewable: isSitePreviewable( state, siteId ),
+		isPreviewable: isSitePreviewable( state, siteId ),
 	};
 }, { setLayoutFocus } )( localize( EditorNotice ) );

@@ -29,7 +29,7 @@ describe( 'EditorNotice', () => {
 				translate={ translate }
 				status="is-error"
 				message="publishFailure"
-				isSitePreviewable={ true }
+				isPreviewable={ true }
 				onViewClick={ spy }
 				error={ new Error( 'NO_CONTENT' ) } />
 		);
@@ -128,7 +128,7 @@ describe( 'EditorNotice', () => {
 				type="page"
 				link="https://example.wordpress.com/published-page"
 				action="view"
-				isSitePreviewable={ true }
+				isPreviewable={ true }
 				onViewClick={ spy }
 				site={ {
 					URL: 'https://example.wordpress.com',
