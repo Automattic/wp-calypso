@@ -6,14 +6,14 @@
 	.delta__icon {
 		width: 20px;
 		height: 20px;
-		background-color: #E9EFF3;
+		background-color: #D54E21;
 		border-radius: 5px;
 
-		&.is-good {
+		&.is-favourable {
 			background-color: #4AB866;
 		}
-		&.is-bad {
-			background-color: #D54E21;
+		&.is-neutral {
+			background-color: #E9EFF3;
 		}
 		&.gridicon {
 			fill: white;

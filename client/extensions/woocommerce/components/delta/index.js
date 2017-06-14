@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
+import { includes } from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -12,39 +13,25 @@ import Gridicon from 'gridicons';
 export default class Delta extends Component {
 
 	static propTypes = {
-		className: PropTypes.string,
-		isIncreaseFavorable: PropTypes.bool,
-		sinceLabel: PropTypes.string,
-		decimalValue: PropTypes.number.isRequired,
-	};
-
-	static defaultProps = {
-		isIncreaseFavorable: true,
+		classNames: PropTypes.string,
+		icon: PropTypes.string,
+		value: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { className, isIncreaseFavorable, sinceLabel, decimalValue } = this.props;
-		const deltaClasses = classnames( 'delta', className );
-		const arrowClasses = classnames( 'delta__icon', {
-			'is-good': ( decimalValue > 0 && isIncreaseFavorable ) || ( decimalValue < 0 && ! isIncreaseFavorable ),
-			'is-bad': ( decimalValue < 0 && isIncreaseFavorable ) || ( decimalValue > 0 && ! isIncreaseFavorable ),
-
-		} );
-		const percentValue = Math.round( ( decimalValue * 100 ) * 10 ) / 10;
-		let icon = ( percentValue > 0 ) ? 'arrow-up' : 'arrow-down';
-		if ( percentValue === 0 ) {
-			icon = 'minus-small';
+		const { classNames, icon, value } = this.props;
+		const deltaClasses = classnames( 'delta', classNames.join( ' ' ) );
+		let deltaIcon;
+		if ( icon ) {
+			deltaIcon = icon;
+		} else {
+			deltaIcon = ( includes( classNames, 'is-increase' ) ) ? 'arrow-up' : 'arrow-down';
+			deltaIcon = ( includes( classNames, 'is-neutral' ) ) ? 'minus-small' : deltaIcon;
 		}
 		return (
 			<div className={ deltaClasses }>
-				<Gridicon
-					className={ arrowClasses }
-					icon={ icon }
-				/>
-				<span className="delta__description">
-					<span className="delta__description-value">{ `${ Math.abs( percentValue ) }%` }</span>
-					<span className="delta__description-since">{ ( sinceLabel ) ? sinceLabel : '' }</span>
-				</span>
+				<Gridicon icon={ deltaIcon } />
+				<span className="delta__value">{ value }</span>
 			</div>
 		);
 	}

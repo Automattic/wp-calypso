@@ -77,6 +77,7 @@ class StoreStatsChart extends Component {
 		const isLoading = ! data.length;
 		const chartData = data.map( item => this.buildChartData( item, selectedTab ) );
 		const selectedIndex = this.getSelectedIndex( data );
+		console.log(data);
 		return (
 			<Card className="store-stats-chart stats-module">
 				{ siteId && <QuerySiteStats
@@ -102,11 +103,11 @@ class StoreStatsChart extends Component {
 									tabClick={ this.tabClick }
 								>
 									<span className="store-stats-chart__value value">{ itemChartData.value }</span>
-									<Delta
-										decimalValue={ delta.value }
-										isIncreaseFavorable={ delta.isIncreaseFavorable }
-										sinceLabel={ delta.sinceLabel }
-									/>
+									{/*<Delta*/}
+										{/*value={ delta.value }*/}
+										{/*isIncreaseFavorable={ delta.isIncreaseFavorable }*/}
+										{/*sinceLabel={ delta.sinceLabel }*/}
+									{/*/>*/}
 								</Tab>
 							);
 						}
