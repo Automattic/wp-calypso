@@ -26,6 +26,9 @@ import withWidth from 'lib/with-width';
 
 const WIDE_DISPLAY_CUTOFF = 660;
 
+const updateQueryArg = params =>
+	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
+
 class SearchStream extends React.Component {
 	static propTypes = {
 		query: PropTypes.string,
@@ -62,7 +65,7 @@ class SearchStream extends React.Component {
 			( trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query ) ||
 			newValue === ''
 		) {
-			this.props.onQueryChange( newValue );
+			updateQueryArg( { q: newValue } );
 		}
 	};
 
@@ -71,27 +74,26 @@ class SearchStream extends React.Component {
 	};
 
 	useRelevanceSort = () => {
+		const sort = 'relevance';
 		recordAction( 'search_page_clicked_relevance_sort' );
 		recordTrack( 'calypso_reader_clicked_search_sort', {
 			query: this.props.query,
-			sort: 'relevance',
+			sort,
 		} );
-		this.props.onSortChange( 'relevance' );
+		updateQueryArg( { sort } );
 	};
 
 	useDateSort = () => {
+		const sort = 'date';
 		recordAction( 'search_page_clicked_date_sort' );
 		recordTrack( 'calypso_reader_clicked_search_sort', {
 			query: this.props.query,
-			sort: 'date',
+			sort,
 		} );
-		this.props.onSortChange( 'date' );
+		updateQueryArg( { sort } );
 	};
 
-	handleSearchTypeSelection = searchType =>
-		page.replace(
-			addQueryArgs( { show: searchType }, window.location.pathname + window.location.search ),
-		);
+	handleSearchTypeSelection = searchType => updateQueryArg( { show: searchType } );
 
 	render() {
 		const { query, translate, searchType } = this.props;
@@ -164,7 +166,7 @@ class SearchStream extends React.Component {
 					</div> }
 				{ ! wideDisplay &&
 					<div className="search-stream__single-column-results">
-						{ ( searchType === POSTS && <PostResults { ...this.props } /> ) ||
+						{ ( ( searchType === POSTS || ! this.query ) && <PostResults { ...this.props } /> ) ||
 							<SiteResults query={ query } sort={ sortOrder } /> }
 					</div> }
 			</div>
