@@ -147,7 +147,6 @@ class PostShare extends Component {
 		this.props.dismissShareConfirmation( this.props.siteId, this.props.postId );
 	};
 
-
 	sharePost = () => {
 		const {
 			postId,
@@ -167,7 +166,6 @@ class PostShare extends Component {
 		}, { service_all: 0 } );
 
 		if ( this.state.scheduledDate ) {
-
 			analytics.tracks.recordEvent( 'calypso_publicize_share_schedule', numberOfAccountsPerService );
 			this.props.schedulePostShareAction(
 				siteId,
