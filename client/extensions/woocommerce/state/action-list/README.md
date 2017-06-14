@@ -33,8 +33,8 @@ example, this could look like:
 ]
 ```
 
-Note that the action list should not contain copies of existing edit state objects.
-Instead, it is preferred to reference each object by ID.
+Note: Actions in the state list should not contain functions or anything not serializable,
+due to the fact that the action list is stored in state.
 
 
 ## Action List Lifecycle
@@ -53,21 +53,32 @@ This both tracks timing and denotes the current status of the step as "running".
 
 #### Action
 
-The first iteration of the API code relies on action thunks to operate, but this
-will likely be replaced by more declarative actions that utilize the Calypso
-data layer HTTP requests.
+This part is simple. When the step is started, the associated action is dispatched.
 
 #### Asynchronous Response
 
+For asynchronous operations, it's recommended that a data-layer handler be set to
+listen for step actions and perform the asynchronous steps as necessary.
+
+It's the responsibility of such a handler to ensure that the appropriate success
+or failure action is dispatched at the conclusion of the asynchronous operation.
+
+This should map easily to any sort of promise situation by having the `then` dispatch
+success, and the `catch` dispatch failure.
+
 Assuming the action has a follow-up asynchronous response, it will be handled based on status:
 
- - Success:
-   1. Edit state is updated (removing created/updated objects, turning placeholder IDs to real ones, etc.)
-   2. Action List steps are updated (placeholder IDs, etc)
-   3. Current step is ended
- - Failure:
-   1. Error state is logged
-   2. Current step is ended
+#### Edit State Updates
+
+It is also the responsibility of the handlers to ensure that the edit state is updated
+appropriately after each step. This means if an API object was created, the state
+should be updated accordingly, for example.
+
+#### Action List Updates
+
+For many cases, there will be placeholder ids for things that have not yet been created.
+It's important for each handler to update these placeholder ids with real ones as they
+become available each step along the way.
 
 #### Step End
 
@@ -96,9 +107,9 @@ whether it fails or succeeds must do this. If this is done properly, the list ca
 be discarded and a new action list can be generated upon error to pick up where
 this one left off.
 
-### What about asynchronous operations?
+### What about multiple operations at the same time?
 
-It's true that some steps could be carried out asynchronously. For example, it's
+It's true that some steps could be carried out at the same time. For example, it's
 possible to create more than one variation at a time by sending off multiple API
 requests at once. In the future, we could easily modify the `operations` field
 to accept an array, which would preserve the sequential dependency order of the
