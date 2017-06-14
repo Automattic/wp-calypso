@@ -6,12 +6,12 @@ import activity from './activity';
 import automatedTransfer from './automated-transfer';
 import comments from './comments';
 import media from './media';
-import resources from './resources';
+import posts from './posts';
 
 export default mergeHandlers(
 	activity,
 	automatedTransfer,
 	comments,
 	media,
-	resources,
+	posts,
 );

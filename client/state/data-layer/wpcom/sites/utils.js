@@ -10,7 +10,6 @@ import {
 	COMMENTS_REMOVE,
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
-	COMMENTS_WRITE,
 } from 'state/action-types';
 import { getSitePost } from 'state/posts/selectors';
 import { errorNotice } from 'state/notices/actions';
@@ -19,7 +18,7 @@ import { errorNotice } from 'state/notices/actions';
  * Creates a placeholder comment for a given text and postId
  * We need placehodler id to be unique in the context of siteId, postId for that specific user,
  * date milliseconds will do for that purpose.
- * 
+ *
  * @param   {String}           commentText     text of the comment
  * @param   {Number}           postId          post identifier
  * @param   {Number|undefined} parentCommentId parent comment identifier
@@ -39,14 +38,11 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
 
 /***
  * updates the placeholder comments with server values
- * 
- * @param {Function}          dispatch        redux dispatcher
- * @param {Number}            siteId          site identifier
- * @param {Number}            postId          post identifier
- * @param {Number|undefined}  parentCommentId post identifier
- * @param {Number}            placeholderId   post identifier
- * @param {Function}          next            dispatches to next middleware in chain
- * @param {Object}            comment         updated comment from the request response
+ *
+ * @param {Function} dispatch redux dispatcher
+ * @param {Object}   action   redux action
+ * @param {Function} next     dispatches to next middleware in chain
+ * @param {Object}   comment  updated comment from the request response
  */
 export const updatePlaceholderComment = ( { dispatch }, { siteId, postId, parentCommentId, placeholderId }, next, comment ) => {
 	// remove placeholder from state
@@ -59,7 +55,7 @@ export const updatePlaceholderComment = ( { dispatch }, { siteId, postId, parent
 
 /***
  * dispatches a error notice if creating a new comment request failed
- * 
+ *
  * @param {Function} dispatch redux dispatcher
  * @param {Function} getState access the redux state
  * @param {Number}   siteId   site identifier
