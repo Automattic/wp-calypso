@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -9,9 +10,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { getSelectedSite } from 'state/ui/selectors';
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import { areSetupChoicesLoading, getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
+import Manage from './manage';
 import Setup from './setup';
 
 class Dashboard extends Component {
@@ -20,42 +23,43 @@ class Dashboard extends Component {
 		className: PropTypes.string,
 	};
 
+	componentDidMount = () => {
+		const { selectedSite } = this.props;
+
+		if ( selectedSite && selectedSite.ID ) {
+			this.props.fetchSetupChoices( selectedSite.ID );
+		}
+	}
+
+	componentWillReceiveProps = ( newProps ) => {
+		const { selectedSite } = this.props;
+
+		const newSiteId = newProps.selectedSite && newProps.selectedSite.ID || null;
+		const oldSiteId = selectedSite && selectedSite.ID || null;
+
+		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchSetupChoices( newSiteId );
+		}
+	}
+
 	onStoreSetupFinished = () => {
 		// TODO - save that setup has been finished to the store's state on WPCOM
-		// TODO - is there a way to set an option on the store site?
-	}
-
-	renderStoreSetup = () => {
-		const { selectedSite } = this.props;
-		return (
-			<Setup
-				onFinished={ this.onStoreSetupFinished }
-				site={ selectedSite }
-			/>
-		);
-	}
-
-	renderStoreManagement = () => {
-		const { translate } = this.props;
-
-		return (
-			<Card>
-				<p>
-					{ translate( 'This is the start of something great!' ) }
-				</p>
-				<p>
-					{ translate( 'This will be the home for your WooCommerce Store integration with WordPress.com.' ) }
-				</p>
-			</Card>
-		);
 	}
 
 	render = () => {
-		const { storeSetupCompleted } = this.props;
+		const { finishedInitialSetup, loading, selectedSite } = this.props;
+
+		if ( loading || ! selectedSite ) {
+			// TODO have a placholder/loading view instead
+			return null;
+		}
 
 		return (
 			<Main className={ classNames( 'dashboard', this.props.className ) }>
-				{ storeSetupCompleted ? this.renderStoreManagement() : this.renderStoreSetup() }
+				{
+					finishedInitialSetup && <Manage site={ selectedSite } /> ||
+					<Setup onFinished={ this.onStoreSetupFinished } site={ selectedSite } />
+				}
 			</Main>
 		);
 	}
@@ -63,12 +67,24 @@ class Dashboard extends Component {
 }
 
 function mapStateToProps( state ) {
-	// TODO - figure out from state if setup has been completed for this store yet
+	const finishedInitialSetup = getFinishedInitialSetup( state );
+	const loading = areSetupChoicesLoading( state );
+	const selectedSite = getSelectedSiteWithFallback( state );
 
 	return {
-		selectedSite: getSelectedSite( state ),
-		storeSetupCompleted: false,
+		finishedInitialSetup,
+		loading,
+		selectedSite,
 	};
 }
 
-export default connect( mapStateToProps )( localize( Dashboard ) );
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchSetupChoices,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Dashboard ) );

@@ -6,6 +6,7 @@ import orders from './orders/reducer';
 import paymentMethods from './payment-methods/reducer';
 import productCategories from './product-categories/reducer';
 import products from './products/reducer';
+import setupChoices from './setup-choices/reducer';
 import shippingMethods from './shipping-methods/reducer';
 import shippingZoneLocations from './shipping-zone-locations/reducer';
 import shippingZoneMethods from './shipping-zone-methods/reducer';
@@ -18,6 +19,7 @@ const reducer = combineReducers( {
 	paymentMethods,
 	productCategories,
 	products,
+	setupChoices,
 	settings,
 	shippingMethods,
 	shippingZoneLocations,

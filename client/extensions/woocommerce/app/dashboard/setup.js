@@ -7,7 +7,7 @@ import React, { Component, PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import { getLink } from '../../lib/nav-utils';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
 import SetupTask from './setup-task';
