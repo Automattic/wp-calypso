@@ -26,13 +26,13 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/orders&page=1&_method=get' } )
+				.query( { path: '/wc/v3/orders&page=1&_method=get', json: true } )
 				.reply( 200, {
 					data: orders,
 					pages: 3
 				} )
 				.get( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
-				.query( { path: '/wc/v3/orders&page=1&_method=get' } )
+				.query( { path: '/wc/v3/orders&page=1&_method=get', json: true } )
 				.reply( 404, {
 					error: 'rest_no_route',
 					message: 'No route was found matching the URL and request method',
