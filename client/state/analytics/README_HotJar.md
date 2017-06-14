@@ -13,7 +13,7 @@ With HotJar we can collect information from our users, communicate with them, an
 HotJar is a thrid party tool and is managed through their website. Their script needs to be loaded in order for it to work. Where you load the script will have an impact on the coverage of the tool. It is recommended to restrict it's loading to a handful of screens rather than the entire app. 
 
 `loadTrackingTool ( trackingTool )`
-Use this analytics action to load HotJar in the `componentDidUnmount` lifecycle method for every screen you want it to appear on.
+Use this analytics action to load HotJar in the `componentDidMount` lifecycle method for every screen you want it to appear on.
 
 ## Access
 A user account is required to access the HotJar dashboard. If you're looking for access, please contact @fditrapani. 

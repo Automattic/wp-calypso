@@ -12,6 +12,7 @@ import moment from 'moment';
  */
 import { themeActivated } from 'state/themes/actions';
 import analytics from 'lib/analytics';
+import { loadTrackingTool } from 'state/analytics/actions';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
@@ -111,6 +112,10 @@ const CheckoutThankYou = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
 
 		window.scrollTo( 0, 0 );
+
+		if ( this.isNewUser() ) {
+			this.props.loadTrackingTool( 'HotJar' );
+		}
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -198,6 +203,10 @@ const CheckoutThankYou = React.createClass( {
 		return page( `/stats/insights/${ this.props.selectedSite.slug }` );
 	},
 
+	isNewUser() {
+		return moment( this.props.userDate ).isAfter( moment().subtract( 2, 'hours' ) );
+	},
+
 	render() {
 		let purchases = [],
 			failedPurchases = [],
@@ -221,11 +230,8 @@ const CheckoutThankYou = React.createClass( {
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
-		const userCreatedMoment = moment( this.props.userDate ),
-			isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
-
 		// streamlined paid NUX thanks page
-		if ( isNewUser && wasDotcomPlanPurchased ) {
+		if ( this.isNewUser() && wasDotcomPlanPurchased ) {
 			return (
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
@@ -406,6 +412,9 @@ export default connect(
 			refreshSitePlans( site ) {
 				dispatch( refreshSitePlans( site.ID ) );
 			},
+			loadTrackingTool( name ) {
+				dispatch( loadTrackingTool( name ) );
+			}
 		};
 	}
 )( CheckoutThankYou );
