@@ -1,4 +1,24 @@
-#wpcom {
+// namespaceing breaks nested & selectors
+// For example, in #wpcom wrapper:
+// .foldable-card__content {
+//   display: none;
+//   .foldable-card.is-expanded & {
+//     display: block;
+//   }
+// }
+//
+// produces
+//
+// #wpcom .foldable-card__content {
+//   display: none;
+// }
+//                              |------this is a problem
+//                            vvvvvv
+// .foldable-card.is-expanded #wpcom .foldable-card__content {
+//   display: block;
+// }
+//
+// #wpcom {
 	@import 'shared/normalize';
 
 	// External Dependencies
@@ -38,4 +58,7 @@
 	// Devdocs
 	@import 'devdocs/design/style';
 	@import 'devdocs/design/syntax';
-}
+
+	// WP Admin Environment
+	@import 'wpadmin-normalize';
+// }
