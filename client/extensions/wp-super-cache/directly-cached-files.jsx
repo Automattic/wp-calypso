@@ -17,6 +17,16 @@ import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
 class DirectlyCachedFiles extends Component {
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.isSaveSuccessful && this.props.isSaveSuccessful ) {
+			this.refs.newDirectPage.refs.textField.value = '';
+			this.props.replaceFields( { new_direct_page: undefined } );
+
+			const directPages = this.props.fields.cache_direct_pages.filter( page => page.trim() !== '' );
+			this.props.replaceFields( { cache_direct_pages: directPages } );
+		}
+	}
+
 	onKeyDown = event => {
 		if ( 13 !== event.keyCode ) {
 			return;
@@ -28,7 +38,6 @@ class DirectlyCachedFiles extends Component {
 			return;
 		}
 
-		newDirectPage.value = '';
 		this.props.handleSubmitForm( event );
 	};
 
