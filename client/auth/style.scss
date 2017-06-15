@@ -35,6 +35,7 @@
 	justify-content: center;
 	align-content: center;
 	max-width: 100%;
+	backface-visibility: hidden;
 }
 
 .auth__content {
