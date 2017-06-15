@@ -33,9 +33,7 @@ function getLayout( loggedIn ) {
 	return new Promise( ( resolve ) => {
 		if ( loggedIn ) {
 			// If user is logged in, async load the main layout
-			require.ensure( [], () => {
-				const Layout = require( 'layout' );
-
+			asyncRequire( 'layout', ( Layout ) => {
 				resolve(
 					( { primary, secondary } ) => (
 						<Layout
@@ -47,7 +45,7 @@ function getLayout( loggedIn ) {
 						/>
 					)
 				);
-			}, 'async-load-layout' );
+			} );
 		} else {
 			resolve(
 				( { primary, secondary, redirectUri } ) => (
