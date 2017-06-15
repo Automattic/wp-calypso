@@ -16,7 +16,7 @@ export function requestBlogStickerAdd( { dispatch }, action ) {
 	dispatch(
 		http( {
 			method: 'POST',
-			path: `/site/${ action.payload.siteId }/blog-stickers/add/${ action.payload.stickerName }`,
+			path: `/sites/${ action.payload.blogId }/blog-stickers/add/${ action.payload.stickerName }`,
 			body: {}, // have to have an empty body to make wpcom-http happy
 			apiVersion: '1.1',
 			onSuccess: action,
@@ -38,7 +38,7 @@ export function receiveBlogStickerAddError( { dispatch }, action, next ) {
 	dispatch(
 		errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) ),
 	);
-	next( removeBlogSticker( action.payload.siteId, action.payload.stickerName ) );
+	next( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) );
 }
 
 export default {
