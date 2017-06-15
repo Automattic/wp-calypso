@@ -46,6 +46,7 @@ import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
 import Notice from 'components/notice';
 import {
 	hasFeature,
+	isRequestingSitePlans,
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 } from 'state/sites/plans/selectors';
@@ -499,22 +500,22 @@ class PostShare extends Component {
 			return null;
 		}
 
-		if ( ! this.props.hasRepublicizeFeature ) {
+		const { postId, siteId } = this.props;
+
+		if ( ! siteId || ! postId ) {
+			return null;
+		}
+
+		if ( ! this.props.hasRepublicizeFeature && ! this.props.isRequestingPlans ) {
 			return this.renderUpgradeToGetPublicizeNudge();
 		}
 
 		const {
 			hasRepublicizeFeature,
 			hasRepublicizeSchedulingFeature,
-			postId,
-			siteId,
 			siteSlug,
 			translate,
 		} = this.props;
-
-		if ( ! siteId || ! postId ) {
-			return null;
-		}
 
 		const classes = classNames(
 			'post-share__wrapper',
@@ -577,6 +578,7 @@ export default connect(
 			hasRepublicizeSchedulingFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE_SCHEDULING ),
 			siteSlug: getSiteSlug( state, siteId ),
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
+			isRequestingPlans: isRequestingSitePlans( state, siteId ),
 			scheduling: isSchedulingPublicizeShareAction( state, siteId, postId ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			requesting: isRequestingSharePost( state, siteId, postId ),
