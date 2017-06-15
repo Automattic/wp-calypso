@@ -16,6 +16,7 @@ import {
 	CHECK_YOUR_EMAIL_PAGE,
 	INTERSTITIAL_PAGE,
 	LINK_EXPIRED_PAGE,
+	REQUEST_FORM,
 } from 'state/login/magic-login/constants';
 import {
 	getMagicLoginEmailAddressFormInput,
@@ -91,7 +92,7 @@ class MagicLogin extends React.Component {
 		return (
 			<Main className={ {
 				'magic-login': true,
-				'magic-login__request_link': ! magicLoginView,
+				'magic-login__request_link': ! magicLoginView || magicLoginView === REQUEST_FORM,
 			} }>
 				<PageViewTracker path="/login" title="Login" />
 
