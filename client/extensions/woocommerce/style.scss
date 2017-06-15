@@ -71,7 +71,7 @@
 	}
 }
 
-.focus-sidebar {
+.is-section-woocommerce.focus-sidebar {
 	@include breakpoint( "<660px" ) {
 		.sticky-panel,
 		.products__form,
@@ -81,7 +81,7 @@
 	}
 }
 
-.focus-content {
+.is-section-woocommerce.focus-content {
 	@include breakpoint( "<660px" ) {
 		.site-icon,
 		.current-section__site-title,
