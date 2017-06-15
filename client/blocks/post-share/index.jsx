@@ -135,6 +135,10 @@ class PostShare extends Component {
 
 	isConnectionActive = connection => connection.status !== 'broken' && this.skipConnection( connection );
 
+	activeConnections() {
+		return this.props.connections.filter( this.isConnectionActive );
+	}
+
 	toggleSharingPreview = () => {
 		const showSharingPreview = ! this.state.showSharingPreview;
 		analytics.tracks.recordEvent( 'calypso_publicize_share_preview_toggle', { show: showSharingPreview } );
@@ -167,6 +171,7 @@ class PostShare extends Component {
 
 		if ( this.state.scheduledDate ) {
 			analytics.tracks.recordEvent( 'calypso_publicize_share_schedule', numberOfAccountsPerService );
+
 			this.props.schedulePostShareAction(
 				siteId,
 				postId,
@@ -180,12 +185,14 @@ class PostShare extends Component {
 		}
 	};
 
-	isSharingPost() {
-		if ( this.props.requesting ) {
+	isDisabled() {
+		if (
+			this.props.disabled ||
+			this.props.requesting ||
+			this.activeConnections().length < 1
+		) {
 			return true;
 		}
-
-		return this.props.connections.filter( this.isConnectionActive ).length < 1;
 	}
 
 	previewSharingPost = () => {
@@ -202,6 +209,7 @@ class PostShare extends Component {
 
 		return (
 			<PublicizeMessage
+				disabled={ this.isDisabled() }
 				message={ this.state.message }
 				preview={ this.props.post.title }
 				requireCount={ requireCount }
@@ -212,7 +220,6 @@ class PostShare extends Component {
 
 	renderSharingButtons() {
 		const {
-			disabled,
 			hasRepublicizeSchedulingFeature,
 			siteId,
 			translate,
@@ -222,7 +229,7 @@ class PostShare extends Component {
 			className="post-share__button"
 			primary
 			onClick={ this.sharePost }
-			disabled={ this.isSharingPost() || disabled }
+			disabled={ this.isDisabled() }
 		>
 			{ this.state.scheduledDate ? translate( 'Schedule post' ) : translate( 'Share post' ) }
 		</Button>;
@@ -239,7 +246,7 @@ class PostShare extends Component {
 			<div className="post-share__button-actions">
 				{ ( isEnabled( 'publicize-preview' ) ) &&
 					<Button
-						disabled={ disabled }
+						disabled={ this.isDisabled() }
 						className="post-share__preview-button"
 						onClick={ this.toggleSharingPreview }
 					>
@@ -250,15 +257,15 @@ class PostShare extends Component {
 				<ButtonGroup
 					className="post-share__share-combo"
 					primary
-					busy={ this.isSharingPost() }
-					disabled={ disabled }
+					busy={ this.props.requesting }
+					disabled={ this.isDisabled() }
 				>
 					{ shareButton }
 
 					<CalendarButton
 						primary
 						className="post-share__schedule-button"
-						disabled={ this.isSharingPost() || disabled }
+						disabled={ this.isDisabled() }
 						title={ translate( 'Set date and time' ) }
 						selectedDay={ this.state.scheduledDate }
 						tabIndex={ 3 }
