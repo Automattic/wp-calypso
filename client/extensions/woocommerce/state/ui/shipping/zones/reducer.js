@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, isEqual, reject } from 'lodash';
+import { every, isEmpty, isEqual, omit, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,8 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_REMOVE,
 } from 'woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from '../../helpers';
+import methodsReducer, { initialState as methodsInitialState } from './methods/reducer';
+import { mergeMethodEdits } from './methods/helpers';
 
 export const initialState = {
 	creates: [],
@@ -44,7 +46,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_CLOSE ] = ( state ) => {
 	if ( null === currentlyEditingId ) {
 		return state;
 	}
-	if ( isEmpty( currentlyEditingChanges ) ) {
+	if ( isEmpty( omit( currentlyEditingChanges, 'methods' ) ) && every( currentlyEditingChanges.methods, isEmpty ) ) {
 		// Nothing to save, no need to go through the rest of the algorithm
 		return { ...state,
 			currentlyEditingId: null,
@@ -57,7 +59,11 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_CLOSE ] = ( state ) => {
 		if ( isEqual( currentlyEditingId, zone.id ) ) {
 			found = true;
 			// If edits for the zone were already in the expected bucket, just update them
-			return { ...zone, ...currentlyEditingChanges };
+			return {
+				...zone,
+				...currentlyEditingChanges,
+				methods: mergeMethodEdits( zone.methods, currentlyEditingChanges.methods )
+			};
 		}
 		return zone;
 	} );
@@ -87,7 +93,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME ] = ( state, { name } ) => {
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_OPEN ] = ( state, { id } ) => {
 	return { ...state,
 		currentlyEditingId: id,
-		currentlyEditingChanges: {}, // Always reset the current changes
+		currentlyEditingChanges: { // Always reset the current changes
+			methods: methodsInitialState,
+		},
 	};
 };
 
@@ -107,4 +115,22 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_REMOVE ] = ( state, { id } ) => {
 	return newState;
 };
 
-export default createReducer( initialState, reducer );
+const mainReducer = createReducer( initialState, reducer );
+
+export default ( state, action ) => {
+	const newState = mainReducer( state, action );
+
+	if ( null !== newState.currentlyEditingId ) {
+		const methodsState = newState.currentlyEditingChanges.methods;
+		const newMethodsState = methodsReducer( methodsState, action );
+		if ( methodsState !== newMethodsState ) {
+			return { ...newState,
+				currentlyEditingChanges: { ...newState.currentlyEditingChanges,
+					methods: newMethodsState,
+				},
+			};
+		}
+	}
+
+	return newState;
+};
