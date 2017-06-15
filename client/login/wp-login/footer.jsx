@@ -25,13 +25,33 @@ export class LoginFooter extends React.Component {
 		twoFactorAuthType: PropTypes.string,
 	};
 
-	onMagicLoginRequestClick = event => {
+	recordBackToWpcomLinkClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
+	};
+
+	recordHelpLinkClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_help_link_click' );
+	};
+
+	recordLostPhoneLinkClick = ( event ) => {
+		event.preventDefault();
+
+		this.props.recordTracksEvent( 'calypso_login_lost_phone_link_click' );
+
+		page( login( { isNative: true, twoFactorAuthType: 'backup' } ) );
+	};
+
+	recordMagicLoginLinkClick = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
 		this.props.resetMagicLoginRequestForm();
 
 		page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
+	};
+
+	recordResetPasswordLinkClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
 	};
 
 	renderHelpLink() {
@@ -43,6 +63,7 @@ export class LoginFooter extends React.Component {
 			<ExternalLink
 				key="help-link"
 				icon={ true }
+				onClick={ this.recordHelpLinkClick }
 				target="_blank"
 				href="http://en.support.wordpress.com/security/two-step-authentication/">
 				{ this.props.translate( 'Get help' ) }
@@ -56,7 +77,7 @@ export class LoginFooter extends React.Component {
 		}
 
 		return (
-			<a href={ login( { isNative: true, twoFactorAuthType: 'backup' } ) } key="lost-phone-link">
+			<a href="#" key="lost-phone-link" onClick={ this.recordLostPhoneLinkClick }>
 				{ this.props.translate( "I can't access my phone" ) }
 			</a>
 		);
@@ -68,7 +89,7 @@ export class LoginFooter extends React.Component {
 		}
 
 		return (
-			<a href="#" key="magic-login-link" onClick={ this.onMagicLoginRequestClick }>
+			<a href="#" key="magic-login-link" onClick={ this.recordMagicLoginLinkClick }>
 				{ this.props.translate( 'Email me a login link' ) }
 			</a>
 		);
@@ -80,7 +101,11 @@ export class LoginFooter extends React.Component {
 		}
 
 		return (
-			<a href={ config( 'login_url' ) + '?action=lostpassword' } key="lost-password-link">
+			<a
+				href={ config( 'login_url' ) + '?action=lostpassword' }
+				key="lost-password-link"
+				onClick={ this.recordResetPasswordLinkClick }
+			>
 				{ this.props.translate( 'Lost your password?' ) }
 			</a>
 		);
@@ -94,8 +119,13 @@ export class LoginFooter extends React.Component {
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
 
-				<a href="https://wordpress.com" key="return-to-wpcom-link">
-					<Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Back to WordPress.com' ) }
+				<a
+					href="https://wordpress.com"
+					key="return-to-wpcom-link"
+					onClick={ this.recordBackToWpcomLinkClick }
+				>
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ this.props.translate( 'Back to WordPress.com' ) }
 				</a>
 			</div>
 		);
