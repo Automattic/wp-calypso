@@ -29,9 +29,24 @@ export default class ProductForm extends Component {
 		editProductVariation: PropTypes.func.isRequired,
 	};
 
+	renderPlaceholder() {
+		const { className } = this.props;
+		return (
+			<div className={ classNames( 'products__form', 'is-placeholder', className ) }>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		);
+	}
+
 	render() {
 		const { siteId, product, productCategories, variations } = this.props;
 		const { editProduct, editProductVariation, editProductAttribute } = this.props;
+
+		if ( ! siteId ) {
+			return this.renderPlaceholder();
+		}
 
 		return (
 			<div className={ classNames( 'products__form', this.props.className ) }>
