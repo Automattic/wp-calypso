@@ -26,6 +26,7 @@ import WaitingTwoFactorNotificationApproval from './two-factor-authentication/wa
 import { login } from 'lib/paths';
 import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
+import store from 'store';
 
 class Login extends Component {
 	static propTypes = {
@@ -79,6 +80,10 @@ class Login extends Component {
 		// Redirects to / if no redirect url is available
 		const url = redirectTo ? redirectTo : window.location.origin;
 
+		// user data is persisted in localstorage at `lib/user/user` line 157
+		// therefor we need to reset it before we redirect, otherwise we'll get
+		// mixed data from old and new user
+		store.clear();
 		window.location.href = url;
 	};
 
