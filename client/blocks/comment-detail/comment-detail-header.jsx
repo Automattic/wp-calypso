@@ -11,18 +11,9 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import CommentDetailActions from './comment-detail-actions';
-import ExternalLink from 'components/external-link';
 import FormCheckbox from 'components/forms/form-checkbox';
 import AutoDirection from 'components/auto-direction';
 import { stripHTML, decodeEntities } from 'lib/formatting';
-
-const controlExternalLink = isBulkEdit => event => {
-	if ( isBulkEdit ) {
-		event.preventDefault();
-	} else {
-		event.stopPropagation();
-	}
-};
 
 export const CommentDetailHeader = ( {
 	authorAvatarUrl,
@@ -37,7 +28,6 @@ export const CommentDetailHeader = ( {
 	isBulkEdit,
 	isExpanded,
 	postTitle,
-	postUrl,
 	toggleApprove,
 	toggleExpanded,
 	toggleLike,
@@ -92,14 +82,7 @@ export const CommentDetailHeader = ( {
 						</span>
 					</div>
 					<div className="comment-detail__author-info-element">
-						{ translate( 'on {{postLink/}}', {
-							components: {
-								postLink:
-									<ExternalLink href={ postUrl } onClick={ controlExternalLink( isBulkEdit ) }>
-										{ postTitle }
-									</ExternalLink>,
-							},
-						} ) }
+						{ translate( 'on %(postTitle)s', { args: { postTitle } } ) }
 					</div>
 				</div>
 			</div>
