@@ -41,7 +41,7 @@ WPJobManager.defaultProps = {
 };
 
 const connectComponent = connect(
-	( state ) => ( { site: getSelectedSite( state ) || {} } )
+	( state ) => ( { site: getSelectedSite( state ) } )
 );
 
 export default flowRight(
