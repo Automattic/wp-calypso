@@ -6,14 +6,14 @@
 		"methodType": "offline"
 	},
 	"cod": {
+		"fields": [
+			"title",
+			"instructions"
+		],
 		"methodType": "offline"
 	},
 	"paypal": {
 		"fees": "2.9% + 30c per transaction",
-		"fields": [
-			"email",
-			"paymentaction"
-		],
 		"informationUrl": "https://docs.woocommerce.com/document/paypal-standard/",
 		"isSuggested": true,
 		"methodType": "off-site"
