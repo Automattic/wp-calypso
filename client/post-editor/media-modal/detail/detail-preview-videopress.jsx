@@ -134,7 +134,9 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 
 	play() {
-		if ( ! this.player || ! this.player.state ) {
+		const playerState = get( this, 'player.state' );
+
+		if ( ! playerState ) {
 			return;
 		}
 
@@ -142,7 +144,9 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 
 	pause() {
-		if ( ! this.player || ! this.player.state ) {
+		const playerState = get( this, 'player.state' );
+
+		if ( ! playerState ) {
 			return;
 		}
 
