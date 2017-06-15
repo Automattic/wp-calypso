@@ -7,15 +7,21 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { actionListStepStart, actionListStepSuccess } from 'woocommerce/state/action-list/actions';
 import {
-	handleStepStart,
+	actionListStepNext,
+	actionListStepAnnotate,
+	actionListStepSuccess,
+	actionListStepFailure,
+} from 'woocommerce/state/action-list/actions';
+import {
+	handleStepNext,
 	handleStepSuccess,
+	handleStepFailure,
 } from '../';
 
 describe( 'handlers', () => {
-	describe( '#handleStepStart', () => {
-		it( 'should dispatch step action', () => {
+	describe( '#handleStepNext', () => {
+		it( 'should annotate startTime and the step action', () => {
 			const step1Action = { type: '%%Step 1 Action%%' };
 
 			const rootState = {
@@ -33,15 +39,18 @@ describe( 'handlers', () => {
 				getState: () => rootState,
 			};
 
-			const action = actionListStepStart();
-			handleStepStart( store, action );
+			const action = actionListStepNext( Date.now() );
+			const annotationAction = actionListStepAnnotate( 0, { startTime: action.time } );
 
+			handleStepNext( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
 			expect( store.dispatch ).to.have.been.calledWith( step1Action );
 		} );
 	} );
 
 	describe( '#handleStepSuccess', () => {
-		it( 'should start the next step', () => {
+		it( 'should annotate endTime and start the next step', () => {
 			const rootState = {
 				extensions: {
 					woocommerce: {
@@ -58,15 +67,54 @@ describe( 'handlers', () => {
 				getState: () => rootState,
 			};
 
-			const action = actionListStepSuccess( 0 );
-			const expectedAction = actionListStepStart( 1, action.time );
+			const action = actionListStepSuccess( 0, Date.now() );
+			const annotationAction = actionListStepAnnotate( 0, { endTime: action.time } );
+			const stepNextAction = actionListStepNext( action.time );
 
 			handleStepSuccess( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( expectedAction );
+			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
+			expect( store.dispatch ).to.have.been.calledWith( stepNextAction );
 		} );
 
 		it( 'should stop after the last step', () => {
+			const step1Start = Date.now() - 300;
+			const step1End = Date.now() - 200;
+			const step2Start = Date.now() - 100;
+			const step2End = Date.now();
+
+			const rootState = {
+				extensions: {
+					woocommerce: {
+						actionList: [
+							{ description: 'Step 1', action: { type: '%%1%%' },
+								startTime: step1Start, endTime: step1End },
+							{ description: 'Step 2', action: { type: '%%2%%' },
+								startTime: step2Start },
+						],
+					}
+				}
+			};
+
+			const store = {
+				dispatch: spy(),
+				getState: () => rootState,
+			};
+
+			const action = actionListStepSuccess( 1, step2End );
+			const annotationAction = actionListStepAnnotate( 1, { endTime: step2End } );
+			const stepNextAction = actionListStepNext( action.time );
+
+			handleStepSuccess( store, action );
+
+			expect( store.dispatch ).to.have.been.called.once;
+			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
+			expect( store.dispatch ).to.not.have.been.calledWith( stepNextAction );
+		} );
+	} );
+
+	describe( '#handleStepFailure', () => {
+		it( 'should annotate endTime and error', () => {
 			const rootState = {
 				extensions: {
 					woocommerce: {
@@ -83,10 +131,13 @@ describe( 'handlers', () => {
 				getState: () => rootState,
 			};
 
-			const action = actionListStepStart( 1 );
-			handleStepSuccess( store, action );
+			const error = 'This is an error';
+			const action = actionListStepFailure( 0, error, Date.now() );
+			const annotationAction = actionListStepAnnotate( 0, { error, endTime: action.time } );
 
-			expect( store.dispatch ).to.not.have.been.called;
+			handleStepFailure( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
 		} );
 	} );
 } );
