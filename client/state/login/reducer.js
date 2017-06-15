@@ -15,6 +15,9 @@ import {
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
+	SOCIAL_CREATE_ACCOUNT_REQUEST,
+	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -54,18 +57,24 @@ export const requestError = createReducer( null, {
 	[ LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => error,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { error } ) => error,
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => null,
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => error,
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => null,
 } );
 
 export const requestSuccess = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: () => true,
 	[ LOGIN_REQUEST_FAILURE ]: () => false,
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => true,
 } );
 
 export const requestNotice = createReducer( null, {
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST ]: ( state, { notice } ) => notice,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: () => null,
-	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { notice } ) => notice
+	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { notice } ) => notice,
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: ( state, { notice } ) => notice,
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: () => null,
 } );
 
 const updateTwoStepNonce = ( state, { twoStepNonce, nonceType } ) => Object.assign( {}, state, {

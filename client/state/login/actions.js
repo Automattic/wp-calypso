@@ -16,6 +16,9 @@ import {
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
+	SOCIAL_CREATE_ACCOUNT_REQUEST,
+	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -31,6 +34,7 @@ import {
 	getTwoFactorAuthNonce,
 	getTwoFactorUserId,
 } from 'state/login/selectors';
+import wpcom from 'lib/wp';
 
 const errorMessages = {
 	account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
@@ -215,6 +219,39 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 
 			return Promise.reject( error );
 		} );
+};
+
+/**
+ * Attempt to create an account with a social service
+ usersSocialNew( 'google', response.Zi.id_token, 'login', ( wpcomError, wpcomResponse ) => {
+ *
+ * @param  {String}    service    The external social service name.
+ * @param  {String}    token      Authentication token provided by the external social service.
+ * @param  {String}    flowName   the name of the signup flow
+ * @return {Function}             Action thunk to trigger the login process.
+ */
+export const createSocialUser = ( service, token, flowName ) => dispatch => {
+	dispatch( {
+		type: SOCIAL_CREATE_ACCOUNT_REQUEST,
+		notice: {
+			message: translate( 'Creating your account' )
+		},
+	} );
+
+	return wpcom.undocumented().usersSocialNew( service, token, flowName ).then( wpcomResponse => {
+		dispatch( { type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS } );
+		return Promise.resolve( wpcomResponse );
+	} ).catch( wpcomError => {
+		const error = wpcomError;
+		error.field = 'global';
+
+		dispatch( {
+			type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+			error,
+		} );
+
+		return Promise.reject( wpcomError );
+	} );
 };
 
 /**
