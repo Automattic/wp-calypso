@@ -8,6 +8,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import {
+	actionListClear,
 	actionListStepNext,
 	actionListStepAnnotate,
 	actionListStepSuccess,
@@ -123,6 +124,41 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.not.have.been.calledWith( stepNextAction );
 			expect( store.dispatch ).to.have.been.calledWith( successAction );
 		} );
+
+		it( 'should clear action-list after success if clearUponComplete is specified', () => {
+			const step1Start = Date.now() - 300;
+			const step1End = Date.now() - 200;
+
+			const rootState = {
+				extensions: {
+					woocommerce: {
+						actionList: {
+							steps: [
+								{ description: 'Step 1', action: { type: '%%1%%' },
+									startTime: step1Start },
+							],
+							clearUponComplete: true,
+						}
+					}
+				}
+			};
+
+			const store = {
+				dispatch: spy(),
+				getState: () => rootState,
+			};
+
+			const action = actionListStepSuccess( 0, step1End );
+			const annotationAction = actionListStepAnnotate( 0, { endTime: step1End } );
+			const stepNextAction = actionListStepNext( action.time );
+			const clearAction = actionListClear();
+
+			handleStepSuccess( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
+			expect( store.dispatch ).to.not.have.been.calledWith( stepNextAction );
+			expect( store.dispatch ).to.have.been.calledWith( clearAction );
+		} );
 	} );
 
 	describe( '#handleStepFailure', () => {
@@ -158,6 +194,36 @@ describe( 'handlers', () => {
 
 			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
 			expect( store.dispatch ).to.have.been.calledWith( failureAction );
+		} );
+
+		it( 'should clear action-list after failure if clearUponComplete is specified', () => {
+			const rootState = {
+				extensions: {
+					woocommerce: {
+						actionList: {
+							steps: [
+								{ description: 'Step 1', action: { type: '%%1%%' } },
+							],
+							clearUponComplete: true,
+						}
+					}
+				}
+			};
+
+			const store = {
+				dispatch: spy(),
+				getState: () => rootState,
+			};
+
+			const error = 'This is an error';
+			const action = actionListStepFailure( 0, error, Date.now() );
+			const annotationAction = actionListStepAnnotate( 0, { error, endTime: action.time } );
+			const clearAction = actionListClear();
+
+			handleStepFailure( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
+			expect( store.dispatch ).to.have.been.calledWith( clearAction );
 		} );
 	} );
 } );
