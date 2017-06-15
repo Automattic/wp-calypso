@@ -42,7 +42,7 @@ describe( 'requestUnfollow', () => {
 		);
 
 		expect( dispatch ).to.be.calledWithMatch(
-			{ type: NOTICE_CREATE, notice: { status: 'is-success', button: 'Undo' } },
+			{ type: NOTICE_CREATE, notice: { status: null, button: 'Undo' } },
 		);
 	} );
 } );

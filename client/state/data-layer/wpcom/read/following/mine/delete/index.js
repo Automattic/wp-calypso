@@ -10,7 +10,7 @@ import config from 'config';
 import { READER_UNFOLLOW } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { createNotice, errorNotice } from 'state/notices/actions';
 import { follow } from 'state/reader/follows/actions';
 import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
 import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
@@ -37,7 +37,8 @@ export function requestUnfollow( { dispatch, getState }, action ) {
 	const feed = getFeedByFeedUrl( getState(), feedUrl );
 	const siteTitle = getSiteName( { feed, site } ) || feedUrl;
 	dispatch(
-		successNotice(
+		createNotice(
+			null,
 			translate( "You're no longer following %(siteTitle)s", { args: { siteTitle } } ),
 			{
 				duration: 7000,
