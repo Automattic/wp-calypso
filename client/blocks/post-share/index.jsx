@@ -61,7 +61,6 @@ import ConnectionsList, { NoConnectionsNotice } from './connections-list';
 
 import ActionsList from './publicize-actions-list';
 import CalendarButton from 'blocks/calendar-button';
-import formatCurrency from 'lib/format-currency';
 
 import SectionHeader from 'components/section-header';
 import Tooltip from 'components/tooltip';
@@ -298,40 +297,6 @@ class PostShare extends Component {
 		);
 	}
 
-	renderUpgradeToBusinessPlanNudge() {
-		if (
-			this.props.hasRepublicizeSchedulingFeature ||
-			! isEnabled( 'publicize-scheduling' )
-		) {
-			return null;
-		}
-
-		const {
-			businessDiscountedRawPrice,
-			businessRawPrice,
-			translate,
-			userCurrency,
-		} = this.props;
-
-		return (
-			<Banner
-				className="post-share__footer-banner"
-				callToAction={
-					translate( 'Upgrade for %s', {
-						args: formatCurrency( businessDiscountedRawPrice || businessRawPrice, userCurrency ),
-						comment: '%s will be replaced by a formatted price, i.e $9.99'
-					} )
-				}
-				list={ [
-					translate( 'Schedule your social messages in advance.' ),
-					translate( 'Remove all advertising from your site.' ),
-					translate( 'Enjoy live chat support.' ),
-				] }
-				plan={ PLAN_BUSINESS }
-				title={ translate( 'Upgrade to a Business Plan!' ) } />
-		);
-	}
-
 	renderConnectionsWarning() {
 		const {
 			connections,
@@ -472,11 +437,13 @@ class PostShare extends Component {
 	}
 
 	renderPrimarySection() {
-		const { hasFetchedConnections, siteSlug, translate, siteId, postId } = this.props;
+		const { hasFetchedConnections } = this.props;
 
 		if ( ! hasFetchedConnections ) {
 			return null;
 		}
+
+		const { siteSlug, translate } = this.props;
 
 		if ( ! this.hasConnections() ) {
 			return (
@@ -498,12 +465,7 @@ class PostShare extends Component {
 					{ this.renderConnectionsSection() }
 				</div>
 
-				{ this.renderUpgradeToBusinessPlanNudge() }
-
-				<ActionsList
-					siteId={ siteId }
-					postId={ postId }
-				/>
+				<ActionsList { ...this.props } />
 			</div>
 		);
 	}

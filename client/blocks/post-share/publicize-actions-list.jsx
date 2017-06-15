@@ -22,6 +22,8 @@ import {
 	SCHEDULED,
 	PUBLISHED,
 } from './constants';
+import Banner from 'components/banner';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
@@ -30,6 +32,7 @@ import Dialog from 'components/dialog';
 import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
 import analytics from 'lib/analytics';
 import SharingPreviewModal from './sharing-preview-modal';
+import formatCurrency from 'lib/format-currency';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {
@@ -63,6 +66,40 @@ class PublicizeActionsList extends PureComponent {
 			previewMessage: message,
 			previewService: service,
 		} );
+	};
+
+	renderUpgradeToBusinessPlanNudge() {
+		if (
+			this.props.hasRepublicizeSchedulingFeature ||
+			! isEnabled( 'publicize-scheduling' )
+		) {
+			return null;
+		}
+
+		const {
+			businessDiscountedRawPrice,
+			businessRawPrice,
+			translate,
+			userCurrency,
+		} = this.props;
+
+		return (
+			<Banner
+				className="post-share__footer-banner"
+				callToAction={
+					translate( 'Upgrade for %s', {
+						args: formatCurrency( businessDiscountedRawPrice || businessRawPrice, userCurrency ),
+						comment: '%s will be replaced by a formatted price, i.e $9.99'
+					} )
+				}
+				list={ [
+					translate( 'Schedule your social messages in advance.' ),
+					translate( 'Remove all advertising from your site.' ),
+					translate( 'Enjoy live chat support.' ),
+				] }
+				plan={ PLAN_BUSINESS }
+				title={ translate( 'Upgrade to a Business Plan!' ) } />
+		);
 	}
 
 	renderFooterSectionItem( item, index ) {
