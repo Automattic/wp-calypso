@@ -96,6 +96,7 @@ class PostShare extends Component {
 	static defaultProps = {
 		connections: [],
 		disabled: false,
+		post: {},
 	};
 
 	state = {
@@ -579,6 +580,7 @@ export default connect(
 	( state, props ) => {
 		const { siteId } = props;
 		const postId = get( props, 'post.ID' );
+		const postType = get( props, 'post.type' );
 		const userId = getCurrentUserId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
 
@@ -590,7 +592,7 @@ export default connect(
 			hasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			hasRepublicizeSchedulingFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE_SCHEDULING ),
 			siteSlug: getSiteSlug( state, siteId ),
-			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
+			isPublicizeEnabled: isPublicizeEnabled( state, siteId, postType ),
 			scheduling: isSchedulingPublicizeShareAction( state, siteId, postId ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			requesting: isRequestingSharePost( state, siteId, postId ),

@@ -25,8 +25,9 @@ class PostShareExample extends Component {
 	};
 
 	toggleEnable = () => this.setState( { isEnabled: ! this.state.isEnabled } );
+
 	render() {
-		const { post = {}, site, siteId } = this.props;
+		const { post, site, siteId } = this.props;
 
 		return (
 			<div>
@@ -47,6 +48,7 @@ class PostShareExample extends Component {
 
 				{ this.state.isEnabled && <Notice
 					status="is-warning"
+					showDismiss={ false }
 					text={ `Keep in mind that you are able to share the '${ post.title }' post now. Be careful!` } />
 				}
 
