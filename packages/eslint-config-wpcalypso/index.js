@@ -97,6 +97,7 @@ module.exports = {
 		'wpcalypso/import-docblock': 2,
 		'wpcalypso/jsx-gridicon-size': 2,
 		'wpcalypso/jsx-classname-namespace': 2,
+		'wpcalypso/redux-no-bound-selectors': 2,
 		yoda: 0
 	}
 };

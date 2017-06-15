@@ -1,3 +1,7 @@
+#### v0.9.0 (2017-06-14)
+
+- Added: [`wpcalypso/redux-no-bound-selectors`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/redux-no-bound-selectors.md) as error
+
 #### v0.8.0 (2017-05-18)
 
 - Added: [`react/no-deprecated`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-deprecated.md) as error
