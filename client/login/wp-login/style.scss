@@ -1,4 +1,14 @@
-.wp-login.main {
+.is-section-login {
+	padding-bottom: 47px;
+	position: relative;
+	min-height: calc( 100vh - 47px );
+
+	.layout__content {
+		position: static;
+	}
+}
+
+.wp-login__main.main {
 	max-width: 400px;
 }
 
@@ -23,4 +33,16 @@
 	a:last-of-type {
 		border-bottom: none;
 	}
+}
+
+.wp-login__jetpack-footer {
+	background: #fff;
+	border-top: solid 1px #f9fbfc;
+	height: 47px;
+	line-height: 47px;
+	position: absolute;
+		bottom: 0;
+		left: 0;
+	text-align: center;
+	width: 100%;
 }

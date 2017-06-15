@@ -95,30 +95,41 @@ export class Login extends React.Component {
 		return <LocaleSuggestions locale={ this.props.locale } path={ this.props.path } />;
 	}
 
+	renderFooter() {
+		return (
+			<div className="wp-login__jetpack-footer">
+				<img src="/calypso/images/jetpack/powered-by-jetpack.svg" alt="Powered by Jetpack" />
+			</div>
+		);
+	}
+
 	render() {
 		const { translate, twoFactorAuthType } = this.props;
 
 		return (
-			<Main className="wp-login">
-				<PageViewTracker path="/login" title="Login" />
+			<div>
+				<Main className="wp-login__main">
+					<PageViewTracker path="/login" title="Login" />
 
-				{ this.renderLocaleSuggestions() }
+					{ this.renderLocaleSuggestions() }
 
-				<GlobalNotices id="notices" notices={ notices.list } />
+					<GlobalNotices id="notices" notices={ notices.list } />
 
-				<div>
-					<div className="wp-login__container">
-						<LoginBlock
-							twoFactorAuthType={ twoFactorAuthType }
-							title={ translate( 'Log in to your account.' ) }
-						/>
+					<div>
+						<div className="wp-login__container">
+							<LoginBlock
+								twoFactorAuthType={ twoFactorAuthType }
+								title={ translate( 'Log in to your account.' ) }
+							/>
+						</div>
+
+						<div className="wp-login__footer">
+							{ this.footerLinks() }
+						</div>
 					</div>
-
-					<div className="wp-login__footer">
-						{ this.footerLinks() }
-					</div>
-				</div>
-			</Main>
+				</Main>
+				{ this.renderFooter() }
+			</div>
 		);
 	}
 }
