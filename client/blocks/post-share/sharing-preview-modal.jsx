@@ -3,7 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import Gridicon from 'gridicons';
-import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,10 +11,10 @@ import Dialog from 'components/dialog';
 import SharingPreviewPane from 'blocks/sharing-preview-pane';
 
 const SharingPreviewModal = ( props ) => {
-	const previewProps = pick( props, [ 'message', 'siteId', 'postId' ] );
 	const {
 		isVisible,
 		onClose,
+		...previewProps,
 	} = props;
 
 	return (
@@ -38,6 +37,7 @@ SharingPreviewModal.propTypes = {
 	siteId: PropTypes.number,
 	postId: PropTypes.number,
 	message: PropTypes.string,
+	selectedService: PropTypes.string,
 };
 
 export default SharingPreviewModal;
