@@ -267,7 +267,11 @@
 }
 
 .comment-detail__comment-body {
-	padding: 0 16px;
+	padding: 0 16px 16px;
+
+	> :last-child {
+		margin-bottom: 0;
+	}
 }
 
 .comment-detail__comment-reply {
