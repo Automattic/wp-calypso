@@ -74,6 +74,7 @@ class VerificationCodeForm extends Component {
 			onSuccess();
 		} ).catch( ( error ) => {
 			this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_failure', {
+				error_code: error.code,
 				error_message: error.message
 			} );
 		} );

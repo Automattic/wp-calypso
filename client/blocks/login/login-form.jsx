@@ -67,6 +67,7 @@ export class LoginForm extends Component {
 			onSuccess();
 		} ).catch( error => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
+				error_code: error.code,
 				error_message: error.message
 			} );
 		} );
