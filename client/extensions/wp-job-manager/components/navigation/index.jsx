@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { find, get, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,31 +24,6 @@ class Navigation extends Component {
 		activeTab: '',
 	};
 
-	getLabel( slug ) {
-		const { JOB_LISTINGS, JOB_SUBMISSION, PAGES } = Tabs;
-
-		switch ( slug ) {
-			case JOB_LISTINGS.slug:
-				return JOB_LISTINGS.label;
-			case JOB_SUBMISSION.slug:
-				return JOB_SUBMISSION.label;
-			case PAGES.slug:
-				return PAGES.label;
-		}
-	}
-
-	getTabs() {
-		const tabs = [];
-
-		for ( const key in Tabs ) {
-			if ( Tabs.hasOwnProperty( key ) ) {
-				tabs.push( Tabs[ key ] );
-			}
-		}
-
-		return tabs;
-	}
-
 	getSettingsPath() {
 		const sections = sectionsModule.get();
 		const section = find( sections, ( value => value.name === 'wp-job-manager' ) );
@@ -56,39 +31,35 @@ class Navigation extends Component {
 		return get( section, 'settings_path' );
 	}
 
-	renderTabItems( tabs ) {
-		const { slug: listingsSlug } = Tabs.JOB_LISTINGS;
+	renderTabItem( { label, slug } ) {
 		const { activeTab, site } = this.props;
+		const { slug: listingsSlug } = Tabs.JOB_LISTINGS;
+		const siteSlug = get( site, 'slug' );
+		let path = this.getSettingsPath();
 
-		return tabs.map( ( { slug: tabSlug } ) => {
-			let path = this.getSettingsPath();
+		if ( slug !== listingsSlug ) {
+			path = `${ path }/${ slug }`;
+		}
 
-			if ( tabSlug !== listingsSlug ) {
-				path = `${ path }/${ tabSlug }`;
-			}
+		if ( siteSlug ) {
+			path += `/${ siteSlug }`;
+		}
 
-			const siteSlug = get( site, 'slug' );
-
-			if ( siteSlug ) {
-				path += `/${ siteSlug }`;
-			}
-
-			return (
-				<SectionNavTabItem
-					key={ `wp-job-manager-${ tabSlug }` }
-					path={ path }
-					selected={ ( activeTab || listingsSlug ) === tabSlug }>
-					{ this.getLabel( tabSlug ) }
-				</SectionNavTabItem>
-			);
-		} );
+		return (
+			<SectionNavTabItem
+				key={ slug }
+				path={ path }
+				selected={ activeTab === slug }>
+				{ label }
+			</SectionNavTabItem>
+		);
 	}
 
 	render() {
 		return (
 			<SectionNav selectedText="Settings">
 				<SectionNavTabs>
-					{ this.renderTabItems( this.getTabs() ) }
+					{ values( Tabs ).map( tab => this.renderTabItem( tab ) ) }
 				</SectionNavTabs>
 			</SectionNav>
 		);
