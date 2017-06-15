@@ -12,7 +12,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
@@ -104,7 +103,7 @@ class DirectlyCachedFiles extends Component {
 							{ cache_direct_pages.map( ( page, index ) => (
 								<FormFieldset key={ index }>
 									<FormTextInput
-										disabled={ isRequesting || isSaving }
+										disabled={ true }
 										key={ index }
 										value={ page || '' } />
 									<Button borderless onClick={ deleteFieldArrayValue( 'cache_direct_pages', index ) }>
@@ -112,14 +111,6 @@ class DirectlyCachedFiles extends Component {
 									</Button>
 								</FormFieldset>
 							) ) }
-
-							{ cache_direct_pages.length > 0 &&
-							<FormSettingExplanation>
-								{ translate(
-									'Make the textbox blank to remove it from the list of direct pages and delete the cached file.'
-								) }
-							</FormSettingExplanation>
-							}
 						</form>
 					</div>
 				</Card>
