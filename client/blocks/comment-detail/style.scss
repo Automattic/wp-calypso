@@ -12,13 +12,13 @@
 		}
 	}
 
-	&:not( .is-expanded ):hover {
+	&.is-collapsed:hover {
 		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
 		z-index: 1;
 	}
 
-	// If the comment is pending and collapsed, color it yellow.
-	&:not( .is-approved ):not( .is-expanded ) {
+	// If the comment is unapproved and collapsed, color it yellow.
+	&.is-unapproved.is-collapsed {
 		.comment-detail__header {
 			background: rgba( $alert-yellow, 0.085 );
 			box-shadow: inset 4px 0 0 0 $alert-yellow;
