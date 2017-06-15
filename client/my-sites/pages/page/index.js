@@ -1,14 +1,12 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import createFragment from 'react-addons-create-fragment';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
-
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import {
 	get,
 	includes,
@@ -17,7 +15,7 @@ import {
 /**
  * Internal dependencies
  */
-import updatePostStatus from 'lib/mixins/update-post-status';
+import updatePostStatus from 'components/update-post-status';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import PopoverMenu from 'components/popover/menu';
@@ -50,10 +48,17 @@ function recordEvent( eventAction ) {
 
 // FIXME(mcsf): I vow to follow-up on this and port to Component
 const Page = React.createClass( { // eslint-disable-line react/prefer-es6-class
-
-	displayName: 'Page',
-
-	mixins: [ updatePostStatus ],
+	propTypes: {
+		// connected via updatePostStatus
+		buildUpdateTemplate: PropTypes.func.isRequired,
+		togglePageActions: PropTypes.func.isRequired,
+		updatePostStatus: PropTypes.func.isRequired,
+		updated: PropTypes.bool.isRequired,
+		updatedStatus: PropTypes.string,
+		previousStatus: PropTypes.string,
+		showMoreOptions: PropTypes.bool.isRequired,
+		showPageActions: PropTypes.bool.isRequired,
+	},
 
 	analyticsEvents: {
 		moreOptions: function() {
@@ -73,33 +78,10 @@ const Page = React.createClass( { // eslint-disable-line react/prefer-es6-class
 		}
 	},
 
-	getInitialState: function() {
-		return {
-			showPageActions: false
-		};
-	},
-
-	componentWillMount: function() {
-		const { translate } = this.props;
-		// used from the `update-post-status` mixin
-		this.strings = {
-			trashing: translate( 'Trashing Page' ),
-			deleting: translate( 'Deleting Page' ),
-			trashed: translate( 'Moved to Trash' ),
-			undo: translate( 'undo?' ),
-			restoring: translate( 'Restoring Page' ),
-			restored: translate( 'Page Restored' ),
-			deleted: translate( 'Page Deleted' ),
-			updating: translate( 'Updating Page' ),
-			error: translate( 'Error' ),
-			updated: translate( 'Updated' ),
-			deleteWarning: translate( 'Delete this page permanently?' )
-		};
-	},
-
 	togglePageActions: function() {
-		this.setState( { showPageActions: ! this.state.showPageActions } );
-		if ( this.state.showPageActions ) {
+		this.props.togglePageActions();
+		// TODO check previous impl for race conditions
+		if ( this.props.showPageActions ) {
 			this.analyticsEvents.moreOptions();
 		}
 	},
@@ -365,7 +347,7 @@ const Page = React.createClass( { // eslint-disable-line react/prefer-es6-class
 
 		const popoverMenu = hasMenuItems && (
 			<PopoverMenu
-				isVisible={ this.state.showPageActions }
+				isVisible={ this.props.showPageActions }
 				onClose={ this.togglePageActions }
 				position={ 'bottom left' }
 				context={ this.refs && this.refs.popoverMenuButton }
@@ -386,7 +368,7 @@ const Page = React.createClass( { // eslint-disable-line react/prefer-es6-class
 				icon="ellipsis"
 				className={ classNames( {
 					'page__actions-toggle': true,
-					'is-active': this.state.showPageActions
+					'is-active': this.props.showPageActions
 				} ) }
 				onClick={ this.togglePageActions }
 				ref="popoverMenuButton" />
@@ -438,7 +420,7 @@ const Page = React.createClass( { // eslint-disable-line react/prefer-es6-class
 					transitionName="updated-trans"
 					transitionEnterTimeout={ 300 }
 					transitionLeaveTimeout={ 300 }>
-					{ this.buildUpdateTemplate() }
+					{ this.props.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
 			</CompactCard>
 
@@ -446,26 +428,22 @@ const Page = React.createClass( { // eslint-disable-line react/prefer-es6-class
 	},
 
 	updateStatusPublish: function() {
-		this.setState( { showPageActions: false } );
-		this.updatePostStatus( 'publish' );
+		this.props.updatePostStatus( 'publish' );
 		recordEvent( 'Clicked Publish Page' );
 	},
 
 	updateStatusTrash: function() {
-		this.setState( { showPageActions: false } );
-		this.updatePostStatus( 'trash' );
+		this.props.updatePostStatus( 'trash' );
 		recordEvent( 'Clicked Move to Trash' );
 	},
 
 	updateStatusRestore: function() {
-		this.setState( { showPageActions: false } );
-		this.updatePostStatus( 'restore' );
+		this.props.updatePostStatus( 'restore' );
 		recordEvent( 'Clicked Restore' );
 	},
 
 	updateStatusDelete: function() {
-		this.setState( { showPageActions: false } );
-		this.updatePostStatus( 'delete' );
+		this.props.updatePostStatus( 'delete' );
 		recordEvent( 'Clicked Delete Page' );
 	},
 
@@ -493,8 +471,5 @@ export default connect(
 			siteSlugOrId,
 		};
 	},
-	( dispatch ) => bindActionCreators( {
-		setPreviewUrl,
-		setLayoutFocus
-	}, dispatch )
-)( localize( Page ) );
+	{ setPreviewUrl, setLayoutFocus }
+)( updatePostStatus( localize( Page ) ) );
