@@ -4,8 +4,8 @@
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import createFragment from 'react-addons-create-fragment';
-import i18n from 'i18n-calypso';
-import page from 'page';
+import i18n, { localize } from 'i18n-calypso';
+import pageRouter from 'page';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -17,16 +17,16 @@ import {
 /**
  * Internal dependencies
  */
-var updatePostStatus = require( 'lib/mixins/update-post-status' ),
-	CompactCard = require( 'components/card/compact' ),
-	Gridicon = require( 'gridicons' ),
-	PopoverMenu = require( 'components/popover/menu' ),
-	PopoverMenuItem = require( 'components/popover/menu-item' ),
-	SiteIcon = require( 'blocks/site-icon' ),
-	helpers = require( './helpers' ),
-	analytics = require( 'lib/analytics' ),
-	utils = require( 'lib/posts/utils' ),
-	classNames = require( 'classnames' );
+import updatePostStatus from 'lib/mixins/update-post-status';
+import CompactCard from 'components/card/compact';
+import Gridicon from 'gridicons';
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
+import SiteIcon from 'blocks/site-icon';
+import helpers from './helpers';
+import analytics from 'lib/analytics';
+import utils from 'lib/posts/utils';
+import classNames from 'classnames';
 
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from './page-card-info';
@@ -49,13 +49,13 @@ function recordEvent( eventAction ) {
 }
 
 function getReadableStatus( status ) {
-	var humanReadableStatus = {
-		'publish': i18n.translate( 'Published' ),
-		'draft': i18n.translate( 'Draft' ),
-		'pending': i18n.translate( 'Pending' ),
-		'future': i18n.translate( 'Future' ),
+	const humanReadableStatus = {
+		publish: i18n.translate( 'Published' ),
+		draft: i18n.translate( 'Draft' ),
+		pending: i18n.translate( 'Pending' ),
+		future: i18n.translate( 'Future' ),
 		'private': i18n.translate( 'Private' ),
-		'trash': i18n.translate( 'Trashed' )
+		trash: i18n.translate( 'Trashed' )
 	};
 
 	return humanReadableStatus [ status ] || status;
@@ -92,19 +92,20 @@ const Page = React.createClass( {
 	},
 
 	componentWillMount: function() {
+		const { translate } = this.props;
 		// used from the `update-post-status` mixin
 		this.strings = {
-			trashing: this.translate( 'Trashing Page' ),
-			deleting: this.translate( 'Deleting Page' ),
-			trashed: this.translate( 'Moved to Trash' ),
-			undo: this.translate( 'undo?' ),
-			restoring: this.translate( 'Restoring Page' ),
-			restored: this.translate( 'Page Restored' ),
-			deleted: this.translate( 'Page Deleted' ),
-			updating: this.translate( 'Updating Page' ),
-			error: this.translate( 'Error' ),
-			updated: this.translate( 'Updated' ),
-			deleteWarning: this.translate( 'Delete this page permanently?' )
+			trashing: translate( 'Trashing Page' ),
+			deleting: translate( 'Deleting Page' ),
+			trashed: translate( 'Moved to Trash' ),
+			undo: translate( 'undo?' ),
+			restoring: translate( 'Restoring Page' ),
+			restored: translate( 'Page Restored' ),
+			deleted: translate( 'Page Deleted' ),
+			updating: translate( 'Updating Page' ),
+			error: translate( 'Error' ),
+			updated: translate( 'Updated' ),
+			deleteWarning: translate( 'Delete this page permanently?' )
 		};
 	},
 
@@ -150,7 +151,7 @@ const Page = React.createClass( {
 			return (
 				<PopoverMenuItem onClick={ this.viewPage }>
 					<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
-					{ this.translate( 'Preview' ) }
+					{ this.props.translate( 'Preview' ) }
 				</PopoverMenuItem>
 			);
 		}
@@ -158,30 +159,28 @@ const Page = React.createClass( {
 		return (
 			<PopoverMenuItem onClick={ this.viewPage }>
 				<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
-				{ this.translate( 'View Page' ) }
+				{ this.props.translate( 'View Page' ) }
 			</PopoverMenuItem>
 		);
 	},
 
 	childPageInfo: function() {
-		var page = this.props.page,
-			site = this.props.site,
-			parentTitle, parentHref, parentLink;
+		const { page, site, translate } = this.props;
 
 		// If we're in hierarchical view, we don't show child info in the context menu, as it's redudant.
 		if ( this.props.hierarchical || ! page.parent ) {
 			return null;
 		}
 
-		parentTitle = page.parent.title || this.translate( '( Untitled )' );
+		const parentTitle = page.parent.title || translate( '( Untitled )' );
 
 		// This is technically if you can edit the current page, not the parent.
 		// Capabilities are not exposed on the parent page.
-		parentHref = utils.userCan( 'edit_post', this.props.page ) ? helpers.editLinkForPage( page.parent, site ) : page.parent.URL;
-		parentLink = <a href={ parentHref }>{ parentTitle }</a>;
+		const parentHref = utils.userCan( 'edit_post', this.props.page ) ? helpers.editLinkForPage( page.parent, site ) : page.parent.URL;
+		const parentLink = <a href={ parentHref }>{ parentTitle }</a>;
 
 		return ( <div className="page__popover-more-info">{
-			this.translate( "Child of {{PageTitle/}}", {
+			translate( 'Child of {{PageTitle/}}', {
 				components: {
 					PageTitle: parentLink
 				}
@@ -195,19 +194,21 @@ const Page = React.createClass( {
 		}
 
 		return ( <div className="page__popover-more-info">{
-			this.translate( 'This page is set as your site\'s homepage' )
+			this.props.translate( 'This page is set as your site\'s homepage' )
 		}</div> );
 	},
 
 	getPublishItem: function() {
-		if ( this.props.page.status === 'publish' || ! utils.userCan( 'publish_post', this.props.page ) || this.props.page.status === 'trash' ) {
+		if ( this.props.page.status === 'publish' ||
+				! utils.userCan( 'publish_post', this.props.page ) ||
+				this.props.page.status === 'trash' ) {
 			return null;
 		}
 
 		return (
 			<PopoverMenuItem onClick={ this.updateStatusPublish }>
 				<Gridicon icon="checkmark" size={ 18 } />
-				{ this.translate( 'Publish' ) }
+				{ this.props.translate( 'Publish' ) }
 			</PopoverMenuItem>
 		);
 	},
@@ -224,7 +225,7 @@ const Page = React.createClass( {
 		return (
 			<PopoverMenuItem onClick={ this.editPage }>
 				<Gridicon icon="pencil" size={ 18 } />
-				{ this.translate( 'Edit' ) }
+				{ this.props.translate( 'Edit' ) }
 			</PopoverMenuItem>
 		);
 	},
@@ -243,7 +244,7 @@ const Page = React.createClass( {
 				separator: <MenuSeparator />,
 				item: <PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
 					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Trash' ) }
+					{ this.props.translate( 'Trash' ) }
 				</PopoverMenuItem>,
 			} );
 		}
@@ -252,7 +253,7 @@ const Page = React.createClass( {
 			separator: <MenuSeparator />,
 			item: <PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
 				<Gridicon icon="trash" size={ 18 } />
-				{ this.translate( 'Delete' ) }
+				{ this.props.translate( 'Delete' ) }
 			</PopoverMenuItem>,
 		} );
 	},
@@ -271,7 +272,7 @@ const Page = React.createClass( {
 		return (
 			<PopoverMenuItem onClick={ this.copyPage } href={ `/page/${ siteSlugOrId }?copy=${ post.ID }` }>
 				<Gridicon icon="clipboard" size={ 18 } />
-				{ this.translate( 'Copy' ) }
+				{ this.props.translate( 'Copy' ) }
 			</PopoverMenuItem>
 		);
 	},
@@ -284,14 +285,14 @@ const Page = React.createClass( {
 		return (
 			<PopoverMenuItem onClick={ this.updateStatusRestore }>
 				<Gridicon icon="undo" size={ 18 } />
-				{ this.translate( 'Restore' ) }
+				{ this.props.translate( 'Restore' ) }
 			</PopoverMenuItem>
 		);
 	},
 
 	statsPage: function() {
 		this.analyticsEvents.statsPage();
-		page( helpers.statsLinkForPage( this.props.page, this.props.site ) );
+		pageRouter( helpers.statsLinkForPage( this.props.page, this.props.site ) );
 	},
 
 	getStatsItem: function() {
@@ -302,14 +303,14 @@ const Page = React.createClass( {
 		return (
 			<PopoverMenuItem onClick={ this.statsPage }>
 				<Gridicon icon="stats" size={ 18 } />
-				{ this.translate( 'Stats' ) }
+				{ this.props.translate( 'Stats' ) }
 			</PopoverMenuItem>
 		);
 	},
 
 	editPage: function() {
 		this.analyticsEvents.editPage();
-		page( helpers.editLinkForPage( this.props.page, this.props.site ) );
+		pageRouter( helpers.editLinkForPage( this.props.page, this.props.site ) );
 	},
 
 	getPageStatusInfo: function() {
@@ -321,9 +322,9 @@ const Page = React.createClass( {
 	},
 
 	popoverMoreInfo: function() {
-		var status = this.getPageStatusInfo(),
-			childPageInfo = this.childPageInfo(),
-			frontPageInfo = this.frontPageInfo();
+		const status = this.getPageStatusInfo();
+		const childPageInfo = this.childPageInfo();
+		const frontPageInfo = this.frontPageInfo();
 
 		if ( ! status && ! childPageInfo && ! frontPageInfo ) {
 			return null;
@@ -340,15 +341,10 @@ const Page = React.createClass( {
 	},
 
 	render: function() {
-		var page = this.props.page,
-			title = page.title || this.translate( '(no title)' ),
-			site = this.props.site || {},
-			canEdit = utils.userCan( 'edit_post', this.props.page ),
-			depthIndicator;
-
-		if ( ! this.props.hierarchical && page.parent ) {
-			depthIndicator = '— ';
-		}
+		const { page, site = {}, translate } = this.props;
+		const title = page.title || translate( '(no title)' );
+		const canEdit = utils.userCan( 'edit_post', page );
+		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
 
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
@@ -418,9 +414,9 @@ const Page = React.createClass( {
 				<div className="page__main">
 					<a className="page__title"
 						href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
-						title={ canEdit ?
-							this.translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } ) :
-							this.translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } ) }
+						title={ canEdit
+							? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
+							: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } ) }
 						onClick={ this.analyticsEvents.pageTitle }
 						>
 						{ depthIndicator }
@@ -497,4 +493,4 @@ export default connect(
 		setPreviewUrl,
 		setLayoutFocus
 	}, dispatch )
-)( Page );
+)( localize( Page ) );
