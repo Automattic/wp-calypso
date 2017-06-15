@@ -40,7 +40,7 @@ class SocialLoginForm extends Component {
 		}
 
 		this.props.loginSocialUser( 'google', response.Zi.id_token, redirectTo ).then( () => {
-			this.props.recordTracksEvent( 'calypso_social_login_form_login_success', {
+			this.props.recordTracksEvent( 'calypso_login_social_login_success', {
 				social_account_type: 'google',
 			} );
 
@@ -48,7 +48,7 @@ class SocialLoginForm extends Component {
 		} ).catch( error => {
 			if ( error.code === 'unknown_user' ) {
 				this.props.createSocialUser( 'google', response.Zi.id_token, 'login' ).then( wpcomResponse => {
-					this.props.recordTracksEvent( 'calypso_social_login_form_signup_success', {
+					this.props.recordTracksEvent( 'calypso_login_social_signup_success', {
 						social_account_type: 'google',
 					} );
 
@@ -57,13 +57,13 @@ class SocialLoginForm extends Component {
 						bearerToken: wpcomResponse.bearer_token
 					} );
 				} ).catch( wpcomError => {
-					this.props.recordTracksEvent( 'calypso_social_login_form_signup_failure', {
+					this.props.recordTracksEvent( 'calypso_login_social_signup_failure', {
 						social_account_type: 'google',
 						error: wpcomError.message
 					} );
 				} );
 			} else {
-				this.props.recordTracksEvent( 'calypso_social_login_form_login_failure', {
+				this.props.recordTracksEvent( 'calypso_login_social_login_failure', {
 					social_account_type: 'google',
 					error: error.message
 				} );
@@ -74,7 +74,7 @@ class SocialLoginForm extends Component {
 	};
 
 	trackGoogleLogin = () => {
-		this.props.recordTracksEvent( 'calypso_social_login_form_click', {
+		this.props.recordTracksEvent( 'calypso_login_social_button_click', {
 			social_account_type: 'google'
 		} );
 	};

@@ -48,7 +48,7 @@ export class LoginForm extends Component {
 	onChangeRememberMe = ( event ) => {
 		const { name, checked } = event.target;
 
-		this.props.recordTracksEvent( 'calypso_login_block_remember_me_change', { new_value: checked } );
+		this.props.recordTracksEvent( 'calypso_login_block_remember_me_click', { new_value: checked } );
 
 		this.setState( { [ name ]: checked } );
 	};

@@ -66,14 +66,14 @@ class VerificationCodeForm extends Component {
 		const { onSuccess, twoFactorAuthType } = this.props;
 		const { twoStepCode } = this.state;
 
-		this.props.recordTracksEvent( 'calypso_two_factor_verification_code_submit' );
+		this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_submit' );
 
 		this.props.loginUserWithTwoFactorVerificationCode( twoStepCode, twoFactorAuthType ).then( () => {
-			this.props.recordTracksEvent( 'calypso_two_factor_verification_code_success' );
+			this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_success' );
 
 			onSuccess();
 		} ).catch( ( error ) => {
-			this.props.recordTracksEvent( 'calypso_two_factor_verification_code_failure', {
+			this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_failure', {
 				error_message: error.message
 			} );
 		} );
