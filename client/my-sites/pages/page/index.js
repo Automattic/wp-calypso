@@ -61,7 +61,8 @@ function getReadableStatus( status ) {
 	return humanReadableStatus [ status ] || status;
 }
 
-const Page = React.createClass( {
+// FIXME(mcsf): I vow to follow-up on this and port to Component
+const Page = React.createClass( { // eslint-disable-line react/prefer-es6-class
 
 	displayName: 'Page',
 
