@@ -192,19 +192,20 @@ class EditorMediaModalDetailItem extends Component {
 		}
 
 		const mimePrefix = MediaUtils.getMimePrefix( item );
-		const classes = classNames( 'editor-media-modal-detail__edition-bar', classname );
 
 		return 'video' === mimePrefix
-			? this.renderVideoEditorButtons( item, classes )
-			: this.renderImageEditorButtons( classes, classname );
+			? this.renderVideoEditorButtons( item, classname )
+			: this.renderImageEditorButtons( classname );
 	}
 
-	renderImageEditorButtons( classes, classname ) {
+	renderImageEditorButtons( classname ) {
 		const { site } = this.props;
 
 		if ( ! enableImageEditing( site ) ) {
 			return null;
 		}
+
+		const classes = classNames( 'editor-media-modal-detail__edition-bar', classname );
 
 		return (
 			<div className={ classes }>
@@ -214,10 +215,12 @@ class EditorMediaModalDetailItem extends Component {
 		);
 	}
 
-	renderVideoEditorButtons( item, classes ) {
+	renderVideoEditorButtons( item, classname ) {
 		if ( ! this.enableVideoEditing( item ) ) {
 			return null;
 		}
+
+		const classes = classNames( 'editor-media-modal-detail__edition-bar', classname );
 
 		return (
 			<div className={ classes }>
