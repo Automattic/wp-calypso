@@ -30,12 +30,12 @@ export function requestBlogStickerList( { dispatch }, action ) {
 export function receiveBlogStickerList( store, action, next, response ) {
 	// validate that it worked
 	if ( ! response || ! isArray( response ) ) {
-		receiveBlogStickersListError( store, action, next );
+		receiveBlogStickerListError( store, action, next );
 		return;
 	}
 }
 
-export function receiveBlogStickerListError( { dispatch }, action, next ) {
+export function receiveBlogStickerListError( { dispatch } ) {
 	dispatch(
 		errorNotice(
 			translate( 'Sorry, we had a problem retrieving blog stickers. Please try again.' ),
