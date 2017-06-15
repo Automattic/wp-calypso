@@ -55,14 +55,14 @@ class PublicizeActionsList extends PureComponent {
 
 	togglePreviewModal = ( message = '', service = '' ) => () => {
 		if ( this.state.showPreviewModal ) {
-			this.setState( { showPreviewModal: false } );
-		} else {
-			this.setState( {
-				showPreviewModal: true,
-				previewMessage: message,
-				previewService: service,
-			} );
+			return this.setState( { showPreviewModal: false } );
 		}
+
+		this.setState( {
+			showPreviewModal: true,
+			previewMessage: message,
+			previewService: service,
+		} );
 	}
 
 	renderFooterSectionItem( {
@@ -103,9 +103,10 @@ class PublicizeActionsList extends PureComponent {
 		if ( isEnabled( 'publicize-preview' ) ) {
 			actions.push(
 				<PopoverMenuItem
-					onClick = { this.togglePreviewModal( message, service ) }
+					onClick={ this.togglePreviewModal( message, service ) }
 					key="1"
-					icon="visible">
+					icon="visible"
+				>
 					{ translate( 'Preview' ) }
 				</PopoverMenuItem>
 			);
