@@ -35,11 +35,11 @@ import {
 const errorMessages = {
 	account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
 		"WordPress.com and click the activation link. You'll be able to log in after that." ),
-	empty_password: translate( 'Please be sure to enter your password.' ),
+	empty_password: translate( "Don't forget to enter your password." ),
 	empty_two_step_code: translate( 'Please enter a verification code.' ),
 	empty_username: translate( 'Please enter a username or email address.' ),
 	forbidden_for_automattician: 'Cannot use social login with an Automattician account',
-	incorrect_password: translate( "Oops, looks like that's not the right password. Please try again!" ),
+	incorrect_password: translate( "Oops, that's not the right password. Please try again!" ),
 	invalid_email: translate( "Oops, looks like that's not the right address. Please try again!" ),
 	invalid_two_step_code: translate( "Hmm, that's not a valid verification code. Please double-check your app and try again." ),
 	invalid_two_step_nonce: translate( 'Your session has expired, please go back to the login screen.' ),
