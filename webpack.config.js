@@ -17,7 +17,6 @@ const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 const NamedModulesPlugin = require( './server/bundler/webpack-plugins/NamedModulesPlugin' );
-const NamedChunksPlugin = require( './server/bundler/webpack-plugins/NamedChunksPlugin' );
 const WebpackChunkHash = require( 'webpack-chunk-hash' );
 
 /**
@@ -203,7 +202,6 @@ const jsRules = {
 if ( calypsoEnv === 'development' ) {
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
 		new NamedModulesPlugin(),
-		new NamedChunksPlugin(),
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.LoaderOptionsPlugin( { debug: true } ),
 	] );
