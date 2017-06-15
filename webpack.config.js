@@ -3,8 +3,9 @@
 /**
  * External dependencies
  */
-const webpack = require( 'webpack' ),
-	path = require( 'path' );
+const webpack = require( 'webpack' );
+const path = require( 'path' );
+const fs = require( 'fs' );
 
 /**
  * Internal dependencies
@@ -22,6 +23,30 @@ const config = require( './server/config' ),
 const calypsoEnv = config( 'env_id' );
 
 const bundleEnv = config( 'env' );
+
+/**
+ * This function scans the /client/extensions directory in order to generate a map that looks like this:
+ * {
+ *   sensei: 'absolute/path/to/wp-calypso/client/extensions/sensei',
+ *   woocommerce: 'absolute/path/to/wp-calypso/client/extensions/woocommerce',
+ *   ....
+ * }
+ *
+ * Providing webpack with these aliases instead of telling it to scan client/extensions for every
+ * module resolution speeds up builds significantly.
+ */
+function getAliasesForExtensions() {
+	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );
+	const extensionsNames = fs
+		.readdirSync( extensionsDirectory )
+		.filter( filename => filename.indexOf( '.' ) === -1 ); // heuristic for finding directories
+
+	const aliasesMap = {};
+	extensionsNames.forEach( extensionName =>
+		aliasesMap[ extensionName ] = path.join( extensionsDirectory, extensionName )
+	);
+	return aliasesMap;
+}
 
 const webpackConfig = {
 	bail: calypsoEnv !== 'development',
@@ -70,12 +95,15 @@ const webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '', '.json', '.js', '.jsx' ],
-		root: [ path.join( __dirname, 'client' ), path.join( __dirname, 'client', 'extensions' ) ],
+		root: [ path.join( __dirname, 'client' ) ],
 		modulesDirectories: [ 'node_modules' ],
-		alias: {
-			'react-virtualized': 'react-virtualized/dist/commonjs',
-			'social-logos/example': 'social-logos/build/example'
-		}
+		alias: Object.assign(
+			{
+				'react-virtualized': 'react-virtualized/dist/commonjs',
+				'social-logos/example': 'social-logos/build/example'
+			},
+			getAliasesForExtensions()
+		),
 	},
 	resolveLoader: {
 		root: [ __dirname ]
