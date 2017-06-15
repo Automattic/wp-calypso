@@ -25,7 +25,20 @@ import { getSitePostsForQuery, isRequestingSitePostsForQuery } from 'state/posts
 const MAX_POST_QUERIES = 10;
 
 const StatModulePostAnniversaries = props => {
-	const { oldestPostQuery, postsByYearQueries, postsByYear, requesting, siteId, translate } = props;
+	const {
+		isFirstYear,
+		oldestPostQuery,
+		postsByYearQueries,
+		postsByYear,
+		requesting,
+		siteId,
+		translate,
+	} = props;
+
+	// Hide the module during the first year
+	if ( isFirstYear ) {
+		return null;
+	}
 
 	const allPosts = Array.prototype.concat( ...postsByYear );
 
@@ -159,6 +172,7 @@ export default connect( () => {
 	 */
 	let postsByYear = [];
 	let postsByYearQueries = [];
+	let isFirstYear = false;
 
 	const oldestPostQuery = { number: 1, order: 'ASC' };
 
@@ -169,14 +183,35 @@ export default connect( () => {
 		const oldestPostResult = getSitePostsForQuery( state, siteId, oldestPostQuery );
 		const oldestPost = oldestPostResult && oldestPostResult[ 0 ];
 
-		// After having received the oldest post date, an array of queries is
-		// created: one for each year preceding the current year.
-		if ( ! postsByYearQueries.length && oldestPost && oldestPost.date ) {
-			const years = Math.min(
-				MAX_POST_QUERIES,
-				moment().diff( moment( oldestPost.date ), 'years' ) + 1,
+		/* After having received the oldest post date, an array of queries is
+		 * created: one for each year preceding the current year.
+		 *
+		 * Things to note here:
+		 *  - The third argument of the diff() method is set to true to get a
+		 *    floating point instead of a rounded number.
+		 *  - The method call startOf('day') is used to get the difference using
+		 *    days only.
+		 *  - Math.floor() is used to get the amount of years as an integer.
+		 */
+		if ( ! isFirstYear && ! postsByYearQueries.length && oldestPost && oldestPost.date ) {
+			const years = Math.floor(
+				Math.min(
+					MAX_POST_QUERIES,
+					moment()
+						.startOf( 'day' )
+						.diff( moment( oldestPost.date ).startOf( 'day' ), 'years', true ),
+				),
 			);
-			postsByYearQueries = [ ...Array( years ) ].map( ( v, i ) => yearsAgoQuery( i + 1 ) );
+			if ( years > 0 ) {
+				postsByYearQueries = [ ...Array( years ) ].map( ( v, i ) => yearsAgoQuery( i + 1 ) );
+			} else {
+				isFirstYear = true;
+			}
+		}
+
+		// No posts published on the blog
+		if ( Array.isArray( oldestPostResult ) && oldestPostResult.length === 0 ) {
+			isFirstYear = true;
 		}
 
 		// Fill postsByYear if any item has been updated
@@ -197,6 +232,7 @@ export default connect( () => {
 
 		return {
 			siteId,
+			isFirstYear,
 			requesting: requestingOldestPost || requestingAnyPostsByYear,
 			oldestPostQuery,
 			oldestPost,
