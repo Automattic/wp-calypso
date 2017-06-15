@@ -38,9 +38,14 @@ describe( 'makeProductActionList', () => {
 			actionListStepFailure( 0, 'UNKNOWN' )
 		);
 
-		const expectedActionList = [
-			{ description: 'Creating product: Product #1', action: action1 },
-		];
+		const expectedActionList = {
+			steps: [
+				{ description: 'Creating product: Product #1', action: action1 },
+			],
+			successAction: undefined,
+			failureAction: undefined,
+			clearUponComplete: true,
+		};
 
 		expect( makeProductActionList( rootState, 123, edits ) ).to.eql( expectedActionList );
 	} );
@@ -77,12 +82,56 @@ describe( 'makeProductActionList', () => {
 			actionListStepFailure( 1, 'UNKNOWN' )
 		);
 
-		const actionList = [
-			{ description: 'Creating product: Product #1', action: action1 },
-			{ description: 'Creating product: Product #2', action: action2 },
-		];
+		const expectedActionList = {
+			steps: [
+				{ description: 'Creating product: Product #1', action: action1 },
+				{ description: 'Creating product: Product #2', action: action2 },
+			],
+			successAction: undefined,
+			failureAction: undefined,
+			clearUponComplete: true,
+		};
 
-		expect( makeProductActionList( rootState, 123, edits ) ).to.eql( actionList );
+		expect( makeProductActionList( rootState, 123, edits ) ).to.eql( expectedActionList );
+	} );
+
+	it( 'should create an action list with success/failure actions', () => {
+		const rootState = {
+			extensions: {
+				woocommerce: {
+				}
+			}
+		};
+
+		const product1 = { id: { index: 0 }, name: 'Product #1' };
+
+		const edits = {
+			creates: [
+				product1,
+			]
+		};
+
+		const action1 = createProduct(
+			123,
+			product1,
+			actionListStepSuccess( 0 ),
+			actionListStepFailure( 0, 'UNKNOWN' )
+		);
+
+		const successAction = { type: '%%SUCCESS%%' };
+		const failureAction = { type: '%%FAILURE%%' };
+
+		const expectedActionList = {
+			steps: [
+				{ description: 'Creating product: Product #1', action: action1 },
+			],
+			successAction,
+			failureAction,
+			clearUponComplete: true,
+		};
+
+		const actionList = makeProductActionList( rootState, 123, edits, successAction, failureAction );
+		expect( actionList ).to.eql( expectedActionList );
 	} );
 } );
 
