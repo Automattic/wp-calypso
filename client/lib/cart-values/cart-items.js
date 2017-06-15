@@ -244,7 +244,7 @@ function hasTld( cart, tld ) {
 	} );
 }
 
-export function getTlds( cart ) {
+function getTlds( cart ) {
 	return uniq( map( getDomainRegistrations( cart ), function( cartItem ) {
 		return trimStart( getDomainRegistrationTld( cartItem ), '.' );
 	} ) );
@@ -833,6 +833,7 @@ module.exports = {
 	getRenewalItemFromProduct,
 	getRenewalItems,
 	getSiteRedirects,
+	getTlds,
 	googleApps,
 	googleAppsExtraLicenses,
 	guidedTransferItem,
