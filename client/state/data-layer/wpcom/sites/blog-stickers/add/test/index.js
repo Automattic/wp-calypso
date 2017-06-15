@@ -11,7 +11,7 @@ import { requestBlogStickerAdd, receiveBlogStickerAdd, receiveBlogStickerAddErro
 import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( 'blog-stickers', () => {
+describe( 'blog-sticker-add', () => {
 	describe( 'requestBlogStickerAdd', () => {
 		it( 'should dispatch an http request and call through next', () => {
 			const dispatch = spy();
