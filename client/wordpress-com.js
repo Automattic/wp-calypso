@@ -369,4 +369,12 @@ sections.push( {
 	secondary: true
 } );
 
+sections.push( {
+	name: 'domain-connect-authorize',
+	paths: [ '/domain-connect/authorize' ],
+	module: 'my-sites/upgrades/domain-management/domain-connect',
+	enableLoggedOut: false,
+	secondary: false
+} );
+
 module.exports = sections;

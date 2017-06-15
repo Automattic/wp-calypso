@@ -1789,7 +1789,18 @@ Undocumented.prototype.updateDns = function( domain, records, fn ) {
 };
 
 Undocumented.prototype.applyDnsTemplate = function( domain, provider, service, variables, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/dns/providers/' + provider + '/services/' + service, { variables }, callback );
+	return this.wpcom.req.post( '/domains/' + domain + '/dns/providers/' + provider + '/services/' + service,
+		{ variables }, callback );
+};
+
+Undocumented.prototype.applyDnsTemplateSyncFlow = function( domain, provider, service, variables, callback ) {
+	return this.wpcom.req.get( '/domain-connect/authorize/v2/domainTemplates/providers/' + provider + '/services/' +
+		service + '/apply/authorized', Object.assign( {}, { apiVersion: '1.3' }, variables ), callback );
+};
+
+Undocumented.prototype.getDnsTemplateRecords = function( domain, provider, service, variables, callback ) {
+	return this.wpcom.req.post( '/domains/' + domain + '/dns/providers/' + provider + '/services/' + service + '/preview',
+		{ variables }, callback );
 };
 
 Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
