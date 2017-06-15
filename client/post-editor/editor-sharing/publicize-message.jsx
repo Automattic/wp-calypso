@@ -83,11 +83,11 @@ export default React.createClass( {
 		} else {
 			return (
 				<FormTextarea
-					disabled={ this.props.disabled }				
+					disabled={ this.props.disabled }
 					value={ this.props.message }
 					placeholder={ this.props.preview }
 					onChange={ this.onChange }
-					className="editor-sharing__message-input"/>
+					className="editor-sharing__message-input" />
 			);
 		}
 	},
