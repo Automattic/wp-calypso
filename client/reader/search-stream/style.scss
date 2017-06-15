@@ -116,7 +116,7 @@
 
 .search-stream.search-stream__with-sites .is-two-columns .search-stream__post-results .reader-post-card:nth-child(2),
 .search-stream.search-stream__with-sites .is-two-columns .search-stream__site-results {
-	margin-top: 140px;
+	margin-top: 135px;
 }
 
 // Search term suggestions
@@ -294,7 +294,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	display: flex;
 	font-weight: 600;
 	list-style-type: none;
-	margin: 20px 0 0;
+	margin: 17px 0 0;
 	text-transform: uppercase;
 }
 
