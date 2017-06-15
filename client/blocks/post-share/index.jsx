@@ -73,6 +73,7 @@ class PostShare extends Component {
 		// parent prps
 		post: PropTypes.object,
 		siteId: PropTypes.number,
+		disabled: PropTypes.bool,
 
 		// connect prps
 		businessDiscountedRawPrice: PropTypes.number,
@@ -94,6 +95,7 @@ class PostShare extends Component {
 
 	static defaultProps = {
 		connections: [],
+		disabled: false,
 	};
 
 	state = {
@@ -145,7 +147,6 @@ class PostShare extends Component {
 		this.props.dismissShareConfirmation( this.props.siteId, this.props.postId );
 	};
 
-
 	sharePost = () => {
 		const {
 			postId,
@@ -165,7 +166,6 @@ class PostShare extends Component {
 		}, { service_all: 0 } );
 
 		if ( this.state.scheduledDate ) {
-
 			analytics.tracks.recordEvent( 'calypso_publicize_share_schedule', numberOfAccountsPerService );
 			this.props.schedulePostShareAction(
 				siteId,
@@ -212,6 +212,7 @@ class PostShare extends Component {
 
 	renderSharingButtons() {
 		const {
+			disabled,
 			hasRepublicizeSchedulingFeature,
 			siteId,
 			translate,
@@ -221,7 +222,7 @@ class PostShare extends Component {
 			className="post-share__button"
 			primary
 			onClick={ this.sharePost }
-			disabled={ this.isSharingPost() }
+			disabled={ this.isSharingPost() || disabled }
 		>
 			{ this.state.scheduledDate ? translate( 'Schedule post' ) : translate( 'Share post' ) }
 		</Button>;
@@ -238,6 +239,7 @@ class PostShare extends Component {
 			<div className="post-share__button-actions">
 				{ ( isEnabled( 'publicize-preview' ) ) &&
 					<Button
+						disabled={ disabled }
 						className="post-share__preview-button"
 						onClick={ this.toggleSharingPreview }
 					>
@@ -249,13 +251,14 @@ class PostShare extends Component {
 					className="post-share__share-combo"
 					primary
 					busy={ this.isSharingPost() }
+					disabled={ disabled }
 				>
 					{ shareButton }
 
 					<CalendarButton
 						primary
 						className="post-share__schedule-button"
-						disabled={ this.isSharingPost() }
+						disabled={ this.isSharingPost() || disabled }
 						title={ translate( 'Set date and time' ) }
 						selectedDay={ this.state.scheduledDate }
 						tabIndex={ 3 }
