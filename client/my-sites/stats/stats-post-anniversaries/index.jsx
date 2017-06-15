@@ -63,12 +63,6 @@ const StatModulePostAnniversaries = props => {
 	);
 };
 
-const CalendarIcon = () => (
-	<span style={ { position: 'relative', top: '-2px' } }>
-		<Gridicon icon="calendar" size={ 18 } />
-	</span>
-);
-
 const PostsList = ( { allPosts, postsByYear } ) =>
 	( allPosts.length === 1
 		? <SinglePost post={ allPosts[ 0 ] } />
@@ -81,7 +75,7 @@ const SinglePost = localize( ( { translate, post } ) => {
 	return (
 		<StatsContentText>
 			<p>
-				<CalendarIcon />
+				<Gridicon icon="calendar" size={ 18 } />
 				{ translate(
 					'%(yearsAgo)d year ago on this day, {{href}}%(title)s{{/href}} was published.',
 					'%(yearsAgo)d years ago on this day, {{href}}%(title)s{{/href}} was published.',
