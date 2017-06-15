@@ -26,14 +26,18 @@ which are objects that describe each sequential step in the list. Using the abov
 example, this could look like:
 
 ```
-[
-  { description: "Creating product: super-awesome thing", action: { ... } },
-  { description: "Creating super-awesome thing variation: small", action: { ... } },
-  { description: "Creating super-awesome thing variation: large", action: { ... } }
-]
+{
+  steps: [
+    { description: "Creating product: super-awesome thing", action: { ... } },
+    { description: "Creating super-awesome thing variation: small", action: { ... } },
+    { description: "Creating super-awesome thing variation: large", action: { ... } }
+  ]
+  successAction: { type: 'MY_SUCCESS_ACTION' },
+  failureAction: { type: 'MY_FAILURE_ACTION' },
+}
 ```
 
-Note: Actions in the state list should not contain functions or anything not serializable,
+Note: Actions in the action list should not contain functions or anything else not serializable,
 due to the fact that the action list is stored in state.
 
 
@@ -90,7 +94,9 @@ step is started. If this is the last step, then no further action is taken.
 #### Action List Complete
 
 The entire list is considered done either when all steps have been ended
-successfully, or when an error is logged on a step.
+successfully, or when an error is logged on a step. When this occurs, if the
+`successAction` or `failureAction` is designated, the appropriate one will be
+dispatched at the end of action list processing.
 
 #### Action List Clear
 

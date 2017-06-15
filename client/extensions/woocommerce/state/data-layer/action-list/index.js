@@ -20,7 +20,7 @@ export function handleStepNext( { dispatch, getState }, action ) {
 	const startTime = action.time || Date.now();
 	const actionList = getActionList( getState() );
 	const stepIndex = getCurrentStepIndex( actionList );
-	const step = actionList[ stepIndex ];
+	const step = actionList.steps[ stepIndex ];
 
 	if ( step.startTime ) {
 		debug( `WOOCOMMERCE_ACTION_LIST_STEP_NEXT dispatched twice for step ${ stepIndex }` );
@@ -40,17 +40,29 @@ export function handleStepSuccess( { dispatch, getState }, action ) {
 
 	dispatch( actionListStepAnnotate( stepIndex, { endTime } ) );
 
-	if ( nextStepIndex < actionList.length ) {
+	if ( nextStepIndex < actionList.steps.length ) {
 		// Still more work to do.
 		dispatch( actionListStepNext( action.time ) );
+	} else {
+		// All done!
+		debug( `Action List Success. ${ actionList.steps.length } steps completed.` );
+		if ( actionList.successAction ) {
+			dispatch( actionList.successAction );
+		}
 	}
 }
 
 export function handleStepFailure( { dispatch, getState }, action ) {
 	const { stepIndex, time, error } = action;
+	const actionList = getActionList( getState() );
 	const endTime = time || Date.now();
 
+	debug( `Action List Failed on step ${ stepIndex } with error: ${ error }` );
+
 	dispatch( actionListStepAnnotate( stepIndex, { endTime, error } ) );
+	if ( actionList.failureAction ) {
+		dispatch( actionList.failureAction );
+	}
 }
 
 export default {

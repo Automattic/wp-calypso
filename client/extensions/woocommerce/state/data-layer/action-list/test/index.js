@@ -27,9 +27,11 @@ describe( 'handlers', () => {
 			const rootState = {
 				extensions: {
 					woocommerce: {
-						actionList: [
-							{ description: 'Step 1', action: step1Action },
-						],
+						actionList: {
+							steps: [
+								{ description: 'Step 1', action: step1Action },
+							],
+						}
 					}
 				}
 			};
@@ -54,10 +56,12 @@ describe( 'handlers', () => {
 			const rootState = {
 				extensions: {
 					woocommerce: {
-						actionList: [
-							{ description: 'Step 1', action: { type: '%%1%%' } },
-							{ description: 'Step 2', action: { type: '%%2%%' } },
-						],
+						actionList: {
+							steps: [
+								{ description: 'Step 1', action: { type: '%%1%%' } },
+								{ description: 'Step 2', action: { type: '%%2%%' } },
+							],
+						}
 					}
 				}
 			};
@@ -83,15 +87,22 @@ describe( 'handlers', () => {
 			const step2Start = Date.now() - 100;
 			const step2End = Date.now();
 
+			const successAction = { type: '%%SUCCESS%%' };
+			const failureAction = { type: '%%FAILURE%%' };
+
 			const rootState = {
 				extensions: {
 					woocommerce: {
-						actionList: [
-							{ description: 'Step 1', action: { type: '%%1%%' },
-								startTime: step1Start, endTime: step1End },
-							{ description: 'Step 2', action: { type: '%%2%%' },
-								startTime: step2Start },
-						],
+						actionList: {
+							steps: [
+								{ description: 'Step 1', action: { type: '%%1%%' },
+									startTime: step1Start, endTime: step1End },
+								{ description: 'Step 2', action: { type: '%%2%%' },
+									startTime: step2Start },
+							],
+							successAction,
+							failureAction,
+						}
 					}
 				}
 			};
@@ -110,18 +121,26 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.have.been.called.once;
 			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
 			expect( store.dispatch ).to.not.have.been.calledWith( stepNextAction );
+			expect( store.dispatch ).to.have.been.calledWith( successAction );
 		} );
 	} );
 
 	describe( '#handleStepFailure', () => {
 		it( 'should annotate endTime and error', () => {
+			const successAction = { type: '%%SUCCESS%%' };
+			const failureAction = { type: '%%FAILURE%%' };
+
 			const rootState = {
 				extensions: {
 					woocommerce: {
-						actionList: [
-							{ description: 'Step 1', action: { type: '%%1%%' } },
-							{ description: 'Step 2', action: { type: '%%2%%' } },
-						],
+						actionList: {
+							steps: [
+								{ description: 'Step 1', action: { type: '%%1%%' } },
+								{ description: 'Step 2', action: { type: '%%2%%' } },
+							],
+							successAction,
+							failureAction,
+						}
 					}
 				}
 			};
@@ -138,6 +157,7 @@ describe( 'handlers', () => {
 			handleStepFailure( store, action );
 
 			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
+			expect( store.dispatch ).to.have.been.calledWith( failureAction );
 		} );
 	} );
 } );
