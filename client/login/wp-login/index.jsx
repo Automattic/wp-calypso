@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import LoginFooter from './footer';
+import LoginLinks from './login-links';
 import Main from 'components/main';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
@@ -89,7 +89,7 @@ export class Login extends React.Component {
 							/>
 						</div>
 
-						<LoginFooter twoFactorAuthType={ twoFactorAuthType } />
+						<LoginLinks twoFactorAuthType={ twoFactorAuthType } />
 					</div>
 				</Main>
 

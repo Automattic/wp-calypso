@@ -16,7 +16,7 @@ import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { login } from 'lib/paths';
 
-export class LoginFooter extends React.Component {
+export class LoginLinks extends React.Component {
 	static propTypes = {
 		recordPageView: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -138,4 +138,4 @@ const mapDispatch = {
 	resetMagicLoginRequestForm,
 };
 
-export default connect( null, mapDispatch )( localize( LoginFooter ) );
+export default connect( null, mapDispatch )( localize( LoginLinks ) );
