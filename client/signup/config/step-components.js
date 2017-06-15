@@ -11,6 +11,7 @@ import SiteComponent from 'signup/steps/site';
 import SiteOrDomainComponent from 'signup/steps/site-or-domain';
 import SitePicker from 'signup/steps/site-picker';
 import SiteTitleComponent from 'signup/steps/site-title';
+import SiteTypeComponent from 'signup/steps/site-type';
 import SurveyStepComponent from 'signup/steps/survey';
 import ThemeSelectionComponent from 'signup/steps/theme-selection';
 import UserSignupComponent from 'signup/steps/user';
@@ -31,6 +32,7 @@ export default {
 	'site-or-domain': SiteOrDomainComponent,
 	'site-picker': SitePicker,
 	'site-title': SiteTitleComponent,
+	'site-type': SiteTypeComponent,
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,

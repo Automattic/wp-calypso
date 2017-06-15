@@ -41,6 +41,28 @@ function getSiteDestination( dependencies ) {
 	return protocol + '://' + dependencies.siteSlug;
 }
 
+function getJetpackSiteDestination( dependencies ) {
+	console.log("getting destination");
+	console.log(dependencies);
+
+	// if ( dependenciesContainCartItem( dependencies ) ) {
+	// 	return getCheckoutUrl( dependencies );
+	// }
+
+	let protocol = 'https';
+
+	/**
+	 * It is possible that non-wordpress.com sites are not HTTPS ready.
+	 *
+	 * Redirect them
+	 */
+	if ( ! dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ) {
+		protocol = 'http';
+	}
+
+	return protocol + '://' + dependencies.siteSlug;
+}
+
 function getPostsDestination( dependencies ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
 		return getCheckoutUrl( dependencies );
@@ -231,6 +253,15 @@ if ( config.isEnabled( 'signup/social' ) ) {
 		steps: [ 'user-social' ],
 		destination: '/',
 		description: 'Create an account without a blog with social signup enabled.',
+		lastModified: '2017-03-16'
+	};
+}
+
+if ( config.isEnabled( 'jetpack/onboarding' ) ) {
+	flows[ 'jetpack-onboarding' ] = {
+		steps: [ 'site-type', 'site-title', 'design-type', 'jetpack-user' ],
+		destination: getJetpackSiteDestination,
+		description: 'Configure a Jetpack site.',
 		lastModified: '2017-03-16'
 	};
 }
