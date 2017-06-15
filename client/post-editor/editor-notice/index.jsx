@@ -135,7 +135,7 @@ export class EditorNotice extends Component {
 
 			case 'publishedPrivately':
 				if ( config.isEnabled( 'post-editor/delta-post-publish-preview' ) ) {
-					return translate( '{{strong}}Privately published.{{/strong}} Only admins and editors can view.', {
+					return translate( '{{strong}}Published privately.{{/strong}} Only admins and editors can view.', {
 						components: {
 							strong: <strong />,
 						},
