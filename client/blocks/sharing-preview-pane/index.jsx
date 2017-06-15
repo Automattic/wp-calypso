@@ -44,15 +44,19 @@ class SharingPreviewPane extends PureComponent {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		seoTitle: PropTypes.string,
+		selectedService: PropTypes.string,
 	};
 
 	static defaultProps = {
 		services: Object.keys( serviceNames )
 	};
 
-	state = {
-		selectedService: 'facebook'
-	};
+	constructor( props ) {
+		super( props );
+		this.state = {
+			selectedService: props.selectedService || props.services[ 0 ]
+		};
+	}
 
 	selectPreview = ( selectedService ) => {
 		this.setState( { selectedService } );
@@ -117,6 +121,7 @@ class SharingPreviewPane extends PureComponent {
 
 	render() {
 		const { translate, services } = this.props;
+		const initialMenuItemIndex = services.indexOf( this.state.selectedService );
 
 		return (
 			<div className="sharing-preview-pane">
@@ -132,7 +137,7 @@ class SharingPreviewPane extends PureComponent {
 								'the networks below' ) }
 						</p>
 					</div>
-					<VerticalMenu onClick={ this.selectPreview }>
+					<VerticalMenu onClick={ this.selectPreview } initialItemIndex={ initialMenuItemIndex } >
 						{ services.map( service => <SocialItem { ...{ key: service, service } } /> ) }
 					</VerticalMenu>
 				</div>
