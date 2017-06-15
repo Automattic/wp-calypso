@@ -48,6 +48,7 @@ class PurchaseNotice extends Component {
 						purchaseName: getName( purchase ),
 						expiry: moment( purchase.expiryMoment ).fromNow(),
 					},
+					comment: '%(expiry)s will be a localized phrase like "in 8 months"',
 				}
 			);
 		}
@@ -62,6 +63,7 @@ class PurchaseNotice extends Component {
 						purchaseName: getName( purchase ),
 						expiry: daysToExpiry,
 					},
+					comment: '%(expiry)s will be a plain number, like 25',
 				}
 			);
 		}
@@ -71,6 +73,7 @@ class PurchaseNotice extends Component {
 				purchaseName: getName( purchase ),
 				expiry: moment( purchase.expiryMoment ).fromNow(),
 			},
+			comment: '%(expiry)s will be a localized phrase like "in a month"',
 		} );
 	}
 
@@ -143,6 +146,7 @@ class PurchaseNotice extends Component {
 							components: {
 								a: editCardDetailsPath ? <a href={ editCardDetailsPath } /> : <span />,
 							},
+							comment: '%(cardExpiry)s will be a localized date like "September 2018"',
 						}
 					) }
 				</Notice>
