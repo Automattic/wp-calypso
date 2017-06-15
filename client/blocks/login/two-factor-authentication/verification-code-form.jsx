@@ -32,7 +32,7 @@ class VerificationCodeForm extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
-		twoFactorAuthRequestError: PropTypes.string,
+		twoFactorAuthRequestError: PropTypes.object,
 		twoFactorAuthType: PropTypes.string.isRequired,
 	};
 
