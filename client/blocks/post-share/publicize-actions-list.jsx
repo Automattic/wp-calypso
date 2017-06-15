@@ -65,13 +65,14 @@ class PublicizeActionsList extends PureComponent {
 		} );
 	}
 
-	renderFooterSectionItem( {
-		ID: actionId,
-		connectionName,
-		message,
-		shareDate,
-		service,
-	}, index ) {
+	renderFooterSectionItem( item, index ) {
+		const {
+			service,
+			connectionName,
+			shareDate,
+			message,
+		} = item;
+
 		return (
 			<CompactCard className="post-share__footer-items" key={ index }>
 				<div className="post-share__footer-item">
@@ -91,12 +92,26 @@ class PublicizeActionsList extends PureComponent {
 						{ message }
 					</div>
 				</div>
-				{ this.renderElipsisMenu( actionId, message, service ) }
+				{ this.renderFooterSectionItemActions( item ) }
 			</CompactCard>
 		);
 	}
 
-	renderElipsisMenu( publicizeActionId, message, service ) {
+	renderFooterSectionItemActions( item ) {
+		const {
+			ID: actionId,
+			message,
+			service,
+		} = item;
+
+		if ( this.state.selectedShareTab === SCHEDULED ) {
+			return this.renderScheduledMenu( actionId, message, service );
+		}
+
+		return null;
+	}
+
+	renderScheduledMenu( publicizeActionId, message, service ) {
 		const actions = [];
 		const { translate } = this.props;
 
@@ -112,17 +127,15 @@ class PublicizeActionsList extends PureComponent {
 			);
 		}
 
-		if ( this.state.selectedShareTab === SCHEDULED ) {
-			actions.push(
-				<PopoverMenuItem
-					onClick={ this.deleteScheduledAction( publicizeActionId ) }
-					key="2"
-					icon="trash"
-				>
-					{ translate( 'Trash' ) }
-				</PopoverMenuItem>
-			);
-		}
+		actions.push(
+			<PopoverMenuItem
+				onClick={ this.deleteScheduledAction( publicizeActionId ) }
+				key="2"
+				icon="trash"
+			>
+				{ translate( 'Trash' ) }
+			</PopoverMenuItem>
+		);
 
 		if ( actions.length === 0 ) {
 			return <div />;
