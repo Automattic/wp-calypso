@@ -749,10 +749,6 @@ export const PostEditor = React.createClass( {
 			message = 'published';
 		}
 
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
-			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
-		}
-
 		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ), savedPost.URL );
 	},
 
@@ -820,6 +816,11 @@ export const PostEditor = React.createClass( {
 
 	onSaveSuccess: function( message, action, link ) {
 		const post = PostEditStore.get();
+		const isNotPrivateOrIsConfirmed = ( 'private' !== post.status ) || ( 'closed' !== this.state.confirmationSidebar );
+
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
+		}
 
 		if ( 'draft' === post.status ) {
 			this.props.setEditorLastDraft( post.site_ID, post.ID );
@@ -848,7 +849,11 @@ export const PostEditor = React.createClass( {
 
 			window.scrollTo( 0, 0 );
 
-			if ( config.isEnabled( 'post-editor/delta-post-publish-preview' ) && this.props.isSitePreviewable ) {
+			if (
+				config.isEnabled( 'post-editor/delta-post-publish-preview' ) &&
+				this.props.isSitePreviewable &&
+				isNotPrivateOrIsConfirmed
+			) {
 				this.setState( { isPostPublishPreview: true } );
 				this.iframePreview();
 			}
