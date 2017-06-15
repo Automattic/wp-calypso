@@ -85,7 +85,7 @@ export default connect(
 	state => {
 		return {
 			isNewReader: getPreference( state, 'is_new_reader' ),
-			isNewUser: isUserNewerThan( state, WEEK_IN_MILLISECONDS * 2 ),
+			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS * 2 )( state ),
 		};
 	},
 	dispatch =>
