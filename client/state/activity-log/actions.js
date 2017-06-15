@@ -2,6 +2,9 @@
  * Internal dependencies
  */
 import {
+	ACTIVITY_LOG_ERROR,
+	ACTIVITY_LOG_REQUEST,
+	ACTIVITY_LOG_UPDATE,
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
@@ -40,6 +43,29 @@ export function rewindActivateFailure( siteId ) {
 	return {
 		type: REWIND_ACTIVATE_FAILURE,
 		siteId,
+	};
+}
+
+export function activityLogRequest( siteId ) {
+	return {
+		type: ACTIVITY_LOG_REQUEST,
+		siteId,
+	};
+}
+
+export function activityLogError( siteId, error ) {
+	return {
+		type: ACTIVITY_LOG_ERROR,
+		siteId,
+		error,
+	};
+}
+
+export function activityLogUpdate( siteId, data ) {
+	return {
+		type: ACTIVITY_LOG_UPDATE,
+		siteId,
+		data,
 	};
 }
 
