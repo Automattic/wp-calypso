@@ -98,11 +98,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		}
 
 		if ( typeof window !== 'undefined' && window.videopress ) {
-			this.player = window.videopress( videopress_guid, this.video, {
-				autoPlay: isPlaying,
-				height: height,
-				width: width,
-			} );
+			this.player = window.videopress( videopress_guid, this.video, { autoPlay: isPlaying, height, width } );
 		}
 	};
 
@@ -111,7 +107,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 			return;
 		}
 
-		const data = event.data;
+		const { data } = event;
 
 		if ( ! data || 'videopress_loading_state' !== data.event || ! ( 'state' in data ) || ! ( 'converting' in data ) ) {
 			return;
