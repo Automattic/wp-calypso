@@ -54,12 +54,15 @@ class PublicizeActionsList extends PureComponent {
 	};
 
 	togglePreviewModal = ( message = '', service = '' ) => () => {
-		const showPreviewModal = ! this.state.showPreviewModal;
-		this.setState( {
-			showPreviewModal,
-			previewMessage: message,
-			previewService: service,
-		} );
+		if ( this.state.showPreviewModal ) {
+			this.setState( { showPreviewModal: false } );
+		} else {
+			this.setState( {
+				showPreviewModal: true,
+				previewMessage: message,
+				previewService: service,
+			} );
+		}
 	}
 
 	renderFooterSectionItem( {
