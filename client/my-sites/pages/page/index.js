@@ -4,7 +4,7 @@
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import createFragment from 'react-addons-create-fragment';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 
 import { connect } from 'react-redux';
@@ -46,19 +46,6 @@ import { getPreviewURL } from 'lib/posts/utils';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
-}
-
-function getReadableStatus( status ) {
-	const humanReadableStatus = {
-		publish: i18n.translate( 'Published' ),
-		draft: i18n.translate( 'Draft' ),
-		pending: i18n.translate( 'Pending' ),
-		future: i18n.translate( 'Future' ),
-		'private': i18n.translate( 'Private' ),
-		trash: i18n.translate( 'Trashed' )
-	};
-
-	return humanReadableStatus [ status ] || status;
 }
 
 // FIXME(mcsf): I vow to follow-up on this and port to Component
@@ -319,7 +306,23 @@ const Page = React.createClass( { // eslint-disable-line react/prefer-es6-class
 			return null;
 		}
 
-		return <div className="page__popover-more-info">{ getReadableStatus( this.props.page.status ) }</div>;
+		return <div className="page__popover-more-info">{ this.getReadableStatus( this.props.page.status ) }</div>;
+	},
+
+	getReadableStatus( status ) {
+		const { translate } = this.props;
+		if ( ! this.humanReadableStatus ) {
+			this.humanReadableStatus = {
+				publish: translate( 'Published' ),
+				draft: translate( 'Draft' ),
+				pending: translate( 'Pending' ),
+				future: translate( 'Future' ),
+				'private': translate( 'Private' ),
+				trash: translate( 'Trashed' ),
+			};
+		}
+
+		return this.humanReadableStatus[ status ] || status;
 	},
 
 	popoverMoreInfo: function() {
