@@ -9,7 +9,11 @@ const debug = debugFactor( 'woocommerce:action-list' );
  * Internal dependencies
  */
 import { getActionList, getCurrentStepIndex } from 'woocommerce/state/action-list/selectors';
-import { actionListStepAnnotate, actionListStepNext } from 'woocommerce/state/action-list/actions';
+import {
+	actionListClear,
+	actionListStepAnnotate,
+	actionListStepNext,
+} from 'woocommerce/state/action-list/actions';
 import {
 	WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
 	WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,
@@ -49,6 +53,9 @@ export function handleStepSuccess( { dispatch, getState }, action ) {
 		if ( actionList.successAction ) {
 			dispatch( actionList.successAction );
 		}
+		if ( actionList.clearUponComplete ) {
+			dispatch( actionListClear() );
+		}
 	}
 }
 
@@ -62,6 +69,9 @@ export function handleStepFailure( { dispatch, getState }, action ) {
 	dispatch( actionListStepAnnotate( stepIndex, { endTime, error } ) );
 	if ( actionList.failureAction ) {
 		dispatch( actionList.failureAction );
+	}
+	if ( actionList.clearUponComplete ) {
+		dispatch( actionListClear() );
 	}
 }
 

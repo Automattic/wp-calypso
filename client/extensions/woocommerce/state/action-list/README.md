@@ -34,6 +34,7 @@ example, this could look like:
   ]
   successAction: { type: 'MY_SUCCESS_ACTION' },
   failureAction: { type: 'MY_FAILURE_ACTION' },
+  clearUponComplete: true,
 }
 ```
 
@@ -101,6 +102,7 @@ dispatched at the end of action list processing.
 #### Action List Clear
 
 This action will clear the current action list from the application state.
+This happens automatically if `clearUponComplete` is set to true.
 
 
 ## Questions
