@@ -2,9 +2,9 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { compact } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -34,57 +34,69 @@ export class LoginFooter extends React.Component {
 		page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
 	};
 
-	footerLinks() {
-		const { translate, twoFactorAuthType } = this.props;
+	renderHelpLink() {
+		if ( ! this.props.twoFactorAuthType ) {
+			return null;
+		}
 
-		const backToWpcomLink = (
-			<a href="https://wordpress.com" key="return-to-wpcom-link">
-				<Gridicon icon="arrow-left" size={ 18 } /> { translate( 'Back to WordPress.com' ) }
-			</a>
-		);
-
-		const magicLoginLink =
-			isEnabled( 'login/magic-login' ) &&
-			!twoFactorAuthType &&
-			<a href="#" key="magic-login-link" onClick={ this.onMagicLoginRequestClick }>
-				{ translate( 'Email me a login link' ) }
-			</a>;
-
-		const resetPasswordLink =
-			!twoFactorAuthType &&
-			<a href={ config( 'login_url' ) + '?action=lostpassword' } key="lost-password-link">
-				{ translate( 'Lost your password?' ) }
-			</a>;
-
-		const lostPhoneLink =
-			twoFactorAuthType &&
-			twoFactorAuthType !== 'backup' &&
-			<a href={ login( { isNative: true, twoFactorAuthType: 'backup' } ) } key="lost-phone-link">
-				{ translate( "I can't access my phone" ) }
-			</a>;
-
-		const helpLink =
-			twoFactorAuthType &&
+		return (
 			<ExternalLink
 				key="help-link"
 				icon={ true }
 				target="_blank"
-				href="http://en.support.wordpress.com/security/two-step-authentication/"
-			>
-				{ translate( 'Get help' ) }
-			</ExternalLink>;
+				href="http://en.support.wordpress.com/security/two-step-authentication/">
+				{ this.props.translate( 'Get help' ) }
+			</ExternalLink>
+		);
+	}
 
-		return compact(
-			[ lostPhoneLink, helpLink, magicLoginLink, resetPasswordLink, backToWpcomLink ],
+	renderLostPhoneLink() {
+		if ( ! this.props.twoFactorAuthType || this.props.twoFactorAuthType === 'backup' ) {
+			return null;
+		}
+
+		return (
+			<a href={ login( { isNative: true, twoFactorAuthType: 'backup' } ) } key="lost-phone-link">
+				{ this.props.translate( "I can't access my phone" ) }
+			</a>
+		);
+	}
+
+	renderMagicLoginLink() {
+		if ( ! isEnabled( 'login/magic-login' ) || this.props.twoFactorAuthType ) {
+			return null;
+		}
+
+		return (
+			<a href="#" key="magic-login-link" onClick={ this.onMagicLoginRequestClick }>
+				{ this.props.translate( 'Email me a login link' ) }
+			</a>
+		);
+	}
+
+	renderResetPasswordLink() {
+		if ( this.props.twoFactorAuthType ) {
+			return null;
+		}
+
+		return (
+			<a href={ config( 'login_url' ) + '?action=lostpassword' } key="lost-password-link">
+				{ this.props.translate( 'Lost your password?' ) }
+			</a>
 		);
 	}
 
 	render() {
-		const { translate, twoFactorAuthType } = this.props;
-
 		return (
 			<div className="wp-login__footer">
-				{ this.footerLinks() }
+				{ this.renderLostPhoneLink() }
+				{ this.renderHelpLink() }
+				{ this.renderMagicLoginLink() }
+				{ this.renderResetPasswordLink() }
+
+				<a href="https://wordpress.com" key="return-to-wpcom-link">
+					<Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Back to WordPress.com' ) }
+				</a>
 			</div>
 		);
 	}
