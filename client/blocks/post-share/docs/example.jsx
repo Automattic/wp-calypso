@@ -39,7 +39,7 @@ class PostShareExample extends Component {
 						query={ { number: 1, type: 'post' } } />
 				) }
 
-				{ site &&
+				{ site && post &&
 					<p>
 						Site: <strong>{ site.name }</strong> ({ siteId })<br />
 						Plan: <strong>{ planSlug }</strong><br />
