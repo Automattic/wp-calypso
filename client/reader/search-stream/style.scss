@@ -36,14 +36,15 @@
 
 .search-stream .search-stream__input-card.card {
 	box-shadow: 0 0 0 2px lighten( $gray, 20% ), 0 1px 2px lighten( $gray, 20% );
+	margin-bottom: 0;
 }
 
 // Fix for smaller breakpoint on the new site-search
 .is-reader-page .search-stream__with-sites .search-stream__fixed-area {
-	padding-top: 20px;
+	top: 20px;
 
 	@include breakpoint( ">660px" ) {
-		padding-top: 77px;
+		top: 0;
 	}
 }
 
@@ -82,7 +83,7 @@
 }
 
 .search-stream.search-stream__with-sites .search-stream__single-column-results {
-	padding-top: 150px;
+	padding-top: 140px;
 }
 
 .search-stream.search-stream__with-sites .search-stream__single-column-results .search-stream__recommendation-list-item:nth-child(2) {
@@ -102,9 +103,16 @@
 }
 
 // Top margin for site results
+.main.search-stream {
+
+	@include breakpoint( "<660px") {
+		perspective: none; // Fix search bar pushed up behind the masterbar in Safari
+	}
+}
+
 .search-stream.search-stream__with-sites .is-two-columns .search-stream__post-results .reader-post-card:nth-child(2),
 .search-stream.search-stream__with-sites .is-two-columns .search-stream__site-results {
-	margin-top: 150px;
+	margin-top: 140px;
 }
 
 // Search term suggestions
@@ -172,6 +180,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
 			flex-basis: 100%;
+			margin-right: 0;
 		}
 
 		@include breakpoint( "<660px" ) {
@@ -281,8 +290,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	display: flex;
 	font-weight: 600;
 	list-style-type: none;
-	margin: 0;
-	padding-top: 20px;
+	margin: 20px 0 0;
 	text-transform: uppercase;
 }
 
@@ -294,8 +302,8 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .search-stream__post-header,
 .search-stream__site-header {
-	border-bottom: 1px solid lighten( $gray, 30% );
-	padding-bottom: 10px;
+	border-bottom: 1px solid lighten( $gray, 20% );
+	padding-bottom: 15px;
 	width: 100%;
 }
 
@@ -309,8 +317,13 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	background: inherit;
 	border-bottom: 2px solid lighten( $gray, 30% );
 	box-shadow: none;
+	height: 54px;
 	margin-bottom: 0;
 	padding-bottom: 0;
+
+	@include breakpoint( ">480px" ) {
+		height: 59px;
+	}
 }
 
 .search-stream__header .section-nav-group {
@@ -363,6 +376,17 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	.reader-subscription-list-item .follow-button__label,
 	.reader-subscription-list-item__settings-label {
 		display: none;
+	}
+}
+
+.search-stream__single-column-results .reader-subscription-list-item__options {
+	align-items: flex-end;
+	display: flex;
+	flex-direction: column;
+	min-width: 90px;
+
+	@include breakpoint( ">660px" ) {
+		align-items: flex-start;
 	}
 }
 
