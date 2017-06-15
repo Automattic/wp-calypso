@@ -3,18 +3,27 @@
 	display: flex;
 	flex-direction: row;
 
+	&.is-favorable {
+		.delta__icon {
+			background-color: #4ab866;
+		}
+	}
+	&.is-unfavorable {
+		.delta__icon {
+			background-color: #d54e21;
+		}
+	}
+	&.is-neutral {
+		.delta__icon {
+			background-color: #e9eff3;
+		}
+	}
+
 	.delta__icon {
 		width: 20px;
 		height: 20px;
-		background-color: #D54E21;
 		border-radius: 5px;
 
-		&.is-favourable {
-			background-color: #4AB866;
-		}
-		&.is-neutral {
-			background-color: #E9EFF3;
-		}
 		&.gridicon {
 			fill: white;
 			padding: 3px 1px;
@@ -22,21 +31,17 @@
 		}
 	}
 
-	.delta__description {
+	.delta__suffix,
+	.delta__value {
 		align-items: center;
+		color: #537994;
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
-
-		.delta__description-value,
-		.delta__description-since {
-			font-size: 14px;
-			color: #537994;
-			line-height: 14px;
-		}
-
-		.delta__description-value {
-			margin-right: 6px;
-		}
+		font-size: 14px;
+		line-height: 14px;
+	}
+	.delta__suffix {
+		margin-left: 6px;
 	}
 }

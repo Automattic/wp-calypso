@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
-import { includes } from 'lodash/includes';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,12 +15,13 @@ export default class Delta extends Component {
 	static propTypes = {
 		classNames: PropTypes.string,
 		icon: PropTypes.string,
+		suffix: PropTypes.string,
 		value: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { classNames, icon, value } = this.props;
-		const deltaClasses = classnames( 'delta', classNames.join( ' ' ) );
+		const { classNames, icon, suffix, value } = this.props;
+		const deltaClasses = classnames( 'delta', classNames );
 		let deltaIcon;
 		if ( icon ) {
 			deltaIcon = icon;
@@ -30,8 +31,11 @@ export default class Delta extends Component {
 		}
 		return (
 			<div className={ deltaClasses }>
-				<Gridicon icon={ deltaIcon } />
+				<Gridicon className="delta__icon" icon={ deltaIcon } />
 				<span className="delta__value">{ value }</span>
+				{ suffix &&
+					<span className="delta__suffix">{ suffix }</span>
+				}
 			</div>
 		);
 	}
