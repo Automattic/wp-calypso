@@ -73,7 +73,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 			translate,
 			ciraAgreementAccepted
 		} = { ...defaultValues, ...this.props };
-		const agreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
+		const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -103,12 +103,12 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 						{ translate( 'CIRA Agreement' ) }
 					</FormLabel>
 					<FormLabel>
-						<FormCheckbox id="cira_acceptance" value={ ciraAccepted } />
+						<FormCheckbox id="cira_acceptance" value={ ciraAgreementAccepted } />
 						<span>{
 							translate( 'I have read and agree to the {{a}}CIRA Registrant Agreement{{/a}}',
 								{
 									components: {
-										a: <a href={ agreementUrl } />
+										a: <a href={ ciraAgreementUrl } />
 									}
 								}
 							)
