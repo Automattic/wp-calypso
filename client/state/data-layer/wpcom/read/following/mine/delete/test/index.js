@@ -16,7 +16,17 @@ describe( 'requestUnfollow', () => {
 	it( 'should dispatch a http request', () => {
 		const dispatch = spy();
 		const action = unfollow( 'http://example.com' );
-		requestUnfollow( { dispatch }, action );
+		const getState = () => ( {
+			reader: {
+				sites: {
+					items: {},
+				},
+				feeds: {
+					items: {},
+				},
+			},
+		} );
+		requestUnfollow( { dispatch, getState }, action );
 		expect( dispatch ).to.have.been.calledWith(
 			http( {
 				method: 'POST',
@@ -28,7 +38,11 @@ describe( 'requestUnfollow', () => {
 				},
 				onSuccess: action,
 				onFailure: action,
-			} )
+			} ),
+		);
+
+		expect( dispatch ).to.be.calledWithMatch(
+			{ type: NOTICE_CREATE, notice: { status: 'is-success', button: 'Undo' } },
 		);
 	} );
 } );

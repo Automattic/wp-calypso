@@ -16,7 +16,18 @@ describe( 'requestFollow', () => {
 	it( 'should dispatch a http request', () => {
 		const dispatch = spy();
 		const action = follow( 'http://example.com' );
-		requestFollow( { dispatch }, action );
+		const getState = () => ( {
+			reader: {
+				sites: {
+					items: {},
+				},
+				feeds: {
+					items: {},
+				},
+			},
+		} );
+
+		requestFollow( { dispatch, getState }, action );
 		expect( dispatch ).to.have.been.calledWith(
 			http( {
 				method: 'POST',
@@ -29,6 +40,10 @@ describe( 'requestFollow', () => {
 				onSuccess: action,
 				onFailure: action,
 			} ),
+		);
+
+		expect( dispatch ).to.be.calledWithMatch(
+			{ type: NOTICE_CREATE, notice: { status: 'is-success' } },
 		);
 	} );
 } );
@@ -50,13 +65,7 @@ describe( 'receiveFollow', () => {
 				is_owner: false,
 			},
 		};
-		const getState = () => ( {
-			reader: {
-				sites: { items: {} },
-				feeds: { items: {} },
-			},
-		} );
-		receiveFollow( { dispatch, getState }, action, next, response );
+		receiveFollow( { dispatch }, action, next, response );
 		expect( next ).to.be.calledWith(
 			follow( 'http://example.com', {
 				ID: 1,
@@ -68,9 +77,6 @@ describe( 'receiveFollow', () => {
 				delivery_methods: {},
 				is_owner: false,
 			} ),
-		);
-		expect( dispatch ).to.be.calledWithMatch(
-			{ type: NOTICE_CREATE, notice: { status: 'is-success' } },
 		);
 	} );
 

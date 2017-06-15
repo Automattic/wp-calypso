@@ -1,3 +1,8 @@
+/**
+ * External Dependencies
+ */
+import { find } from 'lodash';
+
 const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
 
 /**
