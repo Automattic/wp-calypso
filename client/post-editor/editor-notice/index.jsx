@@ -134,6 +134,15 @@ export class EditorNotice extends Component {
 				} );
 
 			case 'publishedPrivately':
+				if ( config.isEnabled( 'post-editor/delta-post-publish-preview' ) ) {
+					return translate( '{{strong}}Privately published.{{/strong}} Only admins and editors can view.', {
+						components: {
+							strong: <strong />,
+						},
+						comment: 'Editor: Message displayed when a post is published privately.',
+					} );
+				}
+
 				if ( ! site ) {
 					if ( 'page' === type ) {
 						return translate( 'Page privately published!' );
