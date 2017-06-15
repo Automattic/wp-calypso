@@ -132,12 +132,18 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			script(src=urls[ 'manifest' ])
 			script(src=urls[ 'vendor' ])
 			script(src=urls[ jsFile ])
+			if user
+				// Load the Layout up front if user is logged-in
+				script(src=urls[ 'async-load-layout' ])
 			if chunk
 				script(src=urls[ chunk ])
 		else
 			script(src=urls[ 'manifest-min' ])
 			script(src=urls[ 'vendor-min' ])
 			script(src=urls[ jsFile + '-min' ])
+			if user
+				// Load the Layout up front if user is logged-in
+				script(src=urls[ 'async-load-layout-min' ])
 			if chunk
 				script(src=urls[ chunk + '-min' ])
 		script(type='text/javascript')!='window.AppBoot();'
