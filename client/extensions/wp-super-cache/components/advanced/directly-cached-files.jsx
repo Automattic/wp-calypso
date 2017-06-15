@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import { pick } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -106,8 +105,8 @@ class DirectlyCachedFiles extends Component {
 										disabled={ true }
 										key={ index }
 										value={ page || '' } />
-									<Button borderless onClick={ deleteFieldArrayValue( 'cache_direct_pages', index ) }>
-										<Gridicon icon="cross" /> { translate( 'Remove' ) }
+									<Button compact onClick={ deleteFieldArrayValue( 'cache_direct_pages', index ) }>
+										{ translate( 'Delete' ) }
 									</Button>
 								</FormFieldset>
 							) ) }
