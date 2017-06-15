@@ -8,5 +8,5 @@ offered for free, but the merchant is allowed to charge an arbitrary amount.
 ## Reducer
 
 The shipping method has the following properties:
-* `tax_status` (String): Whether the shipping cost is subject to taxes (`"Taxable"`) or not (`"None"`).
+* `tax_status` (String): Whether the shipping cost is subject to taxes (`"taxable"`) or not (`"none"`).
 * `cost` (Number): The fixed cost (without taxes) that the customer will pay for shipping.
