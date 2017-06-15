@@ -31,10 +31,16 @@ import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites
  * This function return true if the image editor can be
  * enabled/shown
  *
+ * @param  {object} item - media item
  * @param  {object} site - current site
  * @return {boolean} `true` if the image-editor can be enabled.
  */
-const enableImageEditing = ( site ) => {
+const enableImageEditing = ( item, site ) => {
+	// do not allow if, for some reason, there isn't a valid item yet
+	if ( ! item ) {
+		return false;
+	}
+
 	// do not show if the feature flag isn't set
 	if ( ! config.isEnabled( 'post-editor/image-editor' ) ) {
 		return false;
