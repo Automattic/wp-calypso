@@ -33,12 +33,11 @@ class Navigation extends Component {
 
 	renderTabItem( { label, slug } ) {
 		const { activeTab, site } = this.props;
-		const { slug: listingsSlug } = Tabs.JOB_LISTINGS;
 		const siteSlug = get( site, 'slug' );
 		let path = this.getSettingsPath();
 
-		if ( slug !== listingsSlug ) {
-			path = `${ path }/${ slug }`;
+		if ( slug ) {
+			path += `/${ slug }`;
 		}
 
 		if ( siteSlug ) {
