@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, find } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,25 +30,6 @@ export const areProductsLoading = ( state, page = 1, siteId = getSelectedSiteId(
 	const isLoading = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'isLoading', page ] );
 	// Strict check because it could also be undefined.
 	return ( true === isLoading );
-};
-
-/**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [page] Page of products. If not provided, defaults to first page.
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array|false} List of products for a specific page, or false if there was an error
- */
-export const getProducts = ( state, page = 1, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areProductsLoaded( state, page, siteId ) ) {
-		return [];
-	}
-
-	const products = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], {} );
-	const productIdsOnPage = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'pages', page ], [] );
-	if ( productIdsOnPage.length ) {
-		return productIdsOnPage.map( id => find( products, ( p ) => id === p.id ) );
-	}
-	return false;
 };
 
 /**

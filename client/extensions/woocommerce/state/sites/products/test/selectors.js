@@ -8,7 +8,6 @@ import { expect } from 'chai';
 import {
 	areProductsLoaded,
 	areProductsLoading,
-	getProducts,
 	getTotalProductsPages,
 } from '../selectors';
 import products from './fixtures/products';
@@ -28,7 +27,6 @@ const loadingState = {
 							1: true,
 						},
 						products: {},
-						pages: {},
 					},
 				},
 			},
@@ -45,9 +43,6 @@ const loadedState = {
 							1: false,
 						},
 						products,
-						pages: {
-							1: [ 15, 389 ]
-						},
 						totalPages: 3
 					}
 				},
@@ -57,7 +52,6 @@ const loadedState = {
 							1: true,
 						},
 						products: {},
-						pages: {},
 						totalPages: 1
 					},
 				},
@@ -110,28 +104,6 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( areProductsLoading( loadedStateWithUi, 1 ) ).to.be.false;
-		} );
-	} );
-
-	describe( '#getProducts', () => {
-		it( 'should be an empty array when woocommerce state is not available.', () => {
-			expect( getProducts( preInitializedState, 1, 123 ) ).to.be.empty;
-		} );
-
-		it( 'should be an empty array when products are loading.', () => {
-			expect( getProducts( loadingState, 1, 123 ) ).to.be.empty;
-		} );
-
-		it( 'should be the list of products if they are loaded.', () => {
-			expect( getProducts( loadedState, 1, 123 ) ).to.eql( products );
-		} );
-
-		it( 'should be an empty array when products are loaded only for a different site.', () => {
-			expect( getProducts( loadedState, 1, 456 ) ).to.be.empty;
-		} );
-
-		it( 'should get the siteId from the UI tree if not provided.', () => {
-			expect( getProducts( loadedStateWithUi, 1 ) ).to.eql( products );
 		} );
 	} );
 

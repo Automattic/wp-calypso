@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { areProductsLoaded, areProductsLoading } from './selectors';
+import { areProductsLoading } from './selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
@@ -63,7 +63,7 @@ export const fetchProducts = ( siteId, page ) => ( dispatch, getState ) => {
 		siteId = getSelectedSiteId( state );
 	}
 
-	if ( areProductsLoaded( state, page, siteId ) || areProductsLoading( state, page, siteId ) ) {
+	if ( areProductsLoading( state, page, siteId ) ) {
 		return;
 	}
 

@@ -44,9 +44,6 @@ function updateCachedProduct( products, product ) {
 export function productsRequestSuccess( state, action ) {
 	const prevState = state || {};
 	const isLoading = setLoading( prevState, action.page, false );
-	const pages = prevState.pages && { ...prevState.pages } || {};
-	pages[ action.page ] = action.products.map( product => product.id );
-
 	let products = prevState.products && [ ...prevState.products ] || [];
 	action.products.forEach( function( product ) {
 		products = updateCachedProduct( products, product );
@@ -54,7 +51,6 @@ export function productsRequestSuccess( state, action ) {
 
 	return { ...prevState,
 		products,
-		pages,
 		isLoading,
 		totalPages: action.totalPages,
 	};
