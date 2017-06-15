@@ -132,8 +132,7 @@ const HelpContact = React.createClass( {
 
 	startHappychat: function( contactForm ) {
 		this.props.openHappychat();
-		const { message, siteId } = contactForm;
-		const site = sites.getSite( siteId );
+		const { message, site } = contactForm;
 
 		this.props.sendUserInfo( site.URL );
 		this.props.sendHappychatMessage( message );
@@ -147,8 +146,7 @@ const HelpContact = React.createClass( {
 	},
 
 	startChat: function( contactForm ) {
-		const { message, howCanWeHelp, howYouFeel, siteId } = contactForm;
-		const site = sites.getSite( siteId );
+		const { message, howCanWeHelp, howYouFeel, site } = contactForm;
 
 		// Intentionally not translated since only HE's will see this in the olark console as a notification.
 		const notifications = [
@@ -194,9 +192,8 @@ const HelpContact = React.createClass( {
 	},
 
 	submitKayakoTicket: function( contactForm ) {
-		const { subject, message, howCanWeHelp, howYouFeel, siteId } = contactForm;
+		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
 		const { currentUserLocale } = this.props;
-		const site = sites.getSite( siteId );
 
 		const ticketMeta = [
 			'How can you help: ' + howCanWeHelp,

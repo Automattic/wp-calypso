@@ -22,9 +22,8 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import ChatClosureNotice from '../chat-closure-notice';
-import { getSelectedOrPrimarySiteId } from 'state/selectors';
-import { getHelpSelectedSiteId } from 'state/help/selectors';
 import { selectSiteId } from 'state/help/actions';
+import { getHelpSelectedSite } from 'state/help/selectors';
 
 export const HelpContactForm = React.createClass( {
 	mixins: [ LinkedStateMixin, PureRenderMixin ],
@@ -38,6 +37,7 @@ export const HelpContactForm = React.createClass( {
 		showSubjectField: PropTypes.bool,
 		showSiteField: PropTypes.bool,
 		showHelpLanguagePrompt: PropTypes.bool,
+		selectedSite: PropTypes.object,
 		siteFilter: PropTypes.func,
 		siteList: PropTypes.object,
 		disabled: PropTypes.bool,
@@ -165,7 +165,20 @@ export const HelpContactForm = React.createClass( {
 	 * @param  {object} event Event object
 	 */
 	submitForm() {
-		this.props.onSubmit( this.state );
+		const {
+			howCanWeHelp,
+			howYouFeel,
+			message,
+			subject
+		} = this.state;
+
+		this.props.onSubmit( {
+			howCanWeHelp,
+			howYouFeel,
+			message,
+			subject,
+			site: this.props.selectedSite,
+		} );
 	},
 
 	/**
@@ -224,7 +237,7 @@ export const HelpContactForm = React.createClass( {
 					<div className="help-contact-form__site-selection">
 						<FormLabel>{ translate( 'Which site do you need help with?' ) }</FormLabel>
 						<SitesDropdown
-							selectedSiteId={ this.props.selectedSiteId }
+							selectedSiteId={ this.props.selectedSite.ID }
 							onSiteSelect={ this.props.onChangeSite } />
 					</div>
 				) }
@@ -250,11 +263,9 @@ export const HelpContactForm = React.createClass( {
 	}
 } );
 
-const mapStateToProps = ( state ) => {
-	return {
-		selectedSiteId: getHelpSelectedSiteId( state ) || getSelectedOrPrimarySiteId( state )
-	};
-};
+const mapStateToProps = ( state ) => ( {
+	selectedSite: getHelpSelectedSite( state ),
+} );
 
 const mapDispatchToProps = {
 	onChangeSite: selectSiteId
