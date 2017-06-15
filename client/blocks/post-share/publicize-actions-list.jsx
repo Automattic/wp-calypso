@@ -29,6 +29,7 @@ import { isEnabled } from 'config';
 import Dialog from 'components/dialog';
 import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
 import analytics from 'lib/analytics';
+import SharingPreviewModal from './sharing-preview-modal';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {
@@ -41,13 +42,28 @@ class PublicizeActionsList extends PureComponent {
 	state = {
 		selectedShareTab: SCHEDULED,
 		showDeleteDialog: false,
-		selectedScheduledShareId: null
+		selectedScheduledShareId: null,
+		showPreviewModal: false,
+		previewMessage: '',
+		previewService: '',
 	};
 
 	setFooterSection = selectedShareTab => () => {
 		analytics.tracks.recordEvent( 'calypso_publicize_action_tab_click', { tab: selectedShareTab } );
 		this.setState( { selectedShareTab } );
 	};
+
+	togglePreviewModal = ( message = '', service = '' ) => () => {
+		if ( this.state.showPreviewModal ) {
+			return this.setState( { showPreviewModal: false } );
+		}
+
+		this.setState( {
+			showPreviewModal: true,
+			previewMessage: message,
+			previewService: service,
+		} );
+	}
 
 	renderFooterSectionItem( {
 		ID: actionId,
@@ -75,18 +91,22 @@ class PublicizeActionsList extends PureComponent {
 						{ message }
 					</div>
 				</div>
-				{ this.renderElipsisMenu( actionId ) }
+				{ this.renderElipsisMenu( actionId, message, service ) }
 			</CompactCard>
 		);
 	}
 
-	renderElipsisMenu( publicizeActionId ) {
+	renderElipsisMenu( publicizeActionId, message, service ) {
 		const actions = [];
 		const { translate } = this.props;
 
 		if ( isEnabled( 'publicize-preview' ) ) {
 			actions.push(
-				<PopoverMenuItem key="1" icon="visible">
+				<PopoverMenuItem
+					onClick={ this.togglePreviewModal( message, service ) }
+					key="1"
+					icon="visible"
+				>
 					{ translate( 'Preview' ) }
 				</PopoverMenuItem>
 			);
@@ -204,6 +224,15 @@ class PublicizeActionsList extends PureComponent {
 				</div>
 
 				{ this.renderDeleteDialog() }
+
+				<SharingPreviewModal
+					siteId={ siteId }
+					postId={ postId }
+					message={ this.state.previewMessage }
+					selectedService= { this.state.previewService }
+					isVisible={ this.state.showPreviewModal }
+					onClose={ this.togglePreviewModal() }
+				/>
 			</div>
 		);
 	}
