@@ -22,3 +22,24 @@
 		visibility: visible;
     }
 }
+
+.editor-preview .web-preview__loading-message-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+
+.editor-preview .web-preview__loading-message {
+	font-size: 16px;
+	height: initial;
+	position: relative;
+		z-index: z-index( 'root', '.web-preview' );
+
+	strong {
+		color: $gray-text-min;
+		display: block;
+		font-size: 24px;
+		margin-bottom: 5px;
+	}
+}
