@@ -4,6 +4,9 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 .card.post-share__upgrade-nudge {
 	margin: 0;
 }
+.post-share__actions-list .card.post-share__actions-list-upgrade-nudge {
+	margin: 10px;
+}
 
 .post-share__wrapper {
 	animation: appear .3s ease-in-out;

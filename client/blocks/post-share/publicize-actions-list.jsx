@@ -69,13 +69,6 @@ class PublicizeActionsList extends PureComponent {
 	};
 
 	renderUpgradeToBusinessPlanNudge() {
-		if (
-			this.props.hasRepublicizeSchedulingFeature ||
-			! isEnabled( 'publicize-scheduling' )
-		) {
-			return null;
-		}
-
 		const {
 			businessDiscountedRawPrice,
 			businessRawPrice,
@@ -85,7 +78,7 @@ class PublicizeActionsList extends PureComponent {
 
 		return (
 			<Banner
-				className="post-share__footer-banner"
+				className="post-share__actions-list-upgrade-nudge"
 				callToAction={
 					translate( 'Upgrade for %s', {
 						args: formatCurrency( businessDiscountedRawPrice || businessRawPrice, userCurrency ),
@@ -96,6 +89,8 @@ class PublicizeActionsList extends PureComponent {
 					translate( 'Schedule your social messages in advance.' ),
 					translate( 'Remove all advertising from your site.' ),
 					translate( 'Enjoy live chat support.' ),
+					translate( 'Ability to add features through external plugins.' ),
+					translate( 'Access to thousands of themes.' ),
 				] }
 				plan={ PLAN_BUSINESS }
 				title={ translate( 'Upgrade to a Business Plan!' ) } />
@@ -210,11 +205,13 @@ class PublicizeActionsList extends PureComponent {
 		this.setState( { showDeleteDialog: false } );
 	};
 
-	renderActionsList = ( actions ) => (
+	renderActionsList = actions => {
+		return (
 			<div>
 				{ actions.map( ( item, index ) => this.renderActionItem( item, index ) ) }
 			</div>
 		);
+	};
 
 	renderDeleteDialog() {
 		const { translate } = this.props;
@@ -238,11 +235,14 @@ class PublicizeActionsList extends PureComponent {
 
 	render() {
 		const {
+			hasRepublicizeSchedulingFeature,
 			postId,
 			siteId,
 			scheduledActions,
 			publishedActions,
 		} = this.props;
+
+		const showUpgradeToBusinessNudger = ! hasRepublicizeSchedulingFeature && this.state.selectedShareTab === SCHEDULED;
 
 		return (
 			<div>
@@ -267,11 +267,19 @@ class PublicizeActionsList extends PureComponent {
 				<div className="post-share__actions-list">
 					<QuerySharePostActions siteId={ siteId } postId={ postId } status={ SCHEDULED } />
 					<QuerySharePostActions siteId={ siteId } postId={ postId } status={ PUBLISHED } />
-					{ this.state.selectedShareTab === SCHEDULED &&
+
+					{
+						this.state.selectedShareTab === SCHEDULED &&
+						showUpgradeToBusinessNudger &&
+						this.renderUpgradeToBusinessPlanNudge()
+					}
+
+					{ this.state.selectedShareTab === SCHEDULED && ! showUpgradeToBusinessNudger &&
 						<div className="post-share__scheduled-list">
 							{ this.renderActionsList( scheduledActions ) }
 						</div>
 					}
+
 					{ this.state.selectedShareTab === PUBLISHED &&
 						<div className="post-share__published-list">
 							{ this.renderActionsList( publishedActions ) }
