@@ -20,6 +20,7 @@ import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import Button from 'components/button';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import { userCan } from 'lib/site/utils';
 import versionCompare from 'lib/version-compare';
 import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
@@ -318,7 +319,7 @@ class EditorMediaModalDetailItem extends Component {
 	}
 
 	render() {
-		const { item } = this.props;
+		const { isJetpack, item, siteId } = this.props;
 
 		const classes = classNames( 'editor-media-modal-detail__item', {
 			'is-loading': ! item
@@ -336,6 +337,7 @@ class EditorMediaModalDetailItem extends Component {
 					</div>
 
 					<div className="editor-media-modal-detail__sidebar">
+						{ isJetpack && <QueryJetpackModules siteId={ siteId } /> /* Is the VideoPress module active? */ }
 						{ this.renderMediaEditorButtons( item, 'is-mobile' ) }
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo
@@ -356,6 +358,7 @@ const connectComponent = connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
 			isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
+			siteId,
 		};
 	}
 );
