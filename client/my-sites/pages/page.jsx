@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	ReactCSSTransitionGroup = require( 'react-addons-css-transition-group' ),
-	i18n = require( 'i18n-calypso' ),
-	page = require( 'page' );
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import createFragment from 'react-addons-create-fragment';
+import i18n from 'i18n-calypso';
+import page from 'page';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -238,26 +239,22 @@ const Page = React.createClass( {
 		}
 
 		if ( this.props.page.status !== 'trash' ) {
-			return (
-				<div>
-					<MenuSeparator />
-					<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
-						<Gridicon icon="trash" size={ 18 } />
-						{ this.translate( 'Trash' ) }
-					</PopoverMenuItem>
-				</div>
-			);
-		} else {
-			return (
-				<div>
-					<MenuSeparator />
-					<PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
-						<Gridicon icon="trash" size={ 18 } />
-						{ this.translate( 'Delete' ) }
-					</PopoverMenuItem>
-				</div>
-			);
+			return createFragment( {
+				separator: <MenuSeparator />,
+				item: <PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
+					<Gridicon icon="trash" size={ 18 } />
+					{ this.translate( 'Trash' ) }
+				</PopoverMenuItem>,
+			} );
 		}
+
+		return createFragment( {
+			separator: <MenuSeparator />,
+			item: <PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
+				<Gridicon icon="trash" size={ 18 } />
+				{ this.translate( 'Delete' ) }
+			</PopoverMenuItem>,
+		} );
 	},
 
 	getCopyItem: function() {
@@ -365,7 +362,8 @@ const Page = React.createClass( {
 			viewItem || publishItem || editItem || statsItem ||
 			restoreItem || sendToTrashItem || moreInfoItem
 		);
-		const popoverMenu = hasMenuItems ? (
+
+		const popoverMenu = hasMenuItems && (
 			<PopoverMenu
 				isVisible={ this.state.showPageActions }
 				onClose={ this.togglePageActions }
@@ -381,17 +379,18 @@ const Page = React.createClass( {
 				{ sendToTrashItem }
 				{ moreInfoItem }
 			</PopoverMenu>
-		) : null;
-		const ellipsisGridicon = hasMenuItems ? (
+		);
+
+		const ellipsisGridicon = hasMenuItems && (
 			<Gridicon
-			icon="ellipsis"
-			className={ classNames( {
-				'page__actions-toggle': true,
-				'is-active': this.state.showPageActions
-			} ) }
-			onClick={ this.togglePageActions }
-			ref="popoverMenuButton" />
-		) : null;
+				icon="ellipsis"
+				className={ classNames( {
+					'page__actions-toggle': true,
+					'is-active': this.state.showPageActions
+				} ) }
+				onClick={ this.togglePageActions }
+				ref="popoverMenuButton" />
+		);
 
 		const cardClasses = {
 			page: true,
