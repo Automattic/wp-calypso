@@ -90,7 +90,7 @@ class PaymentMethodItem extends Component {
 		const { method, translate } = this.props;
 		let editButtonText = translate( 'Set up' );
 		if ( method.settings.enabled.value === 'yes' ) {
-			editButtonText = translate( 'Settings' );
+			editButtonText = translate( 'Manage' );
 		}
 		if ( currentlyEditingId === method.id ) {
 			editButtonText = translate( 'Cancel' );
