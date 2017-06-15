@@ -426,25 +426,23 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 }
 
 .post-share__sharing-preview-modal {
-	padding: 0px;
-	@include breakpoint( ">960px" ) {
-		&.dialog.card {
-			position: absolute;
-		}
+	border-radius: 4px;
+	overflow: hidden;
+	width: 100%;
+}
 
-		left: 25%;
-		right: 25%;
-		top: 25%;
-		width: 50%;
-		min-width: 500px;
-	}
+.card.post-share__sharing-preview-modal {
+	padding: 0px;
+}
+
+.dialog.card.post-share__sharing-preview-modal {
+	max-width: 865px;
 }
 
 .post-share__sharing-preview-modal-header {
 	height: 48px;
 	background: $white;
 	border-bottom: 1px solid lighten( $gray, 20% );
-	border-radius: 4px 4px 0;
 	display: flex;
 }
 
