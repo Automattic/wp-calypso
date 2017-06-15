@@ -31,7 +31,7 @@ describe( 'DomainToPaidPlanNotice', function() {
 		expect( wrapper.type() ).to.equal( null );
 	} );
 
-	it( 'should render component when ', function() {
+	it( 'should render component when site information is available and the site is eligible', function() {
 		const wrapper = shallow( <DomainToPaidPlanNotice site={ site } eligible /> );
 		expect( wrapper.type().displayName ).to.equal( 'Localized(Notice)' );
 	} );
