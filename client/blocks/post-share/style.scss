@@ -1,6 +1,7 @@
 $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
-.post-share .card.banner {
+.post-share .card.banner,
+.card.post-share__upgrade-nudge {
 	margin: 0;
 }
 
@@ -71,10 +72,11 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 			box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 0 0 transparentize( lighten( $gray, 20% ), .5 );
 			line-height: 28px;
 			margin-bottom: 0;
-			padding: 11px 16px;
+			padding: 11.5px 16px;
 
 			@include breakpoint( ">480px" ) {
-				padding: 11px 24px;
+				padding-right: 24px;
+				padding-left: 24px;
 			}
 		}
 
@@ -105,7 +107,7 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
 
-.post-share__services-header {
+.post-share .post-share__services-header {
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 0 0 transparentize( lighten( $gray, 20% ), .5 );
 }
 
@@ -286,11 +288,11 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	border-bottom-left-radius: 0;
 }
 
-.post-share__footer-nav {
+.post-share .post-share__footer-nav {
 	margin: 0;
 }
 
-.post-share__footer-items {
+.post-share .post-share__footer-items {
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: space-between;
