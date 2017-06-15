@@ -106,7 +106,7 @@ const EditorPreview = React.createClass( {
 					? <WebPreviewContent
 							showPreview={ this.props.showPreview }
 							showEdit={ true }
-							showExternal={ false }
+							showExternal={ true }
 							defaultViewportDevice={ this.props.defaultViewportDevice }
 							onClose={ this.props.onClose }
 							onEdit={ this.props.onEdit }
