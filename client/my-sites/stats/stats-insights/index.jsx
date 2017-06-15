@@ -64,8 +64,8 @@ const StatsInsights = ( props ) => {
 						<div className="stats__module-column">
 							<LatestPostSummary />
 							<MostPopular />
-							<PostAnniversaries />
 							{ tagsList }
+							<PostAnniversaries />
 						</div>
 						<div className="stats__module-column">
 							<Reach />

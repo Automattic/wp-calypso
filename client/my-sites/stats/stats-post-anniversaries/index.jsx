@@ -1,8 +1,17 @@
+/*
+ * Post Anniversaries
+ *
+ * This component displays the post anniversaries based on the current day.
+ *
+ * There is no loading or empty state: the module is only displayed if there is
+ * at least one anniversary. That is the reason why this module should ideally
+ * be inserted at the end of a column.
+ */
+
 /**
  * External dependencies
  */
 import React from 'react';
-import classNames from 'classnames';
 import { localize, moment } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
@@ -10,66 +19,46 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import ErrorPanel from '../stats-error';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import SectionHeader from 'components/section-header';
 import StatsContentText from '../stats-module/content-text';
-import StatsModulePlaceholder from '../stats-module/placeholder';
 import Card from 'components/card';
 import QueryPosts from 'components/data/query-posts';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSitePostsForQuery, isRequestingSitePostsForQuery } from 'state/posts/selectors';
+import { getSitePostsForQuery } from 'state/posts/selectors';
 
 // Maximum number of simultaneous queries to fetch the posts by year
 const MAX_POST_QUERIES = 10;
 
 const StatModulePostAnniversaries = props => {
-	const {
-		isFirstYear,
-		oldestPostQuery,
-		postsByYearQueries,
-		postsByYear,
-		requesting,
-		siteId,
-		translate,
-	} = props;
+	const { oldestPostQuery, postsByYearQueries, postsByYear, siteId, translate } = props;
 
-	// Hide the module during the first year
-	if ( isFirstYear ) {
+	if ( ! siteId ) {
 		return null;
 	}
 
 	const allPosts = Array.prototype.concat( ...postsByYear );
 
-	const cardClasses = classNames( 'stats-module', 'is-expanded', 'summary', {
-		'is-loading': requesting,
-		'has-no-data': ! allPosts.length,
-		'is-showing-error': ! allPosts.length,
-	} );
-
 	return (
 		<div>
-			<SectionHeader
-				label={ translate( 'Anniversaries', {
-					comment: 'Title of the anniversaries module',
-				} ) }
-			/>
-			<Card className={ cardClasses }>
-				{ siteId && <QueryPosts siteId={ siteId } query={ oldestPostQuery } /> }
-				{ siteId &&
-					postsByYearQueries.map(
-						( query, i ) => <QueryPosts key={ i } siteId={ siteId } query={ query } />,
-					) }
-
-				<StatsModulePlaceholder isLoading={ requesting } />
-
-				{ ! requesting &&
-					allPosts &&
-					( allPosts.length === 0
-						? <EmptyMessage />
-						: <PostsList allPosts={ allPosts } postsByYear={ postsByYear } /> ) }
-			</Card>
+			{ <QueryPosts siteId={ siteId } query={ oldestPostQuery } /> }
+			{ postsByYearQueries.map(
+				( query, i ) => <QueryPosts key={ i } siteId={ siteId } query={ query } />,
+			) }
+			{ ! allPosts.length
+				? null
+				: <div>
+						<SectionHeader
+							label={ translate(
+								'Anniversaries',
+								{ comment: 'Title of the anniversaries module' },
+							) }
+						/>
+						<Card className="stats-post-anniversaries__card stats-module">
+							<PostsList allPosts={ allPosts } postsByYear={ postsByYear } />
+						</Card>
+					</div> }
 		</div>
 	);
 };
@@ -142,14 +131,6 @@ const GroupedPosts = localize( ( { translate, postsByYear } ) => (
 	</div>
 ) );
 
-const EmptyMessage = localize( ( { translate } ) => (
-	<ErrorPanel
-		message={ translate( 'No anniversaries today!', {
-			comment: 'Label displayed when the anniversaries module is empty',
-		} ) }
-	/>
-) );
-
 const yearsAgoToday = ( years = 1, nextDay = false ) =>
 	moment().startOf( 'day' ).subtract( years, 'years' ).add( nextDay ? 1 : 0, 'day' );
 
@@ -172,14 +153,12 @@ export default connect( () => {
 	 */
 	let postsByYear = [];
 	let postsByYearQueries = [];
-	let isFirstYear = false;
 
 	const oldestPostQuery = { number: 1, order: 'ASC' };
 
 	const mapStateToProps = state => {
 		const siteId = getSelectedSiteId( state );
 
-		const requestingOldestPost = isRequestingSitePostsForQuery( state, siteId, oldestPostQuery );
 		const oldestPostResult = getSitePostsForQuery( state, siteId, oldestPostQuery );
 		const oldestPost = oldestPostResult && oldestPostResult[ 0 ];
 
@@ -193,7 +172,7 @@ export default connect( () => {
 		 *    days only.
 		 *  - Math.floor() is used to get the amount of years as an integer.
 		 */
-		if ( ! isFirstYear && ! postsByYearQueries.length && oldestPost && oldestPost.date ) {
+		if ( ! postsByYearQueries.length && oldestPost && oldestPost.date ) {
 			const years = Math.floor(
 				Math.min(
 					MAX_POST_QUERIES,
@@ -204,14 +183,7 @@ export default connect( () => {
 			);
 			if ( years > 0 ) {
 				postsByYearQueries = [ ...Array( years ) ].map( ( v, i ) => yearsAgoQuery( i + 1 ) );
-			} else {
-				isFirstYear = true;
 			}
-		}
-
-		// No posts published on the blog
-		if ( Array.isArray( oldestPostResult ) && oldestPostResult.length === 0 ) {
-			isFirstYear = true;
 		}
 
 		// Fill postsByYear if any item has been updated
@@ -225,17 +197,9 @@ export default connect( () => {
 			}
 		} );
 
-		// True if any of the requests is active
-		const requestingAnyPostsByYear = postsByYearQueries.some(
-			query => isRequestingSitePostsForQuery( state, siteId, query ),
-		);
-
 		return {
 			siteId,
-			isFirstYear,
-			requesting: requestingOldestPost || requestingAnyPostsByYear,
 			oldestPostQuery,
-			oldestPost,
 			postsByYearQueries,
 			postsByYear,
 		};
