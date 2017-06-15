@@ -18,14 +18,9 @@ function _createRequestAction( method, siteId, path, body, onSuccessAction, onFa
 		siteId,
 		path,
 		body,
+		onSuccessAction,
+		onFailureAction,
 	};
-
-	if ( onSuccessAction ) {
-		action.onSuccessAction = onSuccessAction;
-	}
-	if ( onFailureAction ) {
-		action.onFailureAction = onFailureAction;
-	}
 
 	return action;
 }

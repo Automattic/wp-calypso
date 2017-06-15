@@ -23,8 +23,7 @@ export function handleRequest( { dispatch }, action ) {
 
 			if ( action.onSuccessAction ) {
 				// Append data and dispatch.
-				const onSuccess = { ...action.onSuccessAction, data };
-				dispatch( onSuccess );
+				dispatch( { ...action.onSuccessAction, data } );
 			}
 		} )
 		.catch( error => {
@@ -38,8 +37,7 @@ export function handleRequest( { dispatch }, action ) {
 
 			if ( action.onFailureAction ) {
 				// Append error and dispatch.
-				const onFailure = { ...action.onFailureAction, error };
-				dispatch( onFailure );
+				dispatch( { ...action.onFailureAction, error } );
 			}
 		} );
 }
