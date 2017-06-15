@@ -10,7 +10,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
 import LoginForm from './login-form';
 import {
 	getRedirectTo,
@@ -153,8 +152,6 @@ class Login extends Component {
 
 		return (
 			<div>
-				<DocumentHead title={ translate( 'Log In', { textOnly: true } ) } />
-
 				<div className="login__form-header">
 					{ twoStepNonce ? translate( 'Two-Step Authentication' ) : translate( 'Log in to your account.' ) }
 				</div>
