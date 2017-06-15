@@ -16,6 +16,9 @@ const ChunkFileNamePlugin = require( './server/bundler/plugin' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const DashboardPlugin = require( 'webpack-dashboard/plugin' );
+const NamedModulesPlugin = require( './server/bundler/webpack-plugins/NamedModulesPlugin' );
+const NamedChunksPlugin = require( './server/bundler/webpack-plugins/NamedChunksPlugin' );
+const WebpackChunkHash = require( 'webpack-chunk-hash' );
 
 /**
  * Internal variables
@@ -124,7 +127,6 @@ const webpackConfig = {
 		} ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] ),
-		new webpack.HashedModuleIdsPlugin(),
 	],
 	externals: [ 'electron' ]
 };
@@ -199,8 +201,12 @@ const jsRules = {
 };
 
 if ( calypsoEnv === 'development' ) {
-	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
-	webpackConfig.plugins.push( new webpack.LoaderOptionsPlugin( { debug: true } ) );
+	webpackConfig.plugins = webpackConfig.plugins.concat( [
+		new NamedModulesPlugin(),
+		new NamedChunksPlugin(),
+		new webpack.HotModuleReplacementPlugin(),
+		new webpack.LoaderOptionsPlugin( { debug: true } ),
+	] );
 	webpackConfig.entry.build = [
 		'webpack-hot-middleware/client',
 		path.join( __dirname, 'client', 'boot', 'app' )
@@ -219,6 +225,10 @@ if ( calypsoEnv === 'development' ) {
 	}
 } else {
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
+	webpackConfig.plugins = webpackConfig.plugins.concat( [
+		new webpack.HashedModuleIdsPlugin(),
+		new WebpackChunkHash(),
+	] );
 	webpackConfig.devtool = false;
 }
 
