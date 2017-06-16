@@ -76,3 +76,40 @@
 		padding: 24px;
 	}
 }
+
+.payments__method-loading-suggested,
+.payments__method-loading-title,
+.payments__method-loading-fee,
+.payments__method-loading-feelink,
+.payments__method-loading-settings {
+	background-color: lighten( $gray, 30% );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
+.payments__method-loading-suggested {
+	height: 15px;
+	margin-bottom: 5px;
+	width: 100%;
+}
+
+.payments__method-loading-title {
+	height: 12px;
+	width: 90%;
+}
+
+.payments__method-loading-fee {
+	height: 15px;
+	margin-bottom: 5px;
+	width: 100%;
+}
+
+.payments__method-loading-feelink {
+	height: 12px;
+	width: 90%;
+}
+
+.payments__method-loading-settings {
+	align-self: flex-end;
+	height: 26px;
+	width: 54px;
+}
