@@ -50,15 +50,6 @@ class PaymentMethodPaypal extends Component {
 		);
 	}
 
-	renderPaypalId = ( value ) => {
-		return (
-			<FormTextInput
-				name="email"
-				onChange={ this.onEditFieldHandler }
-				value={ value } />
-		);
-	}
-
 	render() {
 		const { method, translate } = this.props;
 		return (
@@ -70,7 +61,9 @@ class PaymentMethodPaypal extends Component {
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>{ translate( 'Your Paypal ID' ) }</FormLabel>
 					<FormTextInput
-						defaultValue={ method.settings.email.value }
+						name="email"
+						onChange={ this.onEditFieldHandler }
+						value={ method.settings.email.value }
 					/>
 					<FormSettingExplanation>
 						{ translate(
