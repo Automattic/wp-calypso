@@ -387,17 +387,12 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	align-items: flex-end;
 	display: flex;
 	flex-direction: column;
-	min-width: 90px;
+	min-width: 0;
+	max-width: 25px;
 
 	@include breakpoint( ">660px" ) {
 		align-items: flex-start;
-	}
-}
-
-.search-stream .search-stream__single-column-results .reader-subscription-list-item .reader-subscription-list-item__site-url-timestamp {
-
-	@include breakpoint( "<960px" ) {
-		max-height: none;
+		min-width: 90px;
 	}
 }
 
