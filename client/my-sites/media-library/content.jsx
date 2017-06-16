@@ -36,6 +36,7 @@ const MediaLibraryContent = React.createClass( {
 		filter: React.PropTypes.string,
 		filterRequiresUpgrade: React.PropTypes.bool,
 		search: React.PropTypes.string,
+		source: React.PropTypes.string,
 		containerWidth: React.PropTypes.number,
 		single: React.PropTypes.bool,
 		scrollable: React.PropTypes.bool,
@@ -178,7 +179,11 @@ const MediaLibraryContent = React.createClass( {
 		}
 
 		return (
-			<MediaListData siteId={ this.props.site.ID } filter={ this.props.filter } search={ this.props.search }>
+			<MediaListData
+				siteId={ this.props.site.ID }
+				filter={ this.props.filter }
+				search={ this.props.search }
+				source={ this.props.source }>
 				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 					<MediaLibraryList
 						key={ 'list-' + ( [ this.props.site.ID, this.props.search, this.props.filter ].join() ) }

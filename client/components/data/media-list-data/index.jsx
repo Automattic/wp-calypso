@@ -26,6 +26,7 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		siteId: React.PropTypes.number.isRequired,
+		source: React.PropTypes.string,
 		filter: React.PropTypes.string,
 		search: React.PropTypes.string
 	},
