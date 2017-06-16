@@ -102,6 +102,7 @@ class PublicizeActionsList extends PureComponent {
 			ID: actionId,
 			message,
 			service,
+			url,
 		} = item;
 
 		if ( this.state.selectedShareTab === SCHEDULED ) {
@@ -110,7 +111,7 @@ class PublicizeActionsList extends PureComponent {
 
 		// PUBLISHED tab
 		return (
-			<a className="post-share__external-url" href={ item.url } target="_blank" rel="noopener noreferrer" >
+			url && <a className="post-share__external-url" href={ url } target="_blank" rel="noopener noreferrer" >
 				<Gridicon icon="external" size={ 24 } />
 			</a>
 		);
