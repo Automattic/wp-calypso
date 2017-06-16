@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -52,7 +53,15 @@ class PaymentMethodEdit extends Component {
 	}
 
 	renderEditField = ( editField ) => {
-		const setting = this.props.method.settings[ editField ];
+		const { method } = this.props;
+		if (
+			method.fields &&
+			isArray( method.fields ) &&
+			method.fields.indexOf( editField ) < 0
+		) {
+			return;
+		}
+		const setting = method.settings[ editField ];
 		return (
 			<FormFieldset className="payments__method-edit-field-container" key={ editField }>
 				<FormLabel>{ setting.label }</FormLabel>
