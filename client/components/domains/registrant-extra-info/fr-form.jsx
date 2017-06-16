@@ -123,14 +123,10 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		const registrantType = this.props.contactDetails.extra.registrantType;
 		return (
 			<form className="registrant-extra-info__form">
-				<h1 className="registrant-extra-info__form-title">
-					{ translate(
-						'Registering a .FR domain'
-					) }
-				</h1>
 				<p className="registrant-extra-info__form-desciption">
 					{ translate(
-						'Almost done! We need some extra details to register domains ending in ".fr".'
+						'Almost done! We need some extra details to register your %(tld)s domain.',
+						{ args: { tld: '.fr' } }
 					) }
 				</p>
 				<FormFieldset>
