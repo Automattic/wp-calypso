@@ -23,32 +23,6 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormCheckbox from 'components/forms/form-checkbox';
 
-const legalTypes = {
-	ABO: 'Aboriginal',
-	ASS: 'Association (Unincorporated)',
-	CCO: 'Canadian Corporation',
-	CCT: 'Canadian Citizen',
-	EDU: 'Educational Institution',
-	GOV: 'Government',
-	HOP: 'Hospital',
-	INB: 'Indian Band',
-	LAM: 'Library, Archive, or Museum',
-	LGR: 'Legal Representative',
-	MAJ: 'Her Majesty the Queen',
-	// An official mark is Canadian thing like a trademark for public authorities
-	OMK: 'Official Mark',
-	PLT: 'Political Party',
-	PRT: 'Partnership',
-	RES: 'Permanent Resident',
-	TDM: 'Trademark Owner',
-	TRD: 'Trade Union',
-	TRS: 'Trust',
-};
-
-const legalTypeOptions = map( legalTypes, ( text, optionValue ) =>
-	<option value={ optionValue } key={ optionValue }>{ text }</option>
-);
-
 const defaultValues = {
 	legalType: 'CCT',
 	ciraAgreementAccepted: false,
@@ -64,6 +38,31 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 	constructor( props ) {
 		super( props );
+		const { translate } = props;
+
+		this.state = {
+			legalTypes: {
+				ABO: translate( 'Aboriginal' ),
+				ASS: translate( 'Association (Unincorporated)' ),
+				CCO: translate( 'Canadian Corporation' ),
+				CCT: translate( 'Canadian Citizen' ),
+				EDU: translate( 'Educational Institution' ),
+				GOV: translate( 'Government' ),
+				HOP: translate( 'Hospital' ),
+				INB: translate( 'Indian Band' ),
+				LAM: translate( 'Library, Archive, or Museum' ),
+				LGR: translate( 'Legal Representative' ),
+				MAJ: translate( 'Her Majesty the Queen' ),
+				// An official mark is Canadian thing like a trademark for public authorities
+				OMK: translate( 'Official Mark' ),
+				PLT: translate( 'Political Party' ),
+				PRT: translate( 'Partnership' ),
+				RES: translate( 'Permanent Resident' ),
+				TDM: translate( 'Trademark Owner' ),
+				TRD: translate( 'Trade Union' ),
+				TRS: translate( 'Trust' ),
+			}
+		};
 
 		// Add defaults to redux state to make accepting default values work.
 		const requiredDetailsNotInProps = difference(
@@ -116,7 +115,9 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 						value={ legalType }
 						className="registrant-extra-info__form-legal-type"
 						onChange={ this.handleChangeEvent }>
-						{ legalTypeOptions }
+						{ map( this.state.legalTypes, ( text, optionValue ) =>
+							<option value={ optionValue } key={ optionValue }>{ text }</option>
+						) }
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
