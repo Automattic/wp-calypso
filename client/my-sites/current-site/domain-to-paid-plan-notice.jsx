@@ -11,7 +11,6 @@ import {
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
 import Notice from 'components/notice';
@@ -39,7 +38,7 @@ export class DomainToPaidPlanNotice extends Component {
 	render() {
 		const { eligible, site, translate } = this.props;
 
-		if ( ! site || ! eligible || abtest( 'domainToPaidPlanUpsellNudge' ) === 'skip' ) {
+		if ( ! site || ! eligible ) {
 			return null;
 		}
 
