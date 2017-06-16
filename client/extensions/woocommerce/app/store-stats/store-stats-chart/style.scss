@@ -30,6 +30,7 @@
 
 		@include breakpoint( '>480px' ) {
 			flex-direction: column;
+			min-height: 102px;
 			justify-content: center;
 
 			.label {
@@ -47,6 +48,22 @@
 			.delta {
 				width: 100%;
 				justify-content: center;
+				margin: 8px auto 0;
+			}
+		}
+
+		@include breakpoint( '<960px' ) {
+			.delta {
+				margin-left: 8px;
+
+				.delta__icon {
+					&.gridicon {
+						margin: 0 4px 0 0;
+					}
+				}
+				.delta__label {
+					padding-right: 4px;
+				}
 			}
 		}
 	}

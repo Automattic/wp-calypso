@@ -32,10 +32,12 @@ export default class Delta extends Component {
 		return (
 			<div className={ deltaClasses }>
 				<Gridicon className="delta__icon" icon={ deltaIcon } />
-				<span className="delta__value">{ value }</span>
-				{ suffix &&
-					<span className="delta__suffix">{ suffix }</span>
-				}
+				<span className="delta__labels">
+					<span className="delta__value">{ value }</span>
+					{ suffix &&
+						<span className="delta__suffix">{ suffix }</span>
+					}
+				</span>
 			</div>
 		);
 	}

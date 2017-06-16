@@ -23,6 +23,7 @@
 		width: 20px;
 		height: 20px;
 		border-radius: 5px;
+		min-width: 15px;
 
 		&.gridicon {
 			fill: white;
@@ -31,17 +32,22 @@
 		}
 	}
 
-	.delta__suffix,
-	.delta__value {
-		align-items: center;
-		color: #537994;
+	.delta__labels {
+		align-items: left;
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
-		font-size: 14px;
-		line-height: 14px;
-	}
-	.delta__suffix {
-		margin-left: 6px;
+
+		.delta__suffix,
+		.delta__value {
+			color: #87a6bc;
+			display: inline-block;
+			font-size: 13px;
+			font-weight: 300;
+			line-height: 13px;
+		}
+		.delta__value {
+			margin-right: 6px;
+		}
 	}
 }
