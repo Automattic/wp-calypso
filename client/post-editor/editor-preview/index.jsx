@@ -25,7 +25,8 @@ const EditorPreview = React.createClass( {
 		previewUrl: React.PropTypes.string,
 		editUrl: React.PropTypes.string,
 		onClose: React.PropTypes.func,
-		postId: React.PropTypes.number
+		postId: React.PropTypes.number,
+		revision: React.PropTypes.number,
 	},
 
 	getInitialState() {
@@ -81,6 +82,7 @@ const EditorPreview = React.createClass( {
 		const parsed = url.parse( this.props.previewUrl, true );
 		parsed.query.preview = 'true';
 		parsed.query.iframe = 'true';
+		parsed.query.revision = String( this.props.revision );
 		delete parsed.search;
 		return url.format( parsed );
 	},
