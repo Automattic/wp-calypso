@@ -31,7 +31,9 @@
 
 	.form-dimensions-input__width,
 	.form-dimensions-input__height {
-		margin-left: -1px;
+		@include breakpoint( ">480px" ) {
+			margin-left: -1px;
+		}
 	}
 
 	.form-dimensions-input__length,

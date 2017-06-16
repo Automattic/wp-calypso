@@ -379,6 +379,9 @@
 		}
 	}
 
+	.form-text-input-with-affixes {
+		flex-direction: row;
+	}
 }
 
 .products__product-form-variation-table th {
@@ -807,10 +810,6 @@
 
 	.products__product-weight-input {
 		width: 150px;
-
-		.form-text-input-with-affixes {
-			flex-direction: row;
-		}
 
 		@include breakpoint( ">480px" ) {
 			.form-text-input {
