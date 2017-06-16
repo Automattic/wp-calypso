@@ -59,3 +59,41 @@ export function getCurrentlyEditingProduct( state, siteId = getSelectedSiteId( s
 
 	return getProductWithLocalEdits( state, currentlyEditingId, siteId );
 }
+
+/**
+ * Gets the current products list page being viewed.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Number} Current product list page (defaul: 1)
+ */
+export function getProductListCurrentPage( state, siteId = getSelectedSiteId( state ) ) {
+	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'currentPage' ], 1 );
+}
+
+/**
+ * Gets an array of products for the current page being viewed.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {array|false} Array of products or false if products are not available.
+ */
+export function getProductListProducts( state, siteId = getSelectedSiteId( state ) ) {
+	const products = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], {} );
+	const productIds = get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'productIds' ], [] );
+	if ( productIds.length ) {
+		return productIds.map( id => find( products, ( p ) => id === p.id ) );
+	}
+	return false;
+}
+
+/**
+ * Gets the requested/loading page for the products list.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {number|null} Requested product list page
+ */
+export function getProductListRequestedPage( state, siteId = getSelectedSiteId( state ) ) {
+	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'requestedPage' ], null );
+}
