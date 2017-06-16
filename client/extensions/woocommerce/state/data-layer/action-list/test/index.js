@@ -8,6 +8,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import {
+	actionListClear,
 	actionListStepNext,
 	actionListStepAnnotate,
 	actionListStepSuccess,
@@ -27,9 +28,11 @@ describe( 'handlers', () => {
 			const rootState = {
 				extensions: {
 					woocommerce: {
-						actionList: [
-							{ description: 'Step 1', action: step1Action },
-						],
+						actionList: {
+							steps: [
+								{ description: 'Step 1', action: step1Action },
+							],
+						}
 					}
 				}
 			};
@@ -54,10 +57,12 @@ describe( 'handlers', () => {
 			const rootState = {
 				extensions: {
 					woocommerce: {
-						actionList: [
-							{ description: 'Step 1', action: { type: '%%1%%' } },
-							{ description: 'Step 2', action: { type: '%%2%%' } },
-						],
+						actionList: {
+							steps: [
+								{ description: 'Step 1', action: { type: '%%1%%' } },
+								{ description: 'Step 2', action: { type: '%%2%%' } },
+							],
+						}
 					}
 				}
 			};
@@ -83,15 +88,22 @@ describe( 'handlers', () => {
 			const step2Start = Date.now() - 100;
 			const step2End = Date.now();
 
+			const successAction = { type: '%%SUCCESS%%' };
+			const failureAction = { type: '%%FAILURE%%' };
+
 			const rootState = {
 				extensions: {
 					woocommerce: {
-						actionList: [
-							{ description: 'Step 1', action: { type: '%%1%%' },
-								startTime: step1Start, endTime: step1End },
-							{ description: 'Step 2', action: { type: '%%2%%' },
-								startTime: step2Start },
-						],
+						actionList: {
+							steps: [
+								{ description: 'Step 1', action: { type: '%%1%%' },
+									startTime: step1Start, endTime: step1End },
+								{ description: 'Step 2', action: { type: '%%2%%' },
+									startTime: step2Start },
+							],
+							successAction,
+							failureAction,
+						}
 					}
 				}
 			};
@@ -110,18 +122,61 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.have.been.called.once;
 			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
 			expect( store.dispatch ).to.not.have.been.calledWith( stepNextAction );
+			expect( store.dispatch ).to.have.been.calledWith( successAction );
+		} );
+
+		it( 'should clear action-list after success if clearUponComplete is specified', () => {
+			const step1Start = Date.now() - 300;
+			const step1End = Date.now() - 200;
+
+			const rootState = {
+				extensions: {
+					woocommerce: {
+						actionList: {
+							steps: [
+								{ description: 'Step 1', action: { type: '%%1%%' },
+									startTime: step1Start },
+							],
+							clearUponComplete: true,
+						}
+					}
+				}
+			};
+
+			const store = {
+				dispatch: spy(),
+				getState: () => rootState,
+			};
+
+			const action = actionListStepSuccess( 0, step1End );
+			const annotationAction = actionListStepAnnotate( 0, { endTime: step1End } );
+			const stepNextAction = actionListStepNext( action.time );
+			const clearAction = actionListClear();
+
+			handleStepSuccess( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
+			expect( store.dispatch ).to.not.have.been.calledWith( stepNextAction );
+			expect( store.dispatch ).to.have.been.calledWith( clearAction );
 		} );
 	} );
 
 	describe( '#handleStepFailure', () => {
 		it( 'should annotate endTime and error', () => {
+			const successAction = { type: '%%SUCCESS%%' };
+			const failureAction = { type: '%%FAILURE%%' };
+
 			const rootState = {
 				extensions: {
 					woocommerce: {
-						actionList: [
-							{ description: 'Step 1', action: { type: '%%1%%' } },
-							{ description: 'Step 2', action: { type: '%%2%%' } },
-						],
+						actionList: {
+							steps: [
+								{ description: 'Step 1', action: { type: '%%1%%' } },
+								{ description: 'Step 2', action: { type: '%%2%%' } },
+							],
+							successAction,
+							failureAction,
+						}
 					}
 				}
 			};
@@ -138,6 +193,37 @@ describe( 'handlers', () => {
 			handleStepFailure( store, action );
 
 			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
+			expect( store.dispatch ).to.have.been.calledWith( failureAction );
+		} );
+
+		it( 'should clear action-list after failure if clearUponComplete is specified', () => {
+			const rootState = {
+				extensions: {
+					woocommerce: {
+						actionList: {
+							steps: [
+								{ description: 'Step 1', action: { type: '%%1%%' } },
+							],
+							clearUponComplete: true,
+						}
+					}
+				}
+			};
+
+			const store = {
+				dispatch: spy(),
+				getState: () => rootState,
+			};
+
+			const error = 'This is an error';
+			const action = actionListStepFailure( 0, error, Date.now() );
+			const annotationAction = actionListStepAnnotate( 0, { error, endTime: action.time } );
+			const clearAction = actionListClear();
+
+			handleStepFailure( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
+			expect( store.dispatch ).to.have.been.calledWith( clearAction );
 		} );
 	} );
 } );

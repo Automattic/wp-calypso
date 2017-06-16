@@ -30,7 +30,7 @@ function handleActionListAnnotate( actionList, action ) {
 
 	if ( undefined !== typeof stepIndex ) {
 		const { startTime, endTime, error } = annotations;
-		const step = actionList[ stepIndex ];
+		const step = actionList.steps[ stepIndex ];
 
 		const newStep = { ...step };
 
@@ -44,9 +44,9 @@ function handleActionListAnnotate( actionList, action ) {
 			newStep.error = error;
 		}
 
-		const newActionList = { ...actionList };
-		newActionList[ stepIndex ] = newStep;
-		return newActionList;
+		const newSteps = { ...actionList.steps };
+		newSteps[ stepIndex ] = newStep;
+		return { ...actionList, steps: newSteps };
 	}
 
 	return actionList;

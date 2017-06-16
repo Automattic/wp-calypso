@@ -24,15 +24,17 @@ export function getActionList( rootState ) {
  * @return {Number|null} The index of the current step, or actionList.length if all steps are complete,
  */
 export function getCurrentStepIndex( actionList ) {
-	for ( let i = 0; i < actionList.length; i++ ) {
-		const step = actionList[ i ];
+	const { steps } = actionList;
+
+	for ( let i = 0; i < steps.length; i++ ) {
+		const step = steps[ i ];
 		if ( ! step.endTime ) {
 			return i;
 		}
 	}
 
 	// All steps complete
-	return actionList.length;
+	return steps.length;
 }
 
 /**
@@ -43,6 +45,6 @@ export function getCurrentStepIndex( actionList ) {
  */
 export function getStepCountRemaining( actionList ) {
 	const currentIndex = getCurrentStepIndex( actionList );
-	return actionList.length - currentIndex;
+	return actionList.steps.length - currentIndex;
 }
 
