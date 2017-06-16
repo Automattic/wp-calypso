@@ -15,6 +15,7 @@ import { follow } from 'state/reader/follows/actions';
 import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
 import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 import { getSiteName } from 'reader/get-helpers';
+import { recordFollow } from 'reader/stats';
 
 export function requestUnfollow( { dispatch, getState }, action ) {
 	const { payload: { feedUrl } } = action;
@@ -45,6 +46,9 @@ export function requestUnfollow( { dispatch, getState }, action ) {
 				button: translate( 'Undo' ),
 				onClick: () => {
 					dispatch( follow( action.payload.feedUrl ) );
+					recordFollow( action.payload.feedUrl, null, {
+						source: 'unfollow_notice_undo',
+					} );
 				},
 			},
 		),
@@ -59,10 +63,18 @@ export function receiveUnfollow( store, action, next, response ) {
 	}
 }
 
-export function unfollowError( { dispatch }, action, next ) {
+export function unfollowError( { dispatch, getState }, action, next ) {
+	const feedUrl = action.payload.feedUrl;
+	const site = getSiteByFeedUrl( getState(), feedUrl );
+	const feed = getFeedByFeedUrl( getState(), feedUrl );
+	const siteTitle = getSiteName( { feed, site } ) || feedUrl;
 	dispatch(
 		errorNotice(
-			translate( 'Sorry, there was a problem unfollowing that site. Please try again.' ),
+			translate( 'Sorry, there was a problem unfollowing that %(siteTitle)s. Please try again.', {
+				args: {
+					siteTitle,
+				},
+			} ),
 		),
 	);
 	next( follow( action.payload.feedUrl ) );

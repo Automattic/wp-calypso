@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { forEach, map, omitBy, isArray, isUndefined } from 'lodash';
+import { forEach } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,7 @@ import { receiveFollows as receiveFollowsAction, syncComplete } from 'state/read
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
-import { toValidId } from 'reader/id-helpers';
+import { isValidApiResponse, subscriptionsFromApi } from './utils';
 
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
@@ -28,35 +28,6 @@ export const requestPageAction = ( page = 1, number = ITEMS_PER_PAGE, meta = '' 
 	type: READER_FOLLOWS_SYNC_PAGE,
 	payload: { page, meta, number },
 } );
-
-export const isValidApiResponse = apiResponse => {
-	const hasSubscriptions =
-		apiResponse && apiResponse.subscriptions && isArray( apiResponse.subscriptions );
-	return hasSubscriptions;
-};
-
-export const subscriptionFromApi = subscription =>
-	subscription &&
-	omitBy(
-		{
-			ID: Number( subscription.ID ),
-			URL: subscription.URL,
-			feed_URL: subscription.URL,
-			blog_ID: toValidId( subscription.blog_ID ),
-			feed_ID: toValidId( subscription.feed_ID ),
-			date_subscribed: Date.parse( subscription.date_subscribed ),
-			delivery_methods: subscription.delivery_methods,
-			is_owner: subscription.is_owner,
-		},
-		isUndefined
-	);
-
-export const subscriptionsFromApi = apiResponse => {
-	if ( ! isValidApiResponse( apiResponse ) ) {
-		return [];
-	}
-	return map( apiResponse.subscriptions, subscriptionFromApi );
-};
 
 let syncingFollows = false;
 let seenSubscriptions = null;
@@ -87,7 +58,7 @@ export function requestPage( store, action ) {
 			},
 			onSuccess: action,
 			onError: action,
-		} )
+		} ),
 	);
 }
 
@@ -105,7 +76,7 @@ export function receivePage( store, action, next, apiResponse ) {
 		receiveFollowsAction( {
 			follows,
 			totalCount: apiResponse.total_subscriptions,
-		} )
+		} ),
 	);
 
 	forEach( follows, follow => {
@@ -133,7 +104,7 @@ export function updateSeenOnFollow( store, action ) {
 export function receiveError( store ) {
 	syncingFollows = false;
 	store.dispatch(
-		errorNotice( translate( 'Sorry, we had a problem fetching your Reader subscriptions.' ) )
+		errorNotice( translate( 'Sorry, we had a problem fetching your Reader subscriptions.' ) ),
 	);
 }
 

@@ -12,7 +12,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { follow, unfollow, recordFollowError } from 'state/reader/follows/actions';
-import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine';
+import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine/utils';
 import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
 import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 import { getSiteName } from 'reader/get-helpers';
