@@ -27,9 +27,9 @@ import NoticeAction from 'components/notice/notice-action';
 
 const serviceNames = {
 	facebook: 'Facebook',
+	twitter: 'Twitter',
 	google_plus: 'Google Plus',
 	linkedin: 'LinkedIn',
-	twitter: 'Twitter',
 	tumblr: 'Tumblr'
 };
 
