@@ -11,10 +11,9 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
-import { loginSocialUser } from 'state/login/actions';
+import { createSocialUser, loginSocialUser } from 'state/login/actions';
 import { errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import wpcom from 'lib/wp';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 
 class SocialLoginForm extends Component {
@@ -34,7 +33,7 @@ class SocialLoginForm extends Component {
 	};
 
 	handleGoogleResponse = ( response ) => {
-		const { onSuccess, redirectTo, translate } = this.props;
+		const { onSuccess, redirectTo } = this.props;
 
 		if ( ! response.Zi || ! response.Zi.id_token ) {
 			return;
@@ -48,28 +47,20 @@ class SocialLoginForm extends Component {
 			onSuccess();
 		} ).catch( error => {
 			if ( error.code === 'unknown_user' ) {
-				const { notice } = this.props.infoNotice( translate( 'Creating your account' ) );
+				this.props.createSocialUser( 'google', response.Zi.id_token, 'login' ).then( wpcomResponse => {
+					this.props.recordTracksEvent( 'calypso_social_login_form_signup_success', {
+						social_account_type: 'google',
+					} );
 
-				wpcom.undocumented().usersSocialNew( 'google', response.Zi.id_token, 'login', ( wpcomError, wpcomResponse ) => {
-					this.props.removeNotice( notice.noticeId );
-
-					if ( wpcomError ) {
-						this.props.recordTracksEvent( 'calypso_social_login_form_signup_failure', {
-							social_account_type: 'google',
-							error: wpcomError.message
-						} );
-
-						this.props.errorNotice( wpcomError.message );
-					} else {
-						this.props.recordTracksEvent( 'calypso_social_login_form_signup_success', {
-							social_account_type: 'google',
-						} );
-
-						this.setState( {
-							username: wpcomResponse.username,
-							bearerToken: wpcomResponse.bearer_token
-						} );
-					}
+					this.setState( {
+						username: wpcomResponse.username,
+						bearerToken: wpcomResponse.bearer_token
+					} );
+				} ).catch( wpcomError => {
+					this.props.recordTracksEvent( 'calypso_social_login_form_signup_failure', {
+						social_account_type: 'google',
+						error: wpcomError.message
+					} );
 				} );
 			} else {
 				this.props.recordTracksEvent( 'calypso_social_login_form_login_failure', {
@@ -115,6 +106,7 @@ export default connect(
 		errorNotice,
 		infoNotice,
 		removeNotice,
+		createSocialUser,
 		loginSocialUser,
 		recordTracksEvent,
 	}
