@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import {
+	cancelEditingPaymentMethod,
 	changePaymentMethodField,
 	closeEditingPaymentMethod,
 	openPaymentMethodForEdit,
@@ -25,6 +26,7 @@ import { savePaymentMethod } from 'woocommerce/state/sites/payment-methods/actio
 
 class PaymentMethodItem extends Component {
 	static propTypes = {
+		cancelEditingPaymentMethod: PropTypes.func.isRequired,
 		closeEditingPaymentMethod: PropTypes.func.isRequired,
 		currentlyEditingId: PropTypes.string,
 		currentlyEditingMethod: PropTypes.shape( {
@@ -53,7 +55,7 @@ class PaymentMethodItem extends Component {
 	};
 
 	onCancel = () => {
-		this.props.closeEditingPaymentMethod( this.props.site.ID, this.props.method.id );
+		this.props.cancelEditingPaymentMethod( this.props.site.ID, this.props.method.id );
 	}
 
 	onEdit = () => {
@@ -150,6 +152,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			cancelEditingPaymentMethod,
 			changePaymentMethodField,
 			closeEditingPaymentMethod,
 			openPaymentMethodForEdit,
