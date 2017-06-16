@@ -700,7 +700,7 @@ export const PostEditor = React.createClass( {
 			return;
 		}
 
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) && 'open' === this.state.confirmationSidebar ) {
 			this.setConfirmationSidebar( { status: 'publishing' } );
 		}
 
