@@ -10,7 +10,24 @@
 	}
 
 	.products__list-wrapper {
-		margin-top: 48px;
+		@include breakpoint( ">660px" ) {
+			margin-top: 58px;
+		}
+	}
+	
+	.stats-pagination__list {
+		background: $white;
+		border: 1px solid lighten( $gray, 25% );
+		padding: 8px;
+	}
+	
+	.stats-pagination__list-item {
+		padding: 0 8px;
+		line-height: 34px;
+	}
+	
+	.stats-pagination__list-item.is-selected {
+		border: 1px solid lighten( $gray, 20% );
 	}
 
 	.products__list-placeholder {

@@ -117,8 +117,7 @@ class Products extends Component {
 
 		return (
 			<div className="products__list-wrapper">
-				{ this.pagination() }
-
+				
 				<ProductsListTable
 					site={ site }
 					products={ products }
@@ -137,8 +136,8 @@ class Products extends Component {
 			<Main className={ classes }>
 				<SidebarNavigation />
 				<ActionHeader>
-					<Button href={ getLink( '/store/product/:site/', site ) }>
-						{ translate( 'Add new product' ) }
+					<Button primary href={ getLink( '/store/product/:site/', site ) }>
+						{ translate( 'Add product' ) }
 					</Button>
 				</ActionHeader>
 				{ this.renderList() }

@@ -16,7 +16,7 @@ import TableItem from 'woocommerce/components/table/table-item';
 const ProductsListTable = ( { translate, products, site, isRequesting } ) => {
 	const headings = (
 		<TableRow isHeader className={ classNames( { 'products__list-placeholder': ! products } ) }>
-			{ [ translate( 'Product' ), translate( 'Stock' ), translate( 'Category' ) ].map( ( item, i ) =>
+			{ [ translate( 'Product' ), translate( 'Inventory' ), translate( 'Category' ) ].map( ( item, i ) =>
 				<TableItem isHeader key={ i } isTitle={ 0 === i }>{ item }</TableItem>
 			) }
 		</TableRow>
