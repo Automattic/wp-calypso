@@ -277,7 +277,16 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getGroups()', () => {
-		global.window = {};
+		let _window; // Keep a copy of the original window if any
+
+		beforeEach( () => {
+			_window = global.window;
+			global.window = {};
+		} );
+
+		afterEach( () => {
+			global.window = _window;
+		} );
 
 		it( 'should return default group for no sites', () => {
 			const siteId = 1;
