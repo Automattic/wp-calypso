@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ import {
 	getSelectedDomain
 } from 'lib/domains';
 import { isPlanFeaturesEnabled } from 'lib/plans';
+import { hasCustomDomain } from 'lib/site/utils';
 
 const Email = React.createClass( {
 	propTypes: {
@@ -58,7 +60,7 @@ const Email = React.createClass( {
 				<Header
 					onClick={ this.goToEditOrList }
 					selectedDomainName={ this.props.selectedDomainName }>
-					{ this.translate( 'Email' ) }
+					{ this.props.translate( 'Email' ) }
 				</Header>
 			);
 		}
@@ -91,20 +93,21 @@ const Email = React.createClass( {
 		const {
 			selectedSite,
 			selectedDomainName,
+			translate
 			} = this.props;
 		let emptyContentProps;
 
 		if ( selectedDomainName ) {
 			emptyContentProps = {
-				title: this.translate( 'G Suite is not supported on this domain' ),
-				line: this.translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
-				secondaryAction: this.translate( 'Add Email Forwarding' ),
+				title: translate( 'G Suite is not supported on this domain' ),
+				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
+				secondaryAction: translate( 'Add Email Forwarding' ),
 				secondaryActionURL: paths.domainManagementEmailForwarding( selectedSite.slug, selectedDomainName )
 			};
 		} else {
 			emptyContentProps = {
-				title: this.translate( "Enable powerful email features." ),
-				line: this.translate(
+				title: translate( 'Enable powerful email features.' ),
+				line: translate(
 					'To set up email forwarding, G Suite, and other email ' +
 					'services for your site, upgrade your site’s web address ' +
 					'to a professional custom domain.'
@@ -113,7 +116,7 @@ const Email = React.createClass( {
 		}
 		Object.assign( emptyContentProps, {
 			illustration: '/calypso/images/drake/drake-whoops.svg',
-			action: this.translate( 'Add a Custom Domain' ),
+			action: translate( 'Add a Custom Domain' ),
 			actionURL: '/domains/add/' + this.props.selectedSite.slug
 		} );
 
@@ -126,16 +129,30 @@ const Email = React.createClass( {
 		return <GoogleAppsUsersCard { ...this.props } />;
 	},
 
+	renderEmailForwarding() {
+		let domain;
+
+		if ( this.props.selectedDomainName ) {
+			domain = this.props.selectedDomainName;
+		} else if ( hasCustomDomain( this.props.selectedSite ) ) {
+			domain = this.props.selectedSite.domain;
+		}
+
+		return (
+			domain && <VerticalNav>
+				<VerticalNavItem
+					path={ paths.domainManagementEmailForwarding( this.props.selectedSite.slug, domain ) }>
+					{ this.props.translate( 'Email Forwarding' ) }
+				</VerticalNavItem>
+			</VerticalNav>
+		);
+	},
+
 	addGoogleAppsCard() {
 		return (
 			<div>
 				<AddGoogleAppsCard { ...this.props } />
-				{ this.props.selectedDomainName && <VerticalNav>
-					<VerticalNavItem
-						path={ paths.domainManagementEmailForwarding( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
-						{ this.translate( 'Email Forwarding' ) }
-					</VerticalNavItem>
-				</VerticalNav> }
+				{ this.renderEmailForwarding() }
 			</div>
 		);
 	},
@@ -149,4 +166,4 @@ const Email = React.createClass( {
 	}
 } );
 
-module.exports = Email;
+export default localize( Email );
