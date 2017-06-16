@@ -46,18 +46,16 @@ const legalTypeOptions = map( legalTypes, ( text, optionValue ) =>
 );
 
 const defaultValues = {
-	legalType: 'CCW',
-	isVisible: true,
+	legalType: 'CCT',
 	ciraAgreementAccepted: false,
-	onSubmit: noop,
 };
 
 class RegistrantExtraInfoCaForm extends React.PureComponent {
 	static propTypes = {
 		ciraAgreementAccepted: PropTypes.bool,
+		contactDetails: PropTypes.object,
 		legalType: PropTypes.string,
-		isVisible: PropTypes.bool,
-		onSubmit: PropTypes.func,
+		translate: PropTypes.function,
 	}
 
 	constructor( props ) {
