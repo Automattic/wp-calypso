@@ -39,29 +39,34 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 	constructor( props ) {
 		super( props );
 		const { translate } = props;
+		const legalTypes = {
+			ABO: translate( 'Aboriginal' ),
+			ASS: translate( 'Association (Unincorporated)' ),
+			CCO: translate( 'Canadian Corporation' ),
+			CCT: translate( 'Canadian Citizen' ),
+			EDU: translate( 'Educational Institution' ),
+			GOV: translate( 'Government' ),
+			HOP: translate( 'Hospital' ),
+			INB: translate( 'Indian Band' ),
+			LAM: translate( 'Library, Archive, or Museum' ),
+			LGR: translate( 'Legal Representative' ),
+			MAJ: translate( 'Her Majesty the Queen' ),
+			// An official mark is Canadian thing like a trademark for public authorities
+			OMK: translate( 'Official Mark' ),
+			PLT: translate( 'Political Party' ),
+			PRT: translate( 'Partnership' ),
+			RES: translate( 'Permanent Resident' ),
+			TDM: translate( 'Trademark Owner' ),
+			TRD: translate( 'Trade Union' ),
+			TRS: translate( 'Trust' ),
+		};
+		const legalTypeOptions = map( legalTypes, ( text, optionValue ) =>
+			<option value={ optionValue } key={ optionValue }>{ text }</option>
+		);
 
 		this.state = {
-			legalTypes: {
-				ABO: translate( 'Aboriginal' ),
-				ASS: translate( 'Association (Unincorporated)' ),
-				CCO: translate( 'Canadian Corporation' ),
-				CCT: translate( 'Canadian Citizen' ),
-				EDU: translate( 'Educational Institution' ),
-				GOV: translate( 'Government' ),
-				HOP: translate( 'Hospital' ),
-				INB: translate( 'Indian Band' ),
-				LAM: translate( 'Library, Archive, or Museum' ),
-				LGR: translate( 'Legal Representative' ),
-				MAJ: translate( 'Her Majesty the Queen' ),
-				// An official mark is Canadian thing like a trademark for public authorities
-				OMK: translate( 'Official Mark' ),
-				PLT: translate( 'Political Party' ),
-				PRT: translate( 'Partnership' ),
-				RES: translate( 'Permanent Resident' ),
-				TDM: translate( 'Trademark Owner' ),
-				TRD: translate( 'Trade Union' ),
-				TRS: translate( 'Trust' ),
-			}
+			legalTypes,
+			legalTypeOptions
 		};
 
 		// Add defaults to redux state to make accepting default values work.
@@ -87,6 +92,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 	render() {
 		const { translate } = this.props;
+		const { legalTypeOptions } = this.state;
 		const {
 			legalType,
 			ciraAgreementAccepted,
@@ -111,9 +117,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 						value={ legalType }
 						className="registrant-extra-info__form-legal-type"
 						onChange={ this.handleChangeEvent }>
-						{ map( this.state.legalTypes, ( text, optionValue ) =>
-							<option value={ optionValue } key={ optionValue }>{ text }</option>
-						) }
+						{ legalTypeOptions }
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
