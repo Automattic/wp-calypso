@@ -49,9 +49,17 @@ class PaymentMethodStripe extends Component {
 		);
 	}
 
-	renderEditTextbox = ( setting ) => {
+	renderEditTextboxSecretKey = ( setting ) => {
+		const { method, translate } = this.props;
 		return (
-			<FormTextInput name={ setting.id } onChange={ this.onEditFieldHandler } value={ setting.value } />
+			<FormTextInput name={ setting.id } onChange={ this.onEditFieldHandler } value={ setting.value } placeholder={ translate( 'Enter your secret key from your Stripe.com account' ) } />
+		);
+	}
+
+	renderEditTextboxPublishableKey = ( setting ) => {
+		const { method, translate } = this.props;
+		return (
+			<FormTextInput name={ setting.id } onChange={ this.onEditFieldHandler } value={ setting.value } placeholder={ translate( 'Enter your publishable key from your Stripe.com account' ) } />
 		);
 	}
 
@@ -67,7 +75,7 @@ class PaymentMethodStripe extends Component {
 					<FormLabel>
 						{ isLiveMode ? liveSecretLabel : testSecretLabel }
 					</FormLabel>
-					{ this.renderEditTextbox(
+					{ this.renderEditTextboxSecretKey(
 						isLiveMode ? method.settings.secret_key : method.settings.test_secret_key
 					) }
 				</FormFieldset>
@@ -75,7 +83,7 @@ class PaymentMethodStripe extends Component {
 					<FormLabel>
 						{ isLiveMode ? livePublishableLabel : testPublishableLabel }
 					</FormLabel>
-					{ this.renderEditTextbox(
+					{ this.renderEditTextboxPublishableKey(
 						isLiveMode ? method.settings.publishable_key : method.settings.test_publishable_key
 					) }
 				</FormFieldset>
