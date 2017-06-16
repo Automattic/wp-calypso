@@ -88,7 +88,6 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 	const renderStock = () => (
 		<Card className={ stockClasses }>
 			<div className="products__product-stock-options-wrapper">
-
 				<div className="products__product-manage-stock">
 					<FormLabel>{ translate( 'Stock' ) }</FormLabel>
 					<FormTextInput
@@ -100,7 +99,6 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 						placeholder={ translate( 'Quantity' ) }
 					/>
 				</div>
-
 				{ product.manage_stock && (
 					<div className="products__product-backorders-wrapper">
 						<FormLabel>{ translate( 'Backorders' ) }</FormLabel>
