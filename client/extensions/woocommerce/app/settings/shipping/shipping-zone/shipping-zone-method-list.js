@@ -18,7 +18,7 @@ const ShippingZoneMethodList = ( { methods, translate } ) => {
 	const renderMethod = ( method, index ) => (
 		<div key={ index }>
 			{ method.title }
-			{ getMethodSummary( method, translate ) }
+			{ getMethodSummary( method ) }
 			<Button compact>{ translate( 'Edit' ) }</Button>
 		</div>
 	);

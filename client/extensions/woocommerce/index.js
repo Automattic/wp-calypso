@@ -16,6 +16,7 @@ import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
 import Shipping from './app/settings/shipping';
+import ShippingZone from './app/settings/shipping/shipping-zone';
 import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
 
@@ -117,6 +118,17 @@ const getStorePages = () => {
 			},
 		},
 		{
+			container: ShippingZone,
+			configKey: 'woocommerce/extension-settings-shipping',
+			path: '/store/settings/shipping/:site/zone/:zone',
+			sidebarItem: {
+				isPrimary: false,
+				label: translate( 'Shipping' ),
+				parentSlug: 'settings',
+				slug: 'settings-shipping',
+			},
+		},
+		{
 			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
 			configKey: 'woocommerce/extension-settings-tax',
 			path: '/store/settings/taxes/:site',
@@ -145,7 +157,7 @@ function getStoreSidebarItemButtons() {
 function addStorePage( storePage, storeNavigation ) {
 	page( storePage.path, siteSelection, storeNavigation, function( context ) {
 		renderWithReduxStore(
-			React.createElement( storePage.container, { className: 'woocommerce' } ),
+			React.createElement( storePage.container, { className: 'woocommerce', ...context.params } ),
 			document.getElementById( 'primary' ),
 			context.store
 		);

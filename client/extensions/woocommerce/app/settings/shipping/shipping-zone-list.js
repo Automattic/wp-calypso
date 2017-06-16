@@ -15,11 +15,11 @@ import ExtendedHeader from 'woocommerce/components/extended-header';
 import ShippingZoneEntry from './shipping-zone-list-entry';
 import ShippingZoneDialog from './shipping-zone-dialog';
 import Spinner from 'components/spinner';
-import { addNewShippingZone } from 'woocommerce/state/ui/shipping/zones/actions';
 import { fetchShippingZones } from 'woocommerce/state/sites/shipping-zones/actions';
 import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { getShippingZones } from 'woocommerce/state/ui/shipping/zones/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 class ShippingZoneList extends Component {
 	componentWillMount() {
@@ -65,16 +65,29 @@ class ShippingZoneList extends Component {
 	}
 
 	render() {
-		const { siteId, loaded, actions, translate } = this.props;
+		const { site, siteId, loaded, translate } = this.props;
 
-		const onAddZoneClick = () => ( actions.addNewShippingZone( siteId ) );
+		const addNewHref = loaded
+			? getLink( '/store/settings/shipping/:site/zone/new', site )
+			: '#';
+
+		const onAddNewClick = ( event ) => {
+			if ( ! loaded ) {
+				event.preventDefault();
+			}
+		};
 
 		return (
 			<div>
 				<ExtendedHeader
 					label={ translate( 'Shipping Zones' ) }
 					description={ translate( 'The regions you ship to and the methods you will provide.' ) }>
-					<Button onClick={ onAddZoneClick } disabled={ ! loaded }>{ translate( 'Add zone' ) }</Button>
+					<Button
+						href={ addNewHref }
+						onClick={ onAddNewClick }
+						disabled={ ! loaded }>{
+							translate( 'Add zone' ) }
+					</Button>
 				</ExtendedHeader>
 				<Card className="shipping__zones">
 					{ this.renderContent() }
@@ -87,14 +100,14 @@ class ShippingZoneList extends Component {
 
 export default connect(
 	( state ) => ( {
+		site: getSelectedSite( state ),
 		siteId: getSelectedSiteId( state ),
 		shippingZones: getShippingZones( state ),
 		loaded: areShippingZonesLoaded( state )
 	} ),
 	( dispatch ) => ( {
 		actions: bindActionCreators( {
-			fetchShippingZones,
-			addNewShippingZone
+			fetchShippingZones
 		}, dispatch )
 	} )
 )( localize( ShippingZoneList ) );

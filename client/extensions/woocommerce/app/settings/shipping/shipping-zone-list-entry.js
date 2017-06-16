@@ -2,59 +2,29 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { isNumber } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Spinner from 'components/spinner';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { getMethodSummary } from './shipping-method-utils';
-import { areShippingZoneMethodsLoaded } from 'woocommerce/state/sites/shipping-zone-methods/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { getShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
-import { openShippingZoneForEdit } from 'woocommerce/state/ui/shipping/zones/actions';
 
-const ShippingZoneEntry = ( { translate, id, name, methods, methodsLoaded, siteId, actions } ) => {
-	const loaded = methodsLoaded || ! isNumber( id );
-
+const ShippingZoneEntry = ( { translate, id, name, methods, site } ) => {
 	const renderMethod = ( methodKey ) => {
 		const method = methods[ methodKey ];
 
 		return (
 			<div key={ methodKey } className="shipping__zones-row-method">
 				<p className="shipping__zones-row-method-name">{ method.title }</p>
-				<p className="shipping__zones-row-method-description">{ getMethodSummary( method, translate ) }</p>
+				<p className="shipping__zones-row-method-description">{ getMethodSummary( method ) }</p>
 			</div>
 		);
-	};
-
-	const onEditClick = () => ( actions.openShippingZoneForEdit( siteId, id ) );
-
-	const renderDetails = () => {
-		if ( ! loaded ) {
-			return (
-				<div className="shipping__loading-spinner">
-					<Spinner size={ 24 } />
-				</div>
-			);
-		}
-
-		return [
-			(
-			<div className="shipping__zones-row-methods" key={ 0 }>
-				{ Object.keys( methods ).map( renderMethod ) }
-			</div>
-			),
-			(
-			<div className="shipping__zones-row-actions" key={ 1 }>
-				<Button compact onClick={ onEditClick }>{ translate( 'Edit' ) }</Button>
-			</div>
-			)
-		];
 	};
 
 	const icon = 0 === id ? 'globe' : 'location';
@@ -68,27 +38,24 @@ const ShippingZoneEntry = ( { translate, id, name, methods, methodsLoaded, siteI
 				<p className="shipping__zones-row-location-name">{ name }</p>
 				{ /*<p className="shipping__zones-row-location-description">{ locationDescription }</p>*/ }
 			</div>
-			{ renderDetails() }
+			<div className="shipping__zones-row-methods" key={ 0 }>
+				{ Object.keys( methods ).map( renderMethod ) }
+			</div>
+			<div className="shipping__zones-row-actions" key={ 1 }>
+				<Button compact href={ getLink( `/store/settings/shipping/:site/zone/${ id }`, site ) }>{ translate( 'Edit' ) }</Button>
+			</div>
 		</div>
 	);
 };
 
 ShippingZoneEntry.propTypes = {
-	siteId: PropTypes.number,
 	id: PropTypes.oneOfType( [ PropTypes.number, PropTypes.object ] ),
 	name: PropTypes.string
 };
 
 export default connect(
 	( state, ownProps ) => ( {
+		site: getSelectedSite( state ),
 		methods: getShippingZoneMethods( state, ownProps.id ),
-		methodsLoaded: areShippingZoneMethodsLoaded( state, ownProps.id )
-	} ),
-	( dispatch ) => ( {
-		actions: bindActionCreators(
-			{
-				openShippingZoneForEdit
-			}, dispatch
-		)
 	} )
 )( localize( ShippingZoneEntry ) );

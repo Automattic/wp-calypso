@@ -13,7 +13,7 @@ import ExtendedHeader from 'woocommerce/components/extended-header';
 
 const ShippingZoneLocations = ( { translate } ) => {
 	return (
-		<div>
+		<div className="shipping-zone__locations">
 			<ExtendedHeader
 				label={ translate( 'Zone locations' ) }
 				description={ translate( 'Add locations that you want to share shipping methods' ) } />

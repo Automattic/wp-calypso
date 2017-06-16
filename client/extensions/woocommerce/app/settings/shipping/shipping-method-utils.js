@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -10,7 +11,7 @@ import FlatRate from './shipping-methods/flat-rate';
 import FreeShipping from './shipping-methods/free-shipping';
 import LocalPickup from './shipping-methods/local-pickup';
 
-export const getMethodName = ( method, translate ) => {
+export const getMethodName = ( method ) => {
 	switch ( method.methodType ) {
 		case 'flat_rate':
 			return translate( 'Flat Rate' );
@@ -23,7 +24,7 @@ export const getMethodName = ( method, translate ) => {
 	}
 };
 
-export const getMethodSummary = ( method, translate ) => {
+export const getMethodSummary = ( method ) => {
 	switch ( method.methodType ) {
 		case 'flat_rate':
 			return translate( 'Cost: %s', { args: [ method.cost ] } );

@@ -14,6 +14,7 @@
 .action-header__breadcrumbs {
 	width: 60%;
 	font-size: 13px;
+	line-height: 43px;
 	@include breakpoint( "<660px" ) {
 		padding-left: 24px;
 	}

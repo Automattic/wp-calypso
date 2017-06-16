@@ -31,7 +31,7 @@ class ShippingOrigin extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div>
+			<div className="shipping__origin">
 				<ExtendedHeader
 					label={ translate( 'Shipping Origin' ) }
 					description={ translate( 'The address of where you will be shipping from.' ) } />
