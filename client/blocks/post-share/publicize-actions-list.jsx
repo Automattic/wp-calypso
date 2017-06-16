@@ -108,7 +108,12 @@ class PublicizeActionsList extends PureComponent {
 			return this.renderScheduledMenu( actionId, message, service );
 		}
 
-		return null;
+		// PUBLISHED tab
+		return (
+			<a className="post-share__external-url" href={ item.url } target="_blank" rel="noopener noreferrer" >
+				<Gridicon icon="external" size={ 24 } />
+			</a>
+		);
 	}
 
 	renderScheduledMenu( publicizeActionId, message, service ) {

@@ -456,3 +456,20 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 		color: $gray-dark;
 	}
 }
+
+.post-share__external-url {
+	color: lighten( $gray, 20% );
+	cursor: pointer;
+
+	&:visited {
+		color: lighten( $gray, 20% );
+	}
+
+	&:hover {
+		color: $gray-dark;
+	}
+	.gridicon {
+		vertical-align: middle;
+	}
+
+}
