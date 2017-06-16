@@ -60,7 +60,7 @@ class ProductFormVariationsTable extends React.Component {
 
 	setStockQuantity = ( e ) => {
 		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
-		const manage_stock = ( stock_quantity !== '' );
+		const manage_stock = stock_quantity !== '';
 		this.editAllVariations( 'stock_quantity', stock_quantity );
 		this.editAllVariations( 'manage_stock', manage_stock );
 	}

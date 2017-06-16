@@ -35,7 +35,7 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 
 	const setStockQuantity = ( e ) => {
 		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
-		const manage_stock = ( stock_quantity !== '' );
+		const manage_stock = stock_quantity !== '';
 		editProduct( siteId, product, { manage_stock, stock_quantity } );
 	};
 

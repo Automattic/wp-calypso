@@ -64,7 +64,7 @@ class ProductFormVariationsRow extends Component {
 	setStockQuantity = ( e ) => {
 		const { siteId, editProductVariation, product, variation } = this.props;
 		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
-		const manage_stock = ( stock_quantity !== '' );
+		const manage_stock = stock_quantity !== '';
 		editProductVariation( siteId, product, variation, { stock_quantity, manage_stock } );
 	}
 
@@ -171,7 +171,7 @@ class ProductFormVariationsRow extends Component {
 	}
 
 	render() {
-		const { variation } = this.props;
+		const { variation, translate } = this.props;
 		return (
 			<tr className="products__product-form-variation-row">
 				<td className="products__product-id">
