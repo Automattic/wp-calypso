@@ -53,6 +53,7 @@ export function productsRequestSuccess( state, action ) {
 		products,
 		isLoading,
 		totalPages: action.totalPages,
+		totalProducts: action.totalProducts,
 	};
 }
 

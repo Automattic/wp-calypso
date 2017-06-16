@@ -30,7 +30,7 @@ describe( 'actions', () => {
 				.reply( 200, {
 					data: {
 						body: products,
-						headers: { 'X-WP-TotalPages': 3 },
+						headers: { 'X-WP-TotalPages': 3, 'X-WP-Total': 30 },
 						status: 200,
 					}
 				} )
@@ -63,6 +63,7 @@ describe( 'actions', () => {
 					siteId,
 					page: 1,
 					totalPages: 3,
+					totalProducts: 30,
 					products
 				} );
 			} );

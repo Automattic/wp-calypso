@@ -77,11 +77,13 @@ export const fetchProducts = ( siteId, page ) => ( dispatch, getState ) => {
 	return request( siteId ).getWithHeaders( `products?page=${ page }&per_page=10` ).then( ( response ) => {
 		const { headers, data } = response;
 		const totalPages = headers[ 'X-WP-TotalPages' ];
+		const totalProducts = headers[ 'X-WP-Total' ];
 		dispatch( {
 			type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 			siteId,
 			page,
 			totalPages,
+			totalProducts,
 			products: data,
 		} );
 	} ).catch( error => {

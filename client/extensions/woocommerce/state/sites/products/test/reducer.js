@@ -84,6 +84,18 @@ describe( 'reducer', () => {
 			const newState = productsRequestSuccess( undefined, action );
 			expect( newState.totalPages ).to.eql( 3 );
 		} );
+		it( 'should store the total number of products', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+				siteId: 123,
+				page: 1,
+				totalPages: 3,
+				totalProducts: 30,
+				products,
+			};
+			const newState = productsRequestSuccess( undefined, action );
+			expect( newState.totalProducts ).to.eql( 30 );
+		} );
 	} );
 	describe( 'productsRequestFailure', () => {
 		it( 'should should show that request has loaded on failure', () => {
