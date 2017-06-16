@@ -13,6 +13,7 @@ import {
 	has,
 	head,
 	indexOf,
+	intersection,
 	isEqual,
 	kebabCase,
 	last,
@@ -41,7 +42,7 @@ import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import wp from 'lib/wp';
-import ExtraInfoFrForm from 'components/domains/registrant-extra-info/fr-form';
+import ExtraInfoForm, { tldsWithAdditionalDetailsForms } from 'components/domains/registrant-extra-info';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
@@ -69,8 +70,9 @@ export class DomainDetailsForm extends PureComponent {
 
 		const steps = [
 			'mainForm',
-			...this.getRequiredExtraSteps()
+			...this.getRequiredExtraSteps(),
 		];
+		debug( 'steps:', steps );
 
 		this.state = {
 			form: null,
@@ -214,8 +216,7 @@ export class DomainDetailsForm extends PureComponent {
 			// All we need to do to disable everything is not show the .FR form
 			return [];
 		}
-
-		return cartItems.getTlds( this.props.cart );
+		return intersection( cartItems.getTlds( this.props.cart ), tldsWithAdditionalDetailsForms );
 	}
 
 	getNumberOfDomainRegistrations() {
@@ -396,11 +397,11 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	renderExtraDetailsForm() {
+	renderExtraDetailsForm( tld ) {
 		return (
-			<ExtraInfoFrForm countriesList={ countriesList } >
+			<ExtraInfoForm tld={ tld } countriesList={ countriesList } >
 				{ this.renderSubmitButton() }
-			</ExtraInfoFrForm>
+			</ExtraInfoForm>
 		);
 	}
 
@@ -501,7 +502,7 @@ export class DomainDetailsForm extends PureComponent {
 			// TODO: gather up tld specific stuff
 			case 'ca':
 			case 'fr':
-				return this.renderExtraDetailsForm();
+				return this.renderExtraDetailsForm( this.state.currentStep );
 			default:
 				return this.renderDetailsForm();
 		}
