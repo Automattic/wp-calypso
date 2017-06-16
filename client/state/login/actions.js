@@ -242,8 +242,7 @@ export const createSocialUser = ( service, token, flowName ) => dispatch => {
 		dispatch( { type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS } );
 		return Promise.resolve( wpcomResponse );
 	} ).catch( wpcomError => {
-		const error = wpcomError;
-		error.field = 'global';
+		const error = { ...wpcomError, field: 'global' };
 
 		dispatch( {
 			type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
