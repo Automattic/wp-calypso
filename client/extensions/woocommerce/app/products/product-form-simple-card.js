@@ -47,7 +47,7 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 	const renderPrice = () => (
 		<Card className="products__product-form-price">
 			<FormLabel>{ translate( 'Price' ) }</FormLabel>
-			<FormCurrencyInput
+			<FormCurrencyInput noWrap
 				currencySymbolPrefix="$"
 				name="price"
 				value={ product.regular_price || '' }
