@@ -18,8 +18,18 @@ import {
 } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
-import useMockery from 'test/helpers/use-mockery';
 import { subscriptionsFromApi } from '../utils';
+
+import {
+	isSyncingFollows,
+	requestPage,
+	requestPageAction,
+	receivePage,
+	receiveError,
+	syncReaderFollows,
+	resetSyncingFollows,
+	updateSeenOnFollow,
+} from '../';
 
 const successfulApiResponse = freeze( {
 	number: 2,
@@ -42,29 +52,6 @@ const successfulApiResponse = freeze( {
 } );
 
 describe( 'get follow subscriptions', () => {
-	let isSyncingFollows,
-		requestPage,
-		requestPageAction,
-		receivePage,
-		receiveError,
-		syncReaderFollows,
-		resetSyncingFollows,
-		updateSeenOnFollow;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'reader/stats', {
-			recordFollow: noop,
-		} );
-
-		isSyncingFollows = require( '../' ).isSyncingFollows;
-		requestPage = require( '../' ).requestPage;
-		requestPageAction = require( '../' ).requestPageAction;
-		receivePage = require( '../' ).receivePage;
-		receiveError = require( '../' ).receiveError;
-		syncReaderFollows = require( '../' ).syncReaderFollows;
-		resetSyncingFollows = require( '../' ).resetSyncingFollows;
-		updateSeenOnFollow = require( '../' ).updateSeenOnFollow;
-	} );
 	beforeEach( () => {
 		resetSyncingFollows();
 	} );

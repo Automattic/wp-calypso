@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -11,22 +10,9 @@ import { noop } from 'lodash';
 import { NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { follow, unfollow } from 'state/reader/follows/actions';
-
-import useMockery from 'test/helpers/use-mockery';
+import { requestUnfollow, receiveUnfollow, unfollowError } from '../';
 
 describe( 'following/mine/delete', () => {
-	let requestUnfollow, receiveUnfollow, unfollowError;
-	useMockery( mockery => {
-		mockery.registerMock( 'reader/stats', {
-			recordFollow: noop,
-		} );
-
-		const module = require( '../' );
-		requestUnfollow = module.requestUnfollow;
-		receiveUnfollow = module.receiveUnfollow;
-		unfollowError = module.unfollowError;
-	} );
-
 	describe( 'requestUnfollow', () => {
 		it( 'should dispatch a http request', () => {
 			const dispatch = spy();
@@ -56,9 +42,7 @@ describe( 'following/mine/delete', () => {
 				} ),
 			);
 
-			expect( dispatch ).to.be.calledWithMatch(
-				{ type: NOTICE_CREATE, notice: { status: null, button: 'Undo' } },
-			);
+			expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE, notice: { status: null } } );
 		} );
 	} );
 

@@ -15,7 +15,6 @@ import { follow } from 'state/reader/follows/actions';
 import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
 import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 import { getSiteName } from 'reader/get-helpers';
-import { recordFollow } from 'reader/stats';
 
 export function requestUnfollow( { dispatch, getState }, action ) {
 	const { payload: { feedUrl } } = action;
@@ -42,14 +41,7 @@ export function requestUnfollow( { dispatch, getState }, action ) {
 			null,
 			translate( "You're no longer following %(siteTitle)s", { args: { siteTitle } } ),
 			{
-				duration: 7000,
-				button: translate( 'Undo' ),
-				onClick: () => {
-					dispatch( follow( action.payload.feedUrl ) );
-					recordFollow( action.payload.feedUrl, null, {
-						source: 'unfollow_notice_undo',
-					} );
-				},
+				duration: 5000,
 			},
 		),
 	);
