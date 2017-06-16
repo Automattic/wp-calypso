@@ -50,16 +50,24 @@ class PaymentMethodStripe extends Component {
 	}
 
 	renderEditTextboxSecretKey = ( setting ) => {
-		const { method, translate } = this.props;
+		const { translate } = this.props;
 		return (
-			<FormTextInput name={ setting.id } onChange={ this.onEditFieldHandler } value={ setting.value } placeholder={ translate( 'Enter your secret key from your Stripe.com account' ) } />
+			<FormTextInput
+				name={ setting.id }
+				onChange={ this.onEditFieldHandler }
+				value={ setting.value }
+				placeholder={ translate( 'Enter your secret key from your Stripe.com account' ) } />
 		);
 	}
 
 	renderEditTextboxPublishableKey = ( setting ) => {
-		const { method, translate } = this.props;
+		const { translate } = this.props;
 		return (
-			<FormTextInput name={ setting.id } onChange={ this.onEditFieldHandler } value={ setting.value } placeholder={ translate( 'Enter your publishable key from your Stripe.com account' ) } />
+			<FormTextInput
+				name={ setting.id }
+				onChange={ this.onEditFieldHandler }
+				value={ setting.value }
+				placeholder={ translate( 'Enter your publishable key from your Stripe.com account' ) } />
 		);
 	}
 
