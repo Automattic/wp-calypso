@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import WebPreview from 'components/web-preview';
 import WebPreviewContent from 'components/web-preview/content';
 
@@ -22,6 +21,7 @@ const EditorPreview = React.createClass( {
 		showPreview: React.PropTypes.bool,
 		isSaving: React.PropTypes.bool,
 		isLoading: React.PropTypes.bool,
+		isFullScreen: React.PropTypes.bool,
 		previewUrl: React.PropTypes.string,
 		editUrl: React.PropTypes.string,
 		onClose: React.PropTypes.func,
@@ -96,14 +96,14 @@ const EditorPreview = React.createClass( {
 	},
 
 	render() {
-		const previewFlow = config.isEnabled( 'post-editor/delta-post-publish-preview' );
+		const isFullScreen = this.props.isFullScreen;
 		const className = classNames( 'editor-preview', {
-			'is-fullscreen': previewFlow,
+			'is-fullscreen': isFullScreen,
 		} );
 
 		return (
 			<div className={ className }>
-				{ previewFlow
+				{ isFullScreen
 					? <WebPreviewContent
 							showPreview={ this.props.showPreview }
 							showEdit={ true }

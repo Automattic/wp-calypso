@@ -363,17 +363,18 @@ export const PostEditor = React.createClass( {
 						onSave={ this.onSave }
 						isPostPrivate={ utils.isPrivate( this.state.post ) }
 						/>
-					{ this.props.isSitePreviewable ?
-						<EditorPreview
+					{ this.props.isSitePreviewable
+						? <EditorPreview
 							showPreview={ this.state.showPreview }
 							onClose={ this.onPreviewClose }
 							onEdit={ this.onPreviewEdit }
 							isSaving={ this.state.isSaving || this.state.isAutosaving }
 							isLoading={ this.state.isLoading }
+							isFullScreen={ this.state.isPostPublishPreview }
 							previewUrl={ this.state.previewUrl }
 							externalUrl={ this.state.previewUrl }
 							editUrl={ this.props.editPath }
-							defaultViewportDevice={ config.isEnabled( 'post-editor/delta-post-publish-preview' ) ? 'computer' : 'tablet' }
+							defaultViewportDevice={ this.state.isPostPublishPreview ? 'computer' : 'tablet' }
 						/>
 						: null }
 					{ config.isEnabled( 'post-editor/delta-post-publish-preview' )
