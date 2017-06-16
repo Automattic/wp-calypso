@@ -8,7 +8,6 @@ import { find, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import Dialog from 'components/dialog';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
@@ -61,21 +60,15 @@ class ProductFormVariationsTable extends React.Component {
 
 	setStockQuantity = ( e ) => {
 		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
+		const manage_stock = stock_quantity !== '';
 		this.editAllVariations( 'stock_quantity', stock_quantity );
+		this.editAllVariations( 'manage_stock', manage_stock );
 	}
 
 	setDimension = ( e ) => {
 		const dimensions = { ...this.state.dimensions, [ e.target.name ]: e.target.value };
 		this.editAllVariations( 'dimensions', dimensions );
 	}
-
-	toggleStock = () => {
-		const manage_stock = ! this.state.manage_stock;
-		if ( this.state.manage_stock ) {
-			this.editAllVariations( 'stock_quantity', '' );
-		}
-		this.editAllVariations( 'manage_stock', manage_stock );
-	};
 
 	onShowDialog( selectedVariation ) {
 		this.setState( {
@@ -138,15 +131,25 @@ class ProductFormVariationsTable extends React.Component {
 	}
 
 	renderBulkRow() {
-		const { translate, variations } = this.props;
+		const { translate } = this.props;
 		const { regular_price, dimensions, weight, stock_quantity } = this.state;
-		const manageStock = ( find( variations, ( v ) => v.manage_stock ) ) ? true : false;
 
 		return (
 			<tr className="products__product-form-variation-all-row">
 				<td className="products__product-id">
 					<div className="products__product-name">
 						{ translate( 'All variations' ) }
+					</div>
+				</td>
+				<td>
+					<div className="products__product-manage-stock">
+						<FormTextInput
+							name="stock_quantity"
+							value={ stock_quantity }
+							type="number"
+							onChange={ this.setStockQuantity }
+							placeholder={ translate( 'Quantity' ) }
+						/>
 					</div>
 				</td>
 				<td>
@@ -176,23 +179,6 @@ class ProductFormVariationsTable extends React.Component {
 						</div>
 					</div>
 				</td>
-				<td>
-					<div className="products__product-manage-stock">
-						<div className="products__product-manage-stock-toggle">
-							<CompactFormToggle
-								checked={ manageStock }
-								onChange={ this.toggleStock }
-							/>
-						</div>
-						{ manageStock && ( <FormTextInput
-							name="stock_quantity"
-							value={ stock_quantity }
-							type="number"
-							placeholder={ translate( 'Quantity' ) }
-							onChange={ this.setStockQuantity }
-						/> ) }
-					</div>
-				</td>
 			</tr>
 		);
 	}
@@ -211,9 +197,9 @@ class ProductFormVariationsTable extends React.Component {
 						<thead>
 							<tr>
 								<th></th>
+								<th>{ translate( 'Stock' ) }</th>
 								<th className="products__product-price">{ translate( 'Price' ) }</th>
 								<th>{ translate( 'Dimensions & weight' ) }</th>
-								<th>{ translate( 'Manage stock' ) }</th>
 							</tr>
 						</thead>
 						<tbody>

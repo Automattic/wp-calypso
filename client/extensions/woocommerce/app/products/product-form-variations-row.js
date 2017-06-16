@@ -64,7 +64,8 @@ class ProductFormVariationsRow extends Component {
 	setStockQuantity = ( e ) => {
 		const { siteId, editProductVariation, product, variation } = this.props;
 		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
-		editProductVariation( siteId, product, variation, { stock_quantity } );
+		const manage_stock = stock_quantity !== '';
+		editProductVariation( siteId, product, variation, { stock_quantity, manage_stock } );
 	}
 
 	showDialog = () => {
@@ -170,7 +171,7 @@ class ProductFormVariationsRow extends Component {
 	}
 
 	render() {
-		const { variation, manageStock, translate } = this.props;
+		const { variation, translate } = this.props;
 		return (
 			<tr className="products__product-form-variation-row">
 				<td className="products__product-id">
@@ -179,6 +180,17 @@ class ProductFormVariationsRow extends Component {
 						<span className="products__product-name products__variation-settings-link" onClick={ this.showDialog }>
 							{ formattedVariationName( variation ) }
 						</span>
+					</div>
+				</td>
+				<td>
+					<div className="products__product-manage-stock">
+						<FormTextInput
+							name="stock_quantity"
+							value={ variation.stock_quantity || '' }
+							type="number"
+							onChange={ this.setStockQuantity }
+							placeholder={ translate( 'Quantity' ) }
+						/>
 					</div>
 				</td>
 				<td>
@@ -206,17 +218,6 @@ class ProductFormVariationsRow extends Component {
 								noWrap
 							/>
 						</div>
-					</div>
-				</td>
-				<td>
-					<div className="products__product-manage-stock">
-						{ manageStock && ( <FormTextInput
-							name="stock_quantity"
-							value={ variation.stock_quantity || '' }
-							type="number"
-							onChange={ this.setStockQuantity }
-							placeholder={ translate( 'Quantity' ) }
-						/> ) }
 					</div>
 				</td>
 			</tr>
