@@ -6,7 +6,7 @@ import {
 	isMappedDomainSite,
 	isSiteOnFreePlan,
 	isUserRegistrationDaysWithinRange,
-} from 'state/selectors/';
+} from 'state/selectors';
 
 /**
  * Returns true if the current user is eligible to participate in the free to paid plan upsell for the site
