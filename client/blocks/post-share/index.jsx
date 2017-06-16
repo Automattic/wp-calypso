@@ -141,6 +141,13 @@ class PostShare extends Component {
 
 	toggleSharingPreview = () => {
 		const showSharingPreview = ! this.state.showSharingPreview;
+
+		if ( showSharingPreview ) {
+			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
+		} else {
+			document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
+		}
+
 		analytics.tracks.recordEvent( 'calypso_publicize_share_preview_toggle', { show: showSharingPreview } );
 		this.setState( { showSharingPreview } );
 	}
