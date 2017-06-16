@@ -14,6 +14,7 @@ import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class PaymentMethodPaypal extends Component {
 
@@ -68,14 +69,16 @@ class PaymentMethodPaypal extends Component {
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>{ translate( 'Your Paypal ID' ) }</FormLabel>
-					{ this.renderPaypalId( method.settings.email.value ) }
-					<span>
+					<FormTextInput
+						defaultValue={ method.settings.email.value }
+					/>
+					<FormSettingExplanation>
 						{ translate(
 							'If you don\'t have a PayPal account yet you ' +
 							'will receive instructions on how to sign up ' +
 							'when you receive your first order via PayPal'
 						) }
-					</span>
+					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLegend>{ translate( 'Payment authorization' ) }</FormLegend>
