@@ -23,9 +23,9 @@ describe( 'isEligibleForDomainToPaidPlanUpsell', () => {
 		isMappedDomainSite = stub();
 		isSiteOnFreePlan = stub();
 
-		mockery.registerMock( './can-current-user', canCurrentUser );
-		mockery.registerMock( './is-mapped-domain-site', isMappedDomainSite );
-		mockery.registerMock( './is-site-on-free-plan', isSiteOnFreePlan );
+		mockery.registerMock( 'state/selectors/can-current-user', canCurrentUser );
+		mockery.registerMock( 'state/selectors/is-mapped-domain-site', isMappedDomainSite );
+		mockery.registerMock( 'state/selectors/is-site-on-free-plan', isSiteOnFreePlan );
 	} );
 
 	before( () => {
