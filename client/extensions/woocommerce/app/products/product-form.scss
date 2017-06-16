@@ -808,6 +808,10 @@
 	.products__product-weight-input {
 		width: 150px;
 
+		.form-text-input-with-affixes {
+			flex-direction: row;
+		}
+
 		@include breakpoint( ">480px" ) {
 			.form-text-input {
 				min-width: 60px;
