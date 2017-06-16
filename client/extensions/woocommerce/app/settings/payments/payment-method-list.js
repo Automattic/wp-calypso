@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { arePaymentMethodsLoaded } from 'woocommerce/state/sites/payment-methods/selectors';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
 import { getPaymentMethodsGroup } from 'woocommerce/state/ui/payments/methods/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -16,9 +17,11 @@ import List from 'woocommerce/components/list/list';
 import ListHeader from 'woocommerce/components/list/list-header';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 import PaymentMethodItem from './payment-method-item';
+import PaymentMethodItemPlaceholder from './payment-method-item-placeholder';
 
 class SettingsPaymentsMethodList extends Component {
 	static propTypes = {
+		isLoading: PropTypes.bool,
 		fetchPaymentMethods: PropTypes.func.isRequired,
 		methodType: PropTypes.string.isRequired,
 		paymentMethods: PropTypes.array.isRequired,
@@ -50,8 +53,14 @@ class SettingsPaymentsMethodList extends Component {
 		);
 	}
 
+	showPlaceholder = () => {
+		return (
+			<PaymentMethodItemPlaceholder />
+		);
+	}
+
 	render() {
-		const { translate, methodType, paymentMethods } = this.props;
+		const { isLoading, methodType, paymentMethods, translate } = this.props;
 
 		return (
 			<List>
@@ -67,6 +76,7 @@ class SettingsPaymentsMethodList extends Component {
 					<ListItemField className="payments__methods-column-settings">
 					</ListItemField>
 				</ListHeader>
+				{ isLoading && this.showPlaceholder() }
 				{ paymentMethods && paymentMethods.map( this.renderMethodItem ) }
 			</List>
 		);
@@ -76,7 +86,9 @@ class SettingsPaymentsMethodList extends Component {
 function mapStateToProps( state, ownProps ) {
 	const paymentMethods = getPaymentMethodsGroup( state, ownProps.methodType );
 	const site = getSelectedSiteWithFallback( state );
+	const isLoading = ! arePaymentMethodsLoaded( state );
 	return {
+		isLoading,
 		paymentMethods,
 		site,
 	};
