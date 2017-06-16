@@ -9,6 +9,9 @@ import { expect } from 'chai';
 import reducer, { initialState } from '../reducer';
 import {
 	addMethodToShippingZone,
+	openShippingZoneMethod,
+	cancelShippingZoneMethod,
+	closeShippingZoneMethod,
 	removeMethodFromShippingZone,
 	changeShippingZoneMethodType,
 	changeShippingZoneMethodTitle,
@@ -238,6 +241,48 @@ describe( 'reducer', () => {
 			expect( newState.updates ).to.be.empty;
 			expect( newState.deletes ).to.be.empty;
 			expect( newState.creates ).to.deep.equal( [ { id: { index: 0 }, cost: 42 } ] );
+		} );
+	} );
+
+	describe( 'openShippingZoneMethod', () => {
+		it( 'should mark the method as open', () => {
+			const state = {
+				creates: [],
+				updates: [],
+				deletes: [],
+				currentlyEditingId: null,
+			};
+
+			const newState = reducer( state, openShippingZoneMethod( siteId, 1 ) );
+			expect( newState.currentlyEditingId ).to.equal( 1 );
+		} );
+	} );
+
+	describe( 'cancelShippingZoneMethod', () => {
+		it( 'should mark the method as closed', () => {
+			const state = {
+				creates: [],
+				updates: [],
+				deletes: [],
+				currentlyEditingId: 1,
+			};
+
+			const newState = reducer( state, cancelShippingZoneMethod( siteId ) );
+			expect( newState.currentlyEditingId ).to.equal( null );
+		} );
+	} );
+
+	describe( 'closeShippingZoneMethod', () => {
+		it( 'should mark the method as closed', () => {
+			const state = {
+				creates: [],
+				updates: [],
+				deletes: [],
+				currentlyEditingId: 1,
+			};
+
+			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
+			expect( newState.currentlyEditingId ).to.equal( null );
 		} );
 	} );
 } );

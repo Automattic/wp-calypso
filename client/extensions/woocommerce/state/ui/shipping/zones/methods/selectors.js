@@ -36,6 +36,7 @@ const getShippingZoneMethodsEdits = ( state, zoneId, siteId ) => {
 		creates: [],
 		updates: [],
 		deletes: [],
+		currentlyEditingId: null,
 	};
 };
 
@@ -114,6 +115,25 @@ export const getCurrentlyEditingShippingZoneMethods = ( state, siteId = getSelec
 
 	const currentMethodEdits = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.methods;
 	return overlayShippingZoneMethods( state, zone, siteId, currentMethodEdits );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Object} The currently open shipping method or null
+ */
+export const getCurrentlyOpenShippingZoneMethod = ( state, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! areShippingZonesLoaded( state, siteId ) ) {
+		return null;
+	}
+	const zone = getCurrentlyEditingShippingZone( state, siteId );
+	if ( ! zone ) {
+		return null;
+	}
+
+	const currentMethodEdits = getShippingZonesEdits( state, zone.id, siteId ).currentlyEditingChanges.methods;
+	const methods = getShippingZoneMethods( state, zone.id, siteId );
+	return find( methods, { id: currentMethodEdits.currentlyEditingId } ) || null;
 };
 
 /**

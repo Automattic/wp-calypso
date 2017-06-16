@@ -55,13 +55,13 @@ class Shipping extends Component {
 	}
 
 	render() {
-		const { className, loaded } = this.props;
+		const { siteId, className, loaded } = this.props;
 
 		return (
 			<Main className={ classNames( 'shipping', className ) }>
 				<ShippingZoneHeader />
 				<ShippingZoneLocations loaded={ loaded } />
-				<ShippingZoneMethodList loaded={ loaded } />
+				<ShippingZoneMethodList siteId={ siteId } loaded={ loaded } />
 			</Main>
 		);
 	}

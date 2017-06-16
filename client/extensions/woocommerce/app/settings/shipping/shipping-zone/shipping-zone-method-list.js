@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,22 +14,27 @@ import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import Spinner from 'components/spinner';
 import { getMethodSummary } from '../shipping-method-utils';
+import { openShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/actions';
 import { getCurrentlyEditingShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 
-const ShippingZoneMethodList = ( { loaded, methods, translate } ) => {
-	const renderMethod = ( method, index ) => (
-		<div key={ index } className="shipping-zone__method-row">
-			<span className="shipping-zone__method-name">
-				{ method.title }
-			</span>
-			<span className="shipping-zone__method-description">
-				{ getMethodSummary( method ) }
-			</span>
-			<span className="shipping-zone__method-actions">
-				<Button compact>{ translate( 'Edit' ) }</Button>
-			</span>
-		</div>
-	);
+const ShippingZoneMethodList = ( { siteId, loaded, methods, translate, actions } ) => {
+	const renderMethod = ( method, index ) => {
+		const onEditClick = () => ( actions.openShippingZoneMethod( siteId, method.id ) );
+
+		return (
+			<div key={ index } className="shipping-zone__method-row">
+				<span className="shipping-zone__method-name">
+					{ method.title }
+				</span>
+				<span className="shipping-zone__method-description">
+					{ getMethodSummary( method ) }
+				</span>
+				<span className="shipping-zone__method-actions">
+					<Button compact onClick={ onEditClick }>{ translate( 'Edit' ) }</Button>
+				</span>
+			</div>
+		);
+	};
 
 	const renderContent = () => {
 		if ( ! loaded ) {
@@ -62,8 +68,17 @@ const ShippingZoneMethodList = ( { loaded, methods, translate } ) => {
 	);
 };
 
+ShippingZoneMethodList.propTypes = {
+	siteId: PropTypes.number,
+};
+
 export default connect(
 	( state ) => ( {
 		methods: getCurrentlyEditingShippingZoneMethods( state )
+	} ),
+	( dispatch ) => ( {
+		actions: bindActionCreators( {
+			openShippingZoneMethod,
+		}, dispatch )
 	} )
 )( localize( ShippingZoneMethodList ) );

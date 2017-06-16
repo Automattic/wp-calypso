@@ -3,6 +3,9 @@
  */
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE,
@@ -17,6 +20,34 @@ import {
  */
 export const addMethodToShippingZone = ( siteId, methodType ) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD, siteId, methodType };
+};
+
+/**
+ * Opens the shipping method for editing
+ * @param {Number} siteId Site ID.
+ * @param {Number|Object} methodId ID of the shipping method to open.
+ * @return {Object} Action object.
+ */
+export const openShippingZoneMethod = ( siteId, methodId ) => {
+	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN, siteId, methodId };
+};
+
+/**
+ * Closes the currently edited shipping method and discards the changes
+ * @param {Number} siteId Site ID.
+ * @return {Object} Action object.
+ */
+export const cancelShippingZoneMethod = ( siteId ) => {
+	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL, siteId };
+};
+
+/**
+ * Closes the currently edited shipping method and saves the changes
+ * @param {Number} siteId Site ID.
+ * @return {Object} Action object.
+ */
+export const closeShippingZoneMethod = ( siteId ) => {
+	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE, siteId };
 };
 
 /**

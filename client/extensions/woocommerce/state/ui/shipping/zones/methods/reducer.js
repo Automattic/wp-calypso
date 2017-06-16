@@ -9,6 +9,9 @@ import { find, findIndex, isNil, reject } from 'lodash';
 import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE,
@@ -29,6 +32,7 @@ export const initialState = {
 	creates: [],
 	updates: [],
 	deletes: [],
+	currentlyEditingId: null,
 };
 
 const reducer = {};
@@ -43,6 +47,22 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
 	return { ...state,
 		creates: [ ...state.creates, method ],
 	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN ] = ( state, action ) => {
+	return { ...state,
+		currentlyEditingId: action.methodId,
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL ] = ( state ) => {
+	return { ...state,
+		currentlyEditingId: null,
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = ( state, action ) => {
+	return reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL ]( state, action );
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { methodId } ) => {
