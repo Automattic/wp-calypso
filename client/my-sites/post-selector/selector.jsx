@@ -454,7 +454,7 @@ const PostSelectorPosts = React.createClass( {
 export default connect( ( state, ownProps ) => {
 	const { siteId, query } = ownProps;
 
-	const apiVersion = ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '99' )
+	const apiVersion = ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.0' )
 		? '1.2'
 		: undefined;
 	const queryWithVersion = { ...query, apiVersion };
