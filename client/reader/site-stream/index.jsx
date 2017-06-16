@@ -20,8 +20,7 @@ import { getFeed } from 'state/reader/feeds/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import FeedFeatured from './featured';
-import QueryReaderTeams from 'components/data/query-reader-teams';
-import { getReaderTeams } from 'state/selectors';
+import BlogStickers from 'blocks/blog-stickers';
 
 class SiteStream extends React.Component {
 	static propTypes = {
@@ -45,7 +44,7 @@ class SiteStream extends React.Component {
 	};
 
 	render() {
-		const { site, feed, featuredStore, teams } = this.props;
+		const { site, feed, featuredStore } = this.props;
 		// check for redirect
 		if ( site && site.prefer_feed && site.feed_ID ) {
 			page.replace( '/read/feeds/' + site.feed_ID );
@@ -72,11 +71,10 @@ class SiteStream extends React.Component {
 			>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				<RefreshFeedHeader site={ site } feed={ feed } showBack={ this.props.showBack } />
-				{ teams && find( teams, [ 'slug', 'a8c' ] ) && <h1>blog stickers</h1> }
+				<BlogStickers blogId={ this.props.siteId } />
 				{ featuredContent }
 				{ ! site && <QueryReaderSite siteId={ this.props.siteId } /> }
 				{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }
-				{ ! teams && <QueryReaderTeams /> }
 			</Stream>
 		);
 	}
@@ -87,6 +85,5 @@ export default connect( ( state, ownProps ) => {
 	return {
 		site: site,
 		feed: site && site.feed_ID && getFeed( state, site.feed_ID ),
-		teams: getReaderTeams( state ),
 	};
 } )( localize( SiteStream ) );
