@@ -26,12 +26,10 @@ describe( 'isEligibleForFreeToPaidUpsell', () => {
 		isSiteOnFreePlan = stub();
 		isUserRegistrationDaysWithinRange = stub();
 
-		mockery.registerMock( 'state/selectors/', {
-			canCurrentUser,
-			isMappedDomainSite,
-			isSiteOnFreePlan,
-			isUserRegistrationDaysWithinRange
-		} );
+		mockery.registerMock( './can-current-user', canCurrentUser );
+		mockery.registerMock( './is-mapped-domain-site', isMappedDomainSite );
+		mockery.registerMock( './is-site-on-free-plan', isSiteOnFreePlan );
+		mockery.registerMock( './is-user-registration-days-within-range', isUserRegistrationDaysWithinRange );
 	} );
 
 	before( () => {

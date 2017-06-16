@@ -1,12 +1,10 @@
 /**
  * Internal dependencies
  */
-import {
-	canCurrentUser,
-	isMappedDomainSite,
-	isSiteOnFreePlan,
-	isUserRegistrationDaysWithinRange,
-} from 'state/selectors';
+import canCurrentUser from './can-current-user';
+import isMappedDomainSite from './is-mapped-domain-site';
+import isSiteOnFreePlan from './is-site-on-free-plan';
+import isUserRegistrationDaysWithinRange from './is-user-registration-days-within-range';
 
 /**
  * Returns true if the current user is eligible to participate in the free to paid plan upsell for the site
