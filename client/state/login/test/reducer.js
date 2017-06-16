@@ -233,6 +233,14 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( 'another error' );
 		} );
 
+		it( 'should reset the error to null when switching routes', () => {
+			const state = twoFactorAuthRequestError( 'some error', {
+				type: ROUTE_SET
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
 		it( 'should not persist state', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
 				type: SERIALIZE
