@@ -65,7 +65,7 @@ class Shipping extends Component {
 			</Main>
 		);
 	}
-};
+}
 
 Shipping.propTypes = {
 	className: PropTypes.string,
