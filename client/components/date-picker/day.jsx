@@ -1,31 +1,32 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/noop' ),
-	classNames = require( 'classnames' );
+import React, { PropTypes, Component } from 'react';
+import { noop } from 'lodash';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var Tooltip = require( 'components/tooltip' );
+import Tooltip from 'components/tooltip';
 
-module.exports = React.createClass( {
-	displayName: 'DatePickerDay',
+class DatePickerDay extends Component {
+	static propTypes = {
+		date: PropTypes.object.isRequired,
+		events: PropTypes.array
+	};
 
-	propTypes: {
-		date: React.PropTypes.object.isRequired,
-		events: React.PropTypes.array
-	},
+	static defaultProps = {
+		showTooltip: false
+	};
 
-	getInitialState: function() {
-		return {
-			showTooltip: false
-		};
-	},
+	state = {
+		showTooltip: false,
+	}
 
-	isPastDay: function( date ) {
-		var today = this.moment().set( {
+	isPastDay( date ) {
+		const today = this.props.moment().set( {
 			hour: 0,
 			minute: 0,
 			second: 0,
@@ -33,23 +34,27 @@ module.exports = React.createClass( {
 		} );
 
 		date = date || this.props.date;
-
 		return ( +today - 1 ) >= +date;
-	},
+	}
 
-	handleTooltip: function( show ) {
-		var showTooltip = ! ! this.props.events.length && show;
-		this.setState( { showTooltip: showTooltip } );
-	},
+	showTooltip = () => {
+		if ( ! this.props.events.length ) {
+			return;
+		}
 
-	renderTooltip: function() {
-		var label;
+		this.setState( { showTooltip: true } );
+	}
 
+	hideTooltip = () => {
+		this.setState( { showTooltip: false } );
+	}
+
+	renderTooltip() {
 		if ( ! this.state.showTooltip ) {
 			return;
 		}
 
-		label = this.translate(
+		const label = this.props.translate(
 				'%(posts)d post',
 				'%(posts)d posts', {
 					count: this.props.events.length,
@@ -66,7 +71,7 @@ module.exports = React.createClass( {
 				onClose={ noop }
 			>
 				<span>{ label }</span>
-				<hr className="tooltip__hr" />
+				<hr className="date-picker__division" />
 				<ul>
 					{
 						this.props.events.map( function( event ) {
@@ -76,12 +81,12 @@ module.exports = React.createClass( {
 				</ul>
 			</Tooltip>
 		);
-	},
+	}
 
-	render: function() {
-		var classes = { 'date-picker__day': true },
-			i = 0,
-			dayEvent;
+	render() {
+		const classes = { 'date-picker__day': true };
+		let i = 0;
+		let dayEvent;
 
 		classes[ 'is-selected' ] = this.props.selected === true;
 		classes[ 'past-day' ] = this.isPastDay() === true;
@@ -103,8 +108,8 @@ module.exports = React.createClass( {
 			<div
 				ref="dayTarget"
 				className={ classNames( classes ) }
-				onMouseEnter={ this.handleTooltip.bind( this, true ) }
-				onMouseLeave={ this.handleTooltip.bind( this, false ) }
+				onMouseEnter={ this.showTooltip }
+				onMouseLeave={ this.hideTooltip }
 			>
 				<span
 					key={ 'selected-' + ( this.props.date.getTime() / 1000 | 0 ) }
@@ -118,4 +123,7 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( DatePickerDay );
+

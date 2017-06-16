@@ -71,6 +71,11 @@ $date-picker_nav_button_size: 20px;
 	opacity: 1;
 }
 
+.date-picker__division {
+	margin: 8px 0;
+	background: $gray;
+}
+
 /**
  * The follow class names are coming from react-day-picker component
  * and they aren't possible change them without change its code base.
