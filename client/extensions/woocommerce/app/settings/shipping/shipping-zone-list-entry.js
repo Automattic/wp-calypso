@@ -13,11 +13,12 @@ import { isNumber } from 'lodash';
  */
 import Button from 'components/button';
 import Spinner from 'components/spinner';
+import { getMethodSummary } from './shipping-method-utils';
 import { areShippingZoneMethodsLoaded } from 'woocommerce/state/sites/shipping-zone-methods/selectors';
 import { getShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { openShippingZoneForEdit } from 'woocommerce/state/ui/shipping/zones/actions';
 
-const ShippingZone = ( { translate, id, name, methods, methodsLoaded, siteId, actions } ) => {
+const ShippingZoneEntry = ( { translate, id, name, methods, methodsLoaded, siteId, actions } ) => {
 	const loaded = methodsLoaded || ! isNumber( id );
 
 	const renderMethod = ( methodKey ) => {
@@ -26,7 +27,7 @@ const ShippingZone = ( { translate, id, name, methods, methodsLoaded, siteId, ac
 		return (
 			<div key={ methodKey } className="shipping__zones-row-method">
 				<p className="shipping__zones-row-method-name">{ method.title }</p>
-				{ /*<p className="shipping__zones-row-method-description">{ method.method_description }</p>*/ }
+				<p className="shipping__zones-row-method-description">{ getMethodSummary( method, translate ) }</p>
 			</div>
 		);
 	};
@@ -72,7 +73,7 @@ const ShippingZone = ( { translate, id, name, methods, methodsLoaded, siteId, ac
 	);
 };
 
-ShippingZone.propTypes = {
+ShippingZoneEntry.propTypes = {
 	siteId: PropTypes.number,
 	id: PropTypes.oneOfType( [ PropTypes.number, PropTypes.object ] ),
 	name: PropTypes.string
@@ -90,4 +91,4 @@ export default connect(
 			}, dispatch
 		)
 	} )
-)( localize( ShippingZone ) );
+)( localize( ShippingZoneEntry ) );

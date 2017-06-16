@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import ShippingZone from './shipping-zone';
+import ShippingZoneEntry from './shipping-zone-list-entry';
 import ShippingZoneDialog from './shipping-zone-dialog';
 import Spinner from 'components/spinner';
 import { addNewShippingZone } from 'woocommerce/state/ui/shipping/zones/actions';
@@ -48,7 +48,7 @@ class ShippingZoneList extends Component {
 		const { translate, siteId } = this.props;
 
 		const renderShippingZone = ( zone, index ) => {
-			return ( <ShippingZone key={ index } siteId={ siteId } { ...zone } /> );
+			return ( <ShippingZoneEntry key={ index } siteId={ siteId } { ...zone } /> );
 		};
 
 		return (
