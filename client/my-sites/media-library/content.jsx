@@ -27,6 +27,7 @@ import {
 } from 'lib/media/constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
+import MediaLibraryScaleHeader from './empty-header';
 import MediaLibraryList from './list';
 
 const MediaLibraryContent = React.createClass( {
@@ -48,7 +49,8 @@ const MediaLibraryContent = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			mediaValidationErrors: Object.freeze( {} ),
-			onAddMedia: noop
+			onAddMedia: noop,
+			source: '',
 		};
 	},
 
@@ -201,22 +203,36 @@ const MediaLibraryContent = React.createClass( {
 		);
 	},
 
+	renderHeader() {
+		if ( this.props.source !== '' ) {
+			return (
+				<MediaLibraryScaleHeader onMediaScaleChange={ this.props.onMediaScaleChange } />
+			);
+		}
+
+		if ( ! this.props.filterRequiresUpgrade ) {
+			return (
+				<MediaLibraryHeader
+					site={ this.props.site }
+					filter={ this.props.filter }
+					onMediaScaleChange={ this.props.onMediaScaleChange }
+					onAddMedia={ this.props.onAddMedia }
+					onAddAndEditImage={ this.props.onAddAndEditImage }
+					selectedItems={ this.props.selectedItems }
+					onViewDetails={ this.props.onViewDetails }
+					onDeleteItem={ this.props.onDeleteItem }
+					sticky={ ! this.props.scrollable }
+				/>
+			);
+		}
+
+		return null;
+	},
+
 	render: function() {
 		return (
 			<div className="media-library__content">
-				{ ! this.props.filterRequiresUpgrade &&
-					<MediaLibraryHeader
-						site={ this.props.site }
-						filter={ this.props.filter }
-						onMediaScaleChange={ this.props.onMediaScaleChange }
-						onAddMedia={ this.props.onAddMedia }
-						onAddAndEditImage={ this.props.onAddAndEditImage }
-						selectedItems={ this.props.selectedItems }
-						onViewDetails={ this.props.onViewDetails }
-						onDeleteItem={ this.props.onDeleteItem }
-						sticky={ ! this.props.scrollable }
-					/>
-				}
+				{ this.renderHeader() }
 				{ this.renderErrors() }
 				{ this.renderMediaList() }
 			</div>

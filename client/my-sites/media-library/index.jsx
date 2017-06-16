@@ -110,6 +110,10 @@ module.exports = React.createClass( {
 	},
 
 	renderDropZone: function() {
+		if ( this.props.source !== '' ) {
+			return null;
+		}
+
 		return (
 			<MediaLibraryDropZone
 				site={ this.props.site }
