@@ -55,7 +55,6 @@ import {
 	PLAN_BUSINESS,
 } from 'lib/plans/constants';
 
-import Banner from 'components/banner';
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
 
@@ -284,19 +283,6 @@ class PostShare extends Component {
 		);
 	}
 
-	renderUpgradeToGetPublicizeNudge() {
-		const { translate } = this.props;
-		return (
-			<Banner
-				className="post-share__upgrade-nudge"
-				feature="republicize"
-				title={ translate( 'Unlock the ability to re-share posts to social media' ) }
-				callToAction={ translate( 'Upgrade to Premium' ) }
-				description={ translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' ) }
-			/>
-		);
-	}
-
 	renderConnectionsWarning() {
 		const {
 			connections,
@@ -473,10 +459,6 @@ class PostShare extends Component {
 	render() {
 		if ( ! this.props.isPublicizeEnabled ) {
 			return null;
-		}
-
-		if ( ! this.props.hasRepublicizeFeature ) {
-			return this.renderUpgradeToGetPublicizeNudge();
 		}
 
 		const {

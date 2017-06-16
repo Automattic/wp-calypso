@@ -68,7 +68,21 @@ class PublicizeActionsList extends PureComponent {
 		} );
 	};
 
-	renderUpgradeToBusinessPlanNudge() {
+	renderUpgradeToPremiumNudge() {
+		const { translate } = this.props;
+
+		return (
+			<Banner
+				className="post-share__upgrade-nudge"
+				feature="republicize"
+				title={ translate( 'Unlock the ability to re-share posts to social media' ) }
+				callToAction={ translate( 'Upgrade to Premium' ) }
+				description={ translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' ) }
+			/>
+		);
+	}
+
+	renderUpgradeToBusinessNudge() {
 		const {
 			businessDiscountedRawPrice,
 			businessRawPrice,
@@ -196,7 +210,7 @@ class PublicizeActionsList extends PureComponent {
 		if ( dialogAction === 'delete' ) {
 			const {
 				siteId,
-				postId
+				postId,
 			} = this.props;
 			analytics.tracks.recordEvent( 'calypso_publicize_scheduled_delete' );
 			this.props.deletePostShareAction( siteId, postId, this.state.selectedScheduledShareId );
@@ -205,10 +219,33 @@ class PublicizeActionsList extends PureComponent {
 		this.setState( { showDeleteDialog: false } );
 	};
 
-	renderActionsList = actions => {
+	renderActionsList = () => {
+		const {
+			hasRepublicizeFeature,
+			hasRepublicizeSchedulingFeature,
+			publishedActions,
+			scheduledActions,
+		} = this.props;
+
+		if ( this.state.selectedShareTab === PUBLISHED ) {
+			return (
+				<div className="post-share__published-list">
+					{ publishedActions.map( ( item, index ) => this.renderActionItem( item, index ) ) }
+				</div>
+			);
+		}
+
+		if ( ! hasRepublicizeFeature && ! hasRepublicizeSchedulingFeature ) {
+			return this.renderUpgradeToPremiumNudge();
+		}
+
+		if ( ! hasRepublicizeSchedulingFeature ) {
+			return this.renderUpgradeToBusinessNudge();
+		}
+
 		return (
-			<div>
-				{ actions.map( ( item, index ) => this.renderActionItem( item, index ) ) }
+			<div className="post-share__scheduled-list">
+				{ scheduledActions.map( ( item, index ) => this.renderActionItem( item, index ) ) }
 			</div>
 		);
 	};
@@ -234,15 +271,7 @@ class PublicizeActionsList extends PureComponent {
 	}
 
 	render() {
-		const {
-			hasRepublicizeSchedulingFeature,
-			postId,
-			siteId,
-			scheduledActions,
-			publishedActions,
-		} = this.props;
-
-		const showUpgradeToBusinessNudger = ! hasRepublicizeSchedulingFeature && this.state.selectedShareTab === SCHEDULED;
+		const { postId, siteId } = this.props;
 
 		return (
 			<div>
@@ -268,23 +297,7 @@ class PublicizeActionsList extends PureComponent {
 					<QuerySharePostActions siteId={ siteId } postId={ postId } status={ SCHEDULED } />
 					<QuerySharePostActions siteId={ siteId } postId={ postId } status={ PUBLISHED } />
 
-					{
-						this.state.selectedShareTab === SCHEDULED &&
-						showUpgradeToBusinessNudger &&
-						this.renderUpgradeToBusinessPlanNudge()
-					}
-
-					{ this.state.selectedShareTab === SCHEDULED && ! showUpgradeToBusinessNudger &&
-						<div className="post-share__scheduled-list">
-							{ this.renderActionsList( scheduledActions ) }
-						</div>
-					}
-
-					{ this.state.selectedShareTab === PUBLISHED &&
-						<div className="post-share__published-list">
-							{ this.renderActionsList( publishedActions ) }
-						</div>
-					}
+					{ this.renderActionsList() }
 				</div>
 
 				{ this.renderDeleteDialog() }
