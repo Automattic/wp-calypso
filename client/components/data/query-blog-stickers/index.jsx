@@ -15,11 +15,11 @@ class QueryBlogStickers extends Component {
 	};
 
 	componentWillMount() {
-		this.props.listBlogStickers( { blogId: this.props.blogId } );
+		this.props.listBlogStickers( this.props.blogId );
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		this.props.listBlogStickers( { blogId: this.props.blogId } );
+		this.props.listBlogStickers( this.props.blogId );
 	}
 
 	render() {

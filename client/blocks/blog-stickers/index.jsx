@@ -33,7 +33,7 @@ BlogStickers.propTypes = {
 	blogId: React.PropTypes.number.isRequired,
 };
 
-export default connect( ( state, ownProps ) => {
+export default connect( ( state /*, ownProps*/ ) => {
 	return {
 		teams: getReaderTeams( state ),
 		//stickers: getBlogStickers( state, ownProps.blogId ),
