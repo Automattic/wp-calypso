@@ -375,6 +375,7 @@ export const PostEditor = React.createClass( {
 							externalUrl={ this.state.previewUrl }
 							editUrl={ this.props.editPath }
 							defaultViewportDevice={ this.state.isPostPublishPreview ? 'computer' : 'tablet' }
+							revision={ get( this.state, 'post.revisions.length', 0 ) }
 						/>
 						: null }
 					{ config.isEnabled( 'post-editor/delta-post-publish-preview' )
