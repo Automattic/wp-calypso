@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import DayPicker from 'react-day-picker';
-import merge from 'lodash/merge';
-import noop from 'lodash/noop';
+import { noop, merge } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,40 +13,37 @@ import DayItem from 'components/date-picker/day';
 
 /* Internal dependencies
  */
-module.exports = React.createClass( {
-	displayName: 'DatePicker',
+class DatePicker extends PureComponent {
+	static propTypes = {
+		calendarViewDate: PropTypes.object,
+		enableOutsideDays: PropTypes.bool,
+		events: PropTypes.array,
+		locale: PropTypes.object,
 
-	propTypes: {
-		calendarViewDate: React.PropTypes.object,
-		enableOutsideDays: React.PropTypes.bool,
-		events: React.PropTypes.array,
-		locale: React.PropTypes.object,
+		selectedDay: PropTypes.object,
+		timeReference: PropTypes.object,
 
-		selectedDay: React.PropTypes.object,
-		timeReference: React.PropTypes.object,
+		onMonthChange: PropTypes.func,
+		onSelectDay: PropTypes.func,
+	};
 
-		onMonthChange: React.PropTypes.func,
-		onSelectDay: React.PropTypes.func
-	},
+	static defaultProps = {
+		enableOutsideDays: true,
+		calendarViewDate: new Date(),
+		selectedDay: null,
+		onMonthChange: noop,
+		onSelectDay: noop,
+	};
 
-	getDefaultProps: function() {
-		return {
-			enableOutsideDays: true,
-			calendarViewDate: new Date(),
-			selectedDay: null,
-			onMonthChange: noop,
-			onSelectDay: noop
-		};
-	},
-
-	isSameDay: function( d0, d1 ) {
-		d0 = this.moment( d0 );
-		d1 = this.moment( d1 );
+	isSameDay( d0, d1 ) {
+		d0 = this.props.moment( d0 );
+		d1 = this.props.moment( d1 );
 		return d0.isSame( d1, 'day' );
-	},
+	}
 
-	filterEventsByDay: function( day ) {
-		var i, event, eventsInDay = [];
+	filterEventsByDay( day ) {
+		let i, event;
+		const eventsInDay = [];
 
 		if ( ! this.props.events ) {
 			return [];
@@ -61,83 +58,82 @@ module.exports = React.createClass( {
 		}
 
 		return eventsInDay;
-	},
+	}
 
-	locale: function() {
-		var moment = this.moment,
-			localeData = moment().localeData(),
-			locale = {
-				formatDay: function( date ) {
-					return moment( date ).format( 'llll' );
-				},
+	locale() {
+		const { moment } = this.props;
+		const localeData = moment().localeData();
 
-				formatMonthTitle: function( date ) {
-					return moment( date ).format( 'MMMM YYYY' );
-				},
+		const locale = {
+			formatDay: function( date ) {
+				return moment( date ).format( 'llll' );
+			},
 
-				formatWeekdayShort: function( day ) {
-					return moment().weekday( day ).format( 'dd' )[ 0 ];
-				},
+			formatMonthTitle: function( date ) {
+				return moment( date ).format( 'MMMM YYYY' );
+			},
 
-				formatWeekdayLong: function( day ) {
-					return moment().weekday( day ).format( 'dddd' );
-				},
+			formatWeekdayShort: function( day ) {
+				return moment().weekday( day ).format( 'dd' )[ 0 ];
+			},
 
-				getFirstDayOfWeek: function() {
-					return Number( localeData.firstDayOfWeek() );
-				}
-			};
+			formatWeekdayLong: function( day ) {
+				return moment().weekday( day ).format( 'dddd' );
+			},
+
+			getFirstDayOfWeek: function() {
+				return Number( localeData.firstDayOfWeek() );
+			}
+		};
 
 		return merge( locale, this.props.locale );
-	},
+	}
 
-	setCalendarDay: function( event, clickedDay ) {
-		clickedDay = this.moment( clickedDay );
+	setCalendarDay = ( event, clickedDay ) => {
+		clickedDay = this.props.moment( clickedDay );
 
-		let modifiers = {
+		const modifiers = {
 			year: clickedDay.year(),
 			month: clickedDay.month(),
 			date: clickedDay.date()
 		};
 
-		let date = ( this.props.timeReference || clickedDay ).set( modifiers );
+		const date = ( this.props.timeReference || clickedDay ).set( modifiers );
 
 		this.props.onSelectDay( date, modifiers );
-	},
+	};
 
-	handleCaptionClick: function() {
-		var daypicker = this.refs.daypicker;
+	setCalendarMonth = () => {
+		const { daypicker } = this.refs;
 		daypicker.showMonth( new Date() );
-	},
+	};
 
-	renderDay: function( day ) {
-		var isSelected = this.props.selectedDay &&
-			this.isSameDay( this.props.selectedDay, day );
+	renderDay = day => {
+		const isSelected = this.props.selectedDay && this.isSameDay( this.props.selectedDay, day );
 
 		return (
 			<DayItem
 				selected={ isSelected }
 				events={ this.filterEventsByDay( day ) }
-				date={ day }
-			/>
+				date={ day } />
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<div className="date-picker_container">
-				<DayPicker
-					ref="daypicker"
-					className="date-picker"
-					initialMonth={ this.props.calendarViewDate }
-					renderDay={ this.renderDay }
-					localeUtils={ this.locale() }
-					onDayClick={ this.setCalendarDay }
-					onMonthChange={ this.props.onMonthChange }
-					enableOutsideDays={ this.props.enableOutsideDays }
-					onCaptionClick={ this.handleCaptionClick }>
-				</DayPicker>
-			</div>
+			<DayPicker
+				ref="daypicker"
+				className="date-picker"
+				initialMonth={ this.props.calendarViewDate }
+				renderDay={ this.renderDay }
+				localeUtils={ this.locale() }
+				onDayClick={ this.setCalendarDay }
+				onMonthChange={ this.props.onMonthChange }
+				enableOutsideDays={ this.props.enableOutsideDays }
+				onCaptionClick={ this.setCalendarMonth } />
 		);
 	}
-} );
+}
+
+export default localize( DatePicker );
+
