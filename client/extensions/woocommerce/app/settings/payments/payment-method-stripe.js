@@ -108,7 +108,7 @@ class PaymentMethodStripe extends Component {
 							value="yes"
 							checked={ 'yes' === method.settings.capture.value }
 							onChange={ this.onEditFieldHandler } />
-						<span>{ translate( 'Authorize and charge the customers credit card' ) }</span>
+						<span>{ translate( 'Authorize and charge the customers credit card automatically' ) }</span>
 					</FormLabel>
 					<FormLabel>
 						<FormRadio
@@ -116,13 +116,7 @@ class PaymentMethodStripe extends Component {
 							value="no"
 							checked={ 'no' === method.settings.capture.value }
 							onChange={ this.onEditFieldHandler } />
-						<span>{ translate( 'Only authorize the customers credit card' ) }</span>
-						<span>
-							{ translate(
-								'You will then have to manually capture the ' +
-								'payment'
-							) }
-						</span>
+						<span>{ translate( 'Authorize the customers credit card but charge manually' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
