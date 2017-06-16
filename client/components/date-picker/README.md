@@ -23,11 +23,13 @@ module.exports = React.createClass( {
 			{
 				title: '1 other post scheduled',
 				date: new Date( '2015-10-15 10:30' ),
-				type: 'schedulled'
+				type: 'schedulled',
+				icon: 'time',
 			},
 			{
 				title: 'Happy birthday Damian!',
-				date: new Date( '2015-07-18 15:00' )
+				date: new Date( '2015-07-18 15:00' ),
+				socialIcon: 'path',
 			}
 		];
 
@@ -36,8 +38,7 @@ module.exports = React.createClass( {
 				initialMonth = { new Date( '2015-07-01' ) }
 				events= { events }
 				onSelectDay= { this.onSelectDay }
-				selectedDay= { this.state.date } >
-			</DatePicker>
+				selectedDay= { this.state.date } />
 		);
 	}
 

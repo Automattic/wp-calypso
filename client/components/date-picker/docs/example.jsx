@@ -1,60 +1,60 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	DatePicker = require( 'components/date-picker' );
+import Card from 'components/card';
+import DatePicker from 'components/date-picker';
 
 /**
  * Date Picker Demo
  */
-var datePicker = React.createClass( {
-	mixins: [ PureRenderMixin ],
-	displayName: 'DatePicker',
+class DatePickerExample extends Component {
+	state = {
+		events: [
+			{
+				title: 'Today',
+				date: new Date(),
+				type: 'scheduled'
+			},
 
-	getInitialState: function() {
-		var date = new Date();
-		date.setDate( date.getDate() + 3 );
-		date.setMilliseconds( 0 );
-		date.setSeconds( 0 );
-		date.setMinutes( 0 );
-		date.setHours( 0 );
+			{
+				title: 'Social media event',
+				date: new Date(),
+				socialIcon: 'twitter',
+			},
 
-		return {
-			events: [
-				{
-					title: '1 other post scheduled',
-					date: new Date( '2015-07-15 10:30' ),
-					type: 'scheduled'
-				},
-				{
-					title: 'Happy birthday Damian',
-					date: new Date( '2015-07-18 15:00' ),
-					type: 'birthday'
-				},
-				{
-					title: 'Do not rest',
-					date: new Date( '2015-07-18 8:00' )
-				}
-			],
-			selectedDay: this.moment( date )
-		};
-	},
+			{
+				title: 'Gridicon event',
+				date: new Date(),
+				icon: 'time',
+			},
 
-	selectDay: function( date, modifiers ) {
+			{
+				title: 'Tomorrow is tomorrow',
+				date: new Date( +new Date() + 60 * 60 * 24 * 1000 ),
+				type: 'future-event',
+			},
+			{
+				title: 'Yesterday',
+				date: new Date( +new Date() - 60 * 60 * 24 * 1000 ),
+				type: 'past-event',
+			}
+		]
+	};
+
+	selectDay( date, modifiers ) {
 		this.setState( { selectedDay: date } );
 
 		if ( date ) {
 			console.log( date.toDate(), modifiers );
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<Card style={ { width: '300px', margin: 0 } }>
 				<DatePicker
@@ -65,6 +65,9 @@ var datePicker = React.createClass( {
 			</Card>
 		);
 	}
-} );
+}
 
-module.exports = datePicker;
+DatePickerExample.displayName = 'DatePicker';
+
+export default DatePickerExample;
+

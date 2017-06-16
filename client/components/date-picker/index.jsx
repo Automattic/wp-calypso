@@ -42,17 +42,21 @@ class DatePicker extends PureComponent {
 	}
 
 	filterEventsByDay( day ) {
-		let i, event;
-		const eventsInDay = [];
-
 		if ( ! this.props.events ) {
 			return [];
 		}
+
+		let i, event;
+		const eventsInDay = [];
 
 		for ( i = 0; i < this.props.events.length; i++ ) {
 			event = this.props.events[ i ];
 
 			if ( this.isSameDay( event.date, day ) ) {
+				if ( typeof event.id === 'undefined' ) {
+					event.id = `event-${ i }`;
+				}
+
 				eventsInDay.push( event );
 			}
 		}
