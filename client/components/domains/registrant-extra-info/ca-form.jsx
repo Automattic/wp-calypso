@@ -4,7 +4,9 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import {
+	map,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,6 +39,10 @@ const legalTypes = {
 	TRD: 'Trade Union',
 	TRS: 'Trust',
 };
+
+const legalTypeOptions = map( legalTypes, ( text, optionValue ) =>
+	<option value={ optionValue } key={ optionValue }>{ text }</option>
+);
 
 const defaultValues = {
 	legalType: 'CCW',
@@ -95,9 +101,10 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 					<FormSelect
 						id="legal-type"
 						value={ legalType }
-						legalTypes={ legalTypes }
 						className="registrant-extra-info__form-legal-type"
-						onChange={ this.handleChangeEvent } />
+						onChange={ this.handleChangeEvent }>
+						{ legalTypeOptions }
+					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="legal-type">
