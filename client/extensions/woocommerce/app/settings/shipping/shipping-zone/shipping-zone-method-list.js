@@ -11,10 +11,11 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
+import Spinner from 'components/spinner';
 import { getMethodSummary } from '../shipping-method-utils';
 import { getCurrentlyEditingShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 
-const ShippingZoneMethodList = ( { methods, translate } ) => {
+const ShippingZoneMethodList = ( { loaded, methods, translate } ) => {
 	const renderMethod = ( method, index ) => (
 		<div key={ index }>
 			{ method.title }
@@ -23,6 +24,23 @@ const ShippingZoneMethodList = ( { methods, translate } ) => {
 		</div>
 	);
 
+	const renderContent = () => {
+		if ( ! loaded ) {
+			return (
+				<div className="shipping-zone__loading-spinner">
+					<Spinner size={ 24 } />
+				</div>
+			);
+		}
+
+		return (
+			<div>
+				{ methods.map( renderMethod ) }
+				<Button compact>{ translate( 'Add method' ) }</Button>
+			</div>
+		);
+	};
+
 	return (
 		<div>
 			<ExtendedHeader
@@ -30,8 +48,7 @@ const ShippingZoneMethodList = ( { methods, translate } ) => {
 				description={ translate( 'Any customers that reside in the locations' +
 					' defined above will have access to these shipping methods' ) } />
 			<Card>
-				{ methods.map( renderMethod ) }
-				<Button compact>{ translate( 'Add method' ) }</Button>
+				{ renderContent() }
 			</Card>
 		</div>
 	);
