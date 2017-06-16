@@ -5,7 +5,7 @@ import {
 	canCurrentUser,
 	isMappedDomainSite,
 	isSiteOnFreePlan,
-} from 'state/selectors/';
+} from 'state/selectors';
 
 /**
  * Returns true if the current user is eligible for a domain to paid plan upsell for the site
