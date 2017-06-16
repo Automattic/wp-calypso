@@ -16,6 +16,8 @@ import {
 import config from 'config';
 import addQueryArgs from 'lib/route/add-query-args';
 
+import DocumentHead from 'components/data/document-head';
+import Main from 'components/main';
 import WebPreviewContent from 'components/web-preview/content';
 
 const debug = debugFactory( 'calypso:my-sites:preview' );
@@ -67,11 +69,16 @@ class PreviewMain extends React.Component {
 	}
 
 	render() {
+		const { translate } = this.props;
+
 		return (
-			<WebPreviewContent
-				showClose={ false }
-				previewUrl={ this.state.previewUrl }
-			/>
+			<Main className="preview">
+				<DocumentHead title={ translate( 'Site Preview' ) } />
+				<WebPreviewContent
+					showClose={ false }
+					previewUrl={ this.state.previewUrl }
+				/>
+			</Main>
 		);
 	}
 }
