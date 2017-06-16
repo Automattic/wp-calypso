@@ -42,6 +42,15 @@
 	}
 }
 
+.is-section-woocommerce {
+	// overwrite notice styles due to sticky bar 
+	.global-notices {
+		@include breakpoint( ">660px" ) {
+			top: 115px;
+		}
+	}
+}
+
 .store-sidebar__sidebar {
 	display: block;
 
