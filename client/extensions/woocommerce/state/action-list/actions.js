@@ -3,9 +3,10 @@
  * Internal dependencies
  */
 import {
+	WOOCOMMERCE_ACTION_LIST_ANNOTATE,
 	WOOCOMMERCE_ACTION_LIST_CREATE,
 	WOOCOMMERCE_ACTION_LIST_CLEAR,
-	WOOCOMMERCE_ACTION_LIST_STEP_START,
+	WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
 	WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,
 	WOOCOMMERCE_ACTION_LIST_STEP_FAILURE,
 } from '../action-types';
@@ -34,16 +35,28 @@ export function actionListClear() {
 }
 
 /**
- * Action Creator: Start action list step.
+ * Action Creator: Annotate a step in the action list.
+ * @param {Number} stepIndex The index of the step to annotate.
+ * @param {Object} annotations One or more of startTime, endTime, or error
+ * @return {Object} action
+ */
+export function actionListStepAnnotate( stepIndex, annotations ) {
+	return {
+		type: WOOCOMMERCE_ACTION_LIST_ANNOTATE,
+		stepIndex,
+		annotations
+	};
+}
+
+/**
+ * Action Creator: Start next action list step.
  *
- * @param {Number} [stepIndex] The index of the step. Defaults to zero (0), first index.
  * @param {Date} [time] Optional timestamp.
  * @return {Object} action
  */
-export function actionListStepStart( stepIndex = 0, time ) {
+export function actionListStepNext( time ) {
 	return {
-		type: WOOCOMMERCE_ACTION_LIST_STEP_START,
-		stepIndex,
+		type: WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
 		time,
 	};
 }
