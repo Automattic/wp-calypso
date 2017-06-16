@@ -42,7 +42,7 @@ const emptyValues = {
 	trademarkNumber: '',
 };
 
-class RegistrantExtraInfoForm extends React.PureComponent {
+class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		countriesList: PropTypes.object.isRequired,
 		isVisible: PropTypes.bool,
@@ -360,4 +360,4 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 export default connect(
 	state => ( { contactDetails: getContactDetailsCache( state ) } ),
 	{ updateContactDetailsCache }
-)( localize( RegistrantExtraInfoForm ) );
+)( localize( RegistrantExtraInfoFrForm ) );
