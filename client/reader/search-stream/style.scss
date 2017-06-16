@@ -406,6 +406,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	display: flex;
 }
 
+.search-stream__results.is-two-columns .reader__content {
+	display: inline;
+}
+
 .search-stream__results.is-two-columns .search-stream__post-results {
 	max-width: 660px;
 	width: calc( 100% - 300px );
