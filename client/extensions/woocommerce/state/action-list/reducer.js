@@ -3,19 +3,15 @@
  */
 import { createReducer } from 'state/utils';
 import {
+	WOOCOMMERCE_ACTION_LIST_ANNOTATE,
 	WOOCOMMERCE_ACTION_LIST_CREATE,
 	WOOCOMMERCE_ACTION_LIST_CLEAR,
-	WOOCOMMERCE_ACTION_LIST_STEP_START,
-	WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,
-	WOOCOMMERCE_ACTION_LIST_STEP_FAILURE,
 } from 'woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_ACTION_LIST_CREATE ]: handleActionListCreate,
 	[ WOOCOMMERCE_ACTION_LIST_CLEAR ]: handleActionListClear,
-	[ WOOCOMMERCE_ACTION_LIST_STEP_START ]: handleActionListStepStart,
-	[ WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS ]: handleActionListStepSuccess,
-	[ WOOCOMMERCE_ACTION_LIST_STEP_FAILURE ]: handleActionListStepFailure,
+	[ WOOCOMMERCE_ACTION_LIST_ANNOTATE ]: handleActionListAnnotate,
 } );
 
 function handleActionListCreate( actionList, action ) {
@@ -29,40 +25,30 @@ function handleActionListClear() {
 	return null;
 }
 
-function handleActionListStepStart( actionList, action ) {
-	const { stepIndex, time } = action;
-	const startTime = time || Date.now();
-	const step = actionList[ stepIndex ];
+function handleActionListAnnotate( actionList, action ) {
+	const { stepIndex, annotations } = action;
 
-	const newActionList = [ ...actionList ];
-	newActionList[ stepIndex ] = { ...step, startTime };
+	if ( undefined !== typeof stepIndex ) {
+		const { startTime, endTime, error } = annotations;
+		const step = actionList[ stepIndex ];
 
-	return newActionList;
-}
+		const newStep = { ...step };
 
-function handleActionListStepSuccess( actionList, action ) {
-	const { stepIndex, time } = action;
-	const endTime = time || Date.now();
-	const step = actionList[ stepIndex ];
+		if ( startTime ) {
+			newStep.startTime = startTime;
+		}
+		if ( endTime ) {
+			newStep.endTime = endTime;
+		}
+		if ( error ) {
+			newStep.error = error;
+		}
 
-	const newStep = { ...step, endTime };
+		const newActionList = { ...actionList };
+		newActionList[ stepIndex ] = newStep;
+		return newActionList;
+	}
 
-	const newActionList = [ ...actionList ];
-	newActionList[ stepIndex ] = newStep;
-
-	return newActionList;
-}
-
-function handleActionListStepFailure( actionList, action ) {
-	const { stepIndex, error, time } = action;
-	const endTime = time || Date.now();
-	const step = actionList[ stepIndex ];
-
-	const newStep = { ...step, error, endTime };
-
-	const newActionList = [ ...actionList ];
-	newActionList[ stepIndex ] = newStep;
-
-	return newActionList;
+	return actionList;
 }
 

@@ -3,12 +3,13 @@
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { addHandlers } from 'state/data-layer/extensions-middleware';
+import actionList from './action-list';
 import products from './products';
 import request from './request';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'woocommerce:errors' );
-const handlers = mergeHandlers( products, request );
+const handlers = mergeHandlers( actionList, products, request );
 
 export default function installActionHandlers() {
 	const added = addHandlers( 'woocommerce', handlers );
