@@ -366,6 +366,11 @@
 		}
 	}
 
+	.form-dimensions-input__width,
+	.form-dimensions-input__height {
+		margin-left: -1px;
+	}
+
 	th, td {
 		padding: 8px;
 		vertical-align: middle;
@@ -379,6 +384,9 @@
 		}
 	}
 
+	.form-text-input-with-affixes {
+		flex-direction: row;
+	}
 }
 
 .products__product-form-variation-table th {
@@ -606,8 +614,12 @@
 }
 
 .products__additional-details-card {
-	margin-top: -1em;
 	border-top: 0;
+	margin-top: -10px;
+
+	@include breakpoint( ">480px" ) {
+		margin-top: -16px;
+	}
 
 	&.is-expanded {
 		margin-bottom: 16px;
@@ -821,11 +833,18 @@
 }
 
 .products__product-simple-cards {
-	margin-top: -1em;
 	border-top: 0;
 
+	.products__product-form-price {
+		margin-top: -16px;
+	}
+
 	.card {
-		margin-top: -1em;
+		margin-top: -10px;
+
+		@include breakpoint( ">480px" ) {
+			margin-top: -16px;
+		}
 	}
 
 	@include breakpoint( ">480px" ) {
@@ -851,9 +870,13 @@
 		cursor: pointer;
 	}
 
-	.products__product-manage-stock-toggle .form-label {
-		font-weight: normal;
-		margin-bottom: 12px;
+	.products__product-manage-stock-toggle {
+		align-items: center;
+
+		.form-label {
+			margin: 0;
+			font-weight: normal;
+		}
 	}
 
 	.products__product-backorders-wrapper label {
@@ -867,7 +890,7 @@
 	.products__product-stock-options-wrapper {
 		display: flex;
 		flex-direction: column;
-		margin-top: 6px;
+		margin-top: 12px;
 
 		.products__product-manage-stock {
 			width: 150px;

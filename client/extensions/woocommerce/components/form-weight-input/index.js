@@ -51,7 +51,7 @@ class FormWeightInput extends Component {
 		const classes = classNames( 'form-weight-input', className, { 'no-wrap': noWrap } );
 
 		return (
-			<FormTextInputWithAffixes
+			<FormTextInputWithAffixes noWrap
 				name="weight"
 				min="0"
 				suffix={ weightUnit }
