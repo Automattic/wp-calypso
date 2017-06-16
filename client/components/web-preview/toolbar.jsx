@@ -65,6 +65,7 @@ class PreviewToolbar extends Component {
 			device: currentDevice,
 			editUrl,
 			externalUrl,
+			isModalWindow,
 			onClose,
 			onEdit,
 			previewUrl,
@@ -90,7 +91,7 @@ class PreviewToolbar extends Component {
 						data-tip-target="web-preview__close"
 						onClick={ onClose }
 					>
-						<Gridicon icon="cross" />
+						<Gridicon icon={ isModalWindow ? 'cross' : 'arrow-left' } />
 					</Button>
 				}
 				{ showDeviceSwitcher &&
