@@ -21,9 +21,8 @@ class SettingsPaymentsOnSite extends Component {
 					label={ translate( 'Off-site credit card payment methods' ) }
 					description={
 						translate(
-							'Off-site payment methods involve sending the customer to a ' +
-							'third party web site to complete payment, like PayPal. More ' +
-							'information'
+							'Send customers to a third party web site ' +
+							'to complete payment, like PayPal. '
 						)
 					} />
 					<PaymentMethodList methodType="off-site" />

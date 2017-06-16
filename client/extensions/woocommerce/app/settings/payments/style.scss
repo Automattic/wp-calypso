@@ -72,7 +72,7 @@
 	border-top: 1px solid $border-ultra-light-gray;
 	width: 100%;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint( ">480px" ) {
 		padding: 24px;
 	}
 }

@@ -17,21 +17,23 @@ import {
 	arePaymentMethodsLoading,
 } from './selectors';
 
-const fetchPaymentMethodsSuccess = ( siteId, data ) => {
-	const paymentMethods = data.map( ( method ) => {
-		return {
-			...method,
-			settings: {
-				enabled: {
-					id: 'enabled',
-					label: 'Enabled',
-					type: 'checkbox',
-					value: method.enabled ? 'yes' : 'no',
-				},
-				...method.settings,
+const addPaymentMethodDetails = ( method ) => {
+	return {
+		...method,
+		settings: {
+			enabled: {
+				id: 'enabled',
+				label: 'Enabled',
+				type: 'checkbox',
+				value: method.enabled ? 'yes' : 'no',
 			},
-			...getPaymentMethodDetails( method.id ) };
-	} );
+			...method.settings,
+		},
+		...getPaymentMethodDetails( method.id ) };
+};
+
+const fetchPaymentMethodsSuccess = ( siteId, data ) => {
+	const paymentMethods = data.map( addPaymentMethodDetails );
 	return {
 		type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 		siteId,
@@ -65,7 +67,7 @@ export const fetchPaymentMethods = ( siteId ) => ( dispatch, getState ) => {
 };
 
 const savePaymentMethodSuccess = ( siteId, data ) => {
-	const paymentMethod = { ...data, ...getPaymentMethodDetails( data.id ) };
+	const paymentMethod = addPaymentMethodDetails( data );
 	return {
 		type: WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS,
 		siteId,

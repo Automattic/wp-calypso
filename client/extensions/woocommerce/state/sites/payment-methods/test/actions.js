@@ -183,6 +183,12 @@ describe( 'actions', () => {
 					id: 'email',
 					label: 'PayPal email'
 				},
+				enabled: {
+					id: 'enabled',
+					label: 'Enabled',
+					type: 'checkbox',
+					value: 'no'
+				},
 			},
 			title: 'PayPal6',
 		};
@@ -255,6 +261,12 @@ describe( 'actions', () => {
 							email: {
 								id: 'email',
 								label: 'PayPal email'
+							},
+							enabled: {
+								id: 'enabled',
+								label: 'Enabled',
+								type: 'checkbox',
+								value: 'no'
 							},
 						},
 						title: 'PayPal7',

@@ -22,6 +22,8 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 import PaymentMethodEdit from './payment-method-edit';
+import PaymentMethodPaypal from './payment-method-paypal';
+import PaymentMethodStripe from './payment-method-stripe';
 import { savePaymentMethod } from 'woocommerce/state/sites/payment-methods/actions';
 
 class PaymentMethodItem extends Component {
@@ -44,9 +46,8 @@ class PaymentMethodItem extends Component {
 	};
 
 	onEditHandler = () => {
-		const { method } = this.props;
-		const currentlyEditingId = this.props.currentlyEditingMethod &&
-			this.props.currentlyEditingMethod.id;
+		const { currentlyEditingMethod, method } = this.props;
+		const currentlyEditingId = currentlyEditingMethod && currentlyEditingMethod.id;
 		if ( currentlyEditingId === method.id ) {
 			this.onCancel( method );
 		} else {
@@ -84,6 +85,32 @@ class PaymentMethodItem extends Component {
 		};
 
 		this.props.savePaymentMethod( site.ID, method, successAction, errorAction );
+	}
+
+	outputEditComponent = () => {
+		const { currentlyEditingMethod, method } = this.props;
+		if ( method.id === 'paypal' ) {
+			return (
+				<PaymentMethodPaypal
+					method={ currentlyEditingMethod }
+					onEditField={ this.onEditField }
+					onSave={ this.onSave } />
+			);
+		}
+		if ( method.id === 'stripe' ) {
+			return (
+				<PaymentMethodStripe
+					method={ currentlyEditingMethod }
+					onEditField={ this.onEditField }
+					onSave={ this.onSave } />
+			);
+		}
+		return (
+			<PaymentMethodEdit
+				method={ currentlyEditingMethod }
+				onEditField={ this.onEditField }
+				onSave={ this.onSave } />
+		);
 	}
 
 	render() {
@@ -130,10 +157,7 @@ class PaymentMethodItem extends Component {
 					</Button>
 				</ListItemField>
 				{ currentlyEditingId === method.id && (
-					<PaymentMethodEdit
-						method={ this.props.currentlyEditingMethod }
-						onEditField={ this.onEditField }
-						onSave={ this.onSave } />
+					this.outputEditComponent()
 				) }
 			</ListItem>
 		);
