@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { noop } from 'lodash';
+import { flowRight, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import Gridicon from 'gridicons';
@@ -19,10 +20,13 @@ import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import Button from 'components/button';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import { userCan } from 'lib/site/utils';
 import versionCompare from 'lib/version-compare';
 import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
 import config from 'config';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 
 /**
  * This function return true if the image editor can be
@@ -30,7 +34,7 @@ import config from 'config';
  *
  * @param  {object} item - media item
  * @param  {object} site - current site
- * @return {boolean} `true` is the image-editor can be enabled.
+ * @return {boolean} `true` if the image-editor can be enabled.
  */
 const enableImageEditing = ( item, site ) => {
 	// do not allow if, for some reason, there isn't a valid item yet
@@ -80,6 +84,41 @@ class EditorMediaModalDetailItem extends Component {
 		onRestore: noop,
 	};
 
+	/**
+	 * This function returns true if the video editor can be enabled/shown.
+	 *
+	 * @param  {Object}  item Media item
+	 * @return {Boolean} Whether the video editor can be enabled
+	 */
+	enableVideoEditing( item ) {
+		if ( ! config.isEnabled( 'post-editor/video-editor' ) ) {
+			return false;
+		}
+
+		const {
+			isJetpack,
+			isVideoPressEnabled,
+			isVideoPressModuleActive,
+		} = this.props;
+
+		// Not a VideoPress video
+		if ( ! MediaUtils.isVideoPressItem( item ) ) {
+			return false;
+		}
+
+		// Jetpack and VideoPress disabled
+		if ( isJetpack ) {
+			if ( ! isVideoPressModuleActive ) {
+				return false;
+			}
+		// WP.com and VideoPress disabled
+		} else if ( ! isVideoPressEnabled ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	renderEditButton() {
 		const {
 			item,
@@ -94,9 +133,13 @@ class EditorMediaModalDetailItem extends Component {
 
 		const mimePrefix = MediaUtils.getMimePrefix( item );
 
-		if ( 'image' !== mimePrefix ) {
+		if ( ! includes( [ 'image', 'video' ], mimePrefix ) ) {
 			return null;
 		}
+
+		const editText = 'video' === mimePrefix
+			? translate( 'Edit Thumbnail' )
+			: translate( 'Edit Image' );
 
 		return (
 			<Button
@@ -104,7 +147,7 @@ class EditorMediaModalDetailItem extends Component {
 				onClick={ onEdit }
 				disabled={ isItemBeingUploaded( item ) }
 			>
-				<Gridicon icon="pencil" size={ 36 } /> { translate( 'Edit Image' ) }
+				<Gridicon icon="pencil" size={ 36 } /> { editText }
 			</Button>
 		);
 	}
@@ -144,10 +187,22 @@ class EditorMediaModalDetailItem extends Component {
 		);
 	}
 
-	renderImageEditorButtons( item, classname = 'is-desktop' ) {
+	renderMediaEditorButtons( item, classname = 'is-desktop' ) {
+		if ( ! item ) {
+			return null;
+		}
+
+		const mimePrefix = MediaUtils.getMimePrefix( item );
+
+		return 'video' === mimePrefix
+			? this.renderVideoEditorButtons( item, classname )
+			: this.renderImageEditorButtons( classname );
+	}
+
+	renderImageEditorButtons( classname ) {
 		const { site } = this.props;
 
-		if ( ! enableImageEditing( item, site ) ) {
+		if ( ! enableImageEditing( site ) ) {
 			return null;
 		}
 
@@ -156,6 +211,20 @@ class EditorMediaModalDetailItem extends Component {
 		return (
 			<div className={ classes }>
 				{ this.renderRestoreButton( classname ) }
+				{ this.renderEditButton() }
+			</div>
+		);
+	}
+
+	renderVideoEditorButtons( item, classname ) {
+		if ( ! this.enableVideoEditing( item ) ) {
+			return null;
+		}
+
+		const classes = classNames( 'editor-media-modal-detail__edition-bar', classname );
+
+		return (
+			<div className={ classes }>
 				{ this.renderEditButton() }
 			</div>
 		);
@@ -250,7 +319,7 @@ class EditorMediaModalDetailItem extends Component {
 	}
 
 	render() {
-		const { item } = this.props;
+		const { isJetpack, item, siteId } = this.props;
 
 		const classes = classNames( 'editor-media-modal-detail__item', {
 			'is-loading': ! item
@@ -262,13 +331,14 @@ class EditorMediaModalDetailItem extends Component {
 
 					<div className="editor-media-modal-detail__preview-wrapper">
 						{ this.renderItem() }
-						{ this.renderImageEditorButtons( item ) }
+						{ this.renderMediaEditorButtons( item ) }
 						{ this.renderPreviousItemButton() }
 						{ this.renderNextItemButton() }
 					</div>
 
 					<div className="editor-media-modal-detail__sidebar">
-						{ this.renderImageEditorButtons( item, 'is-mobile' ) }
+						{ isJetpack && <QueryJetpackModules siteId={ siteId } /> /* Is the VideoPress module active? */ }
+						{ this.renderMediaEditorButtons( item, 'is-mobile' ) }
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo
 							item={ item } />
@@ -280,4 +350,20 @@ class EditorMediaModalDetailItem extends Component {
 	}
 }
 
-export default localize( EditorMediaModalDetailItem );
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			isJetpack: isJetpackSite( state, siteId ),
+			isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
+			isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
+			siteId,
+		};
+	}
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+)( EditorMediaModalDetailItem );
