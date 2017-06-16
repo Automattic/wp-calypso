@@ -6,7 +6,11 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import {
 	camelCase,
+	difference,
+	isEmpty,
+	keys,
 	map,
+	pick,
 } from 'lodash';
 
 /**
@@ -61,10 +65,17 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 	constructor( props ) {
 		super( props );
 
-		this.props.contactDetails.extra = {
-			...defaultValues,
-			...this.props.contactDetails.extra
-		};
+		// Add defaults to redux state to make accepting default values work.
+		const requiredDetailsNotInProps = difference(
+			[ 'legalType', 'ciraAgreementAccepted' ],
+			keys( props.contactDetails.extra ),
+		);
+
+		if ( ! isEmpty( requiredDetailsNotInProps ) ) {
+			props.updateContactDetailsCache( {
+				extra: pick( defaultValues, requiredDetailsNotInProps ),
+			} );
+		}
 	}
 
 	handleChangeEvent = ( event ) => {
