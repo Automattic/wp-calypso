@@ -12,13 +12,11 @@ import EmptyContentComponent from 'components/empty-content';
 
 function DomainConnectNotFoundError( { translate } ) {
 
-console.log( 'blergfull' );
-
 	const emptyContentTitle = translate( 'Uh oh. That method isn\'t supported.', {
-		comment: 'Message displayed when requested Domain Connect method was not found',
+		comment: 'Message displayed when requested Domain Connect URL path is not supported',
 	} );
 	const emptyContentMessage = translate( 'Check with the service provider sent you here for more information.', {
-		comment: 'Message displayed when requested Domain Connect method was not found',
+		comment: 'Message displayed when requested Domain Connect URL path is not supported',
 	} );
 
 	return (
