@@ -12,9 +12,9 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class PaymentMethodPaypal extends Component {
 
@@ -44,26 +44,26 @@ class PaymentMethodPaypal extends Component {
 	renderEnabledField = ( isEnabled ) => {
 		return (
 			<PaymentMethodEditFormToggle
-				checked={ isEnabled === 'yes' ? true : false }
+				checked={ isEnabled === 'yes' }
 				name="enabled"
 				onChange={ this.onEditFieldHandler } />
 		);
 	}
 
 	render() {
-		const { method, translate } = this.props;
+		const { method: { settings }, translate } = this.props;
 		return (
 			<div className="payments__method-edit-fields">
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
-					{ this.renderEnabledField( method.settings.enabled.value ) }
+					{ this.renderEnabledField( settings.enabled.value ) }
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>{ translate( 'Your Paypal ID' ) }</FormLabel>
 					<FormTextInput
 						name="email"
 						onChange={ this.onEditFieldHandler }
-						value={ method.settings.email.value }
+						value={ settings.email.value }
 					/>
 					<FormSettingExplanation>
 						{ translate(
@@ -79,7 +79,7 @@ class PaymentMethodPaypal extends Component {
 						<FormRadio
 							name="paymentaction"
 							value="sale"
-							checked={ 'sale' === method.settings.paymentaction.value }
+							checked={ 'sale' === settings.paymentaction.value }
 							onChange={ this.onEditFieldHandler } />
 						<span>{ translate( 'Authorize and charge the customers credit card automatically' ) }</span>
 					</FormLabel>
@@ -87,7 +87,7 @@ class PaymentMethodPaypal extends Component {
 						<FormRadio
 							name="paymentaction"
 							value="authorization"
-							checked={ 'authorization' === method.settings.paymentaction.value }
+							checked={ 'authorization' === settings.paymentaction.value }
 							onChange={ this.onEditFieldHandler } />
 						<span>{ translate( 'Authorize the customers credit card but charge manually' ) }</span>
 					</FormLabel>

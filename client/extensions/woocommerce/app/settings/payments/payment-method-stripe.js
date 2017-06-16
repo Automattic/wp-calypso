@@ -43,7 +43,7 @@ class PaymentMethodStripe extends Component {
 	renderEnabledField = ( isEnabled ) => {
 		return (
 			<PaymentMethodEditFormToggle
-				checked={ isEnabled === 'yes' ? true : false }
+				checked={ isEnabled === 'yes' }
 				name="enabled"
 				onChange={ this.onEditFieldHandler } />
 		);
@@ -73,15 +73,14 @@ class PaymentMethodStripe extends Component {
 
 	renderKeyFields = ( isLiveMode ) => {
 		const { method, translate } = this.props;
-		const testSecretLabel = translate( 'Test Secret Key' );
-		const liveSecretLabel = translate( 'Live Secret Key' );
-		const testPublishableLabel = translate( 'Test Publishable Key' );
-		const livePublishableLabel = translate( 'Live Publishable Key' );
+		const secretLabel = isLiveMode ? translate( 'Live Secret Key' ) : translate( 'Test Secret Key' );
+		const publishableLabel = isLiveMode ? translate( 'Live Publishable Key' ) : translate( 'Test Publishable Key' );
+
 		return (
 			<div>
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>
-						{ isLiveMode ? liveSecretLabel : testSecretLabel }
+						{ secretLabel }
 					</FormLabel>
 					{ this.renderEditTextboxSecretKey(
 						isLiveMode ? method.settings.secret_key : method.settings.test_secret_key
@@ -89,7 +88,7 @@ class PaymentMethodStripe extends Component {
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>
-						{ isLiveMode ? livePublishableLabel : testPublishableLabel }
+						{ publishableLabel }
 					</FormLabel>
 					{ this.renderEditTextboxPublishableKey(
 						isLiveMode ? method.settings.publishable_key : method.settings.test_publishable_key
@@ -104,11 +103,11 @@ class PaymentMethodStripe extends Component {
 		return (
 			<div className="payments__method-edit-fields">
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>Enabled</FormLabel>
+					<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
 					{ this.renderEnabledField( method.settings.enabled.value ) }
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>Enable Test Mode</FormLabel>
+					<FormLabel>{ translate( 'Enable Test Mode' ) }</FormLabel>
 					<PaymentMethodEditFormToggle
 						checked={ method.settings.testmode.value === 'yes' ? true : false }
 						name="testmode"
