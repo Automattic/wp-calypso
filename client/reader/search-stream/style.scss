@@ -394,6 +394,13 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
+.search-stream .search-stream__single-column-results .reader-subscription-list-item .reader-subscription-list-item__site-url-timestamp {
+
+	@include breakpoint( "<960px" ) {
+		max-height: none;
+	}
+}
+
 // Custom styling for cards in post results
 .search-stream__results.is-two-columns {
 	display: flex;
