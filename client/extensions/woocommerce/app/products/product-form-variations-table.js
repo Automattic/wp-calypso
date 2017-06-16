@@ -148,6 +148,7 @@ class ProductFormVariationsTable extends React.Component {
 							value={ stock_quantity }
 							type="number"
 							onChange={ this.setStockQuantity }
+							placeholder={ translate( 'Quantity' ) }
 						/>
 					</div>
 				</td>

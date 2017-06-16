@@ -189,6 +189,7 @@ class ProductFormVariationsRow extends Component {
 							value={ variation.stock_quantity || '' }
 							type="number"
 							onChange={ this.setStockQuantity }
+							placeholder={ translate( 'Quantity' ) }
 						/>
 					</div>
 				</td>

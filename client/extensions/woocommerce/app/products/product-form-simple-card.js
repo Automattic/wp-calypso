@@ -97,6 +97,7 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 						type="number"
 						min="0"
 						onChange={ setStockQuantity }
+						placeholder={ translate( 'Quantity' ) }
 					/>
 				</div>
 
