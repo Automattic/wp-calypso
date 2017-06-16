@@ -375,7 +375,7 @@ sections.push( {
 	module: 'my-sites/upgrades/domain-management/domain-connect',
 	enableLoggedOut: false,
 	secondary: false,
-	isomorphic: true
+	isomorphic: false
 } );
 
 module.exports = sections;

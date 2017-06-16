@@ -27,17 +27,14 @@ export function domainConnectAuthorize( context, next ) {
 	next();
 }
 
-export function notFoundError( err, context, next ) {
+export function notFoundError( context, next ) {
 console.log( 'blerg-not-found' );
-console.log( err );
 console.log( context );
 console.log( next );
 
-	context.layout = (
-		<ReduxProvider store={ context.store }>
-			<LayoutLoggedOut primary={ <DomainConnectNotFoundError /> } />
-		</ReduxProvider>
+	context.primary = (
+		<DomainConnectNotFoundError />
 	);
-
-	next( err );
+	context.secondary = null;
+	next();
 }

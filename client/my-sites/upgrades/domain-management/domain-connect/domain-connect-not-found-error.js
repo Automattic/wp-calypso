@@ -11,7 +11,10 @@ import Main from 'components/main';
 import EmptyContentComponent from 'components/empty-content';
 
 function DomainConnectNotFoundError( { translate } ) {
-	const emptyContentTitle = translate( 'Oops. We don\'t support that Domain Connect method.', {
+
+console.log( 'blergfull' );
+
+	const emptyContentTitle = translate( 'Uh oh. That method isn\'t supported.', {
 		comment: 'Message displayed when requested Domain Connect method was not found',
 	} );
 	const emptyContentMessage = translate( 'Check with the service provider sent you here for more information.', {
