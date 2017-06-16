@@ -29,6 +29,7 @@ export function enrichPublicizeActionsWithConnections( state, postShareActions )
 		external_url: url,
 	} ) => {
 		const connection = getPublicizeConnection( state, connection_id );
+		const actionDate = moment( share_date );
 
 		return {
 			ID,
@@ -38,7 +39,8 @@ export function enrichPublicizeActionsWithConnections( state, postShareActions )
 			message,
 			result,
 			service: get( connection, 'service', 'twitter' ),
-			shareDate: moment( share_date ).format( 'llll' ),
+			shareDate: actionDate.format( 'llll' ),
+			date: actionDate,
 			status,
 			url,
 		};
