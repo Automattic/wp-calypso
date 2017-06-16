@@ -83,14 +83,15 @@ class PreviewToolbar extends Component {
 		return (
 			<div className="web-preview__toolbar">
 				{ showClose &&
-					<button
+					<Button
+						borderless
 						aria-label={ translate( 'Close preview' ) }
 						className="web-preview__close"
 						data-tip-target="web-preview__close"
 						onClick={ onClose }
 					>
 						<Gridicon icon="cross" />
-					</button>
+					</Button>
 				}
 				{ showDeviceSwitcher &&
 					<SelectDropdown
@@ -114,6 +115,7 @@ class PreviewToolbar extends Component {
 				<div className="web-preview__toolbar-actions">
 					{ showEdit &&
 						<Button
+							borderless
 							className="web-preview__edit"
 							href={ editUrl }
 							onClick={ onEdit }
@@ -122,14 +124,15 @@ class PreviewToolbar extends Component {
 						</Button>
 					}
 					{ showExternal &&
-						<a
+						<Button
+							borderless
 							className="web-preview__external"
 							href={ externalUrl || previewUrl }
 							target="_blank"
 							rel="noopener noreferrer"
 						>
 							<Gridicon icon="external" />
-						</a>
+						</Button>
 					}
 					<div className="web-preview__toolbar-tray">
 						{ this.props.children }
