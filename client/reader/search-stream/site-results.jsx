@@ -27,6 +27,7 @@ class SiteResults extends React.Component {
 		searchResults: PropTypes.array,
 		searchResultsCount: PropTypes.number,
 		width: PropTypes.number.isRequired,
+		showLastUpdatedDate: PropTypes.bool,
 	};
 
 	fetchNextPage = offset => {
@@ -41,7 +42,7 @@ class SiteResults extends React.Component {
 	hasNextPage = offset => offset < this.props.searchResultsCount;
 
 	render() {
-		const { query, searchResults, width } = this.props;
+		const { query, searchResults, width, showLastUpdatedDate } = this.props;
 
 		return (
 			<div>
@@ -53,12 +54,12 @@ class SiteResults extends React.Component {
 				<ReaderInfiniteStream
 					items={ searchResults || [ {}, {}, {}, {}, {} ] }
 					width={ width }
-					showLastUpdatedDate={ false }
 					fetchNextPage={ this.fetchNextPage }
 					hasNextPage={ this.hasNextPage }
 					rowRenderer={ siteRowRenderer }
 					renderEventName={ 'search_stream_sites' }
 					passthroughProp={ this.props.sort }
+					extraRenderItemProps={ { showLastUpdatedDate } }
 				/>
 			</div>
 		);
