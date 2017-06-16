@@ -241,9 +241,19 @@ class PostShare extends Component {
 			{ this.state.scheduledDate ? translate( 'Schedule post' ) : translate( 'Share post' ) }
 		</Button>;
 
+		const previewButton = isEnabled( 'publicize-preview' ) &&
+			<Button
+				disabled={ this.isDisabled() }
+				className="post-share__preview-button"
+				onClick={ this.toggleSharingPreview }
+			>
+				{ translate( 'Preview' ) }
+			</Button>;
+
 		if ( ! hasRepublicizeSchedulingFeature ) {
 			return (
 				<div className="post-share__button-actions">
+					{ previewButton }
 					{ shareButton }
 				</div>
 			);
@@ -251,15 +261,7 @@ class PostShare extends Component {
 
 		return (
 			<div className="post-share__button-actions">
-				{ ( isEnabled( 'publicize-preview' ) ) &&
-					<Button
-						disabled={ this.isDisabled() }
-						className="post-share__preview-button"
-						onClick={ this.toggleSharingPreview }
-					>
-						{ translate( 'Preview' ) }
-					</Button>
-				}
+				{ previewButton }
 
 				<ButtonGroup
 					className="post-share__share-combo"
