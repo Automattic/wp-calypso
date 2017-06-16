@@ -19,7 +19,7 @@ class QueryBlogStickers extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		this.props.listBlogStickers( this.props.blogId );
+		this.props.listBlogStickers( nextProps.blogId );
 	}
 
 	render() {
