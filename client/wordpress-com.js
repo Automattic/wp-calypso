@@ -371,10 +371,11 @@ sections.push( {
 
 sections.push( {
 	name: 'domain-connect-authorize',
-	paths: [ '/domain-connect/authorize' ],
+	paths: [ '/domain-connect' ],
 	module: 'my-sites/upgrades/domain-management/domain-connect',
 	enableLoggedOut: false,
-	secondary: false
+	secondary: false,
+	isomorphic: true
 } );
 
 module.exports = sections;
