@@ -22,8 +22,6 @@ import {
 	SCHEDULED,
 	PUBLISHED,
 } from './constants';
-import Banner from 'components/banner';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
@@ -32,7 +30,7 @@ import Dialog from 'components/dialog';
 import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
 import analytics from 'lib/analytics';
 import SharingPreviewModal from './sharing-preview-modal';
-import formatCurrency from 'lib/format-currency';
+import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {
@@ -43,7 +41,7 @@ class PublicizeActionsList extends PureComponent {
 	};
 
 	state = {
-		selectedShareTab: SCHEDULED,
+		selectedShareTab: PUBLISHED,
 		showDeleteDialog: false,
 		selectedScheduledShareId: null,
 		showPreviewModal: false,
@@ -67,49 +65,6 @@ class PublicizeActionsList extends PureComponent {
 			previewService: service,
 		} );
 	};
-
-	renderUpgradeToPremiumNudge() {
-		const { translate } = this.props;
-
-		return (
-			<Banner
-				className="post-share__upgrade-nudge"
-				feature="republicize"
-				title={ translate( 'Unlock the ability to re-share posts to social media' ) }
-				callToAction={ translate( 'Upgrade to Premium' ) }
-				description={ translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' ) }
-			/>
-		);
-	}
-
-	renderUpgradeToBusinessNudge() {
-		const {
-			businessDiscountedRawPrice,
-			businessRawPrice,
-			translate,
-			userCurrency,
-		} = this.props;
-
-		return (
-			<Banner
-				className="post-share__actions-list-upgrade-nudge"
-				callToAction={
-					translate( 'Upgrade for %s', {
-						args: formatCurrency( businessDiscountedRawPrice || businessRawPrice, userCurrency ),
-						comment: '%s will be replaced by a formatted price, i.e $9.99'
-					} )
-				}
-				list={ [
-					translate( 'Schedule your social messages in advance.' ),
-					translate( 'Remove all advertising from your site.' ),
-					translate( 'Enjoy live chat support.' ),
-					translate( 'Ability to add features through external plugins.' ),
-					translate( 'Access to thousands of themes.' ),
-				] }
-				plan={ PLAN_BUSINESS }
-				title={ translate( 'Upgrade to a Business Plan!' ) } />
-		);
-	}
 
 	renderActionItem( item, index ) {
 		const {
@@ -235,12 +190,8 @@ class PublicizeActionsList extends PureComponent {
 			);
 		}
 
-		if ( ! hasRepublicizeFeature && ! hasRepublicizeSchedulingFeature ) {
-			return this.renderUpgradeToPremiumNudge();
-		}
-
-		if ( ! hasRepublicizeSchedulingFeature ) {
-			return this.renderUpgradeToBusinessNudge();
+		if ( hasRepublicizeFeature && ! hasRepublicizeSchedulingFeature ) {
+			return <UpgradeToPremiumNudge { ...this.props } />;
 		}
 
 		return (
@@ -271,19 +222,26 @@ class PublicizeActionsList extends PureComponent {
 	}
 
 	render() {
-		const { postId, siteId } = this.props;
+		const {
+			hasRepublicizeFeature,
+			hasRepublicizeSchedulingFeature,
+			postId,
+			siteId,
+		} = this.props;
 
 		return (
 			<div>
 				<SectionNav className="post-share__footer-nav" selectedText={ 'some text' }>
 					<NavTabs label="Status" selectedText="Published">
-						<NavItem
-							selected={ this.state.selectedShareTab === SCHEDULED }
-							count={ this.props.scheduledActions.length }
-							onClick={ this.setFooterSection( SCHEDULED ) }
-						>
-							Scheduled
-						</NavItem>
+						{ ( hasRepublicizeFeature || hasRepublicizeSchedulingFeature ) &&
+							<NavItem
+								selected={ this.state.selectedShareTab === SCHEDULED }
+								count={ this.props.scheduledActions.length }
+								onClick={ this.setFooterSection( SCHEDULED ) }
+							>
+								Scheduled
+							</NavItem>
+						}
 						<NavItem
 							selected={ this.state.selectedShareTab === PUBLISHED }
 							count={ this.props.publishedActions.length }

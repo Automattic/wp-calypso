@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
+import { UpgradeToPersonalNudge } from 'blocks/post-share/nudges';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import NoticeAction from 'components/notice/notice-action';
@@ -423,7 +424,11 @@ class PostShare extends Component {
 	}
 
 	renderPrimarySection() {
-		const { hasFetchedConnections } = this.props;
+		const {
+			hasFetchedConnections,
+			hasRepublicizeFeature,
+			hasRepublicizeSchedulingFeature,
+		} = this.props;
 
 		if ( ! hasFetchedConnections ) {
 			return null;
@@ -437,6 +442,19 @@ class PostShare extends Component {
 					siteSlug,
 					translate,
 				} } />
+			);
+		}
+
+		if (
+			! hasRepublicizeFeature &&
+			! hasRepublicizeSchedulingFeature &&
+			isEnabled( 'publicize-scheduling' )
+		) {
+			return (
+				<div>
+					<UpgradeToPersonalNudge { ...this.props } />
+					<ActionsList { ...this.props } />
+				</div>
 			);
 		}
 
