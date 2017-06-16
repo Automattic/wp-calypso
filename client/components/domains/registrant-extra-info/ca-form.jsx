@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import {
+	camelCase,
 	map,
 } from 'lodash';
 
@@ -69,17 +70,20 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 	}
 
 	handleChangeEvent = ( event ) => {
+		const { target } = event;
+		const value = target.type === 'checkbox' ? target.checked : target.value;
 		this.props.updateContactDetailsCache( {
-			extra: { [ event.target.id ]: event.target.value },
+			extra: { [ camelCase( event.target.id ) ]: value },
 		} );
 	}
 
 	render() {
+		const { translate } = this.props;
 		const {
 			legalType,
-			translate,
-			ciraAgreementAccepted
-		} = { ...defaultValues, ...this.props };
+			ciraAgreementAccepted,
+		} = { ...defaultValues, ...this.props.contactDetails };
+
 		const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 
 		return (
@@ -111,12 +115,15 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 						{ translate( 'CIRA Agreement' ) }
 					</FormLabel>
 					<FormLabel>
-						<FormCheckbox id="cira_acceptance" value={ ciraAgreementAccepted } />
+						<FormCheckbox
+							id="cira-agreement-accepted"
+							value={ ciraAgreementAccepted }
+							onChange={ this.handleChangeEvent } />
 						<span>{
 							translate( 'I have read and agree to the {{a}}CIRA Registrant Agreement{{/a}}',
 								{
 									components: {
-										a: <a href={ ciraAgreementUrl } />
+										a: <a href={ ciraAgreementUrl } />,
 									}
 								}
 							)
