@@ -26,7 +26,7 @@ export function enrichPublicizeActionsWithConnections( state, postShareActions )
 		result,
 		share_date,
 		status,
-		url,
+		external_url: url,
 	} ) => {
 		const connection = getPublicizeConnection( state, connection_id );
 
