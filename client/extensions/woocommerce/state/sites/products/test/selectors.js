@@ -9,6 +9,7 @@ import {
 	areProductsLoaded,
 	areProductsLoading,
 	getTotalProductsPages,
+	getTotalProducts,
 } from '../selectors';
 import products from './fixtures/products';
 
@@ -43,7 +44,8 @@ const loadedState = {
 							1: false,
 						},
 						products,
-						totalPages: 3
+						totalPages: 3,
+						totalProducts: 30,
 					}
 				},
 				401: {
@@ -52,7 +54,7 @@ const loadedState = {
 							1: true,
 						},
 						products: {},
-						totalPages: 1
+						totalPages: 1,
 					},
 				},
 			},
@@ -126,6 +128,28 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getTotalProductsPages( loadedStateWithUi ) ).to.eql( 3 );
+		} );
+	} );
+
+	describe( '#getTotalProducts', () => {
+		it( 'should be 0 (default) when woocommerce state is not available.', () => {
+			expect( getTotalProducts( preInitializedState, 123 ) ).to.eql( 0 );
+		} );
+
+		it( 'should be 0 (default) when products are loading.', () => {
+			expect( getTotalProducts( loadingState, 123 ) ).to.eql( 0 );
+		} );
+
+		it( 'should be 30, the set products total, if the products are loaded.', () => {
+			expect( getTotalProducts( loadedState, 123 ) ).to.eql( 30 );
+		} );
+
+		it( 'should be 0 (default) when products are loaded only for a different site.', () => {
+			expect( getTotalProducts( loadedState, 456 ) ).to.eql( 0 );
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getTotalProducts( loadedStateWithUi ) ).to.eql( 30 );
 		} );
 	} );
 } );

@@ -40,3 +40,12 @@ export const areProductsLoading = ( state, page = 1, siteId = getSelectedSiteId(
 export const getTotalProductsPages = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'totalPages' ], 0 );
 };
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Number} Total number of products available on a site, or 0 if not loaded yet.
+ */
+export const getTotalProducts = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'totalProducts' ], 0 );
+};
