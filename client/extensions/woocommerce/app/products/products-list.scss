@@ -1,4 +1,12 @@
 &.products__list {
+	
+	.empty-content.has-title-only {
+		margin-top: 42px;
+	}
+
+	.empty-content.has-title-only .empty-content__title {
+		margin-bottom: 24px;
+	}
 
 	.action-header__actions {
 		padding-bottom: 3px;
