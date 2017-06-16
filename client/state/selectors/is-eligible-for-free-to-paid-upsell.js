@@ -5,7 +5,7 @@ import {
 	canCurrentUser,
 	isMappedDomainSite,
 	isSiteOnFreePlan,
-	isUserRegistrationDaysWithinRange
+	isUserRegistrationDaysWithinRange,
 } from 'state/selectors';
 
 /**
