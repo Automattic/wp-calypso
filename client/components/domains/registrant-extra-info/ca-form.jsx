@@ -23,6 +23,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormCheckbox from 'components/forms/form-checkbox';
 
+const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 const defaultValues = {
 	legalType: 'CCT',
 	ciraAgreementAccepted: false,
@@ -97,8 +98,6 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 			legalType,
 			ciraAgreementAccepted,
 		} = { ...defaultValues, ...this.props.contactDetails };
-
-		const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 
 		return (
 			<form className="registrant-extra-info__form">
