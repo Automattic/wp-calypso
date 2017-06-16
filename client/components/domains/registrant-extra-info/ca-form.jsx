@@ -18,23 +18,24 @@ import FormCheckbox from 'components/forms/form-checkbox';
 
 const legalTypes = {
 	ABO: 'Aboriginal',
-	ASS: 'Association',
-	CCO: 'CanadianCorporation',
-	CCT: 'CanadianCitizen',
+	ASS: 'Association (Unincorporated)',
+	CCO: 'Canadian Corporation',
+	CCT: 'Canadian Citizen',
 	EDU: 'Educational Institution',
 	GOV: 'Government',
 	HOP: 'Hospital',
-	INB: 'IndianBand',
+	INB: 'Indian Band',
 	LAM: 'Library, Archive, or Museum',
 	LGR: 'Legal Representative',
 	MAJ: 'Her Majesty the Queen',
-	OMK: 'Protected by Trademarks Act',
+	// An official mark is Canadian thing like a trademark for public authorities
+	OMK: 'Official Mark',
 	PLT: 'Political Party',
 	PRT: 'Partnership',
 	RES: 'Permanent Resident',
 	TDM: 'Trademark Owner',
 	TRD: 'Trade Union',
-	TRS: 'Trust'
+	TRS: 'Trust',
 };
 
 const defaultValues = {
