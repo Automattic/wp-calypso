@@ -5,13 +5,12 @@ import React, { PropTypes, Component } from 'react';
 import { noop, map } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
-import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
  */
 import Tooltip from 'components/tooltip';
+import { CalendarEvent } from './event';
 
 class DatePickerDay extends Component {
 	static propTypes = {
@@ -77,17 +76,11 @@ class DatePickerDay extends Component {
 				<hr className="date-picker__division" />
 				<ul>{ map( this.props.events, event =>
 					<li key={ event.id }>
-						{ event.icon &&
-							<span className={ `date-picker__social-icon-wrapper date-picker__social-icon-wrapper-${ event.icon }` }>
-								<Gridicon icon={ event.icon } size={ 18 } />
-							</span>
-						}
-						{ event.socialIcon &&
-							<span className={ `date-picker__social-icon-wrapper date-picker__social-icon-wrapper-${ event.socialIcon }` }>
-								<SocialLogo icon={ event.socialIcon } size={ 18 } />
-							</span>
-						}
-						<span className="date-picker__event-title">{ event.title }</span>
+						<CalendarEvent
+							icon={ event.icon }
+							socialIcon={ event.socialIcon }
+							socialIconColor={ event.socialIconColor }
+							title={ event.title } />
 					</li>
 				) }</ul>
 			</Tooltip>

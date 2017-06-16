@@ -22,15 +22,66 @@ class DatePickerExample extends Component {
 			},
 
 			{
-				title: 'Social media event',
+				title: 'Social Media - Facebook',
 				date: new Date(),
-				socialIcon: 'twitter',
+				socialIcon: 'facebook',
 			},
 
 			{
-				title: 'Gridicon event',
+				title: 'Social Media - Twitter',
+				date: new Date(),
+				socialIcon: 'twitter',
+				socialIconColor: false,
+			},
+
+			{
+				title: 'Social Media - Google Plus',
+				date: new Date(),
+				socialIcon: 'google-plus',
+			},
+
+			{
+				title: 'Social Media - LinkedIn',
+				date: new Date(),
+				socialIcon: 'linkedin',
+			},
+
+			{
+				title: 'Social Media - Tumblr',
+				date: new Date(),
+				socialIcon: 'tumblr',
+			},
+
+			{
+				title: 'Social Media - Path',
+				date: new Date(),
+				socialIcon: 'path',
+				socialIconColor: false,
+			},
+
+			{
+				title: 'Social Media - Eventbrite',
+				date: new Date(),
+				socialIcon: 'eventbrite',
+				socialIconColor: false,
+			},
+
+			{
+				title: 'Gridicon - Time',
 				date: new Date(),
 				icon: 'time',
+			},
+
+			{
+				title: 'Gridicon - Offline',
+				date: new Date(),
+				icon: 'offline',
+			},
+
+			{
+				title: 'Gridicon - Shipping',
+				date: new Date(),
+				icon: 'shipping',
 			},
 
 			{
