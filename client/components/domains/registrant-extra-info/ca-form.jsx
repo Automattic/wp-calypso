@@ -69,15 +69,17 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 			legalTypes,
 			legalTypeOptions
 		};
+	}
 
+	componentWillMount() {
 		// Add defaults to redux state to make accepting default values work.
 		const requiredDetailsNotInProps = difference(
 			[ 'legalType', 'ciraAgreementAccepted' ],
-			keys( props.contactDetails.extra ),
+			keys( this.props.contactDetails.extra ),
 		);
 
 		if ( ! isEmpty( requiredDetailsNotInProps ) ) {
-			props.updateContactDetailsCache( {
+			this.props.updateContactDetailsCache( {
 				extra: pick( defaultValues, requiredDetailsNotInProps ),
 			} );
 		}
