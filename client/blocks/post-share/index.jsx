@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
+import { UpgradeToPersonalNudge } from 'blocks/post-share/nudges';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import NoticeAction from 'components/notice/notice-action';
@@ -55,13 +56,11 @@ import {
 	PLAN_BUSINESS,
 } from 'lib/plans/constants';
 
-import Banner from 'components/banner';
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
 
 import ActionsList from './publicize-actions-list';
 import CalendarButton from 'blocks/calendar-button';
-import formatCurrency from 'lib/format-currency';
 
 import SectionHeader from 'components/section-header';
 import Tooltip from 'components/tooltip';
@@ -96,6 +95,7 @@ class PostShare extends Component {
 	static defaultProps = {
 		connections: [],
 		disabled: false,
+		post: {},
 	};
 
 	state = {
@@ -284,53 +284,6 @@ class PostShare extends Component {
 		);
 	}
 
-	renderUpgradeToGetPublicizeNudge() {
-		const { translate } = this.props;
-		return (
-			<Banner
-				className="post-share__upgrade-nudge"
-				feature="republicize"
-				title={ translate( 'Unlock the ability to re-share posts to social media' ) }
-				callToAction={ translate( 'Upgrade to Premium' ) }
-				description={ translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' ) }
-			/>
-		);
-	}
-
-	renderUpgradeToGetSchedulingNudge() {
-		if (
-			this.props.hasRepublicizeSchedulingFeature ||
-			! isEnabled( 'publicize-scheduling' )
-		) {
-			return null;
-		}
-
-		const {
-			businessDiscountedRawPrice,
-			businessRawPrice,
-			translate,
-			userCurrency,
-		} = this.props;
-
-		return (
-			<Banner
-				className="post-share__footer-banner"
-				callToAction={
-					translate( 'Upgrade for %s', {
-						args: formatCurrency( businessDiscountedRawPrice || businessRawPrice, userCurrency ),
-						comment: '%s will be replaced by a formatted price, i.e $9.99'
-					} )
-				}
-				list={ [
-					translate( 'Schedule your social messages in advance.' ),
-					translate( 'Remove all advertising from your site.' ),
-					translate( 'Enjoy live chat support.' ),
-				] }
-				plan={ PLAN_BUSINESS }
-				title={ translate( 'Upgrade to a Business Plan!' ) } />
-		);
-	}
-
 	renderConnectionsWarning() {
 		const {
 			connections,
@@ -471,11 +424,17 @@ class PostShare extends Component {
 	}
 
 	renderPrimarySection() {
-		const { hasFetchedConnections, siteSlug, translate, siteId, postId } = this.props;
+		const {
+			hasFetchedConnections,
+			hasRepublicizeFeature,
+			hasRepublicizeSchedulingFeature,
+		} = this.props;
 
 		if ( ! hasFetchedConnections ) {
 			return null;
 		}
+
+		const { siteSlug, translate } = this.props;
 
 		if ( ! this.hasConnections() ) {
 			return (
@@ -483,6 +442,19 @@ class PostShare extends Component {
 					siteSlug,
 					translate,
 				} } />
+			);
+		}
+
+		if (
+			! hasRepublicizeFeature &&
+			! hasRepublicizeSchedulingFeature &&
+			isEnabled( 'publicize-scheduling' )
+		) {
+			return (
+				<div>
+					<UpgradeToPersonalNudge { ...this.props } />
+					<ActionsList { ...this.props } />
+				</div>
 			);
 		}
 
@@ -497,13 +469,7 @@ class PostShare extends Component {
 					{ this.renderConnectionsSection() }
 				</div>
 
-				{ this.renderUpgradeToGetSchedulingNudge() }
-				{ this.props.hasRepublicizeSchedulingFeature &&
-					<ActionsList
-						siteId={ siteId }
-						postId={ postId }
-					/>
-				}
+				{ isEnabled( 'publicize-scheduling' ) && <ActionsList { ...this.props } /> }
 			</div>
 		);
 	}
@@ -511,10 +477,6 @@ class PostShare extends Component {
 	render() {
 		if ( ! this.props.isPublicizeEnabled ) {
 			return null;
-		}
-
-		if ( ! this.props.hasRepublicizeFeature ) {
-			return this.renderUpgradeToGetPublicizeNudge();
 		}
 
 		const {
@@ -579,6 +541,7 @@ export default connect(
 	( state, props ) => {
 		const { siteId } = props;
 		const postId = get( props, 'post.ID' );
+		const postType = get( props, 'post.type' );
 		const userId = getCurrentUserId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
 
@@ -590,7 +553,7 @@ export default connect(
 			hasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			hasRepublicizeSchedulingFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE_SCHEDULING ),
 			siteSlug: getSiteSlug( state, siteId ),
-			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
+			isPublicizeEnabled: isPublicizeEnabled( state, siteId, postType ),
 			scheduling: isSchedulingPublicizeShareAction( state, siteId, postId ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			requesting: isRequestingSharePost( state, siteId, postId ),

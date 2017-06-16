@@ -30,6 +30,7 @@ import Dialog from 'components/dialog';
 import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
 import analytics from 'lib/analytics';
 import SharingPreviewModal from './sharing-preview-modal';
+import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {
@@ -40,7 +41,7 @@ class PublicizeActionsList extends PureComponent {
 	};
 
 	state = {
-		selectedShareTab: SCHEDULED,
+		selectedShareTab: PUBLISHED,
 		showDeleteDialog: false,
 		selectedScheduledShareId: null,
 		showPreviewModal: false,
@@ -63,9 +64,9 @@ class PublicizeActionsList extends PureComponent {
 			previewMessage: message,
 			previewService: service,
 		} );
-	}
+	};
 
-	renderFooterSectionItem( item, index ) {
+	renderActionItem( item, index ) {
 		const {
 			service,
 			connectionName,
@@ -164,7 +165,7 @@ class PublicizeActionsList extends PureComponent {
 		if ( dialogAction === 'delete' ) {
 			const {
 				siteId,
-				postId
+				postId,
 			} = this.props;
 			analytics.tracks.recordEvent( 'calypso_publicize_scheduled_delete' );
 			this.props.deletePostShareAction( siteId, postId, this.state.selectedScheduledShareId );
@@ -173,11 +174,32 @@ class PublicizeActionsList extends PureComponent {
 		this.setState( { showDeleteDialog: false } );
 	};
 
-	renderActionsList = ( actions ) => (
-			<div>
-				{ actions.map( ( item, index ) => this.renderFooterSectionItem( item, index ) ) }
+	renderActionsList = () => {
+		const {
+			hasRepublicizeFeature,
+			hasRepublicizeSchedulingFeature,
+			publishedActions,
+			scheduledActions,
+		} = this.props;
+
+		if ( this.state.selectedShareTab === PUBLISHED ) {
+			return (
+				<div className="post-share__published-list">
+					{ publishedActions.map( ( item, index ) => this.renderActionItem( item, index ) ) }
+				</div>
+			);
+		}
+
+		if ( hasRepublicizeFeature && ! hasRepublicizeSchedulingFeature ) {
+			return <UpgradeToPremiumNudge { ...this.props } />;
+		}
+
+		return (
+			<div className="post-share__scheduled-list">
+				{ scheduledActions.map( ( item, index ) => this.renderActionItem( item, index ) ) }
 			</div>
 		);
+	};
 
 	renderDeleteDialog() {
 		const { translate } = this.props;
@@ -201,23 +223,25 @@ class PublicizeActionsList extends PureComponent {
 
 	render() {
 		const {
+			hasRepublicizeFeature,
+			hasRepublicizeSchedulingFeature,
 			postId,
 			siteId,
-			scheduledActions,
-			publishedActions,
 		} = this.props;
 
 		return (
 			<div>
 				<SectionNav className="post-share__footer-nav" selectedText={ 'some text' }>
 					<NavTabs label="Status" selectedText="Published">
-						<NavItem
-							selected={ this.state.selectedShareTab === SCHEDULED }
-							count={ this.props.scheduledActions.length }
-							onClick={ this.setFooterSection( SCHEDULED ) }
-						>
-							Scheduled
-						</NavItem>
+						{ ( hasRepublicizeFeature || hasRepublicizeSchedulingFeature ) &&
+							<NavItem
+								selected={ this.state.selectedShareTab === SCHEDULED }
+								count={ this.props.scheduledActions.length }
+								onClick={ this.setFooterSection( SCHEDULED ) }
+							>
+								Scheduled
+							</NavItem>
+						}
 						<NavItem
 							selected={ this.state.selectedShareTab === PUBLISHED }
 							count={ this.props.publishedActions.length }
@@ -230,16 +254,8 @@ class PublicizeActionsList extends PureComponent {
 				<div className="post-share__actions-list">
 					<QuerySharePostActions siteId={ siteId } postId={ postId } status={ SCHEDULED } />
 					<QuerySharePostActions siteId={ siteId } postId={ postId } status={ PUBLISHED } />
-					{ this.state.selectedShareTab === SCHEDULED &&
-						<div className="post-share__scheduled-list">
-							{ this.renderActionsList( scheduledActions ) }
-						</div>
-					}
-					{ this.state.selectedShareTab === PUBLISHED &&
-						<div className="post-share__published-list">
-							{ this.renderActionsList( publishedActions ) }
-						</div>
-					}
+
+					{ this.renderActionsList() }
 				</div>
 
 				{ this.renderDeleteDialog() }

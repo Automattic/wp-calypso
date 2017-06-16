@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import PostShare from 'blocks/post-share';
 import QueryPosts from 'components/data/query-posts';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { getSite } from 'state/sites/selectors';
+import { getSite, getSitePlanSlug } from 'state/sites/selectors';
 import { getSitePosts } from 'state/posts/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Card from 'components/card';
@@ -25,8 +25,9 @@ class PostShareExample extends Component {
 	};
 
 	toggleEnable = () => this.setState( { isEnabled: ! this.state.isEnabled } );
+
 	render() {
-		const { post = {}, site, siteId } = this.props;
+		const { planSlug, post, site, siteId } = this.props;
 
 		return (
 			<div>
@@ -38,8 +39,13 @@ class PostShareExample extends Component {
 						query={ { number: 1, type: 'post' } } />
 				) }
 
-				{ site && <p>Site: <strong>{ site.name }</strong> ({ siteId })</p> }
-				{ post && <p>Post: <em>{ post.title }</em></p> }
+				{ site && post &&
+					<p>
+						Site: <strong>{ site.name }</strong> ({ siteId })<br />
+						Plan: <strong>{ planSlug }</strong><br />
+						Post: <em>{ post.title }</em><br />
+					</p>
+				}
 
 				<p onClick={ this.toggleEnable }>
 					<label>Enabled: <FormToggle checked={ this.state.isEnabled } /></label>
@@ -47,6 +53,7 @@ class PostShareExample extends Component {
 
 				{ this.state.isEnabled && <Notice
 					status="is-warning"
+					showDismiss={ false }
 					text={ `Keep in mind that you are able to share the '${ post.title }' post now. Be careful!` } />
 				}
 
@@ -69,9 +76,11 @@ const ConnectedPostShareExample = connect( ( state ) => {
 	const site = getSite( state, siteId );
 	const posts = getSitePosts( state, siteId );
 	const post = posts && posts[ posts.length - 1 ];
+	const planSlug = getSitePlanSlug( state, siteId );
 
 	return {
 		siteId,
+		planSlug,
 		post,
 		site,
 	};
