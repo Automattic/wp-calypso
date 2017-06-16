@@ -66,7 +66,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 		this.props.contactDetails.extra = {
 			...defaults,
-			...this.props.contactDetails.extra
+			...this.props.contactDetails.extra,
 		};
 	}
 
@@ -241,7 +241,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						translate( 'Year/Month/Day - e.g. 1970/12/31', {
 							comment: 'This is describing a date format with fixed fields, so please do not ' +
 								'alter the numbers (Year, Month, Day). Please translate e.g("For example") if appropriate and also ' +
-								'the words, Year, Month, Day, individually.'
+								'the words, Year, Month, Day, individually.',
 						} )
 					}</FormSettingExplanation>
 				</FormFieldset>
@@ -285,7 +285,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		const {
 			registrantVatId,
 			sirenSiret,
-			trademarkNumber
+			trademarkNumber,
 		} = { ...emptyValues, ...extra };
 
 		return (

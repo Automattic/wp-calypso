@@ -133,7 +133,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 								{
 									components: {
 										a: <a href={ ciraAgreementUrl } />,
-									}
+									},
 								}
 							)
 						}</span>

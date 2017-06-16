@@ -65,7 +65,7 @@ export class DomainDetailsForm extends PureComponent {
 			'state',
 			'postalCode',
 			'countryCode',
-			'fax'
+			'fax',
 		];
 
 		const steps = [
@@ -91,7 +91,7 @@ export class DomainDetailsForm extends PureComponent {
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
-			onError: this.handleFormControllerError
+			onError: this.handleFormControllerError,
 		} );
 	}
 
@@ -236,7 +236,7 @@ export class DomainDetailsForm extends PureComponent {
 			// kebab-case for HTML, so instead of using different variations all over the place, this accepts kebab-case and
 			// converts it to camelCase which is the format stored in the formState.
 			errorMessage: ( formState.getFieldErrorMessages( this.state.form, camelCase( name ) ) || [] ).join( '\n' ),
-			eventFormName: 'Checkout Form'
+			eventFormName: 'Checkout Form',
 		};
 	}
 
@@ -301,7 +301,7 @@ export class DomainDetailsForm extends PureComponent {
 				'Registering this domain for a company? + Add Organization Name',
 				'Registering these domains for a company? + Add Organization Name',
 				{
-					count: this.getNumberOfDomainRegistrations()
+					count: this.getNumberOfDomainRegistrations(),
 				}
 			) }
 			{ ...this.getFieldProps( 'organization' ) } />;
