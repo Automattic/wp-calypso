@@ -411,13 +411,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	display: inline;
 }
 
-.search-stream .search-stream__single-column-results .reader-combined-card__post-details {
-
-	@include breakpoint( "<960px" ) {
-		width: 100%;
-	}
-}
-
 .search-stream__results.is-two-columns .search-stream__post-results {
 	max-width: 660px;
 	width: calc( 100% - 300px );
