@@ -17,10 +17,16 @@ import { getCurrentlyEditingShippingZoneMethods } from 'woocommerce/state/ui/shi
 
 const ShippingZoneMethodList = ( { loaded, methods, translate } ) => {
 	const renderMethod = ( method, index ) => (
-		<div key={ index }>
-			{ method.title }
-			{ getMethodSummary( method ) }
-			<Button compact>{ translate( 'Edit' ) }</Button>
+		<div key={ index } className="shipping-zone__method-row">
+			<span className="shipping-zone__method-name">
+				{ method.title }
+			</span>
+			<span className="shipping-zone__method-description">
+				{ getMethodSummary( method ) }
+			</span>
+			<span className="shipping-zone__method-actions">
+				<Button compact>{ translate( 'Edit' ) }</Button>
+			</span>
 		</div>
 	);
 
@@ -36,7 +42,9 @@ const ShippingZoneMethodList = ( { loaded, methods, translate } ) => {
 		return (
 			<div>
 				{ methods.map( renderMethod ) }
-				<Button compact>{ translate( 'Add method' ) }</Button>
+				<div className="shipping-zone__add-method-row">
+					<Button>{ translate( 'Add method' ) }</Button>
+				</div>
 			</div>
 		);
 	};
