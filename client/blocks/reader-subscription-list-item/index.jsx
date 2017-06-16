@@ -67,8 +67,8 @@ function ReaderSubscriptionListItem( {
 
 	function recordEvent( name ) {
 		const props = {
-			blog_ID: siteId,
-			feed_ID: feedId,
+			blog_id: siteId,
+			feed_id: feedId,
 			source: followSource,
 		};
 		if ( railcar ) {
