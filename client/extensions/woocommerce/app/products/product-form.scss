@@ -781,12 +781,8 @@
 		}
 	}
 
-	.products__product-manage-stock {
-		width: 200px;
-
-		.form-text-input {
+	.products__product-manage-stock .form-text-input {
 			width: 110px;
-		}
 	}
 }
 
@@ -846,7 +842,7 @@
 	}
 
 	.products__product-form-stock-disabled {
-		height: 70px;
+		height: 145px;
 	}
 
 	.products__product-manage-stock-toggle,

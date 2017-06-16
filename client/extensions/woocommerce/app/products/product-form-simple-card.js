@@ -9,7 +9,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormFieldSet from 'components/forms/form-fieldset';
@@ -34,12 +33,10 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 		editProduct( siteId, product, { regular_price: e.target.value } );
 	};
 
-	const toggleStock = () => {
-		editProduct( siteId, product, { manage_stock: ! product.manage_stock } );
-	};
-
 	const setStockQuantity = ( e ) => {
-		editProduct( siteId, product, { stock_quantity: e.target.value } );
+		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
+		const manage_stock = ( stock_quantity !== '' );
+		editProduct( siteId, product, { manage_stock, stock_quantity } );
 	};
 
 	const setBackorders = ( e ) => {
@@ -90,26 +87,19 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 
 	const renderStock = () => (
 		<Card className={ stockClasses }>
-			<div className="products__product-manage-stock-toggle">
-				<CompactFormToggle
-					checked={ Boolean( product.manage_stock ) }
-					name="manage_stock"
-					onChange={ toggleStock } />
-				<FormLabel onClick={ toggleStock }>{ translate( 'Manage stock' ) }</FormLabel>
-			</div>
 			<div className="products__product-stock-options-wrapper">
-				{ product.manage_stock && (
-					<div className="products__product-manage-stock">
-						<FormLabel>{ translate( 'Quantity' ) }</FormLabel>
-						<FormTextInput
-							name="stock_quantity"
-							value={ product.stock_quantity || '' }
-							type="number"
-							min="0"
-							onChange={ setStockQuantity }
-							placeholder={ translate( 'Quantity' ) } />
-					</div>
-				) }
+
+				<div className="products__product-manage-stock">
+					<FormLabel>{ translate( 'Stock' ) }</FormLabel>
+					<FormTextInput
+						name="stock_quantity"
+						value={ product.stock_quantity || '' }
+						type="number"
+						min="0"
+						onChange={ setStockQuantity }
+					/>
+				</div>
+
 				{ product.manage_stock && (
 					<div className="products__product-backorders-wrapper">
 						<FormLabel>{ translate( 'Backorders' ) }</FormLabel>
