@@ -31,6 +31,7 @@ export getActivityLogs from './get-activity-logs';
 export getBlockedSites from './get-blocked-sites';
 export getBillingTransactions from './get-billing-transactions';
 export getContactDetailsCache from './get-contact-details-cache';
+export getContactDetailsExtraCache from './get-contact-details-extra-cache';
 export getWhois from './get-whois';
 export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';

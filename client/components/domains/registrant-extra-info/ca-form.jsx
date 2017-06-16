@@ -9,7 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache } from 'state/selectors';
+import { getContactDetailsExtraCache } from 'state/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -124,6 +124,6 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 }
 
 export default connect(
-	state => ( { contactDetails: getContactDetailsCache( state ) } ),
+	state => ( { contactDetails: getContactDetailsExtraCache( state ) } ),
 	{ updateContactDetailsCache }
 )( localize( RegistrantExtraInfoCaForm ) );
