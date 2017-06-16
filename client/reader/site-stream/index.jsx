@@ -5,7 +5,6 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
-import { find } from 'lodash';
 
 /**
  * Internal dependencies
