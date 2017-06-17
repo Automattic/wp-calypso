@@ -13,7 +13,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ShippingZoneEntry from './shipping-zone-list-entry';
-import ShippingZoneDialog from './shipping-zone-dialog';
 import Spinner from 'components/spinner';
 import { fetchShippingZones } from 'woocommerce/state/sites/shipping-zones/actions';
 import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
@@ -65,7 +64,7 @@ class ShippingZoneList extends Component {
 	}
 
 	render() {
-		const { site, siteId, loaded, translate } = this.props;
+		const { site, loaded, translate } = this.props;
 
 		const addNewHref = loaded
 			? getLink( '/store/settings/shipping/:site/zone/new', site )
@@ -92,7 +91,6 @@ class ShippingZoneList extends Component {
 				<Card className="shipping__zones">
 					{ this.renderContent() }
 				</Card>
-				<ShippingZoneDialog siteId={ siteId } />
 			</div>
 		);
 	}

@@ -12,8 +12,9 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
+import ShippingZoneMethodDialog from './shipping-zone-method-dialog';
 import Spinner from 'components/spinner';
-import { getMethodSummary } from '../shipping-method-utils';
+import { getMethodSummary } from './utils';
 import { openShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/actions';
 import { getCurrentlyEditingShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 
@@ -64,6 +65,7 @@ const ShippingZoneMethodList = ( { siteId, loaded, methods, translate, actions }
 			<Card>
 				{ renderContent() }
 			</Card>
+			<ShippingZoneMethodDialog siteId={ siteId } />
 		</div>
 	);
 };

@@ -11,8 +11,8 @@ import FlatRate from './shipping-methods/flat-rate';
 import FreeShipping from './shipping-methods/free-shipping';
 import LocalPickup from './shipping-methods/local-pickup';
 
-export const getMethodName = ( method ) => {
-	switch ( method.methodType ) {
+export const getMethodName = ( methodType ) => {
+	switch ( methodType ) {
 		case 'flat_rate':
 			return translate( 'Flat Rate' );
 		case 'free_shipping':
@@ -41,14 +41,14 @@ export const getMethodSummary = ( method ) => {
 	}
 };
 
-export const renderMethodSettingsView = ( methodType, methodId, siteId, methodSettings ) => {
-	switch ( methodType ) {
+export const renderMethodSettingsView = ( method, siteId ) => {
+	switch ( method.methodType ) {
 		case 'flat_rate':
-			return <FlatRate id={ methodId } siteId={ siteId } { ...methodSettings } />;
+			return <FlatRate siteId={ siteId } { ...method } />;
 		case 'free_shipping':
-			return <FreeShipping id={ methodId } siteId={ siteId } { ...methodSettings } />;
+			return <FreeShipping siteId={ siteId } { ...method } />;
 		case 'local_pickup':
-			return <LocalPickup id={ methodId } siteId={ siteId } { ...methodSettings } />;
+			return <LocalPickup siteId={ siteId } { ...method } />;
 		default:
 			return null;
 	}

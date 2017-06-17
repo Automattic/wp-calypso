@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getMethodSummary } from './shipping-method-utils';
+import { getMethodSummary } from './shipping-zone/utils';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 

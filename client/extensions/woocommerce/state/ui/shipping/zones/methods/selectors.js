@@ -127,13 +127,12 @@ export const getCurrentlyOpenShippingZoneMethod = ( state, siteId = getSelectedS
 		return null;
 	}
 	const zone = getCurrentlyEditingShippingZone( state, siteId );
-	if ( ! zone ) {
+	if ( ! zone || ! zone.methods || ! zone.methods.currentlyEditingId ) {
 		return null;
 	}
 
-	const currentMethodEdits = getShippingZonesEdits( state, zone.id, siteId ).currentlyEditingChanges.methods;
-	const methods = getShippingZoneMethods( state, zone.id, siteId );
-	return find( methods, { id: currentMethodEdits.currentlyEditingId } ) || null;
+	const methods = getCurrentlyEditingShippingZoneMethods( state );
+	return find( methods, { id: zone.methods.currentlyEditingId } ) || null;
 };
 
 /**
