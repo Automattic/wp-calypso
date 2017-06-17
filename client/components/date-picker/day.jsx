@@ -15,16 +15,17 @@ import { CalendarEvent } from './event';
 class DatePickerDay extends Component {
 	static propTypes = {
 		date: PropTypes.object.isRequired,
-		events: PropTypes.array
+		events: PropTypes.array,
+		maxEventsPerTooltip: PropTypes.number,
 	};
 
 	static defaultProps = {
-		showTooltip: false
+		maxEventsPerTooltip: 8,
 	};
 
 	state = {
 		showTooltip: false,
-	}
+	};
 
 	isPastDay( date ) {
 		const today = this.props.moment().set( {
@@ -56,14 +57,14 @@ class DatePickerDay extends Component {
 		}
 
 		const label = this.props.translate(
-				'%(posts)d post',
-				'%(posts)d posts', {
-					count: this.props.events.length,
-					args: {
-						posts: this.props.events.length
-					}
-				}
-			);
+			'%d post',
+			'%d posts', {
+				count: this.props.events.length,
+				args: this.props.events.length,
+			}
+		);
+
+		const moreEvents = this.props.events.length - this.props.maxEventsPerTooltip;
 
 		return (
 			<Tooltip
@@ -74,15 +75,31 @@ class DatePickerDay extends Component {
 			>
 				<span>{ label }</span>
 				<hr className="date-picker__division" />
-				<ul>{ map( this.props.events, event =>
-					<li key={ event.id }>
-						<CalendarEvent
-							icon={ event.icon }
-							socialIcon={ event.socialIcon }
-							socialIconColor={ event.socialIconColor }
-							title={ event.title } />
-					</li>
-				) }</ul>
+				<ul>
+					{ map( this.props.events, ( event, i ) => ( i < this.props.maxEventsPerTooltip ) &&
+						<li key={ event.id }>
+							<CalendarEvent
+								icon={ event.icon }
+								socialIcon={ event.socialIcon }
+								socialIconColor={ event.socialIconColor }
+								title={ event.title } />
+						</li>
+					) }
+
+					{ ( moreEvents > 0 ) &&
+						<li>
+							{ this.props.translate(
+								'… and %(moreEvents)d more post',
+								'… and %(moreEvents)d more posts', {
+									count: moreEvents,
+									args: {
+										moreEvents
+									}
+								}
+							) }
+						</li>
+					}
+				</ul>
 			</Tooltip>
 		);
 	}
