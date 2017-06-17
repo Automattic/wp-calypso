@@ -113,7 +113,7 @@ class StoreStatsChart extends Component {
 									<span className="store-stats-chart__value value">{ itemChartData.value }</span>
 									<Delta
 										value={ `${ Math.abs( Math.round( delta.percentage_change * 100 ) ) }%` }
-										classNames={ `${ delta.favorable } ${ delta.direction }` }
+										className={ `${ delta.favorable } ${ delta.direction }` }
 										suffix={ `since ${ moment( delta.reference_period ).format( 'MMM D' ) }` }
 									/>
 								</Tab>

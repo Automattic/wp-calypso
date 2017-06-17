@@ -1,13 +1,31 @@
+.stats-tabs {
+	display: flex;
+	flex-direction: column;
+
+	.stats-tab a::after {
+		content: none;
+	}
+
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+	}
+}
+
 .stats-tab {
+	float: none;
+
 	a {
 		align-items: center;
 		display: flex;
 		flex-direction: row;
-		padding-bottom: 10px;
+		box-sizing: border-box;
+		padding: 10px 5px;
 		width: 100%;
+		justify-content: flex-end;
+		height: 100%;
 
 		.label {
-			width: 40%;
+			margin-right: auto;
 		}
 
 		.value {
@@ -15,13 +33,9 @@
 			float: none;
 		}
 
-		.store-stats-chart__value {
-			&.value {
-				display: inline-block;
-				padding-right: 10px;
-				text-align: right;
-				width: 25%;
-			}
+		.store-stats-chart__value.value {
+			display: inline-block;
+			margin-top: auto;
 		}
 
 		.delta {
@@ -30,40 +44,16 @@
 
 		@include breakpoint( '>480px' ) {
 			flex-direction: column;
-			min-height: 102px;
-			justify-content: center;
+			justify-content: space-between;
 
 			.label {
-				width: 100%;
-			}
-
-			.store-stats-chart__value {
-				&.value {
-					width: 100%;
-					text-align: center;
-					padding: 0;
-				}
+				margin-bottom: 10px;
+				margin-right: 0;
 			}
 
 			.delta {
-				width: 100%;
-				justify-content: center;
-				margin: 8px auto 0;
-			}
-		}
-
-		@include breakpoint( '<960px' ) {
-			.delta {
-				margin-left: 8px;
-
-				.delta__icon {
-					&.gridicon {
-						margin: 0 4px 0 0;
-					}
-				}
-				.delta__label {
-					padding-right: 4px;
-				}
+				margin-top: 10px;
+				width: initial;
 			}
 		}
 	}

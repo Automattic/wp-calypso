@@ -13,21 +13,21 @@ import { includes } from 'lodash';
 export default class Delta extends Component {
 
 	static propTypes = {
-		classNames: PropTypes.string,
+		className: PropTypes.string,
 		icon: PropTypes.string,
 		suffix: PropTypes.string,
 		value: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { classNames, icon, suffix, value } = this.props;
-		const deltaClasses = classnames( 'delta', classNames );
+		const { className, icon, suffix, value } = this.props;
+		const deltaClasses = classnames( 'delta', className );
 		let deltaIcon;
 		if ( icon ) {
 			deltaIcon = icon;
 		} else {
-			deltaIcon = ( includes( classNames, 'is-increase' ) ) ? 'arrow-up' : 'arrow-down';
-			deltaIcon = ( includes( classNames, 'is-neutral' ) ) ? 'minus-small' : deltaIcon;
+			deltaIcon = ( includes( className, 'is-increase' ) ) ? 'arrow-up' : 'arrow-down';
+			deltaIcon = ( includes( className, 'is-neutral' ) ) ? 'minus-small' : deltaIcon;
 		}
 		return (
 			<div className={ deltaClasses }>
