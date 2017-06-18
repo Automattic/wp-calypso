@@ -110,6 +110,7 @@ const EditorPreview = React.createClass( {
 							showPreview={ this.props.showPreview }
 							showEdit={ true }
 							showExternal={ true }
+							showUrl={ true }
 							defaultViewportDevice={ this.props.defaultViewportDevice }
 							onClose={ this.props.onClose }
 							onEdit={ this.props.onEdit }
