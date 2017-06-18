@@ -149,6 +149,17 @@ a.web-preview__external.button {
 	width: 200px;
 }
 
+.web-preview__url-clipboard-input {
+	margin: 6px auto;
+	width: 35%;
+
+	input {
+		color: $gray;
+		font-size: 14px;
+		height: 35px;
+	}
+}
+
 .web-preview__device-button {
 	border-right: none;
 	padding-left: 8px;

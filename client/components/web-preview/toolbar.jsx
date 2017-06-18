@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
+import ClipboardButtonInput from 'components/clipboard-button-input';
 
 const possibleDevices = [
 	'computer',
@@ -23,6 +24,8 @@ class PreviewToolbar extends Component {
 	static propTypes = {
 		// Show device viewport switcher
 		showDeviceSwitcher: PropTypes.bool,
+		// Show external link in clipboard input
+		showUrl: PropTypes.bool,
 		// Show external link button
 		showExternal: PropTypes.bool,
 		// Show close button
@@ -72,6 +75,7 @@ class PreviewToolbar extends Component {
 			setDeviceViewport,
 			showClose,
 			showDeviceSwitcher,
+			showUrl,
 			showEdit,
 			showExternal,
 			showSEO,
@@ -112,6 +116,12 @@ class PreviewToolbar extends Component {
 							</DropdownItem>
 						) ) }
 					</SelectDropdown>
+				}
+				{ showUrl &&
+					<ClipboardButtonInput
+						className="web-preview__url-clipboard-input"
+						value={ externalUrl || previewUrl }
+					/>
 				}
 				<div className="web-preview__toolbar-actions">
 					{ showEdit &&
