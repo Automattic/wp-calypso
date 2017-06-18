@@ -31,9 +31,7 @@ const defaultValues = {
 
 class RegistrantExtraInfoCaForm extends React.PureComponent {
 	static propTypes = {
-		ciraAgreementAccepted: PropTypes.bool,
-		contactDetails: PropTypes.object,
-		legalType: PropTypes.string,
+		contactDetailsExtra: PropTypes.object.isRequired,
 		translate: PropTypes.function,
 	}
 
@@ -75,7 +73,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		// Add defaults to redux state to make accepting default values work.
 		const requiredDetailsNotInProps = difference(
 			[ 'legalType', 'ciraAgreementAccepted' ],
-			keys( this.props.contactDetails.extra ),
+			keys( this.props.contactDetailsExtra ),
 		);
 
 		if ( ! isEmpty( requiredDetailsNotInProps ) ) {
@@ -99,7 +97,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		const {
 			legalType,
 			ciraAgreementAccepted,
-		} = { ...defaultValues, ...this.props.contactDetails };
+		} = { ...defaultValues, ...this.props.contactDetailsExtra };
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -149,6 +147,6 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 }
 
 export default connect(
-	state => ( { contactDetails: getContactDetailsExtraCache( state ) } ),
+	state => ( { contactDetailsExtra: getContactDetailsExtraCache( state ) } ),
 	{ updateContactDetailsCache }
 )( localize( RegistrantExtraInfoCaForm ) );
