@@ -94,7 +94,7 @@ class RequestLoginEmailForm extends React.Component {
 							autoFocus="true"
 							disabled={ isFetching || emailRequested }
 							name="emailAddress"
-							placeholder="Email address"
+							placeholder={ translate( 'Email address' ) }
 							value={ this.props.emailAddress }
 							onChange={ this.onEmailAddressFieldChange }
 						/>
