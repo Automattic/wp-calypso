@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormFieldSet from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import {
 	setShippingIsTaxable,
