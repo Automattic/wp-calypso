@@ -92,11 +92,11 @@ class Products extends Component {
 		const { translate, site } = this.props;
 		const emptyContentAction = (
 			<Button href={ getLink( '/store/product/:site/', site ) }>
-				{ translate( 'Add a product' ) }
+				{ translate( 'Add your first product' ) }
 			</Button>
 		);
 		return <EmptyContent
-				title={ translate( 'You don\'t have any products.' ) }
+				title={ translate( 'You don\'t have any products yet.' ) }
 				action={ emptyContentAction }
 		/>;
 	}
@@ -135,7 +135,7 @@ class Products extends Component {
 				<SidebarNavigation />
 				<ActionHeader>
 					<Button primary href={ getLink( '/store/product/:site/', site ) }>
-						{ translate( 'Add product' ) }
+						{ translate( 'Add a product' ) }
 					</Button>
 				</ActionHeader>
 				{ this.renderList() }
