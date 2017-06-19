@@ -9,30 +9,23 @@
 	padding: 16px;
 }
 
-.shipping-zone__method-row {
-	display: flex;
+.shipping-zone__methods-container .list-item:not( :first-child ) {
+	border-top: 1px solid $border-ultra-light-gray;
+}
+
+.shipping-zone__methods-container .list-item-field {
 	flex-direction: row;
-	padding: 8px 0;
 	align-items: baseline;
-	border-bottom: 1px solid lighten( $gray, 20% );
 }
 
-.shipping-zone__method-name {
+.shipping-zone__method-title {
 	margin-right: 14px;
+	font-size: 14px;
 }
 
-.shipping-zone__method-description {
-	flex-grow: 1;
+.shipping-zone__method-summary {
 	color: $gray-text-min;
 	font-size: 13px;
-}
-
-.shipping-zone__method-actions {
-	float: right;
-}
-
-.shipping-zone__add-method-row {
-	padding: 8px 0;
 }
 
 &.shipping-zone__method-dialog {

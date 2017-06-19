@@ -10,8 +10,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
+import List from 'woocommerce/components/list/list';
+import ListItem from 'woocommerce/components/list/list-item';
+import ListItemField from 'woocommerce/components/list/list-item-field';
 import ShippingZoneMethodDialog from './shipping-zone-method-dialog';
 import Spinner from 'components/spinner';
 import { getMethodSummary } from './utils';
@@ -23,17 +25,15 @@ const ShippingZoneMethodList = ( { siteId, loaded, methods, translate, actions }
 		const onEditClick = () => ( actions.openShippingZoneMethod( siteId, method.id ) );
 
 		return (
-			<div key={ index } className="shipping-zone__method-row">
-				<span className="shipping-zone__method-name">
-					{ method.title }
-				</span>
-				<span className="shipping-zone__method-description">
-					{ getMethodSummary( method ) }
-				</span>
-				<span className="shipping-zone__method-actions">
+			<ListItem key={ index } >
+				<ListItemField>
+					<span className="shipping-zone__method-title">{ method.title }</span>
+					<span className="shipping-zone__method-summary">{ getMethodSummary( method ) }</span>
+				</ListItemField>
+				<ListItemField>
 					<Button compact onClick={ onEditClick }>{ translate( 'Edit' ) }</Button>
-				</span>
-			</div>
+				</ListItemField>
+			</ListItem>
 		);
 	};
 
@@ -46,25 +46,25 @@ const ShippingZoneMethodList = ( { siteId, loaded, methods, translate, actions }
 			);
 		}
 
-		return (
-			<div>
-				{ methods.map( renderMethod ) }
-				<div className="shipping-zone__add-method-row">
+		return [
+			...methods.map( renderMethod ),
+			<ListItem key={ methods.length }>
+				<ListItemField>
 					<Button>{ translate( 'Add method' ) }</Button>
-				</div>
-			</div>
-		);
+				</ListItemField>
+			</ListItem>
+		];
 	};
 
 	return (
-		<div>
+		<div className="shipping-zone__methods-container">
 			<ExtendedHeader
 				label={ translate( 'Shipping methods' ) }
 				description={ translate( 'Any customers that reside in the locations' +
 					' defined above will have access to these shipping methods' ) } />
-			<Card>
+			<List>
 				{ renderContent() }
-			</Card>
+			</List>
 			<ShippingZoneMethodDialog siteId={ siteId } />
 		</div>
 	);

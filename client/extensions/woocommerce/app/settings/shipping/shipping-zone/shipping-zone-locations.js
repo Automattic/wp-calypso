@@ -22,7 +22,7 @@ const ShippingZoneLocations = ( { loaded, translate } ) => {
 			);
 		}
 
-		return ( <Button compact>{ translate( 'Add location' ) }</Button> );
+		return ( <Button>{ translate( 'Add location' ) }</Button> );
 	};
 
 	return (
