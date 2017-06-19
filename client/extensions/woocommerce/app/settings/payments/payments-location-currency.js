@@ -14,7 +14,7 @@ import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormSelect from 'components/forms/form-select';
 
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 
@@ -25,12 +25,26 @@ class SettingsPaymentsLocationCurrency extends Component {
 			value: PropTypes.string,
 		} ),
 		fetchSettingsGeneral: PropTypes.func.isRequired,
-		siteId: PropTypes.number.isRequired,
+		site: PropTypes.object,
 	};
 
-	componentDidMount() {
-		const { siteId } = this.props;
-		this.props.fetchSettingsGeneral( siteId );
+	componentDidMount = () => {
+		const { site } = this.props;
+
+		if ( site && site.ID ) {
+			this.props.fetchSettingsGeneral( site.ID );
+		}
+	}
+
+	componentWillReceiveProps = ( newProps ) => {
+		const { site } = this.props;
+
+		const newSiteId = newProps.site && newProps.site.ID || null;
+		const oldSiteId = site && site.ID || null;
+
+		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchSettingsGeneral( newSiteId );
+		}
 	}
 
 	constructor( props ) {
@@ -87,11 +101,11 @@ class SettingsPaymentsLocationCurrency extends Component {
 }
 
 function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
-	const currency = getPaymentCurrencySettings( state, siteId );
+	const site = getSelectedSiteWithFallback( state );
+	const currency = getPaymentCurrencySettings( state );
 	return {
 		currency,
-		siteId,
+		site,
 	};
 }
 
