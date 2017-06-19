@@ -10,14 +10,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import {
-	activateRewind as activateRewindAction,
-} from 'state/activity-log/actions';
+import { activateRewind as activateRewindAction } from 'state/activity-log/actions';
 import { isRewindActivating } from 'state/selectors';
 
 class ActivityLogRewindToggle extends Component {
 	static propTypes = {
-		// passed
 		siteId: PropTypes.number,
 
 		// mappedSelectors
@@ -31,7 +28,6 @@ class ActivityLogRewindToggle extends Component {
 	};
 
 	static defaultProps = {
-		isActive: false,
 		isActivating: false,
 	};
 
@@ -55,13 +51,13 @@ class ActivityLogRewindToggle extends Component {
 
 		return (
 			<Button
-				compact={ true }
 				className={ classNames( 'activity-log__rewind-toggle', {
 					'is-busy': isSiteKnown && isActivating,
 				} ) }
+				compact={ true }
 				disabled={ ! isSiteKnown || isActivating }
-				primary
 				onClick={ this.activateRewind }
+				primary
 			>
 				{ translate( 'Activate Rewind' ) }
 			</Button>

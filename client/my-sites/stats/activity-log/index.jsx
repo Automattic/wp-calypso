@@ -27,7 +27,7 @@ import DatePicker from 'my-sites/stats/stats-date-picker';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
-import { isRewindActive } from 'state/selectors';
+import { isRewindActive as isRewindActiveSelector } from 'state/selectors';
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -262,7 +262,7 @@ export default connect(
 			siteId,
 			slug: getSiteSlug( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
-			isRewindActive: isRewindActive( state, siteId ),
+			isRewindActive: isRewindActiveSelector( state, siteId ),
 
 			// FIXME: Testing only
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false ),
