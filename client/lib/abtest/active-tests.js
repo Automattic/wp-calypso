@@ -36,8 +36,8 @@ module.exports = {
 	newSiteWithJetpack: {
 		datestamp: '20170419',
 		variations: {
-			showNewJetpackSite: 10,
-			onlyDotComSites: 90,
+			showNewJetpackSite: 50,
+			onlyDotComSites: 50,
 		},
 		defaultVariation: 'onlyDotComSites',
 	},
