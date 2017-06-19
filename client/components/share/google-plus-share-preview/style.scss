@@ -7,7 +7,7 @@
 	margin: 0 auto;
 	max-width: 530px;
 	width: 100%;
-	
+
 	// Nesting to win main.scss
 	.google-plus-share-preview__profile-name {
 		color: rgba(0, 0, 0, 0.87);
@@ -64,10 +64,9 @@
 	font-size: 20px;
 	font-weight: 300;
 	line-height: 1.4;
-	margin: 16px;
 	max-height: 56px;
 	overflow: hidden;
-	padding-top: 16px;
+	padding: 16px;
 	text-overflow: ellipsis;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
