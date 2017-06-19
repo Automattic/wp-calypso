@@ -6,7 +6,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getShippingMethods, areShippingMethodsLoaded, areShippingMethodsLoading } from '../selectors';
+import {
+	getShippingMethods,
+	areShippingMethodsLoaded,
+	areShippingMethodsLoading,
+	getShippingMethodNameMap,
+} from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'selectors', () => {
@@ -114,6 +119,58 @@ describe( 'selectors', () => {
 			expect( getShippingMethods( stateLoading ) ).to.equal( LOADING );
 			expect( areShippingMethodsLoaded( stateLoading ) ).to.be.false;
 			expect( areShippingMethodsLoading( stateLoading ) ).to.be.true;
+		} );
+	} );
+
+	describe( 'getShippingMethodNameMap', () => {
+		it( 'should return id of the service if the methods are loading', () => {
+			const state = {
+				extensions: {
+					woocommerce: {
+						sites: {
+							123: {
+								shippingMethods: LOADING,
+							},
+						},
+					},
+				},
+			};
+
+			const map = getShippingMethodNameMap( state, 123 );
+			expect( map( 'flat_rate' ) ).to.equal( 'flat_rate' );
+		} );
+
+		it( 'should return map function', () => {
+			const state = {
+				extensions: {
+					woocommerce: {
+						sites: {
+							123: {
+								shippingMethods: [
+									{
+										id: 'flat_rate',
+										title: 'Flat rate',
+									},
+									{
+										id: 'local_pickup',
+										title: 'Local pickup',
+									},
+									{
+										id: 'free_shipping',
+										title: 'Free shipping',
+									},
+								],
+							},
+						},
+					},
+				},
+			};
+
+			const map = getShippingMethodNameMap( state, 123 );
+			expect( map( 'flat_rate' ) ).to.equal( 'Flat rate' );
+			expect( map( 'local_pickup' ) ).to.equal( 'Local pickup' );
+			expect( map( 'free_shipping' ) ).to.equal( 'Free shipping' );
+			expect( map( 'qwerty' ) ).to.equal( 'qwerty' );
 		} );
 	} );
 } );

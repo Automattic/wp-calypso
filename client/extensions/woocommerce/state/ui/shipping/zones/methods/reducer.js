@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, findIndex, isNil, reject } from 'lodash';
+import { find, findIndex, isEmpty, isEqual, isNil, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,10 +9,14 @@ import { find, findIndex, isNil, reject } from 'lodash';
 import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED,
 } from 'woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from 'woocommerce/state/ui/helpers';
 import flatRate from './flat-rate/reducer';
@@ -29,24 +33,122 @@ export const initialState = {
 	creates: [],
 	updates: [],
 	deletes: [],
+	currentlyEditingId: null,
+	currentlyEditingNew: false,
+	currentlyEditingChangedType: false,
 };
 
 const reducer = {};
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
-	const methodType = action.methodType;
+	const { methodType, title } = action;
 	const id = nextBucketIndex( state.creates );
 	let method = { id, methodType, enabled: true };
 	if ( builtInShippingMethods[ methodType ] ) {
-		method = { ...method, ...builtInShippingMethods[ methodType ]( undefined, action ) };
+		method = {
+			...method,
+			...builtInShippingMethods[ methodType ]( undefined, action ),
+			title,
+		};
 	}
 	return { ...state,
 		creates: [ ...state.creates, method ],
+		currentlyEditingId: id,
+		currentlyEditingNew: true,
+		currentlyEditingChangedType: false,
+		currentlyEditingChanges: {},
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN ] = ( state, action ) => {
+	return { ...state,
+		currentlyEditingId: action.methodId,
+		currentlyEditingChanges: {},
+		currentlyEditingChangedType: false,
+		currentlyEditingNew: false,
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL ] = ( state ) => {
+	return { ...state,
+		currentlyEditingId: null,
+		currentlyEditingChangedType: false,
+		currentlyEditingNew: false,
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = ( state ) => {
+	const { currentlyEditingId, currentlyEditingChanges, currentlyEditingChangedType } = state;
+
+	if ( null === currentlyEditingId ) {
+		return state;
+	}
+	if ( isEmpty( currentlyEditingChanges ) ) {
+		// Nothing to save, no need to go through the rest of the algorithm
+		return { ...state,
+			currentlyEditingChangedType: false,
+			currentlyEditingNew: false,
+			currentlyEditingId: null,
+		};
+	}
+
+	const bucket = getBucket( { id: currentlyEditingId } );
+
+	//if method type has been changed, then remove the old one and a new method in its place
+	if ( currentlyEditingChangedType ) {
+		const method = find( state[ bucket ], { id: currentlyEditingId } );
+		let originalId = currentlyEditingId;
+		if ( method && ! isNil( method._originalId ) ) {
+			originalId = method._originalId;
+		}
+
+		state = reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ]( state, { methodId: currentlyEditingId } );
+		return { ...state,
+			currentlyEditingId: null,
+			currentlyEditingChangedType: false,
+			currentlyEditingNew: false,
+			creates: [
+				...state.creates,
+				{
+					...currentlyEditingChanges,
+					id: nextBucketIndex( state.creates ),
+					_originalId: originalId
+				}
+			],
+		};
+	}
+
+	let found = false;
+	const newBucket = state[ bucket ].map( method => {
+		if ( isEqual( currentlyEditingId, method.id ) ) {
+			found = true;
+			// If edits for the method were already in the expected bucket, just update them
+			return {
+				...method,
+				...currentlyEditingChanges,
+			};
+		}
+		return method;
+	} );
+
+	if ( ! found ) {
+		// If edits for the zone were *not* in the bucket yet, add them
+		newBucket.push( { id: currentlyEditingId, ...currentlyEditingChanges } );
+	}
+
+	return { ...state,
+		currentlyEditingId: null,
+		currentlyEditingChangedType: false,
+		currentlyEditingNew: false,
+		[ bucket ]: newBucket,
 	};
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { methodId } ) => {
-	const newState = { ...state };
+	const newState = {
+		...state,
+		currentlyEditingId: null,
+	};
 
 	const bucket = getBucket( { id: methodId } );
 	if ( 'updates' === bucket ) {
@@ -58,20 +160,41 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { methodId } ) => 
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
-	const bucket = getBucket( { id: action.methodId } );
-	const method = find( state[ bucket ], { id: action.methodId } );
-	let originalId = action.methodId;
-	if ( method && ! isNil( method._originalId ) ) {
-		originalId = method._originalId;
+	const { methodType, title } = action;
+	if ( ! builtInShippingMethods[ methodType ] ) {
+		return state;
 	}
 
-	state = reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ]( state, action );
-	state = reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ]( state, action );
-	state.creates[ state.creates.length - 1 ]._originalId = originalId;
-	return state;
+	const currentlyEditingChanges = {
+		...builtInShippingMethods[ methodType ]( undefined, action ),
+		id: state.currentlyEditingId,
+		title,
+		methodType,
+	};
+
+	return { ...state,
+		currentlyEditingChangedType: true,
+		currentlyEditingChanges,
+	};
 };
 
-const editMethodSetting = ( state, methodId, setting, value ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { title } ) => {
+	return { ...state,
+		currentlyEditingChanges: { ...state.currentlyEditingChanges,
+			title,
+		}
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED ] = ( state, { enabled } ) => {
+	return { ...state,
+		currentlyEditingChanges: { ...state.currentlyEditingChanges,
+			enabled,
+		}
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED ] = ( state, { methodId, enabled } ) => {
 	const bucket = getBucket( { id: methodId } );
 	const index = findIndex( state[ bucket ], { id: methodId } );
 
@@ -81,30 +204,24 @@ const editMethodSetting = ( state, methodId, setting, value ) => {
 				...state[ bucket ],
 				{
 					id: methodId,
-					[ setting ]: value,
+					enabled,
 				},
 			],
 		};
 	}
 
 	const methodState = { ...state[ bucket ][ index ],
-		[ setting ]: value,
+		enabled,
 	};
-	return { ...state,
+
+	return {
+		...state,
 		[ bucket ]: [
 			...state[ bucket ].slice( 0, index ),
 			methodState,
 			...state[ bucket ].slice( index + 1 ),
 		],
 	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { methodId, title } ) => {
-	return editMethodSetting( state, methodId, 'title', title );
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED ] = ( state, { methodId, enabled } ) => {
-	return editMethodSetting( state, methodId, 'enabled', Boolean( enabled ) );
 };
 
 const mainReducer = createReducer( initialState, reducer );
@@ -117,26 +234,13 @@ export default ( state, action ) => {
 	const { methodId, methodType } = action;
 	// If the action has something to do with a built-in shipping method, fire its reducer
 	if ( methodId && methodType && builtInShippingMethods[ methodType ] ) {
-		const bucket = getBucket( { id: methodId } );
-		const index = findIndex( state[ bucket ], { id: methodId } );
-
 		// Only give the shipping method reducer data about the shipping method itself, not the whole tree
-		const methodState = -1 !== index ? state[ bucket ][ index ] : { id: methodId };
+		const methodState = state.currentlyEditingChanges;
 		const newMethodState = builtInShippingMethods[ methodType ]( methodState, action );
-
-		if ( -1 === index ) {
-			return { ...state,
-				[ bucket ]: [ ...state[ bucket ], newMethodState ]
-			};
-		}
 
 		if ( newMethodState !== methodState ) {
 			return { ...state,
-				[ bucket ]: [
-					...state[ bucket ].slice( 0, index ),
-					newMethodState,
-					...state[ bucket ].slice( index + 1 ),
-				],
+				currentlyEditingChanges: newMethodState,
 			};
 		}
 	}
