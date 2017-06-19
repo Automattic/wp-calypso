@@ -234,6 +234,7 @@ class PostShare extends Component {
 
 		const shareButton = <Button
 			className="post-share__share-button"
+			busy={ this.props.requesting && ! hasRepublicizeSchedulingFeature }
 			primary
 			onClick={ this.sharePost }
 			disabled={ this.isDisabled() }
