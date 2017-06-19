@@ -53,4 +53,8 @@ window.AppBoot = () => {
 	} else {
 		user.once( 'change', () => boot( user ) );
 	}
+	// @todo Can we get a wp-defined user...?
+	if ( 'jetpack' === PROJECT_NAME ) {
+		boot( user );
+	}
 };
