@@ -2,15 +2,16 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { once } from 'lodash';
+import { flow, once } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import UpdateTemplate from './update-template';
 import PostActions from 'lib/posts/actions';
-import analytics from 'lib/analytics';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const getStrings = once( ( translate ) => ( {
 	page: {
@@ -41,7 +42,12 @@ const getStrings = once( ( translate ) => ( {
 	},
 } ) );
 
-const updatePostStatus = ( WrappedComponent ) => localize(
+const enhance = flow(
+	localize,
+	connect( null, { recordGoogleEvent } )
+);
+
+const updatePostStatus = ( WrappedComponent ) => enhance(
 	class UpdatePostStatus extends Component {
 		static displayName = `UpdatePostStatus(${
 			WrappedComponent.displayName || WrappedComponent.name || ''
@@ -49,6 +55,7 @@ const updatePostStatus = ( WrappedComponent ) => localize(
 
 		static propTypes = {
 			translate: PropTypes.func.isRequired,
+			recordGoogleEvent: PropTypes.func.isRequired,
 			post: PropTypes.object,
 			page: PropTypes.object,
 		}
@@ -163,11 +170,11 @@ const updatePostStatus = ( WrappedComponent ) => localize(
 		}
 
 		resetToPreviousState = () => {
-			const { group, eventName } = this.getType() === 'page'
-				? { group: 'Pages', eventName: 'Clicked Undo Trashed Page' }
-				: { group: 'Posts', eventName: 'Clicked Undo Trashed Post' };
+			const [ group, eventName ] = this.getType() === 'page'
+				? [ 'Pages', 'Clicked Undo Trashed Page' ]
+				: [ 'Posts', 'Clicked Undo Trashed Post' ];
 
-			analytics.ga.recordEvent( group, eventName );
+			this.props.recordGoogleEvent( group, eventName );
 			if ( this.state.previousStatus ) {
 				this.updatePostStatus( this.state.previousStatus );
 			}
