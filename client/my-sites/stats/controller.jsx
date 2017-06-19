@@ -385,6 +385,7 @@ module.exports = {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+		const { startDate } = context.query;
 
 		if ( siteId && ! isJetpack ) {
 			page.redirect( '/stats' );
@@ -395,6 +396,7 @@ module.exports = {
 				path: context.path,
 				siteId,
 				context,
+				startDate,
 			};
 			renderWithReduxStore(
 				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/activity-log" { ...props } />,
