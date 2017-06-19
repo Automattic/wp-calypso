@@ -116,7 +116,8 @@ const updatePostStatus = ( WrappedComponent ) => enhance(
 				const strings = getStrings( this.props.translate );
 				const type = this.props.post ? 'post' : 'page';
 
-				if ( window.confirm( strings[ type ].deleteWarning ) ) { // eslint-disable-line no-alert
+				if ( typeof window === 'object' &&
+						window.confirm( strings[ type ].deleteWarning ) ) { // eslint-disable-line no-alert
 					PostActions.trash( post, setNewStatus );
 				} else {
 					this.resetState();
