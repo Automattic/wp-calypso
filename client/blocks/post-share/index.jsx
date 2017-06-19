@@ -55,7 +55,7 @@ import {
 	FEATURE_REPUBLICIZE_SCHEDULING,
 	PLAN_BUSINESS,
 } from 'lib/plans/constants';
-import Banner from 'components/banner';
+import { UpgradeToPersonalNudge } from 'blocks/post-share/nudges';
 
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
@@ -437,7 +437,7 @@ class PostShare extends Component {
 			return null;
 		}
 
-		const { siteSlug, translate } = this.props;
+		const { siteSlug, translate, isJetpack } = this.props;
 
 		if ( ! this.hasConnections() ) {
 			return (
@@ -453,21 +453,9 @@ class PostShare extends Component {
 			! hasRepublicizeSchedulingFeature &&
 			isEnabled( 'publicize-scheduling' )
 		) {
-			let description;
-			if ( this.props.isJetpack ) {
-				description = translate( 'Get spam protection, unlimited backup storage and more.' );
-			} else {
-				description = translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' );
-			}
 			return (
 				<div>
-					<Banner
-						className="post-share__upgrade-nudge"
-						feature="republicize"
-						title={ translate( 'Unlock the ability to re-share posts to social media' ) }
-						callToAction={ translate( 'Upgrade to Personal' ) }
-						description={ description }
-					/>
+					<UpgradeToPersonalNudge { ...{ translate, isJetpack } } />
 					<ActionsList { ...this.props } />
 				</div>
 			);
