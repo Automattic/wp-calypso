@@ -332,7 +332,8 @@ export const PLANS_LIST = {
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_PREMIUM_SUPPORT
+			FEATURE_PREMIUM_SUPPORT,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' )
 	},
@@ -354,7 +355,8 @@ export const PLANS_LIST = {
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_PREMIUM_SUPPORT
+			FEATURE_PREMIUM_SUPPORT,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
