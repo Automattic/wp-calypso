@@ -124,7 +124,6 @@
 
 	@include breakpoint( "<660px" ) {
 		flex-direction: row;
-		max-height: none;
 	}
 
 	@include breakpoint( "<480px" ) {
