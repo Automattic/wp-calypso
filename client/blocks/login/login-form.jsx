@@ -146,13 +146,13 @@ export class LoginForm extends Component {
 						</FormsButton>
 					</div>
 				</Card>
-				<Card>
-					{ config.isEnabled( 'signup/social' ) && (
+				{ config.isEnabled( 'signup/social' ) && (
+					<Card>
 						<div className="login__form-social">
 							<SocialLoginForm onSuccess={ this.props.onSuccess } />
 						</div>
-					) }
-				</Card>
+					</Card>
+				) }
 			</form>
 		);
 	}
