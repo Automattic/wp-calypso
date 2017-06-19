@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -43,13 +44,16 @@ const ProductsListRow = ( { site, product, translate } ) => {
 		</div>
 	);
 
+	const goToProduct = () => {
+		const link = getLink( '/store/product/:site/' + product.id, site );
+		page( link );
+	};
+
 	return (
-		<TableRow>
+		<TableRow onClick={ goToProduct }>
 			<TableItem isTitle className="products__list-product">
 				{ renderImage() }
-				<a href={ getLink( '/store/product/:site/' + product.id, site ) }>
-					{ product.name }
-				</a>
+				<span className="products__list-name">{ product.name }</span>
 			</TableItem>
 			<TableItem>{ renderStock() }</TableItem>
 			<TableItem>{ renderCategories() }</TableItem>
