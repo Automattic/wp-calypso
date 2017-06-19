@@ -14,6 +14,7 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
 import SettingsPaymentsLocationCurrency from './payments-location-currency';
+import SettingsNavigation from '../navigation';
 import SettingsPaymentsOffline from './payments-offline';
 import SettingsPaymentsOffSite from './payments-off-site';
 import SettingsPaymentsOnSite from './payments-on-site';
@@ -39,6 +40,7 @@ class SettingsPayments extends Component {
 			<Main
 				className={ classNames( 'settingsPayments', className ) }>
 				<ActionHeader breadcrumbs={ breadcrumbs } />
+				<SettingsNavigation />
 				<SettingsPaymentsLocationCurrency />
 				<SettingsPaymentsOnSite />
 				<SettingsPaymentsOffSite />
