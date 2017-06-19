@@ -15,6 +15,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { errorNotice } from 'state/notices/actions';
 
+export const hasParentCommentId = ( { parentCommentId } ) => !! parentCommentId;
+
 /***
  * Creates a placeholder comment for a given text and postId
  * We need placehodler id to be unique in the context of siteId, postId for that specific user,
