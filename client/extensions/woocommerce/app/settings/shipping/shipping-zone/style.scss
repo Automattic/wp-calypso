@@ -1,0 +1,90 @@
+.shipping-zone__locations {
+	margin-top: 58px;
+}
+
+.shipping-zone__loading-spinner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+}
+
+.shipping-zone__methods-container .list-item:not( :first-child ) {
+	border-top: 1px solid $border-ultra-light-gray;
+}
+
+.shipping-zone__methods-container .list-item-field {
+	flex-direction: row;
+	align-items: baseline;
+}
+
+.shipping-zone__method-title {
+	margin-right: 14px;
+	font-size: 14px;
+}
+
+.shipping-zone__method-summary {
+	color: $gray-text-min;
+	font-size: 13px;
+}
+
+&.shipping-zone__method-dialog {
+	max-width: 600px;
+	max-height: 80%;
+	display: flex;
+	flex-direction: column;
+
+	.dialog__content {
+		height: 100%;
+		overflow-y: scroll;
+	}
+
+	.dialog__action-buttons {
+		overflow: visible;
+	}
+}
+
+.shipping-zone__method-dialog {
+	margin-bottom: 24px;
+	padding-top: 8px;
+	font-size: 18px;
+}
+
+.shipping-zone__method-delete {
+	float: left;
+}
+
+.shipping-zone__method-type-select {
+	width: 100%;
+}
+
+.shipping-zone__method-container {
+	position: relative;
+	padding: 20px;
+	border-bottom: 1px solid lighten( $gray, 20% );
+	margin-bottom: 24px;
+
+	.form-text-input-with-affixes {
+		width: 200px;
+	}
+}
+
+.shipping-methods__free-shipping-option {
+	display: flex;
+	align-items: center;
+
+	.form-text-input-with-affixes {
+		width: 100px;
+		margin: 0 8px;
+	}
+
+	.form-text-input-with-affixes__prefix,
+	.form-currency-input {
+		padding: 4px 8px;
+	}
+}
+
+.shipping-methods__checkbox {
+	margin-right: 7px;
+	margin-top: 4px;
+}

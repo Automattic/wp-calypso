@@ -36,6 +36,7 @@ const getShippingZoneMethodsEdits = ( state, zoneId, siteId ) => {
 		creates: [],
 		updates: [],
 		deletes: [],
+		currentlyEditingId: null,
 	};
 };
 
@@ -63,7 +64,7 @@ const sortShippingZoneMethods = ( state, siteId, methods ) => {
 };
 
 const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
-	const methodIds = [ ...zone.methodIds ];
+	const methodIds = [ ...( zone.methodIds || [] ) ];
 	const edits = getShippingZoneMethodsEdits( state, zone.id, siteId );
 	const { creates, updates, deletes } = mergeMethodEdits( edits, extraEdits );
 
@@ -118,6 +119,33 @@ export const getCurrentlyEditingShippingZoneMethods = ( state, siteId = getSelec
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Object} The currently open shipping method or null
+ */
+export const getCurrentlyOpenShippingZoneMethod = ( state, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! areShippingZonesLoaded( state, siteId ) ) {
+		return null;
+	}
+	const zone = getCurrentlyEditingShippingZone( state, siteId );
+	if ( ! zone || ! zone.methods || ! zone.methods.currentlyEditingId ) {
+		return null;
+	}
+
+	const methods = getCurrentlyEditingShippingZoneMethods( state );
+	const openMethod = find( methods, { id: zone.methods.currentlyEditingId } );
+	if ( ! openMethod ) {
+		return null;
+	}
+
+	return {
+		id: zone.methods.currentlyEditingId,
+		...openMethod,
+		...zone.methods.currentlyEditingChanges
+	};
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
  * @param {Number} [zoneId] Shipping Zone ID. If not provided, it will default to the shipping zone currently being edited
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} The list of Shipping Method types that can be added to the given shipping Zone
@@ -136,6 +164,16 @@ export const getNewMethodTypeOptions = ( state, zoneId = null, siteId = getSelec
 			options.push( methodType );
 		}
 	} );
+
+	//if a method is open and its type has been changed, put the original type back on the list
+	const openMethod = getCurrentlyOpenShippingZoneMethod( state, siteId );
+	if ( openMethod ) {
+		const originalMethod = find( currentMethods, { id: openMethod.id } );
+		if ( openMethod.methodType !== originalMethod.methodType &&
+			-1 === options.indexOf( originalMethod.methodType ) ) {
+			options.push( originalMethod.methodType );
+		}
+	}
 
 	return options.sort();
 };

@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 import AddressView from 'woocommerce/components/address-view';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import Notice from 'components/notice';
 
 class ShippingOrigin extends Component {
 	constructor( props ) {
@@ -31,16 +30,10 @@ class ShippingOrigin extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div>
+			<div className="shipping__origin">
 				<ExtendedHeader
 					label={ translate( 'Shipping Origin' ) }
 					description={ translate( 'The address of where you will be shipping from.' ) } />
-				<Notice
-					status="is-info"
-					className="shipping__address-notice"
-					text={ translate( 'This is the address you entered while signing up for a WordPress.com Store.' ) }
-					showDismiss={ true } >
-				</Notice>
 				<Card>
 					<AddressView address={ this.state.address } />
 				</Card>

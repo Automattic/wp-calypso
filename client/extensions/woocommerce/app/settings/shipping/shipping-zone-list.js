@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -10,52 +12,68 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import ShippingZone from './shipping-zone';
-import ShippingZoneDialog from './shipping-zone-dialog';
+import ShippingZoneEntry from './shipping-zone-list-entry';
+import Spinner from 'components/spinner';
+import { fetchShippingZones } from 'woocommerce/state/sites/shipping-zones/actions';
+import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { getShippingZones } from 'woocommerce/state/ui/shipping/zones/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 class ShippingZoneList extends Component {
-	constructor( props ) {
-		super( props );
-
-		//TODO: use redux state with real data
-		this.state = {
-			showDialog: false,
-			shippingZones: [ {
-				locationName: 'United States',
-				locationDescription: '50 states',
-				methods: [ {
-					name: 'USPS',
-					description: 'All domestic services',
-				}, {
-					name: 'Flat Rate',
-					description: 'Minimum spend: $100',
-				} ],
-				icon: 'location'
-			}, {
-				locationName: 'Rest of the world',
-				locationDescription: '240 countries',
-				methods: [ {
-					name: 'USPS',
-					description: 'All international services',
-				} ],
-				icon: 'globe'
-			} ],
-		};
+	componentWillMount() {
+		if ( this.props.siteId ) {
+			this.props.actions.fetchShippingZones( this.props.siteId );
+		}
 	}
 
-	renderShippingZone( zone, index ) {
-		return ( <ShippingZone key={ index } { ...zone } /> );
+	componentWillReceiveProps( { siteId } ) {
+		if ( siteId === this.props.siteId ) {
+			return;
+		}
+
+		this.props.actions.fetchShippingZones( siteId );
+	}
+
+	renderContent() {
+		if ( ! this.props.loaded ) {
+			return (
+				<div className="shipping__loading-spinner">
+					<Spinner size={ 24 } />
+				</div>
+			);
+		}
+
+		const { translate, siteId } = this.props;
+
+		const renderShippingZone = ( zone, index ) => {
+			return ( <ShippingZoneEntry key={ index } siteId={ siteId } { ...zone } /> );
+		};
+
+		return (
+			<div>
+				<div className="shipping__zones-row shipping__zones-header">
+					<div className="shipping__zones-row-icon"></div>
+					<div className="shipping__zones-row-location">{ translate( 'Location' ) }</div>
+					<div className="shipping__zones-row-methods">{ translate( 'Shipping methods' ) }</div>
+					<div className="shipping__zones-row-actions" />
+				</div>
+				{ this.props.shippingZones.map( renderShippingZone ) }
+			</div>
+		);
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { site, loaded, translate } = this.props;
 
-		const onAddZoneOpen = () => {
-			this.setState( { showDialog: true } );
-		};
+		const addNewHref = loaded
+			? getLink( '/store/settings/shipping/:site/zone/new', site )
+			: '#';
 
-		const onAddZoneClose = () => {
-			this.setState( { showDialog: false } );
+		const onAddNewClick = ( event ) => {
+			if ( ! loaded ) {
+				event.preventDefault();
+			}
 		};
 
 		return (
@@ -63,21 +81,31 @@ class ShippingZoneList extends Component {
 				<ExtendedHeader
 					label={ translate( 'Shipping Zones' ) }
 					description={ translate( 'The regions you ship to and the methods you will provide.' ) }>
-					<Button onClick={ onAddZoneOpen }>{ translate( 'Add zone' ) }</Button>
+					<Button
+						href={ addNewHref }
+						onClick={ onAddNewClick }
+						disabled={ ! loaded }>{
+							translate( 'Add zone' ) }
+					</Button>
 				</ExtendedHeader>
 				<Card className="shipping__zones">
-					<div className="shipping__zones-row shipping__zones-header">
-						<div className="shipping__zones-row-icon"></div>
-						<div className="shipping__zones-row-location">{ translate( 'Location' ) }</div>
-						<div className="shipping__zones-row-methods">{ translate( 'Shipping methods' ) }</div>
-						<div className="shipping__zones-row-actions" />
-					</div>
-					{ this.state.shippingZones.map( this.renderShippingZone ) }
+					{ this.renderContent() }
 				</Card>
-				<ShippingZoneDialog isVisible={ this.state.showDialog } onClose={ onAddZoneClose } />
 			</div>
 		);
 	}
 }
 
-export default localize( ShippingZoneList );
+export default connect(
+	( state ) => ( {
+		site: getSelectedSite( state ),
+		siteId: getSelectedSiteId( state ),
+		shippingZones: getShippingZones( state ),
+		loaded: areShippingZonesLoaded( state )
+	} ),
+	( dispatch ) => ( {
+		actions: bindActionCreators( {
+			fetchShippingZones
+		}, dispatch )
+	} )
+)( localize( ShippingZoneList ) );
