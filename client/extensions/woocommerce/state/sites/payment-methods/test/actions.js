@@ -91,7 +91,6 @@ describe( 'actions', () => {
 				method_title: 'BACS',
 				methodType: 'offline',
 				method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
-				settings: { enabled: { id: 'enabled', label: 'Enabled', type: 'checkbox', value: 'yes' } },
 			} ]
 		};
 		const notEnabled = {
@@ -105,7 +104,6 @@ describe( 'actions', () => {
 				method_title: 'BACS',
 				methodType: 'offline',
 				method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
-				settings: { enabled: { id: 'enabled', label: 'Enabled', type: 'checkbox', value: 'no' } },
 			} ]
 		};
 		it( 'should dispatch an action', () => {
@@ -183,12 +181,6 @@ describe( 'actions', () => {
 					id: 'email',
 					label: 'PayPal email'
 				},
-				enabled: {
-					id: 'enabled',
-					label: 'Enabled',
-					type: 'checkbox',
-					value: 'no'
-				},
 			},
 			title: 'PayPal6',
 		};
@@ -261,12 +253,6 @@ describe( 'actions', () => {
 							email: {
 								id: 'email',
 								label: 'PayPal email'
-							},
-							enabled: {
-								id: 'enabled',
-								label: 'Enabled',
-								type: 'checkbox',
-								value: 'no'
 							},
 						},
 						title: 'PayPal7',

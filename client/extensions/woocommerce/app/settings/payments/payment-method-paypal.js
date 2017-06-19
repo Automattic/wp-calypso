@@ -14,7 +14,6 @@ import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 
 class PaymentMethodPaypal extends Component {
 
@@ -41,23 +40,10 @@ class PaymentMethodPaypal extends Component {
 		this.props.onSave( this.props.method );
 	}
 
-	renderEnabledField = ( isEnabled ) => {
-		return (
-			<PaymentMethodEditFormToggle
-				checked={ isEnabled === 'yes' }
-				name="enabled"
-				onChange={ this.onEditFieldHandler } />
-		);
-	}
-
 	render() {
 		const { method: { settings }, translate } = this.props;
 		return (
 			<div className="payments__method-edit-fields">
-				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
-					{ this.renderEnabledField( settings.enabled.value ) }
-				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>{ translate( 'Your Paypal ID' ) }</FormLabel>
 					<FormTextInput

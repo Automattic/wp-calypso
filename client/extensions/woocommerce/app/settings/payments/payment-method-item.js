@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import {
 	cancelEditingPaymentMethod,
+	changePaymentMethodEnabled,
 	changePaymentMethodField,
 	closeEditingPaymentMethod,
 	openPaymentMethodForEdit,
@@ -19,12 +20,15 @@ import {
 import { getCurrentlyEditingPaymentMethod } from 'woocommerce/state/ui/payments/methods/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 import PaymentMethodEdit from './payment-method-edit';
+import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 import PaymentMethodPaypal from './payment-method-paypal';
 import PaymentMethodStripe from './payment-method-stripe';
-import { savePaymentMethod } from 'woocommerce/state/sites/payment-methods/actions';
+import { savePaymentMethod, savePaymentMethodEnabled } from 'woocommerce/state/sites/payment-methods/actions';
 
 class PaymentMethodItem extends Component {
 	static propTypes = {
@@ -67,9 +71,43 @@ class PaymentMethodItem extends Component {
 		this.props.changePaymentMethodField( this.props.site.ID, field, value );
 	}
 
+	onEnableHandler = ( e ) => {
+		const { method, site, translate } = this.props;
+		const enabled = e.target.value === 'yes';
+		this.props.changePaymentMethodEnabled(
+			site.ID,
+			method.id,
+			enabled
+		);
+		const successAction = () => {
+			return successNotice(
+				translate( 'Payment method successfully saved.' ),
+				{ duration: 4000 }
+			);
+		};
+
+		const errorAction = () => {
+			this.props.changePaymentMethodEnabled(
+				site.ID,
+				method.id,
+				! enabled
+			);
+			return errorNotice(
+				translate( 'There was a problem saving the payment method. Please try again.' )
+			);
+		};
+
+		this.props.savePaymentMethodEnabled(
+			site.ID,
+			method,
+			e.target.value,
+			successAction,
+			errorAction
+		);
+	}
+
 	onSave = () => {
 		const { method, site, translate } = this.props;
-
 		const successAction = () => {
 			this.props.closeEditingPaymentMethod( site.ID, method.id );
 			return successNotice(
@@ -83,7 +121,6 @@ class PaymentMethodItem extends Component {
 				translate( 'There was a problem saving the payment method. Please try again.' )
 			);
 		};
-
 		this.props.savePaymentMethod( site.ID, method, successAction, errorAction );
 	}
 
@@ -113,12 +150,21 @@ class PaymentMethodItem extends Component {
 		);
 	}
 
+	renderEnabledField = ( isEnabled ) => {
+		return (
+			<PaymentMethodEditFormToggle
+				checked={ isEnabled }
+				name="enabled"
+				onChange={ this.onEnableHandler } />
+		);
+	}
+
 	render() {
 		const currentlyEditingId = this.props.currentlyEditingMethod &&
 			this.props.currentlyEditingMethod.id;
 		const { method, translate } = this.props;
 		let editButtonText = translate( 'Set up' );
-		if ( method.settings.enabled.value === 'yes' ) {
+		if ( method.enabled ) {
 			editButtonText = translate( 'Manage' );
 		}
 		if ( currentlyEditingId === method.id ) {
@@ -152,6 +198,14 @@ class PaymentMethodItem extends Component {
 
 				</ListItemField>
 				<ListItemField>
+					<FormFieldset className="payments__method-edit-field-container">
+						<div>
+							<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
+							{ this.renderEnabledField( method.enabled ) }
+						</div>
+					</FormFieldset>
+				</ListItemField>
+				<ListItemField>
 					<Button compact onClick={ this.onEditHandler }>
 						{ editButtonText }
 					</Button>
@@ -177,10 +231,12 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			cancelEditingPaymentMethod,
+			changePaymentMethodEnabled,
 			changePaymentMethodField,
 			closeEditingPaymentMethod,
 			openPaymentMethodForEdit,
 			savePaymentMethod,
+			savePaymentMethodEnabled,
 		},
 		dispatch
 	);

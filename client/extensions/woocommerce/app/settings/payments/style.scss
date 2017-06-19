@@ -44,18 +44,37 @@
 	}
 
 	.list-item-field {
-		width: 30%;
+		width: 25%;
 
 		&:nth-child( 2 ) {
-			width: 45%;
+			width: 20%;
 		}
 
 		&:nth-child( 3 ) {
 			width: 25%;
 		}
+
+		&:nth-child( 4 ) {
+			width: 20%;
+		}
 	}
 
-	.list-item-field:nth-child( 3 ) {
+	.list-item-field:nth-child( 3 ) fieldset > div {
+		display: flex;
+		flex-direction: row;
+
+		label {
+			color: #87a6bc;
+			font-size: 11px;
+			line-height: 16px;
+			margin-right: 8px;
+			vertical-align: top;
+			text-transform: uppercase;
+			cursor: pointer;
+		}
+	}
+
+	.list-item-field:nth-child( 4 ) {
 		.button {
 			align-self: flex-end;
 		}

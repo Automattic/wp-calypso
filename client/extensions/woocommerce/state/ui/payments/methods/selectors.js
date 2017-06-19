@@ -51,8 +51,10 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
 				return;
 			}
 			updateEdits[ updateKey ] = update[ updateKey ].value;
+			if ( updateKey === 'enabled' ) {
+				updateEdits[ updateKey ] = update[ updateKey ];
+			}
 		} );
-
 		methods[ index ] = { ...methods[ index ], ...updateEdits };
 	} );
 	return [ ...methods, ...creates ];
