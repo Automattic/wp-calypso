@@ -46,8 +46,7 @@ function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
 }
 
-// FIXME(mcsf): I vow to follow-up on this and port to Component
-const Page = React.createClass( { // eslint-disable-line react/prefer-es6-class
+const Page = React.createClass( {
 	propTypes: {
 		// connected via updatePostStatus
 		buildUpdateTemplate: PropTypes.func.isRequired,
