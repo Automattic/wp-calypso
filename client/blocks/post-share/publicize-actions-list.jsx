@@ -13,7 +13,6 @@ import {
 	getPostShareScheduledActions,
 	getPostSharePublishedActions,
 } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
 import QuerySharePostActions from 'components/data/query-share-post-actions/index.jsx';
 import CompactCard from 'components/card/compact';
 import SocialLogo from 'social-logos';

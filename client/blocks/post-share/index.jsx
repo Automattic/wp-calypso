@@ -53,7 +53,8 @@ import {
 import {
 	FEATURE_REPUBLICIZE,
 	FEATURE_REPUBLICIZE_SCHEDULING,
-	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+	PLAN_JETPACK_PREMIUM
 } from 'lib/plans/constants';
 import { UpgradeToPersonalNudge } from 'blocks/post-share/nudges';
 
@@ -76,8 +77,6 @@ class PostShare extends Component {
 		disabled: PropTypes.bool,
 
 		// connect prps
-		businessDiscountedRawPrice: PropTypes.number,
-		businessRawPrice: PropTypes.number,
 		connections: PropTypes.array,
 		failed: PropTypes.bool,
 		hasFetchedConnections: PropTypes.bool,
@@ -540,6 +539,12 @@ class PostShare extends Component {
 		);
 	}
 }
+
+const getDiscountedOrRegularPrice = ( state, siteId, plan ) => (
+	getPlanDiscountedRawPrice( state, siteId, plan, { isMonthly: true } ) ||
+	getSitePlanRawPrice( state, siteId, plan, { isMonthly: true } )
+);
+
 export default connect(
 	( state, props ) => {
 		const { siteId } = props;
@@ -565,8 +570,8 @@ export default connect(
 			failed: sharePostFailure( state, siteId, postId ),
 			success: sharePostSuccessMessage( state, siteId, postId ),
 			scheduledAt: getScheduledPublicizeShareActionTime( state, siteId, postId ),
-			businessRawPrice: getSitePlanRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
-			businessDiscountedRawPrice: getPlanDiscountedRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
+			premiumPrice: getDiscountedOrRegularPrice( state, siteId, PLAN_PREMIUM ),
+			jetpackPremiumPrice: getDiscountedOrRegularPrice( state, siteId, PLAN_JETPACK_PREMIUM ),
 			userCurrency: getCurrentUserCurrencyCode( state ),
 		};
 	},
