@@ -422,3 +422,17 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 		display: block;
 	}
 }
+
+.post-share__external-url {
+	color: lighten( $gray, 20% );
+
+	&:hover,
+	&:focus {
+		color: darken( $gray, 10% );
+	}
+}
+
+.post-share__external-url .gridicon {
+	position: relative;
+	top: 2px;
+}
