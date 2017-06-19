@@ -298,7 +298,7 @@ class ActivityLog extends Component {
 				{ this.renderErrorMessage() || this.renderContent() }
 				<ActivityLogConfirmDialog
 					isVisible={ showRestoreConfirmDialog }
-					siteName={ siteTitle }
+					siteTitle={ siteTitle }
 					timestamp={ requestedRestoreTimestamp }
 					onClose={ this.handleRestoreDialogClose }
 					onConfirm={ this.handleRestoreDialogConfirm }
