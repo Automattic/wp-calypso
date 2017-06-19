@@ -17,10 +17,16 @@ import ListItemField from 'woocommerce/components/list/list-item-field';
 import ShippingZoneMethodDialog from './shipping-zone-method-dialog';
 import Spinner from 'components/spinner';
 import { getMethodSummary } from './utils';
-import { openShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/actions';
-import { getCurrentlyEditingShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
+import {
+	openShippingZoneMethod,
+	addMethodToShippingZone
+} from 'woocommerce/state/ui/shipping/zones/methods/actions';
+import {
+	getCurrentlyEditingShippingZoneMethods,
+	getNewMethodTypeOptions,
+} from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 
-const ShippingZoneMethodList = ( { siteId, loaded, methods, translate, actions } ) => {
+const ShippingZoneMethodList = ( { siteId, loaded, methods, newMethodTypeOptions, translate, actions } ) => {
 	const renderMethod = ( method, index ) => {
 		const onEditClick = () => ( actions.openShippingZoneMethod( siteId, method.id ) );
 
@@ -46,11 +52,13 @@ const ShippingZoneMethodList = ( { siteId, loaded, methods, translate, actions }
 			);
 		}
 
+		const onAddMethod = () => ( actions.addMethodToShippingZone( siteId, newMethodTypeOptions[ 0 ] ) );
+
 		return [
 			...methods.map( renderMethod ),
 			<ListItem key={ methods.length }>
 				<ListItemField>
-					<Button>{ translate( 'Add method' ) }</Button>
+					<Button onClick={ onAddMethod }>{ translate( 'Add method' ) }</Button>
 				</ListItemField>
 			</ListItem>
 		];
@@ -76,11 +84,13 @@ ShippingZoneMethodList.propTypes = {
 
 export default connect(
 	( state ) => ( {
-		methods: getCurrentlyEditingShippingZoneMethods( state )
+		methods: getCurrentlyEditingShippingZoneMethods( state ),
+		newMethodTypeOptions: getNewMethodTypeOptions( state ),
 	} ),
 	( dispatch ) => ( {
 		actions: bindActionCreators( {
 			openShippingZoneMethod,
+			addMethodToShippingZone,
 		}, dispatch )
 	} )
 )( localize( ShippingZoneMethodList ) );

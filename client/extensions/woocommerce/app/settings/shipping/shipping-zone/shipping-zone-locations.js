@@ -8,8 +8,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
+import List from 'woocommerce/components/list/list';
+import ListItem from 'woocommerce/components/list/list-item';
+import ListItemField from 'woocommerce/components/list/list-item-field';
 import Spinner from 'components/spinner';
 
 const ShippingZoneLocations = ( { loaded, translate } ) => {
@@ -22,7 +24,12 @@ const ShippingZoneLocations = ( { loaded, translate } ) => {
 			);
 		}
 
-		return ( <Button>{ translate( 'Add location' ) }</Button> );
+		return (
+			<ListItem>
+				<ListItemField>
+					<Button>{ translate( 'Add location' ) }</Button>
+				</ListItemField>
+			</ListItem> );
 	};
 
 	return (
@@ -30,9 +37,9 @@ const ShippingZoneLocations = ( { loaded, translate } ) => {
 			<ExtendedHeader
 				label={ translate( 'Zone locations' ) }
 				description={ translate( 'Add locations that you want to share shipping methods' ) } />
-			<Card>
+			<List>
 				{ renderContent() }
-			</Card>
+			</List>
 		</div>
 	);
 };

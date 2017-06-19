@@ -5,7 +5,6 @@ import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { isString } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,17 +21,10 @@ import {
 
 const FreeShippingMethod = ( { id, siteId, cost, tax_status, translate, actions } ) => {
 	const isTaxable = 'taxable' === tax_status;
-	const advancedCostInput = isString( cost );
 	const onTaxableChange = () => ( actions.setShippingIsTaxable( siteId, id, ! isTaxable ) );
 	const onCostChange = ( event ) => ( actions.setShippingCost( siteId, id, event.target.value ) );
 
 	const renderCostInput = () => {
-		if ( advancedCostInput ) {
-			return <FormTextInput
-				value={ cost }
-				onChange={ onCostChange } />;
-		}
-
 		//TODO: remove hardcoded currency settings
 		return <FormCurrencyInput
 			currencySymbolPrefix={ '$' }

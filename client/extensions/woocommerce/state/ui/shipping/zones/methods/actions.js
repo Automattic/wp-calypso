@@ -64,12 +64,11 @@ export const removeMethodFromShippingZone = ( siteId, methodId ) => {
  * Changes the given shipping method into a shipping method of a new type. Note that, underneath, this removes the
  * shipping method from the shipping zone, and creates a new one of the given type.
  * @param {Number} siteId Site ID.
- * @param {String} methodId ID of the shipping method to change type.
  * @param {String} methodType New shipping method type to switch to. For example, "free_shipping", "local_pickup".
  * @return {Object} Action object.
  */
-export const changeShippingZoneMethodType = ( siteId, methodId, methodType ) => {
-	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE, siteId, methodId, methodType };
+export const changeShippingZoneMethodType = ( siteId, methodType ) => {
+	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE, siteId, methodType };
 };
 
 /**
@@ -86,10 +85,9 @@ export const changeShippingZoneMethodTitle = ( siteId, methodId, title ) => {
 /**
  * Enables or disables the given shipping zone method.
  * @param {Number} siteId Site ID.
- * @param {String} methodId ID of the shipping method.
  * @param {Boolean} enabled Whether to enable (true) or disable (false) the shipping method.
  * @return {Object} Action object.
  */
-export const toggleShippingZoneMethodEnabled = ( siteId, methodId, enabled ) => {
-	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED, siteId, methodId, enabled };
+export const toggleShippingZoneMethodEnabled = ( siteId, enabled ) => {
+	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED, siteId, enabled };
 };

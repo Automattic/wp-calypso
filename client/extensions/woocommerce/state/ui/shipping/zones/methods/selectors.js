@@ -132,7 +132,16 @@ export const getCurrentlyOpenShippingZoneMethod = ( state, siteId = getSelectedS
 	}
 
 	const methods = getCurrentlyEditingShippingZoneMethods( state );
-	return find( methods, { id: zone.methods.currentlyEditingId } ) || null;
+	const openMethod = find( methods, { id: zone.methods.currentlyEditingId } );
+	if ( ! openMethod ) {
+		return null;
+	}
+
+	return {
+		id: zone.methods.currentlyEditingId,
+		...openMethod,
+		...zone.methods.currentlyEditingChanges
+	};
 };
 
 /**
@@ -155,6 +164,16 @@ export const getNewMethodTypeOptions = ( state, zoneId = null, siteId = getSelec
 			options.push( methodType );
 		}
 	} );
+
+	//if a method is open and its type has been changed, put the original type back on the list
+	const openMethod = getCurrentlyOpenShippingZoneMethod( state, siteId );
+	if ( openMethod ) {
+		const originalMethod = find( currentMethods, { id: openMethod.id } );
+		if ( openMethod.methodType !== originalMethod.methodType &&
+			-1 === options.indexOf( originalMethod.methodType ) ) {
+			options.push( originalMethod.methodType );
+		}
+	}
 
 	return options.sort();
 };

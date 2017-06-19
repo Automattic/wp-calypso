@@ -721,5 +721,48 @@ describe( 'selectors', () => {
 
 			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.deep.equal( { id: { index: 0 }, title: 'NewMethod' } );
 		} );
+
+		it( 'should overlay method updates and currently added changes', () => {
+			const state = createState( {
+				site: {
+					shippingZones: [
+						{ id: 1, methodIds: [ 7 ] },
+					],
+					shippingZoneMethods: {
+						7: { id: 7, title: 'MyOldMethodTitle' },
+					},
+					shippingZoneLocations: { 1: emptyZoneLocations },
+				},
+				ui: {
+					shipping: {
+						zones: {
+							creates: [],
+							updates: [ {
+								id: 1,
+								methods: {
+									creates: [],
+									updates: [ { id: 7, title: 'MyNewMethodTitle', cost: 1 } ],
+									deletes: [],
+									currentlyEditingId: 7,
+								},
+							} ],
+							deletes: [],
+							currentlyEditingId: 1,
+							currentlyEditingChanges: {
+								methods: {
+									creates: [],
+									updates: [],
+									deletes: [],
+									currentlyEditingId: 7,
+									currentlyEditingChanges: { cost: 123 }
+								}
+							},
+						},
+					},
+				},
+			} );
+
+			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.deep.equal( { id: 7, title: 'MyNewMethodTitle', cost: 123 } );
+		} );
 	} );
 } );

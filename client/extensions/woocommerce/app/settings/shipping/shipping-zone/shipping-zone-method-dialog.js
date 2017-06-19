@@ -27,11 +27,11 @@ import {
 	closeShippingZoneMethod
 } from 'woocommerce/state/ui/shipping/zones/methods/actions';
 import {
-	getNewMethodTypeOptions,
+	getMethodTypeChangeOptions,
 	getCurrentlyOpenShippingZoneMethod
 } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 
-const ShippingZoneDialog = ( { siteId, method, newMethodTypeOptions, translate, isVisible, actions } ) => {
+const ShippingZoneDialog = ( { siteId, method, methodTypeOptions, translate, isVisible, actions } ) => {
 	if ( ! isVisible ) {
 		return null;
 	}
@@ -43,15 +43,9 @@ const ShippingZoneDialog = ( { siteId, method, newMethodTypeOptions, translate, 
 	const onMethodTypeChange = ( event ) => ( actions.changeShippingZoneMethodType( siteId, id, event.target.value ) );
 
 	const renderMethodTypeOptions = () => {
-		const options = newMethodTypeOptions.map( ( newMethodId, index ) => (
+		return methodTypeOptions.map( ( newMethodId, index ) => (
 			<option value={ newMethodId } key={ index }>{ getMethodName( newMethodId ) }</option>
 		) );
-
-		if ( ! includes( newMethodTypeOptions, methodType ) ) {
-			options.unshift( <option value={ methodType } key={ -1 }>{ getMethodName( methodType ) }</option> );
-		}
-
-		return options;
 	};
 
 	const buttons = [
@@ -109,7 +103,7 @@ export default connect(
 		return {
 			method,
 			isVisible: Boolean( method ),
-			newMethodTypeOptions: getNewMethodTypeOptions( state ),
+			methodTypeOptions: method && getMethodTypeChangeOptions( state, method.methodType ),
 		};
 	},
 	( dispatch ) => ( {
