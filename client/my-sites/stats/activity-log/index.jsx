@@ -166,7 +166,13 @@ class ActivityLog extends Component {
 
 		// FIXME: Do something nicer with the error
 		if ( rewindStatusError ) {
-			return translate( 'Rewind error: %s', { args: rewindStatusError.message } );
+			return (
+				<div>
+					{ translate( 'Rewind error: %s', { args: rewindStatusError.message } ) }
+					<br />
+					{ translate( 'Do you have an appropriate plan?' ) }
+				</div>
+			);
 		}
 		if ( ! isPressable ) {
 			return translate( 'Currently only available for Pressable sites' );
