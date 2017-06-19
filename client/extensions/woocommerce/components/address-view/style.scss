@@ -9,3 +9,36 @@
 		}
 	}
 }
+
+.address-view__editable-city-state-postcode {
+	display: flex;
+
+	.form-fieldset {
+		flex: 1;
+		margin-right: 16px;
+
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+	
+	@include breakpoint( "<960px" ) {
+		flex-direction: column;
+		
+		label + select {
+			width: 100%;
+		}
+		
+		.form-fieldset {
+			margin-right: 0;
+		}
+	}
+}
+
+.address-view__country {
+	margin-bottom: 32px;
+	
+	.form-select {
+		width: 100%;
+	}
+}
