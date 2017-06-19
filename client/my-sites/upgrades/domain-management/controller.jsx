@@ -249,11 +249,6 @@ export default {
 			return;
 		}
 
-		setTitle(
-			i18n.translate( 'Transfer Domain' ),
-			pageContext
-		);
-
 		renderWithReduxStore(
 			<TransferData
 				component={ DomainManagement.TransferToOtherSite }
