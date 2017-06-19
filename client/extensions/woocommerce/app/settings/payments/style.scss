@@ -56,8 +56,7 @@
 	
 	.payments__method-method-suggested-container {
 		@include breakpoint( "<660px" ) {
-			width: 100%;
-			padding-bottom: 0;
+			width: 55%;
 		}
 	}
 	
@@ -76,6 +75,7 @@
 		@include breakpoint( "<660px" ) {
 			width: 60%;
 			order: 4;
+			padding-top: 0px;
 		}
 	}
 	
