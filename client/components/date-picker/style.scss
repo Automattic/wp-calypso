@@ -86,8 +86,21 @@ $date-picker_nav_button_size: 20px;
 	width: 18px;
 }
 
+.tooltip.date-picker__events-tooltip .popover__inner {
+	max-width: 250px;
+	min-width: 100px;
+}
+
 .date-picker__calendar-event {
 	display: flex;
+	max-width: 200px;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+
+	&::after {
+		@include long-content-fade( $color: darken( $gray, 30% ) );
+	}
 }
 
 .date-picker__calendar-event .gridicon,
@@ -101,6 +114,9 @@ $date-picker_nav_button_size: 20px;
 .date-picker__event-title {
 	flex: 0 1 auto;
 	vertical-align: top;
+	white-space: nowrap;
+	height: 18px;
+	line-height: 18px;
 }
 
 /**
