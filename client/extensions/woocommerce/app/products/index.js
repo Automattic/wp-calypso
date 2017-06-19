@@ -117,13 +117,11 @@ class Products extends Component {
 
 		return (
 			<div className="products__list-wrapper">
-				
 				<ProductsListTable
 					site={ site }
 					products={ products }
 					isRequesting={ isRequesting }
 				/>
-
 				{ this.pagination() }
 			</div>
 		);
