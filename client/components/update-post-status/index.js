@@ -106,59 +106,58 @@ const updatePostStatus = ( WrappedComponent ) => enhance(
 				return true;
 			};
 
-			if ( status === 'delete' ) {
-				this.setState( {
-					showPageActions: false,
-					updatedStatus: 'deleting',
-					updated: true,
-				} );
+			switch ( status ) {
+				case 'delete':
+					this.setState( {
+						showPageActions: false,
+						updatedStatus: 'deleting',
+						updated: true,
+					} );
 
-				const strings = getStrings( this.props.translate );
-				const type = this.props.post ? 'post' : 'page';
+					const strings = getStrings( this.props.translate );
+					const type = this.props.post ? 'post' : 'page';
 
-				if ( typeof window === 'object' &&
-						window.confirm( strings[ type ].deleteWarning ) ) { // eslint-disable-line no-alert
-					PostActions.trash( post, setNewStatus );
-				} else {
-					this.resetState();
-				}
-
-				return;
-			}
-
-			if ( status === 'trash' ) {
-				this.setState( {
-					showPageActions: false,
-					updatedStatus: 'trashing',
-					updated: true,
-				} );
-				previousStatus = post.status;
-				PostActions.trash( post, setNewStatus );
-				return;
-			}
-
-			if ( status === 'restore' ) {
-				this.setState( {
-					showPageActions: false,
-					updatedStatus: 'restoring',
-					updated: true,
-				} );
-				previousStatus = 'trash';
-				PostActions.restore( post, setNewStatus );
-				return;
-			}
-
-			this.setState( {
-				showPageActions: false,
-				updatedStatus: 'updating',
-				updated: true,
-			} );
-			PostActions.update( post, { status }, ( error, resultPost ) => {
-				if ( ! setNewStatus( error, resultPost ) ) {
+					if ( typeof window === 'object' &&
+							window.confirm( strings[ type ].deleteWarning ) ) { // eslint-disable-line no-alert
+						PostActions.trash( post, setNewStatus );
+					} else {
+						this.resetState();
+					}
 					return;
-				}
-				setTimeout( this.resetState, 1200 );
-			} );
+
+				case 'trash':
+					this.setState( {
+						showPageActions: false,
+						updatedStatus: 'trashing',
+						updated: true,
+					} );
+					previousStatus = post.status;
+					PostActions.trash( post, setNewStatus );
+					return;
+
+				case 'restore':
+					this.setState( {
+						showPageActions: false,
+						updatedStatus: 'restoring',
+						updated: true,
+					} );
+					previousStatus = 'trash';
+					PostActions.restore( post, setNewStatus );
+					return;
+
+				default:
+					this.setState( {
+						showPageActions: false,
+						updatedStatus: 'updating',
+						updated: true,
+					} );
+					PostActions.update( post, { status }, ( error, resultPost ) => {
+						if ( ! setNewStatus( error, resultPost ) ) {
+							return;
+						}
+						setTimeout( this.resetState, 1200 );
+					} );
+			}
 		}
 
 		resetState = () => {
