@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { translate } from 'i18n-calypso';
+import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
+import { once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,8 +12,7 @@ import UpdateTemplate from './update-template';
 import PostActions from 'lib/posts/actions';
 import analytics from 'lib/analytics';
 
-// TODO(mcsf): use i18n#localize?
-const strings = {
+const getStrings = once( ( translate ) => ( {
 	page: {
 		deleteWarning: translate( 'Delete this page permanently?' ),
 		deleted: translate( 'Page Deleted' ),
@@ -39,13 +39,19 @@ const strings = {
 		updated: translate( 'Updated' ),
 		updating: translate( 'Updating Post' ),
 	},
-};
+} ) );
 
-const updatePostStatus = ( WrappedComponent ) =>
+const updatePostStatus = ( WrappedComponent ) => localize(
 	class UpdatePostStatus extends Component {
 		static displayName = `UpdatePostStatus(${
 			WrappedComponent.displayName || WrappedComponent.name || ''
 		})`;
+
+		static propTypes = {
+			translate: PropTypes.func.isRequired,
+			post: PropTypes.object,
+			page: PropTypes.object,
+		};
 
 		state = {
 			updated: false,
@@ -63,6 +69,8 @@ const updatePostStatus = ( WrappedComponent ) =>
 			if ( ! this.state.updated ) {
 				return;
 			}
+
+			const strings = getStrings( this.props.translate );
 
 			return <UpdateTemplate
 				post={ this.props.post || this.props.page }
@@ -98,7 +106,9 @@ const updatePostStatus = ( WrappedComponent ) =>
 					updated: true,
 				} );
 
+				const strings = getStrings( this.props.translate );
 				const type = this.props.post ? 'post' : 'page';
+
 				if ( window.confirm( strings[ type ].deleteWarning ) ) { // eslint-disable-line no-alert
 					PostActions.trash( post, setNewStatus );
 				} else {
@@ -182,7 +192,8 @@ const updatePostStatus = ( WrappedComponent ) =>
 				updatePostStatus={ this.updatePostStatus }
 				{ ...this.state } />;
 		}
-	};
+	}
+);
 
 export default updatePostStatus;
 
