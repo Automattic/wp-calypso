@@ -16,7 +16,7 @@ import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 import ShippingZoneMethodDialog from './shipping-zone-method-dialog';
 import Spinner from 'components/spinner';
-import { getMethodSummary } from './utils';
+import { getMethodSummary } from 'woocommerce/state/ui/shipping/zones/methods/utils';
 import {
 	openShippingZoneMethod,
 	addMethodToShippingZone
@@ -26,7 +26,7 @@ import {
 	getNewMethodTypeOptions,
 } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 
-const ShippingZoneMethodList = ( { siteId, loaded, methods, newMethodTypeOptions, translate, actions } ) => {
+const ShippingZoneMethodList = ( { siteId, loaded, methods, newMethodTypeOptions, translate, onChange, actions } ) => {
 	const renderMethod = ( method, index ) => {
 		const onEditClick = () => ( actions.openShippingZoneMethod( siteId, method.id ) );
 
@@ -52,7 +52,10 @@ const ShippingZoneMethodList = ( { siteId, loaded, methods, newMethodTypeOptions
 			);
 		}
 
-		const onAddMethod = () => ( actions.addMethodToShippingZone( siteId, newMethodTypeOptions[ 0 ] ) );
+		const onAddMethod = () => {
+			onChange();
+			actions.addMethodToShippingZone( siteId, newMethodTypeOptions[ 0 ] );
+		};
 
 		return [
 			...methods.map( renderMethod ),
@@ -73,13 +76,14 @@ const ShippingZoneMethodList = ( { siteId, loaded, methods, newMethodTypeOptions
 			<List>
 				{ renderContent() }
 			</List>
-			<ShippingZoneMethodDialog siteId={ siteId } />
+			<ShippingZoneMethodDialog siteId={ siteId } onChange={ onChange } />
 		</div>
 	);
 };
 
 ShippingZoneMethodList.propTypes = {
 	siteId: PropTypes.number,
+	onChange: PropTypes.func.isRequired,
 };
 
 export default connect(

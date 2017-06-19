@@ -20,6 +20,7 @@ import {
 } from 'woocommerce/state/ui/shipping/zones/actions';
 import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { protectForm } from 'lib/protect-form';
 
 class Shipping extends Component {
 	componentWillMount() {
@@ -55,13 +56,13 @@ class Shipping extends Component {
 	}
 
 	render() {
-		const { siteId, className, loaded } = this.props;
+		const { siteId, className, loaded, markSaved, markChanged } = this.props;
 
 		return (
 			<Main className={ classNames( 'shipping', className ) }>
-				<ShippingZoneHeader />
-				<ShippingZoneLocations loaded={ loaded } />
-				<ShippingZoneMethodList siteId={ siteId } loaded={ loaded } />
+				<ShippingZoneHeader onSave={ markSaved } />
+				<ShippingZoneLocations loaded={ loaded } onChange={ markChanged } />
+				<ShippingZoneMethodList siteId={ siteId } loaded={ loaded } onChange={ markChanged } />
 			</Main>
 		);
 	}
@@ -85,4 +86,4 @@ export default connect(
 				openShippingZoneForEdit
 			}, dispatch
 		)
-	} ) )( Shipping );
+	} ) )( protectForm( Shipping ) );

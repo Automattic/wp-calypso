@@ -45,7 +45,8 @@ const ShippingZoneLocations = ( { loaded, translate } ) => {
 };
 
 ShippingZoneLocations.PropTypes = {
-	loaded: PropTypes.bool
+	loaded: PropTypes.bool.isRequired,
+	onChange: PropTypes.func.isRequired,
 };
 
 export default localize( ShippingZoneLocations );

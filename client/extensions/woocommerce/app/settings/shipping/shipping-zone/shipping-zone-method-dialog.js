@@ -10,41 +10,61 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
+import FlatRate from './shipping-methods/flat-rate';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle';
+import FreeShipping from './shipping-methods/free-shipping';
+import LocalPickup from './shipping-methods/local-pickup';
 import {
 	getMethodName,
-	renderMethodSettingsView,
-} from './utils';
+} from 'woocommerce/state/ui/shipping/zones/methods/utils';
 import {
 	changeShippingZoneMethodTitle,
 	changeShippingZoneMethodType,
 	cancelShippingZoneMethod,
-	closeShippingZoneMethod
+	closeShippingZoneMethod,
+	toggleShippingZoneMethodEnabled,
 } from 'woocommerce/state/ui/shipping/zones/methods/actions';
 import {
 	getMethodTypeChangeOptions,
 	getCurrentlyOpenShippingZoneMethod
 } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 
-const ShippingZoneDialog = ( { siteId, method, methodTypeOptions, translate, isVisible, actions } ) => {
+const ShippingZoneDialog = ( { siteId, method, methodTypeOptions, translate, isVisible, onChange, actions } ) => {
 	if ( ! isVisible ) {
 		return null;
 	}
 
-	const { id, enabled, methodType, title, } = method;
+	const { enabled, methodType, title, } = method;
 	const onCancel = () => ( actions.cancelShippingZoneMethod( siteId ) );
-	const onClose = () => ( actions.closeShippingZoneMethod( siteId ) );
-	const onMethodTitleChange = ( event ) => ( actions.changeShippingZoneMethodTitle( siteId, id, event.target.value ) );
-	const onMethodTypeChange = ( event ) => ( actions.changeShippingZoneMethodType( siteId, id, event.target.value ) );
+	const onClose = () => {
+		onChange();
+		actions.closeShippingZoneMethod( siteId );
+	};
+	const onMethodTitleChange = ( event ) => ( actions.changeShippingZoneMethodTitle( siteId, event.target.value ) );
+	const onMethodTypeChange = ( event ) => ( actions.changeShippingZoneMethodType( siteId, event.target.value ) );
+	const onEnabledChange = () => ( actions.toggleShippingZoneMethodEnabled( siteId, ! enabled ) );
 
 	const renderMethodTypeOptions = () => {
 		return methodTypeOptions.map( ( newMethodId, index ) => (
 			<option value={ newMethodId } key={ index }>{ getMethodName( newMethodId ) }</option>
 		) );
+	};
+
+	const renderMethodSettingsView = () => {
+		switch ( method.methodType ) {
+			case 'flat_rate':
+				return <FlatRate siteId={ siteId } { ...method } />;
+			case 'free_shipping':
+				return <FreeShipping siteId={ siteId } { ...method } />;
+			case 'local_pickup':
+				return <LocalPickup siteId={ siteId } { ...method } />;
+			default:
+				return null;
+		}
 	};
 
 	const buttons = [
@@ -64,6 +84,7 @@ const ShippingZoneDialog = ( { siteId, method, methodTypeOptions, translate, isV
 			<FormFieldSet>
 				<FormFieldSet>
 					<FormSelect
+						className="shipping-zone__method-type-select"
 						value={ methodType }
 						onChange={ onMethodTypeChange }>
 						{ renderMethodTypeOptions() }
@@ -80,7 +101,7 @@ const ShippingZoneDialog = ( { siteId, method, methodTypeOptions, translate, isV
 					<FormLabel>
 						{ translate( 'Enabled: {{toggle/}}', {
 							components: {
-								toggle: <FormToggle checked={ enabled } />
+								toggle: <FormToggle checked={ enabled } onChange={ onEnabledChange } />
 							}
 						} ) }
 					</FormLabel>
@@ -93,6 +114,7 @@ const ShippingZoneDialog = ( { siteId, method, methodTypeOptions, translate, isV
 
 ShippingZoneDialog.propTypes = {
 	siteId: PropTypes.number,
+	onChange: PropTypes.func.isRequired,
 };
 
 export default connect(
@@ -111,6 +133,7 @@ export default connect(
 			changeShippingZoneMethodType,
 			cancelShippingZoneMethod,
 			closeShippingZoneMethod,
+			toggleShippingZoneMethodEnabled,
 		}, dispatch )
 	} )
 )( localize( ShippingZoneDialog ) );

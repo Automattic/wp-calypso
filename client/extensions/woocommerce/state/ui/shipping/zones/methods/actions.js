@@ -74,12 +74,11 @@ export const changeShippingZoneMethodType = ( siteId, methodType ) => {
 /**
  * Changes the title of the given shipping method.
  * @param {Number} siteId Site ID.
- * @param {String} methodId ID of the shipping method.
  * @param {String} title New user-facing title for the shipping method.
  * @return {Object} Action object.
  */
-export const changeShippingZoneMethodTitle = ( siteId, methodId, title ) => {
-	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE, siteId, methodId, title };
+export const changeShippingZoneMethodTitle = ( siteId, title ) => {
+	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE, siteId, title };
 };
 
 /**

@@ -92,7 +92,7 @@ describe( 'reducer', () => {
 				currentlyEditingChanges: {},
 			};
 
-			const newState = reducer( state, changeShippingZoneMethodTitle( siteId, 1, 'New Title' ) );
+			const newState = reducer( state, changeShippingZoneMethodTitle( siteId, 'New Title' ) );
 			expect( newState.currentlyEditingChanges ).to.deep.equal( { title: 'New Title' } );
 		} );
 	} );

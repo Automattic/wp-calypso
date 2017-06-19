@@ -1,15 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import FlatRate from './shipping-methods/flat-rate';
-import FreeShipping from './shipping-methods/free-shipping';
-import LocalPickup from './shipping-methods/local-pickup';
 
 export const getMethodName = ( methodType ) => {
 	switch ( methodType ) {
@@ -38,18 +30,5 @@ export const getMethodSummary = ( method ) => {
 			return translate( 'Cost: %s', { args: [ method.cost ] } );
 		default:
 			return '';
-	}
-};
-
-export const renderMethodSettingsView = ( method, siteId ) => {
-	switch ( method.methodType ) {
-		case 'flat_rate':
-			return <FlatRate siteId={ siteId } { ...method } />;
-		case 'free_shipping':
-			return <FreeShipping siteId={ siteId } { ...method } />;
-		case 'local_pickup':
-			return <LocalPickup siteId={ siteId } { ...method } />;
-		default:
-			return null;
 	}
 };
