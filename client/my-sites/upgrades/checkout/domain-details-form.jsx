@@ -12,6 +12,7 @@ import {
 	first,
 	has,
 	head,
+	includes,
 	indexOf,
 	intersection,
 	isEqual,
@@ -498,14 +499,10 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	renderCurrentForm() {
-		switch ( this.state.currentStep ) {
-			// TODO: gather up tld specific stuff
-			case 'ca':
-			case 'fr':
-				return this.renderExtraDetailsForm( this.state.currentStep );
-			default:
-				return this.renderDetailsForm();
-		}
+		const { currentStep } = this.state;
+		return includes( tldsWithAdditionalDetailsForms, currentStep )
+			? this.renderExtraDetailsForm( this.state.currentStep )
+			: this.renderDetailsForm();
 	}
 
 	render() {
