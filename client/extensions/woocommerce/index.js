@@ -19,6 +19,7 @@ import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
 import Shipping from './app/settings/shipping';
+import ShippingZone from './app/settings/shipping/shipping-zone';
 import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
 
@@ -123,6 +124,11 @@ const getStorePages = () => {
 				parentSlug: 'settings',
 				slug: 'settings-shipping',
 			},
+		},
+		{
+			container: ShippingZone,
+			configKey: 'woocommerce/extension-settings-shipping',
+			path: '/store/settings/shipping/:site/zone/:zone',
 		},
 		{
 			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available

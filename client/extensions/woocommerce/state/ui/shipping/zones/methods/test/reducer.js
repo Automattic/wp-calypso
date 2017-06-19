@@ -24,17 +24,16 @@ const siteId = 123;
 
 describe( 'reducer', () => {
 	describe( 'addMethodToShippingZone', () => {
-		it( 'should add the shipping method to the "creates" bucket and mark it as opened', () => {
+		it( 'should create a shipping method in currentlyEditingChanges and mark it as new', () => {
 			const newState = reducer( initialState, addMethodToShippingZone( siteId, 'flat_rate', 'Flat rate' ) );
 			expect( newState.currentlyEditingId ).to.deep.equal( { index: 0 } );
-			expect( newState.currentlyEditingChanges ).to.deep.equal( {} );
 			expect( newState.currentlyEditingNew ).to.equal( true );
-			expect( newState.creates.length ).to.equal( 1 );
-			expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
-			expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
-			expect( newState.creates[ 0 ].title ).to.equal( 'Flat rate' );
+			expect( newState.creates.length ).to.equal( 0 );
+			expect( newState.currentlyEditingChanges.id ).to.deep.equal( { index: 0 } );
+			expect( newState.currentlyEditingChanges.methodType ).to.equal( 'flat_rate' );
+			expect( newState.currentlyEditingChanges.title ).to.equal( 'Flat rate' );
 			// Check that the method was initialized:
-			expect( newState.creates[ 0 ].cost ).to.be.a.number;
+			expect( newState.currentlyEditingChanges.cost ).to.be.a.number;
 		} );
 	} );
 
@@ -198,13 +197,13 @@ describe( 'reducer', () => {
 			expect( newState.currentlyEditingId ).to.equal( null );
 		} );
 
-		it( 'method creation - should update the new method and remove the isNew flag', () => {
+		it( 'method creation - should add the new method to creates and remove the isNew flag', () => {
 			const state = {
-				creates: [ { id: { index: 0 }, title: 'default' } ],
+				creates: [],
 				updates: [],
 				deletes: [],
 				currentlyEditingId: { index: 0 },
-				currentlyEditingChanges: { title: 'abc' },
+				currentlyEditingChanges: { id: { index: 0 }, title: 'abc' },
 				currentlyEditingNew: true,
 			};
 
