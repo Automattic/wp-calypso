@@ -38,18 +38,3 @@ export const UpgradeToPremiumNudge = props => {
 			title={ translate( 'Upgrade to a Business Plan!' ) } />
 	);
 };
-
-export const UpgradeToPersonalNudge = props => {
-	const { translate } = props;
-
-	return (
-		<Banner
-			className="post-share__upgrade-nudge"
-			feature="republicize"
-			title={ translate( 'Unlock the ability to re-share posts to social media' ) }
-			callToAction={ translate( 'Upgrade to Personal' ) }
-			description={ translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' ) }
-		/>
-	);
-};
-

@@ -15,7 +15,6 @@ import Gridicon from 'gridicons';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import { UpgradeToPersonalNudge } from 'blocks/post-share/nudges';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import NoticeAction from 'components/notice/notice-action';
@@ -28,6 +27,7 @@ import {
 import {
 	getSiteSlug,
 	getSitePlanSlug,
+	isJetpackSite,
 } from 'state/sites/selectors';
 import { getCurrentUserId, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import {
@@ -55,6 +55,7 @@ import {
 	FEATURE_REPUBLICIZE_SCHEDULING,
 	PLAN_BUSINESS,
 } from 'lib/plans/constants';
+import Banner from 'components/banner';
 
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
@@ -452,9 +453,21 @@ class PostShare extends Component {
 			! hasRepublicizeSchedulingFeature &&
 			isEnabled( 'publicize-scheduling' )
 		) {
+			let description;
+			if ( this.props.isJetpack ) {
+				description = translate( 'Get spam protection, unlimited backup storage and more.' );
+			} else {
+				description = translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' );
+			}
 			return (
 				<div>
-					<UpgradeToPersonalNudge { ...this.props } />
+					<Banner
+						className="post-share__upgrade-nudge"
+						feature="republicize"
+						title={ translate( 'Unlock the ability to re-share posts to social media' ) }
+						callToAction={ translate( 'Upgrade to Personal' ) }
+						description={ description }
+					/>
 					<ActionsList { ...this.props } />
 				</div>
 			);
@@ -551,6 +564,7 @@ export default connect(
 			siteId,
 			postId,
 			planSlug,
+			isJetpack: isJetpackSite( state, siteId ),
 			hasFetchedConnections: siteHasFetchedConnections( state, siteId ),
 			hasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			hasRepublicizeSchedulingFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE_SCHEDULING ),
