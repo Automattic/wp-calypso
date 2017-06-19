@@ -13,7 +13,6 @@ import {
 	getSelectedSite,
 	getSelectedSiteId,
 } from 'state/ui/selectors';
-import config from 'config';
 import addQueryArgs from 'lib/route/add-query-args';
 
 import DocumentHead from 'components/data/document-head';
@@ -31,13 +30,13 @@ class PreviewMain extends React.Component {
 	};
 
 	componentWillMount() {
-		console.log( this.props.site );
 		this.updateUrl();
 	}
 
 	updateUrl() {
 		if ( ! this.props.site ) {
 			if ( this.state.previewUrl !== null ) {
+				debug( 'unloaded page' );
 				this.setState( { previewUrl: null } );
 			}
 			return;
@@ -50,6 +49,7 @@ class PreviewMain extends React.Component {
 		}, this.getBasePreviewUrl() );
 
 		if ( this.iframeUrl !== newUrl ) {
+			debug( 'loading', previewUrl );
 			this.setState( { previewUrl: newUrl } );
 		}
 	}
@@ -58,12 +58,9 @@ class PreviewMain extends React.Component {
 		return this.props.site.options.unmapped_url;
 	}
 
-	componentDidMount() {
-		console.log(this.props);
-	}
-
 	componentDidUpdate( prevProps ) {
 		if ( this.props.siteId !== prevProps.siteId ) {
+			debug( 'site change detected' );
 			this.updateUrl();
 		}
 	}
