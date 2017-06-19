@@ -39,7 +39,9 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		super( props );
 		const { translate } = props;
 		const legalTypes = {
-			ABO: translate( 'Aboriginal' ),
+			ABO: translate( 'Aboriginal', {
+				comment: 'Refers to indigenous peoples, specifically of Canada.'
+			} ),
 			ASS: translate( 'Association (Unincorporated)', {
 				comment: 'Refers to Canadian legal concept -- encompasses entities ' +
 					'like religious congregations, social clubs, community groups, etc'
