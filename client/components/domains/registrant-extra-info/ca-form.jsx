@@ -40,24 +40,34 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		const { translate } = props;
 		const legalTypes = {
 			ABO: translate( 'Aboriginal' ),
-			ASS: translate( 'Association (Unincorporated)' ),
+			ASS: translate( 'Association (Unincorporated)', {
+				comment: 'Refers to Canadian legal concept -- encompasses entities ' +
+					'like religious congregations, social clubs, community groups, etc'
+			} ),
 			CCO: translate( 'Canadian Corporation' ),
 			CCT: translate( 'Canadian Citizen' ),
 			EDU: translate( 'Educational Institution' ),
 			GOV: translate( 'Government' ),
 			HOP: translate( 'Hospital' ),
-			INB: translate( 'Indian Band' ),
+			INB: translate( 'Indian Band', {
+				comment: 'Refers to Canadian legal concept -- Indian meaning the ' +
+					'indigeonous people of North America and band meaning a small ' +
+					'group or community'
+			} ),
 			LAM: translate( 'Library, Archive, or Museum' ),
 			LGR: translate( 'Legal Representative' ),
 			MAJ: translate( 'Her Majesty the Queen' ),
-			// An official mark is Canadian thing like a trademark for public authorities
-			OMK: translate( 'Official Mark' ),
+			OMK: translate( 'Official Mark', {
+				comment: 'Refers to a Canadian legal concept -- similar to a trademark'
+			} ),
 			PLT: translate( 'Political Party' ),
 			PRT: translate( 'Partnership' ),
 			RES: translate( 'Permanent Resident' ),
 			TDM: translate( 'Trademark Owner' ),
 			TRD: translate( 'Trade Union' ),
-			TRS: translate( 'Trust' ),
+			TRS: translate( 'Trust', {
+				comment: 'Refers to the legal concept of trust (noun)'
+			} ),
 		};
 		const legalTypeOptions = map( legalTypes, ( text, optionValue ) =>
 			<option value={ optionValue } key={ optionValue }>{ text }</option>
