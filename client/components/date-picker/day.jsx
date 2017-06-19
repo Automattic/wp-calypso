@@ -53,7 +53,11 @@ class DatePickerDay extends Component {
 
 	renderTooltip() {
 		if ( ! this.state.showTooltip ) {
-			return;
+			return null;
+		}
+
+		if ( ! this.props.events.length ) {
+			return null;
 		}
 
 		const label = this.props.translate(
