@@ -79,72 +79,28 @@ $date-picker_nav_button_size: 20px;
 /*
  * Events Tooltip
  */
-.date-picker__events-tooltip {
-	.date-picker__icon-wrapper,
-	.date-picker__social-icon-wrapper {
-		display: inline-block;
-		height: 14px;
-		width: 14px;
-		margin-top: 4px;
-		margin-right: 4px;
-		border-radius: 2px;
+.date-picker__icon-wrapper,
+.date-picker__social-icon-wrapper {
+	height: 18px;
+	margin-right: 2px;
+	width: 18px;
+}
 
-		&.date-picker__social-icon-wrapper-google-plus {
-			border-radius: 7px;
-		}
-	}
+.date-picker__calendar-event {
+	display: flex;
+}
 
-	.date-picker__social-icon-wrapper {		
-		&.date-picker__social-icon-wrapper-google-plus {
-			border-radius: 7px;
-		}
-	}
+.date-picker__calendar-event .gridicon,
+.date-picker__calendar-event .social-logo {
+	flex: 0 0 18px;
+	position: relative;
+	top: 2px;
+	left: -1px;
+}
 
-	.date-picker__event-title {
-	    height: 22px;
-	    line-height: 22px;
-	    vertical-align: top;
-	}
-
-	.gridicon,
-	.social-logo {
-		margin-top: -2px;
-		margin-left: -2px;
-	}
-
-	.date-picker__social-icon-wrapper-color {
-		background-color: white;
-
-		.social-logo {
-			&.twitter{
-				color: $color-twitter;
-			}
-
-			&.facebook{
-				color: $color-facebook;
-			}
-
-			&.google-plus {
-				color: $color-gplus;
-			}
-
-			&.linkedin {
-				color: $color-linkedin;
-			}
-
-			&.tumblr {
-				color: $color-tumblr;
-			}
-
-			&.path {
-				color: $color-path;
-			}
-
-			&.eventbrite {
-				color: $color-eventbrite;
-			}
-		}
-	}
+.date-picker__event-title {
+	flex: 0 1 auto;
+	vertical-align: top;
 }
 
 /**
