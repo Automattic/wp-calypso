@@ -65,7 +65,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 		this.state = {
 			legalTypes,
-			legalTypeOptions
+			legalTypeOptions,
 		};
 	}
 
