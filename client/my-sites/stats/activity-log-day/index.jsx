@@ -4,49 +4,33 @@
 import React, { Component, PropTypes } from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import FoldableCard from 'components/foldable-card';
 import Button from 'components/button';
 import ActivityLogItem from '../activity-log-item';
-import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
 
 class ActivityLogDay extends Component {
 	static propTypes = {
 		isRewindEnabled: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
+		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
-		timestamp: PropTypes.string.isRequired,
+		timestamp: PropTypes.number.isRequired,
 	};
 
 	static defaultProps = {
 		isRewindEnabled: true,
 	};
 
-	state = {
-		isRestoreConfirmDialogOpen: false,
-	};
-
-	handleRestoreClick = () => this.setState( { isRestoreConfirmDialogOpen: true } );
-
-	handleRestoreDialogClose = () => this.setState( { isRestoreConfirmDialogOpen: false } );
-
-	handleRestoreDialogConfirm = () => {
+	handleClickRestore = () => {
 		const {
-			rewindRestore,
-			siteId,
-			// FIXME: update to timestamp
-			dateIsoString,
+			requestRestore,
+			timestamp,
 		} = this.props;
-
-		const timestamp = this.props.moment( dateIsoString ).format( 'x' );
-
-		this.setState( { isRestoreConfirmDialogOpen: false } );
-		rewindRestore( siteId, timestamp );
+		requestRestore( timestamp );
 	};
 
 	/**
@@ -58,12 +42,13 @@ class ActivityLogDay extends Component {
 	getRewindButton( type = '' ) {
 		return (
 			<Button
-				primary={ 'primary' === type }
-				disabled={ ! this.props.isRewindEnabled }
-				onClick={ this.handleRestoreClick }
 				compact
+				disabled={ ! this.props.isRewindEnabled }
+				onClick={ this.handleClickRestore }
+				primary={ 'primary' === type }
 			>
 				<Gridicon icon="history" size={ 18 } />
+				{ ' ' }
 				{ this.props.translate( 'Rewind to this day' ) }
 			</Button>
 		);
@@ -84,7 +69,7 @@ class ActivityLogDay extends Component {
 
 		return (
 			<div>
-				<div className="activity-log-day__day">{ moment( Number( timestamp ) ).format( 'LL' ) }</div>
+				<div className="activity-log-day__day">{ moment( timestamp ).format( 'LL' ) }</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,
@@ -98,11 +83,8 @@ class ActivityLogDay extends Component {
 	render() {
 		const {
 			logs,
-			timestamp,
+			requestRestore,
 		} = this.props;
-
-		// FIXME get real props
-		const siteName = 'Placeholder site name';
 
 		return (
 			<div className="activity-log-day">
@@ -114,6 +96,8 @@ class ActivityLogDay extends Component {
 					{ logs.map( ( log, index ) => (
 						<ActivityLogItem
 							key={ index }
+							requestRestore={ requestRestore }
+
 							title={ log.name }
 							subTitle={ log.subTitle }
 							description={ log.description }
@@ -127,18 +111,9 @@ class ActivityLogDay extends Component {
 						/>
 					) ) }
 				</FoldableCard>
-				<ActivityLogConfirmDialog
-					isVisible={ this.state.isRestoreConfirmDialogOpen }
-					siteName={ siteName }
-					timestamp={ timestamp }
-					onClose={ this.handleRestoreDialogClose }
-					onConfirm={ this.handleRestoreDialogConfirm }
-				/>
 			</div>
 		);
 	}
 }
 
-export default connect( null, {
-	rewindRestore: rewindRestoreAction
-} )( localize( ActivityLogDay ) );
+export default localize( ActivityLogDay );

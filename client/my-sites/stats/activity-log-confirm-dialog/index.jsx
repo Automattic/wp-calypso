@@ -16,8 +16,8 @@ class ActivityLogConfirmDialog extends Component {
 		isVisible: PropTypes.bool.isRequired,
 		onClose: PropTypes.func.isRequired,
 		onConfirm: PropTypes.func.isRequired,
-		siteName: PropTypes.string.isRequired,
-		timestamp: PropTypes.string.isRequired,
+		siteName: PropTypes.string,
+		timestamp: PropTypes.number,
 
 		// Localize
 		translate: PropTypes.func.isRequired,
@@ -75,7 +75,7 @@ class ActivityLogConfirmDialog extends Component {
 					{
 						translate( 'Restoring to {{b}}%(time)s{{/b}}', {
 							args: {
-								time: moment( timestamp, 'x' ).format( 'LLL' ),
+								time: moment( timestamp ).format( 'LLL' ),
 							},
 							components: { b: <b /> },
 						} )

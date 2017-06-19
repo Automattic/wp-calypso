@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,7 +12,7 @@ import Gridicon from 'gridicons';
 import FoldableCard from 'components/foldable-card';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
+// import PopoverMenuSeparator from 'components/popover/menu-separator';
 import Gravatar from 'components/gravatar';
 
 class ActivityLogItem extends Component {
@@ -21,22 +20,28 @@ class ActivityLogItem extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		timestamp: PropTypes.number.isRequired,
-		requestRestore: PropTypes.func,
+		requestRestore: PropTypes.func.isRequired,
 		title: PropTypes.string,
 		subTitle: PropTypes.string,
 		className: PropTypes.string,
 		icon: PropTypes.string,
 		status: PropTypes.oneOf( [ 'is-success', 'is-warning', 'is-error', 'is-info' ] ),
 		user: PropTypes.object,
-		onClick: PropTypes.func,
 		actionText: PropTypes.string,
 		description: PropTypes.string
 	};
 
 	static defaultProps = {
-		onClick: noop,
 		status: 'is-info',
 		icon: 'info-outline'
+	};
+
+	handleClickRestore = () => {
+		const {
+			requestRestore,
+			timestamp,
+		} = this.props;
+		requestRestore( timestamp );
 	};
 
 	getTime() {
@@ -105,18 +110,14 @@ class ActivityLogItem extends Component {
 	}
 
 	getSummary() {
-		const {
-			translate,
-			actionText
-		} = this.props;
+		const { translate } = this.props;
 
-		return ( actionText &&
+		return (
 			<div className="activity-log-item__action">
 				<EllipsisMenu position="bottom right">
-					<PopoverMenuItem onClick={ noop } icon="undo">{ actionText }</PopoverMenuItem>
-					<PopoverMenuItem icon="pencil">Option B</PopoverMenuItem>
-					<PopoverMenuSeparator />
-					<PopoverMenuItem icon="help">{ translate( 'More Info' ) }</PopoverMenuItem>
+					<PopoverMenuItem onClick={ this.handleClickRestore } icon="undo">
+						{ translate( 'Rewind to this point' ) }
+					</PopoverMenuItem>
 				</EllipsisMenu>
 			</div>
 		);
