@@ -45,7 +45,7 @@ export function closePreview() {
 		dispatch( clearCustomizations( selectedSiteId ) );
 		dispatch( clearPreviewUrl( selectedSiteId ) );
 		dispatch( resetPreviewType() );
-		dispatch( setLayoutFocus( 'sidebar' ) );
+		dispatch( setLayoutFocus( 'content' ) );
 	};
 }
 
