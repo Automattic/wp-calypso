@@ -12,6 +12,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED,
 } from 'woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from 'woocommerce/state/ui/helpers';
 import flatRate from './flat-rate/reducer';
@@ -35,7 +36,7 @@ const reducer = {};
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
 	const methodType = action.methodType;
 	const id = nextBucketIndex( state.creates );
-	let method = { id, methodType: methodType };
+	let method = { id, methodType, enabled: true };
 	if ( builtInShippingMethods[ methodType ] ) {
 		method = { ...method, ...builtInShippingMethods[ methodType ]( undefined, action ) };
 	}
@@ -70,7 +71,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
 	return state;
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { methodId, title } ) => {
+const editMethodSetting = ( state, methodId, setting, value ) => {
 	const bucket = getBucket( { id: methodId } );
 	const index = findIndex( state[ bucket ], { id: methodId } );
 
@@ -78,13 +79,16 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { methodId, ti
 		return { ...state,
 			[ bucket ]: [
 				...state[ bucket ],
-				{ id: methodId, title },
+				{
+					id: methodId,
+					[ setting ]: value,
+				},
 			],
 		};
 	}
 
 	const methodState = { ...state[ bucket ][ index ],
-		title,
+		[ setting ]: value,
 	};
 	return { ...state,
 		[ bucket ]: [
@@ -93,6 +97,14 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { methodId, ti
 			...state[ bucket ].slice( index + 1 ),
 		],
 	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { methodId, title } ) => {
+	return editMethodSetting( state, methodId, 'title', title );
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED ] = ( state, { methodId, enabled } ) => {
+	return editMethodSetting( state, methodId, 'enabled', Boolean( enabled ) );
 };
 
 const mainReducer = createReducer( initialState, reducer );
