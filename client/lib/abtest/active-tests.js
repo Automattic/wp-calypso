@@ -84,4 +84,22 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
+	postPublishPreview: {
+		datestamp: '20170627',
+		allowExistingUsers: true,
+		variations: {
+			showPostPublishPreview: 50,
+			noShowPostPublishPreview: 50,
+		},
+		defaultVariation: 'noShowPostPublishPreview',
+	},
+	showCartAbandonmentNotice: {
+		datestamp: '20170630',
+		variations: {
+			doNotShowNotice: 50,
+			showNotice: 50,
+		},
+		defaultVariation: 'doNotShowNotice',
+		allowExistingUsers: true,
+	},
 };
