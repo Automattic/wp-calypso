@@ -426,6 +426,8 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 .post-share__external-url {
 	color: lighten( $gray, 20% );
 	transition: color 200ms;
+	height: 24px;
+	width: 24px;
 
 	&:hover,
 	&:focus {
@@ -435,5 +437,5 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
 .post-share__external-url .gridicon {
 	position: relative;
-	top: 2px;
+	top: 1px;
 }
