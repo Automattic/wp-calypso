@@ -1,14 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
-const ListItemField = ( { children } ) => {
+const ListItemField = ( { children, className } ) => {
+	const classes = classNames( 'list-item-field', className );
 	return (
-		<div className="list-item-field">
+		<div className={ classes }>
 			{ children }
 		</div>
 	);
+};
+
+ListItemField.propTypes = {
+	className: PropTypes.string,
 };
 
 export default ListItemField;
