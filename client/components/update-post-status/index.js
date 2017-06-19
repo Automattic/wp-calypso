@@ -45,13 +45,13 @@ const updatePostStatus = ( WrappedComponent ) => localize(
 	class UpdatePostStatus extends Component {
 		static displayName = `UpdatePostStatus(${
 			WrappedComponent.displayName || WrappedComponent.name || ''
-		})`;
+		})`
 
 		static propTypes = {
 			translate: PropTypes.func.isRequired,
 			post: PropTypes.object,
 			page: PropTypes.object,
-		};
+		}
 
 		state = {
 			updated: false,
@@ -59,7 +59,7 @@ const updatePostStatus = ( WrappedComponent ) => localize(
 			previousStatus: null,
 			showMoreOptions: false,
 			showPageActions: false,
-		};
+		}
 
 		getType() {
 			return this.props.page ? 'page' : 'post';
@@ -196,4 +196,3 @@ const updatePostStatus = ( WrappedComponent ) => localize(
 );
 
 export default updatePostStatus;
-
