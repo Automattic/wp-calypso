@@ -2,27 +2,33 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Popover from 'components/popover';
 import { preventWidows } from 'lib/formatting';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleLoginButton extends Component {
 	static propTypes = {
 		clientId: PropTypes.string.isRequired,
 		scope: PropTypes.string,
 		fetchBasicProfile: PropTypes.bool,
+		recordTracksEvent: PropTypes.func.isRequired,
 		responseHandler: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired
+		translate: PropTypes.func.isRequired,
+		onClick: PropTypes.func,
 	};
 
 	static defaultProps = {
 		scope: 'https://www.googleapis.com/auth/plus.login',
 		fetchBasicProfile: true,
+		onClick: noop,
 	};
 
 	state = {
@@ -89,6 +95,8 @@ class GoogleLoginButton extends Component {
 	handleClick( event ) {
 		event.preventDefault();
 
+		this.props.onClick( event );
+
 		if ( this.state.error ) {
 			this.setState( {
 				showError: ! this.state.showError,
@@ -104,7 +112,14 @@ class GoogleLoginButton extends Component {
 		// the popup might be blocked by the browser in that case
 		// options are documented here:
 		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
-		this.initialize().then( gapi => gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } ).then( responseHandler ) );
+		this.initialize()
+			.then( gapi => gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } ).then( responseHandler ) )
+			.catch( error => {
+				this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
+					social_account_type: 'google',
+					error_code: error.error
+				} );
+			} );
 	}
 
 	showError( event ) {
@@ -174,4 +189,9 @@ class GoogleLoginButton extends Component {
 	}
 }
 
-export default localize( GoogleLoginButton );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+)( localize( GoogleLoginButton ) );
