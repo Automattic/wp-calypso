@@ -13,6 +13,8 @@ import UpdateTemplate from './update-template';
 import PostActions from 'lib/posts/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+const RESET_TIMEOUT_MS = 1200;
+
 const getStrings = once( ( translate ) => ( {
 	page: {
 		deleteWarning: translate( 'Delete this page permanently?' ),
@@ -155,7 +157,7 @@ const updatePostStatus = ( WrappedComponent ) => enhance(
 						if ( ! setNewStatus( error, resultPost ) ) {
 							return;
 						}
-						setTimeout( this.resetState, 1200 );
+						setTimeout( this.resetState, RESET_TIMEOUT_MS );
 					} );
 			}
 		}
@@ -189,7 +191,7 @@ const updatePostStatus = ( WrappedComponent ) => enhance(
 				updated: true,
 				updatedStatus: 'error',
 			} );
-			setTimeout( this.resetState, 1200 );
+			setTimeout( this.resetState, RESET_TIMEOUT_MS );
 		}
 
 		render() {
