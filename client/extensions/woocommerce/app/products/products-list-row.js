@@ -27,7 +27,10 @@ const ProductsListRow = ( { site, product, translate } ) => {
 	} );
 	const renderCategories = () => (
 		<div className="products__list-categories">
-			{ categoryNames && categoryNames.join( ', ' ) }
+			{ categoryNames &&
+				( categoryNames.join( ', ' ) ) ||
+				( <span>{ translate( '-' ) }</span> )
+			}
 		</div>
 	);
 
@@ -35,7 +38,7 @@ const ProductsListRow = ( { site, product, translate } ) => {
 		<div>
 			{ product.manage_stock && 'simple' === product.type &&
 				( <span>{ product.stock_quantity }</span> ) ||
-				( <span>{ translate( 'N/A' ) }</span> )
+				( <span>{ translate( '-' ) }</span> )
 			}
 		</div>
 	);
