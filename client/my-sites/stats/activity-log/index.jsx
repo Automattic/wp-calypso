@@ -26,6 +26,8 @@ import QueryActivityLog from 'components/data/query-activity-log';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import ActivityLogRewindToggle from './activity-log-rewind-toggle';
+import { isRewindActive as isRewindActiveSelector } from 'state/selectors';
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -164,7 +166,13 @@ class ActivityLog extends Component {
 
 		// FIXME: Do something nicer with the error
 		if ( rewindStatusError ) {
-			return translate( 'Rewind error: %s', { args: rewindStatusError.message } );
+			return (
+				<div>
+					{ translate( 'Rewind error: %s', { args: rewindStatusError.message } ) }
+					<br />
+					{ translate( 'Do you have an appropriate plan?' ) }
+				</div>
+			);
 		}
 		if ( ! isPressable ) {
 			return translate( 'Currently only available for Pressable sites' );
@@ -176,7 +184,8 @@ class ActivityLog extends Component {
 			siteId,
 			slug,
 			moment,
-			startDate
+			startDate,
+			isRewindActive,
 		} = this.props;
 		const startOfMonth = moment( startDate ).startOf( 'month' ),
 			startOfMonthMs = startOfMonth.valueOf(),
@@ -193,7 +202,7 @@ class ActivityLog extends Component {
 					timestamp={ timestamp }
 					logs={ daily_logs }
 					siteId={ siteId }
-					isRewindEnabled={ true }
+					isRewindEnabled={ isRewindActive }
 				/>
 			)
 		);
@@ -218,6 +227,7 @@ class ActivityLog extends Component {
 					/>
 				</StatsPeriodNavigation>
 				{ this.renderBanner() }
+				{ ! isRewindActive && <ActivityLogRewindToggle siteId={ siteId } /> }
 				<section className="activity-log__wrapper">
 					{ logsGroupedByDate }
 				</section>
@@ -258,6 +268,7 @@ export default connect(
 			siteId,
 			slug: getSiteSlug( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
+			isRewindActive: isRewindActiveSelector( state, siteId ),
 
 			// FIXME: Testing only
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false ),

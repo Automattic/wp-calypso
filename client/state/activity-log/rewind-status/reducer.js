@@ -4,7 +4,6 @@
 import { rewindStatusSchema } from './schema';
 import {
 	REWIND_ACTIVATE_SUCCESS,
-	REWIND_DEACTIVATE_SUCCESS,
 	REWIND_STATUS_ERROR,
 	REWIND_STATUS_UPDATE,
 } from 'state/action-types';
@@ -21,10 +20,6 @@ export const rewindStatus = keyedReducer( 'siteId', createReducer( {}, {
 	[ REWIND_ACTIVATE_SUCCESS ]: ( state ) => ( {
 		...state,
 		active: true,
-	} ),
-	[ REWIND_DEACTIVATE_SUCCESS ]: ( state ) => ( {
-		...state,
-		active: false,
 	} ),
 
 }, rewindStatusSchema ) );
