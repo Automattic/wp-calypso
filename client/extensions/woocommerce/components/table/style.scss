@@ -107,15 +107,15 @@
 .table-heading,
 .table-item {
 	font-size: 14px;
-	padding: 6px 12px;
+	padding: 12px;
 	vertical-align: middle;
 
 	&:first-child {
-		padding: 6px 12px 6px 24px;
+		padding-left: 24px;
 	}
 
 	&:last-child {
-		padding: 6px 24px 6px 12px;
+		padding-right: 24px;
 	}
 
 	&.is-row-heading {
