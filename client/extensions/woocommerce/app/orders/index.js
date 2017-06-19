@@ -27,10 +27,6 @@ class Orders extends Component {
 					<SectionNav>
 						<NavTabs label={ translate( 'Status' ) } selectedText={ translate( 'All orders' ) }>
 							<NavItem path="/orders" selected={ true }>{ translate( 'All orders' ) }</NavItem>
-							<NavItem path="/orders/new" selected={ false }>{ translate( 'New' ) }</NavItem>
-							<NavItem path="/orders/pending" selected={ false }>{ translate( 'Pending' ) }</NavItem>
-							<NavItem path="/orders/processing" selected={ false }>{ translate( 'Processing' ) }</NavItem>
-							<NavItem path="/orders/failed" selected={ false }>{ translate( 'Failed' ) }</NavItem>
 						</NavTabs>
 					</SectionNav>
 
