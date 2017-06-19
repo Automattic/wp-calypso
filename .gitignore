@@ -35,6 +35,8 @@ env-config.sh
 /public/style*.css.map
 /public/editor*.css
 /public/directly*.css
+/public/jetpack*.css
+/public/jetpack*.css.map
 /public/images/flags/*.svg
 /public/images/flags/*.png
 /server/devdocs/search-index.js

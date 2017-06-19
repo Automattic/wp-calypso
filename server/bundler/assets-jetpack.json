@@ -1,0 +1,16 @@
+[
+	{
+		"name": "manifest",
+		"hash": "b38e179bfb394033303c",
+		"file": "manifest.bc343a13dec3096d77d4.js",
+		"url": "/calypso/manifest.bc343a13dec3096d77d4.js",
+		"size": 0
+	},
+	{
+		"name": "build-jetpack",
+		"hash": "fc313da169940c801834",
+		"file": "build-jetpack.fc313da169940c801834.js",
+		"url": "/calypso/build-jetpack.fc313da169940c801834.js",
+		"size": 3327346
+	}
+]
