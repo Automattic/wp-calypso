@@ -291,6 +291,7 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 }
 
 .post-share .post-share__footer-items {
+	align-items: center;
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: space-between;
