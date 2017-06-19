@@ -17,7 +17,7 @@
 		margin-top: 16px;
 	}
 
-	.products__list-wrapper {
+	.search {
 		@include breakpoint( ">660px" ) {
 			margin-top: 58px;
 		}
@@ -116,6 +116,10 @@
 
 	.products__list-name {
 		color: $blue-wordpress;
+	}
+
+	.search, .search .search__open-icon {
+		z-index: initial;
 	}
 
 }
