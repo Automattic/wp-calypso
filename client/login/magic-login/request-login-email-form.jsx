@@ -75,7 +75,7 @@ class RequestLoginEmailForm extends React.Component {
 						onDismissClick={ this.onNoticeDismiss }
 						status="is-error" />
 				}
-				<h1 className="magic-login__formheader">
+				<h1 className="magic-login__form-header">
 					{ translate( 'Email me a login link.' ) }
 				</h1>
 				<LoggedOutForm onSubmit={ this.onSubmit }>
