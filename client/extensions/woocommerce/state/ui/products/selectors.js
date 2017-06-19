@@ -97,3 +97,41 @@ export function getProductListProducts( state, siteId = getSelectedSiteId( state
 export function getProductListRequestedPage( state, siteId = getSelectedSiteId( state ) ) {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'requestedPage' ], null );
 }
+
+/**
+ * Gets the current product search page being viewed.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Number} Current product search page (default: 1)
+ */
+export function getProductSearchCurrentPage( state, siteId = getSelectedSiteId( state ) ) {
+	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'currentPage' ], 1 );
+}
+
+/**
+ * Gets an array of products for the current search page being viewed.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {array|false} Array of products or false if products are not available.
+ */
+export function getProductSearchResults( state, siteId = getSelectedSiteId( state ) ) {
+	const products = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], {} );
+	const productIds = get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'productIds' ], [] );
+	if ( productIds.length ) {
+		return productIds.map( id => find( products, ( p ) => id === p.id ) );
+	}
+	return false;
+}
+
+/**
+ * Gets the requested page for products search.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {number|null} Requested product search page
+ */
+export function getProductSearchRequestedPage( state, siteId = getSelectedSiteId( state ) ) {
+	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'requestedPage' ], null );
+}

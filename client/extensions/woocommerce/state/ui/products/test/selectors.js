@@ -14,6 +14,9 @@ import {
 	getProductListCurrentPage,
 	getProductListProducts,
 	getProductListRequestedPage,
+	getProductSearchCurrentPage,
+	getProductSearchResults,
+	getProductSearchRequestedPage,
 } from '../selectors';
 import products from 'woocommerce/state/sites/products/test/fixtures/products';
 
@@ -61,6 +64,42 @@ const loadedListState = {
 
 const loadedListStateWithUi = { ...loadedListState, ui: { selectedSiteId: 123 } };
 
+const loadedSearchState = {
+	extensions: {
+		woocommerce: {
+			ui: {
+				products: {
+					123: {
+						search: {
+							currentPage: 2,
+							requestedPage: 3,
+							productIds: [ 15, 389 ],
+						}
+					},
+					401: {
+						search: {
+						},
+					},
+				},
+			},
+			sites: {
+				123: {
+					products: {
+						products,
+					}
+				},
+				401: {
+					products: {
+						products: {},
+					},
+				},
+			}
+		},
+	},
+};
+
+const loadedSearchStateWithUi = { ...loadedSearchState, ui: { selectedSiteId: 123 } };
+
 describe( 'selectors', () => {
 	let state;
 
@@ -77,7 +116,9 @@ describe( 'selectors', () => {
 						products: {
 							123: {
 								list: {
-								}
+								},
+								search: {
+								},
 							}
 						}
 					},
@@ -215,6 +256,69 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getProductListProducts( loadedListStateWithUi ) ).to.eql( products );
+		} );
+	} );
+	describe( '#getProductSearchCurrentPage', () => {
+		it( 'should be 1 (default) when woocommerce state is not available.', () => {
+			expect( getProductSearchCurrentPage( preInitializedListState, 123 ) ).to.eql( 1 );
+		} );
+
+		it( 'should be 1 (default) when products are loading.', () => {
+			expect( getProductSearchCurrentPage( state, 123 ) ).to.eql( 1 );
+		} );
+
+		it( 'should be 2, the set page, if the products are loaded.', () => {
+			expect( getProductSearchCurrentPage( loadedSearchState, 123 ) ).to.eql( 2 );
+		} );
+
+		it( 'should be 1 (default) when products are loaded only for a different site.', () => {
+			expect( getProductSearchCurrentPage( loadedSearchState, 456 ) ).to.eql( 1 );
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getProductSearchCurrentPage( loadedSearchStateWithUi ) ).to.eql( 2 );
+		} );
+	} );
+	describe( '#getProductSearchRequestedPage', () => {
+		it( 'should be null (default) when woocommerce state is not available.', () => {
+			expect( getProductSearchRequestedPage( preInitializedListState, 123 ) ).to.be.null;
+		} );
+
+		it( 'should be null (default) when products are loading.', () => {
+			expect( getProductSearchRequestedPage( state, 123 ) ).to.be.null;
+		} );
+
+		it( 'should be 3, the set requested page, if the products are loaded.', () => {
+			expect( getProductSearchRequestedPage( loadedSearchState, 123 ) ).to.eql( 3 );
+		} );
+
+		it( 'should be null (default) when products are loaded only for a different site.', () => {
+			expect( getProductSearchRequestedPage( loadedSearchState, 456 ) ).to.be.null;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getProductSearchRequestedPage( loadedSearchStateWithUi ) ).to.eql( 3 );
+		} );
+	} );
+	describe( '#getProductSearchResults', () => {
+		it( 'should be false when woocommerce state is not available.', () => {
+			expect( getProductSearchResults( preInitializedListState, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be false when products are loading.', () => {
+			expect( getProductSearchResults( state, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be the list of products if they are loaded.', () => {
+			expect( getProductSearchResults( loadedSearchState, 123 ) ).to.eql( products );
+		} );
+
+		it( 'should be false when products are loaded only for a different site.', () => {
+			expect( getProductSearchResults( loadedSearchState, 456 ) ).to.be.false;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getProductSearchResults( loadedSearchStateWithUi ) ).to.eql( products );
 		} );
 	} );
 } );
