@@ -1,0 +1,15 @@
+{
+	"name": "test",
+	"author": "Automattic",
+	"description": "Test",
+	"version": "0.0.1",
+	"env_id": [ "development", "wpcalypso", "jetpack" ],
+	"section": {
+		"name": "test",
+		"paths": [ "/test" ],
+		"module": "test",
+		"group": "jetpack",
+		"enableLoggedOut": true,
+		"secondary": false
+	}
+}
