@@ -90,6 +90,22 @@ describe( 'selectors', () => {
 			] );
 		} );
 
+		it( 'should apply the enabled "edits" changes to the method list', () => {
+			siteState.paymentMethods = [
+				{ id: 1, enabled: false, name: 'Method1' },
+			];
+			uiState.methods = {
+				creates: [],
+				deletes: [],
+				updates: [
+					{ id: 1, enabled: true },
+				],
+			};
+			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [
+				{ id: 1, enabled: true, name: 'Method1', },
+			] );
+		} );
+
 		it( 'should NOT apply the uncommited changes made in the modal', () => {
 			siteState.paymentMethods = [
 				{ id: 1, name: 'Method1' },
