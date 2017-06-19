@@ -88,12 +88,18 @@ class ProductCreate extends React.Component {
 		this.props.actionListStepNext();
 	}
 
+	isProductValid( product = this.props.product ) {
+		return product &&
+			product.type &&
+			product.name && product.name.length > 0;
+	}
+
 	render() {
 		const { siteId, product, className, variations, productCategories, actionList } = this.props;
 
-		const isReady = 'undefined' !== siteId;
+		const isValid = 'undefined' !== siteId && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
-		const saveEnabled = isReady && ! isBusy;
+		const saveEnabled = isValid && ! isBusy;
 
 		return (
 			<Main className={ className }>
