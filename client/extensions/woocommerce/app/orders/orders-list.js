@@ -100,6 +100,7 @@ class Orders extends Component {
 	}
 
 	renderPageLink = ( i ) => {
+		// We want this to start at 1, not 0
 		i++;
 		return (
 			<li key={ i }>
@@ -111,8 +112,21 @@ class Orders extends Component {
 		);
 	}
 
+	renderPagination = () => {
+		const { totalPages } = this.props;
+		if ( totalPages < 2 ) {
+			return null;
+		}
+
+		return (
+			<ul>
+				{ times( totalPages, this.renderPageLink ) }
+			</ul>
+		);
+	}
+
 	render() {
-		const { orders, ordersLoading, ordersLoaded, totalPages, translate } = this.props;
+		const { orders, ordersLoading, ordersLoaded, translate } = this.props;
 		const headers = (
 			<TableRow>
 				<TableItem isHeader>
@@ -138,9 +152,7 @@ class Orders extends Component {
 						: <TableRow><TableItem colSpan="5">{ placeholder }</TableItem></TableRow>
 					}
 				</Table>
-				<ul>
-					{ times( totalPages, this.renderPageLink ) }
-				</ul>
+				{ this.renderPagination() }
 			</div>
 		);
 	}
