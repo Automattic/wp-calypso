@@ -42,7 +42,7 @@
 			}
 
 			&:hover {
-				background-color: $gray-light;
+				background: $gray-light;
 
 				.table-item__cell-title:after {
 					background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, $gray-light 90%);
@@ -98,6 +98,14 @@
 
 .table-row {
 	line-height: 36px;
+	
+	&:hover {
+		background: $gray-light;
+		
+		&.is-header {
+			background-color: initial;
+		}
+	}
 
 	&.is-header {
 		color: $gray-text-min;
