@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -26,6 +27,7 @@ import {
 	changeShippingZoneMethodType,
 	cancelShippingZoneMethod,
 	closeShippingZoneMethod,
+	removeMethodFromShippingZone,
 	toggleShippingZoneMethodEnabled,
 } from 'woocommerce/state/ui/shipping/zones/methods/actions';
 import {
@@ -43,6 +45,10 @@ const ShippingZoneDialog = ( { siteId, method, methodTypeOptions, translate, isV
 	const onClose = () => {
 		onChange();
 		actions.closeShippingZoneMethod( siteId );
+	};
+	const onDelete = () => {
+		onChange();
+		actions.removeMethodFromShippingZone( siteId, method.id );
 	};
 	const onMethodTitleChange = ( event ) => ( actions.changeShippingZoneMethodTitle( siteId, event.target.value ) );
 	const onMethodTypeChange = ( event ) => ( actions.changeShippingZoneMethodType( siteId, event.target.value ) );
@@ -68,6 +74,12 @@ const ShippingZoneDialog = ( { siteId, method, methodTypeOptions, translate, isV
 	};
 
 	const buttons = [
+		{
+			action: 'delete',
+			label: <span><Gridicon icon="trash" /> { translate( 'Delete this method' ) }</span>,
+			onClick: onDelete,
+			additionalClassNames: 'shipping-zone__method-delete is-borderless'
+		},
 		{ action: 'cancel', label: translate( 'Cancel' ) },
 		{ action: 'add', label: translate( 'Save' ), onClick: onClose, isPrimary: true },
 	];
@@ -133,6 +145,7 @@ export default connect(
 			changeShippingZoneMethodType,
 			cancelShippingZoneMethod,
 			closeShippingZoneMethod,
+			removeMethodFromShippingZone,
 			toggleShippingZoneMethodEnabled,
 		}, dispatch )
 	} )

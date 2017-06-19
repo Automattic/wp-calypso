@@ -130,7 +130,10 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = ( state ) => {
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { methodId } ) => {
-	const newState = { ...state };
+	const newState = {
+		...state,
+		currentlyEditingId: null,
+	};
 
 	const bucket = getBucket( { id: methodId } );
 	if ( 'updates' === bucket ) {
