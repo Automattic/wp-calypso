@@ -173,7 +173,7 @@ class PaymentMethodItem extends Component {
 
 		return (
 			<ListItem>
-				<ListItemField>
+				<ListItemField className="payments__method-method-suggested-container">
 					{
 						method.isSuggested &&
 						(
@@ -184,7 +184,7 @@ class PaymentMethodItem extends Component {
 					}
 					<p className="payments__method-name">{ method.title }</p>
 				</ListItemField>
-				<ListItemField>
+				<ListItemField className="payments__method-method-information-container">
 					{ method.fees && (
 						<p className="payments__method-information">{ method.fees }</p>
 					) }
@@ -197,15 +197,15 @@ class PaymentMethodItem extends Component {
 					) }
 
 				</ListItemField>
-				<ListItemField>
-					<FormFieldset className="payments__method-edit-field-container">
+				<ListItemField className="payments__method-enable-container">
+					<FormFieldset className="payments__method-enable">
 						<div>
 							<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
 							{ this.renderEnabledField( method.enabled ) }
 						</div>
 					</FormFieldset>
 				</ListItemField>
-				<ListItemField>
+				<ListItemField className="payments__method-action-container">
 					<Button compact onClick={ this.onEditHandler }>
 						{ editButtonText }
 					</Button>

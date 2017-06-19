@@ -6,6 +6,12 @@
 	display: none;
 }
 
+// PAYMENT-METHOD-HEADER
+
+.payments__type-container .list-header {
+	justify-content: flex-start;
+}
+
 // PAYMENT-METHOD-ROW
 .payments__type-container {
 
@@ -42,48 +48,74 @@
 	.payments__method-name {
 		font-size: 14px;
 	}
-
-	.list-item-field {
-		width: 25%;
-
-		&:nth-child( 2 ) {
-			width: 20%;
-		}
-
-		&:nth-child( 3 ) {
-			width: 25%;
-		}
-
-		&:nth-child( 4 ) {
-			width: 20%;
+	
+	.payments__method-method-suggested-container,
+	.list-item-field.payments__methods-column-method {
+		width: 30%;
+	}
+	
+	.payments__method-method-suggested-container {
+		@include breakpoint( "<660px" ) {
+			width: 100%;
+			padding-bottom: 0;
 		}
 	}
-
-	.list-item-field:nth-child( 3 ) fieldset > div {
-		display: flex;
-		flex-direction: row;
-
-		label {
-			color: #87a6bc;
+	
+	.payments__method-method-information-container,
+	.list-item-field.payments__methods-column-fees {
+		width: 30%;
+	}
+	
+	.list-item-field.payments__methods-column-fees {
+		@include breakpoint( "<660px" ) {
+			display: none;
+		}
+	}
+	
+	.payments__method-method-information-container {
+		@include breakpoint( "<660px" ) {
+			width: 60%;
+		}
+	}
+	
+	.payments__method-enable-container {
+		width: 25%;
+		
+		@include breakpoint( "<660px" ) {
+			position: absolute;
+			right: 0;
+			width: 33%;
+		}
+		
+		.payments__method-enable {
+			margin-bottom: 0;
+		}
+			
+		.payments__method-enable .form-label {
+			display: inline-block;
+			color: $gray;
 			font-size: 11px;
+			font-weight: 400;
 			line-height: 16px;
+			margin-top: 6px;
 			margin-right: 8px;
 			vertical-align: top;
 			text-transform: uppercase;
 			cursor: pointer;
 		}
 	}
-
-	.list-item-field:nth-child( 4 ) {
+	
+	.payments__method-action-container {
+		width: 15%;
+		
+		@include breakpoint( "<660px" ) {
+			width: 25%;
+		}
+		
 		.button {
 			align-self: flex-end;
 		}
 	}
-}
-
-.payments__method-edit-field-container {
-	display: block;
-	width: 100%;
 }
 
 .payments__method-edit-fields {
