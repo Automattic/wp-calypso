@@ -13,6 +13,7 @@ import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getRewindStatusError } from 'state/selectors';
+import { getActivityLogs } from 'state/selectors';
 import StatsFirstView from '../stats-first-view';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from '../stats-navigation';
@@ -54,155 +55,6 @@ class ActivityLog extends Component {
 		} = this.props;
 		siteId && activityLogRequest( siteId );
 	}
-
-	logs = () => [
-		{
-			title: 'Site backed up',
-			description: 'We backed up your site',
-			user: null,
-			type: 'site_backed_up',
-			timestamp: 1497356100000
-		},
-		{
-			title: 'Site has backed up Failed',
-			description: 'We couldn\'t establish a connection to your site.',
-			user: null,
-			type: 'site_backed_up_failed',
-			timestamp: 1497356200000
-		},
-		{
-			title: 'Suspicious code detected in 2 plugin files.',
-			description: 'Rewound in 17 January 2017 at 3:30 PM - We found potential warmful code in two of your ' +
-			'Plugins: Yoast SEO and Advanced Custom Fields.',
-			user: null,
-			type: 'suspicious_code',
-			timestamp: 1497356300000,
-			className: 'is-disabled',
-		},
-		{
-			title: 'Akismet activated',
-			description: 'Akismet Plugin was successfully activated.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'plugin_activated',
-			timestamp: 1497356400000
-		},
-		{
-			title: 'Akismet deactivated',
-			description: 'Akismet Plugin was successfully deactivated.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'plugin_deactivated',
-			timestamp: 1497356500000
-		},
-		{
-			title: 'Jetpack version 4.6 is available',
-			description: 'A new version of the Jetpack Plugin was been released. Click here to update, or turn on ' +
-			'auto-updates for Plugins and we\'ll manage those for you',
-			user: null,
-			type: 'plugin_needs_update',
-			timestamp: 1497356600000
-		},
-		{
-			title: 'Akismet updated to version 3.2',
-			description: 'Akismet Plugin was successfully updated to its latest version: 3.2.',
-			user: null,
-			type: 'plugin_updated',
-			timestamp: 1497356700000
-		},
-		{
-			title: 'Twenty Eighteen Theme was activated',
-			description: 'TwentyEighteen Plugin was successfully activated.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'theme_switched',
-			timestamp: 1497356800000
-		},
-		{
-			title: 'Twenty Sixteen updated to version 1.0.1',
-			description: 'Twenty Sixteen Plugin was successfully updated to its latest version: 1.0.1.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'theme_updated',
-			timestamp: 1497356900000
-		},
-		{
-			title: 'Site updated to Professional Plan, Thank you',
-			description: 'Professional Plan was successfully purchased for your site and is valid until February 15, 2018.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'plan_updated',
-			timestamp: 1497356910000
-		},
-		{
-			title: 'Professional Plan Renewed for another month',
-			description: 'Professional Plan was renewed for another month and is valid until February 28, 2017',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'plan_renewed',
-			timestamp: 1497356920000
-		},
-		{
-			title: 'Photon was activated',
-			description: 'Photon module was activated in your site. All your images will now be served through the ' +
-			'WordPress.com worldwide network.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'activate_jetpack_feature',
-			timestamp: 1497300010000
-		},
-		{
-			title: 'Custom CSS was deactivated',
-			description: 'Custom CSS module was deactivated.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'deactivate_jetpack_feature',
-			timestamp: 1497300020000
-		},
-		{
-			title: 'This is some really cool post',
-			description: '',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'site_backed_up',
-			timestamp: 1495000000000
-		},
-		{
-			title: 'This is some really cool post',
-			description: '',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'site_backed_up',
-			timestamp: 1497300020000
-		},
-		{
-			title: 'This is some really cool post',
-			description: '',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'site_backed_up',
-			timestamp: 1493000000000
-		},
-		{
-			title: 'Jetpack updated to 4.5.1',
-			subTitle: 'Plugin Update',
-			description: '',
-			icon: 'plugins',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			time: '4:32pm',
-			actionText: 'Undo',
-			timestamp: 1483351202400
-		},
-		{
-			title: 'Jetpack updated to 4.5.1',
-			subTitle: 'Plugin Activated',
-			description: '',
-			icon: 'plugins',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			time: '4:32pm',
-			actionText: 'Undo',
-			timestamp: 1483351202420
-		},
-		{
-			title: 'Post Title',
-			subTitle: 'Post Updated',
-			description: '',
-			icon: 'posts',
-			user: { ID: 333, name: 'Jane A', role: 'Admin' },
-			time: '10:55am',
-			actionText: 'Undo',
-			timestamp: 1483264820300
-		}
-	];
 
 	update_logs( log ) {
 		const { translate } = this.props;
@@ -402,17 +254,13 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		return {
 			isJetpack: isJetpackSite( state, siteId ),
+			logs: getActivityLogs( state, siteId ),
 			siteId,
 			slug: getSiteSlug( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
 
 			// FIXME: Testing only
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false ),
-			logs: get( state, [
-				'activityLog',
-				'logItems',
-				siteId,
-			], [] ),
 		};
 	},
 	{ recordGoogleEvent }
