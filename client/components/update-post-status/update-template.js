@@ -3,6 +3,14 @@
  */
 import React from 'react';
 
+const Ellipsis = () => (
+	<span>
+		<span className="loading-dot">.</span>
+		<span className="loading-dot">.</span>
+		<span className="loading-dot">.</span>
+	</span>
+);
+
 export default function UpdateTemplate( {
 	post,
 	previousStatus,
@@ -18,7 +26,7 @@ export default function UpdateTemplate( {
 		case 'deleting':
 			trashText = ( status === 'deleting' ) ? s.deleting : s.trashing;
 			updateText = (
-				<span>{ trashText } <span className="loading-dot">.</span><span className="loading-dot">.</span><span className="loading-dot">.</span></span>
+				<span>{ trashText } <Ellipsis /></span>
 			);
 			updateClass += ' conf-alert--trashing';
 			break;
@@ -39,7 +47,7 @@ export default function UpdateTemplate( {
 
 		case 'updating':
 			updateText = (
-				<span>{ s.updating } <span className="loading-dot">.</span><span className="loading-dot">.</span><span className="loading-dot">.</span></span>
+				<span>{ s.updating } <Ellipsis /></span>
 			);
 			updateClass += ' conf-alert--updating';
 			break;
@@ -50,7 +58,7 @@ export default function UpdateTemplate( {
 			break;
 
 		case 'restoring':
-			updateText = ( <span>{ s.restoring } <span className="loading-dot">.</span><span className="loading-dot">.</span><span className="loading-dot">.</span></span> );
+			updateText = ( <span>{ s.restoring } <Ellipsis /></span> );
 			updateClass += ' conf-alert--updating';
 			break;
 
