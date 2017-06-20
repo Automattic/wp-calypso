@@ -43,22 +43,42 @@ class Orders extends Component {
 	getOrderStatus = ( status ) => {
 		const { translate } = this.props;
 		const classes = `orders__item-status is-${ status }`;
+		let paymentLabel;
+		let shippingLabel;
 		switch ( status ) {
 			case 'pending':
-				return <span className={ classes }>{ translate( 'Pending payment' ) }</span>;
+				shippingLabel = translate( 'New order' );
+				paymentLabel = translate( 'Payment pending' );
+				break;
 			case 'processing':
-				return <span className={ classes }>{ translate( 'Processing' ) }</span>;
+				shippingLabel = translate( 'New order' );
+				paymentLabel = translate( 'Paid in full' );
+				break;
 			case 'on-hold':
-				return <span className={ classes }>{ translate( 'On hold' ) }</span>;
+				shippingLabel = translate( 'On hold' );
+				paymentLabel = translate( 'Payment pending' );
+				break;
 			case 'completed':
-				return <span className={ classes }>{ translate( 'Completed' ) }</span>;
+				shippingLabel = translate( 'Fulfilled' );
+				paymentLabel = translate( 'Paid in full' );
+				break;
 			case 'cancelled':
-				return <span className={ classes }>{ translate( 'Cancelled' ) }</span>;
+				paymentLabel = translate( 'Cancelled' );
+				break;
 			case 'refunded':
-				return <span className={ classes }>{ translate( 'Refunded' ) }</span>;
+				paymentLabel = translate( 'Refunded' );
+				break;
 			case 'failed':
-				return <span className={ classes }>{ translate( 'Failed' ) }</span>;
+				paymentLabel = translate( 'Payment Failed' );
+				break;
 		}
+
+		return (
+			<span className={ classes }>
+				{ shippingLabel ? <span className="orders__shipping-status">{ shippingLabel }</span> : null }
+				<span className="orders__payment-status">{ paymentLabel }</span>
+			</span>
+		);
 	}
 
 	renderOrderItems = ( order, i ) => {
