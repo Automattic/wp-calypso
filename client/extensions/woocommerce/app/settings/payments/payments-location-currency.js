@@ -84,20 +84,20 @@ class SettingsPaymentsLocationCurrency extends Component {
 		);
 		const successAction = () => {
 			return successNotice(
-				translate( 'Payment method successfully saved.' ),
+				translate( 'Site currency successfully saved.' ),
 				{ duration: 4000 }
 			);
 		};
 
 		const errorAction = () => {
 			return errorNotice(
-				translate( 'There was a problem saving the payment method. Please try again.' )
+				translate( 'There was a problem saving the currency. Please try again.' )
 			);
 		};
 
 		this.props.saveCurrency(
 			site.ID,
-			e.target.value,
+			newCurrency,
 			successAction,
 			errorAction
 		);

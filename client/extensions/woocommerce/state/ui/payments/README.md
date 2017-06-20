@@ -8,7 +8,7 @@ READMEs for more details.
 
 ```js
 {
-	"currency": "three let key"
+	"currency": "three letter key"
 }
 ```
 

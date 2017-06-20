@@ -16,8 +16,7 @@ const getCurrencyEdits = ( state, siteId ) => {
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of payment methods that the UI should show. That will be the list of methods returned by
- * the wc-api with the edits "overlayed" on top of them.
+ * @return {String} Returns the currently set currency with any local edits.
  */
 export const getCurrencyWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areSettingsGeneralLoaded( state, siteId ) ) {
