@@ -118,6 +118,8 @@ class ThemesSelection extends Component {
 					defaultOption = options.customize;
 				} else if ( options.purchase ) {
 					defaultOption = options.purchase;
+				} else if ( options.upgradePlan ) {
+					defaultOption = options.upgradePlan;
 				} else {
 					defaultOption = options.activate;
 				}

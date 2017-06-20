@@ -45,6 +45,8 @@ import {
 	getThemeRequestErrors,
 	getThemeForumUrl,
 } from 'state/themes/selectors';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import { hasFeature } from 'state/sites/plans/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
@@ -600,16 +602,25 @@ const ThemeSheetWithOptions = ( props ) => {
 		isLoggedIn,
 		isPremium,
 		isPurchased,
+		isJetpack,
+		hasUnlimitedPremiumThemes
 	} = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
+	const needsJetpackUpgrade = isJetpack && isPremium && ! hasUnlimitedPremiumThemes;
+
+	if ( needsJetpackUpgrade ) {
+		secondaryOption = '';
+	}
 
 	if ( ! isLoggedIn ) {
 		defaultOption = 'signup';
 		secondaryOption = null;
 	} else if ( isActive ) {
 		defaultOption = 'customize';
+	} else if ( needsJetpackUpgrade ) {
+		defaultOption = 'upgradePlan';
 	} else if ( isPremium && ! isPurchased ) {
 		defaultOption = 'purchase';
 	} else {
@@ -652,6 +663,7 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
+			hasUnlimitedPremiumThemes: config.isEnabled( 'jetpack/pijp' ) && hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id )
