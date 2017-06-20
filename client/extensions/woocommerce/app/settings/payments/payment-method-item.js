@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import Button from 'components/button';
 import {
 	cancelEditingPaymentMethod,
@@ -80,6 +81,16 @@ class PaymentMethodItem extends Component {
 			method.id,
 			enabled
 		);
+
+		if ( enabled ) {
+			analytics.tracks.recordEvent( 'calypso_woocommerce_payment_method_enabled', {
+				paymentMethod: method.id,
+			} );
+		} else {
+			analytics.tracks.recordEvent( 'calypso_woocommerce_payment_method_disabled', {
+				paymentMethod: method.id,
+			} );
+		}
 
 		const successAction = () => {
 			return successNotice(

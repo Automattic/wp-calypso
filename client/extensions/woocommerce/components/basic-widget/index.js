@@ -3,15 +3,16 @@
  */
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 
-const BasicWidget = ( { buttonLabel, buttonLink, children, className, title } ) => {
+const BasicWidget = ( { buttonLabel, buttonLink, buttonClick, children, className, title } ) => {
 	const classes = classNames( { 'basic-widget__container': true }, className );
-	const target = '/' === buttonLink.substring( 0, 1 ) ? '_self' : '_blank';
+	const target = buttonLink && '/' !== buttonLink.substring( 0, 1 ) ? '_blank' : '_self';
 	return (
 		<div className={ classes } >
 			<h2>{ title }</h2>
@@ -19,6 +20,7 @@ const BasicWidget = ( { buttonLabel, buttonLink, children, className, title } ) 
 				{ children }
 			</div>
 			<Button
+				onClick={ buttonClick }
 				href={ buttonLink }
 				target={ target }>
 				{ buttonLabel }
@@ -30,12 +32,17 @@ const BasicWidget = ( { buttonLabel, buttonLink, children, className, title } ) 
 BasicWidget.propTypes = {
 	buttonLabel: PropTypes.string,
 	buttonLink: PropTypes.string,
+	buttonClick: PropTypes.func,
 	children: PropTypes.oneOfType( [
 		PropTypes.arrayOf( PropTypes.node ),
 		PropTypes.node
 	] ),
 	className: PropTypes.string,
 	title: PropTypes.string,
+};
+
+BasicWidget.defaultProps = {
+	buttonClick: noop,
 };
 
 export default BasicWidget;

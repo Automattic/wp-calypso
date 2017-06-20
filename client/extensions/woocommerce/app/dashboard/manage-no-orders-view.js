@@ -3,10 +3,12 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import BasicWidget from 'woocommerce/components/basic-widget';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import ReadingWidget from 'woocommerce/components/reading-widget';
@@ -49,10 +51,16 @@ class ManageNoOrdersView extends Component {
 
 	renderExampleOrderWidget = () => {
 		const { site, translate } = this.props;
+		const trackClick = () => {
+			analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
+				action: 'view-example-order',
+			} );
+			page.redirect( getLink( '/store/orders/:site/example', site ) );
+		};
 		return (
 			<BasicWidget
 				buttonLabel={ translate( 'View an example order' ) }
-				buttonLink={ getLink( '/store/orders/:site/example', site ) }
+				buttonClick={ trackClick }
 				className="dashboard__example-order-widget"
 				title={ translate( 'Looking for orders and reports?' ) }
 			>
@@ -67,10 +75,16 @@ class ManageNoOrdersView extends Component {
 
 	renderViewAndTestWidget = () => {
 		const { site, translate } = this.props;
+		const trackClick = () => {
+			analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
+				action: 'view-and-test',
+			} );
+		};
 		return (
 			<BasicWidget
 				buttonLabel={ translate( 'View & test your store' ) }
 				buttonLink={ site.URL }
+				buttonClick={ trackClick }
 				className="dashboard__view-and-test-widget"
 				title={ translate( 'Test all the things' ) }
 			>

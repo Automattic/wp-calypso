@@ -3,11 +3,13 @@
  */
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import Button from 'components/button';
 
 // TODO add doc url and documentation link
@@ -17,6 +19,7 @@ class SetupTask extends Component {
 		actions: PropTypes.arrayOf( PropTypes.shape( {
 			isSecondary: PropTypes.bool,
 			label: PropTypes.string.isRequired,
+			analyticsProp: PropTypes.string.isRequired,
 			onClick: PropTypes.func,
 			path: PropTypes.string,
 		} ) ),
@@ -30,6 +33,12 @@ class SetupTask extends Component {
 		isSecondary: false,
 	}
 
+	track( analyticsProp ) {
+		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
+			action: analyticsProp,
+		} );
+	}
+
 	renderTaskPrimaryActions = ( actions, taskCompleted ) => {
 		const primaryActions = actions.filter( action => ! action.isSecondary );
 		return (
@@ -39,9 +48,13 @@ class SetupTask extends Component {
 						// Only the last primary action gets to be a primary button
 						const primary = ( index === primaryActions.length - 1 ) && ! taskCompleted;
 						const target = '/' === action.path.substring( 0, 1 ) ? '_self' : '_blank';
+						const trackClick = () => {
+							this.track( action.analyticsProp );
+							page.redirect( action.path );
+						};
 						return (
 							<Button
-								href={ action.path }
+								onClick={ trackClick }
 								key={ index }
 								primary={ primary }
 								target={ target }>
@@ -60,8 +73,12 @@ class SetupTask extends Component {
 			<div className="dashboard__setup-task-secondary-actions">
 				{
 					secondaryActions.map( ( action, index ) => {
+						const trackClick = ( e ) => {
+							this.track( action.analyticsProp );
+							action.onClick( e );
+						};
 						return (
-							<a key={ index } onClick={ action.onClick }>{ action.label }</a>
+							<a key={ index } onClick={ trackClick }>{ action.label }</a>
 						);
 					} )
 				}
