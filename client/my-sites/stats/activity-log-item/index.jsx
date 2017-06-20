@@ -12,7 +12,6 @@ import Gridicon from 'gridicons';
 import FoldableCard from 'components/foldable-card';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-// import PopoverMenuSeparator from 'components/popover/menu-separator';
 import Gravatar from 'components/gravatar';
 
 class ActivityLogItem extends Component {
