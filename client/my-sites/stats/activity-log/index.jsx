@@ -87,13 +87,6 @@ class ActivityLog extends Component {
 		rewindRestore( siteId, requestedRestoreTimestamp );
 	};
 
-	tryFetchLogs( siteId ) {
-		const {
-			activityLogRequest,
-		} = this.props;
-		siteId && activityLogRequest( siteId );
-	}
-
 	update_logs( log ) {
 		const { translate } = this.props;
 		switch ( log.type ) {
