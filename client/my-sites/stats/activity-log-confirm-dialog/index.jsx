@@ -16,8 +16,8 @@ class ActivityLogConfirmDialog extends Component {
 		isVisible: PropTypes.bool.isRequired,
 		onClose: PropTypes.func.isRequired,
 		onConfirm: PropTypes.func.isRequired,
-		siteName: PropTypes.string.isRequired,
-		timestamp: PropTypes.string.isRequired,
+		siteTitle: PropTypes.string,
+		timestamp: PropTypes.number,
 
 		// Localize
 		translate: PropTypes.func.isRequired,
@@ -50,7 +50,7 @@ class ActivityLogConfirmDialog extends Component {
 		const {
 			isVisible,
 			moment,
-			siteName,
+			siteTitle,
 			timestamp,
 			translate,
 		} = this.props;
@@ -64,8 +64,8 @@ class ActivityLogConfirmDialog extends Component {
 				<p className="activity-log-confirm-dialog__highlight">
 					{
 						translate(
-							'To proceed please confirm this restore on your site %(siteName)s',
-							{ args: { siteName } }
+							'To proceed please confirm this restore on your site %(siteTitle)s',
+							{ args: { siteTitle } }
 						)
 					}
 				</p>
@@ -75,7 +75,7 @@ class ActivityLogConfirmDialog extends Component {
 					{
 						translate( 'Restoring to {{b}}%(time)s{{/b}}', {
 							args: {
-								time: moment( timestamp, 'x' ).format( 'LLL' ),
+								time: moment( timestamp ).format( 'LLL' ),
 							},
 							components: { b: <b /> },
 						} )
