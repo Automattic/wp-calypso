@@ -264,7 +264,6 @@ class SignupForm extends Component {
 	globalNotice( notice ) {
 		return <Notice
 			className="signup-form__notice"
-			isCompact={ true }
 			showDismiss={ false }
 			status={ notices.getStatusHelper( notice ) }
 			text={ notice.message } />;
@@ -460,14 +459,15 @@ class SignupForm extends Component {
 	render() {
 		return (
 			<div className={ classNames( 'signup-form', this.props.className ) }>
+
+				{ this.getNotice() }
+
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
 					{ this.props.formHeader && (
 						<header className="signup-form__header">
 							{ this.props.formHeader }
 						</header>
 					) }
-
-					{ this.getNotice() }
 
 					{ this.formFields() }
 

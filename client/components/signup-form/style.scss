@@ -20,7 +20,6 @@
 }
 
 .signup-form__social {
-	max-width: 400px;
 	p {
 		font-size: 11px;
 		margin: 0 0 20px 0;
@@ -39,6 +38,9 @@
 	}
 }
 
+.signup-form__social,
 .signup-form__notice.notice {
-	margin-bottom: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 400px;
 }
