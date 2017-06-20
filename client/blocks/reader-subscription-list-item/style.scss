@@ -148,7 +148,7 @@
 	word-break: break-all;
 	width: initial;
 	max-height: 16px * 1.3;
-	max-width: calc( 100% - 10px ); // Need to set max width for IE so URLs don't overlow
+	max-width: calc( 100% - 10px ); // Need to set max-width for IE so URLs don't overflow
 
 	@include breakpoint( "<960px" ) {
 		height: 20px;
