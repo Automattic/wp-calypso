@@ -77,7 +77,9 @@ export class Login extends React.Component {
 				<Main className="wp-login__main">
 					{ this.renderLocaleSuggestions() }
 
-					<DocumentHead title={ translate( 'Log In', { textOnly: true } ) } />
+					<DocumentHead
+						title={ translate( 'Log In', { textOnly: true } ) }
+						link={ [ { rel: 'canonical', href: 'https://wordpress.com/login' } ] } />
 
 					<GlobalNotices id="notices" notices={ notices.list } />
 
