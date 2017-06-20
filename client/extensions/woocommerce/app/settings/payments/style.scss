@@ -3,13 +3,22 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-between;
+	
+	@include breakpoint( "<660px" ) {
+		flex-direction: column;
+	}
 }
 
 .payments__currency-container {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 	max-width: 255px;
+	padding-top: 24px;
+	
+	@include breakpoint( ">960px" ) {
+		padding-left: 24px;
+		padding-top: 0;
+	}
 }
 
 .payments__type-container .section-header__label::before {
