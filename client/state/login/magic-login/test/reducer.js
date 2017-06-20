@@ -17,7 +17,6 @@ import {
 	DESERIALIZE,
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
 	MAGIC_LOGIN_HIDE_REQUEST_NOTICE,
-	MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 	MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
@@ -32,7 +31,6 @@ import {
 } from 'state/action-types';
 
 import reducer, {
-	emailAddressFormInput,
 	isFetchingAuth,
 	isFetchingEmail,
 	currentView,
@@ -46,7 +44,6 @@ describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'currentView',
-			'emailAddressFormInput',
 			'isFetchingAuth',
 			'isFetchingEmail',
 			'requestAuthError',
@@ -54,48 +51,6 @@ describe( 'reducer', () => {
 			'requestEmailError',
 			'requestEmailSuccess',
 		] );
-	} );
-
-	describe( 'emailAddressFormInput', () => {
-		it( 'should default to an empty string', () => {
-			const state = emailAddressFormInput( undefined, {} );
-
-			expect( state ).to.equal( '' );
-		} );
-
-		it( 'should be an empty string on DESERIALIZE', () => {
-			const state = emailAddressFormInput( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.equal( '' );
-		} );
-
-		it( 'should be an empty string on SERIALIZE', () => {
-			const state = emailAddressFormInput( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.equal( '' );
-		} );
-
-		it( 'should set emailAddressFormInput to string value on action', () => {
-			const state = emailAddressFormInput( undefined, {
-				type: MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
-				email: 'claudemonet@example.com',
-			} );
-
-			expect( state ).to.equal( 'claudemonet@example.com' );
-		} );
-
-		it( 'should set emailAddressFormInput to empty string when clearing', () => {
-			const state = emailAddressFormInput( undefined, {
-				type: MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
-				email: '',
-			} );
-
-			expect( state ).to.equal( '' );
-		} );
 	} );
 
 	describe( 'isFetchingAuth', () => {

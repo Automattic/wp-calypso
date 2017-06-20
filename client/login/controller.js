@@ -26,7 +26,6 @@ export default {
 	},
 
 	magicLoginUse( context, next ) {
-		// queryArguments isn't set in redux in time for this initial render -- pull 'em out here.
 		const {
 			client_id,
 			email,
@@ -34,7 +33,14 @@ export default {
 			tt,
 		} = context.query;
 
-		context.primary = <HandleEmailedLinkForm clientId={ client_id } emailAddress={ email } token={ token } tokenTime={ tt } />;
+		context.primary = (
+			<HandleEmailedLinkForm
+				clientId={ client_id }
+				emailAddress={ email }
+				token={ token }
+				tokenTime={ tt }
+			/>
+		);
 		next();
 	},
 };

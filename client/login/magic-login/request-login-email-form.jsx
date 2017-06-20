@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -10,16 +10,21 @@ import { connect } from 'react-redux';
 import {
 	fetchMagicLoginRequestEmail,
 	hideMagicLoginRequestNotice,
-	setMagicLoginInputEmailAddress,
 } from 'state/login/magic-login/actions';
 import {
-	getMagicLoginEmailAddressFormInput,
-	getMagicLoginEmailAddressFormInputIsValid,
+	recordPageView,
+} from 'state/analytics/actions';
+import {
 	isFetchingMagicLoginEmail,
+	getMagicLoginCurrentView,
 	getMagicLoginRequestEmailError,
 	getMagicLoginRequestedEmailSuccessfully,
 } from 'state/selectors';
+import {
+	CHECK_YOUR_EMAIL_PAGE,
+} from 'state/login/magic-login/constants';
 
+import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
@@ -29,8 +34,26 @@ import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 class RequestLoginEmailForm extends React.Component {
+	state = {};
+
+	static propTypes = {
+		// mapped to state
+		currentUser: PropTypes.object,
+		isFetching: PropTypes.bool,
+		requestError: PropTypes.string,
+		showCheckYourEmail: PropTypes.bool,
+		emailRequested: PropTypes.bool,
+
+		// mapped to dispatch
+		fetchMagicLoginRequestEmail: PropTypes.func.isRequired,
+		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
+		recordPageView: PropTypes.func.isRequired,
+	};
+
 	onEmailAddressFieldChange = event => {
-		this.props.setMagicLoginInputEmailAddress( event.target.value );
+		this.setState( {
+			emailAddress: event.target.value,
+		} );
 	};
 
 	onNoticeDismiss = () => {
@@ -39,7 +62,7 @@ class RequestLoginEmailForm extends React.Component {
 
 	onSubmit = event => {
 		event.preventDefault();
-		this.props.fetchMagicLoginRequestEmail( this.props.emailAddress );
+		this.props.fetchMagicLoginRequestEmail( this.state.emailAddress );
 	};
 
 	render() {
@@ -47,10 +70,18 @@ class RequestLoginEmailForm extends React.Component {
 			currentUser,
 			requestError,
 			isFetching,
-			isValidEmailAddress,
 			emailRequested,
+			showCheckYourEmail,
 			translate,
 		} = this.props;
+
+		if ( showCheckYourEmail ) {
+			this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
+			return <EmailedLoginLinkSuccessfully emailAddress={ this.state.emailAddress } />;
+		}
+
+		const isValidEmailAddress = this.state.emailAddress &&
+			this.state.emailAddress.match( /^.+@.+/ );
 
 		const submitEnabled = (
 			isValidEmailAddress &&
@@ -76,10 +107,10 @@ class RequestLoginEmailForm extends React.Component {
 				<h1 className="magic-login__form-header">
 					{ translate( 'Email me a login link.' ) }
 				</h1>
-				<p>{
-					translate( 'Get a link sent to the email address associated ' +
-						'with your account to log in instantly without your password.' )
-				}</p>
+				<p>
+					{ translate( 'Get a link sent to the email address associated ' +
+						'with your account to log in instantly without your password.' ) }
+				</p>
 				{ currentUser && currentUser.username &&
 					<p>{
 						translate( 'NOTE: You are already logged in as user: %(user)s', {
@@ -96,7 +127,6 @@ class RequestLoginEmailForm extends React.Component {
 							disabled={ isFetching || emailRequested }
 							name="emailAddress"
 							placeholder={ translate( 'Email address' ) }
-							value={ this.props.emailAddress }
 							onChange={ this.onEmailAddressFieldChange }
 						/>
 
@@ -115,10 +145,9 @@ class RequestLoginEmailForm extends React.Component {
 const mapState = state => {
 	return {
 		currentUser: getCurrentUser( state ),
-		emailAddress: getMagicLoginEmailAddressFormInput( state ),
 		isFetching: isFetchingMagicLoginEmail( state ),
-		isValidEmailAddress: getMagicLoginEmailAddressFormInputIsValid( state ),
 		requestError: getMagicLoginRequestEmailError( state ),
+		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),
 	};
 };
@@ -126,7 +155,7 @@ const mapState = state => {
 const mapDispatch = {
 	fetchMagicLoginRequestEmail,
 	hideMagicLoginRequestNotice,
-	setMagicLoginInputEmailAddress,
+	recordPageView,
 };
 
 export default connect( mapState, mapDispatch )( localize( RequestLoginEmailForm ) );

@@ -21,7 +21,6 @@ import {
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
-	MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 } from 'state/action-types';
@@ -75,19 +74,6 @@ export const fetchMagicLoginRequestEmail = email => dispatch => {
 	} );
 };
 
-const authError = ( error ) => {
-	return {
-		type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
-		error,
-	};
-};
-
-const authSuccess = () => {
-	return {
-		type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
-	};
-};
-
 // @TODO should this move to `/state/data-layer`..?
 export const fetchMagicLoginAuthenticate = ( email, token, tt ) => dispatch => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
@@ -113,17 +99,15 @@ export const fetchMagicLoginAuthenticate = ( email, token, tt ) => dispatch => {
 				// @TODO figure how we should treat `rememberMe`...
 				rememberMe: 0,
 			} );
-			dispatch( authSuccess() );
+			dispatch( {
+				type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
+			} );
 		} )
 		.catch( ( error ) => {
 			const { status } = error;
-			dispatch( authError( status ) );
+			dispatch( {
+				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
+				error: status,
+			} );
 		} );
-};
-
-export const setMagicLoginInputEmailAddress = email => {
-	return {
-		type: MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
-		email,
-	};
 };

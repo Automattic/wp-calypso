@@ -56,7 +56,7 @@ class HandleEmailedLinkForm extends React.Component {
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
 
-		// Conntected action creators
+		// Connected action creators
 		fetchMagicLoginAuthenticate: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		showMagicLoginLinkExpiredPage: PropTypes.func.isRequired,
@@ -77,7 +77,7 @@ class HandleEmailedLinkForm extends React.Component {
 	};
 
 	// Lifted from `blocks/login`
-	// @TODO unify
+	// @TODO move to `state/login/actions` & use both places
 	handleValidToken = () => {
 		if ( ! this.props.twoFactorEnabled ) {
 			this.rebootAfterLogin();
@@ -91,20 +91,20 @@ class HandleEmailedLinkForm extends React.Component {
 	};
 
 	// Lifted from `blocks/login`
-	// @TODO unify
+	// @TODO move to `state/login/actions` & use both places
 	rebootAfterLogin = () => {
 		const { redirectTo } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_login_success', {
 			two_factor_enabled: this.props.twoFactorEnabled,
-			magic_login: 1
+			magic_login: 1,
 		} );
 
 		// Redirects to / if no redirect url is available
 		const url = redirectTo ? redirectTo : window.location.origin;
 
 		// user data is persisted in localstorage at `lib/user/user` line 157
-		// therefor we need to reset it before we redirect, otherwise we'll get
+		// therefore we need to reset it before we redirect, otherwise we'll get
 		// mixed data from old and new user
 		user.clear();
 
@@ -175,13 +175,12 @@ class HandleEmailedLinkForm extends React.Component {
 				</p> );
 		}
 
-		this.props.recordTracksEvent( 'calypso_login_magic_link_handle_click_view' );
+		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 
 		return (
 			<EmptyContent
 				action={ action }
-				className={ classNames( {
-					'magic-login__handle-link': true,
+				className={ classNames( 'magic-login__handle-link', {
 					'magic-login__is-fetching-auth': isFetching,
 				} ) }
 				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }

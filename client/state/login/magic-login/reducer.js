@@ -13,7 +13,6 @@ import {
 import {
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
 	MAGIC_LOGIN_HIDE_REQUEST_NOTICE,
-	MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 	MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
@@ -49,16 +48,10 @@ export const isFetchingAuth = createReducer( false, {
 	[ MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE ]: () => false,
 } );
 
-export const emailAddressFormInput = createReducer( '', {
-	[ MAGIC_LOGIN_HIDE_REQUEST_FORM ]: () => '',
-	[ MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS ]: ( state, { email } ) => email,
-} );
-
 export const requestAuthSuccess = createReducer( false, {
 	[ MAGIC_LOGIN_REQUEST_AUTH_ERROR ]: () => false,
 	[ MAGIC_LOGIN_REQUEST_AUTH_FETCH ]: () => false,
 	[ MAGIC_LOGIN_REQUEST_AUTH_SUCCESS ]: () => true,
-	[ MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS ]: () => false,
 } );
 
 export const requestAuthError = createReducer( null, {
@@ -73,7 +66,6 @@ export const requestEmailError = createReducer( null, {
 	[ MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH ]: () => null,
 	[ MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS ]: () => null,
 	[ MAGIC_LOGIN_RESET_REQUEST_FORM ]: () => null,
-	[ MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS ]: () => null,
 } );
 
 export const requestEmailSuccess = createReducer( false, {
@@ -85,7 +77,6 @@ export const requestEmailSuccess = createReducer( false, {
 } );
 
 export default combineReducers( {
-	emailAddressFormInput,
 	isFetchingAuth,
 	isFetchingEmail,
 	requestAuthError,
