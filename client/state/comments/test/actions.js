@@ -16,11 +16,13 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
-	COMMENTS_WRITE
+	COMMENTS_WRITE,
+	COMMENTS_REPLY_WRITE,
 } from '../../action-types';
 import {
 	requestPostComments,
 	writeComment,
+	replyComment,
 	removeComment,
 	likeComment,
 	unlikeComment
@@ -82,19 +84,20 @@ describe( 'actions', () => {
 				type: COMMENTS_WRITE,
 				siteId: SITE_ID,
 				postId: POST_ID,
-				parentCommentId: null,
 				commentText: 'comment text',
 			} );
 		} );
+	} );
 
-		it( 'should return a write comment action with the specified parent comment id', function() {
-			const action = writeComment( 'comment text', SITE_ID, POST_ID, 10 );
+	describe( '#replyComment()', () => {
+		it( 'should return a write comment action', function() {
+			const action = replyComment( 'comment text', SITE_ID, POST_ID, 1 );
 
 			expect( action ).to.eql( {
-				type: COMMENTS_WRITE,
+				type: COMMENTS_REPLY_WRITE,
 				siteId: SITE_ID,
 				postId: POST_ID,
-				parentCommentId: 10,
+				parentCommentId: 1,
 				commentText: 'comment text',
 			} );
 		} );
