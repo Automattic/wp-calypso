@@ -18,7 +18,8 @@ import {
 } from 'state/current-user/selectors';
 import {
 	writeComment,
-	removeComment
+	removeComment,
+	replyComment,
 } from 'state/comments/actions';
 import {
 	recordAction,
@@ -131,7 +132,13 @@ class PostCommentForm extends React.Component {
 		if ( this.props.placeholderId ) {
 			this.props.removeComment( post.site_ID, post.ID, this.props.placeholderId );
 		}
-		this.props.writeComment( commentText, post.site_ID, post.ID, this.props.parentCommentID );
+
+		if ( this.props.parentCommentID ) {
+			this.props.replyComment( commentText, post.site_ID, post.ID, this.props.parentCommentID );
+		} else {
+			this.props.writeComment( commentText, post.site_ID, post.ID );
+		}
+
 
 		recordAction( 'posted_comment' );
 		recordGaEvent( 'Clicked Post Comment Button' );
@@ -240,7 +247,8 @@ PostCommentForm.propTypes = {
 	// connect()ed props:
 	currentUser: React.PropTypes.object.isRequired,
 	writeComment: React.PropTypes.func.isRequired,
-	removeComment: React.PropTypes.func.isRequired
+	removeComment: React.PropTypes.func.isRequired,
+	replyComment: React.PropTypes.func.isRequired
 };
 
 PostCommentForm.defaultProps = {
@@ -251,5 +259,5 @@ export default connect(
 	( state ) => ( {
 		currentUser: getCurrentUser( state )
 	} ),
-	{ writeComment, removeComment }
+	{ writeComment, removeComment, replyComment }
 )( PostCommentForm );

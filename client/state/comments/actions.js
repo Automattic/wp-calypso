@@ -16,6 +16,7 @@ import {
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
 	COMMENTS_REMOVE,
+	COMMENTS_REPLY_WRITE,
 	COMMENTS_WRITE,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
@@ -66,15 +67,29 @@ export function removeComment( siteId, postId, commentId ) {
 }
 
 /***
- * Creates a thunk that creates a comment for a given post
+ * Creates a write comment action for a siteId and postId
  * @param {String} commentText text of the comment
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
- * @param {Number|undefined} parentCommentId parent comment identifier
  * @returns {Function} a thunk that creates a comment for a given post
  */
-export const writeComment = ( commentText, siteId, postId, parentCommentId = null ) => ( {
+export const writeComment = ( commentText, siteId, postId ) => ( {
 	type: COMMENTS_WRITE,
+	siteId,
+	postId,
+	commentText
+} );
+
+/***
+ * Creates a reply to comment action for a siteId, postId and commentId
+ * @param {String} commentText text of the comment
+ * @param {Number} siteId site identifier
+ * @param {Number} postId post identifier
+ * @param {Number} parentCommentId parent comment identifier
+ * @returns {Function} a thunk that creates a comment for a given post
+ */
+export const replyComment = ( commentText, siteId, postId, parentCommentId ) => ( {
+	type: COMMENTS_REPLY_WRITE,
 	siteId,
 	postId,
 	parentCommentId,

@@ -8,9 +8,9 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import * as Utils from 'state/data-layer/wpcom/sites/utils';
-import { newPostReply } from '../';
+import { writePostComment } from '../';
 
-describe( '#newPostReply()', () => {
+describe( '#writePostComment()', () => {
 	const action = {
 		type: 'DUMMY',
 		siteId: 2916284,
@@ -22,31 +22,15 @@ describe( '#newPostReply()', () => {
 		const dispatch = spy();
 		const dispatchNewCommentRequestSpy = spy( Utils, 'dispatchNewCommentRequest' );
 
-		newPostReply( { dispatch }, {
-			...action,
-			parentCommentId: null
-		} );
+		writePostComment( { dispatch }, action );
 
 		expect( dispatchNewCommentRequestSpy ).to.have.been.calledOnce;
 		expect( dispatchNewCommentRequestSpy ).to.have.been.calledWith(
 			dispatch,
-			{ ...action, parentCommentId: null },
+			action,
 			'/sites/2916284/posts/1010/replies/new'
 		);
 
-		dispatchNewCommentRequestSpy.restore();
-	} );
-
-	it( 'should return if parent comment id is provided', () => {
-		const dispatch = spy();
-		const dispatchNewCommentRequestSpy = spy( Utils, 'dispatchNewCommentRequest' );
-
-		newPostReply( { dispatch }, {
-			...action,
-			parentCommentId: 1
-		} );
-
-		expect( dispatchNewCommentRequestSpy ).to.have.not.been.called;
 		dispatchNewCommentRequestSpy.restore();
 	} );
 } );
