@@ -82,6 +82,7 @@ export class DomainDetailsForm extends PureComponent {
 		};
 
 		this.inputRefs = {};
+		this.inputRefCallbacks = {};
 	}
 
 	componentWillMount() {
@@ -226,7 +227,7 @@ export class DomainDetailsForm extends PureComponent {
 
 	getFieldProps( name ) {
 		const ref = name === 'state'
-			? { inputRef: el => this.inputRefs[ name ] = el }
+			? { inputRef: this.getInputRefCallback( name ) }
 			: { ref: name };
 		return {
 			name,
@@ -500,6 +501,16 @@ export class DomainDetailsForm extends PureComponent {
 		} else {
 			removePrivacyFromAllDomains();
 		}
+	}
+
+	// We want to cache the functions to avoid triggering unecessary rerenders
+	getInputRefCallback( name ) {
+		if ( ! this.inputRefCallbacks[ name ] ) {
+			this.inputRefCallbacks[ name ] =
+				( el ) => this.inputRefs[ name ] = el;
+		}
+
+		return this.inputRefCallbacks[ name ];
 	}
 
 	renderCurrentForm() {
