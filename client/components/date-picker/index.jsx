@@ -19,7 +19,7 @@ class DatePicker extends PureComponent {
 		enableOutsideDays: PropTypes.bool,
 		events: PropTypes.array,
 		locale: PropTypes.object,
-		moment: PropTypes.func,
+		moment: PropTypes.func.isRequired,
 
 		selectedDay: PropTypes.object,
 		timeReference: PropTypes.object,
