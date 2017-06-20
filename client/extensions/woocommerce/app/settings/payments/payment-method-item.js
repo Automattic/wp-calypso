@@ -71,14 +71,16 @@ class PaymentMethodItem extends Component {
 		this.props.changePaymentMethodField( this.props.site.ID, field, value );
 	}
 
-	onEnableHandler = ( e ) => {
+	onChangeEnabled = ( e ) => {
 		const { method, site, translate } = this.props;
-		const enabled = e.target.value === 'yes';
+
+		const enabled = 'yes' === e.target.value;
 		this.props.changePaymentMethodEnabled(
 			site.ID,
 			method.id,
 			enabled
 		);
+
 		const successAction = () => {
 			return successNotice(
 				translate( 'Payment method successfully saved.' ),
@@ -96,10 +98,9 @@ class PaymentMethodItem extends Component {
 				translate( 'There was a problem saving the payment method. Please try again.' )
 			);
 		};
-
 		this.props.savePaymentMethodEnabled(
 			site.ID,
-			method,
+			method.id,
 			e.target.value,
 			successAction,
 			errorAction
@@ -108,6 +109,7 @@ class PaymentMethodItem extends Component {
 
 	onSave = () => {
 		const { method, site, translate } = this.props;
+
 		const successAction = () => {
 			this.props.closeEditingPaymentMethod( site.ID, method.id );
 			return successNotice(
@@ -155,7 +157,7 @@ class PaymentMethodItem extends Component {
 			<PaymentMethodEditFormToggle
 				checked={ isEnabled }
 				name="enabled"
-				onChange={ this.onEnableHandler } />
+				onChange={ this.onChangeEnabled } />
 		);
 	}
 
@@ -163,10 +165,7 @@ class PaymentMethodItem extends Component {
 		const currentlyEditingId = this.props.currentlyEditingMethod &&
 			this.props.currentlyEditingMethod.id;
 		const { method, translate } = this.props;
-		let editButtonText = translate( 'Set up' );
-		if ( method.enabled ) {
-			editButtonText = translate( 'Manage' );
-		}
+		let editButtonText = method.enabled ? translate( 'Manage' ) : translate( 'Set up' );
 		if ( currentlyEditingId === method.id ) {
 			editButtonText = translate( 'Cancel' );
 		}

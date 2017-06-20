@@ -112,7 +112,7 @@ const savePaymentMethodEnabledSuccess = ( siteId, data ) => {
 
 export const savePaymentMethodEnabled = (
 	siteId,
-	method,
+	methodId,
 	enabled,
 	successAction = null,
 	failureAction = null
@@ -123,6 +123,8 @@ export const savePaymentMethodEnabled = (
 	}
 	const updateAction = {
 		type: WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE,
+		enabled,
+		methodId,
 		siteId,
 	};
 
@@ -130,7 +132,7 @@ export const savePaymentMethodEnabled = (
 
 	dispatch( updateAction );
 
-	return request( siteId ).put( `payment_gateways/${ method.id }`, body )
+	return request( siteId ).put( `payment_gateways/${ methodId }`, body )
 		.then( ( data ) => {
 			dispatch( savePaymentMethodEnabledSuccess( siteId, data ) );
 			if ( successAction ) {

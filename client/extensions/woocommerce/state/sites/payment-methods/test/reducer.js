@@ -35,9 +35,20 @@ describe( 'reducer', () => {
 
 	describe( 'WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE_SUCCESS', () => {
 		const siteId = 123;
-		const state = { [ siteId ]: {
-			paymentMethods: [ { id: 'bar', enabled: false } ]
-		} };
+		const state = {
+			[ siteId ]: {
+				paymentMethods: [
+					{ id: 'bar', enabled: false },
+					{ id: 'bang', enabled: false }
+				]
+			},
+			789: {
+				paymentMethods: [
+					{ id: 'bar', enabled: false },
+					{ id: 'bang', enabled: false }
+				]
+			},
+		};
 		const action = {
 			type: WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE_SUCCESS,
 			siteId,
@@ -46,7 +57,10 @@ describe( 'reducer', () => {
 
 		const newState = reducer( state, action );
 		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].paymentMethods ).to.deep.equal( [ { id: 'bar', enabled: true } ] );
+		expect( newState[ siteId ].paymentMethods ).to.deep.equal( [
+			{ id: 'bar', enabled: true },
+			{ id: 'bang', enabled: false }
+		] );
 	} );
 
 	describe( 'WOOCOMMERCE_PAYMENT_METHOD_UPDATE', () => {

@@ -17,11 +17,12 @@ import {
 
 export default createReducer( {}, {
 	[ WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE ]: ( state ) => {
-		// TODO: Return some sort of saving indicator
+		// TODO: Return some sort of saving indicator on method being enabled
 		return state;
 	},
 
 	[ WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE_SUCCESS ]: ( state, { data } ) => {
+		// Replaces method in state methods state array with data from server
 		const methods = state || [];
 		const newMethods = methods.map( ( method ) => {
 			if ( method.id === data.id ) {

@@ -285,21 +285,28 @@ describe( 'actions', () => {
 		it( 'should dispatch an action', () => {
 			const getState = () => ( state );
 			const dispatch = spy();
-			savePaymentMethodEnabled( siteId, method )( dispatch, getState );
+			savePaymentMethodEnabled( siteId, method.id, true )( dispatch, getState );
 			expect( dispatch ).to.have.been.calledWith(
-				{ type: WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE, siteId }
+				{
+					type: WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE,
+					siteId,
+					enabled: true,
+					methodId: 'paypal',
+				}
 			);
 		} );
 
 		it( 'should dispatch a success action with method complete', () => {
 			const getState = () => ( state );
 			const dispatch = spy();
-			const response = savePaymentMethodEnabled( siteId, method )( dispatch, getState );
+			const response = savePaymentMethodEnabled( siteId, method.id, true )( dispatch, getState );
 
 			return response.then( () => {
 				expect( dispatch ).to.have.been.calledWith( {
-					siteId: '789',
 					type: WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE,
+					siteId,
+					enabled: true,
+					methodId: 'paypal',
 				} );
 				expect( dispatch ).to.have.been.calledWith( {
 					type: WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE_SUCCESS,
