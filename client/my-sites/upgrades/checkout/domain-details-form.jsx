@@ -83,6 +83,9 @@ export class DomainDetailsForm extends PureComponent {
 			steps,
 			currentStep: first( steps ),
 		};
+
+		this.inputRefs = {};
+		this.inputRefCallbacks = {};
 	}
 
 	componentWillMount() {
@@ -225,9 +228,12 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	getFieldProps( name ) {
+		const ref = name === 'state'
+			? { inputRef: this.getInputRefCallback( name ) }
+			: { ref: name };
 		return {
 			name,
-			ref: name,
+			...ref,
 			additionalClasses: 'checkout-field',
 			value: formState.getFieldValue( this.state.form, name ) || '',
 			isError: formState.isFieldInvalid( this.state.form, name ),
@@ -419,7 +425,9 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	focusFirstError() {
-		this.refs[ kebabCase( head( map( formState.getInvalidFields( this.state.form ), 'name' ) ) ) ].focus();
+		const firstErrorName = kebabCase( head( formState.getInvalidFields( this.state.form ) ).name );
+		const firstErrorRef = this.inputRefs[ firstErrorName ] || this.refs[ firstErrorName ];
+		firstErrorRef.focus();
 	}
 
 	handleSubmitButtonClick = ( event ) => {
@@ -496,6 +504,16 @@ export class DomainDetailsForm extends PureComponent {
 		} else {
 			removePrivacyFromAllDomains();
 		}
+	}
+
+	// We want to cache the functions to avoid triggering unecessary rerenders
+	getInputRefCallback( name ) {
+		if ( ! this.inputRefCallbacks[ name ] ) {
+			this.inputRefCallbacks[ name ] =
+				( el ) => this.inputRefs[ name ] = el;
+		}
+
+		return this.inputRefCallbacks[ name ];
 	}
 
 	renderCurrentForm() {
