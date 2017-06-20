@@ -11,8 +11,8 @@ import { times } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import EmptyContent from 'components/empty-content';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import { setCurrentPage } from 'woocommerce/state/ui/orders/actions';
 import {
 	areOrdersLoading,
 	areOrdersLoaded,
@@ -21,6 +21,8 @@ import {
 } from 'woocommerce/state/sites/orders/selectors';
 import { getOrdersCurrentPage } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteAdminUrl } from 'state/sites/selectors';
+import { setCurrentPage } from 'woocommerce/state/ui/orders/actions';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -138,7 +140,16 @@ class Orders extends Component {
 	}
 
 	render() {
-		const { orders, ordersLoading, ordersLoaded, translate } = this.props;
+		const { createOrderLink, orders, translate } = this.props;
+		if ( ! orders.length ) {
+			return (
+				<EmptyContent
+					title={ translate( 'Orders will appear here as they come in.' ) }
+					action={ translate( 'Manually add an order' ) }
+					actionURL={ createOrderLink } />
+			);
+		}
+
 		const headers = (
 			<TableRow>
 				<TableItem isHeader>{ translate( 'Order' ) }</TableItem>
@@ -148,16 +159,10 @@ class Orders extends Component {
 			</TableRow>
 		);
 
-		// @todo Designer needed :)
-		const placeholder = ( ordersLoading && ! ordersLoaded ) ? translate( 'Loading orders' ) : translate( 'No orders found.' );
-
 		return (
 			<div>
 				<Table className="orders__table" header={ headers }>
-					{ orders.length
-						? orders.map( this.renderOrderItems )
-						: <TableRow><TableItem colSpan="5">{ placeholder }</TableItem></TableRow>
-					}
+					{ orders.map( this.renderOrderItems ) }
 				</Table>
 				{ this.renderPagination() }
 			</div>
@@ -168,6 +173,7 @@ class Orders extends Component {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const createOrderLink = getSiteAdminUrl( state, siteId, 'post-new.php?post_type=shop_order' );
 		const currentPage = getOrdersCurrentPage( state, siteId );
 		const orders = getOrders( state, currentPage, siteId );
 		const ordersLoading = areOrdersLoading( state, currentPage, siteId );
@@ -175,6 +181,7 @@ export default connect(
 		const totalPages = getTotalOrdersPages( state, siteId );
 
 		return {
+			createOrderLink,
 			currentPage,
 			orders,
 			ordersLoading,
