@@ -2,15 +2,99 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { makeProductActionList, } from '../';
+import { handleProductCategoryEdit, makeProductActionList, } from '../';
 import { actionListStepSuccess, actionListStepFailure } from 'woocommerce/state/action-list/actions';
 import { createProduct } from 'woocommerce/state/sites/products/actions';
+import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
+import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 
 describe( 'handlers', () => {
+	describe( '#handleProductCategoryEdit', () => {
+		const existingCategory = { id: 101, name: 'Existing Category' };
+		const newCategory1 = { id: { placeholder: 'productCategory_1' }, name: 'New Category' };
+		const newProduct = {
+			id: { index: 0 },
+			name: 'Existing Product',
+			categories: [ existingCategory, newCategory1 ],
+		};
+
+		const rootState = {
+			extensions: {
+				woocommerce: {
+					ui: {
+						productCategories: {
+							123: {
+								edits: {
+									creates: [ newCategory1 ],
+								}
+							}
+						},
+						products: {
+							123: {
+								edits: {
+									creates: [ newProduct ],
+								}
+							}
+						},
+					},
+					sites: {
+						123: {
+							products: [ newProduct ],
+							productCategories: [ existingCategory ],
+						}
+					},
+				}
+			}
+		};
+
+		it( 'should do nothing if an existing category is updated.', () => {
+			const store = {
+				dispatch: spy(),
+				getState: () => rootState,
+			};
+
+			const categoryUpdate = { id: 101, name: 'Updated Category' };
+			const action = editProductCategory( 123, existingCategory, categoryUpdate );
+			handleProductCategoryEdit( store, action );
+
+			expect( store.dispatch ).to.not.have.been.called;
+		} );
+
+		it( 'should add placeholder id to action for a create.', () => {
+			const store = {
+				dispatch: spy(),
+				getState: () => rootState,
+			};
+
+			const createId = { placeholder: 'productCategory_2' };
+			const newCategory2 = { name: 'Another New Category' };
+			const action = editProductCategory( 123, { id: createId }, newCategory2 );
+			handleProductCategoryEdit( store, action );
+
+			expect( action.category.id ).to.eql( createId );
+			expect( store.dispatch ).to.not.have.been.called;
+		} );
+
+		it( 'should remove created category from a product that has it', () => {
+			const store = {
+				dispatch: spy(),
+				getState: () => rootState,
+			};
+
+			const action = editProductCategory( 123, newCategory1, null );
+			handleProductCategoryEdit( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				editProductRemoveCategory( 123, newProduct, newCategory1.id )
+			);
+		} );
+	} );
+
 	describe( '#makeProductActionList', () => {
 		it( 'should return null when there are no edits', () => {
 			expect( makeProductActionList( null, 123, null ) ).to.equal.null;

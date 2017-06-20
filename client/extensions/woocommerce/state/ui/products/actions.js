@@ -26,6 +26,18 @@ export function editProductAttribute( siteId, product, attribute, data ) {
 	};
 }
 
+export function editProductAddCategory( siteId, product, categoryId ) {
+	const categories = [ ...product.categories, { id: categoryId } ];
+
+	return editProduct( siteId, product, { categories } );
+}
+
+export function editProductRemoveCategory( siteId, product, categoryId ) {
+	const categories = product.categories.filter( ( c ) => categoryId !== c.id );
+
+	return editProduct( siteId, product, { categories } );
+}
+
 /**
  * Creates an action list to save product-related edits.
  *
