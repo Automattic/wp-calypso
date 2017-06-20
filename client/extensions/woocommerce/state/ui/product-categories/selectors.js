@@ -7,7 +7,7 @@ import { get, find, isNumber } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getProductCategory } from 'woocommerce/state/sites/product-categories/selectors';
+import { getProductCategory, getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
 
 /**
  * Gets all edits for product categories.
@@ -51,6 +51,25 @@ export function getProductCategoryWithLocalEdits( rootState, categoryId, siteId 
 	const categoryEdits = getProductCategoryEdits( rootState, categoryId, siteId );
 
 	return ( category || categoryEdits ) && { ...category, ...categoryEdits } || undefined;
+}
+
+/**
+ * Gets all categories, either fetched, edited, or both.
+ *
+ * This returns a list of all fetched categories overlaid with updates (if any) and
+ * all categories in the creates list as well.
+ *
+ * @param {Object} rootState Global state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, will use selected Site ID
+ * @return {Object} The category list merged between the fetched data, edits, and creates
+ */
+export function getProductCategoriesWithLocalEdits( rootState, siteId ) {
+	const categoryCreates = getAllProductCategoryEdits( rootState, siteId ).creates || [];
+	const fetchedCategoriesWithUpdates = getProductCategories( rootState, siteId ).map(
+		( c ) => getProductCategoryWithLocalEdits( rootState, c.id, siteId )
+	);
+
+	return [ ...categoryCreates, ...fetchedCategoriesWithUpdates ];
 }
 
 /**
