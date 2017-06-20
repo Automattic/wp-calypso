@@ -210,6 +210,7 @@ class ActivityLog extends Component {
 
 	renderContent() {
 		const {
+			isPressable,
 			siteId,
 			slug,
 			moment,
@@ -227,6 +228,7 @@ class ActivityLog extends Component {
 			),
 			( daily_logs, timestamp ) => (
 				<ActivityLogDay
+					allowRestore={ !! isPressable }
 					isRewindActive={ isRewindActive }
 					key={ timestamp }
 					logs={ daily_logs }
