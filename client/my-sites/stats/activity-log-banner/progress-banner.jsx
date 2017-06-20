@@ -11,13 +11,12 @@ import ActivityLogBanner from './index';
 import ProgressBar from 'components/progress-bar';
 
 function SuccessBanner( {
-	translate,
 	moment,
+	percent,
+	translate,
 } ) {
 	// FIXME: real dates
 	const date = 1496400468285;
-	// FIXME: real progress
-	const progress = 25;
 
 	return (
 		<ActivityLogBanner
@@ -32,7 +31,7 @@ function SuccessBanner( {
 
 			<div>
 				<em>{ translate( 'Currently restoring posts…' ) }</em>
-				<ProgressBar value={ progress } isPulsing />
+				<ProgressBar value={ percent } isPulsing />
 			</div>
 		</ActivityLogBanner>
 	);

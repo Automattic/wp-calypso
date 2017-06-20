@@ -34,20 +34,36 @@ import DatePicker from 'my-sites/stats/stats-date-picker';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
-import { isRewindActive as isRewindActiveSelector } from 'state/selectors';
 import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
+import {
+	getRestoreError,
+	getRestoreProgress,
+	isRewindActive as isRewindActiveSelector,
+} from 'state/selectors';
 
 const debug = debugFactory( 'calypso:activity-log' );
 
 class ActivityLog extends Component {
 	static propTypes = {
 		isJetpack: PropTypes.bool,
-		siteId: PropTypes.number,
-		slug: PropTypes.string,
+		restoreError: PropTypes.shape( {
+			error: PropTypes.string.isRequired,
+			message: PropTypes.string.isRequired,
+		} ),
+		restoreProgress: PropTypes.shape( {
+			percent: PropTypes.number.isRequired,
+			status: PropTypes.oneOf( [
+				'queued',
+				'running',
+				'success',
+			] ).isRequired,
+		} ),
 		rewindStatusError: PropTypes.shape( {
 			error: PropTypes.string.isRequired,
 			message: PropTypes.string.isRequired,
 		} ),
+		siteId: PropTypes.number,
+		slug: PropTypes.string,
 
 		// FIXME: Testing only
 		isPressable: PropTypes.bool,
@@ -178,12 +194,28 @@ class ActivityLog extends Component {
 	}
 
 	renderBanner() {
-		// FIXME: Logic to select/show 1 banner
-		return <div>
-			<ErrorBanner />
-			<ProgressBanner />
-			<SuccessBanner />
-		</div>;
+		const {
+			restoreError,
+			restoreProgress,
+		} = this.props;
+
+		if ( restoreError ) {
+			return (
+				<ErrorBanner />
+			);
+		} else if ( restoreProgress ) {
+			const {
+				status,
+				percent,
+			} = restoreProgress;
+			return (
+				status === 'success'
+					? <SuccessBanner />
+					: <ProgressBanner percent={ percent } />
+			);
+		}
+
+		return null;
 	}
 
 	renderErrorMessage() {
@@ -322,6 +354,8 @@ export default connect(
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
+			restoreProgress: getRestoreProgress( state, siteId ),
+			restoreError: getRestoreError( state, siteId ),
 			isRewindActive: isRewindActiveSelector( state, siteId ),
 
 			// FIXME: Testing only
