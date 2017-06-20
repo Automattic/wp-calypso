@@ -29,7 +29,8 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import WpcomPluginPanel from 'my-sites/plugins-wpcom';
 import PluginsBrowser from './plugins-browser';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, canJetpackSiteManage, canJetpackSiteUpdateFiles } from 'state/sites/selectors';
+import { getSelectedOrAllSites } from 'state/selectors';
+import { isJetpackSite, canJetpackSiteManage, canJetpackSiteUpdateFiles, siteHasMinimumJetpackVersion } from 'state/sites/selectors';
 
 const PluginsMain = React.createClass( {
 	mixins: [ URLSearch ],
@@ -84,10 +85,13 @@ const PluginsMain = React.createClass( {
 	},
 
 	getPluginsState( nextProps ) {
+		const props = nextProps || this.props;
 		const sites = this.props.sites.getSelectedOrAllWithPlugins(),
 			pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
 		return {
-			accessError: pluginsAccessControl.hasRestrictedAccess(),
+			accessError: pluginsAccessControl.hasRestrictedAccess( props.selectedSite,
+				props.hasRightsToManagePlutins,
+				props.isMinJetpackVersionValidationFailed ),
 			plugins: this.getPluginsFromStore( nextProps, sites ),
 			pluginUpdateCount: pluginUpdate && pluginUpdate.length,
 			selectedAction: 'Actions'
@@ -429,17 +433,22 @@ const PluginsMain = React.createClass( {
 export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
-
+		const selectedOrAll = getSelectedOrAllSites( state );
+		const hasRightsToManagePlutins = pluginsAccessControl.getHasRightsToManagePlutins( selectedOrAll );
+		const selectedSiteIsJetpack = selectedSite && isJetpackSite( state, selectedSite.ID );
+		const isMinJetpackVersionValidationFailed = selectedSiteIsJetpack && ! siteHasMinimumJetpackVersion( state, selectedSite.ID );
 		return {
 			selectedSite,
 			selectedSiteId: selectedSite && selectedSite.ID,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
-			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
+			selectedSiteIsJetpack,
 			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSite.ID ),
 			canSelectedJetpackSiteUpdateFiles: selectedSite && canJetpackSiteUpdateFiles( state, selectedSite.ID ),
 			canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			wporgPlugins: state.plugins.wporg.items,
+			hasRightsToManagePlutins,
+			isMinJetpackVersionValidationFailed
 		};
 	},
 	{ wporgFetchPluginData }
