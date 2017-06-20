@@ -10,10 +10,11 @@ import { keyBy } from 'lodash';
 import {
 	areOrdersLoaded,
 	areOrdersLoading,
-	isOrderLoaded,
-	isOrderLoading,
+	getOrder,
 	getOrders,
 	getTotalOrdersPages,
+	isOrderLoaded,
+	isOrderLoading,
 } from '../selectors';
 import orders from './fixtures/orders';
 
@@ -199,6 +200,28 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getTotalOrdersPages( loadedStateWithUi ) ).to.eql( 4 );
+		} );
+	} );
+
+	describe( '#getOrder', () => {
+		it( 'should be null when woocommerce state is not available.', () => {
+			expect( getOrder( preInitializedState, 35, 123 ) ).to.be.null;
+		} );
+
+		it( 'should be null when orders are loading.', () => {
+			expect( getOrder( loadingState, 35, 123 ) ).to.be.null;
+		} );
+
+		it( 'should be the order object if it is loaded.', () => {
+			expect( getOrder( loadedState, 35, 123 ) ).to.eql( orders[ 0 ] );
+		} );
+
+		it( 'should be null when orders are loaded only for a different site.', () => {
+			expect( getOrder( loadedState, 23, 456 ) ).to.be.null;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getOrder( loadedStateWithUi, 26 ) ).to.eql( orders[ 1 ] );
 		} );
 	} );
 } );
