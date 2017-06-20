@@ -15,19 +15,19 @@ import {
 
 /**
  * Returns the updated order requests state after an action has been
- * dispatched. The state reflects a mapping of page number to a
+ * dispatched. The state reflects a mapping of query (page number) to a
  * boolean reflecting whether a request for that page is in progress.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function isLoading( state = {}, action ) {
+export function isQueryLoading( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDERS_REQUEST:
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_ORDERS_REQUEST_FAILURE:
-			return Object.assign( {}, state, { [ action.page ]: WOOCOMMERCE_ORDERS_REQUEST === action.type } );
+			return Object.assign( {}, state, { [ `{page:${ action.page }}` ]: WOOCOMMERCE_ORDERS_REQUEST === action.type } );
 		default:
 			return state;
 	}
@@ -51,18 +51,18 @@ export function items( state = {}, action ) {
 }
 
 /**
- * Tracks the orders which belong on a page, as a list of IDs
+ * Tracks the orders which belong to a query, as a list of IDs
  * referencing items in `orders.items`.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function pages( state = {}, action ) {
+export function queries( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
 			const idList = action.orders.map( order => order.id );
-			return Object.assign( {}, state, { [ action.page ]: idList } );
+			return Object.assign( {}, state, { [ `{page:${ action.page }}` ]: idList } );
 		default:
 			return state;
 	}
@@ -85,8 +85,8 @@ export function totalPages( state = 1, action ) {
 }
 
 export default combineReducers( {
-	isLoading,
+	isQueryLoading,
 	items,
-	pages,
+	queries,
 	totalPages,
 } );

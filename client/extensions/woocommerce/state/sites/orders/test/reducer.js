@@ -9,9 +9,9 @@ import { keyBy } from 'lodash';
  * Internal dependencies
  */
 import {
-	isLoading,
+	isQueryLoading,
 	items,
-	pages,
+	queries,
 	totalPages,
 } from '../reducer';
 import {
@@ -23,9 +23,9 @@ import orders from './fixtures/orders';
 import order from './fixtures/order';
 
 describe( 'reducer', () => {
-	describe( 'isLoading', () => {
+	describe( 'isQueryLoading', () => {
 		it( 'should have no change by default', () => {
-			const newState = isLoading( undefined, {} );
+			const newState = isQueryLoading( undefined, {} );
 			expect( newState ).to.eql( {} );
 		} );
 
@@ -35,8 +35,8 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 1,
 			};
-			const newState = isLoading( undefined, action );
-			expect( newState ).to.eql( { 1: true } );
+			const newState = isQueryLoading( undefined, action );
+			expect( newState ).to.eql( { '{page:1}': true } );
 		} );
 
 		it( 'should should show that request has loaded on success', () => {
@@ -47,8 +47,8 @@ describe( 'reducer', () => {
 				totalPages: 4,
 				orders
 			};
-			const newState = isLoading( { 1: true }, action );
-			expect( newState ).to.eql( { 1: false } );
+			const newState = isQueryLoading( { '{page:1}': true }, action );
+			expect( newState ).to.eql( { '{page:1}': false } );
 		} );
 
 		it( 'should should show that request has loaded on failure', () => {
@@ -58,8 +58,8 @@ describe( 'reducer', () => {
 				page: 1,
 				error: {}
 			};
-			const newState = isLoading( { 1: true }, action );
-			expect( newState ).to.eql( { 1: false } );
+			const newState = isQueryLoading( { '{page:1}': true }, action );
+			expect( newState ).to.eql( { '{page:1}': false } );
 		} );
 	} );
 
@@ -108,9 +108,9 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'pages', () => {
+	describe( 'queries', () => {
 		it( 'should have no change by default', () => {
-			const newState = pages( undefined, {} );
+			const newState = queries( undefined, {} );
 			expect( newState ).to.eql( {} );
 		} );
 
@@ -122,8 +122,8 @@ describe( 'reducer', () => {
 				totalPages: 4,
 				orders
 			};
-			const newState = pages( undefined, action );
-			expect( newState ).to.eql( { 1: [ 35, 26 ] } );
+			const newState = queries( undefined, action );
+			expect( newState ).to.eql( { '{page:1}': [ 35, 26 ] } );
 		} );
 
 		it( 'should add the next page of orders as a second list', () => {
@@ -134,9 +134,9 @@ describe( 'reducer', () => {
 				totalPages: 4,
 				orders: [ order ]
 			};
-			const originalState = deepFreeze( { 1: [ 35, 26 ] } );
-			const newState = pages( originalState, action );
-			expect( newState ).to.eql( { ...originalState, 2: [ 40 ] } );
+			const originalState = deepFreeze( { '{page:1}': [ 35, 26 ] } );
+			const newState = queries( originalState, action );
+			expect( newState ).to.eql( { ...originalState, '{page:2}': [ 40 ] } );
 		} );
 
 		it( 'should do nothing on a failure', () => {
@@ -146,8 +146,8 @@ describe( 'reducer', () => {
 				page: 1,
 				error: {}
 			};
-			const originalState = deepFreeze( { 1: [ 35, 26 ] } );
-			const newState = pages( originalState, action );
+			const originalState = deepFreeze( { '{page:1}': [ 35, 26 ] } );
+			const newState = queries( originalState, action );
 			expect( newState ).to.eql( originalState );
 		} );
 	} );

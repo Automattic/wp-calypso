@@ -26,11 +26,11 @@ const loadingState = {
 			sites: {
 				123: {
 					orders: {
-						isLoading: {
-							1: true,
+						isQueryLoading: {
+							'{page:1}': true,
 						},
 						items: {},
-						pages: {},
+						queries: {},
 						totalPages: 1
 					},
 				},
@@ -44,25 +44,15 @@ const loadedState = {
 			sites: {
 				123: {
 					orders: {
-						isLoading: {
-							1: false,
+						isQueryLoading: {
+							'{page:1}': false,
 						},
 						items: keyBy( orders, 'id' ),
-						pages: {
-							1: [ 35, 26 ]
+						queries: {
+							'{page:1}': [ 35, 26 ]
 						},
 						totalPages: 4
 					}
-				},
-				401: {
-					orders: {
-						isLoading: {
-							1: true,
-						},
-						items: {},
-						pages: {},
-						totalPages: 1
-					},
 				},
 			},
 		},

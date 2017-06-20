@@ -88,8 +88,8 @@ describe( 'actions', () => {
 						sites: {
 							123: {
 								orders: {
-									isLoading: {
-										1: true,
+									isQueryLoading: {
+										'{page:1}': true,
 									},
 									items: {},
 									pages: {},
