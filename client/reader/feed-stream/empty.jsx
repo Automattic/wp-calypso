@@ -50,7 +50,7 @@ class FeedEmptyContent extends React.PureComponent {
 				line={ translate( 'This site has not posted anything recently.' ) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 				illustrationWidth={ 500 }
 			/>
 		);

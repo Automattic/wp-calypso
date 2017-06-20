@@ -50,7 +50,7 @@ class ListEmptyContent extends React.Component {
 				line={ this.props.translate( 'The sites in this list have not posted anything recently.' ) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 				illustrationWidth={ 400 }
 			/>
 		);

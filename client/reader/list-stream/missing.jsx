@@ -55,7 +55,7 @@ class ListMissing extends React.Component {
 					line={ this.props.translate( "Sorry, we couldn't find that list." ) }
 					action={ action }
 					secondaryAction={ secondaryAction }
-					illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+					illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 					illustrationWidth={ 500 }
 				/>
 			</div>
