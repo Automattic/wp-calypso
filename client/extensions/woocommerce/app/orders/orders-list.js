@@ -136,7 +136,7 @@ class Orders extends Component {
 				</TableItem>
 				<TableItem isHeader>{ translate( 'Order' ) }</TableItem>
 				<TableItem isHeader>{ translate( 'Date' ) }</TableItem>
-				<TableItem isHeader>{ translate( 'Fulfillment Status' ) }</TableItem>
+				<TableItem isHeader>{ translate( 'Status' ) }</TableItem>
 				<TableItem isHeader>{ translate( 'Total' ) }</TableItem>
 			</TableRow>
 		);
