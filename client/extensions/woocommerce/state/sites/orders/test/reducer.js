@@ -9,12 +9,16 @@ import { keyBy } from 'lodash';
  * Internal dependencies
  */
 import {
+	isLoading,
 	isQueryLoading,
 	items,
 	queries,
 	totalPages,
 } from '../reducer';
 import {
+	WOOCOMMERCE_ORDER_REQUEST,
+	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
+	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
 	WOOCOMMERCE_ORDERS_REQUEST,
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
@@ -23,6 +27,45 @@ import orders from './fixtures/orders';
 import order from './fixtures/order';
 
 describe( 'reducer', () => {
+	describe( 'isLoading', () => {
+		it( 'should have no change by default', () => {
+			const newState = isLoading( undefined, {} );
+			expect( newState ).to.eql( {} );
+		} );
+
+		it( 'should store the currently loading order', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_REQUEST,
+				siteId: 123,
+				orderId: 45,
+			};
+			const newState = isLoading( undefined, action );
+			expect( newState ).to.eql( { 45: true } );
+		} );
+
+		it( 'should should show that request has loaded on success', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
+				siteId: 123,
+				orderId: 45,
+				order
+			};
+			const newState = isLoading( { 45: true }, action );
+			expect( newState ).to.eql( { 45: false } );
+		} );
+
+		it( 'should should show that request has loaded on failure', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
+				siteId: 123,
+				orderId: 45,
+				error: {}
+			};
+			const newState = isLoading( { 45: true }, action );
+			expect( newState ).to.eql( { 45: false } );
+		} );
+	} );
+
 	describe( 'isQueryLoading', () => {
 		it( 'should have no change by default', () => {
 			const newState = isQueryLoading( undefined, {} );
@@ -89,6 +132,18 @@ describe( 'reducer', () => {
 				page: 2,
 				totalPages: 4,
 				orders: [ order ]
+			};
+			const originalState = deepFreeze( keyBy( orders, 'id' ) );
+			const newState = items( originalState, action );
+			expect( newState ).to.eql( { ...originalState, 40: order } );
+		} );
+
+		it( 'should add new single orders onto the existing order list', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
+				siteId: 123,
+				orderId: 40,
+				order,
 			};
 			const originalState = deepFreeze( keyBy( orders, 'id' ) );
 			const newState = items( originalState, action );
