@@ -42,7 +42,7 @@
 			}
 
 			&:hover {
-				background-color: $gray-light;
+				background: $gray-light;
 
 				.table-item__cell-title:after {
 					background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, $gray-light 90%);
@@ -98,6 +98,14 @@
 
 .table-row {
 	line-height: 36px;
+	
+	&:hover {
+		background: $gray-light;
+		
+		&.is-header {
+			background-color: initial;
+		}
+	}
 
 	&.is-header {
 		color: $gray-text-min;
@@ -107,15 +115,15 @@
 .table-heading,
 .table-item {
 	font-size: 14px;
-	padding: 6px 12px;
+	padding: 12px;
 	vertical-align: middle;
 
 	&:first-child {
-		padding: 6px 12px 6px 24px;
+		padding-left: 24px;
 	}
 
 	&:last-child {
-		padding: 6px 24px 6px 12px;
+		padding-right: 24px;
 	}
 
 	&.is-row-heading {

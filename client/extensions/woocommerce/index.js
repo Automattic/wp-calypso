@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
+import Products from './app/products';
 import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
@@ -37,7 +38,7 @@ const getStorePages = () => {
 			},
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
+			container: Products,
 			configKey: 'woocommerce/extension-products',
 			path: '/store/products/:site',
 			sidebarItem: {
@@ -183,4 +184,3 @@ export default function() {
 // TODO: This could probably be done in a better way through the same mechanisms
 // that bring in the rest of the extension code. Maybe extension-loader?
 initExtension();
-
