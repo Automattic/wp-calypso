@@ -126,14 +126,14 @@ class PaymentMethodStripe extends Component {
 							selected={ method.settings.testmode.value === 'yes' }
 							onClick={ this.onToggleTestMode( 'test' ) }
 						>
-							Test Mode
+							translate( 'Test Mode' )
 						</ControlItem>
 
 						<ControlItem
 							selected={ method.settings.testmode.value === 'no' }
 							onClick={ this.onToggleTestMode( 'live' ) }
 						>
-							Live Mode
+							translate( 'Live Mode' )
 						</ControlItem>
 					</SegmentedControl>
 				</FormFieldset>
