@@ -23,16 +23,25 @@ const user = new User();
 const noop = () => {};
 
 class PostSchedule extends Component {
-	constructor() {
-		super( ...arguments );
+	static propTypes = {
+		events: PropTypes.array,
+		posts: PropTypes.array,
+		timezone: PropTypes.string,
+		gmtOffset: PropTypes.number,
+		site: PropTypes.object,
+		onDateChange: PropTypes.func,
+		onMonthChange: PropTypes.func
+	};
 
-		this.state = {
-			calendarViewDate: moment(
-				this.props.selectedDay
-					? this.props.selectedDay
-					: new Date()
-			)
-		};
+	static defaultProps = {
+		posts: [],
+		events: [],
+		onDateChange: noop,
+		onMonthChange: noop
+	};
+
+	state = {
+		calendarViewDate: moment( this.props.selectedDay ? this.props.selectedDay : new Date() )
 	}
 
 	componentWillMount() {
@@ -201,27 +210,5 @@ class PostSchedule extends Component {
 		);
 	}
 }
-
-/**
- * Statics
- */
-PostSchedule.displayName = 'PostSchedule';
-
-PostSchedule.propTypes = {
-	events: PropTypes.array,
-	posts: PropTypes.array,
-	timezone: PropTypes.string,
-	gmtOffset: PropTypes.number,
-	site: PropTypes.object,
-	onDateChange: PropTypes.func,
-	onMonthChange: PropTypes.func
-};
-
-PostSchedule.defaultProps = {
-	posts: [],
-	events: [],
-	onDateChange: noop,
-	onMonthChange: noop
-};
 
 export default PostSchedule;
