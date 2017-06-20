@@ -48,29 +48,29 @@
 	.payments__method-name {
 		font-size: 14px;
 	}
-	
+
 	.payments__method-method-suggested-container,
 	.list-item-field.payments__methods-column-method {
 		width: 30%;
 	}
-	
+
 	.payments__method-method-suggested-container {
 		@include breakpoint( "<660px" ) {
 			width: 50%;
 		}
 	}
-	
+
 	.payments__method-method-information-container,
 	.list-item-field.payments__methods-column-fees {
 		width: 30%;
 	}
-	
+
 	.list-item-field.payments__methods-column-fees {
 		@include breakpoint( "<660px" ) {
 			display: none;
 		}
 	}
-	
+
 	.payments__method-method-information-container {
 		@include breakpoint( "<660px" ) {
 			width: 60%;
@@ -78,20 +78,24 @@
 			padding-top: 0px;
 		}
 	}
-	
+
 	.payments__method-enable-container {
 		width: 25%;
-		
+
+		.form-toggle__label .form-toggle__label-content {
+			margin-left: 0;
+		}
+
 		@include breakpoint( "<660px" ) {
 			width: 30%;
 			padding-left: 0;
 			padding-right: 0;
 		}
-		
+
 		.payments__method-enable {
 			margin-bottom: 0;
 		}
-			
+
 		.payments__method-enable .form-label {
 			display: inline-block;
 			color: $gray;
@@ -105,15 +109,15 @@
 			cursor: pointer;
 		}
 	}
-	
+
 	.payments__method-action-container {
 		width: 15%;
-		
+
 		@include breakpoint( "<660px" ) {
 			width: 20%;
 			padding-left: 0;
 		}
-		
+
 		.button {
 			align-self: flex-end;
 		}
