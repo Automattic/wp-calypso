@@ -38,7 +38,7 @@ const ProductsListTable = ( { translate, products, site, isRequesting } ) => {
 	);
 };
 
-ProductsListRow.propTypes = {
+ProductsListTable.propTypes = {
 	isRequesting: PropTypes.bool,
 	site: PropTypes.shape( {
 		slug: PropTypes.string,

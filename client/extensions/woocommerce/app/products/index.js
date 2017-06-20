@@ -108,13 +108,7 @@ class Products extends Component {
 			return this.renderEmptyContent();
 		}
 
-		let isRequesting = false;
-		if ( requestedPage && ! requestedPageLoaded ) {
-			isRequesting = true;
-		} else if ( ! products ) {
-			isRequesting = true;
-		}
-
+		const isRequesting = ( requestedPage && ! requestedPageLoaded ) || ! products ? true : false;
 		return (
 			<div className="products__list-wrapper">
 				<ProductsListTable

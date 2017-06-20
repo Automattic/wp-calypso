@@ -3,7 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -13,10 +12,11 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
 
-const ProductsListRow = ( { site, product, translate } ) => {
+const ProductsListRow = ( { site, product } ) => {
 	// The first returned image from the API is the featured image.
 	const featuredImage = product.images && product.images[ 0 ];
 	const imageClasses = classNames( 'products__list-image', { 'is-thumb-placeholder': ! featuredImage } );
+
 	const renderImage = () => (
 		<div className={ imageClasses }>
 			{ featuredImage && ( <img src={ featuredImage.src } /> ) }
@@ -26,11 +26,12 @@ const ProductsListRow = ( { site, product, translate } ) => {
 	const categoryNames = product.categories && product.categories.map( function( category ) {
 		return category.name;
 	} );
+
 	const renderCategories = () => (
 		<div className="products__list-categories">
 			{ categoryNames &&
 				( categoryNames.join( ', ' ) ) ||
-				( <span>{ translate( '-' ) }</span> )
+				( <span>-</span> )
 			}
 		</div>
 	);
@@ -39,7 +40,7 @@ const ProductsListRow = ( { site, product, translate } ) => {
 		<div>
 			{ product.manage_stock && 'simple' === product.type &&
 				( <span>{ product.stock_quantity }</span> ) ||
-				( <span>{ translate( '-' ) }</span> )
+				( <span>-</span> )
 			}
 		</div>
 	);
@@ -75,4 +76,4 @@ ProductsListRow.propTypes = {
 	} ),
 };
 
-export default localize( ProductsListRow );
+export default ProductsListRow;
