@@ -6,6 +6,11 @@ import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
+import { withoutHttp } from 'lib/url';
+
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
 		authorAvatarUrl: PropTypes.string,
@@ -135,7 +140,7 @@ export class CommentDetailAuthor extends Component {
 								{ authorDisplayName }
 							</strong>
 							<span>
-								{ authorUrl }
+								{ withoutHttp( authorUrl ).replace( /\/$/, '' ) }
 							</span>
 						</div>
 						<div className="comment-detail__author-info-element comment-detail__comment-date">
