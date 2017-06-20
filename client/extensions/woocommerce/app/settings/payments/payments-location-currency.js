@@ -11,26 +11,46 @@ import { localize } from 'i18n-calypso';
  */
 import AddressView from 'woocommerce/components/address-view';
 import Card from 'components/card';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormSelect from 'components/forms/form-select';
-
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
-import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
+import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
+import { fetchSettingsGeneral, saveCurrency } from 'woocommerce/state/sites/settings/general/actions';
 
 class SettingsPaymentsLocationCurrency extends Component {
 	static propTypes = {
-		currency: PropTypes.shape( {
+		changeCurrency: PropTypes.func.isRequired,
+		currency: PropTypes.string,
+		currencySettings: PropTypes.shape( {
 			options: PropTypes.object,
 			value: PropTypes.string,
 		} ),
 		fetchSettingsGeneral: PropTypes.func.isRequired,
-		siteId: PropTypes.number.isRequired,
+		getCurrencyWithEdits: PropTypes.func.isRequired,
+		saveCurrency: PropTypes.func.isRequired,
+		site: PropTypes.object,
 	};
 
-	componentDidMount() {
-		const { siteId } = this.props;
-		this.props.fetchSettingsGeneral( siteId );
+	componentDidMount = () => {
+		const { site } = this.props;
+
+		if ( site && site.ID ) {
+			this.props.fetchSettingsGeneral( site.ID );
+		}
+	}
+
+	componentWillReceiveProps = ( newProps ) => {
+		const { site } = this.props;
+
+		const newSiteId = newProps.site && newProps.site.ID || null;
+		const oldSiteId = site && site.ID || null;
+
+		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchSettingsGeneral( newSiteId );
+		}
 	}
 
 	constructor( props ) {
@@ -55,8 +75,36 @@ class SettingsPaymentsLocationCurrency extends Component {
 		);
 	}
 
+	onChange = ( e ) => {
+		const { site, translate } = this.props;
+		const newCurrency = e.target.value;
+		this.props.changeCurrency(
+			site.ID,
+			newCurrency
+		);
+		const successAction = () => {
+			return successNotice(
+				translate( 'Site currency successfully saved.' ),
+				{ duration: 4000 }
+			);
+		};
+
+		const errorAction = () => {
+			return errorNotice(
+				translate( 'There was a problem saving the currency. Please try again.' )
+			);
+		};
+
+		this.props.saveCurrency(
+			site.ID,
+			newCurrency,
+			successAction,
+			errorAction
+		);
+	}
+
 	render() {
-		const { currency, translate } = this.props;
+		const { currency, currencySettings, translate } = this.props;
 		return (
 			<div>
 				<ExtendedHeader
@@ -71,11 +119,14 @@ class SettingsPaymentsLocationCurrency extends Component {
 					<AddressView
 						address={ this.state.address } />
 
-					<FormSelect className="payments__currency-select" value={ currency.value }>
+					<FormSelect
+						className="payments__currency-select"
+						onChange={ this.onChange }
+						value={ currency }>
 						{
-							currency.options &&
-							Object.keys( currency.options ).map(
-								( o ) => this.renderOption( o, currency.options )
+							currencySettings.options &&
+							Object.keys( currencySettings.options ).map(
+								( o ) => this.renderOption( o, currencySettings.options )
 							)
 						}
 					</FormSelect>
@@ -87,18 +138,23 @@ class SettingsPaymentsLocationCurrency extends Component {
 }
 
 function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
-	const currency = getPaymentCurrencySettings( state, siteId );
+	const site = getSelectedSiteWithFallback( state );
+	const currencySettings = getPaymentCurrencySettings( state );
+	const currency = getCurrencyWithEdits( state );
 	return {
 		currency,
-		siteId,
+		currencySettings,
+		site,
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchSettingsGeneral
+			changeCurrency,
+			fetchSettingsGeneral,
+			getCurrencyWithEdits,
+			saveCurrency,
 		},
 		dispatch
 	);
