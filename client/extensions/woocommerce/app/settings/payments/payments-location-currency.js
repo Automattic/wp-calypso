@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import AddressView from 'woocommerce/components/address-view';
 import Card from 'components/card';
+import { decodeEntities } from 'lib/formatting';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormSelect from 'components/forms/form-select';
@@ -72,8 +73,8 @@ class SettingsPaymentsLocationCurrency extends Component {
 		return (
 			<option
 				key={ option.code }
-				value={ option.code }
-				dangerouslySetInnerHTML={ { __html: option.symbol } }>
+				value={ option.code } >
+				{ decodeEntities( option.symbol ) }
 			</option>
 		);
 	}
