@@ -98,7 +98,7 @@ class Orders extends Component {
 					{ this.getOrderStatus( order.status ) }
 				</TableItem>
 				<TableItem className="orders__table-total">
-					{ order.total }
+					{ 'USD' === order.currency ? `$${ order.total }` : order.total }
 				</TableItem>
 			</TableRow>
 		);
