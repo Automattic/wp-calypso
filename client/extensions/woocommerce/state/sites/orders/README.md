@@ -5,6 +5,10 @@ This module is used to manage orders for a site.
 
 ## Actions
 
+### `fetchOrder( siteId: number, orderId: number )`
+
+Fetch a single order from the remote site. Does not run if this order is loading or already loaded.
+
 ### `fetchOrders( siteId: number, page: number )`
 
 Pull a page of orders from the remote site. Does not run if the orders are loading or already loaded.
