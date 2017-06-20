@@ -22,7 +22,7 @@ function domainManagementEdit( siteName, domainName, slug ) {
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 	}
 
-	return domainManagementRoot() + '/' + siteName + '/' + slug + '/' + domainName;
+	return domainManagementRoot() + '/' + domainName + '/' + slug + '/' + siteName;
 }
 
 function domainManagementAddGoogleApps( siteName, domainName ) {
