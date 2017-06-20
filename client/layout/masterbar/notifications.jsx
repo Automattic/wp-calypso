@@ -10,8 +10,8 @@ import { partial } from 'lodash';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import MasterbarItem from './item';
-import Notifications from 'notifications';
 import store from 'store';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
@@ -138,7 +138,7 @@ class MasterbarItemNotifications extends Component {
 						key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
 					/>
 				</MasterbarItem>
-				<Notifications
+				<AsyncLoad require="notifications"
 					isShowing={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }
