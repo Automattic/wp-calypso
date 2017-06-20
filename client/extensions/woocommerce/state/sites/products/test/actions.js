@@ -7,10 +7,13 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetchProducts, fetchProductSearchResults, clearProductSearch } from '../actions';
+import { fetchProducts, fetchProductSearchResults, clearProductSearch, deleteProduct } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	WOOCOMMERCE_ERROR_SET,
+	WOOCOMMERCE_PRODUCT_DELETE,
+	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
@@ -251,6 +254,54 @@ describe( 'actions', () => {
 			expect( dispatch ).to.have.been.calledWith( {
 				type: WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
 				siteId,
+			} );
+		} );
+	} );
+	describe( '#deleteProduct()', () => {
+		const siteId = '123';
+
+		useSandbox();
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
+				.query( { path: '/wc/v3/products/523&_method=delete', json: true } )
+				.reply( 200, {
+					data: product,
+				} );
+		} );
+
+		it( 'should dispatch an action', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			deleteProduct( siteId, 1 )( dispatch, getState );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_PRODUCT_DELETE,
+				siteId,
+				productId: 1,
+			} );
+		} );
+
+		it( 'should dispatch a success action with deleted product data when request completes', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			const response = deleteProduct( siteId, 523 )( dispatch, getState );
+
+			return response.then( () => {
+				expect( dispatch ).to.have.been.calledWith( {
+					type: WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
+					siteId,
+					data: product,
+				} );
+			} );
+		} );
+		it( 'should dispatch an error when the request fails', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			const response = deleteProduct( 234, 511 )( dispatch, getState );
+
+			return response.then( () => {
+				expect( dispatch ).to.have.been.calledWithMatch( { type: WOOCOMMERCE_ERROR_SET } );
 			} );
 		} );
 	} );

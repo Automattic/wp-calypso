@@ -3,6 +3,7 @@
  */
 import { createReducer } from 'state/utils';
 import {
+	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
@@ -14,6 +15,7 @@ import {
 } from 'woocommerce/state/action-types';
 
 export default createReducer( {}, {
+	[ WOOCOMMERCE_PRODUCT_DELETE_SUCCESS ]: productsDeleteSuccess,
 	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdated,
 	[ WOOCOMMERCE_PRODUCTS_REQUEST ]: productsRequest,
 	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: productsRequestSuccess,
@@ -62,6 +64,15 @@ export function productsRequestSuccess( state, action ) {
 		isLoading,
 		totalPages: action.totalPages,
 		totalProducts: action.totalProducts,
+	};
+}
+
+export function productsDeleteSuccess( state, action ) {
+	const prevState = state || {};
+	const prevProducts = prevState.products || [];
+	const newProducts = prevProducts.filter( p => p.id !== action.data.id );
+	return { ...prevState,
+		products: newProducts,
 	};
 }
 
