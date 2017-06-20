@@ -139,7 +139,6 @@ class PostCommentForm extends React.Component {
 			this.props.writeComment( commentText, post.site_ID, post.ID );
 		}
 
-
 		recordAction( 'posted_comment' );
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_article_commented_on', post, {
