@@ -139,6 +139,7 @@
 .payments__method-loading-title,
 .payments__method-loading-fee,
 .payments__method-loading-feelink,
+.payments__method-loading-enabled,
 .payments__method-loading-settings {
 	background-color: lighten( $gray, 30% );
 	animation: loading-fade 1.6s ease-in-out infinite;
@@ -148,22 +149,44 @@
 	height: 15px;
 	margin-bottom: 5px;
 	width: 100%;
+
+	@include breakpoint( "<660px" ) {
+		width: 60%;
+	}
 }
 
 .payments__method-loading-title {
 	height: 12px;
 	width: 90%;
+
+	@include breakpoint( "<660px" ) {
+		width: 50%;
+	}
 }
 
 .payments__method-loading-fee {
 	height: 15px;
 	margin-bottom: 5px;
 	width: 100%;
+
+	@include breakpoint( "<660px" ) {
+		width: 60%;
+	}
 }
 
 .payments__method-loading-feelink {
 	height: 12px;
 	width: 90%;
+
+	@include breakpoint( "<660px" ) {
+		width: 50%;
+	}
+}
+
+.payments__method-loading-enabled {
+	align-self: baseline;
+	height: 17px;
+	width: 82px;
 }
 
 .payments__method-loading-settings {
