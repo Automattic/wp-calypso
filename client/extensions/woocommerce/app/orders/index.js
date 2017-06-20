@@ -23,7 +23,7 @@ class Orders extends Component {
 			<Main className={ className }>
 				<OrderHeader siteSlug={ site.slug } />
 
-				<div className="orders__list">
+				<div className="orders__container">
 					<SectionNav>
 						<NavTabs label={ translate( 'Status' ) } selectedText={ translate( 'All orders' ) }>
 							<NavItem path="/orders" selected={ true }>{ translate( 'All orders' ) }</NavItem>

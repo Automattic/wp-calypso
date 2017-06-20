@@ -1,5 +1,5 @@
 
-.orders__list {
+.orders__container {
 	@include breakpoint( ">660px" ) {
 		margin-top: 58px;
 	}
