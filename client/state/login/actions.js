@@ -154,6 +154,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 		.accept( 'application/json' )
 		.send( {
 			user_id: getTwoFactorUserId( getState() ),
+			auth_type: twoFactorAuthType,
 			two_step_code: twoStepCode,
 			two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
 			remember_me: getRememberMe( getState() ),
