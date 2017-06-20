@@ -114,7 +114,8 @@ class Orders extends Component {
 
 	renderPagination = () => {
 		const { totalPages } = this.props;
-		if ( totalPages < 2 ) {
+		// @todo Bring back pagination
+		if ( true || totalPages < 2 ) {
 			return null;
 		}
 
