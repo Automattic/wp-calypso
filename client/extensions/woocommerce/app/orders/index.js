@@ -10,28 +10,16 @@ import React, { Component } from 'react';
  */
 import { getSelectedSite } from 'state/ui/selectors';
 import Main from 'components/main';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
 import OrderHeader from './order-header';
 import OrdersList from './orders-list';
-import SectionNav from 'components/section-nav';
 
 class Orders extends Component {
 	render() {
-		const { className, site, translate } = this.props;
+		const { className, site } = this.props;
 		return (
 			<Main className={ className }>
 				<OrderHeader siteSlug={ site.slug } />
-
-				<div className="orders__container">
-					<SectionNav>
-						<NavTabs label={ translate( 'Status' ) } selectedText={ translate( 'All orders' ) }>
-							<NavItem path="/orders" selected={ true }>{ translate( 'All orders' ) }</NavItem>
-						</NavTabs>
-					</SectionNav>
-
-					<OrdersList />
-				</div>
+				<OrdersList />
 			</Main>
 		);
 	}

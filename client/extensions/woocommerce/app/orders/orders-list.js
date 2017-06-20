@@ -23,6 +23,9 @@ import { getOrdersCurrentPage } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 import { setCurrentPage } from 'woocommerce/state/ui/orders/actions';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import SectionNav from 'components/section-nav';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -143,10 +146,12 @@ class Orders extends Component {
 		const { createOrderLink, orders, translate } = this.props;
 		if ( ! orders.length ) {
 			return (
-				<EmptyContent
-					title={ translate( 'Orders will appear here as they come in.' ) }
-					action={ translate( 'Manually add an order' ) }
-					actionURL={ createOrderLink } />
+				<div className="orders__container">
+					<EmptyContent
+						title={ translate( 'Orders will appear here as they come in.' ) }
+						action={ translate( 'Manually add an order' ) }
+						actionURL={ createOrderLink } />
+				</div>
 			);
 		}
 
@@ -160,7 +165,13 @@ class Orders extends Component {
 		);
 
 		return (
-			<div>
+			<div className="orders__container">
+				<SectionNav>
+					<NavTabs label={ translate( 'Status' ) } selectedText={ translate( 'All orders' ) }>
+						<NavItem path="/orders" selected={ true }>{ translate( 'All orders' ) }</NavItem>
+					</NavTabs>
+				</SectionNav>
+
 				<Table className="orders__table" header={ headers }>
 					{ orders.map( this.renderOrderItems ) }
 				</Table>
