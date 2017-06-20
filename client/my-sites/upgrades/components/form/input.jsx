@@ -88,7 +88,8 @@ export default React.createClass( {
 					maxLength={ this.props.maxLength }
 					onChange={ this.props.onChange }
 					onClick={ this.recordFieldClick }
-					isError={ this.props.isError } />
+					isError={ this.props.isError }
+					inputRef={ this.props.inputRef } />
 				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
 			</div>
 		);

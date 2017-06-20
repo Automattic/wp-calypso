@@ -8,14 +8,14 @@ Supported routes:
 - `/domains/manage` - entry point for domains management
 - `/domains/manage/:site` - lists domains for a site
 - `/domains/manage/:site/add-google-apps` - adds Google Apps for a site
-- `/domains/manage/:site/add-google-apps/:domain` - adds Google Apps for a domain
-- `/domains/manage/:site/contacts-privacy/:domain` - displays contacts and privacy information for a domain
-- `/domains/manage/:site/dns/:domain` - manages DNS records for a domain
-- `/domains/manage/:site/edit/:domain` - displays domain details
-- `/domains/manage/:site/edit-contact-info/:domain` - manages contact information for a domain
-- `/domains/manage/:site/email-forwarding/:domain` - manages email forwarding information for a domain
-- `/domains/manage/:site/name-servers/:domain` - manages name servers for a domain
-- `/domains/manage/:site/primary-domain/:domain` - changes primary domain for a site
-- `/domains/manage/:site/privacy-protection/:domain` - adds privacy protection for a domain
-- `/domains/manage/:site/redirect-settings/:domain` - changes redirect settings for a domain
-- `/domains/manage/:site/transfer/:domain` - allows transfer domain to the different hosting provider
+- `/domains/manage/:domain/add-google-apps/:site` - adds Google Apps for a domain
+- `/domains/manage/:domain/contacts-privacy/:site` - displays contacts and privacy information for a domain
+- `/domains/manage/:domain/dns/:site` - manages DNS records for a domain
+- `/domains/manage/:domain/edit/:site` - displays domain details
+- `/domains/manage/:domain/edit-contact-info/:site` - manages contact information for a domain
+- `/domains/manage/:domain/email-forwarding/:site` - manages email forwarding information for a domain
+- `/domains/manage/:domain/name-servers/:site` - manages name servers for a domain
+- `/domains/manage/:domain/primary-domain/:site` - changes primary domain for a site
+- `/domains/manage/:domain/privacy-protection/:site` - adds privacy protection for a domain
+- `/domains/manage/:domain/redirect-settings/:site` - changes redirect settings for a domain
+- `/domains/manage/:domain/transfer/:site` - allows transfer domain to the different hosting provider

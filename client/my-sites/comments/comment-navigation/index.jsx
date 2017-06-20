@@ -115,6 +115,7 @@ export class CommentNavigation extends Component {
 						{ this.statusHasAction( 'spam' ) &&
 							<Button
 								compact
+								scary
 								disabled={ ! selectedCount }
 								onClick={ setBulkStatus( 'spam' ) }
 							>
@@ -124,6 +125,7 @@ export class CommentNavigation extends Component {
 						{ this.statusHasAction( 'trash' ) &&
 							<Button
 								compact
+								scary
 								disabled={ ! selectedCount }
 								onClick={ setBulkStatus( 'trash' ) }
 							>
@@ -133,6 +135,7 @@ export class CommentNavigation extends Component {
 						{ this.statusHasAction( 'delete' ) &&
 							<Button
 								compact
+								scary
 								disabled={ ! selectedCount }
 								onClick={ setBulkStatus( 'delete' ) }
 							>

@@ -132,8 +132,10 @@ export class CommentDetail extends Component {
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
 			'is-approved': 'approved' === commentStatus,
+			'is-unapproved': 'unapproved' === commentStatus,
 			'is-bulk-edit': isBulkEdit,
 			'is-expanded': isExpanded,
+			'is-collapsed': ! isExpanded,
 			'is-liked': commentIsLiked,
 			'is-spam': 'spam' === commentStatus,
 			'is-trash': 'trash' === commentStatus,

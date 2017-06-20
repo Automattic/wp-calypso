@@ -26,16 +26,22 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/orders&page=1&_method=get', json: true } )
+				.query( { path: '/wc/v3/orders&page=1&per_page=100&_envelope&_method=get', json: true } )
 				.reply( 200, {
-					data: orders,
-					pages: 3
+					data: {
+						body: orders,
+						headers: { 'X-WP-TotalPages': 3, 'X-WP-Total': 30 },
+						status: 200,
+					}
 				} )
 				.get( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
-				.query( { path: '/wc/v3/orders&page=1&_method=get', json: true } )
+				.query( { path: '/wc/v3/orders&page=invalid&per_page=100&_envelope&_method=get', json: true } )
 				.reply( 404, {
-					error: 'rest_no_route',
-					message: 'No route was found matching the URL and request method',
+					data: {
+						message: 'Invalid parameter(s): page',
+						error: 'rest_invalid_param',
+						status: 400,
+					}
 				} );
 		} );
 
@@ -65,7 +71,7 @@ describe( 'actions', () => {
 		it( 'should dispatch a failure action with the error when a the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
-			const response = fetchOrders( 234, 1 )( dispatch, getState );
+			const response = fetchOrders( 234, 'invalid' )( dispatch, getState );
 
 			return response.then( () => {
 				expect( dispatch ).to.have.been.calledWithMatch( {

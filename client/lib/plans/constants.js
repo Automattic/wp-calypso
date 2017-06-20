@@ -285,6 +285,7 @@ export const PLANS_LIST = {
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' )
 	},
@@ -311,6 +312,7 @@ export const PLANS_LIST = {
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
@@ -332,7 +334,8 @@ export const PLANS_LIST = {
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_PREMIUM_SUPPORT
+			FEATURE_PREMIUM_SUPPORT,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' )
 	},
@@ -354,7 +357,8 @@ export const PLANS_LIST = {
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_PREMIUM_SUPPORT
+			FEATURE_PREMIUM_SUPPORT,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},

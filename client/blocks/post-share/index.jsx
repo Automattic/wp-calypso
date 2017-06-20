@@ -15,7 +15,6 @@ import Gridicon from 'gridicons';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import { UpgradeToPersonalNudge } from 'blocks/post-share/nudges';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import NoticeAction from 'components/notice/notice-action';
@@ -28,6 +27,7 @@ import {
 import {
 	getSiteSlug,
 	getSitePlanSlug,
+	isJetpackSite,
 } from 'state/sites/selectors';
 import { getCurrentUserId, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import {
@@ -53,8 +53,10 @@ import {
 import {
 	FEATURE_REPUBLICIZE,
 	FEATURE_REPUBLICIZE_SCHEDULING,
-	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+	PLAN_JETPACK_PREMIUM
 } from 'lib/plans/constants';
+import { UpgradeToPersonalNudge } from 'blocks/post-share/nudges';
 
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
@@ -75,8 +77,6 @@ class PostShare extends Component {
 		disabled: PropTypes.bool,
 
 		// connect prps
-		businessDiscountedRawPrice: PropTypes.number,
-		businessRawPrice: PropTypes.number,
 		connections: PropTypes.array,
 		failed: PropTypes.bool,
 		hasFetchedConnections: PropTypes.bool,
@@ -234,6 +234,7 @@ class PostShare extends Component {
 
 		const shareButton = <Button
 			className="post-share__share-button"
+			busy={ this.props.requesting && ! hasRepublicizeSchedulingFeature }
 			primary
 			onClick={ this.sharePost }
 			disabled={ this.isDisabled() }
@@ -436,7 +437,7 @@ class PostShare extends Component {
 			return null;
 		}
 
-		const { siteSlug, translate } = this.props;
+		const { siteSlug, translate, isJetpack } = this.props;
 
 		if ( ! this.hasConnections() ) {
 			return (
@@ -454,7 +455,7 @@ class PostShare extends Component {
 		) {
 			return (
 				<div>
-					<UpgradeToPersonalNudge { ...this.props } />
+					<UpgradeToPersonalNudge { ...{ translate, isJetpack } } />
 					<ActionsList { ...this.props } />
 				</div>
 			);
@@ -539,6 +540,12 @@ class PostShare extends Component {
 		);
 	}
 }
+
+const getDiscountedOrRegularPrice = ( state, siteId, plan ) => (
+	getPlanDiscountedRawPrice( state, siteId, plan, { isMonthly: true } ) ||
+	getSitePlanRawPrice( state, siteId, plan, { isMonthly: true } )
+);
+
 export default connect(
 	( state, props ) => {
 		const { siteId } = props;
@@ -551,6 +558,7 @@ export default connect(
 			siteId,
 			postId,
 			planSlug,
+			isJetpack: isJetpackSite( state, siteId ),
 			hasFetchedConnections: siteHasFetchedConnections( state, siteId ),
 			hasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			hasRepublicizeSchedulingFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE_SCHEDULING ),
@@ -563,8 +571,8 @@ export default connect(
 			failed: sharePostFailure( state, siteId, postId ),
 			success: sharePostSuccessMessage( state, siteId, postId ),
 			scheduledAt: getScheduledPublicizeShareActionTime( state, siteId, postId ),
-			businessRawPrice: getSitePlanRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
-			businessDiscountedRawPrice: getPlanDiscountedRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
+			premiumPrice: getDiscountedOrRegularPrice( state, siteId, PLAN_PREMIUM ),
+			jetpackPremiumPrice: getDiscountedOrRegularPrice( state, siteId, PLAN_JETPACK_PREMIUM ),
 			userCurrency: getCurrentUserCurrencyCode( state ),
 		};
 	},

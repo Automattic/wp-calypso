@@ -13,7 +13,7 @@ import ProcessOrdersWidget from 'woocommerce/components/process-orders-widget';
 import ReadingWidget from 'woocommerce/components/reading-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
 
-class ManageOrders extends Component {
+class ManageOrdersView extends Component {
 	static propTypes = {
 		site: PropTypes.shape( {
 			slug: PropTypes.string.isRequired,
@@ -77,4 +77,4 @@ class ManageOrders extends Component {
 	}
 }
 
-export default localize( ManageOrders );
+export default localize( ManageOrdersView );

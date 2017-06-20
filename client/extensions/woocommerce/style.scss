@@ -8,6 +8,7 @@
 .woocommerce {
 	flex-grow: 1;
 
+	@import 'app/products/products-list';
 	@import 'app/products/product-form';
 	@import 'app/settings/payments/style';
 	@import 'components/action-header/style';

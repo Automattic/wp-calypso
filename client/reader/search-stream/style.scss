@@ -124,7 +124,7 @@
 	border-bottom: 1px solid lighten( $gray, 20% );
 	font-size: 13px;
 	color: $gray;
-	padding-bottom: 15px;
+	padding: 16px 0;
 	text-align:left;
 
 	a,
@@ -137,7 +137,7 @@
 	}
 
 	@include breakpoint( "<660px" ) {
-		padding-left: 16px;
+		padding: 16px 16px;
 	}
 }
 
@@ -319,14 +319,14 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .search-stream__header .section-nav {
 	background: inherit;
-	border-bottom: 2px solid lighten( $gray, 30% );
+	border-bottom: 1px solid lighten( $gray, 20% );
 	box-shadow: none;
-	height: 54px;
+	height: 53px;
 	margin-bottom: 0;
 	padding-bottom: 0;
 
 	@include breakpoint( ">480px" ) {
-		height: 59px;
+		height: 58px;
 	}
 }
 
@@ -387,17 +387,12 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	align-items: flex-end;
 	display: flex;
 	flex-direction: column;
-	min-width: 90px;
+	min-width: 0;
+	max-width: 25px;
 
 	@include breakpoint( ">660px" ) {
 		align-items: flex-start;
-	}
-}
-
-.search-stream .search-stream__single-column-results .reader-subscription-list-item .reader-subscription-list-item__site-url-timestamp {
-
-	@include breakpoint( "<960px" ) {
-		max-height: none;
+		min-width: 90px;
 	}
 }
 

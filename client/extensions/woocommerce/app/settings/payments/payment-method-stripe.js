@@ -8,12 +8,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import ControlItem from 'components/segmented-control/item';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
+import SegmentedControl from 'components/segmented-control';
 
 class PaymentMethodStripe extends Component {
 
@@ -34,6 +36,14 @@ class PaymentMethodStripe extends Component {
 
 	onEditFieldHandler = ( e ) => {
 		this.props.onEditField( e.target.name, e.target.value );
+	}
+
+	onToggleTestMode = ( mode ) => {
+		const testmode = mode === 'test' ? 'yes' : 'no';
+		// return curried function
+		return () => {
+			this.props.onEditField( 'testmode', testmode );
+		};
 	}
 
 	onSaveHandler = () => {
@@ -103,11 +113,25 @@ class PaymentMethodStripe extends Component {
 		return (
 			<div className="payments__method-edit-fields">
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Enable Test Mode' ) }</FormLabel>
-					<PaymentMethodEditFormToggle
-						checked={ method.settings.testmode.value === 'yes' ? true : false }
-						name="testmode"
-						onChange={ this.onEditFieldHandler } />
+					<FormLabel>{ translate( 'Payment Mode' ) }</FormLabel>
+					<SegmentedControl
+						primary
+						compact
+					>
+						<ControlItem
+							selected={ method.settings.testmode.value === 'yes' }
+							onClick={ this.onToggleTestMode( 'test' ) }
+						>
+							{ translate( 'Test Mode' ) }
+						</ControlItem>
+
+						<ControlItem
+							selected={ method.settings.testmode.value === 'no' }
+							onClick={ this.onToggleTestMode( 'live' ) }
+						>
+							{ translate( 'Live Mode' ) }
+						</ControlItem>
+					</SegmentedControl>
 				</FormFieldset>
 				{ method.settings.testmode.value === 'yes' && this.renderKeyFields( false ) }
 				{ method.settings.testmode.value === 'no' && this.renderKeyFields( true ) }

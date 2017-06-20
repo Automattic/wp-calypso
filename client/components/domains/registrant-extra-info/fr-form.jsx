@@ -42,7 +42,7 @@ const emptyValues = {
 	trademarkNumber: '',
 };
 
-class RegistrantExtraInfoForm extends React.PureComponent {
+class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		countriesList: PropTypes.object.isRequired,
 		isVisible: PropTypes.bool,
@@ -66,7 +66,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 		this.props.contactDetails.extra = {
 			...defaults,
-			...this.props.contactDetails.extra
+			...this.props.contactDetails.extra,
 		};
 	}
 
@@ -123,14 +123,10 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		const registrantType = this.props.contactDetails.extra.registrantType;
 		return (
 			<form className="registrant-extra-info__form">
-				<h1 className="registrant-extra-info__form-title">
-					{ translate(
-						'Registering a .FR domain'
-					) }
-				</h1>
 				<p className="registrant-extra-info__form-desciption">
 					{ translate(
-						'Almost done! We need some extra details to register domains ending in ".fr".'
+						'Almost done! We need some extra details to register your %(tld)s domain.',
+						{ args: { tld: '.fr' } }
 					) }
 				</p>
 				<FormFieldset>
@@ -241,7 +237,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						translate( 'Year/Month/Day - e.g. 1970/12/31', {
 							comment: 'This is describing a date format with fixed fields, so please do not ' +
 								'alter the numbers (Year, Month, Day). Please translate e.g("For example") if appropriate and also ' +
-								'the words, Year, Month, Day, individually.'
+								'the words, Year, Month, Day, individually.',
 						} )
 					}</FormSettingExplanation>
 				</FormFieldset>
@@ -285,7 +281,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		const {
 			registrantVatId,
 			sirenSiret,
-			trademarkNumber
+			trademarkNumber,
 		} = { ...emptyValues, ...extra };
 
 		return (
@@ -360,4 +356,4 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 export default connect(
 	state => ( { contactDetails: getContactDetailsCache( state ) } ),
 	{ updateContactDetailsCache }
-)( localize( RegistrantExtraInfoForm ) );
+)( localize( RegistrantExtraInfoFrForm ) );

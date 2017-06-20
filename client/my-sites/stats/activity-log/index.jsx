@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { groupBy, map, get, filter } from 'lodash';
@@ -11,12 +12,17 @@ import { groupBy, map, get, filter } from 'lodash';
  */
 import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import {
+	getSiteSlug,
+	getSiteTitle,
+	isJetpackSite,
+} from 'state/sites/selectors';
 import { getRewindStatusError } from 'state/selectors';
 import { getActivityLogs } from 'state/selectors';
 import StatsFirstView from '../stats-first-view';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from '../stats-navigation';
+import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import ActivityLogDay from '../activity-log-day';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import ProgressBanner from '../activity-log-banner/progress-banner';
@@ -28,6 +34,9 @@ import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
 import { isRewindActive as isRewindActiveSelector } from 'state/selectors';
+import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
+
+const debug = debugFactory( 'calypso:activity-log' );
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -47,9 +56,36 @@ class ActivityLog extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	state = {
+		requestedRestoreTimestamp: null,
+		showRestoreConfirmDialog: false,
+	};
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 	}
+
+	handleRequestRestore = ( requestedRestoreTimestamp ) => {
+		this.setState( {
+			requestedRestoreTimestamp,
+			showRestoreConfirmDialog: true,
+		} );
+	};
+
+	handleRestoreDialogClose = () => this.setState( { showRestoreConfirmDialog: false } );
+
+	handleRestoreDialogConfirm = () => {
+		const {
+			rewindRestore,
+			siteId,
+		} = this.props;
+
+		const { requestedRestoreTimestamp } = this.state;
+
+		debug( 'Restore requested for site %d to time %d', this.props.siteId, requestedRestoreTimestamp );
+		this.setState( { showRestoreConfirmDialog: false } );
+		rewindRestore( siteId, requestedRestoreTimestamp );
+	};
 
 	tryFetchLogs( siteId ) {
 		const {
@@ -198,11 +234,12 @@ class ActivityLog extends Component {
 			),
 			( daily_logs, timestamp ) => (
 				<ActivityLogDay
-					key={ timestamp }
-					timestamp={ timestamp }
-					logs={ daily_logs }
-					siteId={ siteId }
 					isRewindEnabled={ isRewindActive }
+					key={ timestamp }
+					logs={ daily_logs }
+					requestRestore={ this.handleRequestRestore }
+					siteId={ siteId }
+					timestamp={ +timestamp }
 				/>
 			)
 		);
@@ -239,8 +276,13 @@ class ActivityLog extends Component {
 		const {
 			isJetpack,
 			siteId,
+			siteTitle,
 			slug,
 		} = this.props;
+		const {
+			requestedRestoreTimestamp,
+			showRestoreConfirmDialog,
+		} = this.state;
 
 		return (
 			<Main wideLayout={ true }>
@@ -254,6 +296,13 @@ class ActivityLog extends Component {
 					section="activity"
 				/>
 				{ this.renderErrorMessage() || this.renderContent() }
+				<ActivityLogConfirmDialog
+					isVisible={ showRestoreConfirmDialog }
+					siteTitle={ siteTitle }
+					timestamp={ requestedRestoreTimestamp }
+					onClose={ this.handleRestoreDialogClose }
+					onConfirm={ this.handleRestoreDialogConfirm }
+				/>
 			</Main>
 		);
 	}
@@ -266,6 +315,7 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			logs: getActivityLogs( state, siteId ),
 			siteId,
+			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
 			isRewindActive: isRewindActiveSelector( state, siteId ),
@@ -273,6 +323,8 @@ export default connect(
 			// FIXME: Testing only
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false ),
 		};
-	},
-	{ recordGoogleEvent }
+	}, {
+		recordGoogleEvent,
+		rewindRestore: rewindRestoreAction,
+	}
 )( localize( ActivityLog ) );

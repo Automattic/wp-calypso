@@ -284,6 +284,11 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
 .post-share__share-combo {
 	display: flex;
+	margin-left: 8px;
+
+	.post-share__share-button {
+		margin-left: 0px;
+	}
 }
 
 .post-share .post-share__footer-nav {
@@ -291,6 +296,7 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 }
 
 .post-share .post-share__footer-items {
+	align-items: center;
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: space-between;
@@ -421,4 +427,21 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	@include breakpoint( ">960px" ) {
 		display: block;
 	}
+}
+
+.post-share__external-url {
+	color: lighten( $gray, 20% );
+	transition: color 200ms;
+	height: 24px;
+	width: 24px;
+
+	&:hover,
+	&:focus {
+		color: darken( $gray, 10% );
+	}
+}
+
+.post-share__external-url .gridicon {
+	position: relative;
+	top: 1px;
 }

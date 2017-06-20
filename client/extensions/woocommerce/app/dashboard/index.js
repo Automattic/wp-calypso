@@ -14,8 +14,9 @@ import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions
 import { areSetupChoicesLoading, getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
-import Manage from './manage';
-import Setup from './setup';
+import ManageNoOrdersView from './manage-no-orders-view';
+import ManageOrdersView from './manage-orders-view';
+import SetupTasksView from './setup-tasks-view';
 
 class Dashboard extends Component {
 
@@ -46,20 +47,31 @@ class Dashboard extends Component {
 		// TODO - save that setup has been finished to the store's state on WPCOM
 	}
 
+	renderDashboardContent = () => {
+		const { finishedInitialSetup, hasOrders, selectedSite } = this.props;
+
+		if ( finishedInitialSetup && hasOrders ) {
+			return ( <ManageOrdersView site={ selectedSite } /> );
+		}
+
+		if ( finishedInitialSetup && ! hasOrders ) {
+			return ( <ManageNoOrdersView site={ selectedSite } /> );
+		}
+
+		return ( <SetupTasksView onFinished={ this.onStoreSetupFinished } site={ selectedSite } /> );
+	}
+
 	render = () => {
-		const { finishedInitialSetup, loading, selectedSite } = this.props;
+		const { className, loading, selectedSite } = this.props;
 
 		if ( loading || ! selectedSite ) {
-			// TODO have a placholder/loading view instead
+			// TODO have a placeholder/loading view instead
 			return null;
 		}
 
 		return (
-			<Main className={ classNames( 'dashboard', this.props.className ) }>
-				{
-					finishedInitialSetup && <Manage site={ selectedSite } /> ||
-					<Setup onFinished={ this.onStoreSetupFinished } site={ selectedSite } />
-				}
+			<Main className={ classNames( 'dashboard', className ) }>
+				{ this.renderDashboardContent() }
 			</Main>
 		);
 	}
@@ -67,14 +79,11 @@ class Dashboard extends Component {
 }
 
 function mapStateToProps( state ) {
-	const finishedInitialSetup = getFinishedInitialSetup( state );
-	const loading = areSetupChoicesLoading( state );
-	const selectedSite = getSelectedSiteWithFallback( state );
-
 	return {
-		finishedInitialSetup,
-		loading,
-		selectedSite,
+		finishedInitialSetup: getFinishedInitialSetup( state ),
+		hasOrders: false, // TODO - connect to a selector when it becomes available
+		loading: areSetupChoicesLoading( state ),
+		selectedSite: getSelectedSiteWithFallback( state ),
 	};
 }
 

@@ -12,13 +12,13 @@ const FormSelect = React.createClass( {
 	},
 
 	render() {
-		const { className, isError, ...props } = this.props,
-			classes = classNames( className, 'form-select', {
-				'is-error': isError,
-			} );
+		const { inputRef, className, isError, ...props } = this.props;
+		const classes = classNames( className, 'form-select', {
+			'is-error': isError,
+		} );
 
 		return (
-			<select { ...props } className={ classes }>
+			<select { ...props } ref={ inputRef } className={ classes }>
 				{ this.props.children }
 			</select>
 		);

@@ -64,6 +64,10 @@ export const EligibilityWarnings = ( {
 						? FEATURE_UPLOAD_PLUGINS
 						: FEATURE_UPLOAD_THEMES
 					}
+					event={ 'plugins' === context
+						? 'calypso-plugin-eligibility-upgrade-nudge'
+						: 'calypso-theme-eligibility-upgrade-nudge'
+					}
 					plan={ PLAN_BUSINESS }
 					title={ translate( 'Business plan required' ) }
 				/>

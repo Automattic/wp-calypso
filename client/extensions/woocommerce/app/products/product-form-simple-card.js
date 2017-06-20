@@ -89,7 +89,7 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 		<Card className={ stockClasses }>
 			<div className="products__product-stock-options-wrapper">
 				<div className="products__product-manage-stock">
-					<FormLabel>{ translate( 'Stock' ) }</FormLabel>
+					<FormLabel>{ translate( 'Inventory' ) }</FormLabel>
 					<FormTextInput
 						name="stock_quantity"
 						value={ product.stock_quantity || '' }
