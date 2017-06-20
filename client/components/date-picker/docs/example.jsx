@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import Card from 'components/card';
 import DatePicker from 'components/date-picker';
 
-/**
+/*
  * Date Picker Demo
  */
 class DatePickerExample extends Component {
@@ -97,13 +97,13 @@ class DatePickerExample extends Component {
 		]
 	};
 
-	selectDay( date, modifiers ) {
+	selectDay = ( date, modifiers ) => {
 		this.setState( { selectedDay: date } );
 
 		if ( date ) {
 			console.log( date.toDate(), modifiers );
 		}
-	}
+	};
 
 	render() {
 		return (
@@ -111,8 +111,7 @@ class DatePickerExample extends Component {
 				<DatePicker
 					events={ this.state.events }
 					onSelectDay={ this.selectDay }
-					selectedDay={ this.state.selectedDay }>
-				</DatePicker>
+					selectedDay={ this.state.selectedDay } />
 			</Card>
 		);
 	}

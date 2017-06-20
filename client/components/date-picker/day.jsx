@@ -16,6 +16,7 @@ class DatePickerDay extends Component {
 	static propTypes = {
 		date: PropTypes.object.isRequired,
 		events: PropTypes.array,
+		moment: PropTypes.func,
 		maxEventsPerTooltip: PropTypes.number,
 	};
 

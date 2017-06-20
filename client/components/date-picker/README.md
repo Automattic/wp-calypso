@@ -23,7 +23,7 @@ module.exports = React.createClass( {
 			{
 				title: '1 other post scheduled',
 				date: new Date( '2015-10-15 10:30' ),
-				type: 'schedulled',
+				type: 'scheduled',
 				icon: 'time',
 			},
 			{
