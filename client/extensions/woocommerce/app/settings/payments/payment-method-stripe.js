@@ -119,21 +119,21 @@ class PaymentMethodStripe extends Component {
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>{ translate( 'Payment Mode' ) }</FormLabel>
 					<SegmentedControl
-						primary={ true }
-						compact={ true }
+						primary
+						compact
 					>
 						<ControlItem
 							selected={ method.settings.testmode.value === 'yes' }
 							onClick={ this.onToggleTestMode( 'test' ) }
 						>
-							translate( 'Test Mode' )
+							{ translate( 'Test Mode' ) }
 						</ControlItem>
 
 						<ControlItem
 							selected={ method.settings.testmode.value === 'no' }
 							onClick={ this.onToggleTestMode( 'live' ) }
 						>
-							translate( 'Live Mode' )
+							{ translate( 'Live Mode' ) }
 						</ControlItem>
 					</SegmentedControl>
 				</FormFieldset>
