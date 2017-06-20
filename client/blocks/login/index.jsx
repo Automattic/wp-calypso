@@ -17,6 +17,8 @@ import {
 	getRequestNotice,
 	getTwoFactorAuthRequestError,
 	getTwoFactorNotificationSent,
+	getCreateSocialAccountError,
+	getRequestSocialAccountError,
 	isTwoFactorEnabled,
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -90,9 +92,12 @@ class Login extends Component {
 	};
 
 	renderError() {
-		const error = this.props.requestError || this.props.twoFactorAuthRequestError;
+		const error = this.props.requestError ||
+			this.props.twoFactorAuthRequestError ||
+			this.props.requestAccountError ||
+			this.props.createAccountError && this.props.createAccountError.code !== 'unknown_user' ? this.props.createAccountError : null;
 
-		if ( ! error || error.field !== 'global' ) {
+		if ( ! error || ( error.field && error.field !== 'global' ) || ! error.message ) {
 			return null;
 		}
 
@@ -177,6 +182,8 @@ class Login extends Component {
 export default connect(
 	( state ) => ( {
 		redirectTo: getRedirectTo( state ),
+		createAccountError: getCreateSocialAccountError( state ),
+		requestAccountError: getRequestSocialAccountError( state ),
 		requestError: getRequestError( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
