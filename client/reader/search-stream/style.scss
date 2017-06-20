@@ -290,6 +290,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 // Post and Sites static headers
 .search-stream__headers {
 	color: $gray;
+	display: flex;
 	font-size: 14px;
 	display: flex;
 	font-weight: 600;
@@ -298,17 +299,23 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	text-transform: uppercase;
 }
 
-.search-stream .search-stream__site-header {
-	margin-left: 40px;
-	max-width: 265px;
-	width: 100%;
-}
-
 .search-stream__post-header,
 .search-stream__site-header {
 	border-bottom: 1px solid lighten( $gray, 20% );
 	padding-bottom: 15px;
-	width: 100%;
+}
+
+.search-stream .search-stream__post-header,
+.search-stream .search-stream__site-header {
+	flex: 1 1 auto;
+}
+
+.search-stream .search-stream__post-header {
+	margin-right: 40px;
+}
+
+.search-stream .search-stream__site-header {
+	max-width: 265px;
 }
 
 // Posts and Sites tabbed headers
