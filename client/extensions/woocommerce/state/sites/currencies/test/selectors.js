@@ -111,7 +111,7 @@ describe( 'selectors', () => {
 			expect( getCurrencies( loadingState ) ).to.deep.equal( [] );
 		} );
 
-		it( 'should return the continents, sorted by name', () => {
+		it( 'should return the currencies', () => {
 			expect( getCurrencies( loadedState ) ).to.deep.equal( [
 				{ code: 'AED', name: 'United Arab Emirates dirham', symbol: '&#x62f;.&#x625;' },
 				{ code: 'AFN', name: 'Afghan afghani', symbol: '&#x60b;' },
