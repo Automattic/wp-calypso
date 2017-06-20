@@ -24,7 +24,7 @@ class EmptyContent extends Component {
 
 	static defaultProps = {
 		title: "You haven't created any content yet.",
-		illustration: '/calypso/images/drake/drake-empty-results.svg',
+		illustration: '/calypso/images/illustrations/illustration-empty-results.svg',
 		isCompact: false,
 	};
 

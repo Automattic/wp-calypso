@@ -199,7 +199,7 @@ const PluginsMain = React.createClass( {
 			}
 		} else {
 			emptyContentData.title = this.translate( 'No updates are available.', { textOnly: true } );
-			emptyContentData.illustration = '/calypso/images/drake/drake-empty-results.svg';
+			emptyContentData.illustration = '/calypso/images/illustrations/illustration-empty-results.svg';
 			emptyContentData.actionURL = '/plugins';
 		}
 
@@ -207,7 +207,7 @@ const PluginsMain = React.createClass( {
 	},
 
 	getEmptyContentData() {
-		let emptyContentData = { illustration: '/calypso/images/drake/drake-empty-results.svg', };
+		let emptyContentData = { illustration: '/calypso/images/illustrations/illustration-empty-results.svg', };
 
 		switch ( this.props.filter ) {
 			case 'active':

@@ -91,7 +91,7 @@ export const People = React.createClass( { // eslint-disable-line react/prefer-e
 					<SidebarNavigation />
 					<EmptyContent
 						title={ this.translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+						illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 					/>
 				</Main>
 			);
