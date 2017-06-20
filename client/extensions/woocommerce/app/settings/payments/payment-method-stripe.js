@@ -113,10 +113,6 @@ class PaymentMethodStripe extends Component {
 		return (
 			<div className="payments__method-edit-fields">
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
-					{ this.renderEnabledField( method.settings.enabled.value ) }
-				</FormFieldset>
-				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>{ translate( 'Payment Mode' ) }</FormLabel>
 					<SegmentedControl
 						primary

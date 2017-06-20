@@ -7,10 +7,12 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
 import {
-	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
-	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
+	WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE,
+	WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE_SUCCESS,
 	WOOCOMMERCE_PAYMENT_METHOD_UPDATE,
 	WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS,
+	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
+	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import {
 	arePaymentMethodsLoaded,
@@ -20,15 +22,6 @@ import {
 const addPaymentMethodDetails = ( method ) => {
 	return {
 		...method,
-		settings: {
-			enabled: {
-				id: 'enabled',
-				label: 'Enabled',
-				type: 'checkbox',
-				value: method.enabled ? 'yes' : 'no',
-			},
-			...method.settings,
-		},
 		...getPaymentMethodDetails( method.id ) };
 };
 
@@ -96,6 +89,52 @@ export const savePaymentMethod = ( siteId, method, successAction = null, failure
 	return request( siteId ).put( `payment_gateways/${ method.id }`, body )
 		.then( ( data ) => {
 			dispatch( savePaymentMethodSuccess( siteId, data ) );
+			if ( successAction ) {
+				dispatch( successAction( data ) );
+			}
+		} )
+		.catch( err => {
+			dispatch( setError( siteId, updateAction, err ) );
+			if ( failureAction ) {
+				dispatch( failureAction( err ) );
+			}
+		} );
+};
+
+const savePaymentMethodEnabledSuccess = ( siteId, data ) => {
+	const paymentMethod = addPaymentMethodDetails( data );
+	return {
+		type: WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE_SUCCESS,
+		siteId,
+		data: paymentMethod,
+	};
+};
+
+export const savePaymentMethodEnabled = (
+	siteId,
+	methodId,
+	enabled,
+	successAction = null,
+	failureAction = null
+) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const updateAction = {
+		type: WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE,
+		enabled,
+		methodId,
+		siteId,
+	};
+
+	const body = { settings: { enabled } };
+
+	dispatch( updateAction );
+
+	return request( siteId ).put( `payment_gateways/${ methodId }`, body )
+		.then( ( data ) => {
+			dispatch( savePaymentMethodEnabledSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );
 			}

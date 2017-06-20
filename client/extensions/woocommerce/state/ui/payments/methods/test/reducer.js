@@ -11,6 +11,7 @@ import {
 	openPaymentMethodForEdit,
 	closeEditingPaymentMethod,
 	cancelEditingPaymentMethod,
+	changePaymentMethodEnabled,
 	changePaymentMethodField,
 } from '../actions';
 
@@ -180,6 +181,24 @@ describe( 'reducer', () => {
 			expect( newState.updates ).to.deep.equal( [ { id: 1, name: 'Previous Value' } ] );
 			expect( newState.currentlyEditingChanges ).to.deep.equal( { name: { value: 'New Value' } } );
 			expect( newState.currentlyEditingId ).to.equal( 1 );
+		} );
+	} );
+
+	describe( 'changePaymentMethodEnabled', () => {
+		it( 'should place enabled state in updates when no updates', () => {
+			const state = {
+				updates: [],
+			};
+			const newState = reducer( state, changePaymentMethodEnabled( siteId, 1, true ) );
+			expect( newState.updates ).to.deep.equal( [ { id: 1, enabled: true } ] );
+		} );
+
+		it( 'should place enabled state in updates when there is an existing update', () => {
+			const state = {
+				updates: [ { id: 1, name: 'Previous Value' } ],
+			};
+			const newState = reducer( state, changePaymentMethodEnabled( siteId, 1, true ) );
+			expect( newState.updates ).to.deep.equal( [ { enabled: true, id: 1, name: 'Previous Value', } ] );
 		} );
 	} );
 } );

@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import {
 	cancelEditingPaymentMethod,
+	changePaymentMethodEnabled,
 	changePaymentMethodField,
 	closeEditingPaymentMethod,
 	openPaymentMethodForEdit,
@@ -19,12 +20,15 @@ import {
 import { getCurrentlyEditingPaymentMethod } from 'woocommerce/state/ui/payments/methods/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 import PaymentMethodEdit from './payment-method-edit';
+import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 import PaymentMethodPaypal from './payment-method-paypal';
 import PaymentMethodStripe from './payment-method-stripe';
-import { savePaymentMethod } from 'woocommerce/state/sites/payment-methods/actions';
+import { savePaymentMethod, savePaymentMethodEnabled } from 'woocommerce/state/sites/payment-methods/actions';
 
 class PaymentMethodItem extends Component {
 	static propTypes = {
@@ -67,6 +71,42 @@ class PaymentMethodItem extends Component {
 		this.props.changePaymentMethodField( this.props.site.ID, field, value );
 	}
 
+	onChangeEnabled = ( e ) => {
+		const { method, site, translate } = this.props;
+
+		const enabled = 'yes' === e.target.value;
+		this.props.changePaymentMethodEnabled(
+			site.ID,
+			method.id,
+			enabled
+		);
+
+		const successAction = () => {
+			return successNotice(
+				translate( 'Payment method successfully saved.' ),
+				{ duration: 4000 }
+			);
+		};
+
+		const errorAction = () => {
+			this.props.changePaymentMethodEnabled(
+				site.ID,
+				method.id,
+				! enabled
+			);
+			return errorNotice(
+				translate( 'There was a problem saving the payment method. Please try again.' )
+			);
+		};
+		this.props.savePaymentMethodEnabled(
+			site.ID,
+			method.id,
+			e.target.value,
+			successAction,
+			errorAction
+		);
+	}
+
 	onSave = () => {
 		const { method, site, translate } = this.props;
 
@@ -83,7 +123,6 @@ class PaymentMethodItem extends Component {
 				translate( 'There was a problem saving the payment method. Please try again.' )
 			);
 		};
-
 		this.props.savePaymentMethod( site.ID, method, successAction, errorAction );
 	}
 
@@ -113,21 +152,27 @@ class PaymentMethodItem extends Component {
 		);
 	}
 
+	renderEnabledField = ( isEnabled ) => {
+		return (
+			<PaymentMethodEditFormToggle
+				checked={ isEnabled }
+				name="enabled"
+				onChange={ this.onChangeEnabled } />
+		);
+	}
+
 	render() {
 		const currentlyEditingId = this.props.currentlyEditingMethod &&
 			this.props.currentlyEditingMethod.id;
 		const { method, translate } = this.props;
-		let editButtonText = translate( 'Set up' );
-		if ( method.settings.enabled.value === 'yes' ) {
-			editButtonText = translate( 'Manage' );
-		}
+		let editButtonText = method.enabled ? translate( 'Manage' ) : translate( 'Set up' );
 		if ( currentlyEditingId === method.id ) {
 			editButtonText = translate( 'Cancel' );
 		}
 
 		return (
 			<ListItem>
-				<ListItemField>
+				<ListItemField className="payments__method-method-suggested-container">
 					{
 						method.isSuggested &&
 						(
@@ -138,7 +183,7 @@ class PaymentMethodItem extends Component {
 					}
 					<p className="payments__method-name">{ method.title }</p>
 				</ListItemField>
-				<ListItemField>
+				<ListItemField className="payments__method-method-information-container">
 					{ method.fees && (
 						<p className="payments__method-information">{ method.fees }</p>
 					) }
@@ -151,7 +196,15 @@ class PaymentMethodItem extends Component {
 					) }
 
 				</ListItemField>
-				<ListItemField>
+				<ListItemField className="payments__method-enable-container">
+					<FormFieldset className="payments__method-enable">
+						<div>
+							<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
+							{ this.renderEnabledField( method.enabled ) }
+						</div>
+					</FormFieldset>
+				</ListItemField>
+				<ListItemField className="payments__method-action-container">
 					<Button compact onClick={ this.onEditHandler }>
 						{ editButtonText }
 					</Button>
@@ -177,10 +230,12 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			cancelEditingPaymentMethod,
+			changePaymentMethodEnabled,
 			changePaymentMethodField,
 			closeEditingPaymentMethod,
 			openPaymentMethodForEdit,
 			savePaymentMethod,
+			savePaymentMethodEnabled,
 		},
 		dispatch
 	);
