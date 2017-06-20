@@ -17,6 +17,11 @@ This is saved on a per-site basis. All orders are collected in `items`, and ther
 {
 	"orders": {
 		// Keyed by serialized query
+		"isLoading": {
+			10: false,
+			12: true
+		},
+		// Keyed by serialized query
 		"isQueryLoading": {
 			'{page:1}': false,
 			'{page:2}': true
@@ -53,6 +58,14 @@ Whether the order list on a given page has been successfully loaded from the ser
 ### `areOrdersLoading( state, page, [siteId] )`
 
 Whether the order list on a given page is currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
+
+### `isOrderLoaded( state, orderId, [siteId] )`
+
+Whether the given order has been successfully loaded from the server. Optional `siteId`, will default to currently selected site.
+
+### `isOrderLoading( state, orderId, [siteId] )`
+
+Whether the given order is currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
 
 ### `getOrders( state, page: number, siteId: number )`
 

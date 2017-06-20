@@ -34,6 +34,30 @@ export const areOrdersLoading = ( state, page = 1, siteId = getSelectedSiteId( s
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Number} orderId Order ID to check
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether the orders list has been successfully loaded from the server
+ */
+export const isOrderLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const isLoading = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'isLoading', orderId ] );
+	// Strict check because it could also be undefined.
+	return ( false === isLoading );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} orderId Order ID to check
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether the orders list is currently being retrieved from the server
+ */
+export const isOrderLoading = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const isLoading = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'isLoading', orderId ] );
+	// Strict check because it could also be undefined.
+	return ( true === isLoading );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
  * @param {Number} [page] Page of orders. If not provided, defaults to first page.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {array|false} List of orders, or false if there was an error

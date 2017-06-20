@@ -10,6 +10,8 @@ import { keyBy } from 'lodash';
 import {
 	areOrdersLoaded,
 	areOrdersLoading,
+	isOrderLoaded,
+	isOrderLoading,
 	getOrders,
 	getTotalOrdersPages,
 } from '../selectors';
@@ -26,6 +28,9 @@ const loadingState = {
 			sites: {
 				123: {
 					orders: {
+						isLoading: {
+							35: true
+						},
 						isQueryLoading: {
 							'{page:1}': true,
 						},
@@ -44,6 +49,9 @@ const loadedState = {
 			sites: {
 				123: {
 					orders: {
+						isLoading: {
+							35: false
+						},
 						isQueryLoading: {
 							'{page:1}': false,
 						},
@@ -103,6 +111,50 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( areOrdersLoading( loadedStateWithUi, 1 ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#isOrderLoaded', () => {
+		it( 'should be false when woocommerce state is not available.', () => {
+			expect( isOrderLoaded( preInitializedState, 35, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be false when this order is currently being fetched.', () => {
+			expect( isOrderLoaded( loadingState, 35, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be true when this order is loaded.', () => {
+			expect( isOrderLoaded( loadedState, 35, 123 ) ).to.be.true;
+		} );
+
+		it( 'should be false when orders are loaded only for a different site.', () => {
+			expect( isOrderLoaded( loadedState, 39, 456 ) ).to.be.false;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( isOrderLoaded( loadedStateWithUi, 35 ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#isOrderLoading', () => {
+		it( 'should be false when woocommerce state is not available.', () => {
+			expect( isOrderLoading( preInitializedState, 35, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be true when this order is currently being fetched.', () => {
+			expect( isOrderLoading( loadingState, 35, 123 ) ).to.be.true;
+		} );
+
+		it( 'should be false when this order is loaded.', () => {
+			expect( isOrderLoading( loadedState, 35, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be false when orders are loaded only for a different site.', () => {
+			expect( isOrderLoading( loadedState, 29, 456 ) ).to.be.false;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( isOrderLoading( loadedStateWithUi, 35 ) ).to.be.false;
 		} );
 	} );
 
