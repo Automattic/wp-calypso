@@ -424,7 +424,8 @@ export class DomainDetailsForm extends PureComponent {
 
 	focusFirstError() {
 		const firstErrorName = kebabCase( head( formState.getInvalidFields( this.state.form ) ).name );
-		( this.inputRefs[ firstErrorName ] || this.refs[ firstErrorName ] ).focus();
+		const firstErrorRef = this.inputRefs[ firstErrorName ] || this.refs[ firstErrorName ];
+		firstErrorRef.focus();
 	}
 
 	handleSubmitButtonClick = ( event ) => {
