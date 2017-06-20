@@ -227,7 +227,7 @@ class ActivityLog extends Component {
 			),
 			( daily_logs, timestamp ) => (
 				<ActivityLogDay
-					isRewindEnabled={ isRewindActive }
+					isRewindActive={ isRewindActive }
 					key={ timestamp }
 					logs={ daily_logs }
 					requestRestore={ this.handleRequestRestore }
