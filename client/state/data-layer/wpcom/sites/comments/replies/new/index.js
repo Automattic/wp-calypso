@@ -9,10 +9,11 @@ import {
 	handleWriteCommentFailure,
 } from 'state/data-layer/wpcom/sites/utils';
 
-export const writeReplyComment = ( { dispatch }, action ) => {
-	const path = `/sites/${ action.siteId }/comments/${ action.parentCommentId }/replies/new`;
-	dispatchNewCommentRequest( dispatch, action, path );
-};
+export const writeReplyComment = ( { dispatch }, action ) => dispatchNewCommentRequest(
+	dispatch,
+	action,
+	`/sites/${ action.siteId }/comments/${ action.parentCommentId }/replies/new`
+);
 
 export default {
 	[ COMMENTS_REPLY_WRITE ]: [ dispatchRequest( writeReplyComment, updatePlaceholderComment, handleWriteCommentFailure ) ]
