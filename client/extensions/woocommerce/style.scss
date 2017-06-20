@@ -22,6 +22,7 @@
 	@import 'components/list/style';
 	@import 'components/table/style';
 	@import 'app/dashboard/style';
+	@import 'app/order/style';
 	@import 'app/orders/style';
 	@import 'components/basic-widget/style';
 	@import 'components/share-widget/style';
@@ -45,7 +46,7 @@
 }
 
 .is-section-woocommerce {
-	// overwrite notice styles due to sticky bar 
+	// overwrite notice styles due to sticky bar
 	.global-notices {
 		@include breakpoint( ">660px" ) {
 			top: 115px;

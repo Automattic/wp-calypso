@@ -87,11 +87,11 @@ class Orders extends Component {
 	}
 
 	renderOrderItems = ( order, i ) => {
-		const { moment, siteId } = this.props;
+		const { moment, site } = this.props;
 		return (
 			<TableRow key={ i }>
 				<TableItem className="orders__table-name" isRowHeader>
-					<a className="orders__item-link" href={ `/store/order/${ siteId }/${ order.number }` }>#{ order.number }</a>
+					<a className="orders__item-link" href={ `/store/order/${ site.slug }/${ order.number }` }>#{ order.number }</a>
 					<span className="orders__item-name">
 						{ `${ order.billing.first_name } ${ order.billing.last_name }` }
 					</span>
@@ -198,6 +198,7 @@ export default connect(
 			orders,
 			ordersLoading,
 			ordersLoaded,
+			site,
 			siteId,
 			totalPages,
 		};
