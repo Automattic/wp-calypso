@@ -1,5 +1,15 @@
-.payments__currency-select {
-	width: 100%;
+.payments__address-currency-container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+.payments__currency-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	max-width: 255px;
 }
 
 .payments__type-container .section-header__label::before {

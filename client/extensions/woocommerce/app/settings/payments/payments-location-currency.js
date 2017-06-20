@@ -14,6 +14,7 @@ import Card from 'components/card';
 import { decodeEntities } from 'lib/formatting';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
+import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
 import { fetchCurrencies } from 'woocommerce/state/sites/currencies/actions';
@@ -119,16 +120,21 @@ class SettingsPaymentsLocationCurrency extends Component {
 							'location and currency.'
 						)
 					} />
-				<Card>
+				<Card className="payments__address-currency-container">
 					<AddressView
 						address={ this.state.address } />
+					<div className="payments__currency-container">
+						<FormLabel>
+							Store Currency
+						</FormLabel>
+						<FormSelect
+							className="payments__currency-select"
+							onChange={ this.onChange }
+							value={ currency }>
+							{ currencies && currencies.map( this.renderOption ) }
+						</FormSelect>
+					</div>
 
-					<FormSelect
-						className="payments__currency-select"
-						onChange={ this.onChange }
-						value={ currency }>
-						{ currencies && currencies.map( this.renderOption ) }
-					</FormSelect>
 				</Card>
 			</div>
 		);
