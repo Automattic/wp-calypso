@@ -203,6 +203,7 @@ class ActivityLog extends Component {
 			restoreProgress,
 		} = this.props;
 
+		// FIXME: We should account for status === 'fail' or status === 'aborted'
 		if ( restoreError ) {
 			return (
 				<ErrorBanner />
@@ -213,7 +214,8 @@ class ActivityLog extends Component {
 				percent,
 			} = restoreProgress;
 			return (
-				status === 'success'
+				'success' === status ||
+				'success-with-errors' === status
 					? <SuccessBanner />
 					: <ProgressBanner percent={ percent } />
 			);
