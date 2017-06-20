@@ -1,42 +1,69 @@
 /**
  * External dependencies
  */
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
  */
+import {
+	areSetupChoicesLoading,
+	getOptedOutOfShippingSetup,
+	getOptedOutofTaxesSetup,
+	getTriedCustomizerDuringInitialSetup,
+} from 'woocommerce/state/sites/setup-choices/selectors';
+import {
+	getTotalProducts
+} from 'woocommerce/state/sites/products/selectors';
+import {
+	fetchProducts
+} from 'woocommerce/state/sites/products/actions';
+import {
+	fetchSetupChoices,
+	setOptedOutOfShippingSetup,
+	setOptedOutOfTaxesSetup,
+	setTriedCustomizerDuringInitialSetup,
+} from 'woocommerce/state/sites/setup-choices/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import SetupFooter from './setup-footer';
-import SetupHeader from './setup-header';
 import SetupTask from './setup-task';
 
-class Setup extends Component {
+class SetupTasks extends Component {
 	static propTypes = {
-		onFinished: PropTypes.func,
 		site: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
 			slug: PropTypes.string.isRequired,
 		} ),
-		storeHasBeenCustomized: PropTypes.bool,
-		storeHasProducts: PropTypes.bool,
-		storePaymentsAreSetUp: PropTypes.bool,
-		storeShippingIsSetUp: PropTypes.bool,
-		storeTaxesAreSetUp: PropTypes.bool,
 	};
 
-	// TODO - replace with props mapped from state when this info becomes available in state
-	static defaultProps = {
-		storeHasBeenCustomized: true,
-		storeHasProducts: false,
-		storePaymentsAreSetUp: false,
-		storeShippingIsSetUp: false,
-		storeTaxesAreSetUp: false,
+	constructor( props ) {
+		super( props );
+		this.state = {
+			showShippingTask: props.loading || ! props.optedOutOfShippingSetup,
+			showTaxesTask: props.loading || ! props.optedOutOfTaxesSetup,
+		};
 	}
 
-	state = {
-		showShippingTask: true,
-		showTaxesTask: true,
+	componentDidMount = () => {
+		const { site } = this.props;
+
+		if ( site && site.ID ) {
+			this.props.fetchSetupChoices( site.ID );
+			this.props.fetchProducts( site.ID, 1 );
+		}
+	}
+
+	componentWillReceiveProps = ( newProps ) => {
+		const { site } = this.props;
+
+		const newSiteId = newProps.site && newProps.site.ID || null;
+		const oldSiteId = site && site.ID || null;
+
+		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchSetupChoices( newSiteId );
+		}
 	}
 
 	onClickNoShip = ( event ) => {
@@ -44,7 +71,7 @@ class Setup extends Component {
 		this.setState( {
 			showShippingTask: false
 		} );
-		// TODO - dispatch an action to record the user preference at WordPress.com
+		this.props.setOptedOutOfShippingSetup( this.props.site.ID, true );
 	}
 
 	onClickNoTaxes = () => {
@@ -52,33 +79,28 @@ class Setup extends Component {
 		this.setState( {
 			showTaxesTask: false
 		} );
-		// TODO - dispatch an action to record the user preference at WordPress.com
+		this.props.setOptedOutOfTaxesSetup( this.props.site.ID, true );
 	}
 
 	getSetupTasks = () => {
 		const {
 			site,
-			storeHasBeenCustomized,
-			storeHasProducts,
-			storePaymentsAreSetUp,
-			storeShippingIsSetUp,
-			storeTaxesAreSetUp,
+			triedCustomizer,
+			hasProducts,
+			paymentsAreSetUp,
+			shippingIsSetUp,
+			taxesAreSetUp,
 			translate
 		} = this.props;
 
 		return [
 			{
-				checked: storeHasProducts,
+				checked: hasProducts,
 				docURL: 'https://support.wordpress.com/',
-				explanation: translate( 'Add products one at a time or import many in a single import.' ),
+				explanation: translate( 'Add your products to your store.' ),
 				label: translate( 'Add a product' ),
 				show: true,
 				actions: [
-					{
-						label: translate( 'Import' ),
-						path: getLink( '/store/products/import/:site', site ),
-						slug: 'add-products-import',
-					},
 					{
 						label: 'Add a product',
 						path: getLink( '/store/product/:site', site ),
@@ -86,7 +108,7 @@ class Setup extends Component {
 				]
 			},
 			{
-				checked: storeShippingIsSetUp,
+				checked: shippingIsSetUp,
 				docURL: 'https://support.wordpress.com/',
 				explanation: translate( 'Configure the locations to which you ship your products.' ),
 				label: translate( 'Set up shipping' ),
@@ -104,7 +126,7 @@ class Setup extends Component {
 				]
 			},
 			{
-				checked: storePaymentsAreSetUp,
+				checked: paymentsAreSetUp,
 				docURL: 'https://support.wordpress.com/',
 				explanation: translate( 'Choose which payment methods to offer your customers.' ),
 				label: translate( 'Set up payments' ),
@@ -117,7 +139,7 @@ class Setup extends Component {
 				]
 			},
 			{
-				checked: storeTaxesAreSetUp,
+				checked: taxesAreSetUp,
 				docURL: 'https://support.wordpress.com/',
 				explanation: translate( 'Configure how tax rates are calculated at your store.' ),
 				label: translate( 'Set up taxes' ),
@@ -135,7 +157,7 @@ class Setup extends Component {
 				]
 			},
 			{
-				checked: storeHasBeenCustomized,
+				checked: triedCustomizer,
 				docURL: 'https://support.wordpress.com/',
 				explanation: translate( 'View your store, test your settings and customize the design.' ),
 				label: translate( 'View and customize' ),
@@ -144,6 +166,7 @@ class Setup extends Component {
 					{
 						label: translate( 'Customize' ),
 						path: getLink( 'https://:site/wp-admin/customize.php?return=%2Fwp-admin%2F', site ),
+						// TODO use onClick here instead in order to hit setTriedCustomizerDuringInitialSetup
 					}
 				]
 			}
@@ -168,27 +191,39 @@ class Setup extends Component {
 	}
 
 	render = () => {
-		const { onFinished, translate } = this.props;
-		const tasks = this.getSetupTasks();
-		const allTasksCompleted = tasks.every( task => task.checked );
-
 		return (
-			<div className="card dashboard__setup-wrapper">
-				<SetupHeader
-					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
-					imageWidth={ 160 }
-					title={ translate( 'Howdy! Let\'s set up your store & start selling' ) }
-					subtitle={ translate( 'Below you will find the essential tasks to complete before making your store live.' ) }
-				/>
-				{ tasks.map( this.renderSetupTask ) }
-				<SetupFooter
-					onClick={ onFinished }
-					label={ translate( 'I\'m finished setting up' ) }
-					primary={ allTasksCompleted }
-				/>
+			<div className="dashboard__setup-checklist">
+				{ this.getSetupTasks().map( this.renderSetupTask ) }
 			</div>
 		);
 	}
 }
 
-export default localize( Setup );
+function mapStateToProps( state ) {
+	return {
+		loading: areSetupChoicesLoading( state ),
+		optedOutOfShippingSetup: getOptedOutOfShippingSetup( state ),
+		optedOutOfTaxesSetup: getOptedOutofTaxesSetup( state ),
+		triedCustomizer: getTriedCustomizerDuringInitialSetup( state ),
+		hasProducts: getTotalProducts( state ) > 0,
+		// TODO - connect the following to selectors when they become available
+		paymentsAreSetUp: false,
+		shippingIsSetUp: false,
+		taxesAreSetUp: false,
+	};
+}
+
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchProducts,
+			fetchSetupChoices,
+			setOptedOutOfShippingSetup,
+			setOptedOutOfTaxesSetup,
+			setTriedCustomizerDuringInitialSetup,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupTasks ) );
