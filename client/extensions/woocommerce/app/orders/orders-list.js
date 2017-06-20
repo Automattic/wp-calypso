@@ -11,7 +11,6 @@ import { times } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import FormInputCheckbox from 'components/forms/form-checkbox';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { setCurrentPage } from 'woocommerce/state/ui/orders/actions';
 import {
@@ -63,16 +62,9 @@ class Orders extends Component {
 	}
 
 	renderOrderItems = ( order, i ) => {
-		const { translate, moment, siteId } = this.props;
+		const { moment, siteId } = this.props;
 		return (
 			<TableRow key={ i }>
-				<TableItem className="orders__table-checkbox">
-					<FormInputCheckbox aria-label={ translate( 'Select order %(order)s', {
-						args: {
-							order: order.number,
-						}
-					} ) } />
-				</TableItem>
 				<TableItem className="orders__table-name" isRowHeader>
 					<a className="orders__item-link" href={ `/store/order/${ siteId }/${ order.number }` }>#{ order.number }</a>
 					<span className="orders__item-name">
@@ -129,9 +121,6 @@ class Orders extends Component {
 		const { orders, ordersLoading, ordersLoaded, translate } = this.props;
 		const headers = (
 			<TableRow>
-				<TableItem isHeader>
-					<FormInputCheckbox aria-label={ translate( 'Select All' ) } />
-				</TableItem>
 				<TableItem isHeader>{ translate( 'Order' ) }</TableItem>
 				<TableItem isHeader>{ translate( 'Date' ) }</TableItem>
 				<TableItem isHeader>{ translate( 'Status' ) }</TableItem>
