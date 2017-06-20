@@ -68,7 +68,6 @@ class Orders extends Component {
 			<TableRow key={ i }>
 				<TableItem className="orders__table-checkbox">
 					<FormInputCheckbox aria-label={ translate( 'Select order %(order)s', {
-						context: 'Label for checkbox',
 						args: {
 							order: order.number,
 						}
@@ -131,9 +130,7 @@ class Orders extends Component {
 		const headers = (
 			<TableRow>
 				<TableItem isHeader>
-					<FormInputCheckbox aria-label={ translate( 'Select All', {
-						context: 'Label for checkbox'
-					} ) } />
+					<FormInputCheckbox aria-label={ translate( 'Select All' ) } />
 				</TableItem>
 				<TableItem isHeader>{ translate( 'Order' ) }</TableItem>
 				<TableItem isHeader>{ translate( 'Date' ) }</TableItem>
