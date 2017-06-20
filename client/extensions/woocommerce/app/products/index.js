@@ -35,7 +35,7 @@ import Main from 'components/main';
 import Pagination from 'my-sites/stats/pagination';
 import ProductsListTable from './products-list-table';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Search from 'components/search';
+import SearchCard from 'components/search-card';
 
 class Products extends Component {
 	static propTypes = {
@@ -198,7 +198,7 @@ class Products extends Component {
 						{ translate( 'Add a product' ) }
 					</Button>
 				</ActionHeader>
-				<Search
+				<SearchCard
 					onSearch={ this.onSearch }
 					delaySearch
 					delayTimeout={ 400 }
