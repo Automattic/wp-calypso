@@ -161,7 +161,7 @@ export default React.createClass( {
 				? this.moment( this.props.savedPost.date )
 				: null;
 
-			this.setPostDate( date );
+			this.props.setPostDate( date );
 		}
 
 		this.setState( { showSchedulePopover: false } );
