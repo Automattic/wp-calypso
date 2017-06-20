@@ -10,6 +10,10 @@ import {
 	areProductsLoading,
 	getTotalProductsPages,
 	getTotalProducts,
+	areProductSearchResultsLoaded,
+	areProductSearchResultsLoading,
+	getTotalProductSearchResults,
+	getProductSearchQuery,
 } from '../selectors';
 import products from './fixtures/products';
 
@@ -27,6 +31,12 @@ const loadingState = {
 						isLoading: {
 							1: true,
 						},
+						search: {
+							isLoading: {
+								1: true,
+							},
+							query: 'testing',
+						},
 						products: {},
 					},
 				},
@@ -40,6 +50,13 @@ const loadedState = {
 			sites: {
 				123: {
 					products: {
+						search: {
+							isLoading: {
+								1: false,
+							},
+							totalProducts: 28,
+							query: 'testing',
+						},
 						isLoading: {
 							1: false,
 						},
@@ -50,6 +67,11 @@ const loadedState = {
 				},
 				401: {
 					products: {
+						search: {
+							isLoading: {
+								1: true,
+							}
+						},
 						isLoading: {
 							1: true,
 						},
@@ -150,6 +172,93 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getTotalProducts( loadedStateWithUi ) ).to.eql( 30 );
+		} );
+	} );
+	describe( '#areProductSearchResultsLoaded', () => {
+		it( 'should be false when woocommerce state is not available.', () => {
+			expect( areProductSearchResultsLoaded( preInitializedState, 1, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be false when products are currently being fetched.', () => {
+			expect( areProductSearchResultsLoaded( loadingState, 1, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be true when products are loaded.', () => {
+			expect( areProductSearchResultsLoaded( loadedState, 1, 123 ) ).to.be.true;
+		} );
+
+		it( 'should be false when products are loaded only for a different site.', () => {
+			expect( areProductSearchResultsLoaded( loadedState, 1, 456 ) ).to.be.false;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( areProductSearchResultsLoaded( loadedStateWithUi, 1 ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#areProductSearchResultsLoading', () => {
+		it( 'should be false when woocommerce state is not available.', () => {
+			expect( areProductSearchResultsLoading( preInitializedState, 1, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be true when products are currently being fetched.', () => {
+			expect( areProductSearchResultsLoading( loadingState, 1, 123 ) ).to.be.true;
+		} );
+
+		it( 'should be false when products are loaded.', () => {
+			expect( areProductSearchResultsLoading( loadedState, 1, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be false when products are loaded only for a different site.', () => {
+			expect( areProductSearchResultsLoading( loadedState, 1, 456 ) ).to.be.false;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( areProductSearchResultsLoading( loadedStateWithUi, 1 ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#getTotalProductSearchResults', () => {
+		it( 'should be 0 (default) when woocommerce state is not available.', () => {
+			expect( getTotalProductSearchResults( preInitializedState, 123 ) ).to.eql( 0 );
+		} );
+
+		it( 'should be 0 (default) when products are loading.', () => {
+			expect( getTotalProductSearchResults( loadingState, 123 ) ).to.eql( 0 );
+		} );
+
+		it( 'should be 28, the set total, if the products are loaded.', () => {
+			expect( getTotalProductSearchResults( loadedState, 123 ) ).to.eql( 28 );
+		} );
+
+		it( 'should be 0 (default) when products are loaded only for a different site.', () => {
+			expect( getTotalProductSearchResults( loadedState, 456 ) ).to.eql( 0 );
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getTotalProductSearchResults( loadedStateWithUi ) ).to.eql( 28 );
+		} );
+	} );
+
+	describe( '#getProductSearchQuery', () => {
+		it( 'should be null (default) when woocommerce state is not available.', () => {
+			expect( getProductSearchQuery( preInitializedState, 123 ) ).to.be.null;
+		} );
+
+		it( 'should be testing, the set query, when products are loading.', () => {
+			expect( getProductSearchQuery( loadingState, 123 ) ).to.eql( 'testing' );
+		} );
+
+		it( 'should be testing, the set query, if the products are loaded.', () => {
+			expect( getProductSearchQuery( loadedState, 123 ) ).to.eql( 'testing' );
+		} );
+
+		it( 'should be null (default) when products are loaded only for a different site.', () => {
+			expect( getProductSearchQuery( loadedState, 456 ) ).to.be.null;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getProductSearchQuery( loadedStateWithUi ) ).to.eql( 'testing' );
 		} );
 	} );
 } );

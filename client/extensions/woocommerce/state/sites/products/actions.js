@@ -1,7 +1,13 @@
+import { trim } from 'lodash';
+
 /**
  * Internal dependencies
  */
-import { areProductsLoading } from './selectors';
+import {
+	areProductsLoading,
+	areProductSearchResultsLoading,
+	getProductSearchQuery,
+} from './selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
@@ -9,6 +15,10 @@ import {
 	WOOCOMMERCE_PRODUCTS_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
+	WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
+	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
+	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
+	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE,
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_UPDATED,
 } from 'woocommerce/state/action-types';
@@ -90,3 +100,55 @@ export const fetchProducts = ( siteId, page ) => ( dispatch, getState ) => {
 		} );
 	} );
 };
+
+export const fetchProductSearchResults = ( siteId, page, query ) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	if ( ! query ) {
+		if ( areProductSearchResultsLoading( state, page, siteId ) ) {
+			return;
+		}
+		query = getProductSearchQuery( state, siteId );
+	}
+
+	const queryForURL = encodeURIComponent( trim( query ) );
+	const fetchAction = {
+		type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
+		siteId,
+		query,
+		page,
+	};
+	dispatch( fetchAction );
+
+	return request( siteId ).getWithHeaders( `products?page=${ page }&per_page=10&search=${ queryForURL }` ).then( ( response ) => {
+		const { headers, data } = response;
+		const totalProducts = headers[ 'X-WP-Total' ];
+		dispatch( {
+			type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
+			siteId,
+			query,
+			page,
+			totalProducts,
+			products: data,
+		} );
+	} ).catch( error => {
+		dispatch( setError( siteId, fetchAction, error ) );
+		dispatch( {
+			type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE,
+			siteId,
+			query,
+			page,
+			error,
+		} );
+	} );
+};
+
+export function clearProductSearch( siteId ) {
+	return {
+		type: WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
+		siteId,
+	};
+}

@@ -7,6 +7,10 @@ import {
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 	WOOCOMMERCE_PRODUCT_UPDATED,
+	WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
+	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
+	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
+	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 
 export default createReducer( {}, {
@@ -14,6 +18,10 @@ export default createReducer( {}, {
 	[ WOOCOMMERCE_PRODUCTS_REQUEST ]: productsRequest,
 	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: productsRequestSuccess,
 	[ WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE ]: productsRequestFailure,
+	[ WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR ]: productsSearchClear,
+	[ WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST ]: productsSearchRequest,
+	[ WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS ]: productsSearchRequestSuccess,
+	[ WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE ]: productsSearchRequestFailure,
 } );
 
 function productUpdated( state, action ) {
@@ -67,6 +75,47 @@ export function productsRequestFailure( state, action ) {
 	const prevState = state || {};
 	const isLoading = setLoading( prevState, action.page, false );
 	return { ...prevState, isLoading };
+}
+
+export function productsSearchRequest( state, action ) {
+	const prevState = state || {};
+	const prevSearch = prevState.search || {};
+	const isLoading = setLoading( prevSearch, action.page, true );
+	return { ...prevState, search: { ...prevSearch, isLoading, query: action.query } };
+}
+
+export function productsSearchRequestFailure( state, action ) {
+	const prevState = state || {};
+	const prevSearch = prevState.search || {};
+	const isLoading = setLoading( prevSearch, action.page, false );
+	return { ...prevState, search: { ...prevSearch, isLoading, query: action.query } };
+}
+
+export function productsSearchRequestSuccess( state, action ) {
+	const prevState = state || {};
+	const prevSearch = prevState.search || {};
+	const isLoading = setLoading( prevSearch, action.page, false );
+
+	let products = prevState.products && [ ...prevState.products ] || [];
+	action.products.forEach( function( product ) {
+		products = updateCachedProduct( products, product );
+	} );
+
+	return { ...prevState,
+		products,
+		search: { ...prevSearch,
+			isLoading,
+			query: action.query,
+			totalProducts: action.totalProducts,
+		}
+	};
+}
+
+export function productsSearchClear( state ) {
+	const prevState = state || {};
+	return { ...prevState,
+		search: {},
+	};
 }
 
 function setLoading( state, page, newStatus ) {
