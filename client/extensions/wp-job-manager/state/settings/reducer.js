@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
+import { itemsSchema } from './schema';
 import {
 	WP_JOB_MANAGER_DISPLAY_SETTINGS,
 	WP_JOB_MANAGER_ENABLE_SETTINGS,
@@ -31,7 +31,7 @@ export const fetching = createReducer( {}, {
  */
 export const items = createReducer( {}, {
 	[ WP_JOB_MANAGER_DISPLAY_SETTINGS ]: ( state, { siteId, data } ) => ( { ...state, [ siteId ]: data } ),
-} );
+}, itemsSchema );
 
 export default combineReducers( {
 	fetching,
