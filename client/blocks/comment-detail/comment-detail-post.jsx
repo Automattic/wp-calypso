@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
+import { decodeEntities } from 'lib/formatting';
 
 export const CommentDetailPost = ( {
 	parentCommentAuthorAvatarUrl,
@@ -51,7 +52,7 @@ export const CommentDetailPost = ( {
 					</span>
 				}
 				<a href={ postUrl }>
-					{ postTitle }
+					{ postTitle || translate( 'Untitled' ) }
 				</a>
 			</div>
 		</div>
