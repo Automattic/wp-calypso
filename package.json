@@ -155,7 +155,7 @@
     "npm": "3.10.10"
   },
   "scripts": {
-    "preanalyze-bundles": "cross-env WEBPACK_OUTPUT_JSON=1 CALYPSO_ENV=production npm run -s build",
+    "preanalyze-bundles": "cross-env WEBPACK_OUTPUT_JSON=1 CALYPSO_ENV=production NODE_ARGS=\"--max_old_space_size=8192\" npm run -s build",
     "analyze-bundles": "webpack-bundle-analyzer stats.json public -p 9898",
     "autoprefixer": "postcss -r --use autoprefixer --autoprefixer.browsers \"last 2 versions, > 1%, Safari >= 8, iOS >= 8, Firefox ESR, Opera 12.1\"",
     "prebuild": "npm run -s install-if-needed",
@@ -179,7 +179,7 @@
     "build-docker": "docker build -t wp-calypso .",
     "prebuild-server": "mkdirp build",
     "build-server": "npm run -s env -- webpack --display-error-details --config webpack.config.node.js",
-    "bundle": "npm run -s env -- node server/bundler/bin/bundler.js",
+    "bundle": "npm run -s env -- cross-env node $NODE_ARGS server/bundler/bin/bundler.js",
     "clean": "npm run -s clean:build && npm run -s clean:devdocs && npm run -s clean:public",
     "clean:build": "npm run -s rm -- build && npm run -s rm -- server/bundler .json && npm run -s rm -- .babel-cache",
     "clean:devdocs": "npm run -s rm -- server/devdocs/search-index.js && npm run -s rm -- server/devdocs/proptypes-index.json && npm run -s rm -- server/devdocs/components-usage-stats.json",
