@@ -103,32 +103,12 @@ export const replyComment = ( commentText, siteId, postId, parentCommentId ) => 
  * @param {Number} commentId comment identifier
  * @returns {Function} think that likes a comment
  */
-export function likeComment( siteId, postId, commentId ) {
-	return ( dispatch ) => {
-		// optimistic update
-		dispatch( {
-			type: COMMENTS_LIKE,
-			siteId,
-			postId,
-			commentId
-		} );
-
-		// optimistic revert on error, return here for test more conveniently
-		return wpcom.site( siteId ).comment( commentId ).like().add( { source: 'reader' } ).then( ( data ) => dispatch( {
-			type: COMMENTS_LIKE_UPDATE,
-			siteId,
-			postId,
-			commentId,
-			iLike: data.i_like,
-			likeCount: data.like_count
-		} ) ).catch( () => dispatch( {
-			type: COMMENTS_UNLIKE,
-			siteId,
-			postId,
-			commentId
-		} ) );
-	};
-}
+export const likeComment = ( siteId, postId, commentId ) => ( {
+	type: COMMENTS_LIKE,
+	siteId,
+	postId,
+	commentId
+} );
 
 /***
  * Creates a thunk that unlikes a comment
