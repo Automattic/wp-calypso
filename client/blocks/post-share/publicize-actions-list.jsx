@@ -31,6 +31,7 @@ import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions
 import analytics from 'lib/analytics';
 import SharingPreviewModal from './sharing-preview-modal';
 import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
+import Notice from 'components/notice';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {
@@ -180,6 +181,7 @@ class PublicizeActionsList extends PureComponent {
 			hasRepublicizeSchedulingFeature,
 			publishedActions,
 			scheduledActions,
+			translate,
 		} = this.props;
 
 		if ( this.state.selectedShareTab === PUBLISHED ) {
@@ -192,6 +194,13 @@ class PublicizeActionsList extends PureComponent {
 
 		if ( hasRepublicizeFeature && ! hasRepublicizeSchedulingFeature ) {
 			return <UpgradeToPremiumNudge { ...this.props } />;
+		}
+		if ( scheduledActions.length === 0 ) {
+			return <Notice
+				status="is-info"
+				showDismiss={ false }
+				text={ translate( 'You can schedule social media actions with the calendar above.' ) }
+			/>;
 		}
 
 		return (
