@@ -19,6 +19,7 @@ const activityLogRequest = ( { dispatch }, action ) => {
 		apiVersion: '1',
 		method: 'GET',
 		path: `/sites/${ action.siteId }/activity`,
+		query: { number: 1000 },
 	}, action ) );
 };
 
