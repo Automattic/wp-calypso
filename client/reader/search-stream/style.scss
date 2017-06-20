@@ -390,6 +390,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
+.search-stream__results.is-two-columns .reader-subscription-list-item__byline {
+	min-width: 180px;
+	max-width: 180px;
+}
+
 .search-stream__single-column-results .reader-subscription-list-item__options {
 	align-items: flex-end;
 	display: flex;
