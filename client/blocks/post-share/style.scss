@@ -284,6 +284,11 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
 .post-share__share-combo {
 	display: flex;
+	margin-left: 8px;
+
+	.post-share__share-button {
+		margin-left: 0px;
+	}
 }
 
 .post-share .post-share__footer-nav {
