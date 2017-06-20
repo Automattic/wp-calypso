@@ -20,42 +20,10 @@ This is saved on a per-site basis, either as "LOADING" (when requesting the curr
 	"currencies": "LOADING",
 	// or
 	"currencies": [
-		{
-			code: "AF",
-			name: "Africa",
-			countries: [
-				{
-					code: "SA",
-					name: "South Africa",
-					states: [],
-				},
-				{
-					code: "EG",
-					name: "Egypt",
-					states: [],
-				},
-				{ ... }
-			],
-		},
-		{
-			code: 'NA',
-			name: "North America",
-			countries: [
-				{
-					code: "US",
-					name: "United States",
-					states: [
-						{
-							code: "AL",
-							name: "Alabama",
-						},
-						{ ... }
-					],
-				},
-				{ ... }
-			],
-		},
-		{ ... }
+		{ code: 'Three letter key', name: 'Country currency', symbol: 'currency html symbol' },
+		{ code: 'AED', name: 'United Arab Emirates dirham', symbol: '&#x62f;.&#x625;' },
+		{ code: 'AFN', name: 'Afghan afghani', symbol: '&#x60b;' },
+		...
 	],
 }
 ```

@@ -40,7 +40,7 @@ export const areCurrenciesLoading = ( state, siteId = getSelectedSiteId( state )
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} A list of states in the given country, represented by { code, name } pairs. Sorted alphabetically by name.
+ * @return {Array} A list of currencies, represented by { code, name, symbol }.
  */
 export const getCurrencies = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areCurrenciesLoaded( state, siteId ) ) {
