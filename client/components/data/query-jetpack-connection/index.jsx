@@ -12,13 +12,15 @@ import { requestJetpackConnectionStatus } from 'state/jetpack/connection/actions
 
 class QueryJetpackConnection extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		requestingJetpackConnectionStatus: PropTypes.bool,
 		requestJetpackConnectionStatus: PropTypes.func
 	};
 
 	componentWillMount() {
-		this.request( this.props );
+		if ( this.props.siteId !== null ) {
+			this.request( this.props );
+		}
 	}
 
 	componentWillReceiveProps( nextProps ) {

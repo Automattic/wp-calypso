@@ -19,6 +19,10 @@ import {
 	JETPACK_MODULES_REQUEST_SUCCESS
 } from 'state/action-types';
 import wp from 'lib/wp';
+import config from 'config';
+import restApiClient from 'lib/jetpack-rest-api-client';
+
+const isJetpackAdminPage = config( 'env_id' ) === 'jetpack';
 
 export const activateModule = ( siteId, moduleSlug, silent = false ) => {
 	return ( dispatch ) => {
@@ -100,11 +104,11 @@ export const fetchModuleList = ( siteId ) => {
 			type: JETPACK_MODULES_REQUEST,
 			siteId
 		} );
-
-		return wp.undocumented().getJetpackModules( siteId )
-			.then( ( { data } ) => {
+		const method = isJetpackAdminPage ? restApiClient.fetchModules : wp.undocumented().getJetpackModules
+		return method( siteId )
+			.then( ( data ) => {
 				const modules = mapValues(
-					data,
+					isJetpackAdminPage ? data : data.data,
 					( module ) => ( {
 						active: module.activated,
 						...omit( module, 'activated' )
