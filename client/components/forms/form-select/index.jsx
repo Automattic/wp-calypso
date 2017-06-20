@@ -17,10 +17,8 @@ const FormSelect = React.createClass( {
 			'is-error': isError,
 		} );
 
-		const ref = inputRef ? { ref: inputRef } : {};
-
 		return (
-			<select { ...props } { ...ref } className={ classes }>
+			<select { ...props } ref={ inputRef } className={ classes }>
 				{ this.props.children }
 			</select>
 		);
