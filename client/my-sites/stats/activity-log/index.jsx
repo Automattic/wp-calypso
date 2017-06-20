@@ -53,9 +53,13 @@ class ActivityLog extends Component {
 		restoreProgress: PropTypes.shape( {
 			percent: PropTypes.number.isRequired,
 			status: PropTypes.oneOf( [
+				'aborted',
+				'fail',
+				'finished',
 				'queued',
 				'running',
 				'success',
+				'success-with-errors',
 			] ).isRequired,
 		} ),
 		rewindStatusError: PropTypes.shape( {
