@@ -27,9 +27,9 @@ export const fetchOrders = ( siteId, page ) => ( dispatch, getState ) => {
 	};
 	dispatch( fetchAction );
 
-	return request( siteId ).get( `orders?page=${ page }` ).then( ( data ) => {
-		// @todo Update request to get X-WP-TotalPages
-		const totalPages = 3;
+	return request( siteId ).getWithHeaders( `orders?page=${ page }&per_page=100` ).then( ( response ) => {
+		const { headers, data } = response;
+		const totalPages = headers[ 'X-WP-TotalPages' ];
 		dispatch( {
 			type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 			siteId,
