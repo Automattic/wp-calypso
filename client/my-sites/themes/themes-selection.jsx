@@ -48,7 +48,7 @@ class ThemesSelection extends Component {
 		isRequesting: PropTypes.bool,
 		isLastPage: PropTypes.bool,
 		isThemeActive: PropTypes.func,
-		isThemePurchased: PropTypes.func,
+		hidePremiumThemePrice: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
 		placeholderCount: PropTypes.number
 	}
@@ -155,7 +155,7 @@ class ThemesSelection extends Component {
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
 					isActive={ this.props.isThemeActive }
-					isPurchased={ this.props.isThemePurchased }
+					isPurchased={ this.props.hidePremiumThemePrice }
 					isInstalling={ this.props.isInstallingTheme }
 					loading={ this.props.isRequesting }
 					emptyContent={ this.props.emptyContent }
@@ -205,7 +205,7 @@ const ConnectedThemesSelection = connect(
 			// and `<QuerySitePlans />` components, respectively. At the time of implementation, neither of them
 			// provides caching, and both are already being rendered by a parent component. So to avoid
 			// redundant AJAX requests, we're not rendering these query components locally.
-			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId ),
+			hidePremiumThemePrice: themeId => isJetpack || isPremiumThemeAvailable( state, themeId, siteId ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
 		};
 	},

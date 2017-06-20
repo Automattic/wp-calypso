@@ -39,24 +39,41 @@ import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
-		label: ( state, siteId ) => config.isEnabled( 'jetpack/pijp' ) && isJetpackSite( state, siteId )
-			? i18n.translate( 'Upgrade to activate', {
-				comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
-			} )
-			: i18n.translate( 'Purchase', {
-				context: 'verb'
-			} ),
-		extendedLabel: ( state, siteId ) => config.isEnabled( 'jetpack/pijp' ) && isJetpackSite( state, siteId )
-			? i18n.translate( 'Upgrade to activate', {
-				comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
-			} )
-			: i18n.translate( 'Purchase this design' ),
+		label: i18n.translate( 'Purchase', {
+			context: 'verb'
+		} ),
+		extendedLabel: i18n.translate( 'Purchase this design' ),
 		header: i18n.translate( 'Purchase on:', {
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
 		getUrl: getThemePurchaseUrl,
 		hideForTheme: ( state, themeId, siteId ) => (
+			( config.isEnabled( 'jetpack/pijp' ) && isJetpackSite( state, siteId ) ) ||
+			! getCurrentUser( state ) ||
+			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
+			! isThemePremium( state, themeId ) ||
+			isThemeActive( state, themeId, siteId ) ||
+			isPremiumThemeAvailable( state, themeId, siteId )
+		)
+	}
+	: {};
+
+const upgradePlan = config.isEnabled( 'upgrades/checkout' )
+	? {
+		label: i18n.translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
+		} ),
+		extendedLabel: i18n.translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
+		} ),
+		header: i18n.translate( 'Upgrade on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to upgrade a plan'
+		} ),
+		getUrl: getThemePurchaseUrl,
+		hideForTheme: ( state, themeId, siteId ) => (
+			( config.isEnabled( 'jetpack/pijp' ) && ! isJetpackSite( state, siteId ) ) ||
 			! getCurrentUser( state ) ||
 			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
 			! isThemePremium( state, themeId ) ||
@@ -73,10 +90,10 @@ const activate = {
 	action: activateAction,
 	hideForTheme: ( state, themeId, siteId ) => (
 		! getCurrentUser( state ) ||
-		( config.isEnabled( 'jetpack/pijp' ) && isJetpackSiteMultiSite( state, siteId ) ) ||
+		isJetpackSiteMultiSite( state, siteId ) ||
 		isThemeActive( state, themeId, siteId ) ||
 		( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-		( config.isEnabled( 'jetpack/pijp' ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
+		! isThemeAvailableOnJetpackSite( state, themeId, siteId )
 	)
 };
 
@@ -173,6 +190,7 @@ const ALL_THEME_OPTIONS = {
 	customize,
 	preview,
 	purchase,
+	upgradePlan,
 	activate,
 	tryandcustomize,
 	deleteTheme,
@@ -198,21 +216,12 @@ export const connectOptions = connect(
 		return mapValues( ALL_THEME_OPTIONS, option => Object.assign(
 			{},
 			option,
-			( config.isEnabled( 'jetpack/pijp' ) && ( 'function' === typeof option.label ) )
-				? { label: ( option.label )( state, siteId ) }
-				: { label: option.label },
-			( config.isEnabled( 'jetpack/pijp' ) && ( 'function' === typeof option.extendedLabel ) )
-				? { extendedLabel: ( option.extendedLabel )( state, siteId ) }
-				: { extendedLabel: option.extendedLabel },
 			option.getUrl
 				? { getUrl: mapGetUrl( option.getUrl ) }
 				: {},
 			option.hideForTheme
 				? { hideForTheme: mapHideForTheme( option.hideForTheme ) }
-				: {},
-			{
-				isJetpack: config.isEnabled( 'jetpack/pijp' ) && isJetpackSite( state, siteId )
-			}
+				: {}
 		) );
 	},
 	( dispatch, { siteId, source = 'unknown' } ) => {

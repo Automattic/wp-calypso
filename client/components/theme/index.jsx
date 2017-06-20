@@ -13,7 +13,6 @@ import Gridicon from 'gridicons';
 import Card from 'components/card';
 import ThemeMoreButton from './more-button';
 import PulsingDot from 'components/pulsing-dot';
-import config from 'config';
 
 /**
  * Component
@@ -43,8 +42,6 @@ const Theme = React.createClass( {
 		installing: React.PropTypes.bool,
 		// If true, render a placeholder
 		isPlaceholder: React.PropTypes.bool,
-		// If true, this is a Jetpack site
-		isJetpack: React.PropTypes.bool,
 		// URL the screenshot link points to
 		screenshotClickUrl: React.PropTypes.string,
 		// Called when theme screenshot is clicked
@@ -80,7 +77,6 @@ const Theme = React.createClass( {
 	getDefaultProps() {
 		return ( {
 			isPlaceholder: false,
-			isJetpack: false,
 			buttonContents: {},
 			onMoreButtonClick: noop,
 			actionLabel: '',
@@ -177,10 +173,7 @@ const Theme = React.createClass( {
 							} ) }</span>
 						}
 						{
-							config.isEnabled( 'jetpack/pijp' )
-							? ! this.props.isJetpack && price && ! purchased &&
-								<span className="theme-badge__price">{ price }</span>
-							: price && ! purchased &&
+							price && ! purchased &&
 								<span className="theme-badge__price">{ price }</span>
 						}
 						{ ! isEmpty( this.props.buttonContents )
