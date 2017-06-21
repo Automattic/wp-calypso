@@ -1,6 +1,8 @@
 /**
  * Internal dependencies
  */
+import mine from './mine';
 import newLike from './new';
 
-export default newLike;
+export mine;
+export newLike;

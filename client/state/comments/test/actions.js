@@ -126,65 +126,15 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#unlikeComment()', () => {
-		it( 'should dispatch correct actions when request fails', () => {
-			const unlikeThunk = unlikeComment( 1, 1, 1 );
-			const dispatchSpy = sinon.spy();
+		it( 'should return a comment unlike action', () => {
+			const action = unlikeComment( SITE_ID, POST_ID, 1 );
 
-			const apiPromise = unlikeThunk( dispatchSpy );
-
-			expect( dispatchSpy ).to.be.calledWith( {
+			expect( action ).to.be.eql( {
 				type: COMMENTS_UNLIKE,
-				siteId: 1,
-				postId: 1,
+				siteId: SITE_ID,
+				postId: POST_ID,
 				commentId: 1
 			} );
-
-			// since we didn't mock the request and we have disabled requests
-			// we expect this to fail an revert the optimistic update
-			return apiPromise.then( () => {
-				expect( dispatchSpy ).to.be.calledWith( {
-					type: COMMENTS_LIKE,
-					siteId: 1,
-					postId: 1,
-					commentId: 1
-				} );
-			} );
 		} );
-
-		it( 'should dispatch correct action when request succeed', () => {
-			const dispatchSpy = sinon.spy();
-
-			nock( API_DOMAIN )
-				.post( '/rest/v1.1/sites/1/comments/1/likes/mine/delete' )
-				.query( { source: 'reader' } )
-				.reply( 200, {
-					success: true,
-					i_like: false,
-					like_count: 122
-				} );
-
-			const unlikeThunk = unlikeComment( 1, 1, 1 );
-			const apiPromise = unlikeThunk( dispatchSpy );
-
-			expect( dispatchSpy ).to.be.calledWith( {
-				type: COMMENTS_UNLIKE,
-				siteId: 1,
-				postId: 1,
-				commentId: 1
-			} );
-
-			// since we didn't mock the request and we have disabled requests
-			// we expect this to fail an revert the optimistic update
-			return apiPromise.then( () => {
-				expect( dispatchSpy ).to.be.calledWith( {
-					type: COMMENTS_LIKE_UPDATE,
-					siteId: 1,
-					postId: 1,
-					commentId: 1,
-					iLike: false,
-					likeCount: 122
-				} );
-			} );
-		} );
-	} ); // unlikeComment
+	} );
 } );

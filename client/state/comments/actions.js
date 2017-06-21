@@ -117,32 +117,12 @@ export const likeComment = ( siteId, postId, commentId ) => ( {
  * @param {Number} commentId comment identifier
  * @returns {Function} think that unlikes a comment
  */
-export function unlikeComment( siteId, postId, commentId ) {
-	return ( dispatch ) => {
-		// optimistic update
-		dispatch( {
-			type: COMMENTS_UNLIKE,
-			siteId,
-			postId,
-			commentId
-		} );
-
-		// optimistic revert on error, return here for test more conveniently
-		return wpcom.site( siteId ).comment( commentId ).like().del( { source: 'reader' } ).then( ( data ) => dispatch( {
-			type: COMMENTS_LIKE_UPDATE,
-			siteId,
-			postId,
-			commentId,
-			iLike: data.i_like,
-			likeCount: data.like_count
-		} ) ).catch( () => dispatch( {
-			type: COMMENTS_LIKE,
-			siteId,
-			postId,
-			commentId
-		} ) );
-	};
-}
+export const unlikeComment = ( siteId, postId, commentId ) => ( {
+	type: COMMENTS_UNLIKE,
+	siteId,
+	postId,
+	commentId
+} );
 
 export function changeCommentStatus( siteId, postId, commentId, status ) {
 	return dispatch => {
