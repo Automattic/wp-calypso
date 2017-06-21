@@ -13,10 +13,6 @@
 	margin-bottom: 0;
 }
 
-.is-reader-page .search-stream .reader-post-card.card {
-	width: 100%;
-}
-
 .is-reader-page .search-stream__fixed-area {
 	background-color: $white;
 	position: fixed;
@@ -149,7 +145,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 // Post recommendations in Search
 .is-reader-page .search-stream .reader__content {
 	display: flex;
-	flex-flow: wrap;
+	flex-flow: row wrap;
 }
 
 .is-reader-page .search-stream__recommendation-list-item {
@@ -411,6 +407,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .search-stream__results.is-two-columns .reader__content,
 .search-stream .search-stream__single-column-results .reader__content {
 	display: inline;
+}
+
+.is-reader-page .search-stream .reader-post-card.card {
+	flex-basis: 100%; // Override the 50% flex-basis for post recommendations
 }
 
 .search-stream__results.is-two-columns .search-stream__post-results {
