@@ -10,7 +10,6 @@ import {
 	REWIND_RESTORE,
 } from 'state/action-types';
 import {
-	rewindCompleteRestore,
 	rewindRestoreUpdateError,
 	getRewindRestoreProgress,
 } from 'state/activity-log/actions';
