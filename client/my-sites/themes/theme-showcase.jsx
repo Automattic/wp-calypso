@@ -268,7 +268,6 @@ const ThemeShowcase = React.createClass( {
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	isLoggedIn: !! getCurrentUserId( state ),
 	siteSlug: getSiteSlug( state, siteId ),
-	isJetpack: false,
 	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},

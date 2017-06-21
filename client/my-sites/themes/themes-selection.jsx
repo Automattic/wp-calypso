@@ -148,7 +148,6 @@ class ThemesSelection extends Component {
 					count={ themesCount }
 				/>
 				<ThemesList
-					isJetpack={ config.isEnabled( 'jetpack/pijp' ) && this.props.isJetpack }
 					themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
@@ -194,7 +193,6 @@ const ConnectedThemesSelection = connect(
 			query,
 			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			isJetpack: isJetpack,
 			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
 			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),

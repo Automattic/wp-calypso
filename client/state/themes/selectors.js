@@ -410,7 +410,6 @@ export function getThemeHelpUrl( state, themeId, siteId ) {
 
 /**
  * Returns the URL for purchasing the given theme for the given site.
- * If the site is a Jetpack site, return the plans URL.
  *
  * @param  {Object}  state   Global state tree
  * @param  {String}  themeId Theme ID
@@ -420,9 +419,6 @@ export function getThemeHelpUrl( state, themeId, siteId ) {
 export function getThemePurchaseUrl( state, themeId, siteId ) {
 	if ( ! isThemePremium( state, themeId ) ) {
 		return null;
-	}
-	if ( config.isEnabled( 'jetpack/pijp' ) && isJetpackSite( state, siteId ) ) {
-		return `/plans/${ getSiteSlug( state, siteId ) }`;
 	}
 	return `/checkout/${ getSiteSlug( state, siteId ) }/theme:${ themeId }`;
 }
@@ -697,4 +693,15 @@ export function shouldFilterWpcomThemes( state, siteId ) {
 		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) &&
 		! isJetpackSiteMultiSite( state, siteId )
 	);
+}
+
+/**
+ * Returns the URL for purchasing a plan for the current site.
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  Site ID for which to buy the theme
+ * @return {?String}         Plan purchase URL
+ */
+export function getPlanUpgradeUrl( state, siteId ) {
+	return '/plans/' + getSiteSlug( state, siteId );
 }

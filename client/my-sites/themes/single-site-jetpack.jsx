@@ -42,7 +42,7 @@ const ConnectedThemesSelection = connectOptions(
 				getOptions={ function( theme ) {
 					return pickBy(
 						addTracking( props.options ),
-						( option, key ) => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
+						option => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
 					);
 				} }
 			/>
@@ -115,7 +115,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 							<ConnectedThemesSelection
 								origin="wpcom"
 								defaultOption={ 'activate' }
-								secondaryOption={ config.isEnabled( 'jetpack/pijp' ) && hasUnlimitedPremiumThemes ? 'tryandcustomize' : '' }
+								secondaryOption={ 'tryandcustomize' }
 								search={ search }
 								tier={ tier }
 								filter={ filter }
