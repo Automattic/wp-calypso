@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { isObject, isString } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +21,7 @@ describe( 'actions', () => {
 			const id2 = generateProductCategoryId();
 			const id3 = generateProductCategoryId();
 
-			expect( typeof id1 ).to.equal( 'string' );
+			expect( isObject( id1 ) ).to.be.true;
 			expect( id1 ).to.not.equal( id2 );
 			expect( id1 ).to.not.equal( id3 );
 			expect( id2 ).to.not.equal( id3 );
@@ -32,8 +33,8 @@ describe( 'actions', () => {
 			const action = editProductCategory( siteId, null, { name: 'Cat 1' } );
 
 			expect( action.category ).to.exist;
-			expect( typeof action.category.id ).to.equal( 'object' );
-			expect( typeof action.category.id.placeholder ).to.equal( 'string' );
+			expect( isObject( action.category.id ) ).to.be.true;
+			expect( isString( action.category.id.placeholder ) ).to.be.true;
 		} );
 
 		it( 'should not create a placeholder if category is passed in', () => {
