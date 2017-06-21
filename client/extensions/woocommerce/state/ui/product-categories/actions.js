@@ -13,10 +13,10 @@ import {
 /**
  * Generates a new product category placeholder ID
  * This is used for new creates.
- * @return {String} A new unique ID.
+ * @return {Object} A new unique placeholder ID.
  */
 export function generateProductCategoryId() {
-	return uniqueId( 'productCategory_' );
+	return { placeholder: uniqueId( 'productCategory_' ) };
 }
 
 /**
@@ -31,7 +31,7 @@ export function editProductCategory( siteId, category, data ) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 		siteId,
-		category: category || { id: { placeholder: generateProductCategoryId() } },
+		category: category || { id: generateProductCategoryId() },
 		data,
 	};
 }
