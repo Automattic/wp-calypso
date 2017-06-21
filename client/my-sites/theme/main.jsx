@@ -441,13 +441,9 @@ const ThemeSheet = React.createClass( {
 
 	getDefaultOptionLabel() {
 		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = this.props;
-		if ( isLoggedIn && ! isActive ) {
+		if ( isLoggedIn && ! isActive && ! isJetpack ) {
 			if ( isPremium && ! isPurchased ) { // purchase
-				return config.isEnabled( 'jetpack/pijp' ) && isJetpack
-					? i18n.translate( 'Upgrade to activate', {
-						comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
-					} )
-					: i18n.translate( 'Pick this design' );
+				return i18n.translate( 'Pick this design' );
 			} // else: activate
 			return i18n.translate( 'Activate this design' );
 		}
