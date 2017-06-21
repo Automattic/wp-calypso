@@ -2,9 +2,14 @@ open Js;
 
 let component = ReasonReact.statelessComponent "ReasonableDemo";
 
-let text = ReasonReact.stringToElement;
+type actions =
+  | Counter_Increment
+  | Counter_Decrement
+  | Counter_Add
+  [@@bs.deriving {accessors: accessors}];
 
 let make ::name ::count ::onClick _children => {
+  let text = ReasonReact.stringToElement;
   let clickIt _event _state _self => onClick () [@bs];
   {
     ...component,
@@ -30,9 +35,9 @@ let counter state::(state: undefined int) action => {
     | None => 0
     };
   switch action##_type {
-  | "RD_INC" => prev + 1
-  | _ => prev
+    | Counter_Increment => prev + 1
+    | Counter_Decrement => prev - 1
+    | Counter_Add => prev + action##amount
   }
 };
 
-let inc () => {"_type": "RD_INC"};
