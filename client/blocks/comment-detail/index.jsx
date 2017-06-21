@@ -3,8 +3,9 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, noop } from 'lodash';
+import { get, isUndefined, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -68,8 +69,10 @@ export class CommentDetail extends Component {
 	}
 
 	deleteCommentPermanently = () => {
-		const { commentId, deleteCommentPermanently } = this.props;
-		deleteCommentPermanently( commentId );
+		const { commentId, deleteCommentPermanently, translate } = this.props;
+		if ( isUndefined( window ) || window.confirm( translate( 'Delete this comment permanently?' ) ) ) {
+			deleteCommentPermanently( commentId );
+		}
 	}
 
 	edit = () => noop;
@@ -220,4 +223,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	} );
 };
 
-export default connect( mapStateToProps )( CommentDetail );
+export default connect( mapStateToProps )( localize( CommentDetail ) );
