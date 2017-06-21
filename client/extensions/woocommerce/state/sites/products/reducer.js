@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { reject } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
@@ -70,7 +75,7 @@ export function productsRequestSuccess( state, action ) {
 export function productsDeleteSuccess( state, action ) {
 	const prevState = state || {};
 	const prevProducts = prevState.products || [];
-	const newProducts = prevProducts.filter( p => p.id !== action.data.id );
+	const newProducts = reject( prevProducts, { id: action.data.id } );
 	return { ...prevState,
 		products: newProducts,
 	};
