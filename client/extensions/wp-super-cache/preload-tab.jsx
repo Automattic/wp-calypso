@@ -24,7 +24,7 @@ import WrapSettingsForm from './wrap-settings-form';
 import { cancelPreloadCache, preloadCache } from './state/cache/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isPreloadingCache } from './state/cache/selectors';
-import { getNotices } from './state/notices/selectors';
+import { getStatus } from './state/status/selectors';
 
 /**
  * Render cache preload interval number input
@@ -294,7 +294,7 @@ const connectComponent = connect(
 
 		return {
 			isPreloading: isPreloadingCache( state, siteId ),
-			notices: getNotices( state, siteId ),
+			notices: getStatus( state, siteId ),
 		};
 	},
 	{

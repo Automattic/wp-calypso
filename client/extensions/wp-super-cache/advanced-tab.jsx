@@ -21,7 +21,7 @@ import QueryStatus from './data/query-status';
 import RejectedUserAgents from './rejected-user-agents';
 import WrapSettingsForm from './wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getNotices } from './state/notices/selectors';
+import { getStatus } from './state/status/selectors';
 
 const AdvancedTab = ( {
 	fields: {
@@ -54,7 +54,7 @@ const AdvancedTab = ( {
 const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const notices = getNotices( state, siteId );
+		const notices = getStatus( state, siteId );
 
 		return { notices };
 	}

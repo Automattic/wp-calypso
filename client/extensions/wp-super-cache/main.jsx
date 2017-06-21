@@ -19,7 +19,7 @@ import PreloadTab from './preload-tab';
 import QueryStatus from './data/query-status';
 import { Tabs } from './constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getNotices } from './state/notices/selectors';
+import { getStatus } from './state/status/selectors';
 
 class WPSuperCache extends Component {
 	static propTypes = {
@@ -84,7 +84,7 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			notices: getNotices( state, siteId ),
+			notices: getStatus( state, siteId ),
 			siteId,
 		};
 	}

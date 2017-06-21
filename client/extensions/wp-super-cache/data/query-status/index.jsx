@@ -7,12 +7,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingNotices } from '../../state/notices/selectors';
-import { requestNotices } from '../../state/notices/actions';
+import { isRequestingStatus } from '../../state/status/selectors';
+import { requestStatus } from '../../state/status/actions';
 
 class QueryStatus extends Component {
 	componentWillMount() {
-		this.requestNotices( this.props );
+		this.requestStatus( this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -22,14 +22,14 @@ class QueryStatus extends Component {
 			return;
 		}
 
-		this.requestNotices( nextProps );
+		this.requestStatus( nextProps );
 	}
 
-	requestNotices( props ) {
-		const { requestingNotices, siteId } = props;
+	requestStatus( props ) {
+		const { requestingStatus, siteId } = props;
 
-		if ( ! requestingNotices && siteId ) {
-			props.requestNotices( siteId );
+		if ( ! requestingStatus && siteId ) {
+			props.requestStatus( siteId );
 		}
 	}
 
@@ -40,15 +40,15 @@ class QueryStatus extends Component {
 
 QueryStatus.propTypes = {
 	siteId: PropTypes.number,
-	requestingNotices: PropTypes.bool,
-	requestNotices: PropTypes.func,
+	requestingStatus: PropTypes.bool,
+	requestStatus: PropTypes.func,
 };
 
 export default connect(
 	( state, { siteId } ) => {
 		return {
-			requestingNotices: isRequestingNotices( state, siteId ),
+			requestingStatus: isRequestingStatus( state, siteId ),
 		};
 	},
-	{ requestNotices }
+	{ requestStatus }
 )( QueryStatus );

@@ -10,7 +10,7 @@ import { get } from 'lodash';
  * @param  {Number}  siteId Site ID
  * @return {Boolean} Whether notices are being requested
  */
-export function isRequestingNotices( state, siteId ) {
+export function isRequestingStatus( state, siteId ) {
 	return get( state, [ 'extensions', 'wpSuperCache', 'notices', 'requesting', siteId ], false );
 }
 
@@ -21,6 +21,6 @@ export function isRequestingNotices( state, siteId ) {
  * @param  {Number} siteId Site ID
  * @return {Object} Notices
  */
-export function getNotices( state, siteId ) {
+export function getStatus( state, siteId ) {
 	return get( state, [ 'extensions', 'wpSuperCache', 'notices', 'items', siteId ], {} );
 }

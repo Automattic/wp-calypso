@@ -21,8 +21,8 @@ import {
 	WP_SUPER_CACHE_UPDATE_SETTINGS,
 } from '../action-types';
 import { normalizeSettings, sanitizeSettings } from './utils';
-import { requestNotices } from '../notices/actions';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { requestStatus } from '../notices/actions';
+import { errorNotice, removeNotice, successNotice } from 'state/status/actions';
 import { getSiteTitle } from 'state/sites/selectors';
 
 /**
@@ -91,7 +91,7 @@ export const saveSettings = ( siteId, settings ) => {
 			.then( () => {
 				dispatch( updateSettings( siteId, settings ) );
 				dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS, siteId } );
-				dispatch( requestNotices( siteId ) );
+				dispatch( requestStatus( siteId ) );
 			} )
 			.catch( error => {
 				dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE, siteId, error } );

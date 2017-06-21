@@ -9,9 +9,9 @@ import deepFreeze from 'deep-freeze';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	WP_SUPER_CACHE_RECEIVE_NOTICES,
-	WP_SUPER_CACHE_REQUEST_NOTICES,
-	WP_SUPER_CACHE_REQUEST_NOTICES_FAILURE,
+	WP_SUPER_CACHE_RECEIVE_STATUS,
+	WP_SUPER_CACHE_REQUEST_STATUS,
+	WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
 } from '../../action-types';
 import {
 	SERIALIZE,
@@ -42,7 +42,7 @@ describe( 'reducer', () => {
 
 		it( 'should set request to false if notices have been received', () => {
 			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_RECEIVE_NOTICES,
+				type: WP_SUPER_CACHE_RECEIVE_STATUS,
 				siteId: primarySiteId,
 			} );
 
@@ -53,7 +53,7 @@ describe( 'reducer', () => {
 
 		it( 'should set request to true if request in progress', () => {
 			const state = reducer( undefined, {
-				type: WP_SUPER_CACHE_REQUEST_NOTICES,
+				type: WP_SUPER_CACHE_REQUEST_STATUS,
 				siteId: primarySiteId,
 			} );
 
@@ -64,7 +64,7 @@ describe( 'reducer', () => {
 
 		it( 'should accumulate requesting values', () => {
 			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_REQUEST_NOTICES,
+				type: WP_SUPER_CACHE_REQUEST_STATUS,
 				siteId: secondarySiteId,
 			} );
 
@@ -76,7 +76,7 @@ describe( 'reducer', () => {
 
 		it( 'should set request to false if request finishes with failure', () => {
 			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_REQUEST_NOTICES_FAILURE,
+				type: WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
 				siteId: primarySiteId,
 			} );
 
@@ -129,7 +129,7 @@ describe( 'reducer', () => {
 
 		it( 'should index notices by site ID', () => {
 			const state = reducer( undefined, {
-				type: WP_SUPER_CACHE_RECEIVE_NOTICES,
+				type: WP_SUPER_CACHE_RECEIVE_STATUS,
 				siteId: primarySiteId,
 				notices: primaryNotices,
 			} );
@@ -141,7 +141,7 @@ describe( 'reducer', () => {
 
 		it( 'should accumulate notices', () => {
 			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_RECEIVE_NOTICES,
+				type: WP_SUPER_CACHE_RECEIVE_STATUS,
 				siteId: secondarySiteId,
 				notices: secondaryNotices,
 			} );
@@ -154,7 +154,7 @@ describe( 'reducer', () => {
 
 		it( 'should override previous notices of same site ID', () => {
 			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_RECEIVE_NOTICES,
+				type: WP_SUPER_CACHE_RECEIVE_STATUS,
 				siteId: primarySiteId,
 				notices: secondaryNotices,
 			} );
@@ -176,7 +176,7 @@ describe( 'reducer', () => {
 				},
 			};
 			const state = reducer( previousState, {
-				type: WP_SUPER_CACHE_RECEIVE_NOTICES,
+				type: WP_SUPER_CACHE_RECEIVE_STATUS,
 				siteId: primarySiteId,
 				notices: newNotices,
 			} );

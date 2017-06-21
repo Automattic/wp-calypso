@@ -18,7 +18,7 @@ import {
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../action-types';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, removeNotice, successNotice } from 'state/status/actions';
 import { getSiteTitle } from 'state/sites/selectors';
 
 /*

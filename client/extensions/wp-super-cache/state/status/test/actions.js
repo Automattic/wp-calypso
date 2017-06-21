@@ -8,13 +8,13 @@ import { expect } from 'chai';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	WP_SUPER_CACHE_RECEIVE_NOTICES,
-	WP_SUPER_CACHE_REQUEST_NOTICES,
-	WP_SUPER_CACHE_REQUEST_NOTICES_FAILURE,
+	WP_SUPER_CACHE_RECEIVE_STATUS,
+	WP_SUPER_CACHE_REQUEST_STATUS,
+	WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
 } from '../../action-types';
 import {
 	receiveNotices,
-	requestNotices,
+	requestStatus,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -38,14 +38,14 @@ describe( 'actions', () => {
 			const action = receiveNotices( siteId, notices.data );
 
 			expect( action ).to.eql( {
-				type: WP_SUPER_CACHE_RECEIVE_NOTICES,
+				type: WP_SUPER_CACHE_RECEIVE_STATUS,
 				notices: notices.data,
 				siteId,
 			} );
 		} );
 	} );
 
-	describe( '#requestNotices()', () => {
+	describe( '#requestStatus()', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
@@ -61,16 +61,16 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch request action when thunk triggered', () => {
-			requestNotices( siteId )( spy );
+			requestStatus( siteId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: WP_SUPER_CACHE_REQUEST_NOTICES,
+				type: WP_SUPER_CACHE_REQUEST_STATUS,
 				siteId,
 			} );
 		} );
 
 		it( 'should dispatch receive action when request completes', () => {
-			return requestNotices( siteId )( spy ).then( () => {
+			return requestStatus( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					receiveNotices( siteId, notices.data )
 				);
@@ -78,9 +78,9 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
-			return requestNotices( failedSiteId )( spy ).then( () => {
+			return requestStatus( failedSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: WP_SUPER_CACHE_REQUEST_NOTICES_FAILURE,
+					type: WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
 				} );
 			} );
 		} );

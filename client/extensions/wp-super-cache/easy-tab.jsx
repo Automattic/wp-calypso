@@ -22,7 +22,7 @@ import { testCache } from './state/cache/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteTitle } from 'state/sites/selectors';
 import { getCacheTestResults, isTestingCache } from './state/cache/selectors';
-import { getNotices } from './state/notices/selectors';
+import { getStatus } from './state/status/selectors';
 
 class EasyTab extends Component {
 	static propTypes = {
@@ -226,7 +226,7 @@ const connectComponent = connect(
 		const siteTitle = getSiteTitle( state, siteId );
 		const isTesting = isTestingCache( state, siteId );
 		const cacheTestResults = getCacheTestResults( state, siteId );
-		const notices = getNotices( state, siteId );
+		const notices = getStatus( state, siteId );
 
 		return {
 			cacheTestResults,
