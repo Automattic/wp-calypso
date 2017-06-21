@@ -5,6 +5,7 @@ import {
 	canCurrentUser,
 	isMappedDomainSite,
 	isSiteOnFreePlan,
+	isVipSite,
 } from 'state/selectors';
 
 /**
@@ -18,8 +19,9 @@ const isEligibleForDomainToPaidPlanUpsell = ( state, siteId ) => {
 	const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 	const siteIsOnFreePlan = isSiteOnFreePlan( state, siteId );
 	const siteHasMappedDomain = isMappedDomainSite( state, siteId );
+	const siteIsVipSite = isVipSite( state, siteId );
 
-	return userCanManageOptions && siteHasMappedDomain && siteIsOnFreePlan;
+	return userCanManageOptions && siteHasMappedDomain && ! siteIsVipSite && siteIsOnFreePlan;
 };
 
 export default isEligibleForDomainToPaidPlanUpsell;
