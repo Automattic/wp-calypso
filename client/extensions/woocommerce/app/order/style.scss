@@ -110,3 +110,22 @@
 		margin-right: 8px;
 	}
 }
+
+.order__customer-info {
+	h3 {
+		margin-bottom: 16px;
+	}
+
+	h4 {
+		font-weight: bold;
+	}
+}
+
+.order__billing-address,
+.order__shipping-address {
+	margin-bottom: 1.5em;
+
+	p {
+		margin-bottom: 0;
+	}
+}
