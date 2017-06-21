@@ -5,21 +5,30 @@ This module is used to manage orders for a site.
 
 ## Actions
 
+### `fetchOrder( siteId: number, orderId: number )`
+
+Fetch a single order from the remote site. Does not run if this order is loading or already loaded.
+
 ### `fetchOrders( siteId: number, page: number )`
 
 Pull a page of orders from the remote site. Does not run if the orders are loading or already loaded.
 
 ## Reducer
 
-This is saved on a per-site basis. All orders are collected in `items`, and there is a page => ID mapping in `pages`. `isLoading` indicates which pages are being requested. `totalPages` tracks the number of pages of orders. The order items example below is not a complete list. See the [API documentation for orders](http://woocommerce.github.io/woocommerce-rest-api-docs/#order-properties).
+This is saved on a per-site basis. All orders are collected in `items`, and there is a query => ID mapping in `queries`. `isQueryLoading` indicates which queries are being requested. Currently this is only paged requests (but will allow for filtered queries in v2). `totalPages` tracks the number of pages of orders (this might update to a query mapping later). `isLoading` tracks whether single order requests have been requested/loaded. The order items example below is not a complete list. See the [API documentation for orders](http://woocommerce.github.io/woocommerce-rest-api-docs/#order-properties).
 
 ```js
 {
 	"orders": {
-		// Keyed by page number
+		// Keyed by serialized query
 		"isLoading": {
-			1: false,
-			2: true
+			10: false,
+			12: true
+		},
+		// Keyed by serialized query
+		"isQueryLoading": {
+			'{page:1}': false,
+			'{page:2}': true
 		},
 		// Keyed by post ID
 		"items": {
@@ -33,10 +42,10 @@ This is saved on a per-site basis. All orders are collected in `items`, and ther
 			},
 			2: { … } 
 		},
-		// Keyed by page number (a list of post IDs)
-		"pages": {
-			1: [ 1, 2, 3, 4, 5 ],
-			2: [ 6, 7, 8, 9, 10 ]
+		// Keyed by serialized query (a list of post IDs)
+		"queries": {
+			'{page:1}': [ 1, 2, 3, 4, 5 ],
+			'{page:2}': [ 6, 7, 8, 9, 10 ]
 		},
 		// A single number (the total number of pages for this site's orders)
 		"totalPages": 6
@@ -53,6 +62,14 @@ Whether the order list on a given page has been successfully loaded from the ser
 ### `areOrdersLoading( state, page, [siteId] )`
 
 Whether the order list on a given page is currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
+
+### `isOrderLoaded( state, orderId, [siteId] )`
+
+Whether the given order has been successfully loaded from the server. Optional `siteId`, will default to currently selected site.
+
+### `isOrderLoading( state, orderId, [siteId] )`
+
+Whether the given order is currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
 
 ### `getOrders( state, page: number, siteId: number )`
 
