@@ -65,6 +65,10 @@ function receivePage( siteId, items ) {
 	} );
 }
 
+function clearPointers( siteId ) {
+	MediaStore._pointers[ siteId ] = {};
+}
+
 MediaStore.get = function( siteId, postId ) {
 	if ( ! ( siteId in MediaStore._media ) ) {
 		return;
@@ -91,6 +95,11 @@ MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
 	Dispatcher.waitFor( [ MediaValidationStore.dispatchToken ] );
 
 	switch ( action.type ) {
+		case 'SET_MEDIA_SOURCE':
+			clearPointers( action.siteId );
+			MediaStore.emit( 'change' );
+			break;
+
 		case 'CREATE_MEDIA_ITEM':
 		case 'RECEIVE_MEDIA_ITEM':
 		case 'RECEIVE_MEDIA_ITEMS':

@@ -298,4 +298,13 @@ MediaActions.clearValidationErrorsByType = function( siteId, type ) {
 	} );
 };
 
+MediaActions.changeSource = function( siteId, source ) {
+	debug( 'Changing media source to ' + source );
+	Dispatcher.handleViewAction( {
+		type: 'SET_MEDIA_SOURCE',
+		siteId,
+		source,
+	} );
+};
+
 module.exports = MediaActions;

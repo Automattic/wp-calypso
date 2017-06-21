@@ -144,5 +144,18 @@ describe( 'MediaLibrarySelectedStore', function() {
 
 			expect( MediaLibrarySelectedStore._media[ DUMMY_SITE_ID ] ).to.be.empty;
 		} );
+
+		it( 'should clear selected items when SET_MEDIA_SOURCE is dispatched', function() {
+			dispatchSetLibrarySelectedItems();
+
+			handler( {
+				action: {
+					type: 'SET_MEDIA_SOURCE',
+					siteId: DUMMY_SITE_ID,
+				}
+			} );
+
+			expect( MediaLibrarySelectedStore.getAll( DUMMY_SITE_ID ) ).to.be.empty;
+		} );
 	} );
 } );

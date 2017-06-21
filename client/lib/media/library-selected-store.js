@@ -99,6 +99,11 @@ MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload
 	Dispatcher.waitFor( [ MediaStore.dispatchToken ] );
 
 	switch ( action.type ) {
+		case 'SET_MEDIA_SOURCE':
+			setSelectedItems( action.siteId, [] );
+			MediaLibrarySelectedStore.emit( 'change' );
+			break;
+
 		case 'SET_MEDIA_LIBRARY_SELECTED_ITEMS':
 			if ( action.error || ! action.siteId || ! action.data || ! Array.isArray( action.data ) ) {
 				break;

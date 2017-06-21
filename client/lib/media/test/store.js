@@ -173,5 +173,18 @@ describe( 'MediaStore', function() {
 				ID: DUMMY_MEDIA_ID
 			} );
 		} );
+
+		it( 'should clear all pointers when SET_MEDIA_SOURCE called', () => {
+			MediaStore._pointers = { [ DUMMY_SITE_ID ]: { [ DUMMY_MEDIA_ID ]: {} } };
+
+			handler( {
+				action: {
+					type: 'SET_MEDIA_SOURCE',
+					siteId: DUMMY_SITE_ID,
+				}
+			} );
+
+			expect( MediaStore._pointers[ DUMMY_SITE_ID ] ).to.be.eql( {} );
+		} );
 	} );
 } );
