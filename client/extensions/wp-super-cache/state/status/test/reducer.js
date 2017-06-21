@@ -40,7 +40,7 @@ describe( 'reducer', () => {
 			expect( state.requesting ).to.eql( {} );
 		} );
 
-		it( 'should set request to false if notices have been received', () => {
+		it( 'should set request to false if status have been received', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_STATUS,
 				siteId: primarySiteId,
@@ -127,11 +127,11 @@ describe( 'reducer', () => {
 			expect( state.items ).to.eql( {} );
 		} );
 
-		it( 'should index notices by site ID', () => {
+		it( 'should index status by site ID', () => {
 			const state = reducer( undefined, {
 				type: WP_SUPER_CACHE_RECEIVE_STATUS,
 				siteId: primarySiteId,
-				notices: primaryNotices,
+				status: primaryNotices,
 			} );
 
 			expect( state.items ).to.eql( {
@@ -139,11 +139,11 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate notices', () => {
+		it( 'should accumulate status', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_STATUS,
 				siteId: secondarySiteId,
-				notices: secondaryNotices,
+				status: secondaryNotices,
 			} );
 
 			expect( state.items ).to.eql( {
@@ -152,11 +152,11 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous notices of same site ID', () => {
+		it( 'should override previous status of same site ID', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_STATUS,
 				siteId: primarySiteId,
-				notices: secondaryNotices,
+				status: secondaryNotices,
 			} );
 
 			expect( state.items ).to.eql( {
@@ -164,7 +164,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate new notices and overwrite existing ones for the same site ID', () => {
+		it( 'should accumulate new status and overwrite existing ones for the same site ID', () => {
 			const newNotices = {
 				cache_writable: {
 					message: '/home/public_html/ is writable.',
@@ -178,7 +178,7 @@ describe( 'reducer', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_STATUS,
 				siteId: primarySiteId,
-				notices: newNotices,
+				status: newNotices,
 			} );
 
 			expect( state.items ).to.eql( {

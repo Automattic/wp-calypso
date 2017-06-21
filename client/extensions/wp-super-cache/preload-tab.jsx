@@ -98,7 +98,7 @@ class PreloadTab extends Component {
 			isPreloading,
 			isRequesting,
 			isSaving,
-			notices: {
+			status: {
 				preload_disabled_by_admin,
 				preload_disabled_cache_off,
 				preload_disabled_supercache_off,
@@ -294,7 +294,7 @@ const connectComponent = connect(
 
 		return {
 			isPreloading: isPreloadingCache( state, siteId ),
-			notices: getStatus( state, siteId ),
+			status: getStatus( state, siteId ),
 		};
 	},
 	{

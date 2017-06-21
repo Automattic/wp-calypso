@@ -9,19 +9,19 @@ import {
 } from '../action-types';
 
 /**
- * Returns an action object to be used in signalling that notices have been received.
+ * Returns an action object to be used in signalling that status have been received.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} notices Notices object
+ * @param  {Object} status Status object
  * @return {Object} Action object
  */
-export const receiveNotices = ( siteId, notices ) => ( { type: WP_SUPER_CACHE_RECEIVE_STATUS, siteId, notices } );
+export const receiveStatus = ( siteId, status ) => ( { type: WP_SUPER_CACHE_RECEIVE_STATUS, siteId, status } );
 
 /*
- * Retrieves notices for a site.
+ * Retrieves status for a site.
  *
  * @param  {Number} siteId Site ID
- * @returns {Function} Action thunk that requests notices for a given site
+ * @returns {Function} Action thunk that requests status for a given site
  */
 export const requestStatus = ( siteId ) => {
 	return ( dispatch ) => {
@@ -30,8 +30,8 @@ export const requestStatus = ( siteId ) => {
 			siteId,
 		} );
 
-		return wp.req.get( { path: `/jetpack-blogs/${ siteId }/rest-api/` }, { path: '/wp-super-cache/v1/notices' } )
-			.then( ( { data } ) => dispatch( receiveNotices( siteId, data ) ) )
+		return wp.req.get( { path: `/jetpack-blogs/${ siteId }/rest-api/` }, { path: '/wp-super-cache/v1/status' } )
+			.then( ( { data } ) => dispatch( receiveStatus( siteId, data ) ) )
 			.catch( () => dispatch( { type: WP_SUPER_CACHE_REQUEST_STATUS_FAILURE } ) );
 	};
 };

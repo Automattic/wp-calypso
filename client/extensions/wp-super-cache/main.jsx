@@ -23,7 +23,7 @@ import { getStatus } from './state/status/selectors';
 
 class WPSuperCache extends Component {
 	static propTypes = {
-		notices: PropTypes.object.isRequired,
+		status: PropTypes.object.isRequired,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		tab: PropTypes.string,
@@ -52,14 +52,14 @@ class WPSuperCache extends Component {
 
 	render() {
 		const {
-			notices,
+			status,
 			site,
 			siteId,
 			tab,
 		} = this.props;
 		const mainClassName = 'wp-super-cache__main';
-		const cacheDisabled = get( notices, 'cache_disabled' );
-		const cacheDisabledMessage = get( notices.cache_disabled, 'message' );
+		const cacheDisabled = get( status, 'cache_disabled' );
+		const cacheDisabledMessage = get( status.cache_disabled, 'message' );
 
 		return (
 			<Main className={ mainClassName }>
@@ -84,7 +84,7 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			notices: getStatus( state, siteId ),
+			status: getStatus( state, siteId ),
 			siteId,
 		};
 	}

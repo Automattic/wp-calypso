@@ -31,7 +31,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						notices: {
+						status: {
 							requesting: {
 								[ primarySiteId ]: true,
 							}
@@ -44,11 +44,11 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the notices are not being fetched', () => {
+		it( 'should return false if the status are not being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						notices: {
+						status: {
 							requesting: {
 								[ primarySiteId ]: false,
 							}
@@ -61,11 +61,11 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the notices are being fetched', () => {
+		it( 'should return true if the status are being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						notices: {
+						status: {
 							requesting: {
 								[ primarySiteId ]: true,
 							}
@@ -93,16 +93,16 @@ describe( 'selectors', () => {
 					wpSuperCache: undefined,
 				}
 			};
-			const notices = getStatus( state, primarySiteId );
+			const status = getStatus( state, primarySiteId );
 
-			expect( notices ).to.be.empty;
+			expect( status ).to.be.empty;
 		} );
 
 		it( 'should return empty object if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						notices: {
+						status: {
 							items: {
 								[ primarySiteId ]: primaryNotices,
 							}
@@ -110,16 +110,16 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const notices = getStatus( state, secondarySiteId );
+			const status = getStatus( state, secondarySiteId );
 
-			expect( notices ).to.be.empty;
+			expect( status ).to.be.empty;
 		} );
 
-		it( 'should return the notices for a siteId', () => {
+		it( 'should return the status for a siteId', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						notices: {
+						status: {
 							items: {
 								[ primarySiteId ]: primaryNotices,
 							}
@@ -127,9 +127,9 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const notices = getStatus( state, primarySiteId );
+			const status = getStatus( state, primarySiteId );
 
-			expect( notices ).to.eql( primaryNotices );
+			expect( status ).to.eql( primaryNotices );
 		} );
 	} );
 } );

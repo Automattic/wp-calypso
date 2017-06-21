@@ -89,7 +89,7 @@ class EasyTab extends Component {
 			isRequesting,
 			isSaving,
 			isTesting,
-			notices: { php_mod_rewrite },
+			status: { php_mod_rewrite },
 			site,
 			siteId,
 			translate,
@@ -226,12 +226,12 @@ const connectComponent = connect(
 		const siteTitle = getSiteTitle( state, siteId );
 		const isTesting = isTestingCache( state, siteId );
 		const cacheTestResults = getCacheTestResults( state, siteId );
-		const notices = getStatus( state, siteId );
+		const status = getStatus( state, siteId );
 
 		return {
 			cacheTestResults,
 			isTesting,
-			notices,
+			status,
 			siteTitle,
 		};
 	},

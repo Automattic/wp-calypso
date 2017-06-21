@@ -30,7 +30,7 @@ const Caching = ( {
 	isReadOnly,
 	isRequesting,
 	isSaving,
-	notices: {
+	status: {
 		htaccess_ro,
 		mod_rewrite_missing,
 	},

@@ -21,7 +21,7 @@ import {
 	WP_SUPER_CACHE_UPDATE_SETTINGS,
 } from '../action-types';
 import { normalizeSettings, sanitizeSettings } from './utils';
-import { requestStatus } from '../notices/actions';
+import { requestStatus } from '../status/actions';
 import { errorNotice, removeNotice, successNotice } from 'state/status/actions';
 import { getSiteTitle } from 'state/sites/selectors';
 

@@ -12,7 +12,7 @@ import {
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
- * Requesting state tracks whether a notices request is in progress for a site.
+ * Requesting state tracks whether a status request is in progress for a site.
  *
  * @param  {Object} state Current requesting state
  * @param  {Object} action Action object
@@ -25,14 +25,14 @@ const requesting = createReducer( {}, {
 } );
 
 /**
- * Tracks the notices for a particular site.
+ * Tracks the status for a particular site.
  *
- * @param  {Object} state Current notices
+ * @param  {Object} state Current status
  * @param  {Object} action Action object
- * @return {Object} Updated notices
+ * @return {Object} Updated status
  */
 const items = createReducer( {}, {
-	[ WP_SUPER_CACHE_RECEIVE_STATUS ]: ( state, action ) => ( { ...state, [ action.siteId ]: action.notices } ),
+	[ WP_SUPER_CACHE_RECEIVE_STATUS ]: ( state, action ) => ( { ...state, [ action.siteId ]: action.status } ),
 }, itemsSchema );
 
 export default combineReducers( {

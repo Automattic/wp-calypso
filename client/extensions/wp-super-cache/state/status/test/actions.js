@@ -13,7 +13,7 @@ import {
 	WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
 } from '../../action-types';
 import {
-	receiveNotices,
+	receiveStatus,
 	requestStatus,
 } from '../actions';
 
@@ -24,7 +24,7 @@ describe( 'actions', () => {
 
 	const siteId = 123456;
 	const failedSiteId = 456789;
-	const notices = {
+	const status = {
 		data: {
 			cache_writable: {
 				message: '/home/public_html/ is writable.',
@@ -33,13 +33,13 @@ describe( 'actions', () => {
 		}
 	};
 
-	describe( '#receiveNotices()', () => {
+	describe( '#receiveStatus()', () => {
 		it( 'should return an action object', () => {
-			const action = receiveNotices( siteId, notices.data );
+			const action = receiveStatus( siteId, status.data );
 
 			expect( action ).to.eql( {
 				type: WP_SUPER_CACHE_RECEIVE_STATUS,
-				notices: notices.data,
+				status: status.data,
 				siteId,
 			} );
 		} );
@@ -50,10 +50,10 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.get( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/notices' } )
-				.reply( 200, notices )
+				.query( { path: '/wp-super-cache/v1/status' } )
+				.reply( 200, status )
 				.get( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/notices' } )
+				.query( { path: '/wp-super-cache/v1/status' } )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.'
@@ -72,7 +72,7 @@ describe( 'actions', () => {
 		it( 'should dispatch receive action when request completes', () => {
 			return requestStatus( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
-					receiveNotices( siteId, notices.data )
+					receiveStatus( siteId, status.data )
 				);
 			} );
 		} );

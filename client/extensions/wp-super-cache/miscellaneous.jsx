@@ -30,11 +30,11 @@ const Miscellaneous = ( {
 	isReadOnly,
 	isRequesting,
 	isSaving,
-	notices,
+	status,
 	translate,
 } ) => {
 	const isDisabled = isRequesting || isSaving || isReadOnly;
-	const compressionDisabledMessage = get( notices.compression_disabled, 'message' );
+	const compressionDisabledMessage = get( status.compression_disabled, 'message' );
 
 	return (
 		<div>
