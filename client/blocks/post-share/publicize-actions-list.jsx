@@ -199,7 +199,8 @@ class PublicizeActionsList extends PureComponent {
 			return <Notice
 				status="is-info"
 				showDismiss={ false }
-				text={ translate( 'You can schedule social media actions with the calendar above.' ) }
+				text={ translate( 'Did you know you can decide exactly when Publicize shares your post? You can!' +
+					'Click the calendar icon next to "Share post" to schedule your social shares.' ) }
 			/>;
 		}
 
