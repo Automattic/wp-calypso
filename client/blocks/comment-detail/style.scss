@@ -301,6 +301,23 @@
 	padding-bottom: 16px;
 }
 
+.comment-detail__status-label {
+	align-self: flex-start;
+	border-radius: 9px;
+	font-size: 12px;
+	margin-left: auto;
+	padding: 0 10px;
+
+	&.is-unapproved {
+		background-color: $alert-yellow;
+	}
+	&.is-spam,
+	&.is-trash {
+		background: $alert-red;
+		color: $white;
+	}
+}
+
 .comment-detail__author-more-info-toggle {
 	color: $gray;
 	cursor: pointer;
