@@ -24,7 +24,7 @@ export default class EditorSidebar extends Component {
 		type: PropTypes.string,
 		toggleSidebar: PropTypes.func,
 		setPostDate: PropTypes.func,
-		isPrivate: PropTypes.bool,
+		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
 	}
 
