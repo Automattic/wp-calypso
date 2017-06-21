@@ -63,7 +63,6 @@ class PreSetupView extends Component {
 					address={ address }
 					className="dashboard__pre-setup-address"
 					isEditable
-					nameLabel={ translate( 'Business Name' ) }
 					onChange={ this.onChange }
 				/>
 				<SetupFooter
