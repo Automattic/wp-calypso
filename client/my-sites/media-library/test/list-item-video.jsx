@@ -54,5 +54,11 @@ describe( 'MediaLibraryListItem video', function() {
 
 			expect( wrapper.props().style.backgroundImage ).to.be.equal( expectedBackground() );
 		} );
+
+		it( 'returns existing fmt_hd thumbnail for type MEDIA_IMAGE_THUMBNAIL', function() {
+			wrapper = shallow( getItem( 'MEDIA_IMAGE_THUMBNAIL' ) );
+
+			expect( wrapper.props().style.backgroundImage ).to.be.equal( styleUrl( fixtures.media[ 1 ].thumbnails.fmt_hd ) );
+		} );
 	} );
 } );

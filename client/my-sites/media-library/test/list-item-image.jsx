@@ -59,5 +59,17 @@ describe( 'MediaLibraryListItem image', function() {
 
 			expect( wrapper.props().src ).to.be.equal( getResizedUrl() );
 		} );
+
+		it( 'returns existing medium thumbnail for type MEDIA_IMAGE_THUMBNAIL', function() {
+			wrapper = shallow( getItem( 0, 'MEDIA_IMAGE_THUMBNAIL' ) );
+
+			expect( wrapper.props().src ).to.be.equal( fixtures.media[ 0 ].thumbnails.medium );
+		} );
+
+		it( 'returns resized thumbnail for type MEDIA_IMAGE_THUMBNAIL when no medium thumbnail', function() {
+			wrapper = shallow( getItem( 1, 'MEDIA_IMAGE_THUMBNAIL' ) );
+
+			expect( wrapper.props().src ).to.be.equal( getResizedUrl() );
+		} );
 	} );
 } );
