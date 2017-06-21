@@ -772,9 +772,9 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_REPUBLICIZE ]: {
 		getSlug: () => FEATURE_REPUBLICIZE,
-		getTitle: () => i18n.translate( 'Targeted Social Media' ),
+		getTitle: () => i18n.translate( 'Advanced Social Media' ),
 		getDescription: () => i18n.translate(
-			'Share your posts as many times as you like on all your connected social media accounts using Publicize.'
+			'Plan your social media activity in advance and schedule the updates to be posted at a perfect time.'
 		)
 	},
 	[ FEATURE_NO_BRANDING ]: {
