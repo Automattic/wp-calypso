@@ -55,8 +55,11 @@ const ContactsPrivacyCard = React.createClass( {
 	},
 
 	getNotice() {
+		const { privacyAvailable, hasPrivacyProtection, privateDomain, translate, selectedSite, selectedDomainName } = this.props;
 
-		const { hasPrivacyProtection, privateDomain, translate, selectedSite, selectedDomainName } = this.props;
+		if ( ! privacyAvailable ) {
+			return false;
+		}
 
 		if ( hasPrivacyProtection && privateDomain ) {
 			return (
