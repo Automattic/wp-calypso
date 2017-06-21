@@ -10,6 +10,14 @@
 
 .payments__type-container .list-header {
 	justify-content: flex-start;
+	background: lighten( $gray, 35% );
+	font-weight: 600;
+	font-size: 14px;
+
+	.list-item-field {
+		padding-top: 12px;
+		padding-bottom: 12px;
+	}
 }
 
 // PAYMENT-METHOD-ROW
@@ -30,7 +38,7 @@
 
 	p.payments__method-information
 	p.payments__method-name {
-		font-size: 15px;
+		font-size: 14px;
 	}
 
 	.list-header + .list-item {
@@ -42,7 +50,7 @@
 	}
 
 	.payments__method-information {
-		font-size: 12px;
+		font-size: 14px;
 	}
 
 	.payments__method-name {
@@ -62,7 +70,7 @@
 
 	.payments__method-method-information-container,
 	.list-item-field.payments__methods-column-fees {
-		width: 30%;
+		width: 35%;
 	}
 
 	.list-item-field.payments__methods-column-fees {
@@ -80,7 +88,7 @@
 	}
 
 	.payments__method-enable-container {
-		width: 25%;
+		width: 20%;
 
 		.form-toggle__label .form-toggle__label-content {
 			margin-left: 0;
