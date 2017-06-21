@@ -33,13 +33,16 @@ const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
  * @returns {Promise}		Promise of result from the API
  */
 const doAppPushRequest = ( store ) => {
+	const authType = 'push';
+
 	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
 			user_id: getTwoFactorUserId( store.getState() ),
-			two_step_nonce: getTwoFactorAuthNonce( store.getState(), 'push' ),
+			auth_type: authType,
+			two_step_nonce: getTwoFactorAuthNonce( store.getState(), authType ),
 			remember_me: getRememberMe( store.getState() ),
 			two_step_push_token: getTwoFactorPushToken( store.getState() ),
 			client_id: config( 'wpcom_signup_id' ),
