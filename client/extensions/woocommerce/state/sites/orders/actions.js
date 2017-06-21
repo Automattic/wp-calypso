@@ -38,7 +38,7 @@ export const fetchOrders = ( siteId, page ) => ( dispatch, getState ) => {
 			siteId,
 			page,
 			totalPages,
-			orders: data
+			orders: data,
 		} );
 	} ).catch( error => {
 		dispatch( setError( siteId, fetchAction, error ) );
@@ -46,7 +46,7 @@ export const fetchOrders = ( siteId, page ) => ( dispatch, getState ) => {
 			type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 			siteId,
 			page,
-			error
+			error,
 		} );
 	} );
 };
@@ -80,7 +80,7 @@ export const fetchOrder = ( siteId, orderId ) => ( dispatch, getState ) => {
 			type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 			siteId,
 			orderId,
-			error
+			error,
 		} );
 	} );
 };

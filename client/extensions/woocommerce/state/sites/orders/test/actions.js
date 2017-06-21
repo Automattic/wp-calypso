@@ -67,7 +67,7 @@ describe( 'actions', () => {
 					siteId,
 					page: 1,
 					totalPages: 3,
-					orders
+					orders,
 				} );
 			} );
 		} );
@@ -98,7 +98,7 @@ describe( 'actions', () => {
 									},
 									items: {},
 									pages: {},
-									totalPages: 1
+									totalPages: 1,
 								}
 							}
 						}
@@ -151,7 +151,7 @@ describe( 'actions', () => {
 					type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
 					siteId,
 					orderId: 40,
-					order
+					order,
 				} );
 			} );
 		} );
@@ -178,11 +178,11 @@ describe( 'actions', () => {
 								orders: {
 									isQueryLoading: {},
 									isLoading: {
-										40: true
+										40: true,
 									},
 									items: {},
 									pages: {},
-									totalPages: 1
+									totalPages: 1,
 								}
 							}
 						}

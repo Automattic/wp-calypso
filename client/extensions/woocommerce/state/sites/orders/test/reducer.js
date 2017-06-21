@@ -48,7 +48,7 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
 				siteId: 123,
 				orderId: 45,
-				order
+				order,
 			};
 			const newState = isLoading( { 45: true }, action );
 			expect( newState ).to.eql( { 45: false } );
@@ -59,7 +59,7 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 				siteId: 123,
 				orderId: 45,
-				error: {}
+				error: {},
 			};
 			const newState = isLoading( { 45: true }, action );
 			expect( newState ).to.eql( { 45: false } );
@@ -88,7 +88,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 1,
 				totalPages: 4,
-				orders
+				orders,
 			};
 			const newState = isQueryLoading( { '{page:1}': true }, action );
 			expect( newState ).to.eql( { '{page:1}': false } );
@@ -99,7 +99,7 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
 				page: 1,
-				error: {}
+				error: {},
 			};
 			const newState = isQueryLoading( { '{page:1}': true }, action );
 			expect( newState ).to.eql( { '{page:1}': false } );
@@ -118,7 +118,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 1,
 				totalPages: 4,
-				orders
+				orders,
 			};
 			const newState = items( undefined, action );
 			const ordersById = keyBy( orders, 'id' );
@@ -131,7 +131,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 2,
 				totalPages: 4,
-				orders: [ order ]
+				orders: [ order ],
 			};
 			const originalState = deepFreeze( keyBy( orders, 'id' ) );
 			const newState = items( originalState, action );
@@ -155,7 +155,7 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
 				page: 1,
-				error: {}
+				error: {},
 			};
 			const originalState = deepFreeze( keyBy( orders, 'id' ) );
 			const newState = items( originalState, action );
@@ -175,7 +175,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 1,
 				totalPages: 4,
-				orders
+				orders,
 			};
 			const newState = queries( undefined, action );
 			expect( newState ).to.eql( { '{page:1}': [ 35, 26 ] } );
@@ -187,7 +187,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 2,
 				totalPages: 4,
-				orders: [ order ]
+				orders: [ order ],
 			};
 			const originalState = deepFreeze( { '{page:1}': [ 35, 26 ] } );
 			const newState = queries( originalState, action );
@@ -199,7 +199,7 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
 				page: 1,
-				error: {}
+				error: {},
 			};
 			const originalState = deepFreeze( { '{page:1}': [ 35, 26 ] } );
 			const newState = queries( originalState, action );
@@ -219,7 +219,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 1,
 				totalPages: 4,
-				orders
+				orders,
 			};
 			const newState = totalPages( undefined, action );
 			expect( newState ).to.eql( 4 );
@@ -231,7 +231,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 2,
 				totalPages: 4,
-				orders: [ order ]
+				orders: [ order ],
 			};
 			const originalState = deepFreeze( 4 );
 			const newState = totalPages( originalState, action );
@@ -243,7 +243,7 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
 				page: 1,
-				error: {}
+				error: {},
 			};
 			const originalState = deepFreeze( 4 );
 			const newState = totalPages( originalState, action );
