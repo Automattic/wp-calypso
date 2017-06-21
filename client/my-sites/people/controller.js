@@ -19,10 +19,7 @@ import InvitePeople from './invite-people';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import config from 'config';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 export default {
 	redirectToTeam,
