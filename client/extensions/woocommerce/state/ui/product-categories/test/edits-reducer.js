@@ -65,7 +65,8 @@ describe( 'edits-reducer', () => {
 	} );
 
 	it( 'should create "creates" on first edit', () => {
-		const edits = reducer( undefined, editProductCategory( siteId, null, {
+		const id1 = { placeholder: 'productCategory_1' };
+		const edits = reducer( undefined, editProductCategory( siteId, { id: id1 }, {
 			name: 'New Category',
 			slug: 'new-category',
 		} ) );
@@ -73,26 +74,28 @@ describe( 'edits-reducer', () => {
 		expect( edits ).to.not.equal( null );
 		expect( edits.creates ).to.exist;
 		expect( edits.creates[ 0 ] ).to.exist;
-		expect( edits.creates[ 0 ].id ).to.eql( { index: 0 } );
+		expect( edits.creates[ 0 ].id ).to.eql( id1 );
 		expect( edits.creates[ 0 ].name ).to.eql( 'New Category' );
 		expect( edits.creates[ 0 ].slug ).to.eql( 'new-category' );
 	} );
 
 	it( 'should create more than one category', () => {
-		const edits1 = reducer( undefined, editProductCategory( siteId, null, {
+		const id1 = { placeholder: 'productCategory_1' };
+		const edits1 = reducer( undefined, editProductCategory( siteId, { id: id1 }, {
 			name: 'First Category',
 			slug: 'first-category',
 		} ) );
 
-		const edits2 = reducer( edits1, editProductCategory( siteId, null, {
+		const id2 = { placeholder: 'productCategory_2' };
+		const edits2 = reducer( edits1, editProductCategory( siteId, { id: id2 }, {
 			name: 'Second Category',
 			slug: 'second-category',
 		} ) );
 
-		expect( edits2.creates[ 0 ].id ).to.eql( { index: 0 } );
+		expect( edits2.creates[ 0 ].id ).to.eql( id1 );
 		expect( edits2.creates[ 0 ].name ).to.eql( 'First Category' );
 		expect( edits2.creates[ 0 ].slug ).to.eql( 'first-category' );
-		expect( edits2.creates[ 1 ].id ).to.eql( { index: 1 } );
+		expect( edits2.creates[ 1 ].id ).to.eql( id2 );
 		expect( edits2.creates[ 1 ].name ).to.eql( 'Second Category' );
 		expect( edits2.creates[ 1 ].slug ).to.eql( 'second-category' );
 	} );
