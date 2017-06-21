@@ -8,6 +8,7 @@ import React from 'react';
  */
 import i18nUtils from 'lib/i18n-utils';
 import DomainConnectAuthorize from './domain-connect-authorize';
+import DomainConnectNotFoundError from './domain-connect-not-found-error';
 
 export function domainConnectAuthorize( context, next ) {
 	context.primary = (
@@ -23,4 +24,10 @@ export function domainConnectAuthorize( context, next ) {
 	next();
 }
 
-export default domainConnectAuthorize;
+export function notFoundError( context, next ) {
+	context.primary = (
+		<DomainConnectNotFoundError />
+	);
+	context.secondary = null;
+	next();
+}
