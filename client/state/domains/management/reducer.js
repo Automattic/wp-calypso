@@ -32,19 +32,17 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const _contactDetailsCache = createReducer( {}, {
+export const isRequestingContactDetailsCache = createReducer( false, {
 	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST ]: stubTrue,
 	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS ]: stubFalse,
 	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE ]: stubFalse,
 } );
 
-export const whois = keyedReducer( 'domain', createReducer( {}, {
+export const isRequestingWhois = keyedReducer( 'domain', createReducer( false, {
 	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST ]: stubTrue,
 	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS ]: stubFalse,
 	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE ]: stubFalse,
 } ) );
-
-export const isRequesting = combineReducers( { _contactDetailsCache, whois } );
 
 /**
  * Returns the save request status after an action has been dispatched. The
@@ -90,6 +88,7 @@ export const items = createReducer( {}, {
 
 export default combineReducers( {
 	items,
-	isRequesting,
+	isRequestingContactDetailsCache,
+	isRequestingWhois,
 	isSaving
 } );

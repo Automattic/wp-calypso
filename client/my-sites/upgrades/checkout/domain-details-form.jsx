@@ -42,6 +42,7 @@ import FormButton from 'components/forms/form-button';
 import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
+import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
 import wp from 'lib/wp';
 import ExtraInfoForm, { tldsWithAdditionalDetailsForms } from 'components/domains/registrant-extra-info';
 import config from 'config';
@@ -104,11 +105,10 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		// Note that state.form includes status information like errors,
-		// isValidating, isPendingValidation etc in addition to the actual
-		// field values.
-		if ( ! isEqual( prevState.form, this.state.form ) ) {
-			this.props.updateContactDetailsCache( this.getMainFieldValues( this.state.form ) );
+		const previousFormValues = formState.getAllFieldValues( prevState.form );
+		const currentFormValues = formState.getAllFieldValues( this.state.form );
+		if ( ! isEqual( previousFormValues, currentFormValues ) ) {
+			this.props.updateContactDetailsCache( this.getMainFieldValues() );
 		}
 	}
 
@@ -392,7 +392,7 @@ export class DomainDetailsForm extends PureComponent {
 			<form>
 				{ this.renderNameFields() }
 				{ ! needsOnlyGoogleAppsDetails && this.renderOrganizationField() }
-				{ this.renderEmailField() }
+				{ ! needsOnlyGoogleAppsDetails && this.renderEmailField() }
 				{ ! needsOnlyGoogleAppsDetails && this.renderPhoneField() }
 				{ this.renderCountryField() }
 				{ ! needsOnlyGoogleAppsDetails && this.needsFax() && this.renderFaxField() }
@@ -556,7 +556,21 @@ export class DomainDetailsForm extends PureComponent {
 					title={ title }>
 					{ this.renderCurrentForm() }
 				</PaymentBox>
-			<QueryContactDetailsCache />
+			</div>
+		);
+	}
+}
+
+export class DomainDetailsFormContainer extends PureComponent {
+	render() {
+		return (
+			<div>
+				<QueryContactDetailsCache />
+				{
+					this.props.contactDetails
+						? <DomainDetailsForm { ...this.props } />
+						: <SecurePaymentFormPlaceholder />
+				}
 			</div>
 		);
 	}
@@ -565,4 +579,4 @@ export class DomainDetailsForm extends PureComponent {
 export default connect(
 	state => ( { contactDetails: getContactDetailsCache( state ) } ),
 	{ updateContactDetailsCache }
-)( localize( DomainDetailsForm ) );
+)( localize( DomainDetailsFormContainer ) );

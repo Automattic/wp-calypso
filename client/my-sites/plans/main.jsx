@@ -18,6 +18,7 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
+import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 
 const Plans = React.createClass( {
 	propTypes: {
@@ -71,6 +72,7 @@ const Plans = React.createClass( {
 			<div>
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
+				<QueryContactDetailsCache />
 				<TrackComponentView eventName="calypso_plans_view" />
 				<Main wideLayout={ true } >
 					<SidebarNavigation />
