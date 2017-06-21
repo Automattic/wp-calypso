@@ -921,7 +921,7 @@ Undocumented.prototype.publicizePost = function( siteId, postId, message, skippe
 		body.skipped_connections = skippedConnections;
 	}
 
-	return this.wpcom.req.post( { path: `/sites/${ siteId }/post/${ postId }/publicize`, body, apiVersion: '1.1' }, fn );
+	return this.wpcom.req.post( { path: `/sites/${ siteId }/posts/${ postId }/publicize`, body, apiNamespace: 'wpcom/v2' }, fn );
 };
 
 /**
