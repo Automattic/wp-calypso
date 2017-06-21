@@ -13,6 +13,8 @@ import {
 	REWIND_DEACTIVATE_SUCCESS,
 	REWIND_RESTORE,
 	REWIND_RESTORE_COMPLETED,
+	REWIND_RESTORE_PROGRESS_REQUEST;
+	REWIND_RESTORE_UPDATE_PROGRESS;
 	REWIND_RESTORE_UPDATE_ERROR,
 	REWIND_STATUS_ERROR,
 	REWIND_STATUS_REQUEST,
@@ -155,5 +157,22 @@ export function rewindRestoreUpdateError( siteId, timestamp, error ) {
 		siteId,
 		timestamp,
 		error,
+	};
+}
+
+export function getRewindRestoreProgress( siteId, timestamp ) {
+	return {
+		type: REWIND_RESTORE_PROGRESS_REQUEST,
+		siteId,
+		timestamp,
+	};
+}
+
+export function updateRewindRestoreProgress( siteId, timestamp, progress ) {
+	return {
+		type: REWIND_RESTORE_UPDATE_PROGRESS,
+		siteId,
+		timestamp,
+		...progress,
 	};
 }

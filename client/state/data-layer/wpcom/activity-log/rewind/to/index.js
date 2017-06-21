@@ -12,6 +12,7 @@ import {
 import {
 	rewindCompleteRestore,
 	rewindRestoreUpdateError,
+	getRewindRestoreProgress,
 } from 'state/activity-log/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -24,7 +25,7 @@ const requestRestore = ( { dispatch }, action ) => {
 };
 
 export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp } ) => {
-	dispatch( rewindCompleteRestore( siteId, timestamp ) );
+	dispatch( getRewindRestoreProgress( siteId, timestamp ) );
 };
 
 export const receiveRestoreError = ( { dispatch }, { siteId, timestamp }, next, error ) => {
