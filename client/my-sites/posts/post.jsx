@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import shallowEqual from 'react-pure-render/shallowEqual';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -17,8 +18,8 @@ import PostControls from './post-controls';
 import PostHeader from './post-header';
 import PostImage from '../post/post-image';
 import PostExcerpt from 'components/post-excerpt';
+import updatePostStatus from 'components/update-post-status';
 import utils from 'lib/posts/utils';
-import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
 import config from 'config';
 import { setPreviewUrl } from 'state/ui/preview/actions';
@@ -49,23 +50,42 @@ function checkPropsChange( currentProps, nextProps, propArr ) {
 const Post = React.createClass( {
 	displayName: 'Post',
 
-	mixins: [ updatePostStatus ],
+	propTypes: {
+		// connected via updatePostStatus
+		buildUpdateTemplate: PropTypes.func.isRequired,
+		togglePageActions: PropTypes.func.isRequired,
+		updatePostStatus: PropTypes.func.isRequired,
+		updated: PropTypes.bool.isRequired,
+		updatedStatus: PropTypes.string,
+		previousStatus: PropTypes.string,
+		showMoreOptions: PropTypes.bool.isRequired,
+		showPageActions: PropTypes.bool.isRequired,
+	},
 
 	getInitialState() {
 		return {
-			showMoreOptions: false,
 			showComments: false,
 			showShare: false,
 			commentsFilter: 'all'
 		};
 	},
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate( nextProps, nextState ) {
+		if ( ! shallowEqual( this.state, nextState ) ) {
+			return true;
+		}
+
 		const propsToCheck = [
 			'post',
 			'postImages',
 			'fullWidthPost',
 			'path',
+
+			// via updatePostStatus
+			'previousStatus',
+			'showMoreOptions',
+			'updated',
+			'updatedStatus',
 		];
 		return checkPropsChange( this.props, nextProps, propsToCheck );
 	},
@@ -108,41 +128,23 @@ const Post = React.createClass( {
 	},
 
 	publishPost() {
-		this.updatePostStatus( 'publish' );
+		this.props.updatePostStatus( 'publish' );
 		recordEvent( 'Clicked Publish Post' );
 	},
 
 	restorePost() {
-		this.updatePostStatus( 'restore' );
+		this.props.updatePostStatus( 'restore' );
 		recordEvent( 'Clicked Restore Post' );
 	},
 
 	deletePost() {
-		this.updatePostStatus( 'delete' );
+		this.props.updatePostStatus( 'delete' );
 		recordEvent( 'Clicked Delete Post' );
 	},
 
 	trashPost() {
-		this.updatePostStatus( 'trash' );
+		this.props.updatePostStatus( 'trash' );
 		recordEvent( 'Clicked Trash Post' );
-	},
-
-	componentWillMount() {
-		const { translate } = this.props;
-
-		this.strings = {
-			trashing: translate( 'Trashing Post' ),
-			deleting: translate( 'Deleting Post' ),
-			trashed: translate( 'Moved to Trash' ),
-			undo: translate( 'undo?' ),
-			deleted: translate( 'Post Deleted' ),
-			updating: translate( 'Updating Post' ),
-			error: translate( 'Error' ),
-			updated: translate( 'Updated' ),
-			deleteWarning: translate( 'Delete this post permanently?' ),
-			restoring: translate( 'Restoring' ),
-			restored: translate( 'Restored' )
-		};
 	},
 
 	canUserEditPost() {
@@ -154,7 +156,7 @@ const Post = React.createClass( {
 		return classNames( {
 			post: true,
 			'is-protected': ( this.props.post.password ) ? true : false,
-			'show-more-options': this.state.showMoreOptions
+			'show-more-options': this.props.showMoreOptions
 		} );
 	},
 
@@ -261,12 +263,6 @@ const Post = React.createClass( {
 		return '_blank';
 	},
 
-	toggleMoreControls( visibility ) {
-		this.setState( {
-			showMoreOptions: ( visibility === 'show' )
-		} );
-	},
-
 	toggleComments() {
 		this.setState( {
 			showComments: ! this.state.showComments
@@ -315,8 +311,8 @@ const Post = React.createClass( {
 					post={ this.props.post }
 					editURL={ this.props.editUrl }
 					fullWidth={ this.props.fullWidthPost }
-					onShowMore={ this.toggleMoreControls.bind( this, 'show' ) }
-					onHideMore={ this.toggleMoreControls.bind( this, 'hide' ) }
+					onShowMore={ this.props.showMoreControls }
+					onHideMore={ this.props.hideMoreControls }
 					onPublish={ this.publishPost }
 					onTrash={ this.trashPost }
 					onDelete={ this.deletePost }
@@ -330,7 +326,7 @@ const Post = React.createClass( {
 					transitionName="updated-trans"
 					transitionEnterTimeout={ 300 }
 					transitionLeaveTimeout={ 300 }>
-					{ this.buildUpdateTemplate() }
+					{ this.props.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
 				{ this.state.showComments &&
 					<Comments
@@ -384,4 +380,4 @@ export default connect(
 		};
 	},
 	{ setPreviewUrl, setLayoutFocus }
-)( localize( Post ) );
+)( updatePostStatus( localize( Post ) ) );

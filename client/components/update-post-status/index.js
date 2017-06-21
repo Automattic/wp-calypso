@@ -186,6 +186,14 @@ const updatePostStatus = ( WrappedComponent ) => enhance(
 			this.setState( { showPageActions: ! this.state.showPageActions } );
 		}
 
+		showMoreControls = () => {
+			this.setState( { showMoreOptions: true } );
+		}
+
+		hideMoreControls = () => {
+			this.setState( { showMoreOptions: false } );
+		}
+
 		setErrorState() {
 			this.setState( {
 				updated: true,
@@ -198,6 +206,8 @@ const updatePostStatus = ( WrappedComponent ) => enhance(
 			return <WrappedComponent { ...this.props }
 				buildUpdateTemplate={ this.buildUpdateTemplate }
 				togglePageActions={ this.togglePageActions }
+				showMoreControls={ this.showMoreControls }
+				hideMoreControls={ this.hideMoreControls }
 				updatePostStatus={ this.updatePostStatus }
 				{ ...this.state } />;
 		}
