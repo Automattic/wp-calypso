@@ -7,10 +7,11 @@ import { forEach, groupBy } from 'lodash';
 /**
  * Internal dependencies
  */
+import { mergeHandlers } from 'state/action-watchers/utils';
 import { COMMENTS_LIST_REQUEST, COMMENTS_RECEIVE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-
+import replies from './replies';
 import { errorNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
 
@@ -59,6 +60,11 @@ const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 	dispatch( errorNotice( error ) );
 };
 
-export default {
+const fetchHandler = {
 	[ COMMENTS_LIST_REQUEST ]: [ dispatchRequest( fetchCommentsList, addComments, announceFailure ) ]
 };
+
+export default mergeHandlers(
+	fetchHandler,
+	replies,
+);
