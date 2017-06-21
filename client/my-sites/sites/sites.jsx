@@ -65,7 +65,10 @@ export const Sites = React.createClass( {
 			return this.props.getSiteSelectionHeaderText();
 		}
 
-		let path = this.props.path.split( '?' )[ 0 ].split( '/' )[ 1 ].toLowerCase();
+		let path = this.props.path.split( '?' )[ 0 ].split( '/' )[ 1 ];
+		if ( typeof path !== 'undefined' ) {
+			path = path.toLowerCase();
+		}
 
 		switch ( path ) {
 			case 'stats':
