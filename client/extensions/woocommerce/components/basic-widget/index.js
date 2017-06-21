@@ -10,7 +10,7 @@ import { noop } from 'lodash';
  */
 import Button from 'components/button';
 
-const BasicWidget = ( { buttonLabel, buttonLink, buttonClick, children, className, title } ) => {
+const BasicWidget = ( { buttonLabel, buttonLink, onButtonClick, children, className, title } ) => {
 	const classes = classNames( { 'basic-widget__container': true }, className );
 	const target = buttonLink && '/' !== buttonLink.substring( 0, 1 ) ? '_blank' : '_self';
 	return (
@@ -20,7 +20,7 @@ const BasicWidget = ( { buttonLabel, buttonLink, buttonClick, children, classNam
 				{ children }
 			</div>
 			<Button
-				onClick={ buttonClick }
+				onClick={ onButtonClick }
 				href={ buttonLink }
 				target={ target }>
 				{ buttonLabel }
@@ -32,7 +32,7 @@ const BasicWidget = ( { buttonLabel, buttonLink, buttonClick, children, classNam
 BasicWidget.propTypes = {
 	buttonLabel: PropTypes.string,
 	buttonLink: PropTypes.string,
-	buttonClick: PropTypes.func,
+	onButtonClick: PropTypes.func,
 	children: PropTypes.oneOfType( [
 		PropTypes.arrayOf( PropTypes.node ),
 		PropTypes.node
@@ -42,7 +42,7 @@ BasicWidget.propTypes = {
 };
 
 BasicWidget.defaultProps = {
-	buttonClick: noop,
+	onButtonClick: noop,
 };
 
 export default BasicWidget;

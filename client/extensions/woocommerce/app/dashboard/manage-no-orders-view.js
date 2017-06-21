@@ -60,7 +60,7 @@ class ManageNoOrdersView extends Component {
 		return (
 			<BasicWidget
 				buttonLabel={ translate( 'View an example order' ) }
-				buttonClick={ trackClick }
+				onButtonClick={ trackClick }
 				className="dashboard__example-order-widget"
 				title={ translate( 'Looking for orders and reports?' ) }
 			>
@@ -84,7 +84,7 @@ class ManageNoOrdersView extends Component {
 			<BasicWidget
 				buttonLabel={ translate( 'View & test your store' ) }
 				buttonLink={ site.URL }
-				buttonClick={ trackClick }
+				onButtonClick={ trackClick }
 				className="dashboard__view-and-test-widget"
 				title={ translate( 'Test all the things' ) }
 			>
