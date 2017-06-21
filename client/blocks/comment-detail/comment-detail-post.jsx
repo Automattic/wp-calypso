@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
-import { decodeEntities } from 'lib/formatting';
 
 export const CommentDetailPost = ( {
 	postAuthorDisplayName,
@@ -22,7 +21,7 @@ export const CommentDetailPost = ( {
 				{ postAuthorDisplayName }
 			</span>
 			<a href={ postUrl }>
-				{ decodeEntities( postTitle ) }
+				{ postTitle }
 			</a>
 		</div>
 	</div>;

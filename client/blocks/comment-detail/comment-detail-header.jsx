@@ -82,7 +82,7 @@ export const CommentDetailHeader = ( {
 						</span>
 					</div>
 					<div className="comment-detail__author-info-element">
-						{ translate( 'on %(postTitle)s', { args: { postTitle: decodeEntities( postTitle ) } } ) }
+						{ translate( 'on %(postTitle)s', { args: { postTitle } } ) }
 					</div>
 				</div>
 			</div>
