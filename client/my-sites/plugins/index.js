@@ -6,6 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import controller from 'my-sites/controller';
 import config from 'config';
 import pluginsController from './controller';
@@ -35,6 +36,16 @@ module.exports = function() {
 	}
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
+		page( '/plugins/wpcom-masterbar-redirect/:site', context => {
+			analytics.tracks.recordEvent( 'calypso_wpcom_masterbar_plugins_view_redirect' );
+			page.redirect( '/plugins/' + context.params.site );
+		} );
+
+		page( '/plugins/browse/wpcom-masterbar-redirect/:site', context => {
+			analytics.tracks.recordEvent( 'calypso_wpcom_masterbar_plugins_add_redirect' );
+			page.redirect( '/plugins/browse/' + context.params.site );
+		} );
+
 		page( '/plugins/browse/:category/:site',
 			controller.siteSelection,
 			controller.navigation,
