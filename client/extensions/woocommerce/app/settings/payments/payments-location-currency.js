@@ -11,23 +11,24 @@ import { localize } from 'i18n-calypso';
  */
 import AddressView from 'woocommerce/components/address-view';
 import Card from 'components/card';
+import { decodeEntities } from 'lib/formatting';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
+import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
-import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
+import { fetchCurrencies } from 'woocommerce/state/sites/currencies/actions';
 import { fetchSettingsGeneral, saveCurrency } from 'woocommerce/state/sites/settings/general/actions';
+import { getCurrencies } from 'woocommerce/state/sites/currencies/selectors';
+import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 class SettingsPaymentsLocationCurrency extends Component {
 	static propTypes = {
 		changeCurrency: PropTypes.func.isRequired,
+		currencies: PropTypes.array,
 		currency: PropTypes.string,
-		currencySettings: PropTypes.shape( {
-			options: PropTypes.object,
-			value: PropTypes.string,
-		} ),
+		fetchCurrencies: PropTypes.func.isRequired,
 		fetchSettingsGeneral: PropTypes.func.isRequired,
 		getCurrencyWithEdits: PropTypes.func.isRequired,
 		saveCurrency: PropTypes.func.isRequired,
@@ -38,6 +39,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		const { site } = this.props;
 
 		if ( site && site.ID ) {
+			this.props.fetchCurrencies( site.ID );
 			this.props.fetchSettingsGeneral( site.ID );
 		}
 	}
@@ -49,6 +51,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		const oldSiteId = site && site.ID || null;
 
 		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchCurrencies( newSiteId );
 			this.props.fetchSettingsGeneral( newSiteId );
 		}
 	}
@@ -67,10 +70,12 @@ class SettingsPaymentsLocationCurrency extends Component {
 		};
 	}
 
-	renderOption = ( option, options ) => {
+	renderOption = ( option ) => {
 		return (
-			<option key={ option } value={ option }>
-				{ options[ option ] }
+			<option
+				key={ option.code }
+				value={ option.code } >
+				{ decodeEntities( option.symbol ) } - { option.name }
 			</option>
 		);
 	}
@@ -104,7 +109,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 	}
 
 	render() {
-		const { currency, currencySettings, translate } = this.props;
+		const { currencies, currency, translate } = this.props;
 		return (
 			<div>
 				<ExtendedHeader
@@ -115,21 +120,21 @@ class SettingsPaymentsLocationCurrency extends Component {
 							'location and currency.'
 						)
 					} />
-				<Card>
+				<Card className="payments__address-currency-container">
 					<AddressView
 						address={ this.state.address } />
+					<div className="payments__currency-container">
+						<FormLabel>
+							translate( 'Store Currency' );
+						</FormLabel>
+						<FormSelect
+							className="payments__currency-select"
+							onChange={ this.onChange }
+							value={ currency }>
+							{ currencies && currencies.map( this.renderOption ) }
+						</FormSelect>
+					</div>
 
-					<FormSelect
-						className="payments__currency-select"
-						onChange={ this.onChange }
-						value={ currency }>
-						{
-							currencySettings.options &&
-							Object.keys( currencySettings.options ).map(
-								( o ) => this.renderOption( o, currencySettings.options )
-							)
-						}
-					</FormSelect>
 				</Card>
 			</div>
 		);
@@ -139,11 +144,11 @@ class SettingsPaymentsLocationCurrency extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const currencySettings = getPaymentCurrencySettings( state );
+	const currencies = getCurrencies( state );
 	const currency = getCurrencyWithEdits( state );
 	return {
+		currencies,
 		currency,
-		currencySettings,
 		site,
 	};
 }
@@ -152,6 +157,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			changeCurrency,
+			fetchCurrencies,
 			fetchSettingsGeneral,
 			getCurrencyWithEdits,
 			saveCurrency,

@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { combineReducers, keyedReducer } from 'state/utils';
+import currencies from './currencies/reducer';
 import locations from './locations/reducer';
 import orders from './orders/reducer';
 import paymentMethods from './payment-methods/reducer';
@@ -16,6 +17,7 @@ import settings from './settings/reducer';
 import status from './status/reducer';
 
 const reducer = combineReducers( {
+	currencies,
 	locations,
 	orders,
 	paymentMethods,

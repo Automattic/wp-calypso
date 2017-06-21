@@ -1,5 +1,24 @@
-.payments__currency-select {
-	width: 100%;
+.payments__address-currency-container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	
+	@include breakpoint( "<660px" ) {
+		flex-direction: column;
+	}
+}
+
+.payments__currency-container {
+	display: flex;
+	flex-direction: column;
+	max-width: 255px;
+	padding-top: 24px;
+	
+	@include breakpoint( ">960px" ) {
+		padding-left: 24px;
+		padding-top: 0;
+	}
 }
 
 .payments__type-container .section-header__label::before {
@@ -50,10 +69,6 @@
 	}
 
 	.payments__method-information {
-		font-size: 14px;
-	}
-
-	.payments__method-name {
 		font-size: 14px;
 	}
 
