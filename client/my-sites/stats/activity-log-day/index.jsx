@@ -44,21 +44,21 @@ class ActivityLogDay extends Component {
 	getRewindButton( type = '' ) {
 		const { allowRestore } = this.props;
 
-		return ( allowRestore
-			? (
-				<Button
-					compact
-					disabled={ ! this.props.isRewindActive }
-					onClick={ this.handleClickRestore }
-					primary={ 'primary' === type }
-				>
-					<Gridicon icon="history" size={ 18 } />
-					{ ' ' }
-					{ this.props.translate( 'Rewind to this day' ) }
-				</Button>
-			) : (
-				null
-			)
+		if ( ! allowRestore ) {
+			return null;
+		}
+
+		return (
+			<Button
+				compact
+				disabled={ ! this.props.isRewindActive }
+				onClick={ this.handleClickRestore }
+				primary={ 'primary' === type }
+			>
+				<Gridicon icon="history" size={ 18 } />
+				{ ' ' }
+				{ this.props.translate( 'Rewind to this day' ) }
+			</Button>
 		);
 	}
 

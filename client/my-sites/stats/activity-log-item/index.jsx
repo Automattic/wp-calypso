@@ -116,18 +116,18 @@ class ActivityLogItem extends Component {
 			translate,
 		} = this.props;
 
-		return ( allowRestore
-			? (
-				<div className="activity-log-item__action">
-					<EllipsisMenu position="bottom right">
-						<PopoverMenuItem onClick={ this.handleClickRestore } icon="undo">
-							{ translate( 'Rewind to this point' ) }
-						</PopoverMenuItem>
-					</EllipsisMenu>
-				</div>
-			) : (
-				null
-			)
+		if ( ! allowRestore ) {
+			return null;
+		}
+
+		return (
+			<div className="activity-log-item__action">
+				<EllipsisMenu position="bottom right">
+					<PopoverMenuItem onClick={ this.handleClickRestore } icon="undo">
+						{ translate( 'Rewind to this point' ) }
+					</PopoverMenuItem>
+				</EllipsisMenu>
+			</div>
 		);
 	}
 
