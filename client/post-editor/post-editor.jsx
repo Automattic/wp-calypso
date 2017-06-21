@@ -61,6 +61,7 @@ import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
+import { NESTED_SIDEBAR_NONE } from 'post-editor/editor-sidebar/util';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -99,7 +100,8 @@ export const PostEditor = React.createClass( {
 			isTitleFocused: false,
 			showPreview: false,
 			isPostPublishPreview: false,
-			previewAction: null
+			previewAction: null,
+			nestedSidebar: NESTED_SIDEBAR_NONE,
 		};
 	},
 
@@ -245,6 +247,10 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
+	toggleNestedSidebar: function( nestedSidebar ) {
+		this.setState( { nestedSidebar } );
+	},
+
 	render: function() {
 		const site = this.props.selectedSite || undefined;
 		const mode = this.getEditorMode();
@@ -308,6 +314,7 @@ export const PostEditor = React.createClass( {
 						type={ this.props.type }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }
+						nestedSidebar={ this.state.nestedSidebar }
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
@@ -397,6 +404,8 @@ export const PostEditor = React.createClass( {
 						onSave={ this.onSave }
 						isPostPrivate={ utils.isPrivate( this.state.post ) }
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
+						toggleNestedSidebar={ this.toggleNestedSidebar }
+						nestedSidebar={ this.state.nestedSidebar }
 						/>
 					{ this.props.isSitePreviewable
 						? <EditorPreview

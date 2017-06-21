@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React, { PropTypes, Component } from 'react';
+import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,8 +11,10 @@ import React, { PropTypes, Component } from 'react';
 import EditorDrawer from 'post-editor/editor-drawer';
 import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
+import SidebarRegion from 'layout/sidebar/region';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import EditorDeletePost from 'post-editor/editor-delete-post';
+import { NESTED_SIDEBAR_NONE, NestedSidebarPropType } from './util';
 
 export default class EditorSidebar extends Component {
 	static propTypes = {
@@ -26,6 +30,8 @@ export default class EditorSidebar extends Component {
 		setPostDate: PropTypes.func,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
+		nestedSidebar: NestedSidebarPropType,
+		toggleNestedSidebar: PropTypes.func,
 	}
 
 	render() {
@@ -41,11 +47,22 @@ export default class EditorSidebar extends Component {
 			setPostDate,
 			isPostPrivate,
 			confirmationSidebarStatus,
+			nestedSidebar,
+			toggleNestedSidebar,
 		} = this.props;
 
+		const headerToggleSidebar = nestedSidebar === NESTED_SIDEBAR_NONE
+			? toggleSidebar
+			: partial( toggleNestedSidebar, NESTED_SIDEBAR_NONE );
+
+		const sidebarClassNames = classNames(
+			'editor-sidebar',
+			{ 'is-nested-sidebar-focused': nestedSidebar !== NESTED_SIDEBAR_NONE }
+		);
+
 		return (
-			<div className="editor-sidebar">
-				<EditorSidebarHeader toggleSidebar={ toggleSidebar } />
+			<div className={ sidebarClassNames } >
+				<EditorSidebarHeader nestedSidebar={ nestedSidebar } toggleSidebar={ headerToggleSidebar } />
 				<EditorActionBar
 					isNew={ isNew }
 					post={ post }
@@ -53,26 +70,28 @@ export default class EditorSidebar extends Component {
 					site={ site }
 					type={ type }
 				/>
-				<EditorDrawer
-					site={ site }
-					savedPost={ savedPost }
-					post={ post }
-					isNew={ isNew }
-					type={ type }
-					setPostDate={ setPostDate }
-					onPrivatePublish={ onPublish }
-					onSave={ onSave }
-					isPostPrivate={ isPostPrivate }
-					confirmationSidebarStatus={ confirmationSidebarStatus }
-				/>
-				<SidebarFooter>
-					<EditorDeletePost
+				<SidebarRegion className="editor-sidebar__parent-region">
+					<EditorDrawer
+						site={ site }
+						savedPost={ savedPost }
 						post={ post }
-						onTrashingPost={ onTrashingPost }
+						isNew={ isNew }
+						type={ type }
+						setPostDate={ setPostDate }
+						onPrivatePublish={ onPublish }
+						onSave={ onSave }
+						isPostPrivate={ isPostPrivate }
+						confirmationSidebarStatus={ confirmationSidebarStatus }
+						toggleNestedSidebar={ toggleNestedSidebar }
 					/>
+				</SidebarRegion>
+				<SidebarRegion className="editor-sidebar__nested-region" />
+				<SidebarFooter>
+					{ nestedSidebar === NESTED_SIDEBAR_NONE && (
+						<EditorDeletePost post={ post } onTrashingPost={ onTrashingPost } />
+					) }
 				</SidebarFooter>
 			</div>
 		);
 	}
-
 }
