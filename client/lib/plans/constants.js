@@ -71,7 +71,6 @@ export const FEATURE_BUSINESS_ONBOARDING = 'business-onboarding';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
 export const FEATURE_REPUBLICIZE = 'republicize';
-export const FEATURE_REPUBLICIZE_SCHEDULING = 'republicize-scheduling';
 export const FEATURE_ALL_FREE_FEATURES = 'all-free-features';
 export const FEATURE_ALL_PERSONAL_FEATURES = 'all-personal-features';
 export const FEATURE_ALL_PREMIUM_FEATURES = 'all-premium-features';
@@ -228,7 +227,7 @@ export const PLANS_LIST = {
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
-			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
 		] ),
@@ -296,7 +295,6 @@ export const PLANS_LIST = {
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
-			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 			FEATURE_BUSINESS_ONBOARDING,
 			FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
@@ -378,7 +376,6 @@ export const PLANS_LIST = {
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_WORDADS_INSTANT,
@@ -411,7 +408,6 @@ export const PLANS_LIST = {
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_WORDADS_INSTANT,
@@ -509,7 +505,6 @@ export const PLANS_LIST = {
 			FEATURE_ADVANCED_SEO,
 			FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -550,7 +545,6 @@ export const PLANS_LIST = {
 			FEATURE_ADVANCED_SEO,
 			FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -781,13 +775,6 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Targeted Social Media' ),
 		getDescription: () => i18n.translate(
 			'Share your posts as many times as you like on all your connected social media accounts using Publicize.'
-		)
-	},
-	[ FEATURE_REPUBLICIZE_SCHEDULING ]: {
-		getSlug: () => FEATURE_REPUBLICIZE_SCHEDULING,
-		getTitle: () => i18n.translate( 'Targeted Social Media' ),
-		getDescription: () => i18n.translate(
-			'Use Publicize to share your post on social media whenever you want, as many times as you want.'
 		)
 	},
 	[ FEATURE_NO_BRANDING ]: {

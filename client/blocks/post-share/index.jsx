@@ -56,11 +56,10 @@ import {
 } from 'state/sites/plans/selectors';
 import {
 	FEATURE_REPUBLICIZE,
-	FEATURE_REPUBLICIZE_SCHEDULING,
 	PLAN_PREMIUM,
 	PLAN_JETPACK_PREMIUM
 } from 'lib/plans/constants';
-import { UpgradeToPersonalNudge } from 'blocks/post-share/nudges';
+import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
 
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
@@ -85,7 +84,6 @@ class PostShare extends Component {
 		failed: PropTypes.bool,
 		hasFetchedConnections: PropTypes.bool,
 		hasRepublicizeFeature: PropTypes.bool,
-		hasRepublicizeSchedulingFeature: PropTypes.bool,
 		isPublicizeEnabled: PropTypes.bool,
 		planSlug: PropTypes.string,
 		postId: PropTypes.number,
@@ -231,7 +229,6 @@ class PostShare extends Component {
 
 	renderSharingButtons() {
 		const {
-			hasRepublicizeSchedulingFeature,
 			siteId,
 			translate,
 			publishedActions,
@@ -240,7 +237,7 @@ class PostShare extends Component {
 
 		const shareButton = <Button
 			className="post-share__share-button"
-			busy={ this.props.requesting && ! hasRepublicizeSchedulingFeature }
+			busy={ this.props.requesting }
 			primary
 			onClick={ this.sharePost }
 			disabled={ this.isDisabled() }
@@ -256,15 +253,6 @@ class PostShare extends Component {
 			>
 				{ translate( 'Preview' ) }
 			</Button>;
-
-		if ( ! hasRepublicizeSchedulingFeature ) {
-			return (
-				<div className="post-share__button-actions">
-					{ previewButton }
-					{ shareButton }
-				</div>
-			);
-		}
 
 		const actionsEvents = map( concat( publishedActions, scheduledActions ), ( { ID, message, date, service } ) => ( {
 			id: ID,
@@ -447,7 +435,6 @@ class PostShare extends Component {
 		const {
 			hasFetchedConnections,
 			hasRepublicizeFeature,
-			hasRepublicizeSchedulingFeature,
 			siteSlug,
 			translate,
 		} = this.props;
@@ -455,8 +442,6 @@ class PostShare extends Component {
 		if ( ! hasFetchedConnections ) {
 			return null;
 		}
-
-		const { isJetpack } = this.props;
 
 		if ( ! this.hasConnections() ) {
 			return (
@@ -467,14 +452,10 @@ class PostShare extends Component {
 			);
 		}
 
-		if (
-			! hasRepublicizeFeature &&
-			! hasRepublicizeSchedulingFeature &&
-			isEnabled( 'publicize-scheduling' )
-		) {
+		if ( ! hasRepublicizeFeature ) {
 			return (
 				<div>
-					<UpgradeToPersonalNudge { ...{ translate, isJetpack } } />
+					<UpgradeToPremiumNudge { ...this.props } />
 					<ActionsList { ...this.props } />
 				</div>
 			);
@@ -503,7 +484,6 @@ class PostShare extends Component {
 
 		const {
 			hasRepublicizeFeature,
-			hasRepublicizeSchedulingFeature,
 			postId,
 			siteId,
 			siteSlug,
@@ -517,8 +497,7 @@ class PostShare extends Component {
 		const classes = classNames(
 			'post-share__wrapper',
 			{ 'has-connections': this.hasConnections() },
-			{ 'has-republicize-feature': hasRepublicizeFeature },
-			{ 'has-republicize-scheduling-feature': hasRepublicizeSchedulingFeature },
+			{ 'has-republicize-scheduling-feature': hasRepublicizeFeature },
 		);
 
 		return (
@@ -580,7 +559,6 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			hasFetchedConnections: siteHasFetchedConnections( state, siteId ),
 			hasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
-			hasRepublicizeSchedulingFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE_SCHEDULING ),
 			siteSlug: getSiteSlug( state, siteId ),
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, postType ),
 			scheduling: isSchedulingPublicizeShareAction( state, siteId, postId ),
