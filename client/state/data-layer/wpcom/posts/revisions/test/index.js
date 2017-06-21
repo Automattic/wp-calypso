@@ -135,7 +135,7 @@ describe( '#receiveSuccess', () => {
 
 		const expectedRevisions = cloneDeep( normalizedPostRevisions );
 		forEach( expectedRevisions, revision => {
-			revision.changes = { added: 0, removed: 0 };
+			revision.changes = { added: 2, removed: 0 };
 		} );
 
 		expect( dispatch ).to.have.callCount( 2 );
