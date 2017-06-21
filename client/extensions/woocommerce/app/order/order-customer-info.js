@@ -18,7 +18,6 @@ class OrderCustomerInfo extends Component {
 		}
 
 		const { billing, shipping } = order;
-		console.log( billing, shipping );
 
 		return (
 			<div className="order__customer-info">
