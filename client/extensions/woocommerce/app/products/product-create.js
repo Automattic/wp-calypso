@@ -13,7 +13,9 @@ import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
-import { editProduct, editProductAttribute } from 'woocommerce/state/ui/products/actions';
+import { editProduct, editProductAttribute, createProductActionList } from 'woocommerce/state/ui/products/actions';
+import { getActionList } from 'woocommerce/state/action-list/selectors';
+import { actionListStepNext } from 'woocommerce/state/action-list/actions';
 import { getCurrentlyEditingProduct } from 'woocommerce/state/ui/products/selectors';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
@@ -67,7 +69,7 @@ class ProductCreate extends React.Component {
 	}
 
 	onSave = () => {
-		const { siteId, product, translate } = this.props;
+		const { product, translate } = this.props;
 
 		const successAction = successNotice(
 			translate( '%(product)s successfully created.', {
@@ -76,24 +78,36 @@ class ProductCreate extends React.Component {
 			{ duration: 4000 }
 		);
 
-		const errorAction = errorNotice(
+		const failureAction = errorNotice(
 			translate( 'There was a problem saving %(product)s. Please try again.', {
 				args: { product: product.name },
 			} )
 		);
 
-		this.props.createProduct( siteId, product, successAction, errorAction );
+		this.props.createProductActionList( successAction, failureAction );
+		this.props.actionListStepNext();
+	}
+
+	isProductValid( product = this.props.product ) {
+		return product &&
+			product.type &&
+			product.name && product.name.length > 0;
 	}
 
 	render() {
-		const { siteId, product, className, variations, productCategories } = this.props;
+		const { siteId, product, className, variations, productCategories, actionList } = this.props;
+
+		const isValid = 'undefined' !== siteId && this.isProductValid();
+		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
+		const saveEnabled = isValid && ! isBusy;
 
 		return (
 			<Main className={ className }>
 				<SidebarNavigation />
 				<ProductHeader
 					onTrash={ this.onTrash }
-					onSave={ siteId && this.onSave || false }
+					onSave={ saveEnabled ? this.onSave : false }
+					isBusy={ isBusy }
 				/>
 				<ProductForm
 					siteId={ siteId }
@@ -114,19 +128,23 @@ function mapStateToProps( state ) {
 	const product = getCurrentlyEditingProduct( state, siteId );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id, siteId );
 	const productCategories = getProductCategories( state, siteId );
+	const actionList = getActionList( state );
 
 	return {
 		siteId,
 		product,
 		variations,
 		productCategories,
+		actionList,
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			actionListStepNext,
 			createProduct,
+			createProductActionList,
 			editProduct,
 			editProductAttribute,
 			editProductVariation,

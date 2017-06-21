@@ -11,12 +11,17 @@ import Gridicon from 'gridicons';
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 
-const ProductHeader = ( { onTrash, onSave, translate } ) => {
+const ProductHeader = ( { onTrash, onSave, isBusy, translate } ) => {
 	const trashButton = onTrash &&
 		<Button borderless onClick={ onTrash }><Gridicon icon="trash" /></Button>;
 
-	const saveButton = 'undefined' !== typeof onSave &&
-		<Button primary onClick={ onSave } disabled={ onSave === false }>{ translate( 'Save' ) }</Button>;
+	const saveExists = 'undefined' !== typeof onSave;
+	const saveDisabled = false === onSave;
+
+	const saveButton = saveExists &&
+		<Button primary onClick={ onSave } disabled={ saveDisabled } busy={ isBusy }>
+			{ translate( 'Save' ) }
+		</Button>;
 
 	return (
 		<ActionHeader>
