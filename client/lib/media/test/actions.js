@@ -22,7 +22,8 @@ var DUMMY_SITE_ID = 1,
 		lastModifiedDate: '2015-06-19T09:36:09-04:00',
 		name: 'my-file.jpg',
 		size: 21165,
-		type: 'image/jpeg'
+		type: 'image/jpeg',
+		guid: 'test',
 	},
 	DUMMY_BLOB_UPLOAD = {
 		fileContents: {
@@ -40,7 +41,8 @@ var DUMMY_SITE_ID = 1,
 
 describe( 'MediaActions', function() {
 	let mediaGet, mediaList, mediaAdd, mediaAddUrls, mediaUpdate, mediaDelete, mediaListExternal,
-		MediaActions, sandbox, Dispatcher, PostEditStore, MediaListStore;
+		MediaActions, sandbox, Dispatcher, PostEditStore, MediaListStore,
+		mediaAddExternal;
 
 	useFakeDom();
 	useMockery();
@@ -77,6 +79,9 @@ describe( 'MediaActions', function() {
 			},
 			undocumented: siteId => ( {
 				externalMediaList: mediaListExternal.bind( siteId ),
+				site: () => ( {
+					uploadExternalMedia: mediaAddExternal
+				} ),
 			} ),
 		} );
 		mockery.registerMock( 'lodash/uniqueId', function() {
@@ -107,6 +112,7 @@ describe( 'MediaActions', function() {
 		mediaList = sandbox.stub().callsArgWithAsync( 1, null, DUMMY_API_RESPONSE );
 		mediaListExternal = sandbox.stub().callsArgWithAsync( 1, null, DUMMY_API_RESPONSE );
 		mediaAdd = sandbox.stub().returns( Promise.resolve( DUMMY_API_RESPONSE ) );
+		mediaAddExternal = sandbox.stub().returns( Promise.resolve( DUMMY_API_RESPONSE ) );
 		mediaAddUrls = sandbox.stub().returns( Promise.resolve( DUMMY_API_RESPONSE ) );
 		mediaUpdate = sandbox.stub().callsArgWithAsync( 1, null, DUMMY_API_RESPONSE );
 		mediaDelete = sandbox.stub().callsArgWithAsync( 0, null, DUMMY_API_RESPONSE );
@@ -322,6 +328,20 @@ describe( 'MediaActions', function() {
 				expect( Dispatcher.handleServerAction ).to.have.thrown;
 			} ).catch( () => {
 				expect( mediaAdd ).to.have.been.calledOnce;
+			} );
+		} );
+	} );
+
+	describe( '#addExternal()', () => {
+		it( 'should accept an upload', () => {
+			return MediaActions.addExternal( DUMMY_SITE_ID, [ DUMMY_UPLOAD ], 'external' ).then( () => {
+				expect( mediaAddExternal ).to.have.been.calledWithMatch( 'external', [ DUMMY_UPLOAD.guid ] );
+				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+					type: 'RECEIVE_MEDIA_ITEM',
+					siteId: DUMMY_SITE_ID,
+					id: 'media-1',
+					data: DUMMY_API_RESPONSE.media[ 0 ]
+				} );
 			} );
 		} );
 	} );
