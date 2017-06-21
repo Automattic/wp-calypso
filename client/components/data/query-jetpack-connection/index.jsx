@@ -12,7 +12,7 @@ import { requestJetpackConnectionStatus } from 'state/jetpack/connection/actions
 
 class QueryJetpackConnection extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		requestingJetpackConnectionStatus: PropTypes.bool,
 		requestJetpackConnectionStatus: PropTypes.func
 	};
@@ -28,11 +28,9 @@ class QueryJetpackConnection extends Component {
 	}
 
 	request( props ) {
-		if ( props.requestingJetpackConnectionStatus ) {
-			return;
+		if ( props.siteId !== null && ! props.requestingJetpackConnectionStatus ) {
+			props.requestJetpackConnectionStatus( props.siteId );
 		}
-
-		props.requestJetpackConnectionStatus( props.siteId );
 	}
 
 	render() {
