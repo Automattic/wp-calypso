@@ -6,6 +6,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,7 +47,6 @@ function checkPropsChange( currentProps, nextProps, propArr ) {
 }
 
 const Post = React.createClass( {
-
 	displayName: 'Post',
 
 	mixins: [ updatePostStatus ],
@@ -60,18 +60,14 @@ const Post = React.createClass( {
 		};
 	},
 
-	shouldComponentUpdate( nextProps, nextState ) {
-		const propsToCheck = [ 'post', 'postImages', 'fullWidthPost', 'path' ];
-
-		if ( checkPropsChange( this.props, nextProps, propsToCheck ) ) {
-			return true;
-		}
-
-		if ( nextState.showMoreOptions !== this.props.showMoreOptions ) {
-			return true;
-		}
-
-		return false;
+	shouldComponentUpdate( nextProps ) {
+		const propsToCheck = [
+			'post',
+			'postImages',
+			'fullWidthPost',
+			'path',
+		];
+		return checkPropsChange( this.props, nextProps, propsToCheck );
 	},
 
 	analyticsEvents: {
@@ -211,7 +207,10 @@ const Post = React.createClass( {
 		}
 
 		return (
-			<a href={ this.getContentLinkURL() } className="post__excerpt post__content-link" target={ this.getContentLinkTarget() } onClick={ this.analyticsEvents.postExcerptClick }>
+			<a href={ this.getContentLinkURL() }
+					className="post__excerpt post__content-link"
+					target={ this.getContentLinkTarget() }
+					onClick={ this.analyticsEvents.postExcerptClick }>
 				{ excerptElement }
 			</a>
 		);
@@ -279,6 +278,10 @@ const Post = React.createClass( {
 		this.setState( { showShare: ! this.state.showShare } );
 	},
 
+	setCommentsFilter( commentsFilter ) {
+		this.setState( { commentsFilter } );
+	},
+
 	viewPost( event ) {
 		event.preventDefault();
 		const { isPreviewable, previewUrl, selectedSiteId } = this.props;
@@ -336,8 +339,8 @@ const Post = React.createClass( {
 						showFilters={ isEnabled( 'comments/filters-in-posts' ) }
 						showModerationTools={ isEnabled( 'comments/moderation-tools-in-posts' ) }
 						commentsFilter={ config.isEnabled( 'comments/filters-in-posts' ) ? this.state.commentsFilter : 'approved' }
-						onFilterChange={ commentsFilter => this.setState( { commentsFilter } ) }
-						onCommentsUpdate={ () => {} } />
+						onFilterChange={ this.setCommentsFilter }
+						onCommentsUpdate={ noop } />
 				}
 				{
 					this.state.showShare &&
