@@ -5,7 +5,7 @@ import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 } from 'woocommerce/state/action-types';
-import { getBucket, nextBucketIndex } from '../helpers';
+import { getBucket } from '../helpers';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: editProductCategoryAction,
@@ -15,13 +15,12 @@ function editProductCategoryAction( edits, action ) {
 	const { category, data } = action;
 	const prevEdits = edits || {};
 	const bucket = getBucket( category );
-	const categoryWithId = category || { id: nextBucketIndex( prevEdits[ bucket ] ) };
-	const newArray = editProductCategory( prevEdits[ bucket ], categoryWithId, data );
+	const newArray = editProductCategory( prevEdits[ bucket ], category, data );
 
 	return {
 		...prevEdits,
 		[ bucket ]: newArray,
-		currentlyEditingId: categoryWithId.id,
+		currentlyEditingId: category.id,
 	};
 }
 
