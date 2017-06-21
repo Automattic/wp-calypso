@@ -209,7 +209,7 @@ class Sitemaps extends Component {
 
 		return (
 			<div>
-				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
+				<QueryJetpackConnection siteId={ siteId } />
 
 				<SectionHeader label={ translate( 'Sitemaps' ) } />
 
