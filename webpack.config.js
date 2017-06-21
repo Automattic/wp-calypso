@@ -65,11 +65,16 @@ const webpackConfig = {
 			{
 				include: /node_modules[\/\\]tinymce/,
 				loader: 'imports?this=>window',
+			},
+			{
+				test: /\.tsx?$/,
+				exclude: /node_mdoules/,
+				loaders: [ 'babel-loader', 'awesome-typescript-loader' ]
 			}
 		]
 	},
 	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx' ],
+		extensions: [ '', '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		root: [ path.join( __dirname, 'client' ), path.join( __dirname, 'client', 'extensions' ) ],
 		modulesDirectories: [ 'node_modules' ],
 		alias: {
