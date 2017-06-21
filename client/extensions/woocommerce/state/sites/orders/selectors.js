@@ -77,6 +77,16 @@ export const getOrders = ( state, page = 1, siteId = getSelectedSiteId( state ) 
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Number} orderId ID number of an order
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Object|Null} The requested order object, or null if not available
+ */
+export const getOrder = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'items', orderId ], null );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Number} Total number of pages of orders available on a site, or 1 if not loaded yet.
  */

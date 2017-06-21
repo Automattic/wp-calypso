@@ -75,6 +75,10 @@ Whether the given order is currently being retrieved from the server. Optional `
 
 Gets the list of orders for this page from the current state, or an empty array if not yet loaded.
 
+### `getOrder( state, orderId: number, siteId: number )`
+
+Gets a requested order object from the current state, or null if not yet loaded.
+
 ### `getTotalOrdersPages( state, siteId: number )`
 
 Gets the total number of pages of orders available on a site. Optional `siteId`, will default to currently selected site.
