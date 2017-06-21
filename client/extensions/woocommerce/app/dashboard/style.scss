@@ -35,7 +35,7 @@
 	@include breakpoint( ">960px" ) {
 		margin-left: -32px;
 		margin-right: -32px;
-		padding: 32px;
+		padding: 24px 32px;
 		align-items: center;
 	}
 
@@ -46,13 +46,14 @@
 		text-align: center;
 		width: 24px;
 		flex-shrink: 0;
-		border-radius: 100%;
+		border-radius: 4px;
 		margin-right: 24px;
-		margin-top: 4px;
+		margin-top: 2px;
 
 		@include breakpoint( ">960px" ) {
 			height: 48px;
 			width: 48px;
+			margin-top: -8px;
 		}
 
 		.gridicon {

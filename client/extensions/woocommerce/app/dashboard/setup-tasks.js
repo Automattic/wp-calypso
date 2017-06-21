@@ -97,7 +97,7 @@ class SetupTasks extends Component {
 			{
 				checked: hasProducts,
 				docURL: 'https://support.wordpress.com/',
-				explanation: translate( 'Add your products to your store.' ),
+				explanation: translate( 'Start by adding the first product to your store.' ),
 				label: translate( 'Add a product' ),
 				show: true,
 				actions: [
@@ -110,7 +110,7 @@ class SetupTasks extends Component {
 			{
 				checked: shippingIsSetUp,
 				docURL: 'https://support.wordpress.com/',
-				explanation: translate( 'Configure the locations to which you ship your products.' ),
+				explanation: translate( 'Be ready to ship by the time your first order comes in.' ),
 				label: translate( 'Set up shipping' ),
 				show: this.state.showShippingTask,
 				actions: [
@@ -128,7 +128,7 @@ class SetupTasks extends Component {
 			{
 				checked: paymentsAreSetUp,
 				docURL: 'https://support.wordpress.com/',
-				explanation: translate( 'Choose which payment methods to offer your customers.' ),
+				explanation: translate( 'Choose how you would like your customers to pay you.' ),
 				label: translate( 'Set up payments' ),
 				show: true,
 				actions: [
@@ -141,7 +141,7 @@ class SetupTasks extends Component {
 			{
 				checked: taxesAreSetUp,
 				docURL: 'https://support.wordpress.com/',
-				explanation: translate( 'Configure how tax rates are calculated at your store.' ),
+				explanation: translate( 'Taxes. Everyone\'s favorite. We made it simple.' ),
 				label: translate( 'Set up taxes' ),
 				show: this.state.showTaxesTask,
 				actions: [
@@ -150,7 +150,7 @@ class SetupTasks extends Component {
 						path: getLink( '/store/settings/taxes/:site', site ),
 					},
 					{
-						label: translate( 'I\'m not charging sales tax' ),
+						label: translate( 'I won\'t be charging sales tax' ),
 						isSecondary: true,
 						onClick: this.onClickNoTaxes
 					}
@@ -159,7 +159,7 @@ class SetupTasks extends Component {
 			{
 				checked: triedCustomizer,
 				docURL: 'https://support.wordpress.com/',
-				explanation: translate( 'View your store, test your settings and customize the design.' ),
+				explanation: translate( 'View your store and make any final tweaks before opening for business.' ),
 				label: translate( 'View and customize' ),
 				show: true,
 				actions: [
