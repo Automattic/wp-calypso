@@ -72,7 +72,6 @@ class PeopleListSectionHeader extends Component {
 						<Button
 							compact
 							href={ siteLink }
-							target={ this.shouldUseWPAdmin() ? '_new' : null }
 							className="people-list-section-header__add-button"
 							onMouseEnter={ this.showAddTooltip }
 							onMouseLeave={ this.hideAddTooltip }
