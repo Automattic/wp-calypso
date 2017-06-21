@@ -26,6 +26,7 @@ import {
 	getSelectedSiteSlug
 } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { isATEnabled } from 'lib/automated-transfer';
 
 /**
  * Module variables
@@ -279,6 +280,27 @@ module.exports = {
 		);
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	},
+
+	jetPackWarning( context, next ) {
+		const JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
+		const basePath = route.sectionify( context.path );
+		const selectedSite = getSelectedSite( context.store.getState() );
+
+		if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
+			renderWithReduxStore( (
+				<Main>
+					<JetpackManageErrorPage
+						template="noDomainsOnJetpack"
+						siteId={ selectedSite.ID }
+					/>
+				</Main>
+			), document.getElementById( 'primary' ), context.store );
+
+			analytics.pageView.record( basePath, '> No Domains On Jetpack' );
+		} else {
+			next();
+		}
 	},
 
 	redirectIfNoSite: function( redirectTo ) {

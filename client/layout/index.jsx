@@ -41,6 +41,9 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
 
+// Load My Sites sidebar here to decrease the size of chunks
+require( 'my-sites/sidebar' );
+
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
 }
