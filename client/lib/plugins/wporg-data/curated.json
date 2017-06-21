@@ -20,14 +20,14 @@
 		"slug": "wordpress-seo"
 	},
 	{
-		"name": "Google XML Sitemaps",
-		"author": "<a href=\"http://www.arnebrachhold.de/\">Arne Brachhold</a>",
+		"name": "MailChimp for WordPress",
+		"author": "<a href=\"https://ibericode.com/\">ibericode</a>",
 		"rating": 98,
 		"icons": {
-			"1x": "https://ps.w.org/google-sitemap-generator/assets/icon-128x128.png?rev=976338",
-			"2x": "https://ps.w.org/google-sitemap-generator/assets/icon-256x256.png?rev=976338"
+			"1x": "https://ps.w.org/mailchimp-for-wp/assets/icon-128x128.png?rev=1224577",
+			"2x": "https://ps.w.org/mailchimp-for-wp/assets/icon-256x256.png?rev=1224577"
 		},
-		"slug": "google-sitemap-generator"
+		"slug": "mailchimp-for-wp"
 	},
 	{
 		"name": "TinyMCE Advanced",
