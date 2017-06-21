@@ -17,6 +17,7 @@ import Gravatar from 'components/gravatar';
 class ActivityLogItem extends Component {
 
 	static propTypes = {
+		allowRestore: PropTypes.bool.isRequired,
 		siteId: PropTypes.number.isRequired,
 		timestamp: PropTypes.number.isRequired,
 		requestRestore: PropTypes.func.isRequired,
@@ -31,6 +32,7 @@ class ActivityLogItem extends Component {
 	};
 
 	static defaultProps = {
+		allowRestore: true,
 		status: 'is-info',
 		icon: 'info-outline'
 	};
@@ -109,7 +111,14 @@ class ActivityLogItem extends Component {
 	}
 
 	getSummary() {
-		const { translate } = this.props;
+		const {
+			allowRestore,
+			translate,
+		} = this.props;
+
+		if ( ! allowRestore ) {
+			return null;
+		}
 
 		return (
 			<div className="activity-log-item__action">

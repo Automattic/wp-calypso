@@ -14,7 +14,8 @@ import ActivityLogItem from '../activity-log-item';
 
 class ActivityLogDay extends Component {
 	static propTypes = {
-		isRewindEnabled: PropTypes.bool,
+		allowRestore: PropTypes.bool.isRequired,
+		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
 		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
@@ -22,7 +23,8 @@ class ActivityLogDay extends Component {
 	};
 
 	static defaultProps = {
-		isRewindEnabled: true,
+		allowRestore: true,
+		isRewindActive: true,
 	};
 
 	handleClickRestore = () => {
@@ -40,10 +42,16 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Button to display.
 	 */
 	getRewindButton( type = '' ) {
+		const { allowRestore } = this.props;
+
+		if ( ! allowRestore ) {
+			return null;
+		}
+
 		return (
 			<Button
 				compact
-				disabled={ ! this.props.isRewindEnabled }
+				disabled={ ! this.props.isRewindActive }
 				onClick={ this.handleClickRestore }
 				primary={ 'primary' === type }
 			>
@@ -82,6 +90,7 @@ class ActivityLogDay extends Component {
 
 	render() {
 		const {
+			allowRestore,
 			logs,
 			requestRestore,
 		} = this.props;
@@ -96,6 +105,7 @@ class ActivityLogDay extends Component {
 					{ logs.map( ( log, index ) => (
 						<ActivityLogItem
 							key={ index }
+							allowRestore={ allowRestore }
 							requestRestore={ requestRestore }
 
 							title={ log.name }

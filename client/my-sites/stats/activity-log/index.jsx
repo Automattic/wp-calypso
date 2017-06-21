@@ -24,6 +24,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from '../stats-navigation';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import ActivityLogDay from '../activity-log-day';
+import ActivityLogBanner from '../activity-log-banner';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import SuccessBanner from '../activity-log-banner/success-banner';
@@ -185,7 +186,6 @@ class ActivityLog extends Component {
 		</div>;
 	}
 
-	// FIXME: This is for internal testing
 	renderErrorMessage() {
 		const {
 			isPressable,
@@ -193,41 +193,51 @@ class ActivityLog extends Component {
 			translate,
 		} = this.props;
 
-		// FIXME: Do something nicer with the error
+		// Do not match null
+		// FIXME: This is for internal testing
+		if ( false === isPressable ) {
+			return (
+				<ActivityLogBanner status="info" icon={ null } >
+					{ translate( 'Rewind is currently only available for Pressable sites' ) }
+				</ActivityLogBanner>
+			);
+		}
+
 		if ( rewindStatusError ) {
 			return (
-				<div>
+				<ActivityLogBanner status="error" icon={ null } >
 					{ translate( 'Rewind error: %s', { args: rewindStatusError.message } ) }
 					<br />
 					{ translate( 'Do you have an appropriate plan?' ) }
-				</div>
+				</ActivityLogBanner>
 			);
-		}
-		if ( ! isPressable ) {
-			return translate( 'Currently only available for Pressable sites' );
 		}
 	}
 
 	renderContent() {
 		const {
+			isPressable,
+			isRewindActive,
+			logs,
+			moment,
 			siteId,
 			slug,
-			moment,
 			startDate,
-			isRewindActive,
 		} = this.props;
+
 		const startOfMonth = moment( startDate ).startOf( 'month' ),
 			startOfMonthMs = startOfMonth.valueOf(),
 			endOfMonthMs = moment( startDate ).endOf( 'month' ).valueOf();
-		const logs = filter( this.props.logs, obj => startOfMonthMs <= obj.ts_site && obj.ts_site <= endOfMonthMs );
+		const filteredLogs = filter( logs, obj => startOfMonthMs <= obj.ts_site && obj.ts_site <= endOfMonthMs );
 		const logsGroupedByDate = map(
 			groupBy(
-				logs.map( this.update_logs, this ),
+				filteredLogs.map( this.update_logs, this ),
 				log => moment( log.ts_site ).startOf( 'day' ).format( 'x' )
 			),
 			( daily_logs, timestamp ) => (
 				<ActivityLogDay
-					isRewindEnabled={ isRewindActive }
+					allowRestore={ !! isPressable }
+					isRewindActive={ isRewindActive }
 					key={ timestamp }
 					logs={ daily_logs }
 					requestRestore={ this.handleRequestRestore }
@@ -257,7 +267,7 @@ class ActivityLog extends Component {
 					/>
 				</StatsPeriodNavigation>
 				{ this.renderBanner() }
-				{ ! isRewindActive && <ActivityLogRewindToggle siteId={ siteId } /> }
+				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
 				<section className="activity-log__wrapper">
 					{ logsGroupedByDate }
 				</section>
@@ -278,7 +288,7 @@ class ActivityLog extends Component {
 		} = this.state;
 
 		return (
-			<Main wideLayout={ true }>
+			<Main wideLayout>
 				<QueryRewindStatus siteId={ siteId } />
 				<QueryActivityLog siteId={ siteId } />
 				<StatsFirstView />
@@ -288,7 +298,8 @@ class ActivityLog extends Component {
 					slug={ slug }
 					section="activity"
 				/>
-				{ this.renderErrorMessage() || this.renderContent() }
+				{ this.renderErrorMessage() }
+				{ this.renderContent() }
 				<ActivityLogConfirmDialog
 					isVisible={ showRestoreConfirmDialog }
 					siteTitle={ siteTitle }
@@ -314,7 +325,7 @@ export default connect(
 			isRewindActive: isRewindActiveSelector( state, siteId ),
 
 			// FIXME: Testing only
-			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], false ),
+			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
 		};
 	}, {
 		recordGoogleEvent,
