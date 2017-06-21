@@ -88,7 +88,15 @@ export class DomainDetailsForm extends PureComponent {
 		this.inputRefCallbacks = {};
 	}
 
-	componentWillMount() {
+	componentWillReceiveProps( nextProps ) {
+		if ( this.formStateController || null === this.props.contactDetails ) {
+			return;
+		}
+
+		if ( isEqual( this.props, nextProps ) ) {
+			return;
+		}
+
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
 			loadFunction: this.loadFormStateFromRedux,
@@ -533,6 +541,10 @@ export class DomainDetailsForm extends PureComponent {
 				'only-google-apps-details': needsOnlyGoogleAppsDetails
 			} );
 
+		if ( this.props.contactDetails === null ) {
+			return <QueryContactDetailsCache />;
+		}
+
 		let title;
 		// TODO: gather up tld specific stuff
 		if ( this.state.currentStep === 'fr' ) {
@@ -556,7 +568,6 @@ export class DomainDetailsForm extends PureComponent {
 					title={ title }>
 					{ this.renderCurrentForm() }
 				</PaymentBox>
-			<QueryContactDetailsCache />
 			</div>
 		);
 	}
