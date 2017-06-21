@@ -7,8 +7,11 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { createProduct } from 'woocommerce/state/sites/products/actions';
-import { handleProductCreate } from '../';
+import { createProduct, productUpdated } from 'woocommerce/state/sites/products/actions';
+import {
+	handleProductCreate,
+	handleProductUpdated,
+} from '../';
 import {
 	WOOCOMMERCE_API_REQUEST,
 } from 'woocommerce/state/action-types';
@@ -32,11 +35,27 @@ describe( 'handlers', () => {
 					type: WOOCOMMERCE_API_REQUEST,
 					method: 'post',
 					siteId: 123,
-					onSuccessAction: successAction,
+					onSuccessAction: productUpdated( 123, null, successAction ),
 					onFailureAction: failureAction,
 					body: { name: 'Product #1', type: 'simple' },
 				} )
 			);
+		} );
+	} );
+
+	describe( '#handleProductUpdated', () => {
+		it( 'should dispatch a completion action', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const product1 = { id: 101, name: 'Newly Created Product', type: 'simple' };
+			const completionAction = { type: '%%complete%%' };
+			const action = productUpdated( 123, product1, completionAction );
+
+			handleProductUpdated( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith( completionAction );
 		} );
 	} );
 } );
