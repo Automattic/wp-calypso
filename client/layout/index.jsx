@@ -138,11 +138,11 @@ Layout = React.createClass( {
 				<DocumentHead />
 				<QuerySites allSites />
 				<QueryPreferences />
-				{ <AsyncLoad require="layout/guided-tours" /> }
-				{ config.isEnabled( 'nps-survey/notice' ) && <AsyncLoad require="layout/nps-survey-notice" /> }
+				{ <AsyncLoad require="layout/guided-tours" placeholder={ null } /> }
+				{ config.isEnabled( 'nps-survey/notice' ) && <AsyncLoad require="layout/nps-survey-notice" placeholder={ null } /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) && <KeyboardShortcutsMenu /> }
 				{ this.renderMasterbar() }
-				{ config.isEnabled( 'support-user' ) && <AsyncLoad require="support/support-user" /> }
+				{ config.isEnabled( 'support-user' ) && <AsyncLoad require="support/support-user" placeholder={ null } /> }
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">

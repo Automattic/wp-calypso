@@ -138,7 +138,7 @@ class MasterbarItemNotifications extends Component {
 						key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
 					/>
 				</MasterbarItem>
-				<AsyncLoad require="notifications"
+				<AsyncLoad require="notifications" placeholder={ null }
 					isShowing={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }
