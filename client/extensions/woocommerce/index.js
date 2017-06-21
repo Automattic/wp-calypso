@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
+import Orders from './app/orders';
 import Products from './app/products';
 import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
@@ -64,7 +65,7 @@ const getStorePages = () => {
 			path: '/store/products/import/:site',
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
+			container: Orders,
 			configKey: 'woocommerce/extension-orders',
 			path: '/store/orders/:site',
 			sidebarItem: {
