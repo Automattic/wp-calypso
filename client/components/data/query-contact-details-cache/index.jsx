@@ -12,7 +12,7 @@ import { requestContactDetailsCache } from 'state/domains/management/actions';
 
 class QueryContactDetailsCache extends Component {
 	componentWillMount() {
-		if ( this.props.requesting ) {
+		if ( this.props.isRequesting ) {
 			return;
 		}
 		this.props.requestContactDetailsCache();
@@ -24,11 +24,11 @@ class QueryContactDetailsCache extends Component {
 }
 
 QueryContactDetailsCache.propTypes = {
-	requesting: PropTypes.bool,
-	requestContactDetailsCache: PropTypes.func
+	isRequesting: PropTypes.bool.isRequired,
+	requestContactDetailsCache: PropTypes.func.isRequired
 };
 
 export default connect(
-	( state ) => ( { requesting: isRequestingContactDetailsCache( state ) } ),
+	( state ) => ( { isRequesting: isRequestingContactDetailsCache( state ) } ),
 	{ requestContactDetailsCache }
 )( QueryContactDetailsCache );

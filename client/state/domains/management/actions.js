@@ -22,13 +22,13 @@ import {
  * Returns an action object to be used in signalling that a cached domains
  * contact details object has been received.
  *
- * @param   {Object}   cacheData	cached contact details object
+ * @param   {Object}   data   cached contact details object
  * @returns {Object}   Action object
  */
-export function receiveContactDetailsCache( cacheData ) {
+export function receiveContactDetailsCache( data ) {
 	return {
 		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
-		cacheData
+		data
 	};
 }
 
@@ -43,7 +43,7 @@ export function requestContactDetailsCache() {
 			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 		} );
 
-		wpcom.undocumented().getDomainContactInformation( ( error, cacheData ) => {
+		wpcom.undocumented().getDomainContactInformation( ( error, data ) => {
 			if ( error ) {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
@@ -52,7 +52,7 @@ export function requestContactDetailsCache() {
 				return;
 			}
 
-			dispatch( receiveContactDetailsCache( cacheData ) );
+			dispatch( receiveContactDetailsCache( data ) );
 			dispatch( {
 				type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
 			} );
@@ -60,10 +60,10 @@ export function requestContactDetailsCache() {
 	};
 }
 
-export function updateContactDetailsCache( cacheData ) {
+export function updateContactDetailsCache( data ) {
 	return {
 		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
-		cacheData
+		data
 	};
 }
 
