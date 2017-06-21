@@ -8,8 +8,8 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { fetch, displayAndEnable, enable } from '../';
-import { displaySettings, enableSettings, fetchSettings } from 'wp-job-manager/state/settings/actions';
+import { fetchExtensionError, fetchExtensionSettings, updateExtensionSettings } from '../';
+import { fetchError, fetchSettings, updateSettings } from 'wp-job-manager/state/settings/actions';
 
 const successfulResponse = {
 	data: {
@@ -18,7 +18,7 @@ const successfulResponse = {
 	}
 };
 
-describe( '#fetch()', () => {
+describe( '#fetchExtensionSettings()', () => {
 	it( 'should dispatch an HTTP request to the settings endpoint', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -26,7 +26,7 @@ describe( '#fetch()', () => {
 		};
 		const dispatch = sinon.spy();
 
-		fetch( { dispatch }, action );
+		fetchExtensionSettings( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( http( {
@@ -39,27 +39,26 @@ describe( '#fetch()', () => {
 	} );
 } );
 
-describe( '#displayAndEnable', () => {
-	it( 'should dispatch `displaySettings` and `enableSettings`', () => {
+describe( '#updateExtensionSettings', () => {
+	it( 'should dispatch `updateSettings`', () => {
 		const action = fetchSettings( 12345678 );
 		const dispatch = sinon.spy();
 
-		displayAndEnable( { dispatch }, action, null, successfulResponse );
+		updateExtensionSettings( { dispatch }, action, null, successfulResponse );
 
-		expect( dispatch ).to.have.callCount( 2 );
-		expect( dispatch ).to.have.been.calledWith( displaySettings( 12345678, successfulResponse.data ) );
-		expect( dispatch ).to.have.been.calledWith( enableSettings( 12345678 ) );
+		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch ).to.have.been.calledWith( updateSettings( 12345678, successfulResponse.data ) );
 	} );
 } );
 
-describe( '#enable', () => {
-	it( 'should dispatch `enableSettings`', () => {
+describe( '#fetchExtensionError', () => {
+	it( 'should dispatch `fetchError`', () => {
 		const action = fetchSettings( 12345678 );
 		const dispatch = sinon.spy();
 
-		enable( { dispatch }, action );
+		fetchExtensionError( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( enableSettings( 12345678 ) );
+		expect( dispatch ).to.have.been.calledWith( fetchError( 12345678 ) );
 	} );
 } );

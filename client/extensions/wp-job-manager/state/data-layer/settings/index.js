@@ -3,10 +3,10 @@
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { displaySettings, enableSettings } from '../../settings/actions';
+import { fetchError, updateSettings } from '../../settings/actions';
 import { WP_JOB_MANAGER_FETCH_SETTINGS } from 'wp-job-manager/state/action-types';
 
-export const fetch = ( { dispatch }, action ) => {
+export const fetchExtensionSettings = ( { dispatch }, action ) => {
 	const { siteId } = action;
 
 	dispatch( http( {
@@ -18,14 +18,11 @@ export const fetch = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const displayAndEnable = ( { dispatch }, { siteId }, next, { data } ) => {
-	dispatch( displaySettings( siteId, data ) );
-	dispatch( enableSettings( siteId ) );
-};
+export const updateExtensionSettings = ( { dispatch }, { siteId }, next, { data } ) => dispatch( updateSettings( siteId, data ) );
 
-export const enable = ( { dispatch }, { siteId } ) => dispatch( enableSettings( siteId ) );
+export const fetchExtensionError = ( { dispatch }, { siteId } ) => dispatch( fetchError( siteId ) );
 
-const dispatchSettingsRequest = dispatchRequest( fetch, displayAndEnable, enable );
+const dispatchSettingsRequest = dispatchRequest( fetchExtensionSettings, updateExtensionSettings, fetchExtensionError );
 
 export default {
 	[ WP_JOB_MANAGER_FETCH_SETTINGS ]: [ dispatchSettingsRequest ],

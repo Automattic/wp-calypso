@@ -9,9 +9,9 @@ import deepFreeze from 'deep-freeze';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	WP_JOB_MANAGER_DISPLAY_SETTINGS,
-	WP_JOB_MANAGER_ENABLE_SETTINGS,
+	WP_JOB_MANAGER_FETCH_ERROR,
 	WP_JOB_MANAGER_FETCH_SETTINGS,
+	WP_JOB_MANAGER_UPDATE_SETTINGS,
 } from '../../action-types';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { fetching, items } from '../reducer';
@@ -58,9 +58,20 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set request to false if enabling settings', () => {
+		it( 'should set request to false if updating settings', () => {
 			const state = fetching( previousState, {
-				type: WP_JOB_MANAGER_ENABLE_SETTINGS,
+				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
+				siteId: primarySiteId,
+			} );
+
+			expect( state ).to.eql( {
+				[ primarySiteId ]: false,
+			} );
+		} );
+
+		it( 'should set request to false if settings could not be fetched', () => {
+			const state = fetching( previousState, {
+				type: WP_JOB_MANAGER_FETCH_ERROR,
 				siteId: primarySiteId,
 			} );
 
@@ -101,7 +112,7 @@ describe( 'reducer', () => {
 
 		it( 'should index settings by site ID', () => {
 			const state = items( undefined, {
-				type: WP_JOB_MANAGER_DISPLAY_SETTINGS,
+				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
 				siteId: primarySiteId,
 				data: primarySettings,
 			} );
@@ -113,7 +124,7 @@ describe( 'reducer', () => {
 
 		it( 'should accumulate settings', () => {
 			const state = items( previousState, {
-				type: WP_JOB_MANAGER_DISPLAY_SETTINGS,
+				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
 				siteId: secondarySiteId,
 				data: secondarySettings,
 			} );
@@ -126,7 +137,7 @@ describe( 'reducer', () => {
 
 		it( 'should override previous settings of same site ID', () => {
 			const state = items( previousState, {
-				type: WP_JOB_MANAGER_DISPLAY_SETTINGS,
+				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
 				siteId: primarySiteId,
 				data: secondarySettings,
 			} );
@@ -142,7 +153,7 @@ describe( 'reducer', () => {
 				job_manager_hide_filled_positions: true,
 			};
 			const state = items( previousState, {
-				type: WP_JOB_MANAGER_DISPLAY_SETTINGS,
+				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
 				siteId: primarySiteId,
 				data: newSettings,
 			} );

@@ -6,14 +6,14 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	WP_JOB_MANAGER_DISPLAY_SETTINGS,
-	WP_JOB_MANAGER_ENABLE_SETTINGS,
+	WP_JOB_MANAGER_FETCH_ERROR,
 	WP_JOB_MANAGER_FETCH_SETTINGS,
+	WP_JOB_MANAGER_UPDATE_SETTINGS,
 } from '../../action-types';
 import {
-	displaySettings,
-	enableSettings,
+	fetchError,
 	fetchSettings,
+	updateSettings,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -25,24 +25,24 @@ describe( 'actions', () => {
 		}
 	};
 
-	describe( '#displaySettings()', () => {
+	describe( '#updateSettings()', () => {
 		it( 'should return an action object', () => {
-			const action = displaySettings( siteId, settings.data );
+			const action = updateSettings( siteId, settings.data );
 
 			expect( action ).to.eql( {
-				type: WP_JOB_MANAGER_DISPLAY_SETTINGS,
+				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
 				data: settings.data,
 				siteId,
 			} );
 		} );
 	} );
 
-	describe( '#enableSettings()', () => {
+	describe( '#fetchError()', () => {
 		it( 'should return an action object', () => {
-			const action = enableSettings( siteId );
+			const action = fetchError( siteId );
 
 			expect( action ).to.eql( {
-				type: WP_JOB_MANAGER_ENABLE_SETTINGS,
+				type: WP_JOB_MANAGER_FETCH_ERROR,
 				siteId,
 			} );
 		} );
