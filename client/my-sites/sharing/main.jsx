@@ -62,7 +62,7 @@ export const Sharing = ( {
 	return (
 		<Main className="sharing">
 			<DocumentHead title={ translate( 'Sharing' ) } />
-			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
+			<QueryJetpackModules siteId={ siteId } />
 			<SidebarNavigation />
 			{ filters.length > 0 &&
 				<SectionNav selectedText={ get( selected, 'title', '' ) }>
