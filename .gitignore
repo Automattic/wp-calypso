@@ -48,3 +48,6 @@ env-config.sh
 /calypso-strings.pot
 cover.html
 .test.log
+
+/bin/pre-commit
+/bin/pre-push
