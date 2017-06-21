@@ -7,6 +7,7 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
+	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 } from 'woocommerce/state/action-types';
 
 export function fetchProductCategories( siteId ) {
@@ -70,6 +71,23 @@ export function createProductCategory( siteId, category, successAction, failureA
 	};
 
 	return action;
+}
+
+/**
+ * Action Creator: This action prompts the state to update itself after a product category has changed.
+ *
+ * @param {Number} siteId The id of the site to which the category belongs.
+ * @param {Object} data The complete product category object with which to update the state.
+ * @param {Object} [completionAction] An action that is dispatched after the update is complete.
+ * @return {Object} Action object
+ */
+export function productCategoryUpdated( siteId, data, completionAction ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
+		siteId,
+		data,
+		completionAction,
+	};
 }
 
 function isValidCategoriesArray( categories ) {

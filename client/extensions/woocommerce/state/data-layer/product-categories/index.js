@@ -3,8 +3,10 @@
  */
 import { post } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
+import { productCategoryUpdated } from 'woocommerce/state/sites/product-categories/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
+	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 } from 'woocommerce/state/action-types';
 
 export function handleProductCategoryCreate( { dispatch }, action ) {
@@ -21,10 +23,18 @@ export function handleProductCategoryCreate( { dispatch }, action ) {
 		return;
 	}
 
-	dispatch( post( siteId, 'products/categories', categoryData, successAction, failureAction ) );
+	const updatedAction = productCategoryUpdated( siteId, null, successAction ); // data field will be filled in by request.
+	dispatch( post( siteId, 'products/categories', categoryData, updatedAction, failureAction ) );
+}
+
+export function handleProductCategoryUpdated( { dispatch }, action ) {
+	const { completionAction } = action;
+
+	completionAction && dispatch( completionAction );
 }
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_CATEGORY_CREATE ]: [ handleProductCategoryCreate ],
+	[ WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED ]: [ handleProductCategoryUpdated ],
 };
 

@@ -7,8 +7,8 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
-import { handleProductCategoryCreate } from '../';
+import { createProductCategory, productCategoryUpdated } from 'woocommerce/state/sites/product-categories/actions';
+import { handleProductCategoryCreate, handleProductCategoryUpdated } from '../';
 import {
 	WOOCOMMERCE_API_REQUEST,
 } from 'woocommerce/state/action-types';
@@ -32,11 +32,27 @@ describe( 'handlers', () => {
 					type: WOOCOMMERCE_API_REQUEST,
 					method: 'post',
 					siteId: 123,
-					onSuccessAction: successAction,
+					onSuccessAction: productCategoryUpdated( 123, null, successAction ),
 					onFailureAction: failureAction,
 					body: { name: 'Category 1', slug: 'category-1' },
 				} )
 			);
+		} );
+	} );
+
+	describe( '#handleProductUpdated', () => {
+		it( 'should dispatch a completion action', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const category1 = { id: 101, name: 'Newly Created Category' };
+			const completionAction = { type: '%%complete%%' };
+			const action = productCategoryUpdated( 123, category1, completionAction );
+
+			handleProductCategoryUpdated( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith( completionAction );
 		} );
 	} );
 } );
