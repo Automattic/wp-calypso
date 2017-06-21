@@ -52,7 +52,6 @@
 		"guided-tours/theme-sheet-welcome": true,
 		"help": true,
 		"help/courses": true,
-		"jetpack/invites": true,
 		"jetpack_core_inline_update": true,
 		"jetpack/api-cache": true,
 		"jetpack/activity-log": true,

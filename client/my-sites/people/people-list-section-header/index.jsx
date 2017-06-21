@@ -43,21 +43,12 @@ class PeopleListSectionHeader extends Component {
 
 	hideAddTooltip = () => this.setState( { addPeopleTooltip: false } );
 
-	shouldUseWPAdmin() {
-		return ! config.isEnabled( 'jetpack/invites' ) && get( this.props, 'site.jetpack' ) && ! this.props.isSiteAutomatedTransfer;
-	}
-
 	getAddLink() {
 		const siteSlug = get( this.props, 'site.slug' );
 		const isJetpack = get( this.props, 'site.jetpack' );
-		const wpAdminUrl = get( this.props, 'site.options.admin_url' );
 
 		if ( ! siteSlug || ( isJetpack && this.props.isFollower ) ) {
 			return false;
-		}
-
-		if ( this.shouldUseWPAdmin() ) {
-			return wpAdminUrl + 'user-new.php';
 		}
 
 		return '/people/new/' + siteSlug;

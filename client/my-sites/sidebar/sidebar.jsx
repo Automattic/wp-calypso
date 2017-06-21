@@ -393,7 +393,7 @@ export class MySitesSidebar extends Component {
 	users() {
 		const { site, canUserListUsers } = this.props;
 		let usersLink = '/people/team' + this.props.siteSuffix;
-		let addPeopleLink = '/people/new' + this.props.siteSuffix;
+		const addPeopleLink = '/people/new' + this.props.siteSuffix;
 
 		if ( ! site ) {
 			return null;
@@ -405,11 +405,6 @@ export class MySitesSidebar extends Component {
 
 		if ( ! config.isEnabled( 'manage/people' ) && site.options ) {
 			usersLink = site.options.admin_url + 'users.php';
-		}
-
-		if ( ! config.isEnabled( 'jetpack/invites' ) &&
-			! this.props.isSiteAutomatedTransfer && site && site.options && this.props.isJetpack ) {
-			addPeopleLink = site.options.admin_url + 'user-new.php';
 		}
 
 		return (
