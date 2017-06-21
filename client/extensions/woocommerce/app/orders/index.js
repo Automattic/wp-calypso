@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
 import OrderHeader from './order-header';
 import OrdersList from './orders-list';
@@ -18,7 +18,7 @@ class Orders extends Component {
 		const { className, site } = this.props;
 		return (
 			<Main className={ className }>
-				<OrderHeader siteSlug={ site.slug } />
+				<OrderHeader siteSlug={ site ? site.slug : false } />
 				<OrdersList />
 			</Main>
 		);
@@ -27,7 +27,7 @@ class Orders extends Component {
 
 export default connect(
 	state => {
-		const site = getSelectedSite( state );
+		const site = getSelectedSiteWithFallback( state );
 
 		return {
 			site,

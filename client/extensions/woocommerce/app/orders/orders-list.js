@@ -20,7 +20,7 @@ import {
 	getTotalOrdersPages
 } from 'woocommerce/state/sites/orders/selectors';
 import { getOrdersCurrentPage } from 'woocommerce/state/ui/orders/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 import { setCurrentPage } from 'woocommerce/state/ui/orders/actions';
 import NavItem from 'components/section-nav/item';
@@ -183,7 +183,8 @@ class Orders extends Component {
 
 export default connect(
 	state => {
-		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSiteWithFallback( state );
+		const siteId = site ? site.ID : false;
 		const createOrderLink = getSiteAdminUrl( state, siteId, 'post-new.php?post_type=shop_order' );
 		const currentPage = getOrdersCurrentPage( state, siteId );
 		const orders = getOrders( state, currentPage, siteId );
