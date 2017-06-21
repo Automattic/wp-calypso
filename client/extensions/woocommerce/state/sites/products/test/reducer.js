@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	productsDeleteSuccess,
 	productsRequest,
 	productsRequestSuccess,
 	productsRequestFailure,
@@ -17,6 +18,7 @@ import {
 } from '../reducer';
 
 import {
+	WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
@@ -221,6 +223,19 @@ describe( 'reducer', () => {
 
 			const newState = productsSearchClear( { search: { isLoading: { 1: true } } }, action );
 			expect( newState.search ).to.eql( {} );
+		} );
+	} );
+	describe( 'productsDeleteSuccess', () => {
+		it( 'should remove the product from the products list', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS,
+				siteId: 123,
+				data: product,
+			};
+
+			const additionalProducts = [ product ];
+			const newState = productsDeleteSuccess( { products: [ ...products, ...additionalProducts ] }, action );
+			expect( newState.products ).to.eql( products );
 		} );
 	} );
 } );
