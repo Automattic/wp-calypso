@@ -15,7 +15,7 @@ import Card from 'components/card';
 import Notice from 'components/notice';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';
-import QueryNotices from './data/query-notices';
+import QueryStatus from './data/query-status';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 import { testCache } from './state/cache/actions';
@@ -214,7 +214,7 @@ class EasyTab extends Component {
 						}
 					</div>
 				</Card>
-				<QueryNotices siteId={ siteId } />
+				<QueryStatus siteId={ siteId } />
 			</div>
 		);
 	}

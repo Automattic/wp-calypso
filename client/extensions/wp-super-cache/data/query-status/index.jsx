@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { isRequestingNotices } from '../../state/notices/selectors';
 import { requestNotices } from '../../state/notices/actions';
 
-class QueryNotices extends Component {
+class QueryStatus extends Component {
 	componentWillMount() {
 		this.requestNotices( this.props );
 	}
@@ -38,7 +38,7 @@ class QueryNotices extends Component {
 	}
 }
 
-QueryNotices.propTypes = {
+QueryStatus.propTypes = {
 	siteId: PropTypes.number,
 	requestingNotices: PropTypes.bool,
 	requestNotices: PropTypes.func,
@@ -51,4 +51,4 @@ export default connect(
 		};
 	},
 	{ requestNotices }
-)( QueryNotices );
+)( QueryStatus );

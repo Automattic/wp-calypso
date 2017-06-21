@@ -16,7 +16,7 @@ import Main from 'components/main';
 import Navigation from './navigation';
 import Notice from 'components/notice';
 import PreloadTab from './preload-tab';
-import QueryNotices from './data/query-notices';
+import QueryStatus from './data/query-status';
 import { Tabs } from './constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNotices } from './state/notices/selectors';
@@ -63,7 +63,7 @@ class WPSuperCache extends Component {
 
 		return (
 			<Main className={ mainClassName }>
-				<QueryNotices siteId={ siteId } />
+				<QueryStatus siteId={ siteId } />
 
 				{ cacheDisabled &&
 				<Notice

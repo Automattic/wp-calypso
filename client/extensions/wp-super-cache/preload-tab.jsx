@@ -18,7 +18,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle/compact';
 import Notice from 'components/notice';
-import QueryNotices from './data/query-notices';
+import QueryStatus from './data/query-status';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 import { cancelPreloadCache, preloadCache } from './state/cache/actions';
@@ -151,7 +151,7 @@ class PreloadTab extends Component {
 
 		return (
 			<div>
-				<QueryNotices siteId={ siteId } />
+				<QueryStatus siteId={ siteId } />
 
 				<SectionHeader label={ ( 'Preload' ) }>
 					<Button

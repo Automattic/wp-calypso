@@ -17,7 +17,7 @@ import ExpiryTime from './expiry-time';
 import FixConfig from './fix-config';
 import LockDown from './lock-down';
 import Miscellaneous from './miscellaneous';
-import QueryNotices from './data/query-notices';
+import QueryStatus from './data/query-status';
 import RejectedUserAgents from './rejected-user-agents';
 import WrapSettingsForm from './wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -34,7 +34,7 @@ const AdvancedTab = ( {
 } ) => {
 	return (
 		<div>
-			<QueryNotices siteId={ siteId } />
+			<QueryStatus siteId={ siteId } />
 			<Caching isReadOnly={ isReadOnly } notices={ notices } />
 			<Miscellaneous isReadOnly={ isReadOnly } notices={ notices } />
 			<Advanced isReadOnly={ isReadOnly } />
