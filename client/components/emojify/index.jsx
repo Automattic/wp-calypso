@@ -47,8 +47,14 @@ export default class Emojify extends PureComponent {
 	}
 
 	render() {
+		const {
+			children,
+			className, // eslint-disable-line no-unused-vars
+			...other
+		} = this.props;
+
 		return (
-			<div className="emojify" ref="emojified">{ this.props.children }</div>
+			<div className="emojify" ref="emojified" { ...other }>{ children }</div>
 		);
 	}
 }
