@@ -9,6 +9,7 @@ import React, { Component, PropTypes } from 'react';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import {
 	getOptedOutOfShippingSetup,
 	getOptedOutofTaxesSetup,
@@ -31,6 +32,9 @@ class SetupTasksView extends Component {
 
 	onFinished = ( event ) => {
 		event.preventDefault();
+		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
+			action: 'finished',
+		} );
 		this.props.setFinishedInitialSetup( this.props.site.ID, true );
 	}
 

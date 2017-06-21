@@ -104,6 +104,7 @@ class SetupTasks extends Component {
 					{
 						label: 'Add a product',
 						path: getLink( '/store/product/:site', site ),
+						analyticsProp: 'add-product',
 					}
 				]
 			},
@@ -117,11 +118,13 @@ class SetupTasks extends Component {
 					{
 						label: translate( 'Set up shipping' ),
 						path: getLink( '/store/settings/shipping/:site', site ),
+						analyticsProp: 'set-up-shipping',
 					},
 					{
 						label: translate( 'I won\'t be shipping' ),
 						isSecondary: true,
-						onClick: this.onClickNoShip
+						onClick: this.onClickNoShip,
+						analyticsProp: 'not-shipping',
 					}
 				]
 			},
@@ -135,6 +138,7 @@ class SetupTasks extends Component {
 					{
 						label: translate( 'Set up payments' ),
 						path: getLink( '/store/settings/payments/:site', site ),
+						analyticsProp: 'set-up-payments',
 					}
 				]
 			},
@@ -148,11 +152,13 @@ class SetupTasks extends Component {
 					{
 						label: translate( 'Set up taxes' ),
 						path: getLink( '/store/settings/taxes/:site', site ),
+						analyticsProp: 'set-up-taxes',
 					},
 					{
 						label: translate( 'I\'m not charging sales tax' ),
 						isSecondary: true,
-						onClick: this.onClickNoTaxes
+						onClick: this.onClickNoTaxes,
+						analyticsProp: 'no-taxes',
 					}
 				]
 			},
@@ -166,7 +172,8 @@ class SetupTasks extends Component {
 					{
 						label: translate( 'Customize' ),
 						path: getLink( 'https://:site/wp-admin/customize.php?return=%2Fwp-admin%2F', site ),
-						// TODO use onClick here instead in order to hit setTriedCustomizerDuringInitialSetup
+						// TODO use onClick here instead in order to hit setTriedCustomizerDuringInitialSetup,
+						analyticsProp: 'view-and-customize',
 					}
 				]
 			}

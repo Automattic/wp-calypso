@@ -336,6 +336,11 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackStoreClick = () => {
+		analytics.tracks.recordEvent( 'calypso_woocommerce_store_nav_item_click' );
+		this.onNavigate();
+	};
+
 	store() {
 		const { canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
 		const storeLink = '/store' + siteSuffix;
@@ -347,7 +352,7 @@ export class MySitesSidebar extends Component {
 			<SidebarItem
 				label={ translate( 'Store (BETA)' ) }
 				link={ storeLink }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.trackStoreClick }
 				icon="cart" >
 				<SidebarButton href={ storeLink }>
 					{ translate( 'Set up' ) }

@@ -9,6 +9,7 @@ import React, { Component, PropTypes } from 'react';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import Button from 'components/button';
 import config from 'config';
 import ExternalLink from 'components/external-link';
@@ -137,6 +138,9 @@ class ReadingWidget extends Component {
 
 	onSubmit = () => {
 		// TODO
+		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
+			action: 'subscribe',
+		} );
 	}
 
 	renderSubscriptionFormFields = ( expanded ) => {
@@ -157,7 +161,7 @@ class ReadingWidget extends Component {
 					/>
 				) }
 				{ expanded && (
-					<Button disabled={ ! this.isFormSubmittable() } >
+					<Button disabled={ ! this.isFormSubmittable() } onClick={ this.onSubmit }>
 						{ translate( 'Subscribe' ) }
 					</Button>
 				) }
