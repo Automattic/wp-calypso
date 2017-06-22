@@ -75,6 +75,11 @@
 			width: 16%;
 		}
 	}
+	
+	.order__details-total .order__details-totals-label,
+	.order__details-total .order__details-totals-value {
+		font-weight: bold;
+	}
 }
 
 .order__details-refund,
@@ -90,6 +95,10 @@
 		display: flex;
 		align-items: center;
 		flex-grow: 1;
+	}
+	
+	.order__details-refund-label .gridicon {
+		color: $alert-green;
 	}
 
 	.order__details-refund-action,
@@ -111,9 +120,17 @@
 	}
 }
 
+.order__details-fulfillment {
+	background: lighten( $blue-light, 25% );
+}
+
 .order__customer-info {
-	h3 {
+	.order__billing-details,
+	.order__shipping-details {
 		margin-bottom: 16px;
+		color: $gray-text-min;
+		font-size: 12px;
+		text-transform: uppercase;
 	}
 
 	h4 {
