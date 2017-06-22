@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,8 +32,6 @@ import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 class RequestLoginEmailForm extends React.Component {
-	state = {};
-
 	static propTypes = {
 		// mapped to state
 		currentUser: PropTypes.object,
@@ -58,8 +57,16 @@ class RequestLoginEmailForm extends React.Component {
 
 	onSubmit = event => {
 		event.preventDefault();
-		this.props.fetchMagicLoginRequestEmail( this.state.emailAddress );
+		const emailAddress = this.getEmailAddressFromState();
+		if ( ! emailAddress.length ) {
+			return;
+		}
+		this.props.fetchMagicLoginRequestEmail( emailAddress );
 	};
+
+	getEmailAddressFromState() {
+		return get( this, 'state.emailAddress', '' );
+	}
 
 	render() {
 		const {
@@ -71,15 +78,14 @@ class RequestLoginEmailForm extends React.Component {
 			translate,
 		} = this.props;
 
+		const emailAddress = this.getEmailAddressFromState();
+
 		if ( showCheckYourEmail ) {
-			return <EmailedLoginLinkSuccessfully emailAddress={ this.state.emailAddress } />;
+			return <EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />;
 		}
 
-		const isValidEmailAddress = this.state.emailAddress &&
-			this.state.emailAddress.match( /^.+@.+/ );
-
 		const submitEnabled = (
-			isValidEmailAddress &&
+			emailAddress.match( /^.+@.+/ ) &&
 			! isFetching &&
 			! emailRequested &&
 			! requestError
