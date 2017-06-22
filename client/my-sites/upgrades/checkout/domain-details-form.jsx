@@ -88,7 +88,15 @@ export class DomainDetailsForm extends PureComponent {
 		this.inputRefCallbacks = {};
 	}
 
-	componentWillMount() {
+	componentWillReceiveProps( nextProps ) {
+		if ( this.formStateController || null === this.props.contactDetails ) {
+			return;
+		}
+
+		if ( isEqual( this.props, nextProps ) ) {
+			return;
+		}
+
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
 			loadFunction: this.loadFormStateFromRedux,
@@ -104,11 +112,10 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		// Note that state.form includes status information like errors,
-		// isValidating, isPendingValidation etc in addition to the actual
-		// field values.
-		if ( ! isEqual( prevState.form, this.state.form ) ) {
-			this.props.updateContactDetailsCache( this.getMainFieldValues( this.state.form ) );
+		const previousFormValues = formState.getAllFieldValues( prevState.form );
+		const currentFormValues = formState.getAllFieldValues( this.state.form );
+		if ( ! isEqual( previousFormValues, currentFormValues ) ) {
+			this.props.updateContactDetailsCache( this.getMainFieldValues() );
 		}
 	}
 
@@ -392,7 +399,7 @@ export class DomainDetailsForm extends PureComponent {
 			<form>
 				{ this.renderNameFields() }
 				{ ! needsOnlyGoogleAppsDetails && this.renderOrganizationField() }
-				{ this.renderEmailField() }
+				{ ! needsOnlyGoogleAppsDetails && this.renderEmailField() }
 				{ ! needsOnlyGoogleAppsDetails && this.renderPhoneField() }
 				{ this.renderCountryField() }
 				{ ! needsOnlyGoogleAppsDetails && this.needsFax() && this.renderFaxField() }
@@ -533,6 +540,14 @@ export class DomainDetailsForm extends PureComponent {
 				'only-google-apps-details': needsOnlyGoogleAppsDetails
 			} );
 
+		if ( this.props.contactDetails === null ) {
+			return <QueryContactDetailsCache />;
+		}
+
+		if ( ! this.formStateController ) {
+			return null;
+		}
+
 		let title;
 		// TODO: gather up tld specific stuff
 		if ( this.state.currentStep === 'fr' ) {
@@ -556,7 +571,6 @@ export class DomainDetailsForm extends PureComponent {
 					title={ title }>
 					{ this.renderCurrentForm() }
 				</PaymentBox>
-			<QueryContactDetailsCache />
 			</div>
 		);
 	}

@@ -35,7 +35,6 @@ import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import analyticsMixin from 'lib/mixins/analytics';
 import { getCurrentUser } from 'state/current-user/selectors';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 import {
 	getDomainsSuggestions,
@@ -254,7 +253,6 @@ const RegisterDomainStep = React.createClass( {
 				}
 				{ this.content() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
-				<QueryContactDetailsCache />
 			</div>
 		);
 	},
