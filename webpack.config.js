@@ -117,7 +117,6 @@ const webpackConfig = {
 		fs: 'empty'
 	},
 	plugins: [
-		new DashboardPlugin(),
 		new webpack.DefinePlugin( {
 			'process.env': {
 				NODE_ENV: JSON.stringify( bundleEnv )
@@ -247,6 +246,11 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 }
 
 webpackConfig.module.rules = [ jsRules ].concat( webpackConfig.module.rules );
+
+if ( process.env.DASHBOARD ) {
+	 // dashboard wants to be first
+	webpackConfig.plugins.unshift( new DashboardPlugin() );
+}
 
 if ( process.env.WEBPACK_OUTPUT_JSON ) {
 	webpackConfig.devtool = 'cheap-module-source-map';
