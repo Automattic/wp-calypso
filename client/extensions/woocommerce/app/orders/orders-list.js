@@ -23,6 +23,7 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrdersCurrentPage } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSiteAdminUrl } from 'state/sites/selectors';
+import humanDate from 'lib/human-date';
 import { setCurrentPage } from 'woocommerce/state/ui/orders/actions';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
@@ -88,7 +89,7 @@ class Orders extends Component {
 	}
 
 	renderOrderItems = ( order, i ) => {
-		const { moment, site } = this.props;
+		const { site } = this.props;
 		return (
 			<TableRow key={ i } href={ getLink( `/store/order/:site/${ order.number }`, site ) }>
 				<TableItem className="orders__table-name" isRowHeader>
@@ -98,7 +99,7 @@ class Orders extends Component {
 					</span>
 				</TableItem>
 				<TableItem className="orders__table-date">
-					{ moment( order.date_modified ).format( 'LLL' ) }
+					{ humanDate( order.date_created ) }
 				</TableItem>
 				<TableItem className="orders__table-status">
 					{ this.getOrderStatus( order.status ) }
