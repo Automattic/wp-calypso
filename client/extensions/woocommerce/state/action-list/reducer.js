@@ -44,7 +44,7 @@ function handleActionListAnnotate( actionList, action ) {
 			newStep.error = error;
 		}
 
-		const newSteps = { ...actionList.steps };
+		const newSteps = [ ...actionList.steps ];
 		newSteps[ stepIndex ] = newStep;
 		return { ...actionList, steps: newSteps };
 	}
