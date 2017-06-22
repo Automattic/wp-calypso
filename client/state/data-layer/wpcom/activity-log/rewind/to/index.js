@@ -19,17 +19,32 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:to' );
 
+const fromApi = data => ( {
+	restoreId: +data.restore_id,
+} );
+
 const requestRestore = ( { dispatch }, action ) => {
 	dispatch( http( {
+		apiVersion: '1',
 		method: 'POST',
 		path: `/activity-log/${ action.siteId }/rewind/to/${ action.timestamp }`,
-		apiVersion: '1',
 	}, action ) );
 };
 
-export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp } ) => {
-	debug( 'Request restore success' );
-	dispatch( getRewindRestoreProgress( siteId, timestamp ) );
+export const receiveRestoreSuccess = ( { dispatch }, { siteId }, next, apiData ) => {
+	const { restoreId } = fromApi( apiData );
+	if ( restoreId ) {
+		debug( 'Request restore success', restoreId );
+		dispatch( getRewindRestoreProgress( siteId, restoreId ) );
+	} else {
+		dispatch( rewindRestoreUpdateError(
+			siteId,
+			{
+				error: 'missing_restore_id',
+				message: 'Bad response. No restore ID provided.',
+			}
+		) );
+	}
 };
 
 export const receiveRestoreError = ( { dispatch }, { siteId, timestamp }, next, error ) => {

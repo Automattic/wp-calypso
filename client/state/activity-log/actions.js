@@ -151,28 +151,26 @@ export function rewindCompleteRestore( siteId, timestamp ) {
 	};
 }
 
-export function rewindRestoreUpdateError( siteId, timestamp, error ) {
+export function rewindRestoreUpdateError( siteId, error ) {
 	return {
 		type: REWIND_RESTORE_UPDATE_ERROR,
 		siteId,
-		timestamp,
 		error,
 	};
 }
 
-export function getRewindRestoreProgress( siteId, timestamp ) {
+export function getRewindRestoreProgress( siteId, restoreId ) {
 	return {
 		type: REWIND_RESTORE_PROGRESS_REQUEST,
 		siteId,
-		timestamp,
+		restoreId,
 	};
 }
 
-export function updateRewindRestoreProgress( siteId, timestamp, progress ) {
+export function updateRewindRestoreProgress( siteId, progress ) {
 	return {
 		type: REWIND_RESTORE_UPDATE_PROGRESS,
 		siteId,
-		timestamp,
 		...progress,
 	};
 }
