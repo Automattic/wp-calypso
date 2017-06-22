@@ -8,6 +8,7 @@ import { get, find, isNumber } from 'lodash';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getProductCategory, getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
+import { getBucket } from '../helpers';
 
 /**
  * Gets all edits for product categories.
@@ -30,10 +31,10 @@ export function getAllProductCategoryEdits( rootState, siteId = getSelectedSiteI
  */
 export function getProductCategoryEdits( rootState, categoryId, siteId ) {
 	const edits = getAllProductCategoryEdits( rootState, siteId );
-	const bucket = isNumber( categoryId ) && 'updates' || 'creates';
+	const bucket = getBucket( { id: categoryId } );
 	const array = get( edits, bucket, [] );
 
-	return find( array, ( c ) => categoryId === c.id );
+	return find( array, { id: categoryId } );
 }
 
 /**
@@ -50,7 +51,7 @@ export function getProductCategoryWithLocalEdits( rootState, categoryId, siteId 
 	const category = existing && getProductCategory( rootState, categoryId, siteId );
 	const categoryEdits = getProductCategoryEdits( rootState, categoryId, siteId );
 
-	return ( category || categoryEdits ) && { ...category, ...categoryEdits } || undefined;
+	return ( ( category || categoryEdits ) ? { ...category, ...categoryEdits } : undefined );
 }
 
 /**
@@ -80,8 +81,7 @@ export function getProductCategoriesWithLocalEdits( rootState, siteId ) {
  * @return {Object} The category data merged between the fetched data and edits
  */
 export function getCurrentlyEditingProductCategory( rootState, siteId ) {
-	const edits = getAllProductCategoryEdits( rootState, siteId );
-	const { currentlyEditingId } = edits;
+	const { currentlyEditingId } = getAllProductCategoryEdits( rootState, siteId );
 
 	return getProductCategoryWithLocalEdits( rootState, currentlyEditingId, siteId );
 }
