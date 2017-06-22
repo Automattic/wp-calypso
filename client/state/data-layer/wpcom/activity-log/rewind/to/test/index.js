@@ -38,7 +38,7 @@ describe( 'receiveRestoreSuccess', () => {
 		const dispatch = sinon.spy();
 		receiveRestoreSuccess( { dispatch }, { siteId, timestamp }, null, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
-			getRewindRestoreProgress( siteId, restoreId )
+			getRewindRestoreProgress( siteId, timestamp, restoreId )
 		);
 	} );
 } );

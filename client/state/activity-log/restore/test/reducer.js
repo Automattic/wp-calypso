@@ -27,11 +27,12 @@ const ERROR = deepFreeze( {
 } );
 
 describe( '#restoreProgress()', () => {
-	it( 'start in progress restore a 0%', () => {
+	it( 'should start at 0% queued', () => {
 		const state = restoreProgress( undefined, rewindRestore( SITE_ID, TIMESTAMP ) );
 		expect( state[ SITE_ID ] ).to.deep.equal( {
 			percent: 0,
-			status: 'running',
+			status: 'queued',
+			timestamp: TIMESTAMP,
 		} );
 	} );
 
