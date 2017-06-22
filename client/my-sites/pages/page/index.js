@@ -84,9 +84,9 @@ class Page extends Component {
 
 	viewPage = ( event ) => {
 		event.preventDefault();
-		const { isPreviewable, previewURL } = this.props;
+		const { isPreviewable, page, previewURL } = this.props;
 
-		if ( this.props.page.status && this.props.page.status === 'publish' ) {
+		if ( page.status && page.status === 'publish' ) {
 			this.props.recordViewPage();
 		}
 
