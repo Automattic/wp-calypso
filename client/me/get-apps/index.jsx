@@ -45,7 +45,7 @@ export const GetApps = ( { translate } ) => {
 						) }
 					</p>
 				</div>
-				<Button href={ 'https://apps.wordpress.com/d/osx?ref=getapps' }>Download</Button>
+				<Button className={ 'get-apps__desktop-button' } href={ 'https://apps.wordpress.com/d/osx?ref=getapps' }>Download</Button>
 			</Card>
 			<Card className="get-apps__mobile">
 				<div className={ 'get-apps__card-text' }>
