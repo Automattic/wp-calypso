@@ -10,8 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import { areOrdersLoading, getOrders } from 'woocommerce/state/sites/orders/selectors';
 import { areSetupChoicesLoading, getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
+import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
 import ManageNoOrdersView from './manage-no-orders-view';
@@ -22,6 +24,16 @@ class Dashboard extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
+		finishedInitialSetup: PropTypes.bool,
+		hasOrders: PropTypes.bool,
+		loading: PropTypes.bool,
+		selectedSite: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+			slug: PropTypes.string.isRequired,
+			URL: PropTypes.string.isRequired,
+		} ),
+		fetchOrders: PropTypes.func,
+		fetchSetupChoices: PropTypes.func,
 	};
 
 	componentDidMount = () => {
@@ -29,22 +41,20 @@ class Dashboard extends Component {
 
 		if ( selectedSite && selectedSite.ID ) {
 			this.props.fetchSetupChoices( selectedSite.ID );
+			this.props.fetchOrders( selectedSite.ID, 1 );
 		}
 	}
 
 	componentWillReceiveProps = ( newProps ) => {
 		const { selectedSite } = this.props;
 
-		const newSiteId = newProps.selectedSite && newProps.selectedSite.ID || null;
-		const oldSiteId = selectedSite && selectedSite.ID || null;
+		const newSiteId = newProps.selectedSite ? newProps.selectedSite.ID : null;
+		const oldSiteId = selectedSite ? selectedSite.ID : null;
 
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchSetupChoices( newSiteId );
+			this.props.fetchOrders( newSiteId, 1 );
 		}
-	}
-
-	onStoreSetupFinished = () => {
-		// TODO - save that setup has been finished to the store's state on WPCOM
 	}
 
 	renderDashboardContent = () => {
@@ -58,7 +68,7 @@ class Dashboard extends Component {
 			return ( <ManageNoOrdersView site={ selectedSite } /> );
 		}
 
-		return ( <SetupTasksView onFinished={ this.onStoreSetupFinished } site={ selectedSite } /> );
+		return ( <SetupTasksView site={ selectedSite } /> );
 	}
 
 	render = () => {
@@ -79,17 +89,22 @@ class Dashboard extends Component {
 }
 
 function mapStateToProps( state ) {
+	const selectedSite = getSelectedSiteWithFallback( state );
+	const loading = ( areOrdersLoading( state ) || areSetupChoicesLoading( state ) );
+	const hasOrders = getOrders( state ).length > 0;
+	const finishedInitialSetup = getFinishedInitialSetup( state );
 	return {
-		finishedInitialSetup: getFinishedInitialSetup( state ),
-		hasOrders: false, // TODO - connect to a selector when it becomes available
-		loading: areSetupChoicesLoading( state ),
-		selectedSite: getSelectedSiteWithFallback( state ),
+		finishedInitialSetup,
+		hasOrders,
+		loading,
+		selectedSite,
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			fetchOrders,
 			fetchSetupChoices,
 		},
 		dispatch

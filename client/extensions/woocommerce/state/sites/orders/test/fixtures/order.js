@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
 	"id": 40,
-	"status": "processing",
+	"status": "completed",
 	"currency": "USD",
 	"total": "50.87",
 	"total_tax": "0.00",

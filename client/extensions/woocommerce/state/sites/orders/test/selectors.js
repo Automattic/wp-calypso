@@ -15,8 +15,12 @@ import {
 	getTotalOrdersPages,
 	isOrderLoaded,
 	isOrderLoading,
+	getNewOrders,
+	getNewOrdersRevenue,
 } from '../selectors';
 import orders from './fixtures/orders';
+import order from './fixtures/order';
+const additionalOrders = [ order ];
 
 const preInitializedState = {
 	extensions: {
@@ -61,6 +65,14 @@ const loadedState = {
 							'{page:1}': [ 35, 26 ]
 						},
 						totalPages: 4
+					}
+				},
+				321: {
+					orders: {
+						isQueryLoading: {
+							'{page:1}': false,
+						},
+						items: keyBy( [ ...orders, ...additionalOrders ], 'id' ),
 					}
 				},
 			},
@@ -222,6 +234,52 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getOrder( loadedStateWithUi, 26 ) ).to.eql( orders[ 1 ] );
+		} );
+	} );
+
+	describe( '#getNewOrders', () => {
+		it( 'should be an empty array when woocommerce state is not available.', () => {
+			expect( getNewOrders( preInitializedState, 123 ) ).to.be.empty;
+		} );
+
+		it( 'should be an empty array when orders are loading.', () => {
+			expect( getNewOrders( loadingState, 123 ) ).to.be.empty;
+		} );
+
+		it( 'should return the list of new orders only', () => {
+			expect( getNewOrders( loadedState, 321 ) ).to.have.members( orders );
+			expect( getNewOrders( loadedState, 321 ) ).to.not.have.members( additionalOrders );
+		} );
+
+		it( 'should be an empty array when orders are loaded only for a different site.', () => {
+			expect( getNewOrders( loadedState, 456 ) ).to.be.empty;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getNewOrders( loadedState, 321 ) ).to.have.members( orders );
+			expect( getNewOrders( loadedState, 321 ) ).to.not.have.members( additionalOrders );
+		} );
+	} );
+
+	describe( '#getNewOrdersRevenue', () => {
+		it( 'should be 0 when woocommerce state is not available.', () => {
+			expect( getNewOrdersRevenue( preInitializedState, 123 ) ).to.eql( 0 );
+		} );
+
+		it( 'should be 0 when orders are loading.', () => {
+			expect( getNewOrdersRevenue( loadingState, 123 ) ).to.eql( 0 );
+		} );
+
+		it( 'should return the total of new orders only', () => {
+			expect( getNewOrdersRevenue( loadedState, 321 ) ).to.eql( 30.00 );
+		} );
+
+		it( 'should be 0 when orders are loaded only for a different site.', () => {
+			expect( getNewOrdersRevenue( loadedState, 456 ) ).to.eql( 0 );
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getNewOrdersRevenue( loadedState, 321 ) ).to.eql( 30.00 );
 		} );
 	} );
 } );
