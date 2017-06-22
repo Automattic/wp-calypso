@@ -28,7 +28,7 @@ function handleActionListClear() {
 function handleActionListAnnotate( actionList, action ) {
 	const { stepIndex, annotations } = action;
 
-	if ( undefined !== typeof stepIndex ) {
+	if ( actionList && undefined !== typeof stepIndex ) {
 		const { startTime, endTime, error } = annotations;
 		const step = actionList.steps[ stepIndex ];
 

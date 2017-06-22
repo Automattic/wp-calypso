@@ -23,6 +23,12 @@ import {
 export function handleStepNext( { dispatch, getState }, action ) {
 	const startTime = action.time || Date.now();
 	const actionList = getActionList( getState() );
+
+	if ( ! actionList ) {
+		// Action list has been cancelled, we're too late to participate.
+		return;
+	}
+
 	const stepIndex = getCurrentStepIndex( actionList );
 	const step = actionList.steps[ stepIndex ];
 
@@ -39,6 +45,12 @@ export function handleStepSuccess( { dispatch, getState }, action ) {
 	const { stepIndex, time } = action;
 	const endTime = time || Date.now();
 	const actionList = getActionList( getState() );
+
+	if ( ! actionList ) {
+		// Action list has been cancelled, we're too late to participate.
+		return;
+	}
+
 	const currentStepIndex = getCurrentStepIndex( actionList );
 	const nextStepIndex = currentStepIndex + 1;
 
@@ -65,6 +77,11 @@ export function handleStepFailure( { dispatch, getState }, action ) {
 	const endTime = time || Date.now();
 
 	debug( `Action List Failed on step ${ stepIndex } with error: ${ error }` );
+
+	if ( ! actionList ) {
+		// Action list has been cancelled, we're too late to participate.
+		return;
+	}
 
 	dispatch( actionListStepAnnotate( stepIndex, { endTime, error } ) );
 	if ( actionList.failureAction ) {
