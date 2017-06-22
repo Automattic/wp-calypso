@@ -112,11 +112,10 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		// Note that state.form includes status information like errors,
-		// isValidating, isPendingValidation etc in addition to the actual
-		// field values.
-		if ( ! isEqual( prevState.form, this.state.form ) ) {
-			this.props.updateContactDetailsCache( this.getMainFieldValues( this.state.form ) );
+		const previousFormValues = formState.getAllFieldValues( prevState.form );
+		const currentFormValues = formState.getAllFieldValues( this.state.form );
+		if ( ! isEqual( previousFormValues, currentFormValues ) ) {
+			this.props.updateContactDetailsCache( this.getMainFieldValues() );
 		}
 	}
 
