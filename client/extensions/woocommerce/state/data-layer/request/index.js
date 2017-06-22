@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
  * Internal dependencies
  */
 import request from 'woocommerce/state/sites/request';
@@ -9,6 +14,8 @@ import {
 	WOOCOMMERCE_API_REQUEST_SUCCESS,
 	WOOCOMMERCE_API_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
+
+const debug = debugFactory( 'woocommerce:request' );
 
 export function handleRequest( { dispatch }, action ) {
 	const { method, siteId, path, body } = action;
@@ -27,6 +34,8 @@ export function handleRequest( { dispatch }, action ) {
 			}
 		} )
 		.catch( error => {
+			debug( 'Caught error while handling request: ', error );
+
 			// TODO: Maybe phase out usage of this in favor of the failure action?
 			dispatch( setError( siteId, action, { message: error.toString() } ) );
 			dispatch( {
