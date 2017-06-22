@@ -1,0 +1,17 @@
+.process-orders-widget__container {
+	display: flex;
+	padding-left: 10%;
+
+	div {
+		width: 33%;
+
+		span:first-child {
+			display: block;
+			font-size: 24px;
+		}
+
+		a {
+			margin-top: 8px;
+		}
+	}
+}

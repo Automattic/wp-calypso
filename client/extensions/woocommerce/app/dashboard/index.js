@@ -24,6 +24,16 @@ class Dashboard extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
+		finishedInitialSetup: PropTypes.bool,
+		hasOrders: PropTypes.bool,
+		loading: PropTypes.bool,
+		selectedSite: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+			slug: PropTypes.string.isRequired,
+			URL: PropTypes.string.isRequired,
+		} ),
+		fetchOrders: PropTypes.func,
+		fetchSetupChoices: PropTypes.func,
 	};
 
 	componentDidMount = () => {
@@ -79,20 +89,10 @@ class Dashboard extends Component {
 }
 
 function mapStateToProps( state ) {
-	let finishedInitialSetup = false;
-	let hasOrders = false;
-	let loading = true;
 	const selectedSite = getSelectedSiteWithFallback( state );
-
-	if ( selectedSite ) {
-		loading = areOrdersLoading( state, 1, selectedSite.ID ) || areSetupChoicesLoading( state, selectedSite.ID );
-	}
-
-	if ( ! loading ) {
-		hasOrders = Boolean( getOrders( state ) );
-		finishedInitialSetup = getFinishedInitialSetup( state );
-	}
-
+	const loading = ( areOrdersLoading( state ) || areSetupChoicesLoading( state ) );
+	const hasOrders = getOrders( state ).length > 0;
+	const finishedInitialSetup = getFinishedInitialSetup( state );
 	return {
 		finishedInitialSetup,
 		hasOrders,
