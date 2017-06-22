@@ -153,10 +153,24 @@ a.web-preview__external.button {
 	margin: 6px auto;
 	width: 35%;
 
-	input {
+	.form-text-input {
 		color: $gray;
 		font-size: 14px;
 		height: 35px;
+		border-color: transparent;
+		text-overflow: ellipsis;
+	}
+
+	&:hover .form-text-input {
+		border-color: lighten( $gray, 20% );
+	}
+
+	.clipboard-button {
+		display: none;
+	}
+
+	&:hover .clipboard-button {
+		display: block;
 	}
 }
 
