@@ -20,41 +20,26 @@ import ListingsPerPage from './listings-per-page';
 import SectionHeader from 'components/section-header';
 
 class JobListings extends Component {
-	state = {
-		job_manager_category_filter_type: 'any',
-		job_manager_date_format: 'relative',
-		job_manager_enable_categories: false,
-		job_manager_enable_default_category_multiselect: false,
-		job_manager_enable_types: true,
-		job_manager_google_maps_api_key: '',
-		job_manager_hide_expired: true,
-		job_manager_hide_expired_content: true,
-		job_manager_hide_filled_positions: false,
-		job_manager_multi_job_type: false,
-		job_manager_per_page: 10,
-	};
-
-	updateRadio = name => event => this.setState( { [ name ]: event.target.value } );
-
-	updateTextInput = name => event => this.setState( { [ name ]: event.target.value } );
-
-	updateToggle = name => () => this.setState( { [ name ]: ! this.state[ name ] } );
-
 	render() {
-		const { translate } = this.props;
 		const {
-			job_manager_category_filter_type,
-			job_manager_date_format,
-			job_manager_enable_categories,
-			job_manager_enable_default_category_multiselect,
-			job_manager_enable_types,
-			job_manager_google_maps_api_key,
-			job_manager_hide_expired,
-			job_manager_hide_expired_content,
-			job_manager_hide_filled_positions,
-			job_manager_multi_job_type,
-			job_manager_per_page,
-		} = this.state;
+			onRadioChange,
+			onTextInputChange,
+			onToggleChange,
+			settings: {
+				job_manager_category_filter_type,
+				job_manager_date_format,
+				job_manager_enable_categories,
+				job_manager_enable_default_category_multiselect,
+				job_manager_enable_types,
+				job_manager_google_maps_api_key,
+				job_manager_hide_expired,
+				job_manager_hide_expired_content,
+				job_manager_hide_filled_positions,
+				job_manager_multi_job_type,
+				job_manager_per_page,
+			},
+			translate,
+		} = this.props;
 
 		return (
 			<div>
@@ -72,7 +57,7 @@ class JobListings extends Component {
 								{
 									count: job_manager_per_page,
 									components: {
-										listings: <ListingsPerPage onChange={ this.updateTextInput } value={ job_manager_per_page } />
+										listings: <ListingsPerPage onChange={ onTextInputChange } value={ job_manager_per_page } />
 									}
 								}
 							) }
@@ -81,7 +66,7 @@ class JobListings extends Component {
 						<FormFieldset>
 							<FormToggle
 								checked={ job_manager_hide_filled_positions }
-								onChange={ this.updateToggle( 'job_manager_hide_filled_positions' ) }>
+								onChange={ onToggleChange( 'job_manager_hide_filled_positions' ) }>
 								{ translate( 'Hide filled positions' ) }
 							</FormToggle>
 							<FormSettingExplanation isIndented>
@@ -90,7 +75,7 @@ class JobListings extends Component {
 
 							<FormToggle
 								checked={ job_manager_hide_expired }
-								onChange={ this.updateToggle( 'job_manager_hide_expired' ) }>
+								onChange={ onToggleChange( 'job_manager_hide_expired' ) }>
 								{ translate( 'Hide expired listings in job archives/search' ) }
 							</FormToggle>
 							<FormSettingExplanation isIndented>
@@ -99,7 +84,7 @@ class JobListings extends Component {
 
 							<FormToggle
 								checked={ job_manager_hide_expired_content }
-								onChange={ this.updateToggle( 'job_manager_hide_expired_content' ) }>
+								onChange={ onToggleChange( 'job_manager_hide_expired_content' ) }>
 								{ translate( 'Hide content in expired single job listings' ) }
 							</FormToggle>
 							<FormSettingExplanation isIndented>
@@ -121,7 +106,7 @@ class JobListings extends Component {
 						<FormFieldset>
 							<FormToggle
 								checked={ job_manager_enable_categories }
-								onChange={ this.updateToggle( 'job_manager_enable_categories' ) }>
+								onChange={ onToggleChange( 'job_manager_enable_categories' ) }>
 								{ translate( 'Enable listing categories' ) }
 							</FormToggle>
 							<FormSettingExplanation isIndented>
@@ -131,7 +116,7 @@ class JobListings extends Component {
 
 							<FormToggle
 								checked={ job_manager_enable_default_category_multiselect }
-								onChange={ this.updateToggle( 'job_manager_enable_default_category_multiselect' ) }>
+								onChange={ onToggleChange( 'job_manager_enable_default_category_multiselect' ) }>
 								{ translate( 'Default to category multiselect' ) }
 							</FormToggle>
 							<FormSettingExplanation isIndented>
@@ -152,7 +137,7 @@ class JobListings extends Component {
 								<FormRadio
 									checked={ 'any' === job_manager_category_filter_type }
 									name="job_manager_category_filter_type"
-									onChange={ this.updateRadio( 'job_manager_category_filter_type' ) }
+									onChange={ onRadioChange( 'job_manager_category_filter_type' ) }
 									value="any" />
 								<span>
 									{ translate( 'Jobs will be shown if within ANY selected category' ) }
@@ -163,7 +148,7 @@ class JobListings extends Component {
 								<FormRadio
 									checked={ 'all' === job_manager_category_filter_type }
 									name="job_manager_category_filter_type"
-									onChange={ this.updateRadio( 'job_manager_category_filter_type' ) }
+									onChange={ onRadioChange( 'job_manager_category_filter_type' ) }
 									value="all" />
 								<span>
 									{ translate( 'Jobs will be shown if within ALL selected categories' ) }
@@ -179,7 +164,7 @@ class JobListings extends Component {
 						<FormFieldset>
 							<FormToggle
 								checked={ job_manager_enable_types }
-								onChange={ this.updateToggle( 'job_manager_enable_types' ) }>
+								onChange={ onToggleChange( 'job_manager_enable_types' ) }>
 								{ translate( 'Enable listing types' ) }
 							</FormToggle>
 							<FormSettingExplanation isIndented>
@@ -189,7 +174,7 @@ class JobListings extends Component {
 
 							<FormToggle
 								checked={ job_manager_multi_job_type }
-								onChange={ this.updateToggle( 'job_manager_multi_job_type' ) }>
+								onChange={ onToggleChange( 'job_manager_multi_job_type' ) }>
 								{ translate( 'Allow multiple types for listings' ) }
 							</FormToggle>
 							<FormSettingExplanation isIndented>
@@ -216,7 +201,7 @@ class JobListings extends Component {
 								<FormRadio
 									checked={ 'relative' === job_manager_date_format }
 									name="job_manager_date_format"
-									onChange={ this.updateRadio( 'job_manager_date_format' ) }
+									onChange={ onRadioChange( 'job_manager_date_format' ) }
 									value="relative" />
 								<span>
 									{ translate( 'Relative to the current date (e.g., 1 day, 1 week, 1 month ago)' ) }
@@ -227,7 +212,7 @@ class JobListings extends Component {
 								<FormRadio
 									checked={ 'default' === job_manager_date_format }
 									name="job_manager_date_format"
-									onChange={ this.updateRadio( 'job_manager_date_format' ) }
+									onChange={ onRadioChange( 'job_manager_date_format' ) }
 									value="default" />
 								<span>
 									{ translate( 'Default date format as defined in Settings' ) }
@@ -246,7 +231,7 @@ class JobListings extends Component {
 					<form>
 						<FormFieldset>
 							<FormTextInput
-								onChange={ this.updateTextInput( 'job_manager_google_maps_api_key' ) }
+								onChange={ onTextInputChange( 'job_manager_google_maps_api_key' ) }
 								value={ job_manager_google_maps_api_key } />
 							<FormSettingExplanation>
 								{ translate(
