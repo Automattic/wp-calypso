@@ -54,7 +54,7 @@ module.exports = React.createClass( {
 	},
 
 	getQuery: function( props ) {
-		var query = {};
+		const query = {};
 
 		props = props || this.props;
 
@@ -64,6 +64,11 @@ module.exports = React.createClass( {
 
 		if ( props.filter ) {
 			query.mime_type = utils.getMimeBaseTypeFromFilter( props.filter );
+		}
+
+		if ( props.source ) {
+			query.source = props.source;
+			query.path = 'recent';
 		}
 
 		return query;
