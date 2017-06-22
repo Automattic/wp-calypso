@@ -199,7 +199,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	// when the selector is ready.
 	const comment = ownProps.comment;
 
-	// TODO: eventually it will be returned already decoded from the API.
+	// TODO: eventually it will be returned already decoded from the data layer.
 	const postTitle = decodeEntities( get( comment, 'post.title' ) );
 
 	return ( {
