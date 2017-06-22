@@ -36,14 +36,6 @@ describe( 'AutoDirection', function() {
 			expect( wrapper.node.props ).to.not.have.property( 'direction' );
 		} );
 
-		it( "doesn't add a direction to RTL text without a container", () => {
-			const wrapper = shallow(
-				<AutoDirection>השנה היא 2017.</AutoDirection>
-			);
-
-			expect( wrapper.html() ).to.be( 'השנה היא 2017.' );
-		} );
-
 		it( 'adds a direction to the parent of an inline component', () => {
 			const wrapper = shallow(
 				<AutoDirection><div><Emojify>השנה היא 2017.</Emojify></div></AutoDirection>
