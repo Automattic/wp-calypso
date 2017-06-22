@@ -22,6 +22,7 @@ import SectionHeader from 'components/section-header';
 class JobListings extends Component {
 	render() {
 		const {
+			isFetching,
 			onRadioChange,
 			onTextInputChange,
 			onToggleChange,
@@ -40,11 +41,13 @@ class JobListings extends Component {
 			},
 			translate,
 		} = this.props;
+		const isDisabled = isFetching;
 
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Listings' ) }>
-					<Button compact primary>
+					<Button compact primary
+						disabled={ isDisabled }>
 						{ translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
@@ -57,7 +60,11 @@ class JobListings extends Component {
 								{
 									count: job_manager_per_page,
 									components: {
-										listings: <ListingsPerPage onChange={ onTextInputChange } value={ job_manager_per_page } />
+										listings:
+											<ListingsPerPage
+												isDisabled={ isDisabled }
+												onChange={ onTextInputChange }
+												value={ job_manager_per_page } />
 									}
 								}
 							) }
@@ -66,6 +73,7 @@ class JobListings extends Component {
 						<FormFieldset>
 							<FormToggle
 								checked={ job_manager_hide_filled_positions }
+								disabled={ isDisabled }
 								onChange={ onToggleChange( 'job_manager_hide_filled_positions' ) }>
 								{ translate( 'Hide filled positions' ) }
 							</FormToggle>
@@ -75,6 +83,7 @@ class JobListings extends Component {
 
 							<FormToggle
 								checked={ job_manager_hide_expired }
+								disabled={ isDisabled }
 								onChange={ onToggleChange( 'job_manager_hide_expired' ) }>
 								{ translate( 'Hide expired listings in job archives/search' ) }
 							</FormToggle>
@@ -84,6 +93,7 @@ class JobListings extends Component {
 
 							<FormToggle
 								checked={ job_manager_hide_expired_content }
+								disabled={ isDisabled }
 								onChange={ onToggleChange( 'job_manager_hide_expired_content' ) }>
 								{ translate( 'Hide content in expired single job listings' ) }
 							</FormToggle>
@@ -97,7 +107,8 @@ class JobListings extends Component {
 				</Card>
 
 				<SectionHeader label={ translate( 'Categories' ) }>
-					<Button compact primary>
+					<Button compact primary
+						disabled={ isDisabled }>
 						{ translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
@@ -106,6 +117,7 @@ class JobListings extends Component {
 						<FormFieldset>
 							<FormToggle
 								checked={ job_manager_enable_categories }
+								disabled={ isDisabled }
 								onChange={ onToggleChange( 'job_manager_enable_categories' ) }>
 								{ translate( 'Enable listing categories' ) }
 							</FormToggle>
@@ -116,6 +128,7 @@ class JobListings extends Component {
 
 							<FormToggle
 								checked={ job_manager_enable_default_category_multiselect }
+								disabled={ isDisabled }
 								onChange={ onToggleChange( 'job_manager_enable_default_category_multiselect' ) }>
 								{ translate( 'Default to category multiselect' ) }
 							</FormToggle>
@@ -136,6 +149,7 @@ class JobListings extends Component {
 							<FormLabel>
 								<FormRadio
 									checked={ 'any' === job_manager_category_filter_type }
+									disabled={ isDisabled }
 									name="job_manager_category_filter_type"
 									onChange={ onRadioChange( 'job_manager_category_filter_type' ) }
 									value="any" />
@@ -147,6 +161,7 @@ class JobListings extends Component {
 							<FormLabel>
 								<FormRadio
 									checked={ 'all' === job_manager_category_filter_type }
+									disabled={ isDisabled }
 									name="job_manager_category_filter_type"
 									onChange={ onRadioChange( 'job_manager_category_filter_type' ) }
 									value="all" />
@@ -164,6 +179,7 @@ class JobListings extends Component {
 						<FormFieldset>
 							<FormToggle
 								checked={ job_manager_enable_types }
+								disabled={ isDisabled }
 								onChange={ onToggleChange( 'job_manager_enable_types' ) }>
 								{ translate( 'Enable listing types' ) }
 							</FormToggle>
@@ -174,6 +190,7 @@ class JobListings extends Component {
 
 							<FormToggle
 								checked={ job_manager_multi_job_type }
+								disabled={ isDisabled }
 								onChange={ onToggleChange( 'job_manager_multi_job_type' ) }>
 								{ translate( 'Allow multiple types for listings' ) }
 							</FormToggle>
@@ -187,7 +204,8 @@ class JobListings extends Component {
 				</Card>
 
 				<SectionHeader label={ translate( 'Date Format' ) }>
-					<Button compact primary>
+					<Button compact primary
+						disabled={ isDisabled }>
 						{ translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
@@ -200,6 +218,7 @@ class JobListings extends Component {
 							<FormLabel>
 								<FormRadio
 									checked={ 'relative' === job_manager_date_format }
+									disabled={ isDisabled }
 									name="job_manager_date_format"
 									onChange={ onRadioChange( 'job_manager_date_format' ) }
 									value="relative" />
@@ -211,6 +230,7 @@ class JobListings extends Component {
 							<FormLabel>
 								<FormRadio
 									checked={ 'default' === job_manager_date_format }
+									disabled={ isDisabled }
 									name="job_manager_date_format"
 									onChange={ onRadioChange( 'job_manager_date_format' ) }
 									value="default" />
@@ -223,7 +243,8 @@ class JobListings extends Component {
 				</Card>
 
 				<SectionHeader label={ translate( 'Google Maps API Key' ) }>
-					<Button compact primary>
+					<Button compact primary
+						disabled={ isDisabled }>
 						{ translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
@@ -231,6 +252,7 @@ class JobListings extends Component {
 					<form>
 						<FormFieldset>
 							<FormTextInput
+								disabled={ isDisabled }
 								onChange={ onTextInputChange( 'job_manager_google_maps_api_key' ) }
 								value={ job_manager_google_maps_api_key } />
 							<FormSettingExplanation>
