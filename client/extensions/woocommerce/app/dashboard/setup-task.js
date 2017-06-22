@@ -50,7 +50,11 @@ class SetupTask extends Component {
 						const target = '/' === action.path.substring( 0, 1 ) ? '_self' : '_blank';
 						const trackClick = () => {
 							this.track( action.analyticsProp );
-							page.redirect( action.path );
+							if ( target === '_self' ) {
+								page.redirect( action.path );
+							} else {
+								window.open( action.path );
+							}
 						};
 						return (
 							<Button
