@@ -30,9 +30,10 @@ class SettingsPayments extends Component {
 	render() {
 		const { site, translate, className } = this.props;
 
-		const breadcrumbs = ( <span>
-			<a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a> &gt; { translate( 'Payments' ) }
-		</span> );
+		const breadcrumbs = [
+			( <a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a> ),
+			( <span>{ translate( 'Payments' ) }</span> ),
+		];
 
 		return (
 			<Main

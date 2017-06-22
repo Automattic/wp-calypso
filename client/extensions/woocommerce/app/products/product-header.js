@@ -25,18 +25,17 @@ const ProductHeader = ( { onTrash, onSave, isBusy, translate, site, product } ) 
 			{ translate( 'Save' ) }
 		</Button>;
 
-	const productsCrumbs = (
-		<a href={ getLink( '/store/products/:site/', site ) }>
-			{ translate( 'Products' ) }
-		</a>
-	);
-
-	const breadcrumbs = product && isNumber( product.id )
+	const currentCrumb = product && isNumber( product.id )
 		? ( <span>{ translate( 'Edit Product' ) }</span> )
 		: ( <span>{ translate( 'Add New Product' ) }</span> );
 
+	const breadcrumbs = [
+		( <a href={ getLink( '/store/products/:site/', site ) }> { translate( 'Products' ) } </a> ),
+		currentCrumb,
+	];
+
 	return (
-		<ActionHeader breadcrumbs={ ( <span>{ productsCrumbs } &gt; { breadcrumbs }</span> ) }>
+		<ActionHeader breadcrumbs={ breadcrumbs }>
 			{ trashButton }
 			{ saveButton }
 		</ActionHeader>

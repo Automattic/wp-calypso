@@ -40,10 +40,10 @@ class Order extends Component {
 			return null;
 		}
 
-		const breadcrumbs = ( <span>
-			<a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a> &gt; { translate( 'Order Details' ) }
-		</span> );
-
+		const breadcrumbs = [
+			( <a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a> ),
+			( <span>{ translate( 'Order Details' ) }</span> ),
+		];
 		return (
 			<Main className={ className }>
 				<OrderHeader siteSlug={ site.slug } breadcrumbs={ breadcrumbs } />

@@ -14,9 +14,10 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 const ShippingHeader = ( { translate, site } ) => {
-	const breadcrumbs = ( <span>
-		<a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a> &gt; { translate( 'Shipping' ) }
-	</span> );
+	const breadcrumbs = [
+		( <a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a> ),
+		( <span>{ translate( 'Shipping' ) }</span> ),
+	];
 	return (
 		<ActionHeader breadcrumbs={ breadcrumbs }>
 			<Button primary>{ translate( 'Save' ) }</Button>
