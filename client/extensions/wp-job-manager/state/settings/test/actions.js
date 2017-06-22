@@ -18,18 +18,18 @@ import {
 
 describe( 'actions', () => {
 	const siteId = 123456;
-	const settings = {
-		data: {
-			job_manager_per_page: 25,
-			job_manager_hide_filled_positions: true,
-		}
+	const settings = {};
+
+	settings.data = {
+		job_manager_per_page: 25,
+		job_manager_hide_filled_positions: true,
 	};
 
 	describe( '#updateSettings()', () => {
 		it( 'should return an action object', () => {
 			const action = updateSettings( siteId, settings.data );
 
-			expect( action ).to.eql( {
+			expect( action ).to.deep.equal( {
 				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
 				data: settings.data,
 				siteId,
@@ -41,7 +41,7 @@ describe( 'actions', () => {
 		it( 'should return an action object', () => {
 			const action = fetchError( siteId );
 
-			expect( action ).to.eql( {
+			expect( action ).to.deep.equal( {
 				type: WP_JOB_MANAGER_FETCH_ERROR,
 				siteId,
 			} );
@@ -52,7 +52,7 @@ describe( 'actions', () => {
 		it( 'should return an action object', () => {
 			const action = fetchSettings( siteId );
 
-			expect( action ).to.eql( {
+			expect( action ).to.deep.equal( {
 				type: WP_JOB_MANAGER_FETCH_SETTINGS,
 				siteId,
 			} );

@@ -94,7 +94,7 @@ describe( 'selectors', () => {
 			};
 			const settings = getSettings( state, primarySiteId );
 
-			expect( settings ).to.eql( {} );
+			expect( settings ).to.deep.equal( {} );
 		} );
 
 		it( 'should return an empty object if the site is not attached', () => {
@@ -111,7 +111,7 @@ describe( 'selectors', () => {
 			};
 			const settings = getSettings( state, secondarySiteId );
 
-			expect( settings ).to.eql( {} );
+			expect( settings ).to.deep.equal( {} );
 		} );
 
 		it( 'should return the settings for a siteId', () => {
@@ -128,7 +128,7 @@ describe( 'selectors', () => {
 			};
 			const settings = getSettings( state, primarySiteId );
 
-			expect( settings ).to.eql( primarySettings );
+			expect( settings ).to.deep.equal( primarySettings );
 		} );
 	} );
 } );

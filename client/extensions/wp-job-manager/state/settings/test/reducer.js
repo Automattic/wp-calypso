@@ -7,7 +7,6 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WP_JOB_MANAGER_FETCH_ERROR,
 	WP_JOB_MANAGER_FETCH_SETTINGS,
@@ -20,10 +19,6 @@ describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
-
 	describe( 'fetching()', () => {
 		const previousState = deepFreeze( {
 			[ primarySiteId ]: true,
@@ -32,16 +27,16 @@ describe( 'reducer', () => {
 		it( 'should default to an empty object', () => {
 			const state = fetching( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should set request to true if settings are being fetched', () => {
+		it( 'should set state to true if settings are being fetched', () => {
 			const state = fetching( undefined, {
 				type: WP_JOB_MANAGER_FETCH_SETTINGS,
 				siteId: primarySiteId,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: true,
 			} );
 		} );
@@ -52,30 +47,30 @@ describe( 'reducer', () => {
 				siteId: secondarySiteId,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: true,
 				[ secondarySiteId ]: true,
 			} );
 		} );
 
-		it( 'should set request to false if updating settings', () => {
+		it( 'should set state to false if updating settings', () => {
 			const state = fetching( previousState, {
 				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
 				siteId: primarySiteId,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: false,
 			} );
 		} );
 
-		it( 'should set request to false if settings could not be fetched', () => {
+		it( 'should set state to false if settings could not be fetched', () => {
 			const state = fetching( previousState, {
 				type: WP_JOB_MANAGER_FETCH_ERROR,
 				siteId: primarySiteId,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: false,
 			} );
 		} );
@@ -85,7 +80,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
 		} );
 
 		it( 'should not load persisted state', () => {
@@ -93,7 +88,7 @@ describe( 'reducer', () => {
 				type: DESERIALIZE,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
 		} );
 	} );
 
@@ -107,7 +102,7 @@ describe( 'reducer', () => {
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
 		} );
 
 		it( 'should index settings by site ID', () => {
@@ -117,7 +112,7 @@ describe( 'reducer', () => {
 				data: primarySettings,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: primarySettings,
 			} );
 		} );
@@ -129,7 +124,7 @@ describe( 'reducer', () => {
 				data: secondarySettings,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: primarySettings,
 				[ secondarySiteId ]: secondarySettings,
 			} );
@@ -142,7 +137,7 @@ describe( 'reducer', () => {
 				data: secondarySettings,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: secondarySettings,
 			} );
 		} );
@@ -158,7 +153,7 @@ describe( 'reducer', () => {
 				data: newSettings,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: newSettings,
 			} );
 		} );
@@ -168,7 +163,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: primarySettings,
 			} );
 		} );
@@ -178,7 +173,7 @@ describe( 'reducer', () => {
 				type: DESERIALIZE,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: primarySettings,
 			} );
 		} );
@@ -191,7 +186,7 @@ describe( 'reducer', () => {
 				type: DESERIALIZE,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
 		} );
 	} );
 } );
