@@ -75,7 +75,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 			<option
 				key={ option.code }
 				value={ option.code } >
-				{ decodeEntities( option.symbol ) } - { option.name }
+				{ decodeEntities( option.symbol ) } - { decodeEntities( option.name ) }
 			</option>
 		);
 	}
