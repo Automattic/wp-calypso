@@ -24,6 +24,10 @@
 			// (fix found at http://stackoverflow.com/a/24728957)
 			transform: scale( 1 );
 		}
+
+		&:disabled {
+			border-color: lighten( $gray, 20% );
+		}
 	}
 }
 
