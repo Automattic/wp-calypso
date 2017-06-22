@@ -11,7 +11,7 @@ import sinon from 'sinon';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
-var DUMMY_SITE_ID = 1,
+const DUMMY_SITE_ID = 1,
 	DUMMY_MEDIA_ID = 10,
 	DUMMY_MEDIA_OBJECT = { ID: DUMMY_MEDIA_ID, title: 'Image', date: '2015-06-19T09:36:09-04:00', mime_type: 'image/png' },
 	DUMMY_MEDIA_RESPONSE = {
@@ -316,6 +316,14 @@ describe( 'MediaListStore', function() {
 			dispatchSetQuery( { query: { mime_type: 'image/' } } );
 
 			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
+
+			expect( matches ).to.be.true;
+		} );
+
+		it( 'should return true if item matches an external source but doesnt match title', function() {
+			dispatchSetQuery( { query: { search: 'monkey', source: 'external' } } );
+
+			const matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
 
 			expect( matches ).to.be.true;
 		} );

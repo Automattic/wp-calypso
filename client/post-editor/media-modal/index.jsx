@@ -127,6 +127,7 @@ export class EditorMediaModal extends Component {
 		return {
 			filter: '',
 			detailSelectedIndex: 0,
+			source: '',
 			gallerySettings: props.initialGallerySettings
 		};
 	}
@@ -325,6 +326,9 @@ export class EditorMediaModal extends Component {
 		}
 	};
 
+	onSourceChange = () => {
+	};
+
 	onClose = () => {
 		this.props.onClose();
 	};
@@ -375,7 +379,15 @@ export class EditorMediaModal extends Component {
 			}
 		];
 
-		if ( ModalViews.GALLERY !== this.props.view && selectedItems.length > 1 &&
+		if ( this.state.source !== '' ) {
+			buttons.push( {
+				action: 'confirm',
+				label: this.props.labels.confirm || this.props.translate( 'Copy to media library' ),
+				isPrimary: true,
+				disabled: isDisabled || 0 === selectedItems.length,
+				onClick: this.confirmSelection
+			} );
+		} else if ( ModalViews.GALLERY !== this.props.view && selectedItems.length > 1 &&
 				! some( selectedItems, ( item ) => MediaUtils.getMimePrefix( item ) !== 'image' ) ) {
 			buttons.push( {
 				action: 'confirm',
@@ -470,11 +482,13 @@ export class EditorMediaModal extends Component {
 						filter={ this.state.filter || this.props.defaultFilter || this.getFirstEnabledFilter() }
 						enabledFilters={ this.props.enabledFilters }
 						search={ this.state.search }
+						source={ this.state.source }
 						onAddMedia={ this.onAddMedia }
 						onAddAndEditImage={ this.onAddAndEditImage }
 						onFilterChange={ this.onFilterChange }
 						onScaleChange={ this.onScaleChange }
 						onSearch={ this.onSearch }
+						onSourceChange={ this.onSourceChange }
 						onEditItem={ this.editItem }
 						fullScreenDropZone={ false }
 						single={ this.props.single }
