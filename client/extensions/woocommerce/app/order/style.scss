@@ -118,6 +118,8 @@
 		.button {
 			float: left;
 			margin-right: 8px;
+			white-space: nowrap;
+			margin-left: 12px;
 		}
 
 		& > .button:last-child {
