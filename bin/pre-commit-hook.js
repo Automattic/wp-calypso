@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+require( './ensure-node-modules-present' );
 const execSync = require( 'child_process' ).execSync;
 const spawnSync = require( 'child_process' ).spawnSync;
 const chalk = require( 'chalk' );
@@ -17,7 +18,7 @@ const files = execSync( 'git diff --cached --name-only' )
 	.map( ( name ) => name.trim() )
 	.filter( ( name ) => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) );
 
-const lintResult = spawnSync( 'eslint-eslines', [ ...files, '--', '--diff=index' ], {
+const lintResult = spawnSync( 'eslint-eslines', [ ...files ], {
 	shell: true,
 	stdio: 'inherit',
 } );
