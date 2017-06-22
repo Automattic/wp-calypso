@@ -13,9 +13,15 @@ import {
 
 const stubNull = () => null;
 
-const updateProgress = ( state, { timestamp, restoreId } ) => ( {
+const startProgress = ( state, { timestamp } ) => ( {
 	percent: 0,
 	status: 'queued',
+	timestamp,
+} );
+
+const updateProgress = ( state, { percent, restoreId, status, timestamp } ) => ( {
+	percent,
+	status,
 	timestamp,
 	restoreId,
 } );
@@ -27,7 +33,7 @@ export const restoreError = keyedReducer( 'siteId', createReducer( {}, {
 } ) );
 
 export const restoreProgress = keyedReducer( 'siteId', createReducer( {}, {
-	[ REWIND_RESTORE ]: updateProgress,
+	[ REWIND_RESTORE ]: startProgress,
 	[ REWIND_RESTORE_UPDATE_ERROR ]: stubNull,
 	[ REWIND_RESTORE_UPDATE_PROGRESS ]: updateProgress,
 } ) );
