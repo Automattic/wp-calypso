@@ -444,17 +444,18 @@ class Page extends Component {
 }
 
 const mapState = ( state, props ) => {
-	const site = getSite( state, props.page.site_ID );
+	const pageSiteId = get( props, 'page.site_ID' );
+	const site = getSite( state, pageSiteId );
 	const siteSlugOrId = get( site, 'slug' ) || get( site, 'ID', null );
 	const selectedSiteId = getSelectedSiteId( state );
 	const isPreviewable =
-		false !== isSitePreviewable( state, props.page.site_ID ) &&
+		false !== isSitePreviewable( state, pageSiteId ) &&
 		site && site.ID === selectedSiteId;
 
 	return {
-		hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
-		isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
-		isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
+		hasStaticFrontPage: hasStaticFrontPage( state, pageSiteId ),
+		isFrontPage: isFrontPage( state, pageSiteId, props.page.ID ),
+		isPostsPage: isPostsPage( state, pageSiteId, props.page.ID ),
 		isPreviewable,
 		previewURL: getPreviewURL( props.page ),
 		site,
