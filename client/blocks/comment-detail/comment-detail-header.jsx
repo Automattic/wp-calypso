@@ -70,9 +70,7 @@ export const CommentDetailHeader = ( {
 				</label>
 			}
 			<div className="comment-detail__author-preview">
-				<div className="comment-detail__author-avatar">
-					<img className="comment-detail__author-avatar-image" src={ authorAvatarUrl } />
-				</div>
+				<img className="comment-detail__author-avatar" src={ authorAvatarUrl } />
 				<div className="comment-detail__author-info">
 					<div className="comment-detail__author-info-element">
 						<strong>
