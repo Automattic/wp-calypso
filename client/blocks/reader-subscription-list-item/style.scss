@@ -12,7 +12,7 @@
 .reader-subscription-list-item__byline {
 	color: darken( $gray, 30% );
 	margin-right: 16px;
-	flex: 1 1 auto;
+	flex: 1 1 0px;
 }
 
 .following-manage__subscriptions-list {
@@ -85,7 +85,6 @@
 	max-height: 16px * 2.5;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	overflow-wrap: break-word;
 	position: relative;
 	width: 100%;
 	overflow-wrap: break-word;
