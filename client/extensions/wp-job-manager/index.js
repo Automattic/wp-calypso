@@ -13,6 +13,11 @@ import { Tabs } from './constants';
 import JobListings from './components/job-listings';
 import JobSubmission from './components/job-submission';
 import Pages from './components/pages';
+import installActionHandlers from './state/data-layer';
+
+function initExtension() {
+	installActionHandlers();
+}
 
 export default function() {
 	const jobSubmissionSlug = get( Tabs, 'JOB_SUBMISSION.slug', '' );
@@ -25,3 +30,5 @@ export default function() {
 	page( `/extensions/wp-job-manager/${ pagesSlug }/:site`, siteSelection, navigation,
 		renderTab( Pages, pagesSlug ) );
 }
+
+initExtension();
