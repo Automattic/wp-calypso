@@ -59,13 +59,11 @@ describe( 'Emojify', function() {
 			);
 		} );
 
-		it( 'maintains AutoDirection properties', () => {
-			const AutoDirection = require( 'components/auto-direction' );
-
+		it( 'maintains custom props', () => {
 			const wrapper = shallow(
-				<AutoDirection><Emojify>השנה היא 2017.</Emojify></AutoDirection>
+				<Emojify alt="bar">השנה היא 2017.</Emojify>
 			);
-			expect( wrapper.node.props.direction ).to.equal( 'rtl' );
+			expect( wrapper.node.props.alt ).to.equal( 'bar' );
 		} );
 	} );
 } );
