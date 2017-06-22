@@ -54,6 +54,12 @@
 	thead .table-heading {
 		border-bottom: 1px solid lighten( $gray, 30% );
 	}
+
+	.table-row {
+		&:hover {
+			background: transparent;
+		}
+	}
 }
 
 .order__details-totals {
@@ -75,7 +81,7 @@
 			width: 16%;
 		}
 	}
-	
+
 	.order__details-total .order__details-totals-label,
 	.order__details-total .order__details-totals-value {
 		font-weight: bold;
@@ -96,7 +102,7 @@
 		align-items: center;
 		flex-grow: 1;
 	}
-	
+
 	.order__details-refund-label .gridicon {
 		color: $alert-green;
 	}
