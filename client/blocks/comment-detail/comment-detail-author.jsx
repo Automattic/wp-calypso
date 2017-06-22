@@ -9,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'lib/url';
+import { urlToDomainAndPath } from 'lib/url';
 
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
@@ -140,7 +140,7 @@ export class CommentDetailAuthor extends Component {
 								{ authorDisplayName }
 							</strong>
 							<span>
-								{ withoutHttp( authorUrl ).replace( /\/$/, '' ) }
+								{ urlToDomainAndPath( authorUrl ) }
 							</span>
 						</div>
 						<div className="comment-detail__author-info-element comment-detail__comment-date">
