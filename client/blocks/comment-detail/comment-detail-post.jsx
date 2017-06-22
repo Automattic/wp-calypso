@@ -7,28 +7,30 @@ import React from 'react';
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
-import { decodeEntities, stripHTML } from 'lib/formatting';
 
 export const CommentDetailPost = ( {
-	parentComment,
+	parentCommentAuthorAvatarUrl,
+	parentCommentAuthorDisplayName,
+	parentCommentContent,
+	parentCommentUrl,
 	postAuthorDisplayName,
 	postTitle,
 	postUrl,
 	siteId,
 } ) => {
-	if ( parentComment ) {
+	if ( parentCommentContent ) {
 		return (
 			<div className="comment-detail__post">
 				<div className="comment-detail__site-icon-author-avatar">
 					<SiteIcon siteId={ siteId } size={ 24 } />
-					<img className="comment-detail__author-avatar-image" src={ parentComment.author.avatar_URL } />
+					<img className="comment-detail__author-avatar-image" src={ parentCommentAuthorAvatarUrl } />
 				</div>
 				<div className="comment-detail__post-info">
 					<span>
-						{ parentComment.author.name }
+						{ parentCommentAuthorDisplayName }
 					</span>
-					<a href={ parentComment.URL }>
-						{ decodeEntities( stripHTML( parentComment.content ) ) }
+					<a href={ parentCommentUrl }>
+						{ parentCommentContent }
 					</a>
 				</div>
 			</div>

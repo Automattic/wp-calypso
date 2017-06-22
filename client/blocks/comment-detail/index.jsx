@@ -15,7 +15,7 @@ import CommentDetailComment from './comment-detail-comment';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
 
 export class CommentDetail extends Component {
@@ -122,7 +122,10 @@ export class CommentDetail extends Component {
 			commentIsSelected,
 			commentStatus,
 			isBulkEdit,
-			parentComment,
+			parentCommentAuthorAvatarUrl,
+			parentCommentAuthorDisplayName,
+			parentCommentContent,
+			parentCommentUrl,
 			postAuthorDisplayName,
 			postTitle,
 			postUrl,
@@ -172,7 +175,10 @@ export class CommentDetail extends Component {
 				{ isExpanded &&
 					<div className="comment-detail__content">
 						<CommentDetailPost
-							parentComment={ parentComment }
+							parentCommentAuthorAvatarUrl={ parentCommentAuthorAvatarUrl }
+							parentCommentAuthorDisplayName={ parentCommentAuthorDisplayName }
+							parentCommentContent={ parentCommentContent }
+							parentCommentUrl={ parentCommentUrl }
 							postAuthorDisplayName={ postAuthorDisplayName }
 							postTitle={ postTitle }
 							postUrl={ postUrl }
@@ -215,7 +221,9 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
 	const parentCommentId = get( commentsTree, `[${ comment.ID }].data.parent.ID`, 0 );
-	const parentComment = get( commentsTree, `[${ parentCommentId }].data`, false );
+	const parentComment = get( commentsTree, `[${ parentCommentId }].data`, {} );
+
+	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
 
 	return ( {
 		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
@@ -231,7 +239,10 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentId: comment.ID,
 		commentIsLiked: comment.i_like,
 		commentStatus: comment.status,
-		parentComment,
+		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
+		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
+		parentCommentContent,
+		parentCommentUrl: get( parentComment, 'URL' ),
 		postAuthorDisplayName: get( comment, 'post.author.name' ), // TODO: not available in the current data structure
 		postId,
 		postTitle,
