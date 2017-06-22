@@ -174,6 +174,10 @@ const setChildDirection = ( child ) => {
 				return innerChild;
 			}
 
+			if ( typeof innerChild === 'string' ) {
+				return innerChild;
+			}
+
 			if ( inlineClasses.some( inlineClass => innerChild.props.className.indexOf( inlineClass ) > -1 ) ) {
 				innerChildDirection = getChildDirection( innerChild );
 				return innerChild;
