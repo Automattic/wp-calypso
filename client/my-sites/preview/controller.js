@@ -6,14 +6,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import WebPreviewContent from 'components/web-preview/content';
+import PreviewMain from './main';
 
 export default {
 	preview: function( context, next ) {
 		context.primary = (
-			<WebPreviewContent
-				previewUrl={ `https://${ context.params.site }/?iframe=true&preview=true` }
-				showClose={ false }
+			<PreviewMain
+				site={ context.params.site }
 			/>
 		);
 		next();

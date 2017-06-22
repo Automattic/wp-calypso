@@ -18,6 +18,11 @@
 		max-width: 100%;
 	}
 
+	&.preview {
+		height: 100%;
+		max-width: none;
+	}
+
 	&.is-wide-layout {
 		max-width: 1040px;
 	}
