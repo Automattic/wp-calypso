@@ -16,7 +16,6 @@ import {
 	rewindRestoreUpdateError
 } from 'state/activity-log/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { exponentialBackoff } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:restore-status' );
@@ -26,7 +25,6 @@ const requestRestoreProgress = ( { dispatch }, action ) => {
 		apiVersion: '1',
 		method: 'GET',
 		path: `/activity-log/${ action.siteId }/rewind/${ action.restoreId }/restore-status`,
-		retryPolicy: exponentialBackoff(),
 	}, action ) );
 };
 
