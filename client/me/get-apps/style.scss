@@ -1,53 +1,43 @@
-.get-apps__title {
-	font-size: 24px;
-	font-family: $serif;
-	font-weight: 700;
-	line-height: 32px;
-	margin-bottom: 8px;
+.get-apps {
+	.card {
+		margin-bottom: 0;
+	}
 
-	@include breakpoint( ">480px" ) {
-		margin-top: 24px;
+	h3 {
+		font-size: 18px;
+		margin-bottom: 4px;
+	}
+
+	p {
+		margin-bottom: 4px;
+	}
+
+	p:last-child {
+		margin-bottom: 0;
 	}
 }
 
-.get-apps__subheading {
-	max-width: 500px;
-	margin: 16px auto;
-}
-
-.get-apps__app {
+.get-apps__illustration {
+	background-color: $white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+	max-width: 980px;
+	overflow: hidden;
+	padding-bottom: 50px;
 	text-align: center;
-	float: left;
-}
 
-.get-apps__app-icon {
-	width: 96px;
-	height: 96px;
-	margin: 0 auto 16px auto;
-	border-radius: 8px;
-	background: lighten( $gray, 20% );
-}
+	h2, p {
+		color: $blue-dark;
+	}
 
-.get-apps__app {
-	width: 100%;
-	margin-bottom: 24px;
-}
-
-.get-apps__desktop .get-apps__app {
-	@include breakpoint( ">480px" ) {
-		width: 33%;
-		margin-bottom: 0;
+	h2 {
+		font-size: 21px;
+		font-weight: 600;
 	}
 }
 
-.get-apps__mobile .get-apps__app {
-	a img {
-		width: auto;
-		height: 40px;
-	}
-
-	@include breakpoint( ">480px" ) {
-		width: 50%;
-		margin-bottom: 0;
-	}	
+.get-apps__also-available {
+	color: $gray-text-min;
+	font-size: 13px;
+	font-style: italic;
 }
