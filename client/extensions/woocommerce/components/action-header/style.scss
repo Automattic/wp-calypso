@@ -21,6 +21,11 @@
 	}
 }
 
+.action-header__breadcrumbs-separator {
+	color: $gray;
+	margin-left: 4px;
+}
+
 .action-header__actions {
 	width: 40%;
 	display: flex;

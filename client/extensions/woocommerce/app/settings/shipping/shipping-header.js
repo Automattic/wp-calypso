@@ -29,7 +29,6 @@ ShippingHeader.propTypes = {
 	site: PropTypes.shape( {
 		slug: PropTypes.string,
 	} ),
-	className: PropTypes.string,
 };
 
 function mapStateToProps( state ) {
