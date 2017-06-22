@@ -34,11 +34,18 @@ const DomainRegistrationSuggestion = React.createClass( {
 
 	componentDidMount() {
 		if ( this.props.railcarId && isNumber( this.props.uiPosition ) ) {
+			let resultSuffix = '';
+			if ( this.props.suggestion.isRecommended ) {
+				resultSuffix = 'recommended';
+			} else if ( this.props.suggestion.isBestAlternative ) {
+				resultSuffix = 'best-alternative';
+			}
+
 			tracks.recordEvent( 'calypso_traintracks_render', {
 				railcar: this.props.railcarId,
 				ui_position: this.props.uiPosition,
 				fetch_algo: this.props.fetchAlgo,
-				rec_result: this.props.suggestion.domain_name,
+				rec_result: `${ this.props.suggestion.domain_name }#${ resultSuffix }`,
 				fetch_query: this.props.query
 			} );
 		}

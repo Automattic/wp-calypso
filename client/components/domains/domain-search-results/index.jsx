@@ -8,6 +8,7 @@ import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import React from 'react';
 import classNames from 'classnames';
 import {
+	endsWith,
 	includes,
 	times
 } from 'lodash';
@@ -148,7 +149,7 @@ var DomainSearchResults = React.createClass( {
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						railcarId={ `${ this.props.railcarSeed }-registration-suggestion-${ i }` }
 						uiPosition={ i }
-						fetchAlgo={ this.props.fetchAlgo }
+						fetchAlgo={ endsWith( suggestion.domain_name, 'wordpress.com' ) ? 'wpcom' : this.props.fetchAlgo }
 						query={ this.props.lastDomainSearched }
 						onButtonClick={ this.props.onClickResult.bind( null, suggestion ) } />
 				);
