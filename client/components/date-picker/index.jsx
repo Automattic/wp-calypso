@@ -133,8 +133,11 @@ class DatePicker extends PureComponent {
 	}
 
 	renderDay = day => {
+		const isSelected = this.props.selectedDay && this.isSameDay( this.props.selectedDay, day );
+
 		return (
 			<DayItem
+				selected= { isSelected }
 				events={ this.filterEventsByDay( day ) }
 				date={ day } />
 		);

@@ -52,13 +52,7 @@ class DatePickerDay extends Component {
 	}
 
 	renderTooltip() {
-		if ( ! this.state.showTooltip ) {
-			return null;
-		}
-
-		if ( ! this.props.events.length ) {
-			return null;
-		}
+		const isVisible = !! this.props.events.length && this.state.showTooltip;
 
 		const label = this.props.translate(
 			'%d post',
@@ -74,7 +68,7 @@ class DatePickerDay extends Component {
 			<Tooltip
 				className="date-picker__events-tooltip"
 				context={ this.refs.dayTarget }
-				isVisible={ this.state.showTooltip }
+				isVisible={ isVisible }
 				onClose={ noop }
 			>
 				<span>{ label }</span>
