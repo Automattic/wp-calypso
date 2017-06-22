@@ -20,14 +20,14 @@
 		"slug": "wordpress-seo"
 	},
 	{
-		"name": "Google XML Sitemaps",
-		"author": "<a href=\"http://www.arnebrachhold.de/\">Arne Brachhold</a>",
-		"rating": 98,
+		"name": "BuddyPress",
+		"author": "<a href=\"https://buddypress.org/\">The BuddyPress Community</a>",
+		"rating": 88,
 		"icons": {
-			"1x": "https://ps.w.org/google-sitemap-generator/assets/icon-128x128.png?rev=976338",
-			"2x": "https://ps.w.org/google-sitemap-generator/assets/icon-256x256.png?rev=976338"
+			"1x": "https://ps.w.org/buddypress/assets/icon-128x128.png?rev=1309232",
+			"2x": "https://ps.w.org/buddypress/assets/icon-256x256.png?rev=1309232"
 		},
-		"slug": "google-sitemap-generator"
+		"slug": "buddypress"
 	},
 	{
 		"name": "TinyMCE Advanced",
