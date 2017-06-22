@@ -12,9 +12,6 @@ import {
 	hideMagicLoginRequestNotice,
 } from 'state/login/magic-login/actions';
 import {
-	recordPageView,
-} from 'state/analytics/actions';
-import {
 	isFetchingMagicLoginEmail,
 	getMagicLoginCurrentView,
 	getMagicLoginRequestEmailError,
@@ -47,7 +44,6 @@ class RequestLoginEmailForm extends React.Component {
 		// mapped to dispatch
 		fetchMagicLoginRequestEmail: PropTypes.func.isRequired,
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
-		recordPageView: PropTypes.func.isRequired,
 	};
 
 	onEmailAddressFieldChange = event => {
@@ -76,7 +72,6 @@ class RequestLoginEmailForm extends React.Component {
 		} = this.props;
 
 		if ( showCheckYourEmail ) {
-			this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
 			return <EmailedLoginLinkSuccessfully emailAddress={ this.state.emailAddress } />;
 		}
 
@@ -155,7 +150,6 @@ const mapState = state => {
 const mapDispatch = {
 	fetchMagicLoginRequestEmail,
 	hideMagicLoginRequestNotice,
-	recordPageView,
 };
 
 export default connect( mapState, mapDispatch )( localize( RequestLoginEmailForm ) );
