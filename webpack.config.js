@@ -6,6 +6,7 @@
 const webpack = require( 'webpack' );
 const path = require( 'path' );
 const fs = require( 'fs' );
+const { compact } = require( 'lodash' );
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 const NamedModulesPlugin = require( './server/bundler/webpack-plugins/NamedModulesPlugin' );
 const WebpackChunkHash = require( 'webpack-chunk-hash' );
+const HappyPack = require( 'happypack' );
 
 /**
  * Internal variables
@@ -50,6 +52,18 @@ function getAliasesForExtensions() {
 	return aliasesMap;
 }
 
+const babelLoader = {
+	loader: 'babel-loader',
+	options: {
+		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+		cacheIdentifier: cacheIdentifier,
+		plugins: [ [
+			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
+			{ async: config.isEnabled( 'code-splitting' ) }
+		] ]
+	}
+};
+
 const webpackConfig = {
 	bail: calypsoEnv !== 'development',
 	entry: {},
@@ -66,6 +80,11 @@ const webpackConfig = {
 		// https://github.com/localForage/localForage/issues/577
 		noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
 		rules: [
+			{
+				test: /\.jsx?$/,
+				exclude: /node_modules[\/\\](?!notifications-panel)/,
+				loader: [ 'happypack/loader' ]
+			},
 			{
 				test: /extensions[\/\\]index/,
 				exclude: path.join( __dirname, 'node_modules' ),
@@ -125,6 +144,12 @@ const webpackConfig = {
 		} ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] ),
+		new HappyPack( {
+			loaders: compact( [
+				process.env.NODE_ENV === 'development' && 'react-hot-loader',
+				babelLoader
+			] )
+		} )
 	],
 	externals: [ 'electron' ]
 };
@@ -182,22 +207,6 @@ if ( calypsoEnv === 'desktop' ) {
 	webpackConfig.externals.push( 'jquery' );
 }
 
-const jsRules = {
-	test: /\.jsx?$/,
-	exclude: /node_modules[\/\\](?!notifications-panel)/,
-	loader: [ {
-		loader: 'babel-loader',
-		options: {
-			cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
-			cacheIdentifier: cacheIdentifier,
-			plugins: [ [
-				path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
-				{ async: config.isEnabled( 'code-splitting' ) }
-			] ]
-		}
-	} ]
-};
-
 if ( calypsoEnv === 'development' ) {
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
 		new NamedModulesPlugin(),
@@ -208,7 +217,6 @@ if ( calypsoEnv === 'development' ) {
 		'webpack-hot-middleware/client',
 		path.join( __dirname, 'client', 'boot', 'app' )
 	];
-	jsRules.loader = [ 'react-hot-loader', ...jsRules.loader ];
 	webpackConfig.devServer = { hot: true, inline: true };
 
 
@@ -244,8 +252,6 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'client-records.json' );
 	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ) } ) );
 }
-
-webpackConfig.module.rules = [ jsRules ].concat( webpackConfig.module.rules );
 
 if ( process.env.DASHBOARD ) {
 	 // dashboard wants to be first

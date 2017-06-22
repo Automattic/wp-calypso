@@ -35,7 +35,7 @@
 		"ad-tracking": false,
 		"automated-transfer": true,
 		"apple-pay": true,
-		"code-splitting": true,
+		"code-splitting": false,
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
 		"comments/management": true,
