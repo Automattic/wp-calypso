@@ -91,6 +91,10 @@ MediaActions.fetchNextPage = function( siteId ) {
 	}
 };
 
+const getExternalUploader = service => ( file, siteId ) => {
+	return wpcom.undocumented().site( siteId ).uploadExternalMedia( service, [ file.guid ] );
+};
+
 const getFileUploader = () => ( file, siteId ) => {
 	// Determine upload mechanism by object type
 	const isUrl = 'string' === typeof file;
@@ -174,6 +178,10 @@ function uploadFiles( uploader, files, siteId ) {
 		} );
 	}, Promise.resolve() );
 }
+
+MediaActions.addExternal = function( siteId, files, service ) {
+	return uploadFiles( getExternalUploader( service ), files, siteId );
+};
 
 MediaActions.add = function( siteId, files ) {
 	if ( files instanceof window.FileList ) {
