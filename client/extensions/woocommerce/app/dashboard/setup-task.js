@@ -12,8 +12,6 @@ import React, { Component, PropTypes } from 'react';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
 
-// TODO add doc url and documentation link
-
 class SetupTask extends Component {
 	static propTypes = {
 		actions: PropTypes.arrayOf( PropTypes.shape( {
@@ -24,7 +22,6 @@ class SetupTask extends Component {
 			path: PropTypes.string,
 		} ) ),
 		checked: PropTypes.bool.isRequired,
-		docURL: PropTypes.string,
 		explanation: PropTypes.string,
 		label: PropTypes.string.isRequired,
 	};
@@ -91,8 +88,7 @@ class SetupTask extends Component {
 	};
 
 	render = () => {
-		const { actions, checked, docURL, explanation, label, translate } = this.props;
-		const docLink = docURL ? <a href={ docURL }>{ translate( 'Documentation' ) }</a> : null;
+		const { actions, checked, explanation, label } = this.props;
 
 		return (
 			<div className="dashboard__setup-task">
@@ -105,7 +101,7 @@ class SetupTask extends Component {
 							{ label }
 						</h2>
 						<p>
-							{ explanation } { docLink }
+							{ explanation }
 						</p>
 					</div>
 					<div className="dashboard__setup-task-actions">
