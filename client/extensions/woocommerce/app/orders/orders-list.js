@@ -172,7 +172,7 @@ class Orders extends Component {
 					</NavTabs>
 				</SectionNav>
 
-				<Table className="orders__table" header={ headers }>
+				<Table className="orders__table" header={ headers } horizontalScroll>
 					{ orders.map( this.renderOrderItems ) }
 				</Table>
 				{ this.renderPagination() }

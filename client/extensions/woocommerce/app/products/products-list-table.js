@@ -24,7 +24,7 @@ const ProductsListTable = ( { translate, products, site, isRequesting } ) => {
 
 	return (
 		<div>
-			<Table header={ headings } className={ classNames( { 'is-requesting': isRequesting } ) }>
+			<Table header={ headings } className={ classNames( { 'is-requesting': isRequesting } ) } horizontalScroll>
 				{ products && products.map( ( product, i ) => (
 					<ProductsListRow
 						key={ i }
