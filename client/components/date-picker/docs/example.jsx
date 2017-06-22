@@ -23,7 +23,7 @@ class DatePickerExample extends Component {
 
 			{
 				title: 'Social Media - Facebook',
-				date: new Date(),
+				date: new Date( Date.now() + 60 * 60 * 24 * 1000 ),
 				socialIcon: 'facebook',
 			},
 
@@ -48,7 +48,7 @@ class DatePickerExample extends Component {
 
 			{
 				title: 'Social Media - Tumblr',
-				date: new Date(),
+				date: new Date( Date.now() + 60 * 60 * 24 * 1000 ),
 				socialIcon: 'tumblr',
 			},
 
@@ -86,22 +86,28 @@ class DatePickerExample extends Component {
 
 			{
 				title: 'Tomorrow is tomorrow',
-				date: new Date( +new Date() + 60 * 60 * 24 * 1000 ),
-				type: 'future-event',
+				date: new Date( Date.now() + 60 * 60 * 24 * 1000 ),
+				type: 'future',
 			},
 			{
 				title: 'Yesterday',
-				date: new Date( +new Date() - 60 * 60 * 24 * 1000 ),
-				type: 'past-event',
+				date: new Date( Date.now() - 60 * 60 * 24 * 1000 ),
+				type: 'past',
+			},
+			{
+				title: 'Retro birthday',
+				date: new Date( '1977-07-18' ),
+				type: 'birthday',
+				icon: 'offline',
 			}
 		]
 	};
 
 	selectDay = ( date, modifiers ) => {
-		this.setState( { selectedDay: date } );
+		this.setState( { selectedDay: date.toDate() } );
 
 		if ( date ) {
-			console.log( date.toDate(), modifiers );
+			console.log( date.toDate(), modifiers ); // eslint-disable-line no-console
 		}
 	};
 
@@ -109,6 +115,7 @@ class DatePickerExample extends Component {
 		return (
 			<Card style={ { width: '300px', margin: 0 } }>
 				<DatePicker
+					disabledDays={ [ { before: new Date() } ] }
 					events={ this.state.events }
 					onSelectDay={ this.selectDay }
 					selectedDay={ this.state.selectedDay } />

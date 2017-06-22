@@ -3,7 +3,6 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { noop, map } from 'lodash';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -110,42 +109,14 @@ class DatePickerDay extends Component {
 	}
 
 	render() {
-		const classes = { 'date-picker__day': true };
-		let i = 0;
-		let dayEvent;
-
-		classes[ 'is-selected' ] = this.props.selected === true;
-		classes[ 'past-day' ] = this.isPastDay() === true;
-
-		if ( this.props.events.length ) {
-			classes[ 'date-picker__day_event' ] = true;
-
-			for ( i; i < this.props.events.length; i++ ) {
-				dayEvent = this.props.events[ i ];
-
-				if (
-					dayEvent.type &&
-					( ! classes[ 'date-picker__day_event_' + dayEvent.type ] )
-				) {
-					classes[ 'date-picker__day_event_' + dayEvent.type ] = true;
-				}
-			}
-		}
-
 		return (
 			<div
 				ref="dayTarget"
-				className={ classNames( classes ) }
+				className="date-picker__day"
 				onMouseEnter={ this.showTooltip }
 				onMouseLeave={ this.hideTooltip }
 			>
-				<span
-					key={ 'selected-' + ( this.props.date.getTime() / 1000 | 0 ) }
-					className="date-picker__day-selected">
-				</span>
-				<span className="date-picker__day-text">
-					{ this.props.date.getDate() }
-				</span>
+				{ this.props.date.getDate() }
 
 				{ this.renderTooltip() }
 			</div>
