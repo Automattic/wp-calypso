@@ -20,14 +20,14 @@
 		"slug": "wordpress-seo"
 	},
 	{
-		"name": "MailChimp for WordPress",
-		"author": "<a href=\"https://ibericode.com/\">ibericode</a>",
-		"rating": 98,
+		"name": "BuddyPress",
+		"author": "<a href=\"https://buddypress.org/\">The BuddyPress Community</a>",
+		"rating": 88,
 		"icons": {
-			"1x": "https://ps.w.org/mailchimp-for-wp/assets/icon-128x128.png?rev=1224577",
-			"2x": "https://ps.w.org/mailchimp-for-wp/assets/icon-256x256.png?rev=1224577"
+			"1x": "https://ps.w.org/buddypress/assets/icon-128x128.png?rev=1309232",
+			"2x": "https://ps.w.org/buddypress/assets/icon-256x256.png?rev=1309232"
 		},
-		"slug": "mailchimp-for-wp"
+		"slug": "buddypress"
 	},
 	{
 		"name": "TinyMCE Advanced",
