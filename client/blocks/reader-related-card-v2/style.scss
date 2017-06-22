@@ -126,9 +126,19 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	.reader-related-card-v2__meta {
 		display: flex;
 		height: 38px;
+		justify-content: flex-start;
 		margin-bottom: 13px;
 		z-index: z-index( '.reader-related-card-v2.card', '.reader-related-card-v2__meta' );
 		width: 100%;
+
+		&::last-child {
+			justify-content: flex-end;
+		}
+	}
+
+	.reader-related-card-v2__meta > a {
+		display: flex;
+		flex: 0 0 auto;
 	}
 
 	.reader-related-card-v2__post {
@@ -596,7 +606,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2__byline {
 	display: flex;
-	flex: 1 1 auto;
+	flex: 1 1 0;
 	flex-direction: column;
 	font-size: 14px;
 	margin-top: 3px;
@@ -614,12 +624,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 .reader-related-card-v2__byline-author,
 .reader-related-card-v2__byline-site {
 	color: $blue-medium;
-	display: -webkit-box;
-	-webkit-line-clamp: 1;
-	-webkit-box-orient: vertical;
+	display: flex;
 	max-height: 23px;
+	max-width: 200px;
 	overflow: hidden;
+	overflow-wrap: break-word;
 	position: relative;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 	word-wrap: break-word;
 
 	&::after {
@@ -709,12 +721,17 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	border-radius: 0;
 	margin-bottom: 12px;
 	margin-top: -4px;
+	min-width: 70px;
 	position: relative;
 	padding: 0;
 	z-index: z-index( '.reader-related-card-v2__meta', '.follow-button' );
 
 	.gridicon__follow {
 		fill: $blue-medium;
+	}
+
+	@include breakpoint( "<960px" ) {
+		min-width: 20px;
 	}
 
 	.follow-button__label {
