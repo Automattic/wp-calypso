@@ -15,6 +15,7 @@ import CommentDetailComment from './comment-detail-comment';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
+import { decodeEntities } from 'lib/formatting';
 
 export class CommentDetail extends Component {
 	static propTypes = {
@@ -201,6 +202,9 @@ const mapStateToProps = ( state, ownProps ) => {
 	// when the selector is ready.
 	const comment = ownProps.comment;
 
+	// TODO: eventually it will be returned already decoded from the data layer.
+	const postTitle = decodeEntities( get( comment, 'post.title' ) );
+
 	return ( {
 		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
 		authorDisplayName: get( comment, 'author.name' ),
@@ -216,7 +220,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentIsLiked: comment.i_like,
 		commentStatus: comment.status,
 		postAuthorDisplayName: get( comment, 'post.author.name' ),
-		postTitle: get( comment, 'post.title' ),
+		postTitle,
 		postUrl: get( comment, 'URL' ),
 		repliedToComment: comment.replied, // TODO: not available in the current data structure
 		siteId: comment.siteId,
