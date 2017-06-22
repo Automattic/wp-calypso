@@ -12,6 +12,7 @@ import groupBy from 'lodash/groupBy';
 import toArray from 'lodash/toArray';
 import some from 'lodash/some';
 import { translate } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -185,16 +186,24 @@ const MediaLibraryContent = React.createClass( {
 		analytics.tracks.recordEvent( tracksEvent, tracksData );
 	},
 
+	goToSharing( ev ) {
+		ev.preventDefault();
+		page( `/sharing/${ this.props.site.slug }` );
+	},
+
 	renderExternalMedia() {
-		if ( this.props.isRequesting ) {
-			return (
-				<MediaLibraryList key="list-loading" filterRequiresUpgrade={ this.props.filterRequiresUpgrade } />
-			);
-		}
+		const connectMessage = translate(
+			'To show Photos from Google, you need to connect your Google account. Do that from {{link}}your Sharing settings{{/link}}.', {
+				components: {
+					link: <a href={ `/sharing/${ this.props.site.slug }` } onClick={ this.goToSharing } />
+				}
+			}
+		);
 
 		return (
-			<div>
-				<p>{ translate( 'You will need to connect your account to view your media. Go to the Sharing tab.' ) }</p>
+			<div className="media-library__connect-message">
+				<p><img src="/calypso/images/sharing/google-photos-logo.svg" width="96" height="96" /></p>
+				<p>{ connectMessage }</p>
 			</div>
 		);
 	},
