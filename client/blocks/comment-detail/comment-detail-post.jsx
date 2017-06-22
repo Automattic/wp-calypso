@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ export const CommentDetailPost = ( {
 	postTitle,
 	postUrl,
 	siteId,
+	translate,
 } ) => {
 	if ( parentCommentContent ) {
 		return (
@@ -27,7 +29,7 @@ export const CommentDetailPost = ( {
 				</div>
 				<div className="comment-detail__post-info">
 					<span>
-						{ parentCommentAuthorDisplayName }
+						{ translate( '%(authorName)s:', { args: { authorName: parentCommentAuthorDisplayName } } ) }
 					</span>
 					<a href={ parentCommentUrl }>
 						{ parentCommentContent }
@@ -42,7 +44,7 @@ export const CommentDetailPost = ( {
 			<SiteIcon siteId={ siteId } size={ 24 } />
 			<div className="comment-detail__post-info">
 				<span>
-					{ postAuthorDisplayName }
+					{ translate( '%(authorName)s:', { args: { authorName: postAuthorDisplayName } } ) }
 				</span>
 				<a href={ postUrl }>
 					{ postTitle }
@@ -52,4 +54,4 @@ export const CommentDetailPost = ( {
 	);
 };
 
-export default CommentDetailPost;
+export default localize( CommentDetailPost );
