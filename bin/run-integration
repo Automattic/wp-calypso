@@ -1,5 +1,14 @@
 #!/bin/bash
-if [[ "$RUN_ARGS" == "--nightly" ]];
+if [[ "$@" == "" ]];
 then
-	npm run test-integration:ci
+	echo "No tests provided."
+	exit 0
 fi
+
+if [[ "$RUN_ARGS" != "--nightly" ]];
+then
+	echo "Regular build: skipping tests."
+	exit 0
+fi
+
+npm run test-integration:ci "$@"

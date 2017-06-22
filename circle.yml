@@ -15,8 +15,12 @@ test:
           fi
       : parallel: true
   override:
-    - npm run test-integration:ci:
+    - bin/run-integration:
         parallel: true
+        files:
+          - bin/**/integration/*.js
+          - client/**/integration/*.js
+          - server/**/integration/*.js
     - npm run lint:config-defaults
     - ./node_modules/.bin/eslint-eslines:
         parallel: true

@@ -8,9 +8,9 @@
 	"rootDir": "./../../",
 	"testEnvironment": "node",
 	"testMatch": [
-		"**/bin/**/__integration__/*.js",
-		"**/client/**/__integration__/*.js",
-		"**/server/**/__integration__/*.js"
+		"**/bin/**/integration/*.js",
+		"**/client/**/integration/*.js",
+		"**/server/**/integration/*.js"
 	],
 	"verbose": true
 }
