@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
+import Order from './app/order';
 import Orders from './app/orders';
 import Products from './app/products';
 import ProductCreate from './app/products/product-create';
@@ -74,6 +75,11 @@ const getStorePages = () => {
 				label: translate( 'Orders' ),
 				slug: 'orders',
 			},
+		},
+		{
+			container: Order,
+			configKey: 'woocommerce/extension-orders',
+			path: '/store/order/:site/:order',
 		},
 		{
 			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
@@ -147,7 +153,7 @@ function getStoreSidebarItemButtons() {
 function addStorePage( storePage, storeNavigation ) {
 	page( storePage.path, siteSelection, storeNavigation, function( context ) {
 		renderWithReduxStore(
-			React.createElement( storePage.container, { className: 'woocommerce' } ),
+			React.createElement( storePage.container, { className: 'woocommerce', params: context.params } ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
