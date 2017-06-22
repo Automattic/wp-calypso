@@ -13,7 +13,8 @@ import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import Navigation from '../navigation';
 import QuerySettings from '../../data/query-settings';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSettings, isFetchingSettings } from '../../state/settings/selectors';
 
 class Settings extends Component {
@@ -21,8 +22,8 @@ class Settings extends Component {
 		children: PropTypes.element,
 		isFetching: PropTypes.bool,
 		settings: PropTypes.object,
-		site: PropTypes.object,
 		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 		tab: PropTypes.string,
 		translate: PropTypes.func,
 	};
@@ -61,8 +62,8 @@ class Settings extends Component {
 		const {
 			children,
 			isFetching,
-			site,
 			siteId,
+			siteSlug,
 			tab,
 			translate,
 		} = this.props;
@@ -72,7 +73,7 @@ class Settings extends Component {
 			<Main className={ mainClassName }>
 				<QuerySettings siteId={ siteId } />
 				<DocumentHead title={ translate( 'WP Job Manager' ) } />
-				<Navigation activeTab={ tab } site={ site } />
+				<Navigation activeTab={ tab } siteSlug={ siteSlug } />
 				{
 					Children.map( children, child => cloneElement( child, {
 						isFetching,
@@ -94,8 +95,8 @@ const connectComponent = connect(
 		return {
 			isFetching: isFetchingSettings( state, siteId ),
 			settings: getSettings( state, siteId ),
-			site: getSelectedSite( state ),
 			siteId,
+			siteSlug: getSiteSlug( state, siteId ),
 		};
 	}
 );
