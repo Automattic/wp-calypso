@@ -6,9 +6,7 @@ import {
 	WOOCOMMERCE_CURRENCY_CHANGE,
 } from '../../../action-types';
 
-export const initialState = {
-	currency: ''
-};
+export const initialState = '';
 
 function changeAction( state, { currency } ) {
 	return currency;
