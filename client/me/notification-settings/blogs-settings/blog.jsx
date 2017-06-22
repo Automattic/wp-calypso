@@ -69,7 +69,15 @@ class BlogSettings extends Component {
 								onSave,
 								onSaveToAll
 							} }
-							settingKeys={ [ 'new_comment', 'comment_like', 'post_like', 'follow', 'achievement', 'mentions' ] } />;
+							settingKeys={ [
+								'new_comment',
+								'comment_like',
+								'post_like',
+								'follow',
+								'achievement',
+								'mentions',
+								'scheduled_publicize'
+							] } />;
 					}
 				} )() }
 			</Card>
