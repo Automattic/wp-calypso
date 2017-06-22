@@ -11,12 +11,14 @@ import {
 	keys,
 	map,
 	pick,
+	upperCase,
 } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getContactDetailsExtraCache } from 'state/selectors';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -25,6 +27,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 
 const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 const defaultValues = {
+	lang: 'EN',
 	legalType: 'CCT',
 	ciraAgreementAccepted: false,
 };
@@ -83,16 +86,24 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 	componentWillMount() {
 		// Add defaults to redux state to make accepting default values work.
-		const requiredDetailsNotInProps = difference(
-			[ 'legalType', 'ciraAgreementAccepted' ],
+		const neededRequiredDetails = difference(
+			[ 'lang', 'legalType', 'ciraAgreementAccepted' ],
 			keys( this.props.contactDetailsExtra ),
 		);
 
-		if ( ! isEmpty( requiredDetailsNotInProps ) ) {
-			this.props.updateContactDetailsCache( {
-				extra: pick( defaultValues, requiredDetailsNotInProps ),
-			} );
+		// Bail early as we already have the details from a previous purchase.
+		if ( isEmpty( neededRequiredDetails ) ) {
+			return;
 		}
+
+		// Set the lang to FR if user is FR, otherwise leave EN
+		if ( upperCase( this.props.userWpcomLang ) === 'FR' ) {
+			defaultValues.lang = 'FR';
+		}
+
+		this.props.updateContactDetailsCache( {
+			extra: pick( defaultValues, neededRequiredDetails ),
+		} );
 	}
 
 	handleChangeEvent = ( event ) => {
@@ -159,6 +170,9 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 }
 
 export default connect(
-	state => ( { contactDetailsExtra: getContactDetailsExtraCache( state ) } ),
+	state => ( {
+		contactDetailsExtra: getContactDetailsExtraCache( state ),
+		userWpcomLang: getCurrentUserLocale( state )
+	} ),
 	{ updateContactDetailsCache }
 )( localize( RegistrantExtraInfoCaForm ) );
