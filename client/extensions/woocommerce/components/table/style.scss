@@ -98,10 +98,10 @@
 
 .table-row {
 	line-height: 36px;
-	
+
 	&:hover {
 		background: $gray-light;
-		
+
 		&.is-header {
 			background-color: initial;
 		}
@@ -109,6 +109,15 @@
 
 	&.is-header {
 		color: $gray-text-min;
+	}
+
+	&.has-action {
+		cursor: pointer;
+
+		&:focus,
+		&:active {
+			box-shadow: inset 2px 0 0 $blue-medium;
+		}
 	}
 }
 

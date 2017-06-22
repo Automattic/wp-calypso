@@ -19,6 +19,7 @@ import {
 	getOrders,
 	getTotalOrdersPages
 } from 'woocommerce/state/sites/orders/selectors';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrdersCurrentPage } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSiteAdminUrl } from 'state/sites/selectors';
@@ -89,9 +90,9 @@ class Orders extends Component {
 	renderOrderItems = ( order, i ) => {
 		const { moment, site } = this.props;
 		return (
-			<TableRow key={ i }>
+			<TableRow key={ i } href={ getLink( `/store/order/:site/${ order.number }`, site ) }>
 				<TableItem className="orders__table-name" isRowHeader>
-					<a className="orders__item-link" href={ `/store/order/${ site.slug }/${ order.number }` }>#{ order.number }</a>
+					<span className="orders__item-link">#{ order.number }</span>
 					<span className="orders__item-name">
 						{ `${ order.billing.first_name } ${ order.billing.last_name }` }
 					</span>
