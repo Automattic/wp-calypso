@@ -231,6 +231,30 @@ class PublicizeActionsList extends PureComponent {
 		);
 	}
 
+	getShareTabLabel( shareTab ) {
+		const { translate } = this.props;
+		return shareTab === SCHEDULED ? translate( 'Scheduled' ) : translate( 'Published' );
+	}
+
+	getShareTabCount( shareTab ) {
+		return shareTab === SCHEDULED
+			? this.props.scheduledActions.length
+			: this.props.publishedActions.length;
+	}
+
+	renderShareTab( shareTab ) {
+		return (
+			<NavItem
+				key={ shareTab }
+				selected={ this.state.selectedShareTab === shareTab }
+				count={ this.getShareTabCount( shareTab ) }
+				onClick={ this.setFooterSection( shareTab ) }
+			>
+				{ this.getShareTabLabel( shareTab ) }
+			</NavItem>
+		);
+	}
+
 	render() {
 		const {
 			hasRepublicizeFeature,
@@ -239,26 +263,19 @@ class PublicizeActionsList extends PureComponent {
 			siteId,
 		} = this.props;
 
+		const tabs = ( hasRepublicizeFeature || hasRepublicizeSchedulingFeature )
+			? [ SCHEDULED, PUBLISHED ]
+			: [ PUBLISHED ];
+
 		return (
 			<div>
-				<SectionNav className="post-share__footer-nav" selectedText={ 'some text' }>
-					<NavTabs label="Status" selectedText="Published">
-						{ ( hasRepublicizeFeature || hasRepublicizeSchedulingFeature ) &&
-							<NavItem
-								selected={ this.state.selectedShareTab === SCHEDULED }
-								count={ this.props.scheduledActions.length }
-								onClick={ this.setFooterSection( SCHEDULED ) }
-							>
-								Scheduled
-							</NavItem>
-						}
-						<NavItem
-							selected={ this.state.selectedShareTab === PUBLISHED }
-							count={ this.props.publishedActions.length }
-							onClick={ this.setFooterSection( PUBLISHED ) }
-						>
-							Published
-						</NavItem>
+				<SectionNav
+					className="post-share__footer-nav"
+					selectedText={ this.getShareTabLabel( this.state.selectedShareTab ) }
+					selectedCount={ this.getShareTabCount( this.state.selectedShareTab ) }
+				>
+					<NavTabs>
+						{ tabs.map( this.renderShareTab, this ) }
 					</NavTabs>
 				</SectionNav>
 				<div className="post-share__actions-list">
