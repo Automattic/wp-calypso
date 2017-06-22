@@ -26,7 +26,11 @@
 		}
 
 		&:disabled {
-			border-color: lighten( $gray, 20% );
+			border-right-width: 0;
+
+			& + .form-text-input-with-affixes__suffix {
+				border-left: 1px solid lighten( $gray, 20% );
+			}
 		}
 	}
 }
@@ -71,6 +75,17 @@
 
 	@include breakpoint( ">480px" ) {
 		@include no-prefix-wrap();
+	}
+
+	& + input[type="email"],
+	& + input[type="password"],
+	& + input[type="url"],
+	& + input[type="text"],
+	& + input[type="number"] {
+		&:disabled {
+			border-left-color: lighten( $gray, 20% );
+			border-right-width: 1px;
+		}
 	}
 }
 
