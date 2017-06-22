@@ -12,7 +12,6 @@ import {
 	restoreProgress,
 } from '../reducer';
 import {
-    rewindCompleteRestore,
     rewindRestore,
     rewindRestoreUpdateError,
 } from '../../actions';
@@ -28,19 +27,12 @@ const ERROR = deepFreeze( {
 } );
 
 describe( '#restoreProgress()', () => {
-	it( 'start in progress restore a 0%', () => {
+	it( 'should start at 0% queued', () => {
 		const state = restoreProgress( undefined, rewindRestore( SITE_ID, TIMESTAMP ) );
 		expect( state[ SITE_ID ] ).to.deep.equal( {
 			percent: 0,
-			status: 'running',
-		} );
-	} );
-
-	it( 'complete finished restores at 100%', () => {
-		const state = restoreProgress( undefined, rewindCompleteRestore( SITE_ID, TIMESTAMP ) );
-		expect( state[ SITE_ID ] ).to.deep.equal( {
-			percent: 100,
-			status: 'success',
+			status: 'queued',
+			timestamp: TIMESTAMP,
 		} );
 	} );
 
@@ -71,7 +63,6 @@ describe( '#restoreProgress()', () => {
 
 		[
 			restoreProgress( prevState, rewindRestore( SITE_ID, TIMESTAMP ) ),
-			restoreProgress( prevState, rewindCompleteRestore( SITE_ID, TIMESTAMP ) ),
 			restoreProgress( prevState, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) ),
 		].forEach(
 			state => expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] )
@@ -90,14 +81,6 @@ describe( '#restoreError()', () => {
 			[ SITE_ID ]: ERROR,
 		} );
 		const state = restoreError( prevState, rewindRestore( SITE_ID, TIMESTAMP ) );
-		expect( state[ SITE_ID ] ).to.be.null;
-	} );
-
-	it( 'should null on completion', () => {
-		const prevState = deepFreeze( {
-			[ SITE_ID ]: ERROR,
-		} );
-		const state = restoreError( prevState, rewindCompleteRestore( SITE_ID, TIMESTAMP ) );
 		expect( state[ SITE_ID ] ).to.be.null;
 	} );
 

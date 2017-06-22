@@ -13,16 +13,18 @@ import {
 	receiveRestoreError,
 } from '../';
 import {
-	rewindCompleteRestore,
+	getRewindRestoreProgress,
 	rewindRestoreUpdateError,
 } from 'state/activity-log/actions';
 
 const siteId = 77203074;
 const timestamp = 1496768464;
+const restoreId = 12345;
 
 const SUCCESS_RESPONSE = deepFreeze( {
 	ok: true,
 	error: '',
+	restore_id: restoreId,
 } );
 
 const ERROR_RESPONSE = deepFreeze( {
@@ -32,17 +34,17 @@ const ERROR_RESPONSE = deepFreeze( {
 } );
 
 describe( 'receiveRestoreSuccess', () => {
-	it( 'should dispatch rewind complete restore action', () => {
+	it( 'should dispatch get restore progress on success', () => {
 		const dispatch = sinon.spy();
 		receiveRestoreSuccess( { dispatch }, { siteId, timestamp }, null, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
-			rewindCompleteRestore( siteId, timestamp )
+			getRewindRestoreProgress( siteId, timestamp, restoreId )
 		);
 	} );
 } );
 
 describe( 'receiveRestoreError', () => {
-	it( 'should dispatch rewind restore update error action', () => {
+	it( 'should dispatch update error on error', () => {
 		const dispatch = sinon.spy();
 		receiveRestoreError( { dispatch }, { siteId, timestamp }, null, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(

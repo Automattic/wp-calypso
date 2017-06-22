@@ -3,7 +3,7 @@
  */
 import {
 	REWIND_RESTORE,
-	REWIND_RESTORE_COMPLETED,
+	REWIND_RESTORE_UPDATE_PROGRESS,
 	REWIND_RESTORE_UPDATE_ERROR,
 } from 'state/action-types';
 import {
@@ -11,26 +11,29 @@ import {
 	keyedReducer,
 } from 'state/utils';
 
-// TODO (seear): Use real state when we add restore status data-layer
-const restoreStartState = () => ( {
+const stubNull = () => null;
+
+const startProgress = ( state, { timestamp } ) => ( {
 	percent: 0,
-	status: 'running',
+	status: 'queued',
+	timestamp,
 } );
 
-const restoreCompleteState = () => ( {
-	percent: 100,
-	status: 'success',
+const updateProgress = ( state, { percent, restoreId, status, timestamp } ) => ( {
+	percent,
+	status,
+	timestamp,
+	restoreId,
 } );
-const stubNull = () => null;
 
 export const restoreError = keyedReducer( 'siteId', createReducer( {}, {
 	[ REWIND_RESTORE ]: stubNull,
-	[ REWIND_RESTORE_COMPLETED ]: stubNull,
 	[ REWIND_RESTORE_UPDATE_ERROR ]: ( state, { error } ) => error,
+	[ REWIND_RESTORE_UPDATE_PROGRESS ]: stubNull,
 } ) );
 
 export const restoreProgress = keyedReducer( 'siteId', createReducer( {}, {
-	[ REWIND_RESTORE ]: restoreStartState,
-	[ REWIND_RESTORE_COMPLETED ]: restoreCompleteState,
+	[ REWIND_RESTORE ]: startProgress,
 	[ REWIND_RESTORE_UPDATE_ERROR ]: stubNull,
+	[ REWIND_RESTORE_UPDATE_PROGRESS ]: updateProgress,
 } ) );
