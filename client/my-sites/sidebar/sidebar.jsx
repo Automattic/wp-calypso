@@ -559,8 +559,7 @@ export class MySitesSidebar extends Component {
 			<div>
 				<SidebarMenu>
 					<ul>
-						{/* TODO: enable once we have the new view ready */}
-						{/* this.preview() */}
+						{ config.isEnabled( 'standalone-site-preview' ) && this.preview() }
 						{ this.stats() }
 						{ this.plan() }
 						{ this.store() }
