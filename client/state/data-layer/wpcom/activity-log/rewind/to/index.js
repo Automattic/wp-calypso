@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import { pick } from 'lodash';
 
 /**
@@ -15,6 +16,9 @@ import {
 } from 'state/activity-log/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
+
+const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:to' );
+
 const requestRestore = ( { dispatch }, action ) => {
 	dispatch( http( {
 		method: 'POST',
@@ -24,10 +28,12 @@ const requestRestore = ( { dispatch }, action ) => {
 };
 
 export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp } ) => {
+	debug( 'Request restore success' );
 	dispatch( getRewindRestoreProgress( siteId, timestamp ) );
 };
 
 export const receiveRestoreError = ( { dispatch }, { siteId, timestamp }, next, error ) => {
+	debug( 'Request restore fail', error );
 	dispatch( rewindRestoreUpdateError(
 		siteId,
 		timestamp,

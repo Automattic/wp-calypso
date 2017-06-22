@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import { pick, delay } from 'lodash';
 
 /**
@@ -16,6 +17,8 @@ import {
 } from 'state/activity-log/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
+
+const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:restore-status' );
 
 const requestRestoreProgress = ( { dispatch }, action ) => {
 	dispatch( http( {
@@ -37,13 +40,20 @@ const fromApi = data => {
 
 export const receiveRestoreProgress = ( { dispatch }, { siteId, timestamp }, next, data ) => {
 	const POLLING_DELAY_MS = 1500;
-	dispatch( updateRewindRestoreProgress( fromApi( data ) ) );
+
+	const data = fromApi( apiData );
+
+	debug( 'Restore progress', data );
+
+	dispatch( updateRewindRestoreProgress( siteId, data ) );
 	if ( data.status !== 'finished' ) {
 		delay( dispatch, POLLING_DELAY_MS, getRewindRestoreProgress( siteId, timestamp ) );
 	}
 };
 
 export const receiveRestoreError = ( { dispatch }, { siteId, timestamp }, next, error ) => {
+	debug( 'Restore progress error', error );
+
 	dispatch( rewindRestoreUpdateError(
 		siteId,
 		timestamp,
