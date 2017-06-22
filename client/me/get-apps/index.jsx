@@ -23,34 +23,42 @@ export const GetApps = ( { translate } ) => {
 			<GetAppsIllustration translate={ translate } />
 			<SectionHeader label={ translate( 'WordPress Apps' ) } />
 			<Card className="get-apps__desktop">
-				<h3>{ translate( 'Desktop App for Mac' ) }</h3>
-				<p>{ translate( 'A desktop app that gives WordPress a permanent home in your dock.' ) }</p>
-				<p className={ 'get-apps__also-available' }>
-					{ translate(
-						'Requires Mac OS X 10.11+. Also available for: {{windowsLink}}Windows (7+){{/windowsLink}}, {{tarLink}}Linux (.tar.gz){{/tarLink}}, {{debLink}}Linux (.deb){{/debLink}}.',
-						{
-							components: {
-								windowsLink: (
-									<a href={ 'https://apps.wordpress.com/d/windows?ref=getapps' } onClick={ trackAppDownloadClick } />
-								),
-								tarLink: (
-									<a href={ 'https://apps.wordpress.com/d/linux?ref=getapps' } onClick={ trackAppDownloadClick } />
-								),
-								debLink: (
-									<a href={ 'https://apps.wordpress.com/d/linux-deb?ref=getapps' } onClick={ trackAppDownloadClick } />
-								)
+				<div className={ 'get-apps__card-text' }>
+					<h3>{ translate( 'Desktop App for Mac' ) }</h3>
+					<p>{ translate( 'A desktop app that gives WordPress a permanent home in your dock.' ) }</p>
+					<p className={ 'get-apps__also-available' }>
+						{ translate(
+							'Requires Mac OS X 10.11+. Also available for: {{windowsLink}}Windows (7+){{/windowsLink}}, {{tarLink}}Linux (.tar.gz){{/tarLink}}, {{debLink}}Linux (.deb){{/debLink}}.',
+							{
+								components: {
+									windowsLink: (
+										<a href={ 'https://apps.wordpress.com/d/windows?ref=getapps' } onClick={ trackAppDownloadClick } />
+									),
+									tarLink: (
+										<a href={ 'https://apps.wordpress.com/d/linux?ref=getapps' } onClick={ trackAppDownloadClick } />
+									),
+									debLink: (
+										<a href={ 'https://apps.wordpress.com/d/linux-deb?ref=getapps' } onClick={ trackAppDownloadClick } />
+									)
+								}
 							}
-						}
-					) }
-				</p>
+						) }
+					</p>
+				</div>
 				<Button href={ 'https://apps.wordpress.com/d/osx?ref=getapps' }>Download</Button>
 			</Card>
 			<Card className="get-apps__mobile">
-				<h3>{ translate( 'Mobile Apps' ) }</h3>
-				<p>{ translate( 'WordPress at your fingertips.' ) }</p>
+				<div className={ 'get-apps__card-text' }>
+					<h3>{ translate( 'Mobile Apps' ) }</h3>
+					<p>{ translate( 'WordPress at your fingertips.' ) }</p>
+				</div>
 				<div className={ 'get-apps__badges' }>
-					<img src={ '/calypso/images/me/get-apps-app-store.png' } alt={ translate( 'Get on the iOS App Store' ) } />
-					<img src={ '/calypso/images/me/get-apps-google-play.png' } alt={ translate( 'Android' ) } />
+					<a href={ 'https://itunes.apple.com/us/app/wordpress/id335703880?mt=8' }>
+						<img src={ '/calypso/images/me/get-apps-app-store.png' } alt={ translate( 'Get on the iOS App Store' ) } />
+					</a>
+					<a href={ 'https://play.google.com/store/apps/details?id=org.wordpress.android' }>
+						<img src={ '/calypso/images/me/get-apps-google-play.png' } alt={ translate( 'Android' ) } />
+					</a>
 				</div>
 			</Card>
 		</Main>

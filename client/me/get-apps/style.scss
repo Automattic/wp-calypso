@@ -1,5 +1,7 @@
 .get-apps {
 	.card {
+		display: flex;
+		align-items: center;
 		margin-bottom: 0;
 	}
 
@@ -36,8 +38,20 @@
 	}
 }
 
+.get-apps__card-text {
+	flex: 1;
+}
+
 .get-apps__also-available {
 	color: $gray-text-min;
 	font-size: 13px;
 	font-style: italic;
+}
+
+.get-apps__badges {
+	img {
+		height: 40px;
+		margin-left: 12px;
+		width: auto;
+	}
 }
