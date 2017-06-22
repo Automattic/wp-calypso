@@ -16,6 +16,7 @@ import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
 import { decodeEntities } from 'lib/formatting';
+import { getPostCommentsTree } from 'state/comments/selectors';
 
 export class CommentDetail extends Component {
 	static propTypes = {
@@ -121,6 +122,7 @@ export class CommentDetail extends Component {
 			commentIsSelected,
 			commentStatus,
 			isBulkEdit,
+			parentComment,
 			postAuthorDisplayName,
 			postTitle,
 			postUrl,
@@ -170,6 +172,7 @@ export class CommentDetail extends Component {
 				{ isExpanded &&
 					<div className="comment-detail__content">
 						<CommentDetailPost
+							parentComment={ parentComment }
 							postAuthorDisplayName={ postAuthorDisplayName }
 							postTitle={ postTitle }
 							postUrl={ postUrl }
@@ -205,8 +208,14 @@ const mapStateToProps = ( state, ownProps ) => {
 		siteId,
 	} = ownProps;
 
+	const postId = get( comment, 'post.ID' );
+
 	// TODO: eventually it will be returned already decoded from the data layer.
 	const postTitle = decodeEntities( get( comment, 'post.title' ) );
+
+	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
+	const parentCommentId = get( commentsTree, `[${ comment.ID }].data.parent.ID`, 0 );
+	const parentComment = get( commentsTree, `[${ parentCommentId }].data`, false );
 
 	return ( {
 		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
@@ -222,7 +231,9 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentId: comment.ID,
 		commentIsLiked: comment.i_like,
 		commentStatus: comment.status,
-		postAuthorDisplayName: get( comment, 'post.author.name' ),
+		parentComment,
+		postAuthorDisplayName: get( comment, 'post.author.name' ), // TODO: not available in the current data structure
+		postId,
 		postTitle,
 		postUrl: get( comment, 'URL' ),
 		repliedToComment: comment.replied, // TODO: not available in the current data structure
