@@ -23,7 +23,7 @@ const wpcomMock = {
 };
 
 describe( 'Domain Details Form', () => {
-	let DomainDetailsForm;
+	let DomainDetailsForm, DomainDetailsFormContainer;
 	// needed, because some dependency of dependency uses `window`
 	useFakeDom();
 
@@ -32,6 +32,7 @@ describe( 'Domain Details Form', () => {
 		mockery.registerMock( 'i18n-calypso', { localize: identity } );
 		mockery.registerMock( 'lib/wp', wpcomMock );
 		DomainDetailsForm = require( '../domain-details-form' ).DomainDetailsForm;
+		DomainDetailsFormContainer = require( '../domain-details-form' ).DomainDetailsFormContainer;
 	} );
 
 	const defaultProps = {
@@ -68,6 +69,17 @@ describe( 'Domain Details Form', () => {
 		const wrapper = shallow( <DomainDetailsForm { ...defaultProps } /> );
 
 		expect( wrapper ).to.have.length( 1 );
+	} );
+
+	it( 'should not render if domain details are missing', function() {
+		const propsWithoutCOntactDetails = {
+			...defaultProps,
+			contactDetails: null,
+		};
+		const wrapper = shallow( <DomainDetailsFormContainer { ...propsWithoutCOntactDetails } /> );
+
+		expect( wrapper.find( 'DomainDetailsForm' ) ).to.have.length( 0 );
+		expect( wrapper.find( 'SecurePaymentFormPlaceholder' ) ).to.have.length( 1 );
 	} );
 
 	it( 'does not render privacy with no domains', () => {
