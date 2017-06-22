@@ -197,10 +197,13 @@ export class CommentDetail extends Component {
 }
 
 const mapStateToProps = ( state, ownProps ) => {
-	// TODO: replace with
+	// TODO: replace `const comment = ownProps.comment;` with
 	// `const comment = ownProps.comment || getComment( ownProps.commentId );`
 	// when the selector is ready.
-	const comment = ownProps.comment;
+	const {
+		comment,
+		siteId,
+	} = ownProps;
 
 	// TODO: eventually it will be returned already decoded from the data layer.
 	const postTitle = decodeEntities( get( comment, 'post.title' ) );
@@ -223,7 +226,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		postTitle,
 		postUrl: get( comment, 'URL' ),
 		repliedToComment: comment.replied, // TODO: not available in the current data structure
-		siteId: comment.siteId,
+		siteId: comment.siteId || siteId,
 	} );
 };
 
