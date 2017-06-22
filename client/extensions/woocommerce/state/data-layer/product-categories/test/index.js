@@ -40,7 +40,7 @@ describe( 'handlers', () => {
 		} );
 	} );
 
-	describe( '#handleProductUpdated', () => {
+	describe( '#handleProductCategoryUpdated', () => {
 		it( 'should dispatch a completion action', () => {
 			const store = {
 				dispatch: spy(),
