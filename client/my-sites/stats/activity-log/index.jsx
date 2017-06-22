@@ -112,95 +112,6 @@ class ActivityLog extends Component {
 		rewindRestore( siteId, requestedRestoreTimestamp );
 	};
 
-	update_logs( log ) {
-		const { translate } = this.props;
-		switch ( log.type ) {
-			// Scans
-			case 'security_threat_found':
-				log.subTitle = translate( 'Security Threat Found!' );
-				log.icon = 'notice';
-				log.actionText = translate( 'Fix it' );
-				break;
-			// Backups
-			case 'site_backed_up':
-				log.subTitle = translate( 'Site Backed up' );
-				log.icon = 'checkmark';
-				log.status = 'is-success';
-				log.actionText = 'Restore';
-				break;
-			// Backups
-			case 'site_backed_up_failed':
-				log.subTitle = translate( 'Site Backed up' );
-				log.icon = 'notice';
-				log.actionText = 'Fix';
-				log.status = 'is-error';
-				break;
-			// Plugins
-			case 'plugin_activated':
-				log.subTitle = translate( 'Plugin Activated' );
-				log.icon = 'plugins';
-				log.actionText = 'Deactivate';
-				break;
-			case 'plugin_deactivated':
-				log.subTitle = translate( 'Plugin Deactivated' );
-				log.icon = 'plugins';
-				log.actionText = 'Activate';
-				break;
-			case 'plugin_needs_update':
-				log.subTitle = translate( 'Plugin Update Available' );
-				log.icon = 'plugins';
-				log.status = 'is-warning';
-				log.actionText = 'Update';
-				break;
-			case 'suspicious_code':
-				log.subTitle = translate( 'Security Scan' );
-				log.icon = 'notice';
-				log.status = 'is-error';
-				log.actionText = 'Fix';
-				break;
-			case 'plugin_updated':
-				log.subTitle = translate( 'Plugin Updated' );
-				log.icon = 'plugins';
-				log.actionText = 'Revert';
-				break;
-
-			// Themes
-			case 'theme_switched':
-				log.subTitle = translate( 'Theme Activated' );
-				log.icon = 'themes';
-				log.actionText = 'Revert';
-				break;
-			case 'theme_updated':
-				log.subTitle = translate( 'Theme Updated' );
-				log.icon = 'themes';
-				log.actionText = 'Revert';
-				break;
-			// Plans
-			case 'plan_updated':
-				log.subTitle = translate( 'Plan' );
-				log.icon = 'clipboard';
-				log.actionText = 'Cancel';
-				break;
-			case 'plan_renewed':
-				log.subTitle = translate( 'Plan Renewed' );
-				log.icon = 'clipboard';
-				break;
-			// Jetpack Modules
-			case 'activate_jetpack_feature':
-				log.subTitle = translate( 'Jetpack' );
-				log.icon = 'cog';
-				log.actionText = 'Deactivate';
-				break;
-			case 'deactivate_jetpack_feature':
-				log.subTitle = translate( 'Jetpack' );
-				log.icon = 'cog';
-				log.actionText = 'Activate';
-				break;
-		}
-
-		return log;
-	}
-
 	renderBanner() {
 		const { restoreProgress } = this.props;
 
@@ -288,7 +199,7 @@ class ActivityLog extends Component {
 		const filteredLogs = filter( logs, obj => startOfMonthMs <= obj.ts_site && obj.ts_site <= endOfMonthMs );
 		const logsGroupedByDate = map(
 			groupBy(
-				filteredLogs.map( this.update_logs, this ),
+				filteredLogs,
 				log => moment( log.ts_site ).startOf( 'day' ).format( 'x' )
 			),
 			( daily_logs, timestamp ) => (

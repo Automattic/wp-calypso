@@ -93,6 +93,7 @@ class ActivityLogDay extends Component {
 			allowRestore,
 			logs,
 			requestRestore,
+			siteId,
 		} = this.props;
 
 		return (
@@ -106,18 +107,9 @@ class ActivityLogDay extends Component {
 						<ActivityLogItem
 							key={ index }
 							allowRestore={ allowRestore }
+							siteId={ siteId }
 							requestRestore={ requestRestore }
-
-							title={ log.name }
-							subTitle={ log.subTitle }
-							description={ log.description }
-							icon={ log.icon }
-							siteId={ this.props.siteId }
-							timestamp={ log.ts_site }
-							user={ log.user }
-							actionText={ log.actionText }
-							status={ log.status }
-							className={ log.className }
+							log={ log }
 						/>
 					) ) }
 				</FoldableCard>
