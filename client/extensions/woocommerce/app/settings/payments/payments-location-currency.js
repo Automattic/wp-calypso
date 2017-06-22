@@ -125,7 +125,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 						address={ this.state.address } />
 					<div className="payments__currency-container">
 						<FormLabel>
-							translate( 'Store Currency' );
+							{ translate( 'Store Currency' ) }
 						</FormLabel>
 						<FormSelect
 							className="payments__currency-select"
