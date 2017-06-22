@@ -12,9 +12,9 @@ import Button from 'components/button';
 import formatCurrency from 'lib/format-currency';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
-const ProcessOrdersWidget = ( { className, site, orders, ordersRevenue, translate } ) => {
+const ProcessOrdersWidget = ( { className, site, orders, currency, ordersRevenue, translate } ) => {
 	const classes = classNames( 'card', 'process-orders-widget__container', className );
-	// TODO Use API supplied currency.
+	const currencyValue = currency && currency.value || '';
 	return (
 		<div className={ classes } >
 			<div>
@@ -22,7 +22,9 @@ const ProcessOrdersWidget = ( { className, site, orders, ordersRevenue, translat
 				<span className="process-orders-widget__order-label">{ translate( 'New orders' ) }</span>
 			</div>
 			<div>
-				<span className="process-orders-widget__revenue-amount">{ formatCurrency( ordersRevenue, 'USD' ) }</span>
+				<span className="process-orders-widget__revenue-amount">
+					{ formatCurrency( ordersRevenue, currencyValue ) || ordersRevenue }
+				</span>
 				<span className="process-orders-widget__revenue-label">{ translate( 'Revenue' ) }</span>
 			</div>
 			<div>
@@ -41,6 +43,9 @@ ProcessOrdersWidget.propTypes = {
 	className: PropTypes.string,
 	orders: PropTypes.array,
 	ordersRevenue: PropTypes.number,
+	currency: PropTypes.shape( {
+		value: PropTypes.string,
+	} ),
 };
 
 export default localize( ProcessOrdersWidget );

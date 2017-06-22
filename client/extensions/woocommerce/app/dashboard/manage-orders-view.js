@@ -17,9 +17,11 @@ import {
 	getNewOrders,
 	getNewOrdersRevenue,
 } from 'woocommerce/state/sites/orders/selectors';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import ProcessOrdersWidget from 'woocommerce/components/process-orders-widget';
 import ReadingWidget from 'woocommerce/components/reading-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
@@ -32,6 +34,10 @@ class ManageOrdersView extends Component {
 			URL: PropTypes.string.isRequired,
 		} ),
 		fetchOrders: PropTypes.func,
+		fetchSettingsGeneral: PropTypes.func,
+		currency: PropTypes.shape( {
+			value: PropTypes.string,
+		} ),
 		orders: PropTypes.array,
 		ordersRevenue: PropTypes.number,
 		ordersLoading: PropTypes.bool,
@@ -47,6 +53,7 @@ class ManageOrdersView extends Component {
 
 		if ( site && site.ID ) {
 			this.props.fetchOrders( site.ID );
+			this.props.fetchSettingsGeneral( site.ID );
 		}
 	}
 
@@ -57,11 +64,12 @@ class ManageOrdersView extends Component {
 
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchOrders( newProps.siteId );
+			this.props.fetchSettingsGeneral( site.ID );
 		}
 	}
 
 	possiblyrenderProcessOrdersWidget = () => {
-		const { site, orders, ordersRevenue } = this.props;
+		const { site, orders, ordersRevenue, currency } = this.props;
 		if ( ! orders.length ) {
 			return null;
 		}
@@ -71,6 +79,7 @@ class ManageOrdersView extends Component {
 				site={ site }
 				orders={ orders }
 				ordersRevenue={ ordersRevenue }
+				currency={ currency }
 			/>
 		);
 	}
@@ -136,6 +145,7 @@ function mapStateToProps( state ) {
 	const orders = getNewOrders( state );
 	const ordersRevenue = getNewOrdersRevenue( state );
 	const user = getCurrentUser( state );
+	const currency = getPaymentCurrencySettings( state );
 	return {
 		site,
 		orders,
@@ -143,6 +153,7 @@ function mapStateToProps( state ) {
 		ordersLoading,
 		ordersLoaded,
 		user,
+		currency,
 	};
 }
 
@@ -150,6 +161,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchOrders,
+			fetchSettingsGeneral,
 		},
 		dispatch
 	);
