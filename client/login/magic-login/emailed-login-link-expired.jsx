@@ -25,9 +25,7 @@ class EmailedLoginLinkExpired extends React.Component {
 	};
 
 	render() {
-		const {
-			translate,
-		} = this.props;
+		const { translate } = this.props;
 		this.props.recordPageView( '/log-in/link/use', 'Login > Link > Expired' );
 
 		return (

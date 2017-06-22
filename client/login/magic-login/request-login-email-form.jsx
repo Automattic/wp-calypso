@@ -58,7 +58,7 @@ class RequestLoginEmailForm extends React.Component {
 
 	onNoticeDismiss = () => {
 		this.props.hideMagicLoginRequestNotice();
-	}
+	};
 
 	onSubmit = event => {
 		event.preventDefault();

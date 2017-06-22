@@ -67,10 +67,12 @@ class MagicLogin extends React.Component {
 			</div>
 		);
 
+		const classes = classNames( 'magic-login', {
+			'magic-login__request_link': ! showCheckYourEmail,
+		} );
+
 		return (
-			<Main className={ classNames( 'magic-login', {
-				'magic-login__request_link': ! showCheckYourEmail,
-			} ) }>
+			<Main className={ classes }>
 				<GlobalNotices id="notices" notices={ notices.list } />
 				<RequestLoginEmailForm />
 				{ footer }
