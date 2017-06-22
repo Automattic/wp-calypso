@@ -132,15 +132,22 @@ class DatePicker extends PureComponent {
 		return v;
 	}
 
-	renderDay = day => {
-		const isSelected = this.props.selectedDay && this.isSameDay( this.props.selectedDay, day );
+	renderDay = ( date, modifiers ) =>
+		<DayItem
+			date={ date }
+			modifiers={ modifiers }
+			onMouseEnter={ this.handleDayMouseEnter }
+			onMouseLeave={ this.handleDayMouseLeave }
+		/>;
 
-		return (
-			<DayItem
-				selected= { isSelected }
-				events={ this.filterEventsByDay( day ) }
-				date={ day } />
-		);
+	handleDayMouseEnter = ( date, modifiers, event ) => {
+		const events = this.filterEventsByDay( date );
+		this.props.onDayMouseEnter( date, modifiers, event, events );
+	};
+
+	handleDayMouseLeave = ( date, modifiers, event ) => {
+		const events = this.filterEventsByDay( date );
+		this.props.onDayMouseLeave( date, modifiers, event, events );
 	};
 
 	render() {
