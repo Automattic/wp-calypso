@@ -17,18 +17,24 @@ export default class PlanPrice extends Component {
 			rawPrice,
 			original,
 			discounted,
-			className
+			className,
+			isInSignupTest,
 		} = this.props;
 
 		if ( ! currencyCode || ( rawPrice !== 0 && ! rawPrice ) ) {
 			return null;
 		}
 		const price = getCurrencyObject( rawPrice, currencyCode );
-
 		const classes = classNames( 'plan-price', className, {
 			'is-original': original,
 			'is-discounted': discounted
 		} );
+
+		if ( isInSignupTest ) {
+			return (
+				<span className={ classes }>{ price.symbol }{ price.integer }{ rawPrice > 0 && price.fraction }</span>
+			);
+		}
 
 		return (
 			<h4 className={ classes }>

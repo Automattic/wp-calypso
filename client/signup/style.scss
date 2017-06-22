@@ -9,15 +9,10 @@
 }
 
 .signup__step {
-	margin: 0 24px;
 	position: absolute;
-		left: 0;
-		right: 0;
+	left: 0;
+	right: 0;
 	overflow: hidden;
-
-	@include breakpoint( "<480px" ) {
-		margin: 0;
-	}
 }
 
 .signup__step-enter {

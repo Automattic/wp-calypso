@@ -52,35 +52,62 @@ import { abtest } from 'lib/abtest';
 class PlanFeatures extends Component {
 
 	render() {
-		const { planProperties } = this.props;
-
+		const {
+			planProperties,
+			isInSignupTest
+		} = this.props;
 		const tableClasses = classNames( 'plan-features__table',
 			`has-${ planProperties.length }-cols` );
+		const planClasses = classNames(
+			'plan-features',
+			{ 'plan-features--signup': isInSignupTest }
+		);
+		const planWrapperClasses = classNames(
+			{ 'plan-wrapper': isInSignupTest }
+		);
+		let mobileView, planDescriptions;
+		let bottomButtons = null;
+
+		if ( ! isInSignupTest ) {
+			mobileView = (
+				<div className="plan-features__mobile">
+					{ this.renderMobileView() }
+				</div>
+			);
+
+			planDescriptions = (
+				<tr>
+					{ this.renderPlanDescriptions() }
+				</tr>
+			);
+
+			bottomButtons = (
+				<tr>
+					{ this.renderBottomButtons() }
+				</tr>
+			);
+		}
 
 		return (
-			<div>
-				{ this.renderUpgradeDisabledNotice() }
-				<div className="plan-features__content">
-					<div className="plan-features__mobile">
-						{ this.renderMobileView() }
-					</div>
-					<table className={ tableClasses }>
-						<tbody>
-							<tr>
-								{ this.renderPlanHeaders() }
-							</tr>
-							<tr>
-								{ this.renderPlanDescriptions() }
-							</tr>
-							<tr>
-								{ this.renderTopButtons() }
-							</tr>
+			<div className={ planWrapperClasses }>
+				<div className={ planClasses }>
+					{ this.renderUpgradeDisabledNotice() }
+					<div className="plan-features__content">
+						{ mobileView }
+						<table className={ tableClasses }>
+							<tbody>
+								<tr>
+									{ this.renderPlanHeaders() }
+								</tr>
+								{ planDescriptions }
+								<tr>
+									{ this.renderTopButtons() }
+								</tr>
 								{ this.renderPlanFeatureRows() }
-							<tr>
-								{ this.renderBottomButtons() }
-							</tr>
-						</tbody>
-					</table>
+								{ bottomButtons }
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		);
@@ -194,7 +221,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { planProperties, intervalType, site, basePlansPath, isInSignup } = this.props;
+		const { planProperties, intervalType, site, basePlansPath, isInSignup, isInSignupTest } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -219,6 +246,7 @@ class PlanFeatures extends Component {
 						popular={ popular }
 						newPlan={ newPlan }
 						title={ planConstantObj.getTitle() }
+						audience={ planConstantObj.getAudience() }
 						planType={ planName }
 						rawPrice={ rawPrice }
 						discountPrice={ discountPrice }
@@ -230,6 +258,8 @@ class PlanFeatures extends Component {
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						isInSignup={ isInSignup }
+						isInSignupTest= { isInSignupTest }
+						signupBillingTimeFrame={ planConstantObj.getSignupBillingTimeFrame() }
 					/>
 				</td>
 			);
@@ -437,12 +467,14 @@ PlanFeatures.propTypes = {
 	basePlansPath: PropTypes.string,
 	selectedFeature: PropTypes.string,
 	intervalType: PropTypes.string,
+	isInSignupTest: PropTypes.bool,
 	site: PropTypes.object
 };
 
 PlanFeatures.defaultProps = {
 	onUpgradeClick: noop,
 	isInSignup: false,
+	isInSignupTest: false,
 	basePlansPath: null,
 	intervalType: 'yearly',
 	site: {}
@@ -450,7 +482,7 @@ PlanFeatures.defaultProps = {
 
 export default connect(
 	( state, ownProps ) => {
-		const { isInSignup, placeholder, plans, onUpgradeClick, isLandingPage, site } = ownProps;
+		const { isInSignup, placeholder, plans, onUpgradeClick, isLandingPage, site, isInSignupTest } = ownProps;
 		const selectedSiteId = site ? site.ID : null;
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
@@ -470,10 +502,16 @@ export default connect(
 				const newPlan = isNew( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
 				const showMonthlyPrice = ! relatedMonthlyPlan && showMonthly;
+				let planFeatures = getPlanFeaturesObject( planConstantObj.getFeatures( abtest ) );
 
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
 					isPlaceholder = true;
 				}
+
+				if ( isInSignupTest ) {
+					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+				}
+
 				return {
 					isPlaceholder,
 					isLandingPage,
@@ -486,7 +524,7 @@ export default connect(
 						{
 							isMonthly: showMonthlyPrice
 						} ),
-					features: getPlanFeaturesObject( planConstantObj.getFeatures( abtest ) ),
+					features: planFeatures,
 					onUpgradeClick: onUpgradeClick
 						? () => {
 							const planSlug = getPlanSlug( state, planProductId );

@@ -110,6 +110,7 @@ export const FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK = 'seo-tools-jetpack';
 export const PLANS_LIST = {
 	[ PLAN_FREE ]: {
 		getTitle: () => i18n.translate( 'Free' ),
+		getAudience: () => 'Best for students', //PLANS A/B TEST: Translate if test passes
 		getPriceTitle: () => i18n.translate( 'Free for life' ), //TODO: DO NOT USE
 		getProductId: () => 1,
 		getStoreSlug: () => PLAN_FREE,
@@ -124,11 +125,18 @@ export const PLANS_LIST = {
 			FEATURE_BASIC_DESIGN,
 			FEATURE_3GB_STORAGE
 		],
-		getBillingTimeFrame: () => i18n.translate( 'for life' )
+		getSignupFeatures: () => [ // pay attention to ordering, it is used on /plan page
+			FEATURE_WP_SUBDOMAIN,
+			FEATURE_JETPACK_ESSENTIAL,
+			FEATURE_COMMUNITY_SUPPORT
+		],
+		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getSignupBillingTimeFrame: () => i18n.translate( ' for life' ),
 	},
 
 	[ PLAN_PERSONAL ]: {
 		getTitle: () => i18n.translate( 'Personal' ),
+		getAudience: () => 'Best for hobbyists', //PLANS A/B TEST: Translate if test passes
 		getProductId: () => 1009,
 		getStoreSlug: () => PLAN_PERSONAL,
 		availableFor: ( plan ) => includes( [ PLAN_FREE ], plan ),
@@ -149,11 +157,18 @@ export const PLANS_LIST = {
 			FEATURE_6GB_STORAGE,
 			FEATURE_NO_ADS,
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
+		getSignupFeatures: () => [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_JETPACK_ESSENTIAL,
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT
+		],
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+		getSignupBillingTimeFrame: () => '/month, billed yearly', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_PREMIUM ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
+		getAudience: () => 'Best for small businesses', //PLANS A/B TEST: Translate if test passes
 		getPriceTitle: () => i18n.translate( '$99 per year' ), //TODO: DO NOT USE
 		getProductId: () => 1003,
 		getPathSlug: () => 'premium',
@@ -184,11 +199,18 @@ export const PLANS_LIST = {
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_13GB_STORAGE
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
+		getSignupFeatures: () => compact( [ // pay attention to ordering, shared features should align on /plan page
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_JETPACK_ESSENTIAL,
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT
+		] ),
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+		getSignupBillingTimeFrame: () => '/month, billed yearly', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_BUSINESS ]: {
 		getTitle: () => i18n.translate( 'Business' ),
+		getAudience: () => 'Best for organizations', //PLANS A/B TEST: Translate if test passes
 		getPriceTitle: () => i18n.translate( '$299 per year' ), //TODO: DO NOT USE
 		getProductId: () => 1008,
 		getStoreSlug: () => PLAN_BUSINESS,
@@ -241,11 +263,18 @@ export const PLANS_LIST = {
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_BUSINESS_ONBOARDING
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
+		getSignupFeatures: () => [
+			FEATURE_UNLIMITED_STORAGE,
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
+			FEATURE_CUSTOM_DOMAIN
+		],
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+		getSignupBillingTimeFrame: () => '/month, billed yearly', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_JETPACK_FREE ]: {
 		getTitle: () => i18n.translate( 'Free' ),
+		getAudience: () => 'Best for students', //PLANS A/B TEST: Translate if test passes
 		getProductId: () => 2002,
 		getStoreSlug: () => PLAN_JETPACK_FREE,
 
@@ -259,10 +288,17 @@ export const PLANS_LIST = {
 			FEATURE_TRAFFIC_TOOLS,
 			FEATURE_MANAGE
 		],
-		getBillingTimeFrame: () => i18n.translate( 'for life' )
+		getSignupFeatures: () => [
+			FEATURE_STANDARD_SECURITY_TOOLS,
+			FEATURE_SITE_STATS,
+			FEATURE_TRAFFIC_TOOLS
+		],
+		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getSignupBillingTimeFrame: () => i18n.translate( ' for life' ),
 	},
 	[ PLAN_JETPACK_PREMIUM ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
+		getAudience: () => 'Best for small businesses', //PLANS A/B TEST: Translate if test passes
 		getSubtitle: () => i18n.translate( 'Protection, speed, and revenue.' ),
 		getProductId: () => 2000,
 		getStoreSlug: () => PLAN_JETPACK_PREMIUM,
@@ -286,11 +322,18 @@ export const PLANS_LIST = {
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 		] ),
-		getBillingTimeFrame: () => i18n.translate( 'per year' )
+		getSignupFeatures: () => compact( [
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+			FEATURE_BACKUP_ARCHIVE_30,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED
+		] ),
+		getBillingTimeFrame: () => i18n.translate( 'per year' ),
+		getSignupBillingTimeFrame: () => '/year', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
+		getAudience: () => 'Best for small businesses', //PLANS A/B TEST: Translate if test passes
 		getProductId: () => 2003,
 		getStoreSlug: () => PLAN_JETPACK_PREMIUM_MONTHLY,
 		getPathSlug: () => 'premium-monthly',
@@ -313,11 +356,18 @@ export const PLANS_LIST = {
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 		] ),
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
+		getSignupFeatures: () => compact( [
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+			FEATURE_BACKUP_ARCHIVE_30,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED
+		] ),
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
+		getSignupBillingTimeFrame: () => '/month', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_JETPACK_PERSONAL ]: {
 		getTitle: () => i18n.translate( 'Personal' ),
+		getAudience: () => 'Best for hobbyists', //PLANS A/B TEST: Translate if test passes
 		getProductId: () => 2005,
 		getStoreSlug: () => PLAN_JETPACK_PERSONAL,
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
@@ -335,11 +385,18 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per year' )
+		getSignupFeatures: () => [
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+			FEATURE_BACKUP_ARCHIVE_30,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED
+		],
+		getBillingTimeFrame: () => i18n.translate( 'per year' ),
+		getSignupBillingTimeFrame: () => '/year', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_JETPACK_PERSONAL_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Personal' ),
+		getAudience: () => 'Best for hobbyists', //PLANS A/B TEST: Translate if test passes
 		getStoreSlug: () => PLAN_JETPACK_PERSONAL_MONTHLY,
 		getProductId: () => 2006,
 		getPathSlug: () => 'jetpack-personal-monthly',
@@ -357,11 +414,18 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
+		getSignupFeatures: () => [
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+			FEATURE_BACKUP_ARCHIVE_30,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED
+		],
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
+		getSignupBillingTimeFrame: () => '/month', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_JETPACK_BUSINESS ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
+		getAudience: () => 'Best for organizations', //PLANS A/B TEST: Translate if test passes
 		getProductId: () => 2001,
 		availableFor: ( plan ) => includes( [
 			PLAN_JETPACK_FREE,
@@ -393,10 +457,17 @@ export const PLANS_LIST = {
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING
 		] ),
-		getBillingTimeFrame: () => i18n.translate( 'per year' )
+		getSignupFeatures: () => compact( [
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED
+		] ),
+		getBillingTimeFrame: () => i18n.translate( 'per year' ),
+		getSignupBillingTimeFrame: () => '/year', //PLANS A/B TEST: Translate if test passes
 	},
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
+		getAudience: () => 'Best for organizations', //PLANS A/B TEST: Translate if test passes
 		getSubtitle: () => i18n.translate( 'Ultimate security and traffic tools.' ),
 		getProductId: () => 2004,
 		getPathSlug: () => 'professional-monthly',
@@ -428,7 +499,13 @@ export const PLANS_LIST = {
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING
 		] ),
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
+		getSignupFeatures: () => compact( [
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED
+		] ),
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+		getSignupBillingTimeFrame: () => '/month', //PLANS A/B TEST: Translate if test passes
 	}
 };
 
