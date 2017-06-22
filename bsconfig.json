@@ -2,7 +2,7 @@
 {
   "name": "wp-calypso",
   "sources": [
-    { "dir": "client", "subdirs": "components/reasonable-demo" }
+    { "dir": "client", "subdirs": [ "components/reasonable-demo", "state/selectors" ] }
   ],
   "bs-dependencies": [
     "reason-react"
