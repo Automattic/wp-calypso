@@ -10,6 +10,7 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import formatCurrency from 'lib/format-currency';
 import SectionHeader from 'components/section-header';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
@@ -39,12 +40,18 @@ class OrderDetails extends Component {
 	}
 
 	renderOrderItems = ( item, i ) => {
+		const { order, siteSlug } = this.props;
 		return (
 			<TableRow key={ i } className="order__detail-items">
-				<TableItem isRowHeader className="order__detail-item-product">{ item.name }</TableItem>
-				<TableItem className="order__detail-item-cost">{ item.price }</TableItem>
+				<TableItem isRowHeader className="order__detail-item-product">
+					<a href={ `/store/product/${ siteSlug }/${ item.product_id }` } className="order__detail-item-link">
+						{ item.name }
+					</a>
+					<span className="order__detail-item-sku">{ item.sku }</span>
+				</TableItem>
+				<TableItem className="order__detail-item-cost">{ formatCurrency( item.price, order.currency ) || item.price }</TableItem>
 				<TableItem className="order__detail-item-quantity">{ item.quantity }</TableItem>
-				<TableItem className="order__detail-item-total">{ item.total }</TableItem>
+				<TableItem className="order__detail-item-total">{ formatCurrency( item.total, order.currency ) || item.total }</TableItem>
 			</TableRow>
 		);
 	}
@@ -66,15 +73,21 @@ class OrderDetails extends Component {
 					<div className="order__details-totals">
 						<div className="order__details-total-discount">
 							<div className="order__details-totals-label">{ translate( 'Discount' ) }</div>
-							<div className="order__details-totals-value">{ order.discount_total }</div>
+							<div className="order__details-totals-value">
+								{ formatCurrency( order.discount_total, order.currency ) || order.discount_total }
+							</div>
 						</div>
 						<div className="order__details-total-shipping">
 							<div className="order__details-totals-label">{ translate( 'Shipping' ) }</div>
-							<div className="order__details-totals-value">{ order.shipping_total }</div>
+							<div className="order__details-totals-value">
+								{ formatCurrency( order.shipping_total, order.currency ) || order.shipping_total }
+							</div>
 						</div>
 						<div className="order__details-total">
 							<div className="order__details-totals-label">{ translate( 'Total' ) }</div>
-							<div className="order__details-totals-value">{ order.total }</div>
+							<div className="order__details-totals-value">
+								{ formatCurrency( order.total, order.currency ) || order.total }
+							</div>
 						</div>
 					</div>
 
@@ -83,7 +96,7 @@ class OrderDetails extends Component {
 							<Gridicon icon="checkmark" />
 							{ translate( 'Payment of %(total)s received via %(method)s', {
 								args: {
-									total: order.total,
+									total: formatCurrency( order.total, order.currency ) || order.total,
 									method: order.payment_method_title
 								}
 							} ) }
