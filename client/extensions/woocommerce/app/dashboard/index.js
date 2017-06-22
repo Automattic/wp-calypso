@@ -11,11 +11,16 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import { areSetupChoicesLoading, getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
+import {
+	areSetupChoicesLoading,
+	getFinishedInitialSetup,
+	getSetStoreAddressDuringInitialSetup
+} from 'woocommerce/state/sites/setup-choices/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
+import PreSetupView from './pre-setup-view';
 import SetupTasksView from './setup-tasks-view';
 
 class Dashboard extends Component {
@@ -48,17 +53,21 @@ class Dashboard extends Component {
 	}
 
 	renderDashboardContent = () => {
-		const { finishedInitialSetup, hasOrders, selectedSite } = this.props;
+		const { finishedInitialSetup, hasOrders, selectedSite, setStoreAddressDuringInitialSetup } = this.props;
 
-		if ( finishedInitialSetup && hasOrders ) {
-			return ( <ManageOrdersView site={ selectedSite } /> );
+		if ( ! setStoreAddressDuringInitialSetup ) {
+			return ( <PreSetupView site={ selectedSite } /> );
 		}
 
-		if ( finishedInitialSetup && ! hasOrders ) {
+		if ( ! finishedInitialSetup ) {
+			return ( <SetupTasksView onFinished={ this.onStoreSetupFinished } site={ selectedSite } /> );
+		}
+
+		if ( ! hasOrders ) {
 			return ( <ManageNoOrdersView site={ selectedSite } /> );
 		}
 
-		return ( <SetupTasksView onFinished={ this.onStoreSetupFinished } site={ selectedSite } /> );
+		return ( <ManageOrdersView site={ selectedSite } /> );
 	}
 
 	render = () => {
@@ -84,6 +93,7 @@ function mapStateToProps( state ) {
 		hasOrders: false, // TODO - connect to a selector when it becomes available
 		loading: areSetupChoicesLoading( state ),
 		selectedSite: getSelectedSiteWithFallback( state ),
+		setStoreAddressDuringInitialSetup: getSetStoreAddressDuringInitialSetup( state ),
 	};
 }
 

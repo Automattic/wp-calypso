@@ -43,6 +43,7 @@ class ShippingOrigin extends Component {
 				</Notice>
 				<Card>
 					<AddressView address={ this.state.address } />
+					<a>{ translate( 'Edit address' ) }</a>
 				</Card>
 			</div>
 		);
