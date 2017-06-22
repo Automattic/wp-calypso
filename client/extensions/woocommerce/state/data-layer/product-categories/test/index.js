@@ -32,7 +32,7 @@ describe( 'handlers', () => {
 					type: WOOCOMMERCE_API_REQUEST,
 					method: 'post',
 					siteId: 123,
-					onSuccessAction: productCategoryUpdated( 123, null, successAction ),
+					onSuccessAction: productCategoryUpdated( 123, null, action, successAction ),
 					onFailureAction: failureAction,
 					body: { name: 'Category 1', slug: 'category-1' },
 				} )
@@ -47,8 +47,9 @@ describe( 'handlers', () => {
 			};
 
 			const category1 = { id: 101, name: 'Newly Created Category' };
+			const originatingAction = { type: '%%originating%%' };
 			const completionAction = { type: '%%complete%%' };
-			const action = productCategoryUpdated( 123, category1, completionAction );
+			const action = productCategoryUpdated( 123, category1, originatingAction, completionAction );
 
 			handleProductCategoryUpdated( store, action );
 
