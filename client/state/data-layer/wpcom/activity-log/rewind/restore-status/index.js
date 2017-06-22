@@ -30,13 +30,21 @@ const requestRestoreProgress = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-const fromApi = data => {
+const fromApi = ( { restore_status = {} } ) => {
+	const {
+		error_code = '',
+		failure_reason = '',
+		message = '',
+		percent = 0,
+		status = '',
+	} = restore_status;
+
 	return {
-		status: data.status,
-		percent: data.percent,
-		message: data.message,
-		errorCode: data.error_code,
-		failureReason: data.failure_reason,
+		errorCode: error_code,
+		failureReason: failure_reason,
+		message,
+		percent: +percent,
+		status,
 	};
 };
 
