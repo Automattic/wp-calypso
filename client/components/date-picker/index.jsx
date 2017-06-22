@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, PureComponent } from 'react';
 import DayPicker from 'react-day-picker';
-import { noop, merge } from 'lodash';
+import { noop, merge, map, filter } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,6 +19,7 @@ class DatePicker extends PureComponent {
 		enableOutsideDays: PropTypes.bool,
 		events: PropTypes.array,
 		locale: PropTypes.object,
+		modifiers: PropTypes.object,
 		moment: PropTypes.func.isRequired,
 
 		selectedDay: PropTypes.object,
@@ -31,6 +32,7 @@ class DatePicker extends PureComponent {
 	static defaultProps = {
 		enableOutsideDays: true,
 		calendarViewDate: new Date(),
+		modifiers: {},
 		selectedDay: null,
 		onMonthChange: noop,
 		onSelectDay: noop,
@@ -118,6 +120,18 @@ class DatePicker extends PureComponent {
 		daypicker.showMonth( new Date() );
 	};
 
+	getDateInstance( v ) {
+		if ( this.props.moment.isMoment( v ) ) {
+			return v.toDate();
+		}
+
+		if ( v instanceof Number || typeof v === 'number' ) {
+			return new Date( v );
+		}
+
+		return v;
+	}
+
 	renderDay = day => {
 		return (
 			<DayItem
@@ -127,12 +141,23 @@ class DatePicker extends PureComponent {
 	};
 
 	render() {
+		const modifiers = {
+			...this.props.modifiers,
+			'past-days': { before: new Date() },
+			sunday: { daysOfWeek: [ 0 ] },
+		};
+
+		if ( this.props.selectedDay ) {
+			modifiers[ 'is-selected' ] = this.getDateInstance( this.props.selectedDay );
+		}
+
+		if ( this.props.events && this.props.events.length ) {
+			modifiers.events = map( filter( this.props.events, event => event.date ), event => this.getDateInstance( event.date ) );
+		}
+
 		return (
 			<DayPicker
-				modifiers= { {
-					'is-selected': this.props.selectedDay,
-					'past-days': { before: new Date() }
-				} }
+				modifiers={ modifiers }
 				ref="daypicker"
 				className="date-picker"
 				disabledDays={ this.props.disabledDays }
