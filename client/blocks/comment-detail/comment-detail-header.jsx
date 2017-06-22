@@ -14,6 +14,7 @@ import CommentDetailActions from './comment-detail-actions';
 import FormCheckbox from 'components/forms/form-checkbox';
 import AutoDirection from 'components/auto-direction';
 import { stripHTML, decodeEntities } from 'lib/formatting';
+import { urlToDomainAndPath } from 'lib/url';
 
 export const CommentDetailHeader = ( {
 	authorAvatarUrl,
@@ -78,7 +79,7 @@ export const CommentDetailHeader = ( {
 							{ authorDisplayName }
 						</strong>
 						<span>
-							{ authorUrl }
+							{ urlToDomainAndPath( authorUrl ) }
 						</span>
 					</div>
 					<div className="comment-detail__author-info-element">
