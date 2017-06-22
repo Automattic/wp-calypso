@@ -82,6 +82,10 @@
 		}
 	}
 
+	.order__details-total {
+		margin-bottom: 0;
+	}
+
 	.order__details-total .order__details-totals-label,
 	.order__details-total .order__details-totals-value {
 		font-weight: bold;
@@ -141,6 +145,12 @@
 
 	h4 {
 		font-weight: bold;
+	}
+
+	.order__customer-shipping {
+		.order__shipping-address {
+			margin-bottom: 0;
+		}
 	}
 }
 
