@@ -545,6 +545,10 @@ export class DomainDetailsForm extends PureComponent {
 			return <QueryContactDetailsCache />;
 		}
 
+		if ( ! this.formStateController ) {
+			return null;
+		}
+
 		let title;
 		// TODO: gather up tld specific stuff
 		if ( this.state.currentStep === 'fr' ) {
