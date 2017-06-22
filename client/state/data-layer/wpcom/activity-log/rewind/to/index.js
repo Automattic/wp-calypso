@@ -42,7 +42,7 @@ export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp }, next
 			siteId,
 			timestamp,
 			{
-				// FIXME: should include status?
+				status: 'finished',
 				error: 'missing_restore_id',
 				message: 'Bad response. No restore ID provided.',
 			}
