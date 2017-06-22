@@ -17,7 +17,7 @@ export default React.createClass( {
 	displayName: 'PublicizeMessage',
 
 	propTypes: {
-		message: React.PropTypes.bool,
+		disabled: React.PropTypes.bool,
 		message: React.PropTypes.string,
 		preview: React.PropTypes.string,
 		acceptableLength: React.PropTypes.number,
