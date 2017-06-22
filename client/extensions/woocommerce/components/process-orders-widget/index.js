@@ -19,11 +19,11 @@ const ProcessOrdersWidget = ( { className, site, orders, ordersRevenue, translat
 		<div className={ classes } >
 			<div>
 				<span>{ orders.length }</span>
-				<span>{ translate( 'New orders' ) }</span>
+				<span className="process-orders-widget__order-label">{ translate( 'New orders' ) }</span>
 			</div>
 			<div>
-				<span>{ formatCurrency( ordersRevenue, 'USD' ) }</span>
-				<span>{ translate( 'Revenue' ) }</span>
+				<span className="process-orders-widget__revenue-amount">{ formatCurrency( ordersRevenue, 'USD' ) }</span>
+				<span className="process-orders-widget__revenue-label">{ translate( 'Revenue' ) }</span>
 			</div>
 			<div>
 				<Button href={ getLink( '/store/orders/:site', site ) }>

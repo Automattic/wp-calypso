@@ -112,7 +112,7 @@ class ManageOrdersView extends Component {
 							}
 						} ) }
 						{ orders.length && (
-							<span>{ translate( 'You have new orders to process' ) }</span>
+							<span>{ translate( 'You have new orders to process 🎉' ) }</span>
 						) || '' }
 					</h2>
 				</div>
