@@ -13,6 +13,7 @@ import { times } from 'lodash';
 import Button from 'components/button';
 import EmptyContent from 'components/empty-content';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
+import formatCurrency from 'lib/format-currency';
 import {
 	areOrdersLoading,
 	areOrdersLoaded,
@@ -105,7 +106,7 @@ class Orders extends Component {
 					{ this.getOrderStatus( order.status ) }
 				</TableItem>
 				<TableItem className="orders__table-total">
-					{ 'USD' === order.currency ? `$${ order.total }` : order.total }
+					{ formatCurrency( order.total, order.currency ) || order.total }
 				</TableItem>
 			</TableRow>
 		);
