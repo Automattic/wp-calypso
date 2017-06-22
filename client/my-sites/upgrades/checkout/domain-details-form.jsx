@@ -400,7 +400,7 @@ export class DomainDetailsForm extends PureComponent {
 			<form>
 				{ this.renderNameFields() }
 				{ ! needsOnlyGoogleAppsDetails && this.renderOrganizationField() }
-				{ this.renderEmailField() }
+				{ ! needsOnlyGoogleAppsDetails && this.renderEmailField() }
 				{ ! needsOnlyGoogleAppsDetails && this.renderPhoneField() }
 				{ this.renderCountryField() }
 				{ ! needsOnlyGoogleAppsDetails && this.needsFax() && this.renderFaxField() }
