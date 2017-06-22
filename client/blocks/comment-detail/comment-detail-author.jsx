@@ -57,9 +57,7 @@ export class CommentDetailAuthor extends Component {
 			<div className="comment-detail__author-more-info">
 				<div className="comment-detail__author-more-actions">
 					<div className="comment-detail__author-more-element comment-detail__author-more-element-author">
-						<div className="comment-detail__author-avatar">
-							<img className="comment-detail__author-avatar-image" src={ authorAvatarUrl } />
-						</div>
+						<img className="comment-detail__author-avatar" src={ authorAvatarUrl } />
 						<div className="comment-detail__author-info">
 							<div className="comment-detail__author-name">
 								<strong>
@@ -73,37 +71,36 @@ export class CommentDetailAuthor extends Component {
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="mail" />
-								<span>
-									{ authorEmail }
-								</span>
+						<span>
+							{ authorEmail }
+						</span>
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="link" />
-								<span>
-									{ authorUrl }
-								</span>
+						<span>
+							{ authorUrl }
+						</span>
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="globe" />
-								<span>
-									{ authorIp }
-								</span>
+						<span>
+							{ authorIp }
+						</span>
 					</div>
 				</div>
 				<div className="comment-detail__author-more-actions">
 					<a
 						className={ classNames(
-									'comment-detail__author-more-element comment-detail__author-more-element-block-user',
-									{ 'is-blocked': authorIsBlocked }
-								) }
+							'comment-detail__author-more-element comment-detail__author-more-element-block-user',
+							{ 'is-blocked': authorIsBlocked }
+						) }
 						onClick={ blockUser }
 					>
 						<Gridicon icon="block" />
-								<span>{
-									authorIsBlocked
-										? translate( 'Unblock user' )
-										: translate( 'Block user' )
-								}</span>
+						<span>{ authorIsBlocked
+							? translate( 'Unblock user' )
+							: translate( 'Block user' )
+						} </span>
 					</a>
 				</div>
 			</div>
@@ -128,12 +125,7 @@ export class CommentDetailAuthor extends Component {
 		return (
 			<div className={ classes }>
 				<div className="comment-detail__author-preview">
-					<div className="comment-detail__author-avatar">
-						<img
-							className="comment-detail__author-avatar-image"
-							src={ authorAvatarUrl }
-						/>
-					</div>
+					<img className="comment-detail__author-avatar" src={ authorAvatarUrl } />
 					<div className="comment-detail__author-info">
 						<div className="comment-detail__author-info-element comment-detail__author-name">
 							<strong>
