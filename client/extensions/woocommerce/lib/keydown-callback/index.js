@@ -9,7 +9,7 @@
  */
 export default function( callback ) {
 	return ( event ) => {
-		if ( event.which === 13 || event.which === 32 ) {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
 			callback( event );
 		}
 	};
