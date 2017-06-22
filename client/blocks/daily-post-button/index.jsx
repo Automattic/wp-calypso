@@ -59,7 +59,7 @@ export class DailyPostButton extends React.Component {
 		position: React.PropTypes.string,
 		tagName: React.PropTypes.string,
 		canParticipate: React.PropTypes.bool.isRequired,
-		primarySiteSlug: React.PropTypes.string.isRequired,
+		primarySiteSlug: React.PropTypes.string,
 		onlyOneSite: React.PropTypes.bool.isRequired
 	};
 
