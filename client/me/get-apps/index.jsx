@@ -13,7 +13,7 @@ import Main from 'components/main';
 import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import GetAppsIllustration from './illustration';
+import GetAppsIllustration from './illustration.jsx';
 
 export const GetApps = ( { translate } ) => {
 	const trackAppDownloadClick = () => {};
