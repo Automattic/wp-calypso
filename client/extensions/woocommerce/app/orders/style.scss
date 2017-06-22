@@ -30,13 +30,21 @@
 	background: lighten( $gray, 20% );
 	border-radius: 4px;
 
-	&.is-cancelled,
 	&.is-failed {
 		background: lighten( $alert-red, 20% );
 		color: darken( $alert-red, 30% );
 
 		span + span {
 			border-color: $alert-red;
+		}
+	}
+
+	&.is-cancelled {
+		background: $gray-light;
+		color: $gray-dark;
+
+		span + span {
+			border-color: $gray-text-min;
 		}
 	}
 
