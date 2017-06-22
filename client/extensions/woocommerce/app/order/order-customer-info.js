@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
@@ -11,6 +11,13 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 
 class OrderCustomerInfo extends Component {
+	static propTypes = {
+		order: PropTypes.shape( {
+			billing: PropTypes.object.isRequired,
+			shipping: PropTypes.object.isRequired,
+		} ),
+	}
+
 	render() {
 		const { order, translate } = this.props;
 		if ( ! order ) {

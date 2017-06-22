@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
@@ -11,6 +11,10 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 
 class OrderActivityLog extends Component {
+	static propTypes = {
+		order: PropTypes.object,
+	}
+
 	render() {
 		const { order, translate } = this.props;
 		if ( ! order ) {

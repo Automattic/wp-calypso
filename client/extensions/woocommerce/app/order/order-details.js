@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Gridicon from 'gridicons';
 
 /**
@@ -16,6 +16,16 @@ import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
 
 class OrderDetails extends Component {
+	static propTypes = {
+		order: PropTypes.shape( {
+			discount_total: PropTypes.string.isRequired,
+			line_items: PropTypes.array.isRequired,
+			payment_method_title: PropTypes.string.isRequired,
+			shipping_total: PropTypes.string.isRequired,
+			total: PropTypes.string.isRequired,
+		} ),
+	}
+
 	renderTableHeader = () => {
 		const { translate } = this.props;
 		return (
