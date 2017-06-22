@@ -120,9 +120,9 @@ describe( 'selectors', () => {
 			} );
 
 			expect( getShippingZones( state ) ).to.deep.equal( [
+				{ id: { index: 0 }, methodIds: [], name: 'NewZone4' },
 				{ id: 2, methodIds: [], name: 'EditedZone2' },
 				{ id: 3, methodIds: [], name: 'Zone3' },
-				{ id: { index: 0 }, methodIds: [], name: 'NewZone4' },
 			] );
 		} );
 
@@ -148,6 +148,82 @@ describe( 'selectors', () => {
 			} );
 
 			expect( getShippingZones( state ) ).to.deep.equal( [ { id: 1, methodIds: [], name: 'Zone1' } ] );
+		} );
+
+		it( 'should order the zones without any edits', () => {
+			const state = createState( {
+				site: {
+					shippingZones: [
+						{ id: 0, methodIds: [], name: 'Rest of the world' },
+						{ id: 1, methodIds: [], name: 'Zone1' },
+						{ id: 2, methodIds: [], name: 'Zone2' },
+						{ id: 3, methodIds: [], name: 'Zone3', order: 2 },
+						{ id: 4, methodIds: [], name: 'Zone4', order: 1 },
+					],
+					shippingZoneLocations: {
+						0: emptyZoneLocations,
+						1: emptyZoneLocations,
+						2: emptyZoneLocations,
+						3: emptyZoneLocations,
+						4: emptyZoneLocations,
+					},
+				},
+				ui: {},
+			} );
+
+			expect( getShippingZones( state ) ).to.deep.equal( [
+				{ id: 1, methodIds: [], name: 'Zone1' },
+				{ id: 2, methodIds: [], name: 'Zone2' },
+				{ id: 4, methodIds: [], name: 'Zone4', order: 1 },
+				{ id: 3, methodIds: [], name: 'Zone3', order: 2 },
+				{ id: 0, methodIds: [], name: 'Rest of the world' },
+			] );
+		} );
+
+		it( 'should order the zones overlaid with edits', () => {
+			const state = createState( {
+				site: {
+					shippingZones: [
+						{ id: 0, methodIds: [], name: 'Rest of the world' },
+						{ id: 1, methodIds: [], name: 'Zone1' },
+						{ id: 2, methodIds: [], name: 'Zone2' },
+						{ id: 3, methodIds: [], name: 'Zone3', order: 2 },
+						{ id: 4, methodIds: [], name: 'Zone4', order: 1 },
+					],
+					shippingZoneLocations: {
+						0: emptyZoneLocations,
+						1: emptyZoneLocations,
+						2: emptyZoneLocations,
+						3: emptyZoneLocations,
+						4: emptyZoneLocations,
+					},
+				},
+				ui: {
+					shipping: {
+						zones: {
+							creates: [
+								{ id: { index: 2 }, methodIds: [], name: 'NewZone123' },
+								{ id: { index: 0 }, methodIds: [], name: 'NewZone4' },
+							],
+							updates: [
+								{ id: 2, name: 'EditedZone2' },
+							],
+							deletes: [],
+							currentlyEditingId: null,
+						},
+					},
+				},
+			} );
+
+			expect( getShippingZones( state ) ).to.deep.equal( [
+				{ id: { index: 0 }, methodIds: [], name: 'NewZone4' },
+				{ id: { index: 2 }, methodIds: [], name: 'NewZone123' },
+				{ id: 1, methodIds: [], name: 'Zone1' },
+				{ id: 2, methodIds: [], name: 'EditedZone2' },
+				{ id: 4, methodIds: [], name: 'Zone4', order: 1 },
+				{ id: 3, methodIds: [], name: 'Zone3', order: 2 },
+				{ id: 0, methodIds: [], name: 'Rest of the world' },
+			] );
 		} );
 	} );
 
