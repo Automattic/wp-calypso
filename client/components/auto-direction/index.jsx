@@ -164,7 +164,7 @@ const setChildDirection = ( child ) => {
 	const childDirection = getChildDirection( child );
 
 	if ( childDirection ) {
-		return React.cloneElement( child, getDirectionProps( childDirection ) );
+		return React.cloneElement( child, getDirectionProps( child, childDirection ) );
 	}
 
 	if ( child && child.props.children ) {
