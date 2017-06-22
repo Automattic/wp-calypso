@@ -48,25 +48,27 @@ const fromApi = ( { restore_status = {} } ) => {
 	};
 };
 
-export const receiveRestoreProgress = ( { dispatch }, { siteId, restoreId }, next, apiData ) => {
+export const receiveRestoreProgress = ( { dispatch }, { siteId, timestamp, restoreId }, next, apiData ) => {
 	const POLLING_DELAY_MS = 1500;
 
 	const data = fromApi( apiData );
 
 	debug( 'Restore progress', data );
 
-	dispatch( updateRewindRestoreProgress( siteId, data ) );
+	dispatch( updateRewindRestoreProgress( siteId, timestamp, restoreId, data ) );
 	if ( data.status !== 'finished' ) {
-		delay( dispatch, POLLING_DELAY_MS, getRewindRestoreProgress( siteId, restoreId ) );
+		delay( dispatch, POLLING_DELAY_MS, getRewindRestoreProgress( siteId, timestamp, restoreId ) );
 	}
 };
 
-// FIXME: This could be a network error or an API error. Handle each case correctly.
-export const receiveRestoreError = ( { dispatch }, { siteId }, next, error ) => {
+// FIXME: Could be a network Error (instanceof Error) or an API error. Handle each case correctly.
+export const receiveRestoreError = ( { dispatch }, { siteId, timestamp, restoreId }, next, error ) => {
 	debug( 'Restore progress error', error );
 
 	dispatch( rewindRestoreUpdateError(
 		siteId,
+		timestamp,
+		restoreId,
 		pick( error, [ 'error', 'status', 'message' ] )
 	) );
 };

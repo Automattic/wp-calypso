@@ -31,15 +31,18 @@ const requestRestore = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const receiveRestoreSuccess = ( { dispatch }, { siteId }, next, apiData ) => {
+export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp }, next, apiData ) => {
 	const { restoreId } = fromApi( apiData );
 	if ( restoreId ) {
-		debug( 'Request restore success', restoreId );
-		dispatch( getRewindRestoreProgress( siteId, restoreId ) );
+		debug( 'Request restore success, restore id:', restoreId );
+		dispatch( getRewindRestoreProgress( siteId, timestamp, restoreId ) );
 	} else {
+		debug( 'Request restore response missing restore_id' );
 		dispatch( rewindRestoreUpdateError(
 			siteId,
+			timestamp,
 			{
+				// FIXME: should include status?
 				error: 'missing_restore_id',
 				message: 'Bad response. No restore ID provided.',
 			}
