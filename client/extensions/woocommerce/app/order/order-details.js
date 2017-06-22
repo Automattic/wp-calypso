@@ -27,6 +27,10 @@ class OrderDetails extends Component {
 		} ),
 	}
 
+	getRefundedTotal = ( order ) => {
+		return order.refunds.reduce( ( sum, i ) => sum + ( i.total * 1 ), 0 );
+	}
+
 	renderTableHeader = () => {
 		const { translate } = this.props;
 		return (
@@ -56,11 +60,53 @@ class OrderDetails extends Component {
 		);
 	}
 
+	renderRefundCard = () => {
+		const { order, translate } = this.props;
+		let refundStatus = translate( 'Payment of %(total)s received via %(method)s', {
+			args: {
+				total: formatCurrency( order.total, order.currency ) || order.total,
+				method: order.payment_method_title,
+			}
+		} );
+
+		if ( 'refunded' === order.status ) {
+			refundStatus = translate( 'Payment of %(total)s has been refunded', {
+				args: {
+					total: formatCurrency( order.total, order.currency ) || order.total,
+				}
+			} );
+		} else if ( order.refunds.length ) {
+			const refund = this.getRefundedTotal( order );
+			refundStatus = translate( 'Payment of %(total)s has been partially refunded %(refund)s', {
+				args: {
+					total: formatCurrency( order.total, order.currency ) || order.total,
+					refund: formatCurrency( refund, order.currency ) || refund,
+				}
+			} );
+		}
+
+		return (
+			<div className="order__details-refund">
+				<div className="order__details-refund-label">
+					<Gridicon icon="checkmark" />
+					{ refundStatus }
+				</div>
+				<div className="order__details-refund-action">
+					{ ( 'refunded' !== order.status )
+						? <Button>{ translate( 'Submit Refund' ) }</Button>
+						: null
+					}
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		const { order, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
+		const refundValue = order.refunds.length ? this.getRefundedTotal( order ) : false;
 
 		return (
 			<div className="order__details">
@@ -89,22 +135,18 @@ class OrderDetails extends Component {
 								{ formatCurrency( order.total, order.currency ) || order.total }
 							</div>
 						</div>
+						{ refundValue
+							? <div className="order__details-total-refund">
+								<div className="order__details-totals-label">{ translate( 'Refunded' ) }</div>
+								<div className="order__details-totals-value">
+									{ formatCurrency( refundValue, order.currency ) || refundValue }
+								</div>
+							</div>
+							: null
+						}
 					</div>
 
-					<div className="order__details-refund">
-						<div className="order__details-refund-label">
-							<Gridicon icon="checkmark" />
-							{ translate( 'Payment of %(total)s received via %(method)s', {
-								args: {
-									total: formatCurrency( order.total, order.currency ) || order.total,
-									method: order.payment_method_title
-								}
-							} ) }
-						</div>
-						<div className="order__details-refund-action">
-							<Button>{ translate( 'Submit Refund' ) }</Button>
-						</div>
-					</div>
+					{ this.renderRefundCard() }
 
 					<div className="order__details-fulfillment">
 						<div className="order__details-fulfillment-label">
