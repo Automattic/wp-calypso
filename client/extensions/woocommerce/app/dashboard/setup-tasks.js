@@ -96,7 +96,6 @@ class SetupTasks extends Component {
 		return [
 			{
 				checked: hasProducts,
-				docURL: 'https://support.wordpress.com/',
 				explanation: translate( 'Start by adding the first product to your store.' ),
 				label: translate( 'Add a product' ),
 				show: true,
@@ -109,7 +108,6 @@ class SetupTasks extends Component {
 			},
 			{
 				checked: shippingIsSetUp,
-				docURL: 'https://support.wordpress.com/',
 				explanation: translate( 'Be ready to ship by the time your first order comes in.' ),
 				label: translate( 'Set up shipping' ),
 				show: this.state.showShippingTask,
@@ -127,7 +125,6 @@ class SetupTasks extends Component {
 			},
 			{
 				checked: paymentsAreSetUp,
-				docURL: 'https://support.wordpress.com/',
 				explanation: translate( 'Choose how you would like your customers to pay you.' ),
 				label: translate( 'Set up payments' ),
 				show: true,
@@ -140,7 +137,6 @@ class SetupTasks extends Component {
 			},
 			{
 				checked: taxesAreSetUp,
-				docURL: 'https://support.wordpress.com/',
 				explanation: translate( 'Taxes. Everyone\'s favorite. We made it simple.' ),
 				label: translate( 'Set up taxes' ),
 				show: this.state.showTaxesTask,
@@ -158,7 +154,6 @@ class SetupTasks extends Component {
 			},
 			{
 				checked: triedCustomizer,
-				docURL: 'https://support.wordpress.com/',
 				explanation: translate( 'View your store and make any final tweaks before opening for business.' ),
 				label: translate( 'View and customize' ),
 				show: true,
@@ -182,7 +177,6 @@ class SetupTasks extends Component {
 			<SetupTask
 				actions={ setupTask.actions }
 				checked={ setupTask.checked }
-				docURL= { setupTask.docURL }
 				explanation={ setupTask.explanation }
 				key={ index }
 				label={ setupTask.label }
