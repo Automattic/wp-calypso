@@ -8,6 +8,7 @@ import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import React from 'react';
 import classNames from 'classnames';
 import {
+	endsWith,
 	includes,
 	times
 } from 'lodash';
@@ -44,6 +45,8 @@ var DomainSearchResults = React.createClass( {
 		onAddMapping: React.PropTypes.func,
 		onClickMapping: React.PropTypes.func,
 		isSignupStep: React.PropTypes.bool,
+		railcarSeed: React.PropTypes.string,
+		fetchAlgo: React.PropTypes.string
 	},
 
 	renderDomainAvailability: function() {
@@ -135,7 +138,7 @@ var DomainSearchResults = React.createClass( {
 			mappingOffer;
 
 		if ( this.props.suggestions.length ) {
-			suggestionElements = this.props.suggestions.map( function( suggestion ) {
+			suggestionElements = this.props.suggestions.map( function( suggestion, i ) {
 				return (
 					<DomainRegistrationSuggestion
 						suggestion={ suggestion }
@@ -144,6 +147,10 @@ var DomainSearchResults = React.createClass( {
 						isSignupStep={ this.props.isSignupStep }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						railcarId={ `${ this.props.railcarSeed }-registration-suggestion-${ i }` }
+						uiPosition={ i }
+						fetchAlgo={ endsWith( suggestion.domain_name, '.wordpress.com' ) ? 'wpcom' : this.props.fetchAlgo }
+						query={ this.props.lastDomainSearched }
 						onButtonClick={ this.props.onClickResult.bind( null, suggestion ) } />
 				);
 			}, this );
