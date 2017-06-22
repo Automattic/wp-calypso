@@ -47,4 +47,7 @@
 		top: 47px;
 		left: 229px;
 	}
+	@include breakpoint( ">660px" ) {
+		margin-bottom: 58px;
+	}
 }

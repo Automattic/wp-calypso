@@ -18,6 +18,12 @@
 	line-height: 18px;
 }
 
+.shipping__origin {
+	@include breakpoint( ">660px" ) {
+		margin-top: 58px;
+	}
+}
+
 .shipping__address {
 	margin-bottom: 24px;
 

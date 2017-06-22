@@ -10,11 +10,11 @@ import React from 'react';
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 
-const OrderHeader = ( { translate, siteSlug } ) => {
+const OrderHeader = ( { translate, siteSlug, breadcrumbs } ) => {
 	const addLink = `/store/order/${ siteSlug }`;
 
 	return (
-		<ActionHeader>
+		<ActionHeader breadcrumbs={ breadcrumbs }>
 			<Button primary href={ addLink }>{ translate( 'Add Order' ) }</Button>
 		</ActionHeader>
 	);

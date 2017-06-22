@@ -11,6 +11,7 @@ import React, { Component } from 'react';
  */
 import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
 import Main from 'components/main';
 import OrderActivityLog from './order-activity-log';
@@ -34,14 +35,18 @@ class Order extends Component {
 	}
 
 	render() {
-		const { className, order, site } = this.props;
+		const { className, order, site, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
 
+		const breadcrumbs = ( <span>
+			<a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a> &gt; { translate( 'Order Details' ) }
+		</span> );
+
 		return (
 			<Main className={ className }>
-				<OrderHeader siteSlug={ site.slug } />
+				<OrderHeader siteSlug={ site.slug } breadcrumbs={ breadcrumbs } />
 
 				<div className="order__container">
 					<OrderDetails order={ order } />

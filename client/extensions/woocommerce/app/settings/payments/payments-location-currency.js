@@ -111,7 +111,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 	render() {
 		const { currencies, currency, translate } = this.props;
 		return (
-			<div>
+			<div className="payments__location-currency">
 				<ExtendedHeader
 					label={ translate( 'Store location and currency' ) }
 					description={

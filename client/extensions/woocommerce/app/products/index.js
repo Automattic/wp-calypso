@@ -89,7 +89,7 @@ class Products extends Component {
 		return (
 			<Main className={ classes }>
 				<SidebarNavigation />
-				<ActionHeader>
+				<ActionHeader breadcrumbs={ ( <span>{ translate( 'Products' ) }</span> ) }>
 					<Button primary href={ getLink( '/store/product/:site/', site ) }>
 						{ translate( 'Add a product' ) }
 					</Button>

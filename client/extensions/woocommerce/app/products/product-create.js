@@ -10,9 +10,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { successNotice, errorNotice } from 'state/notices/actions';
-
 import { editProduct, editProductAttribute, createProductActionList } from 'woocommerce/state/ui/products/actions';
 import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
@@ -30,7 +29,10 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 class ProductCreate extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
-		siteId: PropTypes.number,
+		site: PropTypes.shape( {
+			ID: PropTypes.number,
+			slug: PropTypes.string,
+		} ),
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
 		} ),
@@ -42,24 +44,27 @@ class ProductCreate extends React.Component {
 	};
 
 	componentDidMount() {
-		const { product, siteId } = this.props;
+		const { product, site } = this.props;
 
-		if ( siteId ) {
+		if ( site && site.ID ) {
 			if ( ! product ) {
-				this.props.editProduct( siteId, null, {
+				this.props.editProduct( site.ID, null, {
 					type: 'simple'
 				} );
 			}
-			this.props.fetchProductCategories( siteId );
+			this.props.fetchProductCategories( site.ID );
 		}
 	}
 
 	componentWillReceiveProps( newProps ) {
-		if ( newProps.siteId !== this.props.siteId ) {
-			this.props.editProduct( newProps.siteId, null, {
+		const { site } = this.props;
+		const newSiteId = newProps.site && newProps.site.ID || null;
+		const oldSiteId = site && site.ID || null;
+		if ( oldSiteId !== newSiteId ) {
+			this.props.editProduct( newSiteId, null, {
 				type: 'simple'
 			} );
-			this.props.fetchProductCategories( newProps.siteId );
+			this.props.fetchProductCategories( newSiteId );
 		}
 	}
 
@@ -98,9 +103,9 @@ class ProductCreate extends React.Component {
 	}
 
 	render() {
-		const { siteId, product, className, variations, productCategories, actionList } = this.props;
+		const { site, product, className, variations, productCategories, actionList } = this.props;
 
-		const isValid = 'undefined' !== siteId && this.isProductValid();
+		const isValid = 'undefined' !== site && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
 		const saveEnabled = isValid && ! isBusy;
 
@@ -108,12 +113,14 @@ class ProductCreate extends React.Component {
 			<Main className={ className }>
 				<SidebarNavigation />
 				<ProductHeader
+					site={ site }
+					product={ product }
 					onTrash={ this.onTrash }
 					onSave={ saveEnabled ? this.onSave : false }
 					isBusy={ isBusy }
 				/>
 				<ProductForm
-					siteId={ siteId }
+					siteId={ site && site.ID }
 					product={ product || { type: 'simple' } }
 					variations={ variations }
 					productCategories={ productCategories }
@@ -128,14 +135,14 @@ class ProductCreate extends React.Component {
 }
 
 function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
-	const product = getCurrentlyEditingProduct( state, siteId );
-	const variations = product && getProductVariationsWithLocalEdits( state, product.id, siteId );
-	const productCategories = getProductCategoriesWithLocalEdits( state, siteId );
+	const site = getSelectedSiteWithFallback( state );
+	const product = getCurrentlyEditingProduct( state );
+	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
+	const productCategories = getProductCategoriesWithLocalEdits( state );
 	const actionList = getActionList( state );
 
 	return {
-		siteId,
+		site,
 		product,
 		variations,
 		productCategories,

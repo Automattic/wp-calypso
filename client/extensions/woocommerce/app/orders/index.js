@@ -15,10 +15,10 @@ import OrdersList from './orders-list';
 
 class Orders extends Component {
 	render() {
-		const { className, site } = this.props;
+		const { className, site, translate } = this.props;
 		return (
 			<Main className={ className }>
-				<OrderHeader siteSlug={ site ? site.slug : false } />
+				<OrderHeader siteSlug={ site ? site.slug : false } breadcrumbs={ ( <span>{ translate( 'Orders' ) }</span> ) } />
 				<OrdersList />
 			</Main>
 		);
