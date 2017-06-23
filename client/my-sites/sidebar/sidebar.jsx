@@ -152,14 +152,14 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const { site, isSitePreviewable } = this.props;
+		const { site, isPreviewable } = this.props;
 
 		return (
 			<SidebarItem
 				tipTarget="sitePreview"
 				label={ this.props.translate( 'View Site' ) }
 				className={ this.itemLinkClass( [ '/view' ], 'preview' ) }
-				link={ isSitePreviewable ? '/view' + this.props.siteSuffix : site.URL }
+				link={ isPreviewable ? '/view' + this.props.siteSuffix : site.URL }
 				onNavigate={ this.onNavigate }
 				icon="computer"
 				preloadSectionName="preview"
@@ -652,10 +652,10 @@ function mapStateToProps( state ) {
 		hasJetpackSites,
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
+		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		isPreviewShowing,
 		isSharingEnabledOnJetpackSite,
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
-		isSitePreviewable: isSitePreviewable( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
