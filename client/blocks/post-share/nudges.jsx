@@ -61,7 +61,7 @@ export const UpgradeToPersonalNudge = props => {
 
 	let description;
 	if ( isJetpack ) {
-		description = translate( 'Get spam protection, unlimited backup storage and more.' );
+		description = translate( 'Get easy monetization options, Videopress support and more.' );
 	} else {
 		description = translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' );
 	}
@@ -69,8 +69,8 @@ export const UpgradeToPersonalNudge = props => {
 		<Banner
 			className="post-share__upgrade-nudge"
 			feature="republicize"
-			title={ translate( 'Unlock the ability to re-share posts to social media' ) }
-			callToAction={ translate( 'Upgrade to Personal' ) }
+			title={ translate( 'Schedule your social messages in advance.' ) }
+			callToAction={ translate( 'Upgrade to Premium' ) }
 			description={ description }
 		/>
 	);
