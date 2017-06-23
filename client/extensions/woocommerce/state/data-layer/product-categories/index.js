@@ -23,7 +23,7 @@ export function handleProductCategoryCreate( { dispatch }, action ) {
 		return;
 	}
 
-	const updatedAction = productCategoryUpdated( siteId, null, successAction ); // data field will be filled in by request.
+	const updatedAction = productCategoryUpdated( siteId, null, action, successAction ); // data field will be filled in by request.
 	dispatch( post( siteId, 'products/categories', categoryData, updatedAction, failureAction ) );
 }
 

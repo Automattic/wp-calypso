@@ -7,7 +7,7 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { handleProductCategoryEdit, makeProductActionList, } from '../';
+import { handleProductCategoryEdit, updateActionListCategoryId, makeProductActionList, } from '../';
 import { actionListStepSuccess, actionListStepFailure } from 'woocommerce/state/action-list/actions';
 import { createProduct } from 'woocommerce/state/sites/products/actions';
 import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
@@ -93,6 +93,66 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.have.been.calledWith(
 				editProductRemoveCategory( 123, newProduct, newCategory1.id )
 			);
+		} );
+	} );
+
+	describe( '#updateActionListCategoryId', () => {
+		it( 'should convert placeholder ids to real ones', () => {
+			const category1 = { id: { placeholder: 'productCategory_1' }, name: 'Category 1', slug: 'category-1' };
+			const category2 = { id: { placeholder: 'productCategory_2' }, name: 'Category 2', slug: 'category-2' };
+
+			const product1Before = {
+				id: { index: 0 },
+				name: 'Product #1',
+				categories: [ { id: category1.id }, { id: category2.id } ]
+			};
+
+			const product1After = {
+				id: { index: 0 },
+				name: 'Product #1',
+				categories: [ { id: 101 }, { id: category2.id } ]
+			};
+
+			const createCategory1Action = createProductCategory(
+				123, category1, actionListStepSuccess( 0 ), actionListStepFailure( 0, 'UNKNOWN' ),
+			);
+
+			const createCategory2Action = createProductCategory(
+				123, category2, actionListStepSuccess( 1 ), actionListStepFailure( 1, 'UNKNOWN' ),
+			);
+
+			const createProduct1ActionBefore = createProduct(
+				123, product1Before, actionListStepSuccess( 2 ), actionListStepFailure( 2, 'UNKNOWN' ),
+			);
+
+			const createProduct1ActionAfter = createProduct(
+				123, product1After, actionListStepSuccess( 2 ), actionListStepFailure( 2, 'UNKNOWN' ),
+			);
+
+			const actionListBefore = {
+				steps: [
+					{ description: 'Creating product category: Category 1', action: createCategory1Action },
+					{ description: 'Creating product category: Category 2', action: createCategory2Action },
+					{ description: 'Creating product: Product #1', action: createProduct1ActionBefore },
+				],
+				successAction: undefined,
+				failureAction: undefined,
+				clearUponComplete: true,
+			};
+
+			const actionListAfter = {
+				steps: [
+					{ description: 'Creating product category: Category 1', action: createCategory1Action },
+					{ description: 'Creating product category: Category 2', action: createCategory2Action },
+					{ description: 'Creating product: Product #1', action: createProduct1ActionAfter },
+				],
+				successAction: undefined,
+				failureAction: undefined,
+				clearUponComplete: true,
+			};
+
+			const newActionList = updateActionListCategoryId( actionListBefore, category1.id, 101 );
+			expect( newActionList ).to.eql( actionListAfter );
 		} );
 	} );
 

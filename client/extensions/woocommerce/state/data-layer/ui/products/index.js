@@ -2,12 +2,13 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { find, isObject } from 'lodash';
+import { find, isObject, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
 // TODO: Remove this when product edits have siteIds.
+import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
 import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
@@ -20,9 +21,18 @@ import {
 	actionListStepFailure
 } from 'woocommerce/state/action-list/actions';
 import {
+	WOOCOMMERCE_PRODUCT_CREATE,
+	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
+	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 } from 'woocommerce/state/action-types';
+
+export default {
+	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: [ handleProductCategoryEdit ],
+	[ WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE ]: [ handleProductActionListCreate ],
+	[ WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED ]: [ handleProductCategoryUpdated ],
+};
 
 export function handleProductCategoryEdit( { dispatch, getState }, action ) {
 	const rootState = getState();
@@ -51,6 +61,50 @@ export function handleProductActionListCreate( { dispatch, getState }, action ) 
 	const actionList = makeProductActionList( getState(), undefined, undefined, successAction, failureAction );
 
 	dispatch( actionListCreate( actionList ) );
+}
+
+export function handleProductCategoryUpdated( { dispatch, getState }, action ) {
+	const { originatingAction } = action;
+	const actionList = getActionList( getState() );
+
+	if ( WOOCOMMERCE_PRODUCT_CATEGORY_CREATE === originatingAction.type ) {
+		// A category was created, let's update any placeholders for it that we have.
+		const placeholderId = originatingAction.id;
+		const realId = action.data.id;
+		const newActionList = updateActionListCategoryId( actionList, placeholderId, realId );
+		// TODO: "create" should be "set" here.
+		dispatch( actionListCreate( newActionList ) );
+	}
+}
+
+const updateProperty = ( propertyName, updater ) => ( object ) => {
+	return { ...object, [ propertyName ]: updater( object[ propertyName ] ) };
+};
+
+const replaceProperty = ( propertyName, oldValue, newValue ) => {
+	return updateProperty( propertyName, ( value ) => {
+		return ( value === oldValue ? newValue : value );
+	} );
+};
+
+export function updateActionListCategoryId( actionList, placeholderId, realId ) {
+	const updateCategory = replaceProperty( 'id', placeholderId, realId );
+
+	const updateCategories = updateProperty( 'categories', ( categories ) => {
+		return ( categories ? categories.map( updateCategory ) : undefined );
+	} );
+
+	const updateStep = updateProperty( 'action', ( action ) => {
+		if ( WOOCOMMERCE_PRODUCT_CREATE === action.type ) {
+			return updateProperty( 'product', updateCategories )( action );
+		}
+		return action;
+	} );
+
+	return {
+		...actionList,
+		steps: actionList.steps.map( updateStep ),
+	};
 }
 
 /**
@@ -101,7 +155,7 @@ export function makeProductCategorySteps( allSteps, rootState, siteId, productEd
 
 	const categoryEdits = getAllProductCategoryEdits( rootState, siteId );
 	newCategoryIds.forEach( ( categoryId ) => {
-		const category = find( categoryEdits.creates, ( c ) => categoryId === c.id );
+		const category = find( categoryEdits.creates, ( c ) => isEqual( categoryId, c.id ) );
 		const stepIndex = steps.length;
 		const description = translate( 'Creating product category: ' ) + category.name;
 		const action = createProductCategory(
@@ -161,9 +215,4 @@ export function makeProductVariationSteps( allSteps, rootState, siteId, productE
 	return steps;
 }
 */
-
-export default {
-	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: [ handleProductCategoryEdit ],
-	[ WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE ]: [ handleProductActionListCreate ],
-};
 
