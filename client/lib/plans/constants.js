@@ -148,7 +148,6 @@ export const PLANS_LIST = {
 			FEATURE_BASIC_DESIGN,
 			FEATURE_6GB_STORAGE,
 			FEATURE_NO_ADS,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -335,7 +334,6 @@ export const PLANS_LIST = {
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' )
 	},
@@ -358,7 +356,6 @@ export const PLANS_LIST = {
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
