@@ -84,16 +84,6 @@ module.exports = {
 		},
 		defaultVariation: 'show',
 	},
-	pulsingCartTestingAB: {
-		datestamp: '20170601',
-		variations: {
-			original: 50,
-			modified: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	signupProgressIndicator: {
 		datestamp: '20170612',
 		variations: {
