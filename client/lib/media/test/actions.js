@@ -15,7 +15,7 @@ import useMockery from 'test/helpers/use-mockery';
 /**
  * Module variables
  */
-var DUMMY_SITE_ID = 1,
+const DUMMY_SITE_ID = 1,
 	DUMMY_ITEM = { ID: 100, title: 'Sunset' },
 	DUMMY_UPLOAD = {
 		lastModified: '2015-06-19T09:36:09-04:00',
@@ -184,7 +184,7 @@ describe( 'MediaActions', function() {
 
 	describe( '#fetchNextPage()', function() {
 		it( 'should call to the internal WordPress.com REST API', function( done ) {
-			var query = MediaListStore.getNextPageQuery( DUMMY_SITE_ID );
+			const query = MediaListStore.getNextPageQuery( DUMMY_SITE_ID );
 
 			MediaActions.fetchNextPage( DUMMY_SITE_ID );
 
@@ -249,7 +249,7 @@ describe( 'MediaActions', function() {
 		} );
 
 		it( 'should accept a FileList of uploads', function() {
-			var uploads = [ DUMMY_UPLOAD, DUMMY_UPLOAD ];
+			const uploads = [ DUMMY_UPLOAD, DUMMY_UPLOAD ];
 			uploads.__proto__ = new window.FileList(); // eslint-disable-line no-proto
 			MediaActions.add( DUMMY_SITE_ID, uploads );
 			expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
@@ -347,7 +347,7 @@ describe( 'MediaActions', function() {
 	} );
 
 	describe( '#edit()', function() {
-		var item = { ID: 100, description: 'Example' };
+		const item = { ID: 100, description: 'Example' };
 
 		it( 'should immediately edit the existing item', function() {
 			MediaActions.edit( DUMMY_SITE_ID, item );
@@ -361,7 +361,7 @@ describe( 'MediaActions', function() {
 	} );
 
 	describe( '#update()', function() {
-		var item = { ID: 100, description: 'Example' };
+		const item = { ID: 100, description: 'Example' };
 
 		it( 'should accept a single item', function() {
 			MediaActions.update( DUMMY_SITE_ID, item );
@@ -403,7 +403,7 @@ describe( 'MediaActions', function() {
 	} );
 
 	describe( '#delete()', function() {
-		var item = { ID: 100 };
+		const item = { ID: 100 };
 
 		it( 'should accept a single item', function() {
 			MediaActions.delete( DUMMY_SITE_ID, item );
@@ -460,6 +460,17 @@ describe( 'MediaActions', function() {
 				type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
 				siteId: DUMMY_SITE_ID,
 				itemId: DUMMY_ITEM.ID
+			} );
+		} );
+	} );
+
+	describe( '#sourceChanged()', () => {
+		it( 'should dispatch the `CHANGE_MEDIA_SOURCE` action with the specified siteId', () => {
+			MediaActions.sourceChanged( DUMMY_SITE_ID );
+
+			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+				type: 'CHANGE_MEDIA_SOURCE',
+				siteId: DUMMY_SITE_ID,
 			} );
 		} );
 	} );
