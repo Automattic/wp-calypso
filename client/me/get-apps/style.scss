@@ -1,8 +1,11 @@
-.get-apps {
-	.card {
+.get-apps__desktop,
+.get-apps__mobile {
+	margin-bottom: 0;
+
+	@include breakpoint('>480px') {
 		display: flex;
+		flex-direction: row;
 		align-items: center;
-		margin-bottom: 0;
 	}
 
 	h3 {
@@ -24,7 +27,11 @@
 	}
 
 	p:last-child {
-		margin-bottom: 0;
+		margin-bottom: 12px;
+
+		@include breakpoint('>480px') {
+			margin-bottom: 0;
+		}
 	}
 }
 
@@ -35,8 +42,12 @@
 	color: $blue-dark;
 	max-width: 980px;
 	overflow: hidden;
-	padding-bottom: 50px;
+	padding: 0 24px 12px;
 	text-align: center;
+
+	@include breakpoint('>480px') {
+		padding-bottom: 24px;
+	}
 
 	h2 {
 		font-size: 16px;
@@ -54,11 +65,12 @@
 			font-size: 14px;
 		}
 	}
-
 }
 
 .get-apps__card-text {
-	flex: 1;
+	@include breakpoint('>480px') {
+		flex: 1;
+	}
 }
 
 .get-apps__also-available {
@@ -68,13 +80,19 @@
 }
 
 .get-apps__desktop-button {
-	margin-left: 24px;
+	@include breakpoint('>480px') {
+		margin-left: 24px;
+	}
 }
 
 .get-apps__badges {
 	img {
 		height: 40px;
-		margin-left: 12px;
+		margin: 0 12px 0 0;
 		width: auto;
+
+		@include breakpoint('>480px') {
+			margin: 0 0 0 12px;
+		}
 	}
 }
