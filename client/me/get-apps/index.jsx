@@ -20,9 +20,9 @@ export const GetApps = ( { translate } ) => {
 	return (
 		<Main className="get-apps">
 			<MeSidebarNavigation />
-			<GetAppsIllustration translate={ translate } />
+			<GetAppsIllustration />
 			<SectionHeader label={ translate( 'WordPress Apps' ) } />
-			<DownloadCard translate={ translate } />
+			<DownloadCard />
 			<Card className="get-apps__mobile">
 				<div className={ 'get-apps__card-text' }>
 					<h3>{ translate( 'Mobile Apps' ) }</h3>

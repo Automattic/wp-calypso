@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 const GetAppsIllustration = ( { translate } ) =>
 	<div className={ 'get-apps__illustration' }>
@@ -10,4 +11,4 @@ const GetAppsIllustration = ( { translate } ) =>
 		<p>{ translate( 'Get WordPress apps for all your screens.' ) }</p>
 	</div>;
 
-export default GetAppsIllustration;
+export default localize( GetAppsIllustration );
