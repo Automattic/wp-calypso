@@ -131,6 +131,10 @@ export const getCurrentlyOpenShippingZoneMethod = ( state, siteId = getSelectedS
 		return null;
 	}
 
+	if ( zone.methods.currentlyEditingNew ) {
+		return zone.methods.currentlyEditingChanges;
+	}
+
 	const methods = getCurrentlyEditingShippingZoneMethods( state );
 	const openMethod = find( methods, { id: zone.methods.currentlyEditingId } );
 	if ( ! openMethod ) {
@@ -186,7 +190,8 @@ export const getNewMethodTypeOptions = ( state, zoneId = null, siteId = getSelec
 	const openMethod = getCurrentlyOpenShippingZoneMethod( state, siteId );
 	if ( openMethod ) {
 		const originalMethod = find( currentMethods, { id: openMethod.id } );
-		if ( openMethod.methodType !== originalMethod.methodType &&
+		if ( originalMethod &&
+			openMethod.methodType !== originalMethod.methodType &&
 			-1 === options.indexOf( originalMethod.methodType ) ) {
 			options.push( originalMethod.methodType );
 		}
@@ -207,5 +212,3 @@ export const getMethodTypeChangeOptions = ( state, currentMethodType, zoneId = n
 	const options = getNewMethodTypeOptions( state, zoneId, siteId );
 	return -1 === options.indexOf( currentMethodType ) ? [ ...options, currentMethodType ].sort() : options;
 };
-
-export const isTaxable = method => 'taxable' === method.tax_status;

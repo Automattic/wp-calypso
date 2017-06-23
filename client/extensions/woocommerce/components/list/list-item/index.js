@@ -2,10 +2,11 @@
  * External dependencies
  */
 import React from 'react';
+import classNames from 'classnames';
 
-const ListItem = ( { children } ) => {
+const ListItem = ( { children, className } ) => {
 	return (
-		<li className="list-item">
+		<li className={ classNames( 'list-item', className ) }>
 			{ children }
 		</li>
 	);
