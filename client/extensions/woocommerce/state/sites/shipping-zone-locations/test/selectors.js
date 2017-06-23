@@ -9,8 +9,10 @@ import { expect } from 'chai';
 import {
 	areShippingZoneLocationsLoaded,
 	areShippingZoneLocationsLoading,
+	areShippingZonesLocationsValid,
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
+import { createState } from 'woocommerce/state/test/helpers';
 
 const zoneId = 7;
 
@@ -112,6 +114,426 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( areShippingZoneLocationsLoading( loadingState, zoneId ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#areShippingZonesLocationsValid', () => {
+		it( 'should return true if the zones locations are still loading.', () => {
+			expect( areShippingZonesLocationsValid( loadingState ) ).to.be.true;
+		} );
+
+		it( 'should return true for an empty zone list.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return true for the "Rest of the world" zone.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						0: {
+							continent: [],
+							country: [],
+							state: [],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return false for a zone without locations.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [],
+							state: [],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return true for a zone with a single continent.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [ 'NA' ],
+							country: [],
+							state: [],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return true for a zone with multiple continents.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [ 'NA', 'EU' ],
+							country: [],
+							state: [],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return false for zones that have repeated continents.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [ 'NA', 'EU' ],
+							country: [],
+							state: [],
+							postcode: [],
+						},
+						2: {
+							continent: [ 'EU' ],
+							country: [],
+							state: [],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return false for a zone that mixes continents and countries.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [ 'NA' ],
+							country: [ 'UK' ],
+							state: [],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return false for a zone that mixes continents and states.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [ 'NA' ],
+							country: [],
+							state: [ 'US:CA' ],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return false for a zone that mixes continents and postcodes.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [ 'NA' ],
+							country: [],
+							state: [],
+							postcode: [ '12345' ],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return true for a zone with a single country.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [ 'US' ],
+							state: [],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return true for a zone with multiple countries.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [ 'US', 'CA' ],
+							state: [],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return false for zones that have repeated countries.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [ 'US', 'UK' ],
+							state: [],
+							postcode: [],
+						},
+						2: {
+							continent: [],
+							country: [ 'US', 'CA' ],
+							state: [],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return false for a zone that mixes countries and states.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [ 'US' ],
+							state: [ 'US:CA' ],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return true for a zone with a single state.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [],
+							state: [ 'US:CA' ],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return true for a zone with multiple states from the same country.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [],
+							state: [ 'US:UT', 'US:CA', 'US:NY' ],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return false for a zone with multiple states from different countries.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [],
+							state: [ 'US:UT', 'US:CA', 'CA:BC' ],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return false for zones that have repeated states.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [],
+							state: [ 'US:UT', 'US:CA' ],
+							postcode: [],
+						},
+						2: {
+							continent: [],
+							country: [],
+							state: [ 'US:CA', 'US:NY' ],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return false for a zone that mixes states and postcodes.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [],
+							state: [ 'US:CA' ],
+							postcode: [ '80123' ],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return false for a zone that has only a postcode, without country.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [],
+							state: [],
+							postcode: [ '80123' ],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return false for a zone that has a postcode with several countries.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [ 'US', 'CA' ],
+							state: [],
+							postcode: [ '80100...80199' ],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return true for a zone that has a postcode with a country.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [ 'US' ],
+							state: [],
+							postcode: [ '80100...80199' ],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return false for a zone that has multiple postcodes.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [ 'US' ],
+							state: [],
+							postcode: [ '80123', '12345' ],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return false even if only a single zone is incorrect.', () => {
+			const state = createState( {
+				site: {
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [ 'US' ],
+							state: [],
+							postcode: [ '80123' ],
+						},
+						2: {
+							continent: [ 'NA' ],
+							country: [],
+							state: [],
+							postcode: [],
+						},
+						3: { // wrong!
+							continent: [],
+							country: [ 'US' ],
+							state: [ 'US:CA' ],
+							postcode: [ '80123' ],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
 		} );
 	} );
 } );
