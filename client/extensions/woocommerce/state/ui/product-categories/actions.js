@@ -24,7 +24,7 @@ export function generateProductCategoryId() {
  *
  * @param {Number} siteId The id of the site to which the category belongs.
  * @param {Object} [category] The most recent version of the category object, or null if new.
- * @param {Object} data An object containing the properties to be edited for the object.
+ * @param {Object} data An object containing the properties to be edited for the object, if null, the category will be removed.
  * @return {Object} The action object.
  */
 export function editProductCategory( siteId, category, data ) {

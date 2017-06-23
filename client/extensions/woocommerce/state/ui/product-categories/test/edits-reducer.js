@@ -100,6 +100,28 @@ describe( 'edits-reducer', () => {
 		expect( edits2.creates[ 1 ].slug ).to.eql( 'second-category' );
 	} );
 
+	it( 'should remove a "create"', () => {
+		const newCategory = {
+			name: 'New Category',
+			slug: 'first-category',
+		};
+		const edits1 = reducer( undefined, editProductCategory( siteId, null, newCategory ) );
+		const edits2 = reducer( edits1, editProductCategory( siteId, edits1.creates[ 0 ], null ) );
+
+		expect( edits1.creates[ 0 ].name ).to.eql( 'New Category' );
+		expect( edits2.creates[ 0 ] ).to.not.exist;
+	} );
+
+	it( 'should remove an "update"', () => {
+		const category = { id: 101 };
+		const categoryUpdate = { name: 'After first edit' };
+		const edits1 = reducer( undefined, editProductCategory( siteId, category, categoryUpdate ) );
+		const edits2 = reducer( edits1, editProductCategory( siteId, edits1.updates[ 0 ], null ) );
+
+		expect( edits1.updates[ 0 ].name ).to.eql( 'After first edit' );
+		expect( edits2.updates[ 0 ] ).to.not.exist;
+	} );
+
 	it( 'should set currentlyEditingId when editing a new category', () => {
 		const edits1 = reducer( undefined, editProductCategory( siteId, null, {
 			name: 'First Category',

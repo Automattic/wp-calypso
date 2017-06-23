@@ -2,13 +2,16 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 // TODO: Remove this when product edits have siteIds.
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
 import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
+import { getAllProductCategoryEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import { createProduct } from 'woocommerce/state/sites/products/actions';
 import {
 	actionListCreate,
@@ -16,8 +19,31 @@ import {
 	actionListStepFailure
 } from 'woocommerce/state/action-list/actions';
 import {
+	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
 } from 'woocommerce/state/action-types';
+
+export function handleProductCategoryEdit( { dispatch, getState }, action ) {
+	const rootState = getState();
+	const { siteId, category, data } = action;
+
+	if ( null === data ) {
+		// It's removing a category from edits.
+		const categoryCreates = getAllProductCategoryEdits( rootState, siteId ).creates;
+		if ( find( categoryCreates, { id: category.id } ) ) {
+			// It's a create, it needs to be removed from any product edits as well.
+			const productEdits = getAllProductEdits( rootState, siteId );
+
+			productEdits.creates && productEdits.creates.forEach( ( product ) => {
+				dispatch( editProductRemoveCategory( siteId, product, category.id ) );
+			} );
+
+			productEdits.updates && productEdits.updates.forEach( ( product ) => {
+				dispatch( editProductRemoveCategory( siteId, product, category.id ) );
+			} );
+		}
+	}
+}
 
 export function handleProductActionListCreate( { dispatch, getState }, action ) {
 	const { successAction, failureAction } = action;
@@ -87,6 +113,7 @@ export function makeProductActionList(
 }
 
 export default {
+	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: [ handleProductCategoryEdit ],
 	[ WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE ]: [ handleProductActionListCreate ],
 };
 

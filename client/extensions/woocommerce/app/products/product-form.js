@@ -25,6 +25,7 @@ export default class ProductForm extends Component {
 		variations: PropTypes.array,
 		productCategories: PropTypes.array.isRequired,
 		editProduct: PropTypes.func.isRequired,
+		editProductCategory: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
 		editProductVariation: PropTypes.func.isRequired,
 	};
@@ -42,7 +43,7 @@ export default class ProductForm extends Component {
 
 	render() {
 		const { siteId, product, productCategories, variations } = this.props;
-		const { editProduct, editProductVariation, editProductAttribute } = this.props;
+		const { editProduct, editProductCategory, editProductVariation, editProductAttribute } = this.props;
 
 		if ( ! siteId ) {
 			return this.renderPlaceholder();
@@ -66,12 +67,14 @@ export default class ProductForm extends Component {
 					product={ product }
 					productCategories={ productCategories }
 					editProduct={ editProduct }
+					editProductCategory={ editProductCategory }
 				/>
 				<ProductFormVariationsCard
 					siteId={ siteId }
 					product={ product }
 					variations={ variations }
 					editProduct={ editProduct }
+					editProductCategory={ editProductCategory }
 					editProductAttribute={ editProductAttribute }
 					editProductVariation={ editProductVariation }
 				/>

@@ -14,13 +14,14 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
 import { editProduct, editProductAttribute, createProductActionList } from 'woocommerce/state/ui/products/actions';
+import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { actionListStepNext } from 'woocommerce/state/action-list/actions';
 import { getCurrentlyEditingProduct } from 'woocommerce/state/ui/products/selectors';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
-import { getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
+import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import { createProduct } from 'woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
@@ -35,7 +36,9 @@ class ProductCreate extends React.Component {
 		} ),
 		fetchProductCategories: PropTypes.func.isRequired,
 		editProduct: PropTypes.func.isRequired,
+		editProductCategory: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
+		editProductVariation: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
@@ -115,6 +118,7 @@ class ProductCreate extends React.Component {
 					variations={ variations }
 					productCategories={ productCategories }
 					editProduct={ this.props.editProduct }
+					editProductCategory={ this.props.editProductCategory }
 					editProductAttribute={ this.props.editProductAttribute }
 					editProductVariation={ this.props.editProductVariation }
 				/>
@@ -127,7 +131,7 @@ function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const product = getCurrentlyEditingProduct( state, siteId );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id, siteId );
-	const productCategories = getProductCategories( state, siteId );
+	const productCategories = getProductCategoriesWithLocalEdits( state, siteId );
 	const actionList = getActionList( state );
 
 	return {
@@ -146,6 +150,7 @@ function mapDispatchToProps( dispatch ) {
 			createProduct,
 			createProductActionList,
 			editProduct,
+			editProductCategory,
 			editProductAttribute,
 			editProductVariation,
 			fetchProductCategories,
