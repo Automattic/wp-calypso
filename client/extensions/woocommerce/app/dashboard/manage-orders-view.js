@@ -25,6 +25,7 @@ import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/gen
 import ProcessOrdersWidget from 'woocommerce/components/process-orders-widget';
 import ReadingWidget from 'woocommerce/components/reading-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
+import Card from 'components/card';
 
 class ManageOrdersView extends Component {
 	static propTypes = {
@@ -126,11 +127,26 @@ class ManageOrdersView extends Component {
 					</h2>
 				</div>
 				{ this.possiblyrenderProcessOrdersWidget() }
-				<div className="dashboard__manage-has-orders-stats-actions">
-					<Button href={ getLink( '/store/stats/orders/day/:site', site ) }>
-						{ orders.length ? translate( 'View full reports' ) : translate( 'View reports' ) }
-					</Button>
-				</div>
+				<Card
+					className="dashboard__reports-widget"
+				>
+					<div className="dashboard__reports-widget-content-wrapper">
+						<img src="/calypso/images/extensions/woocommerce/woocommerce-reports.svg" width="500" />
+						<div className="dashboard__reports-widget-content">
+							<h2>
+								{ translate( 'Stats & Reports' ) }
+							</h2>
+							<p>
+								{ translate( 'A detailed breakdown of store stats & reports are available on the stats screen.' ) }
+							</p>
+							<p>
+								<Button href={ getLink( '/store/stats/orders/day/:site', site ) }>
+									{ orders.length ? translate( 'View full reports' ) : translate( 'View reports' ) }
+								</Button>
+							</p>
+						</div>
+					</div>
+				</Card>
 				{ this.possiblyRenderShareWidget() }
 				{ this.possiblyRenderReadingWidget() }
 			</div>

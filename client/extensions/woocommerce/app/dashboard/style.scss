@@ -120,7 +120,7 @@
 
 .dashboard__location {
 	padding: 16px;
-	
+
 	@include breakpoint( ">960px" ) {
 		padding: 32px 32px 16px 32px;
 	}
@@ -171,4 +171,65 @@
 .dashboard__manage-has-orders-stats-actions {
 	padding: 24px;
 	text-align: center;
+}
+
+.dashboard__manage-has-orders {
+	.dashboard__reports-widget {
+		overflow: hidden;
+		text-align: center;
+
+		@include breakpoint( ">960px" ) {
+			text-align: left;
+			padding-left: 48px;
+		}
+
+		.dashboard__reports-widget-content-wrapper {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			@include breakpoint( ">960px" ) {
+				flex-direction: row;
+			}
+		}
+
+		@include breakpoint( ">960px" ) {
+			text-align: left;
+		}
+
+		h2 {
+			font-size: 20px;
+			line-height: 1.2em;
+			margin-bottom: 16px;
+		}
+
+		.dashboard__reports-widget-content {
+			@include breakpoint( ">960px" ) {
+				order: 0;
+			}
+		}
+
+		img {
+			margin-bottom: 1.5em;
+			max-width: 150px;
+			margin-top: 1em;
+
+			@include breakpoint( ">960px" ) {
+				margin-bottom: 0;
+				order: 1;
+				transform: translateY(31px);
+				max-width: none;
+				margin-top: 0;
+			}
+		}
+
+		p {
+			color: $gray-text-min;
+			font-size: 14px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
 }
