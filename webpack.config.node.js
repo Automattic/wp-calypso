@@ -90,7 +90,7 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
-				loader: 'happypack/loader'
+				loader: [ 'happypack/loader' ]
 			},
 		]
 	},
