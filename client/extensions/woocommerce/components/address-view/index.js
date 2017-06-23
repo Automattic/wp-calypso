@@ -58,6 +58,7 @@ class AddressView extends Component {
 				<FormFieldSet>
 					<FormLabel>{ nameLabel || translate( 'Business Name' ) }</FormLabel>
 					<FormTextInput
+						disabled
 						name="name"
 						onChange={ onChange }
 						value={ name }
