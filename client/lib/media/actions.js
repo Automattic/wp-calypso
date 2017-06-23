@@ -310,4 +310,12 @@ MediaActions.clearValidationErrorsByType = function( siteId, type ) {
 	} );
 };
 
+MediaActions.sourceChanged = function( siteId ) {
+	debug( 'Media data source changed' );
+	Dispatcher.handleViewAction( {
+		type: 'CHANGE_MEDIA_SOURCE',
+		siteId,
+	} );
+};
+
 module.exports = MediaActions;
