@@ -3,10 +3,11 @@
 /**
  * External dependencies
  */
-const webpack = require( 'webpack' ),
-	path = require( 'path' ),
-	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' ),
-	fs = require( 'fs' );
+const webpack = require( 'webpack' );
+const path = require( 'path' );
+const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
+const fs = require( 'fs' );
+const HappyPack = require( 'happypack' );
 
 /**
  * Internal dependencies
@@ -54,6 +55,18 @@ function getExternals() {
 	return externals;
 }
 
+const babelLoader = {
+	loader: 'babel-loader',
+	options: {
+		plugins: [ [
+			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
+			{ async: false }
+		] ],
+		cacheDirectory: path.join( __dirname, 'build', '.babel-server-cache' ),
+		cacheIdentifier: cacheIdentifier,
+	}
+}
+
 const webpackConfig = {
 	devtool: 'source-map',
 	entry: './index.js',
@@ -77,15 +90,7 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
-				loader: 'babel-loader',
-				options: {
-					plugins: [ [
-						path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
-						{ async: false }
-					] ],
-					cacheDirectory: path.join( __dirname, 'build', '.babel-server-cache' ),
-					cacheIdentifier: cacheIdentifier,
-				}
+				loader: [ 'happypack/loader' ]
 			},
 		]
 	},
@@ -110,6 +115,9 @@ const webpackConfig = {
 		new webpack.BannerPlugin( { banner: 'require( "source-map-support" ).install();', raw: true, entryOnly: false } ),
 		new webpack.DefinePlugin( {
 			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
+		} ),
+		new HappyPack( {
+			loaders: [ babelLoader ],
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]sites-list$/, 'lodash/noop' ), // Depends on BOM
