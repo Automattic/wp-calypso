@@ -43,7 +43,8 @@ import {
 	getSite,
 	isJetpackMinimumVersion,
 	isJetpackModuleActive,
-	isJetpackSite
+	isJetpackSite,
+	isSitePreviewable
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
 import { abtest } from 'lib/abtest';
@@ -151,12 +152,14 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const { site, isSitePreviewable } = this.props;
+
 		return (
 			<SidebarItem
 				tipTarget="sitePreview"
 				label={ this.props.translate( 'View Site' ) }
 				className={ this.itemLinkClass( [ '/view' ], 'preview' ) }
-				link={ '/view' + this.props.siteSuffix }
+				link={ isSitePreviewable && false ? '/view' + this.props.siteSuffix : site.URL }
 				onNavigate={ this.onNavigate }
 				icon="computer"
 				preloadSectionName="preview"
@@ -652,6 +655,7 @@ function mapStateToProps( state ) {
 		isPreviewShowing,
 		isSharingEnabledOnJetpackSite,
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+		isSitePreviewable: isSitePreviewable( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
