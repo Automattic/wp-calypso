@@ -57,7 +57,7 @@
 	color: $blue-dark;
 	max-width: 980px;
 	overflow: hidden;
-	padding: 0 24px 12px;
+	padding-bottom: 12px;
 	text-align: center;
 
 	@include breakpoint('>480px') {
@@ -67,6 +67,7 @@
 	h2 {
 		font-size: 16px;
 		font-weight: 600;
+		padding: 0 24px 0;
 
 		@include breakpoint('>480px') {
 			font-size: 24px;
@@ -75,6 +76,7 @@
 
 	p {
 		font-size: 11px;
+		padding: 0 24px 0;
 
 		@include breakpoint('>480px') {
 			font-size: 14px;
