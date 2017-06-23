@@ -28,9 +28,11 @@ export const CommentDetailPost = ( {
 					<img className="comment-detail__author-avatar-image" src={ parentCommentAuthorAvatarUrl } />
 				</div>
 				<div className="comment-detail__post-info">
-					<span>
-						{ translate( '%(authorName)s:', { args: { authorName: parentCommentAuthorDisplayName } } ) }
-					</span>
+					{ parentCommentAuthorDisplayName &&
+						<span>
+							{ translate( '%(authorName)s:', { args: { authorName: parentCommentAuthorDisplayName } } ) }
+						</span>
+					}
 					<a href={ parentCommentUrl }>
 						{ parentCommentContent }
 					</a>
@@ -43,9 +45,11 @@ export const CommentDetailPost = ( {
 		<div className="comment-detail__post">
 			<SiteIcon siteId={ siteId } size={ 24 } />
 			<div className="comment-detail__post-info">
-				<span>
-					{ translate( '%(authorName)s:', { args: { authorName: postAuthorDisplayName } } ) }
-				</span>
+				{ postAuthorDisplayName &&
+					<span>
+						{ translate( '%(authorName)s:', { args: { authorName: postAuthorDisplayName } } ) }
+					</span>
+				}
 				<a href={ postUrl }>
 					{ postTitle }
 				</a>
