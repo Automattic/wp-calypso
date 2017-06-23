@@ -198,7 +198,7 @@
 	fill: lighten( $gray, 10% );
 	height: 18px;
 	position: relative;
-		left: 0;
+		left: 1px;
 		top: 8px;
 
 	@include breakpoint( ">660px" ) {
