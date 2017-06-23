@@ -53,7 +53,8 @@ const ShippingZoneList = ( { site, siteId, loaded, shippingZones, translate } ) 
 			<QueryShippingZones siteId={ siteId } />
 			<ExtendedHeader
 				label={ translate( 'Shipping Zones' ) }
-				description={ translate( 'The regions you ship to and the methods you will provide.' ) }>
+				description={ translate( 'These are the regions you’ll ship to. ' +
+					'You can define different shipping methods for each region. ' ) }>
 				<Button
 					href={ addNewHref }
 					onClick={ onAddNewClick }
