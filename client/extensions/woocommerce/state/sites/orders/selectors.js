@@ -109,7 +109,7 @@ export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const orders = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'items' ], {} );
 	return filter( orders, function( order ) {
 		const { status } = order;
-		return status === 'pending' || status === 'processing' || status === 'on-hold';
+		return 'pending' === status || 'processing' === status || 'on-hold' === status;
 	} );
 };
 
@@ -120,7 +120,5 @@ export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
  */
 export const getNewOrdersRevenue = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const orders = getNewOrders( state, siteId );
-	return sumBy( orders, function( order ) {
-		return parseFloat( order.total );
-	} );
+	return sumBy( orders, order => parseFloat( order.total ) );
 };

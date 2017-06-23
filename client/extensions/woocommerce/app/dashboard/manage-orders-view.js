@@ -69,7 +69,7 @@ class ManageOrdersView extends Component {
 		}
 	}
 
-	possiblyrenderProcessOrdersWidget = () => {
+	possiblyRenderProcessOrdersWidget = () => {
 		const { site, orders, ordersRevenue, currency } = this.props;
 		if ( ! orders.length ) {
 			return null;
@@ -126,7 +126,7 @@ class ManageOrdersView extends Component {
 						) || '' }
 					</h2>
 				</div>
-				{ this.possiblyrenderProcessOrdersWidget() }
+				{ this.possiblyRenderProcessOrdersWidget() }
 				<Card
 					className="dashboard__reports-widget"
 				>
