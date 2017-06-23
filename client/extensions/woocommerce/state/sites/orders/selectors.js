@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, filter, sumBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -92,4 +92,33 @@ export const getOrder = ( state, orderId, siteId = getSelectedSiteId( state ) ) 
  */
 export const getTotalOrdersPages = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'totalPages' ], 1 );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {array} List of new orders.
+ */
+export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
+	// TODO: fetchOrders right now loads max number of orders, as pagination won't be supported until post v1
+	// We will possibly need to get this data another way once that behavior changes.
+	if ( ! areOrdersLoaded( state, 1, siteId ) ) {
+		return [];
+	}
+
+	const orders = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'items' ], {} );
+	return filter( orders, function( order ) {
+		const { status } = order;
+		return 'pending' === status || 'processing' === status || 'on-hold' === status;
+	} );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Number} Total from all new orders.
+ */
+export const getNewOrdersRevenue = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const orders = getNewOrders( state, siteId );
+	return sumBy( orders, order => parseFloat( order.total ) );
 };
