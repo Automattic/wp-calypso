@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent, PropTypes } from 'react';
-import classNames from 'classNames';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
