@@ -1,3 +1,12 @@
+.get-apps {
+	display: flex;
+	flex-direction: column;
+}
+
+.get-apps > div {
+	width: 100%;
+}
+
 .get-apps__desktop,
 .get-apps__mobile {
 	margin-bottom: 0;
@@ -32,6 +41,12 @@
 		@include breakpoint('>480px') {
 			margin-bottom: 0;
 		}
+	}
+}
+
+.get-apps__mobile {
+	@include breakpoint('>480px') {
+		order: 2;
 	}
 }
 

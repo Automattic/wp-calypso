@@ -22,7 +22,6 @@ export const GetApps = ( { translate } ) => {
 			<MeSidebarNavigation />
 			<GetAppsIllustration />
 			<SectionHeader label={ translate( 'WordPress Apps' ) } />
-			<DownloadCard />
 			<Card className="get-apps__mobile">
 				<div className={ 'get-apps__card-text' }>
 					<h3>{ translate( 'Mobile Apps' ) }</h3>
@@ -37,6 +36,7 @@ export const GetApps = ( { translate } ) => {
 					</a>
 				</div>
 			</Card>
+			<DownloadCard />
 		</Main>
 	);
 };
