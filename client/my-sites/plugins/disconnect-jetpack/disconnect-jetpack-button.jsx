@@ -19,6 +19,7 @@ import { setAllSitesSelected } from 'state/ui/actions';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanClass } from 'lib/plans/constants';
 import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
+import QuerySitePlans from 'components/data/query-site-plans';
 
 class DisconnectJetpackButton extends Component {
 	constructor( props ) {
@@ -111,6 +112,7 @@ class DisconnectJetpackButton extends Component {
 
 		return <Button { ...buttonProps }>
 			{ text }
+			<QuerySitePlans siteId={ site.ID } />
 			<DisconnectJetpackDialog
 				isVisible={ this.state.dialogVisible }
 				onDisconnect={ this.disconnectJetpack }
@@ -141,8 +143,7 @@ export default connect(
 		const plan = getCurrentPlan( state, ownProps.site.ID );
 		const planClass = plan && plan.productSlug
 			? getPlanClass( plan.productSlug )
-			: 'free';
-
+			: 'is-free-plan';
 		return {
 			planClass
 		};
