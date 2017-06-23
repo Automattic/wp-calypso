@@ -145,6 +145,15 @@
 	&.is-header {
 		color: $gray-text-min;
 	}
+
+	&.has-action {
+		cursor: pointer;
+
+		&:focus,
+		&:active {
+			box-shadow: inset 2px 0 0 $blue-medium;
+		}
+	}
 }
 
 .table-heading,

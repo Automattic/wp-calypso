@@ -13,15 +13,18 @@ import { times } from 'lodash';
 import Button from 'components/button';
 import EmptyContent from 'components/empty-content';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
+import formatCurrency from 'lib/format-currency';
 import {
 	areOrdersLoading,
 	areOrdersLoaded,
 	getOrders,
 	getTotalOrdersPages
 } from 'woocommerce/state/sites/orders/selectors';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrdersCurrentPage } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSiteAdminUrl } from 'state/sites/selectors';
+import humanDate from 'lib/human-date';
 import { setCurrentPage } from 'woocommerce/state/ui/orders/actions';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
@@ -87,23 +90,23 @@ class Orders extends Component {
 	}
 
 	renderOrderItems = ( order, i ) => {
-		const { moment, site } = this.props;
+		const { site } = this.props;
 		return (
-			<TableRow key={ i }>
+			<TableRow key={ i } href={ getLink( `/store/order/:site/${ order.number }`, site ) }>
 				<TableItem className="orders__table-name" isRowHeader>
-					<a className="orders__item-link" href={ `/store/order/${ site.slug }/${ order.number }` }>#{ order.number }</a>
+					<span className="orders__item-link">#{ order.number }</span>
 					<span className="orders__item-name">
 						{ `${ order.billing.first_name } ${ order.billing.last_name }` }
 					</span>
 				</TableItem>
 				<TableItem className="orders__table-date">
-					{ moment( order.date_modified ).format( 'LLL' ) }
+					{ humanDate( order.date_created ) }
 				</TableItem>
 				<TableItem className="orders__table-status">
 					{ this.getOrderStatus( order.status ) }
 				</TableItem>
 				<TableItem className="orders__table-total">
-					{ 'USD' === order.currency ? `$${ order.total }` : order.total }
+					{ formatCurrency( order.total, order.currency ) || order.total }
 				</TableItem>
 			</TableRow>
 		);
@@ -157,10 +160,10 @@ class Orders extends Component {
 
 		const headers = (
 			<TableRow>
-				<TableItem isHeader>{ translate( 'Order' ) }</TableItem>
-				<TableItem isHeader>{ translate( 'Date' ) }</TableItem>
-				<TableItem isHeader>{ translate( 'Status' ) }</TableItem>
-				<TableItem isHeader>{ translate( 'Total' ) }</TableItem>
+				<TableItem className="orders__table-name" isHeader>{ translate( 'Order' ) }</TableItem>
+				<TableItem className="orders__table-date" isHeader>{ translate( 'Date' ) }</TableItem>
+				<TableItem className="orders__table-status" isHeader>{ translate( 'Status' ) }</TableItem>
+				<TableItem className="orders__table-total" isHeader>{ translate( 'Total' ) }</TableItem>
 			</TableRow>
 		);
 

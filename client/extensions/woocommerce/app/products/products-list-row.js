@@ -3,7 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -45,13 +44,8 @@ const ProductsListRow = ( { site, product } ) => {
 		</div>
 	);
 
-	const goToProduct = () => {
-		const link = getLink( '/store/product/:site/' + product.id, site );
-		page( link );
-	};
-
 	return (
-		<TableRow onClick={ goToProduct }>
+		<TableRow href={ getLink( '/store/product/:site/' + product.id, site ) }>
 			<TableItem isTitle className="products__list-product">
 				{ renderImage() }
 				<span className="products__list-name">{ product.name }</span>
