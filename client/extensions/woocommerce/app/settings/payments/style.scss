@@ -3,9 +3,15 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	
+
 	@include breakpoint( "<660px" ) {
 		flex-direction: column;
+	}
+}
+
+.payments__location-currency {
+	@include breakpoint( ">660px" ) {
+		margin-top: 58px;
 	}
 }
 
@@ -14,7 +20,7 @@
 	flex-direction: column;
 	max-width: 255px;
 	padding-top: 24px;
-	
+
 	@include breakpoint( ">960px" ) {
 		padding-left: 24px;
 		padding-top: 0;

@@ -115,7 +115,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		const { currencies, currency, translate } = this.props;
 		const validCurrencies = [ 'USD', 'AUD', 'CAD', 'EUR', 'GBP', 'JPY', 'BRL' ];
 		return (
-			<div>
+			<div className="payments__location-currency">
 				<ExtendedHeader
 					label={ translate( 'Store location and currency' ) }
 					description={

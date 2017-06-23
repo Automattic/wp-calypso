@@ -21,6 +21,11 @@
 	}
 }
 
+.action-header__breadcrumbs-separator {
+	color: $gray;
+	margin-left: 4px;
+}
+
 .action-header__actions {
 	width: 40%;
 	display: flex;
@@ -46,5 +51,8 @@
 		width: calc(100% - 229px);
 		top: 47px;
 		left: 229px;
+	}
+	@include breakpoint( ">660px" ) {
+		margin-bottom: 58px;
 	}
 }
