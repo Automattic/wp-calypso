@@ -7,7 +7,7 @@ import shallowEqual from 'react-pure-render/shallowEqual';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { partial, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,8 +20,8 @@ import PostImage from '../post/post-image';
 import PostExcerpt from 'components/post-excerpt';
 import updatePostStatus from 'components/update-post-status';
 import utils from 'lib/posts/utils';
-import analytics from 'lib/analytics';
 import config from 'config';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getPostPreviewUrl } from 'state/posts/selectors';
@@ -33,9 +33,7 @@ import Comments from 'blocks/comments';
 import PostShare from 'blocks/post-share';
 import PostActions from 'blocks/post-actions';
 
-function recordEvent( eventAction ) {
-	analytics.ga.recordEvent( 'Posts', eventAction );
-}
+const recordEvent = partial( recordGoogleEvent, 'Posts' );
 
 function checkPropsChange( currentProps, nextProps, propArr ) {
 	for ( let i = 0; i < propArr.length; i++ ) {
@@ -52,6 +50,17 @@ class Post extends Component {
 		// connected via Redux
 		setPreviewUrl: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
+		recordViewPost: PropTypes.func.isRequired,
+		recordPreviewPost: PropTypes.func.isRequired,
+		recordEditPost: PropTypes.func.isRequired,
+		recordCommentIconClick: PropTypes.func.isRequired,
+		recordLikeIconClick: PropTypes.func.isRequired,
+		recordDateClick: PropTypes.func.isRequired,
+		recordFeaturedImageStandardClick: PropTypes.func.isRequired,
+		recordFeaturedImageLargeClick: PropTypes.func.isRequired,
+		recordPostTitleClick: PropTypes.func.isRequired,
+		recordPostExcerptClick: PropTypes.func.isRequired,
+		recordViewStats: PropTypes.func.isRequired,
 
 		// connected via updatePostStatus
 		buildUpdateTemplate: PropTypes.func.isRequired,
@@ -90,42 +99,6 @@ class Post extends Component {
 		return checkPropsChange( this.props, nextProps, propsToCheck );
 	}
 
-	analyticsEvents: {
-		viewPost() {
-			recordEvent( 'Clicked View Post' );
-		},
-		previewPost() {
-			recordEvent( 'Clicked Preview Post' );
-		},
-		editPost() {
-			recordEvent( 'Clicked Edit Post' );
-		},
-		commentIconClick() {
-			recordEvent( 'Clicked Post Comment Icon/Number' );
-		},
-		likeIconClick() {
-			recordEvent( 'Clicked Post Likes Icon/Number' );
-		},
-		dateClick() {
-			recordEvent( 'Clicked Post Date' );
-		},
-		featuredImageStandardClick() {
-			recordEvent( 'Clicked Post Featured Image Standard' );
-		},
-		featuredImageLargeClick() {
-			recordEvent( 'Clicked Post Featured Image Large' );
-		},
-		postTitleClick() {
-			recordEvent( 'Clicked Post Title' );
-		},
-		postExcerptClick() {
-			recordEvent( 'Clicked Post Excerpt' );
-		},
-		viewStats() {
-			recordEvent( 'Clicked View Post Stats' );
-		}
-	}
-
 	publishPost = () => {
 		this.props.updatePostStatus( 'publish' );
 		recordEvent( 'Clicked Publish Post' );
@@ -160,7 +133,7 @@ class Post extends Component {
 					href={ this.getContentLinkURL() }
 					className="post__title-link post__content-link"
 					target={ this.getContentLinkTarget() }
-					onClick={ this.analyticsEvents.postTitleClick }>
+					onClick={ this.props.postTitleClick }>
 					<h4 className="post__title">{ this.props.post.title }</h4>
 				</a>
 			);
@@ -262,7 +235,7 @@ class Post extends Component {
 		this.setState( {
 			showComments: ! this.state.showComments
 		} );
-		this.analyticsEvents.commentIconClick();
+		this.props.recordCommentIconClick();
 	}
 
 	toggleShare = () => {
@@ -278,9 +251,9 @@ class Post extends Component {
 		const { isPreviewable, previewUrl, selectedSiteId } = this.props;
 
 		if ( this.props.post.status && this.props.post.status === 'future' ) {
-			this.analyticsEvents.previewPost();
+			this.props.recordPreviewPost();
 		} else {
-			this.analyticsEvents.viewPost();
+			this.props.recordViewPost();
 		}
 
 		if ( ! isPreviewable || ! selectedSiteId ) {
@@ -348,6 +321,29 @@ class Post extends Component {
 
 }
 
+const analyticsEvents = [
+	[ 'recordViewPost', 'Clicked View Post' ],
+	[ 'recordPreviewPost', 'Clicked Preview Post' ],
+	[ 'recordEditPost', 'Clicked Edit Post' ],
+	[ 'recordCommentIconClick', 'Clicked Post Comment Icon/Number' ],
+	[ 'recordLikeIconClick', 'Clicked Post Likes Icon/Number' ],
+	[ 'recordDateClick', 'Clicked Post Date' ],
+	[ 'recordFeaturedImageStandardClick', 'Clicked Post Featured Image Standard' ],
+	[ 'recordFeaturedImageLargeClick', 'Clicked Post Featured Image Large' ],
+	[ 'recordPostTitleClick', 'Clicked Post Title' ],
+	[ 'recordPostExcerptClick', 'Clicked Post Excerpt' ],
+	[ 'recordViewStats', 'Clicked View Post Stats' ],
+];
+
+const mapDispatch = {
+	setPreviewUrl,
+	setLayoutFocus,
+	...analyticsEvents.reduce( ( actions, [ key, event ] ) => {
+		actions[ key ] = partial( recordEvent, event );
+		return actions;
+	}, {} ),
+};
+
 export default connect(
 	( state, { post } ) => {
 		const selectedSiteId = getSelectedSiteId( state );
@@ -376,5 +372,5 @@ export default connect(
 			)
 		};
 	},
-	{ setPreviewUrl, setLayoutFocus }
+	mapDispatch
 )( updatePostStatus( localize( Post ) ) );
