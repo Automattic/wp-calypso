@@ -474,6 +474,12 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	top: 8px;
 }
 
+.search-stream .reader-subscription-list-item .gridicons-cog {
+	@include breakpoint( "<660px" ) {
+		left: 1px;
+	}
+}
+
 .card.reader-search-card.is-photo {
 
 	@include breakpoint( "<660px" ) {
