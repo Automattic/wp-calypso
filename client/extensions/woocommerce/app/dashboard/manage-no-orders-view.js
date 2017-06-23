@@ -11,7 +11,6 @@ import page from 'page';
 import analytics from 'lib/analytics';
 import BasicWidget from 'woocommerce/components/basic-widget';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import ReadingWidget from 'woocommerce/components/reading-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
 import WidgetGroup from 'woocommerce/components/widget-group';
 
@@ -36,38 +35,25 @@ class ManageNoOrdersView extends Component {
 		);
 	}
 
-	renderReadingWidget = () => {
-		const { translate } = this.props;
-		return (
-			<ReadingWidget
-				className="dashboard__reading-widget"
-				text={ translate( 'You’re not alone! Get tips from seasoned merchants,' +
-					' learn best practices to keep your store ship-shape,' +
-					' and find how to boost your sales and drive traffic.' ) }
-				title={ translate( 'Recommended reading' ) }
-			/>
-		);
-	}
-
-	renderExampleOrderWidget = () => {
+	renderStatsWidget = () => {
 		const { site, translate } = this.props;
 		const trackClick = () => {
 			analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
-				action: 'view-example-order',
+				action: 'view-stats',
 			} );
-			page.redirect( getLink( '/store/orders/:site/example', site ) );
+			page.redirect( getLink( '/store/stats/orders/day/:site', site ) );
 		};
 		return (
 			<BasicWidget
-				buttonLabel={ translate( 'View an example order' ) }
+				buttonLabel={ translate( 'View stats' ) }
 				onButtonClick={ trackClick }
-				className="dashboard__example-order-widget"
-				title={ translate( 'Looking for orders and reports?' ) }
+				className="dashboard__stats-widget"
+				title={ translate( 'Looking for stats?' ) }
 			>
 				<p>
 					{ translate( 'This dashboard will evolve as your store grows.' +
-						' Statistics will form and order overviews will display when your' +
-						' first orders start arriving.' ) }
+						' Statistics will form and order overviews will display as soon as' +
+						' your orders start arriving.' ) }
 				</p>
 			</BasicWidget>
 		);
@@ -108,9 +94,8 @@ class ManageNoOrdersView extends Component {
 		return (
 			<div className="dashboard__manage-no-orders">
 				{ this.renderShareWidget() }
-				{ this.renderReadingWidget() }
 				<WidgetGroup>
-					{ this.renderExampleOrderWidget() }
+					{ this.renderStatsWidget() }
 					{ this.renderViewAndTestWidget() }
 				</WidgetGroup>
 			</div>

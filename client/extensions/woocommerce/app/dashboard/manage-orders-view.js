@@ -23,7 +23,6 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import ProcessOrdersWidget from 'woocommerce/components/process-orders-widget';
-import ReadingWidget from 'woocommerce/components/reading-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
 import Card from 'components/card';
 
@@ -97,19 +96,6 @@ class ManageOrdersView extends Component {
 		);
 	}
 
-	possiblyRenderReadingWidget = () => {
-		// TODO - connect to display preferences in a follow-on PR
-		const { translate } = this.props;
-		return (
-			<ReadingWidget
-				text={ translate( 'You’re not alone! Get tips from seasoned merchants,' +
-					' learn best practices to keep your store ship-shape,' +
-					' and find how to boost your sales and drive traffic.' ) }
-				title={ translate( 'Recommended reading' ) }
-			/>
-		);
-	}
-
 	render = () => {
 		const { site, translate, orders, user } = this.props;
 		return (
@@ -148,7 +134,6 @@ class ManageOrdersView extends Component {
 					</div>
 				</Card>
 				{ this.possiblyRenderShareWidget() }
-				{ this.possiblyRenderReadingWidget() }
 			</div>
 		);
 	}
