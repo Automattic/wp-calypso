@@ -81,7 +81,7 @@ const ThemeSheet = React.createClass( {
 		// Connected props
 		isLoggedIn: React.PropTypes.bool,
 		isActive: React.PropTypes.bool,
-		isPurchased: React.PropTypes.bool,
+		hidePrice: React.PropTypes.bool,
 		isJetpack: React.PropTypes.bool,
 		siteId: React.PropTypes.number,
 		siteSlug: React.PropTypes.string,
@@ -440,9 +440,9 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getDefaultOptionLabel() {
-		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = this.props;
+		const { defaultOption, isActive, isLoggedIn, isPremium, hidePrice, isJetpack } = this.props;
 		if ( isLoggedIn && ! isActive && ! isJetpack ) {
-			if ( isPremium && ! isPurchased ) { // purchase
+			if ( isPremium && ! hidePrice ) { // purchase
 				return i18n.translate( 'Pick this design' );
 			} // else: activate
 			return i18n.translate( 'Activate this design' );
@@ -482,7 +482,7 @@ const ThemeSheet = React.createClass( {
 			return '';
 		}
 		let price = this.props.price;
-		if ( ! this.isLoaded() || this.props.isActive || this.props.isPurchased ) {
+		if ( ! this.isLoaded() || this.props.isActive || this.props.hidePrice ) {
 			price = '';
 		} else if ( ! this.props.isPremium ) {
 			price = i18n.translate( 'Free' );
@@ -597,7 +597,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isActive,
 		isLoggedIn,
 		isPremium,
-		isPurchased,
+		hidePrice,
 		isJetpack,
 		hasUnlimitedPremiumThemes
 	} = props;
@@ -617,7 +617,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'customize';
 	} else if ( needsJetpackUpgrade ) {
 		defaultOption = 'upgradePlan';
-	} else if ( isPremium && ! isPurchased ) {
+	} else if ( isPremium && ! hidePrice ) {
 		defaultOption = 'purchase';
 	} else {
 		defaultOption = 'activate';
@@ -658,7 +658,7 @@ export default connect(
 			isActive: isThemeActive( state, id, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isPremium: isThemePremium( state, id ),
-			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
+			hidePrice: isPremiumThemeAvailable( state, id, siteId ),
 			hasUnlimitedPremiumThemes: config.isEnabled( 'jetpack/pijp' ) && hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			// No siteId specified since we want the *canonical* URL :-)

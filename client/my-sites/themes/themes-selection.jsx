@@ -156,7 +156,7 @@ class ThemesSelection extends Component {
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
 					isActive={ this.props.isThemeActive }
-					isPurchased={ this.props.hidePremiumThemePrice }
+					hidePrice={ this.props.hidePremiumThemePrice }
 					isInstalling={ this.props.isInstallingTheme }
 					loading={ this.props.isRequesting }
 					emptyContent={ this.props.emptyContent }
