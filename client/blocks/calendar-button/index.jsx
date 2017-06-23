@@ -21,6 +21,7 @@ class CalendarButton extends Component {
 		// calendar-popover properties
 		autoPosition: PropTypes.bool,
 		closeOnEsc: PropTypes.bool,
+		disabledDays: PropTypes.array,
 		events: PropTypes.array,
 		ignoreContext: PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
 		isVisible: PropTypes.bool,
@@ -71,9 +72,12 @@ class CalendarButton extends Component {
 		const calendarProperties = Object.assign( {}, pick( this.props, [
 			'autoPosition',
 			'closeOnEsc',
+			'disabledDays',
 			'events',
+			'enableOutsideDays',
 			'ignoreContext',
 			'isVisible',
+			'modifiers',
 			'rootClassName',
 			'selectedDay',
 			'showDelay',

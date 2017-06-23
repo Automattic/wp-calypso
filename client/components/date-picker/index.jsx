@@ -129,6 +129,7 @@ class DatePicker extends PureComponent {
 			<DayPicker
 				ref="daypicker"
 				className="date-picker"
+				disabledDays={ this.props.disabledDays }
 				initialMonth={ this.props.calendarViewDate }
 				renderDay={ this.renderDay }
 				localeUtils={ this.locale() }
