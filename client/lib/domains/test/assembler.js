@@ -41,6 +41,7 @@ describe( 'assembler', () => {
 			hasPrivacyProtection: undefined,
 			isAutoRenewing: undefined,
 			isPendingIcannVerification: undefined,
+			isPendingWhoisUpdate: undefined,
 			isPrimary: false,
 			name: DOMAIN_NAME,
 			manualTransferRequired: undefined,
