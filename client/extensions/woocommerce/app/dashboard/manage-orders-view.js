@@ -64,8 +64,8 @@ class ManageOrdersView extends Component {
 		const oldSiteId = site ? site.ID : null;
 
 		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchOrders( newProps.siteId );
-			this.props.fetchSettingsGeneral( site.ID );
+			this.props.fetchOrders( newSiteId );
+			this.props.fetchSettingsGeneral( newSiteId );
 		}
 	}
 
