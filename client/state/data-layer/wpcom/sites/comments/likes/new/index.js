@@ -7,19 +7,25 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
-	COMMENTS_LIKE,
+	COMMENTS_LIKE_REQUEST,
 	COMMENTS_LIKE_UPDATE,
-	COMMENTS_UNLIKE
+	COMMENTS_LIKE,
+	COMMENTS_UNLIKE,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
-export const likeComment = ( { dispatch }, action ) => dispatch( http( {
-	method: 'POST',
-	apiVersion: '1.1',
-	path: `/sites/${ action.siteId }/comments/${ action.commentId }/likes/new`
-}, action ) );
+export const likeComment = ( { dispatch }, action ) => {
+	//optimistic update of the like status and count
+	dispatch( { ...action, type: COMMENTS_LIKE } );
+
+	dispatch( http( {
+		method: 'POST',
+		apiVersion: '1.1',
+		path: `/sites/${ action.siteId }/comments/${ action.commentId }/likes/new`
+	}, action ) );
+};
 
 export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId }, next, { i_like, like_count } ) => dispatch( {
 	type: COMMENTS_LIKE_UPDATE,
@@ -43,5 +49,5 @@ export const handleLikeFailure = ( { dispatch }, { siteId, postId, commentId } )
 };
 
 export default {
-	[ COMMENTS_LIKE ]: [ dispatchRequest( likeComment, updateCommentLikes, handleLikeFailure ) ]
+	[ COMMENTS_LIKE_REQUEST ]: [ dispatchRequest( likeComment, updateCommentLikes, handleLikeFailure ) ]
 };
