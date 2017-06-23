@@ -29,7 +29,11 @@ const DownloadCard = ( { translate } ) => {
 		secondAvailableLink: availableLinkTag( linuxTarLink ),
 		thirdAvailableLink: availableLinkTag( linuxDebLink ),
 	};
-	let alsoAvailable = translate( 'Also available for: {{firstAvailableLink}}MacOS{{/firstAvailableLink}}, {{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}}, {{thirdAvailableLink}}Linux (.deb){{/thirdAvailableLink}}.', { components: translateComponents } );
+	let alsoAvailable = translate( 'Also available for: {{firstAvailableLink}}MacOS{{/firstAvailableLink}},' +
+		'{{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}},' +
+		'{{thirdAvailableLink}}Linux (.deb){{/thirdAvailableLink}}.',
+		{ components: translateComponents }
+	);
 
 	if ( navigator.platform && navigator.platform.length > 0 ) {
 		switch ( navigator.platform ) {
