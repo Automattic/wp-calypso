@@ -30,7 +30,7 @@ const JobListings = ( {
 		job_manager_enable_categories,
 		job_manager_enable_default_category_multiselect,
 		job_manager_enable_types,
-		job_manager_google_maps_api_key,
+		job_manager_google_maps_api_key = '',
 		job_manager_hide_expired,
 		job_manager_hide_expired_content,
 		job_manager_hide_filled_positions,

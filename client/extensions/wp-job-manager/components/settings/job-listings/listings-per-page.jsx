@@ -8,7 +8,7 @@ import React from 'react';
  */
 import FormTextInput from 'components/forms/form-text-input';
 
-const ListingsPerPage = ( { isDisabled, onChange, value } ) => (
+const ListingsPerPage = ( { isDisabled, onChange, value = '' } ) => (
 	<FormTextInput
 		disabled={ isDisabled }
 		min="0"
