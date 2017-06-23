@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -9,6 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 export class CommentDetailReply extends Component {
 	state = {
@@ -36,6 +38,16 @@ export class CommentDetailReply extends Component {
 	handleTextChange = event => this.setState( { commentText: event.target.value } );
 
 	submit = () => {
+		const comment = {
+			authorAvatarUrl: this.props.currentUser.avatar_URL,
+			authorName: this.props.currentUser.display_name,
+			authorUrl: this.props.currentUser.primary_blog_url,
+			parentId: this.props.commentId,
+			postTitle: this.props.postTitle,
+			content: this.state.commentText,
+			URL: this.props.postUrl,
+		};
+		this.props.submitComment( comment );
 		this.setState( { commentText: '' } );
 	}
 
@@ -81,4 +93,8 @@ export class CommentDetailReply extends Component {
 	}
 }
 
-export default localize( CommentDetailReply );
+const mapStateToProps = state => ( {
+	currentUser: getCurrentUser( state )
+} );
+
+export default connect( mapStateToProps )( localize( CommentDetailReply ) );

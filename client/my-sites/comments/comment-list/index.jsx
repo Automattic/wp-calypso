@@ -215,6 +215,7 @@ export class CommentList extends Component {
 			status,
 			showPlaceholder,
 			showEmptyContent,
+			submitComment,
 		} = this.props;
 		const {
 			isBulkEdit,
@@ -251,6 +252,7 @@ export class CommentList extends Component {
 							key={ `comment-${ siteId }-${ comment.ID }` }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
+							submitComment={ submitComment }
 							toggleCommentLike={ this.toggleCommentLike }
 							toggleCommentSelected={ this.toggleCommentSelected }
 						/>

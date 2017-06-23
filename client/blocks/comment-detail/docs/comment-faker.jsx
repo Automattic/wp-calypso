@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { filter, get, isNil, keyBy, keys, map, omit } from 'lodash';
+import { filter, get, isNil, keyBy, keys, map, maxBy, omit } from 'lodash';
 
 /**
  * `CommentFaker` is a HOC to easily test the Comments Management without the necessity of real data or actions.
@@ -89,6 +89,41 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		} } );
 	}
 
+	submitComment = comment => {
+		const { comments } = this.state;
+		const newCommentId = parseInt( maxBy( keys( this.state.comments ) ) + 1, 10 );
+		const now = new Date();
+
+		const newComment = {
+			author: {
+				avatar_URL: comment.authorAvatarUrl,
+				name: comment.authorName,
+				URL: comment.authorUrl,
+			},
+			content: comment.content,
+			date: now.toISOString(),
+			i_like: false,
+			ID: newCommentId,
+			like_count: 0,
+			parent: {
+				ID: comment.parentId,
+			},
+			post: {
+				title: comment.postTitle,
+			},
+			status: 'approved',
+			type: 'comment',
+			URL: comment.URL,
+		};
+
+		this.setState( {
+			comments: {
+				...comments,
+				newCommentId: newComment,
+			}
+		} );
+	}
+
 	/**
 	 * Resets the status and the like value of a list of comments to their previous values.
 	 *
@@ -123,6 +158,7 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 			setBulkStatus={ this.setBulkStatus }
 			setCommentLike={ this.setCommentLike }
 			setCommentStatus={ this.setCommentStatus }
+			submitComment={ this.submitComment }
 			undoBulkStatus={ this.undoBulkStatus }
 		/>;
 };
