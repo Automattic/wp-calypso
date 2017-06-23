@@ -12,11 +12,11 @@ import { head } from 'lodash';
  */
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import Button from 'components/button';
-import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
 import ImagePreloader from 'components/image-preloader';
+import PriceInput from 'woocommerce/components/price-input';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
 import Spinner from 'components/spinner';
 
@@ -194,10 +194,9 @@ class ProductFormVariationsRow extends Component {
 					</div>
 				</td>
 				<td>
-					<FormCurrencyInput noWrap
-						currencySymbolPrefix="$"
-						name="price"
+					<PriceInput noWrap
 						value={ variation.regular_price || '' }
+						name="price"
 						placeholder="0.00"
 						onChange={ this.setPrice }
 						size="4"

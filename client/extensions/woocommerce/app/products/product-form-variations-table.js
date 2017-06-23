@@ -9,10 +9,10 @@ import { find, isNumber } from 'lodash';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
+import PriceInput from 'woocommerce/components/price-input';
 import ProductFormVariationsModal from './product-form-variations-modal';
 import ProductFormVariationsRow from './product-form-variations-row';
 
@@ -153,10 +153,9 @@ class ProductFormVariationsTable extends React.Component {
 					</div>
 				</td>
 				<td>
-					<FormCurrencyInput noWrap
-						currencySymbolPrefix="$"
-						name="price"
+					<PriceInput noWrap
 						value={ regular_price }
+						name="price"
 						placeholder="0.00"
 						onChange={ this.setPrice }
 						size="4"
