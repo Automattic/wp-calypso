@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import shallowEqual from 'react-pure-render/shallowEqual';
 import classNames from 'classnames';
@@ -47,10 +47,12 @@ function checkPropsChange( currentProps, nextProps, propArr ) {
 	return false;
 }
 
-const Post = React.createClass( {
-	displayName: 'Post',
+class Post extends Component {
+	static propTypes = {
+		// connected via Redux
+		setPreviewUrl: PropTypes.func.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
 
-	propTypes: {
 		// connected via updatePostStatus
 		buildUpdateTemplate: PropTypes.func.isRequired,
 		togglePageActions: PropTypes.func.isRequired,
@@ -60,15 +62,13 @@ const Post = React.createClass( {
 		previousStatus: PropTypes.string,
 		showMoreOptions: PropTypes.bool.isRequired,
 		showPageActions: PropTypes.bool.isRequired,
-	},
+	}
 
-	getInitialState() {
-		return {
-			showComments: false,
-			showShare: false,
-			commentsFilter: 'all'
-		};
-	},
+	state = {
+		showComments: false,
+		showShare: false,
+		commentsFilter: 'all',
+	}
 
 	shouldComponentUpdate( nextProps, nextState ) {
 		if ( ! shallowEqual( this.state, nextState ) ) {
@@ -88,7 +88,7 @@ const Post = React.createClass( {
 			'updatedStatus',
 		];
 		return checkPropsChange( this.props, nextProps, propsToCheck );
-	},
+	}
 
 	analyticsEvents: {
 		viewPost() {
@@ -124,41 +124,34 @@ const Post = React.createClass( {
 		viewStats() {
 			recordEvent( 'Clicked View Post Stats' );
 		}
+	}
 
-	},
-
-	publishPost() {
+	publishPost = () => {
 		this.props.updatePostStatus( 'publish' );
 		recordEvent( 'Clicked Publish Post' );
-	},
+	}
 
-	restorePost() {
+	restorePost = () => {
 		this.props.updatePostStatus( 'restore' );
 		recordEvent( 'Clicked Restore Post' );
-	},
+	}
 
-	deletePost() {
+	deletePost = () => {
 		this.props.updatePostStatus( 'delete' );
 		recordEvent( 'Clicked Delete Post' );
-	},
+	}
 
-	trashPost() {
+	trashPost = () => {
 		this.props.updatePostStatus( 'trash' );
 		recordEvent( 'Clicked Trash Post' );
-	},
-
-	canUserEditPost() {
-		const post = this.props.post;
-		return post.capabilities && post.capabilities.edit_post && post.status !== 'trash';
-	},
+	}
 
 	getPostClass() {
-		return classNames( {
-			post: true,
-			'is-protected': ( this.props.post.password ) ? true : false,
-			'show-more-options': this.props.showMoreOptions
+		return classNames( 'post', {
+			'is-protected': !! this.props.post.password,
+			'show-more-options': this.props.showMoreOptions,
 		} );
-	},
+	}
 
 	getTitle() {
 		if ( this.props.post.title ) {
@@ -172,7 +165,7 @@ const Post = React.createClass( {
 				</a>
 			);
 		}
-	},
+	}
 
 	getPostImage() {
 		if ( ! this.props.postImages ) {
@@ -188,12 +181,12 @@ const Post = React.createClass( {
 		return (
 			<PostImage postImages={ this.props.postImages } />
 		);
-	},
+	}
 
 	getTrimmedExcerpt() {
 		const excerpt = this.props.post.excerpt;
 		return ( excerpt.length <= 220 ) ? excerpt : excerpt.substring( 0, 220 ) + '\u2026';
-	},
+	}
 
 	getExcerpt() {
 		let excerptElement;
@@ -218,7 +211,7 @@ const Post = React.createClass( {
 				{ excerptElement }
 			</a>
 		);
-	},
+	}
 
 	getHeader() {
 		if ( this.props.selectedSiteId && this.props.isPostFromSingleUserSite ) {
@@ -231,7 +224,7 @@ const Post = React.createClass( {
 				path={ this.props.path }
 				showAuthor={ ! this.props.isPostFromSingleUserSite } />
 		);
-	},
+	}
 
 	getContent() {
 		const post = this.props.post;
@@ -244,7 +237,7 @@ const Post = React.createClass( {
 				</div>
 			);
 		}
-	},
+	}
 
 	getContentLinkURL() {
 		const post = this.props.post;
@@ -255,7 +248,7 @@ const Post = React.createClass( {
 			return null;
 		}
 		return post.URL;
-	},
+	}
 
 	getContentLinkTarget() {
 		if ( utils.userCan( 'edit_post', this.props.post ) ) {
@@ -263,24 +256,24 @@ const Post = React.createClass( {
 		}
 
 		return '_blank';
-	},
+	}
 
-	toggleComments() {
+	toggleComments = () => {
 		this.setState( {
 			showComments: ! this.state.showComments
 		} );
 		this.analyticsEvents.commentIconClick();
-	},
+	}
 
-	toggleShare() {
+	toggleShare = () => {
 		this.setState( { showShare: ! this.state.showShare } );
-	},
+	}
 
-	setCommentsFilter( commentsFilter ) {
+	setCommentsFilter = ( commentsFilter ) => {
 		this.setState( { commentsFilter } );
-	},
+	}
 
-	viewPost( event ) {
+	viewPost = ( event ) => {
 		event.preventDefault();
 		const { isPreviewable, previewUrl, selectedSiteId } = this.props;
 
@@ -296,7 +289,7 @@ const Post = React.createClass( {
 
 		this.props.setPreviewUrl( previewUrl );
 		this.props.setLayoutFocus( 'preview' );
-	},
+	}
 
 	render() {
 		return (
@@ -353,7 +346,7 @@ const Post = React.createClass( {
 		);
 	}
 
-} );
+}
 
 export default connect(
 	( state, { post } ) => {
