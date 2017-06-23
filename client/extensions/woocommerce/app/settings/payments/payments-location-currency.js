@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -70,7 +71,9 @@ class SettingsPaymentsLocationCurrency extends Component {
 		};
 	}
 
-	renderOption = ( option ) => {
+	renderOption = ( currency ) => {
+		const { currencies } = this.props;
+		const option = find( currencies, { code: currency } );
 		return (
 			<option
 				key={ option.code }
@@ -110,6 +113,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 
 	render() {
 		const { currencies, currency, translate } = this.props;
+		const validCurrencies = [ 'USD', 'AUD', 'CAD', 'EUR', 'GBP', 'JPY', 'BRL' ];
 		return (
 			<div>
 				<ExtendedHeader
@@ -131,7 +135,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 							className="payments__currency-select"
 							onChange={ this.onChange }
 							value={ currency }>
-							{ currencies && currencies.map( this.renderOption ) }
+							{ currencies && currencies.length && validCurrencies.map( this.renderOption ) }
 						</FormSelect>
 					</div>
 
