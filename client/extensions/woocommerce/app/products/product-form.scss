@@ -249,6 +249,10 @@
 	resize: vertical;
 }
 
+.products__product-form-details-basic-description.form-fieldset {
+	margin-bottom: 0;
+}
+
 .products__categories-card {
 	.form-fieldset {
 		&:last-child {
@@ -890,12 +894,10 @@
 	.products__product-stock-options-wrapper {
 		display: flex;
 		flex-direction: column;
-		margin-top: 12px;
 
 		.products__product-manage-stock {
 			width: 150px;
 			margin-right: 24px;
-			margin-bottom: 12px;
 		}
 
 		.products__product-backorders-wrapper {

@@ -125,7 +125,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 		return (
 			<div key={ attribute.uid } className={ classes }>
 				<FormTextInput
-					placeholder={ translate( 'Material' ) }
+					placeholder={ translate( 'Fabric' ) }
 					value={ attributeName }
 					id={ attribute.uid }
 					name="type"
@@ -173,9 +173,9 @@ class ProductFormAdditionalDetailsCard extends Component {
 				clickableHeader
 			>
 				<FormSettingExplanation>
-					{ translate( 'Display additional details in a formatted list. Examples when selling ' +
-						'apparel include Cut, Type, and Material. This will also allow customers to filter ' +
-						'your store to find Women\'s cut Hoodies in Cotton.' ) }
+					{ translate( 'Include additional details about your products, like \‘fabric\’ or \‘type\’ ' +
+						'for apparel. This will help customers find the right products by' +
+						'filtering for their preferred options, like a cotton shirt in a women\’s cut.' ) }
 				</FormSettingExplanation>
 
 				<div className="products__additional-details-container">

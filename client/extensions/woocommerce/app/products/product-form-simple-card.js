@@ -75,7 +75,10 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 				</FormFieldSet>
 			</div>
 			<FormSettingExplanation>{ translate(
-				'Shipping services will use this data to provide accurate rates.'
+				'Dimensions are used to calculate shipping. Enter the ' +
+				'size of the product as you’d put it in a package. For ' +
+				'a shirt, this would mean the size it is when folded. ' +
+				'For a vase, this would mean including bubble wrap.'
 			) }</FormSettingExplanation>
 		</Card>
 	);
