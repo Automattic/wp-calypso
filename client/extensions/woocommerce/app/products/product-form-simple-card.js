@@ -9,7 +9,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
-import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -17,6 +16,7 @@ import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
+import PriceInput from 'woocommerce/components/price-input';
 
 const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) => {
 	const setDimension = ( e ) => {
@@ -43,16 +43,15 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 		editProduct( siteId, product, { backorders: e.target.value } );
 	};
 
-	// TODO Pull in currency and currency position.
 	const renderPrice = () => (
 		<Card className="products__product-form-price">
 			<FormLabel>{ translate( 'Price' ) }</FormLabel>
-			<FormCurrencyInput noWrap
-				currencySymbolPrefix="$"
-				name="price"
+			<PriceInput noWrap
 				value={ product.regular_price || '' }
+				name="price"
 				onChange={ setPrice }
 				size="4"
+				placeholder="0.00"
 			/>
 		</Card>
 	);
