@@ -10,6 +10,7 @@ import get from 'lodash/get';
 import userModule from 'lib/user';
 import { stripHTML } from 'lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
+import Emojify from 'components/emojify';
 
 const user = userModule();
 
@@ -150,7 +151,7 @@ const getChildDirection = child => {
 	return null;
 };
 
-const inlineClasses = [ 'emojify' ];
+const inlineComponents = [ Emojify ];
 /***
  * Sets a react component child directionality according to it's text content
  * That function intended to be used recursively with React.Children.map
@@ -178,7 +179,7 @@ const setChildDirection = ( child ) => {
 				return innerChild;
 			}
 
-			if ( inlineClasses.some( inlineClass => innerChild.props.className.indexOf( inlineClass ) > -1 ) ) {
+			if ( inlineComponents.some( inlineComponent => innerChild.type === inlineComponent ) ) {
 				innerChildDirection = getChildDirection( innerChild );
 				return innerChild;
 			}
