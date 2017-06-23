@@ -423,14 +423,27 @@ function mediaButton( editor ) {
 		renderDropZone( { visible: event.type === 'dragend' } );
 	}
 
-	editor.addCommand( 'wpcomAddMedia', () => {
+	function initMediaModal() {
 		const selectedSite = getSelectedSiteFromState();
 		if ( selectedSite ) {
 			MediaActions.clearValidationErrors( selectedSite.ID );
 		}
+	}
+
+	editor.addCommand( 'wpcomAddMedia', () => {
+		initMediaModal();
 
 		renderModal( {
 			visible: true
+		} );
+	} );
+
+	editor.addCommand( 'googleAddMedia', () => {
+		initMediaModal();
+
+		renderModal( {
+			visible: true,
+			source: 'google_photos',
 		} );
 	} );
 
