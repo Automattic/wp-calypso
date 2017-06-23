@@ -137,13 +137,9 @@
 	}
 }
 
-// Custom breakpoints
-$reader-post-card-breakpoint-large: "( min-width: 961px ) and ( max-width: 1040px )";
-$reader-post-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 940px )";
-$reader-post-card-breakpoint-small: "( max-width: 550px )";
-
 // Post recommendations in Search
-.is-reader-page .search-stream .reader__content {
+.is-reader-page .search-stream .reader__content,
+.is-reader-page .search-stream.search-stream__with-sites .reader__content {
 	display: flex;
 	flex-flow: row wrap;
 }
@@ -407,11 +403,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 // Custom styling for cards in post results
 .search-stream__results.is-two-columns {
 	display: flex;
-}
-
-.search-stream__results.is-two-columns .reader__content,
-.search-stream .search-stream__single-column-results .reader__content {
-	display: inline;
 }
 
 .is-reader-page .search-stream .reader-post-card.card {
