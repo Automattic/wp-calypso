@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-require( './ensure-node-modules-present' );
 const execSync = require( 'child_process' ).execSync;
 const spawnSync = require( 'child_process' ).spawnSync;
 const chalk = require( 'chalk' );
