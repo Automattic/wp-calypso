@@ -60,6 +60,23 @@ class OrderDetails extends Component {
 		);
 	}
 
+	renderRefundValue = () => {
+		const { order, translate } = this.props;
+		const refundValue = order.refunds.length ? this.getRefundedTotal( order ) : false;
+		if ( ! refundValue ) {
+			return null;
+		}
+
+		return (
+			<div className="order__details-total-refund">
+				<div className="order__details-totals-label">{ translate( 'Refunded' ) }</div>
+				<div className="order__details-totals-value">
+					{ formatCurrency( refundValue, order.currency ) || refundValue }
+				</div>
+			</div>
+		);
+	}
+
 	renderRefundCard = () => {
 		const { order, translate } = this.props;
 		let refundStatus = translate( 'Payment of %(total)s received via %(method)s', {
@@ -106,7 +123,6 @@ class OrderDetails extends Component {
 		if ( ! order ) {
 			return null;
 		}
-		const refundValue = order.refunds.length ? this.getRefundedTotal( order ) : false;
 
 		return (
 			<div className="order__details">
@@ -135,15 +151,7 @@ class OrderDetails extends Component {
 								{ formatCurrency( order.total, order.currency ) || order.total }
 							</div>
 						</div>
-						{ refundValue
-							? <div className="order__details-total-refund">
-								<div className="order__details-totals-label">{ translate( 'Refunded' ) }</div>
-								<div className="order__details-totals-value">
-									{ formatCurrency( refundValue, order.currency ) || refundValue }
-								</div>
-							</div>
-							: null
-						}
+						{ this.renderRefundValue() }
 					</div>
 
 					{ this.renderRefundCard() }
