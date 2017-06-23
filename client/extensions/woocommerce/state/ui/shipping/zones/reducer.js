@@ -17,6 +17,7 @@ import {
 } from 'woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from '../../helpers';
 import methodsReducer, { initialState as methodsInitialState } from './methods/reducer';
+import locationsReducer, { initialState as locationsInitialState } from './locations/reducer';
 import { mergeMethodEdits } from './methods/helpers';
 
 export const initialState = {
@@ -46,7 +47,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_CLOSE ] = ( state ) => {
 	if ( null === currentlyEditingId ) {
 		return state;
 	}
-	if ( isEmpty( omit( currentlyEditingChanges, 'methods' ) ) && every( currentlyEditingChanges.methods, isEmpty ) ) {
+	if ( isEmpty( omit( currentlyEditingChanges, 'methods', 'locations' ) ) &&
+		every( currentlyEditingChanges.methods, isEmpty ) &&
+		( ! currentlyEditingChanges.locations || currentlyEditingChanges.locations.pristine ) ) {
 		// Nothing to save, no need to go through the rest of the algorithm
 		return { ...state,
 			currentlyEditingId: null,
@@ -95,6 +98,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_OPEN ] = ( state, { id } ) => {
 		currentlyEditingId: id,
 		currentlyEditingChanges: { // Always reset the current changes
 			methods: methodsInitialState,
+			locations: locationsInitialState,
 		},
 	};
 };
@@ -123,13 +127,14 @@ export default ( state, action ) => {
 	if ( null !== newState.currentlyEditingId ) {
 		const methodsState = newState.currentlyEditingChanges.methods;
 		const newMethodsState = methodsReducer( methodsState, action );
-		if ( methodsState !== newMethodsState ) {
-			return { ...newState,
-				currentlyEditingChanges: { ...newState.currentlyEditingChanges,
-					methods: newMethodsState,
-				},
-			};
-		}
+		const locationsState = newState.currentlyEditingChanges.locations;
+		const newLocationsState = locationsReducer( locationsState, action );
+		return { ...newState,
+			currentlyEditingChanges: { ...newState.currentlyEditingChanges,
+				methods: newMethodsState,
+				locations: newLocationsState,
+			},
+		};
 	}
 
 	return newState;
