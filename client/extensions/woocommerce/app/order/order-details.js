@@ -10,6 +10,7 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import formatCurrency from 'lib/format-currency';
 import SectionHeader from 'components/section-header';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
@@ -26,6 +27,10 @@ class OrderDetails extends Component {
 		} ),
 	}
 
+	getRefundedTotal = ( order ) => {
+		return order.refunds.reduce( ( sum, i ) => sum + ( i.total * 1 ), 0 );
+	}
+
 	renderTableHeader = () => {
 		const { translate } = this.props;
 		return (
@@ -39,13 +44,77 @@ class OrderDetails extends Component {
 	}
 
 	renderOrderItems = ( item, i ) => {
+		const { order, siteSlug } = this.props;
 		return (
 			<TableRow key={ i } className="order__detail-items">
-				<TableItem isRowHeader className="order__detail-item-product">{ item.name }</TableItem>
-				<TableItem className="order__detail-item-cost">{ item.price }</TableItem>
+				<TableItem isRowHeader className="order__detail-item-product">
+					<a href={ `/store/product/${ siteSlug }/${ item.product_id }` } className="order__detail-item-link">
+						{ item.name }
+					</a>
+					<span className="order__detail-item-sku">{ item.sku }</span>
+				</TableItem>
+				<TableItem className="order__detail-item-cost">{ formatCurrency( item.price, order.currency ) || item.price }</TableItem>
 				<TableItem className="order__detail-item-quantity">{ item.quantity }</TableItem>
-				<TableItem className="order__detail-item-total">{ item.total }</TableItem>
+				<TableItem className="order__detail-item-total">{ formatCurrency( item.total, order.currency ) || item.total }</TableItem>
 			</TableRow>
+		);
+	}
+
+	renderRefundValue = () => {
+		const { order, translate } = this.props;
+		const refundValue = order.refunds.length ? this.getRefundedTotal( order ) : false;
+		if ( ! refundValue ) {
+			return null;
+		}
+
+		return (
+			<div className="order__details-total-refund">
+				<div className="order__details-totals-label">{ translate( 'Refunded' ) }</div>
+				<div className="order__details-totals-value">
+					{ formatCurrency( refundValue, order.currency ) || refundValue }
+				</div>
+			</div>
+		);
+	}
+
+	renderRefundCard = () => {
+		const { order, translate } = this.props;
+		let refundStatus = translate( 'Payment of %(total)s received via %(method)s', {
+			args: {
+				total: formatCurrency( order.total, order.currency ) || order.total,
+				method: order.payment_method_title,
+			}
+		} );
+
+		if ( 'refunded' === order.status ) {
+			refundStatus = translate( 'Payment of %(total)s has been refunded', {
+				args: {
+					total: formatCurrency( order.total, order.currency ) || order.total,
+				}
+			} );
+		} else if ( order.refunds.length ) {
+			const refund = this.getRefundedTotal( order );
+			refundStatus = translate( 'Payment of %(total)s has been partially refunded %(refund)s', {
+				args: {
+					total: formatCurrency( order.total, order.currency ) || order.total,
+					refund: formatCurrency( refund, order.currency ) || refund,
+				}
+			} );
+		}
+
+		return (
+			<div className="order__details-refund">
+				<div className="order__details-refund-label">
+					<Gridicon icon="checkmark" />
+					{ refundStatus }
+				</div>
+				<div className="order__details-refund-action">
+					{ ( 'refunded' !== order.status )
+						? <Button>{ translate( 'Submit Refund' ) }</Button>
+						: null
+					}
+				</div>
+			</div>
 		);
 	}
 
@@ -66,32 +135,26 @@ class OrderDetails extends Component {
 					<div className="order__details-totals">
 						<div className="order__details-total-discount">
 							<div className="order__details-totals-label">{ translate( 'Discount' ) }</div>
-							<div className="order__details-totals-value">{ order.discount_total }</div>
+							<div className="order__details-totals-value">
+								{ formatCurrency( order.discount_total, order.currency ) || order.discount_total }
+							</div>
 						</div>
 						<div className="order__details-total-shipping">
 							<div className="order__details-totals-label">{ translate( 'Shipping' ) }</div>
-							<div className="order__details-totals-value">{ order.shipping_total }</div>
+							<div className="order__details-totals-value">
+								{ formatCurrency( order.shipping_total, order.currency ) || order.shipping_total }
+							</div>
 						</div>
 						<div className="order__details-total">
 							<div className="order__details-totals-label">{ translate( 'Total' ) }</div>
-							<div className="order__details-totals-value">{ order.total }</div>
+							<div className="order__details-totals-value">
+								{ formatCurrency( order.total, order.currency ) || order.total }
+							</div>
 						</div>
+						{ this.renderRefundValue() }
 					</div>
 
-					<div className="order__details-refund">
-						<div className="order__details-refund-label">
-							<Gridicon icon="checkmark" />
-							{ translate( 'Payment of %(total)s received via %(method)s', {
-								args: {
-									total: order.total,
-									method: order.payment_method_title
-								}
-							} ) }
-						</div>
-						<div className="order__details-refund-action">
-							<Button>{ translate( 'Submit Refund' ) }</Button>
-						</div>
-					</div>
+					{ this.renderRefundCard() }
 
 					<div className="order__details-fulfillment">
 						<div className="order__details-fulfillment-label">

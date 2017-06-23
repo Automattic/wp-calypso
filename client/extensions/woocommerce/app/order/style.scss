@@ -51,6 +51,15 @@
 		text-align: right;
 	}
 
+	.order__detail-item-sku {
+		display: block;
+		margin-bottom: 8px;
+		color: $gray-text-min;
+		font-size: 12px;
+		line-height: 1;
+		text-transform: uppercase;
+	}
+
 	thead .table-heading {
 		border-bottom: 1px solid lighten( $gray, 30% );
 	}
@@ -68,6 +77,7 @@
 
 	.order__details-total-discount,
 	.order__details-total-shipping,
+	.order__details-total-refund,
 	.order__details-total {
 		margin-bottom: 8px;
 
@@ -82,7 +92,7 @@
 		}
 	}
 
-	.order__details-total {
+	& > div:last-child {
 		margin-bottom: 0;
 	}
 
