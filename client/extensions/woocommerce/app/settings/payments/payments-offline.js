@@ -17,11 +17,10 @@ class SettingsPaymentsOffline extends Component {
 		return (
 			<div className="payments__type-container">
 				<ExtendedHeader
-					label={ translate( 'Offline payment methods' ) }
+					label={ translate( 'Offline' ) }
 					description={
 						translate(
-							'Allow customers to pay you manually using methods like bank ' +
-							'transfer, check or cash on delivery.'
+							'Take payments in-person.'
 						)
 					} />
 				<PaymentMethodList methodType="offline" />

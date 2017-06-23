@@ -18,10 +18,11 @@ class SettingsPaymentsOnSite extends Component {
 		return (
 			<div className="payments__type-container">
 				<ExtendedHeader
-					label={ translate( 'On-site credit card payment methods' ) }
+					label={ translate( 'On-site' ) }
 					description={
 						translate(
-							'Payment takes place directly on your site.'
+							'Take credit card payments directly on your site, ' +
+							'without redirecting customers to a third-party site.'
 						)
 					} />
 					<PaymentMethodList methodType="on-site" />

@@ -18,11 +18,11 @@ class SettingsPaymentsOnSite extends Component {
 		return (
 			<div className="payments__type-container">
 				<ExtendedHeader
-					label={ translate( 'Off-site credit card payment methods' ) }
+					label={ translate( 'Off-site' ) }
 					description={
 						translate(
-							'Payment takes place on a third-party site, ' +
-							'such as on PayPal.'
+							'Take payments through a third-party site, like PayPal. ' +
+							'Customers will leave your store to pay.'
 						)
 					} />
 					<PaymentMethodList methodType="off-site" />
