@@ -188,7 +188,7 @@ class PlanFeatures extends Component {
 
 	renderMobileFeatures( features ) {
 		return map( features, ( currentFeature, index ) => {
-			return this.renderFeatureItem( currentFeature, index );
+			return currentFeature ? this.renderFeatureItem( currentFeature, index ) : null;
 		} );
 	}
 
