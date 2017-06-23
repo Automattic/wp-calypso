@@ -20,6 +20,13 @@ const DUMMY_FILE_BLOB = {
 	},
 	fileName: DUMMY_FILENAME,
 };
+const DUMMY_FILE_OBJECT = {
+	thumbnails: true,
+	URL: DUMMY_FILENAME,
+	name: DUMMY_FILENAME,
+	extension: 'jpg',
+	mime_type: 'image/jpeg',
+};
 const EXPECTED = {
 	'transient': true,
 	ID: UNIQUEID,
@@ -686,6 +693,12 @@ describe( 'MediaUtils', function() {
 
 		it( 'should return a transient for a filename', () => {
 			const actual = MediaUtils.createTransientMedia( DUMMY_FILENAME );
+
+			expect( actual ).to.eql( EXPECTED );
+		} );
+
+		it( 'should return a transient for a file object', () => {
+			const actual = MediaUtils.createTransientMedia( DUMMY_FILE_OBJECT );
 
 			expect( actual ).to.eql( EXPECTED );
 		} );
