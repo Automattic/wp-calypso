@@ -13,6 +13,7 @@ import {
 	getSelectedSite,
 	getSelectedSiteId,
 } from 'state/ui/selectors';
+import { isSitePreviewable } from 'state/sites/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
 
 import DocumentHead from 'components/data/document-head';
@@ -66,7 +67,11 @@ class PreviewMain extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, isPreviewable } = this.props;
+
+		if ( ! isPreviewable ) {
+			return <span>only external preview available :(</span>;
+		}
 
 		return (
 			<Main className="preview">
@@ -80,9 +85,13 @@ class PreviewMain extends React.Component {
 	}
 }
 
-const mapState = ( state ) => ( {
-	site: getSelectedSite( state ),
-	siteId: getSelectedSiteId( state ),
-} );
+const mapState = ( state ) => {
+	const selectedSiteId = getSelectedSiteId( state );
+	return {
+		isPreviewable: isSitePreviewable( state, selectedSiteId ),
+		site: getSelectedSite( state ),
+		siteId: selectedSiteId,
+	}
+};
 
 export default connect( mapState )( localize( PreviewMain ) );
