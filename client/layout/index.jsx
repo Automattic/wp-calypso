@@ -36,7 +36,6 @@ import QuerySites from 'components/data/query-sites';
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
 import { isHappychatOpen } from 'state/ui/happychat/selectors';
-import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
@@ -119,7 +118,7 @@ Layout = React.createClass( {
 	renderPreview() {
 		if ( config.isEnabled( 'preview-layout' ) && this.props.section.group === 'sites' ) {
 			return (
-				<SitePreview />
+				<AsyncLoad require='blocks/site-preview' />
 			);
 		}
 	},
