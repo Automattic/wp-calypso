@@ -60,7 +60,7 @@ export function handleStepSuccess( { dispatch }, action, now = Date.now() ) {
 
 	const nextActionList = {
 		...actionList,
-		prevSteps: [ ...prevSteps, { ...currentStep, endTime: now } ],
+		prevSteps: [ ...( prevSteps || [] ), { ...currentStep, endTime: now } ],
 		currentStep: null,
 		nextSteps,
 	};
