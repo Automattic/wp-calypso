@@ -11,9 +11,11 @@ import { createSiteDomainObject } from 'state/sites/domains/assembler';
 
 // first testing-site ID
 export const SITE_ID_FIRST = 2916284;
+export const SUBSCRIPTION_ID_FIRST = 1111;
 
 // second testing-site ID
 export const SITE_ID_SECOND = 77203074;
+export const SUBSCRIPTION_ID_SECOND = null;
 
 // testing primary-domain
 export const DOMAIN_PRIMARY = {
@@ -47,6 +49,7 @@ export const DOMAIN_PRIMARY = {
 	isPrivate: false,
 	registrar: '',
 	registrationDate: '2016-03-09T00:00:00+00:00',
+	subscriptionId: SUBSCRIPTION_ID_FIRST,
 	type: 'MAPPED',
 	transferLockOnWhoisUpdateOptional: true,
 	isWPCOMDomain: false
@@ -84,6 +87,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	isPrivate: false,
 	registrar: '',
 	registrationDate: '',
+	subscriptionId: SUBSCRIPTION_ID_SECOND,
 	type: 'WPCOM',
 	transferLockOnWhoisUpdateOptional: false,
 	isWPCOMDomain: true
@@ -122,6 +126,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	private_domain: false,
 	registrar: '',
 	registration_date: '2016-03-09T00:00:00+00:00',
+	subscription_id: SUBSCRIPTION_ID_FIRST,
 	type: 'mapping',
 	transfer_lock_on_whois_update_optional: true,
 	wpcom_domain: false
@@ -156,6 +161,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	private_domain: false,
 	registrar: '',
 	registration_date: '',
+	subscription_id: SUBSCRIPTION_ID_SECOND,
 	type: 'wpcom',
 	wpcom_domain: true
 };

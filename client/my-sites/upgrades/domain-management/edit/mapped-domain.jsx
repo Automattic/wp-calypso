@@ -64,18 +64,23 @@ const MappedDomain = React.createClass( {
 	},
 
 	getDomainDetailsCard() {
+		const { domain, selectedSite, translate } = this.props;
+
 		return (
 			<div className="domain-details-card">
 				<Header { ...this.props } />
 
 				<Card>
-					<Property label={ this.props.translate( 'Type', { context: 'A type of domain.' } ) }>
-						{ this.props.translate( 'Mapped Domain' ) }
+					<Property label={ translate( 'Type', { context: 'A type of domain.' } ) }>
+						{ translate( 'Mapped Domain' ) }
 					</Property>
 
 					{ this.getAutoRenewalOrExpirationDate() }
 
 					<SubscriptionSettings
+						type={ domain.type }
+						subscriptionId={ domain.subscriptionId }
+						siteSlug={ selectedSite.slug }
 						onClick={ this.handlePaymentSettingsClick } />
 				</Card>
 			</div>

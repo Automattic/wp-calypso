@@ -34,7 +34,8 @@ export const createSiteDomainObject = domain => {
 		pointsToWpcom: Boolean( domain.points_to_wpcom ),
 		registrar: String( domain.registrar ),
 		registrationDate: String( domain.registration_date ),
+		subscriptionId: domain.subscription_id,
+		transferLockOnWhoisUpdateOptional: Boolean( domain.transfer_lock_on_whois_update_optional ),
 		type: getDomainType( domain ),
-		transferLockOnWhoisUpdateOptional: Boolean( domain.transfer_lock_on_whois_update_optional )
 	};
 };
