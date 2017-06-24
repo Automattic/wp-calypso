@@ -29,8 +29,9 @@ const DownloadCard = ( { translate } ) => {
 		secondAvailableLink: availableLinkTag( linuxTarLink ),
 		thirdAvailableLink: availableLinkTag( linuxDebLink ),
 	};
-	let alsoAvailable = translate( 'Also available for: {{firstAvailableLink}}MacOS{{/firstAvailableLink}},' +
-		'{{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}},' +
+	let alsoAvailable = translate( 'Also available for: ' +
+		'{{firstAvailableLink}}MacOS{{/firstAvailableLink}}, ' +
+		'{{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}}, ' +
 		'{{thirdAvailableLink}}Linux (.deb){{/thirdAvailableLink}}.',
 		{ components: translateComponents }
 	);
@@ -46,7 +47,12 @@ const DownloadCard = ( { translate } ) => {
 					secondAvailableLink: availableLinkTag( linuxTarLink ),
 					thirdAvailableLink: availableLinkTag( linuxDebLink ),
 				};
-				alsoAvailable = translate( 'Also available for: {{firstAvailableLink}}Windows{{/firstAvailableLink}}, {{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}}, {{thirdAvailableLink}}Linux (.deb){{/thirdAvailableLink}}.', { components: translateComponents } );
+				alsoAvailable = translate( 'Also available for: ' +
+					'{{firstAvailableLink}}Windows{{/firstAvailableLink}}, ' +
+					'{{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}}, ' +
+					'{{thirdAvailableLink}}Linux (.deb){{/thirdAvailableLink}}.',
+					{ components: translateComponents }
+				);
 				break;
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
@@ -58,9 +64,13 @@ const DownloadCard = ( { translate } ) => {
 					secondAvailableLink: availableLinkTag( windowsLink ),
 					thirdAvailableLink: availableLinkTag( macLink ),
 				};
-				alsoAvailable = translate( 'Also available for: {{firstAvailableLink}}Linux (.deb){{/firstAvailableLink}}, {{secondAvailableLink}}Windows{{/secondAvailableLink}}, {{thirdAvailableLink}}Mac{{/thirdAvailableLink}}.', { components: translateComponents } );
+				alsoAvailable = translate( 'Also available for: ' +
+					'{{firstAvailableLink}}Linux (.deb){{/firstAvailableLink}}, ' +
+					'{{secondAvailableLink}}Windows{{/secondAvailableLink}}, ' +
+					'{{thirdAvailableLink}}Mac{{/thirdAvailableLink}}.',
+					{ components: translateComponents }
+				);
 				break;
-			break;
 		}
 	}
 
