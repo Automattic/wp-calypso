@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { every, forIn, isEmpty, sortBy } from 'lodash';
+import { every, forIn, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -330,6 +330,8 @@ export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Number} maxCountries Maximum number of countries per continent to list individually before
+ * they are grouped into a continent
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} The list of locations currently configured for the zone. This doesn't include temporary edits,
  * since it's made to be used for the UI outside of the modal. Each element of the list will have these properties:
@@ -342,7 +344,7 @@ export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state
  * - countryName: Name of the country that this state is part of.
  * - countryCode: Code of the ecountry that this state is part of.
  */
-export const getCurrentlyEditingShippingZoneLocationsList = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getCurrentlyEditingShippingZoneLocationsList = ( state, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
 	const locations = getShippingZoneLocationsWithEdits( state, siteId, false );
 	if ( ! locations ) {
 		return [];
@@ -374,12 +376,48 @@ export const getCurrentlyEditingShippingZoneLocationsList = ( state, siteId = ge
 			} ) );
 	}
 
-	return sortBy( locations.country.map( code => ( {
-		type: 'country',
-		code,
-		name: getCountryName( state, code, siteId ),
-		postcodeFilter: locations.postcode[ 0 ],
-	} ) ), 'name' );
+	//if postcode filter exists, then only one country should be selected
+	if ( locations.postcode[ 0 ] ) {
+		return locations.country.map( code => ( {
+			type: 'country',
+			code,
+			name: getCountryName( state, code, siteId ),
+			postcodeFilter: locations.postcode[ 0 ],
+		} ) );
+	}
+
+	const selectedCountries = new Set( locations.country );
+	if ( ! selectedCountries.size ) {
+		return [];
+	}
+
+	//if there are more than maxCountries per continent, group them into a continent
+	let result = [];
+	getContinents( state, siteId ).forEach( ( { code: continentCode, name: continentName } ) => {
+		const continentCountries = getCountries( state, continentCode, siteId );
+		const selectedContinentCountries = continentCountries
+			.filter( ( { code } ) => selectedCountries.has( code ) )
+			.map( ( { code, name } ) => ( {
+				type: 'country',
+				code,
+				name,
+				postcodeFilter: undefined,
+			} ) );
+
+		if ( selectedContinentCountries.length < maxCountries ) {
+			result = result.concat( selectedContinentCountries );
+		} else {
+			result.push( {
+				type: 'continent',
+				code: continentCode,
+				name: continentName,
+				countryCount: continentCountries.length,
+				selectedCountryCount: selectedContinentCountries.length,
+			} );
+		}
+	} );
+
+	return result;
 };
 
 /**
@@ -408,24 +446,32 @@ export const getCurrentlyEditingShippingZoneCountries = ( state, siteId = getSel
 
 	getContinents( state, siteId ).forEach( ( { code: continentCode, name: continentName } ) => {
 		const continentSelected = selectedContinents.has( continentCode );
-		locationsList.push( {
+		const continentCountries = getCountries( state, continentCode, siteId );
+		let selectedCount = 0;
+		const continentI = locationsList.push( {
 			code: continentCode,
 			name: continentName,
 			selected: continentSelected,
 			disabled: Boolean( forbiddenContinents[ continentCode ] ),
 			ownerZoneId: forbiddenContinents[ continentCode ],
 			type: 'continent',
+			countryCount: continentCountries.length,
 		} );
-		getCountries( state, continentCode, siteId ).forEach( ( { code: countryCode, name: countryName } ) => {
+		continentCountries.forEach( ( { code: countryCode, name: countryName } ) => {
+			const countrySelected = continentSelected || selectedCountries.has( countryCode );
+			if ( countrySelected ) {
+				selectedCount++;
+			}
 			locationsList.push( {
 				code: countryCode,
 				name: countryName,
-				selected: continentSelected || selectedCountries.has( countryCode ),
+				selected: countrySelected,
 				disabled: ! allowSelectingForbiddenCountries && Boolean( forbiddenCountries[ countryCode ] ),
 				ownerZoneId: forbiddenCountries[ countryCode ],
 				type: 'country',
 			} );
 		} );
+		locationsList[ continentI - 1 ].selectedCountryCount = selectedCount;
 	} );
 	return locationsList;
 };

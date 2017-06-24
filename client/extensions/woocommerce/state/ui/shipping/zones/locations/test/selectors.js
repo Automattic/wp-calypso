@@ -2120,6 +2120,37 @@ describe( 'selectors', () => {
 				},
 			] );
 		} );
+
+		it( 'should group countries into continents if necessary', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'FR', 'US' ],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: initialState,
+			} );
+
+			expect( getCurrentlyEditingShippingZoneLocationsList( state, 0 ) ).to.deep.equal( [
+				{
+					type: 'continent',
+					code: 'EU',
+					name: 'Europe',
+					countryCount: 3,
+					selectedCountryCount: 1,
+				},
+				{
+					type: 'continent',
+					code: 'NA',
+					name: 'North America',
+					countryCount: 2,
+					selectedCountryCount: 1,
+				},
+			] );
+		} );
 	} );
 
 	describe( 'getCurrentlyEditingShippingZoneCountries', () => {
@@ -2161,6 +2192,8 @@ describe( 'selectors', () => {
 					selected: true,
 					disabled: false,
 					ownerZoneId: undefined,
+					countryCount: 3,
+					selectedCountryCount: 3,
 				},
 				{
 					code: 'FR',
@@ -2193,6 +2226,8 @@ describe( 'selectors', () => {
 					selected: false,
 					disabled: true,
 					ownerZoneId: 8,
+					countryCount: 2,
+					selectedCountryCount: 0,
 				},
 				{
 					code: 'CA',

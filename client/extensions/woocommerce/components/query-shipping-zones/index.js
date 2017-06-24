@@ -10,30 +10,33 @@ import { bindActionCreators } from 'redux';
  */
 import { fetchShippingMethods } from 'woocommerce/state/sites/shipping-methods/actions';
 import { fetchShippingZones } from 'woocommerce/state/sites/shipping-zones/actions';
+import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
 import { areShippingMethodsLoaded } from 'woocommerce/state/sites/shipping-methods/selectors';
+import { areLocationsLoaded } from 'woocommerce/state/sites/locations/selectors';
 import { areSettingsGeneralLoaded } from 'woocommerce/state/sites/settings/general/selectors';
 
 class QueryShippingZones extends Component {
+	fetch( siteId ) {
+		this.props.actions.fetchShippingZones( siteId );
+		this.props.actions.fetchShippingMethods( siteId );
+		this.props.actions.fetchSettingsGeneral( siteId );
+		this.props.actions.fetchLocations( siteId );
+	}
+
 	componentWillMount() {
-		const { siteId, loaded, actions } = this.props;
+		const { siteId, loaded } = this.props;
 
 		if ( siteId && ! loaded ) {
-			actions.fetchShippingZones( siteId );
-			actions.fetchShippingMethods( siteId );
-			actions.fetchSettingsGeneral( siteId );
+			this.fetch( siteId );
 		}
 	}
 
 	componentWillReceiveProps( { siteId } ) {
-		const { actions } = this.props;
-
 		//site ID changed, fetch new zones
 		if ( siteId !== this.props.siteId ) {
-			actions.fetchShippingZones( siteId );
-			actions.fetchShippingMethods( siteId );
-			actions.fetchSettingsGeneral( siteId );
+			this.fetch( siteId );
 		}
 	}
 
@@ -49,7 +52,8 @@ QueryShippingZones.propTypes = {
 export const areShippingZonesFullyLoaded = ( state ) => {
 	return areSettingsGeneralLoaded( state ) &&
 		areShippingMethodsLoaded( state ) &&
-		areShippingZonesLoaded( state );
+		areShippingZonesLoaded( state ) &&
+		areLocationsLoaded( state );
 };
 
 export default connect(
@@ -61,6 +65,7 @@ export default connect(
 			{
 				fetchSettingsGeneral,
 				fetchShippingZones,
+				fetchLocations,
 				fetchShippingMethods,
 			}, dispatch
 		)

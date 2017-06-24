@@ -76,10 +76,10 @@ const ShippingZoneMethodList = ( {
 					{ getMethodSummary( method, currency ) }
 				</ListItemField>
 				<ListItemField className="shipping-zone__enable-container">
-					<span>
+					<span onClick={ onEnabledToggle }>
 						{ translate( 'Enabled {{toggle/}}', {
 							components: {
-								toggle: <FormToggle checked={ method.enabled } onChange={ onEnabledToggle } />
+								toggle: <FormToggle checked={ method.enabled } />
 							}
 						} ) }
 					</span>
