@@ -15,7 +15,6 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { editProduct, editProductAttribute, createProductActionList } from 'woocommerce/state/ui/products/actions';
 import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { actionListStepNext } from 'woocommerce/state/action-list/actions';
 import { getCurrentlyEditingProduct } from 'woocommerce/state/ui/products/selectors';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
@@ -93,7 +92,6 @@ class ProductCreate extends React.Component {
 		);
 
 		this.props.createProductActionList( successAction, failureAction );
-		this.props.actionListStepNext();
 	}
 
 	isProductValid( product = this.props.product ) {
@@ -153,7 +151,6 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			actionListStepNext,
 			createProduct,
 			createProductActionList,
 			editProduct,
