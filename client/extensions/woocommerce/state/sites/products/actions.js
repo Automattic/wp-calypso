@@ -53,15 +53,14 @@ export function createProduct( siteId, product, successAction, failureAction ) {
  *
  * @param {Number} siteId The id of the site to which the product belongs.
  * @param {Object} data The complete product object with which to update the state.
- * @param {Object} [completionAction] An action that is dispatched after the update is complete.
  * @return {Object} Action object
  */
-export function productUpdated( siteId, data, completionAction ) {
+export function productUpdated( siteId, data, originatingAction ) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_UPDATED,
 		siteId,
 		data,
-		completionAction,
+		originatingAction,
 	};
 }
 
