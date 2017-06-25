@@ -123,6 +123,7 @@ export class LoginLinks extends React.Component {
 					href="https://wordpress.com"
 					key="return-to-wpcom-link"
 					onClick={ this.recordBackToWpcomLinkClick }
+					rel="external"
 				>
 					<Gridicon icon="arrow-left" size={ 18 } />
 					{ this.props.translate( 'Back to WordPress.com' ) }

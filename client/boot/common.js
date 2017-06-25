@@ -87,12 +87,6 @@ const loggedOutMiddleware = currentUser => {
 				page.redirect( '/devdocs/start' );
 			}
 		} );
-	} else {
-		// Break routing if the user is logged out, and tries to visit /
-		page( '/', () => {
-			window.location.href = '/';
-			return;
-		} );
 	}
 
 	const sections = require( 'sections' );
