@@ -161,7 +161,10 @@ function receivePending( action ) {
 			site_ID: action.blogId,
 			ID: action.postId
 		};
-		const currentPost = _postsForBlogs[ blogKey( action.blogId, action.postId ) ];
+		const currentPost = _postsForBlogs[ blogKey( {
+			blogId: action.blogId,
+			postId: action.postId
+		} ) ];
 		post = assign( post, currentPost, { _state: 'pending' } );
 		setPost( null, post );
 	} else {
