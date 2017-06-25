@@ -35,7 +35,7 @@ export function uploadGravatar( file, bearerToken, email ) {
 			.send( data )
 			.set( 'Authorization', 'Bearer ' + bearerToken )
 			.then( () => {
-				const fileReader = new FileReader( file );
+				const fileReader = new FileReader();
 				fileReader.addEventListener( 'load', function() {
 					dispatch( {
 						type: GRAVATAR_UPLOAD_RECEIVE,

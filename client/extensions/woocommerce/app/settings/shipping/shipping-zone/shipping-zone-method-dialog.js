@@ -137,7 +137,7 @@ const ShippingZoneMethodDialog = ( {
 						value={ title || '' }
 						onChange={ onMethodTitleChange } />
 				</FormFieldSet>
-				{ renderMethodSettingsView( method, siteId ) }
+				{ renderMethodSettingsView() }
 			</FormFieldSet>
 		</Dialog>
 	);

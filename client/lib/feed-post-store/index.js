@@ -102,7 +102,7 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 
 		case FeedPostActionType.MARK_FEED_POST_SEEN:
-			markPostSeen( action.data.post, action.data.site, action.data.source );
+			markPostSeen( action.data.post, action.data.site );
 			break;
 	}
 } );
