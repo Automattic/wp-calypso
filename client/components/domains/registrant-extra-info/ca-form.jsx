@@ -11,7 +11,6 @@ import {
 	keys,
 	map,
 	pick,
-	upperCase,
 } from 'lodash';
 
 /**
@@ -96,8 +95,8 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 			return;
 		}
 
-		// Set the lang to FR if user is FR, otherwise leave EN
-		if ( upperCase( this.props.userWpcomLang ) === 'FR' ) {
+		// Set the lang to FR if user languages is French, otherwise leave EN
+		if ( this.props.userWpcomLang.match( /^fr-?/i ) ) {
 			defaultValues.lang = 'FR';
 		}
 
