@@ -50,8 +50,7 @@ class NonSupportedJetpackVersionNotice extends Component {
 				), {
 					button: translate( 'Update now' ),
 					href: adminUrl,
-					id: `allSitesNotOnMinJetpackVersion-${ jetpackMinVersion }-${ siteId }`,
-					displayOnNextPage: true
+					id: `allSitesNotOnMinJetpackVersion-${ jetpackMinVersion }-${ siteId }`
 				}
 			);
 		}

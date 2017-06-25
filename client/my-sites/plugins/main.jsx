@@ -5,13 +5,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { find, isEmpty, some } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import pluginsAccessControl from 'my-sites/plugins/access-control';
 import PluginItem from './plugin-item/plugin-item';
 import DocumentHead from 'components/data/document-head';
 import SectionNav from 'components/section-nav';
@@ -23,13 +23,27 @@ import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
-import FeatureExample from 'components/feature-example';
 import PluginsList from './plugins-list';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import WpcomPluginPanel from 'my-sites/plugins-wpcom';
 import PluginsBrowser from './plugins-browser';
-import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, canJetpackSiteManage, canJetpackSiteUpdateFiles } from 'state/sites/selectors';
+import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
+import NoPermissionsError from './no-permissions-error';
+import {
+	canCurrentUser,
+	canCurrentUserManagePlugins
+} from 'state/selectors';
+import {
+	canJetpackSiteManage,
+	canJetpackSiteUpdateFiles,
+	isJetpackSite,
+	isRequestingSites
+} from 'state/sites/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug
+} from 'state/ui/selectors';
 
 const PluginsMain = React.createClass( {
 	mixins: [ URLSearch ],
@@ -87,7 +101,6 @@ const PluginsMain = React.createClass( {
 		const sites = this.props.sites.getSelectedOrAllWithPlugins(),
 			pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
 		return {
-			accessError: pluginsAccessControl.hasRestrictedAccess(),
 			plugins: this.getPluginsFromStore( nextProps, sites ),
 			pluginUpdateCount: pluginUpdate && pluginUpdate.length,
 			selectedAction: 'Actions'
@@ -335,6 +348,10 @@ const PluginsMain = React.createClass( {
 			selectedSiteId,
 		} = this.props;
 
+		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
+			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
+		}
+
 		if ( selectedSite && ! this.props.selectedSiteIsJetpack ) {
 			return (
 				<Main>
@@ -344,20 +361,6 @@ const PluginsMain = React.createClass( {
 						category,
 						search,
 					} } />
-				</Main>
-			);
-		}
-
-		if ( this.state.accessError ) {
-			return (
-				<Main>
-					{ this.renderDocumentHead() }
-					<SidebarNavigation />
-					<EmptyContent { ...this.state.accessError } />
-					{ this.state.accessError.featureExample
-						? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample>
-						: null
-					}
 				</Main>
 			);
 		}
@@ -385,6 +388,7 @@ const PluginsMain = React.createClass( {
 
 		return (
 			<Main className={ containerClass }>
+				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
@@ -429,18 +433,22 @@ const PluginsMain = React.createClass( {
 export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
-
+		const selectedSiteId = getSelectedSiteId( state );
 		return {
 			selectedSite,
-			selectedSiteId: selectedSite && selectedSite.ID,
+			selectedSiteId: selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
-			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSite.ID ),
-			canSelectedJetpackSiteUpdateFiles: selectedSite && canJetpackSiteUpdateFiles( state, selectedSite.ID ),
+			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
+			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSiteId ),
+			canSelectedJetpackSiteUpdateFiles: selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
 			canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			wporgPlugins: state.plugins.wporg.items,
+			isRequestingSites: isRequestingSites( state ),
+			userCanManagePlugins: ( selectedSiteId
+				? canCurrentUser( state, selectedSiteId, 'manage_options' )
+				: canCurrentUserManagePlugins( state ) )
 		};
 	},
 	{ wporgFetchPluginData }
-)( PluginsMain );
+)( localize( PluginsMain ) );
