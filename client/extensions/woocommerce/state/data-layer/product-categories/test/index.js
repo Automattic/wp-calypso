@@ -7,8 +7,8 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { createProductCategory, productCategoryUpdated } from 'woocommerce/state/sites/product-categories/actions';
-import { handleProductCategoryCreate, handleProductCategoryUpdated } from '../';
+import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
+import { handleProductCategoryCreate } from '../';
 import {
 	WOOCOMMERCE_API_REQUEST,
 } from 'woocommerce/state/action-types';
@@ -32,27 +32,81 @@ describe( 'handlers', () => {
 					type: WOOCOMMERCE_API_REQUEST,
 					method: 'post',
 					siteId: 123,
-					onSuccessAction: productCategoryUpdated( 123, null, successAction ),
-					onFailureAction: failureAction,
 					body: { name: 'Category 1', slug: 'category-1' },
+					onFailureAction: failureAction,
 				} )
+				.and( match.has( 'onSuccessAction' ) )
 			);
 		} );
-	} );
 
-	describe( '#handleProductCategoryUpdated', () => {
-		it( 'should dispatch a completion action', () => {
+		it( 'should dispatch a success action with extra properties', () => {
 			const store = {
 				dispatch: spy(),
 			};
 
-			const category1 = { id: 101, name: 'Newly Created Category' };
-			const completionAction = { type: '%%complete%%' };
-			const action = productCategoryUpdated( 123, category1, completionAction );
+			const category1 = { id: { placeholder: 'p1' }, name: 'Category 1', slug: 'category-1' };
+			const successAction = { type: '%%success%%' };
+			const action = createProductCategory( 123, category1, successAction );
 
-			handleProductCategoryUpdated( store, action );
+			handleProductCategoryCreate( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( completionAction );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_API_REQUEST,
+					method: 'post',
+					siteId: 123,
+					body: { name: 'Category 1', slug: 'category-1' },
+				} )
+			);
+
+			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
+			expect( updatedSuccessAction ).to.be.a( 'function' );
+
+			updatedSuccessAction( store.dispatch, null, 'RECEIVED_DATA' );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: '%%success%%',
+					sentData: category1,
+					receivedData: 'RECEIVED_DATA',
+				} )
+			);
+		} );
+
+		it( 'should dispatch a success function with extra parameters', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const category1 = { id: { placeholder: 'p1' }, name: 'Category 1', slug: 'category-1' };
+			const successAction = ( dispatch, getState, { sentData, receivedData } ) => {
+				return { type: '%%success%%', sentData, receivedData };
+			};
+			const action = createProductCategory( 123, category1, successAction );
+
+			handleProductCategoryCreate( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_API_REQUEST,
+					method: 'post',
+					siteId: 123,
+					body: { name: 'Category 1', slug: 'category-1' },
+				} )
+			);
+
+			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
+			expect( updatedSuccessAction ).to.be.a( 'function' );
+
+			updatedSuccessAction( store.dispatch, null, 'RECEIVED_DATA' );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: '%%success%%',
+					sentData: category1,
+					receivedData: 'RECEIVED_DATA',
+				} )
+			);
 		} );
 	} );
 } );
