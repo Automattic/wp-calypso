@@ -455,7 +455,7 @@ $plan-features-sidebar-width: 272px;
 
 	.plan-features__table {
 		display: table !important;
-		border-spacing: 10px 0 !important;
+		border-spacing: 15px 0 !important;
 		width: 100%;
 		margin: 0;
 	}
@@ -496,12 +496,16 @@ $plan-features-sidebar-width: 272px;
 		margin: 5px auto;
 	}
 
+	.plan-features__item {
+		margin: 0 15px;
+	}
+
 	.plan-features__item-title {
 		margin: 0;
 	}
 
 	.plan-features__actions {
-		padding-bottom: 12px;
+		padding: 0 15px 15px;
 	}
 
 	.plan-features__actions-button {

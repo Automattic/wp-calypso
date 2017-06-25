@@ -2,7 +2,7 @@
 	display: flex;
 	flex-flow: row wrap;
 	list-style: none;
-	padding: 0;
+	padding: 0 20px;
 	margin: 0 -10px; // items flush against list edge
 
 	.feature-example & {

@@ -32,10 +32,16 @@ import purchasesPaths from 'me/purchases/paths';
 import { plansLink } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
+import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
 	isInSignupTest() {
-		return this.props.isInSignup;
+		const {
+			isInSignup,
+			displayJetpackPlans
+		} = this.props;
+
+		return ( ( isInSignup && ! displayJetpackPlans ) && ( abtest( 'signupPlansCopyChanges' ) === 'modified' ) );
 	}
 
 	getPlanFeatures() {
@@ -76,6 +82,7 @@ class PlansFeaturesMain extends Component {
 						site={ site }
 						domainName={ domainName }
 						isInSignupTest = { this.isInSignupTest() }
+						displayJetpackPlans = { displayJetpackPlans }
 					/>
 				</div>
 			);
@@ -104,6 +111,7 @@ class PlansFeaturesMain extends Component {
 						site={ site }
 						domainName={ domainName }
 						isInSignupTest = { this.isInSignupTest() }
+						displayJetpackPlans = { displayJetpackPlans }
 					/>
 				</div>
 			);
@@ -132,6 +140,7 @@ class PlansFeaturesMain extends Component {
 					site={ site }
 					domainName={ domainName }
 					isInSignupTest = { this.isInSignupTest() }
+					displayJetpackPlans = { displayJetpackPlans }
 				/>
 			</div>
 		);
@@ -366,7 +375,8 @@ class PlansFeaturesMain extends Component {
 		const {
 			site,
 			displayJetpackPlans,
-			isInSignup
+			isInSignup,
+			isInSignupTest
 		} = this.props;
 
 		const renderFAQ = () =>
@@ -381,7 +391,7 @@ class PlansFeaturesMain extends Component {
 
 		return (
 			<div className="plans-features-main">
-				{ displayJetpackPlans ? this.getIntervalTypeToggle() : null }
+				{ ( displayJetpackPlans && isInSignupTest ) ? this.getIntervalTypeToggle() : null }
 				<QueryPlans />
 				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }

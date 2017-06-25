@@ -50,7 +50,6 @@ import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import { abtest } from 'lib/abtest';
 
 class PlanFeatures extends Component {
-
 	render() {
 		const {
 			planProperties,
@@ -63,7 +62,7 @@ class PlanFeatures extends Component {
 			{ 'plan-features--signup': isInSignupTest }
 		);
 		const planWrapperClasses = classNames(
-			{ 'plan-wrapper': isInSignupTest }
+			{ 'plans-wrapper': isInSignupTest }
 		);
 		let mobileView, planDescriptions;
 		let bottomButtons = null;
@@ -237,6 +236,19 @@ class PlanFeatures extends Component {
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
+			const siteType = window.state.signup.dependencyStore.designType;
+			let audience = planConstantObj.getAudience();
+
+			switch ( siteType ) {
+				case 'blog':
+					audience = planConstantObj.getBlogAudience();
+					break;
+				case 'grid':
+					audience = planConstantObj.getPortfolioAudience();
+					break;
+				default:
+					audience = planConstantObj.getAudience();
+			}
 
 			return (
 				<td key={ planName } className={ classes }>
@@ -246,7 +258,7 @@ class PlanFeatures extends Component {
 						popular={ popular }
 						newPlan={ newPlan }
 						title={ planConstantObj.getTitle() }
-						audience={ planConstantObj.getAudience() }
+						audience={ audience }
 						planType={ planName }
 						rawPrice={ rawPrice }
 						discountPrice={ discountPrice }
@@ -455,6 +467,20 @@ class PlanFeatures extends Component {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
 	}
+
+	componentDidMount() {
+		const {
+			isInSignupTest,
+			displayJetpackPlans
+		} = this.props;
+
+		// center plans
+		if ( isInSignupTest ) {
+			displayJetpackPlans
+				? document.querySelector( '.jetpack-connect__plans .plans-wrapper' ).scrollLeft = 150
+				: document.querySelector( '.signup__steps .plans-wrapper' ).scrollLeft = 495;
+		}
+	}
 }
 
 PlanFeatures.propTypes = {
@@ -468,7 +494,8 @@ PlanFeatures.propTypes = {
 	selectedFeature: PropTypes.string,
 	intervalType: PropTypes.string,
 	isInSignupTest: PropTypes.bool,
-	site: PropTypes.object
+	site: PropTypes.object,
+	displayJetpackPlans: PropTypes.bool,
 };
 
 PlanFeatures.defaultProps = {
@@ -477,7 +504,8 @@ PlanFeatures.defaultProps = {
 	isInSignupTest: false,
 	basePlansPath: null,
 	intervalType: 'yearly',
-	site: {}
+	site: {},
+	displayJetpackPlans: false,
 };
 
 export default connect(
@@ -509,7 +537,18 @@ export default connect(
 				}
 
 				if ( isInSignupTest ) {
-					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+					const siteType = window.state.signup.dependencyStore.designType;
+
+					switch ( siteType ) {
+						case 'blog':
+							planFeatures = getPlanFeaturesObject( planConstantObj.getBlogSignupFeatures( abtest ) );
+							break;
+						case 'grid':
+							planFeatures = getPlanFeaturesObject( planConstantObj.getPortfolioSignupFeatures( abtest ) );
+							break;
+						default:
+							planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+					}
 				}
 
 				return {
