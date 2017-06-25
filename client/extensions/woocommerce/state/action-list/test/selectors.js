@@ -10,17 +10,21 @@ import { set } from 'lodash';
 import {
 	getActionList,
 	getCurrentStepIndex,
+	getTotalStepCount,
 	getStepCountRemaining,
 } from '../selectors';
+import * as fxt from './fixtures';
 
 describe( 'selectors', () => {
 	describe( 'getActionList', () => {
 		it( 'should access an existing action list', () => {
 			const actionList = {
-				steps: [
-					{ description: 'Action Step 1', action: { type: 'ACTION1' } },
-					{ description: 'Action Step 2', action: { type: 'ACTION2' } },
-					{ description: 'Action Step 3', action: { type: 'ACTION3' } },
+				prevSteps: [
+					{ description: fxt.stepA.description, startTime: fxt.time.stepAStart, endTime: fxt.time.stepAEnd },
+				],
+				currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
+				nextSteps: [
+					{ description: fxt.stepC.description },
 				],
 			};
 
@@ -39,50 +43,40 @@ describe( 'selectors', () => {
 
 	describe( 'getCurrentStepIndex', () => {
 		it( 'should return the currently running step in the action list', () => {
-			const fiveSecondsAgo = Date.now() - 5000;
-			const threeSecondsAgo = Date.now() - 3000;
-			const twoSecondsAgo = Date.now() - 2000;
-
 			const actionList = {
-				steps: [
-					{ description: 'Action Step 1', action: { type: 'ACTION1' },
-						startTime: fiveSecondsAgo, endTime: threeSecondsAgo },
-					{ description: 'Action Step 2', action: { type: 'ACTION2' },
-						startTime: twoSecondsAgo },
-					{ description: 'Action Step 3', action: { type: 'ACTION3' } },
+				prevSteps: [
+					{ description: fxt.stepA.description, startTime: fxt.time.stepAStart, endTime: fxt.time.stepAEnd },
 				],
-				successAction: { type: '%%SUCCESS%%' },
-				failureAction: { type: '%%FAILURE%%' },
+				currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
+				nextSteps: [
+					{ description: fxt.stepC.description },
+				],
 			};
 
-			expect( getCurrentStepIndex( actionList ) ).to.equal( 1 );
+			expect( getCurrentStepIndex( actionList ) ).to.equal( 2 );
 		} );
 
-		it( 'should return array length if all steps are complete', () => {
-			const fiveSecondsAgo = Date.now() - 5000;
-			const threeSecondsAgo = Date.now() - 3000;
-			const twoSecondsAgo = Date.now() - 2000;
-			const oneSecondAgo = Date.now() - 1000;
-
+		it( 'should return the last run step in the action list if there is no current step', () => {
 			const actionList = {
-				steps: [
-					{ description: 'Action Step 1', action: { type: 'ACTION1' },
-						startTime: fiveSecondsAgo, endTime: threeSecondsAgo },
-					{ description: 'Action Step 2', action: { type: 'ACTION2' },
-						startTime: twoSecondsAgo, endTime: oneSecondAgo },
+				prevSteps: [
+					{ description: fxt.stepA.description, startTime: fxt.time.stepAStart, endTime: fxt.time.stepAEnd },
+					{ description: fxt.stepB.description, startTime: fxt.time.stepBStart, endTime: fxt.time.stepBEnd },
 				],
-				successAction: { type: '%%SUCCESS%%' },
-				failureAction: { type: '%%FAILURE%%' },
+				currentStep: null,
+				nextSteps: [
+					{ description: fxt.stepC.description },
+				],
 			};
 
-			expect( getCurrentStepIndex( actionList ) ).to.equal( actionList.steps.length );
+			expect( getCurrentStepIndex( actionList ) ).to.equal( 2 );
 		} );
 
-		it( 'should return first step if no steps have been started', () => {
+		it( 'should return zero if no steps have been started', () => {
 			const actionList = {
-				steps: [
-					{ description: 'Action Step 1', action: { type: 'ACTION1' } },
-					{ description: 'Action Step 2', action: { type: 'ACTION2' } },
+				nextSteps: [
+					{ description: fxt.stepA.description },
+					{ description: fxt.stepB.description },
+					{ description: fxt.stepC.description },
 				],
 			};
 
@@ -90,47 +84,71 @@ describe( 'selectors', () => {
 		} );
 	} );
 
+	describe( 'getTotalStepCount', () => {
+		it( 'should return a count of all previous, current, and next steps', () => {
+			const actionList = {
+				prevSteps: [
+					{ description: fxt.stepA.description, startTime: fxt.time.stepAStart, endTime: fxt.time.stepAEnd },
+				],
+				currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
+				nextSteps: [
+					{ description: fxt.stepC.description },
+				],
+			};
+
+			expect( getTotalStepCount( actionList ) ).to.equal( 3 );
+		} );
+
+		it( 'should handle an empty prevSteps list', () => {
+			const actionList = {
+				prevSteps: [
+				],
+				currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
+				nextSteps: [
+					{ description: fxt.stepC.description },
+				],
+			};
+
+			expect( getTotalStepCount( actionList ) ).to.equal( 2 );
+		} );
+	} );
+
 	describe( 'getStepCountRemaining', () => {
 		it( 'should return array length if no steps have been started', () => {
 			const actionList = {
-				steps: [
-					{ description: 'Action Step 1', action: { type: 'ACTION1' } },
-					{ description: 'Action Step 2', action: { type: 'ACTION2' } },
+				nextSteps: [
+					{ description: fxt.stepA.description },
+					{ description: fxt.stepB.description },
+					{ description: fxt.stepC.description },
 				],
 			};
 
-			expect( getStepCountRemaining( actionList ) ).to.equal( actionList.steps.length );
+			expect( getStepCountRemaining( actionList ) ).to.equal( 3 );
 		} );
 
 		it( 'should return array length if no steps have been yet completed', () => {
-			const fiveSecondsAgo = Date.now() - 5000;
-
 			const actionList = {
-				steps: [
-					{ description: 'Action Step 1', action: { type: 'ACTION1' },
-						startTime: fiveSecondsAgo },
-					{ description: 'Action Step 2', action: { type: 'ACTION2' } },
+				prevSteps: [
+				],
+				currentStep: { description: fxt.stepA.description, startTime: fxt.time.stepAStart },
+				nextSteps: [
+					{ description: fxt.stepB.description },
+					{ description: fxt.stepC.description },
 				],
 			};
 
-			expect( getStepCountRemaining( actionList ) ).to.equal( actionList.steps.length );
+			expect( getStepCountRemaining( actionList ) ).to.equal( 3 );
 		} );
 
 		it( 'should return zero if all steps are completed', () => {
-			const fiveSecondsAgo = Date.now() - 5000;
-			const threeSecondsAgo = Date.now() - 3000;
-			const twoSecondsAgo = Date.now() - 2000;
-			const oneSecondAgo = Date.now() - 1000;
-
 			const actionList = {
-				steps: [
-					{ description: 'Action Step 1', action: { type: 'ACTION1' },
-						startTime: fiveSecondsAgo, endTime: threeSecondsAgo },
-					{ description: 'Action Step 2', action: { type: 'ACTION2' },
-						startTime: twoSecondsAgo, endTime: oneSecondAgo },
+				prevSteps: [
+					{ description: fxt.stepA.description, startTime: fxt.time.stepAStart, endTime: fxt.time.stepAEnd },
+					{ description: fxt.stepB.description, startTime: fxt.time.stepBStart, endTime: fxt.time.stepBEnd },
+					{ description: fxt.stepC.description, startTime: fxt.time.stepCStart, endTime: fxt.time.stepCEnd },
 				],
-				successAction: { type: '%%SUCCESS%%' },
-				failureAction: { type: '%%FAILURE%%' },
+				currentStep: null,
+				nextSteps: [],
 			};
 
 			expect( getStepCountRemaining( actionList ) ).to.equal( 0 );

@@ -2,15 +2,17 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { spy } from 'sinon';
+import { spy, match } from 'sinon';
 
 /**
  * Internal dependencies
  */
 import {
-	actionListClear,
+	WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
+} from 'woocommerce/state/action-types';
+import {
+	actionListAnnotate,
 	actionListStepNext,
-	actionListStepAnnotate,
 	actionListStepSuccess,
 	actionListStepFailure,
 } from 'woocommerce/state/action-list/actions';
@@ -19,211 +21,286 @@ import {
 	handleStepSuccess,
 	handleStepFailure,
 } from '../';
+import * as fxt from 'woocommerce/state/action-list/test/fixtures';
 
 describe( 'handlers', () => {
+	let store;
+
+	beforeEach( () => {
+		store = {
+			dispatch: spy(),
+		};
+	} );
+
 	describe( '#handleStepNext', () => {
-		it( 'should annotate startTime and the step action', () => {
-			const step1Action = { type: '%%Step 1 Action%%' };
-
-			const rootState = {
-				extensions: {
-					woocommerce: {
-						actionList: {
-							steps: [
-								{ description: 'Step 1', action: step1Action },
-							],
-						}
-					}
-				}
+		it( 'should annotate the actionList to the reducer state', () => {
+			const actionListBefore = {
+				nextSteps: [ fxt.stepA, fxt.stepB, fxt.stepC ]
 			};
 
-			const store = {
-				dispatch: spy(),
-				getState: () => rootState,
+			const actionListAfter = {
+				prevSteps: undefined,
+				currentStep: fxt.stepAStarted,
+				nextSteps: [ fxt.stepB, fxt.stepC ],
 			};
 
-			const action = actionListStepNext( Date.now() );
-			const annotationAction = actionListStepAnnotate( 0, { startTime: action.time } );
+			handleStepNext( store, actionListStepNext( actionListBefore ), fxt.time.stepAStart );
 
-			handleStepNext( store, action );
+			expect( store.dispatch ).to.have.been.calledWith( actionListAnnotate( actionListAfter ) );
+		} );
 
-			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
-			expect( store.dispatch ).to.have.been.calledWith( step1Action );
+		it( 'should run the first step in the list', () => {
+			const actionListBefore = {
+				nextSteps: [ fxt.stepA, fxt.stepB, fxt.stepC ]
+			};
+
+			const actionListAfter = {
+				prevSteps: undefined,
+				currentStep: fxt.stepAStarted,
+				nextSteps: [ fxt.stepB, fxt.stepC ],
+			};
+
+			handleStepNext( store, actionListStepNext( actionListBefore ), fxt.time.stepAStart );
+
+			expect( store.dispatch ).to.have.been.calledWith( { type: '%% action a %%' } );
+			expect( store.dispatch ).to.have.been.calledWith( actionListStepSuccess( actionListAfter ) );
+		} );
+
+		it( 'should run a middle step in the list', () => {
+			const actionListBefore = {
+				prevSteps: [ fxt.stepASuccessful ],
+				currentStep: null,
+				nextSteps: [ fxt.stepB, fxt.stepC ],
+			};
+
+			const actionListAfter = {
+				prevSteps: [ fxt.stepASuccessful ],
+				currentStep: fxt.stepBStarted,
+				nextSteps: [ fxt.stepC ],
+			};
+
+			handleStepNext( store, actionListStepNext( actionListBefore ), fxt.time.stepBStart );
+
+			expect( store.dispatch ).to.have.been.calledWith( { type: '%% action b %%' } );
+			expect( store.dispatch ).to.have.been.calledWith( actionListStepSuccess( actionListAfter ) );
+		} );
+
+		it( 'should run a last step in the list', () => {
+			const actionListBefore = {
+				prevSteps: [ fxt.stepASuccessful, fxt.stepBSuccessful ],
+				currentStep: null,
+				nextSteps: [ fxt.stepC ],
+			};
+
+			const actionListAfter = {
+				prevSteps: [ fxt.stepASuccessful, fxt.stepBSuccessful ],
+				currentStep: fxt.stepCStarted,
+				nextSteps: [],
+			};
+
+			handleStepNext( store, actionListStepNext( actionListBefore ), fxt.time.stepCStart );
+
+			expect( store.dispatch ).to.have.been.calledWith( { type: '%% action c %%' } );
+			expect( store.dispatch ).to.have.been.calledWith( actionListStepSuccess( actionListAfter ) );
+		} );
+
+		it( 'should propagate an error state', () => {
+			const actionListBefore = {
+				prevSteps: [ fxt.stepASuccessful ],
+				currentStep: null,
+				nextSteps: [ fxt.stepE, fxt.stepC ],
+			};
+
+			const actionListAfter = {
+				prevSteps: [ fxt.stepASuccessful ],
+				currentStep: fxt.stepEStarted,
+				nextSteps: [ fxt.stepC ],
+			};
+
+			handleStepNext( store, actionListStepNext( actionListBefore ), fxt.time.stepEStart );
+
+			expect( store.dispatch ).to.have.been.calledWith( { type: '%% error action %%' } );
+			expect( store.dispatch ).to.have.been.calledWith( actionListStepFailure( actionListAfter, fxt.stepEError ) );
+		} );
+
+		it( 'should ignore a next request while a current step is still running.', () => {
+			const actionList = {
+				prevSteps: [],
+				currentStep: fxt.stepA,
+				nextSteps: [ fxt.stepB ],
+			};
+
+			handleStepNext( store, actionListStepNext( actionList ), fxt.time.stepBStart );
+
+			expect( store.dispatch ).to.not.have.been.called;
+		} );
+
+		it( 'should ignore a next request if there are no more steps.', () => {
+			const actionList = {
+				prevSteps: [ fxt.stepA, fxt.stepB ],
+				currentStep: null,
+				nextSteps: [],
+			};
+
+			handleStepNext( store, actionListStepNext( actionList ), fxt.time.stepCStart );
+
+			expect( store.dispatch ).to.not.have.been.called;
 		} );
 	} );
 
 	describe( '#handleStepSuccess', () => {
-		it( 'should annotate endTime and start the next step', () => {
-			const rootState = {
-				extensions: {
-					woocommerce: {
-						actionList: {
-							steps: [
-								{ description: 'Step 1', action: { type: '%%1%%' } },
-								{ description: 'Step 2', action: { type: '%%2%%' } },
-							],
-						}
-					}
-				}
+		it( 'should annotate the actionList to the reducer state', () => {
+			const actionListBefore = {
+				prevSteps: [],
+				currentStep: fxt.stepAStarted,
+				nextSteps: [ fxt.stepB, fxt.stepC ],
 			};
 
-			const store = {
-				dispatch: spy(),
-				getState: () => rootState,
+			const actionListAfter = {
+				prevSteps: [ fxt.stepASuccessful ],
+				currentStep: null,
+				nextSteps: [ fxt.stepB, fxt.stepC ],
 			};
 
-			const action = actionListStepSuccess( 0, Date.now() );
-			const annotationAction = actionListStepAnnotate( 0, { endTime: action.time } );
-			const stepNextAction = actionListStepNext( action.time );
+			handleStepSuccess( store, actionListStepSuccess( actionListBefore ), fxt.time.stepAEnd );
 
-			handleStepSuccess( store, action );
-
-			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
-			expect( store.dispatch ).to.have.been.calledWith( stepNextAction );
+			expect( store.dispatch ).to.have.been.calledWith( actionListAnnotate( actionListAfter ) );
 		} );
 
-		it( 'should stop after the last step', () => {
-			const step1Start = Date.now() - 300;
-			const step1End = Date.now() - 200;
-			const step2Start = Date.now() - 100;
-			const step2End = Date.now();
-
-			const successAction = { type: '%%SUCCESS%%' };
-			const failureAction = { type: '%%FAILURE%%' };
-
-			const rootState = {
-				extensions: {
-					woocommerce: {
-						actionList: {
-							steps: [
-								{ description: 'Step 1', action: { type: '%%1%%' },
-									startTime: step1Start, endTime: step1End },
-								{ description: 'Step 2', action: { type: '%%2%%' },
-									startTime: step2Start },
-							],
-							successAction,
-							failureAction,
-						}
-					}
-				}
+		it( 'should complete the first step in the list and call middle step', () => {
+			const actionListBefore = {
+				prevSteps: [],
+				currentStep: fxt.stepAStarted,
+				nextSteps: [ fxt.stepB, fxt.stepC ],
 			};
 
-			const store = {
-				dispatch: spy(),
-				getState: () => rootState,
+			const actionListAfter = {
+				prevSteps: [ fxt.stepASuccessful ],
+				currentStep: null,
+				nextSteps: [ fxt.stepB, fxt.stepC ],
 			};
 
-			const action = actionListStepSuccess( 1, step2End );
-			const annotationAction = actionListStepAnnotate( 1, { endTime: step2End } );
-			const stepNextAction = actionListStepNext( action.time );
+			handleStepSuccess( store, actionListStepSuccess( actionListBefore ), fxt.time.stepAEnd );
 
-			handleStepSuccess( store, action );
-
-			expect( store.dispatch ).to.have.been.called.once;
-			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
-			expect( store.dispatch ).to.not.have.been.calledWith( stepNextAction );
-			expect( store.dispatch ).to.have.been.calledWith( successAction );
+			expect( store.dispatch ).to.have.been.calledWith( actionListStepNext( actionListAfter ) );
 		} );
 
-		it( 'should clear action-list after success if clearUponComplete is specified', () => {
-			const step1Start = Date.now() - 300;
-			const step1End = Date.now() - 200;
-
-			const rootState = {
-				extensions: {
-					woocommerce: {
-						actionList: {
-							steps: [
-								{ description: 'Step 1', action: { type: '%%1%%' },
-									startTime: step1Start },
-							],
-							clearUponComplete: true,
-						}
-					}
-				}
+		it( 'should complete the middle step in the list and call last step', () => {
+			const actionListBefore = {
+				prevSteps: [ fxt.stepASuccessful ],
+				currentStep: fxt.stepBStarted,
+				nextSteps: [ fxt.stepC ],
 			};
 
-			const store = {
-				dispatch: spy(),
-				getState: () => rootState,
+			const actionListAfter = {
+				prevSteps: [ fxt.stepASuccessful, fxt.stepBSuccessful ],
+				currentStep: null,
+				nextSteps: [ fxt.stepC ],
 			};
 
-			const action = actionListStepSuccess( 0, step1End );
-			const annotationAction = actionListStepAnnotate( 0, { endTime: step1End } );
-			const stepNextAction = actionListStepNext( action.time );
-			const clearAction = actionListClear();
+			handleStepSuccess( store, actionListStepSuccess( actionListBefore ), fxt.time.stepBEnd );
 
-			handleStepSuccess( store, action );
+			expect( store.dispatch ).to.have.been.calledWith( actionListStepNext( actionListAfter ) );
+		} );
 
-			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
-			expect( store.dispatch ).to.not.have.been.calledWith( stepNextAction );
-			expect( store.dispatch ).to.have.been.calledWith( clearAction );
+		it( 'should run onSuccess after the last step', () => {
+			const onSuccess = ( dispatch, actionList ) => dispatch( { type: '%% action list success %%', actionList } );
+
+			const actionListBefore = {
+				prevSteps: [ fxt.stepASuccessful, fxt.stepBSuccessful ],
+				currentStep: fxt.stepCStarted,
+				nextSteps: [],
+				onSuccess,
+			};
+
+			const actionListAfter = {
+				prevSteps: [ fxt.stepASuccessful, fxt.stepBSuccessful, fxt.stepCSuccessful ],
+				currentStep: null,
+				nextSteps: [],
+				onSuccess,
+			};
+
+			handleStepSuccess( store, actionListStepSuccess( actionListBefore ), fxt.time.stepCEnd );
+
+			expect( store.dispatch ).to.not.have.been.calledWith( match( { type: WOOCOMMERCE_ACTION_LIST_STEP_NEXT } ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				{ type: '%% action list success %%', actionList: actionListAfter }
+			);
+		} );
+
+		it( 'should ignore a success request when there is no current step.', () => {
+			const actionList = {
+				prevSteps: [ fxt.stepA ],
+				currentStep: null,
+				nextSteps: [ fxt.stepB ],
+			};
+
+			handleStepSuccess( store, actionListStepSuccess( actionList ) );
+
+			expect( store.dispatch ).to.not.have.been.called;
 		} );
 	} );
 
 	describe( '#handleStepFailure', () => {
-		it( 'should annotate endTime and error', () => {
-			const successAction = { type: '%%SUCCESS%%' };
-			const failureAction = { type: '%%FAILURE%%' };
+		it( 'should annotate the actionList to the reducer state', () => {
+			const onFailure = ( dispatch, actionList ) =>
+				dispatch( { type: '%% action list failure %%', actionList } );
 
-			const rootState = {
-				extensions: {
-					woocommerce: {
-						actionList: {
-							steps: [
-								{ description: 'Step 1', action: { type: '%%1%%' } },
-								{ description: 'Step 2', action: { type: '%%2%%' } },
-							],
-							successAction,
-							failureAction,
-						}
-					}
-				}
+			const actionListBefore = {
+				prevSteps: [ fxt.stepASuccessful ],
+				currentStep: fxt.stepEStarted,
+				nextSteps: [ fxt.stepC ],
+				onFailure,
 			};
 
-			const store = {
-				dispatch: spy(),
-				getState: () => rootState,
+			const actionListAfter = {
+				prevSteps: [ fxt.stepASuccessful, fxt.stepEFailed ],
+				currentStep: null,
+				nextSteps: [ fxt.stepC ],
+				onFailure,
 			};
 
-			const error = 'This is an error';
-			const action = actionListStepFailure( 0, error, Date.now() );
-			const annotationAction = actionListStepAnnotate( 0, { error, endTime: action.time } );
+			handleStepFailure( store, actionListStepFailure( actionListBefore, fxt.stepEError ), fxt.time.stepEEnd );
 
-			handleStepFailure( store, action );
-
-			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
-			expect( store.dispatch ).to.have.been.calledWith( failureAction );
+			expect( store.dispatch ).to.have.been.calledWith( actionListAnnotate( actionListAfter ) );
 		} );
 
-		it( 'should clear action-list after failure if clearUponComplete is specified', () => {
-			const rootState = {
-				extensions: {
-					woocommerce: {
-						actionList: {
-							steps: [
-								{ description: 'Step 1', action: { type: '%%1%%' } },
-							],
-							clearUponComplete: true,
-						}
-					}
-				}
+		it( 'should run onFailure after any failure', () => {
+			const onFailure = ( dispatch, actionList ) =>
+				dispatch( { type: '%% action list failure %%', actionList } );
+
+			const actionListBefore = {
+				prevSteps: [ fxt.stepASuccessful ],
+				currentStep: fxt.stepEStarted,
+				nextSteps: [ fxt.stepC ],
+				onFailure,
 			};
 
-			const store = {
-				dispatch: spy(),
-				getState: () => rootState,
+			const actionListAfter = {
+				prevSteps: [ fxt.stepASuccessful, fxt.stepEFailed ],
+				currentStep: null,
+				nextSteps: [ fxt.stepC ],
+				onFailure,
 			};
 
-			const error = 'This is an error';
-			const action = actionListStepFailure( 0, error, Date.now() );
-			const annotationAction = actionListStepAnnotate( 0, { error, endTime: action.time } );
-			const clearAction = actionListClear();
+			handleStepFailure( store, actionListStepFailure( actionListBefore, fxt.stepEError ), fxt.time.stepEEnd );
 
-			handleStepFailure( store, action );
+			expect( store.dispatch ).to.not.have.been.calledWith( match( { type: WOOCOMMERCE_ACTION_LIST_STEP_NEXT } ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				{ type: '%% action list failure %%', actionList: actionListAfter }
+			);
+		} );
 
-			expect( store.dispatch ).to.have.been.calledWith( annotationAction );
-			expect( store.dispatch ).to.have.been.calledWith( clearAction );
+		it( 'should ignore a failure request when there is no current step.', () => {
+			const actionList = {
+				prevSteps: [ fxt.stepA ],
+				currentStep: null,
+				nextSteps: [ fxt.stepB ],
+			};
+
+			handleStepFailure( store, actionListStepFailure( actionList, fxt.stepEError ) );
+
+			expect( store.dispatch ).to.not.have.been.called;
 		} );
 	} );
 } );

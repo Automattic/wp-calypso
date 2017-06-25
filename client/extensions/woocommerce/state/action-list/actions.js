@@ -4,7 +4,6 @@
  */
 import {
 	WOOCOMMERCE_ACTION_LIST_ANNOTATE,
-	WOOCOMMERCE_ACTION_LIST_CREATE,
 	WOOCOMMERCE_ACTION_LIST_CLEAR,
 	WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
 	WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,
@@ -12,14 +11,14 @@ import {
 } from '../action-types';
 
 /**
- * Action Creator: Create new Action List.
+ * Action Creator: Start next action list step.
  *
- * @param {Object} actionList The sequential actionList to be carried out
+ * @param {Object} actionList The current action list.
  * @return {Object} action
  */
-export function actionListCreate( actionList ) {
+export function actionListStepNext( actionList ) {
 	return {
-		type: WOOCOMMERCE_ACTION_LIST_CREATE,
+		type: WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
 		actionList,
 	};
 }
@@ -35,61 +34,42 @@ export function actionListClear() {
 }
 
 /**
- * Action Creator: Annotate a step in the action list.
- * @param {Number} stepIndex The index of the step to annotate.
- * @param {Object} annotations One or more of startTime, endTime, or error
+ * Action Creator: Annotate the current representation of the action list to state.
+ * @param {Object} actionList The current actionList
  * @return {Object} action
  */
-export function actionListStepAnnotate( stepIndex, annotations ) {
+export function actionListAnnotate( actionList ) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_ANNOTATE,
-		stepIndex,
-		annotations
+		actionList,
 	};
 }
 
 /**
- * Action Creator: Start next action list step.
+ * Action Creator: Mark current step as successful.
  *
- * @param {Date} [time] Optional timestamp.
+ * @param {Object} actionList The current action list.
  * @return {Object} action
  */
-export function actionListStepNext( time ) {
-	return {
-		type: WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
-		time,
-	};
-}
-
-/**
- * Action Creator: Mark step as successful.
- *
- * @param {Number} stepIndex The index of the step.
- * @param {Date} [time] Optional timestamp.
- * @return {Object} action
- */
-export function actionListStepSuccess( stepIndex, time ) {
+export function actionListStepSuccess( actionList ) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,
-		stepIndex,
-		time,
+		actionList,
 	};
 }
 
 /**
- * Action Creator: Mark step as failed.
+ * Action Creator: Mark current step as failed.
  *
- * @param {Number} stepIndex The index of the step.
+ * @param {Object} actionList The current action list.
  * @param {Object} error The error from the failure.
- * @param {Date} [time] Optional timestamp.
  * @return {Object} action
  */
-export function actionListStepFailure( stepIndex, error, time ) {
+export function actionListStepFailure( actionList, error ) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_STEP_FAILURE,
-		stepIndex,
+		actionList,
 		error,
-		time,
 	};
 }
 

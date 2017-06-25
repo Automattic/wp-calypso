@@ -15,26 +15,31 @@ export function getActionList( rootState ) {
 }
 
 /**
- * Get the current step in the action list.
+ * Get the number of the current step.
  *
- * This selector returns the index of the step that is currently executing in the action list.
- * (The first step in the list that does not have an endTime)
+ * This selector returns the 1-indexed number of the step that is currently executing in the action list.
  *
  * @param {Object} actionList The action list to check.
  * @return {Number|null} The index of the current step, or actionList.length if all steps are complete,
  */
 export function getCurrentStepIndex( actionList ) {
-	const { steps } = actionList;
+	const { prevSteps, currentStep } = actionList;
 
-	for ( let i = 0; i < steps.length; i++ ) {
-		const step = steps[ i ];
-		if ( ! step.endTime ) {
-			return i;
-		}
-	}
+	return ( prevSteps ? prevSteps.length : 0 ) + ( currentStep ? 1 : 0 );
+}
 
-	// All steps complete
-	return steps.length;
+/**
+ * Gets the number of steps in total in the action list.
+ *
+ * @param {Object} actionList The action list to check.
+ * @return {Number} The count of steps in total.
+ */
+export function getTotalStepCount( actionList ) {
+	const { prevSteps, currentStep, nextSteps } = actionList;
+
+	return ( prevSteps ? prevSteps.length : 0 ) +
+		( currentStep ? 1 : 0 ) +
+		( nextSteps ? nextSteps.length : 0 );
 }
 
 /**
@@ -44,7 +49,8 @@ export function getCurrentStepIndex( actionList ) {
  * @return {Number} The number of steps remaining.
  */
 export function getStepCountRemaining( actionList ) {
-	const currentIndex = getCurrentStepIndex( actionList );
-	return actionList.steps.length - currentIndex;
+	const { currentStep, nextSteps } = actionList;
+
+	return ( currentStep ? 1 : 0 ) + ( nextSteps ? nextSteps.length : 0 );
 }
 

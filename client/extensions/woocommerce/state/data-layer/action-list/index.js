@@ -8,11 +8,9 @@ const debug = debugFactor( 'woocommerce:action-list' );
 /**
  * Internal dependencies
  */
-import { getActionList, getCurrentStepIndex } from 'woocommerce/state/action-list/selectors';
 import {
-	actionListClear,
-	actionListStepAnnotate,
 	actionListStepNext,
+	actionListAnnotate,
 } from 'woocommerce/state/action-list/actions';
 import {
 	WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
@@ -20,64 +18,82 @@ import {
 	WOOCOMMERCE_ACTION_LIST_STEP_FAILURE,
 } from 'woocommerce/state/action-types';
 
-export function handleStepNext( { dispatch, getState }, action ) {
-	const startTime = action.time || Date.now();
-	const actionList = getActionList( getState() );
-	const stepIndex = getCurrentStepIndex( actionList );
-	const step = actionList.steps[ stepIndex ];
-
-	if ( step.startTime ) {
-		debug( `WOOCOMMERCE_ACTION_LIST_STEP_NEXT dispatched twice for step ${ stepIndex }` );
-		return;
-	}
-
-	dispatch( actionListStepAnnotate( stepIndex, { startTime } ) );
-	dispatch( step.action );
-}
-
-export function handleStepSuccess( { dispatch, getState }, action ) {
-	const { stepIndex, time } = action;
-	const endTime = time || Date.now();
-	const actionList = getActionList( getState() );
-	const currentStepIndex = getCurrentStepIndex( actionList );
-	const nextStepIndex = currentStepIndex + 1;
-
-	dispatch( actionListStepAnnotate( stepIndex, { endTime } ) );
-
-	if ( nextStepIndex < actionList.steps.length ) {
-		// Still more work to do.
-		dispatch( actionListStepNext( action.time ) );
-	} else {
-		// All done!
-		debug( `Action List Success. ${ actionList.steps.length } steps completed.` );
-		if ( actionList.successAction ) {
-			dispatch( actionList.successAction );
-		}
-		if ( actionList.clearUponComplete ) {
-			dispatch( actionListClear() );
-		}
-	}
-}
-
-export function handleStepFailure( { dispatch, getState }, action ) {
-	const { stepIndex, time, error } = action;
-	const actionList = getActionList( getState() );
-	const endTime = time || Date.now();
-
-	debug( `Action List Failed on step ${ stepIndex } with error: ${ error }` );
-
-	dispatch( actionListStepAnnotate( stepIndex, { endTime, error } ) );
-	if ( actionList.failureAction ) {
-		dispatch( actionList.failureAction );
-	}
-	if ( actionList.clearUponComplete ) {
-		dispatch( actionListClear() );
-	}
-}
-
 export default {
 	[ WOOCOMMERCE_ACTION_LIST_STEP_NEXT ]: [ handleStepNext ],
 	[ WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS ]: [ handleStepSuccess ],
 	[ WOOCOMMERCE_ACTION_LIST_STEP_FAILURE ]: [ handleStepFailure ],
 };
+
+export function handleStepNext( { dispatch }, action, now = Date.now() ) {
+	const { actionList } = action;
+	const { prevSteps, currentStep, nextSteps } = actionList;
+	const [ nextStep, ...remainingSteps ] = nextSteps || [];
+
+	if ( currentStep ) {
+		debug( '[handleStepNext] Warning: Attempting before current step finishes. Ignoring.' );
+		return;
+	}
+	if ( ! nextStep ) {
+		debug( '[handleStepNext] Warning: Attempting with no nextSteps left. Ignoring.' );
+		return;
+	}
+
+	const nextActionList = {
+		...actionList,
+		prevSteps,
+		currentStep: { ...nextStep, startTime: now },
+		nextSteps: remainingSteps,
+	};
+
+	dispatch( actionListAnnotate( nextActionList ) );
+	nextStep.onStep( dispatch, nextActionList );
+}
+
+export function handleStepSuccess( { dispatch }, action, now = Date.now() ) {
+	const { actionList } = action;
+	const { prevSteps, currentStep, nextSteps } = actionList;
+
+	if ( ! currentStep ) {
+		debug( '[handleStepSuccess] Warning: Attempting with no current step. Ignoring.' );
+		return;
+	}
+
+	const nextActionList = {
+		...actionList,
+		prevSteps: [ ...prevSteps, { ...currentStep, endTime: now } ],
+		currentStep: null,
+		nextSteps,
+	};
+
+	dispatch( actionListAnnotate( nextActionList ) );
+
+	if ( nextSteps && nextSteps.length > 0 ) {
+		dispatch( actionListStepNext( nextActionList ) );
+	} else if ( actionList.onSuccess ) {
+		actionList.onSuccess( dispatch, nextActionList );
+	}
+}
+
+export function handleStepFailure( { dispatch, getState }, action, now = Date.now() ) {
+	const { actionList, error } = action;
+	const { prevSteps, currentStep, nextSteps } = actionList;
+
+	if ( ! currentStep ) {
+		debug( '[handleStepFailure] Warning: Attempting with no current step. Ignoring.' );
+		return;
+	}
+
+	const nextActionList = {
+		...actionList,
+		prevSteps: [ ...( prevSteps || [] ), { ...currentStep, endTime: now, error } ],
+		currentStep: null,
+		nextSteps,
+	};
+
+	dispatch( actionListAnnotate( nextActionList ) );
+
+	if ( actionList.onFailure ) {
+		actionList.onFailure( dispatch, nextActionList );
+	}
+}
 
