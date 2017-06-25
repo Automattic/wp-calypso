@@ -161,7 +161,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 							translate( 'I have read and agree to the {{a}}CIRA Registrant Agreement{{/a}}',
 								{
 									components: {
-										a: <a href={ ciraAgreementUrl } />,
+										a: <a target="_blank" rel="noopener noreferrer" href={ ciraAgreementUrl } />,
 									},
 								}
 							)
