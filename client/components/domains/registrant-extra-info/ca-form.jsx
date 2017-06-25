@@ -23,6 +23,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormCheckbox from 'components/forms/form-checkbox';
+import FormInputValidation from 'components/forms/form-input-validation';
 
 const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 const defaultValues = {
@@ -108,6 +109,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 	handleChangeEvent = ( event ) => {
 		const { target } = event;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
+
 		this.props.updateContactDetailsCache( {
 			extra: { [ camelCase( event.target.id ) ]: value },
 		} );
@@ -120,6 +122,11 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 			legalType,
 			ciraAgreementAccepted,
 		} = { ...defaultValues, ...this.props.contactDetailsExtra };
+
+
+		const submitButton = React.cloneElement( this.props.children, {
+			disabled: ! ciraAgreementAccepted
+		} );
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -148,7 +155,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 					<FormLabel>
 						<FormCheckbox
 							id="cira-agreement-accepted"
-							value={ ciraAgreementAccepted }
+							defaultChecked={ true }
 							onChange={ this.handleChangeEvent } />
 						<span>{
 							translate( 'I have read and agree to the {{a}}CIRA Registrant Agreement{{/a}}',
@@ -159,10 +166,11 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 								}
 							)
 						}</span>
+						{ ! ciraAgreementAccepted ? <FormInputValidation text={ translate( 'Required' ) } isError={ true } /> : null }
 					</FormLabel>
 				</FormFieldset>
 
-				{ this.props.children }
+				{ submitButton }
 			</form>
 		);
 	}
