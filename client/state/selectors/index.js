@@ -130,6 +130,7 @@ export getUserSettings from './get-user-settings';
 export getVisibleSites from './get-visible-sites';
 export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
 export hasInitializedSites from './has-initialized-sites';
+export hasJetpackSites from './has-jetpack-sites';
 export hasSiteComments from './has-site-comments';
 export hasUnsavedUserSettings from './has-unsaved-user-settings';
 export hasUserSettings from './has-user-settings';
