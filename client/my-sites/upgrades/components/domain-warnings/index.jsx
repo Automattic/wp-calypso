@@ -19,6 +19,7 @@ import { isSubdomain } from 'lib/domains';
 import support from 'lib/url/support';
 import paths from 'my-sites/upgrades/paths';
 import { hasPendingGoogleAppsUsers } from 'lib/domains';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 const domainTypes = domainConstants.type;
 const debug = _debug( 'calypso:domain-warnings' );
@@ -93,6 +94,17 @@ export default React.createClass( {
 
 	getDomains() {
 		return ( this.props.domains || [ this.props.domain ] );
+	},
+
+	trackImpression( warning, count ) {
+		const { position } = this.props;
+
+		return (
+			<TrackComponentView
+				eventName="calypso_domain_warning_impression"
+				eventProperties={ { position, warning, count } }
+			/>
+		);
 	},
 
 	wrongNSMappedDomains() {
@@ -192,14 +204,17 @@ export default React.createClass( {
 			} );
 		}
 
+		const key = 'expired-domains-can-manage';
+
 		return (
 			<Notice
 				isCompact={ this.props.isCompact }
 				status="is-error"
 				showDismiss={ false }
-				key="expired-domains-can-manage"
+				key={ key }
 				text={ text }>
 				{ renewLink }
+				{ this.trackImpression( key, expiredDomains.length ) }
 			</Notice>
 		);
 	},
@@ -231,12 +246,16 @@ export default React.createClass( {
 			} );
 		}
 
+		const key = 'expired-domains-cannot-manage';
+
 		return (
 			<Notice
-				isCompact={ this.props.isCompact }
-				showDismiss={ false }
-				key="expired-domains-cannot-manage"
-				text={ text } />
+			isCompact={ this.props.isCompact }
+			showDismiss={ false }
+			key={ key }
+			text={ text }>
+			{ this.trackImpression( key, expiredDomains.length ) }
+			</Notice>
 		);
 	},
 
