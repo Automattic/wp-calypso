@@ -45,6 +45,36 @@ const CURRENCIES = {
 		grouping: ',',
 		decimal: '.',
 		precision: 2
+	},
+	ILS: {
+		symbol: '₪',
+		grouping: ',',
+		decimal: '.',
+		precision: 2
+	},
+	HUF: {
+		symbol: 'Ft',
+		grouping: ',',
+		decimal: '.',
+		precision: 2
+	},
+	SEK: {
+		symbol: 'kr',
+		grouping: ',',
+		decimal: '.',
+		precision: 2
+	},
+	MXN: {
+		symbol: 'MX$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2
+	},
+	RUB: {
+		symbol: '₽',
+		grouping: ',',
+		decimal: '.',
+		precision: 2
 	}
 };
 
