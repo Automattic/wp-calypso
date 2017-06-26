@@ -34,6 +34,7 @@ There are also several optional configuration settings available:
 
 * `localeTargets` - By default, tests only run on users where the locale is set to English. You can also run for all locales by setting `localeTargets` to 'any', or to an array of a specific locale or locales  `localeTargets: ['de']`
 Don't forget: any test that runs for locales other than English means strings will need to be translated.
+* `countryCodeTarget` - Only run tests for users from a specific country. You'll need to pass the current user country to the abtest method when calling it.
 
 Next, in your code, import the `abtest` method from the `abtest` module:
 
@@ -41,7 +42,7 @@ Next, in your code, import the `abtest` method from the `abtest` module:
 import { abtest } from 'lib/abtest';
 ```
 
-The exported `abtest` method takes a test name and returns one of the variations you defined in the config file.
+The exported `abtest` method takes a test name (and optional country code) and returns one of the variations you defined in the config file.
 
 Here's how you would use it to vary the text attribute of a button:
 
@@ -49,7 +50,7 @@ Here's how you would use it to vary the text attribute of a button:
 let buttonWording;
 
 if ( abtest( 'freeTrialButtonWording' ) === 'startFreeTrial' ) {
-    buttonWording = this.translate( 'Start Free Trial', { textOnly: true } );
+    buttonWording = this.translate( 'Start Free Trial' );
 } else {
     // Note: Don't make this translatable because it's only visible to English-language users
     buttonWording = 'Begin Your Free Trial';
@@ -63,6 +64,20 @@ You should keep the translation comment to make it clear to people reading the c
 When this code runs the first time, we'll fire a `calypso_abtest_start` Tracks event with two properties: `abtest_name` and `abtest_variation`. This information is used by Tracks to help you analyze the impact of your test. For logged-in users, this event is fired via POST request to the `/me/abtest` endpoint and can be seen in a browser's network tab. For logged-out users, this event is fired via the [analytics.tracks.recordEvent method](https://github.com/Automattic/wp-calypso/tree/master/client/lib/analytics#tracks-api) and can be seen by watching the `calypso:analytics` string via [the debug module](https://github.com/Automattic/wp-calypso/blob/master/.github/CONTRIBUTING.md#debugging). The event is fired when there is no variant stored for a given test in localStorage. So you can trigger the event again by removing the record from localStorage.
 
 Also, the user's variation is saved in local storage. You can see this in Chrome's dev tools by going to Resources > Local Storage > Calypso URL and viewing the `ABTests` key. If you'd like to force a specific variation while testing, you can simply change the value for your particular test then reload the page. In the example above, you'd change the value for `freeTrialButtonWording_20150216` to either `startFreeTrial` or `beginYourFreeTrial`.
+
+Here's another example with country targeting:
+```jsx
+const userCountryCode = getGeoCountryShort( state );
+let buttonWording;
+
+if ( abtest( 'freeTrialButtonWordingForIndia', userCountryCode ) === 'startFreeTrial' ) {
+    buttonWording = this.translate( 'India Special: Start Free Trial' );
+} else {
+   buttonWording = this.translate( 'Start Free Trial' );
+}
+
+<Button text={ buttonWording } />
+```
 
 ## Determining whether the user is a participant in an A/B test
 
