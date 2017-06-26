@@ -120,8 +120,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 					label={ translate( 'Store location and currency' ) }
 					description={
 						translate(
-							'Different payment methods may be available based on your store' +
-							'location and currency.'
+							'Different options are available based on your location and currency.'
 						)
 					} />
 				<Card className="payments__address-currency-container">
