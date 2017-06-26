@@ -22,6 +22,7 @@ export class CommentDetailAuthor extends Component {
 		authorUsername: PropTypes.string,
 		blockUser: PropTypes.func,
 		commentDate: PropTypes.string,
+		commentStatus: PropTypes.string,
 		showAuthorInfo: PropTypes.bool,
 	};
 
@@ -100,7 +101,7 @@ export class CommentDetailAuthor extends Component {
 						<span>{ authorIsBlocked
 							? translate( 'Unblock user' )
 							: translate( 'Block user' )
-						} </span>
+						}</span>
 					</a>
 				</div>
 			</div>
@@ -113,8 +114,10 @@ export class CommentDetailAuthor extends Component {
 			authorDisplayName,
 			authorUrl,
 			commentDate,
+			commentStatus,
 			moment,
 			showAuthorInfo,
+			translate,
 		} = this.props;
 		const { isExpanded } = this.state;
 
@@ -139,6 +142,11 @@ export class CommentDetailAuthor extends Component {
 							{ moment( commentDate ).format( 'MMMM D, YYYY H:mma' ) }
 						</div>
 					</div>
+					{ 'unapproved' === commentStatus &&
+						<div className="comment-detail__status-label is-unapproved">
+							{ translate( 'Pending' ) }
+						</div>
+					}
 					{
 						showAuthorInfo &&
 						<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
