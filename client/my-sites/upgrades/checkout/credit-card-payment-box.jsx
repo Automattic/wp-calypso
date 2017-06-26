@@ -170,10 +170,18 @@ var CreditCardPaymentBox = React.createClass( {
 	},
 
 	render: function() {
+		let title;
+
+		if ( abtest( 'indiaDebitCCString', this.props.geoCountry ) === 'modified' ) {
+			title = 'Secure Payment using Debit/Credit card';
+		} else {
+			title = this.translate( 'Secure Payment' );
+		}
+
 		return (
 			<PaymentBox
 				classSet="credit-card-payment-box"
-				title={ this.translate( 'Secure Payment' ) }>
+				title={ title }>
 				{ this.content() }
 			</PaymentBox>
 		);

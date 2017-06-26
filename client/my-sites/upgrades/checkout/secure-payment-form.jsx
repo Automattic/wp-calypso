@@ -186,7 +186,9 @@ const SecurePaymentForm = React.createClass( {
 				selectedSite={ this.props.selectedSite }
 				onToggle={ this.selectPaymentBox }
 				onSubmit={ this.handlePaymentBoxSubmit }
-				transactionStep={ this.props.transaction.step } />
+				transactionStep={ this.props.transaction.step }
+				geoCountry={ this.props.geoCountry }
+			/>
 		);
 	},
 
@@ -198,7 +200,8 @@ const SecurePaymentForm = React.createClass( {
 				countriesList={ countriesListForPayments }
 				selectedSite={ this.props.selectedSite }
 				onToggle={ this.selectPaymentBox }
-				redirectTo={ this.props.redirectTo } />
+				redirectTo={ this.props.redirectTo }
+				geoCountry={ this.props.geoCountry } />
 		);
 	},
 
