@@ -23,7 +23,7 @@ function SuccessBanner( {
 			title={ translate( 'Currently restoring your site' ) }
 		>
 			<p>{ translate(
-				"We're in the process of restoring your site back to %s." +
+				"We're in the process of restoring your site back to %s. " +
 				"You'll be notified once it's complete.",
 				{ args: moment( timestamp ).format( 'LLLL' ) }
 			) }</p>
