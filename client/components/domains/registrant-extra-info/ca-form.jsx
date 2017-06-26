@@ -155,7 +155,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 					<FormLabel>
 						<FormCheckbox
 							id="cira-agreement-accepted"
-							defaultChecked={ true }
+							checked={ ciraAgreementAccepted }
 							onChange={ this.handleChangeEvent } />
 						<span>{
 							translate( 'I have read and agree to the {{a}}CIRA Registrant Agreement{{/a}}',
