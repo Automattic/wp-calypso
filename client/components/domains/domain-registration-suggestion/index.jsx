@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import React from 'react';
 import { includes, isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -12,7 +13,7 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import Gridicon from 'gridicons';
 import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
 import { shouldBundleDomainWithPlan, getDomainPriceRule, hasDomainInCart } from 'lib/cart-values/cart-items';
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
@@ -41,7 +42,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				resultSuffix = '#best-alternative';
 			}
 
-			tracks.recordEvent( 'calypso_traintracks_render', {
+			this.props.recordTracksEvent( 'calypso_traintracks_render', {
 				railcar: this.props.railcarId,
 				ui_position: this.props.uiPosition,
 				fetch_algo: this.props.fetchAlgo,
@@ -53,7 +54,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 	onButtonClick = () => {
 		if ( this.props.railcarId ) {
-			tracks.recordEvent( 'calypso_traintracks_interact', {
+			this.props.recordTracksEvent( 'calypso_traintracks_interact', {
 				railcar: this.props.railcarId,
 				action: 'domain_added_to_cart'
 			} );
@@ -147,4 +148,13 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 }
 
-export default localize( DomainRegistrationSuggestion );
+export default connect(
+	null,
+	( dispatch ) => {
+		return {
+			recordTracksEvent: ( event, properties ) => {
+				dispatch( recordTracksEvent( event, properties ) );
+			}
+		};
+	}
+)( localize( DomainRegistrationSuggestion ) );
