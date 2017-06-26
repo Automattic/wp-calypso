@@ -14,6 +14,7 @@ import QueryShippingZones, { areShippingZonesFullyLoaded } from 'woocommerce/com
 import ShippingZoneHeader from './shipping-zone-header';
 import ShippingZoneLocations from './shipping-zone-locations';
 import ShippingZoneMethodList from './shipping-zone-method-list';
+import ShippingZoneName from './shipping-zone-name';
 import {
 	addNewShippingZone,
 	openShippingZoneForEdit
@@ -54,6 +55,7 @@ class Shipping extends Component {
 			<Main className={ classNames( 'shipping', className ) }>
 				<QueryShippingZones siteId={ siteId } />
 				<ShippingZoneHeader onSave={ markSaved } />
+				<ShippingZoneName siteId={ siteId } loaded={ loaded } onChange={ markChanged } />
 				<ShippingZoneLocations loaded={ loaded } onChange={ markChanged } />
 				<ShippingZoneMethodList siteId={ siteId } loaded={ loaded } onChange={ markChanged } />
 			</Main>

@@ -1,5 +1,37 @@
-.shipping-zone__locations {
+.shipping-zone__name-container {
 	margin-top: 58px;
+	padding: 11px 24px 11px 9px;
+}
+
+.shipping-zone__name {	
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+		
+	&.is-placeholder {
+		.gridicon, button, span {
+			@include placeholder();
+			color: transparent;
+			cursor: default;
+		}
+
+		span {
+			height: 24px;
+		}
+
+		pointer-events: none;
+	}
+
+	span {
+		flex-grow: 1;
+		font-size: 16px;
+		line-height: 1.5;
+		padding: 8px 15px;
+	}
+	
+	button {
+		margin-left: 8px;
+	}
 }
 
 .shipping-zone__loading-spinner {
