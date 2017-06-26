@@ -383,10 +383,10 @@ class PlansFeaturesMain extends Component {
 			displayJetpackPlans
 				? this.getJetpackFAQ()
 				: this.getFAQ( site );
-		let faqs = renderFAQ();
+		let faqs = null;
 
-		if ( this.isInSignupTest() || ( ! displayJetpackPlans && isInSignup ) ) {
-			faqs = null;
+		if ( ! this.isInSignupTest() || ( displayJetpackPlans && ! isInSignup ) ) {
+			faqs = renderFAQ();
 		}
 
 		return (
