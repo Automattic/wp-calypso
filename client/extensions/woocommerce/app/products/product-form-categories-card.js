@@ -62,7 +62,7 @@ const ProductFormCategoriesCard = (
 					onChange={ handleChange }
 				/>
 				<FormSettingExplanation>
-					{ translate( 'Add a category so this product is easy to find.' ) }
+					{ translate( 'Categories let you group similar products so customers can find them more easily.' ) }
 				</FormSettingExplanation>
 			</FormFieldSet>
 			<div className="products__product-form-featured">
@@ -71,7 +71,7 @@ const ProductFormCategoriesCard = (
 						onChange={ toggleFeatured }
 						checked={ product.featured }
 					>
-					{ translate( 'Feature this product to promote it on your store' ) }
+					{ translate( 'Promote this product across the store' ) }
 				</CompactFormToggle>
 				</FormLabel>
 			</div>

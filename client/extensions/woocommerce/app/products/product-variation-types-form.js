@@ -106,11 +106,10 @@ export default class ProductVariationTypesForm extends Component {
 
 		return (
 			<div className="products__variation-types-form-wrapper">
-				<strong>{ i18n.translate( 'Okay, let\'s add some variations!' ) }</strong>
+				<strong>{ i18n.translate( 'Let\'s add some variations!' ) }</strong>
 				<p>
 					{ i18n.translate(
-						'A common variation type is color. ' +
-						'The values would be the colors the product is available in.',
+						'Variations let you sell one item in various different options.',
 						{ components: { em: <em /> } }
 					) }
 				</p>

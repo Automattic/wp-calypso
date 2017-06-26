@@ -123,7 +123,7 @@ class ProductFormVariationsModal extends React.Component {
 						<FormLabel htmlFor="description">{ translate( 'Description' ) }</FormLabel>
 						<Editor />
 						<FormSettingExplanation>{ translate(
-								'This will be displayed in addition to the main product description when this variation is selected.'
+								'This additional information will be displayed when a customer choses this variation.'
 						) }</FormSettingExplanation>
 					</FormFieldSet>
 
@@ -135,7 +135,7 @@ class ProductFormVariationsModal extends React.Component {
 						/>
 					</FormLabel>
 					<FormSettingExplanation>{ translate(
-						'Hidden variations cannot be selected for purchase by customers.'
+						'Hide variations you don’t want to offer to customers.'
 					) }</FormSettingExplanation>
 				</div>
 			</div>

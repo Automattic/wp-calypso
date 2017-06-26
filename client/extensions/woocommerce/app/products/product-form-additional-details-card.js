@@ -13,7 +13,6 @@ import React, { PropTypes, Component } from 'react';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import TokenField from 'components/token-field';
 
@@ -125,7 +124,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 		return (
 			<div key={ attribute.uid } className={ classes }>
 				<FormTextInput
-					placeholder={ translate( 'Material' ) }
+					placeholder={ translate( 'Fabric' ) }
 					value={ attributeName }
 					id={ attribute.uid }
 					name="type"
@@ -172,11 +171,11 @@ class ProductFormAdditionalDetailsCard extends Component {
 				onClose={ this.cardClose }
 				clickableHeader
 			>
-				<FormSettingExplanation>
-					{ translate( 'Display additional details in a formatted list. Examples when selling ' +
-						'apparel include Cut, Type, and Material. This will also allow customers to filter ' +
-						'your store to find Women\'s cut Hoodies in Cotton.' ) }
-				</FormSettingExplanation>
+				<p>
+					{ translate( 'Include additional details about your products, like \‘fabric\’ or \‘type\’ ' +
+						'for apparel. This will help customers find the right products by' +
+						'filtering for their preferred options, like a cotton shirt in a women\’s cut.' ) }
+				</p>
 
 				<div className="products__additional-details-container">
 					<div className="products__additional-details-form-group">

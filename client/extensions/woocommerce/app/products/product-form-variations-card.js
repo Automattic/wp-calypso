@@ -100,7 +100,7 @@ class ProductFormVariationsCard extends Component {
 		const { siteId, product, variations, translate } = this.props;
 		const { editProductAttribute, editProductVariation } = this.props;
 		const variationToggleDescription = translate(
-			'%(productName)s has variations, for example size and color.', {
+			'%(productName)s has variations, like size and color.', {
 				args: {
 					productName: ( product && product.name ) || translate( 'This product' )
 				}
