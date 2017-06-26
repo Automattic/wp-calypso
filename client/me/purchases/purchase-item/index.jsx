@@ -63,7 +63,7 @@ class PurchaseItem extends Component {
 		}
 
 		if ( isExpired( purchase ) ) {
-			const expiredToday = purchase.expiryMoment < moment().add( 1, 'day' );
+			const expiredToday = moment().diff( purchase.expiryMoment, 'hours' ) < 24;
 			const expiredText = expiredToday
 				? purchase.expiryMoment.format( '[today]' )
 				: purchase.expiryMoment.fromNow();
