@@ -81,7 +81,7 @@ const getAlsoAvailableText = ( platform ) => {
 	}
 };
 
-const DownloadCard = () => {
+const DesktopDownloadCard = () => {
 	let buttonLink = WINDOWS_LINK;
 	let cardTitle = translate( 'Desktop App for Windows' );
 	let requirementsText = translate( 'Requires Windows Whatevs v12+. ' );
@@ -120,4 +120,4 @@ const DownloadCard = () => {
 	);
 };
 
-export default DownloadCard;
+export default DesktopDownloadCard;

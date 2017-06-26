@@ -12,7 +12,7 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import Main from 'components/main';
 import Card from 'components/card';
 import GetAppsIllustration from './illustration.jsx';
-import DownloadCard from './download-card.jsx';
+import DesktopDownloadCard from './desktop-download-card.jsx';
 
 export const GetApps = ( { translate } ) => {
 	const trackAppDownloadClick = () => {};
@@ -34,7 +34,7 @@ export const GetApps = ( { translate } ) => {
 					</a>
 				</div>
 			</Card>
-			<DownloadCard />
+			<DesktopDownloadCard />
 		</Main>
 	);
 };
