@@ -50,8 +50,6 @@ export getRestoreError from './get-restore-error';
 export getRewindStatusError from './get-rewind-status-error';
 export getRewindStartDate from './get-rewind-start-date';
 export getMagicLoginCurrentView from './get-magic-login-current-view';
-export getMagicLoginEmailAddressFormInput from './get-magic-login-email-address-form-input';
-export getMagicLoginEmailAddressFormInputIsValid from './get-magic-login-email-address-form-input-is-valid';
 export getMagicLoginRequestedAuthSuccessfully from './get-magic-login-requested-auth-successfully';
 export getMagicLoginRequestAuthError from './get-magic-login-request-auth-error';
 export getMagicLoginRequestEmailError from './get-magic-login-request-email-error';

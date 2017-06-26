@@ -19,19 +19,21 @@
 }
 
 .magic-login__footer {
-	border-bottom: 1px solid #c8d7e1;
-	color: #87a6bc;
-	display: block;
-	font-weight: 500;
-	line-height: 4em;
-	padding: 0 24px;
-	text-decoration: none;
 	a {
+		border-bottom: 1px solid #c8d7e1;
 		color: darken( $gray, 20% );
+		display: block;
+		line-height: 4em;
 		font-size: 14px;
+		font-weight: 500;
+		padding: 0 24px;
+		text-decoration: none;
 
 		&:hover {
 			color: $blue-medium;
+		}
+		&:last-of-type {
+			border-bottom: none;
 		}
 	}
 	.gridicon {

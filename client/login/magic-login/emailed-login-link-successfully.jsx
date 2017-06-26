@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -9,8 +10,13 @@ import { localize } from 'i18n-calypso';
  */
 import EmptyContent from 'components/empty-content';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
+import { recordPageView } from 'state/analytics/actions';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
+	static propTypes = {
+		recordPageView: PropTypes.func.isRequired,
+	};
+
 	render() {
 		const { translate, emailAddress } = this.props;
 		const line = [
@@ -26,6 +32,8 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 				context: '"It" is an email'
 			} )
 		];
+
+		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
 
 		return (
 			<div>
@@ -47,4 +55,8 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 	}
 }
 
-export default localize( EmailedLoginLinkSuccessfully );
+const mapDispatch = {
+	recordPageView,
+};
+
+export default connect( null, mapDispatch )( localize( EmailedLoginLinkSuccessfully ) );
