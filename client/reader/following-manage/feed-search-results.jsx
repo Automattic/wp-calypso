@@ -91,7 +91,6 @@ class FollowingManageSearchFeedsResults extends React.Component {
 					fetchNextPage={ this.fetchNextPage }
 					hasNextPage={ showMoreResults ? this.hasNextPage : undefined }
 					rowRenderer={ siteRowRenderer }
-					renderEventName={ 'following_manage_search' }
 				/>
 				{ ! showMoreResults &&
 					searchResultsCount > 10 &&

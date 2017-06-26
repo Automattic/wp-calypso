@@ -57,7 +57,6 @@ class SiteResults extends React.Component {
 					fetchNextPage={ this.fetchNextPage }
 					hasNextPage={ this.hasNextPage }
 					rowRenderer={ siteRowRenderer }
-					renderEventName={ 'search_stream_sites' }
 					passthroughProp={ this.props.sort }
 					extraRenderItemProps={ { showLastUpdatedDate } }
 				/>
