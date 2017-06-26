@@ -11,7 +11,7 @@ import sinon from 'sinon';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
-var DUMMY_SITE_ID = 1,
+const DUMMY_SITE_ID = 1,
 	DUMMY_MEDIA_ID = 10,
 	DUMMY_MEDIA_OBJECT = { ID: DUMMY_MEDIA_ID, title: 'Image' },
 	DUMMY_MEDIA_RESPONSE = {
@@ -148,7 +148,7 @@ describe( 'MediaStore', function() {
 		} );
 
 		it( 'should replace an item when RECEIVE_MEDIA_ITEM includes ID', function() {
-			var newItem = {
+			const newItem = {
 				ID: DUMMY_MEDIA_ID + 1,
 				ok: true
 			};
@@ -172,6 +172,23 @@ describe( 'MediaStore', function() {
 			expect( MediaStore.get( DUMMY_SITE_ID, DUMMY_MEDIA_ID ) ).to.eql( {
 				ID: DUMMY_MEDIA_ID
 			} );
+		} );
+
+		it( 'should clear all pointers when CHANGE_MEDIA_SOURCE called', () => {
+			MediaStore._pointers = {
+				[ DUMMY_SITE_ID ]: {
+					[ DUMMY_MEDIA_ID + 1 ]: DUMMY_MEDIA_ID
+				}
+			};
+
+			handler( {
+				action: {
+					type: 'CHANGE_MEDIA_SOURCE',
+					siteId: DUMMY_SITE_ID,
+				}
+			} );
+
+			expect( MediaStore._pointers[ DUMMY_SITE_ID ] ).to.eql( {} );
 		} );
 	} );
 } );
