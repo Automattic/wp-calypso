@@ -8,12 +8,15 @@ import React, { Component, PropTypes } from 'react';
  * Internal dependencies
  */
 import formatCurrency from 'lib/format-currency';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
 
 class OrderDetailsTable extends Component {
 	static propTypes = {
+		isEditable: PropTypes.bool,
 		onChange: PropTypes.func,
 		order: PropTypes.shape( {
 			discount_total: PropTypes.string.isRequired,
@@ -24,8 +27,30 @@ class OrderDetailsTable extends Component {
 		} ),
 	}
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			quantities: [],
+			shippingTotal: 0,
+		};
+	}
+
 	getRefundedTotal = ( order ) => {
 		return order.refunds.reduce( ( sum, i ) => sum + ( i.total * 1 ), 0 );
+	}
+
+	onChange = ( event ) => {
+		if ( 'shipping_total' === event.target.name ) {
+			this.setState( { shippingTotal: event.target.value } );
+		} else {
+			const i = event.target.name.split( '-' )[ 1 ];
+			const newQuants = this.state.quantities;
+			newQuants[ i ] = event.target.value;
+			this.setState( {
+				quantities: newQuants,
+			} );
+		}
+		this.props.onChange( event );
 	}
 
 	renderTableHeader = () => {
@@ -41,7 +66,7 @@ class OrderDetailsTable extends Component {
 	}
 
 	renderOrderItems = ( item, i ) => {
-		const { order, siteSlug } = this.props;
+		const { isEditable, order, siteSlug } = this.props;
 		return (
 			<TableRow key={ i } className="order__detail-items">
 				<TableItem isRowHeader className="order__detail-item-product">
@@ -51,7 +76,19 @@ class OrderDetailsTable extends Component {
 					<span className="order__detail-item-sku">{ item.sku }</span>
 				</TableItem>
 				<TableItem className="order__detail-item-cost">{ formatCurrency( item.price, order.currency ) || item.price }</TableItem>
-				<TableItem className="order__detail-item-quantity">{ item.quantity }</TableItem>
+				<TableItem className="order__detail-item-quantity">
+					{ isEditable
+						? <FormTextInput
+							type="number"
+							name={ `quantity-${ i }` }
+							onChange={ this.onChange }
+							data-price={ item.price }
+							min="0"
+							max={ item.quantity }
+							value={ this.state.quantities[ i ] || 0 } />
+						: item.quantity
+					}
+				</TableItem>
 				<TableItem className="order__detail-item-total">{ formatCurrency( item.total, order.currency ) || item.total }</TableItem>
 			</TableRow>
 		);
@@ -75,7 +112,7 @@ class OrderDetailsTable extends Component {
 	}
 
 	render() {
-		const { order, translate } = this.props;
+		const { isEditable, order, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
@@ -96,7 +133,14 @@ class OrderDetailsTable extends Component {
 					<div className="order__details-total-shipping">
 						<div className="order__details-totals-label">{ translate( 'Shipping' ) }</div>
 						<div className="order__details-totals-value">
-							{ formatCurrency( order.shipping_total, order.currency ) || order.shipping_total }
+							{ isEditable
+								? <FormTextInputWithAffixes
+									prefix="$"
+									name="shipping_total"
+									onChange={ this.onChange }
+									value={ this.state.shipping_total } />
+								: formatCurrency( order.shipping_total, order.currency ) || order.shipping_total
+							}
 						</div>
 					</div>
 					<div className="order__details-total">

@@ -4,6 +4,7 @@
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 import Gridicon from 'gridicons';
+import { camelCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +12,12 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
 import formatCurrency from 'lib/format-currency';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormTextarea from 'components/forms/form-textarea';
+import FormTextInput from 'components/forms/form-text-input';
 import OrderDetailsTable from './order-details-table';
+import PaymentLogo from 'components/payment-logo';
 
 class OrderRefundCard extends Component {
 	static propTypes = {
@@ -35,11 +41,48 @@ class OrderRefundCard extends Component {
 	toggleRefundDialog = () => {
 		this.setState( {
 			showRefundDialog: ! this.state.showRefundDialog,
+			refundTotal: 0,
+			refundNote: '',
 		} );
 	}
 
-	onChange = () => {
-		// console.log( 'change' );
+	onChange = ( event ) => {
+		switch ( event.target.name ) {
+			case 'refund_total':
+			case 'refund_note':
+				this.setState( {
+					[ camelCase( event.target.name ) ]: event.target.value,
+				} );
+				break;
+			case 'shipping_total':
+				this.setState( {
+					refundTotal: this.state.refundTotal + parseFloat( event.target.value ),
+				} );
+				break;
+			default:
+				const total = parseFloat( event.target.dataset.price ) * event.target.value;
+				this.setState( {
+					refundTotal: this.state.refundTotal + parseFloat( total ),
+				} );
+		}
+	}
+
+	renderCreditCard = () => {
+		const { translate } = this.props;
+		const type = 'VISA';
+		const digits = 'xxxx';
+		const name = 'Tester';
+
+		return (
+			<div className="order__refund-credit-card">
+				{ translate( 'Refunding payment with:' ) }
+				<PaymentLogo className="order__card-logo" type={ type.toLowerCase() } />
+				<div className="order__card-details">
+					<p className="order__card-number">{ type } ****{ digits }</p>
+					<p className="order__card-name">{ name }</p>
+				</div>
+			</div>
+		);
 	}
 
 	render() {
@@ -84,7 +127,22 @@ class OrderRefundCard extends Component {
 
 				<Dialog isVisible={ this.state.showRefundDialog } onClose={ this.toggleRefundDialog } className={ dialogClass }>
 					<h1>{ translate( 'Refund order' ) }</h1>
-					<OrderDetailsTable order={ order } onChange={ this.onChange } />
+					<OrderDetailsTable order={ order } isEditable onChange={ this.onChange } />
+					<form className="order__refund-container">
+						<FormLabel className="order__refund-note">
+							{ translate( 'Refund note' ) }
+							<FormTextarea onChange={ this.onChange } name="refund_note" value={ this.state.refundNote } />
+						</FormLabel>
+
+						<FormFieldset>
+							<FormLabel className="order__refund-amount">
+								{ translate( 'Total refund amount' ) }
+								<FormTextInput onChange={ this.onChange } name="refund_total" value={ this.state.refundTotal } />
+							</FormLabel>
+
+							{ this.renderCreditCard() }
+						</FormFieldset>
+					</form>
 				</Dialog>
 			</div>
 		);

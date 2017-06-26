@@ -179,3 +179,20 @@
 		margin-bottom: 0;
 	}
 }
+
+.order__details-refund {
+	.order__card-details {
+		float: left;
+	}
+
+	.order__card-number {
+		margin-bottom: 0;
+		font-weight: bold;
+	}
+
+	.order__card-date {
+		float: right;
+		color: $gray-text-min;
+		font-style: italic;
+	}
+}
