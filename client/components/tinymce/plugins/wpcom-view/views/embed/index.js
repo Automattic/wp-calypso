@@ -10,13 +10,8 @@ import defer from 'lodash/defer';
 import EmbedsListStore from 'lib/embeds/list-store';
 import EmbedsStore from 'lib/embeds/store';
 import actions from 'lib/embeds/actions';
-import _sites from 'lib/sites-list';
 import EmbedView from './view';
-
-/**
- * Module variables
- */
-const sites = _sites();
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export default class EmbedViewManager extends EventEmitter {
 	constructor() {
@@ -31,7 +26,7 @@ export default class EmbedViewManager extends EventEmitter {
 	}
 
 	updateSite() {
-		const siteId = ( sites.getSelectedSite() || {} ).ID;
+		const siteId = getSelectedSiteId( this.store.getState() );
 
 		if ( ! this.hasOwnProperty( 'siteId' ) ) {
 			// First update (after adding initial listener) should trigger a
@@ -46,11 +41,11 @@ export default class EmbedViewManager extends EventEmitter {
 		}
 	}
 
-	addListener( event, listener ) {
+	addListener( event, listener, store ) {
 		super.addListener( event, listener );
-
 		if ( 'change' === event && 1 === this.listeners( event ).length ) {
-			sites.addListener( event, this.sitesListener );
+			this.store = store;
+			this.unsubscribeStore = store.subscribe( this.sitesListener );
 			this.embedsListListener = EmbedsListStore.addListener( this.onChange.bind( this ) );
 			this.embedsListener = EmbedsStore.addListener( this.onChange.bind( this ) );
 			this.updateSite();
@@ -61,7 +56,7 @@ export default class EmbedViewManager extends EventEmitter {
 		super.removeListener( event, listener );
 
 		if ( 'change' === event && ! this.listeners( event ).length ) {
-			sites.removeListener( event, this.sitesListener );
+			this.unsubscribeStore();
 
 			if ( this.embedsListListener ) {
 				this.embedsListListener.remove();
