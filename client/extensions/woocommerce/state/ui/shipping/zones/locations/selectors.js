@@ -58,7 +58,7 @@ const getStatesOwnedByOtherZone = ( state, siteId, countryCode ) => {
 	return states;
 };
 
-const getShippingZoneLocationsWithEdits = ( state, siteId ) => {
+export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areShippingZonesLoaded( state, siteId ) ) {
 		return null;
 	}
@@ -67,28 +67,49 @@ const getShippingZoneLocationsWithEdits = ( state, siteId ) => {
 		return null;
 	}
 	const locations = getRawShippingZoneLocations( state, siteId )[ zone.id ];
+
+	const continents = new Set( locations.continent );
+	const countries = new Set( locations.country );
+	const states = new Set();
+	locations.state.forEach( ( fullCode ) => {
+		const [ countryCode, stateCode ] = fullCode.split( ':' );
+		countries.add( countryCode );
+		states.add( stateCode );
+	} );
+
 	const edits = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
 	if ( edits.pristine ) {
-		return locations;
+		return {
+			continent: Array.from( continents ),
+			country: Array.from( countries ),
+			state: Array.from( states ),
+			postcode: locations.postcode,
+		};
 	}
 
 	const forbiddenCountries = new Set( Object.keys( getCountriesOwnedByOtherZone( state, siteId ) ) );
-	const continents = new Set( locations.continent );
-	const countries = new Set( locations.country );
 	edits.journal.forEach( ( { action, code } ) => {
 		switch ( action ) {
 			case JOURNAL_ACTIONS.ADD_CONTINENT:
-				continents.add( code );
-				getCountries( code ).forEach( country => countries.remove( country.code ) );
+				getCountries( state, code, siteId ).forEach( country => countries.delete( country.code ) );
+				if ( countries.size ) {
+					getCountries( state, code, siteId ).forEach( ( country ) => {
+						if ( ! forbiddenCountries.has( country.code ) ) {
+							countries.add( country.code );
+						}
+					} );
+				} else {
+					continents.add( code );
+				}
 				break;
 			case JOURNAL_ACTIONS.REMOVE_CONTINENT:
-				continents.remove( code );
-				getCountries( code ).forEach( country => countries.remove( country.code ) );
+				continents.delete( code );
+				getCountries( state, code, siteId ).forEach( country => countries.delete( country.code ) );
 				break;
 			case JOURNAL_ACTIONS.ADD_COUNTRY:
 				countries.add( code );
 				continents.forEach( ( continentCode ) => {
-					getCountries( continentCode ).forEach( ( country ) => {
+					getCountries( state, continentCode, siteId ).forEach( ( country ) => {
 						if ( ! forbiddenCountries.has( country.code ) ) {
 							countries.add( country.code );
 						}
@@ -102,7 +123,7 @@ const getShippingZoneLocationsWithEdits = ( state, siteId ) => {
 					if ( insideSelectedContinent ) {
 						break;
 					}
-					for ( const country of getCountries( continentCode ) ) {
+					for ( const country of getCountries( state, continentCode, siteId ) ) {
 						if ( country.code === code ) {
 							insideSelectedContinent = true;
 							break;
@@ -111,26 +132,25 @@ const getShippingZoneLocationsWithEdits = ( state, siteId ) => {
 				}
 				if ( insideSelectedContinent ) {
 					continents.forEach( ( continentCode ) => {
-						getCountries( continentCode ).forEach( ( country ) => {
+						getCountries( state, continentCode, siteId ).forEach( ( country ) => {
 							if ( ! forbiddenCountries.has( country.code ) ) {
 								countries.add( country.code );
 							}
 						} );
 					} );
+					continents.clear();
 				}
-				countries.remove( code );
+				countries.delete( code );
 				break;
 		}
 	} );
 
-	let statesArr = [];
-	if ( edits.states && ! edits.states.removeAll && isEmpty( edits.journal ) ) {
-		statesArr = locations.state.map( ( fullCode ) => fullCode.split( ':' )[ 1 ] );
+	if ( ! edits.states || edits.states.removeAll || ! isEmpty( edits.journal ) ) {
+		states.clear();
 	}
-	const states = new Set( statesArr );
 	if ( edits.states ) {
 		edits.states.add.forEach( ( code ) => states.add( code ) );
-		edits.states.remove.forEach( ( code ) => states.remove( code ) );
+		edits.states.remove.forEach( ( code ) => states.delete( code ) );
 	}
 
 	return {
