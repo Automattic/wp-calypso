@@ -774,8 +774,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_REPUBLICIZE,
 		getTitle: () => i18n.translate( 'Advanced Social Media' ),
 		getDescription: () => i18n.translate(
-			'Plan your social media activity in advance and schedule the updates to be posted at a perfect time.'
-		)
+			'Schedule your social media updates in advance and promote your posts when it\'s best for you.' ),
 	},
 	[ FEATURE_NO_BRANDING ]: {
 		getSlug: () => FEATURE_NO_BRANDING,
