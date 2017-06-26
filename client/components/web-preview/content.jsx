@@ -248,8 +248,10 @@ export class WebPreviewContent extends Component {
 WebPreviewContent.propTypes = {
 	// Display the preview
 	showPreview: PropTypes.bool,
-	// Show external link button (only if there is a previewUrl)
+	// Show external link button
 	showExternal: PropTypes.bool,
+	// Show external link with clipboard input
+	showUrl: PropTypes.bool,
 	// Show close button
 	showClose: PropTypes.bool,
 	// Show SEO button

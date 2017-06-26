@@ -24,7 +24,7 @@ class PreviewToolbar extends Component {
 	static propTypes = {
 		// Show device viewport switcher
 		showDeviceSwitcher: PropTypes.bool,
-		// Show external link in clipboard input
+		// Show external link with clipboard input
 		showUrl: PropTypes.bool,
 		// Show external link button
 		showExternal: PropTypes.bool,
