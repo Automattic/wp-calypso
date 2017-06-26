@@ -35,9 +35,9 @@ class MapDomainStep extends React.Component {
 		onMapDomain: React.PropTypes.func.isRequired
 	};
 
-	state = this.getInitialState();
+	state = this.getDefaultState();
 
-	getInitialState() {
+	getDefaultState() {
 		return {
 			searchQuery: this.props.initialQuery
 		};
@@ -49,7 +49,7 @@ class MapDomainStep extends React.Component {
 				Object.assign(
 					{},
 					this.props.initialState,
-					this.getInitialState()
+					this.getDefaultState()
 				)
 			);
 		}
