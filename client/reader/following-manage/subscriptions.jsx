@@ -132,7 +132,6 @@ class FollowingManageSubscriptions extends Component {
 							totalCount={ sortedFollows.length }
 							windowScrollerRef={ this.props.windowScrollerRef }
 							rowRenderer={ siteRowRenderer }
-							renderEventName={ 'following_manage_subscription' }
 						/> }
 					{ noSitesMatchQuery &&
 						<span>
