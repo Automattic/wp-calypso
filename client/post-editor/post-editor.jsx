@@ -701,6 +701,7 @@ export const PostEditor = React.createClass( {
 			showPreview: false,
 			isPostPublishPreview: false,
 			previewAction: null,
+			notice: null,
 		} );
 
 		return false;
