@@ -35,13 +35,13 @@ class MapDomainStep extends React.Component {
 		onMapDomain: React.PropTypes.func.isRequired
 	};
 
+	state = this.getInitialState();
+
 	getInitialState() {
 		return {
 			searchQuery: this.props.initialQuery
 		};
 	}
-
-	state = this.getInitialState();
 
 	componentWillMount() {
 		if ( this.props.initialState ) {
