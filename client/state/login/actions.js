@@ -39,6 +39,7 @@ import {
 	getTwoFactorUserId,
 } from 'state/login/selectors';
 import wpcom from 'lib/wp';
+import i18nUtils from 'lib/i18n-utils';
 
 function getErrorMessageFromErrorCode( code ) {
 	const errorMessages = {
@@ -89,6 +90,14 @@ const errorFields = {
 	invalid_username: 'usernameOrEmail',
 };
 
+function getLocalizedLoginURL( action ) {
+	if ( 'en' === i18nUtils.getLocaleSlug() ) {
+		return 'https://wordpress.com/wp-login.php?action=' + action;
+	}
+
+	return 'https://' + i18nUtils.getLocaleSlug() + '.wordpress.com/wp-login.php?action=' + action;
+}
+
 /**
  * Retrieves the first error message from the specified HTTP error.
  *
@@ -107,11 +116,10 @@ function getErrorFromHTTPError( httpError ) {
 		};
 	}
 
-	const code = get( httpError, 'response.body.data.errors[0]' );
+	const code = get( httpError, 'response.body.data.errors.code' );
+	message = get( httpError, 'response.body.data.errors.message' );
 
 	if ( code ) {
-		message = getErrorMessageFromErrorCode( code );
-
 		if ( code in errorFields ) {
 			field = errorFields[ code ];
 		}
@@ -154,7 +162,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 		type: LOGIN_REQUEST,
 	} );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=login-endpoint' )
+	return request.post( getLocalizedLoginURL( 'login-endpoint' ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -204,7 +212,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAuthType ) => ( dispatch, getState ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
+	return request.post( getLocalizedLoginURL( 'two-step-authentication-endpoint' ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -253,7 +261,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=social-login-endpoint' )
+	return request.post( getLocalizedLoginURL( 'social-login-endpoint' ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -366,7 +374,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		},
 	} );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' )
+	return request.post( getLocalizedLoginURL( 'send-sms-code-endpoint' ) )
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
