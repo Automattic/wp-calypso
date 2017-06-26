@@ -50,6 +50,7 @@ class ActivityLogDay extends Component {
 
 		return (
 			<Button
+				className="activity-log-day__rewind-button"
 				compact
 				disabled={ ! this.props.isRewindActive }
 				onClick={ this.handleClickRestore }
