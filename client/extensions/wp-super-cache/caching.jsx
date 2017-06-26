@@ -96,18 +96,6 @@ const Caching = ( {
 					<FormFieldset className="wp-super-cache__cache-type-fieldset">
 						<FormLabel>
 							<FormRadio
-								checked={ 'mod_rewrite' === cache_type }
-								disabled={ isDisabled || ! is_cache_enabled }
-								name="cache_type"
-								onChange={ handleRadio }
-								value="mod_rewrite" />
-							<span>
-								{ translate( 'Use mod_rewrite to serve cache files.' ) }
-							</span>
-						</FormLabel>
-
-						<FormLabel>
-							<FormRadio
 								checked={ 'PHP' === cache_type }
 								disabled={ isDisabled || ! is_cache_enabled }
 								name="cache_type"
@@ -115,7 +103,7 @@ const Caching = ( {
 								value="PHP" />
 							<span>
 								{ translate(
-									'Use PHP to serve cache files. {{em}}(Recommended){{/em}}',
+									'Simple {{em}}(Recommended){{/em}}',
 									{
 										components: { em: <em /> }
 									}
@@ -125,21 +113,20 @@ const Caching = ( {
 
 						<FormLabel>
 							<FormRadio
-								checked={ 'wpcache' === cache_type }
+								checked={ 'mod_rewrite' === cache_type }
 								disabled={ isDisabled || ! is_cache_enabled }
 								name="cache_type"
 								onChange={ handleRadio }
-								value="wpcache" />
+								value="mod_rewrite" />
 							<span>
-								{ translate( 'Legacy page caching.' ) }
+								{ translate( 'Expert' ) }
 							</span>
 						</FormLabel>
 						<FormSettingExplanation>
 							{
 								translate(
-									'Mod_rewrite is fastest, PHP is almost as fast and easier to get working, ' +
-									'while legacy caching is slower again, but more flexible and also easy to get ' +
-									'working. New users should use PHP caching.'
+									'Expert caching requires changes to important server files ' +
+									'and may require manual intervention if enabled.'
 								)
 							}
 						</FormSettingExplanation>
