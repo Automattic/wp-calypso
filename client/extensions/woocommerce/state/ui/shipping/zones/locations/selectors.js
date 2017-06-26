@@ -225,9 +225,6 @@ export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state
 };
 
 export const getCurrentlyEditingShippingZoneCountries = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areLocationsFilteredByState( state, siteId ) ) {
-		return [];
-	}
 	const locations = getShippingZoneLocationsWithEdits( state, siteId );
 	if ( ! locations ) {
 		return [];
