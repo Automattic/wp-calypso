@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var ReactDomServer = require( 'react-dom/server' ),
+const ReactDomServer = require( 'react-dom/server' ),
 	React = require( 'react' ),
 	assign = require( 'lodash/assign' ),
 	classNames = require( 'classnames' );
@@ -9,16 +9,14 @@ var ReactDomServer = require( 'react-dom/server' ),
 /**
  * Internal dependencies
  */
-var Shortcode = require( 'lib/shortcode' ),
+const Shortcode = require( 'lib/shortcode' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	MediaSerialization = require( 'lib/media-serialization' );
 
 /**
  * Module variables
  */
-var Markup;
-
-Markup = {
+const Markup = {
 	/**
 	 * Given a media object and a site, returns a markup string representing that object
 	 * as HTML.
@@ -29,13 +27,11 @@ Markup = {
 	 * @return {string}         A markup string
 	 */
 	get: function( site, media, options ) {
-		var mimePrefix;
-
 		if ( ! media ) {
 			return '';
 		}
 
-		mimePrefix = MediaUtils.getMimePrefix( media );
+		const mimePrefix = MediaUtils.getMimePrefix( media );
 
 		// Attempt to find a matching function in the mimeTypes object using
 		// the MIME type prefix
@@ -43,7 +39,11 @@ Markup = {
 			return Markup.mimeTypes[ mimePrefix ]( site, media, options );
 		}
 
-		return Markup.link( media );
+		const selectedText = this.tinymce.activeEditor.selection.getContent( { format: 'text' } );
+		return Markup.link( {
+			URL: media.URL,
+			title: selectedText || media.title
+		} );
 	},
 
 	/**
@@ -54,7 +54,7 @@ Markup = {
 	 * @return {string}       A link markup string
 	 */
 	link: function( media ) {
-		var element = React.createElement( 'a', {
+		const element = React.createElement( 'a', {
 			href: media.URL,
 			title: media.title
 		}, media.title );
@@ -77,18 +77,18 @@ Markup = {
 	 *                                 a captioned item.
 	 */
 	caption: function( site, media ) {
-		var parsed, match, img, caption, width;
+		let img, caption, width;
 
 		if ( 'string' !== typeof media ) {
 			media = Markup.get( site, media );
 		}
 
-		parsed = Shortcode.parse( media );
+		const parsed = Shortcode.parse( media );
 		if ( ! parsed || ! parsed.content ) {
 			return null;
 		}
 
-		match = parsed.content.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
+		const match = parsed.content.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
 		if ( match ) {
 			img = match[ 1 ].trim();
 			caption = match[ 2 ].trim();
