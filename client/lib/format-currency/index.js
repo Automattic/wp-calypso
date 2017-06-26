@@ -130,5 +130,12 @@ export function getCurrencyObject( number, code, options = {} ) {
  * @returns {?Object}          currency defaults
  */
 export function getCurrencyDefaults( code ) {
-	return CURRENCIES[ code ] || null;
+	const defaultCurrency = {
+		symbol: '$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2
+	};
+
+	return CURRENCIES[ code ] || defaultCurrency;
 }
