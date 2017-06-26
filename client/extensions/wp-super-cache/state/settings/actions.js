@@ -22,7 +22,7 @@ import {
 } from '../action-types';
 import { normalizeSettings, sanitizeSettings } from './utils';
 import { requestStatus } from '../status/actions';
-import { errorNotice, removeNotice, successNotice } from 'state/status/actions';
+import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteTitle } from 'state/sites/selectors';
 
 /**

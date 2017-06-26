@@ -26,7 +26,7 @@ import {
 	errorNotice,
 	removeNotice,
 	successNotice,
-} from 'state/status/actions';
+} from 'state/notices/actions';
 import { saveSettings } from './state/settings/actions';
 import {
 	isCacheDeleteSuccessful,
