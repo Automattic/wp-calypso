@@ -27,6 +27,8 @@ class DatePicker extends PureComponent {
 
 		onMonthChange: PropTypes.func,
 		onSelectDay: PropTypes.func,
+		onDayMouseEnter: PropTypes.func,
+		onDayMouseLeave: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -36,6 +38,8 @@ class DatePicker extends PureComponent {
 		selectedDay: null,
 		onMonthChange: noop,
 		onSelectDay: noop,
+		onDayMouseEnter: noop,
+		onDayMouseLeave: noop,
 	};
 
 	isSameDay( d0, d1 ) {
