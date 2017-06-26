@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forIn, isEmpty } from 'lodash';
+import { forIn, isEmpty, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,9 +10,17 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
 import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
 import { getShippingZonesEdits, getCurrentlyEditingShippingZone } from '../selectors';
-import { getContinents, getCountries, getStates, hasStates } from 'woocommerce/state/sites/locations/selectors';
+import { getContinents, getCountries, getCountryName, getStates, hasStates } from 'woocommerce/state/sites/locations/selectors';
 import { JOURNAL_ACTIONS } from './reducer';
 
+/**
+ * Computes a map of the continents that belong to a zone different than the one that's currently being edited.
+ * That information will be used to mark them as "disabled" in the UI.
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} siteId Site ID
+ * @return {Object} A map with the form { continentCode => zoneId }. If a continent doesn't appear in the map, it means that
+ * it doesn't belong to a zone.
+ */
 const getContinentsOwnedByOtherZone = ( state, siteId ) => {
 	const continents = {};
 	const currentZone = getCurrentlyEditingShippingZone( state, siteId );
@@ -27,6 +35,14 @@ const getContinentsOwnedByOtherZone = ( state, siteId ) => {
 	return continents;
 };
 
+/**
+ * Computes a map of the countries that belong to a zone different than the one that's currently being edited.
+ * That information will be used to mark them as "disabled" in the UI.
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} siteId Site ID
+ * @return {Object} A map with the form { countryCode => zoneId }. If a country doesn't appear in the map, it means that
+ * it doesn't belong to a zone.
+ */
 const getCountriesOwnedByOtherZone = ( state, siteId ) => {
 	const countries = {};
 	const currentZone = getCurrentlyEditingShippingZone( state, siteId );
@@ -41,6 +57,15 @@ const getCountriesOwnedByOtherZone = ( state, siteId ) => {
 	return countries;
 };
 
+/**
+ * Computes a map of the states that belong to a zone different than the one that's currently being edited.
+ * That information will be used to mark them as "disabled" in the UI.
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} siteId Site ID
+ * @param {String} countryCode 2-letter ISO country code
+ * @return {Object} A map with the form { stateCode: zoneId }. If a state doesn't appear in the map, it means that
+ * it doesn't belong to a zone.
+ */
 const getStatesOwnedByOtherZone = ( state, siteId, countryCode ) => {
 	const states = {};
 	const currentZone = getCurrentlyEditingShippingZone( state, siteId );
@@ -58,6 +83,12 @@ const getStatesOwnedByOtherZone = ( state, siteId, countryCode ) => {
 	return states;
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Object} The list of locations for the shipping zone, including any edits made, in the form
+ * { continent: [ ... ], country: [ ... ], state: [ ... ], postcode: [ ... ] }. On any failure, it will return null.
+ */
 export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areShippingZonesLoaded( state, siteId ) ) {
 		return null;
@@ -222,6 +253,46 @@ export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state
 		! getCurrentSelectedCountryZoneOwner( state, siteId ) &&
 		! areLocationsFilteredByState( state, siteId ) &&
 		! areLocationsFilteredByPostcode( state, siteId );
+};
+
+export const getCurrentlyEditingShippingZoneLocationsList = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const locations = getShippingZoneLocationsWithEdits( state, siteId );
+	if ( ! locations ) {
+		return [];
+	}
+
+	const selectedContinents = new Set( locations.continent );
+	if ( selectedContinents.size ) {
+		return getContinents( state, siteId )
+			.filter( ( { code } ) => selectedContinents.has( code ) )
+			.map( ( { code, name } ) => ( {
+				type: 'continent',
+				code,
+				name,
+			} ) );
+	}
+
+	const selectedStates = new Set( locations.state );
+	if ( selectedStates.size ) {
+		const countryCode = locations.country[ 0 ];
+		const countryName = getCountryName( state, countryCode, siteId );
+		return getStates( state, countryCode, siteId )
+			.filter( ( { code } ) => selectedStates.has( code ) )
+			.map( ( { code, name } ) => ( {
+				type: 'state',
+				code,
+				name,
+				countryName,
+				countryCode
+			} ) );
+	}
+
+	return sortBy( locations.country.map( code => ( {
+		type: 'country',
+		code,
+		name: getCountryName( code ),
+		postcodeFilter: locations.postcode[ 0 ],
+	} ) ), 'name' );
 };
 
 export const getCurrentlyEditingShippingZoneCountries = ( state, siteId = getSelectedSiteId( state ) ) => {
