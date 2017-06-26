@@ -89,7 +89,7 @@ const getStorePages = () => {
 			path: '/store/order/:site/:order',
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
+			container: SettingsPayments,
 			configKey: 'woocommerce/extension-settings',
 			path: '/store/settings/:site',
 			sidebarItem: {
@@ -104,25 +104,11 @@ const getStorePages = () => {
 			container: SettingsPayments,
 			configKey: 'woocommerce/extension-settings-payments',
 			path: '/store/settings/payments/:site',
-			sidebarItem: {
-				isPrimary: false,
-				label: translate( 'Payments' ),
-				parentSlug: 'settings',
-				slug: 'settings-payments',
-				showDuringSetup: false,
-			},
 		},
 		{
 			container: Shipping,
 			configKey: 'woocommerce/extension-settings-shipping',
 			path: '/store/settings/shipping/:site',
-			sidebarItem: {
-				isPrimary: false,
-				label: translate( 'Shipping' ),
-				parentSlug: 'settings',
-				slug: 'settings-shipping',
-				showDuringSetup: false,
-			},
 		},
 		{
 			container: ShippingZone,
@@ -133,13 +119,6 @@ const getStorePages = () => {
 			container: SettingsTaxes,
 			configKey: 'woocommerce/extension-settings-tax',
 			path: '/store/settings/taxes/:site',
-			sidebarItem: {
-				isPrimary: false,
-				label: translate( 'Taxes' ),
-				parentSlug: 'settings',
-				slug: 'settings-tax',
-				showDuringSetup: false,
-			},
 		},
 	];
 };
