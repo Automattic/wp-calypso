@@ -34,11 +34,11 @@ class MapDomainStep extends React.Component {
 		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
 		onRegisterDomain: React.PropTypes.func.isRequired,
 		onMapDomain: React.PropTypes.func.isRequired,
-		save: React.PropTypes.func,
+		onSave: React.PropTypes.func,
 	};
 
 	static defaultProps = {
-		save: noop,
+		onSave: noop,
 	};
 
 	state = this.getDefaultState();
