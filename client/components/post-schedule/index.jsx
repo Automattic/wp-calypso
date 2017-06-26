@@ -201,11 +201,14 @@ class PostSchedule extends Component {
 							? this.state.localizedDate.toDate()
 							: null
 					}
+
 					timeReference={ this.getCurrentDate() }
 					calendarViewDate={ this.state.calendarViewDate.toDate() }
 
 					onMonthChange={ this.setCurrentMonth }
 					onSelectDay={ this.updateDate }
+					onDayMouseEnter={ this.props.onDayMouseEnter }
+					onDayMouseLeave={ this.props.onDayMouseLeave }
 				/>
 
 				{ this.renderClock() }
