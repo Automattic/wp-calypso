@@ -18,24 +18,9 @@ export class CommentDetailReply extends Component {
 		hasFocus: false,
 	};
 
-	handleBlur = () => this.setState( { hasFocus: false } );
-
-	handleFocus = () => this.setState( { hasFocus: true } );
-
-	handleKeyDown = event => {
-		// Use Ctrl+Enter to submit comment
-		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
-			event.preventDefault();
-			this.submit();
-		}
-	}
-
-	handleSubmit = event => {
-		event.preventDefault();
-		this.submit();
-	}
-
 	handleTextChange = event => this.setState( { commentText: event.target.value } );
+
+	setFocus = () => this.setState( { hasFocus: true } );
 
 	submit = () => {
 		const comment = {
@@ -50,6 +35,21 @@ export class CommentDetailReply extends Component {
 		this.props.submitComment( comment );
 		this.setState( { commentText: '' } );
 	}
+
+	submitComment = event => {
+		event.preventDefault();
+		this.submit();
+	}
+
+	submitCommentOnCtrlEnter = event => {
+		// Use Ctrl+Enter to submit comment
+		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
+			event.preventDefault();
+			this.submit();
+		}
+	}
+
+	unsetFocus = () => this.setState( { hasFocus: false } );
 
 	render() {
 		const { translate } = this.props;
@@ -72,10 +72,10 @@ export class CommentDetailReply extends Component {
 					<pre><span>{ commentText }</span><br /></pre>
 					<AutoDirection>
 						<textarea
-							onBlur={ this.handleBlur }
+							onBlur={ this.unsetFocus }
 							onChange={ this.handleTextChange }
-							onFocus={ this.handleFocus }
-							onKeyDown={ this.handleKeyDown }
+							onFocus={ this.setFocus }
+							onKeyDown={ this.submitCommentOnCtrlEnter }
 							placeholder={ translate( 'Enter your comment here…' ) }
 							value={ commentText }
 						/>
@@ -83,7 +83,7 @@ export class CommentDetailReply extends Component {
 					<button
 						className={ buttonClasses }
 						disabled={ ! hasCommentText }
-						onClick={ this.handleSubmit }
+						onClick={ this.submitComment }
 					>
 						{ translate( 'Send' ) }
 					</button>
