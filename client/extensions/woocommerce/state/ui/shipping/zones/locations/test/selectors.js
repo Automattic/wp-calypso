@@ -14,6 +14,7 @@ import {
 	areLocationsFilteredByPostcode,
 	areLocationsFilteredByState,
 	areLocationsUnfiltered,
+	getCurrentlyEditingShippingZoneLocationsList,
 	getCurrentlyEditingShippingZoneCountries,
 	getCurrentlyEditingShippingZoneStates,
 } from '../selectors';
@@ -1788,6 +1789,149 @@ describe( 'selectors', () => {
 			} );
 
 			expect( areLocationsUnfiltered( state ) ).to.be.false;
+		} );
+	} );
+
+	describe( 'getCurrentlyEditingShippingZoneLocationsList', () => {
+		it( 'should return an empty list if the locations are not available', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: LOADING,
+				},
+				locationEdits: {},
+			} );
+
+			expect( getCurrentlyEditingShippingZoneLocationsList( state ) ).to.deep.equal( [] );
+		} );
+
+		it( 'should return a list of continents if the locations are only continents, sorted by name', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [ 'NA', 'EU' ],
+						country: [],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [],
+					states: null,
+					postcode: null,
+					pristine: true,
+				},
+			} );
+
+			expect( getCurrentlyEditingShippingZoneLocationsList( state ) ).to.deep.equal( [
+				{
+					type: 'continent',
+					code: 'EU',
+					name: 'Europe',
+				},
+				{
+					type: 'continent',
+					code: 'NA',
+					name: 'North America',
+				},
+			] );
+		} );
+
+		it( 'should return a list of countries if the locations are only countries, sorted by name', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'FR', 'US' ],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [],
+					states: null,
+					postcode: null,
+					pristine: true,
+				},
+			} );
+
+			expect( getCurrentlyEditingShippingZoneLocationsList( state ) ).to.deep.equal( [
+				{
+					type: 'country',
+					code: 'FR',
+					name: 'France',
+					postcodeFilter: undefined,
+				},
+				{
+					type: 'country',
+					code: 'US',
+					name: 'United States',
+					postcodeFilter: undefined,
+				},
+			] );
+		} );
+
+		it( 'should return a list of states if the locations are only states, sorted by name', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [],
+						state: [ 'US:CA', 'US:NY' ],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [],
+					states: null,
+					postcode: null,
+					pristine: true,
+				},
+			} );
+
+			expect( getCurrentlyEditingShippingZoneLocationsList( state ) ).to.deep.equal( [
+				{
+					type: 'state',
+					code: 'CA',
+					name: 'California',
+					countryCode: 'US',
+					countryName: 'United States',
+				},
+				{
+					type: 'state',
+					code: 'NY',
+					name: 'New York',
+					countryCode: 'US',
+					countryName: 'United States',
+				},
+			] );
+		} );
+
+		it( 'should return the country info and the postcode filter info if the locations are a country plus a postcode', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'US' ],
+						state: [],
+						postcode: [ '12345' ],
+					},
+				},
+				locationEdits: {
+					journal: [],
+					states: null,
+					postcode: null,
+					pristine: true,
+				},
+			} );
+
+			expect( getCurrentlyEditingShippingZoneLocationsList( state ) ).to.deep.equal( [
+				{
+					type: 'country',
+					code: 'US',
+					name: 'United States',
+					postcodeFilter: '12345',
+				},
+			] );
 		} );
 	} );
 
