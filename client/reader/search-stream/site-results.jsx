@@ -14,6 +14,7 @@ import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import ReaderInfiniteStream from 'components/reader-infinite-stream';
 import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
+import { SEARCH_RESULTS_SITES } from 'reader/follow-button/follow-sources';
 import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
 import withWidth from 'lib/with-width';
 
@@ -59,7 +60,7 @@ class SiteResults extends React.Component {
 					rowRenderer={ siteRowRenderer }
 					renderEventName={ 'search_stream_sites' }
 					passthroughProp={ this.props.sort }
-					extraRenderItemProps={ { showLastUpdatedDate } }
+					extraRenderItemProps={ { showLastUpdatedDate, followSource: SEARCH_RESULTS_SITES } }
 				/>
 			</div>
 		);
