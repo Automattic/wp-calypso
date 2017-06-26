@@ -35,13 +35,23 @@ class MapDomainStep extends React.Component {
 		onMapDomain: React.PropTypes.func.isRequired
 	};
 
-	state = {
-		searchQuery: this.props.initialQuery
-	};
+	getInitialState() {
+		return {
+			searchQuery: this.props.initialQuery
+		};
+	}
+
+	state = this.getInitialState();
 
 	componentWillMount() {
 		if ( this.props.initialState ) {
-			this.setState( Object.assign( {}, this.props.initialState, this.getInitialState() ) );
+			this.setState(
+				Object.assign(
+					{},
+					this.props.initialState,
+					this.getInitialState()
+				)
+			);
 		}
 	}
 
@@ -143,9 +153,7 @@ class MapDomainStep extends React.Component {
 		);
 	}
 
-	registerSuggestedDomain = ( event ) => {
-		event.preventDefault();
-
+	registerSuggestedDomain = () => {
 		this.props.recordAddDomainButtonClickInMapDomain( this.state.suggestion.domain_name, this.props.analyticsSection );
 
 		return this.props.onRegisterDomain( this.state.suggestion );
