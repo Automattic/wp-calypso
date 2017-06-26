@@ -864,8 +864,18 @@
 		width: 150px;
 	}
 
+	.products__product-manage-stock {
+		margin-bottom: 12px;
+
+		@include breakpoint( ">960px" ) {
+			margin-bottom: 0;
+		}
+	}
+
 	.products__product-form-stock-disabled {
-		height: 145px;
+		.products__product-manage-stock {
+			margin-bottom: 0;
+		}
 	}
 
 	.products__product-manage-stock-toggle,
