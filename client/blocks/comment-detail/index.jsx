@@ -220,8 +220,8 @@ const mapStateToProps = ( state, ownProps ) => {
 	const postTitle = decodeEntities( get( comment, 'post.title' ) );
 
 	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
-	const parentCommentId = get( commentsTree, `[${ comment.ID }].data.parent.ID`, 0 );
-	const parentComment = get( commentsTree, `[${ parentCommentId }].data`, {} );
+	const parentCommentId = get( commentsTree, [ comment.ID, 'data', 'parent', 'ID' ], 0 );
+	const parentComment = get( commentsTree, [ parentCommentId, 'data' ], {} );
 
 	// TODO: eventually it will be returned already decoded from the data layer.
 	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
