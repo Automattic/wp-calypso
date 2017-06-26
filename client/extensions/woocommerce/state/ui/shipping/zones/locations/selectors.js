@@ -97,7 +97,13 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 	if ( ! zone ) {
 		return null;
 	}
-	const locations = getRawShippingZoneLocations( state, siteId )[ zone.id ];
+
+	const locations = getRawShippingZoneLocations( state, siteId )[ zone.id ] || {
+		continent: [],
+		country: [],
+		state: [],
+		postcode: [],
+	};
 
 	const continents = new Set( locations.continent );
 	const countries = new Set( locations.country );

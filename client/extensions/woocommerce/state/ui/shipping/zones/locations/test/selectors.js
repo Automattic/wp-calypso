@@ -19,7 +19,7 @@ import {
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import { createState } from 'woocommerce/state/test/helpers';
-import { JOURNAL_ACTIONS } from '../reducer';
+import { initialState, JOURNAL_ACTIONS } from '../reducer';
 
 const locations = [
 	{
@@ -132,6 +132,31 @@ describe( 'selectors', () => {
 			} );
 
 			expect( getShippingZoneLocationsWithEdits( state ) ).to.be.null;
+		} );
+
+		it( 'should return null when there is no zone currently being edited', () => {
+			const state = createState( {
+				site: {
+					shippingZones: [],
+					shippingZoneLocations: {},
+				},
+				ui: {
+					shipping: {
+						zones: {
+							creates: [], updates: [], deletes: [],
+							currentlyEditingId: { index: 0 },
+							currentlyEditingChanges: { locations: initialState }
+						},
+					},
+				},
+			} );
+
+			expect( getShippingZoneLocationsWithEdits( state ) ).to.deep.equal( {
+				continent: [],
+				country: [],
+				state: [],
+				postcode: []
+			} );
 		} );
 
 		it( 'should return the original locations if there are no changes', () => {
