@@ -24,7 +24,7 @@ class DomainSuggestionsExample extends React.Component {
 					{ translate( 'A domain name is what people type into their browser to visit your site.' ) }
 				</p>
 				<p className="example-domain-suggestions__mapping-information">
-					<a onClick={ this.props.recordExampleSuggestionMappingLinkClick } href={ this.props.mapDomainUrl }>
+					<a onClick={ this.props.recordClick } href={ this.props.mapDomainUrl }>
 						{ translate( 'Already own a domain?' ) }
 					</a>
 				</p>
@@ -47,13 +47,13 @@ class DomainSuggestionsExample extends React.Component {
 	}
 }
 
-const recordExampleSuggestionMappingLinkClick = () => recordTracksEvent(
+const recordClick = () => recordTracksEvent(
 	'calypso_example_domain_suggestions_mapping_link_click'
 );
 
 export default connect(
 	null,
 	{
-		recordExampleSuggestionMappingLinkClick
+		recordClick
 	}
 )( localize( DomainSuggestionsExample ) );

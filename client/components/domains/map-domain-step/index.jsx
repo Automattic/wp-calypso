@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +33,12 @@ class MapDomainStep extends React.Component {
 		analyticsSection: React.PropTypes.string.isRequired,
 		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
 		onRegisterDomain: React.PropTypes.func.isRequired,
-		onMapDomain: React.PropTypes.func.isRequired
+		onMapDomain: React.PropTypes.func.isRequired,
+		save: React.PropTypes.func,
+	};
+
+	static defaultProps = {
+		save: noop,
 	};
 
 	state = this.getDefaultState();
@@ -56,7 +62,7 @@ class MapDomainStep extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.save();
+		this.props.onSave( this.state );
 	}
 
 	notice() {
@@ -196,12 +202,6 @@ class MapDomainStep extends React.Component {
 					return;
 			}
 		} );
-	};
-
-	save = () => {
-		if ( this.props.onSave ) {
-			this.props.onSave( this.state );
-		}
 	};
 }
 
