@@ -23,6 +23,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormCheckbox from 'components/forms/form-checkbox';
+import FormInputValidation from 'components/forms/form-input-validation';
 
 const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 const defaultValues = {
@@ -80,6 +81,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		this.state = {
 			legalTypes,
 			legalTypeOptions,
+			uncheckedCiraAgreementFlag: false,
 		};
 	}
 
@@ -107,24 +109,40 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 	handleChangeEvent = ( event ) => {
 		const { target } = event;
-		const value = target.type === 'checkbox' ? target.checked : target.value;
+		let value = target.value;
+
+		if ( target.type === 'checkbox' ) {
+			value = target.checked;
+			this.setState( { uncheckedCiraAgreementFlag: false } );
+		}
 
 		this.props.updateContactDetailsCache( {
 			extra: { [ camelCase( event.target.id ) ]: value },
 		} );
 	}
 
+	shimSubmit( event, originalOnClick ) {
+		event.preventDefault();
+
+		if ( ! this.props.contactDetailsExtra.ciraAgreementAccepted ) {
+			this.setState( { uncheckedCiraAgreementFlag: true } );
+			return;
+		}
+
+		originalOnClick( event );
+	}
+
 	render() {
 		const { translate } = this.props;
-		const { legalTypeOptions } = this.state;
+		const { legalTypeOptions, uncheckedCiraAgreementFlag } = this.state;
 		const {
 			legalType,
 			ciraAgreementAccepted,
 		} = { ...defaultValues, ...this.props.contactDetailsExtra };
 
-
-		const submitButton = React.cloneElement( this.props.children, {
-			disabled: ! ciraAgreementAccepted
+		const unvalidatedSubmitButton = this.props.children;
+		const submitButton = React.cloneElement( unvalidatedSubmitButton, {
+			onClick: ( e ) => this.shimSubmit( e, unvalidatedSubmitButton.props.onClick ),
 		} );
 
 		return (
@@ -165,6 +183,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 								}
 							)
 						}</span>
+						{ uncheckedCiraAgreementFlag ? <FormInputValidation text={ translate( 'Required' ) } isError={ true } /> : null }
 					</FormLabel>
 				</FormFieldset>
 
