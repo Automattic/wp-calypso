@@ -117,6 +117,7 @@ const RegisteredDomain = React.createClass( {
 	domainWarnings() {
 		return <DomainWarnings
 			domain={ this.props.domain }
+			position="registered-domain"
 			selectedSite={ this.props.selectedSite }
 			ruleWhiteList={ [
 				'expiredDomainsCanManage',
