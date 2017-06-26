@@ -17,8 +17,6 @@ import {
 	getSiteTitle,
 	isJetpackSite,
 } from 'state/sites/selectors';
-import { getRewindStatusError } from 'state/selectors';
-import { getActivityLogs } from 'state/selectors';
 import StatsFirstView from '../stats-first-view';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from '../stats-navigation';
@@ -30,14 +28,20 @@ import ProgressBanner from '../activity-log-banner/progress-banner';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import QueryRewindStatus from 'components/data/query-rewind-status';
 import QueryActivityLog from 'components/data/query-activity-log';
+// For site time offset
+import QuerySiteSettings from 'components/data/query-site-settings';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
 import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
 import {
+	getRewindStatusError,
+	getActivityLogs,
 	getRestoreProgress,
 	isRewindActive as isRewindActiveSelector,
+	getSiteGmtOffset,
+	getSiteTimezoneValue,
 } from 'state/selectors';
 
 const debug = debugFactory( 'calypso:activity-log' );
@@ -111,6 +115,19 @@ class ActivityLog extends Component {
 		this.setState( { showRestoreConfirmDialog: false } );
 		rewindRestore( siteId, requestedRestoreTimestamp );
 	};
+
+	getSiteOffsetFunc() {
+		const { timezone, gmtOffset } = this.props;
+		return ( moment ) => {
+			if ( timezone ) {
+				return moment.tz( timezone );
+			}
+			if ( gmtOffset ) {
+				return moment.offset( timezone );
+			}
+			return moment;
+		};
+	}
 
 	renderBanner() {
 		const { restoreProgress } = this.props;
@@ -193,14 +210,21 @@ class ActivityLog extends Component {
 			startDate,
 		} = this.props;
 
-		const startOfMonth = moment( startDate ).startOf( 'month' ),
-			startOfMonthMs = startOfMonth.valueOf(),
-			endOfMonthMs = moment( startDate ).endOf( 'month' ).valueOf();
-		const filteredLogs = filter( logs, obj => startOfMonthMs <= obj.ts_site && obj.ts_site <= endOfMonthMs );
-		const logsGroupedByDate = map(
+		const siteOffset = this.getSiteOffsetFunc();
+
+		const startOfMonthMs = siteOffset( moment( startDate ).startOf( 'month' ) ).valueOf();
+		const endOfMonthMs = siteOffset( moment( startDate ).endOf( 'month' ) ).valueOf();
+
+		const filteredLogs = filter( logs, obj => startOfMonthMs <= obj.ts_utc && obj.ts_utc <= endOfMonthMs );
+		const logsGroupedByDay = map(
 			groupBy(
+<<<<<<< HEAD
 				filteredLogs,
 				log => moment( log.ts_site ).startOf( 'day' ).format( 'x' )
+=======
+				filteredLogs.map( this.update_logs, this ),
+				log => siteOffset( moment( log.ts_utc ) ).startOf( 'day' ).format( 'x' )
+>>>>>>> Activity Log: Use site timezone/offset for time/date display
 			),
 			( daily_logs, timestamp ) => (
 				<ActivityLogDay
@@ -211,9 +235,12 @@ class ActivityLog extends Component {
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
 					timestamp={ +timestamp }
+					siteOffset={ siteOffset }
 				/>
 			)
 		);
+
+		const startOfMonth = moment( startDate ).startOf( 'month' );
 		const query = {
 			period: 'month',
 			date: startOfMonth.format( 'YYYY-MM-DD' )
@@ -237,7 +264,7 @@ class ActivityLog extends Component {
 				{ this.renderBanner() }
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
 				<section className="activity-log__wrapper">
-					{ logsGroupedByDate }
+					{ logsGroupedByDay }
 				</section>
 			</div>
 		);
@@ -259,6 +286,7 @@ class ActivityLog extends Component {
 			<Main wideLayout>
 				<QueryRewindStatus siteId={ siteId } />
 				<QueryActivityLog siteId={ siteId } />
+				<QuerySiteSettings siteId={ siteId } />
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
@@ -283,6 +311,7 @@ class ActivityLog extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+
 		return {
 			isJetpack: isJetpackSite( state, siteId ),
 			logs: getActivityLogs( state, siteId ),
@@ -294,7 +323,9 @@ export default connect(
 			isRewindActive: isRewindActiveSelector( state, siteId ),
 
 			// FIXME: Testing only
-			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
+			isPressable: true || get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
+			timezone: getSiteTimezoneValue( state, siteId ),
+			gmtOffset: getSiteGmtOffset( state, siteId ) || 0,
 		};
 	}, {
 		recordGoogleEvent,

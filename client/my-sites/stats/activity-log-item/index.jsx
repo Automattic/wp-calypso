@@ -21,7 +21,7 @@ class ActivityLogItem extends Component {
 		allowRestore: PropTypes.bool.isRequired,
 		siteId: PropTypes.number.isRequired,
 		requestRestore: PropTypes.func.isRequired,
-
+		siteOffset: PropTypes.func.isRequired,
 		log: PropTypes.shape( {
 			group: PropTypes.oneOf( [
 				'attachment',
@@ -270,11 +270,12 @@ class ActivityLogItem extends Component {
 		const {
 			moment,
 			log,
+			siteOffset,
 		} = this.props;
 
 		return (
 			<div className="activity-log-item__time">
-				{ moment( log.ts_site ).format( 'LT' ) }
+				{ siteOffset( moment( log.ts_site ) ).format( 'LT' ) }
 			</div>
 		);
 	}
