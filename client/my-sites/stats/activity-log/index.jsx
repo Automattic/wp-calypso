@@ -32,22 +32,46 @@ import QueryRewindStatus from 'components/data/query-rewind-status';
 import QueryActivityLog from 'components/data/query-activity-log';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
-import { isRewindActive as isRewindActiveSelector } from 'state/selectors';
 import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
+import {
+	getRestoreProgress,
+	isRewindActive as isRewindActiveSelector,
+} from 'state/selectors';
 
 const debug = debugFactory( 'calypso:activity-log' );
 
 class ActivityLog extends Component {
 	static propTypes = {
 		isJetpack: PropTypes.bool,
-		siteId: PropTypes.number,
-		slug: PropTypes.string,
+		restoreProgress: PropTypes.shape( {
+			errorCode: PropTypes.string.isRequired,
+			failureReason: PropTypes.string.isRequired,
+			message: PropTypes.string.isRequired,
+			percent: PropTypes.number.isRequired,
+			restoreId: PropTypes.number,
+			status: PropTypes.oneOf( [
+				'finished',
+				'queued',
+				'running',
+
+				// These are other VP restore statuses.
+				// We should _never_ see them for Activity Log rewinds
+				// 'aborted',
+				// 'fail',
+				// 'success',
+				// 'success-with-errors',
+			] ).isRequired,
+			timestamp: PropTypes.number.isRequired,
+		} ),
 		rewindStatusError: PropTypes.shape( {
 			error: PropTypes.string.isRequired,
 			message: PropTypes.string.isRequired,
 		} ),
+		siteId: PropTypes.number,
+		siteTitle: PropTypes.string,
+		slug: PropTypes.string,
 
 		// FIXME: Testing only
 		isPressable: PropTypes.bool,
@@ -178,12 +202,45 @@ class ActivityLog extends Component {
 	}
 
 	renderBanner() {
-		// FIXME: Logic to select/show 1 banner
-		return <div>
-			<ErrorBanner />
-			<ProgressBanner />
-			<SuccessBanner />
-		</div>;
+		const { restoreProgress } = this.props;
+
+		if ( ! restoreProgress ) {
+			return null;
+		}
+
+		const {
+			errorCode,
+			failureReason,
+			percent,
+			status,
+			siteTitle,
+			timestamp,
+		} = restoreProgress;
+
+		if ( status === 'finished' ) {
+			return ( errorCode
+				? (
+					<ErrorBanner
+						errorCode={ errorCode }
+						failureReason={ failureReason }
+						requestRestore={ this.handleRequestRestore }
+						siteTitle={ siteTitle }
+						timestamp={ timestamp }
+					/>
+				) : (
+					<SuccessBanner
+						timestamp={ timestamp }
+					/>
+				)
+			);
+		}
+		return (
+			<ProgressBanner
+				percent={ percent }
+				status={ status }
+				timestamp={ timestamp }
+			/>
+		);
 	}
 
 	renderErrorMessage() {
@@ -322,6 +379,7 @@ export default connect(
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
+			restoreProgress: getRestoreProgress( state, siteId ),
 			isRewindActive: isRewindActiveSelector( state, siteId ),
 
 			// FIXME: Testing only
