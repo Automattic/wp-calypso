@@ -24,7 +24,8 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormCheckbox from 'components/forms/form-checkbox';
 
-const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
+const ciraAgreementUrlEn = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
+const ciraAgreementUrlFr = 'https://services.cira.ca/agree/agreement_fr/agreementVersion2.0.jsp';
 const defaultValues = {
 	lang: 'EN',
 	legalType: 'CCT',
@@ -96,7 +97,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		// Set the lang to FR if user languages is French, otherwise leave EN
-		if ( this.props.userWpcomLang.match( /^fr-?/i ) ) {
+		if ( this.props.userWpcomLangIsFr ) {
 			defaultValues.lang = 'FR';
 		}
 
@@ -121,7 +122,9 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 			legalType,
 			ciraAgreementAccepted,
 		} = { ...defaultValues, ...this.props.contactDetailsExtra };
-
+		const ciraAgreementUrl = this.props.userWpcomLangIsFr
+			? ciraAgreementUrlFr
+			: ciraAgreementUrlEn;
 
 		const submitButton = React.cloneElement( this.props.children, {
 			disabled: ! ciraAgreementAccepted
@@ -177,7 +180,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 export default connect(
 	state => ( {
 		contactDetailsExtra: getContactDetailsExtraCache( state ),
-		userWpcomLang: getCurrentUserLocale( state )
+		userWpcomLangIsFr: getCurrentUserLocale( state ).match( /^fr-?/i )
 	} ),
 	{ updateContactDetailsCache }
 )( localize( RegistrantExtraInfoCaForm ) );
