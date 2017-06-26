@@ -17,14 +17,17 @@ import {
  * Internal dependencies
  */
 import { getContactDetailsExtraCache } from 'state/selectors';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormCheckbox from 'components/forms/form-checkbox';
+import FormInputValidation from 'components/forms/form-input-validation';
 
 const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 const defaultValues = {
+	lang: 'EN',
 	legalType: 'CCT',
 	ciraAgreementAccepted: false,
 };
@@ -78,38 +81,70 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		this.state = {
 			legalTypes,
 			legalTypeOptions,
+			uncheckedCiraAgreementFlag: false,
 		};
 	}
 
 	componentWillMount() {
 		// Add defaults to redux state to make accepting default values work.
-		const requiredDetailsNotInProps = difference(
-			[ 'legalType', 'ciraAgreementAccepted' ],
+		const neededRequiredDetails = difference(
+			[ 'lang', 'legalType', 'ciraAgreementAccepted' ],
 			keys( this.props.contactDetailsExtra ),
 		);
 
-		if ( ! isEmpty( requiredDetailsNotInProps ) ) {
-			this.props.updateContactDetailsCache( {
-				extra: pick( defaultValues, requiredDetailsNotInProps ),
-			} );
+		// Bail early as we already have the details from a previous purchase.
+		if ( isEmpty( neededRequiredDetails ) ) {
+			return;
 		}
+
+		// Set the lang to FR if user languages is French, otherwise leave EN
+		if ( this.props.userWpcomLang.match( /^fr-?/i ) ) {
+			defaultValues.lang = 'FR';
+		}
+
+		this.props.updateContactDetailsCache( {
+			extra: pick( defaultValues, neededRequiredDetails ),
+		} );
 	}
 
 	handleChangeEvent = ( event ) => {
 		const { target } = event;
-		const value = target.type === 'checkbox' ? target.checked : target.value;
+		let value = target.value;
+
+		if ( target.type === 'checkbox' ) {
+			value = target.checked;
+			this.registerClick();
+		}
+
 		this.props.updateContactDetailsCache( {
 			extra: { [ camelCase( event.target.id ) ]: value },
 		} );
 	}
 
+	handleInvalidSubmit = ( event ) => {
+		event.preventDefault();
+		this.registerClick();
+	}
+
+	registerClick = () => {
+		this.setState( { hasBeenClicked: true } );
+	}
+
 	render() {
 		const { translate } = this.props;
-		const { legalTypeOptions } = this.state;
+		const { legalTypeOptions, hasBeenClicked } = this.state;
 		const {
 			legalType,
 			ciraAgreementAccepted,
 		} = { ...defaultValues, ...this.props.contactDetailsExtra };
+
+		const validatingSubmitButton = ciraAgreementAccepted
+			? this.props.children
+			: React.cloneElement(
+				this.props.children,
+				{ onClick: this.handleInvalidSubmit } );
+
+		const showValidationError = hasBeenClicked && ! ciraAgreementAccepted;
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -138,27 +173,31 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 					<FormLabel>
 						<FormCheckbox
 							id="cira-agreement-accepted"
-							value={ ciraAgreementAccepted }
+							checked={ ciraAgreementAccepted }
 							onChange={ this.handleChangeEvent } />
 						<span>{
 							translate( 'I have read and agree to the {{a}}CIRA Registrant Agreement{{/a}}',
 								{
 									components: {
-										a: <a href={ ciraAgreementUrl } />,
+										a: <a target="_blank" rel="noopener noreferrer" href={ ciraAgreementUrl } />,
 									},
 								}
 							)
 						}</span>
+						{ showValidationError ? <FormInputValidation text={ translate( 'Required' ) } isError={ true } /> : null }
 					</FormLabel>
 				</FormFieldset>
 
-				{ this.props.children }
+				{ validatingSubmitButton }
 			</form>
 		);
 	}
 }
 
 export default connect(
-	state => ( { contactDetailsExtra: getContactDetailsExtraCache( state ) } ),
+	state => ( {
+		contactDetailsExtra: getContactDetailsExtraCache( state ),
+		userWpcomLang: getCurrentUserLocale( state )
+	} ),
 	{ updateContactDetailsCache }
 )( localize( RegistrantExtraInfoCaForm ) );
