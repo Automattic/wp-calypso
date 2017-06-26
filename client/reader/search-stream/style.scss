@@ -400,6 +400,11 @@
 	}
 }
 
+// Hide the last updated date for the moment - see https://github.com/Automattic/wp-calypso/issues/15121
+.search-stream__single-column-results .reader-subscription-list-item__timestamp {
+	display: none;
+}
+
 .search-stream__results.is-two-columns .gridicon__follow {
 	left: 2px;
 }
@@ -481,7 +486,6 @@
 }
 
 .card.reader-search-card.is-photo {
-
 	@include breakpoint( "<660px" ) {
 		z-index: z-index( 'root', '.reader-search-card' );
 	}
