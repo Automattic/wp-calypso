@@ -38,25 +38,6 @@ export class CommentDetailAuthor extends Component {
 		this.setState( { isExpanded: ! this.state.isExpanded } );
 	};
 
-	commentStatusLabel = () => {
-		const { commentStatus, translate } = this.props;
-		if ( 'approved' === commentStatus ) {
-			return null;
-		}
-
-		const statusLabels = {
-			unapproved: translate( 'Pending' ),
-			spam: translate( 'Spam' ),
-			trash: translate( 'Trash' ),
-		};
-
-		return (
-			<div className={ `comment-detail__status-label is-${ commentStatus }` }>
-				{ statusLabels[ commentStatus ] }
-			</div>
-		);
-	}
-
 	authorMoreInfo() {
 		if ( ! this.props.showAuthorInfo ) {
 			return null;
@@ -133,8 +114,10 @@ export class CommentDetailAuthor extends Component {
 			authorDisplayName,
 			authorUrl,
 			commentDate,
+			commentStatus,
 			moment,
 			showAuthorInfo,
+			translate,
 		} = this.props;
 		const { isExpanded } = this.state;
 
@@ -159,7 +142,11 @@ export class CommentDetailAuthor extends Component {
 							{ moment( commentDate ).format( 'MMMM D, YYYY H:mma' ) }
 						</div>
 					</div>
-					{ this.commentStatusLabel() }
+					{ 'unapproved' === commentStatus &&
+						<div className="comment-detail__status-label is-unapproved">
+							{ translate( 'Pending' ) }
+						</div>
+					}
 					{
 						showAuthorInfo &&
 						<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
