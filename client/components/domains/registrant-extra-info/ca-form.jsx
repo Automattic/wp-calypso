@@ -113,7 +113,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 		if ( target.type === 'checkbox' ) {
 			value = target.checked;
-			this.setState( { uncheckedCiraAgreementFlag: false } );
+			this.registerClick();
 		}
 
 		this.props.updateContactDetailsCache( {
@@ -121,29 +121,30 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		} );
 	}
 
-	shimSubmit( event, originalOnClick ) {
+	handleInvalidSubmit = ( event ) => {
 		event.preventDefault();
+		this.registerClick();
+	}
 
-		if ( ! this.props.contactDetailsExtra.ciraAgreementAccepted ) {
-			this.setState( { uncheckedCiraAgreementFlag: true } );
-			return;
-		}
-
-		originalOnClick( event );
+	registerClick = () => {
+		this.setState( { hasBeenClicked: true } );
 	}
 
 	render() {
 		const { translate } = this.props;
-		const { legalTypeOptions, uncheckedCiraAgreementFlag } = this.state;
+		const { legalTypeOptions, hasBeenClicked } = this.state;
 		const {
 			legalType,
 			ciraAgreementAccepted,
 		} = { ...defaultValues, ...this.props.contactDetailsExtra };
 
-		const unvalidatedSubmitButton = this.props.children;
-		const submitButton = React.cloneElement( unvalidatedSubmitButton, {
-			onClick: ( e ) => this.shimSubmit( e, unvalidatedSubmitButton.props.onClick ),
-		} );
+		const validatingSubmitButton = ciraAgreementAccepted
+			? this.props.children
+			: React.cloneElement(
+				this.props.children,
+				{ onClick: this.handleInvalidSubmit } );
+
+		const showValidationError = hasBeenClicked && ! ciraAgreementAccepted;
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -183,11 +184,11 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 								}
 							)
 						}</span>
-						{ uncheckedCiraAgreementFlag ? <FormInputValidation text={ translate( 'Required' ) } isError={ true } /> : null }
+						{ showValidationError ? <FormInputValidation text={ translate( 'Required' ) } isError={ true } /> : null }
 					</FormLabel>
 				</FormFieldset>
 
-				{ submitButton }
+				{ validatingSubmitButton }
 			</form>
 		);
 	}
