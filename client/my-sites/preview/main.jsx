@@ -102,6 +102,7 @@ class PreviewMain extends React.Component {
 				<WebPreviewContent
 					showClose={ false }
 					previewUrl={ this.state.previewUrl }
+					externalUrl={ site.URL }
 				/>
 			</Main>
 		);
@@ -114,7 +115,7 @@ const mapState = ( state ) => {
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		site: getSelectedSite( state ),
 		siteId: selectedSiteId,
-	}
+	};
 };
 
 export default connect( mapState )( localize( PreviewMain ) );
