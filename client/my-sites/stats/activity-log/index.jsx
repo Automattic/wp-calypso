@@ -50,7 +50,7 @@ class ActivityLog extends Component {
 			failureReason: PropTypes.string.isRequired,
 			message: PropTypes.string.isRequired,
 			percent: PropTypes.number.isRequired,
-			restoreId: PropTypes.number.isRequired,
+			restoreId: PropTypes.number,
 			status: PropTypes.oneOf( [
 				'finished',
 				'queued',
