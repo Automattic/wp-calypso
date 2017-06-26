@@ -36,6 +36,15 @@
 
 		li.share-widget__service {
 			margin: 0 4px;
+
+			a {
+				transition: transform ease-in-out .15s;
+				display: block;
+
+				&:hover {
+					transform: translateY(-4px) scale(1.05);
+				}
+			}
 		}
 	}
 }
