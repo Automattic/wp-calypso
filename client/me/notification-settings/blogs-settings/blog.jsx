@@ -76,7 +76,7 @@ class BlogSettings extends Component {
 								'follow',
 								'achievement',
 								'mentions',
-								'scheduled_publicize'
+								'scheduled_publicize',
 							] } />;
 					}
 				} )() }
