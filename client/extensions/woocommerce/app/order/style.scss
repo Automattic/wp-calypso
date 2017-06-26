@@ -70,6 +70,12 @@
 	}
 }
 
+&.dialog__content {
+	.order__details-table {
+		width: 720px;
+	}
+}
+
 .order__details-totals {
 	padding: 24px 0;
 	text-align: right;
