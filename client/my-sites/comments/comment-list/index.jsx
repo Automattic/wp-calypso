@@ -165,6 +165,16 @@ export class CommentList extends Component {
 		this.props.createNotice( type, message, options );
 	}
 
+	submitComment = comment => {
+		this.props.removeNotice( 'comment-submitted' );
+		this.props.createNotice( 'is-success', this.props.translate( 'Comment submitted.' ), {
+			duration: 5000,
+			id: 'comment-submitted',
+			isPersistent: true,
+		} );
+		this.props.submitComment( comment );
+	}
+
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
 	toggleCommentLike = commentId => {
@@ -215,7 +225,6 @@ export class CommentList extends Component {
 			status,
 			showPlaceholder,
 			showEmptyContent,
-			submitComment,
 		} = this.props;
 		const {
 			isBulkEdit,
@@ -252,7 +261,7 @@ export class CommentList extends Component {
 							key={ `comment-${ siteId }-${ comment.ID }` }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
-							submitComment={ submitComment }
+							submitComment={ this.submitComment }
 							toggleCommentLike={ this.toggleCommentLike }
 							toggleCommentSelected={ this.toggleCommentSelected }
 						/>
