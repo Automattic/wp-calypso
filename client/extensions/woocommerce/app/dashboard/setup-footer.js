@@ -8,15 +8,16 @@ import React, { PropTypes } from 'react';
  */
 import Button from 'components/button';
 
-const SetupFooter = ( { label, onClick, primary } ) => {
+const SetupFooter = ( { disabled, label, onClick, primary } ) => {
 	return (
 		<div className="dashboard__setup-footer">
-			<Button onClick={ onClick } primary={ primary }>{ label }</Button>
+			<Button disabled={ disabled } onClick={ onClick } primary={ primary }>{ label }</Button>
 		</div>
 	);
 };
 
 SetupFooter.propTypes = {
+	disabled: PropTypes.bool,
 	label: PropTypes.string.isRequired,
 	onClick: PropTypes.func.isRequired,
 	primary: PropTypes.bool,
