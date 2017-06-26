@@ -11,12 +11,19 @@
 			}
 		}
 	}
+
+	.table-row {
+		&:hover {
+			background: lighten( $gray, 35% );
+		}
+	}
 }
 
 .orders__item-link,
 .orders__item-name {
 	display: inline-block;
 	font-weight: normal;
+	color: $blue-wordpress;
 }
 
 .orders__item-link {

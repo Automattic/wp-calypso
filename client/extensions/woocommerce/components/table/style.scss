@@ -133,7 +133,6 @@
 
 .table-row {
 	line-height: 36px;
-	color: $gray-text-min;
 
 	&:hover {
 		background: $gray-light;
@@ -145,6 +144,7 @@
 
 	&.is-header {
 		color: $gray-dark;
+		font-weight: 600;
 	}
 
 	&.has-action {
