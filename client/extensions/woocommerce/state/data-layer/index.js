@@ -5,6 +5,7 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import { addHandlers } from 'state/data-layer/extensions-middleware';
 import actionList from './action-list';
 import products from './products';
+import productVariations from './products/variations';
 import productCategories from './product-categories';
 import request from './request';
 import ui from './ui';
@@ -14,8 +15,9 @@ const debug = debugFactory( 'woocommerce:errors' );
 
 const handlers = mergeHandlers(
 	actionList,
-	products,
 	productCategories,
+	products,
+	productVariations,
 	request,
 	ui,
 );
