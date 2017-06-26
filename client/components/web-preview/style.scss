@@ -150,8 +150,9 @@ a.web-preview__external.button {
 }
 
 .web-preview__url-clipboard-input {
-	margin: 6px auto;
-	width: 35%;
+	flex-grow: 1;
+	margin: 6px 10px;
+	width: auto;
 
 	.form-text-input {
 		color: $gray;
@@ -171,6 +172,16 @@ a.web-preview__external.button {
 
 	&:hover .clipboard-button {
 		display: block;
+	}
+
+	@include breakpoint( ">660px" ) {
+		max-width: 50%;
+	}
+
+	@include breakpoint( ">960px" ) {
+		margin: 6px auto;
+		width: 35%;
+		flex-grow: inherit;
 	}
 }
 
