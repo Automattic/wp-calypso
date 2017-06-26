@@ -16,26 +16,49 @@ class EventsTooltip extends Component {
 		title: PropTypes.string,
 		events: PropTypes.array,
 		moment: PropTypes.func.isRequired,
-		maxEventsPerTooltip: PropTypes.number,
+		maxEvents: PropTypes.number,
+		moreEvents: PropTypes.string,
 	};
 
 	static defaultProps = {
-		maxEventsPerTooltip: 8,
+		events: [],
+		maxEvents: 8,
 	};
 
 	render() {
-		const { events, maxEventsPerTooltip, isVisible } = this.props;
+		const {
+			events,
+			isVisible,
+			maxEvents,
+		} = this.props;
 
-		const label = this.props.translate(
-			'%d post',
-			'%d posts', {
-				count: events.length,
-				args: events.length,
-			}
-		);
+		let title = this.props.title;
+		if ( ! title ) {
+			title = this.props.translate(
+				'%d post',
+				'%d posts', {
+					count: events.length,
+					args: events.length,
+				}
+			);
+		}
 
 		const show = !! ( events && events.length && isVisible );
-		const moreEvents = events.length - maxEventsPerTooltip;
+		const moreEvents = events.length - maxEvents;
+
+		let moreEventsLabel = this.props.moreEventsLabel;
+
+		if ( ! moreEventsLabel ) {
+			moreEventsLabel = this.props.translate(
+				'… and %(moreEvents)d more post',
+				'… and %(moreEvents)d more posts', {
+					count: moreEvents,
+					args: {
+						moreEvents
+					}
+				}
+			);
+		}
 
 		return (
 			<Tooltip
@@ -44,10 +67,10 @@ class EventsTooltip extends Component {
 				isVisible={ show }
 				onClose={ noop }
 			>
-				<span>{ label }</span>
+				<span>{ title }</span>
 				<hr className="date-picker__division" />
 				<ul>
-					{ map( events, ( event, i ) => ( i < maxEventsPerTooltip ) &&
+					{ map( events, ( event, i ) => ( i < maxEvents ) &&
 						<li key={ event.id }>
 							<CalendarEvent
 								icon={ event.icon }
@@ -57,19 +80,7 @@ class EventsTooltip extends Component {
 						</li>
 					) }
 
-					{ ( moreEvents > 0 ) &&
-						<li>
-							{ this.props.translate(
-								'… and %(moreEvents)d more post',
-								'… and %(moreEvents)d more posts', {
-									count: moreEvents,
-									args: {
-										moreEvents
-									}
-								}
-							) }
-						</li>
-					}
+					{ ( moreEvents > 0 ) && <li>{ moreEventsLabel }</li> }
 				</ul>
 			</Tooltip>
 		);
