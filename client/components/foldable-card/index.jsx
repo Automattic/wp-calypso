@@ -42,9 +42,15 @@ var FoldableCard = React.createClass( {
 			onClose: noop,
 			cardKey: '',
 			icon: 'chevron-down',
-			isExpanded: false,
+			expanded: false,
 			screenReaderText: false,
 		};
+	},
+
+	componentWillReceiveProps: function( nextProps ) {
+		if ( nextProps.expanded !== this.props.expanded ) {
+			this.setState( { expanded: nextProps.expanded } );
+		}
 	},
 
 	onClick: function() {
