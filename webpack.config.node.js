@@ -3,17 +3,20 @@
 /**
  * External dependencies
  */
-const webpack = require( 'webpack' );
-const path = require( 'path' );
-const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const fs = require( 'fs' );
 const HappyPack = require( 'happypack' );
+const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
+const os = require( 'os' );
+const path = require( 'path' );
+const webpack = require( 'webpack' );
+const _ = require( 'lodash' );
 
 /**
  * Internal dependencies
  */
-const config = require( 'config' );
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
+const config = require( 'config' );
+const isWindows = os.type() === 'Windows_NT';
 
 /**
  * This lists modules that must use commonJS `require()`s
@@ -67,6 +70,9 @@ const babelLoader = {
 	}
 }
 
+// happypack is not compatible with windows: https://github.com/amireh/happypack/blob/caaed26eec1795d464ac4b66abd29e60343e6252/README.md#does-it-work-under-windows
+const jsLoader = isWindows ? babelLoader : 'happypack/loader';
+
 const webpackConfig = {
 	devtool: 'source-map',
 	entry: './index.js',
@@ -90,7 +96,7 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
-				loader: [ 'happypack/loader' ]
+				loader: [ jsLoader ]
 			},
 		]
 	},
@@ -110,15 +116,13 @@ const webpackConfig = {
 		__filename: true,
 		__dirname: true
 	},
-	plugins: [
+	plugins: _.compact( [
 		// Require source-map-support at the top, so we get source maps for the bundle
 		new webpack.BannerPlugin( { banner: 'require( "source-map-support" ).install();', raw: true, entryOnly: false } ),
 		new webpack.DefinePlugin( {
 			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
 		} ),
-		new HappyPack( {
-			loaders: [ babelLoader ],
-		} ),
+		isWindows && new HappyPack( { loaders: [ babelLoader ] } ),
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]sites-list$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]olark$/, 'lodash/noop' ), // Depends on DOM
@@ -129,7 +133,7 @@ const webpackConfig = {
 		new webpack.NormalModuleReplacementPlugin( /^my-sites[\/\\]themes[\/\\]theme-upload$/, 'components/empty-component' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^client[\/\\]layout[\/\\]guided-tours[\/\\]config$/, 'components/empty-component' ), // should never be required server side
 		new webpack.NormalModuleReplacementPlugin( /^components[\/\\]site-selector$/, 'components/null-component' ), // Depends on BOM
-	],
+	] ),
 	externals: getExternals()
 };
 
