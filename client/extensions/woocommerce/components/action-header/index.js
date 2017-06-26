@@ -19,7 +19,7 @@ const ActionHeader = ( { children, breadcrumbs } ) => {
 			return (
 				<span key={ i }>
 					{crumb}
-					{ breadcrumbs.length - 1 === i ? '' : ( <span className="action-header__breadcrumbs-separator"> &gt; </span> ) }
+					{ breadcrumbs.length - 1 === i ? '' : ( <span className="action-header__breadcrumbs-separator"> / </span> ) }
 				</span>
 			);
 		} );
