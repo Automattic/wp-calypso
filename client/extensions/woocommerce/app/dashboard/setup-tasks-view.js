@@ -46,8 +46,8 @@ class SetupTasksView extends Component {
 				<SetupHeader
 					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
 					imageWidth={ 160 }
-					title={ translate( 'Howdy! Let\'s set up your store & start selling' ) }
-					subtitle={ translate( 'Below you will find the essential tasks to complete before making your store live.' ) }
+					title={ translate( 'Let\'s set up your store' ) }
+					subtitle={ translate( 'Here are the things you’ll need to do before you can start taking orders.' ) }
 				/>
 				<SetupTasks
 					site={ site }

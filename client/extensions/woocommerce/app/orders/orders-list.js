@@ -151,7 +151,7 @@ class Orders extends Component {
 			return (
 				<div className="orders__container">
 					<EmptyContent
-						title={ translate( 'Orders will appear here as they come in.' ) }
+						title={ translate( 'Your orders will appear here as they come in.' ) }
 						action={ translate( 'Manually add an order' ) }
 						actionURL={ createOrderLink } />
 				</div>

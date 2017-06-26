@@ -26,9 +26,8 @@ class ManageNoOrdersView extends Component {
 		const { site, translate } = this.props;
 		return (
 			<ShareWidget
-				text={ translate( 'Congratulations! Now that your setup is complete you can spread the word' +
-					' and get those first orders rolling in. Share your store with friends,' +
-					' family, and followers now.' ) }
+				text={ translate( 'Your store is ready to take orders - congratulations! ' +
+					'Spread the word to get orders rolling in.' ) }
 				title={ translate( 'Your store is ready, the world awaits!' ) }
 				urlToShare={ site.URL }
 			/>

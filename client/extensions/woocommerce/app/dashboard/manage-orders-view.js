@@ -89,8 +89,8 @@ class ManageOrdersView extends Component {
 		const { site, translate } = this.props;
 		return (
 			<ShareWidget
-				text={ translate( 'Share a link to your store on social media.' ) }
-				title={ translate( 'Share your store' ) }
+				text={ translate( 'Spread the news about your new store.' ) }
+				title={ translate( 'Share with your world' ) }
 				urlToShare={ site.URL }
 			/>
 		);
@@ -102,13 +102,13 @@ class ManageOrdersView extends Component {
 			<div className="dashboard__manage-has-orders">
 				<div className="dashboard__manage-has-orders-header">
 					<h2>
-						{ translate( 'Welcome back, {{storeOwnerName/}}.', {
+						{ translate( 'Hi, {{storeOwnerName/}}.', {
 							components: {
 								storeOwnerName: <strong>{ user.display_name || user.username }</strong>
 							}
 						} ) }
 						{ orders.length && (
-							<span>{ translate( 'You have new orders to process 🎉' ) }</span>
+							<span>{ translate( 'You have new orders 🎉' ) }</span>
 						) || '' }
 					</h2>
 				</div>
@@ -120,10 +120,10 @@ class ManageOrdersView extends Component {
 						<img src="/calypso/images/extensions/woocommerce/woocommerce-reports.svg" width="500" />
 						<div className="dashboard__reports-widget-content">
 							<h2>
-								{ translate( 'Stats & Reports' ) }
+								{ translate( 'Reports' ) }
 							</h2>
 							<p>
-								{ translate( 'A detailed breakdown of store stats & reports are available on the stats screen.' ) }
+								{ translate( 'See a detailed breakdown of how your store is doing on the stats screen.' ) }
 							</p>
 							<p>
 								<Button href={ getLink( '/store/stats/orders/day/:site', site ) }>

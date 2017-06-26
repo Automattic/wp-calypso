@@ -110,8 +110,8 @@ class PreSetupView extends Component {
 				<SetupHeader
 					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
 					imageWidth={ 160 }
-					title={ translate( 'Howdy! Let\'s set up your store & start selling' ) }
-					subtitle={ translate( 'First we need to know where you\'re located.' ) }
+					title={ translate( 'Howdy! Ready to start selling?' ) }
+					subtitle={ translate( 'First we need to know where you are in the world.' ) }
 				/>
 				<AddressView
 					address={ this.state.address }
@@ -122,7 +122,7 @@ class PreSetupView extends Component {
 				<SetupFooter
 					disabled={ this.state.isSaving }
 					onClick={ this.onNext }
-					label={ translate( 'Next' ) }
+					label={ translate( 'Let\'s Go!' ) }
 					primary
 				/>
 			</div>

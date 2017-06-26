@@ -20,7 +20,7 @@ const ProcessOrdersWidget = ( { className, site, orders, currency, ordersRevenue
 			<div>
 				<span>{ orders.length }</span>
 				<span className="process-orders-widget__order-label">
-					{ translate( 'New orders' ) }
+					{ translate( '✨ New orders' ) }
 				</span>
 			</div>
 			<div>
@@ -28,7 +28,7 @@ const ProcessOrdersWidget = ( { className, site, orders, currency, ordersRevenue
 					{ formatCurrency( ordersRevenue, currencyValue ) || ordersRevenue }
 				</span>
 				<span className="process-orders-widget__revenue-label">
-					{ translate( 'Revenue' ) }
+					{ translate( '💰 Revenue' ) }
 				</span>
 			</div>
 			<div>
