@@ -38,6 +38,7 @@ const getStorePages = () => {
 				isPrimary: true,
 				label: translate( 'Dashboard' ),
 				slug: 'dashboard',
+				showDuringSetup: true,
 			},
 		},
 		{
@@ -49,6 +50,7 @@ const getStorePages = () => {
 				isPrimary: true,
 				label: translate( 'Products' ),
 				slug: 'products',
+				showDuringSetup: false,
 			},
 		},
 		{
@@ -59,12 +61,8 @@ const getStorePages = () => {
 				label: translate( 'Add' ),
 				parentSlug: 'products',
 				slug: 'product-add',
+				showDuringSetup: false,
 			},
-		},
-		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
-			configKey: 'woocommerce/extension-products-import',
-			path: '/store/products/import/:site',
 		},
 		{
 			container: Orders,
@@ -75,22 +73,13 @@ const getStorePages = () => {
 				isPrimary: true,
 				label: translate( 'Orders' ),
 				slug: 'orders',
+				showDuringSetup: false,
 			},
 		},
 		{
 			container: Order,
 			configKey: 'woocommerce/extension-orders',
 			path: '/store/order/:site/:order',
-		},
-		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
-			configKey: 'woocommerce/extension-orders',
-			path: '/store/order/:site',
-			sidebarItemButton: {
-				label: translate( 'Add' ),
-				parentSlug: 'orders',
-				slug: 'order-add',
-			},
 		},
 		{
 			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
@@ -101,6 +90,7 @@ const getStorePages = () => {
 				isPrimary: false,
 				label: translate( 'Settings' ),
 				slug: 'settings',
+				showDuringSetup: false,
 			},
 		},
 		{
@@ -112,6 +102,7 @@ const getStorePages = () => {
 				label: translate( 'Payments' ),
 				parentSlug: 'settings',
 				slug: 'settings-payments',
+				showDuringSetup: false,
 			},
 		},
 		{
@@ -123,6 +114,7 @@ const getStorePages = () => {
 				label: translate( 'Shipping' ),
 				parentSlug: 'settings',
 				slug: 'settings-shipping',
+				showDuringSetup: false,
 			},
 		},
 		{
@@ -139,6 +131,7 @@ const getStorePages = () => {
 				label: translate( 'Taxes' ),
 				parentSlug: 'settings',
 				slug: 'settings-tax',
+				showDuringSetup: false,
 			},
 		},
 	];
