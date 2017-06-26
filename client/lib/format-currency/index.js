@@ -62,7 +62,7 @@ const CURRENCIES = {
 		symbol: 'Ft',
 		grouping: ',',
 		decimal: '.',
-		precision: 2
+		precision: 0
 	},
 	SEK: {
 		symbol: 'kr',
