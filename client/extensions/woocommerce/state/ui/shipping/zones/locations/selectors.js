@@ -17,11 +17,11 @@ const getContinentsOwnedByOtherZone = ( state, siteId ) => {
 	const continents = {};
 	const currentZone = getCurrentlyEditingShippingZone( state, siteId );
 	forIn( getRawShippingZoneLocations( state, siteId ), ( { continent }, zoneId ) => {
-		if ( currentZone.id === zoneId ) {
+		if ( currentZone.id === Number( zoneId ) ) {
 			return;
 		}
 		for ( const c of continent ) {
-			continents[ c ] = zoneId;
+			continents[ c ] = Number( zoneId );
 		}
 	} );
 	return continents;
@@ -31,11 +31,11 @@ const getCountriesOwnedByOtherZone = ( state, siteId ) => {
 	const countries = {};
 	const currentZone = getCurrentlyEditingShippingZone( state, siteId );
 	forIn( getRawShippingZoneLocations( state, siteId ), ( { country, postcode }, zoneId ) => {
-		if ( currentZone.id === zoneId || ! isEmpty( postcode ) ) {
+		if ( currentZone.id === Number( zoneId ) || ! isEmpty( postcode ) ) {
 			return;
 		}
 		for ( const c of country ) {
-			countries[ c ] = zoneId;
+			countries[ c ] = Number( zoneId );
 		}
 	} );
 	return countries;
@@ -45,13 +45,13 @@ const getStatesOwnedByOtherZone = ( state, siteId, countryCode ) => {
 	const states = {};
 	const currentZone = getCurrentlyEditingShippingZone( state, siteId );
 	forIn( getRawShippingZoneLocations( state, siteId ), ( locations, zoneId ) => {
-		if ( currentZone.id === zoneId ) {
+		if ( currentZone.id === Number( zoneId ) ) {
 			return;
 		}
 		for ( const s of locations.state ) {
 			const [ stateCountry, stateCode ] = s.split( ':' );
 			if ( stateCountry === countryCode ) {
-				states[ stateCode ] = zoneId;
+				states[ stateCode ] = Number( zoneId );
 			}
 		}
 	} );
@@ -197,7 +197,7 @@ export const areLocationsFilteredByPostcode = ( state, siteId = getSelectedSiteI
 	if ( null !== edits.postcode ) {
 		return true;
 	}
-	return ! canLocationsBeFilteredByState( state, siteId ) && getCurrentSelectedCountryZoneOwner( state, siteId );
+	return ! canLocationsBeFilteredByState( state, siteId ) && Boolean( getCurrentSelectedCountryZoneOwner( state, siteId ) );
 };
 
 export const areLocationsFilteredByState = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -214,7 +214,7 @@ export const areLocationsFilteredByState = ( state, siteId = getSelectedSiteId( 
 	if ( null !== edits.states ) {
 		return true;
 	}
-	return ! areLocationsFilteredByPostcode( state, siteId ) && getCurrentSelectedCountryZoneOwner( state, siteId );
+	return ! areLocationsFilteredByPostcode( state, siteId ) && Boolean( getCurrentSelectedCountryZoneOwner( state, siteId ) );
 };
 
 export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state ) ) => {
