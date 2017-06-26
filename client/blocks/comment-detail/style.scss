@@ -415,12 +415,12 @@ a.comment-detail__author-more-element {
 .comment-detail__reply {
 	// The inner working of these styles is covered here:
 	// http://alistapart.com/article/expanding-text-areas-made-elegant
-	.expanding-area {
+	.is-expanding-area {
 		min-height: 33px;
 		position: relative;
 		transition: min-height 0.2s ease-in-out;
 
-		&.focused {
+		&.is-focused {
 			min-height: 70px;
 		}
 

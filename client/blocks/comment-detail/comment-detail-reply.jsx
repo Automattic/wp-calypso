@@ -15,12 +15,12 @@ import { getCurrentUser } from 'state/current-user/selectors';
 export class CommentDetailReply extends Component {
 	state = {
 		commentText: '',
-		haveFocus: false,
+		hasFocus: false,
 	};
 
-	handleBlur = () => this.setState( { haveFocus: false } );
+	handleBlur = () => this.setState( { hasFocus: false } );
 
-	handleFocus = () => this.setState( { haveFocus: true } );
+	handleFocus = () => this.setState( { hasFocus: true } );
 
 	handleKeyDown = event => {
 		// Use Ctrl+Enter to submit comment
@@ -53,17 +53,17 @@ export class CommentDetailReply extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const { commentText, haveFocus } = this.state;
+		const { commentText, hasFocus } = this.state;
 
 		const hasCommentText = commentText.trim().length > 0;
 
 		const buttonClasses = classNames( 'comment-detail__reply-submit', {
 			'is-active': hasCommentText,
-			'is-visible': haveFocus || hasCommentText,
+			'is-visible': hasFocus || hasCommentText,
 		} );
 
-		const expandingAreaClasses = classNames( 'expanding-area', {
-			focused: haveFocus,
+		const expandingAreaClasses = classNames( 'is-expanding-area', {
+			'is-focused': hasFocus,
 		} );
 
 		return (
