@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Main from 'components/main';
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
 import GetAppsIllustration from './illustration.jsx';
 import DownloadCard from './download-card.jsx';
 
@@ -21,7 +20,6 @@ export const GetApps = ( { translate } ) => {
 		<Main className="get-apps">
 			<MeSidebarNavigation />
 			<GetAppsIllustration />
-			<SectionHeader label={ translate( 'WordPress Apps' ) } />
 			<Card className="get-apps__mobile">
 				<div className={ 'get-apps__card-text' }>
 					<h3>{ translate( 'Mobile Apps' ) }</h3>
