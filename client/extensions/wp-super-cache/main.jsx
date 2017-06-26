@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -52,14 +52,13 @@ class WPSuperCache extends Component {
 
 	render() {
 		const {
-			status,
 			site,
 			siteId,
+			status: { cache_disabled: cacheDisabled },
 			tab,
+			translate,
 		} = this.props;
 		const mainClassName = 'wp-super-cache__main';
-		const cacheDisabled = get( status, 'cache_disabled' );
-		const cacheDisabledMessage = get( status.cache_disabled, 'message' );
 
 		return (
 			<Main className={ mainClassName }>
@@ -69,7 +68,7 @@ class WPSuperCache extends Component {
 				<Notice
 					showDismiss={ false }
 					status="is-error"
-					text={ cacheDisabledMessage } />
+					text={ translate( 'Read Only Mode. Configuration cannot be changed.' ) } />
 				}
 
 				<Navigation activeTab={ tab } site={ site } />
@@ -90,4 +89,4 @@ const connectComponent = connect(
 	}
 );
 
-export default connectComponent( WPSuperCache );
+export default connectComponent( localize( WPSuperCache ) );

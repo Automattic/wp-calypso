@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { get, pick } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,11 +30,13 @@ const Miscellaneous = ( {
 	isReadOnly,
 	isRequesting,
 	isSaving,
-	status,
+	status: {
+		compression_disabled: compressionDisabled
+	},
 	translate,
 } ) => {
 	const isDisabled = isRequesting || isSaving || isReadOnly;
-	const compressionDisabledMessage = get( status.compression_disabled, 'message' );
+	const compressionDisabledMessage = translate( 'Compression disabled.' );
 
 	return (
 		<div>
@@ -43,14 +45,14 @@ const Miscellaneous = ( {
 			</SectionHeader>
 			<Card>
 				<form>
-					{ compressionDisabledMessage &&
+					{ compressionDisabled &&
 					<Notice
 						showDismiss={ false }
 						status="is-warning"
 						text={ compressionDisabledMessage } />
 					}
 					<FormFieldset>
-						{ ! compressionDisabledMessage &&
+						{ ! compressionDisabled &&
 						<FormToggle
 							checked={ !! cache_compression }
 							disabled={ isDisabled }
@@ -65,7 +67,7 @@ const Miscellaneous = ( {
 							</span>
 						</FormToggle>
 						}
-						{ ! compressionDisabledMessage &&
+						{ ! compressionDisabled &&
 						<Notice
 							isCompact
 							className="wp-super-cache__toggle-notice"

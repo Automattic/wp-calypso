@@ -94,7 +94,6 @@ class EasyTab extends Component {
 			siteId,
 			translate,
 		} = this.props;
-		const phpModRewriteMessage = get( php_mod_rewrite, 'message' );
 
 		return (
 			<div>
@@ -114,11 +113,15 @@ class EasyTab extends Component {
 					</form>
 				</Card>
 
-				{ phpModRewriteMessage &&
+				{ php_mod_rewrite &&
 				<Notice
 					className="wp-super-cache__notice-hug-card"
 					showDismiss={ false }
-					text={ phpModRewriteMessage } />
+					text={ translate(
+						'PHP caching enabled but Supercache mod_rewrite rules detected. ' +
+						'Cached files will be served using those rules. If your site is working ok, please ignore this message. ' +
+						'Otherwise, you can edit the .htaccess file in the root of your install and remove the SuperCache rules.'
+					) } />
 				}
 
 				{ is_cache_enabled &&

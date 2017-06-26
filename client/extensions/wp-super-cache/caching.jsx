@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { get, pick } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,13 +31,12 @@ const Caching = ( {
 	isRequesting,
 	isSaving,
 	status: {
-		htaccess_ro,
-		mod_rewrite_missing,
+		htaccess_ro: htaccessReadOnly,
+		mod_rewrite_missing: modRewriteMissing,
 	},
 	translate,
 } ) => {
 	const isDisabled = isRequesting || isSaving || isReadOnly;
-	const modRewriteMessage = get( mod_rewrite_missing, 'message' );
 
 	return (
 		<div>
@@ -55,7 +54,7 @@ const Caching = ( {
 			</SectionHeader>
 			<Card>
 				<form>
-					{ htaccess_ro &&
+					{ htaccessReadOnly &&
 					<Notice
 						showDismiss={ false }
 						status="is-warning"
@@ -77,11 +76,11 @@ const Caching = ( {
 						/>
 					}
 
-					{ modRewriteMessage &&
+					{ modRewriteMissing &&
 					<Notice
 						showDismiss={ false }
 						status="is-warning"
-						text={ modRewriteMessage } />
+						text={ translate( 'The mod_rewrite module has not been detected. Cache files will still be served by PHP.' ) } />
 					}
 					<FormFieldset>
 						<FormToggle
