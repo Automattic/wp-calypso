@@ -113,7 +113,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 
 	render() {
 		const { currencies, currency, translate } = this.props;
-		const validCurrencies = [ 'USD', 'AUD', 'CAD', 'EUR', 'GBP', 'JPY', 'BRL' ];
+		const validCurrencies = [ 'USD', 'AUD', 'CAD', 'GBP', 'BRL' ];
 		return (
 			<div className="payments__location-currency">
 				<ExtendedHeader
