@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
-import { decodeEntities } from 'lib/formatting';
 
 export const CommentDetailPost = ( {
 	parentCommentAuthorAvatarUrl,
