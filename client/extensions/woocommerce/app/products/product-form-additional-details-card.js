@@ -13,7 +13,6 @@ import React, { PropTypes, Component } from 'react';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import TokenField from 'components/token-field';
 
@@ -172,11 +171,11 @@ class ProductFormAdditionalDetailsCard extends Component {
 				onClose={ this.cardClose }
 				clickableHeader
 			>
-				<FormSettingExplanation>
+				<p>
 					{ translate( 'Include additional details about your products, like \‘fabric\’ or \‘type\’ ' +
 						'for apparel. This will help customers find the right products by' +
 						'filtering for their preferred options, like a cotton shirt in a women\’s cut.' ) }
-				</FormSettingExplanation>
+				</p>
 
 				<div className="products__additional-details-container">
 					<div className="products__additional-details-form-group">
