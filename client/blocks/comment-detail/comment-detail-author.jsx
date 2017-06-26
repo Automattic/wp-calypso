@@ -101,7 +101,7 @@ export class CommentDetailAuthor extends Component {
 						<span>{ authorIsBlocked
 							? translate( 'Unblock user' )
 							: translate( 'Block user' )
-						} </span>
+						}</span>
 					</a>
 				</div>
 			</div>
