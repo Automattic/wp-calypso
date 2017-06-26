@@ -111,7 +111,7 @@ class PreviewMain extends React.Component {
 const mapState = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
-		isPreviewable: false,// isSitePreviewable( state, selectedSiteId ),
+		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		site: getSelectedSite( state ),
 		siteId: selectedSiteId,
 	}
