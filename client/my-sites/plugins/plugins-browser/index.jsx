@@ -28,7 +28,8 @@ import FeatureExample from 'components/feature-example';
 import { hasTouch } from 'lib/touch-detect';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite, canJetpackSiteManage } from 'state/sites/selectors';
+import { getSelectedOrAllSites } from 'state/selectors';
+import { isJetpackSite, canJetpackSiteManage, siteHasMinimumJetpackVersion } from 'state/sites/selectors';
 
 const PluginsBrowser = React.createClass( {
 	_SHORT_LIST_LENGTH: 6,
@@ -92,7 +93,9 @@ const PluginsBrowser = React.createClass( {
 		} );
 		fullLists.search = PluginsListStore.getSearchList( search );
 		return {
-			accessError: pluginsAccessControl.hasRestrictedAccess(),
+			accessError: pluginsAccessControl.hasRestrictedAccess( this.props.selectedSite,
+				this.props.hasRightsToManagePlutins,
+				this.props.isMinJetpackVersionValidationFailed ),
 			shortLists: shortLists,
 			fullLists: fullLists
 		};
@@ -335,10 +338,16 @@ const PluginsBrowser = React.createClass( {
 export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
+		const selectedOrAll = getSelectedOrAllSites( state );
+		const hasRightsToManagePlutins = pluginsAccessControl.getHasRightsToManagePlutins( selectedOrAll );
+		const selectedSiteIsJetpack = selectedSite && isJetpackSite( state, selectedSite.ID );
+		const isMinJetpackVersionValidationFailed = selectedSiteIsJetpack && ! siteHasMinimumJetpackVersion( state, selectedSite.ID );
 		return {
 			selectedSite,
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
+			hasRightsToManagePlutins,
+			isMinJetpackVersionValidationFailed
 		};
 	},
 	{

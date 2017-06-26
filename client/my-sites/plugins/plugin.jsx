@@ -28,8 +28,8 @@ import EmptyContent from 'components/empty-content';
 import FeatureExample from 'components/feature-example';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, canJetpackSiteManage, getRawSite } from 'state/sites/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import { isJetpackSite, canJetpackSiteManage, getRawSite, siteHasMinimumJetpackVersion } from 'state/sites/selectors';
+import { isSiteAutomatedTransfer, getSelectedOrAllSites } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import QuerySites from 'components/data/query-sites';
 
@@ -82,7 +82,9 @@ const SinglePlugin = React.createClass( {
 			}, sitePlugin );
 
 		return {
-			accessError: pluginsAccessControl.hasRestrictedAccess(),
+			accessError: pluginsAccessControl.hasRestrictedAccess( props.selectedSite,
+				props.hasRightsToManagePlutins,
+				props.isMinJetpackVersionValidationFailed ),
 			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],
 			notInstalledSites: PluginsStore.getNotInstalledSites( sites, props.pluginSlug ) || [],
 			plugin: plugin,
@@ -408,6 +410,10 @@ export default connect(
 			? JetpackSite( getRawSite( state, selectedSiteId ) )
 			: site;
 
+		const selectedOrAll = getSelectedOrAllSites( state );
+		const hasRightsToManagePlutins = pluginsAccessControl.getHasRightsToManagePlutins( selectedOrAll );
+		const selectedSiteIsJetpack = selectedSite && isJetpackSite( state, selectedSite.ID );
+		const isMinJetpackVersionValidationFailed = selectedSiteIsJetpack && ! siteHasMinimumJetpackVersion( state, selectedSite.ID );
 		return {
 			wporgPlugins: state.plugins.wporg.items,
 			wporgFetching: WporgPluginsSelectors.isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug ),
@@ -415,6 +421,8 @@ export default connect(
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
+			hasRightsToManagePlutins,
+			isMinJetpackVersionValidationFailed
 		};
 	},
 	{
