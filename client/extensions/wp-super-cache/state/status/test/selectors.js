@@ -7,22 +7,22 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	isRequestingNotices,
-	getNotices,
+	isRequestingStatus,
+	getStatus,
 } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	describe( 'isRequestingNotices()', () => {
+	describe( 'isRequestingStatus()', () => {
 		it( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
 				}
 			};
-			const isRequesting = isRequestingNotices( state, primarySiteId );
+			const isRequesting = isRequestingStatus( state, primarySiteId );
 
 			expect( isRequesting ).to.be.false;
 		} );
@@ -31,7 +31,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						notices: {
+						status: {
 							requesting: {
 								[ primarySiteId ]: true,
 							}
@@ -39,16 +39,16 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const isRequesting = isRequestingNotices( state, secondarySiteId );
+			const isRequesting = isRequestingStatus( state, secondarySiteId );
 
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the notices are not being fetched', () => {
+		it( 'should return false if the status are not being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						notices: {
+						status: {
 							requesting: {
 								[ primarySiteId ]: false,
 							}
@@ -56,16 +56,16 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const isRequesting = isRequestingNotices( state, primarySiteId );
+			const isRequesting = isRequestingStatus( state, primarySiteId );
 
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the notices are being fetched', () => {
+		it( 'should return true if the status are being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						notices: {
+						status: {
 							requesting: {
 								[ primarySiteId ]: true,
 							}
@@ -73,13 +73,13 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const isRequesting = isRequestingNotices( state, primarySiteId );
+			const isRequesting = isRequestingStatus( state, primarySiteId );
 
 			expect( isRequesting ).to.be.true;
 		} );
 	} );
 
-	describe( 'getNotices()', () => {
+	describe( 'getStatus()', () => {
 		const primaryNotices = {
 			cache_writable: {
 				message: '/home/public_html/ is writable.',
@@ -93,16 +93,16 @@ describe( 'selectors', () => {
 					wpSuperCache: undefined,
 				}
 			};
-			const notices = getNotices( state, primarySiteId );
+			const status = getStatus( state, primarySiteId );
 
-			expect( notices ).to.be.empty;
+			expect( status ).to.be.empty;
 		} );
 
 		it( 'should return empty object if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						notices: {
+						status: {
 							items: {
 								[ primarySiteId ]: primaryNotices,
 							}
@@ -110,16 +110,16 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const notices = getNotices( state, secondarySiteId );
+			const status = getStatus( state, secondarySiteId );
 
-			expect( notices ).to.be.empty;
+			expect( status ).to.be.empty;
 		} );
 
-		it( 'should return the notices for a siteId', () => {
+		it( 'should return the status for a siteId', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						notices: {
+						status: {
 							items: {
 								[ primarySiteId ]: primaryNotices,
 							}
@@ -127,9 +127,9 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const notices = getNotices( state, primarySiteId );
+			const status = getStatus( state, primarySiteId );
 
-			expect( notices ).to.eql( primaryNotices );
+			expect( status ).to.eql( primaryNotices );
 		} );
 	} );
 } );

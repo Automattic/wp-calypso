@@ -15,14 +15,14 @@ import Card from 'components/card';
 import Notice from 'components/notice';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';
-import QueryNotices from './data/query-notices';
+import QueryStatus from './data/query-status';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 import { testCache } from './state/cache/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteTitle } from 'state/sites/selectors';
 import { getCacheTestResults, isTestingCache } from './state/cache/selectors';
-import { getNotices } from './state/notices/selectors';
+import { getStatus } from './state/status/selectors';
 
 class EasyTab extends Component {
 	static propTypes = {
@@ -89,12 +89,11 @@ class EasyTab extends Component {
 			isRequesting,
 			isSaving,
 			isTesting,
-			notices: { php_mod_rewrite },
+			status: { php_mod_rewrite },
 			site,
 			siteId,
 			translate,
 		} = this.props;
-		const phpModRewriteMessage = get( php_mod_rewrite, 'message' );
 
 		return (
 			<div>
@@ -114,11 +113,15 @@ class EasyTab extends Component {
 					</form>
 				</Card>
 
-				{ phpModRewriteMessage &&
+				{ php_mod_rewrite &&
 				<Notice
 					className="wp-super-cache__notice-hug-card"
 					showDismiss={ false }
-					text={ phpModRewriteMessage } />
+					text={ translate(
+						'PHP caching enabled but Supercache mod_rewrite rules detected. ' +
+						'Cached files will be served using those rules. If your site is working ok, please ignore this message. ' +
+						'Otherwise, you can edit the .htaccess file in the root of your install and remove the SuperCache rules.'
+					) } />
 				}
 
 				{ is_cache_enabled &&
@@ -214,7 +217,7 @@ class EasyTab extends Component {
 						}
 					</div>
 				</Card>
-				<QueryNotices siteId={ siteId } />
+				<QueryStatus siteId={ siteId } />
 			</div>
 		);
 	}
@@ -226,12 +229,12 @@ const connectComponent = connect(
 		const siteTitle = getSiteTitle( state, siteId );
 		const isTesting = isTestingCache( state, siteId );
 		const cacheTestResults = getCacheTestResults( state, siteId );
-		const notices = getNotices( state, siteId );
+		const status = getStatus( state, siteId );
 
 		return {
 			cacheTestResults,
 			isTesting,
-			notices,
+			status,
 			siteTitle,
 		};
 	},
