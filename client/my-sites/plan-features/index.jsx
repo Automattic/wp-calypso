@@ -271,7 +271,6 @@ class PlanFeatures extends Component {
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						isInSignup={ isInSignup }
 						isInSignupTest= { isInSignupTest }
-						signupBillingTimeFrame={ planConstantObj.getSignupBillingTimeFrame() }
 					/>
 				</td>
 			);

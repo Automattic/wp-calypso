@@ -158,7 +158,6 @@ export const PLANS_LIST = {
 			FEATURE_FREE_THEMES_SIGNUP,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getSignupBillingTimeFrame: () => i18n.translate( ' for life' ),
 	},
 
 	[ PLAN_PERSONAL ]: {
@@ -202,7 +201,6 @@ export const PLANS_LIST = {
 			FEATURE_ALL_FREE_FEATURES,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
-		getSignupBillingTimeFrame: () => '/month, billed yearly', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_PREMIUM ]: {
@@ -256,7 +254,6 @@ export const PLANS_LIST = {
 			FEATURE_ALL_PERSONAL_FEATURES,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
-		getSignupBillingTimeFrame: () => '/month, billed yearly', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_BUSINESS ]: {
@@ -332,7 +329,6 @@ export const PLANS_LIST = {
 			FEATURE_ALL_PREMIUM_FEATURES,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
-		getSignupBillingTimeFrame: () => '/month, billed yearly', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_JETPACK_FREE ]: {
@@ -357,7 +353,6 @@ export const PLANS_LIST = {
 			FEATURE_TRAFFIC_TOOLS
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getSignupBillingTimeFrame: () => i18n.translate( ' for life' ),
 	},
 	[ PLAN_JETPACK_PREMIUM ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
@@ -391,7 +386,6 @@ export const PLANS_LIST = {
 			FEATURE_ALL_PERSONAL_FEATURES,
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getSignupBillingTimeFrame: () => '/year', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
@@ -425,7 +419,6 @@ export const PLANS_LIST = {
 			FEATURE_ALL_PERSONAL_FEATURES,
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
-		getSignupBillingTimeFrame: () => '/month', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_JETPACK_PERSONAL ]: {
@@ -454,7 +447,6 @@ export const PLANS_LIST = {
 			FEATURE_ALL_FREE_FEATURES,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getSignupBillingTimeFrame: () => '/year', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_JETPACK_PERSONAL_MONTHLY ]: {
@@ -483,7 +475,6 @@ export const PLANS_LIST = {
 			FEATURE_ALL_FREE_FEATURES,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
-		getSignupBillingTimeFrame: () => '/month', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_JETPACK_BUSINESS ]: {
@@ -526,7 +517,6 @@ export const PLANS_LIST = {
 			FEATURE_ALL_PREMIUM_FEATURES
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getSignupBillingTimeFrame: () => '/year', //PLANS A/B TEST: Translate if test passes
 	},
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
@@ -568,7 +558,6 @@ export const PLANS_LIST = {
 			FEATURE_ALL_PREMIUM_FEATURES
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
-		getSignupBillingTimeFrame: () => '/month', //PLANS A/B TEST: Translate if test passes
 	}
 };
 

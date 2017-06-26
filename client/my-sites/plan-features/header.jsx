@@ -112,7 +112,7 @@ class PlanFeaturesHeader extends Component {
 					<PlanIcon plan={ planType } />
 				</div>
 				<div className="plan-features__pricing">
-					{ this.getPlanFeaturesPrices() }{ this.getBillingTimeframe() }
+					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
 				</div>
 			</div>
 		);
@@ -121,7 +121,6 @@ class PlanFeaturesHeader extends Component {
 	getBillingTimeframe() {
 		const {
 			billingTimeFrame,
-			signupBillingTimeFrame,
 			discountPrice,
 			isPlaceholder,
 			site,
@@ -140,7 +139,7 @@ class PlanFeaturesHeader extends Component {
 		if ( isInSignupTest ) {
 			return (
 				<span>
-					<span>{ signupBillingTimeFrame }</span>
+					<span>{ billingTimeFrame }</span>
 				</span>
 			);
 		}
