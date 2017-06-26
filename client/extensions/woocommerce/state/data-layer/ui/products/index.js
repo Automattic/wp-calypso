@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, isObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,7 @@ import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions
 import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
 import { getAllProductCategoryEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import { createProduct } from 'woocommerce/state/sites/products/actions';
+import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
 import {
 	actionListCreate,
 	actionListStepSuccess,
@@ -71,16 +72,59 @@ export function makeProductActionList(
 	successAction,
 	failureAction,
 ) {
-	const steps = [];
+	let steps = [];
 
-	// TODO: sequentially go through edit state and create steps.
-	/* TODO: Add category API calls before product.
-	...categories.creates
+	if ( productEdits ) {
+		steps = makeProductCategorySteps( steps, rootState, siteId, productEdits );
+		steps = makeProductSteps( steps, rootState, siteId, productEdits );
+		// TODO: variations
+		//steps = makeProductVariationSteps( steps, rootState, siteId, productEdits );
+	}
+
+	return { steps, successAction, failureAction, clearUponComplete: true };
+}
+
+export function makeProductCategorySteps( allSteps, rootState, siteId, productEdits ) {
+	const steps = [ ...allSteps ];
+
+	const creates = productEdits.creates || [];
+	const updates = productEdits.updates || [];
+	const allProductEdits = [ ...creates, ...updates ];
+
+	const newCategoryIds = allProductEdits.reduce( ( categoryIds, product ) => {
+		const categories = product.categories || [];
+
+		return categories.reduce( ( productCategoryIds, category ) => {
+			return ( isObject( category.id ) ? productCategoryIds.add( category.id ) : productCategoryIds );
+		}, categoryIds );
+	}, new Set() );
+
+	const categoryEdits = getAllProductCategoryEdits( rootState, siteId );
+	newCategoryIds.forEach( ( categoryId ) => {
+		const category = find( categoryEdits.creates, ( c ) => categoryId === c.id );
+		const stepIndex = steps.length;
+		const description = translate( 'Creating product category: ' ) + category.name;
+		const action = createProductCategory(
+			siteId,
+			category,
+			actionListStepSuccess( stepIndex ),
+			actionListStepFailure( stepIndex, 'UNKNOWN' ) // error will be set by request failure.
+		);
+		steps.push( { description, action } );
+	} );
+
+	/* TODO:
 	...categories.updates
 	...categories.deletes
 	*/
 
-	if ( productEdits && productEdits.creates ) {
+	return steps;
+}
+
+export function makeProductSteps( allSteps, rootState, siteId, productEdits ) {
+	const steps = [ ...allSteps ];
+
+	if ( productEdits.creates ) {
 		// Each create gets its own step.
 		// TODO: Consider making these parallel actions.
 		productEdits.creates.forEach( ( product ) => {
@@ -103,14 +147,20 @@ export function makeProductActionList(
 	...product.deletes
 	*/
 
-	/* TODO: Add variation API calls after product.
-	...variation.creates
-	...variation.updates
-	...variation.deletes
-	*/
-
-	return { steps, successAction, failureAction, clearUponComplete: true };
+	return steps;
 }
+
+/*
+export function makeProductVariationSteps( allSteps, rootState, siteId, productEdits ) {
+	const steps = [ ...allSteps ];
+
+	// TODO: ...variation.creates
+	// TODO: ...variation.updates
+	// TODO: ...variation.deletes
+
+	return steps;
+}
+*/
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: [ handleProductCategoryEdit ],

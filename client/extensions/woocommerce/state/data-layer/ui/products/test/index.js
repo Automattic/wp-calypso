@@ -10,6 +10,7 @@ import { spy } from 'sinon';
 import { handleProductCategoryEdit, makeProductActionList, } from '../';
 import { actionListStepSuccess, actionListStepFailure } from 'woocommerce/state/action-list/actions';
 import { createProduct } from 'woocommerce/state/sites/products/actions';
+import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
 import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
 import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 
@@ -216,6 +217,67 @@ describe( 'handlers', () => {
 			};
 
 			const actionList = makeProductActionList( rootState, 123, edits, successAction, failureAction );
+			expect( actionList ).to.eql( expectedActionList );
+		} );
+
+		it( 'should create only new categories referenced by the products', () => {
+			const category1 = { id: { placeholder: 'productCategory_1' }, name: 'Category 1', slug: 'category-1' };
+			const category2 = { id: { placeholder: 'productCategory_2' }, name: 'Unused Category', slug: 'unused-category' };
+			const product1 = { id: { index: 0 }, name: 'Product #1', categories: [ { id: category1.id } ] };
+
+			const rootState = {
+				extensions: {
+					woocommerce: {
+						ui: {
+							products: {
+								123: {
+									edits: {
+										creates: [
+											product1,
+										]
+									}
+								},
+							},
+							productCategories: {
+								123: {
+									edits: {
+										creates: [
+											category1,
+											category2,
+										],
+									}
+								},
+							},
+						},
+					}
+				}
+			};
+
+			const createCategory1Action = createProductCategory(
+				123,
+				category1,
+				actionListStepSuccess( 0 ),
+				actionListStepFailure( 0, 'UNKNOWN' ),
+			);
+
+			const createProduct1Action = createProduct(
+				123,
+				product1,
+				actionListStepSuccess( 1 ),
+				actionListStepFailure( 1, 'UNKNOWN' ),
+			);
+
+			const expectedActionList = {
+				steps: [
+					{ description: 'Creating product category: Category 1', action: createCategory1Action },
+					{ description: 'Creating product: Product #1', action: createProduct1Action },
+				],
+				clearUponComplete: true,
+				successAction: undefined,
+				failureAction: undefined,
+			};
+
+			const actionList = makeProductActionList( rootState, 123 );
 			expect( actionList ).to.eql( expectedActionList );
 		} );
 	} );
