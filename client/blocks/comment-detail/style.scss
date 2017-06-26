@@ -225,6 +225,19 @@
 	}
 }
 
+.comment-detail__site-icon-author-avatar {
+	position: relative;
+
+	.comment-detail__author-avatar-image {
+		border: 2px solid $white;
+		border-radius: 50%;
+		position: absolute;
+			bottom: -7px;
+			right: -7px;
+		width: 18px;
+	}
+}
+
 .comment-detail__post-info {
 	overflow: hidden;
 	padding-left: 8px;
@@ -233,7 +246,7 @@
 
 	span {
 		color: $gray-text;
-		margin-right: 8px;
+		margin: 0 8px;
 	}
 
 	a {
