@@ -2,9 +2,10 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import debugFactor from 'debug';
-import { find, isEqual } from 'lodash';
+import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 const debug = debugFactor( 'woocommerce:action-list' );
@@ -13,8 +14,9 @@ const debug = debugFactor( 'woocommerce:action-list' );
  * Internal dependencies
  */
 import { activatePlugin, installPlugin } from 'state/plugins/installed/actions';
+import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
-import { getPlugins } from 'state/plugins/installed/selectors';
+import { getPlugins, isRequesting } from 'state/plugins/installed/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
@@ -22,49 +24,75 @@ import SetupHeader from './setup-header';
 
 const requiredPlugins = [
 	'woocommerce',
-	'wc-api-dev',
+	// 'wc-api-dev',
 	'woocommerce-gateway-stripe',
 	'woocommerce-services',
 ];
+
+const requiredPluginIds = {
+	woocommerce: 'woocommerce/woocommerce',
+	// 'wc-api-dev': 'wc-api-dev/wc-api-dev',
+	'woocommerce-gateway-stripe': 'woocommerce-gateway-stripe/woocommerce-gateway-stripe',
+	'woocommerce-services': 'woocommerce-services/woocommerce-services',
+};
 
 class RequiredPluginsInstallView extends Component {
 	static propTypes = {
 		plugins: PropTypes.array,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			installingPlugin: null,
+			allPluginsInstalled: false,
+		};
+	}
+
 	componentDidMount = () => {
 		const { plugins } = this.props;
 
-		if ( plugins && plugins.length ) {
+		if ( plugins && plugins.length && ! this.props.isRequesting ) {
 			this.installPlugins( plugins );
+		}
+
+		this.getWporgPluginData();
+	}
+
+	componentDidUpdate = ( newProps ) => {
+		if (
+			( newProps.plugins && newProps.plugins.length && ! this.state.installingPlugin ) ||
+			( find( newProps.plugins, { slug: this.state.installingPlugin } ) )
+		) {
+			this.installPlugins( newProps.plugins );
 		}
 	}
 
-	componentWillReceiveProps = ( newProps ) => {
-		if ( isEqual( newProps.plugins, this.props.plugins ) ) {
-			return;
-		}
-		this.installPlugins( newProps.plugins );
+	getWporgPluginData() {
+		requiredPlugins.map( plugin => {
+			const pluginData = getPlugin( this.props.wporg, plugin );
+			if ( ! pluginData ) {
+				this.props.fetchPluginData( plugin );
+			}
+		} );
 	}
 
 	installPlugins = ( plugins ) => {
 		const { siteId, wporg } = this.props;
-		requiredPlugins.map( function( slug ) {
+		for ( let i = 0; i < requiredPlugins.length; i++ ) {
+			const slug = requiredPlugins[ i ];
 			const plugin = find( plugins, { slug } );
-			if ( slug === 'wc-api-dev' ) {
-				debug( 'wc-api-dev not installed since it is on on WordPress.org' );
-			}
 			if ( ! plugin ) {
+				if ( ! wporg[ slug ] ) {
+					return;
+				}
 				const wporgPlugin = getPlugin( wporg, slug );
-				// debugger;
-				installPlugin( siteId, wporgPlugin );
+				this.setState( { installingPlugin: slug } );
+				debugger;
+				this.props.installPlugin( siteId, { ...wporgPlugin, id: requiredPluginIds[ slug ] } );
 				return;
 			}
-			if ( plugin && ! plugin.active ) {
-				// debugger;
-				activatePlugin( siteId, plugin );
-			}
-		} );
+		}
 	}
 
 	render = () => {
@@ -81,7 +109,7 @@ class RequiredPluginsInstallView extends Component {
 					<ProgressBar value={ 75 } isPulsing />
 					<ul>
 					{ plugins.map( ( plugin ) => (
-						<li>{ plugin.name } ({ plugin.active ? 'active' : 'inactive' })</li>
+						<li key={ plugin.slug }>{ plugin.name } ({ plugin.active ? 'active' : 'inactive' })</li>
 					) ) }
 					</ul>
 				</SetupHeader>
@@ -95,10 +123,22 @@ function mapStateToProps( state ) {
 	const siteId = selectedSite && selectedSite.ID;
 
 	return {
+		isRequesting: isRequesting( state, siteId ),
 		siteId,
 		plugins: getPlugins( state, [ { ID: siteId } ] ),
 		wporg: state.plugins.wporg.items,
 	};
 }
 
-export default connect( mapStateToProps )( localize( RequiredPluginsInstallView ) );
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			activatePlugin,
+			fetchPluginData,
+			installPlugin,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( RequiredPluginsInstallView ) );
