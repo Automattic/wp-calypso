@@ -66,6 +66,20 @@
 		font-size: 14px;
 	}
 
+	.payments__method-name-paypal,
+	.payments__method-name-stripe {
+		text-indent: -999em;
+		height: 24px;
+		width: 100%;
+		background: url( '/calypso/images/extensions/woocommerce/paypal.svg' );
+		background-repeat: no-repeat;
+		background-size: contain;
+	}
+
+	.payments__method-name-stripe {
+		background-image: url( '/calypso/images/extensions/woocommerce/stripe.svg' );
+	}
+
 	.list-header + .list-item {
 		border-top: 0;
 	}
