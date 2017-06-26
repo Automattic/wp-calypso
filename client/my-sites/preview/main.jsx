@@ -88,7 +88,7 @@ class PreviewMain extends React.Component {
 			return (
 				<EmptyContent
 					title={ 'Site cannot be previewed here' }
-					line={ 'Here we should say why…' }
+					line={ 'You can open it in a new tab' }
 					action={ action }
 					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					illustrationWidth={ 350 }
