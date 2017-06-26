@@ -28,6 +28,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
 		selectedSite: React.PropTypes.object,
 		railcarId: React.PropTypes.string,
+		recordTracksEvent: React.PropTypes.func,
 		uiPosition: React.PropTypes.number,
 		fetchAlgo: React.PropTypes.string,
 		query: React.PropTypes.string
@@ -150,11 +151,5 @@ class DomainRegistrationSuggestion extends React.Component {
 
 export default connect(
 	null,
-	( dispatch ) => {
-		return {
-			recordTracksEvent: ( event, properties ) => {
-				dispatch( recordTracksEvent( event, properties ) );
-			}
-		};
-	}
+	{ recordTracksEvent }
 )( localize( DomainRegistrationSuggestion ) );
