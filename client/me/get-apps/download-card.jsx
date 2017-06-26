@@ -16,18 +16,18 @@ const DownloadCard = ( { translate } ) => {
 		return <a href={ platformLink } onClick={ trackAppDownloadClick } />;
 	};
 
-	const windowsLink = 'https://apps.wordpress.com/d/windows?ref=getapps';
-	const macLink = 'https://apps.wordpress.com/d/osx?ref=getapps';
-	const linuxTarLink = 'https://apps.wordpress.com/d/linux?ref=getapps';
-	const linuxDebLink = 'https://apps.wordpress.com/d/linux-deb?ref=getapps';
+	const WINDOWS_LINK = 'https://apps.wordpress.com/d/windows?ref=getapps';
+	const MAC_LINK = 'https://apps.wordpress.com/d/osx?ref=getapps';
+	const LINUX_TAR_LINK = 'https://apps.wordpress.com/d/linux?ref=getapps';
+	const LINUX_DEB_LINK = 'https://apps.wordpress.com/d/linux-deb?ref=getapps';
 
-	let buttonLink = windowsLink;
+	let buttonLink = WINDOWS_LINK;
 	let cardTitle = translate( 'Desktop App for Windows' );
 	let requires = translate( 'Requires Windows Whatevs v12+. ' );
 	let translateComponents = {
-		firstAvailableLink: availableLinkTag( macLink ),
-		secondAvailableLink: availableLinkTag( linuxTarLink ),
-		thirdAvailableLink: availableLinkTag( linuxDebLink ),
+		firstAvailableLink: availableLinkTag( MAC_LINK ),
+		secondAvailableLink: availableLinkTag( LINUX_TAR_LINK ),
+		thirdAvailableLink: availableLinkTag( LINUX_DEB_LINK ),
 	};
 	let alsoAvailable = translate( 'Also available for: ' +
 		'{{firstAvailableLink}}MacOS{{/firstAvailableLink}}, ' +
@@ -39,13 +39,13 @@ const DownloadCard = ( { translate } ) => {
 	if ( navigator.platform && navigator.platform.length > 0 ) {
 		switch ( navigator.platform ) {
 			case 'MacIntel':
-				buttonLink = macLink;
+				buttonLink = MAC_LINK;
 				cardTitle = translate( 'Desktop App for MacOS' );
 				requires = translate( 'Requires Mac OS X 10.11+. ' );
 				translateComponents = {
-					firstAvailableLink: availableLinkTag( windowsLink ),
-					secondAvailableLink: availableLinkTag( linuxTarLink ),
-					thirdAvailableLink: availableLinkTag( linuxDebLink ),
+					firstAvailableLink: availableLinkTag( WINDOWS_LINK ),
+					secondAvailableLink: availableLinkTag( LINUX_TAR_LINK ),
+					thirdAvailableLink: availableLinkTag( LINUX_DEB_LINK ),
 				};
 				alsoAvailable = translate( 'Also available for: ' +
 					'{{firstAvailableLink}}Windows{{/firstAvailableLink}}, ' +
@@ -56,13 +56,13 @@ const DownloadCard = ( { translate } ) => {
 				break;
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
-				buttonLink = linuxTarLink;
+				buttonLink = LINUX_TAR_LINK;
 				cardTitle = translate( 'Desktop App for Linux' );
 				requires = translate( 'Requires Linux Whatevs v345. ' );
 				translateComponents = {
-					firstAvailableLink: availableLinkTag( linuxDebLink ),
-					secondAvailableLink: availableLinkTag( windowsLink ),
-					thirdAvailableLink: availableLinkTag( macLink ),
+					firstAvailableLink: availableLinkTag( LINUX_DEB_LINK ),
+					secondAvailableLink: availableLinkTag( WINDOWS_LINK ),
+					thirdAvailableLink: availableLinkTag( MAC_LINK ),
 				};
 				alsoAvailable = translate( 'Also available for: ' +
 					'{{firstAvailableLink}}Linux (.deb){{/firstAvailableLink}}, ' +
