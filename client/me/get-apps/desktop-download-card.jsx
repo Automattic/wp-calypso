@@ -28,6 +28,8 @@ const getButtonLink = ( platform ) => {
 		case 'Linux i686':
 		case 'Linux i686 on x86_64':
 			return LINUX_TAR_LINK;
+		default:
+			return WINDOWS_LINK;
 	}
 };
 
@@ -38,6 +40,9 @@ const getCardTitle = ( platform ) => {
 		case 'Linux i686':
 		case 'Linux i686 on x86_64':
 			return translate( 'Desktop App for Linux' );
+		default:
+			return translate( 'Desktop App for Windows' );
+
 	}
 };
 
@@ -48,6 +53,8 @@ const getRequirementsText = ( platform ) => {
 		case 'Linux i686':
 		case 'Linux i686 on x86_64':
 			return translate( 'Requires Linux Whatevs v345. ' );
+		default:
+			return translate( 'Requires Windows Whatevs v12+. ' );
 	}
 };
 
@@ -66,12 +73,33 @@ const getTranslateComponents = ( platform ) => {
 				secondAvailableLink: GetLinkAnchorTag( WINDOWS_LINK ),
 				thirdAvailableLink: GetLinkAnchorTag( MAC_LINK ),
 			};
+		default:
+			return {
+				firstAvailableLink: GetLinkAnchorTag( MAC_LINK ),
+				secondAvailableLink: GetLinkAnchorTag( LINUX_TAR_LINK ),
+				thirdAvailableLink: GetLinkAnchorTag( LINUX_DEB_LINK ),
+			};
 	}
 };
 
 const getAlsoAvailableText = ( platform ) => {
 	switch ( platform ) {
 		case 'MacIntel':
+			return translate( 'Also available for: ' +
+				'{{firstAvailableLink}}Windows{{/firstAvailableLink}}, ' +
+				'{{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}}, ' +
+				'{{thirdAvailableLink}}Linux (.deb){{/thirdAvailableLink}}.',
+				{ components: getTranslateComponents( platform ) }
+			);
+		case 'Linux i686':
+		case 'Linux i686 on x86_64':
+			return translate( 'Also available for: ' +
+				'{{firstAvailableLink}}Linux (.deb){{/firstAvailableLink}}, ' +
+				'{{secondAvailableLink}}Windows{{/secondAvailableLink}}, ' +
+				'{{thirdAvailableLink}}Mac{{/thirdAvailableLink}}.',
+				{ components: getTranslateComponents( platform ) }
+			);
+		default:
 			return translate( 'Also available for: ' +
 				'{{firstAvailableLink}}MacOS{{/firstAvailableLink}}, ' +
 				'{{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}}, ' +
@@ -82,40 +110,19 @@ const getAlsoAvailableText = ( platform ) => {
 };
 
 const DesktopDownloadCard = () => {
-	let buttonLink = WINDOWS_LINK;
-	let cardTitle = translate( 'Desktop App for Windows' );
-	let requirementsText = translate( 'Requires Windows Whatevs v12+. ' );
-	let translateComponents = {
-		firstAvailableLink: GetLinkAnchorTag( MAC_LINK ),
-		secondAvailableLink: GetLinkAnchorTag( LINUX_TAR_LINK ),
-		thirdAvailableLink: GetLinkAnchorTag( LINUX_DEB_LINK ),
-	};
-	let alsoAvailableText = translate( 'Also available for: ' +
-		'{{firstAvailableLink}}MacOS{{/firstAvailableLink}}, ' +
-		'{{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}}, ' +
-		'{{thirdAvailableLink}}Linux (.deb){{/thirdAvailableLink}}.',
-		{ components: translateComponents }
-	);
-
-	if ( navigator.platform && navigator.platform.length > 0 ) {
-		buttonLink = getButtonLink( navigator.platform );
-		cardTitle = getCardTitle( navigator.platform );
-		requirementsText = getRequirementsText( navigator.platform );
-		translateComponents = getTranslateComponents( navigator.platform );
-		alsoAvailableText = getAlsoAvailableText( navigator.platform );
-	}
+	const platform = ( navigator.platform && navigator.platform.length > 0 ) ? navigator.platform : false;
 
 	return (
 		<Card className="get-apps__desktop">
 			<div className={ 'get-apps__card-text' }>
-				<h3>{ cardTitle }</h3>
+				<h3>{ getCardTitle( platform ) }</h3>
 				<p>{ translate( 'A desktop app that gives WordPress a permanent home in your dock.' ) }</p>
 				<p className={ 'get-apps__also-available' }>
-					{ requirementsText }
-					{ alsoAvailableText }
+					{ getRequirementsText( platform ) }
+					{ getAlsoAvailableText( platform ) }
 				</p>
 			</div>
-			<Button className={ 'get-apps__desktop-button' } href={ buttonLink }>{ translate( 'Download' ) }</Button>
+			<Button className={ 'get-apps__desktop-button' } href={ getButtonLink( platform ) }>{ translate( 'Download' ) }</Button>
 		</Card>
 	);
 };
