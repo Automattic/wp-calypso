@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, find, isNumber } from 'lodash';
+import { get, find, isNumber, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,10 +9,10 @@ import { get, find, isNumber } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getVariation } from '../../../variations/selectors';
 
-function getVariationEditsStateForProduct( state, productId, siteId = getSelectedSiteId( state ) ) {
+export function getVariationEditsStateForProduct( state, productId, siteId = getSelectedSiteId( state ) ) {
 	const woocommerce = state.extensions.woocommerce;
 	const variations = get( woocommerce, [ 'ui', 'products', siteId, 'variations', 'edits' ], [] );
-	return find( variations, ( v ) => productId === v.productId );
+	return find( variations, ( v ) => isEqual( productId, v.productId ) );
 }
 
 /**
@@ -28,7 +28,7 @@ export function getVariationEdits( state, productId, variationId, siteId = getSe
 	const edits = getVariationEditsStateForProduct( state, productId, siteId );
 	const bucket = isNumber( variationId ) && 'updates' || 'creates';
 	const array = get( edits, bucket, [] );
-	return find( array, ( v ) => variationId === v.id );
+	return find( array, ( v ) => isEqual( variationId, v.id ) );
 }
 
 /**
