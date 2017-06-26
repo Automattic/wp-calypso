@@ -46,6 +46,12 @@
 			margin-left: 8px;
 		}
 	}
+
+	.section-nav {
+		@include breakpoint( ">660px" ) {
+			margin-top: 58px;
+		}
+	}
 }
 
 .is-section-woocommerce {

@@ -19,12 +19,6 @@
 	max-width: 600px;
 }
 
-.payments__location-currency {
-	@include breakpoint( ">660px" ) {
-		margin-top: 58px;
-	}
-}
-
 .payments__currency-container {
 	display: flex;
 	flex-direction: column;

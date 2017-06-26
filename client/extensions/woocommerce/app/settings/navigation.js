@@ -8,77 +8,64 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 
-export const StoreSettings = ( {
-	siteId,
-	siteSlug,
+export const SettingsNavigation = ( {
+	site,
+	activeSection,
 	translate,
 } ) => {
-	const pathSuffix = siteSlug ? '/' + siteSlug : '';
-	const filters = [];
-
-	filters.push( {
-		id: 'payments',
-		route: '/store/settings/payments' + pathSuffix,
-		title: translate( 'Payments' ),
-	} );
-
-	filters.push( {
-		id: 'shipping',
-		route: '/store/settings/shipping' + pathSuffix,
-		title: translate( 'Shipping' ),
-	} );
-
-	filters.push( {
-		id: 'tax',
-		route: '/store/settings/tax' + pathSuffix,
-		title: translate( 'Tax' ),
-	} );
-
-	filters.push( {
-		id: 'display',
-		route: '/store/settings/display' + pathSuffix,
-		title: translate( 'Display' ),
-	} );
-
-	filters.push( {
-		id: 'emails',
-		route: '/store/settings/emails' + pathSuffix,
-		title: translate( 'Emails' ),
-	} );
-
+	const items = [
+		{
+			id: 'payments',
+			path: '/store/settings/payments/:site',
+			title: translate( 'Payments' ),
+		},
+		{
+			id: 'shipping',
+			path: '/store/settings/shipping/:site',
+			title: translate( 'Shipping' ),
+		},
+		{
+			id: 'tax',
+			path: '/store/settings/tax/:site',
+			title: translate( 'Tax' ),
+		},
+	];
 
 	return (
 		<SectionNav>
 			<NavTabs>
-				{ filters.map( ( { id, route, title } ) => (
-					<NavItem className={ route } key={ id } path={ route }>
-						{ title }
-					</NavItem>
-				) ) }
+				{ items.map( ( { id, path, title } ) => {
+					const link = getLink( path, site );
+					return (
+						<NavItem selected={ activeSection === id } key={ id } path={ link }>
+							{ title }
+						</NavItem>
+					);
+				} ) }
 			</NavTabs>
 		</SectionNav>
 	);
 };
 
-StoreSettings.propTypes = {
-	siteId: PropTypes.number,
-	siteSlug: PropTypes.string,
+SettingsNavigation.propTypes = {
+	site: PropTypes.shape( {
+		ID: PropTypes.number,
+		slug: PropTypes.string,
+	} ),
+	activeSection: PropTypes.string,
 	translate: PropTypes.func,
 };
 
 export default connect(
 	( state ) => {
-		const siteId = getSelectedSiteId( state );
-
 		return {
-			siteId,
-			siteSlug: getSiteSlug( state, siteId ),
+			site: getSelectedSiteWithFallback( state ),
 		};
 	},
-)( localize( StoreSettings ) );
+)( localize( SettingsNavigation ) );

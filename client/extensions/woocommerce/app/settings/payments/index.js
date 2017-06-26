@@ -40,7 +40,7 @@ class SettingsPayments extends Component {
 			<Main
 				className={ classNames( 'settingsPayments', className ) }>
 				<ActionHeader breadcrumbs={ breadcrumbs } />
-				<SettingsNavigation />
+				<SettingsNavigation activeSection="payments" />
 				<SettingsPaymentsLocationCurrency />
 				<SettingsPaymentsOnSite />
 				<SettingsPaymentsOffSite />

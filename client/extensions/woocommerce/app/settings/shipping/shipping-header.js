@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import ActionHeader from 'woocommerce/components/action-header';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import SettingsNavigation from '../navigation';
 
 const ShippingHeader = ( { translate, site } ) => {
 	const breadcrumbs = [
@@ -18,7 +19,10 @@ const ShippingHeader = ( { translate, site } ) => {
 		( <span>{ translate( 'Shipping' ) }</span> ),
 	];
 	return (
-		<ActionHeader breadcrumbs={ breadcrumbs } />
+		<div>
+			<ActionHeader breadcrumbs={ breadcrumbs } />
+			<SettingsNavigation activeSection="shipping" />
+		</div>
 	);
 };
 
