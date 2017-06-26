@@ -2021,7 +2021,7 @@ Undocumented.prototype.getHelpLinks = function( searchQuery, fn ) {
 };
 
 Undocumented.prototype.getQandA = function( query, site, fn ) {
-	debug( 'help-contact-qanda/ searchQuery {searchQuery}' );
+	debug( 'help-contact-qanda/ searchQuery {query}' );
 
 	return this.wpcom.req.get( '/help/qanda', {
 		query,
