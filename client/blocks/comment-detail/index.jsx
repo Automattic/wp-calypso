@@ -30,7 +30,7 @@ export class CommentDetail extends Component {
 		authorUsername: PropTypes.string,
 		commentContent: PropTypes.string,
 		commentDate: PropTypes.string,
-		commentId: PropTypes.number,
+		commentId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		commentIsLiked: PropTypes.bool,
 		commentIsSelected: PropTypes.bool,
 		commentStatus: PropTypes.string,
@@ -129,6 +129,7 @@ export class CommentDetail extends Component {
 			parentCommentContent,
 			parentCommentUrl,
 			postAuthorDisplayName,
+			postId,
 			postTitle,
 			postUrl,
 			repliedToComment,
@@ -203,6 +204,7 @@ export class CommentDetail extends Component {
 						/>
 						<CommentDetailReply
 							commentId={ commentId }
+							postId={ postId }
 							postTitle={ postTitle }
 							submitComment={ submitComment }
 						/>

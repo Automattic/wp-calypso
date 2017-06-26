@@ -28,6 +28,7 @@ export class CommentDetailReply extends Component {
 			authorName: this.props.currentUser.display_name,
 			authorUrl: this.props.currentUser.primary_blog_url,
 			parentId: this.props.commentId,
+			postId: this.props.postId,
 			postTitle: this.props.postTitle,
 			content: this.state.commentText,
 			URL: this.props.postUrl,
