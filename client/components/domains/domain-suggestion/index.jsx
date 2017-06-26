@@ -23,9 +23,16 @@ class DomainSuggestion extends React.Component {
 
 	render() {
 		const { price, isAdded, extraClasses, children, priceRule } = this.props;
-		const classes = classNames( 'domain-suggestion', 'card', 'is-compact', 'is-clickable', {
-			'is-added': isAdded,
-		}, extraClasses );
+		const classes = classNames(
+			'domain-suggestion',
+			'card',
+			'is-compact',
+			'is-clickable',
+			{
+				'is-added': isAdded,
+			},
+			extraClasses
+		);
 
 		return (
 			<div
@@ -50,16 +57,8 @@ class DomainSuggestion extends React.Component {
 }
 
 DomainSuggestion.Placeholder = function() {
-	const classes = classNames(
-		'domain-suggestion',
-		'card',
-		'is-compact',
-		'is-placeholder',
-		'is-clickable'
-	);
-
 	return (
-		<div className={ classes }>
+		<div className="domain-suggestion card is-compact is-placeholder is-clickable">
 			<div className="domain-suggestion__content">
 				<h3 />
 			</div>
