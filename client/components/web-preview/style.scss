@@ -149,6 +149,42 @@ a.web-preview__external.button {
 	width: 200px;
 }
 
+.web-preview__url-clipboard-input {
+	flex-grow: 1;
+	margin: 6px 10px;
+	width: auto;
+
+	.form-text-input {
+		color: $gray;
+		font-size: 14px;
+		height: 35px;
+		border-color: transparent;
+		text-overflow: ellipsis;
+	}
+
+	&:hover .form-text-input {
+		border-color: lighten( $gray, 20% );
+	}
+
+	.clipboard-button {
+		display: none;
+	}
+
+	&:hover .clipboard-button {
+		display: block;
+	}
+
+	@include breakpoint( ">660px" ) {
+		max-width: 50%;
+	}
+
+	@include breakpoint( ">960px" ) {
+		margin: 6px auto;
+		width: 35%;
+		flex-grow: inherit;
+	}
+}
+
 .web-preview__device-button {
 	border-right: none;
 	padding-left: 8px;
