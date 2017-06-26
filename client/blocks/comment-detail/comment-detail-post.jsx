@@ -51,7 +51,7 @@ export const CommentDetailPost = ( {
 					</span>
 				}
 				<a href={ postUrl }>
-					{ postTitle }
+					{ postTitle || translate( 'Untitled' ) }
 				</a>
 			</div>
 		</div>
