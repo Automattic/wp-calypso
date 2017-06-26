@@ -58,5 +58,12 @@ describe( 'Emojify', function() {
 				'src="https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/72x72/1f9d4-1f3fb.png"></p></div>'
 			);
 		} );
+
+		it( 'maintains custom props', () => {
+			const wrapper = shallow(
+				<Emojify alt="bar">השנה היא 2017.</Emojify>
+			);
+			expect( wrapper.node.props.alt ).to.equal( 'bar' );
+		} );
 	} );
 } );
