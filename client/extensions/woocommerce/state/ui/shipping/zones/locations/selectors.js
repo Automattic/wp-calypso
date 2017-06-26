@@ -290,7 +290,7 @@ export const getCurrentlyEditingShippingZoneLocationsList = ( state, siteId = ge
 	return sortBy( locations.country.map( code => ( {
 		type: 'country',
 		code,
-		name: getCountryName( code ),
+		name: getCountryName( state, code, siteId ),
 		postcodeFilter: locations.postcode[ 0 ],
 	} ) ), 'name' );
 };
