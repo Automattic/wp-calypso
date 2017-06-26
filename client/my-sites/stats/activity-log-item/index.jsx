@@ -167,7 +167,7 @@ class ActivityLogItem extends Component {
 					FIXME: actor does not correspond to a Gravatar user
 					We need to receive `avatar_URL` from the endpoint or query users.
 				*/ }
-				<Gravatar user={ {} } size={ 48 } />
+				<Gravatar user={ {} } size={ 40 } />
 				<div className="activity-log-item__actor-info">
 					<div className="activity-log-item__actor-name">{ actor.display_name }</div>
 					<div className="activity-log-item__actor-role">{ actor.translated_role }</div>
