@@ -15,12 +15,17 @@ export default class Delta extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		icon: PropTypes.string,
+		iconSize: PropTypes.number,
 		suffix: PropTypes.string,
 		value: PropTypes.string.isRequired,
 	};
 
+	static defaultProps = {
+		iconSize: 18,
+	};
+
 	render() {
-		const { className, icon, suffix, value } = this.props;
+		const { className, icon, iconSize, suffix, value } = this.props;
 		const deltaClasses = classnames( 'delta', className );
 		let deltaIcon;
 		if ( icon ) {
@@ -31,7 +36,7 @@ export default class Delta extends Component {
 		}
 		return (
 			<div className={ deltaClasses }>
-				<Gridicon className="delta__icon" icon={ deltaIcon } />
+				<Gridicon className="delta__icon" icon={ deltaIcon } size={ iconSize } />
 				<span className="delta__labels">
 					<span className="delta__value">{ value }</span>
 					{ suffix &&

@@ -5,30 +5,51 @@
 
 	&.is-favorable {
 		.delta__icon {
-			background-color: #4ab866;
+			&.gridicon {
+				fill: $alert-green;
+			}
+		}
+		.delta__labels {
+			.delta__value {
+				color: $alert-green;
+			}
 		}
 	}
 	&.is-unfavorable {
 		.delta__icon {
-			background-color: #d54e21;
+			&.gridicon {
+				fill: $alert-red;
+			}
+		}
+		.delta__labels {
+			.delta__value {
+				color: $alert-red;
+			}
 		}
 	}
 	&.is-neutral {
 		.delta__icon {
-			background-color: #e9eff3;
+			&.gridicon {
+				fill: $gray-light;
+			}
+		}
+		.delta__labels {
+			.delta__value {
+				color: $gray-light;
+			}
 		}
 	}
 
 	.delta__icon {
-		width: 20px;
-		height: 20px;
+		width: 15px;
+		height: 15px;
 		border-radius: 5px;
 		min-width: 15px;
 
 		&.gridicon {
 			fill: white;
 			padding: 3px 1px;
-			margin: 0 6px 0 0;
+			margin: 0;
 		}
 	}
 
@@ -40,7 +61,7 @@
 
 		.delta__suffix,
 		.delta__value {
-			color: #87a6bc;
+			color: $gray;
 			display: inline-block;
 			font-size: 13px;
 			font-weight: 300;

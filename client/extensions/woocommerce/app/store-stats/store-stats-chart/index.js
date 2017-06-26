@@ -102,6 +102,7 @@ class StoreStatsChart extends Component {
 						if ( ! isLoading ) {
 							const itemChartData = this.buildChartData( orderData[ selectedIndex ], tabs[ tabIndex ] );
 							const delta = this.getDeltaByStat( tab.attr );
+							const deltaValue = Math.abs( Math.round( delta.percentage_change * 100 ) );
 							return (
 								<Tab
 									key={ tab.attr }
@@ -112,7 +113,7 @@ class StoreStatsChart extends Component {
 								>
 									<span className="store-stats-chart__value value">{ itemChartData.value }</span>
 									<Delta
-										value={ `${ Math.abs( Math.round( delta.percentage_change * 100 ) ) }%` }
+										value={ `${ deltaValue }%` }
 										className={ `${ delta.favorable } ${ delta.direction }` }
 										suffix={ `since ${ moment( delta.reference_period ).format( 'MMM D' ) }` }
 									/>

@@ -31,11 +31,13 @@
 
 		.store-stats-chart__value.value {
 			display: inline-block;
-			margin-top: auto;
+			font-size: 20px;
+			font-weight: 300;
+			margin-top: 4px;
 		}
 
 		.delta {
-			margin-top: 10px;
+			margin-top: 8px;
 			width: initial;
 		}
 
