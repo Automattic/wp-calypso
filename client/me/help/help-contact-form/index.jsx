@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import config from 'config';
 import FormLabel from 'components/forms/form-label';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
@@ -116,7 +117,7 @@ export const HelpContactForm = React.createClass( {
 
 	doQandASearch() {
 		const query = this.state.subject + ' ' + this.state.message;
-		wpcom.getQandA( query )
+		wpcom.getQandA( query, config( 'happychat_support_blog' ) )
 			.then( qanda => this.setState( { qanda } ) )
 			.catch( () => this.setState( { qanda: [] } ) );
 	},

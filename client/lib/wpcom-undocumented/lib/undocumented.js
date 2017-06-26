@@ -2020,12 +2020,12 @@ Undocumented.prototype.getHelpLinks = function( searchQuery, fn ) {
 	}, fn );
 };
 
-Undocumented.prototype.getQandA = function( searchQuery, fn ) {
+Undocumented.prototype.getQandA = function( query, site, fn ) {
 	debug( 'help-contact-qanda/ searchQuery {searchQuery}' );
 
 	return this.wpcom.req.get( '/help/qanda', {
-		query: searchQuery,
-		site: config( 'happychat_support_blog' ),
+		query,
+		site,
 	}, fn );
 };
 
