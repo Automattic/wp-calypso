@@ -400,6 +400,10 @@
 	}
 }
 
+.search-stream__results.is-two-columns .gridicon__follow {
+	left: 2px;
+}
+
 // Custom styling for cards in post results
 .search-stream__results.is-two-columns {
 	display: flex;
