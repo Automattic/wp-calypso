@@ -46,6 +46,12 @@ const CURRENCIES = {
 		decimal: '.',
 		precision: 2
 	},
+	NZD: {
+		symbol: 'NZ$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2
+	},
 	ILS: {
 		symbol: '₪',
 		grouping: ',',
