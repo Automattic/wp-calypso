@@ -3,7 +3,7 @@
 .activity-log__wrapper {
 	position: relative;
 
-	&:after {
+	&:before {
 		content: "";
 		position: absolute;
 		top: 0;
@@ -11,7 +11,6 @@
 		left: 33px;
 		width: 2px;
 		background-color: lighten( $gray, 20% );
-		z-index: 1;
 	}
 }
 
