@@ -16,7 +16,10 @@ import {
 import { isSitePreviewable } from 'state/sites/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
 
+import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
+import EmptyContent from 'components/empty-content';
+import Gridicon from 'gridicons';
 import Main from 'components/main';
 import WebPreviewContent from 'components/web-preview/content';
 
@@ -67,10 +70,30 @@ class PreviewMain extends React.Component {
 	}
 
 	render() {
-		const { translate, isPreviewable } = this.props;
+		const { translate, isPreviewable, site } = this.props;
+
+		if ( ! site ) {
+			// todo: some loading state?
+			return <span></span>;
+		}
 
 		if ( ! isPreviewable ) {
-			return <span>only external preview available :(</span>;
+			const action = (
+				<Button primary icon href={ site.URL } target="_blank">
+					Open Externally
+					<Gridicon icon="external" />
+				</Button>
+			);
+
+			return (
+				<EmptyContent
+					title={ 'Site cannot be previewed here' }
+					line={ 'Here we should say why…' }
+					action={ action }
+					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					illustrationWidth={ 350 }
+				/>
+			);
 		}
 
 		return (
@@ -88,7 +111,7 @@ class PreviewMain extends React.Component {
 const mapState = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
-		isPreviewable: isSitePreviewable( state, selectedSiteId ),
+		isPreviewable: false,// isSitePreviewable( state, selectedSiteId ),
 		site: getSelectedSite( state ),
 		siteId: selectedSiteId,
 	}
