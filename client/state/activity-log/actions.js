@@ -12,6 +12,7 @@ import {
 	REWIND_DEACTIVATE_REQUEST,
 	REWIND_DEACTIVATE_SUCCESS,
 	REWIND_RESTORE,
+	REWIND_RESTORE_DISMISS_PROGRESS,
 	REWIND_RESTORE_PROGRESS_REQUEST,
 	REWIND_RESTORE_UPDATE_ERROR,
 	REWIND_RESTORE_UPDATE_PROGRESS,
@@ -139,6 +140,13 @@ export function rewindRestore( siteId, timestamp ) {
 		type: REWIND_RESTORE,
 		siteId,
 		timestamp,
+	};
+}
+
+export function dismissRewindRestoreProgress( siteId ) {
+	return {
+		type: REWIND_RESTORE_DISMISS_PROGRESS,
+		siteId,
 	};
 }
 

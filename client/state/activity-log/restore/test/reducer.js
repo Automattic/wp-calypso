@@ -9,8 +9,9 @@ import deepFreeze from 'deep-freeze';
  */
 import { restoreProgress } from '../reducer';
 import {
-    rewindRestore,
-    rewindRestoreUpdateError,
+	dismissRewindRestoreProgress,
+	rewindRestore,
+	rewindRestoreUpdateError,
 } from '../../actions';
 
 /**
@@ -36,6 +37,18 @@ describe( '#restoreProgress()', () => {
 		} );
 	} );
 
+	it( 'should null on dismissal', () => {
+		const prevState = deepFreeze( {
+			[ SITE_ID ]: {
+				percent: 100,
+				status: 'finished',
+			},
+		} );
+
+		const state = restoreProgress( prevState, dismissRewindRestoreProgress( SITE_ID ) );
+		expect( state[ SITE_ID ] ).to.be.null;
+	} );
+
 	it( 'should preserve other sites', () => {
 		const otherSiteId = 123456;
 		const prevState = deepFreeze( {
@@ -50,6 +63,7 @@ describe( '#restoreProgress()', () => {
 		[
 			restoreProgress( prevState, rewindRestore( SITE_ID, TIMESTAMP ) ),
 			restoreProgress( prevState, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) ),
+			restoreProgress( prevState, dismissRewindRestoreProgress( SITE_ID ) ),
 		].forEach(
 			state => expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] )
 		);
