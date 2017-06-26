@@ -250,7 +250,16 @@ module.exports = {
 		let period;
 
 		const validModules = [
-			'posts', 'referrers', 'clicks', 'countryviews', 'authors', 'videoplays', 'videodetails', 'podcastdownloads', 'searchterms'
+			'posts',
+			'referrers',
+			'clicks',
+			'countryviews',
+			'authors',
+			'videoplays',
+			'videodetails',
+			'podcastdownloads',
+			'searchterms',
+			'anniversaries',
 		];
 		let momentSiteZone = i18n.moment();
 		const basePath = route.sectionify( context.path );
@@ -277,6 +286,11 @@ module.exports = {
 				date = momentSiteZone.endOf( activeFilter.period );
 			}
 			period = rangeOfPeriod( activeFilter.period, date );
+
+			// Only show anniversaries for days, weeks and months
+			if ( contextModule === 'anniversaries' && period.period === 'year' ) {
+				return next();
+			}
 
 			const extraProps = context.params.module === 'videodetails' ? { postId: parseInt( queryOptions.post, 10 ) } : {};
 

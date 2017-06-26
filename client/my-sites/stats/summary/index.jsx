@@ -21,6 +21,7 @@ import StatsFirstView from '../stats-first-view';
 import QueryMedia from 'components/data/query-media';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getMediaItem } from 'state/selectors';
+import PostAnniversaries from '../stats-post-anniversaries';
 
 const StatsStrings = statsStringsFactory();
 
@@ -185,6 +186,15 @@ class StatsSummary extends Component {
 					query={ merge( {}, statsQueryOptions, query ) }
 					statType="statsSearchTerms"
 					summary />;
+				break;
+
+			case 'anniversaries':
+				title = translate( 'Anniversaries' );
+				summaryView = <PostAnniversaries
+						key="anniversaries-summary"
+						path="anniversaries"
+						period={ this.props.period }
+						summary />;
 				break;
 		}
 

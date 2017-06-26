@@ -11,126 +11,133 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { localize, moment } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import StatsList from '../stats-list';
-import StatsListLegend from '../stats-list/legend';
-import SectionHeader from 'components/section-header';
-import StatsContentText from '../stats-module/content-text';
 import Card from 'components/card';
+import StatsModuleExpand from '../stats-module/expand';
+import SectionHeader from 'components/section-header';
+import PostsList from './posts-list';
 import QueryPosts from 'components/data/query-posts';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePostsForQuery } from 'state/posts/selectors';
+import QueryPostStats from 'components/data/query-post-stats';
+import { getPostStats } from 'state/stats/posts/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 // Maximum number of simultaneous queries to fetch the posts by year
 const MAX_POST_QUERIES = 10;
 
-const StatModulePostAnniversaries = props => {
-	const { oldestPostQuery, postsByYearQueries, postsByYear, siteId, translate } = props;
+// Maximum number of posts to display
+const MAX_POSTS_DISPLAYED = 3;
 
-	if ( ! siteId ) {
-		return null;
+const PERIODS_ALLOWED = [ 'day', 'week', 'month' ];
+
+class StatModulePostAnniversaries extends Component {
+	render() {
+		const {
+			topPostsOnly,
+			oldestPostQuery,
+			postsByYearQueries,
+			postsByYear,
+			topPostsByYear,
+			siteId,
+			translate,
+			summary,
+			period,
+		} = this.props;
+
+		if ( ! siteId || PERIODS_ALLOWED.indexOf( period.period ) === -1 ) {
+			return null;
+		}
+
+		const allPosts = Array.prototype.concat( ...postsByYear );
+
+		let title = translate( 'Anniversaries', { comment: 'Title of the anniversaries module' } );
+		if ( topPostsOnly ) {
+			title = translate( 'Top %d anniversaries', {
+				args: MAX_POSTS_DISPLAYED,
+				comment: 'Title of the anniversaries module (when the maximum is reached)',
+			} );
+		}
+
+		return (
+			<div>
+				{ <QueryPosts siteId={ siteId } query={ oldestPostQuery } /> }
+				{ postsByYearQueries.map(
+					( query, i ) => <QueryPosts key={ i } siteId={ siteId } query={ query } />,
+				) }
+				{ ! allPosts.length
+					? null
+					: <div>
+							{ topPostsOnly
+								? allPosts.map(
+										( post, i ) => (
+											<QueryPostStats key={ i } siteId={ siteId } postId={ post.ID } />
+										),
+									)
+								: null }
+							{ ! summary &&
+								<SectionHeader label={ title } href={ summary ? null : this.getHref() } /> }
+							<Card className="stats-post-anniversaries__card stats-module">
+								{ summary &&
+									<div className="stats-post-anniversaries__title stats-section-title">
+										<h3>
+											{ translate( 'Anniversaries for %s', { args: this.getDateForDisplay() } ) }
+										</h3>
+									</div> }
+								<PostsList postsByYear={ topPostsByYear } summary={ summary } period={ period } />
+								{ topPostsOnly && <StatsModuleExpand href={ this.getHref() } /> }
+							</Card>
+						</div> }
+			</div>
+		);
 	}
 
-	const allPosts = Array.prototype.concat( ...postsByYear );
+	getDateForDisplay() {
+		const { period, translate } = this.props;
 
-	return (
-		<div>
-			{ <QueryPosts siteId={ siteId } query={ oldestPostQuery } /> }
-			{ postsByYearQueries.map(
-				( query, i ) => <QueryPosts key={ i } siteId={ siteId } query={ query } />,
-			) }
-			{ ! allPosts.length
-				? null
-				: <div>
-						<SectionHeader
-							label={ translate(
-								'Anniversaries',
-								{ comment: 'Title of the anniversaries module' },
-							) }
-						/>
-						<Card className="stats-post-anniversaries__card stats-module">
-							<PostsList allPosts={ allPosts } postsByYear={ postsByYear } />
-						</Card>
-					</div> }
-		</div>
-	);
-};
+		// Ensure we have a moment instance here to work with.
+		const date = period.startOf.clone();
 
-const PostsList = ( { allPosts, postsByYear } ) =>
-	( allPosts.length === 1
-		? <SinglePost post={ allPosts[ 0 ] } />
-		: <GroupedPosts postsByYear={ postsByYear } /> );
+		if ( period.period === 'week' ) {
+			return translate( '%(startDate)s - %(endDate)s', {
+				context: 'Date range to represent a week',
+				args: {
+					// LL is a date localized by momentjs
+					startDate: date.startOf( 'week' ).add( 1, 'd' ).format( 'LL' ),
+					endDate: date.endOf( 'week' ).add( 1, 'd' ).format( 'LL' ),
+				},
+			} );
+		}
 
-const SinglePost = localize( ( { translate, post } ) => {
-	const yearsAgo = moment()
-		.startOf( 'year' )
-		.diff( moment( post.date ).startOf( 'year' ), 'years' );
-	return (
-		<StatsContentText>
-			<p>
-				<Gridicon icon="calendar" size={ 18 } />
-				{ translate(
-					'%(yearsAgo)d year ago on this day, {{href}}%(title)s{{/href}} was published.',
-					'%(yearsAgo)d years ago on this day, {{href}}%(title)s{{/href}} was published.',
-					{
-						count: yearsAgo,
-						args: { yearsAgo, title: post.title },
-						components: {
-							href: <a href={ post.URL } target="_blank" rel="noopener noreferrer" />,
-						},
-						comment: 'Sentence showing what post was published some years ago',
-					},
-				) }
-			</p>
-		</StatsContentText>
-	);
-} );
+		if ( period.period === 'month' ) {
+			return date.format( 'MMMM YYYY' );
+		}
 
-const GroupedPosts = localize( ( { translate, postsByYear } ) => (
-	<div>
-		<StatsContentText>
-			<p>
-				{ translate( 'Published on this day in the past years:', {
-					comment: 'Sentence preceding a list of posts published in the previous years',
-				} ) }
-			</p>
-		</StatsContentText>
-		<StatsListLegend label={ translate( 'Post' ) } value={ translate( 'Year' ) } />
-		<StatsList
-			moduleName={ 'postAnniversaries' }
-			data={ postsByYear.reduce(
-				( allPosts, posts, i ) =>
-					allPosts.concat(
-						posts.map( post => ( {
-							link: post.URL,
-							label: post.title,
-							labelIcon: 'calendar',
-							value: {
-								type: 'raw',
-								value: moment().subtract( i + 1, 'years' ).format( 'YYYY' ),
-							},
-						} ) ),
-					),
-				[],
-			) }
-		/>
+		return date.format( 'LL' );
+	}
 
-	</div>
-) );
+	getHref() {
+		const { period, path, siteSlug } = this.props;
 
-const yearsAgoToday = ( years = 1, nextDay = false ) =>
-	moment().startOf( 'day' ).subtract( years, 'years' ).add( nextDay ? 1 : 0, 'day' );
+		// Some modules do not have view all abilities
+		if ( period && path && siteSlug ) {
+			return (
+				`/stats/${ period.period }/${ path }/${ siteSlug }` +
+				`?startDate=${ period.startOf.format( 'YYYY-MM-DD' ) }`
+			);
+		}
+	}
+}
 
-const yearsAgoQuery = ( yearsAgo = 1 ) => ( {
-	after: yearsAgoToday( yearsAgo ).format(),
-	before: yearsAgoToday( yearsAgo, true ).format(),
+const yearsAgoQuery = ( startDate, endDate, yearsAgo = 1 ) => ( {
+	after: startDate.clone().subtract( yearsAgo, 'years' ).format(),
+	before: endDate.clone().subtract( yearsAgo, 'years' ).format(),
 	status: 'publish',
 } );
 
@@ -142,19 +149,29 @@ export default connect( () => {
 	 * responsible of creating the data in the Redux store.
 	 *
 	 * Creating these arrays on the fly would create a new reference every time,
-	 * which would trigger a re-rendering of the component as we need to pass
-	 * them to it.
+	 * which would trigger a re-rendering of the component because we need to
+	 * pass them to it.
+	 *
+	 * previousPeriod is used to recreate these arrays when the period has changed.
 	 */
 	let postsByYear = [];
 	let postsByYearQueries = [];
+	let previousPeriod = null;
 
 	const oldestPostQuery = { number: 1, order: 'ASC' };
 
-	const mapStateToProps = state => {
+	const mapStateToProps = ( state, props ) => {
 		const siteId = getSelectedSiteId( state );
-
+		const siteSlug = getSiteSlug( state, siteId );
 		const oldestPostResult = getSitePostsForQuery( state, siteId, oldestPostQuery );
 		const oldestPost = oldestPostResult && oldestPostResult[ 0 ];
+		const { summary, period } = props;
+
+		if ( period !== previousPeriod ) {
+			postsByYear = [];
+			postsByYearQueries = [];
+			previousPeriod = period;
+		}
 
 		/* After having received the oldest post date, an array of queries is
 		 * created: one for each year preceding the current year.
@@ -162,21 +179,19 @@ export default connect( () => {
 		 * Things to note here:
 		 *  - The third argument of the diff() method is set to true to get a
 		 *    floating point instead of a rounded number.
-		 *  - The method call startOf('day') is used to get the difference using
-		 *    days only.
 		 *  - Math.floor() is used to get the amount of years as an integer.
 		 */
 		if ( ! postsByYearQueries.length && oldestPost && oldestPost.date ) {
 			const years = Math.floor(
 				Math.min(
 					MAX_POST_QUERIES,
-					moment()
-						.startOf( 'day' )
-						.diff( moment( oldestPost.date ).startOf( 'day' ), 'years', true ),
+					period.startOf.diff( moment( oldestPost.date ).startOf( 'day' ), 'years', true ),
 				),
 			);
 			if ( years > 0 ) {
-				postsByYearQueries = [ ...Array( years ) ].map( ( v, i ) => yearsAgoQuery( i + 1 ) );
+				postsByYearQueries = [ ...Array( years + 1 ) ].map(
+					( v, i ) => yearsAgoQuery( period.startOf, period.endOf, i + 1 ),
+				);
 			}
 		}
 
@@ -184,18 +199,41 @@ export default connect( () => {
 		postsByYearQueries.forEach( ( query, i ) => {
 			const result = getSitePostsForQuery( state, siteId, query );
 
-			// Create a new array when an item is updated, to invalidate the equality check
+			// Create a new array when an item is updated to invalidate
+			// the equality check and render the component.
 			if ( postsByYear[ i ] !== result ) {
 				postsByYear[ i ] = result || [];
 				postsByYear = [ ...postsByYear ];
 			}
 		} );
 
+		// Get the number of views for each post, to get the top posts
+		const allPosts = Array.prototype.concat( ...postsByYear );
+		const topPostsOnly = ! summary && allPosts.length > MAX_POSTS_DISPLAYED;
+		const topPosts = ! topPostsOnly
+			? allPosts
+			: allPosts
+					.map( post => {
+						const stats = getPostStats( state, siteId, post.ID );
+						const views = ( stats && stats.views ) || 0;
+						return [ post.ID, views, post.title ];
+					} )
+					.sort( ( a, b ) => b[ 1 ] - a[ 1 ] )
+					.slice( 0, MAX_POSTS_DISPLAYED )
+					.map( postViews => postViews[ 0 ] );
+
+		const topPostsByYear = topPostsOnly
+			? postsByYear.map( posts => posts.filter( post => topPosts.indexOf( post.ID ) > -1 ) )
+			: postsByYear;
+
 		return {
 			siteId,
 			oldestPostQuery,
 			postsByYearQueries,
 			postsByYear,
+			topPostsByYear,
+			topPostsOnly,
+			siteSlug,
 		};
 	};
 

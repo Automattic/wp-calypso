@@ -25,7 +25,6 @@ import StatsFirstView from '../stats-first-view';
 import SectionHeader from 'components/section-header';
 import StatsViews from '../stats-views';
 import Followers from '../stats-followers';
-import PostAnniversaries from '../stats-post-anniversaries';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
@@ -65,7 +64,6 @@ const StatsInsights = ( props ) => {
 							<LatestPostSummary />
 							<MostPopular />
 							{ tagsList }
-							<PostAnniversaries />
 						</div>
 						<div className="stats__module-column">
 							<Reach />
