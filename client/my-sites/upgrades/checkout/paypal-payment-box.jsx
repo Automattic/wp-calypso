@@ -147,6 +147,18 @@ module.exports = React.createClass( {
 		const creditCardButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
 			'credit-card-payment-box__switch-link-left': showPaymentChatButton
 		} );
+
+		let orUseCreditCardString;
+
+		if ( abtest( 'indiaDebitCCString', this.props.geoCountry ) === 'modified' ) {
+			orUseCreditCardString = 'or use a Debit/Credit card';
+		} else {
+			orUseCreditCardString = this.translate( 'or use a credit card', {
+				context: 'Upgrades: PayPal checkout screen',
+				comment: 'Checkout with PayPal -- or use a credit card'
+			} );
+		}
+
 		return (
 			<form onSubmit={ this.redirectToPayPal }>
 				<div className="payment-box-section">
@@ -181,10 +193,7 @@ module.exports = React.createClass( {
 
 					{ cartValues.isCreditCardPaymentsEnabled( this.props.cart ) &&
 						<a href="" className={ creditCardButtonClasses } onClick={ this.handleToggle }>
-							{ this.translate( 'or use a credit card', {
-								context: 'Upgrades: PayPal checkout screen',
-								comment: 'Checkout with PayPal -- or use a credit card'
-							} ) }
+							{ orUseCreditCardString }
 						</a> }
 
 					{

@@ -92,4 +92,15 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
+	indiaDebitCCString: {
+		datestamp: '20170626',
+		variations: {
+			original: 20,
+			modified: 80,
+		},
+		defaultVariation: 'original',
+		countryCodeTarget: 'IN',
+		localeTargets: [ 'en' ],
+		allowExistingUsers: true,
+	},
 };

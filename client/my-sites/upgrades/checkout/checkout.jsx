@@ -31,6 +31,7 @@ const analytics = require( 'lib/analytics' ),
 	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 import { getStoredCards } from 'state/stored-cards/selectors';
+import { getGeoCountryShort } from 'state/geo/selectors';
 import {
 	isValidFeatureKey,
 	getUpgradePlanSlugFromPath
@@ -395,6 +396,7 @@ const Checkout = React.createClass( {
 				selectedSite={ selectedSite }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
+				geoCountry={ 'IN' }
 			/>
 		);
 	},
@@ -444,6 +446,7 @@ module.exports = connect(
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
+			geoCountryShort: getGeoCountryShort( state ),
 		};
 	},
 	{
