@@ -252,16 +252,18 @@ class PlanFeatures extends Component {
 			const { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
 			let audience = planConstantObj.getAudience();
-
-			switch ( siteType ) {
-				case 'blog':
-					audience = planConstantObj.getBlogAudience();
-					break;
-				case 'grid':
-					audience = planConstantObj.getPortfolioAudience();
-					break;
-				default:
-					audience = planConstantObj.getAudience();
+			
+			if ( isInSignupTest ) {
+				switch ( siteType ) {
+					case 'blog':
+						audience = planConstantObj.getBlogAudience();
+						break;
+					case 'grid':
+						audience = planConstantObj.getPortfolioAudience();
+						break;
+					default:
+						audience = planConstantObj.getAudience();
+				}
 			}
 
 			return (
