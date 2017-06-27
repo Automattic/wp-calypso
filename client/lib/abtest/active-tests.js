@@ -68,14 +68,6 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	reduceThemesInSignupTest: {
-		datestamp: '20170518',
-		variations: {
-			original: 0,
-			modified: 100,
-		},
-		defaultVariation: 'original',
-	},
 	savingsInCheckoutSummary: {
 		datestamp: '20170516',
 		variations: {
