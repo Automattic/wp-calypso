@@ -53,8 +53,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			- cssLinkAttrs = { rel: 'preload', as: 'style', onload: "this.rel='stylesheet'" }
 
 			//- JS polyfill for rel="preload"
-			script(type='text/javascript')
-				include ../../public/loadcss.m.js
+			script(type='text/javascript')!= loadCssPolyfill
 
 		link(href='https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese')&attributes( cssLinkAttrs )
 		link(href='//s1.wp.com/i/noticons/noticons.css?v=20150727')&attributes( cssLinkAttrs )
@@ -62,8 +61,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 
 		if ! renderedLayout
 			//- Required CSS for the initial shell
-			style(type="text/css")
-				include ../../public/css/shell.css
+			style(type="text/css")!= shellCss
 
 		if isRTL
 			link(href=urls['style-rtl.css'])&attributes( cssLinkAttrs )

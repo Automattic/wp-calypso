@@ -46,6 +46,7 @@
     "copy-webpack-plugin": "3.0.1",
     "create-react-class": "15.5.3",
     "creditcards": "2.1.2",
+    "critical": "0.8.4",
     "cross-env": "4.0.0",
     "d3-array": "1.2.0",
     "d3-scale": "1.0.6",
@@ -156,7 +157,6 @@
     "npm": "3.10.10"
   },
   "scripts": {
-    "generate-shell-css": "node bin/generate-shell-css.js",
     "preanalyze-bundles": "cross-env WEBPACK_OUTPUT_JSON=1 CALYPSO_ENV=production NODE_ARGS=\"--max_old_space_size=8192\" npm run -s build",
     "analyze-bundles": "webpack-bundle-analyzer stats.json public -p 9898",
     "autoprefixer": "postcss -r --use autoprefixer --autoprefixer.browsers \"last 2 versions, > 1%, Safari >= 8, iOS >= 8, Firefox ESR, Opera 12.1\"",
@@ -168,7 +168,7 @@
     "build-css:debug": "node-sass --include-path client --source-map \"public/style-debug.css.map\" assets/stylesheets/style.scss public/style-debug.css && npm run -s autoprefixer -- public/style-debug.css",
     "build-css:directly": "node-sass --include-path client assets/stylesheets/directly.scss public/directly.css && npm run -s autoprefixer -- public/directly.css",
     "build-css:editor": "node-sass --include-path client assets/stylesheets/editor.scss public/editor.css && npm run -s autoprefixer -- public/editor.css",
-    "build-css:style": "node-sass --include-path client assets/stylesheets/style.scss public/style.css && npm run -s autoprefixer -- public/style.css && rtlcss public/style.css public/style-rtl.css",
+    "build-css:style": "node-sass --include-path client assets/stylesheets/style.scss public/style.css && npm run -s autoprefixer -- public/style.css && rtlcss public/style.css public/style-rtl.css && node bin/generate-shell-css.js",
     "prebuild-desktop": "npm run -s install-if-deps-outdated",
     "build-desktop": "run-p -s build-server build-css",
     "postbuild-desktop": "npm run -s bundle",

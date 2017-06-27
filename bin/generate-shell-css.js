@@ -1,25 +1,29 @@
 var http = require( 'http' );
 var critical = require( 'critical' );
+var jade = require( 'jade' );
 
-// Load the HTML page from the dev server. This will fail if the dev server is
-// not running.
-http.get( {
-	host: 'calypso.localhost',
-	port: 3000,
-	path: '/'
-}, function(res) {
-	res.on( 'data', function( body ) {
-		// Generate the CSS required to render the initial loading screen.
-		critical.generate( {
-			base: './',
-			html: body,
-			css: [ 'public/style.css' ],
-			width: 1300,
-			height: 900,
-			dest: 'public/css/shell.css',
-			minify: true,
-			extract: false,
-			ignore: [ /environment/ ]
-		} );
-	} );
-});
+// Stub vars and render shell HTML.
+var renderVars = {
+	head: {
+		metas: [],
+		links: []
+	},
+	renderedLayout: false,
+	hasSecondary: true,
+	urls: {}
+};
+
+var html = jade.renderFile( 'server/pages/index.jade', renderVars );
+
+// Generate the CSS required to render the initial shell.
+critical.generate( {
+	folder: 'public',
+	html: html,
+	css: [ 'public/style.css' ],
+	width: 1300,
+	height: 900,
+	dest: 'public/shell.css',
+	minify: true,
+	extract: false,
+	ignore: [ /environment/ ]
+} );
