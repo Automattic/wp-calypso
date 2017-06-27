@@ -1,11 +1,7 @@
 /**
- * External dependencies
- */
-import { isFunction, isObject } from 'lodash';
-
-/**
  * Internal dependencies
  */
+import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { post } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import { productUpdated } from 'woocommerce/state/sites/products/actions';
@@ -27,15 +23,11 @@ export function handleProductCreate( store, action ) {
 		return;
 	}
 
-	const updatedAction = ( dispatch, getState, data ) => {
+	const updatedAction = ( dispatch, getState, { data } ) => {
 		dispatch( productUpdated( siteId, data, action ) );
 
-		// TODO: Make this a utility function.
-		if ( isFunction( successAction ) ) {
-			dispatch( successAction( dispatch, getState, action.product, data ) );
-		} else if ( isObject( successAction ) ) {
-			dispatch( { ...successAction, sentData: action.product, receivedData: data } );
-		}
+		const props = { sentData: action.product, receivedData: data };
+		dispatchWithProps( dispatch, getState, successAction, props );
 	};
 
 	store.dispatch( post( siteId, 'products', productData, updatedAction, failureAction ) );

@@ -63,7 +63,7 @@ describe( 'handlers', () => {
 			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
 			expect( updatedSuccessAction ).to.be.a( 'function' );
 
-			updatedSuccessAction( store.dispatch, null, 'RECEIVED_DATA' );
+			updatedSuccessAction( store.dispatch, null, { data: 'RECEIVED_DATA' } );
 
 			expect( store.dispatch ).to.have.been.calledWith(
 				match( {
@@ -80,7 +80,7 @@ describe( 'handlers', () => {
 			};
 
 			const product1 = { id: { index: 0 }, name: 'Product #1', type: 'simple' };
-			const successAction = ( dispatch, getState, sentData, receivedData ) => {
+			const successAction = ( dispatch, getState, { sentData, receivedData } ) => {
 				return { type: '%%success%%', sentData, receivedData };
 			};
 			const action = createProduct( 123, product1, successAction );
@@ -99,7 +99,7 @@ describe( 'handlers', () => {
 			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
 			expect( updatedSuccessAction ).to.be.a( 'function' );
 
-			updatedSuccessAction( store.dispatch, null, 'RECEIVED_DATA' );
+			updatedSuccessAction( store.dispatch, null, { data: 'RECEIVED_DATA' } );
 
 			expect( store.dispatch ).to.have.been.calledWith(
 				match( {
