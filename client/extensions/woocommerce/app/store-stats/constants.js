@@ -41,20 +41,24 @@ export const UNITS = {
 		quantity: 30,
 		label: 'days',
 		durationFn: 'asDays',
+		format: 'YYYY-MM-DD',
 	},
 	week: {
 		quantity: 30,
 		label: 'weeks',
 		durationFn: 'asWeeks',
+		format: 'YYYY',
 	},
 	month: {
 		quantity: 30,
 		label: 'months',
 		durationFn: 'asMonths',
+		format: 'YYYY-MM'
 	},
 	year: {
 		quantity: 10,
 		label: 'years',
 		durationFn: 'asYears',
+		format: 'YYYY',
 	},
 };

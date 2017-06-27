@@ -121,9 +121,13 @@ function parseOrderDeltas( payload ) {
 
 	forEach( payload.deltas, ( values, stat ) => {
 		values.forEach( row => {
-			const periodIndex = findIndex( response, ( item ) => item.period === row[ periodFieldIndex ] );
+			const periodIndex = findIndex( response, ( item ) => {
+				return item.period === parseUnitPeriods( payload.unit, row[ periodFieldIndex ] ).format( 'YYYY-MM-DD' );
+			} );
 			if ( periodIndex === -1 ) {
-				const newRow = { period: row[ periodFieldIndex ] };
+				const newRow = {
+					period: parseUnitPeriods( payload.unit, row[ periodFieldIndex ] ).format( 'YYYY-MM-DD' )
+				};
 				newRow[ stat ] = {};
 				payload.delta_fields.forEach( ( value, index ) => {
 					newRow[ stat ][ value ] = row[ index ];
@@ -139,6 +143,55 @@ function parseOrderDeltas( payload ) {
 	} );
 
 	return response;
+}
+
+/**
+ * Return data in a format used by 'components/chart`. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Object} payload - response
+ * @param {array} nullAttributes - properties on data objects to be initialized with
+ * a null value
+ * @return {array} - Array of data objects
+ */
+function parseOrdersChartData( payload ) {
+	if ( ! payload || ! payload.data ) {
+		return [];
+	}
+
+	return payload.data.map( function( record ) {
+		// Initialize data
+		const dataRecord = {};
+
+		// Fill Field Values
+		record.forEach( function( value, i ) {
+			dataRecord[ payload.fields[ i ] ] = value;
+		} );
+
+		dataRecord.labelDay = '';
+		dataRecord.labelWeek = '';
+		dataRecord.labelMonth = '';
+		dataRecord.labelYear = '';
+		dataRecord.classNames = [];
+
+		if ( dataRecord.period ) {
+			const date = parseUnitPeriods( payload.unit, dataRecord.period ).locale( 'en' );
+			const localizedDate = parseUnitPeriods( payload.unit, dataRecord.period );
+			if ( date.isValid() ) {
+				const dayOfWeek = date.toDate().getDay();
+				if ( ( 'day' === payload.unit ) && ( ( 6 === dayOfWeek ) || ( 0 === dayOfWeek ) ) ) {
+					dataRecord.classNames.push( 'is-weekend' );
+				}
+				dataRecord.labelDay = localizedDate.format( 'MMM D' );
+				dataRecord.labelWeek = localizedDate.format( 'MMM D' );
+				dataRecord.labelMonth = localizedDate.format( 'MMM' );
+				dataRecord.labelYear = localizedDate.format( 'YYYY' );
+			}
+		}
+
+		dataRecord.period = parseUnitPeriods( payload.unit, dataRecord.period ).format( 'YYYY-MM-DD' );
+		return dataRecord;
+	} );
 }
 
 /**
@@ -194,6 +247,28 @@ function parseChartData( payload, nullAttributes = [] ) {
 
 		return dataRecord;
 	} );
+}
+
+/**
+ * Return moment date object for the day or last day of the period.
+ *
+ * @param {string} unit - day, week, month or year
+ * @param {string} period - period in shortened store sting format, eg '2017-W26'
+ * @return {Object} - moment date object
+ */
+function parseUnitPeriods( unit, period ) {
+	switch ( unit ) {
+		case 'week':
+			const splitYearWeek = period.split( '-W' );
+			return moment().isoWeekYear( splitYearWeek[ 0 ] ).isoWeek( splitYearWeek[ 1 ] ).endOf( 'isoWeek' );
+		case 'month':
+			return moment( period, 'YYYY-MM' ).endOf( 'month' );
+		case 'year':
+			return moment( period, 'YYYY' ).endOf( 'year' );
+		case 'day':
+		default:
+			return moment( period, 'YYYY-MM-DD' );
+	}
 }
 
 export const normalizers = {
@@ -718,7 +793,7 @@ export const normalizers = {
 
 	statsOrders( payload ) {
 		return {
-			data: parseChartData( payload ),
+			data: parseOrdersChartData( payload ),
 			deltas: parseOrderDeltas( payload ),
 		};
 	},
