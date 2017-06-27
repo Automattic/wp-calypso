@@ -43,6 +43,24 @@ const staticFiles = [
 
 const sections = sectionsModule.get();
 
+// Retrieve Promise for the contents of `filepath`. On error, resolve with
+// empty string.
+function getFileContentsSafely( filepath ) {
+	return new Promise( function( resolve ) {
+		fs.readFile( filepath, function( err, content ) {
+			if ( err ) {
+				resolve( '' );
+			} else {
+				resolve( content );
+			}
+		} );
+	} );
+}
+
+// Load and cache file contents for inlining
+const loadCssContentPromise = getFileContentsSafely( process.cwd() + LOAD_CSS_POLYFILL_PATH );
+const shellCssContentPromise = getFileContentsSafely( process.cwd() + SHELL_CSS_PATH );
+
 // TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
 function getInitialServerState( serializedServerState ) {
 	// Bootstrapped state from a server-render
@@ -122,18 +140,6 @@ function getCurrentCommitShortChecksum() {
 	}
 }
 
-function getFileContentsSafely( filepath ) {
-	return new Promise( function( resolve ) {
-		fs.readFile( filepath, function( err, content ) {
-			if ( err ) {
-				resolve( '' );
-			} else {
-				resolve( content );
-			}
-		} );
-	} );
-}
-
 function getDefaultContext( request, callback ) {
 	let initialServerState = {};
 	// We don't cache routes with query params
@@ -199,8 +205,8 @@ function getDefaultContext( request, callback ) {
 
 	// Fetch JS and CSS to be inlined
 	Promise.all( [
-		getFileContentsSafely( process.cwd() + LOAD_CSS_POLYFILL_PATH ),
-		getFileContentsSafely( process.cwd() + SHELL_CSS_PATH )
+		loadCssContentPromise,
+		shellCssContentPromise
 	] ).then( function( values ) {
 		context.loadCssPolyfill = values[ 0 ];
 		context.shellCss = values[ 1 ];
