@@ -14,30 +14,33 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import TokenField from 'components/token-field';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { generateProductCategoryId } from 'woocommerce/state/ui/product-categories/actions';
 
 // TODO Rename this card since it contains other controls, and may contain more in the future (like tax)
 const ProductFormCategoriesCard = (
-	{ product, productCategories, editProduct, translate }
+	{ siteId, product, productCategories, editProduct, editProductCategory, translate }
 ) => {
 	const handleChange = ( categoryNames ) => {
 		const newCategories = compact( categoryNames.map( ( name ) => {
 			const category = find( productCategories, { name: escape( name ) } );
 
 			if ( ! category ) {
-				// TODO: Add new product category to edit state.
-				// TODO: Remove 'compact' calls afterwards as they will no longer be needed.
-				return undefined;
+				// Add a new product category to the creates list.
+				const newCategoryId = generateProductCategoryId();
+				editProductCategory( siteId, { id: newCategoryId }, { name } );
+				return { id: newCategoryId };
 			}
 
 			return pick( category, 'id' );
 		} ) );
 
+		// Update the categories list.
 		const data = { id: product.id, categories: newCategories };
-		editProduct( product, data );
+		editProduct( siteId, product, data );
 	};
 
 	const toggleFeatured = () => {
-		editProduct( product, { featured: ! product.featured } );
+		editProduct( siteId, product, { featured: ! product.featured } );
 	};
 
 	const selectedCategories = product.categories || [];
@@ -59,7 +62,7 @@ const ProductFormCategoriesCard = (
 					onChange={ handleChange }
 				/>
 				<FormSettingExplanation>
-					{ translate( 'Add a category so this product is easy to find.' ) }
+					{ translate( 'Categories let you group similar products so customers can find them more easily.' ) }
 				</FormSettingExplanation>
 			</FormFieldSet>
 			<div className="products__product-form-featured">
@@ -68,7 +71,7 @@ const ProductFormCategoriesCard = (
 						onChange={ toggleFeatured }
 						checked={ product.featured }
 					>
-					{ translate( 'Feature this product to promote it on your store' ) }
+					{ translate( 'Promote this product across the store' ) }
 				</CompactFormToggle>
 				</FormLabel>
 			</div>
@@ -77,6 +80,7 @@ const ProductFormCategoriesCard = (
 };
 
 ProductFormCategoriesCard.propTypes = {
+	siteId: PropTypes.number,
 	product: PropTypes.shape( {
 		id: PropTypes.isRequired,
 		type: PropTypes.string.isRequired,

@@ -27,6 +27,7 @@ export class MediaLibraryFilterBar extends Component {
 		filter: React.PropTypes.string,
 		filterRequiresUpgrade: React.PropTypes.bool,
 		search: React.PropTypes.string,
+		source: React.PropTypes.string,
 		site: React.PropTypes.object,
 		onFilterChange: React.PropTypes.func,
 		onSearch: React.PropTypes.func,
@@ -38,7 +39,8 @@ export class MediaLibraryFilterBar extends Component {
 		basePath: '/media',
 		onFilterChange: noop,
 		onSearch: noop,
-		translate: identity
+		translate: identity,
+		source: '',
 	};
 
 	getSearchPlaceholderText() {
@@ -84,7 +86,7 @@ export class MediaLibraryFilterBar extends Component {
 	};
 
 	renderTabItems() {
-		const tabs = [ '', 'images', 'documents', 'videos', 'audio' ];
+		const tabs = this.props.source === '' ? [ '', 'images', 'documents', 'videos', 'audio' ] : [];
 
 		return map( tabs, filter =>
 			<FilterItem

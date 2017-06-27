@@ -15,7 +15,7 @@ export default function stepsForProductAndSurvey( survey, product, canChat ) {
 			return [ steps.INITIAL_STEP, steps.CONCIERGE_STEP, steps.FINAL_STEP ];
 		}
 
-		if ( canChat && includesProduct( PERSONAL_PREMIUM_PLANS, product ) && abtest( 'chatOfferOnCancel' ) === 'show' ) {
+		if ( canChat && includesProduct( PERSONAL_PREMIUM_PLANS, product ) ) {
 			return [ steps.INITIAL_STEP, steps.HAPPYCHAT_STEP, steps.FINAL_STEP ];
 		}
 	}

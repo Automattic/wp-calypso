@@ -17,7 +17,8 @@ import {
 	HAPPYCHAT_GROUP_JPOP,
 	HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT
 } from './constants';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, getSite } from 'state/sites/selectors';
+import { isATEnabled } from 'lib/automated-transfer';
 
 // How much time needs to pass before we consider the session inactive:
 const HAPPYCHAT_INACTIVE_TIMEOUT_MS = 1000 * 60 * 10;
@@ -40,8 +41,12 @@ export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
  */
 export const getGroups = ( state, siteId ) => {
 	const groups = [];
+	const siteDetails = getSite( state, siteId );
 
-	if ( isJetpackSite( state, siteId ) ) {
+	if ( isATEnabled( siteDetails ) ) {
+		// AT sites should go to WP.com even though they are jetpack also
+		groups.push( HAPPYCHAT_GROUP_WPCOM );
+	} else if ( isJetpackSite( state, siteId ) ) {
 		groups.push( HAPPYCHAT_GROUP_JPOP );
 	} else {
 		groups.push( HAPPYCHAT_GROUP_WPCOM );

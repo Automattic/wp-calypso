@@ -21,8 +21,8 @@ import BulkSelect from 'components/bulk-select';
 import Tooltip from 'components/tooltip';
 import analytics from 'lib/analytics';
 
-// Constants help determin if the action bar should be a dropdown
-const MAX_ACTIONBAR_HEIGHT = 50;
+// Constants help determine if the action bar should be a dropdown
+const MAX_ACTIONBAR_HEIGHT = 57;
 const MIN_ACTIONBAR_WIDTH = 600;
 
 export class PluginsListHeader extends PureComponent {
@@ -74,7 +74,6 @@ export class PluginsListHeader extends PureComponent {
 		if ( actionBarDomElement.offsetWidth < MIN_ACTIONBAR_WIDTH ) {
 			return;
 		}
-		this.setState( { actionBarVisible: true } );
 		setTimeout( () => {
 			const actionBarVisible = actionBarDomElement.offsetHeight <= MAX_ACTIONBAR_HEIGHT;
 			this.setState( { actionBarVisible } );

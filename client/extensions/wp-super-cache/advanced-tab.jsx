@@ -17,11 +17,11 @@ import ExpiryTime from './expiry-time';
 import FixConfig from './fix-config';
 import LockDown from './lock-down';
 import Miscellaneous from './miscellaneous';
-import QueryNotices from './data/query-notices';
+import QueryStatus from './data/query-status';
 import RejectedUserAgents from './rejected-user-agents';
 import WrapSettingsForm from './wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getNotices } from './state/notices/selectors';
+import { getStatus } from './state/status/selectors';
 
 const AdvancedTab = ( {
 	fields: {
@@ -29,14 +29,14 @@ const AdvancedTab = ( {
 		is_super_cache_enabled,
 	},
 	isReadOnly,
-	notices,
+	status,
 	siteId,
 } ) => {
 	return (
 		<div>
-			<QueryNotices siteId={ siteId } />
-			<Caching isReadOnly={ isReadOnly } notices={ notices } />
-			<Miscellaneous isReadOnly={ isReadOnly } notices={ notices } />
+			<QueryStatus siteId={ siteId } />
+			<Caching isReadOnly={ isReadOnly } status={ status } />
+			<Miscellaneous isReadOnly={ isReadOnly } status={ status } />
 			<Advanced isReadOnly={ isReadOnly } />
 			<CacheLocation isReadOnly={ isReadOnly } />
 			<ExpiryTime isReadOnly={ isReadOnly } />
@@ -44,7 +44,7 @@ const AdvancedTab = ( {
 			<RejectedUserAgents isReadOnly={ isReadOnly } />
 			<LockDown isReadOnly={ isReadOnly } />
 			{ is_cache_enabled && is_super_cache_enabled &&
-				<DirectlyCachedFiles notices={ notices } />
+				<DirectlyCachedFiles status={ status } />
 			}
 			<FixConfig isReadOnly={ isReadOnly } />
 		</div>
@@ -54,9 +54,9 @@ const AdvancedTab = ( {
 const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const notices = getNotices( state, siteId );
+		const status = getStatus( state, siteId );
 
-		return { notices };
+		return { status };
 	}
 );
 

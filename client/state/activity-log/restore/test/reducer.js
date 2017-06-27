@@ -7,14 +7,11 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import { restoreProgress } from '../reducer';
 import {
-	restoreError,
-	restoreProgress,
-} from '../reducer';
-import {
-    rewindCompleteRestore,
-    rewindRestore,
-    rewindRestoreUpdateError,
+	dismissRewindRestoreProgress,
+	rewindRestore,
+	rewindRestoreUpdateError,
 } from '../../actions';
 
 /**
@@ -28,33 +25,27 @@ const ERROR = deepFreeze( {
 } );
 
 describe( '#restoreProgress()', () => {
-	it( 'start in progress restore a 0%', () => {
+	it( 'should start at 0% queued', () => {
 		const state = restoreProgress( undefined, rewindRestore( SITE_ID, TIMESTAMP ) );
 		expect( state[ SITE_ID ] ).to.deep.equal( {
+			errorCode: '',
+			failureReason: '',
+			message: '',
 			percent: 0,
-			status: 'running',
+			status: 'queued',
+			timestamp: TIMESTAMP,
 		} );
 	} );
 
-	it( 'complete finished restores at 100%', () => {
-		const state = restoreProgress( undefined, rewindCompleteRestore( SITE_ID, TIMESTAMP ) );
-		expect( state[ SITE_ID ] ).to.deep.equal( {
-			percent: 100,
-			status: 'success',
-		} );
-	} );
-
-	it( 'should null on errors', () => {
+	it( 'should null on dismissal', () => {
 		const prevState = deepFreeze( {
 			[ SITE_ID ]: {
-				active: false,
-				firstBackupDate: '',
-				isPressable: false,
-				plan: 'jetpack-free',
+				percent: 100,
+				status: 'finished',
 			},
 		} );
 
-		const state = restoreProgress( prevState, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) );
+		const state = restoreProgress( prevState, dismissRewindRestoreProgress( SITE_ID ) );
 		expect( state[ SITE_ID ] ).to.be.null;
 	} );
 
@@ -71,49 +62,10 @@ describe( '#restoreProgress()', () => {
 
 		[
 			restoreProgress( prevState, rewindRestore( SITE_ID, TIMESTAMP ) ),
-			restoreProgress( prevState, rewindCompleteRestore( SITE_ID, TIMESTAMP ) ),
 			restoreProgress( prevState, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) ),
+			restoreProgress( prevState, dismissRewindRestoreProgress( SITE_ID ) ),
 		].forEach(
 			state => expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] )
 		);
 	} );
 } );
-
-describe( '#restoreError()', () => {
-	it( 'should insert errors', () => {
-		const state = restoreError( undefined, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) );
-		expect( state[ SITE_ID ] ).to.deep.equal( ERROR );
-	} );
-
-	it( 'should null on progress', () => {
-		const prevState = deepFreeze( {
-			[ SITE_ID ]: ERROR,
-		} );
-		const state = restoreError( prevState, rewindRestore( SITE_ID, TIMESTAMP ) );
-		expect( state[ SITE_ID ] ).to.be.null;
-	} );
-
-	it( 'should null on completion', () => {
-		const prevState = deepFreeze( {
-			[ SITE_ID ]: ERROR,
-		} );
-		const state = restoreError( prevState, rewindCompleteRestore( SITE_ID, TIMESTAMP ) );
-		expect( state[ SITE_ID ] ).to.be.null;
-	} );
-
-	it( 'should preserve other sites', () => {
-		const otherSiteId = 123456;
-		const prevState = deepFreeze( {
-			[ otherSiteId ]: {
-				active: false,
-				firstBackupDate: '',
-				isPressable: false,
-				plan: 'jetpack-free',
-			},
-		} );
-
-		const state = restoreError( prevState, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) );
-		expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] );
-	} );
-} );
-

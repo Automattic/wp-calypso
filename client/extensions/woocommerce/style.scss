@@ -8,6 +8,7 @@
 .woocommerce {
 	flex-grow: 1;
 
+	@import 'app/products/products-list';
 	@import 'app/products/product-form';
 	@import 'app/settings/payments/style';
 	@import 'components/action-header/style';
@@ -16,11 +17,22 @@
 	@import 'components/extended-header/style';
 	@import 'components/form-click-to-edit-input/style';
 	@import 'components/form-dimensions-input/style';
+	@import 'components/process-orders-widget/style';
 	@import 'components/product-image-uploader/style';
 	@import 'app/settings/shipping/style';
 	@import 'components/list/style';
 	@import 'components/table/style';
 	@import 'app/dashboard/style';
+	@import 'app/order/style';
+	@import 'app/orders/style';
+	@import 'components/basic-widget/style';
+	@import 'components/share-widget/style';
+	@import 'components/reading-widget/style';
+	@import 'components/widget-group/style';
+	@import 'components/sparkline/style';
+	@import 'app/store-stats/store-stats-chart/style';
+	@import 'app/store-stats/store-stats-navigation/style';
+	@import 'components/delta/style';
 
 	.components__action-header {
 		width: 100%;
@@ -33,6 +45,15 @@
 
 		.button {
 			margin-left: 8px;
+		}
+	}
+}
+
+.is-section-woocommerce {
+	// overwrite notice styles due to sticky bar
+	.global-notices {
+		@include breakpoint( ">660px" ) {
+			top: 115px;
 		}
 	}
 }
@@ -66,7 +87,7 @@
 	}
 }
 
-.focus-sidebar {
+.is-section-woocommerce.focus-sidebar {
 	@include breakpoint( "<660px" ) {
 		.sticky-panel,
 		.products__form,
@@ -76,7 +97,7 @@
 	}
 }
 
-.focus-content {
+.is-section-woocommerce.focus-content {
 	@include breakpoint( "<660px" ) {
 		.site-icon,
 		.current-section__site-title,

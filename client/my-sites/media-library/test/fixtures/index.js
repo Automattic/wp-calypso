@@ -44,6 +44,9 @@ module.exports = {
 			ID: 1009,
 			guid: 'http://example.files.wordpress.com/2015/05/g1009.gif',
 			URL: 'http://example.files.wordpress.com/2015/05/g1009.gif',
+			thumbnails: {
+				medium: 'http://example.files.wordpress.com/2015/05/g1009-medium.gif'
+			}
 		}, {
 			ID: 1008,
 			guid: 'http://example.files.wordpress.com/2015/05/g1008.gif',

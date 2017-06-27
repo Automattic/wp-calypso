@@ -290,12 +290,16 @@
 .site-settings__footer-credit-change {
 	width: 175px;
 	text-align:center;
+	margin-left: 24px;
 }
 
 .site-settings__footer-credit-explanation {
 	display:flex;
 	flex-direction: row;
 	justify-content: space-between;
+} 
+.site-settings__footer-credit-explanation p {
+	margin: 0
 }
 
 

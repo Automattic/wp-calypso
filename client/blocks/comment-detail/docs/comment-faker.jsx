@@ -23,8 +23,9 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.comments.length ) {
-			this.getCommentsFromProps( nextProps );
+		if ( this.props.comments.length !== nextProps.comments.length ||
+			this.props.siteId !== nextProps.siteId ) {
+				this.getCommentsFromProps( nextProps );
 		}
 	}
 

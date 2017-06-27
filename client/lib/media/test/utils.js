@@ -1,18 +1,52 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	map = require( 'lodash/map' ),
-	useFakeDom = require( 'test/helpers/use-fake-dom' );
+import { expect } from 'chai';
+import { map } from 'lodash';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-var JetpackSite = require( 'lib/site/jetpack' ),
-	MediaUtils = require( '../utils' );
+import JetpackSite from 'lib/site/jetpack';
+import useMockery from 'test/helpers/use-mockery';
+
+const UNIQUEID = 'media-1';
+const DUMMY_FILENAME = 'test.jpg';
+const DUMMY_FILE_BLOB = {
+	fileContents: {
+		size: 1,
+	},
+	fileName: DUMMY_FILENAME,
+};
+const EXPECTED = {
+	'transient': true,
+	ID: UNIQUEID,
+	file: DUMMY_FILENAME,
+	title: 'test.jpg',
+	extension: 'jpg',
+	mime_type: 'image/jpeg',
+};
 
 describe( 'MediaUtils', function() {
+	let MediaUtils;
+
 	useFakeDom();
+	useMockery();
+
+	before( () => {
+		mockery.registerMock( 'lodash/uniqueId', function() {
+			return UNIQUEID;
+		} );
+
+		MediaUtils = require( '../utils' );
+	} );
+
+	after( function() {
+		mockery.deregisterAll();
+		mockery.disable();
+	} );
 
 	describe( '#url()', function() {
 		var media;
@@ -627,6 +661,33 @@ describe( 'MediaUtils', function() {
 			const item = {};
 
 			expect( MediaUtils.isItemBeingUploaded( item ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#createTransientMedia()', () => {
+		const GUID = 'URL';
+
+		beforeEach( () => {
+			window.URL = { createObjectURL: () => {
+				return GUID;
+			} };
+		} );
+
+		it( 'should return a transient for a file blob', () => {
+			const actual = MediaUtils.createTransientMedia( DUMMY_FILE_BLOB );
+			const expected = Object.assign( {}, EXPECTED, {
+				URL: GUID,
+				guid: GUID,
+				size: 1,
+			} );
+
+			expect( actual ).to.eql( expected );
+		} );
+
+		it( 'should return a transient for a filename', () => {
+			const actual = MediaUtils.createTransientMedia( DUMMY_FILENAME );
+
+			expect( actual ).to.eql( EXPECTED );
 		} );
 	} );
 } );

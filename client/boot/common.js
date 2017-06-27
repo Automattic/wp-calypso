@@ -111,8 +111,8 @@ const oauthTokenMiddleware = () => {
 	}
 };
 
-const clearNoticesMiddleware = () => {
-	page( '*', function( context, next ) {
+const setRouteMiddleware = () => {
+	page( '*', ( context, next ) => {
 		context.store.dispatch( setRouteAction(
 			context.pathname,
 			context.query
@@ -120,7 +120,9 @@ const clearNoticesMiddleware = () => {
 
 		next();
 	} );
+};
 
+const clearNoticesMiddleware = () => {
 	//TODO: remove this one when notices are reduxified - it is for old notices
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 };
@@ -196,6 +198,7 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 	oauthTokenMiddleware();
 	loadSectionsMiddleware();
 	loggedOutMiddleware( currentUser );
+	setRouteMiddleware();
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 };

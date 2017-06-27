@@ -51,6 +51,7 @@ import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
 import RelatedPostCardv2 from 'blocks/reader-related-card-v2/docs/example';
 import PlanPrice from 'my-sites/plan-price/docs/example';
+import PostShare from 'blocks/post-share/docs/example';
 import PlanThankYouCard from 'blocks/plan-thank-you-card/docs/example';
 import DismissibleCard from 'blocks/dismissible-card/docs/example';
 import PostEditButton from 'blocks/post-edit-button/docs/example';
@@ -149,6 +150,7 @@ export default React.createClass( {
 					<ReaderCombinedCard />
 					<ReaderRecommendedSites />
 					<PlanPrice />
+					<PostShare />
 					<PlanThankYouCard />
 					<DismissibleCard />
 					<ReaderAvatar />

@@ -17,7 +17,7 @@ const files = execSync( 'git diff --cached --name-only' )
 	.map( ( name ) => name.trim() )
 	.filter( ( name ) => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) );
 
-const lintResult = spawnSync( 'node', [ 'bin/run-lint', ...files, '--', '--diff=index' ], {
+const lintResult = spawnSync( 'eslint-eslines', [ ...files, '--', '--diff=index' ], {
 	shell: true,
 	stdio: 'inherit',
 } );

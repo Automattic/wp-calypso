@@ -19,6 +19,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+	ROUTE_SET,
 } from 'state/action-types';
 import reducer, {
 	isRequesting,
@@ -40,6 +41,7 @@ describe( 'reducer', () => {
 			'requestError',
 			'requestNotice',
 			'requestSuccess',
+			'socialAccount',
 			'twoFactorAuth',
 			'isRequestingTwoFactorAuth',
 			'twoFactorAuthRequestError',
@@ -175,6 +177,14 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( 'another error' );
 		} );
 
+		it( 'should reset the error to null when switching routes', () => {
+			const state = requestError( 'some error', {
+				type: ROUTE_SET
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
 		it( 'should not persist state', () => {
 			const state = requestError( 'some error', {
 				type: SERIALIZE
@@ -222,6 +232,14 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( 'another error' );
+		} );
+
+		it( 'should reset the error to null when switching routes', () => {
+			const state = twoFactorAuthRequestError( 'some error', {
+				type: ROUTE_SET
+			} );
+
+			expect( state ).to.be.null;
 		} );
 
 		it( 'should not persist state', () => {

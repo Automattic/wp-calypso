@@ -336,6 +336,11 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackStoreClick = () => {
+		analytics.tracks.recordEvent( 'calypso_woocommerce_store_nav_item_click' );
+		this.onNavigate();
+	};
+
 	store() {
 		const { canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
 		const storeLink = '/store' + siteSuffix;
@@ -345,9 +350,9 @@ export class MySitesSidebar extends Component {
 		return (
 			showStoreLink &&
 			<SidebarItem
-				label={ translate( 'Store' ) }
+				label={ translate( 'Store (BETA)' ) }
 				link={ storeLink }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.trackStoreClick }
 				icon="cart" >
 				<SidebarButton href={ storeLink }>
 					{ translate( 'Set up' ) }
@@ -393,7 +398,7 @@ export class MySitesSidebar extends Component {
 	users() {
 		const { site, canUserListUsers } = this.props;
 		let usersLink = '/people/team' + this.props.siteSuffix;
-		let addPeopleLink = '/people/new' + this.props.siteSuffix;
+		const addPeopleLink = '/people/new' + this.props.siteSuffix;
 
 		if ( ! site ) {
 			return null;
@@ -405,11 +410,6 @@ export class MySitesSidebar extends Component {
 
 		if ( ! config.isEnabled( 'manage/people' ) && site.options ) {
 			usersLink = site.options.admin_url + 'users.php';
-		}
-
-		if ( ! config.isEnabled( 'jetpack/invites' ) &&
-			! this.props.isSiteAutomatedTransfer && site && site.options && this.props.isJetpack ) {
-			addPeopleLink = site.options.admin_url + 'user-new.php';
 		}
 
 		return (
@@ -554,8 +554,7 @@ export class MySitesSidebar extends Component {
 			<div>
 				<SidebarMenu>
 					<ul>
-						{/* TODO: enable once we have the new view ready */}
-						{/* this.preview() */}
+						{ config.isEnabled( 'standalone-site-preview' ) && this.preview() }
 						{ this.stats() }
 						{ this.plan() }
 						{ this.store() }

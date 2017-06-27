@@ -166,3 +166,43 @@ export const getRedirectTo = ( state ) => {
 export const getRememberMe = ( state ) => {
 	return get( state, 'login.rememberMe', false );
 };
+
+/***
+ * Tells us if we're in a process of creating a social account
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Boolean}         Error for the request.
+ */
+export const isSocialAccountCreating = ( state ) => get( state, 'login.socialAccount.isCreating', null );
+
+/***
+ * Gets Username of the created social account
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Username of the created social account
+ */
+export const getCreatedSocialAccountUsername = ( state ) => get( state, 'login.socialAccount.username', null );
+
+/***
+ * Gets Bearer token of the created social account
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Bearer token of the created social account
+ */
+export const getCreatedSocialAccountBearerToken = ( state ) => get( state, 'login.socialAccount.bearerToken', null );
+
+/***
+ * Gets error for the create social account request.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Object}         Error for the create social account request.
+ */
+export const getCreateSocialAccountError = ( state ) => get( state, 'login.socialAccount.createError', null );
+
+/***
+ * Gets error for the get social account request.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Object}         Error for the get social account request.
+ */
+export const getRequestSocialAccountError = ( state ) => get( state, 'login.socialAccount.requestError', null );

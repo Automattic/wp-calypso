@@ -9,7 +9,7 @@ var React = require( 'react' );
 var MediaUtils = require( 'lib/media/utils' ),
 	MediaLibraryListItemFileDetails = require( './list-item-file-details' );
 
-import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
+import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
 
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryListItemImage',
@@ -80,6 +80,7 @@ module.exports = React.createClass( {
 		var url = MediaUtils.url( this.props.media, {
 			photon: this.props.thumbnailType === MEDIA_IMAGE_PHOTON,
 			maxWidth: this.props.maxImageWidth,
+			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
 		} );
 
 		if ( ! url ) {

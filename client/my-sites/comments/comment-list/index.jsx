@@ -22,6 +22,7 @@ import CommentFaker from 'blocks/comment-detail/docs/comment-faker';
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import QuerySiteComments from 'components/data/query-site-comments';
+import { hasSiteComments } from 'state/selectors';
 
 export class CommentList extends Component {
 	static propTypes = {
@@ -212,6 +213,8 @@ export class CommentList extends Component {
 			siteId,
 			siteSlug,
 			status,
+			showPlaceholder,
+			showEmptyContent,
 		} = this.props;
 		const {
 			isBulkEdit,
@@ -253,29 +256,20 @@ export class CommentList extends Component {
 						/>
 					) }
 				</ReactCSSTransitionGroup>
-
 				<ReactCSSTransitionGroup
 					className="comment-list__transition-wrapper"
 					component="div"
 					transitionEnterTimeout={ 300 }
 					transitionLeaveTimeout={ 150 }
-					transitionName="comment-list__transition"
-				>
-					{ null === comments &&
-						<CommentDetailPlaceholder
-							key="comment-detail-placeholder"
-						/>
-					}
-
-					{ 0 === size( comments ) &&
-						<EmptyContent
-							illustration="/calypso/images/comments/illustration_comments_gray.svg"
-							illustrationWidth={ 150 }
-							key="comment-list-empty"
-							line={ emptyMessageLine }
-							title={ emptyMessageTitle }
-						/>
-					}
+					transitionName="comment-list__transition" >
+					{ showPlaceholder && <CommentDetailPlaceholder key="comment-detail-placeholder" /> }
+					{ showEmptyContent && <EmptyContent
+						illustration="/calypso/images/comments/illustration_comments_gray.svg"
+						illustrationWidth={ 150 }
+						key="comment-list-empty"
+						line={ emptyMessageLine }
+						title={ emptyMessageTitle }
+					/> }
 				</ReactCSSTransitionGroup>
 			</div>
 		);
@@ -284,8 +278,14 @@ export class CommentList extends Component {
 
 const mapStateToProps = ( state, { siteId } ) => {
 	const comments = getSiteComments( state, siteId );
+	const isLoading = ! hasSiteComments( state, siteId );
+	const zeroComments = size( comments ) <= 0;
+	const showPlaceholder = ( ! siteId || isLoading ) && zeroComments;
+	const showEmptyContent = zeroComments && ! showPlaceholder;
 	return {
 		comments,
+		showPlaceholder,
+		showEmptyContent,
 		notices: getNotices( state ),
 		siteId,
 	};

@@ -9,5 +9,5 @@ import rewind from './rewind';
 export default mergeHandlers(
 	activate,
 	deactivate,
-	rewind
+	rewind,
 );

@@ -12,10 +12,14 @@ import { translate } from 'i18n-calypso';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
+import Order from './app/order';
+import Orders from './app/orders';
+import Products from './app/products';
 import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
 import Shipping from './app/settings/shipping';
+import ShippingZone from './app/settings/shipping/shipping-zone';
 import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
 
@@ -37,7 +41,7 @@ const getStorePages = () => {
 			},
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
+			container: Products,
 			configKey: 'woocommerce/extension-products',
 			path: '/store/products/:site',
 			sidebarItem: {
@@ -63,7 +67,7 @@ const getStorePages = () => {
 			path: '/store/products/import/:site',
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
+			container: Orders,
 			configKey: 'woocommerce/extension-orders',
 			path: '/store/orders/:site',
 			sidebarItem: {
@@ -72,6 +76,11 @@ const getStorePages = () => {
 				label: translate( 'Orders' ),
 				slug: 'orders',
 			},
+		},
+		{
+			container: Order,
+			configKey: 'woocommerce/extension-orders',
+			path: '/store/order/:site/:order',
 		},
 		{
 			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
@@ -117,6 +126,11 @@ const getStorePages = () => {
 			},
 		},
 		{
+			container: ShippingZone,
+			configKey: 'woocommerce/extension-settings-shipping',
+			path: '/store/settings/shipping/:site/zone/:zone',
+		},
+		{
 			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
 			configKey: 'woocommerce/extension-settings-tax',
 			path: '/store/settings/taxes/:site',
@@ -145,7 +159,7 @@ function getStoreSidebarItemButtons() {
 function addStorePage( storePage, storeNavigation ) {
 	page( storePage.path, siteSelection, storeNavigation, function( context ) {
 		renderWithReduxStore(
-			React.createElement( storePage.container, { className: 'woocommerce' } ),
+			React.createElement( storePage.container, { className: 'woocommerce', params: context.params } ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -183,4 +197,3 @@ export default function() {
 // TODO: This could probably be done in a better way through the same mechanisms
 // that bring in the rest of the extension code. Maybe extension-loader?
 initExtension();
-

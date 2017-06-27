@@ -63,7 +63,8 @@ class StateSelect extends Component {
 							disabled={ this.props.disabled }
 							onChange={ this.props.onChange }
 							onClick={ this.recordStateSelectClick }
-							isError={ this.props.isError } >
+							isError={ this.props.isError }
+							inputRef={ this.props.inputRef } >
 
 							<option key="--" value="--" disabled="disabled">{ this.props.translate( 'Select State' ) }</option>
 							{ this.props.countryStates.map( ( state ) =>
@@ -90,6 +91,7 @@ StateSelect.propTypes = {
 	name: PropTypes.string,
 	onChange: PropTypes.func,
 	value: PropTypes.string,
+	inputRef: PropTypes.func,
 };
 
 export default connect(

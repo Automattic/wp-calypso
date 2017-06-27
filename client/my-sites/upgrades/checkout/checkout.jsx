@@ -117,7 +117,42 @@ const Checkout = React.createClass( {
 		recordViewCheckout( props.cart );
 	},
 
-	addProductToCart: function() {
+	getProductSlugFromSynonym( slug ) {
+		if ( 'no-ads' === slug ) {
+			return 'no-adverts/no-adverts.php';
+		}
+		return slug;
+	},
+
+	addProductToCart() {
+		if ( this.props.purchaseId ) {
+			this.addRenewItemToCart();
+		} else {
+			this.addNewItemToCart();
+		}
+	},
+
+	addRenewItemToCart() {
+		const { product, purchaseId, selectedSiteSlug } = this.props;
+		const [ slug, meta ] = product.split( ':' );
+		const productSlug = this.getProductSlugFromSynonym( slug );
+
+		if ( ! purchaseId ) {
+			return;
+		}
+
+		const cartItem = cartItems.getRenewalItemFromCartItem( {
+			meta,
+			product_slug: productSlug
+		}, {
+			id: purchaseId,
+			domain: selectedSiteSlug
+		} );
+
+		upgradesActions.addItem( cartItem );
+	},
+
+	addNewItemToCart() {
 		const planSlug = getUpgradePlanSlugFromPath( this.props.product, this.props.selectedSite );
 
 		let cartItem,

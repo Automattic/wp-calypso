@@ -1,5 +1,6 @@
 .action-header__header {
 	width: 100%;
+	min-height: 58px;
 	padding: 8px 16px 7px;
 	display: flex;
 	flex-direction: row;
@@ -14,9 +15,15 @@
 .action-header__breadcrumbs {
 	width: 60%;
 	font-size: 13px;
+	line-height: 43px;
 	@include breakpoint( "<660px" ) {
 		padding-left: 24px;
 	}
+}
+
+.action-header__breadcrumbs-separator {
+	color: $gray;
+	margin-left: 4px;
 }
 
 .action-header__actions {
@@ -44,5 +51,8 @@
 		width: calc(100% - 229px);
 		top: 47px;
 		left: 229px;
+	}
+	@include breakpoint( ">660px" ) {
+		margin-bottom: 58px;
 	}
 }

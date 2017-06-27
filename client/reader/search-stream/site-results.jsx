@@ -14,6 +14,7 @@ import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import ReaderInfiniteStream from 'components/reader-infinite-stream';
 import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
+import { SEARCH_RESULTS_SITES } from 'reader/follow-button/follow-sources';
 import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
 import withWidth from 'lib/with-width';
 
@@ -27,6 +28,7 @@ class SiteResults extends React.Component {
 		searchResults: PropTypes.array,
 		searchResultsCount: PropTypes.number,
 		width: PropTypes.number.isRequired,
+		showLastUpdatedDate: PropTypes.bool,
 	};
 
 	fetchNextPage = offset => {
@@ -41,7 +43,7 @@ class SiteResults extends React.Component {
 	hasNextPage = offset => offset < this.props.searchResultsCount;
 
 	render() {
-		const { query, searchResults, width } = this.props;
+		const { query, searchResults, width, showLastUpdatedDate } = this.props;
 
 		return (
 			<div>
@@ -53,12 +55,11 @@ class SiteResults extends React.Component {
 				<ReaderInfiniteStream
 					items={ searchResults || [ {}, {}, {}, {}, {} ] }
 					width={ width }
-					showLastUpdatedDate={ false }
 					fetchNextPage={ this.fetchNextPage }
 					hasNextPage={ this.hasNextPage }
 					rowRenderer={ siteRowRenderer }
-					renderEventName={ 'search_stream_sites' }
 					passthroughProp={ this.props.sort }
+					extraRenderItemProps={ { showLastUpdatedDate, followSource: SEARCH_RESULTS_SITES } }
 				/>
 			</div>
 		);

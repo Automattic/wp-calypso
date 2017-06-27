@@ -12,6 +12,7 @@ import {
 	areShippingZonesLoading,
 } from './selectors';
 import { fetchShippingZoneMethods } from '../shipping-zone-methods/actions';
+import { fetchShippingZoneLocations } from '../shipping-zone-locations/actions';
 
 export const fetchShippingZonesSuccess = ( siteId, data ) => {
 	return {
@@ -44,6 +45,8 @@ export const fetchShippingZones = ( siteId ) => ( dispatch, getState ) => {
 			dispatch( fetchShippingZonesSuccess( siteId, data ) );
 			return Promise.all( data.map( zone => {
 				return fetchShippingZoneMethods( siteId, zone.id )( dispatch, getState );
-			} ) );
+			} ).concat( data.map( zone => {
+				return fetchShippingZoneLocations( siteId, zone.id )( dispatch, getState );
+			} ) ) );
 		} );
 };

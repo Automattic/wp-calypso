@@ -1,0 +1,87 @@
+
+.orders__container {
+	@include breakpoint( ">660px" ) {
+		margin-top: 58px;
+	}
+
+	thead {
+		.table-row {
+			&:hover {
+				background: transparent;
+			}
+		}
+	}
+}
+
+.orders__item-link,
+.orders__item-name {
+	display: inline-block;
+	font-weight: normal;
+}
+
+.orders__item-link {
+	margin-right: 5px;
+}
+
+.orders__item-status {
+	display: inline-flex;
+	padding: 0px 8px;
+	line-height: 32px;
+	background: lighten( $gray, 20% );
+	border-radius: 4px;
+
+	&.is-failed {
+		background: lighten( $alert-red, 20% );
+		color: darken( $alert-red, 30% );
+
+		span + span {
+			border-color: $alert-red;
+		}
+	}
+
+	&.is-cancelled {
+		background: $gray-light;
+		color: $gray-dark;
+
+		span + span {
+			border-color: $gray-text-min;
+		}
+	}
+
+	&.is-on-hold {
+		background: lighten( $alert-yellow, 20% );
+		color: darken( $alert-yellow, 30% );
+
+		span + span {
+			border-color: $alert-yellow;
+		}
+	}
+
+	&.is-completed {
+		background: lighten( $alert-green, 20% );
+		color: darken( $alert-green, 30% );
+
+		span + span {
+			border-color: $alert-green;
+		}
+	}
+
+	&.is-refunded {
+		background: lighten( $alert-purple, 20% );
+		color: darken( $alert-purple, 30% );
+
+		span + span {
+			border-color: $alert-purple;
+		}
+	}
+
+	span + span {
+		margin-left: 8px;
+		padding-left: 8px;
+		border-left: 1px solid $gray;
+	}
+}
+
+.orders__table-total {
+	text-align: right;
+}

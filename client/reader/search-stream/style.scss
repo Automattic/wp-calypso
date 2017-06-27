@@ -13,10 +13,6 @@
 	margin-bottom: 0;
 }
 
-.is-reader-page .search-stream .reader-post-card.card {
-	width: 100%;
-}
-
 .is-reader-page .search-stream__fixed-area {
 	background-color: $white;
 	position: fixed;
@@ -36,14 +32,15 @@
 
 .search-stream .search-stream__input-card.card {
 	box-shadow: 0 0 0 2px lighten( $gray, 20% ), 0 1px 2px lighten( $gray, 20% );
+	margin-bottom: 0;
 }
 
 // Fix for smaller breakpoint on the new site-search
 .is-reader-page .search-stream__with-sites .search-stream__fixed-area {
-	padding-top: 20px;
+	top: 20px;
 
 	@include breakpoint( ">660px" ) {
-		padding-top: 77px;
+		top: 0;
 	}
 }
 
@@ -82,7 +79,11 @@
 }
 
 .search-stream.search-stream__with-sites .search-stream__single-column-results {
-	padding-top: 150px;
+	padding-top: 130px;
+
+	@include breakpoint( ">660px" ) {
+		padding-top: 150px;
+	}
 }
 
 .search-stream.search-stream__with-sites .search-stream__single-column-results .search-stream__recommendation-list-item:nth-child(2) {
@@ -101,10 +102,21 @@
 	}
 }
 
+.search-stream.search-stream__with-sites .search-stream__post-results .reader__card:nth-child(2) {
+	margin-top: 120px;
+}
+
 // Top margin for site results
+.main.search-stream {
+
+	@include breakpoint( "<660px") {
+		perspective: none; // Fix search bar pushed up behind the masterbar in Safari
+	}
+}
+
 .search-stream.search-stream__with-sites .is-two-columns .search-stream__post-results .reader-post-card:nth-child(2),
 .search-stream.search-stream__with-sites .is-two-columns .search-stream__site-results {
-	margin-top: 150px;
+	margin-top: 135px;
 }
 
 // Search term suggestions
@@ -112,7 +124,7 @@
 	border-bottom: 1px solid lighten( $gray, 20% );
 	font-size: 13px;
 	color: $gray;
-	padding-bottom: 15px;
+	padding: 16px 0;
 	text-align:left;
 
 	a,
@@ -125,19 +137,15 @@
 	}
 
 	@include breakpoint( "<660px" ) {
-		padding-left: 16px;
+		padding: 16px 16px;
 	}
 }
 
-// Custom breakpoints
-$reader-post-card-breakpoint-large: "( min-width: 961px ) and ( max-width: 1040px )";
-$reader-post-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 940px )";
-$reader-post-card-breakpoint-small: "( max-width: 550px )";
-
 // Post recommendations in Search
-.is-reader-page .search-stream .reader__content {
+.is-reader-page .search-stream .reader__content,
+.is-reader-page .search-stream.search-stream__with-sites .reader__content {
 	display: flex;
-	flex-flow: wrap;
+	flex-flow: row wrap;
 }
 
 .is-reader-page .search-stream__recommendation-list-item {
@@ -172,6 +180,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
 			flex-basis: 100%;
+			margin-right: 0;
 		}
 
 		@include breakpoint( "<660px" ) {
@@ -277,26 +286,32 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 // Post and Sites static headers
 .search-stream__headers {
 	color: $gray;
+	display: flex;
 	font-size: 14px;
 	display: flex;
 	font-weight: 600;
 	list-style-type: none;
-	margin: 0;
-	padding-top: 20px;
+	margin: 17px 0 0;
 	text-transform: uppercase;
-}
-
-.search-stream .search-stream__site-header {
-	margin-left: 40px;
-	max-width: 265px;
-	width: 100%;
 }
 
 .search-stream__post-header,
 .search-stream__site-header {
-	border-bottom: 1px solid lighten( $gray, 30% );
-	padding-bottom: 10px;
-	width: 100%;
+	border-bottom: 1px solid lighten( $gray, 20% );
+	padding-bottom: 15px;
+}
+
+.search-stream .search-stream__post-header,
+.search-stream .search-stream__site-header {
+	flex: 1 1 auto;
+}
+
+.search-stream .search-stream__post-header {
+	margin-right: 40px;
+}
+
+.search-stream .search-stream__site-header {
+	max-width: 265px;
 }
 
 // Posts and Sites tabbed headers
@@ -307,10 +322,15 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .search-stream__header .section-nav {
 	background: inherit;
-	border-bottom: 2px solid lighten( $gray, 30% );
+	border-bottom: 1px solid lighten( $gray, 20% );
 	box-shadow: none;
+	height: 53px;
 	margin-bottom: 0;
 	padding-bottom: 0;
+
+	@include breakpoint( ">480px" ) {
+		height: 58px;
+	}
 }
 
 .search-stream__header .section-nav-group {
@@ -366,13 +386,45 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
+.search-stream__results.is-two-columns .reader-subscription-list-item__byline {
+	min-width: 180px;
+	max-width: 180px;
+}
+
+.search-stream__single-column-results .reader-subscription-list-item__options {
+	align-items: flex-end;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	max-width: 25px;
+
+	@include breakpoint( ">660px" ) {
+		align-items: flex-start;
+		min-width: 90px;
+	}
+}
+
+// Hide the last updated date for the moment - see https://github.com/Automattic/wp-calypso/issues/15121
+.search-stream__single-column-results .reader-subscription-list-item__timestamp {
+	display: none;
+}
+
+.search-stream__results.is-two-columns .gridicon__follow {
+	left: 2px;
+}
+
 // Custom styling for cards in post results
 .search-stream__results.is-two-columns {
 	display: flex;
 }
 
+.is-reader-page .search-stream .reader-post-card.card {
+	flex-basis: 100%; // Override the 50% flex-basis for post recommendations
+}
+
 .search-stream__results.is-two-columns .search-stream__post-results {
 	max-width: 660px;
+	width: calc( 100% - 300px );
 
 	.reader-post-card__post {
 
@@ -427,12 +479,17 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .search-stream__results.is-two-columns .search-stream__site-results .gridicons-cog {
-	left: -3px;
-	top: 15px;
+	left: -2px;
+	top: 8px;
+}
+
+.search-stream .reader-subscription-list-item .gridicons-cog {
+	@include breakpoint( "<660px" ) {
+		left: 1px;
+	}
 }
 
 .card.reader-search-card.is-photo {
-
 	@include breakpoint( "<660px" ) {
 		z-index: z-index( 'root', '.reader-search-card' );
 	}

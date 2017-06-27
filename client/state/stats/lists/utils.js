@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { sortBy, toPairs, camelCase, mapKeys, isNumber, get, filter, map, concat, flatten } from 'lodash';
+import { sortBy, toPairs, camelCase, mapKeys, isNumber, get, filter, findIndex, forEach, map, concat, flatten } from 'lodash';
 import { moment, translate } from 'i18n-calypso';
 
 /**
@@ -102,6 +102,43 @@ export function buildExportArray( data, parent = null ) {
  */
 export function getSerializedStatsQuery( query = {} ) {
 	return JSON.stringify( sortBy( toPairs( query ), ( pair ) => pair[ 0 ] ) );
+}
+
+/**
+ * Return delta data in a format used by 'extensions/woocommerce/app/store-stats`. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Object} payload - response
+ * @return {array} - Array of data objects
+ */
+function parseOrderDeltas( payload ) {
+	if ( ! payload || ! payload.deltas || ! payload.delta_fields ) {
+		return [];
+	}
+	const periodFieldIndex = findIndex( payload.delta_fields, ( field ) => field === 'period' );
+
+	const response = [];
+
+	forEach( payload.deltas, ( values, stat ) => {
+		values.forEach( row => {
+			const periodIndex = findIndex( response, ( item ) => item.period === row[ periodFieldIndex ] );
+			if ( periodIndex === -1 ) {
+				const newRow = { period: row[ periodFieldIndex ] };
+				newRow[ stat ] = {};
+				payload.delta_fields.forEach( ( value, index ) => {
+					newRow[ stat ][ value ] = row[ index ];
+				} );
+				response.push( newRow );
+			} else {
+				response[ periodIndex ][ stat ] = {};
+				payload.delta_fields.forEach( ( value, index ) => {
+					response[ periodIndex ][ stat ][ value ] = row[ index ];
+				} );
+			}
+		} );
+	} );
+
+	return response;
 }
 
 /**
@@ -680,7 +717,38 @@ export const normalizers = {
 	},
 
 	statsOrders( payload ) {
-		return parseChartData( payload );
+		return {
+			data: parseChartData( payload ),
+			deltas: parseOrderDeltas( payload ),
+		};
+	},
+
+	statsTopSellers( payload ) {
+		if ( ! payload || ! payload.data ) {
+			return [];
+		}
+		return payload.data;
+	},
+
+	statsTopCategories( payload ) {
+		if ( ! payload || ! payload.data ) {
+			return [];
+		}
+		return payload.data;
+	},
+
+	statsTopCoupons( payload ) {
+		if ( ! payload || ! payload.data ) {
+			return [];
+		}
+		return payload.data;
+	},
+
+	statsTopEarners( payload ) {
+		if ( ! payload || ! payload.data ) {
+			return [];
+		}
+		return payload.data;
 	},
 
 	/*

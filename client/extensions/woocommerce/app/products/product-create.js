@@ -10,15 +10,17 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { successNotice, errorNotice } from 'state/notices/actions';
-
-import { editProduct, editProductAttribute } from 'woocommerce/state/ui/products/actions';
+import { editProduct, editProductAttribute, createProductActionList } from 'woocommerce/state/ui/products/actions';
+import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
+import { getActionList } from 'woocommerce/state/action-list/selectors';
+import { actionListStepNext } from 'woocommerce/state/action-list/actions';
 import { getCurrentlyEditingProduct } from 'woocommerce/state/ui/products/selectors';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
-import { getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
+import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import { createProduct } from 'woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
@@ -27,32 +29,42 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 class ProductCreate extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
-		siteId: PropTypes.number,
+		site: PropTypes.shape( {
+			ID: PropTypes.number,
+			slug: PropTypes.string,
+		} ),
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
 		} ),
 		fetchProductCategories: PropTypes.func.isRequired,
 		editProduct: PropTypes.func.isRequired,
+		editProductCategory: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
+		editProductVariation: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
-		const { product, siteId } = this.props;
+		const { product, site } = this.props;
 
-		if ( ! product ) {
-			this.props.editProduct( null, {
-				type: 'simple'
-			} );
-		}
-
-		if ( siteId ) {
-			this.props.fetchProductCategories( siteId );
+		if ( site && site.ID ) {
+			if ( ! product ) {
+				this.props.editProduct( site.ID, null, {
+					type: 'simple'
+				} );
+			}
+			this.props.fetchProductCategories( site.ID );
 		}
 	}
 
 	componentWillReceiveProps( newProps ) {
-		if ( newProps.siteId !== this.props.siteId ) {
-			this.props.fetchProductCategories( newProps.siteId );
+		const { site } = this.props;
+		const newSiteId = newProps.site && newProps.site.ID || null;
+		const oldSiteId = site && site.ID || null;
+		if ( oldSiteId !== newSiteId ) {
+			this.props.editProduct( newSiteId, null, {
+				type: 'simple'
+			} );
+			this.props.fetchProductCategories( newSiteId );
 		}
 	}
 
@@ -65,7 +77,7 @@ class ProductCreate extends React.Component {
 	}
 
 	onSave = () => {
-		const { siteId, product, translate } = this.props;
+		const { product, translate } = this.props;
 
 		const successAction = successNotice(
 			translate( '%(product)s successfully created.', {
@@ -74,30 +86,46 @@ class ProductCreate extends React.Component {
 			{ duration: 4000 }
 		);
 
-		const errorAction = errorNotice(
+		const failureAction = errorNotice(
 			translate( 'There was a problem saving %(product)s. Please try again.', {
 				args: { product: product.name },
 			} )
 		);
 
-		this.props.createProduct( siteId, product, successAction, errorAction );
+		this.props.createProductActionList( successAction, failureAction );
+		this.props.actionListStepNext();
+	}
+
+	isProductValid( product = this.props.product ) {
+		return product &&
+			product.type &&
+			product.name && product.name.length > 0;
 	}
 
 	render() {
-		const { product, className, variations, productCategories } = this.props;
+		const { site, product, className, variations, productCategories, actionList } = this.props;
+
+		const isValid = 'undefined' !== site && this.isProductValid();
+		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
+		const saveEnabled = isValid && ! isBusy;
 
 		return (
 			<Main className={ className }>
 				<SidebarNavigation />
 				<ProductHeader
+					site={ site }
+					product={ product }
 					onTrash={ this.onTrash }
-					onSave={ this.onSave }
+					onSave={ saveEnabled ? this.onSave : false }
+					isBusy={ isBusy }
 				/>
 				<ProductForm
+					siteId={ site && site.ID }
 					product={ product || { type: 'simple' } }
 					variations={ variations }
 					productCategories={ productCategories }
 					editProduct={ this.props.editProduct }
+					editProductCategory={ this.props.editProductCategory }
 					editProductAttribute={ this.props.editProductAttribute }
 					editProductVariation={ this.props.editProductVariation }
 				/>
@@ -107,24 +135,29 @@ class ProductCreate extends React.Component {
 }
 
 function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSiteWithFallback( state );
 	const product = getCurrentlyEditingProduct( state );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
-	const productCategories = getProductCategories( state, siteId );
+	const productCategories = getProductCategoriesWithLocalEdits( state );
+	const actionList = getActionList( state );
 
 	return {
-		siteId,
+		site,
 		product,
 		variations,
 		productCategories,
+		actionList,
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			actionListStepNext,
 			createProduct,
+			createProductActionList,
 			editProduct,
+			editProductCategory,
 			editProductAttribute,
 			editProductVariation,
 			fetchProductCategories,

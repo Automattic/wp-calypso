@@ -115,8 +115,10 @@ export class WebPreview extends Component {
 WebPreview.propTypes = {
 	// Display the preview
 	showPreview: PropTypes.bool,
-	// Show external link button (only if there is a previewUrl)
+	// Show external link button
 	showExternal: PropTypes.bool,
+	// Show external link with clipboard input
+	showUrl: PropTypes.bool,
 	// Show close button
 	showClose: PropTypes.bool,
 	// Show SEO button
@@ -142,6 +144,8 @@ WebPreview.propTypes = {
 	onLoad: PropTypes.func,
 	// Called when the preview is closed, either via the 'X' button or the escape key
 	onClose: PropTypes.func,
+	// Called when the edit button is clicked
+	onEdit: PropTypes.func,
 	// Optional loading message to display during loading
 	loadingMessage: PropTypes.string,
 	// The iframe's title element, used for accessibility purposes
@@ -161,6 +165,7 @@ WebPreview.defaultProps = {
 	previewMarkup: null,
 	onLoad: noop,
 	onClose: noop,
+	onEdit: noop,
 	hasSidebar: false,
 };
 

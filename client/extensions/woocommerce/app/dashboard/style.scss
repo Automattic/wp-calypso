@@ -35,7 +35,7 @@
 	@include breakpoint( ">960px" ) {
 		margin-left: -32px;
 		margin-right: -32px;
-		padding: 32px;
+		padding: 24px 32px;
 		align-items: center;
 	}
 
@@ -46,13 +46,14 @@
 		text-align: center;
 		width: 24px;
 		flex-shrink: 0;
-		border-radius: 100%;
+		border-radius: 4px;
 		margin-right: 24px;
-		margin-top: 4px;
+		margin-top: 2px;
 
 		@include breakpoint( ">960px" ) {
 			height: 48px;
 			width: 48px;
+			margin-top: -8px;
 		}
 
 		.gridicon {
@@ -111,10 +112,23 @@
 
 		.dashboard__setup-task-secondary-actions {
 			a {
+				cursor: pointer;
 				font-size: 12px;
 			}
 		}
 	}
+}
+
+.dashboard__location {
+	padding: 16px;
+
+	@include breakpoint( ">960px" ) {
+		padding: 32px 32px 16px 32px;
+	}
+}
+
+.dashboard__location .dashboard__setup-footer {
+	padding: 16px 32px 0 32px;
 }
 
 .dashboard__setup-footer {
@@ -131,5 +145,92 @@
 		margin-left: -32px;
 		margin-right: -32px;
 		padding: 32px 32px 0 32px;
+	}
+}
+
+.dashboard__stats-widget {
+	background-image: url( '/calypso/images/extensions/woocommerce/woocommerce-sample-graph.svg' );
+	background-position: center bottom;
+	background-repeat: no-repeat;
+	background-size: 120%;
+	min-height: 290px;
+}
+
+.dashboard__manage-has-orders-header {
+	margin-bottom: 24px;
+	text-align: center;
+
+	h2 {
+		font-size: 24px;
+
+		span {
+			display: block;
+		}
+	}
+}
+
+.dashboard__manage-has-orders-stats-actions {
+	padding: 24px;
+	text-align: center;
+}
+
+.dashboard__manage-has-orders {
+	.dashboard__reports-widget {
+		overflow: hidden;
+		text-align: center;
+
+		@include breakpoint( ">960px" ) {
+			text-align: left;
+			padding-left: 48px;
+		}
+
+		.dashboard__reports-widget-content-wrapper {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			@include breakpoint( ">960px" ) {
+				flex-direction: row;
+			}
+		}
+
+		@include breakpoint( ">960px" ) {
+			text-align: left;
+		}
+
+		h2 {
+			font-size: 24px;
+			line-height: 1.2em;
+			margin-bottom: 16px;
+		}
+
+		.dashboard__reports-widget-content {
+			@include breakpoint( ">960px" ) {
+				order: 0;
+			}
+		}
+
+		img {
+			margin-bottom: 1.5em;
+			max-width: 200px;
+			margin-top: 1em;
+
+			@include breakpoint( ">960px" ) {
+				margin-bottom: 0;
+				order: 1;
+				transform: translateY( 31px );
+				max-width: none;
+				margin-top: 0;
+			}
+		}
+
+		p {
+			color: $gray-text-min;
+			font-size: 14px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
 	}
 }

@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import {
 	isTwoFactorAuthTypeSupported,
 } from 'state/login/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode } from 'state/login/actions';
 import { login } from 'lib/paths';
 
@@ -20,6 +21,7 @@ class TwoFactorActions extends Component {
 	static propTypes = {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
 		isSmsSupported: PropTypes.bool.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
@@ -28,9 +30,19 @@ class TwoFactorActions extends Component {
 	sendSmsCode = ( event ) => {
 		event.preventDefault();
 
+		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_sms_link_click' );
+
 		page( login( { isNative: true, twoFactorAuthType: 'sms' } ) );
 
-		this.props.sendSmsCode( );
+		this.props.sendSmsCode();
+	};
+
+	recordAuthenticatorLinkClick = ( event ) => {
+		event.preventDefault();
+
+		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_authenticator_link_click' );
+
+		page( login( { isNative: true, twoFactorAuthType: 'authenticator' } ) );
 	};
 
 	render() {
@@ -64,7 +76,7 @@ class TwoFactorActions extends Component {
 
 				{ isAuthenticatorAvailable && (
 					<p>
-						<a href={ login( { isNative: true, twoFactorAuthType: 'authenticator' } ) }>
+						<a href="#" onClick={ this.recordAuthenticatorLinkClick }>
 							{ translate( 'Your Authenticator app' ) }
 						</a>
 					</p>
@@ -80,6 +92,7 @@ export default connect(
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 	} ),
 	{
+		recordTracksEvent,
 		sendSmsCode,
 	}
 )( localize( TwoFactorActions ) );

@@ -6,6 +6,11 @@ import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
+import { urlToDomainAndPath } from 'lib/url';
+
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
 		authorAvatarUrl: PropTypes.string,
@@ -17,6 +22,7 @@ export class CommentDetailAuthor extends Component {
 		authorUsername: PropTypes.string,
 		blockUser: PropTypes.func,
 		commentDate: PropTypes.string,
+		commentStatus: PropTypes.string,
 		showAuthorInfo: PropTypes.bool,
 	};
 
@@ -52,9 +58,7 @@ export class CommentDetailAuthor extends Component {
 			<div className="comment-detail__author-more-info">
 				<div className="comment-detail__author-more-actions">
 					<div className="comment-detail__author-more-element comment-detail__author-more-element-author">
-						<div className="comment-detail__author-avatar">
-							<img className="comment-detail__author-avatar-image" src={ authorAvatarUrl } />
-						</div>
+						<img className="comment-detail__author-avatar" src={ authorAvatarUrl } />
 						<div className="comment-detail__author-info">
 							<div className="comment-detail__author-name">
 								<strong>
@@ -68,37 +72,36 @@ export class CommentDetailAuthor extends Component {
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="mail" />
-								<span>
-									{ authorEmail }
-								</span>
+						<span>
+							{ authorEmail }
+						</span>
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="link" />
-								<span>
-									{ authorUrl }
-								</span>
+						<span>
+							{ authorUrl }
+						</span>
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="globe" />
-								<span>
-									{ authorIp }
-								</span>
+						<span>
+							{ authorIp }
+						</span>
 					</div>
 				</div>
 				<div className="comment-detail__author-more-actions">
 					<a
 						className={ classNames(
-									'comment-detail__author-more-element comment-detail__author-more-element-block-user',
-									{ 'is-blocked': authorIsBlocked }
-								) }
+							'comment-detail__author-more-element comment-detail__author-more-element-block-user',
+							{ 'is-blocked': authorIsBlocked }
+						) }
 						onClick={ blockUser }
 					>
 						<Gridicon icon="block" />
-								<span>{
-									authorIsBlocked
-										? translate( 'Unblock user' )
-										: translate( 'Block user' )
-								}</span>
+						<span>{ authorIsBlocked
+							? translate( 'Unblock user' )
+							: translate( 'Block user' )
+						}</span>
 					</a>
 				</div>
 			</div>
@@ -111,8 +114,10 @@ export class CommentDetailAuthor extends Component {
 			authorDisplayName,
 			authorUrl,
 			commentDate,
+			commentStatus,
 			moment,
 			showAuthorInfo,
+			translate,
 		} = this.props;
 		const { isExpanded } = this.state;
 
@@ -123,25 +128,25 @@ export class CommentDetailAuthor extends Component {
 		return (
 			<div className={ classes }>
 				<div className="comment-detail__author-preview">
-					<div className="comment-detail__author-avatar">
-						<img
-							className="comment-detail__author-avatar-image"
-							src={ authorAvatarUrl }
-						/>
-					</div>
+					<img className="comment-detail__author-avatar" src={ authorAvatarUrl } />
 					<div className="comment-detail__author-info">
 						<div className="comment-detail__author-info-element comment-detail__author-name">
 							<strong>
 								{ authorDisplayName }
 							</strong>
 							<span>
-								{ authorUrl }
+								{ urlToDomainAndPath( authorUrl ) }
 							</span>
 						</div>
 						<div className="comment-detail__author-info-element comment-detail__comment-date">
 							{ moment( commentDate ).format( 'MMMM D, YYYY H:mma' ) }
 						</div>
 					</div>
+					{ 'unapproved' === commentStatus &&
+						<div className="comment-detail__status-label is-unapproved">
+							{ translate( 'Pending' ) }
+						</div>
+					}
 					{
 						showAuthorInfo &&
 						<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>

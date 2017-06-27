@@ -60,7 +60,7 @@
 		@include breakpoint( ">960px" ) {
 			left: 24px;
 			right: 24px;
-			width: calc( 100% - 48px ); /* IE11 fix */
+			width: calc( 100% - 46px ); /* IE11 fix */
 		}
 	}
 
@@ -88,38 +88,43 @@
 }
 
 .web-preview__toolbar {
-	height: 48px;
+	height: 46px;
 	background: $white;
 	border-bottom: 1px solid lighten( $gray, 20% );
 	border-radius: 4px 4px 0 0;
 	display: flex;
 }
 
-.web-preview__close,
-a.web-preview__external {
+.web-preview__close.button,
+a.web-preview__external.button {
 	color: $gray;
-	padding: 12px 16px;
+	padding: 6px 10px;
 
 	cursor: pointer;
 
 	&:hover {
 		color: $gray-dark;
 	}
+}
+
+.web-preview__close.button {
+	border-right: 1px solid lighten( $gray, 25% );
 
 	.gridicon {
-		vertical-align: middle;
+		top: 4px;
 	}
 }
 
-.web-preview__close {
-	height: 49px;
-	cursor: pointer;
+a.web-preview__external.button {
+	.gridicon {
+		top: 6px;
+	}
 }
 
-.web-preview__edit {
+.web-preview__edit.button {
 	color: $gray;
 	border: none;
-	padding: 15px 12px;
+	padding: 6px 12px;
 
 	&:visited {
 		color: $gray;
@@ -140,8 +145,44 @@ a.web-preview__external {
 
 .web-preview__device-switcher {
 	display: flex;
-	margin: 6px 0 0 8px;
+	margin: 6px 0 0 12px;
 	width: 200px;
+}
+
+.web-preview__url-clipboard-input {
+	flex-grow: 1;
+	margin: 6px 10px;
+	width: auto;
+
+	.form-text-input {
+		color: $gray;
+		font-size: 14px;
+		height: 35px;
+		border-color: transparent;
+		text-overflow: ellipsis;
+	}
+
+	&:hover .form-text-input {
+		border-color: lighten( $gray, 20% );
+	}
+
+	.clipboard-button {
+		display: none;
+	}
+
+	&:hover .clipboard-button {
+		display: block;
+	}
+
+	@include breakpoint( ">660px" ) {
+		max-width: 50%;
+	}
+
+	@include breakpoint( ">960px" ) {
+		margin: 6px auto;
+		width: 35%;
+		flex-grow: inherit;
+	}
 }
 
 .web-preview__device-button {

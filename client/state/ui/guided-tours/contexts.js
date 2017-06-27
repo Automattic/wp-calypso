@@ -23,7 +23,7 @@ import {
 	isCurrentPlanPaid,
 } from 'state/sites/selectors';
 
-const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
+export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
 /**
  * Returns a selector that tests if the current user is in a given section
@@ -56,14 +56,24 @@ const timeSinceUserRegistration = state => {
 };
 
 /**
+ * Returns a selector that tests if the user is newer than a given time
+ *
+ * @param {Number} age Number of milliseconds
+ * @return {Function} Selector function
+ */
+export const isUserNewerThan = age => state => {
+	const userAge = timeSinceUserRegistration( state );
+	return userAge !== false ? userAge <= age : false;
+};
+
+/**
  * Returns true if the user is considered "new" (less than a week since registration)
  *
  * @param {Object} state Global state tree
  * @return {Boolean} True if user is new, false otherwise
  */
 export const isNewUser = state => {
-	const userAge = timeSinceUserRegistration( state );
-	return userAge !== false ? userAge <= WEEK_IN_MILLISECONDS : false;
+	return isUserNewerThan( WEEK_IN_MILLISECONDS )( state );
 };
 
 /**

@@ -11,12 +11,12 @@ import {
 import SocialLogo from 'social-logos';
 
 const services = translate => ( {
-	facebook: { icon: 'facebook', label: translate( 'Facebook feed' ) },
+	facebook: { icon: 'facebook', label: translate( 'Facebook' ) },
 	google: { icon: 'google', label: translate( 'Google search' ) },
 	google_plus: { icon: 'google-plus', label: translate( 'Google+ ' ) },
-	linkedin: { icon: 'linkedin', label: translate( 'LinkedIn share' ) },
-	tumblr: { icon: 'tumblr', label: translate( 'Tumblr post' ) },
-	twitter: { icon: 'twitter', label: translate( 'Twitter card' ) },
+	linkedin: { icon: 'linkedin', label: translate( 'LinkedIn' ) },
+	tumblr: { icon: 'tumblr', label: translate( 'Tumblr' ) },
+	twitter: { icon: 'twitter', label: translate( 'Twitter' ) },
 	wordpress: { icon: 'wordpress', label: translate( 'WordPress.com Reader' ) }
 } );
 

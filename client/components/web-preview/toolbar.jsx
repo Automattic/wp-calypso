@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
+import ClipboardButtonInput from 'components/clipboard-button-input';
 
 const possibleDevices = [
 	'computer',
@@ -23,6 +24,8 @@ class PreviewToolbar extends Component {
 	static propTypes = {
 		// Show device viewport switcher
 		showDeviceSwitcher: PropTypes.bool,
+		// Show external link with clipboard input
+		showUrl: PropTypes.bool,
 		// Show external link button
 		showExternal: PropTypes.bool,
 		// Show close button
@@ -41,6 +44,8 @@ class PreviewToolbar extends Component {
 		setDeviceViewport: PropTypes.func,
 		// Called when the close button is pressed
 		onClose: PropTypes.func.isRequired,
+		// Called when the edit button is clicked
+		onEdit: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -63,11 +68,14 @@ class PreviewToolbar extends Component {
 			device: currentDevice,
 			editUrl,
 			externalUrl,
+			isModalWindow,
 			onClose,
+			onEdit,
 			previewUrl,
 			setDeviceViewport,
 			showClose,
 			showDeviceSwitcher,
+			showUrl,
 			showEdit,
 			showExternal,
 			showSEO,
@@ -80,14 +88,15 @@ class PreviewToolbar extends Component {
 		return (
 			<div className="web-preview__toolbar">
 				{ showClose &&
-					<button
+					<Button
+						borderless
 						aria-label={ translate( 'Close preview' ) }
 						className="web-preview__close"
 						data-tip-target="web-preview__close"
 						onClick={ onClose }
 					>
-						<Gridicon icon="cross" />
-					</button>
+						<Gridicon icon={ isModalWindow ? 'cross' : 'arrow-left' } />
+					</Button>
 				}
 				{ showDeviceSwitcher &&
 					<SelectDropdown
@@ -108,25 +117,33 @@ class PreviewToolbar extends Component {
 						) ) }
 					</SelectDropdown>
 				}
+				{ showUrl &&
+					<ClipboardButtonInput
+						className="web-preview__url-clipboard-input"
+						value={ externalUrl || previewUrl }
+					/>
+				}
 				<div className="web-preview__toolbar-actions">
 					{ showEdit &&
 						<Button
+							borderless
 							className="web-preview__edit"
 							href={ editUrl }
-							onClick={ onClose }
+							onClick={ onEdit }
 						>
 							<Gridicon icon="pencil" /> { translate( 'Edit' ) }
 						</Button>
 					}
 					{ showExternal &&
-						<a
+						<Button
+							borderless
 							className="web-preview__external"
 							href={ externalUrl || previewUrl }
 							target="_blank"
 							rel="noopener noreferrer"
 						>
 							<Gridicon icon="external" />
-						</a>
+						</Button>
 					}
 					<div className="web-preview__toolbar-tray">
 						{ this.props.children }

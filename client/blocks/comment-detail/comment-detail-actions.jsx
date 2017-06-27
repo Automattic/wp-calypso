@@ -76,8 +76,8 @@ export const CommentDetailActions = ( {
 					<Gridicon icon="spam" />
 					<span>{
 						isSpam
-							? translate( 'Spam' )
-							: translate( 'Mark as Spam' )
+							? translate( 'Spammed' )
+							: translate( 'Spam' )
 					}</span>
 				</a>
 			}

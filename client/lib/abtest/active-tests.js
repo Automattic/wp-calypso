@@ -36,8 +36,8 @@ module.exports = {
 	newSiteWithJetpack: {
 		datestamp: '20170419',
 		variations: {
-			showNewJetpackSite: 10,
-			onlyDotComSites: 90,
+			showNewJetpackSite: 50,
+			onlyDotComSites: 50,
 		},
 		defaultVariation: 'onlyDotComSites',
 	},
@@ -48,15 +48,6 @@ module.exports = {
 			hide: 50,
 		},
 		defaultVariation: 'show',
-		allowExistingUsers: true,
-	},
-	domainToPaidPlanUpsellNudge: {
-		datestamp: '20170607',
-		variations: {
-			skip: 50,
-			show: 50,
-		},
-		defaultVariation: 'skip',
 		allowExistingUsers: true,
 	},
 	ATPromptOnCancel: {
@@ -92,16 +83,6 @@ module.exports = {
 			show: 50,
 		},
 		defaultVariation: 'show',
-	},
-	pulsingCartTestingAB: {
-		datestamp: '20170601',
-		variations: {
-			original: 50,
-			modified: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 	signupProgressIndicator: {
 		datestamp: '20170612',

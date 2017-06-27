@@ -10,11 +10,15 @@ import { keyBy } from 'lodash';
  */
 import {
 	isLoading,
+	isQueryLoading,
 	items,
-	pages,
+	queries,
 	totalPages,
 } from '../reducer';
 import {
+	WOOCOMMERCE_ORDER_REQUEST,
+	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
+	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
 	WOOCOMMERCE_ORDERS_REQUEST,
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
@@ -29,14 +33,53 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( {} );
 		} );
 
+		it( 'should store the currently loading order', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_REQUEST,
+				siteId: 123,
+				orderId: 45,
+			};
+			const newState = isLoading( undefined, action );
+			expect( newState ).to.eql( { 45: true } );
+		} );
+
+		it( 'should should show that request has loaded on success', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
+				siteId: 123,
+				orderId: 45,
+				order,
+			};
+			const newState = isLoading( { 45: true }, action );
+			expect( newState ).to.eql( { 45: false } );
+		} );
+
+		it( 'should should show that request has loaded on failure', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
+				siteId: 123,
+				orderId: 45,
+				error: {},
+			};
+			const newState = isLoading( { 45: true }, action );
+			expect( newState ).to.eql( { 45: false } );
+		} );
+	} );
+
+	describe( 'isQueryLoading', () => {
+		it( 'should have no change by default', () => {
+			const newState = isQueryLoading( undefined, {} );
+			expect( newState ).to.eql( {} );
+		} );
+
 		it( 'should store the currently loading page', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST,
 				siteId: 123,
 				page: 1,
 			};
-			const newState = isLoading( undefined, action );
-			expect( newState ).to.eql( { 1: true } );
+			const newState = isQueryLoading( undefined, action );
+			expect( newState ).to.eql( { '{page:1}': true } );
 		} );
 
 		it( 'should should show that request has loaded on success', () => {
@@ -45,10 +88,10 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 1,
 				totalPages: 4,
-				orders
+				orders,
 			};
-			const newState = isLoading( { 1: true }, action );
-			expect( newState ).to.eql( { 1: false } );
+			const newState = isQueryLoading( { '{page:1}': true }, action );
+			expect( newState ).to.eql( { '{page:1}': false } );
 		} );
 
 		it( 'should should show that request has loaded on failure', () => {
@@ -56,10 +99,10 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
 				page: 1,
-				error: {}
+				error: {},
 			};
-			const newState = isLoading( { 1: true }, action );
-			expect( newState ).to.eql( { 1: false } );
+			const newState = isQueryLoading( { '{page:1}': true }, action );
+			expect( newState ).to.eql( { '{page:1}': false } );
 		} );
 	} );
 
@@ -75,7 +118,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 1,
 				totalPages: 4,
-				orders
+				orders,
 			};
 			const newState = items( undefined, action );
 			const ordersById = keyBy( orders, 'id' );
@@ -88,7 +131,19 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 2,
 				totalPages: 4,
-				orders: [ order ]
+				orders: [ order ],
+			};
+			const originalState = deepFreeze( keyBy( orders, 'id' ) );
+			const newState = items( originalState, action );
+			expect( newState ).to.eql( { ...originalState, 40: order } );
+		} );
+
+		it( 'should add new single orders onto the existing order list', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
+				siteId: 123,
+				orderId: 40,
+				order,
 			};
 			const originalState = deepFreeze( keyBy( orders, 'id' ) );
 			const newState = items( originalState, action );
@@ -100,7 +155,7 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
 				page: 1,
-				error: {}
+				error: {},
 			};
 			const originalState = deepFreeze( keyBy( orders, 'id' ) );
 			const newState = items( originalState, action );
@@ -108,9 +163,9 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'pages', () => {
+	describe( 'queries', () => {
 		it( 'should have no change by default', () => {
-			const newState = pages( undefined, {} );
+			const newState = queries( undefined, {} );
 			expect( newState ).to.eql( {} );
 		} );
 
@@ -120,10 +175,10 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 1,
 				totalPages: 4,
-				orders
+				orders,
 			};
-			const newState = pages( undefined, action );
-			expect( newState ).to.eql( { 1: [ 35, 26 ] } );
+			const newState = queries( undefined, action );
+			expect( newState ).to.eql( { '{page:1}': [ 35, 26 ] } );
 		} );
 
 		it( 'should add the next page of orders as a second list', () => {
@@ -132,11 +187,11 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 2,
 				totalPages: 4,
-				orders: [ order ]
+				orders: [ order ],
 			};
-			const originalState = deepFreeze( { 1: [ 35, 26 ] } );
-			const newState = pages( originalState, action );
-			expect( newState ).to.eql( { ...originalState, 2: [ 40 ] } );
+			const originalState = deepFreeze( { '{page:1}': [ 35, 26 ] } );
+			const newState = queries( originalState, action );
+			expect( newState ).to.eql( { ...originalState, '{page:2}': [ 40 ] } );
 		} );
 
 		it( 'should do nothing on a failure', () => {
@@ -144,10 +199,10 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
 				page: 1,
-				error: {}
+				error: {},
 			};
-			const originalState = deepFreeze( { 1: [ 35, 26 ] } );
-			const newState = pages( originalState, action );
+			const originalState = deepFreeze( { '{page:1}': [ 35, 26 ] } );
+			const newState = queries( originalState, action );
 			expect( newState ).to.eql( originalState );
 		} );
 	} );
@@ -164,7 +219,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 1,
 				totalPages: 4,
-				orders
+				orders,
 			};
 			const newState = totalPages( undefined, action );
 			expect( newState ).to.eql( 4 );
@@ -176,7 +231,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 2,
 				totalPages: 4,
-				orders: [ order ]
+				orders: [ order ],
 			};
 			const originalState = deepFreeze( 4 );
 			const newState = totalPages( originalState, action );
@@ -188,7 +243,7 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
 				page: 1,
-				error: {}
+				error: {},
 			};
 			const originalState = deepFreeze( 4 );
 			const newState = totalPages( originalState, action );

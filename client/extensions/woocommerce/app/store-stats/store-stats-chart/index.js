@@ -5,7 +5,8 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import page from 'page';
-import { findIndex } from 'lodash';
+import { findIndex, find } from 'lodash';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,11 +18,11 @@ import ElementChart from 'components/chart';
 import Legend from 'components/chart/legend';
 import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
-import { calculateDelta } from 'woocommerce/app/store-stats/utils';
+import Delta from 'woocommerce/components/delta';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
-		data: PropTypes.array.isRequired,
+		data: PropTypes.object.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		path: PropTypes.string.isRequired,
 		query: PropTypes.object.isRequired,
@@ -59,13 +60,22 @@ class StoreStatsChart extends Component {
 		};
 	};
 
+	getDeltasBySelectedPeriod = () => {
+		return find( this.props.data.deltas, ( item ) => item.period === this.props.selectedDate );
+	};
+
+	getDeltaByStat = ( stat ) => {
+		return this.getDeltasBySelectedPeriod()[ stat ];
+	};
+
 	getSelectedIndex = data => {
 		return findIndex( data, d => d.period === this.props.selectedDate );
 	};
 
 	render() {
-		const { siteId, query, data, unit } = this.props;
+		const { siteId, query, data } = this.props;
 		const { selectedTabIndex } = this.state;
+		const orderData = data.data;
 		const tabs = [
 			{ label: 'Gross Sales', attr: 'gross_sales' },
 			{ label: 'Net Sales', attr: 'net_sales' },
@@ -73,9 +83,9 @@ class StoreStatsChart extends Component {
 			{ label: 'Average Order Value', attr: 'avg_order_value' },
 		];
 		const selectedTab = tabs[ selectedTabIndex ];
-		const isLoading = ! data.length;
-		const chartData = data.map( item => this.buildChartData( item, selectedTab ) );
-		const selectedIndex = this.getSelectedIndex( data );
+		const isLoading = ! orderData.length;
+		const chartData = orderData.map( item => this.buildChartData( item, selectedTab ) );
+		const selectedIndex = this.getSelectedIndex( orderData );
 		return (
 			<Card className="store-stats-chart stats-module">
 				{ siteId && <QuerySiteStats
@@ -90,19 +100,23 @@ class StoreStatsChart extends Component {
 				<Tabs data={ chartData }>
 					{ tabs.map( ( tab, tabIndex ) => {
 						if ( ! isLoading ) {
-							const itemChartData = this.buildChartData( data[ selectedIndex ], tabs[ tabIndex ] );
-							const delta = calculateDelta( data[ selectedIndex ], data[ selectedIndex - 1 ], tabs[ tabIndex ].attr, unit );
+							const itemChartData = this.buildChartData( orderData[ selectedIndex ], tabs[ tabIndex ] );
+							const delta = this.getDeltaByStat( tab.attr );
+							const deltaValue = Math.abs( Math.round( delta.percentage_change * 100 ) );
 							return (
 								<Tab
 									key={ tab.attr }
 									index={ tabIndex }
+									label={ tab.label }
 									selected={ tabIndex === selectedTabIndex }
 									tabClick={ this.tabClick }
 								>
-									<div>{ tab.label }</div>
-									<div>{ itemChartData.value }</div>
-									<div>{ delta.value }</div>
-									<div>{ delta.since }</div>
+									<span className="store-stats-chart__value value">{ itemChartData.value }</span>
+									<Delta
+										value={ `${ deltaValue }%` }
+										className={ `${ delta.favorable } ${ delta.direction }` }
+										suffix={ `since ${ moment( delta.reference_period ).format( 'MMM D' ) }` }
+									/>
 								</Tab>
 							);
 						}

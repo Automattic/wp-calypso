@@ -8,6 +8,7 @@ import { pick } from 'lodash';
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
 import restoreHandler from './to';
+import restoreStatusHandler from './restore-status';
 import {
 	REWIND_STATUS_REQUEST,
 } from 'state/action-types';
@@ -52,4 +53,8 @@ const statusHandler = {
 	) ],
 };
 
-export default mergeHandlers( restoreHandler, statusHandler );
+export default mergeHandlers(
+	restoreHandler,
+	restoreStatusHandler,
+	statusHandler
+);

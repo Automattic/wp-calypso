@@ -109,6 +109,18 @@ function urlToSlug( url ) {
 }
 
 /**
+ * Removes the `http(s)://` part and the trailing slash from an URL.
+ * "http://blog.wordpress.com" will be converted into "blog.wordpress.com".
+ * "https://www.wordpress.com/blog/" will be converted into "www.wordpress.com/blog".
+ *
+ * @param  {String} urlToConvert The URL to convert
+ * @return {String} The URL's domain and path
+ */
+function urlToDomainAndPath( urlToConvert ) {
+	return withoutHttp( urlToConvert ).replace( /\/$/, '' );
+}
+
+/**
  * Checks if the supplied string appears to be a URL.
  * Looks only for the absolute basics:
  *  - does it have a .suffix?
@@ -151,6 +163,7 @@ export default {
 	addSchemeIfMissing,
 	setUrlScheme,
 	urlToSlug,
+	urlToDomainAndPath,
 	// [TODO]: Move lib/route/add-query-args contents here
 	addQueryArgs,
 	resemblesUrl,

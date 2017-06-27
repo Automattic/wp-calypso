@@ -21,6 +21,7 @@ import VerticalMenu from 'components/vertical-menu';
 class ProductFormVariationsModal extends React.Component {
 
 	static propTypes = {
+		siteId: PropTypes.number,
 		product: PropTypes.object.isRequired,
 		variations: PropTypes.array.isRequired,
 		editProductVariation: PropTypes.func.isRequired,
@@ -46,10 +47,10 @@ class ProductFormVariationsModal extends React.Component {
 	 * same TinyMCE instance for different descriptions.
 	 */
 	editorComponent = ( variationId ) => {
-		const { product, variations, editProductVariation } = this.props;
+		const { siteId, product, variations, editProductVariation } = this.props;
 		const variation = find( variations, ( v ) => variationId === v.id );
 		const setDescription = debounce( ( description ) => {
-			editProductVariation( product, variation, { description } );
+			editProductVariation( siteId, product, variation, { description } );
 		}, 200 );
 		return <CompactTinyMCE
 				value={ variation.description || '' }
@@ -64,16 +65,16 @@ class ProductFormVariationsModal extends React.Component {
 	}
 
 	setSku = ( sku ) => {
-		const { product, editProductVariation } = this.props;
+		const { siteId, product, editProductVariation } = this.props;
 		const variation = this.selectedVariation();
-		editProductVariation( product, variation, { sku } );
+		editProductVariation( siteId, product, variation, { sku } );
 	}
 
 	toggleVisible() {
-		const { product, editProductVariation } = this.props;
+		const { siteId, product, editProductVariation } = this.props;
 		const variation = this.selectedVariation();
 		const status = 'publish' === variation.status ? 'private' : 'publish';
-		editProductVariation( product, variation, { status } );
+		editProductVariation( siteId, product, variation, { status } );
 	}
 
 	switchVariation( selectedVariation ) {
@@ -122,7 +123,7 @@ class ProductFormVariationsModal extends React.Component {
 						<FormLabel htmlFor="description">{ translate( 'Description' ) }</FormLabel>
 						<Editor />
 						<FormSettingExplanation>{ translate(
-								'This will be displayed in addition to the main product description when this variation is selected.'
+								'This additional information will be displayed when a customer choses this variation.'
 						) }</FormSettingExplanation>
 					</FormFieldSet>
 
@@ -134,7 +135,7 @@ class ProductFormVariationsModal extends React.Component {
 						/>
 					</FormLabel>
 					<FormSettingExplanation>{ translate(
-						'Hidden variations cannot be selected for purchase by customers.'
+						'Hide variations you don’t want to offer to customers.'
 					) }</FormSettingExplanation>
 				</div>
 			</div>

@@ -17,6 +17,7 @@ import {
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
 	COMMENTS_ERROR,
+	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_RECEIVE,
 	COMMENTS_REMOVE,
@@ -148,7 +149,7 @@ describe( 'reducer', () => {
 			expect( result[ '1-1' ][ 0 ].placeholderState ).to.equal( PLACEHOLDER_STATE.ERROR );
 			expect( result[ '1-1' ][ 0 ].placeholderError ).to.equal( 'error_message' );
 		} );
-	} ); // end of items
+	} );
 
 	describe( '#totalCommentsCount()', () => {
 		it( 'should update post comments count', () => {
@@ -161,5 +162,17 @@ describe( 'reducer', () => {
 
 			expect( response[ '1-1' ] ).to.eql( 123 );
 		} );
-	} ); // end of totalCommentsCount
+
+		it( 'should increment post comment count', () => {
+			const response = totalCommentsCount( {
+				'1-1': 1
+			}, {
+				type: COMMENTS_COUNT_INCREMENT,
+				siteId: 1,
+				postId: 1
+			} );
+
+			expect( response[ '1-1' ] ).to.eql( 2 );
+		} );
+	} );
 } );

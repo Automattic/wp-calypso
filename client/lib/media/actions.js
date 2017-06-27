@@ -62,8 +62,6 @@ MediaActions.fetch = function( siteId, itemId ) {
 };
 
 MediaActions.fetchNextPage = function( siteId ) {
-	var query;
-
 	if ( MediaListStore.isFetchingNextPage( siteId ) ) {
 		return;
 	}
@@ -73,10 +71,8 @@ MediaActions.fetchNextPage = function( siteId ) {
 		siteId: siteId
 	} );
 
-	query = MediaListStore.getNextPageQuery( siteId );
-
-	debug( 'Fetching media for %d using query %o', siteId, query );
-	wpcom.site( siteId ).mediaList( query, function( error, data ) {
+	const query = MediaListStore.getNextPageQuery( siteId );
+	const mediaReceived = ( error, data ) => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_MEDIA_ITEMS',
 			error: error,
@@ -84,18 +80,55 @@ MediaActions.fetchNextPage = function( siteId ) {
 			data: data,
 			query: query
 		} );
-	} );
+	};
+
+	debug( 'Fetching media for %d using query %o', siteId, query );
+
+	if ( ! query.source ) {
+		wpcom.site( siteId ).mediaList( query, mediaReceived );
+	} else {
+		wpcom.undocumented().externalMediaList( query, mediaReceived );
+	}
 };
 
-MediaActions.add = function( siteId, files ) {
-	if ( files instanceof window.FileList ) {
-		files = [ ...files ];
+const getExternalUploader = service => ( file, siteId ) => {
+	return wpcom.undocumented().site( siteId ).uploadExternalMedia( service, [ file.guid ] );
+};
+
+const getFileUploader = () => ( file, siteId ) => {
+	// Determine upload mechanism by object type
+	const isUrl = 'string' === typeof file;
+
+	// Assign parent ID if currently editing post
+	const post = PostEditStore.get();
+	const title = file.title;
+	if ( post && post.ID ) {
+		file = {
+			parent_id: post.ID,
+			[ isUrl ? 'url' : 'file' ]: file
+		};
+	} else if ( file.fileContents ) {
+		//if there's no parent_id, but the file object is wrapping a Blob
+		//(contains fileContents, fileName etc) still wrap it in a new object
+		file = {
+			file: file
+		};
 	}
 
-	if ( ! Array.isArray( files ) ) {
-		files = [ files ];
+	if ( title ) {
+		file.title = title;
 	}
 
+	debug( 'Uploading media to %d from %o', siteId, file );
+
+	if ( isUrl ) {
+		return wpcom.site( siteId ).addMediaUrls( {}, file );
+	}
+
+	return wpcom.site( siteId ).addMediaFiles( {}, file );
+};
+
+function uploadFiles( uploader, files, siteId ) {
 	// We offset the current time when generating a fake date for the transient
 	// media so that the first uploaded media doesn't suddenly become newest in
 	// the set once it finishes uploading. This duration is pretty arbitrary,
@@ -125,37 +158,12 @@ MediaActions.add = function( siteId, files ) {
 			return Promise.resolve();
 		}
 
-		// Determine upload mechanism by object type
-		const isUrl = 'string' === typeof file;
-		const addHandler = isUrl ? 'addMediaUrls' : 'addMediaFiles';
-
-		// Assign parent ID if currently editing post
-		const post = PostEditStore.get();
-		const title = file.title;
-		if ( post && post.ID ) {
-			file = {
-				parent_id: post.ID,
-				[ isUrl ? 'url' : 'file' ]: file
-			};
-		} else if ( file.fileContents ) {
-			//if there's no parent_id, but the file object is wrapping a Blob
-			//(contains fileContents, fileName etc) still wrap it in a new object
-			file = {
-				file: file
-			};
-		}
-
-		if ( title ) {
-			file.title = title;
-		}
-
-		debug( 'Uploading media to %d from %o', siteId, file );
-
 		return lastUpload.then( () => {
 			// Achieve series upload by waiting for the previous promise to
 			// resolve before starting this item's upload
 			const action = { type: 'RECEIVE_MEDIA_ITEM', id: transientMedia.ID, siteId };
-			return wpcom.site( siteId )[ addHandler ]( {}, file ).then( ( data ) => {
+
+			return uploader( file, siteId ).then( ( data ) => {
 				Dispatcher.handleServerAction( Object.assign( action, {
 					data: data.media[ 0 ]
 				} ) );
@@ -169,6 +177,22 @@ MediaActions.add = function( siteId, files ) {
 			} );
 		} );
 	}, Promise.resolve() );
+}
+
+MediaActions.addExternal = function( siteId, files, service ) {
+	return uploadFiles( getExternalUploader( service ), files, siteId );
+};
+
+MediaActions.add = function( siteId, files ) {
+	if ( files instanceof window.FileList ) {
+		files = [ ...files ];
+	}
+
+	if ( ! Array.isArray( files ) ) {
+		files = [ files ];
+	}
+
+	return uploadFiles( getFileUploader(), files, siteId );
 };
 
 MediaActions.edit = function( siteId, item ) {
@@ -283,6 +307,14 @@ MediaActions.clearValidationErrorsByType = function( siteId, type ) {
 		type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
 		siteId: siteId,
 		errorType: type
+	} );
+};
+
+MediaActions.sourceChanged = function( siteId ) {
+	debug( 'Media data source changed' );
+	Dispatcher.handleViewAction( {
+		type: 'CHANGE_MEDIA_SOURCE',
+		siteId,
 	} );
 };
 

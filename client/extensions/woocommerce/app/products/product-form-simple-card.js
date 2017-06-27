@@ -9,8 +9,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -18,44 +16,42 @@ import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
+import PriceInput from 'woocommerce/components/price-input';
 
-const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
+const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) => {
 	const setDimension = ( e ) => {
 		const dimensions = { ...product.dimensions, [ e.target.name ]: e.target.value };
-		editProduct( product, { dimensions } );
+		editProduct( siteId, product, { dimensions } );
 	};
 
 	const setWeight = ( e ) => {
 		const weight = e.target.value;
-		Number( weight ) >= 0 && editProduct( product, { weight } );
+		Number( weight ) >= 0 && editProduct( siteId, product, { weight } );
 	};
 
 	const setPrice = ( e ) => {
-		editProduct( product, { regular_price: e.target.value } );
-	};
-
-	const toggleStock = () => {
-		editProduct( product, { manage_stock: ! product.manage_stock } );
+		editProduct( siteId, product, { regular_price: e.target.value } );
 	};
 
 	const setStockQuantity = ( e ) => {
-		editProduct( product, { stock_quantity: e.target.value } );
+		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
+		const manage_stock = stock_quantity !== '';
+		editProduct( siteId, product, { manage_stock, stock_quantity } );
 	};
 
 	const setBackorders = ( e ) => {
-		editProduct( product, { backorders: e.target.value } );
+		editProduct( siteId, product, { backorders: e.target.value } );
 	};
 
-	// TODO Pull in currency and currency position.
 	const renderPrice = () => (
 		<Card className="products__product-form-price">
 			<FormLabel>{ translate( 'Price' ) }</FormLabel>
-			<FormCurrencyInput
-				currencySymbolPrefix="$"
-				name="price"
+			<PriceInput noWrap
 				value={ product.regular_price || '' }
+				name="price"
 				onChange={ setPrice }
 				size="4"
+				placeholder="0.00"
 			/>
 		</Card>
 	);
@@ -79,7 +75,10 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 				</FormFieldSet>
 			</div>
 			<FormSettingExplanation>{ translate(
-				'Shipping services will use this data to provide accurate rates.'
+				'Dimensions are used to calculate shipping. Enter the ' +
+				'size of the product as you’d put it in a package. For ' +
+				'a shirt, this would mean the size it is when folded. ' +
+				'For a vase, this would mean including bubble wrap.'
 			) }</FormSettingExplanation>
 		</Card>
 	);
@@ -90,26 +89,18 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 
 	const renderStock = () => (
 		<Card className={ stockClasses }>
-			<div className="products__product-manage-stock-toggle">
-				<CompactFormToggle
-					checked={ Boolean( product.manage_stock ) }
-					name="manage_stock"
-					onChange={ toggleStock } />
-				<FormLabel onClick={ toggleStock }>{ translate( 'Manage stock' ) }</FormLabel>
-			</div>
 			<div className="products__product-stock-options-wrapper">
-				{ product.manage_stock && (
-					<div className="products__product-manage-stock">
-						<FormLabel>{ translate( 'Quantity' ) }</FormLabel>
-						<FormTextInput
-							name="stock_quantity"
-							value={ product.stock_quantity || '' }
-							type="number"
-							min="0"
-							onChange={ setStockQuantity }
-							placeholder={ translate( 'Quantity' ) } />
-					</div>
-				) }
+				<div className="products__product-manage-stock">
+					<FormLabel>{ translate( 'Inventory' ) }</FormLabel>
+					<FormTextInput
+						name="stock_quantity"
+						value={ product.stock_quantity || '' }
+						type="number"
+						min="0"
+						onChange={ setStockQuantity }
+						placeholder={ translate( 'Quantity' ) }
+					/>
+				</div>
 				{ product.manage_stock && (
 					<div className="products__product-backorders-wrapper">
 						<FormLabel>{ translate( 'Backorders' ) }</FormLabel>
@@ -138,6 +129,7 @@ const ProductFormSimpleCard = ( { product, editProduct, translate } ) => {
 };
 
 ProductFormSimpleCard.propTypes = {
+	siteId: PropTypes.number,
 	product: PropTypes.shape( {
 		dimensions: PropTypes.object,
 		weight: PropTypes.string,

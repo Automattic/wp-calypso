@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import { merge } from 'lodash';
+import { merge, stubFalse, stubTrue } from 'lodash';
+
 /**
  * Internal dependencies
  */
-import { createReducer, combineReducers } from 'state/utils';
+import { createReducer, combineReducers, keyedReducer } from 'state/utils';
 import { domainWhoisSchema } from './schema';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
@@ -31,14 +32,17 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const requesting = createReducer( false, {
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST ]: ( state ) => ( { ...state, _contactDetailsCache: true } ),
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS ]: ( state ) => ( { ...state, _contactDetailsCache: false } ),
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE ]: ( state ) => ( { ...state, _contactDetailsCache: false } ),
-	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST ]: ( state, { domain } ) => ( { ...state, [ domain ]: true } ),
-	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS ]: ( state, { domain } ) => ( { ...state, [ domain ]: false } ),
-	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE ]: ( state, { domain } ) => ( { ...state, [ domain ]: false } )
+export const isRequestingContactDetailsCache = createReducer( false, {
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST ]: stubTrue,
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS ]: stubFalse,
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE ]: stubFalse,
 } );
+
+export const isRequestingWhois = keyedReducer( 'domain', createReducer( false, {
+	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST ]: stubTrue,
+	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS ]: stubFalse,
+	[ DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE ]: stubFalse,
+} ) );
 
 /**
  * Returns the save request status after an action has been dispatched. The
@@ -48,7 +52,7 @@ export const requesting = createReducer( false, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const saving = createReducer( false, {
+export const isSaving = createReducer( {}, {
 	[ DOMAIN_MANAGEMENT_WHOIS_SAVE ]: ( state, { domain } ) => ( {
 		...state,
 		[ domain ]: { saving: true, status: 'pending', error: false }
@@ -72,22 +76,19 @@ export const saving = createReducer( false, {
  * @return {Object}        Updated state
  */
 export const items = createReducer( {}, {
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE ]: ( state, { cacheData } ) => ( { ...state, _contactDetailsCache: cacheData } ),
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE ]:
-		( state, { cacheData } ) =>
-			merge( {}, state, { _contactDetailsCache: cacheData } ),
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE ]: ( state, { data } ) => ( { ...state, _contactDetailsCache: data } ),
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE ]: ( state, { data } ) => {
+		return merge( {}, state, { _contactDetailsCache: data } );
+	},
 	[ DOMAIN_MANAGEMENT_WHOIS_RECEIVE ]: ( state, { domain, whoisData } ) => ( { ...state, [ domain ]: whoisData } ),
-	[ DOMAIN_MANAGEMENT_WHOIS_UPDATE ]: ( state, { domain, whoisData } ) => ( {
-		...state,
-		[ domain ]: {
-			...state[ domain ],
-			...whoisData
-		}
-	} )
+	[ DOMAIN_MANAGEMENT_WHOIS_UPDATE ]: ( state, { domain, whoisData } ) => {
+		return merge( {}, state, { [ domain ]: { ...state[ domain ], ...whoisData } } );
+	},
 }, domainWhoisSchema );
 
 export default combineReducers( {
 	items,
-	requesting,
-	saving
+	isRequestingContactDetailsCache,
+	isRequestingWhois,
+	isSaving
 } );

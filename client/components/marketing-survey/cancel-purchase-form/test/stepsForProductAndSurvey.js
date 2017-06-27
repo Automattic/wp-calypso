@@ -37,9 +37,8 @@ describe( 'stepsForProductAndSurvey', function() {
 	describe( 'question one answer is "too hard"', function() {
 		const survey = { questionOneRadio: 'tooHard' };
 
-		it( 'should include happychat step if product is personal plan, abtest variant is show and happychat is available', function() {
+		it( 'should include happychat step if product is personal plan and happychat is available', function() {
 			const product = { product_slug: plans.PLAN_PERSONAL };
-			abtests.chatOfferOnCancel = 'show';
 			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS_WITH_HAPPYCHAT );
 		} );
 
@@ -48,27 +47,14 @@ describe( 'stepsForProductAndSurvey', function() {
 			expect( stepsForProductAndSurvey( survey, product, false ) ).to.deep.equal( DEFAULT_STEPS );
 		} );
 
-		it( 'should not include happychat step if product is personal plan, happychat is available but abtest variant is hide', function() {
-			const product = { product_slug: plans.PLAN_PERSONAL };
-			abtests.chatOfferOnCancel = 'hide';
-			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS );
-		} );
-
-		it( 'should include happychat step if product is premium plan, abtest is show and happychat is available', function() {
+		it( 'should include happychat step if product is premium plan and happychat is available', function() {
 			const product = { product_slug: plans.PLAN_PREMIUM };
-			abtests.chatOfferOnCancel = 'show';
 			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS_WITH_HAPPYCHAT );
 		} );
 
 		it( 'should not include happychat step if product is premium plan but happychat is not available', function() {
 			const product = { product_slug: plans.PLAN_PREMIUM };
 			expect( stepsForProductAndSurvey( survey, product, false ) ).to.deep.equal( DEFAULT_STEPS );
-		} );
-
-		it( 'should not include happychat step if product is premium plan, happychat is available but abtest is hide', function() {
-			const product = { product_slug: plans.PLAN_PREMIUM };
-			abtests.chatOfferOnCancel = 'hide';
-			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS );
 		} );
 
 		it( 'should include concierge step if product is business plan', function() {

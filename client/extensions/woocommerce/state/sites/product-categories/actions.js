@@ -6,6 +6,8 @@ import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
+	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 } from 'woocommerce/state/action-types';
 
 export function fetchProductCategories( siteId ) {
@@ -45,6 +47,46 @@ export function fetchProductCategoriesSuccess( siteId, data ) {
 		type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 		siteId,
 		data,
+	};
+}
+
+/**
+ * Action Creator: Create a new product category.
+ *
+ * @param {Number} siteId The id of the site upon which to create.
+ * @param {Object} category The product category object (may include a placeholder id).
+ * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
+ * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @return {Object} Action object
+ */
+export function createProductCategory( siteId, category, successAction, failureAction ) {
+	// TODO: Error action if not valid?
+
+	const action = {
+		type: WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
+		siteId,
+		category,
+		successAction,
+		failureAction,
+	};
+
+	return action;
+}
+
+/**
+ * Action Creator: This action prompts the state to update itself after a product category has changed.
+ *
+ * @param {Number} siteId The id of the site to which the category belongs.
+ * @param {Object} data The complete product category object with which to update the state.
+ * @param {Object} [completionAction] An action that is dispatched after the update is complete.
+ * @return {Object} Action object
+ */
+export function productCategoryUpdated( siteId, data, completionAction ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
+		siteId,
+		data,
+		completionAction,
 	};
 }
 

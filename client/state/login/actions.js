@@ -16,6 +16,9 @@ import {
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
+	SOCIAL_CREATE_ACCOUNT_REQUEST,
+	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -31,26 +34,36 @@ import {
 	getTwoFactorAuthNonce,
 	getTwoFactorUserId,
 } from 'state/login/selectors';
+import wpcom from 'lib/wp';
 
-const errorMessages = {
-	account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
-		"WordPress.com and click the activation link. You'll be able to log in after that." ),
-	empty_password: translate( 'Please be sure to enter your password.' ),
-	empty_two_step_code: translate( 'Please enter a verification code.' ),
-	empty_username: translate( 'Please enter a username or email address.' ),
-	forbidden_for_automattician: 'Cannot use social login with an Automattician account',
-	incorrect_password: translate( "Oops, looks like that's not the right password. Please try again!" ),
-	invalid_email: translate( "Oops, looks like that's not the right address. Please try again!" ),
-	invalid_two_step_code: translate( "Hmm, that's not a valid verification code. Please double-check your app and try again." ),
-	invalid_two_step_nonce: translate( 'Your session has expired, please go back to the login screen.' ),
-	invalid_username: translate( "We don't seem to have an account with that name. Double-check the spelling and try again!" ),
-	push_authentication_throttled: translate( 'You can only request a code via the WordPress mobile app once every ' +
-		'two minutes. Please wait and try again.' ),
-	sms_code_throttled: translate( 'You can only request a code via SMS once per minute. Please wait and try again.' ),
-	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
-	unknown: translate( "Hmm, we can't find a WordPress.com account with this username and password combo. " +
-		'Please double check your information and try again.' ),
-};
+function getErrorMessageFromErrorCode( code ) {
+	const errorMessages = {
+		account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
+			"WordPress.com and click the activation link. You'll be able to log in after that." ),
+		empty_password: translate( "Don't forget to enter your password." ),
+		empty_two_step_code: translate( 'Please enter a verification code.' ),
+		empty_username: translate( 'Please enter a username or email address.' ),
+		forbidden_for_automattician: 'Cannot use social login with an Automattician account',
+		incorrect_password: translate( "Oops, that's not the right password. Please try again!" ),
+		invalid_email: translate( "Oops, looks like that's not the right address. Please try again!" ),
+		invalid_two_step_code: translate( "Hmm, that's not a valid verification code. Please double-check your app and try again." ),
+		invalid_two_step_nonce: translate( 'Your session has expired, please go back to the login screen.' ),
+		invalid_username: translate( "We don't seem to have an account with that name. Double-check the spelling and try again!" ),
+		push_authentication_throttled: translate( 'You can only request a code via the WordPress mobile app once every ' +
+			'two minutes. Please wait and try again.' ),
+		sms_code_throttled: translate( 'You can only request a code via SMS once per minute. Please wait and try again.' ),
+		sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. ' +
+			'Please wait and try again.' ),
+		unknown: translate( "Hmm, we can't find a WordPress.com account with this username and password combo. " +
+			'Please double check your information and try again.' ),
+	};
+
+	if ( code in errorMessages ) {
+		return errorMessages[ code ];
+	}
+
+	return code;
+}
 
 const errorFields = {
 	empty_password: 'password',
@@ -75,14 +88,10 @@ function getErrorFromHTTPError( httpError ) {
 	const code = get( httpError, 'response.body.data.errors[0]' );
 
 	if ( code ) {
-		if ( code in errorMessages ) {
-			message = errorMessages[ code ];
+		message = getErrorMessageFromErrorCode( code );
 
-			if ( code in errorFields ) {
-				field = errorFields[ code ];
-			}
-		} else {
-			message = code;
+		if ( code in errorFields ) {
+			field = errorFields[ code ];
 		}
 	} else {
 		message = get( httpError, 'response.body.data', httpError.message );
@@ -90,6 +99,24 @@ function getErrorFromHTTPError( httpError ) {
 
 	return { code, message, field };
 }
+
+const wpcomErrorMessages = {
+	user_exists: translate( 'Your Google email address is already in use WordPress.com. ' +
+		'Log in to your account using your email address or username, and your password. ' +
+		'To create a new WordPress.com account, use a different Google account.' )
+};
+
+/**
+ * Transforms WPCOM error to the error object we use for login purposes
+ *
+ * @param {Object} wpcomError HTTP error
+ * @returns {{message: string, field: string, code: string}} an error message and the id of the corresponding field
+ */
+const getErrorFromWPCOMError = ( wpcomError ) => ( {
+	message: wpcomErrorMessages[ wpcomError.error ] || wpcomError.message,
+	code: wpcomError.error,
+	field: 'global',
+} );
 
 /**
  * Attempt to login a user.
@@ -150,6 +177,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 		.accept( 'application/json' )
 		.send( {
 			user_id: getTwoFactorUserId( getState() ),
+			auth_type: twoFactorAuthType,
 			two_step_code: twoStepCode,
 			two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
 			remember_me: getRememberMe( getState() ),
@@ -215,6 +243,42 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 
 			return Promise.reject( error );
 		} );
+};
+
+/**
+ * Attempt to create an account with a social service
+ usersSocialNew( 'google', response.Zi.id_token, 'login', ( wpcomError, wpcomResponse ) => {
+ *
+ * @param  {String}    service    The external social service name.
+ * @param  {String}    token      Authentication token provided by the external social service.
+ * @param  {String}    flowName   the name of the signup flow
+ * @return {Function}             Action thunk to trigger the login process.
+ */
+export const createSocialUser = ( service, token, flowName ) => dispatch => {
+	dispatch( {
+		type: SOCIAL_CREATE_ACCOUNT_REQUEST,
+		notice: {
+			message: translate( 'Creating your account' )
+		},
+	} );
+
+	return wpcom.undocumented().usersSocialNew( service, token, flowName ).then( wpcomResponse => {
+		const data = {
+			username: wpcomResponse.username,
+			bearerToken: wpcomResponse.bearer_token
+		};
+		dispatch( { type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS, data } );
+		return data;
+	}, wpcomError => {
+		const error = getErrorFromWPCOMError( wpcomError );
+
+		dispatch( {
+			type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+			error,
+		} );
+
+		return Promise.reject( wpcomError );
+	} );
 };
 
 /**

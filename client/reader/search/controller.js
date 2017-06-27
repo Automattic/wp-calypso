@@ -21,6 +21,7 @@ import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
+// TODO: delete this after launching sites in search
 function replaceSearchUrl( newValue, sort ) {
 	let searchUrl = '/read/search';
 	if ( newValue ) {

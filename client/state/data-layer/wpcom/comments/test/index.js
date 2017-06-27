@@ -33,7 +33,7 @@ describe( 'wpcom-api', () => {
 				};
 				const action = {
 					type: 'DUMMY_ACTION',
-					siteId: '101010',
+					siteId: '2916284',
 					postId: '1010',
 					query
 				};
@@ -41,7 +41,7 @@ describe( 'wpcom-api', () => {
 				const getState = () => ( {
 					comments: {
 						items: {
-							'101010-1010': []
+							'2916284-1010': []
 						}
 					}
 				} );
@@ -52,7 +52,7 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledWith( http( {
 					apiVersion: '1.1',
 					method: 'GET',
-					path: '/sites/101010/posts/1010/replies',
+					path: '/sites/2916284/posts/1010/replies',
 					query
 				}, action ) );
 			} );
@@ -65,7 +65,7 @@ describe( 'wpcom-api', () => {
 				};
 				const action = {
 					type: 'DUMMY_ACTION',
-					siteId: '101010',
+					siteId: '2916284',
 					postId: '1010',
 					query
 				};
@@ -73,7 +73,7 @@ describe( 'wpcom-api', () => {
 				const getState = () => ( {
 					comments: {
 						items: {
-							'101010-1010': [
+							'2916284-1010': [
 								{ id: 1, date: '2017-05-25T21:41:25.841Z' },
 								{ id: 2, date: '2017-05-25T20:41:25.841Z' },
 								{ id: 3, date: '2017-05-25T19:41:25.841Z' }
@@ -88,7 +88,7 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledWith( http( {
 					apiVersion: '1.1',
 					method: 'GET',
-					path: '/sites/101010/posts/1010/replies',
+					path: '/sites/2916284/posts/1010/replies',
 					query: {
 						...query,
 						before: '2017-05-25T19:41:25.841Z'
@@ -101,7 +101,7 @@ describe( 'wpcom-api', () => {
 			it( 'should dispatch a comments receive action', () => {
 				const dispatch = spy();
 				const action = {
-					siteId: 101010,
+					siteId: 2916284,
 					postId: 1010
 				};
 				const data = {
@@ -114,7 +114,7 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( {
 					type: COMMENTS_RECEIVE,
-					siteId: 101010,
+					siteId: 2916284,
 					postId: 1010,
 					comments: []
 				} );
@@ -123,7 +123,7 @@ describe( 'wpcom-api', () => {
 			it( 'should dispatch a comments receive action and a count receive action when comments found', () => {
 				const dispatch = spy();
 				const action = {
-					siteId: 101010,
+					siteId: 2916284,
 					postId: 1010
 				};
 				const data = {
@@ -136,14 +136,14 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledTwice;
 				expect( dispatch ).to.have.been.calledWith( {
 					type: COMMENTS_RECEIVE,
-					siteId: 101010,
+					siteId: 2916284,
 					postId: 1010,
 					comments: [ {}, {} ]
 				} );
 
 				expect( dispatch ).to.have.been.calledWith( {
 					type: COMMENTS_COUNT_RECEIVE,
-					siteId: 101010,
+					siteId: 2916284,
 					postId: 1010,
 					totalCommentsCount: 2
 				} );
@@ -159,7 +159,7 @@ describe( 'wpcom-api', () => {
 					}
 				} );
 
-				announceFailure( { dispatch, getState }, { siteId: 101010, postId: 1010 } );
+				announceFailure( { dispatch, getState }, { siteId: 2916284, postId: 1010 } );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWithMatch( {

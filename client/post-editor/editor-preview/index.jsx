@@ -5,11 +5,11 @@ import React from 'react';
 import url from 'url';
 import omit from 'lodash/omit';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import WebPreview from 'components/web-preview';
 import WebPreviewContent from 'components/web-preview/content';
 
@@ -21,10 +21,12 @@ const EditorPreview = React.createClass( {
 		showPreview: React.PropTypes.bool,
 		isSaving: React.PropTypes.bool,
 		isLoading: React.PropTypes.bool,
+		isFullScreen: React.PropTypes.bool,
 		previewUrl: React.PropTypes.string,
 		editUrl: React.PropTypes.string,
 		onClose: React.PropTypes.func,
-		postId: React.PropTypes.number
+		postId: React.PropTypes.number,
+		revision: React.PropTypes.number,
 	},
 
 	getInitialState() {
@@ -80,6 +82,7 @@ const EditorPreview = React.createClass( {
 		const parsed = url.parse( this.props.previewUrl, true );
 		parsed.query.preview = 'true';
 		parsed.query.iframe = 'true';
+		parsed.query.revision = String( this.props.revision );
 		delete parsed.search;
 		return url.format( parsed );
 	},
@@ -89,28 +92,36 @@ const EditorPreview = React.createClass( {
 			return null;
 		}
 		const parsed = url.parse( externalUrl, true );
-		parsed.query = omit( parsed.query, 'preview', 'iframe', 'frame-nonce' );
+		parsed.query = omit( parsed.query, 'iframe', 'frame-nonce' );
 		delete parsed.search;
 		return url.format( parsed );
 	},
 
 	render() {
-		const previewFlow = config.isEnabled( 'post-editor/delta-post-publish-preview' );
+		const isFullScreen = this.props.isFullScreen;
 		const className = classNames( 'editor-preview', {
-			'is-fullscreen': previewFlow,
+			'is-fullscreen': isFullScreen,
 		} );
 
 		return (
 			<div className={ className }>
-				{ previewFlow
+				{ isFullScreen
 					? <WebPreviewContent
 							showPreview={ this.props.showPreview }
 							showEdit={ true }
-							showExternal={ false }
+							showExternal={ true }
+							showUrl={ true }
 							defaultViewportDevice={ this.props.defaultViewportDevice }
 							onClose={ this.props.onClose }
+							onEdit={ this.props.onEdit }
 							previewUrl={ this.state.iframeUrl }
 							editUrl={ this.props.editUrl }
+							externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
+							loadingMessage={
+								this.props.translate( '{{strong}}One moment please…{{/strong}} loading your new post.',
+									{ components: { strong: <strong /> } }
+								)
+							}
 						/>
 					: <WebPreview
 							showPreview={ this.props.showPreview }
@@ -125,4 +136,4 @@ const EditorPreview = React.createClass( {
 	}
 } );
 
-module.exports = EditorPreview;
+module.exports = localize( EditorPreview );

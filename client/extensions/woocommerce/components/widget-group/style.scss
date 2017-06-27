@@ -1,0 +1,30 @@
+.widget-group__group-container {
+	width: 100%;
+}
+
+.widget-group__group-container .widget-group__row-container {
+	align-items: stretch;
+	display: flex;
+	margin-bottom: 16px;
+	width: 100%;
+	flex-direction: column;
+
+	@include breakpoint( ">660px" ) {
+		flex-direction: row;
+	}
+}
+
+.widget-group__row-container .widget-group__row-item {
+	@include breakpoint( ">660px" ) {
+		margin: 0 8px 0 8px;
+		width: 50%;
+	}
+
+	&:first-child {
+		margin-left: 0;
+	}
+
+	&:last-child {
+		margin-right: 0;
+	}
+}

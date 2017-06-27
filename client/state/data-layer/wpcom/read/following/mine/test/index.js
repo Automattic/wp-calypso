@@ -10,18 +10,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { READER_FOLLOWS_SYNC_START } from 'state/action-types';
-import {
-	isSyncingFollows,
-	requestPage,
-	requestPageAction,
-	receivePage,
-	receiveError,
-	subscriptionsFromApi,
-	isValidApiResponse,
-	syncReaderFollows,
-	resetSyncingFollows,
-	updateSeenOnFollow,
-} from '../';
+
 import {
 	receiveFollows as receiveFollowsAction,
 	follow,
@@ -29,6 +18,18 @@ import {
 } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
+import { subscriptionsFromApi } from '../utils';
+
+import {
+	isSyncingFollows,
+	requestPage,
+	requestPageAction,
+	receivePage,
+	receiveError,
+	syncReaderFollows,
+	resetSyncingFollows,
+	updateSeenOnFollow,
+} from '../';
 
 const successfulApiResponse = freeze( {
 	number: 2,
@@ -83,7 +84,7 @@ describe( 'get follow subscriptions', () => {
 					query: { page: 1, number: 200, meta: '' },
 					onSuccess: action,
 					onError: action,
-				} )
+				} ),
 			);
 		} );
 	} );
@@ -104,7 +105,7 @@ describe( 'get follow subscriptions', () => {
 				receiveFollowsAction( {
 					follows: subscriptionsFromApi( successfulApiResponse ),
 					totalCount: successfulApiResponse.total_subscriptions,
-				} )
+				} ),
 			);
 		} );
 
@@ -142,10 +143,10 @@ describe( 'get follow subscriptions', () => {
 				receiveFollowsAction( {
 					follows: [],
 					totalCount: 10,
-				} )
+				} ),
 			);
 			expect( dispatch ).to.have.been.calledWith(
-				syncComplete( [ 'http://readerpostcards.wordpress.com', 'https://fivethirtyeight.com/' ] )
+				syncComplete( [ 'http://readerpostcards.wordpress.com', 'https://fivethirtyeight.com/' ] ),
 			);
 		} );
 
@@ -172,10 +173,7 @@ describe( 'get follow subscriptions', () => {
 			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction );
 			receivePage( { dispatch: ignoredDispatch }, action, null, successfulApiResponse );
 
-			updateSeenOnFollow(
-				{ dispatch: ignoredDispatch },
-				follow( 'http://feed.example.com' ),
-			);
+			updateSeenOnFollow( { dispatch: ignoredDispatch }, follow( 'http://feed.example.com' ) );
 
 			receivePage( { dispatch, getState }, action, null, {
 				number: 0,
@@ -189,15 +187,17 @@ describe( 'get follow subscriptions', () => {
 				receiveFollowsAction( {
 					follows: [],
 					totalCount: 10,
-				} )
+				} ),
 			);
 
 			expect( dispatch ).to.have.been.calledWith(
-				syncComplete( [
-					'http://readerpostcards.wordpress.com',
-					'https://fivethirtyeight.com/',
-					'http://feed.example.com',
-				] )
+				syncComplete(
+					[
+						'http://readerpostcards.wordpress.com',
+						'https://fivethirtyeight.com/',
+						'http://feed.example.com',
+					],
+				),
 			);
 		} );
 	} );
@@ -214,46 +214,6 @@ describe( 'get follow subscriptions', () => {
 				type: NOTICE_CREATE,
 			} );
 			expect( isSyncingFollows() ).not.ok;
-		} );
-	} );
-
-	describe( '#isValidApiResponse', () => {
-		it( 'should return false for invalid responses', () => {
-			expect( isValidApiResponse( {} ) ).not.ok;
-			expect( isValidApiResponse( { notExpected: 'true' } ) ).not.ok;
-			expect( isValidApiResponse( { subscriptions: 'notAnArray' } ) ).not.ok;
-		} );
-
-		it( 'should return true for happy cases', () => {
-			expect( isValidApiResponse( { subscriptions: [] } ) ).ok;
-			expect( isValidApiResponse( successfulApiResponse ) ).ok;
-		} );
-	} );
-
-	describe( '#subscriptionsFromApi', () => {
-		it( 'should return subscriptions from the apiResponse', () => {
-			const transformedSubs = [
-				{
-					ID: 12345,
-					blog_ID: 122463145,
-					URL: 'http://readerpostcards.wordpress.com',
-					feed_URL: 'http://readerpostcards.wordpress.com',
-					date_subscribed: Date.parse( '2017-01-12T03:55:45+00:00' ),
-				},
-				{
-					ID: 123456,
-					blog_ID: 64146350,
-					URL: 'https://fivethirtyeight.com/',
-					feed_URL: 'https://fivethirtyeight.com/',
-					date_subscribed: Date.parse( '2016-01-12T03:55:45+00:00' ),
-				},
-			];
-			expect( subscriptionsFromApi( successfulApiResponse ) ).eql( transformedSubs );
-		} );
-
-		it( 'should return an empty list from invalid apiResponse', () => {
-			expect( subscriptionsFromApi( { notExpected: 'true' } ) ).eql( [] );
-			expect( subscriptionsFromApi( { subscriptions: 'true' } ) ).eql( [] );
 		} );
 	} );
 } );

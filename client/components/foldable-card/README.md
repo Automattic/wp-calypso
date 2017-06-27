@@ -36,7 +36,7 @@ render: function() {
 * `compact`: a boolean indicating if the foldable card is compact
 * `disabled`: boolean indicating if the component it's not interactive
 * `expandedSummary`: string or component to show next to the action button when expanded
-* `expanded`: boolean indicating if the component is expanded on initial render
+* `expanded`: boolean indicating if the component is expanded
 * `onClick`: function to be executed in addition to the expand action when the header is clicked
 * `onClose`: function to be executed in addition to the expand action when the card is closed
 * `onOpen`: function to be executed in addition to the expand action when the card is opened

@@ -43,3 +43,43 @@ export function getPaymentCurrencySettings( state, siteId = getSelectedSiteId( s
 	const currency = find( generalSettings, ( item ) => item.id === 'woocommerce_currency' );
 	return currency || {};
 }
+
+export const getStoreLocation = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const address = {
+		street: '',
+		street2: '',
+		city: '',
+		state: '',
+		postcode: '',
+		country: '',
+	};
+
+	if ( ! areSettingsGeneralLoaded( state, siteId ) ) {
+		return address;
+	}
+
+	const generalSettings = getRawGeneralSettings( state, siteId );
+
+	const settingsMap = {
+		street: 'woocommerce_store_address',
+		street2: 'woocommerce_store_address_2',
+		city: 'woocommerce_store_city',
+		postcode: 'woocommerce_store_postcode',
+		country: 'woocommerce_default_country',
+	};
+
+	for ( const addressKey in settingsMap ) {
+		const setting = find( generalSettings, { id: settingsMap[ addressKey ] } );
+		address[ addressKey ] = setting ? setting.value : '';
+	}
+
+	// WooCommerce uses country to hold both country and state (e.g. US:CT)
+	// let's fix that here
+	if ( address.country.indexOf( ':' ) ) {
+		const parts = address.country.split( ':' );
+		address.country = parts[ 0 ];
+		address.state = parts[ 1 ];
+	}
+
+	return address;
+};

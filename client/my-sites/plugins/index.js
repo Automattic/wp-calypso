@@ -9,6 +9,7 @@ import page from 'page';
 import controller from 'my-sites/controller';
 import config from 'config';
 import pluginsController from './controller';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 
 const nonJetpackRedirectTo = path => ( context, next ) => {
@@ -35,6 +36,16 @@ module.exports = function() {
 	}
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
+		page( '/plugins/wpcom-masterbar-redirect/:site', context => {
+			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_view_click' ) );
+			page.redirect( '/plugins/' + context.params.site );
+		} );
+
+		page( '/plugins/browse/wpcom-masterbar-redirect/:site', context => {
+			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_add_click' ) );
+			page.redirect( '/plugins/browse/' + context.params.site );
+		} );
+
 		page( '/plugins/browse/:category/:site',
 			controller.siteSelection,
 			controller.navigation,

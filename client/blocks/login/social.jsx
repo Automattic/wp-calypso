@@ -11,94 +11,91 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
-import { loginSocialUser } from 'state/login/actions';
-import { errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
+import { loginSocialUser, createSocialUser } from 'state/login/actions';
+import {
+	getCreatedSocialAccountUsername,
+	getCreatedSocialAccountBearerToken,
+	isSocialAccountCreating,
+} from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import wpcom from 'lib/wp';
 import WpcomLoginForm from 'signup/wpcom-login-form';
+import { InfoNotice } from 'blocks/global-notice';
 
 class SocialLoginForm extends Component {
 	static propTypes = {
-		errorNotice: PropTypes.func.isRequired,
-		infoNotice: PropTypes.func.isRequired,
+		createSocialUser: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
-		removeNotice: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
-	};
-
-	state = {
-		username: null,
-		bearerToken: null,
+		loginSocialUser: PropTypes.func.isRequired,
 	};
 
 	handleGoogleResponse = ( response ) => {
-		const { onSuccess, redirectTo, translate } = this.props;
+		const { onSuccess, redirectTo } = this.props;
 
 		if ( ! response.Zi || ! response.Zi.id_token ) {
 			return;
 		}
 
-		this.props.loginSocialUser( 'google', response.Zi.id_token, redirectTo ).then( () => {
-			this.props.recordTracksEvent( 'calypso_social_login_form_login_success', {
-				social_account_type: 'google',
-			} );
+		this.props.loginSocialUser( 'google', response.Zi.id_token, redirectTo )
+			.then(
+				() => {
+					this.recordEvent( 'calypso_login_social_login_success' );
 
-			onSuccess();
-		} ).catch( error => {
-			if ( error.code === 'unknown_user' ) {
-				const { notice } = this.props.infoNotice( translate( 'Creating your account' ) );
-
-				wpcom.undocumented().usersSocialNew( 'google', response.Zi.id_token, 'login', ( wpcomError, wpcomResponse ) => {
-					this.props.removeNotice( notice.noticeId );
-
-					if ( wpcomError ) {
-						this.props.recordTracksEvent( 'calypso_social_login_form_signup_failure', {
-							social_account_type: 'google',
-							error: wpcomError.message
-						} );
-
-						this.props.errorNotice( wpcomError.message );
-					} else {
-						this.props.recordTracksEvent( 'calypso_social_login_form_signup_success', {
-							social_account_type: 'google',
-						} );
-
-						this.setState( {
-							username: wpcomResponse.username,
-							bearerToken: wpcomResponse.bearer_token
-						} );
+					onSuccess();
+				},
+				error => {
+					if ( error.code === 'unknown_user' ) {
+						return this.props.createSocialUser( 'google', response.Zi.id_token, 'login' )
+							.then(
+								() => this.recordEvent( 'calypso_login_social_signup_success' ),
+								createAccountError => this.recordEvent( 'calypso_login_social_signup_failure', {
+									error_code: createAccountError.code,
+									error_message: createAccountError.message
+								} )
+							);
 					}
-				} );
-			} else {
-				this.props.recordTracksEvent( 'calypso_social_login_form_login_failure', {
-					social_account_type: 'google',
-					error: error.message
-				} );
 
-				this.props.errorNotice( error.message );
-			}
-		} );
+					this.recordEvent( 'calypso_login_social_login_failure', {
+						error_code: error.code,
+						error_message: error.message
+					} );
+				}
+			);
+	};
+
+	recordEvent = ( eventName, params ) => this.props.recordTracksEvent( eventName, {
+		social_account_type: 'google',
+		...params
+	} );
+
+	trackGoogleLogin = () => {
+		this.recordEvent( 'calypso_login_social_button_click' );
 	};
 
 	render() {
 		return (
 			<div className="login__social">
 				<p className="login__social-text">
-					{ this.props.translate( 'Or login with your existing social profile:' ) }
+					{ this.props.translate( 'Or log in with your existing social profile:' ) }
 				</p>
 
 				<div className="login__social-buttons">
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
-						responseHandler={ this.handleGoogleResponse } />
+						responseHandler={ this.handleGoogleResponse }
+						onClick={ this.trackGoogleLogin } />
 				</div>
 
-				{ this.state.bearerToken && (
+				{ this.props.isSocialAccountCreating &&
+					<InfoNotice text={ this.props.translate( 'Creating your account…' ) } />
+				}
+
+				{ this.props.bearerToken && (
 					<WpcomLoginForm
-						log={ this.state.username }
-						authorization={ 'Bearer ' + this.state.bearerToken }
+						log={ this.props.username }
+						authorization={ 'Bearer ' + this.props.bearerToken }
 						redirectTo="/start"
 					/>
 				) }
@@ -110,12 +107,13 @@ class SocialLoginForm extends Component {
 export default connect(
 	( state ) => ( {
 		redirectTo: getCurrentQueryArguments( state ).redirect_to,
+		isSocialAccountCreating: isSocialAccountCreating( state ),
+		bearerToken: getCreatedSocialAccountBearerToken( state ),
+		username: getCreatedSocialAccountUsername( state ),
 	} ),
 	{
-		errorNotice,
-		infoNotice,
-		removeNotice,
 		loginSocialUser,
+		createSocialUser,
 		recordTracksEvent,
 	}
 )( localize( SocialLoginForm ) );

@@ -9,8 +9,8 @@ import React, { Component, PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteWithFallback } from '../state/sites/selectors';
-import { getLink } from '../lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarItem from 'layout/sidebar/item';

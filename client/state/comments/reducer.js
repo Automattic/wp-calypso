@@ -12,6 +12,7 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_REMOVE,
 	COMMENTS_ERROR,
+	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
 	COMMENTS_LIKE_UPDATE,
@@ -113,13 +114,19 @@ export function items( state = {}, action ) {
  * @returns {Object} new redux state
  */
 export function totalCommentsCount( state = {}, action ) {
+	const { siteId, postId } = action;
+	const stateKey = getStateKey( siteId, postId );
+
 	switch ( action.type ) {
 		case COMMENTS_COUNT_RECEIVE:
-			const { siteId, postId } = action;
-			const stateKey = getStateKey( siteId, postId );
 			return {
 				...state,
 				[ stateKey ]: action.totalCommentsCount
+			};
+		case COMMENTS_COUNT_INCREMENT:
+			return {
+				...state,
+				[ stateKey ]: state[ stateKey ] + 1
 			};
 	}
 

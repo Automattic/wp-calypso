@@ -1,3 +1,8 @@
+/**
+ * External Dependencies
+ */
+import { find } from 'lodash';
+
 const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
 
 /**
@@ -32,4 +37,8 @@ function isStale( state, siteId ) {
 
 export function getSite( state, siteId ) {
 	return state.reader.sites.items[ siteId ];
+}
+
+export function getSiteByFeedUrl( state, feedUrl ) {
+	return find( state.reader.sites.items, { feed_URL: feedUrl } );
 }

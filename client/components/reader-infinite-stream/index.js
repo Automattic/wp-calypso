@@ -26,13 +26,11 @@ class ReaderInfiniteStream extends Component {
 		windowScrollerRef: PropTypes.func,
 		extraRenderItemProps: PropTypes.object,
 		minHeight: PropTypes.number,
-		renderEventName: PropTypes.string,
 		passthroughProp: PropTypes.any, // https://github.com/bvaughn/react-virtualized#pure-components. For use with things like sort etc.
 	};
 
 	static defaultProps = {
 		windowScrollerRef: noop,
-		showLastUpdatedDate: true,
 		minHeight: 70,
 		hasNextPage: () => false,
 	};
@@ -50,12 +48,11 @@ class ReaderInfiniteStream extends Component {
 
 	rowRenderer = rowRendererProps => {
 		const railcar = get( this.props.items[ rowRendererProps.index ], 'railcar', undefined );
-		if ( railcar && this.props.renderEventName && ! this.recordedRender.has( rowRendererProps.index ) ) {
+		if ( railcar && ! this.recordedRender.has( rowRendererProps.index ) ) {
 			this.recordedRender.add( rowRendererProps.index );
 			this.recordTraintrackForRowRender( pickBy( {
 				index: rowRendererProps.index,
 				railcar,
-				eventName: this.props.renderEventName,
 			} ) );
 		}
 

@@ -11,18 +11,10 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import CommentDetailActions from './comment-detail-actions';
-import ExternalLink from 'components/external-link';
 import FormCheckbox from 'components/forms/form-checkbox';
 import AutoDirection from 'components/auto-direction';
 import { stripHTML, decodeEntities } from 'lib/formatting';
-
-const controlExternalLink = isBulkEdit => event => {
-	if ( isBulkEdit ) {
-		event.preventDefault();
-	} else {
-		event.stopPropagation();
-	}
-};
+import { urlToDomainAndPath } from 'lib/url';
 
 export const CommentDetailHeader = ( {
 	authorAvatarUrl,
@@ -37,7 +29,6 @@ export const CommentDetailHeader = ( {
 	isBulkEdit,
 	isExpanded,
 	postTitle,
-	postUrl,
 	toggleApprove,
 	toggleExpanded,
 	toggleLike,
@@ -79,27 +70,20 @@ export const CommentDetailHeader = ( {
 				</label>
 			}
 			<div className="comment-detail__author-preview">
-				<div className="comment-detail__author-avatar">
-					<img className="comment-detail__author-avatar-image" src={ authorAvatarUrl } />
-				</div>
+				<img className="comment-detail__author-avatar" src={ authorAvatarUrl } />
 				<div className="comment-detail__author-info">
 					<div className="comment-detail__author-info-element">
 						<strong>
 							{ authorDisplayName }
 						</strong>
 						<span>
-							{ authorUrl }
+							{ urlToDomainAndPath( authorUrl ) }
 						</span>
 					</div>
 					<div className="comment-detail__author-info-element">
-						{ translate( 'on {{postLink/}}', {
-							components: {
-								postLink:
-									<ExternalLink href={ postUrl } onClick={ controlExternalLink( isBulkEdit ) }>
-										{ postTitle }
-									</ExternalLink>,
-							},
-						} ) }
+						{ translate( 'on %(postTitle)s', { args: {
+							postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
+						} } ) }
 					</div>
 				</div>
 			</div>

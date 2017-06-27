@@ -1,16 +1,16 @@
 /**
  * Internal dependencies
  */
-import request from 'woocommerce/state/sites/request';
+import { post } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import { productUpdated } from 'woocommerce/state/sites/products/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
-	WOOCOMMERCE_PRODUCT_CREATE_SUCCESS,
+	WOOCOMMERCE_PRODUCT_UPDATED,
 } from 'woocommerce/state/action-types';
 
-function createProduct( { dispatch }, action, next ) {
-	const { siteId, product, successAction, errorAction } = action;
+export function handleProductCreate( { dispatch }, action ) {
+	const { siteId, product, successAction, failureAction } = action;
 
 	// Filter out any id we might have.
 	const { id, ...productData } = product;
@@ -23,58 +23,18 @@ function createProduct( { dispatch }, action, next ) {
 		return;
 	}
 
-	request( siteId ).post( 'products', productData )
-		.then( data => {
-			dispatch( {
-				type: WOOCOMMERCE_PRODUCT_CREATE_SUCCESS,
-				siteId,
-				data,
-				successAction,
-				errorAction,
-			} );
-		} )
-		.catch( err => {
-			dispatch( setError( siteId, action, { message: err.toString() } ) );
-
-			if ( errorAction ) {
-				dispatch( errorAction );
-			}
-		} );
-
-	return next( action );
+	const updatedAction = productUpdated( siteId, null, successAction ); // data field will be filled in by request.
+	dispatch( post( siteId, 'products', productData, updatedAction, failureAction ) );
 }
 
-function createProductSuccess( { dispatch }, action ) {
-	const { siteId, data, successAction, errorAction } = action;
+export function handleProductUpdated( { dispatch }, action ) {
+	const { completionAction } = action;
 
-	if ( isValidProduct( data ) ) {
-		dispatch( productUpdated( siteId, data ) );
-
-		if ( successAction ) {
-			dispatch( successAction );
-		}
-	} else {
-		dispatch( setError( siteId, action, {
-			message: 'Invalid Product Object',
-			data
-		} ) );
-
-		if ( errorAction ) {
-			dispatch( errorAction );
-		}
-	}
-}
-
-function isValidProduct( product ) {
-	return (
-		product &&
-		product.id && ( 'number' === typeof product.id ) &&
-		product.type && ( 'string' === typeof product.type )
-	);
+	completionAction && dispatch( completionAction );
 }
 
 export default {
-	[ WOOCOMMERCE_PRODUCT_CREATE ]: [ createProduct ],
-	[ WOOCOMMERCE_PRODUCT_CREATE_SUCCESS ]: [ createProductSuccess ],
+	[ WOOCOMMERCE_PRODUCT_CREATE ]: [ handleProductCreate ],
+	[ WOOCOMMERCE_PRODUCT_UPDATED ]: [ handleProductUpdated ],
 };
 

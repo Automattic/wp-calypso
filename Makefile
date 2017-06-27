@@ -9,10 +9,10 @@
 .DEFAULT_GOAL := install
 
 install:
-	npm run install-if-needed
+	@npm run install-if-needed
 
 run:
-	npm start
+	@npm start
 
 dashboard:
 	@npm run dashboard
@@ -68,3 +68,5 @@ docker-build:
 
 docker-run:
 	@npm run docker
+
+.PHONY: install run dashboard test lint eslint eslint-branch mixedindentlint config-defaults-lint build-server build build-desktop clean distclean translate shrinkwrap analyze-bundles urn docker-build docker-run

@@ -25,7 +25,7 @@ class StoreStats extends Component {
 	};
 
 	render() {
-		const { siteId, unit, selectedDate, queryDate, path, slug } = this.props;
+		const { path, queryDate, selectedDate, siteId, slug, unit } = this.props;
 		const ordersQuery = {
 			unit,
 			date: queryDate,

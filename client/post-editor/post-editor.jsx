@@ -90,7 +90,9 @@ export const PostEditor = React.createClass( {
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
 			isTitleFocused: false,
-			showPreview: false
+			showPreview: false,
+			isPostPublishPreview: false,
+			previewAction: null
 		};
 	},
 
@@ -116,6 +118,8 @@ export const PostEditor = React.createClass( {
 		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
+		this.onPreviewClick = this.onPreview.bind( this, 'preview' );
+		this.onViewClick = this.onPreview.bind( this, 'view' );
 		this.useDefaultSidebarFocus();
 		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
@@ -223,6 +227,7 @@ export const PostEditor = React.createClass( {
 		const mode = this.getEditorMode();
 		const isInvalidURL = this.state.loadingError;
 		const siteURL = site ? site.URL + '/' : null;
+
 		let isPage;
 		let isTrashed;
 		let hasAutosave;
@@ -258,7 +263,7 @@ export const PostEditor = React.createClass( {
 						isSaveBlocked={ this.isSaveBlocked() }
 						isPublishing={ this.state.isPublishing }
 						isSaving={ this.state.isSaving }
-						onPreview={ this.onPreview }
+						onPreview={ this.onPreviewClick }
 						onPublish={ this.onPublish }
 						onSave={ this.onSave }
 						onSaveDraft={ this.props.onSaveDraft }
@@ -273,11 +278,13 @@ export const PostEditor = React.createClass( {
 						allPostsUrl={ this.getAllPostsUrl() }
 					/>
 					<div className="post-editor__content">
-						<div className="editor">
-							<EditorNotice
-								{ ...this.state.notice }
-								onDismissClick={ this.hideNotice }
-								onViewClick={ this.onPreview } />
+						<div className="post-editor__content-editor">
+							{ ! config.isEnabled( 'post-editor/delta-post-publish-preview' )
+								? <EditorNotice
+									{ ...this.state.notice }
+									onDismissClick={ this.hideNotice }
+									onViewClick={ this.onViewClick } />
+								: null }
 							<EditorActionBar
 								isNew={ this.state.isNew }
 								onPrivatePublish={ this.onPublish }
@@ -304,7 +311,7 @@ export const PostEditor = React.createClass( {
 								site={ site }
 								post={ this.state.post }
 								maxWidth={ 1462 } />
-							<div className="editor__header">
+							<div className="post-editor__header">
 								<EditorTitle
 									onChange={ this.debouncedAutosave }
 									tabIndex={ 1 } />
@@ -317,7 +324,7 @@ export const PostEditor = React.createClass( {
 										/>
 									: null
 								}
-								<SegmentedControl className="editor__switch-mode" compact={ true }>
+								<SegmentedControl className="post-editor__switch-mode" compact={ true }>
 									<SegmentedControlItem
 										selected={ mode === 'tinymce' }
 										onClick={ this.switchEditorVisualMode }
@@ -332,7 +339,7 @@ export const PostEditor = React.createClass( {
 									</SegmentedControlItem>
 								</SegmentedControl>
 							</div>
-							<hr className="editor__header-divider" />
+							<hr className="post-editor__header-divider" />
 							<TinyMCE
 								ref={ this.storeEditor }
 								mode={ mode }
@@ -360,17 +367,26 @@ export const PostEditor = React.createClass( {
 						onSave={ this.onSave }
 						isPostPrivate={ utils.isPrivate( this.state.post ) }
 						/>
-					{ this.props.isSitePreviewable ?
-						<EditorPreview
+					{ this.props.isSitePreviewable
+						? <EditorPreview
 							showPreview={ this.state.showPreview }
 							onClose={ this.onPreviewClose }
+							onEdit={ this.onPreviewEdit }
 							isSaving={ this.state.isSaving || this.state.isAutosaving }
 							isLoading={ this.state.isLoading }
-							previewUrl={ this.state.previewUrl }
-							externalUrl={ this.state.previewUrl }
+							isFullScreen={ this.state.isPostPublishPreview }
+							previewUrl={ this.getPreviewUrl() }
+							externalUrl={ this.getPreviewUrl() }
 							editUrl={ this.props.editPath }
-							defaultViewportDevice={ config.isEnabled( 'post-editor/delta-post-publish-preview' ) ? 'computer' : 'tablet' }
+							defaultViewportDevice={ this.state.isPostPublishPreview ? 'computer' : 'tablet' }
+							revision={ get( this.state, 'post.revisions.length', 0 ) }
 						/>
+						: null }
+					{ config.isEnabled( 'post-editor/delta-post-publish-preview' )
+						? <EditorNotice
+								{ ...this.state.notice }
+								onDismissClick={ this.hideNotice }
+								onViewClick={ this.onPreview } />
 						: null }
 				</div>
 				{ isTrashed
@@ -605,9 +621,25 @@ export const PostEditor = React.createClass( {
 		this.setState( { isSaving: true } );
 	},
 
-	onPreview: function( event ) {
+	getPreviewUrl: function() {
+		const { post, previewAction, previewUrl } = this.state;
+
+		if ( previewAction === 'view' ) {
+			return post.URL;
+		}
+
+		return previewUrl;
+	},
+
+	onPreview: function( action, event ) {
 		var status = 'draft',
 			previewPost;
+
+		if ( this.state.previewAction !== action ) {
+			this.setState( {
+				previewAction: action
+			} );
+		}
 
 		if ( this.props.isSitePreviewable && ! event.metaKey && ! event.ctrlKey ) {
 			return this.iframePreview();
@@ -623,10 +655,10 @@ export const PostEditor = React.createClass( {
 
 		previewPost = function() {
 			if ( this._previewWindow ) {
-				this._previewWindow.location = this.state.previewUrl;
+				this._previewWindow.location = this.getPreviewUrl();
 				this._previewWindow.focus();
 			} else {
-				this._previewWindow = window.open( this.state.previewUrl, 'WordPress.com Post Preview' );
+				this._previewWindow = window.open( this.getPreviewUrl(), 'WordPress.com Post Preview' );
 			}
 		}.bind( this );
 
@@ -653,7 +685,26 @@ export const PostEditor = React.createClass( {
 	},
 
 	onPreviewClose: function() {
-		this.setState( { showPreview: false } );
+		if ( this.state.isPostPublishPreview ) {
+			page.back( this.getAllPostsUrl() );
+		} else {
+			this.setState( {
+				showPreview: false,
+				isPostPublishPreview: false,
+				previewAction: null,
+			} );
+		}
+	},
+
+	onPreviewEdit: function() {
+		this.setState( {
+			showPreview: false,
+			isPostPublishPreview: false,
+			previewAction: null,
+			notice: null,
+		} );
+
+		return false;
 	},
 
 	onSaveDraftFailure: function( error ) {
@@ -681,7 +732,7 @@ export const PostEditor = React.createClass( {
 			return;
 		}
 
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) && 'open' === this.state.confirmationSidebar ) {
 			this.setConfirmationSidebar( { status: 'publishing' } );
 		}
 
@@ -728,10 +779,6 @@ export const PostEditor = React.createClass( {
 			message = 'scheduled';
 		} else {
 			message = 'published';
-		}
-
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
-			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
 		}
 
 		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ), savedPost.URL );
@@ -801,6 +848,11 @@ export const PostEditor = React.createClass( {
 
 	onSaveSuccess: function( message, action, link ) {
 		const post = PostEditStore.get();
+		const isNotPrivateOrIsConfirmed = ( 'private' !== post.status ) || ( 'closed' !== this.state.confirmationSidebar );
+
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
+		}
 
 		if ( 'draft' === post.status ) {
 			this.props.setEditorLastDraft( post.site_ID, post.ID );
@@ -824,12 +876,17 @@ export const PostEditor = React.createClass( {
 				status: 'is-success',
 				message,
 				action,
-				link
+				link: config.isEnabled( 'post-editor/delta-post-publish-preview' ) ? null : link,
 			};
 
 			window.scrollTo( 0, 0 );
 
-			if ( config.isEnabled( 'post-editor/delta-post-publish-preview' ) && this.props.isSitePreviewable ) {
+			if (
+				config.isEnabled( 'post-editor/delta-post-publish-preview' ) &&
+				this.props.isSitePreviewable &&
+				isNotPrivateOrIsConfirmed
+			) {
+				this.setState( { isPostPublishPreview: true } );
 				this.iframePreview();
 			}
 		} else {

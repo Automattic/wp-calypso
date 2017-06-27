@@ -148,7 +148,6 @@ export const PLANS_LIST = {
 			FEATURE_BASIC_DESIGN,
 			FEATURE_6GB_STORAGE,
 			FEATURE_NO_ADS,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -175,9 +174,9 @@ export const PLANS_LIST = {
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
+			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		] ),
 		getPromotedFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
@@ -222,9 +221,9 @@ export const PLANS_LIST = {
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_NO_ADS,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 			FEATURE_BUSINESS_ONBOARDING,
 			FEATURE_ADVANCED_SEO,
@@ -285,6 +284,7 @@ export const PLANS_LIST = {
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' )
 	},
@@ -311,6 +311,7 @@ export const PLANS_LIST = {
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
@@ -332,7 +333,7 @@ export const PLANS_LIST = {
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_PREMIUM_SUPPORT
+			FEATURE_PREMIUM_SUPPORT,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' )
 	},
@@ -354,7 +355,7 @@ export const PLANS_LIST = {
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_PREMIUM_SUPPORT
+			FEATURE_PREMIUM_SUPPORT,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},

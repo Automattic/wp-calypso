@@ -27,6 +27,7 @@ import {
 } from 'lib/media/constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
+import MediaLibraryScaleHeader from './empty-header';
 import MediaLibraryList from './list';
 
 const MediaLibraryContent = React.createClass( {
@@ -36,6 +37,7 @@ const MediaLibraryContent = React.createClass( {
 		filter: React.PropTypes.string,
 		filterRequiresUpgrade: React.PropTypes.bool,
 		search: React.PropTypes.string,
+		source: React.PropTypes.string,
 		containerWidth: React.PropTypes.number,
 		single: React.PropTypes.bool,
 		scrollable: React.PropTypes.bool,
@@ -47,7 +49,8 @@ const MediaLibraryContent = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			mediaValidationErrors: Object.freeze( {} ),
-			onAddMedia: noop
+			onAddMedia: noop,
+			source: '',
 		};
 	},
 
@@ -178,7 +181,11 @@ const MediaLibraryContent = React.createClass( {
 		}
 
 		return (
-			<MediaListData siteId={ this.props.site.ID } filter={ this.props.filter } search={ this.props.search }>
+			<MediaListData
+				siteId={ this.props.site.ID }
+				filter={ this.props.filter }
+				search={ this.props.search }
+				source={ this.props.source }>
 				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 					<MediaLibraryList
 						key={ 'list-' + ( [ this.props.site.ID, this.props.search, this.props.filter ].join() ) }
@@ -196,22 +203,36 @@ const MediaLibraryContent = React.createClass( {
 		);
 	},
 
+	renderHeader() {
+		if ( this.props.source !== '' ) {
+			return (
+				<MediaLibraryScaleHeader onMediaScaleChange={ this.props.onMediaScaleChange } />
+			);
+		}
+
+		if ( ! this.props.filterRequiresUpgrade ) {
+			return (
+				<MediaLibraryHeader
+					site={ this.props.site }
+					filter={ this.props.filter }
+					onMediaScaleChange={ this.props.onMediaScaleChange }
+					onAddMedia={ this.props.onAddMedia }
+					onAddAndEditImage={ this.props.onAddAndEditImage }
+					selectedItems={ this.props.selectedItems }
+					onViewDetails={ this.props.onViewDetails }
+					onDeleteItem={ this.props.onDeleteItem }
+					sticky={ ! this.props.scrollable }
+				/>
+			);
+		}
+
+		return null;
+	},
+
 	render: function() {
 		return (
 			<div className="media-library__content">
-				{ ! this.props.filterRequiresUpgrade &&
-					<MediaLibraryHeader
-						site={ this.props.site }
-						filter={ this.props.filter }
-						onMediaScaleChange={ this.props.onMediaScaleChange }
-						onAddMedia={ this.props.onAddMedia }
-						onAddAndEditImage={ this.props.onAddAndEditImage }
-						selectedItems={ this.props.selectedItems }
-						onViewDetails={ this.props.onViewDetails }
-						onDeleteItem={ this.props.onDeleteItem }
-						sticky={ ! this.props.scrollable }
-					/>
-				}
+				{ this.renderHeader() }
 				{ this.renderErrors() }
 				{ this.renderMediaList() }
 			</div>

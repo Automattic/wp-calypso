@@ -1,8 +1,24 @@
 /**
  * External dependencies
  */
-var update = require( 'react-addons-update' );
-import { every, assign, flow, isEqual, merge, reject, tail, some, uniq, flatten, filter, find, get } from 'lodash';
+import update from 'react-addons-update';
+import {
+	assign,
+	every,
+	filter,
+	find,
+	flatten,
+	flow,
+	get,
+	isEqual,
+	map,
+	merge,
+	reject,
+	some,
+	trimStart,
+	tail,
+	uniq,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -226,6 +242,12 @@ function hasTld( cart, tld ) {
 	return some( getDomainRegistrations( cart ), function( cartItem ) {
 		return getDomainRegistrationTld( cartItem ) === '.' + tld;
 	} );
+}
+
+function getTlds( cart ) {
+	return uniq( map( getDomainRegistrations( cart ), function( cartItem ) {
+		return trimStart( getDomainRegistrationTld( cartItem ), '.' );
+	} ) );
 }
 
 function getDomainRegistrationTld( cartItem ) {
@@ -811,6 +833,7 @@ module.exports = {
 	getRenewalItemFromProduct,
 	getRenewalItems,
 	getSiteRedirects,
+	getTlds,
 	googleApps,
 	googleAppsExtraLicenses,
 	guidedTransferItem,

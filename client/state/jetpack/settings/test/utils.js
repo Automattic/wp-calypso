@@ -128,7 +128,9 @@ describe( 'utils', () => {
 			const settings = {
 				some_other_setting: 123,
 				jetpack_testimonial: true,
+				jetpack_testimonial_posts_per_page: true,
 				jetpack_portfolio: true,
+				jetpack_portfolio_posts_per_page: true,
 				'custom-content-types': true,
 			};
 
@@ -221,7 +223,9 @@ describe( 'utils', () => {
 			const settings = {
 				some_other_setting: 123,
 				jetpack_testimonial: true,
+				jetpack_testimonial_posts_per_page: true,
 				jetpack_portfolio: true,
+				jetpack_portfolio_posts_per_page: true,
 				'custom-content-types': true,
 			};
 

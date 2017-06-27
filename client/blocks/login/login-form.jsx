@@ -48,7 +48,7 @@ export class LoginForm extends Component {
 	onChangeRememberMe = ( event ) => {
 		const { name, checked } = event.target;
 
-		this.props.recordTracksEvent( 'calypso_login_block_remember_me_change', { new_value: checked } );
+		this.props.recordTracksEvent( 'calypso_login_block_remember_me_click', { new_value: checked } );
 
 		this.setState( { [ name ]: checked } );
 	};
@@ -67,6 +67,7 @@ export class LoginForm extends Component {
 			onSuccess();
 		} ).catch( error => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
+				error_code: error.code,
 				error_message: error.message
 			} );
 		} );
@@ -145,13 +146,14 @@ export class LoginForm extends Component {
 							{ this.props.translate( 'Log In' ) }
 						</FormsButton>
 					</div>
-
-					{ config.isEnabled( 'signup/social' ) && (
+				</Card>
+				{ config.isEnabled( 'signup/social' ) && (
+					<Card>
 						<div className="login__form-social">
 							<SocialLoginForm onSuccess={ this.props.onSuccess } />
 						</div>
-					) }
-				</Card>
+					</Card>
+				) }
 			</form>
 		);
 	}

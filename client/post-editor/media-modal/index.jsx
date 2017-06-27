@@ -15,7 +15,8 @@ import {
 	some,
 	values,
 	isEmpty,
-	identity
+	identity,
+	includes,
 } from 'lodash';
 
 /**
@@ -40,6 +41,7 @@ import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { deleteMedia } from 'state/media/actions';
 import ImageEditor from 'blocks/image-editor';
+import VideoEditor from 'blocks/video-editor';
 import MediaModalDetail from './detail';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
@@ -125,6 +127,7 @@ export class EditorMediaModal extends Component {
 		return {
 			filter: '',
 			detailSelectedIndex: 0,
+			source: '',
 			gallerySettings: props.initialGallerySettings
 		};
 	}
@@ -249,9 +252,28 @@ export class EditorMediaModal extends Component {
 		this.props.setView( ModalViews.DETAIL );
 	};
 
-	onImageEditorCancel = imageEditorProps => {
-		const { mediaLibrarySelectedItems } = this.props;
+	handleUpdatePoster = ( { ID, posterUrl } ) => {
+		const { site } = this.props;
 
+		// Photon does not support URLs with a querystring component.
+		const urlBeforeQuery = ( posterUrl || '' ).split( '?' )[ 0 ];
+
+		if ( site ) {
+			MediaActions.edit( site.ID, {
+				ID,
+				thumbnails: {
+					fmt_hd: urlBeforeQuery,
+					fmt_dvd: urlBeforeQuery,
+					fmt_std: urlBeforeQuery,
+				}
+			} );
+		}
+
+		this.props.setView( ModalViews.DETAIL );
+	}
+
+	handleCancel = () => {
+		const { mediaLibrarySelectedItems } = this.props;
 		const item = mediaLibrarySelectedItems[ this.getDetailSelectedIndex() ];
 
 		if ( ! item ) {
@@ -260,9 +282,12 @@ export class EditorMediaModal extends Component {
 		}
 
 		this.props.setView( ModalViews.DETAIL );
+	}
 
+	onImageEditorCancel = imageEditorProps => {
 		const {	resetAllImageEditorState } = imageEditorProps;
 
+		this.handleCancel();
 		resetAllImageEditorState();
 	};
 
@@ -299,6 +324,9 @@ export class EditorMediaModal extends Component {
 			analytics.mc.bumpStat( 'editor_media_actions', 'search' );
 			this.statsTracking.search = true;
 		}
+	};
+
+	onSourceChange = () => {
 	};
 
 	onClose = () => {
@@ -338,7 +366,7 @@ export class EditorMediaModal extends Component {
 	}
 
 	getModalButtons() {
-		if ( ModalViews.IMAGE_EDITOR === this.props.view ) {
+		if ( includes( [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ], this.props.view ) ) {
 			return;
 		}
 
@@ -351,7 +379,15 @@ export class EditorMediaModal extends Component {
 			}
 		];
 
-		if ( ModalViews.GALLERY !== this.props.view && selectedItems.length > 1 &&
+		if ( this.state.source !== '' ) {
+			buttons.push( {
+				action: 'confirm',
+				label: this.props.labels.confirm || this.props.translate( 'Copy to media library' ),
+				isPrimary: true,
+				disabled: isDisabled || 0 === selectedItems.length,
+				onClick: this.confirmSelection
+			} );
+		} else if ( ModalViews.GALLERY !== this.props.view && selectedItems.length > 1 &&
 				! some( selectedItems, ( item ) => MediaUtils.getMimePrefix( item ) !== 'image' ) ) {
 			buttons.push( {
 				action: 'confirm',
@@ -374,7 +410,7 @@ export class EditorMediaModal extends Component {
 	}
 
 	shouldClose() {
-		return ( ModalViews.IMAGE_EDITOR !== this.props.view );
+		return ! includes( [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ], this.props.view );
 	}
 
 	updateSettings = ( gallerySettings ) => {
@@ -407,6 +443,7 @@ export class EditorMediaModal extends Component {
 				break;
 
 			case ModalViews.IMAGE_EDITOR:
+			case ModalViews.VIDEO_EDITOR:
 				const {
 					site,
 					imageEditorProps,
@@ -416,15 +453,26 @@ export class EditorMediaModal extends Component {
 				const selectedIndex = this.getDetailSelectedIndex();
 				const media = items ? items[ selectedIndex ] : null;
 
-				content = (
-					<ImageEditor
-						siteId={ site && site.ID }
-						media={ media }
-						onDone={ this.onImageEditorDone }
-						onCancel={ this.onImageEditorCancel }
-						{ ...imageEditorProps }
-					/>
-				);
+				if ( ModalViews.IMAGE_EDITOR === this.props.view ) {
+					content = (
+						<ImageEditor
+							siteId={ site && site.ID }
+							media={ media }
+							onDone={ this.onImageEditorDone }
+							onCancel={ this.onImageEditorCancel }
+							{ ...imageEditorProps }
+						/>
+					);
+				} else {
+					content = (
+						<VideoEditor
+							media={ media }
+							onCancel={ this.handleCancel }
+							onUpdatePoster={ this.handleUpdatePoster }
+						/>
+					);
+				}
+
 				break;
 
 			default:
@@ -434,11 +482,13 @@ export class EditorMediaModal extends Component {
 						filter={ this.state.filter || this.props.defaultFilter || this.getFirstEnabledFilter() }
 						enabledFilters={ this.props.enabledFilters }
 						search={ this.state.search }
+						source={ this.state.source }
 						onAddMedia={ this.onAddMedia }
 						onAddAndEditImage={ this.onAddAndEditImage }
 						onFilterChange={ this.onFilterChange }
 						onScaleChange={ this.onScaleChange }
 						onSearch={ this.onSearch }
+						onSourceChange={ this.onSourceChange }
 						onEditItem={ this.editItem }
 						fullScreenDropZone={ false }
 						single={ this.props.single }

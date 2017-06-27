@@ -31,6 +31,7 @@ import {
 	HAPPYCHAT_GROUP_WPCOM,
 	HAPPYCHAT_GROUP_JPOP
 } from '../constants';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 const TIME_SECOND = 1000;
 const TIME_MINUTE = TIME_SECOND * 60;
@@ -276,6 +277,17 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getGroups()', () => {
+		let _window; // Keep a copy of the original window if any
+
+		beforeEach( () => {
+			_window = global.window;
+			global.window = {};
+		} );
+
+		afterEach( () => {
+			global.window = _window;
+		} );
+
 		it( 'should return default group for no sites', () => {
 			const siteId = 1;
 			const state = {
@@ -303,6 +315,14 @@ describe( 'selectors', () => {
 		it( 'should return JPOP group for jetpack site', () => {
 			const siteId = 1;
 			const state = {
+				currentUser: {
+					id: 1,
+					capabilities: {
+						[ siteId ]: {
+							manage_options: true
+						}
+					}
+				},
 				sites: {
 					items: {
 						[ siteId ]: { jetpack: true }
@@ -311,6 +331,31 @@ describe( 'selectors', () => {
 			};
 
 			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_JPOP ] );
+		} );
+
+		it( 'should return WPCOM for AT sites group for jetpack site', () => {
+			const siteId = 1;
+			const state = {
+				currentUser: {
+					id: 1,
+					capabilities: {
+						[ siteId ]: {
+							manage_options: true
+						}
+					}
+				},
+				sites: {
+					items: {
+						[ siteId ]: {
+							jetpack: true,
+							options: { is_automated_transfer: true },
+							plan: { product_slug: PLAN_BUSINESS }
+						}
+					}
+				}
+			};
+
+			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
 		} );
 	} );
 } );

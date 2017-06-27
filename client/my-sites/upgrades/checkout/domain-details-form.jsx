@@ -12,7 +12,9 @@ import {
 	first,
 	has,
 	head,
+	includes,
 	indexOf,
+	intersection,
 	isEqual,
 	kebabCase,
 	last,
@@ -40,8 +42,9 @@ import FormButton from 'components/forms/form-button';
 import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
+import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
 import wp from 'lib/wp';
-import ExtraInfoFrForm from 'components/domains/registrant-extra-info/fr-form';
+import ExtraInfoForm, { tldsWithAdditionalDetailsForms } from 'components/domains/registrant-extra-info';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
@@ -64,13 +67,14 @@ export class DomainDetailsForm extends PureComponent {
 			'state',
 			'postalCode',
 			'countryCode',
-			'fax'
+			'fax',
 		];
 
 		const steps = [
 			'mainForm',
-			...this.getRequiredExtraSteps()
+			...this.getRequiredExtraSteps(),
 		];
+		debug( 'steps:', steps );
 
 		this.state = {
 			form: null,
@@ -80,6 +84,9 @@ export class DomainDetailsForm extends PureComponent {
 			steps,
 			currentStep: first( steps ),
 		};
+
+		this.inputRefs = {};
+		this.inputRefCallbacks = {};
 	}
 
 	componentWillMount() {
@@ -89,7 +96,7 @@ export class DomainDetailsForm extends PureComponent {
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
-			onError: this.handleFormControllerError
+			onError: this.handleFormControllerError,
 		} );
 	}
 
@@ -98,11 +105,10 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		// Note that state.form includes status information like errors,
-		// isValidating, isPendingValidation etc in addition to the actual
-		// field values.
-		if ( ! isEqual( prevState.form, this.state.form ) ) {
-			this.props.updateContactDetailsCache( this.getMainFieldValues( this.state.form ) );
+		const previousFormValues = formState.getAllFieldValues( prevState.form );
+		const currentFormValues = formState.getAllFieldValues( this.state.form );
+		if ( ! isEqual( previousFormValues, currentFormValues ) ) {
+			this.props.updateContactDetailsCache( this.getMainFieldValues() );
 		}
 	}
 
@@ -204,9 +210,11 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	getMainFieldValues() {
-		const mainFieldValues = Object.assign( {}, formState.getAllFieldValues( this.state.form ) );
-		mainFieldValues.phone = toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] );
-		return mainFieldValues;
+		const mainFieldValues = formState.getAllFieldValues( this.state.form );
+		return {
+			...mainFieldValues,
+			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
+		};
 	}
 
 	getRequiredExtraSteps() {
@@ -214,8 +222,7 @@ export class DomainDetailsForm extends PureComponent {
 			// All we need to do to disable everything is not show the .FR form
 			return [];
 		}
-
-		return cartItems.hasTld( this.props.cart, 'fr' ) ? [ 'fr' ] : [];
+		return intersection( cartItems.getTlds( this.props.cart ), tldsWithAdditionalDetailsForms );
 	}
 
 	getNumberOfDomainRegistrations() {
@@ -223,9 +230,12 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	getFieldProps( name ) {
+		const ref = name === 'state'
+			? { inputRef: this.getInputRefCallback( name ) }
+			: { ref: name };
 		return {
 			name,
-			ref: name,
+			...ref,
 			additionalClasses: 'checkout-field',
 			value: formState.getFieldValue( this.state.form, name ) || '',
 			isError: formState.isFieldInvalid( this.state.form, name ),
@@ -235,7 +245,7 @@ export class DomainDetailsForm extends PureComponent {
 			// kebab-case for HTML, so instead of using different variations all over the place, this accepts kebab-case and
 			// converts it to camelCase which is the format stored in the formState.
 			errorMessage: ( formState.getFieldErrorMessages( this.state.form, camelCase( name ) ) || [] ).join( '\n' ),
-			eventFormName: 'Checkout Form'
+			eventFormName: 'Checkout Form',
 		};
 	}
 
@@ -300,7 +310,7 @@ export class DomainDetailsForm extends PureComponent {
 				'Registering this domain for a company? + Add Organization Name',
 				'Registering these domains for a company? + Add Organization Name',
 				{
-					count: this.getNumberOfDomainRegistrations()
+					count: this.getNumberOfDomainRegistrations(),
 				}
 			) }
 			{ ...this.getFieldProps( 'organization' ) } />;
@@ -396,11 +406,11 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	renderExtraDetailsForm() {
+	renderExtraDetailsForm( tld ) {
 		return (
-			<ExtraInfoFrForm countriesList={ countriesList } >
+			<ExtraInfoForm tld={ tld } countriesList={ countriesList } >
 				{ this.renderSubmitButton() }
-			</ExtraInfoFrForm>
+			</ExtraInfoForm>
 		);
 	}
 
@@ -417,7 +427,9 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	focusFirstError() {
-		this.refs[ kebabCase( head( map( formState.getInvalidFields( this.state.form ), 'name' ) ) ) ].focus();
+		const firstErrorName = kebabCase( head( formState.getInvalidFields( this.state.form ) ).name );
+		const firstErrorRef = this.inputRefs[ firstErrorName ] || this.refs[ firstErrorName ];
+		firstErrorRef.focus();
 	}
 
 	handleSubmitButtonClick = ( event ) => {
@@ -496,14 +508,21 @@ export class DomainDetailsForm extends PureComponent {
 		}
 	}
 
-	renderCurrentForm() {
-		switch ( this.state.currentStep ) {
-			// TODO: gather up tld specific stuff
-			case 'fr':
-				return this.renderExtraDetailsForm();
-			default:
-				return this.renderDetailsForm();
+	// We want to cache the functions to avoid triggering unecessary rerenders
+	getInputRefCallback( name ) {
+		if ( ! this.inputRefCallbacks[ name ] ) {
+			this.inputRefCallbacks[ name ] =
+				( el ) => this.inputRefs[ name ] = el;
 		}
+
+		return this.inputRefCallbacks[ name ];
+	}
+
+	renderCurrentForm() {
+		const { currentStep } = this.state;
+		return includes( tldsWithAdditionalDetailsForms, currentStep )
+			? this.renderExtraDetailsForm( this.state.currentStep )
+			: this.renderDetailsForm();
 	}
 
 	render() {
@@ -537,7 +556,21 @@ export class DomainDetailsForm extends PureComponent {
 					title={ title }>
 					{ this.renderCurrentForm() }
 				</PaymentBox>
-			<QueryContactDetailsCache />
+			</div>
+		);
+	}
+}
+
+export class DomainDetailsFormContainer extends PureComponent {
+	render() {
+		return (
+			<div>
+				<QueryContactDetailsCache />
+				{
+					this.props.contactDetails
+						? <DomainDetailsForm { ...this.props } />
+						: <SecurePaymentFormPlaceholder />
+				}
 			</div>
 		);
 	}
@@ -546,4 +579,4 @@ export class DomainDetailsForm extends PureComponent {
 export default connect(
 	state => ( { contactDetails: getContactDetailsCache( state ) } ),
 	{ updateContactDetailsCache }
-)( localize( DomainDetailsForm ) );
+)( localize( DomainDetailsFormContainer ) );

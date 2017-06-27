@@ -10,6 +10,8 @@ var React = require( 'react' ),
 var ListItemFileDetails = require( './list-item-file-details' ),
 	Gridicon = require( 'gridicons' );
 
+import { MEDIA_IMAGE_THUMBNAIL, MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
+
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryListItemVideo',
 
@@ -21,7 +23,8 @@ module.exports = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			maxImageWidth: 450
+			maxImageWidth: 450,
+			thumbnailType: MEDIA_IMAGE_PHOTON,
 		};
 	},
 
@@ -37,9 +40,10 @@ module.exports = React.createClass( {
 		const thumbnail = this.getHighestQualityThumbnail();
 
 		if ( thumbnail ) {
-			// All thumbnails extracted from the media should be accessible via
-			// Photon, so we don't concern ourselves with the boolean prop
-			const url = photon( thumbnail, { width: this.props.maxImageWidth } );
+			// Non MEDIA_IMAGE_THUMBNAIL video media is accessible via Photon
+			const url = this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL
+							? thumbnail
+							: photon( thumbnail, { width: this.props.maxImageWidth } );
 
 			return (
 				<div className="media-library__list-item-video" style={ { backgroundImage: 'url(' + url + ')' } }>

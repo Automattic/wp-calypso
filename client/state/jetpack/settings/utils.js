@@ -18,6 +18,8 @@ export const normalizeSettings = ( settings ) => {
 			case 'custom-content-types':
 			case 'jetpack_testimonial':
 			case 'jetpack_portfolio':
+			case 'jetpack_testimonial_posts_per_page':
+			case 'jetpack_portfolio_posts_per_page':
 				break;
 			case 'jetpack_protect_global_whitelist':
 				const whitelist = get( settings[ key ], [ 'local' ], [] );
@@ -58,6 +60,8 @@ export const sanitizeSettings = ( settings ) => {
 			case 'infinite-scroll':
 			case 'jetpack_portfolio':
 			case 'jetpack_testimonial':
+			case 'jetpack_testimonial_posts_per_page':
+			case 'jetpack_portfolio_posts_per_page':
 			case 'post_by_email_address':
 				break;
 			case 'infinite_scroll':

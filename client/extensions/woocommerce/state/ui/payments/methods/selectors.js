@@ -47,12 +47,14 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
 		}
 		const updateEdits = {};
 		Object.keys( update ).map( function( updateKey ) {
-			if ( updateKey === 'id' ) {
+			if ( 'id' === updateKey ) {
 				return;
 			}
 			updateEdits[ updateKey ] = update[ updateKey ].value;
+			if ( 'enabled' === updateKey ) {
+				updateEdits[ updateKey ] = update[ updateKey ];
+			}
 		} );
-
 		methods[ index ] = { ...methods[ index ], ...updateEdits };
 	} );
 	return [ ...methods, ...creates ];

@@ -2,6 +2,11 @@
  * External dependencies
  */
 import React, { PureComponent, PropTypes } from 'react';
+import classNames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
 import twemoji from 'twemoji';
 import config from 'config';
 
@@ -12,11 +17,11 @@ export default class Emojify extends PureComponent {
 			PropTypes.object.isRequired,
 			PropTypes.string.isRequired,
 		] ),
-		className: PropTypes.string
+		imgClassName: PropTypes.string
 	}
 
 	static defaultProps = {
-		className: 'emojify__emoji'
+		imgClassName: 'emojify__emoji'
 	}
 
 	componentDidMount() {
@@ -28,12 +33,12 @@ export default class Emojify extends PureComponent {
 	}
 
 	parseEmoji = () => {
-		const { className } = this.props;
+		const { imgClassName } = this.props;
 
 		twemoji.parse( this.refs.emojified, {
 			base: config( 'twemoji_cdn_url' ),
 			size: '72x72',
-			className: className,
+			className: imgClassName,
 			callback: function( icon, options ) {
 				const ignored = [ 'a9', 'ae', '2122', '2194', '2660', '2663', '2665', '2666' ];
 
@@ -47,8 +52,17 @@ export default class Emojify extends PureComponent {
 	}
 
 	render() {
+		const {
+			children,
+			className,
+			imgClassName, // eslint-disable-line no-unused-vars
+			...other
+		} = this.props;
+
+		const classes = classNames( className, 'emojify' );
+
 		return (
-			<div className="emojify" ref="emojified">{ this.props.children }</div>
+			<div className={ classes } ref="emojified" { ...other }>{ children }</div>
 		);
 	}
 }

@@ -1,0 +1,176 @@
+.order__container {
+	padding-bottom: 0;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 58px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+
+		.order__details {
+			flex: 1 1 100%;
+		}
+
+		.order__activity-log {
+			flex: 2;
+			margin-right: 16px;
+		}
+
+		.order__customer-info {
+			flex: 1;
+		}
+	}
+
+	.section-header__label {
+		font-size: 16px;
+	}
+
+	thead {
+		.table-row:hover {
+			background: transparent;
+		}
+	}
+}
+
+.order__details-card {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.order__details-table {
+	margin: 0 -24px;
+	box-shadow: none;
+	border-bottom: 1px solid lighten( $gray, 30% );
+
+	.order__detail-item-cost,
+	.order__detail-item-quantity,
+	.order__detail-item-total {
+		text-align: right;
+	}
+
+	.order__detail-item-sku {
+		display: block;
+		margin-bottom: 8px;
+		color: $gray-text-min;
+		font-size: 12px;
+		line-height: 1;
+		text-transform: uppercase;
+	}
+
+	thead .table-heading {
+		border-bottom: 1px solid lighten( $gray, 30% );
+	}
+
+	.table-row {
+		&:hover {
+			background: transparent;
+		}
+	}
+}
+
+.order__details-totals {
+	padding: 24px 0;
+	text-align: right;
+
+	.order__details-total-discount,
+	.order__details-total-shipping,
+	.order__details-total-refund,
+	.order__details-total {
+		margin-bottom: 8px;
+
+		.order__details-totals-label {
+			display: inline-block;
+			width: 84%;
+		}
+
+		.order__details-totals-value {
+			display: inline-block;
+			width: 16%;
+		}
+	}
+
+	& > div:last-child {
+		margin-bottom: 0;
+	}
+
+	.order__details-total .order__details-totals-label,
+	.order__details-total .order__details-totals-value {
+		font-weight: bold;
+	}
+}
+
+.order__details-refund,
+.order__details-fulfillment {
+	margin: 0 -24px;
+	padding: 24px;
+	border-top: 1px solid lighten( $gray, 30% );
+	display: flex;
+	align-items: center;
+
+	.order__details-refund-label,
+	.order__details-fulfillment-label {
+		display: flex;
+		align-items: center;
+		flex-grow: 1;
+	}
+
+	.order__details-refund-label .gridicon {
+		color: $alert-green;
+	}
+
+	.order__details-refund-action,
+	.order__details-fulfillment-action {
+		flex-grow: 0;
+
+		.button {
+			float: left;
+			margin-right: 8px;
+			white-space: nowrap;
+			margin-left: 12px;
+		}
+
+		& > .button:last-child {
+			margin-right: 0;
+		}
+	}
+
+	.gridicon {
+		margin-right: 8px;
+	}
+}
+
+.order__details-fulfillment {
+	background: lighten( $blue-light, 25% );
+}
+
+.order__customer-info {
+	.order__billing-details,
+	.order__shipping-details {
+		margin-bottom: 16px;
+		color: $gray-text-min;
+		font-size: 12px;
+		text-transform: uppercase;
+	}
+
+	h4 {
+		font-weight: bold;
+	}
+
+	.order__customer-shipping {
+		.order__shipping-address {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.order__billing-address,
+.order__shipping-address {
+	margin-bottom: 1.5em;
+
+	p {
+		margin-bottom: 0;
+	}
+}

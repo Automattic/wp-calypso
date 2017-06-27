@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, noop, toInteger } from 'lodash';
+import { defaults, isEqual, noop, toInteger } from 'lodash';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import debugFactory from 'debug';
@@ -24,6 +24,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 // We use this for basic birth date validation.
 // Twill need to be updated once Ray gets us to the singularity.
 const currentPlausibleHumanLifespan = 140;
+const minimumLegalAge = 13;
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 
@@ -32,9 +33,6 @@ const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 // so we use these values to plug missing.
 const emptyValues = {
 	countryOfBirth: '',
-	dobDays: '',
-	dobMonths: '',
-	dobYears: '',
 	placeOfBirth: '',
 	postalCodeOfBirth: '',
 	registrantVatId: '',
@@ -42,7 +40,7 @@ const emptyValues = {
 	trademarkNumber: '',
 };
 
-class RegistrantExtraInfoForm extends React.PureComponent {
+class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		countriesList: PropTypes.object.isRequired,
 		isVisible: PropTypes.bool,
@@ -57,17 +55,22 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	constructor( props ) {
 		super( props );
-
-		const defaults = {
-			registrantType: this.props.contactDetails.organization
-				? 'organization' : 'individual',
-			countryOfBirth: this.props.contactDetails.countryCode || 'FR',
+		this.state = {
+			dobDays: '',
+			dobMonths: '',
+			dobYears: '',
 		};
+	}
 
-		this.props.contactDetails.extra = {
-			...defaults,
-			...this.props.contactDetails.extra
-		};
+	componentWillMount() {
+		// We're pushing props out into the global state here because:
+		// 1) We want to use these values if the user immediately hits submit
+		// 2) We want to use the tld specific forms to manage the tld specific
+		//    fields so we can keep them together in one place
+		this.props.updateContactDetailsCache( { extra: {
+			registrantType: this.props.contactDetails.organization ? 'organization' : 'individual',
+			countryOfBirth: this.props.contactDetails.countryCode || 'FR'
+		} } );
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -78,37 +81,37 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		}
 	}
 
-	handleDobChangeEvent = ( event ) => {
-		this.setState( {
-			...this.state,
-			[ event.target.id ]: event.target.value,
-		} );
-	}
-
 	compileDateOfBirth() {
-		const { dobYears, dobMonths, dobDays } = this.state || {};
-		let dateOfBirth = false;
+		const { dobYears, dobMonths, dobDays } = this.state;
 
-		if ( new Date().getFullYear() - toInteger( dobYears ) > currentPlausibleHumanLifespan ) {
+		if ( ! dobYears || ! dobMonths || ! dobDays ) {
+			return false;
+		}
+
+		const dateOfBirth = [ dobYears, dobMonths, dobDays ].join( '-' );
+
+		if ( ! dateOfBirth || ! moment( dateOfBirth, 'YYYY-MM-DD' ).isValid() ) {
 			// @todo: set error state
 			return false;
 		}
 
-		if ( dobYears && dobMonths && dobDays ) {
-			dateOfBirth = [ dobYears, dobMonths, dobDays ].join( '-' );
+		const yearDiff = new Date().getFullYear() - toInteger( dobYears );
+
+		if ( yearDiff > currentPlausibleHumanLifespan || yearDiff < minimumLegalAge ) {
+			// @todo: set error state
+			return false;
 		}
 
-		if ( dateOfBirth && moment( dateOfBirth, 'YYYY-MM-DD' ).isValid() ) {
-			return dateOfBirth;
-		}
-
-		// @todo: set error state
-		return false;
+		return dateOfBirth;
 	}
 
 	setDateOfBirth( dateOfBirth ) {
 		debug( 'Setting dateOfBirth to ' + dateOfBirth );
 		this.props.updateContactDetailsCache( { extra: { dateOfBirth } } );
+	}
+
+	handleDobChangeEvent = ( event ) => {
+		this.setState( { [ event.target.id ]: event.target.value } );
 	}
 
 	handleChangeEvent = ( event ) => {
@@ -123,14 +126,10 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 		const registrantType = this.props.contactDetails.extra.registrantType;
 		return (
 			<form className="registrant-extra-info__form">
-				<h1 className="registrant-extra-info__form-title">
-					{ translate(
-						'Registering a .FR domain'
-					) }
-				</h1>
 				<p className="registrant-extra-info__form-desciption">
 					{ translate(
-						'Almost done! We need some extra details to register domains ending in ".fr".'
+						'Almost done! We need some extra details to register your %(tld)s domain.',
+						{ args: { tld: '.fr' } }
 					) }
 				</p>
 				<FormFieldset>
@@ -164,17 +163,14 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	}
 
 	renderPersonalFields() {
-		const translate = this.props.translate;
-		const extra = this.props.contactDetails.extra;
 		const screenReaderText = 'screen-reader-text';
+		const translate = this.props.translate;
+		const { dobYears, dobMonths, dobDays } = this.state;
 		const {
 			countryOfBirth,
-			dobYears,
-			dobMonths,
-			dobDays,
 			placeOfBirth,
 			postalCodeOfBirth,
-		} = { ...emptyValues, ...extra, ...this.state };
+		} = defaults( {}, this.props.contactDetails.extra, emptyValues );
 
 		return (
 			<div>
@@ -241,7 +237,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						translate( 'Year/Month/Day - e.g. 1970/12/31', {
 							comment: 'This is describing a date format with fixed fields, so please do not ' +
 								'alter the numbers (Year, Month, Day). Please translate e.g("For example") if appropriate and also ' +
-								'the words, Year, Month, Day, individually.'
+								'the words, Year, Month, Day, individually.',
 						} )
 					}</FormSettingExplanation>
 				</FormFieldset>
@@ -281,12 +277,12 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	renderOrganizationFields() {
 		const translate = this.props.translate;
-		const extra = this.props.contactDetails.extra;
+		const { extra } = this.props.contactDetails;
 		const {
 			registrantVatId,
 			sirenSiret,
 			trademarkNumber
-		} = { ...emptyValues, ...extra };
+		} = defaults( {}, extra, emptyValues );
 
 		return (
 			<div>
@@ -360,4 +356,4 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 export default connect(
 	state => ( { contactDetails: getContactDetailsCache( state ) } ),
 	{ updateContactDetailsCache }
-)( localize( RegistrantExtraInfoForm ) );
+)( localize( RegistrantExtraInfoFrForm ) );

@@ -64,6 +64,7 @@ import {
 	getCurrentUser,
 	getCurrentUserLocale,
 } from 'state/current-user/selectors';
+import { getHelpSelectedSite } from 'state/help/selectors';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
 
@@ -99,9 +100,10 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 		return;
 	}
 
+	const selectedSite = getHelpSelectedSite( state );
 	const user = getCurrentUser( state );
 	const locale = getCurrentUserLocale( state );
-	const groups = getGroups( state );
+	const groups = getGroups( state, selectedSite.ID );
 
 	// Notify that a new connection is being established
 	dispatch( setConnecting() );
@@ -135,7 +137,6 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 		.then( ( { jwt } ) => connection.open( user.ID, jwt, locale, groups ) )
 		.catch( e => debug( 'failed to start happychat session', e, e.stack ) );
 };
-
 
 export const updateChatPreferences = ( connection, { getState }, siteId ) => {
 	const state = getState();
