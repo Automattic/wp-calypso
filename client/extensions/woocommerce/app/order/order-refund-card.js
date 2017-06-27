@@ -1,15 +1,18 @@
 /**
  * External dependencies
  */
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Dialog from 'components/dialog';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import formatCurrency from 'lib/format-currency';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -92,6 +95,18 @@ class OrderRefundCard extends Component {
 		}
 	}
 
+	sendRefund = () => {
+		const { translate } = this.props;
+		// Send API request
+		this.toggleRefundDialog();
+		setTimeout( () => {
+			this.props.errorNotice(
+				translate( 'Refund granted.' ),
+				{ duration: 4000 }
+			);
+		}, 1000 );
+	}
+
 	renderCreditCard = () => {
 		const { translate } = this.props;
 		const type = 'VISA';
@@ -157,8 +172,8 @@ class OrderRefundCard extends Component {
 						</FormFieldset>
 
 						<div className="order__refund-actions">
-							<Button>{ translate( 'Cancel' ) }</Button>
-							<Button primary>{ translate( 'Refund' ) }</Button>
+							<Button onClick={ this.toggleRefundDialog }>{ translate( 'Cancel' ) }</Button>
+							<Button primary onClick={ this.sendRefund }>{ translate( 'Refund' ) }</Button>
 						</div>
 					</form>
 				</Dialog>
@@ -167,4 +182,9 @@ class OrderRefundCard extends Component {
 	}
 }
 
-export default localize( OrderRefundCard );
+export default connect(
+	undefined,
+	dispatch => {
+		return bindActionCreators( { errorNotice, successNotice }, dispatch );
+	}
+)( localize( OrderRefundCard ) );
