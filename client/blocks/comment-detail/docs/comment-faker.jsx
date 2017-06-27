@@ -2,7 +2,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { filter, get, isNil, keyBy, keys, map, omit } from 'lodash';
+import { filter, get, isNil, keyBy, keys, map, maxBy, omit } from 'lodash';
+
+import { createPlaceholderComment } from 'state/data-layer/wpcom/comments';
 
 /**
  * `CommentFaker` is a HOC to easily test the Comments Management without the necessity of real data or actions.
@@ -89,6 +91,33 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		} } );
 	}
 
+	submitComment = comment => {
+		const { comments } = this.state;
+
+		const newComment = {
+			...createPlaceholderComment( comment.content, comment.postId, comment.parentId ),
+			author: {
+				avatar_URL: comment.authorAvatarUrl,
+				name: comment.authorName,
+				URL: comment.authorUrl,
+			},
+			i_like: false,
+			like_count: 0,
+			post: {
+				title: comment.postTitle,
+			},
+			status: 'approved',
+			URL: comment.URL,
+		};
+
+		this.setState( {
+			comments: {
+				...comments,
+				[ newComment.ID ]: newComment,
+			}
+		} );
+	}
+
 	/**
 	 * Resets the status and the like value of a list of comments to their previous values.
 	 *
@@ -123,6 +152,7 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 			setBulkStatus={ this.setBulkStatus }
 			setCommentLike={ this.setCommentLike }
 			setCommentStatus={ this.setCommentStatus }
+			submitComment={ this.submitComment }
 			undoBulkStatus={ this.undoBulkStatus }
 		/>;
 };
