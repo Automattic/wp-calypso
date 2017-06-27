@@ -92,4 +92,12 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
+	postPublishPreview: {
+		datestamp: '20170627',
+		variations: {
+			showPostPublishPreview: 50,
+			noShowPostPublishPreview: 50,
+		},
+		defaultVariation: 'showPostPublishPreview',
+	},
 };
