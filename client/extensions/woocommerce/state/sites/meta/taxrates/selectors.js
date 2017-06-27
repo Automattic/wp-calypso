@@ -14,7 +14,12 @@ export const getTaxRates = ( state, siteId = getSelectedSiteId( state ) ) => {
 };
 
 export const areTaxRatesLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isObject( getTaxRates( state, siteId ) );
+	const taxRates = getTaxRates( state, siteId );
+	if ( ! isObject( taxRates ) ) {
+		return false;
+	}
+	// combined_rate is present in all well formed responses
+	return ( 'combined_rate' in taxRates );
 };
 
 export const areTaxRatesLoading = ( state, siteId = getSelectedSiteId( state ) ) => {

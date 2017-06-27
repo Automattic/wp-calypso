@@ -1,14 +1,11 @@
 /**
  * External dependencies
  */
-
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:allendav' );
-
 import { bindActionCreators } from 'redux';
-import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { isEmpty, round } from 'lodash';
 import { localize } from 'i18n-calypso';
+import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
@@ -33,6 +30,9 @@ import ExtendedHeader from 'woocommerce/components/extended-header';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import Notice from 'components/notice';
+import Table from 'woocommerce/components/table';
+import TableRow from 'woocommerce/components/table/table-row';
+import TableItem from 'woocommerce/components/table/table-item';
 
 class TaxesRates extends Component {
 
@@ -43,13 +43,21 @@ class TaxesRates extends Component {
 	};
 
 	componentDidMount = () => {
-		const { address, loadedSettingsGeneral, loadedTaxJarRates, site } = this.props;
+		const { address, loadedSettingsGeneral, loadedTaxRates, site } = this.props;
 
 		if ( site && site.ID ) {
 			if ( ! loadedSettingsGeneral ) {
 				this.props.fetchSettingsGeneral( site.ID );
-			} else if ( ! loadedTaxJarRates ) {
+			} else if ( ! loadedTaxRates ) {
 				this.props.fetchTaxRates( site.ID, address );
+			}
+		}
+	}
+
+	componentWillReceiveProps = ( nextProps ) => {
+		if ( nextProps.loadedSettingsGeneral ) {
+			if ( ! nextProps.loadedTaxRates ) {
+				this.props.fetchTaxRates( nextProps.site.ID, nextProps.address );
 			}
 		}
 	}
@@ -142,7 +150,7 @@ class TaxesRates extends Component {
 
 		if ( ! areTaxesEnabled ) {
 			return (
-				<Notice status="is-error">
+				<Notice showDismiss={ false } status="is-error">
 					{ translate( 'Sales taxes are not currently being charged. Unless ' +
 						'your products are exempt from sales tax we recommend that you ' +
 						'{{strong}}enable automatic tax calculation and charging{{/strong}}',
@@ -172,7 +180,75 @@ class TaxesRates extends Component {
 	}
 
 	possiblyRenderRates = () => {
-		return null;
+		const { address, areTaxesEnabled, taxRates, translate } = this.props;
+		if ( ! areTaxesEnabled ) {
+			return null;
+		}
+
+		const stateData = getStateData( address.country, address.state );
+		if ( ! stateData ) {
+			return null;
+		}
+
+		if ( ORIGIN_BASED_SALES_TAX !== stateData.salesTaxBasis ) {
+			return null;
+		}
+
+		if ( isEmpty( taxRates ) ) {
+			return (
+				<Notice showDismiss={ false } status="is-error">
+					{ translate( 'The WordPress.com sales tax rate service is not ' +
+						'available for this site.' ) }
+				</Notice>
+			);
+		}
+
+		let state_rate = ( 'state_rate' in taxRates ) ? parseFloat( taxRates.state_rate ) : 0;
+		let combined_rate = ( 'combined_rate' in taxRates ) ? parseFloat( taxRates.combined_rate ) : 0;
+		let local_rate = combined_rate - state_rate;
+
+		state_rate = round( state_rate * 100, 2 );
+		combined_rate = round( combined_rate * 100, 2 );
+		local_rate = round( local_rate * 100, 2 );
+
+		const rates = [];
+
+		if ( 0 < state_rate ) {
+			rates.push( {
+				name: translate( 'State Tax' ),
+				rate: state_rate
+			} );
+			if ( 0 < local_rate ) {
+				rates.push( {
+					name: translate( 'Local Tax' ),
+					rate: local_rate
+				} );
+			}
+		}
+
+		rates.push( {
+			name: translate( 'Total Tax' ),
+			rate: combined_rate
+		} );
+
+		return (
+			<Table>
+				<TableRow isHeader>
+					<TableItem isHeader>
+						{ translate( 'Name' ) }
+					</TableItem>
+					<TableItem isHeader>
+						{ translate( 'Rate' ) }
+					</TableItem>
+				</TableRow>
+				{ rates.map( ( row, i ) => (
+					<TableRow key={ i }>
+							<TableItem key={ i }>{ row.name }</TableItem>
+							<TableItem key={ i + 1 }>{ row.rate }%</TableItem>
+					</TableRow>
+				) ) }
+			</Table>
+		);
 	}
 
 	render = () => {
@@ -211,8 +287,6 @@ function mapStateToProps( state, ownProps ) {
 	const areTaxesEnabled = areTaxCalculationsEnabled( state, siteId );
 	const loadedTaxRates = areTaxRatesLoaded( state, siteId );
 	const taxRates = getTaxRates( state, siteId );
-
-	debug( 'areTaxesEnabled=', areTaxesEnabled );
 
 	return {
 		address,

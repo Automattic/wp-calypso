@@ -12,11 +12,8 @@ import {
 } from 'woocommerce/state/action-types';
 import wp from 'lib/wp';
 
-export const fetchTaxRates = ( siteId ) => ( dispatch, getState ) => {
-	if (
-		areTaxRatesLoaded( getState(), siteId ) ||
-		areTaxRatesLoading( getState(), siteId )
-	) {
+export const fetchTaxRates = ( siteId, address ) => ( dispatch, getState ) => {
+	if ( areTaxRatesLoaded( getState(), siteId ) || areTaxRatesLoading( getState(), siteId ) ) {
 		return;
 	}
 
@@ -27,7 +24,7 @@ export const fetchTaxRates = ( siteId ) => ( dispatch, getState ) => {
 
 	dispatch( getAction );
 
-	return wp.req.get( { path: `/sites/${ siteId }/tax-rates` } )
+	return wp.req.get( { path: `/sites/${ siteId }/tax-rates` }, { ...address } )
 		.then( ( data ) => {
 			dispatch( {
 				type: TAXRATES_REQUEST_SUCCESS,
