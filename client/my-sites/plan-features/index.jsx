@@ -88,7 +88,7 @@ class PlanFeatures extends Component {
 		}
 
 		return (
-			<div className={ planWrapperClasses }>
+			<div className={ planWrapperClasses } ref="plansWrapper">
 				<div className={ planClasses }>
 					{ this.renderUpgradeDisabledNotice() }
 					<div className="plan-features__content">
@@ -476,8 +476,8 @@ class PlanFeatures extends Component {
 		// center plans
 		if ( isInSignupTest ) {
 			displayJetpackPlans
-				? document.querySelector( '.jetpack-connect__plans .plans-wrapper' ).scrollLeft = 150
-				: document.querySelector( '.signup__steps .plans-wrapper' ).scrollLeft = 495;
+				? this.refs.plansWrapper.scrollLeft = 150
+				: this.refs.plansWrapper.scrollLeft = 495;
 		}
 	}
 }
