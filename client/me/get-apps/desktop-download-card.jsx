@@ -46,6 +46,17 @@ const getCardTitle = ( platform ) => {
 	}
 };
 
+const getDescription = ( platform ) => {
+	switch ( platform ) {
+		case 'MacIntel':
+		case 'Linux i686':
+		case 'Linux i686 on x86_64':
+			return translate( 'A desktop app that gives WordPress a permanent home in your dock.' );
+		default:
+			return translate( 'A desktop app that gives WordPress a permanent home in your taskbar.' );
+	}
+};
+
 const getRequirementsText = ( platform ) => {
 	switch ( platform ) {
 		case 'MacIntel':
@@ -116,7 +127,7 @@ const DesktopDownloadCard = () => {
 		<Card className="get-apps__desktop">
 			<div className="get-apps__card-text">
 				<h3>{ getCardTitle( platform ) }</h3>
-				<p>{ translate( 'A desktop app that gives WordPress a permanent home in your dock.' ) }</p>
+				<p>{ getDescription( platform ) }</p>
 				<p className="get-apps__also-available">
 					{ getRequirementsText( platform ) }
 					{ getAlsoAvailableText( platform ) }
