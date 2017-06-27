@@ -19,6 +19,7 @@ import ProgressBar from 'components/progress-bar';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SetupHeader from './setup-header';
+import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
 
 const requiredPlugins = [
 	'woocommerce',
@@ -29,21 +30,28 @@ const requiredPlugins = [
 
 class RequiredPluginsInstallView extends Component {
 	static propTypes = {
+		fetchPluginData: PropTypes.func.isRequired,
+		installPlugin: PropTypes.func.isRequired,
 		plugins: PropTypes.array,
+		setFinishedInstallOfRequiredPlugins: PropTypes.func.isRequired,
+		site: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+		} ),
+		wpOrg: PropTypes.array,
 	};
 
 	constructor( props ) {
 		super( props );
 		this.state = {
-			allPluginsInstalled: false,
 			installingPlugin: null,
+			progress: 0,
 		};
 	}
 
 	componentDidMount = () => {
 		const { plugins } = this.props;
 
-		if ( plugins && plugins.length && ! this.props.isRequesting ) {
+		if ( plugins && plugins.length ) {
 			this.installPlugins( plugins );
 		}
 
@@ -80,18 +88,22 @@ class RequiredPluginsInstallView extends Component {
 				}
 				const wporgPlugin = getPlugin( wporg, slug );
 				this.setState( { installingPlugin: slug } );
+				this.setState( { progress: this.state.progress + 25 } );
 				this.props.installPlugin( site.ID, wporgPlugin );
 				isRunningInstall = true;
 				return;
 			}
 		}
 		if ( ! isRunningInstall ) {
-			this.setState( { allPluginsInstalled: true } );
+			this.props.setFinishedInstallOfRequiredPlugins(
+				site.ID,
+				true
+			);
 		}
 	}
 
 	render = () => {
-		const { translate, site, plugins } = this.props;
+		const { translate, site } = this.props;
 		return (
 			<div className="card dashboard__setup-wrapper">
 				{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
@@ -102,12 +114,7 @@ class RequiredPluginsInstallView extends Component {
 					title={ translate( 'Setting up your store' ) }
 					subtitle={ translate( 'Give us a minute and we\'ll move right along.' ) }
 				>
-					<ProgressBar value={ 75 } isPulsing />
-					<ul>
-					{ plugins.map( ( plugin ) => (
-						<li key={ plugin.slug }>{ plugin.name } ({ plugin.active ? 'active' : 'inactive' })</li>
-					) ) }
-					</ul>
+					<ProgressBar value={ this.state.progress } isPulsing />
 				</SetupHeader>
 			</div>
 		);
@@ -128,6 +135,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			fetchPluginData,
 			installPlugin,
+			setFinishedInstallOfRequiredPlugins,
 		},
 		dispatch
 	);
