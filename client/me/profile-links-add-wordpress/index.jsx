@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { keyBy } from 'lodash';
+import { pickBy, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,8 +13,23 @@ import config from 'config';
 import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
 import { recordClickEvent } from 'me/event-recorder';
-import { getPublicSites, getSites } from 'state/selectors';
+import { getPublicSites } from 'state/selectors';
+import { getSite } from 'state/sites/selectors';
 import ProfileLinksAddWordPressSite from './site';
+
+const addProfileLinks = ( inputs, userProfileLinks, callback ) => ( dispatch, getState ) => {
+	const links = pickBy( inputs, ( inputValue, inputName ) => 'site-' === inputName.substr( 0, 5 ) && inputValue );
+	const profileLinks = map( links, ( inputValue, inputName ) => parseInt( inputName.substr( 5 ), 10 ) )
+		.map( siteId => getSite( getState(), siteId ) )
+		.map( site => ( {
+			title: site.name,
+			value: site.URL,
+		} ) );
+
+	if ( profileLinks.length ) {
+		userProfileLinks.addProfileLinks( profileLinks, callback );
+	}
+};
 
 class ProfileLinksAddWordPress extends Component {
 	// an empty initial state is required to keep render and handleCheckedChange
@@ -45,26 +60,9 @@ class ProfileLinksAddWordPress extends Component {
 	}
 
 	onAddableSubmit = ( event ) => {
-		const { sites } = this.props;
-		const links = [];
-		let siteID, site, inputName;
-
 		event.preventDefault();
 
-		for ( inputName in this.state ) {
-			if ( 'site-' === inputName.substr( 0, 5 ) && this.state[ inputName ] ) {
-				siteID = parseInt( inputName.substr( 5 ), 10 ); // strip leading "site-" from inputName to get siteID
-				site = sites[ siteID ];
-				if ( site ) {
-					links.push( {
-						title: site.name,
-						value: site.URL
-					} );
-				}
-			}
-		}
-
-		this.props.userProfileLinks.addProfileLinks( links, this.onSubmitResponse );
+		this.props.addProfileLinks( this.state, this.props.userProfileLinks, this.onSubmitResponse );
 	};
 
 	onCancel = ( event ) => {
@@ -232,7 +230,9 @@ class ProfileLinksAddWordPress extends Component {
 
 export default connect(
 	( state ) => ( {
-		sites: keyBy( getSites( state ), 'ID' ),
 		publicSites: getPublicSites( state ),
-	} )
+	} ),
+	{
+		addProfileLinks
+	}
 )( localize( ProfileLinksAddWordPress ) );
