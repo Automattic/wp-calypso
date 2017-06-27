@@ -25,6 +25,10 @@ render: function() {
 
 The number to be displayed. Make sure it's a number, not a string containing a number.
 
+### `primary`
+
+Boolean. Applies `is-primary` class and related styles.
+
 ## Custom Styling
 
 In some cases, it may be necessary to increase the font size or remove the border. In your component's style file, specify rules for the `.count` within your component's selector. For an example, see the `select-dropdown` component's style file.
