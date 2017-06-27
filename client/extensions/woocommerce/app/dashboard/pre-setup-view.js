@@ -64,6 +64,8 @@ class PreSetupView extends Component {
 		const address = this.state.address;
 		address[ event.target.name ] = event.target.value;
 		this.setState( { address, userBeganEditing: true } );
+
+		// TODO - if country changes, reset state to an appropriate default
 	}
 
 	onNext = ( event ) => {

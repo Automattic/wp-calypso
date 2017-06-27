@@ -18,6 +18,7 @@ import Products from './app/products';
 import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
+import SettingsTaxes from './app/settings/taxes';
 import Shipping from './app/settings/shipping';
 import ShippingZone from './app/settings/shipping/shipping-zone';
 import StatsController from './app/store-stats/controller';
@@ -123,7 +124,7 @@ const getStorePages = () => {
 			path: '/store/settings/shipping/:site/zone/:zone',
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
+			container: SettingsTaxes,
 			configKey: 'woocommerce/extension-settings-tax',
 			path: '/store/settings/taxes/:site',
 			sidebarItem: {
