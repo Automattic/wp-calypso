@@ -15,6 +15,12 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { isMonthly, getYearlyPlanByMonthly } from 'lib/plans/constants';
 import { planItem } from 'lib/cart-values/cart-items';
 import { addItem } from 'lib/upgrades/actions';
+import {
+	isExpired,
+	isExpiring,
+	isRenewing,
+	showCreditCardExpiringWarning,
+} from 'lib/purchases';
 
 class PlanBillingPeriod extends Component {
 	static propTypes = {
@@ -36,6 +42,37 @@ class PlanBillingPeriod extends Component {
 		page( '/checkout/' + purchase.domain );
 	};
 
+	renderYearlyBillingInformation() {
+		const { purchase, translate } = this.props;
+
+		if ( showCreditCardExpiringWarning( purchase ) ) {
+			return translate( 'Billed yearly, credit card expiring soon' );
+		}
+
+		if ( isRenewing( purchase ) ) {
+			return translate( 'Billed yearly, renews on %s', {
+				args: purchase.renewMoment.format( 'LL' ),
+			} );
+		}
+
+		if ( isExpiring( purchase ) ) {
+			return translate( 'Billed yearly, expires on %s', {
+				args: purchase.expiryMoment.format( 'LL' ),
+			} );
+		}
+
+		if ( isExpired( purchase ) ) {
+			return translate( 'Billed yearly, expired %(timeSinceExpiry)s', {
+				args: {
+					timeSinceExpiry: purchase.expiryMoment.fromNow(),
+				},
+				context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+			} );
+		}
+
+		return translate( 'Billed yearly' );
+	}
+
 	renderBillingPeriodSelector() {
 		const { purchase, translate } = this.props;
 		if ( ! purchase ) {
@@ -45,7 +82,7 @@ class PlanBillingPeriod extends Component {
 		if ( ! isMonthly( purchase.productSlug ) ) {
 			return (
 				<FormSettingExplanation>
-					{ translate( 'Yearly' ) }
+					{ this.renderYearlyBillingInformation() }
 				</FormSettingExplanation>
 			);
 		}
