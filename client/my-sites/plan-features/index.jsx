@@ -221,7 +221,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { planProperties, intervalType, site, basePlansPath, isInSignup, isInSignupTest } = this.props;
+		const { planProperties, intervalType, site, basePlansPath, isInSignup, isInSignupTest, siteType } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -237,7 +237,6 @@ class PlanFeatures extends Component {
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
-			const siteType = window.state.signup.dependencyStore.designType;
 			let audience = planConstantObj.getAudience();
 
 			switch ( siteType ) {
@@ -516,6 +515,7 @@ export default connect(
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
 		const signupDependencies = getSignupDependencyStore( state );
+		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 		const planProperties = compact(
 			map( plans, ( plan ) => {
@@ -538,8 +538,6 @@ export default connect(
 				}
 
 				if ( isInSignupTest ) {
-					const siteType = signupDependencies.designType;
-
 					switch ( siteType ) {
 						case 'blog':
 							planFeatures = getPlanFeaturesObject( planConstantObj.getBlogSignupFeatures( abtest ) );
@@ -599,7 +597,8 @@ export default connect(
 
 		return {
 			canPurchase,
-			planProperties
+			planProperties,
+			siteType
 		};
 	},
 	{
