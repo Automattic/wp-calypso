@@ -138,7 +138,10 @@ class ActivityLog extends Component {
 	}
 
 	renderBanner() {
-		const { restoreProgress } = this.props;
+		const {
+			restoreProgress,
+			siteId,
+		} = this.props;
 
 		if ( ! restoreProgress ) {
 			return null;
@@ -160,11 +163,13 @@ class ActivityLog extends Component {
 						errorCode={ errorCode }
 						failureReason={ failureReason }
 						requestRestore={ this.handleRequestRestore }
+						siteId={ siteId }
 						siteTitle={ siteTitle }
 						timestamp={ timestamp }
 					/>
 				) : (
 					<SuccessBanner
+						siteId={ siteId }
 						timestamp={ timestamp }
 					/>
 				)
