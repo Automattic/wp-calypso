@@ -191,7 +191,7 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 		dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST } );
 
 		const doInstall = function( pluginData ) {
-			return getPluginHandler( siteId, pluginData.id ).install();
+			return getPluginHandler( siteId, pluginData.slug ).install();
 		};
 
 		const doActivate = function( pluginData ) {

@@ -4,21 +4,19 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import debugFactor from 'debug';
 import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-const debug = debugFactor( 'woocommerce:action-list' );
 
 /**
  * Internal dependencies
  */
-import { activatePlugin, installPlugin } from 'state/plugins/installed/actions';
+import { installPlugin } from 'state/plugins/installed/actions';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
-import { getPlugins, isRequesting } from 'state/plugins/installed/selectors';
+import { getPlugins } from 'state/plugins/installed/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
+import QueryPluginKeys from 'components/data/query-plugin-keys';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SetupHeader from './setup-header';
 
@@ -29,13 +27,6 @@ const requiredPlugins = [
 	'woocommerce-services',
 ];
 
-const requiredPluginIds = {
-	woocommerce: 'woocommerce/woocommerce',
-	// 'wc-api-dev': 'wc-api-dev/wc-api-dev',
-	'woocommerce-gateway-stripe': 'woocommerce-gateway-stripe/woocommerce-gateway-stripe',
-	'woocommerce-services': 'woocommerce-services/woocommerce-services',
-};
-
 class RequiredPluginsInstallView extends Component {
 	static propTypes = {
 		plugins: PropTypes.array,
@@ -44,8 +35,8 @@ class RequiredPluginsInstallView extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			installingPlugin: null,
 			allPluginsInstalled: false,
+			installingPlugin: null,
 		};
 	}
 
@@ -59,12 +50,12 @@ class RequiredPluginsInstallView extends Component {
 		this.getWporgPluginData();
 	}
 
-	componentDidUpdate = ( newProps ) => {
+	componentDidUpdate = ( prevProps ) => {
 		if (
-			( newProps.plugins && newProps.plugins.length && ! this.state.installingPlugin ) ||
-			( find( newProps.plugins, { slug: this.state.installingPlugin } ) )
+			( this.props.plugins && this.props.plugins.length && ! this.state.installingPlugin ) ||
+			( prevProps.plugins && this.props.plugins.length > prevProps.plugins.length )
 		) {
-			this.installPlugins( newProps.plugins );
+			this.installPlugins( this.props.plugins );
 		}
 	}
 
@@ -78,7 +69,8 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	installPlugins = ( plugins ) => {
-		const { siteId, wporg } = this.props;
+		const { site, wporg } = this.props;
+		let isRunningInstall = false;
 		for ( let i = 0; i < requiredPlugins.length; i++ ) {
 			const slug = requiredPlugins[ i ];
 			const plugin = find( plugins, { slug } );
@@ -88,18 +80,22 @@ class RequiredPluginsInstallView extends Component {
 				}
 				const wporgPlugin = getPlugin( wporg, slug );
 				this.setState( { installingPlugin: slug } );
-				debugger;
-				this.props.installPlugin( siteId, { ...wporgPlugin, id: requiredPluginIds[ slug ] } );
+				this.props.installPlugin( site.ID, wporgPlugin );
+				isRunningInstall = true;
 				return;
 			}
+		}
+		if ( ! isRunningInstall ) {
+			this.setState( { allPluginsInstalled: true } );
 		}
 	}
 
 	render = () => {
-		const { translate, siteId, plugins } = this.props;
+		const { translate, site, plugins } = this.props;
 		return (
 			<div className="card dashboard__setup-wrapper">
-				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
+				{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
+				{ site.canUpdateFiles && <QueryPluginKeys siteId={ site.ID } /> }
 				<SetupHeader
 					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
 					imageWidth={ 160 }
@@ -119,13 +115,10 @@ class RequiredPluginsInstallView extends Component {
 }
 
 function mapStateToProps( state ) {
-	const selectedSite = getSelectedSiteWithFallback( state );
-	const siteId = selectedSite && selectedSite.ID;
-
+	const site = getSelectedSiteWithFallback( state );
 	return {
-		isRequesting: isRequesting( state, siteId ),
-		siteId,
-		plugins: getPlugins( state, [ { ID: siteId } ] ),
+		site,
+		plugins: getPlugins( state, [ { ID: site.ID } ] ),
 		wporg: state.plugins.wporg.items,
 	};
 }
@@ -133,7 +126,6 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			activatePlugin,
 			fetchPluginData,
 			installPlugin,
 		},
