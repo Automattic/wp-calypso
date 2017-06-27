@@ -31,12 +31,19 @@ const Miscellaneous = ( {
 	isRequesting,
 	isSaving,
 	status: {
-		compression_disabled: compressionDisabled
+		compression_disabled_by_admin: compressionDisabledByAdmin,
+		compression_disabled_no_gzencode: compressionDisabledNoGzEncode
 	},
 	translate,
 } ) => {
 	const isDisabled = isRequesting || isSaving || isReadOnly;
-	const compressionDisabledMessage = translate( 'Compression disabled.' );
+	let compressionDisabledMessage;
+
+	if ( compressionDisabledByAdmin ) {
+		compressionDisabledMessage = translate( 'Compression disabled by a site administrator.' );
+	} else if ( compressionDisabledNoGzEncode ) {
+		compressionDisabledMessage = translate( 'Warning! Compression is disabled as gzencode() function was not found.' );
+	}
 
 	return (
 		<div>
@@ -45,14 +52,14 @@ const Miscellaneous = ( {
 			</SectionHeader>
 			<Card>
 				<form>
-					{ compressionDisabled &&
+					{ compressionDisabledMessage &&
 					<Notice
 						showDismiss={ false }
 						status="is-warning"
 						text={ compressionDisabledMessage } />
 					}
 					<FormFieldset>
-						{ ! compressionDisabled &&
+						{ ! compressionDisabledMessage &&
 						<FormToggle
 							checked={ !! cache_compression }
 							disabled={ isDisabled }
@@ -67,7 +74,7 @@ const Miscellaneous = ( {
 							</span>
 						</FormToggle>
 						}
-						{ ! compressionDisabled &&
+						{ ! compressionDisabledMessage &&
 						<Notice
 							isCompact
 							className="wp-super-cache__toggle-notice"
