@@ -93,7 +93,7 @@ describe( 'handlers', () => {
 				],
 			};
 
-			const successAction = ( dispatch, getState, productId, sentData, receivedData ) => {
+			const successAction = ( dispatch, getState, { productId, sentData, receivedData } ) => {
 				return { type: '%%success%%', productId, sentData, receivedData };
 			};
 			const action = createProductVariation( 123, 66, variation1, successAction );

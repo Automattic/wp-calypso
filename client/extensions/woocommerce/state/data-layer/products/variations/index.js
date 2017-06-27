@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import { isFunction, isNumber, isObject } from 'lodash';
+import { isNumber } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { post } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import { productVariationUpdated } from 'woocommerce/state/sites/products/variations/actions';
@@ -34,12 +35,8 @@ export function handleProductVariationCreate( store, action ) {
 	const updatedAction = ( dispatch, getState, data ) => {
 		dispatch( productVariationUpdated( siteId, data, action ) );
 
-		// TODO: Make this a utility function.
-		if ( isFunction( successAction ) ) {
-			dispatch( successAction( dispatch, getState, productId, action.variation, data ) );
-		} else if ( isObject( successAction ) ) {
-			dispatch( { ...successAction, productId, sentData: action.variation, receivedData: data } );
-		}
+		const props = { productId: action.productId, sentData: action.variation, receivedData: data };
+		dispatchWithProps( dispatch, getState, successAction, props );
 	};
 
 	const endpoint = 'products/' + productId + '/variations';
