@@ -86,7 +86,8 @@ class SiteSelectorModal extends Component {
 				<SitesDropdown
 					onSiteSelect={ this.setSite }
 					selectedSiteId={ this.state.siteId }
-					filter={ this.props.filter } />
+					filter={ this.props.filter }
+					isPlaceholder={ ! this.props.initialSiteId } />
 			</Dialog>
 		);
 	}
