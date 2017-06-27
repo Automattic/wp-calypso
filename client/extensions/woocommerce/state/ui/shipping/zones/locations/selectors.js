@@ -214,6 +214,11 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 	};
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Boolean} Whether the "Edit Locations" modal is opened or not.
+ */
 export const isEditLocationsModalOpen = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areShippingZonesLoaded( state, siteId ) || ! getCurrentlyEditingShippingZone( state, siteId ) ) {
 		return false;
@@ -250,6 +255,12 @@ export const getCurrentSelectedCountryZoneOwner = ( state, siteId = getSelectedS
 	return getCountriesOwnedByOtherZone( state, siteId )[ locations.country[ 0 ] ];
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Boolean} Whether the locations currently being edited can be filtered by state. This will happen when there
+ * is only one country selected and it has a list of available states.
+ */
 export const canLocationsBeFilteredByState = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! canLocationsBeFiltered( state, siteId ) ) {
 		return false;
@@ -259,6 +270,11 @@ export const canLocationsBeFilteredByState = ( state, siteId = getSelectedSiteId
 	return locations && hasStates( state, locations.country[ 0 ], siteId );
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Boolean} Whether the "Filter by postcode range" option is selected.
+ */
 export const areLocationsFilteredByPostcode = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! canLocationsBeFiltered( state, siteId ) ) {
 		return false;
@@ -277,6 +293,11 @@ export const areLocationsFilteredByPostcode = ( state, siteId = getSelectedSiteI
 	return ! canLocationsBeFilteredByState( state, siteId ) && Boolean( getCurrentSelectedCountryZoneOwner( state, siteId ) );
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Boolean} Whether the "Filter by state" option is selected.
+ */
 export const areLocationsFilteredByState = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! canLocationsBeFiltered( state, siteId ) || ! canLocationsBeFilteredByState( state, siteId ) ) {
 		return false;
@@ -295,6 +316,11 @@ export const areLocationsFilteredByState = ( state, siteId = getSelectedSiteId( 
 	return ! areLocationsFilteredByPostcode( state, siteId ) && Boolean( getCurrentSelectedCountryZoneOwner( state, siteId ) );
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Boolean} Whether the "Ship to the whole country" option is selected.
+ */
 export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return canLocationsBeFiltered( state, siteId ) &&
 		! getCurrentSelectedCountryZoneOwner( state, siteId ) &&
@@ -302,6 +328,20 @@ export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state
 		! areLocationsFilteredByPostcode( state, siteId );
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array} The list of locations currently configured for the zone. This doesn't include temporary edits,
+ * since it's made to be used for the UI outside of the modal. Each element of the list will have these properties:
+ * - type: 'continent|country|state'
+ * - code: Continent code, country code or state code, depending on the type
+ * - name: Name of the location to be displayed
+ * Additionally, if the "type" is "country", it will have an optional field:
+ * - postcodeFilter: String, postcode range applied, if any.
+ * And if the "type" is "state":
+ * - countryName: Name of the country that this state is part of.
+ * - countryCode: Code of the ecountry that this state is part of.
+ */
 export const getCurrentlyEditingShippingZoneLocationsList = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const locations = getShippingZoneLocationsWithEdits( state, siteId, false );
 	if ( ! locations ) {
@@ -342,6 +382,18 @@ export const getCurrentlyEditingShippingZoneLocationsList = ( state, siteId = ge
 	} ) ), 'name' );
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array} The list of continents and countries for this zone, ready to be rendered in the UI. This includes
+ * temporary edits, as it's made to be used inside the modal UI. Each element will have these properties:
+ * - type: 'continent|country'
+ * - code: Continent code or country code
+ * - name: Name of the location to be displayed
+ * - selected: Boolean, whether this location should be markef as "selected"
+ * - disabled: Boolean, whether this location should be marked as "disabled". The user shouldn't be able to toggle a disabled element.
+ * - ownerZoneId: The Zone ID that is the "owner" of this location, or undefined if no other zone includes this location.
+ */
 export const getCurrentlyEditingShippingZoneCountries = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const locations = getShippingZoneLocationsWithEdits( state, siteId );
 	if ( ! locations ) {
@@ -378,6 +430,17 @@ export const getCurrentlyEditingShippingZoneCountries = ( state, siteId = getSel
 	return locationsList;
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array} The list of states for this zone, ready to be rendered in the UI. This includes
+ * temporary edits, as it's made to be used inside the modal UI. Each element will have these properties:
+ * - code: State code
+ * - name: State name
+ * - selected: Boolean, whether this location should be markef as "selected"
+ * - disabled: Boolean, whether this location should be marked as "disabled". The user shouldn't be able to toggle a disabled element.
+ * - ownerZoneId: The Zone ID that is the "owner" of this state, or undefined if no other zone includes this state.
+ */
 export const getCurrentlyEditingShippingZoneStates = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areLocationsFilteredByState( state, siteId ) ) {
 		return [];
@@ -399,6 +462,12 @@ export const getCurrentlyEditingShippingZoneStates = ( state, siteId = getSelect
 	} ) );
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Boolean} Whether the locations for the shipping zone currently being edited are valid. This includes
+ * temporary edits, as it's designed to be used for enabling / disabling the "Save Changes" button.
+ */
 export const areCurrentlyEditingShippingZoneLocationsValid = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const locations = getShippingZoneLocationsWithEdits( state, siteId );
 	if ( ! locations ) {
