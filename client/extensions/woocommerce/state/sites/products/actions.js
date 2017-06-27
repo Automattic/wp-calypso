@@ -22,6 +22,7 @@ import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_DELETE,
 	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
+	WOOCOMMERCE_PRODUCT_REQUEST,
 	WOOCOMMERCE_PRODUCT_UPDATED,
 } from 'woocommerce/state/action-types';
 
@@ -114,6 +115,16 @@ function deleteProductSuccess( siteId, data ) {
 		type: WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
 		siteId,
 		data,
+	};
+}
+
+export function fetchProduct( siteId, productId, successAction, failureAction ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_REQUEST,
+		siteId,
+		productId,
+		successAction,
+		failureAction,
 	};
 }
 
