@@ -204,17 +204,18 @@ class ActivityLogItem extends Component {
 			log,
 			moment,
 			translate,
+			siteOffset,
 		} = this.props;
 		const {
 			name,
-			ts_site,
+			ts_utc,
 		} = log;
 
 		return (
 			<div>
 				{ translate( 'An event "%(eventName)s" occurred at %(date)s', {
 					args: {
-						date: moment( ts_site ).format( 'LLL' ),
+						date: siteOffset( moment( ts_utc ) ).format( 'LLL' ),
 						eventName: name,
 					}
 				} ) }
@@ -275,7 +276,7 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__time">
-				{ siteOffset( moment( log.ts_site ) ).format( 'LT' ) }
+				{ siteOffset( moment( log.ts_utc ) ).format( 'LT' ) }
 			</div>
 		);
 	}
