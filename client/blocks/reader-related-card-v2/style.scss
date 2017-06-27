@@ -727,6 +727,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: initial;
 		word-wrap: break-word;
+		word-break: break-word; // Wrap long words in WebKit
 	}
 }
 
