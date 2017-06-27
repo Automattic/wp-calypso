@@ -1,7 +1,6 @@
 .email__add-google-apps-card-product-details {
 	@include breakpoint( ">960px" ) {
 		display: flex;
-		flex-basis: 50%;
 	}
 }
 
@@ -10,6 +9,7 @@
 	font-size: 14px;
 
 	@include breakpoint( ">960px" ) {
+		flex-basis: 100%;
 		max-width: 400px;
 	}
 
@@ -86,14 +86,18 @@
 }
 
 .email__add-google-apps-card-logos {
-	align-items: center;
-	display: flex;
-	flex-grow: 1;
-	margin-left: 100px;
-	justify-content: center;
+	display: none;
 
-	@include breakpoint( "<960px" ) {
-		display: none;
+	@include breakpoint( ">960px" ) {
+		align-items: flex-start;
+		display: flex;
+		flex-grow: 1;
+		margin-left: 20px;
+		justify-content: center;
+	}
+
+	@include breakpoint( ">1040px" ) {
+		align-items: center;
 	}
 }
 
