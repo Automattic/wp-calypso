@@ -134,6 +134,9 @@ class ActivityLogItem extends Component {
 			case 'term':
 				return 'folder';
 
+			case 'theme':
+				return 'themes';
+
 			case 'user':
 				return 'user';
 		}
@@ -148,12 +151,14 @@ class ActivityLogItem extends Component {
 		switch ( name ) {
 			case 'comment__trashed':
 			case 'post__trashed':
+			case 'theme__deleted':
 				return 'is-error';
 
 			case 'attachment__uploaded':
 			case 'comment__published':
 			case 'post__published':
 			case 'term__created':
+			case 'theme__installed':
 			case 'user__registered':
 				return 'is-success';
 
