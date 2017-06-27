@@ -83,7 +83,7 @@ ProductFormCategoriesCard.propTypes = {
 	siteId: PropTypes.number,
 	product: PropTypes.shape( {
 		id: PropTypes.isRequired,
-		type: PropTypes.string.isRequired,
+		type: PropTypes.string,
 	} ),
 	productCategories: PropTypes.array.isRequired,
 	editProduct: PropTypes.func.isRequired,
