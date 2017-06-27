@@ -80,15 +80,15 @@ class PreviewMain extends React.Component {
 		if ( ! isPreviewable ) {
 			const action = (
 				<Button primary icon href={ site.URL } target="_blank">
-					Open Externally
+					{ translate( 'Open' ) }
 					<Gridicon icon="external" />
 				</Button>
 			);
 
 			return (
 				<EmptyContent
-					title={ 'Site cannot be previewed here' }
-					line={ 'You can open it in a new tab' }
+					title={ translate( 'Unable to show your site here' ) }
+					line={ translate( 'To view your site, click the button below' ) }
 					action={ action }
 					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					illustrationWidth={ 350 }
