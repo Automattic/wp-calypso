@@ -94,6 +94,7 @@ module.exports = {
 	},
 	postPublishPreview: {
 		datestamp: '20170627',
+		allowExistingUsers: true,
 		variations: {
 			showPostPublishPreview: 50,
 			noShowPostPublishPreview: 50,
