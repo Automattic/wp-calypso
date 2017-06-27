@@ -83,3 +83,15 @@ export const getStoreLocation = ( state, siteId = getSelectedSiteId( state ) ) =
 
 	return address;
 };
+
+export const areTaxCalculationsEnabled = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const generalSettings = getRawGeneralSettings( state, siteId );
+	const taxesEnabled = find( generalSettings, { id: 'woocommerce_calc_taxes' } );
+	if ( ! taxesEnabled ) {
+		return null;
+	}
+	if ( ! ( 'value' in taxesEnabled ) ) {
+		return null;
+	}
+	return ( 'yes' === taxesEnabled.value );
+};

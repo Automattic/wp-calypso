@@ -21,8 +21,16 @@ export const getCountries = () => {
 	];
 };
 
-export const getStateData = ( country, state ) => {
+export const getCountryData = ( country ) => {
 	const countryData = find( getCountries(), { code: country } );
+	if ( ! countryData ) {
+		return null;
+	}
+	return countryData;
+};
+
+export const getStateData = ( country, state ) => {
+	const countryData = getCountryData( country );
 	if ( ! countryData ) {
 		return null;
 	}
