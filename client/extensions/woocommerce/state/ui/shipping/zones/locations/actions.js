@@ -2,6 +2,9 @@
  * Internal dependencies
  */
 import {
+	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CANCEL,
+	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CLOSE,
+	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_EDIT,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_SELECT_CONTINENT,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_SELECT_COUNTRY,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_SELECT_STATE,
@@ -10,6 +13,42 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_STATE,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_POSTCODE,
 } from 'woocommerce/state/action-types';
+
+/**
+ * Opens the locations UI for editing them
+ * @param {Number} siteId Site ID.
+ * @return {Object} Action object.
+ */
+export const openEditLocations = ( siteId ) => {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_EDIT,
+		siteId,
+	};
+};
+
+/**
+ * Closes the locations UI, saving any changes that were made
+ * @param {Number} siteId Site ID.
+ * @return {Object} Action object.
+ */
+export const closeEditLocations = ( siteId ) => {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CLOSE,
+		siteId,
+	};
+};
+
+/**
+ * Closes the locations UI, discarding any changes that were made
+ * @param {Number} siteId Site ID.
+ * @return {Object} Action object.
+ */
+export const cancelEditLocations = ( siteId ) => {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CANCEL,
+		siteId,
+	};
+};
 
 /**
  * Selects or un-selects a continent.
