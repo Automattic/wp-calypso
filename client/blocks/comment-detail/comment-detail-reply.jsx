@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,17 +24,27 @@ export class CommentDetailReply extends Component {
 	setFocus = () => this.setState( { hasFocus: true } );
 
 	submit = () => {
+		const {
+			commentId,
+			currentUser,
+			postId,
+			postTitle,
+			postUrl,
+			submitComment,
+		} = this.props;
+		const { commentText } = this.state;
+
 		const comment = {
-			authorAvatarUrl: this.props.currentUser.avatar_URL,
-			authorName: this.props.currentUser.display_name,
-			authorUrl: this.props.currentUser.primary_blog_url,
-			parentId: this.props.commentId,
-			postId: this.props.postId,
-			postTitle: this.props.postTitle,
-			content: this.state.commentText,
-			URL: this.props.postUrl,
+			authorAvatarUrl: get( currentUser, 'avatar_URL', '' ),
+			authorName: get( currentUser, 'display_name', '' ),
+			authorUrl: get( currentUser, 'primary_blog_url', '' ),
+			parentId: commentId,
+			postId: postId,
+			postTitle: postTitle,
+			content: commentText,
+			URL: postUrl,
 		};
-		this.props.submitComment( comment );
+		submitComment( comment );
 		this.setState( { commentText: '' } );
 	}
 
