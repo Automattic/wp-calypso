@@ -198,6 +198,7 @@ module.exports = {
 						productsList={ productsList }
 						purchaseId={ context.params.purchaseId }
 						selectedFeature={ selectedFeature }
+						couponCode={ context.query.code }
 					/>
 				</CheckoutData>
 			),

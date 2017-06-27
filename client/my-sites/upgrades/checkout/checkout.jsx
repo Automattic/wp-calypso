@@ -57,6 +57,7 @@ const Checkout = React.createClass( {
 
 	propTypes: {
 		cards: React.PropTypes.array.isRequired,
+		couponCode: React.PropTypes.string,
 		selectedFeature: React.PropTypes.string
 	},
 
@@ -129,6 +130,9 @@ const Checkout = React.createClass( {
 			this.addRenewItemToCart();
 		} else {
 			this.addNewItemToCart();
+		}
+		if ( this.props.couponCode ) {
+			upgradesActions.applyCoupon( this.props.couponCode );
 		}
 	},
 
