@@ -17,6 +17,7 @@ export default () => {
 		{
 			code: 'US',
 			name: translate( 'USA' ),
+			defaultState: 'AL',
 			states: [
 				{
 					code: 'AL',

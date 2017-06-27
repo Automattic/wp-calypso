@@ -1,9 +1,6 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:allendav' );
-
 import { bindActionCreators } from 'redux';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
@@ -43,15 +40,15 @@ class TaxesNexus extends Component {
 
 	onEditAddress = ( event ) => {
 		event.preventDefault();
-		debug( 'wut wut' );
 		// TODO - modal up
 	}
 
 	render = () => {
 		const { address, loading, translate } = this.props;
 
-		debug( 'address=', address );
-		debug( 'loading=', loading );
+		if ( loading ) {
+			return null;
+		}
 
 		return (
 			<div className="taxes__taxes-nexus">
@@ -70,15 +67,20 @@ class TaxesNexus extends Component {
 
 function mapStateToProps( state, ownProps ) {
 	let name = '';
+	let storeLocation = {};
+	let loading = true;
+
 	if ( ownProps.site ) {
 		name = getSiteTitle( state, ownProps.site.ID );
+		storeLocation = getStoreLocation( state, ownProps.site.ID );
+		loading = areSettingsGeneralLoading( state, ownProps.site.ID );
 	}
-	const storeLocation = getStoreLocation( state );
+
 	const address = {
 		name,
 		...storeLocation,
 	};
-	const loading = areSettingsGeneralLoading( state );
+
 	return {
 		address,
 		loading,

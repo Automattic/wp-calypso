@@ -72,9 +72,15 @@ class TaxesOptions extends Component {
 
 }
 
-function mapStateToProps( state ) {
-	const address = getStoreLocation( state );
-	const loading = areSettingsGeneralLoading( state );
+function mapStateToProps( state, ownProps ) {
+	let address = {};
+	let loading = true;
+
+	if ( ownProps.site ) {
+		address = getStoreLocation( state, ownProps.site.ID );
+		loading = areSettingsGeneralLoading( state, ownProps.site.ID );
+	}
+
 	return {
 		address,
 		loading,

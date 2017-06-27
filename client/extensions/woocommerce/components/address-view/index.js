@@ -2,14 +2,13 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import find from 'lodash/find';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
  */
-import { getCountries } from 'woocommerce/lib/countries';
+import { getCountries, getCountryData } from 'woocommerce/lib/countries';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
@@ -34,7 +33,7 @@ class AddressView extends Component {
 			street: '',
 			street2: '',
 			city: '',
-			state: '',
+			state: 'AL',
 			country: 'US',
 			postcode: '',
 		},
