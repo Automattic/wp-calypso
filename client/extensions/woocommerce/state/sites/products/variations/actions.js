@@ -14,8 +14,8 @@ import {
  * @param {Number|Object} productId The id of the product for which this variation will be created
  *                                  (could be a placeholder id if product is not yet created).
  * @param {Object} variation The complete variation object to be created.
- * @param {Object|Function} [successAction] Optional action to be dispatched upon success.
- * @param {Object|Function} [failureAction] Optional action to be dispatched upon error.
+ * @param {Object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
+ * @param {Object|Function} [failureAction] Action with extra props { error }
  * @return {Object} Action object
  */
 export function createProductVariation( siteId, productId, variation, successAction, failureAction ) {
