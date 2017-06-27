@@ -323,7 +323,7 @@ export default connect(
 			isRewindActive: isRewindActiveSelector( state, siteId ),
 
 			// FIXME: Testing only
-			isPressable: true || get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
+			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
 			timezone: getSiteTimezoneValue( state, siteId ),
 			gmtOffset: getSiteGmtOffset( state, siteId ) || 0,
 		};
