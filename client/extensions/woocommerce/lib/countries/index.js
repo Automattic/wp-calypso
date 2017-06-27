@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { find } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import CA from './CA';
@@ -9,7 +14,22 @@ import US from './US';
 // want to decorate these objects further in a subsequent PR
 // with things like origin vs destination based tax booleans
 
-export default [
-	CA(),
-	US(),
-];
+export const getCountries = () => {
+	return [
+		CA(),
+		US(),
+	];
+};
+
+export const getStateData = ( country, state ) => {
+	const countryData = find( getCountries(), { code: country } );
+	if ( ! countryData ) {
+		return null;
+	}
+	const stateData = find( countryData.states, { code: state } );
+	if ( ! stateData ) {
+		return null;
+	}
+
+	return stateData;
+};
