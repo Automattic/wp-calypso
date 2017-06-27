@@ -16,6 +16,7 @@ import Order from './app/order';
 import Orders from './app/orders';
 import Products from './app/products';
 import ProductCreate from './app/products/product-create';
+import ProductUpdate from './app/products/product-update';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
 import SettingsTaxes from './app/settings/taxes';
@@ -64,6 +65,11 @@ const getStorePages = () => {
 				slug: 'product-add',
 				showDuringSetup: false,
 			},
+		},
+		{
+			container: ProductUpdate,
+			configKey: 'woocommerce/extension-products',
+			path: '/store/product/:site/:product',
 		},
 		{
 			container: Orders,
