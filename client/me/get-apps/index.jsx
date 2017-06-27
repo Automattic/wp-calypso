@@ -22,8 +22,8 @@ export const GetApps = ( { translate } ) => {
 			<GetAppsIllustration />
 			<Card className="get-apps__mobile">
 				<div className="get-apps__card-text">
-					<h3>{ translate( 'Mobile Apps' ) }</h3>
-					<p>{ translate( 'WordPress at your fingertips.' ) }</p>
+					<h3 className="get-apps__card-title">{ translate( 'Mobile Apps' ) }</h3>
+					<p className="get-apps__description">{ translate( 'WordPress at your fingertips.' ) }</p>
 				</div>
 				<div className="get-apps__badges">
 					<a href={ 'https://itunes.apple.com/us/app/wordpress/id335703880?mt=8' } onClick={ trackAppDownloadClick }>

@@ -126,8 +126,8 @@ const DesktopDownloadCard = () => {
 	return (
 		<Card className="get-apps__desktop">
 			<div className="get-apps__card-text">
-				<h3>{ getCardTitle( platform ) }</h3>
-				<p>{ getDescription( platform ) }</p>
+				<h3 className="get-apps__card-title">{ getCardTitle( platform ) }</h3>
+				<p className="get-apps__description">{ getDescription( platform ) }</p>
 				<p className="get-apps__also-available">
 					{ getRequirementsText( platform ) }
 					{ getAlsoAvailableText( platform ) }
