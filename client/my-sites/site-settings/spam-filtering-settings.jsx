@@ -126,8 +126,7 @@ export default connect( state => {
 	const hasAkismetKeyError =
 		jetpackSettingsSaveStatus &&
 		jetpackSettingsSaveStatus === 'error' &&
-		( includes( jetpackSettingsSaveError, 'wordpress_api_key' ) ||
-			includes( jetpackSettingsSaveError, 'wordpress_api_key' ) );
+		includes( jetpackSettingsSaveError, 'wordpress_api_key' );
 	return {
 		hasAkismetKeyError,
 	};
