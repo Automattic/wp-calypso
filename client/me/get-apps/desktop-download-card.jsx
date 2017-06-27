@@ -52,9 +52,9 @@ const getRequirementsText = ( platform ) => {
 			return translate( 'Requires Mac OS X 10.11+. ' );
 		case 'Linux i686':
 		case 'Linux i686 on x86_64':
-			return translate( 'Requires Linux Whatevs v345. ' );
+			return translate( 'Requires a 64-bit kernel. ' );
 		default:
-			return translate( 'Requires Windows Whatevs v12+. ' );
+			return translate( 'Requires Windows 7+. ' );
 	}
 };
 
