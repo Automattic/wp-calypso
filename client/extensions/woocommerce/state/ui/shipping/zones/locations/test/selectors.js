@@ -22,6 +22,16 @@ import { LOADING } from 'woocommerce/state/constants';
 import { createState } from 'woocommerce/state/test/helpers';
 import { initialState, JOURNAL_ACTIONS } from '../reducer';
 
+const initialStateWithEmptyTempEdits = {
+	...initialState,
+	temporaryChanges: {
+		journal: [],
+		states: null,
+		postcode: null,
+		pristine: true,
+	},
+};
+
 const locations = [
 	{
 		code: 'EU',
@@ -842,6 +852,78 @@ describe( 'selectors', () => {
 				postcode: [],
 			} );
 		} );
+
+		it( 'should overlay temporary edits by default', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'US' ],
+						state: [],
+						postcode: [ '12345' ],
+					},
+				},
+				locationEdits: {
+					journal: [
+						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
+					],
+					states: null,
+					postcode: null,
+					pristine: false,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'FR' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					}
+				},
+			} );
+
+			expect( getShippingZoneLocationsWithEdits( state ) ).to.deep.equal( {
+				continent: [],
+				country: [ 'US', 'UK', 'FR' ],
+				state: [],
+				postcode: [],
+			} );
+		} );
+
+		it( 'should NOT overlay temporary edits if specified', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'US' ],
+						state: [],
+						postcode: [ '12345' ],
+					},
+				},
+				locationEdits: {
+					journal: [
+						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
+					],
+					states: null,
+					postcode: null,
+					pristine: false,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'FR' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					}
+				},
+			} );
+
+			expect( getShippingZoneLocationsWithEdits( state, undefined, false ) ).to.deep.equal( {
+				continent: [],
+				country: [ 'US', 'UK' ],
+				state: [],
+				postcode: [],
+			} );
+		} );
 	} );
 
 	describe( 'canLocationsBeFiltered', () => {
@@ -855,12 +937,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( canLocationsBeFiltered( state ) ).to.be.false;
@@ -876,12 +953,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( canLocationsBeFiltered( state ) ).to.be.false;
@@ -898,12 +970,15 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-					],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
 				},
 			} );
 
@@ -920,12 +995,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( canLocationsBeFiltered( state ) ).to.be.true;
@@ -941,12 +1011,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( canLocationsBeFiltered( state ) ).to.be.true;
@@ -962,12 +1027,7 @@ describe( 'selectors', () => {
 						postcode: [ '12345' ],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( canLocationsBeFiltered( state ) ).to.be.true;
@@ -1013,10 +1073,13 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
+					...initialState,
+					temporaryChanges: {
+						journal: [],
+						states: null,
+						postcode: null,
+						pristine: true,
+					}
 				},
 			} );
 
@@ -1039,12 +1102,7 @@ describe( 'selectors', () => {
 						postcode: [ '12345' ],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( getCurrentSelectedCountryZoneOwner( state ) ).to.be.nil;
@@ -1067,13 +1125,16 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' },
-						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
-					],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' },
+							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1092,12 +1153,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( canLocationsBeFilteredByState( state ) ).to.be.false;
@@ -1113,12 +1169,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( canLocationsBeFilteredByState( state ) ).to.be.false;
@@ -1135,12 +1186,15 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-					],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1157,12 +1211,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( canLocationsBeFilteredByState( state ) ).to.be.true;
@@ -1178,12 +1227,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( canLocationsBeFilteredByState( state ) ).to.be.true;
@@ -1199,12 +1243,7 @@ describe( 'selectors', () => {
 						postcode: [ '12345' ],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( canLocationsBeFilteredByState( state ) ).to.be.true;
@@ -1220,12 +1259,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( canLocationsBeFilteredByState( state ) ).to.be.false;
@@ -1241,12 +1275,7 @@ describe( 'selectors', () => {
 						postcode: [ '12345' ],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( canLocationsBeFilteredByState( state ) ).to.be.false;
@@ -1264,12 +1293,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.false;
@@ -1285,12 +1309,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.false;
@@ -1307,12 +1326,15 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-					],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1329,12 +1351,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.false;
@@ -1357,13 +1374,16 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' },
-						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
-					],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' },
+							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1387,13 +1407,16 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
-					],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
+							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					}
 				},
 			} );
 
@@ -1411,14 +1434,17 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [],
-					states: {
-						add: [ 'NY' ],
-						remove: [],
-						removeAll: true,
+					...initialState,
+					temporaryChanges: {
+						journal: [],
+						states: {
+							add: [ 'NY' ],
+							remove: [],
+							removeAll: true,
+						},
+						postcode: null,
+						pristine: false,
 					},
-					postcode: null,
-					pristine: false,
 				},
 			} );
 
@@ -1436,10 +1462,13 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1456,12 +1485,7 @@ describe( 'selectors', () => {
 						postcode: [ '12345' ],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.true;
@@ -1478,10 +1502,13 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: '12345',
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [],
+						states: null,
+						postcode: '12345',
+						pristine: false,
+					}
 				},
 			} );
 
@@ -1500,12 +1527,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( areLocationsFilteredByState( state ) ).to.be.false;
@@ -1521,12 +1543,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( areLocationsFilteredByState( state ) ).to.be.false;
@@ -1543,12 +1560,15 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-					],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1565,12 +1585,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( areLocationsFilteredByState( state ) ).to.be.false;
@@ -1593,13 +1608,16 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' },
-						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
-					],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' },
+							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1617,10 +1635,13 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: '12345',
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [],
+						states: null,
+						postcode: '12345',
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1638,10 +1659,13 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1659,14 +1683,17 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [],
-					states: {
-						add: [],
-						remove: [],
-						removeAll: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [],
+						states: {
+							add: [],
+							remove: [],
+							removeAll: false,
+						},
+						postcode: null,
+						pristine: false,
 					},
-					postcode: null,
-					pristine: false,
 				},
 			} );
 
@@ -1684,14 +1711,17 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [],
-					states: {
-						add: [ 'CA', 'NY' ],
-						remove: [],
-						removeAll: true,
+					...initialState,
+					temporaryChanges: {
+						journal: [],
+						states: {
+							add: [ 'CA', 'NY' ],
+							remove: [],
+							removeAll: true,
+						},
+						postcode: null,
+						pristine: false,
 					},
-					postcode: null,
-					pristine: false,
 				},
 			} );
 
@@ -1710,12 +1740,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( areLocationsUnfiltered( state ) ).to.be.false;
@@ -1731,12 +1756,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialStateWithEmptyTempEdits,
 			} );
 
 			expect( areLocationsUnfiltered( state ) ).to.be.false;
@@ -1753,12 +1773,15 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-					],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1776,10 +1799,13 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1803,13 +1829,16 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' },
-						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
-					],
-					states: null,
-					postcode: null,
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' },
+							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1827,10 +1856,13 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: '12345',
-					pristine: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [],
+						states: null,
+						postcode: '12345',
+						pristine: false,
+					},
 				},
 			} );
 
@@ -1848,14 +1880,17 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [],
-					states: {
-						add: [],
-						remove: [],
-						removeAll: false,
+					...initialState,
+					temporaryChanges: {
+						journal: [],
+						states: {
+							add: [],
+							remove: [],
+							removeAll: false,
+						},
+						postcode: null,
+						pristine: false,
 					},
-					postcode: null,
-					pristine: false,
 				},
 			} );
 
@@ -1885,12 +1920,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialState,
 			} );
 
 			expect( getCurrentlyEditingShippingZoneLocationsList( state ) ).to.deep.equal( [
@@ -1917,12 +1947,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialState,
 			} );
 
 			expect( getCurrentlyEditingShippingZoneLocationsList( state ) ).to.deep.equal( [
@@ -1951,12 +1976,7 @@ describe( 'selectors', () => {
 						postcode: [],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialState,
 			} );
 
 			expect( getCurrentlyEditingShippingZoneLocationsList( state ) ).to.deep.equal( [
@@ -1987,12 +2007,7 @@ describe( 'selectors', () => {
 						postcode: [ '12345' ],
 					},
 				},
-				locationEdits: {
-					journal: [],
-					states: null,
-					postcode: null,
-					pristine: true,
-				},
+				locationEdits: initialState,
 			} );
 
 			expect( getCurrentlyEditingShippingZoneLocationsList( state ) ).to.deep.equal( [
@@ -2001,6 +2016,50 @@ describe( 'selectors', () => {
 					code: 'US',
 					name: 'United States',
 					postcodeFilter: '12345',
+				},
+			] );
+		} );
+
+		it( 'should apply the commited edits, but not the temporal edits', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'FR' ],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [
+						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
+					],
+					states: null,
+					postcode: null,
+					pristine: false,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
+				},
+			} );
+
+			expect( getCurrentlyEditingShippingZoneLocationsList( state ) ).to.deep.equal( [
+				{
+					type: 'country',
+					code: 'FR',
+					name: 'France',
+					postcodeFilter: undefined,
+				},
+				{
+					type: 'country',
+					code: 'UK',
+					name: 'United Kingdom',
+					postcodeFilter: undefined,
 				},
 			] );
 		} );
@@ -2114,6 +2173,7 @@ describe( 'selectors', () => {
 					states: null,
 					postcode: '12345',
 					pristine: false,
+					temporaryChanges: initialState,
 				},
 			} );
 
@@ -2145,6 +2205,7 @@ describe( 'selectors', () => {
 					},
 					postcode: null,
 					pristine: false,
+					temporaryChanges: initialState,
 				},
 			} );
 

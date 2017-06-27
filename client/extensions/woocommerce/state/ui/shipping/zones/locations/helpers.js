@@ -35,6 +35,6 @@ export const mergeLocationEdits = ( zoneLocationEdits, currentLocationEdits ) =>
 		journal: [ ...journal, ...currentJournal ],
 		states: mergedStates,
 		postcode: currentPostcode,
-		pristine: zoneLocationEdits.pristine,
+		pristine: currentLocationEdits.pristine,
 	};
 };

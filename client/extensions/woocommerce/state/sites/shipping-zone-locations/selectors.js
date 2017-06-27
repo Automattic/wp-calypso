@@ -112,6 +112,9 @@ export const areShippingZonesLocationsValid = ( reduxState, siteId = getSelected
 				}
 				statesSet.add( s );
 			}
+		} else if ( ! isEmpty( postcode ) ) {
+			// A postcode without a country is not valid
+			return false;
 		}
 	}
 

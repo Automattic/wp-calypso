@@ -12,6 +12,7 @@ import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zo
 import { getShippingZonesEdits, getCurrentlyEditingShippingZone } from '../selectors';
 import { getContinents, getCountries, getCountryName, getStates, hasStates } from 'woocommerce/state/sites/locations/selectors';
 import { JOURNAL_ACTIONS } from './reducer';
+import { mergeLocationEdits } from './helpers';
 
 /**
  * Computes a map of the continents that belong to a zone different than the one that's currently being edited.
@@ -86,10 +87,12 @@ const getStatesOwnedByOtherZone = ( state, siteId, countryCode ) => {
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {Boolean} [overlayTemporalEdits] Whether to overlay the temporal location edits that are being made inside the modal (true),
+ * or just use the committed edits.
  * @return {Object} The list of locations for the shipping zone, including any edits made, in the form
  * { continent: [ ... ], country: [ ... ], state: [ ... ], postcode: [ ... ] }. On any failure, it will return null.
  */
-export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSiteId( state ), overlayTemporalEdits = true ) => {
 	if ( ! areShippingZonesLoaded( state, siteId ) ) {
 		return null;
 	}
@@ -115,7 +118,8 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 		states.add( stateCode );
 	} );
 
-	const edits = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
+	const { temporaryChanges, ...committedEdits } = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
+	const edits = overlayTemporalEdits ? mergeLocationEdits( committedEdits, temporaryChanges ) : committedEdits;
 	if ( edits.pristine ) {
 		return {
 			continent: Array.from( continents ),
@@ -210,6 +214,13 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 	};
 };
 
+export const isEditLocationsModalOpen = ( state, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! areShippingZonesLoaded( state, siteId ) || ! getCurrentlyEditingShippingZone( state, siteId ) ) {
+		return false;
+	}
+	return Boolean( getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations.temporaryChanges );
+};
+
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
@@ -217,6 +228,9 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
  * is only one country selected (and no continents).
  */
 export const canLocationsBeFiltered = ( state, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! isEditLocationsModalOpen( state, siteId ) ) {
+		return false;
+	}
 	const locations = getShippingZoneLocationsWithEdits( state, siteId );
 	return locations && isEmpty( locations.continent ) && 1 === locations.country.length;
 };
@@ -251,7 +265,8 @@ export const areLocationsFilteredByPostcode = ( state, siteId = getSelectedSiteI
 	}
 	const zone = getCurrentlyEditingShippingZone( state, siteId );
 	const locations = getRawShippingZoneLocations( state, siteId )[ zone.id ];
-	const edits = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
+	const { temporaryChanges, ...committedEdits } = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
+	const edits = mergeLocationEdits( committedEdits, temporaryChanges );
 
 	if ( edits.pristine ) {
 		return ! isEmpty( locations.postcode );
@@ -268,7 +283,8 @@ export const areLocationsFilteredByState = ( state, siteId = getSelectedSiteId( 
 	}
 	const zone = getCurrentlyEditingShippingZone( state, siteId );
 	const locations = getRawShippingZoneLocations( state, siteId )[ zone.id ];
-	const edits = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
+	const { temporaryChanges, ...committedEdits } = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
+	const edits = mergeLocationEdits( committedEdits, temporaryChanges );
 
 	if ( edits.pristine ) {
 		return ! isEmpty( locations.state );
@@ -287,7 +303,7 @@ export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state
 };
 
 export const getCurrentlyEditingShippingZoneLocationsList = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const locations = getShippingZoneLocationsWithEdits( state, siteId );
+	const locations = getShippingZoneLocationsWithEdits( state, siteId, false );
 	if ( ! locations ) {
 		return [];
 	}
