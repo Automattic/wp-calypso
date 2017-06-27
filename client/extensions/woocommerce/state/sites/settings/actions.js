@@ -122,3 +122,75 @@ export const doInitialSetup = (
 			}
 		} );
 };
+
+const setAddressSuccess = ( siteId, data ) => {
+	return {
+		type: WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
+		siteId,
+		data,
+	};
+};
+
+export const setAddress = (
+	siteId,
+	street,
+	street2,
+	city,
+	stateOrProvince,
+	postcode,
+	country,
+	failureAction
+) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const updateAction = {
+		type: WOOCOMMERCE_SETTINGS_BATCH_REQUEST,
+		siteId,
+	};
+
+	dispatch( updateAction );
+
+	// If a state is given (e.g. CT), combine it with the country (e.g. US)
+	// to create the appropriate value for woocommerce_default_country (e.g. US:CT)
+	const countryState = stateOrProvince ? country + ':' + stateOrProvince : country;
+	const update = [
+		{
+			group_id: 'general',
+			id: 'woocommerce_store_address',
+			value: street,
+		},
+		{
+			group_id: 'general',
+			id: 'woocommerce_store_address_2',
+			value: street2,
+		},
+		{
+			group_id: 'general',
+			id: 'woocommerce_store_city',
+			value: city,
+		},
+		{
+			group_id: 'general',
+			id: 'woocommerce_default_country',
+			value: countryState,
+		},
+		{
+			group_id: 'general',
+			id: 'woocommerce_store_postcode',
+			value: postcode,
+		},
+	];
+
+	return request( siteId ).post( 'settings/batch', { update } )
+		.then( ( data ) => {
+			dispatch( setAddressSuccess( siteId, data ) );
+		} )
+		.catch( err => {
+			dispatch( setError( siteId, updateAction, err ) );
+			if ( failureAction ) {
+				dispatch( failureAction( err ) );
+			}
+		} );
+};

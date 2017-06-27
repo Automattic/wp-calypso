@@ -1,6 +1,14 @@
 .address-view__address {
 	margin-bottom: 8px;
 
+ .address-view__city {
+		margin-right: 8px;
+	}
+
+	.address-view__state {
+		margin-right: 8px;
+	}
+
 	p {
 		margin-bottom: 0;
 
@@ -21,14 +29,18 @@
 			margin-right: 0;
 		}
 	}
-	
+
+	.address-view__editable-state {
+		max-width: 200px;
+	}
+
 	@include breakpoint( "<960px" ) {
 		flex-direction: column;
-		
+
 		label + select {
 			width: 100%;
 		}
-		
+
 		.form-fieldset {
 			margin-right: 0;
 		}
@@ -37,7 +49,7 @@
 
 .address-view__country {
 	margin-bottom: 32px;
-	
+
 	.form-select {
 		width: 100%;
 	}
