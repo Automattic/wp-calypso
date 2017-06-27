@@ -127,7 +127,7 @@ class StoreAddress extends Component {
 					buttons={ buttons }
 					isVisible={ this.state.showDialog }
 					onClose={ this.onCloseDialog }
-					additionalClassNames="woocommerce"
+					additionalClassNames="woocommerce store-location__edit-dialog"
 					><AddressView address={ this.state.addressEdits } isEditable onChange={ this.onChange } />
 				</Dialog>
 				{ display }

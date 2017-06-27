@@ -15,6 +15,10 @@
 	}
 }
 
+&.store-location__edit-dialog {
+	max-width: 600px;
+}
+
 .payments__location-currency {
 	@include breakpoint( ">660px" ) {
 		margin-top: 58px;
