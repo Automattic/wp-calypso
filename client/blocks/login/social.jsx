@@ -29,6 +29,7 @@ class SocialLoginForm extends Component {
 		onSuccess: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		loginSocialUser: PropTypes.func.isRequired,
+		linkSocialUser: PropTypes.func.isRequired,
 	};
 
 	handleGoogleResponse = ( response ) => {
@@ -50,10 +51,16 @@ class SocialLoginForm extends Component {
 						return this.props.createSocialUser( 'google', response.Zi.id_token, 'login' )
 							.then(
 								() => this.recordEvent( 'calypso_login_social_signup_success' ),
-								createAccountError => this.recordEvent( 'calypso_login_social_signup_failure', {
-									error_code: createAccountError.code,
-									error_message: createAccountError.message
-								} )
+								createAccountError => {
+									this.recordEvent( 'calypso_login_social_signup_failure', {
+										error_code: createAccountError.code,
+										error_message: createAccountError.message
+									} );
+
+									if ( createAccountError.code === 'user_exists' ) {
+										this.props.linkSocialUser( 'google', createAccountError.email );
+									}
+								}
 							);
 					}
 

@@ -276,6 +276,7 @@ export const createSocialUser = ( service, token, flowName ) => dispatch => {
 		dispatch( {
 			type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 			error,
+			email: get( wpcomError, 'response.body.data.email' )
 		} );
 
 		return Promise.reject( wpcomError );
