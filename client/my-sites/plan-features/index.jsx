@@ -89,7 +89,7 @@ class PlanFeatures extends Component {
 		}
 
 		return (
-			<div className={ planWrapperClasses } ref="plansWrapper">
+			<div className={ planWrapperClasses } ref={ this.setScrollLeft }>
 				<div className={ planClasses }>
 					{ this.renderUpgradeDisabledNotice() }
 					<div className="plan-features__content">
@@ -111,6 +111,20 @@ class PlanFeatures extends Component {
 				</div>
 			</div>
 		);
+	}
+
+	setScrollLeft = ( plansWrapper ) => {
+		const {
+			isInSignupTest,
+			displayJetpackPlans
+		} = this.props;
+
+		// center plans
+		if ( isInSignupTest ) {
+			displayJetpackPlans
+				? plansWrapper.scrollLeft = 150
+				: plansWrapper.scrollLeft = 495;
+		}
 	}
 
 	renderUpgradeDisabledNotice() {
@@ -465,20 +479,6 @@ class PlanFeatures extends Component {
 	componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
-	}
-
-	componentDidMount() {
-		const {
-			isInSignupTest,
-			displayJetpackPlans
-		} = this.props;
-
-		// center plans
-		if ( isInSignupTest ) {
-			displayJetpackPlans
-				? this.refs.plansWrapper.scrollLeft = 150
-				: this.refs.plansWrapper.scrollLeft = 495;
-		}
 	}
 }
 
