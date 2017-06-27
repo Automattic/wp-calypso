@@ -8,6 +8,9 @@ import { expect } from 'chai';
  */
 import reducer, { initialState, JOURNAL_ACTIONS } from '../reducer';
 import {
+	openEditLocations,
+	closeEditLocations,
+	cancelEditLocations,
 	toggleContinentSelected,
 	toggleCountrySelected,
 	toggleStateSelected,
@@ -19,12 +22,84 @@ import {
 
 const initialStateWithTempChanges = {
 	...initialState,
-	temporaryChanges: initialState,
+	temporaryChanges: { ...initialState },
 };
 
 const siteId = 123;
 
 describe( 'reducer', () => {
+	describe( 'openEditLocations', () => {
+		it( 'should add an empty set of "temporal changes" to the state', () => {
+			const newState = reducer( initialState, openEditLocations( siteId ) );
+			expect( newState ).to.deep.equal( initialStateWithTempChanges );
+		} );
+	} );
+
+	describe( 'closeEditLocations', () => {
+		it( 'should commit the temporal changes to the main state', () => {
+			const state = {
+				journal: [
+					{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
+				],
+				states: null,
+				postcode: null,
+				pristine: false,
+				temporaryChanges: {
+					journal: [
+						{ action: JOURNAL_ACTIONS.REMOVE_CONTINENT, code: 'NA' },
+						{ action: JOURNAL_ACTIONS.ADD_CONTINENT, code: 'EU' },
+					],
+					states: null,
+					postcode: null,
+					pristine: false,
+				},
+			};
+			const newState = reducer( state, closeEditLocations( siteId ) );
+			expect( newState ).to.deep.equal( {
+				journal: [
+					{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
+					{ action: JOURNAL_ACTIONS.REMOVE_CONTINENT, code: 'NA' },
+					{ action: JOURNAL_ACTIONS.ADD_CONTINENT, code: 'EU' },
+				],
+				states: null,
+				postcode: null,
+				pristine: false,
+			} );
+		} );
+	} );
+
+	describe( 'cancelEditLocations', () => {
+		it( 'should discard the temporal changes', () => {
+			const state = {
+				journal: [
+					{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
+				],
+				states: null,
+				postcode: null,
+				pristine: false,
+				temporaryChanges: {
+					journal: [
+						{ action: JOURNAL_ACTIONS.REMOVE_CONTINENT, code: 'NA' },
+						{ action: JOURNAL_ACTIONS.ADD_CONTINENT, code: 'EU' },
+					],
+					states: null,
+					postcode: null,
+					pristine: false,
+				},
+			};
+			const newState = reducer( state, cancelEditLocations( siteId ) );
+			expect( newState ).to.deep.equal( {
+				journal: [
+					{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
+				],
+				states: null,
+				postcode: null,
+				pristine: false,
+				temporaryChanges: null,
+			} );
+		} );
+	} );
+
 	describe( 'toggleContinentSelected', () => {
 		it( 'should add an ADD_CONTINENT entry to the journal', () => {
 			const newState = reducer( initialStateWithTempChanges, toggleContinentSelected( siteId, 'NA', true ) );

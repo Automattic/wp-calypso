@@ -10,7 +10,7 @@ import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CANCEL,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CLOSE,
-	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_OPEN,
+	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_EDIT,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_SELECT_CONTINENT,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_SELECT_COUNTRY,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_SELECT_STATE,
@@ -37,9 +37,9 @@ export const initialState = {
 
 const reducer = {};
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_OPEN ] = ( state ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_EDIT ] = ( state ) => {
 	return { ...state,
-		temporaryChanges: initialState,
+		temporaryChanges: { ...initialState },
 	};
 };
 
@@ -154,7 +154,7 @@ const mainReducer = createReducer( initialState, reducer );
 export default ( state, action ) => {
 	const newState = mainReducer( state, action );
 
-	if ( state.temporaryChanges !== newState.temporaryChanges ) {
+	if ( state.temporaryChanges && newState.temporaryChanges && state.temporaryChanges !== newState.temporaryChanges ) {
 		newState.temporaryChanges.pristine = false;
 	}
 
