@@ -114,15 +114,15 @@ const DesktopDownloadCard = () => {
 
 	return (
 		<Card className="get-apps__desktop">
-			<div className={ 'get-apps__card-text' }>
+			<div className="get-apps__card-text">
 				<h3>{ getCardTitle( platform ) }</h3>
 				<p>{ translate( 'A desktop app that gives WordPress a permanent home in your dock.' ) }</p>
-				<p className={ 'get-apps__also-available' }>
+				<p className="get-apps__also-available">
 					{ getRequirementsText( platform ) }
 					{ getAlsoAvailableText( platform ) }
 				</p>
 			</div>
-			<Button className={ 'get-apps__desktop-button' } href={ getButtonLink( platform ) }>{ translate( 'Download' ) }</Button>
+			<Button className="get-apps__desktop-button" href={ getButtonLink( platform ) }>{ translate( 'Download' ) }</Button>
 		</Card>
 	);
 };

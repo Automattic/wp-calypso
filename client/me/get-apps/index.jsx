@@ -21,11 +21,11 @@ export const GetApps = ( { translate } ) => {
 			<MeSidebarNavigation />
 			<GetAppsIllustration />
 			<Card className="get-apps__mobile">
-				<div className={ 'get-apps__card-text' }>
+				<div className="get-apps__card-text">
 					<h3>{ translate( 'Mobile Apps' ) }</h3>
 					<p>{ translate( 'WordPress at your fingertips.' ) }</p>
 				</div>
-				<div className={ 'get-apps__badges' }>
+				<div className="get-apps__badges">
 					<a href={ 'https://itunes.apple.com/us/app/wordpress/id335703880?mt=8' } onClick={ trackAppDownloadClick }>
 						<img src={ '/calypso/images/me/get-apps-app-store.png' } alt={ translate( 'Get on the iOS App Store' ) } />
 					</a>
