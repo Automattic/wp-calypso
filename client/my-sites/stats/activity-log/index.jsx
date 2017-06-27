@@ -328,7 +328,7 @@ export default connect(
 			// FIXME: Testing only
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
 			timezone: getSiteTimezoneValue( state, siteId ),
-			gmtOffset: getSiteGmtOffset( state, siteId ) || 0,
+			gmtOffset: getSiteGmtOffset( state, siteId ),
 		};
 	}, {
 		recordGoogleEvent,
