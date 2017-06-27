@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { pick } from 'lodash';
+import { includes, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -96,7 +96,7 @@ const Caching = ( {
 					<FormFieldset className="wp-super-cache__cache-type-fieldset">
 						<FormLabel>
 							<FormRadio
-								checked={ 'PHP' === cache_type }
+								checked={ includes( [ 'PHP', 'wpcache' ], cache_type ) /* wpcache is legacy */ }
 								disabled={ isDisabled || ! is_cache_enabled }
 								name="cache_type"
 								onChange={ handleRadio }
