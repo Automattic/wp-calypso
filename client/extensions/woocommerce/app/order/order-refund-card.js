@@ -28,6 +28,10 @@ class OrderRefundCard extends Component {
 			shipping_total: PropTypes.string.isRequired,
 			total: PropTypes.string.isRequired,
 		} ),
+		site: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+			slug: PropTypes.string.isRequired,
+		} ),
 	}
 
 	state = {
@@ -86,7 +90,7 @@ class OrderRefundCard extends Component {
 	}
 
 	render() {
-		const { order, translate } = this.props;
+		const { order, site, translate } = this.props;
 		let refundStatus = translate( 'Payment of %(total)s received via %(method)s', {
 			args: {
 				total: formatCurrency( order.total, order.currency ) || order.total,
@@ -127,27 +131,39 @@ class OrderRefundCard extends Component {
 
 				<Dialog isVisible={ this.state.showRefundDialog } onClose={ this.toggleRefundDialog } className={ dialogClass }>
 					<h1>{ translate( 'Refund order' ) }</h1>
-					<OrderDetailsTable order={ order } isEditable onChange={ this.onChange } />
-					<form className="order__refund-container">
-						<FormLabel className="order__refund-note">
-							{ translate( 'Refund note' ) }
-							<FormTextarea onChange={ this.onChange } name="refund_note" value={ this.state.refundNote } />
-						</FormLabel>
-
-						<FormFieldset className="order__refund-details">
-							<FormLabel className="order__refund-amount">
-								<span className="order__refund-amount-label">{ translate( 'Total refund amount' ) }</span>
-								<div className="order__refund-amount-value">
-									<FormTextInputWithAffixes
-										name="refund_total"
-										prefix="$"
-										onChange={ this.onChange }
-										value={ this.state.refundTotal } />
-								</div>
+					<OrderDetailsTable order={ order } isEditable onChange={ this.onChange } site={ site } />
+					<form>
+						<div className="order__refund-container">
+							<FormLabel className="order__refund-note">
+								{ translate( 'Refund note' ) }
+								<FormTextarea onChange={ this.onChange } name="refund_note" value={ this.state.refundNote } />
 							</FormLabel>
 
-							{ this.renderCreditCard() }
-						</FormFieldset>
+							<FormFieldset className="order__refund-details">
+								<FormLabel className="order__refund-amount">
+									<span className="order__refund-amount-label">{ translate( 'Total refund amount' ) }</span>
+									<div className="order__refund-amount-value">
+										<FormTextInputWithAffixes
+											name="refund_total"
+											prefix="$"
+											onChange={ this.onChange }
+											value={ this.state.refundTotal } />
+									</div>
+								</FormLabel>
+
+								{ this.renderCreditCard() }
+							</FormFieldset>
+						</div>
+						<div className="order__refund-actions">
+							<Button>{ translate( 'Cancel' ) }</Button>
+							<Button primary>
+								{ translate( 'Refund %(total)s', {
+									args: {
+										total: this.state.refundTotal
+									}
+								} ) }
+							</Button>
+						</div>
 					</form>
 				</Dialog>
 			</div>

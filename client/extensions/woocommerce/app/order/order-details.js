@@ -23,6 +23,10 @@ class OrderDetails extends Component {
 			shipping_total: PropTypes.string.isRequired,
 			total: PropTypes.string.isRequired,
 		} ),
+		site: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+			slug: PropTypes.string.isRequired,
+		} ),
 	}
 
 	state = {
@@ -36,7 +40,7 @@ class OrderDetails extends Component {
 	}
 
 	render() {
-		const { order, translate } = this.props;
+		const { order, site, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
@@ -45,8 +49,8 @@ class OrderDetails extends Component {
 			<div className="order__details">
 				<SectionHeader label={ translate( 'Order Details' ) } />
 				<Card className="order__details-card">
-					<OrderDetailsTable order={ order } />
-					<OrderRefundCard order={ order } />
+					<OrderDetailsTable order={ order } site={ site } />
+					<OrderRefundCard order={ order } site={ site } />
 
 					<div className="order__details-fulfillment">
 						<div className="order__details-fulfillment-label">

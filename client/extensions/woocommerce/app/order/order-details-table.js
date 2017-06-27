@@ -10,6 +10,7 @@ import React, { Component, PropTypes } from 'react';
 import formatCurrency from 'lib/format-currency';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -24,6 +25,10 @@ class OrderDetailsTable extends Component {
 			payment_method_title: PropTypes.string.isRequired,
 			shipping_total: PropTypes.string.isRequired,
 			total: PropTypes.string.isRequired,
+		} ),
+		site: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+			slug: PropTypes.string.isRequired,
 		} ),
 	}
 
@@ -66,11 +71,11 @@ class OrderDetailsTable extends Component {
 	}
 
 	renderOrderItems = ( item, i ) => {
-		const { isEditable, order, siteSlug } = this.props;
+		const { isEditable, order, site } = this.props;
 		return (
 			<TableRow key={ i } className="order__detail-items">
 				<TableItem isRowHeader className="order__detail-item-product">
-					<a href={ `/store/product/${ siteSlug }/${ item.product_id }` } className="order__detail-item-link">
+					<a href={ getLink( `/store/product/:site/${ item.product_id }`, site ) } className="order__detail-item-link">
 						{ item.name }
 					</a>
 					<span className="order__detail-item-sku">{ item.sku }</span>
