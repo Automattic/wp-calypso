@@ -95,12 +95,16 @@
 			display: none;
 		}
 
-		.current-section a {
-			position: fixed;
-			z-index: 1;
-			top: 18px;
-			background: transparent;
-			border: none;
+		.current-section {
+			margin: 0;
+
+			a {
+				position: fixed;
+				z-index: 1;
+				top: 10px;
+				background: transparent;
+				border: none;
+			}
 		}
 	}
 
