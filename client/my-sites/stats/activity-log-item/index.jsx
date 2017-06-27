@@ -2,17 +2,17 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
-import FoldableCard from 'components/foldable-card';
 import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import FoldableCard from 'components/foldable-card';
 import Gravatar from 'components/gravatar';
+import Gridicon from 'gridicons';
+import PopoverMenuItem from 'components/popover/menu-item';
 import { addQueryArgs } from 'lib/route';
 
 class ActivityLogItem extends Component {
