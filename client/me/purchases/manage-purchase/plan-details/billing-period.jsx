@@ -66,7 +66,7 @@ class PlanBillingPeriod extends Component {
 				args: {
 					timeSinceExpiry: purchase.expiryMoment.fromNow(),
 				},
-				context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+				comment: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 			} );
 		}
 
