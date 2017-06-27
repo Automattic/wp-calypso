@@ -120,7 +120,7 @@ class PlanFeatures extends Component {
 		} = this.props;
 
 		// center plans
-		if ( isInSignupTest ) {
+		if ( isInSignupTest && plansWrapper ) {
 			displayJetpackPlans
 				? plansWrapper.scrollLeft = 150
 				: plansWrapper.scrollLeft = 495;
