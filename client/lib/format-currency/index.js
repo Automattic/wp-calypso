@@ -60,8 +60,8 @@ const CURRENCIES = {
 	},
 	HUF: {
 		symbol: 'Ft',
-		grouping: ',',
-		decimal: '.',
+		grouping: '.',
+		decimal: ',',
 		precision: 0
 	},
 	SEK: {
