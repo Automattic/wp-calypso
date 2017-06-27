@@ -29,6 +29,7 @@ import { getCountryData, getStateData } from 'woocommerce/lib/countries';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
+import FormToggle from 'components/forms/form-toggle';
 import Notice from 'components/notice';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
@@ -37,6 +38,7 @@ import TableItem from 'woocommerce/components/table/table-item';
 class TaxesRates extends Component {
 
 	static propTypes = {
+		onEnabledChange: PropTypes.func.isRequired,
 		site: PropTypes.shape( {
 			slug: PropTypes.string,
 		} ),
@@ -252,7 +254,7 @@ class TaxesRates extends Component {
 	}
 
 	render = () => {
-		const { loadedSettingsGeneral, loadedTaxRates, translate } = this.props;
+		const { loadedSettingsGeneral, loadedTaxRates, onEnabledChange, taxesEnabled, translate } = this.props;
 
 		if ( ! loadedSettingsGeneral ) {
 			return null;
@@ -265,8 +267,9 @@ class TaxesRates extends Component {
 		return (
 			<div className="taxes__taxes-rates">
 				<ExtendedHeader
-					label={ translate( 'Tax rates' ) }
-				/>
+					label={ translate( 'Tax rates' ) } >
+					<FormToggle name="taxesEnabled" onChange={ onEnabledChange } checked={ taxesEnabled } />
+				</ExtendedHeader>
 				<Card>
 					{ this.renderInfo() }
 					{ this.renderCalculationStatus() }

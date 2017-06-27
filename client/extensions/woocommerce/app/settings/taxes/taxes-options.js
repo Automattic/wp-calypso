@@ -1,21 +1,14 @@
 /**
  * External dependencies
  */
-import { bindActionCreators } from 'redux';
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import {
-	areSettingsGeneralLoading,
-	getStoreLocation
-} from 'woocommerce/state/sites/settings/general/selectors';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -23,28 +16,13 @@ import FormLabel from 'components/forms/form-label';
 class TaxesOptions extends Component {
 
 	static propTypes = {
-		site: PropTypes.shape( {
-			slug: PropTypes.string,
-		} ),
+		onCheckboxChange: PropTypes.func.isRequired,
+		pricesIncludeTaxes: PropTypes.bool.isRequired,
+		shippingIsTaxable: PropTypes.bool.isRequired,
 	};
 
-	componentDidMount = () => {
-		const { site } = this.props;
-
-		if ( site && site.ID ) {
-			this.props.fetchSettingsGeneral( site.ID );
-		}
-	}
-
-	onChange = ( /* event */ ) => {
-	}
-
 	render = () => {
-		const { loading, translate } = this.props;
-
-		if ( loading ) {
-			return null;
-		}
+		const { onCheckboxChange, pricesIncludeTaxes, shippingIsTaxable, translate } = this.props;
 
 		return (
 			<div className="taxes__taxes-options">
@@ -55,13 +33,13 @@ class TaxesOptions extends Component {
 				<Card>
 					<FormFieldset>
 						<FormLabel>
-							<FormCheckbox checked={ this.props.pricesIncludeTaxes } onChange={ this.onChange } />
+							<FormCheckbox checked={ pricesIncludeTaxes } name="pricesIncludeTaxes" onChange={ onCheckboxChange } />
 								<span>{ translate( 'Taxes are included in product prices' ) }</span>
 						</FormLabel>
 					</FormFieldset>
 					<FormFieldset>
 						<FormLabel>
-							<FormCheckbox checked={ this.props.shippingIsTaxable } onChange={ this.onChange } />
+							<FormCheckbox checked={ shippingIsTaxable } name="shippingIsTaxable" onChange={ onCheckboxChange } />
 								<span>{ translate( 'Charge taxes on shipping costs' ) }</span>
 						</FormLabel>
 					</FormFieldset>
@@ -69,31 +47,6 @@ class TaxesOptions extends Component {
 			</div>
 		);
 	}
-
 }
 
-function mapStateToProps( state, ownProps ) {
-	let address = {};
-	let loading = true;
-
-	if ( ownProps.site ) {
-		address = getStoreLocation( state, ownProps.site.ID );
-		loading = areSettingsGeneralLoading( state, ownProps.site.ID );
-	}
-
-	return {
-		address,
-		loading,
-	};
-}
-
-function mapDispatchToProps( dispatch ) {
-	return bindActionCreators(
-		{
-			fetchSettingsGeneral,
-		},
-		dispatch
-	);
-}
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( TaxesOptions ) );
+export default localize( TaxesOptions );
