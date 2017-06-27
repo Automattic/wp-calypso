@@ -50,7 +50,6 @@ const GroupedPosts = ( { translate, postsByYear, summary, period, siteSlug } ) =
 								{ type: 'link', data: post.URL },
 							],
 							label: post.title,
-							labelIcon: 'calendar',
 							value: {
 								type: 'raw',
 								value: moment().subtract( i + 1, 'years' ).format( 'YYYY' ),
