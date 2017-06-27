@@ -22,7 +22,7 @@ export default class ProductFormDetailsCard extends Component {
 		siteId: PropTypes.number,
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
-			type: PropTypes.string.isRequired,
+			type: PropTypes.string,
 			name: PropTypes.string,
 		} ),
 		editProduct: PropTypes.func.isRequired,
