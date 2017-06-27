@@ -116,6 +116,14 @@ class ActivityLog extends Component {
 		rewindRestore( siteId, requestedRestoreTimestamp );
 	};
 
+	/**
+	 * Creates a function that will offset a moment by the site
+	 * timezone or gmt offset. Use the resulting function wherever
+	 * log times need to be formatted for display to ensure all times
+	 * are displayed as site times.
+	 *
+	 * @returns {function} func that takes a moment and returns moment offset by site timezone or offset
+	 */
 	getSiteOffsetFunc() {
 		const { timezone, gmtOffset } = this.props;
 		return ( moment ) => {
@@ -218,13 +226,8 @@ class ActivityLog extends Component {
 		const filteredLogs = filter( logs, obj => startOfMonthMs <= obj.ts_utc && obj.ts_utc <= endOfMonthMs );
 		const logsGroupedByDay = map(
 			groupBy(
-<<<<<<< HEAD
 				filteredLogs,
-				log => moment( log.ts_site ).startOf( 'day' ).format( 'x' )
-=======
-				filteredLogs.map( this.update_logs, this ),
 				log => siteOffset( moment( log.ts_utc ) ).startOf( 'day' ).format( 'x' )
->>>>>>> Activity Log: Use site timezone/offset for time/date display
 			),
 			( daily_logs, timestamp ) => (
 				<ActivityLogDay
