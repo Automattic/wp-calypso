@@ -94,7 +94,7 @@ const activate = {
 		isJetpackSiteMultiSite( state, siteId ) ||
 		isThemeActive( state, themeId, siteId ) ||
 		( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-		! isThemeAvailableOnJetpackSite( state, themeId, siteId )
+		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
 	)
 };
 
@@ -139,9 +139,10 @@ const tryandcustomize = {
 			( isJetpackSite( state, siteId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) )
 		) ||
 		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) ) ||
-		( config.isEnabled( 'jetpack/pijp' ) &&
-			isJetpackSite( state, siteId ) &&
-			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) )
+		(
+			config.isEnabled( 'jetpack/pijp' ) && isJetpackSite( state, siteId ) &&
+			isThemePremium( state, themeId ) && ! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+		)
 	)
 };
 
