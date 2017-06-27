@@ -15,7 +15,7 @@ import formatCurrency from 'lib/format-currency';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import OrderDetailsTable from './order-details-table';
 import PaymentLogo from 'components/payment-logo';
 
@@ -75,7 +75,7 @@ class OrderRefundCard extends Component {
 
 		return (
 			<div className="order__refund-credit-card">
-				{ translate( 'Refunding payment with:' ) }
+				<h3>{ translate( 'Refunding payment with:' ) }</h3>
 				<PaymentLogo className="order__card-logo" type={ type.toLowerCase() } />
 				<div className="order__card-details">
 					<p className="order__card-number">{ type } ****{ digits }</p>
@@ -134,10 +134,16 @@ class OrderRefundCard extends Component {
 							<FormTextarea onChange={ this.onChange } name="refund_note" value={ this.state.refundNote } />
 						</FormLabel>
 
-						<FormFieldset>
+						<FormFieldset className="order__refund-details">
 							<FormLabel className="order__refund-amount">
-								{ translate( 'Total refund amount' ) }
-								<FormTextInput onChange={ this.onChange } name="refund_total" value={ this.state.refundTotal } />
+								<span className="order__refund-amount-label">{ translate( 'Total refund amount' ) }</span>
+								<div className="order__refund-amount-value">
+									<FormTextInputWithAffixes
+										name="refund_total"
+										prefix="$"
+										onChange={ this.onChange }
+										value={ this.state.refundTotal } />
+								</div>
 							</FormLabel>
 
 							{ this.renderCreditCard() }
