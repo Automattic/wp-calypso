@@ -13,6 +13,7 @@ import FoldableCard from 'components/foldable-card';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gravatar from 'components/gravatar';
+import { addQueryArgs } from 'lib/route';
 
 class ActivityLogItem extends Component {
 
@@ -40,6 +41,7 @@ class ActivityLogItem extends Component {
 				user_email: PropTypes.string,
 				user_roles: PropTypes.string,
 				wpcom_user_id: PropTypes.number,
+				avatar_url: PropTypes.string,
 			} ),
 
 			object: PropTypes.shape( {
@@ -161,13 +163,17 @@ class ActivityLogItem extends Component {
 			return null;
 		}
 
+		const avatar_URL = actor.avatar_url
+			? addQueryArgs( { s: 40 }, actor.avatar_url )
+			: null;
+
 		return (
 			<div className="activity-log-item__actor">
 				{ /*
 					FIXME: actor does not correspond to a Gravatar user
 					We need to receive `avatar_URL` from the endpoint or query users.
 				*/ }
-				<Gravatar user={ {} } size={ 40 } />
+				<Gravatar user={ { avatar_URL } } size={ 40 } />
 				<div className="activity-log-item__actor-info">
 					<div className="activity-log-item__actor-name">{ actor.display_name }</div>
 					<div className="activity-log-item__actor-role">{ actor.translated_role }</div>
