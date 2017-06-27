@@ -18,6 +18,7 @@ import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/a
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getStoreLocation, areSettingsGeneralLoading } from 'woocommerce/state/sites/settings/general/selectors';
 import { setAddress } from 'woocommerce/state/sites/settings/actions';
+import FormLabel from 'components/forms/form-label';
 
 class StoreAddress extends Component {
 
@@ -121,6 +122,7 @@ class StoreAddress extends Component {
 		const classes = classNames( 'store-address', { 'is-placeholder': ! site || loading } );
 		return (
 			<Card className={ classes }>
+				<FormLabel>{ translate( 'Store location' ) }</FormLabel>
 				<Dialog
 					buttons={ buttons }
 					isVisible={ this.state.showDialog }

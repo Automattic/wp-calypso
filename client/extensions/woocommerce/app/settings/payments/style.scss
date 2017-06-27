@@ -7,6 +7,12 @@
 	@include breakpoint( "<660px" ) {
 		flex-direction: column;
 	}
+	
+	.store-address.card {
+		margin: 0;
+		padding: 0;
+		box-shadow: none;
+	}
 }
 
 .payments__location-currency {
