@@ -389,7 +389,8 @@ export const PostEditor = React.createClass( {
 						? <EditorNotice
 								{ ...this.state.notice }
 								onDismissClick={ this.hideNotice }
-								onViewClick={ this.onPreview } />
+								onViewClick={ this.onPreview }
+								isFullScreenPreview={ true } />
 						: null }
 				</div>
 				{ isTrashed

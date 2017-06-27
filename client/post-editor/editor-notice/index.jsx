@@ -9,7 +9,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
@@ -34,14 +33,9 @@ export class EditorNotice extends Component {
 		link: PropTypes.string,
 		onViewClick: PropTypes.func,
 		isPreviewable: PropTypes.bool,
+		isFullScreenPreview: PropTypes.bool,
 		onDismissClick: PropTypes.func,
 		error: PropTypes.object
-	}
-
-	constructor( props ) {
-		super( props );
-
-		this.isPostPublishPreviewABTest = abtest( 'postPublishPreview' ) === 'showPostPublishPreview';
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -140,7 +134,7 @@ export class EditorNotice extends Component {
 				} );
 
 			case 'publishedPrivately':
-				if ( this.isPostPublishPreviewABTest ) {
+				if ( this.props.isFullScreenPreview ) {
 					return translate( '{{strong}}Published privately.{{/strong}} Only admins and editors can view.', {
 						components: {
 							strong: <strong />,
@@ -244,7 +238,7 @@ export class EditorNotice extends Component {
 		const { siteId, message, status, onDismissClick } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
 		const classes = classNames( 'editor-notice', {
-			'is-global': this.isPostPublishPreviewABTest,
+			'is-global': this.props.isFullScreenPreview,
 		} );
 
 		return (
