@@ -33,6 +33,7 @@ const actions = require( 'lib/posts/actions' ),
 	analytics = require( 'lib/analytics' );
 
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
@@ -279,7 +280,7 @@ export const PostEditor = React.createClass( {
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
-							{ ! config.isEnabled( 'post-editor/delta-post-publish-preview' )
+							{ ! abtest( 'postPublishPreview' ) === 'showPostPublishPreview'
 								? <EditorNotice
 									{ ...this.state.notice }
 									onDismissClick={ this.hideNotice }
@@ -382,7 +383,7 @@ export const PostEditor = React.createClass( {
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
 						/>
 						: null }
-					{ config.isEnabled( 'post-editor/delta-post-publish-preview' )
+					{ abtest( 'postPublishPreview' ) === 'showPostPublishPreview'
 						? <EditorNotice
 								{ ...this.state.notice }
 								onDismissClick={ this.hideNotice }
@@ -876,13 +877,13 @@ export const PostEditor = React.createClass( {
 				status: 'is-success',
 				message,
 				action,
-				link: config.isEnabled( 'post-editor/delta-post-publish-preview' ) ? null : link,
+				link: abtest( 'postPublishPreview' ) === 'showPostPublishPreview' ? null : link,
 			};
 
 			window.scrollTo( 0, 0 );
 
 			if (
-				config.isEnabled( 'post-editor/delta-post-publish-preview' ) &&
+				abtest( 'postPublishPreview' ) === 'showPostPublishPreview' &&
 				this.props.isSitePreviewable &&
 				isNotPrivateOrIsConfirmed
 			) {

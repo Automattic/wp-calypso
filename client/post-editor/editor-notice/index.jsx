@@ -9,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { abtest } from 'lib/abtest';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
@@ -134,7 +134,7 @@ export class EditorNotice extends Component {
 				} );
 
 			case 'publishedPrivately':
-				if ( config.isEnabled( 'post-editor/delta-post-publish-preview' ) ) {
+				if ( abtest( 'postPublishPreview' ) === 'showPostPublishPreview' ) {
 					return translate( '{{strong}}Published privately.{{/strong}} Only admins and editors can view.', {
 						components: {
 							strong: <strong />,
@@ -238,7 +238,7 @@ export class EditorNotice extends Component {
 		const { siteId, message, status, onDismissClick } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
 		const classes = classNames( 'editor-notice', {
-			'is-global': config.isEnabled( 'post-editor/delta-post-publish-preview' ),
+			'is-global': abtest( 'postPublishPreview' ) === 'showPostPublishPreview',
 		} );
 
 		return (
