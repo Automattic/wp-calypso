@@ -2,11 +2,12 @@
  * Extrenal dependencies
  */
 import React, { PureComponent } from 'react';
-import { keys } from 'lodash';
+import { keys, filter } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import fr from './fr-form';
 import ca from './ca-form';
 
@@ -15,7 +16,12 @@ const tldSpecificForms = {
 	fr,
 };
 
-export const tldsWithAdditionalDetailsForms = keys( tldSpecificForms );
+const enabledTldForms = filter(
+	keys( tldSpecificForms ),
+	tld => config.isEnabled( `domains/cctlds/${ tld }` )
+);
+
+export const tldsWithAdditionalDetailsForms = enabledTldForms;
 
 export default class DomainDetailsForm extends PureComponent {
 	render() {

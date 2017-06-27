@@ -47,6 +47,8 @@
 		"devdocs/components-usage-stats": false,
 		"dev/test-helper": true,
 		"domains/cctlds": true,
+		"domains/cctlds/ca": true,
+		"domains/cctlds/fr": true,
 		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
