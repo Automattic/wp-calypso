@@ -14,6 +14,7 @@ import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
 import CartMessagesMixin from './cart-messages-mixin';
 import CartButtons from './cart-buttons';
+import Count from 'components/count';
 import Popover from 'components/popover';
 import CartEmpty from './cart-empty';
 import CartPlanAd from './cart-plan-ad';
@@ -55,7 +56,7 @@ const PopoverCart = React.createClass( {
 		if ( this.itemCount() ) {
 			countBadge = (
 				<div className="cart__count-badge count-badge-pulsing">
-					{ this.itemCount() }
+					<Count primary count={ this.itemCount() } />
 					<TrackComponentView eventName="calypso_popover_cart_badge_impression" />
 				</div>
 			);
