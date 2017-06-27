@@ -264,11 +264,21 @@ class TaxesRates extends Component {
 			return null;
 		}
 
+		const toggleMessage = taxesEnabled ? translate( 'Tax calculations enabled' )
+			: translate( 'Tax calculations disabled' );
+
 		return (
 			<div className="taxes__taxes-rates">
 				<ExtendedHeader
 					label={ translate( 'Tax rates' ) } >
-					<FormToggle name="taxesEnabled" onChange={ onEnabledChange } checked={ taxesEnabled } />
+					<FormToggle
+						name="taxesEnabled"
+						onChange={ onEnabledChange }
+						checked={ taxesEnabled } >
+						<span>
+								{ toggleMessage }
+						</span>
+					</FormToggle>
 				</ExtendedHeader>
 				<Card>
 					{ this.renderInfo() }

@@ -1,9 +1,6 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:allendav' );
-
 import { bindActionCreators } from 'redux';
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
@@ -24,11 +21,18 @@ import {
 	getShippingIsTaxFree
 } from 'woocommerce/state/sites/settings/tax/selectors';
 import Button from 'components/button';
-import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
-import { fetchTaxSettings } from 'woocommerce/state/sites/settings/tax/actions';
+import {
+	fetchSettingsGeneral,
+	updateTaxesEnabledSetting
+} from 'woocommerce/state/sites/settings/general/actions';
+import {
+	fetchTaxSettings,
+	updateTaxSettings
+} from 'woocommerce/state/sites/settings/tax/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
+import { successNotice, errorNotice } from 'state/notices/actions';
 import TaxesNexus from './taxes-nexus';
 import TaxesOptions from './taxes-options';
 import TaxesRates from './taxes-rates';
@@ -37,6 +41,7 @@ class SettingsTaxes extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
+			isSaving: false,
 			pricesIncludeTaxes: true,
 			shippingIsTaxable: true,
 			taxesEnabled: true,
@@ -81,21 +86,42 @@ class SettingsTaxes extends Component {
 	}
 
 	pageHasChanges = () => {
-		if ( this.state.pricesIncludeTaxes !== this.props.pricesIncludeTaxes ) {
-			return true;
-		}
-		if ( this.state.shippingIsTaxable !== this.props.shippingIsTaxable ) {
-			return true;
-		}
-		if ( this.state.taxesEnabled !== this.props.taxesEnabled ) {
-			return true;
-		}
-		return false;
+		return this.state.userBeganEditing;
 	}
 
-	onSave = ( /* event */ ) => {
-		// TODO - persist changes to the server
-	}
+	onSave = ( event ) => {
+		const { site, translate } = this.props;
+
+		event.preventDefault();
+		this.setState( { isSaving: true } );
+
+		const onSuccess = () => {
+			this.setState( { isSaving: false, userBeganEditing: false } );
+			return successNotice( translate( 'Settings updated successfully.' ) );
+		};
+
+		const onFailure = () => {
+			this.setState( { isSaving: false } );
+			return errorNotice( translate( 'There was a problem saving your changes. Please try again.' ) );
+		};
+
+		// TODO - chain these
+
+		this.props.updateTaxesEnabledSetting(
+			site.ID,
+			this.state.taxesEnabled,
+			null,
+			null,
+		);
+
+		this.props.updateTaxSettings(
+			site.ID,
+			this.state.pricesIncludeTax,
+			! this.state.shippingIsTaxable, // note the inversion
+			onSuccess,
+			onFailure
+		);
+	};
 
 	render = () => {
 		const { className, loading, site, translate } = this.props;
@@ -110,14 +136,12 @@ class SettingsTaxes extends Component {
 			( <span>{ translate( 'Taxes' ) }</span> ),
 		];
 
-		debug( 'in render, props=', this.props );
-
-		const saveButtonDisabled = ! this.pageHasChanges();
+		const saveButtonDisabled = this.state.isSaving || ! this.pageHasChanges();
 
 		return (
 			<Main className={ classNames( 'settings-taxes', className ) }>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
-					<Button disabled={ saveButtonDisabled } primary >
+					<Button disabled={ saveButtonDisabled } onClick={ this.onSave } primary >
 						{ translate( 'Save' ) }
 					</Button>
 				</ActionHeader>
@@ -169,7 +193,9 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchSettingsGeneral,
-			fetchTaxSettings
+			fetchTaxSettings,
+			updateTaxesEnabledSetting,
+			updateTaxSettings
 		},
 		dispatch
 	);
