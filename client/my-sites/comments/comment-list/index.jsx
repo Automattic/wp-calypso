@@ -220,16 +220,19 @@ export class CommentList extends Component {
 	render() {
 		const {
 			comments,
+			isLoading,
 			siteId,
 			siteSlug,
 			status,
-			showPlaceholder,
-			showEmptyContent,
 		} = this.props;
 		const {
 			isBulkEdit,
 			selectedComments,
 		} = this.state;
+
+		const zeroComments = size( comments ) <= 0;
+		const showPlaceholder = ( ! siteId || isLoading ) && zeroComments;
+		const showEmptyContent = zeroComments && ! showPlaceholder;
 
 		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
 
@@ -290,13 +293,9 @@ export class CommentList extends Component {
 const mapStateToProps = ( state, { siteId } ) => {
 	const comments = getSiteComments( state, siteId );
 	const isLoading = ! hasSiteComments( state, siteId );
-	const zeroComments = size( comments ) <= 0;
-	const showPlaceholder = ( ! siteId || isLoading ) && zeroComments;
-	const showEmptyContent = zeroComments && ! showPlaceholder;
 	return {
 		comments,
-		showPlaceholder,
-		showEmptyContent,
+		isLoading,
 		notices: getNotices( state ),
 		siteId,
 	};
