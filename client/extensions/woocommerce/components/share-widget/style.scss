@@ -1,18 +1,22 @@
 .share-widget__container {
 	align-items: center;
 	background-color: $white;
-	background-image: url( '/calypso/images/extensions/woocommerce/woocommerce-share.svg' );
-	background-position: center bottom;
-	background-repeat: no-repeat;
-	background-size: 120%;
 	display: flex;
 	flex-direction: column;
-	min-height: 280px;
 	padding: 24px;
+	padding-bottom: 0;
 
 	@include breakpoint( ">960px" ) {
 		padding: 48px 48px 72px;
-		min-height: 360px;
+		padding-bottom: 0;
+	}
+
+	img {
+		margin-top: 12px;
+
+		@include breakpoint( ">960px" ) {
+			height: 90px;
+		}
 	}
 
 	h2 {

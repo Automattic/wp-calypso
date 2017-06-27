@@ -117,6 +117,7 @@ class ShareWidget extends Component {
 				<h2>{ title }</h2>
 				<p>{ text }</p>
 				{ this.renderServiceIcons( urlToShare ) }
+				<img src="/calypso/images/extensions/woocommerce/woocommerce-share.svg" />
 			</div>
 		);
 	}
