@@ -15,6 +15,7 @@ import {
 	getTotalOrdersPages,
 	isOrderLoaded,
 	isOrderLoading,
+	isOrderRefunding,
 	getNewOrders,
 	getNewOrdersRevenue,
 } from '../selectors';
@@ -36,6 +37,9 @@ const loadingState = {
 						isLoading: {
 							35: true
 						},
+						isRefunding: {
+							20: true,
+						},
 						isQueryLoading: {
 							'{page:1}': true,
 						},
@@ -56,6 +60,9 @@ const loadedState = {
 					orders: {
 						isLoading: {
 							35: false
+						},
+						isRefunding: {
+							20: false,
 						},
 						isQueryLoading: {
 							'{page:1}': false,
@@ -168,6 +175,24 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( isOrderLoading( loadedStateWithUi, 35 ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#isOrderRefunding', () => {
+		it( 'should be false when woocommerce state is not available.', () => {
+			expect( isOrderRefunding( preInitializedState, 20, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be true when the order refund is requested.', () => {
+			expect( isOrderRefunding( loadingState, 20, 123 ) ).to.be.true;
+		} );
+
+		it( 'should be false when this order refund is completed.', () => {
+			expect( isOrderRefunding( loadedState, 20, 123 ) ).to.be.false;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( isOrderRefunding( loadedStateWithUi, 20 ) ).to.be.false;
 		} );
 	} );
 

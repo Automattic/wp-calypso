@@ -12,7 +12,6 @@ import React, { Component, PropTypes } from 'react';
  */
 import Button from 'components/button';
 import Dialog from 'components/dialog';
-import { errorNotice, successNotice } from 'state/notices/actions';
 import formatCurrency from 'lib/format-currency';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -20,6 +19,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import OrderDetailsTable from './order-details-table';
 import PaymentLogo from 'components/payment-logo';
+import { sendRefund } from 'woocommerce/state/sites/orders/actions';
 
 class OrderRefundCard extends Component {
 	static propTypes = {
@@ -96,15 +96,14 @@ class OrderRefundCard extends Component {
 	}
 
 	sendRefund = () => {
-		const { translate } = this.props;
+		const { order, site } = this.props;
 		// Send API request
 		this.toggleRefundDialog();
-		setTimeout( () => {
-			this.props.errorNotice(
-				translate( 'Refund granted.' ),
-				{ duration: 4000 }
-			);
-		}, 1000 );
+		const refundObj = {
+			amount: this.state.refundTotal + '', // API expects a string
+			reason: this.state.refundNote,
+		};
+		this.props.sendRefund( site.ID, order.id, refundObj );
 	}
 
 	renderCreditCard = () => {
@@ -185,6 +184,6 @@ class OrderRefundCard extends Component {
 export default connect(
 	undefined,
 	dispatch => {
-		return bindActionCreators( { errorNotice, successNotice }, dispatch );
+		return bindActionCreators( { sendRefund }, dispatch );
 	}
 )( localize( OrderRefundCard ) );

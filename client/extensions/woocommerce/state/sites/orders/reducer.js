@@ -8,6 +8,9 @@ import { keyBy } from 'lodash';
  */
 import { combineReducers } from 'state/utils';
 import {
+	WOOCOMMERCE_ORDER_REFUND_REQUEST,
+	WOOCOMMERCE_ORDER_REFUND_REQUEST_FAILURE,
+	WOOCOMMERCE_ORDER_REFUND_REQUEST_SUCCESS,
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
@@ -51,6 +54,26 @@ export function isQueryLoading( state = {}, action ) {
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_ORDERS_REQUEST_FAILURE:
 			return Object.assign( {}, state, { [ `{page:${ action.page }}` ]: WOOCOMMERCE_ORDERS_REQUEST === action.type } );
+		default:
+			return state;
+	}
+}
+
+/**
+ * Returns the updated order requests state after an action has been
+ * dispatched. The state reflects a mapping of query (page number) to a
+ * boolean reflecting whether a request for that page is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function isRefunding( state = {}, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_ORDER_REFUND_REQUEST:
+		case WOOCOMMERCE_ORDER_REFUND_REQUEST_SUCCESS:
+		case WOOCOMMERCE_ORDER_REFUND_REQUEST_FAILURE:
+			return Object.assign( {}, state, { [ action.orderId ]: WOOCOMMERCE_ORDER_REFUND_REQUEST === action.type } );
 		default:
 			return state;
 	}

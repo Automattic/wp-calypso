@@ -13,6 +13,10 @@ Fetch a single order from the remote site. Does not run if this order is loading
 
 Pull a page of orders from the remote site. Does not run if the orders are loading or already loaded.
 
+### `sendRefund( siteId: number, orderId: number, refund: object )`
+
+Create a refund for the given order. Refund should have `amount` & an optional `reason`, both strings. Does not run if there's already a refund request for this order.
+
 ## Reducer
 
 This is saved on a per-site basis. All orders are collected in `items`, and there is a query => ID mapping in `queries`. `isQueryLoading` indicates which queries are being requested. Currently this is only paged requests (but will allow for filtered queries in v2). `totalPages` tracks the number of pages of orders (this might update to a query mapping later). `isLoading` tracks whether single order requests have been requested/loaded. The order items example below is not a complete list. See the [API documentation for orders](http://woocommerce.github.io/woocommerce-rest-api-docs/#order-properties).
@@ -20,7 +24,7 @@ This is saved on a per-site basis. All orders are collected in `items`, and ther
 ```js
 {
 	"orders": {
-		// Keyed by serialized query
+		// Keyed by order ID
 		"isLoading": {
 			10: false,
 			12: true
@@ -29,6 +33,10 @@ This is saved on a per-site basis. All orders are collected in `items`, and ther
 		"isQueryLoading": {
 			'{page:1}': false,
 			'{page:2}': true
+		},
+		// Keyed by order ID
+		"isRefunding": {
+			10: true,
 		},
 		// Keyed by post ID
 		"items": {
@@ -70,6 +78,10 @@ Whether the given order has been successfully loaded from the server. Optional `
 ### `isOrderLoading( state, orderId, [siteId] )`
 
 Whether the given order is currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
+
+### `isOrderRefunding( state, orderId, [siteId] )`
+
+Whether an order refund has been requested (or completed). Optional `siteId`, will default to currently selected site.
 
 ### `getOrders( state, page: number, siteId: number )`
 
