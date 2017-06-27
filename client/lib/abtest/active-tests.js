@@ -98,6 +98,6 @@ module.exports = {
 			showPostPublishPreview: 50,
 			noShowPostPublishPreview: 50,
 		},
-		defaultVariation: 'showPostPublishPreview',
+		defaultVariation: 'noShowPostPublishPreview',
 	},
 };
