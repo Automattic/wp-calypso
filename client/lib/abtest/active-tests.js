@@ -76,6 +76,14 @@ module.exports = {
 		},
 		defaultVariation: 'show',
 	},
+	signupPlansCopyChanges: {
+		datestamp: '20170623',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+	},
 	signupProgressIndicator: {
 		datestamp: '20170612',
 		variations: {

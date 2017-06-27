@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { filter, get } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -28,8 +29,21 @@ import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 import { isEnabled } from 'config';
 import purchasesPaths from 'me/purchases/paths';
+import { plansLink } from 'lib/plans';
+import SegmentedControl from 'components/segmented-control';
+import SegmentedControlItem from 'components/segmented-control/item';
+import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
+	isInSignupTest() {
+		const {
+			isInSignup,
+			displayJetpackPlans
+		} = this.props;
+
+		return ( ( isInSignup && ! displayJetpackPlans ) && ( abtest( 'signupPlansCopyChanges' ) === 'modified' ) );
+	}
+
 	getPlanFeatures() {
 		const {
 			site,
@@ -67,6 +81,8 @@ class PlansFeaturesMain extends Component {
 						intervalType={ intervalType }
 						site={ site }
 						domainName={ domainName }
+						isInSignupTest = { this.isInSignupTest() }
+						displayJetpackPlans = { displayJetpackPlans }
 					/>
 				</div>
 			);
@@ -94,6 +110,8 @@ class PlansFeaturesMain extends Component {
 						intervalType={ intervalType }
 						site={ site }
 						domainName={ domainName }
+						isInSignupTest = { this.isInSignupTest() }
+						displayJetpackPlans = { displayJetpackPlans }
 					/>
 				</div>
 			);
@@ -121,6 +139,8 @@ class PlansFeaturesMain extends Component {
 					intervalType={ intervalType }
 					site={ site }
 					domainName={ domainName }
+					isInSignupTest = { this.isInSignupTest() }
+					displayJetpackPlans = { displayJetpackPlans }
 				/>
 			</div>
 		);
@@ -315,29 +335,67 @@ class PlansFeaturesMain extends Component {
 		);
 	}
 
+	getIntervalTypeToggle() {
+		const {
+			translate,
+			intervalType,
+			site,
+			basePlansPath,
+		} = this.props;
+		const segmentClasses = classNames(
+			'plan-features__interval-type',
+			'price-toggle'
+		);
+
+		let plansUrl = '/plans';
+		if ( basePlansPath ) {
+			plansUrl = basePlansPath;
+		}
+
+		return (
+			<SegmentedControl compact className={ segmentClasses } primary={ true }>
+				<SegmentedControlItem
+					selected={ intervalType === 'monthly' }
+					path={ plansLink( plansUrl, site, 'monthly' ) }
+				>
+					{ translate( 'Monthly billing' ) }
+				</SegmentedControlItem>
+
+				<SegmentedControlItem
+					selected={ intervalType === 'yearly' }
+					path={ plansLink( plansUrl, site, 'yearly' ) }
+				>
+					{ translate( 'Yearly billing' ) }
+				</SegmentedControlItem>
+			</SegmentedControl>
+		);
+	}
+
 	render() {
 		const {
 			site,
-			showFAQ,
-			displayJetpackPlans
+			displayJetpackPlans,
+			isInSignup,
+			isInSignupTest
 		} = this.props;
 
 		const renderFAQ = () =>
 			displayJetpackPlans
 				? this.getJetpackFAQ()
 				: this.getFAQ( site );
+		let faqs = null;
+
+		if ( ! this.isInSignupTest() || ( displayJetpackPlans && ! isInSignup ) ) {
+			faqs = renderFAQ();
+		}
 
 		return (
 			<div className="plans-features-main">
+				{ ( displayJetpackPlans && isInSignupTest ) ? this.getIntervalTypeToggle() : null }
 				<QueryPlans />
 				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }
-
-				{
-					showFAQ
-						? renderFAQ()
-						: null
-				}
+				{ faqs }
 			</div>
 		);
 	}

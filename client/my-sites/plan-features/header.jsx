@@ -39,6 +39,17 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 class PlanFeaturesHeader extends Component {
 
 	render() {
+		const { isInSignupTest } = this.props;
+		let content = this.renderPlansHeader();
+
+		if ( isInSignupTest ) {
+			content = this.renderSignupHeader();
+		}
+
+		return content;
+	}
+
+	renderPlansHeader() {
 		const {
 			planType,
 			popular,
@@ -46,8 +57,8 @@ class PlanFeaturesHeader extends Component {
 			title,
 			translate
 		} = this.props;
-		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
+		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 		return (
 			<header className={ headerClasses } onClick={ this.props.onClick } >
 				{
@@ -71,6 +82,42 @@ class PlanFeaturesHeader extends Component {
 		);
 	}
 
+	renderSignupHeader() {
+		const {
+			planType,
+			popular,
+			newPlan,
+			title,
+			audience,
+			translate
+		} = this.props;
+
+		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
+		return (
+			<div className="plan-features__header-wrapper">
+				<header className={ headerClasses } onClick={ this.props.onClick } >
+					{
+						popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon>
+					}
+					{
+						newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon>
+					}
+
+					<div className="plan-features__header-text">
+						<h4 className="plan-features__header-title">{ title }</h4>
+						{ audience }
+					</div>
+				</header>
+				<div className="plan-features__graphic">
+					<PlanIcon plan={ planType } />
+				</div>
+				<div className="plan-features__pricing">
+					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
+				</div>
+			</div>
+		);
+	}
+
 	getBillingTimeframe() {
 		const {
 			billingTimeFrame,
@@ -79,7 +126,8 @@ class PlanFeaturesHeader extends Component {
 			site,
 			translate,
 			isSiteAT,
-			hideMonthly
+			hideMonthly,
+			isInSignupTest
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -87,6 +135,14 @@ class PlanFeaturesHeader extends Component {
 			'is-discounted': isDiscounted,
 			'is-placeholder': isPlaceholder
 		} );
+
+		if ( isInSignupTest ) {
+			return (
+				<span>
+					<span>{ billingTimeFrame }</span>
+				</span>
+			);
+		}
 
 		if (
 			isSiteAT ||
@@ -175,10 +231,11 @@ class PlanFeaturesHeader extends Component {
 			rawPrice,
 			isPlaceholder,
 			relatedMonthlyPlan,
-			site
+			site,
+			isInSignupTest
 		} = this.props;
 
-		if ( isPlaceholder ) {
+		if ( isPlaceholder && ! isInSignupTest ) {
 			const isJetpackSite = !! site.jetpack;
 			const classes = classNames( 'is-placeholder', {
 				'plan-features__price': ! isJetpackSite,
@@ -189,11 +246,22 @@ class PlanFeaturesHeader extends Component {
 				<div className={ classes } ></div>
 			);
 		}
+
 		if ( discountPrice ) {
 			return (
 				<span className="plan-features__header-price-group">
-					<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } original />
-					<PlanPrice currencyCode={ currencyCode } rawPrice={ discountPrice } discounted />
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ rawPrice }
+						isInSignupTest={ isInSignupTest }
+						original
+					/>
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ discountPrice }
+						isInSignupTest={ isInSignupTest }
+						discounted
+					/>
 				</span>
 			);
 		}
@@ -202,14 +270,28 @@ class PlanFeaturesHeader extends Component {
 			const originalPrice = relatedMonthlyPlan.raw_price * 12;
 			return (
 				<span className="plan-features__header-price-group">
-					<PlanPrice currencyCode={ currencyCode } rawPrice={ originalPrice } original />
-					<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } discounted />
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ originalPrice }
+						isInSignupTest={ isInSignupTest }
+						original
+					/>
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ rawPrice }
+						isInSignupTest={ isInSignupTest }
+						discounted
+					/>
 				</span>
 			);
 		}
 
 		return (
-			<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } />
+			<PlanPrice
+				currencyCode={ currencyCode }
+				rawPrice={ rawPrice }
+				isInSignupTest={ isInSignupTest }
+			/>
 		);
 	}
 }
