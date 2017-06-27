@@ -80,6 +80,8 @@ export const PostEditor = React.createClass( {
 
 	_previewWindow: null,
 
+	isPostPublishPreviewABTest: abtest( 'postPublishPreview' ) === 'showPostPublishPreview',
+
 	getInitialState() {
 		return {
 			...this.getPostEditState(),
@@ -280,7 +282,7 @@ export const PostEditor = React.createClass( {
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
-							{ ! abtest( 'postPublishPreview' ) === 'showPostPublishPreview'
+							{ ! this.isPostPublishPreviewABTest
 								? <EditorNotice
 									{ ...this.state.notice }
 									onDismissClick={ this.hideNotice }
@@ -383,7 +385,7 @@ export const PostEditor = React.createClass( {
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
 						/>
 						: null }
-					{ abtest( 'postPublishPreview' ) === 'showPostPublishPreview'
+					{ this.isPostPublishPreviewABTest
 						? <EditorNotice
 								{ ...this.state.notice }
 								onDismissClick={ this.hideNotice }
@@ -877,13 +879,13 @@ export const PostEditor = React.createClass( {
 				status: 'is-success',
 				message,
 				action,
-				link: abtest( 'postPublishPreview' ) === 'showPostPublishPreview' ? null : link,
+				link: this.isPostPublishPreviewABTest ? null : link,
 			};
 
 			window.scrollTo( 0, 0 );
 
 			if (
-				abtest( 'postPublishPreview' ) === 'showPostPublishPreview' &&
+				this.isPostPublishPreviewABTest &&
 				this.props.isSitePreviewable &&
 				isNotPrivateOrIsConfirmed
 			) {

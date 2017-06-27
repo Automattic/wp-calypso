@@ -38,6 +38,12 @@ export class EditorNotice extends Component {
 		error: PropTypes.object
 	}
 
+	constructor( props ) {
+		super( props );
+
+		this.isPostPublishPreviewABTest = abtest( 'postPublishPreview' ) === 'showPostPublishPreview';
+	}
+
 	componentWillReceiveProps( nextProps ) {
 		if ( isMobile() &&
 			( ( ! this.props.message && nextProps.message ) || ( ! this.props.error && nextProps.error ) ) ) {
@@ -134,7 +140,7 @@ export class EditorNotice extends Component {
 				} );
 
 			case 'publishedPrivately':
-				if ( abtest( 'postPublishPreview' ) === 'showPostPublishPreview' ) {
+				if ( this.isPostPublishPreviewABTest ) {
 					return translate( '{{strong}}Published privately.{{/strong}} Only admins and editors can view.', {
 						components: {
 							strong: <strong />,
@@ -238,7 +244,7 @@ export class EditorNotice extends Component {
 		const { siteId, message, status, onDismissClick } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
 		const classes = classNames( 'editor-notice', {
-			'is-global': abtest( 'postPublishPreview' ) === 'showPostPublishPreview',
+			'is-global': this.isPostPublishPreviewABTest,
 		} );
 
 		return (
