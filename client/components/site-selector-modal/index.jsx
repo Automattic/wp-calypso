@@ -60,17 +60,35 @@ class SiteSelectorModal extends Component {
 	}
 
 	getMainLink() {
-		const url = this.props.getMainUrl && this.props.getMainUrl( this.state.siteId );
+		const { siteId } = this.state;
+		const url = this.props.getMainUrl && siteId && this.props.getMainUrl( siteId );
 
-		return url
-			? <Button primary href={ url } onClick={ this.onButtonClick } >{ this.props.mainActionLabel }</Button>
-			: { action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true };
+		if ( url ) {
+			return (
+				<Button
+					primary
+					key="mainAction"
+					disabled={ ! siteId }
+					href={ url }
+					onClick={ this.onButtonClick } >
+					{ this.props.mainActionLabel }
+				</Button>
+			);
+		}
+
+		return {
+			key: 'mainAction',
+			action: siteId && 'mainAction',
+			label: this.props.mainActionLabel,
+			isPrimary: true,
+			disabled: ! siteId
+		};
 	}
 
 	render() {
 		const mainLink = this.getMainLink();
 		const buttons = [
-			{ action: 'back', label: this.props.translate( 'Back' ) },
+			{ key: 'back', action: 'back', label: this.props.translate( 'Back' ) },
 			mainLink
 		];
 		const classNames = classnames( 'site-selector-modal', this.props.className );
