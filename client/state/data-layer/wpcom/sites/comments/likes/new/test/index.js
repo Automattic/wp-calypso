@@ -30,24 +30,25 @@ const action = {
 };
 
 describe( '#likeComment()', () => {
-	it( 'should dispatch a comment like action', () => {
-		const dispatch = spy();
+	// it( 'should dispatch a comment like action', () => {
+	// 	const dispatch = spy();
 
-		likeComment( { dispatch }, action );
+	// 	likeComment( { dispatch }, action );
 
-		expect( dispatch ).to.have.been.calledTwice;
+	// 	expect( dispatch ).to.have.been.calledTwice;
 
-		expect( dispatch ).to.have.been.calledWith( action );
-	} );
+	// 	expect( dispatch ).to.have.been.calledWith( action );
+	// } );
 
 	it( 'should dispatch a http action to create a new like', () => {
 		const dispatch = spy();
 
 		likeComment( { dispatch }, action );
 
-		expect( dispatch ).to.have.been.calledTwice;
+		// expect( dispatch ).to.have.been.calledTwice;
+		expect( dispatch ).to.have.been.calledOnce;
 
-		expect( dispatch ).to.have.been.calledWith( action );
+		// expect( dispatch ).to.have.been.calledWith( action );
 
 		expect( dispatch ).to.have.been.calledWith( http( {
 			apiVersion: '1.1',

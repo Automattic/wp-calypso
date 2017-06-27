@@ -13,7 +13,7 @@ import {
 	COMMENTS_LIST_REQUEST,
 	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
-	COMMENTS_LIKE_REQUEST,
+	// COMMENTS_LIKE_REQUEST,
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
 	COMMENTS_REMOVE,
@@ -105,7 +105,7 @@ export const replyComment = ( commentText, siteId, postId, parentCommentId ) => 
  * @returns {Function} think that likes a comment
  */
 export const likeComment = ( siteId, postId, commentId ) => ( {
-	type: COMMENTS_LIKE_REQUEST,
+	type: COMMENTS_LIKE,
 	siteId,
 	postId,
 	commentId

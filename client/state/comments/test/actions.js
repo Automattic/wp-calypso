@@ -14,7 +14,7 @@ import {
 	COMMENTS_REMOVE,
 	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
-	COMMENTS_LIKE_REQUEST,
+	// COMMENTS_LIKE_REQUEST,
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
@@ -118,7 +118,7 @@ describe( 'actions', () => {
 			const action = likeComment( SITE_ID, POST_ID, 1 );
 
 			expect( action ).to.eql( {
-				type: COMMENTS_LIKE_REQUEST,
+				type: COMMENTS_LIKE,
 				siteId: SITE_ID,
 				postId: POST_ID,
 				commentId: 1

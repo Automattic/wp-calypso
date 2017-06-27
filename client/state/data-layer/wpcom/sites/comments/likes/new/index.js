@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
-	COMMENTS_LIKE_REQUEST,
+	// COMMENTS_LIKE_REQUEST,
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
@@ -18,7 +18,7 @@ import { errorNotice } from 'state/notices/actions';
 
 export const likeComment = ( { dispatch }, action ) => {
 	//optimistic update of the like status and count
-	dispatch( { ...action, type: COMMENTS_LIKE } );
+	// dispatch( { ...action, type: COMMENTS_LIKE } );
 
 	dispatch( http( {
 		method: 'POST',
@@ -49,5 +49,5 @@ export const handleLikeFailure = ( { dispatch }, { siteId, postId, commentId } )
 };
 
 export default {
-	[ COMMENTS_LIKE_REQUEST ]: [ dispatchRequest( likeComment, updateCommentLikes, handleLikeFailure ) ]
+	[ COMMENTS_LIKE ]: [ dispatchRequest( likeComment, updateCommentLikes, handleLikeFailure ) ]
 };
