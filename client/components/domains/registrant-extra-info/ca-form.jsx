@@ -156,7 +156,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 				</p>
 				<FormFieldset>
 					<FormLabel htmlFor="legal-type">
-						{ translate( 'Choose the option that best describes you:' ) }
+						{ translate( 'Choose the option that best describes your Canadian presence:' ) }
 					</FormLabel>
 					<FormSelect
 						id="legal-type"
