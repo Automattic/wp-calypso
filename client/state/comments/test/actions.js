@@ -16,6 +16,7 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
+	COMMENTS_UNLIKE_REQUEST,
 	COMMENTS_WRITE,
 	COMMENTS_REPLY_WRITE,
 } from '../../action-types';
@@ -130,7 +131,7 @@ describe( 'actions', () => {
 			const action = unlikeComment( SITE_ID, POST_ID, 1 );
 
 			expect( action ).to.be.eql( {
-				type: COMMENTS_UNLIKE,
+				type: COMMENTS_UNLIKE_REQUEST,
 				siteId: SITE_ID,
 				postId: POST_ID,
 				commentId: 1

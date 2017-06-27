@@ -9,17 +9,23 @@ import { translate } from 'i18n-calypso';
 import {
 	COMMENTS_LIKE,
 	COMMENTS_LIKE_UPDATE,
-	COMMENTS_UNLIKE
+	COMMENTS_UNLIKE,
+	COMMENTS_UNLIKE_REQUEST
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
-export const unlikeComment = ( { dispatch }, action ) => dispatch( http( {
-	method: 'POST',
-	apiVersion: '1.1',
-	path: `/sites/${ action.siteId }/comments/${ action.commentId }/likes/mine/delete`
-}, action ) );
+export const unlikeComment = ( { dispatch }, action ) => {
+	//optimistic update of comment like status and count
+	dispatch( { ...action, type: COMMENTS_UNLIKE } );
+
+	dispatch( http( {
+		method: 'POST',
+		apiVersion: '1.1',
+		path: `/sites/${ action.siteId }/comments/${ action.commentId }/likes/mine/delete`
+	}, action ) );
+};
 
 export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId }, next, { i_like, like_count } ) => dispatch( {
 	type: COMMENTS_LIKE_UPDATE,
@@ -35,7 +41,7 @@ export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId },
  *
  * @param {Function} dispatch redux dispatcher
  */
-export const handleLikeFailure = ( { dispatch }, { siteId, postId, commentId } ) => {
+export const handleUnlikeFailure = ( { dispatch }, { siteId, postId, commentId } ) => {
 	// revert optimistic updated on error
 	dispatch( { type: COMMENTS_LIKE, siteId, postId, commentId } );
 	// dispatch a error notice
@@ -43,5 +49,5 @@ export const handleLikeFailure = ( { dispatch }, { siteId, postId, commentId } )
 };
 
 export default {
-	[ COMMENTS_UNLIKE ]: [ dispatchRequest( unlikeComment, updateCommentLikes, handleLikeFailure ) ]
+	[ COMMENTS_UNLIKE_REQUEST ]: [ dispatchRequest( unlikeComment, updateCommentLikes, handleUnlikeFailure ) ]
 };
