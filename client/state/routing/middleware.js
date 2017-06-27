@@ -3,15 +3,11 @@
  */
 import debugFactory from 'debug';
 import { isEmpty } from 'lodash';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
-import {
-	getSavedPath,
-	savePath,
-} from 'lib/restore-last-path';
+import { savePath } from 'lib/restore-last-path';
 import { ROUTE_SET } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:restore-last-location' );
@@ -30,17 +26,8 @@ export const routingMiddleware = () => {
 		const isFirstRun = ! hasInitialized;
 		hasInitialized = true;
 
-		if ( isFirstRun && action.path === '/' ) {
-			// Attempt to restore the last path on the first run
-			return getSavedPath()
-					.then( ( lastPath ) => {
-						debug( 'restoring: ' + lastPath );
-						page( lastPath );
-					} )
-					.catch( ( reason ) => {
-						debug( 'cannot restore', reason );
-						next( action );
-					} );
+		if ( isFirstRun || action.path === '/' ) {
+			return next( action );
 		}
 
 		// Attempt to save the path so it might be restored in the future
