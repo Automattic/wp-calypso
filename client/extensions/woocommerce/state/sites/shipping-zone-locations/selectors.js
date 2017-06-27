@@ -112,9 +112,6 @@ export const areShippingZonesLocationsValid = ( reduxState, siteId = getSelected
 				}
 				statesSet.add( s );
 			}
-		} else {
-			// A zone must have *any* location. If it doesn't, it's incorrect.
-			return false;
 		}
 	}
 

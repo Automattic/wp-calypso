@@ -450,6 +450,77 @@ describe( 'selectors', () => {
 			} );
 		} );
 
+		it( 'should allow selecting a single country even if it belongs to another zone', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'UK' ],
+						state: [],
+						postcode: [],
+					},
+					7: {
+						continent: [],
+						country: [ 'US' ],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [
+						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' },
+						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
+					],
+					states: null,
+					postcode: null,
+					pristine: false,
+				},
+			} );
+
+			expect( getShippingZoneLocationsWithEdits( state ) ).to.deep.equal( {
+				continent: [],
+				country: [ 'US' ],
+				state: [],
+				postcode: [],
+			} );
+		} );
+
+		it( 'should allow selecting a second country even if the first belongs to another zone, but the first will be removed', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'UK' ],
+						state: [],
+						postcode: [],
+					},
+					7: {
+						continent: [],
+						country: [ 'US' ],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [
+						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' },
+						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
+						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'CA' },
+					],
+					states: null,
+					postcode: null,
+					pristine: false,
+				},
+			} );
+
+			expect( getShippingZoneLocationsWithEdits( state ) ).to.deep.equal( {
+				continent: [],
+				country: [ 'CA' ],
+				state: [],
+				postcode: [],
+			} );
+		} );
+
 		it( 'should remove the continent and add in its place all its countries when removing a country inside it', () => {
 			const state = createEditState( {
 				zoneLocations: {

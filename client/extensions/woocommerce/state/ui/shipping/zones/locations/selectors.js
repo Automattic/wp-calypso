@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forIn, isEmpty, sortBy } from 'lodash';
+import { every, forIn, isEmpty, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -107,6 +107,7 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 
 	const continents = new Set( locations.continent );
 	const countries = new Set( locations.country );
+	// Extract the country/state pair from the raw states (they are in the format "Country:State")
 	const states = new Set();
 	locations.state.forEach( ( fullCode ) => {
 		const [ countryCode, stateCode ] = fullCode.split( ':' );
@@ -125,11 +126,14 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 	}
 
 	const forbiddenCountries = new Set( Object.keys( getCountriesOwnedByOtherZone( state, siteId ) ) );
+	// Play the journal entries in order, from oldest to newest
 	edits.journal.forEach( ( { action, code } ) => {
 		switch ( action ) {
 			case JOURNAL_ACTIONS.ADD_CONTINENT:
+				// When selecting a whole continent, remove all its countries from the selection
 				getCountries( state, code, siteId ).forEach( country => countries.delete( country.code ) );
 				if ( countries.size ) {
+					// If the zone has countries selected, then instead of selecting the continent we select all its countries
 					getCountries( state, code, siteId ).forEach( ( country ) => {
 						if ( ! forbiddenCountries.has( country.code ) ) {
 							countries.add( country.code );
@@ -144,7 +148,11 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 				getCountries( state, code, siteId ).forEach( country => countries.delete( country.code ) );
 				break;
 			case JOURNAL_ACTIONS.ADD_COUNTRY:
+				forbiddenCountries.forEach( countryCode => {
+					countries.delete( countryCode );
+				} );
 				countries.add( code );
+				// If the zone has continents selected, then we need to replace them with their respective countries
 				continents.forEach( ( continentCode ) => {
 					getCountries( state, continentCode, siteId ).forEach( ( country ) => {
 						if ( ! forbiddenCountries.has( country.code ) ) {
@@ -152,6 +160,7 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 						}
 					} );
 				} );
+				// This is a "countries" zone now, remove all the continents
 				continents.clear();
 				break;
 			case JOURNAL_ACTIONS.REMOVE_COUNTRY:
@@ -167,6 +176,7 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 						}
 					}
 				}
+				// If the user unselected a country that was inside a selected continent, replace the continent for its countries
 				if ( insideSelectedContinent ) {
 					continents.forEach( ( continentCode ) => {
 						getCountries( state, continentCode, siteId ).forEach( ( country ) => {
@@ -175,6 +185,7 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 							}
 						} );
 					} );
+					// This is a "countries" zone now, remove all the continents
 					continents.clear();
 				}
 				countries.delete( code );
@@ -182,6 +193,7 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 		}
 	} );
 
+	// If there are journal entries, then the user selected/unselected countries&continents, so the original states must be purged
 	if ( ! edits.states || edits.states.removeAll || ! isEmpty( edits.journal ) ) {
 		states.clear();
 	}
@@ -198,11 +210,24 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 	};
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Boolean} Whether the locations can be filtered (by state or postcode) or not. They can be filtered if there
+ * is only one country selected (and no continents).
+ */
 export const canLocationsBeFiltered = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const locations = getShippingZoneLocationsWithEdits( state, siteId );
 	return locations && isEmpty( locations.continent ) && 1 === locations.country.length;
 };
 
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Number|undefined} The Zone ID that is the "owner" of the currently selected country, or "false-y" if the
+ * currently selected country isn't owned by any other zone. If this returns a Zone ID, then the user shouldn't be able
+ * to filter by "whole country", only by states / postcode.
+ */
 export const getCurrentSelectedCountryZoneOwner = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! canLocationsBeFiltered( state, siteId ) ) {
 		return null;
@@ -356,4 +381,21 @@ export const getCurrentlyEditingShippingZoneStates = ( state, siteId = getSelect
 		disabled: Boolean( forbiddenStates[ code ] ),
 		ownerZoneId: forbiddenStates[ code ],
 	} ) );
+};
+
+export const areCurrentlyEditingShippingZoneLocationsValid = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const locations = getShippingZoneLocationsWithEdits( state, siteId );
+	if ( ! locations ) {
+		return false;
+	}
+	if ( every( locations, isEmpty ) ) {
+		return false;
+	}
+	if ( areLocationsFilteredByPostcode( state, siteId ) && ! locations.postcode[ 0 ] ) {
+		return false;
+	}
+	if ( areLocationsFilteredByState( state, siteId ) && isEmpty( locations.state ) ) {
+		return false;
+	}
+	return true;
 };
