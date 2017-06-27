@@ -12,9 +12,9 @@ import { keyBy } from 'lodash';
 import config from 'config';
 import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
-import Site from 'blocks/site';
-import { recordCheckboxEvent, recordClickEvent } from 'me/event-recorder';
+import { recordClickEvent } from 'me/event-recorder';
 import { getPublicSites, getSites } from 'state/selectors';
+import ProfileLinksAddWordPressSite from './site';
 
 class ProfileLinksAddWordPress extends Component {
 	// an empty initial state is required to keep render and handleCheckedChange
@@ -28,12 +28,9 @@ class ProfileLinksAddWordPress extends Component {
 	};
 
 	onSelect = ( inputName ) => {
-		return ( event ) => {
-			const updates = {};
-			event.preventDefault();
-			updates[ inputName ] = ! this.state[ inputName ];
-			this.setState( updates );
-		};
+		const updates = {};
+		updates[ inputName ] = ! this.state[ inputName ];
+		this.setState( updates );
 	};
 
 	getCheckedCount() {
@@ -143,22 +140,13 @@ class ProfileLinksAddWordPress extends Component {
 				}
 
 				return (
-					<li
-						key={ site.ID }
-						className="profile-links-add-wordpress__item"
-						onClick={ recordCheckboxEvent( 'Add WordPress Site' ) }
-					>
-						<input
-							className="profile-links-add-wordpress__checkbox"
-							type="checkbox"
-							name={ inputName }
-							onChange={ this.handleCheckedChanged }
-							checked={ checkedState } />
-						<Site
-							site={ site }
-							indicator={ false }
-							onSelect={ this.onSelect( inputName ) } />
-					</li>
+					<ProfileLinksAddWordPressSite
+						key={ inputName }
+						site={ site }
+						checked={ checkedState }
+						onChange={ this.handleCheckedChanged }
+						onSelect={ this.onSelect }
+					/>
 				);
 			} )
 		);
