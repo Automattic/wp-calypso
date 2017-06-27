@@ -798,6 +798,7 @@
 	display: flex;
 	justify-content: flex-start;
 	flex-direction: column;
+	max-width: 440px;
 
 	.form-fieldset.products__product-dimensions-input {
 		margin-bottom: 12px;
