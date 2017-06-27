@@ -76,7 +76,7 @@ export const ThemesList = React.createClass( {
 			index={ index }
 			theme={ theme }
 			active={ this.props.isActive( theme.id ) }
-			purchased={ this.props.hidePrice( theme.id ) }
+			hidePrice={ this.props.hidePrice( theme.id ) }
 			installing={ this.props.isInstalling( theme.id ) } />;
 	},
 

@@ -36,8 +36,8 @@ const Theme = React.createClass( {
 		} ),
 		// If true, highlight this theme as active
 		active: React.PropTypes.bool,
-		// If true, the user has 'purchased' the theme
-		purchased: React.PropTypes.bool,
+		// If true, hide the theme price
+		hidePrice: React.PropTypes.bool,
 		// If true, the theme is being installed
 		installing: React.PropTypes.bool,
 		// If true, render a placeholder
@@ -66,7 +66,7 @@ const Theme = React.createClass( {
 	shouldComponentUpdate( nextProps ) {
 		return nextProps.theme.id !== this.props.theme.id ||
 			( nextProps.active !== this.props.active ) ||
-			( nextProps.purchased !== this.props.purchased ) ||
+			( nextProps.hidePrice !== this.props.hidePrice ) ||
 			( nextProps.installing !== this.props.installing ) ||
 			! isEqual( Object.keys( nextProps.buttonContents ), Object.keys( this.props.buttonContents ) ) ||
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
@@ -128,7 +128,7 @@ const Theme = React.createClass( {
 		} = this.props.theme;
 		const {
 			active,
-			purchased
+			hidePrice
 		} = this.props;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
@@ -173,7 +173,7 @@ const Theme = React.createClass( {
 							} ) }</span>
 						}
 						{
-							price && ! purchased &&
+							price && ! hidePrice &&
 								<span className="theme-badge__price">{ price }</span>
 						}
 						{ ! isEmpty( this.props.buttonContents )
