@@ -3,6 +3,13 @@
  */
 import { pullAll, union } from 'lodash';
 
+/**
+ * @param {Object} zoneLocationEdits Pre-existing edits made to the zone locations.
+ * It's in the format { journal: [], states: { add: [], remove: [], removeAll: Bool }, postcode: String, pristine: Bool }
+ * @param {Object} [currentLocationEdits] Edits made to the zone's methods, but not committed yet
+ * (i.e. the "Edit Locations" modal is still open). Same format as zoneLocationEdits
+ * @return {Object} A merge of the 2 edit objects, or just zoneLocationEdits if currentLocationEdits is omitted
+ */
 export const mergeLocationEdits = ( zoneLocationEdits, currentLocationEdits ) => {
 	if ( ! currentLocationEdits || currentLocationEdits.pristine ) {
 		return zoneLocationEdits;
@@ -35,6 +42,6 @@ export const mergeLocationEdits = ( zoneLocationEdits, currentLocationEdits ) =>
 		journal: [ ...journal, ...currentJournal ],
 		states: mergedStates,
 		postcode: currentPostcode,
-		pristine: currentLocationEdits.pristine,
+		pristine: currentLocationEdits.pristine && zoneLocationEdits.pristine,
 	};
 };
