@@ -4,7 +4,6 @@
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 import Gridicon from 'gridicons';
-import { camelCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -50,24 +49,19 @@ class OrderRefundCard extends Component {
 		} );
 	}
 
+	recalculateRefund = ( total ) => {
+		this.setState( { refundTotal: total } );
+	}
+
 	onChange = ( event ) => {
-		switch ( event.target.name ) {
-			case 'refund_total':
-			case 'refund_note':
-				this.setState( {
-					[ camelCase( event.target.name ) ]: event.target.value,
-				} );
-				break;
-			case 'shipping_total':
-				this.setState( {
-					refundTotal: this.state.refundTotal + parseFloat( event.target.value ),
-				} );
-				break;
-			default:
-				const total = parseFloat( event.target.dataset.price ) * event.target.value;
-				this.setState( {
-					refundTotal: this.state.refundTotal + parseFloat( total ),
-				} );
+		if ( 'refund_total' === event.target.name ) {
+			this.setState( {
+				refundTotal: event.target.value.replace( /[^0-9.,]/g, '' ),
+			} );
+		} else if ( 'refund_note' === event.target.name ) {
+			this.setState( {
+				refundNote: event.target.value,
+			} );
 		}
 	}
 
@@ -89,8 +83,8 @@ class OrderRefundCard extends Component {
 		);
 	}
 
-	render() {
-		const { order, site, translate } = this.props;
+	getRefundStatus = () => {
+		const { order, translate } = this.props;
 		let refundStatus = translate( 'Payment of %(total)s received via %(method)s', {
 			args: {
 				total: formatCurrency( order.total, order.currency ) || order.total,
@@ -113,14 +107,23 @@ class OrderRefundCard extends Component {
 				}
 			} );
 		}
+		return refundStatus;
+	}
 
+	render() {
+		const { order, site, translate } = this.props;
 		const dialogClass = 'woocommerce'; // eslint/css specificity hack
+		let refundTotal = formatCurrency( 0, order.currency );
+		if ( this.state.refundTotal ) {
+			refundTotal = formatCurrency( this.state.refundTotal, order.currency ) || this.state.refundTotal;
+		}
+		refundTotal = refundTotal.replace( /[^0-9.,]/g, '' );
 
 		return (
 			<div className="order__details-refund">
 				<div className="order__details-refund-label">
 					<Gridicon icon="checkmark" />
-					{ refundStatus }
+					{ this.getRefundStatus() }
 				</div>
 				<div className="order__details-refund-action">
 					{ ( 'refunded' !== order.status )
@@ -131,39 +134,27 @@ class OrderRefundCard extends Component {
 
 				<Dialog isVisible={ this.state.showRefundDialog } onClose={ this.toggleRefundDialog } className={ dialogClass }>
 					<h1>{ translate( 'Refund order' ) }</h1>
-					<OrderDetailsTable order={ order } isEditable onChange={ this.onChange } site={ site } />
-					<form>
-						<div className="order__refund-container">
-							<FormLabel className="order__refund-note">
-								{ translate( 'Refund note' ) }
-								<FormTextarea onChange={ this.onChange } name="refund_note" value={ this.state.refundNote } />
+					<OrderDetailsTable order={ order } isEditable onChange={ this.recalculateRefund } site={ site } />
+					<form className="order__refund-container">
+						<FormLabel className="order__refund-note">
+							{ translate( 'Refund note' ) }
+							<FormTextarea onChange={ this.onChange } name="refund_note" value={ this.state.refundNote } />
+						</FormLabel>
+
+						<FormFieldset className="order__refund-details">
+							<FormLabel className="order__refund-amount">
+								<span className="order__refund-amount-label">{ translate( 'Total refund amount' ) }</span>
+								<div className="order__refund-amount-value">
+									<FormTextInputWithAffixes
+										name="refund_total"
+										prefix="$"
+										onChange={ this.onChange }
+										value={ refundTotal } />
+								</div>
 							</FormLabel>
 
-							<FormFieldset className="order__refund-details">
-								<FormLabel className="order__refund-amount">
-									<span className="order__refund-amount-label">{ translate( 'Total refund amount' ) }</span>
-									<div className="order__refund-amount-value">
-										<FormTextInputWithAffixes
-											name="refund_total"
-											prefix="$"
-											onChange={ this.onChange }
-											value={ this.state.refundTotal } />
-									</div>
-								</FormLabel>
-
-								{ this.renderCreditCard() }
-							</FormFieldset>
-						</div>
-						<div className="order__refund-actions">
-							<Button>{ translate( 'Cancel' ) }</Button>
-							<Button primary>
-								{ translate( 'Refund %(total)s', {
-									args: {
-										total: this.state.refundTotal
-									}
-								} ) }
-							</Button>
-						</div>
+							{ this.renderCreditCard() }
+						</FormFieldset>
 					</form>
 				</Dialog>
 			</div>

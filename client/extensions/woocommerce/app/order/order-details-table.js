@@ -3,6 +3,7 @@
  */
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
+import { sum } from 'lodash';
 
 /**
  * Internal dependencies
@@ -41,21 +42,33 @@ class OrderDetailsTable extends Component {
 	}
 
 	getRefundedTotal = ( order ) => {
-		return order.refunds.reduce( ( sum, i ) => sum + ( i.total * 1 ), 0 );
+		return order.refunds.reduce( ( total, i ) => total + ( i.total * 1 ), 0 );
+	}
+
+	recalculateRefund = () => {
+		if ( ! this.props.order ) {
+			return 0;
+		}
+		const subtotal = sum( this.state.quantities.map( ( q, i ) => {
+			if ( ! this.props.order.line_items[ i ] ) {
+				return 0;
+			}
+			return parseFloat( this.props.order.line_items[ i ].price ) * q;
+		} ) );
+		const total = subtotal + ( parseFloat( this.state.shippingTotal ) || 0 );
+		this.props.onChange( total );
 	}
 
 	onChange = ( event ) => {
 		if ( 'shipping_total' === event.target.name ) {
-			this.setState( { shippingTotal: event.target.value } );
+			const shippingValue = event.target.value.replace( /[^0-9,.]/g, '' );
+			this.setState( { shippingTotal: shippingValue }, this.recalculateRefund );
 		} else {
 			const i = event.target.name.split( '-' )[ 1 ];
 			const newQuants = this.state.quantities;
 			newQuants[ i ] = event.target.value;
-			this.setState( {
-				quantities: newQuants,
-			} );
+			this.setState( { quantities: newQuants }, this.recalculateRefund );
 		}
-		this.props.onChange( event );
 	}
 
 	renderTableHeader = () => {
@@ -143,7 +156,7 @@ class OrderDetailsTable extends Component {
 									prefix="$"
 									name="shipping_total"
 									onChange={ this.onChange }
-									value={ this.state.shipping_total } />
+									value={ this.state.shippingTotal } />
 								: formatCurrency( order.shipping_total, order.currency ) || order.shipping_total
 							}
 						</div>
