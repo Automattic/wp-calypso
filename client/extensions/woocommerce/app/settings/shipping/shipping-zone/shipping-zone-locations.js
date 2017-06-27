@@ -19,7 +19,7 @@ const ShippingZoneLocations = ( { translate } ) => {
 	return (
 		<div className="shipping-zone__locations">
 			<ExtendedHeader
-				label={ translate( 'Zone location' ) }
+				label={ translate( 'Zone locations' ) }
 				description={ translate( 'Define the places that are included in this zone.' ) } >
 				<Button>{ translate( 'Add location' ) }</Button>
 			</ExtendedHeader>
