@@ -38,6 +38,7 @@ import Button from 'components/button';
 import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
+import config from 'config';
 
 /**
  * Module constant
@@ -70,6 +71,7 @@ export class EditorHtmlToolbar extends Component {
 		showInsertContentMenu: false,
 		showLinkDialog: false,
 		showMediaModal: false,
+		source: '',
 	};
 
 	componentDidMount() {
@@ -414,6 +416,15 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( {
 			showInsertContentMenu: false,
 			showMediaModal: true,
+			source: '',
+		} );
+	}
+
+	openGoogleModal = () => {
+		this.setState( {
+			showInsertContentMenu: false,
+			showMediaModal: true,
+			source: 'google_photos',
 		} );
 	}
 
@@ -444,6 +455,24 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
+
+	renderExternal() {
+		const { translate } = this.props;
+
+		if ( ! config.isEnabled( 'external-media' ) ) {
+			return null;
+		}
+
+		return (
+			<div
+				className="editor-html-toolbar__insert-content-dropdown-item"
+				onClick={ this.openGoogleModal }
+			>
+				<Gridicon icon="add-image" />
+				<span>{ translate( 'Add from Google' ) }</span>
+			</div>
+		);
+	}
 
 	render() {
 		const {
@@ -556,6 +585,9 @@ export class EditorHtmlToolbar extends Component {
 								<Gridicon icon="add-image" />
 								<span>{ translate( 'Add Media' ) }</span>
 							</div>
+
+							{ this.renderExternal() }
+
 							<div
 								className="editor-html-toolbar__insert-content-dropdown-item"
 								onClick={ this.openContactFormDialog }
@@ -597,6 +629,7 @@ export class EditorHtmlToolbar extends Component {
 					onClose={ this.closeMediaModal }
 					onInsertMedia={ this.onInsertMedia }
 					visible={ this.state.showMediaModal }
+					source={ this.state.source }
 				/>
 
 				<MediaLibraryDropZone

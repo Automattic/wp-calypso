@@ -24,6 +24,7 @@ import {
 	ValidationErrors as MediaValidationErrors,
 	MEDIA_IMAGE_PHOTON,
 	MEDIA_IMAGE_RESIZER,
+	MEDIA_IMAGE_THUMBNAIL,
 } from 'lib/media/constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
@@ -168,6 +169,10 @@ const MediaLibraryContent = React.createClass( {
 	},
 
 	getThumbnailType() {
+		if ( this.props.source !== '' ) {
+			return MEDIA_IMAGE_THUMBNAIL;
+		}
+
 		if ( this.props.site.is_private ) {
 			return MEDIA_IMAGE_RESIZER;
 		}

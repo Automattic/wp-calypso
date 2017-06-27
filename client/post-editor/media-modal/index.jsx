@@ -127,7 +127,7 @@ export class EditorMediaModal extends Component {
 		return {
 			filter: '',
 			detailSelectedIndex: 0,
-			source: '',
+			source: props.source ? props.source : '',
 			gallerySettings: props.initialGallerySettings
 		};
 	}
