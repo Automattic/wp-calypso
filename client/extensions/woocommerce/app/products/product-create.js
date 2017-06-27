@@ -24,7 +24,6 @@ import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product
 import { createProduct } from 'woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 class ProductCreate extends React.Component {
 	static propTypes = {
@@ -111,7 +110,6 @@ class ProductCreate extends React.Component {
 
 		return (
 			<Main className={ className }>
-				<SidebarNavigation />
 				<ProductHeader
 					site={ site }
 					product={ product }

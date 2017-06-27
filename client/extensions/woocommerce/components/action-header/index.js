@@ -8,6 +8,7 @@ import { isArray } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StickyPanel from 'components/sticky-panel';
 
 const ActionHeader = ( { children, breadcrumbs } ) => {
@@ -26,6 +27,7 @@ const ActionHeader = ( { children, breadcrumbs } ) => {
 	}
 	return (
 		<StickyPanel>
+			<SidebarNavigation />
 			<Card className="action-header__header">
 				<span className="action-header__breadcrumbs">{ breadcrumbsOutput }</span>
 				<div className="action-header__actions">
