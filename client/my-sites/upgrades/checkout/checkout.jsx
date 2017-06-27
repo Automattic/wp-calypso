@@ -81,9 +81,6 @@ const Checkout = React.createClass( {
 
 		if ( this.props.cart.hasLoadedFromServer && this.props.product ) {
 			this.addProductToCart();
-			if ( this.props.couponCode ) {
-				upgradesActions.applyCoupon( this.props.couponCode );
-			}
 		}
 
 		window.scrollTo( 0, 0 );
@@ -133,6 +130,9 @@ const Checkout = React.createClass( {
 			this.addRenewItemToCart();
 		} else {
 			this.addNewItemToCart();
+		}
+		if ( this.props.couponCode ) {
+			upgradesActions.applyCoupon( this.props.couponCode );
 		}
 	},
 
