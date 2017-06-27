@@ -100,7 +100,6 @@ class OrderDetailsTable extends Component {
 							type="number"
 							name={ `quantity-${ i }` }
 							onChange={ this.onChange }
-							data-price={ item.price }
 							min="0"
 							max={ item.quantity }
 							value={ this.state.quantities[ i ] || 0 } />

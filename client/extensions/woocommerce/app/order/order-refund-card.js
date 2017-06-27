@@ -41,6 +41,33 @@ class OrderRefundCard extends Component {
 		return order.refunds.reduce( ( sum, i ) => sum + ( i.total * 1 ), 0 );
 	}
 
+	getRefundStatus = () => {
+		const { order, translate } = this.props;
+		let refundStatus = translate( 'Payment of %(total)s received via %(method)s', {
+			args: {
+				total: formatCurrency( order.total, order.currency ) || order.total,
+				method: order.payment_method_title,
+			}
+		} );
+
+		if ( 'refunded' === order.status ) {
+			refundStatus = translate( 'Payment of %(total)s has been refunded', {
+				args: {
+					total: formatCurrency( order.total, order.currency ) || order.total,
+				}
+			} );
+		} else if ( order.refunds.length ) {
+			const refund = this.getRefundedTotal( order );
+			refundStatus = translate( 'Payment of %(total)s has been partially refunded %(refund)s', {
+				args: {
+					total: formatCurrency( order.total, order.currency ) || order.total,
+					refund: formatCurrency( refund, order.currency ) || refund,
+				}
+			} );
+		}
+		return refundStatus;
+	}
+
 	toggleRefundDialog = () => {
 		this.setState( {
 			showRefundDialog: ! this.state.showRefundDialog,
@@ -81,33 +108,6 @@ class OrderRefundCard extends Component {
 				</div>
 			</div>
 		);
-	}
-
-	getRefundStatus = () => {
-		const { order, translate } = this.props;
-		let refundStatus = translate( 'Payment of %(total)s received via %(method)s', {
-			args: {
-				total: formatCurrency( order.total, order.currency ) || order.total,
-				method: order.payment_method_title,
-			}
-		} );
-
-		if ( 'refunded' === order.status ) {
-			refundStatus = translate( 'Payment of %(total)s has been refunded', {
-				args: {
-					total: formatCurrency( order.total, order.currency ) || order.total,
-				}
-			} );
-		} else if ( order.refunds.length ) {
-			const refund = this.getRefundedTotal( order );
-			refundStatus = translate( 'Payment of %(total)s has been partially refunded %(refund)s', {
-				args: {
-					total: formatCurrency( order.total, order.currency ) || order.total,
-					refund: formatCurrency( refund, order.currency ) || refund,
-				}
-			} );
-		}
-		return refundStatus;
 	}
 
 	render() {
@@ -155,6 +155,11 @@ class OrderRefundCard extends Component {
 
 							{ this.renderCreditCard() }
 						</FormFieldset>
+
+						<div className="order__refund-actions">
+							<Button>{ translate( 'Cancel' ) }</Button>
+							<Button primary>{ translate( 'Refund' ) }</Button>
+						</div>
 					</form>
 				</Dialog>
 			</div>
