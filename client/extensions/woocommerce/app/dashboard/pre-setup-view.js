@@ -15,12 +15,13 @@ import {
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { errorNotice } from 'state/notices/actions';
-import { fetchSettingsGeneral, updateStoreAddress } from 'woocommerce/state/sites/settings/general/actions';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSiteTitle } from 'state/sites/selectors';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
+import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
 
 class PreSetupView extends Component {
 	constructor( props ) {
@@ -84,7 +85,7 @@ class PreSetupView extends Component {
 			return errorNotice( translate( 'There was a problem saving the store address. Please try again.' ) );
 		};
 
-		this.props.updateStoreAddress(
+		this.props.doInitialSetup(
 			site.ID,
 			this.state.address.street,
 			this.state.address.street2,
@@ -154,7 +155,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchSettingsGeneral,
-			updateStoreAddress,
+			doInitialSetup,
 		},
 		dispatch
 	);
