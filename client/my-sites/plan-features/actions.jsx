@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
@@ -10,6 +11,9 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPlanClass, isMonthly } from 'lib/plans/constants';
 
 const PlanFeaturesActions = ( {
 	canPurchase,
@@ -25,7 +29,9 @@ const PlanFeaturesActions = ( {
 	translate,
 	manageHref,
 	isLandingPage,
-	planName
+	planName,
+	currentSitePlan,
+	planType,
 } ) => {
 	let upgradeButton;
 	const classes = classNames(
@@ -57,6 +63,10 @@ const PlanFeaturesActions = ( {
 				}
 			} );
 		}
+		const isCurrentPlanMonthly = currentSitePlan && isMonthly( currentSitePlan.productSlug );
+		if ( isCurrentPlanMonthly && getPlanClass( planType ) === getPlanClass( currentSitePlan.productSlug ) ) {
+			buttonText = translate( 'Upgrade to Yearly' );
+		}
 
 		upgradeButton = (
 			<Button
@@ -87,7 +97,17 @@ PlanFeaturesActions.propTypes = {
 	onUpgradeClick: PropTypes.func,
 	freePlan: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
-	isLandingPage: PropTypes.bool
+	isLandingPage: PropTypes.bool,
+	planType: PropTypes.string,
 };
 
-export default localize( PlanFeaturesActions );
+export default connect(
+	( state, ownProps ) => {
+		const { isInSignup } = ownProps;
+		const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
+		const currentSitePlan = getCurrentPlan( state, selectedSiteId );
+		return {
+			currentSitePlan,
+		};
+	}
+)( localize( PlanFeaturesActions ) );
