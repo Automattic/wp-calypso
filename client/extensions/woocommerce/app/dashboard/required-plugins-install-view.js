@@ -49,9 +49,9 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	componentDidMount = () => {
-		const { plugins } = this.props;
+		const { plugins, site } = this.props;
 
-		if ( plugins && plugins.length ) {
+		if ( site && plugins && plugins.length ) {
 			this.installPlugins( plugins );
 		}
 
@@ -59,9 +59,10 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	componentDidUpdate = ( prevProps ) => {
+		const { plugins, site } = this.props.plugins;
 		if (
-			( this.props.plugins && this.props.plugins.length && ! this.state.installingPlugin ) ||
-			( prevProps.plugins && this.props.plugins.length > prevProps.plugins.length )
+			( site && plugins && plugins.length && ! this.state.installingPlugin ) ||
+			( prevProps.plugins && plugins.length > prevProps.plugins.length )
 		) {
 			this.installPlugins( this.props.plugins );
 		}
@@ -87,8 +88,10 @@ class RequiredPluginsInstallView extends Component {
 					return;
 				}
 				const wporgPlugin = getPlugin( wporg, slug );
-				this.setState( { installingPlugin: slug } );
-				this.setState( { progress: this.state.progress + 25 } );
+				this.setState( {
+					installingPlugin: slug,
+					progress: this.state.progress + 25
+				} );
 				this.props.installPlugin( site.ID, wporgPlugin );
 				isRunningInstall = true;
 				return;
@@ -125,7 +128,7 @@ function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	return {
 		site,
-		plugins: getPlugins( state, [ { ID: site.ID } ] ),
+		plugins: getPlugins( state, [ site ] ),
 		wporg: state.plugins.wporg.items,
 	};
 }
