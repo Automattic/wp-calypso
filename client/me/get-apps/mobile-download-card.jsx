@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { translate } from 'i18n-calypso';
-import { recordTracksEvent } from 'state/analytics/actions';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { partial, identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import { recordTracksEvent } from 'state/analytics/actions';
 
-const MobileDownloadCard = () => {
-	const trackIosClick = () => recordTracksEvent( 'calypso_app_download_ios_click' );
-	const trackAndroidClick = () => recordTracksEvent( 'calypso_app_download_android_click' );
+const MobileDownloadCard = ( { translate, trackIosClick, trackAndroidClick } ) => {
 	return (
 		<Card className="get-apps__mobile">
 			<div className="get-apps__card-text">
@@ -35,4 +35,24 @@ const MobileDownloadCard = () => {
 	);
 };
 
-export default MobileDownloadCard;
+MobileDownloadCard.propTypes = {
+	translate: PropTypes.func,
+	trackIosClick: PropTypes.func,
+	trackAndroidClick: PropTypes.func,
+};
+
+MobileDownloadCard.defaultProps = {
+	translate: identity,
+	trackIosClick: noop,
+	trackAndroidClick: noop,
+};
+
+const mapDispatchToProps = {
+	trackIosClick: partial( recordTracksEvent, 'calypso_app_download_ios_click' ),
+	trackAndroidClick: partial( recordTracksEvent, 'calypso_app_download_android_click' ),
+};
+
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( MobileDownloadCard ) );
