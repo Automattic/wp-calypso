@@ -13,6 +13,11 @@ import Card from 'components/card';
 import Button from 'components/button';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+const WINDOWS_LINK = 'https://apps.wordpress.com/d/windows?ref=getapps';
+const MAC_LINK = 'https://apps.wordpress.com/d/osx?ref=getapps';
+const LINUX_TAR_LINK = 'https://apps.wordpress.com/d/linux?ref=getapps';
+const LINUX_DEB_LINK = 'https://apps.wordpress.com/d/linux-deb?ref=getapps';
+
 class DesktopDownloadCard extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
@@ -29,15 +34,6 @@ class DesktopDownloadCard extends Component {
 		trackLinuxTarClick: noop,
 		trackLinuxDebClick: noop,
 	};
-
-	constructor( props ) {
-		super( props );
-
-		this.windowsLink = 'https://apps.wordpress.com/d/windows?ref=getapps';
-		this.macLink = 'https://apps.wordpress.com/d/osx?ref=getapps';
-		this.linuxTarLink = 'https://apps.wordpress.com/d/linux?ref=getapps';
-		this.linuxDebLink = 'https://apps.wordpress.com/d/linux-deb?ref=getapps';
-	}
 
 	getDescription = ( platform ) => {
 		const { translate } = this.props;
@@ -68,22 +64,22 @@ class DesktopDownloadCard extends Component {
 		switch ( platform ) {
 			case 'MacIntel':
 				return {
-					firstAvailableLink: this.getLinkAnchorTag( this.windowsLink ),
-					secondAvailableLink: this.getLinkAnchorTag( this.linuxTarLink ),
-					thirdAvailableLink: this.getLinkAnchorTag( this.linuxDebLink ),
+					firstAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
+					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
+					thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
 				};
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
 				return {
-					firstAvailableLink: this.getLinkAnchorTag( this.linuxDebLink ),
-					secondAvailableLink: this.getLinkAnchorTag( this.windowsLink ),
-					thirdAvailableLink: this.getLinkAnchorTag( this.macLink ),
+					firstAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
+					secondAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
+					thirdAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
 				};
 			default:
 				return {
-					firstAvailableLink: this.getLinkAnchorTag( this.macLink ),
-					secondAvailableLink: this.getLinkAnchorTag( this.linuxTarLink ),
-					thirdAvailableLink: this.getLinkAnchorTag( this.linuxDebLink ),
+					firstAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
+					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
+					thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
 				};
 		}
 	}
@@ -139,12 +135,12 @@ class DesktopDownloadCard extends Component {
 	getButtonLink = ( platform ) => {
 		switch ( platform ) {
 			case 'MacIntel':
-				return this.macLink;
+				return MAC_LINK;
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
-				return this.linuxTarLink;
+				return LINUX_TAR_LINK;
 			default:
-				return this.windowsLink;
+				return WINDOWS_LINK;
 		}
 	}
 
@@ -164,11 +160,11 @@ class DesktopDownloadCard extends Component {
 
 	getLinkAnchorTag = ( platformLink ) => {
 		switch ( platformLink ) {
-			case this.macLink:
+			case MAC_LINK:
 				return <a href={ platformLink } onClick={ this.trackMacClick } />;
-			case this.linuxTarLink:
+			case LINUX_TAR_LINK:
 				return <a href={ platformLink } onClick={ this.trackLinuxTarClick } />;
-			case this.linuxDebLink:
+			case LINUX_DEB_LINK:
 				return <a href={ platformLink } onClick={ this.trackLinuxDebClick } />;
 			default:
 				return <a href={ platformLink } onClick={ this.trackWindowsClick } />;
