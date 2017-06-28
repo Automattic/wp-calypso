@@ -9,7 +9,7 @@ import { isNumber } from 'lodash';
 import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { post } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
-import { productVariationUpdated } from 'woocommerce/state/sites/products/variations/actions';
+import { productVariationUpdated } from 'woocommerce/state/sites/product-variations/actions';
 import {
 	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
 } from 'woocommerce/state/action-types';

@@ -7,7 +7,7 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { createProductVariation } from 'woocommerce/state/sites/products/variations/actions';
+import { createProductVariation } from 'woocommerce/state/sites/product-variations/actions';
 import {
 	handleProductVariationCreate,
 } from '../';
