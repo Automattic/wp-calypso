@@ -17,21 +17,14 @@
 	background-color: $white;
 	position: fixed;
 	top: 0;
-	padding-top: 47px;
+	margin-top: 50px;
+	padding-top: 30px;
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
-
-	@include breakpoint( ">660px" ) {
-		padding-top: 77px;
-	}
 }
 
 .search-stream__fixed-area .section-nav-tabs.is-dropdown {
 	margin: 0;
-}
-
-.search-stream .reader__content .reader-post-card:first-child {
-	margin-top: 120px;
 }
 
 .search-stream .search-stream__input-card.card {
@@ -39,26 +32,10 @@
 	margin-bottom: 0;
 }
 
-// Fix for smaller breakpoint on the new site-search
-.is-reader-page .search-stream__with-sites .search-stream__fixed-area {
-	top: 20px;
-
-	@include breakpoint( ">660px" ) {
-		top: 0;
-	}
-}
-
 .search-stream__input-card.card {
 	margin-bottom: 16px;
 	padding: 0;
 	z-index: z-index( 'root', '.search-stream__input-card' );
-}
-
-// Top margins
-// Top margin for post recs and post results with suggested terms
-.search-stream .search-stream__recommendation-list-item:nth-child(2),
-.search-stream .search-stream__recommendation-list-item:nth-child(3) {
-	margin-top: 100px;
 }
 
 .search-stream .search-stream__recommendation-list-item:nth-child(3) {
@@ -69,24 +46,6 @@
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
 		margin-top: 0;
-	}
-}
-
-// Top margin for post recs without suggested terms
-.search-stream.search-stream__with-sites .search-stream__recommendation-list-item:nth-child(2),
-.search-stream.search-stream__with-sites .search-stream__recommendation-list-item:nth-child(3) {
-	margin-top: 70px;
-
-	@include breakpoint( ">660px" ) {
-		margin-top: 90px;
-	}
-}
-
-.search-stream.search-stream__with-sites .search-stream__single-column-results {
-	padding-top: 130px;
-
-	@include breakpoint( ">660px" ) {
-		padding-top: 150px;
 	}
 }
 
@@ -106,21 +65,12 @@
 	}
 }
 
-.search-stream.search-stream__with-sites .search-stream__post-results .reader__card:nth-child(2) {
-	margin-top: 120px;
-}
-
 // Top margin for site results
 .main.search-stream {
 
 	@include breakpoint( "<660px") {
 		perspective: none; // Fix search bar pushed up behind the masterbar in Safari
 	}
-}
-
-.search-stream.search-stream__with-sites .is-two-columns .search-stream__post-results .reader-post-card:nth-child(2),
-.search-stream.search-stream__with-sites .is-two-columns .search-stream__site-results {
-	margin-top: 135px;
 }
 
 // Search term suggestions

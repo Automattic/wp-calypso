@@ -17,10 +17,11 @@ import { debounce } from 'lodash';
  * @returns {object} the enhanced component
  */
 export default ( EnhancedComponent, { domTarget } = {} ) => class WithWidth extends React.Component {
-	static displayName = `WithWidth( ${ EnhancedComponent.displayName } )`;
+	static displayName = `WithDimensions( ${ EnhancedComponent.displayName || EnhancedComponent.name } )`;
 
 	state = {
 		width: 0,
+		height: 0,
 	};
 
 	handleResize = () => {
