@@ -220,9 +220,11 @@ class ActivityLog extends Component {
 
 		const applySiteOffset = this.getSiteOffsetFunc();
 
-		const startOfMonthMs = moment.utc( startDate ).startOf( 'month' ).valueOf();
-		const endOfMonthMs = moment.utc( startDate ).endOf( 'month' ).valueOf();
-		const logsForMonth = filter( logs, obj => startOfMonthMs <= obj.ts_utc && obj.ts_utc <= endOfMonthMs );
+		// example: "2019 3"
+		const selectedMonthAndYear = moment( startDate ).format( 'YYYY M' );
+		const logsForMonth = filter( logs, ( item ) => {
+			return applySiteOffset( moment.utc( item.ts_utc ) ).format( 'YYYY M' ) === selectedMonthAndYear;
+		} );
 
 		const logsGroupedByDay = map(
 			groupBy(
