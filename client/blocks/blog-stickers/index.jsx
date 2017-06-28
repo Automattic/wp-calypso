@@ -26,6 +26,7 @@ const BlogStickers = ( { blogId, teams, stickers } ) => {
 		<div className="blog-stickers">
 			{ isTeamMember &&
 				stickers &&
+				stickers.length > 0 &&
 				<InfoPopover><BlogStickersList stickers={ stickers } /></InfoPopover> }
 			{ ! stickers && <QueryBlogStickers blogId={ blogId } /> }
 			{ ! teams && <QueryReaderTeams /> }
