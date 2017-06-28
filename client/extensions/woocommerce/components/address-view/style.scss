@@ -18,8 +18,16 @@
 	}
 }
 
+.form-label {
+	color: $gray-dark;
+}
+
 .address-view__editable-city-state-postcode {
 	display: flex;
+
+	@include breakpoint( ">960px" ) {
+		align-items: flex-end;
+	}
 
 	.form-fieldset {
 		flex: 1;
@@ -28,10 +36,6 @@
 		&:last-child {
 			margin-right: 0;
 		}
-	}
-
-	.address-view__editable-state {
-		max-width: 200px;
 	}
 
 	@include breakpoint( "<960px" ) {
@@ -43,6 +47,13 @@
 
 		.form-fieldset {
 			margin-right: 0;
+			width: 100%;
+		}
+	}
+
+	.form-select {
+		@include breakpoint( ">960px" ) {
+			max-width: 200px;
 		}
 	}
 }
