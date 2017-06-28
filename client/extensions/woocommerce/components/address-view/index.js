@@ -48,7 +48,7 @@ class AddressView extends Component {
 	renderEditable = () => {
 		const { nameLabel, onChange, translate } = this.props;
 		const { city, country, name, postcode, street, street2, state } = this.props.address;
-		const countryData = find( Countries, { code: country } );
+		const countryData = find( Countries, { code: country || 'US' } );
 		const foundCountry = Boolean( countryData );
 		const states = foundCountry ? countryData.states : [];
 		const statesLabel = foundCountry ? countryData.statesLabel : '';
@@ -117,7 +117,7 @@ class AddressView extends Component {
 					<FormSelect
 						name="country"
 						onChange={ onChange }
-						value={ country }
+						value={ country || 'US' }
 					>
 						{ Countries.map( ( option ) => {
 							return (
