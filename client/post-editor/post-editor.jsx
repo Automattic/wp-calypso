@@ -33,6 +33,7 @@ const actions = require( 'lib/posts/actions' ),
 	analytics = require( 'lib/analytics' );
 
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
@@ -78,6 +79,8 @@ export const PostEditor = React.createClass( {
 	},
 
 	_previewWindow: null,
+
+	isPostPublishPreviewABTest: abtest( 'postPublishPreview' ) === 'showPostPublishPreview',
 
 	getInitialState() {
 		return {
@@ -279,7 +282,7 @@ export const PostEditor = React.createClass( {
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
-							{ ! config.isEnabled( 'post-editor/delta-post-publish-preview' )
+							{ ! this.isPostPublishPreviewABTest
 								? <EditorNotice
 									{ ...this.state.notice }
 									onDismissClick={ this.hideNotice }
@@ -382,11 +385,12 @@ export const PostEditor = React.createClass( {
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
 						/>
 						: null }
-					{ config.isEnabled( 'post-editor/delta-post-publish-preview' )
+					{ this.isPostPublishPreviewABTest
 						? <EditorNotice
 								{ ...this.state.notice }
 								onDismissClick={ this.hideNotice }
-								onViewClick={ this.onPreview } />
+								onViewClick={ this.onPreview }
+								isFullScreenPreview={ true } />
 						: null }
 				</div>
 				{ isTrashed
@@ -876,13 +880,13 @@ export const PostEditor = React.createClass( {
 				status: 'is-success',
 				message,
 				action,
-				link: config.isEnabled( 'post-editor/delta-post-publish-preview' ) ? null : link,
+				link: this.isPostPublishPreviewABTest ? null : link,
 			};
 
 			window.scrollTo( 0, 0 );
 
 			if (
-				config.isEnabled( 'post-editor/delta-post-publish-preview' ) &&
+				this.isPostPublishPreviewABTest &&
 				this.props.isSitePreviewable &&
 				isNotPrivateOrIsConfirmed
 			) {
