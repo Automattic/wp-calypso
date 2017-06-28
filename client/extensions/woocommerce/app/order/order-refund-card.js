@@ -17,6 +17,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import Notice from 'components/notice';
 import OrderDetailsTable from './order-details-table';
 import PaymentLogo from 'components/payment-logo';
 import { sendRefund } from 'woocommerce/state/sites/orders/actions';
@@ -41,7 +42,7 @@ class OrderRefundCard extends Component {
 	}
 
 	getRefundedTotal = ( order ) => {
-		return order.refunds.reduce( ( sum, i ) => sum + ( i.total * 1 ), 0 );
+		return order.refunds.reduce( ( sum, i ) => sum + parseFloat( i.total ), 0 );
 	}
 
 	getRefundStatus = () => {
@@ -73,9 +74,10 @@ class OrderRefundCard extends Component {
 
 	toggleRefundDialog = () => {
 		this.setState( {
-			showRefundDialog: ! this.state.showRefundDialog,
+			errorMessage: false,
 			refundTotal: 0,
 			refundNote: '',
+			showRefundDialog: ! this.state.showRefundDialog,
 		} );
 	}
 
@@ -96,8 +98,15 @@ class OrderRefundCard extends Component {
 	}
 
 	sendRefund = () => {
-		const { order, site } = this.props;
-		// Send API request
+		const { order, site, translate } = this.props;
+		const maxRefund = parseFloat( order.total ) + this.getRefundedTotal( order );
+		if ( this.state.refundTotal > maxRefund ) {
+			this.setState( { errorMessage: translate( 'Refund must be less than order total.' ) } );
+			return;
+		} else if ( this.state.refundTotal <= 0 ) {
+			this.setState( { errorMessage: translate( 'Refund must be greater than zero.' ) } );
+			return;
+		}
 		this.toggleRefundDialog();
 		const refundObj = {
 			amount: this.state.refundTotal + '', // API expects a string
@@ -126,6 +135,7 @@ class OrderRefundCard extends Component {
 
 	render() {
 		const { order, site, translate } = this.props;
+		const { errorMessage, refundNote, showRefundDialog } = this.state;
 		const dialogClass = 'woocommerce'; // eslint/css specificity hack
 		let refundTotal = formatCurrency( 0, order.currency );
 		if ( this.state.refundTotal ) {
@@ -146,13 +156,13 @@ class OrderRefundCard extends Component {
 					}
 				</div>
 
-				<Dialog isVisible={ this.state.showRefundDialog } onClose={ this.toggleRefundDialog } className={ dialogClass }>
+				<Dialog isVisible={ showRefundDialog } onClose={ this.toggleRefundDialog } className={ dialogClass }>
 					<h1>{ translate( 'Refund order' ) }</h1>
 					<OrderDetailsTable order={ order } isEditable onChange={ this.recalculateRefund } site={ site } />
 					<form className="order__refund-container">
 						<FormLabel className="order__refund-note">
 							{ translate( 'Refund note' ) }
-							<FormTextarea onChange={ this.onChange } name="refund_note" value={ this.state.refundNote } />
+							<FormTextarea onChange={ this.onChange } name="refund_note" value={ refundNote } />
 						</FormLabel>
 
 						<FormFieldset className="order__refund-details">
@@ -171,6 +181,7 @@ class OrderRefundCard extends Component {
 						</FormFieldset>
 
 						<div className="order__refund-actions">
+							{ errorMessage && <Notice status="is-error" showDismiss={ false }>{ errorMessage }</Notice> }
 							<Button onClick={ this.toggleRefundDialog }>{ translate( 'Cancel' ) }</Button>
 							<Button primary onClick={ this.sendRefund }>{ translate( 'Refund' ) }</Button>
 						</div>
