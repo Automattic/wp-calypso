@@ -18,7 +18,6 @@ import FormTextInput from 'components/forms/form-text-input';
 class AddressView extends Component {
 	static propTypes = {
 		address: PropTypes.shape( {
-			name: PropTypes.string.isRequired,
 			street: PropTypes.string.isRequired,
 			street2: PropTypes.string,
 			city: PropTypes.string.isRequired,
@@ -27,13 +26,11 @@ class AddressView extends Component {
 			postcode: PropTypes.string,
 		} ),
 		isEditable: PropTypes.bool,
-		nameLabel: PropTypes.string,
 		onChange: PropTypes.func,
 	};
 
 	static defaultProps = {
 		address: {
-			name: '',
 			street: '',
 			street2: '',
 			city: '',
@@ -42,28 +39,18 @@ class AddressView extends Component {
 			postcode: '',
 		},
 		isEditable: false,
-		nameLabel: '',
 	}
 
 	renderEditable = () => {
-		const { nameLabel, onChange, translate } = this.props;
-		const { city, country, name, postcode, street, street2, state } = this.props.address;
-		const countryData = find( Countries, { code: country } );
+		const { onChange, translate } = this.props;
+		const { city, country, postcode, street, street2, state } = this.props.address;
+		const countryData = find( Countries, { code: country || 'US' } );
 		const foundCountry = Boolean( countryData );
 		const states = foundCountry ? countryData.states : [];
 		const statesLabel = foundCountry ? countryData.statesLabel : '';
 
 		return (
 			<div className="address-view__fields-editable">
-				<FormFieldSet>
-					<FormLabel>{ nameLabel || translate( 'Business Name' ) }</FormLabel>
-					<FormTextInput
-						disabled
-						name="name"
-						onChange={ onChange }
-						value={ name }
-					/>
-				</FormFieldSet>
 				<FormFieldSet>
 					<FormLabel>{ translate( 'Street address' ) }</FormLabel>
 					<FormTextInput
@@ -88,7 +75,7 @@ class AddressView extends Component {
 							value={ city }
 						/>
 					</FormFieldSet>
-					<FormFieldSet>
+					<FormFieldSet className="address-view__editable-state">
 						<FormLabel>{ statesLabel }</FormLabel>
 						<FormSelect
 							disabled={ ! foundCountry }
@@ -117,7 +104,7 @@ class AddressView extends Component {
 					<FormSelect
 						name="country"
 						onChange={ onChange }
-						value={ country }
+						value={ country || 'US' }
 					>
 						{ Countries.map( ( option ) => {
 							return (
@@ -142,7 +129,9 @@ class AddressView extends Component {
 				</p>
 				{	street2 && <p>{ street2 }</p> }
 				<p>
-					{ city } { state && { state } } { postcode && { postcode } }
+					{ city && ( <span className="address-view__city">{ city }</span> ) }
+					{ state && ( <span className="address-view__state">{ state }</span> ) }
+					{ postcode && ( <span className="address-view__postcode">{ postcode }</span> ) }
 				</p>
 				<p>
 					{ country }
