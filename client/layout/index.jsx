@@ -134,7 +134,8 @@ Layout = React.createClass( {
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'wp-singletree-layout': !! this.props.primary },
-				{ 'has-chat': this.props.chatIsOpen }
+				{ 'has-chat': this.props.chatIsOpen },
+				`oauth-client-${ this.props.oauthClientId }`,
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
