@@ -180,6 +180,7 @@ export isRequestingContactDetailsCache from './is-requesting-contact-details-cac
 export isRequestingJetpackConnectionStatus from './is-requesting-jetpack-connection-status';
 export isRequestingJetpackJumpstartStatus from './is-requesting-jetpack-jumpstart-status';
 export isRequestingJetpackSettings from './is-requesting-jetpack-settings';
+export isRequestingJetpackUserConnection from './is-requesting-jetpack-user-connection';
 export isRequestingMedia from './is-requesting-media';
 export isRequestingMediaItem from './is-requesting-media-item';
 export isRequestingMissingSites from './is-requesting-missing-sites';
