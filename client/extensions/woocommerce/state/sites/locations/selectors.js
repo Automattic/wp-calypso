@@ -72,7 +72,7 @@ export const getCountries = ( state, continentCode, siteId = getSelectedSiteId( 
  * @param {Object} state Whole Redux state tree
  * @param {String} countryCode 2-letter ISO country code
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The country name.
+ * @return {String} The country name. If it can't be found, it will default to returning the country ISO code.
  */
 export const getCountryName = ( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areLocationsLoaded( state, siteId ) ) {
