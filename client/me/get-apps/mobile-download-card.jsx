@@ -21,10 +21,14 @@ const MobileDownloadCard = () => {
 			</div>
 			<div className="get-apps__badges">
 				<a href={ 'https://itunes.apple.com/us/app/wordpress/id335703880?mt=8' } onClick={ trackIosClick }>
-					<img src={ '/calypso/images/me/get-apps-app-store.png' } alt={ translate( 'Get on the iOS App Store' ) } />
+					<img src={ '/calypso/images/me/get-apps-app-store.png' }
+						title={ translate( 'Download the WordPress iOS mobile app.' ) }
+						alt={ translate( 'Apple App Store download badge' ) } />
 				</a>
 				<a href={ 'https://play.google.com/store/apps/details?id=org.wordpress.android' } onClick={ trackAndroidClick }>
-					<img src={ '/calypso/images/me/get-apps-google-play.png' } alt={ translate( 'Android' ) } />
+					<img src={ '/calypso/images/me/get-apps-google-play.png' }
+						title={ translate( 'Download the WordPress Android mobile app.' ) }
+						alt={ translate( 'Google Play Store download badge' ) } />
 				</a>
 			</div>
 		</Card>
