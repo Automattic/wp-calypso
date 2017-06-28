@@ -38,13 +38,17 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 		switch ( location.type ) {
 			case 'continent':
 				if ( location.selectedCountryCount && location.selectedCountryCount !== location.countryCount ) {
-					return translate( '%(selected)s out of %(count)s countries', {
-						count: location.countryCount,
-						args: {
-							selected: location.selectedCountryCount,
+					return translate(
+						'%(selected)s out of %(count)s country',
+						'%(selected)s out of %(count)s countries',
+						{
 							count: location.countryCount,
+							args: {
+								selected: location.selectedCountryCount,
+								count: location.countryCount,
+							}
 						}
-					} );
+					);
 				}
 
 				return translate( 'All countries' );
