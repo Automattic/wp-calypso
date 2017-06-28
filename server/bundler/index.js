@@ -4,6 +4,7 @@
 var webpackMiddleware = require( 'webpack-dev-middleware' ),
 	webpack = require( 'webpack' ),
 	chalk = require( 'chalk' );
+const hotMiddleware = require( 'webpack-hot-middleware' );
 
 var utils = require( './utils' ),
 	webpackConfig = require( 'webpack.config' );
@@ -15,7 +16,13 @@ function middleware( app ) {
 		beforeFirstCompile = true,
 		assets;
 
+	app.use( hotMiddleware( compiler ) );
+
 	app.set( 'compiler', compiler );
+
+	compiler.apply( new webpack.ProgressPlugin( {
+		profile: true,
+	} ) );
 
 	compiler.plugin( 'done', function( stats ) {
 		built = true;
@@ -77,7 +84,7 @@ function middleware( app ) {
 			hash: true,
 			version: false,
 			timings: true,
-			assets: true,
+			assets: false,
 			chunks: true,
 			chunkModules: false,
 			modules: false,
