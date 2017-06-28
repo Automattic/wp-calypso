@@ -17,7 +17,7 @@ import { changeShippingZoneName } from 'woocommerce/state/ui/shipping/zones/acti
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 
 export const getZoneName = ( zone, locations, translate, returnEmpty = false ) => {
-	if ( zone.name ) {
+	if ( zone && zone.name ) {
 		return zone.name;
 	}
 
@@ -30,7 +30,7 @@ export const getZoneName = ( zone, locations, translate, returnEmpty = false ) =
 	}
 
 	const locationNames = locations.map( ( { name, postcodeFilter } ) => (
-		postcodeFilter ? postcodeFilter : decodeEntities( name )
+		postcodeFilter ? `${ name } (${ postcodeFilter })` : decodeEntities( name )
 	) );
 
 	if ( locationNames.length > 10 ) {
