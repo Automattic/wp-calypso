@@ -57,8 +57,8 @@ class SocialLoginForm extends Component {
 							.then(
 								() => this.recordEvent( 'calypso_login_social_signup_success' ),
 								createAccountError => this.recordEvent( 'calypso_login_social_signup_failure', {
-										error_code: createAccountError.code,
-										error_message: createAccountError.message
+									error_code: createAccountError.code,
+									error_message: createAccountError.message
 								} )
 							);
 					} else if ( error.code === 'existing_wpcom_user' ) {
