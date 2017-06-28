@@ -4,7 +4,6 @@
 import React from 'react';
 import {
 	endsWith,
-	includes,
 	omit
 } from 'lodash';
 import page from 'page';
@@ -230,8 +229,7 @@ class EditContactInfoFormCard extends React.Component {
 	render() {
 		const { translate } = this.props,
 			saveButtonLabel = translate( 'Save Contact Info' ),
-			{ OPENHRS, OPENSRS } = registrarNames,
-			canUseDesignatedAgent = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar );
+			canUseDesignatedAgent = this.props.selectedDomain.canUseDesignatedAgent;
 
 		return (
 			<Card>
