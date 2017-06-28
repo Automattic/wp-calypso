@@ -163,6 +163,8 @@ function singleEnsure( chunkName ) {
 module.exports = function( content ) {
 	var sections;
 
+	this.cacheable && this.cacheable();
+
 	sections = require( this.resourcePath );
 
 	if ( ! Array.isArray( sections ) ) {
