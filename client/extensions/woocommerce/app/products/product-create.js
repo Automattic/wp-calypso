@@ -70,10 +70,6 @@ class ProductCreate extends React.Component {
 		// TODO: Remove the product we added here from the edit state.
 	}
 
-	onTrash = () => {
-		// TODO: Add action dispatch to trash this product.
-	}
-
 	onSave = () => {
 		const { product, translate } = this.props;
 
@@ -111,7 +107,6 @@ class ProductCreate extends React.Component {
 				<ProductHeader
 					site={ site }
 					product={ product }
-					onTrash={ this.onTrash }
 					onSave={ saveEnabled ? this.onSave : false }
 					isBusy={ isBusy }
 				/>
