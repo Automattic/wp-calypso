@@ -19,7 +19,6 @@ import { getFeed } from 'state/reader/feeds/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import FeedFeatured from './featured';
-import BlogStickers from 'blocks/blog-stickers';
 
 class SiteStream extends React.Component {
 	static propTypes = {
@@ -70,7 +69,6 @@ class SiteStream extends React.Component {
 			>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				<RefreshFeedHeader site={ site } feed={ feed } showBack={ this.props.showBack } />
-				<BlogStickers blogId={ this.props.siteId } />
 				{ featuredContent }
 				{ ! site && <QueryReaderSite siteId={ this.props.siteId } /> }
 				{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }

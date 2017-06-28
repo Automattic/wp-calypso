@@ -16,8 +16,8 @@ export const items = createReducer(
 			return merge( {}, state, {
 				[ action.payload.blogId ]: action.payload.stickers,
 			} );
-		}
-	}
+		},
+	},
 );
 
 export default combineReducers( {
