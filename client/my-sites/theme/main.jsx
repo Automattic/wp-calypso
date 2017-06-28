@@ -439,8 +439,8 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getDefaultOptionLabel() {
-		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = this.props;
-		if ( isLoggedIn && ! isActive && ! isJetpack ) {
+		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased } = this.props;
+		if ( isLoggedIn && ! isActive ) {
 			if ( isPremium && ! isPurchased ) { // purchase
 				return i18n.translate( 'Pick this design' );
 			} // else: activate
