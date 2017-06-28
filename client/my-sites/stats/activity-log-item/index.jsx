@@ -28,6 +28,7 @@ class ActivityLogItem extends Component {
 				'comment',
 				'post',
 				'term',
+				'theme',
 				'user',
 			] ).isRequired,
 			name: PropTypes.string.isRequired,
