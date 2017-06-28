@@ -345,7 +345,7 @@ export class MySitesSidebar extends Component {
 		const { canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
 		const storeLink = '/store' + siteSuffix;
 		const showStoreLink = config.isEnabled( 'woocommerce/extension-dashboard' ) &&
-			site && isJetpack && canUserManageOptions;
+			site && isJetpack && canUserManageOptions && this.props.isSiteAutomatedTransfer;
 
 		return (
 			showStoreLink &&
@@ -353,11 +353,8 @@ export class MySitesSidebar extends Component {
 				label={ translate( 'Store (BETA)' ) }
 				link={ storeLink }
 				onNavigate={ this.trackStoreClick }
-				icon="cart" >
-				<SidebarButton href={ storeLink }>
-					{ translate( 'Set up' ) }
-				</SidebarButton>
-			</SidebarItem>
+				icon="cart"
+			/>
 		);
 	}
 
