@@ -18,8 +18,10 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import request from 'woocommerce/state/sites/request';
 import SetupHeader from './setup-header';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
+import wp from 'lib/wp';
 
 const requiredPlugins = [
 	'woocommerce',
@@ -50,7 +52,10 @@ class RequiredPluginsInstallView extends Component {
 
 	componentDidMount = () => {
 		const { plugins, site } = this.props;
-
+		this.props.setFinishedInstallOfRequiredPlugins(
+			site.ID,
+			false
+		);
 		if ( site && plugins && plugins.length ) {
 			this.installPlugins( plugins );
 		}
@@ -62,7 +67,7 @@ class RequiredPluginsInstallView extends Component {
 		const { plugins, site } = this.props.plugins;
 		if (
 			( site && plugins && plugins.length && ! this.state.installingPlugin ) ||
-			( prevProps.plugins && plugins.length > prevProps.plugins.length )
+			( prevProps.plugins && plugins && plugins.length > prevProps.plugins.length )
 		) {
 			this.installPlugins( this.props.plugins );
 		}
@@ -80,6 +85,20 @@ class RequiredPluginsInstallView extends Component {
 	installPlugins = ( plugins ) => {
 		const { site, wporg } = this.props;
 		let isRunningInstall = false;
+		if ( ! find( plugins, 'wc-api-dev' ) ) {
+			const body = {
+				zip: [ { id: 'https://github.com/woocommerce/wc-api-dev/archive/settings-batch.zip' } ]
+			};
+			wp.req.post(
+				{
+					path: `/sites/${ site.ID }/plugins/new`
+				},
+				{
+					body: body && JSON.stringify( body ),
+					json: true,
+				}
+			);
+		}
 		for ( let i = 0; i < requiredPlugins.length; i++ ) {
 			const slug = requiredPlugins[ i ];
 			const plugin = find( plugins, { slug } );
