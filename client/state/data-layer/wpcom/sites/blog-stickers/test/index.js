@@ -31,9 +31,11 @@ describe( 'blog-sticker-list', () => {
 	} );
 
 	describe( 'receiveBlogStickerList', () => {
-		it( 'should do nothing if successful', () => {
+		it( 'should not call the next function if successful', () => {
+			const dispatch = spy();
 			const nextSpy = spy();
-			receiveBlogStickerList( null, null, nextSpy, [ 'broken-in-reader' ] );
+			const action = { payload: { blogId: 123 } };
+			receiveBlogStickerList( { dispatch }, action, nextSpy, [ 'broken-in-reader' ] );
 			expect( nextSpy ).to.not.have.been.called;
 		} );
 	} );
