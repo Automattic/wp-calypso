@@ -166,6 +166,7 @@ export isJetpackModuleUnavailableInDevelopmentMode from './is-jetpack-module-una
 export isJetpackSettingsSaveFailure from './is-jetpack-settings-save-failure';
 export isJetpackSiteInDevelopmentMode from './is-jetpack-site-in-development-mode';
 export isJetpackSiteInStagingMode from './is-jetpack-site-in-staging-mode';
+export isJetpackUserMaster from './is-jetpack-user-master';
 export isMappedDomainSite from './is-mapped-domain-site';
 export isNotificationsOpen from './is-notifications-open';
 export isPendingEmailChange from './is-pending-email-change';
