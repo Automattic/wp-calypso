@@ -13,6 +13,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { addBlogStickerHandler } from 'state/data-layer/wpcom/sites/blog-stickers/add';
 import { mergeHandlers } from 'state/action-watchers/utils';
+import { receiveBlogStickers } from 'state/sites/blog-stickers/actions';
 
 export function requestBlogStickerList( { dispatch }, action ) {
 	dispatch(
@@ -33,6 +34,8 @@ export function receiveBlogStickerList( store, action, next, response ) {
 		receiveBlogStickerListError( store, action, next );
 		return;
 	}
+
+	store.dispatch( receiveBlogStickers( action.payload.blogId, response ) );
 }
 
 export function receiveBlogStickerListError( { dispatch } ) {
