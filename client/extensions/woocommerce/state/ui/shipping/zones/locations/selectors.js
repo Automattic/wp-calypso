@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forIn, isEmpty, sortBy } from 'lodash';
+import { every, forIn, isEmpty, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -460,4 +460,27 @@ export const getCurrentlyEditingShippingZoneStates = ( state, siteId = getSelect
 		disabled: Boolean( forbiddenStates[ code ] ),
 		ownerZoneId: forbiddenStates[ code ],
 	} ) );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Boolean} Whether the locations for the shipping zone currently being edited are valid. This includes
+ * temporary edits, as it's designed to be used for enabling / disabling the "Save Changes" button.
+ */
+export const areCurrentlyEditingShippingZoneLocationsValid = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const locations = getShippingZoneLocationsWithEdits( state, siteId );
+	if ( ! locations ) {
+		return false;
+	}
+	if ( every( locations, isEmpty ) ) {
+		return false;
+	}
+	if ( areLocationsFilteredByPostcode( state, siteId ) && ! locations.postcode[ 0 ] ) {
+		return false;
+	}
+	if ( areLocationsFilteredByState( state, siteId ) && isEmpty( locations.state ) ) {
+		return false;
+	}
+	return true;
 };

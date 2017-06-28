@@ -18,6 +18,7 @@ import {
 	getCurrentlyEditingShippingZoneLocationsList,
 	getCurrentlyEditingShippingZoneCountries,
 	getCurrentlyEditingShippingZoneStates,
+	areCurrentlyEditingShippingZoneLocationsValid,
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import { createState } from 'woocommerce/state/test/helpers';
@@ -2295,6 +2296,203 @@ describe( 'selectors', () => {
 					ownerZoneId: 7,
 				},
 			] );
+		} );
+	} );
+
+	describe( 'areCurrentlyEditingShippingZoneLocationsValid', () => {
+		it( 'should return false when the locations are empty', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'US' ],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [
+						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
+					],
+					states: null,
+					postcode: null,
+					pristine: false,
+					temporaryChanges: initialState,
+				},
+			} );
+
+			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return false when the locations are filtered by postcode but it is empty', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'US' ],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [],
+					states: null,
+					postcode: '',
+					pristine: false,
+					temporaryChanges: initialState,
+				},
+			} );
+
+			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return false when the locations are filtered by state but there are no states selected', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'US' ],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [],
+					states: {
+						add: [],
+						remove: [],
+						removeAll: false,
+					},
+					postcode: null,
+					pristine: false,
+					temporaryChanges: initialState,
+				},
+			} );
+
+			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.false;
+		} );
+
+		it( 'should return true when the locations are several countries', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'US', 'UK' ],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [],
+					states: null,
+					postcode: null,
+					pristine: true,
+					temporaryChanges: initialState,
+				},
+			} );
+
+			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return true when the locations are several continents', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [ 'NA', 'EU' ],
+						country: [],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [],
+					states: null,
+					postcode: null,
+					pristine: true,
+					temporaryChanges: initialState,
+				},
+			} );
+
+			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return true when the locations are a country with a postcode', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'US' ],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [],
+					states: null,
+					postcode: '12345',
+					pristine: false,
+					temporaryChanges: initialState,
+				},
+			} );
+
+			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return true when the locations are a country with states', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'US' ],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [],
+					states: {
+						add: [ 'CA', 'NY' ],
+						remove: [],
+						removeAll: false,
+					},
+					postcode: null,
+					pristine: false,
+					temporaryChanges: initialState,
+				},
+			} );
+
+			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should overlay the temporary changes', () => {
+			const state = createEditState( {
+				zoneLocations: {
+					1: {
+						continent: [],
+						country: [ 'US' ],
+						state: [],
+						postcode: [],
+					},
+				},
+				locationEdits: {
+					journal: [
+						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
+					],
+					states: null,
+					postcode: null,
+					pristine: false,
+					temporaryChanges: {
+						journal: [
+							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
+						],
+						states: null,
+						postcode: null,
+						pristine: false,
+					},
+				},
+			} );
+
+			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.true;
 		} );
 	} );
 } );

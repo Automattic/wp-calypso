@@ -112,8 +112,8 @@ export const areShippingZonesLocationsValid = ( reduxState, siteId = getSelected
 				}
 				statesSet.add( s );
 			}
-		} else {
-			// A zone must have *any* location. If it doesn't, it's incorrect.
+		} else if ( ! isEmpty( postcode ) ) {
+			// A postcode without a country is not valid
 			return false;
 		}
 	}
