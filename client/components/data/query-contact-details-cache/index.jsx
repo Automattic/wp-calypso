@@ -16,9 +16,16 @@ import { requestContactDetailsCache } from 'state/domains/management/actions';
 
 class QueryContactDetailsCache extends Component {
 	componentWillMount() {
-		if ( this.props.isRequesting || ! isEmpty( this.props.contactDetailsCache ) ) {
+		const {
+			isRequesting,
+			contactDetailsCacheIsEmpty,
+		} = this.props;
+
+		if ( isRequesting || ! contactDetailsCacheIsEmpty ) {
 			return;
 		}
+
+		// Not destructured to disambiguate unbound action
 		this.props.requestContactDetailsCache();
 	}
 
@@ -34,7 +41,7 @@ QueryContactDetailsCache.propTypes = {
 
 export default connect(
 	( state ) => ( {
-		contactDetailsCache: getContactDetailsCache( state ),
+		contactDetailsCacheIsEmpty: isEmpty( getContactDetailsCache( state ) ),
 		isRequesting: isRequestingContactDetailsCache( state ),
 	} ),
 	{ requestContactDetailsCache }
