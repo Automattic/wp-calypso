@@ -9,7 +9,7 @@ import { get, isEmpty, isObject } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
-const getRawShippingZoneLocations = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getRawShippingZoneLocations = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'shippingZoneLocations' ] );
 };
 
@@ -112,8 +112,8 @@ export const areShippingZonesLocationsValid = ( reduxState, siteId = getSelected
 				}
 				statesSet.add( s );
 			}
-		} else {
-			// A zone must have *any* location. If it doesn't, it's incorrect.
+		} else if ( ! isEmpty( postcode ) ) {
+			// A postcode without a country is not valid
 			return false;
 		}
 	}

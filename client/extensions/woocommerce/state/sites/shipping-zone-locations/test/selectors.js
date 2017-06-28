@@ -149,7 +149,7 @@ describe( 'selectors', () => {
 			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
 		} );
 
-		it( 'should return false for a zone without locations.', () => {
+		it( 'should return true for a zone without locations.', () => {
 			const state = createState( {
 				site: {
 					shippingZoneLocations: {
@@ -163,7 +163,7 @@ describe( 'selectors', () => {
 				},
 				ui: {},
 			} );
-			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
 		} );
 
 		it( 'should return true for a zone with a single continent.', () => {
