@@ -138,20 +138,13 @@ class PreSetupView extends Component {
 }
 
 function mapStateToProps( state, ownProps ) {
-	let name = '';
 	let loading = true;
 	let address = {};
 
 	if ( ownProps.site ) {
-		name = getSiteTitle( state, ownProps.site.ID );
 		address = getStoreLocation( state, ownProps.site.ID );
 		loading = areSettingsGeneralLoading( state, ownProps.site.ID );
 	}
-
-	const address = {
-		name,
-		...storeLocation,
-	};
 
 	return {
 		address,

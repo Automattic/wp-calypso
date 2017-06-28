@@ -8,7 +8,7 @@ import React, { Component, PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import { getCountries, getCountryData } from 'woocommerce/lib/countries';
+import { getCountries } from 'woocommerce/lib/countries';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
@@ -43,7 +43,7 @@ class AddressView extends Component {
 	renderEditable = () => {
 		const { onChange, translate } = this.props;
 		const { city, country, postcode, street, street2, state } = this.props.address;
-		const countryData = find( Countries, { code: country || 'US' } );
+		const countryData = find( getCountries, { code: country || 'US' } );
 		const foundCountry = Boolean( countryData );
 		const states = foundCountry ? countryData.states : [];
 		const statesLabel = foundCountry ? countryData.statesLabel : translate( 'State' );
