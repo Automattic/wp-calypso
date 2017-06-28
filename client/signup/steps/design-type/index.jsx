@@ -15,10 +15,6 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
 
-import BlogImage from '../design-type-with-store/blog-image';
-import PageImage from '../design-type-with-store/page-image';
-import GridImage from '../design-type-with-store/grid-image';
-
 import { recordTracksEvent } from 'state/analytics/actions';
 
 export class DesignTypeStep extends Component {
@@ -44,19 +40,19 @@ export class DesignTypeStep extends Component {
 				type: 'blog',
 				label: translate( 'Start with a blog' ),
 				description: translate( 'To share your ideas, stories, and photographs with your followers.' ),
-				image: <BlogImage />,
+				image: '/calypso/images/signup/type-blog.svg',
 			},
 			{
 				type: 'page',
 				label: translate( 'Start with a website' ),
 				description: translate( 'To promote your business, organization, or brand and connect with your audience.' ),
-				image: <PageImage />,
+				image: '/calypso/images/signup/type-website.svg',
 			},
 			{
 				type: 'grid',
 				label: translate( 'Start with a portfolio' ),
 				description: translate( 'To present your creative projects in a visual showcase.' ),
-				image: <GridImage />,
+				image: '/calypso/images/signup/type-portfolio.svg',
 			},
 		];
 	}
@@ -72,7 +68,7 @@ export class DesignTypeStep extends Component {
 				onClick={ choiceHandlers[ choice.type ] }
 			>
 				<div className="design-type__choice-image">
-					{ choice.image }
+					<img src={ choice.image } />
 				</div>
 				<div className="design-type__choice-copy">
 					<span className="button is-compact design-type__cta">{ choice.label }</span>

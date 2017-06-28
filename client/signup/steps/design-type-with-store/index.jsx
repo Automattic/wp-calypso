@@ -15,10 +15,6 @@ import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PressableStoreStep from './pressable-store';
-import BlogImage from './blog-image';
-import PageImage from './page-image';
-import GridImage from './grid-image';
-import StoreImage from './store-image';
 import { abtest } from 'lib/abtest';
 
 class DesignTypeWithStoreStep extends Component {
@@ -44,22 +40,30 @@ class DesignTypeWithStoreStep extends Component {
 		const storeText = translate( 'To sell your products or services and accept payments.' );
 
 		return [
-			{ type: 'blog',
+			{
+				type: 'blog',
 				label: translate( 'Start with a blog' ),
 				description: blogText,
-				image: <BlogImage /> },
-			{ type: 'page',
+				image: '/calypso/images/signup/type-blog.svg',
+			},
+			{
+				type: 'page',
 				label: translate( 'Start with a website' ),
 				description: siteText,
-				image: <PageImage /> },
-			{ type: 'grid',
+				image: '/calypso/images/signup/type-website.svg',
+			},
+			{
+				type: 'grid',
 				label: translate( 'Start with a portfolio' ),
 				description: gridText,
-				image: <GridImage /> },
-			{ type: 'store',
+				image: '/calypso/images/signup/type-portfolio.svg',
+			},
+			{
+				type: 'store',
 				label: translate( 'Start with an online store' ),
 				description: storeText,
-				image: <StoreImage /> },
+				image: '/calypso/images/signup/type-e-commerce.svg',
+			},
 		];
 	}
 
@@ -109,7 +113,7 @@ class DesignTypeWithStoreStep extends Component {
 					href="#"
 					onClick={ this.handleChoiceClick( choice.type ) }>
 					<div className="design-type-with-store__image">
-						{ choice.image }
+						<img src={ choice.image } />
 					</div>
 					<div className="design-type-with-store__choice-copy">
 						<span className="button is-compact design-type-with-store__cta">

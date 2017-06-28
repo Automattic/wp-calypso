@@ -104,11 +104,36 @@ export class PlanFeaturesHeader extends Component {
 
 	renderPlanIcon() {
 		const { showBigPlanIcon, planType } = this.props;
+		let icon;
+
+		switch ( this.props.planType ) {
+			case PLAN_JETPACK_FREE:
+			case PLAN_JETPACK_BUSINESS:
+			case PLAN_JETPACK_BUSINESS_MONTHLY:
+			case PLAN_JETPACK_PREMIUM:
+			case PLAN_JETPACK_PREMIUM_MONTHLY:
+			case PLAN_JETPACK_PERSONAL:
+			case PLAN_JETPACK_PERSONAL_MONTHLY:
+				icon = <PlanIcon plan={ planType } />;
+				break;
+			case PLAN_PREMIUM:
+				icon = <img src="/calypso/images/plans/plan-icon-premium.svg" className="plan-icon" />
+				break;
+			case PLAN_BUSINESS:
+				icon = <img src="/calypso/images/plans/plan-icon-business.svg" className="plan-icon" />
+				break;
+			case PLAN_PERSONAL:
+				icon = <img src="/calypso/images/plans/plan-icon-personal.svg" className="plan-icon" />
+				break;
+			case PLAN_FREE:
+			default:
+				icon = <img src="/calypso/images/plans/plan-icon-free.svg" className="plan-icon" />
+		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="plan-features__header-figure" >
-				<PlanIcon plan={ planType } isBig={ showBigPlanIcon } />
+				{ icon }
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

@@ -49,15 +49,11 @@
 	}
 
 	@at-root #{&}-image {
-		display: block;
-		position: relative;
-		width: 100%;
-		padding-top: 90%;
-		svg {
-			position: absolute;
-			top: 9%;
-			left: 8%;
-			width: 90%;
+		width: 85%;
+		margin: 30px auto 20px;
+
+		img {
+			width: 100%;
 		}
 	}
 

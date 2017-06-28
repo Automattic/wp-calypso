@@ -208,16 +208,12 @@ $plan-features-sidebar-width: 272px;
 		.plan-features__header-figure {
 			position: relative;
 			width: 90%;
-			padding-top: 45%;
-			margin: 0 auto 10px;
-
+			height: auto;
+			margin: 30px auto 15px;
 			.plan-icon {
-				position: absolute;
+				display: block;
 				width: 100%;
 				height: auto;
-				bottom: 0;
-				left: 50%;
-				transform: translate( -50%, 0 );
 			}
 		}
 

@@ -130,19 +130,11 @@
 
 .design-type-with-store__image {
 	display: none;
-	position: relative;
-	width: 100%;
-	padding-top: 90%;
+	width: 85%;
+	margin: 30px auto 20px;
 
 	@include breakpoint( ">480px" ) {
 		display: block;
-	}
-
-	svg {
-		position: absolute;
-		top: 9%;
-		left: 8%;
-		width: 90%;
 	}
 }
 
