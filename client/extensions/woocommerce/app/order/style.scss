@@ -49,6 +49,10 @@
 	.order__detail-item-quantity,
 	.order__detail-item-total {
 		text-align: right;
+
+		input {
+			width: 5em;
+		}
 	}
 
 	.order__detail-item-sku {
@@ -202,7 +206,7 @@
 	.order__refund-details {
 		flex: 1;
 	}
-	
+
 	.order__refund-note .form-textarea {
 		margin-top: 8px;
 	}
@@ -224,7 +228,7 @@
 			flex: 1;
 		}
 	}
-	
+
 	.order__refund-credit-card h3{
 		font-size: 11px;
 		text-transform: uppercase;
