@@ -23,7 +23,7 @@
 
 .action-header__breadcrumbs-separator {
 	color: $gray;
-	margin-left: 4px;
+	margin: 0 2px;
 }
 
 .action-header__actions {
@@ -34,6 +34,7 @@
 
 	.button {
 		margin-left: 12px;
+		white-space: nowrap;
 	}
 }
 

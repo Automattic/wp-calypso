@@ -159,7 +159,7 @@ class Orders extends Component {
 		}
 
 		const headers = (
-			<TableRow>
+			<TableRow isHeader>
 				<TableItem className="orders__table-name" isHeader>{ translate( 'Order' ) }</TableItem>
 				<TableItem className="orders__table-date" isHeader>{ translate( 'Date' ) }</TableItem>
 				<TableItem className="orders__table-status" isHeader>{ translate( 'Status' ) }</TableItem>
