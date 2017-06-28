@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { identity } from 'lodash';
+import { connect } from 'react-redux';
+import { identity, partial, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,10 +16,18 @@ import { recordTracksEvent } from 'state/analytics/actions';
 class DesktopDownloadCard extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
+		trackWindowsClick: PropTypes.func,
+		trackMacClick: PropTypes.func,
+		trackLinuxTarClick: PropTypes.func,
+		trackLinuxDebClick: PropTypes.func,
 	};
 
 	static defaultProps = {
 		translate: identity,
+		trackWindowsClick: noop,
+		trackMacClick: noop,
+		trackLinuxTarClick: noop,
+		trackLinuxDebClick: noop,
 	};
 
 	constructor( props ) {
@@ -29,11 +38,6 @@ class DesktopDownloadCard extends Component {
 		this.linuxTarLink = 'https://apps.wordpress.com/d/linux?ref=getapps';
 		this.linuxDebLink = 'https://apps.wordpress.com/d/linux-deb?ref=getapps';
 	}
-
-	trackWindowsClick = () => recordTracksEvent( 'calypso_app_download_windows_click' );
-	trackMacClick = () => recordTracksEvent( 'calypso_app_download_mac_click' );
-	trackLinuxTarClick = () => recordTracksEvent( 'calypso_app_download_linux_tar_click' );
-	trackLinuxDebClick = () => recordTracksEvent( 'calypso_app_download_linux_deb_click' );
 
 	getDescription = ( platform ) => {
 		const { translate } = this.props;
@@ -113,15 +117,22 @@ class DesktopDownloadCard extends Component {
 	}
 
 	getButtonClickHandler = ( platform ) => {
+		const {
+			trackWindowsClick,
+			trackMacClick,
+			trackLinuxTarClick,
+			trackLinuxDebClick,
+		} = this.props;
+
 		switch ( platform ) {
 			case 'MacIntel':
-				return this.trackMacClick;
+				return trackMacClick;
 			case 'Linux i686':
-				return this.trackLinuxTarClick;
+				return trackLinuxTarClick;
 			case 'Linux i686 on x86_64':
-				return this.trackLinuxDebClick;
+				return trackLinuxDebClick;
 			default:
-				return this.trackWindowsClick;
+				return trackWindowsClick;
 		}
 	}
 
@@ -188,4 +199,14 @@ class DesktopDownloadCard extends Component {
 	}
 }
 
-export default localize( DesktopDownloadCard );
+const mapDispatchToProps = {
+	trackWindowsClick: partial( recordTracksEvent, 'calypso_app_download_windows_click' ),
+	trackMacClick: partial( recordTracksEvent, 'calypso_app_download_mac_click' ),
+	trackLinuxTarClick: partial( recordTracksEvent, 'calypso_app_download_linux_tar_click' ),
+	trackLinuxDebClick: partial( recordTracksEvent, 'calypso_app_download_linux_deb_click' ),
+};
+
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( DesktopDownloadCard ) );
