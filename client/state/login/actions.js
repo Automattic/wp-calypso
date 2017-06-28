@@ -236,6 +236,7 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 		} )
 		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
+			error.email = get( httpError, 'response.body.data.email' );
 
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_FAILURE,
@@ -276,10 +277,9 @@ export const createSocialUser = ( service, token, flowName ) => dispatch => {
 		dispatch( {
 			type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 			error,
-			email: get( wpcomError, 'response.body.data.email' )
 		} );
 
-		return Promise.reject( wpcomError );
+		return Promise.reject( error );
 	} );
 };
 

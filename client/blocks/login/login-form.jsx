@@ -134,19 +134,10 @@ export class LoginForm extends Component {
 						{ this.state.linkingSocialUser && (
 							<div className="login__form-link-social-notice">
 								<p>
-									{ this.props.translate( 'We found a WordPress.com account with the email address "%(email)s".' +
-										'To connect this account to your %(service)s account, please enter your password.', {
+									{ this.props.translate( 'We found a WordPress.com account with the email address "%(email)s". ' +
+										'Log in to this account to connect it to your %(service)s profile.', {
 											args: {
 												email: this.state.usernameOrEmail,
-												service: this.state.linkingSocialService,
-											}
-										}
-									) }
-								</p>
-								<p>
-									{ this.props.translate( 'You will be able to user your %(service)s account to ' +
-										'log in to WordPress.com in the future.', {
-											args: {
 												service: this.state.linkingSocialService,
 											}
 										}
@@ -220,7 +211,10 @@ export class LoginForm extends Component {
 				{ config.isEnabled( 'signup/social' ) && (
 					<Card>
 						<div className="login__form-social">
-							<SocialLoginForm onSuccess={ this.props.onSuccess } linkSocialUser={ this.linkSocialUser } />
+							<SocialLoginForm
+								onSuccess={ this.props.onSuccess }
+								linkSocialUser={ this.linkSocialUser }
+								linkingSocialService={ this.state.linkingSocialService } />
 						</div>
 					</Card>
 				) }
