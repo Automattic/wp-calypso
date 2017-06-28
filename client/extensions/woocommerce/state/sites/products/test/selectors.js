@@ -6,6 +6,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	getProduct,
 	areProductsLoaded,
 	areProductsLoading,
 	getTotalProductsPages,
@@ -87,6 +88,20 @@ const loadedState = {
 const loadedStateWithUi = { ...loadedState, ui: { selectedSiteId: 123 } };
 
 describe( 'selectors', () => {
+	describe( '#getProduct', () => {
+		it( 'should give the product object when present.', () => {
+			const wooLogo = getProduct( loadedState, 15, 123 );
+
+			expect( wooLogo.id ).to.equal( 15 );
+			expect( wooLogo.name ).to.equal( 'Woo Logo' );
+		} );
+
+		it( 'should return undefined if the product is not present.', () => {
+			const nonexistentId = 250002;
+			expect( getProduct( loadedState, nonexistentId, 123 ) ).to.be.undefined;
+		} );
+	} );
+
 	describe( '#areProductsLoaded', () => {
 		it( 'should be false when woocommerce state is not available.', () => {
 			expect( areProductsLoaded( preInitializedState, 1, 123 ) ).to.be.false;
