@@ -27,6 +27,8 @@ class DatePicker extends PureComponent {
 
 		onMonthChange: PropTypes.func,
 		onSelectDay: PropTypes.func,
+		onDayMouseEnter: PropTypes.func,
+		onDayMouseLeave: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -36,6 +38,8 @@ class DatePicker extends PureComponent {
 		selectedDay: null,
 		onMonthChange: noop,
 		onSelectDay: noop,
+		onDayMouseEnter: noop,
+		onDayMouseLeave: noop,
 	};
 
 	isSameDay( d0, d1 ) {
@@ -132,15 +136,22 @@ class DatePicker extends PureComponent {
 		return v;
 	}
 
-	renderDay = day => {
-		const isSelected = this.props.selectedDay && this.isSameDay( this.props.selectedDay, day );
+	renderDay = ( date, modifiers ) =>
+		<DayItem
+			date={ date }
+			modifiers={ modifiers }
+			onMouseEnter={ this.handleDayMouseEnter }
+			onMouseLeave={ this.handleDayMouseLeave }
+		/>;
 
-		return (
-			<DayItem
-				selected= { isSelected }
-				events={ this.filterEventsByDay( day ) }
-				date={ day } />
-		);
+	handleDayMouseEnter = ( date, modifiers, event ) => {
+		const eventsByDay = this.filterEventsByDay( date );
+		this.props.onDayMouseEnter( date, modifiers, event, eventsByDay );
+	};
+
+	handleDayMouseLeave = ( date, modifiers, event ) => {
+		const eventsByDay = this.filterEventsByDay( date );
+		this.props.onDayMouseLeave( date, modifiers, event, eventsByDay );
 	};
 
 	render() {

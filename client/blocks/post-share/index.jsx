@@ -66,6 +66,7 @@ import ConnectionsList, { NoConnectionsNotice } from './connections-list';
 
 import ActionsList from './publicize-actions-list';
 import CalendarButton from 'blocks/calendar-button';
+import EventsTooltip from 'components/date-picker/events-tooltip';
 
 import SectionHeader from 'components/section-header';
 import Tooltip from 'components/tooltip';
@@ -106,6 +107,9 @@ class PostShare extends Component {
 		showSharingPreview: false,
 		showAccountTooltip: false,
 		scheduledDate: null,
+		showTooltip: false,
+		tooltipContext: null,
+		eventsByDay: [],
 	};
 
 	hasConnections() {
@@ -227,6 +231,22 @@ class PostShare extends Component {
 		);
 	}
 
+	showCalendarTooltip = ( date, modifiers, event, eventsByDay ) => {
+		this.setState( {
+			eventsByDay,
+			context: event.target,
+			showTooltip: true,
+		} );
+	};
+
+	hideEventsTooltip = () => {
+		this.setState( {
+			eventsByDay: [],
+			context: null,
+			showTooltip: false,
+		} );
+	};
+
 	renderSharingButtons() {
 		const {
 			siteId,
@@ -262,6 +282,28 @@ class PostShare extends Component {
 			socialIcon: service === 'google_plus' ? 'google-plus' : service,
 		} ) );
 
+		// custom tooltip title
+		const { eventsByDay } = this.state;
+
+		const tooltipTitle = this.props.translate(
+			'%d share',
+			'%d shares', {
+				count: eventsByDay.length,
+				args: eventsByDay.length,
+			}
+		);
+
+		const maxEvents = 8;
+		const moreShares = eventsByDay.length - maxEvents;
+
+		const tooltipMoreEventsLabel = this.props.translate(
+			'… and %d more share',
+			'… and %d more shares', {
+				count: moreShares,
+				args: moreShares
+			}
+		);
+
 		return (
 			<div className="post-share__button-actions">
 				{ previewButton }
@@ -286,8 +328,21 @@ class PostShare extends Component {
 						tabIndex={ 3 }
 						siteId={ siteId }
 						onDateChange={ this.scheduleDate }
-						popoverPosition="bottom left" />
+						onDayMouseEnter={ this.showCalendarTooltip }
+						onDayMouseLeave={ this.hideEventsTooltip }
+						onClose={ this.hideEventsTooltip }
+						popoverPosition="bottom left"
+					/>
 				</ButtonGroup>
+
+				<EventsTooltip
+					events={ eventsByDay }
+					context={ this.state.context }
+					isVisible={ this.state.showTooltip }
+					title={ tooltipTitle }
+					moreEventsLabel={ tooltipMoreEventsLabel }
+					maxEvents={ maxEvents }
+				/>
 			</div>
 		);
 	}
