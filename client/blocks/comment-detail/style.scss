@@ -20,7 +20,6 @@
 	// If the comment is unapproved and collapsed, color it yellow.
 	&.is-unapproved.is-collapsed {
 		.comment-detail__header {
-			//background: rgba( $alert-yellow, 0.085 );
 			background: mix( $alert-yellow, $white, 8.5% );
 			box-shadow: inset 4px 0 0 0 $alert-yellow;
 		}
