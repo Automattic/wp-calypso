@@ -72,11 +72,11 @@ describe( 'Domain Details Form', () => {
 	} );
 
 	it( 'should not render if domain details are missing', function() {
-		const propsWithoutCOntactDetails = {
+		const propsWithoutContactDetails = {
 			...defaultProps,
 			contactDetails: null,
 		};
-		const wrapper = shallow( <DomainDetailsFormContainer { ...propsWithoutCOntactDetails } /> );
+		const wrapper = shallow( <DomainDetailsFormContainer { ...propsWithoutContactDetails } /> );
 
 		expect( wrapper.find( 'DomainDetailsForm' ) ).to.have.length( 0 );
 		expect( wrapper.find( 'SecurePaymentFormPlaceholder' ) ).to.have.length( 1 );
