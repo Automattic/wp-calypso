@@ -5,7 +5,27 @@
 import {
 	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
+	WOOCOMMERCE_PRODUCT_VARIATIONS_REQUEST,
 } from 'woocommerce/state/action-types';
+
+/**
+ * Action Creator: Fetch a product's variations.
+ *
+ * @param {Number} siteId The id of the site in which the variation's product exists.
+ * @param {Number} productId The id of the product.
+ * @param {Object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
+ * @param {Object|Function} [failureAction] Action with extra props { error }
+ * @return {Object} Action object
+ */
+export function fetchProductVariations( siteId, productId, successAction, failureAction ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_VARIATIONS_REQUEST,
+		siteId,
+		productId,
+		successAction,
+		failureAction,
+	};
+}
 
 /**
  * Action Creator: Create a new product variation.
