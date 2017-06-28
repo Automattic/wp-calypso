@@ -7,6 +7,16 @@
 	@include breakpoint( "<660px" ) {
 		flex-direction: column;
 	}
+	
+	.store-address.card {
+		margin: 0;
+		padding: 0;
+		box-shadow: none;
+	}
+}
+
+&.store-location__edit-dialog {
+	max-width: 600px;
 }
 
 .payments__location-currency {

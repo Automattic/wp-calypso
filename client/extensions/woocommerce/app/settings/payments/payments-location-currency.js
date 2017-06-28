@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AddressView from 'woocommerce/components/address-view';
 import Card from 'components/card';
 import { decodeEntities } from 'lib/formatting';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
+import StoreAddress from 'woocommerce/components/store-address';
 import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
 import { fetchCurrencies } from 'woocommerce/state/sites/currencies/actions';
 import { fetchSettingsGeneral, saveCurrency } from 'woocommerce/state/sites/settings/general/actions';
@@ -55,20 +55,6 @@ class SettingsPaymentsLocationCurrency extends Component {
 			this.props.fetchCurrencies( newSiteId );
 			this.props.fetchSettingsGeneral( newSiteId );
 		}
-	}
-
-	constructor( props ) {
-		super( props );
-
-		//TODO: use redux state and real data
-		this.state = {
-			address: {
-				name: 'Octopus Outlet Emporium',
-				street: '27 Main Street',
-				city: 'Ellington, CT 06029',
-				country: 'United States'
-			},
-		};
 	}
 
 	renderOption = ( currency ) => {
@@ -124,8 +110,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 						)
 					} />
 				<Card className="payments__address-currency-container">
-					<AddressView
-						address={ this.state.address } />
+					<StoreAddress />
 					<div className="payments__currency-container">
 						<FormLabel>
 							{ translate( 'Store Currency' ) }

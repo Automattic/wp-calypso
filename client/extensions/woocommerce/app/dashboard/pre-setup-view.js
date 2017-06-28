@@ -17,7 +17,6 @@ import {
 import { errorNotice } from 'state/notices/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getSiteTitle } from 'state/sites/selectors';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
@@ -133,15 +132,7 @@ class PreSetupView extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	let name = '';
-	if ( site ) {
-		name = getSiteTitle( state, site.ID );
-	}
-	const storeLocation = getStoreLocation( state );
-	const address = {
-		name,
-		...storeLocation,
-	};
+	const address = getStoreLocation( state );
 	const loading = areSettingsGeneralLoading( state );
 
 	return {
