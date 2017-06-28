@@ -22,6 +22,7 @@ import PrivateSite from './private-site';
 
 export class Login extends React.Component {
 	static propTypes = {
+		clientId: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		path: PropTypes.string.isRequired,
@@ -85,6 +86,7 @@ export class Login extends React.Component {
 
 	renderContent() {
 		const {
+			clientId,
 			isLoggedIn,
 			privateSite,
 			socialConnect,
@@ -102,6 +104,7 @@ export class Login extends React.Component {
 				twoFactorAuthType={ twoFactorAuthType }
 				socialConnect={ socialConnect }
 				privateSite={ privateSite }
+				clientId={ clientId }
 			/>
 		);
 	}

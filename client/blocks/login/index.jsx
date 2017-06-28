@@ -19,7 +19,9 @@ import {
 	isTwoFactorEnabled,
 	getLinkingSocialUser,
 	getLinkingSocialService,
+	getOAuth2ClientData,
 } from 'state/login/selectors';
+import { fetchOAuth2ClientData } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
@@ -33,6 +35,10 @@ const user = userFactory();
 
 class Login extends Component {
 	static propTypes = {
+		clientId: PropTypes.string,
+		fetchOAuth2ClientData: PropTypes.func,
+		getOAuth2ClientData: PropTypes.func,
+		oauth2ClientData: PropTypes.object,
 		privateSite: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
@@ -44,6 +50,12 @@ class Login extends Component {
 		linkingSocialUser: PropTypes.string,
 		linkingSocialService: PropTypes.string,
 	};
+
+	componentWillMount = () => {
+		if ( this.props.clientId ) {
+			this.props.fetchOAuth2ClientData( this.props.clientId );
+		}
+	}
 
 	componentDidMount = () => {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
@@ -112,6 +124,8 @@ class Login extends Component {
 
 	renderHeader() {
 		const {
+			clientId,
+			oauth2ClientData,
 			privateSite,
 			socialConnect,
 			translate,
@@ -131,6 +145,12 @@ class Login extends Component {
 			} );
 		} else if ( privateSite ) {
 			headerText = translate( 'This is a private WordPress.com site.' );
+		} else if ( clientId && oauth2ClientData ) {
+			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
+				args: {
+					clientTitle: oauth2ClientData.title
+				}
+			} );
 		}
 
 		return (
@@ -222,7 +242,9 @@ export default connect(
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		linkingSocialUser: getLinkingSocialUser( state ),
 		linkingSocialService: getLinkingSocialService( state ),
+		oauth2ClientData: getOAuth2ClientData( state ),
 	} ), {
 		recordTracksEvent,
+		fetchOAuth2ClientData,
 	}
 )( localize( Login ) );

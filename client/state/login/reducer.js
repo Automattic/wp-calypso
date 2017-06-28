@@ -17,6 +17,9 @@ import {
 	LOGOUT_REQUEST_FAILURE,
 	LOGOUT_REQUEST_SUCCESS,
 	ROUTE_SET,
+	OAUTH2_CLIENT_DATA_REQUEST,
+	OAUTH2_CLIENT_DATA_REQUEST_FAILURE,
+	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
@@ -182,6 +185,12 @@ export const socialAccount = createReducer( { isCreating: false }, {
 	[ LOGIN_REQUEST ]: state => ( { ...state, createError: null } ),
 } );
 
+export const oauth2ClientData = createReducer( null, {
+	[ OAUTH2_CLIENT_DATA_REQUEST ]: () => null,
+	[ OAUTH2_CLIENT_DATA_REQUEST_FAILURE ]: ( state, { error } ) => error,
+	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => data,
+} );
+
 export default combineReducers( {
 	isRequesting,
 	isRequestingTwoFactorAuth,
@@ -196,4 +205,5 @@ export default combineReducers( {
 	twoFactorAuthRequestError,
 	twoFactorAuthPushPoll,
 	socialAccount,
+	oauth2ClientData,
 } );

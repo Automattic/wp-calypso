@@ -2432,6 +2432,16 @@ Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
 };
 
 /**
+ * Get OAuth2 Client data for a given client ID
+ * @param {string}     clientId       The client ID
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}  A promise
+ */
+Undocumented.prototype.oauth2ClientId = function( clientId, fn ) {
+	return this.wpcom.req.get( `/oauth2-client-data/${ clientId }`, { apiNamespace: 'wpcom/v2' }, fn );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;
