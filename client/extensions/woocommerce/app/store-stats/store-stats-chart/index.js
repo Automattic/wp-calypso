@@ -128,10 +128,8 @@ class StoreStatsChart extends Component {
 }
 
 export default connect(
-	( state, { query, siteId } ) => {
-		return {
-			data: getSiteStatsNormalizedData( state, siteId, 'statsOrders', query ),
-			isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsOrders', query ),
-		};
-	}
+	( state, { query, siteId } ) => ( {
+		data: getSiteStatsNormalizedData( state, siteId, 'statsOrders', query ),
+		isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsOrders', query ),
+	} )
 )( StoreStatsChart );
