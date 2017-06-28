@@ -45,8 +45,6 @@ import {
 	getThemeRequestErrors,
 	getThemeForumUrl,
 } from 'state/themes/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
-import { hasFeature } from 'state/sites/plans/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
@@ -56,7 +54,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
-import config from 'config';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -478,9 +475,6 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderPrice() {
-		if ( config.isEnabled( 'jetpack/pijp' ) && this.props.isJetpack ) {
-			return '';
-		}
 		let price = this.props.price;
 		if ( ! this.isLoaded() || this.props.isActive || this.props.hidePrice ) {
 			price = '';
@@ -598,15 +592,14 @@ const ThemeSheetWithOptions = ( props ) => {
 		isLoggedIn,
 		isPremium,
 		hidePrice,
-		isJetpack,
-		hasUnlimitedPremiumThemes
+		isJetpack
 	} = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
-	const needsJetpackUpgrade = isJetpack && isPremium && ! hasUnlimitedPremiumThemes;
+	const needsJetpackPlanUpgrade = isJetpack && isPremium && ! hidePrice;
 
-	if ( needsJetpackUpgrade ) {
+	if ( needsJetpackPlanUpgrade ) {
 		secondaryOption = '';
 	}
 
@@ -615,7 +608,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		secondaryOption = null;
 	} else if ( isActive ) {
 		defaultOption = 'customize';
-	} else if ( needsJetpackUpgrade ) {
+	} else if ( needsJetpackPlanUpgrade ) {
 		defaultOption = 'upgradePlan';
 	} else if ( isPremium && ! hidePrice ) {
 		defaultOption = 'purchase';
@@ -659,7 +652,6 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			isPremium: isThemePremium( state, id ),
 			hidePrice: isPremiumThemeAvailable( state, id, siteId ),
-			hasUnlimitedPremiumThemes: config.isEnabled( 'jetpack/pijp' ) && hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id )

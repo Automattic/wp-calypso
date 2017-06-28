@@ -598,11 +598,13 @@ export function isThemePremium( state, themeId ) {
  * @param  {Object}  state   Global state tree
  * @param  {String}  themeId Theme ID for which we check availability
  * @param  {Number}  siteId  Site ID
- * @return {Boolean}        True if the premium theme is available for the given site
+ * @return {Boolean}         True if the premium theme is available for the given site
  */
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
-	return isThemePurchased( state, themeId, siteId ) ||
-		hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES );
+	return isThemePurchased( state, themeId, siteId ) || (
+			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) &&
+			( ! isJetpackSite( state, siteId ) || config.isEnabled( 'jetpack/pijp' ) )
+		);
 }
 
 /**
