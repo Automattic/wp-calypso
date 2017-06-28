@@ -132,7 +132,7 @@ class ThemeEnhancements extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="minileven"
-					label={ translate( 'Optimize your site with a mobile-friendly theme for tablets and phones' ) }
+					label={ translate( 'Enable the Jetpack Mobile theme' ) }
 					disabled={ formPending }
 					/>
 
