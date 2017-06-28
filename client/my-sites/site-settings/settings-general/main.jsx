@@ -19,15 +19,21 @@ import { getSelectedSite } from 'state/ui/selectors';
 const SiteSettingsGeneral = ( {
 	site,
 	translate,
-} ) => (
-	<Main className="settings-general site-settings">
-		<DocumentHead title={ translate( 'Site Settings' ) } />
-		<SidebarNavigation />
-		<SiteSettingsNavigation site={ site } section="general" />
-		<GeneralForm site={ site } />
-		<SiteTools />
-	</Main>
-);
+} ) => {
+	if ( ! site ) {
+		return <div className="settings-general wpcom-site__logo noticon noticon-wordpress" />;
+	}
+
+	return (
+		<Main className="settings-general site-settings">
+			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<SidebarNavigation />
+			<SiteSettingsNavigation site={ site } section="general" />
+			<GeneralForm site={ site } />
+			<SiteTools />
+		</Main>
+	);
+};
 
 export default connect(
 	( state ) => ( {
