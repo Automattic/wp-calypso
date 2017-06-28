@@ -13,21 +13,21 @@ import { localize } from 'i18n-calypso';
 import ActionHeader from 'woocommerce/components/action-header';
 import {
 	areSettingsGeneralLoading,
-	areTaxCalculationsEnabled
+	areTaxCalculationsEnabled,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import {
 	areTaxSettingsLoading,
 	getPricesIncludeTax,
-	getShippingIsTaxFree
+	getShippingIsTaxFree,
 } from 'woocommerce/state/sites/settings/tax/selectors';
 import Button from 'components/button';
 import {
 	fetchSettingsGeneral,
-	updateTaxesEnabledSetting
+	updateTaxesEnabledSetting,
 } from 'woocommerce/state/sites/settings/general/actions';
 import {
 	fetchTaxSettings,
-	updateTaxSettings
+	updateTaxSettings,
 } from 'woocommerce/state/sites/settings/tax/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -110,8 +110,6 @@ class SettingsTaxes extends Component {
 		this.props.updateTaxesEnabledSetting(
 			site.ID,
 			this.state.taxesEnabled,
-			null,
-			null,
 		);
 
 		this.props.updateTaxSettings(
@@ -141,7 +139,7 @@ class SettingsTaxes extends Component {
 		return (
 			<Main className={ classNames( 'settings-taxes', className ) }>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
-					<Button disabled={ saveButtonDisabled } onClick={ this.onSave } primary >
+					<Button disabled={ saveButtonDisabled } onClick={ this.onSave } primary>
 						{ translate( 'Save' ) }
 					</Button>
 				</ActionHeader>

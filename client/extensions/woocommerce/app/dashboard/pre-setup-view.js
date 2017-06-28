@@ -61,12 +61,15 @@ class PreSetupView extends Component {
 	}
 
 	onChange = ( event ) => {
+		const addressKey = event.target.name;
+		const newValue = event.target.value;
+
 		const address = this.state.address;
-		address[ event.target.name ] = event.target.value;
+		address[ addressKey ] = newValue;
 
 		// Did they change the country? Force an appropriate state default
-		if ( 'country' === name ) {
-			const countryData = getCountryData( event.target.value );
+		if ( 'country' === addressKey ) {
+			const countryData = getCountryData( newValue );
 			address.state = countryData ? countryData.defaultState : '';
 		}
 

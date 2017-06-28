@@ -7,8 +7,8 @@ import {
 } from './selectors';
 import { setError } from '../../status/wc-api/actions';
 import {
-	TAXRATES_REQUEST,
-	TAXRATES_REQUEST_SUCCESS,
+	WOOCOMMERCE_TAXRATES_REQUEST,
+	WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import wp from 'lib/wp';
 
@@ -18,7 +18,7 @@ export const fetchTaxRates = ( siteId, address ) => ( dispatch, getState ) => {
 	}
 
 	const getAction = {
-		type: TAXRATES_REQUEST,
+		type: WOOCOMMERCE_TAXRATES_REQUEST,
 		siteId,
 	};
 
@@ -27,7 +27,7 @@ export const fetchTaxRates = ( siteId, address ) => ( dispatch, getState ) => {
 	return wp.req.get( { path: `/sites/${ siteId }/tax-rates` }, { ...address } )
 		.then( ( data ) => {
 			dispatch( {
-				type: TAXRATES_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS,
 				siteId,
 				data,
 			} );

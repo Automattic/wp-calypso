@@ -276,7 +276,7 @@ class TaxesRates extends Component {
 						onChange={ onEnabledChange }
 						checked={ taxesEnabled } >
 						<span>
-								{ toggleMessage }
+							{ toggleMessage }
 						</span>
 					</FormToggle>
 				</ExtendedHeader>
