@@ -205,7 +205,7 @@ const ConnectedThemesSelection = connect(
 			// and `<QuerySitePlans />` components, respectively. At the time of implementation, neither of them
 			// provides caching, and both are already being rendered by a parent component. So to avoid
 			// redundant AJAX requests, we're not rendering these query components locally.
-			hidePremiumThemePrice: themeId => isJetpack || isPremiumThemeAvailable( state, themeId, siteId ),
+			hidePremiumThemePrice: themeId => isPremiumThemeAvailable( state, themeId, siteId ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
 		};
 	},
