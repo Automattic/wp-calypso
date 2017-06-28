@@ -30,6 +30,7 @@ export getAccountRecoveryValidationKey from './get-account-recovery-validation-k
 export getAccountRecoveryValidationError from './get-account-recovery-validation-error';
 export getActivityLogs from './get-activity-logs';
 export getBlockedSites from './get-blocked-sites';
+export getBlogStickers from './get-blog-stickers';
 export getBillingTransactions from './get-billing-transactions';
 export getContactDetailsCache from './get-contact-details-cache';
 export getContactDetailsExtraCache from './get-contact-details-extra-cache';
