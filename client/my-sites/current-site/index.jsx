@@ -20,6 +20,7 @@ const AllSites = require( 'my-sites/all-sites' ),
 	DomainsStore = require( 'lib/domains/store' ),
 	DomainWarnings = require( 'my-sites/upgrades/components/domain-warnings' );
 
+import config from 'config';
 import SiteNotice from './notice';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -107,6 +108,10 @@ class CurrentSite extends Component {
 	previewSite = ( event ) => this.props.onClick && this.props.onClick( event );
 
 	renderSiteViewLink() {
+		if ( config.isEnabled( 'standalone-site-preview' ) ) {
+			return;
+		}
+
 		const {
 			isPreviewShowing,
 			selectedSite,

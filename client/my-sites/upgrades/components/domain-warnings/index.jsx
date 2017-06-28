@@ -36,7 +36,7 @@ export default React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired
+		] )
 	},
 
 	getDefaultProps() {

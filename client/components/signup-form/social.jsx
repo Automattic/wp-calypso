@@ -7,9 +7,11 @@ import FacebookLoginButton from 'components/social-buttons/facebook';
 import { localize } from 'i18n-calypso';
 
 /**
- * External dependencies
+ * Internal dependencies
  */
+import Card from 'components/card';
 import config from 'config';
+import { preventWidows } from 'lib/formatting';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -41,9 +43,9 @@ class SocialSignupForm extends Component {
 
 	render() {
 		return (
-			<div className="signup-form__social">
+			<Card className="signup-form__social">
 				<p>
-					{ this.props.translate( 'Or create an account using your existing social profile:' ) }
+					{ preventWidows( this.props.translate( "Or create an account using your existing social profile to get started faster. We'll never post without your permission." ) ) }
 				</p>
 
 				<div className="signup-form__social-buttons">
@@ -55,13 +57,7 @@ class SocialSignupForm extends Component {
 						appId={ config( 'facebook_app_id' ) }
 						responseHandler={ this.handleFacebookResponse } />
 				</div>
-
-        <p>
-					{ this.props.translate(
-            "Connect to your existing social profile to get started faster. We'll never post without your permission."
-          ) }
-				</p>
-			</div>
+			</Card>
 		);
 	}
 }

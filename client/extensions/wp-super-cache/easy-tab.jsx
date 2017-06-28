@@ -15,12 +15,14 @@ import Card from 'components/card';
 import Notice from 'components/notice';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';
+import QueryStatus from './data/query-status';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 import { testCache } from './state/cache/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteTitle } from 'state/sites/selectors';
 import { getCacheTestResults, isTestingCache } from './state/cache/selectors';
+import { getStatus } from './state/status/selectors';
 
 class EasyTab extends Component {
 	static propTypes = {
@@ -80,25 +82,18 @@ class EasyTab extends Component {
 			cacheTestResults: {
 				attempts = {},
 			},
-			fields: {
-				cache_mod_rewrite,
-				is_cache_enabled,
-			},
+			fields: { is_cache_enabled },
 			handleAutosavingToggle,
 			isDeleting,
 			isReadOnly,
 			isRequesting,
 			isSaving,
 			isTesting,
+			status: { php_mod_rewrite },
 			site,
+			siteId,
 			translate,
 		} = this.props;
-		const enableCacheNotice = translate(
-			'PHP caching is enabled but Supercache mod_rewrite rules were ' +
-			'detected. Cached files will be served using those rules. If your site is working ok, ' +
-			'please ignore this message. Otherwise, you can edit the .htaccess file in the root of your ' +
-			'install and remove the SuperCache rules.'
-		);
 
 		return (
 			<div>
@@ -118,8 +113,15 @@ class EasyTab extends Component {
 					</form>
 				</Card>
 
-				{ is_cache_enabled && ! cache_mod_rewrite &&
-					<Notice text={ enableCacheNotice } showDismiss={ false } className="wp-super-cache__notice-hug-card" />
+				{ php_mod_rewrite &&
+				<Notice
+					className="wp-super-cache__notice-hug-card"
+					showDismiss={ false }
+					text={ translate(
+						'PHP caching enabled but Supercache mod_rewrite rules detected. ' +
+						'Cached files will be served using those rules. If your site is working ok, please ignore this message. ' +
+						'Otherwise, you can edit the .htaccess file in the root of your install and remove the SuperCache rules.'
+					) } />
 				}
 
 				{ is_cache_enabled &&
@@ -215,6 +217,7 @@ class EasyTab extends Component {
 						}
 					</div>
 				</Card>
+				<QueryStatus siteId={ siteId } />
 			</div>
 		);
 	}
@@ -226,10 +229,12 @@ const connectComponent = connect(
 		const siteTitle = getSiteTitle( state, siteId );
 		const isTesting = isTestingCache( state, siteId );
 		const cacheTestResults = getCacheTestResults( state, siteId );
+		const status = getStatus( state, siteId );
 
 		return {
 			cacheTestResults,
 			isTesting,
+			status,
 			siteTitle,
 		};
 	},

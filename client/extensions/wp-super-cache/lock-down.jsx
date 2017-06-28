@@ -72,8 +72,7 @@ const LockDown = ( {
 						</FormSettingExplanation>
 
 						<Notice
-							isCompact={ true }
-							className="wp-super-cache__lock-down-notice"
+							isCompact
 							status={ cache_lock_down ? 'is-warning' : 'is-info' }
 							text={ cache_lock_down
 								? translate( 'WordPress is locked down. Super Cache static files will not be deleted ' +

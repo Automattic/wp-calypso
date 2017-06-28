@@ -96,7 +96,7 @@ function generateStaticUrls( request ) {
 		const name = asset.name;
 		urls[ name ] = asset.url;
 		if ( config( 'env' ) !== 'development' ) {
-			urls[ name + '-min' ] = asset.url.replace( '.js', '.m.js' );
+			urls[ name + '-min' ] = asset.url.replace( '.js', '.min.js' );
 		}
 	} );
 
@@ -203,7 +203,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 	const context = getDefaultContext( req );
 
-	if ( config( 'wpcom_user_bootstrap' ) ) {
+	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const user = require( 'user-bootstrap' );
 
 		protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';

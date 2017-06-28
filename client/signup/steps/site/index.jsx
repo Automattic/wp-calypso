@@ -9,6 +9,7 @@ const debug = require( 'debug' )( 'calypso:steps:site' ); // eslint-disable-line
 /**
  * Internal dependencies
  */
+import config from 'config';
 import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
@@ -186,7 +187,7 @@ module.exports = React.createClass( {
 	},
 
 	getErrorMessagesWithLogin( fieldName ) {
-		const link = login( { isNative: true, redirectTo: window.location.href } ),
+		const link = login( { isNative: config.isEnabled( 'login/native-login-links' ), redirectTo: window.location.href } ),
 			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
 		if ( ! messages ) {

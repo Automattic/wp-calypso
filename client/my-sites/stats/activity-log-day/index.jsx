@@ -2,39 +2,38 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import FoldableCard from 'components/foldable-card';
 import Button from 'components/button';
 import ActivityLogItem from '../activity-log-item';
 
 class ActivityLogDay extends Component {
 	static propTypes = {
-		isRewindEnabled: PropTypes.bool,
+		allowRestore: PropTypes.bool.isRequired,
+		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
+		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
-		dateIsoString: PropTypes.string.isRequired,
+		timestamp: PropTypes.number.isRequired,
 	};
 
 	static defaultProps = {
-		isRewindEnabled: true,
+		allowRestore: true,
+		isRewindActive: true,
 	};
 
-	state = {
-		isRestoreConfirmDialogOpen: false,
+	handleClickRestore = () => {
+		const {
+			requestRestore,
+			timestamp,
+		} = this.props;
+		requestRestore( timestamp );
 	};
-
-	handleRestoreClick = () => this.setState( { isRestoreConfirmDialogOpen: true } );
-
-	handleRestoreDialogClose = () => this.setState( { isRestoreConfirmDialogOpen: false } );
-
-	// FIXME: Handle confirm correctly
-	handleRestoreDialogConfirm = () => this.setState( { isRestoreConfirmDialogOpen: false } );
 
 	/**
 	 * Return a button to rewind to this point.
@@ -43,14 +42,22 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Button to display.
 	 */
 	getRewindButton( type = '' ) {
+		const { allowRestore } = this.props;
+
+		if ( ! allowRestore ) {
+			return null;
+		}
+
 		return (
 			<Button
-				primary={ 'primary' === type }
-				disabled={ ! this.props.isRewindEnabled }
-				onClick={ this.handleRestoreClick }
+				className="activity-log-day__rewind-button"
 				compact
+				disabled={ ! this.props.isRewindActive }
+				onClick={ this.handleClickRestore }
+				primary={ 'primary' === type }
 			>
 				<Gridicon icon="history" size={ 18 } />
+				{ ' ' }
 				{ this.props.translate( 'Rewind to this day' ) }
 			</Button>
 		);
@@ -63,14 +70,15 @@ class ActivityLogDay extends Component {
 	 */
 	getEventsHeading() {
 		const {
-			dateIsoString,
 			logs,
 			moment,
+			timestamp,
 			translate,
 		} = this.props;
+
 		return (
 			<div>
-				<div className="activity-log-day__day">{ moment( dateIsoString ).format( 'LL' ) }</div>
+				<div className="activity-log-day__day">{ moment( timestamp ).format( 'LL' ) }</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,
@@ -83,12 +91,11 @@ class ActivityLogDay extends Component {
 
 	render() {
 		const {
+			allowRestore,
 			logs,
-			dateIsoString,
+			requestRestore,
+			siteId,
 		} = this.props;
-
-		// FIXME get real props
-		const siteName = 'Placeholder site name';
 
 		return (
 			<div className="activity-log-day">
@@ -97,31 +104,16 @@ class ActivityLogDay extends Component {
 					summary={ this.getRewindButton( 'primary' ) }
 					expandedSummary={ this.getRewindButton() }
 				>
-					{ logs.map( ( log, index ) => {
-						return (
-							<ActivityLogItem
-								key={ index }
-								title={ log.title }
-								subTitle={ log.subTitle }
-								description={ log.description }
-								icon={ log.icon }
-								siteId={ this.props.siteId }
-								timestamp={ log.timestamp }
-								user={ log.user }
-								actionText={ log.actionText }
-								status={ log.status }
-								className={ log.className }
-							/>
-						);
-					} ) }
+					{ logs.map( ( log, index ) => (
+						<ActivityLogItem
+							key={ index }
+							allowRestore={ allowRestore }
+							siteId={ siteId }
+							requestRestore={ requestRestore }
+							log={ log }
+						/>
+					) ) }
 				</FoldableCard>
-				<ActivityLogConfirmDialog
-					isVisible={ this.state.isRestoreConfirmDialogOpen }
-					siteName={ siteName }
-					dateIsoString={ dateIsoString }
-					onClose={ this.handleRestoreDialogClose }
-					onConfirm={ this.handleRestoreDialogConfirm }
-				/>
 			</div>
 		);
 	}

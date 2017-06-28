@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -11,26 +12,49 @@ import { localize } from 'i18n-calypso';
  */
 import AddressView from 'woocommerce/components/address-view';
 import Card from 'components/card';
+import { decodeEntities } from 'lib/formatting';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
+import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
-
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
-import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
+import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
+import { fetchCurrencies } from 'woocommerce/state/sites/currencies/actions';
+import { fetchSettingsGeneral, saveCurrency } from 'woocommerce/state/sites/settings/general/actions';
+import { getCurrencies } from 'woocommerce/state/sites/currencies/selectors';
+import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 class SettingsPaymentsLocationCurrency extends Component {
 	static propTypes = {
-		currency: PropTypes.shape( {
-			options: PropTypes.object,
-			value: PropTypes.string,
-		} ),
+		changeCurrency: PropTypes.func.isRequired,
+		currencies: PropTypes.array,
+		currency: PropTypes.string,
+		fetchCurrencies: PropTypes.func.isRequired,
 		fetchSettingsGeneral: PropTypes.func.isRequired,
-		siteId: PropTypes.number.isRequired,
+		getCurrencyWithEdits: PropTypes.func.isRequired,
+		saveCurrency: PropTypes.func.isRequired,
+		site: PropTypes.object,
 	};
 
-	componentDidMount() {
-		const { siteId } = this.props;
-		this.props.fetchSettingsGeneral( siteId );
+	componentDidMount = () => {
+		const { site } = this.props;
+
+		if ( site && site.ID ) {
+			this.props.fetchCurrencies( site.ID );
+			this.props.fetchSettingsGeneral( site.ID );
+		}
+	}
+
+	componentWillReceiveProps = ( newProps ) => {
+		const { site } = this.props;
+
+		const newSiteId = newProps.site && newProps.site.ID || null;
+		const oldSiteId = site && site.ID || null;
+
+		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchCurrencies( newSiteId );
+			this.props.fetchSettingsGeneral( newSiteId );
+		}
 	}
 
 	constructor( props ) {
@@ -47,38 +71,73 @@ class SettingsPaymentsLocationCurrency extends Component {
 		};
 	}
 
-	renderOption = ( option, options ) => {
+	renderOption = ( currency ) => {
+		const { currencies } = this.props;
+		const option = find( currencies, { code: currency } );
 		return (
-			<option key={ option } value={ option }>
-				{ options[ option ] }
+			<option
+				key={ option.code }
+				value={ option.code } >
+				{ decodeEntities( option.symbol ) } - { decodeEntities( option.name ) }
 			</option>
 		);
 	}
 
+	onChange = ( e ) => {
+		const { site, translate } = this.props;
+		const newCurrency = e.target.value;
+		this.props.changeCurrency(
+			site.ID,
+			newCurrency
+		);
+		const successAction = () => {
+			return successNotice(
+				translate( 'Site currency successfully saved.' ),
+				{ duration: 4000 }
+			);
+		};
+
+		const errorAction = () => {
+			return errorNotice(
+				translate( 'There was a problem saving the currency. Please try again.' )
+			);
+		};
+
+		this.props.saveCurrency(
+			site.ID,
+			newCurrency,
+			successAction,
+			errorAction
+		);
+	}
+
 	render() {
-		const { currency, translate } = this.props;
+		const { currencies, currency, translate } = this.props;
+		const validCurrencies = [ 'USD', 'AUD', 'CAD', 'GBP', 'BRL' ];
 		return (
-			<div>
+			<div className="payments__location-currency">
 				<ExtendedHeader
 					label={ translate( 'Store location and currency' ) }
 					description={
 						translate(
-							'Different payment methods may be available based on your store' +
-							'location and currency.'
+							'Different options are available based on your location and currency.'
 						)
 					} />
-				<Card>
+				<Card className="payments__address-currency-container">
 					<AddressView
 						address={ this.state.address } />
+					<div className="payments__currency-container">
+						<FormLabel>
+							{ translate( 'Store Currency' ) }
+						</FormLabel>
+						<FormSelect
+							className="payments__currency-select"
+							onChange={ this.onChange }
+							value={ currency }>
+							{ currencies && currencies.length && validCurrencies.map( this.renderOption ) }
+						</FormSelect>
+					</div>
 
-					<FormSelect className="payments__currency-select" value={ currency.value }>
-						{
-							currency.options &&
-							Object.keys( currency.options ).map(
-								( o ) => this.renderOption( o, currency.options )
-							)
-						}
-					</FormSelect>
 				</Card>
 			</div>
 		);
@@ -87,18 +146,24 @@ class SettingsPaymentsLocationCurrency extends Component {
 }
 
 function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
-	const currency = getPaymentCurrencySettings( state, siteId );
+	const site = getSelectedSiteWithFallback( state );
+	const currencies = getCurrencies( state );
+	const currency = getCurrencyWithEdits( state );
 	return {
+		currencies,
 		currency,
-		siteId,
+		site,
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchSettingsGeneral
+			changeCurrency,
+			fetchCurrencies,
+			fetchSettingsGeneral,
+			getCurrencyWithEdits,
+			saveCurrency,
 		},
 		dispatch
 	);

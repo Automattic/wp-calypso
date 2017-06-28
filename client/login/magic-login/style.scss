@@ -1,0 +1,42 @@
+.magic-login__request_link {
+	max-width: 400px;
+}
+
+.magic-login__form-header {
+	font-size: 22px;
+	margin-bottom: 24px;
+	margin-top: 16px;
+	text-align: center;
+}
+
+.magic-login__form-action {
+	margin-top: 10px;
+	overflow: auto;
+
+	button {
+		width: 100%;
+	}
+}
+
+.magic-login__footer {
+	a {
+		border-bottom: 1px solid #c8d7e1;
+		color: darken( $gray, 20% );
+		display: block;
+		line-height: 4em;
+		font-size: 14px;
+		font-weight: 500;
+		padding: 0 24px;
+		text-decoration: none;
+
+		&:hover {
+			color: $blue-medium;
+		}
+		&:last-of-type {
+			border-bottom: none;
+		}
+	}
+	.gridicon {
+		vertical-align: text-bottom;
+	}
+}

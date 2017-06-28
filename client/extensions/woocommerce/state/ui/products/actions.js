@@ -2,20 +2,55 @@
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_PRODUCT_EDIT,
+	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
+	WOOCOMMERCE_PRODUCT_EDIT,
 } from 'woocommerce/state/action-types';
 
-export function editProduct( product, data ) {
+export function editProduct( siteId, product, data ) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_EDIT,
-		payload: { product, data },
+		siteId,
+		product,
+		data,
 	};
 }
 
-export function editProductAttribute( product, attribute, data ) {
+export function editProductAttribute( siteId, product, attribute, data ) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
-		payload: { product, attribute, data },
+		siteId,
+		product,
+		attribute,
+		data,
 	};
 }
+
+export function editProductAddCategory( siteId, product, categoryId ) {
+	const categories = [ ...product.categories, { id: categoryId } ];
+
+	return editProduct( siteId, product, { categories } );
+}
+
+export function editProductRemoveCategory( siteId, product, categoryId ) {
+	const categories = product.categories.filter( ( c ) => categoryId !== c.id );
+
+	return editProduct( siteId, product, { categories } );
+}
+
+/**
+ * Creates an action list to save product-related edits.
+ *
+ * Saves products, variations, and product categories.
+ * @param {Object} [successAction] Action to be dispatched upon successful completion.
+ * @param {Object} [failureAction] Action to be dispatched upon failure of execution.
+ * @return {Function} action
+ */
+export function createProductActionList( successAction, failureAction ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
+		successAction,
+		failureAction,
+	};
+}
+

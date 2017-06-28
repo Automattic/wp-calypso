@@ -2,17 +2,18 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import noop from 'lodash/noop';
+import { map, noop, reverse, sortBy } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 import SortableList from 'components/forms/sortable-list';
 import EditorMediaModalGalleryEditItem from './edit-item';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryEdit',
-
+const EditorMediaModalGalleryEdit = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		settings: PropTypes.object,
@@ -40,24 +41,44 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { site, settings } = this.props;
+		const { onUpdateSetting, site, settings, translate } = this.props;
 
 		if ( ! site || ! settings.items ) {
 			return null;
 		}
 
+		const orders = {
+			[ translate( 'Reverse order' ) ]: reverse( [ ...settings.items ] ),
+			[ translate( 'Order alphabetically' ) ]: sortBy( settings.items, 'title' ),
+			[ translate( 'Order chronologically' ) ]: sortBy( settings.items, 'date' ),
+		};
+
 		return (
-			<SortableList onChange={ this.onOrderChanged }>
-				{ settings.items.map( ( item ) => {
-					return (
-						<EditorMediaModalGalleryEditItem
-							key={ item.ID }
-							site={ site }
-							item={ item }
-							showRemoveButton={ settings.items.length > 1 } />
-					);
-				} ) }
-			</SortableList>
+			<div>
+				<EllipsisMenu popoverClassName="gallery__order-popover" position="bottom right">
+					{ map( orders, ( orderedItems, name ) => {
+						const boundAction = () => onUpdateSetting( { items: orderedItems } );
+						return (
+							<PopoverMenuItem key={ name } onClick={ boundAction }>
+								{ name }
+							</PopoverMenuItem>
+						);
+					} ) }
+				</EllipsisMenu>
+				<SortableList onChange={ this.onOrderChanged }>
+					{ settings.items.map( ( item ) => {
+						return (
+							<EditorMediaModalGalleryEditItem
+								key={ item.ID }
+								site={ site }
+								item={ item }
+								showRemoveButton={ settings.items.length > 1 } />
+						);
+					} ) }
+				</SortableList>
+			</div>
 		);
 	}
 } );
+
+export default localize( EditorMediaModalGalleryEdit );

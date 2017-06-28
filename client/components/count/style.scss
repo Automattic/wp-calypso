@@ -8,4 +8,10 @@
 	line-height: 14px;
 	color: $gray-text-min;
 	text-align: center;
+
+	&.is-primary {
+		color: $white;
+		border-color: $blue-medium;
+		background-color: $blue-medium;
+	}
 }

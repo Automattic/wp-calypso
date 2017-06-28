@@ -3,8 +3,9 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, noop } from 'lodash';
+import { get, isUndefined, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +15,8 @@ import CommentDetailComment from './comment-detail-comment';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
+import { decodeEntities, stripHTML } from 'lib/formatting';
+import { getPostCommentsTree } from 'state/comments/selectors';
 
 export class CommentDetail extends Component {
 	static propTypes = {
@@ -27,8 +30,9 @@ export class CommentDetail extends Component {
 		authorUsername: PropTypes.string,
 		commentContent: PropTypes.string,
 		commentDate: PropTypes.string,
-		commentId: PropTypes.number,
+		commentId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		commentIsLiked: PropTypes.bool,
+		commentIsSelected: PropTypes.bool,
 		commentStatus: PropTypes.string,
 		deleteCommentPermanently: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
@@ -38,10 +42,13 @@ export class CommentDetail extends Component {
 		repliedToComment: PropTypes.bool,
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
+		submitComment: PropTypes.func,
 		toggleCommentLike: PropTypes.func,
+		toggleCommentSelected: PropTypes.func,
 	};
 
 	static defaultProps = {
+		commentIsSelected: false,
 		isBulkEdit: false,
 	};
 
@@ -50,14 +57,8 @@ export class CommentDetail extends Component {
 	};
 
 	componentWillMount() {
-		const {
-			authorIsBlocked,
-			commentIsLiked,
-		} = this.props;
-		this.setState( {
-			authorIsBlocked,
-			isLiked: commentIsLiked,
-		} );
+		const { authorIsBlocked } = this.props;
+		this.setState( { authorIsBlocked } );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -71,8 +72,10 @@ export class CommentDetail extends Component {
 	}
 
 	deleteCommentPermanently = () => {
-		const { commentId, deleteCommentPermanently } = this.props;
-		deleteCommentPermanently( commentId );
+		const { commentId, deleteCommentPermanently, translate } = this.props;
+		if ( isUndefined( window ) || window.confirm( translate( 'Delete this comment permanently?' ) ) ) {
+			deleteCommentPermanently( commentId );
+		}
 	}
 
 	edit = () => noop;
@@ -89,6 +92,11 @@ export class CommentDetail extends Component {
 	toggleLike = () => {
 		const { commentId, toggleCommentLike } = this.props;
 		toggleCommentLike( commentId );
+	}
+
+	toggleSelected = () => {
+		const { commentId, toggleCommentSelected } = this.props;
+		toggleCommentSelected( commentId );
 	}
 
 	toggleSpam = () => {
@@ -111,14 +119,22 @@ export class CommentDetail extends Component {
 			authorUsername,
 			commentContent,
 			commentDate,
+			commentId,
 			commentIsLiked,
+			commentIsSelected,
 			commentStatus,
 			isBulkEdit,
+			parentCommentAuthorAvatarUrl,
+			parentCommentAuthorDisplayName,
+			parentCommentContent,
+			parentCommentUrl,
 			postAuthorDisplayName,
+			postId,
 			postTitle,
 			postUrl,
 			repliedToComment,
 			siteId,
+			submitComment,
 		} = this.props;
 
 		const {
@@ -129,8 +145,10 @@ export class CommentDetail extends Component {
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
 			'is-approved': 'approved' === commentStatus,
+			'is-unapproved': 'unapproved' === commentStatus,
 			'is-bulk-edit': isBulkEdit,
 			'is-expanded': isExpanded,
+			'is-collapsed': ! isExpanded,
 			'is-liked': commentIsLiked,
 			'is-spam': 'spam' === commentStatus,
 			'is-trash': 'trash' === commentStatus,
@@ -144,19 +162,27 @@ export class CommentDetail extends Component {
 					authorUrl={ authorUrl }
 					commentContent={ commentContent }
 					commentIsLiked={ commentIsLiked }
+					commentIsSelected={ commentIsSelected }
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
+					postTitle={ postTitle }
+					postUrl={ postUrl }
 					toggleApprove={ this.toggleApprove }
 					toggleExpanded={ this.toggleExpanded }
 					toggleLike={ this.toggleLike }
+					toggleSelected={ this.toggleSelected }
 					toggleSpam={ this.toggleSpam }
 					toggleTrash={ this.toggleTrash }
 				/>
 				{ isExpanded &&
 					<div className="comment-detail__content">
 						<CommentDetailPost
+							parentCommentAuthorAvatarUrl={ parentCommentAuthorAvatarUrl }
+							parentCommentAuthorDisplayName={ parentCommentAuthorDisplayName }
+							parentCommentContent={ parentCommentContent }
+							parentCommentUrl={ parentCommentUrl }
 							postAuthorDisplayName={ postAuthorDisplayName }
 							postTitle={ postTitle }
 							postUrl={ postUrl }
@@ -173,9 +199,15 @@ export class CommentDetail extends Component {
 							blockUser={ this.blockUser }
 							commentContent={ commentContent }
 							commentDate={ commentDate }
+							commentStatus={ commentStatus }
 							repliedToComment={ repliedToComment }
 						/>
-						<CommentDetailReply />
+						<CommentDetailReply
+							commentId={ commentId }
+							postId={ postId }
+							postTitle={ postTitle }
+							submitComment={ submitComment }
+						/>
 					</div>
 				}
 			</Card>
@@ -184,10 +216,25 @@ export class CommentDetail extends Component {
 }
 
 const mapStateToProps = ( state, ownProps ) => {
-	// TODO: replace with
+	// TODO: replace `const comment = ownProps.comment;` with
 	// `const comment = ownProps.comment || getComment( ownProps.commentId );`
 	// when the selector is ready.
-	const comment = ownProps.comment;
+	const {
+		comment,
+		siteId,
+	} = ownProps;
+
+	const postId = get( comment, 'post.ID' );
+
+	// TODO: eventually it will be returned already decoded from the data layer.
+	const postTitle = decodeEntities( get( comment, 'post.title' ) );
+
+	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
+	const parentCommentId = get( commentsTree, [ comment.ID, 'data', 'parent', 'ID' ], 0 );
+	const parentComment = get( commentsTree, [ parentCommentId, 'data' ], {} );
+
+	// TODO: eventually it will be returned already decoded from the data layer.
+	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
 
 	return ( {
 		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
@@ -203,12 +250,17 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentId: comment.ID,
 		commentIsLiked: comment.i_like,
 		commentStatus: comment.status,
-		postAuthorDisplayName: get( comment, 'post.author.name' ),
-		postTitle: get( comment, 'post.title' ),
-		postUrl: get( comment, 'post.link' ),
+		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
+		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
+		parentCommentContent,
+		parentCommentUrl: get( parentComment, 'URL' ),
+		postAuthorDisplayName: get( comment, 'post.author.name' ), // TODO: not available in the current data structure
+		postId,
+		postTitle,
+		postUrl: get( comment, 'URL' ),
 		repliedToComment: comment.replied, // TODO: not available in the current data structure
-		siteId: comment.siteId,
+		siteId: comment.siteId || siteId,
 	} );
 };
 
-export default connect( mapStateToProps )( CommentDetail );
+export default connect( mapStateToProps )( localize( CommentDetail ) );

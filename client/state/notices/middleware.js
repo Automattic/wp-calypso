@@ -46,8 +46,8 @@ import {
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	SITE_DELETE,
-	SITE_DELETE_SUCCESS,
 	SITE_DELETE_FAILURE,
+	SITE_DELETE_RECEIVE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	THEME_DELETE_FAILURE,
@@ -212,7 +212,7 @@ const onSiteDelete = ( dispatch, { siteId }, getState ) => dispatch(
 	} ), { duration: 5000, id: 'site-delete' } )
 );
 
-const onSiteDeleteSuccess = ( dispatch, { siteId }, getState ) => dispatch(
+const onSiteDeleteReceive = ( dispatch, { siteId }, getState ) => dispatch(
 	successNotice( translate( '%(siteDomain)s has been deleted.', {
 		args: { siteDomain: getSiteDomain( getState(), siteId ) }
 	} ), { duration: 5000, id: 'site-delete' } )
@@ -279,7 +279,7 @@ export const handlers = {
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_DELETE ]: onSiteDelete,
 	[ SITE_DELETE_FAILURE ]: onSiteDeleteFailure,
-	[ SITE_DELETE_SUCCESS ]: onSiteDeleteSuccess,
+	[ SITE_DELETE_RECEIVE ]: onSiteDeleteReceive,
 	[ SITE_MONITOR_SETTINGS_UPDATE_SUCCESS ]: onSiteMonitorSettingsUpdateSuccess,
 	[ SITE_MONITOR_SETTINGS_UPDATE_FAILURE ]: onSiteMonitorSettingsUpdateFailure,
 	[ THEME_DELETE_FAILURE ]: onThemeDeleteFailure,

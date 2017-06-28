@@ -1,303 +1,264 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { groupBy, map } from 'lodash';
+import { groupBy, map, get, filter } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import {
+	getSiteSlug,
+	getSiteTitle,
+	isJetpackSite,
+} from 'state/sites/selectors';
+import { getRewindStatusError } from 'state/selectors';
+import { getActivityLogs } from 'state/selectors';
 import StatsFirstView from '../stats-first-view';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from '../stats-navigation';
+import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import ActivityLogDay from '../activity-log-day';
+import ActivityLogBanner from '../activity-log-banner';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import SuccessBanner from '../activity-log-banner/success-banner';
+import QueryRewindStatus from 'components/data/query-rewind-status';
+import QueryActivityLog from 'components/data/query-activity-log';
+import DatePicker from 'my-sites/stats/stats-date-picker';
+import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import ActivityLogRewindToggle from './activity-log-rewind-toggle';
+import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
+import {
+	getRestoreProgress,
+	isRewindActive as isRewindActiveSelector,
+} from 'state/selectors';
+
+const debug = debugFactory( 'calypso:activity-log' );
 
 class ActivityLog extends Component {
+	static propTypes = {
+		isJetpack: PropTypes.bool,
+		restoreProgress: PropTypes.shape( {
+			errorCode: PropTypes.string.isRequired,
+			failureReason: PropTypes.string.isRequired,
+			message: PropTypes.string.isRequired,
+			percent: PropTypes.number.isRequired,
+			restoreId: PropTypes.number,
+			status: PropTypes.oneOf( [
+				'finished',
+				'queued',
+				'running',
+
+				// These are other VP restore statuses.
+				// We should _never_ see them for Activity Log rewinds
+				// 'aborted',
+				// 'fail',
+				// 'success',
+				// 'success-with-errors',
+			] ).isRequired,
+			timestamp: PropTypes.number.isRequired,
+		} ),
+		rewindStatusError: PropTypes.shape( {
+			error: PropTypes.string.isRequired,
+			message: PropTypes.string.isRequired,
+		} ),
+		siteId: PropTypes.number,
+		siteTitle: PropTypes.string,
+		slug: PropTypes.string,
+
+		// FIXME: Testing only
+		isPressable: PropTypes.bool,
+
+		// localize
+		moment: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
+	state = {
+		requestedRestoreTimestamp: null,
+		showRestoreConfirmDialog: false,
+	};
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 	}
 
-	logs = () => [
-		{
-			title: 'Site backed up',
-			description: 'We backed up your site',
-			user: null,
-			type: 'site_backed_up',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'Site has backed up Failed',
-			description: 'We couldn\'t establish a connection to your site.',
-			user: null,
-			type: 'site_backed_up_failed',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'Suspicious code detected in 2 plugin files.',
-			description: 'Rewound in 17 January 2017 at 3:30 PM - We found potential warmful code in two of your ' +
-			'Plugins: Yoast SEO and Advanced Custom Fields.',
-			user: null,
-			type: 'suspicious_code',
-			timestamp: 1485220539222,
-			className: 'is-disabled',
-		},
-		{
-			title: 'Akismet activated',
-			description: 'Akismet Plugin was successfully activated.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'plugin_activated',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'Akismet deactivated',
-			description: 'Akismet Plugin was successfully deactivated.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'plugin_deactivated',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'Jetpack version 4.6 is available',
-			description: 'A new version of the Jetpack Plugin was been released. Click here to update, or turn on ' +
-			'auto-updates for Plugins and we\'ll manage those for you',
-			user: null,
-			type: 'plugin_needs_update',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'Akismet updated to version 3.2',
-			description: 'Akismet Plugin was successfully updated to its latest version: 3.2.',
-			user: null,
-			type: 'plugin_updated',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'Twenty Eighteen Theme was activated',
-			description: 'TwentyEighteen Plugin was successfully activated.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'theme_switched',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'Twenty Sixteen updated to version 1.0.1',
-			description: 'Twenty Sixteen Plugin was successfully updated to its latest version: 1.0.1.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'theme_updated',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'Site updated to Professional Plan, Thank you',
-			description: 'Professional Plan was successfully purchased for your site and is valid until February 15, 2018.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'plan_updated',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'Professional Plan Renewed for another month',
-			description: 'Professional Plan was renewed for another month and is valid until February 28, 2017',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'plan_renewed',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'Photon was activated',
-			description: 'Photon module was activated in your site. All your images will now be served through the ' +
-			'WordPress.com worldwide network.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'activate_jetpack_feature',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'Custom CSS was deactivated',
-			description: 'Custom CSS module was deactivated.',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'deactivate_jetpack_feature',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'This is some really cool post',
-			description: '',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'site_backed_up',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'This is some really cool post',
-			description: '',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'site_backed_up',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'This is some really cool post',
-			description: '',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			type: 'site_backed_up',
-			timestamp: 1485220539222
-		},
-		{
-			title: 'Jetpack updated to 4.5.1',
-			subTitle: 'Plugin Update',
-			description: '',
-			icon: 'plugins',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			time: '4:32pm',
-			actionText: 'Undo',
-			timestamp: 1483351202400
-		},
-		{
-			title: 'Jetpack updated to 4.5.1',
-			subTitle: 'Plugin Activated',
-			description: '',
-			icon: 'plugins',
-			user: { ID: 123, name: 'Jane A', role: 'Admin' },
-			time: '4:32pm',
-			actionText: 'Undo',
-			timestamp: 1483351202420
-		},
-		{
-			title: 'Post Title',
-			subTitle: 'Post Updated',
-			description: '',
-			icon: 'posts',
-			user: { ID: 333, name: 'Jane A', role: 'Admin' },
-			time: '10:55am',
-			actionText: 'Undo',
-			timestamp: 1483264820300
-		}
-	];
+	handleRequestRestore = ( requestedRestoreTimestamp ) => {
+		this.setState( {
+			requestedRestoreTimestamp,
+			showRestoreConfirmDialog: true,
+		} );
+	};
 
-	update_logs( log ) {
-		const { translate } = this.props;
-		switch ( log.type ) {
-			// Scans
-			case 'security_threat_found':
-				log.subTitle = translate( 'Security Threat Found!' );
-				log.icon = 'notice';
-				log.actionText = translate( 'Fix it' );
-				break;
-			// Backups
-			case 'site_backed_up':
-				log.subTitle = translate( 'Site Backed up' );
-				log.icon = 'checkmark';
-				log.status = 'is-success';
-				log.actionText = 'Restore';
-				break;
-			// Backups
-			case 'site_backed_up_failed':
-				log.subTitle = translate( 'Site Backed up' );
-				log.icon = 'notice';
-				log.actionText = 'Fix';
-				log.status = 'is-error';
-				break;
-			// Plugins
-			case 'plugin_activated':
-				log.subTitle = translate( 'Plugin Activated' );
-				log.icon = 'plugins';
-				log.actionText = 'Deactivate';
-				break;
-			case 'plugin_deactivated':
-				log.subTitle = translate( 'Plugin Deactivated' );
-				log.icon = 'plugins';
-				log.actionText = 'Activate';
-				break;
-			case 'plugin_needs_update':
-				log.subTitle = translate( 'Plugin Update Available' );
-				log.icon = 'plugins';
-				log.status = 'is-warning';
-				log.actionText = 'Update';
-				break;
-			case 'suspicious_code':
-				log.subTitle = translate( 'Security Scan' );
-				log.icon = 'notice';
-				log.status = 'is-error';
-				log.actionText = 'Fix';
-				break;
-			case 'plugin_updated':
-				log.subTitle = translate( 'Plugin Updated' );
-				log.icon = 'plugins';
-				log.actionText = 'Revert';
-				break;
+	handleRestoreDialogClose = () => this.setState( { showRestoreConfirmDialog: false } );
 
-			// Themes
-			case 'theme_switched':
-				log.subTitle = translate( 'Theme Activated' );
-				log.icon = 'themes';
-				log.actionText = 'Revert';
-				break;
-			case 'theme_updated':
-				log.subTitle = translate( 'Theme Updated' );
-				log.icon = 'themes';
-				log.actionText = 'Revert';
-				break;
-			// Plans
-			case 'plan_updated':
-				log.subTitle = translate( 'Plan' );
-				log.icon = 'clipboard';
-				log.actionText = 'Cancel';
-				break;
-			case 'plan_renewed':
-				log.subTitle = translate( 'Plan Renewed' );
-				log.icon = 'clipboard';
-				break;
-			// Jetpack Modules
-			case 'activate_jetpack_feature':
-				log.subTitle = translate( 'Jetpack' );
-				log.icon = 'cog';
-				log.actionText = 'Deactivate';
-				break;
-			case 'deactivate_jetpack_feature':
-				log.subTitle = translate( 'Jetpack' );
-				log.icon = 'cog';
-				log.actionText = 'Activate';
-				break;
-		}
+	handleRestoreDialogConfirm = () => {
+		const {
+			rewindRestore,
+			siteId,
+		} = this.props;
 
-		return log;
-	}
+		const { requestedRestoreTimestamp } = this.state;
+
+		debug( 'Restore requested for site %d to time %d', this.props.siteId, requestedRestoreTimestamp );
+		this.setState( { showRestoreConfirmDialog: false } );
+		rewindRestore( siteId, requestedRestoreTimestamp );
+	};
 
 	renderBanner() {
-		// FIXME: Logic to select/show 1 banner
-		return <div>
-			<ErrorBanner />
-			<ProgressBanner />
-			<SuccessBanner />
-		</div>;
+		const { restoreProgress } = this.props;
+
+		if ( ! restoreProgress ) {
+			return null;
+		}
+
+		const {
+			errorCode,
+			failureReason,
+			percent,
+			status,
+			siteTitle,
+			timestamp,
+		} = restoreProgress;
+
+		if ( status === 'finished' ) {
+			return ( errorCode
+				? (
+					<ErrorBanner
+						errorCode={ errorCode }
+						failureReason={ failureReason }
+						requestRestore={ this.handleRequestRestore }
+						siteTitle={ siteTitle }
+						timestamp={ timestamp }
+					/>
+				) : (
+					<SuccessBanner
+						timestamp={ timestamp }
+					/>
+				)
+			);
+		}
+		return (
+			<ProgressBanner
+				percent={ percent }
+				status={ status }
+				timestamp={ timestamp }
+			/>
+		);
+	}
+
+	renderErrorMessage() {
+		const {
+			isPressable,
+			rewindStatusError,
+			translate,
+		} = this.props;
+
+		// Do not match null
+		// FIXME: This is for internal testing
+		if ( false === isPressable ) {
+			return (
+				<ActivityLogBanner status="info" icon={ null } >
+					{ translate( 'Rewind is currently only available for Pressable sites' ) }
+				</ActivityLogBanner>
+			);
+		}
+
+		if ( rewindStatusError ) {
+			return (
+				<ActivityLogBanner status="error" icon={ null } >
+					{ translate( 'Rewind error: %s', { args: rewindStatusError.message } ) }
+					<br />
+					{ translate( 'Do you have an appropriate plan?' ) }
+				</ActivityLogBanner>
+			);
+		}
+	}
+
+	renderContent() {
+		const {
+			isPressable,
+			isRewindActive,
+			logs,
+			moment,
+			siteId,
+			slug,
+			startDate,
+		} = this.props;
+
+		const startOfMonth = moment( startDate ).startOf( 'month' ),
+			startOfMonthMs = startOfMonth.valueOf(),
+			endOfMonthMs = moment( startDate ).endOf( 'month' ).valueOf();
+		const filteredLogs = filter( logs, obj => startOfMonthMs <= obj.ts_site && obj.ts_site <= endOfMonthMs );
+		const logsGroupedByDate = map(
+			groupBy(
+				filteredLogs,
+				log => moment( log.ts_site ).startOf( 'day' ).format( 'x' )
+			),
+			( daily_logs, timestamp ) => (
+				<ActivityLogDay
+					allowRestore={ !! isPressable }
+					isRewindActive={ isRewindActive }
+					key={ timestamp }
+					logs={ daily_logs }
+					requestRestore={ this.handleRequestRestore }
+					siteId={ siteId }
+					timestamp={ +timestamp }
+				/>
+			)
+		);
+		const query = {
+			period: 'month',
+			date: startOfMonth.format( 'YYYY-MM-DD' )
+		};
+
+		return (
+			<div>
+				<StatsPeriodNavigation
+					period="month"
+					date={ startOfMonth }
+					url={ `/stats/activity/${ slug }` }
+					recordGoogleEvent={ this.changePeriod }
+				>
+					<DatePicker
+						isActivity={ true }
+						period="month"
+						date={ startOfMonth }
+						query={ query }
+					/>
+				</StatsPeriodNavigation>
+				{ this.renderBanner() }
+				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
+				<section className="activity-log__wrapper">
+					{ logsGroupedByDate }
+				</section>
+			</div>
+		);
 	}
 
 	render() {
 		const {
 			isJetpack,
-			moment,
 			siteId,
+			siteTitle,
 			slug,
 		} = this.props;
-		const logs = this.logs();
-		const logsGroupedByDate = map(
-			groupBy(
-				logs.map( this.update_logs, this ),
-				( log ) => moment( log.timestamp ).startOf( 'day' ).toISOString()
-			),
-			( daily_logs, isoString ) => (
-				<ActivityLogDay
-					key={ isoString }
-					dateIsoString={ isoString }
-					logs={ daily_logs }
-					siteId={ siteId }
-					isRewindEnabled={ true }
-				/>
-			)
-		);
+		const {
+			requestedRestoreTimestamp,
+			showRestoreConfirmDialog,
+		} = this.state;
 
 		return (
-			<Main wideLayout={ true }>
+			<Main wideLayout>
+				<QueryRewindStatus siteId={ siteId } />
+				<QueryActivityLog siteId={ siteId } />
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
@@ -305,10 +266,15 @@ class ActivityLog extends Component {
 					slug={ slug }
 					section="activity"
 				/>
-				{ this.renderBanner() }
-				<section className="activity-log__wrapper">
-					{ logsGroupedByDate }
-				</section>
+				{ this.renderErrorMessage() }
+				{ this.renderContent() }
+				<ActivityLogConfirmDialog
+					isVisible={ showRestoreConfirmDialog }
+					siteTitle={ siteTitle }
+					timestamp={ requestedRestoreTimestamp }
+					onClose={ this.handleRestoreDialogClose }
+					onConfirm={ this.handleRestoreDialogConfirm }
+				/>
 			</Main>
 		);
 	}
@@ -317,10 +283,21 @@ class ActivityLog extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
 		return {
-			isJetpack,
-			slug: getSiteSlug( state, siteId )
+			isJetpack: isJetpackSite( state, siteId ),
+			logs: getActivityLogs( state, siteId ),
+			siteId,
+			siteTitle: getSiteTitle( state, siteId ),
+			slug: getSiteSlug( state, siteId ),
+			rewindStatusError: getRewindStatusError( state, siteId ),
+			restoreProgress: getRestoreProgress( state, siteId ),
+			isRewindActive: isRewindActiveSelector( state, siteId ),
+
+			// FIXME: Testing only
+			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
 		};
+	}, {
+		recordGoogleEvent,
+		rewindRestore: rewindRestoreAction,
 	}
 )( localize( ActivityLog ) );

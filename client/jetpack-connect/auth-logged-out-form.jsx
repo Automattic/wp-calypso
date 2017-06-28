@@ -14,7 +14,7 @@ import { login } from 'lib/paths';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import addQueryArgs from 'lib/route/add-query-args';
-import LocaleSuggestions from 'signup/locale-suggestions';
+import LocaleSuggestions from 'components/locale-suggestions';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import versionCompare from 'lib/version-compare';
@@ -41,19 +41,24 @@ class LoggedOutForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
 	}
 
+	getRedirectAfterLoginUrl() {
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+		return addQueryArgs( queryObject, window.location.href );
+	}
+
 	handleSubmitSignup = ( form, userData ) => {
 		debug( 'submiting new account', form, userData );
 		this.props.createAccount( userData );
 	}
 
 	renderLoginUser() {
-		const { queryObject, userData, bearerToken } = this.props.jetpackConnectAuthorize;
-		const redirectTo = addQueryArgs( queryObject, window.location.href );
+		const { userData, bearerToken } = this.props.jetpackConnectAuthorize;
+
 		return (
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
-				redirectTo={ redirectTo } />
+				redirectTo={ this.getRedirectAfterLoginUrl() } />
 		);
 	}
 
@@ -83,8 +88,7 @@ class LoggedOutForm extends Component {
 	}
 
 	renderFooterLink() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
-		const redirectTo = addQueryArgs( queryObject, window.location.href );
+		const redirectTo = this.getRedirectAfterLoginUrl();
 
 		return (
 			<LoggedOutFormLinks>
@@ -107,7 +111,7 @@ class LoggedOutForm extends Component {
 				{ this.renderLocaleSuggestions() }
 				{ this.renderFormHeader() }
 				<SignupForm
-					getRedirectToAfterLoginUrl={ window.location.href }
+					getRedirectToAfterLoginUrl={ this.getRedirectAfterLoginUrl() }
 					disabled={ isAuthorizing }
 					submitting={ isAuthorizing }
 					submitForm={ this.handleSubmitSignup }

@@ -13,7 +13,7 @@ import LayoutLoggedOut from 'layout/logged-out';
 /**
  * Re-export
  */
-export { setSection } from './shared.js';
+export { setSection, setUpLocale } from './shared.js';
 
 const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) => (
 	<ReduxProvider store={ store }>

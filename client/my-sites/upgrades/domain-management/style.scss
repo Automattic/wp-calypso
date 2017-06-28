@@ -411,6 +411,61 @@ input[type=radio].domain-management-list-item__radio {
 	}
 }
 
+.domain-connect__main {
+	h2 {
+		font-size: 20px;
+		font-weight: 600;
+		margin-bottom: 1em;
+	}
+
+	a {
+		cursor: pointer;
+	}
+
+	.domain-connect__button {
+		margin-right: 16px;
+		margin-top: 16px;
+	}
+
+	.domain-connect__footer {
+		border-top: 1px solid $gray-light;
+		padding-top: 10px;
+	}
+
+	.domain-connect__is-placeholder {
+		span {
+			@include placeholder( 23% );
+
+			display: block;
+			margin: 0.8em 0 0.8em 0;
+			height: 1em;
+
+			&:last-child {
+				width: 30%;
+			}
+
+			&:first-child {
+				width: 100%;
+			}
+		}
+	}
+
+	.domain-connect__dns-records {
+		background-color: $gray-light;
+		color: $gray-text-min;
+
+		* {
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		& > * + * {
+			margin-top: 1.5em;
+		}
+	}
+}
+
 .email-forwarding__form {
 	margin-top: 0;
 
@@ -739,7 +794,9 @@ ul.email-forwarding__list {
 	}
 }
 
-.dns__list > ul {
+.dns__list > ul,
+ul.domain-connect__dns-list
+{
 	list-style: none;
 	margin: 15px 0 0 0;
 	padding: 0;
@@ -780,10 +837,12 @@ ul.email-forwarding__list {
 		}
 	}
 
+	.domain-connect__dns-list-type,
 	.dns__list-type {
 		min-width: 60px;
 	}
 
+	.domain-connect__dns-list-info,
 	.dns__list-info {
 		width: 100%;
 		word-break: break-all;

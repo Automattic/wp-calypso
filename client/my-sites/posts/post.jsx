@@ -28,8 +28,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 import Comments from 'blocks/comments';
-import PostShare from 'my-sites/post-share';
-
+import AsyncLoad from 'components/async-load';
 import PostActions from 'blocks/post-actions';
 
 function recordEvent( eventAction ) {
@@ -340,8 +339,13 @@ const Post = React.createClass( {
 						onFilterChange={ commentsFilter => this.setState( { commentsFilter } ) }
 						onCommentsUpdate={ () => {} } />
 				}
-				{ this.state.showShare && config.isEnabled( 'republicize' ) &&
-					<PostShare post={ this.props.post } siteId={ this.props.post.site_ID } />
+				{
+					this.state.showShare &&
+					config.isEnabled( 'republicize' ) &&
+					<AsyncLoad
+						require="blocks/post-share"
+						post={ this.props.post }
+						siteId={ this.props.post.site_ID } />
 				}
 			</Card>
 		);

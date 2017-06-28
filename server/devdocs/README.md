@@ -2,7 +2,7 @@
 
 Devdocs is a built-in search engine that allows developers and users to browse and search Calypso’s developer documentation.
 
-This directory contains the server portion of the implementation, which uses [lunr.js](http://lunrjs.com/) to index and query the documents. We do some pre-processing of the indexed docs to remove Markdown punctuation so that snippets are easier to read. Full rendered HTML of the documents is available via the /devdocs/content endpoint.
+This directory contains the server portion of the implementation, which uses [lunr.js](http://lunrjs.com/) to index and query the documents. We do some pre-processing of the indexed docs to remove Markdown punctuation so that snippets are easier to read. Full rendered HTML of the documents is available via the `/devdocs/content` endpoint.
 
 Endpoints:
 

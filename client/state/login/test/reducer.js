@@ -19,6 +19,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+	ROUTE_SET,
 } from 'state/action-types';
 import reducer, {
 	isRequesting,
@@ -35,9 +36,12 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'isRequesting',
 			'magicLogin',
+			'redirectTo',
+			'rememberMe',
 			'requestError',
 			'requestNotice',
 			'requestSuccess',
+			'socialAccount',
 			'twoFactorAuth',
 			'isRequestingTwoFactorAuth',
 			'twoFactorAuthRequestError',
@@ -173,6 +177,14 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( 'another error' );
 		} );
 
+		it( 'should reset the error to null when switching routes', () => {
+			const state = requestError( 'some error', {
+				type: ROUTE_SET
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
 		it( 'should not persist state', () => {
 			const state = requestError( 'some error', {
 				type: SERIALIZE
@@ -220,6 +232,14 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( 'another error' );
+		} );
+
+		it( 'should reset the error to null when switching routes', () => {
+			const state = twoFactorAuthRequestError( 'some error', {
+				type: ROUTE_SET
+			} );
+
+			expect( state ).to.be.null;
 		} );
 
 		it( 'should not persist state', () => {
@@ -372,7 +392,7 @@ describe( 'reducer', () => {
 				rememberMe: true
 			} );
 
-			expect( state ).to.eql( { ...data, remember_me: true } );
+			expect( state ).to.eql( { ...data } );
 		} );
 
 		it( 'should set twoFactorAuth to null value if a request is unsuccessful', () => {

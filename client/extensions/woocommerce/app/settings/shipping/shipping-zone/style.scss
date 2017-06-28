@@ -1,0 +1,265 @@
+.shipping-zone__name-container {
+	margin-top: 58px;
+	padding: 11px 24px 11px 9px;
+}
+
+.shipping-zone__name {	
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+		
+	&.is-placeholder {
+		.gridicon, button, span {
+			@include placeholder();
+			color: transparent;
+			cursor: default;
+		}
+
+		span {
+			height: 24px;
+		}
+
+		pointer-events: none;
+	}
+
+	span {
+		flex-grow: 1;
+		font-size: 16px;
+		line-height: 1.5;
+		padding: 8px 15px;
+	}
+	
+	button {
+		margin-left: 8px;
+	}
+}
+
+.shipping-zone__loading-spinner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+}
+
+.shipping-zone__methods-container .list-item {
+	border-top: 1px solid $border-ultra-light-gray;
+}
+
+.shipping-zone__methods-container .list-header + .list-item {
+	border-top: 0;
+}
+
+.shipping-zone__methods-container .list-item-field {
+	flex-direction: row;
+	align-items: baseline;
+}
+
+.shipping-zone__methods-container {
+	.list-header,
+	.list-item {
+		justify-content: flex-start;
+	}
+
+	.list-header {
+		background: lighten( $gray, 35% );
+		font-weight: 600;
+		font-size: 14px;
+
+		.list-item-field {
+			padding-top: 12px;
+			padding-bottom: 12px;
+		}
+
+		.shipping-zone__methods-column-title {
+			width: 50%;
+
+			@include breakpoint( ">660px" ) {
+				width: 30%;
+			}
+		}
+
+		.shipping-zone__methods-column-summary {
+			display: none;
+
+			@include breakpoint( ">660px" ) {
+				width: 30%;
+				display: block;
+			}
+		}
+	}
+
+	.list-item.is-placeholder {
+		@include placeholder();
+		pointer-events: none;
+		background: $white;
+
+		.gridicon, p, a, span, button {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: lighten( $gray, 25% );
+			color: transparent;
+			cursor: default;
+		}
+
+		p, span {
+			width: 100px;
+			height: 14px;
+			margin-right: 10px;
+		}
+
+		.gridicon {
+			fill: transparent;
+			stroke: transparent;
+		}
+
+		&:after {
+			display: none;
+		}
+	}
+
+	.list-item-field {
+		justify-content: left;
+		align-items: center;
+	}
+
+	.shipping-zone__method-title {
+		font-size: 14px;
+		width: 50%;
+
+		@include breakpoint( ">660px" ) {
+			width: 30%;
+		}
+	}
+
+	.shipping-zone__method-summary {
+		font-size: 14px;
+		width: 30%;
+
+		@include breakpoint( "<660px" ) {
+			width: 100%;
+			order: 4;
+			padding-top: 0px;
+		}
+	}
+
+	.shipping-zone__enable-container {
+		width: 30%;
+		color: $gray;
+		font-size: 11px;
+		font-weight: 400;
+		line-height: 16px;
+		vertical-align: top;
+		text-transform: uppercase;
+		cursor: pointer;
+
+		@include breakpoint( ">660px" ) {
+			width: 25%;
+		}
+
+		.form-toggle__switch {
+			margin-left: 4px;
+			margin-top: -3px;
+		}
+
+		.form-toggle__label-content {
+			margin-left: 0;
+		}
+	}
+
+	.shipping-zone__method-actions {
+		width: 20%;
+		justify-content: flex-end;
+
+		.button {
+			flex-shrink: 0;
+		}
+
+		@include breakpoint( ">660px" ) {
+			width: 15%;
+		}
+	}
+}
+
+&.shipping-zone__method-dialog {
+	max-width: 600px;
+	max-height: 80%;
+	display: flex;
+	flex-direction: column;
+
+	.dialog__content {
+		height: 100%;
+		overflow-y: scroll;
+	}
+
+	.dialog__action-buttons {
+		overflow: visible;
+	}
+}
+
+.shipping-zone__method-dialog {
+	margin-bottom: 24px;
+	padding-top: 8px;
+	font-size: 18px;
+}
+
+.shipping-zone__method-delete {
+	float: left;
+}
+
+.shipping-zone__method-type-select {
+	width: 100%;
+}
+
+.shipping-zone__method-container {
+	position: relative;
+	padding: 20px;
+	border-bottom: 1px solid lighten( $gray, 20% );
+	margin-bottom: 24px;
+
+	.form-text-input-with-affixes {
+		width: 200px;
+	}
+}
+
+.shipping-methods__free-shipping-option {
+	display: flex;
+	align-items: center;
+
+	.form-text-input-with-affixes {
+		width: 100px;
+		margin: 0 8px;
+	}
+
+	.form-text-input-with-affixes__prefix,
+	.form-currency-input {
+		padding: 4px 8px;
+	}
+
+	input:disabled {
+		border-color: lighten( $gray, 20% );
+	}
+}
+
+.shipping-methods__checkbox {
+	margin-right: 7px;
+	margin-top: 4px;
+}
+
+.shipping-zone__method-dialog-header {
+	padding: 0 0 24px 0;
+	font-size: 18px;
+}
+
+.shipping-zone__enable {
+	position: absolute;
+	top: 30px;
+	right: 16px;
+
+	.form-label {
+		color: $gray;
+		font-size: 11px;
+		line-height: 16px;
+		vertical-align: top;
+		text-transform: uppercase;
+		font-weight: normal;
+	}
+}

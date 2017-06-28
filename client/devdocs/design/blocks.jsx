@@ -51,11 +51,13 @@ import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
 import RelatedPostCardv2 from 'blocks/reader-related-card-v2/docs/example';
 import PlanPrice from 'my-sites/plan-price/docs/example';
+import PostShare from 'blocks/post-share/docs/example';
 import PlanThankYouCard from 'blocks/plan-thank-you-card/docs/example';
 import DismissibleCard from 'blocks/dismissible-card/docs/example';
 import PostEditButton from 'blocks/post-edit-button/docs/example';
 import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
+import VideoEditor from 'blocks/video-editor/docs/example';
 import ReaderPostCard from 'blocks/reader-post-card/docs/example';
 import ReaderCombinedCard from 'blocks/reader-combined-card/docs/example';
 import ReaderRecommendedSites from 'blocks/reader-recommended-sites/docs/example';
@@ -117,6 +119,7 @@ export default React.createClass( {
 					<FollowButton />
 					<HappinessSupport />
 					<ImageEditor />
+					<VideoEditor />
 					<LikeButtons />
 					<Login />
 					<PostEditButton />
@@ -147,6 +150,7 @@ export default React.createClass( {
 					<ReaderCombinedCard />
 					<ReaderRecommendedSites />
 					<PlanPrice />
+					<PostShare />
 					<PlanThankYouCard />
 					<DismissibleCard />
 					<ReaderAvatar />

@@ -41,6 +41,7 @@ export const sanitizeSettings = settings => {
 			case 'cache_mobile_prefixes':
 			case 'cache_mod_rewrite':
 			case 'cache_next_gc':
+			case 'default_cache_path':
 			case 'is_preloading':
 			case 'minimum_preload_interval':
 			case 'post_count':

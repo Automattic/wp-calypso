@@ -1,31 +1,34 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/noop' ),
-	classNames = require( 'classnames' );
+import React, { PropTypes, Component } from 'react';
+import { noop, map } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var Tooltip = require( 'components/tooltip' );
+import Tooltip from 'components/tooltip';
+import { CalendarEvent } from './event';
 
-module.exports = React.createClass( {
-	displayName: 'DatePickerDay',
+class DatePickerDay extends Component {
+	static propTypes = {
+		date: PropTypes.object.isRequired,
+		events: PropTypes.array,
+		moment: PropTypes.func.isRequired,
+		maxEventsPerTooltip: PropTypes.number,
+	};
 
-	propTypes: {
-		date: React.PropTypes.object.isRequired,
-		events: React.PropTypes.array
-	},
+	static defaultProps = {
+		maxEventsPerTooltip: 8,
+	};
 
-	getInitialState: function() {
-		return {
-			showTooltip: false
-		};
-	},
+	state = {
+		showTooltip: false,
+	};
 
-	isPastDay: function( date ) {
-		var today = this.moment().set( {
+	isPastDay( date ) {
+		const today = this.props.moment().set( {
 			hour: 0,
 			minute: 0,
 			second: 0,
@@ -33,89 +36,87 @@ module.exports = React.createClass( {
 		} );
 
 		date = date || this.props.date;
-
 		return ( +today - 1 ) >= +date;
-	},
+	}
 
-	handleTooltip: function( show ) {
-		var showTooltip = ! ! this.props.events.length && show;
-		this.setState( { showTooltip: showTooltip } );
-	},
-
-	renderTooltip: function() {
-		var label;
-
-		if ( ! this.state.showTooltip ) {
+	showTooltip = () => {
+		if ( ! this.props.events.length ) {
 			return;
 		}
 
-		label = this.translate(
-				'%(posts)d post',
-				'%(posts)d posts', {
-					count: this.props.events.length,
-					args: {
-						posts: this.props.events.length
-					}
-				}
-			);
+		this.setState( { showTooltip: true } );
+	}
+
+	hideTooltip = () => {
+		this.setState( { showTooltip: false } );
+	}
+
+	renderTooltip() {
+		const isVisible = !! this.props.events.length && this.state.showTooltip;
+
+		const label = this.props.translate(
+			'%d post',
+			'%d posts', {
+				count: this.props.events.length,
+				args: this.props.events.length,
+			}
+		);
+
+		const moreEvents = this.props.events.length - this.props.maxEventsPerTooltip;
 
 		return (
 			<Tooltip
+				className="date-picker__events-tooltip"
 				context={ this.refs.dayTarget }
-				isVisible={ this.state.showTooltip }
+				isVisible={ isVisible }
 				onClose={ noop }
 			>
 				<span>{ label }</span>
-				<hr className="tooltip__hr" />
+				<hr className="date-picker__division" />
 				<ul>
-					{
-						this.props.events.map( function( event ) {
-							return <li key={ event.id }>{ event.title }</li>;
-						} )
+					{ map( this.props.events, ( event, i ) => ( i < this.props.maxEventsPerTooltip ) &&
+						<li key={ event.id }>
+							<CalendarEvent
+								icon={ event.icon }
+								socialIcon={ event.socialIcon }
+								socialIconColor={ event.socialIconColor }
+								title={ event.title } />
+						</li>
+					) }
+
+					{ ( moreEvents > 0 ) &&
+						<li>
+							{ this.props.translate(
+								'… and %(moreEvents)d more post',
+								'… and %(moreEvents)d more posts', {
+									count: moreEvents,
+									args: {
+										moreEvents
+									}
+								}
+							) }
+						</li>
 					}
 				</ul>
 			</Tooltip>
 		);
-	},
+	}
 
-	render: function() {
-		var classes = { 'date-picker__day': true },
-			i = 0,
-			dayEvent;
-
-		classes[ 'is-selected' ] = this.props.selected === true;
-		classes[ 'past-day' ] = this.isPastDay() === true;
-
-		if ( this.props.events.length ) {
-			classes[ 'date-picker__day_event' ] = true;
-
-			for ( i; i < this.props.events.length; i++ ) {
-				dayEvent = this.props.events[ i ];
-
-				if ( dayEvent.type &&
-					( ! classes[ 'date-picker__day_event_' + dayEvent.type ] ) ) {
-					classes[ 'date-picker__day_event_' + dayEvent.type ] = true;
-				}
-			}
-		}
-
+	render() {
 		return (
 			<div
 				ref="dayTarget"
-				className={ classNames( classes ) }
-				onMouseEnter={ this.handleTooltip.bind( this, true ) }
-				onMouseLeave={ this.handleTooltip.bind( this, false ) }
+				className="date-picker__day"
+				onMouseEnter={ this.showTooltip }
+				onMouseLeave={ this.hideTooltip }
 			>
-				<span
-					key={ 'selected-' + ( this.props.date.getTime() / 1000 | 0 ) }
-					className="date-picker__day-selected">
-				</span>
-				<span className="date-picker__day-text">
-					{ this.props.date.getDate() }
-				</span>
+				{ this.props.date.getDate() }
 
 				{ this.renderTooltip() }
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( DatePickerDay );
+

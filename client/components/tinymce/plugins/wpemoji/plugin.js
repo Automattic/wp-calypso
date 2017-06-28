@@ -3,6 +3,7 @@
  */
 import tinymce from 'tinymce/tinymce';
 import twemoji from 'twemoji';
+import config from 'config';
 
 /**
  * TinyMCE plugin tweaking Markdown behaviour.
@@ -32,13 +33,26 @@ function wpemoji( editor ) {
 	}
 
 	function replaceEmoji( node ) {
-		const imgAttr = {
-			'data-mce-resize': 'false',
-			'data-mce-placeholder': '1',
-			'data-wp-emoji': '1'
-		};
+		twemoji.parse( node, {
+			base: config( 'twemoji_cdn_url' ),
+			size: '72x72',
+			attributes: () => {
+				return {
+					'data-mce-resize': 'false',
+					'data-mce-placeholder': '1',
+					'data-wp-emoji': '1'
+				};
+			},
+			callback: ( icon, options ) => {
+				const ignored = [ 'a9', 'ae', '2122', '2194', '2660', '2663', '2665', '2666' ];
 
-		twemoji.parse( node, { imgAttr: imgAttr } );
+				if ( -1 !== ignored.indexOf( icon ) ) {
+					return false;
+				}
+
+				return ''.concat( options.base, options.size, '/', icon, options.ext );
+			},
+		} );
 	}
 
 	// Test if the node text contains emoji char(s) and replace.

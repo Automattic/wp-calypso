@@ -20,9 +20,15 @@ import NoticeAction from 'components/notice/notice-action';
 import MediaListData from 'components/data/media-list-data';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaActions from 'lib/media/actions';
-import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
+import {
+	ValidationErrors as MediaValidationErrors,
+	MEDIA_IMAGE_PHOTON,
+	MEDIA_IMAGE_RESIZER,
+	MEDIA_IMAGE_THUMBNAIL,
+} from 'lib/media/constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
+import MediaLibraryScaleHeader from './empty-header';
 import MediaLibraryList from './list';
 
 const MediaLibraryContent = React.createClass( {
@@ -32,6 +38,7 @@ const MediaLibraryContent = React.createClass( {
 		filter: React.PropTypes.string,
 		filterRequiresUpgrade: React.PropTypes.bool,
 		search: React.PropTypes.string,
+		source: React.PropTypes.string,
 		containerWidth: React.PropTypes.number,
 		single: React.PropTypes.bool,
 		scrollable: React.PropTypes.bool,
@@ -43,7 +50,8 @@ const MediaLibraryContent = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			mediaValidationErrors: Object.freeze( {} ),
-			onAddMedia: noop
+			onAddMedia: noop,
+			source: '',
 		};
 	},
 
@@ -160,13 +168,29 @@ const MediaLibraryContent = React.createClass( {
 		analytics.tracks.recordEvent( tracksEvent, tracksData );
 	},
 
+	getThumbnailType() {
+		if ( this.props.source !== '' ) {
+			return MEDIA_IMAGE_THUMBNAIL;
+		}
+
+		if ( this.props.site.is_private ) {
+			return MEDIA_IMAGE_RESIZER;
+		}
+
+		return MEDIA_IMAGE_PHOTON;
+	},
+
 	renderMediaList: function() {
 		if ( ! this.props.site ) {
 			return <MediaLibraryList key="list-loading" />;
 		}
 
 		return (
-			<MediaListData siteId={ this.props.site.ID } filter={ this.props.filter } search={ this.props.search }>
+			<MediaListData
+				siteId={ this.props.site.ID }
+				filter={ this.props.filter }
+				search={ this.props.search }
+				source={ this.props.source }>
 				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 					<MediaLibraryList
 						key={ 'list-' + ( [ this.props.site.ID, this.props.search, this.props.filter ].join() ) }
@@ -175,7 +199,7 @@ const MediaLibraryContent = React.createClass( {
 						filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
 						search={ this.props.search }
 						containerWidth={ this.props.containerWidth }
-						photon={ ! this.props.site.is_private }
+						thumbnailType={ this.getThumbnailType() }
 						single={ this.props.single }
 						scrollable={ this.props.scrollable }
 						onEditItem={ this.props.onEditItem } />
@@ -184,22 +208,36 @@ const MediaLibraryContent = React.createClass( {
 		);
 	},
 
+	renderHeader() {
+		if ( this.props.source !== '' ) {
+			return (
+				<MediaLibraryScaleHeader onMediaScaleChange={ this.props.onMediaScaleChange } />
+			);
+		}
+
+		if ( ! this.props.filterRequiresUpgrade ) {
+			return (
+				<MediaLibraryHeader
+					site={ this.props.site }
+					filter={ this.props.filter }
+					onMediaScaleChange={ this.props.onMediaScaleChange }
+					onAddMedia={ this.props.onAddMedia }
+					onAddAndEditImage={ this.props.onAddAndEditImage }
+					selectedItems={ this.props.selectedItems }
+					onViewDetails={ this.props.onViewDetails }
+					onDeleteItem={ this.props.onDeleteItem }
+					sticky={ ! this.props.scrollable }
+				/>
+			);
+		}
+
+		return null;
+	},
+
 	render: function() {
 		return (
 			<div className="media-library__content">
-				{ ! this.props.filterRequiresUpgrade &&
-					<MediaLibraryHeader
-						site={ this.props.site }
-						filter={ this.props.filter }
-						onMediaScaleChange={ this.props.onMediaScaleChange }
-						onAddMedia={ this.props.onAddMedia }
-						onAddAndEditImage={ this.props.onAddAndEditImage }
-						selectedItems={ this.props.selectedItems }
-						onViewDetails={ this.props.onViewDetails }
-						onDeleteItem={ this.props.onDeleteItem }
-						sticky={ ! this.props.scrollable }
-					/>
-				}
+				{ this.renderHeader() }
 				{ this.renderErrors() }
 				{ this.renderMediaList() }
 			</div>

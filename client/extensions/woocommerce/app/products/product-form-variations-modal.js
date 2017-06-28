@@ -4,23 +4,24 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, debounce } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextArea from 'components/forms/form-textarea';
 import FormToggle from 'components/forms/form-toggle';
 import VerticalMenu from 'components/vertical-menu';
 
 class ProductFormVariationsModal extends React.Component {
 
 	static propTypes = {
+		siteId: PropTypes.number,
 		product: PropTypes.object.isRequired,
 		variations: PropTypes.array.isRequired,
 		editProductVariation: PropTypes.func.isRequired,
@@ -29,13 +30,32 @@ class ProductFormVariationsModal extends React.Component {
 	constructor( props ) {
 		super( props );
 
+		const { selectedVariation } = props;
+
 		this.state = {
-			selectedVariation: this.props.selectedVariation,
+			selectedVariation,
+			editor: () => this.editorComponent( selectedVariation ),
 		};
 
 		this.switchVariation = this.switchVariation.bind( this );
-		this.setDescription = this.setDescription.bind( this );
 		this.toggleVisible = this.toggleVisible.bind( this );
+	}
+
+	/*
+	 * Initialize an editor when loading a different variation so we can
+	 * make sure the correct event handler runs, and that we don't share the
+	 * same TinyMCE instance for different descriptions.
+	 */
+	editorComponent = ( variationId ) => {
+		const { siteId, product, variations, editProductVariation } = this.props;
+		const variation = find( variations, ( v ) => variationId === v.id );
+		const setDescription = debounce( ( description ) => {
+			editProductVariation( siteId, product, variation, { description } );
+		}, 200 );
+		return <CompactTinyMCE
+				value={ variation.description || '' }
+				onContentsChange={ setDescription }
+			/>;
 	}
 
 	selectedVariation() {
@@ -44,27 +64,23 @@ class ProductFormVariationsModal extends React.Component {
 		return find( variations, ( v ) => selectedVariation === v.id );
 	}
 
-	setDescription( e ) {
-		const { product, editProductVariation } = this.props;
-		const variation = this.selectedVariation();
-		editProductVariation( product, variation, { description: e.target.value } );
-	}
-
 	setSku = ( sku ) => {
-		const { product, editProductVariation } = this.props;
+		const { siteId, product, editProductVariation } = this.props;
 		const variation = this.selectedVariation();
-		editProductVariation( product, variation, { sku } );
+		editProductVariation( siteId, product, variation, { sku } );
 	}
 
 	toggleVisible() {
-		const { product, editProductVariation } = this.props;
+		const { siteId, product, editProductVariation } = this.props;
 		const variation = this.selectedVariation();
-		editProductVariation( product, variation, { visible: ! variation.visible } );
+		const status = 'publish' === variation.status ? 'private' : 'publish';
+		editProductVariation( siteId, product, variation, { status } );
 	}
 
 	switchVariation( selectedVariation ) {
 		this.setState( {
-			selectedVariation
+			selectedVariation,
+			editor: () => this.editorComponent( selectedVariation ),
 		} );
 	}
 
@@ -78,6 +94,8 @@ class ProductFormVariationsModal extends React.Component {
 				<ModalNavItem key={ i } variation={ v } selected={ selectedVariation } />
 			);
 		} );
+
+		const Editor = this.state.editor;
 
 		return (
 			<div className="products__product-form-modal-wrapper">
@@ -103,13 +121,9 @@ class ProductFormVariationsModal extends React.Component {
 
 					<FormFieldSet className="products__product-form-variation-description">
 						<FormLabel htmlFor="description">{ translate( 'Description' ) }</FormLabel>
-						<FormTextArea
-							id="description"
-							value={ variation.description || '' }
-							onChange={ this.setDescription }
-						/>
+						<Editor />
 						<FormSettingExplanation>{ translate(
-								'This will be displayed in addition to the main product description when this variation is selected.'
+								'This additional information will be displayed when a customer choses this variation.'
 						) }</FormSettingExplanation>
 					</FormFieldSet>
 
@@ -117,11 +131,11 @@ class ProductFormVariationsModal extends React.Component {
 						{ translate( 'Visible' ) }
 						<FormToggle
 							onChange={ this.toggleVisible }
-							checked={ variation.visible }
+							checked={ 'publish' === variation.status }
 						/>
 					</FormLabel>
 					<FormSettingExplanation>{ translate(
-						'Hidden variations cannot be selected for purchase by customers.'
+						'Hide variations you don’t want to offer to customers.'
 					) }</FormSettingExplanation>
 				</div>
 			</div>

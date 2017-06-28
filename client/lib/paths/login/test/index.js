@@ -13,7 +13,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'index', () => {
 	describe( '#login()', () => {
 		useSandbox( sandbox => {
-			sandbox.stub( config, 'isEnabled' ).withArgs( 'wp-login' ).returns( true );
+			sandbox.stub( config, 'isEnabled' ).withArgs( 'login/wp-login' ).returns( true );
 		} );
 
 		it( 'should return the legacy login url', () => {

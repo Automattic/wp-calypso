@@ -111,8 +111,8 @@ const oauthTokenMiddleware = () => {
 	}
 };
 
-const clearNoticesMiddleware = () => {
-	page( '*', function( context, next ) {
+const setRouteMiddleware = () => {
+	page( '*', ( context, next ) => {
 		context.store.dispatch( setRouteAction(
 			context.pathname,
 			context.query
@@ -120,7 +120,9 @@ const clearNoticesMiddleware = () => {
 
 		next();
 	} );
+};
 
+const clearNoticesMiddleware = () => {
 	//TODO: remove this one when notices are reduxified - it is for old notices
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 };
@@ -143,7 +145,7 @@ export const locales = currentUser => {
 
 	// When the user is not bootstrapped, we also bootstrap the
 	// locale strings
-	if ( ! config( 'wpcom_user_bootstrap' ) ) {
+	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		switchUserLocale( currentUser );
 	}
 
@@ -196,6 +198,7 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 	oauthTokenMiddleware();
 	loadSectionsMiddleware();
 	loggedOutMiddleware( currentUser );
+	setRouteMiddleware();
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 };

@@ -11,12 +11,21 @@ import { translate } from 'i18n-calypso';
  */
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import installActionHandlers from './state/data-layer';
+import Order from './app/order';
+import Orders from './app/orders';
+import Products from './app/products';
 import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
 import Shipping from './app/settings/shipping';
+import ShippingZone from './app/settings/shipping/shipping-zone';
 import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
+
+function initExtension() {
+	installActionHandlers();
+}
 
 const getStorePages = () => {
 	return [
@@ -32,7 +41,7 @@ const getStorePages = () => {
 			},
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
+			container: Products,
 			configKey: 'woocommerce/extension-products',
 			path: '/store/products/:site',
 			sidebarItem: {
@@ -45,7 +54,7 @@ const getStorePages = () => {
 		{
 			container: ProductCreate,
 			configKey: 'woocommerce/extension-products',
-			path: '/store/products/:site/add',
+			path: '/store/product/:site',
 			sidebarItemButton: {
 				label: translate( 'Add' ),
 				parentSlug: 'products',
@@ -55,10 +64,10 @@ const getStorePages = () => {
 		{
 			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
 			configKey: 'woocommerce/extension-products-import',
-			path: '/store/products/:site/import',
+			path: '/store/products/import/:site',
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
+			container: Orders,
 			configKey: 'woocommerce/extension-orders',
 			path: '/store/orders/:site',
 			sidebarItem: {
@@ -69,35 +78,18 @@ const getStorePages = () => {
 			},
 		},
 		{
+			container: Order,
+			configKey: 'woocommerce/extension-orders',
+			path: '/store/order/:site/:order',
+		},
+		{
 			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
 			configKey: 'woocommerce/extension-orders',
-			path: '/store/orders/:site/add',
+			path: '/store/order/:site',
 			sidebarItemButton: {
 				label: translate( 'Add' ),
 				parentSlug: 'orders',
 				slug: 'order-add',
-			},
-		},
-		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
-			configKey: 'woocommerce/extension-promotions',
-			path: '/store/promotions/:site',
-			sidebarItem: {
-				icon: 'money',
-				isPrimary: true,
-				label: translate( 'Promotions' ),
-				slug: 'promotions',
-			},
-		},
-		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
-			configKey: 'woocommerce/extension-extensions',
-			path: '/store/extensions/:site',
-			sidebarItem: {
-				icon: 'plugins',
-				isPrimary: false,
-				label: translate( 'Extensions' ),
-				slug: 'extensions',
 			},
 		},
 		{
@@ -114,17 +106,40 @@ const getStorePages = () => {
 		{
 			container: SettingsPayments,
 			configKey: 'woocommerce/extension-settings-payments',
-			path: '/store/settings/:site/payments',
+			path: '/store/settings/payments/:site',
+			sidebarItem: {
+				isPrimary: false,
+				label: translate( 'Payments' ),
+				parentSlug: 'settings',
+				slug: 'settings-payments',
+			},
 		},
 		{
 			container: Shipping,
 			configKey: 'woocommerce/extension-settings-shipping',
-			path: '/store/settings/:site/shipping',
+			path: '/store/settings/shipping/:site',
+			sidebarItem: {
+				isPrimary: false,
+				label: translate( 'Shipping' ),
+				parentSlug: 'settings',
+				slug: 'settings-shipping',
+			},
+		},
+		{
+			container: ShippingZone,
+			configKey: 'woocommerce/extension-settings-shipping',
+			path: '/store/settings/shipping/:site/zone/:zone',
 		},
 		{
 			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
 			configKey: 'woocommerce/extension-settings-tax',
-			path: '/store/settings/:site/tax',
+			path: '/store/settings/taxes/:site',
+			sidebarItem: {
+				isPrimary: false,
+				label: translate( 'Taxes' ),
+				parentSlug: 'settings',
+				slug: 'settings-tax',
+			},
 		},
 	];
 };
@@ -144,7 +159,7 @@ function getStoreSidebarItemButtons() {
 function addStorePage( storePage, storeNavigation ) {
 	page( storePage.path, siteSelection, storeNavigation, function( context ) {
 		renderWithReduxStore(
-			React.createElement( storePage.container, { className: 'woocommerce' } ),
+			React.createElement( storePage.container, { className: 'woocommerce', params: context.params } ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -178,3 +193,7 @@ export default function() {
 		page( '/store/stats/:type/:unit/:site', siteSelection, navigation, StatsController );
 	}
 }
+
+// TODO: This could probably be done in a better way through the same mechanisms
+// that bring in the rest of the extension code. Maybe extension-loader?
+initExtension();

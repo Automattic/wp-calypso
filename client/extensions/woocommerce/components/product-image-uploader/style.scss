@@ -6,8 +6,10 @@
 	margin-bottom: 16px;
 	border: 1px dashed $gray;
 	border-radius: 5px;
-	width: 250px;
 
+	@include breakpoint( ">960px" ) {
+		width: 250px;
+	}
 
 	.product-image-uploader__picker {
 		position: absolute;

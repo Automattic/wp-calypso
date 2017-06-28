@@ -12,16 +12,17 @@ import { head } from 'lodash';
  */
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import Button from 'components/button';
-import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormWeightInput from 'woocommerce/components/form-weight-input';
 import ImagePreloader from 'components/image-preloader';
+import PriceInput from 'woocommerce/components/price-input';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
 import Spinner from 'components/spinner';
 
 class ProductFormVariationsRow extends Component {
 	static propTypes = {
+		siteId: PropTypes.number,
 		product: PropTypes.object.isRequired,
 		variation: PropTypes.object.isRequired,
 		manageStock: PropTypes.bool,
@@ -45,25 +46,26 @@ class ProductFormVariationsRow extends Component {
 
 	// TODO: Consildate the following set/toggle functions with a helper (along with the form-details functions).
 	setPrice = ( e ) => {
-		const { editProductVariation, product, variation } = this.props;
-		editProductVariation( product, variation, { regular_price: e.target.value } );
+		const { siteId, editProductVariation, product, variation } = this.props;
+		editProductVariation( siteId, product, variation, { regular_price: e.target.value } );
 	}
 
 	setWeight = ( e ) => {
-		const { editProductVariation, product, variation } = this.props;
-		editProductVariation( product, variation, { weight: e.target.value } );
+		const { siteId, editProductVariation, product, variation } = this.props;
+		editProductVariation( siteId, product, variation, { weight: e.target.value } );
 	}
 
 	setDimension = ( e ) => {
-		const { editProductVariation, product, variation } = this.props;
+		const { siteId, editProductVariation, product, variation } = this.props;
 		const dimensions = { ...variation.dimensions, [ e.target.name ]: e.target.value };
-		editProductVariation( product, variation, { dimensions } );
+		editProductVariation( siteId, product, variation, { dimensions } );
 	}
 
 	setStockQuantity = ( e ) => {
-		const { editProductVariation, product, variation } = this.props;
+		const { siteId, editProductVariation, product, variation } = this.props;
 		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
-		editProductVariation( product, variation, { stock_quantity } );
+		const manage_stock = stock_quantity !== '';
+		editProductVariation( siteId, product, variation, { stock_quantity, manage_stock } );
 	}
 
 	showDialog = () => {
@@ -81,7 +83,7 @@ class ProductFormVariationsRow extends Component {
 	}
 
 	onUpload = ( file ) => {
-		const { editProductVariation, product, variation } = this.props;
+		const { siteId, editProductVariation, product, variation } = this.props;
 		const image = {
 			src: file.URL,
 			id: file.ID,
@@ -90,7 +92,7 @@ class ProductFormVariationsRow extends Component {
 			transientId: null,
 			isUploading: false,
 		} );
-		editProductVariation( product, variation, { image } );
+		editProductVariation( siteId, product, variation, { image } );
 	}
 
 	onError = () => {
@@ -102,7 +104,7 @@ class ProductFormVariationsRow extends Component {
 	}
 
 	removeImage = () => {
-		const { editProductVariation, product, variation } = this.props;
+		const { siteId, editProductVariation, product, variation } = this.props;
 		this.setState( {
 			placeholder: null,
 			transientId: null,
@@ -110,7 +112,7 @@ class ProductFormVariationsRow extends Component {
 			src: null,
 			id: null,
 		} );
-		editProductVariation( product, variation, { image: {} } );
+		editProductVariation( siteId, product, variation, { image: {} } );
 	}
 
 	renderImage = () => {
@@ -169,7 +171,7 @@ class ProductFormVariationsRow extends Component {
 	}
 
 	render() {
-		const { variation, manageStock, translate } = this.props;
+		const { variation, translate } = this.props;
 		return (
 			<tr className="products__product-form-variation-row">
 				<td className="products__product-id">
@@ -181,10 +183,20 @@ class ProductFormVariationsRow extends Component {
 					</div>
 				</td>
 				<td>
-					<FormCurrencyInput noWrap
-						currencySymbolPrefix="$"
-						name="price"
+					<div className="products__product-manage-stock">
+						<FormTextInput
+							name="stock_quantity"
+							value={ variation.stock_quantity || '' }
+							type="number"
+							onChange={ this.setStockQuantity }
+							placeholder={ translate( 'Quantity' ) }
+						/>
+					</div>
+				</td>
+				<td>
+					<PriceInput noWrap
 						value={ variation.regular_price || '' }
+						name="price"
 						placeholder="0.00"
 						onChange={ this.setPrice }
 						size="4"
@@ -194,33 +206,17 @@ class ProductFormVariationsRow extends Component {
 					<div className="products__product-dimensions-weight">
 						<FormDimensionsInput
 							className="products__product-dimensions-input"
-							unit="in"
 							dimensions={ variation.dimensions }
 							onChange={ this.setDimension }
 							noWrap
 						/>
 						<div className="products__product-weight-input">
-							<FormTextInputWithAffixes
-								name="weight"
-								type="number"
-								suffix="g"
-								value={ variation.weight || '' }
+							<FormWeightInput
+								value={ variation.weight }
 								onChange={ this.setWeight }
-								size="4"
 								noWrap
 							/>
 						</div>
-					</div>
-				</td>
-				<td>
-					<div className="products__product-manage-stock">
-						{ manageStock && ( <FormTextInput
-							name="stock_quantity"
-							value={ variation.stock_quantity || '' }
-							type="number"
-							onChange={ this.setStockQuantity }
-							placeholder={ translate( 'Quantity' ) }
-						/> ) }
 					</div>
 				</td>
 			</tr>

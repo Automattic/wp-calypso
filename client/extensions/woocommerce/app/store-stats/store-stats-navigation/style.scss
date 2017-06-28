@@ -1,0 +1,45 @@
+.followers-count {
+	.button {
+		margin-right: 16px;
+		margin-left: 16px;
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
+	}
+}
+
+.segmented-control {
+	@include breakpoint( "<480px" ) {
+		padding: 0 16px 16px;
+	}
+
+	.segmented-control__item {
+
+		.segmented-control__link {
+			background: #f3f6f8;
+			border-color: #e9eff3;
+
+			.segmented-control__text {
+				color: #a8bece;
+			}
+		}
+
+		&.is-selected {
+			.segmented-control__link {
+				background: #00aadc;
+				border-color: #008ab3;
+
+				.segmented-control__text {
+					color: #ffffff;
+				}
+			}
+		}
+
+		&.is-selected + .segmented-control__item {
+			.segmented-control__link {
+				border-left-color: #008ab3;
+			}
+		}
+
+	}
+}

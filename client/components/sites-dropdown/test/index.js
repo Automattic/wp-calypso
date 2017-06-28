@@ -50,40 +50,30 @@ describe( 'index', function() {
 	} );
 
 	describe( 'component state', function() {
-		xit( "should initially consider as selected the user's primary site, when is not specified something different", function() {
-			const sitesDropdown = shallow( <SitesDropdown /> );
-			expect( sitesDropdown.instance().state.selectedSiteSlug ).to.be.equal( 'primary.wordpress.com' );
-		} );
-
-		xit( 'should initially consider as selected the site whose id is passed as `selectedSiteId` prop', function() {
-			const sitesDropdown = shallow( <SitesDropdown selectedSiteId={ 42 } /> );
-			expect( sitesDropdown.instance().state.selectedSiteSlug ).to.be.equal( 'foo.wordpress.com' );
+		it( 'should initially consider as selected the selectedOrPrimarySiteId prop', function() {
+			const sitesDropdown = shallow( <SitesDropdown selectedSiteId={ 1234567 } /> );
+			expect( sitesDropdown.instance().state.selectedSiteId ).to.be.equal( 1234567 );
 		} );
 	} );
 
 	describe( 'selectSite', function() {
 		it( 'should update the `selectedSiteSlug`, and `open` state properties', function() {
 			const setStateSpy = sinon.spy();
-			const setLocallySelectedSiteIdSpy = sinon.spy();
 			const siteSelectedSpy = sinon.spy();
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
 					onSiteSelect: siteSelectedSpy,
-					setLocallySelectedSiteId: setLocallySelectedSiteIdSpy,
 				}
 			};
 
-			SitesDropdown.prototype.selectSite.call( fakeContext, 'foobar' );
+			SitesDropdown.prototype.selectSite.call( fakeContext, 12345 );
 
 			sinon.assert.calledOnce( siteSelectedSpy );
-			sinon.assert.calledWith( siteSelectedSpy, 'foobar' );
-
-			sinon.assert.calledOnce( setLocallySelectedSiteIdSpy );
-			sinon.assert.calledWith( setLocallySelectedSiteIdSpy, 'foobar' );
+			sinon.assert.calledWith( siteSelectedSpy, 12345 );
 
 			sinon.assert.calledOnce( setStateSpy );
-			sinon.assert.calledWith( setStateSpy, { open: false } );
+			sinon.assert.calledWith( setStateSpy, { open: false, selectedSiteId: 12345 } );
 		} );
 	} );
 
@@ -120,7 +110,7 @@ describe( 'index', function() {
 	describe( 'getSelectedSite', function() {
 		xit( 'should return a site on the basis of the component `selectedSiteSlug` state property', function() {
 			const fakeState = {
-				selectedSiteSlug: 'foo.wordpress.com'
+				selectedSiteId: 42
 			};
 			const selectedSite = SitesDropdown.prototype.getSelectedSite.call( { state: fakeState } );
 			expect( selectedSite ).to.be.eql( {

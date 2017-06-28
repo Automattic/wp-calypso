@@ -1,8 +1,24 @@
 /**
  * External dependencies
  */
-var update = require( 'react-addons-update' );
-import { every, assign, flow, isEqual, merge, reject, tail, some, uniq, flatten, filter, find } from 'lodash';
+import update from 'react-addons-update';
+import {
+	assign,
+	every,
+	filter,
+	find,
+	flatten,
+	flow,
+	get,
+	isEqual,
+	map,
+	merge,
+	reject,
+	some,
+	trimStart,
+	tail,
+	uniq,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -228,6 +244,12 @@ function hasTld( cart, tld ) {
 	} );
 }
 
+function getTlds( cart ) {
+	return uniq( map( getDomainRegistrations( cart ), function( cartItem ) {
+		return trimStart( getDomainRegistrationTld( cartItem ), '.' );
+	} ) );
+}
+
 function getDomainRegistrationTld( cartItem ) {
 	if ( ! isDomainRegistration( cartItem ) ) {
 		throw new Error( 'This function only works on domain registration cart ' +
@@ -281,6 +303,10 @@ function hasOnlyProductsOf( cart, productSlug ) {
  */
 function hasDomainRegistration( cart ) {
 	return some( getAll( cart ), isDomainRegistration );
+}
+
+function hasOnlyDomainRegistrationsWithPrivacySupport( cart ) {
+	return every( getDomainRegistrations( cart ), privacyAvailable );
 }
 
 function hasDomainMapping( cart ) {
@@ -404,7 +430,11 @@ function themeItem( themeSlug, source ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainRegistration( properties ) {
-	return assign( domainItem( properties.productSlug, properties.domain, properties.source ), { is_domain_registration: true } );
+	return assign( domainItem( properties.productSlug, properties.domain, properties.source ),
+		{
+			is_domain_registration: true,
+			...( properties.extra ? { extra: properties.extra } : {} ),
+		} );
 }
 
 /**
@@ -714,6 +744,16 @@ function isRenewal( cartItem ) {
 }
 
 /**
+ * Determines whether a cart item supports privacy
+ *
+ * @param {Object} cartItem - `CartItemValue` object
+ * @returns {boolean} true if item supports privacy
+ */
+function privacyAvailable( cartItem ) {
+	return get( cartItem, 'extra.privacy_available', true );
+}
+
+/**
  * Get the included domain for a cart item
  *
  * @param {Object} cartItem - `CartItemValue` object
@@ -793,6 +833,7 @@ module.exports = {
 	getRenewalItemFromProduct,
 	getRenewalItems,
 	getSiteRedirects,
+	getTlds,
 	googleApps,
 	googleAppsExtraLicenses,
 	guidedTransferItem,
@@ -802,6 +843,7 @@ module.exports = {
 	hasDomainInCart,
 	hasDomainMapping,
 	hasDomainRegistration,
+	hasOnlyDomainRegistrationsWithPrivacySupport,
 	hasFreeTrial,
 	hasGoogleApps,
 	hasOnlyFreeTrial,

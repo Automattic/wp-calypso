@@ -2,6 +2,9 @@
  * Internal dependencies
  */
 import {
+	ACTIVITY_LOG_ERROR,
+	ACTIVITY_LOG_REQUEST,
+	ACTIVITY_LOG_UPDATE,
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
@@ -9,8 +12,10 @@ import {
 	REWIND_DEACTIVATE_REQUEST,
 	REWIND_DEACTIVATE_SUCCESS,
 	REWIND_RESTORE,
-	REWIND_RESTORE_COMPLETED,
+	REWIND_RESTORE_DISMISS_PROGRESS,
+	REWIND_RESTORE_PROGRESS_REQUEST,
 	REWIND_RESTORE_UPDATE_ERROR,
+	REWIND_RESTORE_UPDATE_PROGRESS,
 	REWIND_STATUS_ERROR,
 	REWIND_STATUS_REQUEST,
 	REWIND_STATUS_UPDATE,
@@ -40,6 +45,29 @@ export function rewindActivateFailure( siteId ) {
 	return {
 		type: REWIND_ACTIVATE_FAILURE,
 		siteId,
+	};
+}
+
+export function activityLogRequest( siteId ) {
+	return {
+		type: ACTIVITY_LOG_REQUEST,
+		siteId,
+	};
+}
+
+export function activityLogError( siteId, error ) {
+	return {
+		type: ACTIVITY_LOG_ERROR,
+		siteId,
+		error,
+	};
+}
+
+export function activityLogUpdate( siteId, data ) {
+	return {
+		type: ACTIVITY_LOG_UPDATE,
+		siteId,
+		data,
 	};
 }
 
@@ -115,10 +143,28 @@ export function rewindRestore( siteId, timestamp ) {
 	};
 }
 
-export function rewindCompleteRestore( siteId, timestamp ) {
+export function dismissRewindRestoreProgress( siteId ) {
 	return {
-		type: REWIND_RESTORE_COMPLETED,
+		type: REWIND_RESTORE_DISMISS_PROGRESS,
 		siteId,
+	};
+}
+
+export function getRewindRestoreProgress( siteId, timestamp, restoreId ) {
+	return {
+		type: REWIND_RESTORE_PROGRESS_REQUEST,
+		siteId,
+		restoreId,
+		timestamp,
+	};
+}
+
+export function updateRewindRestoreProgress( siteId, timestamp, restoreId, progress ) {
+	return {
+		type: REWIND_RESTORE_UPDATE_PROGRESS,
+		...progress,
+		siteId,
+		restoreId,
 		timestamp,
 	};
 }

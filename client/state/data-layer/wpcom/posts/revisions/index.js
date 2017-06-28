@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-import { flow, map } from 'lodash';
-import mapValues from 'lodash/fp/mapValues';
-import pick from 'lodash/fp/pick';
+import { flow, forEach, map, mapKeys, mapValues, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { countDiffWords, diffWords } from 'lib/text-utils';
 import {
 	POST_REVISIONS_REQUEST,
 } from 'state/action-types';
@@ -31,10 +30,15 @@ export function normalizeRevision( revision ) {
 	}
 
 	return {
-		...revision,
+		...omit( revision, [ 'title', 'content', 'excerpt', 'date', 'date_gmt', 'modified', 'modified_gmt' ] ),
 		...flow(
-			pick( [ 'title', 'content', 'excerpt' ] ),
-			mapValues( ( val = {} ) => val.rendered )
+			r => pick( r, [ 'title', 'content', 'excerpt' ] ),
+			r => mapValues( r, ( val = {} ) => val.rendered )
+		)( revision ),
+		...flow(
+			r => pick( r, [ 'date_gmt', 'modified_gmt' ] ),
+			r => mapValues( r, val => `${ val }Z` ),
+			r => mapKeys( r, ( val, key ) => key.slice( 0, -'_gmt'.length ) )
 		)( revision )
 	};
 }
@@ -64,8 +68,16 @@ export const receiveError = ( { dispatch }, { siteId, postId }, next, rawError )
  * @param {Array} revisions raw data from post revisions API
  */
 export const receiveSuccess = ( { dispatch }, { siteId, postId }, next, revisions ) => {
+	const normalizedRevisions = map( revisions, normalizeRevision );
+
+	forEach( normalizedRevisions, ( revision, index ) => {
+		revision.changes = index === normalizedRevisions.length - 1
+			? { added: 0, removed: 0 }
+			: countDiffWords( diffWords( normalizedRevisions[ index + 1 ].content, revision.content ) );
+	} );
+
 	dispatch( receivePostRevisionsSuccess( siteId, postId ) );
-	dispatch( receivePostRevisions( siteId, postId, map( revisions, normalizeRevision ) ) );
+	dispatch( receivePostRevisions( siteId, postId, normalizedRevisions ) );
 };
 
 /**

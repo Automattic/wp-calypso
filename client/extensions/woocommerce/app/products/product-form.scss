@@ -2,12 +2,51 @@
  * TODO: Variation modal width
  */
 
+.products__form {
+	@include breakpoint( ">660px" ) {
+		margin-top: 58px;
+	}
+
+	&.is-placeholder div {
+		@include placeholder();
+		background: $white;
+		width: 720px;
+		margin-bottom: 8px;
+
+		@include breakpoint( "<480px" ) {
+			width: 100%;
+		}
+
+		@include breakpoint( "660px-960px" ) {
+			width: 620px;
+		}
+
+		&:first-child {
+			height: 575px;
+		}
+
+		&:nth-child( 2 ) {
+			height: 200px;
+		}
+
+		&:last-child {
+			height: 400px;
+		}
+	}
+}
+
 .form-label {
 	margin-bottom: 5px;
 }
 
 .foldable-card.products__variation-card {
 	margin-bottom: 16px;
+
+	.foldable-card__header {
+		@include breakpoint( ">480px" ) {
+			padding: 24px;
+		}
+	}
 }
 
 .foldable-card.products__variation-card .foldable-card__content {
@@ -19,11 +58,13 @@
 	flex: inherit;
 }
 
-.products__product-form-details-featured {
-	text-align: right;
+.products__product-form-featured {
+	.form-toggle__label {
+		font-weight: 400;
+	}
 
 	.form-toggle__wrapper {
-		margin-left: 10px;
+		display: block;
 	}
 }
 
@@ -105,6 +146,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
+		width: 100%;
 
 		@include breakpoint( ">960px" ) {
 			justify-content: flex-start;
@@ -207,8 +249,16 @@
 	resize: vertical;
 }
 
-.products__product-form-details-basic-description {
+.products__product-form-details-basic-description.form-fieldset {
 	margin-bottom: 0;
+}
+
+.products__categories-card {
+	.form-fieldset {
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
 }
 
 .products__product-form-details-basic-name {
@@ -296,13 +346,6 @@
 	border-spacing: 24px 16px;
 	border-collapse: collapse;
 
-	.form-dimensions-input {
-		.form-dimensions-input__length,
-		.form-dimensions-input__width {
-			border-right-width: 0;
-		}
-	}
-
 	.products__product-form-variation-all-row {
 		background: lighten( $gray, 30% );
 
@@ -327,6 +370,11 @@
 		}
 	}
 
+	.form-dimensions-input__width,
+	.form-dimensions-input__height {
+		margin-left: -1px;
+	}
+
 	th, td {
 		padding: 8px;
 		vertical-align: middle;
@@ -340,6 +388,9 @@
 		}
 	}
 
+	.form-text-input-with-affixes {
+		flex-direction: row;
+	}
 }
 
 .products__product-form-variation-table th {
@@ -386,7 +437,7 @@
 .products__product-form-variation-table-wrapper .form-text-input-with-affixes .form-text-input,
 .form-dimensions-input__length,
 .form-dimensions-input__width {
-	min-width: 75px;
+	min-width: 80px;
 }
 
 .products__product-form-variation-image {
@@ -544,6 +595,12 @@
 		padding: 16px;
 		max-height: 80vh;
 		overflow-y: hidden;
+
+		.compact-tinymce {
+			padding: 16px;
+			padding-left: 0px;
+			max-width: 700px;
+		}
 	}
 
 	h1 {
@@ -561,11 +618,35 @@
 }
 
 .products__additional-details-card {
-	margin-top: -1em;
 	border-top: 0;
+	margin-top: -10px;
+
+	@include breakpoint( ">480px" ) {
+		margin-top: -16px;
+	}
 
 	&.is-expanded {
 		margin-bottom: 16px;
+	}
+
+	.foldable-card__header {
+		padding: 16px;
+
+		@include breakpoint( ">480px" ) {
+			padding: 24px;
+		}
+
+		.foldable-card__expand {
+			@include breakpoint( ">480px" ) {
+				width: 63px;
+			}
+		}
+	}
+
+	.foldable-card__content {
+		@include breakpoint( ">480px" ) {
+			padding: 24px;
+		}
 	}
 }
 
@@ -573,12 +654,15 @@
 	display: flex;
 
 	label:first-child {
-		width: 44%;
-		padding-left: 16px;
-		@include breakpoint( ">660px" ) {
-			width: 42%;
-		}
+		width: calc( 40% - 1px );
+		margin-left: 16px;
+		margin-right: 8px;
+	}
 
+	label:last-child {
+		width: calc( 40% - 1px );
+		margin-left: 8px;
+		margin-right: 16px;
 	}
 }
 
@@ -606,16 +690,26 @@
 	background: $gray-light;
 	padding: 8px;
 	border: 1px solid lighten( $gray, 30% );
-	padding: 16px 16px 4px 16px;
+	padding: 16px 0 0 0;
 	margin-bottom: 8px;
 	@include breakpoint( ">960px" ) {
-		margin-right: 24px;
 		margin-bottom: 16px;
 	}
 
 	.form-setting-explanation {
 		padding: 10px;
 		padding-top: 0;
+	}
+
+	.products__additional-details-form-remove {
+		.button {
+			padding: 4px 6px 7px;
+
+			@include breakpoint( ">660px" ) {
+				padding-left: 12px;
+				padding-right: 12px;
+			}
+		}
 	}
 }
 
@@ -641,7 +735,7 @@
 .products__additional-details-preview {
 	border: 1px solid lighten( $gray, 20% );
 	padding: 16px 16px 4px 16px;
-	margin-top: 2px;
+	margin-top: 4px;
 	font-size: 13px;
 	color: darken( $gray, 10% );
 }
@@ -673,12 +767,13 @@
 
 	.form-text-input {
 		width: 40%;
-		margin-right: 24px;
+		margin-right: 8px;
+		margin-left: 16px;
 	}
 
 	.token-field {
-		width: 50%;
-		margin-right: 16px;
+		width: 40%;
+		margin-left: 8px;
 	}
 }
 
@@ -702,12 +797,8 @@
 		}
 	}
 
-	.products__product-manage-stock {
-		width: 200px;
-
-		.form-text-input {
+	.products__product-manage-stock .form-text-input {
 			width: 110px;
-		}
 	}
 }
 
@@ -736,7 +827,6 @@
 		@include breakpoint( ">480px" ) {
 			.form-text-input {
 				min-width: 60px;
-				max-width: 100px;
 			}
 		}
 	}
@@ -747,11 +837,18 @@
 }
 
 .products__product-simple-cards {
-	margin-top: -1em;
 	border-top: 0;
 
+	.products__product-form-price {
+		margin-top: -16px;
+	}
+
 	.card {
-		margin-top: -1em;
+		margin-top: -10px;
+
+		@include breakpoint( ">480px" ) {
+			margin-top: -16px;
+		}
 	}
 
 	@include breakpoint( ">480px" ) {
@@ -767,8 +864,18 @@
 		width: 150px;
 	}
 
+	.products__product-manage-stock {
+		margin-bottom: 12px;
+
+		@include breakpoint( ">960px" ) {
+			margin-bottom: 0;
+		}
+	}
+
 	.products__product-form-stock-disabled {
-		height: 70px;
+		.products__product-manage-stock {
+			margin-bottom: 0;
+		}
 	}
 
 	.products__product-manage-stock-toggle,
@@ -777,9 +884,13 @@
 		cursor: pointer;
 	}
 
-	.products__product-manage-stock-toggle .form-label {
-		font-weight: normal;
-		margin-bottom: 12px;
+	.products__product-manage-stock-toggle {
+		align-items: center;
+
+		.form-label {
+			margin: 0;
+			font-weight: normal;
+		}
 	}
 
 	.products__product-backorders-wrapper label {
@@ -787,18 +898,16 @@
 	}
 
 	.products__product-backorders-wrapper select {
-		padding: 9px 32px 11px 14px;
+		padding: 8px 32px 8px 14px;
 	}
 
 	.products__product-stock-options-wrapper {
 		display: flex;
 		flex-direction: column;
-		margin-top: 6px;
 
 		.products__product-manage-stock {
 			width: 150px;
 			margin-right: 24px;
-			margin-bottom: 12px;
 		}
 
 		.products__product-backorders-wrapper {

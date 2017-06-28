@@ -2,13 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import { get, pick } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
@@ -29,15 +30,13 @@ const Caching = ( {
 	isReadOnly,
 	isRequesting,
 	isSaving,
-	notices: {
-		htaccess_ro,
-		mod_rewrite_missing,
+	status: {
+		htaccess_ro: htaccessReadOnly,
+		mod_rewrite_missing: modRewriteMissing,
 	},
 	translate,
 } ) => {
 	const isDisabled = isRequesting || isSaving || isReadOnly;
-	const htaccessMessage = get( htaccess_ro, 'message' );
-	const modRewriteMessage = get( mod_rewrite_missing, 'message' );
 
 	return (
 		<div>
@@ -55,18 +54,33 @@ const Caching = ( {
 			</SectionHeader>
 			<Card>
 				<form>
-					{ htaccessMessage &&
+					{ htaccessReadOnly &&
 					<Notice
 						showDismiss={ false }
 						status="is-warning"
-						text={ htaccessMessage } />
+						text={ translate( 'The .htaccess file is readonly and cannot be updated. Cache files ' +
+							'will still be served by PHP. See {{a}}Changing File Permissions{{/a}} on WordPress.org ' +
+							'for help on fixing this.',
+							{
+								components: {
+									a: (
+										<ExternalLink
+											icon={ true }
+											target="_blank"
+											href="https://codex.wordpress.org/Changing_File_Permissions"
+										/>
+									),
+								}
+							}
+						) }
+						/>
 					}
 
-					{ modRewriteMessage &&
+					{ modRewriteMissing &&
 					<Notice
 						showDismiss={ false }
 						status="is-warning"
-						text={ modRewriteMessage } />
+						text={ translate( 'The mod_rewrite module has not been detected. Cache files will still be served by PHP.' ) } />
 					}
 					<FormFieldset>
 						<FormToggle

@@ -12,6 +12,7 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
+import { productCategoryUpdated } from '../actions';
 
 describe( 'reducer', () => {
 	it( 'should mark the product category tree as "loading"', () => {
@@ -55,7 +56,7 @@ describe( 'reducer', () => {
 		const state = { [ siteId ]: {
 			paymentMethods: {},
 			productCategories: 'LOADING',
-			settings: { general: {} },
+			settings: { general: {}, products: {} },
 			shippingZones: {},
 			products: {},
 		} };
@@ -68,6 +69,21 @@ describe( 'reducer', () => {
 		const newState = reducer( state, action );
 		expect( newState[ siteId ] ).to.exist;
 		expect( newState[ siteId ].productCategories ).to.eql( [] );
-		expect( newState[ siteId ].settings ).to.eql( { general: {} } );
+		expect( newState[ siteId ].settings ).to.eql( { general: {}, products: {} } );
+	} );
+
+	it( 'should store data from an updated action', () => {
+		const siteId = 123;
+		const state = { [ siteId ]: {
+			productCategories: 'LOADING',
+		} };
+
+		const category1 = { id: 1, name: 'Cat 1', slug: 'cat-1' };
+		const action = productCategoryUpdated( siteId, category1 );
+
+		const newState = reducer( state, action );
+		expect( newState[ siteId ] ).to.exist;
+		expect( newState[ siteId ].productCategories ).to.exist;
+		expect( newState[ siteId ].productCategories[ 0 ] ).to.equal( category1 );
 	} );
 } );

@@ -135,16 +135,6 @@ class ContentsTab extends Component {
 						</div>
 					}
 
-					{ ( wpcache || supercache ) &&
-						<p className="wp-super-cache__cache-stat-refresh">
-							{ translate(
-								'Cache stats last generated: %(generated)d minutes ago.',
-								{
-									args: { generated: ( get( stats, 'generated', 0 ) ) },
-								}
-							) }
-						</p>
-					}
 						<Button
 							compact
 							busy={ isGenerating }
@@ -159,7 +149,7 @@ class ContentsTab extends Component {
 				{ ! isEmpty( get( wpcache, 'cached_list' ) ) &&
 					<CacheStats
 						files={ wpcache.cached_list }
-						header={ translate( 'Fresh WP-Cached Files' ) }
+						header={ translate( 'Fresh Full Cache Files' ) }
 						isCached={ true }
 						isSupercache={ false } />
 				}
@@ -167,7 +157,7 @@ class ContentsTab extends Component {
 				{ ! isEmpty( get( wpcache, 'expired_list' ) ) &&
 					<CacheStats
 						files={ wpcache.expired_list }
-						header={ translate( 'Stale WP-Cached Files' ) }
+						header={ translate( 'Stale Full Cache Files' ) }
 						isCached={ false }
 						isSupercache={ false } />
 				}
@@ -190,7 +180,7 @@ class ContentsTab extends Component {
 				</div>
 
 				<Card>
-					{ cache_max_time &&
+					{ cache_max_time > 0 &&
 						<p>
 							{ translate(
 								'Expired files are files older than %(cache_max_time)d seconds. They are still used by ' +

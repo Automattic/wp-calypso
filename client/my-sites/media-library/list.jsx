@@ -37,7 +37,7 @@ export const MediaLibraryList = React.createClass( {
 		containerWidth: React.PropTypes.number,
 		rowPadding: React.PropTypes.number,
 		mediaScale: React.PropTypes.number.isRequired,
-		photon: React.PropTypes.bool,
+		thumbnailType: React.PropTypes.string,
 		mediaHasNextPage: React.PropTypes.bool,
 		mediaFetchingNextPage: React.PropTypes.bool,
 		mediaOnFetchNextPage: React.PropTypes.func,
@@ -174,7 +174,7 @@ export const MediaLibraryList = React.createClass( {
 				style={ this.getMediaItemStyle( index ) }
 				media={ item }
 				scale={ this.props.mediaScale }
-				photon={ this.props.photon }
+				thumbnailType={ this.props.thumbnailType }
 				showGalleryHelp={ showGalleryHelp }
 				selectedIndex={ selectedIndex }
 				onToggle={ this.toggleItem }

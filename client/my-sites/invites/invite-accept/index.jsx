@@ -25,7 +25,7 @@ import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import userUtils from 'lib/user/utils';
-import LocaleSuggestions from 'signup/locale-suggestions';
+import LocaleSuggestions from 'components/locale-suggestions';
 
 /**
  * Module variables

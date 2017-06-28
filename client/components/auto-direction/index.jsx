@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,6 +10,7 @@ import React, { PropTypes } from 'react';
 import userModule from 'lib/user';
 import { stripHTML } from 'lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
+import Emojify from 'components/emojify';
 
 const user = userModule();
 
@@ -126,6 +128,30 @@ const getTextMainDirection = ( text ) => {
 	return rtlCount > ltrCount ? 'rtl' : 'ltr';
 };
 
+const getDirectionProps = ( child, direction ) => ( {
+	direction: direction,
+	style: Object.assign( {}, get( child, 'props.style', {} ), {
+		direction: direction,
+		textAlign: direction === 'rtl' ? 'right' : 'left'
+	} )
+} );
+
+const getChildDirection = child => {
+	const childContent = getContent( child );
+
+	if ( childContent ) {
+		const textMainDirection = getTextMainDirection( childContent );
+		const userDirection = user.isRTL() ? 'rtl' : 'ltr';
+
+		if ( textMainDirection !== userDirection ) {
+			return textMainDirection;
+		}
+	}
+
+	return null;
+};
+
+const inlineComponents = [ Emojify ];
 /***
  * Sets a react component child directionality according to it's text content
  * That function intended to be used recursively with React.Children.map
@@ -136,29 +162,32 @@ const getTextMainDirection = ( text ) => {
  * @returns {React.Element} transformed child
  */
 const setChildDirection = ( child ) => {
-	const childContent = getContent( child );
+	const childDirection = getChildDirection( child );
 
-	if ( childContent ) {
-		const textMainDirection = getTextMainDirection( childContent );
-		const userDirection = user.isRTL() ? 'rtl' : 'ltr';
-
-		if ( textMainDirection !== userDirection ) {
-			return React.cloneElement( child, {
-				direction: textMainDirection,
-				style: Object.assign( {}, child.props.style, {
-					direction: textMainDirection,
-					textAlign: textMainDirection === 'rtl' ? 'right' : 'left'
-				} )
-			} );
-		}
-
-		return child;
+	if ( childDirection ) {
+		return React.cloneElement( child, getDirectionProps( child, childDirection ) );
 	}
 
 	if ( child && child.props.children ) {
-		return React.cloneElement( child, {
-			children: React.Children.map( child.props.children, setChildDirection )
+		let innerChildDirection = null;
+		const children = React.Children.map( child.props.children, innerChild => {
+			if ( innerChildDirection ) {
+				return innerChild;
+			}
+
+			if ( typeof innerChild === 'string' ) {
+				return innerChild;
+			}
+
+			if ( inlineComponents.some( inlineComponent => innerChild.type === inlineComponent ) ) {
+				innerChildDirection = getChildDirection( innerChild );
+				return innerChild;
+			}
+
+			return setChildDirection( innerChild );
 		} );
+
+		return React.cloneElement( child, innerChildDirection ? getDirectionProps( child, innerChildDirection ) : null, children );
 	}
 
 	return child;

@@ -25,8 +25,6 @@ import User from 'lib/user';
 /**
  * Local variables
  */
-// Remove me
-const sitesList = require( 'lib/sites-list' )(); // eslint-disable-line no-restricted-modules
 
 const user = User();
 const actionMap = {
@@ -202,7 +200,6 @@ class ReaderShare extends React.Component {
 						? <SitesPopover
 								key="menu"
 								header={ <div>{ this.props.translate( 'Share on:' ) }</div> }
-								sites={ sitesList }
 								context={ this.refs && this.refs.shareButton }
 								visible={ this.state.showingMenu }
 								groups={ true }

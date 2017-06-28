@@ -1,4 +1,4 @@
-var fetchPluginsListCalls = 0,
+let fetchPluginsListCalls = 0,
 	lastRequestParams = null;
 
 module.exports = {

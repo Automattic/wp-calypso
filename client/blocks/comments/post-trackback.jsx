@@ -1,8 +1,9 @@
-/***
+/**
  * External dependencies
  */
 import React from 'react';
 import Gridicon from 'gridicons';
+import { get } from 'lodash';
 
 /***
  * Internal dependencies
@@ -16,8 +17,11 @@ function unescape( str ) {
 export default class PostTrackback extends React.Component {
 	render() {
 		const commentsTree = this.props.commentsTree;
-		const comment = commentsTree.getIn( [ this.props.commentId, 'data' ] ).toJS();
-		const unescapedAuthorName = unescape( comment.author.name );
+		const comment = get( commentsTree[ this.props.commentId ], 'data' );
+		if ( ! comment ) {
+			return null;
+		}
+		const unescapedAuthorName = unescape( get( comment, 'author.name', '' ) );
 
 		return (
 			<li className={ 'comments__comment depth-0' }>
@@ -26,8 +30,15 @@ export default class PostTrackback extends React.Component {
 						<Gridicon icon="link" size={ 24 } />
 					</div>
 
-					{ comment.author.URL
-						? <a href={ comment.author.URL } target="_blank" rel="noopener noreferrer" className="comments__comment-username">{ unescapedAuthorName }</a>
+					{ get( comment, 'author.URL' )
+						? <a
+								href={ comment.author.URL }
+								target="_blank"
+								rel="noopener noreferrer"
+								className="comments__comment-username"
+							>
+								{ unescapedAuthorName }
+							</a>
 						: <strong className="comments__comment-username">{ unescapedAuthorName }</strong> }
 
 					<div className="comments__comment-timestamp">
@@ -43,5 +54,6 @@ export default class PostTrackback extends React.Component {
 }
 
 PostTrackback.propTypes = {
-	commentId: React.PropTypes.number
+	commentId: React.PropTypes.number,
+	commentsTree: React.PropTypes.object,
 };

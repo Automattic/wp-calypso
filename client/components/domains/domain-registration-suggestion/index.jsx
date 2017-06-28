@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { includes } from 'lodash';
+import { includes, isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,7 +12,7 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import Gridicon from 'gridicons';
 import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
 import { shouldBundleDomainWithPlan, getDomainPriceRule, hasDomainInCart } from 'lib/cart-values/cart-items';
-import { abtest } from 'lib/abtest';
+import { tracks } from 'lib/analytics';
 
 const DomainRegistrationSuggestion = React.createClass( {
 	propTypes: {
@@ -25,7 +25,41 @@ const DomainRegistrationSuggestion = React.createClass( {
 		} ).isRequired,
 		onButtonClick: React.PropTypes.func.isRequired,
 		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
-		selectedSite: React.PropTypes.object
+		selectedSite: React.PropTypes.object,
+		railcarId: React.PropTypes.string,
+		uiPosition: React.PropTypes.number,
+		fetchAlgo: React.PropTypes.string,
+		query: React.PropTypes.string
+	},
+
+	componentDidMount() {
+		if ( this.props.railcarId && isNumber( this.props.uiPosition ) ) {
+			let resultSuffix = '';
+			if ( this.props.suggestion.isRecommended ) {
+				resultSuffix = '#recommended';
+			} else if ( this.props.suggestion.isBestAlternative ) {
+				resultSuffix = '#best-alternative';
+			}
+
+			tracks.recordEvent( 'calypso_traintracks_render', {
+				railcar: this.props.railcarId,
+				ui_position: this.props.uiPosition,
+				fetch_algo: this.props.fetchAlgo,
+				rec_result: `${ this.props.suggestion.domain_name }${ resultSuffix }`,
+				fetch_query: this.props.query
+			} );
+		}
+	},
+
+	onClick( event ) {
+		if ( this.props.railcarId ) {
+			tracks.recordEvent( 'calypso_traintracks_interact', {
+				railcar: this.props.railcarId,
+				action: 'domain_added_to_cart'
+			} );
+		}
+
+		this.props.onButtonClick( event );
 	},
 
 	render() {
@@ -89,8 +123,7 @@ const DomainRegistrationSuggestion = React.createClass( {
 			buttonContent = <Gridicon icon="checkmark" />;
 		} else {
 			buttonClasses = 'add is-primary';
-			const allowUpgradeCta = ! isSignupStep || abtest( 'selectCtaInDomainsSignup' ) === 'original';
-			buttonContent = allowUpgradeCta && shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
+			buttonContent = ! isSignupStep && shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
 				? translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
 				: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
@@ -104,7 +137,7 @@ const DomainRegistrationSuggestion = React.createClass( {
 					buttonContent={ buttonContent }
 					cart={ cart }
 					domainsWithPlansOnly={ domainsWithPlansOnly }
-					onButtonClick={ this.props.onButtonClick }>
+					onButtonClick={ this.onClick }>
 				<h3>
 					{ domain }
 					{ domainFlags }

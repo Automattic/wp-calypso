@@ -60,7 +60,10 @@ class Plans extends Component {
 	};
 
 	componentDidMount() {
-		if ( this.hasPreSelectedPlan() ) {
+		if ( this.props.isAutomatedTransfer && ! this.redirecting && this.props.selectedSite ) {
+			this.redirecting = true;
+			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+		} else if ( this.hasPreSelectedPlan() ) {
 			this.autoselectPlan();
 		} else {
 			this.props.recordTracksEvent( 'calypso_jpc_plans_view', {
@@ -249,7 +252,7 @@ class Plans extends Component {
 		addItem( cartItem );
 		this.redirecting = true;
 		this.props.completeFlow();
-		page( checkoutPath );
+		page.redirect( checkoutPath );
 	}
 
 	storeSelectedPlan( cartItem ) {

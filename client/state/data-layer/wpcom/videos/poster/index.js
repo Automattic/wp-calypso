@@ -5,7 +5,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { VIDEO_EDITOR_UPDATE_POSTER } from 'state/action-types';
 import {
-	closeModal,
 	setPosterUrl,
 	showError,
 	showUploadProgress,
@@ -39,7 +38,6 @@ export const updatePoster = ( { dispatch }, action ) => {
 
 export const receivePosterUrl = ( { dispatch }, action, next, { poster: posterUrl } ) => {
 	dispatch( setPosterUrl( posterUrl ) );
-	dispatch( closeModal() );
 };
 
 export const receivePosterError = ( { dispatch } ) => {

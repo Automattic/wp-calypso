@@ -171,11 +171,11 @@ export function isCandidateForCanonicalImage( image ) {
 		return false;
 	}
 
-	if ( image.width < 350 ) {
+	if ( image.width < 100 ) {
 		return false;
 	}
 
-	if ( image.width * image.height < 30000 ) {
+	if ( image.width * image.height < 100 * 75 ) {
 		return false;
 	}
 	return true;
@@ -203,7 +203,7 @@ export function isFeaturedImageInContent( post ) {
 		const indexOfContentImage = findIndex(
 			post.images,
 			img => getPathname( img.src ) === featuredImagePath,
-			1
+			1,
 		); // skip first element in post.images because it is always the featuredImage
 
 		if ( indexOfContentImage > 0 ) {

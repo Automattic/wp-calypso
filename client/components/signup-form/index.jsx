@@ -264,7 +264,6 @@ class SignupForm extends Component {
 	globalNotice( notice ) {
 		return <Notice
 			className="signup-form__notice"
-			isCompact={ true }
 			showDismiss={ false }
 			status={ notices.getStatusHelper( notice ) }
 			text={ notice.message } />;
@@ -284,7 +283,10 @@ class SignupForm extends Component {
 			return;
 		}
 
-		let link = login( { isNative: true, redirectTo: this.props.getRedirectToAfterLoginUrl } );
+		let link = login( {
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: this.props.getRedirectToAfterLoginUrl
+		} );
 
 		return map( messages, ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
@@ -441,7 +443,7 @@ class SignupForm extends Component {
 			return;
 		}
 
-		const logInUrl = config.isEnabled( 'wp-login' )
+		const logInUrl = config.isEnabled( 'login/native-login-links' )
 			? login( { isNative: true } )
 			: this.localizeUrlWithSubdomain( config( 'login_url' ) );
 
@@ -457,6 +459,9 @@ class SignupForm extends Component {
 	render() {
 		return (
 			<div className={ classNames( 'signup-form', this.props.className ) }>
+
+				{ this.getNotice() }
+
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
 					{ this.props.formHeader && (
 						<header className="signup-form__header">
@@ -464,16 +469,15 @@ class SignupForm extends Component {
 						</header>
 					) }
 
-					{ this.getNotice() }
-
 					{ this.formFields() }
 
 					{ this.props.formFooter || this.formFooter() }
 
-					{ this.props.isSocialSignupEnabled && (
-						<SocialSignupForm handleResponse={ this.props.handleSocialResponse } />
-					) }
 				</LoggedOutForm>
+
+				{ this.props.isSocialSignupEnabled && (
+					<SocialSignupForm handleResponse={ this.props.handleSocialResponse } />
+				) }
 
 				{ this.props.footerLink || this.footerLink() }
 			</div>

@@ -92,11 +92,6 @@
 	display: block;
 }
 
-.wp-super-cache__cache-stat-refresh {
-	font-style: italic;
-	font-size: 13px;
-}
-
 .wp-super-cache__foldable-card.is-compact .foldable-card__header {
 	padding: 24px;
 }
@@ -188,7 +183,7 @@
 	margin-top: -10px;
 }
 
-.wp-super-cache__miscellaneous-304-notice.is-compact {
+.wp-super-cache__toggle-notice.is-compact {
 	margin-left: 36px;
 	margin-bottom: 5px;
 }

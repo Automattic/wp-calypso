@@ -3,7 +3,7 @@
  */
 
 import { assert } from 'chai';
-
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -13,6 +13,7 @@ import mockedWporg from './mocks/wporg';
 
 describe( 'WPorg Data Actions', () => {
 	let WPorgActions;
+
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/wporg', mockedWporg );
 		mockery.registerMock( 'lodash/debounce', cb => cb );
@@ -32,6 +33,10 @@ describe( 'WPorg Data Actions', () => {
 		assert.isFunction( WPorgActions.fetchPluginsList );
 	} );
 
+	it( 'Actions should have method fetchCuratedList', () => {
+		assert.isFunction( WPorgActions.fetchCuratedList );
+	} );
+
 	it( 'Actions should have method fetchNextCategoryPage', () => {
 		assert.isFunction( WPorgActions.fetchNextCategoryPage );
 	} );
@@ -41,6 +46,17 @@ describe( 'WPorg Data Actions', () => {
 		WPorgActions.fetchPluginsList( 'new', 1 );
 		WPorgActions.fetchPluginsList( 'new', 1 );
 		assert.equal( mockedWporg.getActivity().fetchPluginsList, 1 );
+	} );
+
+	it( 'should return our Calypso curated feature list', () => {
+		const curatedSpy = spy( WPorgActions, 'fetchCuratedList' );
+		WPorgActions.fetchPluginsList( 'featured', 1 );
+		assert.isTrue( curatedSpy.called );
+	} );
+
+	it( 'does not return the community featured list', () => {
+		WPorgActions.fetchPluginsList( 'featured', 1 );
+		assert.equal( mockedWporg.getActivity().fetchPluginsList, 0 );
 	} );
 
 	it( 'when fetching for the next page, the next page number should be calculated automatically', () => {

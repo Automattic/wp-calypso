@@ -21,6 +21,7 @@ import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
+// TODO: delete this after launching sites in search
 function replaceSearchUrl( newValue, sort ) {
 	let searchUrl = '/read/search';
 	if ( newValue ) {
@@ -33,9 +34,9 @@ const exported = {
 	search: function( context ) {
 		const basePath = '/read/search',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
-			searchSlug = context.query.q,
-			sort = context.query.sort || 'relevance',
 			mcKey = 'search';
+
+		const { sort = 'relevance', q: searchSlug, show = 'Posts' } = context.query;
 
 		let store;
 		if ( searchSlug ) {
@@ -86,6 +87,7 @@ const exported = {
 				autoFocusInput={ autoFocusInput }
 				onQueryChange={ reportQueryChange }
 				onSortChange={ reportSortChange }
+				searchType={ show }
 			/>,
 			document.getElementById( 'primary' ),
 			context.store

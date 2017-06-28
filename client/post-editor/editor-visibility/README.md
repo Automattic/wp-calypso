@@ -38,3 +38,4 @@ The following props are used with the Editor Visibility component:
 - `password`: (string) A password for 'password' protected post. An empty string if not password protected.
 - `savedStatus`: (string) Auto-save post status.
 - `savedPassword`: (string) Auto-save post password for 'password' protected post.
+- `context`: (string) A string describing the context in which the component is being rendered. (Ex: 'post-settings', 'confirmation-sidebar')

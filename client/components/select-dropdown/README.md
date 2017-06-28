@@ -51,6 +51,10 @@ Used for displaying the text on the dropdown header.
 
 Used for displaying the count on the dropdown header.
 
+`selectedIcon`
+
+Used for displaying an icon on the dropdown header.
+
 `className`
 
 Optional extra class(es) to be applied to the `.select-dropdown`.
@@ -71,9 +75,17 @@ Optional number to show a Count next to the item text.
 
 ![selected example screenshot](https://cldup.com/BOZktaoqTT.png)
 
+`icon`
+
+Optional icon to show before the item text.
+
 `path`
 
 Optional URL to navigate to when option is clicked.
+
+`disabled`
+
+Optional bool to disable dropdown item.
 
 `onClick`
 

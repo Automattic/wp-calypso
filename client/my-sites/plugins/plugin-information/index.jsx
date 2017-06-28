@@ -5,11 +5,12 @@ import React from 'react';
 import i18n from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-
+import Button from 'components/button';
 import ExternalLink from 'components/external-link';
 import Version from 'components/version';
 import PluginRatings from 'my-sites/plugins/plugin-ratings/';
@@ -147,6 +148,19 @@ export default React.createClass( {
 		return {};
 	},
 
+	getDefaultActionLinks( plugin ) {
+		let adminUrl = get( this.props, 'site.options.admin_url' );
+		const pluginSlug = get( plugin, 'slug' );
+
+		if ( pluginSlug === 'vaultpress' ) {
+			adminUrl += 'admin.php?page=vaultpress'; // adminUrl has a trailing slash
+		}
+
+		return adminUrl
+			? { [ i18n.translate( 'WP Admin' ) ]: adminUrl }
+			: null;
+	},
+
 	renderPlaceholder() {
 		const classes = classNames( { 'plugin-information': true, 'is-placeholder': true } );
 		return (
@@ -195,6 +209,13 @@ export default React.createClass( {
 			'is-singlesite': !! this.props.siteVersion
 		} );
 
+		const { plugin } = this.props;
+		let actionLinks = get( plugin, 'action_links' );
+
+		if ( get( plugin, 'active' ) && isEmpty( actionLinks ) ) {
+			actionLinks = this.getDefaultActionLinks( plugin );
+		}
+
 		return (
 			<div className="plugin-information">
 				<div className="plugin-information__wrapper">
@@ -208,6 +229,21 @@ export default React.createClass( {
 							{ this.renderLimits() }
 						</div>
 					</div>
+
+					{ ! isEmpty( actionLinks ) &&
+					<div className="plugin-information__action-links">
+						{ Object.keys( actionLinks ).map( ( linkTitle, index ) => (
+							<Button compact icon
+								href={ actionLinks[ linkTitle ] }
+								target="_blank"
+								key={ 'action-link-' + index }
+								rel="noopener noreferrer">
+									{ linkTitle } <Gridicon icon="external" />
+							</Button>
+						) ) }
+					</div>
+					}
+
 					<div className="plugin-information__links">
 						{ this.renderWporgLink() }
 						{ this.renderHomepageLink() }

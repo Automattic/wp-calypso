@@ -35,6 +35,7 @@ function createDomainObjects( dataTransferObject ) {
 			name: domain.domain,
 			owner: domain.owner,
 			privateDomain: domain.private_domain,
+			privacyAvailable: domain.privacy_available,
 			pendingTransfer: domain.pending_transfer,
 			registrar: domain.registrar,
 			registrationMoment: domain.registration_date && i18n.moment( domain.registration_date ),

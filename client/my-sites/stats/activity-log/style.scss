@@ -3,14 +3,17 @@
 .activity-log__wrapper {
 	position: relative;
 
-	&:after {
+	&:before {
 		content: "";
 		position: absolute;
 		top: 0;
-		left: 31px;
+		bottom: 0;
+		left: 33px;
 		width: 2px;
-		height: calc( 100% - 64px );
 		background-color: lighten( $gray, 20% );
-		z-index: 1;
 	}
+}
+
+.activity-log__rewind-toggle {
+	margin-bottom: 18px;
 }

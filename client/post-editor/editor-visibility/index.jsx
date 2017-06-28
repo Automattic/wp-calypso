@@ -27,6 +27,7 @@ import DropdownItem from 'components/select-dropdown/item';
 import touchDetect from 'lib/touch-detect';
 import postActions from 'lib/posts/actions';
 import { recordEvent, recordStat } from 'lib/posts/stats';
+import { tracks } from 'lib/analytics';
 import accept from 'lib/accept';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -42,6 +43,7 @@ const EditorVisibility = React.createClass( {
 	},
 
 	propTypes: {
+		context: React.PropTypes.string,
 		onPrivatePublish: React.PropTypes.func,
 		isPrivateSite: React.PropTypes.bool,
 		type: React.PropTypes.string,
@@ -178,6 +180,7 @@ const EditorVisibility = React.createClass( {
 
 		recordStat( 'visibility-set-' + newVisibility );
 		recordEvent( 'Changed visibility', newVisibility );
+		tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: newVisibility } );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( postEdits );
@@ -202,6 +205,10 @@ const EditorVisibility = React.createClass( {
 				this.setState( { passwordIsValid: true } );
 				break;
 		}
+
+		recordStat( 'visibility-set-' + newVisibility );
+		recordEvent( 'Changed visibility', newVisibility );
+		tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: newVisibility } );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( postEdits );
@@ -231,6 +238,7 @@ const EditorVisibility = React.createClass( {
 
 		recordStat( 'visibility-set-private' );
 		recordEvent( 'Changed visibility', 'private' );
+		tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: 'private' } );
 	},
 
 	onPrivatePublish() {
@@ -428,7 +436,7 @@ const EditorVisibility = React.createClass( {
 		const dropdownItems = [
 			{
 				label: this.props.translate( 'Public', { context: 'Editor: Radio label to set post visible to public' } ),
-				icon: 'globe',
+				icon: <Gridicon icon="globe" size={ 18 } />,
 				value: 'public',
 				onClick: () => {
 					this.updateDropdownVisibility( 'public' );
@@ -436,13 +444,13 @@ const EditorVisibility = React.createClass( {
 			},
 			{
 				label: this.props.translate( 'Private', { context: 'Editor: Radio label to set post to private' } ),
-				icon: 'user',
+				icon: <Gridicon icon="user" size={ 18 } />,
 				value: 'private',
 				onClick: this.onSetToPrivate
 			},
 			{
 				label: this.props.translate( 'Password Protected', { context: 'Editor: Radio label to set post to password protected' } ),
-				icon: 'lock',
+				icon: <Gridicon icon="lock" size={ 18 } />,
 				value: 'password',
 				onClick: () => {
 					this.updateDropdownVisibility( 'password' );
@@ -457,15 +465,18 @@ const EditorVisibility = React.createClass( {
 					<FormLegend className="editor-fieldset__legend">
 						{ this.props.translate( 'Post Visibility' ) }
 					</FormLegend>
-					<SelectDropdown selectedText={ selectedItem ? selectedItem.label : this.props.translate( 'Select an option' ) }>
+					<SelectDropdown
+						selectedText={ selectedItem ? selectedItem.label : this.props.translate( 'Select an option' ) }
+						selectedIcon={ selectedItem.icon }
+					>
 						{ dropdownItems.map( option =>
 							<DropdownItem
 								selected={ option.value === visibility }
 								key={ option.value }
 								value={ option.value }
 								onClick={ option.onClick }
+								icon={ option.icon }
 							>
-								<Gridicon icon={ option.icon } size={ 18 } />
 								{ option.label }
 							</DropdownItem>
 						) }

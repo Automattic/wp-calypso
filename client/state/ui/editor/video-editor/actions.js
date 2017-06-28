@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import {
-	VIDEO_EDITOR_CLOSE_MODAL,
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
@@ -28,13 +27,6 @@ export const updatePoster = ( videoId, params ) =>
  * @return {Object} Action object
  */
 export const setPosterUrl = posterUrl => ( { type: VIDEO_EDITOR_SET_POSTER_URL, posterUrl } );
-
-/**
- * Returns an action object to indicate that the video editor modal should close.
- *
- * @return {Object} Action object
- */
-export const closeModal = () => ( { type: VIDEO_EDITOR_CLOSE_MODAL } );
 
 /**
  * Returns an action object to indicate that the poster for the video failed to update.

@@ -9,17 +9,17 @@ import { find, isNumber } from 'lodash';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
+import FormWeightInput from 'woocommerce/components/form-weight-input';
+import PriceInput from 'woocommerce/components/price-input';
 import ProductFormVariationsModal from './product-form-variations-modal';
 import ProductFormVariationsRow from './product-form-variations-row';
 
 class ProductFormVariationsTable extends React.Component {
 
 	static propTypes = {
+		siteId: PropTypes.number,
 		variations: PropTypes.array,
 		product: PropTypes.object,
 		editProductVariation: PropTypes.func.isRequired,
@@ -43,10 +43,10 @@ class ProductFormVariationsTable extends React.Component {
 	}
 
 	editAllVariations( field, value ) {
-		const { product, variations, editProductVariation } = this.props;
+		const { siteId, product, variations, editProductVariation } = this.props;
 		this.setState( { [ field ]: value } );
 		variations.map( function( variation ) {
-			editProductVariation( product, variation, { [ field ]: value } );
+			editProductVariation( siteId, product, variation, { [ field ]: value } );
 		} );
 	}
 
@@ -60,21 +60,15 @@ class ProductFormVariationsTable extends React.Component {
 
 	setStockQuantity = ( e ) => {
 		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
+		const manage_stock = stock_quantity !== '';
 		this.editAllVariations( 'stock_quantity', stock_quantity );
+		this.editAllVariations( 'manage_stock', manage_stock );
 	}
 
 	setDimension = ( e ) => {
 		const dimensions = { ...this.state.dimensions, [ e.target.name ]: e.target.value };
 		this.editAllVariations( 'dimensions', dimensions );
 	}
-
-	toggleStock = () => {
-		const manage_stock = ! this.state.manage_stock;
-		if ( this.state.manage_stock ) {
-			this.editAllVariations( 'stock_quantity', '' );
-		}
-		this.editAllVariations( 'manage_stock', manage_stock );
-	};
 
 	onShowDialog( selectedVariation ) {
 		this.setState( {
@@ -91,7 +85,7 @@ class ProductFormVariationsTable extends React.Component {
 	}
 
 	renderModal() {
-		const { variations, product, editProductVariation, translate } = this.props;
+		const { siteId, variations, product, editProductVariation, translate } = this.props;
 		const { showDialog, selectedVariation } = this.state;
 
 		const buttons = [
@@ -107,6 +101,7 @@ class ProductFormVariationsTable extends React.Component {
 				additionalClassNames="woocommerce products__product-form-variation-dialog"
 			>
 				<ProductFormVariationsModal
+					siteId={ siteId }
 					product={ product }
 					variations={ variations }
 					selectedVariation={ selectedVariation }
@@ -118,12 +113,13 @@ class ProductFormVariationsTable extends React.Component {
 	}
 
 	renderVariationRow( variation ) {
-		const { product, variations, editProductVariation } = this.props;
+		const { siteId, product, variations, editProductVariation } = this.props;
 		const id = isNumber( variation.id ) && variation.id || 'index_' + variation.id.index;
 		const manageStock = ( find( variations, ( v ) => v.manage_stock ) ) ? true : false;
 
 		return (
 			<ProductFormVariationsRow
+				siteId={ siteId }
 				key={ id }
 				product={ product }
 				variation={ variation }
@@ -135,9 +131,8 @@ class ProductFormVariationsTable extends React.Component {
 	}
 
 	renderBulkRow() {
-		const { translate, variations } = this.props;
+		const { translate } = this.props;
 		const { regular_price, dimensions, weight, stock_quantity } = this.state;
-		const manageStock = ( find( variations, ( v ) => v.manage_stock ) ) ? true : false;
 
 		return (
 			<tr className="products__product-form-variation-all-row">
@@ -147,10 +142,20 @@ class ProductFormVariationsTable extends React.Component {
 					</div>
 				</td>
 				<td>
-					<FormCurrencyInput noWrap
-						currencySymbolPrefix="$"
-						name="price"
+					<div className="products__product-manage-stock">
+						<FormTextInput
+							name="stock_quantity"
+							value={ stock_quantity }
+							type="number"
+							onChange={ this.setStockQuantity }
+							placeholder={ translate( 'Quantity' ) }
+						/>
+					</div>
+				</td>
+				<td>
+					<PriceInput noWrap
 						value={ regular_price }
+						name="price"
 						placeholder="0.00"
 						onChange={ this.setPrice }
 						size="4"
@@ -160,39 +165,17 @@ class ProductFormVariationsTable extends React.Component {
 					<div className="products__product-dimensions-weight">
 						<FormDimensionsInput
 							className="products__product-dimensions-input"
-							unit="in"
 							noWrap
 							dimensions={ dimensions }
 							onChange={ this.setDimension }
 						/>
 						<div className="products__product-weight-input">
-							<FormTextInputWithAffixes
-								name="weight"
-								type="number"
-								suffix="g"
+							<FormWeightInput
 								value={ weight }
-								size="4"
-								noWrap
 								onChange={ this.setWeight }
+								noWrap
 							/>
 						</div>
-					</div>
-				</td>
-				<td>
-					<div className="products__product-manage-stock">
-						<div className="products__product-manage-stock-toggle">
-							<CompactFormToggle
-								checked={ manageStock }
-								onChange={ this.toggleStock }
-							/>
-						</div>
-						{ manageStock && ( <FormTextInput
-							name="stock_quantity"
-							value={ stock_quantity }
-							type="number"
-							placeholder={ translate( 'Quantity' ) }
-							onChange={ this.setStockQuantity }
-						/> ) }
 					</div>
 				</td>
 			</tr>
@@ -213,9 +196,9 @@ class ProductFormVariationsTable extends React.Component {
 						<thead>
 							<tr>
 								<th></th>
+								<th>{ translate( 'Inventory' ) }</th>
 								<th className="products__product-price">{ translate( 'Price' ) }</th>
 								<th>{ translate( 'Dimensions & weight' ) }</th>
-								<th>{ translate( 'Manage stock' ) }</th>
 							</tr>
 						</thead>
 						<tbody>

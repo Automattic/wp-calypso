@@ -77,8 +77,3 @@ module.exports = React.createClass( {
 } );
 
 ```
-
-###Testing
-
-To run tests go to 
-```cd client/lib/followers/ && make test```

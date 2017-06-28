@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import debugModule from 'debug';
 import page from 'page';
 import i18n from 'i18n-calypso';
@@ -14,35 +14,56 @@ const debug = debugModule( 'calypso:protect-form' );
 const confirmText = i18n.translate( 'You have unsaved changes. Are you sure you want to leave this page?' );
 const beforeUnloadText = i18n.translate( 'You have unsaved changes.' );
 let formsChanged = [];
+let listenerCount = 0;
 
+function warnIfChanged( event ) {
+	if ( ! formsChanged.length ) {
+		return;
+	}
+	debug( 'unsaved form changes detected' );
+	( event || window.event ).returnValue = beforeUnloadText;
+	return beforeUnloadText;
+}
+
+function addBeforeUnloadListener() {
+	if ( listenerCount === 0 && typeof window !== 'undefined' ) {
+		window.addEventListener( 'beforeunload', warnIfChanged );
+	}
+	listenerCount++;
+}
+
+function removeBeforeUnloadListener() {
+	listenerCount--;
+	if ( listenerCount === 0 && typeof window !== 'undefined' ) {
+		window.removeEventListener( 'beforeunload', warnIfChanged );
+	}
+}
+
+function markChanged( form ) {
+	if ( ! includes( formsChanged, form ) ) {
+		formsChanged.push( form );
+	}
+}
+
+function markSaved( form ) {
+	formsChanged = without( formsChanged, form );
+}
+
+/*
+ * HOC that passes markChanged/markSaved props to the wrapped component instance
+ */
 export const protectForm = WrappedComponent => {
 	return class ProtectedFormComponent extends Component {
+		markChanged = () => markChanged( this );
+		markSaved = () => markSaved( this );
+
 		componentDidMount() {
-			window.addEventListener( 'beforeunload', this.warnIfChanged );
+			addBeforeUnloadListener();
 		}
 
 		componentWillUnmount() {
-			window.removeEventListener( 'beforeunload', this.warnIfChanged );
+			removeBeforeUnloadListener();
 			this.markSaved();
-		}
-
-		warnIfChanged = event => {
-			if ( ! formsChanged.length ) {
-				return;
-			}
-			debug( 'unsaved form changes detected' );
-			( event || window.event ).returnValue = beforeUnloadText;
-			return beforeUnloadText;
-		};
-
-		markChanged = () => {
-			if ( ! includes( formsChanged, this ) ) {
-				formsChanged.push( this );
-			}
-		};
-
-		markSaved = () => {
-			formsChanged = without( formsChanged, this );
 		}
 
 		render() {
@@ -57,12 +78,43 @@ export const protectForm = WrappedComponent => {
 	};
 };
 
+/*
+ * Declarative variant that takes a 'isChanged' prop.
+ */
+export class ProtectFormGuard extends Component {
+	static propTypes = {
+		isChanged: PropTypes.bool.isRequired
+	}
+
+	componentDidMount() {
+		addBeforeUnloadListener();
+		if ( this.props.isChanged ) {
+			markChanged( this );
+		}
+	}
+
+	componentWillUnmount() {
+		removeBeforeUnloadListener();
+		markSaved( this );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.isChanged !== this.props.isChanged ) {
+			nextProps.isChanged ? markChanged( this ) : markSaved( this );
+		}
+	}
+
+	render() {
+		return null;
+	}
+}
+
 export const checkFormHandler = ( context, next ) => {
 	if ( ! formsChanged.length ) {
 		return next();
 	}
 	debug( 'unsaved form changes detected' );
-	if ( window.confirm( confirmText ) ) { // eslint-disable-line no-alert
+	if ( typeof window === 'undefined' || window.confirm( confirmText ) ) {
 		formsChanged = [];
 		next();
 	} else {

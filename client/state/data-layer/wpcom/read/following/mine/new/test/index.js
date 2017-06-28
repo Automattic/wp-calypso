@@ -16,7 +16,18 @@ describe( 'requestFollow', () => {
 	it( 'should dispatch a http request', () => {
 		const dispatch = spy();
 		const action = follow( 'http://example.com' );
-		requestFollow( { dispatch }, action );
+		const getState = () => ( {
+			reader: {
+				sites: {
+					items: {},
+				},
+				feeds: {
+					items: {},
+				},
+			},
+		} );
+
+		requestFollow( { dispatch, getState }, action );
 		expect( dispatch ).to.have.been.calledWith(
 			http( {
 				method: 'POST',
@@ -28,7 +39,11 @@ describe( 'requestFollow', () => {
 				},
 				onSuccess: action,
 				onFailure: action,
-			} )
+			} ),
+		);
+
+		expect( dispatch ).to.be.calledWithMatch(
+			{ type: NOTICE_CREATE, notice: { status: 'is-success' } },
 		);
 	} );
 } );
@@ -61,7 +76,7 @@ describe( 'receiveFollow', () => {
 				date_subscribed: 211636800000,
 				delivery_methods: {},
 				is_owner: false,
-			} )
+			} ),
 		);
 	} );
 
@@ -74,7 +89,9 @@ describe( 'receiveFollow', () => {
 		};
 
 		receiveFollow( { dispatch }, action, next, response );
-		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
+		expect( dispatch ).to.be.calledWithMatch(
+			{ type: NOTICE_CREATE, notice: { status: 'is-error' } },
+		);
 		expect( next ).to.be.calledWith( unfollow( 'http://example.com' ) );
 	} );
 } );

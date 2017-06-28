@@ -10,13 +10,15 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
 import LoginForm from './login-form';
 import {
+	getRedirectTo,
 	getRequestError,
 	getRequestNotice,
 	getTwoFactorAuthRequestError,
 	getTwoFactorNotificationSent,
+	getCreateSocialAccountError,
+	getRequestSocialAccountError,
 	isTwoFactorEnabled,
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -25,21 +27,20 @@ import WaitingTwoFactorNotificationApproval from './two-factor-authentication/wa
 import { login } from 'lib/paths';
 import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
+import userFactory from 'lib/user';
+
+const user = userFactory();
 
 class Login extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
-		redirectLocation: PropTypes.string,
+		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
 		requestNotice: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
 		twoFactorAuthRequestError: PropTypes.object,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
-	};
-
-	state = {
-		rememberMe: false,
 	};
 
 	componentDidMount = () => {
@@ -73,28 +74,30 @@ class Login extends Component {
 	};
 
 	rebootAfterLogin = () => {
+		const { redirectTo } = this.props;
+
 		this.props.recordTracksEvent( 'calypso_login_success', {
 			two_factor_enabled: this.props.twoFactorEnabled
 		} );
 
-		const { redirectLocation } = this.props;
+		// Redirects to / if no redirect url is available
+		const url = redirectTo ? redirectTo : window.location.origin;
 
-		let newHref;
+		// user data is persisted in localstorage at `lib/user/user` line 157
+		// therefor we need to reset it before we redirect, otherwise we'll get
+		// mixed data from old and new user
+		user.clear();
 
-		if ( redirectLocation && redirectLocation.match( /^(?!\/\/)[\/\-a-z0-9.]+$/i ) ) {
-			// only redirect to paths on the current domain
-			newHref = redirectLocation;
-		} else {
-			newHref = window.location.origin;
-		}
-
-		window.location.href = newHref;
+		window.location.href = url;
 	};
 
 	renderError() {
-		const error = this.props.requestError || this.props.twoFactorAuthRequestError;
+		const error = this.props.requestError ||
+			this.props.twoFactorAuthRequestError ||
+			this.props.requestAccountError ||
+			this.props.createAccountError && this.props.createAccountError.code !== 'unknown_user' ? this.props.createAccountError : null;
 
-		if ( ! error || error.field !== 'global' ) {
+		if ( ! error || ( error.field && error.field !== 'global' ) || ! error.message ) {
 			return null;
 		}
 
@@ -126,10 +129,6 @@ class Login extends Component {
 			twoFactorNotificationSent,
 		} = this.props;
 
-		const {
-			rememberMe,
-		} = this.state;
-
 		let poller;
 		if ( twoFactorEnabled && twoFactorAuthType && twoFactorNotificationSent === 'push' ) {
 			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
@@ -140,7 +139,6 @@ class Login extends Component {
 				<div>
 					{ poller }
 					<VerificationCodeForm
-						rememberMe={ rememberMe }
 						onSuccess={ this.rebootAfterLogin }
 						twoFactorAuthType={ twoFactorAuthType }
 					/>
@@ -167,8 +165,6 @@ class Login extends Component {
 
 		return (
 			<div>
-				<DocumentHead title={ translate( 'Log In', { textOnly: true } ) } />
-
 				<div className="login__form-header">
 					{ twoStepNonce ? translate( 'Two-Step Authentication' ) : translate( 'Log in to your account.' ) }
 				</div>
@@ -185,6 +181,9 @@ class Login extends Component {
 
 export default connect(
 	( state ) => ( {
+		redirectTo: getRedirectTo( state ),
+		createAccountError: getCreateSocialAccountError( state ),
+		requestAccountError: getRequestSocialAccountError( state ),
 		requestError: getRequestError( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),

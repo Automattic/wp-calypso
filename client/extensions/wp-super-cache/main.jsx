@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,14 +16,14 @@ import Main from 'components/main';
 import Navigation from './navigation';
 import Notice from 'components/notice';
 import PreloadTab from './preload-tab';
-import QueryNotices from './data/query-notices';
+import QueryStatus from './data/query-status';
 import { Tabs } from './constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getNotices } from './state/notices/selectors';
+import { getStatus } from './state/status/selectors';
 
 class WPSuperCache extends Component {
 	static propTypes = {
-		notices: PropTypes.object.isRequired,
+		status: PropTypes.object.isRequired,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		tab: PropTypes.string,
@@ -52,24 +52,23 @@ class WPSuperCache extends Component {
 
 	render() {
 		const {
-			notices,
 			site,
 			siteId,
+			status: { cache_disabled: cacheDisabled },
 			tab,
+			translate,
 		} = this.props;
 		const mainClassName = 'wp-super-cache__main';
-		const cacheDisabled = get( notices, 'cache_disabled' );
-		const cacheDisabledMessage = get( notices.cache_disabled, 'message' );
 
 		return (
 			<Main className={ mainClassName }>
-				<QueryNotices siteId={ siteId } />
+				<QueryStatus siteId={ siteId } />
 
 				{ cacheDisabled &&
 				<Notice
 					showDismiss={ false }
 					status="is-error"
-					text={ cacheDisabledMessage } />
+					text={ translate( 'Read Only Mode. Configuration cannot be changed.' ) } />
 				}
 
 				<Navigation activeTab={ tab } site={ site } />
@@ -84,10 +83,10 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			notices: getNotices( state, siteId ),
+			status: getStatus( state, siteId ),
 			siteId,
 		};
 	}
 );
 
-export default connectComponent( WPSuperCache );
+export default connectComponent( localize( WPSuperCache ) );

@@ -5,7 +5,6 @@
 	"hostname": "calypso.localhost",
 	"port": 3000,
 	"i18n_default_locale_slug": "en",
-	"wpcom_user_bootstrap": false,
 	"rtl": false,
 	"jetpack_min_version": "3.3",
 	"siftscience_key": "e00e878351",
@@ -40,6 +39,7 @@
 		"devdocs/components-usage-stats": false,
 		"help": true,
 		"jetpack_core_inline_update": true,
+		"login/wp-login": true,
 		"keyboard-shortcuts": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
@@ -81,6 +81,7 @@
 		"plans/personal-plan": true,
 		"post-editor-github-link": false,
 		"post-editor/media-advanced": true,
+		"post-editor/video-editor": false,
 		"press-this": true,
 		"reader": true,
 		"reader/following-intro": true,
@@ -101,6 +102,7 @@
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
 		"upgrades/paypal": true,
-		"upgrades/premium-themes": true
+		"upgrades/premium-themes": true,
+		"wpcom-user-bootstrap": false
 	}
 }

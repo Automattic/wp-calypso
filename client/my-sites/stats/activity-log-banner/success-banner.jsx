@@ -11,11 +11,10 @@ import ActivityLogBanner from './index';
 import Button from 'components/button';
 
 function SuccessBanner( {
-	translate,
 	moment,
+	timestamp,
+	translate,
 } ) {
-	// FIXME: real dates
-	const date = 1496400468285;
 	// FIXME: real dismiss
 	const handleDismiss = () => {};
 
@@ -28,9 +27,9 @@ function SuccessBanner( {
 		>
 			<p>{ translate(
 				'We successfully restored your site back to %s!',
-				{ args: moment( date ).format( 'LLLL' ) }
+				{ args: moment( timestamp ).format( 'LLLL' ) }
 			) }</p>
-			<Button primary >
+			<Button primary>
 				{ translate( 'View site' ) }
 			</Button>
 			{ '  ' }

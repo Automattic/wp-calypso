@@ -34,6 +34,7 @@ class FollowingManageSearchFollowed extends Component {
 				delaySearch={ true }
 				delayTimeout={ 100 }
 				hideOpenIcon={ true }
+				disableAutocorrect={ true }
 			/>
 		);
 	}

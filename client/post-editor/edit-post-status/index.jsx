@@ -208,7 +208,8 @@ export class EditPostStatus extends Component {
 			type,
 			password,
 			savedStatus,
-			savedPassword
+			savedPassword,
+			context: 'post-settings',
 		};
 
 		return (

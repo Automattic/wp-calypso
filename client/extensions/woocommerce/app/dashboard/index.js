@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -9,53 +10,87 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { getSelectedSite } from 'state/ui/selectors';
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import {
+	areSetupChoicesLoading,
+	getFinishedInitialSetup,
+	getSetStoreAddressDuringInitialSetup
+} from 'woocommerce/state/sites/setup-choices/selectors';
+import { areOrdersLoading, getOrders } from 'woocommerce/state/sites/orders/selectors';
+import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
-import Setup from './setup';
+import ManageNoOrdersView from './manage-no-orders-view';
+import ManageOrdersView from './manage-orders-view';
+import PreSetupView from './pre-setup-view';
+import SetupTasksView from './setup-tasks-view';
 
 class Dashboard extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
+		finishedInitialSetup: PropTypes.bool,
+		hasOrders: PropTypes.bool,
+		loading: PropTypes.bool,
+		selectedSite: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+			slug: PropTypes.string.isRequired,
+			URL: PropTypes.string.isRequired,
+		} ),
+		fetchOrders: PropTypes.func,
+		fetchSetupChoices: PropTypes.func,
 	};
 
-	onStoreSetupFinished = () => {
-		// TODO - save that setup has been finished to the store's state on WPCOM
-		// TODO - is there a way to set an option on the store site?
-	}
-
-	renderStoreSetup = () => {
+	componentDidMount = () => {
 		const { selectedSite } = this.props;
-		return (
-			<Setup
-				onFinished={ this.onStoreSetupFinished }
-				site={ selectedSite }
-			/>
-		);
+
+		if ( selectedSite && selectedSite.ID ) {
+			this.props.fetchSetupChoices( selectedSite.ID );
+			this.props.fetchOrders( selectedSite.ID, 1 );
+		}
 	}
 
-	renderStoreManagement = () => {
-		const { translate } = this.props;
+	componentWillReceiveProps = ( newProps ) => {
+		const { selectedSite } = this.props;
 
-		return (
-			<Card>
-				<p>
-					{ translate( 'This is the start of something great!' ) }
-				</p>
-				<p>
-					{ translate( 'This will be the home for your WooCommerce Store integration with WordPress.com.' ) }
-				</p>
-			</Card>
-		);
+		const newSiteId = newProps.selectedSite ? newProps.selectedSite.ID : null;
+		const oldSiteId = selectedSite ? selectedSite.ID : null;
+
+		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchSetupChoices( newSiteId );
+			this.props.fetchOrders( newSiteId, 1 );
+		}
+	}
+
+	renderDashboardContent = () => {
+		const { finishedInitialSetup, hasOrders, selectedSite, setStoreAddressDuringInitialSetup } = this.props;
+
+		if ( ! setStoreAddressDuringInitialSetup ) {
+			return ( <PreSetupView site={ selectedSite } /> );
+		}
+
+		if ( ! finishedInitialSetup ) {
+			return ( <SetupTasksView onFinished={ this.onStoreSetupFinished } site={ selectedSite } /> );
+		}
+
+		if ( ! hasOrders ) {
+			return ( <ManageNoOrdersView site={ selectedSite } /> );
+		}
+
+		return ( <ManageOrdersView site={ selectedSite } /> );
 	}
 
 	render = () => {
-		const { storeSetupCompleted } = this.props;
+		const { className, loading, selectedSite } = this.props;
+
+		if ( loading || ! selectedSite ) {
+			// TODO have a placeholder/loading view instead
+			return null;
+		}
 
 		return (
-			<Main className={ classNames( 'dashboard', this.props.className ) }>
-				{ storeSetupCompleted ? this.renderStoreManagement() : this.renderStoreSetup() }
+			<Main className={ classNames( 'dashboard', className ) }>
+				{ this.renderDashboardContent() }
 			</Main>
 		);
 	}
@@ -63,12 +98,27 @@ class Dashboard extends Component {
 }
 
 function mapStateToProps( state ) {
-	// TODO - figure out from state if setup has been completed for this store yet
-
+	const selectedSite = getSelectedSiteWithFallback( state );
+	const loading = ( areOrdersLoading( state ) || areSetupChoicesLoading( state ) );
+	const hasOrders = getOrders( state ).length > 0;
+	const finishedInitialSetup = getFinishedInitialSetup( state );
 	return {
-		selectedSite: getSelectedSite( state ),
-		storeSetupCompleted: false,
+		finishedInitialSetup,
+		hasOrders,
+		loading,
+		selectedSite,
+		setStoreAddressDuringInitialSetup: getSetStoreAddressDuringInitialSetup( state ),
 	};
 }
 
-export default connect( mapStateToProps )( localize( Dashboard ) );
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchOrders,
+			fetchSetupChoices,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Dashboard ) );

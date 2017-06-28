@@ -653,7 +653,7 @@ In cases where ESLint incorrectly identifies code as not following our standards
 
 ### [Automatically Run ESLint Against Your Changesets](#setting-up-githooks)
 
-If you would like to have your changes automatically run through ESLint - there is a git pre-commit hook in `bin/pre-commit` that will perform the task.  To install the git hook, execute `make githooks-commit` from the root of your Calypso directory.  This creates a symlink to the pre-commit hook that will run everytime you do a `git commit`.
+If you would like to have your changes automatically run through ESLint - there is a git pre-commit hook in `bin/pre-commit-hook.js` that will perform the task. It will be run everytime you do a `git commit`.
 
 If ESLint encounters any issues inside any .jsx or .js files you have updated, an error will be displayed, and the commit will not proceed.  Here is an example of an attempted commit with the hook installed:
 
@@ -664,7 +664,7 @@ If ESLint encounters any issues inside any .jsx or .js files you have updated, a
 To lint the entire project, from the root of your working directory run:
 
 ```bash
-make eslint
+npm run lint:js
 ```
 
 

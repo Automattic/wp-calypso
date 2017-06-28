@@ -14,11 +14,11 @@ import {
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 } from 'state/action-types';
 import {
-	getTwoFactorUserId,
+	getRememberMe,
 	getTwoFactorAuthNonce,
+	getTwoFactorPushPollInProgress,
 	getTwoFactorPushToken,
-	getTwoFactorRememberMe,
-	getTwoFactorPushPollInProgress
+	getTwoFactorUserId,
 } from 'state/login/selectors';
 
 /***
@@ -33,14 +33,17 @@ const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
  * @returns {Promise}		Promise of result from the API
  */
 const doAppPushRequest = ( store ) => {
+	const authType = 'push';
+
 	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
 			user_id: getTwoFactorUserId( store.getState() ),
-			two_step_nonce: getTwoFactorAuthNonce( store.getState(), 'push' ),
-			remember_me: getTwoFactorRememberMe( store.getState() ),
+			auth_type: authType,
+			two_step_nonce: getTwoFactorAuthNonce( store.getState(), authType ),
+			remember_me: getRememberMe( store.getState() ),
 			two_step_push_token: getTwoFactorPushToken( store.getState() ),
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),

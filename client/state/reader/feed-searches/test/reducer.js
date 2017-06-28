@@ -10,7 +10,7 @@ import freeze from 'deep-freeze';
 import { receiveFeedSearch } from '../actions';
 import { items } from '../reducer';
 
-const query = 'macrumor';
+const queryKey = 'macrumor-F-ASC';
 const feeds = freeze( [
 	{
 		URL: 'http://www.macrumors.com/macrumors.xml',
@@ -39,11 +39,11 @@ describe( 'reducer', () => {
 
 		it( 'should add query results to an empty object', () => {
 			const prevState = {};
-			const action = receiveFeedSearch( query, feeds );
+			const action = receiveFeedSearch( queryKey, feeds );
 			const nextState = items( prevState, action );
 
 			expect( nextState ).to.eql( {
-				[ query ]: feeds,
+				[ queryKey ]: feeds,
 			} );
 		} );
 
@@ -51,11 +51,11 @@ describe( 'reducer', () => {
 			const prevState = {
 				chickens: [ { blogName: 'chickens R us' } ],
 			};
-			const action = receiveFeedSearch( query, feeds );
+			const action = receiveFeedSearch( queryKey, feeds );
 			const nextState = items( prevState, action );
 			expect( nextState ).to.eql( {
 				...prevState,
-				[ query ]: feeds,
+				[ queryKey ]: feeds,
 			} );
 		} );
 	} );

@@ -28,7 +28,7 @@ import SignupDependencyStore from 'lib/signup/dependency-store';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import SignupProgressStore from 'lib/signup/progress-store';
 import SignupFlowController from 'lib/signup/flow-controller';
-import LocaleSuggestions from './locale-suggestions';
+import LocaleSuggestions from 'components/locale-suggestions';
 import FlowProgressIndicator from './flow-progress-indicator';
 import steps from './config/steps';
 import stepComponents from './config/step-components';

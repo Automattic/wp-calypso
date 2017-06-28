@@ -36,8 +36,8 @@ module.exports = {
 	newSiteWithJetpack: {
 		datestamp: '20170419',
 		variations: {
-			showNewJetpackSite: 10,
-			onlyDotComSites: 90,
+			showNewJetpackSite: 50,
+			onlyDotComSites: 50,
 		},
 		defaultVariation: 'onlyDotComSites',
 	},
@@ -48,15 +48,6 @@ module.exports = {
 			hide: 50,
 		},
 		defaultVariation: 'show',
-		allowExistingUsers: true,
-	},
-	domainToPaidPlanUpsellNudge: {
-		datestamp: '20170607',
-		variations: {
-			skip: 50,
-			show: 50,
-		},
-		defaultVariation: 'skip',
 		allowExistingUsers: true,
 	},
 	ATPromptOnCancel: {
@@ -77,14 +68,6 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	reduceThemesInSignupTest: {
-		datestamp: '20170518',
-		variations: {
-			original: 0,
-			modified: 100,
-		},
-		defaultVariation: 'original',
-	},
 	savingsInCheckoutSummary: {
 		datestamp: '20170516',
 		variations: {
@@ -93,30 +76,20 @@ module.exports = {
 		},
 		defaultVariation: 'show',
 	},
-	siteCreationStepOne: {
-		datestamp: '20170524',
+	signupPlansCopyChanges: {
+		datestamp: '20170623',
 		variations: {
 			original: 50,
 			modified: 50,
 		},
 		defaultVariation: 'original',
 	},
-	selectCtaInDomainsSignup: {
-		datestamp: '20170529',
+	signupProgressIndicator: {
+		datestamp: '20170612',
 		variations: {
 			original: 50,
-			select: 50,
+			wizardbar: 50,
 		},
 		defaultVariation: 'original',
-	},
-	pulsingCartTestingAB: {
-		datestamp: '20170601',
-		variations: {
-			original: 50,
-			modified: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 };

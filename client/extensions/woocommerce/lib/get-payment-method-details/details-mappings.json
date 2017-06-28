@@ -6,6 +6,10 @@
 		"methodType": "offline"
 	},
 	"cod": {
+		"fields": [
+			"title",
+			"instructions"
+		],
 		"methodType": "offline"
 	},
 	"paypal": {

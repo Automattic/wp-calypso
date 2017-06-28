@@ -1,3 +1,10 @@
+.layout {
+	&.is-section-preview {
+		height: 100%;
+		overflow: hidden;
+	}
+}
+
 .layout__content {
 	@include clear-fix;
 	position: relative;
@@ -15,6 +22,11 @@
 	.is-section-themes.has-no-sidebar & {
 		padding: 0;
 		margin: 0;
+	}
+
+	.is-section-preview & {
+		height: 100%;
+		padding: 47px 0 0 $sidebar-width-max;
 	}
 
 	@media print {
@@ -36,6 +48,10 @@
 			padding: 0;
 			margin: 0;
 		}
+
+		.is-section-preview & {
+			padding: 47px 0px 0px 228px;
+		}
 	}
 }
 
@@ -49,11 +65,19 @@
 		.has-no-sidebar & {
 			padding-left: 0;
 		}
+
+		.is-section-preview & {
+			padding: 47px 0 0 0;
+		}
 	}
 }
 
 .layout__primary {
 	transition: all 0.15s ease-in-out;
+
+	.is-section-preview & {
+		height: 100%;
+	}
 }
 
 .layout__content a {

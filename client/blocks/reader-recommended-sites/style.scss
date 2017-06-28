@@ -1,5 +1,4 @@
 // Custom breakpoints needed to match Related Posts
-
 $reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
 $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
@@ -59,7 +58,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	flex-direction: column;
 	list-style-type: none;
 	margin-top: -40px;
-	min-width: 0;
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
 		flex-direction: row;
@@ -175,10 +173,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	&:only-child {
 		margin-left: 0;
 		margin-right: 0;
-	}
-
-	.reader-subscription-list-item__avatar {
-		min-width: 0;
 	}
 
 	.reader-subscription-list-item__byline {

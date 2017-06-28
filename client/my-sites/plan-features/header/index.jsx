@@ -36,11 +36,13 @@ import TimeFrame from './time-frame';
 export class PlanFeaturesHeader extends Component {
 	render() {
 		const {
+			audience,
 			basePlansPath,
 			billingTimeFrame,
 			currencyCode,
 			discountPrice,
 			hideMonthly,
+			isInSignupTest,
 			isPlaceholder,
 			isSiteAT,
 			intervalType,
@@ -49,7 +51,7 @@ export class PlanFeaturesHeader extends Component {
 			relatedMonthlyPlan,
 			showBigPlanIcon,
 			site,
-			title,
+			title
 		} = this.props;
 
 		const headerClasses = classNames(
@@ -79,6 +81,7 @@ export class PlanFeaturesHeader extends Component {
 				{ ! showBigPlanIcon && this.renderPlanIcon() }
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
+					{ ! showBigPlanIcon && isInSignupTest && audience }
 					{ showBigPlanIcon && <Tagline planType={ planType } /> }
 					{ showBigPlanIcon && this.renderPlanIcon() }
 					<Price { ...priceProps } />

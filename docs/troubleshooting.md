@@ -2,7 +2,7 @@
 
 ## Building
 This section lists known problems you can encounter while building the project.
-If you have a problem when running `make run` - this is the proper section to look for a solution.
+If you have a problem when running `npm start` - this is the proper section to look for a solution.
 
 ### EMFILE - too many open files
 
@@ -36,15 +36,15 @@ This command will temporarily (until your next system reboot) change the maximum
 Sometimes, usually during the first build, you can see a message similar to `Please try running again as an administrator`. 
 Just run
 ```
-sudo make run
+sudo npm start
 ```
 
 ### Other build problems - try to clean the build
 Sometimes, especially while switching branches, previous build leaves some artifacts in your directory.
-This can cause problems with the next build. Simply re-runnning `make run` doesn't always clean it up.
+This can cause problems with the next build. Simply re-runnning `npm start` doesn't always clean it up.
 To clean up directory, just run:
 ```
-make distclean
+npm run distclean
 ```
 
 ## Running

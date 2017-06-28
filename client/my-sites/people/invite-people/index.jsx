@@ -443,7 +443,7 @@ const InvitePeople = React.createClass( {
 					<SidebarNavigation />
 					<EmptyContent
 						title={ translate( 'Oops, only administrators can invite other people' ) }
-						illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+						illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 					/>
 				</Main>
 			);

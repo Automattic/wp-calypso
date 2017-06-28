@@ -146,6 +146,24 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	preview() {
+		if ( ! this.props.siteId ) {
+			return null;
+		}
+
+		return (
+			<SidebarItem
+				tipTarget="sitePreview"
+				label={ this.props.translate( 'View Site' ) }
+				className={ this.itemLinkClass( [ '/view' ], 'preview' ) }
+				link={ '/view' + this.props.siteSuffix }
+				onNavigate={ this.onNavigate }
+				icon="computer"
+				preloadSectionName="preview"
+			/>
+		);
+	}
+
 	ads() {
 		const { site, canUserManageOptions } = this.props;
 		const adsLink = '/ads/earnings' + this.props.siteSuffix;
@@ -295,13 +313,13 @@ export class MySitesSidebar extends Component {
 
 		let linkClass = 'upgrades-nudge';
 
-		if ( productsValues.isPlan( site.plan ) ) {
+		if ( site && productsValues.isPlan( site.plan ) ) {
 			linkClass += ' is-paid-plan';
 		}
 
-		let planName = site.plan.product_name_short;
+		let planName = site && site.plan.product_name_short;
 
-		if ( productsValues.isFreeTrial( site.plan ) ) {
+		if ( site && productsValues.isFreeTrial( site.plan ) ) {
 			planName = this.props.translate( 'Trial', {
 				context: 'Label in the sidebar indicating that the user is on the free trial for a plan.'
 			} );
@@ -318,6 +336,11 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackStoreClick = () => {
+		analytics.tracks.recordEvent( 'calypso_woocommerce_store_nav_item_click' );
+		this.onNavigate();
+	};
+
 	store() {
 		const { canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
 		const storeLink = '/store' + siteSuffix;
@@ -327,9 +350,9 @@ export class MySitesSidebar extends Component {
 		return (
 			showStoreLink &&
 			<SidebarItem
-				label={ translate( 'Store' ) }
+				label={ translate( 'Store (BETA)' ) }
 				link={ storeLink }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.trackStoreClick }
 				icon="cart" >
 				<SidebarButton href={ storeLink }>
 					{ translate( 'Set up' ) }
@@ -375,7 +398,7 @@ export class MySitesSidebar extends Component {
 	users() {
 		const { site, canUserListUsers } = this.props;
 		let usersLink = '/people/team' + this.props.siteSuffix;
-		let addPeopleLink = '/people/new' + this.props.siteSuffix;
+		const addPeopleLink = '/people/new' + this.props.siteSuffix;
 
 		if ( ! site ) {
 			return null;
@@ -387,10 +410,6 @@ export class MySitesSidebar extends Component {
 
 		if ( ! config.isEnabled( 'manage/people' ) && site.options ) {
 			usersLink = site.options.admin_url + 'users.php';
-		}
-
-		if ( ! config.isEnabled( 'jetpack/invites' ) && ! this.props.isSiteAutomatedTransfer && site.options && this.props.isJetpack ) {
-			addPeopleLink = site.options.admin_url + 'user-new.php';
 		}
 
 		return (
@@ -535,6 +554,7 @@ export class MySitesSidebar extends Component {
 			<div>
 				<SidebarMenu>
 					<ul>
+						{ config.isEnabled( 'standalone-site-preview' ) && this.preview() }
 						{ this.stats() }
 						{ this.plan() }
 						{ this.store() }

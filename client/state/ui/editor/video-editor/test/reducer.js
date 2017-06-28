@@ -7,14 +7,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	VIDEO_EDITOR_CLOSE_MODAL,
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 } from 'state/action-types';
 
 import reducer, {
-	closeModal,
 	showError,
 	uploadProgress,
 	url,
@@ -23,35 +21,10 @@ import reducer, {
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'closeModal',
 			'showError',
 			'uploadProgress',
 			'url',
 		] );
-	} );
-
-	describe( '#closeModal()', () => {
-		it( 'should default to false', () => {
-			const state = closeModal( undefined, {} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should change to true on successful update', () => {
-			const state = closeModal( undefined, {
-				type: VIDEO_EDITOR_CLOSE_MODAL,
-			} );
-
-			expect( state ).to.be.true;
-		} );
-
-		it( 'should change to false on some other state change', () => {
-			const state = closeModal( undefined, {
-				type: VIDEO_EDITOR_SHOW_ERROR,
-			} );
-
-			expect( state ).to.be.false;
-		} );
 	} );
 
 	describe( '#url()', () => {
@@ -97,14 +70,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( percentage );
-		} );
-
-		it( 'should change to null on modal closed', () => {
-			const state = uploadProgress( undefined, {
-				type: VIDEO_EDITOR_CLOSE_MODAL,
-			} );
-
-			expect( state ).to.be.null;
 		} );
 
 		it( 'should change to null on some other state change', () => {

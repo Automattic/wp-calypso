@@ -361,4 +361,21 @@ sections.push( {
 	secondary: true
 } );
 
+sections.push( {
+	name: 'preview',
+	paths: [ '/view' ],
+	module: 'my-sites/preview',
+	group: 'sites',
+	secondary: true
+} );
+
+sections.push( {
+	name: 'domain-connect-authorize',
+	paths: [ '/domain-connect' ],
+	module: 'my-sites/upgrades/domain-management/domain-connect',
+	enableLoggedOut: false,
+	secondary: false,
+	isomorphic: false
+} );
+
 module.exports = sections;

@@ -14,6 +14,7 @@ import mapValues from 'lodash/mapValues';
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
 import { trackClick } from './helpers';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getTheme } from 'state/themes/selectors';
 
 const OPTION_SHAPE = PropTypes.shape( {
@@ -31,6 +32,9 @@ const ThemesSiteSelectorModal = React.createClass( {
 		secondaryOption: OPTION_SHAPE,
 		// Will be prepended to site slug for a redirect on selection
 		pathName: PropTypes.string.isRequired,
+		// connected props
+		getSiteSlug: PropTypes.func,
+		getWpcomTheme: PropTypes.func,
 	},
 
 	getInitialState() {
@@ -40,12 +44,13 @@ const ThemesSiteSelectorModal = React.createClass( {
 		};
 	},
 
-	trackAndCallAction( site ) {
+	trackAndCallAction( siteId ) {
 		const action = this.state.selectedOption.action;
 		const themeId = this.state.selectedThemeId;
 		const { search } = this.props;
+		const siteSlug = this.props.getSiteSlug( siteId );
 
-		let redirectTarget = this.props.pathName + '/' + site.slug;
+		let redirectTarget = this.props.pathName + '/' + siteSlug;
 		if ( search ) {
 			redirectTarget += '?s=' + search;
 		}
@@ -59,7 +64,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 		 */
 		if ( action ) {
 			defer( () => {
-				action( themeId, site.ID );
+				action( themeId, siteId );
 			} );
 		}
 	},
@@ -109,14 +114,14 @@ const ThemesSiteSelectorModal = React.createClass( {
 				{ children }
 				{ selectedOption && <SiteSelectorModal className="themes__site-selector-modal"
 					isVisible={ true }
-					filter={ function( site ) {
-						return ! ( selectedOption.hideForTheme && selectedOption.hideForTheme( selectedThemeId, site.ID ) );
+					filter={ function( siteId ) {
+						return ! ( selectedOption.hideForTheme && selectedOption.hideForTheme( selectedThemeId, siteId ) );
 					} }
 					hide={ this.hideSiteSelectorModal }
 					mainAction={ this.trackAndCallAction }
 					mainActionLabel={ selectedOption.label }
-					getMainUrl={ selectedOption.getUrl ? function( site ) {
-						return selectedOption.getUrl( selectedThemeId, site.ID );
+					getMainUrl={ selectedOption.getUrl ? function( siteId ) {
+						return selectedOption.getUrl( selectedThemeId, siteId );
 					} : null } >
 
 					<Theme isActionable={ false } theme={ theme } />
@@ -131,8 +136,9 @@ export default connect(
 	( state ) => ( {
 		// We don't need a <QueryTheme /> component to fetch data for the theme since the
 		// ThemesSiteSelectorModal will always be called from a context where those data are available.
-		// FIXME: Since the themeId is part of the component's internal state, we can't use it here and
-		// have to return a function instead of a ready-made theme object.
-		getWpcomTheme: themeId => getTheme( state, 'wpcom', themeId )
+		// FIXME: Since the siteId and themeId are part of the component's internal state, we can't use them
+		// here. Instead, we have to return helper functions.
+		getSiteSlug: siteId => getSiteSlug( state, siteId ),
+		getWpcomTheme: themeId => getTheme( state, 'wpcom', themeId ),
 	} )
 )( ThemesSiteSelectorModal );

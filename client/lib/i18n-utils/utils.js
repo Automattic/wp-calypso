@@ -19,12 +19,25 @@ function getPathParts( path ) {
 }
 
 const i18nUtils = {
+	/**
+	 * Checks if provided locale is a default one.
+	 *
+	 * @param {string} locale - locale slug (eg: 'fr')
+	 * @return {boolean} true when the default locale is provided
+	 */
+	isDefaultLocale: function( locale ) {
+		return locale === config( 'i18n_default_locale_slug' );
+	},
+
 	getLanguage: function( langSlug ) {
 		let language;
+
 		if ( localeRegex.test( langSlug ) || localeWithRegionRegex.test( langSlug ) ) {
-			language = find( config( 'languages' ), { langSlug: langSlug } ) ||
-				find( config( 'languages' ), { langSlug: langSlug.substring( 0, 2 ) } );
+			language =
+				find( config( 'languages' ), { langSlug } ) ||
+				find( config( 'languages' ), { langSlug: langSlug.split( '-' )[ 0 ] } );
 		}
+
 		return language;
 	},
 
@@ -37,7 +50,7 @@ const i18nUtils = {
 		const parts = getPathParts( path );
 		const locale = parts.pop();
 
-		return ( 'undefined' === typeof i18nUtils.getLanguage( locale ) ) ? undefined : locale;
+		return 'undefined' === typeof i18nUtils.getLanguage( locale ) ? undefined : locale;
 	},
 
 	/**
@@ -48,10 +61,11 @@ const i18nUtils = {
 	 * @param {string} path - original path
 	 * @param {string} locale - locale slug (eg: 'fr')
 	 * @returns {string} original path with new locale slug
-	*/
+	 */
 	addLocaleToPath: function( path, locale ) {
 		const urlParts = url.parse( path );
 		const queryString = urlParts.search || '';
+
 		return i18nUtils.removeLocaleFromPath( urlParts.pathname ) + `/${ locale }` + queryString;
 	},
 
@@ -72,6 +86,7 @@ const i18nUtils = {
 		}
 
 		return parts.join( '/' ) + queryString;
-	}
+	},
 };
+
 export default i18nUtils;

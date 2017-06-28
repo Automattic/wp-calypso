@@ -7,7 +7,7 @@ import config, { isEnabled } from 'config';
 export function login( { isNative, redirectTo, twoFactorAuthType } = {} ) {
 	let url = config( 'login_url' );
 
-	if ( isNative && isEnabled( 'wp-login' ) ) {
+	if ( isNative && isEnabled( 'login/wp-login' ) ) {
 		url = '/log-in';
 
 		if ( twoFactorAuthType ) {

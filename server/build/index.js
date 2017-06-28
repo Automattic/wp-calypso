@@ -6,7 +6,7 @@ var path = require( 'path' ),
 	debug = require( 'debug' )( 'build' );
 
 /**
- * Returns a "build middleware", which runs `make build-css` upon each HTTP
+ * Returns a "build middleware", which runs `npm run build-css` upon each HTTP
  * request. Meant for use in "development" env.
  *
  * @return {Function} build middleware function
@@ -59,7 +59,7 @@ function setup() {
 				next();
 			} else {
 				// `make` failed
-				res.send( '<pre>`make build-css` failed \n\n' + errors + '</pre>' );
+				res.send( '<pre>`npm run build-css` failed \n\n' + errors + '</pre>' );
 			}
 		} );
 	};

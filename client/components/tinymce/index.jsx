@@ -282,6 +282,7 @@ module.exports = React.createClass( {
 			relative_urls: false,
 			remove_script_host: false,
 			convert_urls: false,
+			branding: false,
 			browser_spellcheck: true,
 			fix_list_elements: true,
 			entities: '38,amp,60,lt,62,gt',

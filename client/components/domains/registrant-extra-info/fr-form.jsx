@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { isEqual, noop } from 'lodash';
+import { connect } from 'react-redux';
+import { defaults, isEqual, noop, toInteger } from 'lodash';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import debugFactory from 'debug';
@@ -10,6 +11,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { getContactDetailsCache } from 'state/selectors';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -18,6 +21,11 @@ import FormCountrySelect from 'components/forms/form-country-select';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
+// We use this for basic birth date validation.
+// Twill need to be updated once Ray gets us to the singularity.
+const currentPlausibleHumanLifespan = 140;
+const minimumLegalAge = 13;
+
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 
 // If we set a field to null, react decides it's uncontrolled and complains
@@ -25,9 +33,6 @@ const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 // so we use these values to plug missing.
 const emptyValues = {
 	countryOfBirth: '',
-	dobDays: '',
-	dobMonths: '',
-	dobYears: '',
 	placeOfBirth: '',
 	postalCodeOfBirth: '',
 	registrantVatId: '',
@@ -35,97 +40,96 @@ const emptyValues = {
 	trademarkNumber: '',
 };
 
-class RegistrantExtraInfoForm extends React.PureComponent {
+class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		countriesList: PropTypes.object.isRequired,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
-		onStateChanged: PropTypes.func, // Just until we can reduxify the contact details
-		countryCode: PropTypes.string,
-		isProbablyOrganization: PropTypes.bool,
 	}
 
 	static defaultProps = {
 		countriesList: { data: [] },
 		isVisible: true,
-		isProbablyOrganization: false,
-		values: {},
 		onSubmit: noop,
-		onStateChanged: noop,
+	}
+
+	constructor( props ) {
+		super( props );
+		this.state = {
+			dobDays: '',
+			dobMonths: '',
+			dobYears: '',
+		};
 	}
 
 	componentWillMount() {
-		const defaults = {
-			registrantType: this.props.isProbablyOrganization
-				? 'organization' : 'individual',
-			countryOfBirth: this.props.countryCode || 'FR',
-		};
+		// We're pushing props out into the global state here because:
+		// 1) We want to use these values if the user immediately hits submit
+		// 2) We want to use the tld specific forms to manage the tld specific
+		//    fields so we can keep them together in one place
+		this.props.updateContactDetailsCache( { extra: {
+			registrantType: this.props.contactDetails.organization ? 'organization' : 'individual',
+			countryOfBirth: this.props.contactDetails.countryCode || 'FR'
+		} } );
+	}
 
-		const values = {
-			...defaults,
-			...this.props.values,
-		};
+	componentDidUpdate( prevProps, prevState ) {
+		const dateOfBirth = this.compileDateOfBirth();
 
-		// It's possible for the parent to pass in null and still have a form
-		// that the user is happy with, so we pass one state out
-		// immediatly to to make sure there's something valid in the parent
-		this.props.onStateChange( values );
+		if ( dateOfBirth && ! isEqual( prevState, this.state ) ) {
+			this.setDateOfBirth( dateOfBirth );
+		}
+	}
+
+	compileDateOfBirth() {
+		const { dobYears, dobMonths, dobDays } = this.state;
+
+		if ( ! dobYears || ! dobMonths || ! dobDays ) {
+			return false;
+		}
+
+		const dateOfBirth = [ dobYears, dobMonths, dobDays ].join( '-' );
+
+		if ( ! dateOfBirth || ! moment( dateOfBirth, 'YYYY-MM-DD' ).isValid() ) {
+			// @todo: set error state
+			return false;
+		}
+
+		const yearDiff = new Date().getFullYear() - toInteger( dobYears );
+
+		if ( yearDiff > currentPlausibleHumanLifespan || yearDiff < minimumLegalAge ) {
+			// @todo: set error state
+			return false;
+		}
+
+		return dateOfBirth;
+	}
+
+	setDateOfBirth( dateOfBirth ) {
+		debug( 'Setting dateOfBirth to ' + dateOfBirth );
+		this.props.updateContactDetailsCache( { extra: { dateOfBirth } } );
 	}
 
 	handleDobChangeEvent = ( event ) => {
-		// TODO FIXME: Sanitize and validate individual fields and resulting
-		// date
-
-		// setState() is not syncronous :(
-		const newState = this.newStateFromEvent( event );
-		const { dobYears, dobMonths, dobDays } = newState;
-
-		const dateOfBirth = ( dobYears && dobMonths && dobDays ) &&
-			[ dobYears, dobMonths, dobDays ].join( '-' );
-
-		if ( dateOfBirth ) {
-			debug( 'Setting dateOfBirth to ' + dateOfBirth +
-				( moment( dateOfBirth, 'YYYY-MM-DD' ).isValid() ? '' : ' (invalid)' ) );
-		}
-
-		this.props.onStateChange( {
-			...newState,
-			...( dateOfBirth ? { dateOfBirth } : {} )
-		} );
-	}
-
-	newStateFromEvent( event ) {
-		return {
-			...this.props.values,
-			[ event.target.id ]: event.target.value,
-		};
+		this.setState( { [ event.target.id ]: event.target.value } );
 	}
 
 	handleChangeEvent = ( event ) => {
-		this.props.onStateChange( this.newStateFromEvent( event ) );
-	}
-
-	// We need a deep comparison to check inside props.values
-	shouldComponentUpdate( nextProps ) {
-		return ! isEqual( this.props, nextProps );
+		debug( 'Setting ' + event.target.id + ' to ' + event.target.value );
+		this.props.updateContactDetailsCache( {
+			extra: { [ event.target.id ]: event.target.value },
+		} );
 	}
 
 	render() {
 		const translate = this.props.translate;
-		const {
-			registrantType
-		} = { ...emptyValues, ...this.props.values };
-
+		const registrantType = this.props.contactDetails.extra.registrantType;
 		return (
 			<form className="registrant-extra-info__form">
-				<h1 className="registrant-extra-info__form-title">
-					{ translate(
-						'Registering a .FR domain'
-					) }
-				</h1>
 				<p className="registrant-extra-info__form-desciption">
 					{ translate(
-						'Almost done! We need some extra details to register domains ending in ".fr".'
+						'Almost done! We need some extra details to register your %(tld)s domain.',
+						{ args: { tld: '.fr' } }
 					) }
 				</p>
 				<FormFieldset>
@@ -159,16 +163,14 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	}
 
 	renderPersonalFields() {
-		const translate = this.props.translate;
 		const screenReaderText = 'screen-reader-text';
+		const translate = this.props.translate;
+		const { dobYears, dobMonths, dobDays } = this.state;
 		const {
 			countryOfBirth,
-			dobDays,
-			dobMonths,
-			dobYears,
 			placeOfBirth,
 			postalCodeOfBirth,
-		} = { ...emptyValues, ...this.props.values };
+		} = defaults( {}, this.props.contactDetails.extra, emptyValues );
 
 		return (
 			<div>
@@ -235,7 +237,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 						translate( 'Year/Month/Day - e.g. 1970/12/31', {
 							comment: 'This is describing a date format with fixed fields, so please do not ' +
 								'alter the numbers (Year, Month, Day). Please translate e.g("For example") if appropriate and also ' +
-								'the words, Year, Month, Day, individually.'
+								'the words, Year, Month, Day, individually.',
 						} )
 					}</FormSettingExplanation>
 				</FormFieldset>
@@ -275,11 +277,13 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 
 	renderOrganizationFields() {
 		const translate = this.props.translate;
+		const { extra } = this.props.contactDetails;
 		const {
 			registrantVatId,
 			sirenSiret,
 			trademarkNumber
-		} = { ...emptyValues, ...this.props.values };
+		} = defaults( {}, extra, emptyValues );
+
 		return (
 			<div>
 				<FormFieldset>
@@ -349,4 +353,7 @@ class RegistrantExtraInfoForm extends React.PureComponent {
 	}
 }
 
-export default localize( RegistrantExtraInfoForm );
+export default connect(
+	state => ( { contactDetails: getContactDetailsCache( state ) } ),
+	{ updateContactDetailsCache }
+)( localize( RegistrantExtraInfoFrForm ) );

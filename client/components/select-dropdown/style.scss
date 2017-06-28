@@ -53,7 +53,7 @@ $compact-header-height: 35;
 .select-dropdown__header {
 	height: #{ $header-height }px;
 	line-height: #{ $header-height - 3 }px;
-	padding: 0 75px 0 #{ $side-margin }px;
+	padding: 0 32px 0 #{ $side-margin }px;
 	box-sizing: border-box;
 
 	border-style: solid;
@@ -87,12 +87,15 @@ $compact-header-height: 35;
 		}
 	}
 
+	.has-count & {
+		padding-right: 75px;
+	}
+
 	.is-compact & {
 		height: #{$compact-header-height }px;
 		line-height: #{$compact-header-height - 3 }px;
 		color: $gray-text-min;
-		font-size: 11px;
-		text-transform: uppercase;
+		font-size: 12px;
 
 		.count {
 			border-width: 0;
@@ -119,6 +122,16 @@ $compact-header-height: 35;
 		position: absolute;
 		right: 40px;
 		top: #{ ( $header-height - 18 - 2 ) / 2 }px;
+	}
+
+	.gridicon {
+		margin-right: #{ ( $side-margin / 2 ) }px;
+		vertical-align: text-bottom;
+
+		.is-compact & {
+			position: relative;
+			top: 2px;
+		}
 	}
 }
 
@@ -216,6 +229,11 @@ $compact-header-height: 35;
 			color: $white;
 		}
 	}
+
+	.gridicon {
+		margin-right: #{ ( $side-margin / 2 ) }px;
+		vertical-align: text-bottom;
+	}
 }
 
 .select-dropdown__item-count {
@@ -256,7 +274,6 @@ $compact-header-height: 35;
 
 	label {
 		font-size: 12px;
-		text-transform: uppercase;
 		padding: 0px #{ $side-margin }px;
 	}
 }

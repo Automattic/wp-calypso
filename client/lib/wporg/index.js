@@ -86,7 +86,7 @@ module.exports = {
 			'&request[fields][requires]=0&request[fields][sections]=0';
 
 		if ( options.search ) {
-			payload += '&request[search]=' + options.search + '*';
+			payload += '&request[search]=' + options.search;
 		} else {
 			payload += '&request[browse]=' + options.category;
 		}

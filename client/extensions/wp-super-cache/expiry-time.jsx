@@ -53,8 +53,11 @@ const ExpiryTime = ( {
 				<FormTextInput
 					className="wp-super-cache__cache-timeout"
 					disabled={ isDisabled }
+					min="0"
 					onChange={ handleChange( 'cache_max_time' ) }
-					value={ cache_max_time || '' } />
+					step="1"
+					type="number"
+					value={ cache_max_time || 0 } />
 				{ translate( 'seconds' ) }
 				<FormSettingExplanation>
 					{
@@ -86,7 +89,10 @@ const ExpiryTime = ( {
 						{ translate( 'Timer' ) }
 						<FormTextInput
 							disabled={ isDisabled || ( 'interval' !== cache_schedule_type ) }
+							min="1"
 							onChange={ handleChange( 'cache_time_interval' ) }
+							step="1"
+							type="number"
 							value={ cache_time_interval || '' } />
 						{ translate( 'seconds' ) }
 					</span>

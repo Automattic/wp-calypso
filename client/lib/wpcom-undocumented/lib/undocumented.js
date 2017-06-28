@@ -921,7 +921,7 @@ Undocumented.prototype.publicizePost = function( siteId, postId, message, skippe
 		body.skipped_connections = skippedConnections;
 	}
 
-	return this.wpcom.req.post( { path: `/sites/${ siteId }/post/${ postId }/publicize`, body, apiVersion: '1.1' }, fn );
+	return this.wpcom.req.post( { path: `/sites/${ siteId }/posts/${ postId }/publicize`, body, apiNamespace: 'wpcom/v2' }, fn );
 };
 
 /**
@@ -1789,7 +1789,18 @@ Undocumented.prototype.updateDns = function( domain, records, fn ) {
 };
 
 Undocumented.prototype.applyDnsTemplate = function( domain, provider, service, variables, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/dns/providers/' + provider + '/services/' + service, { variables }, callback );
+	return this.wpcom.req.post( '/domains/' + domain + '/dns/providers/' + provider + '/services/' + service,
+		{ variables }, callback );
+};
+
+Undocumented.prototype.applyDnsTemplateSyncFlow = function( domain, provider, service, variables, callback ) {
+	return this.wpcom.req.get( '/domain-connect/authorize/v2/domainTemplates/providers/' + provider + '/services/' +
+		service + '/apply/authorized', Object.assign( {}, { apiVersion: '1.3' }, variables ), callback );
+};
+
+Undocumented.prototype.getDnsTemplateRecords = function( domain, provider, service, variables, callback ) {
+	return this.wpcom.req.post( '/domains/' + domain + '/dns/providers/' + provider + '/services/' + service + '/preview',
+		{ variables }, callback );
 };
 
 Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
@@ -2308,6 +2319,21 @@ Undocumented.prototype.initiateTransfer = function( siteId, plugin, theme, onPro
 		const req = this.wpcom.req.post( post, resolver );
 		req && ( req.upload.onprogress = onProgress );
 	} );
+};
+
+/**
+ * Returns a list of media from an external media service. Similar to Site.mediaList in use, but
+ * with a more restricted set of query params.
+ *
+ * @param {Object} query - Media query, supports 'path', 'search', 'max', 'page_handle', and 'source'
+ * @param {Function} fn - The callback function
+ *
+ * @returns {Promise} promise for handling result
+ */
+Undocumented.prototype.externalMediaList = function( query, fn ) {
+	debug( `/meta/external-media/${ query.source }` );
+
+	return this.wpcom.req.get( `/meta/external-media/${ query.source }`, query, fn );
 };
 
 /**

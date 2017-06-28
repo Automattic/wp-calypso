@@ -29,7 +29,7 @@
 	"olark": {},
 	"port": false,
 	"happychat_url": "https://happychat.io/customer",
-	"google_oauth_client_id": "543610697398-l287fumouns096o4os9l9fs1svh5esjc.apps.googleusercontent.com",
+	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"support_locales": [ "en", "es", "pt-br" ],
 	"languages": [
@@ -178,7 +178,7 @@
 	"siftscience_key": false,
 	"signup_url": false,
 	"twemoji_cdn_url": "https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/",
+	"woocommerce_blog_id": 113771570,
 	"wpcom_signup_id": false,
-	"wpcom_signup_key": false,
-	"wpcom_user_bootstrap": false
+	"wpcom_signup_key": false
 }

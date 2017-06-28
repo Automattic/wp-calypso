@@ -10,11 +10,11 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
 import CartMessagesMixin from './cart-messages-mixin';
 import CartButtons from './cart-buttons';
+import Count from 'components/count';
 import Popover from 'components/popover';
 import CartEmpty from './cart-empty';
 import CartPlanAd from './cart-plan-ad';
@@ -54,12 +54,9 @@ const PopoverCart = React.createClass( {
 		} );
 
 		if ( this.itemCount() ) {
-			const className = abtest( 'pulsingCartTestingAB' ) === 'modified'
-					? 'popover-cart__count-badge count-badge-pulsing'
-					: 'popover-cart__count-badge';
 			countBadge = (
-				<div className={ className }>
-					{ this.itemCount() }
+				<div className="cart__count-badge count-badge-pulsing">
+					<Count primary count={ this.itemCount() } />
 					<TrackComponentView eventName="calypso_popover_cart_badge_impression" />
 				</div>
 			);
