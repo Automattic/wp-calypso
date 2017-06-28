@@ -213,7 +213,7 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div>
-				{ translate( 'An event "%(eventName)s" occurred at %(date)s.', {
+				{ translate( 'An event "%(eventName)s" occurred at %(date)s', {
 					args: {
 						date: applySiteOffset( moment.utc( ts_utc ) ).format( 'LLL' ),
 						eventName: name,
