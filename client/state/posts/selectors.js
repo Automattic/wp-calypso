@@ -20,6 +20,7 @@ import {
 import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import addQueryArgs from 'lib/route/add-query-args';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 /**
  * Returns a post object by its global ID.
@@ -470,4 +471,27 @@ export function getSitePostsByTerm( state, siteId, taxonomy, termId ) {
 		return post.terms && post.terms[ taxonomy ] &&
 			find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId );
 	} );
+}
+
+export function getPostMetadata( state, siteId, postId, key ) {
+	const post = getSitePost( state, siteId, postId );
+	if ( ! post || ! post.metadata ) {
+		return null;
+	}
+
+	return get( find( post.metadata, { key } ), 'value', null );
+}
+
+export function isPostEditLocked( state, siteId, postId ) {
+	const lock = getPostMetadata( state, siteId, postId, '_edit_lock' );
+	if ( ! lock ) {
+		return false;
+	}
+
+	const [ timestamp, userId ] = lock.split( ':' );
+	if ( timestamp < ( Date.now() / 1000 ) - 150 ) {
+		return false;
+	}
+
+	return getCurrentUserId( state ) !== userId;
 }

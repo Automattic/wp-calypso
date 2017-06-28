@@ -46,6 +46,7 @@ import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
 import EditorNotice from 'post-editor/editor-notice';
+import EditorPostLockDialog from 'post-editor/editor-post-lock-dialog';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
@@ -258,6 +259,7 @@ export const PostEditor = React.createClass( {
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
+				<EditorPostLockDialog />
 				<div className="post-editor__inner">
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }

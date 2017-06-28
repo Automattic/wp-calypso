@@ -6,7 +6,7 @@ import { includes, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSite, getSiteSlug } from 'state/sites/selectors';
+import { getSite, getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 
 /**
  * Returns the site object for the currently selected site.
@@ -138,4 +138,24 @@ export function hasSidebar( state ) {
 		return false;
 	}
 	return get( getSection( state ), 'secondary', true );
+}
+
+export function getPostsPath( state, siteId, postType = 'post' ) {
+	let path;
+	switch ( postType ) {
+		case 'post': path = '/posts'; break;
+		case 'page': path = '/pages'; break;
+		default: path = `/types/${ postType }`;
+	}
+
+	if ( 'post' === postType && ! isJetpackSite( state, siteId ) && ! isSingleUserSite( state, siteId ) ) {
+		path += '/my';
+	}
+
+	const siteSlug = getSiteSlug( state, siteId );
+	if ( siteSlug ) {
+		path += '/' + siteSlug;
+	}
+
+	return path;
 }
