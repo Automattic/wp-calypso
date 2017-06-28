@@ -9,16 +9,29 @@ import { translate } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import Button from 'components/button';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const WINDOWS_LINK = 'https://apps.wordpress.com/d/windows?ref=getapps';
 const MAC_LINK = 'https://apps.wordpress.com/d/osx?ref=getapps';
 const LINUX_TAR_LINK = 'https://apps.wordpress.com/d/linux?ref=getapps';
 const LINUX_DEB_LINK = 'https://apps.wordpress.com/d/linux-deb?ref=getapps';
 
-const TrackAppDownloadClick = () => {};
+const trackWindowsClick = () => recordTracksEvent( 'calypso_app_download_windows_click' );
+const trackMacClick = () => recordTracksEvent( 'calypso_app_download_mac_click' );
+const trackLinuxTarClick = () => recordTracksEvent( 'calypso_app_download_linux_tar_click' );
+const trackLinuxDebClick = () => recordTracksEvent( 'calypso_app_download_linux_deb_click' );
 
-const GetLinkAnchorTag = ( platformLink ) => {
-	return <a href={ platformLink } onClick={ TrackAppDownloadClick } />;
+const getLinkAnchorTag = ( platformLink ) => {
+	switch ( platformLink ) {
+		case MAC_LINK:
+			return <a href={ platformLink } onClick={ trackMacClick } />;
+		case LINUX_TAR_LINK:
+			return <a href={ platformLink } onClick={ trackLinuxTarClick } />;
+		case LINUX_DEB_LINK:
+			return <a href={ platformLink } onClick={ trackLinuxDebClick } />;
+		default:
+			return <a href={ platformLink } onClick={ trackWindowsClick } />;
+	}
 };
 
 const getButtonLink = ( platform ) => {
@@ -73,22 +86,22 @@ const getTranslateComponents = ( platform ) => {
 	switch ( platform ) {
 		case 'MacIntel':
 			return {
-				firstAvailableLink: GetLinkAnchorTag( WINDOWS_LINK ),
-				secondAvailableLink: GetLinkAnchorTag( LINUX_TAR_LINK ),
-				thirdAvailableLink: GetLinkAnchorTag( LINUX_DEB_LINK ),
+				firstAvailableLink: getLinkAnchorTag( WINDOWS_LINK ),
+				secondAvailableLink: getLinkAnchorTag( LINUX_TAR_LINK ),
+				thirdAvailableLink: getLinkAnchorTag( LINUX_DEB_LINK ),
 			};
 		case 'Linux i686':
 		case 'Linux i686 on x86_64':
 			return {
-				firstAvailableLink: GetLinkAnchorTag( LINUX_DEB_LINK ),
-				secondAvailableLink: GetLinkAnchorTag( WINDOWS_LINK ),
-				thirdAvailableLink: GetLinkAnchorTag( MAC_LINK ),
+				firstAvailableLink: getLinkAnchorTag( LINUX_DEB_LINK ),
+				secondAvailableLink: getLinkAnchorTag( WINDOWS_LINK ),
+				thirdAvailableLink: getLinkAnchorTag( MAC_LINK ),
 			};
 		default:
 			return {
-				firstAvailableLink: GetLinkAnchorTag( MAC_LINK ),
-				secondAvailableLink: GetLinkAnchorTag( LINUX_TAR_LINK ),
-				thirdAvailableLink: GetLinkAnchorTag( LINUX_DEB_LINK ),
+				firstAvailableLink: getLinkAnchorTag( MAC_LINK ),
+				secondAvailableLink: getLinkAnchorTag( LINUX_TAR_LINK ),
+				thirdAvailableLink: getLinkAnchorTag( LINUX_DEB_LINK ),
 			};
 	}
 };
@@ -120,9 +133,21 @@ const getAlsoAvailableText = ( platform ) => {
 	}
 };
 
+const getButtonClickHandler = ( platform ) => {
+	switch ( platform ) {
+		case 'MacIntel':
+			return trackMacClick;
+		case 'Linux i686':
+			return trackLinuxTarClick;
+		case 'Linux i686 on x86_64':
+			return trackLinuxDebClick;
+		default:
+			return trackWindowsClick;
+	}
+};
+
 const DesktopDownloadCard = () => {
 	const platform = ( navigator.platform && navigator.platform.length > 0 ) ? navigator.platform : false;
-
 	return (
 		<Card className="get-apps__desktop">
 			<div className="get-apps__card-text">
@@ -133,7 +158,12 @@ const DesktopDownloadCard = () => {
 					{ getAlsoAvailableText( platform ) }
 				</p>
 			</div>
-			<Button className="get-apps__desktop-button" href={ getButtonLink( platform ) }>{ translate( 'Download' ) }</Button>
+			<Button
+				className="get-apps__desktop-button"
+				href={ getButtonLink( platform ) }
+				onClick={ getButtonClickHandler( platform ) }>
+				{ translate( 'Download' ) }
+			</Button>
 		</Card>
 	);
 };
