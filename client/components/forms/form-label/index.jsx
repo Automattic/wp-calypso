@@ -3,7 +3,8 @@
  */
 var React = require( 'react' ),
 	classnames = require( 'classnames' ),
-	omit = require( 'lodash/omit' );
+	omit = require( 'lodash/omit' ),
+	i18n = require( 'i18n-calypso' );
 
 module.exports = React.createClass( {
 
@@ -18,7 +19,7 @@ module.exports = React.createClass( {
 			<label { ...omit( this.props, 'className' ) } className={ classnames( this.props.className, 'form-label' ) } >
 				{ this.props.children }
 				{ this.props.required && (
-					<span className="form-label__required"> *</span>
+					<small className="form-label__required">{ i18n.translate( 'Required' ) }</small>
 				) }
 			</label>
 		);
