@@ -24,8 +24,8 @@ import Main from 'components/main';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
 import PreSetupView from './pre-setup-view';
-import SetupTasksView from './setup-tasks-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
+import SetupTasksView from './setup-tasks-view';
 
 class Dashboard extends Component {
 
