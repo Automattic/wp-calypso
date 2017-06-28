@@ -45,6 +45,7 @@ export getJetpackSetting from './get-jetpack-setting';
 export getJetpackSettings from './get-jetpack-settings';
 export getJetpackSettingsSaveError from './get-jetpack-settings-save-error';
 export getJetpackSettingsSaveRequestStatus from './get-jetpack-settings-save-request-status';
+export getJetpackUserConnection from './get-jetpack-user-connection';
 export getReaderFollowsLastSyncTime from './get-reader-follows-last-sync-time';
 export getRestoreProgress from './get-restore-progress';
 export getRestoreError from './get-restore-error';
