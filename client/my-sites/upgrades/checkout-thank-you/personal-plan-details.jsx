@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 import { isPersonal } from 'lib/products-values';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import PurchaseDetail from 'components/purchase-detail';
-import { AdWords, CustomDomain } from './icons';
 
 const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 	const plan = find( sitePlans.data, isPersonal );
@@ -21,12 +20,12 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
-				svgIcon={ <CustomDomain /> }
+				svgIcon={ <img src="/calypso/images/upgrades/custom-domain.svg" /> }
 			/>
 
 			<PurchaseDetail
 				icon="speaker"
-				svgIcon={ <AdWords /> }
+				svgIcon={ <img src="/calypso/images/upgrades/adwords.svg" /> }
 				title={ translate( 'Advertising Removed' ) }
 				description={ translate(
 					'With your plan, all WordPress.com advertising has been removed from your site. ' +

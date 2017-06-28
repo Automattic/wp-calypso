@@ -13,7 +13,6 @@ import GoogleAppsDetails from './google-apps-details';
 import { isGoogleApps } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 import supportUrls from 'lib/url/support';
-import { WaitTime, CheckEmailsDesktop } from './icons';
 
 export class DomainRegistrationDetails extends Component {
 	static propTypes = {
@@ -36,7 +35,7 @@ export class DomainRegistrationDetails extends Component {
 			<PurchaseDetail
 				key="detail"
 				icon="mail"
-				svgIcon={ <CheckEmailsDesktop /> }
+				svgIcon={ <img src="/calypso/images/upgrades/check-emails-desktop.svg" /> }
 				title={ translate( 'Verify your email address' ) }
 				description={ translate( 'We sent you an email with a request to verify your new domain. Unverified domains may be suspended.' ) } // eslint-disable-line max-len
 				buttonText={ translate( 'Learn more about verifying your domain' ) }
@@ -62,7 +61,7 @@ export class DomainRegistrationDetails extends Component {
 
 				<PurchaseDetail
 					icon="time"
-					svgIcon={ <WaitTime /> }
+					svgIcon={ <img src="/calypso/images/upgrades/wait-time.svg" /> }
 					title={ translate( 'When will it be ready?', { comment: '"it" refers to a domain' } ) }
 					description={ translate( 'Your domain should start working immediately, but may be unreliable during the first 72 hours.' ) } // eslint-disable-line max-len
 					buttonText={ translate( 'Learn more about your domain' ) }
