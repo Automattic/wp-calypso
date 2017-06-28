@@ -7,7 +7,7 @@ import { get, find, isNumber, isEqual } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getVariation } from '../../../variations/selectors';
+import { getVariationsForProduct } from 'woocommerce/state/sites/products/variations/selectors';
 
 export function getVariationEditsStateForProduct( state, productId, siteId = getSelectedSiteId( state ) ) {
 	const woocommerce = state.extensions.woocommerce;
@@ -42,7 +42,8 @@ export function getVariationEdits( state, productId, variationId, siteId = getSe
  */
 export function getVariationWithLocalEdits( state, productId, variationId, siteId = getSelectedSiteId( state ) ) {
 	const existing = isNumber( variationId );
-	const variation = existing && getVariation( state, productId, variationId );
+	const variations = existing && getVariationsForProduct( state, productId, siteId );
+	const variation = variations && variations[ variationId ];
 	const variationEdits = getVariationEdits( state, productId, variationId, siteId );
 
 	return ( variation || variationEdits ) && { ...variation, ...variationEdits } || undefined;
