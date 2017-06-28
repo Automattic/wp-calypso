@@ -72,7 +72,7 @@ class ShippingLabels extends Component {
 			<div>
 				<ExtendedHeader
 					label={ translate( 'Shipping Labels' ) }
-					description={ translate( 'Print shipping labels yourself.' ) }>
+					description={ translate( 'Print shipping labels yourself and save a trip to the post office.' ) }>
 					<FormToggle onChange={ onToggle } checked={ this.state.visible } />
 				</ExtendedHeader>
 				<Card className={ classNames( 'shipping__labels-container', { hidden: ! this.state.visible } ) }>

@@ -33,7 +33,7 @@ class ShippingOrigin extends Component {
 			<div className="shipping__origin">
 				<ExtendedHeader
 					label={ translate( 'Shipping Origin' ) }
-					description={ translate( 'The address of where you will be shipping from.' ) } />
+					description={ translate( 'This is the address you’ll be shipping products from.' ) } />
 				<Card>
 					<AddressView address={ this.state.address } />
 					<a>{ translate( 'Edit address' ) }</a>
