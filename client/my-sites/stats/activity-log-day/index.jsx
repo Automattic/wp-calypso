@@ -20,6 +20,7 @@ class ActivityLogDay extends Component {
 		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		day: PropTypes.string.isRequired,
+		applySiteOffset: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
@@ -94,7 +95,7 @@ class ActivityLogDay extends Component {
 			logs,
 			requestRestore,
 			siteId,
-			siteOffset,
+			applySiteOffset,
 		} = this.props;
 
 		return (
@@ -111,7 +112,7 @@ class ActivityLogDay extends Component {
 							siteId={ siteId }
 							requestRestore={ requestRestore }
 							log={ log }
-							siteOffset={ siteOffset }
+							applySiteOffset={ applySiteOffset }
 						/>
 					) ) }
 				</FoldableCard>

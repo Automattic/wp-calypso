@@ -21,7 +21,7 @@ class ActivityLogItem extends Component {
 		allowRestore: PropTypes.bool.isRequired,
 		siteId: PropTypes.number.isRequired,
 		requestRestore: PropTypes.func.isRequired,
-		siteOffset: PropTypes.func.isRequired,
+		applySiteOffset: PropTypes.func.isRequired,
 		log: PropTypes.shape( {
 			group: PropTypes.oneOf( [
 				'attachment',
@@ -204,7 +204,7 @@ class ActivityLogItem extends Component {
 			log,
 			moment,
 			translate,
-			siteOffset,
+			applySiteOffset,
 		} = this.props;
 		const {
 			name,
@@ -215,7 +215,7 @@ class ActivityLogItem extends Component {
 			<div>
 				{ translate( 'An event "%(eventName)s" occurred at %(date)s.', {
 					args: {
-						date: siteOffset( moment.utc( ts_utc ) ).format( 'LLL' ),
+						date: applySiteOffset( moment.utc( ts_utc ) ).format( 'LLL' ),
 						eventName: name,
 					}
 				} ) }
@@ -271,12 +271,12 @@ class ActivityLogItem extends Component {
 		const {
 			moment,
 			log,
-			siteOffset,
+			applySiteOffset,
 		} = this.props;
 
 		return (
 			<div className="activity-log-item__time">
-				{ siteOffset( moment.utc( log.ts_utc ) ).format( 'LT' ) }
+				{ applySiteOffset( moment.utc( log.ts_utc ) ).format( 'LT' ) }
 			</div>
 		);
 	}

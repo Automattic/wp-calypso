@@ -218,7 +218,7 @@ class ActivityLog extends Component {
 			startDate,
 		} = this.props;
 
-		const siteOffset = this.getSiteOffsetFunc();
+		const applySiteOffset = this.getSiteOffsetFunc();
 
 		const startOfMonthMs = moment.utc( startDate ).startOf( 'month' ).valueOf();
 		const endOfMonthMs = moment.utc( startDate ).endOf( 'month' ).valueOf();
@@ -227,7 +227,7 @@ class ActivityLog extends Component {
 		const logsGroupedByDay = map(
 			groupBy(
 				logsForMonth,
-				log => siteOffset( moment.utc( log.ts_utc ) ).format( 'LL' )
+				log => applySiteOffset( moment.utc( log.ts_utc ) ).format( 'LL' )
 			),
 			( daily_logs, day ) => (
 				<ActivityLogDay
@@ -238,7 +238,7 @@ class ActivityLog extends Component {
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
 					day={ day }
-					siteOffset={ siteOffset }
+					applySiteOffset={ applySiteOffset }
 				/>
 			)
 		);
