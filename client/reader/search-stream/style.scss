@@ -148,6 +148,10 @@
 	flex-flow: row wrap;
 }
 
+.search-stream .reader-related-card-v2__featured-image {
+	min-height: 78px;
+}
+
 .is-reader-page .search-stream__recommendation-list-item {
 	box-sizing: border-box;
 	border-bottom: 1px solid lighten( $gray, 20% );
