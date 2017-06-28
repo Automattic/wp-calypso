@@ -57,6 +57,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	autoRenewing: false,
 	blogId: SITE_ID_SECOND,
 	canSetAsPrimary: true,
+	canUseDesignatedAgent: false,
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.wordpress.me',
 	pointsToWpcom: true,
