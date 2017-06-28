@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { find, includes, isEqual, omit, some, get, uniq } from 'lodash';
+import i18n from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -706,4 +707,26 @@ export function shouldFilterWpcomThemes( state, siteId ) {
  */
 export function getPlanUpgradeUrl( state, siteId ) {
 	return '/plans/' + getSiteSlug( state, siteId );
+}
+
+/**
+ * Returns the price string to display for a given theme on a given site:
+ * @TODO Add tests!
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {string}  themeId Theme ID
+ * @param  {Number}  siteId  Site ID
+ * @return {String}          Price
+ */
+export function getPremiumThemePrice( state, themeId, siteId ) {
+	if ( ! isThemePremium( state, themeId ) || isPremiumThemeAvailable( state, themeId, siteId ) ) {
+		return '';
+	}
+
+	if ( isJetpackSite( state, siteId ) && config.isEnabled( 'jetpack/pijp' ) ) {
+		return i18n.translate( 'Plan' );
+	}
+
+	const theme = getTheme( state, 'wpcom', themeId );
+	return get( theme, 'price' );
 }

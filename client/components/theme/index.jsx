@@ -27,8 +27,6 @@ const Theme = React.createClass( {
 			name: React.PropTypes.string.isRequired,
 			// Theme screenshot URL
 			screenshot: React.PropTypes.string,
-			// Theme price (pre-formatted string) -- empty string indicates free theme
-			price: React.PropTypes.string,
 			author: React.PropTypes.string,
 			author_uri: React.PropTypes.string,
 			demo_uri: React.PropTypes.string,
@@ -36,8 +34,8 @@ const Theme = React.createClass( {
 		} ),
 		// If true, highlight this theme as active
 		active: React.PropTypes.bool,
-		// If true, hide the theme price
-		hidePrice: React.PropTypes.bool,
+		// Theme price (pre-formatted string) -- empty string indicates free theme
+		price: React.PropTypes.string,
 		// If true, the theme is being installed
 		installing: React.PropTypes.bool,
 		// If true, render a placeholder
@@ -66,7 +64,7 @@ const Theme = React.createClass( {
 	shouldComponentUpdate( nextProps ) {
 		return nextProps.theme.id !== this.props.theme.id ||
 			( nextProps.active !== this.props.active ) ||
-			( nextProps.hidePrice !== this.props.hidePrice ) ||
+			( nextProps.price !== this.props.price ) ||
 			( nextProps.installing !== this.props.installing ) ||
 			! isEqual( Object.keys( nextProps.buttonContents ), Object.keys( this.props.buttonContents ) ) ||
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
@@ -123,16 +121,19 @@ const Theme = React.createClass( {
 	render() {
 		const {
 			name,
-			price,
 			screenshot
 		} = this.props.theme;
 		const {
 			active,
-			hidePrice
+			price
 		} = this.props;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
 			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick )
+		} );
+
+		const priceClass = classNames( 'theme-badge__price', {
+			'theme-badge__price-plan': price === this.translate( 'Plan' )
 		} );
 
 		// for performance testing
@@ -172,10 +173,7 @@ const Theme = React.createClass( {
 								context: 'singular noun, the currently active theme'
 							} ) }</span>
 						}
-						{
-							price && ! hidePrice &&
-								<span className="theme-badge__price">{ price }</span>
-						}
+						<span className={ priceClass }>{ price }</span>
 						{ ! isEmpty( this.props.buttonContents )
 							? <ThemeMoreButton
 								index={ this.props.index }

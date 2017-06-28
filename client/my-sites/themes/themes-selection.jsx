@@ -17,11 +17,11 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
+	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
 	isRequestingThemesForQuery,
 	isThemesLastPageForQuery,
-	isPremiumThemeAvailable,
 	isThemeActive,
 	isInstallingTheme
 } from 'state/themes/selectors';
@@ -48,7 +48,7 @@ class ThemesSelection extends Component {
 		isRequesting: PropTypes.bool,
 		isLastPage: PropTypes.bool,
 		isThemeActive: PropTypes.func,
-		hidePremiumThemePrice: PropTypes.func,
+		getPremiumThemePrice: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
 		placeholderCount: PropTypes.number
 	}
@@ -156,7 +156,7 @@ class ThemesSelection extends Component {
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
 					isActive={ this.props.isThemeActive }
-					hidePrice={ this.props.hidePremiumThemePrice }
+					getPrice={ this.props.getPremiumThemePrice }
 					isInstalling={ this.props.isInstallingTheme }
 					loading={ this.props.isRequesting }
 					emptyContent={ this.props.emptyContent }
@@ -205,7 +205,7 @@ const ConnectedThemesSelection = connect(
 			// and `<QuerySitePlans />` components, respectively. At the time of implementation, neither of them
 			// provides caching, and both are already being rendered by a parent component. So to avoid
 			// redundant AJAX requests, we're not rendering these query components locally.
-			hidePremiumThemePrice: themeId => isPremiumThemeAvailable( state, themeId, siteId ),
+			getPremiumThemePrice: themeId => getPremiumThemePrice( state, themeId, siteId ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
 		};
 	},

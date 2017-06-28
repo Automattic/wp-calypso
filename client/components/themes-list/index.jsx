@@ -31,7 +31,7 @@ export const ThemesList = React.createClass( {
 		onMoreButtonClick: React.PropTypes.func,
 		getActionLabel: React.PropTypes.func,
 		isActive: React.PropTypes.func,
-		hidePrice: React.PropTypes.func,
+		getPrice: React.PropTypes.func,
 		isInstalling: React.PropTypes.func,
 		// i18n function provided by localize()
 		translate: React.PropTypes.func,
@@ -51,7 +51,7 @@ export const ThemesList = React.createClass( {
 			optionsGenerator: () => [],
 			getActionLabel: () => '',
 			isActive: () => false,
-			hidePrice: () => false,
+			getPrice: () => '',
 			isInstalling: () => false
 		};
 	},
@@ -76,7 +76,7 @@ export const ThemesList = React.createClass( {
 			index={ index }
 			theme={ theme }
 			active={ this.props.isActive( theme.id ) }
-			hidePrice={ this.props.hidePrice( theme.id ) }
+			price={ this.props.getPrice( theme.id ) }
 			installing={ this.props.isInstalling( theme.id ) } />;
 	},
 
