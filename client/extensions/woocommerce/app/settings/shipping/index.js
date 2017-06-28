@@ -9,9 +9,7 @@ import classNames from 'classnames';
  */
 import Main from 'components/main';
 import ShippingHeader from './shipping-header';
-import ShippingLabels from './shipping-labels';
 import ShippingOrigin from './shipping-origin';
-import ShippingPackageList from './shipping-package-list';
 import ShippingZoneList from './shipping-zone-list';
 
 const Shipping = ( { className } ) => {
@@ -20,8 +18,6 @@ const Shipping = ( { className } ) => {
 			<ShippingHeader />
 			<ShippingOrigin />
 			<ShippingZoneList />
-			<ShippingLabels />
-			<ShippingPackageList />
 		</Main>
 	);
 };
