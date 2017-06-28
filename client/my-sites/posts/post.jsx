@@ -28,7 +28,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 import Comments from 'blocks/comments';
-import AsyncLoad from 'components/async-load';
+import PostShare from 'blocks/post-share';
 import PostActions from 'blocks/post-actions';
 
 function recordEvent( eventAction ) {
@@ -342,8 +342,7 @@ const Post = React.createClass( {
 				{
 					this.state.showShare &&
 					config.isEnabled( 'republicize' ) &&
-					<AsyncLoad
-						require="blocks/post-share"
+					<PostShare
 						post={ this.props.post }
 						siteId={ this.props.post.site_ID } />
 				}
