@@ -19,8 +19,7 @@ class ActivityLogDay extends Component {
 		logs: PropTypes.array.isRequired,
 		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
-		timestamp: PropTypes.number.isRequired,
-		siteOffset: PropTypes.func.isRequired,
+		day: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
@@ -72,15 +71,13 @@ class ActivityLogDay extends Component {
 	getEventsHeading() {
 		const {
 			logs,
-			moment,
-			timestamp,
 			translate,
-			siteOffset,
+			day,
 		} = this.props;
 
 		return (
 			<div>
-				<div className="activity-log-day__day">{ siteOffset( moment( timestamp ) ).format( 'LL' ) }</div>
+				<div className="activity-log-day__day">{ day }</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,

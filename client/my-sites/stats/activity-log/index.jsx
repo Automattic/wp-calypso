@@ -220,30 +220,30 @@ class ActivityLog extends Component {
 
 		const siteOffset = this.getSiteOffsetFunc();
 
-		const startOfMonthMs = siteOffset( moment( startDate ).startOf( 'month' ) ).valueOf();
-		const endOfMonthMs = siteOffset( moment( startDate ).endOf( 'month' ) ).valueOf();
+		const startOfMonthMs = moment.utc( startDate ).startOf( 'month' ).valueOf();
+		const endOfMonthMs = moment.utc( startDate ).endOf( 'month' ).valueOf();
+		const logsForMonth = filter( logs, obj => startOfMonthMs <= obj.ts_utc && obj.ts_utc <= endOfMonthMs );
 
-		const filteredLogs = filter( logs, obj => startOfMonthMs <= obj.ts_utc && obj.ts_utc <= endOfMonthMs );
 		const logsGroupedByDay = map(
 			groupBy(
-				filteredLogs,
-				log => siteOffset( moment( log.ts_utc ) ).startOf( 'day' ).format( 'x' )
+				logsForMonth,
+				log => siteOffset( moment.utc( log.ts_utc ) ).format( 'LL' )
 			),
-			( daily_logs, timestamp ) => (
+			( daily_logs, day ) => (
 				<ActivityLogDay
 					allowRestore={ !! isPressable }
 					isRewindActive={ isRewindActive }
-					key={ timestamp }
+					key={ day }
 					logs={ daily_logs }
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
-					timestamp={ +timestamp }
+					day={ day }
 					siteOffset={ siteOffset }
 				/>
 			)
 		);
 
-		const startOfMonth = moment( startDate ).startOf( 'month' );
+		const startOfMonth = moment.utc( startDate ).startOf( 'month' );
 		const query = {
 			period: 'month',
 			date: startOfMonth.format( 'YYYY-MM-DD' )
