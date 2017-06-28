@@ -7,7 +7,6 @@
 		"transform-runtime",
 		"transform-class-properties",
 		"transform-export-extensions",
-		"add-module-exports",
 		"syntax-jsx",
 		"transform-react-jsx",
 		"transform-react-display-name",

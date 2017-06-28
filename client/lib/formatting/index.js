@@ -324,14 +324,14 @@ function unescapeAndFormatSpaces( str ) {
 	return decodeEntities( str ).replace( / /g, nbsp );
 }
 
-module.exports = {
-	decodeEntities: decodeEntities,
-	interpose: interpose,
-	stripHTML: stripHTML,
-	preventWidows: preventWidows,
-	wpautop: wpautop,
-	removep: removep,
-	capitalPDangit: capitalPDangit,
-	parseHtml: parseHtml,
-	unescapeAndFormatSpaces: unescapeAndFormatSpaces,
+export {
+	decodeEntities,
+	interpose,
+	stripHTML,
+	preventWidows,
+	wpautop,
+	removep,
+	capitalPDangit,
+	parseHtml,
+	unescapeAndFormatSpaces
 };
