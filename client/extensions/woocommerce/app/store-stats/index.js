@@ -29,14 +29,25 @@ class StoreStats extends Component {
 		unit: PropTypes.string.isRequired,
 	};
 
+	getUnitPeriod = ( date ) => {
+		const { unit } = this.props;
+		return ( unit === 'week' )
+			? `${ moment( date ).format( UNITS[ unit ].format ) }-W${ moment( date ).isoWeek() }`
+			: moment( date ).format( UNITS[ unit ].format );
+	};
+
+	getEndPeriod = ( date ) => {
+		const { unit } = this.props;
+		return ( unit === 'week' )
+			? moment( date ).endOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
+			: moment( date ).endOf( unit ).format( 'YYYY-MM-DD' );
+	};
+
 	render() {
 		const { path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
-		const unitQueryDate = ( unit === 'week' )
-			? `${ moment( queryDate ).format( UNITS[ unit ].format ) }-W${ moment( queryDate ).isoWeek() }`
-			: moment( queryDate ).format( UNITS[ unit ].format );
-		const unitSelectedDate = ( unit === 'week' )
-			? moment( selectedDate ).endOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
-			: moment( selectedDate ).endOf( unit ).format( 'YYYY-MM-DD' );
+		const unitQueryDate = this.getUnitPeriod( queryDate );
+		const unitSelectedDate = this.getUnitPeriod( selectedDate );
+		const endSelectedDate = this.getEndPeriod( selectedDate );
 		const ordersQuery = {
 			unit,
 			date: queryDate,
@@ -44,7 +55,7 @@ class StoreStats extends Component {
 		};
 		const topQuery = {
 			unit,
-			date: selectedDate,
+			date: unitSelectedDate,
 			limit: 10,
 		};
 		const widgets = [ topProducts, topCategories, topCoupons ];
@@ -56,7 +67,7 @@ class StoreStats extends Component {
 				<Chart
 					path={ path }
 					query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
-					selectedDate={ unitSelectedDate }
+					selectedDate={ endSelectedDate }
 					siteId={ siteId }
 					unit={ unit }
 				/>
