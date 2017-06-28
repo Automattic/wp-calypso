@@ -17,10 +17,10 @@ const ProductHeader = ( { onView, onTrash, onSave, isBusy, translate, site, prod
 	const existing = product && ! isObject( product.id );
 
 	const viewButton = onView &&
-		<Button borderless onClick={ onView }><Gridicon icon="visible" /> { translate( 'View' ) } </Button>;
+		<Button borderless onClick={ onView }><Gridicon icon="visible" /><span> { translate( 'View' ) } </span></Button>;
 
 	const trashButton = onTrash &&
-		<Button borderless scary onClick={ onTrash }><Gridicon icon="trash" /> { translate( 'Trash' ) } </Button>;
+		<Button borderless scary onClick={ onTrash }><Gridicon icon="trash" /><span>{ translate( 'Trash' ) } </span></Button>;
 
 	const saveExists = 'undefined' !== typeof onSave;
 	const saveDisabled = false === onSave;
