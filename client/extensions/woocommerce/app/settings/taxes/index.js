@@ -21,6 +21,7 @@ import {
 	getShippingIsTaxFree,
 } from 'woocommerce/state/sites/settings/tax/selectors';
 import Button from 'components/button';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 import {
 	fetchSettingsGeneral,
 	updateTaxesEnabledSetting,
@@ -33,7 +34,7 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import TaxesNexus from './taxes-nexus';
+import StoreAddress from 'woocommerce/components/store-address';
 import TaxesOptions from './taxes-options';
 import TaxesRates from './taxes-rates';
 
@@ -143,9 +144,12 @@ class SettingsTaxes extends Component {
 						{ translate( 'Save' ) }
 					</Button>
 				</ActionHeader>
-				<TaxesNexus
-					site={ site }
-				/>
+				<div className="taxes__nexus">
+					<ExtendedHeader
+						label={ translate( 'Store Address / Tax Nexus' ) }
+						description={ translate( 'The address of where your business is located for tax purposes.' ) } />
+					<StoreAddress className="taxes__store-address" />
+				</div>
 				<TaxesRates
 					taxesEnabled={ this.state.taxesEnabled }
 					onEnabledChange={ this.onEnabledChange }

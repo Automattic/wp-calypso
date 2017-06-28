@@ -93,7 +93,7 @@ class StoreAddress extends Component {
 	}
 
 	render() {
-		const { site, loading, translate } = this.props;
+		const { className, site, loading, translate } = this.props;
 
 		const buttons = [
 			{ action: 'close', label: translate( 'Close' ) },
@@ -119,7 +119,7 @@ class StoreAddress extends Component {
 			);
 		}
 
-		const classes = classNames( 'store-address', { 'is-placeholder': ! site || loading } );
+		const classes = classNames( 'store-address', { 'is-placeholder': ! site || loading }, className );
 		return (
 			<Card className={ classes }>
 				<FormLabel>{ translate( 'Store location' ) }</FormLabel>
