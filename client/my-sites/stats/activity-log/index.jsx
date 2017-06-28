@@ -222,8 +222,8 @@ class ActivityLog extends Component {
 
 		// example: "2019 3"
 		const selectedMonthAndYear = moment( startDate ).format( 'YYYY M' );
-		const logsForMonth = filter( logs, ( item ) => {
-			return applySiteOffset( moment.utc( item.ts_utc ) ).format( 'YYYY M' ) === selectedMonthAndYear;
+		const logsForMonth = filter( logs, ( { ts_utc } ) => {
+			return applySiteOffset( moment.utc( ts_utc ) ).format( 'YYYY M' ) === selectedMonthAndYear;
 		} );
 
 		const logsGroupedByDay = map(
