@@ -22,8 +22,8 @@ describe( 'reducer', () => {
 					{
 						type: SITES_BLOG_STICKER_LIST_RECEIVE,
 						payload: { blogId: 123, stickers: [ 'dont-recommend' ] },
-					}
-				)
+					},
+				),
 			).to.deep.equal( { 123: [ 'dont-recommend' ] } );
 		} );
 
@@ -34,12 +34,23 @@ describe( 'reducer', () => {
 					{
 						type: SITES_BLOG_STICKER_LIST_RECEIVE,
 						payload: { blogId: 456, stickers: [ 'dont-recommend', 'broken-in-reader' ] },
-					}
-				)
+					},
+				),
 			).to.deep.equal(
 				{ 123: [ 'dont-recommend' ], 456: [ 'dont-recommend', 'broken-in-reader' ] },
-
 			);
+		} );
+
+		it( 'should replace existing stickers for a blog when received', () => {
+			expect(
+				items(
+					{ 123: [ 'dont-recommend' ] },
+					{
+						type: SITES_BLOG_STICKER_LIST_RECEIVE,
+						payload: { blogId: 123, stickers: [ 'okapi-friendly', 'broken-in-reader' ] },
+					},
+				),
+			).to.deep.equal( { 123: [ 'okapi-friendly', 'broken-in-reader' ] } );
 		} );
 	} );
 } );
