@@ -123,6 +123,7 @@ const webpackConfig = {
 			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
 		} ),
 		! isWindows && new HappyPack( { loaders: [ babelLoader ] } ),
+		new webpack.optimize.ModuleConcatenationPlugin(),
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]sites-list$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]olark$/, 'lodash/noop' ), // Depends on DOM
