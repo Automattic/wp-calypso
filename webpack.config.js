@@ -153,7 +153,8 @@ const webpackConfig = {
 				process.env.NODE_ENV === 'development' && 'react-hot-loader',
 				babelLoader
 			] )
-		} )
+		} ),
+		new webpack.optimize.ModuleConcatenationPlugin()
 	] ),
 	externals: [ 'electron' ]
 };

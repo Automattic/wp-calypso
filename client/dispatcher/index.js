@@ -1,5 +1,6 @@
-var Dispatcher = require( 'flux' ).Dispatcher,
-	debug = require( 'debug' )( 'calypso:dispatcher' );
+import { Dispatcher } from 'flux';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:dispatcher' );
 
 var AppDispatcher = Object.assign( new Dispatcher(), {
 	handleViewAction: function( action ) {
@@ -18,4 +19,4 @@ var AppDispatcher = Object.assign( new Dispatcher(), {
 	}
 } );
 
-module.exports = AppDispatcher;
+export default AppDispatcher;
