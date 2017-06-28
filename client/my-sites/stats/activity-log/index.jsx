@@ -131,7 +131,7 @@ class ActivityLog extends Component {
 				return moment.tz( timezone );
 			}
 			if ( gmtOffset ) {
-				return moment.offset( timezone );
+				return moment.utcOffset( gmtOffset );
 			}
 			return moment;
 		};
