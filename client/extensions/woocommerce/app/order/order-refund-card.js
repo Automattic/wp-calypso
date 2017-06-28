@@ -85,16 +85,10 @@ class OrderRefundCard extends Component {
 		this.setState( { refundTotal: total } );
 	}
 
-	onChange = ( event ) => {
-		if ( 'refund_total' === event.target.name ) {
-			this.setState( {
-				refundTotal: event.target.value.replace( /[^0-9.,]/g, '' ),
-			} );
-		} else if ( 'refund_note' === event.target.name ) {
-			this.setState( {
-				refundNote: event.target.value,
-			} );
-		}
+	updateNote = ( event ) => {
+		this.setState( {
+			refundNote: event.target.value,
+		} );
 	}
 
 	sendRefund = () => {
@@ -162,7 +156,7 @@ class OrderRefundCard extends Component {
 					<form className="order__refund-container">
 						<FormLabel className="order__refund-note">
 							{ translate( 'Refund note' ) }
-							<FormTextarea onChange={ this.onChange } name="refund_note" value={ refundNote } />
+							<FormTextarea onChange={ this.updateNote } name="refund_note" value={ refundNote } />
 						</FormLabel>
 
 						<FormFieldset className="order__refund-details">
@@ -172,7 +166,7 @@ class OrderRefundCard extends Component {
 									<FormTextInputWithAffixes
 										name="refund_total"
 										prefix="$"
-										onChange={ this.onChange }
+										readOnly
 										value={ refundTotal } />
 								</div>
 							</FormLabel>
