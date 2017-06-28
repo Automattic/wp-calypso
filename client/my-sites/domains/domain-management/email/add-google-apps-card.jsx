@@ -4,6 +4,8 @@
 import React from 'react';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +17,7 @@ import paths from 'my-sites/domains/paths';
 import support from 'lib/url/support';
 import analyticsMixin from 'lib/mixins/analytics';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
 const AddGoogleAppsCard = React.createClass( {
 	propTypes: {
@@ -29,14 +32,13 @@ const AddGoogleAppsCard = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'email' ) ],
 
 	render() {
-		const gapps = this.props.products.gapps,
+		const prices = get( this.props, 'products.gapps.prices', [] ),
 			googleAppsSupportUrl = support.ADDING_GOOGLE_APPS_TO_YOUR_SITE,
-			price = gapps && gapps.cost_display,
 			selectedDomainName = this.props.selectedSite.domain,
-			{ translate } = this.props;
+			{ currencyCode, translate } = this.props;
 
-		const annualPrice = getAnnualPrice( price );
-		const monthlyPrice = getMonthlyPrice( price );
+		const annualPrice = getAnnualPrice( prices[ currencyCode ], currencyCode );
+		const monthlyPrice = getMonthlyPrice( prices[ currencyCode ], currencyCode );
 
 		return (
 			<div>
@@ -223,4 +225,8 @@ const AddGoogleAppsCard = React.createClass( {
 	}
 } );
 
-export default localize( AddGoogleAppsCard );
+export default connect(
+	( state ) => ( {
+		currencyCode: getCurrentUserCurrencyCode( state ),
+	} )
+)( localize( AddGoogleAppsCard ) );

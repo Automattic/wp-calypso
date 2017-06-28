@@ -21,6 +21,7 @@ import {
 	recordGoogleEvent,
 	composeAnalytics,
 } from 'state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
 class GoogleAppsDialog extends React.Component {
 	static propTypes = {
@@ -51,9 +52,10 @@ class GoogleAppsDialog extends React.Component {
 
 	render() {
 		const gapps = this.props.productsList && this.props.productsList.get().gapps;
-		const price = gapps && gapps.cost_display;
-		const monthlyPrice = getMonthlyPrice( price );
-		const annualPrice = getAnnualPrice( price );
+		const prices = gapps && gapps.prices;
+		const { currencyCode } = this.props;
+		const annualPrice = getAnnualPrice( prices[ currencyCode ], currencyCode );
+		const monthlyPrice = getMonthlyPrice( prices[ currencyCode ], currencyCode );
 
 		return (
 			<form className="google-apps-dialog" onSubmit={ this.handleFormSubmit }>
@@ -301,7 +303,9 @@ const recordFormSubmit = ( section ) => composeAnalytics(
 );
 
 export default connect(
-	null,
+	( state ) => ( {
+		currencyCode: getCurrentUserCurrencyCode( state ),
+	} ),
 	{
 		recordAddEmailButtonClick,
 		recordCancelButtonClick,
