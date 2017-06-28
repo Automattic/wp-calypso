@@ -3,73 +3,29 @@
 /**
  * External dependencies
  */
-const _ = require( 'lodash' );
-const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
-const DashboardPlugin = require( 'webpack-dashboard/plugin' );
-const fs = require( 'fs' );
-const HappyPack = require( 'happypack' );
-const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
-const os = require( 'os' );
-const path = require( 'path' );
-const webpack = require( 'webpack' );
-const WebpackChunkHash = require( 'webpack-chunk-hash' );
+const webpack = require( 'webpack' ),
+	path = require( 'path' );
 
 /**
  * Internal dependencies
  */
-const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
-const ChunkFileNamePlugin = require( './server/bundler/plugin' );
-const config = require( './server/config' );
-const NamedModulesPlugin = require( './server/bundler/webpack-plugins/NamedModulesPlugin' );
+const config = require( './server/config' ),
+	cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' ),
+	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
+	CopyWebpackPlugin = require( 'copy-webpack-plugin' ),
+	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' ),
+	WebpackStableBuildPlugin = require( './server/bundler/webpack/stable-build-plugin' );
 
 /**
  * Internal variables
  */
 const calypsoEnv = config( 'env_id' );
+
 const bundleEnv = config( 'env' );
-const isWindows = os.type() === 'Windows_NT';
-
-/**
- * This function scans the /client/extensions directory in order to generate a map that looks like this:
- * {
- *   sensei: 'absolute/path/to/wp-calypso/client/extensions/sensei',
- *   woocommerce: 'absolute/path/to/wp-calypso/client/extensions/woocommerce',
- *   ....
- * }
- *
- * Providing webpack with these aliases instead of telling it to scan client/extensions for every
- * module resolution speeds up builds significantly.
- */
-function getAliasesForExtensions() {
-	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );
-	const extensionsNames = fs
-		.readdirSync( extensionsDirectory )
-		.filter( filename => filename.indexOf( '.' ) === -1 ); // heuristic for finding directories
-
-	const aliasesMap = {};
-	extensionsNames.forEach( extensionName =>
-		aliasesMap[ extensionName ] = path.join( extensionsDirectory, extensionName )
-	);
-	return aliasesMap;
-}
-
-const babelLoader = {
-	loader: 'babel-loader',
-	options: {
-		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
-		cacheIdentifier: cacheIdentifier,
-		plugins: [ [
-			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
-			{ async: config.isEnabled( 'code-splitting' ) }
-		] ]
-	}
-};
-
-// happypack is not compatible with windows: https://github.com/amireh/happypack/blob/caaed26eec1795d464ac4b66abd29e60343e6252/README.md#does-it-work-under-windows
-const jsLoader = isWindows ? babelLoader : 'happypack/loader';
 
 const webpackConfig = {
 	bail: calypsoEnv !== 'development',
+	cache: true,
 	entry: {},
 	devtool: '#eval',
 	output: {
@@ -83,21 +39,20 @@ const webpackConfig = {
 		// avoids this warning:
 		// https://github.com/localForage/localForage/issues/577
 		noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
-		rules: [
-			{
-				test: /\.jsx?$/,
-				exclude: /node_modules[\/\\](?!notifications-panel)/,
-				loader: [ jsLoader ]
-			},
+		loaders: [
 			{
 				test: /extensions[\/\\]index/,
-				exclude: path.join( __dirname, 'node_modules' ),
+				exclude: 'node_modules',
 				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' )
 			},
 			{
 				test: /sections.js$/,
-				exclude: path.join( __dirname, 'node_modules' ),
+				exclude: 'node_modules',
 				loader: path.join( __dirname, 'server', 'bundler', 'loader' )
+			},
+			{
+				test: /\.json$/,
+				loader: 'json-loader'
 			},
 			{
 				test: /\.html$/,
@@ -105,30 +60,25 @@ const webpackConfig = {
 			},
 			{
 				include: require.resolve( 'tinymce/tinymce' ),
-				loader: 'exports-loader',
-				query: {
-					window: 'tinymce'
-				}
+				loader: 'exports?window.tinymce',
 			},
 			{
-				test: /node_modules[\/\\]tinymce/,
-				use: 'imports-loader?this=>window',
+				include: /node_modules[\/\\]tinymce/,
+				loader: 'imports?this=>window',
 			}
 		]
 	},
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx' ],
-		modules: [
-			path.join( __dirname, 'client' ),
-			'node_modules',
-		],
-		alias: Object.assign(
-			{
-				'react-virtualized': 'react-virtualized/dist/commonjs',
-				'social-logos/example': 'social-logos/build/example'
-			},
-			getAliasesForExtensions()
-		),
+		extensions: [ '', '.json', '.js', '.jsx' ],
+		root: [ path.join( __dirname, 'client' ), path.join( __dirname, 'client', 'extensions' ) ],
+		modulesDirectories: [ 'node_modules' ],
+		alias: {
+			'react-virtualized': 'react-virtualized/dist/commonjs',
+			'social-logos/example': 'social-logos/build/example'
+		}
+	},
+	resolveLoader: {
+		root: [ __dirname ]
 	},
 	node: {
 		console: false,
@@ -139,22 +89,19 @@ const webpackConfig = {
 		__dirname: 'mock',
 		fs: 'empty'
 	},
-	plugins: _.compact( [
+	plugins: [
 		new webpack.DefinePlugin( {
 			'process.env': {
 				NODE_ENV: JSON.stringify( bundleEnv )
 			},
 			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
 		} ),
+		new WebpackStableBuildPlugin( {
+			seed: 0
+		} ),
 		new webpack.IgnorePlugin( /^props$/ ),
-		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] ),
-		! isWindows && new HappyPack( {
-			loaders: _.compact( [
-				process.env.NODE_ENV === 'development' && 'react-hot-loader',
-				babelLoader
-			] )
-		} )
-	] ),
+		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] )
+	],
 	externals: [ 'electron' ]
 };
 
@@ -178,10 +125,10 @@ if ( calypsoEnv === 'desktop' ) {
 	];
 
 	webpackConfig.plugins.push(
-		new webpack.optimize.CommonsChunkPlugin( {
-			name: 'vendor',
-			filename: 'vendor.[chunkhash].js',
-		} )
+		new webpack.optimize.CommonsChunkPlugin(
+			'vendor',
+			'vendor.[chunkhash].js'
+		)
 	);
 
 	// slight black magic here. 'manifest' is a secret webpack module that includes the webpack loader and
@@ -211,33 +158,46 @@ if ( calypsoEnv === 'desktop' ) {
 	webpackConfig.externals.push( 'jquery' );
 }
 
+const jsLoader = {
+	test: /\.jsx?$/,
+	exclude: /node_modules[\/\\](?!notifications-panel)/,
+	loader: 'babel',
+	query: {
+		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+		cacheIdentifier: cacheIdentifier,
+		plugins: [ [
+			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
+			{ async: config.isEnabled( 'code-splitting' ) }
+		] ]
+	}
+};
+
 if ( calypsoEnv === 'development' ) {
-	webpackConfig.plugins = webpackConfig.plugins.concat( [
-		new NamedModulesPlugin(),
-		new webpack.HotModuleReplacementPlugin(),
-		new webpack.LoaderOptionsPlugin( { debug: true } ),
-	] );
+	const DashboardPlugin = require( 'webpack-dashboard/plugin' );
+	webpackConfig.plugins.splice( 0, 0, new DashboardPlugin() );
+	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 	webpackConfig.entry.build = [
-		'webpack-hot-middleware/client',
+		'webpack-dev-server/client?/',
+		'webpack/hot/only-dev-server',
 		path.join( __dirname, 'client', 'boot', 'app' )
 	];
-	webpackConfig.devServer = { hot: true, inline: true };
-
 
 	if ( config.isEnabled( 'use-source-maps' ) ) {
+		webpackConfig.debug = true;
 		webpackConfig.devtool = '#eval-cheap-module-source-map';
-		webpackConfig.module.rules.push( {
+		webpackConfig.module.preLoaders = webpackConfig.module.preLoaders || [];
+		webpackConfig.module.preLoaders.push( {
 			test: /\.jsx?$/,
-			enforce: 'pre',
 			loader: 'source-map-loader'
 		} );
+	} else {
+		// Add react hot loader before babel-loader.
+		// It's loaded by default since `use-source-maps` is disabled by default.
+		jsLoader.loaders = [ 'react-hot' ].concat( jsLoader.loaders );
 	}
 } else {
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
-	webpackConfig.plugins = webpackConfig.plugins.concat( [
-		new webpack.HashedModuleIdsPlugin(),
-		new WebpackChunkHash(),
-	] );
+	webpackConfig.debug = false;
 	webpackConfig.devtool = false;
 }
 
@@ -257,10 +217,7 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ) } ) );
 }
 
-if ( process.env.DASHBOARD ) {
-	 // dashboard wants to be first
-	webpackConfig.plugins.unshift( new DashboardPlugin() );
-}
+webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );
 
 if ( process.env.WEBPACK_OUTPUT_JSON ) {
 	webpackConfig.devtool = 'cheap-module-source-map';
