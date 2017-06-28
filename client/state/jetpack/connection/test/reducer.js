@@ -19,8 +19,6 @@ import {
 	JETPACK_USER_CONNECTION_DATA_REQUEST,
 	JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
 	JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import {
 	items as itemsReducer,
@@ -71,24 +69,6 @@ describe( 'reducer', () => {
 				[ siteId ]: ITEMS_FIXTURE[ 87654321 ]
 			} );
 		} );
-
-		it( 'should not persist state', () => {
-			const stateIn = ITEMS_FIXTURE,
-				action = {
-					type: SERIALIZE
-				};
-			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const stateIn = ITEMS_FIXTURE,
-				action = {
-					type: DESERIALIZE
-				};
-			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'requests', () => {
@@ -138,24 +118,6 @@ describe( 'reducer', () => {
 				[ siteId ]: false
 			} );
 		} );
-
-		it( 'should not persist state', () => {
-			const stateIn = REQUESTS_FIXTURE,
-				action = {
-					type: SERIALIZE
-				};
-			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const stateIn = REQUESTS_FIXTURE,
-				action = {
-					type: DESERIALIZE
-				};
-			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'dataItems', () => {
@@ -192,24 +154,6 @@ describe( 'reducer', () => {
 				...DATA_ITEMS_FIXTURE,
 				[ siteId ]: DATA_ITEMS_FIXTURE[ 87654321 ]
 			} );
-		} );
-
-		it( 'should not persist state', () => {
-			const stateIn = DATA_ITEMS_FIXTURE,
-				action = {
-					type: SERIALIZE
-				};
-			const stateOut = dataItemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const stateIn = DATA_ITEMS_FIXTURE,
-				action = {
-					type: DESERIALIZE
-				};
-			const stateOut = dataItemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {} );
 		} );
 	} );
 
@@ -260,24 +204,6 @@ describe( 'reducer', () => {
 				[ siteId ]: false
 			} );
 		} );
-
-		it( 'should not persist state', () => {
-			const stateIn = REQUESTS_FIXTURE,
-				action = {
-					type: SERIALIZE
-				};
-			const stateOut = dataRequestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const stateIn = REQUESTS_FIXTURE,
-				action = {
-					type: DESERIALIZE
-				};
-			const stateOut = dataRequestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'disconnectRequests', () => {
@@ -327,24 +253,6 @@ describe( 'reducer', () => {
 				...REQUESTS_FIXTURE,
 				[ siteId ]: false
 			} );
-		} );
-
-		it( 'should not persist state', () => {
-			const stateIn = REQUESTS_FIXTURE,
-				action = {
-					type: SERIALIZE
-				};
-			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const stateIn = REQUESTS_FIXTURE,
-				action = {
-					type: DESERIALIZE
-				};
-			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {} );
 		} );
 	} );
 } );
