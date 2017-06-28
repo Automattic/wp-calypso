@@ -88,9 +88,10 @@ class FeedHeader extends Component {
 					</a>
 					<div className="reader-feed-header__site-title">
 						<a className="reader-feed-header__site-title-link" href={ siteUrl }>
-							{ siteBadge &&
+							{ site &&
 								<span className="reader-feed-header__site-badge">
 									{ siteBadge }
+									<BlogStickers blogId={ site.ID } />
 								</span> }
 							{ siteTitle }
 						</a>
@@ -106,7 +107,6 @@ class FeedHeader extends Component {
 									},
 								} ) }
 							</span> }
-						{ site && <BlogStickers blogId={ site.ID } /> }
 					</div>
 				</Card>
 			</div>

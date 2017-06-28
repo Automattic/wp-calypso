@@ -12,6 +12,7 @@ import QueryReaderTeams from 'components/data/query-reader-teams';
 import QueryBlogStickers from 'components/data/query-blog-stickers';
 import { getReaderTeams, getBlogStickers } from 'state/selectors';
 import BlogStickersList from 'blocks/blog-stickers/list';
+import InfoPopover from 'components/info-popover';
 
 const BlogStickers = ( { blogId, teams, stickers } ) => {
 	// If the user isn't in the a8c team, don't show the feature
@@ -23,7 +24,9 @@ const BlogStickers = ( { blogId, teams, stickers } ) => {
 
 	return (
 		<div className="blog-stickers">
-			{ isTeamMember && stickers && <BlogStickersList stickers={ stickers } /> }
+			{ isTeamMember &&
+				stickers &&
+				<InfoPopover><BlogStickersList stickers={ stickers } /></InfoPopover> }
 			{ ! stickers && <QueryBlogStickers blogId={ blogId } /> }
 			{ ! teams && <QueryReaderTeams /> }
 		</div>
