@@ -20,7 +20,7 @@ class ActivityLogDay extends Component {
 		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		day: PropTypes.string.isRequired,
-		applySiteOffset: PropTypes.function.isRequired,
+		applySiteOffset: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
