@@ -22,7 +22,6 @@ function createDomainObjects( dataTransferObject ) {
 	domains = dataTransferObject.map( ( domain ) => {
 		return {
 			autoRenewalMoment: domain.auto_renewal_date && i18n.moment( domain.auto_renewal_date ),
-			canUseDesignatedAgent: domain.can_use_designated_agent,
 			currentUserCanManage: domain.current_user_can_manage,
 			expirationMoment: domain.expiry && i18n.moment( domain.expiry ),
 			expired: domain.expired,
