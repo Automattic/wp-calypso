@@ -53,7 +53,7 @@ function minify( files ) {
 				file,
 				'-m',
 				'-c',
-				'-o', file.replace( '.js', '.m.js' )
+				'-o', file.replace( '.js', '.min.js' )
 			],
 			// have to pipe stderr to parent, otherwise large bundles will never finish
 			// see https://github.com/nodejs/node-v0.x-archive/issues/6764
