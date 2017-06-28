@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Returns the blog stickers for a certain site.
  *
  * @param  {Object}  state   Global state tree
@@ -6,5 +11,5 @@
  * @return {Array} Blog stickers
  */
 export default function getBlogStickers( state, blogId ) {
-	return state.sites.blogStickers.items[ blogId ];
+	return get( state.sites.blogStickers.items, blogId, null );
 }
