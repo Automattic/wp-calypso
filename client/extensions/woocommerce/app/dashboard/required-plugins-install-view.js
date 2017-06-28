@@ -16,7 +16,6 @@ import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
-import QueryPluginKeys from 'components/data/query-plugin-keys';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SetupHeader from './setup-header';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
@@ -59,10 +58,10 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	componentDidUpdate = ( prevProps ) => {
-		const { plugins, site } = this.props.plugins;
+		const { plugins, site } = this.props;
 		if (
 			( site && plugins && plugins.length && ! this.state.installingPlugin ) ||
-			( prevProps.plugins && plugins.length > prevProps.plugins.length )
+			( plugins && prevProps.plugins && plugins.length > prevProps.plugins.length )
 		) {
 			this.installPlugins( this.props.plugins );
 		}
@@ -79,7 +78,6 @@ class RequiredPluginsInstallView extends Component {
 
 	installPlugins = ( plugins ) => {
 		const { site, wporg } = this.props;
-		let isRunningInstall = false;
 		for ( let i = 0; i < requiredPlugins.length; i++ ) {
 			const slug = requiredPlugins[ i ];
 			const plugin = find( plugins, { slug } );
@@ -88,21 +86,19 @@ class RequiredPluginsInstallView extends Component {
 					return;
 				}
 				const wporgPlugin = getPlugin( wporg, slug );
+				const progress = this.state.progress + ( 100 / requiredPlugins.length );
 				this.setState( {
 					installingPlugin: slug,
-					progress: this.state.progress + 25
+					progress
 				} );
 				this.props.installPlugin( site.ID, wporgPlugin );
-				isRunningInstall = true;
 				return;
 			}
 		}
-		if ( ! isRunningInstall ) {
-			this.props.setFinishedInstallOfRequiredPlugins(
-				site.ID,
-				true
-			);
-		}
+		this.props.setFinishedInstallOfRequiredPlugins(
+			site.ID,
+			true
+		);
 	}
 
 	render = () => {
@@ -110,7 +106,6 @@ class RequiredPluginsInstallView extends Component {
 		return (
 			<div className="card dashboard__setup-wrapper">
 				{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
-				{ site.canUpdateFiles && <QueryPluginKeys siteId={ site.ID } /> }
 				<SetupHeader
 					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
 					imageWidth={ 160 }
