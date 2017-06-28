@@ -35,7 +35,7 @@ class DesktopDownloadCard extends Component {
 		trackLinuxDebClick: noop,
 	};
 
-	getDescription = ( platform ) => {
+	getDescription( platform ) {
 		const { translate } = this.props;
 		switch ( platform ) {
 			case 'MacIntel':
@@ -47,7 +47,7 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getRequirementsText = ( platform ) => {
+	getRequirementsText( platform ) {
 		const { translate } = this.props;
 		switch ( platform ) {
 			case 'MacIntel':
@@ -60,7 +60,7 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getTranslateComponents = ( platform ) => {
+	getTranslateComponents( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
 				return {
@@ -84,7 +84,7 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getAlsoAvailableText = ( platform ) => {
+	getAlsoAvailableText( platform ) {
 		const { translate } = this.props;
 		switch ( platform ) {
 			case 'MacIntel':
@@ -112,7 +112,7 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getButtonClickHandler = ( platform ) => {
+	getButtonClickHandler( platform ) {
 		const {
 			trackWindowsClick,
 			trackMacClick,
@@ -132,7 +132,7 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getButtonLink = ( platform ) => {
+	getButtonLink( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
 				return MAC_LINK;
@@ -144,7 +144,7 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getCardTitle = ( platform ) => {
+	getCardTitle( platform ) {
 		const { translate } = this.props;
 		switch ( platform ) {
 			case 'MacIntel':
@@ -158,7 +158,7 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getLinkAnchorTag = ( platformLink ) => {
+	getLinkAnchorTag( platformLink ) {
 		switch ( platformLink ) {
 			case MAC_LINK:
 				return <a href={ platformLink } onClick={ this.trackMacClick } />;
