@@ -17,7 +17,7 @@ import { Tabs } from '../../constants';
 class Navigation extends Component {
 	static propTypes = {
 		activeTab: PropTypes.string,
-		site: PropTypes.object,
+		siteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -32,8 +32,7 @@ class Navigation extends Component {
 	}
 
 	renderTabItem( { label, slug } ) {
-		const { activeTab, site } = this.props;
-		const siteSlug = get( site, 'slug' );
+		const { activeTab, siteSlug } = this.props;
 		let path = this.getSettingsPath();
 
 		if ( slug ) {
