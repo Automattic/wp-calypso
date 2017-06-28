@@ -26,7 +26,7 @@ class ShippingZoneName extends Component {
 	}
 
 	render() {
-		const { loaded, zone, actions, onChange } = this.props;
+		const { loaded, isRestOfTheWorld, zone, actions, onChange } = this.props;
 		const { editing } = this.state;
 
 		const startEditing = () => ( this.setState( { editing: true } ) );
@@ -62,9 +62,9 @@ class ShippingZoneName extends Component {
 			return (
 				<div className="shipping-zone__name">
 					<span>{ zone.name }</span>
-					<Button borderless onClick={ startEditing }>
-						<Gridicon icon="pencil" size={ 24 } />
-					</Button>
+					{ isRestOfTheWorld
+						? null
+						: <Button borderless onClick={ startEditing }><Gridicon icon="pencil" size={ 24 } /></Button> }
 				</div>
 			);
 		};
@@ -79,6 +79,7 @@ class ShippingZoneName extends Component {
 
 ShippingZoneName.PropTypes = {
 	siteId: PropTypes.number,
+	isRestOfTheWorld: PropTypes.bool.isRequired,
 	loaded: PropTypes.bool.isRequired,
 	onChange: PropTypes.func.isRequired,
 };

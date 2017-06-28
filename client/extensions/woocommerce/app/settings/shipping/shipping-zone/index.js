@@ -12,7 +12,7 @@ import { bindActionCreators } from 'redux';
 import Main from 'components/main';
 import QueryShippingZones, { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
 import ShippingZoneHeader from './shipping-zone-header';
-import ShippingZoneLocations from './shipping-zone-locations';
+import ShippingZoneLocationList from './shipping-zone-location-list';
 import ShippingZoneMethodList from './shipping-zone-method-list';
 import ShippingZoneName from './shipping-zone-name';
 import {
@@ -49,14 +49,17 @@ class Shipping extends Component {
 	}
 
 	render() {
-		const { siteId, className, loaded, markSaved, markChanged } = this.props;
+		const { siteId, className, loaded, markSaved, markChanged, params } = this.props;
+		const isRestOfTheWorld = 0 === Number( params.zone );
 
 		return (
 			<Main className={ classNames( 'shipping', className ) }>
 				<QueryShippingZones siteId={ siteId } />
 				<ShippingZoneHeader onSave={ markSaved } />
-				<ShippingZoneName siteId={ siteId } loaded={ loaded } onChange={ markChanged } />
-				<ShippingZoneLocations loaded={ loaded } onChange={ markChanged } />
+				<ShippingZoneName siteId={ siteId } loaded={ loaded } isRestOfTheWorld={ isRestOfTheWorld } onChange={ markChanged } />
+				{ isRestOfTheWorld
+					? null
+					: <ShippingZoneLocationList siteId={ siteId } loaded={ loaded } onChange={ markChanged } /> }
 				<ShippingZoneMethodList siteId={ siteId } loaded={ loaded } onChange={ markChanged } />
 			</Main>
 		);
