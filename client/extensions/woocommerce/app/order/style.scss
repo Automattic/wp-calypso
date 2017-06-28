@@ -229,26 +229,11 @@
 		}
 	}
 
-	.order__refund-credit-card h3{
+	.order__refund-credit-card h3 {
 		font-size: 11px;
 		text-transform: uppercase;
 		margin-bottom: 8px;
 		color: $gray-text-min;
-	}
-
-	.order__card-details {
-		float: left;
-	}
-
-	.order__card-number {
-		margin-bottom: 0;
-		font-weight: bold;
-	}
-
-	.order__card-date {
-		float: right;
-		color: $gray-text-min;
-		font-style: italic;
 	}
 
 	.order__refund-actions {

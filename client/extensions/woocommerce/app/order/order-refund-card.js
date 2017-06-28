@@ -19,8 +19,8 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import Notice from 'components/notice';
 import OrderDetailsTable from './order-details-table';
-import PaymentLogo from 'components/payment-logo';
 import { sendRefund } from 'woocommerce/state/sites/orders/actions';
+import StoredCard from 'my-sites/upgrades/checkout/stored-card';
 
 class OrderRefundCard extends Component {
 	static propTypes = {
@@ -105,24 +105,24 @@ class OrderRefundCard extends Component {
 		const refundObj = {
 			amount: this.state.refundTotal + '', // API expects a string
 			reason: this.state.refundNote,
+			// api_refund
 		};
 		this.props.sendRefund( site.ID, order.id, refundObj );
 	}
 
 	renderCreditCard = () => {
 		const { translate } = this.props;
-		const type = 'VISA';
-		const digits = 'xxxx';
-		const name = 'Tester';
+		const card = {
+			expiry: '',
+			card_type: 'VISA',
+			card: '4345',
+			name: 'John Smith',
+		};
 
 		return (
 			<div className="order__refund-credit-card">
 				<h3>{ translate( 'Refunding payment with:' ) }</h3>
-				<PaymentLogo className="order__card-logo" type={ type.toLowerCase() } />
-				<div className="order__card-details">
-					<p className="order__card-number">{ type } ****{ digits }</p>
-					<p className="order__card-name">{ name }</p>
-				</div>
+				<StoredCard card={ card } />
 			</div>
 		);
 	}
