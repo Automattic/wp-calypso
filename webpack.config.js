@@ -13,6 +13,7 @@ const os = require( 'os' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const WebpackChunkHash = require( 'webpack-chunk-hash' );
+const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 
 /**
  * Internal dependencies
@@ -153,7 +154,7 @@ const webpackConfig = {
 				process.env.NODE_ENV === 'development' && 'react-hot-loader',
 				babelLoader
 			] )
-		} )
+		} ),
 	] ),
 	externals: [ 'electron' ]
 };
@@ -237,6 +238,7 @@ if ( calypsoEnv === 'development' ) {
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
 		new webpack.HashedModuleIdsPlugin(),
 		new WebpackChunkHash(),
+		new NameAllModulesPlugin(),
 	] );
 	webpackConfig.devtool = false;
 }

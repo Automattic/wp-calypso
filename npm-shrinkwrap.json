@@ -4293,6 +4293,9 @@
       "version": "0.0.5",
       "dev": true
     },
+    "name-all-modules-plugin": {
+      "version": "1.0.1"
+    },
     "nan": {
       "version": "2.6.2"
     },
@@ -4322,7 +4325,7 @@
       "dev": true,
       "dependencies": {
         "qs": {
-          "version": "6.4.0",
+          "version": "6.5.0",
           "dev": true
         }
       }
@@ -4819,8 +4822,8 @@
     },
     "prettier": {
       "version": "1.1.7",
-      "from": "git+https://github.com/Automattic/calypso-prettier.git#fe7705e62920d76581e8ea42c6699c8d1dead7ac",
-      "resolved": "git+https://github.com/Automattic/calypso-prettier.git#fe7705e62920d76581e8ea42c6699c8d1dead7ac",
+      "from": "git+https://github.com/Automattic/calypso-prettier.git#183198b79773dbe9bd6c64a45cf74d1e90d4db24",
+      "resolved": "git+https://github.com/Automattic/calypso-prettier.git#183198b79773dbe9bd6c64a45cf74d1e90d4db24",
       "dev": true,
       "dependencies": {
         "ast-types": {
@@ -5915,7 +5918,7 @@
           "version": "2.0.3"
         },
         "qs": {
-          "version": "6.4.0"
+          "version": "6.5.0"
         },
         "readable-stream": {
           "version": "2.3.2"
