@@ -78,7 +78,7 @@ const ThemeSheet = React.createClass( {
 		// Connected props
 		isLoggedIn: React.PropTypes.bool,
 		isActive: React.PropTypes.bool,
-		hidePrice: React.PropTypes.bool,
+		isPurchased: React.PropTypes.bool,
 		isJetpack: React.PropTypes.bool,
 		siteId: React.PropTypes.number,
 		siteSlug: React.PropTypes.string,
@@ -437,9 +437,9 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getDefaultOptionLabel() {
-		const { defaultOption, isActive, isLoggedIn, isPremium, hidePrice, isJetpack } = this.props;
+		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = this.props;
 		if ( isLoggedIn && ! isActive && ! isJetpack ) {
-			if ( isPremium && ! hidePrice ) { // purchase
+			if ( isPremium && ! isPurchased ) { // purchase
 				return i18n.translate( 'Pick this design' );
 			} // else: activate
 			return i18n.translate( 'Activate this design' );
@@ -476,7 +476,7 @@ const ThemeSheet = React.createClass( {
 
 	renderPrice() {
 		let price = this.props.price;
-		if ( ! this.isLoaded() || this.props.isActive || this.props.hidePrice ) {
+		if ( ! this.isLoaded() || this.props.isActive || this.props.isPurchased ) {
 			price = '';
 		} else if ( ! this.props.isPremium ) {
 			price = i18n.translate( 'Free' );
@@ -591,13 +591,13 @@ const ThemeSheetWithOptions = ( props ) => {
 		isActive,
 		isLoggedIn,
 		isPremium,
-		hidePrice,
+		isPurchased,
 		isJetpack
 	} = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
-	const needsJetpackPlanUpgrade = isJetpack && isPremium && ! hidePrice;
+	const needsJetpackPlanUpgrade = isJetpack && isPremium && ! isPurchased;
 
 	if ( needsJetpackPlanUpgrade ) {
 		secondaryOption = '';
@@ -610,7 +610,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'customize';
 	} else if ( needsJetpackPlanUpgrade ) {
 		defaultOption = 'upgradePlan';
-	} else if ( isPremium && ! hidePrice ) {
+	} else if ( isPremium && ! isPurchased ) {
 		defaultOption = 'purchase';
 	} else {
 		defaultOption = 'activate';
@@ -651,7 +651,7 @@ export default connect(
 			isActive: isThemeActive( state, id, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isPremium: isThemePremium( state, id ),
-			hidePrice: isPremiumThemeAvailable( state, id, siteId ),
+			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id )
