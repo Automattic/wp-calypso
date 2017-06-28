@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import { isNumber } from 'lodash';
+import { isObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,21 +13,26 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
-const ProductHeader = ( { onTrash, onSave, isBusy, translate, site, product } ) => {
+const ProductHeader = ( { onView, onTrash, onSave, isBusy, translate, site, product } ) => {
+	const existing = product && ! isObject( product.id );
+
+	const viewButton = onView &&
+		<Button borderless onClick={ onView }><Gridicon icon="visible" /> { translate( 'View' ) } </Button>;
+
 	const trashButton = onTrash &&
-		<Button borderless onClick={ onTrash }><Gridicon icon="trash" /></Button>;
+		<Button borderless scary onClick={ onTrash }><Gridicon icon="trash" /> { translate( 'Trash' ) } </Button>;
 
 	const saveExists = 'undefined' !== typeof onSave;
 	const saveDisabled = false === onSave;
 
-	const saveButton = saveExists &&
-		<Button primary onClick={ onSave } disabled={ saveDisabled } busy={ isBusy }>
-			{ translate( 'Save' ) }
-		</Button>;
+	const saveLabel = ( product && existing ? translate( 'Update' ) : translate( 'Save & Publish' ) );
 
-	const currentCrumb = product && isNumber( product.id )
+	const saveButton = saveExists &&
+		<Button primary onClick={ onSave } disabled={ saveDisabled } busy={ isBusy }> { saveLabel } </Button>;
+
+	const currentCrumb = product && existing
 		? ( <span>{ translate( 'Edit Product' ) }</span> )
-		: ( <span>{ translate( 'Add New Product' ) }</span> );
+		: ( <span>{ translate( 'Add New' ) }</span> );
 
 	const breadcrumbs = [
 		( <a href={ getLink( '/store/products/:site/', site ) }> { translate( 'Products' ) } </a> ),
@@ -37,6 +42,7 @@ const ProductHeader = ( { onTrash, onSave, isBusy, translate, site, product } ) 
 	return (
 		<ActionHeader breadcrumbs={ breadcrumbs }>
 			{ trashButton }
+			{ viewButton }
 			{ saveButton }
 		</ActionHeader>
 	);
@@ -52,6 +58,7 @@ ProductHeader.propTypes = {
 			PropTypes.object,
 		] ),
 	} ),
+	onView: PropTypes.func,
 	onTrash: PropTypes.func,
 	onSave: PropTypes.oneOfType( [
 		React.PropTypes.func,
