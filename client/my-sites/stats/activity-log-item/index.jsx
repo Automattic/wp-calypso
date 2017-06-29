@@ -32,7 +32,6 @@ class ActivityLogItem extends Component {
 				'user',
 			] ).isRequired,
 			name: PropTypes.string.isRequired,
-			ts_site: PropTypes.number.isRequired,
 			ts_utc: PropTypes.number.isRequired,
 
 			actor: PropTypes.shape( {
