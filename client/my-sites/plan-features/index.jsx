@@ -201,6 +201,7 @@ class PlanFeatures extends Component {
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						showBigPlanIcon={ showBigPlanIcon }
+						isMobileView={ true }
 						isInSignup={ isInSignup }
 					/>
 					{
@@ -224,7 +225,7 @@ class PlanFeatures extends Component {
 						planName ={ planConstantObj.getTitle() }
 					/>
 					<FoldableCard
-						header={ translate( 'Show features' ) }
+						header={ translate( 'View Details' ) }
 						clickableHeader
 						compact>
 						{ this.renderMobileFeatures( features ) }

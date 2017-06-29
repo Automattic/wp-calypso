@@ -45,6 +45,7 @@ export class PlanFeaturesHeader extends Component {
 			isInSignupTest,
 			isPlaceholder,
 			isSiteAT,
+			isMobileView,
 			intervalType,
 			planType,
 			rawPrice,
@@ -78,14 +79,16 @@ export class PlanFeaturesHeader extends Component {
 		return (
 			<header className={ headerClasses } onClick={ this.props.onClick } >
 				{ this.renderRibbons() }
-				{ ! showBigPlanIcon && this.renderPlanIcon() }
+				{ ( ! showBigPlanIcon || isMobileView ) && this.renderPlanIcon() }
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
 					{ ! showBigPlanIcon && isInSignupTest && audience }
 					{ showBigPlanIcon && <Tagline planType={ planType } /> }
-					{ showBigPlanIcon && this.renderPlanIcon() }
-					<Price { ...priceProps } />
-					<TimeFrame { ...timeFrameProps } isPlanCurrent={ this.isPlanCurrent() } />
+					{ showBigPlanIcon && ! isMobileView && this.renderPlanIcon() }
+					<div className="plan-features__header-meta">
+						<Price { ...priceProps } />
+						<TimeFrame { ...timeFrameProps } isPlanCurrent={ this.isPlanCurrent() } />
+					</div>
 				</div>
 			</header>
 		);
@@ -103,7 +106,8 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPlanIcon() {
-		const { showBigPlanIcon, planType } = this.props;
+		const { showBigPlanIcon, planType, isMobileView } = this.props;
+		const postfix = isMobileView ? '-circle' : '';
 		let icon;
 
 		switch ( this.props.planType ) {
@@ -117,17 +121,17 @@ export class PlanFeaturesHeader extends Component {
 				icon = <PlanIcon plan={ planType } />;
 				break;
 			case PLAN_PREMIUM:
-				icon = <img src="/calypso/images/plans/plan-icon-premium.svg" className="plan-icon" />
+				icon = <img src={ `/calypso/images/plans/plan-icon-premium${ postfix }.svg` } className="plan-icon" />
 				break;
 			case PLAN_BUSINESS:
-				icon = <img src="/calypso/images/plans/plan-icon-business.svg" className="plan-icon" />
+				icon = <img src={ `/calypso/images/plans/plan-icon-business${ postfix }.svg` } className="plan-icon" />
 				break;
 			case PLAN_PERSONAL:
-				icon = <img src="/calypso/images/plans/plan-icon-personal.svg" className="plan-icon" />
+				icon = <img src={ `/calypso/images/plans/plan-icon-personal${ postfix }.svg` } className="plan-icon" />
 				break;
 			case PLAN_FREE:
 			default:
-				icon = <img src="/calypso/images/plans/plan-icon-free.svg" className="plan-icon" />
+				icon = <img src={ `/calypso/images/plans/plan-icon-free${ postfix }.svg` } className="plan-icon" />
 		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -186,6 +190,7 @@ PlanFeaturesHeader.propTypes = {
 	relatedMonthlyPlan: PropTypes.object,
 	isSiteAT: PropTypes.bool,
 	showBigPlanIcon: PropTypes.bool,
+	isMobileView: PropTypes.bool,
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -200,6 +205,7 @@ PlanFeaturesHeader.defaultProps = {
 	currentSitePlan: {},
 	isSiteAT: false,
 	showBigPlanIcon: false,
+	isMobileView: false,
 };
 
 export default connect( ( state, ownProps ) => {

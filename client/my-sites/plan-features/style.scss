@@ -45,6 +45,17 @@ $plan-features-sidebar-width: 272px;
 		padding: 0;
 	}
 
+	.foldable-card__main {
+		display: block;
+		max-width: none;
+		margin-right: 0;
+		text-align: center;
+	}
+
+	.foldable-card__secondary {
+		display: none;
+	}
+
 	.plan-features__header-banner {
 		display: none;
 	}
@@ -56,6 +67,47 @@ $plan-features-sidebar-width: 272px;
 
 	.plan-features__item:last-child {
 		border-bottom: none;
+	}
+
+	.plan-features__header.has-big-icon {
+		.plan-features__header-figure {
+			width: 60px;
+			margin: 0 20px 10px 10px;
+		}
+		.plan-features__header-text {
+			position: relative;
+			padding-right: 140px;
+		}
+		.plan-features__header-title {
+			text-align: left;
+			font-size: 22px;
+			line-height: 1.2;
+		}
+		.plan-features__header-tagline {
+			text-align: left;
+			font-size: 14px;
+			line-height: 1.4;
+			margin-top: .5em;
+		}
+		.plan-features__header-meta {
+			display: flex;
+			flex-wrap: no-wrap;
+			position: absolute;
+			top: 0;
+			right: 15px;
+			max-width: 135px;
+		}
+		.plan-features__price {
+
+		}
+		.plan-features__header-timeframe {
+			flex-shrink: 1;
+			text-align: left;
+			line-height: 1;
+			white-space: normal;
+			align-self: flex-end;
+			margin: 0 0 5px 5px;
+		}
 	}
 }
 
@@ -71,7 +123,7 @@ $plan-features-sidebar-width: 272px;
 	font-size: 14px;
 	border: solid 1px lighten( $gray, 27% );
 	background-color: $white;
-	margin-bottom: 24px;
+	margin: 0 25px 25px;
 }
 
 .is-section-plans .plan-features__table {
