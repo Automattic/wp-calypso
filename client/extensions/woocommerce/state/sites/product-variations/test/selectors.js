@@ -9,16 +9,15 @@ import { expect } from 'chai';
 import {
 	getVariationsForProduct,
 } from '../selectors';
-import variations from './fixtures/variations';
+import productVariations from './fixtures/variations';
 
 const loadedState = {
 	extensions: {
 		woocommerce: {
 			sites: {
 				123: {
-					products: {
-						variations,
-					}
+					products: { },
+					productVariations,
 				}
 			}
 		}
