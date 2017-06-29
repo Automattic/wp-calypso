@@ -7,7 +7,7 @@ import { get, find, isNumber, isEqual } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getVariationsForProduct } from 'woocommerce/state/sites/products/variations/selectors';
+import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
 
 export function getVariationEditsStateForProduct( state, productId, siteId = getSelectedSiteId( state ) ) {
 	const woocommerce = state.extensions.woocommerce;

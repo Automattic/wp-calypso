@@ -14,7 +14,7 @@ import {
 	getProductVariationsWithLocalEdits,
 } from '../selectors';
 import products from 'woocommerce/state/sites/products/test/fixtures/products';
-import variations from 'woocommerce/state/sites/products/variations/test/fixtures/variations';
+import variations from 'woocommerce/state/sites/product-variations/test/fixtures/variations';
 
 const siteId = 123;
 
