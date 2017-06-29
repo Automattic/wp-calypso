@@ -7,7 +7,7 @@
 	@include breakpoint( "<660px" ) {
 		flex-direction: column;
 	}
-	
+
 	.store-address.card {
 		margin: 0;
 		padding: 0;
@@ -62,6 +62,7 @@
 		font-size: 11px;
 		text-transform: uppercase;
 		color: $gray-text-min;
+		display: none;
 	}
 
 	p.payments__method-suggested,
@@ -97,6 +98,7 @@
 
 	.list-item {
 		border-top: 1px solid $border-ultra-light-gray;
+		align-items: center;
 	}
 
 	.payments__method-information {
