@@ -19,6 +19,7 @@ import {
 	SOCIAL_CREATE_ACCOUNT_REQUEST,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_CONNECT_ACCOUNT,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -241,6 +242,7 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 				error,
+				service: service,
 			} );
 
 			return Promise.reject( error );
@@ -282,6 +284,8 @@ export const createSocialUser = ( service, token, flowName ) => dispatch => {
 		return Promise.reject( error );
 	} );
 };
+
+export const connectSocialAccount = () => ( { type: SOCIAL_CONNECT_ACCOUNT } );
 
 /**
  * Sends a two factor authentication recovery code to the 2FA user

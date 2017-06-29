@@ -25,6 +25,7 @@ export class Login extends React.Component {
 		recordPageView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
+		socialConnect: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -35,10 +36,14 @@ export class Login extends React.Component {
 		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
 			this.recordPageView( nextProps );
 		}
+
+		if ( this.props.socialConnect !== nextProps.socialConnect ) {
+			this.recordPageView( nextProps );
+		}
 	}
 
 	recordPageView( props ) {
-		const { twoFactorAuthType } = props;
+		const { socialConnect, twoFactorAuthType } = props;
 
 		let url = '/log-in';
 		let title = 'Login';
@@ -48,13 +53,18 @@ export class Login extends React.Component {
 			title += ` > Two-Step Authentication > ${ startCase( twoFactorAuthType ) }`;
 		}
 
+		if ( socialConnect ) {
+			url += `/${ socialConnect }`;
+			title += ' > Social Connect';
+		}
+
 		this.props.recordPageView( url, title );
 	}
 
 	renderLocaleSuggestions() {
-		const { locale, path, twoFactorAuthType } = this.props;
+		const { locale, path, twoFactorAuthType, socialConnect } = this.props;
 
-		if ( twoFactorAuthType ) {
+		if ( twoFactorAuthType || socialConnect ) {
 			return null;
 		}
 
@@ -70,14 +80,19 @@ export class Login extends React.Component {
 	}
 
 	render() {
-		const { locale, translate, twoFactorAuthType } = this.props;
-
+		const {
+			locale,
+			socialConnect,
+			translate,
+			twoFactorAuthType,
+		} = this.props;
 		const canonicalUrl = `https://${ locale !== 'en' ? locale + '.' : '' }wordpress.com/login`;
 
 		return (
 			<div>
 				<Main className="wp-login__main">
-					{ this.renderLocaleSuggestions() }
+					{ ! socialConnect &&
+						this.renderLocaleSuggestions() }
 
 					<DocumentHead
 						title={ translate( 'Log In', { textOnly: true } ) }
@@ -90,10 +105,13 @@ export class Login extends React.Component {
 							<LoginBlock
 								twoFactorAuthType={ twoFactorAuthType }
 								title={ translate( 'Log in to your account.' ) }
+								socialConnect={ socialConnect }
 							/>
 						</div>
 
-						<LoginLinks locale={ locale } twoFactorAuthType={ twoFactorAuthType } />
+						{ ! socialConnect &&
+							<LoginLinks locale={ locale } twoFactorAuthType={ twoFactorAuthType } />
+						}
 					</div>
 				</Main>
 

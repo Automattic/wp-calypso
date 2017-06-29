@@ -19,6 +19,7 @@ import {
 	SOCIAL_CREATE_ACCOUNT_REQUEST,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_CONNECT_ACCOUNT,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -133,12 +134,16 @@ export const socialAccount = createReducer( { isCreating: false }, {
 		username,
 		bearerToken
 	} ),
-	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => ( {
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: ( state, { error, service } ) => ( {
 		...state,
-		requestError: error
+		requestError: error,
+		email: error.email,
+		service: service,
 	} ),
 	[ USER_RECEIVE ]: state => ( { ...state, bearerToken: null, username: null } ),
 	[ LOGIN_REQUEST ]: state => ( { ...state, createError: null } ),
+	[ SOCIAL_CONNECT_ACCOUNT ]: state => ( { ...state, connecting: true } ),
+	[ LOGIN_REQUEST_SUCCESS ]: state => ( { ...state, connecting: true } ),
 } );
 
 export default combineReducers( {

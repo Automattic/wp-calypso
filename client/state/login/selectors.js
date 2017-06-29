@@ -206,3 +206,21 @@ export const getCreateSocialAccountError = ( state ) => get( state, 'login.socia
  * @return {?Object}         Error for the get social account request.
  */
 export const getRequestSocialAccountError = ( state ) => get( state, 'login.socialAccount.requestError', null );
+
+/***
+ * Gets the email address of the social account to be linked.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Email address of the social account.
+ */
+export const getLinkingSocialUser = ( state ) => get( state, 'login.socialAccount.email', null );
+
+/***
+ * Gets the Service name of the social account to be linked.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Service name of the social account.
+ */
+export const getLinkingSocialService = ( state ) => get( state, 'login.socialAccount.service', null );
+
+export const isConnectingSocialService = ( state ) => get( state, 'login.socialAccount.connecting', null );
