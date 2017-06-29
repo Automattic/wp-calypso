@@ -13,3 +13,25 @@ $masterbar-color:         $blue-wordpress;
 $sidebar-bg-color:        $gray-lighten-30;
 $sidebar-text-color:      $gray-dark;
 $sidebar-selected-color:  $gray-text-min;
+
+// Define color schemes based on theming variables
+$color-schemes: (
+	default: (
+		'--masterbar-primary-color':			$masterbar-color,
+		'--sidebar-bg-color':					$sidebar-bg-color,
+		'--sidebar-text-color':					$sidebar-text-color,
+		'--sidebar-selected-color':				$sidebar-selected-color
+	),
+	light: (
+		'--masterbar-primary-color':			$white,
+		'--sidebar-bg-color':					$white,
+		'--sidebar-text-color':					$sidebar-text-color,
+		'--sidebar-selected-color':				$sidebar-selected-color
+	),
+	dark: (
+		'--masterbar-primary-color':			$gray-dark,
+		'--sidebar-bg-color':					$gray-dark,
+		'--sidebar-text-color':					$white,
+		'--sidebar-selected-color':				$sidebar-selected-color
+	)
+);
