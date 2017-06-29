@@ -7,6 +7,7 @@ import { keyBy } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
+import notes from './notes/reducer';
 import {
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
@@ -116,4 +117,5 @@ export default combineReducers( {
 	items,
 	queries,
 	totalPages,
+	notes,
 } );
