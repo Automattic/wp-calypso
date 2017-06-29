@@ -93,12 +93,22 @@ class ActivityLogItem extends Component {
 					type: PropTypes.string.isRequired,
 				} ),
 
-				theme: PropTypes.shape( {
-					name: PropTypes.string,
-					slug: PropTypes.string,
-					uri: PropTypes.string,
-					version: PropTypes.string,
-				} ),
+				theme: PropTypes.oneOfType( [
+					PropTypes.arrayOf(
+						PropTypes.shape( {
+							name: PropTypes.string,
+							slug: PropTypes.string,
+							uri: PropTypes.string,
+							version: PropTypes.string,
+						} )
+					),
+					PropTypes.shape( {
+						name: PropTypes.string,
+						slug: PropTypes.string,
+						uri: PropTypes.string,
+						version: PropTypes.string,
+					} ),
+				] ),
 
 				user: PropTypes.shape( {
 					display_name: PropTypes.string,
