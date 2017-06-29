@@ -11,7 +11,7 @@
 		top: auto;
 		margin-bottom: 20px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin-bottom: 30px;
 		}
 	}
@@ -21,11 +21,5 @@
 			display: block;
 			font-size: 12px;
 		}
-	}
-}
-
-.map-domain-step {
-	.domain-search-results__domain-availability {
-		margin-top: 30px;
 	}
 }

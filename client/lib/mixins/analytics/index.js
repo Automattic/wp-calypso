@@ -149,40 +149,6 @@ const EVENTS = {
 		}
 	},
 
-	mapDomain: {
-		formSubmit( searchBoxValue ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Submitted Form in Map Domain Step',
-				'Search Box Value',
-				searchBoxValue
-			);
-		},
-
-		inputFocus( searchBoxValue ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Focused On Search Box Input in Map Domain Step',
-				'Search Box Value',
-				searchBoxValue
-			);
-		},
-
-		goButtonClick( searchBoxValue, section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Go" Button in Map Domain Step',
-				'Search Box Value',
-				searchBoxValue
-			);
-
-			analytics.tracks.recordEvent( 'calypso_map_domain_step_go_click', {
-				search_box_value: searchBoxValue,
-				section
-			} );
-		},
-	},
-
 	siteRedirect: {
 		formSubmit( searchBoxValue ) {
 			analytics.ga.recordEvent(

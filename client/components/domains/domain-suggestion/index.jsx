@@ -10,9 +10,8 @@ import Gridicon from 'gridicons';
  */
 import DomainProductPrice from 'components/domains/domain-product-price';
 
-const DomainSuggestion = React.createClass( {
-
-	propTypes: {
+class DomainSuggestion extends React.Component {
+	static propTypes = {
 		buttonContent: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] ).isRequired,
 		buttonClasses: React.PropTypes.string,
 		extraClasses: React.PropTypes.string,
@@ -20,13 +19,20 @@ const DomainSuggestion = React.createClass( {
 		priceRule: React.PropTypes.string.isRequired,
 		price: React.PropTypes.string,
 		domain: React.PropTypes.string
-	},
+	};
 
 	render() {
 		const { price, isAdded, extraClasses, children, priceRule } = this.props;
-		const classes = classNames( 'domain-suggestion', 'card', 'is-compact', 'is-clickable', {
-			'is-added': isAdded,
-		}, extraClasses );
+		const classes = classNames(
+			'domain-suggestion',
+			'card',
+			'is-compact',
+			'is-clickable',
+			{
+				'is-added': isAdded,
+			},
+			extraClasses
+		);
 
 		return (
 			<div
@@ -38,7 +44,8 @@ const DomainSuggestion = React.createClass( {
 					{ children }
 					<DomainProductPrice
 						rule={ priceRule }
-						price={ price } />
+						price={ price }
+					/>
 				</div>
 				<div className="domain-suggestion__action">
 					{ this.props.buttonContent }
@@ -47,23 +54,18 @@ const DomainSuggestion = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-DomainSuggestion.Placeholder = React.createClass( {
-	render() {
-		const classes = classNames( 'domain-suggestion', 'card', 'is-compact', 'is-placeholder', {
-			'is-clickable': true,
-		} );
-		return (
-			<div className={ classes }>
-				<div className="domain-suggestion__content">
-					<h3 />
-				</div>
-				<div className="domain-suggestion__action" />
-				<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
+DomainSuggestion.Placeholder = function() {
+	return (
+		<div className="domain-suggestion card is-compact is-placeholder is-clickable">
+			<div className="domain-suggestion__content">
+				<h3 />
 			</div>
-		);
-	}
-} );
+			<div className="domain-suggestion__action" />
+			<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
+		</div>
+	);
+};
 
 export default DomainSuggestion;
