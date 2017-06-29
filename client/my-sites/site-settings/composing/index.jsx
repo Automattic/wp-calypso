@@ -13,12 +13,14 @@ import CompactCard from 'components/card/compact';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
 import PostsPerPage from './posts-per-page';
+import PublishConfirmation from './publish-confirmation';
 import {
 	isJetpackMinimumVersion,
 	isJetpackSite,
 	siteSupportsJetpackSettingsUi,
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import config from 'config';
 
 const Composing = ( {
 	eventTracker,
@@ -39,6 +41,15 @@ const Composing = ( {
 	return (
 		<div>
 			<CardComponent className="composing__card site-settings">
+				{
+					config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+					<PublishConfirmation
+						fields={ fields }
+						handleToggle={ handleToggle }
+						isRequestingSettings={ isRequestingSettings }
+						isSavingSettings={ isSavingSettings }
+					/>
+				}
 				<PostsPerPage
 					eventTracker={ eventTracker }
 					fields={ fields }
