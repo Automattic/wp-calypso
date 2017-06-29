@@ -21,9 +21,13 @@ class ProfileLinksAddWordPressSite extends Component {
 		checked: false,
 	};
 
-	inputName = `site-${ this.props.site.ID }`;
+	onSelect = ( event ) => {
+		this.props.onSelect( event, this.getInputName() );
+	};
 
-	onSelect = this.props.onSelect.bind( null, this.inputName );
+	getInputName() {
+		return `site-${ this.props.site.ID }`;
+	}
 
 	render() {
 		const { checked, onChange, site } = this.props;
@@ -37,7 +41,7 @@ class ProfileLinksAddWordPressSite extends Component {
 				<input
 					className="profile-links-add-wordpress__checkbox"
 					type="checkbox"
-					name={ this.inputName }
+					name={ this.getInputName() }
 					onChange={ onChange }
 					checked={ checked } />
 				<Site

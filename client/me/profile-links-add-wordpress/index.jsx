@@ -42,7 +42,7 @@ class ProfileLinksAddWordPress extends Component {
 		this.setState( updates );
 	};
 
-	onSelect = ( inputName ) => {
+	onSelect = ( event, inputName ) => {
 		const updates = {};
 		updates[ inputName ] = ! this.state[ inputName ];
 		this.setState( updates );
