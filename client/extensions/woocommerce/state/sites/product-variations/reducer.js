@@ -16,11 +16,13 @@ export default createReducer( {}, {
 } );
 
 export function variationUpdated( state, action ) {
-	const { data } = action;
-	const variations = state && state.variations || [];
+	const { productId, data } = action;
+	const variations = state || {};
+	const productVariations = variations[ productId ] || [];
 
-	return { ...state,
-		variations: updateCachedVariation( variations, data ),
+	return {
+		...variations,
+		[ productId ]: updateCachedVariation( productVariations, data ),
 	};
 }
 

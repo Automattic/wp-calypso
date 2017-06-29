@@ -27,10 +27,9 @@ describe( 'reducer', () => {
 				]
 			};
 			const action = productVariationUpdated( 123, 66, variation1 );
-
 			const state = variationUpdated( undefined, action );
 
-			expect( state.variations ).to.eql( [ variation1 ] );
+			expect( state[ 66 ] ).to.eql( [ variation1 ] );
 		} );
 
 		it( 'should overwrite an existing variation via update', () => {
@@ -59,8 +58,8 @@ describe( 'reducer', () => {
 			const state1 = variationUpdated( undefined, actionBefore );
 			const state2 = variationUpdated( state1, actionAfter );
 
-			expect( state1.variations ).to.eql( [ variation1Before ] );
-			expect( state2.variations ).to.eql( [ variation1After ] );
+			expect( state1[ 66 ] ).to.eql( [ variation1Before ] );
+			expect( state2[ 66 ] ).to.eql( [ variation1After ] );
 		} );
 	} );
 } );
