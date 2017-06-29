@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import AddressView from 'woocommerce/components/address-view';
 import Card from 'components/card';
 import Dialog from 'components/dialog';
-import { errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getStoreLocation, areSettingsGeneralLoading } from 'woocommerce/state/sites/settings/general/selectors';
@@ -65,11 +65,17 @@ class StoreAddress extends Component {
 	}
 
 	onCloseDialog = ( action ) => {
-		const { translate, site } = this.props;
+		const { translate, site, onSetAddress } = this.props;
 		if ( 'save' === action ) {
 			const onFailure = () => {
 				this.setState( { showDialog: false } );
 				return errorNotice( translate( 'There was a problem saving the store address. Please try again.' ) );
+			};
+			const onSuccess = () => {
+				if ( onSetAddress ) {
+					onSetAddress( this.state.addressEdits );
+				}
+				return successNotice( translate( 'Address saved.' ), { duration: 4000 } );
 			};
 			this.setState( {
 				showDialog: false,
@@ -83,6 +89,7 @@ class StoreAddress extends Component {
 				this.state.addressEdits.state,
 				this.state.addressEdits.postcode,
 				this.state.addressEdits.country,
+				onSuccess,
 				onFailure
 			);
 		} else {
@@ -93,7 +100,7 @@ class StoreAddress extends Component {
 	}
 
 	render() {
-		const { site, loading, translate } = this.props;
+		const { className, site, loading, translate } = this.props;
 
 		const buttons = [
 			{ action: 'close', label: translate( 'Close' ) },
@@ -119,7 +126,7 @@ class StoreAddress extends Component {
 			);
 		}
 
-		const classes = classNames( 'store-address', { 'is-placeholder': ! site || loading } );
+		const classes = classNames( 'store-address', { 'is-placeholder': ! site || loading }, className );
 		return (
 			<Card className={ classes }>
 				<FormLabel>{ translate( 'Store location' ) }</FormLabel>

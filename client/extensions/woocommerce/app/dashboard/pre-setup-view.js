@@ -16,7 +16,7 @@ import {
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { errorNotice } from 'state/notices/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getCountryData } from 'woocommerce/lib/countries';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
@@ -61,8 +61,18 @@ class PreSetupView extends Component {
 	}
 
 	onChange = ( event ) => {
+		const addressKey = event.target.name;
+		const newValue = event.target.value;
+
 		const address = this.state.address;
-		address[ event.target.name ] = event.target.value;
+		address[ addressKey ] = newValue;
+
+		// Did they change the country? Force an appropriate state default
+		if ( 'country' === addressKey ) {
+			const countryData = getCountryData( newValue );
+			address.state = countryData ? countryData.defaultState : '';
+		}
+
 		this.setState( { address, userBeganEditing: true } );
 	}
 
@@ -130,15 +140,18 @@ class PreSetupView extends Component {
 	}
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
-	const address = getStoreLocation( state );
-	const loading = areSettingsGeneralLoading( state );
+function mapStateToProps( state, ownProps ) {
+	let loading = true;
+	let address = {};
+
+	if ( ownProps.site ) {
+		address = getStoreLocation( state, ownProps.site.ID );
+		loading = areSettingsGeneralLoading( state, ownProps.site.ID );
+	}
 
 	return {
 		address,
 		loading,
-		site,
 	};
 }
 

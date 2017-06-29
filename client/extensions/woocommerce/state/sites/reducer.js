@@ -4,6 +4,7 @@
 import { combineReducers, keyedReducer } from 'state/utils';
 import currencies from './currencies/reducer';
 import locations from './locations/reducer';
+import meta from './meta/reducer';
 import orders from './orders/reducer';
 import paymentMethods from './payment-methods/reducer';
 import productCategories from './product-categories/reducer';
@@ -19,6 +20,7 @@ import status from './status/reducer';
 const reducer = combineReducers( {
 	currencies,
 	locations,
+	meta,
 	orders,
 	paymentMethods,
 	productCategories,
