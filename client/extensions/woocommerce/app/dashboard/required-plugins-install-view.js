@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { installPlugin, activatePlugin } from 'state/plugins/installed/actions';
+import { installPlugin, activatePlugin, fetchPlugins } from 'state/plugins/installed/actions';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
@@ -19,10 +19,11 @@ import ProgressBar from 'components/progress-bar';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SetupHeader from './setup-header';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
+import wp from 'lib/wp';
 
 const requiredPlugins = [
 	'woocommerce',
-	// 'wc-api-dev',
+	'wc-api-dev',
 	'woocommerce-gateway-stripe',
 	'woocommerce-services',
 ];
@@ -77,6 +78,9 @@ class RequiredPluginsInstallView extends Component {
 
 	getWporgPluginData() {
 		requiredPlugins.map( plugin => {
+			if ( 'wc-api-dev' === plugin ) {
+				return;
+			}
 			const pluginData = getPlugin( this.props.wporg, plugin );
 			if ( ! pluginData ) {
 				this.props.fetchPluginData( plugin );
@@ -84,20 +88,47 @@ class RequiredPluginsInstallView extends Component {
 		} );
 	}
 
+	installApiDevPlugin = ( siteId ) => {
+		const progress = this.state.progress + ( 100 / requiredPlugins.length );
+		this.setState( () => ( {
+			installingPlugin: 'wc-api-dev',
+			progress,
+		} ) );
+
+		const afterApiPluginInstalled = () => {
+			this.setState( () => ( { installingPlugin: null } ) );
+			this.props.fetchPlugins( [ siteId ] );
+		};
+
+		wp.req.post( {
+			path: `/sites/${ siteId }/woocommerce/install-api-dev-plugin`
+		} ).then( afterApiPluginInstalled );
+	}
+
 	installPlugins = ( plugins ) => {
 		const { site, wporg } = this.props;
 		for ( let i = 0; i < requiredPlugins.length; i++ ) {
 			const slug = requiredPlugins[ i ];
 			const plugin = find( plugins, { slug } );
-			if ( ! wporg[ slug ] ) {
-				return;
-			}
+
 			if ( ! plugin ) {
+				if ( 'wc-api-dev' === slug ) {
+					if ( 'wc-api-dev' !== this.state.installingPlugin ) {
+						this.installApiDevPlugin( site.ID );
+					}
+
+					return;
+				}
+
+				if ( ! wporg[ slug ] ) {
+					return;
+				}
+
 				const wporgPlugin = getPlugin( wporg, slug );
 				const progress = this.state.progress + ( 100 / requiredPlugins.length );
 				this.setState( () => ( {
 					installingPlugin: slug,
-					progress
+					progress,
 				} ) );
 				this.props.installPlugin( site.ID, wporgPlugin );
 				return;
@@ -147,6 +178,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			activatePlugin,
 			fetchPluginData,
+			fetchPlugins,
 			installPlugin,
 			setFinishedInstallOfRequiredPlugins,
 		},
