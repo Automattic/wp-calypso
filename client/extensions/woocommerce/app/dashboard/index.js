@@ -85,7 +85,7 @@ class Dashboard extends Component {
 			return translate( 'Store Setup' );
 		}
 
-		return translate( 'Orders' );
+		return translate( 'Dashboard' );
 	}
 
 	renderDashboardContent = () => {
