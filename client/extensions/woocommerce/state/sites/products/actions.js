@@ -23,6 +23,7 @@ import {
 	WOOCOMMERCE_PRODUCT_DELETE,
 	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
 	WOOCOMMERCE_PRODUCT_REQUEST,
+	WOOCOMMERCE_PRODUCT_UPDATE,
 	WOOCOMMERCE_PRODUCT_UPDATED,
 } from 'woocommerce/state/action-types';
 
@@ -48,12 +49,34 @@ export function createProduct( siteId, product, successAction, failureAction ) {
 }
 
 /**
+ * Action Creator: Update an existing product
+ *
+ * @param {Number} siteId The id of the site upon which to create the product.
+ * @param {Object} product The complete product object (must have real id)
+ * @param {Object|Function} [successAction] Action with extra props { sentData, receivedData }
+ * @param {Object|Function} [failureAction] Action with extra props { error }
+ * @return {Object} Action object
+ */
+export function updateProduct( siteId, product, successAction, failureAction ) {
+	const action = {
+		type: WOOCOMMERCE_PRODUCT_UPDATE,
+		siteId,
+		product,
+		successAction,
+		failureAction,
+	};
+
+	return action;
+}
+
+/**
  * Action Creator: Update local state that product has been updated.
  *
  * This action prompts the state to update itself after a product has been updated.
  *
  * @param {Number} siteId The id of the site to which the product belongs.
  * @param {Object} data The complete product object with which to update the state.
+ * @param {Object} originatingAction The action which precipitated this update.
  * @return {Object} Action object
  */
 export function productUpdated( siteId, data, originatingAction ) {
