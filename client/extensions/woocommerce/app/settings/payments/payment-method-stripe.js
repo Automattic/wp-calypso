@@ -116,7 +116,6 @@ class PaymentMethodStripe extends Component {
 					<FormLabel>{ translate( 'Payment Mode' ) }</FormLabel>
 					<SegmentedControl
 						primary
-						compact
 					>
 						<ControlItem
 							selected={ method.settings.testmode.value === 'yes' }

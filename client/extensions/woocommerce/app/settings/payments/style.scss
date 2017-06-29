@@ -189,6 +189,10 @@
 	@include breakpoint( ">480px" ) {
 		padding: 24px;
 	}
+
+	.segmented-control {
+		max-width: 300px;
+	}
 }
 
 .payments__method-loading-suggested,
