@@ -62,13 +62,12 @@ class ShippingZoneName extends Component {
 	}
 
 	render() {
-		const { loaded, isRestOfTheWorld, zone, locations, actions, onChange, translate } = this.props;
+		const { loaded, isRestOfTheWorld, zone, locations, actions, translate } = this.props;
 		const { editing } = this.state;
 
 		const startEditing = () => ( this.setState( { editing: true } ) );
 		const stopEditing = () => ( this.setState( { editing: false } ) );
 		const onNameChange = ( event ) => {
-			onChange();
 			actions.changeShippingZoneName( event.target.value );
 		};
 
@@ -120,7 +119,6 @@ ShippingZoneName.PropTypes = {
 	siteId: PropTypes.number,
 	isRestOfTheWorld: PropTypes.bool.isRequired,
 	loaded: PropTypes.bool.isRequired,
-	onChange: PropTypes.func.isRequired,
 	zone: PropTypes.object,
 	locations: PropTypes.array,
 };

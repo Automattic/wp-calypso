@@ -21,7 +21,7 @@ import {
 	areCurrentlyEditingShippingZoneLocationsValid,
 } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 
-const ShippingZoneLocationDialog = ( { siteId, isVisible, translate, actions, canSave, onChange } ) => {
+const ShippingZoneLocationDialog = ( { siteId, isVisible, translate, actions, canSave } ) => {
 	if ( ! isVisible ) {
 		return null;
 	}
@@ -32,7 +32,6 @@ const ShippingZoneLocationDialog = ( { siteId, isVisible, translate, actions, ca
 			return;
 		}
 
-		onChange();
 		actions.closeEditLocations();
 	};
 
@@ -58,7 +57,6 @@ const ShippingZoneLocationDialog = ( { siteId, isVisible, translate, actions, ca
 
 ShippingZoneLocationDialog.propTypes = {
 	siteId: PropTypes.number,
-	onChange: PropTypes.func.isRequired,
 };
 
 export default connect(

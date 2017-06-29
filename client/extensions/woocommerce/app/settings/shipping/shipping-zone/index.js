@@ -24,7 +24,6 @@ import { changeShippingZoneName } from 'woocommerce/state/ui/shipping/zones/acti
 import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
 import { getCurrentlyEditingShippingZoneLocationsList } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { protectForm } from 'lib/protect-form';
 
 class Shipping extends Component {
 	componentWillMount() {
@@ -53,15 +52,13 @@ class Shipping extends Component {
 	}
 
 	render() {
-		const { siteId, className, loaded, markSaved, markChanged, params, zone, locations, actions, translate } = this.props;
+		const { siteId, className, loaded, params, zone, locations, actions, translate } = this.props;
 		const isRestOfTheWorld = 0 === Number( params.zone );
 
 		const onSave = () => {
 			actions.changeShippingZoneName( siteId, getZoneName( zone, locations, translate ) );
 
 			//TODO: saving
-
-			markSaved();
 		};
 
 		return (
@@ -73,15 +70,13 @@ class Shipping extends Component {
 					loaded={ loaded }
 					zone={ zone }
 					locations={ locations }
-					isRestOfTheWorld={ isRestOfTheWorld }
-					onChange={ markChanged } />
+					isRestOfTheWorld={ isRestOfTheWorld } />
 				{ isRestOfTheWorld
 					? null
-					: <ShippingZoneLocationList siteId={ siteId } loaded={ loaded } onChange={ markChanged } /> }
+					: <ShippingZoneLocationList siteId={ siteId } loaded={ loaded } /> }
 				<ShippingZoneMethodList
 					siteId={ siteId }
-					loaded={ loaded }
-					onChange={ markChanged } />
+					loaded={ loaded } />
 			</Main>
 		);
 	}
@@ -111,4 +106,4 @@ export default connect(
 				changeShippingZoneName,
 			}, dispatch
 		)
-	} ) )( localize( protectForm( Shipping ) ) );
+	} ) )( localize( Shipping ) );
