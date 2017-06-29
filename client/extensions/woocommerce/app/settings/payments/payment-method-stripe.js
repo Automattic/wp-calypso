@@ -115,7 +115,7 @@ class PaymentMethodStripe extends Component {
 		return (
 			<div className="payments__method-edit-fields">
 				<FormFieldset className="payments__method-edit-field-container">
-					<Notice showDismiss={ false } status="is-info" text={ translate( 'To use Stripe you need to register an account' ) }>
+					<Notice showDismiss={ false } text={ translate( 'To use Stripe you need to register an account' ) }>
 						<NoticeAction href="https://dashboard.stripe.com/register">{ translate( 'Sign up' ) }</NoticeAction>
 					</Notice>
 					<FormLabel>{ translate( 'Payment Mode' ) }</FormLabel>
