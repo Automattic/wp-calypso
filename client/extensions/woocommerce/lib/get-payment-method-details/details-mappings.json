@@ -20,7 +20,7 @@
 	},
 	"stripe": {
 		"fees": "2.9% + 30c per transaction",
-		"informationUrl": "https://docs.woocommerce.com/document/stripe/",
+		"informationUrl": "https://stripe.com/pricing",
 		"isSuggested": true,
 		"methodType": "on-site"
 	}
