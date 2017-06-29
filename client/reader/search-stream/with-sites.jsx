@@ -123,7 +123,7 @@ class SearchStream extends React.Component {
 		} );
 
 		const singleColumnResultsClasses = cx( 'search-stream__single-column-results', {
-			'is-recs': ! query,
+			'is-post-results': searchType === POSTS && query,
 		} );
 
 		return (
