@@ -87,12 +87,12 @@ class FeedHeader extends Component {
 						<SiteIcon site={ site } size={ 96 } />
 					</a>
 					<div className="reader-feed-header__site-title">
+						{ site &&
+							<span className="reader-feed-header__site-badge">
+								{ siteBadge }
+								<BlogStickers blogId={ site.ID } />
+							</span> }
 						<a className="reader-feed-header__site-title-link" href={ siteUrl }>
-							{ site &&
-								<span className="reader-feed-header__site-badge">
-									{ siteBadge }
-									<BlogStickers blogId={ site.ID } />
-								</span> }
 							{ siteTitle }
 						</a>
 					</div>
