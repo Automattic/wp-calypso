@@ -77,10 +77,6 @@ class ProductUpdate extends React.Component {
 		// TODO: Remove the product we added here from the edit state.
 	}
 
-	onView = () => {
-		// TODO: Add action dispatch to view this product.
-	}
-
 	onTrash = () => {
 		// TODO: Add action dispatch to trash this product.
 	}
@@ -123,7 +119,7 @@ class ProductUpdate extends React.Component {
 				<ProductHeader
 					site={ site }
 					product={ product }
-					onView={ this.onView }
+					viewEnabled={ true }
 					onTrash={ this.onTrash }
 					onSave={ saveEnabled ? this.onSave : false }
 					isBusy={ isBusy }
