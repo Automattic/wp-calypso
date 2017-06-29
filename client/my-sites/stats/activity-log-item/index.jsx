@@ -119,7 +119,7 @@ class ActivityLogItem extends Component {
 				user: PropTypes.shape( {
 					display_name: PropTypes.string,
 					external_user_id: PropTypes.number,
-					login: PropTypes.string.isRequired,
+					login: PropTypes.string,
 					wpcom_user_id: PropTypes.number,
 				} ),
 
