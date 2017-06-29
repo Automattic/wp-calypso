@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isFunction, isObject } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -17,8 +18,8 @@ import {
 
 const debug = debugFactory( 'woocommerce:request' );
 
-export function handleRequest( { dispatch }, action ) {
-	const { method, siteId, path, body } = action;
+export function handleRequest( { dispatch, getState }, action ) {
+	const { method, siteId, path, body, onSuccessAction, onFailureAction } = action;
 
 	return request( siteId )[ method ]( path, body )
 		.then( data => {
@@ -28,9 +29,13 @@ export function handleRequest( { dispatch }, action ) {
 				data,
 			} );
 
-			if ( action.onSuccessAction ) {
+			// TODO: Make this a utility function.
+			if ( isFunction( onSuccessAction ) ) {
+				// Dispatch with an extra data parameter.
+				return onSuccessAction( dispatch, getState, data );
+			} else if ( isObject( onSuccessAction ) ) {
 				// Append data and dispatch.
-				dispatch( { ...action.onSuccessAction, data } );
+				dispatch( { ...onSuccessAction, data } );
 			}
 		} )
 		.catch( error => {
@@ -44,7 +49,11 @@ export function handleRequest( { dispatch }, action ) {
 				error,
 			} );
 
-			if ( action.onFailureAction ) {
+			// TODO: Make this a utility function.
+			if ( isFunction( onFailureAction ) ) {
+				// Dispatch with an extra error paramter.
+				return onFailureAction( dispatch, getState, error );
+			} else if ( isObject( onFailureAction ) ) {
 				// Append error and dispatch.
 				dispatch( { ...action.onFailureAction, error } );
 			}

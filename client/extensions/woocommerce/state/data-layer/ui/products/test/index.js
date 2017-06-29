@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { spy } from 'sinon';
+import { spy, match } from 'sinon';
 
 /**
  * Internal dependencies
@@ -12,6 +12,10 @@ import { actionListStepSuccess, actionListStepFailure } from 'woocommerce/state/
 import { createProduct } from 'woocommerce/state/sites/products/actions';
 import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
 import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
+import {
+	WOOCOMMERCE_PRODUCT_CREATE,
+	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
+} from 'woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	describe( '#handleProductCategoryEdit', () => {
@@ -97,7 +101,7 @@ describe( 'handlers', () => {
 
 	describe( '#makeProductActionList', () => {
 		it( 'should return null when there are no edits', () => {
-			expect( makeProductActionList( null, 123, null ) ).to.equal.null;
+			expect( makeProductActionList( null, 123, undefined ) ).to.equal.null;
 		} );
 
 		it( 'should return a single product create request', () => {
@@ -116,23 +120,18 @@ describe( 'handlers', () => {
 				]
 			};
 
-			const action1 = createProduct(
+			const actionList = makeProductActionList( rootState, 123, edits );
+			expect( actionList.nextSteps.length ).to.equal( 1 );
+
+			const dispatch = spy();
+			actionList.nextSteps[ 0 ].onStep( dispatch, actionList );
+
+			expect( dispatch ).to.have.been.calledWith( createProduct(
 				123,
 				product1,
-				actionListStepSuccess( 0 ),
-				actionListStepFailure( 0, 'UNKNOWN' )
-			);
-
-			const expectedActionList = {
-				steps: [
-					{ description: 'Creating product: Product #1', action: action1 },
-				],
-				successAction: undefined,
-				failureAction: undefined,
-				clearUponComplete: true,
-			};
-
-			expect( makeProductActionList( rootState, 123, edits ) ).to.eql( expectedActionList );
+				actionListStepSuccess( actionList ),
+				actionListStepFailure( actionList )
+			) );
 		} );
 
 		it( 'should return multiple product create requests', () => {
@@ -153,31 +152,26 @@ describe( 'handlers', () => {
 				]
 			};
 
-			const action1 = createProduct(
+			const actionList = makeProductActionList( rootState, 123, edits );
+			expect( actionList.nextSteps.length ).to.equal( 2 );
+
+			const dispatch = spy();
+			actionList.nextSteps[ 0 ].onStep( dispatch, actionList );
+			actionList.nextSteps[ 1 ].onStep( dispatch, actionList );
+
+			expect( dispatch ).to.have.been.calledWith( createProduct(
 				123,
 				product1,
-				actionListStepSuccess( 0 ),
-				actionListStepFailure( 0, 'UNKNOWN' )
-			);
+				actionListStepSuccess( actionList ),
+				actionListStepFailure( actionList ),
+			) );
 
-			const action2 = createProduct(
+			expect( dispatch ).to.have.been.calledWith( createProduct(
 				123,
 				product2,
-				actionListStepSuccess( 1 ),
-				actionListStepFailure( 1, 'UNKNOWN' )
-			);
-
-			const expectedActionList = {
-				steps: [
-					{ description: 'Creating product: Product #1', action: action1 },
-					{ description: 'Creating product: Product #2', action: action2 },
-				],
-				successAction: undefined,
-				failureAction: undefined,
-				clearUponComplete: true,
-			};
-
-			expect( makeProductActionList( rootState, 123, edits ) ).to.eql( expectedActionList );
+				actionListStepSuccess( actionList ),
+				actionListStepFailure( actionList ),
+			) );
 		} );
 
 		it( 'should create an action list with success/failure actions', () => {
@@ -196,27 +190,83 @@ describe( 'handlers', () => {
 				]
 			};
 
-			const action1 = createProduct(
-				123,
-				product1,
-				actionListStepSuccess( 0 ),
-				actionListStepFailure( 0, 'UNKNOWN' )
-			);
-
 			const successAction = { type: '%%SUCCESS%%' };
-			const failureAction = { type: '%%FAILURE%%' };
+			const onSuccess = ( dispatch ) => dispatch( successAction );
 
-			const expectedActionList = {
-				steps: [
-					{ description: 'Creating product: Product #1', action: action1 },
-				],
-				successAction,
-				failureAction,
-				clearUponComplete: true,
+			const failureAction = { type: '%%FAILURE%%' };
+			const onFailure = ( dispatch ) => dispatch( failureAction );
+
+			const actionList = makeProductActionList( rootState, 123, edits, onSuccess, onFailure );
+
+			const dispatch = spy();
+			actionList.onSuccess( dispatch, actionList );
+			actionList.onFailure( dispatch, actionList );
+
+			expect( dispatch ).to.have.been.calledWith( successAction );
+			expect( dispatch ).to.have.been.calledWith( failureAction );
+		} );
+
+		it( 'should create only new categories referenced by the products', () => {
+			const category1 = { id: { placeholder: 'productCategory_1' }, name: 'Category 1', slug: 'category-1' };
+			const category2 = { id: { placeholder: 'productCategory_2' }, name: 'Unused Category', slug: 'unused-category' };
+			const product1 = { id: { index: 0 }, name: 'Product #1', categories: [ { id: category1.id } ] };
+
+			const rootState = {
+				extensions: {
+					woocommerce: {
+						ui: {
+							products: {
+								123: {
+									edits: {
+										creates: [
+											product1,
+										]
+									}
+								},
+							},
+							productCategories: {
+								123: {
+									edits: {
+										creates: [
+											category1,
+											category2,
+										],
+									}
+								},
+							},
+						},
+					}
+				}
 			};
 
-			const actionList = makeProductActionList( rootState, 123, edits, successAction, failureAction );
-			expect( actionList ).to.eql( expectedActionList );
+			const edits = rootState.extensions.woocommerce.ui.products[ 123 ].edits;
+			const actionList = makeProductActionList( rootState, 123, edits );
+			expect( actionList.nextSteps.length ).to.equal( 2 );
+
+			const dispatch = spy();
+
+			// Create the category
+			actionList.nextSteps[ 0 ].onStep( dispatch, actionList );
+
+			// Add the mapping
+			actionList.categoryIdMapping = {
+				[ 'productCategory_1' ]: 66,
+			};
+
+			// Create the product
+			actionList.nextSteps[ 1 ].onStep( dispatch, actionList );
+
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
+				siteId: 123,
+				category: category1,
+			} ) );
+
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_PRODUCT_CREATE,
+				siteId: 123,
+				product: { ...product1, categories: [ { id: 66 } ] },
+			} ) );
 		} );
 	} );
 } );
