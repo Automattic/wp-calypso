@@ -10,7 +10,7 @@ import {
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export default createReducer( [], {
+export default createReducer( null, {
 	[ WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST ]: () => {
 		return LOADING;
 	},
@@ -20,6 +20,6 @@ export default createReducer( [], {
 	},
 
 	[ WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return updateSettings( 'products', state, data );
+		return updateSettings( 'products', state || [], data );
 	},
 } );
