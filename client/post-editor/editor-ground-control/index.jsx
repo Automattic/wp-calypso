@@ -23,7 +23,7 @@ import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
 import PostScheduler from './post-scheduler';
-import { NESTED_SIDEBAR_REVISIONS, NestedSidebarPropType } from 'post-editor/editor-sidebar/util';
+import { NESTED_SIDEBAR_REVISIONS, NestedSidebarPropType } from 'post-editor/editor-sidebar/constants';
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {

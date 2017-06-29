@@ -14,7 +14,7 @@ import {
 	NESTED_SIDEBAR_NONE,
 	NESTED_SIDEBAR_REVISIONS,
 	NestedSidebarPropType,
-} from './util';
+} from './constants';
 
 const EditorSidebarHeader = ( { nestedSidebar = NESTED_SIDEBAR_NONE, toggleSidebar, translate } ) => (
 	<div className="editor-sidebar__header">

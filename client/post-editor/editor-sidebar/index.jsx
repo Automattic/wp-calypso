@@ -14,7 +14,7 @@ import SidebarFooter from 'layout/sidebar/footer';
 import SidebarRegion from 'layout/sidebar/region';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import EditorDeletePost from 'post-editor/editor-delete-post';
-import { NESTED_SIDEBAR_NONE, NestedSidebarPropType } from './util';
+import { NESTED_SIDEBAR_NONE, NestedSidebarPropType } from './constants';
 
 export default class EditorSidebar extends Component {
 	static propTypes = {
