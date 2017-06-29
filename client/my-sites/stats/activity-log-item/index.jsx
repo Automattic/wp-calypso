@@ -89,8 +89,8 @@ class ActivityLogItem extends Component {
 				post: PropTypes.shape( {
 					id: PropTypes.number.isRequired,
 					status: PropTypes.string.isRequired,
-					type: PropTypes.string.isRequired,
-					title: PropTypes.string.isRequired,
+					type: PropTypes.string,
+					title: PropTypes.string,
 				} ),
 
 				term: PropTypes.shape( {
@@ -118,7 +118,7 @@ class ActivityLogItem extends Component {
 
 				user: PropTypes.shape( {
 					display_name: PropTypes.string,
-					external_user_id: PropTypes.number,
+					external_user_id: PropTypes.string,
 					login: PropTypes.string,
 					wpcom_user_id: PropTypes.number,
 				} ),
