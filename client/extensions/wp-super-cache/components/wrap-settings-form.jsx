@@ -21,23 +21,23 @@ import {
 	getSelectedSite,
 	getSelectedSiteId,
 } from 'state/ui/selectors';
-import { deleteCache } from './state/cache/actions';
+import { deleteCache } from '../state/cache/actions';
 import {
 	errorNotice,
 	removeNotice,
 	successNotice,
 } from 'state/notices/actions';
-import { saveSettings } from './state/settings/actions';
+import { saveSettings } from '../state/settings/actions';
 import {
 	isCacheDeleteSuccessful,
 	isDeletingCache,
-} from './state/cache/selectors';
+} from '../state/cache/selectors';
 import {
 	getSettings,
 	isRequestingSettings,
 	isSavingSettings,
 	isSettingsSaveSuccessful,
-} from './state/settings/selectors';
+} from '../state/settings/selectors';
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {

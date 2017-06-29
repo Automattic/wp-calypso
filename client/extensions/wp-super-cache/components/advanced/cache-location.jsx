@@ -11,13 +11,14 @@ import Button from 'components/button';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextarea from 'components/forms/form-textarea';
+import FormTextInput from 'components/forms/form-text-input';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from './wrap-settings-form';
+import WrapSettingsForm from '../wrap-settings-form';
 
-const RejectedUserAgents = ( {
+const CacheLocation = ( {
 	fields: {
-		cache_rejected_user_agent,
+		cache_path = '',
+		default_cache_path = '',
 	},
 	handleChange,
 	handleSubmitForm,
@@ -30,7 +31,7 @@ const RejectedUserAgents = ( {
 
 	return (
 		<div>
-			<SectionHeader label={ translate( 'Rejected User Agents' ) }>
+			<SectionHeader label={ translate( 'Cache Location' ) }>
 				<Button
 					compact
 					primary
@@ -45,15 +46,19 @@ const RejectedUserAgents = ( {
 			<Card>
 				<form>
 					<FormFieldset>
-						<FormTextarea
+						<FormTextInput
 							disabled={ isDisabled }
-							onChange={ handleChange( 'cache_rejected_user_agent' ) }
-							value={ cache_rejected_user_agent } />
+							onChange={ handleChange( 'cache_path' ) }
+							value={ cache_path } />
 						<FormSettingExplanation>
 							{ translate(
-								'Strings in the HTTP ’User Agent’ header that prevent WP-Cache from caching bot, ' +
-								'spiders, and crawlers’ requests. Note that super cached files are still sent to ' +
-								'these agents if they already exists.'
+								'Change the location of your cache files. The default is WP_CONTENT_DIR . ' +
+								'/cache/ which translates to {{cacheLocation/}}',
+								{
+									components: {
+										cacheLocation: <span>{ default_cache_path }</span>,
+									}
+								}
 							) }
 						</FormSettingExplanation>
 					</FormFieldset>
@@ -65,8 +70,9 @@ const RejectedUserAgents = ( {
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'cache_rejected_user_agent',
+		'cache_path',
+		'default_cache_path',
 	] );
 };
 
-export default WrapSettingsForm( getFormSettings )( RejectedUserAgents );
+export default WrapSettingsForm( getFormSettings )( CacheLocation );

@@ -12,9 +12,9 @@ import Button from 'components/button';
 import CacheStats from './cache-stats';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from './wrap-settings-form';
+import WrapSettingsForm from '../wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { generateStats } from './state/stats/actions';
+import { generateStats } from '../../state/stats/actions';
 import {
 	getSiteTitle,
 	isJetpackSiteMultiSite,
@@ -22,7 +22,7 @@ import {
 import {
 	getStats,
 	isGeneratingStats,
-} from './state/stats/selectors';
+} from '../../state/stats/selectors';
 
 class ContentsTab extends Component {
 	static propTypes = {

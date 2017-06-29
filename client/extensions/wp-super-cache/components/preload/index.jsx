@@ -18,13 +18,13 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle/compact';
 import Notice from 'components/notice';
-import QueryStatus from './data/query-status';
+import QueryStatus from '../data/query-status';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from './wrap-settings-form';
-import { cancelPreloadCache, preloadCache } from './state/cache/actions';
+import WrapSettingsForm from '../wrap-settings-form';
+import { cancelPreloadCache, preloadCache } from '../../state/cache/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isPreloadingCache } from './state/cache/selectors';
-import { getStatus } from './state/status/selectors';
+import { isPreloadingCache } from '../../state/cache/selectors';
+import { getStatus } from '../../state/status/selectors';
 
 /**
  * Render cache preload interval number input

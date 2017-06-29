@@ -15,14 +15,14 @@ import Card from 'components/card';
 import Notice from 'components/notice';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';
-import QueryStatus from './data/query-status';
+import QueryStatus from '../data/query-status';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from './wrap-settings-form';
-import { testCache } from './state/cache/actions';
+import WrapSettingsForm from '../wrap-settings-form';
+import { testCache } from '../../state/cache/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteTitle } from 'state/sites/selectors';
-import { getCacheTestResults, isTestingCache } from './state/cache/selectors';
-import { getStatus } from './state/status/selectors';
+import { getCacheTestResults, isTestingCache } from '../../state/cache/selectors';
+import { getStatus } from '../../state/status/selectors';
 
 class EasyTab extends Component {
 	static propTypes = {
