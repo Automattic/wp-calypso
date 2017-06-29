@@ -89,7 +89,7 @@
 	top: 47px;
 	bottom: 47px;
 	width: 100%;
-	transition: all 150ms cubic-bezier(0.075, 0.82, 0.165, 1);
+	transition: transform 150ms cubic-bezier(0.075, 0.82, 0.165, 1);
 	overflow-y: auto;
 
 	.is-nested-sidebar-focused & {
@@ -111,7 +111,7 @@
 
 .editor-sidebar__nested-region {
 	transform: translateX( $sidebar-width-max + 1 );
-	transition: all 150ms cubic-bezier( 0.075, 0.82, 0.165, 1 );
+	transition: transform 150ms cubic-bezier( 0.075, 0.82, 0.165, 1 );
 
 	.is-nested-sidebar-focused & {
 		transform: translateX( 0 );
