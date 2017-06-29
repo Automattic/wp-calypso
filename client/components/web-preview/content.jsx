@@ -237,7 +237,9 @@ export class WebPreviewContent extends Component {
 						/>
 					</div>
 					{ 'seo' === this.state.device &&
-						<SeoPreviewPane />
+						<SeoPreviewPane
+							frontPageMetaDescription={ this.props.frontPageMetaDescription }
+						/>
 					}
 				</div>
 			</div>
@@ -288,7 +290,9 @@ WebPreviewContent.propTypes = {
 	// Called after user switches device
 	onDeviceUpdate: React.PropTypes.func,
 	// Flag that differentiates modal window from inline embeds
-	isModalWindow: React.PropTypes.bool
+	isModalWindow: React.PropTypes.bool,
+	// The site/post description passed to the SeoPreviewPane
+	frontPageMetaDescription: React.PropTypes.string,
 };
 
 WebPreviewContent.defaultProps = {
