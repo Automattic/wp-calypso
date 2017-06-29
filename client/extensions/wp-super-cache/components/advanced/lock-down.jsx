@@ -14,7 +14,7 @@ import FormToggle from 'components/forms/form-toggle/compact';
 import ClipboardButton from 'components/forms/clipboard-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import WrapSettingsForm from './wrap-settings-form';
+import WrapSettingsForm from '../wrap-settings-form';
 import Notice from 'components/notice';
 
 const LockDown = ( {

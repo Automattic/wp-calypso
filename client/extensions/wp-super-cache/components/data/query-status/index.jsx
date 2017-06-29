@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingStatus } from '../../state/status/selectors';
-import { requestStatus } from '../../state/status/actions';
+import { isRequestingStatus } from '../../../state/status/selectors';
+import { requestStatus } from '../../../state/status/actions';
 
 class QueryStatus extends Component {
 	componentWillMount() {

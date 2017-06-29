@@ -8,18 +8,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AdvancedTab from './advanced-tab';
-import CdnTab from './cdn-tab';
-import ContentsTab from './contents-tab';
-import EasyTab from './easy-tab';
+import AdvancedTab from '../components/advanced';
+import CdnTab from '../components/cdn';
+import ContentsTab from '../components/contents';
+import EasyTab from '../components/easy';
 import Main from 'components/main';
-import Navigation from './navigation';
+import Navigation from '../components/navigation';
 import Notice from 'components/notice';
-import PreloadTab from './preload-tab';
-import QueryStatus from './data/query-status';
+import PreloadTab from '../components/preload';
+import QueryStatus from '../components/data/query-status';
 import { Tabs } from './constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getStatus } from './state/status/selectors';
+import { getStatus } from '../state/status/selectors';
 
 class WPSuperCache extends Component {
 	static propTypes = {

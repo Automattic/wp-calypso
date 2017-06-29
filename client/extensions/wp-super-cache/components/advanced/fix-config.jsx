@@ -12,9 +12,9 @@ import { flowRight } from 'lodash';
 import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import { restoreSettings } from './state/settings/actions';
+import { restoreSettings } from '../../state/settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRestoringSettings } from './state/settings/selectors';
+import { isRestoringSettings } from '../../state/settings/selectors';
 
 class FixConfig extends Component {
 	static propTypes = {

@@ -17,7 +17,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle/compact';
 import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from './wrap-settings-form';
+import WrapSettingsForm from '../wrap-settings-form';
 
 const Caching = ( {
 	fields: {

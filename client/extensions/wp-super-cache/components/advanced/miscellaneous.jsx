@@ -13,7 +13,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import Notice from 'components/notice';
-import WrapSettingsForm from './wrap-settings-form';
+import WrapSettingsForm from '../wrap-settings-form';
 
 const Miscellaneous = ( {
 	fields: {

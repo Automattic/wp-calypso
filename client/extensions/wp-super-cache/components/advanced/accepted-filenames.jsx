@@ -16,7 +16,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from './wrap-settings-form';
+import WrapSettingsForm from '../wrap-settings-form';
 
 class AcceptedFilenames extends Component {
 	static propTypes = {
