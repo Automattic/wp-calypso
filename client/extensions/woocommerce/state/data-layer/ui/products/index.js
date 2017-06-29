@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { find, isObject } from 'lodash';
+import { find, isObject, isEqual, compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,10 +11,10 @@ import { find, isObject } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
 import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
-import { getVariationEditsStateForProduct } from 'woocommerce/state/ui/products/variations/selectors';
+import { getAllVariationEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { getAllProductCategoryEdits } from 'woocommerce/state/ui/product-categories/selectors';
-import { createProduct } from 'woocommerce/state/sites/products/actions';
-import { createProductVariation } from 'woocommerce/state/sites/product-variations/actions';
+import { createProduct, updateProduct } from 'woocommerce/state/sites/products/actions';
+import { createProductVariation, updateProductVariation } from 'woocommerce/state/sites/product-variations/actions';
 import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
 import {
 	actionListStepNext,
@@ -56,13 +56,22 @@ export function handleProductCategoryEdit( { dispatch, getState }, action ) {
 
 export function handleProductActionListCreate( store, action ) {
 	const { successAction, failureAction } = action;
+	const rootState = store.getState();
+	const siteId = getSelectedSiteId( rootState );
 
 	const onSuccess = ( dispatch ) => dispatch( successAction );
 	const onFailure = ( dispatch ) => {
 		dispatch( failureAction );
 		dispatch( actionListClear() );
 	};
-	const actionList = makeProductActionList( store.getState(), undefined, undefined, onSuccess, onFailure );
+	const actionList = makeProductActionList(
+		rootState,
+		siteId,
+		getAllProductEdits( rootState, siteId ),
+		getAllVariationEdits( rootState, siteId ),
+		onSuccess,
+		onFailure
+	);
 
 	store.dispatch( actionListStepNext( actionList ) );
 }
@@ -81,8 +90,9 @@ export function handleProductActionListCreate( store, action ) {
  */
 export function makeProductActionList(
 	rootState,
-	siteId = getSelectedSiteId( rootState ),
-	productEdits = getAllProductEdits( rootState, siteId ),
+	siteId,
+	productEdits,
+	variationEdits,
 	onSuccess,
 	onFailure,
 ) {
@@ -90,7 +100,7 @@ export function makeProductActionList(
 		nextSteps: [
 			...makeProductCategorySteps( rootState, siteId, productEdits ),
 			...makeProductSteps( rootState, siteId, productEdits ),
-			...makeProductVariationSteps( rootState, siteId, productEdits ),
+			...makeProductVariationSteps( rootState, siteId, productEdits, variationEdits ),
 		],
 		onSuccess: ( dispatch, actionList ) => {
 			dispatch( onSuccess( dispatch, actionList ) );
@@ -115,6 +125,10 @@ const categoryCreated = ( actionList ) => ( dispatch, getState, { sentData, rece
 };
 
 export function makeProductCategorySteps( rootState, siteId, productEdits ) {
+	if ( ! productEdits ) {
+		return [];
+	}
+
 	const creates = productEdits.creates || [];
 	const updates = productEdits.updates || [];
 	const categoryEdits = getAllProductCategoryEdits( rootState, siteId );
@@ -139,11 +153,7 @@ export function makeProductCategorySteps( rootState, siteId, productEdits ) {
 		};
 	} );
 
-	return [
-		...createSteps,
-		// TODO: ...updateSteps,
-		// TODO: ...deleteSteps,
-	];
+	return [ ...createSteps ];
 }
 
 function getNewCategoryIdsForEdits( edits ) {
@@ -162,7 +172,7 @@ function getCategoryIdsForProduct( product ) {
 	} );
 }
 
-const productCreated = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
+const productSuccess = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
 	const productIdMapping = {
 		...actionList.productIdMapping,
 		[ sentData.id.index ]: receivedData.id,
@@ -177,20 +187,25 @@ const productCreated = ( actionList ) => ( dispatch, getState, { sentData, recei
 };
 
 export function makeProductSteps( rootState, siteId, productEdits ) {
+	if ( ! productEdits ) {
+		return [];
+	}
+
 	let createSteps = [];
+	let updateSteps = [];
 
 	if ( productEdits.creates ) {
 		// TODO: Consider making these parallel actions.
 		createSteps = productEdits.creates.map( ( product ) => {
 			return {
-				description: translate( 'Creating product: ' ) + product.name,
+				description: translate( 'Creating product' ),
 				onStep: ( dispatch, actionList ) => {
 					const { categoryIdMapping } = actionList;
 
 					dispatch( createProduct(
 						siteId,
 						getCorrectedProduct( product, categoryIdMapping ),
-						productCreated( actionList ),
+						productSuccess( actionList ),
 						actionListStepFailure( actionList ),
 					) );
 				},
@@ -198,10 +213,33 @@ export function makeProductSteps( rootState, siteId, productEdits ) {
 		} );
 	}
 
+	if ( productEdits.updates ) {
+		updateSteps = compact( productEdits.updates.map( ( product ) => {
+			// TODO: When we no longer have to edit a product just to set
+			// the currently editing id, remove this.
+			if ( isEqual( { id: product.id }, product ) ) {
+				return undefined;
+			}
+
+			return {
+				description: translate( 'Updating product' ),
+				onStep: ( dispatch, actionList ) => {
+					const { categoryIdMapping } = actionList;
+
+					dispatch( updateProduct(
+						siteId,
+						getCorrectedProduct( product, categoryIdMapping ),
+						productSuccess( actionList ),
+						actionListStepFailure( actionList ),
+					) );
+				},
+			};
+		} ) );
+	}
+
 	return [
 		...createSteps,
-		// TODO: ...updateSteps,
-		// TODO: ...deleteSteps,
+		...updateSteps,
 	];
 }
 
@@ -233,40 +271,58 @@ function getCorrectedCategory( category, categoryIdMapping ) {
 	return category;
 }
 
-export function makeProductVariationSteps( rootState, siteId, productEdits ) {
-	const creates = productEdits.creates || [];
-	let productCreateVariationCreates = [];
+export function makeProductVariationSteps( rootState, siteId, productEdits, variationEdits ) {
+	if ( ! variationEdits ) {
+		return [];
+	}
 
-	creates && creates.forEach( ( product ) => {
-		if ( 'variable' !== product.type ) {
-			return;
-		}
+	let variationCreates = [];
+	let variationUpdates = [];
 
-		const variationEdits = getVariationEditsStateForProduct( rootState, product.id, siteId );
-		productCreateVariationCreates = ( variationEdits.creates || [] ).map( ( variation ) => {
-			return {
-				description: translate( 'Creating variations for product: ' ) + product.name,
-				onStep: ( dispatch, actionList ) => {
-					const { productIdMapping } = actionList;
-					const correctedProductId = productIdMapping[ product.id.index ];
-
-					dispatch( createProductVariation(
-						siteId,
-						correctedProductId,
-						variation,
-						actionListStepSuccess( actionList ),
-						actionListStepFailure( actionList ),
-					) );
-				},
-			};
+	variationEdits.map( ( { productId, creates, updates } ) => {
+		variationCreates = ( creates || [] ).map( ( variation ) => {
+			return variationCreateStep( siteId, productId, variation );
+		} );
+		variationUpdates = ( updates || [] ).map( ( variation ) => {
+			return variationUpdateStep( siteId, productId, variation );
 		} );
 	} );
 
 	return [
-		...productCreateVariationCreates,
-		// TODO: ...productUpdateVariationCreates,
-		// TODO: ...productUpdateVariationUpdates,
-		// TODO: ...productUpdateVariationDeletes,
+		...variationCreates,
+		...variationUpdates,
 	];
+}
+
+function variationCreateStep( siteId, productId, variation ) {
+	return {
+		description: translate( 'Creating variation' ),
+		onStep: ( dispatch, actionList ) => {
+			const newProduct = isObject( productId );
+
+			dispatch( createProductVariation(
+				siteId,
+				( newProduct ? actionList.productIdMapping[ productId.index ] : productId ),
+				variation,
+				actionListStepSuccess( actionList ),
+				actionListStepFailure( actionList ),
+			) );
+		},
+	};
+}
+
+function variationUpdateStep( siteId, productId, variation ) {
+	return {
+		description: translate( 'Updating variation' ),
+		onStep: ( dispatch, actionList ) => {
+			dispatch( updateProductVariation(
+				siteId,
+				productId,
+				variation,
+				actionListStepSuccess( actionList ),
+				actionListStepFailure( actionList ),
+			) );
+		},
+	};
 }
 
