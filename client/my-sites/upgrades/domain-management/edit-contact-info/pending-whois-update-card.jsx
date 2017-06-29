@@ -22,10 +22,10 @@ function PendingWhoisUpdateCard( { translate } ) {
 			</Notice>
 			<p>
 				{ translate(
-					'This usually happens in an instance but if you did change your name, organization or ' +
-					'email address you\'ll have to confirm the change via email. ' +
-					'You can find more information on contact updates in {{supporta}}our support page{{/supporta}}. ' +
-					'If you have any questions or issues please {{a}}contact support{{/a}}.',
+					'Your change will be reflected shortly. Please note that if you made a change to your name, ' +
+					'organization, or email address, you must confirm the change by clicking the confirmation ' +
+					'link(s) in the email(s) sent to you. If you have any questions or issues, please refer to our ' +
+					'{{supporta}}support page{{/supporta}} or {{a}}contact support{{/a}}.',
 					{
 						components: {
 							a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
