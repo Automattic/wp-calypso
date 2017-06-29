@@ -25,10 +25,11 @@ import StoredCard from 'my-sites/upgrades/checkout/stored-card';
 class OrderRefundCard extends Component {
 	static propTypes = {
 		order: PropTypes.shape( {
-			discount_total: PropTypes.string.isRequired,
-			line_items: PropTypes.array.isRequired,
+			currency: PropTypes.string.isRequired,
+			id: PropTypes.number.isRequired,
 			payment_method_title: PropTypes.string.isRequired,
-			shipping_total: PropTypes.string.isRequired,
+			refunds: PropTypes.array.isRequired,
+			status: PropTypes.string.isRequired,
 			total: PropTypes.string.isRequired,
 		} ),
 		site: PropTypes.shape( {
@@ -38,7 +39,10 @@ class OrderRefundCard extends Component {
 	}
 
 	state = {
-		showRefundDialog: false,
+		errorMessage: false,
+		refundTotal: 0,
+		refundNote: '',
+		showDialog: false,
 	}
 
 	getRefundedTotal = ( order ) => {
@@ -72,12 +76,12 @@ class OrderRefundCard extends Component {
 		return refundStatus;
 	}
 
-	toggleRefundDialog = () => {
+	toggleDialog = () => {
 		this.setState( {
 			errorMessage: false,
 			refundTotal: 0,
 			refundNote: '',
-			showRefundDialog: ! this.state.showRefundDialog,
+			showDialog: ! this.state.showDialog,
 		} );
 	}
 
@@ -101,7 +105,7 @@ class OrderRefundCard extends Component {
 			this.setState( { errorMessage: translate( 'Refund must be greater than zero.' ) } );
 			return;
 		}
-		this.toggleRefundDialog();
+		this.toggleDialog();
 		const refundObj = {
 			amount: this.state.refundTotal + '', // API expects a string
 			reason: this.state.refundNote,
@@ -129,7 +133,7 @@ class OrderRefundCard extends Component {
 
 	render() {
 		const { order, site, translate } = this.props;
-		const { errorMessage, refundNote, showRefundDialog } = this.state;
+		const { errorMessage, refundNote, showDialog } = this.state;
 		const dialogClass = 'woocommerce'; // eslint/css specificity hack
 		let refundTotal = formatCurrency( 0, order.currency );
 		if ( this.state.refundTotal ) {
@@ -145,12 +149,12 @@ class OrderRefundCard extends Component {
 				</div>
 				<div className="order__details-refund-action">
 					{ ( 'refunded' !== order.status )
-						? <Button onClick={ this.toggleRefundDialog }>{ translate( 'Submit Refund' ) }</Button>
+						? <Button onClick={ this.toggleDialog }>{ translate( 'Submit Refund' ) }</Button>
 						: null
 					}
 				</div>
 
-				<Dialog isVisible={ showRefundDialog } onClose={ this.toggleRefundDialog } className={ dialogClass }>
+				<Dialog isVisible={ showDialog } onClose={ this.toggleDialog } className={ dialogClass }>
 					<h1>{ translate( 'Refund order' ) }</h1>
 					<OrderDetailsTable order={ order } isEditable onChange={ this.recalculateRefund } site={ site } />
 					<form className="order__refund-container">
@@ -176,7 +180,7 @@ class OrderRefundCard extends Component {
 
 						<div className="order__refund-actions">
 							{ errorMessage && <Notice status="is-error" showDismiss={ false }>{ errorMessage }</Notice> }
-							<Button onClick={ this.toggleRefundDialog }>{ translate( 'Cancel' ) }</Button>
+							<Button onClick={ this.toggleDialog }>{ translate( 'Cancel' ) }</Button>
 							<Button primary onClick={ this.sendRefund }>{ translate( 'Refund' ) }</Button>
 						</div>
 					</form>
@@ -188,7 +192,5 @@ class OrderRefundCard extends Component {
 
 export default connect(
 	undefined,
-	dispatch => {
-		return bindActionCreators( { sendRefund }, dispatch );
-	}
+	dispatch => bindActionCreators( { sendRefund }, dispatch )
 )( localize( OrderRefundCard ) );

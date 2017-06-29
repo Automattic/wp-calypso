@@ -16,13 +16,7 @@ import SectionHeader from 'components/section-header';
 
 class OrderDetails extends Component {
 	static propTypes = {
-		order: PropTypes.shape( {
-			discount_total: PropTypes.string.isRequired,
-			line_items: PropTypes.array.isRequired,
-			payment_method_title: PropTypes.string.isRequired,
-			shipping_total: PropTypes.string.isRequired,
-			total: PropTypes.string.isRequired,
-		} ),
+		order: PropTypes.object.isRequired,
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 			slug: PropTypes.string.isRequired,

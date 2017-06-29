@@ -21,9 +21,10 @@ class OrderDetailsTable extends Component {
 		isEditable: PropTypes.bool,
 		onChange: PropTypes.func,
 		order: PropTypes.shape( {
+			currency: PropTypes.string.isRequired,
 			discount_total: PropTypes.string.isRequired,
 			line_items: PropTypes.array.isRequired,
-			payment_method_title: PropTypes.string.isRequired,
+			refunds: PropTypes.array.isRequired,
 			shipping_total: PropTypes.string.isRequired,
 			total: PropTypes.string.isRequired,
 		} ),
