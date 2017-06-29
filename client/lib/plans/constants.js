@@ -522,7 +522,7 @@ export const PLANS_LIST = {
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_VIDEO_CDN_LIMITIED,
+			FEATURE_VIDEO_CDN_UNLIMITIED,
 			FEATURE_SEO_PREVIEW_TOOLS,
 			FEATURE_ALL_PREMIUM_FEATURES
 		] ),
@@ -564,7 +564,7 @@ export const PLANS_LIST = {
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_VIDEO_CDN_LIMITIED,
+			FEATURE_VIDEO_CDN_UNLIMITIED,
 			FEATURE_SEO_PREVIEW_TOOLS,
 			FEATURE_ALL_PREMIUM_FEATURES
 		] ),
@@ -656,12 +656,12 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_VIDEO_CDN_LIMITIED ]: {
 		getSlug: () => FEATURE_VIDEO_CDN_LIMITIED,
-		getTitle: () => 'Video CDN (13GB)', //PLANS A/B TEST: Translate if test passes
+		getTitle: () => '13GB Video Storage', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ FEATURE_VIDEO_CDN_UNLIMITIED ]: {
 		getSlug: () => FEATURE_VIDEO_CDN_UNLIMITIED,
-		getTitle: () => 'Video CDN (Unlimited)', //PLANS A/B TEST: Translate if test passes
+		getTitle: () => 'Unlimited Video Storage', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ FEATURE_SEO_PREVIEW_TOOLS ]: {
