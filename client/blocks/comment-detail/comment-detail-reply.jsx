@@ -88,7 +88,7 @@ export class CommentDetailReply extends Component {
 							onChange={ this.handleTextChange }
 							onFocus={ this.setFocus }
 							onKeyDown={ this.submitCommentOnCtrlEnter }
-							placeholder={ translate( 'Enter your comment here…' ) }
+							placeholder={ translate( 'Reply to comment…' ) }
 							value={ commentText }
 						/>
 					</AutoDirection>

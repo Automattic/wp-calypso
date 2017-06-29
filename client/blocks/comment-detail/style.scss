@@ -419,13 +419,8 @@ a.comment-detail__author-more-element {
 		position: relative;
 		transition: min-height 0.2s ease-in-out;
 
-		&.is-focused {
-			min-height: 70px;
-		}
-
 		pre,
 		textarea {
-			font-family: $serif;
 			font-size: 14px;
 			line-height: 21px;
 			margin: 0;
@@ -444,24 +439,32 @@ a.comment-detail__author-more-element {
 		}
 
 		textarea {
-			border: none;
+			border-width: 0;
 			height: 100%;
 			position: absolute;
 				left: 0;
 				top: 0;
 			resize: none;
+
+			&:focus {
+				border-width: 1px;
+			}
+
+			&::placeholder {
+				color: $gray-text-min;
+			}
 		}
 	}
 
 	.comment-detail__reply-submit {
-		color: lighten( $gray, 10% );
+		color: $gray;
 		font-size: 12px;
 		font-weight: 600;
 		opacity: 0;
 		padding: 4px;
 		position: absolute;
-			right: 24px;
-			top: 10px;
+			right: 18px;
+			top: 11px;
 		text-transform: uppercase;
 		transition: opacity 0.2s ease-in-out;
 
