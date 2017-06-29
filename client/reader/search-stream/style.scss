@@ -148,7 +148,8 @@
 }
 
 .is-reader-page .search-stream.search-stream__with-sites .search-stream__results.is-two-columns .reader__content,
-.is-reader-page .search-stream.search-stream__with-sites .search-stream__single-column-results .reader__content {
+.is-reader-page .search-stream.search-stream__with-sites .search-stream__single-column-results.is-post-results .reader__content {
+	flex-flow: inherit;
 	flex-direction: column; // So post results are stacked
 }
 
