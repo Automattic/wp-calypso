@@ -26,6 +26,7 @@ class ActivityLogItem extends Component {
 			group: PropTypes.oneOf( [
 				'attachment',
 				'comment',
+				'core',
 				'plugin',
 				'post',
 				'term',
@@ -61,6 +62,11 @@ class ActivityLogItem extends Component {
 				comment: PropTypes.shape( {
 					approved: PropTypes.bool.isRequired,
 					id: PropTypes.number.isRequired,
+				} ),
+
+				core: PropTypes.shape( {
+					new_version: PropTypes.string,
+					old_version: PropTypes.string,
 				} ),
 
 				plugin: PropTypes.oneOfType( [
