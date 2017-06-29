@@ -26,6 +26,7 @@ class ActivityLogItem extends Component {
 			group: PropTypes.oneOf( [
 				'attachment',
 				'comment',
+				'plugin',
 				'post',
 				'term',
 				'theme',
@@ -61,6 +62,23 @@ class ActivityLogItem extends Component {
 					id: PropTypes.number.isRequired,
 				} ),
 
+				plugin: PropTypes.oneOfType( [
+					PropTypes.shape( {
+						name: PropTypes.string,
+						previous_version: PropTypes.string,
+						slug: PropTypes.string,
+						version: PropTypes.string,
+					} ),
+					PropTypes.arrayOf(
+						PropTypes.shape( {
+							name: PropTypes.string,
+							previous_version: PropTypes.string,
+							slug: PropTypes.string,
+							version: PropTypes.string,
+						} ),
+					),
+				] ),
+
 				post: PropTypes.shape( {
 					id: PropTypes.number.isRequired,
 					status: PropTypes.string.isRequired,
@@ -83,8 +101,8 @@ class ActivityLogItem extends Component {
 
 				user: PropTypes.shape( {
 					display_name: PropTypes.string,
-					login: PropTypes.string.isRequired,
 					external_user_id: PropTypes.number,
+					login: PropTypes.string.isRequired,
 					wpcom_user_id: PropTypes.number,
 				} ),
 			} ),
