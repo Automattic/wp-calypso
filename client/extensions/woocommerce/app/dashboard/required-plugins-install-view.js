@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { installPlugin } from 'state/plugins/installed/actions';
+import { installPlugin, activatePlugin } from 'state/plugins/installed/actions';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
@@ -42,6 +42,7 @@ class RequiredPluginsInstallView extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
+			activatingPlugins: [],
 			installingPlugin: null,
 			progress: 0,
 		};
@@ -81,10 +82,10 @@ class RequiredPluginsInstallView extends Component {
 		for ( let i = 0; i < requiredPlugins.length; i++ ) {
 			const slug = requiredPlugins[ i ];
 			const plugin = find( plugins, { slug } );
+			if ( ! wporg[ slug ] ) {
+				return;
+			}
 			if ( ! plugin ) {
-				if ( ! wporg[ slug ] ) {
-					return;
-				}
 				const wporgPlugin = getPlugin( wporg, slug );
 				const progress = this.state.progress + ( 100 / requiredPlugins.length );
 				this.setState( {
@@ -93,6 +94,14 @@ class RequiredPluginsInstallView extends Component {
 				} );
 				this.props.installPlugin( site.ID, wporgPlugin );
 				return;
+			}
+			if ( ! plugin.active ) {
+				if ( -1 < this.state.activatingPlugins.indexOf( slug ) ) {
+					return;
+				}
+				const wporgPlugin = getPlugin( wporg, slug );
+				this.setState( { activatingPlugins: [ ...this.state.activatingPlugins, slug ] } );
+				this.props.activatePlugin( site.ID, { ...wporgPlugin, id: plugin.id } );
 			}
 		}
 		this.props.setFinishedInstallOfRequiredPlugins(
@@ -131,6 +140,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			activatePlugin,
 			fetchPluginData,
 			installPlugin,
 			setFinishedInstallOfRequiredPlugins,
