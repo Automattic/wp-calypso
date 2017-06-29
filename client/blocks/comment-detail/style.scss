@@ -322,12 +322,11 @@
 	padding: 0 10px;
 
 	&.is-unapproved {
-		background-color: $alert-yellow;
+		background: lighten( $alert-yellow, 18% );
 	}
 	&.is-spam,
 	&.is-trash {
-		background: $alert-red;
-		color: $white;
+		background: lighten( $alert-red, 18% );
 	}
 }
 
