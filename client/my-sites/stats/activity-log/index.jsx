@@ -220,10 +220,10 @@ class ActivityLog extends Component {
 
 		const applySiteOffset = this.getSiteOffsetFunc();
 
-		// example: "2019 3"
-		const selectedMonthAndYear = moment( startDate ).format( 'YYYY M' );
+		const YEAR_MONTH = 'YYYY-MM';
+		const selectedMonthAndYear = moment( startDate ).format( YEAR_MONTH );
 		const logsForMonth = filter( logs, ( { ts_utc } ) => {
-			return applySiteOffset( moment.utc( ts_utc ) ).format( 'YYYY M' ) === selectedMonthAndYear;
+			return applySiteOffset( moment.utc( ts_utc ) ).format( YEAR_MONTH ) === selectedMonthAndYear;
 		} );
 
 		const logsGroupedByDay = map(
