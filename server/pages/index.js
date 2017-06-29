@@ -30,8 +30,8 @@ const URL_BASE_PATH = '/calypso';
 const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
 
-const SHELL_CSS_PATH = '/public/shell.css';
-const LOAD_CSS_POLYFILL_PATH = '/public/loadcss.m.js';
+const SHELL_CSS_PATH = SERVER_BASE_PATH + '/shell.css';
+const LOAD_CSS_POLYFILL_PATH = SERVER_BASE_PATH + '/loadcss.m.js';
 
 const staticFiles = [
 	{ path: 'style.css' },
