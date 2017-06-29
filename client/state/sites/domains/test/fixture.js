@@ -11,7 +11,7 @@ import { createSiteDomainObject } from 'state/sites/domains/assembler';
 
 // first testing-site ID
 export const SITE_ID_FIRST = 2916284;
-export const SUBSCRIPTION_ID_FIRST = 1111;
+export const SUBSCRIPTION_ID_FIRST = '1111';
 
 // second testing-site ID
 export const SITE_ID_SECOND = 77203074;

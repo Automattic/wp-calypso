@@ -15,7 +15,7 @@ class SubscriptionSettings extends React.Component {
 	static propTypes = {
 		type: React.PropTypes.string.isRequired,
 		siteSlug: React.PropTypes.string,
-		subscriptionId: React.PropTypes.number,
+		subscriptionId: React.PropTypes.string,
 		onClick: React.PropTypes.func.isRequired,
 	};
 
