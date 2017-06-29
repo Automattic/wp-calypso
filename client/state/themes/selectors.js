@@ -699,14 +699,22 @@ export function shouldFilterWpcomThemes( state, siteId ) {
 }
 
 /**
- * Returns the URL for purchasing a plan for the current site.
+ * Returns the URL for purchasing a Jetpack Professional plan if the theme is a premium theme and site doesn't have access to them.
  *
  * @param  {Object}  state   Global state tree
- * @param  {Number}  siteId  Site ID for which to buy the theme
+ * @param  {string}  themeId Theme to check whether it's premium.¡
+ * @param  {Number}  siteId  Site ID for which to purchase the plan
  * @return {?String}         Plan purchase URL
  */
-export function getPlanUpgradeUrl( state, siteId ) {
-	return '/plans/' + getSiteSlug( state, siteId );
+export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
+	if (
+		isJetpackSite( state, siteId ) &&
+		isThemePremium( state, themeId ) &&
+		! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+	) {
+		return `/checkout/${ getSiteSlug( state, siteId ) }/professional`;
+	}
+	return null;
 }
 
 /**

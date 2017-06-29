@@ -22,7 +22,7 @@ import {
 	getThemeCustomizeUrl,
 	getThemeDetailsUrl,
 	getThemeSupportUrl,
-	getPlanUpgradeUrl,
+	getJetpackUpgradeUrlIfPremiumTheme,
 	getThemeHelpUrl,
 	isThemeActive,
 	isThemePremium,
@@ -69,7 +69,7 @@ const upgradePlan = config.isEnabled( 'upgrades/checkout' )
 			context: 'verb',
 			comment: 'label for selecting a site for which to upgrade a plan'
 		} ),
-		getUrl: ( state, themeId, siteId ) => getPlanUpgradeUrl( state, siteId ),
+		getUrl: ( state, themeId, siteId ) => getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
 		hideForTheme: ( state, themeId, siteId ) => (
 			( config.isEnabled( 'jetpack/pijp' ) && ! isJetpackSite( state, siteId ) ) ||
 			! getCurrentUser( state ) ||
