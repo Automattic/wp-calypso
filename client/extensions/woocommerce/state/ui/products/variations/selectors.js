@@ -73,8 +73,15 @@ export function getCurrentlyEditingVariation( state, productId, siteId = getSele
  * @return {Array} Array of variation objects.
  */
 export function getProductVariationsWithLocalEdits( state, productId, siteId = getSelectedSiteId( state ) ) {
+	const variations = getVariationsForProduct( state, productId, siteId );
 	const edits = getVariationEditsStateForProduct( state, productId, siteId );
 	const creates = get( edits, 'creates', undefined );
-	// TODO Merge in existing variations loaded by the API for existing products.
-	return creates;
+	const updates = get( edits, 'updates', undefined );
+
+	const updatedVariations = ( variations || [] ).map( ( variation ) => {
+		const update = find( updates, { id: variation.id } );
+		return { ...variation, ...update };
+	} );
+
+	return ( creates || variations ? [ ...creates || [], ...updatedVariations || [] ] : undefined );
 }

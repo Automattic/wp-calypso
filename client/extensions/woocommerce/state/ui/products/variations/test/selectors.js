@@ -139,15 +139,42 @@ describe( 'selectors', () => {
 
 	describe( 'getProductVariationsWithLocalEdits', () => {
 		it( 'should return undefined if no product is found for productId', () => {
-			expect( getProductVariationsWithLocalEdits( state, 4 ) ).to.not.exist;
+			expect( getProductVariationsWithLocalEdits( state, 4, 123 ) ).to.not.exist;
 		} );
+
 		it( 'should get variations from "creates"', () => {
 			const newVariation = { id: { index: 0 }, sku: 'new-variation' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 15 );
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'creates' ], [ newVariation ] );
 
-			expect( getProductVariationsWithLocalEdits( state, 15 ) ).to.eql( [ newVariation ] );
+			const productVariations = getProductVariationsWithLocalEdits( state, 15, 123 );
+			expect( productVariations ).to.exist;
+			expect( productVariations[ 0 ] ).to.exist;
+			expect( productVariations[ 0 ].id ).to.equal( newVariation.id );
+			expect( productVariations[ 0 ].sku ).to.equal( newVariation.sku );
+		} );
+
+		it( 'should get API data by itself for a variation with no edits', () => {
+			const allVariations = state.extensions.woocommerce.sites[ 123 ].products.variations;
+
+			const productVariations = getProductVariationsWithLocalEdits( state, 15, 123 );
+			expect( productVariations ).to.exist;
+			expect( productVariations ).to.eql( allVariations[ 15 ] );
+		} );
+
+		it( 'should get both fetched data and edits for a variation in "updates"', () => {
+			const uiProducts = state.extensions.woocommerce.ui.products;
+
+			const existingVariation = { id: 733, sku: 'updated-variation' };
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 15 );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'updates' ], [ existingVariation ] );
+
+			const productVariations = getProductVariationsWithLocalEdits( state, 15, 123 );
+			expect( productVariations ).to.exist;
+			expect( productVariations[ 0 ].id ).to.equal( existingVariation.id );
+			expect( productVariations[ 0 ].sku ).to.equal( existingVariation.sku );
+			expect( productVariations[ 0 ].price ).to.equal( '9.00' );
 		} );
 	} );
 } );
