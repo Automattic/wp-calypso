@@ -2020,6 +2020,15 @@ Undocumented.prototype.getHelpLinks = function( searchQuery, fn ) {
 	}, fn );
 };
 
+Undocumented.prototype.getQandA = function( query, site, fn ) {
+	debug( 'help-contact-qanda/ searchQuery {query}' );
+
+	return this.wpcom.req.get( '/help/qanda', {
+		query,
+		site,
+	}, fn );
+};
+
 Undocumented.prototype.cancelPurchase = function( purchaseId, fn ) {
 	debug( 'upgrades/{purchaseId}/disable-auto-renew' );
 
