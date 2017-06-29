@@ -44,6 +44,7 @@ export function productVariationUpdated( siteId, productId, data, originatingAct
 	return {
 		type: WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
 		siteId,
+		productId,
 		data,
 		originatingAction,
 	};
