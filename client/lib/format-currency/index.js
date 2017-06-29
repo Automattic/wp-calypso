@@ -78,8 +78,8 @@ const CURRENCIES = {
 	},
 	RUB: {
 		symbol: '₽',
-		grouping: ',',
-		decimal: '.',
+		grouping: ' ',
+		decimal: ',',
 		precision: 2
 	}
 };
