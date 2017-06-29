@@ -3,7 +3,6 @@
  */
 import classNames from 'classnames';
 import React, { PropTypes, Component } from 'react';
-import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,9 +33,16 @@ export default class EditorSidebar extends Component {
 		toggleNestedSidebar: PropTypes.func,
 	}
 
+	headerToggleSidebar = () => {
+		if ( this.props.nestedSidebar === NESTED_SIDEBAR_NONE ) {
+			this.props.toggleSidebar();
+		} else {
+			this.props.toggleNestedSidebar( NESTED_SIDEBAR_NONE );
+		}
+	}
+
 	render() {
-		const { toggleSidebar,
-			isNew,
+		const { isNew,
 			onTrashingPost,
 			onPublish,
 			onSave,
@@ -51,10 +57,6 @@ export default class EditorSidebar extends Component {
 			toggleNestedSidebar,
 		} = this.props;
 
-		const headerToggleSidebar = nestedSidebar === NESTED_SIDEBAR_NONE
-			? toggleSidebar
-			: partial( toggleNestedSidebar, NESTED_SIDEBAR_NONE );
-
 		const sidebarClassNames = classNames(
 			'editor-sidebar',
 			{ 'is-nested-sidebar-focused': nestedSidebar !== NESTED_SIDEBAR_NONE }
@@ -62,7 +64,7 @@ export default class EditorSidebar extends Component {
 
 		return (
 			<div className={ sidebarClassNames } >
-				<EditorSidebarHeader nestedSidebar={ nestedSidebar } toggleSidebar={ headerToggleSidebar } />
+				<EditorSidebarHeader nestedSidebar={ nestedSidebar } toggleSidebar={ this.headerToggleSidebar } />
 				<EditorActionBar
 					isNew={ isNew }
 					post={ post }
