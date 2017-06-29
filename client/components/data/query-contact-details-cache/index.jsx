@@ -25,7 +25,6 @@ class QueryContactDetailsCache extends Component {
 			return;
 		}
 
-		// Not destructured to disambiguate unbound action
 		this.props.requestContactDetailsCache();
 	}
 
