@@ -6,24 +6,18 @@ import {
 	areOrdersLoading,
 	isOrderLoaded,
 	isOrderLoading,
-	isOrderRefunding,
 } from './selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { translate } from 'i18n-calypso';
 import {
-	WOOCOMMERCE_ORDER_REFUND_REQUEST,
-	WOOCOMMERCE_ORDER_REFUND_REQUEST_SUCCESS,
-	WOOCOMMERCE_ORDER_REFUND_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
 	WOOCOMMERCE_ORDERS_REQUEST,
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 
 export const fetchOrders = ( siteId, page ) => ( dispatch, getState ) => {
 	const state = getState();
@@ -89,40 +83,6 @@ export const fetchOrder = ( siteId, orderId ) => ( dispatch, getState ) => {
 		dispatch( setError( siteId, fetchAction, error ) );
 		dispatch( {
 			type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
-			siteId,
-			orderId,
-			error,
-		} );
-	} );
-};
-
-export const sendRefund = ( siteId, orderId, refund ) => ( dispatch, getState ) => {
-	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
-	}
-	if ( isOrderRefunding( state, orderId, siteId ) ) {
-		return;
-	}
-
-	dispatch( {
-		type: WOOCOMMERCE_ORDER_REFUND_REQUEST,
-		siteId,
-		orderId,
-	} );
-
-	return request( siteId ).post( `orders/${ orderId }/refunds`, refund ).then( () => {
-		dispatch( successNotice( translate( 'Refund granted.' ), { duration: 5000 } ) );
-		dispatch( fetchOrder( siteId, orderId ) );
-		dispatch( {
-			type: WOOCOMMERCE_ORDER_REFUND_REQUEST_SUCCESS,
-			siteId,
-			orderId,
-		} );
-	} ).catch( error => {
-		dispatch( errorNotice( translate( 'Unable to grant refund.' ), { duration: 5000 } ) );
-		dispatch( {
-			type: WOOCOMMERCE_ORDER_REFUND_REQUEST_FAILURE,
 			siteId,
 			orderId,
 			error,

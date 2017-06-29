@@ -7,13 +7,10 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetchOrder, fetchOrders, sendRefund } from '../actions';
+import { fetchOrder, fetchOrders } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	WOOCOMMERCE_ORDER_REFUND_REQUEST,
-	WOOCOMMERCE_ORDER_REFUND_REQUEST_SUCCESS,
-	// WOOCOMMERCE_ORDER_REFUND_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
@@ -195,59 +192,6 @@ describe( 'actions', () => {
 			const dispatch = spy();
 			fetchOrder( 123, 40 )( dispatch, getState );
 			expect( dispatch ).to.have.not.been.called;
-		} );
-	} );
-
-	describe( '#sendRefund()', () => {
-		const siteId = '123';
-		const refundObj = {
-			amount: '10',
-			reason: 'Testing reason.',
-		};
-
-		useSandbox();
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/orders/40/refunds&_method=get', json: true, body: refundObj } )
-				.reply( 200, {
-					data: order,
-				} )
-				.post( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
-				.query( { path: '/wc/v3/orders/invalid/refunds&_method=get', json: true, body: refundObj } )
-				.reply( 404, {
-					data: {
-						message: 'No route was found matching the URL and request method',
-						error: 'rest_no_route',
-						status: 400,
-					}
-				} );
-		} );
-
-		it( 'should dispatch an action', () => {
-			const getState = () => ( {} );
-			const dispatch = spy();
-			sendRefund( siteId, 40, refundObj )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
-				type: WOOCOMMERCE_ORDER_REFUND_REQUEST,
-				siteId,
-				orderId: 40,
-			} );
-		} );
-
-		it( 'should dispatch a success action with the order when the refund request completes', () => {
-			const getState = () => ( {} );
-			const dispatch = spy();
-			const response = sendRefund( siteId, 40, refundObj )( dispatch, getState );
-
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_ORDER_REFUND_REQUEST_SUCCESS,
-					siteId,
-					orderId: 40,
-				} );
-			} );
 		} );
 	} );
 } );

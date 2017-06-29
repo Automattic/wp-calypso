@@ -19,7 +19,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import Notice from 'components/notice';
 import OrderDetailsTable from './order-details-table';
-import { sendRefund } from 'woocommerce/state/sites/orders/actions';
+import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
 import StoredCard from 'my-sites/upgrades/checkout/stored-card';
 
 class OrderRefundCard extends Component {

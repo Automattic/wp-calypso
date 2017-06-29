@@ -11,15 +11,11 @@ import { keyBy } from 'lodash';
 import {
 	isLoading,
 	isQueryLoading,
-	isRefunding,
 	items,
 	queries,
 	totalPages,
 } from '../reducer';
 import {
-	WOOCOMMERCE_ORDER_REFUND_REQUEST,
-	WOOCOMMERCE_ORDER_REFUND_REQUEST_SUCCESS,
-	WOOCOMMERCE_ORDER_REFUND_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
@@ -107,45 +103,6 @@ describe( 'reducer', () => {
 			};
 			const newState = isQueryLoading( { '{page:1}': true }, action );
 			expect( newState ).to.eql( { '{page:1}': false } );
-		} );
-	} );
-
-	describe( 'isRefunding', () => {
-		it( 'should have no change by default', () => {
-			const newState = isRefunding( undefined, {} );
-			expect( newState ).to.eql( {} );
-		} );
-
-		it( 'should store the currently refunding order', () => {
-			const action = {
-				type: WOOCOMMERCE_ORDER_REFUND_REQUEST,
-				siteId: 123,
-				orderId: 45,
-			};
-			const newState = isRefunding( undefined, action );
-			expect( newState ).to.eql( { 45: true } );
-		} );
-
-		it( 'should should show that the refund request has finished on success', () => {
-			const action = {
-				type: WOOCOMMERCE_ORDER_REFUND_REQUEST_SUCCESS,
-				siteId: 123,
-				orderId: 45,
-				order,
-			};
-			const newState = isRefunding( { 45: true }, action );
-			expect( newState ).to.eql( { 45: false } );
-		} );
-
-		it( 'should should show that the refund request has finished on failure', () => {
-			const action = {
-				type: WOOCOMMERCE_ORDER_REFUND_REQUEST_FAILURE,
-				siteId: 123,
-				orderId: 45,
-				error: {},
-			};
-			const newState = isRefunding( { 45: true }, action );
-			expect( newState ).to.eql( { 45: false } );
 		} );
 	} );
 
