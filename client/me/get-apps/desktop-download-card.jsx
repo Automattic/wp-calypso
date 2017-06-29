@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { identity, partial, noop } from 'lodash';
+import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -159,15 +159,22 @@ class DesktopDownloadCard extends Component {
 	}
 
 	getLinkAnchorTag( platformLink ) {
+		const {
+			trackWindowsClick,
+			trackMacClick,
+			trackLinuxTarClick,
+			trackLinuxDebClick,
+		} = this.props;
+
 		switch ( platformLink ) {
 			case MAC_LINK:
-				return <a href={ platformLink } onClick={ this.trackMacClick } />;
+				return <a href={ platformLink } onClick={ trackMacClick } />;
 			case LINUX_TAR_LINK:
-				return <a href={ platformLink } onClick={ this.trackLinuxTarClick } />;
+				return <a href={ platformLink } onClick={ trackLinuxTarClick } />;
 			case LINUX_DEB_LINK:
-				return <a href={ platformLink } onClick={ this.trackLinuxDebClick } />;
+				return <a href={ platformLink } onClick={ trackLinuxDebClick } />;
 			default:
-				return <a href={ platformLink } onClick={ this.trackWindowsClick } />;
+				return <a href={ platformLink } onClick={ trackWindowsClick } />;
 		}
 	}
 
@@ -196,10 +203,10 @@ class DesktopDownloadCard extends Component {
 }
 
 const mapDispatchToProps = {
-	trackWindowsClick: partial( recordTracksEvent, 'calypso_app_download_windows_click' ),
-	trackMacClick: partial( recordTracksEvent, 'calypso_app_download_mac_click' ),
-	trackLinuxTarClick: partial( recordTracksEvent, 'calypso_app_download_linux_tar_click' ),
-	trackLinuxDebClick: partial( recordTracksEvent, 'calypso_app_download_linux_deb_click' ),
+	trackWindowsClick: () => recordTracksEvent( 'calypso_app_download_windows_click' ),
+	trackMacClick: () => recordTracksEvent( 'calypso_app_download_mac_click' ),
+	trackLinuxTarClick: () => recordTracksEvent( 'calypso_app_download_linux_tar_click' ),
+	trackLinuxDebClick: () => recordTracksEvent( 'calypso_app_download_linux_deb_click' ),
 };
 
 export default connect(

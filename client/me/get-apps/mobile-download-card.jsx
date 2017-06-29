@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { partial, identity, noop } from 'lodash';
+import { identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -48,8 +48,8 @@ MobileDownloadCard.defaultProps = {
 };
 
 const mapDispatchToProps = {
-	trackIosClick: partial( recordTracksEvent, 'calypso_app_download_ios_click' ),
-	trackAndroidClick: partial( recordTracksEvent, 'calypso_app_download_android_click' ),
+	trackIosClick: () => recordTracksEvent( 'calypso_app_download_ios_click' ),
+	trackAndroidClick: () => recordTracksEvent( 'calypso_app_download_android_click' ),
 };
 
 export default connect(
