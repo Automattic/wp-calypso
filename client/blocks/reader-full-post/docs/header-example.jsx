@@ -10,7 +10,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import ReaderFullPostHeader from 'blocks/reader-full-post/header';
 import Card from 'components/card';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ReaderFullPostHeader',
 
 	mixins: [ PureRenderMixin ],
