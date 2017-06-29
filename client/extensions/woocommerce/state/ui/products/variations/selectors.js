@@ -9,9 +9,13 @@ import { get, find, isNumber, isEqual } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
 
-export function getVariationEditsStateForProduct( state, productId, siteId = getSelectedSiteId( state ) ) {
+export function getAllVariationEdits( state, siteId = getSelectedSiteId( state ) ) {
 	const woocommerce = state.extensions.woocommerce;
-	const variations = get( woocommerce, [ 'ui', 'products', siteId, 'variations', 'edits' ], [] );
+	return get( woocommerce, [ 'ui', 'products', siteId, 'variations', 'edits' ], [] );
+}
+
+export function getVariationEditsStateForProduct( state, productId, siteId = getSelectedSiteId( state ) ) {
+	const variations = getAllVariationEdits( state, siteId );
 	return find( variations, ( v ) => isEqual( productId, v.productId ) );
 }
 
