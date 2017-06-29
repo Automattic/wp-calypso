@@ -1,27 +1,28 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import QueryPreferences from 'components/data/query-preferences';
+import { savePreference } from 'state/preferences/actions';
+import { getPreference } from 'state/preferences/selectors';
 
 const PublishConfirmation = ( {
-	fields,
-	handleToggle,
-	isRequestingSettings,
-	isSavingSettings,
+	publishConfirmationPreference,
+	savePublishConfirmationPreference,
 	translate,
 } ) => {
-	const fieldName = 'publish_confirmation';
-
-	if ( ! fields.hasOwnProperty( fieldName ) ) {
-		return null;
-	}
+	const handleToggle = () => {
+		savePublishConfirmationPreference( ! publishConfirmationPreference );
+	};
 
 	const fieldLabel = translate( 'Show publish confirmation' );
 	const fieldDescription = translate(
@@ -30,10 +31,10 @@ const PublishConfirmation = ( {
 
 	return (
 		<div>
+			<QueryPreferences />
 			<CompactFormToggle
-				checked={ !! fields[ fieldName ] }
-				disabled={ isRequestingSettings || isSavingSettings }
-				onChange={ handleToggle( fieldName ) }
+				checked={ !! publishConfirmationPreference }
+				onChange={ handleToggle }
 			>
 				{ fieldLabel }
 			</CompactFormToggle>
@@ -46,16 +47,23 @@ const PublishConfirmation = ( {
 };
 
 PublishConfirmation.defaultProps = {
-	fields: {},
-	isRequestingSettings: true,
-	isSavingSettings: false,
+	publishConfirmationPreference: true,
 };
 
 PublishConfirmation.propTypes = {
-	fields: PropTypes.object,
-	handleToggle: PropTypes.func.isRequired,
-	isRequestingSettings: PropTypes.bool,
-	isSavingSettings: PropTypes.bool,
+	publishConfirmationPreference: React.PropTypes.bool,
+	savePublishConfirmationPreference: React.PropTypes.func,
 };
 
-export default localize( PublishConfirmation );
+export default connect(
+	( state ) => {
+		return {
+			publishConfirmationPreference: getPreference( state, 'publishConfirmation' ),
+		};
+	},
+	( dispatch ) => {
+		return bindActionCreators( {
+			savePublishConfirmationPreference: savePreference.bind( null, 'publishConfirmation' ),
+		}, dispatch );
+	},
+)( localize( PublishConfirmation ) );

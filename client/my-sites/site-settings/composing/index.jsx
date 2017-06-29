@@ -43,12 +43,7 @@ const Composing = ( {
 			<CardComponent className="composing__card site-settings">
 				{
 					config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-					<PublishConfirmation
-						fields={ fields }
-						handleToggle={ handleToggle }
-						isRequestingSettings={ isRequestingSettings }
-						isSavingSettings={ isSavingSettings }
-					/>
+					<PublishConfirmation />
 				}
 				<PostsPerPage
 					eventTracker={ eventTracker }
