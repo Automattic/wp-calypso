@@ -14,6 +14,7 @@ import { editProductCategory } from 'woocommerce/state/ui/product-categories/act
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
+	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 } from 'woocommerce/state/action-types';
 
@@ -120,7 +121,7 @@ describe( 'handlers', () => {
 				]
 			};
 
-			const actionList = makeProductActionList( rootState, 123, edits );
+			const actionList = makeProductActionList( rootState, 123, edits, [] );
 			expect( actionList.nextSteps.length ).to.equal( 1 );
 
 			const dispatch = spy();
@@ -152,7 +153,7 @@ describe( 'handlers', () => {
 				]
 			};
 
-			const actionList = makeProductActionList( rootState, 123, edits );
+			const actionList = makeProductActionList( rootState, 123, edits, [] );
 			expect( actionList.nextSteps.length ).to.equal( 2 );
 
 			const dispatch = spy();
@@ -196,7 +197,7 @@ describe( 'handlers', () => {
 			const failureAction = { type: '%%FAILURE%%' };
 			const onFailure = ( dispatch ) => dispatch( failureAction );
 
-			const actionList = makeProductActionList( rootState, 123, edits, onSuccess, onFailure );
+			const actionList = makeProductActionList( rootState, 123, edits, [], onSuccess, onFailure );
 
 			const dispatch = spy();
 			actionList.onSuccess( dispatch, actionList );
@@ -240,7 +241,7 @@ describe( 'handlers', () => {
 			};
 
 			const edits = rootState.extensions.woocommerce.ui.products[ 123 ].edits;
-			const actionList = makeProductActionList( rootState, 123, edits );
+			const actionList = makeProductActionList( rootState, 123, edits, [] );
 			expect( actionList.nextSteps.length ).to.equal( 2 );
 
 			const dispatch = spy();
@@ -302,7 +303,8 @@ describe( 'handlers', () => {
 			};
 
 			const productEdits = rootState.extensions.woocommerce.ui.products[ 123 ].edits;
-			const actionList = makeProductActionList( rootState, 123, productEdits );
+			const variationEdits = rootState.extensions.woocommerce.ui.products[ 123 ].variations.edits;
+			const actionList = makeProductActionList( rootState, 123, productEdits, variationEdits );
 
 			expect( actionList.nextSteps.length ).to.equal( 2 );
 
@@ -330,6 +332,127 @@ describe( 'handlers', () => {
 				siteId: 123,
 				productId: 42,
 				variation: variationBlack,
+			} ) );
+		} );
+
+		it( 'should create variations for an existing product', () => {
+			const product1 = { id: 42, name: 'Product #1', type: 'variable' };
+			const variationBlack = { id: 202, sku: 'old-sku', attributes: [ { name: 'Color', options: 'Black' } ] };
+
+			const rootState = {
+				extensions: {
+					woocommerce: {
+						ui: {
+							products: {
+								123: {
+									edits: {
+									},
+									variations: {
+										edits: [
+											{
+												productId: 42,
+												creates: [
+													variationBlack,
+												]
+											}
+										]
+									}
+								},
+							},
+						},
+						sites: {
+							123: {
+								products: {
+									products: [
+										product1,
+									]
+								},
+								productVariations: { },
+							}
+						},
+					}
+				}
+			};
+
+			const productEdits = rootState.extensions.woocommerce.ui.products[ 123 ].edits;
+			const variationEdits = rootState.extensions.woocommerce.ui.products[ 123 ].variations.edits;
+			const actionList = makeProductActionList( rootState, 123, productEdits, variationEdits );
+
+			expect( actionList.nextSteps.length ).to.equal( 1 );
+
+			const dispatch = spy();
+
+			// Create the variation.
+			actionList.nextSteps[ 0 ].onStep( dispatch, actionList );
+
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
+				siteId: 123,
+				productId: 42,
+				variation: variationBlack,
+			} ) );
+		} );
+
+		it( 'should update a variation for an existing product', () => {
+			const product1 = { id: 42, name: 'Product #1', type: 'variable' };
+			const variationBlack = { id: 202, sku: 'old-sku', attributes: [ { name: 'Color', options: 'Black' } ] };
+			const variationBlackEdit = { id: 202, sku: 'new-sku' };
+
+			const rootState = {
+				extensions: {
+					woocommerce: {
+						ui: {
+							products: {
+								123: {
+									edits: {
+									},
+									variations: {
+										edits: [
+											{
+												productId: 42,
+												updates: [
+													variationBlackEdit,
+												]
+											}
+										]
+									}
+								},
+							},
+						},
+						sites: {
+							123: {
+								products: {
+									products: [
+										product1,
+									]
+								},
+								productVariations: {
+									42: [
+										variationBlack,
+									]
+								},
+							}
+						},
+					}
+				}
+			};
+
+			const productEdits = rootState.extensions.woocommerce.ui.products[ 123 ].edits;
+			const variationEdits = rootState.extensions.woocommerce.ui.products[ 123 ].variations.edits;
+			const actionList = makeProductActionList( rootState, 123, productEdits, variationEdits );
+
+			expect( actionList.nextSteps.length ).to.equal( 1 );
+
+			const dispatch = spy();
+
+			// Create the variation.
+			actionList.nextSteps[ 0 ].onStep( dispatch, actionList );
+
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
+				siteId: 123,
+				productId: 42,
+				variation: variationBlackEdit,
 			} ) );
 		} );
 	} );
