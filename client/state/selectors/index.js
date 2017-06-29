@@ -164,6 +164,7 @@ export isSchedulingPublicizeShareAction from './is-scheduling-publicize-share-ac
 export isJetpackModuleActive from './is-jetpack-module-active';
 export isJetpackModuleUnavailableInDevelopmentMode from './is-jetpack-module-unavailable-in-development-mode';
 export isJetpackSettingsSaveFailure from './is-jetpack-settings-save-failure';
+export isJetpackSiteConnected from './is-jetpack-site-connected';
 export isJetpackSiteInDevelopmentMode from './is-jetpack-site-in-development-mode';
 export isJetpackSiteInStagingMode from './is-jetpack-site-in-staging-mode';
 export isMappedDomainSite from './is-mapped-domain-site';

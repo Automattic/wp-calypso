@@ -1,6 +1,6 @@
 export const items = {
 	12345678: {
-		isActive: true,
+		isActive: false,
 		isStaging: false,
 		devMode: {
 			isActive: false,
