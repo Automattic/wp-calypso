@@ -2,16 +2,18 @@
  * Internal dependencies
  */
 import { dispatchWithProps } from 'woocommerce/state/helpers';
-import { get, post } from 'woocommerce/state/data-layer/request/actions';
+import { get, post, put } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import { productUpdated } from 'woocommerce/state/sites/products/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
+	WOOCOMMERCE_PRODUCT_UPDATE,
 	WOOCOMMERCE_PRODUCT_REQUEST,
 } from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_CREATE ]: [ handleProductCreate ],
+	[ WOOCOMMERCE_PRODUCT_UPDATE ]: [ handleProductUpdate ],
 	[ WOOCOMMERCE_PRODUCT_REQUEST ]: [ handleProductRequest ],
 };
 
@@ -49,6 +51,22 @@ export function handleProductCreate( { dispatch }, action ) {
 
 	const updatedSuccessAction = updatedAction( siteId, action, successAction, product );
 	dispatch( post( siteId, 'products', productData, updatedSuccessAction, failureAction ) );
+}
+
+export function handleProductUpdate( { dispatch }, action ) {
+	const { siteId, product, successAction, failureAction } = action;
+
+	// Verify the id
+	if ( typeof product.id !== 'number' ) {
+		dispatch( setError( siteId, action, {
+			message: 'Attempting to update a product without a valid id.',
+			product,
+		} ) );
+		return;
+	}
+
+	const updatedSuccessAction = updatedAction( siteId, action, successAction, product );
+	dispatch( put( siteId, 'products/' + product.id, product, updatedSuccessAction, failureAction ) );
 }
 
 export function handleProductRequest( { dispatch }, action ) {
