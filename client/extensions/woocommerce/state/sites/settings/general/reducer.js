@@ -17,7 +17,7 @@ import {
 
 // TODO: Handle error
 
-export default createReducer( [], {
+export default createReducer( null, {
 	[ WOOCOMMERCE_CURRENCY_UPDATE ]: ( state ) => {
 		// TODO: Return some sort of saving indicator
 		return state;
@@ -62,6 +62,6 @@ export default createReducer( [], {
 	},
 
 	[ WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return updateSettings( 'general', state, data );
+		return updateSettings( 'general', state || [], data );
 	},
 } );

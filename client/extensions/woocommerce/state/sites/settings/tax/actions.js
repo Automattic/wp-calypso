@@ -76,10 +76,9 @@ export const updateTaxSettings = (
 		},
 		{
 			id: 'woocommerce_shipping_tax_class',
-			value: shippingIsTaxFree ? 'zero-rate' : 'inherit', // woocommerce 15795 - inherit should be standard
+			value: shippingIsTaxFree ? 'zero-rate' : '',
 		},
 	];
-
 	return request( siteId ).post( 'settings/tax/batch', { update } )
 		.then( ( data ) => {
 			dispatch( updateTaxSettingsSuccess( siteId, data ) );

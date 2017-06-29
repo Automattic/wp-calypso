@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,7 +44,7 @@ class AddressView extends Component {
 	renderEditable = () => {
 		const { onChange, translate } = this.props;
 		const { city, country, postcode, street, street2, state } = this.props.address;
-		const countryData = find( getCountries, { code: country || 'US' } );
+		const countryData = find( getCountries(), { code: country || 'US' } );
 		const foundCountry = Boolean( countryData );
 		const states = foundCountry ? countryData.states : [];
 		const statesLabel = foundCountry ? countryData.statesLabel : translate( 'State' );

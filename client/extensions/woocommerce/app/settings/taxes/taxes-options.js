@@ -17,8 +17,8 @@ class TaxesOptions extends Component {
 
 	static propTypes = {
 		onCheckboxChange: PropTypes.func.isRequired,
-		pricesIncludeTaxes: PropTypes.bool.isRequired,
-		shippingIsTaxable: PropTypes.bool.isRequired,
+		pricesIncludeTaxes: PropTypes.bool,
+		shippingIsTaxable: PropTypes.bool,
 	};
 
 	render = () => {
@@ -33,13 +33,13 @@ class TaxesOptions extends Component {
 				<Card>
 					<FormFieldset>
 						<FormLabel>
-							<FormCheckbox checked={ pricesIncludeTaxes } name="pricesIncludeTaxes" onChange={ onCheckboxChange } />
+							<FormCheckbox checked={ pricesIncludeTaxes || false } name="pricesIncludeTaxes" onChange={ onCheckboxChange } />
 								<span>{ translate( 'Taxes are included in product prices' ) }</span>
 						</FormLabel>
 					</FormFieldset>
 					<FormFieldset>
 						<FormLabel>
-							<FormCheckbox checked={ shippingIsTaxable } name="shippingIsTaxable" onChange={ onCheckboxChange } />
+							<FormCheckbox checked={ shippingIsTaxable || false } name="shippingIsTaxable" onChange={ onCheckboxChange } />
 								<span>{ translate( 'Charge taxes on shipping costs' ) }</span>
 						</FormLabel>
 					</FormFieldset>

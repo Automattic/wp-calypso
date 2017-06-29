@@ -26,6 +26,7 @@ import {
 	fetchSettingsGeneral,
 	updateTaxesEnabledSetting,
 } from 'woocommerce/state/sites/settings/general/actions';
+import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import {
 	fetchTaxSettings,
 	updateTaxSettings,
@@ -68,6 +69,14 @@ class SettingsTaxes extends Component {
 
 	componentWillReceiveProps = ( newProps ) => {
 		if ( ! this.state.userBeganEditing ) {
+			const { site } = this.props;
+			const newSiteId = newProps.site && newProps.site.ID || null;
+			const oldSiteId = site && site.ID || null;
+			if ( oldSiteId !== newSiteId ) {
+				this.props.fetchSettingsGeneral( newSiteId );
+				this.props.fetchTaxSettings( newSiteId );
+			}
+
 			this.setState( {
 				pricesIncludeTaxes: newProps.pricesIncludeTaxes,
 				shippingIsTaxable: newProps.shippingIsTaxable,
@@ -115,11 +124,16 @@ class SettingsTaxes extends Component {
 
 		this.props.updateTaxSettings(
 			site.ID,
-			this.state.pricesIncludeTax,
+			this.state.pricesIncludeTaxes || false,
 			! this.state.shippingIsTaxable, // note the inversion
 			onSuccess,
 			onFailure
 		);
+	};
+
+	onAddressChange = ( address ) => {
+		const { site } = this.props;
+		this.props.fetchTaxRates( site.ID, address, true );
 	};
 
 	render = () => {
@@ -148,7 +162,7 @@ class SettingsTaxes extends Component {
 					<ExtendedHeader
 						label={ translate( 'Store Address / Tax Nexus' ) }
 						description={ translate( 'The address of where your business is located for tax purposes.' ) } />
-					<StoreAddress className="taxes__store-address" />
+					<StoreAddress className="taxes__store-address" onSetAddress={ this.onAddressChange } />
 				</div>
 				<TaxesRates
 					taxesEnabled={ this.state.taxesEnabled }
@@ -173,13 +187,12 @@ function mapStateToProps( state ) {
 	let taxesEnabled = false;
 
 	const site = getSelectedSiteWithFallback( state );
-	if ( site ) {
-		loading = areTaxSettingsLoading( state, site.ID ) || areSettingsGeneralLoading( state, site.ID );
-		if ( ! loading ) {
-			pricesIncludeTaxes = getPricesIncludeTax( state, site.ID );
-			shippingIsTaxable = ! getShippingIsTaxFree( state, site.ID ); // note the inversion
-			taxesEnabled = areTaxCalculationsEnabled( state, site.ID );
-		}
+
+	loading = areTaxSettingsLoading( state ) || areSettingsGeneralLoading( state );
+	if ( ! loading ) {
+		pricesIncludeTaxes = getPricesIncludeTax( state );
+		shippingIsTaxable = ! getShippingIsTaxFree( state ); // note the inversion
+		taxesEnabled = areTaxCalculationsEnabled( state );
 	}
 
 	return {
@@ -195,6 +208,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchSettingsGeneral,
+			fetchTaxRates,
 			fetchTaxSettings,
 			updateTaxesEnabledSetting,
 			updateTaxSettings

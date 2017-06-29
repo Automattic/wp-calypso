@@ -24,11 +24,11 @@ export const areTaxSettingsLoading = ( state, siteId = getSelectedSiteId( state 
 export function getPricesIncludeTax( state, siteId = getSelectedSiteId( state ) ) {
 	const taxSettings = getRawTaxSettings( state, siteId );
 	const pricesIncludeTax = find( taxSettings, { id: 'woocommerce_prices_include_tax' } );
-	return ( 'yes' === pricesIncludeTax );
+	return ( pricesIncludeTax && 'yes' === pricesIncludeTax.value );
 }
 
 export function getShippingIsTaxFree( state, siteId = getSelectedSiteId( state ) ) {
 	const taxSettings = getRawTaxSettings( state, siteId );
 	const shippingIsTaxFree = find( taxSettings, { id: 'woocommerce_shipping_tax_class' } );
-	return ( 'zero-rate' === shippingIsTaxFree );
+	return ( shippingIsTaxFree && 'zero-rate' === shippingIsTaxFree.value );
 }

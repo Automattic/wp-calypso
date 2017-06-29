@@ -12,8 +12,12 @@ import {
 } from 'woocommerce/state/action-types';
 import wp from 'lib/wp';
 
-export const fetchTaxRates = ( siteId, address ) => ( dispatch, getState ) => {
-	if ( areTaxRatesLoaded( getState(), siteId ) || areTaxRatesLoading( getState(), siteId ) ) {
+export const fetchTaxRates = ( siteId, address, forceReload = false ) => ( dispatch, getState ) => {
+	if ( areTaxRatesLoading( getState(), siteId ) ) {
+		return;
+	}
+
+	if ( false === forceReload && areTaxRatesLoaded( getState(), siteId ) ) {
 		return;
 	}
 

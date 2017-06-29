@@ -15,7 +15,7 @@ import {
 	WOOCOMMERCE_SETTINGS_TAX_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export default createReducer( {}, {
+export default createReducer( null, {
 	[ WOOCOMMERCE_SETTINGS_TAX_REQUEST ]: () => {
 		return LOADING;
 	},
