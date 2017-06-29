@@ -122,6 +122,10 @@ class SearchStream extends React.Component {
 			'is-two-columns': !! query,
 		} );
 
+		const singleColumnResultsClasses = cx( 'search-stream__single-column-results', {
+			'is-post-results': searchType === POSTS && query,
+		} );
+
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
@@ -165,7 +169,7 @@ class SearchStream extends React.Component {
 							</div> }
 					</div> }
 				{ ! wideDisplay &&
-					<div className="search-stream__single-column-results">
+					<div className={ singleColumnResultsClasses }>
 						{ ( ( searchType === POSTS || ! query ) && <PostResults { ...this.props } /> ) ||
 							<SiteResults query={ query } sort={ sortOrder } showLastUpdatedDate={ true } /> }
 					</div> }
