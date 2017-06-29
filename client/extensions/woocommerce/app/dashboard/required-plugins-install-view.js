@@ -107,7 +107,7 @@ class RequiredPluginsInstallView extends Component {
 			<div className="card dashboard__setup-wrapper">
 				{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
 				<SetupHeader
-					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
+					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 					imageWidth={ 160 }
 					title={ translate( 'Setting up your store' ) }
 					subtitle={ translate( 'Give us a minute and we\'ll move right along.' ) }
