@@ -98,10 +98,11 @@ module.exports = ( { types: t } ) => {
 					// Transform to asynchronous require.ensure
 					path.replaceWith(
 						t.callExpression( t.memberExpression( t.identifier( 'require' ), t.identifier( 'ensure' ) ), [
-							argument,
+							t.arrayExpression( [ argument ] ),
 							t.functionExpression( null, [ t.identifier( 'require' ) ], t.blockStatement( [
 								t.expressionStatement( requireCall )
 							] ) ),
+							t.nullLiteral(),
 							t.stringLiteral( chunkName )
 						] )
 					);

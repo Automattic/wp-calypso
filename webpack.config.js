@@ -12,7 +12,6 @@ const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const os = require( 'os' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
-const WebpackChunkHash = require( 'webpack-chunk-hash' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 
 /**
@@ -21,7 +20,7 @@ const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const ChunkFileNamePlugin = require( './server/bundler/plugin' );
 const config = require( './server/config' );
-const NamedModulesPlugin = require( './server/bundler/webpack-plugins/NamedModulesPlugin' );
+const HashedChunkIdPlugin = require( './server/bundler/webpack-plugins/HashedChunkIdPlugin' );
 
 /**
  * Internal variables
@@ -212,9 +211,15 @@ if ( calypsoEnv === 'desktop' ) {
 	webpackConfig.externals.push( 'jquery' );
 }
 
+// make builds stable
+webpackConfig.plugins = webpackConfig.plugins.concat( [
+	new webpack.NamedModulesPlugin(),
+	new HashedChunkIdPlugin(),
+	new NameAllModulesPlugin(),
+] );
+
 if ( calypsoEnv === 'development' ) {
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
-		new NamedModulesPlugin(),
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.LoaderOptionsPlugin( { debug: true } ),
 	] );
@@ -223,7 +228,6 @@ if ( calypsoEnv === 'development' ) {
 		path.join( __dirname, 'client', 'boot', 'app' )
 	];
 	webpackConfig.devServer = { hot: true, inline: true };
-
 
 	if ( config.isEnabled( 'use-source-maps' ) ) {
 		webpackConfig.devtool = '#eval-cheap-module-source-map';
@@ -235,11 +239,6 @@ if ( calypsoEnv === 'development' ) {
 	}
 } else {
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
-	webpackConfig.plugins = webpackConfig.plugins.concat( [
-		new webpack.HashedModuleIdsPlugin(),
-		new WebpackChunkHash(),
-		new NameAllModulesPlugin(),
-	] );
 	webpackConfig.devtool = false;
 }
 
@@ -260,7 +259,7 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 }
 
 if ( process.env.DASHBOARD ) {
-	 // dashboard wants to be first
+	// dashboard wants to be first
 	webpackConfig.plugins.unshift( new DashboardPlugin() );
 }
 
