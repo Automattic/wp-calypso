@@ -6,6 +6,7 @@ import { every, forIn, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
 import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
@@ -22,19 +23,29 @@ import { mergeLocationEdits } from './helpers';
  * @return {Object} A map with the form { continentCode => zoneId }. If a continent doesn't appear in the map, it means that
  * it doesn't belong to a zone.
  */
-const getContinentsOwnedByOtherZone = ( state, siteId ) => {
-	const continents = {};
-	const currentZone = getCurrentlyEditingShippingZone( state, siteId );
-	forIn( getRawShippingZoneLocations( state, siteId ), ( { continent }, zoneId ) => {
-		if ( currentZone.id === Number( zoneId ) ) {
-			return;
-		}
-		for ( const c of continent ) {
-			continents[ c ] = Number( zoneId );
-		}
-	} );
-	return continents;
-};
+const getContinentsOwnedByOtherZone = createSelector(
+	( state, siteId ) => {
+		const continents = {};
+		const currentZone = getCurrentlyEditingShippingZone( state, siteId );
+		forIn( getRawShippingZoneLocations( state, siteId ), ( { continent }, zoneId ) => {
+			if ( currentZone.id === Number( zoneId ) ) {
+				return;
+			}
+			for ( const c of continent ) {
+				continents[ c ] = Number( zoneId );
+			}
+		} );
+		return continents;
+	},
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return [
+			siteId,
+			getCurrentlyEditingShippingZone( state, siteId ),
+			getRawShippingZoneLocations( state, siteId ),
+		];
+	}
+);
 
 /**
  * Computes a map of the countries that belong to a zone different than the one that's currently being edited.
@@ -44,19 +55,30 @@ const getContinentsOwnedByOtherZone = ( state, siteId ) => {
  * @return {Object} A map with the form { countryCode => zoneId }. If a country doesn't appear in the map, it means that
  * it doesn't belong to a zone.
  */
-const getCountriesOwnedByOtherZone = ( state, siteId ) => {
-	const countries = {};
-	const currentZone = getCurrentlyEditingShippingZone( state, siteId );
-	forIn( getRawShippingZoneLocations( state, siteId ), ( { country, postcode }, zoneId ) => {
-		if ( currentZone.id === Number( zoneId ) || ! isEmpty( postcode ) ) {
-			return;
-		}
-		for ( const c of country ) {
-			countries[ c ] = Number( zoneId );
-		}
-	} );
-	return countries;
-};
+const getCountriesOwnedByOtherZone = createSelector(
+	( state, siteId ) => {
+		const countries = {};
+		const currentZone = getCurrentlyEditingShippingZone( state, siteId );
+
+		forIn( getRawShippingZoneLocations( state, siteId ), ( { country, postcode }, zoneId ) => {
+			if ( currentZone.id === Number( zoneId ) || ! isEmpty( postcode ) ) {
+				return;
+			}
+			for ( const c of country ) {
+				countries[ c ] = Number( zoneId );
+			}
+		} );
+		return countries;
+	},
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return [
+			siteId,
+			getCurrentlyEditingShippingZone( state, siteId ),
+			getRawShippingZoneLocations( state, siteId ),
+		];
+	}
+);
 
 /**
  * Computes a map of the states that belong to a zone different than the one that's currently being edited.
@@ -67,22 +89,32 @@ const getCountriesOwnedByOtherZone = ( state, siteId ) => {
  * @return {Object} A map with the form { stateCode: zoneId }. If a state doesn't appear in the map, it means that
  * it doesn't belong to a zone.
  */
-const getStatesOwnedByOtherZone = ( state, siteId, countryCode ) => {
-	const states = {};
-	const currentZone = getCurrentlyEditingShippingZone( state, siteId );
-	forIn( getRawShippingZoneLocations( state, siteId ), ( locations, zoneId ) => {
-		if ( currentZone.id === Number( zoneId ) ) {
-			return;
-		}
-		for ( const s of locations.state ) {
-			const [ stateCountry, stateCode ] = s.split( ':' );
-			if ( stateCountry === countryCode ) {
-				states[ stateCode ] = Number( zoneId );
+const getStatesOwnedByOtherZone = createSelector(
+	( state, siteId, countryCode ) => {
+		const states = {};
+		const currentZone = getCurrentlyEditingShippingZone( state, siteId );
+		forIn( getRawShippingZoneLocations( state, siteId ), ( locations, zoneId ) => {
+			if ( currentZone.id === Number( zoneId ) ) {
+				return;
 			}
-		}
-	} );
-	return states;
-};
+			for ( const s of locations.state ) {
+				const [ stateCountry, stateCode ] = s.split( ':' );
+				if ( stateCountry === countryCode ) {
+					states[ stateCode ] = Number( zoneId );
+				}
+			}
+		} );
+		return states;
+	},
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return [
+			siteId,
+			getCurrentlyEditingShippingZone( state, siteId ),
+			getRawShippingZoneLocations( state, siteId ),
+		];
+	}
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -92,96 +124,73 @@ const getStatesOwnedByOtherZone = ( state, siteId, countryCode ) => {
  * @return {Object} The list of locations for the shipping zone, including any edits made, in the form
  * { continent: [ ... ], country: [ ... ], state: [ ... ], postcode: [ ... ] }. On any failure, it will return null.
  */
-export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSiteId( state ), overlayTemporalEdits = true ) => {
-	if ( ! areShippingZonesLoaded( state, siteId ) ) {
-		return null;
-	}
-	const zone = getCurrentlyEditingShippingZone( state, siteId );
-	if ( ! zone ) {
-		return null;
-	}
+export const getShippingZoneLocationsWithEdits = createSelector(
+	( state, siteId = getSelectedSiteId( state ), overlayTemporalEdits = true ) => {
+		//console.log( 'yo' );
+		if ( ! areShippingZonesLoaded( state, siteId ) ) {
+			return null;
+		}
+		const zone = getCurrentlyEditingShippingZone( state, siteId );
+		if ( ! zone ) {
+			return null;
+		}
 
-	const locations = getRawShippingZoneLocations( state, siteId )[ zone.id ] || {
-		continent: [],
-		country: [],
-		state: [],
-		postcode: [],
-	};
-
-	const continents = new Set( locations.continent );
-	const countries = new Set( locations.country );
-	// Extract the country/state pair from the raw states (they are in the format "Country:State")
-	const states = new Set();
-	locations.state.forEach( ( fullCode ) => {
-		const [ countryCode, stateCode ] = fullCode.split( ':' );
-		countries.add( countryCode );
-		states.add( stateCode );
-	} );
-
-	const { temporaryChanges, ...committedEdits } = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
-	const edits = overlayTemporalEdits ? mergeLocationEdits( committedEdits, temporaryChanges ) : committedEdits;
-	if ( edits.pristine ) {
-		return {
-			continent: Array.from( continents ),
-			country: Array.from( countries ),
-			state: Array.from( states ),
-			postcode: locations.postcode,
+		const locations = getRawShippingZoneLocations( state, siteId )[ zone.id ] || {
+			continent: [],
+			country: [],
+			state: [],
+			postcode: [],
 		};
-	}
 
-	const forbiddenCountries = new Set( Object.keys( getCountriesOwnedByOtherZone( state, siteId ) ) );
-	// Play the journal entries in order, from oldest to newest
-	edits.journal.forEach( ( { action, code } ) => {
-		switch ( action ) {
-			case JOURNAL_ACTIONS.ADD_CONTINENT:
-				// When selecting a whole continent, remove all its countries from the selection
-				getCountries( state, code, siteId ).forEach( country => countries.delete( country.code ) );
-				if ( countries.size ) {
-					// If the zone has countries selected, then instead of selecting the continent we select all its countries
-					getCountries( state, code, siteId ).forEach( ( country ) => {
-						if ( ! forbiddenCountries.has( country.code ) ) {
-							countries.add( country.code );
-						}
-					} );
-				} else {
-					continents.add( code );
-				}
-				break;
-			case JOURNAL_ACTIONS.REMOVE_CONTINENT:
-				continents.delete( code );
-				getCountries( state, code, siteId ).forEach( country => countries.delete( country.code ) );
-				break;
-			case JOURNAL_ACTIONS.ADD_COUNTRY:
-				forbiddenCountries.forEach( countryCode => {
-					countries.delete( countryCode );
-				} );
-				countries.add( code );
-				// If the zone has continents selected, then we need to replace them with their respective countries
-				continents.forEach( ( continentCode ) => {
-					getCountries( state, continentCode, siteId ).forEach( ( country ) => {
-						if ( ! forbiddenCountries.has( country.code ) ) {
-							countries.add( country.code );
-						}
-					} );
-				} );
-				// This is a "countries" zone now, remove all the continents
-				continents.clear();
-				break;
-			case JOURNAL_ACTIONS.REMOVE_COUNTRY:
-				let insideSelectedContinent = false;
-				for ( const continentCode of continents ) {
-					if ( insideSelectedContinent ) {
-						break;
+		const continents = new Set( locations.continent );
+		const countries = new Set( locations.country );
+		// Extract the country/state pair from the raw states (they are in the format "Country:State")
+		const states = new Set();
+		locations.state.forEach( ( fullCode ) => {
+			const [ countryCode, stateCode ] = fullCode.split( ':' );
+			countries.add( countryCode );
+			states.add( stateCode );
+		} );
+
+		const { temporaryChanges, ...committedEdits } = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
+		const edits = overlayTemporalEdits ? mergeLocationEdits( committedEdits, temporaryChanges ) : committedEdits;
+		if ( edits.pristine ) {
+			return {
+				continent: Array.from( continents ),
+				country: Array.from( countries ),
+				state: Array.from( states ),
+				postcode: locations.postcode,
+			};
+		}
+
+		const forbiddenCountries = new Set( Object.keys( getCountriesOwnedByOtherZone( state, siteId ) ) );
+		// Play the journal entries in order, from oldest to newest
+		edits.journal.forEach( ( { action, code } ) => {
+			switch ( action ) {
+				case JOURNAL_ACTIONS.ADD_CONTINENT:
+					// When selecting a whole continent, remove all its countries from the selection
+					getCountries( state, code, siteId ).forEach( country => countries.delete( country.code ) );
+					if ( countries.size ) {
+						// If the zone has countries selected, then instead of selecting the continent we select all its countries
+						getCountries( state, code, siteId ).forEach( ( country ) => {
+							if ( ! forbiddenCountries.has( country.code ) ) {
+								countries.add( country.code );
+							}
+						} );
+					} else {
+						continents.add( code );
 					}
-					for ( const country of getCountries( state, continentCode, siteId ) ) {
-						if ( country.code === code ) {
-							insideSelectedContinent = true;
-							break;
-						}
-					}
-				}
-				// If the user unselected a country that was inside a selected continent, replace the continent for its countries
-				if ( insideSelectedContinent ) {
+					break;
+				case JOURNAL_ACTIONS.REMOVE_CONTINENT:
+					continents.delete( code );
+					getCountries( state, code, siteId ).forEach( country => countries.delete( country.code ) );
+					break;
+				case JOURNAL_ACTIONS.ADD_COUNTRY:
+					forbiddenCountries.forEach( countryCode => {
+						countries.delete( countryCode );
+					} );
+					countries.add( code );
+					// If the zone has continents selected, then we need to replace them with their respective countries
 					continents.forEach( ( continentCode ) => {
 						getCountries( state, continentCode, siteId ).forEach( ( country ) => {
 							if ( ! forbiddenCountries.has( country.code ) ) {
@@ -191,28 +200,66 @@ export const getShippingZoneLocationsWithEdits = ( state, siteId = getSelectedSi
 					} );
 					// This is a "countries" zone now, remove all the continents
 					continents.clear();
-				}
-				countries.delete( code );
-				break;
+					break;
+				case JOURNAL_ACTIONS.REMOVE_COUNTRY:
+					let insideSelectedContinent = false;
+					for ( const continentCode of continents ) {
+						if ( insideSelectedContinent ) {
+							break;
+						}
+						for ( const country of getCountries( state, continentCode, siteId ) ) {
+							if ( country.code === code ) {
+								insideSelectedContinent = true;
+								break;
+							}
+						}
+					}
+					// If the user unselected a country that was inside a selected continent, replace the continent for its countries
+					if ( insideSelectedContinent ) {
+						continents.forEach( ( continentCode ) => {
+							getCountries( state, continentCode, siteId ).forEach( ( country ) => {
+								if ( ! forbiddenCountries.has( country.code ) ) {
+									countries.add( country.code );
+								}
+							} );
+						} );
+						// This is a "countries" zone now, remove all the continents
+						continents.clear();
+					}
+					countries.delete( code );
+					break;
+			}
+		} );
+
+		// If there are journal entries, then the user selected/unselected countries&continents, so the original states must be purged
+		if ( ! edits.states || edits.states.removeAll || ! isEmpty( edits.journal ) ) {
+			states.clear();
 		}
-	} );
+		if ( edits.states ) {
+			edits.states.add.forEach( ( code ) => states.add( code ) );
+			edits.states.remove.forEach( ( code ) => states.delete( code ) );
+		}
 
-	// If there are journal entries, then the user selected/unselected countries&continents, so the original states must be purged
-	if ( ! edits.states || edits.states.removeAll || ! isEmpty( edits.journal ) ) {
-		states.clear();
+		return {
+			continent: Array.from( continents ),
+			country: Array.from( countries ),
+			state: Array.from( states ),
+			postcode: null === edits.postcode ? [] : [ edits.postcode ],
+		};
+	},
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const loaded = areShippingZonesLoaded( state, siteId );
+		const zone = loaded && getCurrentlyEditingShippingZone( state, siteId );
+		return [
+			loaded,
+			zone,
+			zone && getRawShippingZoneLocations( state, siteId ),
+			zone && getShippingZonesEdits( state, siteId ),
+			zone && getCountriesOwnedByOtherZone( state, siteId ),
+		];
 	}
-	if ( edits.states ) {
-		edits.states.add.forEach( ( code ) => states.add( code ) );
-		edits.states.remove.forEach( ( code ) => states.delete( code ) );
-	}
-
-	return {
-		continent: Array.from( continents ),
-		country: Array.from( countries ),
-		state: Array.from( states ),
-		postcode: null === edits.postcode ? [] : [ edits.postcode ],
-	};
-};
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -275,46 +322,75 @@ export const canLocationsBeFilteredByState = ( state, siteId = getSelectedSiteId
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Boolean} Whether the "Filter by postcode range" option is selected.
  */
-export const areLocationsFilteredByPostcode = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! canLocationsBeFiltered( state, siteId ) ) {
-		return false;
-	}
-	const zone = getCurrentlyEditingShippingZone( state, siteId );
-	const locations = getRawShippingZoneLocations( state, siteId )[ zone.id ];
-	const { temporaryChanges, ...committedEdits } = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
-	const edits = mergeLocationEdits( committedEdits, temporaryChanges );
+export const areLocationsFilteredByPostcode = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! canLocationsBeFiltered( state, siteId ) ) {
+			return false;
+		}
+		const zone = getCurrentlyEditingShippingZone( state, siteId );
+		const locations = getRawShippingZoneLocations( state, siteId )[ zone.id ];
+		const { temporaryChanges, ...committedEdits } = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
+		const edits = mergeLocationEdits( committedEdits, temporaryChanges );
 
-	if ( edits.pristine ) {
-		return ! isEmpty( locations.postcode );
+		if ( edits.pristine ) {
+			return ! isEmpty( locations.postcode );
+		}
+		if ( null !== edits.postcode ) {
+			return true;
+		}
+		return ! canLocationsBeFilteredByState( state, siteId ) && Boolean( getCurrentSelectedCountryZoneOwner( state, siteId ) );
+	},
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const canFilter = canLocationsBeFiltered( state, siteId );
+		return [
+			canFilter,
+			canFilter && getCurrentlyEditingShippingZone( state, siteId ),
+			canFilter && getRawShippingZoneLocations( state, siteId ),
+			canFilter && getShippingZonesEdits( state, siteId ),
+			canFilter && canLocationsBeFilteredByState( state, siteId ),
+			canFilter && getCurrentSelectedCountryZoneOwner( state, siteId ),
+		];
 	}
-	if ( null !== edits.postcode ) {
-		return true;
-	}
-	return ! canLocationsBeFilteredByState( state, siteId ) && Boolean( getCurrentSelectedCountryZoneOwner( state, siteId ) );
-};
+);
 
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Boolean} Whether the "Filter by state" option is selected.
  */
-export const areLocationsFilteredByState = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! canLocationsBeFiltered( state, siteId ) || ! canLocationsBeFilteredByState( state, siteId ) ) {
-		return false;
-	}
-	const zone = getCurrentlyEditingShippingZone( state, siteId );
-	const locations = getRawShippingZoneLocations( state, siteId )[ zone.id ];
-	const { temporaryChanges, ...committedEdits } = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
-	const edits = mergeLocationEdits( committedEdits, temporaryChanges );
+export const areLocationsFilteredByState = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! canLocationsBeFiltered( state, siteId ) || ! canLocationsBeFilteredByState( state, siteId ) ) {
+			return false;
+		}
+		const zone = getCurrentlyEditingShippingZone( state, siteId );
+		const locations = getRawShippingZoneLocations( state, siteId )[ zone.id ];
+		const { temporaryChanges, ...committedEdits } = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
+		const edits = mergeLocationEdits( committedEdits, temporaryChanges );
 
-	if ( edits.pristine ) {
-		return ! isEmpty( locations.state );
+		if ( edits.pristine ) {
+			return ! isEmpty( locations.state );
+		}
+		if ( null !== edits.states ) {
+			return true;
+		}
+		return ! areLocationsFilteredByPostcode( state, siteId ) && Boolean( getCurrentSelectedCountryZoneOwner( state, siteId ) );
+	},
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const canFilter = canLocationsBeFiltered( state, siteId );
+		return [
+			canFilter,
+			canFilter && canLocationsBeFilteredByState( state, siteId ),
+			canFilter && getCurrentlyEditingShippingZone( state, siteId ),
+			canFilter && getRawShippingZoneLocations( state, siteId ),
+			canFilter && getShippingZonesEdits( state, siteId ),
+			canFilter && areLocationsFilteredByPostcode( state, siteId ),
+			canFilter && getCurrentSelectedCountryZoneOwner( state, siteId ),
+		];
 	}
-	if ( null !== edits.states ) {
-		return true;
-	}
-	return ! areLocationsFilteredByPostcode( state, siteId ) && Boolean( getCurrentSelectedCountryZoneOwner( state, siteId ) );
-};
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -344,81 +420,89 @@ export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state
  * - countryName: Name of the country that this state is part of.
  * - countryCode: Code of the ecountry that this state is part of.
  */
-export const getCurrentlyEditingShippingZoneLocationsList = ( state, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
-	const locations = getShippingZoneLocationsWithEdits( state, siteId, false );
-	if ( ! locations ) {
-		return [];
-	}
+export const getCurrentlyEditingShippingZoneLocationsList = createSelector(
+	( state, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+		const locations = getShippingZoneLocationsWithEdits( state, siteId, false );
+		if ( ! locations ) {
+			return [];
+		}
 
-	const selectedContinents = new Set( locations.continent );
-	if ( selectedContinents.size ) {
-		return getContinents( state, siteId )
-			.filter( ( { code } ) => selectedContinents.has( code ) )
-			.map( ( { code, name } ) => ( {
-				type: 'continent',
-				code,
-				name,
-			} ) );
-	}
+		const selectedContinents = new Set( locations.continent );
+		if ( selectedContinents.size ) {
+			return getContinents( state, siteId )
+				.filter( ( { code } ) => selectedContinents.has( code ) )
+				.map( ( { code, name } ) => ( {
+					type: 'continent',
+					code,
+					name,
+				} ) );
+		}
 
-	const selectedStates = new Set( locations.state );
-	if ( selectedStates.size ) {
-		const countryCode = locations.country[ 0 ];
-		const countryName = getCountryName( state, countryCode, siteId );
-		return getStates( state, countryCode, siteId )
-			.filter( ( { code } ) => selectedStates.has( code ) )
-			.map( ( { code, name } ) => ( {
-				type: 'state',
-				code,
-				name,
-				countryName,
-				countryCode
-			} ) );
-	}
+		const selectedStates = new Set( locations.state );
+		if ( selectedStates.size ) {
+			const countryCode = locations.country[ 0 ];
+			const countryName = getCountryName( state, countryCode, siteId );
+			return getStates( state, countryCode, siteId )
+				.filter( ( { code } ) => selectedStates.has( code ) )
+				.map( ( { code, name } ) => ( {
+					type: 'state',
+					code,
+					name,
+					countryName,
+					countryCode
+				} ) );
+		}
 
-	//if postcode filter exists, then only one country should be selected
-	if ( locations.postcode[ 0 ] ) {
-		return locations.country.map( code => ( {
-			type: 'country',
-			code,
-			name: getCountryName( state, code, siteId ),
-			postcodeFilter: locations.postcode[ 0 ],
-		} ) );
-	}
-
-	const selectedCountries = new Set( locations.country );
-	if ( ! selectedCountries.size ) {
-		return [];
-	}
-
-	//if there are more than maxCountries per continent, group them into a continent
-	let result = [];
-	getContinents( state, siteId ).forEach( ( { code: continentCode, name: continentName } ) => {
-		const continentCountries = getCountries( state, continentCode, siteId );
-		const selectedContinentCountries = continentCountries
-			.filter( ( { code } ) => selectedCountries.has( code ) )
-			.map( ( { code, name } ) => ( {
+		//if postcode filter exists, then only one country should be selected
+		if ( locations.postcode[ 0 ] ) {
+			return locations.country.map( code => ( {
 				type: 'country',
 				code,
-				name,
-				postcodeFilter: undefined,
+				name: getCountryName( state, code, siteId ),
+				postcodeFilter: locations.postcode[ 0 ],
 			} ) );
-
-		if ( selectedContinentCountries.length < maxCountries ) {
-			result = result.concat( selectedContinentCountries );
-		} else {
-			result.push( {
-				type: 'continent',
-				code: continentCode,
-				name: continentName,
-				countryCount: continentCountries.length,
-				selectedCountryCount: selectedContinentCountries.length,
-			} );
 		}
-	} );
 
-	return result;
-};
+		const selectedCountries = new Set( locations.country );
+		if ( ! selectedCountries.size ) {
+			return [];
+		}
+
+		//if there are more than maxCountries per continent, group them into a continent
+		let result = [];
+		getContinents( state, siteId ).forEach( ( { code: continentCode, name: continentName } ) => {
+			const continentCountries = getCountries( state, continentCode, siteId );
+			const selectedContinentCountries = continentCountries
+				.filter( ( { code } ) => selectedCountries.has( code ) )
+				.map( ( { code, name } ) => ( {
+					type: 'country',
+					code,
+					name,
+					postcodeFilter: undefined,
+				} ) );
+
+			if ( selectedContinentCountries.length < maxCountries ) {
+				result = result.concat( selectedContinentCountries );
+			} else {
+				result.push( {
+					type: 'continent',
+					code: continentCode,
+					name: continentName,
+					countryCount: continentCountries.length,
+					selectedCountryCount: selectedContinentCountries.length,
+				} );
+			}
+		} );
+
+		return result;
+	},
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return [
+			getShippingZoneLocationsWithEdits( state, siteId, false ),
+		];
+	}
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -432,49 +516,59 @@ export const getCurrentlyEditingShippingZoneLocationsList = ( state, maxCountrie
  * - disabled: Boolean, whether this location should be marked as "disabled". The user shouldn't be able to toggle a disabled element.
  * - ownerZoneId: The Zone ID that is the "owner" of this location, or undefined if no other zone includes this location.
  */
-export const getCurrentlyEditingShippingZoneCountries = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const locations = getShippingZoneLocationsWithEdits( state, siteId );
-	if ( ! locations ) {
-		return [];
-	}
-	const selectedContinents = new Set( locations.continent );
-	const selectedCountries = new Set( locations.country );
-	const forbiddenContinents = getContinentsOwnedByOtherZone( state, siteId );
-	const forbiddenCountries = getCountriesOwnedByOtherZone( state, siteId );
-	const locationsList = [];
-	const allowSelectingForbiddenCountries = 0 === selectedContinents.size && 0 === selectedCountries.size;
+export const getCurrentlyEditingShippingZoneCountries = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const locations = getShippingZoneLocationsWithEdits( state, siteId );
+		if ( ! locations ) {
+			return [];
+		}
+		const selectedContinents = new Set( locations.continent );
+		const selectedCountries = new Set( locations.country );
+		const forbiddenContinents = getContinentsOwnedByOtherZone( state, siteId );
+		const forbiddenCountries = getCountriesOwnedByOtherZone( state, siteId );
+		const locationsList = [];
+		const allowSelectingForbiddenCountries = 0 === selectedContinents.size && 0 === selectedCountries.size;
 
-	getContinents( state, siteId ).forEach( ( { code: continentCode, name: continentName } ) => {
-		const continentSelected = selectedContinents.has( continentCode );
-		const continentCountries = getCountries( state, continentCode, siteId );
-		let selectedCount = 0;
-		const continentI = locationsList.push( {
-			code: continentCode,
-			name: continentName,
-			selected: continentSelected,
-			disabled: Boolean( forbiddenContinents[ continentCode ] ),
-			ownerZoneId: forbiddenContinents[ continentCode ],
-			type: 'continent',
-			countryCount: continentCountries.length,
-		} );
-		continentCountries.forEach( ( { code: countryCode, name: countryName } ) => {
-			const countrySelected = continentSelected || selectedCountries.has( countryCode );
-			if ( countrySelected ) {
-				selectedCount++;
-			}
-			locationsList.push( {
-				code: countryCode,
-				name: countryName,
-				selected: countrySelected,
-				disabled: ! allowSelectingForbiddenCountries && Boolean( forbiddenCountries[ countryCode ] ),
-				ownerZoneId: forbiddenCountries[ countryCode ],
-				type: 'country',
+		getContinents( state, siteId ).forEach( ( { code: continentCode, name: continentName } ) => {
+			const continentSelected = selectedContinents.has( continentCode );
+			const continentCountries = getCountries( state, continentCode, siteId );
+			let selectedCount = 0;
+			const continentI = locationsList.push( {
+				code: continentCode,
+				name: continentName,
+				selected: continentSelected,
+				disabled: Boolean( forbiddenContinents[ continentCode ] ),
+				ownerZoneId: forbiddenContinents[ continentCode ],
+				type: 'continent',
+				countryCount: continentCountries.length,
 			} );
+			continentCountries.forEach( ( { code: countryCode, name: countryName } ) => {
+				const countrySelected = continentSelected || selectedCountries.has( countryCode );
+				if ( countrySelected ) {
+					selectedCount++;
+				}
+				locationsList.push( {
+					code: countryCode,
+					name: countryName,
+					selected: countrySelected,
+					disabled: ! allowSelectingForbiddenCountries && Boolean( forbiddenCountries[ countryCode ] ),
+					ownerZoneId: forbiddenCountries[ countryCode ],
+					type: 'country',
+				} );
+			} );
+			locationsList[ continentI - 1 ].selectedCountryCount = selectedCount;
 		} );
-		locationsList[ continentI - 1 ].selectedCountryCount = selectedCount;
-	} );
-	return locationsList;
-};
+		return locationsList;
+	},
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return [
+			getShippingZoneLocationsWithEdits( state, siteId ),
+			getContinentsOwnedByOtherZone( state, siteId ),
+			getCountriesOwnedByOtherZone( state, siteId ),
+		];
+	}
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -487,26 +581,36 @@ export const getCurrentlyEditingShippingZoneCountries = ( state, siteId = getSel
  * - disabled: Boolean, whether this location should be marked as "disabled". The user shouldn't be able to toggle a disabled element.
  * - ownerZoneId: The Zone ID that is the "owner" of this state, or undefined if no other zone includes this state.
  */
-export const getCurrentlyEditingShippingZoneStates = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areLocationsFilteredByState( state, siteId ) ) {
-		return [];
-	}
-	const locations = getShippingZoneLocationsWithEdits( state, siteId );
-	if ( ! locations ) {
-		return [];
-	}
-	const countryCode = locations.country[ 0 ];
-	const selectedStates = new Set( locations.state );
-	const forbiddenStates = getStatesOwnedByOtherZone( state, siteId, countryCode );
+export const getCurrentlyEditingShippingZoneStates = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! areLocationsFilteredByState( state, siteId ) ) {
+			return [];
+		}
+		const locations = getShippingZoneLocationsWithEdits( state, siteId );
+		if ( ! locations ) {
+			return [];
+		}
+		const countryCode = locations.country[ 0 ];
+		const selectedStates = new Set( locations.state );
+		const forbiddenStates = getStatesOwnedByOtherZone( state, siteId, countryCode );
 
-	return getStates( state, countryCode, siteId ).map( ( { code, name } ) => ( {
-		code,
-		name,
-		selected: selectedStates.has( code ),
-		disabled: Boolean( forbiddenStates[ code ] ),
-		ownerZoneId: forbiddenStates[ code ],
-	} ) );
-};
+		return getStates( state, countryCode, siteId ).map( ( { code, name } ) => ( {
+			code,
+			name,
+			selected: selectedStates.has( code ),
+			disabled: Boolean( forbiddenStates[ code ] ),
+			ownerZoneId: forbiddenStates[ code ],
+		} ) );
+	},
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return [
+			areLocationsFilteredByState( state, siteId ),
+			getShippingZoneLocationsWithEdits( state, siteId ),
+			getStatesOwnedByOtherZone( state, siteId ),
+		];
+	}
+);
 
 /**
  * @param {Object} state Whole Redux state tree

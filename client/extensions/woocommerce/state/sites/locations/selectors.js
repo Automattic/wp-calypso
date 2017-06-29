@@ -6,6 +6,7 @@ import { find, flatMap, get, isArray, isEmpty, omit, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
@@ -42,13 +43,16 @@ export const areLocationsLoading = ( state, siteId = getSelectedSiteId( state ) 
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} A list of continents, represented by { code, name } pairs. Sorted alphabetically by name.
  */
-export const getContinents = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areLocationsLoaded( state, siteId ) ) {
-		return [];
-	}
-	const continents = getRawLocations( state, siteId ).map( continent => omit( continent, 'countries' ) );
-	return sortBy( continents, 'name' );
-};
+export const getContinents = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! areLocationsLoaded( state, siteId ) ) {
+			return [];
+		}
+		const continents = getRawLocations( state, siteId ).map( continent => omit( continent, 'countries' ) );
+		return sortBy( continents, 'name' );
+	},
+	[ areLocationsLoaded, getRawLocations ]
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -56,17 +60,20 @@ export const getContinents = ( state, siteId = getSelectedSiteId( state ) ) => {
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} A list of countries in the given country, represented by { code, name } pairs. Sorted alphabetically by name.
  */
-export const getCountries = ( state, continentCode, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areLocationsLoaded( state, siteId ) ) {
-		return [];
-	}
-	const continent = find( getRawLocations( state, siteId ), { code: continentCode } );
-	if ( ! continent ) {
-		return [];
-	}
-	const countries = continent.countries.map( country => omit( country, 'states' ) );
-	return sortBy( countries, 'name' );
-};
+export const getCountries = createSelector(
+	( state, continentCode, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! areLocationsLoaded( state, siteId ) ) {
+			return [];
+		}
+		const continent = find( getRawLocations( state, siteId ), { code: continentCode } );
+		if ( ! continent ) {
+			return [];
+		}
+		const countries = continent.countries.map( country => omit( country, 'states' ) );
+		return sortBy( countries, 'name' );
+	},
+	[ areLocationsLoaded, getRawLocations ]
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -74,16 +81,19 @@ export const getCountries = ( state, continentCode, siteId = getSelectedSiteId( 
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {String} The country name. If it can't be found, it will default to returning the country ISO code.
  */
-export const getCountryName = ( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areLocationsLoaded( state, siteId ) ) {
-		return countryCode;
-	}
-	const country = find( flatMap( getRawLocations( state, siteId ), 'countries' ), { code: countryCode } );
-	if ( ! country ) {
-		return countryCode;
-	}
-	return country.name;
-};
+export const getCountryName = createSelector(
+	( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! areLocationsLoaded( state, siteId ) ) {
+			return countryCode;
+		}
+		const country = find( flatMap( getRawLocations( state, siteId ), 'countries' ), { code: countryCode } );
+		if ( ! country ) {
+			return countryCode;
+		}
+		return country.name;
+	},
+	[ areLocationsLoaded, getRawLocations ]
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -91,16 +101,19 @@ export const getCountryName = ( state, countryCode, siteId = getSelectedSiteId( 
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} A list of states in the given country, represented by { code, name } pairs. Sorted alphabetically by name.
  */
-export const getStates = ( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areLocationsLoaded( state, siteId ) ) {
-		return [];
-	}
-	const country = find( flatMap( getRawLocations( state, siteId ), 'countries' ), { code: countryCode } );
-	if ( ! country ) {
-		return [];
-	}
-	return sortBy( country.states, 'name' );
-};
+export const getStates = createSelector(
+	( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! areLocationsLoaded( state, siteId ) ) {
+			return [];
+		}
+		const country = find( flatMap( getRawLocations( state, siteId ), 'countries' ), { code: countryCode } );
+		if ( ! country ) {
+			return [];
+		}
+		return sortBy( country.states, 'name' );
+	},
+	[ areLocationsLoaded, getRawLocations ]
+);
 
 /**
  * @param {Object} state Whole Redux state tree
