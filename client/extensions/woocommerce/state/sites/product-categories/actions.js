@@ -55,8 +55,8 @@ export function fetchProductCategoriesSuccess( siteId, data ) {
  *
  * @param {Number} siteId The id of the site upon which to create.
  * @param {Object} category The product category object (may include a placeholder id).
- * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
- * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @param {Object|Function} [successAction] action with extra props { sentData, receivedData }
+ * @param {Object|Function} [failureAction] action with extra props { error }
  * @return {Object} Action object
  */
 export function createProductCategory( siteId, category, successAction, failureAction ) {
@@ -78,15 +78,15 @@ export function createProductCategory( siteId, category, successAction, failureA
  *
  * @param {Number} siteId The id of the site to which the category belongs.
  * @param {Object} data The complete product category object with which to update the state.
- * @param {Object} [completionAction] An action that is dispatched after the update is complete.
+ * @param {Object} originatingAction The action that precipitated this update.
  * @return {Object} Action object
  */
-export function productCategoryUpdated( siteId, data, completionAction ) {
+export function productCategoryUpdated( siteId, data, originatingAction ) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 		siteId,
 		data,
-		completionAction,
+		originatingAction,
 	};
 }
 
