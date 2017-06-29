@@ -13,22 +13,47 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
-const ProductHeader = ( { onView, onTrash, onSave, isBusy, translate, site, product } ) => {
-	const existing = product && ! isObject( product.id );
+function renderViewButton( product, translate ) {
+	const url = product && product.permalink;
+	return (
+		// TODO: Do more to validate this URL?
+		<a href={ url } className="products__header-view-link" target="_blank" rel="noopener noreferrer">
+			<Button borderless><Gridicon icon="visible" /><span> { translate( 'View' ) } </span></Button>
+		</a>
+	);
+}
 
-	const viewButton = onView &&
-		<Button borderless onClick={ onView }><Gridicon icon="visible" /><span> { translate( 'View' ) } </span></Button>;
+function renderTrashButton( onTrash, product, isBusy, translate ) {
+	return onTrash && (
+		<Button borderless scary onClick={ onTrash }>
+			<Gridicon icon="trash" />
+			<span>{ translate( 'Trash' ) } </span>
+		</Button>
+	);
+}
 
-	const trashButton = onTrash &&
-		<Button borderless scary onClick={ onTrash }><Gridicon icon="trash" /><span>{ translate( 'Trash' ) } </span></Button>;
-
+function renderSaveButton( onSave, product, isBusy, translate ) {
 	const saveExists = 'undefined' !== typeof onSave;
 	const saveDisabled = false === onSave;
 
-	const saveLabel = ( product && existing ? translate( 'Update' ) : translate( 'Save & Publish' ) );
+	const saveLabel = ( product && ! isObject( product.id )
+		? translate( 'Update' )
+		: translate( 'Save & Publish' )
+	);
 
-	const saveButton = saveExists &&
-		<Button primary onClick={ onSave } disabled={ saveDisabled } busy={ isBusy }> { saveLabel } </Button>;
+	return saveExists && (
+		<Button primary onClick={ onSave } disabled={ saveDisabled } busy={ isBusy }>
+			{ saveLabel }
+		</Button>
+	);
+}
+
+const ProductHeader = ( { viewEnabled, onTrash, onSave, isBusy, translate, site, product } ) => {
+	const existing = product && ! isObject( product.id );
+
+	const viewButton = viewEnabled && renderViewButton( product, translate );
+	const trashButton = renderTrashButton( onTrash, product, isBusy, translate );
+	const saveButton = renderSaveButton( onSave, product, isBusy, translate );
 
 	const currentCrumb = product && existing
 		? ( <span>{ translate( 'Edit Product' ) }</span> )
@@ -58,7 +83,7 @@ ProductHeader.propTypes = {
 			PropTypes.object,
 		] ),
 	} ),
-	onView: PropTypes.func,
+	viewEnabled: PropTypes.bool,
 	onTrash: PropTypes.func,
 	onSave: PropTypes.oneOfType( [
 		React.PropTypes.func,
