@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var PaginationPage = require( './pagination-page' );
+import PaginationPage from './pagination-page';
 
-module.exports = React.createClass({
+export default React.createClass({
 	displayName: 'StatModulePagination',
 
 	propTypes: {

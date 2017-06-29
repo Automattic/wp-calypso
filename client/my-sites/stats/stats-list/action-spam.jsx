@@ -1,18 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:action-spam' );
+import React from 'react';
+
+import classNames from 'classnames';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:stats:action-spam');
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'gridicons' );
+import wpcom from 'lib/wp';
 
-module.exports = React.createClass( {
+import analytics from 'lib/analytics';
+import Gridicon from 'gridicons';
+
+export default React.createClass( {
 	displayName: 'StatsActionSpam',
 
 	getInitialState: function() {
