@@ -16,14 +16,13 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import { recordAction, recordTrack } from 'reader/stats';
-// import { SEARCH_RESULTS } from 'reader/follow-button/follow-sources';
 import SiteResults from './site-results';
 import PostResults from './post-results';
 import ReaderMain from 'components/reader-main';
 import { addQueryArgs } from 'lib/url';
 import SearchStreamHeader, { POSTS } from './search-stream-header';
 import withWidth from 'lib/with-width';
-import { SORT_BY_LAST_UPDATED, SORT_BY_RELEVANCE } from './site-results';
+import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
 
 const WIDE_DISPLAY_CUTOFF = 660;
 
@@ -100,7 +99,6 @@ class SearchStream extends React.Component {
 
 	render() {
 		const { query, translate, searchType } = this.props;
-		// const emptyContent = <EmptyContent query={ query } />;
 		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 
