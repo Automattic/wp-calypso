@@ -23,6 +23,7 @@ import SectionHeader from 'components/section-header';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { getCurrentUserSiteCount } from 'state/current-user/selectors';
 
 function checkPropsChange( nextProps, propArr ) {
 	let i, prop;
@@ -47,7 +48,7 @@ export const PluginsList = React.createClass( {
 			name: PropTypes.string,
 		} ) ).isRequired,
 		header: PropTypes.string.isRequired,
-		sites: PropTypes.object.isRequired,
+		hasSingleSite: PropTypes.bool.isRequired,
 		selectedSite: PropTypes.object,
 		selectedSiteSlug: PropTypes.string,
 		pluginUpdateCount: PropTypes.number,
@@ -61,7 +62,7 @@ export const PluginsList = React.createClass( {
 	},
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		const propsToCheck = [ 'plugins', 'sites', 'selectedSite', 'pluginUpdateCount', '' ];
+		const propsToCheck = [ 'plugins', 'hasSingleSite', 'selectedSite', 'pluginUpdateCount', '' ];
 		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
 			return true;
 		}
@@ -166,7 +167,7 @@ export const PluginsList = React.createClass( {
 	},
 
 	hasNoSitesThatCanManage( plugin ) {
-		return ! plugin.sites.some( site => includes( site.modules || [], 'manage' ) );
+		return ! plugin.sites.some( site => site.canManage );
 	},
 
 	getSelected() {
@@ -174,8 +175,7 @@ export const PluginsList = React.createClass( {
 	},
 
 	siteSuffix() {
-		const hasSingleSite = this.props.sites && this.props.sites.get().length === 1;
-		return ( this.props.selectedSite || hasSingleSite ) ? '/' + this.props.selectedSiteSlug : '';
+		return ( this.props.selectedSite || this.props.hasSingleSite ) ? '/' + this.props.selectedSiteSlug : '';
 	},
 
 	recordEvent( eventAction, includeSelectedPlugins ) {
@@ -530,6 +530,7 @@ export default connect(
 			selectedSite,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
+			hasSingleSite: getCurrentUserSiteCount( state ) === 1
 		};
 	},
 	{
