@@ -42,7 +42,7 @@ class RequiredPluginsInstallView extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			activatingPlugins: [],
+			activatingPlugin: null,
 			installingPlugin: null,
 			progress: 0,
 		};
@@ -60,9 +60,16 @@ class RequiredPluginsInstallView extends Component {
 
 	componentDidUpdate = ( prevProps ) => {
 		const { plugins, site } = this.props;
+		if ( ! plugins || ! site ) {
+			return;
+		}
+		const isReady = plugins.length && ! this.state.installingPlugin && ! this.state.activatingPlugin;
+		const isDoneInstalling = prevProps.plugins && plugins.length > prevProps.plugins.length;
+		const activatingPlugin = find( plugins, { slug: this.state.activatingPlugin } );
+		const isDoneActivating = activatingPlugin && activatingPlugin.active;
 		if (
-			( site && plugins && plugins.length && ! this.state.installingPlugin ) ||
-			( plugins && prevProps.plugins && plugins.length > prevProps.plugins.length )
+			isReady ||
+			( isDoneInstalling || isDoneActivating )
 		) {
 			this.installPlugins( this.props.plugins );
 		}
@@ -96,12 +103,10 @@ class RequiredPluginsInstallView extends Component {
 				return;
 			}
 			if ( ! plugin.active ) {
-				if ( -1 < this.state.activatingPlugins.indexOf( slug ) ) {
-					return;
-				}
 				const wporgPlugin = getPlugin( wporg, slug );
-				this.setState( { activatingPlugins: [ ...this.state.activatingPlugins, slug ] } );
+				this.setState( { activatingPlugin: slug } );
 				this.props.activatePlugin( site.ID, { ...wporgPlugin, id: plugin.id } );
+				return;
 			}
 		}
 		this.props.setFinishedInstallOfRequiredPlugins(
