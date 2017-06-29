@@ -31,6 +31,7 @@ class ActivityLogItem extends Component {
 				'term',
 				'theme',
 				'user',
+				'widget',
 			] ).isRequired,
 			name: PropTypes.string.isRequired,
 			ts_utc: PropTypes.number.isRequired,
@@ -104,6 +105,12 @@ class ActivityLogItem extends Component {
 					external_user_id: PropTypes.number,
 					login: PropTypes.string.isRequired,
 					wpcom_user_id: PropTypes.number,
+				} ),
+
+				widget: PropTypes.shape( {
+					id: PropTypes.number,
+					name: PropTypes.string,
+					sidebar: PropTypes.string,
 				} ),
 			} ),
 		} ).isRequired,
