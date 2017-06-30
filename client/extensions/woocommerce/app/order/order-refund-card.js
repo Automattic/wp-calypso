@@ -184,7 +184,11 @@ class OrderRefundCard extends Component {
 					}
 				</div>
 
-				<Dialog isVisible={ showDialog } onClose={ this.toggleDialog } className={ dialogClass }>
+				<Dialog
+					isVisible={ showDialog }
+					onClose={ this.toggleDialog }
+					className={ dialogClass }
+					additionalClassNames="order__refund-dialog woocommerce">
 					<h1>{ translate( 'Refund order' ) }</h1>
 					<OrderDetailsTable order={ order } isEditable onChange={ this.recalculateRefund } site={ site } />
 					<form className="order__refund-container">
