@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import cx from 'classnames';
+import classnames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -119,11 +119,11 @@ class SearchStream extends React.Component {
 			comment: 'A sort order, showing the most recent posts first.',
 		} );
 
-		const searchStreamResultsClasses = cx( 'search-stream__results', {
+		const searchStreamResultsClasses = classnames( 'search-stream__results', {
 			'is-two-columns': !! query,
 		} );
 
-		const singleColumnResultsClasses = cx( 'search-stream__single-column-results', {
+		const singleColumnResultsClasses = classnames( 'search-stream__single-column-results', {
 			'is-post-results': searchType === POSTS && query,
 		} );
 
