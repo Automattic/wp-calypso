@@ -83,7 +83,6 @@
 		"reader/related-posts": true,
 		"reader/tags-with-elasticsearch": false,
 		"reader/search": true,
-		"reader/sites-in-search": true,
 		"resume-editing": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,
