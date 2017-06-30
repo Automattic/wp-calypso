@@ -48,6 +48,7 @@ const MappedDomain = React.createClass( {
 	domainWarnings() {
 		return <DomainWarnings
 			domain={ this.props.domain }
+			position="mapped-domain"
 			selectedSite={ this.props.selectedSite }
 			ruleWhiteList={ [ 'wrongNSMappedDomains' ] } />;
 	},

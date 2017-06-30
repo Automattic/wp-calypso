@@ -112,6 +112,7 @@ class CurrentPlan extends Component {
 
 				{ showDomainWarnings && <DomainWarnings
 						domains={ domains }
+						position="current-plan"
 						selectedSite={ selectedSite }
 						ruleWhiteList={ [
 							'newDomainsWithPrimary',

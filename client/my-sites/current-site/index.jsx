@@ -91,6 +91,7 @@ class CurrentSite extends Component {
 				isCompact
 				selectedSite={ site }
 				domains={ domains }
+				position="site-sidebar"
 				ruleWhiteList={ [
 					'unverifiedDomainsCanManage',
 					'unverifiedDomainsCannotManage',
