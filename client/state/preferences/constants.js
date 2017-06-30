@@ -9,5 +9,5 @@ export const DEFAULT_PREFERENCE_VALUES = {
 	recentSites: [],
 	mediaScale: 0.157,
 	editorAdvancedVisible: false,
-	publishConfirmation: true,
+	editorConfirmationDisabledSites: [],
 };
