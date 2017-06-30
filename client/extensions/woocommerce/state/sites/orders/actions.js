@@ -56,12 +56,16 @@ export const fetchOrders = ( siteId, page ) => ( dispatch, getState ) => {
 	} );
 };
 
-export const fetchOrder = ( siteId, orderId ) => ( dispatch, getState ) => {
+export const fetchOrder = ( siteId, orderId, refresh = false ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
-	if ( isOrderLoaded( state, orderId, siteId ) || isOrderLoading( state, orderId, siteId ) ) {
+	if ( isOrderLoading( state, orderId, siteId ) ) {
+		return;
+	}
+	// Bail if the order is loaded, and we don't want to force a refresh
+	if ( ! refresh && isOrderLoaded( state, orderId, siteId ) ) {
 		return;
 	}
 

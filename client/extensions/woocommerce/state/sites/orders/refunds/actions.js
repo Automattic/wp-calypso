@@ -30,7 +30,7 @@ export const sendRefund = ( siteId, orderId, refund ) => ( dispatch, getState ) 
 
 	return request( siteId ).post( `orders/${ orderId }/refunds`, refund ).then( () => {
 		dispatch( successNotice( translate( 'Refund granted.' ), { duration: 5000 } ) );
-		dispatch( fetchOrder( siteId, orderId ) );
+		dispatch( fetchOrder( siteId, orderId, true ) );
 		dispatch( {
 			type: WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
 			siteId,
