@@ -109,13 +109,17 @@ export class CommentDetailReply extends Component {
 
 		const hasCommentText = commentText.trim().length > 0;
 
+		// Only show the scrollbar if the textarea content exceeds the max height
+		const hasScrollbar = textareaMinHeight === TEXTAREA_MAX_HEIGHT;
+
 		const buttonClasses = classNames( 'comment-detail__reply-submit', {
+			'has-scrollbar': hasScrollbar,
 			'is-active': hasCommentText,
-			'is-visible': hasFocus || hasCommentText,
 		} );
 
 		const textareaClasses = classNames( {
-			'is-focused': hasFocus,
+			'has-focus': hasFocus,
+			'has-scrollbar': hasScrollbar,
 		} );
 
 		const textareaStyle = {
@@ -124,10 +128,6 @@ export class CommentDetailReply extends Component {
 		if ( ! hasFocus ) {
 			// Force the textarea to collapse even if it was manually resized
 			textareaStyle.height = TEXTAREA_MIN_HEIGHT_COLLAPSED;
-		}
-		if ( textareaMinHeight === TEXTAREA_MAX_HEIGHT ) {
-			// Only show the scrollbar if the textarea content exceeds the max height
-			textareaStyle.overflow = 'auto';
 		}
 
 		return (
@@ -145,13 +145,15 @@ export class CommentDetailReply extends Component {
 						value={ commentText }
 					/>
 				</AutoDirection>
-				<button
-					className={ buttonClasses }
-					disabled={ ! hasCommentText }
-					onClick={ this.submitComment }
-				>
-					{ translate( 'Send' ) }
-				</button>
+				{ hasFocus &&
+					<button
+						className={ buttonClasses }
+						disabled={ ! hasCommentText }
+						onClick={ this.submitComment }
+					>
+						{ translate( 'Send' ) }
+					</button>
+				}
 			</form>
 		);
 	}
