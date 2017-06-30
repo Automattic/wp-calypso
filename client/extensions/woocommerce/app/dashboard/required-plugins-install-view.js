@@ -95,16 +95,16 @@ class RequiredPluginsInstallView extends Component {
 			if ( ! plugin ) {
 				const wporgPlugin = getPlugin( wporg, slug );
 				const progress = this.state.progress + ( 100 / requiredPlugins.length );
-				this.setState( {
+				this.setState( () => ( {
 					installingPlugin: slug,
 					progress
-				} );
+				} ) );
 				this.props.installPlugin( site.ID, wporgPlugin );
 				return;
 			}
 			if ( ! plugin.active ) {
 				const wporgPlugin = getPlugin( wporg, slug );
-				this.setState( { activatingPlugin: slug } );
+				this.setState( () => ( { activatingPlugin: slug } ) );
 				this.props.activatePlugin( site.ID, { ...wporgPlugin, id: plugin.id } );
 				return;
 			}
