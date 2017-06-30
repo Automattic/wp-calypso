@@ -191,7 +191,7 @@ describe( 'actions', () => {
 			} );
 			const dispatch = spy();
 			fetchOrder( 123, 40 )( dispatch, getState );
-			expect( dispatch ).to.have.not.been.called;
+			expect( dispatch ).to.not.have.been.called;
 		} );
 	} );
 } );
