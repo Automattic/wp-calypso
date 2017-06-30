@@ -209,10 +209,12 @@ const Post = React.createClass( {
 		}
 
 		return (
-			<a href={ this.getContentLinkURL() }
-					className="post__excerpt post__content-link"
-					target={ this.getContentLinkTarget() }
-					onClick={ this.analyticsEvents.postExcerptClick }>
+			<a
+				href={ this.getContentLinkURL() }
+				className="post__excerpt post__content-link"
+				target={ this.getContentLinkTarget() }
+				onClick={ this.analyticsEvents.postExcerptClick }
+			>
 				{ excerptElement }
 			</a>
 		);
@@ -336,14 +338,16 @@ const Post = React.createClass( {
 						showModerationTools={ isEnabled( 'comments/moderation-tools-in-posts' ) }
 						commentsFilter={ config.isEnabled( 'comments/filters-in-posts' ) ? this.state.commentsFilter : 'approved' }
 						onFilterChange={ this.setCommentsFilter }
-						onCommentsUpdate={ noop } />
+						onCommentsUpdate={ noop }
+					/>
 				}
 				{
 					this.state.showShare &&
 					config.isEnabled( 'republicize' ) &&
 					<PostShare
 						post={ this.props.post }
-						siteId={ this.props.post.site_ID } />
+						siteId={ this.props.post.site_ID }
+					/>
 				}
 			</Card>
 		);
