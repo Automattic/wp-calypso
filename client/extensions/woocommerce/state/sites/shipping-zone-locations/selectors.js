@@ -1,14 +1,12 @@
 /**
  * External dependencies
  */
-import { get, isEmpty, isObject, orderBy } from 'lodash';
+import { get, isEmpty, isObject } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getAPIShippingZones } from '../shipping-zones/selectors';
-import { getZoneLocationsPriority } from './helpers';
 import { LOADING } from 'woocommerce/state/constants';
 
 export const getRawShippingZoneLocations = ( state, siteId = getSelectedSiteId( state ) ) => {
