@@ -27,7 +27,7 @@ function renderTrashButton( onTrash, product, isBusy, translate ) {
 	return onTrash && (
 		<Button borderless scary onClick={ onTrash }>
 			<Gridicon icon="trash" />
-			<span>{ translate( 'Trash' ) } </span>
+			<span>{ translate( 'Delete' ) } </span>
 		</Button>
 	);
 }

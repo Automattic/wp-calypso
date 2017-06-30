@@ -4,16 +4,19 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import accept from 'lib/accept';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { createProduct, fetchProduct } from 'woocommerce/state/sites/products/actions';
+import { createProduct, fetchProduct, deleteProduct as deleteProductAction } from 'woocommerce/state/sites/products/actions';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -27,6 +30,7 @@ import { editProductVariation } from 'woocommerce/state/ui/products/variations/a
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
+import page from 'page';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
 
@@ -77,8 +81,36 @@ class ProductUpdate extends React.Component {
 		// TODO: Remove the product we added here from the edit state.
 	}
 
+	// TODO: In v1, this deletes a product, as we don't have trash management.
+	// Once we have trashing management, we can introduce 'trash' instead.
 	onTrash = () => {
-		// TODO: Add action dispatch to trash this product.
+		const { translate, site, product, deleteProduct } = this.props;
+		const areYouSure = translate( 'Are you sure you want to permanently delete \'%(name)s\'?', {
+			args: { name: product.name }
+		} );
+		accept( areYouSure, function( accepted ) {
+			if ( ! accepted ) {
+				return;
+			}
+			const successAction = () => {
+				debounce( () => {
+					page.redirect( getLink( '/store/products/:site/', site ) );
+				}, 1000 )();
+				return successNotice(
+					translate( '%(product)s successfully deleted.', {
+						args: { product: product.name },
+					} )
+				);
+			};
+			const failureAction = () => {
+				return errorNotice(
+					translate( 'There was a problem deleting %(product)s. Please try again.', {
+						args: { product: product.name },
+					} )
+				);
+			};
+			deleteProduct( site.ID, product.id, successAction, failureAction );
+		} );
 	}
 
 	onSave = () => {
@@ -160,6 +192,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			createProduct,
 			createProductActionList,
+			deleteProduct: deleteProductAction,
 			editProduct,
 			editProductCategory,
 			editProductAttribute,
