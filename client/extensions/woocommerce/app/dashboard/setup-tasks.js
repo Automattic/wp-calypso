@@ -10,6 +10,9 @@ import React, { Component, PropTypes } from 'react';
  * Internal dependencies
  */
 import {
+	areTaxCalculationsEnabled,
+} from 'woocommerce/state/sites/settings/general/selectors';
+import {
 	areSetupChoicesLoading,
 	getOptedOutOfShippingSetup,
 	getOptedOutofTaxesSetup,
@@ -30,6 +33,9 @@ import {
 	setOptedOutOfTaxesSetup,
 	setTriedCustomizerDuringInitialSetup,
 } from 'woocommerce/state/sites/setup-choices/actions';
+import {
+	fetchSettingsGeneral,
+} from 'woocommerce/state/sites/settings/general/actions';
 import {
 	arePaymentsSetup
 } from 'woocommerce/state/ui/payments/methods/selectors';
@@ -56,9 +62,10 @@ class SetupTasks extends Component {
 		const { site } = this.props;
 
 		if ( site && site.ID ) {
-			this.props.fetchSetupChoices( site.ID );
 			this.props.fetchPaymentMethods( site.ID );
 			this.props.fetchProducts( site.ID, 1 );
+			this.props.fetchSettingsGeneral( site.ID );
+			this.props.fetchSetupChoices( site.ID );
 		}
 	}
 
@@ -69,6 +76,8 @@ class SetupTasks extends Component {
 		const oldSiteId = site && site.ID || null;
 
 		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchProducts( newSiteId, 1 );
+			this.props.fetchSettingsGeneral( newSiteId );
 			this.props.fetchSetupChoices( newSiteId );
 		}
 	}
@@ -217,7 +226,7 @@ function mapStateToProps( state ) {
 		// TODO - connect the following to selectors when they become available
 		paymentsAreSetUp: arePaymentsSetup( state ),
 		shippingIsSetUp: false,
-		taxesAreSetUp: false,
+		taxesAreSetUp: !! areTaxCalculationsEnabled( state ),
 	};
 }
 
@@ -226,6 +235,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			fetchPaymentMethods,
 			fetchProducts,
+			fetchSettingsGeneral,
 			fetchSetupChoices,
 			setOptedOutOfShippingSetup,
 			setOptedOutOfTaxesSetup,
