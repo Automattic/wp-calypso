@@ -2569,7 +2569,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getOrderOperationsToSaveCurrentZone( state ) ).to.deep.equal( [] );
+			expect( getOrderOperationsToSaveCurrentZone( state ) ).to.deep.equal( {} );
 		} );
 
 		it( 'should return a move operation if the zone locations edits have made it change priority', () => {
@@ -2610,9 +2610,9 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getOrderOperationsToSaveCurrentZone( state ) ).to.deep.equal( [
-				{ id: 1, order: 2 },
-			] );
+			expect( getOrderOperationsToSaveCurrentZone( state ) ).to.deep.equal( {
+				1: 2, // Zone 1 must have order=2
+			} );
 		} );
 
 		it( 'should return multiple move operations if the existing zones were not in ideal order', () => {
@@ -2663,11 +2663,11 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getOrderOperationsToSaveCurrentZone( state ) ).to.deep.equal( [
-				{ id: 1, order: 2 },
-				{ id: 2, order: 3 },
-				{ id: 3, order: 3 },
-			] );
+			expect( getOrderOperationsToSaveCurrentZone( state ) ).to.deep.equal( {
+				1: 2, // Zone 1 must have order=2
+				2: 3, // Zone 2 must have order=3
+				3: 3, // Zone 3 must have order=3
+			} );
 		} );
 	} );
 } );

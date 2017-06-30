@@ -535,13 +535,11 @@ export const areCurrentlyEditingShippingZoneLocationsValid = ( state, siteId = g
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} A list of actions to save the current zone changes while preserving a valid shipping zones order.
- * Each action will have the properties:
- * - {Number} id Zone ID
- * - {Number} order New order property for that Zone
+ * @return {Object} A map of the new "order" property that the zones will need to have to preserve a correct ordering.
+ * The keys will be the zone IDs, and the values will be the required order property for those zones
  */
 export const getOrderOperationsToSaveCurrentZone = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const moves = [];
+	const moves = {};
 	const allLocations = getRawShippingZoneLocations( state, siteId );
 	const allZones = orderBy( getAPIShippingZones( state, siteId ), 'order' );
 
@@ -550,7 +548,7 @@ export const getOrderOperationsToSaveCurrentZone = ( state, siteId = getSelected
 	const currentZoneLocations = getShippingZoneLocationsWithEdits( state, siteId );
 	const currentZonePriority = getZoneLocationsPriority( currentZoneLocations );
 	if ( currentZonePriority && currentZoneOrder !== currentZonePriority ) {
-		moves.push( { id: currentZone.id, order: currentZonePriority } );
+		moves[ currentZone.id ] = currentZonePriority;
 	}
 
 	// Normally this won't be needed because all the already saved zones will have the correct order according
@@ -567,7 +565,7 @@ export const getOrderOperationsToSaveCurrentZone = ( state, siteId = getSelected
 		}
 
 		if ( order !== priority ) {
-			moves.push( { id, order: priority } );
+			moves[ id ] = priority;
 		}
 	}
 
