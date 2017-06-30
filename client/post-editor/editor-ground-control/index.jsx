@@ -289,7 +289,7 @@ export default React.createClass( {
 
 	renderGroundControlActionButtons: function() {
 		const publishComboClasses = classNames( 'editor-ground-control__publish-combo', {
-			'is-standalone': config.isEnabled( 'post-editor/delta-post-publish-flow' )
+			'is-standalone': ! this.canPublishPost() || config.isEnabled( 'post-editor/delta-post-publish-flow' )
 		} );
 
 		return ( <div className="editor-ground-control__action-buttons">
