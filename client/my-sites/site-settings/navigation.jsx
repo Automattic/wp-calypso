@@ -51,6 +51,7 @@ export class SiteSettingsNavigation extends Component {
 				<NavTabs>
 					<NavItem
 						path={ `/settings/general/${ site.slug }` }
+						preloadSectionName="settings-general"
 						selected={ section === 'general' } >
 							{ strings.general }
 					</NavItem>
