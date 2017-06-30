@@ -105,7 +105,9 @@ class DirectlyCachedFiles extends Component {
 										disabled={ true }
 										key={ index }
 										value={ page || '' } />
-									<Button compact onClick={ deleteFieldArrayValue( 'cache_direct_pages', index ) }>
+									<Button compact
+										className="wp-super-cache__directly-cached-files-delete"
+										onClick={ deleteFieldArrayValue( 'cache_direct_pages', index ) }>
 										{ translate( 'Delete' ) }
 									</Button>
 								</FormFieldset>
