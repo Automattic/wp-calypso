@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { installPlugin } from 'state/plugins/installed/actions';
+import { installPlugin, activatePlugin } from 'state/plugins/installed/actions';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
@@ -42,6 +42,7 @@ class RequiredPluginsInstallView extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
+			activatingPlugin: null,
 			installingPlugin: null,
 			progress: 0,
 		};
@@ -59,9 +60,16 @@ class RequiredPluginsInstallView extends Component {
 
 	componentDidUpdate = ( prevProps ) => {
 		const { plugins, site } = this.props;
+		if ( ! plugins || ! site ) {
+			return;
+		}
+		const isReady = plugins.length && ! this.state.installingPlugin && ! this.state.activatingPlugin;
+		const isDoneInstalling = prevProps.plugins && plugins.length > prevProps.plugins.length;
+		const activatingPlugin = find( plugins, { slug: this.state.activatingPlugin } );
+		const isDoneActivating = activatingPlugin && activatingPlugin.active;
 		if (
-			( site && plugins && plugins.length && ! this.state.installingPlugin ) ||
-			( plugins && prevProps.plugins && plugins.length > prevProps.plugins.length )
+			isReady ||
+			( isDoneInstalling || isDoneActivating )
 		) {
 			this.installPlugins( this.props.plugins );
 		}
@@ -81,17 +89,23 @@ class RequiredPluginsInstallView extends Component {
 		for ( let i = 0; i < requiredPlugins.length; i++ ) {
 			const slug = requiredPlugins[ i ];
 			const plugin = find( plugins, { slug } );
+			if ( ! wporg[ slug ] ) {
+				return;
+			}
 			if ( ! plugin ) {
-				if ( ! wporg[ slug ] ) {
-					return;
-				}
 				const wporgPlugin = getPlugin( wporg, slug );
 				const progress = this.state.progress + ( 100 / requiredPlugins.length );
-				this.setState( {
+				this.setState( () => ( {
 					installingPlugin: slug,
 					progress
-				} );
+				} ) );
 				this.props.installPlugin( site.ID, wporgPlugin );
+				return;
+			}
+			if ( ! plugin.active ) {
+				const wporgPlugin = getPlugin( wporg, slug );
+				this.setState( () => ( { activatingPlugin: slug } ) );
+				this.props.activatePlugin( site.ID, { ...wporgPlugin, id: plugin.id } );
 				return;
 			}
 		}
@@ -131,6 +145,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			activatePlugin,
 			fetchPluginData,
 			installPlugin,
 			setFinishedInstallOfRequiredPlugins,
