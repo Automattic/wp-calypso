@@ -46,7 +46,7 @@ class EditorConfirmationSidebar extends React.Component {
 			case 'update':
 				return this.props.translate( 'Update' );
 			case 'schedule':
-				return this.props.translate( 'Schedule' );
+				return this.props.translate( 'Schedule!' );
 			case 'publish':
 				return this.props.translate( 'Publish!' );
 			case 'requestReview':
