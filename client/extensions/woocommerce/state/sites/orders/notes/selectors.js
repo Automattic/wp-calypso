@@ -59,6 +59,5 @@ export const getOrderNotes = ( state, orderId, siteId = getSelectedSiteId( state
  */
 export const isOrderNoteSaving = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const isSaving = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'notes', 'isSaving', orderId ] );
-	// Strict check because it could also be undefined.
-	return ( true === isSaving );
+	return !! isSaving;
 };
