@@ -11,7 +11,7 @@
 		top: 47px;
 		right: 0;
 		left: 0;
-		z-index: z-index( 'root', '.web-preview' );
+		z-index: z-index( 'root', '.editor-preview' );
 	transition: opacity 0.3s ease-in-out;
 	width: 100%;
 	height: calc( 100% - 47px );
@@ -34,7 +34,7 @@
 	height: initial;
 	position: relative;
 		top: 30%;
-		z-index: z-index( 'root', '.web-preview' );
+		z-index: z-index( 'root', '.editor-preview' );
 
 	strong {
 		color: $gray-text-min;
