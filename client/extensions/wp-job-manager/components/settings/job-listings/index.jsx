@@ -10,9 +10,9 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import ExternalLink from 'components/external-link';
+import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -21,13 +21,12 @@ import ReduxFormTextInput from 'components/redux-forms/redux-form-text-input';
 import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
 import SectionHeader from 'components/section-header';
 
-const JobListings = ( { perPage, translate } ) => {
+const JobListings = ( { isSaving, perPage, translate } ) => {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Listings' ) }>
-				<Button compact primary>
-					{ translate( 'Save Settings' ) }
-				</Button>
+				<FormButton compact
+					isSubmitting={ isSaving } />
 			</SectionHeader>
 			<Card>
 				<form>
@@ -77,9 +76,8 @@ const JobListings = ( { perPage, translate } ) => {
 			</Card>
 
 			<SectionHeader label={ translate( 'Categories' ) }>
-				<Button compact primary>
-					{ translate( 'Save Settings' ) }
-				</Button>
+				<FormButton compact
+					isSubmitting={ isSaving } />
 			</SectionHeader>
 			<Card>
 				<form>
@@ -130,7 +128,10 @@ const JobListings = ( { perPage, translate } ) => {
 				</form>
 			</Card>
 
-			<SectionHeader label={ translate( 'Types' ) }></SectionHeader>
+			<SectionHeader label={ translate( 'Types' ) }>
+				<FormButton compact
+					isSubmitting={ isSaving } />
+			</SectionHeader>
 			<Card>
 				<form>
 					<FormFieldset>
@@ -155,9 +156,8 @@ const JobListings = ( { perPage, translate } ) => {
 			</Card>
 
 			<SectionHeader label={ translate( 'Date Format' ) }>
-				<Button compact primary>
-					{ translate( 'Save Settings' ) }
-				</Button>
+				<FormButton compact
+					isSubmitting={ isSaving } />
 			</SectionHeader>
 			<Card>
 				<form>
@@ -187,9 +187,8 @@ const JobListings = ( { perPage, translate } ) => {
 			</Card>
 
 			<SectionHeader label={ translate( 'Google Maps API Key' ) }>
-				<Button compact primary>
-					{ translate( 'Save Settings' ) }
-				</Button>
+				<FormButton compact
+					isSubmitting={ isSaving } />
 			</SectionHeader>
 			<Card>
 				<form>
