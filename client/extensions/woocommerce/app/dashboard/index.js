@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ActionHeader from 'woocommerce/components/action-header';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import {
 	areSetupChoicesLoading,
@@ -64,6 +65,29 @@ class Dashboard extends Component {
 		}
 	}
 
+	getBreadcrumb = () => {
+		const {
+			finishedInstallOfRequiredPlugins,
+			finishedInitialSetup,
+			setStoreAddressDuringInitialSetup,
+			translate
+		} = this.props;
+
+		if ( ! finishedInstallOfRequiredPlugins ) {
+			return translate( 'Installing Plugins' );
+		}
+
+		if ( ! setStoreAddressDuringInitialSetup ) {
+			return translate( 'Store Location' );
+		}
+
+		if ( ! finishedInitialSetup ) {
+			return translate( 'Store Setup' );
+		}
+
+		return translate( 'Dashboard' );
+	}
+
 	renderDashboardContent = () => {
 		const {
 			finishedInstallOfRequiredPlugins,
@@ -102,6 +126,7 @@ class Dashboard extends Component {
 
 		return (
 			<Main className={ classNames( 'dashboard', className ) }>
+				<ActionHeader breadcrumbs={ this.getBreadcrumb() } />
 				{ this.renderDashboardContent() }
 			</Main>
 		);
