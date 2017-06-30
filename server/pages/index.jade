@@ -44,16 +44,32 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		link(rel='apple-touch-icon', sizes='180x180', href='//s1.wp.com/i/favicons/apple-touch-icon-180x180.png')
 		link(rel='profile', href='http://gmpg.org/xfn/11')
 		link(rel='manifest', href='/calypso/manifest.json')
-		link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese')
-		link(rel='stylesheet', href='//s1.wp.com/i/noticons/noticons.css?v=20150727')
-		link(rel='stylesheet', href='//s1.wp.com/wp-includes/css/dashicons.css?v=20150727')
+
+		if !! renderedLayout
+			//- If we're server-side rendering, just load the stylesheets normally
+			- cssLinkAttrs = { rel: 'stylesheet' }
+		else
+			//- If we're not server-side rendering, load CSS async
+			- cssLinkAttrs = { rel: 'preload', as: 'style', onload: "this.rel='stylesheet'" }
+
+			//- JS polyfill for rel="preload"
+			script(type='text/javascript')!= loadCssPolyfill
+
+		link(href='https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese')&attributes( cssLinkAttrs )
+		link(href='//s1.wp.com/i/noticons/noticons.css?v=20150727')&attributes( cssLinkAttrs )
+		link(href='//s1.wp.com/wp-includes/css/dashicons.css?v=20150727')&attributes( cssLinkAttrs )
+
+		if ! renderedLayout
+			//- Required CSS for the initial shell
+			style(type="text/css")!= shellCss
+
 		if isRTL
-			link(rel='stylesheet', href=urls['style-rtl.css'])
+			link(href=urls['style-rtl.css'])&attributes( cssLinkAttrs )
 		else
 			if 'development' === env || isDebug
-				link(rel='stylesheet', href=urls['style-debug.css'])
+				link(href=urls['style-debug.css'])&attributes( cssLinkAttrs )
 			else
-				link(rel='stylesheet', href=urls['style.css'])
+				link(href=urls['style.css'])&attributes( cssLinkAttrs )
 
 	body(class=isRTL ? 'rtl' : '')
 		if renderedLayout

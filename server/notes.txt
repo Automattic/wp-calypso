@@ -1,0 +1,13 @@
+
+- Top-level middleware, get response time stats (per section?)
+ - Getting about 120 req/sec
+  - Actually 300 req/sec
+- Log the RenderToString
+
+- Middleware:
+	- Log section and timing data for it
+	- Not sure about the API though. Look at P2 and other examples
+
+- Maybe look at a way to capture the "tick time"
+
+- Also renderToString

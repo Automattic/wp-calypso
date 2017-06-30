@@ -30,6 +30,9 @@ const URL_BASE_PATH = '/calypso';
 const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
 
+const SHELL_CSS_PATH = SERVER_BASE_PATH + '/shell.css';
+const LOAD_CSS_POLYFILL_PATH = SERVER_BASE_PATH + '/loadcss.m.js';
+
 const staticFiles = [
 	{ path: 'style.css' },
 	{ path: 'editor.css' },
@@ -39,6 +42,24 @@ const staticFiles = [
 ];
 
 const sections = sectionsModule.get();
+
+// Retrieve Promise for the contents of `filepath`. On error, resolve with
+// empty string.
+function getFileContentsSafely( filepath ) {
+	return new Promise( function( resolve ) {
+		fs.readFile( filepath, function( err, content ) {
+			if ( err ) {
+				resolve( '' );
+			} else {
+				resolve( content );
+			}
+		} );
+	} );
+}
+
+// Load and cache file contents for inlining
+const loadCssContentPromise = getFileContentsSafely( process.cwd() + LOAD_CSS_POLYFILL_PATH );
+const shellCssContentPromise = getFileContentsSafely( process.cwd() + SHELL_CSS_PATH );
 
 // TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
 function getInitialServerState( serializedServerState ) {
@@ -119,7 +140,7 @@ function getCurrentCommitShortChecksum() {
 	}
 }
 
-function getDefaultContext( request ) {
+function getDefaultContext( request, callback ) {
 	let initialServerState = {};
 	// We don't cache routes with query params
 	if ( isEmpty( request.query ) ) {
@@ -182,16 +203,29 @@ function getDefaultContext( request ) {
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
-	return context;
+	// Fetch JS and CSS to be inlined
+	Promise.all( [
+		loadCssContentPromise,
+		shellCssContentPromise
+	] ).then( function( values ) {
+		context.loadCssPolyfill = values[ 0 ];
+		context.shellCss = values[ 1 ];
+
+		// Return context object
+		callback( context );
+	} );
 }
 
 function setUpLoggedOutRoute( req, res, next ) {
-	req.context = getDefaultContext( req );
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN'
 	} );
 
-	next();
+	getDefaultContext( req, function( context ) {
+		req.context = context;
+
+		next();
+	} );
 }
 
 function setUpLoggedInRoute( req, res, next ) {
@@ -201,86 +235,86 @@ function setUpLoggedInRoute( req, res, next ) {
 		'X-Frame-Options': 'SAMEORIGIN'
 	} );
 
-	const context = getDefaultContext( req );
+	getDefaultContext( req, function( context ) {
+		if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
+			const user = require( 'user-bootstrap' );
 
-	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		const user = require( 'user-bootstrap' );
+			protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
-		protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
+			redirectUrl = config( 'login_url' ) + '?' + qs.stringify( {
+				redirect_to: protocol + '://' + config( 'hostname' ) + req.originalUrl
+			} );
 
-		redirectUrl = config( 'login_url' ) + '?' + qs.stringify( {
-			redirect_to: protocol + '://' + config( 'hostname' ) + req.originalUrl
-		} );
-
-		// if we don't have a wordpress cookie, we know the user needs to
-		// authenticate
-		if ( ! req.cookies.wordpress_logged_in ) {
-			debug( 'User not logged in. Redirecting to %s', redirectUrl );
-			res.redirect( redirectUrl );
-			return;
-		}
-		start = new Date().getTime();
-
-		debug( 'Issuing API call to fetch user object' );
-		user( req.get( 'Cookie' ), function( error, data ) {
-			let searchParam, errorMessage;
-
-			if ( error ) {
-				if ( error.error === 'authorization_required' ) {
-					debug( 'User public API authorization required. Redirecting to %s', redirectUrl );
-					res.redirect( redirectUrl );
-				} else {
-					if ( error.error ) {
-						errorMessage = error.error + ' ' + error.message;
-					} else {
-						errorMessage = error.message;
-					}
-
-					console.log( 'API Error: ' + errorMessage );
-
-					res.status( 500 ).render( '500.jade', context );
-				}
-
+			// if we don't have a wordpress cookie, we know the user needs to
+			// authenticate
+			if ( ! req.cookies.wordpress_logged_in ) {
+				debug( 'User not logged in. Redirecting to %s', redirectUrl );
+				res.redirect( redirectUrl );
 				return;
 			}
+			start = new Date().getTime();
 
-			const end = ( new Date().getTime() ) - start;
+			debug( 'Issuing API call to fetch user object' );
+			user( req.get( 'Cookie' ), function( error, data ) {
+				let searchParam, errorMessage;
 
-			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
-			context.user = data;
-			context.isRTL = data.isRTL ? true : false;
+				if ( error ) {
+					if ( error.error === 'authorization_required' ) {
+						debug( 'User public API authorization required. Redirecting to %s', redirectUrl );
+						res.redirect( redirectUrl );
+					} else {
+						if ( error.error ) {
+							errorMessage = error.error + ' ' + error.message;
+						} else {
+							errorMessage = error.message;
+						}
 
-			if ( data.localeSlug ) {
-				context.lang = data.localeSlug;
-			}
+						console.log( 'API Error: ' + errorMessage );
 
-			if ( req.path === '/' && req.query ) {
-				searchParam = req.query.s || req.query.q;
-				if ( searchParam ) {
-					res.redirect( 'https://' + context.lang + '.search.wordpress.com/?q=' + encodeURIComponent( searchParam ) );
+						res.status( 500 ).render( '500.jade', context );
+					}
+
 					return;
 				}
 
-				if ( req.query.newuseremail ) {
-					debug( 'Detected legacy email verification action. Redirecting...' );
-					res.redirect( 'https://wordpress.com/verify-email/?' + qs.stringify( req.query ) );
-					return;
+				const end = ( new Date().getTime() ) - start;
+
+				debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
+				context.user = data;
+				context.isRTL = data.isRTL ? true : false;
+
+				if ( data.localeSlug ) {
+					context.lang = data.localeSlug;
 				}
 
-				if ( req.query.action === 'wpcom-invite-users' ) {
-					debug( 'Detected legacy invite acceptance action. Redirecting...' );
-					res.redirect( 'https://wordpress.com/accept-invite/?' + qs.stringify( req.query ) );
-					return;
-				}
-			}
+				if ( req.path === '/' && req.query ) {
+					searchParam = req.query.s || req.query.q;
+					if ( searchParam ) {
+						res.redirect( 'https://' + context.lang + '.search.wordpress.com/?q=' + encodeURIComponent( searchParam ) );
+						return;
+					}
 
+					if ( req.query.newuseremail ) {
+						debug( 'Detected legacy email verification action. Redirecting...' );
+						res.redirect( 'https://wordpress.com/verify-email/?' + qs.stringify( req.query ) );
+						return;
+					}
+
+					if ( req.query.action === 'wpcom-invite-users' ) {
+						debug( 'Detected legacy invite acceptance action. Redirecting...' );
+						res.redirect( 'https://wordpress.com/accept-invite/?' + qs.stringify( req.query ) );
+						return;
+					}
+				}
+
+				req.context = context;
+				next();
+			} );
+		} else {
 			req.context = context;
 			next();
-		} );
-	} else {
-		req.context = context;
-		next();
-	}
+		}
+	} );
 }
 
 function setUpRoute( req, res, next ) {
