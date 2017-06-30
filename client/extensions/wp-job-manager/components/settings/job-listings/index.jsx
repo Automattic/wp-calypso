@@ -21,14 +21,17 @@ import ReduxFormTextInput from 'components/redux-forms/redux-form-text-input';
 import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
 import SectionHeader from 'components/section-header';
 
-const JobListings = ( { isSaving, perPage, translate } ) => {
+const JobListings = ( { handleSubmit, isSaving, onSubmit, perPage, translate } ) => {
+	const save = section => data => onSubmit( data[ section ] );
+
 	return (
 		<div>
 			<form>
 				<FormSection name="listings">
 					<SectionHeader label={ translate( 'Listings' ) }>
 						<FormButton compact
-							isSubmitting={ isSaving } />
+							isSubmitting={ isSaving }
+							onClick={ handleSubmit( save( 'listings' ) ) } />
 					</SectionHeader>
 					<Card>
 						<p>
@@ -81,7 +84,8 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 				<FormSection name="categories">
 					<SectionHeader label={ translate( 'Categories' ) }>
 						<FormButton compact
-							isSubmitting={ isSaving } />
+							isSubmitting={ isSaving }
+							onClick={ handleSubmit( save( 'categories' ) ) } />
 					</SectionHeader>
 					<Card>
 						<FormFieldset>
@@ -136,7 +140,8 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 				<FormSection name="types">
 					<SectionHeader label={ translate( 'Types' ) }>
 						<FormButton compact
-							isSubmitting={ isSaving } />
+							isSubmitting={ isSaving }
+							onClick={ handleSubmit( save( 'types' ) ) } />
 					</SectionHeader>
 					<Card>
 						<FormFieldset>
@@ -165,7 +170,8 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 				<FormSection name="format">
 					<SectionHeader label={ translate( 'Date Format' ) }>
 						<FormButton compact
-							isSubmitting={ isSaving } />
+							isSubmitting={ isSaving }
+							onClick={ handleSubmit( save( 'format' ) ) } />
 					</SectionHeader>
 					<Card>
 						<FormFieldset>
@@ -198,7 +204,8 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 				<FormSection name="apiKey">
 					<SectionHeader label={ translate( 'Google Maps API Key' ) }>
 						<FormButton compact
-							isSubmitting={ isSaving } />
+							isSubmitting={ isSaving }
+							onClick={ handleSubmit( save( 'apiKey' ) ) } />
 					</SectionHeader>
 					<Card>
 						<FormFieldset>
@@ -229,6 +236,9 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 };
 
 JobListings.propTypes = {
+	handleSubmit: PropTypes.func,
+	isSaving: PropTypes.bool,
+	onSubmit: PropTypes.func,
 	translate: PropTypes.func,
 };
 

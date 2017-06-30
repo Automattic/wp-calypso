@@ -11,7 +11,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { fetchError, saveError, saveSuccess, updateSettings } from '../../settings/actions';
 import { WP_JOB_MANAGER_FETCH_SETTINGS, WP_JOB_MANAGER_SAVE_SETTINGS } from 'wp-job-manager/state/action-types';
-import { fromApi } from './utils';
+import { fromApi, toApi } from './utils';
 
 export const fetchExtensionSettings = ( { dispatch }, action ) => {
 	const { siteId } = action;
@@ -39,7 +39,7 @@ export const saveSettings = ( { dispatch, getState }, action ) => {
 		method: 'POST',
 		path: `/jetpack-blogs/${ siteId }/rest-api/`,
 		query: {
-			body: JSON.stringify( data ),
+			body: JSON.stringify( toApi( data ) ),
 			json: true,
 			path: '/wpjm/v1/settings',
 		},
