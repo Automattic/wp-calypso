@@ -815,6 +815,13 @@ export const PostEditor = React.createClass( {
 			this.props.saveConfirmationSidebarPreference( this.props.siteId, false );
 		}
 
+		if (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.props.isConfirmationSidebarEnabled
+		) {
+			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
+		}
+
 		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ), savedPost.URL );
 	},
 
@@ -883,13 +890,6 @@ export const PostEditor = React.createClass( {
 	onSaveSuccess: function( message, action, link ) {
 		const post = PostEditStore.get();
 		const isNotPrivateOrIsConfirmed = ( 'private' !== post.status ) || ( 'closed' !== this.state.confirmationSidebar );
-
-		if (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.props.isConfirmationSidebarEnabled
-		) {
-			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
-		}
 
 		if ( 'draft' === post.status ) {
 			this.props.setEditorLastDraft( post.site_ID, post.ID );
