@@ -22,7 +22,7 @@ const shouldNext = action => {
 
 	const data = meta.dataLayer;
 	if ( ! data ) {
-		return true;
+		return false;
 	}
 
 	// is a network response, don't reissue
