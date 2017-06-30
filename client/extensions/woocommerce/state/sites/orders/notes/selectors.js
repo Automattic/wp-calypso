@@ -50,3 +50,14 @@ export const getOrderNotes = ( state, orderId, siteId = getSelectedSiteId( state
 	}
 	return false;
 };
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} orderId Order ID to check.
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether we're currently saving a note for a given order on a site.
+ */
+export const isOrderNoteSaving = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const isSaving = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'notes', 'isSaving', orderId ] );
+	return !! isSaving;
+};

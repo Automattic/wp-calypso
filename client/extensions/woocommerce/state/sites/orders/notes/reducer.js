@@ -8,6 +8,9 @@ import { keyBy } from 'lodash';
  */
 import { combineReducers } from 'state/utils';
 import {
+	WOOCOMMERCE_ORDER_NOTE_CREATE,
+	WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
+	WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
 	WOOCOMMERCE_ORDER_NOTES_REQUEST,
 	WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
@@ -28,6 +31,26 @@ export function isLoading( state = {}, action ) {
 		case WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS:
 		case WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE:
 			return Object.assign( {}, state, { [ action.orderId ]: WOOCOMMERCE_ORDER_NOTES_REQUEST === action.type } );
+		default:
+			return state;
+	}
+}
+
+/**
+ * Returns the updated order saving state after an action has been
+ * dispatched. This reflects a mapping of order ID to a boolean,
+ * indicating whether there is a save in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function isSaving( state = {}, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_ORDER_NOTE_CREATE:
+		case WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE:
+		case WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS:
+			return Object.assign( {}, state, { [ action.orderId ]: WOOCOMMERCE_ORDER_NOTE_CREATE === action.type } );
 		default:
 			return state;
 	}
@@ -71,6 +94,7 @@ export function orders( state = {}, action ) {
 
 export default combineReducers( {
 	isLoading,
+	isSaving,
 	items,
 	orders,
 } );

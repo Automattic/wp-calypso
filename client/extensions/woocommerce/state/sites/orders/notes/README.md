@@ -9,6 +9,10 @@ This module is used to manage order notes on a site.
 
 Fetch notes from the remote site. Does not run if this order's notes are loading or already loaded.
 
+### `createNote( siteId: number, orderId: number, note: object )`
+
+Create a note for an order on the remote site.
+
 ## Reducer
 
 This is saved on a per-site basis. 
@@ -21,6 +25,10 @@ This is saved on a per-site basis.
 			10: false,
 			12: true
 		},
+		// Keyed by order ID
+		"isSaving": {
+			10: true,
+		}
 		// Keyed by order ID
 		"items": {
 			1: {
@@ -52,3 +60,7 @@ Whether the note list for a given order is currently being retrieved from the se
 ### `getOrderNotes( state, orderId: number, [ siteId: number ] )`
 
 Gets the note list for a given order from the current state, or null if not yet loaded.
+
+### `isOrderNoteSaving( state, orderId: number, [ siteId: number ] )`
+
+Whether we're currently saving a note for a given order on a site. Optional `siteId`, will default to currently selected site.

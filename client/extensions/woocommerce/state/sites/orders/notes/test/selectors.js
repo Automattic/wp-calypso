@@ -11,6 +11,7 @@ import {
 	areOrderNotesLoaded,
 	areOrderNotesLoading,
 	getOrderNotes,
+	isOrderNoteSaving,
 } from '../selectors';
 import notes from './fixtures/notes';
 
@@ -27,6 +28,9 @@ const loadingState = {
 					orders: {
 						notes: {
 							isLoading: {
+								45: true,
+							},
+							isSaving: {
 								45: true,
 							},
 							items: {},
@@ -47,6 +51,9 @@ const loadedState = {
 						notes: {
 							isLoading: {
 								45: false,
+							},
+							isSaving: {
+								20: false,
 							},
 							items: keyBy( notes, 'id' ),
 							orders: {
@@ -138,6 +145,32 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getOrderNotes( loadedStateWithUi, 45 ) ).to.eql( notes );
+		} );
+	} );
+
+	describe( '#isOrderNoteSaving', () => {
+		it( 'should be false when woocommerce state is not available.', () => {
+			expect( isOrderNoteSaving( preInitializedState, 1, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be true when a note is currently being saved for this order.', () => {
+			expect( isOrderNoteSaving( loadingState, 45, 123 ) ).to.be.true;
+		} );
+
+		it( 'should be false when saving a note is completed for this order.', () => {
+			expect( isOrderNoteSaving( loadedState, 45, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be false when a note has been saved for a different order.', () => {
+			expect( isOrderNoteSaving( loadedState, 20, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be false when a note has been saved for a different site.', () => {
+			expect( isOrderNoteSaving( loadedState, 20, 456 ) ).to.be.false;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( isOrderNoteSaving( loadedStateWithUi, 45 ) ).to.be.false;
 		} );
 	} );
 } );

@@ -10,10 +10,14 @@ import { keyBy } from 'lodash';
  */
 import {
 	isLoading,
+	isSaving,
 	items,
 	orders,
 } from '../reducer';
 import {
+	WOOCOMMERCE_ORDER_NOTE_CREATE,
+	WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
+	WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
 	WOOCOMMERCE_ORDER_NOTES_REQUEST,
 	WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
@@ -57,6 +61,47 @@ describe( 'reducer', () => {
 				error: {},
 			};
 			const newState = isLoading( { 45: true }, action );
+			expect( newState ).to.eql( { 45: false } );
+		} );
+	} );
+
+	describe( 'isSaving', () => {
+		it( 'should have no change by default', () => {
+			const newState = isSaving( undefined, {} );
+			expect( newState ).to.eql( {} );
+		} );
+
+		it( 'should flag that a note is currently being saved for an order', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_NOTE_CREATE,
+				siteId: 123,
+				orderId: 45,
+			};
+			const newState = isSaving( undefined, action );
+			expect( newState ).to.eql( { 45: true } );
+		} );
+
+		it( 'should show that the order has finished saving on a success', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
+				siteId: 123,
+				orderId: 45,
+				notes,
+			};
+			const originalState = deepFreeze( { 45: true } );
+			const newState = isSaving( originalState, action );
+			expect( newState ).to.eql( { 45: false } );
+		} );
+
+		it( 'should show that the order has finished saving on a failure', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
+				siteId: 123,
+				orderId: 45,
+				error: {},
+			};
+			const originalState = deepFreeze( { 45: true } );
+			const newState = isSaving( originalState, action );
 			expect( newState ).to.eql( { 45: false } );
 		} );
 	} );
