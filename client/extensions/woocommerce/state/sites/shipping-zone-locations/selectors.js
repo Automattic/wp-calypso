@@ -38,41 +38,6 @@ export const areShippingZoneLocationsLoading = ( state, zoneId, siteId = getSele
 };
 
 /**
- * Checks if the shipping zones order is correct to be edited from Calypso. For auto-ordering to work, it's assumed
- * that the zones with more generic locations (continents) come _after_ zones with more specific locations (countries,
- * states, postcode ranges). If that's not the case, then the user _must_ have been editing the zones in WP-Admin
- * and the Calypso UI shouldn't mess with them.
- * @param {Object} reduxState Whole Redux state tree
- * @param {Number} siteId Site ID to check
- * @return {boolean} Whether the shipping zones have are ordered correctly.
- */
-const isShippingZonesOrderValid = ( reduxState, siteId ) => {
-	const allLocations = getRawShippingZoneLocations( reduxState, siteId );
-	const zones = orderBy( getAPIShippingZones( reduxState, siteId ), 'order', 'id' );
-
-	let previousPriority = 0;
-	for ( const { id } of zones ) {
-		if ( 0 === id ) { // Special case: ignore the "Rest Of The World" zone order
-			continue;
-		}
-
-		const priority = getZoneLocationsPriority( allLocations[ id ] );
-		if ( ! priority ) {
-			// No locations in this zone, its order is always valid
-			continue;
-		}
-
-		// This zone should be before the previous one. Fail.
-		if ( previousPriority > priority ) {
-			return false;
-		}
-		previousPriority = priority;
-	}
-
-	return true;
-};
-
-/**
  * Checks if the shipping zones configuration is valid for being edited in Calypso. If the user only has ever
  * used the Calypso interface, this method will always return true. If he has done some configuration
  * in WP-Admin (which doesn't have as many restrictions), then it could be that he configured the zones in a way
@@ -155,5 +120,5 @@ export const areShippingZonesLocationsValid = ( reduxState, siteId = getSelected
 		}
 	}
 
-	return isShippingZonesOrderValid( reduxState, siteId );
+	return true;
 };
