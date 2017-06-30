@@ -101,6 +101,12 @@
 	.form-text-input-with-affixes input {
 		text-align: right;
 	}
+
+	.form-label {
+		.form-text-input-with-affixes {
+			font-weight: normal;
+		}
+	}
 }
 
 .order__details-totals {
@@ -134,7 +140,7 @@
 
 	.order__details-total .order__details-totals-label,
 	.order__details-total .order__details-totals-value {
-		font-weight: bold;
+		font-weight: 600;
 	}
 }
 
