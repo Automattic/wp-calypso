@@ -12,7 +12,7 @@ import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import NavItem from 'components/section-nav/item';
 
-export const SEARCH_TYPES = { posts: 'posts', sites: 'sites' };
+export const SEARCH_TYPES = { POSTS: 'posts', SITES: 'sites' };
 
 class SearchStreamHeader extends Component {
 	static propTypes = {
@@ -26,8 +26,8 @@ class SearchStreamHeader extends Component {
 		selected: SEARCH_TYPES.posts,
 	};
 
-	handlePostsSelected = () => this.props.onSelection( SEARCH_TYPES.posts );
-	handleSitesSelected = () => this.props.onSelection( SEARCH_TYPES.sites );
+	handlePostsSelected = () => this.props.onSelection( SEARCH_TYPES.POSTS );
+	handleSitesSelected = () => this.props.onSelection( SEARCH_TYPES.SITES );
 
 	render() {
 		const { translate, wideDisplay, selected } = this.props;
@@ -47,14 +47,14 @@ class SearchStreamHeader extends Component {
 					<NavTabs>
 						<NavItem
 							key={ 'posts-nav' }
-							selected={ selected === SEARCH_TYPES.posts }
+							selected={ selected === SEARCH_TYPES.POSTS }
 							onClick={ this.handlePostsSelected }
 						>
 							{ translate( 'Posts' ) }
 						</NavItem>
 						<NavItem
 							key={ 'sites-nav' }
-							selected={ selected === SEARCH_TYPES.sites }
+							selected={ selected === SEARCH_TYPES.SITES }
 							onClick={ this.handleSitesSelected }
 						>
 							{ translate( 'Sites' ) }

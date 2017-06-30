@@ -66,7 +66,7 @@ class SearchStream extends React.Component {
 	};
 
 	state = {
-		selected: SEARCH_TYPES.posts,
+		selected: SEARCH_TYPES.POSTS,
 		title: this.getTitle(),
 	};
 
@@ -136,7 +136,7 @@ class SearchStream extends React.Component {
 		} );
 
 		const singleColumnResultsClasses = classnames( 'search-stream__single-column-results', {
-			'is-post-results': searchType === SEARCH_TYPES.posts && query,
+			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
 		} );
 
 		return (
@@ -192,7 +192,7 @@ class SearchStream extends React.Component {
 					</div> }
 				{ ! wideDisplay &&
 					<div className={ singleColumnResultsClasses }>
-						{ ( ( searchType === SEARCH_TYPES.posts || ! query ) &&
+						{ ( ( searchType === SEARCH_TYPES.POSTS || ! query ) &&
 							<PostResults { ...this.props } /> ) ||
 							<SiteResults
 								query={ query }

@@ -37,7 +37,7 @@ const exported = {
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
 			mcKey = 'search';
 
-		const { sort = 'relevance', q: searchSlug, show = SEARCH_TYPES.posts } = context.query;
+		const { sort = 'relevance', q: searchSlug, show = SEARCH_TYPES.POSTS } = context.query;
 
 		let store;
 		if ( searchSlug ) {
