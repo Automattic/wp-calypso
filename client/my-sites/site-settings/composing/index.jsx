@@ -41,10 +41,10 @@ const Composing = ( {
 	return (
 		<div>
 			<CardComponent className="composing__card site-settings">
-				{
-					config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+				{ config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
 					<PublishConfirmation />
 				}
+
 				<PostsPerPage
 					eventTracker={ eventTracker }
 					fields={ fields }

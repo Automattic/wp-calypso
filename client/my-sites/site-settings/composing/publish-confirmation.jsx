@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import QueryPreferences from 'components/data/query-preferences';
 import { isFetchingPreferences } from 'state/preferences/selectors';
@@ -53,7 +54,7 @@ class PublishConfirmation extends Component {
 		const { fetchingPreferences, translate } = this.props;
 
 		return (
-			<div>
+			<FormFieldset className="composing__publish-confirmation has-divider is-bottom-only">
 				<QueryPreferences />
 				<CompactFormToggle
 					checked={ this.state.isToggleOn }
@@ -69,7 +70,7 @@ class PublishConfirmation extends Component {
 						'checking your content before publishing.'
 					) }
 				</FormSettingExplanation>
-			</div>
+			</FormFieldset>
 		);
 	}
 }
