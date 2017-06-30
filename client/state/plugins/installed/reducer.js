@@ -2,7 +2,6 @@
  * External dependencies
  */
 import {
-	uniqBy,
 	omit,
 	findIndex,
 } from 'lodash';
@@ -58,7 +57,7 @@ const updatePlugin = function( state, action ) {
  */
 export const plugins = createReducer( {}, {
 	[ PLUGINS_REQUEST_SUCCESS ]: ( state, action ) => {
-		return { ...state, [ action.siteId ]: uniqBy( action.data, 'slug' ) };
+		return { ...state, [ action.siteId ]: action.data };
 	},
 	[ PLUGINS_REQUEST_FAILURE ]: ( state, action ) => {
 		return { ...state, [ action.siteId ]: [] };
