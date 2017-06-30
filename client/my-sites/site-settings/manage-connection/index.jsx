@@ -45,7 +45,7 @@ class ManageConnection extends Component {
 				<DocumentHead title={ translate( 'Site Settings' ) } />
 
 				<HeaderCake onClick={ this.redirectToGeneral }>
-					{ translate( 'Manage connection' ) }
+					{ translate( 'Manage Connection' ) }
 				</HeaderCake>
 
 				<SiteOwnership />
