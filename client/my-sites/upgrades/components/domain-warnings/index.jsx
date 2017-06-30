@@ -285,14 +285,17 @@ export default React.createClass( {
 			} );
 		}
 
+		const key = 'expiring-domains-can-manage';
+
 		return (
 			<Notice
 				isCompact={ this.props.isCompact }
 				status="is-error"
 				showDismiss={ false }
-				key="expiring-domains-can-manage"
+				key={ key }
 				text={ text }>
 				{ renewLink }
+				{ this.trackImpression( key, expiringDomains.length ) }
 			</Notice>
 		);
 	},
@@ -324,12 +327,16 @@ export default React.createClass( {
 			} );
 		}
 
+		const key = 'expiring-domains-cannot-manage';
+
 		return (
 			<Notice
 				isCompact={ this.props.isCompact }
 				showDismiss={ false }
-				key="expiring-domains-cannot-manage"
-				text={ text } />
+				key={ key }
+				text={ text }>
+				{ this.trackImpression( key, expiringDomains.length ) }
+			</Notice>
 		);
 	},
 
