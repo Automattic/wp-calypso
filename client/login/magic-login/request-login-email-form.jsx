@@ -108,7 +108,7 @@ class RequestLoginEmailForm extends React.Component {
 				<h1 className="magic-login__form-header">
 					{ translate( 'Email me a login link.' ) }
 				</h1>
-				<p>
+				<p className="magic-login__description">
 					{ translate( 'Get a link sent to the email address associated ' +
 						'with your account to log in instantly without your password.' ) }
 				</p>
