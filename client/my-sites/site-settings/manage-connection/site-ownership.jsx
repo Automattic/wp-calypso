@@ -1,0 +1,118 @@
+/**
+ * External dependencies
+ */
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import Card from 'components/card';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLegend from 'components/forms/form-legend';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import SectionHeader from 'components/section-header';
+import Site from 'blocks/site';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import {
+	isJetpackSiteConnected,
+	isJetpackSiteInDevelopmentMode,
+	isJetpackUserMaster,
+} from 'state/selectors';
+
+class SiteOwnership extends PureComponent {
+	renderPlaceholder() {
+		return (
+			<Card className="manage-connection__card site-settings__card is-placeholder">
+				<div />
+			</Card>
+		);
+	}
+
+	renderConnectionDetails() {
+		const {
+			site,
+			siteIsConnected,
+			siteIsInDevMode,
+			translate,
+			userIsMaster,
+		} = this.props;
+
+		if ( siteIsConnected === false ) {
+			return translate( 'The site is not connected.' );
+		}
+
+		if ( siteIsInDevMode ) {
+			return (
+				<FormSettingExplanation>
+					{ translate( 'Your site is in Development Mode, so it can not be connected to WordPress.com.' ) }
+				</FormSettingExplanation>
+			);
+		}
+
+		return (
+			<div>
+				<FormSettingExplanation>
+					{
+						userIsMaster
+							? translate( 'You are the owner of this site\'s connection to WordPress.com.' )
+							: translate( 'Somebody else owns this site\'s connection to WordPress.com.' )
+					}
+				</FormSettingExplanation>
+				<Site site={ site } indicator={ false } compact />
+			</div>
+		);
+	}
+
+	renderCardContent() {
+		const { translate } = this.props;
+
+		return (
+			<Card>
+				<FormFieldset>
+					<FormLegend>{ translate( 'Connection owner' ) }</FormLegend>
+					{ this.renderConnectionDetails() }
+				</FormFieldset>
+			</Card>
+		);
+	}
+
+	render() {
+		const {
+			siteId,
+			siteIsConnected,
+			translate,
+		} = this.props;
+
+		return (
+			<div>
+				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
+				{ siteId && <QueryJetpackUserConnection siteId={ siteId } /> }
+
+				<SectionHeader label={ translate( 'Site ownership' ) } />
+
+				{ siteIsConnected === null
+					? this.renderPlaceholder()
+					: this.renderCardContent()
+				}
+			</div>
+		);
+	}
+}
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			site: getSelectedSite( state ),
+			siteId,
+			siteIsConnected: isJetpackSiteConnected( state, siteId ),
+			siteIsInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
+			userIsMaster: isJetpackUserMaster( state, siteId ),
+		};
+	}
+)( localize( SiteOwnership ) );
