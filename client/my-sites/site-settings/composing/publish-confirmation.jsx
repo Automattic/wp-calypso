@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { bindActionCreators } from 'redux';
@@ -18,48 +18,64 @@ import { isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 import analytics from 'lib/analytics';
 
-const PublishConfirmation = ( {
-	siteId,
-	fetchingPreferences,
-	publishConfirmationEnabled,
-	savePublishConfirmationPreference,
-	translate,
-} ) => {
-	const handleToggle = () => {
-		savePublishConfirmationPreference( siteId, ! publishConfirmationEnabled );
+class PublishConfirmation extends Component {
 
-		analytics.mc.bumpStat( 'calypso_publish_confirmation', publishConfirmationEnabled ? 'enabled' : 'disabled' );
+	constructor( props ) {
+		super( props );
+		this.state = { isToggleOn: props.publishConfirmationEnabled };
 
-		analytics.tracks.recordEvent( publishConfirmationEnabled
+		this.handleToggle = this.handleToggle.bind( this );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.publishConfirmationEnabled !== this.state.isToggleOn ) {
+			this.state = { isToggleOn: nextProps.publishConfirmationEnabled };
+		}
+	}
+
+	handleToggle() {
+		const { siteId, savePublishConfirmationPreference } = this.props;
+
+		const isToggleOn = ! this.state.isToggleOn;
+
+		this.setState( { isToggleOn: isToggleOn } );
+
+		savePublishConfirmationPreference( siteId, isToggleOn );
+
+		analytics.mc.bumpStat( 'calypso_publish_confirmation', isToggleOn ? 'enabled' : 'disabled' );
+
+		analytics.tracks.recordEvent( isToggleOn
 			? 'calypso_publish_confirmation_preference_enable'
 			: 'calypso_publish_confirmation_preference_disable' );
-	};
+	}
 
-	const fieldLabel = translate( 'Show publish confirmation' );
-	const fieldDescription = translate(
-		'This adds a confirmation step with helpful settings and tips for double checking your content before publishing.'
-	);
+	render() {
+		const { fetchingPreferences, translate } = this.props;
 
-	return (
-		<div>
-			<QueryPreferences />
-			<CompactFormToggle
-				checked={ !! publishConfirmationEnabled }
-				disabled={ fetchingPreferences }
-				onChange={ handleToggle }
-			>
-				{ fieldLabel }
-			</CompactFormToggle>
+		return (
+			<div>
+				<QueryPreferences />
+				<CompactFormToggle
+					checked={ this.state.isToggleOn }
+					disabled={ fetchingPreferences }
+					onChange={ this.handleToggle }
+				>
+					{ translate( 'Show publish confirmation' ) }
+				</CompactFormToggle>
 
-			<FormSettingExplanation isIndented>
-				{ fieldDescription }
-			</FormSettingExplanation>
-		</div>
-	);
-};
+				<FormSettingExplanation isIndented>
+					{ translate(
+						'This adds a confirmation step with helpful settings and tips for double' +
+						'checking your content before publishing.'
+					) }
+				</FormSettingExplanation>
+			</div>
+		);
+	}
+}
 
 PublishConfirmation.defaultProps = {
-	isConfirmationSidebarEnabled: true,
+	publishConfirmationEnabled: true,
 };
 
 PublishConfirmation.propTypes = {
