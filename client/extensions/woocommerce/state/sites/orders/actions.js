@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
  */
-import { areOrdersLoaded, areOrdersLoading, isOrderLoaded, isOrderLoading } from './selectors';
+import {
+	areOrdersLoaded,
+	areOrdersLoading,
+	isOrderLoaded,
+	isOrderLoading,
+} from './selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
@@ -12,7 +17,7 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST,
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
-} from '../../action-types';
+} from 'woocommerce/state/action-types';
 
 export const fetchOrders = ( siteId, page ) => ( dispatch, getState ) => {
 	const state = getState();
@@ -51,12 +56,16 @@ export const fetchOrders = ( siteId, page ) => ( dispatch, getState ) => {
 	} );
 };
 
-export const fetchOrder = ( siteId, orderId ) => ( dispatch, getState ) => {
+export const fetchOrder = ( siteId, orderId, refresh = false ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
-	if ( isOrderLoaded( state, orderId, siteId ) || isOrderLoading( state, orderId, siteId ) ) {
+	if ( isOrderLoading( state, orderId, siteId ) ) {
+		return;
+	}
+	// Bail if the order is loaded, and we don't want to force a refresh
+	if ( ! refresh && isOrderLoaded( state, orderId, siteId ) ) {
 		return;
 	}
 

@@ -16,6 +16,7 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
+import refunds from './refunds/reducer';
 
 /**
  * Returns the updated order requests state after an action has been
@@ -114,8 +115,10 @@ export function totalPages( state = 1, action ) {
 
 export default combineReducers( {
 	isQueryLoading,
+	isLoading,
 	items,
 	queries,
+	refunds,
 	totalPages,
 	notes,
 } );

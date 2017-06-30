@@ -5,9 +5,9 @@ This module is used to manage orders for a site.
 
 ## Actions
 
-### `fetchOrder( siteId: number, orderId: number )`
+### `fetchOrder( siteId: number, orderId: number, [ refresh: boolean ] )`
 
-Fetch a single order from the remote site. Does not run if this order is loading or already loaded.
+Fetch a single order from the remote site. Does not run if this order is loading. If the order is already loaded, and refresh is true, it re-fetches the order. `refresh` defaults to false (won't re-fetch).
 
 ### `fetchOrders( siteId: number, page: number )`
 
@@ -20,7 +20,7 @@ This is saved on a per-site basis. All orders are collected in `items`, and ther
 ```js
 {
 	"orders": {
-		// Keyed by serialized query
+		// Keyed by order ID
 		"isLoading": {
 			10: false,
 			12: true

@@ -49,6 +49,10 @@
 	.order__detail-item-quantity,
 	.order__detail-item-total {
 		text-align: right;
+
+		input {
+			width: 5em;
+		}
 	}
 
 	.order__detail-item-sku {
@@ -70,6 +74,17 @@
 	}
 }
 
+&.dialog__content {
+	@include breakpoint( ">960px" ) {
+		width: 720px;
+	}
+
+	.form-text-input,
+	.form-text-input-with-affixes input {
+		text-align: right;
+	}
+}
+
 .order__details-totals {
 	padding: 24px 0;
 	text-align: right;
@@ -79,15 +94,19 @@
 	.order__details-total-refund,
 	.order__details-total {
 		margin-bottom: 8px;
+		display: flex;
+		align-items: center;
 
 		.order__details-totals-label {
-			display: inline-block;
-			width: 84%;
+			width: 75%;
 		}
 
 		.order__details-totals-value {
-			display: inline-block;
-			width: 16%;
+			width: 25%;
+
+			.form-text-input-with-affixes {
+				width: 85%;
+			}
 		}
 	}
 
@@ -171,5 +190,61 @@
 
 	p {
 		margin-bottom: 0;
+	}
+}
+
+.order__refund-container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin: 0 -24px -24px;
+	padding: 24px;
+	border-top: 1px solid lighten( $gray, 30% );
+	background: lighten( $gray, 35% );
+
+	.order__refund-note,
+	.order__refund-details {
+		flex: 1;
+	}
+
+	.order__refund-note .form-textarea {
+		margin-top: 8px;
+	}
+
+	.order__refund-details {
+		margin-left: 50px;
+	}
+
+	.order__refund-amount {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		padding-bottom: 16px;
+		margin-bottom: 16px;
+		border-bottom: 1px solid lighten( $gray, 30% );
+
+		.order__refund-amount-label,
+		.order__refund-amount-value {
+			flex: 1;
+		}
+	}
+
+	.order__refund-credit-card h3 {
+		font-size: 11px;
+		text-transform: uppercase;
+		margin-bottom: 8px;
+		color: $gray-text-min;
+	}
+
+	.order__refund-actions {
+		margin: 0 -24px;
+		padding: 24px 24px 0;
+		min-width: 100%;
+		border-top: 1px solid lighten( $gray, 30% );
+		text-align: right;
+
+		button + button {
+			margin-left: 8px;
+		}
 	}
 }
