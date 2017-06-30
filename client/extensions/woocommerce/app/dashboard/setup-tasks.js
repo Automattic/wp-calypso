@@ -82,6 +82,10 @@ class SetupTasks extends Component {
 		this.props.setOptedOutOfTaxesSetup( this.props.site.ID, true );
 	}
 
+	onClickOpenCustomizer = () => {
+		this.props.setTriedCustomizerDuringInitialSetup( this.props.site.ID, true );
+	}
+
 	getSetupTasks = () => {
 		const {
 			site,
@@ -167,7 +171,7 @@ class SetupTasks extends Component {
 					{
 						label: translate( 'Customize' ),
 						path: getLink( 'https://:site/wp-admin/customize.php?return=' + encodeURIComponent( '//' + site.slug ), site ),
-						// TODO use onClick here instead in order to hit setTriedCustomizerDuringInitialSetup,
+						onClick: this.onClickOpenCustomizer,
 						analyticsProp: 'view-and-customize',
 					}
 				]
