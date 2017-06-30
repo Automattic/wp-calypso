@@ -27,10 +27,16 @@
  */
 
 // Layout
-$masterbar-color:         $blue-wordpress;
-$sidebar-bg-color:        $gray-lighten-30;
-$sidebar-text-color:      $gray-dark;
-$sidebar-selected-color:  $gray-text-min;
+$masterbar-color:                  $white;
+$masterbar-bg-color:               $blue-wordpress;
+$masterbar-border-color:           darken( $masterbar-bg-color, 4% );
+$masterbar-item-active-bg-color:   darken( $masterbar-bg-color, 17% );
+$masterbar-item-hover-bg-color:    lighten( $masterbar-bg-color, 5% );
+$masterbar-item-new-color:         $blue-wordpress;
+
+$sidebar-bg-color:                 $gray-lighten-30;
+$sidebar-text-color:               $gray-dark;
+$sidebar-selected-color:           $gray-text-min;
 
 /**
  * 2.0 Color scheme definitions
@@ -41,22 +47,28 @@ $sidebar-selected-color:  $gray-text-min;
 
 $color-schemes: (
 	default: (
-		'--masterbar-color':					$masterbar-color,
-		'--sidebar-bg-color':					$sidebar-bg-color,
-		'--sidebar-text-color':					$sidebar-text-color,
-		'--sidebar-selected-color':				$sidebar-selected-color
+		'--masterbar-color':                    $masterbar-color,
+		'--masterbar-bg-color':                 $masterbar-bg-color,
+		'--masterbar-border-color':             $masterbar-border-color,
+		'--masterbar-item-active-bg-color':     $masterbar-item-active-bg-color,
+		'--masterbar-item-hover-bg-color':      $masterbar-item-hover-bg-color,
+		'--masterbar-item-new-color':           $masterbar-item-new-color,
 	),
 	light: (
-		'--masterbar-color':					$gray,
-		'--sidebar-bg-color':					$white,
-		'--sidebar-text-color':					$sidebar-text-color,
-		'--sidebar-selected-color':				$sidebar-selected-color
+		'--masterbar-color':                    $gray-text,
+		'--masterbar-bg-color':                 $gray-lighten-20,
+		'--masterbar-border-color':             $gray-lighten-10,
+		'--masterbar-item-active-bg-color':     $gray-lighten-10,
+		'--masterbar-item-hover-bg-color':      $gray-lighten-30,
+		'--masterbar-item-new-color':           $gray-text,
 	),
 	dark: (
-		'--masterbar-color':					$gray-dark,
-		'--sidebar-bg-color':					$gray-dark,
-		'--sidebar-text-color':					$white,
-		'--sidebar-selected-color':				$sidebar-selected-color
+		'--masterbar-color':                    $masterbar-color,
+		'--masterbar-bg-color':                 $gray-dark,
+		'--masterbar-border-color':             $gray-darken-10,
+		'--masterbar-item-active-bg-color':     $gray-text-min,
+		'--masterbar-item-hover-bg-color':      $gray-darken-10,
+		'--masterbar-item-new-color':           $masterbar-item-new-color,
 	)
 );
 
