@@ -77,7 +77,7 @@
 	}
 
 	.dashboard__setup-task-label-and-actions {
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( ">960px" ) {
 			display: flex;
 			align-items: center;
 		}
@@ -100,7 +100,7 @@
 		display: flex;
 		align-items: center;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( ">960px" ) {
 			display: block;
 			text-align: right;
 			width: 320px;
@@ -111,7 +111,7 @@
 				white-space: nowrap;
 				margin-right: 8px;
 
-				@include breakpoint( ">660px" ) {
+				@include breakpoint( ">960px" ) {
 					margin: 2px 0 2px 8px;
 				}
 			}
