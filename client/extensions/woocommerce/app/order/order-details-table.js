@@ -10,8 +10,8 @@ import { sum } from 'lodash';
  */
 import formatCurrency from 'lib/format-currency';
 import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import PriceInput from 'woocommerce/components/price-input';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -62,9 +62,10 @@ class OrderDetailsTable extends Component {
 
 	onChange = ( event ) => {
 		if ( 'shipping_total' === event.target.name ) {
-			const shippingValue = event.target.value.replace( /[^0-9,.]/g, '' );
-			this.setState( { shippingTotal: shippingValue }, this.recalculateRefund );
+			const shippingTotal = event.target.value.replace( /[^0-9,.]/g, '' );
+			this.setState( { shippingTotal }, this.recalculateRefund );
 		} else {
+			// Name is `quantity-x`, where x is the ID in the line_items array
 			const i = event.target.name.split( '-' )[ 1 ];
 			const newQuants = this.state.quantities;
 			newQuants[ i ] = event.target.value;
@@ -152,10 +153,10 @@ class OrderDetailsTable extends Component {
 						<div className="order__details-totals-label">{ translate( 'Shipping' ) }</div>
 						<div className="order__details-totals-value">
 							{ isEditable
-								? <FormTextInputWithAffixes
-									prefix="$"
+								? <PriceInput
 									name="shipping_total"
 									onChange={ this.onChange }
+									currency={ order.currency }
 									value={ this.state.shippingTotal } />
 								: formatCurrency( order.shipping_total, order.currency ) || order.shipping_total
 							}

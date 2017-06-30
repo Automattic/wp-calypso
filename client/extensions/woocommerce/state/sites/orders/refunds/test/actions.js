@@ -12,6 +12,7 @@ import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WOOCOMMERCE_ORDER_REFUND_CREATE,
+	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
 } from 'woocommerce/state/action-types';
 import order from '../../test/fixtures/order';
@@ -39,7 +40,6 @@ describe( 'actions', () => {
 					data: {
 						message: 'No route was found matching the URL and request method',
 						error: 'rest_no_route',
-						status: 400,
 					}
 				} );
 		} );
@@ -65,6 +65,19 @@ describe( 'actions', () => {
 					type: WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
 					siteId,
 					orderId: 40,
+				} );
+			} );
+		} );
+
+		it( 'should dispatch a error action with the order when the refund request fails', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			const response = sendRefund( 234, 'invalid', refundObj )( dispatch, getState );
+
+			return response.then( () => {
+				expect( dispatch ).to.have.been.calledWithMatch( {
+					type: WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
+					siteId: 234,
 				} );
 			} );
 		} );

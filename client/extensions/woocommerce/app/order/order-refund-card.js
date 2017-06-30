@@ -16,9 +16,9 @@ import formatCurrency from 'lib/format-currency';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import Notice from 'components/notice';
 import OrderDetailsTable from './order-details-table';
+import PriceInput from 'woocommerce/components/price-input';
 import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
 import StoredCard from 'my-sites/upgrades/checkout/stored-card';
 
@@ -167,10 +167,10 @@ class OrderRefundCard extends Component {
 							<FormLabel className="order__refund-amount">
 								<span className="order__refund-amount-label">{ translate( 'Total refund amount' ) }</span>
 								<div className="order__refund-amount-value">
-									<FormTextInputWithAffixes
+									<PriceInput
 										name="refund_total"
-										prefix="$"
 										readOnly
+										currency={ order.currency }
 										value={ refundTotal } />
 								</div>
 							</FormLabel>

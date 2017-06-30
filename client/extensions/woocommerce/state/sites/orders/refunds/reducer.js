@@ -10,8 +10,8 @@ import {
 
 /**
  * Returns the updated order requests state after an action has been
- * dispatched. The state reflects a mapping of query (page number) to a
- * boolean reflecting whether a request for that page is in progress.
+ * dispatched. The state reflects a mapping of order ID to a
+ * boolean indicating whether there is a save in progress.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
