@@ -2,38 +2,43 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { editProduct, editProductAttribute, createProductActionList } from 'woocommerce/state/ui/products/actions';
-import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { getCurrentlyEditingProduct } from 'woocommerce/state/ui/products/selectors';
-import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
-import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
+import { createProduct, fetchProduct } from 'woocommerce/state/sites/products/actions';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
+import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import {
+	editProduct,
+	editProductAttribute,
+	createProductActionList
+} from 'woocommerce/state/ui/products/actions';
+import { getCurrentlyEditingProduct } from 'woocommerce/state/ui/products/selectors';
+import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
+import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
+import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
-import { createProduct } from 'woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
 
-class ProductCreate extends React.Component {
+class ProductUpdate extends React.Component {
 	static propTypes = {
+		params: PropTypes.object,
 		className: PropTypes.string,
-		site: PropTypes.shape( {
-			ID: PropTypes.number,
-			slug: PropTypes.string,
-		} ),
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
 		} ),
+		fetchProduct: PropTypes.func.isRequired,
+		fetchProductVariations: PropTypes.func.isRequired,
 		fetchProductCategories: PropTypes.func.isRequired,
 		editProduct: PropTypes.func.isRequired,
 		editProductCategory: PropTypes.func.isRequired,
@@ -42,26 +47,28 @@ class ProductCreate extends React.Component {
 	};
 
 	componentDidMount() {
-		const { product, site } = this.props;
+		const { params, product, site } = this.props;
+		const productId = Number( params.product );
 
 		if ( site && site.ID ) {
 			if ( ! product ) {
-				this.props.editProduct( site.ID, null, {
-					type: 'simple'
-				} );
+				this.props.fetchProduct( site.ID, productId );
+				this.props.fetchProductVariations( site.ID, productId );
+				this.props.editProduct( site.ID, { id: productId }, {} );
 			}
 			this.props.fetchProductCategories( site.ID );
 		}
 	}
 
 	componentWillReceiveProps( newProps ) {
-		const { site } = this.props;
+		const { params, site } = this.props;
+		const productId = Number( params.product );
 		const newSiteId = newProps.site && newProps.site.ID || null;
 		const oldSiteId = site && site.ID || null;
 		if ( oldSiteId !== newSiteId ) {
-			this.props.editProduct( newSiteId, null, {
-				type: 'simple'
-			} );
+			this.props.fetchProduct( newSiteId, productId );
+			this.props.fetchProductVariations( newSiteId, productId );
+			this.props.editProduct( newSiteId, { id: productId }, {} );
 			this.props.fetchProductCategories( newSiteId );
 		}
 	}
@@ -70,11 +77,15 @@ class ProductCreate extends React.Component {
 		// TODO: Remove the product we added here from the edit state.
 	}
 
+	onTrash = () => {
+		// TODO: Add action dispatch to trash this product.
+	}
+
 	onSave = () => {
 		const { product, translate } = this.props;
 
 		const successAction = successNotice(
-			translate( '%(product)s successfully created.', {
+			translate( '%(product)s successfully updated.', {
 				args: { product: product.name },
 			} ),
 			{ duration: 4000 }
@@ -104,9 +115,12 @@ class ProductCreate extends React.Component {
 
 		return (
 			<Main className={ className }>
+				<SidebarNavigation />
 				<ProductHeader
 					site={ site }
 					product={ product }
+					viewEnabled={ true }
+					onTrash={ this.onTrash }
 					onSave={ saveEnabled ? this.onSave : false }
 					isBusy={ isBusy }
 				/>
@@ -150,10 +164,12 @@ function mapDispatchToProps( dispatch ) {
 			editProductCategory,
 			editProductAttribute,
 			editProductVariation,
+			fetchProduct,
+			fetchProductVariations,
 			fetchProductCategories,
 		},
 		dispatch
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCreate ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductUpdate ) );

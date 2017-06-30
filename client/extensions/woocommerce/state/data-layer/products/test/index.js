@@ -7,9 +7,14 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { createProduct, fetchProduct } from 'woocommerce/state/sites/products/actions';
+import {
+	createProduct,
+	updateProduct,
+	fetchProduct
+} from 'woocommerce/state/sites/products/actions';
 import {
 	handleProductCreate,
+	handleProductUpdate,
 	handleProductRequest,
 } from '../';
 import {
@@ -111,6 +116,102 @@ describe( 'handlers', () => {
 			);
 		} );
 	} );
+
+	describe( '#handleProductUpdate', () => {
+		it( 'should dispatch a put action', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const product1 = { id: 42, name: 'Product #1', type: 'simple' };
+			const successAction = { type: '%%success%%' };
+			const failureAction = { type: '%%failure%%' };
+			const action = updateProduct( 123, product1, successAction, failureAction );
+
+			handleProductUpdate( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_API_REQUEST,
+					method: 'put',
+					siteId: 123,
+					onFailureAction: failureAction,
+					body: product1,
+				} ).and( match.has( 'onSuccessAction' ) )
+			);
+		} );
+
+		it( 'should dispatch a success action with extra properties', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const product1 = { id: 42, name: 'Product #1', type: 'simple' };
+			const successAction = { type: '%%success%%' };
+			const action = updateProduct( 123, product1, successAction );
+
+			handleProductUpdate( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_API_REQUEST,
+					method: 'put',
+					siteId: 123,
+					body: product1,
+				} )
+			);
+
+			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
+			expect( updatedSuccessAction ).to.be.a( 'function' );
+
+			updatedSuccessAction( store.dispatch, null, { data: 'RECEIVED_DATA' } );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: '%%success%%',
+					sentData: product1,
+					receivedData: 'RECEIVED_DATA',
+				} )
+			);
+		} );
+
+		it( 'should dispatch a success function with extra properties', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const product1 = { id: 42, name: 'Product #1', type: 'simple' };
+			const successAction = ( dispatch, getState, { sentData, receivedData } ) => {
+				return { type: '%%success%%', sentData, receivedData };
+			};
+			const action = updateProduct( 123, product1, successAction );
+
+			handleProductUpdate( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_API_REQUEST,
+					method: 'put',
+					siteId: 123,
+					body: product1,
+				} )
+			);
+
+			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
+			expect( updatedSuccessAction ).to.be.a( 'function' );
+
+			updatedSuccessAction( store.dispatch, null, { data: 'RECEIVED_DATA' } );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: '%%success%%',
+					sentData: product1,
+					receivedData: 'RECEIVED_DATA',
+				} )
+			);
+		} );
+	} );
+
 	describe( '#handleProductRequest', () => {
 		it( 'should dispatch a get action', () => {
 			const store = {

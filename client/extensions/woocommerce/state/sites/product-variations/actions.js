@@ -4,6 +4,7 @@
  */
 import {
 	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
+	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
 	WOOCOMMERCE_PRODUCT_VARIATIONS_REQUEST,
 } from 'woocommerce/state/action-types';
@@ -41,6 +42,27 @@ export function fetchProductVariations( siteId, productId, successAction, failur
 export function createProductVariation( siteId, productId, variation, successAction, failureAction ) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
+		siteId,
+		productId,
+		variation,
+		successAction,
+		failureAction,
+	};
+}
+
+/**
+ * Action Creator: Update an existing product variation.
+ *
+ * @param {Number} siteId The id of the site in which the variation's product exists.
+ * @param {Number} productId The id of the product for which this variation.
+ * @param {Object} variation The variation data to be updated (must include id).
+ * @param {Object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
+ * @param {Object|Function} [failureAction] Action with extra props { error }
+ * @return {Object} Action object
+ */
+export function updateProductVariation( siteId, productId, variation, successAction, failureAction ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
 		siteId,
 		productId,
 		variation,
