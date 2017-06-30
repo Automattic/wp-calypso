@@ -15,6 +15,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteSettingsMain from 'my-sites/site-settings/main';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
+import ManageConnection from './manage-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser, isVipSite } from 'state/selectors';
@@ -145,6 +146,13 @@ const controller = {
 		renderPage(
 			context,
 			<ThemeSetup />
+		);
+	},
+
+	manageConnection( context ) {
+		renderPage(
+			context,
+			<ManageConnection />
 		);
 	},
 
