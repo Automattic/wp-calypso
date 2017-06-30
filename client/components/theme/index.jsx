@@ -3,9 +3,9 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty, isEqual, noop } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import PulsingDot from 'components/pulsing-dot';
 /**
  * Component
  */
-const Theme = React.createClass( {
+export const Theme = React.createClass( {
 
 	propTypes: {
 		theme: React.PropTypes.shape( {
@@ -58,7 +58,9 @@ const Theme = React.createClass( {
 		// Index of theme in results list
 		index: React.PropTypes.number,
 		// Label to show on screenshot hover.
-		actionLabel: React.PropTypes.string
+		actionLabel: React.PropTypes.string,
+		// Translate function,
+		translate: React.PropTypes.func,
 	},
 
 	shouldComponentUpdate( nextProps ) {
@@ -125,7 +127,8 @@ const Theme = React.createClass( {
 		} = this.props.theme;
 		const {
 			active,
-			price
+			price,
+			translate
 		} = this.props;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
@@ -133,7 +136,7 @@ const Theme = React.createClass( {
 		} );
 
 		const priceClass = classNames( 'theme-badge__price', {
-			'theme-badge__price-plan': price === this.translate( 'Plan' )
+			'theme-badge__price-plan': price === translate( 'Plan' )
 		} );
 
 		// for performance testing
@@ -169,7 +172,7 @@ const Theme = React.createClass( {
 					<div className="theme__info" >
 						<h2 className="theme__info-title">{ name }</h2>
 						{ active &&
-							<span className="theme-badge__active">{ this.translate( 'Active', {
+							<span className="theme-badge__active">{ translate( 'Active', {
 								context: 'singular noun, the currently active theme'
 							} ) }</span>
 						}
@@ -191,4 +194,4 @@ const Theme = React.createClass( {
 	}
 } );
 
-export default Theme;
+export default localize( Theme );
