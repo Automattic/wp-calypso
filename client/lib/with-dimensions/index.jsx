@@ -9,23 +9,22 @@ import { debounce } from 'lodash';
  * withDimensions assumes that you care about the space at the dom location of the component, but you may also pass
  * in a domTarget in case you want to be tracking the dimensions of a different component
  *
- * @example:
- * 1. withDimensions( Component )
- * 2. withDimensions( Component, { domTarget: thingWhoseDimensionsToTrack } )
+ * @example: withDimensions( Component )
  *
  * @param {object} EnhancedComponent - react component to wrap and give the prop width/height to
  * @returns {object} the enhanced component
  */
-export default ( EnhancedComponent, { domTarget } = {} ) => class WithWidth extends React.Component {
+export default EnhancedComponent => class WithWidth extends React.Component {
 	static displayName = `WithDimensions( ${ EnhancedComponent.displayName || EnhancedComponent.name } )`;
+	static propTypes = { domTarget: React.PropTypes.object };
 
 	state = {
 		width: 0,
 		height: 0,
 	};
 
-	handleResize = () => {
-		const domElement = domTarget ? domTarget : this.divRef;
+	handleResize = ( props = this.props ) => {
+		const domElement = props.domTarget ? props.domTarget : this.divRef;
 
 		if ( domElement ) {
 			const dimensions = domElement.getClientRects()[ 0 ];
@@ -37,9 +36,12 @@ export default ( EnhancedComponent, { domTarget } = {} ) => class WithWidth exte
 	componentDidMount() {
 		this.resizeEventListener = window.addEventListener(
 			'resize',
-			debounce( this.handleResize, 50 )
+			debounce( this.handleResize, 50 ),
 		);
 		this.handleResize();
+	}
+	componentWillReceiveProps( nextProps ) {
+		this.handleResize( nextProps );
 	}
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.resizeEventListener );

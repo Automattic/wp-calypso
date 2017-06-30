@@ -31,7 +31,14 @@ const updateQueryArg = params =>
 
 const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
-const SpacerDiv = ( { width, height } ) => <div style={ { width, height } } />;
+const SpacerDiv = withDimensions( ( { width, height } ) => (
+	<div
+		style={ {
+			width: `${ width }px`,
+			height: `${ height }px`,
+		} }
+	/>
+) );
 
 class SearchStream extends React.Component {
 	static propTypes = {
@@ -131,8 +138,6 @@ class SearchStream extends React.Component {
 			'is-post-results': searchType === POSTS && query,
 		} );
 
-		const FixedAreaPadding = withDimensions( SpacerDiv, { domTarget: this.fixedAreaRef } );
-
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
@@ -169,7 +174,7 @@ class SearchStream extends React.Component {
 							wideDisplay={ wideDisplay }
 						/> }
 				</div>
-				<FixedAreaPadding />
+				<SpacerDiv domTarget={ this.fixedAreaRef } />
 				{ wideDisplay &&
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
