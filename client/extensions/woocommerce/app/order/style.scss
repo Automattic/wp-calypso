@@ -134,11 +134,16 @@
 
 .order__details-refund,
 .order__details-fulfillment {
-	margin: 0 -24px;
-	padding: 24px;
+	margin: 0 -16px;
+	padding: 16px;
 	border-top: 1px solid lighten( $gray, 30% );
 	display: flex;
 	align-items: center;
+
+	@include breakpoint( ">960px" ) {
+		margin: 0 -24px;
+		padding: 24px;
+	}
 
 	.order__details-refund-label,
 	.order__details-fulfillment-label {
