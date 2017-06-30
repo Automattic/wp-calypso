@@ -60,3 +60,7 @@ Whether the note list for a given order is currently being retrieved from the se
 ### `getOrderNotes( state, orderId: number, [ siteId: number ] )`
 
 Gets the note list for a given order from the current state, or null if not yet loaded.
+
+### `isOrderNoteSaving( state, orderId: number, [ siteId: number ] )`
+
+Whether we're currently saving a note for a given order on a site. Optional `siteId`, will default to currently selected site.
