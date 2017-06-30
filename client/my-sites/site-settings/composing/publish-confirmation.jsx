@@ -28,7 +28,7 @@ class PublishConfirmation extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.publishConfirmationEnabled !== this.state.isToggleOn ) {
-			this.state = { isToggleOn: nextProps.publishConfirmationEnabled };
+			this.setState( { isToggleOn: nextProps.publishConfirmationEnabled } );
 		}
 	}
 
