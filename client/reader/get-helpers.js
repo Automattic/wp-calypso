@@ -47,12 +47,12 @@ export const getFeedUrl = ( { feed, site, post } = {} ) => {
  * @param {*} options - an object containing a feed, site, and post. all optional
  * @returns {string} the site title
  */
-export const getSiteName = ( { feed, site, post } = {} ) => {
+export const getSiteName = ( { feed, site, post, hasDefaultSiteTitle } = {} ) => {
 	let siteName = null;
 
-	if ( site && site.title ) {
+	if ( ! hasDefaultSiteTitle && site && site.title ) {
 		siteName = site.title;
-	} else if ( feed && ( feed.name || feed.title ) ) {
+	} else if ( ! hasDefaultSiteTitle && feed && ( feed.name || feed.title ) ) {
 		siteName = feed.name || feed.title;
 	} else if ( post && post.site_name ) {
 		siteName = post.site_name;

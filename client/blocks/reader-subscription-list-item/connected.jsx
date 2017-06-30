@@ -13,6 +13,7 @@ import connectSite from 'lib/reader-connect-site';
 import userSettings from 'lib/user-settings';
 import SubscriptionListItem from 'blocks/reader-subscription-list-item';
 import { isFollowing as isFollowingSelector } from 'state/selectors';
+import { hasDefaultSiteTitle } from 'state/sites/selectors';
 
 class ConnectedSubscriptionListItem extends React.Component {
 	static propTypes = {
@@ -89,4 +90,5 @@ class ConnectedSubscriptionListItem extends React.Component {
 
 export default connect( ( state, ownProps ) => ( {
 	isFollowing: isFollowingSelector( state, { feedId: ownProps.feedId, blogId: ownProps.siteId } ),
+	hasDefaultSiteTitle: ownProps.siteId && hasDefaultSiteTitle( state, ownProps.siteId )
 } ) )( localize( connectSite( ConnectedSubscriptionListItem ) ) );
