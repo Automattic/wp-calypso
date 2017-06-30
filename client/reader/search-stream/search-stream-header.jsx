@@ -12,9 +12,7 @@ import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import NavItem from 'components/section-nav/item';
 
-const posts = 'posts';
-const sites = 'sites';
-export const SEARCH_TYPES = { posts, sites };
+export const SEARCH_TYPES = { posts: 'posts', sites: 'sites' };
 
 class SearchStreamHeader extends Component {
 	static propTypes = {
