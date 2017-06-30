@@ -10,6 +10,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import AsyncLoad from 'components/async-load';
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
@@ -123,6 +124,8 @@ export class EditPostStatus extends Component {
 			siteUtils.gmtOffset( this.props.site )
 		).format( 'll LT' );
 
+		const isPostPublishFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' );
+
 		return (
 			<div className="edit-post-status">
 				<span
@@ -144,6 +147,11 @@ export class EditPostStatus extends Component {
 					{ this.renderTZTooltop() }
 					{ this.renderPostSchedulePopover() }
 				</span>
+				{
+					isPostPublishFlow
+						? this.renderPostVisibility()
+						: null
+				}
 				{ this.props.type === 'post' && ! isPostPrivate && ! isPasswordProtected &&
 					<label className="edit-post-status__sticky">
 						<span className="edit-post-status__label-text">
@@ -183,7 +191,11 @@ export class EditPostStatus extends Component {
 						<Gridicon icon="undo" size={ 18 } /> { translate( 'Revert to draft' ) }
 					</Button>
 				}
-				{ this.renderPostVisibility() }
+				{
+					! isPostPublishFlow
+						? this.renderPostVisibility()
+						: null
+				}
 				<Revisions
 					revisions={ this.props.post && this.props.post.revisions }
 					adminUrl={ adminUrl }
