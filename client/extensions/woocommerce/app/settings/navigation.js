@@ -32,9 +32,9 @@ export const SettingsNavigation = ( {
 			title: translate( 'Shipping' ),
 		},
 		{
-			id: 'tax',
-			path: '/store/settings/tax/:site',
-			title: translate( 'Tax' ),
+			id: 'taxes',
+			path: '/store/settings/taxes/:site',
+			title: translate( 'Taxes' ),
 		},
 	];
 
