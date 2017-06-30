@@ -182,6 +182,9 @@
 }
 
 .dashboard__manage-has-orders {
+	@include breakpoint( ">960px" ) {
+		margin-top: 58px;
+	}
 	.dashboard__reports-widget {
 		overflow: hidden;
 		text-align: center;
