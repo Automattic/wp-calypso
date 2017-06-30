@@ -66,3 +66,7 @@
 		margin-bottom: 58px;
 	}
 }
+
+& .sticky-panel.is-sticky .sticky-panel__content {
+	margin-top: 0;
+}
