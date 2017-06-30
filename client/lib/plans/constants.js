@@ -71,7 +71,7 @@ export const FEATURE_BUSINESS_ONBOARDING = 'business-onboarding';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
 export const FEATURE_REPUBLICIZE = 'republicize';
-export const FEATURE_ALL_FREE_FEATURES = 'all-free-features'; //PLANS COPY TEST START
+export const FEATURE_ALL_FREE_FEATURES = 'all-free-features';
 export const FEATURE_ALL_PERSONAL_FEATURES = 'all-personal-features';
 export const FEATURE_ALL_PREMIUM_FEATURES = 'all-premium-features';
 export const FEATURE_ADVANCED_CUSTOMIZATION = 'advanced-customization';
@@ -119,9 +119,9 @@ export const FEATURE_SECURITY_ESSENTIALS_JETPACK = 'security-essentials-jetpack'
 export const FEATURE_PRIORITY_SUPPORT_JETPACK = 'priority-support-jetpack';
 export const FEATURE_TRAFFIC_TOOLS_JETPACK = 'seo-tools-jetpack';
 export const FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK = 'seo-tools-jetpack';
-export const FEATURE_FREE_WORDPRESS_THEMES = 'free-wordpress-themes'; //PLANS COPY TEST START
-export const FEATURE_VIDEO_CDN_LIMITIED = 'video-cdn-limited';
-export const FEATURE_VIDEO_CDN_UNLIMITIED = 'video-cdn-unlimited';
+export const FEATURE_FREE_WORDPRESS_THEMES = 'free-wordpress-themes';
+export const FEATURE_VIDEO_CDN_LIMITED = 'video-cdn-limited';
+export const FEATURE_VIDEO_CDN_UNLIMITED = 'video-cdn-unlimited';
 export const FEATURE_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -356,7 +356,7 @@ export const PLANS_LIST = {
 			FEATURE_TRAFFIC_TOOLS
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getSignupBillingTimeFrame: () => 'for life', //PLANS A/B TEST: Translate if test passes
+		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
 	},
 	[ PLAN_JETPACK_PREMIUM ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
@@ -385,12 +385,12 @@ export const PLANS_LIST = {
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_MALWARE_SCANNING_DAILY,
-			FEATURE_VIDEO_CDN_LIMITIED,
+			FEATURE_VIDEO_CDN_LIMITED,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_ALL_PERSONAL_FEATURES,
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getSignupBillingTimeFrame: () => 'per year', //PLANS A/B TEST: Translate if test passes
+		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 	},
 
 	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
@@ -419,7 +419,7 @@ export const PLANS_LIST = {
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_MALWARE_SCANNING_DAILY,
-			FEATURE_VIDEO_CDN_LIMITIED,
+			FEATURE_VIDEO_CDN_LIMITED,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_ALL_PERSONAL_FEATURES,
 		] ),
@@ -454,7 +454,7 @@ export const PLANS_LIST = {
 			FEATURE_ALL_FREE_FEATURES,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getSignupBillingTimeFrame: () => 'per year', //PLANS A/B TEST: Translate if test passes
+		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 	},
 
 	[ PLAN_JETPACK_PERSONAL_MONTHLY ]: {
@@ -522,12 +522,12 @@ export const PLANS_LIST = {
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_VIDEO_CDN_UNLIMITIED,
+			FEATURE_VIDEO_CDN_UNLIMITED,
 			FEATURE_SEO_PREVIEW_TOOLS,
 			FEATURE_ALL_PREMIUM_FEATURES
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getSignupBillingTimeFrame: () => 'per year', //PLANS A/B TEST: Translate if test passes
+		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 	},
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
@@ -564,7 +564,7 @@ export const PLANS_LIST = {
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_VIDEO_CDN_UNLIMITIED,
+			FEATURE_VIDEO_CDN_UNLIMITED,
 			FEATURE_SEO_PREVIEW_TOOLS,
 			FEATURE_ALL_PREMIUM_FEATURES
 		] ),
@@ -654,13 +654,13 @@ export const FEATURES_LIST = {
 		getTitle: () => 'Free WordPress Themes', //PLANS A/B TEST: Translate if test passes
 	},
 
-	[ FEATURE_VIDEO_CDN_LIMITIED ]: {
-		getSlug: () => FEATURE_VIDEO_CDN_LIMITIED,
+	[ FEATURE_VIDEO_CDN_LIMITED ]: {
+		getSlug: () => FEATURE_VIDEO_CDN_LIMITED,
 		getTitle: () => '13GB Video Storage', //PLANS A/B TEST: Translate if test passes
 	},
 
-	[ FEATURE_VIDEO_CDN_UNLIMITIED ]: {
-		getSlug: () => FEATURE_VIDEO_CDN_UNLIMITIED,
+	[ FEATURE_VIDEO_CDN_UNLIMITED ]: {
+		getSlug: () => FEATURE_VIDEO_CDN_UNLIMITED,
 		getTitle: () => 'Unlimited Video Storage', //PLANS A/B TEST: Translate if test passes
 	},
 
