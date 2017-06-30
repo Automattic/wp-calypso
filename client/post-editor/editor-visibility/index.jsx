@@ -462,9 +462,6 @@ const EditorVisibility = React.createClass( {
 		return (
 			<div className="editor-visibility__dropdown">
 				<FormFieldset className="editor-fieldset">
-					<FormLegend className="editor-fieldset__legend">
-						{ this.props.translate( 'Post Visibility' ) }
-					</FormLegend>
 					<SelectDropdown
 						selectedText={ selectedItem ? selectedItem.label : this.props.translate( 'Select an option' ) }
 						selectedIcon={ selectedItem.icon }
