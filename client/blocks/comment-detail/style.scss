@@ -137,6 +137,9 @@
 		rgba( mix( $alert-yellow, $white, 8.5% ), 0 ),
 		rgba( mix( $alert-yellow, $white, 8.5% ), 1 ) 50%
 	);
+	@supports( -webkit-line-clamp: 2 ) {
+		background: transparent;
+	}
 }
 
 .comment-detail__actions {
