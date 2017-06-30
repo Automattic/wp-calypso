@@ -83,6 +83,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 				isFollowing={ isFollowing }
 				followSource={ followSource }
 				railcar={ railcar }
+				hasDefaultSiteTitle={ hasDefaultSiteTitle }
 			/>
 		);
 	}
