@@ -5,6 +5,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_DELETED,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS,
+	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED,
 	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
 } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
@@ -29,6 +30,10 @@ reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS ] = ( state, { dat
 	return { ...state,
 		[ zoneId ]: locations,
 	};
+};
+
+reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED ] = ( state, { data, originatingAction: { zoneId } } ) => {
+	return reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS ]( state, { data, zoneId } );
 };
 
 reducers[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ] = ( state, { data, originatingAction: { zone } } ) => {

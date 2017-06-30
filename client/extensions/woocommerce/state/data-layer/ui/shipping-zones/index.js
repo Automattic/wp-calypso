@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { isEmpty, omit } from 'lodash';
+import { isEmpty, omit, some, xor } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import {
 	updateShippingZone,
 	deleteShippingZone,
 } from 'woocommerce/state/sites/shipping-zones/actions';
+import { updateShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/actions';
 import {
 	actionListStepNext,
 	actionListStepSuccess,
@@ -23,6 +24,26 @@ import {
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE,
 } from 'woocommerce/state/action-types';
+import { getShippingZoneLocationsWithEdits } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
+import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
+
+const createShippingZoneSuccess = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
+	const zoneIdMapping = {
+		...actionList.productIdMapping,
+		[ sentData.id.index ]: receivedData.id,
+	};
+
+	const newActionList = {
+		...actionList,
+		zoneIdMapping,
+	};
+
+	dispatch( actionListStepSuccess( newActionList ) );
+};
+
+const getZoneId = ( zoneId, { zoneIdMapping } ) => {
+	return 'number' === typeof zoneId ? zoneId : zoneIdMapping[ zoneId.index ];
+};
 
 const getSaveZoneActionListSteps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
@@ -54,6 +75,35 @@ const getSaveZoneActionListSteps = ( state ) => {
 				dispatch( createShippingZone(
 					siteId,
 					zoneData,
+					createShippingZoneSuccess( actionList ),
+					actionListStepFailure( actionList ),
+				) );
+			},
+		} );
+	}
+
+	const locations = getShippingZoneLocationsWithEdits( state, siteId );
+	const serverLocations = getRawShippingZoneLocations( state, siteId )[ zoneId ] || {
+		continent: [],
+		country: [],
+		state: [],
+		postcode: [],
+	};
+	if ( ! isEmpty( locations.state ) ) {
+		locations.state = locations.state.map( st => locations.country[ 0 ] + ':' + st );
+		locations.country = [];
+	}
+	const areLocationsDifferent = some( Object.keys( locations ).map( ( key ) => {
+		return ! isEmpty( xor( locations[ key ], serverLocations[ key ] ) );
+	} ) );
+	if ( areLocationsDifferent ) {
+		steps.push( {
+			description: translate( 'Updating Shipping Zone locations' ),
+			onStep: ( dispatch, actionList ) => {
+				dispatch( updateShippingZoneLocations(
+					siteId,
+					getZoneId( zoneId, actionList ),
+					locations,
 					actionListStepSuccess( actionList ),
 					actionListStepFailure( actionList ),
 				) );
@@ -61,7 +111,6 @@ const getSaveZoneActionListSteps = ( state ) => {
 		} );
 	}
 
-	// TODO: update locations
 	// TODO: auto-order operations
 	// TODO: create methods
 	// TODO: update methods
