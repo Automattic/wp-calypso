@@ -11,6 +11,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { fetchError, saveError, saveSuccess, updateSettings } from '../../settings/actions';
 import { WP_JOB_MANAGER_FETCH_SETTINGS, WP_JOB_MANAGER_SAVE_SETTINGS } from 'wp-job-manager/state/action-types';
+import { fromApi } from './utils';
 
 export const fetchExtensionSettings = ( { dispatch }, action ) => {
 	const { siteId } = action;
@@ -24,9 +25,11 @@ export const fetchExtensionSettings = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const updateExtensionSettings = ( { dispatch }, { siteId }, next, { data } ) => dispatch( updateSettings( siteId, data ) );
+export const updateExtensionSettings = ( { dispatch }, { siteId }, next, { data } ) =>
+	dispatch( updateSettings( siteId, fromApi( data ) ) );
 
-export const fetchExtensionError = ( { dispatch }, { siteId } ) => dispatch( fetchError( siteId ) );
+export const fetchExtensionError = ( { dispatch }, { siteId } ) =>
+	dispatch( fetchError( siteId ) );
 
 export const saveSettings = ( { dispatch, getState }, action ) => {
 	const { data, siteId } = action;

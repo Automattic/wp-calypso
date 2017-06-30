@@ -41,7 +41,7 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 										listings:
 											<ReduxFormTextInput
 												min="0"
-												name="job_manager_per_page"
+												name="perPage"
 												step="1"
 												type="number" />
 									}
@@ -51,21 +51,21 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 
 						<FormFieldset>
 							<ReduxFormToggle
-								name="job_manager_hide_filled_positions"
+								name="hideFilledPositions"
 								text={ translate( 'Hide filled positions' ) } />
 							<FormSettingExplanation isIndented>
 								{ translate( 'Filled positions will not display in your archives.' ) }
 							</FormSettingExplanation>
 
 							<ReduxFormToggle
-								name="job_manager_hide_expired"
+								name="hideExpired"
 								text={ translate( 'Hide expired listings in job archives/search' ) } />
 							<FormSettingExplanation isIndented>
 								{ translate( 'Expired job listings will not be searchable.' ) }
 							</FormSettingExplanation>
 
 							<ReduxFormToggle
-								name="job_manager_hide_expired_content"
+								name="hideExpiredContent"
 								text={ translate( 'Hide content in expired single job listings' ) } />
 							<FormSettingExplanation isIndented>
 								{ translate( 'Your site will display the titles of expired listings, but not the ' +
@@ -86,7 +86,7 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 					<Card>
 						<FormFieldset>
 							<ReduxFormToggle
-								name="job_manager_enable_categories"
+								name="enableCategories"
 								text={ translate( 'Enable listing categories' ) } />
 							<FormSettingExplanation isIndented>
 								{ translate( 'This lets users select from a list of categories when submitting a ' +
@@ -94,7 +94,7 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 							</FormSettingExplanation>
 
 							<ReduxFormToggle
-								name="job_manager_enable_default_category_multiselect"
+								name="enableDefaultCategory"
 								text={ translate( 'Default to category multiselect' ) } />
 							<FormSettingExplanation isIndented>
 								{ translate( 'The category selection box will default to allowing multiple ' +
@@ -112,7 +112,7 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 							</FormSettingExplanation>
 							<FormLabel>
 								<ReduxFormRadio
-									name="job_manager_category_filter_type"
+									name="categoryFilterType"
 									value="any" />
 								<span>
 									{ translate( 'Jobs will be shown if within ANY selected category' ) }
@@ -121,7 +121,7 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 
 							<FormLabel>
 								<ReduxFormRadio
-									name="job_manager_category_filter_type"
+									name="categoryFilterType"
 									value="all" />
 								<span>
 									{ translate( 'Jobs will be shown if within ALL selected categories' ) }
@@ -141,7 +141,7 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 					<Card>
 						<FormFieldset>
 							<ReduxFormToggle
-								name="job_manager_enable_types"
+								name="enableTypes"
 								text={ translate( 'Enable listing types' ) } />
 							<FormSettingExplanation isIndented>
 								{ translate( 'This lets users select from a list of types when submitting a job. ' +
@@ -149,7 +149,7 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 							</FormSettingExplanation>
 
 							<ReduxFormToggle
-								name="job_manager_multi_job_type"
+								name="multiJobType"
 								text={ translate( 'Allow multiple types for listings' ) } />
 							<FormSettingExplanation isIndented>
 								{ translate( 'This allows users to select more than one type when submitting a job. ' +
@@ -174,7 +174,7 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 							</FormSettingExplanation>
 							<FormLabel>
 								<ReduxFormRadio
-									name="job_manager_date_format"
+									name="dateFormat"
 									value="relative" />
 								<span>
 									{ translate( 'Relative to the current date (e.g., 1 day, 1 week, 1 month ago)' ) }
@@ -183,7 +183,7 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 
 							<FormLabel>
 								<ReduxFormRadio
-									name="job_manager_date_format"
+									name="dateFormat"
 									value="default" />
 								<span>
 									{ translate( 'Default date format as defined in Settings' ) }
@@ -202,7 +202,7 @@ const JobListings = ( { isSaving, perPage, translate } ) => {
 					</SectionHeader>
 					<Card>
 						<FormFieldset>
-							<ReduxFormTextInput name="job_manager_google_maps_api_key" />
+							<ReduxFormTextInput name="googleMapsApiKey" />
 							<FormSettingExplanation>
 								{ translate(
 									'Google requires an API key to retrieve location information for job listings. ' +
@@ -237,7 +237,7 @@ const connectComponent = connect(
 		const selector = formValueSelector( 'jobListings', () => state.extensions.wpJobManager.form );
 
 		return {
-			perPage: selector( state, 'job_manager_per_page' ),
+			perPage: selector( state, 'perPage' ),
 		};
 	}
 );
