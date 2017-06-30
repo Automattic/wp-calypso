@@ -129,7 +129,7 @@ const tryandcustomize = {
 		( siteId && ( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
 		isThemeActive( state, themeId, siteId ) ||
-		( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
+		( isThemePremium( state, themeId ) && isJetpackSite( state, siteId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
 		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
 	)
 };
