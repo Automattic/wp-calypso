@@ -16,6 +16,7 @@ import { isFetchingPreferences } from 'state/preferences/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
+import analytics from 'lib/analytics';
 
 const PublishConfirmation = ( {
 	siteId,
@@ -26,6 +27,12 @@ const PublishConfirmation = ( {
 } ) => {
 	const handleToggle = () => {
 		savePublishConfirmationPreference( siteId, ! publishConfirmationEnabled );
+
+		analytics.mc.bumpStat( 'calypso_publish_confirmation', publishConfirmationEnabled ? 'enabled' : 'disabled' );
+
+		analytics.tracks.recordEvent( publishConfirmationEnabled
+			? 'calypso_publish_confirmation_preference_enable'
+			: 'calypso_publish_confirmation_preference_disable' );
 	};
 
 	const fieldLabel = translate( 'Show publish confirmation' );
