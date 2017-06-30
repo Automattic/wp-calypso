@@ -22,11 +22,17 @@ import {
 	fetchProducts
 } from 'woocommerce/state/sites/products/actions';
 import {
+	fetchPaymentMethods,
+} from 'woocommerce/state/sites/payment-methods/actions';
+import {
 	fetchSetupChoices,
 	setOptedOutOfShippingSetup,
 	setOptedOutOfTaxesSetup,
 	setTriedCustomizerDuringInitialSetup,
 } from 'woocommerce/state/sites/setup-choices/actions';
+import {
+	arePaymentsSetup
+} from 'woocommerce/state/ui/payments/methods/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import SetupTask from './setup-task';
 
@@ -51,6 +57,7 @@ class SetupTasks extends Component {
 
 		if ( site && site.ID ) {
 			this.props.fetchSetupChoices( site.ID );
+			this.props.fetchPaymentMethods( site.ID );
 			this.props.fetchProducts( site.ID, 1 );
 		}
 	}
@@ -208,7 +215,7 @@ function mapStateToProps( state ) {
 		triedCustomizer: getTriedCustomizerDuringInitialSetup( state ),
 		hasProducts: getTotalProducts( state ) > 0,
 		// TODO - connect the following to selectors when they become available
-		paymentsAreSetUp: false,
+		paymentsAreSetUp: arePaymentsSetup( state ),
 		shippingIsSetUp: false,
 		taxesAreSetUp: false,
 	};
@@ -217,6 +224,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			fetchPaymentMethods,
 			fetchProducts,
 			fetchSetupChoices,
 			setOptedOutOfShippingSetup,
