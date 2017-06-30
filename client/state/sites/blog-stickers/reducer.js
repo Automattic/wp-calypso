@@ -21,7 +21,7 @@ export const items = createReducer(
 			const { blogId, stickerName } = action.payload;
 
 			// If the blog already has this sticker, do nothing
-			if ( state[ blogId ] && includes( state[ blogId ], stickerName ) ) {
+			if ( includes( state[ blogId ], stickerName ) ) {
 				return state;
 			}
 
