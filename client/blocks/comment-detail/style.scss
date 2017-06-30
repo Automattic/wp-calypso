@@ -411,43 +411,30 @@ a.comment-detail__author-more-element {
 }
 
 .comment-detail__reply {
-	// The inner working of these styles is covered here:
-	// http://alistapart.com/article/expanding-text-areas-made-elegant
-	.is-expanding-area {
-		min-height: 33px;
+	line-height: 0;
+	position: relative;
+
+	textarea {
+		font-family: $serif;
+		font-size: 14px;
+		height: 47px;
+		line-height: 21px;
+		min-height: 47px;
+		overflow: hidden;
+		padding: 12px 70px 12px 16px;
 		position: relative;
-		transition: min-height 0.2s ease-in-out;
+		resize: vertical;
+		white-space: pre-wrap;
+		word-wrap: break-word;
 
-		&.is-focused {
-			min-height: 70px;
-		}
-
-		pre,
-		textarea {
-			font-family: $serif;
-			font-size: 14px;
-			line-height: 21px;
-			margin: 0;
-			max-height: 400px;
-			min-height: 33px;
-			padding: 12px 70px 12px 16px;
-			white-space: pre-wrap;
-			word-wrap: break-word;
-		}
-
-		pre {
-			box-sizing: border-box;
-			display: block;
-			visibility: hidden;
-		}
-
-		textarea {
-			border: none;
-			height: 100%;
-			position: absolute;
-				left: 0;
-				top: 0;
+		&:not( :focus ) {
+			border-color: $white;
 			resize: none;
+		}
+
+		&:focus,
+		&.is-focused {
+			min-height: 68px; // 2 lines
 		}
 	}
 
