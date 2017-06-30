@@ -16,6 +16,11 @@ import Button from 'components/button';
 import { fetchProducts, fetchProductSearchResults, clearProductSearch } from 'woocommerce/state/sites/products/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import {
+	getTotalProducts,
+	areProductsLoaded,
+	areProductsLoading,
+} from 'woocommerce/state/sites/products/selectors';
 import Main from 'components/main';
 import ProductsList from './products-list';
 import ProductsListSearchResults from './products-list-search-results';
@@ -76,7 +81,7 @@ class Products extends Component {
 	}
 
 	render() {
-		const { className, site, translate } = this.props;
+		const { className, site, translate, productsLoading, productsLoaded, totalProducts } = this.props;
 		const classes = classNames( 'products__list', className );
 
 		let productsDisplay;
@@ -84,6 +89,18 @@ class Products extends Component {
 			productsDisplay = <ProductsList onSwitchPage={ this.switchPage } />;
 		} else {
 			productsDisplay = <ProductsListSearchResults onSwitchPage={ this.switchPage } />;
+		}
+
+		let searchCard = null;
+		// Show the search card if we actually have products, or during the loading process as part of the placeholder UI
+		if ( ( productsLoaded === true && totalProducts > 0 ) || ( ! site || productsLoading === true ) ) {
+			searchCard = <SearchCard
+				onSearch={ this.onSearch }
+				delaySearch
+				delayTimeout={ 400 }
+				disabled={ ! site }
+				placeholder={ translate( 'Search products…' ) }
+			/>;
 		}
 
 		return (
@@ -94,13 +111,7 @@ class Products extends Component {
 						{ translate( 'Add a product' ) }
 					</Button>
 				</ActionHeader>
-				<SearchCard
-					onSearch={ this.onSearch }
-					delaySearch
-					delayTimeout={ 400 }
-					disabled={ ! site }
-					placeholder={ translate( 'Search products…' ) }
-				/>
+				{ searchCard }
 				{ productsDisplay }
 			</Main>
 		);
@@ -109,8 +120,14 @@ class Products extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
+	const productsLoaded = site && areProductsLoaded( state, 1, site.ID );
+	const totalProducts = site && getTotalProducts( state, site.ID );
+	const productsLoading = site && areProductsLoading( state, 1, site.ID );
 	return {
 		site,
+		productsLoaded,
+		productsLoading,
+		totalProducts,
 	};
 }
 
