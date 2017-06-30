@@ -9,7 +9,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
@@ -19,9 +18,7 @@ const ShippingHeader = ( { translate, site } ) => {
 		( <span>{ translate( 'Shipping' ) }</span> ),
 	];
 	return (
-		<ActionHeader breadcrumbs={ breadcrumbs }>
-			<Button primary>{ translate( 'Save' ) }</Button>
-		</ActionHeader>
+		<ActionHeader breadcrumbs={ breadcrumbs } />
 	);
 };
 
