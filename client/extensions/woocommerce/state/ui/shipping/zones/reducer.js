@@ -122,7 +122,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_REMOVE ] = ( state, { id } ) => {
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ] = ( state, { data, originatingAction: { zone } } ) => {
-	if ( zone.id === state.currentlyEditingId ) {
+	if ( zone.id !== state.currentlyEditingId ) {
 		return state;
 	}
 
