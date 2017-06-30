@@ -12,16 +12,20 @@ import { bindActionCreators } from 'redux';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import QueryPreferences from 'components/data/query-preferences';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import { isFetchingPreferences } from 'state/preferences/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
+import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 
 const PublishConfirmation = ( {
-	publishConfirmationPreference,
+	siteId,
+	fetchingPreferences,
+	publishConfirmationEnabled,
 	savePublishConfirmationPreference,
 	translate,
 } ) => {
 	const handleToggle = () => {
-		savePublishConfirmationPreference( ! publishConfirmationPreference );
+		savePublishConfirmationPreference( siteId, ! publishConfirmationEnabled );
 	};
 
 	const fieldLabel = translate( 'Show publish confirmation' );
@@ -33,7 +37,8 @@ const PublishConfirmation = ( {
 		<div>
 			<QueryPreferences />
 			<CompactFormToggle
-				checked={ !! publishConfirmationPreference }
+				checked={ !! publishConfirmationEnabled }
+				disabled={ fetchingPreferences }
 				onChange={ handleToggle }
 			>
 				{ fieldLabel }
@@ -47,23 +52,30 @@ const PublishConfirmation = ( {
 };
 
 PublishConfirmation.defaultProps = {
-	publishConfirmationPreference: true,
+	isConfirmationSidebarEnabled: true,
 };
 
 PublishConfirmation.propTypes = {
-	publishConfirmationPreference: React.PropTypes.bool,
+	siteId: React.PropTypes.number,
+	fetchingPreferences: React.PropTypes.bool,
+	publishConfirmationEnabled: React.PropTypes.bool,
 	savePublishConfirmationPreference: React.PropTypes.func,
+	translate: React.PropTypes.func,
 };
 
 export default connect(
 	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
 		return {
-			publishConfirmationPreference: getPreference( state, 'publishConfirmation' ),
+			siteId,
+			fetchingPreferences: isFetchingPreferences( state ),
+			publishConfirmationEnabled: isConfirmationSidebarEnabled( state, siteId ),
 		};
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
-			savePublishConfirmationPreference: savePreference.bind( null, 'publishConfirmation' ),
+			savePublishConfirmationPreference: saveConfirmationSidebarPreference,
 		}, dispatch );
 	},
 )( localize( PublishConfirmation ) );
