@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -44,6 +45,9 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 				/>
 				<EmptyContent
 					action={ translate( 'Back to WordPress.com' ) }
+					actionCallback={ function() {
+						page( '/' );
+					} }
 					actionURL={ '/' }
 					illustration={ '/calypso/images/drake/drake-all-done.svg' }
 					illustrationWidth={ 500 }
