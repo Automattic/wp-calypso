@@ -20,7 +20,7 @@
 	// If the comment is unapproved and collapsed, color it yellow.
 	&.is-unapproved.is-collapsed {
 		.comment-detail__header {
-			background: rgba( $alert-yellow, 0.085 );
+			background: mix( $alert-yellow, $white, 8.5% );
 			box-shadow: inset 4px 0 0 0 $alert-yellow;
 		}
 	}
@@ -28,24 +28,6 @@
 	.gridicon {
 		margin-right: 4px;
 		vertical-align: middle;
-	}
-}
-
-.comment-detail__transition-enter {
-	opacity: 0.01;
-
-	&.comment-detail__transition-enter-active {
-		opacity: 1;
-		transition: opacity .15s linear;
-		transition-delay: .15s;
-	}
-}
-.comment-detail__transition-leave {
-	opacity: 1;
-
-	&.comment-detail__transition-leave-active {
-		opacity: 0.01;
-		transition: opacity .15s linear;
 	}
 }
 
@@ -128,7 +110,11 @@
 	width: 60%;
 
 	&:after {
-		background: linear-gradient(to right, rgba( $white, 0 ), rgba( $white, 1 ) 50%);
+		background: linear-gradient(
+			to right,
+			rgba( $white, 0 ),
+			rgba( $white, 1 ) 50%
+		);
 		content: '';
 		height: 19px;
 		position: absolute;
@@ -144,6 +130,13 @@
 			background: transparent;
 		}
 	}
+}
+.comment-detail.is-unapproved .comment-detail__comment-preview:after {
+	background: linear-gradient(
+		to right,
+		rgba( mix( $alert-yellow, $white, 8.5% ), 0 ),
+		rgba( mix( $alert-yellow, $white, 8.5% ), 1 ) 50%
+	);
 }
 
 .comment-detail__actions {
@@ -487,6 +480,9 @@ a.comment-detail__author-more-element {
 		color: transparent;
 		height: 32px;
 		margin: 0 8px;
+		&:after {
+			background: transparent;
+		}
 	}
 
 	&.is-expanded .comment-detail__header {

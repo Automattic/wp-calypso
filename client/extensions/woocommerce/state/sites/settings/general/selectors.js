@@ -45,17 +45,17 @@ export function getPaymentCurrencySettings( state, siteId = getSelectedSiteId( s
 }
 
 export const getStoreLocation = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const address = {
+	const defaultLocation = {
 		street: '',
 		street2: '',
 		city: '',
-		state: '',
+		state: 'AL',
 		postcode: '',
-		country: '',
+		country: 'US',
 	};
 
 	if ( ! areSettingsGeneralLoaded( state, siteId ) ) {
-		return address;
+		return defaultLocation;
 	}
 
 	const generalSettings = getRawGeneralSettings( state, siteId );
@@ -68,6 +68,8 @@ export const getStoreLocation = ( state, siteId = getSelectedSiteId( state ) ) =
 		country: 'woocommerce_default_country',
 	};
 
+	const address = defaultLocation;
+
 	for ( const addressKey in settingsMap ) {
 		const setting = find( generalSettings, { id: settingsMap[ addressKey ] } );
 		address[ addressKey ] = setting ? setting.value : '';
@@ -79,7 +81,21 @@ export const getStoreLocation = ( state, siteId = getSelectedSiteId( state ) ) =
 		const parts = address.country.split( ':' );
 		address.country = parts[ 0 ];
 		address.state = parts[ 1 ];
+	} else {
+		address.state = '';
 	}
 
 	return address;
+};
+
+export const areTaxCalculationsEnabled = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const generalSettings = getRawGeneralSettings( state, siteId );
+	const taxesEnabled = find( generalSettings, { id: 'woocommerce_calc_taxes' } );
+	if ( ! taxesEnabled ) {
+		return null;
+	}
+	if ( ! ( 'value' in taxesEnabled ) ) {
+		return null;
+	}
+	return ( 'yes' === taxesEnabled.value );
 };

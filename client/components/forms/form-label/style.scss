@@ -3,6 +3,12 @@
 	font-size: 14px;
 	font-weight: 600;
 	margin-bottom: 5px;
+
+	.form-label__required {
+		color: $orange-fire;
+		font-weight: normal;
+		margin-left: 6px;
+	}
 }
 
 .form-label input[type="checkbox"] + span,

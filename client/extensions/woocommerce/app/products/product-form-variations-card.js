@@ -22,7 +22,7 @@ class ProductFormVariationsCard extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		product: PropTypes.shape( {
-			type: PropTypes.string.isRequired,
+			type: PropTypes.string,
 			name: PropTypes.string,
 			attributes: PropTypes.array,
 		} ),
@@ -44,7 +44,9 @@ class ProductFormVariationsCard extends Component {
 	 * A user shouldn't lose work just because they locally toggled a card.
 	 */
 	handleToggle = () => {
-		if ( 'variable' !== this.props.product.type ) {
+		const type = this.props.product.type || 'simple';
+
+		if ( 'variable' !== type ) {
 			this.setProductTypeVariable();
 		} else {
 			this.setProductTypeSimple();
@@ -99,6 +101,7 @@ class ProductFormVariationsCard extends Component {
 	render() {
 		const { siteId, product, variations, translate } = this.props;
 		const { editProductAttribute, editProductVariation } = this.props;
+		const type = product.type || 'simple';
 		const variationToggleDescription = translate(
 			'%(productName)s has variations, like size and color.', {
 				args: {
@@ -112,12 +115,12 @@ class ProductFormVariationsCard extends Component {
 				icon=""
 				expanded
 				className="products__variation-card"
-				header={ ( <FormToggle onChange={ this.handleToggle } checked={ 'variable' === product.type }>
+				header={ ( <FormToggle onChange={ this.handleToggle } checked={ 'variable' === type }>
 					{ variationToggleDescription }
 				</FormToggle>
 				) }
 			>
-				{ 'variable' === product.type && (
+				{ 'variable' === type && (
 					<div>
 						<ProductVariationTypesForm
 							siteId={ siteId }

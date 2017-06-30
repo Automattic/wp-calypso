@@ -102,6 +102,11 @@ export class EditorMediaModal extends Component {
 
 		if ( nextProps.visible ) {
 			this.setState( this.getDefaultState( nextProps ) );
+
+			if ( nextProps.source && this.state.source !== nextProps.source ) {
+				// Signal that we're coming from another data source
+				MediaActions.sourceChanged( nextProps.site.ID );
+			}
 		} else {
 			this.props.resetView();
 		}
@@ -146,7 +151,11 @@ export class EditorMediaModal extends Component {
 				settings: this.state.gallerySettings
 			} : undefined;
 
-		this.props.onClose( value );
+		if ( value && this.state.source !== '' ) {
+			this.copyExternal( mediaLibrarySelectedItems, this.state.source );
+		} else {
+			this.props.onClose( value );
+		}
 	};
 
 	setDetailSelectedIndex = index => {
@@ -326,7 +335,22 @@ export class EditorMediaModal extends Component {
 		}
 	};
 
-	onSourceChange = () => {
+	copyExternal = ( selectedItems, originalSource ) => {
+		const { site } = this.props;
+
+		// Trigger the action to clear pointers/selected items
+		MediaActions.sourceChanged( site.ID );
+
+		// Change our state back to WordPress
+		this.setState( {
+			source: '',
+			search: undefined,
+		}, () => {
+			// Copy the selected item from the external source. Note we pass the actual media data as we need this to generate
+			// transient placeholders. This is done after the state changes so our transients and external items appear
+			// in the WordPress library that we've just switched to
+			MediaActions.addExternal( this.props.site.ID, selectedItems, originalSource );
+		} );
 	};
 
 	onClose = () => {
@@ -488,7 +512,6 @@ export class EditorMediaModal extends Component {
 						onFilterChange={ this.onFilterChange }
 						onScaleChange={ this.onScaleChange }
 						onSearch={ this.onSearch }
-						onSourceChange={ this.onSourceChange }
 						onEditItem={ this.editItem }
 						fullScreenDropZone={ false }
 						single={ this.props.single }

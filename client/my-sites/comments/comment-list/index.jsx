@@ -249,11 +249,11 @@ export class CommentList extends Component {
 					toggleBulkEdit={ this.toggleBulkEdit }
 					toggleSelectAll={ this.toggleSelectAll }
 				/>
-
 				<ReactCSSTransitionGroup
-					transitionEnterTimeout={ 300 }
+					className="comment-list__transition-wrapper"
+					transitionEnterTimeout={ 150 }
 					transitionLeaveTimeout={ 150 }
-					transitionName="comment-detail__transition"
+					transitionName="comment-list__transition"
 				>
 					{ map( comments, comment =>
 						<CommentDetail
@@ -269,14 +269,9 @@ export class CommentList extends Component {
 							toggleCommentSelected={ this.toggleCommentSelected }
 						/>
 					) }
-				</ReactCSSTransitionGroup>
-				<ReactCSSTransitionGroup
-					className="comment-list__transition-wrapper"
-					component="div"
-					transitionEnterTimeout={ 300 }
-					transitionLeaveTimeout={ 150 }
-					transitionName="comment-list__transition" >
+
 					{ showPlaceholder && <CommentDetailPlaceholder key="comment-detail-placeholder" /> }
+
 					{ showEmptyContent && <EmptyContent
 						illustration="/calypso/images/comments/illustration_comments_gray.svg"
 						illustrationWidth={ 150 }

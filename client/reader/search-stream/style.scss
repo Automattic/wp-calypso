@@ -142,10 +142,19 @@
 }
 
 // Post recommendations in Search
-.is-reader-page .search-stream .reader__content,
-.is-reader-page .search-stream.search-stream__with-sites .reader__content {
+.is-reader-page .search-stream .reader__content {
 	display: flex;
-	flex-flow: row wrap;
+	flex-flow: row wrap; // So post recs are side by side
+}
+
+.is-reader-page .search-stream.search-stream__with-sites .search-stream__results.is-two-columns .reader__content,
+.is-reader-page .search-stream.search-stream__with-sites .search-stream__single-column-results.is-post-results .reader__content {
+	flex-flow: inherit;
+	flex-direction: column; // So post results are stacked
+}
+
+.search-stream .reader-related-card-v2__featured-image {
+	min-height: 78px;
 }
 
 .is-reader-page .search-stream__recommendation-list-item {

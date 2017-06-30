@@ -49,6 +49,7 @@ export default React.createClass( {
 					onClick={ this.props.onNavigate }
 					href={ this.props.link }
 					target={ isExternalLink ? '_blank' : null }
+					rel={ isExternalLink ? 'noopener noreferrer' : null }
 					onMouseEnter={ this.preload }
 				>
 					<Gridicon icon={ this.props.icon } size={ 24 } />

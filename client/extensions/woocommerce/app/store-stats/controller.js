@@ -28,7 +28,7 @@ export default function StatsController( context ) {
 		page.redirect( `/store/stats/orders/day/${ context.params.site }` );
 	}
 	const props = {
-		context: context,
+		querystring: context.querystring,
 		type: context.params.type,
 		unit: context.params.unit,
 		path: context.pathname,

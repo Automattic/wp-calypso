@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes, PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -9,11 +10,16 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityLogBanner from './index';
 import Button from 'components/button';
+import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
 
 class ErrorBanner extends PureComponent {
 	static propTypes = {
 		requestRestore: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
 		timestamp: PropTypes.number.isRequired,
+
+		// connect
+		dismissRewindRestoreProgress: PropTypes.func.isRequired,
 
 		// localize
 		translate: PropTypes.func.isRequired,
@@ -21,13 +27,15 @@ class ErrorBanner extends PureComponent {
 
 	handleClickRestore = () => this.props.requestRestore( this.props.timestamp );
 
+	handleDismiss = () => this.props.dismissRewindRestoreProgress( this.props.siteId );
+
 	render() {
 		const { translate } = this.props;
 
 		return (
 			<ActivityLogBanner
 				isDismissable
-				onDismissClick={ /* FIXME */ function() {} }
+				onDismissClick={ this.handleDismiss }
 				status="error"
 				title={ translate( 'Problem restoring your site' ) }
 			>
@@ -44,4 +52,6 @@ class ErrorBanner extends PureComponent {
 	}
 }
 
-export default localize( ErrorBanner );
+export default connect( null, {
+	dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
+} )( localize( ErrorBanner ) );

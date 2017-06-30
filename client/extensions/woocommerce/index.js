@@ -16,8 +16,10 @@ import Order from './app/order';
 import Orders from './app/orders';
 import Products from './app/products';
 import ProductCreate from './app/products/product-create';
+import ProductUpdate from './app/products/product-update';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
+import SettingsTaxes from './app/settings/taxes';
 import Shipping from './app/settings/shipping';
 import ShippingZone from './app/settings/shipping/shipping-zone';
 import StatsController from './app/store-stats/controller';
@@ -38,6 +40,7 @@ const getStorePages = () => {
 				isPrimary: true,
 				label: translate( 'Dashboard' ),
 				slug: 'dashboard',
+				showDuringSetup: true,
 			},
 		},
 		{
@@ -49,22 +52,26 @@ const getStorePages = () => {
 				isPrimary: true,
 				label: translate( 'Products' ),
 				slug: 'products',
+				showDuringSetup: false,
 			},
 		},
 		{
 			container: ProductCreate,
 			configKey: 'woocommerce/extension-products',
 			path: '/store/product/:site',
+			parentPath: '/store/products/:site',
 			sidebarItemButton: {
 				label: translate( 'Add' ),
 				parentSlug: 'products',
 				slug: 'product-add',
+				showDuringSetup: false,
 			},
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
-			configKey: 'woocommerce/extension-products-import',
-			path: '/store/products/import/:site',
+			container: ProductUpdate,
+			configKey: 'woocommerce/extension-products',
+			path: '/store/product/:site/:product',
+			parentPath: '/store/products/:site',
 		},
 		{
 			container: Orders,
@@ -75,25 +82,17 @@ const getStorePages = () => {
 				isPrimary: true,
 				label: translate( 'Orders' ),
 				slug: 'orders',
+				showDuringSetup: false,
 			},
 		},
 		{
 			container: Order,
 			configKey: 'woocommerce/extension-orders',
 			path: '/store/order/:site/:order',
+			parentPath: '/store/orders/:site',
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
-			configKey: 'woocommerce/extension-orders',
-			path: '/store/order/:site',
-			sidebarItemButton: {
-				label: translate( 'Add' ),
-				parentSlug: 'orders',
-				slug: 'order-add',
-			},
-		},
-		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
+			container: SettingsPayments,
 			configKey: 'woocommerce/extension-settings',
 			path: '/store/settings/:site',
 			sidebarItem: {
@@ -101,45 +100,32 @@ const getStorePages = () => {
 				isPrimary: false,
 				label: translate( 'Settings' ),
 				slug: 'settings',
+				showDuringSetup: false,
 			},
 		},
 		{
 			container: SettingsPayments,
 			configKey: 'woocommerce/extension-settings-payments',
 			path: '/store/settings/payments/:site',
-			sidebarItem: {
-				isPrimary: false,
-				label: translate( 'Payments' ),
-				parentSlug: 'settings',
-				slug: 'settings-payments',
-			},
+			parentPath: '/store/settings/:site',
 		},
 		{
 			container: Shipping,
 			configKey: 'woocommerce/extension-settings-shipping',
 			path: '/store/settings/shipping/:site',
-			sidebarItem: {
-				isPrimary: false,
-				label: translate( 'Shipping' ),
-				parentSlug: 'settings',
-				slug: 'settings-shipping',
-			},
+			parentPath: '/store/settings/:site',
 		},
 		{
 			container: ShippingZone,
 			configKey: 'woocommerce/extension-settings-shipping',
 			path: '/store/settings/shipping/:site/zone/:zone',
+			parentPath: '/store/settings/:site',
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
+			container: SettingsTaxes,
 			configKey: 'woocommerce/extension-settings-tax',
 			path: '/store/settings/taxes/:site',
-			sidebarItem: {
-				isPrimary: false,
-				label: translate( 'Taxes' ),
-				parentSlug: 'settings',
-				slug: 'settings-tax',
-			},
+			parentPath: '/store/settings/:site',
 		},
 	];
 };
@@ -166,10 +152,11 @@ function addStorePage( storePage, storeNavigation ) {
 	} );
 }
 
-function createStoreNavigation( context, next ) {
+function createStoreNavigation( context, next, storePage ) {
 	renderWithReduxStore(
 		React.createElement( StoreSidebar, {
 			path: context.path,
+			page: storePage,
 			sidebarItems: getStoreSidebarItems(),
 			sidebarItemButtons: getStoreSidebarItemButtons(),
 		} ),
@@ -184,7 +171,7 @@ export default function() {
 	// Add pages that use the store navigation
 	getStorePages().forEach( function( storePage ) {
 		if ( config.isEnabled( storePage.configKey ) ) {
-			addStorePage( storePage, createStoreNavigation );
+			addStorePage( storePage, ( context, next ) => createStoreNavigation( context, next, storePage ) );
 		}
 	} );
 

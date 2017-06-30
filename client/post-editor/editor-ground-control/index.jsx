@@ -23,7 +23,6 @@ import AsyncLoad from 'components/async-load';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
-import config from 'config';
 import classNames from 'classnames';
 
 export default React.createClass( {
@@ -31,6 +30,7 @@ export default React.createClass( {
 
 	propTypes: {
 		hasContent: React.PropTypes.bool,
+		isConfirmationSidebarEnabled: React.PropTypes.bool,
 		isDirty: React.PropTypes.bool,
 		isSaveBlocked: React.PropTypes.bool,
 		isPublishing: React.PropTypes.bool,
@@ -55,6 +55,7 @@ export default React.createClass( {
 	getDefaultProps: function() {
 		return {
 			hasContent: false,
+			isConfirmationSidebarEnabled: true,
 			isDirty: false,
 			isSaveBlocked: false,
 			isPublishing: false,
@@ -289,7 +290,7 @@ export default React.createClass( {
 
 	renderGroundControlActionButtons: function() {
 		const publishComboClasses = classNames( 'editor-ground-control__publish-combo', {
-			'is-standalone': config.isEnabled( 'post-editor/delta-post-publish-flow' )
+			'is-standalone': ! this.canPublishPost() || this.props.isConfirmationSidebarEnabled
 		} );
 
 		return ( <div className="editor-ground-control__action-buttons">
@@ -317,6 +318,7 @@ export default React.createClass( {
 					onSave={ this.props.onSave }
 					onPublish={ this.props.onPublish }
 					tabIndex={ 5 }
+					isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
 					isPublishing={ this.props.isPublishing }
 					isSaveBlocked={ this.props.isSaveBlocked }
 					hasContent={ this.props.hasContent }
@@ -324,7 +326,7 @@ export default React.createClass( {
 					busy={ this.props.isPublishing || ( postUtils.isPublished( this.props.savedPost ) && this.props.isSaving ) }
 				/>
 				{ this.canPublishPost() &&
-				! config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+				! this.props.isConfirmationSidebarEnabled &&
 				<Button
 					primary
 					compact
@@ -350,7 +352,7 @@ export default React.createClass( {
 				}
 			</div>
 			{ this.canPublishPost() &&
-			! config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			! this.props.isConfirmationSidebarEnabled &&
 			this.schedulePostPopover()
 			}
 		</div> );

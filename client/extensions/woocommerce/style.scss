@@ -15,6 +15,7 @@
 	@import 'components/process-orders-widget/style';
 	@import 'components/product-image-uploader/style';
 	@import 'app/settings/shipping/style';
+	@import 'app/settings/taxes/style';
 	@import 'components/list/style';
 	@import 'components/location-flag/style';
 	@import 'components/table/style';
@@ -29,6 +30,7 @@
 	@import 'components/store-address/style';
 	@import 'app/store-stats/store-stats-chart/style';
 	@import 'app/store-stats/store-stats-navigation/style';
+	@import 'app/store-stats/style';
 	@import 'components/delta/style';
 
 	.components__action-header {
@@ -42,6 +44,12 @@
 
 		.button {
 			margin-left: 8px;
+		}
+	}
+
+	.section-nav {
+		@include breakpoint( ">660px" ) {
+			margin-top: 58px;
 		}
 	}
 }

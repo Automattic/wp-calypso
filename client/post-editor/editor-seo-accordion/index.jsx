@@ -87,6 +87,7 @@ class EditorSeoAccordion extends Component {
 								showDeviceSwitcher={ false }
 								showExternal={ false }
 								defaultViewportDevice="seo"
+								frontPageMetaDescription={ metaDescription }
 							/>
 						</div>
 					}

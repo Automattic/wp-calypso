@@ -104,6 +104,7 @@ export class WebPreview extends Component {
 							{ ...this.props }
 							onDeviceUpdate={ this.setDeviceViewport }
 							isModalWindow={ true }
+							frontPageMetaDescription={ this.props.frontPageMetaDescription || null }
 						/>
 					</div>
 				</div>
@@ -152,6 +153,8 @@ WebPreview.propTypes = {
 	iframeTitle: PropTypes.string,
 	// Makes room for a sidebar if desired
 	hasSidebar: React.PropTypes.bool,
+	// The site/post description passed to the SeoPreviewPane
+	frontPageMetaDescription: React.PropTypes.string,
 };
 
 WebPreview.defaultProps = {

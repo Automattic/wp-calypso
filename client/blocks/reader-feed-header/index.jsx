@@ -15,6 +15,7 @@ import HeaderBack from 'reader/header-back';
 import { getSiteDescription, getSiteName, getSiteUrl } from 'reader/get-helpers';
 import Gridicon from 'gridicons';
 import SiteIcon from 'blocks/site-icon';
+import BlogStickers from 'blocks/blog-stickers';
 
 const getBadgeForSite = site => {
 	/* eslint-disable wpcalypso/jsx-gridicon-size */
@@ -86,11 +87,12 @@ class FeedHeader extends Component {
 						<SiteIcon site={ site } size={ 96 } />
 					</a>
 					<div className="reader-feed-header__site-title">
+						{ site &&
+							<span className="reader-feed-header__site-badge">
+								{ siteBadge }
+								<BlogStickers blogId={ site.ID } />
+							</span> }
 						<a className="reader-feed-header__site-title-link" href={ siteUrl }>
-							{ siteBadge &&
-								<span className="reader-feed-header__site-badge">
-									{ siteBadge }
-								</span> }
 							{ siteTitle }
 						</a>
 					</div>

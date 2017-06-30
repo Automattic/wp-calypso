@@ -11,11 +11,13 @@ import {
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
+	WOOCOMMERCE_TAXES_ENABLED_UPDATE,
+	WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 // TODO: Handle error
 
-export default createReducer( [], {
+export default createReducer( null, {
 	[ WOOCOMMERCE_CURRENCY_UPDATE ]: ( state ) => {
 		// TODO: Return some sort of saving indicator
 		return state;
@@ -31,6 +33,22 @@ export default createReducer( [], {
 		} );
 		return newSettings;
 	},
+
+	[ WOOCOMMERCE_TAXES_ENABLED_UPDATE ]: ( state ) => {
+		return state;
+	},
+
+	[ WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS ]: ( state, { data } ) => {
+		const settings = state || [];
+		const newSettings = settings.map( ( setting ) => {
+			if ( setting.id === data.id ) {
+				return data;
+			}
+			return setting;
+		} );
+		return newSettings;
+	},
+
 	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST ]: () => {
 		return LOADING;
 	},
@@ -44,6 +62,6 @@ export default createReducer( [], {
 	},
 
 	[ WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return updateSettings( 'general', state, data );
+		return updateSettings( 'general', state || [], data );
 	},
 } );

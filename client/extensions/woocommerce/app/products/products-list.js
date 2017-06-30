@@ -48,7 +48,7 @@ const ProductsList = ( {
 	};
 
 	if ( currentPageLoaded === true && totalProducts === 0 ) {
-		return renderEmptyContent;
+		return renderEmptyContent();
 	}
 
 	const isRequesting = ( requestedPage && ! requestedPageLoaded ) || ! products ? true : false;

@@ -1,6 +1,13 @@
 .dashboard__setup-wrapper {
 	@include breakpoint( ">960px" ) {
 		padding: 32px;
+		margin-top: 58px;
+	}
+}
+
+.dashboard__manage-no-orders {
+	@include breakpoint( ">960px" ) {
+		margin-top: 58px;
 	}
 }
 
@@ -175,6 +182,9 @@
 }
 
 .dashboard__manage-has-orders {
+	@include breakpoint( ">960px" ) {
+		margin-top: 58px;
+	}
 	.dashboard__reports-widget {
 		overflow: hidden;
 		text-align: center;

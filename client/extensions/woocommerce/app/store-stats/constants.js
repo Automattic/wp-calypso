@@ -4,6 +4,7 @@
 import { translate } from 'i18n-calypso';
 
 export const topProducts = {
+	basePath: '/store/stats/products',
 	title: translate( 'Products' ),
 	values: [
 		{ key: 'name', title: translate( 'Title' ) },
@@ -15,6 +16,7 @@ export const topProducts = {
 };
 
 export const topCategories = {
+	basePath: '/store/stats/categories',
 	title: translate( 'Categories' ),
 	values: [
 		{ key: 'name', title: translate( 'Title' ) },
@@ -26,6 +28,7 @@ export const topCategories = {
 };
 
 export const topCoupons = {
+	basePath: '/store/stats/coupons',
 	title: translate( 'Coupons' ),
 	values: [
 		{ key: 'name', title: translate( 'Title' ) },

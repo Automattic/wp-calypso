@@ -21,7 +21,7 @@ import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { getCurrentlyEditingShippingZoneLocationsList } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 import { openEditLocations } from 'woocommerce/state/ui/shipping/zones/locations/actions';
 
-const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actions, onChange } ) => {
+const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actions } ) => {
 	const getLocationFlag = ( location ) => {
 		if ( 'continent' === location.type ) {
 			return null;
@@ -96,7 +96,6 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 		if ( ! loaded ) {
 			return;
 		}
-		onChange();
 		actions.openEditLocations();
 	};
 
@@ -120,7 +119,7 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 				</ListHeader>
 				{ locationsToRender.map( renderLocation ) }
 			</List>
-			<ShippingZoneLocationDialog siteId={ siteId } onChange={ onChange } />
+			<ShippingZoneLocationDialog siteId={ siteId } />
 		</div>
 	);
 };
@@ -128,7 +127,6 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 ShippingZoneLocationList.PropTypes = {
 	siteId: PropTypes.number,
 	loaded: PropTypes.bool.isRequired,
-	onChange: PropTypes.func.isRequired,
 };
 
 export default connect(

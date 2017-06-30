@@ -1,0 +1,29 @@
+.store-stats__widgets {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.store-stats__widgets-column {
+	width: 100%;
+
+	.module-content-text.is-error {
+		padding-top: 11px;
+	}
+}
+
+@include breakpoint( ">960px" ) {
+	.store-stats__widgets {
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+	.store-stats__widgets-column {
+		width: calc(50% - 4px);
+	}
+}
+
+@include breakpoint( ">1280px" ) {
+	.store-stats__widgets-column {
+		width: calc(33% - 3px);
+	}
+}

@@ -535,6 +535,16 @@ const MediaUtils = {
 				extension: MediaUtils.getFileExtension( file ),
 				mime_type: MediaUtils.getMimeType( file )
 			} );
+		} else if ( file.thumbnails ) {
+			// Generate from a file data object
+			Object.assign( transientMedia, {
+				file: file.URL,
+				title: file.name,
+				extension: file.extension,
+				mime_type: file.mime_type,
+				guid: file.URL,
+				URL: file.URL,
+			} );
 		} else {
 			// Handle the case where a an object has been passed that wraps a
 			// Blob and contains a fileName
