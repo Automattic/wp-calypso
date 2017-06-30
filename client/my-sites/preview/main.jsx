@@ -74,7 +74,7 @@ class PreviewMain extends React.Component {
 
 		if ( ! site ) {
 			// todo: some loading state?
-			return <span></span>;
+			return null;
 		}
 
 		if ( ! isPreviewable ) {
