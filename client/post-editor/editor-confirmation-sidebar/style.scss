@@ -125,6 +125,7 @@
 	padding: 0 24px 24px 24px
 }
 
+
 .editor-confirmation-sidebar__sidebar .editor-confirmation-sidebar__display-preference {
 	@extend .sidebar__footer;
 	background-color: lighten( $gray, 25% );
@@ -139,4 +140,10 @@
 
 input[type=checkbox].editor-confirmation-sidebar__display-preference-checkbox {
 	margin-top: 3px;
+}
+
+.editor-confirmation-sidebar__header {
+	color: $gray-text-min;
+	font-size: 14px;
+	padding-bottom: 16px;
 }

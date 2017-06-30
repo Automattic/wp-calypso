@@ -178,6 +178,17 @@ class EditorConfirmationSidebar extends React.Component {
 							</div>
 						</div>
 						<div className="editor-confirmation-sidebar__content-wrap">
+							<div className="editor-confirmation-sidebar__header">
+								{
+									this.props.translate( '{{strong}}Ready to go?{{/strong}} Double-check and then confirm to publish.', {
+										comment: 'This string appears as the header for the confirmation sidebar ' +
+											'when a user publishes a post or page.',
+										components: {
+											strong: <strong />
+										},
+									} )
+								}
+							</div>
 							<div className="editor-confirmation-sidebar__privacy-control">
 								{ this.renderPrivacyControl() }
 							</div>
