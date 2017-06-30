@@ -5,6 +5,9 @@ import { areOrderNotesLoaded, areOrderNotesLoading } from './selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../../request';
 import {
+	WOOCOMMERCE_ORDER_NOTE_CREATE,
+	WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
+	WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
 	WOOCOMMERCE_ORDER_NOTES_REQUEST,
 	WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
@@ -35,6 +38,37 @@ export const fetchNotes = ( siteId, orderId ) => ( dispatch, getState ) => {
 	} ).catch( error => {
 		dispatch( {
 			type: WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
+			siteId,
+			orderId,
+			error,
+		} );
+	} );
+};
+
+export const createNote = ( siteId, orderId, note ) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	dispatch( {
+		type: WOOCOMMERCE_ORDER_NOTE_CREATE,
+		siteId,
+		orderId,
+	} );
+
+	return request( siteId ).post( `orders/${ orderId }/notes`, note ).then( data => {
+		// If note is customer note, maybe add a notice
+		// dispatch( successNotice( translate( 'Notified customer.' ), { duration: 5000 } ) );
+		dispatch( {
+			type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
+			siteId,
+			orderId,
+			note: data,
+		} );
+	} ).catch( error => {
+		dispatch( {
+			type: WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
 			siteId,
 			orderId,
 			error,

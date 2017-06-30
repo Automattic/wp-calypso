@@ -9,6 +9,10 @@ This module is used to manage order notes on a site.
 
 Fetch notes from the remote site. Does not run if this order's notes are loading or already loaded.
 
+### `createNote( siteId: number, orderId: number, note: object )`
+
+Create a note for an order on the remote site.
+
 ## Reducer
 
 This is saved on a per-site basis. 
