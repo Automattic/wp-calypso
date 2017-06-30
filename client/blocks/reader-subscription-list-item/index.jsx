@@ -47,9 +47,8 @@ function ReaderSubscriptionListItem( {
 	showLastUpdatedDate,
 	isFollowing,
 	railcar,
-	hasDefaultSiteTitle,
 } ) {
-	const siteTitle = getSiteName( { feed, site, hasDefaultSiteTitle } );
+	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
 	const siteExcerpt = getSiteDescription( { feed, site } );
 	const authorName = getSiteAuthorName( site );

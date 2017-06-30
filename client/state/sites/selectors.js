@@ -43,11 +43,7 @@ import { isSiteUpgradeable } from 'state/selectors';
  * @return {?Object}        Site object
  */
 export const getRawSite = ( state, siteId ) => {
-	return (
-		state.sites.items[ siteId ] ||
-		state.reader.sites.items[ siteId ] ||
-		null
-	);
+	return state.sites.items[ siteId ] || null;
 };
 
 /**

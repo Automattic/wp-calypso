@@ -4,6 +4,7 @@
 import url from 'url';
 import { translate } from 'i18n-calypso';
 import { trim } from 'lodash';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -47,12 +48,16 @@ export const getFeedUrl = ( { feed, site, post } = {} ) => {
  * @param {*} options - an object containing a feed, site, and post. all optional
  * @returns {string} the site title
  */
-export const getSiteName = ( { feed, site, post, hasDefaultSiteTitle } = {} ) => {
+export const getSiteName = ( { feed, site, post } = {} ) => {
 	let siteName = null;
+	const isDefaultSiteTitle = (
+		site && site.name === i18n.translate( 'Site Title' ) ||
+		feed && feed.name === i18n.translate( 'Site Title' )
+	);
 
-	if ( ! hasDefaultSiteTitle && site && site.title ) {
+	if ( ! isDefaultSiteTitle && site && site.title ) {
 		siteName = site.title;
-	} else if ( ! hasDefaultSiteTitle && feed && ( feed.name || feed.title ) ) {
+	} else if ( ! isDefaultSiteTitle && feed && ( feed.name || feed.title ) ) {
 		siteName = feed.name || feed.title;
 	} else if ( post && post.site_name ) {
 		siteName = post.site_name;
