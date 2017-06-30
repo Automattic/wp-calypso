@@ -1,12 +1,14 @@
 /**
  * External dependencies
  */
-import { get, isEmpty, isObject } from 'lodash';
+import { get, isEmpty, isObject, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getAPIShippingZones } from '../shipping-zones/selectors';
+import { getZoneLocationsPriority } from './helpers';
 import { LOADING } from 'woocommerce/state/constants';
 
 export const getRawShippingZoneLocations = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -33,6 +35,41 @@ export const areShippingZoneLocationsLoaded = ( state, zoneId, siteId = getSelec
 export const areShippingZoneLocationsLoading = ( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
 	const rawLocations = getRawShippingZoneLocations( state, siteId );
 	return rawLocations && LOADING === getRawShippingZoneLocations( state, siteId )[ zoneId ];
+};
+
+/**
+ * Checks if the shipping zones order is correct to be edited from Calypso. For auto-ordering to work, it's assumed
+ * that the zones with more generic locations (continents) come _after_ zones with more specific locations (countries,
+ * states, postcode ranges). If that's not the case, then the user _must_ have been editing the zones in WP-Admin
+ * and the Calypso UI shouldn't mess with them.
+ * @param {Object} reduxState Whole Redux state tree
+ * @param {Number} siteId Site ID to check
+ * @return {boolean} Whether the shipping zones have are ordered correctly.
+ */
+const isShippingZonesOrderValid = ( reduxState, siteId ) => {
+	const allLocations = getRawShippingZoneLocations( reduxState, siteId );
+	const zones = orderBy( getAPIShippingZones( reduxState, siteId ), 'order', 'id' );
+
+	let previousPriority = 0;
+	for ( const { id } of zones ) {
+		if ( 0 === id ) { // Special case: ignore the "Rest Of The World" zone order
+			continue;
+		}
+
+		const priority = getZoneLocationsPriority( allLocations[ id ] );
+		if ( ! priority ) {
+			// No locations in this zone, its order is always valid
+			continue;
+		}
+
+		// This zone should be before the previous one. Fail.
+		if ( previousPriority > priority ) {
+			return false;
+		}
+		previousPriority = priority;
+	}
+
+	return true;
 };
 
 /**
@@ -118,5 +155,5 @@ export const areShippingZonesLocationsValid = ( reduxState, siteId = getSelected
 		}
 	}
 
-	return true;
+	return isShippingZonesOrderValid( reduxState, siteId );
 };

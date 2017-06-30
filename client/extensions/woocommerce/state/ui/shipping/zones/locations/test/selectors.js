@@ -19,6 +19,7 @@ import {
 	getCurrentlyEditingShippingZoneCountries,
 	getCurrentlyEditingShippingZoneStates,
 	areCurrentlyEditingShippingZoneLocationsValid,
+	getOrderOperationsToSaveCurrentZone,
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import { createState } from 'woocommerce/state/test/helpers';
@@ -93,7 +94,7 @@ const locations = [
 
 const createEditState = ( { zoneLocations, locationEdits } ) => createState( {
 	site: {
-		shippingZones: Object.keys( zoneLocations ).map( zoneId => ( { id: zoneId, methodIds: [] } ) ),
+		shippingZones: Object.keys( zoneLocations ).map( zoneId => ( { id: Number( zoneId ), methodIds: [] } ) ),
 		shippingZoneLocations: zoneLocations,
 		locations,
 	},
@@ -2528,6 +2529,145 @@ describe( 'selectors', () => {
 			} );
 
 			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.true;
+		} );
+	} );
+
+	describe( 'getOrderOperationsToSaveCurrentZone', () => {
+		it( 'should return an empty list if the zone does not have locations', () => {
+			const state = createState( {
+				site: {
+					shippingZones: [
+						{ id: 1, methodIds: [] },
+					],
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [ 'US' ],
+							state: [],
+							postcode: [],
+						},
+					},
+					locations,
+				},
+				ui: {
+					shipping: {
+						zones: {
+							creates: [], updates: [], deletes: [],
+							currentlyEditingId: 1,
+							currentlyEditingChanges: {
+								locations: {
+									journal: [
+										{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
+									],
+									states: null,
+									postcode: null,
+									pristine: false,
+								},
+							},
+						},
+					},
+				},
+			} );
+
+			expect( getOrderOperationsToSaveCurrentZone( state ) ).to.deep.equal( [] );
+		} );
+
+		it( 'should return a move operation if the zone locations edits have made it change priority', () => {
+			const state = createState( {
+				site: {
+					shippingZones: [
+						{ id: 1, order: 3, methodIds: [] },
+					],
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [ 'US' ],
+							state: [],
+							postcode: [],
+						},
+					},
+					locations,
+				},
+				ui: {
+					shipping: {
+						zones: {
+							creates: [], updates: [], deletes: [],
+							currentlyEditingId: 1,
+							currentlyEditingChanges: {
+								locations: {
+									journal: [],
+									states: {
+										add: [ 'NY' ],
+										remove: [],
+										removeAll: false,
+									},
+									postcode: null,
+									pristine: false,
+								},
+							},
+						},
+					},
+				},
+			} );
+
+			expect( getOrderOperationsToSaveCurrentZone( state ) ).to.deep.equal( [
+				{ id: 1, order: 2 },
+			] );
+		} );
+
+		it( 'should return multiple move operations if the existing zones were not in ideal order', () => {
+			const state = createState( {
+				site: {
+					shippingZones: [
+						{ id: 1, order: 0, methodIds: [] },
+						{ id: 2, order: 0, methodIds: [] },
+						{ id: 3, order: 0, methodIds: [] },
+					],
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [],
+							state: [ 'US:NY' ],
+							postcode: [],
+						},
+						2: {
+							continent: [],
+							country: [ 'UK' ],
+							state: [],
+							postcode: [],
+						},
+						3: {
+							continent: [],
+							country: [ 'US' ],
+							state: [],
+							postcode: [],
+						},
+					},
+					locations,
+				},
+				ui: {
+					shipping: {
+						zones: {
+							creates: [], updates: [], deletes: [],
+							currentlyEditingId: 1,
+							currentlyEditingChanges: {
+								locations: {
+									journal: [],
+									states: null,
+									postcode: null,
+									pristine: true,
+								},
+							},
+						},
+					},
+				},
+			} );
+
+			expect( getOrderOperationsToSaveCurrentZone( state ) ).to.deep.equal( [
+				{ id: 1, order: 2 },
+				{ id: 2, order: 3 },
+				{ id: 3, order: 3 },
+			] );
 		} );
 	} );
 } );

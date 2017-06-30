@@ -535,5 +535,59 @@ describe( 'selectors', () => {
 			} );
 			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
 		} );
+
+		it( 'should return true if the zones order is valid', () => {
+			const state = createState( {
+				site: {
+					shippingZones: [
+						{ id: 1, order: 1 },
+						{ id: 2, order: 2 },
+					],
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [ 'US' ],
+							state: [],
+							postcode: [ '80123' ],
+						},
+						2: {
+							continent: [ 'NA' ],
+							country: [],
+							state: [],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
+		} );
+
+		it( 'should return true if the zones order is not valid', () => {
+			const state = createState( {
+				site: {
+					shippingZones: [
+						{ id: 1, order: 7 },
+						{ id: 2, order: 2 },
+					],
+					shippingZoneLocations: {
+						1: {
+							continent: [],
+							country: [ 'US' ],
+							state: [],
+							postcode: [ '80123' ],
+						},
+						2: {
+							continent: [ 'NA' ],
+							country: [],
+							state: [],
+							postcode: [],
+						},
+					},
+				},
+				ui: {},
+			} );
+			expect( areShippingZonesLocationsValid( state ) ).to.be.false;
+		} );
 	} );
 } );

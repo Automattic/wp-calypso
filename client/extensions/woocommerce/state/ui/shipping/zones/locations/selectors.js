@@ -1,18 +1,19 @@
 /**
  * External dependencies
  */
-import { every, forIn, isEmpty } from 'lodash';
+import { every, forIn, isEmpty, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
+import { areShippingZonesLoaded, getAPIShippingZones } from 'woocommerce/state/sites/shipping-zones/selectors';
 import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
 import { getShippingZonesEdits, getCurrentlyEditingShippingZone } from '../selectors';
 import { getContinents, getCountries, getCountryName, getStates, hasStates } from 'woocommerce/state/sites/locations/selectors';
 import { JOURNAL_ACTIONS } from './reducer';
 import { mergeLocationEdits } from './helpers';
+import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-locations/helpers';
 
 /**
  * Computes a map of the continents that belong to a zone different than the one that's currently being edited.
@@ -529,4 +530,46 @@ export const areCurrentlyEditingShippingZoneLocationsValid = ( state, siteId = g
 		return false;
 	}
 	return true;
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array} A list of actions to save the current zone changes while preserving a valid shipping zones order.
+ * Each action will have the properties:
+ * - {Number} id Zone ID
+ * - {Number} order New order property for that Zone
+ */
+export const getOrderOperationsToSaveCurrentZone = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const moves = [];
+	const allLocations = getRawShippingZoneLocations( state, siteId );
+	const allZones = orderBy( getAPIShippingZones( state, siteId ), 'order' );
+
+	const currentZone = getCurrentlyEditingShippingZone( state, siteId );
+	const currentZoneOrder = 'number' === typeof currentZone.id ? currentZone.order : 0;
+	const currentZoneLocations = getShippingZoneLocationsWithEdits( state, siteId );
+	const currentZonePriority = getZoneLocationsPriority( currentZoneLocations );
+	if ( currentZonePriority && currentZoneOrder !== currentZonePriority ) {
+		moves.push( { id: currentZone.id, order: currentZonePriority } );
+	}
+
+	// Normally this won't be needed because all the already saved zones will have the correct order according
+	// to their priority, but for example that's not the case after the initial setup (the "home country" zone
+	// has order=0)
+	for ( const { id, order } of allZones ) {
+		// Skip over the "Rest of the World" zone, the current zone and zones with no locations
+		if ( currentZone.id === id || 0 === id ) {
+			continue;
+		}
+		const priority = getZoneLocationsPriority( allLocations[ id ] );
+		if ( ! priority ) {
+			continue;
+		}
+
+		if ( order !== priority ) {
+			moves.push( { id, order: priority } );
+		}
+	}
+
+	return moves;
 };
