@@ -17,6 +17,7 @@ import Site from 'blocks/site';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
 	isJetpackSiteConnected,
 	isJetpackSiteInDevelopmentMode,
@@ -84,13 +85,14 @@ class SiteOwnership extends PureComponent {
 		const {
 			siteId,
 			siteIsConnected,
+			siteIsJetpack,
 			translate,
 		} = this.props;
 
 		return (
 			<div>
-				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
-				{ siteId && <QueryJetpackUserConnection siteId={ siteId } /> }
+				{ siteIsJetpack && <QueryJetpackConnection siteId={ siteId } /> }
+				{ siteIsJetpack && <QueryJetpackUserConnection siteId={ siteId } /> }
 
 				<SectionHeader label={ translate( 'Site ownership' ) } />
 
@@ -111,6 +113,7 @@ export default connect(
 			site: getSelectedSite( state ),
 			siteId,
 			siteIsConnected: isJetpackSiteConnected( state, siteId ),
+			siteIsJetpack: isJetpackSite( state, siteId ),
 			siteIsInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
 			userIsMaster: isJetpackUserMaster( state, siteId ),
 		};
