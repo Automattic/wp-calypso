@@ -115,7 +115,7 @@ class OrderRefundCard extends Component {
 	}
 
 	sendRefund = () => {
-		const { order, site, translate } = this.props;
+		const { order, paymentMethod, site, translate } = this.props;
 		const maxRefund = parseFloat( order.total ) + this.getRefundedTotal( order );
 		if ( this.state.refundTotal > maxRefund ) {
 			this.setState( { errorMessage: translate( 'Refund must be less than order total.' ) } );
@@ -128,7 +128,7 @@ class OrderRefundCard extends Component {
 		const refundObj = {
 			amount: this.state.refundTotal + '', // API expects a string
 			reason: this.state.refundNote,
-			// api_refund
+			api_refund: ( -1 !== paymentMethod.method_supports.indexOf( 'refunds' ) ),
 		};
 		this.props.sendRefund( site.ID, order.id, refundObj );
 	}
@@ -162,7 +162,7 @@ class OrderRefundCard extends Component {
 	}
 
 	render() {
-		const { order, site, translate } = this.props;
+		const { isPaymentLoading, order, site, translate } = this.props;
 		const { errorMessage, refundNote, showDialog } = this.state;
 		const dialogClass = 'woocommerce'; // eslint/css specificity hack
 		let refundTotal = formatCurrency( 0, order.currency );
@@ -211,7 +211,7 @@ class OrderRefundCard extends Component {
 						<div className="order__refund-actions">
 							{ errorMessage && <Notice status="is-error" showDismiss={ false }>{ errorMessage }</Notice> }
 							<Button onClick={ this.toggleDialog }>{ translate( 'Cancel' ) }</Button>
-							<Button primary onClick={ this.sendRefund }>{ translate( 'Refund' ) }</Button>
+							<Button primary onClick={ this.sendRefund } disabled={ isPaymentLoading }>{ translate( 'Refund' ) }</Button>
 						</div>
 					</form>
 				</Dialog>
