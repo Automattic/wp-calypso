@@ -31,18 +31,6 @@ describe( 'blog-sticker-add', () => {
 	} );
 
 	describe( 'receiveBlogStickerAdd', () => {
-		it( 'should do nothing if successful', () => {
-			const dispatch = spy();
-			const nextSpy = spy();
-			receiveBlogStickerAdd(
-				{ dispatch },
-				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
-				nextSpy,
-				{ success: true },
-			);
-			expect( nextSpy ).to.not.have.been.called;
-		} );
-
 		it( 'should dispatch a success notice', () => {
 			const dispatch = spy();
 			const nextSpy = spy();
@@ -57,6 +45,7 @@ describe( 'blog-sticker-add', () => {
 					status: 'is-success',
 				},
 			} );
+			expect( nextSpy ).to.not.have.been.called;
 		} );
 
 		it( 'should dispatch a sticker removal if it fails using next', () => {
