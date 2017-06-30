@@ -230,8 +230,12 @@
 		flex: 1;
 	}
 
-	.order__refund-note .form-textarea {
-		margin-top: 8px;
+	.order__refund-note {
+		margin-bottom: 16px;
+
+		.form-textarea {
+			margin-top: 8px;
+		}
 	}
 
 	.order__refund-details {
