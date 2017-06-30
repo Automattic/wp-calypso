@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import React from 'react';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -10,7 +11,7 @@ import { SITES_BLOG_STICKER_ADD } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { removeBlogSticker } from 'state/sites/blog-stickers/actions';
-import { errorNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 
 export function requestBlogStickerAdd( { dispatch }, action ) {
 	dispatch(
@@ -32,6 +33,17 @@ export function receiveBlogStickerAdd( store, action, next, response ) {
 		receiveBlogStickerAddError( store, action, next );
 		return;
 	}
+
+	store.dispatch(
+		successNotice(
+			translate( 'The sticker {{i}}%s{{/i}} has been successfully added.', {
+				args: action.payload.stickerName,
+				components: {
+					i: <i />,
+				},
+			} ),
+		),
+	);
 }
 
 export function receiveBlogStickerAddError( { dispatch }, action, next ) {
