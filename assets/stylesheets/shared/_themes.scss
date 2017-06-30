@@ -1,11 +1,29 @@
+// ==========================================================================
+// Themes
+//
+// Theming variables and color scheme definitions
+//
+// 1.0 Theme variables
+// 2.0 Color scheme definitions
+// 3.0 Theming classes
+//
+// Usage:
+//
+// Add a new theme variable:
+// I.) Add a new theme variable to section 1.0 of this file
+// II.) Add new custom property matching the theme variable name to $color-schemes > default
+// III.) Add the same custom property to each theme in $color-schemes
+//
+// Add a new theme:
+// I.) Add a new block to $color-schemes by copying $color-schemes > default
+// II.) Change name of new color scheme to desired name for the new theme
+// III.) Change color values assigned to the custom properties of the new theme
+// ==========================================================================
+
 /**
- * Themes
+ * 1.0 Theme variables
  *
- * Theming variables and color scheme definitions
- *
- * 1.) Declare theme variables and assign default colors
- * 2.) Assign theme variables to custom properties
- * 3.) Define new theme by adding new map to $color-schemes
+ * Declare theme variables and assign default colors
  */
 
 // Layout
@@ -14,24 +32,54 @@ $sidebar-bg-color:        $gray-lighten-30;
 $sidebar-text-color:      $gray-dark;
 $sidebar-selected-color:  $gray-text-min;
 
-// Define color schemes based on theming variables
+/**
+ * 2.0 Color scheme definitions
+ *
+ * Assign color variables to custom properties
+ * Note: theme variable names have to match custom property names in 'default' theme
+ */
+
 $color-schemes: (
 	default: (
-		'--masterbar-primary-color':			$masterbar-color,
+		'--masterbar-color':					$masterbar-color,
 		'--sidebar-bg-color':					$sidebar-bg-color,
 		'--sidebar-text-color':					$sidebar-text-color,
 		'--sidebar-selected-color':				$sidebar-selected-color
 	),
 	light: (
-		'--masterbar-primary-color':			$white,
+		'--masterbar-color':					$gray,
 		'--sidebar-bg-color':					$white,
 		'--sidebar-text-color':					$sidebar-text-color,
 		'--sidebar-selected-color':				$sidebar-selected-color
 	),
 	dark: (
-		'--masterbar-primary-color':			$gray-dark,
+		'--masterbar-color':					$gray-dark,
 		'--sidebar-bg-color':					$gray-dark,
 		'--sidebar-text-color':					$white,
 		'--sidebar-selected-color':				$sidebar-selected-color
 	)
 );
+
+/**
+ * 3.0 Theming classes
+ *
+ * Assign values for themes at :root level
+ * This enables us to change the theme via a single class
+ */
+
+:root {
+	@each $color-scheme, $color-scheme-values in $color-schemes {
+		@if $color-scheme == 'default' {
+			@each $custom-property, $sass-variable in map-get( $color-schemes, 'default' ) {
+				#{ $custom-property } :  $sass-variable;
+			}
+		}
+		@else {
+			&.is-#{$color-scheme}-theme {
+				@each $custom-property, $sass-variable in map-get( $color-schemes, $color-scheme ) {
+					#{ $custom-property } :  $sass-variable;
+				}
+			}
+		}
+	}
+}
