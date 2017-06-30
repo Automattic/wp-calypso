@@ -85,10 +85,16 @@
 		height: 100%;
 		overflow-y: scroll;
 		padding: 16px;
+		color: $gray-text-min;
 
 		@include breakpoint( ">960px" ) {
 			padding: 24px;
 		}
+	}
+
+	.order__detail-header,
+	.order__details-total {
+		color: $gray-dark;
 	}
 
 	.form-text-input,
