@@ -124,3 +124,19 @@
 .editor-confirmation-sidebar__content-wrap {
 	padding: 0 24px 24px 24px
 }
+
+.editor-confirmation-sidebar__sidebar .editor-confirmation-sidebar__display-preference {
+	@extend .sidebar__footer;
+	background-color: lighten( $gray, 25% );
+	padding: 4px 10px;
+
+	@include breakpoint( "<660px" ) {
+		background: none;
+		border-top: none;
+		padding: 0 24px 24px 24px;
+	}
+}
+
+input[type=checkbox].editor-confirmation-sidebar__display-preference-checkbox {
+	margin-top: 3px;
+}

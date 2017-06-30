@@ -61,6 +61,17 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
 };
 
 /**
+ * Are payment settings setup?
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId wpcom site id
+ * @return {Boolean} Bool indicating if payments are setup
+ */
+export const arePaymentsSetup = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return !! filter( getPaymentMethodsWithEdits( state, siteId ), { enabled: true } ).length;
+};
+
+/**
  * Gets group of payment methods. (offline, off-site, on-site)
  *
  * @param {Object} state Global state tree
