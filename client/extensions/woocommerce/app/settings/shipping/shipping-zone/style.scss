@@ -333,10 +333,6 @@
 	&.is-disabled {
 		color: $gray-text-min;
 
-		span {
-			text-decoration: line-through;
-		}
-
 		img {
 			filter: grayscale(1);
 			opacity: .5;
