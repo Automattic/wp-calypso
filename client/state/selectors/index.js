@@ -100,6 +100,7 @@ export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
 export getPostShareScheduledActions from './get-post-share-scheduled-actions';
 export getPostSharePublishedActions from './get-post-share-published-actions';
+export getPublicSites from './get-public-sites';
 export getSiteId from './get-site-id';
 export getSiteMonitorSettings from './get-site-monitor-settings';
 export getSiteSetting from './get-site-setting';
