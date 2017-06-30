@@ -17,6 +17,7 @@ import {
 	getFinishedInitialSetup,
 	getSetStoreAddressDuringInitialSetup,
 	getFinishedInstallOfRequiredPlugins,
+	getFinishedPageSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
 import { areOrdersLoading, getOrders } from 'woocommerce/state/sites/orders/selectors';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
@@ -25,6 +26,7 @@ import Main from 'components/main';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
 import PreSetupView from './pre-setup-view';
+import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup-tasks-view';
 
@@ -68,6 +70,7 @@ class Dashboard extends Component {
 	getBreadcrumb = () => {
 		const {
 			finishedInstallOfRequiredPlugins,
+			finishedPageSetup,
 			finishedInitialSetup,
 			setStoreAddressDuringInitialSetup,
 			translate
@@ -75,6 +78,10 @@ class Dashboard extends Component {
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
 			return translate( 'Installing Plugins' );
+		}
+
+		if ( ! finishedPageSetup ) {
+			return translate( 'Setting Up Store Pages' );
 		}
 
 		if ( ! setStoreAddressDuringInitialSetup ) {
@@ -91,6 +98,7 @@ class Dashboard extends Component {
 	renderDashboardContent = () => {
 		const {
 			finishedInstallOfRequiredPlugins,
+			finishedPageSetup,
 			finishedInitialSetup,
 			hasOrders,
 			selectedSite,
@@ -99,6 +107,10 @@ class Dashboard extends Component {
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
 			return ( <RequiredPluginsInstallView site={ selectedSite } /> );
+		}
+
+		if ( ! finishedPageSetup ) {
+			return ( <RequiredPagesSetupView site={ selectedSite } /> );
 		}
 
 		if ( ! setStoreAddressDuringInitialSetup ) {
@@ -142,6 +154,7 @@ function mapStateToProps( state ) {
 	return {
 		finishedInitialSetup,
 		finishedInstallOfRequiredPlugins: getFinishedInstallOfRequiredPlugins( state ),
+		finishedPageSetup: getFinishedPageSetup( state ),
 		hasOrders,
 		loading,
 		selectedSite,

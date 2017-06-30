@@ -11,6 +11,7 @@ import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
 	getFinishedInstallOfRequiredPlugins,
+	getFinishedPageSetup,
 	getOptedOutOfShippingSetup,
 	getOptedOutofTaxesSetup,
 	getSetStoreAddressDuringInitialSetup,
@@ -41,6 +42,7 @@ const loadedState = {
 				123: {
 					setupChoices: {
 						finished_initial_setup: true,
+						finished_page_setup: true,
 						opted_out_of_shipping_setup: true,
 						opted_out_of_taxes_setup: true,
 						tried_customizer_during_initial_setup: true,
@@ -51,6 +53,7 @@ const loadedState = {
 				124: {
 					setupChoices: {
 						finished_initial_setup: false,
+						finished_page_setup: false,
 						opted_out_of_shipping_setup: false,
 						opted_out_of_taxes_setup: false,
 						tried_customizer_during_initial_setup: false,
@@ -178,6 +181,20 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getFinishedInstallOfRequiredPlugins( loadedStateWithUi ) ).to.eql( true );
+		} );
+	} );
+
+	describe( '#getFinishedPageSetup', () => {
+		it( 'should get whether initial setup was completed from the state (123-true).', () => {
+			expect( getFinishedPageSetup( loadedState, 123 ) ).to.eql( true );
+		} );
+
+		it( 'should get whether initial setup was completed from the state (124-false).', () => {
+			expect( getFinishedPageSetup( loadedState, 124 ) ).to.eql( false );
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getFinishedPageSetup( loadedStateWithUi ) ).to.eql( true );
 		} );
 	} );
 
