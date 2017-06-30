@@ -1,10 +1,6 @@
 @import 'shipping-zone/style';
 @import 'shipping-zone/style';
 
-.shipping__origin {
-	margin-top: 58px;
-}
-
 .shipping__zones-header,
 .shipping__packages-header {
 	font-weight: 600;
@@ -16,12 +12,6 @@
 	padding-bottom: 8px;
 	font-size: 14px;
 	line-height: 18px;
-}
-
-.shipping__origin {
-	@include breakpoint( ">660px" ) {
-		margin-top: 58px;
-	}
 }
 
 .shipping__address {

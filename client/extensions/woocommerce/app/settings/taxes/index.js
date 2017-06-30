@@ -34,6 +34,7 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
+import SettingsNavigation from '../navigation';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import StoreAddress from 'woocommerce/components/store-address';
 import TaxesOptions from './taxes-options';
@@ -158,6 +159,7 @@ class SettingsTaxes extends Component {
 						{ translate( 'Save' ) }
 					</Button>
 				</ActionHeader>
+				<SettingsNavigation activeSection="taxes" />
 				<div className="taxes__nexus">
 					<ExtendedHeader
 						label={ translate( 'Store Address / Tax Nexus' ) }
