@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -37,8 +38,9 @@ export const SettingsNavigation = ( {
 		},
 	];
 
+	const section = find( items, { id: activeSection } );
 	return (
-		<SectionNav>
+		<SectionNav selectedText={ section && section.title }>
 			<NavTabs>
 				{ items.map( ( { id, path, title } ) => {
 					const link = getLink( path, site );
