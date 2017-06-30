@@ -34,8 +34,11 @@
 	transition: opacity .2s ease-in;
 	// IE needs a horizontal margin values to properly center flex item
 	margin: auto 0;
-	max-height: 90%;
-	overflow-y: scroll;
+
+	&:not( .editor-media-modal ) {
+		max-height: 90%;
+		overflow-y: scroll;
+	}
 
 	.dialog-enter &,
 	.dialog-leave.dialog-leave-active & {
