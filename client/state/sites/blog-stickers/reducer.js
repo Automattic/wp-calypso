@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { merge, includes, concat } from 'lodash';
+import { includes, concat, compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,9 +13,10 @@ export const items = createReducer(
 	{},
 	{
 		[ SITES_BLOG_STICKER_LIST_RECEIVE ]: ( state, action ) => {
-			return merge( {}, state, {
+			return {
+				...state,
 				[ action.payload.blogId ]: action.payload.stickers,
-			} );
+			};
 		},
 		[ SITES_BLOG_STICKER_ADD ]: ( state, action ) => {
 			const { blogId, stickerName } = action.payload;
@@ -25,9 +26,10 @@ export const items = createReducer(
 				return state;
 			}
 
-			return merge( {}, state, {
-				[ blogId ]: state[ blogId ] ? concat( state[ blogId ], stickerName ) : [ stickerName ],
-			} );
+			return {
+				...state,
+				[ blogId ]: compact( concat( stickerName, state[ blogId ] ) ),
+			};
 		},
 	},
 );
