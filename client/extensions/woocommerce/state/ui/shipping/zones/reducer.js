@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { every, isEmpty, isEqual, omit, reject } from 'lodash';
+import { every, isEmpty, isEqual, omit, pick, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,9 +11,11 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_ADD,
 	WOOCOMMERCE_SHIPPING_ZONE_CANCEL,
 	WOOCOMMERCE_SHIPPING_ZONE_CLOSE,
+	WOOCOMMERCE_SHIPPING_ZONE_DELETED,
 	WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME,
 	WOOCOMMERCE_SHIPPING_ZONE_OPEN,
 	WOOCOMMERCE_SHIPPING_ZONE_REMOVE,
+	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
 } from 'woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from '../../helpers';
 import methodsReducer, { initialState as methodsInitialState } from './methods/reducer';
@@ -117,6 +119,27 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_REMOVE ] = ( state, { id } ) => {
 	newState[ bucket ] = reject( state[ bucket ], { id } );
 
 	return newState;
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ] = ( state, { data, originatingAction: { zone } } ) => {
+	if ( zone.id === state.currentlyEditingId ) {
+		return state;
+	}
+
+	return { ...state,
+		currentlyEditingId: data.id,
+		currentlyEditingChanges: pick( state.currentlyEditingChanges, 'locations', 'methods' ),
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_DELETED ] = ( state, { originatingAction: { zone } } ) => {
+	if ( zone.id !== state.currentlyEditingId ) {
+		return state;
+	}
+
+	return { ...state,
+		currentlyEditingId: null,
+	};
 };
 
 const mainReducer = createReducer( initialState, reducer );

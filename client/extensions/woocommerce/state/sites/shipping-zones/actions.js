@@ -4,6 +4,11 @@
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
 import {
+	WOOCOMMERCE_SHIPPING_ZONE_CREATE,
+	WOOCOMMERCE_SHIPPING_ZONE_DELETE,
+	WOOCOMMERCE_SHIPPING_ZONE_DELETED,
+	WOOCOMMERCE_SHIPPING_ZONE_UPDATE,
+	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
 	WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
 	WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
@@ -50,3 +55,50 @@ export const fetchShippingZones = ( siteId ) => ( dispatch, getState ) => {
 			} ) ) );
 		} );
 };
+
+export function createShippingZone( siteId, zone, successAction, failureAction ) {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_CREATE,
+		siteId,
+		zone,
+		successAction,
+		failureAction,
+	};
+}
+
+export function updateShippingZone( siteId, zone, successAction, failureAction ) {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_UPDATE,
+		siteId,
+		zone,
+		successAction,
+		failureAction,
+	};
+}
+
+export function deleteShippingZone( siteId, zone, successAction, failureAction ) {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_DELETE,
+		siteId,
+		zone,
+		successAction,
+		failureAction,
+	};
+}
+
+export function shippingZoneUpdated( siteId, data, originatingAction ) {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
+		siteId,
+		data,
+		originatingAction,
+	};
+}
+
+export function shippingZoneDeleted( siteId, originatingAction ) {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_DELETED,
+		siteId,
+		originatingAction,
+	};
+}

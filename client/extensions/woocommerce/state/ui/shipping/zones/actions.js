@@ -3,6 +3,7 @@
  */
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_ADD,
+	WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE,
 	WOOCOMMERCE_SHIPPING_ZONE_CANCEL,
 	WOOCOMMERCE_SHIPPING_ZONE_CLOSE,
 	WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME,
@@ -69,3 +70,21 @@ export const changeShippingZoneName = ( siteId, name ) => {
 export const deleteShippingZone = ( siteId, id ) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_REMOVE, siteId, id };
 };
+
+/**
+ * Creates an action list to save shipping-zone-related edits.
+ *
+ * Saves the shipping zone, its shipping methods and its locations.
+ * @param {Object} [successAction] Action to be dispatched upon successful completion.
+ * @param {Object} [failureAction] Action to be dispatched upon failure of execution.
+ * @param {boolean} [deleteZone] Mark that the zone should be deleted instead of saved.
+ * @return {Object} Action object.
+ */
+export function createShippingZoneActionList( successAction, failureAction, deleteZone = false ) {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE,
+		successAction,
+		failureAction,
+		deleteZone,
+	};
+}
