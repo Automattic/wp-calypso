@@ -51,8 +51,8 @@ function getErrorMessageFromErrorCode( code ) {
 		invalid_username: translate( "We don't seem to have an account with that name. Double-check the spelling and try again!" ),
 		push_authentication_throttled: translate( 'You can only request a code via the WordPress mobile app once every ' +
 			'two minutes. Please wait and try again.' ),
-		sms_code_throttled: translate( 'You can only request a code via SMS once per minute. Please wait and try again.' ),
-		sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. ' +
+		sms_code_throttled: translate( 'You can only request a code via text message once per minute. Please wait and try again.' ),
+		sms_recovery_code_throttled: translate( 'You can only request a recovery code via text message once per minute. ' +
 			'Please wait and try again.' ),
 		unknown: translate( "Hmm, we can't find a WordPress.com account with this username and password combo. " +
 			'Please double check your information and try again.' ),
